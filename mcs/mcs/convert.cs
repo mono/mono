@@ -1134,7 +1134,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsDynamicType (source_type))
 					return null;
 
-				method = GetConversionOperator (RootContext.ToplevelTypes.Compiler, null, source, target, look_for_explicit);
+				method = GetConversionOperator (ec.Compiler, null, source, target, look_for_explicit);
 			}
 
 			if (method != null) {

@@ -1977,10 +1977,10 @@ namespace Mono.CSharp {
 			FieldOffset = new PredefinedAttribute ("System.Runtime.InteropServices", "FieldOffsetAttribute");
 		}
 
-		public void Initialize ()
+		public void Initialize (CompilerContext ctx)
 		{
 			foreach (FieldInfo fi in GetType ().GetFields (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly)) {
-				((PredefinedAttribute) fi.GetValue (this)).Resolve (true);
+				((PredefinedAttribute) fi.GetValue (this)).Initialize (ctx, true);
 			}
 		}
 
@@ -1996,6 +1996,7 @@ namespace Mono.CSharp {
 		CustomAttributeBuilder cab;
 		ConstructorInfo ctor;
 		readonly string ns, name;
+		CompilerContext compiler;
 
 		static readonly Type NotFound = typeof (PredefinedAttribute);
 
@@ -2080,6 +2081,12 @@ namespace Mono.CSharp {
 			get { return type != null && type != NotFound; }
 		}
 
+		public void Initialize (CompilerContext ctx, bool canFail)
+		{
+			this.compiler = ctx;
+			Resolve (canFail);
+		}
+
 		public bool Resolve (bool canFail)
 		{
 			if (type != null) {
@@ -2089,7 +2096,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			type = TypeManager.CoreLookupType (RootContext.ToplevelTypes.Compiler, ns, name, Kind.Class, !canFail);
+			type = TypeManager.CoreLookupType (compiler, ns, name, Kind.Class, !canFail);
 			if (type == null) {
 				type = NotFound;
 				return false;

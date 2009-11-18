@@ -1014,7 +1014,7 @@ namespace Mono.CSharp {
 		    this.types = types;
 		}
 		
-		public ParametersCompiled (params Parameter[] parameters)
+		public ParametersCompiled (CompilerContext ctx, params Parameter[] parameters)
 		{
 			if (parameters == null)
 				throw new ArgumentException ("Use EmptyReadOnlyParameters");
@@ -1038,14 +1038,14 @@ namespace Mono.CSharp {
 					if (base_name != parameters [j].Name)
 						continue;
 
-					ErrorDuplicateName (parameters[i], RootContext.ToplevelTypes.Compiler.Report);
+					ErrorDuplicateName (parameters[i], ctx.Report);
 					i = j;
 				}
 			}
 		}
 
-		public ParametersCompiled (Parameter [] parameters, bool has_arglist) :
-			this (parameters)
+		public ParametersCompiled (CompilerContext ctx, Parameter [] parameters, bool has_arglist) :
+			this (ctx, parameters)
 		{
 			this.has_arglist = has_arglist;
 		}
@@ -1060,9 +1060,9 @@ namespace Mono.CSharp {
 			return new ParametersCompiled (parameters, types);
 		}
 
-		public static ParametersCompiled MergeGenerated (ParametersCompiled userParams, bool checkConflicts, Parameter compilerParams, Type compilerTypes)
+		public static ParametersCompiled MergeGenerated (CompilerContext ctx, ParametersCompiled userParams, bool checkConflicts, Parameter compilerParams, Type compilerTypes)
 		{
-			return MergeGenerated (userParams, checkConflicts,
+			return MergeGenerated (ctx, userParams, checkConflicts,
 				new Parameter [] { compilerParams },
 				new Type [] { compilerTypes });
 		}
@@ -1070,7 +1070,7 @@ namespace Mono.CSharp {
 		//
 		// Use this method when you merge compiler generated parameters with user parameters
 		//
-		public static ParametersCompiled MergeGenerated (ParametersCompiled userParams, bool checkConflicts, Parameter[] compilerParams, Type[] compilerTypes)
+		public static ParametersCompiled MergeGenerated (CompilerContext ctx, ParametersCompiled userParams, bool checkConflicts, Parameter[] compilerParams, Type[] compilerTypes)
 		{
 			Parameter[] all_params = new Parameter [userParams.Count + compilerParams.Length];
 			userParams.FixedParameters.CopyTo(all_params, 0);
@@ -1089,7 +1089,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < last_filled; ++i) {
 					while (p.Name == all_params [i].Name) {
 						if (checkConflicts && i < userParams.Count) {
-							RootContext.ToplevelTypes.Compiler.Report.Error (316, userParams[i].Location,
+							ctx.Report.Error (316, userParams[i].Location,
 								"The parameter name `{0}' conflicts with a compiler generated name", p.Name);
 						}
 						p.Name = '_' + p.Name;

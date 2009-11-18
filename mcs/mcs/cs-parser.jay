@@ -1007,7 +1007,7 @@ constant_declaration
 		foreach (VariableDeclaration constant in (ArrayList) $5){
 			Location l = constant.Location;
 			if ((modflags & Modifiers.STATIC) != 0) {
-				Report.Error (504, l, "The constant `{0}' cannot be marked static", current_container.GetSignatureForError () + '.' + (string) constant.identifier);
+				Report.Error (504, l, "The constant `{0}' cannot be marked static", current_container.GetSignatureForError () + "." + (string) constant.identifier);
 				continue;
 			}
 
@@ -1424,7 +1424,7 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-	  	$$ = new ParametersCompiled (pars); 
+	  	$$ = new ParametersCompiled (compiler, pars); 
 	  } 
 	| fixed_parameters COMMA parameter_array
 	  {
@@ -1434,7 +1434,7 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-		$$ = new ParametersCompiled (pars); 
+		$$ = new ParametersCompiled (compiler, pars); 
 	  }
 	| fixed_parameters COMMA arglist_modifier
 	  {
@@ -1444,14 +1444,14 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-		$$ = new ParametersCompiled (pars, true);
+		$$ = new ParametersCompiled (compiler, pars, true);
 	  }
 	| parameter_array COMMA error
 	  {
 		if ($1 != null)
 			Report.Error (231, ((Parameter) $1).Location, "A params parameter must be the last parameter in a formal parameter list");
 
-		$$ = new ParametersCompiled (new Parameter[] { (Parameter) $1 } );			
+		$$ = new ParametersCompiled (compiler, new Parameter[] { (Parameter) $1 } );			
 	  }
 	| fixed_parameters COMMA parameter_array COMMA error
 	  {
@@ -1464,13 +1464,13 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-		$$ = new ParametersCompiled (pars, true);
+		$$ = new ParametersCompiled (compiler, pars, true);
 	  }
 	| arglist_modifier COMMA error
 	  {
 		Report.Error (257, (Location) $1, "An __arglist parameter must be the last parameter in a formal parameter list");
 
-		$$ = new ParametersCompiled (new Parameter [] { new ArglistParameter ((Location) $1) }, true);
+		$$ = new ParametersCompiled (compiler, new Parameter [] { new ArglistParameter ((Location) $1) }, true);
 	  }
 	| fixed_parameters COMMA ARGLIST COMMA error 
 	  {
@@ -1482,15 +1482,15 @@ formal_parameter_list
 		Parameter [] pars = new Parameter [pars_list.Count];
 		pars_list.CopyTo (pars);
 
-		$$ = new ParametersCompiled (pars, true);
+		$$ = new ParametersCompiled (compiler, pars, true);
 	  }
 	| parameter_array 
 	  {
-		$$ = new ParametersCompiled (new Parameter[] { (Parameter) $1 } );
+		$$ = new ParametersCompiled (compiler, new Parameter[] { (Parameter) $1 } );
 	  }
 	| arglist_modifier
 	  {
-		$$ = new ParametersCompiled (new Parameter [] { new ArglistParameter ((Location) $1) }, true);
+		$$ = new ParametersCompiled (compiler, new Parameter [] { new ArglistParameter ((Location) $1) }, true);
 	  }
 	;
 
@@ -1828,9 +1828,9 @@ set_accessor_declaration
 			Parameter.Modifier.NONE, null, (Location) $3);
 
 		if (!parsing_indexer) {
-			current_local_parameters = new ParametersCompiled (new Parameter [] { implicit_value_parameter });
+			current_local_parameters = new ParametersCompiled (compiler, new Parameter [] { implicit_value_parameter });
 		} else {
-			current_local_parameters = ParametersCompiled.MergeGenerated (
+			current_local_parameters = ParametersCompiled.MergeGenerated (compiler,
 				indexer_parameters, true, implicit_value_parameter, null);
 		}
 		
@@ -2293,7 +2293,7 @@ event_declaration
 	  OPEN_BRACE
 	  {
 		implicit_value_parameter_type = (FullNamedExpression) $4;  
-		current_local_parameters = new ParametersCompiled (
+		current_local_parameters = new ParametersCompiled (compiler,
 			new Parameter (implicit_value_parameter_type, "value", 
 			Parameter.Modifier.NONE, null, GetLocation ($3)));
 
@@ -4140,7 +4140,7 @@ opt_lambda_parameter_list
 	: /* empty */			{ $$ = ParametersCompiled.EmptyReadOnlyParameters; }
 	| lambda_parameter_list		{ 
 		ArrayList pars_list = (ArrayList) $1;
-		$$ = new ParametersCompiled ((Parameter[])pars_list.ToArray (typeof (Parameter)));
+		$$ = new ParametersCompiled (compiler, (Parameter[])pars_list.ToArray (typeof (Parameter)));
 	  }
 	;
 
@@ -4164,7 +4164,7 @@ lambda_expression
 	  {
 		LocatedToken lt = (LocatedToken) $1;
 		Parameter p = new ImplicitLambdaParameter (lt.Value, lt.Location);
-		start_anonymous (true, new ParametersCompiled (p), GetLocation ($1));
+		start_anonymous (true, new ParametersCompiled (compiler, p), GetLocation ($1));
 	  }
 	  lambda_expression_body
 	  {
@@ -5488,7 +5488,7 @@ from_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 		
-		((Linq.QueryBlock)current_block).AddTransparentParameter (lt);
+		((Linq.QueryBlock)current_block).AddTransparentParameter (compiler, lt);
 	  }	  
 	| FROM type IDENTIFIER IN
 	  {
@@ -5504,7 +5504,7 @@ from_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 		
-		((Linq.QueryBlock)current_block).AddTransparentParameter (lt);
+		((Linq.QueryBlock)current_block).AddTransparentParameter (compiler, lt);
 	  }
 	;	
 
@@ -5597,7 +5597,7 @@ let_clause
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 		
-		((Linq.QueryBlock)current_block).AddTransparentParameter (lt);
+		((Linq.QueryBlock)current_block).AddTransparentParameter (compiler, lt);
 	  }
 	;
 
@@ -5659,9 +5659,9 @@ join_clause
 		current_block = current_block.Parent;
 			
 		if ($12 == null)
-			((Linq.QueryBlock)current_block).AddTransparentParameter (lt);
+			((Linq.QueryBlock)current_block).AddTransparentParameter (compiler, lt);
 		else
-			((Linq.QueryBlock)current_block).AddTransparentParameter ((LocatedToken) $12);
+			((Linq.QueryBlock)current_block).AddTransparentParameter (compiler, (LocatedToken) $12);
 	  }
 	| JOIN type IDENTIFIER IN
 	  {
@@ -5706,9 +5706,9 @@ join_clause
 		current_block = current_block.Parent;
 			
 		if ($13 == null)
-			((Linq.QueryBlock)current_block).AddTransparentParameter (lt);
+			((Linq.QueryBlock)current_block).AddTransparentParameter (compiler, lt);
 		else
-			((Linq.QueryBlock)current_block).AddTransparentParameter ((LocatedToken) $13);
+			((Linq.QueryBlock)current_block).AddTransparentParameter (compiler, (LocatedToken) $13);
 	  }
 	;
 	
@@ -5846,7 +5846,7 @@ interactive_parsing
 		Parameter [] mpar = new Parameter [1];
 		mpar [0] = new Parameter (TypeManager.system_object_expr, "$retval", Parameter.Modifier.REF, null, Location.Null);
 
-		ParametersCompiled pars = new ParametersCompiled (mpar);
+		ParametersCompiled pars = new ParametersCompiled (compiler, mpar);
 		current_local_parameters = pars;
 		Method method = new Method (
 			current_class,

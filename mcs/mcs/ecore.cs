@@ -4800,9 +4800,9 @@ namespace Mono.CSharp {
 			IConstant ic = TypeManager.GetConstant (constant);
 			if (ic == null) {
 				if (constant.IsLiteral) {
-					ic = new ExternalConstant (constant);
+					ic = new ExternalConstant (constant, ec.Compiler);
 				} else {
-					ic = ExternalConstant.CreateDecimal (constant);
+					ic = ExternalConstant.CreateDecimal (constant, ec);
 					// HACK: decimal field was not resolved as constant
 					if (ic == null)
 						return new FieldExpr (constant, loc).ResolveMemberAccess (ec, left, loc, original);
@@ -4977,7 +4977,7 @@ namespace Mono.CSharp {
 							InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
 					}
 				} else {
-					ResolveFlags rf = ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis;
+					const ResolveFlags rf = ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis;
 
 					if (InstanceExpression != EmptyExpression.Null)
 						InstanceExpression = InstanceExpression.Resolve (ec, rf);

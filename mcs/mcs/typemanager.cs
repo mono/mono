@@ -958,8 +958,8 @@ namespace Mono.CSharp {
 		runtime_field_handle_type = CoreLookupType (ctx, "System", "RuntimeFieldHandle", Kind.Struct, true);
 		runtime_handle_type = CoreLookupType (ctx, "System", "RuntimeTypeHandle", Kind.Struct, true);
 
-		PredefinedAttributes.Get.ParamArray.Resolve (false);
-		PredefinedAttributes.Get.Out.Resolve (false);
+		PredefinedAttributes.Get.ParamArray.Initialize (ctx, false);
+		PredefinedAttributes.Get.Out.Initialize (ctx, false);
 
 		return ctx.Report.Errors == 0;
 	}
@@ -980,7 +980,7 @@ namespace Mono.CSharp {
 		// Initialize InternalsVisibleTo as the very first optional type. Otherwise we would populate
 		// types cache with incorrect accessiblity when any of optional types is internal.
 		//
-		PredefinedAttributes.Get.Initialize ();
+		PredefinedAttributes.Get.Initialize (ctx);
 
 		runtime_argument_handle_type = CoreLookupType (ctx, "System", "RuntimeArgumentHandle", Kind.Struct, false);
 		asynccallback_type = CoreLookupType (ctx, "System", "AsyncCallback", Kind.Delegate, false);
@@ -1249,7 +1249,7 @@ namespace Mono.CSharp {
 	//
 	public static bool IsBeingCompiled (MemberInfo mi)
 	{
-		return mi.Module.Assembly == RootContext.ToplevelTypes.Module.Assembly;
+		return mi.Module.Assembly == CodeGen.Assembly.Builder;
 	}
 
 	public static bool IsBuiltinType (Type t)

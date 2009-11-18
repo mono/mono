@@ -240,14 +240,16 @@ namespace Mono.CSharp {
 	{
 		FieldInfo fi;
 		object value;
+		CompilerContext ctx;
 
-		public ExternalConstant (FieldInfo fi)
+		public ExternalConstant (FieldInfo fi, CompilerContext ctx)
 		{
 			this.fi = fi;
+			this.ctx = ctx;
 		}
 
-		private ExternalConstant (FieldInfo fi, object value):
-			this (fi)
+		private ExternalConstant (FieldInfo fi, object value, CompilerContext ctx)
+			: this (fi, ctx)
 		{
 			this.value = value;
 		}
@@ -257,7 +259,7 @@ namespace Mono.CSharp {
 		// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
 		// DecimalConstantAttribute metadata.
 		//
-		public static IConstant CreateDecimal (FieldInfo fi)
+		public static IConstant CreateDecimal (FieldInfo fi, ResolveContext rc)
 		{
 			if (fi is FieldBuilder)
 				return null;
@@ -271,7 +273,8 @@ namespace Mono.CSharp {
 				return null;
 
 			IConstant ic = new ExternalConstant (fi,
-				((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value);
+				((System.Runtime.CompilerServices.DecimalConstantAttribute) attrs [0]).Value,
+				rc.Compiler);
 
 			return ic;
 		}
@@ -285,7 +288,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (fi), loc, RootContext.ToplevelTypes.Compiler.Report);
+			AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (fi), loc, ctx.Report);
 		}
 
 		public bool ResolveValue ()

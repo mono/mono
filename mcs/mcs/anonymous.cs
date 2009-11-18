@@ -1689,8 +1689,8 @@ namespace Mono.CSharp {
 	{
 		sealed class AnonymousParameters : ParametersCompiled
 		{
-			public AnonymousParameters (params Parameter[] parameters)
-				: base (parameters)
+			public AnonymousParameters (CompilerContext ctx, params Parameter[] parameters)
+				: base (ctx, parameters)
 			{
 			}
 
@@ -1739,7 +1739,7 @@ namespace Mono.CSharp {
 				a_type.SetParameterInfo (null);
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
-				null, new AnonymousParameters (ctor_params), null, loc);
+				null, new AnonymousParameters (ctx, ctor_params), null, loc);
 			c.Block = new ToplevelBlock (ctx, c.Parameters, loc);
 
 			// 

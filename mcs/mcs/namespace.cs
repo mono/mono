@@ -412,7 +412,7 @@ namespace Mono.CSharp {
 		public virtual void Error_NamespaceDoesNotExist (Location loc, string name, IMemberContext ctx)
 		{
 			if (name.IndexOf ('`') > 0) {
-				FullNamedExpression retval = Lookup (RootContext.ToplevelTypes.Compiler, SimpleName.RemoveGenericArity (name), loc);
+				FullNamedExpression retval = Lookup (ctx.Compiler, SimpleName.RemoveGenericArity (name), loc);
 				if (retval != null) {
 					retval.Error_TypeArgumentsCannotBeUsed (ctx.Compiler.Report, loc);
 					return;

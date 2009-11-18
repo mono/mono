@@ -214,7 +214,7 @@ namespace Mono.CSharp {
 			//
 			// BeginInvoke
 			//
-			ParametersCompiled async_parameters = ParametersCompiled.MergeGenerated (Parameters, false,
+			ParametersCompiled async_parameters = ParametersCompiled.MergeGenerated (Compiler, Parameters, false,
 				new Parameter [] {
 					new Parameter (null, "callback", Parameter.Modifier.NONE, null, Location),
 					new Parameter (null, "object", Parameter.Modifier.NONE, null, Location)
@@ -267,7 +267,7 @@ namespace Mono.CSharp {
 				end_parameters = ParametersCompiled.EmptyReadOnlyParameters;
 			}
 
-			end_parameters = ParametersCompiled.MergeGenerated (end_parameters, false,
+			end_parameters = ParametersCompiled.MergeGenerated (Compiler, end_parameters, false,
 				new Parameter (null, "result", Parameter.Modifier.NONE, null, Location), TypeManager.iasyncresult_type);
 
 			//

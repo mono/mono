@@ -624,14 +624,14 @@ namespace Mono.CSharp.Linq
 		}
 
 		public QueryBlock (CompilerContext ctx, Block parent, LocatedToken lt, Location start)
-			: base (ctx, parent, new ParametersCompiled (new ImplicitQueryParameter (lt.Value, lt.Location)), start)
+			: base (ctx, parent, new ParametersCompiled (ctx, new ImplicitQueryParameter (lt.Value, lt.Location)), start)
 		{
 			if (parent != null)
 				base.CheckParentConflictName (parent.Toplevel, lt.Value, lt.Location);
 		}
 
 		public QueryBlock (CompilerContext ctx, Block parent, ParametersCompiled parameters, LocatedToken lt, Location start)
-			: base (ctx, parent, new ParametersCompiled (parameters [0].Clone (), new ImplicitQueryParameter (lt.Value, lt.Location)), start)
+			: base (ctx, parent, new ParametersCompiled (ctx, parameters [0].Clone (), new ImplicitQueryParameter (lt.Value, lt.Location)), start)
 		{
 		}
 
@@ -640,11 +640,11 @@ namespace Mono.CSharp.Linq
 		{
 		}
 
-		public void AddTransparentParameter (LocatedToken name)
+		public void AddTransparentParameter (CompilerContext ctx, LocatedToken name)
 		{
 			base.CheckParentConflictName (this, name.Value, name.Location);
 
-			parameters = new ParametersCompiled (new TransparentParameter (parameters, name));
+			parameters = new ParametersCompiled (ctx, new TransparentParameter (parameters, name));
 		}
 
 		protected override bool CheckParentConflictName (ToplevelBlock block, string name, Location l)

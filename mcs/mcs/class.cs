@@ -6308,7 +6308,7 @@ namespace Mono.CSharp {
 			public SetMethod (PropertyBase method) :
 				base (method, "set_")
 			{
-				parameters = new ParametersCompiled (
+				parameters = new ParametersCompiled (Compiler,
 					new Parameter (method.type_name, "value", Parameter.Modifier.NONE, null, Location));
 			}
 
@@ -7528,7 +7528,7 @@ namespace Mono.CSharp {
 			public SetIndexerMethod (Indexer method):
 				base (method)
 			{
-				parameters = ParametersCompiled.MergeGenerated (method.parameters, false, parameters [0], null);
+				parameters = ParametersCompiled.MergeGenerated (Compiler, method.parameters, false, parameters [0], null);
 			}
 
 			public SetIndexerMethod (PropertyBase method, Accessor accessor):
