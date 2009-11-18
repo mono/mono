@@ -40,7 +40,7 @@ namespace System.Web.Hosting {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class ApplicationHost {
 		internal static readonly string MonoHostedDataKey = ".:!MonoAspNetHostedApp!:.";
-		internal static string [] WebConfigFileNames = { "Web.config", "Web.Config", "web.config" };
+		internal static string [] WebConfigFileNames = { "web.config", "Web.config", "Web.Config" };
 
 		ApplicationHost ()
 		{

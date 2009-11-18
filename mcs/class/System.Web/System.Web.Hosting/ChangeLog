@@ -1,3 +1,9 @@
+2009-11-18  Marek Habersack  <mhabersack@novell.com>
+
+	* ApplicationHost.cs: changed the order of file names in
+	WebConfigFileNames, so that our global web.config is found first
+	(it's frequently accessed)
+
 2009-10-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ApplicationHost.cs: set the shadow copy options calling the methods
