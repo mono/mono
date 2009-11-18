@@ -35,7 +35,8 @@ bin_SCRIPTS = \
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
 	mod$(SCRIPT_SUFFIX)	\
-	mono-test-install
+	mono-test-install	\
+	mono-heapviz
 
 if INSTALL_4_0
 bin_SCRIPTS += $(scripts_4_0)
@@ -73,7 +74,6 @@ scripts_2_0 = \
 	mdoc$(SCRIPT_SUFFIX)                    \
 	monolinker$(SCRIPT_SUFFIX)		\
 	mono-api-info$(SCRIPT_SUFFIX) 		\
-	mono-heapviz$(SCRIPT_SUFFIX)		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
 	monop2$(SCRIPT_SUFFIX) 			\
 	mozroots$(SCRIPT_SUFFIX)		\
