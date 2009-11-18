@@ -61,6 +61,8 @@ namespace System.Runtime.Remoting
 		static BinaryFormatter _deserializationFormatter;
 		
 		static string app_id;
+		static readonly object app_id_lock = new object ();
+		
 		static int next_id = 1;
 		const BindingFlags methodBindings = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 		static readonly MethodInfo FieldSetterMethod;
@@ -341,8 +343,12 @@ namespace System.Runtime.Remoting
 
 		static string NewUri ()
 		{
-			if (app_id == null)
-				app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
+			if (app_id == null) {
+				lock (app_id_lock) {
+					if (app_id == null)
+						app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
+				}
+			}
 
 			int n = Interlocked.Increment (ref next_id);
 			return app_id + Environment.TickCount.ToString("x") + "_" + n + ".rem";
