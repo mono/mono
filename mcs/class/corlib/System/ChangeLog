@@ -1,3 +1,7 @@
+2009-11-18  Marek Safar  <marek.safar@gmail.com>
+
+	* Type.cs: Use faster string comparers.
+
 2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeOffset.cs : fix parse failure on missing colon.

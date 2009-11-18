@@ -66,7 +66,7 @@ namespace System {
 				return false; // because m.Name cannot be null or empty
 				
 			if (name [name.Length-1] == '*')
-				return string.Compare (name, 0, m.Name, 0, name.Length-1, false, CultureInfo.InvariantCulture) == 0;
+				return string.CompareOrdinal (name, 0, m.Name, 0, name.Length-1) == 0;
 
            	return name.Equals (m.Name);            	
 		}
@@ -78,9 +78,9 @@ namespace System {
 				return false; // because m.Name cannot be null or empty
 				
 			if (name [name.Length-1] == '*')
-				return string.Compare (name, 0, m.Name, 0, name.Length-1, true, CultureInfo.InvariantCulture) == 0;
+				return string.Compare (name, 0, m.Name, 0, name.Length-1, StringComparison.OrdinalIgnoreCase) == 0;
 
-			return String.Compare (name, m.Name, true, CultureInfo.InvariantCulture) == 0;				
+			return string.Equals (name, m.Name, StringComparison.OrdinalIgnoreCase);
 		}
 
 		static bool FilterAttribute_impl (MemberInfo m, object filterCriteria)
