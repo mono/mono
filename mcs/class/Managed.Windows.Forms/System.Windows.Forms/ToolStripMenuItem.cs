@@ -344,8 +344,9 @@ namespace System.Windows.Forms
 			// If DropDown.ShowImageMargin is false, we don't display the image
 			Image draw_image = this.UseImageMargin ? this.Image : null;
 			
-			// Figure out our text color
-			Color font_color = this.ForeColor == SystemColors.ControlText ? SystemColors.MenuText : this.ForeColor;
+			// Disable this color detection until we do the color detection for ToolStrip *completely*
+			// Color font_color = this.ForeColor == SystemColors.ControlText ? SystemColors.MenuText : this.ForeColor;
+			Color font_color = ForeColor;
 			
 			if ((this.Selected || this.Pressed) && this.IsOnDropDown && font_color == SystemColors.MenuText)
 				font_color = SystemColors.HighlightText;
