@@ -1,3 +1,7 @@
+2009-11-18  Marek Safar  <marek.safar@gmail.com>
+
+	* RemotingServices.cs: Delay heavyweight GUID initialization.
+
 2009-09-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RemotingServices.cs: Avoid depending on COM stuff for NET_2_1

@@ -60,9 +60,9 @@ namespace System.Runtime.Remoting
 		static BinaryFormatter _serializationFormatter;
 		static BinaryFormatter _deserializationFormatter;
 		
-		internal static string app_id;
+		static string app_id;
 		static int next_id = 1;
-		static readonly BindingFlags methodBindings = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
+		const BindingFlags methodBindings = BindingFlags.Instance | BindingFlags.Public | BindingFlags.NonPublic;
 		static readonly MethodInfo FieldSetterMethod;
 		static readonly MethodInfo FieldGetterMethod;
 		
@@ -83,7 +83,6 @@ namespace System.Runtime.Remoting
 			_deserializationFormatter.AssemblyFormat = FormatterAssemblyStyle.Full;
 			
 			RegisterInternalChannels ();
-			app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
 			CreateWellKnownServerIdentity (typeof(RemoteActivator), "RemoteActivationService.rem", WellKnownObjectMode.Singleton);
 			
 			FieldSetterMethod = typeof(object).GetMethod ("FieldSetter", BindingFlags.NonPublic|BindingFlags.Instance);
@@ -342,6 +341,9 @@ namespace System.Runtime.Remoting
 
 		static string NewUri ()
 		{
+			if (app_id == null)
+				app_id = Guid.NewGuid().ToString().Replace('-', '_') + "/";
+
 			int n = Interlocked.Increment (ref next_id);
 			return app_id + Environment.TickCount.ToString("x") + "_" + n + ".rem";
 		}
