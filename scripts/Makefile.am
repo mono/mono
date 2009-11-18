@@ -143,6 +143,7 @@ EXTRA_DIST =			\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
 	mono-test-install	\
+	mono-heapviz		\
 	$(MDOC_COMPAT)		\
 	patch-quiet.sh
 
