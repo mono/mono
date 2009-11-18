@@ -99,7 +99,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
-					expr = expr.Resolve (rc);
+					expr = expr.Resolve (rc, Compiler.ResolveFlags.VariableOrValue | Compiler.ResolveFlags.DisableFlowAnalysis);
 				}
 
 				if (expr == null)
@@ -223,18 +223,16 @@ namespace Microsoft.CSharp.RuntimeBinder
 				if (Compiler.TypeManager.object_type != null)
 					return;
 
-				// TODO: This smells like pretty big issue
+				// I don't think dynamically loaded assemblies can be used as dynamic
+				// expression without static type be loaded first
 				// AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => { throw new NotImplementedException (); };
 
-				// Add all currently loaded assemblies
+				// Import all currently loaded assemblies
 				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
 					Compiler.GlobalRootNamespace.Instance.AddAssemblyReference (a);
 
 				if (ctx == null)
 					ctx = CreateDefaultCompilerContext ();
-
-				// FIXME: this is wrong
-				Compiler.RootContext.ToplevelTypes = new Compiler.ModuleCompiled (ctx, true);
 
 				Compiler.TypeManager.InitCoreTypes (ctx);
 				Compiler.TypeManager.InitOptionalCoreTypes (ctx);
