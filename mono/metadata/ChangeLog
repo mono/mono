@@ -1,3 +1,10 @@
+2009-11-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* class.c (can_access_internals): Allow CoreCLR to participate in
+	allowing (or not) [InternalsVisibleTo] between assemblies.
+	* security-core-clr.c|h: Make sure that only trusted code (a 
+	superset of platform code) can access the internals of platform
+	code.
 
 Mon Nov 16 16:28:11 CET 2009 Paolo Molaro <lupus@ximian.com>
 
