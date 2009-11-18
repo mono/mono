@@ -955,6 +955,14 @@ namespace System.Windows.Forms
 		internal int FirstVisibleRow {
 			get { return first_visible_row; }
 		}
+
+		// As opposed to VisibleRowCount, this value is the maximum
+		// *possible* number of visible rows given our area.
+		internal int MaxVisibleRowCount {
+			get {
+				return cells_area.Height / RowHeight;
+			}
+		}
 		
 		internal int RowsCount {
 			get { return ListManager != null ? ListManager.Count : 0; }
@@ -3013,7 +3021,7 @@ namespace System.Windows.Forms
 				UpdateVisibleRowCount ();
 
 				needHoriz = (width_of_all_columns > visible_cells_width);
-				needVert = (allrows > visible_row_count);
+				needVert = (allrows > MaxVisibleRowCount);
 			}
 
 			int horiz_scrollbar_width = ClientRectangle.Width;
@@ -3345,8 +3353,7 @@ namespace System.Windows.Forms
 
 		int VLargeChange {
 			get { 
-				// the possible number of visible rows
-				return cells_area.Height / RowHeight;
+				return MaxVisibleRowCount;
 			}
 		}
 
