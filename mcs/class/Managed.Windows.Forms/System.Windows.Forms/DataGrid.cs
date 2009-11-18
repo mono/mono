@@ -489,7 +489,7 @@ namespace System.Windows.Forms
 					throw new Exception ("CurrentCell cannot be set at this time.");
 				}
 
-				if (current_cell.Equals (value)) {
+				if (current_cell.Equals (value) && !is_editing) {
 					setting_current_cell = false;
 					return;
 				}
@@ -2608,7 +2608,8 @@ namespace System.Windows.Forms
 			if (!CurrentTableStyle.GridColumnStyles[CurrentColumn].bound)
 				return;
 
-			if (ListManager != null && ListManager.Count == 0)
+			// if we don't have any rows nor the "new" cell, there's nothing to do
+			if (ListManager != null && (ListManager.Count == 0 && !ListManager.AllowNew))
 				return;
 
 			is_editing = true;
