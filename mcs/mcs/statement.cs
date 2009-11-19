@@ -2545,7 +2545,7 @@ namespace Mono.CSharp {
 				throw new NotSupportedException ();
 			}
 
-			public override Expression DoResolve (ResolveContext ec)
+			protected override Expression DoResolve (ResolveContext ec)
 			{
 				if (child == null)
 					return null;

@@ -1,3 +1,7 @@
+2009-11-19  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: DoResolve is a worker method and has to be protected.
+
 2009-11-18  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: More context specific handling.

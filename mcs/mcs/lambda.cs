@@ -101,7 +101,7 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			//
 			// Only explicit parameters can be resolved at this point

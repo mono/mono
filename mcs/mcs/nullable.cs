@@ -137,7 +137,7 @@ namespace Mono.CSharp.Nullable
 			return expr.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
@@ -276,7 +276,7 @@ namespace Mono.CSharp.Nullable
 				throw new NotSupportedException ("ET");
 			}
 
-			public override Expression DoResolve (ResolveContext ec)
+			protected override Expression DoResolve (ResolveContext ec)
 			{
 				return this;
 			}
@@ -404,7 +404,7 @@ namespace Mono.CSharp.Nullable
 			return expr.CreateExpressionTree (ec);
 		}			
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			//
 			// It's null when lifting non-nullable type
@@ -483,7 +483,7 @@ namespace Mono.CSharp.Nullable
 			return base.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -617,7 +617,7 @@ namespace Mono.CSharp.Nullable
 			return ReducedExpression.Create (c, this);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -1053,7 +1053,7 @@ namespace Mono.CSharp.Nullable
 			return this;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;
@@ -1145,7 +1145,7 @@ namespace Mono.CSharp.Nullable
 			return new SimpleAssign (this, this).CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)

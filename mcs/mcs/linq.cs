@@ -33,7 +33,7 @@ namespace Mono.CSharp.Linq
 			return next.BuildQueryClause (ec, lSide);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			int counter = QueryBlock.TransparentParameter.Counter;
 
@@ -166,9 +166,9 @@ namespace Mono.CSharp.Linq
 				t.next = (AQueryClause) next.Clone (clonectx);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
-			return expr.DoResolve (ec);
+			return expr.Resolve (ec);
 		}
 
 		public virtual Expression BuildQueryClause (ResolveContext ec, Expression lSide)
@@ -283,7 +283,7 @@ namespace Mono.CSharp.Linq
 			return next.BuildQueryClause (ec, expr);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			Expression e = BuildQueryClause (ec, null);
 			return e.Resolve (ec);

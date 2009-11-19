@@ -227,9 +227,9 @@ namespace Mono.CSharp {
 		///   to a valid type (this is the type of the
 		///   expression).
 		/// </remarks>
-		public abstract Expression DoResolve (ResolveContext ec);
+		protected abstract Expression DoResolve (ResolveContext rc);
 
-		public virtual Expression DoResolveLValue (ResolveContext ec, Expression right_side)
+		public virtual Expression DoResolveLValue (ResolveContext rc, Expression right_side)
 		{
 			return null;
 		}
@@ -526,13 +526,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Expression Resolve (ResolveContext ec)
 		{
-			Expression e = Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
-
-			if (e != null && e.eclass == ExprClass.MethodGroup && RootContext.Version == LanguageVersion.ISO_1) {
-				((MethodGroupExpr) e).ReportUsageError (ec);
-				return null;
-			}
-			return e;
+			return Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 		}
 
 		public Constant ResolveAsConstant (ResolveContext ec, MemberCore mc)
@@ -1385,7 +1379,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, ec.HasSet (ResolveContext.Options.CheckedScope) ? "ConvertChecked" : "Convert", args);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -1689,7 +1683,7 @@ namespace Mono.CSharp {
 		{
 		}
 		
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -1823,7 +1817,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Value;
 		}
 		
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -1856,7 +1850,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -1917,7 +1911,7 @@ namespace Mono.CSharp {
 			mode = m;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -2119,7 +2113,7 @@ namespace Mono.CSharp {
 			this.op = op;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			// This should never be invoked, we are born in fully
 			// initialized state.
@@ -2242,7 +2236,7 @@ namespace Mono.CSharp {
 				return orig_expr.CreateExpressionTree (ec);
 			}
 
-			public override Expression DoResolve (ResolveContext ec)
+			protected override Expression DoResolve (ResolveContext ec)
 			{
 				eclass = stm.eclass;
 				type = stm.Type;
@@ -2302,7 +2296,7 @@ namespace Mono.CSharp {
 			return orig_expr.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			eclass = expr.eclass;
 			type = expr.Type;
@@ -2354,7 +2348,7 @@ namespace Mono.CSharp {
 			get { return expr; }
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr != null) {
@@ -2558,7 +2552,7 @@ namespace Mono.CSharp {
 				(mc.LookupNamespaceOrType (Name, loc, /* ignore_cs0104 = */ true) != null);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return SimpleNameResolve (ec, null, false);
 		}
@@ -2930,7 +2924,7 @@ namespace Mono.CSharp {
 
 				return (right_side != null)
 					? me.DoResolveLValue (ec, right_side)
-					: me.DoResolve (ec);
+					: me.Resolve (ec);
 			}
 
 			return e;
@@ -2985,7 +2979,7 @@ namespace Mono.CSharp {
 			return t;
 		}
 
-		override public Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return ResolveAsTypeTerminal (ec, false);
 		}
@@ -3741,10 +3735,10 @@ namespace Mono.CSharp {
 			return new TypeOfMethod (best_candidate, loc);
 		}
 		
-		override public Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (InstanceExpression != null) {
-				InstanceExpression = InstanceExpression.DoResolve (ec);
+				InstanceExpression = InstanceExpression.Resolve (ec);
 				if (InstanceExpression == null)
 					return null;
 			}
@@ -4818,7 +4812,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			IConstant ic = TypeManager.GetConstant (constant);
 			if (ic.ResolveValue ()) {
@@ -4947,7 +4941,7 @@ namespace Mono.CSharp {
 			return new TypeOfField (GetConstructedFieldInfo (), loc);
 		}
 
-		override public Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return DoResolve (ec, false, false);
 		}
@@ -5560,7 +5554,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			InstanceExpression = InstanceExpression.DoResolve (ec);
+			InstanceExpression = InstanceExpression.Resolve (ec);
 			if (lvalue_instance && InstanceExpression != null)
 				InstanceExpression = InstanceExpression.ResolveLValue (ec, EmptyExpression.LValueMemberAccess);
 
@@ -5620,7 +5614,7 @@ namespace Mono.CSharp {
 			return t_name_len > 2 && t_name [t_name_len - 2] == '[';
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (resolved)
 				return this;
@@ -5637,7 +5631,7 @@ namespace Mono.CSharp {
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = InstanceExpression;
 						ex_method_lookup.SetTypeArguments (ec, targs);
-						return ex_method_lookup.DoResolve (ec);
+						return ex_method_lookup.Resolve (ec);
 					}
 				}
 
@@ -5988,7 +5982,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			InstanceExpression = InstanceExpression.DoResolve (ec);
+			InstanceExpression = InstanceExpression.Resolve (ec);
 			if (InstanceExpression == null)
 				return false;
 
@@ -6034,7 +6028,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			bool must_do_cs1540_check;
 			if (!(IsAccessorAccessible (ec.CurrentType, add_accessor, out must_do_cs1540_check) &&
@@ -6108,7 +6102,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (li != null)
 				return this;

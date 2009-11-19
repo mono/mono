@@ -1193,7 +1193,7 @@ namespace Mono.CSharp {
 					return expr;
 				}
 			} else {
-				expr = new UserCast (method, expr, loc).DoResolve (ec);
+				expr = new UserCast (method, expr, loc).Resolve (ec);
 
 				if (return_convert && !TypeManager.IsEqual (expr.Type, target)) {
 					if (look_for_explicit) {
@@ -1346,7 +1346,7 @@ namespace Mono.CSharp {
 				AnonymousMethodExpression ame = (AnonymousMethodExpression) expr;
 				Expression am = ame.Compatible (ec, target_type);
 				if (am != null)
-					return am.DoResolve (ec);
+					return am.Resolve (ec);
 			}
 
 			if (expr_type == InternalType.Arglist && target_type == TypeManager.arg_iterator_type)

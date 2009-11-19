@@ -116,7 +116,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.bool_type;
 			return this;
@@ -132,7 +132,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.char_type;
 			return this;
@@ -148,7 +148,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.int32_type;
 			return this;
@@ -179,7 +179,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.uint32_type;
 			return this;
@@ -195,7 +195,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.int64_type;
 			return this;
@@ -211,7 +211,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.uint64_type;
 			return this;
@@ -228,7 +228,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.float_type;
 			return this;
@@ -245,7 +245,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.double_type;
 
@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.decimal_type;
 			return this;
@@ -301,7 +301,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			type = TypeManager.string_type;
 

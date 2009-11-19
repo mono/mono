@@ -70,7 +70,7 @@ namespace Mono.CSharp {
 
 		}
 		
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			ArrayList results = new ArrayList ();
 
@@ -131,7 +131,7 @@ namespace Mono.CSharp {
 			this.targs = targs;
 		}
 		
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			Expression expr_resolved = expr.Resolve (ec,
 				ResolveFlags.VariableOrValue | ResolveFlags.Type |
@@ -218,7 +218,7 @@ namespace Mono.CSharp {
 			this.loc = l;
 		}
 		
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			MemberList members = TypeManager.FindMembers (
 				ec.CurrentInitializerVariable.Type,

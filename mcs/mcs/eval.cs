@@ -1148,7 +1148,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			CloneContext cc = new CloneContext ();
 			Expression clone = source.Clone (cc);

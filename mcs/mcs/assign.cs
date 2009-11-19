@@ -213,7 +213,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
@@ -332,7 +332,7 @@ namespace Mono.CSharp {
 			get { return source; }
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			bool ok = true;
 			source = source.Resolve (ec);
@@ -461,7 +461,7 @@ namespace Mono.CSharp {
 			return t.Equals (source);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			Expression e = base.DoResolve (ec);
 			if (e == null || e != this)
@@ -491,7 +491,7 @@ namespace Mono.CSharp {
 				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			// Field initializer can be resolved (fail) many times
 			if (source == null)
@@ -561,7 +561,7 @@ namespace Mono.CSharp {
 			return new SimpleAssign (target, source).CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (op != Binary.Operator.Addition && op != Binary.Operator.Subtraction)
 				target.Error_AssignmentEventOnly (ec);
@@ -613,7 +613,7 @@ namespace Mono.CSharp {
 				throw new NotSupportedException ("ET");
 			}
 
-			public override Expression DoResolve (ResolveContext ec)
+			protected override Expression DoResolve (ResolveContext ec)
 			{
 				type = child.Type;
 				eclass = ExprClass.Value;
@@ -644,7 +644,7 @@ namespace Mono.CSharp {
 			this.left = left;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			right = right.Resolve (ec);
 			if (right == null)
@@ -666,7 +666,7 @@ namespace Mono.CSharp {
 			}
 
 			if (target is EventExpr)
-				return new EventAddOrRemove (target, op, right, loc).DoResolve (ec);
+				return new EventAddOrRemove (target, op, right, loc).Resolve (ec);
 
 			//
 			// Only now we can decouple the original source/target

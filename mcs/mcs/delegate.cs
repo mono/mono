@@ -519,7 +519,7 @@ namespace Mono.CSharp {
 			return e.CreateExpressionTree (ec);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			constructor_method = Delegate.GetConstructor (ec.Compiler, ec.CurrentType, type);
 
@@ -721,7 +721,7 @@ namespace Mono.CSharp {
 			this.loc  = loc; 
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (Arguments == null || Arguments.Count != 1) {
 				ec.Report.Error (149, loc, "Method name expected");
@@ -788,7 +788,7 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Invoke", args);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (InstanceExpr is EventExpr) {
 				((EventExpr) InstanceExpr).Error_CannotAssign (ec);

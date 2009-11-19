@@ -97,7 +97,7 @@ namespace Mono.CSharp
 			throw new NotImplementedException ();
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
@@ -156,9 +156,9 @@ namespace Mono.CSharp
 			this.type = type;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
-			expr = expr.DoResolve (ec);
+			expr = expr.Resolve (ec);
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -225,7 +225,7 @@ namespace Mono.CSharp
 				this.statement = statement;
 			}
 
-			public override Expression DoResolve (ResolveContext ec)
+			protected override Expression DoResolve (ResolveContext ec)
 			{
 				Child = new IntConstant ((int) (flags | statement.flags), statement.loc);
 
@@ -291,7 +291,7 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass != ExprClass.Invalid)
 				return this;

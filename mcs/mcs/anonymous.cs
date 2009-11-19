@@ -631,7 +631,7 @@ namespace Mono.CSharp {
 				throw new NotSupportedException ("ET");
 			}
 
-			public override Expression DoResolve (ResolveContext ec)
+			protected override Expression DoResolve (ResolveContext ec)
 			{
 				eclass = ExprClass.Value;
 				type = TypeManager.expression_type_expr.Type;
@@ -854,8 +854,13 @@ namespace Mono.CSharp {
 				return CreateExpressionFactoryCall (ec, "Quote", args);
 			}
 
-			public override Expression DoResolve (ResolveContext ec)
+			protected override Expression DoResolve (ResolveContext rc)
 			{
+				expr = expr.Resolve (rc);
+				if (expr == null)
+					return null;
+
+				eclass = expr.eclass;
 				type = expr.Type;
 				return this;
 			}
@@ -1169,7 +1174,7 @@ namespace Mono.CSharp {
 			return Parameters;
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (ec.HasSet (ResolveContext.Options.ConstantScope)) {
 				ec.Report.Error (1706, loc, "Anonymous methods and lambda expressions cannot be used in the current context");
@@ -1533,7 +1538,7 @@ namespace Mono.CSharp {
 				real_name, member_name, parameters);
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (eclass == ExprClass.Invalid) {
 				if (!Define (ec))

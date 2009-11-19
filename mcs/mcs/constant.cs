@@ -71,7 +71,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Constants are always born in a fully resolved state
 		/// </summary>
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
@@ -1869,7 +1869,7 @@ namespace Mono.CSharp {
 			return GetSignatureForError ();
 		}
 
-		public override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
 		}
