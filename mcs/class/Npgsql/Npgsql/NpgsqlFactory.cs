@@ -2,8 +2,10 @@
 //
 // Author:
 //	Francisco Jr. (fxjrlists@yahoo.com.br)
+//	Veerapuram Varadhan  (vvaradhan@novell.com)
 //
 //	Copyright (C) 2002-2006 The Npgsql Development Team
+//	Copyright (C) 2009 Novell Inc
 //
 // Permission to use, copy, modify, and distribute this software and its
 // documentation for any purpose, without fee, and without a written
@@ -23,6 +25,8 @@
 // TO PROVIDE MAINTENANCE, SUPPORT, UPDATES, ENHANCEMENTS, OR MODIFICATIONS.
 
 using System;
+using System.ComponentModel;
+using System.Data;
 using System.Data.Common;
 
 namespace Npgsql
@@ -46,35 +50,36 @@ namespace Npgsql
 		/// </summary>
 		public override DbCommand CreateCommand()
 		{
-			return new NpgsqlCommand();
+			return (DbCommand) (IDbCommand) new NpgsqlCommand();
 		}
 
 
 		public override DbCommandBuilder CreateCommandBuilder()
 		{
-			return new NpgsqlCommandBuilder();
+			return (DbCommandBuilder) (Component) new NpgsqlCommandBuilder();
 		}
 
 		public override DbConnection CreateConnection()
 		{
-			return new NpgsqlConnection();
+		    return (DbConnection) (IDbConnection) new NpgsqlConnection();
 		}
 
 		public override DbDataAdapter CreateDataAdapter()
 		{
-			return new NpgsqlDataAdapter();
+		    return (DbDataAdapter) (IDbDataAdapter) new NpgsqlDataAdapter();
 		}
 
 		public override DbParameter CreateParameter()
 		{
-			return new NpgsqlParameter();
+		    return (DbParameter) (IDbDataParameter) new NpgsqlParameter();
 		}
 
+#if NET_2_0
 		public override DbConnectionStringBuilder CreateConnectionStringBuilder()
 		{
 			return new NpgsqlConnectionStringBuilder();
 		}
-
+#endif
 		#region IServiceProvider Members
 
 		public object GetService(Type serviceType)

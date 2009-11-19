@@ -15,6 +15,7 @@ Npgsql/NpgsqlCommandBuilder.cs
 Npgsql/NpgsqlConnectedState.cs
 Npgsql/NpgsqlConnection.cs
 Npgsql/NpgsqlConnectionString.cs
+Npgsql/NpgsqlConnectionStringBuilder.cs
 Npgsql/NpgsqlConnector.cs
 Npgsql/NpgsqlConnectorPool.cs
 Npgsql/NpgsqlDataAdapter.cs
@@ -24,6 +25,7 @@ Npgsql/NpgsqlError.cs
 Npgsql/NpgsqlEventLog.cs
 Npgsql/NpgsqlException.cs
 Npgsql/NpgsqlExecute.cs
+Npgsql/NpgsqlFactory.cs
 Npgsql/NpgsqlFlush.cs
 Npgsql/NpgsqlMediator.cs
 Npgsql/NpgsqlMessageTypes.cs

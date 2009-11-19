@@ -4,10 +4,13 @@
 //
 // Author:
 //	Glen Parker (glenebob@nwlink.com)
+//	Veerapuram Varadhan  (vvaradhan@novell.com)
 //
 //	Copyright (C) 2002 The Npgsql Development Team
 //	npgsql-general@gborg.postgresql.org
 //	http://gborg.postgresql.org/project/npgsql/projdisplay.php
+//
+//	Copyright (C) 2009 Novell Inc
 //
 // This library is free software; you can redistribute it and/or
 // modify it under the terms of the GNU Lesser General Public
@@ -446,7 +449,8 @@ namespace Npgsql
         public static readonly Boolean SyncNotification     = false;
         public static readonly Int32 CommandTimeout         = 20; // Seconds
     }
-    
+
+    /*
     internal enum SslMode
     {
         Disable = 1 << 0,
@@ -454,6 +458,7 @@ namespace Npgsql
         Prefer =  1 << 2,
         Require = 1 << 3
     }
+    */
 
 
 

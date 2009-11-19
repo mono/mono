@@ -1,3 +1,13 @@
+2009-11-20  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	* Npgsql.dll.sources: Add
+	Npgsql{Factory,ConnectionStringBuilder}.cs
+	* Npgsql/NpgsqlConnectionString.cs: Comment out redefinition of
+	SslMode.
+	* Npgsql/NpgsqlConnectionStringBuilder.cs: Mark it for 2.x profile
+	onwards.
+	* Npgsql/NpgsqlFactory.cs: Make methods to work also on 2.x profile
+	
 2008-11-05  Francisco Figueiredo Jr.  <francisco@npgsql.org>
 
 	Undone update as it breaks the svn tree. 
