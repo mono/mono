@@ -1,5 +1,12 @@
 2009-11-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_emit_prolog): Fix a copy-paste error to fix the ppc64
+	port.
+	(mono_arch_cpu_init): Don't set cpu_hw_flags to 0 at the end, this was somehow
+	added by the ps3 changes.
+
+2009-11-19  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-gc.c: Resurrect this, so at least it compiles.
 
 	* debugger-agent.c (assembly_commands): Implement GET_NAME command.
