@@ -195,7 +195,7 @@ endif
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 ifeq (net_2_0, $(PROFILE))
 OTHER_RES += $(RESOURCE_FILES_2)
-OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.dll -r:Mono.Data.Sqlite.dll
+OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.dll -r:Mono.Data.Sqlite.dll -r:System.Core.dll
 endif
 
 LIB_MCS_FLAGS = \
@@ -207,7 +207,6 @@ LIB_MCS_FLAGS = \
 	-r:System.Data.dll		\
 	-r:System.Xml.dll		\
 	-r:System.EnterpriseServices.dll \
-	-r:System.Core.dll		\
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)

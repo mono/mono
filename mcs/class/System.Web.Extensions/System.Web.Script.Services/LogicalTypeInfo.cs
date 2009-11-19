@@ -110,12 +110,8 @@ namespace System.Web.Script.Services
 					XmlTextWriter xwriter = new XmlTextWriter (writer);
 					xwriter.Formatting = Formatting.None;
 					_xmlSer.Serialize (xwriter, result);
-				}
-				else
-				{
-					result = new JsonResult (result);
+				} else
 					LogicalTypeInfo.JSSerializer.Serialize (result, writer);
-				}
 			}
 
 			bool HasParameters { get { return _params != null && _params.Length > 0; } }
@@ -487,14 +483,6 @@ Type.registerNamespace('{0}');",
 			type_to_manager [t] = tm;
 
 			return tm;
-		}
-		
-		sealed class JsonResult
-		{
-			public readonly object d;
-			public JsonResult (object result) {
-				d = result;
-			}
 		}
 	}
 }
