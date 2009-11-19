@@ -142,7 +142,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 					return new Compiler.NullLiteral (Compiler.Location.Null);
 
 				InitializeCompiler (null);
-				return Compiler.Constant.CreateConstant (value.LimitType, null, Compiler.Location.Null);
+				return Compiler.Constant.CreateConstantFromValue (value.LimitType, null, Compiler.Location.Null);
 			}
 
 			bool is_compile_time;
@@ -150,7 +150,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if (info != null) {
 				if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
 					InitializeCompiler (null);
-					return Compiler.Constant.CreateConstant (value.LimitType, value.Value, Compiler.Location.Null);
+					return Compiler.Constant.CreateConstantFromValue (value.LimitType, value.Value, Compiler.Location.Null);
 				}
 
 				if ((info.Flags & CSharpArgumentInfoFlags.IsStaticType) != 0)
