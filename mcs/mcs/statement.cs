@@ -1984,7 +1984,7 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				e = ce.ConvertImplicitly (variable_type);
+				e = ce.ConvertImplicitly (ec, variable_type);
 				if (e == null) {
 					if (TypeManager.IsReferenceType (variable_type))
 						Const.Error_ConstantCanBeInitializedWithNullOnly (variable_type, vi.Location, vi.Name, ec.Report);

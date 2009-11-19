@@ -28,27 +28,27 @@ namespace Mono.CSharp {
 		// TODO: BinaryFold should be called as an optimization step only,
 		// error checking here is weak
 		//		
-		static bool DoBinaryNumericPromotions (ref Constant left, ref Constant right)
+		static bool DoBinaryNumericPromotions (ResolveContext rc, ref Constant left, ref Constant right)
 		{
 			Type ltype = left.Type;
 			Type rtype = right.Type;
 
 			foreach (Type t in binary_promotions) {
 				if (t == ltype)
-					return t == rtype || ConvertPromotion (ref right, ref left, t);
+					return t == rtype || ConvertPromotion (rc, ref right, ref left, t);
 
 				if (t == rtype)
-					return t == ltype || ConvertPromotion (ref left, ref right, t);
+					return t == ltype || ConvertPromotion (rc, ref left, ref right, t);
 			}
 
-			left = left.ConvertImplicitly (TypeManager.int32_type);
-			right = right.ConvertImplicitly (TypeManager.int32_type);
+			left = left.ConvertImplicitly (rc, TypeManager.int32_type);
+			right = right.ConvertImplicitly (rc, TypeManager.int32_type);
 			return left != null && right != null;
 		}
 
-		static bool ConvertPromotion (ref Constant prim, ref Constant second, Type type)
+		static bool ConvertPromotion (ResolveContext rc, ref Constant prim, ref Constant second, Type type)
 		{
-			Constant c = prim.ConvertImplicitly (type);
+			Constant c = prim.ConvertImplicitly (rc, type);
 			if (c != null) {
 				prim = c;
 				return true;
@@ -56,8 +56,8 @@ namespace Mono.CSharp {
 
 			if (type == TypeManager.uint32_type) {
 				type = TypeManager.int64_type;
-				prim = prim.ConvertImplicitly (type);
-				second = second.ConvertImplicitly (type);
+				prim = prim.ConvertImplicitly (rc, type);
+				second = second.ConvertImplicitly (rc, type);
 				return prim != null && second != null;
 			}
 
@@ -143,15 +143,19 @@ namespace Mono.CSharp {
 					case Binary.Operator.BitwiseOr:
 					case Binary.Operator.BitwiseAnd:
 					case Binary.Operator.ExclusiveOr:
-						return BinaryFold (ec, oper, ((EnumConstant)left).Child,
-								((EnumConstant)right).Child, loc).TryReduce (ec, lt, loc);
+						result = BinaryFold (ec, oper, ((EnumConstant)left).Child, ((EnumConstant)right).Child, loc);
+						if (result != null)
+							result = result.Resolve (ec).TryReduce (ec, lt, loc);
+						return result;
 
 					///
 					/// U operator -(E x, E y);
 					/// 
 					case Binary.Operator.Subtraction:
 						result = BinaryFold (ec, oper, ((EnumConstant)left).Child, ((EnumConstant)right).Child, loc);
-						return result.TryReduce (ec, ((EnumConstant)left).Child.Type, loc);
+						if (result != null)
+							result = result.Resolve (ec).TryReduce (ec, ((EnumConstant)left).Child.Type, loc);
+						return result;
 
 					///
 					/// bool operator ==(E x, E y);
@@ -174,7 +178,7 @@ namespace Mono.CSharp {
 
 			switch (oper){
 			case Binary.Operator.BitwiseOr:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				if (left is IntConstant){
@@ -201,7 +205,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.BitwiseAnd:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 				
 				///
@@ -231,7 +235,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.ExclusiveOr:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 				
 				if (left is IntConstant){
@@ -290,7 +294,7 @@ namespace Mono.CSharp {
 					}
 
 					// U has to be implicitly convetible to E.base
-					right = right.ConvertImplicitly (lc.Child.Type);
+					right = right.ConvertImplicitly (ec, lc.Child.Type);
 					if (right == null)
 						return null;
 
@@ -298,14 +302,14 @@ namespace Mono.CSharp {
 					if (result == null)
 						return null;
 
-					result = result.TryReduce (ec, lt, loc);
+					result = result.Resolve (ec).TryReduce (ec, lt, loc);
 					if (result == null)
 						return null;
 
 					return new EnumConstant (result, lt);
 				}
 
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				try {
@@ -409,7 +413,7 @@ namespace Mono.CSharp {
 					}
 
 					// U has to be implicitly convetible to E.base
-					right = right.ConvertImplicitly (lc.Child.Type);
+					right = right.ConvertImplicitly (ec, lc.Child.Type);
 					if (right == null)
 						return null;
 
@@ -417,14 +421,14 @@ namespace Mono.CSharp {
 					if (result == null)
 						return null;
 
-					result = result.TryReduce (ec, lt, loc);
+					result = result.Resolve (ec).TryReduce (ec, lt, loc);
 					if (result == null)
 						return null;
 
 					return new EnumConstant (result, lt);
 				}
 
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				try {
@@ -515,7 +519,7 @@ namespace Mono.CSharp {
 				return result;
 				
 			case Binary.Operator.Multiply:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				try {
@@ -605,7 +609,7 @@ namespace Mono.CSharp {
 				break;
 
 			case Binary.Operator.Division:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				try {
@@ -699,7 +703,7 @@ namespace Mono.CSharp {
 				break;
 				
 			case Binary.Operator.Modulus:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				try {
@@ -783,7 +787,7 @@ namespace Mono.CSharp {
 				// There is no overflow checking on left shift
 				//
 			case Binary.Operator.LeftShift:
-				IntConstant ic = right.ConvertImplicitly (TypeManager.int32_type) as IntConstant;
+				IntConstant ic = right.ConvertImplicitly (ec, TypeManager.int32_type) as IntConstant;
 				if (ic == null){
 					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc);
 					return null;
@@ -797,7 +801,7 @@ namespace Mono.CSharp {
 				if (left.Type == TypeManager.uint32_type)
 					return new UIntConstant (((UIntConstant)left).Value << lshift_val, left.Location);
 
-				left = left.ConvertImplicitly (TypeManager.int32_type);
+				left = left.ConvertImplicitly (ec, TypeManager.int32_type);
 				if (left.Type == TypeManager.int32_type)
 					return new IntConstant (((IntConstant)left).Value << lshift_val, left.Location);
 
@@ -808,7 +812,7 @@ namespace Mono.CSharp {
 				// There is no overflow checking on right shift
 				//
 			case Binary.Operator.RightShift:
-				IntConstant sic = right.ConvertImplicitly (TypeManager.int32_type) as IntConstant;
+				IntConstant sic = right.ConvertImplicitly (ec, TypeManager.int32_type) as IntConstant;
 				if (sic == null){
 					Binary.Error_OperatorCannotBeApplied (ec, left, right, oper, loc); ;
 					return null;
@@ -821,7 +825,7 @@ namespace Mono.CSharp {
 				if (left.Type == TypeManager.uint32_type)
 					return new UIntConstant (((UIntConstant)left).Value >> rshift_val, left.Location);
 
-				left = left.ConvertImplicitly (TypeManager.int32_type);
+				left = left.ConvertImplicitly (ec, TypeManager.int32_type);
 				if (left.Type == TypeManager.int32_type)
 					return new IntConstant (((IntConstant)left).Value >> rshift_val, left.Location);
 
@@ -832,7 +836,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (lt)) {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
-							new BoolConstant (left.IsNull == right.IsNull, left.Location),
+							new BoolConstant (left.IsNull == right.IsNull, left.Location).Resolve (ec),
 							new Binary (oper, left, right));
 					}
 
@@ -843,7 +847,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -874,7 +878,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsReferenceType (lt) && TypeManager.IsReferenceType (lt)) {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
-							new BoolConstant (left.IsNull != right.IsNull, left.Location),
+							new BoolConstant (left.IsNull != right.IsNull, left.Location).Resolve (ec),
 							new Binary (oper, left, right));
 					}
 
@@ -885,7 +889,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -913,7 +917,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.LessThan:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -941,7 +945,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 				
 			case Binary.Operator.GreaterThan:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -969,7 +973,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.GreaterThanOrEqual:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				bool_res = false;
@@ -997,7 +1001,7 @@ namespace Mono.CSharp {
 				return new BoolConstant (bool_res, left.Location);
 
 			case Binary.Operator.LessThanOrEqual:
-				if (!DoBinaryNumericPromotions (ref left, ref right))
+				if (!DoBinaryNumericPromotions (ec, ref left, ref right))
 					return null;
 
 				bool_res = false;

@@ -245,7 +245,7 @@ namespace Mono.CSharp {
 			//
 			NullLiteral nl = expr as NullLiteral;
 			if (nl != null) {
-				return nl.ConvertImplicitly(target_type);
+				return nl.ConvertImplicitly (null, target_type);
 			}
 
 			if (ImplicitReferenceConversionExists (expr, target_type)) {
@@ -498,7 +498,7 @@ namespace Mono.CSharp {
 
 			// Do constant optimization for S -> T?
 			if (unwrap is Constant)
-				conv = ((Constant) unwrap).ConvertImplicitly (t_el);
+				conv = ((Constant) unwrap).ConvertImplicitly (ec, t_el);
 
 			return Nullable.Wrap.Create (conv, target_type);
 		}
@@ -702,7 +702,7 @@ namespace Mono.CSharp {
 			if (expr_type == TypeManager.null_type) {
 				NullLiteral nl = expr as NullLiteral;
 				if (nl != null)
-					return nl.ConvertImplicitly (target_type) != null;
+					return nl.ConvertImplicitly (null, target_type) != null;
 			}
 
 			if (expr_type == TypeManager.void_type)
@@ -1291,7 +1291,7 @@ namespace Mono.CSharp {
 			Constant c = expr as Constant;
 			if (c != null) {
 				try {
-					c = c.ConvertImplicitly (target_type);
+					c = c.ConvertImplicitly (ec, target_type);
 				} catch {
 					Console.WriteLine ("Conversion error happened in line {0}", loc);
 					throw;
@@ -1318,7 +1318,7 @@ namespace Mono.CSharp {
 				// type is an enum-type
 				//
 				if (i.IsDefaultValue)
-					return new EnumConstant (i, target_type);
+					return new EnumConstant (i, target_type).Resolve (ec);
 			}
 
 			if (ec.IsUnsafe) {

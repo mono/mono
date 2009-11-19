@@ -973,7 +973,7 @@ namespace Mono.CSharp {
 						} else if (value == null) {
 							default_value = new NullLiteral (Location.Null);
 						} else {
-							default_value = Constant.CreateConstant (value.GetType (), value, Location.Null);
+							default_value = Constant.CreateConstant (null, value.GetType (), value, Location.Null);
 						}
 					}
 				}

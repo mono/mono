@@ -219,7 +219,7 @@ namespace Mono.CSharp
 			CSharpBinderFlags flags;
 
 			public BinderFlags (CSharpBinderFlags flags, DynamicExpressionStatement statement)
-				: base ()
+				: base (statement.loc)
 			{
 				this.flags = flags;
 				this.statement = statement;
@@ -227,7 +227,7 @@ namespace Mono.CSharp
 
 			protected override Expression DoResolve (ResolveContext ec)
 			{
-				Child = new IntConstant ((int) (flags | statement.flags), statement.loc);
+				Child = new IntConstant ((int) (flags | statement.flags), statement.loc).Resolve (ec);
 
 				type = TypeManager.binder_flags;
 				eclass = Child.eclass;

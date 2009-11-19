@@ -524,9 +524,9 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Resolves an expression and performs semantic analysis on it.
 		/// </summary>
-		public Expression Resolve (ResolveContext ec)
+		public Expression Resolve (ResolveContext rc)
 		{
-			return Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
+			return Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 		}
 
 		public Constant ResolveAsConstant (ResolveContext ec, MemberCore mc)
@@ -1571,13 +1571,16 @@ namespace Mono.CSharp {
 	//
 	public class EmptyConstantCast : Constant
 	{
-		public readonly Constant child;
+		public Constant child;
 
-		public EmptyConstantCast(Constant child, Type type)
+		public EmptyConstantCast (Constant child, Type type)
 			: base (child.Location)
 		{
-			eclass = child.eclass;
+			if (child == null)
+				throw new ArgumentNullException ("child");
+
 			this.child = child;
+			this.eclass = child.eclass;
 			this.type = type;
 		}
 
@@ -1593,6 +1596,9 @@ namespace Mono.CSharp {
 
 		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
 		{
+			if (child.Type == target_type)
+				return child;
+
 			// FIXME: check that 'type' can be converted to 'target_type' first
 			return child.ConvertExplicitly (in_checked_context, target_type);
 		}
@@ -1609,11 +1615,6 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Convert", args);
 		}
 
-		public override Constant Increment ()
-		{
-			return child.Increment ();
-		}
-
 		public override bool IsDefaultValue {
 			get { return child.IsDefaultValue; }
 		}
@@ -1628,6 +1629,11 @@ namespace Mono.CSharp {
 
 		public override bool IsZeroInteger {
 			get { return child.IsZeroInteger; }
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			return this;
 		}
 		
 		public override void Emit (EmitContext ec)
@@ -1649,12 +1655,12 @@ namespace Mono.CSharp {
 			child.EmitSideEffect (ec);
 		}
 
-		public override Constant ConvertImplicitly (Type target_type)
+		public override Constant ConvertImplicitly (ResolveContext rc, Type target_type)
 		{
 			// FIXME: Do we need to check user conversions?
 			if (!Convert.ImplicitStandardConversionExists (this, target_type))
 				return null;
-			return child.ConvertImplicitly (target_type);
+			return child.ConvertImplicitly (rc, target_type);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -1663,31 +1669,29 @@ namespace Mono.CSharp {
 		}
 	}
 
-
 	/// <summary>
 	///  This class is used to wrap literals which belong inside Enums
 	/// </summary>
-	public class EnumConstant : Constant {
+	public class EnumConstant : Constant
+	{
 		public Constant Child;
 
-		public EnumConstant (Constant child, Type enum_type):
-			base (child.Location)
+		public EnumConstant (Constant child, Type enum_type)
+			: base (child.Location)
 		{
-			eclass = child.eclass;
 			this.Child = child;
-			type = enum_type;
+			this.type = enum_type;
 		}
 
-		protected EnumConstant ()
-			: base (Location.Null)
+		protected EnumConstant (Location loc)
+			: base (loc)
 		{
 		}
-		
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			// This should never be invoked, we are born in fully
-			// initialized state.
 
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			Child = Child.Resolve (rc);
+			this.eclass = ExprClass.Value;
 			return this;
 		}
 
@@ -1749,9 +1753,9 @@ namespace Mono.CSharp {
 			return Child.AsString ();
 		}
 
-		public override Constant Increment()
+		public EnumConstant Increment()
 		{
-			return new EnumConstant (Child.Increment (), type);
+			return new EnumConstant (((IntegralConstant) Child).Increment (), type);
 		}
 
 		public override bool IsDefaultValue {
@@ -1778,7 +1782,7 @@ namespace Mono.CSharp {
 			return Child.ConvertExplicitly (in_checked_context, target_type);
 		}
 
-		public override Constant ConvertImplicitly (Type type)
+		public override Constant ConvertImplicitly (ResolveContext rc, Type type)
 		{
 			Type this_type = TypeManager.DropGenericTypeArguments (Type);
 			type = TypeManager.DropGenericTypeArguments (type);
@@ -1790,7 +1794,7 @@ namespace Mono.CSharp {
 
 				Type child_type = TypeManager.DropGenericTypeArguments (Child.Type);
 				if (type.UnderlyingSystemType != child_type)
-					Child = Child.ConvertImplicitly (type.UnderlyingSystemType);
+					Child = Child.ConvertImplicitly (rc, type.UnderlyingSystemType);
 				return this;
 			}
 
@@ -1798,9 +1802,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			return Child.ConvertImplicitly(type);
+			return Child.ConvertImplicitly (rc, type);
 		}
-
 	}
 
 	/// <summary>
@@ -2186,11 +2189,12 @@ namespace Mono.CSharp {
 				this.orig_expr = orig_expr;
 			}
 
-			public override Constant ConvertImplicitly (Type target_type)
+			public override Constant ConvertImplicitly (ResolveContext rc, Type target_type)
 			{
-				Constant c = base.ConvertImplicitly (target_type);
+				Constant c = base.ConvertImplicitly (rc, target_type);
 				if (c != null)
 					c = new ReducedConstantExpression (c, orig_expr);
+
 				return c;
 			}
 
@@ -2264,12 +2268,20 @@ namespace Mono.CSharp {
 		private ReducedExpression (Expression expr, Expression orig_expr)
 		{
 			this.expr = expr;
+			this.eclass = expr.eclass;
+			this.type = expr.Type;
 			this.orig_expr = orig_expr;
 			this.loc = orig_expr.Location;
 		}
 
+		//
+		// Creates fully resolved expression switcher
+		//
 		public static Constant Create (Constant expr, Expression original_expr)
 		{
+			if (expr.eclass == ExprClass.Invalid)
+				throw new ArgumentException ("Unresolved expression");
+
 			return new ReducedConstantExpression (expr, original_expr);
 		}
 
@@ -2278,6 +2290,10 @@ namespace Mono.CSharp {
 			return new ReducedExpressionStatement (s, orig);
 		}
 
+		//
+		// Creates unresolved reduce expression. The original expression has to be
+		// already resolved
+		//
 		public static Expression Create (Expression expr, Expression original_expr)
 		{
 			Constant c = expr as Constant;
@@ -2287,6 +2303,9 @@ namespace Mono.CSharp {
 			ExpressionStatement s = expr as ExpressionStatement;
 			if (s != null)
 				return Create (s, original_expr);
+
+			if (expr.eclass == ExprClass.Invalid)
+				throw new ArgumentException ("Unresolved expression");
 
 			return new ReducedExpression (expr, original_expr);
 		}
@@ -2298,8 +2317,6 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			eclass = expr.eclass;
-			type = expr.Type;
 			return this;
 		}
 
@@ -4812,15 +4829,15 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		protected override Expression DoResolve (ResolveContext rc)
 		{
 			IConstant ic = TypeManager.GetConstant (constant);
 			if (ic.ResolveValue ()) {
-				if (!ec.IsObsolete)
+				if (!rc.IsObsolete)
 					ic.CheckObsoleteness (loc);
 			}
 
-			return ic.CreateConstantReference (loc);
+			return ic.CreateConstantReference (rc, loc);
 		}
 
 		public override void Emit (EmitContext ec)

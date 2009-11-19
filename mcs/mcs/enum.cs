@@ -99,18 +99,17 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				return new EnumConstant (c, MemberType);
+				return new EnumConstant (c, MemberType).Resolve (ec);
 			}
 
 			if (prev_member == null)
-				return new EnumConstant (
-					New.Constantify (ParentEnum.UnderlyingType), MemberType);
+				return new EnumConstant (New.Constantify (ParentEnum.UnderlyingType), MemberType).Resolve (ec);
 
 			if (!prev_member.ResolveValue ())
 				return null;
 
 			try {
-				return (EnumConstant) prev_member.value.Increment ();
+				return ((EnumConstant) prev_member.value).Increment ();
 			} catch (OverflowException) {
 				Report.Error (543, Location, "The enumerator value `{0}' is too " +
 					      "large to fit in its type `{1}'", GetSignatureForError (),

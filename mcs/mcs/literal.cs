@@ -66,7 +66,7 @@ namespace Mono.CSharp {
 			base.Error_ValueCannotBeConverted (ec, loc, t, expl);
 		}
 
-		public override Constant ConvertImplicitly (Type targetType)
+		public override Constant ConvertImplicitly (ResolveContext rc, Type targetType)
 		{
 			//
 			// Null literal is of object type
@@ -74,7 +74,7 @@ namespace Mono.CSharp {
 			if (targetType == TypeManager.object_type)
 				return this;
 
-			return base.ConvertImplicitly (targetType);
+			return base.ConvertImplicitly (rc, targetType);
 		}
 
 		public override bool IsLiteral {
@@ -116,12 +116,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.bool_type;
-			return this;
-		}
-
 		public override bool IsLiteral {
 			get { return true; }
 		}
@@ -130,12 +124,6 @@ namespace Mono.CSharp {
 	public class CharLiteral : CharConstant {
 		public CharLiteral (char c, Location loc) : base (c, loc)
 		{
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.char_type;
-			return this;
 		}
 
 		public override bool IsLiteral {
@@ -148,25 +136,20 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
+		public override Constant ConvertImplicitly (ResolveContext rc, Type type)
 		{
-			type = TypeManager.int32_type;
-			return this;
-		}
-
-		public override Constant ConvertImplicitly (Type type)
-		{
-			///
-			/// The 0 literal can be converted to an enum value,
-			///
+			//
+			// The 0 literal can be converted to an enum value
+			//
 			if (Value == 0 && TypeManager.IsEnumType (type)) {
-				Constant c = ConvertImplicitly (TypeManager.GetEnumUnderlyingType (type));
+				Constant c = ConvertImplicitly (rc, TypeManager.GetEnumUnderlyingType (type));
 				if (c == null)
 					return null;
 
-				return new EnumConstant (c, type);
+				return new EnumConstant (c, type).Resolve (rc);
 			}
-			return base.ConvertImplicitly (type);
+
+			return base.ConvertImplicitly (rc, type);
 		}
 
 		public override bool IsLiteral {
@@ -179,12 +162,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.uint32_type;
-			return this;
-		}
-
 		public override bool IsLiteral {
 			get { return true; }
 		}
@@ -195,12 +172,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.int64_type;
-			return this;
-		}
-
 		public override bool IsLiteral {
 			get { return true; }
 		}
@@ -209,12 +180,6 @@ namespace Mono.CSharp {
 	public class ULongLiteral : ULongConstant {
 		public ULongLiteral (ulong l, Location loc) : base (l, loc)
 		{
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.uint64_type;
-			return this;
 		}
 
 		public override bool IsLiteral {
@@ -228,12 +193,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.float_type;
-			return this;
-		}
-
 		public override bool IsLiteral {
 			get { return true; }
 		}
@@ -243,13 +202,6 @@ namespace Mono.CSharp {
 	public class DoubleLiteral : DoubleConstant {
 		public DoubleLiteral (double d, Location loc) : base (d, loc)
 		{
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.double_type;
-
-			return this;
 		}
 
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type target, bool expl)
@@ -285,12 +237,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.decimal_type;
-			return this;
-		}
-
 		public override bool IsLiteral {
 			get { return true; }
 		}
@@ -299,13 +245,6 @@ namespace Mono.CSharp {
 	public class StringLiteral : StringConstant {
 		public StringLiteral (string s, Location loc) : base (s, loc)
 		{
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.string_type;
-
-			return this;
 		}
 
 		public override bool IsLiteral {

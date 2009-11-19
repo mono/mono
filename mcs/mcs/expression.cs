@@ -456,7 +456,7 @@ namespace Mono.CSharp {
 			if (cexpr != null) {
 				cexpr = TryReduceConstant (ec, cexpr);
 				if (cexpr != null)
-					return cexpr;
+					return cexpr.Resolve (ec);
 			}
 
 			Expression expr = ResolveOperator (ec, Expr);
@@ -1307,7 +1307,7 @@ namespace Mono.CSharp {
 				ec.Report.Warning (184, 1, loc, "The given expression is never of the provided (`{0}') type",
 					TypeManager.CSharpName (probe_type_expr.Type));
 
-			return ReducedExpression.Create (new BoolConstant (result, loc), this);
+			return ReducedExpression.Create (new BoolConstant (result, loc).Resolve (ec), this);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -1656,14 +1656,14 @@ namespace Mono.CSharp {
 			}
 
 			if (type.IsPointer)
-				return new NullLiteral (Location).ConvertImplicitly (type);
+				return new NullLiteral (Location).ConvertImplicitly (ec, type);
 
 			if (TypeManager.IsReferenceType (type))
 				return new NullConstant (type, loc);
 
 			Constant c = New.Constantify (type);
 			if (c != null)
-				return c;
+				return c.Resolve (ec);
 
 			eclass = ExprClass.Variable;
 			return this;
@@ -1818,7 +1818,7 @@ namespace Mono.CSharp {
 				//
 				// Start a new concat expression using converted expression
 				//
-				return new StringConcat (b.loc, b.left, b.right).Resolve (ec);
+				return StringConcat.Create (ec, b.left, b.right, b.loc);
 			}
 		}
 
@@ -1845,7 +1845,7 @@ namespace Mono.CSharp {
 				//
 				// Expression tree representation does not use & mask
 				//
-				b.right = ReducedExpression.Create (b.right, expr_tree_expr).Resolve (ec);
+				b.right = ReducedExpression.Create (b.right, expr_tree_expr);
 				b.type = ReturnType;
 				return b;
 			}
@@ -2520,14 +2520,14 @@ namespace Mono.CSharp {
 		//
 		// Rules used during binary numeric promotion
 		//
-		static bool DoNumericPromotion (ref Expression prim_expr, ref Expression second_expr, Type type)
+		static bool DoNumericPromotion (ResolveContext rc, ref Expression prim_expr, ref Expression second_expr, Type type)
 		{
 			Expression temp;
 			Type etype;
 
 			Constant c = prim_expr as Constant;
 			if (c != null) {
-				temp = c.ConvertImplicitly (type);
+				temp = c.ConvertImplicitly (rc, type);
 				if (temp != null) {
 					prim_expr = temp;
 					return true;
@@ -2542,7 +2542,7 @@ namespace Mono.CSharp {
 					if (type != second_expr.Type) {
 						c = second_expr as Constant;
 						if (c != null)
-							temp = c.ConvertImplicitly (type);
+							temp = c.ConvertImplicitly (rc, type);
 						else
 							temp = Convert.ImplicitNumericConversion (second_expr, type);
 						if (temp == null)
@@ -2578,17 +2578,17 @@ namespace Mono.CSharp {
 
 			foreach (Type t in ConstantFold.binary_promotions) {
 				if (t == ltype)
-					return t == rtype || DoNumericPromotion (ref right, ref left, t);
+					return t == rtype || DoNumericPromotion (ec, ref right, ref left, t);
 
 				if (t == rtype)
-					return t == ltype || DoNumericPromotion (ref left, ref right, t);
+					return t == ltype || DoNumericPromotion (ec, ref left, ref right, t);
 			}
 
 			Type int32 = TypeManager.int32_type;
 			if (ltype != int32) {
 				Constant c = left as Constant;
 				if (c != null)
-					temp = c.ConvertImplicitly (int32);
+					temp = c.ConvertImplicitly (ec, int32);
 				else
 					temp = Convert.ImplicitNumericConversion (left, int32);
 
@@ -2600,7 +2600,7 @@ namespace Mono.CSharp {
 			if (rtype != int32) {
 				Constant c = right as Constant;
 				if (c != null)
-					temp = c.ConvertImplicitly (int32);
+					temp = c.ConvertImplicitly (ec, int32);
 				else
 					temp = Convert.ImplicitNumericConversion (right, int32);
 
@@ -2662,8 +2662,10 @@ namespace Mono.CSharp {
 
 			if (rc != null && lc != null) {
 				int prev_e = ec.Report.Errors;
-				Expression e = ConstantFold.BinaryFold (
-					ec, oper, lc, rc, loc);
+				Expression e = ConstantFold.BinaryFold (ec, oper, lc, rc, loc);
+				if (e != null)
+					e = e.Resolve (ec);
+
 				if (e != null || ec.Report.Errors != prev_e)
 					return e;
 			}
@@ -2879,12 +2881,12 @@ namespace Mono.CSharp {
 				underlying_type = TypeManager.GetEnumUnderlyingType (ltype);
 
 				if (left is Constant)
-					left = ((Constant) left).ConvertExplicitly (false, underlying_type);
+					left = ((Constant) left).ConvertExplicitly (false, underlying_type).Resolve (ec);
 				else
 					left = EmptyCast.Create (left, underlying_type);
 
 				if (right is Constant)
-					right = ((Constant) right).ConvertExplicitly (false, underlying_type);
+					right = ((Constant) right).ConvertExplicitly (false, underlying_type).Resolve (ec);
 				else
 					right = EmptyCast.Create (right, underlying_type);
 			} else if (lenum) {
@@ -2902,7 +2904,7 @@ namespace Mono.CSharp {
 				}
 
 				if (left is Constant)
-					left = ((Constant) left).ConvertExplicitly (false, underlying_type);
+					left = ((Constant) left).ConvertExplicitly (false, underlying_type).Resolve (ec);
 				else
 					left = EmptyCast.Create (left, underlying_type);
 
@@ -2921,7 +2923,7 @@ namespace Mono.CSharp {
 				}
 
 				if (right is Constant)
-					right = ((Constant) right).ConvertExplicitly (false, underlying_type);
+					right = ((Constant) right).ConvertExplicitly (false, underlying_type).Resolve (ec);
 				else
 					right = EmptyCast.Create (right, underlying_type);
 
@@ -3205,7 +3207,7 @@ namespace Mono.CSharp {
 						new SideEffectConstant (lc, right, loc) :
 						new SideEffectConstant (rc, left, loc);
 
-					return ReducedExpression.Create (side_effect, expr);
+					return ReducedExpression.Create (side_effect.Resolve (ec), expr);
 				}
 			}
 
@@ -3297,7 +3299,7 @@ namespace Mono.CSharp {
 						(right is NullLiteral && IsBuildInEqualityOperator (l))) {
 						type = TypeManager.bool_type;
 						if (left is NullLiteral || right is NullLiteral)
-							oper_expr = ReducedExpression.Create (this, oper_expr).Resolve (ec);
+							oper_expr = ReducedExpression.Create (this, oper_expr);
 					} else if (l != r) {
 						MethodInfo mi = (MethodInfo) union;
 						
@@ -3788,15 +3790,24 @@ namespace Mono.CSharp {
 	public class StringConcat : Expression {
 		Arguments arguments;
 		
-		public StringConcat (Location loc, Expression left, Expression right)
+		public StringConcat (Expression left, Expression right, Location loc)
 		{
 			this.loc = loc;
 			type = TypeManager.string_type;
 			eclass = ExprClass.Value;
 
 			arguments = new Arguments (2);
-			Append (left);
-			Append (right);
+		}
+
+		public static StringConcat Create (ResolveContext rc, Expression left, Expression right, Location loc)
+		{
+			if (left.eclass == ExprClass.Invalid || right.eclass == ExprClass.Invalid)
+				throw new ArgumentException ();
+
+			var s = new StringConcat (left, right, loc);
+			s.Append (rc, left);
+			s.Append (rc, right);
+			return s;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -3842,7 +3853,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 		
-		public void Append (Expression operand)
+		void Append (ResolveContext rc, Expression operand)
 		{
 			//
 			// Constant folding
@@ -3854,7 +3865,7 @@ namespace Mono.CSharp {
 					StringConstant last_expr_constant = last_argument.Expr as StringConstant;
 					if (last_expr_constant != null) {
 						last_argument.Expr = new StringConstant (
-							last_expr_constant.Value + sc.Value, sc.Location);
+							last_expr_constant.Value + sc.Value, sc.Location).Resolve (rc);
 						return;
 					}
 				}
@@ -4060,7 +4071,7 @@ namespace Mono.CSharp {
 					if (size != 0) {
 						// TODO: Should be the checks resolve context sensitive?
 						ResolveContext rc = new ResolveContext (ec.MemberContext);
-						right = ConstantFold.BinaryFold (rc, Binary.Operator.Multiply, new IntConstant (size, right.Location), right_const, loc);
+						right = ConstantFold.BinaryFold (rc, Binary.Operator.Multiply, new IntConstant (size, right.Location).Resolve (rc), right_const, loc);
 						if (right == null)
 							return;
 					} else {
@@ -4252,7 +4263,7 @@ namespace Mono.CSharp {
 			if (c != null){
 				bool is_false = c.IsDefaultValue;
 				ec.Report.Warning (429, 4, is_false ? true_expr.Location : false_expr.Location, "Unreachable expression code detected");
-				return ReducedExpression.Create (is_false ? false_expr : true_expr, this).Resolve (ec);
+				return ReducedExpression.Create (is_false ? false_expr : true_expr, this);
 			}
 
 			return this;
@@ -5438,7 +5449,7 @@ namespace Mono.CSharp {
 			if (Arguments == null) {
 				Constant c = Constantify (type);
 				if (c != null)
-					return ReducedExpression.Create (c, this);
+					return ReducedExpression.Create (c.Resolve (ec), this);
 			}
 
 			if (TypeManager.IsDelegateType (type)) {
@@ -7239,7 +7250,7 @@ namespace Mono.CSharp {
 
 			int size_of = GetTypeSize (type_queried);
 			if (size_of > 0) {
-				return new IntConstant (size_of, loc);
+				return new IntConstant (size_of, loc).Resolve (ec);
 			}
 
 			if (!TypeManager.VerifyUnmanaged (ec.Compiler, type_queried, loc)){

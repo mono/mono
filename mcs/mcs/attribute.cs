@@ -344,7 +344,7 @@ namespace Mono.CSharp {
 			get { return expression.Name; }
 		}
 
-		void ApplyModuleCharSet ()
+		void ApplyModuleCharSet (ResolveContext rc)
 		{
 			if (Type != PredefinedAttributes.Get.DllImport)
 				return;
@@ -363,7 +363,7 @@ namespace Mono.CSharp {
 			}
 			
 			NamedArguments.Add (new NamedArgument (new LocatedToken (loc, CharSetEnumMember),
-				Constant.CreateConstant (typeof (CharSet), RootContext.ToplevelTypes.DefaultCharSet, Location)));
+				Constant.CreateConstant (rc, typeof (CharSet), RootContext.ToplevelTypes.DefaultCharSet, Location)));
  		}
 
 		public Report Report {
@@ -412,7 +412,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			ApplyModuleCharSet ();
+			ApplyModuleCharSet (rc);
 
 			CustomAttributeBuilder cb;
 			try {

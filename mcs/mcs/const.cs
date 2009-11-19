@@ -20,7 +20,7 @@ namespace Mono.CSharp {
 	{
 		void CheckObsoleteness (Location loc);
 		bool ResolveValue ();
-		Constant CreateConstantReference (Location loc);
+		Constant CreateConstantReference (ResolveContext rc, Location loc);
 	}
 
 	public class Const : FieldBase, IConstant {
@@ -185,22 +185,22 @@ namespace Mono.CSharp {
 			if (resolved)
 				return value != null;
 
+			ResolveContext.Options opt = ResolveContext.Options.ConstantScope;
+			if (this is EnumMember)
+				opt |= ResolveContext.Options.EnumScope;
+			ResolveContext rc = new ResolveContext (this, opt);
+
 			SetMemberIsUsed ();
 			if (in_transit) {
 				Error_CyclicDeclaration (this, Report);
 				// Suppress cyclic errors
-				value = New.Constantify (MemberType);
+				value = New.Constantify (MemberType).Resolve (rc);
 				resolved = true;
 				return false;
 			}
 
 			in_transit = true;
 
-			ResolveContext.Options opt = ResolveContext.Options.ConstantScope;
-			if (this is EnumMember)
-				opt |= ResolveContext.Options.EnumScope;
-
-			ResolveContext rc = new ResolveContext (this, opt);
 			value = DoResolveValue (rc);
 
 			in_transit = false;
@@ -214,7 +214,7 @@ namespace Mono.CSharp {
 			if (value == null)
 				return null;
 
-			Constant c = value.ConvertImplicitly (MemberType);
+			Constant c = value.ConvertImplicitly (ec, MemberType);
 			if (c == null) {
 				if (TypeManager.IsReferenceType (MemberType))
 					Error_ConstantCanBeInitializedWithNullOnly (MemberType, Location, GetSignatureForError (), Report);
@@ -225,12 +225,12 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public virtual Constant CreateConstantReference (Location loc)
+		public virtual Constant CreateConstantReference (ResolveContext rc, Location loc)
 		{
 			if (value == null)
 				return null;
 
-			return Constant.CreateConstant (value.Type, value.GetValue(), loc);
+			return Constant.CreateConstant (rc, value.Type, value.GetValue(), loc);
 		}
 
 		#endregion
@@ -300,9 +300,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Constant CreateConstantReference (Location loc)
+		public Constant CreateConstantReference (ResolveContext rc, Location loc)
 		{
-			return Constant.CreateConstant (TypeManager.TypeToCoreType (fi.FieldType), value, loc);
+			return Constant.CreateConstant (rc, TypeManager.TypeToCoreType (fi.FieldType), value, loc);
 		}
 
 		#endregion
