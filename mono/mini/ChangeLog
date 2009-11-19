@@ -1,5 +1,12 @@
 2009-11-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c: Fix support for ppc.
+
+	* exceptions-ppc.c (mono_arch_find_jit_info): Change this to use dwarf frame
+	unwind info. Change to the mono_arch_find_jit_info_ext () interface.
+
+2009-11-19  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-ppc.c (mono_arch_emit_prolog): Fix a copy-paste error to fix the ppc64
 	port.
 	(mono_arch_cpu_init): Don't set cpu_hw_flags to 0 at the end, this was somehow
