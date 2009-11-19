@@ -1,3 +1,10 @@
+2009-11-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DataGrid.cs: In OnLeave, do cancel or end current edit, depending on
+	the commit_new_row value, instead of just trying to cancel if a new
+	row had been added. This is important when modifying existing rows and
+	then moving the focus out of the control.
+
 2009-11-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUICarbon.cs: Implement the overriden AudibleAlert

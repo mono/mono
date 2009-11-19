@@ -1485,9 +1485,10 @@ namespace System.Windows.Forms
 			base.OnLeave (e);
 
 			EndEdit ();
-			if (cursor_in_add_row) {
+			if (commit_row_changes)
+				ListManager.EndCurrentEdit ();
+			else
 				ListManager.CancelCurrentEdit ();
-			}
 		}
 
 		protected override void OnMouseDown (MouseEventArgs e)
