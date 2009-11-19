@@ -1,5 +1,8 @@
 2009-11-19  Marek Habersack  <mhabersack@novell.com>
 
+	* WebConfigurationHost.cs: IsDefinitionAllowed now normalizes the
+	passed configuration path, so that MachineToApplication sections
+
 	* WebConfigurationManager.cs: use an rw lock to protect access to
 	sectionCache. This is now necessary as the save handler clears the
 	cache.
