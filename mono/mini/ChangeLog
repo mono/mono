@@ -1,5 +1,7 @@
 2009-11-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-gc.c: Resurrect this, so at least it compiles.
+
 	* debugger-agent.c (assembly_commands): Implement GET_NAME command.
 
 2009-11-18  Zoltan Varga  <vargaz@gmail.com>
