@@ -1,3 +1,7 @@
+2009-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs: Add a test for AssemblyMirror.GetName ().
+
 2009-11-16  Mark Probst  <mark.probst@gmail.com>
 
 	* large-gc-bitmap.cs: New test for large GC bitmaps.
