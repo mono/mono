@@ -327,7 +327,7 @@ namespace System.Web {
 
 		static char [] path_sep = { '/' };
 
-		static string Normalize (string path)
+		internal static string Normalize (string path)
 		{
 			if (!IsRooted (path))
 				throw new ArgumentException (String.Format ("The relative virtual path '{0}' is not allowed here.", path));

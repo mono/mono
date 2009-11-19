@@ -362,11 +362,18 @@ namespace System.Web.Configuration
 				case ConfigurationAllowDefinition.MachineToApplication:
 					if (String.IsNullOrEmpty (configPath))
 						return true;
-					return (String.Compare (configPath, MachinePath, StringComparison.Ordinal) == 0) ||
-						(String.Compare (configPath, MachineWebPath, StringComparison.Ordinal) == 0) ||
-						(String.Compare (configPath, "/", StringComparison.Ordinal) == 0) ||
-						(String.Compare (configPath, "~", StringComparison.Ordinal) == 0) ||
-						(String.Compare (configPath, HttpRuntime.AppDomainAppVirtualPath) == 0);
+					string normalized;
+
+					if (VirtualPathUtility.IsRooted (configPath))
+						normalized = VirtualPathUtility.Normalize (configPath);
+					else
+						normalized = configPath;
+					
+					return (String.Compare (normalized, MachinePath, StringComparison.Ordinal) == 0) ||
+						(String.Compare (normalized, MachineWebPath, StringComparison.Ordinal) == 0) ||
+						(String.Compare (normalized, "/", StringComparison.Ordinal) == 0) ||
+						(String.Compare (normalized, "~", StringComparison.Ordinal) == 0) ||
+						(String.Compare (normalized, HttpRuntime.AppDomainAppVirtualPath) == 0);
 				default:
 					return true;
 			}

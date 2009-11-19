@@ -1,3 +1,8 @@
+2009-11-19  Marek Habersack  <mhabersack@novell.com>
+
+	* LogicalTypeInfo.cs: removed the JsonResult class - it has no use
+	and it can break applications (e.g. Umbraco)
+
 2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* LogicalTypeInfo.cs, RestHandler.cs : add support for WCF proxy
