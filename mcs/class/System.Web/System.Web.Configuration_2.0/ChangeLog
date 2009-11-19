@@ -1,3 +1,9 @@
+2009-11-19  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: use an rw lock to protect access to
+	sectionCache. This is now necessary as the save handler clears the
+	cache.
+
 2009-11-10  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: path passed to OpenWebConfiguration

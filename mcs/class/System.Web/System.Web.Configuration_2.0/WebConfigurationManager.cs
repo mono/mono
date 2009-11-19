@@ -53,6 +53,7 @@ namespace System.Web.Configuration {
 		
 		static readonly object suppressAppReloadLock = new object ();
 		static readonly object saveLocationsCacheLock = new object ();
+		static readonly ReaderWriterLockSlim sectionCacheLock;
 		
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
@@ -183,6 +184,8 @@ namespace System.Web.Configuration {
 				if (fi != null && fi.FieldType == Type.GetType ("System.Type"))
 					fi.SetValue (null, typeof (ApplicationSettingsConfigurationFileMap));
 			}
+
+			sectionCacheLock = new ReaderWriterLockSlim ();
 		}
 
 		static void ReenableWatcherOnConfigLocation (object state)
@@ -208,6 +211,16 @@ namespace System.Web.Configuration {
 		
 		static void ConfigurationSaveHandler (_Configuration sender, ConfigurationSaveEventArgs args)
 		{
+			bool locked = false;
+			try {
+				sectionCacheLock.EnterWriteLock ();
+				locked = true;
+				sectionCache.Clear ();
+			} finally {
+				if (locked)
+					sectionCacheLock.ExitWriteLock ();
+			}
+			
 			lock (suppressAppReloadLock) {
 				string rootConfigPath = WebConfigurationHost.GetWebConfigFileName (HttpRuntime.AppDomainAppPath);
 				if (String.Compare (args.StreamPath, rootConfigPath, StringComparison.OrdinalIgnoreCase) == 0) {
@@ -404,8 +417,18 @@ namespace System.Web.Configuration {
 
 			int sectionCacheKey = GetSectionCacheKey (sectionName, config_vdir);
 			object cachedSection;
-			if (sectionCache.TryGetValue (sectionCacheKey, out cachedSection) && cachedSection != null)
-				return cachedSection;
+			bool locked = false;
+
+			try {
+				sectionCacheLock.EnterReadLock ();
+				locked = true;
+				
+				if (sectionCache.TryGetValue (sectionCacheKey, out cachedSection) && cachedSection != null)
+					return cachedSection;
+			} finally {
+				if (locked)
+					sectionCacheLock.ExitReadLock ();
+			}
 
 			HttpRequest req = context != null ? context.Request : null;
 			_Configuration c = OpenWebConfiguration (path, /* path */
@@ -572,16 +595,28 @@ namespace System.Web.Configuration {
 		static void AddSectionToCache (int key, object section)
 		{
 			object cachedSection;
-			if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
-				return;
+			bool locked = false;
 
-			// Not sure if it wouldn't be better to just use a lock here
-			var tmpTable = new Dictionary <int, object> (sectionCache);
-			if (tmpTable.ContainsKey (key))
-				return;
+			try {
+				sectionCacheLock.EnterUpgradeableReadLock ();
+				locked = true;
+					
+				if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
+					return;
 
-			tmpTable.Add (key, section);
-			sectionCache = tmpTable;
+				bool innerLocked = false;
+				try {
+					sectionCacheLock.EnterWriteLock ();
+					innerLocked = true;
+					sectionCache.Add (key, section);
+				} finally {
+					if (innerLocked)
+						sectionCacheLock.ExitWriteLock ();
+				}
+			} finally {
+				if (locked)
+					sectionCacheLock.ExitUpgradeableReadLock ();
+			}
 		}
 
 		static int GetSectionCacheKey (string sectionName, string vdir)
