@@ -1,3 +1,8 @@
+2009-11-19  Mark Probst  <mark.probst@gmail.com>
+
+	* process.c: Don't put references to managed objects into a
+	g_ptr_array.
+
 2009-11-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class.c (can_access_internals): Allow CoreCLR to participate in
