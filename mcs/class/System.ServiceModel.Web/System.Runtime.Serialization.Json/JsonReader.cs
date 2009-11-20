@@ -35,7 +35,6 @@ using System.Xml;
 namespace System.Runtime.Serialization.Json
 {
 	// FIXME: quotas check
-	// FIXME: parse object content and handle __type as attribute.
 	class JsonReader : XmlDictionaryReader, IXmlJsonReaderInitializer, IXmlLineInfo
 	{
 		class ElementInfo
@@ -90,6 +89,8 @@ namespace System.Runtime.Serialization.Json
 		{
 			SetInput (stream, encoding, quotas, onClose);
 		}
+
+		internal bool LameSilverlightLiteralParser { get; set; }
 
 		// IXmlLineInfo
 
@@ -472,11 +473,13 @@ namespace System.Runtime.Serialization.Json
 				ReadEndArray ();
 				return true;
 			case '"':
-				string s = ReadStringLiteral ();
+				bool lame = LameSilverlightLiteralParser && ch != '"';
+				string s = ReadStringLiteral (lame);
 				if (!objectValue && elements.Count > 0 && elements.Peek ().Type == "object") {
 					next_element = s;
 					SkipWhitespaces ();
-					Expect (':');
+					if (!lame)
+						Expect (':');
 					SkipWhitespaces ();
 					ReadContent (true);
 				}
@@ -516,7 +519,9 @@ namespace System.Runtime.Serialization.Json
 					ReadNumber (ch);
 					return true;
 				}
-				throw XmlError (String.Format ("Unexpected token: '{0}' ({1:X04})", ch, (int) ch));
+				if (LameSilverlightLiteralParser)
+					goto case '"';
+				throw XmlError (String.Format ("Unexpected token: '{0}' ({1:X04})", (char) ch, (int) ch));
 			}
 		}
 
@@ -639,12 +644,19 @@ namespace System.Runtime.Serialization.Json
 
 		string ReadStringLiteral ()
 		{
+			return ReadStringLiteral (false);
+		}
+
+		string ReadStringLiteral (bool endWithColon)
+		{
 			vb.Length = 0;
 			while (true) {
 				int c = ReadChar ();
 				if (c < 0)
 					throw XmlError ("JSON string is not closed");
-				if (c == '"')
+				if (c == '"' && !endWithColon)
+					return vb.ToString ();
+				else if (c == ':' && endWithColon)
 					return vb.ToString ();
 				else if (c != '\\') {
 					vb.Append ((char) c);

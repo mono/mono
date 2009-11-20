@@ -1255,6 +1255,17 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			var s = Encoding.UTF8.GetString (ms.ToArray ());
 			Assert.AreEqual (@"{""Bar"":null,""Foo"":""foo""}", s, "#1");
 		}
+
+		// [Test] use this case if you want to check lame silverlight parser behavior. Seealso #549756
+		public void QuotelessDeserialization ()
+		{
+			string s1 = @"{FooMember:""value""}";
+			var ds = new DataContractJsonSerializer (typeof (DCWithName));
+			ds.ReadObject (new MemoryStream (Encoding.UTF8.GetBytes (s1)));
+
+			string s2 = @"{FooMember:"" \""{dummy:string}\""""}";
+			ds.ReadObject (new MemoryStream (Encoding.UTF8.GetBytes (s2)));
+		}
 	}
 
 	public class TestData

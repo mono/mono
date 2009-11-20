@@ -1,3 +1,9 @@
+2009-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializer.cs, JsonReader.cs : Silverlight uses
+	  LAME parser that allows object member name as *raw* string
+	  without double-quotes. (This also reverts the previous change.)
+
 2009-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	*  JsonSerializationReader.cs : reuse generic collection search
