@@ -1,3 +1,8 @@
+2009-11-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DefaultContext.cs : do not use sloppy XmlConvert to parse xpath
+	  number. Fixed bug #556619.
+
 2009-09-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Expression.cs : to support external function that returns non-

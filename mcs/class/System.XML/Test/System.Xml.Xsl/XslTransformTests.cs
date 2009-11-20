@@ -2188,6 +2188,45 @@ World";
 			Assert.AreEqual (expected, sw.ToString ());
 		}
 
+		[Test] // bug #556619
+		public void RejectCurrencySymbolAsNumber ()
+		{
+			XslTransform xslt = new XslTransform ();
+			StringWriter sw = new StringWriter ();
+			string s =
+@"<?xml version=""1.0""?>
+
+<xsl:stylesheet
+  version=""1.0""
+  xmlns:xsl=""http://www.w3.org/1999/XSL/Transform""
+  >
+
+  <xsl:template name=""F"">
+    <xsl:param name=""p""/>
+    <xsl:choose>
+      <xsl:when test=""number($p)"">
+YES <xsl:value-of select=""number($p)""/>
+      </xsl:when>
+      <xsl:otherwise>
+NO
+      </xsl:otherwise>
+    </xsl:choose>
+  </xsl:template>
+  <xsl:template match=""/"">
+    <xsl:call-template name=""F"">
+      <xsl:with-param name=""p"">$4$2</xsl:with-param>
+    </xsl:call-template>
+  </xsl:template>
+
+</xsl:stylesheet>";
+			xslt.Load (new XmlTextReader (new StringReader (s)));
+			xslt.Transform (new XPathDocument (new StringReader (
+@"<?xml version=""1.0""?>
+<root>
+</root>")), null, sw);
+			Assert.IsTrue (sw.ToString ().IndexOf ("NO") > 0);
+		}
+
 #if NET_2_0
 		[Test] // bug #349375
 		public void PreserveWhitespace ()
