@@ -1,5 +1,8 @@
 2009-11-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-ppc.c (mono_arch_create_generic_class_init_trampoline_full): These
+	receive their argument in MONO_ARCH_VTABLE_REG, not in the first argument reg.
+
 	* debugger-agent.c (create_event_list): Fix a crash if an empty assembly list
 	was used as an assembly filter.
 
