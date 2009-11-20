@@ -135,7 +135,7 @@ namespace Mono.CSharp {
 		{
 			Expression expr_resolved = expr.Resolve (ec,
 				ResolveFlags.VariableOrValue | ResolveFlags.Type |
-				ResolveFlags.Intermediate | ResolveFlags.DisableStructFlowAnalysis);
+				ResolveFlags.Intermediate);
 
 			if (expr_resolved == null)
 				return null;

@@ -7375,9 +7375,10 @@ namespace Mono.CSharp {
 			//
 
 			SimpleName original = expr as SimpleName;
-			Expression expr_resolved = expr.Resolve (ec,
-				ResolveFlags.VariableOrValue | ResolveFlags.Type |
-				ResolveFlags.Intermediate | ResolveFlags.DisableStructFlowAnalysis);
+			Expression expr_resolved;
+			using (ec.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
+				expr_resolved = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.Type | ResolveFlags.Intermediate);
+			}
 
 			if (expr_resolved == null)
 				return null;

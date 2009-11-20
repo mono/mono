@@ -63,17 +63,8 @@ namespace Mono.CSharp {
 		// Mask of all the expression class flags.
 		MaskExprClass = VariableOrValue | Type | MethodGroup | TypeParameter,
 
-		// Disable control flow analysis while resolving the expression.
-		// This is used when resolving the instance expression of a field expression.
-		DisableFlowAnalysis	= 1 << 10,
-
 		// Set if this is resolving the first part of a MemberAccess.
 		Intermediate		= 1 << 11,
-
-		// Disable control flow analysis _of struct_ while resolving the expression.
-		// This is used when resolving the instance expression of a field expression.
-		DisableStructFlowAnalysis	= 1 << 12,
-
 	}
 
 	//
@@ -485,24 +476,11 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Unresolved)
 				return this;
 
-			if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type) 
-				return ResolveAsTypeStep (ec, false);
-
-			bool do_flow_analysis = ec.DoFlowAnalysis;
-			bool omit_struct_analysis = ec.OmitStructFlowAnalysis;
-			if ((flags & ResolveFlags.DisableFlowAnalysis) != 0)
-				do_flow_analysis = false;
-			if ((flags & ResolveFlags.DisableStructFlowAnalysis) != 0)
-				omit_struct_analysis = true;
-
 			Expression e;
-			using (ec.WithFlowAnalysis (do_flow_analysis, omit_struct_analysis)) {
-				if (this is SimpleName) {
-					bool intermediate = (flags & ResolveFlags.Intermediate) == ResolveFlags.Intermediate;
-					e = ((SimpleName) this).DoResolve (ec, intermediate);
-				} else {
-					e = DoResolve (ec);
-				}
+			if (this is SimpleName) {
+				e = ((SimpleName) this).DoResolve (ec, (flags & ResolveFlags.Intermediate) != 0);
+			} else {
+				e = DoResolve (ec);
 			}
 
 			if (e == null)
@@ -513,12 +491,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (e.type == null && !(e is Namespace)) {
-				throw new Exception (
-					"Expression " + e.GetType () +
-					" did not set its type after Resolve\n" +
-					"called from: " + this.GetType ());
-			}
+			if (e.type == null)
+				throw new InternalErrorException ("Expression `{0}' didn't set its type in DoResolve", e.GetType ());
 
 			return e;
 		}
@@ -2788,11 +2762,13 @@ namespace Mono.CSharp {
 					if (right_side != null) {
 						e = e.ResolveLValue (ec, right_side);
 					} else {
-						ResolveFlags rf = ResolveFlags.VariableOrValue;
-						if (intermediate)
-							rf |= ResolveFlags.DisableFlowAnalysis;
-
-						e = e.Resolve (ec, rf);
+						if (intermediate) {
+							using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
+								e = e.Resolve (ec, ResolveFlags.VariableOrValue);
+							}
+						} else {
+							e = e.Resolve (ec, ResolveFlags.VariableOrValue);
+						}
 					}
 
 					if (targs != null && e != null)
@@ -4990,10 +4966,11 @@ namespace Mono.CSharp {
 							InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
 					}
 				} else {
-					const ResolveFlags rf = ResolveFlags.VariableOrValue | ResolveFlags.DisableFlowAnalysis;
-
-					if (InstanceExpression != EmptyExpression.Null)
-						InstanceExpression = InstanceExpression.Resolve (ec, rf);
+					if (InstanceExpression != EmptyExpression.Null) {
+						using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
+							InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue);
+						}
+					}
 				}
 
 				if (InstanceExpression == null)

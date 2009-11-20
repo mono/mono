@@ -451,14 +451,6 @@ namespace Mono.CSharp
 			return new FlagsHandle (this, options, enable ? options : 0);
 		}
 
-		public FlagsHandle WithFlowAnalysis (bool do_flow_analysis, bool omit_struct_analysis)
-		{
-			Options newflags =
-				(do_flow_analysis ? Options.DoFlowAnalysis : 0) |
-				(omit_struct_analysis ? Options.OmitStructFlowAnalysis : 0);
-			return new FlagsHandle (this, Options.DoFlowAnalysis | Options.OmitStructFlowAnalysis, newflags);
-		}
-
 		#region IMemberContext Members
 
 		public string GetSignatureForError ()

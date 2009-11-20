@@ -1,5 +1,10 @@
 2009-11-20  Marek Safar  <marek.safar@gmail.com>
 
+	* context.cs, expression.cs, ecore.cs, complete.cs: Cleaned up
+	Expression.Resolve.
+
+2009-11-20  Marek Safar  <marek.safar@gmail.com>
+
 	* *.cs: Resolved expressions are never resolved again, this helps to
 	uncover some not easy to find bugs and improve the performance.
 
