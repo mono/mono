@@ -14,12 +14,14 @@
 // Namespace: System.Data.OracleClient.Oci
 // 
 // Authors: 
-//     Daniel Morgan <danmorg@sc.rr.com>
+//     Daniel Morgan <monodanmorg@yahoo.com>
 //     Tim Coleman <tim@timcoleman.com>
 //         
-// Copyright (C) Daniel Morgan, 2002
+// Copyright (C) Daniel Morgan, 2002, 2009
 // Copyright (C) Tim Coleman, 2002
 // 
+
+//#define ORACLE_DATA_ACCESS
 
 using System;
 using System.Runtime.InteropServices;
@@ -132,18 +134,39 @@ namespace System.Data.OracleClient.Oci {
 				throw new OracleException (info.ErrorCode, info.ErrorMessage);
 			}
 
-			if (!session.BeginSession (conInfo.CredentialType, OciSessionMode.Default, ErrorHandle)) {
-				OciErrorInfo info = error.HandleError ();
-				Disconnect ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
-			}
+#if ORACLE_DATA_ACCESS
+			if (conInfo.SetNewPassword == true) {
+				// open with new password
+				if (!service.SetSession (session)) {
+					OciErrorInfo info = error.HandleError ();
+					Disconnect ();
+					throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				}
+				if (!service.ChangePassword (conInfo.NewPassword, error)) {
+					OciErrorInfo info = error.HandleError ();
+					Disconnect ();
+					throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				}
+				conInfo.Password = conInfo.NewPassword;
+				conInfo.SetNewPassword = false;
+				conInfo.NewPassword = string.Empty;
+			} else {
+#endif
+				// open normally
+				if (!session.BeginSession (conInfo.CredentialType, OciSessionMode.Default, ErrorHandle)) {
+					OciErrorInfo info = error.HandleError ();
+					Disconnect ();
+					throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				}
 
-			if (!service.SetSession (session)) {
-				OciErrorInfo info = error.HandleError ();
-				Disconnect ();
-				throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				if (!service.SetSession (session)) {
+					OciErrorInfo info = error.HandleError ();
+					Disconnect ();
+					throw new OracleException (info.ErrorCode, info.ErrorMessage);
+				}
+#if ORACLE_DATA_ACCESS
 			}
-
+#endif
 			connected = true;
 		}
 

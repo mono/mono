@@ -25,6 +25,10 @@
 // Licensed under the MIT/X11 License.
 //
 
+//#define ORACLE_DATA_ACCESS
+// define ORACLE_DATA_ACCESS for Oracle.DataAccess functionality
+// otherwise it defaults to Microsoft's System.Data.OracleClient
+
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -36,7 +40,11 @@ using System.EnterpriseServices;
 using System.Globalization;
 using System.Text;
 
+//#if ORACLE_DATA_ACCESS
+//namespace Oracle.DataAccess
+//#else
 namespace System.Data.OracleClient
+//#endif
 {
 	internal struct OracleConnectionInfo
 	{
@@ -45,6 +53,8 @@ namespace System.Data.OracleClient
 		internal string Database;
 		internal string ConnectionString;
 		internal OciCredentialType CredentialType;
+		internal bool SetNewPassword;
+		internal string NewPassword;
 	}
 
 	[DefaultEvent ("InfoMessage")]
@@ -402,7 +412,7 @@ namespace System.Data.OracleClient
 
 			PersistSecurityInfo ();
 
-			if (!pooling) {
+			if (!pooling || conInfo.SetNewPassword == true) {
 				oci = new OciGlue ();
 				oci.CreateConnection (conInfo);
 			} else {
@@ -413,6 +423,23 @@ namespace System.Data.OracleClient
 
 			CreateStateChange (ConnectionState.Closed, ConnectionState.Open);
 		}
+
+#if ORACLE_DATA_ACCESS
+		public void OpenWithNewPassword (string newPassword) 
+		{
+			if (State == ConnectionState.Open)
+				throw new InvalidOperationException ();
+
+			conInfo.SetNewPassword = true;
+			conInfo.NewPassword = newPassword;
+
+			Open ();
+
+			conInfo.SetNewPassword = false;
+			conInfo.NewPassword = string.Empty;
+			conInfo.Password = newPassword;
+		}
+#endif
 
 		internal void CreateInfoMessage (OciErrorInfo info)
 		{
@@ -573,6 +600,8 @@ namespace System.Data.OracleClient
 			conInfo.Database = string.Empty;
 			conInfo.Password = string.Empty;
 			conInfo.CredentialType = OciCredentialType.RDBMS;
+			conInfo.SetNewPassword = false;
+			conInfo.NewPassword = string.Empty;
 
 			if (connectionString == null || connectionString.Length == 0) {
 				this.connectionString = connectionString;

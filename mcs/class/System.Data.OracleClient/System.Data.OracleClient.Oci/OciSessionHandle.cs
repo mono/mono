@@ -11,9 +11,13 @@
 //
 // Author:
 //     Tim Coleman <tim@timcoleman.com>
+//     Daniel Morgan <monodanmorg@yahoo.com>
 //
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2009
 //
+
+//#define ORACLE_DATA_ACCESS
 
 using System;
 using System.Runtime.InteropServices;
@@ -63,31 +67,43 @@ namespace System.Data.OracleClient.Oci {
 
 		#region Methods
 
+		internal bool SetCredentialAttributes (OciErrorHandle error)
+		{
+			errorHandle = error;
+
+			int status;
+
+			status = OciCalls.OCIAttrSetString (this,
+				OciHandleType.Session,
+				username,
+				(uint) username.Length,
+				OciAttributeType.Username,
+				errorHandle);
+
+			if (status != 0)
+				return false;
+
+			status = OciCalls.OCIAttrSetString (this,
+				OciHandleType.Session,
+				password,
+				(uint) password.Length,
+				OciAttributeType.Password,
+				errorHandle);
+
+			if (status != 0)
+				return false;
+			
+			return true;
+		}
+
 		public bool BeginSession (OciCredentialType credentialType, OciSessionMode mode, OciErrorHandle error)
 		{
 			errorHandle = error;
 
-			int status = 0;
+			int status;
 
 			if (credentialType == OciCredentialType.RDBMS) {
-				status = OciCalls.OCIAttrSetString (this,
-					OciHandleType.Session,
-					username,
-					(uint) username.Length,
-					OciAttributeType.Username,
-					errorHandle);
-
-				if (status != 0)
-					return false;
-
-				status = OciCalls.OCIAttrSetString (this,
-					OciHandleType.Session,
-					password,
-					(uint) password.Length,
-					OciAttributeType.Password,
-					errorHandle);
-
-				if (status != 0)
+				if (!SetCredentialAttributes (errorHandle))
 					return false;
 			}
 

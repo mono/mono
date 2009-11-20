@@ -11,9 +11,13 @@
 // 
 // Author: 
 //     Tim Coleman <tim@timcoleman.com>
+//     Daniel Morgan <monodanmorg@yahoo.com>
 //         
 // Copyright (C) Tim Coleman, 2003
+// Copyright (C) Daniel Morgan, 2009
 // 
+
+//#define ORACLE_DATA_ACCESS
 
 using System;
 using System.Runtime.InteropServices;
@@ -28,6 +32,10 @@ namespace System.Data.OracleClient.Oci {
 		OciServerHandle server;
 
 		OciErrorHandle errorHandle;
+
+#if ORACLE_DATA_ACCESS
+		static readonly uint OCI_AUTH = 8;
+#endif
 
 		#endregion // Fields
 
@@ -92,6 +100,43 @@ namespace System.Data.OracleClient.Oci {
 			return (status == 0);
 		}
 
+#if ORACLE_DATA_ACCESS
+		byte[] UnicodeToCharSet (string s)
+		{
+			int rsize = 0;
+			byte [] buffer;
+			
+			// Get size of buffer
+			OciCalls.OCIUnicodeToCharSet (Parent, null, s, out rsize);
+			
+			// Fill buffer
+			buffer = new byte[rsize];
+			OciCalls.OCIUnicodeToCharSet (Parent, buffer, s, out rsize);
+
+			return buffer;
+		}
+
+		internal bool ChangePassword (string new_password, OciErrorHandle error) 
+		{			
+			if (!session.SetCredentialAttributes (error))
+				return false;
+
+			byte[] ub = UnicodeToCharSet (session.Username
+			byte[] opb = UnicodeToCharSet (session.Password);
+			byte[] npb = UnicodeToCharSet (new_password);
+
+			int status = OciCalls.OCIPasswordChange (this, error, ub, ub.Length, opb, opb.Length, npb, npb.Length, OCI_AUTH);
+			
+			if (status == 0) {
+				session.Password = new_password;
+				return true;
+			}
+				
+			return false;
+		}
+#endif
+
 		#endregion // Methods
 	}
 }
+
