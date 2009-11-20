@@ -94,7 +94,7 @@ mcs-do-test-profiles:
 mcs-do-run-test-profiles: test-support-files
 	cd $(mcs_topdir) && $(MAKE) NO_DIR_CHECK=1 PROFILES='$(test_profiles)' run-test-profiles
 
-if PLATFORM_WIN32
+if HOST_WIN32
 if CROSS_COMPILING
 cur_dir_cmd = pwd
 PLATFORM_PATH_SEPARATOR = :

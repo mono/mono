@@ -1,4 +1,4 @@
-if PLATFORM_WIN32
+if HOST_WIN32
 SUPPORT=
 else
 SUPPORT=libMonoSupportW.la
@@ -49,7 +49,7 @@ MPH_UNIX_SOURCE =				\
 	utime.c					\
 	x-struct-str.c
 
-if PLATFORM_WIN32
+if HOST_WIN32
 MPH_SOURCE = $(MPH_C_SOURCE)
 MPH_LIBS   = $(GLIB_LIBS)
 else

@@ -153,7 +153,7 @@ else
 mono_interp = mint
 endif
 
-if PLATFORM_WIN32
+if HOST_WIN32
 if CROSS_COMPILING
 plat_bindir = $(bindir)
 mono_instdir = $(prefix)/lib/mono
