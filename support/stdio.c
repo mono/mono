@@ -16,7 +16,7 @@
 
 G_BEGIN_DECLS
 
-#ifndef PLATFORM_WIN32
+#ifndef HOST_WIN32
 gint32
 Mono_Posix_Syscall_L_ctermid (void)
 {
@@ -32,7 +32,7 @@ Mono_Posix_Syscall_L_cuserid (void)
 	return L_cuserid;
 #endif
 }
-#endif /* ndef PLATFORM_WIN32 */
+#endif /* ndef HOST_WIN32 */
 
 mph_size_t
 Mono_Posix_Stdlib_fread (unsigned char *ptr, mph_size_t size, mph_size_t nmemb, void *stream)
