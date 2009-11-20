@@ -357,6 +357,7 @@ namespace Mono.CSharp {
 				: base (null, loc)
 			{
 				this.method = method;
+				eclass = ExprClass.Unresolved;
 			}
 
 			protected override Expression DoResolve (ResolveContext ec)

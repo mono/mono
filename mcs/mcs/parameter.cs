@@ -250,7 +250,7 @@ namespace Mono.CSharp {
 		int idx;
 		public bool HasAddressTaken;
 
-		LocalVariableReference expr_tree_variable;
+		Expression expr_tree_variable;
 		static TypeExpr parameter_expr_tree_type;
 
 		HoistedVariable hoisted_variant;
@@ -570,12 +570,8 @@ namespace Mono.CSharp {
 			if ((modFlags & Modifier.ISBYREF) != 0)
 				ec.Report.Error (1951, Location, "An expression tree parameter cannot use `ref' or `out' modifier");
 
-			LocalInfo variable = ec.CurrentBlock.AddTemporaryVariable (
-				ResolveParameterExpressionType (ec, Location), Location);
-			variable.Resolve (ec);
-
-			expr_tree_variable = new LocalVariableReference (
-				ec.CurrentBlock, variable.Name, Location, variable, false);
+			expr_tree_variable = new TemporaryVariable (ResolveParameterExpressionType (ec, Location).Type, Location);
+			expr_tree_variable = expr_tree_variable.Resolve (ec);
 
 			Arguments arguments = new Arguments (2);
 			arguments.Add (new Argument (new TypeOf (

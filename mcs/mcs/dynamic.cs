@@ -293,9 +293,6 @@ namespace Mono.CSharp
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			if (DoResolveCore (ec))
 				binder_expr = binder.CreateCallSiteBinder (ec, arguments);
 

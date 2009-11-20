@@ -32,7 +32,10 @@ namespace Mono.CSharp {
 			if (ec.IsInProbingMode)
 				return this;
 
-			BlockContext bc = new BlockContext (ec.MemberContext, ec.CurrentBlock.Explicit, TypeManager.void_type);
+			BlockContext bc = new BlockContext (ec.MemberContext, ec.CurrentBlock.Explicit, TypeManager.void_type) {
+				CurrentAnonymousMethod = ec.CurrentAnonymousMethod
+			};
+
 			Expression args = Parameters.CreateExpressionTree (bc, loc);
 			Expression expr = Block.CreateExpressionTree (ec);
 			if (expr == null)

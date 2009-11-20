@@ -282,6 +282,9 @@ namespace Mono.CSharp {
 
 		public new Constant Resolve (ResolveContext rc)
 		{
+			if (eclass != ExprClass.Unresolved)
+				return this;
+
 			// Resolved constant has to be still a constant
 			Constant c = (Constant) DoResolve (rc);
 			if (c == null)

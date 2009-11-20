@@ -648,8 +648,7 @@ namespace Mono.CSharp {
 
 		public override bool Resolve (BlockContext ec)
 		{
-			if (expr != null && expr.eclass == ExprClass.Invalid)
-				expr = expr.ResolveStatement (ec);
+			expr = expr.ResolveStatement (ec);
 			return expr != null;
 		}
 		

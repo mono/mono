@@ -485,9 +485,6 @@ namespace Mono.CSharp.Nullable
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			unwrap = Unwrap.Create (Expr, false);
 			if (unwrap == null)
 				return null;
@@ -619,9 +616,6 @@ namespace Mono.CSharp.Nullable
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			if ((Oper & Operator.LogicalMask) != 0) {
 				Error_OperatorCannotBeApplied (ec, left, right);
 				return null;
@@ -1055,9 +1049,6 @@ namespace Mono.CSharp.Nullable
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			left = left.Resolve (ec);
 			right = right.Resolve (ec);
 
@@ -1136,8 +1127,6 @@ namespace Mono.CSharp.Nullable
 			this.expr = expr;
 			this.Mode = mode;
 			this.loc = loc;
-
-			eclass = ExprClass.Value;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -1159,6 +1148,8 @@ namespace Mono.CSharp.Nullable
 			if (underlying == null)
 				return null;
 
+
+			eclass = ExprClass.Value;
 			type = expr.Type;
 			return this;
 		}

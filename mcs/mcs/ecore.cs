@@ -29,7 +29,7 @@ namespace Mono.CSharp {
 	///   nothing).
 	/// </remarks>
 	public enum ExprClass : byte {
-		Invalid,
+		Unresolved	= 0,
 		
 		Value,
 		Variable,
@@ -446,8 +446,7 @@ namespace Mono.CSharp {
 			ec.Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
 		}
 
-		ResolveFlags ExprClassToResolveFlags
-		{
+		ResolveFlags ExprClassToResolveFlags {
 			get {
 				switch (eclass) {
 				case ExprClass.Type:
@@ -483,6 +482,9 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public Expression Resolve (ResolveContext ec, ResolveFlags flags)
 		{
+			if (eclass != ExprClass.Unresolved)
+				return this;
+
 			if ((flags & ResolveFlags.MaskExprClass) == ResolveFlags.Type) 
 				return ResolveAsTypeStep (ec, false);
 
@@ -581,7 +583,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (e.eclass == ExprClass.Invalid)
+			if (e.eclass == ExprClass.Unresolved)
 				throw new Exception ("Expression " + e + " ExprClass is Invalid after resolve");
 
 			if ((e.type == null) && !(e is GenericTypeExpr))
@@ -626,8 +628,6 @@ namespace Mono.CSharp {
 
 		protected Expression ()
 		{
-			eclass = ExprClass.Invalid;
-			type = null;
 		}
 
 		/// <summary>
@@ -972,8 +972,8 @@ namespace Mono.CSharp {
 		{
 			get {
 				switch (eclass){
-				case ExprClass.Invalid:
-					return "Invalid";
+				case ExprClass.Unresolved:
+					return "Unresolved";
 				case ExprClass.Value:
 					return "value";
 				case ExprClass.Variable:
@@ -2279,7 +2279,7 @@ namespace Mono.CSharp {
 		//
 		public static Constant Create (Constant expr, Expression original_expr)
 		{
-			if (expr.eclass == ExprClass.Invalid)
+			if (expr.eclass == ExprClass.Unresolved)
 				throw new ArgumentException ("Unresolved expression");
 
 			return new ReducedConstantExpression (expr, original_expr);
@@ -2304,7 +2304,7 @@ namespace Mono.CSharp {
 			if (s != null)
 				return Create (s, original_expr);
 
-			if (expr.eclass == ExprClass.Invalid)
+			if (expr.eclass == ExprClass.Unresolved)
 				throw new ArgumentException ("Unresolved expression");
 
 			return new ReducedExpression (expr, original_expr);
@@ -3754,6 +3754,8 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
+			this.eclass = ExprClass.MethodGroup;
+
 			if (InstanceExpression != null) {
 				InstanceExpression = InstanceExpression.Resolve (ec);
 				if (InstanceExpression == null)
@@ -5002,10 +5004,6 @@ namespace Mono.CSharp {
 				}
 			}
 
-			// TODO: the code above uses some non-standard multi-resolve rules
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			if (!ec.IsObsolete) {
 				FieldBase f = TypeManager.GetField (FieldInfo);
 				if (f != null) {
@@ -5048,7 +5046,6 @@ namespace Mono.CSharp {
 				return null;
 
 			variable_info = vi.GetSubStruct (FieldInfo.Name);
-			eclass = ExprClass.Variable;
 			return this;
 		}
 
@@ -5398,7 +5395,6 @@ namespace Mono.CSharp {
 		MethodInfo getter, setter;
 		bool is_static;
 
-		bool resolved;
 		TypeArguments targs;
 		
 		LocalTemporary temp;
@@ -5407,7 +5403,6 @@ namespace Mono.CSharp {
 		public PropertyExpr (Type container_type, PropertyInfo pi, Location l)
 		{
 			PropertyInfo = pi;
-			eclass = ExprClass.PropertyAccess;
 			is_static = false;
 			loc = l;
 
@@ -5633,8 +5628,7 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (resolved)
-				return this;
+			eclass = ExprClass.PropertyAccess;
 
 			bool must_do_cs1540_check = false;
 			ec.Report.DisableReporting ();
@@ -5681,13 +5675,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			resolved = true;
-
 			return this;
 		}
 
 		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
+			eclass = ExprClass.PropertyAccess;
+
 			if (right_side == EmptyExpression.OutAccess.Instance) {
 				if (ec.CurrentBlock.Toplevel.GetParameterReference (PropertyInfo.Name, loc) is MemberAccess) {
 					ec.Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
@@ -5908,7 +5902,6 @@ namespace Mono.CSharp {
 		{
 			EventInfo = ei;
 			this.loc = loc;
-			eclass = ExprClass.EventAccess;
 
 			add_accessor = TypeManager.GetAddMethod (ei);
 			remove_accessor = TypeManager.GetRemoveMethod (ei);
@@ -6047,6 +6040,8 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
+			eclass = ExprClass.EventAccess;
+
 			bool must_do_cs1540_check;
 			if (!(IsAccessorAccessible (ec.CurrentType, add_accessor, out must_do_cs1540_check) &&
 			      IsAccessorAccessible (ec.CurrentType, remove_accessor, out must_do_cs1540_check))) {
@@ -6111,7 +6106,6 @@ namespace Mono.CSharp {
 		{
 			this.type = type;
 			this.loc = loc;
-			eclass = ExprClass.Variable;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -6121,8 +6115,7 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (li != null)
-				return this;
+			eclass = ExprClass.Variable;
 
 			TypeExpr te = new TypeExpression (type, loc);
 			li = ec.CurrentBlock.AddTemporaryVariable (te, loc);
@@ -6143,7 +6136,7 @@ namespace Mono.CSharp {
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			return DoResolve (ec);
+			return Resolve (ec);
 		}
 		
 		public override void Emit (EmitContext ec)

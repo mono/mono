@@ -1387,9 +1387,6 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			eclass = ExprClass.Type;
 
 			if (!args.Resolve (ec))

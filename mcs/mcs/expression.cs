@@ -1137,7 +1137,7 @@ namespace Mono.CSharp {
 				Binary.Operator op = IsDecrement ? Binary.Operator.Subtraction : Binary.Operator.Addition;
 				operation = new Binary (op, operation, one);
 				operation = operation.Resolve (ec);
-				if (operation.Type != type)
+				if (operation != null && operation.Type != type)
 					operation = Convert.ExplicitNumericConversion (operation, type);
 
 				return this;
@@ -1447,10 +1447,6 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			// Because expr is modified
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			if (resolved_type == null) {
 				resolved_type = base.DoResolve (ec);
 
@@ -3801,7 +3797,7 @@ namespace Mono.CSharp {
 
 		public static StringConcat Create (ResolveContext rc, Expression left, Expression right, Location loc)
 		{
-			if (left.eclass == ExprClass.Invalid || right.eclass == ExprClass.Invalid)
+			if (left.eclass == ExprClass.Unresolved || right.eclass == ExprClass.Unresolved)
 				throw new ArgumentException ();
 
 			var s = new StringConcat (left, right, loc);
@@ -3925,6 +3921,7 @@ namespace Mono.CSharp {
 			: base (oper_method, arguments, expr_tree, loc)
 		{
 			this.is_and = is_and;
+			eclass = ExprClass.Unresolved;
 		}
 		
 		protected override Expression DoResolve (ResolveContext ec)
@@ -4472,7 +4469,6 @@ namespace Mono.CSharp {
 		public Block Block;
 		public LocalInfo local_info;
 		bool is_readonly;
-		bool resolved;	// TODO: merge with eclass
 
 		public LocalVariableReference (Block block, string name, Location l)
 		{
@@ -4554,8 +4550,6 @@ namespace Mono.CSharp {
 
 		Expression DoResolveBase (ResolveContext ec)
 		{
-			type = local_info.VariableType;
-
 			Expression e = Block.GetConstantExpression (Name);
 			if (e != null)
 				return e.Resolve (ec);
@@ -4576,16 +4570,13 @@ namespace Mono.CSharp {
 				}
 			}
 
-			resolved |= ec.DoFlowAnalysis;
 			eclass = ExprClass.Variable;
+			type = local_info.VariableType;
 			return this;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (resolved)
-				return this;
-
 			ResolveLocalInfo ();
 			local_info.Used = true;
 
@@ -4927,10 +4918,6 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			// Don't resolve already resolved expression
-			if (eclass != ExprClass.Invalid)
-				return this;
-			
 			Expression member_expr = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 			if (member_expr == null)
 				return null;
@@ -6693,9 +6680,6 @@ namespace Mono.CSharp {
 
 		public bool ResolveBase (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return true;
-
 			eclass = ExprClass.Variable;
 			type = ec.CurrentType;
 
@@ -6938,9 +6922,6 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			TypeExpr texpr = QueriedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
@@ -7531,7 +7512,7 @@ namespace Mono.CSharp {
 				me.SetTypeArguments (ec, targs);
 			}
 
-			if (original != null && !TypeManager.IsValueType (expr_type)) {
+			if (original != null && (!TypeManager.IsValueType (expr_type) || me is PropertyExpr)) {
 				if (me.IsInstance) {
 					LocalVariableReference var = expr_resolved as LocalVariableReference;
 					if (var != null && !var.VerifyAssigned (ec))
@@ -7973,20 +7954,6 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-#if false
-			ExprClass eclass = ea.Expr.eclass;
-
-			// As long as the type is valid
-			if (!(eclass == ExprClass.Variable || eclass == ExprClass.PropertyAccess ||
-			      eclass == ExprClass.Value)) {
-				ea.Expr.Error_UnexpectedKind ("variable or value");
-				return null;
-			}
-#endif
-
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			// dynamic is used per argument in ConvertExpressionToArrayIndex case
 			bool dynamic;
 			ea.Arguments.Resolve (ec, out dynamic);
@@ -8460,7 +8427,6 @@ namespace Mono.CSharp {
 		{
 			this.instance_expr = instance_expr;
 			this.is_base_indexer = is_base_indexer;
-			this.eclass = ExprClass.Value;
 			this.loc = loc;
 		}
 
@@ -8972,7 +8938,6 @@ namespace Mono.CSharp {
 
 		private EmptyExpressionStatement ()
 		{
-			eclass = ExprClass.Value;
 			loc = Location.Null;
 		}
 
@@ -8988,6 +8953,7 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
+			eclass = ExprClass.Value;
 			type = TypeManager.object_type;
 			return this;
 		}
@@ -9482,9 +9448,6 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			base.expr = new AddMemberAccess (ec.CurrentInitializerVariable, loc);
 
 			return base.DoResolve (ec);
@@ -9543,9 +9506,6 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-
 			ArrayList element_names = null;
 			for (int i = 0; i < initializers.Count; ++i) {
 				Expression initializer = (Expression) initializers [i];
@@ -9719,9 +9679,6 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass != ExprClass.Invalid)
-				return this;
-			
 			Expression e = base.DoResolve (ec);
 			if (type == null)
 				return null;

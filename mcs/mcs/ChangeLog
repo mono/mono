@@ -1,3 +1,8 @@
+2009-11-20  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Resolved expressions are never resolved again, this helps to
+	uncover some not easy to find bugs and improve the performance.
+
 2009-11-19  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Made constant expressions fully compatible with any other

@@ -1540,10 +1540,8 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (eclass == ExprClass.Invalid) {
-				if (!Define (ec))
-					return null;
-			}
+			if (!Define (ec))
+				return null;
 
 			eclass = ExprClass.Value;
 			return this;
