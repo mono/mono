@@ -99,7 +99,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
-					expr = expr.Resolve (rc, Compiler.ResolveFlags.VariableOrValue | Compiler.ResolveFlags.DisableFlowAnalysis);
+					expr = expr.Resolve (rc, Compiler.ResolveFlags.VariableOrValue);
 				}
 
 				if (expr == null)
