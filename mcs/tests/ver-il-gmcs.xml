@@ -39517,7 +39517,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>95</size>
+        <size>89</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey0">
@@ -39557,7 +39557,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>171</size>
+        <size>162</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey0">
@@ -39602,7 +39602,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>233</size>
+        <size>224</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey1">
@@ -39669,7 +39669,7 @@
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey2">
       <method name="Void &lt;&gt;m__0()">
-        <size>356</size>
+        <size>347</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey2+&lt;Test&gt;c__AnonStorey4">
@@ -39712,7 +39712,7 @@
         <size>7</size>
       </method>
       <method name="Void &lt;&gt;m__0()">
-        <size>166</size>
+        <size>157</size>
       </method>
     </type>
     <type name="X+&lt;Test&gt;c__AnonStorey0">
