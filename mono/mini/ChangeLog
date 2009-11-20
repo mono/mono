@@ -1,3 +1,8 @@
+2009-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-ppc.c (mono_arch_create_generic_class_init_trampoline_full): These
+	receive their argument in MONO_ARCH_VTABLE_REG, not in the first argument reg.
+
 2009-11-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (handle_thunk): Add a domain argument to control the domain
