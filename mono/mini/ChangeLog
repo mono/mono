@@ -1,3 +1,8 @@
+2009-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (create_event_list): Fix a crash if an empty assembly list
+	was used as an assembly filter.
+
 2009-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* unwind.c: Fix support for ppc.
