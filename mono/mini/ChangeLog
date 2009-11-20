@@ -1,3 +1,7 @@
+2009-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (assembly_commands): Implement GET_NAME command.
+
 2009-11-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_handle_exception): Pass a MonoJitInfo to
