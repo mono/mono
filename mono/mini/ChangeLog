@@ -1,5 +1,15 @@
 2009-11-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c mini-trampolines.c driver.c: Add a 'mono_use_llvm' flag to control
+	whenever the runtime uses LLVM code. Add a '--llvm' command line option to set
+	it. Use this flag to control llvm related code paths instead of #ifdef
+	ENABLE_LLVM, so a runtime configured without --enable-llvm can use LLVM compiled
+	AOT code.
+
+	* aot-runtime.c aot-compiler.c: Add a 'flag' field to MonoAotFileInfo.
+
+	* mini.h: Bump AOT file format version.
+
 	* tramp-ppc.c (mono_arch_create_generic_class_init_trampoline_full): These
 	receive their argument in MONO_ARCH_VTABLE_REG, not in the first argument reg.
 
