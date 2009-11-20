@@ -1,3 +1,11 @@
+2009-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c (mono_test_marshal_bool_in): Use 'short' as the type of the
+	variant bool argument.
+
+	* marshalbool.cs: Pass -1 as the 'expected' argument instead of 0xffff, which
+	causes sign extensions issues on some platforms.
+
 2009-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs: Add a test for AssemblyMirror.GetName ().
