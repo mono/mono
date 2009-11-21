@@ -1,3 +1,10 @@
+2009-11-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* cfold.c (mono_constant_fold_ins): Fix constant folding of shr_imm. Fixes
+	#557262.
+
+	* basic.cs: Add a test.
+
 2009-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-ppc.c (mono_arch_create_generic_class_init_trampoline_full): These
