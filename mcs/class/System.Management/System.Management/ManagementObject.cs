@@ -385,6 +385,12 @@ namespace System.Management
 				throw new NotImplementedException ();
 			}
 		}
+
+		[MonoTODO]
+		public void Dispose ()
+		{
+			base.Dispose ();
+		}
 	}
 }
 

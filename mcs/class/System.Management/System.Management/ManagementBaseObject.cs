@@ -171,6 +171,11 @@ namespace System.Management
 				throw new NotImplementedException ();
 			}
 		}
+
+		public void Dispose ()
+		{
+			base.Dispose ();
+		}
 	}
 }
 

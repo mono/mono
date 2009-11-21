@@ -28,6 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Security;
+
 namespace System.Management
 {
 	public class ConnectionOptions : ManagementOptions, ICloneable
@@ -50,6 +52,18 @@ namespace System.Management
 		{
 		}
 
+		public ConnectionOptions (string locale,
+					  string username,
+					  SecureString password,
+					  string authority,
+					  ImpersonationLevel impersonation,
+					  AuthenticationLevel authentication,
+					  bool enablePrivileges,
+					  ManagementNamedValueCollection context,
+					  TimeSpan timeout)
+		{
+		}
+		
 		[MonoTODO]
 		public override object Clone ()
 		{
