@@ -1,3 +1,10 @@
+2009-11-21  Raja R Harinath  <harinath@hurrynot.org>
+
+	* System.Collections.ObjectModel/ObservableCollection.cs [NET_4_0]:
+	Forward type to System.dll.
+	* System.Collections.ObjectModel/ReadOnlyObservableCollection.cs:
+	Likewise.
+
 2009-06-25  Sandy Armstrong  <sanfordarmstrong@gmail.com>
 
 	* System.Windows/Rect.cs: Implement unimplemented ToString methods to

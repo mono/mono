@@ -24,6 +24,14 @@
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
 
+#if NET_4_0
+
+using System.Collections.Specialized;
+using System.Runtime.CompilerServices;
+[assembly:TypeForwardedTo (typeof (NotifyCollectionChangedEventArgs))]
+
+#else
+
 namespace System.Collections.Specialized {
 	public class NotifyCollectionChangedEventArgs : EventArgs {
 		private NotifyCollectionChangedAction action;
@@ -209,3 +217,4 @@ namespace System.Collections.Specialized {
 		#endregion
 	}
 }
+#endif

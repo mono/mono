@@ -23,6 +23,14 @@
 //	Chris Toshok (toshok@ximian.com)
 //
 
+#if NET_4_0
+
+using System.Collections.Specialized;
+using System.Runtime.CompilerServices;
+[assembly:TypeForwardedTo (typeof (NotifyCollectionChangedEventHandler))]
+
+#else
+
 using System;
 
 namespace System.Collections.Specialized {
@@ -30,3 +38,4 @@ namespace System.Collections.Specialized {
 	public delegate void NotifyCollectionChangedEventHandler (object sender, NotifyCollectionChangedEventArgs e);
 
 }
+#endif

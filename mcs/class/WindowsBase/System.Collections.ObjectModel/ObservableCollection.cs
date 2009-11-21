@@ -24,6 +24,14 @@
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
 
+#if NET_4_0
+
+using System.Collections.ObjectModel;
+using System.Runtime.CompilerServices;
+[assembly:TypeForwardedTo (typeof (ObservableCollection<>))]
+
+#else
+
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
@@ -180,3 +188,4 @@ namespace System.Collections.ObjectModel {
 		}
 	}
 }
+#endif
