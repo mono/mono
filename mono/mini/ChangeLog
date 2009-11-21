@@ -1,3 +1,8 @@
+2009-11-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Use mono_use_llvm instead of ENABLE_LLVM
+	in one more place.
+
 2009-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c mini-trampolines.c driver.c: Add a 'mono_use_llvm' flag to control
