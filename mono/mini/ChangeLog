@@ -1,5 +1,9 @@
 2009-11-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* cprop.c: Remove this unused file.
+
+2009-11-21  Zoltan Varga  <vargaz@gmail.com>
+
 	* cfold.c (mono_constant_fold_ins): Fix constant folding of shr_imm. Fixes
 	#557262.
 
