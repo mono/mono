@@ -1,3 +1,8 @@
+2009-11-21  Daniel Morgan  <monodanmorg@yahoo.com>
+
+	* OciDefineHandle.cs: implement data types LONG RAW / LONG VARRAW
+		to output as byte[]
+
 2009-10-29  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #321718
