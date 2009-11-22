@@ -1,3 +1,18 @@
+2009-11-21  Daniel Morgan  <monodanmorg@yahoo.com>
+
+	* System.Data.OracleClient/OracleParameter.cs:
+		- if programmer explicitly sets the Size property,
+		do not override the size later if the Value property
+		is set for character data.
+		- for character and numeric data types, output and 
+		return parameters were not allocated memory.  Also,
+		input/output parameters need to allocate memory 
+		based on Size because the output can be bigger than
+		the input after an execute.
+
+	* Test/TestOracleClient.cs: Data Adapter Test 2 is failing 
+	for NET_2_0 profile.
+
 2009-11-19  Daniel Morgan  <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleConnection.cs

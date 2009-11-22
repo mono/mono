@@ -80,6 +80,7 @@ namespace System.Data.OracleClient
 
 		short indicator; 
 		int bindSize;
+		bool sizeManuallySet;
 
 		#endregion // Fields
 
@@ -332,6 +333,7 @@ namespace System.Data.OracleClient
 			set {
 				sizeSet = true;
 				size = value;
+				sizeManuallySet = true;
 			}
 		}
 
@@ -485,12 +487,25 @@ namespace System.Data.OracleClient
 						// Get size of buffer
 						status = OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
 
-						// allocate memory based on oracle returned length
-						bytes = new byte [rsize];
+						if (direction == ParameterDirection.Input)
+							bindSize = rsize;
+						else {
+							// this cannot be rsize because you need room for the output after the execute
+							bindSize = Encoding.UTF8.GetMaxByteCount (Size + 1);
+						}
+
+						// allocate memory based on bind size
+						bytes = new byte [bindSize];
 
 						// Fill buffer
 						status = OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
-						bindSize = bytes.Length;
+					}
+
+					if (direction == ParameterDirection.ReturnValue || direction == ParameterDirection.Output) {
+						// for Return and Output params, get size in bytes 					
+						bindSize = Encoding.UTF8.GetMaxByteCount (size + 1);
+						// allocate memory for oracle to place the results for the Return or Output param						
+						bytes = new byte [bindSize];
 					}
 					break;
 				case OciDataType.Date:
@@ -605,8 +620,18 @@ namespace System.Data.OracleClient
 						OciCalls.OCIUnicodeToCharSet (statement.Parent, null, svalue, out rsize);
 
 						// Fill buffer 
-						bytes = new byte [rsize];
+						
+						if (direction == ParameterDirection.Input)
+							bindSize = rsize;
+						else
+							bindSize = 30; // need room for output possibly being bigger than the input
+						
+						bytes = new byte [bindSize];
 						OciCalls.OCIUnicodeToCharSet (statement.Parent, bytes, svalue, out rsize);
+					}
+					if (direction == ParameterDirection.ReturnValue || direction == ParameterDirection.Output) {
+						bindSize = 30;
+						bytes = new byte [bindSize];
 					} 
 					break;
 				case OciDataType.Long:
@@ -958,6 +983,8 @@ namespace System.Data.OracleClient
 			case OciDataType.OciString:
 			case OciDataType.Long:
 			case OciDataType.LongVarChar:
+				if (sizeManuallySet == true)
+					return size;
 				if (value == null || value == DBNull.Value)
 					newSize = 0;
 				else
