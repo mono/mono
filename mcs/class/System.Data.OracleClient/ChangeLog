@@ -1,5 +1,9 @@
 2009-11-21  Daniel Morgan  <monodanmorg@yahoo.com>
 
+	* System.Data.OracleClient/OracleParameter.cs: clean up
+
+2009-11-21  Daniel Morgan  <monodanmorg@yahoo.com>
+
 	* System.Data.OracleClient/OracleParameter.cs:
 		- if programmer explicitly sets the Size property,
 		do not override the size later if the Value property
