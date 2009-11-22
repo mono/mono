@@ -401,6 +401,18 @@ class Tests {
 		return 0;
 	}
 
+	struct S<T> {}
+
+	public static int test_0_inline_infinite_polymorphic_recursion () {
+           f<int>(0);
+
+		   return 0;
+	}
+
+	private static void f<T>(int i) {
+		if(i==42) f<S<T>>(i);
+	}
+
 	enum MyEnumUlong : ulong {
 		Value_2 = 2
 	}
