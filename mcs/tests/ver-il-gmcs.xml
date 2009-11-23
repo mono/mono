@@ -35574,6 +35574,31 @@
       </method>
     </type>
   </test>
+  <test name="test-682.cs">
+    <type name="broken_cast">
+      <method name="Void report(System.String)">
+        <size>7</size>
+      </method>
+      <method name="Void conv_ovf_i(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_i_un(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_u(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Void conv_ovf_u_un(Int64, Boolean)">
+        <size>73</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>472</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-683.cs">
     <type name="broken_cast">
       <method name="Void .ctor()">
@@ -36597,16 +36622,6 @@
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-    </type>
-  </test>
-  <test name="test-733.cs">
-    <type name="Test">
-      <method name="Int32 Main()">
-        <size>43</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
