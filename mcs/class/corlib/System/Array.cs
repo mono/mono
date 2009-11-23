@@ -1588,8 +1588,11 @@ namespace System
 					return;
 				}
 
-				// Use Comparer<T>.Default instead
-				// comparer = Comparer<K>.Default;
+				// Using Comparer<TKey> adds a small overload, but with value types it
+				// helps us to not box them.
+				if (typeof (IComparable<TKey>).IsAssignableFrom (typeof (TKey)) &&
+						typeof (TKey).IsValueType)
+					comparer = Comparer<TKey>.Default;
 			}
 			
 			int low = index;

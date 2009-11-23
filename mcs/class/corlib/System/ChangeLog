@@ -1,3 +1,11 @@
+2009-11-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Array.cs: When sorting and we are sorting value types implementing
+	IComparable<T>, use its corresponding Comparer<T>.Default helper. 
+	This way we avoid casting our values to IComparable<T>, and thus we 
+	avoid *all* the boxing for them. Using Comparer<T>.Default seems to be
+	slower for reference types, so we don't use it for those ones.
+
 2009-11-22  Miguel de Icaza  <miguel@novell.com>
 
 	* Environment (IsUnix): expose this common property, so we avoid
