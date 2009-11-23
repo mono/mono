@@ -1,3 +1,10 @@
+2009-11-22  Miguel de Icaza  <miguel@novell.com>
+
+	* Directory.cs: Added new IEnumerable methods to Directory.
+
+	* MonoIO.cs: Surface a high level FindFirst/FindNext API to
+	implement the various enumerable APIs.
+
 2009-11-13  Marek Safar <marek.safar@gmail.com>
 
 	* UnmanagedMemoryAccessor.cs: Finished.

@@ -467,14 +467,12 @@ namespace System.IO
 				throw new ArgumentException ("Path contains invalid chars");
 		}
 
-		private static string [] GetFileSystemEntries (string path, string searchPattern, FileAttributes mask, FileAttributes attrs)
+		// Does the common validation, searchPattern has already been checked for not-null
+		static string ValidateDirectoryListing (string path, string searchPattern, out bool stop)
 		{
-			if (path == null || searchPattern == null)
-				throw new ArgumentNullException ();
+			if (path == null)
+				throw new ArgumentNullException ("path");
 
-			if (searchPattern.Length == 0)
-				return new string [] {};
-			
 			if (path.Trim ().Length == 0)
 				throw new ArgumentException ("The Path does not have a valid format");
 
@@ -495,7 +493,8 @@ namespace System.IO
 				if (error == MonoIOError.ERROR_SUCCESS) {
 					MonoIOError file_error;
 					if (MonoIO.ExistsFile (wildpath, out file_error)) {
-						return new string [] { wildpath };
+						stop = true;
+						return wildpath;
 					}
 				}
 
@@ -511,13 +510,85 @@ namespace System.IO
 				throw new ArgumentException ("Path is invalid", "path");
 			}
 
-			string path_with_pattern = Path.Combine (wildpath, searchPattern);
+			stop = false;
+			return Path.Combine (wildpath, searchPattern);
+		}
+		
+		private static string [] GetFileSystemEntries (string path, string searchPattern, FileAttributes mask, FileAttributes attrs)
+		{
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+			if (searchPattern.Length == 0)
+				return new string [] {};
+			bool stop;
+			string path_with_pattern = ValidateDirectoryListing (path, searchPattern, out stop);
+			if (stop)
+				return new string [] { path_with_pattern };
+
+			MonoIOError error;
 			string [] result = MonoIO.GetFileSystemEntries (path, path_with_pattern, (int) attrs, (int) mask, out error);
 			if (error != 0)
-				throw MonoIO.GetException (wildpath, error);
+				throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), error);
 			
 			return result;
 		}
+
+#if NET_4_0
+		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories(string path, string searchPattern, SearchOption searchOption)
+		{
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+
+			if (searchPattern.Length == 0)
+				yield break;
+
+			if (searchOption != SearchOption.TopDirectoryOnly && searchOption != SearchOption.AllDirectories)
+				throw new ArgumentOutOfRangeException ("searchoption");
+
+			bool stop;
+			string path_with_pattern = ValidateDirectoryListing (path, searchPattern, out stop);
+			if (stop){
+				yield return path_with_pattern;
+				yield break;
+			}
+			
+			IntPtr handle;
+			int error;
+
+			// Do not follow symlinks (ReparsePoint), need to check if Windows has different semantics
+			// the loop is possible, but not sure if the MS version deals with this:
+			// http://blogs.msdn.com/oldnewthing/archive/2004/12/27/332704.aspx
+			
+			string s = MonoIO.FindFirst (path, path_with_pattern, (int) FileAttributes.Directory, (int) (FileAttributes.Directory|FileAttributes.ReparsePoint), out error, out handle);
+			if (s == null)
+				yield break;
+			if (error != 0)
+				throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
+
+			try {
+				yield return s;
+				
+				while ((s = MonoIO.FindNext (handle, out error)) != null){
+					yield return s;
+					if (searchOption == SearchOption.AllDirectories)
+						foreach (string child in EnumerateDirectories (s, searchPattern, SearchOption.AllDirectories))
+							yield return child;
+				}
+			} finally {
+				MonoIO.FindClose (handle);
+			}
+		}
+
+		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories (string path, string searchPattern)
+		{
+			return EnumerateDirectories (path, searchPattern, SearchOption.TopDirectoryOnly);
+		}
+
+		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories (string path)
+		{
+			return EnumerateDirectories (path, "*", SearchOption.TopDirectoryOnly);
+		}
+#endif
 
 #if !NET_2_1 || MONOTOUCH
 		[MonoNotSupported ("DirectorySecurity isn't implemented")]
