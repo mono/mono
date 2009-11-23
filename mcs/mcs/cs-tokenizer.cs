@@ -497,11 +497,11 @@ namespace Mono.CSharp
 				for (int i = 1; i < id_len; ++i) {
 					if (id [i] != kwe.Value [i]) {
 						res = 0;
+						kwe = kwe.Next;
 						break;
 					}
 				}
-				kwe = kwe.Next;
-			} while (kwe != null && res == 0);
+			} while (res == 0 && kwe != null);
 
 			if (res == 0)
 				return -1;
@@ -2397,9 +2397,15 @@ namespace Mono.CSharp
 			return res;
 		}
 
-		private int consume_identifier (int c, bool quoted) 
+		int consume_identifier (int c, bool quoted) 
 		{
+			//
+			// This method is very performance sensitive. It accounts
+			// for approximately 25% of all parser time
+			//
+
 			int pos = 0;
+			Location loc = Location;
 
 			if (c == '\\') {
 				int surrogate;
@@ -2411,31 +2417,43 @@ namespace Mono.CSharp
 			}
 
 			id_builder [pos++] = (char) c;
-			Location loc = Location;
 
-			while ((c = get_char ()) != -1) {
-			loop:
-				if (is_identifier_part_character ((char) c)){
-					if (pos == max_id_size){
-						Report.Error (645, loc, "Identifier too long (limit is 512 chars)");
-						return Token.ERROR;
+			try {
+				while (true) {
+					c = reader.Read ();
+
+					if ((c >= 'a' && c <= 'z') || (c >= 'A' && c <= 'Z') || c == '_' || (c >= '0' && c <= '9')) {
+						id_builder [pos++] = (char) c;
+						continue;
 					}
-					
-					id_builder [pos++] = (char) c;
-				} else if (c == '\\') {
-					int surrogate;
-					c = escape (c, out surrogate);
-					if (surrogate != 0) {
-						if (is_identifier_part_character ((char) c))
-							id_builder [pos++] = (char) c;
-						c = surrogate;
+
+					if (c < 0x80) {
+						if (c == '\\') {
+							int surrogate;
+							c = escape (c, out surrogate);
+							if (surrogate != 0) {
+								if (is_identifier_part_character ((char) c))
+									id_builder[pos++] = (char) c;
+								c = surrogate;
+							}
+
+							continue;
+						}
+					} else if (Char.IsLetter ((char) c) || Char.GetUnicodeCategory ((char) c) == UnicodeCategory.ConnectorPunctuation) {
+						id_builder [pos++] = (char) c;
+						continue;
 					}
-					goto loop;
-				} else {
-					putback (c);
+
+					putback_char = c;
 					break;
 				}
+			} catch (IndexOutOfRangeException) {
+				col += pos - 1;
+				Report.Error (645, loc, "Identifier too long (limit is 512 chars)");
+				return Token.ERROR;
 			}
+
+			col += pos - 1;
 
 			//
 			// Optimization: avoids doing the keyword lookup

@@ -1,5 +1,9 @@
 2009-11-23  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-tokenizer.cs, support.cs: Some tokenizer optimizations.
+
+2009-11-23  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs, support.cs: Use Dictionary instead of Hashtable,
 	cleanup some obsolete code.
 

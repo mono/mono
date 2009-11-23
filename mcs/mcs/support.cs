@@ -96,7 +96,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class SeekableStreamReader
 	{
-		const int default_average_read_length = 1024;
 		const int buffer_read_length_spans = 3;
 
 		TextReader reader;
@@ -113,7 +112,7 @@ namespace Mono.CSharp {
 		{
 			average_read_length += read_length_inc;
 			stream.Position = 0;
-			reader = new StreamReader (stream, encoding, true);
+			reader = new StreamReader (stream, encoding, true, average_read_length);
 			buffer = new char [average_read_length * buffer_read_length_spans];
 			buffer_start = char_count = pos = 0;
 		}
@@ -123,6 +122,7 @@ namespace Mono.CSharp {
 			this.stream = stream;
 			this.encoding = encoding;
 
+			const int default_average_read_length = 1024;
 			ResetStream (default_average_read_length);
 		}
 
