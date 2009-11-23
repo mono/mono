@@ -223,9 +223,7 @@ namespace System.IO {
 		[MonoTODO("Currently only implemented on Mono/Linux")]
 		public static DriveInfo[] GetDrives ()
 		{
-			int platform = (int) Environment.Platform;
-
-			if (platform == 4 || platform == 128 || platform == 6)
+			if (Environment.IsUnix)
 				return UnixGetDrives ();
 			else
 				return WindowsGetDrives ();
