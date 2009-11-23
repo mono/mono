@@ -1,3 +1,8 @@
+2009-11-22  Miguel de Icaza  <miguel@novell.com>
+
+	* Environment (IsUnix): expose this common property, so we avoid
+	duplicating code. 
+
 2009-11-18  Marek Safar  <marek.safar@gmail.com>
 
 	* Type.cs: Use faster string comparers.

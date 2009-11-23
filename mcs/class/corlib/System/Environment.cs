@@ -707,6 +707,14 @@ namespace System {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static string internalGetHome ();
+
+		static internal bool IsUnix {
+			get {
+				int platform = (int) Environment.Platform;
+
+				return (platform == 4 || platform == 128 || platform == 6);
+			}
+		}
 	}
 }
 
