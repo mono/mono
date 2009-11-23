@@ -1,5 +1,13 @@
 2009-11-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c: Add support for a few simple cases which weren't supported
+	before.
+
+	* mini-trampolines.c (mono_magic_trampoline): Don't call
+	mono_arch_get_vcall_slot () when llvm is enabled.
+
+	* aot-compiler.c (emit_llvm_file): Add code to run the 'opt' llvm tool.
+
 	* mini-trampolines.c (mono_magic_trampoline): Extract the bulk of this function
 	into a new function called common_call_trampoline () which is used by the
 	llvm vcall trampoline as well.
