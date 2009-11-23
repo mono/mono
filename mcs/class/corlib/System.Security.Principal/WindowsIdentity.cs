@@ -91,7 +91,7 @@ namespace System.Security.Principal {
 
 			// TODO: Windows 2003 compatibility should be done in runtime
 			IntPtr token = GetUserToken (sUserPrincipalName);
-			if ((!IsPosix) && (token == IntPtr.Zero)) {
+			if ((!Environment.IsUnix) && (token == IntPtr.Zero)) {
 				throw new ArgumentException ("only for Windows Server 2003 +");
 			}
 
@@ -125,7 +125,7 @@ namespace System.Security.Principal {
 		public static WindowsIdentity GetAnonymous ()
 		{
 			WindowsIdentity id = null;
-			if (IsPosix) {
+			if (Environment.IsUnix) {
 				id = new WindowsIdentity ("nobody");
 				// special case
 				id._account = WindowsAccountType.Anonymous;
@@ -263,16 +263,9 @@ namespace System.Security.Principal {
 			info.AddValue ("m_isAuthenticated", _authenticated);
 		}
 #endif
-		private static bool IsPosix {
-			get {
-				int p = (int) Environment.Platform;
-				return (p == 128) || (p == 4) || (p == 6);
-			}
-		}
-
 		private void SetToken (IntPtr token) 
 		{
-			if (IsPosix) {
+			if (Environment.IsUnix) {
 
 				_token = token;
 				// apply defaults
