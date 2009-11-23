@@ -1,3 +1,10 @@
+2009-11-23  Juraj Skripsky <js@hotfeet.ch>
+
+	* List.cs (Sort): Call more appropriate overload of Array.Sort<T>.
+	Array.Sort<T> should be able to determine the comparison itself.
+	Speeds up the sorting for items of primitive type. 
+	Fixes #530450.
+
 2009-11-08  Juraj Skripsky <js@hotfeet.ch>
 
 	* List.cs (Sort): Sync to latest changes in Array.Sort.

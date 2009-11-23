@@ -563,7 +563,7 @@ namespace System.Collections.Generic {
 		
 		public void Sort ()
 		{
-			Array.Sort<T> (_items, 0, _size, Comparer <T>.Default);
+			Array.Sort<T> (_items, 0, _size);
 			_version++;
 		}
 		public void Sort (IComparer <T> comparer)
