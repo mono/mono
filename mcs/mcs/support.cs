@@ -62,49 +62,6 @@ namespace Mono.CSharp {
 #endif
 	}
 
-	/*
-	 * Hashtable whose keys are character arrays with the same length
-	 */
-	class CharArrayHashtable : Hashtable {
-		sealed class ArrComparer : IComparer {
-			private int len;
-
-			public ArrComparer (int len) {
-				this.len = len;
-			}
-
-			public int Compare (object x, object y)
-			{
-				char[] a = (char[])x;
-				char[] b = (char[])y;
-
-				for (int i = 0; i < len; ++i)
-					if (a [i] != b [i])
-						return 1;
-				return 0;
-			}
-		}
-
-		private int len;
-
-		protected override int GetHash (Object key)
-		{
-			char[] arr = (char[])key;
-			int h = 0;
-
-			for (int i = 0; i < len; ++i)
-				h = (h << 5) - h + arr [i];
-
-			return h;
-		}
-
-		public CharArrayHashtable (int len)
-		{
-			this.len = len;
-			comparer = new ArrComparer (len);
-		}
-	}
-
 	struct Pair {
 		public object First;
 		public object Second;

@@ -1,3 +1,8 @@
+2009-11-23  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs, support.cs: Use Dictionary instead of Hashtable,
+	cleanup some obsolete code.
+
 2009-11-20  Marek Safar  <marek.safar@gmail.com>
 
 	* context.cs, expression.cs, ecore.cs, complete.cs: Cleaned up

@@ -15,6 +15,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 using System.Reflection;
@@ -37,6 +38,34 @@ namespace Mono.CSharp
 			{
 				this.Value = value.ToCharArray ();
 				this.Token = token;
+			}
+		}
+
+		sealed class IdentifiersComparer : IEqualityComparer<char[]>
+		{
+			readonly int length;
+
+			public IdentifiersComparer (int length)
+			{
+				this.length = length;
+			}
+
+			public bool Equals (char[] x, char[] y)
+			{
+				for (int i = 0; i < length; ++i)
+					if (x [i] != y [i])
+						return false;
+
+				return true;
+			}
+
+			public int GetHashCode (char[] obj)
+			{
+				int h = 0;
+				for (int i = 0; i < length; ++i)
+					h = (h << 5) - h + obj [i];
+
+				return h;
 			}
 		}
 
@@ -188,7 +217,7 @@ namespace Mono.CSharp
 		// Class variables
 		// 
 		static KeywordEntry[][] keywords;
-		static Hashtable keyword_strings;
+		static Dictionary<string, object> keyword_strings; 		// TODO: HashSet
 		static NumberStyles styles;
 		static NumberFormatInfo csharp_format_info;
 		
@@ -216,11 +245,13 @@ namespace Mono.CSharp
 		const int max_id_size = 512;
 		static char [] id_builder = new char [max_id_size];
 
-		static CharArrayHashtable [] identifiers = new CharArrayHashtable [max_id_size + 1];
+		public static Dictionary<char[], string>[] identifiers = new Dictionary<char[], string>[max_id_size + 1];
 
 		const int max_number_size = 512;
 		static char [] number_builder = new char [max_number_size];
 		static int number_pos;
+
+		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
 		
 		//
 		// Details about the error encoutered by the tokenizer
@@ -303,7 +334,7 @@ namespace Mono.CSharp
 		
 		static void AddKeyword (string kw, int token)
 		{
-			keyword_strings.Add (kw, kw);
+			keyword_strings.Add (kw, null);
 
 			int length = kw.Length;
 			if (keywords [length] == null) {
@@ -326,7 +357,7 @@ namespace Mono.CSharp
 
 		static void InitTokens ()
 		{
-			keyword_strings = new Hashtable ();
+			keyword_strings = new Dictionary<string, object> ();
 
 			// 11 is the length of the longest keyword for now
 			keywords = new KeywordEntry [11] [];
@@ -661,7 +692,7 @@ namespace Mono.CSharp
 
 		public static bool IsKeyword (string s)
 		{
-			return keyword_strings [s] != null;
+			return keyword_strings.ContainsKey (s);
 		}
 
 		//
@@ -1125,16 +1156,8 @@ namespace Mono.CSharp
 							//
 							Report.Warning (78, 4, Location, "The 'l' suffix is easily confused with the digit '1' (use 'L' for clarity)");
 						}
-						//
-						// This goto statement causes the MS CLR 2.0 beta 1 csc to report an error, so
-						// work around that.
-						//
-						//goto case 'L';
-						if (is_long)
-							scanning = false;
-						is_long = true;
-						get_char ();
-						break;
+
+						goto case 'L';
 
 					case 'L': 
 						if (is_long)
@@ -1575,8 +1598,6 @@ namespace Mono.CSharp
 			current_token = xtoken ();
 			return current_token;
 		}
-
-		static StringBuilder static_cmd_arg = new System.Text.StringBuilder ();
 
 		void get_cmd_arg (out string cmd, out string arg)
 		{
@@ -2433,36 +2454,30 @@ namespace Mono.CSharp
 			// Keep identifiers in an array of hashtables to avoid needless
 			// allocations
 			//
-			CharArrayHashtable identifiers_group = identifiers [pos];
+			var identifiers_group = identifiers [pos];
+			string s;
 			if (identifiers_group != null) {
-				val = identifiers_group [id_builder];
-				if (val != null) {
-					val = new LocatedToken (loc, (string) val);
+				if (identifiers_group.TryGetValue (id_builder, out s)) {
+					val = new LocatedToken (loc, s);
 					if (quoted)
 						AddEscapedIdentifier ((LocatedToken) val);
 					return Token.IDENTIFIER;
 				}
 			} else {
-				identifiers_group = new CharArrayHashtable (pos);
+				// TODO: this should be number of files dependant
+				// corlib compilation peaks at 1000 and System.Core at 150
+				int capacity = pos > 20 ? 10 : 100;
+				identifiers_group = new Dictionary<char[],string> (capacity, new IdentifiersComparer (pos));
 				identifiers [pos] = identifiers_group;
 			}
 
 			char [] chars = new char [pos];
 			Array.Copy (id_builder, chars, pos);
 
-			val = new String (id_builder, 0, pos);
-			identifiers_group.Add (chars, val);
+			s = new string (id_builder, 0, pos);
+			identifiers_group.Add (chars, s);
 
-			if (RootContext.Version == LanguageVersion.ISO_1) {
-				for (int i = 1; i < chars.Length; i += 3) {
-					if (chars [i] == '_' && (chars [i - 1] == '_' || chars [i + 1] == '_')) {
-						Report.Error (1638, loc,
-							"`{0}': Any identifier with double underscores cannot be used when ISO language version mode is specified", val.ToString ());
-					}
-				}
-			}
-
-			val = new LocatedToken (loc, (string) val);
+			val = new LocatedToken (loc, s);
 			if (quoted)
 				AddEscapedIdentifier ((LocatedToken) val);
 			return Token.IDENTIFIER;
