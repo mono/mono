@@ -788,6 +788,18 @@ namespace System.Reflection {
 			get;
 		}
 
+		public override bool Equals (object o)
+		{
+			if (((object) this) == o)
+				return true;
+
+			if (o == null)
+				return false;
+			
+			Assembly other = (Assembly) o;
+			return other._mono_assembly == _mono_assembly;
+		}
+		
 #if !NET_2_1 || MONOTOUCH
 		// Code Access Security
 
