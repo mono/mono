@@ -1,3 +1,9 @@
+2009-11-23  Marek Habersack  <mhabersack@novell.com>
+
+	* Route.cs: GetRouteData throws NotImplementedException only when
+	pathInfo for the current request is a non-empty string. Patch from
+	Tiaan <tagdev@gmail.com>, thanks!
+
 2009-11-09  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteCollection.cs: GetVirtualPath doesn't append trailing slash

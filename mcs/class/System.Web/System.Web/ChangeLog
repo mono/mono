@@ -1,3 +1,9 @@
+2009-11-23  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: PathInfo returns an empty string when worker
+	request is absent or its GetPathInfo method returns a null. Patch
+	from Tiaan <tagdev@gmail.com>, thanks!
+
 2009-11-19  Marek Habersack  <mhabersack@novell.com>
 
 	* VirtualPathUtility.cs: made Normalize internal
