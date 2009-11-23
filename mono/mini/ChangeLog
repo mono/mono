@@ -1,5 +1,9 @@
 2009-11-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_magic_trampoline): Extract the bulk of this function
+	into a new function called common_call_trampoline () which is used by the
+	llvm vcall trampoline as well.
+
 	* debugger-agent.c: Implement single threaded invokes.
 
 	* debugger-agent.c: Revert change which broke the agent on linux.
