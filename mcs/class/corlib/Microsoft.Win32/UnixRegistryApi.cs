@@ -308,6 +308,29 @@ namespace Microsoft.Win32 {
 			}
 		}
 
+		public RegistryValueKind GetValueKind (string name)
+		{
+			if (name == null)
+				return RegistryValueKind.Unknown;
+			object value = values [name];
+			if (value == null)
+				return RegistryValueKind.Unknown;
+
+			if (value is int)
+				return RegistryValueKind.DWord;
+			if (value is string [])
+				return RegistryValueKind.MultiString;
+			if (value is long)
+				return RegistryValueKind.QWord;
+			if (value is byte [])
+				return RegistryValueKind.Binary;
+			if (value is string)
+				return RegistryValueKind.String;
+			if (value is ExpandString)
+				return RegistryValueKind.ExpandString;
+			return RegistryValueKind.Unknown;
+		}
+		
 		public object GetValue (string name, RegistryValueOptions options)
 		{
 			if (IsMarkedForDeletion)
@@ -729,6 +752,17 @@ namespace Microsoft.Win32 {
 				throw RegistryKey.CreateMarkedForDeletionException ();
 			return self.Ensure (rkey, ToUnix (keyname), writable);
 		}
+
+		public RegistryValueKind GetValueKind (RegistryKey rkey, string name)
+		{
+			KeyHandler self = KeyHandler.Lookup (rkey, true);
+			if (self != null) 
+				return self.GetValueKind (name);
+
+			// key was removed since it was opened or it does not exist.
+			return RegistryValueKind.Unknown;
+		}
+		
 	}
 }
 

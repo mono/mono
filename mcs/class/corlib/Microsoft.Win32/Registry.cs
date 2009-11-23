@@ -45,6 +45,8 @@ namespace Microsoft.Win32
 				RegistryHive.CurrentConfig);
 		public static readonly RegistryKey CurrentUser = new RegistryKey (
 				RegistryHive.CurrentUser);
+
+		[Obsolete ("Use PerformanceData instead")]
 		public static readonly RegistryKey DynData = new RegistryKey (
 				RegistryHive.DynData);
 		public static readonly RegistryKey LocalMachine = new RegistryKey (

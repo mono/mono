@@ -273,7 +273,7 @@ namespace Microsoft.Win32
 		[ComVisible (false)]
 		public RegistryValueKind GetValueKind (string name)
 		{
-			throw new NotImplementedException ();
+			return RegistryApi.GetValueKind (this, name);
 		}
 
 		/// <summary>
@@ -291,15 +291,17 @@ namespace Microsoft.Win32
 		}
 
 		[ComVisible (false)]
+		[MonoLimitation ("permissionCheck is ignored in Mono")]
 		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck)
 		{
-			throw new NotImplementedException ();
+			return CreateSubKey (subkey);
 		}
 
 		[ComVisible (false)]
+		[MonoLimitation ("permissionCheck and registrySecurity are ignored in Mono")]
 		public RegistryKey CreateSubKey (string subkey, RegistryKeyPermissionCheck permissionCheck, RegistrySecurity registrySecurity)
 		{
-			throw new NotImplementedException ();
+			return CreateSubKey (subkey);
 		}
 		
 		/// <summary>
@@ -433,15 +435,17 @@ namespace Microsoft.Win32
 		}
 
 		[ComVisible (false)]
+		[MonoLimitation ("permissionCheck is ignored in Mono")]
 		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck)
 		{
-			throw new NotImplementedException ();
+			return OpenSubKey (name);
 		}
 		
 		[ComVisible (false)]
+		[MonoLimitation ("permissionCheck and rights are ignored in Mono")]
 		public RegistryKey OpenSubKey (string name, RegistryKeyPermissionCheck permissionCheck, RegistryRights rights)
 		{
-			throw new NotImplementedException ();
+			return OpenSubKey (name);
 		}
 		
 		public void SetAccessControl (RegistrySecurity registrySecurity)

@@ -139,6 +139,20 @@ namespace Microsoft.Win32
 			return key.Handle != null;
 		}
 
+		public RegistryValueKind GetValueKind (RegistryKey rkey, string name)
+		{
+			RegistryValueKind type = 0;
+			int size = 0;
+			object obj = null;
+			IntPtr handle = GetHandle (rkey);
+			int result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, IntPtr.Zero, ref size);
+
+			if (result == Win32ResultCode.FileNotFound || result == Win32ResultCode.MarkedForDeletion) 
+				return RegistryValueKind.Unknown;
+
+			return type;
+		}
+		
 		/// <summary>
 		/// Acctually read a registry value. Requires knowledge of the
 		/// value's type and size.
