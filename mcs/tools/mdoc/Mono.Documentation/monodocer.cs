@@ -130,8 +130,11 @@ class MDocUpdater : MDocCommand
 							Error ("Unable to read XML file: {0}.", import);
 					}
 					if (r.LocalName == "doc") {
+						var xml = File.ReadAllText (import);
+						// Ensure Unix line endings
+						xml = xml.Replace ("\r", "");
 						slashdocs = new XmlDocument();
-						slashdocs.Load (import);
+						slashdocs.LoadXml (xml);
 					}
 					else if (r.LocalName == "Libraries") {
 						ecmadocs = new XmlTextReader (import);
@@ -774,10 +777,12 @@ class MDocUpdater : MDocCommand
 
 	private static TextWriter OpenWrite (string path, FileMode mode)
 	{
-		return new StreamWriter (
+		var w = new StreamWriter (
 			new FileStream (path, mode),
 			new UTF8Encoding (false)
 		);
+		w.NewLine = "\n";
+		return w;
 	}
 
 	private string[] GetAssemblyVersions ()

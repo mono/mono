@@ -1,3 +1,10 @@
+2009-11-23  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: ".NET support": ensure that we
+	  always get Unix line endings so that we can update documentation
+	  under both Mono & .NET w/o continually changing the file due to
+	  line-ending differences.
+
 2009-11-06  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocer.cs: When deleting the ExtensionMethods
