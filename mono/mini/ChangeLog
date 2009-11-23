@@ -1,5 +1,9 @@
 2009-11-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c: Implement single threaded invokes.
+
+2009-11-23  Zoltan Varga  <vargaz@gmail.com>
+
 	* method-to-ir.c (inline_method): Prevent infinite recursion. Fixes
 	#557606.
 
