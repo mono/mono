@@ -166,9 +166,6 @@ typedef struct {
 	/* Whenever to disable breakpoints (used during invokes) */
 	gboolean disable_breakpoints;
 
-	/* Whenever this thread should be resumed without resuming the others */
-	gboolean resume_one;
-
 	/*
 	 * Number of times this thread has been resumed using resume_thread ().
 	 */
@@ -1843,12 +1840,11 @@ resume_thread (MonoInternalThread *thread)
 
 	DEBUG(1, fprintf (log_file, "[%p] Resuming thread...\n", (gpointer)thread->tid));
 
-	tls->resume_one = TRUE;
 	tls->resume_count ++;
 
 	/* 
 	 * Signal suspend_count without decreasing suspend_count, the threads will wake up
-	 * but only the one whose resume_one field is set will be resumed.
+	 * but only the one whose resume_count field is > 0 will be resumed.
 	 */
 	err = mono_cond_broadcast (&suspend_cond);
 	g_assert (err == 0);
@@ -1913,8 +1909,8 @@ suspend_current (void)
 
 	DEBUG(1, fprintf (log_file, "[%p] Suspended.\n", (gpointer)GetCurrentThreadId ()));
 
-	while (suspend_count > 0) {
-#ifdef PLATFORM_WIN32
+	while (suspend_count - tls->resume_count > 0) {
+#ifdef HOST_WIN32
 		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 0))
 		{
 			mono_mutex_unlock (&suspend_mutex);
@@ -1928,9 +1924,6 @@ suspend_current (void)
 		err = mono_cond_wait (&suspend_cond, &suspend_mutex);
 		g_assert (err == 0);
 #endif
-
-		if (tls->resume_one)
-			break;
 	}
 
 	tls->suspended = FALSE;
@@ -1941,13 +1934,6 @@ suspend_current (void)
 	mono_mutex_unlock (&suspend_mutex);
 
 	DEBUG(1, fprintf (log_file, "[%p] Resumed.\n", (gpointer)GetCurrentThreadId ()));
-
-	if (tls->resume_one) {
-		/* The thread should be resumed to do an invoke. */
-		g_assert (tls->invoke);
-		g_assert (tls->invoke->flags & INVOKE_FLAG_SINGLE_THREADED);
-		tls->resume_one = FALSE;
-	}
 
 	if (tls->invoke) {
 		/* Save the original context */
