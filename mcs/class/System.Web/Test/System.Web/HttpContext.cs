@@ -90,6 +90,7 @@ namespace MonoTests.System.Web {
 			Assert.IsNotNull (ctx.Response, "Response");
 		}
 
+#if NET_2_0
 		[Test]
 		public void RewritePath ()
 		{
@@ -145,5 +146,6 @@ namespace MonoTests.System.Web {
 				// success
 			}
 		}
+#endif
 	}
 }
