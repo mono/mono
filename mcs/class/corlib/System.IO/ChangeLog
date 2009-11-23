@@ -1,3 +1,8 @@
+2009-11-23  Miguel de Icaza  <miguel@novell.com>
+
+	* Directory.cs: Add EnumerateFiles and EnumerateFileSystemEntries
+	overloads.    Share code.
+
 2009-11-22  Miguel de Icaza  <miguel@novell.com>
 
 	* Directory.cs: Added new IEnumerable methods to Directory.

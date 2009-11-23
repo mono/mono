@@ -534,7 +534,7 @@ namespace System.IO
 		}
 
 #if NET_4_0
-		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories(string path, string searchPattern, SearchOption searchOption)
+		internal static System.Collections.Generic.IEnumerable<string> EnumerateKind (string path, string searchPattern, SearchOption searchOption, FileAttributes kind)
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
@@ -553,25 +553,28 @@ namespace System.IO
 			}
 			
 			IntPtr handle;
-			int error;
-
-			// Do not follow symlinks (ReparsePoint), need to check if Windows has different semantics
-			// the loop is possible, but not sure if the MS version deals with this:
-			// http://blogs.msdn.com/oldnewthing/archive/2004/12/27/332704.aspx
+			MonoIOError error;
+			FileAttributes rattr;
+			bool subdirs = searchOption == SearchOption.AllDirectories;
 			
-			string s = MonoIO.FindFirst (path, path_with_pattern, (int) FileAttributes.Directory, (int) (FileAttributes.Directory|FileAttributes.ReparsePoint), out error, out handle);
+			string s = MonoIO.FindFirst (path, path_with_pattern, out rattr, out error, out handle);
 			if (s == null)
 				yield break;
 			if (error != 0)
 				throw MonoIO.GetException (Path.GetDirectoryName (Path.Combine (path, searchPattern)), (MonoIOError) error);
 
 			try {
-				yield return s;
-				
-				while ((s = MonoIO.FindNext (handle, out error)) != null){
+				if (((rattr & FileAttributes.ReparsePoint) == 0) && ((rattr & kind) != 0))
 					yield return s;
-					if (searchOption == SearchOption.AllDirectories)
-						foreach (string child in EnumerateDirectories (s, searchPattern, SearchOption.AllDirectories))
+				
+				while ((s = MonoIO.FindNext (handle, out rattr, out error)) != null){
+					if ((rattr & FileAttributes.ReparsePoint) != 0)
+						continue;
+					if ((rattr & kind) != 0)
+						yield return s;
+					
+					if (((rattr & FileAttributes.Directory) != 0) && subdirs)
+						foreach (string child in EnumerateKind (s, searchPattern, searchOption, kind))
 							yield return child;
 				}
 			} finally {
@@ -579,15 +582,51 @@ namespace System.IO
 			}
 		}
 
+		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories (string path, string searchPattern, SearchOption searchOption)
+		{
+			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Directory);
+		}
+		
 		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories (string path, string searchPattern)
 		{
-			return EnumerateDirectories (path, searchPattern, SearchOption.TopDirectoryOnly);
+			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Directory);
 		}
 
 		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories (string path)
 		{
-			return EnumerateDirectories (path, "*", SearchOption.TopDirectoryOnly);
+			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Directory);
 		}
+
+		public static System.Collections.Generic.IEnumerable<string> EnumerateFiles (string path, string searchPattern, SearchOption searchOption)
+		{
+			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Normal);
+		}
+
+		public static System.Collections.Generic.IEnumerable<string> EnumerateFiles (string path, string searchPattern)
+		{
+			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Normal);
+		}
+
+		public static System.Collections.Generic.IEnumerable<string> EnumerateFiles (string path)
+		{
+			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Normal);
+		}
+
+		public static System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
+		{
+			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Normal | FileAttributes.Directory);
+		}
+
+		public static System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries (string path, string searchPattern)
+		{
+			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Normal | FileAttributes.Directory);
+		}
+
+		public static System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries (string path)
+		{
+			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Normal | FileAttributes.Directory);
+		}
+		
 #endif
 
 #if !NET_2_1 || MONOTOUCH

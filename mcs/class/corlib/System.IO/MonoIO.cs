@@ -214,10 +214,10 @@ namespace System.IO
 		// Find file methods
 		//
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string FindFirst (string path, string pattern, int attrs, int mask, out int error, out IntPtr handle);
+		public extern static string FindFirst (string path, string pattern, out FileAttributes result_attr, out MonoIOError error, out IntPtr handle);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern static string FindNext (IntPtr handle, out int error);
+		public extern static string FindNext (IntPtr handle, out FileAttributes result_attr, out MonoIOError error);
 		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public extern static int FindClose (IntPtr handle);
