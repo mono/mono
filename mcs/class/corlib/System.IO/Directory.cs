@@ -534,6 +534,12 @@ namespace System.IO
 		}
 
 #if NET_4_0
+		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
+		{
+			// Take the simple way home:
+			return new System.Collections.Generic.List<string> (EnumerateFileSystemEntries (path, searchPattern, searchOption)).ToArray ();
+		}
+						       
 		internal static System.Collections.Generic.IEnumerable<string> EnumerateKind (string path, string searchPattern, SearchOption searchOption, FileAttributes kind)
 		{
 			if (searchPattern == null)

@@ -32,6 +32,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Text;
@@ -348,6 +349,102 @@ namespace System.IO {
 				throw new ArgumentNullException ("directorySecurity");
 			throw new UnauthorizedAccessException ();
 		}
+#endif
+
+#if NET_4_0
+
+		public IEnumerable<DirectoryInfo> EnumerateDirectories ()
+		{
+			return EnumerateDirectories ("*", SearchOption.TopDirectoryOnly);
+		}
+
+		public IEnumerable<DirectoryInfo> EnumerateDirectories (string searchPattern)
+		{
+			return EnumerateDirectories (searchPattern, SearchOption.TopDirectoryOnly);
+		}
+
+		public IEnumerable<DirectoryInfo> EnumerateDirectories (string searchPattern, SearchOption searchOption)
+		{
+			foreach (string name in Directory.EnumerateDirectories (FullPath, searchPattern, searchOption))
+				yield return new DirectoryInfo (name);
+		}
+
+		public IEnumerable<FileInfo> EnumerateFiles ()
+		{
+			return EnumerateFiles ("*", SearchOption.TopDirectoryOnly);
+		}
+
+		public IEnumerable<FileInfo> EnumerateFiles (string searchPattern)
+		{
+			return EnumerateFiles (searchPattern, SearchOption.TopDirectoryOnly);
+		}
+
+		public IEnumerable<FileInfo> EnumerateFiles (string searchPattern, SearchOption searchOption)
+		{
+			foreach (string name in Directory.EnumerateFiles (FullPath, searchPattern, searchOption))
+				yield return new FileInfo (name);
+		}
+
+		public IEnumerable<FileSystemInfo> EnumerateFileSystemInfos ()
+		{
+			return EnumerateFileSystemInfos ("*", SearchOption.TopDirectoryOnly);
+		}
+
+		public IEnumerable<FileSystemInfo> EnumerateFileSystemInfos (string searchPattern)
+		{
+			return EnumerateFileSystemInfos (searchPattern, SearchOption.TopDirectoryOnly);
+		}
+
+		public IEnumerable<FileSystemInfo> EnumerateFileSystemInfos (string searchPattern, SearchOption searchOption)
+		{
+			if (searchPattern == null)
+				throw new ArgumentNullException ("searchPattern");
+			if (searchOption != SearchOption.TopDirectoryOnly && searchOption != SearchOption.AllDirectories)
+				throw new ArgumentOutOfRangeException ("searchoption");
+
+			return EnumerateFileSystemInfos (FullPath, searchPattern, searchOption);
+		}
+
+		static internal IEnumerable<FileSystemInfo> EnumerateFileSystemInfos (string full, string searchPattern, SearchOption searchOption)
+		{
+			string path_with_pattern = Path.Combine (full, searchPattern);
+			IntPtr handle;
+			MonoIOError error;
+			FileAttributes rattr;
+			bool subdirs = searchOption == SearchOption.AllDirectories;
+			
+			string s = MonoIO.FindFirst (full, path_with_pattern, out rattr, out error, out handle);
+			if (s == null)
+				yield break;
+			if (error != 0)
+				throw MonoIO.GetException (Path.GetDirectoryName (path_with_pattern), (MonoIOError) error);
+
+			try {
+				if (((rattr & FileAttributes.ReparsePoint) == 0)){
+					if ((rattr & FileAttributes.Directory) != 0)
+						yield return new DirectoryInfo (s);
+					else
+						yield return new FileInfo (s);
+				}
+				
+				while ((s = MonoIO.FindNext (handle, out rattr, out error)) != null){
+					if ((rattr & FileAttributes.ReparsePoint) != 0)
+						continue;
+					if ((rattr & FileAttributes.Directory) != 0)
+						yield return new DirectoryInfo (s);
+					else
+						yield return new FileInfo (s);
+					
+					if (((rattr & FileAttributes.Directory) != 0) && subdirs)
+						foreach (FileSystemInfo child in EnumerateFileSystemInfos (s, searchPattern, searchOption))
+							yield return child;
+				}
+			} finally {
+				MonoIO.FindClose (handle);
+			}
+		}
+		
+		
 #endif
 	}
 }

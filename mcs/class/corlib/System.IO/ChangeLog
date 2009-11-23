@@ -1,7 +1,11 @@
 2009-11-23  Miguel de Icaza  <miguel@novell.com>
 
+	* DirectoryInfo.cs: Added the new overloads.
+
 	* Directory.cs: Add EnumerateFiles and EnumerateFileSystemEntries
 	overloads.    Share code.
+	
+	Add new GetFileSystemEntries overload
 
 2009-11-22  Miguel de Icaza  <miguel@novell.com>
 
