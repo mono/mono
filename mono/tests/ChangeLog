@@ -1,3 +1,7 @@
+2009-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs dtest-app.cs: Add a test for single threaded invokes.
+
 2009-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c (mono_test_marshal_bool_in): Use 'short' as the type of the
