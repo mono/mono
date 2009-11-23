@@ -1,3 +1,9 @@
+2009-11-23  Andreas Färber  <andreas.faerber@web.de>
+
+	* mono-mmap.c (mono_mprotect): Use posix_madvise in absence of madvise.
+	
+	Code contributed under MIT/X11 license.
+
 2009-11-23  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-io-portability.c: gather up and report misnamed files
