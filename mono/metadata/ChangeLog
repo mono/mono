@@ -1,3 +1,10 @@
+2009-11-22  Miguel de Icaza  <miguel@novell.com>
+
+	* file-io.c: Surface a smart FindFirst/FindNext/FindClose API to
+	the managed world.
+
+	* icall-def.h: New entry points.
+	
 2009-11-19  Mark Probst  <mark.probst@gmail.com>
 
 	* process.c: Don't put references to managed objects into a
