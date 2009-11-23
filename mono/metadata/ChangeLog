@@ -1,3 +1,9 @@
+2009-11-23  Miguel de Icaza  <miguel@novell.com>
+
+	* file-io.c: Change FindFirst/FindNext/FindClose API to return the
+	file attribute to managed code and avoid doing the mask/attribute
+	checks here. 
+
 2009-11-22  Miguel de Icaza  <miguel@novell.com>
 
 	* file-io.c: Surface a smart FindFirst/FindNext/FindClose API to
