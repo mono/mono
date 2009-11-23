@@ -1,3 +1,7 @@
+2009-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (mono_type_get_desc): Handle typedbyref.
+
 2009-11-23  Miguel de Icaza  <miguel@novell.com>
 
 	* file-io.c: Change FindFirst/FindNext/FindClose API to return the
