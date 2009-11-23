@@ -40,6 +40,24 @@
 #include <ucontext.h>
 #endif
 
+/* Definitions to make backporting to 2.6 easier */
+#ifdef PLATFORM_WIN32
+#define HOST_WIN32
+#define TARGET_WIN32
+#endif
+
+#ifdef HOST_WIN32
+#include <ws2tcpip.h>
+#ifdef __GNUC__
+/* cygwin's headers do not seem to define these */
+void WSAAPI freeaddrinfo (struct addrinfo*);
+int WSAAPI getaddrinfo (const char*,const char*,const struct addrinfo*,
+                        struct addrinfo**);
+int WSAAPI getnameinfo(const struct sockaddr*,socklen_t,char*,DWORD,
+                       char*,DWORD,int);
+#endif
+#endif
+
 #ifdef PLATFORM_ANDROID
 #include <linux/in.h>
 #include <linux/tcp.h>
@@ -1706,7 +1724,7 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 static void CALLBACK notify_thread_apc (ULONG_PTR param)
 {
 	//DebugBreak ();
-	mono_debugger_agent_thread_interrupt (NULL);
+	mono_debugger_agent_thread_interrupt (NULL, NULL);
 }
 #endif /* PLATFORM_WIN32 */
 
@@ -2551,7 +2569,7 @@ static void
 end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 {
 	int i;
-#ifdef PLATFORM_WIN32
+#if defined(HOST_WIN32) && !defined(__GNUC__)
 	gpointer stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));
 #else
 	gpointer stackptr = __builtin_frame_address (0);
@@ -5705,8 +5723,10 @@ mono_debugger_agent_free_domain_info (MonoDomain *domain)
 {
 }
 
-gboolean mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
+gboolean
+mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 {
+	return FALSE;
 }
 
 void
