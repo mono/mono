@@ -53,7 +53,9 @@ namespace System.Web.Configuration {
 		
 		static readonly object suppressAppReloadLock = new object ();
 		static readonly object saveLocationsCacheLock = new object ();
+#if SYSTEMCORE_DEP
 		static readonly ReaderWriterLockSlim sectionCacheLock;
+#endif
 		
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
@@ -185,7 +187,9 @@ namespace System.Web.Configuration {
 					fi.SetValue (null, typeof (ApplicationSettingsConfigurationFileMap));
 			}
 
+#if SYSTEMCORE_DEP
 			sectionCacheLock = new ReaderWriterLockSlim ();
+#endif
 		}
 
 		static void ReenableWatcherOnConfigLocation (object state)
@@ -213,12 +217,16 @@ namespace System.Web.Configuration {
 		{
 			bool locked = false;
 			try {
+#if SYSTEMCORE_DEP
 				sectionCacheLock.EnterWriteLock ();
+#endif
 				locked = true;
 				sectionCache.Clear ();
 			} finally {
+#if SYSTEMCORE_DEP
 				if (locked)
 					sectionCacheLock.ExitWriteLock ();
+#endif
 			}
 			
 			lock (suppressAppReloadLock) {
@@ -420,14 +428,18 @@ namespace System.Web.Configuration {
 			bool locked = false;
 
 			try {
+#if SYSTEMCORE_DEP
 				sectionCacheLock.EnterReadLock ();
+#endif
 				locked = true;
 				
 				if (sectionCache.TryGetValue (sectionCacheKey, out cachedSection) && cachedSection != null)
 					return cachedSection;
 			} finally {
+#if SYSTEMCORE_DEP
 				if (locked)
 					sectionCacheLock.ExitReadLock ();
+#endif
 			}
 
 			HttpRequest req = context != null ? context.Request : null;
@@ -598,7 +610,9 @@ namespace System.Web.Configuration {
 			bool locked = false;
 
 			try {
+#if SYSTEMCORE_DEP
 				sectionCacheLock.EnterUpgradeableReadLock ();
+#endif
 				locked = true;
 					
 				if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
@@ -606,16 +620,22 @@ namespace System.Web.Configuration {
 
 				bool innerLocked = false;
 				try {
+#if SYSTEMCORE_DEP
 					sectionCacheLock.EnterWriteLock ();
+#endif
 					innerLocked = true;
 					sectionCache.Add (key, section);
 				} finally {
+#if SYSTEMCORE_DEP
 					if (innerLocked)
 						sectionCacheLock.ExitWriteLock ();
+#endif
 				}
 			} finally {
+#if SYSTEMCORE_DEP
 				if (locked)
 					sectionCacheLock.ExitUpgradeableReadLock ();
+#endif
 			}
 		}
 
