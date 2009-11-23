@@ -1,3 +1,7 @@
+2009-11-23  Marek Habersack  <mhabersack@novell.com>
+
+	* mono.1: documented the 'report' option for MONO_IOMAP
+
 2009-10-11  Ankit Jain  <jankit@novell.com>
 
 	* xbuild.1: Add info about env var XBUILD_COLORS.

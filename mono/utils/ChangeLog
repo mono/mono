@@ -1,3 +1,9 @@
+2009-11-23  Marek Habersack  <mhabersack@novell.com>
+
+	* mono-io-portability.c: gather up and report misnamed files
+	accessed by the application if the 'report' option is present in
+	the MONO_IOMAP environment variable.
+
 2009-11-13 Jonathan Chambers <joncham@gmail.com>
 
 	* mono-semaphore.h: Implementation for Windows platform.

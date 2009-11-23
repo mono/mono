@@ -1282,7 +1282,10 @@ applications that hard-code Windows paths.  Set to a colon-separated
 list of "drive" to strip drive letters, or "case" to do
 case-insensitive file matching in every directory in a path.  "all"
 enables all rewriting methods.  (Backslashes are always mapped to
-slashes if this variable is set to a valid option.)
+slashes if this variable is set to a valid option). Additional option "report" can 
+be set (it is not included in "all") to make mapping code print the names of
+files in case a mismatch is found, together with a stack trace showing which managed method
+the misnamed file has been requested from.
 .fi
 .Sp
 For example, this would work from the shell:
