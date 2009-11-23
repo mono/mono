@@ -982,7 +982,7 @@ namespace System.Web {
 				if (path_info == null) {
 					if (worker_request == null)
 						return String.Empty;
-					path_info = worker_request.GetPathInfo ();
+					path_info = worker_request.GetPathInfo () ?? String.Empty;
 				}
 
 				return path_info;
