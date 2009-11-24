@@ -1,3 +1,7 @@
+2009-11-24  Marek Safar  <marek.safar@gmail.com>
+
+	* UTF8Encoding.cs (GetPreamble): Let compiler optimize it.
+
 2009-11-02  Miguel de Icaza  <miguel@novell.com>
 
 	* Jumbo patch to drop support for pre-NET_2_0 code:

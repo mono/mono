@@ -842,15 +842,10 @@ fail_no_space:
 	// Get the UTF8 preamble.
 	public override byte[] GetPreamble ()
 	{
-		if (emitIdentifier) {
-			byte[] pre = new byte [3];
-			pre[0] = (byte)0xEF;
-			pre[1] = (byte)0xBB;
-			pre[2] = (byte)0xBF;
-			return pre;
-		} else {
-			return new byte [0];
-		}
+		if (emitIdentifier)
+			return new byte [] { 0xEF, 0xBB, 0xBF };
+
+		return new byte [0];
 	}
 
 	// Determine if this object is equal to another.
