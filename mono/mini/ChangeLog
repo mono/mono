@@ -1,5 +1,11 @@
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-arm.c: Use blx instead of mov pc, reg to improve support for thumb.
+
+	* mini-arm.c (mono_arm_thumb_supported): New helper function.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
 	* cfold.c (mono_constant_fold_ins): Fix a problem in the previous change,
 	OP_SHL_IMM is not 32 bit.
 
