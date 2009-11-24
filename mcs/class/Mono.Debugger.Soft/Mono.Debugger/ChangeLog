@@ -1,3 +1,9 @@
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* ObjectMirror.cs TypeMirror.cs StructMirror.cs: Make the BeginInvokeMethod
+	which takes a 'vm' argument obsolete, it was added by mistake, add a version
+	without that argument instead.
+
 2009-11-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyMirror.cs: Add a GetName () method.
