@@ -3071,5 +3071,12 @@ public class ArrayTest
 	{
 		Array.CreateInstance (typeof (Foo<>), 42);
 	}
+
+	[Test]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
+	public void ClearNegativeLength ()
+	{
+		Array.Clear (new int [] { 1, 2 }, 0, -1);
+	}
 }
 }

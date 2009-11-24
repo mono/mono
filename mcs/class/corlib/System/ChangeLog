@@ -1,5 +1,10 @@
 2009-11-24  Jb Evain  <jbevain@novell.com>
 
+	* Array.cs (Clear): throw an IndexOutOfRangeException instead
+	of an ArgumentOutRangeException for a negative length.
+
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
 	* Array.cs (CreateInstance): do not allow open generic types.
 
 2009-11-24  Jb Evain <jbevain@novell.com>

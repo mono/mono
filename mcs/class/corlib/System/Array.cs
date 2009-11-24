@@ -825,7 +825,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length < 0");
+				throw new IndexOutOfRangeException ("length < 0");
 
 			int low = array.GetLowerBound (0);
 			if (index < low)

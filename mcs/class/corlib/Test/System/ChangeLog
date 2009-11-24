@@ -1,5 +1,9 @@
 2009-11-24  Jb Evain  <jbevain@novell.com>
 
+	* ArrayTest: test for the proper exception on Clear ().
+
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
 	* ArrayTest.cs: add test ensuring we do not allow open
 	generic types in CreateInstance.
 
