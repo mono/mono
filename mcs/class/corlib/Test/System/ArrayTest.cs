@@ -3062,5 +3062,14 @@ public class ArrayTest
 	{
 		Array.CreateInstance (typeof (void), 42);
 	}
+
+	class Foo<T> {}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ArrayCreateInstanceOfOpenGenericType ()
+	{
+		Array.CreateInstance (typeof (Foo<>), 42);
+	}
 }
 }
