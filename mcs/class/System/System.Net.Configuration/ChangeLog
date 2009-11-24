@@ -1,3 +1,7 @@
+2009-11-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ConnectionManagementElement.cs: bump maxconnection to 6.
+
 2009-09-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DefaultProxyHandler.cs: handle upper and lowercase HTTP_PROXY and

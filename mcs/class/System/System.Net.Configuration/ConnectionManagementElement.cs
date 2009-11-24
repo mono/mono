@@ -80,7 +80,7 @@ namespace System.Net.Configuration
 			set { base [addressProp] = value; }
 		}
 
-		[ConfigurationProperty ("maxconnection", DefaultValue = "1", Options = ConfigurationPropertyOptions.IsRequired)]
+		[ConfigurationProperty ("maxconnection", DefaultValue = "6", Options = ConfigurationPropertyOptions.IsRequired)]
 		public int MaxConnection {
 			get { return (int) base [maxConnectionProp]; }
 			set { base [maxConnectionProp] = value; } 
