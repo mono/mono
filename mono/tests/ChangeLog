@@ -1,3 +1,7 @@
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs dtest-app.cs: Add a test for single threaded invokes + events.
+
 2009-11-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs dtest-app.cs: Add a test for single threaded invokes.
