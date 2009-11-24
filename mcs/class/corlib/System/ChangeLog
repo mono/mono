@@ -1,3 +1,7 @@
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
+	* Array.cs (CreateInstance): do not allow open generic types.
+
 2009-11-24  Jb Evain <jbevain@novell.com>
 
 	* Array.cs (CreateInstance): do not allow void arrays.
