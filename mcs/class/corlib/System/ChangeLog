@@ -2,7 +2,7 @@
 
 	* Array.cs (CreateInstance): do not allow void arrays.
 
-	backport r146814.
+	backport r146814,r146818.
 
 2009-11-11  Sebastien Pouliot  <sebastien@ximian.com>
 
