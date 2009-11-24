@@ -786,7 +786,7 @@ mono_debugger_agent_cleanup (void)
 
 	/* This will interrupt the agent thread */
 	/* Close the read part only so it can still send back replies */
-#ifdef PLATFORM_WIN32
+#ifdef HOST_WIN32
 	shutdown (conn_fd, SD_RECEIVE);
 #else
 	shutdown (conn_fd, SHUT_RD);
@@ -1727,13 +1727,13 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 	}
 }
 
-#ifdef PLATFORM_WIN32
+#ifdef HOST_WIN32
 static void CALLBACK notify_thread_apc (ULONG_PTR param)
 {
 	//DebugBreak ();
 	mono_debugger_agent_thread_interrupt (NULL, NULL);
 }
-#endif /* PLATFORM_WIN32 */
+#endif /* HOST_WIN32 */
 
 /*
  * notify_thread:
@@ -1754,8 +1754,8 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 		 * of things like breaking waits etc. which we don't want.
 		 */
 		InterlockedIncrement (&tls->interrupt_count);
-#ifdef PLATFORM_WIN32
-	//	g_assert_not_reached ();
+		/* This is _not_ equivalent to ves_icall_System_Threading_Thread_Abort () */
+#ifdef HOST_WIN32
 		QueueUserAPC (notify_thread_apc, thread->handle, NULL);
 #else
 		pthread_kill ((pthread_t) tid, mono_thread_get_abort_signal ());
@@ -4126,7 +4126,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		mono_thread_suspend_all_other_threads ();
 		DEBUG(1, fprintf (log_file, "Shutting down the runtime...\n"));
 		mono_runtime_quit ();
-#ifdef PLATFORM_WIN32
+#ifdef HOST_WIN32
 		shutdown (conn_fd, SD_BOTH);
 #else
 		shutdown (conn_fd, SHUT_RDWR);
@@ -5699,7 +5699,7 @@ debugger_thread (void *arg)
 	mono_cond_signal (&debugger_thread_exited_cond);
 	mono_mutex_unlock (&debugger_thread_exited_mutex);
 
-#ifdef PLATFORM_WIN32
+#ifdef HOST_WIN32
 	shutdown (conn_fd, SD_BOTH);
 #else
 	shutdown (conn_fd, SHUT_RDWR);
@@ -5718,11 +5718,6 @@ mono_debugger_agent_parse_options (char *options)
 
 void
 mono_debugger_agent_init (void)
-{
-}
-
-void
-mono_debugger_agent_cleanup (void)
 {
 }
 
