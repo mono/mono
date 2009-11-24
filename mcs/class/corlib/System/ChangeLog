@@ -1,3 +1,9 @@
+2009-11-24  Jb Evain <jbevain@novell.com>
+
+	* Array.cs (CreateInstance): do not allow void arrays.
+
+	backport r146814.
+
 2009-11-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Console.cs: Reduce duplication between OpenStandard[Input|
