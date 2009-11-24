@@ -314,7 +314,8 @@ namespace Mono.Debugger
 			GET_ENTRY_POINT = 2,
 			GET_MANIFEST_MODULE = 3,
 			GET_OBJECT = 4,
-			GET_TYPE = 5
+			GET_TYPE = 5,
+			GET_NAME = 6
 		}
 
 		enum CmdModule {
@@ -1411,6 +1412,10 @@ namespace Mono.Debugger
 
 		public long Assembly_GetType (long id, string name, bool ignoreCase) {
 			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_TYPE, new PacketWriter ().WriteId (id).WriteString (name).WriteBool (ignoreCase)).ReadId ();
+		}
+
+		public string Assembly_GetName (long id) {
+			return SendReceive (CommandSet.ASSEMBLY, (int)CmdAssembly.GET_NAME, new PacketWriter ().WriteId (id)).ReadString ();
 		}
 
 		/*
