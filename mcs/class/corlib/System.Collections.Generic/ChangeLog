@@ -1,3 +1,9 @@
+2009-11-23   Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Comparer.cs: Our DefaultComparer class should be serializable just
+	as the generic one is.
+	Fixes #503585.
+
 2009-11-23  Juraj Skripsky <js@hotfeet.ch>
 
 	* List.cs (Sort): Call more appropriate overload of Array.Sort<T>.

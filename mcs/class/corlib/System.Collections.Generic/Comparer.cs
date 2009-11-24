@@ -65,6 +65,7 @@ namespace System.Collections.Generic {
 			throw new ArgumentException ();
 		}
 	
+		[Serializable]
 		sealed class DefaultComparer : Comparer<T> {
 	
 			public override int Compare (T x, T y)
