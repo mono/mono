@@ -96,11 +96,9 @@ namespace System.Reflection {
 		/// </summary>
 		VtableLayoutMask = 256,
 
-#if NET_1_1
 		/// <summary>
 		/// </summary>		
 		CheckAccessOnOverride = 512,
-#endif
 
 		/// <summary>
 		/// </summary>

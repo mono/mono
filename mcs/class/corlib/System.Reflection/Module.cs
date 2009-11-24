@@ -470,7 +470,6 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void GetPEKind (IntPtr module, out PortableExecutableKinds peKind, out ImageFileMachine machine);
 
-#if NET_1_1
 		void _Module.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -491,6 +490,5 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

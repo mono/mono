@@ -389,7 +389,6 @@ namespace System.Reflection {
 			return aname;
 		}
 
-#if NET_1_1
 		void _AssemblyName.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
@@ -410,6 +409,5 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }
