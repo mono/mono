@@ -110,7 +110,6 @@ namespace Mono.CSharp {
 		public SeekableStreamReader (Stream stream, Encoding encoding)
 		{
 			this.stream = stream;
-			this.encoding = encoding;
 
 			const int default_average_read_length = 1024;
 			InitializeStream (default_average_read_length);
