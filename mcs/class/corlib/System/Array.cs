@@ -606,7 +606,7 @@ namespace System
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
-			if (elementType.IsGenericType && elementType.IsGenericTypeDefinition)
+			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
 			
 			return CreateInstanceImpl (elementType, lengths, bounds);
@@ -626,7 +626,7 @@ namespace System
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
-			if (elementType.IsGenericType && elementType.IsGenericTypeDefinition)
+			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
 
 			if (lengths.Length < 1)
