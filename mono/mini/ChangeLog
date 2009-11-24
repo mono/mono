@@ -1,5 +1,8 @@
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_generic_instances): Only emit the GetGenericValueImpl
+	wrapper into the mscorlib aot image.
+
 	* debugger-agent.c (suspend_current): Check the resume_count field instead
 	of resume_one so suspends+resumes during single threaded invokes work
 	correctly.
