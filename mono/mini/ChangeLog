@@ -1,5 +1,8 @@
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c: Avoid infinite recursion when generic virtual recursion is
+	encountered.
+
 	* debugger-agent.c (resume_vm): Signal the suspend_cond even if suspend_count
 	> 0 since some threads can resume if their resume_count is > 0.
 	(invoke_method): Avoid reading freed memory.
