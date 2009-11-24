@@ -1,5 +1,10 @@
 2009-11-24  Jb Evain  <jbevain@novell.com>
 
+	* ArrayTest.cs: test that we don't allow the use of the IList indexer
+	on a multi dimensional array.
+
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
 	* ArrayTest: test for the proper exception on Clear ().
 
 2009-11-24  Jb Evain  <jbevain@novell.com>

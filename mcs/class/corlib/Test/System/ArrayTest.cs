@@ -3078,5 +3078,21 @@ public class ArrayTest
 	{
 		Array.Clear (new int [] { 1, 2 }, 0, -1);
 	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void MultiDimension_IList_setItem ()
+	{
+		IList array = new int [1, 1];
+		array [0] = 2;
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void MultiDimension_IList_getItem ()
+	{
+		IList array = new int [1, 1];
+		int a = (int) array [0];
+	}
 }
 }

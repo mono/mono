@@ -286,11 +286,15 @@ namespace System
 			get {
 				if (unchecked ((uint) index) >= unchecked ((uint) Length))
 					throw new IndexOutOfRangeException ("index");
+				if (this.Rank > 1)
+					throw new ArgumentException (Locale.GetText ("Only single dimension arrays are supported."));
 				return GetValueImpl (index);
 			} 
 			set {
 				if (unchecked ((uint) index) >= unchecked ((uint) Length))
 					throw new IndexOutOfRangeException ("index");
+				if (this.Rank > 1)
+					throw new ArgumentException (Locale.GetText ("Only single dimension arrays are supported."));
 				SetValueImpl (value, index);
 			}
 		}
