@@ -1,3 +1,10 @@
+2009-11-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* image.c (mono_image_load_module): Fix crash when a bad assembly
+	has no module at all (fix bug #553412) and also replace the 
+	g_assert with a return NULL (documented return value for failure)
+	[Backport r146839]
+
 2009-11-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class.c (can_access_internals): Allow CoreCLR to participate in
