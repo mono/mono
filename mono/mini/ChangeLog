@@ -1,5 +1,10 @@
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* cfold.c (mono_constant_fold_ins): Fix a problem in the previous change,
+	OP_SHL_IMM is not 32 bit.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c: Sync this with the version of HEAD to make backporting
 	easier.
 
