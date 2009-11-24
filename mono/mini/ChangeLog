@@ -1,5 +1,9 @@
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (encode_patch): Fix the encoding of R8 on big-endian systems.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c: Avoid infinite recursion when generic virtual recursion is
 	encountered.
 
