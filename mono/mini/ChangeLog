@@ -1,10 +1,8 @@
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
-	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Handle more llvm
-	calling sequences.
-
-	* aot-compiler.c (add_generic_instances): Only emit the GetGenericValueImpl
-	wrapper into the mscorlib aot image.
+	* debugger-agent.c (process_suspend): Extract the suspend code from
+	process_single_step_inner () to a separate function. Rework the code to prevent
+	races between this function and thread interrupts.
 
 	* debugger-agent.c (suspend_current): Check the resume_count field instead
 	of resume_one so suspends+resumes during single threaded invokes work
