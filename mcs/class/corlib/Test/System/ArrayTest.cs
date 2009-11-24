@@ -3055,5 +3055,12 @@ public class ArrayTest
 		Assert.IsTrue (arr.IsReadOnly);
 	}
 #endif
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ArrayCreateInstanceOfVoid ()
+	{
+		Array.CreateInstance (typeof (void), 42);
+	}
 }
 }

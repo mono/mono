@@ -1,3 +1,7 @@
+2009-11-24  Jb Evain <jbevain@novell.com>
+
+	* ArrayTest.cs: Add test ensuring we do not allow void arrays.
+
 2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeOffsetTest.cs : add test for bug #547675.
