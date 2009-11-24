@@ -4,6 +4,7 @@
 // Author:
 //   Dietmar Maurer (dietmar@ximian.com)
 //   Miguel de Icaza (miguel@ximian.com) 
+//   Marek Safar (marek.safar@gmail.com)
 //
 // (C) Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004 Novell (http://www.novell.com)
@@ -49,11 +50,16 @@ namespace System.IO {
 		// The input buffer
 		//
 		byte [] input_buffer;
+		
+		// Input buffer ready for recycling
+		static byte [] input_buffer_recycle;
+		static object input_buffer_recycle_lock = new object ();
 
 		//
 		// The decoded buffer from the above input buffer
 		//
 		char [] decoded_buffer;
+		static char[] decoded_buffer_recycle;
 
 		//
 		// Decoded bytes in decoded_buffer.
@@ -116,7 +122,7 @@ namespace System.IO {
 			}
 		}
 
-		public new static readonly StreamReader Null =  (StreamReader)(new NullStreamReader());
+		public new static readonly StreamReader Null =  new NullStreamReader ();
 		
 		internal StreamReader() {}
 
@@ -179,9 +185,41 @@ namespace System.IO {
 
 			if (bufferSize < MinimumBufferSize)
 				bufferSize = MinimumBufferSize;
+			
+			// since GetChars() might add flushed character, it 
+			// should have additional char buffer for extra 1 
+			// (probably 1 is ok, but might be insufficient. I'm not sure)
+			var decoded_buffer_size = encoding.GetMaxCharCount (bufferSize) + 1;
 
-			base_stream = stream;
-			input_buffer = new byte [bufferSize];
+			//
+			// Instead of allocating a new default buffer use the
+			// last one if there is any available
+			//
+			if (bufferSize <= DefaultBufferSize && input_buffer_recycle != null) {
+				lock (input_buffer_recycle_lock) {
+					if (input_buffer_recycle != null) {
+						input_buffer = input_buffer_recycle;
+						input_buffer_recycle = null;
+					}
+					
+					if (decoded_buffer_recycle != null && decoded_buffer_size <= decoded_buffer_recycle.Length) {
+						decoded_buffer = decoded_buffer_recycle;
+						decoded_buffer_recycle = null;
+					}
+				}
+			}
+			
+			if (input_buffer == null)
+				input_buffer = new byte [bufferSize];
+			else
+				Array.Clear (input_buffer, 0, bufferSize);
+			
+			if (decoded_buffer == null)
+				decoded_buffer = new char [decoded_buffer_size];
+			else
+				Array.Clear (decoded_buffer, 0, decoded_buffer_size);
+
+			base_stream = stream;		
 			this.buffer_size = bufferSize;
 			this.encoding = encoding;
 			decoder = encoding.GetDecoder ();
@@ -190,10 +228,6 @@ namespace System.IO {
 			do_checks = detectEncodingFromByteOrderMarks ? 1 : 0;
 			do_checks += (preamble.Length == 0) ? 0 : 2;
 			
-			// since GetChars() might add flushed character, it 
-			// should have additional char buffer for extra 1 
-			// (probably 1 is ok, but might be insufficient. I'm not sure)
-			decoded_buffer = new char [encoding.GetMaxCharCount (bufferSize) + 1];
 			decoded_count = 0;
 			pos = 0;
 		}
@@ -227,6 +261,18 @@ namespace System.IO {
 		{
 			if (disposing && base_stream != null)
 				base_stream.Close ();
+			
+			if (input_buffer != null && input_buffer.Length == DefaultBufferSize && input_buffer_recycle == null) {
+				lock (input_buffer_recycle_lock) {
+					if (input_buffer_recycle == null) {
+						input_buffer_recycle = input_buffer;
+					}
+					
+					if (decoded_buffer_recycle == null) {
+						decoded_buffer_recycle = decoded_buffer;
+					}
+				}
+			}
 			
 			input_buffer = null;
 			decoded_buffer = null;

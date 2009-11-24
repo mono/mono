@@ -331,6 +331,7 @@ namespace System.IO {
 			// if the supplied path ends with a separator...
 			char end = path [path.Length - 1];
 
+			var canonicalize = true;
 			if (path.Length >= 2 &&
 				IsDsc (path [0]) &&
 				IsDsc (path [1])) {
@@ -340,11 +341,19 @@ namespace System.IO {
 				if (path [0] != DirectorySeparatorChar)
 					path = path.Replace (AltDirectorySeparatorChar, DirectorySeparatorChar);
 
-				path = CanonicalizePath (path);
 			} else {
-				if (!IsPathRooted (path))
+				if (!IsPathRooted (path)) {
+					
+					// avoid calling expensive CanonicalizePath when possible
+					var start = 0;
+					while ((start = path.IndexOf ('.', start)) != -1) {
+						if (++start == path.Length || path [start] == DirectorySeparatorChar || path [start] == AltDirectorySeparatorChar)
+							break;
+					}
+					canonicalize = start > 0;
+					
 					path = Directory.GetCurrentDirectory () + DirectorySeparatorStr + path;
-				else if (DirectorySeparatorChar == '\\' &&
+				} else if (DirectorySeparatorChar == '\\' &&
 					path.Length >= 2 &&
 					IsDsc (path [0]) &&
 					!IsDsc (path [1])) { // like `\abc\def'
@@ -354,8 +363,10 @@ namespace System.IO {
 					else
 						path = current.Substring (0, current.IndexOf ('\\', current.IndexOf ("\\\\") + 1));
 				}
-				path = CanonicalizePath (path);
 			}
+			
+			if (canonicalize)
+			    path = CanonicalizePath (path);
 
 			// if the original ended with a [Alt]DirectorySeparatorChar then ensure the full path also ends with one
 			if (IsDsc (end) && (path [path.Length - 1] != DirectorySeparatorChar))

@@ -5,6 +5,7 @@
 // 	Dietmar Maurer (dietmar@ximian.com)
 // 	Dan Lewis (dihlewis@yahoo.co.uk)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//  Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001-2003 Ximian, Inc.  http://www.ximian.com
 // Copyright (C) 2004-2005, 2008 Novell, Inc (http://www.novell.com)
@@ -69,7 +70,7 @@ namespace System.IO
 			: this (handle, access, ownsHandle, bufferSize, isAsync, false) {}
 
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
-		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool noBuffering)
+		internal FileStream (IntPtr handle, FileAccess access, bool ownsHandle, int bufferSize, bool isAsync, bool isZeroSize)
 		{
 			this.handle = MonoIO.InvalidHandle;
 			if (handle == this.handle)
@@ -104,8 +105,10 @@ namespace System.IO
 #else
 			this.anonymous = false;
 #endif
+			if (isZeroSize)
+				bufferSize = 1;
 
-			InitBuffer (bufferSize, noBuffering);
+			InitBuffer (bufferSize);
 
 			if (canseek) {
 				buf_start = MonoIO.Seek (handle, 0, SeekOrigin.Current, out error);
@@ -326,7 +329,7 @@ namespace System.IO
 				}
 			}
 
-			InitBuffer (bufferSize, false);
+			InitBuffer (bufferSize);
 
 			if (mode==FileMode.Append) {
 				this.Seek (0, SeekOrigin.End);
@@ -918,11 +921,19 @@ namespace System.IO
 
 			canseek = false;
 			access = 0;
-			if (disposing) {
+			
+			if (disposing && buf != null) {
+				if (buf.Length == DefaultBufferSize && buf_recycle == null) {
+					lock (buf_recycle_lock) {
+						if (buf_recycle == null) {
+							buf_recycle = buf;
+						}
+					}
+				}
+				
 				buf = null;
-			}
-			if (disposing)
 				GC.SuppressFinalize (this);
+			}
 		}
 
 #if !NET_2_1
@@ -1061,26 +1072,35 @@ namespace System.IO
 			return(amount);
 		}
 				
-		private void InitBuffer (int size, bool noBuffering)
+		void InitBuffer (int size)
 		{
-			if (noBuffering) {
-				size = 0;
-				// We need a buffer for the ReadByte method. This buffer won't
-				// be used for anything else since buf_size==0.
-				buf = new byte [1];
+			if (size <= 0)
+				throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
+			
+			size = Math.Max (size, 8);
+			
+			//
+			// Instead of allocating a new default buffer use the
+			// last one if there is any available
+			//		
+			if (size <= DefaultBufferSize && buf_recycle != null) {
+				lock (buf_recycle_lock) {
+					if (buf_recycle != null) {
+						buf = buf_recycle;
+						buf_recycle = null;
+					}
+				}
 			}
-			else {
-				if (size <= 0)
-					throw new ArgumentOutOfRangeException ("bufferSize", "Positive number required.");
-				if (size < 8)
-					size = 8;
+			
+			if (buf == null)
 				buf = new byte [size];
-			}
+			else
+				Array.Clear (buf, 0, size);
 					
 			buf_size = size;
-			buf_start = 0;
-			buf_offset = buf_length = 0;
-			buf_dirty = false;
+//			buf_start = 0;
+//			buf_offset = buf_length = 0;
+//			buf_dirty = false;
 		}
 
 		private string GetSecureFileName (string filename)
@@ -1097,6 +1117,10 @@ namespace System.IO
 		// fields
 
 		internal const int DefaultBufferSize = 8192;
+
+		// Input buffer ready for recycling				
+		static byte[] buf_recycle;
+		static readonly object buf_recycle_lock = new object ();
 
 		private FileAccess access;
 		private bool owner;

@@ -1,3 +1,12 @@
+2009-11-24  Marek Safar <marek.safar@gmail.com>
+
+	* StreamReader.cs, FileStream.cs: Use recycle buffer to avoid
+	repeated underlying buffer initialization (saves hefty 10MB
+	during corlib compilation).
+	
+	* Path.cs (InsecureGetFullPath): Avoid CanonicalizePath in common
+	path.
+
 2009-11-23  Miguel de Icaza  <miguel@novell.com>
 
 	* DirectoryInfo.cs: Added the new overloads.
@@ -13,6 +22,10 @@
 
 	* MonoIO.cs: Surface a high level FindFirst/FindNext API to
 	implement the various enumerable APIs.
+
+2009-11-13  Marek Safar <marek.safar@gmail.com>
+
+	* UnmanagedMemoryAccessor.cs: Finished.
 
 2009-11-13  Marek Safar <marek.safar@gmail.com>
 
