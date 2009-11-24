@@ -652,7 +652,7 @@ namespace System
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
 #if NET_2_0
-			if (elementType.IsGenericType && elementType.IsGenericTypeDefinition)
+			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
 #endif
 			
@@ -674,7 +674,7 @@ namespace System
 			if (elementType.Equals (typeof (void)))
 				throw new NotSupportedException ("Array type can not be void");
 #if NET_2_0
-			if (elementType.IsGenericType && elementType.IsGenericTypeDefinition)
+			if (elementType.ContainsGenericParameters)
 				throw new NotSupportedException ("Array type can not be an open generic type");
 #endif
 

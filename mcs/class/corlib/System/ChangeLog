@@ -1,5 +1,12 @@
 2009-11-24  Jb Evain  <jbevain@novell.com>
 
+	* Array.cs: use ContainsGenericParameters instead of
+	IsGenericTypeDefinition as it catches more cases.
+
+	backport r146834.
+
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
 	* Array.cs (IList.this[int]): prevent the use of the IList indexer 
 	when dealing with a multi dimensional array.
 
