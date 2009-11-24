@@ -203,6 +203,7 @@ namespace Mono.CSharp
 
 			reader.Position = 0;
 			Parse (reader, file);
+			reader.Dispose ();
 			input.Close ();
 		}	
 		

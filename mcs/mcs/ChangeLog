@@ -1,3 +1,9 @@
+2009-11-24  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Lower static array initializer barrier.
+	
+	* support.cs, driver.cs: Share reader buffer.
+
 2009-11-23  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs, support.cs: Some tokenizer optimizations.

@@ -94,28 +94,18 @@ namespace Mono.CSharp {
 	///   but if the seek is too far, it may read the underly
 	///   stream all over from the beginning.
 	/// </summary>
-	public class SeekableStreamReader
+	public class SeekableStreamReader : IDisposable
 	{
 		const int buffer_read_length_spans = 3;
 
 		TextReader reader;
 		Stream stream;
-		Encoding encoding;
 
-		char[] buffer;
+		static char[] buffer;
 		int average_read_length;
 		int buffer_start;       // in chars
 		int char_count;         // count buffer[] valid characters
 		int pos;                // index into buffer[]
-
-		void ResetStream (int read_length_inc)
-		{
-			average_read_length += read_length_inc;
-			stream.Position = 0;
-			reader = new StreamReader (stream, encoding, true, average_read_length);
-			buffer = new char [average_read_length * buffer_read_length_spans];
-			buffer_start = char_count = pos = 0;
-		}
 
 		public SeekableStreamReader (Stream stream, Encoding encoding)
 		{
@@ -123,7 +113,26 @@ namespace Mono.CSharp {
 			this.encoding = encoding;
 
 			const int default_average_read_length = 1024;
-			ResetStream (default_average_read_length);
+			InitializeStream (default_average_read_length);
+			reader = new StreamReader (stream, encoding, true);
+		}
+
+		public void Dispose ()
+		{
+			// Needed to release stream reader buffers
+			reader.Dispose ();
+		}
+
+		void InitializeStream (int read_length_inc)
+		{
+			average_read_length += read_length_inc;
+
+			int required_buffer_size = average_read_length * buffer_read_length_spans;
+			if (buffer == null || buffer.Length < required_buffer_size)
+				buffer = new char [required_buffer_size];
+
+			stream.Position = 0;			
+			buffer_start = char_count = pos = 0;
 		}
 
 		/// <remarks>
@@ -139,7 +148,7 @@ namespace Mono.CSharp {
 			set {
 				// If the lookahead was too small, re-read from the beginning.  Increase the buffer size while we're at it
 				if (value < buffer_start)
-					ResetStream (average_read_length / 2);
+					InitializeStream (average_read_length / 2);
 
 				while (value > buffer_start + char_count) {
 					pos = char_count;
