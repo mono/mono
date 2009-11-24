@@ -611,7 +611,12 @@ namespace Mono.Debugger
 			return ObjectMirror.InvokeMethod (vm, thread, method, null, arguments, options);
 		}
 
+		[Obsolete ("Use the overload without the 'vm' argument")]
 		public IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+			return ObjectMirror.BeginInvokeMethod (vm, thread, method, null, arguments, options, callback, state);
+		}
+
+		public IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			return ObjectMirror.BeginInvokeMethod (vm, thread, method, null, arguments, options, callback, state);
 		}
 
