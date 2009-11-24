@@ -598,6 +598,8 @@ namespace System
 			int[] bounds = null;
 
 			elementType = elementType.UnderlyingSystemType;
+			if (elementType.Equals (typeof (void)))
+				throw new NotSupportedException ("Array type can not be void");
 			if (!elementType.IsSystemType)
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
 			
