@@ -13,7 +13,6 @@
 	
 	<!-- TEMPLATE PARAMETERS -->
 
-	<xsl:param name="language" select="'C#'"/>
 	<xsl:param name="ext" select="'xml'"/>
 	<xsl:param name="basepath" select="'./'"/>
 	

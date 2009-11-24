@@ -1,5 +1,11 @@
 2009-11-23  Jonathan Pryor <jpryor@novell.com>
 
+	* Resources/overview.xsl, Resources/stylesheet.xsl: Remove the 'ext'
+	  and 'language' global <xsl:param>'s, as they cause "variable 'foo' 
+	  was duplicated within the same scope" errors under .NET.
+
+2009-11-23  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/monodocer.cs: ".NET support": ensure that we
 	  always get Unix line endings so that we can update documentation
 	  under both Mono & .NET w/o continually changing the file due to

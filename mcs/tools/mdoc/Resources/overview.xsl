@@ -13,7 +13,6 @@
 	
 	<xsl:include href="stylesheet.xsl"/>
 	
-	<xsl:param name="ext" select="'xml'"/>
 	<xsl:param name="namespace" select="''"/>
 
 	<xsl:variable name="max-types">50</xsl:variable>
