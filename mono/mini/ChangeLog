@@ -1,5 +1,10 @@
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* cfold.c (mono_constant_fold_ins): Fix a problem in the previous change,
+	OP_SHL_IMM is not 32 bit.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c (encode_patch): Fix the encoding of R8 on big-endian systems.
 
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
