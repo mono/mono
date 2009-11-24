@@ -1,3 +1,9 @@
+2009-11-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* image.c (mono_image_load_module): Fix crash when a bad assembly
+	has no module at all (fix bug #553412) and also replace the 
+	g_assert with a return NULL (documented return value for failure)
+
 2009-11-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (mono_type_get_desc): Handle typedbyref.
