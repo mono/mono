@@ -1,3 +1,15 @@
+2009-11-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_plt_resolve): Clean up the handling of function
+	descriptors a bit, add comments, handle RGCTX_FETCH/GENERIC_CLASS_INIT_TRAMPOLINE
+	correctly.
+
+	* exceptions-ppc.c (mono_arch_find_jit_info_ext): Use mgreg_t as the type of
+	regs. Pass the real size of the regs array to mono_unwind_frame ().
+
+	* unwind.c (mono_unwind_frame): Remove an incorrect assert, add more correct
+	ones instead.
+
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-arm.c: Use blx instead of mov pc, reg to improve support for thumb.
