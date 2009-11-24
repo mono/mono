@@ -1,5 +1,9 @@
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (resume_vm): Signal the suspend_cond even if suspend_count
+	> 0 since some threads can resume if their resume_count is > 0.
+	(invoke_method): Avoid reading freed memory.
+
 	* debugger-agent.c (process_suspend): Extract the suspend code from
 	process_single_step_inner () to a separate function. Rework the code to prevent
 	races between this function and thread interrupts.
