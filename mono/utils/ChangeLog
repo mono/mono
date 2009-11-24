@@ -1,3 +1,8 @@
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-io-portability.c (append_report): g_string_append_vprintf is available
+	only in glib 2.14.
+
 2009-11-23  Andreas Färber  <andreas.faerber@web.de>
 
 	* mono-mmap.c (mono_mprotect): Use posix_madvise in absence of madvise.
