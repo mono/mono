@@ -403,12 +403,10 @@ namespace System.Reflection.Emit
 							SetLastError = (bool)value;
 						else if (name == "PreserveSig")
 							preserveSig = (bool)value;
-#if NET_1_1
 					else if (name == "BestFitMapping")
 						BestFitMapping = (bool)value;
 					else if (name == "ThrowOnUnmappableChar")
 						ThrowOnUnmappableChar = (bool)value;
-#endif
 					}
 
 					attrs |= MethodAttributes.PinvokeImpl;
