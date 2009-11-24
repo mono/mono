@@ -1,3 +1,10 @@
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
+	* ArrayTest.cs: add test ensuring we do not allow open
+	generic types in CreateInstance.
+
+	backport of r146823.
+
 2009-11-24  Jb Evain <jbevain@novell.com>
 
 	* ArrayTest.cs: Add test ensuring we do not allow void arrays.
