@@ -1,3 +1,7 @@
+2009-11-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-hash.c (mono_g_hash_table_find): Implement this.
+
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-io-portability.c (append_report): g_string_append_vprintf is available
