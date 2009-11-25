@@ -1,5 +1,12 @@
 2009-11-25  Jb Evain  <jbevain@novell.com>
 
+	* QueueTest.cs: add test for a specific combination of
+	calls that make the queue crash when enqueuing an item.
+
+	backport 146925.
+
+2009-11-25  Jb Evain  <jbevain@novell.com>
+
 	* QueueTest.cs: add tests for ICollection.CopyTo.
 
 	backport r146914.

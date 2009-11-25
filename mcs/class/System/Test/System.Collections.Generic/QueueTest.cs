@@ -283,6 +283,27 @@ namespace MonoTests.System.Collections.Generic {
 		}
 
 		[Test]
+		public void TrimExcessDequeueEnqueue ()
+		{
+			var queue = new Queue<int> ();
+			queue.Enqueue (1);
+			queue.Enqueue (2);
+			queue.Enqueue (3);
+
+			queue.TrimExcess ();
+
+			Assert.AreEqual (1, queue.Dequeue ());
+
+			queue.Enqueue (4);
+
+			Assert.AreEqual (2, queue.Dequeue ());
+			Assert.AreEqual (3, queue.Dequeue ());
+			Assert.AreEqual (4, queue.Dequeue ());
+
+			Assert.AreEqual (0, queue.Count);
+		}
+
+		[Test]
 		[Category ("NotWorking")] // bug #80649
 		public void SerializeTest ()
 		{
