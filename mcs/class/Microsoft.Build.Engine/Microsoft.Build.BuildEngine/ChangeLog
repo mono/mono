@@ -1,3 +1,8 @@
+2009-11-26  Ankit Jain  <jankit@novell.com>
+
+	* TargetBatchingImpl.cs (BuildTargetNeeded): Expand metadata
+	refs also, for Inputs and Outputs.
+
 2009-10-13  Ankit Jain  <jankit@novell.com>
 
 	* DirectoryScanner.cs:
