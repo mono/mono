@@ -1,3 +1,10 @@
+2009-11-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (inflate_generic_type): Change code to use new signature of
+	mono_error_set_bad_image.
+
+	Fixes #558124.
+
 2009-11-25  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* verify.c (mono_method_verify): Don't free ctx.params items if 
