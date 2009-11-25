@@ -1,3 +1,7 @@
+2009-11-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs (GetHashCode): Fix this so it is constant.
+
 2009-11-24  Jb Evain  <jbevain@novell.com>
 
 	* Array.cs: use ContainsGenericParameters instead of
