@@ -2625,7 +2625,9 @@ mono_metadata_parse_generic_param (MonoImage *m, MonoGenericContainer *generic_c
 		return param;
 	}
 
-	g_assert (index < generic_container->type_argc);
+	if (index >= generic_container->type_argc)
+		return NULL;
+
 	return mono_generic_container_get_param (generic_container, index);
 }
 

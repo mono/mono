@@ -1,3 +1,15 @@
+2009-11-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (find_method_in_class): Don't crash if the signature cannot
+	be resolved.
+
+	* metadata.c (mono_metadata_parse_generic_param): Return NULL instead
+	of asserting for the case of invalid params.
+
+	Fixes #553304.
+
+	Backport of r146875.
+
 2009-11-24  Bill Holmes  <billholmes54@gmail.com>
 
 	Backport of 144280.
