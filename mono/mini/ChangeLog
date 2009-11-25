@@ -1,3 +1,10 @@
+2009-11-24  Geoff Norton  <gnorton@novell.com>
+
+	* mini-darwin.c: Work around apple bug rdar://7209349  See
+	http://openradar.appspot.com/7209349 for details.  Synopsis,
+	CoreFoundation SIGTRAP's if you dlopen it off the main thread if its
+	never been initialized before.
+
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-arm.c: Use blx instead of mov pc, reg to improve support for thumb.
