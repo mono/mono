@@ -1008,6 +1008,17 @@ namespace MonoTests.System
 			Assert.AreEqual (10, d (5));
 		}
 #endif
+
+		[Test]
+		public void GetHashCode_Constant () {
+			Action del = delegate {
+			};
+			int hc1 = del.GetHashCode ();
+			del ();
+			int hc2 = del.GetHashCode ();
+			Assert.AreEqual (hc1, hc2);
+		}
+
 		delegate string FooDelegate (Iface iface, string s);
 
 		delegate string FooDelegate2 (B b, string s);
