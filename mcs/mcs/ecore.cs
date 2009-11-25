@@ -6164,16 +6164,17 @@ namespace Mono.CSharp {
 	class VarExpr : SimpleName
 	{
 		// Used for error reporting only
-		ArrayList initializer;
+		int initializers_count;
 
 		public VarExpr (Location loc)
 			: base ("var", loc)
 		{
+			initializers_count = 1;
 		}
 
-		public ArrayList VariableInitializer {
+		public int VariableInitializersCount {
 			set {
-				this.initializer = value;
+				this.initializers_count = value;
 			}
 		}
 
@@ -6210,18 +6211,17 @@ namespace Mono.CSharp {
 			if (RootContext.Version < LanguageVersion.V_3)
 				rc.Compiler.Report.FeatureIsNotAvailable (loc, "implicitly typed local variable");
 
-			if (initializer == null)
+			if (initializers_count == 1)
 				return null;
 
-			if (initializer.Count > 1) {
-				Location loc_init = ((CSharpParser.VariableDeclaration) initializer[1]).Location;
-				rc.Compiler.Report.Error (819, loc_init, "An implicitly typed local variable declaration cannot include multiple declarators");
-				initializer = null;
+			if (initializers_count > 1) {
+				rc.Compiler.Report.Error (819, loc, "An implicitly typed local variable declaration cannot include multiple declarators");
+				initializers_count = 1;
 				return null;
 			}
 
-			Expression variable_initializer = ((CSharpParser.VariableDeclaration) initializer[0]).expression_or_array_initializer;
-			if (variable_initializer == null) {
+			if (initializers_count == 0) {
+				initializers_count = 1;
 				rc.Compiler.Report.Error (818, loc, "An implicitly typed local variable declarator must include an initializer");
 				return null;
 			}

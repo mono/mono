@@ -153,6 +153,14 @@ namespace Mono.CSharp
 		static int class_count;
 		
 		CompilerContext compiler;
+		
+		//
+		// Instead of allocating carrier array everytime we
+		// share the bucket for very common constructs which can never
+		// be recursive
+		//
+		static ArrayList parameters_bucket = new ArrayList (6);
+		static ArrayList variables_bucket = new ArrayList (6);
 %}
 
 %token EOF
@@ -764,11 +772,7 @@ attribute_target
 attribute_list
 	: attribute
 	  {
-		ArrayList attrs = new ArrayList (4);
-		attrs.Add ($1);
-
-		$$ = attrs;
-	       
+		$$ = new ArrayList (4) { $1 };
 	  }
 	| attribute_list COMMA attribute
 	  {
@@ -1028,10 +1032,10 @@ constant_declaration
 constant_declarators
 	: constant_declarator 
 	  {
-		ArrayList constants = new ArrayList (4);
+  	  	variables_bucket.Clear ();
 		if ($1 != null)
-			constants.Add ($1);
-		$$ = constants;
+			variables_bucket.Add ($1);
+		$$ = variables_bucket;
 	  }
 	| constant_declarators COMMA constant_declarator
 	  {
@@ -1159,10 +1163,10 @@ fixed_variable_declarator
 local_variable_declarators	
 	: local_variable_declarator 
 	  {
-		ArrayList decl = new ArrayList (4);
+		variables_bucket.Clear ();
 		if ($1 != null)
-			decl.Add ($1);
-		$$ = decl;
+			variables_bucket.Add ($1);
+		$$ = variables_bucket;
 	  }
 	| local_variable_declarators COMMA local_variable_declarator
 	  {
@@ -1208,10 +1212,10 @@ local_variable_initializer
 variable_declarators
 	: variable_declarator 
 	  {
-		ArrayList decl = new ArrayList (4);
+		variables_bucket.Clear ();
 		if ($1 != null)
-			decl.Add ($1);
-		$$ = decl;
+			variables_bucket.Add ($1);
+		$$ = variables_bucket;
 	  }
 	| variable_declarators COMMA variable_declarator
 	  {
@@ -1497,12 +1501,12 @@ formal_parameter_list
 fixed_parameters
 	: fixed_parameter	
 	  {
-		ArrayList pars = new ArrayList (4);
+		parameters_bucket.Clear ();
 		Parameter p = (Parameter) $1;
-		pars.Add (p);
+		parameters_bucket.Add (p);
 		
 		default_parameter_used = p.HasDefaultValue;
-		$$ = pars;
+		$$ = parameters_bucket;
 	  }
 	| fixed_parameters COMMA fixed_parameter
 	  {
@@ -3634,8 +3638,7 @@ opt_array_initializer
 array_initializer
 	: OPEN_BRACE CLOSE_BRACE
 	  {
-		ArrayList list = new ArrayList (4);
-		$$ = list;
+		$$ = new ArrayList (0);
 	  }
 	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
 	  {
@@ -4696,8 +4699,12 @@ local_variable_declaration
 	  {
 		if ($1 != null) {
 			VarExpr ve = $1 as VarExpr;
-			if (ve != null)
-				ve.VariableInitializer = (ArrayList)$2;
+			if (ve != null) {
+				if (((VariableDeclaration)((ArrayList)$2) [0]).expression_or_array_initializer == null)
+					ve.VariableInitializersCount = 0;
+				else
+					ve.VariableInitializersCount = ((ArrayList)$2).Count;
+			}
 				
 			$$ = new DictionaryEntry ($1, $2);
 		} else
@@ -5207,7 +5214,7 @@ catch_clause
 			LocatedToken lt = (LocatedToken) cc.Value;
 
 			if (lt != null){
-				ArrayList one = new ArrayList (4);
+				ArrayList one = new ArrayList (2);
 
 				one.Add (new VariableDeclaration (lt, null));
 
@@ -5900,7 +5907,7 @@ close_brace_or_complete_completion
 // <summary>
 //   A class used to pass around variable declarations and constants
 // </summary>
-public class VariableDeclaration {
+class VariableDeclaration {
 	public string identifier;
 	public Expression expression_or_array_initializer;
 	public Location Location;
@@ -6037,7 +6044,6 @@ MakeName (MemberName class_name)
 Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)
 {
 	Block implicit_block;
-	ArrayList inits = null;
 
 	//
 	// If we are doing interactive editing, we want variable declarations
@@ -6112,26 +6118,16 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 
 		if (implicit_block.AddVariable (type, decl.identifier, decl.Location) != null) {
 			if (decl.expression_or_array_initializer != null){
-				if (inits == null)
-					inits = new ArrayList (4);
-				inits.Add (decl);
+				Assign assign;
+				Expression expr = decl.expression_or_array_initializer;
+				
+				var lvr = new LocalVariableReference (implicit_block, decl.identifier, loc);
+
+				assign = new SimpleAssign (lvr, expr, decl.Location);
+
+				implicit_block.AddStatement (new StatementExpression (assign));
 			}
 		}
-	}
-
-	if (inits == null)
-		return implicit_block;
-
-	foreach (VariableDeclaration decl in inits){
-		Assign assign;
-		Expression expr = decl.expression_or_array_initializer;
-		
-		LocalVariableReference var;
-		var = new LocalVariableReference (implicit_block, decl.identifier, loc);
-
-		assign = new SimpleAssign (var, expr, decl.Location);
-
-		implicit_block.AddStatement (new StatementExpression (assign));
 	}
 	
 	return implicit_block;
