@@ -1,5 +1,15 @@
 2009-11-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (stack_push, stack_pop, stack_pop_safe): Assert if we underflow
+	or overflow. The caller must have done this check explicitly. This guard us
+	from accessing invalid memory.
+
+	* verify.c (do_push_static_field): Check for stack overflow.
+
+	Fixes #553333.
+
+2009-11-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (find_method_in_class): Don't crash if the signature cannot
 	be resolved.
 
