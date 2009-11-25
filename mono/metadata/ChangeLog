@@ -1,3 +1,8 @@
+2009-11-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* verify.c (mono_method_verify): Don't free ctx.params items if 
+	we aborted while inflating the ctx.locals. Complete previous fix
+
 2009-11-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* verify.c (mono_method_verify): Use the uninflated type name, 
