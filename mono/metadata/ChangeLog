@@ -1,5 +1,13 @@
 2009-11-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (field_from_memberref): Resolve the class first then the field
+	signature. Remove a lot of duplicated code and make sure we don't pass valid
+	values to mono_loader_set_error_field_load.
+
+	Fixes #553306.
+
+2009-11-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (inflate_generic_type): Change code to use new signature of
 	mono_error_set_bad_image.
 
