@@ -609,7 +609,7 @@
 	<Target Name="_RecordCleanFile"
 		DependsOnTargets="_GetCompileOutputsForClean">
 		<WriteLinesToFile
-			File="$(BaseIntermediateOutputPath)$(CleanFile)"
+			File="$(IntermediateOutputPath)$(CleanFile)"
 			Lines="@(FileWrites->'%(FullPath)')"
 			Overwrite="true"/>
 	</Target>
@@ -637,7 +637,7 @@
 	<!-- Get the list of files written, for clean -->
 	<Target Name="_GetCleanFileWrites"
 		DependsOnTargets="_GetCompileOutputsForClean">
-		<ReadLinesFromFile File="$(BaseIntermediateOutputPath)$(CleanFile)">
+		<ReadLinesFromFile File="$(IntermediateOutputPath)$(CleanFile)">
 			<Output TaskParameter="Lines" ItemName="FileWrites"/>
 		</ReadLinesFromFile>
 	</Target>
