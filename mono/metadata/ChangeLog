@@ -1,3 +1,13 @@
+2009-11-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (find_method_in_class): Don't crash if the signature cannot
+	be resolved.
+
+	* metadata.c (mono_metadata_parse_generic_param): Return NULL instead
+	of asserting for the case of invalid params.
+
+	Fixes #553304.
+
 2009-11-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* image.c (mono_image_load_module): Fix crash when a bad assembly
