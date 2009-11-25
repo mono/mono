@@ -557,13 +557,12 @@
 
 	<!-- this gets invoked in two cases, from CoreBuildDependsOn, if the build completes
 	     successfully, OR from OnError in CoreBuild, if the build failed and $(RunPostBuildEvent)
-	     is 'Always' or 'OnOutputUpdated' -->
+	     is 'Always' or 'OnOutputUpdated'. Invoke $(PostBuildEvent) if its either Empty (== OnBuildSuccess)
+	     or OnBuildSuccess or Always OR (OnOutputUpdated and output assembly got updated) -->
 	<Target Name="PostBuildEvent"
 		Condition="'$(PostBuildEvent)' != '' and
-			('$(RunPostBuildEvent)' == 'Always' or '$(RunPostBuildEvent)' == 'OnBuildSuccess' or
-			  ('$(RunPostBuildEvent)' == 'OnOutputUpdated' and
-			    '$(_AssemblyModifiedTimeBeforeCompile)' != '$(_AssemblyModifiedTimeAfterCompile)')
-			)"
+			('$(RunPostBuildEvent)' != 'OnOutputUpdated' or
+			  '$(_AssemblyModifiedTimeBeforeCompile)' != '$(_AssemblyModifiedTimeAfterCompile)')"
 		DependsOnTargets="$(PostBuildEventDependsOn)">
 
 		<Exec WorkingDirectory="$(OutDir)" Command="$(PostBuildEvent)" />
