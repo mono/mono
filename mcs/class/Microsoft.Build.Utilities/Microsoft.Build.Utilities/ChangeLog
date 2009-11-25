@@ -1,3 +1,8 @@
+2009-11-25  Ankit Jain  <jankit@novell.com>
+
+	* ToolLocationHelper.cs: Set directory for 3.0 framework
+	to "2.0"
+
 2009-11-09  Ankit Jain  <jankit@novell.com>
 
 	* TargetDotNetFrameworkVersion.cs (Version30):

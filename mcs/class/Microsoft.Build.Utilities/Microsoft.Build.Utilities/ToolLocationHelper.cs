@@ -54,7 +54,7 @@ namespace Microsoft.Build.Utilities
 			mono_dir = new string [] {
 				Path.Combine (lib_mono_dir, "1.0"),
 				Path.Combine (lib_mono_dir, "2.0"),
-				Path.Combine (lib_mono_dir, "3.0"),
+				Path.Combine (lib_mono_dir, "2.0"),
 				Path.Combine (lib_mono_dir, "3.5")
 			};
 		}
