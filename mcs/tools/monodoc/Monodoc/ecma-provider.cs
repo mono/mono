@@ -703,7 +703,7 @@ public class EcmaHelpSource : HelpSource {
 			XsltArgumentList args = new XsltArgumentList();
 			args.AddExtensionObject("monodoc:///extensions", ExtObject);
 			args.AddParam("show", "", "masteroverview");
-			string s = Htmlize(new XPathDocument (summary), args);
+			string s = Htmlize(summary, args);
 			return BuildHtml (css_ecma_code, js_code, s); 
 		}
 		
@@ -1124,7 +1124,7 @@ public class EcmaHelpSource : HelpSource {
 			args.AddExtensionObject("monodoc:///extensions", ExtObject);
 			args.AddParam("show", "", "namespace");
 			args.AddParam("namespace", "", ns_name);
-			string s = Htmlize(doc, args);
+			string s = Htmlize(new XmlNodeReader (doc), args);
 			return BuildHtml (css_ecma_code, js_code, s); 
 
 		}
@@ -1240,7 +1240,7 @@ public class EcmaHelpSource : HelpSource {
 		
 		if (rest == "") {
 			args.AddParam("show", "", "typeoverview");
-			string s = Htmlize(doc, args);
+			string s = Htmlize(new XmlNodeReader (doc), args);
 			return BuildHtml (css_ecma_code, js_code, s); 
 		}
 		
@@ -1300,7 +1300,7 @@ public class EcmaHelpSource : HelpSource {
 			return "Unknown url: " + url;
 		}
 
-		string html = Htmlize(doc, args);
+		string html = Htmlize(new XmlNodeReader (doc), args);
 		return BuildHtml (css_ecma_code, js_code, html); 
 	}
 
@@ -1310,22 +1310,25 @@ public class EcmaHelpSource : HelpSource {
 		XsltArgumentList args = new XsltArgumentList ();
 		args.AddExtensionObject ("monodoc:///extensions", ExtObject);
 		
-		Htmlize (newNode, args, writer);
+		Htmlize (new XmlNodeReader (newNode), args, writer);
 	}
 
-	static XslTransform ecma_transform;
+	static XslCompiledTransform ecma_transform;
 
-	public string Htmlize (IXPathNavigable ecma_xml)
+	public string Htmlize (XmlReader ecma_xml)
 	{
 		return Htmlize(ecma_xml, null);
 	}
 
-	public string Htmlize (IXPathNavigable ecma_xml, XsltArgumentList args)
+	public string Htmlize (XmlReader ecma_xml, XsltArgumentList args)
 	{
 		EnsureTransform ();
 		
-		StringWriter output = new StringWriter ();
-		ecma_transform.Transform (ecma_xml, args, output, CreateDocumentResolver ());
+		var output = new StringBuilder ();
+		ecma_transform.Transform (ecma_xml, 
+				args, 
+				XmlWriter.Create (output, ecma_transform.OutputSettings),
+				CreateDocumentResolver ());
 		return output.ToString ();
 	}
 
@@ -1335,7 +1338,7 @@ public class EcmaHelpSource : HelpSource {
 		return null;
 	}
 	
-	static void Htmlize (IXPathNavigable ecma_xml, XsltArgumentList args, XmlWriter w)
+	static void Htmlize (XmlReader ecma_xml, XsltArgumentList args, XmlWriter w)
 	{
 		EnsureTransform ();
 		
@@ -1345,22 +1348,22 @@ public class EcmaHelpSource : HelpSource {
 		ecma_transform.Transform (ecma_xml, args, w, null);
 	}
 	
-	static XslTransform ecma_transform_css, ecma_transform_no_css;
+	static XslCompiledTransform ecma_transform_css, ecma_transform_no_css;
 	static void EnsureTransform ()
 	{
 		if (ecma_transform == null) {
-			ecma_transform_css = new XslTransform ();
-			ecma_transform_no_css = new XslTransform ();
+			ecma_transform_css = new XslCompiledTransform ();
+			ecma_transform_no_css = new XslCompiledTransform ();
 			Assembly assembly = System.Reflection.Assembly.GetCallingAssembly ();
 			
 			Stream stream = assembly.GetManifestResourceStream ("mono-ecma-css.xsl");
 			XmlReader xml_reader = new XmlTextReader (stream);
 			XmlResolver r = new ManifestResourceResolver (".");
-			ecma_transform_css.Load (xml_reader, r, null);
+			ecma_transform_css.Load (xml_reader, XsltSettings.TrustedXslt, r);
 			
 			stream = assembly.GetManifestResourceStream ("mono-ecma.xsl");
 			xml_reader = new XmlTextReader (stream);
-			ecma_transform_no_css.Load (xml_reader, r, null);
+			ecma_transform_no_css.Load (xml_reader, XsltSettings.TrustedXslt, r);
 		}
 		if (use_css)
 			ecma_transform = ecma_transform_css;
@@ -2214,7 +2217,7 @@ public class EcmaUncompiledHelpSource : EcmaHelpSource {
 			XsltArgumentList args = new XsltArgumentList();
 			args.AddExtensionObject("monodoc:///extensions", ExtObject);
 			args.AddParam("show", "", "masteroverview");
-			string s = Htmlize(new XPathDocument (reader), args);
+			string s = Htmlize(reader, args);
 			return BuildHtml (css_ecma_code, js_code, s); 
 		}
 		return base.GetText(url, out match_node);

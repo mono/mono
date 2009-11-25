@@ -1,3 +1,9 @@
+2009-11-24  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/ecma-provider.cs: Use XslCompiledTransform instead of
+	  XslTransform, as XslCompiledTransform is *significantly* faster
+	  under .NET (3m7s -> 1.7s for some tests).
+
 2009-10-02  Jonathan Pryor  <jpryor@novell.com>
 
 	* Mono.Documentation/XmlDocUtils.cs: GetInterfaces() can throw if the
