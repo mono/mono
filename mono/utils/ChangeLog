@@ -1,3 +1,7 @@
+2009-11-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-hash.c (mono_g_hash_table_find): Implement this.
+
 2009-11-13 Jonathan Chambers <joncham@gmail.com>
 
 	* mono-semaphore.h: Implementation for Windows platform.
