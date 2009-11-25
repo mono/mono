@@ -459,8 +459,7 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			// FIXME: Sync with Equals above
-			return (int)method_ptr;
+			return method.GetHashCode () ^ (m_target != null ? m_target.GetHashCode () : 0);
 		}
 
 		protected virtual MethodInfo GetMethodImpl ()

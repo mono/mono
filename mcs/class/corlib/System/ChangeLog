@@ -1,3 +1,7 @@
+2009-11-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs (GetHashCode): Fix this so it is constant.
+
 2009-10-28  Lluis Sanchez Gual  <lluis@novell.com>
 
 	* MarshalByRefObject.cs: In InitializeLifetimeService, if a lease
