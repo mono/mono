@@ -5,6 +5,7 @@ using System.Diagnostics;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Text;
 using System.Xml;
 using System.Xml.Xsl;
 using System.Xml.XPath;
@@ -107,16 +108,16 @@ class MDocToHtmlConverter : MDocCommand {
 
 		// Load the stylesheets, overview.xml, and resolver
 		
-		XslTransform overviewxsl = LoadTransform("overview.xsl", sourceDirectories);
-		XslTransform stylesheet = LoadTransform("stylesheet.xsl", sourceDirectories);
-		XslTransform template;
+		XslCompiledTransform overviewxsl = LoadTransform("overview.xsl", sourceDirectories);
+		XslCompiledTransform stylesheet = LoadTransform("stylesheet.xsl", sourceDirectories);
+		XslCompiledTransform template;
 		if (opts.template == null) {
 			template = LoadTransform("defaulttemplate.xsl", sourceDirectories);
 		} else {
 			try {
 				XmlDocument templatexsl = new XmlDocument();
 				templatexsl.Load(opts.template);
-				template = new XslTransform();
+				template = new XslCompiledTransform ();
 				template.Load(templatexsl);
 			} catch (Exception e) {
 				throw new ApplicationException("There was an error loading " + opts.template, e);
@@ -222,7 +223,7 @@ class MDocToHtmlConverter : MDocCommand {
 		}
 	}
 	
-	private static void Generate(XmlDocument source, XslTransform transform, XsltArgumentList args, string output, XslTransform template, List<string> sourceDirectories) {
+	private static void Generate(XmlDocument source, XslCompiledTransform transform, XsltArgumentList args, string output, XslCompiledTransform template, List<string> sourceDirectories) {
 		using (TextWriter textwriter = new StreamWriter(new FileStream(output, FileMode.Create))) {
 			XmlTextWriter writer = new XmlTextWriter(textwriter);
 			writer.Formatting = Formatting.Indented;
@@ -230,17 +231,24 @@ class MDocToHtmlConverter : MDocCommand {
 			writer.IndentChar = ' ';
 			
 			try {
-				XmlDocument intermediate = new XmlDocument();
-				intermediate.PreserveWhitespace = true;
-				intermediate.Load(transform.Transform(source, args, new ManifestResourceResolver(sourceDirectories.ToArray ()))); // FIXME?
-				template.Transform(intermediate, new XsltArgumentList(), new XhtmlWriter (writer), null);
+				var intermediate = new StringBuilder ();
+				transform.Transform (
+						new XmlNodeReader (source), 
+						args, 
+						XmlWriter.Create (intermediate, transform.OutputSettings),
+						new ManifestResourceResolver(sourceDirectories.ToArray ()));
+				template.Transform (
+						XmlReader.Create (new StringReader (intermediate.ToString ())),
+						new XsltArgumentList (),
+						new XhtmlWriter (writer),
+						null);
 			} catch (Exception e) {
 				throw new ApplicationException("An error occured while generating " + output, e);
 			}
 		}
 	}
 	
-	private static XslTransform LoadTransform(string name, List<string> sourceDirectories) {
+	private static XslCompiledTransform LoadTransform(string name, List<string> sourceDirectories) {
 		try {
 			XmlDocument xsl = new XmlDocument();
 			xsl.Load(Assembly.GetExecutingAssembly().GetManifestResourceStream(name));
@@ -259,8 +267,11 @@ class MDocToHtmlConverter : MDocCommand {
 					xsl.DocumentElement.AppendChild(xsl.ImportNode(node, true));
 			}
 			
-			XslTransform t = new XslTransform();
-			t.Load (xsl, new ManifestResourceResolver (sourceDirectories.ToArray ())); // FIXME?
+			XslCompiledTransform t = new XslCompiledTransform ();
+			t.Load (
+					xsl, 
+					XsltSettings.TrustedXslt,
+					new ManifestResourceResolver (sourceDirectories.ToArray ()));
 			
 			return t;
 		} catch (Exception e) {

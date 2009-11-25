@@ -1,3 +1,9 @@
+2009-11-24  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocs2html.cs: Use XslCompiledTransform, as
+	  it's *significantly* faster under .NET than XslTransform -- 
+	  1.7s vs ~3 minutes 7s (for a trivial test case).
+
 2009-11-23  Jonathan Pryor <jpryor@novell.com>
 
 	* Resources/overview.xsl, Resources/stylesheet.xsl: Remove the 'ext'
