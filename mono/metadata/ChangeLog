@@ -1,3 +1,12 @@
+2009-11-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* verify.c (mono_method_verify): Use the uninflated type name, 
+	when the inflated is null, to report errors. Also take care when
+	freeing, not to free everything since, in case of an error, some
+	stuff would be copies (i.e. not allocated by the function itself)
+	Fix bug #558145
+	[Backport r146900]
+
 2009-11-24  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (stack_push, stack_pop, stack_pop_safe): Assert if we underflow
