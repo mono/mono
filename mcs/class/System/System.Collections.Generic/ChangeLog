@@ -1,5 +1,10 @@
 2009-11-25  Jb Evain  <jbevain@novell.com>
 
+	* Queue.cs (Enqueue): deal with the case where the tail
+	is off the array when deciding to enlarge the capacity.
+
+2009-11-25  Jb Evain  <jbevain@novell.com>
+
 	* Queue.cs (ICollection.CopyTo): fix typo, remove code duplication.
 
 2009-11-02  Miguel de Icaza  <miguel@novell.com>
