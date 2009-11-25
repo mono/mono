@@ -131,6 +131,7 @@ class MDocToHtmlConverter : MDocCommand {
 		
 		// Create the master page
 		XsltArgumentList overviewargs = new XsltArgumentList();
+		overviewargs.AddParam("Index", "", overview.CreateNavigator ());
 
 		var regenIndex = sourceDirectories.Any (
 					d => !DestinationIsNewer (Path.Combine (d, "index.xml"), overviewDest));
@@ -141,7 +142,6 @@ class MDocToHtmlConverter : MDocCommand {
 			overviewargs.RemoveParam("basepath", "");
 		}
 		overviewargs.AddParam("basepath", "", "../");
-		overviewargs.AddParam("Index", "", overview.CreateNavigator ());
 		
 		// Create the namespace & type pages
 		

@@ -1,3 +1,23 @@
+2009-11-25  Jonathan Pryor <jpryor@novell.com>
+
+	+ Giving up on getting mdoc to fully work under .NET; specifically,
+	  mdoc-export-html makes use of many Mono XSLT "extensions" (part of
+	  XSLT 2.0, apparently) which .NET doesn't support.  To run mdoc under
+	  .NET, use mdoc-net.exe, which is a "static" mdoc.exe, including the 
+	  sources for BOTH monodoc.dll AND Mono's System.Xml.dll in the binary.
+	  Yes, this makes it huge.
+
+	* . (svn:ignore): Ignore generated files.
+	* Makefile: If the NET variable is present (e.g. 'make NET=1'),
+	  generate mdoc-net.exe instead of mdoc.exe, otherwise generate
+	  mdoc.exe (the default, with normal dependencies).  When NET is
+	  present, also create a 'mdoc-net' directory which contains
+	  mdoc-net.exe and all assembly dependencies (to make it easier to
+	  grab all the deps at once).
+	* mdoc-net.exe.sources: Added; sources to use for mdoc-net.exe.
+	* Mono.Documentation/monodocs2html.cs: Ensure that the "Index" XSLT
+	  variable is set before generating output.
+
 2009-11-24  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2html.cs: Use XslCompiledTransform, as
