@@ -136,6 +136,7 @@ namespace System.Data.OracleClient.Oci
 				DefineLob (position, definedType, connection);
 				return;
 			case OciDataType.Raw:
+			case OciDataType.VarRaw:
 				DefineRaw( position, connection);
 				return;
 			case OciDataType.LongRaw:
@@ -149,6 +150,8 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Integer:
 			case OciDataType.Number:
 			case OciDataType.Float:
+			case OciDataType.VarNum:
+			case OciDataType.UnsignedInt:
 				DefineNumber (position, connection);
 				return;
 			case OciDataType.Long:
@@ -542,6 +545,8 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Integer:
 			case OciDataType.Number:
 			case OciDataType.Float:
+			case OciDataType.VarNum:
+			case OciDataType.UnsignedInt:
 				tmp = Marshal.PtrToStringAnsi (Value, Size);
 				if (tmp != null)
 					return Decimal.Parse (String.Copy ((string) tmp), formatProvider);
@@ -551,6 +556,7 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Date:
 				return UnpackDate ();
 			case OciDataType.Raw:
+			case OciDataType.VarRaw:
 				byte [] raw_buffer = new byte [Size];
 				Marshal.Copy (Value, raw_buffer, 0, Size);
 				return raw_buffer;
@@ -588,8 +594,12 @@ namespace System.Data.OracleClient.Oci
 
 			switch (DataType) {
 			case OciDataType.Raw:
+			case OciDataType.VarRaw:
+			case OciDataType.LongRaw:
+			case OciDataType.LongVarRaw:
 				return new OracleBinary ((byte[]) ovalue);
 			case OciDataType.Date:
+			case OciDataType.TimeStamp:
 				return new OracleDateTime ((DateTime) ovalue);
 			case OciDataType.Blob:
 			case OciDataType.Clob:
@@ -598,6 +608,8 @@ namespace System.Data.OracleClient.Oci
 			case OciDataType.Integer:
 			case OciDataType.Number:
 			case OciDataType.Float:
+			case OciDataType.VarNum:
+			case OciDataType.UnsignedInt:
 				return new OracleNumber ((decimal) ovalue);
 			case OciDataType.VarChar2:
 			case OciDataType.String:

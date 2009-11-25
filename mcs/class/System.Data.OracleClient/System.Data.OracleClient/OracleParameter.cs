@@ -14,7 +14,7 @@
 //	  Veerapuram Varadhan  <vvaradhan@novell.com>	
 //
 // Copyright (C) Tim Coleman , 2003
-// Copyright (C) Daniel Morgan, 2005, 2008
+// Copyright (C) Daniel Morgan, 2005, 2008, 2009
 // Copyright (C) Hubert FONGARNAND, 2005
 // Copyright (C) Novell Inc, 2009
 //
@@ -437,6 +437,8 @@ namespace System.Data.OracleClient
 			string sDate;
 			DateTime dt;
 			bool isnull = false;
+			int byteCount;
+			byte[] byteArrayLen;
 
 			if (direction == ParameterDirection.Input || direction == ParameterDirection.InputOutput) {
 				if (v == null)
@@ -651,12 +653,11 @@ namespace System.Data.OracleClient
 					
 					if (direction == ParameterDirection.Input || 
 						direction == ParameterDirection.InputOutput) {
-						int byteCount = 0;
 						if (svalue.Length > 0) {	
 							byteCount = enc.GetBytes (svalue, 4, svalue.Length, bytes, 0);
 							// LONG VARCHAR prepends a 4-byte length
 							if (byteCount > 0) {
-								byte[] byteArrayLen = BitConverter.GetBytes ((uint) byteCount);
+								byteArrayLen = BitConverter.GetBytes ((uint) byteCount);
 								bytes[0] = byteArrayLen[0];
 								bytes[1] = byteArrayLen[1];
 								bytes[2] = byteArrayLen[2];
@@ -754,18 +755,51 @@ namespace System.Data.OracleClient
 					}
 					break;
 				case OciDataType.Raw:
-					if (direction == ParameterDirection.Input) {
+				case OciDataType.VarRaw:
+					bindType = OciDataType.VarRaw;
+					bindSize = Size + 2; // include 2 bytes prepended to hold the length
+					indicator = 0;
+					bytes = new byte [bindSize];
+					if (direction == ParameterDirection.Input || 
+						direction == ParameterDirection.InputOutput) {
+						byteCount = 0;
 						byte[] val = v as byte[];
-						bindValue = OciCalls.AllocateClear (val.Length);
-						Marshal.Copy (val, 0, bindValue, val.Length);
-						bindSize = val.Length;
-					} else
-						throw new NotImplementedException ("Raw parameters not implemented for InputOutput, Output, and Return");
+						if (val.Length > 0) {	
+							byteCount = val.Length;
+							// LONG VARRAW prepends a 4-byte length
+							if (byteCount > 0) {
+								byteArrayLen = BitConverter.GetBytes ((ushort) byteCount);
+								bytes[0] = byteArrayLen[0];
+								bytes[1] = byteArrayLen[1];
+								Array.ConstrainedCopy (val, 2, bytes, 0, byteCount);
+							}
+						}
+					}
 					break;
 				case OciDataType.LongRaw:
 				case OciDataType.LongVarRaw:
-					// TODO: See how LongVarChar and Raw are implemented
-					throw new NotImplementedException ("LongVarRaw not implemented.");
+					bindType = OciDataType.LongVarRaw;
+					bindSize = Size + 4; // include 4 bytes prepended to hold the length
+					indicator = 0;
+					bytes = new byte [bindSize];
+					if (direction == ParameterDirection.Input || 
+						direction == ParameterDirection.InputOutput) {
+						byteCount = 0;
+						byte[] val = v as byte[];
+						if (val.Length > 0) {	
+							byteCount = val.Length;
+							// LONG VARRAW prepends a 4-byte length
+							if (byteCount > 0) {
+								byteArrayLen = BitConverter.GetBytes ((uint) byteCount);
+								bytes[0] = byteArrayLen[0];
+								bytes[1] = byteArrayLen[1];
+								bytes[2] = byteArrayLen[2];
+								bytes[3] = byteArrayLen[3];
+								Array.ConstrainedCopy (val, 4, bytes, 0, byteCount);
+							}
+						}
+					}
+					break;
 				case OciDataType.RowIdDescriptor:
 					if (direction == ParameterDirection.Output || 
 						direction == ParameterDirection.InputOutput || 
@@ -1235,6 +1269,30 @@ namespace System.Data.OracleClient
 				value = encoding.GetString (bytes, 4, longSize);
 				encoding = null;
 				break;
+			case OciDataType.LongRaw:
+			case OciDataType.LongVarRaw:
+				int longrawSize = 0;
+				if (BitConverter.IsLittleEndian)
+					longrawSize = BitConverter.ToInt32 (new byte [] {bytes [0], bytes [1], bytes [2], bytes [3]}, 0);
+				else
+					longrawSize = BitConverter.ToInt32 (new byte [] {bytes [3], bytes [2], bytes [1], bytes [0]}, 0);
+
+				byte[] longraw_buffer = new byte [longrawSize];
+				Array.ConstrainedCopy (bytes, 4, longraw_buffer, 0, longrawSize);
+				value = longraw_buffer;
+				break;
+			case OciDataType.Raw:
+			case OciDataType.VarRaw:
+				int rawSize = 0;
+				if (BitConverter.IsLittleEndian)
+					rawSize = (int) BitConverter.ToInt16 (new byte [] {bytes [0], bytes [1]}, 0);
+				else
+					rawSize = (int) BitConverter.ToInt16 (new byte [] {bytes [1], bytes [0]}, 0);
+
+				byte[] raw_buffer = new byte [rawSize];
+				Array.ConstrainedCopy (bytes, 2, raw_buffer, 0, rawSize);
+				value = raw_buffer;
+				break;
 			case OciDataType.Integer:
 			case OciDataType.Number:
 			case OciDataType.Float:
@@ -1303,9 +1361,6 @@ namespace System.Data.OracleClient
 			case OciDataType.Clob:
 			case OciDataType.Blob:
 				lobLocator = null;
-				break;
-			case OciDataType.Raw:
-				Marshal.FreeHGlobal (bindValue);
 				break;
 			case OciDataType.TimeStamp:
 				break;

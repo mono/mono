@@ -1,3 +1,11 @@
+2009-11-25  Daniel Morgan  <monodanmorg@yahoo.com>
+
+	* System.Data.OracleClient/OracleParameter.cs: add
+	parameter support for LONG RAW and RAW data types
+
+	* System.Data.OracleClient.Oci/OciDefineHandle.cs: flush
+	extra assigning of types
+
 2009-11-21  Daniel Morgan  <monodanmorg@yahoo.com>
 
 	* System.Data.OracleClient/OracleParameter.cs: clean up
