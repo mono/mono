@@ -1,3 +1,11 @@
+2009-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeaders.cs
+	  SecurityBindingElement.cs
+	  LocalClientSecuritySettings.cs
+	  TransportSecurityBindingElement.cs
+	  FaultConverter.cs : They are now part of SL3 API.
+
 2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BinaryMessageEncodingBindingElement.cs : changes for 2.1 build.

@@ -1,3 +1,7 @@
+2009-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientCredentials.cs : it is part of SL3 API, so adjusted for it.
+
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : channelDispatchers is keyed by URL,

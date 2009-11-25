@@ -36,8 +36,12 @@ using System.ServiceModel.Security.Tokens;
 namespace System.ServiceModel.Channels
 {
 	public sealed class TransportSecurityBindingElement
+#if NET_2_1
+		: SecurityBindingElement
+#else
 		: SecurityBindingElement,
 		  ISecurityCapabilities, IPolicyExportExtension
+#endif
 	{
 		public TransportSecurityBindingElement ()
 		{
@@ -51,6 +55,12 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
+		public override BindingElement Clone ()
+		{
+			return new TransportSecurityBindingElement (this);
+		}
+
+		[MonoTODO]
 		protected override IChannelFactory<TChannel>
 			BuildChannelFactoryCore<TChannel> (
 			BindingContext context)
@@ -58,18 +68,13 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		protected override IChannelListener<TChannel>
 			BuildChannelListenerCore<TChannel> (
 			BindingContext context)
 		{
 			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override BindingElement Clone ()
-		{
-			return new TransportSecurityBindingElement (this);
 		}
 
 		[MonoTODO]
@@ -112,5 +117,6 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 		#endregion
+#endif
 	}
 }

@@ -71,6 +71,7 @@ System.ServiceModel.Channels/ChannelParameterCollection.cs
 System.ServiceModel.Channels/ChannelPoolSettings.cs
 System.ServiceModel.Channels/CommunicationObject.cs
 System.ServiceModel.Channels/CustomBinding.cs
+System.ServiceModel.Channels/FaultConverter.cs
 System.ServiceModel.Channels/HtmlizedException.cs
 System.ServiceModel.Channels/HttpChannelFactory.cs
 System.ServiceModel.Channels/HttpRequestChannel.cs
@@ -100,6 +101,7 @@ System.ServiceModel.Channels/ISessionChannel.cs
 System.ServiceModel.Channels/LayeredCommunicationObject.cs
 System.ServiceModel.Channels/LayeredOutputChannel.cs
 System.ServiceModel.Channels/LayeredRequestChannel.cs
+System.ServiceModel.Channels/LocalClientSecuritySettings.cs
 System.ServiceModel.Channels/Message.cs
 System.ServiceModel.Channels/MessageBuffer_2_1.cs
 System.ServiceModel.Channels/MessageBufferImpl.cs
@@ -117,13 +119,16 @@ System.ServiceModel.Channels/MessageVersion.cs
 System.ServiceModel.Channels/OutputChannelBase.cs
 System.ServiceModel.Channels/RequestChannelBase.cs
 System.ServiceModel.Channels/RequestContext.cs
+System.ServiceModel.Channels/SecurityBindingElement.cs
 System.ServiceModel.Channels/TextMessageEncoder.cs
 System.ServiceModel.Channels/TextMessageEncoderFactory.cs
 System.ServiceModel.Channels/TextMessageEncodingBindingElement.cs
 System.ServiceModel.Channels/TransportBindingElement.cs
+System.ServiceModel.Channels/TransportSecurityBindingElement.cs
 System.ServiceModel.Channels/UnderstoodHeaders.cs
 System.ServiceModel.Channels/XmlObjectSerializerBodyWriter.cs
 System.ServiceModel.Channels/XmlReaderBodyWriter.cs
+System.ServiceModel.Description/ClientCredentials.cs
 System.ServiceModel.Description/ContractDescription.cs
 System.ServiceModel.Description/ContractDescriptionGenerator.cs
 System.ServiceModel.Description/FaultDescription.cs
@@ -147,8 +152,12 @@ System.ServiceModel.Dispatcher/IChannelInitializer.cs
 System.ServiceModel.Dispatcher/IClientMessageFormatter.cs
 System.ServiceModel.Dispatcher/IClientMessageInspector.cs
 System.ServiceModel.Dispatcher/IClientOperationSelector.cs
+System.ServiceModel.Dispatcher/IDispatchMessageFormatter.cs
 System.ServiceModel.Dispatcher/IInteractiveChannelInitializer.cs
 System.ServiceModel.Dispatcher/IParameterInspector.cs
+System.ServiceModel.Security/MessageSecurityException.cs
+System.ServiceModel.Security/SecurityAccessDeniedException.cs
+System.ServiceModel.Security/UsernamePasswordClientCredential.cs
 System.ServiceModel/ActionNotSupportedException.cs
 System.ServiceModel/AllEnums.cs
 System.ServiceModel/BasicHttpBinding.cs
@@ -166,6 +175,7 @@ System.ServiceModel/DataContractFormatAttribute.cs
 System.ServiceModel/DefaultCommunicationTimeouts.cs
 System.ServiceModel/Dummy.cs
 System.ServiceModel/EndpointAddress.cs
+System.ServiceModel/EndpointAddress10.cs
 System.ServiceModel/EndpointNotFoundException.cs
 System.ServiceModel/EnvelopeVersion.cs
 System.ServiceModel/ExceptionDetail.cs

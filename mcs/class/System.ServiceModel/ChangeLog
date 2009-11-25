@@ -1,3 +1,8 @@
+2009-11-25  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources, Dummy_2_1.cs:
+	  reflected a couple of SL3 updates.
+
 2009-11-17  Astushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_System.ServiceModel.dll.sources :

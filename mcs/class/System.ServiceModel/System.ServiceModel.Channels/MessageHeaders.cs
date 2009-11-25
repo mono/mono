@@ -332,7 +332,6 @@ namespace System.ServiceModel.Channels
 			get { return l.Count; }
 		}
 
-#if !NET_2_1
 		public EndpointAddress FaultTo {
 			get {
 				int idx = FindHeader ("FaultTo", Constants.WSA1);
@@ -362,7 +361,6 @@ namespace System.ServiceModel.Channels
 					Add (MessageHeader.CreateHeader ("From", Constants.WSA1, EndpointAddress10.FromEndpointAddress (value)));
 			}
 		}
-#endif
 
 		public MessageHeaderInfo this [int index] {
 			get { return l [index]; }
@@ -401,7 +399,6 @@ namespace System.ServiceModel.Channels
 
 		}
 
-#if !NET_2_1
 		public EndpointAddress ReplyTo {
 			get {
 				int idx = FindHeader ("ReplyTo", Constants.WSA1);
@@ -416,7 +413,6 @@ namespace System.ServiceModel.Channels
 					Add (MessageHeader.CreateHeader ("ReplyTo", Constants.WSA1, EndpointAddress10.FromEndpointAddress (value)));
 			}
 		}
-#endif
 
 		public Uri To {
 			get {
