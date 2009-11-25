@@ -1,5 +1,8 @@
 2009-11-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (vm_commands): Implement EXIT by invoking Environment.Exit ()
+	on a random thread if possible.
+
 	* aot-runtime.c (mono_aot_plt_resolve): Clean up the handling of function
 	descriptors a bit, add comments, handle RGCTX_FETCH/GENERIC_CLASS_INIT_TRAMPOLINE
 	correctly.
