@@ -1,3 +1,8 @@
+2009-11-26  Ankit Jain  <jankit@novell.com>
+
+	* ManagedCompiler.cs (AddResponseFileCommands): *mcs doesn't
+	support /debug:pdbonly, so map it to /debug:full .
+
 2009-11-10  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs (ToolExe): New.
