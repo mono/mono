@@ -100,25 +100,8 @@ namespace System.Collections.Generic
 		{
 			if (array == null)
 				throw new ArgumentNullException ();
-			
-			if ((uint) idx > (uint) array.Length)
-				throw new ArgumentOutOfRangeException ();
-			
-			if (array.Length - idx < _size)
-				throw new ArgumentOutOfRangeException ();
-			
-			if (_size == 0)
-				return;
-			
-			int contents_length = _array.Length;
-			int length_from_head = contents_length - _head;
-			
-			Array.Copy (_array, _head, array, idx, Math.Min (_size, length_from_head));
-			if (_size > length_from_head)
-				Array.Copy (_array, 0, array, 
-					    idx  + length_from_head,
-					    _size - length_from_head);
-			
+
+			((ICollection) this).CopyTo (array, idx);
 		}
 		
 		void ICollection.CopyTo (Array array, int idx)
@@ -126,7 +109,7 @@ namespace System.Collections.Generic
 			if (array == null)
 				throw new ArgumentNullException ();
 			
-			if ((uint) idx < (uint) array.Length)
+			if ((uint) idx > (uint) array.Length)
 				throw new ArgumentOutOfRangeException ();
 			
 			if (array.Length - idx < _size)
