@@ -1,5 +1,10 @@
 2009-11-26  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #558292
+	* class.cs: Allow single unsafe fixed buffer fields.
+
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
 	* expression: Optimize few more zero-based operations.
 
 2009-11-26  Marek Safar  <marek.safar@gmail.com>
