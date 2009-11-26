@@ -335,13 +335,7 @@ namespace Mono.CSharp
 %token OP_PTR
 %token OP_COALESCING
 
-/* Numbers */
-%token LITERAL_INTEGER
-%token LITERAL_FLOAT
-%token LITERAL_DOUBLE
-%token LITERAL_DECIMAL
-%token LITERAL_CHARACTER
-%token LITERAL_STRING
+%token LITERAL
 
 %token IDENTIFIER
 %token OPEN_PARENS_LAMBDA
@@ -3059,34 +3053,8 @@ primary_expression_no_array_creation
 
 literal
 	: boolean_literal
-	| integer_literal
-	| real_literal
-	| LITERAL_CHARACTER     { $$ = new CharLiteral ((char) lexer.Value, GetLocation ($1)); }
-	| LITERAL_STRING        { $$ = new StringLiteral ((string) lexer.Value, GetLocation ($1)); } 
+	| LITERAL
 	| NULL			{ $$ = new NullLiteral (GetLocation ($1)); }
-	;
-
-real_literal
-	: LITERAL_FLOAT         { $$ = new FloatLiteral ((float) lexer.Value, GetLocation ($1)); }
-	| LITERAL_DOUBLE        { $$ = new DoubleLiteral ((double) lexer.Value, GetLocation ($1)); }
-	| LITERAL_DECIMAL       { $$ = new DecimalLiteral ((decimal) lexer.Value, GetLocation ($1)); }
-	;
-
-integer_literal
-	: LITERAL_INTEGER       { 
-		object v = lexer.Value;
-
-		if (v is int){
-			$$ = new IntLiteral ((int) v, GetLocation ($1));
-		} else if (v is uint)
-			$$ = new UIntLiteral ((UInt32) v, GetLocation ($1));
-		else if (v is long)
-			$$ = new LongLiteral ((Int64) v, GetLocation ($1));
-		else if (v is ulong)
-			$$ = new ULongLiteral ((UInt64) v, GetLocation ($1));
-		else
-			Console.WriteLine ("OOPS.  Unexpected result from scanner");
-	  }
 	;
 
 boolean_literal
@@ -6434,13 +6402,8 @@ string GetExpecting ()
 string GetSymbolName (int token)
 {
 	switch (token){
-	case Token.LITERAL_FLOAT:
-	case Token.LITERAL_INTEGER:
-	case Token.LITERAL_DOUBLE:
-	case Token.LITERAL_DECIMAL:
-	case Token.LITERAL_CHARACTER:
-	case Token.LITERAL_STRING:
-		return lexer.Value.ToString ();
+	case Token.LITERAL:
+		return ((Constant)lexer.Value).GetValue ().ToString ();
 	case Token.IDENTIFIER:
 		return ((Tokenizer.LocatedToken)lexer.Value).Value;
 
@@ -6808,12 +6771,7 @@ static string GetTokenName (int token)
 		return "?";
 	case Token.DOUBLE_COLON:
 		return "::";
-	case Token.LITERAL_FLOAT:
-	case Token.LITERAL_INTEGER:
-	case Token.LITERAL_DOUBLE:
-	case Token.LITERAL_DECIMAL:
-	case Token.LITERAL_CHARACTER:
-	case Token.LITERAL_STRING:
+	case Token.LITERAL:
 		return "value";
 	case Token.IDENTIFIER:
 		return "identifier";

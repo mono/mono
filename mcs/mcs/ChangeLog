@@ -1,5 +1,10 @@
 2009-11-26  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-tokenizer.cs, cs-parser.jay: Simplify literal parsing, also
+	avoids boxing of literal values.
+
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs, argument.cs, eval.cs, linq.cs, decl.cs,
 	expression.cs, ecore.cs, location.cs, cs-parser.jay, attribute.cs,
 	codegen.cs: LocatedToken redesing to avoid excessive allocation and

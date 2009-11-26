@@ -806,12 +806,7 @@ namespace Mono.CSharp
 						case Token.BANG:
 						case Token.TILDE:
 						case Token.IDENTIFIER:
-						case Token.LITERAL_INTEGER:
-						case Token.LITERAL_FLOAT:
-						case Token.LITERAL_DOUBLE:
-						case Token.LITERAL_DECIMAL:
-						case Token.LITERAL_CHARACTER:
-						case Token.LITERAL_STRING:
+						case Token.LITERAL:
 						case Token.BASE:
 						case Token.CHECKED:
 						case Token.DELEGATE:
@@ -1054,8 +1049,7 @@ namespace Mono.CSharp
 			case Token.TRUE:
 			case Token.FALSE:
 			case Token.NULL:
-			case Token.LITERAL_INTEGER:
-			case Token.LITERAL_STRING:
+			case Token.LITERAL:
 				return Token.INTERR;
 			}
 
@@ -1070,12 +1064,7 @@ namespace Mono.CSharp
 			current_token = Token.NONE;
 			int next_token;
 			switch (xtoken ()) {
-			case Token.LITERAL_INTEGER:
-			case Token.LITERAL_STRING:
-			case Token.LITERAL_CHARACTER:
-			case Token.LITERAL_DECIMAL:
-			case Token.LITERAL_DOUBLE:
-			case Token.LITERAL_FLOAT:
+			case Token.LITERAL:
 			case Token.TRUE:
 			case Token.FALSE:
 			case Token.NULL:
@@ -1177,24 +1166,18 @@ namespace Mono.CSharp
 			return (e >= '0' && e <= '9') || (e >= 'A' && e <= 'F') || (e >= 'a' && e <= 'f');
 		}
 
-		static int real_type_suffix (int c)
+		static TypeCode real_type_suffix (int c)
 		{
-			int t;
-
 			switch (c){
 			case 'F': case 'f':
-				t =  Token.LITERAL_FLOAT;
-				break;
+				return TypeCode.Single;
 			case 'D': case 'd':
-				t = Token.LITERAL_DOUBLE;
-				break;
+				return TypeCode.Double;
 			case 'M': case 'm':
-				 t= Token.LITERAL_DECIMAL;
-				break;
+				return TypeCode.Decimal;
 			default:
-				return Token.NONE;
+				return TypeCode.Empty;
 			}
-			return t;
 		}
 
 		int integer_type_suffix (ulong ul, int c)
@@ -1240,38 +1223,40 @@ namespace Mono.CSharp
 			}
 
 			if (is_long && is_unsigned){
-				val = ul;
-				return Token.LITERAL_INTEGER;
-			} else if (is_unsigned){
+				val = new ULongLiteral (ul, Location);
+				return Token.LITERAL;
+			}
+			
+			if (is_unsigned){
 				// uint if possible, or ulong else.
 
 				if ((ul & 0xffffffff00000000) == 0)
-					val = (uint) ul;
+					val = new UIntLiteral ((uint) ul, Location);
 				else
-					val = ul;
+					val = new ULongLiteral (ul, Location);
 			} else if (is_long){
 				// long if possible, ulong otherwise
 				if ((ul & 0x8000000000000000) != 0)
-					val = ul;
+					val = new ULongLiteral (ul, Location);
 				else
-					val = (long) ul;
+					val = new LongLiteral ((long) ul, Location);
 			} else {
 				// int, uint, long or ulong in that order
 				if ((ul & 0xffffffff00000000) == 0){
 					uint ui = (uint) ul;
 					
 					if ((ui & 0x80000000) != 0)
-						val = ui;
+						val = new UIntLiteral (ui, Location);
 					else
-						val = (int) ui;
+						val = new IntLiteral ((int) ui, Location);
 				} else {
 					if ((ul & 0x8000000000000000) != 0)
-						val = ul;
+						val = new ULongLiteral (ul, Location);
 					else
-						val = (long) ul;
+						val = new LongLiteral ((long) ul, Location);
 				}
 			}
-			return Token.LITERAL_INTEGER;
+			return Token.LITERAL;
 		}
 				
 		//
@@ -1300,51 +1285,49 @@ namespace Mono.CSharp
 			} catch (OverflowException) {
 				error_details = "Integral constant is too large";
 				Report.Error (1021, Location, error_details);
-				val = 0ul;
-				return Token.LITERAL_INTEGER;
+				val = new IntLiteral (0, Location);
+				return Token.LITERAL;
 			}
 			catch (FormatException) {
 				Report.Error (1013, Location, "Invalid number");
-				val = 0ul;
-				return Token.LITERAL_INTEGER;
+				val = new IntLiteral (0, Location);
+				return Token.LITERAL;
 			}
 		}
 		
-		int adjust_real (int t)
+		int adjust_real (TypeCode t)
 		{
 			string s = new String (number_builder, 0, number_pos);
 			const string error_details = "Floating-point constant is outside the range of type `{0}'";
 
 			switch (t){
-			case Token.LITERAL_DECIMAL:
+			case TypeCode.Decimal:
 				try {
-					val = System.Decimal.Parse (s, styles, csharp_format_info);
+					val = new DecimalLiteral (decimal.Parse (s, styles, csharp_format_info), Location);
 				} catch (OverflowException) {
-					val = 0m;     
+					val = new DecimalLiteral (0, Location);
 					Report.Error (594, Location, error_details, "decimal");
 				}
 				break;
-			case Token.LITERAL_FLOAT:
+			case TypeCode.Single:
 				try {
-					val = float.Parse (s, styles, csharp_format_info);
+					val = new FloatLiteral (float.Parse (s, styles, csharp_format_info), Location);
 				} catch (OverflowException) {
-					val = 0.0f;     
+					val = new FloatLiteral (0, Location);
 					Report.Error (594, Location, error_details, "float");
 				}
 				break;
-				
-			case Token.LITERAL_DOUBLE:
-			case Token.NONE:
-				t = Token.LITERAL_DOUBLE;
+			default:
 				try {
-					val = System.Double.Parse (s, styles, csharp_format_info);
+					val = new DoubleLiteral (double.Parse (s, styles, csharp_format_info), Location);
 				} catch (OverflowException) {
-					val = 0.0;     
+					val = new DoubleLiteral (0, Location);
 					Report.Error (594, Location, error_details, "double");
 				}
 				break;
 			}
-			return t;
+
+			return Token.LITERAL;
 		}
 
 		int handle_hex ()
@@ -1370,13 +1353,13 @@ namespace Mono.CSharp
 			} catch (OverflowException){
 				error_details = "Integral constant is too large";
 				Report.Error (1021, Location, error_details);
-				val = 0ul;
-				return Token.LITERAL_INTEGER;
+				val = new IntLiteral (0, Location);
+				return Token.LITERAL;
 			}
 			catch (FormatException) {
 				Report.Error (1013, Location, "Invalid number");
-				val = 0ul;
-				return Token.LITERAL_INTEGER;
+				val = new IntLiteral (0, Location);
+				return Token.LITERAL;
 			}
 			
 			return integer_type_suffix (ul, peek_char ());
@@ -1388,7 +1371,6 @@ namespace Mono.CSharp
 		int is_number (int c)
 		{
 			bool is_real = false;
-			int type;
 
 			number_pos = 0;
 
@@ -1445,21 +1427,21 @@ namespace Mono.CSharp
 				c = get_char ();
 			}
 
-			type = real_type_suffix (c);
-			if (type == Token.NONE && !is_real){
+			var type = real_type_suffix (c);
+			if (type == TypeCode.Empty && !is_real){
 				putback (c);
 				return adjust_int (c);
-			} else 
-				is_real = true;
+			}
 
-			if (type == Token.NONE){
+			is_real = true;
+
+			if (type == TypeCode.Empty){
 				putback (c);
 			}
 			
 			if (is_real)
 				return adjust_real (type);
 
-			Console.WriteLine ("This should not be reached");
 			throw new Exception ("Is Number should never reach this point");
 		}
 
@@ -2425,8 +2407,8 @@ namespace Mono.CSharp
 						get_char ();
 						continue;
 					} else {
-						val = string_builder.ToString ();
-						return Token.LITERAL_STRING;
+						val = new StringLiteral (string_builder.ToString (), Location);
+						return Token.LITERAL;
 					}
 				}
 
@@ -3016,7 +2998,7 @@ namespace Mono.CSharp
 			if (d != 0)
 				throw new NotImplementedException ();
 
-			val = (char) c;
+			val = new CharLiteral ((char) c, Location);
 			c = get_char ();
 
 			if (c != '\'') {
@@ -3030,7 +3012,7 @@ namespace Mono.CSharp
 				return Token.ERROR;
 			}
 
-			return Token.LITERAL_CHARACTER;
+			return Token.LITERAL;
 		}
 
 		int TokenizeLessThan ()
