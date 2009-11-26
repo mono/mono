@@ -84,6 +84,9 @@ namespace Mono.CSharp {
 
 		public void AddFile (SourceFile file)
 		{
+			if (file == this)
+				return;
+			
 			if (include_files == null)
 				include_files = new Hashtable ();
 

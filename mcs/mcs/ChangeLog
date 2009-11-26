@@ -1,5 +1,10 @@
 2009-11-26  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #558305
+	* location.cs: Ignore self referencing #line directive
+
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #558292
 	* class.cs: Allow single unsafe fixed buffer fields.
 
