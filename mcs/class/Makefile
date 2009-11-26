@@ -122,6 +122,7 @@ net_2_0_dirs := \
 	Mono.Options 			\
 	Mono.Simd			\
 	Mono.Tasklets       		\
+	Mono.CSharp			\
 	WindowsBase			\
 	System.Data.Services
 

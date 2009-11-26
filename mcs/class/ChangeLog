@@ -1,3 +1,7 @@
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Add Mono.CSharp.
+
 2009-11-09  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: dist dlr subdirs.
