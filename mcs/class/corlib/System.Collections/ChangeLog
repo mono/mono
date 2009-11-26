@@ -1,3 +1,7 @@
+2009-11-26  Marek Safar <marek.safar@gmail.com>
+	
+	* CollectionDebuggerView.cs: Removed limit restriction.
+
 2009-10-22  Marek Safar  <marek.safar@gmail.com>
 
 	* StructuralComparisons.cs: Implemented.

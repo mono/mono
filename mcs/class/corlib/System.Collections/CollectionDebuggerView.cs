@@ -46,9 +46,7 @@ namespace System.Collections
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 		public object[] Items {
 			get {
-				// It does not make much sense to browse more than 1k
-				// of items in debug view
-				var o = new object [Math.Min (c.Count, 1024)];
+				var o = new object [c.Count];
 				c.CopyTo (o, 0);
 				return o;
 			}
