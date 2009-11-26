@@ -1,5 +1,8 @@
 2009-11-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_register_opcode_emulation): Make this a no-op when the JIT
+	is disabled.
+
 	* aot-compiler.c (emit_klass_info): Save whenever the class has a generic
 	container.
 
