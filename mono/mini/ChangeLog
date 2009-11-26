@@ -1,3 +1,12 @@
+2009-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_globals_table): Emit a hash table for the globals, to
+	avoid linear searches at runtime.
+
+	* aot-runtime.c (find_symbol): Update this to use the hash.
+
+	* mini.h: Bump AOT file format version.
+
 2009-11-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (vm_commands): Implement EXIT by invoking Environment.Exit ()
