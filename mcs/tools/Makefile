@@ -5,7 +5,6 @@ per_profile_dirs = \
 	compiler-tester	\
 	linker		\
 	tuner		\
-	csharplib	\
 	csharp		\
 	culevel		\
 	genxs		\

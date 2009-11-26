@@ -1,4 +1,8 @@
-2009-11-13  Marek Safar  <marek.safar@seznam.cz>
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Don't build csharplib.
+
+2009-11-13  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Always install only 2.0 version of security and gacutil.
 
