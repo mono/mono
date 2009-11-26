@@ -74,6 +74,7 @@ eval-test:
 	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) eval-test.exe
 
 check: eval-test
+	cd ../class/Mono.CSharp && $(MAKE) NO_DIR_CHECK=yes
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS)
 
 test-local:

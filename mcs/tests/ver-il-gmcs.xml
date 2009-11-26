@@ -21361,6 +21361,39 @@
       </method>
     </type>
   </test>
+  <test name="test-106.cs">
+    <type name="Test">
+      <method name="Int32 F(Int32)">
+        <size>27</size>
+      </method>
+      <method name="Void async_callback(IAsyncResult)">
+        <size>33</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>135</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="Test+SimpleDelegate">
+      <method name="Int32 Invoke(Int32)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(Int32, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Int32 EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-107.cs">
     <type name="Test">
       <method name="Void .ctor()">
@@ -34220,10 +34253,10 @@
         <size>7</size>
       </method>
       <method name="Void ZeroBasedReductions()">
-        <size>9</size>
+        <size>18</size>
       </method>
       <method name="Void Main()">
-        <size>1</size>
+        <size>6</size>
       </method>
     </type>
   </test>
