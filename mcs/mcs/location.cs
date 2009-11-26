@@ -460,21 +460,4 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 			}
 		}
 	}
-
-	public class LocatedToken
-	{
-		public readonly Location Location;
-		public readonly string Value;
-
-		public LocatedToken (Location loc, string value)
-		{
-			Location = loc;
-			Value = value;
-		}
-
-		public override string ToString ()
-		{
-			return Location.ToString () + Value;
-		}
-	}
 }

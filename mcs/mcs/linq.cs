@@ -234,7 +234,7 @@ namespace Mono.CSharp.Linq
 	{
 		sealed class RangeAnonymousTypeParameter : AnonymousTypeParameter
 		{
-			public RangeAnonymousTypeParameter (Expression initializer, LocatedToken parameter)
+			public RangeAnonymousTypeParameter (Expression initializer, SimpleMemberName parameter)
 				: base (initializer, parameter.Value, parameter.Location)
 			{
 			}
@@ -251,7 +251,7 @@ namespace Mono.CSharp.Linq
 		{
 		}
 
-		protected static Expression CreateRangeVariableType (ToplevelBlock block, IMemberContext context, LocatedToken name, Expression init)
+		protected static Expression CreateRangeVariableType (ToplevelBlock block, IMemberContext context, SimpleMemberName name, Expression init)
 		{
 			ArrayList args = new ArrayList (2);
 			args.Add (new AnonymousTypeParameter (block.Parameters [0]));
@@ -366,10 +366,10 @@ namespace Mono.CSharp.Linq
 
 	class Join : ARangeVariableQueryClause
 	{
-		readonly LocatedToken lt;
+		readonly SimpleMemberName lt;
 		ToplevelBlock inner_selector, outer_selector;
 
-		public Join (ToplevelBlock block, LocatedToken lt, Expression inner, ToplevelBlock outerSelector, ToplevelBlock innerSelector, Location loc)
+		public Join (ToplevelBlock block, SimpleMemberName lt, Expression inner, ToplevelBlock outerSelector, ToplevelBlock innerSelector, Location loc)
 			: base (block, inner)
 		{
 			this.lt = lt;
@@ -392,7 +392,7 @@ namespace Mono.CSharp.Linq
 			args.Add (new Argument (lambda));
 
 			Expression result_selector_expr;
-			LocatedToken into_variable = GetIntoVariable ();
+			SimpleMemberName into_variable = GetIntoVariable ();
 			//
 			// When select follows use is as result selector
 			//
@@ -411,7 +411,7 @@ namespace Mono.CSharp.Linq
 			args.Add (new Argument (result_selector));
 		}
 
-		protected virtual LocatedToken GetIntoVariable ()
+		protected virtual SimpleMemberName GetIntoVariable ()
 		{
 			return lt;
 		}
@@ -431,16 +431,16 @@ namespace Mono.CSharp.Linq
 
 	class GroupJoin : Join
 	{
-		readonly LocatedToken into;
+		readonly SimpleMemberName into;
 
-		public GroupJoin (ToplevelBlock block, LocatedToken lt, Expression inner,
-			ToplevelBlock outerSelector, ToplevelBlock innerSelector, LocatedToken into, Location loc)
+		public GroupJoin (ToplevelBlock block, SimpleMemberName lt, Expression inner,
+			ToplevelBlock outerSelector, ToplevelBlock innerSelector, SimpleMemberName into, Location loc)
 			: base (block, lt, inner, outerSelector, innerSelector, loc)
 		{
 			this.into = into;
 		}
 
-		protected override LocatedToken GetIntoVariable ()
+		protected override SimpleMemberName GetIntoVariable ()
 		{
 			return into;
 		}
@@ -452,7 +452,7 @@ namespace Mono.CSharp.Linq
 
 	class Let : ARangeVariableQueryClause
 	{
-		public Let (ToplevelBlock block, TypeContainer container, LocatedToken identifier, Expression expr)
+		public Let (ToplevelBlock block, TypeContainer container, SimpleMemberName identifier, Expression expr)
 			: base (block, CreateRangeVariableType (block, container, identifier, expr))
 		{
 		}
@@ -490,9 +490,9 @@ namespace Mono.CSharp.Linq
 
 	class SelectMany : ARangeVariableQueryClause
 	{
-		LocatedToken lt;
+		SimpleMemberName lt;
 
-		public SelectMany (ToplevelBlock block, LocatedToken lt, Expression expr)
+		public SelectMany (ToplevelBlock block, SimpleMemberName lt, Expression expr)
 			: base (block, expr)
 		{
 			this.lt = lt;
@@ -602,7 +602,7 @@ namespace Mono.CSharp.Linq
 			public readonly ParametersCompiled Parent;
 			public readonly string Identifier;
 
-			public TransparentParameter (ParametersCompiled parent, LocatedToken identifier)
+			public TransparentParameter (ParametersCompiled parent, SimpleMemberName identifier)
 				: base (ParameterNamePrefix + Counter++, identifier.Location)
 			{
 				Parent = parent;
@@ -623,14 +623,14 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		public QueryBlock (CompilerContext ctx, Block parent, LocatedToken lt, Location start)
+		public QueryBlock (CompilerContext ctx, Block parent, SimpleMemberName lt, Location start)
 			: base (ctx, parent, new ParametersCompiled (ctx, new ImplicitQueryParameter (lt.Value, lt.Location)), start)
 		{
 			if (parent != null)
 				base.CheckParentConflictName (parent.Toplevel, lt.Value, lt.Location);
 		}
 
-		public QueryBlock (CompilerContext ctx, Block parent, ParametersCompiled parameters, LocatedToken lt, Location start)
+		public QueryBlock (CompilerContext ctx, Block parent, ParametersCompiled parameters, SimpleMemberName lt, Location start)
 			: base (ctx, parent, new ParametersCompiled (ctx, parameters [0].Clone (), new ImplicitQueryParameter (lt.Value, lt.Location)), start)
 		{
 		}
@@ -640,7 +640,7 @@ namespace Mono.CSharp.Linq
 		{
 		}
 
-		public void AddTransparentParameter (CompilerContext ctx, LocatedToken name)
+		public void AddTransparentParameter (CompilerContext ctx, SimpleMemberName name)
 		{
 			base.CheckParentConflictName (this, name.Value, name.Location);
 

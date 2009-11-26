@@ -172,17 +172,17 @@ namespace Mono.CSharp {
 
 		static void Error_InvalidNamedArgument (ResolveContext rc, NamedArgument name)
 		{
-			rc.Report.Error (617, name.Name.Location, "`{0}' is not a valid named attribute argument. Named attribute arguments " +
+			rc.Report.Error (617, name.Location, "`{0}' is not a valid named attribute argument. Named attribute arguments " +
 				      "must be fields which are not readonly, static, const or read-write properties which are " +
 				      "public and not static",
-			      name.Name.Value);
+			      name.Name);
 		}
 
 		static void Error_InvalidNamedArgumentType (ResolveContext rc, NamedArgument name)
 		{
-			rc.Report.Error (655, name.Name.Location,
+			rc.Report.Error (655, name.Location,
 				"`{0}' is not a valid named attribute argument because it is not a valid attribute parameter type",
-				name.Name.Value);
+				name.Name);
 		}
 
 		public static void Error_AttributeArgumentNotValid (ResolveContext rc, Location loc)
@@ -357,12 +357,12 @@ namespace Mono.CSharp {
 				NamedArguments = new Arguments (1);
 			} else {
 				foreach (NamedArgument a in NamedArguments) {
-					if (a.Name.Value == CharSetEnumMember)
+					if (a.Name == CharSetEnumMember)
 						return;
 				}
 			}
 			
-			NamedArguments.Add (new NamedArgument (new LocatedToken (loc, CharSetEnumMember),
+			NamedArguments.Add (new NamedArgument (CharSetEnumMember, loc,
 				Constant.CreateConstant (rc, typeof (CharSet), RootContext.ToplevelTypes.DefaultCharSet, Location)));
  		}
 
@@ -530,9 +530,9 @@ namespace Mono.CSharp {
 			ArrayList seen_names = new ArrayList (named_arg_count);
 			
 			foreach (NamedArgument a in NamedArguments) {
-				string name = a.Name.Value;
+				string name = a.Name;
 				if (seen_names.Contains (name)) {
-					ec.Report.Error (643, a.Name.Location, "Duplicate named attribute `{0}' argument", name);
+					ec.Report.Error (643, a.Location, "Duplicate named attribute `{0}' argument", name);
 					continue;
 				}			
 	

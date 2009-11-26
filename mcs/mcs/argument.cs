@@ -158,18 +158,20 @@ namespace Mono.CSharp
 
 	public class NamedArgument : Argument
 	{
-		public readonly LocatedToken Name;
+		public readonly string Name;
+		readonly Location loc;
 		LocalTemporary variable;
 
-		public NamedArgument (LocatedToken name, Expression expr)
+		public NamedArgument (string Name, Location loc, Expression expr)
 			: base (expr)
 		{
-			Name = name;
+			this.Name = Name;
+			this.loc = loc;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			ec.Report.Error (853, Name.Location, "An expression tree cannot contain named argument");
+			ec.Report.Error (853, loc, "An expression tree cannot contain named argument");
 			return base.CreateExpressionTree (ec);
 		}
 
@@ -190,6 +192,10 @@ namespace Mono.CSharp
 			variable.Store (ec);
 
 			Expr = variable;
+		}
+
+		public Location Location {
+			get { return loc; }
 		}
 	}
 
@@ -270,7 +276,7 @@ namespace Mono.CSharp
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "NamedArgument", loc));
 
-					named_value = na.Name.Value;
+					named_value = na.Name;
 				} else {
 					named_value = null;
 				}

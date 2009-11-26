@@ -1,3 +1,10 @@
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs, argument.cs, eval.cs, linq.cs, decl.cs,
+	expression.cs, ecore.cs, location.cs, cs-parser.jay, attribute.cs,
+	codegen.cs: LocatedToken redesing to avoid excessive allocation and
+	boxing (saves ~7MB for corlib).
+
 2009-11-25  Marek Safar  <marek.safar@gmail.com>
 
 	* ecore.cs, cs-parser.jay: Keep parser structures local. Share

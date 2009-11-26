@@ -69,6 +69,71 @@ namespace Mono.CSharp
 			}
 		}
 
+		//
+		// This class has to be used in the parser only, it reuses token
+		// details after each parse
+		//
+		public class LocatedToken
+		{
+			int row, column;
+			string value;
+
+			static LocatedToken[] buffer;
+			static int pos;
+
+			private LocatedToken ()
+			{
+			}
+
+			public static LocatedToken Create (int row, int column)
+			{
+				return Create (null, row, column);
+			}
+			
+			public static LocatedToken Create (string value, int row, int column)
+			{
+				//
+				// TODO: I am not very happy about the logic but it's the best
+				// what I could come up with for now.
+				// Ideally we should be using just tiny buffer (256 elements) which
+				// is enough to hold all details for currect stack and recycle elements
+				// poped from the stack but there is a trick needed to recycle
+				// them properly.
+				//
+				LocatedToken entry;
+				if (pos >= buffer.Length) {
+					entry = new LocatedToken ();
+				} else {
+					entry = buffer [pos];
+					if (entry == null) {
+						entry = new LocatedToken ();
+						buffer [pos] = entry;
+					}
+
+					++pos;
+				}
+				entry.value = value;
+				entry.row = row;
+				entry.column = column;
+				return entry;
+			}
+			
+			public static void Initialize ()
+			{
+				if (buffer == null)
+					buffer = new LocatedToken [10000];
+				pos = 0;
+			}
+
+			public Location Location {
+				get { return new Location (row, column); }
+			}
+
+			public string Value {
+				get { return value; }
+			}
+		}
+
 		SeekableStreamReader reader;
 		SourceFile ref_name;
 		CompilationUnit file_name;
@@ -194,19 +259,19 @@ namespace Mono.CSharp
 		// This is used to trigger completion generation on the parser
 		public bool CompleteOnEOF;
 		
-		void AddEscapedIdentifier (LocatedToken lt)
+		void AddEscapedIdentifier (Location loc)
 		{
 			if (escaped_identifiers == null)
 				escaped_identifiers = new ArrayList ();
 
-			escaped_identifiers.Add (lt);
+			escaped_identifiers.Add (loc);
 		}
 
 		public bool IsEscapedIdentifier (Location loc)
 		{
 			if (escaped_identifiers != null) {
-				foreach (LocatedToken lt in escaped_identifiers)
-					if (lt.Location.Equals (loc))
+				foreach (Location lt in escaped_identifiers)
+					if (lt.Equals (loc))
 						return true;
 			}
 
@@ -2405,7 +2470,7 @@ namespace Mono.CSharp
 			//
 
 			int pos = 0;
-			Location loc = Location;
+			int column = col;
 
 			if (c == '\\') {
 				int surrogate;
@@ -2448,8 +2513,8 @@ namespace Mono.CSharp
 					break;
 				}
 			} catch (IndexOutOfRangeException) {
+				Report.Error (645, Location, "Identifier too long (limit is 512 chars)");
 				col += pos - 1;
-				Report.Error (645, loc, "Identifier too long (limit is 512 chars)");
 				return Token.ERROR;
 			}
 
@@ -2462,8 +2527,7 @@ namespace Mono.CSharp
 			if (id_builder [0] >= '_' && !quoted) {
 				int keyword = GetKeyword (id_builder, pos);
 				if (keyword != -1) {
-					// TODO: No need to store location for keyword, required location cleanup
-					val = loc;
+					val = LocatedToken.Create (null, ref_line, column);
 					return keyword;
 				}
 			}
@@ -2476,9 +2540,9 @@ namespace Mono.CSharp
 			string s;
 			if (identifiers_group != null) {
 				if (identifiers_group.TryGetValue (id_builder, out s)) {
-					val = new LocatedToken (loc, s);
+					val = LocatedToken.Create (s, ref_line, column);
 					if (quoted)
-						AddEscapedIdentifier ((LocatedToken) val);
+						AddEscapedIdentifier (((LocatedToken) val).Location);
 					return Token.IDENTIFIER;
 				}
 			} else {
@@ -2495,9 +2559,10 @@ namespace Mono.CSharp
 			s = new string (id_builder, 0, pos);
 			identifiers_group.Add (chars, s);
 
-			val = new LocatedToken (loc, s);
+			val = LocatedToken.Create (s, ref_line, column);
 			if (quoted)
-				AddEscapedIdentifier ((LocatedToken) val);
+				AddEscapedIdentifier (((LocatedToken) val).Location);
+
 			return Token.IDENTIFIER;
 		}
 		
@@ -2548,10 +2613,10 @@ namespace Mono.CSharp
 					return consume_identifier (c);
 
 				case '{':
-					val = Location;
+					val = LocatedToken.Create (ref_line, col);
 					return Token.OPEN_BRACE;
 				case '}':
-					val = Location;
+					val = LocatedToken.Create (ref_line, col);
 					return Token.CLOSE_BRACE;
 				case '[':
 					// To block doccomment inside attribute declaration.
@@ -2561,7 +2626,7 @@ namespace Mono.CSharp
 				case ']':
 					return Token.CLOSE_BRACKET;
 				case '(':
-					val = Location;
+					val = LocatedToken.Create (ref_line, col);
 					//
 					// An expression versions of parens can appear in block context only
 					//
@@ -2722,7 +2787,7 @@ namespace Mono.CSharp
 						get_char ();
 						return Token.OP_MULT_ASSIGN;
 					}
-					val = Location;
+					val = LocatedToken.Create (ref_line, col);
 					return Token.STAR;
 
 				case '/':

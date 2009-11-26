@@ -231,6 +231,18 @@ namespace Mono.CSharp {
 		}
 	}
 
+	class SimpleMemberName
+	{
+		public string Value;
+		public Location Location;
+
+		public SimpleMemberName (string name, Location loc)
+		{
+			this.Value = name;
+			this.Location = loc;
+		}
+	}
+
 	/// <summary>
 	///   Base representation for members.  This is used to keep track
 	///   of Name, Location and Modifier flags, and handling Attributes.

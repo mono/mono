@@ -7906,7 +7906,7 @@ namespace Mono.CSharp {
 
 		public static void Error_NamedArgument (NamedArgument na, Report Report)
 		{
-			Report.Error (1742, na.Name.Location, "An element access expression cannot use named argument");
+			Report.Error (1742, na.Location, "An element access expression cannot use named argument");
 		}
 
 		public override string GetSignatureForError ()

@@ -610,6 +610,7 @@ namespace Mono.CSharp {
 			partial_input = false;
 			Reset ();
 			queued_fields.Clear ();
+			Tokenizer.LocatedToken.Initialize ();
 
 			Stream s = new MemoryStream (Encoding.Default.GetBytes (input));
 			SeekableStreamReader seekable = new SeekableStreamReader (s, Encoding.Default);
@@ -655,7 +656,7 @@ namespace Mono.CSharp {
 				disable_error_reporting = true;
 			else
 				disable_error_reporting = false;
-			
+
 			if (disable_error_reporting)
 				ctx.Report.DisableReporting ();
 			try {

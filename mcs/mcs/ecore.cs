@@ -3929,7 +3929,7 @@ namespace Mono.CSharp {
 							if (na == null)
 								break;
 
-							int index = pd.GetParameterIndexByName (na.Name.Value);
+							int index = pd.GetParameterIndexByName (na.Name);
 
 							// Named parameter not found or already reordered
 							if (index <= i)
@@ -4655,18 +4655,18 @@ namespace Mono.CSharp {
 				} else {
 					NamedArgument na = a as NamedArgument;
 					if (na != null) {
-						int name_index = pd.GetParameterIndexByName (na.Name.Value);
+						int name_index = pd.GetParameterIndexByName (na.Name);
 						if (name_index < 0 || name_index >= param_count) {
 							if (DeclaringType != null && TypeManager.IsDelegateType (DeclaringType)) {
 								ec.Report.SymbolRelatedToPreviousError (DeclaringType);
-								ec.Report.Error (1746, na.Name.Location,
+								ec.Report.Error (1746, na.Location,
 									"The delegate `{0}' does not contain a parameter named `{1}'",
-									TypeManager.CSharpName (DeclaringType), na.Name.Value);
+									TypeManager.CSharpName (DeclaringType), na.Name);
 							} else {
 								ec.Report.SymbolRelatedToPreviousError (best_candidate);
-								ec.Report.Error (1739, na.Name.Location,
+								ec.Report.Error (1739, na.Location,
 									"The best overloaded method match for `{0}' does not contain a parameter named `{1}'",
-									TypeManager.CSharpSignature (method), na.Name.Value);
+									TypeManager.CSharpSignature (method), na.Name);
 							}
 						} else if (arguments[name_index] != a) {
 							if (DeclaringType != null && TypeManager.IsDelegateType (DeclaringType))
@@ -4674,9 +4674,9 @@ namespace Mono.CSharp {
 							else
 								ec.Report.SymbolRelatedToPreviousError (best_candidate);
 
-							ec.Report.Error (1744, na.Name.Location,
+							ec.Report.Error (1744, na.Location,
 								"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
-								na.Name.Value);
+								na.Name);
 						}
 					}
 				}
