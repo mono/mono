@@ -1,5 +1,16 @@
 2009-11-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (get_field_on_inst_generic_type): Try to fallback using the field from
+	the GTD instead of the DGC instead of crashing.
+
+	* reflection.c (ensure_generic_class_runtime_vtable): Only reinflate stuff that is
+	required. Inflate fields if needed.
+
+	* reflection.c (remove_instantiations_of): Ensure generic instances are properly
+	finished. Renamed.
+
+2009-11-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (check_interface_method_override): Check for NULL signatures and fail
 	the type.
 
