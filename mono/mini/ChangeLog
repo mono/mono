@@ -1,3 +1,9 @@
+2009-11-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoDebugOptions): Add 'explicit_null_checks' option.
+
+	* method-to-ir.c: Add support for generating explicit null checks.
+
 2009-11-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (vm_commands): Implement EXIT by invoking Environment.Exit ()
