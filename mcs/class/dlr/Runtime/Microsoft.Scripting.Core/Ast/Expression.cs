@@ -159,7 +159,7 @@ namespace System.Linq.Expressions {
         /// </remarks>
         protected internal virtual Expression VisitChildren(ExpressionVisitor visitor) {
             if (!CanReduce) throw Error.MustBeReducible();
-            return visitor.Visit(ReduceExtensions());
+            return visitor.Visit(ReduceAndCheck());
         }
 
         /// <summary>

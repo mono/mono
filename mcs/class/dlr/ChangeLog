@@ -1,3 +1,7 @@
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
+	* Updated to r35702.
+
 2009-11-09  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Add dist only Makefile.
