@@ -1,5 +1,9 @@
 2009-11-26  Marek Safar  <marek.safar@gmail.com>
 
+	* expression: Optimize few more zero-based operations.
+
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-tokenizer.cs, cs-parser.jay: Simplify literal parsing, also
 	avoids boxing of literal values.
 

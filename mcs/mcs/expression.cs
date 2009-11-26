@@ -1740,6 +1740,20 @@ namespace Mono.CSharp {
 				if (left == TypeManager.decimal_type)
 					return b.ResolveUserOperator (ec, b.left.Type, b.right.Type);
 
+				var c = b.right as IntegralConstant;
+				if (c != null) {
+					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.BitwiseOr || b.oper == Operator.Subtraction))
+						return ReducedExpression.Create (b.left, b);
+					return b;
+				}
+
+				c = b.left as IntegralConstant;
+				if (c != null) {
+					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.BitwiseOr))
+						return ReducedExpression.Create (b.right, b);
+					return b;
+				}
+
 				return b;
 			}
 
@@ -1841,8 +1855,16 @@ namespace Mono.CSharp {
 				//
 				// Expression tree representation does not use & mask
 				//
-				b.right = ReducedExpression.Create (b.right, expr_tree_expr);
+				b.right = ReducedExpression.Create (b.right, expr_tree_expr).Resolve (ec);
 				b.type = ReturnType;
+
+				//
+				// Optimize shift by 0
+				//
+				var c = b.right as Constant;
+				if (c != null && c.IsDefaultValue)
+					return ReducedExpression.Create (b.left, b).Resolve (ec);
+
 				return b;
 			}
 		}
@@ -3615,20 +3637,19 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			left.Emit (ec);
-
 			//
-			// Optimize zero-based operations
+			// Optimize zero-based operations which cannot be optimized at expression level
 			//
-			// TODO: Implement more optimizations, but it should probably go to PredefinedOperators
-			//
-			if ((oper & Operator.ShiftMask) != 0 || oper == Operator.Addition || oper == Operator.Subtraction) {
-				Constant rc = right as Constant;
-				if (rc != null && rc.IsDefaultValue) {
+			if (oper == Operator.Subtraction) {
+				var lc = left as IntegralConstant;
+				if (lc != null && lc.IsDefaultValue) {
+					right.Emit (ec);
+					ig.Emit (OpCodes.Neg);
 					return;
 				}
 			}
 
+			left.Emit (ec);
 			right.Emit (ec);
 			EmitOperatorOpcode (ec, oper, l);
 
