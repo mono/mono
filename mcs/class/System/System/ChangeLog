@@ -1,3 +1,8 @@
+2009-11-26  Stephane Delcroix  <stephane@delcroix.org>
+
+	* Uri.cs (ParseNoExceptions): don't try to find a scheme if the uri is a
+	UnixFileName or WindowsUNC.
+
 2009-11-02  Miguel de Icaza  <miguel@novell.com>
 
 	* UriFormatException.cs: .NET 4.0 API

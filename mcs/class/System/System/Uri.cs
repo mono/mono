@@ -13,7 +13,8 @@
 // (C) 2001 Garrett Rooney
 // (C) 2003 Ian MacLean
 // (C) 2003 Ben Maurer
-// Copyright (C) 2003,2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2003,2009 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2009 Stephane Delcroix
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -1374,27 +1375,30 @@ namespace System {
 
 			// 1, 2
 			// Identify Windows path, unix path, or standard URI.
+			if (uriString [0] == '/' && Path.DirectorySeparatorChar == '/'){
+				//Unix Path
+				ParseAsUnixAbsoluteFilePath (uriString);
+#if NET_2_1 && !MONOTOUCH
+				isAbsoluteUri = false;
+#else
+				if (kind == UriKind.Relative)
+					isAbsoluteUri = false;
+#endif
+				return null;
+			} else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\') {
+				//Windows UNC
+				ParseAsWindowsUNC (uriString);
+				return null;
+			}
+
+
 			pos = uriString.IndexOf (':');
 			if (pos == 0) {
 				return "Invalid URI: The format of the URI could not be determined.";
 			} else if (pos < 0) {
-				// It must be Unix file path or Windows UNC
-				if (uriString [0] == '/' && Path.DirectorySeparatorChar == '/'){
-					ParseAsUnixAbsoluteFilePath (uriString);
-#if NET_2_1 && !MONOTOUCH
-					isAbsoluteUri = false;
-#else
-					if (kind == UriKind.Relative)
-						isAbsoluteUri = false;
-#endif
-					
-				} else if (uriString.Length >= 2 && uriString [0] == '\\' && uriString [1] == '\\')
-					ParseAsWindowsUNC (uriString);
-				else {
-					/* Relative path */
-					isAbsoluteUri = false;
-					path = uriString;
-				}
+				/* Relative path */
+				isAbsoluteUri = false;
+				path = uriString;
 				return null;
 			} else if (pos == 1) {
 				if (!IsAlpha (uriString [0]))

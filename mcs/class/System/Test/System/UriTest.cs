@@ -1814,6 +1814,19 @@ namespace MonoTests.System
 			Uri fileUri = new Uri (fullpath);
 		}
 
+		[Test]
+		public void UnixAbsoluteFilePath_WithSpecialChars1 ()
+		{
+			Uri unixuri = new Uri ("/home/user/a@b");
+			Assert.AreEqual ("file", unixuri.Scheme, "UnixAbsoluteFilePath_WithSpecialChars #1");
+		}
+
+		[Test]
+		public void UnixAbsoluteFilePath_WithSpecialChars2 ()
+		{
+			Uri unixuri = new Uri ("/home/user/a:b");
+			Assert.AreEqual ("file", unixuri.Scheme, "UnixAbsoluteFilePath_WithSpecialChars #2");
+		}
 
 		public class DerivedUri : Uri
 		{
