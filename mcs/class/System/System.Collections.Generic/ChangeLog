@@ -1,3 +1,7 @@
+2009-11-26  Marek Safar <marek.safar@gmail.com>
+
+	* LinkedList.cs: Allocate less.
+
 2009-11-25  Jb Evain  <jbevain@novell.com>
 
 	* Queue.cs (Enqueue): deal with the case where the tail
