@@ -122,7 +122,7 @@ namespace System
 			if (diff <= 1)
 				return minValue;
 
-			return (int)(Sample () * diff) + minValue;
+			return (int)((uint)(Sample () * diff) + minValue);
 		}
 
 		public virtual void NextBytes (byte [] buffer)

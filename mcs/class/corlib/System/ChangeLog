@@ -1,3 +1,8 @@
+2009-11-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Random.cs: Fix case where the diff between min and max
+	is very large in Next(int,int). Fix bug #558593
+
 2009-11-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Delegate.cs (GetHashCode): Fix this so it is constant.
