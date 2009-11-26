@@ -36700,6 +36700,31 @@
       </method>
     </type>
   </test>
+  <test name="test-735.cs">
+    <type name="B">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+C">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+C+X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B+D">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-74.cs">
     <type name="X">
       <method name="Void .ctor()">
