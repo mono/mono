@@ -46,9 +46,7 @@ namespace System.Collections.Generic
 		[DebuggerBrowsable(DebuggerBrowsableState.RootHidden)]
 		public T[] Items {
 			get {
-				// It does not make much sense to browse more than 1k
-				// of items in debug view
-				var o = new T [Math.Min (c.Count, 1024)];
+				var o = new T [c.Count];
 				c.CopyTo (o, 0);
 				return o;
 			}
@@ -67,9 +65,7 @@ namespace System.Collections.Generic
 		[DebuggerBrowsable (DebuggerBrowsableState.RootHidden)]
 		public KeyValuePair<T, U>[] Items {
 			get {
-				// It does not make much sense to browse more than 1k
-				// of items in debug view
-				var o = new KeyValuePair<T, U> [Math.Min (c.Count, 1024)];
+				var o = new KeyValuePair<T, U> [c.Count];
 				c.CopyTo (o, 0);
 				return o;
 			}
