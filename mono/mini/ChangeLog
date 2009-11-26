@@ -1,5 +1,11 @@
 2009-11-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_klass_info): Save whenever the class has a generic
+	container.
+
+	* aot-runtime.c (decode_cached_class_info): Set the is_generic_container field
+	too.
+
 	* aot-compiler.c (mono_compile_assembly): Add a 'stats' option to print out
 	the distribution of got slot types.
 
