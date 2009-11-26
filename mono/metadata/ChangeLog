@@ -1,3 +1,12 @@
+2009-11-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (check_interface_method_override): Check for NULL signatures and fail
+	the type.
+
+	* debug-helpers.c (mono_signature_get_desc): Return a fixed string for NULL signatures.
+
+	Fixes #553428.
+
 2009-11-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_get_virtual_methods): Call decode_row_col to obtain
