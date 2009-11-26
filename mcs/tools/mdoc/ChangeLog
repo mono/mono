@@ -1,5 +1,11 @@
 2009-11-25  Jonathan Pryor <jpryor@novell.com>
 
+	* Makefile: When copying mdoc-net.exe into ./mdoc-net, rename it to
+	  mdoc.exe so that .NET users continue to use the name 'mdoc'.  This
+	  will make documentation easier, etc.
+
+2009-11-25  Jonathan Pryor <jpryor@novell.com>
+
 	+ Giving up on getting mdoc to fully work under .NET; specifically,
 	  mdoc-export-html makes use of many Mono XSLT "extensions" (part of
 	  XSLT 2.0, apparently) which .NET doesn't support.  To run mdoc under

@@ -30,7 +30,7 @@ all : copy-with-deps
 
 copy-with-deps:
 	-mkdir mdoc-net
-	cp $(PROGRAM) mdoc-net
+	cp $(PROGRAM) mdoc-net/mdoc.exe
 	cp $(topdir)/class/lib/net_2_0/Commons.Xml.Relaxng.dll mdoc-net
 	cp $(topdir)/class/lib/net_2_0/ICSharpCode.SharpZipLib.dll mdoc-net
 	cp $(topdir)/class/lib/net_2_0/Mono.Cecil.dll mdoc-net
