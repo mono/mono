@@ -1,3 +1,8 @@
+2009-11-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_get_virtual_methods): Call decode_row_col to obtain
+	the MONO_METHOD_FLAGS column instead of decoding the whole row.
+
 2009-11-25  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (field_from_memberref): Resolve the class first then the field
