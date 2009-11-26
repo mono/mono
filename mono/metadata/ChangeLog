@@ -1,3 +1,7 @@
+2009-11-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (MonoCachedClassInfo): Add 'is_generic_container' field.
+
 2009-11-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (get_field_on_inst_generic_type): Try to fallback using the field from
