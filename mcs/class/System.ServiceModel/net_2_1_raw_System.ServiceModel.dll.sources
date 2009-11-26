@@ -157,7 +157,7 @@ System.ServiceModel.Dispatcher/IInteractiveChannelInitializer.cs
 System.ServiceModel.Dispatcher/IParameterInspector.cs
 System.ServiceModel.Security/MessageSecurityException.cs
 System.ServiceModel.Security/SecurityAccessDeniedException.cs
-System.ServiceModel.Security/UsernamePasswordClientCredential.cs
+System.ServiceModel.Security/UserNamePasswordClientCredential.cs
 System.ServiceModel/ActionNotSupportedException.cs
 System.ServiceModel/AllEnums.cs
 System.ServiceModel/BasicHttpBinding.cs

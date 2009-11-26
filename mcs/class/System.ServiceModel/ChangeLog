@@ -1,3 +1,8 @@
+2009-11-26  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources : fix file name case,
+	  which was not caught on windows.
+
 2009-11-25  Astushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_raw_System.ServiceModel.dll.sources, Dummy_2_1.cs:
