@@ -23,6 +23,10 @@ public unsafe struct TestNew {
 	}
 }
 
+struct Struct2 {
+	public unsafe fixed byte Pad[64];
+}
+
 public class C {
 	unsafe static int Test () {
 		TestNew tt = new TestNew ();
