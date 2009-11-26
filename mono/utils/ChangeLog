@@ -1,3 +1,7 @@
+2009-11-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-ehash.c (mono_g_hash_table_find): Add this for eglib too.
+
 2009-11-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-error-internals.h: Add mono_error_set_bad_image_name and change signature
