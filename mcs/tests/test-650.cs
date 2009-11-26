@@ -4,6 +4,8 @@
 
 #line 1 "@@file_does_not_exist@@"
 
+#line 3 "test-650.cs" // self-reference
+
 class App
 {
     static void Main ()
