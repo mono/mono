@@ -1,5 +1,8 @@
 2009-11-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_globals_table): Use temp_prefix instead of .L in a few
+	places.
+
 	* aot-compiler.c (emit_globals_table): Emit a hash table for the globals, to
 	avoid linear searches at runtime.
 
