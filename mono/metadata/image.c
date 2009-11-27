@@ -1512,7 +1512,7 @@ mono_image_close (MonoImage *image)
 	}
 
 	if (image->method_cache)
-		mono_value_hash_table_destroy (image->method_cache);
+		g_hash_table_destroy (image->method_cache);
 	if (image->methodref_cache)
 		g_hash_table_destroy (image->methodref_cache);
 	mono_internal_hash_table_destroy (&image->class_cache);
