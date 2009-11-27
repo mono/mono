@@ -1,3 +1,10 @@
+2009-11-28  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (TryGetEvaluatedItemByNameBatched): Item could be
+	available in either perBatchItemsByName or commonItemsByName
+	or the evaluatedItemsByName collection. Allows the use of
+	items which are not batched, but are consumed in case of batching.
+
 2009-11-26  Ankit Jain  <jankit@novell.com>
 
 	* TargetBatchingImpl.cs (BuildTargetNeeded): Expand metadata

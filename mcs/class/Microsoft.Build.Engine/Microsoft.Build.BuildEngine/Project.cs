@@ -1078,17 +1078,14 @@ namespace Microsoft.Build.BuildEngine {
 		// Honors batching
 		internal bool TryGetEvaluatedItemByNameBatched (string itemName, out BuildItemGroup group)
 		{
-			if (perBatchItemsByName == null && commonItemsByName == null)
-				return EvaluatedItemsByName.TryGetValue (itemName, out group);
+			if (perBatchItemsByName != null && perBatchItemsByName.TryGetValue (itemName, out group))
+				return true;
 
-			if (perBatchItemsByName != null)
-				return perBatchItemsByName.TryGetValue (itemName, out group);
-
-			if (commonItemsByName != null)
-				return commonItemsByName.TryGetValue (itemName, out group);
+			if (commonItemsByName != null && commonItemsByName.TryGetValue (itemName, out group))
+				return true;
 
 			group = null;
-			return false;
+			return EvaluatedItemsByName.TryGetValue (itemName, out group);
 		}
 
 		internal string GetMetadataBatched (string itemName, string metadataName)
