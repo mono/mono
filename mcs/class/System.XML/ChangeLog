@@ -1,3 +1,8 @@
+2009-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xml.dll.sources : added NamespaceHandling which is kept
+	  internal in 2.0 (to simplify its support in XmlTextWriter).
+
 2009-08-01  Miguel de Icaza  <miguel@novell.com>
 
 	* Various changes to support the non-XAP XmlSchema resolution on

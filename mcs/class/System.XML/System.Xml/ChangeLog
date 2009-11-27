@@ -1,3 +1,8 @@
+2009-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NamespaceHandling.cs, XmlWriterSettings.cs, XmlTextWriter2.cs:
+	  implement NamespaceHandling support for Moonlight.
+
 2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : fix DateTimeOffset roundtrip by giving format
