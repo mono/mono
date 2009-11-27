@@ -1,5 +1,9 @@
 2009-11-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_setup_vtable_general): Cache the result of
+	get_virtual_methods () since it can be slow because of the metadata
+	optimization.
+
 	* metadata-internals.h (_MonoImage): Change 'method_cache' to a GHashTable
 	from a MonoValueHashTable for now, since the later is based on an earlier
 	version of hpj's internal probing code and seems to have serious collision
