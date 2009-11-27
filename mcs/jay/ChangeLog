@@ -1,3 +1,7 @@
+2009-11-27  Marek Safar  <marek.safar@gmail.com>
+
+	* skeleton.cs: Add global state stacks.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Add doc-update target support.

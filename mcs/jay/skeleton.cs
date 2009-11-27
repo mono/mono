@@ -123,6 +123,10 @@ t    this.debug = (yydebug.yyDebug)yyd;
 .    return first;
 .  }
 .
+.	static int[] global_yyStates;
+.	static object[] global_yyVals;
+.	protected bool use_global_stacks;
+.
 .  /** the generated parser.
 .      Maintains a state and a value stack, currently with fixed maximum size.
 .      @param yyLex scanner.
@@ -131,24 +135,31 @@ t    this.debug = (yydebug.yyDebug)yyd;
 .    */
 .  internal Object yyparse (yyParser.yyInput yyLex)
 .  {
-.    if (yyMax <= 0) yyMax = 256;			// initial size
-.    int yyState = 0;                                   // state stack ptr
-.    int [] yyStates = new int[yyMax];	                // state stack 
-.    Object yyVal = null;                               // value stack ptr
-.    Object [] yyVals = new Object[yyMax];	        // value stack
+.    if (yyMax <= 0) yyMax = 256;		// initial size
+.    int yyState = 0;                   // state stack ptr
+.    int [] yyStates;               	// state stack 
+.    Object yyVal = null;                // value stack ptr
+.    Object [] yyVals;					// value stack
 .    int yyToken = -1;					// current input
 .    int yyErrorFlag = 0;				// #tks to shift
+.	if (use_global_stacks && global_yyStates != null) {
+.		yyVals = global_yyVals;
+.		yyStates = global_yyStates;
+.   } else {
+.		yyVals = new object [yyMax];
+.		yyStates = new int [yyMax];
+.		if (use_global_stacks) {
+.			global_yyVals = yyVals;
+.			global_yyStates = yyStates;
+.		}
+.	}
 .
  local		## %{ ... %} after the first %%
 
 .    /*yyLoop:*/ for (int yyTop = 0;; ++ yyTop) {
 .      if (yyTop >= yyStates.Length) {			// dynamically increase
-.        int[] i = new int[yyStates.Length+yyMax];
-.        yyStates.CopyTo (i, 0);
-.        yyStates = i;
-.        Object[] o = new Object[yyVals.Length+yyMax];
-.        yyVals.CopyTo (o, 0);
-.        yyVals = o;
+.        Array.Resize (ref yyStates, yyStates.Length+yyMax);
+.        Array.Resize (ref yyVals, yyVals.Length+yyMax);
 .      }
 .      yyStates[yyTop] = yyState;
 .      yyVals[yyTop] = yyVal;
