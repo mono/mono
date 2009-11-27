@@ -1,3 +1,7 @@
+2009-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XNodeWriter.cs : avoid prefix NRE on WriteStartAttribute().
+
 2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XContainer.cs : when replacing nodes, add contents first and then
