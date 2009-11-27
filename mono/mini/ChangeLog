@@ -1,3 +1,8 @@
+2009-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_globals_table): Use temp_prefix instead of .L in a few
+	places.
+
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Avoid infinite recursion when generic virtual recursion is
