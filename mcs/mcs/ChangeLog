@@ -1,5 +1,9 @@
 2009-11-27  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay: Use jay global stacks (saves over 3MB for corlib).
+
+2009-11-27  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs (SimpleName): Removed no longer needed in_transit as
 	Resolve is now non-reentrant (saves ~0.6MB for corlib).
 

@@ -6198,6 +6198,8 @@ public CSharpParser (SeekableStreamReader reader, CompilationUnit file, Compiler
 	current_container = current_class.PartialContainer; // == RootContest.ToplevelTypes
 	oob_stack.Clear ();
 	lexer = new Tokenizer (reader, file, ctx);
+	
+	use_global_stacks = true;
 }
 
 public void parse ()
