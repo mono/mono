@@ -1,3 +1,8 @@
+2009-11-27  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs (SimpleName): Removed no longer needed in_transit as
+	Resolve is now non-reentrant (saves ~0.6MB for corlib).
+
 2009-11-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #545081

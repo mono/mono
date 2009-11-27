@@ -2470,9 +2470,8 @@ namespace Mono.CSharp {
 	///   SimpleName expressions are formed of a single word and only happen at the beginning 
 	///   of a dotted-name.
 	/// </summary>
-	public class SimpleName : ATypeNameExpression {
-		bool in_transit;
-
+	public class SimpleName : ATypeNameExpression
+	{
 		public SimpleName (string name, Location l)
 			: base (name, l)
 		{
@@ -2552,7 +2551,6 @@ namespace Mono.CSharp {
 		{
 			return SimpleNameResolve (ec, right_side, false);
 		}
-		
 
 		public Expression DoResolve (ResolveContext ec, bool intermediate)
 		{
@@ -2713,12 +2711,7 @@ namespace Mono.CSharp {
 
 		Expression SimpleNameResolve (ResolveContext ec, Expression right_side, bool intermediate)
 		{
-			if (in_transit)
-				return null;
-
-			in_transit = true;
 			Expression e = DoSimpleNameResolve (ec, right_side, intermediate);
-			in_transit = false;
 
 			if (e == null)
 				return null;
