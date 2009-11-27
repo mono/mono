@@ -7,7 +7,7 @@ public class Test
 		float a = 1f / 3;
 		float b = (float) Math.Acos ((float) (a * 3));
 		Console.WriteLine (b);
-		if (b != 0)
+		if (b != 0 && b != float.NaN)
 			return 1;
 
 		return 0;

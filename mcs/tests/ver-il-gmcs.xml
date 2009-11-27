@@ -36680,7 +36680,7 @@
   <test name="test-733.cs">
     <type name="Test">
       <method name="Int32 Main()">
-        <size>43</size>
+        <size>54</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
