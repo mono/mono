@@ -1,3 +1,8 @@
+2009-11-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c aot-runtime.c: Get rid of a few global symbols, move their
+	contents to MonoAotFileInfo.
+
 2009-11-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c aot-runtime.c: Reorganize the AOT file format once again.
