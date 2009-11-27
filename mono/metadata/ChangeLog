@@ -1,3 +1,12 @@
+2009-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-internals.h (_MonoImage): Change 'method_cache' to a GHashTable
+	from a MonoValueHashTable for now, since the later is based on an earlier
+	version of hpj's internal probing code and seems to have serious collision
+	issues.
+
+	* loader.c (mono_get_method_full): Update after the change above.
+
 2009-11-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h (MonoCachedClassInfo): Add 'is_generic_container' field.
