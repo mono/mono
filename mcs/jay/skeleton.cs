@@ -158,8 +158,8 @@ t    this.debug = (yydebug.yyDebug)yyd;
 
 .    /*yyLoop:*/ for (int yyTop = 0;; ++ yyTop) {
 .      if (yyTop >= yyStates.Length) {			// dynamically increase
-.        Array.Resize (ref yyStates, yyStates.Length+yyMax);
-.        Array.Resize (ref yyVals, yyVals.Length+yyMax);
+.        global::System.Array.Resize (ref yyStates, yyStates.Length+yyMax);
+.        global::System.Array.Resize (ref yyVals, yyVals.Length+yyMax);
 .      }
 .      yyStates[yyTop] = yyState;
 .      yyVals[yyTop] = yyVal;
