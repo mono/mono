@@ -1,5 +1,11 @@
 2009-11-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Reorganize the AOT file format once again.
+	Put all binary data into a giant blob, similarly to the way .net assemblies
+	store binary data. Emit offset tables in a compact form to reduce their size.
+
+	* mini.h: Bump AOT file format version.
+
 	* aot-compiler.c (emit_globals_table): Use temp_prefix instead of .L in a few
 	places.
 
