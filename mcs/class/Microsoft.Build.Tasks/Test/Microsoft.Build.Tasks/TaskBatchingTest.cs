@@ -747,6 +747,122 @@ namespace MonoTests.Microsoft.Build.Tasks
 		}
 
 		[Test]
+		public void TestTargetInvocationFromBatchedTask () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<Item1 Include=""One""/>
+		<Item1 Include=""Two""/>
+
+		<Item1Ref Include=""@(Item1)"" />
+	</ItemGroup>
+	<PropertyGroup>
+		<Prop1>@(Item1)</Prop1>
+		<Prop2>@(Item1Ref)</Prop2>
+	</PropertyGroup>
+	<Target Name='1'>
+		<CallTarget Targets='foo' Condition="" '%(Item1.Identity)' != ''"" />
+		<Message Text=""Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""Prop1: $(Prop1) Prop2: $(Prop2)""/>
+	</Target>
+	<Target Name='foo'>
+		<Message Text=""(foo) Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""(foo) Prop1: $(Prop1) Prop2: $(Prop2)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			try {
+				testLogger.CheckLoggedMessageHead ("(foo) Item1: One;Two Item1Ref: One;Two", "A1");
+				testLogger.CheckLoggedMessageHead ("(foo) Prop1: One;Two Prop2: One;Two", "A2");
+
+				testLogger.CheckLoggedMessageHead ("Item1: One;Two Item1Ref: One;Two", "A3");
+				testLogger.CheckLoggedMessageHead ("Prop1: One;Two Prop2: One;Two", "A4");
+
+				Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+			} catch (AssertionException) {
+				testLogger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestTargetInvocationFromBatchedTarget () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<Item1 Include=""One""/>
+		<Item1 Include=""Two""/>
+
+		<Item1Ref Include=""@(Item1)"" />
+	</ItemGroup>
+	<PropertyGroup>
+		<Prop1>@(Item1)</Prop1>
+		<Prop2>@(Item1Ref)</Prop2>
+	</PropertyGroup>
+	<Target Name='1' Inputs=""%(Item1.Identity)"" Outputs=""Nonexistant.foobar"">
+		<Message Text=""Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""Prop1: $(Prop1) Prop2: $(Prop2)""/>
+
+		<CallTarget Targets='foo' />
+
+		<Message Text=""Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""Prop1: $(Prop1) Prop2: $(Prop2)""/>
+	</Target>
+	<Target Name='foo' Condition="" '@(Item1)' != 'One' "">
+		<Message Text=""(foo) Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""(foo) Prop1: $(Prop1) Prop2: $(Prop2)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			try {
+				testLogger.CheckLoggedMessageHead ("Item1: One Item1Ref: One;Two", "A1");
+				testLogger.CheckLoggedMessageHead ("Prop1: One Prop2: One;Two", "A2");
+
+				testLogger.CheckLoggedMessageHead ("(foo) Item1: One;Two Item1Ref: One;Two", "A3");
+				testLogger.CheckLoggedMessageHead ("(foo) Prop1: One;Two Prop2: One;Two", "A4");
+
+				testLogger.CheckLoggedMessageHead ("Item1: One Item1Ref: One;Two", "A5");
+				testLogger.CheckLoggedMessageHead ("Prop1: One Prop2: One;Two", "A6");
+
+				//second batch, foo has already run, so doesn't execute again
+				testLogger.CheckLoggedMessageHead ("Item1: Two Item1Ref: One;Two", "A7");
+				testLogger.CheckLoggedMessageHead ("Prop1: Two Prop2: One;Two", "A8");
+
+				testLogger.CheckLoggedMessageHead ("Item1: Two Item1Ref: One;Two", "A9");
+				testLogger.CheckLoggedMessageHead ("Prop1: Two Prop2: One;Two", "A10");
+
+				Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+			} catch (AssertionException) {
+				testLogger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
 		public void TestBatchingWithUnqualifiedMetadataReference () {
 			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
 	<ItemGroup>

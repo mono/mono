@@ -233,6 +233,27 @@ namespace Microsoft.Build.BuildEngine {
 				}
 			}
 		}
+
+               public void DumpBuckets (Dictionary<string, Dictionary<string, BuildItemGroup>> buckets)
+               {
+                       foreach (KeyValuePair<string, Dictionary<string, BuildItemGroup>> pair in buckets) {
+                               Console.WriteLine ("Bucket> {0} {", pair.Key);
+			       DumpBucket (pair.Value);
+			       Console.WriteLine ("}");
+                       }
+               }
+
+		public static void DumpBucket (Dictionary<string, BuildItemGroup> bucket)
+		{
+		       foreach (KeyValuePair<string, BuildItemGroup> bpair in bucket) {
+			       Console.WriteLine ("\t{0} [", bpair.Key);
+			       foreach (BuildItem item in bpair.Value)
+				       Console.WriteLine ("\t\t{0} - {1}", item.Name, item.FinalItemSpec);
+			       Console.WriteLine ("\t]");
+		       }
+		}
+
+
 	}
 }
 

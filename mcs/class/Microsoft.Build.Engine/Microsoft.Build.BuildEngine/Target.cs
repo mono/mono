@@ -135,10 +135,13 @@ namespace Microsoft.Build.BuildEngine {
 				return true;
 			}
 
+			// Push a null/empty batch, effectively clearing it
+			project.PushBatch (null, null);
 			if (!ConditionParser.ParseAndEvaluate (Condition, Project)) {
 				LogMessage (MessageImportance.Low,
 						"Target {0} skipped due to false condition: {1}",
 						Name, Condition);
+				project.PopBatch ();
 				return true;
 			}
 
@@ -157,6 +160,8 @@ namespace Microsoft.Build.BuildEngine {
 			} catch (Exception e) {
 				LogError ("Error building target {0}: {1}", Name, e.ToString ());
 				return false;
+			} finally {
+				project.PopBatch ();
 			}
 
 			project.ParentEngine.BuiltTargetsOutputByName [built_targets_key] = (ITaskItem[]) Outputs.Clone ();

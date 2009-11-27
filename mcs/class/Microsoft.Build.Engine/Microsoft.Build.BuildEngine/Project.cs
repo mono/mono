@@ -76,6 +76,8 @@ namespace Microsoft.Build.BuildEngine {
 		List<string>			builtTargetKeys;
 		bool				building;
 		BuildSettings			current_settings;
+		Stack<Batch>			batches;
+
 
 		static string extensions_path;
 		static XmlNamespaceManager	manager;
@@ -104,6 +106,7 @@ namespace Microsoft.Build.BuildEngine {
 			builtTargetKeys = new List<string> ();
 			initialTargets = new List<string> ();
 			defaultTargets = new string [0];
+			batches = new Stack<Batch> ();
 
 			globalProperties = new BuildPropertyGroup (null, this, null, false);
 			foreach (BuildProperty bp in parentEngine.GlobalProperties)
@@ -1069,7 +1072,39 @@ namespace Microsoft.Build.BuildEngine {
 		Dictionary<string, BuildItemGroup> perBatchItemsByName;
 		Dictionary<string, BuildItemGroup> commonItemsByName;
 
-		internal void SetBatchedItems (Dictionary<string, BuildItemGroup> perBatchItemsByName, Dictionary<string, BuildItemGroup> commonItemsByName)
+		struct Batch {
+			public Dictionary<string, BuildItemGroup> perBatchItemsByName;
+			public Dictionary<string, BuildItemGroup> commonItemsByName;
+
+			public Batch (Dictionary<string, BuildItemGroup> perBatchItemsByName, Dictionary<string, BuildItemGroup> commonItemsByName)
+			{
+				this.perBatchItemsByName = perBatchItemsByName;
+				this.commonItemsByName = commonItemsByName;
+			}
+		}
+
+		Stack<Batch> Batches {
+			get { return batches; }
+		}
+
+		internal void PushBatch (Dictionary<string, BuildItemGroup> perBatchItemsByName, Dictionary<string, BuildItemGroup> commonItemsByName)
+		{
+			batches.Push (new Batch (perBatchItemsByName, commonItemsByName));
+			SetBatchedItems (perBatchItemsByName, commonItemsByName);
+		}
+
+		internal void PopBatch ()
+		{
+			batches.Pop ();
+			if (batches.Count > 0) {
+				Batch b = batches.Peek ();
+				SetBatchedItems (b.perBatchItemsByName, b.commonItemsByName);
+			} else {
+				SetBatchedItems (null, null);
+			}
+		}
+
+		void SetBatchedItems (Dictionary<string, BuildItemGroup> perBatchItemsByName, Dictionary<string, BuildItemGroup> commonItemsByName)
 		{
 			this.perBatchItemsByName = perBatchItemsByName;
 			this.commonItemsByName = commonItemsByName;
@@ -1197,7 +1232,6 @@ namespace Microsoft.Build.BuildEngine {
 					throw new InvalidOperationException ("GlobalProperties can not be set to persisted property group.");
 				
 				globalProperties = value;
-				NeedToReevaluate ();
 			}
 		}
 

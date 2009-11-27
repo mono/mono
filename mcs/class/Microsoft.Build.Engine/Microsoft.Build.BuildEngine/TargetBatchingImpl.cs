@@ -95,18 +95,14 @@ namespace Microsoft.Build.BuildEngine {
 			executeOnErrors = false;
 			foreach (Dictionary<string, BuildItemGroup> bucket in buckets) {
 				LogTargetStarted (target);
+				project.PushBatch (bucket, commonItemsByName);
 				try {
-					project.SetBatchedItems (bucket, commonItemsByName);
 					if (!BuildTargetNeeded ()) {
 						LogTargetSkipped (target);
 						continue;
 					}
 
 					for (int i = 0; i < target.BuildTasks.Count; i ++) {
-						//required setting here, as batchtask.Run resets
-						//these to null before returning!
-						project.SetBatchedItems (bucket, commonItemsByName);
-
 						//FIXME: parsing attributes repeatedly
 						BuildTask task = target.BuildTasks [i];
 						result = new TaskBatchingImpl (project).Build (task, out executeOnErrors);
@@ -116,11 +112,10 @@ namespace Microsoft.Build.BuildEngine {
 						}
 					}
 				} finally {
+					project.PopBatch ();
 					LogTargetFinished (target, result);
 				}
 			}
-			project.SetBatchedItems (null, null);
-
 			return result;
 		}
 

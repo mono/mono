@@ -1,5 +1,9 @@
 2009-11-28  Ankit Jain  <jankit@novell.com>
 
+	* TaskBatchingTest.cs: Add new tests for batching.
+
+2009-11-28  Ankit Jain  <jankit@novell.com>
+
 	* TaskBatchingTest.cs: Add new tests for batching, use on unbatched
 	items in a batching scenario.
 
