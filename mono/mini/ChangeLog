@@ -1,3 +1,8 @@
+2009-11-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Add an option to set the number of static rgctx trampolines
+	generated.
+
 2009-11-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_globals_table): Use temp_prefix instead of .L in a few
