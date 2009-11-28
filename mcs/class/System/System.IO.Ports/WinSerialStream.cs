@@ -574,7 +574,7 @@ namespace System.IO.Ports
 	}
 
 	[StructLayout (LayoutKind.Sequential)]
-	class CommStat
+	struct CommStat
 	{
 		public uint flags;
 		public uint BytesIn;
