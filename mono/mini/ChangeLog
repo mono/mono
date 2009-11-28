@@ -1,3 +1,8 @@
+2009-11-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Add an option to set the number of static rgctx trampolines
+	generated.
+
 2009-11-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c aot-runtime.c: Get rid of a few global symbols, move their
