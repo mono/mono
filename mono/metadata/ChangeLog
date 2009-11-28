@@ -1,3 +1,18 @@
+2009-11-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (ensure_generic_class_runtime_vtable): Split this function in 2
+	so we can avoid calling ensure_runtime_vtable multiple times for the GTD during
+	its TypeBuilder::CreateType ().
+
+	* reflection.c (ensure_generic_class_runtime_vtable): Avoid initializing interfaces
+	if not needed.
+
+	* reflection.c: Every time we change the interface array, set interfaces_packed to NULL
+	to make setup_interface_offsets happy.
+
+	* reflection.c (remove_instantiations_of_and_ensure_contents): Fix instances again as corlib
+	compilation now works.
+
 2009-11-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (create_exceptions): New helper function extracted from
