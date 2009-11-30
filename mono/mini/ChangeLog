@@ -1,3 +1,14 @@
+2009-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_find_jit_info): Compute the length of the method
+	using the sorted_code_offsets array, instead of reading it from the
+	exception debug info.
+	(load_method): Call mono_aot_find_jit_info instead of
+	decode_exception_debug_info ().
+
+	* aot-compiler.c (emit_exception_debug_info): Emit whenever the method was
+	LLVM compiled as a flag.
+
 2009-11-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (resume_thread): Fix a warning.
