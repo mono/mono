@@ -13,6 +13,7 @@ using System;
 using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections.Generic;
 
 namespace Mono.CSharp
 {
@@ -198,21 +199,20 @@ namespace Mono.CSharp
 			get { return loc; }
 		}
 	}
-
+	
 	public class Arguments
 	{
-		ArrayList args;			// TODO: This should really be linked list
+		List<Argument> args;
 		ArrayList reordered;	// TODO: LinkedList
-		bool has_dynamic;
 
 		public Arguments (int capacity)
 		{
-			args = new ArrayList (capacity);
+			args = new List<Argument> (capacity);
 		}
 
-		public int Add (Argument arg)
+		public void Add (Argument arg)
 		{
-			return args.Add (arg);
+			args.Add (arg);
 		}
 
 		public void AddRange (Arguments args)
@@ -401,7 +401,12 @@ namespace Mono.CSharp
 		//
 		public bool HasDynamic {
 			get {
-				return has_dynamic;
+				foreach (Argument a in args) {
+					if (TypeManager.IsDynamicType (a.Type))
+						return true;
+				}
+				
+				return false;
 			}
 		}
 
@@ -445,12 +450,11 @@ namespace Mono.CSharp
 		//
 		public void Resolve (ResolveContext ec, out bool dynamic)
 		{
+			dynamic = false;
 			foreach (Argument a in args) {
 				a.Resolve (ec);
-				this.has_dynamic |= TypeManager.IsDynamicType (a.Type);
+				dynamic |= TypeManager.IsDynamicType (a.Type);
 			}
-
-			dynamic = has_dynamic;
 		}
 
 		public void MutateHoistedGenericType (AnonymousMethodStorey storey)
