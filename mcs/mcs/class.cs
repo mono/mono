@@ -3884,8 +3884,9 @@ namespace Mono.CSharp {
 			if (IsPartialDefinition) {
 				caching_flags &= ~Flags.Excluded_Undetected;
 				caching_flags |= Flags.Excluded;
-				// Add to member cache only when a partial method implementation is not there
-				if ((caching_flags & Flags.MethodOverloadsExist) == 0) {
+
+				// Add to member cache only when a partial method implementation has not been found yet
+				if ((caching_flags & Flags.PartialDefinitionExists) == 0) {
 					MethodBase mb = new PartialMethodDefinitionInfo (this);
 					Parent.MemberCache.AddMember (mb, this);
 					TypeManager.AddMethod (mb, this);

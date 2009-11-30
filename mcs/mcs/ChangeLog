@@ -1,5 +1,11 @@
 2009-11-30  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #558305
+	* decl.cs, class.cs: Check partial method definitions using correct
+	flag.
+
+2009-11-30  Marek Safar  <marek.safar@gmail.com>
+
 	* argument.cs: Don't cache rarely used dynamic flag.
 
 2009-11-27  Marek Safar  <marek.safar@gmail.com>

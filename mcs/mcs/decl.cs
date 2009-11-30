@@ -2787,6 +2787,7 @@ namespace Mono.CSharp {
 									entries.RemoveAt (i);
 								} else {
 									method_b.SetPartialDefinition (method_a);
+									method_a.caching_flags |= MemberCore.Flags.PartialDefinitionExists;
 								}
 								continue;
 							}
@@ -2807,10 +2808,11 @@ namespace Mono.CSharp {
 						if (method_a.IsPartialDefinition) {
 							Report.Error (756, member.Location, "A partial method `{0}' declaration is already defined",
 								member.GetSignatureForError ());
+						} else {
+							Report.Error (757, member.Location, "A partial method `{0}' implementation is already defined",
+								member.GetSignatureForError ());
 						}
 
-						Report.Error (757, member.Location, "A partial method `{0}' implementation is already defined",
-							member.GetSignatureForError ());
 						return false;
 					}
 
