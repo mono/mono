@@ -1,3 +1,8 @@
+2009-11-30  Andrés G. Aragoneses  <aaragoneses@novell.com>
+
+        * Makefile: Remove the MOON_A11Y_INTERNAL_HACK define
+       for MoonAtkBridge after audit finished r147098.
+
 2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
 
 	* corlib_test.dll.sources: Add System/ArraySortArgChecks.cs
@@ -219,7 +224,7 @@
 
 	* corlib.dll.sources: Remove System.IO/Check[Argument|Permission].cs
 
-2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>>
+2008-04-30  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* corlib_test.dll.sources: Added ConstructorOnTypeBuilderInstTest.cs.
 
