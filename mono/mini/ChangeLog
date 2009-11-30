@@ -1,5 +1,10 @@
 2009-11-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_lowering_pass): Fix an assert which is hit when
+	the instruction following an OP_FCOMPARE is optimized away.
+
+2009-11-30  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c (arch_emit_autoreg): Extract the auto-registration code from
 	emit_autoreg () into this arch-specific function.
 
