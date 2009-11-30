@@ -1,3 +1,8 @@
+2009-11-30  Jonathan Pryor  <jpryor@novell.com>
+
+	* monotouch_System.Xml.dll.sources: Add System.Xml/NamespaceHandling.cs 
+	  to the MonoTouch build (fixed build break).
+
 2009-11-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xml.dll.sources : added NamespaceHandling which is kept
