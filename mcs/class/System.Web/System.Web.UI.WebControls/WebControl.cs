@@ -288,16 +288,19 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public bool HasAttributes 
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		bool HasAttributes 
 		{
 			get {
 				return (attributes != null && attributes.Count > 0);
 			}
 		}
-#endif		
 		
 #if ONLY_1_1
 		[Bindable(true)]
@@ -447,9 +450,12 @@ namespace System.Web.UI.WebControls {
 			if (o != null)
 				ViewState ["ToolTip"] = o;
 
-			if (controlSrc.attributes != null)
+			if (controlSrc.attributes != null) {
+				AttributeCollection attributes = Attributes;
+				
 				foreach (string s in controlSrc.attributes.Keys)
-					Attributes [s] = controlSrc.attributes [s];
+					attributes [s] = controlSrc.attributes [s];
+			}
 		}
 
 		public void MergeStyle (Style s) 
@@ -560,6 +566,7 @@ namespace System.Web.UI.WebControls {
 					if (IsTrackingViewState) 
 						attribute_state.TrackViewState ();
 				}
+
 				attribute_state.LoadViewState (pair.Second);
 				attributes = new AttributeCollection(attribute_state);
 			}
@@ -621,8 +628,10 @@ namespace System.Web.UI.WebControls {
 			if (style != null)
 				style.TrackViewState ();
 
-			if (attribute_state != null)
+			if (attribute_state != null) {
 				attribute_state.TrackViewState ();
+				attribute_state.SetDirty (true);
+			}
 
 			base.TrackViewState ();
 		}

@@ -1,3 +1,14 @@
+2009-11-30  Marek Habersack  <mhabersack@novell.com>
+
+	* WebControl.cs: HasAttributes made available as internal for 1.1
+	Avoid calling the Attributes getter many times in
+	CopyBaseAttributes.
+	If TrackViewState is called and attributes state bag already
+	exists, mark all items in the latter as dirty.
+
+	* CheckBox.cs, Button.cs, ImageButton.cs, LinkButton.cs: do not
+	create the Attributes collection if not necessary.
+
 2009-11-16  Marek Habersack  <mhabersack@novell.com>
 
 	* TreeNodeCollection.cs: whenever a node is added, let the owner

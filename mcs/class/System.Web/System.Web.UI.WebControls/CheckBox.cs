@@ -348,21 +348,26 @@ namespace System.Web.UI.WebControls {
 
 		bool AddAttributesForSpan (HtmlTextWriter writer)
 		{
-			ICollection k = Attributes.Keys;
-			string [] keys = new string [k.Count];
-			k.CopyTo (keys, 0);
-			foreach (string key in keys) {
-				if (!IsInputOrCommonAttr (key))
-					continue;
-				if (common_attrs == null)
-					common_attrs = new AttributeCollection (new StateBag ());
-				common_attrs [key] = Attributes [key];
-				Attributes.Remove (key);
+			if (HasAttributes) {
+				AttributeCollection attributes = Attributes;
+				ICollection k = attributes.Keys;
+				string [] keys = new string [k.Count];
+				k.CopyTo (keys, 0);
+				foreach (string key in keys) {
+					if (!IsInputOrCommonAttr (key))
+						continue;
+					if (common_attrs == null)
+						common_attrs = new AttributeCollection (new StateBag ());
+					common_attrs [key] = Attributes [key];
+					attributes.Remove (key);
+				}
+			
+				if (attributes.Count > 0) {
+					attributes.AddAttributes (writer);
+					return true;
+				}
 			}
-			if (Attributes.Count > 0) {
-				Attributes.AddAttributes (writer);
-				return true;
-			}
+			
 			return false;
 		}
 #if NET_2_0
