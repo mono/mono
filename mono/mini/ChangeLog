@@ -1,5 +1,12 @@
 2009-11-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_exception_debug_info): Don't emit the length of the
+	code, it is no longer needed.
+
+	* aot-runtime.c (decode_exception_debug_info): Don't read the code length.
+
+	* mini.h: Bump AOT file format version.
+
 	* aot-runtime.c (mono_aot_find_jit_info): Compute the length of the method
 	using the sorted_code_offsets array, instead of reading it from the
 	exception debug info.
