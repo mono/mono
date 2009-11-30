@@ -1,7 +1,7 @@
 2009-11-30  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
         * Makefile: Remove the MOON_A11Y_INTERNAL_HACK define
-       for MoonAtkBridge after audit finished r147098.
+       for MoonAtkBridge after audit finished in r147098.
 
 2009-11-08  Juraj Skripsky  <js@hotfeet.ch>
 
