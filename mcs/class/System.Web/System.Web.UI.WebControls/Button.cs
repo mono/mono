@@ -173,7 +173,7 @@ namespace System.Web.UI.WebControls {
 
 			string onclick = OnClientClick;
 			onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
-			if (Attributes ["onclick"] != null) {
+			if (HasAttributes && Attributes ["onclick"] != null) {
 				onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick + Attributes ["onclick"]);
 				Attributes.Remove ("onclick");
 			}
