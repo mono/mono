@@ -1,5 +1,8 @@
 2009-11-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (arch_emit_autoreg): Extract the auto-registration code from
+	emit_autoreg () into this arch-specific function.
+
 	* aot-compiler.c (emit_exception_debug_info): Don't emit the length of the
 	code, it is no longer needed.
 
