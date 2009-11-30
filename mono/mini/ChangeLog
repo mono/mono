@@ -1,3 +1,8 @@
+2009-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_lowering_pass): Fix an assert which is hit when
+	the instruction following an OP_FCOMPARE is optimized away.
+
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Avoid infinite recursion when generic virtual recursion is
