@@ -1,3 +1,7 @@
+2009-12-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachine.cs (ErrorHandler): Handle NOT_SUSPENDED error code too.
+
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* ObjectMirror.cs TypeMirror.cs StructMirror.cs: Make the BeginInvokeMethod
