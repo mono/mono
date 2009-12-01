@@ -41,7 +41,7 @@ namespace System.ServiceModel
 	// Since System.Configuration is not supported in SL, this config
 	// loader has to be created without depending on it.
 
-	public class SilverlightClientConfigLoader
+	internal class SilverlightClientConfigLoader
 	{
 		public SilverlightClientConfiguration Load (XmlReader reader)
 		{

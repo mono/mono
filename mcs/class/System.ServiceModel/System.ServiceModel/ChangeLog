@@ -1,5 +1,9 @@
 2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SilverlightClientConfigLoader.cs : I made an extraneous change.
+
+2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientBase.cs, ChannelFactory_1.cs, ChannelFactory.cs :
 	  more SL3 changes.
 
