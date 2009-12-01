@@ -234,6 +234,19 @@ namespace MonoTests.System.Collections.Generic
 		}
 
 		[Test]
+		public void DisposeEnumerator ()
+		{
+			var stack = new Stack<int> ();
+			stack.Push (1);
+			stack.Push (2);
+
+			var enumerator = stack.GetEnumerator ();
+			Assert.IsTrue (enumerator.MoveNext ());
+			enumerator.Dispose ();
+			Assert.IsFalse (enumerator.MoveNext ());
+		}
+
+		[Test]
 		public void TrimExcessTest ()
 		{
 			Stack <int> s = new Stack <int> ();

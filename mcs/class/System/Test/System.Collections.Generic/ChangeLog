@@ -1,3 +1,9 @@
+2009-12-01  Jb Evain  <jbevain@novell.com>
+
+	* StackTest.cs: add a test ensuring that disposing the stack
+	enumerator prevents to iterate further.
+
+
 2009-11-25  Jb Evain  <jbevain@novell.com>
 
 	* QueueTest.cs: add test for a specific combination of
