@@ -1,3 +1,9 @@
+2009-12-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (clear_event_request): Clear method entry/exit requests too.
+
+	* exceptions-x86.c (mono_arch_get_restore_context): Restore EAX too.
+
 2009-12-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (vm_commands): Don't allow invokes on threads which are not
