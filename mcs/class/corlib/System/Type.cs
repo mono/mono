@@ -1301,6 +1301,8 @@ namespace System {
 		{
 			if (!IsSystemType)
 				throw new NotSupportedException ("Derived classes must provide an implementation.");
+			if (IsByRef)
+				throw new TypeLoadException ("Can not call MakeByRefType on a ByRef type");
 			return make_byref_type ();
 		}
 
