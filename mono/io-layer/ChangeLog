@@ -1,3 +1,11 @@
+2009-11-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* io.cs: In CopyFile check if the destination already exists before
+	trying to open it, and if it is the same as the source, report an error,
+	just as .net does. We do the check here to take advantage of the IOMAP
+	capability.
+	Fixes #510230.
+
 2009-11-13 Jonathan Chambers <joncham@gmail.com>
 
 	* mono-mutex.h: Implementation for Windows platform.
