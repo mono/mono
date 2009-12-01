@@ -154,9 +154,7 @@ namespace System.ServiceModel
 		{
 			ContractDescription cd = ContractDescription.GetContract (typeof (TChannel));
 			ServiceEndpoint ep = new ServiceEndpoint (cd);
-#if !NET_2_1
 			ep.Behaviors.Add (new ClientCredentials ());
-#endif
 			return ep;
 		}
 	}

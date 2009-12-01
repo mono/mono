@@ -67,11 +67,9 @@ namespace System.ServiceModel
 			get { return service_endpoint; }
 		}
 
-#if !NET_2_1
 		public ClientCredentials Credentials {
 			get { return Endpoint.Behaviors.Find<ClientCredentials> (); }
 		}
-#endif
 
 		protected internal override TimeSpan DefaultCloseTimeout {
 			get { return Endpoint.Binding.CloseTimeout; }

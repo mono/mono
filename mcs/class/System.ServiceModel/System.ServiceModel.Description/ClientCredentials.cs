@@ -40,7 +40,9 @@ using System.ServiceModel.Security.Tokens;
 namespace System.ServiceModel.Description
 {
 	public class ClientCredentials
-#if !NET_2_1
+#if NET_2_1
+		: IEndpointBehavior
+#else
 		: SecurityCredentialsManager, IEndpointBehavior
 #endif
 	{

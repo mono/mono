@@ -1,5 +1,10 @@
 2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientBase.cs, ChannelFactory_1.cs, ChannelFactory.cs :
+	  more SL3 changes.
+
+2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SilverlightClientConfigLoader.cs : do not enter infinite loop at
 	  empty <binding> element.
 

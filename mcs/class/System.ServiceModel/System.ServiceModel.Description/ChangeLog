@@ -1,3 +1,7 @@
+2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientCredentials.cs : more SL3 changes.
+
 2009-11-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientCredentials.cs : it is part of SL3 API, so adjusted for it.
