@@ -1,3 +1,7 @@
+2009-12-01  Jb Evain  <jbevain@novell.com>
+
+	* TypeTest.cs: add test for MakeByRefType on a ByRef type.
+
 2009-11-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* DelegateTest.cs: Add a test for GetHashCode ().

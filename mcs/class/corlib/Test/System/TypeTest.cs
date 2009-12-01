@@ -2923,6 +2923,13 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test]
+		[ExpectedException (typeof (TypeLoadException))]
+		public void MakeByRefByRef ()
+		{
+			typeof (int).MakeByRefType ().MakeByRefType ();
+		}
+
+		[Test]
 		public void MakeArrayTypeTest ()
 		{
 			// This should not crash:
