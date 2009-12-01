@@ -141,6 +141,8 @@ namespace System.Security.Cryptography {
 			case "System.Security.Cryptography.SHA1":
 			case "SHA1":
 				return new SHA1Managed ();
+			case "SHA256":
+				return new SHA256Managed ();
 			case "System.Security.Cryptography.MD5":
 			case "MD5":
 				return new MD5CryptoServiceProvider ();

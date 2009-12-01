@@ -31,7 +31,9 @@ using System.Runtime.InteropServices;
 
 namespace System.Security.Cryptography {
 	
+#if !NET_2_1
 	[ComVisible (true)]
+#endif
 	public abstract class RandomNumberGenerator {
 
 		protected RandomNumberGenerator ()
