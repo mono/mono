@@ -499,6 +499,7 @@ namespace System.ServiceModel.Syndication
 				writer.WriteEndElement ();
 			}
 
+			WriteElementExtensions (writer, Item, Version);
 			if (writeRoot)
 				writer.WriteEndElement ();
 		}
