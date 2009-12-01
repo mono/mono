@@ -42,7 +42,7 @@ namespace System.Net
 #else
 	public class CookieCollection : ICollection, IEnumerable {
 #endif
-		class CookieCollectionPathComparer : IComparer
+		sealed class CookieCollectionPathComparer : IComparer
 		{
 			int IComparer.Compare (object p1, object p2)
 			{

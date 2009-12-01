@@ -1,3 +1,10 @@
+2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CookieCollection.cs: Seal inner CookieCollectionPathComparer
+	* IPAddress.cs: Avoid multiple casts in Equals
+	* SocketAddress.cs: Avoid multiple casts in Equals
+	[Found using Gendarme]
+
 2009-10-23  Alexandre Gomes  <alexmipego@gmail.com>
 
 	* WebClient.cs: Fixed GetWebRequest overriding problems, bug: 
