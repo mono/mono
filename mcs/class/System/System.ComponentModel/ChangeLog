@@ -1,3 +1,7 @@
+2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TypeConverterAttribute.cs: Add missing [ComVisible] for SL2/3 builds
+
 2009-10-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* TypeConverter_2_1.cs: Skip this type in the MonoTouch profile;

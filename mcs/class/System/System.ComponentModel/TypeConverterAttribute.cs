@@ -29,9 +29,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-namespace System.ComponentModel 
-{
+
+using System.Runtime.InteropServices;
+
+namespace System.ComponentModel {
+#if NET_2_1
+	[ComVisible (true)]
+#endif
 	[AttributeUsage(AttributeTargets.All)]
 	public sealed class TypeConverterAttribute : Attribute
 	{
