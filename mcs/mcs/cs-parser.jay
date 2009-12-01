@@ -874,16 +874,30 @@ named_attribute_argument
 	;
 	
 named_argument
-	: IDENTIFIER COLON expression
+	: IDENTIFIER COLON opt_named_modifier expression
 	  {
 		if (RootContext.Version <= LanguageVersion.V_3)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "named argument");
 			
+		// Avoid boxing in common case (no modifier)
+		var arg_mod = $3 == null ? Argument.AType.None : (Argument.AType) $3;
+			
 		var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $3);
-	  }	  
-	;	
-
+		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4, arg_mod);
+	  }
+	;
+	
+opt_named_modifier
+	: /* empty */   { $$ = null; }
+	| REF
+	  { 
+		$$ = Argument.AType.Ref;
+	  }
+	| OUT
+	  { 
+		$$ = Argument.AType.Out;
+	  }
+	;
 		  
 class_body
 	:  OPEN_BRACE opt_class_member_declarations CLOSE_BRACE

@@ -137,16 +137,7 @@ namespace Mono.CSharp
 				mode |= AddressOp.Load;
 
 			IMemoryLocation ml = (IMemoryLocation) Expr;
-			ParameterReference pr = ml as ParameterReference;
-
-			//
-			// ParameterReferences might already be references, so we want
-			// to pass just the value
-			//
-			if (pr != null && pr.IsRef)
-				pr.EmitLoad (ec);
-			else
-				ml.AddressOf (ec, mode);
+			ml.AddressOf (ec, mode);
 		}
 
 		public Argument Clone (CloneContext clonectx)
@@ -163,10 +154,15 @@ namespace Mono.CSharp
 		readonly Location loc;
 		LocalTemporary variable;
 
-		public NamedArgument (string Name, Location loc, Expression expr)
-			: base (expr)
+		public NamedArgument (string name, Location loc, Expression expr)
+			: this (name, loc, expr, AType.None)
 		{
-			this.Name = Name;
+		}
+
+		public NamedArgument (string name, Location loc, Expression expr, AType modifier)
+			: base (expr, modifier)
+		{
+			this.Name = name;
 			this.loc = loc;
 		}
 
@@ -188,8 +184,16 @@ namespace Mono.CSharp
 
 		public void EmitAssign (EmitContext ec)
 		{
-			Expr.Emit (ec);
-			variable = new LocalTemporary (Expr.Type);
+			var type = Expr.Type;
+			if (IsByRef) {
+				var ml = (IMemoryLocation) Expr;
+				ml.AddressOf (ec, AddressOp.Load);
+				type = TypeManager.GetReferenceType (type);
+			} else {
+				Expr.Emit (ec);
+			}
+
+			variable = new LocalTemporary (type);
 			variable.Store (ec);
 
 			Expr = variable;

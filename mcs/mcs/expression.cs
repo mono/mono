@@ -4353,7 +4353,7 @@ namespace Mono.CSharp {
 		public abstract VariableInfo VariableInfo { get; }
 		#endregion
 
-		public void AddressOf (EmitContext ec, AddressOp mode)
+		public virtual void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			HoistedVariable hv = GetHoistedVariable (ec);
 			if (hv != null) {
@@ -4815,6 +4815,19 @@ namespace Mono.CSharp {
 				return false;
 
 			return Name == pr.Name;
+		}
+
+		public override void AddressOf (EmitContext ec, AddressOp mode)
+		{
+			//
+			// ParameterReferences might already be a reference
+			//
+			if (IsRef) {
+				EmitLoad (ec);
+				return;
+			}
+
+			base.AddressOf (ec, mode);
 		}
 		
 		protected override void CloneTo (CloneContext clonectx, Expression target)

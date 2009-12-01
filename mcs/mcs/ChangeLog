@@ -1,5 +1,10 @@
 2009-12-01  Marek Safar  <marek.safar@gmail.com>
 
+	 argument.cs, assign.cs, expression.cs, cs-parser.jay: Named
+	 arguments by ref.
+
+2009-12-01  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #360455
 	* class.cs: Never report a unused warning for generic events to
 	workaround wrong expression type.

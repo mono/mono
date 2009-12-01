@@ -176,27 +176,19 @@ namespace Mono.CSharp {
 	///   Does not happen with a class because a class is a pointer -- so you always
 	///   get the indirection.
 	///
-	///   The `is_address' stuff is really just a hack. We need to come up with a better
-	///   way to handle it.
 	/// </remarks>
 	public class LocalTemporary : Expression, IMemoryLocation, IAssignMethod {
 		LocalBuilder builder;
-		bool is_address;
 
-		public LocalTemporary (Type t) : this (t, false) {}
-
-		public LocalTemporary (Type t, bool is_address)
+		public LocalTemporary (Type t)
 		{
 			type = t;
 			eclass = ExprClass.Value;
-			this.is_address = is_address;
 		}
 
 		public LocalTemporary (LocalBuilder b, Type t)
+			: this (t)
 		{
-			type = t;
-			eclass = ExprClass.Value;
-			loc = Location.Null;
 			builder = b;
 		}
 
@@ -231,8 +223,9 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Emit without Store, or after Release");
 
 			ig.Emit (OpCodes.Ldloc, builder);
+
 			// we need to copy from the pointer
-			if (is_address)
+			if (builder.LocalType.IsByRef)
 				LoadFromPtr (ig, type);
 		}
 
@@ -265,14 +258,11 @@ namespace Mono.CSharp {
 			get { return builder; }
 		}
 
-		// NB: if you have `is_address' on the stack there must
-		// be a managed pointer. Otherwise, it is the type from
-		// the ctor.
 		public void Store (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
 			if (builder == null)
-				builder = ec.GetTemporaryLocal (is_address ? TypeManager.GetReferenceType (type): type);
+				builder = ec.GetTemporaryLocal (type);
 
 			ig.Emit (OpCodes.Stloc, builder);
 		}
@@ -280,27 +270,24 @@ namespace Mono.CSharp {
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			if (builder == null)
-				builder = ec.GetTemporaryLocal (is_address ? TypeManager.GetReferenceType (type): type);
+				builder = ec.GetTemporaryLocal (type);
 
-			// if is_address, than this is just the address anyways,
-			// so we just return this.
 			ILGenerator ig = ec.ig;
 
-			if (is_address)
+			if (builder.LocalType.IsByRef) {
+				//
+				// if is_address, than this is just the address anyways,
+				// so we just return this.
+				//
 				ig.Emit (OpCodes.Ldloc, builder);
-			else
+			} else {
 				ig.Emit (OpCodes.Ldloca, builder);
+			}
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			type = storey.MutateType (type);
-		}
-
-		public bool PointsToAddress {
-			get {
-				return is_address;
-			}
 		}
 	}
 
