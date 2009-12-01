@@ -1,3 +1,9 @@
+2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Remove [StringFreezing] and [DefaultDependency]
+	from NET_2_1 builds
+	[Backport r147158]
+
 2009-11-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Open up the internals to System.Net.dll (which
