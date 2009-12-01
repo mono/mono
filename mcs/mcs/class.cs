@@ -7215,7 +7215,7 @@ namespace Mono.CSharp {
 			// FIXME: We are unable to detect whether generic event is used because
 			// we are using FieldExpr instead of EventExpr for event access in that
 			// case.  When this issue will be fixed this hack can be removed.
-			if (TypeManager.IsGenericType (MemberType))
+			if (TypeManager.IsGenericType (MemberType) || Parent.IsGeneric)
 				SetMemberIsUsed ();
 
 			if (Add.IsInterfaceImplementation)
