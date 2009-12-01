@@ -1,5 +1,11 @@
 2009-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-trampolines.c: Fix MSVC build.
+
+	Backport of r147245.
+
+2009-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-trampolines.c: Check for mono_method_get_vtable_slot failures.
 
 	Backport of r147220.
