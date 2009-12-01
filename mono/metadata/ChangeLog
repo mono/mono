@@ -1,5 +1,17 @@
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_vtable_general): Check for mono_method_get_vtable_slot
+	failures.
+
+	* class.c (mono_method_get_vtable_slot): Don't assert if the computed method slot
+	is -1 but its class is broken.
+
+	Fixes #558522.
+
+	Backport of r147219.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c: Introduce mono_metadata_get_param_attrs_checked which checks
 	for parameter overflow.
 
