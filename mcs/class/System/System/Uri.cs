@@ -1140,10 +1140,14 @@ namespace System {
 			path = EscapeString (path);
 		}
 
-#if NET_2_0
+#if NET_2_1 && !MONOTOUCH
+		static string EscapeString (string str)
+#else
+	#if NET_2_0
 		[Obsolete]
-#endif
+	#endif
 		protected static string EscapeString (string str) 
+#endif
 		{
 			return EscapeString (str, false, true, true);
 		}
@@ -1224,10 +1228,14 @@ namespace System {
 			}
 		}
 
-#if NET_2_0
+#if NET_2_1 && !MONOTOUCH
+		string Unescape (string str)
+#else
+	#if NET_2_0
 		[Obsolete]
-#endif
+	#endif
 		protected virtual string Unescape (string str)
+#endif
 		{
 			return Unescape (str, false);
 		}
