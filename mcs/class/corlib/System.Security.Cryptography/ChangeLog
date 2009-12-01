@@ -1,3 +1,10 @@
+2009-12-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CryptoConfig_2_1.cs: Add mapping for SHA256 since it's used 
+	internally in corlib (e.g. HMAC256)
+	* KeySizes.cs, RandomNumberGenerator.cs, RNGCryptoServiceProvider.cs:
+	Remove [ComVisible] attribute from NET_2_1 build.
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoStream.cs: Fix [Input|Output]BlockSize for custom streams.
