@@ -1,3 +1,7 @@
+2009-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-trampolines.c: Check for mono_method_get_vtable_slot failures.
+
 2009-11-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_lowering_pass): Fix an assert which is hit when
