@@ -1,5 +1,16 @@
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (code_bounds_check): Do proper overflow checking.
+
+	* verify.c (mono_method_verify): The number of switch entries is
+	an unsigned int. Properly bounds check it.
+
+	Fixes #558594.
+
+	Backport of r147259.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c: Kill mono_metadata_get_param_attrs_checked. Add
 	mono_metadata_method_has_param_attrs which only checks if a given param
 	list has a non zero flags entry.
