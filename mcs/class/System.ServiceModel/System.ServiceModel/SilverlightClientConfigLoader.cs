@@ -202,6 +202,8 @@ namespace System.ServiceModel
 				}
 				reader.ReadEndElement ();
 			}
+			else
+				reader.Read ();
 			
 			return b;
 		}
@@ -266,7 +268,7 @@ namespace System.ServiceModel
 			}
 		}
 
-		internal class ServiceEndpointConfiguration
+		public class ServiceEndpointConfiguration
 		{
 			public string Name { get; set; }
 			public EndpointAddress Address { get; set; }

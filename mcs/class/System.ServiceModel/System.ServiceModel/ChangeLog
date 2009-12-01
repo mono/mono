@@ -1,3 +1,12 @@
+2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SilverlightClientConfigLoader.cs : I made an extraneous change.
+
+2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SilverlightClientConfigLoader.cs : do not enter infinite loop at
+	  empty <binding> element.
+
 2009-11-05  Geoff Norton  <gnorton@novell.com>
 
 	* ClientRuntimeChannel.cs: Support OperationContext in async calls
