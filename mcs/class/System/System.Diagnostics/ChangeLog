@@ -1,3 +1,7 @@
+2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Debug_2_1.cs: Change type to sealed to match SL2/3
+
 2009-10-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* Process.cs (Dispose): Close the async output/error readers. Fixes #545429.
