@@ -213,7 +213,7 @@ namespace System.Collections.Generic
 			// broken.
 			public void Dispose ()
 			{
-				idx = NOT_STARTED;
+				idx = FINISHED;
 			}
 			
 			public bool MoveNext ()

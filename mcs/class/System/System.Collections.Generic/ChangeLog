@@ -1,3 +1,8 @@
+2009-12-01  Jb Evain  <jbevain@novell.com>
+
+	* Stack.cs (Enumerator.Dispose): tag the enumerator as finished
+	upon Dispose.
+
 2009-11-26  Marek Safar <marek.safar@gmail.com>
 
 	* LinkedList.cs: Allocate less.
