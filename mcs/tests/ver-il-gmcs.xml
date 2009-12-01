@@ -36725,6 +36725,67 @@
       </method>
     </type>
   </test>
+  <test name="test-736.cs">
+    <type name="TestGeneric`1[T]">
+      <method name="Void add_Event(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_Event(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void Raise()">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGeneric2`1[T]">
+      <method name="Void add_Event(TestGeneric2`1+GenericHandler[T])">
+        <size>24</size>
+      </method>
+      <method name="Void remove_Event(TestGeneric2`1+GenericHandler[T])">
+        <size>24</size>
+      </method>
+      <method name="Void Raise()">
+        <size>21</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void add_Event(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_Event(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void Raise()">
+        <size>18</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestGeneric2`1+GenericHandler[T]">
+      <method name="Void Invoke(T)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(T, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
   <test name="test-74.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -42754,6 +42815,19 @@
       </method>
       <method name="Int32 EndInvoke(IAsyncResult)">
         <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-named-04.cs">
+    <type name="Program">
+      <method name="Void Foo2(Int32, Int32 ByRef)">
+        <size>40</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>239</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
