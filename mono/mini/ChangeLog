@@ -1,3 +1,7 @@
+2009-12-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-ppc64.md (store_memindex): Add storei8_memindex.
+
 2009-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-trampolines.c: Fix MSVC build.
