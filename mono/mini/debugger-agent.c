@@ -4236,6 +4236,10 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
+		if (!tls->really_suspended)
+			/* The thread is still running native code, can't do invokes */
+			return ERR_NOT_SUSPENDED;
+
 		/* 
 		 * Store the invoke data into tls, the thread will execute it after it is
 		 * resumed.

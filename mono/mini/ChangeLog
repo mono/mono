@@ -1,5 +1,10 @@
 2009-12-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (vm_commands): Don't allow invokes on threads which are not
+	really suspended.
+
+2009-12-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* cpu-ppc64.md (store_memindex): Add storei8_memindex.
 
 2009-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
