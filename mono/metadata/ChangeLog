@@ -1,5 +1,18 @@
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c: Introduce mono_metadata_get_param_attrs_checked which checks
+	for parameter overflow.
+
+	* metadata.c (mono_metadata_parse_method_signature_full): Use checked version
+	of mono_metadata_get_param_attrs.
+
+	* metadata-internals.h: Add mono_metadata_get_param_attrs_checked to the internal
+	API.
+
+	* loader.c (mono_method_signature): Use checked version of mono_metadata_get_param_attrs.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_setup_fields): Check for fields with broken types.
 
 	Fixes #558741.
