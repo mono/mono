@@ -1,3 +1,8 @@
+2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Atom10ItemFormatter.cs, Atom10FeedFormatter.cs :
+	  write extensions. Patch by Tom Philpot.
+
 2009-10-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Rss20FeedFormatter.cs, Rss20ItemFormatter.cs : handle other text
