@@ -1,3 +1,10 @@
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (inflated_method_in_image): Avoid calling
+	mono_method_signature () if the method does not already have a signature.
+
+	Backport of r125724.
+
 2009-11-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* appdomain.c (create_exceptions): New helper function extracted from
