@@ -158,7 +158,6 @@ namespace MonoTests.System
 		}
 	}
 
-#if NET_2_0
 	public class Foo<T>
 	{
 		public T Whatever;
@@ -184,7 +183,12 @@ namespace MonoTests.System
 	public class Baz<T> : IBar<T>
 	{
 	}
-#endif
+
+	class Gazonk {
+
+		public static void Bang<S> () {}
+	}
+
 	public class Bug348522
 	{
 		public void Test (int __argument)
@@ -1590,6 +1594,20 @@ namespace MonoTests.System
 		public void Namespace ()
 		{
 			Assert.AreEqual (null, typeof (NoNamespaceClass).Namespace);
+		}
+
+		[Test]
+		public void GenericParameterNamespace ()
+		{
+			var t = typeof (Foo<>).GetGenericArguments () [0];
+
+			Assert.AreEqual ("T", t.Name);
+			Assert.AreEqual ("MonoTests.System", t.Namespace);
+
+			var s = typeof (Gazonk).GetMethod ("Bang").GetGenericArguments () [0];
+
+			Assert.AreEqual ("S", s.Name);
+			Assert.AreEqual ("MonoTests.System", s.Namespace);
 		}
 
 		public static void Reflected (ref int a)

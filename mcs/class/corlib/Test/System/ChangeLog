@@ -1,5 +1,9 @@
 2009-12-01  Jb Evain  <jbevain@novell.com>
 
+	* TypeTest.cs: add tests for namespaces of generic parameter types.
+
+2009-12-01  Jb Evain  <jbevain@novell.com>
+
 	* TypeTest.cs: add test for MakeByRefType on a ByRef type.
 
 2009-11-25  Zoltan Varga  <vargaz@gmail.com>
