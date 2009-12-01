@@ -1,3 +1,8 @@
+2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Uri.cs: Hide protected EscapeString and Unescape for SL2/3
+	* UriTypeConverter.cs: Seal type for SL2/3
+
 2009-11-26  Stephane Delcroix  <stephane@delcroix.org>
 
 	* Uri.cs (ParseNoExceptions): don't try to find a scheme if the uri is a

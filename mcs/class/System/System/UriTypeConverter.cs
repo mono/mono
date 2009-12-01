@@ -37,8 +37,11 @@ using System.Reflection;
 
 namespace System {
 
+#if NET_2_1 && !MONOTOUCH
+	public sealed class UriTypeConverter : TypeConverter {
+#else
 	public class UriTypeConverter : TypeConverter {
-
+#endif
 		public UriTypeConverter ()
 		{
 		}
