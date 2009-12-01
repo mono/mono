@@ -1,5 +1,22 @@
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c: Kill mono_metadata_get_param_attrs_checked. Add
+	mono_metadata_method_has_param_attrs which only checks if a given param
+	list has a non zero flags entry.
+
+	* metadata.c (mono_metadata_get_param_attrs): Add param_count parameter
+	to inform how many params should we expect to decode.
+
+	* loader.c (mono_method_signature): Use mono_metadata_method_has_param_attrs
+	as it's faster than mono_metadata_get_param_attrs.
+
+	* metadata-internals.h: Fix mono_metadata_get_param_attrs signature and
+	add mono_metadata_method_has_param_attrs.
+
+	Backport of r147244.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_setup_vtable_general): Check for mono_method_get_vtable_slot
 	failures.
 
