@@ -1,3 +1,8 @@
+2009-12-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlDictionaryReader.cs: Fix ReadValueAsBase64 return value and
+	remove NET_2_1 (gui-compare shows this in our 3.0 SP1 profile)
+
 2009-09-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDictionaryWriter.cs: Remove usage of XmlMtomDictionaryWriter
