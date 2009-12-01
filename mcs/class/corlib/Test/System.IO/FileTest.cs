@@ -343,6 +343,27 @@ namespace MonoTests.System.IO
 		}
 
 		[Test]
+		public void Copy_SourceFileName_DestFileName_Same ()
+		{
+			string source = TempFolder + Path.DirectorySeparatorChar + "SameFile.txt";
+			DeleteFile (source);
+			try {
+				// new empty file
+				File.Create (source).Close ();
+				try {
+					File.Copy (source, source, true);
+					Assert.Fail ("#1");
+				} catch (IOException ex) {
+					// process cannot access file ... because it is being used by another process
+					Assert.IsNull (ex.InnerException, "#2");
+					Assert.IsTrue (ex.Message.IndexOf (source) != -1, "#3");
+				}
+			} finally {
+				DeleteFile (source);
+			}
+		}
+
+		[Test]
 		public void Copy ()
 		{
 			string path1 = TempFolder + Path.DirectorySeparatorChar + "bar";

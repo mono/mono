@@ -1,3 +1,8 @@
+2009-12-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* FileTest.cs: New test for File.Copy throwing an exception if src and
+	dest are the same.
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UnmanagedMemoryStreamTest.cs: Add more test cases to cover all
