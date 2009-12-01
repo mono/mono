@@ -1,3 +1,9 @@
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_fields): Check for fields with broken types.
+
+	Fixes #558741.
+
 2009-11-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (ensure_generic_class_runtime_vtable): Split this function in 2
