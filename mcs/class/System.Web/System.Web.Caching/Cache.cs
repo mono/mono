@@ -471,8 +471,10 @@ namespace System.Web.Caching
 			while (item != null) {
 				if (!item.Disabled && item.ExpiresAt > now.Ticks)
 					break;
-				if (item.Disabled)
+				if (item.Disabled) {
+					item = timedItems.Dequeue ();
 					continue;
+				}
 				
 				item = timedItems.Dequeue ();
 				Remove (item.Key, CacheItemRemovedReason.Expired, true);

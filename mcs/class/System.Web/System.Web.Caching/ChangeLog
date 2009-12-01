@@ -1,3 +1,10 @@
+2009-12-01  Marek Habersack  <mhabersack@novell.com>
+
+	* Cache.cs: ExpireItems dequeues the next item when a disabled
+	item is found before continuing to look for items to expire. Fixes
+	bug #559470. Patch from Adriaan van Kekem <avkekem@hotmail.com>,
+	thanks.
+
 2009-10-21  Marek Habersack  <mhabersack@novell.com>
 
 	* CacheItemPriorityQueue.cs: lock the queue on enqueue/dequeue
