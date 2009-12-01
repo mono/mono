@@ -1,5 +1,14 @@
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): Check for catch clauses with broken
+	types.
+
+	Fixes #558465.
+
+	Backport of r147261.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (code_bounds_check): Do proper overflow checking.
 
 	* verify.c (mono_method_verify): The number of switch entries is
