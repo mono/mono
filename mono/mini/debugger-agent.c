@@ -1960,10 +1960,10 @@ suspend_current (void)
 	mono_mutex_lock (&suspend_mutex);
 
 	tls->suspending = FALSE;
+	tls->really_suspended = TRUE;
 
 	if (!tls->suspended) {
 		tls->suspended = TRUE;
-		tls->really_suspended = TRUE;
 		MONO_SEM_POST (&suspend_sem);
 	}
 
