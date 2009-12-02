@@ -1,3 +1,9 @@
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Check for invalid method signatures.
+
+	Fixes #553450.
+
 2009-12-02  Jb Evain  <jbevain@novell.com>
 
 	* appdomain.c (MONO_CORLIB_VERSION): bump.
