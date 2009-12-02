@@ -1,3 +1,8 @@
+2009-12-02  Miguel de Icaza  <miguel@novell.com>
+
+	* processes.c (EnumProcesses): Add support for OSX, patch from Tom
+	Philpot <tom.philpot@logos.com>
+
 2009-11-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* io.cs: In CopyFile check if the destination already exists before
