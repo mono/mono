@@ -55,6 +55,7 @@ namespace System.Web.Configuration
 		static ConfigurationProperty expressionBuildersProp;
 		static ConfigurationProperty urlLinePragmasProp;
 		static ConfigurationProperty codeSubDirectoriesProp;
+		static ConfigurationProperty optimizeCompilationsProp;
 		
 		static CompilationSection ()
 		{
@@ -91,6 +92,10 @@ namespace System.Web.Configuration
 			tempDirectoryProp = new ConfigurationProperty ("tempDirectory", typeof (string), "");
 			urlLinePragmasProp = new ConfigurationProperty ("urlLinePragmas", typeof (bool), false);
 
+			// This is a 4.0 property but it is also supported in 3.5 with
+			// this hotfix: http://support.microsoft.com/kb/961884
+			optimizeCompilationsProp = new ConfigurationProperty ("optimizeCompilations", typeof (bool), false);
+
 			properties = new ConfigurationPropertyCollection ();
 			properties.Add (assembliesProp);
 			properties.Add (assemblyPostProcessorTypeProp);
@@ -111,6 +116,7 @@ namespace System.Web.Configuration
 			properties.Add (strictProp);
 			properties.Add (tempDirectoryProp);
 			properties.Add (urlLinePragmasProp);
+			properties.Add (optimizeCompilationsProp);
 		}
 
 		public CompilationSection ()
@@ -211,12 +217,18 @@ namespace System.Web.Configuration
 			set { base [numRecompilesBeforeAppRestartProp] = value; }
 		}
 
+		[ConfigurationProperty ("optimizeCompilations", DefaultValue = "False")]
+		public bool OptimizeCompilations {
+			get { return (bool) base [optimizeCompilationsProp]; }
+			set { base [optimizeCompilationsProp] = value; }
+		}
+		
 		[ConfigurationProperty ("strict", DefaultValue = "False")]
 		public bool Strict {
 			get { return (bool) base [strictProp]; }
 			set { base [strictProp] = value; }
 		}
-
+		
 		[ConfigurationProperty ("tempDirectory", DefaultValue = "")]
 		public string TempDirectory {
 			get { return (string) base [tempDirectoryProp]; }
