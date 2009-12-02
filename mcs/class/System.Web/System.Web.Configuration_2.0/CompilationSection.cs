@@ -57,7 +57,7 @@ namespace System.Web.Configuration
 		static ConfigurationProperty codeSubDirectoriesProp;
 		static ConfigurationProperty optimizeCompilationsProp;
 #if NET_4_0
-		static ConfigurationProperty targetNetworkProp;
+		static ConfigurationProperty targetFrameworkProp;
 #endif
 		
 		static CompilationSection ()
@@ -102,7 +102,7 @@ namespace System.Web.Configuration
 #if NET_4_0
 			// Mono ignores this as there is no way to switch the runtime version
 			// dynamically while application is running
-			targetNetworkProp = new ConfigurationProperty ("targetNetwork", typeof (string), null);
+			targetFrameworkProp = new ConfigurationProperty ("targetFramework", typeof (string), null);
 #endif
 
 			properties = new ConfigurationPropertyCollection ();
@@ -127,7 +127,7 @@ namespace System.Web.Configuration
 			properties.Add (urlLinePragmasProp);
 			properties.Add (optimizeCompilationsProp);
 #if NET_4_0
-			properties.Add (targetNetworkProp);
+			properties.Add (targetFrameworkProp);
 #endif
 		}
 
@@ -242,10 +242,10 @@ namespace System.Web.Configuration
 		}
 
 #if NET_4_0
-		[ConfigurationProperty ("targetNetwork", DefaultValue = null)]
-		public string TargetNetwork {
-			get { return (string) base [targetNetworkProp]; }
-			set { base [targetNetworkProp] = value; }
+		[ConfigurationProperty ("targetFramework", DefaultValue = null)]
+		public string TargetFramework {
+			get { return (string) base [targetFrameworkProp]; }
+			set { base [targetFrameworkProp] = value; }
 		}
 #endif
 		
