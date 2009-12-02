@@ -3055,5 +3055,46 @@ public class ArrayTest
 		Assert.IsTrue (arr.IsReadOnly);
 	}
 #endif
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ArrayCreateInstanceOfVoid ()
+	{
+		Array.CreateInstance (typeof (void), 42);
+	}
+
+#if NET_2_0
+	class Foo<T> {}
+
+	[Test]
+	[ExpectedException (typeof (NotSupportedException))]
+	public void ArrayCreateInstanceOfOpenGenericType ()
+	{
+		Array.CreateInstance (typeof (Foo<>), 42);
+	}
+#endif
+
+	[Test]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
+	public void ClearNegativeLength ()
+	{
+		Array.Clear (new int [] { 1, 2 }, 0, -1);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void MultiDimension_IList_setItem ()
+	{
+		IList array = new int [1, 1];
+		array [0] = 2;
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void MultiDimension_IList_getItem ()
+	{
+		IList array = new int [1, 1];
+		int a = (int) array [0];
+	}
 }
 }

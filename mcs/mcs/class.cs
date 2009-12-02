@@ -5679,7 +5679,8 @@ namespace Mono.CSharp {
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
-			Modifiers.PRIVATE;
+			Modifiers.PRIVATE |
+			Modifiers.UNSAFE;
 
 		public FixedField (DeclSpace parent, FullNamedExpression type, int mod, string name,
 			Expression size_expr, Attributes attrs, Location loc):
@@ -5720,7 +5721,7 @@ namespace Mono.CSharp {
 		{
 			base.DoMemberTypeIndependentChecks ();
 
-			if (!Parent.IsUnsafe)
+			if (!IsUnsafe)
 				Expression.UnsafeError (Report, Location);
 
 			if (Parent.PartialContainer.Kind != Kind.Struct) {

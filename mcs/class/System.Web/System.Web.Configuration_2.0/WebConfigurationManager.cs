@@ -53,6 +53,9 @@ namespace System.Web.Configuration {
 		
 		static readonly object suppressAppReloadLock = new object ();
 		static readonly object saveLocationsCacheLock = new object ();
+#if SYSTEMCORE_DEP
+		static readonly ReaderWriterLockSlim sectionCacheLock;
+#endif
 		
 #if !TARGET_J2EE
 		static IInternalConfigConfigurationFactory configFactory;
@@ -183,6 +186,10 @@ namespace System.Web.Configuration {
 				if (fi != null && fi.FieldType == Type.GetType ("System.Type"))
 					fi.SetValue (null, typeof (ApplicationSettingsConfigurationFileMap));
 			}
+
+#if SYSTEMCORE_DEP
+			sectionCacheLock = new ReaderWriterLockSlim ();
+#endif
 		}
 
 		static void ReenableWatcherOnConfigLocation (object state)
@@ -208,6 +215,20 @@ namespace System.Web.Configuration {
 		
 		static void ConfigurationSaveHandler (_Configuration sender, ConfigurationSaveEventArgs args)
 		{
+			bool locked = false;
+			try {
+#if SYSTEMCORE_DEP
+				sectionCacheLock.EnterWriteLock ();
+#endif
+				locked = true;
+				sectionCache.Clear ();
+			} finally {
+#if SYSTEMCORE_DEP
+				if (locked)
+					sectionCacheLock.ExitWriteLock ();
+#endif
+			}
+			
 			lock (suppressAppReloadLock) {
 				string rootConfigPath = WebConfigurationHost.GetWebConfigFileName (HttpRuntime.AppDomainAppPath);
 				if (String.Compare (args.StreamPath, rootConfigPath, StringComparison.OrdinalIgnoreCase) == 0) {
@@ -404,8 +425,22 @@ namespace System.Web.Configuration {
 
 			int sectionCacheKey = GetSectionCacheKey (sectionName, config_vdir);
 			object cachedSection;
-			if (sectionCache.TryGetValue (sectionCacheKey, out cachedSection) && cachedSection != null)
-				return cachedSection;
+			bool locked = false;
+
+			try {
+#if SYSTEMCORE_DEP
+				sectionCacheLock.EnterReadLock ();
+#endif
+				locked = true;
+				
+				if (sectionCache.TryGetValue (sectionCacheKey, out cachedSection) && cachedSection != null)
+					return cachedSection;
+			} finally {
+#if SYSTEMCORE_DEP
+				if (locked)
+					sectionCacheLock.ExitReadLock ();
+#endif
+			}
 
 			HttpRequest req = context != null ? context.Request : null;
 			_Configuration c = OpenWebConfiguration (path, /* path */
@@ -572,16 +607,36 @@ namespace System.Web.Configuration {
 		static void AddSectionToCache (int key, object section)
 		{
 			object cachedSection;
-			if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
-				return;
+			bool locked = false;
 
-			// Not sure if it wouldn't be better to just use a lock here
-			var tmpTable = new Dictionary <int, object> (sectionCache);
-			if (tmpTable.ContainsKey (key))
-				return;
+			try {
+#if SYSTEMCORE_DEP
+				sectionCacheLock.EnterUpgradeableReadLock ();
+#endif
+				locked = true;
+					
+				if (sectionCache.TryGetValue (key, out cachedSection) && cachedSection != null)
+					return;
 
-			tmpTable.Add (key, section);
-			sectionCache = tmpTable;
+				bool innerLocked = false;
+				try {
+#if SYSTEMCORE_DEP
+					sectionCacheLock.EnterWriteLock ();
+#endif
+					innerLocked = true;
+					sectionCache.Add (key, section);
+				} finally {
+#if SYSTEMCORE_DEP
+					if (innerLocked)
+						sectionCacheLock.ExitWriteLock ();
+#endif
+				}
+			} finally {
+#if SYSTEMCORE_DEP
+				if (locked)
+					sectionCacheLock.ExitUpgradeableReadLock ();
+#endif
+			}
 		}
 
 		static int GetSectionCacheKey (string sectionName, string vdir)

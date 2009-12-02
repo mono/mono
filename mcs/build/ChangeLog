@@ -1,3 +1,8 @@
+2009-11-17  Marek Habersack  <mhabersack@novell.com>
+
+	* tests.make (TEST_RUNTIME_WRAPPERS_PATH): added - used to set up
+	correct PATH for tests
+
 2008-09-11  Marek Safar  <marek.safar@gmail.com>
 
 	* library.make: Add NO_BUILD to ignore assembly during build.

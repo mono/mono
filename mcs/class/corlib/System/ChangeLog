@@ -1,3 +1,46 @@
+2009-11-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Random.cs: Fix case where the diff between min and max
+	is very large in Next(int,int). Fix bug #558593
+	[Backport r146993]
+
+2009-11-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* Delegate.cs (GetHashCode): Fix this so it is constant.
+
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
+	* Array.cs: use ContainsGenericParameters instead of
+	IsGenericTypeDefinition as it catches more cases.
+
+	backport r146834.
+
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
+	* Array.cs (IList.this[int]): prevent the use of the IList indexer 
+	when dealing with a multi dimensional array.
+
+	backport r146831.
+
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
+	* Array.cs (Clear): throw an IndexOutOfRangeException instead
+	of an ArgumentOutRangeException for a negative length.
+
+	backport of r146825.
+
+2009-11-24  Jb Evain  <jbevain@novell.com>
+
+	* Array.cs (CreateInstance): do not allow open generic types.
+
+	backport r146821.
+
+2009-11-24  Jb Evain <jbevain@novell.com>
+
+	* Array.cs (CreateInstance): do not allow void arrays.
+
+	backport r146814,r146818.
+
 2009-11-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Console.cs: Reduce duplication between OpenStandard[Input|

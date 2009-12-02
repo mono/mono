@@ -301,11 +301,15 @@ namespace System
 			get {
 				if (unchecked ((uint) index) >= unchecked ((uint) Length))
 					throw new IndexOutOfRangeException ("index");
+				if (this.Rank > 1)
+					throw new ArgumentException (Locale.GetText ("Only single dimension arrays are supported."));
 				return GetValueImpl (index);
 			} 
 			set {
 				if (unchecked ((uint) index) >= unchecked ((uint) Length))
 					throw new IndexOutOfRangeException ("index");
+				if (this.Rank > 1)
+					throw new ArgumentException (Locale.GetText ("Only single dimension arrays are supported."));
 				SetValueImpl (value, index);
 			}
 		}
@@ -645,6 +649,12 @@ namespace System
 			elementType = elementType.UnderlyingSystemType;
 			if (!elementType.IsSystemType)
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
+			if (elementType.Equals (typeof (void)))
+				throw new NotSupportedException ("Array type can not be void");
+#if NET_2_0
+			if (elementType.ContainsGenericParameters)
+				throw new NotSupportedException ("Array type can not be an open generic type");
+#endif
 			
 			return CreateInstanceImpl (elementType, lengths, bounds);
 		}
@@ -661,6 +671,12 @@ namespace System
 			elementType = elementType.UnderlyingSystemType;
 			if (!elementType.IsSystemType)
 				throw new ArgumentException ("Type must be a type provided by the runtime.", "elementType");
+			if (elementType.Equals (typeof (void)))
+				throw new NotSupportedException ("Array type can not be void");
+#if NET_2_0
+			if (elementType.ContainsGenericParameters)
+				throw new NotSupportedException ("Array type can not be an open generic type");
+#endif
 
 			if (lengths.Length < 1)
 				throw new ArgumentException (Locale.GetText ("Arrays must contain >= 1 elements."));
@@ -880,7 +896,7 @@ namespace System
 			if (array == null)
 				throw new ArgumentNullException ("array");
 			if (length < 0)
-				throw new ArgumentOutOfRangeException ("length < 0");
+				throw new IndexOutOfRangeException ("length < 0");
 
 			int low = array.GetLowerBound (0);
 			if (index < low)

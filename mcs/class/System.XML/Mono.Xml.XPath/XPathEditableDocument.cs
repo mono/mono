@@ -253,7 +253,10 @@ namespace Mono.Xml.XPath
 
 		public override void WriteEndAttribute ()
 		{
-			XmlElement element = current as XmlElement;
+			// when the writer is for AppendChild() and the root 
+			// node is element, it allows to write attributes
+			// (IMHO incorrectly: isn't it append "child" ???)
+			XmlElement element = (current as XmlElement) ?? (nextSibling == null ? parent as XmlElement : null);
 			if (state != WriteState.Attribute || element == null)
 				throw new InvalidOperationException ("Current state is not inside attribute. Cannot close attribute.");
 			element.SetAttributeNode (attribute);

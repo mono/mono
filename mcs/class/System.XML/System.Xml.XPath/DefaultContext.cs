@@ -143,7 +143,10 @@ namespace System.Xml.XPath
 			if (s.Length == 0)
 				return double.NaN;
 			try {
-				return XmlConvert.ToDouble (s);
+				// workaround for allowed ".xxx" style.
+				if (s [0] == '.')
+					s = '.' + s;
+				return Double.Parse (s, NumberStyles.AllowLeadingWhite | NumberStyles.AllowTrailingWhite | NumberStyles.AllowLeadingSign | NumberStyles.AllowDecimalPoint, NumberFormatInfo.InvariantInfo);
 			} catch (System.OverflowException) {
 				return double.NaN;
 			} catch (System.FormatException) {

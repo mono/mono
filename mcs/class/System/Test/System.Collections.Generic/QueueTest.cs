@@ -114,10 +114,33 @@ namespace MonoTests.System.Collections.Generic {
 			z = new Queue <int> ();
 			x = new int [z.Count];
 			z.CopyTo (x, 0);
-			
-			ICollection c = new Queue <int> ();
-			x = new int [c.Count];
-			c.CopyTo (x, 0);
+		}
+
+		[Test]
+		public void TestICollectionCopyTo ()
+		{
+			var queue = new Queue<int> ();
+
+			((ICollection) queue).CopyTo (new int [0], 0);
+
+			queue.Enqueue (1);
+			queue.Enqueue (2);
+
+			var array = new int [queue.Count];
+
+			((ICollection) queue).CopyTo (array, 0);
+
+			Assert.AreEqual (1, array [0]);
+			Assert.AreEqual (2, array [1]);
+
+			array = new int [queue.Count + 1];
+			array [0] = 42;
+
+			((ICollection) queue).CopyTo (array, 1);
+
+			Assert.AreEqual (42, array [0]);
+			Assert.AreEqual (1, array [1]);
+			Assert.AreEqual (2, array [2]);
 		}
 
 		[Test]
@@ -257,6 +280,27 @@ namespace MonoTests.System.Collections.Generic {
 
 			s.TrimExcess ();
 			Assert.AreEqual (0, s.Count, "#8");
+		}
+
+		[Test]
+		public void TrimExcessDequeueEnqueue ()
+		{
+			var queue = new Queue<int> ();
+			queue.Enqueue (1);
+			queue.Enqueue (2);
+			queue.Enqueue (3);
+
+			queue.TrimExcess ();
+
+			Assert.AreEqual (1, queue.Dequeue ());
+
+			queue.Enqueue (4);
+
+			Assert.AreEqual (2, queue.Dequeue ());
+			Assert.AreEqual (3, queue.Dequeue ());
+			Assert.AreEqual (4, queue.Dequeue ());
+
+			Assert.AreEqual (0, queue.Count);
 		}
 
 		[Test]

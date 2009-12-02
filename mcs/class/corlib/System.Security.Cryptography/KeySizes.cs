@@ -36,7 +36,7 @@ namespace System.Security.Cryptography {
 #if NET_1_0
 	public class KeySizes {
 #else
-	#if NET_2_0
+	#if NET_2_0 && !NET_2_1
 	[ComVisible (true)]
 	#endif
 	public sealed class KeySizes {

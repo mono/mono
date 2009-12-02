@@ -96,9 +96,9 @@ namespace System.Net {
 
 		public override bool Equals (object obj)
 		{
-			if (obj is System.Net.SocketAddress &&
-			    ((System.Net.SocketAddress) obj).data.Length == data.Length){
-				byte [] otherData = ((System.Net.SocketAddress) obj).data;
+			SocketAddress sa = (obj as SocketAddress);
+			if ((sa != null) && (sa.data.Length == data.Length)) {
+				byte [] otherData = sa.data;
 				for (int i = 0; i < data.Length; i++)
 					if (otherData [i] != data [i])
 						return false;

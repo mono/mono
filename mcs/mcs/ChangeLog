@@ -1,7 +1,21 @@
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #545081
+	* decl.cs: Check private nested types of nested types recursively.
+
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #558305
+	* location.cs: Ignore self referencing #line directive
+
+2009-11-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #558292
+	* class.cs: Allow single unsafe fixed buffer fields.
+
 2009-11-07  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #553465
-
 	* expression.cs: Fixed mixed version of expression tree anonymous
 	type.
 

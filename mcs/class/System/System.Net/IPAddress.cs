@@ -455,9 +455,8 @@ namespace System.Net {
 		/// </returns>
 		public override bool Equals (object other)
 		{
-			if (other is System.Net.IPAddress){
-				IPAddress otherAddr = other as IPAddress;
-
+			IPAddress otherAddr = other as IPAddress;
+			if (otherAddr != null){
 				if(AddressFamily != otherAddr.AddressFamily)
 					return false;
 

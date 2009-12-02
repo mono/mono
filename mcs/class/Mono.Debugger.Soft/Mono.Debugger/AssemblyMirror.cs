@@ -1,4 +1,5 @@
 using System;
+using System.Reflection;
 using Mono.Debugger;
 using Mono.Cecil;
 
@@ -10,6 +11,7 @@ namespace Mono.Debugger
 		MethodMirror entry_point;
 		bool entry_point_set;
 		ModuleMirror main_module;
+		AssemblyName aname;
 		AssemblyDefinition meta;
 
 		internal AssemblyMirror (VirtualMachine vm, long id) : base (vm, id) {
@@ -43,6 +45,14 @@ namespace Mono.Debugger
 				}
 				return main_module;
 			}
+		}
+
+		public virtual AssemblyName GetName () {
+			if (aname == null) {
+				string name = vm.conn.Assembly_GetName (id);
+				aname = new AssemblyName (name);
+			}
+			return aname;
 		}
 
 		public ObjectMirror GetAssemblyObject () {

@@ -86,7 +86,7 @@ namespace System.Web.Routing
 			var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
 			var pathInfo = httpContext.Request.PathInfo;
 
-			if (pathInfo != String.Empty)
+			if (!String.IsNullOrEmpty (pathInfo))
 				throw new NotImplementedException ();
 
 			// probably code like this causes ArgumentOutOfRangeException under .NET.

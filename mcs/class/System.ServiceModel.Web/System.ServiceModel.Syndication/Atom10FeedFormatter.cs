@@ -486,6 +486,7 @@ namespace System.ServiceModel.Syndication
 
 			WriteItems (writer, Feed.Items, Feed.BaseUri);
 
+			WriteElementExtensions (writer, Feed, Version);
 			if (writeRoot)
 				writer.WriteEndElement ();
 		}
