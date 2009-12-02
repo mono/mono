@@ -788,6 +788,12 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void ConvertToStringType ()
+		{
+			Assert.AreEqual ("This", ((IConvertible) TestingEnum.This).ToType (typeof (string), null));
+		}
+
+		[Test]
 		public void TestToString ()
 		{
 			Assert.AreEqual ("This", TestingEnum.This.ToString (), "#A1");

@@ -1,5 +1,10 @@
 2009-12-02  Jb Evain  <jbevain@novell.com>
 
+	* EnumTest.cs: add a test for IConvertible.ToType when converting
+	an enum to a string.
+
+2009-12-02  Jb Evain  <jbevain@novell.com>
+
 	* AttributeTest.cs: add tests for retrieving custom attributes
 	defined on parameters on virtual methods.
 
