@@ -1,5 +1,10 @@
 2009-12-02  Jb Evain  <jbevain@novell.com>
 
+	* Enum.cs (IConvertible.ToType): properly convert enum values
+	to strings instead of their numeric value.
+
+2009-12-02  Jb Evain  <jbevain@novell.com>
+
 	* Environment.cs (mono_corlib_version): bump.
 	* Attribute.cs: when retrieving custom attributes defined
 	on parameters belonging to a virtual method, walk

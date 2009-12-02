@@ -283,6 +283,8 @@ namespace System
 		{
 			if (targetType == null)
 				throw new ArgumentNullException ("targetType");
+			if (targetType == typeof (string))
+				return ToString (provider);
 			return Convert.ToType (Value, targetType, provider, false);
 		}
 
