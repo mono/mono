@@ -1,3 +1,15 @@
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_class_has_default_constructor): Check fror broken signatures.
+
+	* verify.c (verify_delegate_compatibility): Ditto.
+
+	* verify.c (do_newobj): Ditto.
+
+	Fixes #558046.
+
+	Backport of r147422.
+
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): Check for catch clauses with broken
