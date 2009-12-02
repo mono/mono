@@ -1312,9 +1312,9 @@ namespace Mono.CSharp {
 	}
 
 	//
-	// Dynamic type or any element of type is dynamic type is used
+	// When any element of the type is a dynamic type
 	//
-	// This method builds transformation array for dynamic types
+	// This method builds a transformation array for dynamic types
 	// used in places where DynamicAttribute cannnot be applied to.
 	// It uses bool flag when type is of dynamic type and each
 	// section always starts with "false" for some reason.
