@@ -286,6 +286,16 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (ret_type)) {
 				return_attributes = new ReturnParameter (this, InvokeBuilder, Location);
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
+			} else {
+				var trans_flags = TypeManager.HasDynamicTypeUsed (ret_type);
+				if (trans_flags != null) {
+					var pa = PredefinedAttributes.Get.DynamicTransform;
+					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.bool_type.MakeArrayType ())) {
+						return_attributes = new ReturnParameter (this, InvokeBuilder, Location);
+						return_attributes.Builder.SetCustomAttribute (
+							new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
+					}
+				}
 			}
 
 			Parameters.ApplyAttributes (InvokeBuilder);

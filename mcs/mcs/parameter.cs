@@ -546,8 +546,18 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (TypeManager.IsDynamicType (parameter_type))
+			if (TypeManager.IsDynamicType (parameter_type)) {
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (builder);
+			} else {
+				var trans_flags = TypeManager.HasDynamicTypeUsed (parameter_type);
+				if (trans_flags != null) {
+					var pa = PredefinedAttributes.Get.DynamicTransform;
+					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.bool_type.MakeArrayType ())) {
+						builder.SetCustomAttribute (
+							new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
+					}
+				}
+			}
 		}
 
 		public override string[] ValidAttributeTargets {

@@ -3952,6 +3952,16 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (ReturnType)) {
 				return_attributes = new ReturnParameter (this, MethodBuilder, Location);
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
+			} else {
+				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType);
+				if (trans_flags != null) {
+					var pa = PredefinedAttributes.Get.DynamicTransform;
+					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.bool_type.MakeArrayType ())) {
+						return_attributes = new ReturnParameter (this, MethodBuilder, Location);
+						return_attributes.Builder.SetCustomAttribute (
+							new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
+					}
+				}
 			}
 
 			if (OptAttributes != null)
@@ -5574,8 +5584,17 @@ namespace Mono.CSharp {
 
 		public override void Emit ()
 		{
-			if (TypeManager.IsDynamicType (member_type))
+			if (TypeManager.IsDynamicType (member_type)) {
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (FieldBuilder);
+			} else {
+				var trans_flags = TypeManager.HasDynamicTypeUsed (member_type);
+				if (trans_flags != null) {
+					var pa = PredefinedAttributes.Get.DynamicTransform;
+					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.bool_type.MakeArrayType ())) {
+						FieldBuilder.SetCustomAttribute (new CustomAttributeBuilder (pa.Constructor, new object[] { trans_flags }));
+					}
+				}
+			}
 
 			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
 				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (FieldBuilder);
@@ -6173,6 +6192,16 @@ namespace Mono.CSharp {
 			if (TypeManager.IsDynamicType (ReturnType)) {
 				return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (return_attributes.Builder);
+			} else {
+				var trans_flags = TypeManager.HasDynamicTypeUsed (ReturnType);
+				if (trans_flags != null) {
+					var pa = PredefinedAttributes.Get.DynamicTransform;
+					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.bool_type.MakeArrayType ())) {
+						return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
+						return_attributes.Builder.SetCustomAttribute (
+							new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
+					}
+				}
 			}
 
 			if (OptAttributes != null)
@@ -6686,8 +6715,18 @@ namespace Mono.CSharp {
 				if (OptAttributes != null)
 					OptAttributes.Emit ();
 
-				if (TypeManager.IsDynamicType (member_type))
+				if (TypeManager.IsDynamicType (member_type)) {
 					PredefinedAttributes.Get.Dynamic.EmitAttribute (PropertyBuilder);
+				} else {
+					var trans_flags = TypeManager.HasDynamicTypeUsed (member_type);
+					if (trans_flags != null) {
+						var pa = PredefinedAttributes.Get.DynamicTransform;
+						if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.bool_type.MakeArrayType ())) {
+							PropertyBuilder.SetCustomAttribute (
+								new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
+						}
+					}
+				}
 			}
 
 			if (!Get.IsDummy)

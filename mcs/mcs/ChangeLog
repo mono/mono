@@ -1,3 +1,9 @@
+2009-12-02  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, parameter.cs, class.cs, delegate.cs, attribute.cs:
+	Encode dynamic type attribute for elements where attributes cannot
+	be used.
+
 2009-12-01  Marek Safar  <marek.safar@gmail.com>
 
 	 argument.cs, assign.cs, expression.cs, cs-parser.jay: Named

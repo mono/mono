@@ -1923,6 +1923,7 @@ namespace Mono.CSharp {
 
 		// New in .NET 4.0
 		public readonly PredefinedAttribute Dynamic;
+		public readonly PredefinedAttribute DynamicTransform;	// DynamicAttribute with transform arguments
 
 		//
 		// Optional types which are used as types and for member lookup
@@ -1970,6 +1971,7 @@ namespace Mono.CSharp {
 			Extension = new PredefinedAttribute ("System.Runtime.CompilerServices", "ExtensionAttribute");
 
 			Dynamic = new PredefinedAttribute ("System.Runtime.CompilerServices", "DynamicAttribute");
+			DynamicTransform = new PredefinedAttribute ("System.Runtime.CompilerServices", "DynamicAttribute");
 
 			DefaultMember = new PredefinedAttribute ("System.Reflection", "DefaultMemberAttribute");
 			DecimalConstant = new PredefinedAttribute ("System.Runtime.CompilerServices", "DecimalConstantAttribute");

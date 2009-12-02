@@ -22,6 +22,7 @@ using System;
 using System.IO;
 using System.Globalization;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
@@ -1308,6 +1309,55 @@ namespace Mono.CSharp {
 
 		object[] res = t.GetCustomAttributes (pa.Type, false);
 		return res != null && res.Length != 0;
+	}
+
+	//
+	// Dynamic type or any element of type is dynamic type is used
+	//
+	// This method builds transformation array for dynamic types
+	// used in places where DynamicAttribute cannnot be applied to.
+	// It uses bool flag when type is of dynamic type and each
+	// section always starts with "false" for some reason.
+	//
+	// LAMESPEC: This should be part of C# specification !
+	// 
+	// Example: Func<dynamic, int, dynamic[]>
+	// Transformation: { false, true, false, false, true }
+	//
+	public static bool[] HasDynamicTypeUsed (Type t)
+	{
+		if (t is DynamicArrayType)
+			return new bool[] { false, true };
+
+		if (t == null)
+			return null;
+
+		if (IsGenericType (t)) {
+			List<bool> transform = null;
+			var targs = GetTypeArguments (t);
+			for (int i = 0; i < targs.Length; ++i) {
+				var element = HasDynamicTypeUsed (targs [i]);
+				if (element != null) {
+					if (transform == null) {
+						transform = new List<bool> ();
+						for (int ii = 0; ii <= i; ++ii)
+							transform.Add (false);
+					}
+
+					transform.AddRange (element);
+				} else if (transform != null) {
+					transform.Add (false);
+				}
+			}
+
+			if (transform != null)
+				return transform.ToArray ();
+		}
+
+		if (object.ReferenceEquals (InternalType.Dynamic, t))
+			return new bool [] { true };
+
+		return null;
 	}
 	
 	public static bool IsEnumType (Type t)
