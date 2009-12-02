@@ -1,3 +1,7 @@
+2009-12-02  Marek Safar <marek.safar@gmail.com>
+
+	* DynamicAttribute.cs: Add arguments check.
+
 2009-11-14  Jb Evain  <jbevain@novell.com>
 
 	* ExecutionScope.cs: implement IsolateExpression.

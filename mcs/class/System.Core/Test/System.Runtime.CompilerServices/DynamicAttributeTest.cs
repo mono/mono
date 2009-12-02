@@ -1,10 +1,10 @@
 //
-// DynamicAttribute.cs
+// DynamicAttributeTest.cs
 //
-// Authors:
-//	Marek Safar  <marek.safar@gmail.com>
+// Author:
+//   Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (C) 2009, Novell, Inc (http://www.novell.com)
+// (C) 2009 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,36 +29,36 @@
 #if NET_4_0
 
 using System;
-using System.Collections.Generic;
+using System.Runtime.CompilerServices;
 
-namespace System.Runtime.CompilerServices
+using NUnit.Framework;
+
+namespace MonoTests.System.Runtime.CompilerServices
 {
-
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Struct | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter | AttributeTargets.ReturnValue)]
-	public sealed class DynamicAttribute : Attribute
+	[TestFixture]
+	public class DynamicAttributeTest
 	{
-		static readonly IList<bool> empty = Array.AsReadOnly (new [] { true });
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CtorNull ()
+		{
+			new DynamicAttribute (null);
+		}
+
+		[Test]
+		public void DefaultCtor ()
+		{
+			var da = new DynamicAttribute ();
+			Assert.AreEqual (da.TransformFlags, new [] { true });
+			Assert.IsTrue (da.TransformFlags.IsReadOnly);
+		}
 		
-		IList<bool> transformFlags;
-
-		public DynamicAttribute ()
+		[Test]
+		public void TransformCtor ()
 		{
-			transformFlags = empty;
-		}
-
-		public DynamicAttribute (bool[] transformFlags)
-		{
-			if (transformFlags == null)
-				throw new ArgumentNullException ();
-
-			this.transformFlags = transformFlags;
-		}
-
-		public IList<bool> TransformFlags {
-			get {
-				return transformFlags;
-			}
-		}
+			var da = new DynamicAttribute (new [] { false, true, false });
+			Assert.AreEqual (da.TransformFlags, new [] { false, true, false });
+		}		
 	}
 }
 

@@ -77,3 +77,4 @@ System.Security.Cryptography/SHA384CngTest.cs
 System.Security.Cryptography/SHA384CryptoServiceProviderTest.cs
 System.Security.Cryptography/SHA512CngTest.cs
 System.Security.Cryptography/SHA512CryptoServiceProviderTest.cs
+System.Runtime.CompilerServices/DynamicAttributeTest.cs
