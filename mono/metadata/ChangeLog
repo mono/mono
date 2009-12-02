@@ -1,3 +1,8 @@
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_fields): Fail an enum without an instance field.
+
+	Fixes #558042.
 
 Wed Dec 2 16:35:49 CET 2009 Paolo Molaro <lupus@ximian.com>
 
