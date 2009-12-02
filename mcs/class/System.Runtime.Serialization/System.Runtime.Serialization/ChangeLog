@@ -1,3 +1,8 @@
+2009-12-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataContractSerializer.cs: Add two missing methods for FX3.0 
+	and SL2/SL3.
+
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : partly revert previous sorting fix in
