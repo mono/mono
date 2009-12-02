@@ -1,5 +1,19 @@
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_type_retrieve_from_typespec): Use MonoError machinery to report errors.
+
+	* class.c (mono_class_create_from_typespec): Ditto.
+
+	* class.c (mono_class_get_full): Fix for change on the above 2 functions.
+
+	* class.c (mono_type_get_full): Fix for change on the above 2 functions.
+
+	Fixes #558184.
+
+	Backport of r147427.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_class_has_default_constructor): Check fror broken signatures.
 
 	* verify.c (verify_delegate_compatibility): Ditto.
