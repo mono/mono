@@ -44,6 +44,8 @@ using Mono.Security;
 
 namespace System.Reflection {
 
+#pragma warning disable 659 // overrides Equals but not GetHashCode
+
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
@@ -884,3 +886,5 @@ namespace System.Reflection {
 #endif
 	}
 }
+
+#pragma warning restore 659

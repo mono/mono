@@ -1,5 +1,10 @@
 2009-12-02  Jb Evain  <jbevain@novell.com>
 
+	* Assembly.cs: disable warning about Assembly overriding
+	Equals but not GetHashCode. That's sadly how it's in .net.
+
+2009-12-02  Jb Evain  <jbevain@novell.com>
+
 	* MethodInfo.cs: add an internal virtual GetBaseMethod
 	returning the immediate predecessor in the inheritance chain.
 	* MonoMethod.cs: modify the get_base_definition icall to take
