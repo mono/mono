@@ -1,4 +1,10 @@
 
+Wed Dec 2 16:35:49 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: remove asserts for invalid type token in
+	mono_class_name_from_token(), mono_assembly_name_from_token() and
+	mono_class_create_from_typedef () (fixes bug #553318).
+
 Wed Dec 2 15:48:19 CET 2009 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c, class.c, loader.c: remove assert after bsearch() for
