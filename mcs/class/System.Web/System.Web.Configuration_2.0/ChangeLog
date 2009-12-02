@@ -1,3 +1,8 @@
+2009-12-02  Marek Habersack  <mhabersack@novell.com>
+
+	* CompilationSection.cs: added two properties -
+	OptimizeCompilations (3.5+) and TargetNetwork (4.0+)
+
 2009-11-19  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationHost.cs: IsDefinitionAllowed now normalizes the
