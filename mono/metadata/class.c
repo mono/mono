@@ -506,7 +506,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 			return NULL;
 		if (num >= inst->type_argc) {
 			MonoGenericParamInfo *info = mono_generic_param_info (type->data.generic_param);
-			mono_error_set_bad_image (error, image->module_name, "MVAR %d (%s) cannot be expanded in this context with %d instantiations",
+			mono_error_set_bad_image (error, image, "MVAR %d (%s) cannot be expanded in this context with %d instantiations",
 				num, info ? info->name : "", inst->type_argc);
 			return NULL;
 		}
@@ -529,7 +529,7 @@ inflate_generic_type (MonoImage *image, MonoType *type, MonoGenericContext *cont
 			return NULL;
 		if (num >= inst->type_argc) {
 			MonoGenericParamInfo *info = mono_generic_param_info (type->data.generic_param);
-			mono_error_set_bad_image (error, image->module_name, "VAR %d (%s) cannot be expanded in this context with %d instantiations",
+			mono_error_set_bad_image (error, image, "VAR %d (%s) cannot be expanded in this context with %d instantiations",
 				num, info ? info->name : "", inst->type_argc);
 			return NULL;
 		}
@@ -1099,6 +1099,26 @@ mono_class_find_enum_basetype (MonoClass *class)
 	return NULL;
 }
 
+/*
+ * Checks for MonoClass::exception_type without resolving all MonoType's into MonoClass'es
+ * It doesn't resolve generic instances, only check the GTD.
+ */
+static gboolean
+mono_type_has_exceptions (MonoType *type)
+{
+	switch (type->type) {
+	case MONO_TYPE_CLASS:
+	case MONO_TYPE_VALUETYPE:
+	case MONO_TYPE_SZARRAY:
+		return type->data.klass->exception_type;
+	case MONO_TYPE_ARRAY:
+		return type->data.array->eklass->exception_type;
+	case MONO_TYPE_GENERICINST:
+		return type->data.generic_class->container_class->exception_type;
+	}
+	return FALSE;
+}
+
 /** 
  * mono_class_setup_fields:
  * @class: The class to initialize
@@ -1285,6 +1305,16 @@ mono_class_setup_fields (MonoClass *class)
 			blittable = class->element_class->blittable;
 		}
 
+		if (mono_type_has_exceptions (field->type)) {
+			char *class_name = mono_type_get_full_name (class);
+			char *type_name = mono_type_full_name (field->type);
+
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+			g_warning ("Invalid type %s for instance field %s:%s", type_name, class_name, field->name);
+			g_free (class_name);
+			g_free (type_name);
+			break;
+		}
 		/* The def_value of fields is compute lazily during vtable creation */
 	}
 
@@ -2923,6 +2953,7 @@ print_method_signatures (MonoMethod *im, MonoMethod *cm) {
 #endif
 static gboolean
 check_interface_method_override (MonoClass *class, MonoMethod *im, MonoMethod *cm, gboolean require_newslot, gboolean interface_is_explicitly_implemented_by_class, gboolean slot_is_empty, gboolean security_enabled) {
+	MonoMethodSignature *cmsig, *imsig;
 	if (strcmp (im->name, cm->name) == 0) {
 		if (! (cm->flags & METHOD_ATTRIBUTE_PUBLIC)) {
 			TRACE_INTERFACE_VTABLE (printf ("[PUBLIC CHECK FAILED]"));
@@ -2942,7 +2973,14 @@ check_interface_method_override (MonoClass *class, MonoMethod *im, MonoMethod *c
 				TRACE_INTERFACE_VTABLE (printf ("[FULL SLOT REFUSED]"));
 			}
 		}
-		if (! mono_metadata_signature_equal (mono_method_signature (cm), mono_method_signature (im))) {
+		cmsig = mono_method_signature (cm);
+		imsig = mono_method_signature (im);
+		if (!cmsig || !imsig) {
+			mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, g_strdup ("Could not resolve the signature of a virtual method"));
+			return FALSE;
+		}
+
+		if (! mono_metadata_signature_equal (cmsig, imsig)) {
 			TRACE_INTERFACE_VTABLE (printf ("[SIGNATURE CHECK FAILED  "));
 			TRACE_INTERFACE_VTABLE (print_method_signatures (im, cm));
 			TRACE_INTERFACE_VTABLE (printf ("]"));
@@ -3219,6 +3257,7 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 #if (DEBUG_INTERFACE_VTABLE_CODE|TRACE_INTERFACE_VTABLE_CODE)
 	int first_non_interface_slot;
 #endif
+	GSList *virt_methods, *l;
 
 	if (class->vtable)
 		return;
@@ -3326,7 +3365,13 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 		MonoMethod *decl = overrides [i*2];
 		if (MONO_CLASS_IS_INTERFACE (decl->klass)) {
 			int dslot;
-			dslot = mono_method_get_vtable_slot (decl) + mono_class_interface_offset (class, decl->klass);
+			dslot = mono_method_get_vtable_slot (decl);
+			if (dslot == -1) {
+				mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+				return;
+			}
+
+			dslot += mono_class_interface_offset (class, decl->klass);
 			vtable [dslot] = overrides [i*2 + 1];
 			vtable [dslot]->slot = dslot;
 			if (!override_map)
@@ -3341,6 +3386,21 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 	TRACE_INTERFACE_VTABLE (print_overrides (override_map, "AFTER OVERRIDING INTERFACE METHODS"));
 	TRACE_INTERFACE_VTABLE (print_vtable_full (class, vtable, cur_slot, first_non_interface_slot, "AFTER OVERRIDING INTERFACE METHODS", FALSE));
 
+	/*
+	 * Create a list of virtual methods to avoid calling 
+	 * mono_class_get_virtual_methods () which is slow because of the metadata
+	 * optimization.
+	 */
+	{
+		gpointer iter = NULL;
+		MonoMethod *cm;
+
+		virt_methods = NULL;
+		while ((cm = mono_class_get_virtual_methods (class, &iter))) {
+			virt_methods = g_slist_prepend (virt_methods, cm);
+		}
+	}
+	
 	// Loop on all implemented interfaces...
 	for (i = 0; i < class->interface_offsets_count; i++) {
 		MonoClass *parent = class->parent;
@@ -3385,7 +3445,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 
 				// First look for a suitable method among the class methods
 				iter = NULL;
-				while ((cm = mono_class_get_virtual_methods (class, &iter))) {
+				for (l = virt_methods; l; l = l->next) {
+					cm = l->data;
 					TRACE_INTERFACE_VTABLE (printf ("    For slot %d ('%s'.'%s':'%s'), trying method '%s'.'%s':'%s'... [EXPLICIT IMPLEMENTATION = %d][SLOT IS NULL = %d]", im_slot, ic->name_space, ic->name, im->name, cm->klass->name_space, cm->klass->name, cm->name, interface_is_explicitly_implemented_by_class, (vtable [im_slot] == NULL)));
 					if (check_interface_method_override (class, im, cm, TRUE, interface_is_explicitly_implemented_by_class, (vtable [im_slot] == NULL), security_enabled)) {
 						TRACE_INTERFACE_VTABLE (printf ("[check ok]: ASSIGNING"));
@@ -3396,6 +3457,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 						}
 					}
 					TRACE_INTERFACE_VTABLE (printf ("\n"));
+					if (class->exception_type)  /*Might be set by check_interface_method_override*/ 
+						return;
 				}
 				
 				// If the slot is still empty, look in all the inherited virtual methods...
@@ -3415,6 +3478,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 							}
 							break;
 						}
+						if (class->exception_type) /*Might be set by check_interface_method_override*/ 
+							return;
 						TRACE_INTERFACE_VTABLE ((cm != NULL) && printf ("\n"));
 					}
 				}
@@ -3459,7 +3524,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 
 	TRACE_INTERFACE_VTABLE (print_vtable_full (class, vtable, cur_slot, first_non_interface_slot, "AFTER SETTING UP INTERFACE METHODS", FALSE));
 	class_iter = NULL;
-	while ((cm = mono_class_get_virtual_methods (class, &class_iter))) {
+	for (l = virt_methods; l; l = l->next) {
+		cm = l->data;
 		/*
 		 * If the method is REUSE_SLOT, we must check in the
 		 * base class for a method to override.
@@ -3494,6 +3560,11 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 							mono_security_core_clr_check_override (class, cm, m1);
 
 						slot = mono_method_get_vtable_slot (m1);
+						if (slot == -1) {
+							mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
+							return;
+						}
+
 						g_assert (cm->slot < max_vtsize);
 						if (!override_map)
 							override_map = g_hash_table_new (mono_aligned_addr_hash, NULL);
@@ -3549,6 +3620,8 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 
 		g_hash_table_destroy (override_map);
 	}
+
+	g_slist_free (virt_methods);
 
 	/* Ensure that all vtable slots are filled with concrete instance methods */
 	if (!(class->flags & TYPE_ATTRIBUTE_ABSTRACT)) {
@@ -3640,14 +3713,18 @@ mono_class_setup_vtable_general (MonoClass *class, MonoMethod **overrides, int o
 /*
  * mono_method_get_vtable_slot:
  *
- *   Returns method->slot, computing it if neccesary.
+ *   Returns method->slot, computing it if neccesary. Return -1 on failure.
  * LOCKING: Acquires the loader lock.
+ *
+ * FIXME Use proper MonoError machinery here.
  */
 int
 mono_method_get_vtable_slot (MonoMethod *method)
 {
 	if (method->slot == -1) {
 		mono_class_setup_vtable (method->klass);
+		if (method->klass->exception_type)
+			return -1;
 		g_assert (method->slot != -1);
 	}
 	return method->slot;
@@ -3659,7 +3736,9 @@ mono_method_get_vtable_slot (MonoMethod *method)
  *
  * Returns the index into the runtime vtable to access the method or,
  * in the case of a virtual generic method, the virtual generic method
- * thunk.
+ * thunk. Returns -1 on failure.
+ *
+ * FIXME Use proper MonoError machinery here.
  */
 int
 mono_method_get_vtable_index (MonoMethod *method)
@@ -6739,7 +6818,7 @@ MonoType*
 mono_class_enum_basetype (MonoClass *klass)
 {
 	if (klass->element_class == klass)
-		/* SRE */
+		/* SRE or broken types */
 		return NULL;
 	else
 		return &klass->element_class->byval_arg;

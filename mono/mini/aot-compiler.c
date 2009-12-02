@@ -99,6 +99,7 @@ typedef struct MonoAotOptions {
 	gboolean soft_debug;
 	int nthreads;
 	int ntrampolines;
+	int nrgctx_trampolines;
 	gboolean print_skipped_methods;
 	char *tool_prefix;
 } MonoAotOptions;
@@ -116,6 +117,7 @@ typedef struct MonoAotCompile {
 	MonoImage *image;
 	GPtrArray *methods;
 	GHashTable *method_indexes;
+	GHashTable *method_depth;
 	MonoCompile **cfgs;
 	int cfgs_size;
 	GHashTable *patch_to_plt_offset;
@@ -1651,7 +1653,7 @@ get_method_index (MonoAotCompile *acfg, MonoMethod *method)
 }
 
 static int
-add_method_full (MonoAotCompile *acfg, MonoMethod *method, gboolean extra)
+add_method_full (MonoAotCompile *acfg, MonoMethod *method, gboolean extra, int depth)
 {
 	int index;
 
@@ -1665,6 +1667,8 @@ add_method_full (MonoAotCompile *acfg, MonoMethod *method, gboolean extra)
 	/* FIXME: Fix quadratic behavior */
 	acfg->method_order = g_list_append (acfg->method_order, GUINT_TO_POINTER (index));
 
+	g_hash_table_insert (acfg->method_depth, method, GUINT_TO_POINTER (depth));
+
 	acfg->method_index ++;
 
 	return index;
@@ -1673,13 +1677,19 @@ add_method_full (MonoAotCompile *acfg, MonoMethod *method, gboolean extra)
 static int
 add_method (MonoAotCompile *acfg, MonoMethod *method)
 {
-	return add_method_full (acfg, method, FALSE);
+	return add_method_full (acfg, method, FALSE, 0);
 }
 
 static void
 add_extra_method (MonoAotCompile *acfg, MonoMethod *method)
 {
-	add_method_full (acfg, method, TRUE);
+	add_method_full (acfg, method, TRUE, 0);
+}
+
+static void
+add_extra_method_with_depth (MonoAotCompile *acfg, MonoMethod *method, int depth)
+{
+	add_method_full (acfg, method, TRUE, depth);
 }
 
 static void
@@ -3478,6 +3488,8 @@ mono_aot_parse_options (const char *aot_options, MonoAotOptions *opts)
 			opts->nodebug = TRUE;
 		} else if (str_begins_with (arg, "ntrampolines=")) {
 			opts->ntrampolines = atoi (arg + strlen ("ntrampolines="));
+		} else if (str_begins_with (arg, "nrgctx-trampolines=")) {
+			opts->nrgctx_trampolines = atoi (arg + strlen ("nrgctx-trampolines="));
 		} else if (str_begins_with (arg, "tool-prefix=")) {
 			opts->tool_prefix = g_strdup (arg + strlen ("tool-prefix="));
 		} else if (str_begins_with (arg, "soft-debug")) {
@@ -3597,7 +3609,7 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	MonoCompile *cfg;
 	MonoJumpInfo *patch_info;
 	gboolean skip;
-	int index;
+	int index, depth;
 	MonoMethod *wrapped;
 
 	if (acfg->aot_opts.metadata_only)
@@ -3721,34 +3733,41 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 	}
 
 	/* Adds generic instances referenced by this method */
-	for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
-		switch (patch_info->type) {
-		case MONO_PATCH_INFO_METHOD: {
-			MonoMethod *m = patch_info->data.method;
-			if (m->is_inflated) {
-				if (!(mono_class_generic_sharing_enabled (m->klass) &&
-					  mono_method_is_generic_sharable_impl (m, FALSE)) &&
-					!method_has_type_vars (m)) {
-					if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
-						if (acfg->aot_opts.full_aot)
-							add_extra_method (acfg, mono_marshal_get_native_wrapper (m, TRUE, TRUE));
-					} else {
-						add_extra_method (acfg, m);
+	/* 
+	 * The depth is used to avoid infinite loops when generic virtual recursion is 
+	 * encountered.
+	 */
+	depth = GPOINTER_TO_UINT (g_hash_table_lookup (acfg->method_depth, method));
+	if (depth < 32) {
+		for (patch_info = cfg->patch_info; patch_info; patch_info = patch_info->next) {
+			switch (patch_info->type) {
+			case MONO_PATCH_INFO_METHOD: {
+				MonoMethod *m = patch_info->data.method;
+				if (m->is_inflated) {
+					if (!(mono_class_generic_sharing_enabled (m->klass) &&
+						  mono_method_is_generic_sharable_impl (m, FALSE)) &&
+						!method_has_type_vars (m)) {
+						if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) {
+							if (acfg->aot_opts.full_aot)
+								add_extra_method_with_depth (acfg, mono_marshal_get_native_wrapper (m, TRUE, TRUE), depth + 1);
+						} else {
+							add_extra_method_with_depth (acfg, m, depth + 1);
+						}
 					}
+					add_generic_class (acfg, m->klass);
 				}
-				add_generic_class (acfg, m->klass);
+				break;
 			}
-			break;
-		}
-		case MONO_PATCH_INFO_VTABLE: {
-			MonoClass *klass = patch_info->data.klass;
+			case MONO_PATCH_INFO_VTABLE: {
+				MonoClass *klass = patch_info->data.klass;
 
-			if (klass->generic_class && !mono_generic_context_is_sharable (&klass->generic_class->context, FALSE))
-				add_generic_class (acfg, klass);
-			break;
-		}
-		default:
-			break;
+				if (klass->generic_class && !mono_generic_context_is_sharable (&klass->generic_class->context, FALSE))
+					add_generic_class (acfg, klass);
+				break;
+			}
+			default:
+				break;
+			}
 		}
 	}
 
@@ -4830,6 +4849,109 @@ emit_got (MonoAotCompile *acfg)
 	emit_pointer (acfg, acfg->got_symbol);
 }
 
+typedef struct GlobalsTableEntry {
+	guint32 value, index;
+	struct GlobalsTableEntry *next;
+} GlobalsTableEntry;
+
+static void
+emit_globals_table (MonoAotCompile *acfg)
+{
+	int i, table_size;
+	guint32 hash;
+	GPtrArray *table;
+	char symbol [256];
+	GlobalsTableEntry *entry, *new_entry;
+
+	/*
+	 * Construct a chained hash table for mapping global names to their index in
+	 * the globals table.
+	 */
+	table_size = g_spaced_primes_closest ((int)(acfg->globals->len * 1.5));
+	table = g_ptr_array_sized_new (table_size);
+	for (i = 0; i < table_size; ++i)
+		g_ptr_array_add (table, NULL);
+	for (i = 0; i < acfg->globals->len; ++i) {
+		char *name = g_ptr_array_index (acfg->globals, i);
+
+		hash = mono_aot_str_hash (name) % table_size;
+
+		/* FIXME: Allocate from the mempool */
+		new_entry = g_new0 (GlobalsTableEntry, 1);
+		new_entry->value = i;
+
+		entry = g_ptr_array_index (table, hash);
+		if (entry == NULL) {
+			new_entry->index = hash;
+			g_ptr_array_index (table, hash) = new_entry;
+		} else {
+			while (entry->next)
+				entry = entry->next;
+			
+			entry->next = new_entry;
+			new_entry->index = table->len;
+			g_ptr_array_add (table, new_entry);
+		}
+	}
+
+	/* Emit the table */
+	sprintf (symbol, ".Lglobals_hash");
+	emit_section_change (acfg, ".text", 0);
+	emit_alignment (acfg, 8);
+	emit_label (acfg, symbol);
+
+	/* FIXME: Optimize memory usage */
+	g_assert (table_size < 65000);
+	emit_int16 (acfg, table_size);
+	for (i = 0; i < table->len; ++i) {
+		GlobalsTableEntry *entry = g_ptr_array_index (table, i);
+
+		if (entry == NULL) {
+			emit_int16 (acfg, 0);
+			emit_int16 (acfg, 0);
+		} else {
+			emit_int16 (acfg, entry->value + 1);
+			if (entry->next)
+				emit_int16 (acfg, entry->next->index);
+			else
+				emit_int16 (acfg, 0);
+		}
+	}
+
+	/* Emit the names */
+	for (i = 0; i < acfg->globals->len; ++i) {
+		char *name = g_ptr_array_index (acfg->globals, i);
+
+		sprintf (symbol, "name_%d", i);
+		emit_section_change (acfg, ".text", 1);
+		emit_label (acfg, symbol);
+		emit_string (acfg, name);
+	}
+
+	/* Emit the globals table */
+	sprintf (symbol, ".Lglobals");
+	emit_section_change (acfg, ".data", 0);
+	/* This is not a global, since it is accessed by the init function */
+	emit_alignment (acfg, 8);
+	emit_label (acfg, symbol);
+
+	sprintf (symbol, "%sglobals_hash", acfg->temp_prefix);
+	emit_pointer (acfg, symbol);
+
+	for (i = 0; i < acfg->globals->len; ++i) {
+		char *name = g_ptr_array_index (acfg->globals, i);
+
+		sprintf (symbol, "name_%d", i);
+		emit_pointer (acfg, symbol);
+
+		sprintf (symbol, "%s", name);
+		emit_pointer (acfg, symbol);
+	}
+	/* Null terminate the table */
+	emit_int32 (acfg, 0);
+	emit_int32 (acfg, 0);
+}
+
 static void
 emit_globals (MonoAotCompile *acfg)
 {
@@ -4858,42 +4980,13 @@ emit_globals (MonoAotCompile *acfg)
 	 * When static linking, we emit a global which will point to the symbol table.
 	 */
 	if (acfg->aot_opts.static_link) {
-		int i;
 		char symbol [256];
 		char *p;
 
 		/* Emit a string holding the assembly name */
 		emit_string_symbol (acfg, "mono_aot_assembly_name", acfg->image->assembly->aname.name);
 
-		/* Emit the names */
-		for (i = 0; i < acfg->globals->len; ++i) {
-			char *name = g_ptr_array_index (acfg->globals, i);
-
-			sprintf (symbol, "name_%d", i);
-			emit_section_change (acfg, ".text", 1);
-			emit_label (acfg, symbol);
-			emit_string (acfg, name);
-		}
-
-		/* Emit the globals table */
-		sprintf (symbol, "globals");
-		emit_section_change (acfg, ".data", 0);
-		/* This is not a global, since it is accessed by the init function */
-		emit_alignment (acfg, 8);
-		emit_label (acfg, symbol);
-
-		for (i = 0; i < acfg->globals->len; ++i) {
-			char *name = g_ptr_array_index (acfg->globals, i);
-
-			sprintf (symbol, "name_%d", i);
-			emit_pointer (acfg, symbol);
-
-			sprintf (symbol, "%s", name);
-			emit_pointer (acfg, symbol);
-		}
-		/* Null terminate the table */
-		emit_int32 (acfg, 0);
-		emit_int32 (acfg, 0);
+		emit_globals_table (acfg);
 
 		/* 
 		 * Emit a global symbol which can be passed by an embedding app to
@@ -4915,7 +5008,8 @@ emit_globals (MonoAotCompile *acfg)
 		emit_global_inner (acfg, symbol, FALSE);
 		emit_alignment (acfg, 8);
 		emit_label (acfg, symbol);
-		emit_pointer (acfg, "globals");
+		sprintf (symbol, "%sglobals", acfg->temp_prefix);
+		emit_pointer (acfg, symbol);
 	}
 }
 
@@ -5223,6 +5317,7 @@ acfg_create (MonoAssembly *ass, guint32 opts)
 	acfg = g_new0 (MonoAotCompile, 1);
 	acfg->methods = g_ptr_array_new ();
 	acfg->method_indexes = g_hash_table_new (NULL, NULL);
+	acfg->method_depth = g_hash_table_new (NULL, NULL);
 	acfg->plt_offset_to_patch = g_hash_table_new (NULL, NULL);
 	acfg->patch_to_plt_offset = g_hash_table_new (mono_patch_info_hash, mono_patch_info_equal);
 	acfg->patch_to_got_offset = g_hash_table_new (mono_patch_info_hash, mono_patch_info_equal);
@@ -5266,6 +5361,7 @@ acfg_free (MonoAotCompile *acfg)
 	g_ptr_array_free (acfg->globals, TRUE);
 	g_ptr_array_free (acfg->unwind_ops, TRUE);
 	g_hash_table_destroy (acfg->method_indexes);
+	g_hash_table_destroy (acfg->method_depth);
 	g_hash_table_destroy (acfg->plt_offset_to_patch);
 	g_hash_table_destroy (acfg->patch_to_plt_offset);
 	g_hash_table_destroy (acfg->patch_to_got_offset);
@@ -5298,6 +5394,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	memset (&acfg->aot_opts, 0, sizeof (acfg->aot_opts));
 	acfg->aot_opts.write_symbols = TRUE;
 	acfg->aot_opts.ntrampolines = 1024;
+	acfg->aot_opts.nrgctx_trampolines = 1024;
 
 	mono_aot_parse_options (aot_options, &acfg->aot_opts);
 
@@ -5329,7 +5426,7 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 
 	acfg->num_trampolines [MONO_AOT_TRAMP_SPECIFIC] = acfg->aot_opts.full_aot ? acfg->aot_opts.ntrampolines : 0;
 #ifdef MONO_ARCH_HAVE_STATIC_RGCTX_TRAMPOLINE
-	acfg->num_trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = acfg->aot_opts.full_aot ? 1024 : 0;
+	acfg->num_trampolines [MONO_AOT_TRAMP_STATIC_RGCTX] = acfg->aot_opts.full_aot ? acfg->aot_opts.nrgctx_trampolines : 0;
 #endif
 	acfg->num_trampolines [MONO_AOT_TRAMP_IMT_THUNK] = acfg->aot_opts.full_aot ? 128 : 0;
 

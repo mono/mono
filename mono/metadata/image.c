@@ -534,7 +534,8 @@ mono_image_load_module (MonoImage *image, int idx)
 	GList *list_iter, *valid_modules = NULL;
 	MonoImageOpenStatus status;
 
-	g_assert (idx <= image->module_count);
+	if ((image->module_count == 0) || (idx > image->module_count))
+		return NULL;
 	if (image->modules_loaded [idx - 1])
 		return image->modules [idx - 1];
 
@@ -1511,7 +1512,7 @@ mono_image_close (MonoImage *image)
 	}
 
 	if (image->method_cache)
-		mono_value_hash_table_destroy (image->method_cache);
+		g_hash_table_destroy (image->method_cache);
 	if (image->methodref_cache)
 		g_hash_table_destroy (image->methodref_cache);
 	mono_internal_hash_table_destroy (&image->class_cache);

@@ -417,7 +417,7 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	MonoTableInfo *tables = image->tables;
 	MonoType *sig_type;
 	guint32 cols[6];
-	guint32 nindex, class;
+	guint32 nindex, class, class_table;
 	const char *fname;
 	const char *ptr;
 	guint32 idx = mono_metadata_token_index (token);
@@ -433,13 +433,40 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 		return NULL;
 	}
 
+	switch (class) {
+	case MONO_MEMBERREF_PARENT_TYPEDEF:
+		class_table = MONO_TOKEN_TYPE_DEF;
+		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | nindex);
+		break;
+	case MONO_MEMBERREF_PARENT_TYPEREF:
+		class_table = MONO_TOKEN_TYPE_REF;
+		klass = mono_class_from_typeref (image, MONO_TOKEN_TYPE_REF | nindex);
+		break;
+	case MONO_MEMBERREF_PARENT_TYPESPEC:
+		class_table = MONO_TOKEN_TYPE_SPEC;
+		klass = mono_class_get_full (image, MONO_TOKEN_TYPE_SPEC | nindex, context);
+		break;
+	default:
+		/*FIXME this must set a loader error!*/
+		g_warning ("field load from %x", class);
+		return NULL;
+	}
+
+	if (!klass) {
+		char *name = mono_class_name_from_token (image, class_table | nindex);
+		g_warning ("Missing field %s in class %s (type token %d)", fname, name, class_table | nindex);
+		mono_loader_set_error_type_load (name, image->assembly_name);
+		g_free (name);
+		return NULL;
+	}
+
 	ptr = mono_metadata_blob_heap (image, cols [MONO_MEMBERREF_SIGNATURE]);
 	mono_metadata_decode_blob_size (ptr, &ptr);
 	/* we may want to check the signature here... */
 
 	if (*ptr++ != 0x6) {
 		g_warning ("Bad field signature class token %08x field name %s token %08x", class, fname, token);
-		mono_loader_set_error_field_load (NULL, fname);
+		mono_loader_set_error_field_load (klass, fname);
 		return NULL;
 	}
 	/* FIXME: This needs a cache, especially for generic instances, since
@@ -449,60 +476,16 @@ field_from_memberref (MonoImage *image, guint32 token, MonoClass **retklass,
 	if (!sig_type) {
 		sig_type = mono_metadata_parse_type (image, MONO_PARSE_TYPE, 0, ptr, &ptr);
 		if (sig_type == NULL) {
-			mono_loader_set_error_field_load (NULL, fname);
+			mono_loader_set_error_field_load (klass, fname);
 			return NULL;
 		}
 		sig_type = cache_memberref_sig (image, cols [MONO_MEMBERREF_SIGNATURE], sig_type);
 	}
 
-	switch (class) {
-	case MONO_MEMBERREF_PARENT_TYPEDEF:
-		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | nindex);
-		if (!klass) {
-			char *name = mono_class_name_from_token (image, MONO_TOKEN_TYPE_DEF | nindex);
-			g_warning ("Missing field %s in class %s (typedef index %d)", fname, name, nindex);
-			mono_loader_set_error_type_load (name, image->assembly_name);
-			g_free (name);
-			return NULL;
-		}
-		mono_class_init (klass);
-		if (retklass)
-			*retklass = klass;
-		field = mono_class_get_field_from_name_full (klass, fname, sig_type);
-		break;
-	case MONO_MEMBERREF_PARENT_TYPEREF:
-		klass = mono_class_from_typeref (image, MONO_TOKEN_TYPE_REF | nindex);
-		if (!klass) {
-			char *name = mono_class_name_from_token (image, MONO_TOKEN_TYPE_REF | nindex);
-			g_warning ("missing field %s in class %s (typeref index %d)", fname, name, nindex);
-			mono_loader_set_error_type_load (name, image->assembly_name);
-			g_free (name);
-			return NULL;
-		}
-		mono_class_init (klass);
-		if (retklass)
-			*retklass = klass;
-		field = mono_class_get_field_from_name_full (klass, fname, sig_type);
-		break;
-	case MONO_MEMBERREF_PARENT_TYPESPEC: {
-		klass = mono_class_get_full (image, MONO_TOKEN_TYPE_SPEC | nindex, context);
-		if (!klass) {
-			char *name = mono_class_name_from_token (image, MONO_TOKEN_TYPE_REF | nindex);
-			g_warning ("missing field %s in class %s (typeref index %d)", fname, name, nindex);
-			mono_loader_set_error_type_load (name, image->assembly_name);
-			g_free (name);
-			return NULL;
-		}
-		mono_class_init (klass); /*FIXME is this really necessary?*/
-		if (retklass)
-			*retklass = klass;
-		field = mono_class_get_field_from_name_full (klass, fname, sig_type);
-		break;
-	}
-	default:
-		g_warning ("field load from %x", class);
-		return NULL;
-	}
+	mono_class_init (klass); /*FIXME is this really necessary?*/
+	if (retklass)
+		*retklass = klass;
+	field = mono_class_get_field_from_name_full (klass, fname, sig_type);
 
 	if (!field)
 		mono_loader_set_error_field_load (klass, fname);
@@ -621,17 +604,21 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
 	mono_class_setup_methods (klass);
 	for (i = 0; i < klass->method.count; ++i) {
 		MonoMethod *m = klass->methods [i];
+		MonoMethodSignature *msig;
 
 		if (!((fqname && !strcmp (m->name, fqname)) ||
 		      (qname && !strcmp (m->name, qname)) ||
 		      (name && !strcmp (m->name, name))))
 			continue;
+		msig = mono_method_signature (m);
+		if (!msig)
+			continue;
 
 		if (sig->call_convention == MONO_CALL_VARARG) {
-			if (mono_metadata_signature_vararg_match (sig, mono_method_signature (m)))
+			if (mono_metadata_signature_vararg_match (sig, msig))
 				break;
 		} else {
-			if (mono_metadata_signature_equal (sig, mono_method_signature (m)))
+			if (mono_metadata_signature_equal (sig, msig))
 				break;
 		}
 	}
@@ -1566,14 +1553,6 @@ mono_get_method (MonoImage *image, guint32 token, MonoClass *klass)
 	return mono_get_method_full (image, token, klass, NULL);
 }
 
-static gpointer
-get_method_token (gpointer value)
-{
-	MonoMethod *m = (MonoMethod*)value;
-
-	return GUINT_TO_POINTER (m->token);
-}
-
 MonoMethod *
 mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 		      MonoGenericContext *context)
@@ -1587,8 +1566,8 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 
 	if (mono_metadata_token_table (token) == MONO_TABLE_METHOD) {
 		if (!image->method_cache)
-			image->method_cache = mono_value_hash_table_new (NULL, NULL, get_method_token);
-		result = mono_value_hash_table_lookup (image->method_cache, GINT_TO_POINTER (token));
+			image->method_cache = g_hash_table_new (NULL, NULL);
+		result = g_hash_table_lookup (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)));
 	} else {
 		if (!image->methodref_cache)
 			image->methodref_cache = g_hash_table_new (NULL, NULL);
@@ -1607,7 +1586,7 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 	if (!used_context && !result->is_inflated) {
 		MonoMethod *result2;
 		if (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
-			result2 = mono_value_hash_table_lookup (image->method_cache, GINT_TO_POINTER (token));
+			result2 = g_hash_table_lookup (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)));
 		else
 			result2 = g_hash_table_lookup (image->methodref_cache, GINT_TO_POINTER (token));
 
@@ -1617,7 +1596,7 @@ mono_get_method_full (MonoImage *image, guint32 token, MonoClass *klass,
 		}
 
 		if (mono_metadata_token_table (token) == MONO_TABLE_METHOD)
-			mono_value_hash_table_insert (image->method_cache, GINT_TO_POINTER (token), result);
+			g_hash_table_insert (image->method_cache, GINT_TO_POINTER (mono_metadata_token_index (token)), result);
 		else
 			g_hash_table_insert (image->methodref_cache, GINT_TO_POINTER (token), result);
 	}
@@ -2060,6 +2039,7 @@ mono_loader_lock_is_owned_by_self (void)
 MonoMethodSignature*
 mono_method_signature (MonoMethod *m)
 {
+	MonoError error;
 	int idx;
 	int size;
 	MonoImage* img;
@@ -2112,7 +2092,12 @@ mono_method_signature (MonoMethod *m)
 	can_cache_signature = !(m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && !(m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) && !container;
 
 	/* If the method has parameter attributes, that can modify the signature */
-	pattrs = mono_metadata_get_param_attrs (img, idx);
+	pattrs = mono_metadata_get_param_attrs_checked (img, idx, &error);
+	if (!mono_error_ok (&error)) {
+		mono_error_cleanup (&error);
+		g_warning (mono_error_get_message (&error)); /*Since the error message is been swallowed let's produce a warning at least.*/
+		return NULL;
+	}
 	if (pattrs) {
 		can_cache_signature = FALSE;
 		g_free (pattrs);

@@ -1,3 +1,123 @@
+2009-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-trampolines.c: Check for mono_method_get_vtable_slot failures.
+
+	Backport of r147220.
+
+2009-11-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_lowering_pass): Fix an assert which is hit when
+	the instruction following an OP_FCOMPARE is optimized away.
+
+2009-11-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Add an option to set the number of static rgctx trampolines
+	generated.
+
+2009-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_globals_table): Use temp_prefix instead of .L in a few
+	places.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Avoid infinite recursion when generic virtual recursion is
+	encountered.
+
+2009-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_globals_table): Emit a hash table for the globals, to
+	avoid linear searches at runtime.
+
+	* aot-runtime.c (find_symbol): Update this to use the hash.
+
+	* mini.h: Bump AOT file format version.
+
+2009-11-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (vm_commands): Implement EXIT by invoking Environment.Exit ()
+	on a random thread if possible.
+
+2009-11-24  Geoff Norton  <gnorton@novell.com>
+
+	* mini-darwin.c: Work around apple bug rdar://7209349  See
+	http://openradar.appspot.com/7209349 for details.  Synopsis,
+	CoreFoundation SIGTRAP's if you dlopen it off the main thread if its
+	never been initialized before.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-arm.c: Use blx instead of mov pc, reg to improve support for thumb.
+
+	* mini-arm.c (mono_arm_thumb_supported): New helper function.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* cfold.c (mono_constant_fold_ins): Fix a problem in the previous change,
+	OP_SHL_IMM is not 32 bit.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Sync this with the version of HEAD to make backporting
+	easier.
+
+	* debugger-agent.c (resume_vm): Signal the suspend_cond even if suspend_count
+	> 0 since some threads can resume if their resume_count is > 0.
+	(invoke_method): Avoid reading freed memory.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (process_suspend): Extract the suspend code from
+	process_single_step_inner () to a separate function. Rework the code to prevent
+	races between this function and thread interrupts.
+
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (suspend_current): Check the resume_count field instead
+	of resume_one so suspends+resumes during single threaded invokes work
+	correctly.
+
+2009-11-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Fix the cygwin build.
+
+2009-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Implement single threaded invokes.
+
+2009-11-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (inline_method): Prevent infinite recursion. Fixes
+	#557606.
+
+	* generics.cs: Add a test.
+
+2009-11-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* cfold.c (mono_constant_fold_ins): Fix constant folding of shr_imm. Fixes
+	#557262.
+
+	* basic.cs: Add a test.
+
+2009-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-ppc.c (mono_arch_create_generic_class_init_trampoline_full): These
+	receive their argument in MONO_ARCH_VTABLE_REG, not in the first argument reg.
+
+2009-11-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (create_event_list): Fix a crash if an empty assembly list
+	was used as an assembly filter.
+
+2009-11-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (assembly_commands): Implement GET_NAME command.
+
+2009-11-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_handle_exception): Pass a MonoJitInfo to
+	create_event_list () so assembly filters can be used.
+
 2009-11-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_generic_instances): Emit instances of common generic

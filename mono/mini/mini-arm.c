@@ -2335,8 +2335,13 @@ loop_start:
 			gboolean swap = FALSE;
 			int reg;
 
+			if (!ins->next) {
+				/* Optimized away */
+				NULLIFY_INS (ins);
+				break;
+			}
+
 			/* Some fp compares require swapped operands */
-			g_assert (ins->next);
 			switch (ins->next->opcode) {
 			case OP_FBGT:
 				ins->next->opcode = OP_FBLT;
@@ -2741,6 +2746,12 @@ mono_arm_emit_load_imm (guint8 *code, int dreg, guint32 val)
 		//g_assert_not_reached ();
 	}
 	return code;
+}
+
+gboolean
+mono_arm_thumb_supported (void)
+{
+	return thumb_supported;
 }
 
 /*

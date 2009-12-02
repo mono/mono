@@ -40,6 +40,24 @@
 #include <ucontext.h>
 #endif
 
+/* Definitions to make backporting to 2.6 easier */
+#ifdef PLATFORM_WIN32
+#define HOST_WIN32
+#define TARGET_WIN32
+#endif
+
+#ifdef HOST_WIN32
+#include <ws2tcpip.h>
+#ifdef __GNUC__
+/* cygwin's headers do not seem to define these */
+void WSAAPI freeaddrinfo (struct addrinfo*);
+int WSAAPI getaddrinfo (const char*,const char*,const struct addrinfo*,
+                        struct addrinfo**);
+int WSAAPI getnameinfo(const struct sockaddr*,socklen_t,char*,DWORD,
+                       char*,DWORD,int);
+#endif
+#endif
+
 #ifdef PLATFORM_ANDROID
 #include <linux/in.h>
 #include <linux/tcp.h>
@@ -106,6 +124,11 @@ typedef struct
 	/* This is the context which needs to be restored after the invoke */
 	MonoContext ctx;
 	gboolean has_ctx;
+	/*
+	 * If this is set, invoke this method with the arguments given by ARGS.
+	 */
+	MonoMethod *method;
+	gpointer *args;
 } InvokeData;
 
 typedef struct {
@@ -134,6 +157,11 @@ typedef struct {
 	 */
 	gboolean suspended;
 	/*
+	 * Signals whenever the thread is in the process of suspending, i.e. it will suspend
+	 * within a finite amount of time.
+	 */
+	gboolean suspending;
+	/*
 	 * Set to TRUE if this thread is suspended in suspend_current ().
 	 */
 	gboolean really_suspended;
@@ -147,6 +175,11 @@ typedef struct {
 
 	/* Whenever to disable breakpoints (used during invokes) */
 	gboolean disable_breakpoints;
+
+	/*
+	 * Number of times this thread has been resumed using resume_thread ().
+	 */
+	guint32 resume_count;
 } DebuggerTlsData;
 
 /* 
@@ -246,7 +279,8 @@ typedef enum {
 } StackFrameFlags;
 
 typedef enum {
-	INVOKE_FLAG_DISABLE_BPS = 1
+	INVOKE_FLAG_DISABLE_BREAKPOINTS = 1,
+	INVOKE_FLAG_SINGLE_THREADED = 2
 } InvokeFlags;
 
 typedef enum {
@@ -291,6 +325,7 @@ typedef enum {
 	CMD_ASSEMBLY_GET_MANIFEST_MODULE = 3,
 	CMD_ASSEMBLY_GET_OBJECT = 4,
 	CMD_ASSEMBLY_GET_TYPE = 5,
+	CMD_ASSEMBLY_GET_NAME = 6
 } CmdAssembly;
 
 typedef enum {
@@ -756,7 +791,7 @@ mono_debugger_agent_cleanup (void)
 
 	/* This will interrupt the agent thread */
 	/* Close the read part only so it can still send back replies */
-#ifdef PLATFORM_WIN32
+#ifdef HOST_WIN32
 	shutdown (conn_fd, SD_RECEIVE);
 #else
 	shutdown (conn_fd, SHUT_RD);
@@ -782,6 +817,11 @@ mono_debugger_agent_cleanup (void)
 	objrefs_cleanup ();
 	ids_cleanup ();
 
+#ifdef HOST_WIN32
+	shutdown (conn_fd, SD_BOTH);
+#else
+	shutdown (conn_fd, SHUT_RDWR);
+#endif
 	
 	mono_mutex_destroy (&debugger_thread_exited_mutex);
 	mono_cond_destroy (&debugger_thread_exited_cond);
@@ -1636,6 +1676,7 @@ suspend_init (void)
  * mono_debugger_agent_thread_interrupt:
  *
  *   Called by the abort signal handler.
+ * Should be signal safe.
  */
 gboolean
 mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
@@ -1665,15 +1706,16 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 
 	if (ji) {
 		/* Running managed code, will be suspended by the single step code */
-		//printf ("S1: %p\n", GetCurrentThreadId ());
+		DEBUG (1, printf ("[%p] Received interrupt while at %s(%p), continuing.\n", (gpointer)GetCurrentThreadId (), ji->method->name, mono_arch_ip_from_context (sigctx)));
 		return TRUE;
 	} else {
 		/* 
 		 * Running native code, will be suspended when it returns to/enters 
 		 * managed code. Treat it as already suspended.
+		 * This might interrupt the code in process_single_step_inner (), we use the
+		 * tls->suspending flag to avoid races when that happens.
 		 */
-		//printf ("S2: %p\n", GetCurrentThreadId ());
-		if (!tls->suspended) {
+		if (!tls->suspended && !tls->suspending) {
 			MonoContext ctx;
 
 			/* 
@@ -1683,6 +1725,9 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			 * Maybe do a stack walk now, and save its result ?
 			 */
 			mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+			// FIXME: printf is not signal safe, but this is only used during
+			// debugger debugging
+			DEBUG (1, printf ("[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)GetCurrentThreadId (), mono_arch_ip_from_context (sigctx)));
 			save_thread_context (&ctx);
 
 			tls->suspended = TRUE;
@@ -1692,13 +1737,13 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 	}
 }
 
-#ifdef PLATFORM_WIN32
+#ifdef HOST_WIN32
 static void CALLBACK notify_thread_apc (ULONG_PTR param)
 {
 	//DebugBreak ();
-	mono_debugger_agent_thread_interrupt (NULL);
+	mono_debugger_agent_thread_interrupt (NULL, NULL);
 }
-#endif /* PLATFORM_WIN32 */
+#endif /* HOST_WIN32 */
 
 /*
  * notify_thread:
@@ -1719,13 +1764,49 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 		 * of things like breaking waits etc. which we don't want.
 		 */
 		InterlockedIncrement (&tls->interrupt_count);
-#ifdef PLATFORM_WIN32
-	//	g_assert_not_reached ();
+		/* This is _not_ equivalent to ves_icall_System_Threading_Thread_Abort () */
+#ifdef HOST_WIN32
 		QueueUserAPC (notify_thread_apc, thread->handle, NULL);
 #else
 		pthread_kill ((pthread_t) tid, mono_thread_get_abort_signal ());
 #endif
 	}
+}
+
+static void
+process_suspend (DebuggerTlsData *tls, MonoContext *ctx)
+{
+	guint8 *ip = MONO_CONTEXT_GET_IP (ctx);
+	MonoJitInfo *ji;
+
+	if (debugger_thread_id == GetCurrentThreadId ())
+		return;
+
+	/* Prevent races with mono_debugger_agent_thread_interrupt () */
+	if (suspend_count - tls->resume_count > 0)
+		tls->suspending = TRUE;
+
+	DEBUG(1, fprintf (log_file, "[%p] Received single step event for suspending.\n", (gpointer)GetCurrentThreadId ()));
+
+	if (suspend_count - tls->resume_count == 0) {
+		/* 
+		 * We are executing a single threaded invoke but the single step for 
+		 * suspending is still active.
+		 * FIXME: This slows down single threaded invokes.
+		 */
+		DEBUG(1, fprintf (log_file, "[%p] Ignored during single threaded invoke.\n", (gpointer)GetCurrentThreadId ()));
+		return;
+	}
+
+	ji = mono_jit_info_table_find (mono_domain_get (), (char*)ip);
+
+	/* Can't suspend in these methods */
+	if (ji->method->klass == mono_defaults.string_class && (!strcmp (ji->method->name, "memset") || strstr (ji->method->name, "memcpy")))
+		return;
+
+	save_thread_context (ctx);
+
+	suspend_current ();
 }
 
 /*
@@ -1781,9 +1862,50 @@ resume_vm (void)
 	if (suspend_count == 0) {
 		// FIXME: Is it safe to call this inside the lock ?
 		stop_single_stepping ();
-		err = mono_cond_broadcast (&suspend_cond);
-		g_assert (err == 0);
 	}
+
+	/* Signal this even when suspend_count > 0, since some threads might have resume_count > 0 */
+	err = mono_cond_broadcast (&suspend_cond);
+	g_assert (err == 0);
+
+	mono_mutex_unlock (&suspend_mutex);
+	//g_assert (err == 0);
+
+	mono_loader_unlock ();
+}
+
+/*
+ * resume_thread:
+ *
+ *   Resume just one thread.
+ */
+static void
+resume_thread (MonoInternalThread *thread)
+{
+	int err;
+	DebuggerTlsData *tls;
+
+	g_assert (debugger_thread_id == GetCurrentThreadId ());
+
+	mono_loader_lock ();
+
+	tls = mono_g_hash_table_lookup (thread_to_tls, thread);
+	g_assert (tls);
+	
+	mono_mutex_lock (&suspend_mutex);
+
+	g_assert (suspend_count > 0);
+
+	DEBUG(1, fprintf (log_file, "[%p] Resuming thread...\n", (gpointer)thread->tid));
+
+	tls->resume_count ++;
+
+	/* 
+	 * Signal suspend_count without decreasing suspend_count, the threads will wake up
+	 * but only the one whose resume_count field is > 0 will be resumed.
+	 */
+	err = mono_cond_broadcast (&suspend_cond);
+	g_assert (err == 0);
 
 	mono_mutex_unlock (&suspend_mutex);
 	//g_assert (err == 0);
@@ -1837,6 +1959,8 @@ suspend_current (void)
 
 	mono_mutex_lock (&suspend_mutex);
 
+	tls->suspending = FALSE;
+
 	if (!tls->suspended) {
 		tls->suspended = TRUE;
 		tls->really_suspended = TRUE;
@@ -1845,8 +1969,8 @@ suspend_current (void)
 
 	DEBUG(1, fprintf (log_file, "[%p] Suspended.\n", (gpointer)GetCurrentThreadId ()));
 
-	while (suspend_count > 0) {
-#ifdef PLATFORM_WIN32
+	while (suspend_count - tls->resume_count > 0) {
+#ifdef HOST_WIN32
 		if (WAIT_TIMEOUT == WaitForSingleObject(suspend_cond, 0))
 		{
 			mono_mutex_unlock (&suspend_mutex);
@@ -2152,9 +2276,11 @@ create_event_list (EventKind event, GPtrArray *reqs, MonoJitInfo *ji, MonoExcept
 					gboolean found = FALSE;
 					MonoAssembly **assemblies = mod->data.assemblies;
 
-					for (k = 0; assemblies [k]; ++k)
-						if (assemblies [k] == ji->method->klass->image->assembly)
-							found = TRUE;
+					if (assemblies) {
+						for (k = 0; assemblies [k]; ++k)
+							if (assemblies [k] == ji->method->klass->image->assembly)
+								found = TRUE;
+					}
 					if (!found)
 						filtered = TRUE;
 				}
@@ -2489,7 +2615,7 @@ static void
 end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 {
 	int i;
-#ifdef PLATFORM_WIN32
+#if defined(HOST_WIN32) && !defined(__GNUC__)
 	gpointer stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));
 #else
 	gpointer stackptr = __builtin_frame_address (0);
@@ -3001,7 +3127,7 @@ mono_debugger_agent_breakpoint_hit (void *sigctx)
 }
 
 static void
-process_single_step_inner (MonoContext *ctx)
+process_single_step_inner (DebuggerTlsData *tls, MonoContext *ctx)
 {
 	MonoJitInfo *ji;
 	guint8 *ip;
@@ -3018,19 +3144,7 @@ process_single_step_inner (MonoContext *ctx)
 	mono_arch_skip_single_step (ctx);
 
 	if (suspend_count > 0) {
-		if (debugger_thread_id == GetCurrentThreadId ())
-			return;
-
-		DEBUG(1, fprintf (log_file, "[%p] Received single step event for suspending.\n", (gpointer)GetCurrentThreadId ()));
-
-		ji = mono_jit_info_table_find (mono_domain_get (), (char*)ip);
-
-		/* See the comment below */
-		if (ji->method->klass == mono_defaults.string_class && (!strcmp (ji->method->name, "memset") || strstr (ji->method->name, "memcpy")))
-			return;
-
-		save_thread_context (ctx);
-		suspend_current ();
+		process_suspend (tls, ctx);
 		return;
 	}
 
@@ -3175,7 +3289,7 @@ process_single_step (void)
 	tls = TlsGetValue (debugger_tls_id);
 	memcpy (&ctx, &tls->handler_ctx, sizeof (MonoContext));
 
-	process_single_step_inner (&ctx);
+	process_single_step_inner (tls, &ctx);
 
 	/* This is called when resuming from a signal handler, so it shouldn't return */
 	restore_context (&ctx);
@@ -3259,8 +3373,10 @@ ss_start (MonoInternalThread *thread, StepSize size, StepDepth depth, EventReque
 	wait_for_suspend ();
 
 	// FIXME: Multiple requests
-	if (ss_req)
+	if (ss_req) {
+		DEBUG (0, printf ("Received a single step request while the previous one was still active.\n"));
 		return ERR_NOT_IMPLEMENTED;
+	}
 
 	ss_req = g_new0 (MonoSingleStepReq, 1);
 	ss_req->req = req;
@@ -3323,6 +3439,7 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *ctx)
 {
 	int suspend_policy;
 	GSList *events;
+	MonoJitInfo *ji;
 
 	/* Just-In-Time debugging */
 	if (agent_config.onthrow && !inited) {
@@ -3354,8 +3471,10 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *ctx)
 	if (!inited)
 		return;
 
+	ji = mini_jit_info_table_find (mono_domain_get (), MONO_CONTEXT_GET_IP (ctx), NULL);
+
 	mono_loader_lock ();
-	events = create_event_list (EVENT_KIND_EXCEPTION, NULL, NULL, exc, &suspend_policy);
+	events = create_event_list (EVENT_KIND_EXCEPTION, NULL, ji, exc, &suspend_policy);
 	mono_loader_unlock ();
 
 	process_event (EVENT_KIND_EXCEPTION, exc, 0, ctx, events, suspend_policy);
@@ -3730,6 +3849,16 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 	MonoLMFExt ext;
 #endif
 
+	if (invoke->method) {
+		/* 
+		 * Invoke this method directly, currently only Environment.Exit () is supported.
+		 */
+		this = NULL;
+		DEBUG (1, printf ("[%p] Invoking method '%s' on receiver '%s'.\n", (gpointer)GetCurrentThreadId (), mono_method_full_name (invoke->method, TRUE), this ? this->vtable->klass->name : "<null>"));
+		mono_runtime_invoke (invoke->method, NULL, invoke->args, &exc);
+		g_assert_not_reached ();
+	}
+
 	m = decode_methodid (p, &p, end, &domain, &err);
 	if (err)
 		return err;
@@ -3794,7 +3923,7 @@ do_invoke_method (DebuggerTlsData *tls, Buffer *buf, InvokeData *invoke)
 	if (i < nargs)
 		return err;
 
-	if (invoke->flags & INVOKE_FLAG_DISABLE_BPS)
+	if (invoke->flags & INVOKE_FLAG_DISABLE_BREAKPOINTS)
 		tls->disable_breakpoints = TRUE;
 	else
 		tls->disable_breakpoints = FALSE;
@@ -3909,7 +4038,8 @@ invoke_method (void)
 	err = do_invoke_method (tls, &buf, invoke);
 
 	/* Start suspending before sending the reply */
-	suspend_vm ();
+	if (!(invoke->flags & INVOKE_FLAG_SINGLE_THREADED))
+		suspend_vm ();
 
 	send_reply_packet (id, err, &buf);
 	
@@ -3920,10 +4050,33 @@ invoke_method (void)
 	if (invoke->has_ctx)
 		save_thread_context (&restore_ctx);
 
+	if (invoke->flags & INVOKE_FLAG_SINGLE_THREADED) {
+		g_assert (tls->resume_count);
+		tls->resume_count --;
+	}
+
+	DEBUG (1, printf ("[%p] Invoke finished, resume_count = %d.\n", (gpointer)GetCurrentThreadId (), tls->resume_count));
+
 	g_free (invoke->p);
 	g_free (invoke);
 
 	suspend_current ();
+}
+
+static gboolean
+is_really_suspended (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoThread *thread = value;
+	DebuggerTlsData *tls;
+	gboolean res;
+
+	mono_loader_lock ();
+	tls = mono_g_hash_table_lookup (thread_to_tls, thread);
+	g_assert (tls);
+	res = tls->really_suspended;
+	mono_loader_unlock ();
+
+	return res;
 }
 
 static ErrorCode
@@ -3975,7 +4128,14 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		disconnected = TRUE;
 		break;
 	case CMD_VM_EXIT: {
-		int exit_code = decode_int (p, &p, end);
+		MonoInternalThread *thread;
+		DebuggerTlsData *tls;
+		MonoClass *env_class;
+		MonoMethod *exit_method;
+		gpointer *args;
+		int exit_code;
+
+		exit_code = decode_int (p, &p, end);
 
 		// FIXME: What if there is a VM_DEATH event request with SUSPEND_ALL ?
 
@@ -3991,32 +4151,67 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		}
 		mono_loader_unlock ();
 
-		/* FIXME: Races with normal shutdown */
-		while (suspend_count > 0)
-			resume_vm ();
-
 		/*
 		 * The JDWP documentation says that the shutdown is not orderly. It doesn't
 		 * specify whenever a VM_DEATH event is sent. We currently do an orderly
-		 * shutdown similar to Environment.Exit ().
+		 * shutdown by hijacking a thread to execute Environment.Exit (). This is
+		 * better than doing the shutdown ourselves, since it avoids various races.
 		 */
-		mono_runtime_set_shutting_down ();
 
-		mono_threads_set_shutting_down ();
+		suspend_vm ();
+		wait_for_suspend ();
 
-		/* Suspend all managed threads since the runtime is going away */
-		DEBUG(1, fprintf (log_file, "Suspending all threads...\n"));
-		mono_thread_suspend_all_other_threads ();
-		DEBUG(1, fprintf (log_file, "Shutting down the runtime...\n"));
-		mono_runtime_quit ();
-#ifdef PLATFORM_WIN32
-		shutdown (conn_fd, SD_BOTH);
+		env_class = mono_class_from_name (mono_defaults.corlib, "System", "Environment");
+		g_assert (env_class);
+		exit_method = mono_class_get_method_from_name (env_class, "Exit", 1);
+		g_assert (exit_method);
+
+		mono_loader_lock ();
+		thread = mono_g_hash_table_find (tid_to_thread, is_really_suspended, NULL);
+		mono_loader_unlock ();
+
+		if (thread) {
+			mono_loader_lock ();
+			tls = mono_g_hash_table_lookup (thread_to_tls, thread);
+			mono_loader_unlock ();
+
+			args = g_new0 (gpointer, 1);
+			args [0] = g_malloc (sizeof (int));
+			*(int*)(args [0]) = exit_code;
+
+			tls->invoke = g_new0 (InvokeData, 1);
+			tls->invoke->method = exit_method;
+			tls->invoke->args = args;
+
+			while (suspend_count > 0)
+				resume_vm ();
+		} else {
+			/* 
+			 * No thread found, do it ourselves.
+			 * FIXME: This can race with normal shutdown etc.
+			 */
+			while (suspend_count > 0)
+				resume_vm ();
+
+			mono_runtime_set_shutting_down ();
+
+			mono_threads_set_shutting_down ();
+
+			/* Suspend all managed threads since the runtime is going away */
+			DEBUG(1, fprintf (log_file, "Suspending all threads...\n"));
+			mono_thread_suspend_all_other_threads ();
+			DEBUG(1, fprintf (log_file, "Shutting down the runtime...\n"));
+			mono_runtime_quit ();
+#ifdef HOST_WIN32
+			shutdown (conn_fd, SD_BOTH);
 #else
-		shutdown (conn_fd, SHUT_RDWR);
+			shutdown (conn_fd, SHUT_RDWR);
 #endif
-		DEBUG(1, fprintf (log_file, "Exiting...\n"));
+			DEBUG(1, fprintf (log_file, "Exiting...\n"));
 
-		exit (exit_code);
+			exit (exit_code);
+		}
+		break;
 	}		
 	case CMD_VM_INVOKE_METHOD: {
 		int objid = decode_objid (p, &p, end);
@@ -4054,7 +4249,10 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		memcpy (tls->invoke->p, p, end - p);
 		tls->invoke->endp = tls->invoke->p + (end - p);
 
-		resume_vm ();
+		if (flags & INVOKE_FLAG_SINGLE_THREADED)
+			resume_thread (THREAD_TO_INTERNAL (thread));
+		else
+			resume_vm ();
 		break;
 	}
 	default:
@@ -4353,6 +4551,22 @@ assembly_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		mono_reflection_free_type_info (&info);
 		g_free (s);
 
+		break;
+	}
+	case CMD_ASSEMBLY_GET_NAME: {
+		gchar *name;
+		MonoAssembly *mass = ass;
+
+		name = g_strdup_printf (
+		  "%s, Version=%d.%d.%d.%d, Culture=%s, PublicKeyToken=%s%s",
+		  mass->aname.name,
+		  mass->aname.major, mass->aname.minor, mass->aname.build, mass->aname.revision,
+		  mass->aname.culture && *mass->aname.culture? mass->aname.culture: "neutral",
+		  mass->aname.public_key_token [0] ? (char *)mass->aname.public_key_token : "null",
+		  (mass->aname.flags & ASSEMBLYREF_RETARGETABLE_FLAG) ? ", Retargetable=Yes" : "");
+
+		buffer_add_string (buf, name);
+		g_free (name);
 		break;
 	}
 	default:
@@ -5563,11 +5777,7 @@ debugger_thread (void *arg)
 	mono_cond_signal (&debugger_thread_exited_cond);
 	mono_mutex_unlock (&debugger_thread_exited_mutex);
 
-#ifdef PLATFORM_WIN32
-	shutdown (conn_fd, SD_BOTH);
-#else
-	shutdown (conn_fd, SHUT_RDWR);
-#endif
+	DEBUG (1, printf ("[dbg] Debugger thread exited.\n"));
 
 	return 0;
 }
@@ -5586,11 +5796,6 @@ mono_debugger_agent_init (void)
 }
 
 void
-mono_debugger_agent_cleanup (void)
-{
-}
-
-void
 mono_debugger_agent_breakpoint_hit (void *sigctx)
 {
 }
@@ -5605,8 +5810,10 @@ mono_debugger_agent_free_domain_info (MonoDomain *domain)
 {
 }
 
-gboolean mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
+gboolean
+mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 {
+	return FALSE;
 }
 
 void

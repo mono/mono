@@ -1,3 +1,20 @@
+2009-11-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-ehash.c (mono_g_hash_table_find): Add this for eglib too.
+
+2009-11-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-error-internals.h: Add mono_error_set_bad_image_name and change signature
+	of mono_error_set_bad_image to take a MonoImage instead of a const char *.
+
+	* mono-error.c: Same.
+
+	Backport of r146936.
+
+2009-11-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-hash.c (mono_g_hash_table_find): Implement this.
+
 2009-11-13 Jonathan Chambers <joncham@gmail.com>
 
 	* mono-semaphore.h: Implementation for Windows platform.

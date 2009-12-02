@@ -12,6 +12,7 @@
 #include "mono/utils/monobitset.h"
 #include "mono/utils/mono-property-hash.h"
 #include "mono/utils/mono-value-hash.h"
+#include "mono/utils/mono-error.h"
 
 #define MONO_SECMAN_FLAG_INIT(x)		(x & 0x2)
 #define MONO_SECMAN_FLAG_GET_VALUE(x)		(x & 0x1)
@@ -158,7 +159,7 @@ struct _MonoImage {
 	/*
 	 * Indexed by method tokens and typedef tokens.
 	 */
-	MonoValueHashTable *method_cache; /*protected by the image lock*/
+	GHashTable *method_cache; /*protected by the image lock*/
 	MonoInternalHashTable class_cache;
 
 	/* Indexed by memberref + methodspec tokens */
@@ -561,6 +562,8 @@ gboolean mono_image_load_cli_data (MonoImage *image) MONO_INTERNAL;
 void mono_image_load_names (MonoImage *image) MONO_INTERNAL;
 
 MonoImage *mono_image_open_raw (const char *fname, MonoImageOpenStatus *status) MONO_INTERNAL;
+
+int* mono_metadata_get_param_attrs_checked (MonoImage *m, int def, MonoError *error) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 

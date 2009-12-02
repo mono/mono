@@ -1,3 +1,145 @@
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_vtable_general): Check for mono_method_get_vtable_slot
+	failures.
+
+	* class.c (mono_method_get_vtable_slot): Don't assert if the computed method slot
+	is -1 but its class is broken.
+
+	Fixes #558522.
+
+	Backport of r147219.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c: Introduce mono_metadata_get_param_attrs_checked which checks
+	for parameter overflow.
+
+	* metadata.c (mono_metadata_parse_method_signature_full): Use checked version
+	of mono_metadata_get_param_attrs.
+
+	* metadata-internals.h: Add mono_metadata_get_param_attrs_checked to the internal
+	API.
+
+	* loader.c (mono_method_signature): Use checked version of mono_metadata_get_param_attrs.
+
+	Backport of r147218.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_fields): Check for fields with broken types.
+
+	Fixes #558741.
+
+	Backport of r147214.
+
+2009-11-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (create_exceptions): New helper function extracted from
+	mono_runtime_init () to precreate objects used during exception handling.
+	(mono_runtime_init): Call it.
+	(mono_domain_create_appdomain_internal): Ditto. Fixes #555264.
+
+2009-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_setup_vtable_general): Cache the result of
+	get_virtual_methods () since it can be slow because of the metadata
+	optimization.
+
+2009-11-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata-internals.h (_MonoImage): Change 'method_cache' to a GHashTable
+	from a MonoValueHashTable for now, since the later is based on an earlier
+	version of hpj's internal probing code and seems to have serious collision
+	issues.
+
+	* loader.c (mono_get_method_full): Update after the change above.
+
+2009-11-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (check_interface_method_override): Check for NULL signatures and fail
+	the type.
+
+	* debug-helpers.c (mono_signature_get_desc): Return a fixed string for NULL signatures.
+
+	Fixes #553428.
+
+	Backport of r146970.
+
+2009-11-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (field_from_memberref): Resolve the class first then the field
+	signature. Remove a lot of duplicated code and make sure we don't pass valid
+	values to mono_loader_set_error_field_load.
+
+	Fixes #553306.
+
+	Backport of r146937.
+
+2009-11-25  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (inflate_generic_type): Change code to use new signature of
+	mono_error_set_bad_image.
+
+	Fixes #558124.
+
+	Backport of r146936.
+
+2009-11-25  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* verify.c (mono_method_verify): Don't free ctx.params items if 
+	we aborted while inflating the ctx.locals. Complete previous fix
+	[Backport 146919]
+
+2009-11-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* verify.c (mono_method_verify): Use the uninflated type name, 
+	when the inflated is null, to report errors. Also take care when
+	freeing, not to free everything since, in case of an error, some
+	stuff would be copies (i.e. not allocated by the function itself)
+	Fix bug #558145
+	[Backport r146900]
+
+2009-11-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (stack_push, stack_pop, stack_pop_safe): Assert if we underflow
+	or overflow. The caller must have done this check explicitly. This guard us
+	from accessing invalid memory.
+
+	* verify.c (do_push_static_field): Check for stack overflow.
+
+	Fixes #553333.
+
+	Backport of r146876.
+
+2009-11-24  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (find_method_in_class): Don't crash if the signature cannot
+	be resolved.
+
+	* metadata.c (mono_metadata_parse_generic_param): Return NULL instead
+	of asserting for the case of invalid params.
+
+	Fixes #553304.
+
+	Backport of r146875.
+
+2009-11-24  Bill Holmes  <billholmes54@gmail.com>
+
+	Backport of 144280.
+
+	* cominterop.c : Search the interface parts of vtable to find 
+	  method matches.  Fixes 547030.
+
+	Code is contributed under MIT/X11 license.
+
+2009-11-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* image.c (mono_image_load_module): Fix crash when a bad assembly
+	has no module at all (fix bug #553412) and also replace the 
+	g_assert with a return NULL (documented return value for failure)
+	[Backport r146839]
+
 2009-11-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class.c (can_access_internals): Allow CoreCLR to participate in
