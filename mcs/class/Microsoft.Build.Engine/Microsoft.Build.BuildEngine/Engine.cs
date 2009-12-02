@@ -261,8 +261,9 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void UnloadAllProjects ()
 		{
-			foreach (KeyValuePair <string, Project> e in projects)
-				UnloadProject (e.Value);
+			IList<Project> values = new List<Project> (projects.Values);
+			foreach (Project p in values)
+				UnloadProject (p);
 		}
 
 		[MonoTODO]
