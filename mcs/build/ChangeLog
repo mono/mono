@@ -1,3 +1,8 @@
+2009-12-02  Marek Safar  <marek.safar@gmail.com>
+
+	* common/basic-profile-check.cs: Bump bootstrap requirement to Mono
+	2.4+.
+
 2009-11-17  Marek Habersack  <mhabersack@novell.com>
 
 	* tests.make (TEST_RUNTIME_WRAPPERS_PATH): added - used to set up

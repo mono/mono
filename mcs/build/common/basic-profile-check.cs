@@ -5,8 +5,13 @@ class X {
 	static int Main ()
 	{
 		// Check installed mscorlib
-		// Type is included in Mono 2.0+, and .NET 2.0 SP1+
-		object o = typeof (System.Runtime.GCLatencyMode);
+		// Type is included in Mono 2.4+, and .NET 3.5 SP1
+		object o = typeof (System.Runtime.InteropServices.AllowReversePInvokeCallsAttribute);
+		
+		// It should crash but double check it in case of very old old runtime
+		if (o == null)
+			return 1;
+
 		return 0;
 	}
 }
