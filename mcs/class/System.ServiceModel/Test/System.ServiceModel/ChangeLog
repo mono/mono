@@ -1,3 +1,9 @@
+2009-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs :
+	  I have to disable a lot of connective tests that somehow blocks
+	  test runs. No idea why it started to happen though.
+
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBaseTest.cs : add test for checking non-mex contract

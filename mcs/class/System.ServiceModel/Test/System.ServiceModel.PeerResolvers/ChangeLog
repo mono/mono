@@ -1,3 +1,11 @@
+2009-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomPeerResolverServiceTest.cs :
+	  I have to disable a lot of connective tests that somehow blocks
+	  test runs. No idea why it started to happen though.
+	  (It internally uses HTTP binding, which is the indirect source of
+	  the problem here.)
+
 2009-07-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* PeerResolverSerializationTest.cs : fix test name/namespace.

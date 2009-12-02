@@ -1,3 +1,9 @@
+2009-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntimeTest.cs :
+	  I have to disable a lot of connective tests that somehow blocks
+	  test runs. No idea why it started to happen though.
+
 2009-09-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcherTest.cs : add a test to make sure that
