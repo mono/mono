@@ -117,7 +117,7 @@ class MDocToHtmlConverter : MDocCommand {
 			try {
 				XmlDocument templatexsl = new XmlDocument();
 				templatexsl.Load(opts.template);
-				template = new XslCompiledTransform ();
+				template = new XslCompiledTransform (DebugOutput);
 				template.Load(templatexsl);
 			} catch (Exception e) {
 				throw new ApplicationException("There was an error loading " + opts.template, e);
@@ -248,7 +248,7 @@ class MDocToHtmlConverter : MDocCommand {
 		}
 	}
 	
-	private static XslCompiledTransform LoadTransform(string name, List<string> sourceDirectories) {
+	private XslCompiledTransform LoadTransform(string name, List<string> sourceDirectories) {
 		try {
 			XmlDocument xsl = new XmlDocument();
 			xsl.Load(Assembly.GetExecutingAssembly().GetManifestResourceStream(name));
@@ -267,7 +267,7 @@ class MDocToHtmlConverter : MDocCommand {
 					xsl.DocumentElement.AppendChild(xsl.ImportNode(node, true));
 			}
 			
-			XslCompiledTransform t = new XslCompiledTransform ();
+			XslCompiledTransform t = new XslCompiledTransform (DebugOutput);
 			t.Load (
 					xsl, 
 					XsltSettings.TrustedXslt,

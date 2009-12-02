@@ -1,3 +1,15 @@
+2009-12-02  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocs2html.cs: Enable debug output in
+	  XslCompiledTransform when --debug is specified.
+	* Resources/overview.xsl: Add xmlns, exclude-result-prefixes so that
+	  .NET won't complain about the stylesheet.  (Why's it complain?)
+	* Resources/stylesheet.xsl: .NET compatibility fixes:
+	  - Use msxsl:node-set() when necessary.
+	  - Change XPath expressions so that they work properly everywhere.
+	* Makefile: Don't build an 'mdoc-net.exe' anymore, as the normal
+	  mdoc.exe can now run normally under .NET.
+
 2009-11-25  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile: When copying mdoc-net.exe into ./mdoc-net, rename it to
