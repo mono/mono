@@ -1,5 +1,14 @@
 2009-12-02  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Use a gray queue instead of requiring that gray
+	objects are in a contiguous region.
+
+	* sgen-gray.c: The gray queue implementation.
+
+	* Makefile.am: sgen-gray.c added.
+
+2009-12-02  Mark Probst  <mark.probst@gmail.com>
+
 	* appdomain.c: When unloading a domain, zero its static data and
 	perform a minor collection when using SGen.  That will get rid of
 	all the remsets pointing into that domain's static data.
