@@ -14,10 +14,10 @@ namespace Mono.Documentation {
 
 		public override Uri ResolveUri (Uri baseUri, string relativeUri)
 		{
-			using (Stream s = Assembly.GetExecutingAssembly ().GetManifestResourceStream (relativeUri)) {
-				if (s != null)
+			if (Array.IndexOf (
+						Assembly.GetExecutingAssembly ().GetManifestResourceNames (), 
+						relativeUri) >= 0)
 					return new Uri ("x-resource:///" + relativeUri);
-			}
 			foreach (var dir in dirs) {
 				if (File.Exists (Path.Combine (dir, relativeUri)))
 					return base.ResolveUri (new Uri ("file://" + new DirectoryInfo (dir).FullName + "/"), 

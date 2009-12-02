@@ -23,6 +23,8 @@
 <xsl:stylesheet
 	version="1.0"
 	xmlns:xsl="http://www.w3.org/1999/XSL/Transform"
+	xmlns:msxsl="urn:schemas-microsoft-com:xslt"
+	exclude-result-prefixes="msxsl"
 	>
 	<xsl:import href="mdoc-html-format.xsl" />
 	
@@ -93,7 +95,7 @@
 				</xsl:for-each>
 				<a>
 					<xsl:attribute name="href">
-						<xsl:call-template name="GetLinkTarget">
+						<xsl:call-template name="GetLinkTargetHtml">
 							<xsl:with-param name="type" select="@Type" />
 							<xsl:with-param name="cref">
 								<xsl:text>T:</xsl:text>
@@ -851,11 +853,11 @@
 		<xsl:param name="wrt" select="'notset'"/>
 		<xsl:param name="nested" select="0"/>
 
-		<xsl:param name="btype">
+		<xsl:variable name="btype">
 			<xsl:call-template name="ToBrackets">
 				<xsl:with-param name="s" select="$type" />
 			</xsl:call-template>
-		</xsl:param>
+		</xsl:variable>
 
 		<xsl:variable name="array">
 			<xsl:call-template name="GetArraySuffix">
@@ -881,7 +883,7 @@
 			</xsl:call-template>
 		</xsl:when>
 
-		<xsl:when test="$array">
+		<xsl:when test="string($array)">
 			<xsl:call-template name="maketypelink">
 				<xsl:with-param name="type" select="substring($type, 1, string-length($type) - string-length ($array))"/>
 				<xsl:with-param name="wrt" select="$wrt"/>
@@ -924,7 +926,7 @@
 			</xsl:variable>
 			<a>
 				<xsl:attribute name="href">
-					<xsl:call-template name="GetLinkTarget">
+					<xsl:call-template name="GetLinkTargetHtml">
 						<xsl:with-param name="type" select="$escaped-type" />
 						<xsl:with-param name="cref" select="concat ('T:', $escaped-type)" />
 					</xsl:call-template>
@@ -1149,7 +1151,7 @@
 		</xsl:variable>
 		<a>
 			<xsl:attribute name="href">
-				<xsl:call-template name="GetLinkTarget">
+				<xsl:call-template name="GetLinkTargetHtml">
 					<xsl:with-param name="type" select="$escaped-type" />
 					<xsl:with-param name="cref">
 						<xsl:call-template name="ToBraces">
@@ -1661,11 +1663,11 @@
 				</xsl:call-template>
 			</xsl:variable>
 
-			<xsl:if test="not($basedocsfile='--not-available--')">
+			<xsl:if test="not(string($basedocsfile) = '')">
 				<xsl:call-template name="GetInheritedMembers">
 					<xsl:with-param name="listmembertype" select="$listmembertype"/>
 					<xsl:with-param name="showprotected" select="$showprotected"/>
-					<xsl:with-param name="declaringtype" select="document($basedocsfile,.)/Type"/>
+					<xsl:with-param name="declaringtype" select="document(string($basedocsfile),.)/Type"/>
 					<xsl:with-param name="generictypereplacements" select="$declaringtype/Base/BaseTypeArguments/*"/>
 					<xsl:with-param name="showstatic" select='0'/>
 				</xsl:call-template>
@@ -1801,7 +1803,7 @@
 		<xsl:variable name="TypeName" select="@Name"/>		
 		<xsl:variable name="TypeNamespace" select="substring-before(@FullName, concat('.',@Name))"/>
 		
-		<xsl:variable name="MEMBERS">
+		<xsl:variable name="MEMBERS-rtf">
 			<xsl:call-template name="GetInheritedMembers">
 				<xsl:with-param name="listmembertype" select="$listmembertype"/>
 				<xsl:with-param name="showprotected" select="$showprotected"/>
@@ -1809,6 +1811,7 @@
 				<xsl:with-param name="overloads-mode" select="$overloads-mode" />
 			</xsl:call-template>
 		</xsl:variable>
+		<xsl:variable name="MEMBERS" select="msxsl:node-set($MEMBERS-rtf)" />
 		
 		<!--
 		<xsl:variable name="MEMBERS" select="
@@ -1822,7 +1825,7 @@
 		-->
 		
 		<!-- if there aren't any, skip this -->
-		<xsl:if test="count($MEMBERS/Member)">
+		<xsl:if test="count($MEMBERS//Member)">
 
 		<xsl:variable name="SectionName">
 			<xsl:if test="$listmembertype != 'Explicit' and $listmembertype != 'ExtensionMethod'">
@@ -1841,7 +1844,7 @@
 				<xsl:call-template name="CreateMembersTable">
 				<xsl:with-param name="content">
 
-				<xsl:for-each select="$MEMBERS/Member">
+				<xsl:for-each select="$MEMBERS/Members/Member">
 					<!--<xsl:sort select="contains(MemberSignature[@Language='C#']/@Value,' static ')" data-type="text"/>-->
 					<xsl:sort select="@MemberName = 'op_Implicit' or @MemberName = 'op_Explicit'"/>
 					<xsl:sort select="@ExplicitMemberName" data-type="text"/>
@@ -1866,7 +1869,7 @@
 
 					<xsl:variable name="linkid">
 						<xsl:if test="not(parent::Members/@FullName = $TypeFullName)">
-							<xsl:call-template name="GetLinkTarget">
+							<xsl:call-template name="GetLinkTargetHtml">
 								<xsl:with-param name="type">
 									<xsl:choose>
 										<xsl:when test="count(Link) = 1">
@@ -2222,11 +2225,12 @@
 		<xsl:param name="arglist" />
 		<xsl:param name="count" />
 
-		<xsl:variable name="rest">
+		<xsl:variable name="rest-rtf">
 			<xsl:call-template name="SkipTypeArgument">
 				<xsl:with-param name="s" select="$arglist" />
 			</xsl:call-template>
 		</xsl:variable>
+		<xsl:variable name="rest" select="string($rest-rtf)" />
 
 		<xsl:choose>
 			<xsl:when test="$arglist != '' and $rest = ''">
@@ -2260,11 +2264,12 @@
 	<xsl:template name="SkipTypeArgument">
 		<xsl:param name="s" />
 
-		<xsl:variable name="p">
+		<xsl:variable name="p-rtf">
 			<xsl:call-template name="GetCLtGtPositions">
 				<xsl:with-param name="s" select="$s" />
 			</xsl:call-template>
 		</xsl:variable>
+		<xsl:variable name="p" select="msxsl:node-set($p-rtf)"/>
 
 		<xsl:choose>
 			<!--
@@ -2307,11 +2312,9 @@ SkipTypeArgument: invalid type substring '<xsl:value-of select="$s" />'
 		<xsl:variable name="lt" select="substring-before ($s, '&lt;')" />
 		<xsl:variable name="gt" select="substring-before ($s, '&gt;')" />
 
-		<Positions>
 			<Comma String="{$c}" Length="{string-length ($c)}" />
 			<Lt String="{$lt}" Length="{string-length ($lt)}" />
 			<Gt String="{$gt}" Length="{string-length ($gt)}" />
-		</Positions>
 	</xsl:template>
 
 	<!--
@@ -2323,11 +2326,12 @@ SkipTypeArgument: invalid type substring '<xsl:value-of select="$s" />'
 	<xsl:template name="SkipGenericArgument">
 		<xsl:param name="s" />
 
-		<xsl:variable name="p">
+		<xsl:variable name="p-rtf">
 			<xsl:call-template name="GetCLtGtPositions">
 				<xsl:with-param name="s" select="$s" />
 			</xsl:call-template>
 		</xsl:variable>
+		<xsl:variable name="p" select="msxsl:node-set($p-rtf)" />
 
 		<xsl:choose>
 			<xsl:when test="starts-with ($s, '>')">
@@ -2430,12 +2434,13 @@ SkipGenericArgument: invalid type substring '<xsl:value-of select="$s" />'
 		</xsl:if>
 		<xsl:if test="$member/@MemberName='op_Implicit' or $member/@MemberName='op_Explicit'">
 			<xsl:text>~</xsl:text>
+			<xsl:variable name="parameter-rtf">
+				<Parameter Type="{$member/ReturnValue/ReturnType}" />
+			</xsl:variable>
 			<xsl:call-template name="GetParameterType">
 				<xsl:with-param name="type" select="$type" />
 				<xsl:with-param name="member" select="$member" />
-				<xsl:with-param name="parameter">
-					<Parameter Type="{$member/ReturnValue/ReturnType}" />
-				</xsl:with-param>
+				<xsl:with-param name="parameter" select="msxsl:node-set($parameter-rtf)" />
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
@@ -2630,6 +2635,24 @@ SkipGenericArgument: invalid type substring '<xsl:value-of select="$s" />'
 			<i>Note: This namespace, class, or member is supported only in version <xsl:value-of select="@version" />
 			and later.</i>
 		</p>
+	</xsl:template>
+
+	<xsl:template name="GetLinkTargetHtml">
+		<xsl:param name="type" />
+		<xsl:param name="cref" />
+
+		<xsl:variable name="href">
+			<xsl:call-template name="GetLinkTarget">
+				<xsl:with-param name="type" select="$type" />
+				<xsl:with-param name="cref" select="$cref" />
+			</xsl:call-template>
+		</xsl:variable>
+		<xsl:choose>
+			<xsl:when test="string($href) = ''">
+				<xsl:text>javascript:alert("Documentation not found.")</xsl:text>
+			</xsl:when>
+			<xsl:otherwise><xsl:value-of select="$href" /></xsl:otherwise>
+		</xsl:choose>
 	</xsl:template>
 
 </xsl:stylesheet>

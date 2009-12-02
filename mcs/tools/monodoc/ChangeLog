@@ -1,3 +1,19 @@
+2009-12-02  Jonathan Pryor  <jpryor@novell.com>
+
+	* Mono.Documentation/ManifestResourceResolver.cs:
+	  Assembly.GetManifestResourceStream() throws an exception if the
+	  resource isn't present (instead of returning null), so don't just
+	  call it to see if the resource exists.
+	* Resources/mdoc-html-utils.xsl: .NET compatibility fixes (so that
+	  mdoc can run under .NET w/o bundling Mono's System.Xml):
+	  - Use msxsl:node-set() when required.
+	  - Use <xsl:variable/> not <xsl:param/> when a variable is needed.
+	  - Change semantics of GetLinkTarget(): instead of returning
+	    javascript code (previous behavior) or '--not-available--' (did
+	    this ever happen), return "" if the target can't be found.
+	  - Add GetLinkTargetHtml() to wrap GetLinkTarget() and return the
+	    previous javascript if the target couldn't be found.
+
 2009-11-24  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/ecma-provider.cs: Use XslCompiledTransform instead of
