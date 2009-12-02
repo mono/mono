@@ -1,3 +1,9 @@
+2009-12-02  Mark Probst  <mark.probst@gmail.com>
+
+	* mono-hash.c: Don't use MONO_ROOT_SETREF for setting keys and
+	values.  It's unnecessary - the hash table has a marking function
+	which takes care of all GC-tracked keys and values.
+
 2009-11-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-ehash.c (mono_g_hash_table_find): Add this for eglib too.
