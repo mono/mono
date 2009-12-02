@@ -1,5 +1,19 @@
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata.c (mono_metadata_inflate_generic_inst): Add MonoError parameter.
+
+	* metadata-internals.h: Change signature of mono_metadata_inflate_generic_inst. 
+
+	* class.c (inflate_generic_type): Use new version of mono_metadata_inflate_generic_inst.
+
+	* class.c (inflate_generic_context): Ditto.
+
+	* loader.c (method_from_methodspec): Ditto.
+
+	Fixes #558230.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_type_retrieve_from_typespec): Use MonoError machinery to report errors.
 
 	* class.c (mono_class_create_from_typespec): Ditto.
