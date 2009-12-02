@@ -1,5 +1,13 @@
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (do_invoke_method): Check for invalid method signatures.
+
+	Fixes #553450.
+
+	Backport of r147464.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_setup_fields): Fail an enum without an instance field.
 
 	Fixes #558042.
