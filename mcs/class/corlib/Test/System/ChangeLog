@@ -1,3 +1,8 @@
+2009-12-02  Jb Evain  <jbevain@novell.com>
+
+	* AttributeTest.cs: add tests for retrieving custom attributes
+	defined on parameters on virtual methods.
+
 2009-12-01  Jb Evain  <jbevain@novell.com>
 
 	* TypeTest.cs: add tests for namespaces of generic parameter types.

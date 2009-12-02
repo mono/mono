@@ -918,4 +918,132 @@ namespace MonoTests.System
 		{
 		}
 	}
+
+	namespace ParamNamespace {
+
+		class FooAttribute : Attribute {}
+		class BarAttribute : Attribute {}
+
+		class DataAttribute : Attribute {
+
+			public string Data { get; set; }
+
+			public DataAttribute (string data)
+			{
+				this.Data = data;
+			}
+		}
+
+		class UltraBase {
+
+			public virtual void Bar ([Foo] string bar, [Data ("UltraBase.baz")] string baz)
+			{
+			}
+		}
+
+		class Base : UltraBase {
+
+			public override void Bar ([Data ("Base.bar")] string bar, string baz)
+			{
+			}
+		}
+
+		class Derived : Base {
+
+			public override void Bar ([Bar] string bar, [Data ("Derived.baz")] string baz)
+			{
+			}
+		}
+	}
+
+	[TestFixture]
+	public class ParamAttributeTest {
+
+		static ParameterInfo GetParameter (Type type, string method_name, string param_name)
+		{
+			foreach (var method in type.GetMethods ()) {
+				if (method.Name != method_name)
+					continue;
+
+				foreach (var parameter in method.GetParameters ())
+					if (parameter.Name == param_name)
+						return parameter;
+			}
+
+			return null;
+		}
+
+		[Test]
+		public void IsDefinedTopLevel ()
+		{
+			var parameter = GetParameter (typeof (ParamNamespace.Derived), "Bar", "bar");
+
+			Assert.IsNotNull (parameter);
+			Assert.IsTrue (Attribute.IsDefined (parameter, typeof (ParamNamespace.BarAttribute)));
+		}
+
+		[Test]
+		public void IsDefinedHierarchy ()
+		{
+			var parameter = GetParameter (typeof (ParamNamespace.Derived), "Bar", "bar");
+
+			Assert.IsNotNull (parameter);
+			Assert.IsTrue (Attribute.IsDefined (parameter, typeof (ParamNamespace.FooAttribute)));
+		}
+
+		[Test]
+		public void IsDefinedHierarchyMultiple ()
+		{
+			var parameter = GetParameter (typeof (ParamNamespace.Derived), "Bar", "baz");
+
+			Assert.IsNotNull (parameter);
+			Assert.IsTrue (Attribute.IsDefined (parameter, typeof (ParamNamespace.DataAttribute)));
+		}
+
+		[Test]
+		public void GetCustomAttributeTopLevel ()
+		{
+			var parameter = GetParameter (typeof (ParamNamespace.Derived), "Bar", "bar");
+
+			Assert.IsNotNull (Attribute.GetCustomAttribute (parameter, typeof (ParamNamespace.BarAttribute)));
+		}
+
+		[Test]
+		public void GetCustomAttributeHierarchy ()
+		{
+			var parameter = GetParameter (typeof (ParamNamespace.Derived), "Bar", "bar");
+			var data = (ParamNamespace.DataAttribute) Attribute.GetCustomAttribute (parameter, typeof (ParamNamespace.DataAttribute));
+			Assert.IsNotNull (data);
+			Assert.AreEqual ("Base.bar", data.Data);
+		}
+
+		[Test]
+		public void GetCustomAttributeHierarchyMultiple ()
+		{
+			var parameter = GetParameter (typeof (ParamNamespace.Derived), "Bar", "baz");
+			var data = (ParamNamespace.DataAttribute) Attribute.GetCustomAttribute (parameter, typeof (ParamNamespace.DataAttribute));
+			Assert.IsNotNull (data);
+			Assert.AreEqual ("Derived.baz", data.Data);
+		}
+
+		[Test]
+		public void GetAllCustomAttributes ()
+		{
+			var parameter = GetParameter (typeof (ParamNamespace.Derived), "Bar", "bar");
+			var attributes = (Attribute []) Attribute.GetCustomAttributes (parameter, true);
+			Assert.AreEqual (3, attributes.Length);
+			Assert.AreEqual (typeof (ParamNamespace.BarAttribute), attributes [0].GetType ());
+			Assert.AreEqual (typeof (ParamNamespace.DataAttribute), attributes [1].GetType ());
+			Assert.AreEqual (typeof (ParamNamespace.FooAttribute), attributes [2].GetType ());
+		}
+
+		[Test]
+		public void GetDataCustomAttributes ()
+		{
+			var parameter = GetParameter (typeof (ParamNamespace.Derived), "Bar", "baz");
+			var attributes = (ParamNamespace.DataAttribute []) Attribute.GetCustomAttributes (parameter, typeof (ParamNamespace.DataAttribute), true);
+			Assert.AreEqual (1, attributes.Length);
+			Assert.AreEqual ("Derived.baz", attributes [0].Data);
+		}
+	}
 }
