@@ -1,3 +1,11 @@
+2009-12-02  Jb Evain  <jbevain@novell.com>
+
+	* appdomain.c (MONO_CORLIB_VERSION): bump.
+	* icall-def.h (get_base_definition): renamed to get_base_method
+	and add a boolean argument indicating we want the original
+	method definition, or the immediate base method.
+	* icall.c: apply the get_base_definition to get_base_method change.
+
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_fields): Fail an enum without an instance field.
