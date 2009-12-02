@@ -126,11 +126,16 @@ namespace System.Reflection {
 		internal static extern string get_name (MethodBase method);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		internal static extern MonoMethod get_base_definition (MonoMethod method);
+		internal static extern MonoMethod get_base_method (MonoMethod method, bool definition);
 
 		public override MethodInfo GetBaseDefinition ()
 		{
-			return get_base_definition (this);
+			return get_base_method (this, true);
+		}
+
+		internal override MethodInfo GetBaseMethod ()
+		{
+			return get_base_method (this, false);
 		}
 
 		public override ParameterInfo ReturnParameter {

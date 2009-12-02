@@ -1,3 +1,12 @@
+2009-12-02  Jb Evain  <jbevain@novell.com>
+
+	* MethodInfo.cs: add an internal virtual GetBaseMethod
+	returning the immediate predecessor in the inheritance chain.
+	* MonoMethod.cs: modify the get_base_definition icall to take
+	a boolean indicating that we want the immediate	base method
+	or the original method definition and rename it to
+	get_base_method. Implement GetBaseMethod with it.
+
 2009-11-21  Miguel de Icaza  <miguel@novell.com>
 
 	* Assembly.cs: Implement missing method.

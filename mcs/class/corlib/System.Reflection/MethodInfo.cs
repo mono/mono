@@ -41,6 +41,11 @@ namespace System.Reflection {
 
 		public abstract MethodInfo GetBaseDefinition();
 
+		internal virtual MethodInfo GetBaseMethod ()
+		{
+			return this;
+		}
+
 		protected MethodInfo() {
 		}
 

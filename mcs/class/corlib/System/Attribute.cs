@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.InteropServices;
 
@@ -36,7 +37,6 @@ namespace System
 {
 	[AttributeUsage (AttributeTargets.All)]
 	[Serializable]
-
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_Attribute))]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
@@ -131,9 +131,7 @@ namespace System
 			// neither parameter is allowed to be null
 			CheckParameters (element, attributeType);
 
-			// ParameterInfo inheritance hierarchies CAN NOT be searched for attributes, so the second
-			// parameter of GetCustomAttributes () is IGNORED.
-			object[] attributes = element.GetCustomAttributes (attributeType, inherit);
+			object[] attributes = GetCustomAttributes (element, attributeType, inherit);
 
 			return FindAttribute (attributes);
 		}
@@ -201,6 +199,10 @@ namespace System
 			// element parameter is not allowed to be null
 			CheckParameters (element, attributeType);
 
+			Attribute [] attributes;
+			if (inherit && TryGetParamCustomAttributes (element, attributeType, out attributes))
+				return attributes;
+
 			return (Attribute []) element.GetCustomAttributes (attributeType, inherit);
 		}
 
@@ -263,7 +265,7 @@ namespace System
 			// element parameter is not allowed to be null
 			CheckParameters (element, typeof (Attribute));
 
-			return (Attribute []) element.GetCustomAttributes (inherit);
+			return GetCustomAttributes (element, typeof (Attribute), inherit);
 		}
 
 		public override int GetHashCode ()
@@ -331,7 +333,6 @@ namespace System
 			return element.IsDefined (attributeType, inherit);
 		}
 
-		// FIXME: MS apparently walks the inheritance way in some form.
 		public static bool IsDefined (ParameterInfo element, Type attributeType, bool inherit)
 		{
 			CheckParameters (element, attributeType);
@@ -339,8 +340,74 @@ namespace System
 			if (element.IsDefined (attributeType, inherit))
 				return true;
 
-			// FIXME: MS walks up the inheritance chain in some crazy way
-			return IsDefined (element.Member, attributeType, inherit);
+			if (inherit)
+				return IsDefinedOnParameter (element, attributeType);
+
+			return false;
+		}
+
+		static bool IsDefinedOnParameter (ParameterInfo parameter, Type attributeType)
+		{
+			var member = parameter.Member;
+			if (member.MemberType != MemberTypes.Method)
+				return false;
+
+			var method = ((MethodInfo) member).GetBaseMethod ();
+
+			while (true) {
+				var param = method.GetParameters () [parameter.Position];
+				if (param.IsDefined (attributeType, false))
+					return true;
+
+				var base_method = method.GetBaseMethod ();
+				if (base_method == method)
+					break;
+
+				method = base_method;
+			}
+
+			return false;
+		}
+
+		static bool TryGetParamCustomAttributes (ParameterInfo parameter, Type attributeType, out Attribute [] attributes)
+		{
+			attributes = null;
+
+			if (parameter.Member.MemberType != MemberTypes.Method)
+				return false;
+
+			var method = (MethodInfo) parameter.Member;
+			var definition = method.GetBaseDefinition ();
+
+			if (method == definition)
+				return false;
+
+			var types = new List<Type> ();
+			var custom_attributes = new List<Attribute> ();
+
+			while (true) {
+				var param = method.GetParameters () [parameter.Position];
+				var param_attributes = (Attribute []) param.GetCustomAttributes (attributeType, false);
+				foreach (var param_attribute in param_attributes) {
+					var param_type = param_attribute.GetType ();
+					if (types.Contains (param_type))
+						continue;
+
+					types.Add (param_type);
+					custom_attributes.Add (param_attribute);
+				}
+
+				var base_method = method.GetBaseMethod ();
+				if (base_method == method)
+					break;
+
+				method = base_method;
+			}
+
+			attributes = (Attribute []) Array.CreateInstance (attributeType, custom_attributes.Count);
+			custom_attributes.CopyTo (attributes, 0);
+
+			return true;
 		}
 
 		public virtual bool Match (object obj)

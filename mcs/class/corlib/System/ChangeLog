@@ -1,3 +1,11 @@
+2009-12-02  Jb Evain  <jbevain@novell.com>
+
+	* Environment.cs (mono_corlib_version): bump.
+	* Attribute.cs: when retrieving custom attributes defined
+	on parameters belonging to a virtual method, walk
+	the inheritance chain to check for parameters attributes
+	all the way down.
+
 2009-12-01  Jb Evain  <jbevain@novell.com>
 
 	* Type.cs (MakeByRefType): throw a TypeLoadException when being
