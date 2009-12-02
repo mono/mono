@@ -3406,7 +3406,7 @@ mono_metadata_typedef_from_field (MonoImage *meta, guint32 index)
 		loc.idx = search_ptr_table (meta, MONO_TABLE_FIELD_POINTER, loc.idx);
 
 	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, typedef_locator))
-		g_assert_not_reached ();
+		return 0;
 
 	/* loc_result is 0..1, needs to be mapped to table index (that is +1) */
 	return loc.result + 1;
@@ -3437,7 +3437,7 @@ mono_metadata_typedef_from_method (MonoImage *meta, guint32 index)
 		loc.idx = search_ptr_table (meta, MONO_TABLE_METHOD_POINTER, loc.idx);
 
 	if (!bsearch (&loc, tdef->base, tdef->rows, tdef->row_size, typedef_locator))
-		g_assert_not_reached ();
+		return 0;
 
 	/* loc_result is 0..1, needs to be mapped to table index (that is +1) */
 	return loc.result + 1;

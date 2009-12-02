@@ -1,3 +1,9 @@
+
+Wed Dec 2 15:48:19 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, class.c, loader.c: remove assert after bsearch() for
+	incorrect assemblies (bug #553322).
+
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c (mono_metadata_inflate_generic_inst): Add MonoError parameter.
