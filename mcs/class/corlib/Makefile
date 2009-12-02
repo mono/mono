@@ -23,7 +23,7 @@ RESOURCE_FILES = \
 	resources/collation.cjkKOlv2.bin
 
 corlib_flags = -unsafe -nostdlib
-LOCAL_MCS_FLAGS = -nowarn:612,618 -d:INSIDE_CORLIB
+LOCAL_MCS_FLAGS = -nowarn:612,618 -d:INSIDE_CORLIB -d:LIBC
 
 # System.IO/DirectoryInfoTest.cs needs Mono.Posix
 TEST_MCS_FLAGS = -debug+ -debug:full -nowarn:168,219,618,672 -unsafe -r:$(topdir)/class/lib/$(PROFILE)/Mono.Posix.dll -define:MONO_DATACONVERTER_STATIC_METHODS
