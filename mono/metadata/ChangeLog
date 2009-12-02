@@ -6,6 +6,8 @@
 
 	* verify.c (do_newobj): Ditto.
 
+	Fixes #558046.
+
 2009-12-02  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Use a gray queue instead of requiring that gray
