@@ -2097,8 +2097,12 @@ namespace System.Linq.Expressions {
 					throw new ArgumentNullException ("expression");
 				if (!expression.Type.IsAssignableTo (propertyAccessor.DeclaringType))
 					throw new ArgumentException ("expression");
-			} else if (expression != null)
-				throw new ArgumentException ("expression");
+			} 
+			//
+			// .NET does not mandate that if the property is static, that the expression must be null
+			// fixes a bug exposed by Orchard's ContentItemRecordAlteration.Alteration
+			// else if (expression != null)
+			//		throw new ArgumentException ("expression");
 
 			var prop = GetAssociatedProperty (propertyAccessor);
 			if (prop == null)

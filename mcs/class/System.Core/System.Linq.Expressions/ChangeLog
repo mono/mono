@@ -1,3 +1,8 @@
+2009-12-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Expression.cs: expression can be null for static getters. Patch from
+	Miguel de Icaza (miguel@novell.com).
+
 2009-11-15  Jb Evain  <jbevain@novell.com>
 
 	* Expression (Call): deal with lambda expression <> delegate
