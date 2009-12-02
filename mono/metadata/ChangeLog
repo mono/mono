@@ -1,3 +1,12 @@
+2009-12-02  Mark Probst  <mark.probst@gmail.com>
+
+	* appdomain.c: When unloading a domain, zero its static data and
+	perform a minor collection when using SGen.  That will get rid of
+	all the remsets pointing into that domain's static data.
+
+	* sgen-gc.c: Allow remsets into static data.  By doing this we
+	need less checks so we're more efficient.
+
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): Check for catch clauses with broken
