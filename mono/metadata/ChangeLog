@@ -1,5 +1,15 @@
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (get_stack_type): Return that the type is invalid instead of
+	asserting.
+
+	* verify.c (mono_method_verify): Verify that all locals and arguments
+	have valid stack types.
+
+	Fixes #559913.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_method_verify): Bounds check the filter offset. Make all
 	bounds checking overflow aware.
 
