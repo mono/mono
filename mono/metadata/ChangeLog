@@ -1,5 +1,14 @@
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): Bounds check the filter offset. Make all
+	bounds checking overflow aware.
+
+	Fixes #559910.
+
+	Backport of r147472.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_invoke_method): Check for invalid method signatures.
 
 	Fixes #553450.
