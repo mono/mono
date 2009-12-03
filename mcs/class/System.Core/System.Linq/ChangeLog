@@ -1,3 +1,8 @@
+2009-12-03  Marek Safar  <marek.safar@gmail.com>
+
+	* EnumerableExecutor.cs, EnumerableExecutor_T.cs, EnumerableQuery.cs
+	EnumerableQuery_T.cs: Implemented.
+
 2009-11-14  Jb Evain  <jbevain@novell.com>
 
 	* QueryableTransformer: adjust to latest ExpressionTransformer

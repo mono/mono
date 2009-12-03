@@ -23,6 +23,10 @@ System.Runtime.CompilerServices/IStrongBox.cs
 System.Runtime.CompilerServices/StrongBox_T.cs
 System.Linq/Check.cs
 System.Linq/Enumerable.cs
+System.Linq/EnumerableExecutor.cs
+System.Linq/EnumerableExecutor_T.cs
+System.Linq/EnumerableQuery.cs
+System.Linq/EnumerableQuery_T.cs
 System.Linq/QueryableEnumerable.cs
 System.Linq/Grouping.cs
 System.Linq/IGrouping.cs
