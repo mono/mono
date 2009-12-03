@@ -1,3 +1,8 @@
+2009-12-03  Mark Probst  <mark.probst@gmail.com>
+
+	* appdomain.c (create_exceptions): Set the domain temporarily if
+	necessary to avoid cross-domain references.
+
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (get_stack_type): Return that the type is invalid instead of
