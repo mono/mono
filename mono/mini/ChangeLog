@@ -1,3 +1,14 @@
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Rework the handling of stack traces of running threads to
+	avoid crashes if compute_frames () tries to walk the stack of running thread.
+
+	* mini.c (mono_print_method_from_ip): Use mini_jit_info_table_find.
+
+	* mini-exceptions.c (mono_jit_walk_stack_from_ctx_in_thread): Set frame->lmf.
+
+	* mini.h (StackFrameInfo): Add an 'lmf' field.
+
 2009-12-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (suspend_current): Always set really_suspended.
