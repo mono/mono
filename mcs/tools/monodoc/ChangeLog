@@ -1,3 +1,8 @@
+2009-12-03  Jonathan Pryor  <jpryor@novell.com>
+
+	* Resources/mdoc-html-utils.xsl: Fix link-id generation of conversion
+	  operators.
+
 2009-12-02  Jonathan Pryor  <jpryor@novell.com>
 
 	* Mono.Documentation/ManifestResourceResolver.cs:

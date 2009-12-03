@@ -2440,7 +2440,7 @@ SkipGenericArgument: invalid type substring '<xsl:value-of select="$s" />'
 			<xsl:call-template name="GetParameterType">
 				<xsl:with-param name="type" select="$type" />
 				<xsl:with-param name="member" select="$member" />
-				<xsl:with-param name="parameter" select="msxsl:node-set($parameter-rtf)" />
+				<xsl:with-param name="parameter" select="msxsl:node-set($parameter-rtf)/Parameter" />
 			</xsl:call-template>
 		</xsl:if>
 	</xsl:template>
