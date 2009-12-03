@@ -30,7 +30,7 @@ namespace Mono.Debugger
 			Socket accepted = null;
 			try {
 				accepted = socket.Accept ();
-			} catch (ObjectDisposedException) {
+			} catch (Exception) {
 				throw;
 			}
 
@@ -111,7 +111,7 @@ namespace Mono.Debugger
 			if (con_sock != null) {
 				try {
 					con_acc = con_sock.Accept ();
-				} catch (ObjectDisposedException) {
+				} catch (Exception) {
 					try {
 						dbg_sock.Close ();
 					} catch {}
@@ -121,7 +121,7 @@ namespace Mono.Debugger
 						
 			try {
 				dbg_acc = dbg_sock.Accept ();
-			} catch (ObjectDisposedException) {
+			} catch (Exception) {
 				if (con_sock != null) {
 					try {
 						con_sock.Close ();
