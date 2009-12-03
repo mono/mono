@@ -13,7 +13,7 @@
 using System;
 using System.Diagnostics;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -919,7 +919,7 @@ namespace Mono.CSharp {
 		/// Creates instance of SecurityAttribute class and add result of CreatePermission method to permission table.
 		/// </summary>
 		/// <returns></returns>
-		public void ExtractSecurityPermissionSet (ListDictionary permissions)
+		public void ExtractSecurityPermissionSet (Dictionary<SecurityAction, PermissionSet> permissions)
 		{
 			Type orig_assembly_type = null;
 
@@ -998,8 +998,8 @@ namespace Mono.CSharp {
 				}
 			}
 
-			PermissionSet ps = (PermissionSet)permissions [action];
-			if (ps == null) {
+			PermissionSet ps;
+			if (!permissions.TryGetValue (action, out ps)) {
 				if (sa is PermissionSetAttribute)
 					ps = new PermissionSet (sa.Unrestricted ? PermissionState.Unrestricted : PermissionState.None);
 				else
@@ -1186,13 +1186,13 @@ namespace Mono.CSharp {
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return type.GetHashCode () ^ Target.GetHashCode ();
 		}
 
 		/// <summary>
 		/// Emit attribute for Attributable symbol
 		/// </summary>
-		public void Emit (ListDictionary allEmitted)
+		public void Emit (Dictionary<Attribute, List<Attribute>> allEmitted)
 		{
 			CustomAttributeBuilder cb = Resolve ();
 			if (cb == null)
@@ -1217,10 +1217,10 @@ namespace Mono.CSharp {
 			}
 
 			if (!usage_attr.AllowMultiple && allEmitted != null) {
-				if (allEmitted.Contains (this)) {
-					ArrayList a = allEmitted [this] as ArrayList;
+				if (allEmitted.ContainsKey (this)) {
+					var a = allEmitted [this];
 					if (a == null) {
-						a = new ArrayList (2);
+						a = new List<Attribute> (2);
 						allEmitted [this] = a;
 					}
 					a.Add (this);
@@ -1383,20 +1383,20 @@ namespace Mono.CSharp {
 	}
 
 	public class Attributes {
-		public readonly ArrayList Attrs;
+		public readonly List<Attribute> Attrs;
 
 		public Attributes (Attribute a)
 		{
-			Attrs = new ArrayList ();
+			Attrs = new List<Attribute> ();
 			Attrs.Add (a);
 		}
 
-		public Attributes (ArrayList attrs)
+		public Attributes (List<Attribute> attrs)
 		{
 			Attrs = attrs;
 		}
 
-		public void AddAttributes (ArrayList attrs)
+		public void AddAttributes (List<Attribute> attrs)
 		{
 			Attrs.AddRange (attrs);
 		}
@@ -1409,7 +1409,7 @@ namespace Mono.CSharp {
 
 		public Attributes Clone ()
 		{
-			ArrayList al = new ArrayList (Attrs.Count);
+			var al = new List<Attribute> (Attrs.Count);
 			foreach (Attribute a in Attrs)
 				al.Add (a.Clone ());
 
@@ -1459,7 +1459,7 @@ namespace Mono.CSharp {
 		{
 			CheckTargets ();
 
-			ListDictionary ld = Attrs.Count > 1 ? new ListDictionary () : null;
+			Dictionary<Attribute, List<Attribute>> ld = Attrs.Count > 1 ? new Dictionary<Attribute, List<Attribute>> () : null;
 
 			foreach (Attribute a in Attrs)
 				a.Emit (ld);
@@ -1467,13 +1467,13 @@ namespace Mono.CSharp {
 			if (ld == null || ld.Count == 0)
 				return;
 
-			foreach (DictionaryEntry d in ld) {
+			foreach (var d in ld) {
 				if (d.Value == null)
 					continue;
 
-				Attribute a = (Attribute) d.Key;
+				Attribute a = d.Key;
 
-				foreach (Attribute collision in (ArrayList)d.Value)
+				foreach (Attribute collision in d.Value)
 					a.Report.SymbolRelatedToPreviousError (collision.Location, "");
 
 				a.Report.Error (579, a.Location, "The attribute `{0}' cannot be applied multiple times",

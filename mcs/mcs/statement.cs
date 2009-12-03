@@ -16,7 +16,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 
 namespace Mono.CSharp {
 	
@@ -1442,7 +1442,7 @@ namespace Mono.CSharp {
 		//
 		// The statements in this block
 		//
-		protected ArrayList statements;
+		protected List<Statement> statements;
 
 		//
 		// An array of Blocks.  We keep track of children just
@@ -1451,35 +1451,35 @@ namespace Mono.CSharp {
 		// Statements and child statements are handled through the
 		// statements.
 		//
-		ArrayList children;
+		List<Block> children;
 
 		//
 		// Labels.  (label, block) pairs.
 		//
-		protected HybridDictionary labels;
+		protected Dictionary<string, LabeledStatement> labels;
 
 		//
 		// Keeps track of (name, type) pairs
 		//
-		IDictionary variables;
+		Dictionary<string, LocalInfo> variables;
 
 		//
 		// Keeps track of constants
-		HybridDictionary constants;
+		Dictionary<string, Expression> constants;
 
 		//
 		// Temporary variables.
 		//
-		ArrayList temporary_variables;
+		List<LocalInfo> temporary_variables;
 		
 		//
 		// If this is a switch section, the enclosing switch block.
 		//
 		Block switch_block;
 
-		protected ArrayList scope_initializers;
+		protected List<Statement> scope_initializers;
 
-		ArrayList anonymous_children;
+		List<ToplevelBlock> anonymous_children;
 
 		protected static int id;
 
@@ -1531,7 +1531,7 @@ namespace Mono.CSharp {
 			this.EndLocation = end;
 			this.loc = start;
 			this_id = id++;
-			statements = new ArrayList (4);
+			statements = new List<Statement> (4);
 		}
 
 		public Block CreateSwitchBlock (Location start)
@@ -1546,10 +1546,10 @@ namespace Mono.CSharp {
 			get { return this_id; }
 		}
 
-		public IDictionary Variables {
+		public IDictionary<string, LocalInfo> Variables {
 			get {
 				if (variables == null)
-					variables = new ListDictionary ();
+					variables = new Dictionary<string, LocalInfo> ();
 				return variables;
 			}
 		}
@@ -1557,7 +1557,7 @@ namespace Mono.CSharp {
 		void AddChild (Block b)
 		{
 			if (children == null)
-				children = new ArrayList (1);
+				children = new List<Block> (1);
 			
 			children.Add (b);
 		}
@@ -1628,7 +1628,7 @@ namespace Mono.CSharp {
 			Toplevel.CheckError158 (name, target.loc);
 
 			if (labels == null)
-				labels = new HybridDictionary();
+				labels = new Dictionary<string, LabeledStatement> ();
 
 			labels.Add (name, target);
 			return true;
@@ -1661,8 +1661,8 @@ namespace Mono.CSharp {
 				return switch_block.LookupLabel (name);
 
 			if (labels != null)
-				if (labels.Contains (name))
-					return ((LabeledStatement) labels [name]);
+				if (labels.ContainsKey (name))
+					return labels [name];
 
 			return null;
 		}
@@ -1824,7 +1824,7 @@ namespace Mono.CSharp {
 				return false;
 			
 			if (constants == null)
-				constants = new HybridDictionary();
+				constants = new Dictionary<string, Expression> ();
 
 			constants.Add (name, value);
 
@@ -1840,7 +1840,7 @@ namespace Mono.CSharp {
 			Report.Debug (64, "ADD TEMPORARY", this, Toplevel, loc);
 
 			if (temporary_variables == null)
-				temporary_variables = new ArrayList ();
+				temporary_variables = new List<LocalInfo> ();
 
 			int id = ++next_temp_id;
 			string name = "$s_" + id.ToString ();
@@ -1856,8 +1856,7 @@ namespace Mono.CSharp {
 			LocalInfo ret;
 			for (Block b = this; b != null; b = b.Parent) {
 				if (b.variables != null) {
-					ret = (LocalInfo) b.variables [name];
-					if (ret != null)
+					if (b.variables.TryGetValue (name, out ret))
 						return ret;
 				}
 			}
@@ -1873,10 +1872,10 @@ namespace Mono.CSharp {
 
 		public Expression GetConstantExpression (string name)
 		{
+			Expression ret;
 			for (Block b = this; b != null; b = b.Parent) {
 				if (b.constants != null) {
-					Expression ret = b.constants [name] as Expression;
-					if (ret != null)
+					if (b.constants.TryGetValue (name, out ret))
 						return ret;
 				}
 			}
@@ -1890,7 +1889,7 @@ namespace Mono.CSharp {
 		public void AddScopeStatement (Statement s)
 		{
 			if (scope_initializers == null)
-				scope_initializers = new ArrayList ();
+				scope_initializers = new List<Statement> ();
 
 			scope_initializers.Add (s);
 		}
@@ -1923,14 +1922,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList AnonymousChildren {
+		public IList<ToplevelBlock> AnonymousChildren {
 			get { return anonymous_children; }
 		}
 
 		public void AddAnonymousChild (ToplevelBlock b)
 		{
 			if (anonymous_children == null)
-				anonymous_children = new ArrayList ();
+				anonymous_children = new List<ToplevelBlock> ();
 
 			anonymous_children.Add (b);
 		}
@@ -1943,9 +1942,9 @@ namespace Mono.CSharp {
 			if (variables == null)
 				throw new InternalErrorException ("cannot happen");
 
-			foreach (DictionaryEntry de in variables) {
-				string name = (string) de.Key;
-				LocalInfo vi = (LocalInfo) de.Value;
+			foreach (var de in variables) {
+				string name = de.Key;
+				LocalInfo vi = de.Value;
 				Type variable_type = vi.VariableType;
 
 				if (variable_type == null) {
@@ -1955,8 +1954,8 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				Expression cv = (Expression) constants [name];
-				if (cv == null)
+				Expression cv;
+				if (!constants.TryGetValue (name, out cv))
 					continue;
 
 				// Don't let 'const int Foo = Foo;' succeed.
@@ -2051,11 +2050,11 @@ namespace Mono.CSharp {
 			if (variables == null || ec.Report.WarningLevel < 3)
 				return;
 
-			foreach (DictionaryEntry de in variables) {
-				LocalInfo vi = (LocalInfo) de.Value;
+			foreach (var de in variables) {
+				LocalInfo vi = de.Value;
 
 				if (!vi.Used) {
-					string name = (string) de.Key;
+					string name = de.Key;
 
 					// vi.VariableInfo can be null for 'catch' variables
 					if (vi.VariableInfo != null && vi.VariableInfo.IsEverAssigned)
@@ -2304,21 +2303,21 @@ namespace Mono.CSharp {
 				target.Parent = clonectx.RemapBlockCopy (Parent);
 
 			if (variables != null){
-				target.variables = new Hashtable ();
+				target.variables = new Dictionary<string, LocalInfo> ();
 
-				foreach (DictionaryEntry de in variables){
-					LocalInfo newlocal = ((LocalInfo) de.Value).Clone (clonectx);
+				foreach (var de in variables){
+					LocalInfo newlocal = de.Value.Clone (clonectx);
 					target.variables [de.Key] = newlocal;
-					clonectx.AddVariableMap ((LocalInfo) de.Value, newlocal);
+					clonectx.AddVariableMap (de.Value, newlocal);
 				}
 			}
 
-			target.statements = new ArrayList (statements.Count);
+			target.statements = new List<Statement> (statements.Count);
 			foreach (Statement s in statements)
 				target.statements.Add (s.Clone (clonectx));
 
 			if (target.children != null){
-				target.children = new ArrayList (children.Count);
+				target.children = new List<Block> (children.Count);
 				foreach (Block b in children){
 					target.children.Add (clonectx.LookupBlock (b));
 				}
@@ -2330,8 +2329,9 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class ExplicitBlock : Block {
-		HybridDictionary known_variables;
+	public class ExplicitBlock : Block
+	{
+		Dictionary<string, IKnownVariable> known_variables;
 		protected AnonymousMethodStorey am_storey;
 
 		public ExplicitBlock (Block parent, Location start, Location end)
@@ -2353,7 +2353,7 @@ namespace Mono.CSharp {
 		internal void AddKnownVariable (string name, IKnownVariable info)
 		{
 			if (known_variables == null)
-				known_variables = new HybridDictionary();
+				known_variables = new Dictionary<string, IKnownVariable> ();
 
 			known_variables [name] = info;
 
@@ -2465,7 +2465,14 @@ namespace Mono.CSharp {
 
 		internal IKnownVariable GetKnownVariable (string name)
 		{
-			return known_variables == null ? null : (IKnownVariable) known_variables [name];
+			if (known_variables == null)
+				return null;
+
+			IKnownVariable kw;
+			if (!known_variables.TryGetValue (name, out kw))
+				return null;
+
+			return kw;
 		}
 
 		public bool HasCapturedThis
@@ -2736,7 +2743,7 @@ namespace Mono.CSharp {
 			// Creates block with original statements
 			AddStatement (new IteratorStatement (iterator, new Block (this, source)));
 
-			source.statements = new ArrayList (1);
+			source.statements = new List<Statement> (1);
 			source.AddStatement (new Return (iterator, iterator.Location));
 			source.IsIterator = false;
 
@@ -3264,9 +3271,7 @@ namespace Mono.CSharp {
 		bool CheckSwitch (ResolveContext ec)
 		{
 			bool error = false;
-			Elements = Sections.Count > 10 ? 
-				(IDictionary)new Hashtable () : 
-				(IDictionary)new ListDictionary ();
+			Elements = new Dictionary<object, SwitchLabel> ();
 				
 			foreach (SwitchSection ss in Sections){
 				foreach (SwitchLabel sl in ss.Labels){

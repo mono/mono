@@ -11,7 +11,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.InteropServices;
@@ -55,8 +55,7 @@ namespace Mono.CSharp
 	//
 	public class ModuleCompiled : ModuleContainer
 	{
-		// TODO: It'd be so nice to have generics
-		Hashtable anonymous_types;
+		Dictionary<int, List<AnonymousTypeClass>> anonymous_types;
 		readonly bool is_unsafe;
 		readonly CompilerContext context;
 
@@ -72,8 +71,8 @@ namespace Mono.CSharp
 			this.is_unsafe = isUnsafe;
 			this.context = context;
 
-			types = new ArrayList ();
-			anonymous_types = new Hashtable ();
+			types = new MemberCoreArrayList ();
+			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 		}
 
  		public override AttributeTargets AttributeTargets {
@@ -84,15 +83,17 @@ namespace Mono.CSharp
 
 		public void AddAnonymousType (AnonymousTypeClass type)
 		{
-			ArrayList existing = (ArrayList)anonymous_types [type.Parameters.Count];
+			List<AnonymousTypeClass> existing;
+			if (!anonymous_types.TryGetValue (type.Parameters.Count, out existing))
 			if (existing == null) {
-				existing = new ArrayList ();
+				existing = new List<AnonymousTypeClass> ();
 				anonymous_types.Add (type.Parameters.Count, existing);
 			}
+
 			existing.Add (type);
 		}
 
-		public void AddAttributes (ArrayList attrs)
+		public void AddAttributes (List<Attribute> attrs)
 		{
 			foreach (Attribute a in attrs)
 				a.AttachTo (this, CodeGen.Assembly);
@@ -155,10 +156,10 @@ namespace Mono.CSharp
 			}
 		}
 
-		public AnonymousTypeClass GetAnonymousType (ArrayList parameters)
+		public AnonymousTypeClass GetAnonymousType (IList<AnonymousTypeParameter> parameters)
 		{
-			ArrayList candidates = (ArrayList) anonymous_types [parameters.Count];
-			if (candidates == null)
+			List<AnonymousTypeClass> candidates;
+			if (!anonymous_types.TryGetValue (parameters.Count, out candidates))
 				return null;
 
 			int i;

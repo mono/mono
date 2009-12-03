@@ -9777,13 +9777,13 @@ namespace Mono.CSharp {
 
 	public class NewAnonymousType : New
 	{
-		static readonly ArrayList EmptyParameters = new ArrayList (0);
+		static readonly IList<AnonymousTypeParameter> EmptyParameters = Array.AsReadOnly (new AnonymousTypeParameter[0]);
 
-		ArrayList parameters;
+		List<AnonymousTypeParameter> parameters;
 		readonly TypeContainer parent;
 		AnonymousTypeClass anonymous_type;
 
-		public NewAnonymousType (ArrayList parameters, TypeContainer parent, Location loc)
+		public NewAnonymousType (List<AnonymousTypeParameter> parameters, TypeContainer parent, Location loc)
 			 : base (null, null, loc)
 		{
 			this.parameters = parameters;
@@ -9796,12 +9796,12 @@ namespace Mono.CSharp {
 				return;
 
 			NewAnonymousType t = (NewAnonymousType) target;
-			t.parameters = new ArrayList (parameters.Count);
+			t.parameters = new List<AnonymousTypeParameter> (parameters.Count);
 			foreach (AnonymousTypeParameter atp in parameters)
-				t.parameters.Add (atp.Clone (clonectx));
+				t.parameters.Add ((AnonymousTypeParameter) atp.Clone (clonectx));
 		}
 
-		AnonymousTypeClass CreateAnonymousType (ResolveContext ec, ArrayList parameters)
+		AnonymousTypeClass CreateAnonymousType (ResolveContext ec, IList<AnonymousTypeParameter> parameters)
 		{
 			AnonymousTypeClass type = parent.Module.Compiled.GetAnonymousType (parameters);
 			if (type != null)

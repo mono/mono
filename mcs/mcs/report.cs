@@ -10,7 +10,7 @@
 using System;
 using System.IO;
 using System.Text;
-using System.Collections;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -30,17 +30,17 @@ namespace Mono.CSharp {
 		///   Whether warnings should be considered errors
 		/// </summary>
 		public bool WarningsAreErrors;
-		ArrayList warnings_as_error;
-		ArrayList warnings_only;
+		List<int> warnings_as_error;
+		List<int> warnings_only;
 
 		public static int DebugFlags = 0;
 
 		//
 		// Keeps track of the warnings that we are ignoring
 		//
-		public Hashtable warning_ignore_table;
+		public Dictionary<int, bool> warning_ignore_table;
 
-		Hashtable warning_regions_table;
+		Dictionary<string, WarningRegions> warning_regions_table;
 
 		int warning_level;
 
@@ -51,7 +51,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// List of symbols related to reported error/warning. You have to fill it before error/warning is reported.
 		/// </summary>
-		ArrayList extra_information = new ArrayList ();
+		List<string> extra_information = new List<string> ();
 
 		// 
 		// IF YOU ADD A NEW WARNING YOU HAVE TO ADD ITS ID HERE
@@ -139,7 +139,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (warning_ignore_table != null) {
-				if (warning_ignore_table.Contains (code)) {
+				if (warning_ignore_table.ContainsKey (code)) {
 					return false;
 				}
 			}
@@ -147,8 +147,8 @@ namespace Mono.CSharp {
 			if (warning_regions_table == null || loc.IsNull)
 				return true;
 
-			WarningRegions regions = (WarningRegions) warning_regions_table [loc.Name];
-			if (regions == null)
+			WarningRegions regions;
+			if (!warning_regions_table.TryGetValue (loc.Name, out regions))
 				return true;
 
 			return regions.IsWarningEnabled (code, loc.Row);
@@ -267,7 +267,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (warnings_as_error == null)
-				warnings_as_error = new ArrayList ();
+				warnings_as_error = new List<int> ();
 			
 			warnings_as_error.Add (id);
 		}
@@ -285,7 +285,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (warnings_only == null)
-				warnings_only = new ArrayList ();
+				warnings_only = new List<int> ();
 
 			warnings_only.Add (id);
 		}
@@ -311,14 +311,19 @@ namespace Mono.CSharp {
 
 		public WarningRegions RegisterWarningRegion (Location location)
 		{
-			if (warning_regions_table == null)
-				warning_regions_table = new Hashtable ();
+			WarningRegions regions;
+			if (warning_regions_table == null) {
+				regions = null;
+				warning_regions_table = new Dictionary<string, WarningRegions> ();
+			} else {
+				warning_regions_table.TryGetValue (location.Name, out regions);
+			}
 
-			WarningRegions regions = (WarningRegions)warning_regions_table [location.Name];
 			if (regions == null) {
 				regions = new WarningRegions ();
 				warning_regions_table.Add (location.Name, regions);
 			}
+
 			return regions;
 		}
 
@@ -445,7 +450,7 @@ namespace Mono.CSharp {
 		public void SetIgnoreWarning (int code)
 		{
 			if (warning_ignore_table == null)
-				warning_ignore_table = new Hashtable ();
+				warning_ignore_table = new Dictionary<int, bool> ();
 
 			warning_ignore_table [code] = true;
 		}
@@ -491,8 +496,8 @@ namespace Mono.CSharp {
 						sb.Append (", ");
 					if (arg == null)
 						sb.Append ("null");
-					else if (arg is ICollection)
-						sb.Append (PrintCollection ((ICollection) arg));
+//					else if (arg is ICollection)
+//						sb.Append (PrintCollection ((ICollection) arg));
 					else
 						sb.Append (arg);
 				}
@@ -500,7 +505,7 @@ namespace Mono.CSharp {
 
 			Console.WriteLine (sb.ToString ());
 		}
-
+/*
 		static public string PrintCollection (ICollection collection)
 		{
 			StringBuilder sb = new StringBuilder ();
@@ -520,6 +525,7 @@ namespace Mono.CSharp {
 			sb.Append (")");
 			return sb.ToString ();
 		}
+*/ 
 	}
 
 	public abstract class AbstractMessage
@@ -529,7 +535,7 @@ namespace Mono.CSharp {
 		protected readonly Location location;
 		readonly string message;
 
-		protected AbstractMessage (int code, Location loc, string msg, ArrayList extraInfo)
+		protected AbstractMessage (int code, Location loc, string msg, List<string> extraInfo)
 		{
 			this.code = code;
 			if (code < 0)
@@ -538,7 +544,7 @@ namespace Mono.CSharp {
 			this.location = loc;
 			this.message = msg;
 			if (extraInfo.Count != 0) {
-				this.extra_info = (string[])extraInfo.ToArray (typeof (string));
+				this.extra_info = extraInfo.ToArray ();
 			}
 		}
 
@@ -587,7 +593,7 @@ namespace Mono.CSharp {
 
 	sealed class WarningMessage : AbstractMessage
 	{
-		public WarningMessage (int code, Location loc, string message, ArrayList extra_info)
+		public WarningMessage (int code, Location loc, string message, List<string> extra_info)
 			: base (code, loc, message, extra_info)
 		{
 		}
@@ -605,7 +611,7 @@ namespace Mono.CSharp {
 
 	sealed class ErrorMessage : AbstractMessage
 	{
-		public ErrorMessage (int code, Location loc, string message, ArrayList extraInfo)
+		public ErrorMessage (int code, Location loc, string message, List<string> extraInfo)
 			: base (code, loc, message, extraInfo)
 		{
 		}
@@ -698,16 +704,16 @@ namespace Mono.CSharp {
 	//
 	class SessionReportPrinter : ReportPrinter
 	{
-		ArrayList session_messages;
+		List<AbstractMessage> session_messages;
 		//
 		// A collection of exactly same messages reported in all sessions
 		//
-		ArrayList common_messages;
+		List<AbstractMessage> common_messages;
 
 		//
 		// A collection of unique messages reported in all sessions
 		//
-		ArrayList merged_messages;
+		List<AbstractMessage> merged_messages;
 
 		public override void Print (AbstractMessage msg)
 		{
@@ -717,7 +723,7 @@ namespace Mono.CSharp {
 			// Console.WriteLine ("RECORDING: {0} {1} {2}", code, location, message);
 
 			if (session_messages == null)
-				session_messages = new ArrayList ();
+				session_messages = new List<AbstractMessage> ();
 
 			session_messages.Add (msg);
 
@@ -733,7 +739,7 @@ namespace Mono.CSharp {
 			// Handles the first session
 			//
 			if (common_messages == null) {
-				common_messages = new ArrayList (session_messages);
+				common_messages = new List<AbstractMessage> (session_messages);
 				merged_messages = session_messages;
 				session_messages = null;
 				return;
@@ -785,7 +791,7 @@ namespace Mono.CSharp {
 		//
 		public bool Merge (ReportPrinter dest)
 		{
-			ArrayList messages_to_print = merged_messages;
+			var messages_to_print = merged_messages;
 			if (common_messages != null && common_messages.Count > 0) {
 				messages_to_print = common_messages;
 			}
@@ -1166,7 +1172,7 @@ namespace Mono.CSharp {
 		}
 
 
-		ArrayList regions = new ArrayList ();
+		List<PragmaCmd> regions = new List<PragmaCmd> ();
 
 		public void WarningDisable (int line)
 		{

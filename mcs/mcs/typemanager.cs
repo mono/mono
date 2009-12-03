@@ -1891,14 +1891,14 @@ namespace Mono.CSharp {
 		return (EventField) events [ei];
 	}
 
-	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen)
+	public static bool CheckStructCycles (TypeContainer tc, Dictionary<TypeContainer, object> seen)
 	{
-		Hashtable hash = new Hashtable ();
+		var hash = new Dictionary<TypeContainer, object> ();
 		return CheckStructCycles (tc, seen, hash);
 	}
 
-	public static bool CheckStructCycles (TypeContainer tc, Hashtable seen,
-					      Hashtable hash)
+	public static bool CheckStructCycles (TypeContainer tc, Dictionary<TypeContainer, object> seen,
+						  Dictionary<TypeContainer, object> hash)
 	{
 		if ((tc.Kind != Kind.Struct) || IsBuiltinType (tc.TypeBuilder))
 			return true;
@@ -1906,7 +1906,7 @@ namespace Mono.CSharp {
 		//
 		// `seen' contains all types we've already visited.
 		//
-		if (seen.Contains (tc))
+		if (seen.ContainsKey (tc))
 			return true;
 		seen.Add (tc, null);
 
@@ -1922,7 +1922,7 @@ namespace Mono.CSharp {
 			if (ftc == null)
 				continue;
 
-			if (hash.Contains (ftc)) {
+			if (hash.ContainsKey (ftc)) {
 				tc.Compiler.Report.Error (523, tc.Location,
 					      "Struct member `{0}.{1}' of type `{2}' " +
 					      "causes a cycle in the struct layout",
@@ -1942,7 +1942,7 @@ namespace Mono.CSharp {
 			if (!ok)
 				return false;
 
-			if (!seen.Contains (ftc))
+			if (!seen.ContainsKey (ftc))
 				seen.Add (ftc, null);
 		}
 
@@ -2432,19 +2432,19 @@ namespace Mono.CSharp {
 	//
 	// The name is assumed to be the same.
 	//
-	public static ArrayList CopyNewMethods (ArrayList target_list, IList new_members)
+	public static List<MethodBase> CopyNewMethods (List<MethodBase> target_list, IList new_members)
 	{
 		if (target_list == null){
-			target_list = new ArrayList ();
+			target_list = new List<MethodBase> ();
 
 			foreach (MemberInfo mi in new_members){
 				if (mi is MethodBase)
-					target_list.Add (mi);
+					target_list.Add ((MethodBase) mi);
 			}
 			return target_list;
 		}
-		
-		MemberInfo [] target_array = new MemberInfo [target_list.Count];
+
+		MethodBase[] target_array = new MethodBase[target_list.Count];
 		target_list.CopyTo (target_array, 0);
 		
 		foreach (MemberInfo mi in new_members){
@@ -2927,7 +2927,7 @@ namespace Mono.CSharp {
 	{
 		BindingFlags bf = original_bf;
 		
-		ArrayList method_list = null;
+		List<MethodBase> method_list = null;
 		Type current_type = queried_type;
 		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
 		bool skip_iface_check = true, used_cache = false;
@@ -3054,7 +3054,7 @@ namespace Mono.CSharp {
 			return first_members_list;
 
 		if (method_list != null && method_list.Count > 0) {
-			return (MemberInfo []) method_list.ToArray (typeof (MemberInfo));
+			return method_list.ToArray ();
 		}
 		//
 		// This happens if we already used the cache in the first iteration, in this case

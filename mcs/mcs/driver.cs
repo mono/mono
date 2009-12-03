@@ -17,7 +17,7 @@ namespace Mono.CSharp
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Collections;
-	using System.Collections.Specialized;
+	using System.Collections.Generic;
 	using System.IO;
 	using System.Text;
 	using System.Globalization;
@@ -39,27 +39,27 @@ namespace Mono.CSharp
 		//
 		// Assemblies references to be linked.   Initialized with
 		// mscorlib.dll here.
-		ArrayList references;
+		List<string> references;
 
 		//
 		// If any of these fail, we ignore the problem.  This is so
 		// that we can list all the assemblies in Windows and not fail
 		// if they are missing on Linux.
 		//
-		ArrayList soft_references;
+		List<string> soft_references;
 
 		// 
 		// External aliases for assemblies.
 		//
-		Hashtable external_aliases;
+		Dictionary<string, string> external_aliases;
 
 		//
 		// Modules to be linked
 		//
-		ArrayList modules;
+		List<string> modules;
 
 		// Lookup paths
-		static ArrayList link_paths;
+		List<string> link_paths;
 
 		// Whether we want to only run the tokenizer
 		bool tokenize;
@@ -483,8 +483,8 @@ namespace Mono.CSharp
 			foreach (string r in references)
 				LoadAssembly (r, false);
 
-			foreach (DictionaryEntry entry in external_aliases)
-				LoadAssembly ((string) entry.Value, (string) entry.Key, false);
+			foreach (var entry in external_aliases)
+				LoadAssembly (entry.Value, entry.Key, false);
 				
 			GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
 		}
@@ -588,11 +588,11 @@ namespace Mono.CSharp
 
 		bool ParseArguments (string[] args, bool require_files)
 		{
-			references = new ArrayList ();
-			external_aliases = new Hashtable ();
-			soft_references = new ArrayList ();
-			modules = new ArrayList (2);
-			link_paths = new ArrayList ();
+			references = new List<string> ();
+			external_aliases = new Dictionary<string, string> ();
+			soft_references = new List<string> ();
+			modules = new List<string> (2);
+			link_paths = new List<string> ();
 
 			ArrayList response_file_list = null;
 			bool parsing_options = true;
@@ -691,12 +691,12 @@ namespace Mono.CSharp
 		{
 			Location.Initialize ();
 
-			ArrayList cu = Location.SourceFiles;
+			var cu = Location.SourceFiles;
 			for (int i = 0; i < cu.Count; ++i) {
 				if (tokenize) {
-					tokenize_file ((CompilationUnit) cu [i], ctx);
+					tokenize_file (cu [i], ctx);
 				} else {
-					Parse ((CompilationUnit) cu [i]);
+					Parse (cu [i]);
 				}
 			}
 		}
@@ -1937,7 +1937,7 @@ namespace Mono.CSharp
 		}
 
 
-		IDictionary embedded_resources = new HybridDictionary ();
+		Dictionary<string, IResource> embedded_resources = new Dictionary<string, IResource> ();
 		readonly CompilerContext ctx;
 
 		public Resources (CompilerContext ctx)
@@ -1952,7 +1952,7 @@ namespace Mono.CSharp
 
 		public void Add (bool embeded, string file, string name, bool isPrivate)
 		{
-			if (embedded_resources.Contains (name)) {
+			if (embedded_resources.ContainsKey (name)) {
 				ctx.Report.Error (1508, "The resource identifier `{0}' has already been used in this assembly", name);
 				return;
 			}

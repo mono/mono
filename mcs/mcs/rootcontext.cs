@@ -12,7 +12,7 @@
 // Copyright 2004-2008 Novell, Inc
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
@@ -114,7 +114,7 @@ namespace Mono.CSharp {
 		// This hashtable contains all of the #definitions across the source code
 		// it is used by the ConditionalAttribute handler.
 		//
-		static ArrayList AllDefines;
+		static List<string> AllDefines;
 		
 		//
 		// This keeps track of the order in which classes were defined
@@ -125,13 +125,13 @@ namespace Mono.CSharp {
 		// or abstract as well as the parent names (to implement new, 
 		// override).
 		//
-		static ArrayList type_container_resolve_order;
+		static List<TypeContainer> type_container_resolve_order;
 
 		//
 		// Holds a reference to the Private Implementation Details
 		// class.
 		//
-		static ArrayList helper_classes;
+		static List<TypeBuilder> helper_classes;
 		
 		static TypeBuilder impl_details_class;
 
@@ -153,7 +153,7 @@ namespace Mono.CSharp {
 			if (full)
 				root = null;
 			
-			type_container_resolve_order = new ArrayList ();
+			type_container_resolve_order = new List<TypeContainer> ();
 			EntryPoint = null;
 			Checked = false;
 			Unsafe = false;
@@ -179,7 +179,7 @@ namespace Mono.CSharp {
 			//
 			// Setup default defines
 			//
-			AllDefines = new ArrayList ();
+			AllDefines = new List<string> ();
 			AddConditional ("__MonoCS__");
 		}
 
@@ -290,7 +290,7 @@ namespace Mono.CSharp {
 		public static void RegisterCompilerGeneratedType (TypeBuilder helper_class)
 		{
 			if (helper_classes == null)
-				helper_classes = new ArrayList ();
+				helper_classes = new List<TypeBuilder> ();
 
 			helper_classes.Add (helper_class);
 		}
@@ -338,7 +338,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ArrayList delegates = root.Delegates;
+			var delegates = root.Delegates;
 			if (delegates != null){
 				foreach (Delegate d in delegates)
 					d.Define ();
@@ -348,7 +348,7 @@ namespace Mono.CSharp {
 			// Check for cycles in the struct layout
 			//
 			if (type_container_resolve_order != null){
-				Hashtable seen = new Hashtable ();
+				var seen = new Dictionary<TypeContainer, object> ();
 				foreach (TypeContainer tc in type_container_resolve_order)
 					TypeManager.CheckStructCycles (tc, seen);
 			}

@@ -11,7 +11,7 @@
 
 using System;
 using System.IO;
-using System.Collections;
+using System.Collections.Generic;
 using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.CSharp {
@@ -75,8 +75,8 @@ namespace Mono.CSharp {
 	public class CompilationUnit : SourceFile, ICompileUnit
 	{
 		CompileUnitEntry comp_unit;
-		Hashtable include_files;
-		Hashtable conditionals;
+		Dictionary<string, SourceFile> include_files;
+		Dictionary<string, bool> conditionals;
 
 		public CompilationUnit (string name, string path, int index)
 			: base (name, path, index, false)
@@ -88,16 +88,16 @@ namespace Mono.CSharp {
 				return;
 			
 			if (include_files == null)
-				include_files = new Hashtable ();
+				include_files = new Dictionary<string, SourceFile> ();
 
-			if (!include_files.Contains (file.Path))
+			if (!include_files.ContainsKey (file.Path))
 				include_files.Add (file.Path, file);
 		}
 
 		public void AddDefine (string value)
 		{
 			if (conditionals == null)
-				conditionals = new Hashtable (2);
+				conditionals = new Dictionary<string, bool> (2);
 
 			conditionals [value] = true;
 		}
@@ -105,9 +105,9 @@ namespace Mono.CSharp {
 		public void AddUndefine (string value)
 		{
 			if (conditionals == null)
-				conditionals = new Hashtable (2);
+				conditionals = new Dictionary<string, bool> (2);
 
-			conditionals [value] = null;
+			conditionals [value] = false;
 		}
 
 		CompileUnitEntry ICompileUnit.Entry {
@@ -135,12 +135,12 @@ namespace Mono.CSharp {
 		public bool IsConditionalDefined (string value)
 		{
 			if (conditionals != null) {
-				object res = conditionals [value];
-				if (res != null)
-					return (bool)res;
+				bool res;
+				if (conditionals.TryGetValue (value, out res))
+					return res;
 				
 				// When conditional was undefined
-				if (conditionals.Contains (value))
+				if (conditionals.ContainsKey (value))
 					return false;					
 			}
 
@@ -180,9 +180,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static ArrayList source_list;
-		static ArrayList compile_units;
-		static Hashtable source_files;
+		static List<SourceFile> source_list;
+		static List<CompilationUnit> compile_units;
+		static Dictionary<string, int> source_files;
 		static int checkpoint_bits;
 		static int source_count;
 		static int current_source;
@@ -199,19 +199,15 @@ namespace Mono.CSharp {
 		
 		static Location ()
 		{
-			source_files = new Hashtable ();
-			source_list = new ArrayList ();
-			compile_units = new ArrayList ();
-			current_source = 0;
-			current_compile_unit = 0;
+			Reset ();
 			checkpoints = new Checkpoint [10];
 		}
 
 		public static void Reset ()
 		{
-			source_files = new Hashtable ();
-			source_list = new ArrayList ();
-			compile_units = new ArrayList ();
+			source_files = new Dictionary<string, int> ();
+			source_list = new List<SourceFile> ();
+			compile_units = new List<CompilationUnit> ();
 			current_source = 0;
 			current_compile_unit = 0;
 			source_count = 0;
@@ -223,10 +219,9 @@ namespace Mono.CSharp {
 		static public void AddFile (Report r, string name)
 		{
 			string path = Path.GetFullPath (name);
-
-			if (source_files.Contains (path)){
-				int id = (int) source_files [path];
-				string other_name = ((SourceFile) source_list [id - 1]).Name;
+			int id;
+			if (source_files.TryGetValue (path, out id)){
+				string other_name = source_list [id - 1].Name;
 				if (name.Equals (other_name))
 					r.Warning (2002, 1, "Source file `{0}' specified multiple times", other_name);
 				else
@@ -240,8 +235,7 @@ namespace Mono.CSharp {
 			compile_units.Add (unit);
 		}
 
-		// IList<CompilationUnit>
-		static public ArrayList SourceFiles {
+		public static IList<CompilationUnit> SourceFiles {
 			get {
 				return compile_units;
 			}
@@ -279,7 +273,7 @@ namespace Mono.CSharp {
 			} else
 				path = name;
 
-			if (!source_files.Contains (path)) {
+			if (!source_files.ContainsKey (path)) {
 				if (source_count >= (1 << checkpoint_bits))
 					return new SourceFile (name, path, 0, true);
 

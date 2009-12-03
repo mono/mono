@@ -12,7 +12,7 @@
 using System;
 using System.Text;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -866,13 +866,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		ListDictionary compatibles;
+		Dictionary<Type, Expression> compatibles;
 		public ToplevelBlock Block;
 
 		public AnonymousMethodExpression (Location loc)
 		{
 			this.loc = loc;
-			this.compatibles = new ListDictionary ();
+			this.compatibles = new Dictionary<Type, Expression> ();
 		}
 
 		public override string ExprClassName {
@@ -1049,8 +1049,8 @@ namespace Mono.CSharp {
 		//
 		public Expression Compatible (ResolveContext ec, Type type)
 		{
-			Expression am = (Expression) compatibles [type];
-			if (am != null)
+			Expression am;
+			if (compatibles.TryGetValue (type, out am))
 				return am;
 
 			Type delegate_type = CompatibleChecks (ec, type);
@@ -1708,15 +1708,15 @@ namespace Mono.CSharp {
 		public const string ClassNamePrefix = "<>__AnonType";
 		public const string SignatureForError = "anonymous type";
 		
-		readonly ArrayList parameters;
+		readonly IList<AnonymousTypeParameter> parameters;
 
-		private AnonymousTypeClass (DeclSpace parent, MemberName name, ArrayList parameters, Location loc)
+		private AnonymousTypeClass (DeclSpace parent, MemberName name, IList<AnonymousTypeParameter> parameters, Location loc)
 			: base (parent, name, (RootContext.EvalMode ? Modifiers.PUBLIC : 0) | Modifiers.SEALED)
 		{
 			this.parameters = parameters;
 		}
 
-		public static AnonymousTypeClass Create (CompilerContext ctx, TypeContainer parent, ArrayList parameters, Location loc)
+		public static AnonymousTypeClass Create (CompilerContext ctx, TypeContainer parent, IList<AnonymousTypeParameter> parameters, Location loc)
 		{
 			string name = ClassNamePrefix + types_counter++;
 
@@ -1980,7 +1980,7 @@ namespace Mono.CSharp {
 			return SignatureForError;
 		}
 
-		public ArrayList Parameters {
+		public IList<AnonymousTypeParameter> Parameters {
 			get {
 				return parameters;
 			}

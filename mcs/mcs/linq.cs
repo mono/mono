@@ -10,7 +10,7 @@
 
 using System;
 using System.Reflection;
-using System.Collections;
+using System.Collections.Generic;
 
 namespace Mono.CSharp.Linq
 {
@@ -253,7 +253,7 @@ namespace Mono.CSharp.Linq
 
 		protected static Expression CreateRangeVariableType (ToplevelBlock block, IMemberContext context, SimpleMemberName name, Expression init)
 		{
-			ArrayList args = new ArrayList (2);
+			var args = new List<AnonymousTypeParameter> (2);
 			args.Add (new AnonymousTypeParameter (block.Parameters [0]));
 			args.Add (new RangeAnonymousTypeParameter (init, name));
 			return new NewAnonymousType (args, context.CurrentTypeDefinition, name.Location);

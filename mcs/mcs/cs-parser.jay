@@ -24,11 +24,11 @@
 using System.Text;
 using System.IO;
 using System;
+using System.Collections;
+using System.Collections.Generic;
 
 namespace Mono.CSharp
 {
-	using System.Collections;
-
 	/// <summary>
 	///    The C# Parser
 	/// </summary>
@@ -669,7 +669,7 @@ attribute_sections
 	: attribute_section
 	  {
 		if (current_attr_target != String.Empty) {
-			ArrayList sect = (ArrayList) $1;
+			var sect = (List<Attribute>) $1;
 
 			if (global_attrs_enabled) {
 				if (current_attr_target == "module") {
@@ -700,7 +700,7 @@ attribute_sections
 	  {
 		if (current_attr_target != String.Empty) {
 			Attributes attrs = $1 as Attributes;
-			ArrayList sect = (ArrayList) $2;
+			var sect = (List<Attribute>) $2;
 
 			if (global_attrs_enabled) {
 				if (current_attr_target == "module") {
@@ -766,12 +766,12 @@ attribute_target
 attribute_list
 	: attribute
 	  {
-		$$ = new ArrayList (4) { $1 };
+		$$ = new List<Attribute> (4) { (Attribute) $1 };
 	  }
 	| attribute_list COMMA attribute
 	  {
-		ArrayList attrs = (ArrayList) $1;
-		attrs.Add ($3);
+		var attrs = (List<Attribute>) $1;
+		attrs.Add ((Attribute) $3);
 
 		$$ = attrs;
 	  }
@@ -3486,7 +3486,7 @@ anonymous_type_expression
 	  	else if (RootContext.Version <= LanguageVersion.ISO_2)
 	  		Report.FeatureIsNotAvailable (GetLocation ($1), "anonymous types");
 
-		$$ = new NewAnonymousType ((ArrayList) $3, current_container, GetLocation ($1));
+		$$ = new NewAnonymousType ((List<AnonymousTypeParameter>) $3, current_container, GetLocation ($1));
 	  }
 	;
 
@@ -3503,14 +3503,14 @@ anonymous_type_parameters_opt
 anonymous_type_parameters
 	: anonymous_type_parameter
 	  {
-	  	ArrayList a = new ArrayList (4);
-	  	a.Add ($1);
+	  	var a = new List<AnonymousTypeParameter> (4);
+	  	a.Add ((AnonymousTypeParameter) $1);
 	  	$$ = a;
 	  }
 	| anonymous_type_parameters COMMA anonymous_type_parameter
 	  {
-	  	ArrayList a = (ArrayList) $1;
-	  	a.Add ($3);
+	  	var a = (List<AnonymousTypeParameter>) $1;
+	  	a.Add ((AnonymousTypeParameter) $3);
 	  	$$ = a;
 	  }
 	;
@@ -3540,8 +3540,9 @@ anonymous_type_parameter
 	  }
 	| error
 	  {
-		Report.Error (746, lexer.Location, "Invalid anonymous type member declarator. " +
-		"Anonymous type members must be a member assignment, simple name or member access expression");
+		Report.Error (746, lexer.Location,
+			"Invalid anonymous type member declarator. Anonymous type members must be a member assignment, simple name or member access expression");
+		$$ = null;
 	  }
 	;
 

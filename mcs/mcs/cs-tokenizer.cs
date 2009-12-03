@@ -1951,9 +1951,9 @@ namespace Mono.CSharp
 
 			if (arg.StartsWith (w_restore)) {
 				int[] codes = ParseNumbers (arg.Substring (w_restore.Length));
-				Hashtable w_table = Report.warning_ignore_table;
+				var w_table = Report.warning_ignore_table;
 				foreach (int code in codes) {
-					if (w_table != null && w_table.Contains (code))
+					if (w_table != null && w_table.ContainsKey (code))
 						Report.Warning (1635, 1, Location, "Cannot restore warning `CS{0:0000}' because it was disabled globally", code);
 					Report.RegisterWarningRegion (Location).WarningEnable (Location, code, Report);
 				}

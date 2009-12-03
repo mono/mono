@@ -10,7 +10,7 @@
 //
 using System;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Reflection;
 
 namespace Mono.CSharp {
@@ -26,7 +26,7 @@ namespace Mono.CSharp {
 		protected readonly string alias_name;
 		protected Assembly [] referenced_assemblies;
 
-		Hashtable all_namespaces;
+		Dictionary<string, Namespace> all_namespaces;
 
 		static RootNamespace ()
 		{
@@ -39,7 +39,7 @@ namespace Mono.CSharp {
 			this.alias_name = alias_name;
 			referenced_assemblies = new Assembly [0];
 
-			all_namespaces = new Hashtable ();
+			all_namespaces = new Dictionary<string, Namespace> ();
 			all_namespaces.Add ("", this);
 		}
 
@@ -147,7 +147,7 @@ namespace Mono.CSharp {
 
 		public bool IsNamespace (string name)
 		{
-			return all_namespaces.Contains (name);
+			return all_namespaces.ContainsKey (name);
 		}
 
 		protected void RegisterNamespace (string dotted_name)
@@ -159,7 +159,12 @@ namespace Mono.CSharp {
 		void RegisterExtensionMethodClass (Type t)
  		{
 			string n = t.Namespace;
-			Namespace ns = n == null ? GlobalRootNamespace.Instance : (Namespace) all_namespaces[n];
+			Namespace ns = null;
+			if (n == null)
+				ns = GlobalRootNamespace.Instance;
+			else
+				all_namespaces.TryGetValue (n, out ns);
+
  			if (ns == null)
  				ns = GetNamespace (n, true);
  
@@ -228,14 +233,14 @@ namespace Mono.CSharp {
 
 	public class GlobalRootNamespace : RootNamespace {
 		Module [] modules;
-		ListDictionary root_namespaces;
+		Dictionary<string, RootNamespace> root_namespaces;
 
 		public static GlobalRootNamespace Instance = new GlobalRootNamespace ();
 
 		GlobalRootNamespace ()
 			: base ("global")
 		{
-			root_namespaces = new ListDictionary ();
+			root_namespaces = new Dictionary<string, RootNamespace> ();
 			root_namespaces.Add (alias_name, this);
 		}
 
@@ -306,7 +311,11 @@ namespace Mono.CSharp {
 
 		public RootNamespace GetRootNamespace (string name)
 		{
-			return (RootNamespace) root_namespaces[name];
+			RootNamespace rn;
+			if (!root_namespaces.TryGetValue (name, out rn))
+				return null;
+
+			return rn;
 		}
 
 		public override Type LookupTypeReflection (CompilerContext ctx, string name, Location loc, bool must_be_unique)
@@ -351,8 +360,8 @@ namespace Mono.CSharp {
 		
 		Namespace parent;
 		string fullname;
-		IDictionary namespaces;
-		IDictionary declspaces;
+		Dictionary<string, Namespace> namespaces;
+		Dictionary<string, DeclSpace> declspaces;
 		Hashtable cached_types;
 		RootNamespace root;
 		ArrayList external_exmethod_classes;
@@ -398,7 +407,7 @@ namespace Mono.CSharp {
 			else
 				MemberName = new MemberName (name);
 
-			namespaces = new HybridDictionary ();
+			namespaces = new Dictionary<string, Namespace> ();
 			cached_types = new Hashtable ();
 
 			root.RegisterNamespace (this);
@@ -453,8 +462,7 @@ namespace Mono.CSharp {
 			else
 				first = name;
 
-			ns = (Namespace) namespaces [first];
-			if (ns == null) {
+			if (!namespaces.TryGetValue (first, out ns)) {
 				if (!create)
 					return null;
 
@@ -480,8 +488,8 @@ namespace Mono.CSharp {
 
 			Type t = null;
 			if (declspaces != null) {
-				DeclSpace tdecl = declspaces [name] as DeclSpace;
-				if (tdecl != null) {
+				DeclSpace tdecl;
+				if (declspaces.TryGetValue (name, out tdecl)) {
 					//
 					// Note that this is not:
 					//
@@ -526,19 +534,19 @@ namespace Mono.CSharp {
 
 			typeName = SimpleName.RemoveGenericArity (typeName);
 
-			foreach (DictionaryEntry de in declspaces) {
-				string type_item = (string) de.Key;
+			foreach (var de in declspaces) {
+				string type_item = de.Key;
 				int pos = type_item.LastIndexOf ('`');
 				if (pos == typeName.Length && String.Compare (typeName, 0, type_item, 0, pos) == 0)
-					return ((DeclSpace) de.Value).TypeBuilder;
+					return de.Value.TypeBuilder;
 			}
 			return null;
 		}
 
 		public FullNamedExpression Lookup (CompilerContext ctx, string name, Location loc)
 		{
-			if (namespaces.Contains (name))
-				return (Namespace) namespaces [name];
+			if (namespaces.ContainsKey (name))
+				return namespaces [name];
 
 			return LookupType (ctx, name, loc);
 		}
@@ -644,7 +652,7 @@ namespace Mono.CSharp {
 		public void AddDeclSpace (string name, DeclSpace ds)
 		{
 			if (declspaces == null)
-				declspaces = new HybridDictionary ();
+				declspaces = new Dictionary<string, DeclSpace> ();
 			declspaces.Add (name, ds);
 		}
 

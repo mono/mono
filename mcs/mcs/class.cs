@@ -13,7 +13,7 @@
 
 using System;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
@@ -241,7 +241,7 @@ namespace Mono.CSharp {
 		public readonly Kind Kind;
 
 		// Holds a list of classes and structures
-		protected ArrayList types;
+		protected MemberCoreArrayList types;
 
 		MemberCoreArrayList ordered_explicit_member_list;
 		MemberCoreArrayList ordered_member_list;
@@ -2583,8 +2583,9 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public abstract class ClassOrStruct : TypeContainer {
-		ListDictionary declarative_security;
+	public abstract class ClassOrStruct : TypeContainer
+	{
+		Dictionary<SecurityAction, PermissionSet> declarative_security;
 
 		public ClassOrStruct (NamespaceEntry ns, DeclSpace parent,
 				      MemberName name, Attributes attrs, Kind kind)
@@ -2632,7 +2633,7 @@ namespace Mono.CSharp {
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
-					declarative_security = new ListDictionary ();
+					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
 
 				a.ExtractSecurityPermissionSet (declarative_security);
 				return;
@@ -2700,8 +2701,8 @@ namespace Mono.CSharp {
 			base.Emit ();
 
 			if (declarative_security != null) {
-				foreach (DictionaryEntry de in declarative_security) {
-					TypeBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				foreach (var de in declarative_security) {
+					TypeBuilder.AddDeclarativeSecurity (de.Key, de.Value);
 				}
 			}
 		}
@@ -3786,7 +3787,7 @@ namespace Mono.CSharp {
 	{
 		public MethodBuilder MethodBuilder;
 		ReturnParameter return_attributes;
-		ListDictionary declarative_security;
+		Dictionary<SecurityAction, PermissionSet> declarative_security;
 		protected MethodData MethodData;
 
 		static string[] attribute_targets = new string [] { "method", "return" };
@@ -3823,7 +3824,7 @@ namespace Mono.CSharp {
 
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
-					declarative_security = new ListDictionary ();
+					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
 				a.ExtractSecurityPermissionSet (declarative_security);
 				return;
 			}
@@ -3968,8 +3969,8 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 
 			if (declarative_security != null) {
-				foreach (DictionaryEntry de in declarative_security) {
-					MethodBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				foreach (var de in declarative_security) {
+					MethodBuilder.AddDeclarativeSecurity (de.Key, de.Value);
 				}
 			}
 
@@ -4630,7 +4631,7 @@ namespace Mono.CSharp {
 	public class Constructor : MethodCore, IMethodData {
 		public ConstructorBuilder ConstructorBuilder;
 		public ConstructorInitializer Initializer;
-		ListDictionary declarative_security;
+		Dictionary<SecurityAction, PermissionSet> declarative_security;
 		bool has_compliant_args;
 
 		// <summary>
@@ -4684,7 +4685,7 @@ namespace Mono.CSharp {
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null) {
-					declarative_security = new ListDictionary ();
+					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
 				}
 				a.ExtractSecurityPermissionSet (declarative_security);
 				return;
@@ -4856,8 +4857,8 @@ namespace Mono.CSharp {
 				source.CloseMethod ();
 
 			if (declarative_security != null) {
-				foreach (DictionaryEntry de in declarative_security) {
-					ConstructorBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				foreach (var de in declarative_security) {
+					ConstructorBuilder.AddDeclarativeSecurity (de.Key, de.Value);
 				}
 			}
 
@@ -6049,7 +6050,7 @@ namespace Mono.CSharp {
 	public abstract class AbstractPropertyEventMethod : MemberCore, IMethodData {
 		protected MethodData method_data;
 		protected ToplevelBlock block;
-		protected ListDictionary declarative_security;
+		protected Dictionary<SecurityAction, PermissionSet> declarative_security;
 
 		// The accessor are created even if they are not wanted.
 		// But we need them because their names are reserved.
@@ -6148,7 +6149,7 @@ namespace Mono.CSharp {
 
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
-					declarative_security = new ListDictionary ();
+					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
 				a.ExtractSecurityPermissionSet (declarative_security);
 				return;
 			}
@@ -6208,8 +6209,8 @@ namespace Mono.CSharp {
 				OptAttributes.Emit ();
 
 			if (declarative_security != null) {
-				foreach (DictionaryEntry de in declarative_security) {
-					method_data.MethodBuilder.AddDeclarativeSecurity ((SecurityAction)de.Key, (PermissionSet)de.Value);
+				foreach (var de in declarative_security) {
+					method_data.MethodBuilder.AddDeclarativeSecurity (de.Key, de.Value);
 				}
 			}
 

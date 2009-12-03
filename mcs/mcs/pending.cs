@@ -11,7 +11,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
@@ -87,9 +87,9 @@ namespace Mono.CSharp {
 		//   bases that we must implement.  Notice that this `flattens' the
 		//   method search space, and takes into account overrides.  
 		// </remarks>
-		static ArrayList GetAbstractMethods (Type t)
+		static IList<MethodBase> GetAbstractMethods (Type t)
 		{
-			ArrayList list = null;
+			List<MethodBase> list = null;
 			bool searching = true;
 			Type current_type = t;
 			
@@ -133,7 +133,7 @@ namespace Mono.CSharp {
 			return list;
 		}
 
-		PendingImplementation (TypeContainer container, MissingInterfacesInfo [] missing_ifaces, ArrayList abstract_methods, int total)
+		PendingImplementation (TypeContainer container, MissingInterfacesInfo[] missing_ifaces, IList<MethodBase> abstract_methods, int total)
 		{
 			TypeBuilder type_builder = container.TypeBuilder;
 			
@@ -299,7 +299,7 @@ namespace Mono.CSharp {
 			// We also pre-compute the methods.
 			//
 			bool implementing_abstract = ((b != null) && b.IsAbstract && !type_builder.IsAbstract);
-			ArrayList abstract_methods = null;
+			IList<MethodBase> abstract_methods = null;
 
 			if (implementing_abstract){
 				abstract_methods = GetAbstractMethods (b);

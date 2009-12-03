@@ -20,7 +20,7 @@
 using System;
 using System.IO;
 using System.Collections;
-using System.Collections.Specialized;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -436,7 +436,7 @@ namespace Mono.CSharp {
 
 	public abstract class CommonAssemblyModulClass : Attributable, IMemberContext
 	{
-		public void AddAttributes (ArrayList attrs, IMemberContext context)
+		public void AddAttributes (List<Attribute> attrs, IMemberContext context)
 		{
 			foreach (Attribute a in attrs)
 				a.AttachTo (this, context);
@@ -526,11 +526,11 @@ namespace Mono.CSharp {
 
 		public Attribute ClsCompliantAttribute;
 
-		ListDictionary declarative_security;
+		Dictionary<SecurityAction, PermissionSet> declarative_security;
 		bool has_extension_method;		
 		public AssemblyName Name;
 		MethodInfo add_type_forwarder;
-		ListDictionary emitted_forwarders;
+		Dictionary<Type, Attribute> emitted_forwarders;
 
 		// Module is here just because of error messages
 		static string[] attribute_targets = new string [] { "assembly", "module" };
@@ -598,7 +598,7 @@ namespace Mono.CSharp {
 				g.AttachTo (this, this);
 
 				if (g.Resolve () != null) {
-					declarative_security = new ListDictionary ();
+					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
 					g.ExtractSecurityPermissionSet (declarative_security);
 				}
 			}
@@ -827,7 +827,7 @@ namespace Mono.CSharp {
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
-					declarative_security = new ListDictionary ();
+					declarative_security = new Dictionary<SecurityAction, PermissionSet> ();
 
 				a.ExtractSecurityPermissionSet (declarative_security);
 				return;
@@ -869,9 +869,9 @@ namespace Mono.CSharp {
 
 				t = TypeManager.DropGenericTypeArguments (t);
 				if (emitted_forwarders == null) {
-					emitted_forwarders = new ListDictionary();
-				} else if (emitted_forwarders.Contains(t)) {
-					Report.SymbolRelatedToPreviousError(((Attribute)emitted_forwarders[t]).Location, null);
+					emitted_forwarders = new Dictionary<Type, Attribute>  ();
+				} else if (emitted_forwarders.ContainsKey (t)) {
+					Report.SymbolRelatedToPreviousError(emitted_forwarders[t].Location, null);
 					Report.Error(739, a.Location, "A duplicate type forward of type `{0}'",
 						TypeManager.CSharpName(t));
 					return;
@@ -949,9 +949,10 @@ namespace Mono.CSharp {
 						builder_instance = fi.GetValue (Builder);
 					}
 
-					object[] args = new object [] { declarative_security [SecurityAction.RequestMinimum],
-												  declarative_security [SecurityAction.RequestOptional],
-												  declarative_security [SecurityAction.RequestRefuse] };
+					var args = new PermissionSet [3];
+					declarative_security.TryGetValue (SecurityAction.RequestMinimum, out args [0]);
+					declarative_security.TryGetValue (SecurityAction.RequestOptional, out args [1]);
+					declarative_security.TryGetValue (SecurityAction.RequestRefuse, out args [2]);
 					add_permission.Invoke (builder_instance, args);
 				}
 				catch {
