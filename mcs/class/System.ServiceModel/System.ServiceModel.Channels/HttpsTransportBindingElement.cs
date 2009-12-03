@@ -40,7 +40,7 @@ namespace System.ServiceModel.Channels
 		: HttpTransportBindingElement, ITransportTokenAssertionProvider,
 		IPolicyExportExtension, IWsdlExportExtension
 	{
-		bool req_cli_cert = true;
+		bool req_cli_cert = false;
 
 		public HttpsTransportBindingElement ()
 		{
@@ -50,11 +50,7 @@ namespace System.ServiceModel.Channels
 			HttpsTransportBindingElement other)
 			: base (other)
 		{
-#if NET_2_1
 			req_cli_cert = other.req_cli_cert;
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 		public bool RequireClientCertificate {

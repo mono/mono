@@ -39,8 +39,7 @@ namespace System.ServiceModel.Channels
 #if NET_2_1
 		: SecurityBindingElement
 #else
-		: SecurityBindingElement,
-		  ISecurityCapabilities, IPolicyExportExtension
+		: SecurityBindingElement, IPolicyExportExtension
 #endif
 	{
 		public TransportSecurityBindingElement ()
@@ -51,10 +50,8 @@ namespace System.ServiceModel.Channels
 			TransportSecurityBindingElement other)
 			: base (other)
 		{
-			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override BindingElement Clone ()
 		{
 			return new TransportSecurityBindingElement (this);
@@ -83,32 +80,6 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
-		#region explicit interface implementations
-		[MonoTODO]
-		ProtectionLevel ISecurityCapabilities.SupportedRequestProtectionLevel {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		ProtectionLevel ISecurityCapabilities.SupportedResponseProtectionLevel {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsClientAuthentication {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsClientWindowsIdentity {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsServerAuthentication {
-			get { throw new NotImplementedException (); }
-		}
-
 		[MonoTODO]
 		void IPolicyExportExtension.ExportPolicy (
 			MetadataExporter exporter,
@@ -116,7 +87,6 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
-		#endregion
 #endif
 	}
 }

@@ -1,3 +1,7 @@
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicHttpBinding.cs : handle transport security properties.
+
 2009-12-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CommunicationObjectAbortedException.cs, ServerTooBusyException.cs,

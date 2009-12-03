@@ -209,7 +209,9 @@ namespace System.ServiceModel.Channels
 		public static TransportSecurityBindingElement 
 			CreateCertificateOverTransportBindingElement (MessageSecurityVersion version)
 		{
-			throw new NotImplementedException ();
+			var be = new TransportSecurityBindingElement () { MessageSecurityVersion = version };
+			be.EndpointSupportingTokenParameters.SignedEncrypted.Add (new X509SecurityTokenParameters ());
+			return be;
 		}
 
 		[MonoTODO]
@@ -449,7 +451,9 @@ namespace System.ServiceModel.Channels
 		public static TransportSecurityBindingElement 
 			CreateUserNameOverTransportBindingElement ()
 		{
-			throw new NotImplementedException ();
+			var be = new TransportSecurityBindingElement ();
+			be.EndpointSupportingTokenParameters.SignedEncrypted.Add (new UserNameSecurityTokenParameters ());
+			return be;
 		}
 		#endregion
 

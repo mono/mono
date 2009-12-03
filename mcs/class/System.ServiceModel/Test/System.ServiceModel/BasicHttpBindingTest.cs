@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.Net;
 using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
@@ -246,6 +247,71 @@ namespace MonoTests.System.ServiceModel
 			Assert.AreEqual (TransferMode.Streamed, t.TransferMode, "#14");
 			Assert.AreEqual (false, t.UnsafeConnectionNtlmAuthentication, "#15");
 			Assert.AreEqual (false, t.UseDefaultWebProxy, "#16");
+		}
+
+		[Test]
+		public void SecurityMode ()
+		{
+			// hmm, against my expectation, those modes does not give Http(s)TransportBindingElement property differences..
+			var modes = new HttpClientCredentialType [] {HttpClientCredentialType.None, HttpClientCredentialType.Basic, HttpClientCredentialType.Digest, HttpClientCredentialType.Ntlm, HttpClientCredentialType.Windows, HttpClientCredentialType.Certificate};
+			foreach (var m in modes) {
+				var b = new BasicHttpBinding ();
+				b.Security.Mode = BasicHttpSecurityMode.Transport;
+				b.Security.Transport.ClientCredentialType = m;
+				var bec = b.CreateBindingElements ();
+				Assert.AreEqual (2, bec.Count, "#1." + m);
+				Assert.IsTrue (bec [1] is HttpsTransportBindingElement, "#2." + m);
+				var tbe = (HttpsTransportBindingElement) bec [1];
+				if (m == HttpClientCredentialType.Certificate)
+					Assert.IsTrue (tbe.RequireClientCertificate, "#3." + m);
+				else
+					Assert.IsFalse (tbe.RequireClientCertificate, "#3." + m);
+			}
+		}
+
+		[Test]
+		public void SecurityMode2 ()
+		{
+			var modes = new HttpClientCredentialType [] {HttpClientCredentialType.None, HttpClientCredentialType.Basic, HttpClientCredentialType.Digest, HttpClientCredentialType.Ntlm, HttpClientCredentialType.Windows, HttpClientCredentialType.Certificate};
+			foreach (var m in modes) {
+				var b = new BasicHttpBinding ();
+				b.Security.Mode = BasicHttpSecurityMode.TransportWithMessageCredential; // gives WS-Security message security.
+				b.Security.Transport.ClientCredentialType = m;
+				var bec = b.CreateBindingElements ();
+				Assert.AreEqual (3, bec.Count, "#1." + m);
+				Assert.IsTrue (bec [0] is TransportSecurityBindingElement, "#2." + m);
+				Assert.IsTrue (bec [2] is HttpsTransportBindingElement, "#3." + m);
+				var tbe = (HttpsTransportBindingElement) bec [2];
+				Assert.IsFalse (tbe.RequireClientCertificate, "#4." + m);
+			}
+		}
+
+		[Test]
+		public void SecurityMode3 ()
+		{
+			var modes = new HttpClientCredentialType [] {HttpClientCredentialType.None, HttpClientCredentialType.Basic, HttpClientCredentialType.Digest, HttpClientCredentialType.Ntlm, HttpClientCredentialType.Windows};
+			var auths = new AuthenticationSchemes [] { AuthenticationSchemes.Anonymous, AuthenticationSchemes.Basic, AuthenticationSchemes.Digest, AuthenticationSchemes.Ntlm, AuthenticationSchemes.Negotiate }; // specifically, none->anonymous, and windows->negotiate
+			for (int i = 0; i < modes.Length; i++) {
+				var m = modes [i];
+				var b = new BasicHttpBinding ();
+				b.Security.Mode = BasicHttpSecurityMode.TransportCredentialOnly; // gives WS-Security message security.
+				b.Security.Transport.ClientCredentialType = m;
+				var bec = b.CreateBindingElements ();
+				Assert.AreEqual (2, bec.Count, "#1." + m);
+				Assert.IsTrue (bec [1] is HttpTransportBindingElement, "#2." + m);
+				var tbe = (HttpTransportBindingElement) bec [1];
+				Assert.AreEqual (auths [i], tbe.AuthenticationScheme, "#3." + m);
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void SecurityMode4 ()
+		{
+			var b = new BasicHttpBinding ();
+			b.Security.Mode = BasicHttpSecurityMode.TransportCredentialOnly; // gives WS-Security message security.
+			b.Security.Transport.ClientCredentialType = HttpClientCredentialType.Certificate;
+			var bec = b.CreateBindingElements ();
 		}
 
 		private BasicHttpBinding CreateBindingFromConfig ()

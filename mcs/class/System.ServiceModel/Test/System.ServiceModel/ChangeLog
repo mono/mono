@@ -1,3 +1,7 @@
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicHttpBindingTest.cs : added transport security related tests.
+
 2009-12-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetTcpBindingTest.cs :

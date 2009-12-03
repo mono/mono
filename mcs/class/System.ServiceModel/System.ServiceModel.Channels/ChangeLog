@@ -1,3 +1,13 @@
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpsTransportBindingElement.cs :
+	  RequireClientCertificate is false by default.
+	  Remove extra #if NET_2_1.
+	* SecurityBindingElement.cs :
+	  Implement some transport security factory methods.
+	* TransportSecurityBindingElement.cs :
+	  It is not ISecurityCapabilities anymore.
+
 2009-11-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageHeaders.cs
