@@ -618,7 +618,16 @@ namespace MonoTests.System {
 			}
 			return result;
 		}
-
+		
+		[Test]
+		public void ArithmeticAccrossDSTBoudaries ()
+		{
+			DateTime dt = new DateTime (633954393584177800, DateTimeKind.Local); //Dec 3, 2009, 12:16
+			DateTimeOffset dto = new DateTimeOffset (dt);
+			DateTimeOffset dto2 = dto.AddDays (-60); //Should cross the late Oct boundary in most part of the world
+			Assert.AreEqual (dto.Offset, dto2.Offset);
+			Assert.AreEqual (dt.AddDays (-60), dto2.DateTime);
+		}
 	}
 }
 #endif

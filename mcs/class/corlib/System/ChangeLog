@@ -1,3 +1,8 @@
+2009-12-03  Stephane Delcroix  <stephane@delcroix.org>
+
+	* DateTimeOffset.cs: fix dates arithmetic to avoid throwing
+	while crossing dst boundaries.
+
 2009-12-03  Jb Evain  <jbevain@novell.com>
 
 	* Attribute.cs: remove code duplication.
