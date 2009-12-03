@@ -26,8 +26,11 @@
 #if NET_4_0
 using System.Collections.Specialized;
 using System.ComponentModel;
+using System.Runtime.CompilerServices;
 
-namespace System.Collections.ObjectModel {
+namespace System.Collections.ObjectModel
+{
+	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
 	public class ReadOnlyObservableCollection<T> : ReadOnlyCollection<T>, INotifyCollectionChanged, INotifyPropertyChanged {
 		
 		public ReadOnlyObservableCollection(ObservableCollection<T> list)
