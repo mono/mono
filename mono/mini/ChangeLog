@@ -1,5 +1,11 @@
 2009-12-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_jit_runtime_invoke): Avoid the call to mono_class_setup_vtable ()
+	if no security manager is present, to speed up the AOT case. Call
+	mono_class_vtable () full with raise_on_error == TRUE instead.
+
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.c (mini_method_compile): Call handle_exception_clauses earlier so
 	the local optimization passes can take its result into account. Fixes
 	#559876.
