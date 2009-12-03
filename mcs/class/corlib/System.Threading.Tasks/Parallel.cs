@@ -107,6 +107,7 @@ namespace System.Threading.Tasks
 			return For<TLocal> (from, to, null, init, action, destruct);
 		}
 		
+		[MonoTODO]
 		public static ParallelLoopResult For<TLocal> (int from, int to, ParallelOptions options, 
 		                                              Func<TLocal> init, 
 		                                              Func<int, ParallelLoopState, TLocal, TLocal> action,
@@ -122,7 +123,9 @@ namespace System.Threading.Tasks
 			int step = Math.Min (5, (to - from) / num);
 			if (step <= 0)
 				step = 1;
-
+			
+			throw new NotImplementedException ();
+/*
 			// Each worker put the indexes it's responsible for here
 			// so that other worker may steal if they starve.
 			ConcurrentBag<int> bag = new ConcurrentBag<int> ();
@@ -200,12 +203,13 @@ namespace System.Threading.Tasks
 			}
 			
 			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped.Value || infos.IsExceptional));
+*/			
 		}
 
 		#endregion
 		
 		#region Foreach
-		
+		[MonoTODO]
 		static ParallelLoopResult ForEach<TSource, TLocal> (Func<int, IList<IEnumerator<TSource>>> enumerable, ParallelOptions options,
 		                                                    Func<TLocal> init, Func<TSource, ParallelLoopState, TLocal, TLocal> action,
 		                                                    Action<TLocal> destruct)
@@ -216,6 +220,8 @@ namespace System.Threading.Tasks
 			Task[] tasks = new Task[num];
 			ParallelLoopState.ExternalInfos infos = new ParallelLoopState.ExternalInfos ();
 			
+			throw new NotImplementedException ();
+/*			
 			ConcurrentBag<TSource> bag = new ConcurrentBag<TSource> ();
 			const int bagCount = 5;
 			
@@ -287,6 +293,7 @@ namespace System.Threading.Tasks
 			}
 			
 			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped.Value || infos.IsExceptional));
+			*/
 		}
 		
 		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> enumerable, Action<TSource> action)

@@ -1507,7 +1507,6 @@ System.Collections.Concurrent/OrderablePartitioner.cs
 System.Collections.Concurrent/ConcurrentDictionary.cs
 System.Collections.Concurrent/Partitioner.cs
 System.Collections.Concurrent/ConcurrentQueue.cs
-System.Collections.Concurrent/ConcurrentBag.cs
 System.Collections.Concurrent/ConcurrentSkipList.cs
 System.Collections.Concurrent/Partitionners/ListPartitioner.cs
 System.Collections.Concurrent/Partitionners/EnumerablePartitioner.cs
