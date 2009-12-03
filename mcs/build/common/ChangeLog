@@ -1,3 +1,7 @@
+2009-12-03  Marek Safar  <marek.safar@gmail.com>
+
+	* Consts.cs.in: Add WindowsBase_3_0.
+
 2009-11-12  Jb Evain  <jbevain@novell.com>
 
 	* Consts.cs.in: add a AssemblySystem_Core constant.
