@@ -1,5 +1,7 @@
 2009-12-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MonoInst): Remove unused 'ssa_op' field.
+
 	* debugger-agent.c: Rework the handling of stack traces of running threads to
 	avoid crashes if compute_frames () tries to walk the stack of running thread.
 
