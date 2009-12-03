@@ -1,3 +1,9 @@
+2009-12-02  Geoff Norton  <gnorton@novell.com>
+
+	* VirtualMachineManager.cs: We might get a SocketException (interrupted)
+	here, so lets just handle all Exceptions to our Accept pattern the same
+	way
+
 2009-12-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* VirtualMachine.cs (ErrorHandler): Handle NOT_SUSPENDED error code too.
