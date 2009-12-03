@@ -1,3 +1,8 @@
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* src/gmisc-unix.c (g_get_user_name): Avoid returning NULL if the env
+	var is not set.
+
 2009-09-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* test/queue.c: new tests.
