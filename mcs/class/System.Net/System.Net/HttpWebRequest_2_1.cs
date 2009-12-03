@@ -92,6 +92,11 @@ namespace System.Net {
 			}
 		}
 
+		public CookieContainer CookieContainer {
+			get;
+			set;
+		}
+
 		public override string Method {
 			get { throw NotImplemented (); }
 			set { throw NotImplemented (); }
