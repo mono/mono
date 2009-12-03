@@ -1,5 +1,10 @@
 2009-12-03  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Only add references from outside the nursery to
+	within the nursery to the global remset list.
+
+2009-12-03  Mark Probst  <mark.probst@gmail.com>
+
 	* appdomain.c (create_exceptions): Set the domain temporarily if
 	necessary to avoid cross-domain references.
 
