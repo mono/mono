@@ -26,13 +26,17 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
+#if NET_2_0 || (NET_4_0 && INSIDE_CORLIB)
 
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Runtime.CompilerServices;
 
 namespace System.Threading {
 
+#if NET_4_0 && INSIDE_CORLIB
+//	[TypeForwardedFrom (Consts.AssemblySystem_2_0)]
+#endif
 	[ComVisible (false)]
 	[Serializable]
 	public class SemaphoreFullException : SystemException {

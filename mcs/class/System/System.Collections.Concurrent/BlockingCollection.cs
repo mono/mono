@@ -1,4 +1,4 @@
-#if NET_4_0
+//
 // BlockingCollection.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -23,14 +23,20 @@
 //
 //
 
+#if NET_4_0
+
 using System;
 using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
+using System.Runtime.InteropServices;
 
 namespace System.Collections.Concurrent
 {
+	[ComVisible (false)]
+	[DebuggerDisplay ("Count={Count}")]
+	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class BlockingCollection<T> : IEnumerable<T>, ICollection, IEnumerable, IDisposable
 	{
 		readonly IProducerConsumerCollection<T> underlyingColl;
