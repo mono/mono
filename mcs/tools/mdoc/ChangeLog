@@ -1,3 +1,10 @@
+2009-12-03  Jonathan Pryor <jpryor@novell.com>
+
+	* Test/html.expected/Mono.DocTest.Generic/MyList`1.html,
+	  Test/html.expected/Mono.DocTest.Generic/MyList`2.html: Flush to sync
+	  with updated mdoc.  Inherited members are now shown (as they were
+	  supposed to be, but a bug had prevented from being found).
+
 2009-12-02  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2html.cs: Enable debug output in
