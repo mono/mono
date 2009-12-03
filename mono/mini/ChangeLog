@@ -1,3 +1,9 @@
+2009-01-24  Steven Munroe  <munroesj@us.ibm.com>
+
+	This patch is contributed under the terms of the MIT/X11 license
+
+        * cpu-ppc64.md (load_memindex): Add loadi8_memindex.
+
 2009-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MonoInst): Remove unused 'ssa_op' field.
