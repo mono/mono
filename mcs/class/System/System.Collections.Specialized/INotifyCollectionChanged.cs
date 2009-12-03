@@ -22,13 +22,15 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
+
 #if NET_4_0
-using System;
+using System.Runtime.CompilerServices;
 
 namespace System.Collections.Specialized {
 
-	public interface INotifyCollectionChanged {
-
+	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
+	public interface INotifyCollectionChanged
+	{
 		event NotifyCollectionChangedEventHandler CollectionChanged;
 	}
 

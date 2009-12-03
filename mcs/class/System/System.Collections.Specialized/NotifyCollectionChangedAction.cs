@@ -23,11 +23,13 @@
 //	Chris Toshok (toshok@ximian.com)
 //
 #if NET_4_0
-using System;
+using System.Runtime.CompilerServices;
 
-namespace System.Collections.Specialized {
-
-	public enum NotifyCollectionChangedAction {
+namespace System.Collections.Specialized
+{
+	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
+	public enum NotifyCollectionChangedAction
+	{
 		Add,
 		Remove,
 		Replace,

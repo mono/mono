@@ -24,8 +24,13 @@
 //	Brian O'Keefe (zer0keefie@gmail.com)
 //
 #if NET_4_0
-namespace System.Collections.Specialized {
-	public class NotifyCollectionChangedEventArgs : EventArgs {
+using System.Runtime.CompilerServices;
+
+namespace System.Collections.Specialized
+{
+	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
+	public class NotifyCollectionChangedEventArgs : EventArgs
+	{
 		private NotifyCollectionChangedAction action;
 		private IList oldItems, newItems;
 		private int oldIndex = -1, newIndex = -1;

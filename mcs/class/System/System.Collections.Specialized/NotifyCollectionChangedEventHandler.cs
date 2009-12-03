@@ -23,11 +23,12 @@
 //	Chris Toshok (toshok@ximian.com)
 //
 #if NET_4_0
-using System;
+using System.Runtime.CompilerServices;
 
-namespace System.Collections.Specialized {
-
+namespace System.Collections.Specialized
+{
+	[TypeForwardedFrom (Consts.WindowsBase_3_0)]
 	public delegate void NotifyCollectionChangedEventHandler (object sender, NotifyCollectionChangedEventArgs e);
-
 }
+
 #endif
