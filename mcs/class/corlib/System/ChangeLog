@@ -1,3 +1,7 @@
+2009-12-03  Jb Evain  <jbevain@novell.com>
+
+	* Attribute.cs: remove code duplication.
+
 2009-12-02  Jb Evain  <jbevain@novell.com>
 
 	* Enum.cs (IConvertible.ToType): properly convert enum values

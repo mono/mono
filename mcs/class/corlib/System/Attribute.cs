@@ -231,33 +231,17 @@ namespace System
 
 		public static Attribute[] GetCustomAttributes (Module element, bool inherit)
 		{
-			// element parameter is not allowed to be null
-			CheckParameters (element, typeof (Attribute));
-
-			return (Attribute []) element.GetCustomAttributes (inherit);
+			return GetCustomAttributes (element, typeof (Attribute), inherit);
 		}
 
 		public static Attribute[] GetCustomAttributes (Assembly element, bool inherit)
 		{
-			// element parameter is not allowed to be null
-			CheckParameters (element, typeof (Attribute));
-
-			return (Attribute []) element.GetCustomAttributes (inherit);
+			return GetCustomAttributes (element, typeof (Attribute), inherit);
 		}
 
 		public static Attribute[] GetCustomAttributes (MemberInfo element, bool inherit)
 		{
-			// element parameter is not allowed to be null
-			CheckParameters (element, typeof (Attribute));
-
-			// MS ignores the inherit param in PropertyInfo's ICustomAttributeProvider 
-			// implementation, but not in the Attributes, so directly get the attributes
-			// from MonoCustomAttrs instead of going throught the PropertyInfo's 
-			// ICustomAttributeProvider
-			MemberTypes mtype = element.MemberType;
-			if (mtype == MemberTypes.Property)
-				return (Attribute []) MonoCustomAttrs.GetCustomAttributes (element, inherit);
-			return (Attribute []) element.GetCustomAttributes (typeof (Attribute), inherit);
+			return GetCustomAttributes (element, typeof (Attribute), inherit);
 		}
 
 		public static Attribute[] GetCustomAttributes (ParameterInfo element, bool inherit)
