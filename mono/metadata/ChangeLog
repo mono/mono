@@ -1,3 +1,11 @@
+2009-12-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (find_method_in_class): Ignore methods with broken signatures.
+
+	Fixes #559906.
+
+	Backport of r147557.
+
 2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (get_stack_type): Return that the type is invalid instead of
