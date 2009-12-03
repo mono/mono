@@ -32,7 +32,7 @@ namespace Mono.Debugger
 			get {
 				FieldInfoMirror[] field_info = Type.GetFields ();
 				for (int i = 0; i < field_info.Length; ++i)
-					if (field_info [i].Name == field)
+					if (!field_info [i].IsStatic && field_info [i].Name == field)
 						return Fields [i];
 				throw new ArgumentException ("Unknown struct field '" + field + "'.", "field");
 			}
