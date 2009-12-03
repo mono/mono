@@ -1,5 +1,9 @@
 2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TransportSecurityBindingElement.cs : fix 2.1 build.
+
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpsTransportBindingElement.cs :
 	  RequireClientCertificate is false by default.
 	  Remove extra #if NET_2_1.

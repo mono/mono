@@ -452,7 +452,9 @@ namespace System.ServiceModel.Channels
 			CreateUserNameOverTransportBindingElement ()
 		{
 			var be = new TransportSecurityBindingElement ();
+#if !NET_2_1 // FIXME: there should be whatever else to do for 2.1 instead.
 			be.EndpointSupportingTokenParameters.SignedEncrypted.Add (new UserNameSecurityTokenParameters ());
+#endif
 			return be;
 		}
 		#endregion
