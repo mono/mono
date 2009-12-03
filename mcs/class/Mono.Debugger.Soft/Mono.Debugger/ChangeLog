@@ -1,3 +1,7 @@
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* StructMirror.cs (this): Ignore static fields.
+
 2009-12-02  Geoff Norton  <gnorton@novell.com>
 
 	* VirtualMachineManager.cs: We might get a SocketException (interrupted)
