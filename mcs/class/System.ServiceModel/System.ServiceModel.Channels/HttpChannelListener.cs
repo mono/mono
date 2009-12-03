@@ -110,6 +110,11 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (context)
 		{
+			// The null Uri check looks weird, but it seems the listener can be built without it.
+			// See HttpTransportBindingElementTest.BuildChannelListenerWithoutListenUri().
+			if (Uri != null && source.Scheme != Uri.Scheme)
+				throw new ArgumentException (String.Format ("Requested listen uri scheme must be {0}, but was {1}.", source.Scheme, Uri.Scheme));
+
 			foreach (BindingElement be in context.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {

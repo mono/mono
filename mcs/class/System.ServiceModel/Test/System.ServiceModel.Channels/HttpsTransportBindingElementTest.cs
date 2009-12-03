@@ -1,5 +1,5 @@
 //
-// HttpsTransportBindingElement.cs
+// HttpTransportBindingElementTest.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
@@ -26,69 +26,41 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.IO;
 using System.Net;
 using System.Net.Security;
+using System.Reflection;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
+using System.Threading;
 using System.Xml;
+using NUnit.Framework;
 
-namespace System.ServiceModel.Channels
+namespace MonoTests.System.ServiceModel.Channels
 {
-	[MonoTODO]
-	public class HttpsTransportBindingElement
-		: HttpTransportBindingElement, ITransportTokenAssertionProvider,
-		IPolicyExportExtension, IWsdlExportExtension
+	[TestFixture]
+	public class HttpsTransportBindingElementTest
 	{
-		bool req_cli_cert = false;
-
-		public HttpsTransportBindingElement ()
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BuildChannelFactoryForHttpEndpoint ()
 		{
+			var b = new BasicHttpBinding ();
+			b.Security.Mode = BasicHttpSecurityMode.Transport;
+			var cf = b.BuildChannelFactory<IRequestChannel> ();
+			cf.Open ();
+			cf.CreateChannel (new EndpointAddress ("http://localhost:8080"));
 		}
 
-		protected HttpsTransportBindingElement (
-			HttpsTransportBindingElement other)
-			: base (other)
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void BuildChannelListenerForHttpEndpoint ()
 		{
-			req_cli_cert = other.req_cli_cert;
+			var b = new BasicHttpBinding ();
+			b.Security.Mode = BasicHttpSecurityMode.Transport;
+			b.BuildChannelListener<IReplyChannel> (new Uri ("http://localhost:8080"));
 		}
-
-		public bool RequireClientCertificate {
-			get { return req_cli_cert; }
-			set { req_cli_cert = value; }
-		}
-
-		public override string Scheme {
-			get { return Uri.UriSchemeHttps; }
-		}
-
-		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
-			BindingContext context)
-		{
-			return base.BuildChannelFactory <TChannel> (context);
-		}
-
-#if !NET_2_1
-		[MonoTODO]
-		public override IChannelListener<TChannel>
-			BuildChannelListener<TChannel> (
-			BindingContext context)
-		{
-			return base.BuildChannelListener <TChannel> (context);
-		}
-#endif
-
-		public override BindingElement Clone ()
-		{
-			return new HttpsTransportBindingElement (this);
-		}
-
-#if !NET_2_1
-		[MonoTODO]
-		public XmlElement GetTransportTokenAssertion ()
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 	}
 }
