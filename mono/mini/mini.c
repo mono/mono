@@ -3252,6 +3252,20 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	mono_jit_stats.basic_blocks += cfg->num_bblocks;
 	mono_jit_stats.max_basic_blocks = MAX (cfg->num_bblocks, mono_jit_stats.max_basic_blocks);
 
+	/* todo: remove code when we have verified that the liveness for try/catch blocks
+	 * works perfectly 
+	 */
+	/* 
+	 * Currently, this can't be commented out since exception blocks are not
+	 * processed during liveness analysis.
+	 * It is also needed, because otherwise the local optimization passes would
+	 * delete assignments in cases like this:
+	 * r1 <- 1
+	 * <something which throws>
+	 * r1 <- 2
+	 */
+	mono_liveness_handle_exception_clauses (cfg);
+
 	/*g_print ("numblocks = %d\n", cfg->num_bblocks);*/
 
 	mono_decompose_long_opts (cfg);
@@ -3443,15 +3457,6 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		
 		g_list_free (regs);
 	}
-
-	/* todo: remove code when we have verified that the liveness for try/catch blocks
-	 * works perfectly 
-	 */
-	/* 
-	 * Currently, this can't be commented out since exception blocks are not
-	 * processed during liveness analysis.
-	 */
-	mono_liveness_handle_exception_clauses (cfg);
 
 	if (cfg->globalra) {
 		MonoBasicBlock *bb;
