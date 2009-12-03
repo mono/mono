@@ -181,8 +181,10 @@ System.Runtime.Serialization/SerializationCallbackTest.cs
 System.Runtime.Serialization/ArraySerializationTest.cs
 System.Runtime.Serialization/ObjectManagerTest.cs
 System.Runtime.Serialization.Formatters.Binary/BinaryFormatterTest.cs
+System.Runtime.Versioning/FrameworkNameTest.cs
 System.Runtime.Versioning/ResourceConsumptionAttributeTest.cs
 System.Runtime.Versioning/ResourceExposureAttributeTest.cs
+System.Runtime.Versioning/TargetFrameworkAttributeTest.cs
 System.Runtime.Versioning/VersioningHelperTest.cs
 System/SByteTest.cs
 System.Security/CodeAccessPermissionTest.cs

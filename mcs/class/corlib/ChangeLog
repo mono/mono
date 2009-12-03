@@ -1,3 +1,13 @@
+2009-12-03  Marek Habersack  <mhabersack@novell.com>
+
+	* corlib.dll.sources: added
+	System.Runtime.Versioning/FrameworkName.cs and
+	System.Runtime.Versioning/TargetFrameworkAttribute.cs
+
+	* corlib_test.dll.sources: added
+	System.Runtime.Versioning/FrameworkNameTest.cs and
+	System.Runtime.Versioning/TargetFrameworkAttributeTest.cs
+
 2009-12-02  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Add LIBC define.
