@@ -1,3 +1,10 @@
+2009-12-02  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CommunicationObjectAbortedException.cs, ServerTooBusyException.cs,
+	ServiceActivationException.cs: Fix base class
+	* ServiceKnownTypeAttribute.cs: Seal type and add missing 
+	[AttributeUsage] attribute
+
 2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SilverlightClientConfigLoader.cs : I made an extraneous change.
