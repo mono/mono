@@ -1,5 +1,10 @@
 2009-12-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Call handle_exception_clauses () in the same
+	place it was called before too.
+
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.c (mini_method_compile): Call handle_exception_clauses earlier so
 	the local optimization passes can take its result into account. Fixes
 	#559876.
