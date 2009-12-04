@@ -1,3 +1,7 @@
+2009-12-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* SortOrder.cs: Add enum.
+
 2009-10-15  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** As part of fix for #385028
