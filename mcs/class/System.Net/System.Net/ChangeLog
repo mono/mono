@@ -1,3 +1,11 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HttpWebRequest_2_1.cs: Add CookieCollection, need to be 
+	implemented in the client stack
+	* HttpWebResponse_2_1.cs: CookieContainer is virtual. Add FIXME
+	to move (a real) implementation into the client stack
+	* WebRequest_2_1.cs: Add Create(string) overload (SL3)
+
 2009-09-24  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Dns_2_1.cs: New. Smaller version of Dns.cs that offers just

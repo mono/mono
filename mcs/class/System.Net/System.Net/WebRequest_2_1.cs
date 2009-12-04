@@ -48,6 +48,10 @@ namespace System.Net {
 		public abstract string Method { get; set; }
 		public abstract Uri RequestUri { get; }
 
+		public virtual IWebRequestCreate CreatorInstance { 
+			get { return null; }
+		}
+
 		static WebRequest ()
 		{
 			registred_prefixes = new Dictionary<string, IWebRequestCreate> (StringComparer.OrdinalIgnoreCase);
@@ -66,6 +70,11 @@ namespace System.Net {
 		internal virtual IAsyncResult BeginGetResponse (AsyncCallback callback, object state, bool policy)
 		{
 			return BeginGetResponse (callback, state);
+		}
+
+		public static WebRequest Create (string requestUriString)
+		{
+			return Create (new Uri (requestUriString));
 		}
 
 		public static WebRequest Create (Uri uri)
