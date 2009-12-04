@@ -275,6 +275,7 @@ Microsoft.SqlServer.Server/TriggerAction.cs
 Microsoft.SqlServer.Server/SqlTriggerContext.cs
 Microsoft.SqlServer.Server/SqlProcedureAttribute.cs
 Microsoft.SqlServer.Server/SqlTriggerAttribute.cs
+System.Data.SqlClient/SortOrder.cs
 System.Data.SqlClient/SqlNotificationType.cs
 System.Data.SqlClient/SqlNotificationInfo.cs
 System.Data.SqlClient/SqlNotificationSource.cs
