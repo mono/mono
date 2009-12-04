@@ -1,5 +1,11 @@
 2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ReplyChannelBase.cs : added listener property.
+	* SecurityChannelListener.cs : quick async impl, as ServiceHost has
+	  been updated to prefer async by default, a while ago.
+
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpTransportBindingElement.cs : finished all GetProperty() values.
 
 2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>

@@ -157,61 +157,54 @@ namespace System.ServiceModel.Channels
 		}
 	}
 
-	internal class SecurityReplyChannel : LayeredReplyChannel
+	internal class SecurityReplyChannel : InternalReplyChannelBase
 	{
-		SecurityChannelListener<IReplyChannel> source;
+		IReplyChannel inner;
 
 		public SecurityReplyChannel (
 			SecurityChannelListener<IReplyChannel> source,
 			IReplyChannel innerChannel)
-			: base (innerChannel)
+			: base (source)
 		{
-			this.source = source;
-		}
-
-		public override ChannelListenerBase Listener {
-			get { return source; }
+			this.inner = innerChannel;
 		}
 
 		public SecurityChannelListener<IReplyChannel> Source {
-			get { return source; }
+			get { return (SecurityChannelListener<IReplyChannel>) Listener; }
 		}
 
 		// IReplyChannel
 
-		public override IAsyncResult BeginReceiveRequest (
-			TimeSpan timeout, AsyncCallback callback, object state)
+		protected override void OnOpen (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			inner.Open (timeout);
 		}
 
-		public override IAsyncResult BeginTryReceiveRequest (
-			TimeSpan timeout, AsyncCallback callback, object state)
+		protected override void OnClose (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
+			inner.Close (timeout);
 		}
 
-		public override RequestContext EndReceiveRequest (IAsyncResult result)
+		public override RequestContext ReceiveRequest (TimeSpan timeout)
 		{
-			throw new NotImplementedException ();
-		}
-
-		public override bool EndTryReceiveRequest (IAsyncResult result, out RequestContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public override RequestContext  ReceiveRequest (TimeSpan timeout)
-		{
-			return new SecurityRequestContext (this, base.ReceiveRequest (timeout));
+			RequestContext ctx;
+			if (TryReceiveRequest (timeout, out ctx))
+				return ctx;
+			throw new TimeoutException ("Failed to receive request context");
 		}
 
 		public override bool TryReceiveRequest (TimeSpan timeout, out RequestContext context)
 		{
-			if (!base.TryReceiveRequest (timeout, out context))
+			if (!inner.TryReceiveRequest (timeout, out context))
 				return false;
 			context = new SecurityRequestContext (this, context);
 			return true;
+		}
+
+		[MonoTODO]
+		public override bool WaitForRequest (TimeSpan timeout)
+		{
+			throw new NotImplementedException ();
 		}
 
 		// IChannel
@@ -219,7 +212,7 @@ namespace System.ServiceModel.Channels
 		public override T GetProperty<T> ()
 		{
 			// FIXME: implement
-			return base.GetProperty<T> ();
+			return inner.GetProperty<T> ();
 		}
 	}
 }
