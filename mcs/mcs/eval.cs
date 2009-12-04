@@ -12,6 +12,7 @@
 using System;
 using System.Threading;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.IO;
@@ -1188,11 +1189,11 @@ namespace Mono.CSharp {
 	}
 
 	public class Undo {
-		ArrayList undo_types;
+		List<KeyValuePair<TypeContainer, TypeContainer>> undo_types;
 		
 		public Undo ()
 		{
-			undo_types = new ArrayList ();
+			undo_types = new List<KeyValuePair<TypeContainer, TypeContainer>> ();
 		}
 
 		public void AddTypeContainer (TypeContainer current_container, TypeContainer tc)
@@ -1201,10 +1202,11 @@ namespace Mono.CSharp {
 				Console.Error.WriteLine ("Internal error: inserting container into itself");
 				return;
 			}
-			
+
 			if (undo_types == null)
-				undo_types = new ArrayList ();
-			undo_types.Add (new Pair (current_container, tc));
+				undo_types = new List<KeyValuePair<TypeContainer, TypeContainer>> ();
+
+			undo_types.Add (new KeyValuePair<TypeContainer, TypeContainer> (current_container, tc));
 		}
 
 		public void ExecuteUndo ()
@@ -1212,10 +1214,10 @@ namespace Mono.CSharp {
 			if (undo_types == null)
 				return;
 
-			foreach (Pair p in undo_types){
-				TypeContainer current_container = (TypeContainer) p.First;
+			foreach (var p in undo_types){
+				TypeContainer current_container = p.Key;
 
-				current_container.RemoveTypeContainer ((TypeContainer) p.Second);
+				current_container.RemoveTypeContainer (p.Value);
 			}
 			undo_types = null;
 		}

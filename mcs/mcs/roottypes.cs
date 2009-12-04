@@ -71,7 +71,7 @@ namespace Mono.CSharp
 			this.is_unsafe = isUnsafe;
 			this.context = context;
 
-			types = new MemberCoreArrayList ();
+			types = new List<TypeContainer> ();
 			anonymous_types = new Dictionary<int, List<AnonymousTypeClass>> ();
 		}
 

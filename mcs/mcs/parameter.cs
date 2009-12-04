@@ -1184,7 +1184,7 @@ namespace Mono.CSharp {
 
 		public Expression CreateExpressionTree (BlockContext ec, Location loc)
 		{
-			ArrayList initializers = new ArrayList (Count);
+			var initializers = new ArrayList (Count);
 			foreach (Parameter p in FixedParameters) {
 				//
 				// Each parameter expression is stored to local variable

@@ -362,9 +362,9 @@ namespace Mono.CSharp {
 		string fullname;
 		Dictionary<string, Namespace> namespaces;
 		Dictionary<string, DeclSpace> declspaces;
-		Hashtable cached_types;
+		Dictionary<string, TypeExpr> cached_types;
 		RootNamespace root;
-		ArrayList external_exmethod_classes;
+		List<Type> external_exmethod_classes;
 
 		public readonly MemberName MemberName;
 
@@ -408,7 +408,7 @@ namespace Mono.CSharp {
 				MemberName = new MemberName (name);
 
 			namespaces = new Dictionary<string, Namespace> ();
-			cached_types = new Hashtable ();
+			cached_types = new Dictionary<string, TypeExpr> ();
 
 			root.RegisterNamespace (this);
 		}
@@ -478,13 +478,14 @@ namespace Mono.CSharp {
 
 		public bool HasDefinition (string name)
 		{
-			return declspaces != null && declspaces [name] != null;
+			return declspaces != null && declspaces.ContainsKey (name);
 		}
 
 		TypeExpr LookupType (CompilerContext ctx, string name, Location loc)
 		{
-			if (cached_types.Contains (name))
-				return cached_types [name] as TypeExpr;
+			TypeExpr te;
+			if (cached_types.TryGetValue (name, out te))
+				return te;
 
 			Type t = null;
 			if (declspaces != null) {
@@ -519,7 +520,7 @@ namespace Mono.CSharp {
 			if (t == null || (rt != null && loc.IsNull))
 				t = rt;
 
-			TypeExpr te = t == null ? null : new TypeExpression (t, Location.Null);
+			te = t == null ? null : new TypeExpression (t, Location.Null);
 			cached_types [name] = te;
 			return te;
 		}
@@ -594,7 +595,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (external_exmethod_classes == null)
-				external_exmethod_classes = new ArrayList ();
+				external_exmethod_classes = new List<Type> ();
 
 			external_exmethod_classes.Add (type);
 		}

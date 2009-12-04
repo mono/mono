@@ -10,9 +10,9 @@
 //
 
 using System;
-using System.Collections;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Mono.CSharp
@@ -207,7 +207,7 @@ namespace Mono.CSharp
 	public class Arguments
 	{
 		List<Argument> args;
-		ArrayList reordered;	// TODO: LinkedList
+		List<NamedArgument> reordered;
 
 		public Arguments (int capacity)
 		{
@@ -226,7 +226,7 @@ namespace Mono.CSharp
 
 		public ArrayList CreateDynamicBinderArguments (ResolveContext rc)
 		{
-			ArrayList all = new ArrayList (args.Count);
+			var all = new ArrayList (args.Count);
 			Location loc = Location.Null;
 
 			MemberAccess binder = DynamicExpressionStatement.GetBinderNamespace (loc);
@@ -395,7 +395,7 @@ namespace Mono.CSharp
 			return true;
 		}
 
-		public IEnumerator GetEnumerator ()
+		public IEnumerator<Argument> GetEnumerator ()
 		{
 			return args.GetEnumerator ();
 		}
@@ -444,7 +444,7 @@ namespace Mono.CSharp
 				return;
 
 			if (reordered == null)
-				reordered = new ArrayList ();
+				reordered = new List<NamedArgument> ();
 
 			reordered.Add (a);
 		}

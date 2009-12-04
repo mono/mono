@@ -15,13 +15,13 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
-	public class Yield : ResumableStatement {
+	class Yield : ResumableStatement {
 		Expression expr;
 		bool unwind_protect;
 		Iterator iterator;
@@ -219,9 +219,9 @@ namespace Mono.CSharp {
 				public override bool Resolve (BlockContext ec)
 				{
 					TypeExpression storey_type_expr = new TypeExpression (host.TypeBuilder, loc);
-					ArrayList init = null;
+					List<Expression> init = null;
 					if (host.hoisted_this != null) {
-						init = new ArrayList (host.hoisted_params == null ? 1 : host.HoistedParameters.Count + 1);
+						init = new List<Expression> (host.hoisted_params == null ? 1 : host.HoistedParameters.Count + 1);
 						HoistedThis ht = host.hoisted_this;
 						FieldExpr from = new FieldExpr (ht.Field.FieldBuilder, loc);
 						from.InstanceExpression = CompilerGeneratedThis.Instance;
@@ -230,7 +230,7 @@ namespace Mono.CSharp {
 
 					if (host.hoisted_params != null) {
 						if (init == null)
-							init = new ArrayList (host.HoistedParameters.Count);
+							init = new List<Expression> (host.HoistedParameters.Count);
 
 						for (int i = 0; i < host.hoisted_params.Count; ++i) {
 							HoistedParameter hp = (HoistedParameter) host.hoisted_params [i];
@@ -400,7 +400,7 @@ namespace Mono.CSharp {
 		TypeExpr generic_enumerator_type;
 		TypeExpr generic_enumerable_type;
 
-		ArrayList hoisted_params_copy;
+		List<HoistedParameter> hoisted_params_copy;
 		int local_name_idx;
 
 		public IteratorStorey (Iterator iterator)
@@ -418,7 +418,7 @@ namespace Mono.CSharp {
 			get { return current_field; }
 		}
 
-		public ArrayList HoistedParameters {
+		public IList<HoistedParameter> HoistedParameters {
 			get { return hoisted_params; }
 		}
 
@@ -427,7 +427,7 @@ namespace Mono.CSharp {
 			iterator_type_expr = new TypeExpression (MutateType (Iterator.OriginalIteratorType), Location);
 			generic_args = new TypeArguments (iterator_type_expr);
 
-			ArrayList list = new ArrayList ();
+			var list = new List<FullNamedExpression> ();
 			if (Iterator.IsEnumerable) {
 				enumerable_type = new TypeExpression (
 					TypeManager.ienumerable_type, Location);
@@ -477,7 +477,7 @@ namespace Mono.CSharp {
 				//
 				// TODO: Do it for assigned/modified parameters only
 				//
-				hoisted_params_copy = new ArrayList (hoisted_params.Count);
+				hoisted_params_copy = new List<HoistedParameter> (hoisted_params.Count);
 				foreach (HoistedParameter hp in hoisted_params) {
 					hoisted_params_copy.Add (new HoistedParameter (hp, "<$>" + hp.Field.Name));
 				}
@@ -518,7 +518,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void EmitHoistedParameters (EmitContext ec, ArrayList hoisted)
+		protected override void EmitHoistedParameters (EmitContext ec, IList<HoistedParameter> hoisted)
 		{
 			base.EmitHoistedParameters (ec, hoisted);
 			base.EmitHoistedParameters (ec, hoisted_params_copy);
@@ -579,6 +579,7 @@ namespace Mono.CSharp {
 		AnonymousMethodMethod method;
 		public readonly TypeContainer Host;
 		public readonly bool IsEnumerable;
+		List<ResumableStatement> resume_points;
 
 		//
 		// The state as we generate the iterator
@@ -668,7 +669,7 @@ namespace Mono.CSharp {
 
 			bool need_skip_finally = false;
 			for (int i = 0; i < resume_points.Count; ++i) {
-				ResumableStatement s = (ResumableStatement) resume_points [i];
+				ResumableStatement s = resume_points [i];
 				need_skip_finally |= s is ExceptionStatement;
 				labels [i+1] = s.PrepareForEmit (ec);
 			}
@@ -754,12 +755,11 @@ namespace Mono.CSharp {
 			ig.MarkLabel (end);
 		}
 
-
-		ArrayList resume_points;
 		public int AddResumePoint (ResumableStatement stmt)
 		{
 			if (resume_points == null)
-				resume_points = new ArrayList ();
+				resume_points = new List<ResumableStatement> ();
+
 			resume_points.Add (stmt);
 			return resume_points.Count;
 		}

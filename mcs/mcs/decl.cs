@@ -14,6 +14,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection.Emit;
 using System.Reflection;
@@ -911,11 +912,11 @@ namespace Mono.CSharp {
 		//
 		public NamespaceEntry NamespaceEntry;
 
-		private Hashtable Cache = new Hashtable ();
+		private Dictionary<string, FullNamedExpression> Cache = new Dictionary<string, FullNamedExpression> ();
 		
 		public readonly string Basename;
 		
-		protected Hashtable defined_names;
+		protected Dictionary<string, MemberCore> defined_names;
 
 		public TypeContainer PartialContainer;		
 
@@ -946,7 +947,7 @@ namespace Mono.CSharp {
 		{
 			NamespaceEntry = ns;
 			Basename = name.Basename;
-			defined_names = new Hashtable ();
+			defined_names = new Dictionary<string, MemberCore> ();
 			PartialContainer = null;
 			if (name.TypeArguments != null) {
 				is_generic = true;
@@ -961,9 +962,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected virtual bool AddToContainer (MemberCore symbol, string name)
 		{
-			MemberCore mc = (MemberCore) defined_names [name];
-
-			if (mc == null) {
+			MemberCore mc;
+			if (!defined_names.TryGetValue (name, out mc)) {
 				defined_names.Add (name, symbol);
 				return true;
 			}
@@ -1012,7 +1012,9 @@ namespace Mono.CSharp {
 		/// 
 		public MemberCore GetDefinition (string name)
 		{
-			return (MemberCore)defined_names [name];
+			MemberCore mc = null;
+			defined_names.TryGetValue (name, out mc);
+			return mc;
 		}
 
 		public bool IsStaticClass {
@@ -1239,10 +1241,11 @@ namespace Mono.CSharp {
 		//
 		public override FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
 		{
-			if (Cache.Contains (name))
-				return (FullNamedExpression) Cache [name];
+			FullNamedExpression e;
+			if (Cache.TryGetValue (name, out e))
+				return e;
 
-			FullNamedExpression e = null;
+			e = null;
 			int errors = Report.Errors;
 
 			TypeParameter[] tp = CurrentTypeParameters;
@@ -1341,7 +1344,7 @@ namespace Mono.CSharp {
 			return type_param_list;
 		}
 
-		public virtual void SetParameterInfo (ArrayList constraints_list)
+		public virtual void SetParameterInfo (List<Constraints> constraints_list)
 		{
 			if (!is_generic) {
 				if (constraints_list != null) {

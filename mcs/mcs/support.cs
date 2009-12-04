@@ -62,17 +62,6 @@ namespace Mono.CSharp {
 #endif
 	}
 
-	struct Pair {
-		public object First;
-		public object Second;
-
-		public Pair (object f, object s)
-		{
-			First = f;
-			Second = s;
-		}
-	}
-
 	public class Accessors {
 		public Accessor get_or_add;
 		public Accessor set_or_remove;

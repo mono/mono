@@ -14,7 +14,6 @@
 
 using System;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
@@ -150,7 +149,7 @@ namespace Mono.CSharp
 		bool handle_typeof = false;
 		bool lambda_arguments_parsing;
 		Location current_comment_location = Location.Null;
-		ArrayList escaped_identifiers;
+		List<Location> escaped_identifiers;
 		int parsing_generic_less_than;
 		
 		//
@@ -262,7 +261,7 @@ namespace Mono.CSharp
 		void AddEscapedIdentifier (Location loc)
 		{
 			if (escaped_identifiers == null)
-				escaped_identifiers = new ArrayList ();
+				escaped_identifiers = new List<Location> ();
 
 			escaped_identifiers.Add (loc);
 		}
@@ -303,7 +302,7 @@ namespace Mono.CSharp
 		//
 		// pre-processor if stack state:
 		//
-		Stack ifstack;
+		Stack<int> ifstack;
 
 		static System.Text.StringBuilder string_builder;
 
@@ -341,7 +340,8 @@ namespace Mono.CSharp
 		// on its own to deamiguate a token in behalf of the
 		// parser.
 		//
-		Stack position_stack = new Stack (2);
+		Stack<Position> position_stack = new Stack<Position> (2);
+
 		class Position {
 			public int position;
 			public int line;
@@ -350,7 +350,7 @@ namespace Mono.CSharp
 			public bool hidden;
 			public int putback_char;
 			public int previous_col;
-			public Stack ifstack;
+			public Stack<int> ifstack;
 			public int parsing_generic_less_than;
 			public int current_token;
 
@@ -363,8 +363,13 @@ namespace Mono.CSharp
 				hidden = t.hidden;
 				putback_char = t.putback_char;
 				previous_col = t.previous_col;
-				if (t.ifstack != null && t.ifstack.Count != 0)
-					ifstack = (Stack)t.ifstack.Clone ();
+				if (t.ifstack != null && t.ifstack.Count != 0) {
+					// There is no simple way to clone Stack<T> all
+					// methods reverse the order
+					var clone = t.ifstack.ToArray ();
+					Array.Reverse (clone);
+					ifstack = new Stack<int> (clone);
+				}
 				parsing_generic_less_than = t.parsing_generic_less_than;
 				current_token = t.current_token;
 			}
@@ -377,7 +382,7 @@ namespace Mono.CSharp
 
 		public void PopPosition ()
 		{
-			Position p = (Position) position_stack.Pop ();
+			Position p = position_stack.Pop ();
 
 			reader.Position = p.position;
 			ref_line = p.ref_line;
@@ -2223,7 +2228,7 @@ namespace Mono.CSharp
 					Error_UnexpectedDirective ("no #region for this #endregion");
 					return true;
 				}
-				int pop = (int) ifstack.Pop ();
+				int pop = ifstack.Pop ();
 					
 				if ((pop & REGION) == 0)
 					Report.Error (1027, Location, "Expected `#endif' directive");
@@ -2232,13 +2237,13 @@ namespace Mono.CSharp
 				
 			case "if":
 				if (ifstack == null)
-					ifstack = new Stack (2);
+					ifstack = new Stack<int> (2);
 
 				int flags = region_directive ? REGION : 0;
 				if (ifstack.Count == 0){
 					flags |= PARENT_TAKING;
 				} else {
-					int state = (int) ifstack.Peek ();
+					int state = ifstack.Peek ();
 					if ((state & TAKING) != 0) {
 						flags |= PARENT_TAKING;
 					}
@@ -2256,7 +2261,7 @@ namespace Mono.CSharp
 					Error_UnexpectedDirective ("no #if for this #endif");
 					return true;
 				} else {
-					pop = (int) ifstack.Pop ();
+					pop = ifstack.Pop ();
 					
 					if ((pop & REGION) != 0)
 						Report.Error (1038, Location, "#endregion directive expected");
@@ -2268,7 +2273,7 @@ namespace Mono.CSharp
 					if (ifstack.Count == 0)
 						return true;
 
-					int state = (int) ifstack.Peek ();
+					int state = ifstack.Peek ();
 					return (state & TAKING) != 0;
 				}
 
@@ -2277,7 +2282,7 @@ namespace Mono.CSharp
 					Error_UnexpectedDirective ("no #if for this #elif");
 					return true;
 				} else {
-					int state = (int) ifstack.Pop ();
+					int state = ifstack.Pop ();
 
 					if ((state & REGION) != 0) {
 						Report.Error (1038, Location, "#endregion directive expected");
@@ -2308,7 +2313,7 @@ namespace Mono.CSharp
 					Error_UnexpectedDirective ("no #if for this #else");
 					return true;
 				} else {
-					int state = (int) ifstack.Peek ();
+					int state = ifstack.Peek ();
 
 					if ((state & REGION) != 0) {
 						Report.Error (1038, Location, "#endregion directive expected");
@@ -3172,7 +3177,7 @@ namespace Mono.CSharp
 		public void cleanup ()
 		{
 			if (ifstack != null && ifstack.Count >= 1) {
-				int state = (int) ifstack.Pop ();
+				int state = ifstack.Pop ();
 				if ((state & REGION) != 0)
 					Report.Error (1038, Location, "#endregion directive expected");
 				else 

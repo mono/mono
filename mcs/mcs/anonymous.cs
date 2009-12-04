@@ -11,7 +11,6 @@
 
 using System;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -34,7 +33,7 @@ namespace Mono.CSharp {
 			: this (parent, name, mod)
 		{
 			if (generic != null) {
-				ArrayList list = new ArrayList ();
+				var list = new List<Constraints> ();
 				foreach (TypeParameter tparam in generic.TypeParameters) {
 					if (tparam.Constraints != null)
 						list.Add (tparam.Constraints.Clone ());
@@ -57,7 +56,8 @@ namespace Mono.CSharp {
 	//
 	public class AnonymousMethodStorey : CompilerGeneratedClass
 	{
-		class StoreyFieldPair {
+		struct StoreyFieldPair
+		{
 			public readonly AnonymousMethodStorey Storey;
 			public readonly Field Field;
 
@@ -65,16 +65,6 @@ namespace Mono.CSharp {
 			{
 				this.Storey = storey;
 				this.Field = field;
-			}
-
-			public override int GetHashCode ()
-			{
-				return Storey.ID.GetHashCode ();
-			}
-
-			public override bool Equals (object obj)
-			{
-				return (AnonymousMethodStorey)obj == Storey;
 			}
 		}
 
@@ -137,12 +127,12 @@ namespace Mono.CSharp {
 		public readonly Block OriginalSourceBlock;
 
 		// A list of StoreyFieldPair with local field keeping parent storey instance
-		ArrayList used_parent_storeys;
-		ArrayList children_references;
+		List<StoreyFieldPair> used_parent_storeys;
+		List<ExplicitBlock> children_references;
 
 		// A list of hoisted parameters
-		protected ArrayList hoisted_params;
-		protected ArrayList hoisted_locals;
+		protected List<HoistedParameter> hoisted_params;
+		protected List<HoistedVariable> hoisted_locals;
 
 		// Hoisted this
 		protected HoistedThis hoisted_this;
@@ -212,7 +202,7 @@ namespace Mono.CSharp {
 		public void AddReferenceFromChildrenBlock (ExplicitBlock block)
 		{
 			if (children_references == null)
-				children_references = new ArrayList ();
+				children_references = new List<ExplicitBlock> ();
 
 			if (!children_references.Contains (block))
 				children_references.Add (block);
@@ -223,8 +213,8 @@ namespace Mono.CSharp {
 			CheckMembersDefined ();
 
 			if (used_parent_storeys == null)
-				used_parent_storeys = new ArrayList ();
-			else if (used_parent_storeys.IndexOf (storey) != -1)
+				used_parent_storeys = new List<StoreyFieldPair> ();
+			else if (used_parent_storeys.Exists (i => i.Storey == storey))
 				return;
 
 			TypeExpr type_expr = new TypeExpression (storey.TypeBuilder, Location);
@@ -245,7 +235,7 @@ namespace Mono.CSharp {
 			local_info.HoistedVariant = var;
 
 			if (hoisted_locals == null)
-				hoisted_locals = new ArrayList ();
+				hoisted_locals = new List<HoistedVariable> ();
 
 			hoisted_locals.Add (var);
 		}
@@ -259,9 +249,9 @@ namespace Mono.CSharp {
 				return;
 
 			if (hoisted_params == null)
-				hoisted_params = new ArrayList (2);
+				hoisted_params = new List<HoistedParameter> (2);
 
-			HoistedVariable expr = new HoistedParameter (this, param_ref);
+			var expr = new HoistedParameter (this, param_ref);
 			param_ref.Parameter.HoistedVariant = expr;
 			hoisted_params.Add (expr);
 		}
@@ -368,7 +358,7 @@ namespace Mono.CSharp {
 			ec.CurrentAnonymousMethod = ae;
 		}
 
-		protected virtual void EmitHoistedParameters (EmitContext ec, ArrayList hoisted)
+		protected virtual void EmitHoistedParameters (EmitContext ec, IList<HoistedParameter> hoisted)
 		{
 			foreach (HoistedParameter hp in hoisted) {
 				hp.EmitHoistingAssignment (ec);
@@ -600,7 +590,7 @@ namespace Mono.CSharp {
 			return type;
 		}
 
-		public ArrayList ReferencesFromChildrenBlock {
+		public IList<ExplicitBlock> ReferencesFromChildrenBlock {
 			get { return children_references; }
 		}
 
@@ -651,7 +641,7 @@ namespace Mono.CSharp {
 	
 		protected readonly AnonymousMethodStorey storey;
 		protected Field field;
-		Hashtable cached_inner_access; // TODO: Hashtable is too heavyweight
+		Dictionary<AnonymousExpression, FieldExpr> cached_inner_access; // TODO: Hashtable is too heavyweight
 		FieldExpr cached_outer_access;
 
 		protected HoistedVariable (AnonymousMethodStorey storey, string name, Type type)
@@ -703,10 +693,11 @@ namespace Mono.CSharp {
 
 			FieldExpr inner_access;
 			if (cached_inner_access != null) {
-				inner_access = (FieldExpr) cached_inner_access [ec.CurrentAnonymousMethod];
+				if (!cached_inner_access.TryGetValue (ec.CurrentAnonymousMethod, out inner_access))
+					inner_access = null;
 			} else {
 				inner_access = null;
-				cached_inner_access = new Hashtable (4);
+				cached_inner_access = new Dictionary<AnonymousExpression, FieldExpr> (4);
 			}
 
 			if (inner_access == null) {
@@ -734,7 +725,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class HoistedParameter : HoistedVariable
+	public class HoistedParameter : HoistedVariable
 	{
 		sealed class HoistedFieldAssign : Assign
 		{
@@ -1518,7 +1509,7 @@ namespace Mono.CSharp {
 				generic_method = new GenericMethod (parent.NamespaceEntry, parent, member_name,
 					new TypeExpression (ReturnType, Location), parameters);
 
-				ArrayList list = new ArrayList ();
+				var list = new List<Constraints> ();
 				foreach (TypeParameter tparam in ec.CurrentTypeParameters) {
 					if (tparam.Constraints != null)
 						list.Add (tparam.Constraints.Clone ());
@@ -1787,7 +1778,7 @@ namespace Mono.CSharp {
 
 		protected override bool AddToContainer (MemberCore symbol, string name)
 		{
-			MemberCore mc = (MemberCore) defined_names [name];
+			MemberCore mc = GetDefinition (name);
 
 			if (mc == null) {
 				defined_names.Add (name, symbol);

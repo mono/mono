@@ -12,6 +12,7 @@
 using System;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
@@ -1043,7 +1044,7 @@ namespace Mono.CSharp
 		public TypeInfo[] SubStructInfo;
 
 		readonly StructInfo struct_info;
-		private static Hashtable type_hash;
+		private static Dictionary<Type, TypeInfo> type_hash;
 		
 		static TypeInfo ()
 		{
@@ -1052,14 +1053,14 @@ namespace Mono.CSharp
 		
 		public static void Reset ()
 		{
-			type_hash = new Hashtable ();
-			StructInfo.field_type_hash = new Hashtable ();
+			type_hash = new Dictionary<Type, TypeInfo> ();
+			StructInfo.field_type_hash = new Dictionary<Type, StructInfo> ();
 		}
 
 		public static TypeInfo GetTypeInfo (Type type)
 		{
-			TypeInfo info = (TypeInfo) type_hash [type];
-			if (info != null)
+			TypeInfo info;
+			if (type_hash.TryGetValue (type, out info))
 				return info;
 
 			info = new TypeInfo (type);
@@ -1069,8 +1070,8 @@ namespace Mono.CSharp
 
 		public static TypeInfo GetTypeInfo (TypeContainer tc)
 		{
-			TypeInfo info = (TypeInfo) type_hash [tc.TypeBuilder];
-			if (info != null)
+			TypeInfo info;
+			if (type_hash.TryGetValue (tc.TypeBuilder, out info))
 				return info;
 
 			info = new TypeInfo (tc);
@@ -1188,9 +1189,9 @@ namespace Mono.CSharp
 			public readonly int TotalLength;
 			public readonly bool HasStructFields;
 
-			public static Hashtable field_type_hash;
-			private Hashtable struct_field_hash;
-			private Hashtable field_hash;
+			public static Dictionary<Type, StructInfo> field_type_hash;
+			private Dictionary<string, TypeInfo> struct_field_hash;
+			private Dictionary<string, int> field_hash;
 
 			protected bool InTransit = false;
 
@@ -1212,7 +1213,7 @@ namespace Mono.CSharp
 					// TODO: tc != null is needed because FixedBuffers are not cached
 					//
 					if (tc != null) {					
-					ArrayList fields = tc.Fields;
+					var fields = tc.Fields;
 
 					if (fields != null) {
 						foreach (FieldBase field in fields) {
@@ -1252,8 +1253,8 @@ namespace Mono.CSharp
 					non_public_fields.CopyTo (Fields, CountPublic);
 				}
 
-				struct_field_hash = new Hashtable ();
-				field_hash = new Hashtable ();
+				struct_field_hash = new Dictionary<string, TypeInfo> ();
+				field_hash = new Dictionary<string, int> ();
 
 				Length = 0;
 				StructFields = new TypeInfo [Count];
@@ -1297,16 +1298,21 @@ namespace Mono.CSharp
 
 			public int this [string name] {
 				get {
-					if (field_hash.Contains (name))
-						return (int) field_hash [name];
-					else
+					int val;
+					if (!field_hash.TryGetValue (name, out val))
 						return 0;
+
+					return val;
 				}
 			}
 
 			public TypeInfo GetStructField (string name)
 			{
-				return (TypeInfo) struct_field_hash [name];
+				TypeInfo ti;
+				if (struct_field_hash.TryGetValue (name, out ti))
+					return ti;
+
+				return null;
 			}
 
 			public static StructInfo GetStructInfo (Type type)
@@ -1318,8 +1324,8 @@ namespace Mono.CSharp
 				if (TypeManager.IsGenericParameter (type))
 					return null;
 
-				StructInfo info = (StructInfo) field_type_hash [type];
-				if (info != null)
+				StructInfo info;
+				if (field_type_hash.TryGetValue (type, out info))
 					return info;
 
 				return new StructInfo (type);
@@ -1327,8 +1333,8 @@ namespace Mono.CSharp
 
 			public static StructInfo GetStructInfo (TypeContainer tc)
 			{
-				StructInfo info = (StructInfo) field_type_hash [tc.TypeBuilder];
-				if (info != null)
+				StructInfo info;
+				if (field_type_hash.TryGetValue (tc.TypeBuilder, out info))
 					return info;
 
 				return new StructInfo (tc.TypeBuilder);

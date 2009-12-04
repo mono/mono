@@ -44,116 +44,8 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   This is the base class for structs and classes.  
 	/// </summary>
-	public abstract class TypeContainer : DeclSpace, IMemberContainer {
-
- 		public class MemberCoreArrayList: ArrayList
- 		{
-			/// <summary>
-			///   Defines the MemberCore objects that are in this array
-			/// </summary>
-			public virtual void DefineContainerMembers ()
-			{
-				foreach (MemberCore mc in this) {
-					try {
-						mc.Define ();
-					} catch (Exception e) {
-						throw new InternalErrorException (mc, e);
-					}
-				}
-			}
-
-			public virtual void Emit ()
-			{
-				foreach (MemberCore mc in this)
-					mc.Emit ();
-			}
- 		}
-
- 		public class OperatorArrayList: MemberCoreArrayList
-		{
-			TypeContainer container;
-
-			public OperatorArrayList (TypeContainer container)
-			{
-				this.container = container;
-			}
-
-			//
-			// Checks that some operators come in pairs:
-			//  == and !=
-			// > and <
-			// >= and <=
-			// true and false
-			//
-			// They are matched based on the return type and the argument types
-			//
-			void CheckPairedOperators ()
-			{
-				bool has_equality_or_inequality = false;
-				Operator[] operators = (Operator[]) ToArray (typeof (Operator));
-				bool [] has_pair = new bool [operators.Length];
-
-				for (int i = 0; i < Count; ++i) {
-					if (operators [i] == null)
-						continue;
-
-					Operator o_a = operators [i];
-					Operator.OpType o_type = o_a.OperatorType;
-					if (o_type == Operator.OpType.Equality || o_type == Operator.OpType.Inequality)
-						has_equality_or_inequality = true;
-
-					Operator.OpType matching_type = o_a.GetMatchingOperator ();
-					if (matching_type == Operator.OpType.TOP) {
-						operators [i] = null;
-						continue;
-					}
-	
-					for (int ii = 0; ii < Count; ++ii) {
-						Operator o_b = operators [ii];
-						if (o_b == null || o_b.OperatorType != matching_type)
-							continue;
-
-						if (!TypeManager.IsEqual (o_a.ReturnType, o_b.ReturnType))
-							continue;
-
-						if (!TypeManager.IsEqual (o_a.ParameterTypes, o_b.ParameterTypes))
-							continue;
-
-						operators [i] = null;
-
-						//
-						// Used to ignore duplicate user conversions
-						//
-						has_pair [ii] = true;
-					}
-				}
-
-				for (int i = 0; i < Count; ++i) {
-					if (operators [i] == null || has_pair [i])
-						continue;
-
-					Operator o = operators [i];
-					container.Report.Error (216, o.Location,
-						"The operator `{0}' requires a matching operator `{1}' to also be defined",
-						o.GetSignatureForError (), Operator.GetName (o.GetMatchingOperator ()));
-				}
-
- 				if (has_equality_or_inequality && container.Report.WarningLevel > 2) {
- 					if (container.Methods == null || !container.HasEquals)
- 						container.Report.Warning (660, 2, container.Location, "`{0}' defines operator == or operator != but does not override Object.Equals(object o)", container.GetSignatureForError ());
- 
- 					if (container.Methods == null || !container.HasGetHashCode)
- 						container.Report.Warning (661, 2, container.Location, "`{0}' defines operator == or operator != but does not override Object.GetHashCode()", container.GetSignatureForError ());
- 				}
-			}
-
-	 		public override void DefineContainerMembers ()
-	 		{
-	 			base.DefineContainerMembers ();
-	 			CheckPairedOperators ();
-			}
-		}
-
+	public abstract class TypeContainer : DeclSpace, IMemberContainer
+	{
 		//
 		// Different context is needed when resolving type container base
 		// types. Type names come from the parent scope but type parameter
@@ -241,43 +133,43 @@ namespace Mono.CSharp {
 		public readonly Kind Kind;
 
 		// Holds a list of classes and structures
-		protected MemberCoreArrayList types;
+		protected List<TypeContainer> types;
 
-		MemberCoreArrayList ordered_explicit_member_list;
-		MemberCoreArrayList ordered_member_list;
+		List<MemberCore> ordered_explicit_member_list;
+		List<MemberCore> ordered_member_list;
 
 		// Holds the list of properties
-		MemberCoreArrayList properties;
+		List<MemberCore> properties;
 
 		// Holds the list of delegates
-		MemberCoreArrayList delegates;
+		List<TypeContainer> delegates;
 		
 		// Holds the list of constructors
-		protected MemberCoreArrayList instance_constructors;
+		protected List<MemberCore> instance_constructors;
 
 		// Holds the list of fields
-		protected MemberCoreArrayList fields;
+		protected List<MemberCore> fields;
 
 		// Holds a list of fields that have initializers
-		protected ArrayList initialized_fields;
+		protected List<FieldInitializer> initialized_fields;
 
 		// Holds a list of static fields that have initializers
-		protected ArrayList initialized_static_fields;
+		protected List<FieldInitializer> initialized_static_fields;
 
 		// Holds the list of constants
-		protected MemberCoreArrayList constants;
+		protected List<MemberCore> constants;
 
 		// Holds the methods.
-		MemberCoreArrayList methods;
+		List<MemberCore> methods;
 
 		// Holds the events
-		protected MemberCoreArrayList events;
+		protected List<MemberCore> events;
 
 		// Holds the indexers
-		ArrayList indexers;
+		List<MemberCore> indexers;
 
 		// Holds the operators
-		MemberCoreArrayList operators;
+		List<MemberCore> operators;
 
 		// Holds the compiler generated classes
 		ArrayList compiler_generated;
@@ -305,7 +197,7 @@ namespace Mono.CSharp {
 		Type GenericType;
 		GenericTypeParameterBuilder[] nested_gen_params;
 
-		protected ArrayList type_bases;
+		protected List<FullNamedExpression> type_bases;
 
 		protected bool members_defined;
 		bool members_defined_ok;
@@ -325,7 +217,7 @@ namespace Mono.CSharp {
 
 		private CachedMethods cached_method;
 
-		ArrayList partial_parts;
+		List<TypeContainer> partial_parts;
 
 		/// <remarks>
 		///  The pending methods that need to be implemented
@@ -365,7 +257,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (constants == null)
-				constants = new MemberCoreArrayList ();
+				constants = new List<MemberCore> ();
 			
 			constants.Add (constant);
 		}
@@ -376,9 +268,9 @@ namespace Mono.CSharp {
 				return tc;
 
 			if (types == null)
-				types = new MemberCoreArrayList ();
-			types.Add (tc);
+				types = new List<TypeContainer> ();
 
+			types.Add (tc);
 			return tc;
 		}
 
@@ -390,8 +282,7 @@ namespace Mono.CSharp {
 		protected TypeContainer AddPartial (TypeContainer next_part, string name)
 		{
 			next_part.ModFlags |= Modifiers.PARTIAL;
-			TypeContainer tc = defined_names [name] as TypeContainer;
-
+			TypeContainer tc = GetDefinition (name) as TypeContainer;
 			if (tc == null)
 				return AddTypeContainer (next_part);
 
@@ -417,7 +308,7 @@ namespace Mono.CSharp {
 			}
 
 			if (tc.partial_parts == null)
-				tc.partial_parts = new ArrayList (1);
+				tc.partial_parts = new List<TypeContainer> (1);
 
 			if ((next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
 				tc.ModFlags |= next_part.ModFlags & ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.Accessibility);
@@ -453,16 +344,16 @@ namespace Mono.CSharp {
 				return;
 
 			if (delegates == null)
-				delegates = new MemberCoreArrayList ();
+				delegates = new List<TypeContainer> ();
 
 			delegates.Add (d);
 		}
 
-		private void AddMemberToList (MemberCore mc, ArrayList alist, bool isexplicit)
+		private void AddMemberToList (MemberCore mc, List<MemberCore> alist, bool isexplicit)
 		{
 			if (ordered_explicit_member_list == null)  {
-				ordered_explicit_member_list = new MemberCoreArrayList ();
-				ordered_member_list = new MemberCoreArrayList ();
+				ordered_explicit_member_list = new List<MemberCore> ();
+				ordered_member_list = new List<MemberCore> ();
 			}
 
 			if (isexplicit) {
@@ -487,7 +378,7 @@ namespace Mono.CSharp {
 				return;
 			
 			if (methods == null)
-				methods = new MemberCoreArrayList ();
+				methods = new List<MemberCore> ();
 
 			if (method.MemberName.Left != null) 
 				AddMemberToList (method, methods, true);
@@ -517,7 +408,7 @@ namespace Mono.CSharp {
 					default_constructor = c;
 				
 				if (instance_constructors == null)
-					instance_constructors = new MemberCoreArrayList ();
+					instance_constructors = new List<MemberCore> ();
 				
 				instance_constructors.Add (c);
 			}
@@ -529,7 +420,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (fields == null)
-				fields = new MemberCoreArrayList ();
+				fields = new List<MemberCore> ();
 
 			fields.Add (field);
 
@@ -557,7 +448,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (properties == null)
-				properties = new MemberCoreArrayList ();
+				properties = new List<MemberCore> ();
 
 			if (prop.MemberName.Left != null)
 				AddMemberToList (prop, properties, true);
@@ -579,7 +470,7 @@ namespace Mono.CSharp {
 			}
 
 			if (events == null)
-				events = new MemberCoreArrayList ();
+				events = new List<MemberCore> ();
 
 			events.Add (e);
 		}
@@ -590,7 +481,7 @@ namespace Mono.CSharp {
 		public void AddIndexer (Indexer i)
 		{
 			if (indexers == null)
-				indexers = new ArrayList ();
+				indexers = new List<MemberCore> ();
 
 			if (i.IsExplicitImpl)
 				AddMemberToList (i, indexers, true);
@@ -604,7 +495,7 @@ namespace Mono.CSharp {
 				return;
 
 			if (operators == null)
-				operators = new OperatorArrayList (this);
+				operators = new List<MemberCore> ();
 
 			operators.Add (op);
 		}
@@ -637,19 +528,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Types {
+		public IList<TypeContainer> Types {
 			get {
 				return types;
 			}
 		}
 
-		public MemberCoreArrayList Methods {
+		public IList<MemberCore> Methods {
 			get {
 				return methods;
 			}
 		}
 
-		public ArrayList Constants {
+		public IList<MemberCore> Constants {
 			get {
 				return constants;
 			}
@@ -661,43 +552,43 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public ArrayList Fields {
+		public IList<MemberCore> Fields {
 			get {
 				return fields;
 			}
 		}
 
-		public ArrayList InstanceConstructors {
+		public IList<MemberCore> InstanceConstructors {
 			get {
 				return instance_constructors;
 			}
 		}
 
-		public ArrayList Properties {
+		public IList<MemberCore> Properties {
 			get {
 				return properties;
 			}
 		}
 
-		public ArrayList Events {
+		public IList<MemberCore> Events {
 			get {
 				return events;
 			}
 		}
 		
-		public ArrayList Indexers {
+		public IList<MemberCore> Indexers {
 			get {
 				return indexers;
 			}
 		}
 
-		public ArrayList Operators {
+		public IList<MemberCore> Operators {
 			get {
 				return operators;
 			}
 		}
 
-		public ArrayList Delegates {
+		public IList<TypeContainer> Delegates {
 			get {
 				return delegates;
 			}
@@ -729,13 +620,13 @@ namespace Mono.CSharp {
 			if ((field.ModFlags & Modifiers.STATIC) != 0){
 				if (initialized_static_fields == null) {
 					PartialContainer.HasStaticFieldInitializer = true;
-					initialized_static_fields = new ArrayList (4);
+					initialized_static_fields = new List<FieldInitializer> (4);
 				}
 
 				initialized_static_fields.Add (expression);
 			} else {
 				if (initialized_fields == null)
-					initialized_fields = new ArrayList (4);
+					initialized_fields = new List<FieldInitializer> (4);
 
 				initialized_fields.Add (expression);
 			}
@@ -831,7 +722,7 @@ namespace Mono.CSharp {
 			return base.GetClsCompliantAttributeValue ();
 		}
 
-		public virtual void AddBasesForPart (DeclSpace part, ArrayList bases)
+		public virtual void AddBasesForPart (DeclSpace part, List<FullNamedExpression> bases)
 		{
 			// FIXME: get rid of partial_parts and store lists of bases of each part here
 			// assumed, not verified: 'part' is in 'partial_parts' 
@@ -953,6 +844,77 @@ namespace Mono.CSharp {
 				return null;
 
 			return (TypeExpr[])ifaces.ToArray (typeof (TypeExpr));
+		}
+
+		//
+		// Checks that some operators come in pairs:
+		//  == and !=
+		// > and <
+		// >= and <=
+		// true and false
+		//
+		// They are matched based on the return type and the argument types
+		//
+		void CheckPairedOperators ()
+		{
+			bool has_equality_or_inequality = false;
+			var operators = this.operators.ToArray ();
+			bool[] has_pair = new bool[operators.Length];
+
+			for (int i = 0; i < operators.Length; ++i) {
+				if (operators[i] == null)
+					continue;
+
+				Operator o_a = (Operator) operators[i];
+				Operator.OpType o_type = o_a.OperatorType;
+				if (o_type == Operator.OpType.Equality || o_type == Operator.OpType.Inequality)
+					has_equality_or_inequality = true;
+
+				Operator.OpType matching_type = o_a.GetMatchingOperator ();
+				if (matching_type == Operator.OpType.TOP) {
+					operators[i] = null;
+					continue;
+				}
+
+				for (int ii = 0; ii < operators.Length; ++ii) {
+					Operator o_b = (Operator) operators[ii];
+					if (o_b == null || o_b.OperatorType != matching_type)
+						continue;
+
+					if (!TypeManager.IsEqual (o_a.ReturnType, o_b.ReturnType))
+						continue;
+
+					if (!TypeManager.IsEqual (o_a.ParameterTypes, o_b.ParameterTypes))
+						continue;
+
+					operators[i] = null;
+
+					//
+					// Used to ignore duplicate user conversions
+					//
+					has_pair[ii] = true;
+				}
+			}
+
+			for (int i = 0; i < operators.Length; ++i) {
+				if (operators[i] == null || has_pair[i])
+					continue;
+
+				Operator o = (Operator) operators [i];
+				Report.Error (216, o.Location,
+					"The operator `{0}' requires a matching operator `{1}' to also be defined",
+					o.GetSignatureForError (), Operator.GetName (o.GetMatchingOperator ()));
+			}
+
+			if (has_equality_or_inequality) {
+				if (Methods == null || !HasEquals)
+					Report.Warning (660, 2, Location, "`{0}' defines operator == or operator != but does not override Object.Equals(object o)",
+						GetSignatureForError ());
+
+				if (Methods == null || !HasGetHashCode)
+					Report.Warning (661, 2, Location, "`{0}' defines operator == or operator != but does not override Object.GetHashCode()",
+						GetSignatureForError ());
+			}
 		}
 
 		bool CheckGenericInterfaces (Type[] ifaces)
@@ -1153,7 +1115,7 @@ namespace Mono.CSharp {
 			return TypeBuilder;
 		}
 
-		public override void SetParameterInfo (ArrayList constraints_list)
+		public override void SetParameterInfo (List<Constraints> constraints_list)
 		{
 			base.SetParameterInfo (constraints_list);
 
@@ -1444,7 +1406,11 @@ namespace Mono.CSharp {
 			DefineContainerMembers (ordered_explicit_member_list);
 			DefineContainerMembers (ordered_member_list);
 
-			DefineContainerMembers (operators);
+			if (operators != null) {
+				DefineContainerMembers (operators);
+				CheckPairedOperators ();
+			}
+
 			DefineContainerMembers (delegates);
 
 			ComputeIndexerName();
@@ -1465,10 +1431,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected virtual void DefineContainerMembers (MemberCoreArrayList mcal)
+		protected virtual void DefineContainerMembers (IList mcal) // IList<MemberCore>
 		{
-			if (mcal != null)
-				mcal.DefineContainerMembers ();
+			if (mcal != null) {
+				foreach (MemberCore mc in mcal) {
+					try {
+						mc.Define ();
+					} catch (Exception e) {
+						throw new InternalErrorException (mc, e);
+					}
+				}
+			}
 		}
 		
 		protected virtual void ComputeIndexerName ()
@@ -1641,16 +1614,16 @@ namespace Mono.CSharp {
 			if (PartialContainer != this)
 				throw new InternalErrorException ("should not happen");
 
-			ArrayList [] lists = { types, delegates };
+			var lists = new[] { types, delegates };
 
 			for (int j = 0; j < lists.Length; ++j) {
-				ArrayList list = lists [j];
+				var list = lists [j];
 				if (list == null)
 					continue;
 				
 				int len = list.Count;
 				for (int i = 0; i < len; ++i) {
-					DeclSpace ds = (DeclSpace) list [i];
+					var ds = list [i];
 					if (ds.Basename == name) {
 						return ds.DefineType ();
 					}
@@ -1664,16 +1637,16 @@ namespace Mono.CSharp {
 						      BindingFlags bf, MemberFilter filter, object criteria,
 						      ref ArrayList members)
 		{
-			ArrayList [] lists = { types, delegates };
+			var lists = new[] { types, delegates };
 
 			for (int j = 0; j < lists.Length; ++j) {
-				ArrayList list = lists [j];
+				var list = lists [j];
 				if (list == null)
 					continue;
 			
 				int len = list.Count;
 				for (int i = 0; i < len; i++) {
-					DeclSpace ds = (DeclSpace) list [i];
+					var ds = list [i];
 					
 					if ((ds.ModFlags & modflags) == 0)
 						continue;
@@ -2072,7 +2045,7 @@ namespace Mono.CSharp {
 			return;
 		}
 
-		void CheckMemberUsage (MemberCoreArrayList al, string member_type)
+		void CheckMemberUsage (List<MemberCore> al, string member_type)
 		{
 			if (al == null)
 				return;
@@ -2414,12 +2387,12 @@ namespace Mono.CSharp {
 				base_cache.GetPublicMembers ();
 			Hashtable this_members = new Hashtable ();
 
-			foreach (DictionaryEntry entry in defined_names) {
-				MemberCore mc = (MemberCore)entry.Value;
+			foreach (var entry in defined_names) {
+				MemberCore mc = entry.Value;
 				if (!mc.IsClsComplianceRequired ())
 					continue;
 
-				string name = (string) entry.Key;
+				string name = entry.Key;
 				string basename = name.Substring (name.LastIndexOf ('.') + 1);
 
 				string lcase = basename.ToLower (System.Globalization.CultureInfo.InvariantCulture);
@@ -2760,7 +2733,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void AddBasesForPart (DeclSpace part, ArrayList bases)
+		public override void AddBasesForPart (DeclSpace part, List<FullNamedExpression> bases)
 		{
 			if (part.Name == "System.Object")
 				Report.Error (537, part.Location,
@@ -2804,7 +2777,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void DefineContainerMembers (MemberCoreArrayList list)
+		protected override void DefineContainerMembers (IList list)
 		{
 			if (list == null)
 				return;
@@ -4271,7 +4244,7 @@ namespace Mono.CSharp {
 			if (!base.CheckForDuplications ())
 				return false;
 
-			ArrayList ar = Parent.PartialContainer.Properties;
+			var ar = Parent.PartialContainer.Properties;
 			if (ar != null) {
 				for (int i = 0; i < ar.Count; ++i) {
 					PropertyBase pb = (PropertyBase) ar [i];

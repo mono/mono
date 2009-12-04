@@ -9494,13 +9494,13 @@ namespace Mono.CSharp {
 	//
 	public class CollectionOrObjectInitializers : ExpressionStatement
 	{
-		ArrayList initializers;
+		IList<Expression> initializers;
 		bool is_collection_initialization;
 		
 		public static readonly CollectionOrObjectInitializers Empty = 
-			new CollectionOrObjectInitializers (new ArrayList (0), Location.Null);
+			new CollectionOrObjectInitializers (Array.AsReadOnly (new Expression [0]), Location.Null);
 
-		public CollectionOrObjectInitializers (ArrayList initializers, Location loc)
+		public CollectionOrObjectInitializers (IList<Expression> initializers, Location loc)
 		{
 			this.initializers = initializers;
 			this.loc = loc;
@@ -9522,14 +9522,14 @@ namespace Mono.CSharp {
 		{
 			CollectionOrObjectInitializers t = (CollectionOrObjectInitializers) target;
 
-			t.initializers = new ArrayList (initializers.Count);
-			foreach (Expression e in initializers)
+			t.initializers = new List<Expression> (initializers.Count);
+			foreach (var e in initializers)
 				t.initializers.Add (e.Clone (clonectx));
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			ArrayList expr_initializers = new ArrayList (initializers.Count);
+			var expr_initializers = new ArrayList (initializers.Count);
 			foreach (Expression e in initializers) {
 				Expression expr = e.CreateExpressionTree (ec);
 				if (expr != null)
@@ -9826,11 +9826,11 @@ namespace Mono.CSharp {
 			if (parameters == null)
 				return base.CreateExpressionTree (ec);
 
-			ArrayList init = new ArrayList (parameters.Count);
+			var init = new ArrayList (parameters.Count);
 			foreach (Property p in anonymous_type.Properties)
 				init.Add (new TypeOfMethod (TypeBuilder.GetMethod (type, p.GetBuilder), loc));
 
-			ArrayList ctor_args = new ArrayList (Arguments.Count);
+			var ctor_args = new ArrayList (Arguments.Count);
 			foreach (Argument a in Arguments)
 				ctor_args.Add (a.CreateExpressionTree (ec));
 

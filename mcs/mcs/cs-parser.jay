@@ -952,7 +952,7 @@ struct_declaration
 	  {
 		lexer.ConstraintsParsing = false;
 
-		current_class.SetParameterInfo ((ArrayList) $9);
+		current_class.SetParameterInfo ((List<Constraints>) $9);
 
 		if (RootContext.Documentation != null)
 			current_container.DocComment = Lexer.consume_doc_comment ();
@@ -1324,7 +1324,7 @@ method_header
 			generic = new GenericMethod (current_namespace, current_class, name,
 						     (FullNamedExpression) $3, current_local_parameters);
 
-			generic.SetParameterInfo ((ArrayList) $10);
+			generic.SetParameterInfo ((List<Constraints>) $10);
 		}
 
 		method = new Method (current_class, generic, (FullNamedExpression) $3, (int) $2,
@@ -1367,7 +1367,7 @@ method_header
 			generic = new GenericMethod (current_namespace, current_class, name,
 						     TypeManager.system_void_expr, current_local_parameters);
 
-			generic.SetParameterInfo ((ArrayList) $11);
+			generic.SetParameterInfo ((List<Constraints>) $11);
 		}
 
 		int modifiers = (int) $2;
@@ -1900,7 +1900,7 @@ interface_declaration
 	  {
 		lexer.ConstraintsParsing = false;
 
-		current_class.SetParameterInfo ((ArrayList) $9);
+		current_class.SetParameterInfo ((List<Constraints>) $9);
 
 		if (RootContext.Documentation != null) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
@@ -2671,7 +2671,7 @@ delegate_declaration
 	  }
 	  SEMICOLON
 	  {
-		current_delegate.SetParameterInfo ((ArrayList) $11);
+		current_delegate.SetParameterInfo ((List<Constraints>) $11);
 		$$ = current_delegate;
 
 		current_delegate = null;
@@ -2966,14 +2966,14 @@ type_expression
 type_list
 	: base_type_name
 	  {
-		ArrayList types = new ArrayList (2);
-		types.Add ($1);
+		var types = new List<FullNamedExpression> (2);
+		types.Add ((FullNamedExpression) $1);
 		$$ = types;
 	  }
 	| type_list COMMA base_type_name
 	  {
-		ArrayList types = (ArrayList) $1;
-		types.Add ($3);
+		var types = (List<FullNamedExpression>) $1;
+		types.Add ((FullNamedExpression) $3);
 		$$ = types;
 	  }
 	;
@@ -2988,6 +2988,7 @@ base_type_name
 	| error
 	  {
 	  	Error_TypeExpected (lexer.Location);
+		$$ = null;
 	  }
 	;
 	
@@ -3154,11 +3155,11 @@ object_or_collection_initializer
 	  	if ($2 == null)
 	  		$$ = CollectionOrObjectInitializers.Empty;
 	  	else
-	  		$$ = new CollectionOrObjectInitializers ((ArrayList) $2, GetLocation ($1));
+	  		$$ = new CollectionOrObjectInitializers ((List<Expression>) $2, GetLocation ($1));
 	  }
 	| OPEN_BRACE member_initializer_list COMMA CLOSE_BRACE
 	  {
-	  	$$ = new CollectionOrObjectInitializers ((ArrayList) $2, GetLocation ($1));
+	  	$$ = new CollectionOrObjectInitializers ((List<Expression>) $2, GetLocation ($1));
 	  }
 	;
 
@@ -3171,16 +3172,16 @@ opt_member_initializer_list
 	;
 
 member_initializer_list
-	: member_initializer 
+	: member_initializer
 	  {
-	  	ArrayList a = new ArrayList ();
-	  	a.Add ($1);
+	  	var a = new List<Expression> ();
+	  	a.Add ((Expression) $1);
 	  	$$ = a;
 	  }
 	| member_initializer_list COMMA member_initializer
 	  {
-	  	ArrayList a = (ArrayList)$1;
-	  	a.Add ($3);
+	  	var a = (List<Expression>)$1;
+	  	a.Add ((Expression) $3);
 	  	$$ = a;
 	  }
 	;
@@ -3209,6 +3210,7 @@ member_initializer
 	| OPEN_BRACE CLOSE_BRACE
 	  {
 	  	Report.Error (1920, GetLocation ($1), "An element initializer cannot be empty");
+		$$ = null;
 	  }	  
 	;
 
@@ -3627,7 +3629,7 @@ array_initializer
 	  }
 	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
 	  {
-		$$ = (ArrayList) $2;
+		$$ = $2;
 	  }
 	;
 
@@ -4216,7 +4218,7 @@ class_declaration
 	  {
 		lexer.ConstraintsParsing = false;
 
-		current_class.SetParameterInfo ((ArrayList) $9);
+		current_class.SetParameterInfo ((List<Constraints>) $9);
 
 		if (RootContext.Documentation != null) {
 			current_container.DocComment = Lexer.consume_doc_comment ();
@@ -4290,7 +4292,10 @@ opt_class_base
 	;
 
 class_base
-	: COLON type_list	{ current_container.AddBasesForPart (current_class, (ArrayList) $2); }
+	: COLON type_list
+	 {
+		current_container.AddBasesForPart (current_class, (List<FullNamedExpression>) $2);
+	 }
 	;
 
 opt_type_parameter_constraints_clauses
@@ -4301,12 +4306,12 @@ opt_type_parameter_constraints_clauses
 
 type_parameter_constraints_clauses
 	: type_parameter_constraints_clause {
-		ArrayList constraints = new ArrayList (1);
-		constraints.Add ($1);
+		var constraints = new List<Constraints> (1);
+		constraints.Add ((Constraints) $1);
 		$$ = constraints;
 	  }
 	| type_parameter_constraints_clauses type_parameter_constraints_clause {
-		ArrayList constraints = (ArrayList) $1;
+		var constraints = (List<Constraints>) $1;
 		Constraints new_constraint = (Constraints)$2;
 
 		foreach (Constraints c in constraints) {
@@ -4324,18 +4329,18 @@ type_parameter_constraints_clauses
 type_parameter_constraints_clause
 	: WHERE IDENTIFIER COLON type_parameter_constraints {
 		var lt = (Tokenizer.LocatedToken) $2;
-		$$ = new Constraints (lt.Value, (ArrayList) $4, lt.Location);
+		$$ = new Constraints (lt.Value, (List<object>) $4, lt.Location);
 	  }
 	; 
 
 type_parameter_constraints
 	: type_parameter_constraint {
-		ArrayList constraints = new ArrayList (1);
+		var constraints = new List<object> (1);
 		constraints.Add ($1);
 		$$ = constraints;
 	  }
 	| type_parameter_constraints COMMA type_parameter_constraint {
-		ArrayList constraints = (ArrayList) $1;
+		var constraints = (List<object>) $1;
 
 		constraints.Add ($3);
 		$$ = constraints;
@@ -4798,7 +4803,7 @@ switch_statement
 	  expression CLOSE_PARENS 
 	  switch_block
 	  {
-		$$ = new Switch ((Expression) $4, (ArrayList) $6, GetLocation ($1));
+		$$ = new Switch ((Expression) $4, (List<SwitchSection>) $6, GetLocation ($1));
 		current_block = (Block) switch_stack.Pop ();
 	  }
 	;
@@ -4816,7 +4821,7 @@ opt_switch_sections
 	: /* empty */ 		
           {
 	  	Report.Warning (1522, 1, lexer.Location, "Empty switch block"); 
-		$$ = new ArrayList ();
+		$$ = new List<SwitchSection> ();
 	  }
 	| switch_sections
 	;
@@ -4824,16 +4829,16 @@ opt_switch_sections
 switch_sections
 	: switch_section 
 	  {
-		ArrayList sections = new ArrayList (4);
+		var sections = new List<SwitchSection> (4);
 
-		sections.Add ($1);
+		sections.Add ((SwitchSection) $1);
 		$$ = sections;
 	  }
 	| switch_sections switch_section
 	  {
-		ArrayList sections = (ArrayList) $1;
+		var sections = (List<SwitchSection>) $1;
 
-		sections.Add ($2);
+		sections.Add ((SwitchSection) $2);
 		$$ = sections;
 	  }
 	;
@@ -4845,22 +4850,22 @@ switch_section
 	  }
  	  statement_list 
 	  {
-		$$ = new SwitchSection ((ArrayList) $1, current_block.Explicit);
+		$$ = new SwitchSection ((List<SwitchLabel>) $1, current_block.Explicit);
 	  }
 	;
 
 switch_labels
 	: switch_label 
 	  {
-		ArrayList labels = new ArrayList (4);
+		var labels = new List<SwitchLabel> (4);
 
-		labels.Add ($1);
+		labels.Add ((SwitchLabel) $1);
 		$$ = labels;
 	  }
 	| switch_labels switch_label 
 	  {
-		ArrayList labels = (ArrayList) ($1);
-		labels.Add ($2);
+		var labels = (List<SwitchLabel>) ($1);
+		labels.Add ((SwitchLabel) $2);
 
 		$$ = labels;
 	  }
@@ -5140,7 +5145,7 @@ opt_expression
 try_statement
 	: TRY block catch_clauses
 	  {
-		$$ = new TryCatch ((Block) $2, (ArrayList) $3, GetLocation ($1), false);
+		$$ = new TryCatch ((Block) $2, (List<Catch>) $3, GetLocation ($1), false);
 	  }
 	| TRY block FINALLY block
 	  {
@@ -5148,7 +5153,7 @@ try_statement
 	  }
 	| TRY block catch_clauses FINALLY block
 	  {
-		$$ = new TryFinally (new TryCatch ((Block) $2, (ArrayList) $3, GetLocation ($1), true), (Block) $5, GetLocation ($1));
+		$$ = new TryFinally (new TryCatch ((Block) $2, (List<Catch>) $3, GetLocation ($1), true), (Block) $5, GetLocation ($1));
 	  }
 	| TRY block error 
 	  {
@@ -5160,23 +5165,23 @@ try_statement
 catch_clauses
 	: catch_clause 
 	  {
-		ArrayList l = new ArrayList (4);
+		var l = new List<Catch> (2);
 
-		l.Add ($1);
+		l.Add ((Catch) $1);
 		$$ = l;
 	  }
 	| catch_clauses catch_clause
 	  {
-		ArrayList l = (ArrayList) $1;
+		var l = (List<Catch>) $1;
 		
 		Catch c = (Catch) $2;
-		if (((Catch) l [0]).IsGeneral) {
+		if (l [0].IsGeneral) {
 			Report.Error (1017, c.loc, "Try statement already has an empty catch block");
 		} else {
 			if (c.IsGeneral)
-				l.Insert (0, $2);
+				l.Insert (0, c);
 			else
-				l.Add ($2);
+				l.Add (c);
 		}
 		
 		$$ = l;
@@ -5272,32 +5277,21 @@ fixed_statement
 	  type_and_void fixed_pointer_declarators 
 	  CLOSE_PARENS
 	  {
-		ArrayList list = (ArrayList) $4;
-		Expression type = (Expression) $3;
-		Location l = GetLocation ($1);
-		int top = list.Count;
-
 		start_block (lexer.Location);
-
-		for (int i = 0; i < top; i++){
-			Pair p = (Pair) list [i];
-			LocalInfo v;
-
-			v = current_block.AddVariable (type, (string) p.First, l);
-			if (v == null)
-				continue;
-
-			v.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
-			v.Pinned = true;
-			p.First = v;
-			list [i] = p;
-		}
 	  }
 	  embedded_statement 
 	  {
-		Location l = GetLocation ($1);
-
-		Fixed f = new Fixed ((Expression) $3, (ArrayList) $4, (Statement) $7, l);
+		Expression type = (Expression) $3;
+	  	var list = (List<KeyValuePair<Tokenizer.LocatedToken, Expression>>) $4;
+		Fixed f = new Fixed (type,
+			list.ConvertAll (i => {
+				var v = new KeyValuePair<LocalInfo, Expression> (current_block.AddVariable (type, i.Key.Value, i.Key.Location), i.Value);
+				if (v.Key != null) {
+					v.Key.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
+					v.Key.Pinned = true;
+				}
+				return v;
+			}), (Statement) $7, GetLocation ($1));
 
 		current_block.AddStatement (f);
 
@@ -5307,16 +5301,16 @@ fixed_statement
 
 fixed_pointer_declarators
 	: fixed_pointer_declarator	{ 
-	   	ArrayList declarators = new ArrayList (4);
+	   	var declarators = new List<KeyValuePair<Tokenizer.LocatedToken, Expression>> (2);
 	   	if ($1 != null)
-			declarators.Add ($1);
+			declarators.Add ((KeyValuePair<Tokenizer.LocatedToken, Expression>)$1);
 		$$ = declarators;
 	  }
 	| fixed_pointer_declarators COMMA fixed_pointer_declarator
 	  {
-		ArrayList declarators = (ArrayList) $1;
+		var declarators = (List<KeyValuePair<Tokenizer.LocatedToken, Expression>>) $1;
 		if ($3 != null)
-			declarators.Add ($3);
+			declarators.Add ((KeyValuePair<Tokenizer.LocatedToken, Expression>)$3);
 		$$ = declarators;
 	  }
 	;
@@ -5325,8 +5319,7 @@ fixed_pointer_declarator
 	: IDENTIFIER ASSIGN expression
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
-		// FIXME: keep location
-		$$ = new Pair (lt.Value, $3);
+		$$ = new KeyValuePair<Tokenizer.LocatedToken, Expression> (lt, (Expression) $3);
 	  }
 	| IDENTIFIER
 	  {
@@ -5850,7 +5843,7 @@ interactive_parsing
 		push_current_class (new Class (current_namespace, current_class, new MemberName ("Class" + class_count++),
 			Modifiers.PUBLIC, null), null);
 
-		ArrayList baseclass_list = new ArrayList ();
+		var baseclass_list = new List<FullNamedExpression> ();
 		baseclass_list.Add (new TypeExpression (Evaluator.InteractiveBaseClass, lexer.Location));
 		current_container.AddBasesForPart (current_class, baseclass_list);
 

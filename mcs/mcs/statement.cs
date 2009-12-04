@@ -1004,9 +1004,7 @@ namespace Mono.CSharp {
 			if (val == null)
 				val = SwitchLabel.NullStringCase;
 					
-			sl = (SwitchLabel) ec.Switch.Elements [val];
-
-			if (sl == null){
+			if (!ec.Switch.Elements.TryGetValue (val, out sl)) {
 				FlowBranchingBlock.Error_UnknownLabel (loc, "case " + 
 					(c.GetValue () == null ? "null" : val.ToString ()), ec.Report);
 				return false;
@@ -2441,7 +2439,7 @@ namespace Mono.CSharp {
 				am_storey.Define ();
 				am_storey.Parent.PartialContainer.AddCompilerGeneratedClass (am_storey);
 
-				ArrayList ref_blocks = am_storey.ReferencesFromChildrenBlock;
+				var ref_blocks = am_storey.ReferencesFromChildrenBlock;
 				if (ref_blocks != null) {
 					foreach (ExplicitBlock ref_block in ref_blocks) {
 						for (ExplicitBlock b = ref_block.Explicit; b != this; b = b.Parent.Explicit) {
@@ -3108,10 +3106,10 @@ namespace Mono.CSharp {
 
 	public class SwitchSection {
 		// An array of SwitchLabels.
-		public readonly ArrayList Labels;
+		public readonly List<SwitchLabel> Labels;
 		public readonly Block Block;
 		
-		public SwitchSection (ArrayList labels, Block block)
+		public SwitchSection (List<SwitchLabel> labels, Block block)
 		{
 			Labels = labels;
 			Block = block;
@@ -3119,7 +3117,7 @@ namespace Mono.CSharp {
 
 		public SwitchSection Clone (CloneContext clonectx)
 		{
-			ArrayList cloned_labels = new ArrayList ();
+			var cloned_labels = new List<SwitchLabel> ();
 
 			foreach (SwitchLabel sl in cloned_labels)
 				cloned_labels.Add (sl.Clone (clonectx));
@@ -3129,13 +3127,13 @@ namespace Mono.CSharp {
 	}
 	
 	public class Switch : Statement {
-		public ArrayList Sections;
+		public List<SwitchSection> Sections;
 		public Expression Expr;
 
 		/// <summary>
 		///   Maps constants whose type type SwitchType to their  SwitchLabels.
 		/// </summary>
-		public IDictionary Elements;
+		public IDictionary<object, SwitchLabel> Elements;
 
 		/// <summary>
 		///   The governing switch type
@@ -3171,8 +3169,8 @@ namespace Mono.CSharp {
 		// on the governing type
 		//
 		static Type [] allowed_types;
-		
-		public Switch (Expression e, ArrayList sects, Location l)
+
+		public Switch (Expression e, List<SwitchSection> sects, Location l)
 		{
 			Expr = e;
 			Sections = sects;
@@ -3296,7 +3294,7 @@ namespace Mono.CSharp {
 					try {
 						Elements.Add (key, sl);
 					} catch (ArgumentException) {
-						sl.Error_AlreadyOccurs (ec, SwitchType, (SwitchLabel)Elements [key]);
+						sl.Error_AlreadyOccurs (ec, SwitchType, Elements [key]);
 						error = true;
 					}
 				}
@@ -3361,7 +3359,7 @@ namespace Mono.CSharp {
 			}
 			public long first;
 			public long last;
-			public ArrayList element_keys = null;
+			public List<object> element_keys;
 			// how many items are in the bucket
 			public int Size = 1;
 			public int Length
@@ -3401,7 +3399,7 @@ namespace Mono.CSharp {
 			Array.Sort (element_keys);
 
 			// initialize the block list with one element per key
-			ArrayList key_blocks = new ArrayList (element_count);
+			var key_blocks = new List<KeyBlock> (element_count);
 			foreach (object key in element_keys)
 				key_blocks.Add (new KeyBlock (System.Convert.ToInt64 (key)));
 
@@ -3410,7 +3408,7 @@ namespace Mono.CSharp {
 			// there's probably a really cool way to do this with a tree...
 			while (key_blocks.Count > 1)
 			{
-				ArrayList key_blocks_new = new ArrayList ();
+				var key_blocks_new = new List<KeyBlock> ();
 				current_kb = (KeyBlock) key_blocks [0];
 				for (int ikb = 1; ikb < key_blocks.Count; ikb++)
 				{
@@ -3436,7 +3434,7 @@ namespace Mono.CSharp {
 
 			// initialize the key lists
 			foreach (KeyBlock kb in key_blocks)
-				kb.element_keys = new ArrayList ();
+				kb.element_keys = new List<object> ();
 
 			// fill the key lists
 			int iBlockCurr = 0;
@@ -3661,12 +3659,14 @@ namespace Mono.CSharp {
 			Report.Debug (1, "START OF SWITCH BLOCK", loc, ec.CurrentBranching);
 			ec.StartFlowBranching (FlowBranching.BranchingType.Switch, loc);
 
-			is_constant = new_expr is Constant;
-			if (is_constant) {
-				object key = ((Constant) new_expr).GetValue ();
-				SwitchLabel label = (SwitchLabel) Elements [key];
+			var constant = new_expr as Constant;
+			if (constant != null) {
+				is_constant = true;
+				object key = constant.GetValue ();
+				SwitchLabel label;
+				if (Elements.TryGetValue (key, out label))
+					constant_section = FindSection (label);
 
-				constant_section = FindSection (label);
 				if (constant_section == null)
 					constant_section = default_section;
 			}
@@ -3739,7 +3739,7 @@ namespace Mono.CSharp {
 				return;
 			ec.CurrentTypeDefinition.PartialContainer.AddField (field);
 
-			ArrayList init = new ArrayList ();
+			var init = new List<Expression> ();
 			int counter = 0;
 			Elements.Clear ();
 			string value = null;
@@ -3891,7 +3891,7 @@ namespace Mono.CSharp {
 			Switch target = (Switch) t;
 
 			target.Expr = Expr.Clone (clonectx);
-			target.Sections = new ArrayList ();
+			target.Sections = new List<SwitchSection> ();
 			foreach (SwitchSection ss in Sections){
 				target.Sections.Add (ss.Clone (clonectx));
 			}
@@ -3927,6 +3927,8 @@ namespace Mono.CSharp {
 	{
 		bool code_follows;
 		Iterator iter;
+		List<ResumableStatement> resume_points;
+		int first_resume_pc;
 
 		protected abstract void EmitPreTryBody (EmitContext ec);
 		protected abstract void EmitTryBody (EmitContext ec);
@@ -3993,12 +3995,10 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		ArrayList resume_points;
-		int first_resume_pc;
 		public void AddResumePoint (ResumableStatement stmt, int pc)
 		{
 			if (resume_points == null) {
-				resume_points = new ArrayList ();
+				resume_points = new List<ResumableStatement> ();
 				first_resume_pc = pc;
 			}
 
@@ -4277,9 +4277,9 @@ namespace Mono.CSharp {
 	// 
 	// Fixed statement
 	//
-	public class Fixed : Statement {
+	class Fixed : Statement {
 		Expression type;
-		ArrayList declarators;
+		List<KeyValuePair<LocalInfo, Expression>> declarators;
 		Statement statement;
 		Type expr_type;
 		Emitter[] data;
@@ -4371,7 +4371,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Fixed (Expression type, ArrayList decls, Statement stmt, Location l)
+		public Fixed (Expression type, List<KeyValuePair<LocalInfo, Expression>> decls, Statement stmt, Location l)
 		{
 			this.type = type;
 			declarators = decls;
@@ -4408,9 +4408,9 @@ namespace Mono.CSharp {
 			}
 			
 			int i = 0;
-			foreach (Pair p in declarators){
-				LocalInfo vi = (LocalInfo) p.First;
-				Expression e = (Expression) p.Second;
+			foreach (var p in declarators){
+				LocalInfo vi = p.Key;
+				Expression e = p.Value;
 				
 				vi.VariableInfo.SetAssigned (ec);
 				vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Fixed);
@@ -4548,13 +4548,10 @@ namespace Mono.CSharp {
 			Fixed target = (Fixed) t;
 
 			target.type = type.Clone (clonectx);
-			target.declarators = new ArrayList (declarators.Count);
-			foreach (Pair p in declarators) {
-				LocalInfo vi = (LocalInfo) p.First;
-				Expression e = (Expression) p.Second;
-
-				target.declarators.Add (
-					new Pair (clonectx.LookupVariable (vi), e.Clone (clonectx)));				
+			target.declarators = new List<KeyValuePair<LocalInfo, Expression>> (declarators.Count);
+			foreach (var p in declarators) {
+				target.declarators.Add (new KeyValuePair<LocalInfo, Expression> (
+					clonectx.LookupVariable (p.Key), p.Value.Clone (clonectx)));
 			}
 			
 			target.statement = statement.Clone (clonectx);
@@ -4744,17 +4741,17 @@ namespace Mono.CSharp {
 
 	public class TryCatch : Statement {
 		public Block Block;
-		public ArrayList Specific;
+		public List<Catch> Specific;
 		public Catch General;
 		bool inside_try_finally, code_follows;
 
-		public TryCatch (Block block, ArrayList catch_clauses, Location l, bool inside_try_finally)
+		public TryCatch (Block block, List<Catch> catch_clauses, Location l, bool inside_try_finally)
 		{
 			this.Block = block;
 			this.Specific = catch_clauses;
 			this.inside_try_finally = inside_try_finally;
 
-			Catch c = (Catch) catch_clauses [0];
+			Catch c = catch_clauses [0];
 			if (c.IsGeneral) {
 				this.General = c;			
 				catch_clauses.RemoveAt (0);
@@ -4872,9 +4869,9 @@ namespace Mono.CSharp {
 			if (General != null)
 				target.General = (Catch) General.Clone (clonectx);
 			if (Specific != null){
-				target.Specific = new ArrayList ();
+				target.Specific = new List<Catch> ();
 				foreach (Catch c in Specific)
-					target.Specific.Add (c.Clone (clonectx));
+					target.Specific.Add ((Catch) c.Clone (clonectx));
 			}
 		}
 	}

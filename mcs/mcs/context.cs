@@ -10,7 +10,7 @@
 //
 
 using System;
-using System.Collections;
+using System.Collections.Generic;
 using System.Reflection.Emit;
 
 namespace Mono.CSharp
@@ -501,23 +501,22 @@ namespace Mono.CSharp
 	//
 	public class CloneContext
 	{
-		Hashtable block_map = new Hashtable ();
-		Hashtable variable_map;
+		Dictionary<Block, Block> block_map = new Dictionary<Block, Block> ();
+		Dictionary<LocalInfo, LocalInfo> variable_map;
 
 		public void AddBlockMap (Block from, Block to)
 		{
-			if (block_map.Contains (from))
+			if (block_map.ContainsKey (from))
 				return;
 			block_map[from] = to;
 		}
 
 		public Block LookupBlock (Block from)
 		{
-			Block result = (Block) block_map[from];
-
-			if (result == null) {
+			Block result;
+			if (!block_map.TryGetValue (from, out result)) {
 				result = (Block) from.Clone (this);
-				block_map[from] = result;
+				block_map [from] = result;
 			}
 
 			return result;
@@ -528,8 +527,8 @@ namespace Mono.CSharp
 		///
 		public Block RemapBlockCopy (Block from)
 		{
-			Block mapped_to = (Block) block_map[from];
-			if (mapped_to == null)
+			Block mapped_to;
+			if (!block_map.TryGetValue (from, out mapped_to))
 				return from;
 
 			return mapped_to;
@@ -538,21 +537,20 @@ namespace Mono.CSharp
 		public void AddVariableMap (LocalInfo from, LocalInfo to)
 		{
 			if (variable_map == null)
-				variable_map = new Hashtable ();
-
-			if (variable_map.Contains (from))
+				variable_map = new Dictionary<LocalInfo, LocalInfo> ();
+			else if (variable_map.ContainsKey (from))
 				return;
+
 			variable_map[from] = to;
 		}
 
 		public LocalInfo LookupVariable (LocalInfo from)
 		{
-			LocalInfo result = (LocalInfo) variable_map[from];
-
-			if (result == null)
+			try {
+				return variable_map[from];
+			} catch (KeyNotFoundException) {
 				throw new Exception ("LookupVariable: looking up a variable that has not been registered yet");
-
-			return result;
+			}
 		}
 	}
 

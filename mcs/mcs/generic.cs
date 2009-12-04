@@ -15,6 +15,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
 using System.Collections;
+using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
 	
@@ -221,15 +222,14 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Constraints : GenericConstraints {
 		string name;
-		ArrayList constraints;
+		List<object> constraints;
 		Location loc;
 		
 		//
 		// name is the identifier, constraints is an arraylist of
 		// Expressions (with types) or `true' for the constructor constraint.
 		// 
-		public Constraints (string name, ArrayList constraints,
-				    Location loc)
+		public Constraints (string name, List<object> constraints, Location loc)
 		{
 			this.name = name;
 			this.constraints = constraints;
@@ -249,8 +249,8 @@ namespace Mono.CSharp {
 
 		GenericParameterAttributes attrs;
 		TypeExpr class_constraint;
-		ArrayList iface_constraints;
-		ArrayList type_param_constraints;
+		List<TypeExpr> iface_constraints;
+		List<TypeExpr> type_param_constraints;
 		int num_constraints;
 		Type class_constraint_type;
 		Type[] iface_constraint_types;
@@ -270,8 +270,8 @@ namespace Mono.CSharp {
 			if (ec == null)
 				return false;
 
-			iface_constraints = new ArrayList (2);	// TODO: Too expensive allocation
-			type_param_constraints = new ArrayList ();
+			iface_constraints = new List<TypeExpr> (2);	// TODO: Too expensive allocation
+			type_param_constraints = new List<TypeExpr> ();
 
 			foreach (object obj in constraints) {
 				if (HasConstructorConstraint) {
@@ -370,7 +370,7 @@ namespace Mono.CSharp {
 				num_constraints++;
 			}
 
-			ArrayList list = new ArrayList ();
+			var list = new List<Type> ();
 			foreach (TypeExpr iface_constraint in iface_constraints) {
 				foreach (Type type in list) {
 					if (!type.Equals (iface_constraint.Type))
@@ -454,7 +454,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		bool CheckTypeParameterConstraints (Type tparam, ref TypeExpr prevConstraint, ArrayList seen, Report Report)
+		bool CheckTypeParameterConstraints (Type tparam, ref TypeExpr prevConstraint, List<Type> seen, Report Report)
 		{
 			seen.Add (tparam);
 
@@ -531,7 +531,7 @@ namespace Mono.CSharp {
 			}
 
 			if (type_param_constraints.Count != 0) {
-				ArrayList seen = new ArrayList ();
+				var seen = new List<Type> ();
 				TypeExpr prev_constraint = class_constraint;
 				foreach (TypeExpr expr in type_param_constraints) {
 					if (!CheckTypeParameterConstraints (expr.Type, ref prev_constraint, seen, r))
@@ -1089,7 +1089,7 @@ namespace Mono.CSharp {
 				this.gc = gc;
 				this.dargs = dargs;
 
-				ArrayList list = new ArrayList ();
+				var list = new List<Type> ();
 				if (gc.HasClassConstraint)
 					list.Add (inflate (gc.ClassConstraint));
 				foreach (Type iface in gc.InterfaceConstraints)
@@ -1197,17 +1197,17 @@ namespace Mono.CSharp {
 	// by both type arguments and type parameters
 	//
 	public class TypeArguments {
-		ArrayList args;
+		List<FullNamedExpression> args;
 		Type[] atypes;
 		
 		public TypeArguments ()
 		{
-			args = new ArrayList ();
+			args = new List<FullNamedExpression> ();
 		}
 
 		public TypeArguments (params FullNamedExpression[] types)
 		{
-			this.args = new ArrayList (types);
+			this.args = new List<FullNamedExpression> (types);
 		}
 
 		public void Add (FullNamedExpression type)
@@ -1220,10 +1220,10 @@ namespace Mono.CSharp {
 			args.AddRange (new_args.args);
 		}
 
-		// TODO: Should be deleted
+		// TODO: Kill this monster
 		public TypeParameterName[] GetDeclarations ()
 		{
-			return (TypeParameterName[]) args.ToArray (typeof (TypeParameterName));
+			return args.ConvertAll (i => (TypeParameterName) i).ToArray ();
 		}
 
 		/// <summary>
@@ -1300,7 +1300,7 @@ namespace Mono.CSharp {
 		public TypeArguments Clone ()
 		{
 			TypeArguments copy = new TypeArguments ();
-			foreach (Expression ta in args)
+			foreach (var ta in args)
 				copy.args.Add (ta);
 
 			return copy;
@@ -2444,7 +2444,7 @@ namespace Mono.CSharp {
 
 		readonly Type[] unfixed_types;
 		readonly Type[] fixed_types;
-		readonly ArrayList[] bounds;
+		readonly List<BoundInfo>[] bounds;
 		bool failed;
 		
 		public TypeInferenceContext (Type[] typeArguments)
@@ -2456,7 +2456,7 @@ namespace Mono.CSharp {
 			for (int i = 0; i < typeArguments.Length; ++i) {
 				if (typeArguments [i].IsGenericParameter) {
 					if (bounds == null) {
-						bounds = new ArrayList [typeArguments.Length];
+						bounds = new List<BoundInfo> [typeArguments.Length];
 						unfixed_types = new Type [typeArguments.Length];
 					}
 					unfixed_types [i] = typeArguments [i];
@@ -2475,7 +2475,7 @@ namespace Mono.CSharp {
 			fixed_types = new Type [1];
 			unfixed_types = new Type [1];
 			unfixed_types[0] = InternalType.Arglist; // it can be any internal type
-			bounds = new ArrayList [1];
+			bounds = new List<BoundInfo> [1];
 		}
 
 		public Type[] InferredTypeArguments {
@@ -2497,9 +2497,9 @@ namespace Mono.CSharp {
 			if (bound.Type == TypeManager.void_type || bound.Type.IsPointer)
 				return;
 
-			ArrayList a = bounds [index];
+			var a = bounds [index];
 			if (a == null) {
-				a = new ArrayList ();
+				a = new List<BoundInfo> ();
 				bounds [index] = a;
 			} else {
 				if (a.Contains (bound))
@@ -2614,7 +2614,7 @@ namespace Mono.CSharp {
 		//
 		public bool FixIndependentTypeArguments (ResolveContext ec, Type[] methodParameters, ref bool fixed_any)
 		{
-			ArrayList types_to_fix = new ArrayList (unfixed_types);
+			var types_to_fix = new List<Type> (unfixed_types);
 			for (int i = 0; i < methodParameters.Length; ++i) {
 				Type t = methodParameters[i];
 
@@ -2670,13 +2670,13 @@ namespace Mono.CSharp {
 			if (failed)
 				return false;
 
-			ArrayList candidates = (ArrayList)bounds [i];
+			var candidates = bounds [i];
 			if (candidates == null)
 				return false;
 
 			if (candidates.Count == 1) {
 				unfixed_types[i] = null;
-				Type t = ((BoundInfo) candidates[0]).Type;
+				Type t = candidates[0].Type;
 				if (t == TypeManager.null_type)
 					return false;
 
@@ -2890,7 +2890,7 @@ namespace Mono.CSharp {
 				// such that U is identical to, inherits from (directly or indirectly),
 				// or implements (directly or indirectly) C<U1..Uk>
 				//
-				ArrayList u_candidates = new ArrayList ();
+				var u_candidates = new List<Type> ();
 				if (u.IsGenericType)
 					u_candidates.Add (u);
 
@@ -3025,7 +3025,7 @@ namespace Mono.CSharp {
 			return LowerBoundInference (e.Type, t) * 2;
 		}
 
-		void RemoveDependentTypes (ArrayList types, Type returnType)
+		void RemoveDependentTypes (List<Type> types, Type returnType)
 		{
 			int idx = IsUnfixed (returnType);
 			if (idx >= 0) {
