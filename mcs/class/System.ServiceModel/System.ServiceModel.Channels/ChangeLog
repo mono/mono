@@ -1,5 +1,9 @@
 2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpTransportBindingElement.cs : finished all GetProperty() values.
+
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpRequestChannel.cs : disabled carelessly added
 	  "UseDefaultCredentials = false" line. It blocked basic auth.
 

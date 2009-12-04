@@ -1,3 +1,7 @@
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs : added GetProperty() tests.
+
 2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpsTransportBindingElementTest.cs : new test.
