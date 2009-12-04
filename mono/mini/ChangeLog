@@ -1,5 +1,10 @@
 2009-12-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (handle_delegate_ctor): Add support for using this from gshared
+	code.
+
+	* generics.cs: Add a test.
+
 	* method-to-ir.c (emit_get_rgctx_method): Make this work even if context_used
 	is 0. Simplify a lot of code using this.
 
