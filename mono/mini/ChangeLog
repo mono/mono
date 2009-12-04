@@ -1,3 +1,9 @@
+2009-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (handle_delegate_ctor): Allow the method_code optimization
+	in gshared code too using the new rgctx info type
+	MONO_RGCTX_INFO_METHOD_DELEGATE_CODE.
+
 2009-12-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (handle_delegate_ctor): Add support for using this from gshared
