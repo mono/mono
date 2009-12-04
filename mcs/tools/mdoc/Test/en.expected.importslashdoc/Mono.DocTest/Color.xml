@@ -10,7 +10,9 @@
   <Docs>
     <summary>Possible colors</summary>
     <remarks>
-      <see cref="T:Mono.DocTest.Color" />.</remarks>
+      <see cref="T:Mono.DocTest.Color" />.
+            Namespace Test: [<see cref="N:Mono.DocTest" />]
+            </remarks>
   </Docs>
   <Members>
     <Member MemberName="AnotherGreen">

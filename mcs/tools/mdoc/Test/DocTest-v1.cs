@@ -3,6 +3,8 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 
+/// <summary>Namespace Test: [<see cref="N:Mono.DocTest" />]</summary>
+/// <remarks><c>T:NoNamespace</c></remarks>
 public class NoNamespace {}
 
 namespace System {
@@ -108,7 +110,10 @@ namespace Mono.DocTest {
 	}
 
 	/// <summary>Possible colors</summary>
-	/// <remarks><see cref="T:Mono.DocTest.Color"/>.</remarks>
+	/// <remarks>
+	///   <see cref="T:Mono.DocTest.Color"/>.
+	///   Namespace Test: [<see cref="N:Mono.DocTest" />]
+	/// </remarks>
 	[MonoTODO]
 	public enum Color {
 		/// <summary>Insert Red summary here</summary>

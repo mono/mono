@@ -217,6 +217,19 @@
 				<xsl:value-of select="concat($typeentry/Type/@Namespace, '/', $typeentry/Type/@Name, '.xml')" />
 			</xsl:when>
 			<xsl:when test="$xmltarget" />
+			<xsl:when test="starts-with ($cref, 'N:')">
+				<xsl:variable name="namespace">
+					<xsl:call-template name="FindNamespaceInIndex">
+						<xsl:with-param name="namespace" select="substring-after ($cref, 'N:')" />
+					</xsl:call-template>
+				</xsl:variable>
+				<xsl:if test="string($namespace) != ''">
+					<xsl:if test="$TypeNamespace != ''">
+						<xsl:value-of select="$basepath" />
+					</xsl:if>
+					<xsl:value-of select="concat ($namespace, '/index.', $ext)" />
+				</xsl:if>
+			</xsl:when>
 			<xsl:when test="count($typeentry/Type)">
 				<xsl:if test="string-length ($typeentry/Type/@Namespace)">
 					<xsl:value-of select="$basepath" />
@@ -262,6 +275,16 @@
 			</xsl:variable>
 			<xsl:if test="concat($nsp, translate(@Name, '+', '.')) = $type">
 				<Type Name="{@Name}" Namespace="{parent::Namespace/@Name}" />
+			</xsl:if>
+		</xsl:for-each>
+	</xsl:template>
+
+	<xsl:template name="FindNamespaceInIndex">
+		<xsl:param name="namespace" />
+
+		<xsl:for-each select="$Index//Namespace">
+			<xsl:if test="@Name = $namespace">
+				<xsl:value-of select="@Name" />
 			</xsl:if>
 		</xsl:for-each>
 	</xsl:template>

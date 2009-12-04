@@ -4,8 +4,10 @@
     </assembly>
     <members>
         <member name="T:NoNamespace">
-            <summary>To be added.</summary>
-            <remarks>To be added.</remarks>
+            <summary>Namespace Test: [<see cref="N:Mono.DocTest" />]</summary>
+            <remarks>
+                <c>T:NoNamespace</c>
+            </remarks>
         </member>
         <member name="C:NoNamespace">
             <summary>To be added.</summary>
@@ -14,7 +16,9 @@
         <member name="T:Mono.DocTest.Color">
             <summary>Possible colors</summary>
             <remarks>
-                <see cref="T:Mono.DocTest.Color" />.</remarks>
+                <see cref="T:Mono.DocTest.Color" />.
+            Namespace Test: [<see cref="N:Mono.DocTest" />]
+            </remarks>
         </member>
         <member name="F:Mono.DocTest.Color.AnotherGreen">
             <summary>To be added.</summary>
