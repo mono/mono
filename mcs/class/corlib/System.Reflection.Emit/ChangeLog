@@ -1,5 +1,12 @@
 2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MethodOnTypeBuilderInst.cs: Change instantiation field type to System.Type.
+
+	* MethodOnTypeBuilderInst.cs (MetadataToken): Explicitly throw if not under
+	compiler context.
+
+2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MethodOnTypeBuilderInst.cs: Rename mb to base_method to better reflect
 	it's meaning. Introduce IsCompilerContext method and apply it's usage.
 

@@ -40,7 +40,7 @@ namespace System.Reflection.Emit
 	internal class MethodOnTypeBuilderInst : MethodInfo
 	{
 		#region Keep in sync with object-internals.h
-		MonoGenericClass instantiation;
+		Type instantiation;
 		internal MethodBuilder base_method; /*This is the base method definition, it must be non-inflated and belong to a non-inflated type.*/
 		Type[] method_arguments;
 		MethodOnTypeBuilderInst generic_method_definition;
@@ -59,6 +59,14 @@ namespace System.Reflection.Emit
 			this.method_arguments = new Type [typeArguments.Length];
 			typeArguments.CopyTo (this.method_arguments, 0);
 			this.generic_method_definition = gmd;
+		}
+
+		internal Type[] GetTypeArgs ()
+		{
+			if (!instantiation.IsGenericType || instantiation.IsGenericParameter)
+				return null;				
+
+			return instantiation.GetGenericArguments ();
 		}
 
 		internal bool IsCompilerContext {
@@ -91,7 +99,7 @@ namespace System.Reflection.Emit
 			get { 
 				if (!IsCompilerContext)
 					return base_method.ReturnType;
-				return instantiation.InflateType (base_method.ReturnType, method_arguments);
+				return MonoGenericClass.InflateType (base_method.ReturnType, GetTypeArgs (), method_arguments);
 			}
 		}
 
@@ -144,7 +152,7 @@ namespace System.Reflection.Emit
 
 			ParameterInfo [] res = new ParameterInfo [base_method.parameters.Length];
 			for (int i = 0; i < base_method.parameters.Length; i++) {
-				Type type = instantiation.InflateType (base_method.parameters [i], method_arguments);
+				Type type = MonoGenericClass.InflateType (base_method.parameters [i], GetTypeArgs (), method_arguments);
 				res [i] = new ParameterInfo (base_method.pinfo == null ? null : base_method.pinfo [i + 1], type, this, i + 1);
 			}
 			return res;
