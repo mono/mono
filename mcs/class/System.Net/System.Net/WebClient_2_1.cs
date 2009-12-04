@@ -78,6 +78,9 @@ namespace System.Net {
 			}
 		}
 
+		[MonoTODO ("provide credentials to the client stack")]
+		public ICredentials Credentials { get; set; }
+
 		// this is an unvalidated collection, HttpWebRequest is responsable to validate it
 		public WebHeaderCollection Headers {
 			get {
@@ -89,8 +92,7 @@ namespace System.Net {
 			set { headers = value; }
 		}
 
-		// note: it's public in SL3 beta 1 - but we need it right now
-		internal WebHeaderCollection ResponseHeaders {
+		public WebHeaderCollection ResponseHeaders {
 			get { return responseHeaders; }
 		}
 

@@ -1,3 +1,11 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* HttpStatusCode_2_1.cs: Remove. SL3 provides all status code 
+	since they are used for the client stack
+	* WebClient_2_1.cs: Add Credentials property and change
+	ResponseHeaders property to public
+	* WebRequest_2_1.cs: Add Credentials property
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DnsEndPoint_2_1.cs: Moved to System.dll since it's also part

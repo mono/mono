@@ -52,6 +52,11 @@ namespace System.Net {
 			get { return null; }
 		}
 
+		public virtual ICredentials Credentials {
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
+		}
+
 		static WebRequest ()
 		{
 			registred_prefixes = new Dictionary<string, IWebRequestCreate> (StringComparer.OrdinalIgnoreCase);
@@ -135,6 +140,12 @@ namespace System.Net {
 			FieldInfo fi = GetType ().GetField ("progress_delegate", BindingFlags.Instance | BindingFlags.NonPublic);
 			if (fi != null)
 				fi.SetValue (this, progress_delegate);
+		}
+
+		static Exception NotImplemented ()
+		{
+			// hide the "normal" NotImplementedException from corcompare-like tools
+			return new NotImplementedException ();
 		}
 	}
 }
