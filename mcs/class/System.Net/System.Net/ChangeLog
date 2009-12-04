@@ -1,3 +1,12 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpStatusCode_2_1.cs: Remove. SL3 provides all status code 
+	since they are used for the client stack
+	* WebClient_2_1.cs: Add Credentials property and change
+	ResponseHeaders property to public
+	* WebRequest_2_1.cs: Add Credentials property
+	[Backport r147704]
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* HttpWebRequest_2_1.cs: Add CookieCollection, need to be 

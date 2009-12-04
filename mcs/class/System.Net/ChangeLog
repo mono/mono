@@ -1,3 +1,8 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.Net.dll.sources: Remove HttpStatusCode_2_1.cs
+	[Backport r147704]
+
 2009-11-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* net_2_1_raw_System.Net.dll.sources: Add Consts.cs, Locale.cs and
