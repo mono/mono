@@ -1,4 +1,4 @@
-// CS3005: Identifier `ErrorCS3005.FOO' differing only in case is not CLS-compliant
+// CS3005: Identifier `ErrorCS3005.foo' differing only in case is not CLS-compliant
 // Line: 9
 // Compiler options: -warnaserror -warn:1
 

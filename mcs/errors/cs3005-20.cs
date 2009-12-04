@@ -1,5 +1,5 @@
-// cs3005-20.cs: Identifier `I.BLAH.get' differing only in case is not CLS-compliant
-// Line: 15
+// CS3005: Identifier `I.this[int]' differing only in case is not CLS-compliant
+// Line: 12
 // Compiler options: -warnaserror
 
 using System.Runtime.CompilerServices;
