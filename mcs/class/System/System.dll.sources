@@ -678,6 +678,7 @@ System.Net/DecompressionMethods.cs
 System.Net/DefaultCertificatePolicy.cs
 System.Net/DigestClient.cs
 System.Net/Dns.cs
+System.Net/DnsEndPoint.cs
 System.Net/DnsPermissionAttribute.cs
 System.Net/DnsPermission.cs
 System.Net/EndPoint.cs

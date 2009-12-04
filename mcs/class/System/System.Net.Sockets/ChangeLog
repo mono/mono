@@ -1,3 +1,8 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Net.Sockets/SocketAsyncEventArgs.cs: Implement 
+	ConnectByNameError property for Moonlight 3 (and fx 4.0)
+
 2009-11-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket_2_1.cs: throw when shutting down a socket that is not

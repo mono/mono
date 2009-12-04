@@ -1,3 +1,8 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DnsEndPoint_2_1.cs: Moved to System.dll since it's also part
+	of .net 4.0
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* HttpWebRequest_2_1.cs: Add CookieCollection, need to be 

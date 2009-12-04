@@ -1,3 +1,8 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.Net.dll.sources: Adjust location for
+	DnsEndPoint
+
 2009-09-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.Net.dll.sources: Remove Timer_2_1.cs and 

@@ -53,6 +53,9 @@ namespace System.Net.Sockets
 			return ((bool) check_socket_policy.Invoke (null, new object [1] { endpoint }));
 		}
 #endif
+#if (NET_2_1 || NET_4_0) && !MONOTOUCH
+		public Exception ConnectByNameError { get; internal set; }
+#endif
 
 		public event EventHandler<SocketAsyncEventArgs> Completed;
 
@@ -215,7 +218,7 @@ namespace System.Net.Sockets
 			LastOperation = SocketAsyncOperation.Connect;
 			SocketError error = SocketError.AccessDenied;
 			try {
-#if NET_2_1 && !MONOTOUCH
+#if (NET_2_1 || NET_4_0) && !MONOTOUCH
 				// Connect to the first address that match the host name, like:
 				// http://blogs.msdn.com/ncl/archive/2009/07/20/new-ncl-features-in-net-4-0-beta-2.aspx
 				// while skipping entries that do not match the address family
@@ -226,15 +229,19 @@ namespace System.Net.Sockets
 						try {
 							if (curSocket.AddressFamily == addr.AddressFamily) {
 								error = TryConnect (new IPEndPoint (addr, dep.Port));
-								if (error == SocketError.Success)
+								if (error == SocketError.Success) {
+									ConnectByNameError = null;
 									break;
+								}
 							}
 						}
-						catch (SocketException) {
+						catch (SocketException se) {
+							ConnectByNameError = se;
 							error = SocketError.AccessDenied;
 						}
 					}
 				} else {
+					ConnectByNameError = null;
 					error = TryConnect (RemoteEndPoint);
 				}
 #else

@@ -1,5 +1,5 @@
 //
-// System.Net.DnsEndPoint (for 2.1 profile)
+// System.Net.DnsEndPoint
 //
 // Authors:
 //	Stephane Delcroix  <stephane@delcroix.org>
@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_1
+#if NET_2_1 || NET_4_0
 
 using System.Net.Sockets;
 

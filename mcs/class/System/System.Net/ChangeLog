@@ -1,3 +1,8 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Net/DnsEndPoint.cs: Moved from System.Net (where the
+	type resides in Moonlight) so it's available for 4.0
+
 2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CookieCollection.cs: Seal inner CookieCollectionPathComparer
