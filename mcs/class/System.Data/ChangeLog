@@ -1,3 +1,7 @@
+2009-12-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* System.Data.dll.sources: Add SortOrder.cs.
+
 2009-01-03  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* System.Data_test.dll.sources: Added SqlCommandBuilderTest.cs
