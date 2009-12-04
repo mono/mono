@@ -1,5 +1,17 @@
 2009-12-03  Jonathan Pryor <jpryor@novell.com>
 
+	* Resources/stylesheet.xsl: Add support for generating namespace links
+	  for <see cref="N:..." />.
+	* Test/DocTest-v1.cs: Add namespace links for testing.
+	* Test/en.expected.importslashdoc/Mono.DocTest/Color.xml,
+	  Test/en.expected.importslashdoc/NoNamespace.xml,
+	  Test/html.expected/index.html,
+	  Test/html.expected/Mono.DocTest/Color.html,
+	  Test/html.expected/NoNamespace.html,
+	  Test/msxdoc-expected.importslashdoc.xml: Flush.
+
+2009-12-03  Jonathan Pryor <jpryor@novell.com>
+
 	* Test/html.expected/Mono.DocTest.Generic/MyList`1.html,
 	  Test/html.expected/Mono.DocTest.Generic/MyList`2.html: Flush to sync
 	  with updated mdoc.  Inherited members are now shown (as they were
