@@ -1,5 +1,13 @@
 2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MethodBuilder.cs (MakeGenericMethod): Don't rely on the runtime to
+	inflate a MethodBuilder. Create directly an instance of MethodOnTypeBuilderInst.
+
+	* MethodOnTypeBuilderInst.cs (MakeGenericMethod): Cleanup this method and support
+	inflating already inflated methods under compiler context.
+
+2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MethodOnTypeBuilderInst.cs: Change instantiation field type to System.Type.
 
 	* MethodOnTypeBuilderInst.cs (MetadataToken): Explicitly throw if not under

@@ -52,6 +52,14 @@ namespace System.Reflection.Emit
 			this.base_method = base_method;
 		}
 
+		internal MethodOnTypeBuilderInst (MethodBuilder base_method, Type[] typeArguments)
+		{
+			this.instantiation = base_method.TypeBuilder;
+			this.base_method = base_method;
+			this.method_arguments = new Type [typeArguments.Length];
+			typeArguments.CopyTo (this.method_arguments, 0);
+		}
+
 		internal MethodOnTypeBuilderInst (MethodOnTypeBuilderInst gmd, Type[] typeArguments)
 		{
 			this.instantiation = gmd.instantiation;
@@ -194,23 +202,26 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public override MethodInfo MakeGenericMethod (params Type [] typeArguments)
+		public override MethodInfo MakeGenericMethod (params Type [] methodInstantiation)
 		{
-			if (base_method.generic_params == null || method_arguments != null)
-				throw new NotSupportedException (); //FIXME is this the right exception?
+			if (base_method.generic_params == null || (method_arguments != null && !IsCompilerContext))
+				throw new InvalidOperationException ("Method is not a generic method definition");
 
-			if (typeArguments == null)
-				throw new ArgumentNullException ("typeArguments");
+			if (methodInstantiation == null)
+				throw new ArgumentNullException ("methodInstantiation");
 
-			foreach (Type t in typeArguments) {
-				if (t == null)
-					throw new ArgumentNullException ("typeArguments");
+			if (base_method.generic_params.Length != methodInstantiation.Length)
+				throw new ArgumentException ("Incorrect length", "methodInstantiation");
+
+			foreach (Type type in methodInstantiation) {
+				if (type == null)
+					throw new ArgumentNullException ("methodInstantiation");
 			}
 
-			if (base_method.generic_params.Length != typeArguments.Length)
+			if (base_method.generic_params.Length != methodInstantiation.Length)
 				throw new ArgumentException ("Invalid argument array length");
 
-			return new MethodOnTypeBuilderInst (this, typeArguments);
+			return new MethodOnTypeBuilderInst (this, methodInstantiation);
 		}
 
 		public override Type [] GetGenericArguments ()

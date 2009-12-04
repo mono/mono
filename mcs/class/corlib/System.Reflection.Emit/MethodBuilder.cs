@@ -533,8 +533,21 @@ namespace System.Reflection.Emit
 			return new NotSupportedException ("The invoked member is not supported in a dynamic module.");
 		}
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		public override extern MethodInfo MakeGenericMethod (params Type [] typeArguments);
+		public override MethodInfo MakeGenericMethod (params Type [] methodInstantiation)
+		{
+			if (!IsGenericMethodDefinition)
+				throw new InvalidOperationException ("Method is not a generic method definition");
+			if (methodInstantiation == null)
+				throw new ArgumentNullException ("methodInstantiation");
+			if (generic_params.Length != methodInstantiation.Length)
+				throw new ArgumentException ("Incorrect length", "methodInstantiation");
+			foreach (Type type in methodInstantiation) {
+				if (type == null)
+					throw new ArgumentNullException ("methodInstantiation");
+			}
+
+			return new MethodOnTypeBuilderInst (this, methodInstantiation);
+		}
 
 		public override bool IsGenericMethodDefinition {
 			get {
