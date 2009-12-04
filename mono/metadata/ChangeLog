@@ -1,5 +1,12 @@
 2009-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (inflate_method): Fix signature.
+
+	* object-internals.h (MonoReflectionMethodOnTypeBuilderInst): Reflect change
+	in managed code.
+
+2009-12-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (inflate_method): Make this method work with TypeBuilder as well.
 
 2009-12-03  Mark Probst  <mark.probst@gmail.com>
