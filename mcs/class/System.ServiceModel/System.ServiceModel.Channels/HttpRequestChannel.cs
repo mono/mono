@@ -112,10 +112,10 @@ namespace System.ServiceModel.Channels
 				string pwd = cred != null ? cred.UserName.Password : null;
 				if (String.IsNullOrEmpty (user))
 					throw new InvalidOperationException (String.Format ("Use ClientCredentials to specify a user name for required HTTP {0} authentication.", authType));
-				// FIXME: fill name/pass from UserNamePassword.
 				var nc = new NetworkCredential (user, pwd);
 				web_request.Credentials = nc;
-				web_request.UseDefaultCredentials = false;
+				// FIXME: it is said required in SL4, but it blocks full WCF.
+				//web_request.UseDefaultCredentials = false;
 			}
 #endif
 

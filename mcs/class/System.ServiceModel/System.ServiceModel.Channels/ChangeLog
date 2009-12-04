@@ -1,5 +1,10 @@
 2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestChannel.cs : disabled carelessly added
+	  "UseDefaultCredentials = false" line. It blocked basic auth.
+
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpRequestChannel.cs, HttpChannelFactory.cs,
 	  HttpChannelListener.cs, HttpListenerManager.cs :
 	  implemented http client authentication and some of corresponding
