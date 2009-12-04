@@ -1,5 +1,10 @@
 2009-12-03  Jonathan Pryor  <jpryor@novell.com>
 
+	* Resources/mdoc-html-utils.xsl: Add support for generating namespace
+	  links via <see cref="N:..." />
+
+2009-12-03  Jonathan Pryor  <jpryor@novell.com>
+
 	* Resources/mdoc-html-utils.xsl: Fix link-id generation of conversion
 	  operators.
 

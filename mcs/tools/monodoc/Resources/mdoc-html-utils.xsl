@@ -848,6 +848,20 @@
 		</xsl:call-template>
 	</xsl:template>
 
+	<xsl:template name="makenamespacelink">
+		<xsl:param name="cref" select="''"/>
+
+		<a>
+			<xsl:attribute name="href">
+				<xsl:call-template name="GetLinkTargetHtml">
+					<xsl:with-param name="cref" select="$cref" />
+				</xsl:call-template>
+			</xsl:attribute>
+	
+			<xsl:value-of select="substring-after ($cref, 'N:')" />
+		</a>
+	</xsl:template>
+
 	<xsl:template name="maketypelink">
 		<xsl:param name="type" select="'notset'"/>
 		<xsl:param name="wrt" select="'notset'"/>
@@ -1525,6 +1539,11 @@
 		<xsl:when test="not(substring-after(@cref, 'T:')='')">
 			<xsl:call-template name="maketypelink">
 				<xsl:with-param name="type" select="normalize-space (@cref)"/>
+			</xsl:call-template>
+		</xsl:when>
+		<xsl:when test="not(substring-after(@cref, 'N:')='')">
+			<xsl:call-template name="makenamespacelink">
+				<xsl:with-param name="cref" select="normalize-space (@cref)"/>
 			</xsl:call-template>
 		</xsl:when>
 		<xsl:otherwise>
