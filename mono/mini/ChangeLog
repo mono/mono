@@ -1,5 +1,8 @@
 2009-12-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (emit_get_rgctx_method): Make this work even if context_used
+	is 0. Simplify a lot of code using this.
+
 	* mini-trampolines.c (mono_delegate_trampoline): Call
 	mono_create_static_rgctx_trampoline () before saving the final address in
 	delegate->method_code, to avoid calling it each time a delegate is first called.
