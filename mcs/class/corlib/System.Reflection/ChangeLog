@@ -1,3 +1,9 @@
+2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs (InflateType): Add a type argument parameter and
+	make this function static. Now it can inflate types using the context
+	of any type.
+
 2009-12-02  Jb Evain  <jbevain@novell.com>
 
 	* Assembly.cs: disable warning about Assembly overriding

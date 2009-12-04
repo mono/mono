@@ -106,10 +106,15 @@ namespace System.Reflection
 
 		internal Type InflateType (Type type)
 		{
-			return InflateType (type, null);
+			return InflateType (type, type_arguments, null);
 		}
 
 		internal Type InflateType (Type type, Type[] method_args)
+		{
+			return InflateType (type, type_arguments, method_args);
+		}
+
+		internal static Type InflateType (Type type, Type[] type_args, Type[] method_args)
 		{
 			if (type == null)
 				return null;
@@ -117,30 +122,28 @@ namespace System.Reflection
 				return type;
 			if (type.IsGenericParameter) {
 				if (type.DeclaringMethod == null)
-					return type_arguments [type.GenericParameterPosition];
-				if (method_args != null)
-					return method_args [type.GenericParameterPosition];
-				return type;
+					return type_args == null ? type : type_args [type.GenericParameterPosition];
+				return method_args == null ? type : method_args [type.GenericParameterPosition];
 			}
 			if (type.IsPointer)
-				return InflateType (type.GetElementType (), method_args).MakePointerType ();
+				return InflateType (type.GetElementType (), type_args, method_args).MakePointerType ();
 			if (type.IsByRef)
-				return InflateType (type.GetElementType (), method_args).MakeByRefType ();
+				return InflateType (type.GetElementType (), type_args, method_args).MakeByRefType ();
 			if (type.IsArray) {
 				if (type.GetArrayRank () > 1)
-					return InflateType (type.GetElementType (), method_args).MakeArrayType (type.GetArrayRank ());
+					return InflateType (type.GetElementType (), type_args, method_args).MakeArrayType (type.GetArrayRank ());
 #if BOOTSTRAP_NET_2_0
 				if (type.ToString ().EndsWith ("[*]"))
 #else
 				if (type.ToString ().EndsWith ("[*]", StringComparison.Ordinal)) /*FIXME, the reflection API doesn't offer a way around this*/
 #endif
-					return InflateType (type.GetElementType (), method_args).MakeArrayType (1);
-				return InflateType (type.GetElementType (), method_args).MakeArrayType ();
+					return InflateType (type.GetElementType (), type_args, method_args).MakeArrayType (1);
+				return InflateType (type.GetElementType (), type_args, method_args).MakeArrayType ();
 			}
 
 			Type[] args = type.GetGenericArguments ();
 			for (int i = 0; i < args.Length; ++i)
-				args [i] = InflateType (args [i], method_args);
+				args [i] = InflateType (args [i], type_args, method_args);
 
 			Type gtd = type.IsGenericTypeDefinition ? type : type.GetGenericTypeDefinition ();
 			return gtd.MakeGenericType (args);
