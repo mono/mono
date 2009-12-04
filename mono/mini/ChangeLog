@@ -1,5 +1,12 @@
 2009-12-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (mono_delegate_trampoline): Call
+	mono_create_static_rgctx_trampoline () before saving the final address in
+	delegate->method_code, to avoid calling it each time a delegate is first called.
+
+	* method-to-ir.c (mono_method_to_ir): Allow fast delegate creation for methods
+	which need static rgctx trampolines.
+
 	* mini-trampolines.c (mono_create_static_rgctx_trampoline): Use a cache
 	keyed on the method+addr pair, since addr could be either the method addr or
 	an unbox trampoline in the AOT case. Fixes #560246.
