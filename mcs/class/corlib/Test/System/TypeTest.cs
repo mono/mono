@@ -11,9 +11,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.IO;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -259,11 +257,11 @@ namespace MonoTests.System
 		private void ByrefMethod (ref int i, ref Derived1 j, ref Base1 k)
 		{
 		}
-#if NET_2_0
+
 		private void GenericMethod<Q> (Q q)
 		{
 		}
-#endif
+
 		[Test]
 		public void TestIsAssignableFrom ()
 		{
@@ -330,11 +328,9 @@ namespace MonoTests.System
 			Assert.IsTrue (mi.GetParameters ()[1].ParameterType.IsAssignableFrom (mi.GetParameters ()[1].ParameterType));
 
 			// Tests for type parameters
-#if NET_2_0
 			mi = typeof (TypeTest).GetMethod ("GenericMethod", BindingFlags.Instance|BindingFlags.NonPublic);
 			Assert.IsTrue (mi.GetParameters ()[0].ParameterType.IsAssignableFrom (mi.GetParameters ()[0].ParameterType));
 			Assert.IsFalse (mi.GetParameters ()[0].ParameterType.IsAssignableFrom (typeof (int)));
-#endif
 		}
 
 		[Test]
@@ -412,11 +408,7 @@ namespace MonoTests.System
 			Assert.IsTrue (ContainsProperty (props, "ProtInstBase"), "#A2");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInstBase"), "#A3");
 			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#A4");
-#if NET_2_0
 			Assert.IsTrue (ContainsProperty (props, "IntInstBase"), "#A5");
-#else
-			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#A5");
-#endif
 			Assert.IsTrue (ContainsProperty (props, "PrivInst"), "#A6");
 			Assert.IsTrue (ContainsProperty (props, "ProtInst"), "#A7");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInst"), "#A8");
@@ -436,11 +428,7 @@ namespace MonoTests.System
 			Assert.IsTrue (ContainsProperty (props, "ProtInstBlue"), "#A22");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInstBlue"), "#A23");
 			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#A24");
-#if NET_2_0
 			Assert.IsTrue (ContainsProperty (props, "IntInstBlue"), "#A25");
-#else
-			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#A25");
-#endif
 			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#A26");
 			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#A27");
 			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#A28");
@@ -557,11 +545,7 @@ namespace MonoTests.System
 			Assert.IsTrue (ContainsProperty (props, "ProtInstBase"), "#E2");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInstBase"), "#E3");
 			Assert.IsFalse (ContainsProperty (props, "PubInstBase"), "#E4");
-#if NET_2_0
 			Assert.IsTrue (ContainsProperty (props, "IntInstBase"), "#E5");
-#else
-			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#E5");
-#endif
 			Assert.IsTrue (ContainsProperty (props, "PrivInst"), "#E6");
 			Assert.IsTrue (ContainsProperty (props, "ProtInst"), "#E7");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInst"), "#E8");
@@ -581,11 +565,7 @@ namespace MonoTests.System
 			Assert.IsTrue (ContainsProperty (props, "ProtInstBlue"), "#E22");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInstBlue"), "#E23");
 			Assert.IsFalse (ContainsProperty (props, "PubInstBlue"), "#E24");
-#if NET_2_0
 			Assert.IsTrue (ContainsProperty (props, "IntInstBlue"), "#E25");
-#else
-			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#E25");
-#endif
 			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#E26");
 			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#E27");
 			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#E28");
@@ -680,11 +660,7 @@ namespace MonoTests.System
 			Assert.IsTrue (ContainsProperty (props, "ProtStatBase"), "#H12");
 			Assert.IsTrue (ContainsProperty (props, "ProIntStatBase"), "#H13");
 			Assert.IsFalse (ContainsProperty (props, "PubStatBase"), "#H14");
-#if NET_2_0
 			Assert.IsTrue (ContainsProperty (props, "IntStatBase"), "#H15");
-#else
-			Assert.IsFalse (ContainsProperty (props, "IntStatBase"), "#H15");
-#endif
 			Assert.IsTrue (ContainsProperty (props, "PrivStat"), "#H16");
 			Assert.IsTrue (ContainsProperty (props, "ProtStat"), "#H17");
 			Assert.IsTrue (ContainsProperty (props, "ProIntStat"), "#H18");
@@ -699,11 +675,7 @@ namespace MonoTests.System
 			Assert.IsTrue (ContainsProperty (props, "ProtStatBlue"), "#H27");
 			Assert.IsTrue (ContainsProperty (props, "ProIntStatBlue"), "#H28");
 			Assert.IsFalse (ContainsProperty (props, "PubStatBlue"), "#H29");
-#if NET_2_0
 			Assert.IsTrue (ContainsProperty (props, "IntStatBlue"), "#H30");
-#else
-			Assert.IsFalse (ContainsProperty (props, "IntStatBlue"), "#H50");
-#endif
 
 			flags = BindingFlags.Instance | BindingFlags.NonPublic |
 				BindingFlags.DeclaredOnly;
@@ -853,11 +825,7 @@ namespace MonoTests.System
 			Assert.IsTrue (ContainsProperty (props, "ProtInstBase"), "#M2");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInstBase"), "#M3");
 			Assert.IsTrue (ContainsProperty (props, "PubInstBase"), "#M4");
-#if NET_2_0
 			Assert.IsTrue (ContainsProperty (props, "IntInstBase"), "#M5");
-#else
-			Assert.IsFalse (ContainsProperty (props, "IntInstBase"), "#M5");
-#endif
 			Assert.IsTrue (ContainsProperty (props, "PrivInst"), "#M6");
 			Assert.IsTrue (ContainsProperty (props, "ProtInst"), "#M7");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInst"), "#M8");
@@ -877,11 +845,7 @@ namespace MonoTests.System
 			Assert.IsTrue (ContainsProperty (props, "ProtInstBlue"), "#M22");
 			Assert.IsTrue (ContainsProperty (props, "ProIntInstBlue"), "#M23");
 			Assert.IsTrue (ContainsProperty (props, "PubInstBlue"), "#M24");
-#if NET_2_0
 			Assert.IsTrue (ContainsProperty (props, "IntInstBlue"), "#M25");
-#else
-			Assert.IsFalse (ContainsProperty (props, "IntInstBlue"), "#M25");
-#endif
 			Assert.IsFalse (ContainsProperty (props, "PrivStatBlue"), "#M26");
 			Assert.IsFalse (ContainsProperty (props, "ProtStatBlue"), "#M27");
 			Assert.IsFalse (ContainsProperty (props, "ProIntStatBlue"), "#M28");
@@ -952,11 +916,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (type.GetProperty ("ProtInstBase", flags), "#A2");
 			Assert.IsNotNull (type.GetProperty ("ProIntInstBase", flags), "#A3");
 			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#A4");
-#if NET_2_0
 			Assert.IsNotNull (type.GetProperty ("IntInstBase", flags), "#A5");
-#else
-			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#A5");
-#endif
 			Assert.IsNotNull (type.GetProperty ("PrivInst", flags), "#A6");
 			Assert.IsNotNull (type.GetProperty ("ProtInst", flags), "#A7");
 			Assert.IsNotNull (type.GetProperty ("ProIntInst", flags), "#A8");
@@ -976,11 +936,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (type.GetProperty ("ProtInstBlue", flags), "#A22");
 			Assert.IsNotNull (type.GetProperty ("ProIntInstBlue", flags), "#A23");
 			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#A24");
-#if NET_2_0
 			Assert.IsNotNull (type.GetProperty ("IntInstBlue", flags), "#A25");
-#else
-			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#A25");
-#endif
 			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#A26");
 			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#A27");
 			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#A28");
@@ -1093,11 +1049,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (type.GetProperty ("ProtInstBase", flags), "#E2");
 			Assert.IsNotNull (type.GetProperty ("ProIntInstBase", flags), "#E3");
 			Assert.IsNull (type.GetProperty ("PubInstBase", flags), "#E4");
-#if NET_2_0
 			Assert.IsNotNull (type.GetProperty ("IntInstBase", flags), "#E5");
-#else
-			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#E5");
-#endif
 			Assert.IsNotNull (type.GetProperty ("PrivInst", flags), "#E6");
 			Assert.IsNotNull (type.GetProperty ("ProtInst", flags), "#E7");
 			Assert.IsNotNull (type.GetProperty ("ProIntInst", flags), "#E8");
@@ -1117,11 +1069,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (type.GetProperty ("ProtInstBlue", flags), "#E22");
 			Assert.IsNotNull (type.GetProperty ("ProIntInstBlue", flags), "#E23");
 			Assert.IsNull (type.GetProperty ("PubInstBlue", flags), "#E24");
-#if NET_2_0
 			Assert.IsNotNull (type.GetProperty ("IntInstBlue", flags), "#E25");
-#else
-			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#E25");
-#endif
 			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#E26");
 			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#E27");
 			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#E28");
@@ -1213,11 +1161,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (type.GetProperty ("ProtStatBase", flags), "#H12");
 			Assert.IsNotNull (type.GetProperty ("ProIntStatBase", flags), "#H13");
 			Assert.IsNull (type.GetProperty ("PubStatBase", flags), "#H14");
-#if NET_2_0
 			Assert.IsNotNull (type.GetProperty ("IntStatBase", flags), "#H15");
-#else
-			Assert.IsNull (type.GetProperty ("IntStatBase", flags), "#H15");
-#endif
 			Assert.IsNotNull (type.GetProperty ("PrivStat", flags), "#H16");
 			Assert.IsNotNull (type.GetProperty ("ProtStat", flags), "#H17");
 			Assert.IsNotNull (type.GetProperty ("ProIntStat", flags), "#H18");
@@ -1232,11 +1176,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (type.GetProperty ("ProtStatBlue", flags), "#H27");
 			Assert.IsNotNull (type.GetProperty ("ProIntStatBlue", flags), "#H28");
 			Assert.IsNull (type.GetProperty ("PubStatBlue", flags), "#H29");
-#if NET_2_0
 			Assert.IsNotNull (type.GetProperty ("IntStatBlue", flags), "#H30");
-#else
-			Assert.IsNull (type.GetProperty ("IntStatBlue", flags), "#H60");
-#endif
 
 			flags = BindingFlags.Instance | BindingFlags.NonPublic |
 				BindingFlags.DeclaredOnly;
@@ -1381,11 +1321,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (type.GetProperty ("ProtInstBase", flags), "#M2");
 			Assert.IsNotNull (type.GetProperty ("ProIntInstBase", flags), "#M3");
 			Assert.IsNotNull (type.GetProperty ("PubInstBase", flags), "#M4");
-#if NET_2_0
 			Assert.IsNotNull (type.GetProperty ("IntInstBase", flags), "#M5");
-#else
-			Assert.IsNull (type.GetProperty ("IntInstBase", flags), "#M5");
-#endif
 			Assert.IsNotNull (type.GetProperty ("PrivInst", flags), "#M6");
 			Assert.IsNotNull (type.GetProperty ("ProtInst", flags), "#M7");
 			Assert.IsNotNull (type.GetProperty ("ProIntInst", flags), "#M8");
@@ -1405,11 +1341,7 @@ namespace MonoTests.System
 			Assert.IsNotNull (type.GetProperty ("ProtInstBlue", flags), "#M22");
 			Assert.IsNotNull (type.GetProperty ("ProIntInstBlue", flags), "#M23");
 			Assert.IsNotNull (type.GetProperty ("PubInstBlue", flags), "#M24");
-#if NET_2_0
 			Assert.IsNotNull (type.GetProperty ("IntInstBlue", flags), "#M25");
-#else
-			Assert.IsNull (type.GetProperty ("IntInstBlue", flags), "#M25");
-#endif
 			Assert.IsNull (type.GetProperty ("PrivStatBlue", flags), "#M26");
 			Assert.IsNull (type.GetProperty ("ProtStatBlue", flags), "#M27");
 			Assert.IsNull (type.GetProperty ("ProIntStatBlue", flags), "#M28");
@@ -1571,7 +1503,6 @@ namespace MonoTests.System
 		{
 		}
 
-#if NET_2_0
 		[Test]
 		public void StructLayoutAttribute ()
 		{
@@ -1587,7 +1518,6 @@ namespace MonoTests.System
 			Assert.AreEqual (LayoutKind.Explicit, attr3.Value);
 			Assert.AreEqual (CharSet.Unicode, attr3.CharSet);
 		}
-#endif
 #endif // TARGET_JVM
 
 		[Test]
@@ -1640,7 +1570,6 @@ namespace MonoTests.System
 			Assert.IsNotNull (typeof (TypeTest).GetField ("afield", BindingFlags.Instance|BindingFlags.Public|BindingFlags.IgnoreCase));
 		}
 
-#if NET_2_0
 		public int Count {
 			internal get {
 				return 0;
@@ -1656,7 +1585,6 @@ namespace MonoTests.System
 			Assert.IsNotNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.Public));
 			Assert.IsNull (typeof (TypeTest).GetProperty ("Count", BindingFlags.Instance | BindingFlags.NonPublic));
 		}
-#endif
 
 		[Test]
 		public void IsAbstract ()
@@ -1668,12 +1596,10 @@ namespace MonoTests.System
 			Assert.IsFalse (typeof (TimeSpan).IsAbstract, "#5");
 			Assert.IsTrue (typeof (TextReader).IsAbstract, "#6");
 
-#if NET_2_0
 			// LAMESPEC:
 			// https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=286308
 			Type [] typeArgs = typeof (List<>).GetGenericArguments ();
 			Assert.IsFalse (typeArgs [0].IsAbstract, "#7");
-#endif
 		}
 
 		[Test]
@@ -1926,11 +1852,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.IsNotNull (ex.ParamName, "#B5");
-#if NET_2_0
 				Assert.AreEqual ("bindingFlags", ex.ParamName, "#B6");
-#else
-				Assert.AreEqual ("invokeAttr", ex.ParamName, "#B6");
-#endif
 			}
 		}
 
@@ -1949,11 +1871,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("bindingFlags", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("invokeAttr", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -1973,11 +1891,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
 				Assert.IsNotNull (ex.ParamName, "#A5");
-#if NET_2_0
 				Assert.AreEqual ("bindingFlags", ex.ParamName, "#A6");
-#else
-				Assert.AreEqual ("invokeAttr", ex.ParamName, "#A6");
-#endif
 			}
 
 			try {
@@ -1992,11 +1906,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsNull (ex.InnerException, "#B3");
 				Assert.IsNotNull (ex.Message, "#B4");
 				Assert.IsNotNull (ex.ParamName, "#B5");
-#if NET_2_0
 				Assert.AreEqual ("bindingFlags", ex.ParamName, "#B6");
-#else
-				Assert.AreEqual ("invokeAttr", ex.ParamName, "#B6");
-#endif
 			}
 		}
 
@@ -2042,11 +1952,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNotNull (ex.ParamName, "#5");
-#if NET_2_0
 				Assert.AreEqual ("bindingFlags", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("invokeAttr", ex.ParamName, "#6");
-#endif
 			}
 		}
 
@@ -2077,11 +1983,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsNull (ex.InnerException, "#A3");
 				Assert.IsNotNull (ex.Message, "#A4");
 				Assert.IsNotNull (ex.ParamName, "#A5");
-#if NET_2_0
 				Assert.AreEqual ("bindingFlags", ex.ParamName, "#6");
-#else
-				Assert.AreEqual ("invokeAttr", ex.ParamName, "#6");
-#endif
 			}
 
 			try {
@@ -2089,7 +1991,6 @@ PublicKeyToken=b77a5c561934e089"));
 					BindingFlags.Static | BindingFlags.SetField,
 					null, null, null);
 				Assert.Fail ("#B1");
-#if NET_2_0
 			} catch (ArgumentNullException ex) {
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#B2");
 				Assert.IsNull (ex.InnerException, "#B3");
@@ -2097,21 +1998,6 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsNotNull (ex.ParamName, "#B5");
 				Assert.AreEqual ("providedArgs", ex.ParamName, "#B6");
 			}
-#else
-			} catch (ArgumentException ex) {
-				// Only the field value can be specified to set
-				// a field value
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsNotNull (ex.ParamName, "#B5");
-#if NET_2_0
-				Assert.AreEqual ("bindingFlags", ex.ParamName, "#B6");
-#else
-				Assert.AreEqual ("invokeAttr", ex.ParamName, "#B6");
-#endif
-			}
-#endif
 		}
 
 		[Test] // bug #336841
@@ -2479,9 +2365,7 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test] // bug #82431
-#if NET_2_0
 		[Category ("NotWorking")]
-#endif
 		public void IsDefined_Inherited ()
 		{
 			Assert.IsFalse (typeof (CA).IsDefined (typeof (NemerleAttribute), false), "#C1");
@@ -2499,13 +2383,8 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsFalse (typeof (BBA).IsDefined (typeof (BarAttribute), false), "#D4");
 			Assert.IsTrue (typeof (BBA).IsDefined (typeof (NemerleAttribute), true), "#D5");
 			Assert.IsTrue (typeof (BBA).IsDefined (typeof (VolatileModifier), true), "#D6");
-#if NET_2_0
 			Assert.IsTrue (typeof (BBA).IsDefined (typeof (FooAttribute), true), "#D7");
 			Assert.IsTrue (typeof (BBA).IsDefined (typeof (BarAttribute), true), "#D8");
-#else
-			Assert.IsFalse (typeof (BBA).IsDefined (typeof (FooAttribute), true), "#D7");
-			Assert.IsFalse (typeof (BBA).IsDefined (typeof (BarAttribute), true), "#D8");
-#endif
 
 			Assert.IsTrue (typeof (bug82431A1).IsDefined (typeof (InheritAttribute), false), "#E1");
 			Assert.IsTrue (typeof (bug82431A1).IsDefined (typeof (NotInheritAttribute), false), "#E2");
@@ -2514,11 +2393,7 @@ PublicKeyToken=b77a5c561934e089"));
 
 			Assert.IsFalse (typeof (bug82431A2).IsDefined (typeof (InheritAttribute), false), "#F1");
 			Assert.IsFalse (typeof (bug82431A2).IsDefined (typeof (NotInheritAttribute), false), "#F2");
-#if NET_2_0
 			Assert.IsFalse (typeof (bug82431A2).IsDefined (typeof (InheritAttribute), true), "#F3");
-#else
-			Assert.IsTrue (typeof (bug82431A2).IsDefined (typeof (InheritAttribute), true), "#F3");
-#endif
 			Assert.IsFalse (typeof (bug82431A2).IsDefined (typeof (NotInheritAttribute), true), "#F4");
 
 			Assert.IsTrue (typeof (bug82431A3).IsDefined (typeof (InheritAttribute), false), "#G1");
@@ -2557,11 +2432,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
-#else
-				Assert.AreEqual ("className", ex.ParamName, "#5");
-#endif
 			}
 		}
 
@@ -2575,11 +2446,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
-#else
-				Assert.AreEqual ("className", ex.ParamName, "#5");
-#endif
 			}
 		}
 
@@ -2593,11 +2460,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.AreEqual ("TypeName", ex.ParamName, "#5");
-#else
-				Assert.AreEqual ("className", ex.ParamName, "#5");
-#endif
 			}
 		}
 
@@ -2643,20 +2506,7 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			RuntimeTypeHandle handle = new RuntimeTypeHandle ();
 
-#if NET_2_0
 			Assert.IsNull (Type.GetTypeFromHandle (handle));
-#else
-			try {
-				Type.GetTypeFromHandle (handle);
-				Assert.Fail ("#1");
-			} catch (ArgumentException ex) {
-				// Handle is not initialized
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#2");
-				Assert.IsNull (ex.InnerException, "#3");
-				Assert.IsNotNull (ex.Message, "#4");
-				Assert.IsNull (ex.ParamName, "#5");
-			}
-#endif
 		}
 
 		[Test]
@@ -2669,11 +2519,7 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 				Assert.IsNull (ex.InnerException, "#3");
 				Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 				Assert.IsNull (ex.ParamName, "#5");
-#else
-				Assert.AreEqual ("o", ex.ParamName, "#5");
-#endif
 			}
 		}
 
@@ -2831,7 +2677,6 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsNull (typeof (TheEnum).GetElementType (), "#1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void FullNameGenerics ()
 		{
@@ -2925,9 +2770,7 @@ PublicKeyToken=b77a5c561934e089"));
 		{
 			Assert.IsFalse (typeof (int).IsInstanceOfType (null), "int");
 			Assert.IsFalse (typeof (object).IsInstanceOfType (null), "object");
-#if NET_2_0
 			Assert.IsFalse (typeof (int?).IsInstanceOfType (null), "int?");
-#endif
 		}
 
 		[Test]
@@ -3183,7 +3026,6 @@ PublicKeyToken=b77a5c561934e089"));
 	public void GenericParameterPositionUserType () {
 		Assert.IsTrue (new UserType(null).GenericParameterPosition == 0);
 	}
-#endif
 
 		[Test]
 		public void TypeGetMemberReturnTypeTest ()
@@ -3267,8 +3109,6 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.IsTrue (m.DeclaringType == typeof (object), String.Format ("{0}::{1}", m.DeclaringType, m.Name));
 		}
 
-#if NET_2_0
-
 		[Test]
 		public void MakeArrayTypeOfOneDimension ()
 		{
@@ -3326,7 +3166,6 @@ PublicKeyToken=b77a5c561934e089"));
 				Assert.Fail ("#3");
 			} catch (ArgumentException) {}
 		}
-#endif
 
 		static bool ContainsProperty (PropertyInfo [] props, string name)
 		{
@@ -3641,7 +3480,6 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 	}
 
-#if NET_2_0
 	class UserType : Type
 	{
 		protected Type type;
@@ -3833,5 +3671,4 @@ PublicKeyToken=b77a5c561934e089"));
 			return type.GetHashCode();
 		}
 	}
-#endif
 }

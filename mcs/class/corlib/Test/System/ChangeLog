@@ -1,3 +1,7 @@
+2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	TypeTest.cs: Remove NET_2_0.
+
 2009-12-02  Jb Evain  <jbevain@novell.com>
 
 	* EnumTest.cs: add a test for IConvertible.ToType when converting
