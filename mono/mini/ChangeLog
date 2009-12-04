@@ -1,3 +1,9 @@
+2009-12-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_create_static_rgctx_trampoline): Use a cache
+	keyed on the method+addr pair, since addr could be either the method addr or
+	an unbox trampoline in the AOT case. Fixes #560246.
+
 2009-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Call handle_exception_clauses () in the same
