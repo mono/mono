@@ -1,3 +1,8 @@
+2009-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (buffer_add_value): Treat I/U as a valuetype, so the
+	client can distinguish between intptrs and longs.
+
 2009-12-04  Geoff Norton  <gnorton@novell.com>
 
 	* debugger-agent.c: When doing a func-eval invoke on a suspended runtime, 
