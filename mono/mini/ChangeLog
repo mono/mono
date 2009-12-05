@@ -7,6 +7,12 @@
 	in gshared code too using the new rgctx info type
 	MONO_RGCTX_INFO_METHOD_DELEGATE_CODE.
 
+2009-12-04  Geoff Norton  <gnorton@novell.com>
+
+	* debugger-agent.c: When doing a func-eval invoke on a suspended runtime, 
+	we need to track the original suspend count so the thread properly
+	wakes up in resume_thread.
+
 2009-12-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (handle_delegate_ctor): Add support for using this from gshared
