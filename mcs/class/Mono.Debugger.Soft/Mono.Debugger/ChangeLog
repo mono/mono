@@ -1,3 +1,10 @@
+2009-12-05  Lluis Sanchez  <lluis@novell.com>
+
+	* StructMirror.cs: Fix field indexer for structs with static fields.
+	* VirtualMachineManager.cs: Added an option to LaunchOptions which
+	allows providing a custom method for launching the process. This
+	allows launching mono in a wrapper process.
+
 2009-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* StructMirror.cs (this): Ignore static fields.
