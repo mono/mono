@@ -1,3 +1,9 @@
+2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Net.dll.sources: Remove (almost) everything. This 
+	assembly in 3.5+ does not share anything with what SL2/3 
+	provide (the later being a part of System.dll)
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* net_2_1_raw_System.Net.dll.sources: Remove HttpStatusCode_2_1.cs
