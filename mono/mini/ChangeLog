@@ -1,5 +1,9 @@
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_arm_exidx): New function to initialize a MonoJitInfo
+	based on the contents of the ARM .exidx section. Not yet used since llvm doesn't
+	yet generate this info.
+
 	* mini-llvm.c: Fix the conversion of call results if they are unsigned.
 
 	* debugger-agent.c (buffer_add_value): Treat I/U as a valuetype, so the
