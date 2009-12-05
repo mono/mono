@@ -1,5 +1,10 @@
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (buffer_add_value): Treat I/U as a valuetype, so the
+	client can distinguish between intptrs and longs.
+
+2009-12-05  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c (emit_trampoline): Emit the trampoline info into the global
 	blob.
 
