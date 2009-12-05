@@ -134,6 +134,7 @@ typedef struct
 	 */
 	MonoMethod *method;
 	gpointer *args;
+	guint32 suspend_count;
 } InvokeData;
 
 typedef struct {
@@ -1975,7 +1976,7 @@ resume_thread (MonoInternalThread *thread)
 
 	DEBUG(1, fprintf (log_file, "[%p] Resuming thread...\n", (gpointer)thread->tid));
 
-	tls->resume_count ++;
+	tls->resume_count += suspend_count;
 
 	/* 
 	 * Signal suspend_count without decreasing suspend_count, the threads will wake up
@@ -4148,7 +4149,7 @@ invoke_method (void)
 
 	if (invoke->flags & INVOKE_FLAG_SINGLE_THREADED) {
 		g_assert (tls->resume_count);
-		tls->resume_count --;
+		tls->resume_count -= invoke->suspend_count;
 	}
 
 	DEBUG (1, printf ("[%p] Invoke finished, resume_count = %d.\n", (gpointer)GetCurrentThreadId (), tls->resume_count));
@@ -4348,6 +4349,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		tls->invoke->p = g_malloc (end - p);
 		memcpy (tls->invoke->p, p, end - p);
 		tls->invoke->endp = tls->invoke->p + (end - p);
+		tls->invoke->suspend_count = suspend_count;
 
 		if (flags & INVOKE_FLAG_SINGLE_THREADED)
 			resume_thread (THREAD_TO_INTERNAL (thread));
