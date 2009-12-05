@@ -1,5 +1,7 @@
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c: Fix the conversion of call results if they are unsigned.
+
 	* debugger-agent.c (buffer_add_value): Treat I/U as a valuetype, so the
 	client can distinguish between intptrs and longs.
 
