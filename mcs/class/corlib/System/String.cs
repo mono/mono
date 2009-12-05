@@ -62,6 +62,8 @@ namespace System
 
 		public static readonly String Empty = "";
 
+		internal static readonly int LOS_limit = GetLOSLimit ();
+
 		public static unsafe bool Equals (string a, string b)
 		{
 			if ((a as object) == (b as object))
@@ -3027,5 +3029,8 @@ namespace System
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static string InternalIsInterned (string str);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		private extern static int GetLOSLimit ();
 	}
 }

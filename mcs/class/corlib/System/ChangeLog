@@ -1,3 +1,13 @@
+2009-12-05  Mark Probst  <mark.probst@gmail.com>
+
+	* String.cs: A new LOS_limit variable which gives the maximum
+	string length that's not put in the LOS.
+
+	* StringBuilder.cs: Copy the string also if it's in the LOS and
+	chopping it would bring its size below the LOS limit.
+
+	* Environment.cs: Bump corlib version.
+
 2009-12-03  Stephane Delcroix  <stephane@delcroix.org>
 
 	* DateTimeOffset.cs: fix dates arithmetic to avoid throwing

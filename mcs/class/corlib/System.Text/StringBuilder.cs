@@ -208,7 +208,7 @@ namespace System.Text {
 				return _cached_str;
 
 			// If we only have a half-full buffer we return a new string.
-			if (_length < (_str.Length >> 1)) 
+			if (_length < (_str.Length >> 1) || (_str.Length > string.LOS_limit && _length <= string.LOS_limit))
 			{
 				// use String.SubstringUnchecked instead of String.Substring
 				// as the former is guaranteed to create a new string object
