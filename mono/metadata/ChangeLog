@@ -1,5 +1,20 @@
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
+	Applied patch from Laurent Etiemble (laurent.etiemble@gmail.com).
+
+	* mono/metadata/assembly.c: When opening an assembly image, pass the real
+	names in addition to the runtime generated one.
+
+	* mono/metadata/image.h: Add a function to take the real name of the assembly
+	image.
+
+	* mono/metadata/image.c: If a real name has been passed to load an assembly,
+	use it instead of the runtime generated one.
+
+	Code is contributed under MIT/X11 license.
+
+2009-12-05  Zoltan Varga  <vargaz@gmail.com>
+
 	* marshal.c (emit_marshal_vtype): Do the klass == date_time_class checks
 	before the other checks to prevent problems if the DateTime class is blittable.
 	Hopefully fixes #559600.
