@@ -1,5 +1,12 @@
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_trampoline): Emit the trampoline info into the global
+	blob.
+
+	* aot-runtime.c (load_function): Update after the change above.
+
+	* mini.h: Bump AOT file format version.
+
 	* method-to-ir.c (mono_method_to_ir): Disallow the delegate optimization
 	if the delegate class is dynamic.
 
@@ -9,7 +16,7 @@
 
 2009-12-04  Geoff Norton  <gnorton@novell.com>
 
-	* debugger-agent.c: When doing a func-eval invoke on a suspended runtime, 
+	* debugger-agent.c: When doing a func-eval invoke on a suspended runtime,
 	we need to track the original suspend count so the thread properly
 	wakes up in resume_thread.
 
