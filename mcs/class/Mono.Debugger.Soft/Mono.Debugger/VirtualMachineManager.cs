@@ -16,6 +16,12 @@ namespace Mono.Debugger
 		public bool Valgrind {
 			get; set;
 		}
+		
+		public ProcessLauncher CustomProcessLauncher {
+			get; set;
+		}
+
+		public delegate Process ProcessLauncher (ProcessStartInfo info);
 	}
 
 	public class VirtualMachineManager
@@ -71,7 +77,11 @@ namespace Mono.Debugger
 			if (options != null && options.Valgrind)
 				info.FileName = "valgrind";
 				
-			Process p = Process.Start (info);
+			Process p;
+			if (options != null && options.CustomProcessLauncher != null)
+				p = options.CustomProcessLauncher (info);
+			else
+				p = Process.Start (info);
 			
 			p.Exited += delegate (object sender, EventArgs eargs) {
 				socket.Close ();
