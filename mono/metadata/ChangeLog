@@ -1,3 +1,9 @@
+2009-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_vtype): Do the klass == date_time_class checks
+	before the other checks to prevent problems if the DateTime class is blittable.
+	Hopefully fixes #559600.
+
 2009-12-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (find_method_in_class): Ignore methods with broken signatures.
