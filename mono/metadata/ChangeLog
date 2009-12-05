@@ -1,3 +1,14 @@
+2009-12-05  Mark Probst  <mark.probst@gmail.com>
+
+	* string-icalls.c, string-icalls.h, icall-def.h: New icall that
+	returns the largest string length that will not be put into the
+	LOS.
+
+	* sgen-gc.c, gc-internal.h: New function that returns the largest
+	object size that will not be put into the LOS.
+
+	* appdomain.c: Bump corlib version.
+
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h: Add MONO_RGCTX_INFO_METHOD_DELEGATE_CODE.
