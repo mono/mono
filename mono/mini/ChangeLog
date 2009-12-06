@@ -1,3 +1,8 @@
+2009-12-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_arm_exidx): Refactor this into two functions, add
+	support for non-inline unwind descriptors.
+
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_arm_exidx): New function to initialize a MonoJitInfo
