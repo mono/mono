@@ -1,5 +1,12 @@
 2009-12-06  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Make all major heap sections the same size (currently
+	128k) and allocate them on aligned addresses.  Small heap sections
+	give us better granularity with pinned objects - we can free up
+	much more memory.
+
+2009-12-06  Mark Probst  <mark.probst@gmail.com>
+
 	* string-icalls.c (ves_icall_System_String_GetLOSLimit): Debug
 	output removed.
 
