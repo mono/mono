@@ -1,5 +1,7 @@
 2009-12-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_arm_exidx): Handle most descriptors created by gas.
+
 	* aot-runtime.c (decode_arm_exidx): Refactor this into two functions, add
 	support for non-inline unwind descriptors.
 
