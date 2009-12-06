@@ -1,6 +1,6 @@
 2009-12-06  Zoltan Varga  <vargaz@gmail.com>
 
-	* mini-llvm.c: Add basic SIMD support.
+	* mini-llvm.c mini.c: Fix alignment issues with SIMD vars.
 
 	* aot-runtime.c (decode_arm_exidx): Handle most descriptors created by gas.
 
