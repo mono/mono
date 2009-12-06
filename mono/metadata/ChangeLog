@@ -1,3 +1,8 @@
+2009-12-06  Mark Probst  <mark.probst@gmail.com>
+
+	* string-icalls.c (ves_icall_System_String_GetLOSLimit): Debug
+	output removed.
+
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
 	Applied patch from Laurent Etiemble (laurent.etiemble@gmail.com).
