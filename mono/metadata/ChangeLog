@@ -1,3 +1,8 @@
+2009-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c (mono_gc_wbarrier_nostore): Skip the remset if the
+	reference is not in the nursery.
+
 2009-12-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_from_typeref): Bounds check idx against the 
