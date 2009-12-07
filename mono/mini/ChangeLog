@@ -1,5 +1,7 @@
 2009-12-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c ssa.c abcremoval.c: Enable SSA for methods with exception clauses.
+
 	* mini-llvm.c: Put our methods/globals into the 'llvm.used' array, so the
 	LLVM optimizations don't try to remove them.
 
