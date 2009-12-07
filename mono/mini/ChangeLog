@@ -1,5 +1,8 @@
 2009-12-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Do the disable_llvm checks early
+	and avoid the LLVM compile pass if the checks fail.
+
 	* mini.c ssa.c abcremoval.c: Enable SSA for methods with exception clauses.
 
 	* mini-llvm.c: Put our methods/globals into the 'llvm.used' array, so the
