@@ -20,6 +20,12 @@
 	* aot-runtime.c (decode_arm_exidx): Refactor this into two functions, add
 	support for non-inline unwind descriptors.
 
+2009-12-07  Geoff Norton  <gnorton@novell.com>
+
+	* debugger-agent.c:  Darwin can colesce signals, so we need to handle
+	the interrupt_count slightly differently.  Native threads were never
+	marked as resumed.
+
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_arm_exidx): New function to initialize a MonoJitInfo
