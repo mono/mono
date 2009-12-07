@@ -19,7 +19,6 @@
 
 using System;
 using System.IO;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
@@ -260,7 +259,7 @@ namespace Mono.CSharp {
 		///   to store structures (used to compute the address of the structure
 		///   value on structure method invocations)
 		/// </summary>
-		Hashtable temporary_storage;
+		Dictionary<Type, object> temporary_storage;
 
 		/// <summary>
 		///   The location where we store the return value.
@@ -356,10 +355,10 @@ namespace Mono.CSharp {
 		public LocalBuilder GetTemporaryLocal (Type t)
 		{
 			if (temporary_storage != null) {
-				object o = temporary_storage [t];
-				if (o != null) {
-					if (o is Stack) {
-						Stack s = (Stack) o;
+				object o;
+				if (temporary_storage.TryGetValue (t, out o)) {
+					if (o is Stack<LocalBuilder>) {
+						var s = (Stack<LocalBuilder>) o;
 						o = s.Count == 0 ? null : s.Pop ();
 					} else {
 						temporary_storage.Remove (t);
@@ -374,19 +373,20 @@ namespace Mono.CSharp {
 		public void FreeTemporaryLocal (LocalBuilder b, Type t)
 		{
 			if (temporary_storage == null) {
-				temporary_storage = new Hashtable ();
-				temporary_storage [t] = b;
+				temporary_storage = new Dictionary<Type, object> (ReferenceEquality<Type>.Default);
+				temporary_storage.Add (t, b);
 				return;
 			}
-			object o = temporary_storage [t];
-			if (o == null) {
-				temporary_storage [t] = b;
+			object o;
+			
+			if (!temporary_storage.TryGetValue (t, out o)) {
+				temporary_storage.Add (t, b);
 				return;
 			}
-			Stack s = o as Stack;
+			var s = o as Stack<LocalBuilder>;
 			if (s == null) {
-				s = new Stack ();
-				s.Push (o);
+				s = new Stack<LocalBuilder> ();
+				s.Push ((LocalBuilder)o);
 				temporary_storage [t] = s;
 			}
 			s.Push (b);

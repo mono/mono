@@ -628,7 +628,7 @@ namespace Mono.CSharp {
 		}
 
 		// TODO: [Obsolete ("Can be removed")]
-		protected static ArrayList almost_matched_members = new ArrayList (4);
+		protected static IList<MemberInfo> almost_matched_members = new List<MemberInfo> (4);
 
 		//
 		// FIXME: Probably implement a cache for (t,name,current_access_set)?
@@ -2790,7 +2790,7 @@ namespace Mono.CSharp {
 			//
 
 			Type almost_matched_type = null;
-			ArrayList almost_matched = null;
+			IList<MemberInfo> almost_matched = null;
 			for (Type lookup_ds = ec.CurrentType; lookup_ds != null; lookup_ds = lookup_ds.DeclaringType) {
 				e = MemberLookup (ec.Compiler, ec.CurrentType, lookup_ds, Name, loc);
 				if (e != null) {
@@ -2816,14 +2816,14 @@ namespace Mono.CSharp {
 
 				if (almost_matched == null && almost_matched_members.Count > 0) {
 					almost_matched_type = lookup_ds;
-					almost_matched = (ArrayList) almost_matched_members.Clone ();
+					almost_matched = new List<MemberInfo>(almost_matched_members);
 				}
 			}
 
 			if (e == null) {
 				if (almost_matched == null && almost_matched_members.Count > 0) {
 					almost_matched_type = ec.CurrentType;
-					almost_matched = (ArrayList) almost_matched_members.Clone ();
+					almost_matched = new List<MemberInfo> (almost_matched_members);
 				}
 				e = ResolveAsTypeStep (ec, true);
 			}
@@ -4200,8 +4200,8 @@ namespace Mono.CSharp {
 			//
 			// false is normal form, true is expanded form
 			//
-			Hashtable candidate_to_form = null;
-			Hashtable candidates_expanded = null;
+			Dictionary<MethodBase, MethodBase> candidate_to_form = null;
+			Dictionary<MethodBase, Arguments> candidates_expanded = null;
 			Arguments candidate_args = Arguments;
 
 			int arg_count = Arguments != null ? Arguments.Count : 0;
@@ -4274,14 +4274,14 @@ namespace Mono.CSharp {
 				
 				if (params_expanded_form) {
 					if (candidate_to_form == null)
-						candidate_to_form = new PtrHashtable ();
+						candidate_to_form = new Dictionary<MethodBase, MethodBase> (4, ReferenceEquality<MethodBase>.Default);
 					MethodBase candidate = Methods [i];
 					candidate_to_form [candidate] = candidate;
 				}
 				
 				if (candidate_args != Arguments) {
 					if (candidates_expanded == null)
-						candidates_expanded = new Hashtable (2);
+						candidates_expanded = new Dictionary<MethodBase, Arguments> (4, ReferenceEquality<MethodBase>.Default);
 
 					candidates_expanded.Add (Methods [i], candidate_args);
 					candidate_args = Arguments;
@@ -4420,14 +4420,14 @@ namespace Mono.CSharp {
 			//
 
 			best_candidate = (MethodBase) candidates [0];
-			method_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
+			method_params = candidate_to_form != null && candidate_to_form.ContainsKey (best_candidate);
 
 			//
 			// TODO: Broken inverse order of candidates logic does not work with optional
 			// parameters used for method overrides and I am not going to fix it for SRE
 			//
-			if (candidates_expanded != null && candidates_expanded.Contains (best_candidate)) {
-				candidate_args = (Arguments) candidates_expanded [best_candidate];
+			if (candidates_expanded != null && candidates_expanded.ContainsKey (best_candidate)) {
+				candidate_args = candidates_expanded [best_candidate];
 				arg_count = candidate_args.Count;
 			}
 
@@ -4437,7 +4437,7 @@ namespace Mono.CSharp {
 				if (candidate == best_candidate)
 					continue;
 
-				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
+				bool cand_params = candidate_to_form != null && candidate_to_form.ContainsKey (candidate);
 
 				if (BetterFunction (ec, candidate_args, arg_count, 
 					candidate, cand_params,
@@ -4457,7 +4457,7 @@ namespace Mono.CSharp {
 				if (candidate == best_candidate)
 					continue;
 
-				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (candidate);
+				bool cand_params = candidate_to_form != null && candidate_to_form.ContainsKey (candidate);
 				if (!BetterFunction (ec, candidate_args, arg_count,
 					best_candidate, method_params,
 					candidate, cand_params)) 
@@ -4544,7 +4544,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		bool NoExactMatch (ResolveContext ec, ref Arguments Arguments, Hashtable candidate_to_form)
+		bool NoExactMatch (ResolveContext ec, ref Arguments Arguments, IDictionary<MethodBase, MethodBase> candidate_to_form)
 		{
 			AParametersCollection pd = TypeManager.GetParameterData (best_candidate);
 			int arg_count = Arguments == null ? 0 : Arguments.Count;
@@ -4588,7 +4588,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				bool cand_params = candidate_to_form != null && candidate_to_form.Contains (best_candidate);
+				bool cand_params = candidate_to_form != null && candidate_to_form.ContainsKey (best_candidate);
 				if (!VerifyArgumentsCompat (ec, ref Arguments, arg_count, best_candidate, cand_params, false, loc))
 					return true;
 

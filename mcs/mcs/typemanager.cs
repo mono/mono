@@ -21,7 +21,6 @@
 using System;
 using System.IO;
 using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -149,43 +148,45 @@ namespace Mono.CSharp {
 	static public ConstructorInfo void_decimal_ctor_int_arg;
 	public static ConstructorInfo void_decimal_ctor_long_arg;
 
-	static PtrHashtable builder_to_declspace;
+	static Dictionary<TypeBuilder, DeclSpace> builder_to_declspace;
 
-	static PtrHashtable builder_to_member_cache;
+	static Dictionary<Type, MemberCache> builder_to_member_cache;
 
 	// <remarks>
 	//   Tracks the interfaces implemented by typebuilders.  We only
 	//   enter those who do implement or or more interfaces
 	// </remarks>
-	static PtrHashtable builder_to_ifaces;
+	static Dictionary<Type, Type[]> builder_to_ifaces;
 
 	// <remarks>
 	//   Maps a MethodBase to its ParameterData (either InternalParameters or ReflectionParameters)
 	// <remarks>
-	static Hashtable method_params;
+	static Dictionary<MemberInfo, AParametersCollection> method_params;
 
 	// <remarks>
 	//  A hash table from override methods to their base virtual method.
 	// <remarks>
-	static Hashtable method_overrides;
+	static Dictionary<MethodBase, MethodBase> method_overrides;
 
 	// <remarks>
 	//  Keeps track of methods
 	// </remarks>
 
-	static Hashtable builder_to_method;
+	static Dictionary<MethodBase, IMethodData> builder_to_method;
 
 	// <remarks>
 	//  Contains all public types from referenced assemblies.
 	//  This member is used only if CLS Compliance verification is required.
 	// </remarks>
-	public static Hashtable AllClsTopLevelTypes;
+	public static Dictionary<string, object> AllClsTopLevelTypes;
 
-	static Hashtable fieldbuilders_to_fields;
-	static Hashtable propertybuilder_to_property;
-	static Hashtable fields;
-	static Hashtable events;
-	static PtrHashtable assembly_internals_vis_attrs;
+	static Dictionary<FieldInfo, FieldBase> fieldbuilders_to_fields;
+	static Dictionary<PropertyInfo, PropertyBase> propertybuilder_to_property;
+	static Dictionary<FieldInfo, IConstant> fields;
+	static Dictionary<EventInfo, EventField> events;
+	static Dictionary<Assembly, bool> assembly_internals_vis_attrs;
+	static Dictionary<GenericTypeParameterBuilder, TypeParameter> builder_to_type_param;
+	static Dictionary<Type, Type[]> iface_cache;
 
 	public static void CleanUp ()
 	{
@@ -196,6 +197,7 @@ namespace Mono.CSharp {
 		builder_to_type_param = null;
 		method_params = null;
 		builder_to_method = null;
+		iface_cache = null;
 		
 		fields = null;
 		events = null;
@@ -242,20 +244,20 @@ namespace Mono.CSharp {
 
 		InitExpressionTypes ();
 		
-		builder_to_declspace = new PtrHashtable ();
-		builder_to_member_cache = new PtrHashtable ();
-		builder_to_method = new PtrHashtable ();
-		builder_to_type_param = new PtrHashtable ();
-		method_params = new PtrHashtable ();
-		method_overrides = new PtrHashtable ();
-		builder_to_ifaces = new PtrHashtable ();
-		
-		fieldbuilders_to_fields = new Hashtable ();
-		propertybuilder_to_property = new Hashtable ();
-		fields = new Hashtable ();
+		builder_to_declspace = new Dictionary<TypeBuilder, DeclSpace> (ReferenceEquality<TypeBuilder>.Default);
+		builder_to_member_cache = new Dictionary<Type, MemberCache> (ReferenceEquality<Type>.Default);
+		builder_to_method = new Dictionary<MethodBase, IMethodData> (ReferenceEquality<MethodBase>.Default);
+		builder_to_type_param = new Dictionary<GenericTypeParameterBuilder, TypeParameter> (ReferenceEquality<GenericTypeParameterBuilder>.Default);
+		method_params = new Dictionary<MemberInfo, AParametersCollection> (ReferenceEquality<MemberInfo>.Default);
+		method_overrides = new Dictionary<MethodBase, MethodBase> (ReferenceEquality<MethodBase>.Default);
+		builder_to_ifaces = new Dictionary<Type, Type[]> (ReferenceEquality<Type>.Default);
+
+		fieldbuilders_to_fields = new Dictionary<FieldInfo, FieldBase> (ReferenceEquality<FieldInfo>.Default);
+		propertybuilder_to_property = new Dictionary<PropertyInfo, PropertyBase> (ReferenceEquality<PropertyInfo>.Default);
+		fields = new Dictionary<FieldInfo, IConstant> (ReferenceEquality<FieldInfo>.Default);
 		type_hash = new DoubleHash ();
-		assembly_internals_vis_attrs = new PtrHashtable ();
-		iface_cache = new PtrHashtable ();
+		assembly_internals_vis_attrs = new Dictionary<Assembly, bool> ();
+		iface_cache = new Dictionary<Type, Type[]> (ReferenceEquality<Type>.Default);
 		
 		closure = new Closure ();
 		FilterWithClosure_delegate = new MemberFilter (closure.Filter);
@@ -317,7 +319,10 @@ namespace Mono.CSharp {
 
 	public static IMethodData GetMethod (MethodBase builder)
 	{
-		return (IMethodData) builder_to_method [builder];
+		IMethodData md;
+		if (builder_to_method.TryGetValue (builder, out md))
+			return md;
+		return null;
 	}
 
 	/// <summary>
@@ -326,7 +331,12 @@ namespace Mono.CSharp {
 	/// </summary>
 	public static DeclSpace LookupDeclSpace (Type t)
 	{
-		return builder_to_declspace [t] as DeclSpace;
+		DeclSpace ds;
+		var tb = t as TypeBuilder;
+		if (tb != null && builder_to_declspace.TryGetValue (tb, out ds))
+			return ds;
+
+		return null;
 	}
 
 	/// <summary>
@@ -335,21 +345,20 @@ namespace Mono.CSharp {
 	/// </summary>
 	public static TypeContainer LookupTypeContainer (Type t)
 	{
-		return builder_to_declspace [t] as TypeContainer;
+		return LookupDeclSpace (t) as TypeContainer;
 	}
 
 	public static MemberCache LookupMemberCache (Type t)
 	{
 		if (IsBeingCompiled (t)) {
-			DeclSpace container = (DeclSpace)builder_to_declspace [t];
+			DeclSpace container = LookupDeclSpace (t);
 			if (container != null)
 				return container.MemberCache;
 		}
 
 		if (t is GenericTypeParameterBuilder) {
-			TypeParameter container = builder_to_type_param [t] as TypeParameter;
-
-			if (container != null)
+			TypeParameter container;
+			if (builder_to_type_param.TryGetValue ((GenericTypeParameterBuilder) t, out container))
 				return container.MemberCache;
 		}
 
@@ -364,8 +373,8 @@ namespace Mono.CSharp {
 			return LookupMemberCache (ifaces [0]);
 
 		// TODO: the builder_to_member_cache should be indexed by 'ifaces', not 't'
-		MemberCache cache = builder_to_member_cache [t] as MemberCache;
-		if (cache != null)
+		MemberCache cache;
+		if (builder_to_member_cache.TryGetValue (t, out cache))
 			return cache;
 
 		cache = new MemberCache (ifaces);
@@ -375,7 +384,7 @@ namespace Mono.CSharp {
 
 	public static TypeContainer LookupInterface (Type t)
 	{
-		TypeContainer tc = (TypeContainer) builder_to_declspace [t];
+		TypeContainer tc = LookupTypeContainer (t);
 		if ((tc == null) || (tc.Kind != Kind.Interface))
 			return null;
 
@@ -384,12 +393,12 @@ namespace Mono.CSharp {
 
 	public static Delegate LookupDelegate (Type t)
 	{
-		return builder_to_declspace [t] as Delegate;
+		return LookupDeclSpace (t) as Delegate;
 	}
 
 	public static Class LookupClass (Type t)
 	{
-		return (Class) builder_to_declspace [t];
+		return LookupDeclSpace (t) as Class;
 	}
 
 	//
@@ -496,7 +505,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public static void LoadAllImportedTypes ()
 	{
-		AllClsTopLevelTypes = new Hashtable (1500);
+		AllClsTopLevelTypes = new Dictionary<string, object> (1500);
 		foreach (Assembly a in GlobalRootNamespace.Instance.Assemblies) {
 			foreach (Type t in a.GetExportedTypes ()) {
 				AllClsTopLevelTypes [t.FullName.ToLower (System.Globalization.CultureInfo.InvariantCulture)] = null;
@@ -1058,7 +1067,7 @@ namespace Mono.CSharp {
 			t = t.GetGenericTypeDefinition ();
 #endif
 
-		DeclSpace decl = (DeclSpace) builder_to_declspace [t];
+		DeclSpace decl = LookupDeclSpace (t);
 
 		//
 		// `builder_to_declspace' contains all dynamic types.
@@ -1084,7 +1093,7 @@ namespace Mono.CSharp {
 			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
 
 		if (t is GenericTypeParameterBuilder) {
-			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
+			TypeParameter tparam = builder_to_type_param [(GenericTypeParameterBuilder) t];
 
 			Timer.StartTimer (TimerType.FindMembers);
 			MemberList list = tparam.FindMembers (
@@ -1149,7 +1158,7 @@ namespace Mono.CSharp {
 #if MS_COMPATIBLE
 		if (t.Assembly == CodeGen.Assembly.Builder) {
 			if (t.IsGenericParameter) {
-				TypeParameter tparam = (TypeParameter) builder_to_type_param[t];
+				TypeParameter tparam = builder_to_type_param [(GenericTypeParameterBuilder) t];
 
 				used_cache = true;
 				if (tparam.MemberCache == null)
@@ -1175,7 +1184,7 @@ namespace Mono.CSharp {
 #else
 		if (t is TypeBuilder) {
 #endif
-			DeclSpace decl = (DeclSpace) builder_to_declspace [t];
+			DeclSpace decl = LookupDeclSpace (t);
 			cache = decl.MemberCache;
 
 			//
@@ -1212,7 +1221,7 @@ namespace Mono.CSharp {
 		}
 
 		if (t is GenericTypeParameterBuilder) {
-			TypeParameter tparam = (TypeParameter) builder_to_type_param [t];
+			TypeParameter tparam = builder_to_type_param [(GenericTypeParameterBuilder) t];
 
 			used_cache = true;
 			if (tparam.MemberCache == null)
@@ -1468,7 +1477,7 @@ namespace Mono.CSharp {
 	
 	public static bool IsInterfaceType (Type t)
 	{
-		TypeContainer tc = (TypeContainer) builder_to_declspace [t];
+		TypeContainer tc = LookupTypeContainer (t);
 		if (tc == null)
 			return false;
 
@@ -1605,8 +1614,9 @@ namespace Mono.CSharp {
 		if (invocationAssembly == assembly)
 			return true;
 
-		if (assembly_internals_vis_attrs.Contains (assembly))
-			return (bool)(assembly_internals_vis_attrs [assembly]);
+		bool value;
+		if (assembly_internals_vis_attrs.TryGetValue (assembly, out value))
+			return value;
 
 		PredefinedAttribute pa = PredefinedAttributes.Get.InternalsVisibleTo;
 		// HACK: Do very early resolve of SRE type checking
@@ -1732,8 +1742,8 @@ namespace Mono.CSharp {
 	
 	static public AParametersCollection GetParameterData (MethodBase mb)
 	{
-		AParametersCollection pd = (AParametersCollection) method_params [mb];
-		if (pd == null) {
+		AParametersCollection pd;
+		if (!method_params.TryGetValue (mb, out pd)) {
 #if MS_COMPATIBLE
 			if (mb.IsGenericMethod && !mb.IsGenericMethodDefinition) {
 				MethodInfo mi = ((MethodInfo) mb).GetGenericMethodDefinition ();
@@ -1770,8 +1780,8 @@ namespace Mono.CSharp {
 
 	public static AParametersCollection GetParameterData (PropertyInfo pi)
 	{
-		AParametersCollection pd = (AParametersCollection)method_params [pi];
-		if (pd == null) {
+		AParametersCollection pd;
+		if (!method_params.TryGetValue (pi, out pd)) {
 			if (pi is PropertyBuilder)
 				return ParametersCompiled.EmptyReadOnlyParameters;
 
@@ -1788,7 +1798,7 @@ namespace Mono.CSharp {
 
 	public static AParametersCollection GetDelegateParameters (ResolveContext ec, Type t)
 	{
-		Delegate d = builder_to_declspace [t] as Delegate;
+		Delegate d = LookupDelegate (t);
 		if (d != null)
 			return d.Parameters;
 
@@ -1798,7 +1808,7 @@ namespace Mono.CSharp {
 
 	static public void RegisterOverride (MethodBase override_method, MethodBase base_method)
 	{
-		if (!method_overrides.Contains (override_method))
+		if (!method_overrides.ContainsKey (override_method))
 			method_overrides [override_method] = base_method;
 		if (method_overrides [override_method] != base_method)
 			throw new InternalErrorException ("Override mismatch: " + override_method);
@@ -1810,14 +1820,17 @@ namespace Mono.CSharp {
 
 		return m.IsVirtual &&
 			(m.Attributes & MethodAttributes.NewSlot) == 0 &&
-			(m is MethodBuilder || method_overrides.Contains (m));
+			(m is MethodBuilder || method_overrides.ContainsKey (m));
 	}
 
 	static public MethodBase TryGetBaseDefinition (MethodBase m)
 	{
 		m = DropGenericMethodArguments (m);
+		MethodBase mb;
+		if (method_overrides.TryGetValue (m, out mb))
+			return mb;
 
-		return (MethodBase) method_overrides [m];
+		return null;
 	}
 
 	public static void RegisterConstant (FieldInfo fb, IConstant ic)
@@ -1830,7 +1843,11 @@ namespace Mono.CSharp {
 		if (fb == null)
 			return null;
 
-		return (IConstant)fields [fb];
+		IConstant ic;
+		if (fields.TryGetValue (fb, out ic))
+			return ic;
+
+		return null;
 	}
 
 	public static void RegisterProperty (PropertyInfo pi, PropertyBase pb)
@@ -1840,7 +1857,11 @@ namespace Mono.CSharp {
 
 	public static PropertyBase GetProperty (PropertyInfo pi)
 	{
-		return (PropertyBase)propertybuilder_to_property [pi];
+		PropertyBase pb;
+		if (propertybuilder_to_property.TryGetValue (pi, out pb))
+			return pb;
+
+		return null;
 	}
 
 	static public void RegisterFieldBase (FieldBuilder fb, FieldBase f)
@@ -1856,7 +1877,11 @@ namespace Mono.CSharp {
 	static public FieldBase GetField (FieldInfo fb)
 	{
 		fb = GetGenericFieldDefinition (fb);
-		return (FieldBase) fieldbuilders_to_fields [fb];
+		FieldBase f;
+		if (fieldbuilders_to_fields.TryGetValue (fb, out f))
+			return f;
+
+		return null;
 	}
 
 	static public MethodInfo GetAddMethod (EventInfo ei)
@@ -1878,7 +1903,7 @@ namespace Mono.CSharp {
 	static public void RegisterEventField (EventInfo einfo, EventField e)
 	{
 		if (events == null)
-			events = new Hashtable ();
+			events = new Dictionary<EventInfo, EventField> (ReferenceEquality<EventInfo>.Default);
 
 		events.Add (einfo, e);
 	}
@@ -1888,7 +1913,11 @@ namespace Mono.CSharp {
 		if (events == null)
 			return null;
 
-		return (EventField) events [ei];
+		EventField value;
+		if (events.TryGetValue (ei, out value))
+			return value;
+
+		return null;
 	}
 
 	public static bool CheckStructCycles (TypeContainer tc, Dictionary<TypeContainer, object> seen)
@@ -1960,7 +1989,7 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public static Type[] ExpandInterfaces (TypeExpr [] base_interfaces)
 	{
-		ArrayList new_ifaces = new ArrayList ();
+		var new_ifaces = new List<Type> ();
 
 		foreach (TypeExpr iface in base_interfaces){
 			Type itype = iface.Type;
@@ -1977,14 +2006,13 @@ namespace Mono.CSharp {
 					new_ifaces.Add (imp);
 			}
 		}
-		Type [] ret = new Type [new_ifaces.Count];
-		new_ifaces.CopyTo (ret, 0);
-		return ret;
+
+		return new_ifaces.ToArray ();
 	}
 
 	public static Type[] ExpandInterfaces (Type [] base_interfaces)
 	{
-		ArrayList new_ifaces = new ArrayList ();
+		var new_ifaces = new List<Type> ();
 
 		foreach (Type itype in base_interfaces){
 			if (new_ifaces.Contains (itype))
@@ -1999,12 +2027,9 @@ namespace Mono.CSharp {
 					new_ifaces.Add (imp);
 			}
 		}
-		Type [] ret = new Type [new_ifaces.Count];
-		new_ifaces.CopyTo (ret, 0);
-		return ret;
+
+		return new_ifaces.ToArray ();
 	}
-		
-	static PtrHashtable iface_cache;
 		
 	/// <summary>
 	///   This function returns the interfaces in the type `t'.  Works with
@@ -2012,7 +2037,8 @@ namespace Mono.CSharp {
 	/// </summary>
 	public static Type [] GetInterfaces (Type t)
 	{
-		Type [] cached = iface_cache [t] as Type [];
+		Type [] cached;
+		if (iface_cache.TryGetValue (t, out cached))
 		if (cached != null)
 			return cached;
 		
@@ -2044,7 +2070,7 @@ namespace Mono.CSharp {
 				type_ifaces = t.GetInterfaces ();
 #endif
 			else
-				type_ifaces = (Type []) builder_to_ifaces [t];
+				type_ifaces = GetExplicitInterfaces (t);
 			if (type_ifaces == null || type_ifaces.Length == 0)
 				type_ifaces = Type.EmptyTypes;
 
@@ -2056,7 +2082,7 @@ namespace Mono.CSharp {
 			iface_cache [t] = result;
 			return result;
 		} else if (t is GenericTypeParameterBuilder){
-			Type[] type_ifaces = (Type []) builder_to_ifaces [t];
+			Type[] type_ifaces = GetExplicitInterfaces (t);
 			if (type_ifaces == null || type_ifaces.Length == 0)
 				type_ifaces = Type.EmptyTypes;
 
@@ -2072,9 +2098,13 @@ namespace Mono.CSharp {
 	//
 	// gets the interfaces that are declared explicitly on t
 	//
-	public static Type [] GetExplicitInterfaces (TypeBuilder t)
+	public static Type[] GetExplicitInterfaces (Type t)
 	{
-		return (Type []) builder_to_ifaces [t];
+		Type[] ifaces;
+		if (builder_to_ifaces.TryGetValue (t, out ifaces))
+			return ifaces;
+
+		return null;
 	}
 	
 	/// <remarks>
@@ -2432,7 +2462,7 @@ namespace Mono.CSharp {
 	//
 	// The name is assumed to be the same.
 	//
-	public static List<MethodBase> CopyNewMethods (List<MethodBase> target_list, IList new_members)
+	public static List<MethodBase> CopyNewMethods (List<MethodBase> target_list, IList<MemberInfo> new_members)
 	{
 		if (target_list == null){
 			target_list = new List<MethodBase> ();
@@ -2460,17 +2490,20 @@ namespace Mono.CSharp {
 	// <remarks>
 	//   Tracks the generic parameters.
 	// </remarks>
-	static PtrHashtable builder_to_type_param;
 
-	public static void AddTypeParameter (Type t, TypeParameter tparam)
+	public static void AddTypeParameter (GenericTypeParameterBuilder t, TypeParameter tparam)
 	{
-		if (!builder_to_type_param.Contains (t))
-			builder_to_type_param.Add (t, tparam);
+		builder_to_type_param [t] = tparam;
 	}
 
 	public static TypeParameter LookupTypeParameter (Type t)
 	{
-		return (TypeParameter) builder_to_type_param [t];
+		TypeParameter tp;
+		var gtp = t as GenericTypeParameterBuilder;
+		if (gtp != null && builder_to_type_param.TryGetValue (gtp, out tp))
+			return tp;
+
+		return null;
 	}
 
 	// This method always return false for non-generic compiler,
@@ -2714,7 +2747,7 @@ namespace Mono.CSharp {
 	public static bool IsGenericMethodDefinition (MethodBase mb)
 	{
 		if (mb.DeclaringType is TypeBuilder) {
-			IMethodData method = (IMethodData) builder_to_method [mb];
+			IMethodData method = GetMethod (mb);
 			if (method == null)
 				return false;
 
@@ -2754,7 +2787,7 @@ namespace Mono.CSharp {
 
 		// The assembly that defines the type is that is calling us
 		internal Assembly invocation_assembly;
-		internal IList almost_match;
+		internal IList<MemberInfo> almost_match;
 
 		private bool CheckValidFamilyAccess (bool is_static, MemberInfo m)
 		{
@@ -2909,7 +2942,7 @@ namespace Mono.CSharp {
 	//
 	public static MemberInfo [] MemberLookup (Type invocation_type, Type qualifier_type,
 						  Type queried_type, MemberTypes mt,
-						  BindingFlags original_bf, string name, IList almost_match)
+						  BindingFlags original_bf, string name, IList<MemberInfo> almost_match)
 	{
 		Timer.StartTimer (TimerType.MemberLookup);
 
@@ -2923,7 +2956,7 @@ namespace Mono.CSharp {
 
 	static MemberInfo [] RealMemberLookup (Type invocation_type, Type qualifier_type,
 					       Type queried_type, MemberTypes mt,
-					       BindingFlags original_bf, string name, IList almost_match)
+					       BindingFlags original_bf, string name, IList<MemberInfo> almost_match)
 	{
 		BindingFlags bf = original_bf;
 		
@@ -3241,8 +3274,8 @@ public sealed class TypeHandle : IMemberContainer {
 	/// </summary>
 	private static TypeHandle GetTypeHandle (Type t)
 	{
-		TypeHandle handle = (TypeHandle) type_hash [t];
-		if (handle != null)
+		TypeHandle handle;
+		if (type_hash.TryGetValue (t, out handle))
 			return handle;
 
 		handle = new TypeHandle (t);
@@ -3262,7 +3295,7 @@ public sealed class TypeHandle : IMemberContainer {
 
 	public static void Reset ()
 	{
-		type_hash = new PtrHashtable ();
+		type_hash = new Dictionary<Type, TypeHandle> (ReferenceEquality<Type>.Default);
 	}
 
 	/// <summary>
@@ -3293,10 +3326,10 @@ public sealed class TypeHandle : IMemberContainer {
 		}
 	}
 
-	private static PtrHashtable type_hash;
+	static Dictionary<Type, TypeHandle> type_hash;
 
-	private static TypeHandle object_type = null;
-	private static TypeHandle array_type = null;
+	private static TypeHandle object_type;
+	private static TypeHandle array_type;
 
 	private Type type;
 	private string full_name;

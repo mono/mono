@@ -1485,35 +1485,35 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   This is a readonly list of MemberInfo's.      
 	/// </summary>
-	public class MemberList : IList {
-		public readonly IList List;
+	public class MemberList : IList<MemberInfo> {
+		public readonly IList<MemberInfo> List;
 		int count;
 
 		/// <summary>
 		///   Create a new MemberList from the given IList.
 		/// </summary>
-		public MemberList (IList list)
+		public MemberList (IList<MemberInfo> list)
 		{
 			if (list != null)
 				this.List = list;
 			else
-				this.List = new ArrayList ();
+				this.List = new List<MemberInfo> ();
 			count = List.Count;
 		}
 
 		/// <summary>
 		///   Concatenate the ILists `first' and `second' to a new MemberList.
 		/// </summary>
-		public MemberList (IList first, IList second)
+		public MemberList (IList<MemberInfo> first, IList<MemberInfo> second)
 		{
-			ArrayList list = new ArrayList ();
+			var list = new List<MemberInfo> ();
 			list.AddRange (first);
 			list.AddRange (second);
 			count = list.Count;
 			List = list;
 		}
 
-		public static readonly MemberList Empty = new MemberList (new ArrayList (0));
+		public static readonly MemberList Empty = new MemberList (Array.AsReadOnly (new MemberInfo[0]));
 
 		/// <summary>
 		///   Cast the MemberList into a MemberInfo[] array.
@@ -1538,26 +1538,19 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IsSynchronized {
-			get {
-				return List.IsSynchronized;
-			}
-		}
-
-		public object SyncRoot {
-			get {
-				return List.SyncRoot;
-			}
-		}
-
-		public void CopyTo (Array array, int index)
+		public void CopyTo (MemberInfo[] array, int index)
 		{
 			List.CopyTo (array, index);
 		}
 
 		// IEnumerable
 
-		public IEnumerator GetEnumerator ()
+		public IEnumerator<MemberInfo> GetEnumerator ()
+		{
+			return List.GetEnumerator ();
+		}
+
+		IEnumerator IEnumerable.GetEnumerator ()
 		{
 			return List.GetEnumerator ();
 		}
@@ -1576,7 +1569,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		object IList.this [int index] {
+		MemberInfo IList<MemberInfo>.this [int index] {
 			get {
 				return List [index];
 			}
@@ -1593,7 +1586,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public int Add (object value)
+		public void Add (MemberInfo value)
 		{
 			throw new NotSupportedException ();
 		}
@@ -1603,22 +1596,22 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ();
 		}
 
-		public bool Contains (object value)
+		public bool Contains (MemberInfo value)
 		{
 			return List.Contains (value);
 		}
 
-		public int IndexOf (object value)
+		public int IndexOf (MemberInfo value)
 		{
 			return List.IndexOf (value);
 		}
 
-		public void Insert (int index, object value)
+		public void Insert (int index, MemberInfo value)
 		{
 			throw new NotSupportedException ();
 		}
 
-		public void Remove (object value)
+		public bool Remove (MemberInfo value)
 		{
 			throw new NotSupportedException ();
 		}

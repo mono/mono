@@ -1635,7 +1635,7 @@ namespace Mono.CSharp {
 
 		private void FindMembers_NestedTypes (int modflags,
 						      BindingFlags bf, MemberFilter filter, object criteria,
-						      ref ArrayList members)
+							  ref List<MemberInfo> members)
 		{
 			var lists = new[] { types, delegates };
 
@@ -1659,7 +1659,7 @@ namespace Mono.CSharp {
 					
 					if (tb != null && (filter (tb, criteria) == true)) {
 						if (members == null)
-							members = new ArrayList ();
+							members = new List<MemberInfo> ();
 						
 						members.Add (tb);
 					}
@@ -1693,7 +1693,7 @@ namespace Mono.CSharp {
 		public override MemberList FindMembers (MemberTypes mt, BindingFlags bf,
 							MemberFilter filter, object criteria)
 		{
-			ArrayList members = null;
+			List<MemberInfo> members = null;
 
 			int modflags = 0;
 			if ((bf & BindingFlags.Public) != 0)
@@ -1737,7 +1737,7 @@ namespace Mono.CSharp {
 						FieldBuilder fb = f.FieldBuilder;
 						if (fb != null && filter (fb, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (fb);
 						}
@@ -1762,7 +1762,7 @@ namespace Mono.CSharp {
 						}
 						if (fb != null && filter (fb, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (fb);
 						}
@@ -1785,9 +1785,9 @@ namespace Mono.CSharp {
 
 						if (mb != null && filter (mb, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
-							
-                                                        members.Add (mb);
+								members = new List<MemberInfo> ();
+
+							members.Add (mb);
 						}
 					}
 				}
@@ -1805,7 +1805,7 @@ namespace Mono.CSharp {
 						MethodBuilder ob = o.MethodBuilder;
 						if (ob != null && filter (ob, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (ob);
 						}
@@ -1822,15 +1822,15 @@ namespace Mono.CSharp {
 						MethodBuilder b = e.AddBuilder;
 						if (b != null && filter (b, criteria)) {
 							if (members == null)
-								members = new ArrayList (4);
+								members = new List<MemberInfo> ();
 
 							members.Add (b);
 						}
 
 						b = e.RemoveBuilder;
 						if (b != null && filter (b, criteria)) {
-							if (members == null) 
-								members = new ArrayList (4);
+							if (members == null)
+								members = new List<MemberInfo> ();
 
 							members.Add (b);
 						}
@@ -1852,7 +1852,7 @@ namespace Mono.CSharp {
 						b = p.GetBuilder;
 						if (b != null && filter (b, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (b);
 						}
@@ -1860,7 +1860,7 @@ namespace Mono.CSharp {
 						b = p.SetBuilder;
 						if (b != null && filter (b, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (b);
 						}
@@ -1882,7 +1882,7 @@ namespace Mono.CSharp {
 						b = ix.GetBuilder;
 						if (b != null && filter (b, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (b);
 						}
@@ -1890,7 +1890,7 @@ namespace Mono.CSharp {
 						b = ix.SetBuilder;
 						if (b != null && filter (b, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (b);
 						}
@@ -1912,9 +1912,9 @@ namespace Mono.CSharp {
 						MemberInfo eb = e.EventBuilder;
 						if (eb != null && filter (eb, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
-							
-						        members.Add (e.EventBuilder);
+								members = new List<MemberInfo> ();
+
+							members.Add (e.EventBuilder);
 						}
 					}
 				}
@@ -1934,7 +1934,7 @@ namespace Mono.CSharp {
 						MemberInfo pb = p.PropertyBuilder;
 						if (pb != null && filter (pb, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (p.PropertyBuilder);
 						}
@@ -1954,7 +1954,7 @@ namespace Mono.CSharp {
 						MemberInfo ib = ix.PropertyBuilder;
 						if (ib != null && filter (ib, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 							
 							members.Add (ix.PropertyBuilder);
 						}
@@ -1974,7 +1974,7 @@ namespace Mono.CSharp {
 						ConstructorBuilder cb = c.ConstructorBuilder;
 						if (cb != null && filter (cb, criteria) == true) {
 							if (members == null)
-								members = new ArrayList ();
+								members = new List<MemberInfo> ();
 
 							members.Add (cb);
 						}
@@ -1987,7 +1987,7 @@ namespace Mono.CSharp {
 					
 					if (cb != null && filter (cb, criteria) == true) {
 						if (members == null)
-							members = new ArrayList ();
+							members = new List<MemberInfo> ();
 						
 						members.Add (cb);
 					}
@@ -2002,7 +2002,7 @@ namespace Mono.CSharp {
 					MemberList list = FindMembers (TypeBuilder.BaseType, mt, bf, filter, criteria);
 					if (list.Count > 0) {
 						if (members == null)
-							members = new ArrayList ();
+							members = new List<MemberInfo> ();
 					
 						members.AddRange (list);
 					}

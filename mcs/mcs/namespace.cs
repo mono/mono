@@ -805,9 +805,9 @@ namespace Mono.CSharp {
 		int symfile_id;
 
 		// Namespace using import block
-		ArrayList using_aliases;
+		List<UsingAliasEntry> using_aliases;
 		ArrayList using_clauses;
-		public bool DeclarationFound = false;
+		public bool DeclarationFound;
 		// End
 
 		public readonly bool IsImplicit;
@@ -854,7 +854,7 @@ namespace Mono.CSharp {
 		{
 			foreach (UsingAliasEntry uae in source_using_aliases){
 				if (using_aliases == null)
-					using_aliases = new ArrayList ();
+					using_aliases = new List<UsingAliasEntry> ();
 				
 				using_aliases.Add (uae);
 			}
@@ -1014,7 +1014,7 @@ namespace Mono.CSharp {
 		void AddUsingAlias (UsingAliasEntry uae)
 		{
 			if (using_aliases == null) {
-				using_aliases = new ArrayList ();
+				using_aliases = new List<UsingAliasEntry> ();
 			} else {
 				foreach (UsingAliasEntry entry in using_aliases) {
 					if (uae.Alias == entry.Alias) {

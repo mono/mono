@@ -10,12 +10,13 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using System.Reflection.Emit;
+
 namespace Mono.CSharp {
-	using System;
-	using System.Collections;
-	using System.Diagnostics;
-	using System.Reflection;
-	using System.Reflection.Emit;
 
 	//
 	// A container class for all the conversion operations
@@ -40,7 +41,7 @@ namespace Mono.CSharp {
 		
 		static Type TypeParam_EffectiveBaseType (GenericConstraints gc)
 		{
-			ArrayList list = new ArrayList ();
+			var list = new List<Type> ();
 			list.Add (gc.EffectiveBaseClass);
 			foreach (Type t in gc.InterfaceConstraints) {
 				if (!TypeManager.IsGenericParameter (t))
@@ -793,7 +794,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassed type" according to the spec (13.4.2)
 		///  amongst the methods in the MethodGroupExpr
 		/// </summary>
-		static Type FindMostEncompassedType (ArrayList types)
+		static Type FindMostEncompassedType (IList<Type> types)
 		{
 			Type best = null;
 
@@ -835,7 +836,7 @@ namespace Mono.CSharp {
 		///  Finds "most encompassing type" according to the spec (13.4.2)
 		///  amongst the types in the given set
 		/// </summary>
-		static Type FindMostEncompassingType (ArrayList types)
+		static Type FindMostEncompassingType (IList<Type> types)
 		{
 			Type best = null;
 
@@ -843,7 +844,7 @@ namespace Mono.CSharp {
 				return null;
 
 			if (types.Count == 1)
-				return (Type) types [0];
+				return types [0];
 
 			EmptyExpression expr = EmptyExpression.Grab ();
 
@@ -878,10 +879,10 @@ namespace Mono.CSharp {
 		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
 		///   for explicit and implicit conversion operators.
 		/// </summary>
-		static public Type FindMostSpecificSource (IList list,
+		static public Type FindMostSpecificSource (IList<MethodInfo> list,
 							   Expression source, bool apply_explicit_conv_rules)
 		{
-			ArrayList src_types_set = new ArrayList ();
+			var src_types_set = new List<Type> ();
 
 			//
 			// If any operator converts from S then Sx = S
@@ -901,7 +902,7 @@ namespace Mono.CSharp {
 			// Explicit Conv rules
 			//
 			if (apply_explicit_conv_rules) {
-				ArrayList candidate_set = new ArrayList ();
+				var candidate_set = new List<Type> ();
 
 				foreach (Type param_type in src_types_set){
 					if (ImplicitStandardConversionExists (source, param_type))
@@ -924,10 +925,10 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Finds the most specific target Tx according to section 13.4.4
 		/// </summary>
-		static public Type FindMostSpecificTarget (IList list,
+		static public Type FindMostSpecificTarget (IList<MethodInfo> list,
 							   Type target, bool apply_explicit_conv_rules)
 		{
-			ArrayList tgt_types_set = new ArrayList ();
+			var tgt_types_set = new List<Type> ();
 
 			//
 			// If any operator converts to T then Tx = T
@@ -944,7 +945,7 @@ namespace Mono.CSharp {
 			// Explicit conv rules
 			//
 			if (apply_explicit_conv_rules) {
-				ArrayList candidate_set = new ArrayList ();
+				var candidate_set = new List<Type> ();
 
 				EmptyExpression expr = EmptyExpression.Grab ();
 
@@ -988,7 +989,7 @@ namespace Mono.CSharp {
 			return UserDefinedConversion (ec, source, target, loc, true, true);
 		}
 
-		static void AddConversionOperators (ArrayList list,
+		static void AddConversionOperators (List<MethodInfo> list,
 						    Expression source, Type target_type,
 						    bool look_for_explicit,
 						    MethodGroupExpr mg)
@@ -1054,7 +1055,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		static MethodInfo GetConversionOperator (CompilerContext ctx, Type container_type, Expression source, Type target_type, bool look_for_explicit)
 		{
-			ArrayList ops = new ArrayList (4);
+			var ops = new List<MethodInfo> (4);
 
 			Type source_type = source.Type;
 

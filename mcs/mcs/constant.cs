@@ -9,11 +9,10 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
-namespace Mono.CSharp {
+using System;
+using System.Reflection.Emit;
 
-	using System;
-	using System.Reflection.Emit;
-	using System.Collections;
+namespace Mono.CSharp {
 
 	/// <summary>
 	///   Base class for constants and literals.

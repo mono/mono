@@ -12,7 +12,6 @@
 
 using System;
 using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -109,9 +108,9 @@ namespace Mono.CSharp {
 		object [] prop_values_arr;
 		object [] pos_values;
 
-		static PtrHashtable usage_attr_cache;
+		static Dictionary<Type, AttributeUsageAttribute> usage_attr_cache;
 		// Cache for parameter-less attributes
-		static PtrHashtable att_cache;
+		static Dictionary<Type, CustomAttributeBuilder> att_cache;
 
 		public Attribute (string target, ATypeNameExpression expr, Arguments[] args, Location loc, bool nameEscaped)
 		{
@@ -140,8 +139,8 @@ namespace Mono.CSharp {
 
 		public static void Reset ()
 		{
-			usage_attr_cache = new PtrHashtable ();
-			att_cache = new PtrHashtable ();
+			usage_attr_cache = new Dictionary<Type, AttributeUsageAttribute> (ReferenceEquality<Type>.Default);
+			att_cache = new Dictionary<Type, CustomAttributeBuilder> (ReferenceEquality<Type>.Default);
 		}
 
 		//
@@ -393,11 +392,11 @@ namespace Mono.CSharp {
 				AttributeTester.Report_ObsoleteMessage (obsolete_attr, TypeManager.CSharpName (Type), Location, Report);
 			}
 
+			CustomAttributeBuilder cb;
 			if (PosArguments == null && NamedArguments == null) {
-				object o = att_cache [Type];
-				if (o != null) {
+				if (att_cache.TryGetValue (Type, out cb)) {
 					resolve_error = false;
-					return (CustomAttributeBuilder)o;
+					return cb;
 				}
 			}
 
@@ -414,7 +413,6 @@ namespace Mono.CSharp {
 
 			ApplyModuleCharSet (rc);
 
-			CustomAttributeBuilder cb;
 			try {
 				// SRE does not allow private ctor but we want to report all source code errors
 				if (ctor.IsPrivate)
@@ -522,12 +520,12 @@ namespace Mono.CSharp {
 		{
 			int named_arg_count = NamedArguments.Count;
 
-			ArrayList field_infos = new ArrayList (named_arg_count);
-			ArrayList prop_infos  = new ArrayList (named_arg_count);
-			ArrayList field_values = new ArrayList (named_arg_count);
-			ArrayList prop_values = new ArrayList (named_arg_count);
+			var field_infos = new List<FieldInfo> (named_arg_count);
+			var prop_infos  = new List<PropertyInfo> (named_arg_count);
+			var field_values = new List<object> (named_arg_count);
+			var prop_values = new List<object> (named_arg_count);
 
-			ArrayList seen_names = new ArrayList (named_arg_count);
+			var seen_names = new List<string> (named_arg_count);
 			
 			foreach (NamedArgument a in NamedArguments) {
 				string name = a.Name;
@@ -622,7 +620,7 @@ namespace Mono.CSharp {
 					else
 						obsolete_attr = AttributeTester.GetMemberObsoleteAttribute (fi);
 
- 					field_values.Add (value);  					
+ 					field_values.Add (value);
 					field_infos.Add (fi);
 				}
 
@@ -705,8 +703,8 @@ namespace Mono.CSharp {
 		/// </summary>
 		static AttributeUsageAttribute GetAttributeUsage (Type type)
 		{
-			AttributeUsageAttribute ua = usage_attr_cache [type] as AttributeUsageAttribute;
-			if (ua != null)
+			AttributeUsageAttribute ua;
+			if (usage_attr_cache.TryGetValue (type, out ua))
 				return ua;
 
 			Class attr_class = TypeManager.LookupClass (type);
@@ -854,7 +852,7 @@ namespace Mono.CSharp {
 			}
 
 			// TODO: we can skip the first item
-			if (((IList) valid_targets).Contains (ExplicitTarget)) {
+			if (Array.Exists (valid_targets, i => i == ExplicitTarget)) {
 				switch (ExplicitTarget) {
 				case "return": Target = AttributeTargets.ReturnValue; return true;
 				case "param": Target = AttributeTargets.Parameter; return true;
@@ -1442,17 +1440,17 @@ namespace Mono.CSharp {
 		/// </summary>
 		public Attribute[] SearchMulti (PredefinedAttribute t)
 		{
-			ArrayList ar = null;
+			List<Attribute> ar = null;
 
 			foreach (Attribute a in Attrs) {
 				if (a.ResolveType () == t) {
 					if (ar == null)
-						ar = new ArrayList ();
+						ar = new List<Attribute> (Attrs.Count);
 					ar.Add (a);
 				}
 			}
 
-			return ar == null ? null : ar.ToArray (typeof (Attribute)) as Attribute[];
+			return ar == null ? null : ar.ToArray ();
 		}
 
 		public void Emit ()
@@ -1492,14 +1490,11 @@ namespace Mono.CSharp {
 	/// </summary>
 	sealed class AttributeTester
 	{
-		static PtrHashtable analyzed_types;
-		static PtrHashtable analyzed_types_obsolete;
-		static PtrHashtable analyzed_member_obsolete;
-		static PtrHashtable analyzed_method_excluded;
-		static PtrHashtable fixed_buffer_cache;
-
-		static object TRUE = new object ();
-		static object FALSE = new object ();
+		static Dictionary<Type, bool> analyzed_types;
+		static Dictionary<Type, ObsoleteAttribute> analyzed_types_obsolete;
+		static Dictionary<MemberInfo, ObsoleteAttribute> analyzed_member_obsolete;
+		static Dictionary<MethodBase, bool> analyzed_method_excluded;
+		static Dictionary<FieldInfo, IFixedBuffer> fixed_buffer_cache;
 
 		static AttributeTester ()
 		{
@@ -1512,11 +1507,11 @@ namespace Mono.CSharp {
 
 		public static void Reset ()
 		{
-			analyzed_types = new PtrHashtable ();
-			analyzed_types_obsolete = new PtrHashtable ();
-			analyzed_member_obsolete = new PtrHashtable ();
-			analyzed_method_excluded = new PtrHashtable ();
-			fixed_buffer_cache = new PtrHashtable ();
+			analyzed_types = new Dictionary<Type, bool> (ReferenceEquality<Type>.Default);
+			analyzed_types_obsolete = new Dictionary<Type, ObsoleteAttribute> (ReferenceEquality<Type>.Default);
+			analyzed_member_obsolete = new Dictionary<MemberInfo, ObsoleteAttribute> (ReferenceEquality<MemberInfo>.Default);
+			analyzed_method_excluded = new Dictionary<MethodBase, bool> (ReferenceEquality<MethodBase>.Default);
+			fixed_buffer_cache = new Dictionary<FieldInfo, IFixedBuffer> (ReferenceEquality<FieldInfo>.Default);
 		}
 
 		public enum Result {
@@ -1576,16 +1571,15 @@ namespace Mono.CSharp {
 			if (type == null)
 				return true;
 
-			object type_compliance = analyzed_types[type];
-			if (type_compliance != null)
-				return type_compliance == TRUE;
+			bool result;
+			if (analyzed_types.TryGetValue (type, out result))
+				return result;
 
 			if (type.IsPointer) {
-				analyzed_types.Add (type, FALSE);
+				analyzed_types.Add (type, false);
 				return false;
 			}
 
-			bool result;
 			if (type.IsArray) {
 				result = IsClsCompliant (TypeManager.GetElementType (type));
 			} else if (TypeManager.IsNullableType (type)) {
@@ -1593,7 +1587,7 @@ namespace Mono.CSharp {
 			} else {
 				result = AnalyzeTypeCompliance (type);
 			}
-			analyzed_types.Add (type, result ? TRUE : FALSE);
+			analyzed_types.Add (type, result);
 			return result;
 		}        
         
@@ -1614,14 +1608,14 @@ namespace Mono.CSharp {
 			if (TypeManager.GetConstant (fi) != null)
 				return null;
 
-			object o = fixed_buffer_cache [fi];
-			if (o == null) {
+			IFixedBuffer ifb;
+			if (!fixed_buffer_cache.TryGetValue (fi, out ifb)) {
 				PredefinedAttribute pa = PredefinedAttributes.Get.FixedBuffer;
 				if (!pa.IsDefined)
 					return null;
 
 				if (!fi.IsDefined (pa.Type, false)) {
-					fixed_buffer_cache.Add (fi, FALSE);
+					fixed_buffer_cache.Add (fi, null);
 					return null;
 				}
 				
@@ -1630,10 +1624,7 @@ namespace Mono.CSharp {
 				return iff;
 			}
 
-			if (o == FALSE)
-				return null;
-
-			return (IFixedBuffer)o;
+			return ifb;
 		}
 
 		public static void VerifyModulesClsCompliance (CompilerContext ctx)
@@ -1702,14 +1693,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static ObsoleteAttribute GetObsoleteAttribute (Type type)
 		{
-			object type_obsolete = analyzed_types_obsolete [type];
-			if (type_obsolete == FALSE)
-				return null;
+			ObsoleteAttribute result;
+			if (analyzed_types_obsolete.TryGetValue (type, out result))
+				return result;
 
-			if (type_obsolete != null)
-				return (ObsoleteAttribute)type_obsolete;
-
-			ObsoleteAttribute result = null;
 			if (TypeManager.HasElementType (type)) {
 				result = GetObsoleteAttribute (TypeManager.GetElementType (type));
 			} else if (TypeManager.IsGenericParameter (type))
@@ -1733,7 +1720,7 @@ namespace Mono.CSharp {
 			}
 
 			// Cannot use .Add because of corlib bootstrap
-			analyzed_types_obsolete [type] = result == null ? FALSE : result;
+			analyzed_types_obsolete [type] = result;
 			return result;
 		}
 
@@ -1766,12 +1753,9 @@ namespace Mono.CSharp {
 		/// </summary>
 		public static ObsoleteAttribute GetMemberObsoleteAttribute (MemberInfo mi)
 		{
-			object type_obsolete = analyzed_member_obsolete [mi];
-			if (type_obsolete == FALSE)
-				return null;
-
-			if (type_obsolete != null)
-				return (ObsoleteAttribute)type_obsolete;
+			ObsoleteAttribute oa;
+			if (analyzed_member_obsolete.TryGetValue (mi, out oa))
+				return oa;
 
 			if ((mi.DeclaringType is TypeBuilder) || TypeManager.IsGenericType (mi.DeclaringType))
 				return null;
@@ -1780,9 +1764,8 @@ namespace Mono.CSharp {
 			if (!pa.IsDefined)
 				return null;
 
-			ObsoleteAttribute oa = System.Attribute.GetCustomAttribute (mi, pa.Type, false)
-				as ObsoleteAttribute;
-			analyzed_member_obsolete.Add (mi, oa == null ? FALSE : oa);
+			oa = System.Attribute.GetCustomAttribute (mi, pa.Type, false) as ObsoleteAttribute;
+			analyzed_member_obsolete.Add (mi, oa);
 			return oa;
 		}
 
@@ -1805,9 +1788,9 @@ namespace Mono.CSharp {
 
 		public static bool IsConditionalMethodExcluded (MethodBase mb, Location loc)
 		{
-			object excluded = analyzed_method_excluded [mb];
-			if (excluded != null)
-				return excluded == TRUE ? true : false;
+			bool excluded;
+			if (analyzed_method_excluded.TryGetValue (mb, out excluded))
+				return excluded;
 
 			PredefinedAttribute pa = PredefinedAttributes.Get.Conditional;
 			if (!pa.IsDefined)
@@ -1816,18 +1799,18 @@ namespace Mono.CSharp {
 			ConditionalAttribute[] attrs = mb.GetCustomAttributes (pa.Type, true)
 				as ConditionalAttribute[];
 			if (attrs.Length == 0) {
-				analyzed_method_excluded.Add (mb, FALSE);
+				analyzed_method_excluded.Add (mb, false);
 				return false;
 			}
 
 			foreach (ConditionalAttribute a in attrs) {
 				if (loc.CompilationUnit.IsConditionalDefined (a.ConditionString)) {
-					analyzed_method_excluded.Add (mb, FALSE);
+					analyzed_method_excluded.Add (mb, false);
 					return false;
 				}
 			}
 
-			analyzed_method_excluded.Add (mb, TRUE);
+			analyzed_method_excluded.Add (mb, true);
 			return true;
 		}
 

@@ -1030,7 +1030,7 @@ namespace Mono.CSharp {
 			if (gc == null)
 				return MemberList.Empty;
 
-			ArrayList members = new ArrayList ();
+			var members = new List<MemberInfo> ();
 
 			if (gc.HasClassConstraint) {
 				MemberList list = TypeManager.FindMembers (

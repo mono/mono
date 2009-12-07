@@ -11,7 +11,6 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Reflection;
@@ -147,7 +146,7 @@ namespace Mono.CSharp {
 					XmlNodeList nl = n.SelectNodes (".//include");
 					if (nl.Count > 0) {
 						// It could result in current node removal, so prepare another list to iterate.
-						ArrayList al = new ArrayList (nl.Count);
+						var al = new List<XmlNode> (nl.Count);
 						foreach (XmlNode inc in nl)
 							al.Add (inc);
 						foreach (XmlElement inc in al)
@@ -198,8 +197,8 @@ namespace Mono.CSharp {
 				keep_include_node = true;
 			}
 			else {
-				XmlDocument doc = RootContext.Documentation.StoredDocuments [file] as XmlDocument;
-				if (doc == null) {
+				XmlDocument doc;
+				if (!RootContext.Documentation.StoredDocuments.TryGetValue (file, out doc)) {
 					try {
 						doc = new XmlDocument ();
 						doc.Load (file);
@@ -383,7 +382,7 @@ namespace Mono.CSharp {
 			if (ml == null)
 				return empty_member_infos;
 
-			ArrayList al = new ArrayList (ml.Length);
+			var al = new List<MemberInfo> (ml.Length);
 			for (int i = 0; i < ml.Length; i++) {
 				MethodBase mx = ml [i] as MethodBase;
 				PropertyInfo px = ml [i] as PropertyInfo;
@@ -412,7 +411,7 @@ namespace Mono.CSharp {
 				}
 				al.Add (ml [i]);
 			}
-			return al.ToArray (typeof (MemberInfo)) as MemberInfo [];
+			return al.ToArray ();
 		}
 
 		struct FoundMember
@@ -646,7 +645,7 @@ namespace Mono.CSharp {
 				parameter_types = Type.EmptyTypes;
 			else {
 				string [] param_list = parameters.Split (',');
-				ArrayList plist = new ArrayList ();
+				var plist = new List<Type> ();
 				for (int i = 0; i < param_list.Length; i++) {
 					string param_type_name = param_list [i].Trim (wsChars);
 					Normalize (mc, ref param_type_name, Report);
@@ -658,7 +657,7 @@ namespace Mono.CSharp {
 					}
 					plist.Add (param_type);
 				}
-				parameter_types = plist.ToArray (typeof (Type)) as Type [];
+				parameter_types = plist.ToArray ();
 			}
 
 			Type type = FindDocumentedType (mc, name, ds, cref, Report);
@@ -880,7 +879,7 @@ namespace Mono.CSharp {
 		internal static void OnMethodGenerateDocComment (
 			MethodCore mc, XmlElement el, Report Report)
 		{
-			Hashtable paramTags = new Hashtable ();
+			var paramTags = new Dictionary<string, string> ();
 			foreach (XmlElement pelem in el.SelectNodes ("param")) {
 				string xname = pelem.GetAttribute ("name");
 				if (xname.Length == 0)
@@ -888,14 +887,14 @@ namespace Mono.CSharp {
 				if (xname != "" && mc.Parameters.GetParameterIndexByName (xname) < 0)
 					Report.Warning (1572, 2, mc.Location, "XML comment on `{0}' has a param tag for `{1}', but there is no parameter by that name",
 						mc.GetSignatureForError (), xname);
-				else if (paramTags [xname] != null)
+				else if (paramTags.ContainsKey (xname))
 					Report.Warning (1571, 2, mc.Location, "XML comment on `{0}' has a duplicate param tag for `{1}'",
 						mc.GetSignatureForError (), xname);
 				paramTags [xname] = xname;
 			}
 			IParameterData [] plist = mc.Parameters.FixedParameters;
 			foreach (Parameter p in plist) {
-				if (paramTags.Count > 0 && paramTags [p.Name] == null)
+				if (paramTags.Count > 0 && !paramTags.ContainsKey (p.Name))
 					Report.Warning (1573, 4, mc.Location, "Parameter `{0}' has no matching param tag in the XML comment for `{1}'",
 						p.Name, mc.GetSignatureForError ());
 			}
@@ -964,7 +963,7 @@ namespace Mono.CSharp {
 		// Stores XmlDocuments that are included in XML documentation.
 		// Keys are included filenames, values are XmlDocuments.
 		//
-		public Hashtable StoredDocuments = new Hashtable ();
+		public Dictionary<string, XmlDocument> StoredDocuments = new Dictionary<string, XmlDocument> ();
 
 		//
 		// Outputs XML documentation comment from tokenized comments.

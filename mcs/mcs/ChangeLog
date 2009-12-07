@@ -1,3 +1,7 @@
+2009-12-07  Marek Safar  <marek.safar@gmail.com>
+
+	*.cs: Moving to generics world.
+
 2009-12-04  Marek Safar  <marek.safar@gmail.com>
 
 	*.cs: Moving to generics world (day 2).

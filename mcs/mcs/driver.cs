@@ -16,7 +16,6 @@ namespace Mono.CSharp
 	using System;
 	using System.Reflection;
 	using System.Reflection.Emit;
-	using System.Collections;
 	using System.Collections.Generic;
 	using System.IO;
 	using System.Text;
@@ -492,7 +491,7 @@ namespace Mono.CSharp
 		static string [] LoadArgs (string file)
 		{
 			StreamReader f;
-			ArrayList args = new ArrayList ();
+			var args = new List<string> ();
 			string line;
 			try {
 				f = new StreamReader (file);
@@ -532,10 +531,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			string [] ret_value = new string [args.Count];
-			args.CopyTo (ret_value, 0);
-
-			return ret_value;
+			return args.ToArray ();
 		}
 
 		//
@@ -594,7 +590,7 @@ namespace Mono.CSharp
 			modules = new List<string> (2);
 			link_paths = new List<string> ();
 
-			ArrayList response_file_list = null;
+			List<string> response_file_list = null;
 			bool parsing_options = true;
 
 			for (int i = 0; i < args.Length; i++) {
@@ -607,7 +603,7 @@ namespace Mono.CSharp
 					string response_file = arg.Substring (1);
 
 					if (response_file_list == null)
-						response_file_list = new ArrayList ();
+						response_file_list = new List<string> ();
 
 					if (response_file_list.Contains (response_file)) {
 						Report.Error (

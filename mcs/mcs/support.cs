@@ -4,62 +4,39 @@
 //
 // Author:
 //   Miguel de Icaza (miguel@ximian.com)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2001 Ximian, Inc (http://www.ximian.com)
-// Copyright 2003-2008 Novell, Inc
+// Copyright 2003-2009 Novell, Inc
 //
 
 using System;
 using System.IO;
 using System.Text;
 using System.Reflection;
-using System.Collections;
 using System.Reflection.Emit;
 using System.Globalization;
+using System.Collections.Generic;
 
 namespace Mono.CSharp {
 
-	class PtrHashtable : Hashtable {
-		sealed class PtrComparer : IComparer, IEqualityComparer
+	class ReferenceEquality<T> : IEqualityComparer<T> where T : class
+	{
+		public static readonly IEqualityComparer<T> Default = new ReferenceEquality<T> ();
+
+		private ReferenceEquality ()
 		{
-			private PtrComparer () {}
-
-			public static PtrComparer Instance = new PtrComparer ();
-
-			public int Compare (object x, object y)
-			{
-				if (x == y)
-					return 0;
-				else
-					return 1;
-			}
-
-			bool IEqualityComparer.Equals (object x, object y)
-			{
-				return x == y;
-			}
-			
-			int IEqualityComparer.GetHashCode (object obj)
-			{
-				return obj.GetHashCode ();
-			}
 		}
 
-		public PtrHashtable () : base (PtrComparer.Instance) {}
-
-#if MS_COMPATIBLE
-		//
-		// Workaround System.InvalidOperationException for enums
-		//
-		protected override int GetHash (object key)
+		public bool Equals (T x, T y)
 		{
-			TypeBuilder tb = key as TypeBuilder;
-			if (tb != null && tb.BaseType == TypeManager.enum_type && tb.BaseType != null)
-				key = tb.BaseType;
-
-			return base.GetHash (key);
+			return object.ReferenceEquals (x, y);
 		}
-#endif
+
+		public int GetHashCode (T obj)
+		{
+			return obj == null ? 0 : obj.GetHashCode ();
+		}
 	}
 
 	public class Accessors {
