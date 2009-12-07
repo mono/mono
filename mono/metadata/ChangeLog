@@ -1,5 +1,13 @@
 2009-12-07  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-pinning.c: When pinning, make only one pass
+	through the potential roots, then sort the results and find the
+	pinned objects from there.
+
+	* Makefile.am: sgen-pinning.c added.
+
+2009-12-07  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Record generic stores in specialized remset buffers.
 
 2009-12-06  Mark Probst  <mark.probst@gmail.com>
