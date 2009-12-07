@@ -1,5 +1,10 @@
 2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : fix regression; ServiceBehaviorAttribute
+	  could be set explicitly null.
+
+2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : handle AddressFilterMode (.Any only yet).
 	* OperationInvokerHandler.cs : fix wrong IAsyncResult use.
 

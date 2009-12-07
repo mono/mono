@@ -339,7 +339,9 @@ namespace System.ServiceModel.Dispatcher
 			public ListenerLoopManager (ChannelDispatcher owner)
 			{
 				this.owner = owner;
-				address_filter_mode = owner.Host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().AddressFilterMode;
+				var sba = owner.Host != null ? owner.Host.Description.Behaviors.Find<ServiceBehaviorAttribute> () : null;
+				if (sba != null)
+					address_filter_mode = sba.AddressFilterMode;
 			}
 
 			public void Setup (TimeSpan openTimeout)
