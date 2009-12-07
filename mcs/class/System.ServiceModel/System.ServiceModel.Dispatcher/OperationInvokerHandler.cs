@@ -58,11 +58,12 @@ namespace System.ServiceModel.Dispatcher
 		{
 			DispatchOperation operation = mrc.Operation;
 			DispatchRuntime dispatchRuntime = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
-			operation.Invoker.InvokeBegin (instance, parameters,
-					delegate (IAsyncResult res) {						
+			IAsyncResult ar = null;
+			ar = operation.Invoker.InvokeBegin (instance, parameters,
+					delegate (IAsyncResult res) {
 						try {
 							object result;
-							result = operation.Invoker.InvokeEnd (instance, out parameters, res);
+							result = operation.Invoker.InvokeEnd (instance, out parameters, ar);
 							HandleInvokeResult (mrc, parameters, result);
 							Reply (mrc, true);
 						} catch (Exception ex) {

@@ -334,10 +334,12 @@ namespace System.ServiceModel.Dispatcher
 			TimeSpan close_timeout;
 			Func<IAsyncResult> channel_acceptor;
 			List<IChannel> channels = new List<IChannel> ();
+			AddressFilterMode address_filter_mode;
 
 			public ListenerLoopManager (ChannelDispatcher owner)
 			{
 				this.owner = owner;
+				address_filter_mode = owner.Host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().AddressFilterMode;
 			}
 
 			public void Setup (TimeSpan openTimeout)
@@ -623,9 +625,11 @@ namespace System.ServiceModel.Dispatcher
 
 			bool MessageMatchesEndpointDispatcher (Message req, EndpointDispatcher endpoint)
 			{
+				// FIXME: handle AddressFilterMode.Prefix too.
+
 				Uri to = req.Headers.To;
 				if (to == null)
-					return false;
+					return address_filter_mode == AddressFilterMode.Any;
 				if (to.AbsoluteUri == Constants.WsaAnonymousUri)
 					return false;
 				return endpoint.AddressFilter.Match (req) && endpoint.ContractFilter.Match (req);
