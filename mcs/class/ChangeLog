@@ -1,3 +1,7 @@
+2009-12-07  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Add System.Core to basic.
+
 2009-11-26  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Add Mono.CSharp.
