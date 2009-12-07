@@ -1,5 +1,6 @@
-﻿using System;
+using System;
 using System.Collections.Generic;
+using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Channels;
@@ -34,7 +35,7 @@ namespace System.ServiceModel.Dispatcher
 			}
 			createdByUserProvider = false;
 			return Activator.CreateInstance (
-				dispatch_runtime.ChannelDispatcher.Host.Description.ServiceType);			
+				dispatch_runtime.ChannelDispatcher.Host.Description.ServiceType, true);
 		}
 
 		internal IInstanceContextProvider InstanceContextProvider {

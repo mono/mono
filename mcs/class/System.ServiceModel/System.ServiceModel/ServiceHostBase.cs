@@ -163,7 +163,7 @@ namespace System.ServiceModel
 
 		protected void AddBaseAddress (Uri baseAddress)
 		{
-			if (Description != null)
+			if (base_addresses == null)
 				throw new InvalidOperationException ("Base addresses must be added before the service description is initialized");
 			base_addresses.Add (baseAddress);
 		}

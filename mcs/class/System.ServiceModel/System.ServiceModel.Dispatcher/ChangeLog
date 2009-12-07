@@ -1,3 +1,8 @@
+2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InstanceBehavior.cs : allow nonpublic instance.
+	* DefaultOperationInvoker.cs : do use IsSynchronous correctly.
+
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : disable concurrent channel acceptance

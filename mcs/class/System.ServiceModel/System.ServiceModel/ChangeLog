@@ -1,3 +1,8 @@
+2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : in AddBaseAddress(), use base_addresses
+	  instead of Description. It could be called in InitializeDescription.
+
 2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BasicHttpBinding.cs : handle transport security properties.
