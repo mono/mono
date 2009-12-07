@@ -1,5 +1,10 @@
 2009-12-07  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Make sure section->data is aligned to 8 bytes by
+	possibly adding padding to sizeof (GCMemSection).
+
+2009-12-07  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c (mono_gc_wbarrier_nostore): Skip the remset if the
 	reference is not in the nursery.
 
