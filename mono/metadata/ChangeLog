@@ -1,3 +1,7 @@
+2009-12-07  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Record generic stores in specialized remset buffers.
+
 2009-12-06  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Make pinned chunks the same size as major heap
