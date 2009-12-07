@@ -19,6 +19,10 @@ LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
 CLR_PROFILE := $(filter 2.0 4.0, $(FRAMEWORK_VERSION))
+ifeq (basic, $(PROFILE))
+CLR_PROFILE :=
+endif
+
 ifdef CLR_PROFILE
 LIB_MCS_FLAGS += -r:Mono.Posix -unsafe
 endif

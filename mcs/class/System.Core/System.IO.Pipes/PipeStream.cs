@@ -25,6 +25,9 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+
+#if !BOOTSTRAP_BASIC
+
 using Microsoft.Win32.SafeHandles;
 using System;
 using System.IO;
@@ -319,3 +322,5 @@ namespace System.IO.Pipes
 		}
 	}
 }
+
+#endif
