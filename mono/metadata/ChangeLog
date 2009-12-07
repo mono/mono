@@ -1,3 +1,10 @@
+2009-12-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_from_typeref): Bounds check idx against the 
+	assemblyref table.
+
+	Backport of r147797.
+
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
 	Applied patch from Laurent Etiemble (laurent.etiemble@gmail.com).
