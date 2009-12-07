@@ -1,3 +1,11 @@
+2009-12-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c: Put our methods/globals into the 'llvm.used' array, so the
+	LLVM optimizations don't try to remove them.
+
+	* aot-compiler.c (emit_llvm_file): Save the result of opt into a
+	different file so the original remains.
+
 2009-12-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c mini.c: Fix alignment issues with SIMD vars.
