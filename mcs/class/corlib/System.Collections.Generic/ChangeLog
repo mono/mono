@@ -1,3 +1,9 @@
+2009-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* KeyValuePair.cs: we need setters for Key and Value so they can
+	be set via reflection from
+	System.ServiceModel.System.Runtime.Serialization.Json.TypeMap.cs.
+
 2009-11-26  Marek Safar <marek.safar@gmail.com>
 	
 	* CollectionDebuggerView.cs: Removed limit restriction.

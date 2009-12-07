@@ -1,3 +1,29 @@
+2009-12-06  Chris Toshok  <toshok@ximian.com>
+
+	* JsonSerializationReader.cs (DeserializeGenericCollection): this
+	is jb's (iirc) patch, actually.  Types subclassing from
+	ICollection<T> need to be supported, and since it's an interface
+	the implementation might be explicit.  So instead of groveling
+	around in the actual type, we need to dispatch through the
+	interface's method.
+
+	* TypeMap.cs (CreateDefaultTypeMap): we need to include non-public
+	properties, since KeyValuePair items must be able to write to Key
+	and Value properties.
+
+	* JsonReader.cs (ReadContent): for builtin values (null, true,
+	false), use TryReadString instead of individual ReadChar's, since
+	they aren't reversible if the string didn't match.  In the default
+	case, if we're LameSilverlightLiseralParser, we need to push back
+	the current character onto the stream -- this is because for
+	netflix's AppConfig.json we were parsing "frameRatePolicy" as
+	"rameRatePolicy" (the 'f' was triggering the "false" parsing).
+	(class PushBackReader): add this class to unify all the pushing
+	back of characters we need to do.  1 character (JsonReader's old
+	"saved_char") isn't enough given that you could have a property
+	named, e.g., "falsifiable", and we'd need 4 characters worth of
+	pushback to recognize that correctly.
+
 2009-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializer.cs, JsonReader.cs : Silverlight uses

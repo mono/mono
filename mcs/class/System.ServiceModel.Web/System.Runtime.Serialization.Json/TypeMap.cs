@@ -84,7 +84,7 @@ namespace System.Runtime.Serialization.Json
 			var l = new List<TypeMapMember> ();
 			foreach (var fi in type.GetFields ())
 				l.Add (new TypeMapField (fi, null));
-			foreach (var pi in type.GetProperties ())
+			foreach (var pi in type.GetProperties (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
 				if (pi.CanRead && pi.CanWrite)
 					l.Add (new TypeMapProperty (pi, null));
 			l.Sort ((x, y) => x.Order != y.Order ? x.Order - y.Order : String.Compare (x.Name, y.Name, StringComparison.Ordinal));

@@ -34,6 +34,46 @@ using System.Xml;
 
 namespace System.Runtime.Serialization.Json
 {
+	class PushbackReader : StreamReader
+	{
+		Stack<int> pushback;
+
+		public PushbackReader (Stream stream, Encoding encoding) : base (stream, encoding)
+		{
+			pushback = new Stack<int>();
+		}
+
+		public override void Close ()
+		{
+			pushback.Clear ();
+		}
+
+		public override int Peek ()
+		{
+			if (pushback.Count > 0) {
+				return pushback.Peek ();
+			}
+			else {
+				return base.Peek ();
+			}
+		}
+
+		public override int Read ()
+		{
+			if (pushback.Count > 0) {
+				return pushback.Pop ();
+			}
+			else {
+				return base.Read ();
+			}
+		}
+
+		public void Pushback (int ch)
+		{
+			pushback.Push (ch);
+		}
+	}
+
 	// FIXME: quotas check
 	class JsonReader : XmlDictionaryReader, IXmlJsonReaderInitializer, IXmlLineInfo
 	{
@@ -59,7 +99,7 @@ namespace System.Runtime.Serialization.Json
 			RuntimeTypeValue
 		}
 
-		TextReader reader;
+		PushbackReader reader;
 		XmlDictionaryReaderQuotas quotas;
 		OnXmlDictionaryReaderClose on_close;
 		XmlNameTable name_table = new NameTable ();
@@ -75,8 +115,6 @@ namespace System.Runtime.Serialization.Json
 		Stack<ElementInfo> elements = new Stack<ElementInfo> ();
 
 		int line = 1, column = 0;
-
-		int saved_char = -1;
 
 		// Constructors
 
@@ -116,7 +154,7 @@ namespace System.Runtime.Serialization.Json
 
 		public void SetInput (Stream stream, Encoding encoding, XmlDictionaryReaderQuotas quotas, OnXmlDictionaryReaderClose onClose)
 		{
-			reader = new StreamReader (stream, encoding ?? Encoding.UTF8);
+			reader = new PushbackReader (stream, encoding ?? Encoding.UTF8);
 			if (quotas == null)
 				throw new ArgumentNullException ("quotas");
 			this.quotas = quotas;
@@ -414,6 +452,20 @@ namespace System.Runtime.Serialization.Json
 			return true;
 		}
 
+		bool TryReadString (string str)
+		{
+			for (int i = 0; i < str.Length; i ++) {
+				int ch = ReadChar ();
+				if (ch != str[i]) {
+					for (int j = i; j >= 0; j--)
+						PushbackChar (j);
+					return false;
+				}
+			}
+
+			return true;
+		}
+
 		bool ReadContent (bool objectValue)
 		{
 			int ch = ReadChar ();
@@ -490,37 +542,47 @@ namespace System.Runtime.Serialization.Json
 				ReadNumber (ch);
 				return true;
 			case 'n':
-				if (ReadChar () == 'u' &&
-				    ReadChar () == 'l' &&
-				    ReadChar () == 'l') {
-				    	ReadAsSimpleContent ("null", "null");
+				if (TryReadString("ull")) {
+					ReadAsSimpleContent ("null", "null");
 					return true;
 				}
-				goto default;
+				else {
+					// the pushback for 'n' is taken care of by the
+					// default case if we're in lame silverlight literal
+					// mode
+					goto default;
+				}
 			case 't':
-				if (ReadChar () == 'r' &&
-				    ReadChar () == 'u' &&
-				    ReadChar () == 'e') {
-				    	ReadAsSimpleContent ("boolean", "true");
+				if (TryReadString ("rue")) {
+					ReadAsSimpleContent ("boolean", "true");
 					return true;
 				}
-				goto default;
+				else {
+					// the pushback for 't' is taken care of by the
+					// default case if we're in lame silverlight literal
+					// mode
+					goto default;
+				}
 			case 'f':
-				if (ReadChar () == 'a' &&
-				    ReadChar () == 'l' &&
-				    ReadChar () == 's' &&
-				    ReadChar () == 'e') {
-				    	ReadAsSimpleContent ("boolean", "false");
+				if (TryReadString ("alse")) {
+					ReadAsSimpleContent ("boolean", "false");
 					return true;
 				}
-				goto default;
+				else {
+					// the pushback for 'f' is taken care of by the
+					// default case if we're in lame silverlight literal
+					// mode
+					goto default;
+				}
 			default:
 				if ('0' <= ch && ch <= '9') {
 					ReadNumber (ch);
 					return true;
 				}
-				if (LameSilverlightLiteralParser)
+				if (LameSilverlightLiteralParser) {
+					PushbackChar (ch);
 					goto case '"';
+				}
 				throw XmlError (String.Format ("Unexpected token: '{0}' ({1:X04})", (char) ch, (int) ch));
 			}
 		}
@@ -619,7 +681,7 @@ namespace System.Runtime.Serialization.Json
 					break;
 				default:
 					if (!IsNumber (ch)) {
-						saved_char = ch;
+						PushbackChar (ch);
 						cont = false;
 					}
 					break;
@@ -711,15 +773,12 @@ namespace System.Runtime.Serialization.Json
 
 		int PeekChar ()
 		{
-			if (saved_char < 0)
-				saved_char = reader.Read ();
-			return saved_char;
+			return reader.Peek ();
 		}
 
 		int ReadChar ()
 		{
-			int v = saved_char >= 0 ? saved_char : reader.Read ();
-			saved_char = -1;
+			int v = reader.Read ();
 			if (v == '\n') {
 				line++;
 				column = 0;
@@ -727,6 +786,12 @@ namespace System.Runtime.Serialization.Json
 			else
 				column++;
 			return v;
+		}
+
+		void PushbackChar (int ch)
+		{
+			// FIXME handle lines (and columns?  ugh, how?)
+			reader.Pushback (ch);
 		}
 
 		void SkipWhitespaces ()

@@ -263,6 +263,12 @@ namespace System.Runtime.Serialization.Json
 			} else {
 				object c = Activator.CreateInstance (collectionType);
 				MethodInfo add = collectionType.GetMethod ("Add", new Type [] {elementType});
+				if (add == null) {
+					var icoll = typeof (ICollection<>).MakeGenericType (elementType);
+					if (icoll.IsAssignableFrom (c.GetType ()))
+						add = icoll.GetMethod ("Add");
+				}
+				
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (!reader.IsStartElement ("item"))
 						throw SerializationError (String.Format ("Expected element 'item', but found '{0}' in namespace '{1}'", reader.LocalName, reader.NamespaceURI));
