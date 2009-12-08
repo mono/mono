@@ -79,7 +79,7 @@ namespace DbMetal.Generator.EntityInterface.Implementation
         {
             writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression(sendPropertyChangedMethod,
                                                                                 writer.GetLiteralValue(property.Member))));
-            writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression("On" + property.Name + "Changed")));
+            writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression("On" + property.Member + "Changed")));
         }
     }
 }

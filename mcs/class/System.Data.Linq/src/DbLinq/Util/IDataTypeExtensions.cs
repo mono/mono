@@ -44,7 +44,7 @@ namespace DbLinq.Util
             var match = rawTypeEx.Match(rawType);
             if (match.Success)
             {
-                dataType.Type = match.Result("${type}");
+                dataType.SqlType = match.Result("${type}");
                 var rawLength = match.Result("${length}");
                 int length;
                 if (int.TryParse(rawLength, out length))
@@ -63,7 +63,7 @@ namespace DbLinq.Util
             }
             else
             {
-                dataType.Type = rawType;
+                dataType.SqlType = rawType;
                 dataType.Length = null;
                 dataType.Precision = null;
                 dataType.Scale = null;

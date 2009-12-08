@@ -39,9 +39,7 @@ namespace DbLinq.MySql
     partial class MySqlSchemaLoader : SchemaLoader
     {
         private readonly IVendor vendor = new MySqlVendor();
-        public override IVendor Vendor { get { return vendor; } }
-
-        public override System.Type DataContextType { get { return typeof(MySqlDataContext); } }
+        public override IVendor Vendor { get { return vendor; } set { } }
 
         protected override TableName CreateTableName(string dbTableName, string dbSchema, INameAliases nameAliases, NameFormat nameFormat)
         {

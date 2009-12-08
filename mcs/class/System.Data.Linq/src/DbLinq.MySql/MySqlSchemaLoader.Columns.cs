@@ -54,7 +54,7 @@ namespace DbLinq.MySql
             column.ColumnName = rdr.GetAsString(field++);
             string nullableStr = rdr.GetAsString(field++);
             column.Nullable = nullableStr == "YES";
-            column.Type = rdr.GetAsString(field++);
+            column.SqlType = rdr.GetAsString(field++);
             var extra = rdr.GetAsString(field++); 
             column.Generated = extra == "auto_increment";
             column.FullType = FormatFullType(rdr.GetAsString(field++));

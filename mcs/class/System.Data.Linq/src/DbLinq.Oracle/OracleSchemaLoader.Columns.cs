@@ -39,13 +39,13 @@ namespace DbLinq.Oracle
             column.TableSchema = rdr.GetString(field++);
             column.TableName = rdr.GetString(field++);
             column.ColumnName = rdr.GetString(field++);
-            column.Type = rdr.GetString(field++);
+            column.SqlType = rdr.GetString(field++);
             column.Length = rdr.GetAsNullableNumeric<long>(field++);
             column.Precision = rdr.GetAsNullableNumeric<int>(field++);
             column.Scale = rdr.GetAsNullableNumeric<int>(field++);
             string nullableStr = rdr.GetString(field++);
             column.Nullable = nullableStr == "Y";
-            column.FullType = column.Type;
+            column.FullType = column.SqlType;
             return column;
         }
 

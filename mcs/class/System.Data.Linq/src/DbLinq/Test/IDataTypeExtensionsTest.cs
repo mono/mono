@@ -51,7 +51,7 @@ namespace DbLinqTest
             string rawType = "int";
             IDataType dataType = new SchemaLoader.DataType();
             dataType.UnpackRawDbType(rawType);
-            Assert.AreEqual("int", dataType.Type);
+            Assert.AreEqual("int", dataType.SqlType);
             Assert.AreEqual(null, dataType.Length);
             Assert.AreEqual(null, dataType.Precision);
             Assert.AreEqual(null, dataType.Scale);
@@ -67,7 +67,7 @@ namespace DbLinqTest
             string rawType = "int(12)";
             IDataType dataType = new SchemaLoader.DataType();
             dataType.UnpackRawDbType(rawType);
-            Assert.AreEqual("int", dataType.Type);
+            Assert.AreEqual("int", dataType.SqlType);
             Assert.AreEqual(12, dataType.Length);
             Assert.AreEqual(12, dataType.Precision);
             Assert.AreEqual(null, dataType.Scale);
@@ -83,7 +83,7 @@ namespace DbLinqTest
             string rawType = "number(15,5)";
             IDataType dataType = new SchemaLoader.DataType();
             dataType.UnpackRawDbType(rawType);
-            Assert.AreEqual("number", dataType.Type);
+            Assert.AreEqual("number", dataType.SqlType);
             Assert.AreEqual(15, dataType.Length);
             Assert.AreEqual(15, dataType.Precision);
             Assert.AreEqual(5, dataType.Scale);
@@ -99,7 +99,7 @@ namespace DbLinqTest
             string rawType = "type()";
             IDataType dataType = new SchemaLoader.DataType();
             dataType.UnpackRawDbType(rawType);
-            Assert.AreEqual("type", dataType.Type);
+            Assert.AreEqual("type", dataType.SqlType);
             Assert.AreEqual(null, dataType.Length);
             Assert.AreEqual(null, dataType.Precision);
             Assert.AreEqual(null, dataType.Scale);
@@ -114,7 +114,7 @@ namespace DbLinqTest
             string rawType = "smallint unsigned";
             IDataType dataType = new SchemaLoader.DataType();
             dataType.UnpackRawDbType(rawType);
-            Assert.AreEqual("smallint", dataType.Type);
+            Assert.AreEqual("smallint", dataType.SqlType);
             Assert.AreEqual(null, dataType.Length);
             Assert.AreEqual(null, dataType.Precision);
             Assert.AreEqual(null, dataType.Scale);

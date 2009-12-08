@@ -53,7 +53,7 @@ namespace DbLinq.Oracle
             parameter.Name = dataRecord.GetAsString(field++);
             parameter.Schema = dataRecord.GetAsString(field++);
             parameter.Type = new DataType();
-            parameter.Type.Type = dataRecord.GetAsString(field++);
+            parameter.Type.SqlType = dataRecord.GetAsString(field++);
             parameter.Type.Length = dataRecord.GetAsNullableNumeric<long>(field++);
             parameter.Type.Precision = dataRecord.GetAsNullableNumeric<int>(field++);
             parameter.Type.Scale = dataRecord.GetAsNullableNumeric<int>(field++);
@@ -88,7 +88,7 @@ from all_arguments where lower(owner) = :db order by object_id, position";
                 if (parameter.Name == null)
                 {
                     var returnParameter = new Return();
-                    returnParameter.DbType = parameter.Type.Type;
+                    returnParameter.DbType = parameter.Type.SqlType;
                     returnParameter.Type = MapDbType(parameter.Name, parameter.Type).ToString();
 
                     function.IsComposable = true;
@@ -97,7 +97,7 @@ from all_arguments where lower(owner) = :db order by object_id, position";
                 else
                 {
                     var functionParameter = new Parameter();
-                    functionParameter.DbType = parameter.Type.Type;
+                    functionParameter.DbType = parameter.Type.SqlType;
                     functionParameter.Type = MapDbType(parameter.Name, parameter.Type).ToString();
                     if (parameter.In)
                     {

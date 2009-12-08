@@ -48,7 +48,13 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
     {
         protected virtual void WriteClasses(CodeWriter writer, Database schema, GenerationContext context)
         {
-            foreach (var table in schema.Tables)
+            IEnumerable<Table> tables = schema.Tables;
+
+            var types = context.Parameters.GenerateTypes;
+            if (types.Count > 0)
+                tables = tables.Where(t => types.Contains(t.Type.Name));
+
+            foreach (var table in tables)
                 WriteClass(writer, table, schema, context);
         }
 
@@ -74,7 +80,7 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
             using (WriteAttributes(writer, GetAttributeNames(context, context.Parameters.EntityExposedAttributes)))
             using (writer.WriteAttribute(tableAttribute))
             using (writer.WriteClass(specifications,
-                                     table.Type.Name, entityBase, context.Parameters.EntityImplementedInterfaces))
+                                     table.Type.Name, entityBase, context.Parameters.EntityInterfaces))
             {
                 WriteClassHeader(writer, table, context);
                 WriteCustomTypes(writer, table, schema, context);
@@ -181,8 +187,8 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                 writer.WriteLine("partial void OnCreated();");
                 foreach (var c in table.Type.Columns)
                 {
-                    writer.WriteLine("partial void On{0}Changed();", c.Name);
-                    writer.WriteLine("partial void On{0}Changing({1} value);", c.Name, GetTypeOrExtendedType(writer, c));
+                    writer.WriteLine("partial void On{0}Changed();", c.Member);
+                    writer.WriteLine("partial void On{0}Changing({1} value);", c.Member, GetTypeOrExtendedType(writer, c));
                 }
             }
         }

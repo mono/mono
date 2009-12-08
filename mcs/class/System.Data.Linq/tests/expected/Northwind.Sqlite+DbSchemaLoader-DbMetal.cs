@@ -17,7 +17,12 @@ using System.Data;
 using System.Data.Linq.Mapping;
 using System.Diagnostics;
 using System.Reflection;
+#if MONO_STRICT
 using System.Data.Linq;
+#else   // MONO_STRICT
+using DbLinq.Data.Linq;
+using DbLinq.Vendor;
+#endif  // MONO_STRICT
 using System.ComponentModel;
 
 namespace nwind
@@ -37,7 +42,11 @@ namespace nwind
 		}
 
 		public Northwind(IDbConnection connection)
+		#if MONO_STRICT
 			: base(connection)
+		#else   // MONO_STRICT
+			: base(connection, new DbLinq.Sqlite.SqliteVendor())
+		#endif  // MONO_STRICT
 		{
 			OnCreated();
 		}
@@ -53,6 +62,22 @@ namespace nwind
 		{
 			OnCreated();
 		}
+
+		#if !MONO_STRICT
+		public Northwind(IDbConnection connection, IVendor vendor)
+			: base(connection, vendor)
+		{
+			OnCreated();
+		}
+		#endif  // !MONO_STRICT
+
+		#if !MONO_STRICT
+		public Northwind(IDbConnection connection, MappingSource mappingSource, IVendor vendor)
+			: base(connection, mappingSource, vendor)
+		{
+			OnCreated();
+		}
+		#endif  // !MONO_STRICT
 
 		public Table<Category> Categories { get { return GetTable<Category>(); } }
 		public Table<Customer> Customers { get { return GetTable<Customer>(); } }
@@ -70,7 +95,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Categories")]
+	[Table(Name = "Categories")]
 	public partial class Category : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -106,7 +131,7 @@ namespace nwind
 
 		partial void OnCreated();
 		partial void OnCategoryIDChanged();
-		partial void OnCategoryIDChanging(int value);
+		partial void OnCategoryIDChanging(long value);
 		partial void OnCategoryNameChanged();
 		partial void OnCategoryNameChanging(string value);
 		partial void OnDescriptionChanged();
@@ -116,12 +141,12 @@ namespace nwind
 
 		#endregion
 
-		#region int CategoryID
+		#region long CategoryID
 
-		private int _categoryID;
+		private long _categoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryID", Name = "CategoryID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int CategoryID
+		[Column(Storage = "_categoryID", Name = "CategoryID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long CategoryID
 		{
 			get
 			{
@@ -146,7 +171,7 @@ namespace nwind
 
 		private string _categoryName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryName", Name = "CategoryName", DbType = "nvarchar (15)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_categoryName", Name = "CategoryName", DbType = "nvarchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CategoryName
 		{
 			get
@@ -172,7 +197,7 @@ namespace nwind
 
 		private string _description;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_description", Name = "Description", DbType = "ntext", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_description", Name = "Description", DbType = "ntext", AutoSync = AutoSync.Never)]
 		public string Description
 		{
 			get
@@ -198,7 +223,7 @@ namespace nwind
 
 		private Byte[] _picture;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_picture", Name = "Picture", DbType = "image", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_picture", Name = "Picture", DbType = "image", AutoSync = AutoSync.Never)]
 		public Byte[] Picture
 		{
 			get
@@ -223,7 +248,7 @@ namespace nwind
 		#region Children
 
 		private EntitySet<Product> _products;
-		[Association(Storage = "_products", OtherKey = "CategoryID", ThisKey = "CategoryID", Name = "fk_Products_1")]
+		[Association(Storage = "_products", OtherKey = "CategoryID", ThisKey = "CategoryID", Name = "FK_Products_1")]
 		[DebuggerNonUserCode]
 		public EntitySet<Product> Products
 		{
@@ -267,7 +292,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Customers")]
+	[Table(Name = "Customers")]
 	public partial class Customer : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -331,7 +356,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Address
 		{
 			get
@@ -357,7 +382,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_city", Name = "City", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string City
 		{
 			get
@@ -383,7 +408,7 @@ namespace nwind
 
 		private string _companyName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CompanyName
 		{
 			get
@@ -409,7 +434,7 @@ namespace nwind
 
 		private string _contactName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactName", Name = "ContactName", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_contactName", Name = "ContactName", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ContactName
 		{
 			get
@@ -435,7 +460,7 @@ namespace nwind
 
 		private string _contactTitle;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactTitle", Name = "ContactTitle", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_contactTitle", Name = "ContactTitle", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ContactTitle
 		{
 			get
@@ -461,7 +486,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Country
 		{
 			get
@@ -487,7 +512,7 @@ namespace nwind
 
 		private string _customerID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
+		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CustomerID
 		{
 			get
@@ -513,7 +538,7 @@ namespace nwind
 
 		private string _fax;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_fax", Name = "Fax", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_fax", Name = "Fax", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Fax
 		{
 			get
@@ -539,7 +564,7 @@ namespace nwind
 
 		private string _phone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Phone
 		{
 			get
@@ -565,7 +590,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string PostalCode
 		{
 			get
@@ -591,7 +616,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Region
 		{
 			get
@@ -615,23 +640,8 @@ namespace nwind
 
 		#region Children
 
-		private EntitySet<CustomerCustomerDemo> _customerCustomerDemo;
-		[Association(Storage = "_customerCustomerDemo", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "fk_CustomerCustomerDemo_0")]
-		[DebuggerNonUserCode]
-		public EntitySet<CustomerCustomerDemo> CustomerCustomerDemo
-		{
-			get
-			{
-				return _customerCustomerDemo;
-			}
-			set
-			{
-				_customerCustomerDemo = value;
-			}
-		}
-
 		private EntitySet<Order> _orders;
-		[Association(Storage = "_orders", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "fk_Orders_2")]
+		[Association(Storage = "_orders", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "FK_Orders_2")]
 		[DebuggerNonUserCode]
 		public EntitySet<Order> Orders
 		{
@@ -645,20 +655,25 @@ namespace nwind
 			}
 		}
 
+		private EntitySet<CustomerCustomerDemo> _customerCustomerDemo;
+		[Association(Storage = "_customerCustomerDemo", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "FK_CustomerCustomerDemo_0")]
+		[DebuggerNonUserCode]
+		public EntitySet<CustomerCustomerDemo> CustomerCustomerDemo
+		{
+			get
+			{
+				return _customerCustomerDemo;
+			}
+			set
+			{
+				_customerCustomerDemo = value;
+			}
+		}
+
 
 		#endregion
 
 		#region Attachement handlers
-
-		private void CustomerCustomerDemo_Attach(CustomerCustomerDemo entity)
-		{
-			entity.Customer = this;
-		}
-
-		private void CustomerCustomerDemo_Detach(CustomerCustomerDemo entity)
-		{
-			entity.Customer = null;
-		}
 
 		private void Orders_Attach(Order entity)
 		{
@@ -670,6 +685,16 @@ namespace nwind
 			entity.Customer = null;
 		}
 
+		private void CustomerCustomerDemo_Attach(CustomerCustomerDemo entity)
+		{
+			entity.Customer = this;
+		}
+
+		private void CustomerCustomerDemo_Detach(CustomerCustomerDemo entity)
+		{
+			entity.Customer = null;
+		}
+
 
 		#endregion
 
@@ -677,8 +702,8 @@ namespace nwind
 
 		public Customer()
 		{
-			_customerCustomerDemo = new EntitySet<CustomerCustomerDemo>(CustomerCustomerDemo_Attach, CustomerCustomerDemo_Detach);
 			_orders = new EntitySet<Order>(Orders_Attach, Orders_Detach);
+			_customerCustomerDemo = new EntitySet<CustomerCustomerDemo>(CustomerCustomerDemo_Attach, CustomerCustomerDemo_Detach);
 			OnCreated();
 		}
 
@@ -686,7 +711,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.CustomerCustomerDemo")]
+	[Table(Name = "CustomerCustomerDemo")]
 	public partial class CustomerCustomerDemo : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -732,7 +757,7 @@ namespace nwind
 
 		private string _customerID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
+		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CustomerID
 		{
 			get
@@ -762,7 +787,7 @@ namespace nwind
 
 		private string _customerTypeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerTypeID", Name = "CustomerTypeID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
+		[Column(Storage = "_customerTypeID", Name = "CustomerTypeID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CustomerTypeID
 		{
 			get
@@ -791,7 +816,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Customer> _customer;
-		[Association(Storage = "_customer", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "fk_CustomerCustomerDemo_0", IsForeignKey = true)]
+		[Association(Storage = "_customer", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "FK_CustomerCustomerDemo_0", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Customer Customer
 		{
@@ -824,7 +849,7 @@ namespace nwind
 		}
 
 		private EntityRef<CustomerDemographic> _customerDemographic;
-		[Association(Storage = "_customerDemographic", OtherKey = "CustomerTypeID", ThisKey = "CustomerTypeID", Name = "fk_CustomerCustomerDemo_1", IsForeignKey = true)]
+		[Association(Storage = "_customerDemographic", OtherKey = "CustomerTypeID", ThisKey = "CustomerTypeID", Name = "FK_CustomerCustomerDemo_1", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public CustomerDemographic CustomerDemographic
 		{
@@ -872,7 +897,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.CustomerDemographics")]
+	[Table(Name = "CustomerDemographics")]
 	public partial class CustomerDemographic : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -918,7 +943,7 @@ namespace nwind
 
 		private string _customerDesc;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerDesc", Name = "CustomerDesc", DbType = "ntext", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_customerDesc", Name = "CustomerDesc", DbType = "ntext", AutoSync = AutoSync.Never)]
 		public string CustomerDesc
 		{
 			get
@@ -944,7 +969,7 @@ namespace nwind
 
 		private string _customerTypeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerTypeID", Name = "CustomerTypeID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
+		[Column(Storage = "_customerTypeID", Name = "CustomerTypeID", DbType = "nchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CustomerTypeID
 		{
 			get
@@ -969,7 +994,7 @@ namespace nwind
 		#region Children
 
 		private EntitySet<CustomerCustomerDemo> _customerCustomerDemo;
-		[Association(Storage = "_customerCustomerDemo", OtherKey = "CustomerTypeID", ThisKey = "CustomerTypeID", Name = "fk_CustomerCustomerDemo_1")]
+		[Association(Storage = "_customerCustomerDemo", OtherKey = "CustomerTypeID", ThisKey = "CustomerTypeID", Name = "FK_CustomerCustomerDemo_1")]
 		[DebuggerNonUserCode]
 		public EntitySet<CustomerCustomerDemo> CustomerCustomerDemo
 		{
@@ -1013,7 +1038,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Employees")]
+	[Table(Name = "Employees")]
 	public partial class Employee : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -1057,7 +1082,7 @@ namespace nwind
 		partial void OnCountryChanged();
 		partial void OnCountryChanging(string value);
 		partial void OnEmployeeIDChanged();
-		partial void OnEmployeeIDChanging(int value);
+		partial void OnEmployeeIDChanging(long value);
 		partial void OnExtensionChanged();
 		partial void OnExtensionChanging(string value);
 		partial void OnFirstNameChanged();
@@ -1079,7 +1104,7 @@ namespace nwind
 		partial void OnRegionChanged();
 		partial void OnRegionChanging(string value);
 		partial void OnReportsToChanged();
-		partial void OnReportsToChanging(int? value);
+		partial void OnReportsToChanging(long? value);
 		partial void OnTitleChanged();
 		partial void OnTitleChanging(string value);
 		partial void OnTitleOfCourtesyChanged();
@@ -1091,7 +1116,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Address
 		{
 			get
@@ -1117,7 +1142,7 @@ namespace nwind
 
 		private DateTime? _birthDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_birthDate", Name = "BirthDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_birthDate", Name = "BirthDate", DbType = "datetime", AutoSync = AutoSync.Never)]
 		public DateTime? BirthDate
 		{
 			get
@@ -1143,7 +1168,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_city", Name = "City", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string City
 		{
 			get
@@ -1169,7 +1194,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Country
 		{
 			get
@@ -1191,12 +1216,12 @@ namespace nwind
 
 		#endregion
 
-		#region int EmployeeID
+		#region long EmployeeID
 
-		private int _employeeID;
+		private long _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int EmployeeID
+		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long EmployeeID
 		{
 			get
 			{
@@ -1221,7 +1246,7 @@ namespace nwind
 
 		private string _extension;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_extension", Name = "Extension", DbType = "nvarchar (4)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_extension", Name = "Extension", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Extension
 		{
 			get
@@ -1247,7 +1272,7 @@ namespace nwind
 
 		private string _firstName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_firstName", Name = "FirstName", DbType = "nvarchar (10)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_firstName", Name = "FirstName", DbType = "nvarchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string FirstName
 		{
 			get
@@ -1273,7 +1298,7 @@ namespace nwind
 
 		private DateTime? _hireDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_hireDate", Name = "HireDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_hireDate", Name = "HireDate", DbType = "datetime", AutoSync = AutoSync.Never)]
 		public DateTime? HireDate
 		{
 			get
@@ -1299,7 +1324,7 @@ namespace nwind
 
 		private string _homePhone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_homePhone", Name = "HomePhone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_homePhone", Name = "HomePhone", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string HomePhone
 		{
 			get
@@ -1325,7 +1350,7 @@ namespace nwind
 
 		private string _lastName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_lastName", Name = "LastName", DbType = "nvarchar (20)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_lastName", Name = "LastName", DbType = "nvarchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string LastName
 		{
 			get
@@ -1351,7 +1376,7 @@ namespace nwind
 
 		private string _notes;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_notes", Name = "Notes", DbType = "ntext", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_notes", Name = "Notes", DbType = "ntext", AutoSync = AutoSync.Never)]
 		public string Notes
 		{
 			get
@@ -1377,7 +1402,7 @@ namespace nwind
 
 		private Byte[] _photo;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_photo", Name = "Photo", DbType = "image", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_photo", Name = "Photo", DbType = "image", AutoSync = AutoSync.Never)]
 		public Byte[] Photo
 		{
 			get
@@ -1403,7 +1428,7 @@ namespace nwind
 
 		private string _photoPath;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_photoPath", Name = "PhotoPath", DbType = "nvarchar (255)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_photoPath", Name = "PhotoPath", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string PhotoPath
 		{
 			get
@@ -1429,7 +1454,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string PostalCode
 		{
 			get
@@ -1455,7 +1480,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Region
 		{
 			get
@@ -1477,12 +1502,12 @@ namespace nwind
 
 		#endregion
 
-		#region int? ReportsTo
+		#region long? ReportsTo
 
-		private int? _reportsTo;
+		private long? _reportsTo;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_reportsTo", Name = "ReportsTo", DbType = "INTEGER", AutoSync = AutoSync.Never, CanBeNull = true)]
-		public int? ReportsTo
+		[Column(Storage = "_reportsTo", Name = "ReportsTo", DbType = "integer", AutoSync = AutoSync.Never)]
+		public long? ReportsTo
 		{
 			get
 			{
@@ -1511,7 +1536,7 @@ namespace nwind
 
 		private string _title;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_title", Name = "Title", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_title", Name = "Title", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Title
 		{
 			get
@@ -1537,7 +1562,7 @@ namespace nwind
 
 		private string _titleOfCourtesy;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_titleOfCourtesy", Name = "TitleOfCourtesy", DbType = "nvarchar (25)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_titleOfCourtesy", Name = "TitleOfCourtesy", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string TitleOfCourtesy
 		{
 			get
@@ -1561,23 +1586,8 @@ namespace nwind
 
 		#region Children
 
-		private EntitySet<EmployeeTerritory> _employeeTerritories;
-		[Association(Storage = "_employeeTerritories", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "fk_EmployeeTerritories_1")]
-		[DebuggerNonUserCode]
-		public EntitySet<EmployeeTerritory> EmployeeTerritories
-		{
-			get
-			{
-				return _employeeTerritories;
-			}
-			set
-			{
-				_employeeTerritories = value;
-			}
-		}
-
 		private EntitySet<Employee> _employees;
-		[Association(Storage = "_employees", OtherKey = "ReportsTo", ThisKey = "EmployeeID", Name = "fk_Employees_0")]
+		[Association(Storage = "_employees", OtherKey = "ReportsTo", ThisKey = "EmployeeID", Name = "FK_Employees_0")]
 		[DebuggerNonUserCode]
 		public EntitySet<Employee> Employees
 		{
@@ -1592,7 +1602,7 @@ namespace nwind
 		}
 
 		private EntitySet<Order> _orders;
-		[Association(Storage = "_orders", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "fk_Orders_1")]
+		[Association(Storage = "_orders", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "FK_Orders_1")]
 		[DebuggerNonUserCode]
 		public EntitySet<Order> Orders
 		{
@@ -1606,13 +1616,28 @@ namespace nwind
 			}
 		}
 
+		private EntitySet<EmployeeTerritory> _employeeTerritories;
+		[Association(Storage = "_employeeTerritories", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "FK_EmployeeTerritories_1")]
+		[DebuggerNonUserCode]
+		public EntitySet<EmployeeTerritory> EmployeeTerritories
+		{
+			get
+			{
+				return _employeeTerritories;
+			}
+			set
+			{
+				_employeeTerritories = value;
+			}
+		}
+
 
 		#endregion
 
 		#region Parents
 
 		private EntityRef<Employee> _reportsToEmployee;
-		[Association(Storage = "_reportsToEmployee", OtherKey = "EmployeeID", ThisKey = "ReportsTo", Name = "fk_Employees_0", IsForeignKey = true)]
+		[Association(Storage = "_reportsToEmployee", OtherKey = "EmployeeID", ThisKey = "ReportsTo", Name = "FK_Employees_0", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Employee ReportsToEmployee
 		{
@@ -1649,16 +1674,6 @@ namespace nwind
 
 		#region Attachement handlers
 
-		private void EmployeeTerritories_Attach(EmployeeTerritory entity)
-		{
-			entity.Employee = this;
-		}
-
-		private void EmployeeTerritories_Detach(EmployeeTerritory entity)
-		{
-			entity.Employee = null;
-		}
-
 		private void Employees_Attach(Employee entity)
 		{
 			entity.ReportsToEmployee = this;
@@ -1679,6 +1694,16 @@ namespace nwind
 			entity.Employee = null;
 		}
 
+		private void EmployeeTerritories_Attach(EmployeeTerritory entity)
+		{
+			entity.Employee = this;
+		}
+
+		private void EmployeeTerritories_Detach(EmployeeTerritory entity)
+		{
+			entity.Employee = null;
+		}
+
 
 		#endregion
 
@@ -1686,9 +1711,9 @@ namespace nwind
 
 		public Employee()
 		{
-			_employeeTerritories = new EntitySet<EmployeeTerritory>(EmployeeTerritories_Attach, EmployeeTerritories_Detach);
 			_employees = new EntitySet<Employee>(Employees_Attach, Employees_Detach);
 			_orders = new EntitySet<Order>(Orders_Attach, Orders_Detach);
+			_employeeTerritories = new EntitySet<EmployeeTerritory>(EmployeeTerritories_Attach, EmployeeTerritories_Detach);
 			_reportsToEmployee = new EntityRef<Employee>();
 			OnCreated();
 		}
@@ -1697,7 +1722,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.EmployeeTerritories")]
+	[Table(Name = "EmployeeTerritories")]
 	public partial class EmployeeTerritory : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -1733,18 +1758,18 @@ namespace nwind
 
 		partial void OnCreated();
 		partial void OnEmployeeIDChanged();
-		partial void OnEmployeeIDChanging(int value);
+		partial void OnEmployeeIDChanging(long value);
 		partial void OnTerritoryIDChanged();
 		partial void OnTerritoryIDChanging(string value);
 
 		#endregion
 
-		#region int EmployeeID
+		#region long EmployeeID
 
-		private int _employeeID;
+		private long _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int EmployeeID
+		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long EmployeeID
 		{
 			get
 			{
@@ -1773,7 +1798,7 @@ namespace nwind
 
 		private string _territoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryID", Name = "TerritoryID", DbType = "nvarchar", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
+		[Column(Storage = "_territoryID", Name = "TerritoryID", DbType = "nvarchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string TerritoryID
 		{
 			get
@@ -1802,7 +1827,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Territory> _territory;
-		[Association(Storage = "_territory", OtherKey = "TerritoryID", ThisKey = "TerritoryID", Name = "fk_EmployeeTerritories_0", IsForeignKey = true)]
+		[Association(Storage = "_territory", OtherKey = "TerritoryID", ThisKey = "TerritoryID", Name = "FK_EmployeeTerritories_0", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Territory Territory
 		{
@@ -1835,7 +1860,7 @@ namespace nwind
 		}
 
 		private EntityRef<Employee> _employee;
-		[Association(Storage = "_employee", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "fk_EmployeeTerritories_1", IsForeignKey = true)]
+		[Association(Storage = "_employee", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "FK_EmployeeTerritories_1", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Employee Employee
 		{
@@ -1861,7 +1886,7 @@ namespace nwind
 					}
 					else
 					{
-						_employeeID = default(int);
+						_employeeID = default(long);
 					}
 				}
 			}
@@ -1883,7 +1908,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Orders")]
+	[Table(Name = "Orders")]
 	public partial class Order : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -1921,13 +1946,13 @@ namespace nwind
 		partial void OnCustomerIDChanged();
 		partial void OnCustomerIDChanging(string value);
 		partial void OnEmployeeIDChanged();
-		partial void OnEmployeeIDChanging(int? value);
+		partial void OnEmployeeIDChanging(long? value);
 		partial void OnFreightChanged();
 		partial void OnFreightChanging(decimal? value);
 		partial void OnOrderDateChanged();
 		partial void OnOrderDateChanging(DateTime? value);
 		partial void OnOrderIDChanged();
-		partial void OnOrderIDChanging(int value);
+		partial void OnOrderIDChanging(long value);
 		partial void OnRequiredDateChanged();
 		partial void OnRequiredDateChanging(DateTime? value);
 		partial void OnShipAddressChanged();
@@ -1945,7 +1970,7 @@ namespace nwind
 		partial void OnShipRegionChanged();
 		partial void OnShipRegionChanging(string value);
 		partial void OnShipViaChanged();
-		partial void OnShipViaChanging(int? value);
+		partial void OnShipViaChanging(long? value);
 
 		#endregion
 
@@ -1953,7 +1978,7 @@ namespace nwind
 
 		private string _customerID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar (5)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_customerID", Name = "CustomerID", DbType = "nchar", AutoSync = AutoSync.Never)]
 		public string CustomerID
 		{
 			get
@@ -1979,12 +2004,12 @@ namespace nwind
 
 		#endregion
 
-		#region int? EmployeeID
+		#region long? EmployeeID
 
-		private int? _employeeID;
+		private long? _employeeID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "INTEGER", AutoSync = AutoSync.Never, CanBeNull = true)]
-		public int? EmployeeID
+		[Column(Storage = "_employeeID", Name = "EmployeeID", DbType = "integer", AutoSync = AutoSync.Never)]
+		public long? EmployeeID
 		{
 			get
 			{
@@ -2013,7 +2038,7 @@ namespace nwind
 
 		private decimal? _freight;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_freight", Name = "Freight", DbType = "money", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_freight", Name = "Freight", DbType = "money", AutoSync = AutoSync.Never)]
 		public decimal? Freight
 		{
 			get
@@ -2039,7 +2064,7 @@ namespace nwind
 
 		private DateTime? _orderDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderDate", Name = "OrderDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_orderDate", Name = "OrderDate", DbType = "datetime", AutoSync = AutoSync.Never)]
 		public DateTime? OrderDate
 		{
 			get
@@ -2061,12 +2086,12 @@ namespace nwind
 
 		#endregion
 
-		#region int OrderID
+		#region long OrderID
 
-		private int _orderID;
+		private long _orderID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderID", Name = "OrderID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int OrderID
+		[Column(Storage = "_orderID", Name = "OrderID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long OrderID
 		{
 			get
 			{
@@ -2091,7 +2116,7 @@ namespace nwind
 
 		private DateTime? _requiredDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_requiredDate", Name = "RequiredDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_requiredDate", Name = "RequiredDate", DbType = "datetime", AutoSync = AutoSync.Never)]
 		public DateTime? RequiredDate
 		{
 			get
@@ -2117,7 +2142,7 @@ namespace nwind
 
 		private string _shipAddress;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipAddress", Name = "ShipAddress", DbType = "nvarchar (60)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_shipAddress", Name = "ShipAddress", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ShipAddress
 		{
 			get
@@ -2143,7 +2168,7 @@ namespace nwind
 
 		private string _shipCity;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipCity", Name = "ShipCity", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_shipCity", Name = "ShipCity", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ShipCity
 		{
 			get
@@ -2169,7 +2194,7 @@ namespace nwind
 
 		private string _shipCountry;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipCountry", Name = "ShipCountry", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_shipCountry", Name = "ShipCountry", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ShipCountry
 		{
 			get
@@ -2195,7 +2220,7 @@ namespace nwind
 
 		private string _shipName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipName", Name = "ShipName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_shipName", Name = "ShipName", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ShipName
 		{
 			get
@@ -2221,7 +2246,7 @@ namespace nwind
 
 		private DateTime? _shippedDate;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shippedDate", Name = "ShippedDate", DbType = "datetime", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_shippedDate", Name = "ShippedDate", DbType = "datetime", AutoSync = AutoSync.Never)]
 		public DateTime? ShippedDate
 		{
 			get
@@ -2247,7 +2272,7 @@ namespace nwind
 
 		private string _shipPostalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipPostalCode", Name = "ShipPostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_shipPostalCode", Name = "ShipPostalCode", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ShipPostalCode
 		{
 			get
@@ -2273,7 +2298,7 @@ namespace nwind
 
 		private string _shipRegion;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipRegion", Name = "ShipRegion", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_shipRegion", Name = "ShipRegion", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ShipRegion
 		{
 			get
@@ -2295,12 +2320,12 @@ namespace nwind
 
 		#endregion
 
-		#region int? ShipVia
+		#region long? ShipVia
 
-		private int? _shipVia;
+		private long? _shipVia;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipVia", Name = "ShipVia", DbType = "INTEGER", AutoSync = AutoSync.Never, CanBeNull = true)]
-		public int? ShipVia
+		[Column(Storage = "_shipVia", Name = "ShipVia", DbType = "integer", AutoSync = AutoSync.Never)]
+		public long? ShipVia
 		{
 			get
 			{
@@ -2328,7 +2353,7 @@ namespace nwind
 		#region Children
 
 		private EntitySet<OrderDetail> _orderDetails;
-		[Association(Storage = "_orderDetails", OtherKey = "OrderID", ThisKey = "OrderID", Name = "\"fk_Order Details_1\"")]
+		[Association(Storage = "_orderDetails", OtherKey = "OrderID", ThisKey = "OrderID", Name = "\"FK_Order Details_1\"")]
 		[DebuggerNonUserCode]
 		public EntitySet<OrderDetail> OrderDetails
 		{
@@ -2348,7 +2373,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Shipper> _shipper;
-		[Association(Storage = "_shipper", OtherKey = "ShipperID", ThisKey = "ShipVia", Name = "fk_Orders_0", IsForeignKey = true)]
+		[Association(Storage = "_shipper", OtherKey = "ShipperID", ThisKey = "ShipVia", Name = "FK_Orders_0", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Shipper Shipper
 		{
@@ -2381,7 +2406,7 @@ namespace nwind
 		}
 
 		private EntityRef<Employee> _employee;
-		[Association(Storage = "_employee", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "fk_Orders_1", IsForeignKey = true)]
+		[Association(Storage = "_employee", OtherKey = "EmployeeID", ThisKey = "EmployeeID", Name = "FK_Orders_1", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Employee Employee
 		{
@@ -2414,7 +2439,7 @@ namespace nwind
 		}
 
 		private EntityRef<Customer> _customer;
-		[Association(Storage = "_customer", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "fk_Orders_2", IsForeignKey = true)]
+		[Association(Storage = "_customer", OtherKey = "CustomerID", ThisKey = "CustomerID", Name = "FK_Orders_2", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Customer Customer
 		{
@@ -2479,7 +2504,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.\"Order Details\"")]
+	[Table(Name = "\"Order Details\"")]
 	public partial class OrderDetail : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -2517,9 +2542,9 @@ namespace nwind
 		partial void OnDiscountChanged();
 		partial void OnDiscountChanging(float value);
 		partial void OnOrderIDChanged();
-		partial void OnOrderIDChanging(int value);
+		partial void OnOrderIDChanging(long value);
 		partial void OnProductIDChanged();
-		partial void OnProductIDChanging(int value);
+		partial void OnProductIDChanging(long value);
 		partial void OnQuantityChanged();
 		partial void OnQuantityChanging(short value);
 		partial void OnUnitPriceChanged();
@@ -2531,7 +2556,7 @@ namespace nwind
 
 		private float _discount;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_discount", Name = "Discount", DbType = "real", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_discount", Name = "Discount", DbType = "real", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public float Discount
 		{
 			get
@@ -2553,12 +2578,12 @@ namespace nwind
 
 		#endregion
 
-		#region int OrderID
+		#region long OrderID
 
-		private int _orderID;
+		private long _orderID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_orderID", Name = "OrderID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int OrderID
+		[Column(Storage = "_orderID", Name = "OrderID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long OrderID
 		{
 			get
 			{
@@ -2583,12 +2608,12 @@ namespace nwind
 
 		#endregion
 
-		#region int ProductID
+		#region long ProductID
 
-		private int _productID;
+		private long _productID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productID", Name = "ProductID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int ProductID
+		[Column(Storage = "_productID", Name = "ProductID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long ProductID
 		{
 			get
 			{
@@ -2617,7 +2642,7 @@ namespace nwind
 
 		private short _quantity;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_quantity", Name = "Quantity", DbType = "smallint", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_quantity", Name = "Quantity", DbType = "smallint", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public short Quantity
 		{
 			get
@@ -2643,7 +2668,7 @@ namespace nwind
 
 		private decimal _unitPrice;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitPrice", Name = "UnitPrice", DbType = "money", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_unitPrice", Name = "UnitPrice", DbType = "money", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public decimal UnitPrice
 		{
 			get
@@ -2668,7 +2693,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Product> _product;
-		[Association(Storage = "_product", OtherKey = "ProductID", ThisKey = "ProductID", Name = "\"fk_Order Details_0\"", IsForeignKey = true)]
+		[Association(Storage = "_product", OtherKey = "ProductID", ThisKey = "ProductID", Name = "\"FK_Order Details_0\"", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Product Product
 		{
@@ -2694,14 +2719,14 @@ namespace nwind
 					}
 					else
 					{
-						_productID = default(int);
+						_productID = default(long);
 					}
 				}
 			}
 		}
 
 		private EntityRef<Order> _order;
-		[Association(Storage = "_order", OtherKey = "OrderID", ThisKey = "OrderID", Name = "\"fk_Order Details_1\"", IsForeignKey = true)]
+		[Association(Storage = "_order", OtherKey = "OrderID", ThisKey = "OrderID", Name = "\"FK_Order Details_1\"", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Order Order
 		{
@@ -2727,7 +2752,7 @@ namespace nwind
 					}
 					else
 					{
-						_orderID = default(int);
+						_orderID = default(long);
 					}
 				}
 			}
@@ -2749,7 +2774,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Products")]
+	[Table(Name = "Products")]
 	public partial class Product : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -2785,11 +2810,11 @@ namespace nwind
 
 		partial void OnCreated();
 		partial void OnCategoryIDChanged();
-		partial void OnCategoryIDChanging(int? value);
+		partial void OnCategoryIDChanging(long? value);
 		partial void OnDiscontinuedChanged();
 		partial void OnDiscontinuedChanging(bool value);
 		partial void OnProductIDChanged();
-		partial void OnProductIDChanging(int value);
+		partial void OnProductIDChanging(long value);
 		partial void OnProductNameChanged();
 		partial void OnProductNameChanging(string value);
 		partial void OnQuantityPerUnitChanged();
@@ -2797,7 +2822,7 @@ namespace nwind
 		partial void OnReorderLevelChanged();
 		partial void OnReorderLevelChanging(short? value);
 		partial void OnSupplierIDChanged();
-		partial void OnSupplierIDChanging(int? value);
+		partial void OnSupplierIDChanging(long? value);
 		partial void OnUnitPriceChanged();
 		partial void OnUnitPriceChanging(decimal? value);
 		partial void OnUnitsInStockChanged();
@@ -2807,12 +2832,12 @@ namespace nwind
 
 		#endregion
 
-		#region int? CategoryID
+		#region long? CategoryID
 
-		private int? _categoryID;
+		private long? _categoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_categoryID", Name = "CategoryID", DbType = "INTEGER", AutoSync = AutoSync.Never, CanBeNull = true)]
-		public int? CategoryID
+		[Column(Storage = "_categoryID", Name = "CategoryID", DbType = "integer", AutoSync = AutoSync.Never)]
+		public long? CategoryID
 		{
 			get
 			{
@@ -2841,7 +2866,7 @@ namespace nwind
 
 		private bool _discontinued;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_discontinued", Name = "Discontinued", DbType = "bit", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_discontinued", Name = "Discontinued", DbType = "bit", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public bool Discontinued
 		{
 			get
@@ -2863,12 +2888,12 @@ namespace nwind
 
 		#endregion
 
-		#region int ProductID
+		#region long ProductID
 
-		private int _productID;
+		private long _productID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productID", Name = "ProductID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int ProductID
+		[Column(Storage = "_productID", Name = "ProductID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long ProductID
 		{
 			get
 			{
@@ -2893,7 +2918,7 @@ namespace nwind
 
 		private string _productName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_productName", Name = "ProductName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_productName", Name = "ProductName", DbType = "nvarchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string ProductName
 		{
 			get
@@ -2919,7 +2944,7 @@ namespace nwind
 
 		private string _quantityPerUnit;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_quantityPerUnit", Name = "QuantityPerUnit", DbType = "nvarchar (20)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_quantityPerUnit", Name = "QuantityPerUnit", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string QuantityPerUnit
 		{
 			get
@@ -2945,7 +2970,7 @@ namespace nwind
 
 		private short? _reorderLevel;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_reorderLevel", Name = "ReorderLevel", DbType = "smallint", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_reorderLevel", Name = "ReorderLevel", DbType = "smallint", AutoSync = AutoSync.Never)]
 		public short? ReorderLevel
 		{
 			get
@@ -2967,12 +2992,12 @@ namespace nwind
 
 		#endregion
 
-		#region int? SupplierID
+		#region long? SupplierID
 
-		private int? _supplierID;
+		private long? _supplierID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_supplierID", Name = "SupplierID", DbType = "INTEGER", AutoSync = AutoSync.Never, CanBeNull = true)]
-		public int? SupplierID
+		[Column(Storage = "_supplierID", Name = "SupplierID", DbType = "integer", AutoSync = AutoSync.Never)]
+		public long? SupplierID
 		{
 			get
 			{
@@ -3001,7 +3026,7 @@ namespace nwind
 
 		private decimal? _unitPrice;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitPrice", Name = "UnitPrice", DbType = "money", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_unitPrice", Name = "UnitPrice", DbType = "money", AutoSync = AutoSync.Never)]
 		public decimal? UnitPrice
 		{
 			get
@@ -3027,7 +3052,7 @@ namespace nwind
 
 		private short? _unitsInStock;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitsInStock", Name = "UnitsInStock", DbType = "smallint", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_unitsInStock", Name = "UnitsInStock", DbType = "smallint", AutoSync = AutoSync.Never)]
 		public short? UnitsInStock
 		{
 			get
@@ -3053,7 +3078,7 @@ namespace nwind
 
 		private short? _unitsOnOrder;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_unitsOnOrder", Name = "UnitsOnOrder", DbType = "smallint", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_unitsOnOrder", Name = "UnitsOnOrder", DbType = "smallint", AutoSync = AutoSync.Never)]
 		public short? UnitsOnOrder
 		{
 			get
@@ -3078,7 +3103,7 @@ namespace nwind
 		#region Children
 
 		private EntitySet<OrderDetail> _orderDetails;
-		[Association(Storage = "_orderDetails", OtherKey = "ProductID", ThisKey = "ProductID", Name = "\"fk_Order Details_0\"")]
+		[Association(Storage = "_orderDetails", OtherKey = "ProductID", ThisKey = "ProductID", Name = "\"FK_Order Details_0\"")]
 		[DebuggerNonUserCode]
 		public EntitySet<OrderDetail> OrderDetails
 		{
@@ -3098,7 +3123,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Supplier> _supplier;
-		[Association(Storage = "_supplier", OtherKey = "SupplierID", ThisKey = "SupplierID", Name = "fk_Products_0", IsForeignKey = true)]
+		[Association(Storage = "_supplier", OtherKey = "SupplierID", ThisKey = "SupplierID", Name = "FK_Products_0", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Supplier Supplier
 		{
@@ -3131,7 +3156,7 @@ namespace nwind
 		}
 
 		private EntityRef<Category> _category;
-		[Association(Storage = "_category", OtherKey = "CategoryID", ThisKey = "CategoryID", Name = "fk_Products_1", IsForeignKey = true)]
+		[Association(Storage = "_category", OtherKey = "CategoryID", ThisKey = "CategoryID", Name = "FK_Products_1", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Category Category
 		{
@@ -3195,7 +3220,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Region")]
+	[Table(Name = "Region")]
 	public partial class Region : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -3233,7 +3258,7 @@ namespace nwind
 		partial void OnRegionDescriptionChanged();
 		partial void OnRegionDescriptionChanging(string value);
 		partial void OnRegionIDChanged();
-		partial void OnRegionIDChanging(int value);
+		partial void OnRegionIDChanging(long value);
 
 		#endregion
 
@@ -3241,7 +3266,7 @@ namespace nwind
 
 		private string _regionDescription;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionDescription", Name = "RegionDescription", DbType = "nchar", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_regionDescription", Name = "RegionDescription", DbType = "nchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string RegionDescription
 		{
 			get
@@ -3263,12 +3288,12 @@ namespace nwind
 
 		#endregion
 
-		#region int RegionID
+		#region long RegionID
 
-		private int _regionID;
+		private long _regionID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionID", Name = "RegionID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int RegionID
+		[Column(Storage = "_regionID", Name = "RegionID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long RegionID
 		{
 			get
 			{
@@ -3292,7 +3317,7 @@ namespace nwind
 		#region Children
 
 		private EntitySet<Territory> _territories;
-		[Association(Storage = "_territories", OtherKey = "RegionID", ThisKey = "RegionID", Name = "fk_Territories_0")]
+		[Association(Storage = "_territories", OtherKey = "RegionID", ThisKey = "RegionID", Name = "FK_Territories_0")]
 		[DebuggerNonUserCode]
 		public EntitySet<Territory> Territories
 		{
@@ -3336,7 +3361,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Shippers")]
+	[Table(Name = "Shippers")]
 	public partial class Shipper : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -3376,7 +3401,7 @@ namespace nwind
 		partial void OnPhoneChanged();
 		partial void OnPhoneChanging(string value);
 		partial void OnShipperIDChanged();
-		partial void OnShipperIDChanging(int value);
+		partial void OnShipperIDChanging(long value);
 
 		#endregion
 
@@ -3384,7 +3409,7 @@ namespace nwind
 
 		private string _companyName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CompanyName
 		{
 			get
@@ -3410,7 +3435,7 @@ namespace nwind
 
 		private string _phone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Phone
 		{
 			get
@@ -3432,12 +3457,12 @@ namespace nwind
 
 		#endregion
 
-		#region int ShipperID
+		#region long ShipperID
 
-		private int _shipperID;
+		private long _shipperID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_shipperID", Name = "ShipperID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int ShipperID
+		[Column(Storage = "_shipperID", Name = "ShipperID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long ShipperID
 		{
 			get
 			{
@@ -3461,7 +3486,7 @@ namespace nwind
 		#region Children
 
 		private EntitySet<Order> _orders;
-		[Association(Storage = "_orders", OtherKey = "ShipVia", ThisKey = "ShipperID", Name = "fk_Orders_0")]
+		[Association(Storage = "_orders", OtherKey = "ShipVia", ThisKey = "ShipperID", Name = "FK_Orders_0")]
 		[DebuggerNonUserCode]
 		public EntitySet<Order> Orders
 		{
@@ -3505,7 +3530,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Suppliers")]
+	[Table(Name = "Suppliers")]
 	public partial class Supplier : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -3563,7 +3588,7 @@ namespace nwind
 		partial void OnRegionChanged();
 		partial void OnRegionChanging(string value);
 		partial void OnSupplierIDChanged();
-		partial void OnSupplierIDChanging(int value);
+		partial void OnSupplierIDChanging(long value);
 
 		#endregion
 
@@ -3571,7 +3596,7 @@ namespace nwind
 
 		private string _address;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar (60)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_address", Name = "Address", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Address
 		{
 			get
@@ -3597,7 +3622,7 @@ namespace nwind
 
 		private string _city;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_city", Name = "City", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_city", Name = "City", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string City
 		{
 			get
@@ -3623,7 +3648,7 @@ namespace nwind
 
 		private string _companyName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar (40)", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_companyName", Name = "CompanyName", DbType = "nvarchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string CompanyName
 		{
 			get
@@ -3649,7 +3674,7 @@ namespace nwind
 
 		private string _contactName;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactName", Name = "ContactName", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_contactName", Name = "ContactName", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ContactName
 		{
 			get
@@ -3675,7 +3700,7 @@ namespace nwind
 
 		private string _contactTitle;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_contactTitle", Name = "ContactTitle", DbType = "nvarchar (30)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_contactTitle", Name = "ContactTitle", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string ContactTitle
 		{
 			get
@@ -3701,7 +3726,7 @@ namespace nwind
 
 		private string _country;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_country", Name = "Country", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Country
 		{
 			get
@@ -3727,7 +3752,7 @@ namespace nwind
 
 		private string _fax;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_fax", Name = "Fax", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_fax", Name = "Fax", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Fax
 		{
 			get
@@ -3753,7 +3778,7 @@ namespace nwind
 
 		private string _homePage;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_homePage", Name = "HomePage", DbType = "ntext", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_homePage", Name = "HomePage", DbType = "ntext", AutoSync = AutoSync.Never)]
 		public string HomePage
 		{
 			get
@@ -3779,7 +3804,7 @@ namespace nwind
 
 		private string _phone;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar (24)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_phone", Name = "Phone", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Phone
 		{
 			get
@@ -3805,7 +3830,7 @@ namespace nwind
 
 		private string _postalCode;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar (10)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_postalCode", Name = "PostalCode", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string PostalCode
 		{
 			get
@@ -3831,7 +3856,7 @@ namespace nwind
 
 		private string _region;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar (15)", AutoSync = AutoSync.Never, CanBeNull = true)]
+		[Column(Storage = "_region", Name = "Region", DbType = "nvarchar", AutoSync = AutoSync.Never)]
 		public string Region
 		{
 			get
@@ -3853,12 +3878,12 @@ namespace nwind
 
 		#endregion
 
-		#region int SupplierID
+		#region long SupplierID
 
-		private int _supplierID;
+		private long _supplierID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_supplierID", Name = "SupplierID", DbType = "INTEGER", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never)]
-		public int SupplierID
+		[Column(Storage = "_supplierID", Name = "SupplierID", DbType = "integer", IsPrimaryKey = true, IsDbGenerated = true, AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long SupplierID
 		{
 			get
 			{
@@ -3882,7 +3907,7 @@ namespace nwind
 		#region Children
 
 		private EntitySet<Product> _products;
-		[Association(Storage = "_products", OtherKey = "SupplierID", ThisKey = "SupplierID", Name = "fk_Products_0")]
+		[Association(Storage = "_products", OtherKey = "SupplierID", ThisKey = "SupplierID", Name = "FK_Products_0")]
 		[DebuggerNonUserCode]
 		public EntitySet<Product> Products
 		{
@@ -3926,7 +3951,7 @@ namespace nwind
 
 	}
 
-	[Table(Name = "main.Territories")]
+	[Table(Name = "Territories")]
 	public partial class Territory : INotifyPropertyChanging, INotifyPropertyChanged
 	{
 		#region INotifyPropertyChanging handling
@@ -3962,7 +3987,7 @@ namespace nwind
 
 		partial void OnCreated();
 		partial void OnRegionIDChanged();
-		partial void OnRegionIDChanging(int value);
+		partial void OnRegionIDChanging(long value);
 		partial void OnTerritoryDescriptionChanged();
 		partial void OnTerritoryDescriptionChanging(string value);
 		partial void OnTerritoryIDChanged();
@@ -3970,12 +3995,12 @@ namespace nwind
 
 		#endregion
 
-		#region int RegionID
+		#region long RegionID
 
-		private int _regionID;
+		private long _regionID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_regionID", Name = "RegionID", DbType = "INTEGER", AutoSync = AutoSync.Never)]
-		public int RegionID
+		[Column(Storage = "_regionID", Name = "RegionID", DbType = "integer", AutoSync = AutoSync.Never, CanBeNull = false)]
+		public long RegionID
 		{
 			get
 			{
@@ -4004,7 +4029,7 @@ namespace nwind
 
 		private string _territoryDescription;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryDescription", Name = "TerritoryDescription", DbType = "nchar", AutoSync = AutoSync.Never)]
+		[Column(Storage = "_territoryDescription", Name = "TerritoryDescription", DbType = "nchar", AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string TerritoryDescription
 		{
 			get
@@ -4030,7 +4055,7 @@ namespace nwind
 
 		private string _territoryID;
 		[DebuggerNonUserCode]
-		[Column(Storage = "_territoryID", Name = "TerritoryID", DbType = "nvarchar", IsPrimaryKey = true, AutoSync = AutoSync.Never)]
+		[Column(Storage = "_territoryID", Name = "TerritoryID", DbType = "nvarchar", IsPrimaryKey = true, AutoSync = AutoSync.Never, CanBeNull = false)]
 		public string TerritoryID
 		{
 			get
@@ -4055,7 +4080,7 @@ namespace nwind
 		#region Children
 
 		private EntitySet<EmployeeTerritory> _employeeTerritories;
-		[Association(Storage = "_employeeTerritories", OtherKey = "TerritoryID", ThisKey = "TerritoryID", Name = "fk_EmployeeTerritories_0")]
+		[Association(Storage = "_employeeTerritories", OtherKey = "TerritoryID", ThisKey = "TerritoryID", Name = "FK_EmployeeTerritories_0")]
 		[DebuggerNonUserCode]
 		public EntitySet<EmployeeTerritory> EmployeeTerritories
 		{
@@ -4075,7 +4100,7 @@ namespace nwind
 		#region Parents
 
 		private EntityRef<Region> _region;
-		[Association(Storage = "_region", OtherKey = "RegionID", ThisKey = "RegionID", Name = "fk_Territories_0", IsForeignKey = true)]
+		[Association(Storage = "_region", OtherKey = "RegionID", ThisKey = "RegionID", Name = "FK_Territories_0", IsForeignKey = true)]
 		[DebuggerNonUserCode]
 		public Region Region
 		{
@@ -4101,7 +4126,7 @@ namespace nwind
 					}
 					else
 					{
-						_regionID = default(int);
+						_regionID = default(long);
 					}
 				}
 			}

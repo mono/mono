@@ -59,6 +59,8 @@ namespace DbLinq.Util
         {
             if (type == typeof(Binary))
                 return DbType.Binary;
+            if (type == typeof(byte[]))
+                return DbType.Binary;
             return null;
         }
 

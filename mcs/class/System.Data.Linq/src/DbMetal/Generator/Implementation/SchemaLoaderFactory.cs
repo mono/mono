@@ -58,10 +58,11 @@ namespace DbMetal.Generator.Implementation
         {
             string dbLinqSchemaLoaderType;
             string databaseConnectionType;
-            GetLoaderAndConnection(out dbLinqSchemaLoaderType, out databaseConnectionType, parameters);
+            string sqlDialectType;
+            GetLoaderAndConnection(parameters, out dbLinqSchemaLoaderType, out databaseConnectionType, out sqlDialectType);
             if (dbLinqSchemaLoaderType == null)
                 throw new ApplicationException("Please provide -Provider=MySql (or Oracle, OracleODP, PostgreSql, Sqlite - see app.config for provider listing)");
-            return Load(parameters, dbLinqSchemaLoaderType, databaseConnectionType);
+            return Load(parameters, dbLinqSchemaLoaderType, databaseConnectionType, sqlDialectType);
         }
 
         /// <summary>
@@ -73,10 +74,11 @@ namespace DbMetal.Generator.Implementation
         {
             string dbLinqSchemaLoaderType;
             string databaseConnectionType;
-            GetLoaderAndConnection(out dbLinqSchemaLoaderType, out databaseConnectionType, provider);
+            string sqlDialectType;
+            GetLoaderAndConnection(provider, out dbLinqSchemaLoaderType, out databaseConnectionType, out sqlDialectType);
             if (dbLinqSchemaLoaderType == null)
                 return null;
-            return Load(null, dbLinqSchemaLoaderType, databaseConnectionType);
+            return Load(null, dbLinqSchemaLoaderType, databaseConnectionType, sqlDialectType);
         }
 
         /// <summary>
@@ -84,7 +86,7 @@ namespace DbMetal.Generator.Implementation
         /// (e.g. DbLinq.Oracle.OracleSchemaLoader and System.Data.OracleClient.OracleConnection),
         /// return an instance of the OracleSchemaLoader.
         /// </summary>
-        public ISchemaLoader Load(Parameters parameters, Type dbLinqSchemaLoaderType, Type databaseConnectionType)
+        public ISchemaLoader Load(Parameters parameters, Type dbLinqSchemaLoaderType, Type databaseConnectionType, Type sqlDialectType)
         {
             if (dbLinqSchemaLoaderType == null)
                 throw new ArgumentNullException("dbLinqSchemaLoaderType");
@@ -101,6 +103,14 @@ namespace DbMetal.Generator.Implementation
 
                 errorMsg = "Failed on Activator.CreateInstance(" + databaseConnectionType.Name + ")";
                 var connection = (IDbConnection)Activator.CreateInstance(databaseConnectionType);
+
+                IVendor vendor = null;
+                if (sqlDialectType != null)
+                {
+                    errorMsg = "Failed on Activator.CreateInstance(" + sqlDialectType.Name + ")";
+                    vendor = (IVendor)Activator.CreateInstance(sqlDialectType);
+                    loader.Vendor = vendor;
+                }
 
                 if (parameters != null)
                 {
@@ -128,18 +138,19 @@ namespace DbMetal.Generator.Implementation
             }
         }
 
-        public ISchemaLoader Load(Parameters parameters, string dbLinqSchemaLoaderTypeName, string databaseConnectionTypeName)
+        public ISchemaLoader Load(Parameters parameters, string dbLinqSchemaLoaderTypeName, string databaseConnectionTypeName, string sqlDialectTypeName)
         {
             AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Type dbLinqSchemaLoaderType = Type.GetType(dbLinqSchemaLoaderTypeName);
             Type databaseConnectionType = Type.GetType(databaseConnectionTypeName);
+            Type sqlDialectType         = string.IsNullOrEmpty(sqlDialectTypeName) ? null : Type.GetType(sqlDialectTypeName);
 
             if (dbLinqSchemaLoaderType == null)
                 throw new ArgumentException("Unable to resolve dbLinqSchemaLoaderType: " + dbLinqSchemaLoaderTypeName);
             if (databaseConnectionType == null)
                 throw new ArgumentException("Unable to resolve databaseConnectionType: " + databaseConnectionTypeName);
 
-            ISchemaLoader loader = Load(parameters, dbLinqSchemaLoaderType, databaseConnectionType);
+            ISchemaLoader loader = Load(parameters, dbLinqSchemaLoaderType, databaseConnectionType, sqlDialectType);
             AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
             return loader;
         }
@@ -228,7 +239,7 @@ namespace DbMetal.Generator.Implementation
             return null;
         }
 
-        protected void GetLoaderAndConnection(out string dbLinqSchemaLoaderType, out string databaseConnectionType, string provider)
+        protected void GetLoaderAndConnection(string provider, out string dbLinqSchemaLoaderType, out string databaseConnectionType, out string sqlDialectType)
         {
             var configuration = (ProvidersSection)ConfigurationManager.GetSection("providers");
 
@@ -244,18 +255,26 @@ namespace DbMetal.Generator.Implementation
             //databaseConnectionType = types[1].Trim();
             dbLinqSchemaLoaderType = element.DbLinqSchemaLoader;
             databaseConnectionType = element.DatabaseConnection;
+            sqlDialectType         = element.SqlDialectType;
         }
 
-        protected void GetLoaderAndConnection(out string dbLinqSchemaLoaderType, out string databaseConnectionType, Parameters parameters)
+        protected void GetLoaderAndConnection(Parameters parameters, out string dbLinqSchemaLoaderType, out string databaseConnectionType, out string sqlDialectType)
         {
             if (!string.IsNullOrEmpty(parameters.Provider))
             {
-                GetLoaderAndConnection(out dbLinqSchemaLoaderType, out databaseConnectionType, parameters.Provider);
+                GetLoaderAndConnection(parameters.Provider, out dbLinqSchemaLoaderType, out databaseConnectionType, out sqlDialectType);
             }
             else
             {
                 dbLinqSchemaLoaderType = parameters.DbLinqSchemaLoaderProvider;
                 databaseConnectionType = parameters.DatabaseConnectionProvider;
+                sqlDialectType         = parameters.SqlDialectType;
+            }
+            if (string.IsNullOrEmpty(dbLinqSchemaLoaderType))
+            {
+                // No provider specified, not explicitly provided either
+                // Default to using SQL Server for sqlmetal.exe compatibility
+                GetLoaderAndConnection("SqlServer", out dbLinqSchemaLoaderType, out databaseConnectionType, out sqlDialectType);
             }
         }
 

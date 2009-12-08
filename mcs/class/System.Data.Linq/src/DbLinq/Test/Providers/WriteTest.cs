@@ -222,7 +222,7 @@ using Id = System.Int32;
             Northwind db = CreateDB();
             int productCount1 = db.Products.Count();
 #if INGRES && !MONO_STRICT
-            Product p_temp = new Product { ProductName = "temp_g4", Discontinued = 0 };
+            Product p_temp = new Product { ProductName = "temp_g4", Discontinued = "N" };
 #else
             Product p_temp = new Product { ProductName = "temp_g4", Discontinued = false };
 #endif
@@ -245,7 +245,7 @@ using Id = System.Int32;
             //todo fix Oracle
             Product p1 = new Product { ProductName = productName, Discontinued = false, UnitPrice = 11 };
 #elif INGRES && !MONO_STRICT
-            Product p1 = new Product { ProductName = productName, Discontinued = 0, UnitPrice = 11m };
+            Product p1 = new Product { ProductName = productName, Discontinued = "N", UnitPrice = 11m };
 #else
             Product p1 = new Product { ProductName = productName, Discontinued = false, UnitPrice = 11m };
 #endif
@@ -792,7 +792,7 @@ dummy text
             db.SubmitChanges();
         }
 
-#if !DEBUG && (SQLITE || POSTGRES)
+#if !DEBUG && SQLITE
         [Explicit]
 #endif
         [Test]
@@ -807,7 +807,7 @@ dummy text
             var product = new Product
             {
 #if INGRES
-                Discontinued = 1,
+                Discontinued = "Y",
 #else
                 Discontinued = true,
 #endif
@@ -835,7 +835,7 @@ dummy text
             var p2 = new Product
             {
 #if INGRES
-                Discontinued = 1,
+                Discontinued = "Y",
 #else
                 Discontinued = true,
 #endif

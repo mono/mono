@@ -47,7 +47,8 @@ namespace DbLinq.Vendor.Implementation
         /// </summary>
         public class DataType : IDataType
         {
-            public virtual string Type { get; set; }
+            public virtual string SqlType { get; set; }
+            public virtual string ManagedType { get; set; }
             public virtual bool Nullable { get; set; }
             public virtual long? Length { get; set; }
             public virtual int? Precision { get; set; }
@@ -60,7 +61,10 @@ namespace DbLinq.Vendor.Implementation
         {
             if (dataType == null)
                 throw new ArgumentNullException("dataType");
-            string dataTypeL = dataType.Type.ToLowerInvariant();
+            if (dataType.ManagedType != null)
+                return Type.GetType(dataType.ManagedType, true);
+
+            string dataTypeL = dataType.SqlType.ToLowerInvariant();
 
             if (columnName != null && columnName.ToLower().Contains("guid"))
             {
@@ -86,6 +90,7 @@ namespace DbLinq.Vendor.Implementation
             case "long":
             case "longtext":
             case "long varchar":
+            case "mediumtext":
             case "nchar":
             case "ntext":
             case "nvarchar":
@@ -189,6 +194,7 @@ namespace DbLinq.Vendor.Implementation
                 return typeof(DateTime);
 
             // byte[]
+            case "binary":
             case "blob":
             case "bytea":
             case "byte varying":

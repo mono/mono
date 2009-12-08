@@ -48,7 +48,18 @@ namespace DbLinq.Ingres
                                          select outputExpression.Replace("next value", "current value", true)).ToArray())
                 );
         }
+		
+		public override string GetTableAlias (string nameBase)
+		{
+			return nameBase + "$";
+		}
+		
+		public override SqlStatement GetLiteral (bool literal)
+		{
+			return literal == true ? "'Y'" : "'N'";
+		}
 
+		
         protected override SqlStatement GetLiteralCount(SqlStatement a)
         {
             return "COUNT(*)";
@@ -86,7 +97,7 @@ namespace DbLinq.Ingres
 
         public override string GetParameterName(string nameBase)
         {
-            return "?";
+            return (":" + nameBase).ToLower();
         }
 
         protected override bool IsNameCaseSafe(string dbName)

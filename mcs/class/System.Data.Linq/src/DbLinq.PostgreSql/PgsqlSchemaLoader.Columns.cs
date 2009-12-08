@@ -39,10 +39,10 @@ namespace DbLinq.PostgreSql
                 return domain_schema + "." + domain_name; //without precision - precision is already defined in CREATE DOMAIN
 
             if (column.Length != null)
-                return column.Type + "(" + column.Length + ")";
+                return column.SqlType + "(" + column.Length + ")";
             if (column.Precision != null && column.Scale != null)
-                return column.Type + "(" + column.Precision + "," + column.Scale + ")";
-            return column.Type;
+                return column.SqlType + "(" + column.Precision + "," + column.Scale + ")";
+            return column.SqlType;
         }
 
         protected virtual string GetColumnDefaultValue(string defaultValue)
@@ -62,7 +62,7 @@ namespace DbLinq.PostgreSql
             column.ColumnName = rdr.GetAsString(field++);
             string nullableStr = rdr.GetAsString(field++);
             column.Nullable = nullableStr == "YES";
-            column.Type = rdr.GetAsString(field++);
+            column.SqlType = rdr.GetAsString(field++);
             var domain_schema = rdr.GetAsString(field++);
             var domain_name = rdr.GetAsString(field++);
             column.DefaultValue = GetColumnDefaultValue(rdr.GetAsString(field++));
