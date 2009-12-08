@@ -1,5 +1,7 @@
 2009-12-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Add more SIMD opcodes.
+
 	* mini.c (mono_print_method_from_ip): Fix the lookup of trampolines.
 
 	* mini-codegen.c (mono_local_regalloc): Allow non-call opcodes with cloc:c.
