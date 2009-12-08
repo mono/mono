@@ -3962,7 +3962,7 @@ namespace Mono.CSharp {
 						return int.MaxValue - 20000 + Math.Abs (type_arguments.Count - g_args.Length);
 
 					// TODO: Don't create new method, create Parameters only
-					method = ((MethodInfo) candidate).MakeGenericMethod (type_arguments.Arguments);
+					method = TypeManager.MakeGenericMethod ((MethodInfo) candidate, type_arguments.Arguments);
 					candidate = method;
 					pd = TypeManager.GetParameterData (candidate);
 				} else {

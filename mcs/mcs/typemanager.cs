@@ -2769,6 +2769,13 @@ namespace Mono.CSharp {
 	{
 		return generic_nullable_type == DropGenericTypeArguments (t);
 	}
+
+	public static MethodInfo MakeGenericMethod (MethodInfo gmd, Type[] methodArguments) 
+	{
+		if (!gmd.IsGenericMethodDefinition)
+			gmd = gmd.GetGenericMethodDefinition ();
+		return gmd.MakeGenericMethod (type_arguments.Arguments);		
+	}
 #endregion
 
 #region MemberLookup implementation

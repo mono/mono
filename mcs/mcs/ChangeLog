@@ -1,3 +1,11 @@
+2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* typemanager.cs: Add MakeGenericMethod that checks if the method
+	is really the generic method definition.
+
+	ecore.cs (MethodGroupExpr:IsApplicable): Use new TypeManager function
+	to inflate generic methods.
+
 2009-12-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #561149
