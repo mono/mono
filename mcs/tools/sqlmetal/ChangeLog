@@ -1,3 +1,8 @@
+2009-12-08  Jonathan Pryor <jonpryor@vt.edu>
+
+	* sqlmetal.exe.config: Add provider entry for SQL Server.
+	* sqlmetal.exe.sources: Add additional files.
+
 2009-11-06  Jonathan Pryor <jonpryor@vt.edu>
 
 	* Makefile: re-enable the tests.  They were disabled in r137153
