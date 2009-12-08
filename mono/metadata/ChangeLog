@@ -1,3 +1,7 @@
+2009-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (inflate_method): Handle the case of a regular system type.
+
 2009-12-08  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, sgen-pinning-stats.c, sgen-gray.c: More statistics
