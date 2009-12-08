@@ -1,5 +1,15 @@
 2009-12-08  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-pinning-stats.c, sgen-gray.c: More statistics
+	gathering code.
+
+	* mempool.c, mempool-internals.h: New function
+	mono_mempool_get_bytes_allocated().
+
+	* Makefile.am: sgen-pinning-stats.c added.
+
+2009-12-08  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c (create_allocator): Only use the fast path if the
 	object size is within the small object size limit.
 
