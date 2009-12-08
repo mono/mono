@@ -62,6 +62,20 @@ namespace System.Reflection
 			}
 		}
 
+		internal ParameterInfo (ParameterInfo pinfo, Type type, MemberInfo member, int position) {
+			this.ClassImpl = type;
+			this.MemberImpl = member;
+			if (pinfo != null) {
+				this.NameImpl = pinfo.Name;
+				this.PositionImpl = pinfo.Position - 1;	// ParameterInfo.Position is zero-based
+				this.AttrsImpl = (ParameterAttributes) pinfo.Attributes;
+			} else {
+				this.NameImpl = null;
+				this.PositionImpl = position - 1;
+				this.AttrsImpl = ParameterAttributes.None;
+			}
+		}
+
 		/* to build a ParameterInfo for the return type of a method */
 		internal ParameterInfo (Type type, MemberInfo member, UnmanagedMarshal marshalAs) {
 			this.ClassImpl = type;

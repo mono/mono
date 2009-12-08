@@ -1,5 +1,10 @@
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ParameterInfo.cs: Add constructor that takes an array of ParameterInfo
+	objects.
+
+2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoGenericClass.cs: Implement IsCompilerContext property and replace
 	all checks to use it.
 

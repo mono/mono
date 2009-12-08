@@ -41,7 +41,7 @@ namespace System.Reflection.Emit
 	{
 		#region Keep in sync with object-internals.h
 		Type instantiation;
-		internal MethodBuilder base_method; /*This is the base method definition, it must be non-inflated and belong to a non-inflated type.*/
+		MethodInfo base_method; /*This is the base method definition, it must be non-inflated and belong to a non-inflated type.*/
 		Type[] method_arguments;
 		MethodOnTypeBuilderInst generic_method_definition;
 		#endregion
@@ -155,13 +155,24 @@ namespace System.Reflection.Emit
 
 		public override ParameterInfo [] GetParameters ()
 		{
+			ParameterInfo [] res = null;
 			if (!IsCompilerContext)
 				throw new NotSupportedException ();
 
-			ParameterInfo [] res = new ParameterInfo [base_method.parameters.Length];
-			for (int i = 0; i < base_method.parameters.Length; i++) {
-				Type type = MonoGenericClass.InflateType (base_method.parameters [i], GetTypeArgs (), method_arguments);
-				res [i] = new ParameterInfo (base_method.pinfo == null ? null : base_method.pinfo [i + 1], type, this, i + 1);
+			if (base_method is MethodBuilder) {
+				MethodBuilder mb = (MethodBuilder)base_method;
+				res = new ParameterInfo [mb.parameters.Length];
+				for (int i = 0; i < mb.parameters.Length; i++) {
+					Type type = MonoGenericClass.InflateType (mb.parameters [i], GetTypeArgs (), method_arguments);
+					res [i] = new ParameterInfo (mb.pinfo == null ? null : mb.pinfo [i + 1], type, this, i + 1);
+				}
+			} else {
+				ParameterInfo[] base_params = base_method.GetParameters ();
+				res = new ParameterInfo [base_params.Length];
+				for (int i = 0; i < base_params.Length; i++) {
+					Type type = MonoGenericClass.InflateType (base_params [i].ParameterType, GetTypeArgs (), method_arguments);
+					res [i] = new ParameterInfo (base_params [i], type, this, i + 1);
+				}
 			}
 			return res;
 		}
@@ -204,13 +215,13 @@ namespace System.Reflection.Emit
 
 		public override MethodInfo MakeGenericMethod (params Type [] methodInstantiation)
 		{
-			if (base_method.generic_params == null || (method_arguments != null && !IsCompilerContext))
+			if (!base_method.IsGenericMethodDefinition || (method_arguments != null && !IsCompilerContext))
 				throw new InvalidOperationException ("Method is not a generic method definition");
 
 			if (methodInstantiation == null)
 				throw new ArgumentNullException ("methodInstantiation");
 
-			if (base_method.generic_params.Length != methodInstantiation.Length)
+			if (base_method.GetGenericArguments ().Length != methodInstantiation.Length)
 				throw new ArgumentException ("Incorrect length", "methodInstantiation");
 
 			foreach (Type type in methodInstantiation) {
@@ -218,17 +229,14 @@ namespace System.Reflection.Emit
 					throw new ArgumentNullException ("methodInstantiation");
 			}
 
-			if (base_method.generic_params.Length != methodInstantiation.Length)
-				throw new ArgumentException ("Invalid argument array length");
-
 			return new MethodOnTypeBuilderInst (this, methodInstantiation);
 		}
 
 		public override Type [] GetGenericArguments ()
 		{
-			if (base_method.generic_params == null)
+			if (!base_method.IsGenericMethodDefinition)
 				return null;
-			Type[] source = method_arguments ?? base_method.generic_params;
+			Type[] source = method_arguments ?? base_method.GetGenericArguments ();
 			Type[] result = new Type [source.Length];
 			source.CopyTo (result, 0);
 			return result;
@@ -241,7 +249,7 @@ namespace System.Reflection.Emit
 
 		public override bool ContainsGenericParameters {
 			get {
-				if (base_method.generic_params == null)
+				if (!base_method.IsGenericMethodDefinition)
 					throw new NotSupportedException ();
 				if (method_arguments == null)
 					return true;
@@ -255,13 +263,13 @@ namespace System.Reflection.Emit
 
 		public override bool IsGenericMethodDefinition {
 			get {
-				return base_method.generic_params != null && method_arguments == null;
+				return base_method.IsGenericMethodDefinition && method_arguments == null;
 			}
 		}
 
 		public override bool IsGenericMethod {
 			get {
-				return base_method.generic_params != null;
+				return base_method.IsGenericMethodDefinition;
 			}
 		}
 
