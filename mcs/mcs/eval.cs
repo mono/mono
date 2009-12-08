@@ -11,7 +11,6 @@
 //
 using System;
 using System.Threading;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -55,10 +54,10 @@ namespace Mono.CSharp {
 		static string current_debug_name;
 		static int count;
 		static Thread invoke_thread;
-		
-		static ArrayList using_alias_list = new ArrayList ();
-		internal static ArrayList using_list = new ArrayList ();
-		static Hashtable fields = new Hashtable ();
+
+		static List<NamespaceEntry.UsingAliasEntry> using_alias_list = new List<NamespaceEntry.UsingAliasEntry> ();
+		internal static List<NamespaceEntry.UsingEntry> using_list = new List<NamespaceEntry.UsingEntry> ();
+		static Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo> ();
 
 		static Type   interactive_base_class = typeof (InteractiveBase);
 		static Driver driver;
@@ -118,7 +117,7 @@ namespace Mono.CSharp {
 				
 				driver.ProcessDefaultConfig ();
 
-				ArrayList startup_files = new ArrayList ();
+				var startup_files = new List<string> ();
 				foreach (CompilationUnit file in Location.SourceFiles)
 					startup_files.Add (file.Path);
 				
@@ -129,7 +128,7 @@ namespace Mono.CSharp {
 				RootContext.EvalMode = true;
 				inited = true;
 
-				return (string []) startup_files.ToArray (typeof (string));
+				return startup_files.ToArray ();
 			}
 		}
 
@@ -682,7 +681,7 @@ namespace Mono.CSharp {
 		// or reflection gets confused (it basically gets confused, and variables override each
 		// other).
 		//
-		static ArrayList queued_fields = new ArrayList ();
+		static List<Field> queued_fields = new List<Field> ();
 		
 		//static ArrayList types = new ArrayList ();
 
@@ -745,11 +744,11 @@ namespace Mono.CSharp {
 			foreach (Field field in queued_fields){
 				FieldInfo fi = tt.GetField (field.Name);
 				
-				FieldInfo old = (FieldInfo) fields [field.Name];
+				FieldInfo old;
 				
 				// If a previous value was set, nullify it, so that we do
 				// not leak memory
-				if (old != null){
+				if (fields.TryGetValue (field.Name, out old)){
 					if (TypeManager.IsStruct (old.FieldType)){
 						//
 						// TODO: Clear fields for structs
@@ -831,9 +830,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		static internal ICollection GetUsingList ()
+		static internal ICollection<string> GetUsingList ()
 		{
-			ArrayList res = new ArrayList (using_list.Count);
+			var res = new List<string> (using_list.Count);
 			foreach (object ue in using_list)
 				res.Add (ue.ToString ());
 			return res;
@@ -842,7 +841,7 @@ namespace Mono.CSharp {
 		static internal string [] GetVarNames ()
 		{
 			lock (evaluator_lock){
-				return (string []) new ArrayList (fields.Keys).ToArray (typeof (string));
+				return new List<string> (fields.Keys).ToArray ();
 			}
 		}
 		
@@ -851,8 +850,8 @@ namespace Mono.CSharp {
 			lock (evaluator_lock){
 				StringBuilder sb = new StringBuilder ();
 				
-				foreach (DictionaryEntry de in fields){
-					FieldInfo fi = LookupField ((string) de.Key);
+				foreach (var de in fields){
+					FieldInfo fi = LookupField (de.Key);
 					object value = null;
 					bool error = false;
 					

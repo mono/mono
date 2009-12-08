@@ -12,7 +12,6 @@
 
 namespace Mono.CSharp {
 	using System;
-	using System.Collections;
 	using System.Collections.Generic;
 	using System.Reflection;
 	using System.Reflection.Emit;
@@ -2463,7 +2462,7 @@ namespace Mono.CSharp {
 
 		static void CreatePointerOperatorsTable ()
 		{
-			ArrayList temp = new ArrayList ();
+			var temp = new List<PredefinedPointerOperator> ();
 
 			//
 			// Pointer arithmetic:
@@ -2494,12 +2493,12 @@ namespace Mono.CSharp {
 			//
 			temp.Add (new PredefinedPointerOperator (null, Operator.SubtractionMask, TypeManager.int64_type));
 
-			pointer_operators = (PredefinedOperator []) temp.ToArray (typeof (PredefinedOperator));
+			pointer_operators = temp.ToArray ();
 		}
 
 		static void CreateStandardOperatorsTable ()
 		{
-			ArrayList temp = new ArrayList ();
+			var temp = new List<PredefinedOperator> ();
 			Type bool_type = TypeManager.bool_type;
 
 			temp.Add (new PredefinedOperator (TypeManager.int32_type, Operator.ArithmeticMask | Operator.BitwiseMask));
@@ -2532,7 +2531,7 @@ namespace Mono.CSharp {
 			temp.Add (new PredefinedShiftOperator (TypeManager.int64_type, Operator.ShiftMask));
 			temp.Add (new PredefinedShiftOperator (TypeManager.uint64_type, Operator.ShiftMask));
 
-			standard_operators = (PredefinedOperator []) temp.ToArray (typeof (PredefinedOperator));
+			standard_operators = temp.ToArray ();
 		}
 
 		//
@@ -5775,6 +5774,57 @@ namespace Mono.CSharp {
 		}
 	}
 
+	public class ArrayInitializer : ShimExpression
+	{
+		List<Expression> elements;
+
+		public ArrayInitializer (List<Expression> init, Location loc)
+			: base (null)
+		{
+			elements = init;
+		}
+
+		public ArrayInitializer (int count, Location loc)
+			: base (null)
+		{
+			elements = new List<Expression> (count);
+		}
+
+		public ArrayInitializer (Location loc)
+			: this (4, loc)
+		{
+		}
+
+		public void Add (Expression expr)
+		{
+			elements.Add (expr);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Expression t)
+		{
+			var target = (ArrayInitializer) t;
+
+			target.elements = new List<Expression> (elements.Count);
+			foreach (var element in elements)
+				target.elements.Add (element.Clone (clonectx));
+
+			base.CloneTo (clonectx, t);
+		}
+
+		public int Count {
+			get { return elements.Count; }
+		}
+
+		protected override Expression DoResolve (ResolveContext rc)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public Expression this [int index] {
+			get { return elements [index]; }
+		}
+	}
+
 	/// <summary>
 	///   14.5.10.2: Represents an array creation expression.
 	/// </summary>
@@ -5785,15 +5835,16 @@ namespace Mono.CSharp {
 	///   initialization data and the other which does not need dimensions
 	///   specified but where initialization data is mandatory.
 	/// </remarks>
-	public class ArrayCreation : Expression {
+	class ArrayCreation : Expression
+	{
 		FullNamedExpression requested_base_type;
-		ArrayList initializers;
+		ArrayInitializer initializers;
 
 		//
 		// The list of Argument types.
 		// This is used to construct the `newarray' or constructor signature
 		//
-		protected ArrayList arguments;
+		protected List<Expression> arguments;
 		
 		protected Type array_element_type;
 		bool expect_initializers = false;
@@ -5805,28 +5856,24 @@ namespace Mono.CSharp {
 
 		protected List<Expression> array_data;
 
-		IDictionary bounds;
+		Dictionary<int, int> bounds;
 
 		// The number of constants in array initializers
 		int const_initializers_count;
 		bool only_constant_initializers;
-		
-		public ArrayCreation (FullNamedExpression requested_base_type, ArrayList exprs, string rank, ArrayList initializers, Location l)
+
+		public ArrayCreation (FullNamedExpression requested_base_type, List<Expression> exprs, string rank, ArrayInitializer initializers, Location l)
 		{
 			this.requested_base_type = requested_base_type;
 			this.initializers = initializers;
 			this.rank = rank;
 			loc = l;
 
-			arguments = new ArrayList (exprs.Count);
-
-			foreach (Expression e in exprs) {
-				arguments.Add (e);
-				num_arguments++;
-			}
+			arguments = new List<Expression> (exprs);
+			num_arguments = arguments.Count;
 		}
 
-		public ArrayCreation (FullNamedExpression requested_base_type, string rank, ArrayList initializers, Location l)
+		public ArrayCreation (FullNamedExpression requested_base_type, string rank, ArrayInitializer initializers, Location l)
 		{
 			this.requested_base_type = requested_base_type;
 			this.initializers = initializers;
@@ -5846,10 +5893,10 @@ namespace Mono.CSharp {
 			ec.Report.Error (248, loc, "Cannot create an array with a negative size");
 		}
 
-		bool CheckIndices (ResolveContext ec, ArrayList probe, int idx, bool specified_dims, int child_bounds)
+		bool CheckIndices (ResolveContext ec, ArrayInitializer probe, int idx, bool specified_dims, int child_bounds)
 		{
 			if (specified_dims) { 
-				Expression a = (Expression) arguments [idx];
+				Expression a = arguments [idx];
 				a = a.Resolve (ec);
 				if (a == null)
 					return false;
@@ -5876,9 +5923,9 @@ namespace Mono.CSharp {
 
 			only_constant_initializers = true;
 			for (int i = 0; i < probe.Count; ++i) {
-				object o = probe [i];
-				if (o is ArrayList) {
-					ArrayList sub_probe = o as ArrayList;
+				var o = probe [i];
+				if (o is ArrayInitializer) {
+					var sub_probe = o as ArrayInitializer;
 					if (idx + 1 >= dimensions){
 						ec.Report.Error (623, loc, "Array initializers can only be used in a variable or field initializer. Try using a new expression instead");
 						return false;
@@ -5888,9 +5935,9 @@ namespace Mono.CSharp {
 					if (!ret)
 						return false;
 				} else if (child_bounds > 1) {
-					ec.Report.Error (846, ((Expression) o).Location, "A nested array initializer was expected");
+					ec.Report.Error (846, o.Location, "A nested array initializer was expected");
 				} else {
-					Expression element = ResolveArrayElement (ec, (Expression) o);
+					Expression element = ResolveArrayElement (ec, o);
 					if (element == null)
 						continue;
 
@@ -5938,7 +5985,7 @@ namespace Mono.CSharp {
 				for (int i = 0; i < array_data.Count; ++i) {
 					Expression e = array_data [i];
 					if (e == null)
-						e = Convert.ImplicitConversion (ec, (Expression) initializers [i], array_element_type, loc);
+						e = Convert.ImplicitConversion (ec, initializers [i], array_element_type, loc);
 
 					args.Add (new Argument (e.CreateExpressionTree (ec)));
 				}
@@ -5950,14 +5997,14 @@ namespace Mono.CSharp {
 		public void UpdateIndices ()
 		{
 			int i = 0;
-			for (ArrayList probe = initializers; probe != null;) {
-				if (probe.Count > 0 && probe [0] is ArrayList) {
+			for (var probe = initializers; probe != null;) {
+				if (probe.Count > 0 && probe [0] is ArrayInitializer) {
 					Expression e = new IntConstant (probe.Count, Location.Null);
 					arguments.Add (e);
 
-					bounds [i++] =  probe.Count;
-					
-					probe = (ArrayList) probe [0];
+					bounds [i++] = probe.Count;
+
+					probe = (ArrayInitializer) probe[0];
 					
 				} else {
 					Expression e = new IntConstant (probe.Count, Location.Null);
@@ -5997,12 +6044,12 @@ namespace Mono.CSharp {
 			// will need to store them in the byte blob later
 			//
 			array_data = new List<Expression> ();
-			bounds = new System.Collections.Specialized.HybridDictionary ();
+			bounds = new Dictionary<int, int> ();
 			
 			if (arguments != null)
 				return CheckIndices (ec, initializers, 0, true, dimensions);
 
-			arguments = new ArrayList ();
+			arguments = new List<Expression> ();
 
 			if (!CheckIndices (ec, initializers, 0, false, dimensions))
 				return false;
@@ -6017,11 +6064,6 @@ namespace Mono.CSharp {
 		//
 		bool ResolveArrayType (ResolveContext ec)
 		{
-			if (requested_base_type == null) {
-				ec.Report.Error (622, loc, "Can only use array initializer expressions to assign to array types. Try using a new expression instead");
-				return false;
-			}
-
 			if (requested_base_type is VarExpr) {
 				ec.Report.Error (820, loc, "An implicitly typed local variable declarator cannot use an array initializer");
 				return false;
@@ -6050,6 +6092,11 @@ namespace Mono.CSharp {
 				return false;
 
 			type = array_type_expr.Type;
+			if (!type.IsArray) {
+				ec.Report.Error (622, loc, "Can only use array initializer expressions to assign to array types. Try using a new expression instead");
+				return false;
+			}
+
 			array_element_type = TypeManager.GetElementType (type);
 			dimensions = type.GetArrayRank ();
 
@@ -6072,7 +6119,7 @@ namespace Mono.CSharp {
 				return null;
 
 			for (int i = 0; i < arguments.Count; ++i) {
-				Expression e = ((Expression) arguments[i]).Resolve (ec);
+				Expression e = arguments[i].Resolve (ec);
 				if (e == null)
 					continue;
 
@@ -6349,7 +6396,7 @@ namespace Mono.CSharp {
 
 			for (int i = 0; i < array_data.Count; i++){
 
-				Expression e = (Expression)array_data [i];
+				Expression e = array_data [i];
 
 				// Constant can be initialized via StaticInitializer
 				if (e != null && !(!emitConstants && e is Constant)) {
@@ -6392,7 +6439,7 @@ namespace Mono.CSharp {
 				//
 				for (int j = dims - 1; j >= 0; j--){
 					current_pos [j]++;
-					if (current_pos [j] < (int) bounds [j])
+					if (current_pos [j] < bounds [j])
 						break;
 					current_pos [j] = 0;
 				}
@@ -6445,7 +6492,7 @@ namespace Mono.CSharp {
 			}
 
 			if (array_data == null) {
-				Expression arg = (Expression) arguments[0];
+				Expression arg = arguments [0];
 				object arg_value;
 				if (arg.GetAttributableValue (ec, arg.Type, out arg_value) && arg_value is int && (int)arg_value == 0) {
 					value = Array.CreateInstance (array_element_type, 0);
@@ -6460,7 +6507,7 @@ namespace Mono.CSharp {
 			object element_value;
 			for (int i = 0; i < ret.Length; ++i)
 			{
-				Expression e = (Expression)array_data [i];
+				Expression e = array_data [i];
 
 				// Is null when an initializer is optimized (value == predefined value)
 				if (e == null) 
@@ -6484,33 +6531,22 @@ namespace Mono.CSharp {
 				target.requested_base_type = (FullNamedExpression)requested_base_type.Clone (clonectx);
 
 			if (arguments != null){
-				target.arguments = new ArrayList (arguments.Count);
+				target.arguments = new List<Expression> (arguments.Count);
 				foreach (Expression e in arguments)
 					target.arguments.Add (e.Clone (clonectx));
 			}
 
-			if (initializers != null){
-				target.initializers = new ArrayList (initializers.Count);
-				foreach (object initializer in initializers)
-					if (initializer is ArrayList) {
-						ArrayList this_al = (ArrayList)initializer;
-						ArrayList al = new ArrayList (this_al.Count);
-						target.initializers.Add (al);
-						foreach (Expression e in this_al)
-							al.Add (e.Clone (clonectx));
-					} else {
-						target.initializers.Add (((Expression)initializer).Clone (clonectx));
-					}
-			}
+			if (initializers != null)
+				target.initializers = (ArrayInitializer) initializers.Clone (clonectx);
 		}
 	}
 	
 	//
 	// Represents an implicitly typed array epxression
 	//
-	public class ImplicitlyTypedArrayCreation : ArrayCreation
+	class ImplicitlyTypedArrayCreation : ArrayCreation
 	{
-		public ImplicitlyTypedArrayCreation (string rank, ArrayList initializers, Location loc)
+		public ImplicitlyTypedArrayCreation (string rank, ArrayInitializer initializers, Location loc)
 			: base (null, rank, initializers, loc)
 		{			
 			if (rank.Length > 2) {
@@ -8330,7 +8366,7 @@ namespace Mono.CSharp {
 			public IndexerMethodGroupExpr (Indexers indexers, Location loc)
 				: base (null, loc)
 			{
-				Methods = (MethodBase []) indexers.Methods.ToArray (typeof (MethodBase));
+				Methods = indexers.Methods.ToArray ();
 			}
 
 			public override string Name {
@@ -8357,8 +8393,8 @@ namespace Mono.CSharp {
 		class Indexers
 		{
 			// Contains either property getter or setter
-			public ArrayList Methods;
-			public ArrayList Properties;
+			public List<MethodBase> Methods;
+			public List<PropertyInfo> Properties;
 
 			Indexers ()
 			{
@@ -8375,8 +8411,8 @@ namespace Mono.CSharp {
 						accessor = property.GetSetMethod (true);
 
 					if (Methods == null) {
-						Methods = new ArrayList ();
-						Properties = new ArrayList ();
+						Methods = new List<MethodBase> ();
+						Properties = new List<PropertyInfo> ();
 					}
 
 					Methods.Add (accessor);
@@ -9451,7 +9487,7 @@ namespace Mono.CSharp {
 			this.loc = argument.Location;
 		}
 
-		public CollectionElementInitializer (ArrayList arguments, Location loc)
+		public CollectionElementInitializer (List<Expression> arguments, Location loc)
 			: base (null, new Arguments (arguments.Count))
 		{
 			foreach (Expression e in arguments)
@@ -9465,7 +9501,7 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (mg.CreateExpressionTree (ec)));
 
-			ArrayList expr_initializers = new ArrayList (arguments.Count);
+			var expr_initializers = new ArrayInitializer (arguments.Count, loc);
 			foreach (Argument a in arguments)
 				expr_initializers.Add (a.CreateExpressionTree (ec));
 
@@ -9529,7 +9565,7 @@ namespace Mono.CSharp {
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
-			var expr_initializers = new ArrayList (initializers.Count);
+			var expr_initializers = new ArrayInitializer (initializers.Count, loc);
 			foreach (Expression e in initializers) {
 				Expression expr = e.CreateExpressionTree (ec);
 				if (expr != null)
@@ -9541,14 +9577,14 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			ArrayList element_names = null;
+			List<string> element_names = null;
 			for (int i = 0; i < initializers.Count; ++i) {
 				Expression initializer = (Expression) initializers [i];
 				ElementInitializer element_initializer = initializer as ElementInitializer;
 
 				if (i == 0) {
 					if (element_initializer != null) {
-						element_names = new ArrayList (initializers.Count);
+						element_names = new List<string> (initializers.Count);
 						element_names.Add (element_initializer.Name);
 					} else if (initializer is CompletingExpression){
 						initializer.Resolve (ec);
@@ -9826,11 +9862,11 @@ namespace Mono.CSharp {
 			if (parameters == null)
 				return base.CreateExpressionTree (ec);
 
-			var init = new ArrayList (parameters.Count);
+			var init = new ArrayInitializer (parameters.Count, loc);
 			foreach (Property p in anonymous_type.Properties)
 				init.Add (new TypeOfMethod (TypeBuilder.GetMethod (type, p.GetBuilder), loc));
 
-			var ctor_args = new ArrayList (Arguments.Count);
+			var ctor_args = new ArrayInitializer (Arguments.Count, loc);
 			foreach (Argument a in Arguments)
 				ctor_args.Add (a.CreateExpressionTree (ec));
 

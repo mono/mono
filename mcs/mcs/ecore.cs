@@ -12,7 +12,6 @@
 
 namespace Mono.CSharp {
 	using System;
-	using System.Collections;
 	using System.Collections.Generic;
 	using System.Diagnostics;
 	using System.Reflection;
@@ -684,21 +683,21 @@ namespace Mono.CSharp {
 
 			if (mi.Length > 1) {
 				bool is_interface = qualifier_type != null && qualifier_type.IsInterface;
-				ArrayList methods = new ArrayList (2);
-				ArrayList non_methods = null;
+				var methods = new List<MethodBase> (2);
+				List<MemberInfo> non_methods = null;
 
 				foreach (MemberInfo m in mi) {
 					if (m is MethodBase) {
-						methods.Add (m);
+						methods.Add ((MethodBase) m);
 						continue;
 					}
 
 					if (non_methods == null)
-						non_methods = new ArrayList (2);
+						non_methods = new List<MemberInfo> (2);
 
 					bool is_candidate = true;
 					for (int i = 0; i < non_methods.Count; ++i) {
-						MemberInfo n_m = (MemberInfo) non_methods [i];
+						MemberInfo n_m = non_methods [i];
 						if (n_m.DeclaringType.IsInterface && TypeManager.ImplementsInterface (m.DeclaringType, n_m.DeclaringType)) {
 							non_methods.Remove (n_m);
 							--i;
@@ -714,11 +713,11 @@ namespace Mono.CSharp {
 				}
 				
 				if (methods.Count == 0 && non_methods != null && non_methods.Count > 1) {
-					ctx.Report.SymbolRelatedToPreviousError ((MemberInfo)non_methods [1]);
-					ctx.Report.SymbolRelatedToPreviousError ((MemberInfo)non_methods [0]);
+					ctx.Report.SymbolRelatedToPreviousError (non_methods [1]);
+					ctx.Report.SymbolRelatedToPreviousError (non_methods [0]);
 					ctx.Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
-						TypeManager.GetFullNameSignature ((MemberInfo)non_methods [1]),
-						TypeManager.GetFullNameSignature ((MemberInfo)non_methods [0]));
+						TypeManager.GetFullNameSignature (non_methods [1]),
+						TypeManager.GetFullNameSignature (non_methods [0]));
 					return null;
 				}
 
@@ -1499,7 +1498,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class CastFromDecimal : TypeCast
 	{
-		static IDictionary operators;
+		static Dictionary<Type, MethodInfo> operators;
 
 		public CastFromDecimal (Expression child, Type return_type)
 			: base (child, return_type)
@@ -1514,11 +1513,11 @@ namespace Mono.CSharp {
 		public Expression Resolve ()
 		{
 			if (operators == null) {
-				 MemberInfo[] all_oper = TypeManager.MemberLookup (TypeManager.decimal_type,
-					TypeManager.decimal_type, TypeManager.decimal_type, MemberTypes.Method,
-					BindingFlags.Static | BindingFlags.Public, "op_Explicit", null);
+				MemberInfo[] all_oper = TypeManager.MemberLookup (TypeManager.decimal_type,
+				   TypeManager.decimal_type, TypeManager.decimal_type, MemberTypes.Method,
+				   BindingFlags.Static | BindingFlags.Public, "op_Explicit", null);
 
-				operators = new System.Collections.Specialized.HybridDictionary ();
+				operators = new Dictionary<Type, MethodInfo> (ReferenceEquality<Type>.Default);
 				foreach (MethodInfo oper in all_oper) {
 					AParametersCollection pd = TypeManager.GetParameterData (oper);
 					if (pd.Types [0] == TypeManager.decimal_type)
@@ -1526,7 +1525,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			return operators.Contains (type) ? this : null;
+			return operators.ContainsKey (type) ? this : null;
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1534,7 +1533,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			child.Emit (ec);
 
-			ig.Emit (OpCodes.Call, (MethodInfo)operators [type]);
+			ig.Emit (OpCodes.Call, operators [type]);
 		}
 	}
 
@@ -3261,7 +3260,7 @@ namespace Mono.CSharp {
 		public Expression ExtensionExpression;
 		Argument extension_argument;
 
-		public ExtensionMethodGroupExpr (ArrayList list, NamespaceEntry n, Type extensionType, Location l)
+		public ExtensionMethodGroupExpr (List<MethodBase> list, NamespaceEntry n, Type extensionType, Location l)
 			: base (list, extensionType, l)
 		{
 			this.namespace_entry = n;
@@ -3354,11 +3353,11 @@ namespace Mono.CSharp {
 			has_inaccessible_candidates_only = inacessibleCandidatesOnly;
 		}
 
-		public MethodGroupExpr (ArrayList list, Type type, Location l)
+		public MethodGroupExpr (List<MethodBase> list, Type type, Location l)
 			: this (type, l)
 		{
 			try {
-				Methods = (MethodBase[])list.ToArray (typeof (MethodBase));
+				Methods = list.ToArray ();
 			} catch {
 				foreach (MemberInfo m in list){
 					if (!(m is MethodBase)){
@@ -4103,8 +4102,8 @@ namespace Mono.CSharp {
 
 			if (mg2 == null)
 				return mg1;
-			
-			ArrayList all = new ArrayList (mg1.Methods);
+
+			var all = new List<MethodBase> (mg1.Methods);
 			foreach (MethodBase m in mg2.Methods){
 				if (!TypeManager.ArrayContainsMethod (mg1.Methods, m, false))
 					all.Add (m);
@@ -4190,8 +4189,8 @@ namespace Mono.CSharp {
 		{
 			bool method_params = false;
 			Type applicable_type = null;
-			ArrayList candidates = new ArrayList (2);
-			ArrayList candidate_overrides = null;
+			var candidates = new List<MethodBase> (2);
+			List<MethodBase> candidate_overrides = null;
 
 			//
 			// Used to keep a map between the candidate
@@ -4230,7 +4229,7 @@ namespace Mono.CSharp {
 					MethodBase m = Methods [i];
 					if (TypeManager.IsOverride (m)) {
 						if (candidate_overrides == null)
-							candidate_overrides = new ArrayList ();
+							candidate_overrides = new List<MethodBase> ();
 						candidate_overrides.Add (m);
 						m = TypeManager.TryGetBaseDefinition (m);
 					}
@@ -4386,7 +4385,7 @@ namespace Mono.CSharp {
 					int j = finalized; // where to put the next finalized candidate
 					int k = finalized; // where to put the next undiscarded candidate
 					for (int i = finalized; i < candidate_top; ++i) {
-						MethodBase candidate = (MethodBase) candidates [i];
+						MethodBase candidate = candidates [i];
 						Type decl_type = candidate.DeclaringType;
 
 						if (decl_type == applicable_type) {
@@ -4419,7 +4418,7 @@ namespace Mono.CSharp {
 			// Now we actually find the best method
 			//
 
-			best_candidate = (MethodBase) candidates [0];
+			best_candidate = candidates [0];
 			method_params = candidate_to_form != null && candidate_to_form.ContainsKey (best_candidate);
 
 			//
@@ -4452,7 +4451,7 @@ namespace Mono.CSharp {
 			//
 			MethodBase ambiguous = null;
 			for (int ix = 1; ix < candidate_top; ix++) {
-				MethodBase candidate = (MethodBase) candidates [ix];
+				MethodBase candidate = candidates [ix];
 
 				if (candidate == best_candidate)
 					continue;
@@ -4617,7 +4616,7 @@ namespace Mono.CSharp {
 			Type pt = null;
 			int a_idx = 0, a_pos = 0;
 			Argument a = null;
-			ArrayList params_initializers = null;
+			ArrayInitializer params_initializers = null;
 			bool has_unsafe_arg = method is MethodInfo ? ((MethodInfo) method).ReturnType.IsPointer : false;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
@@ -4629,7 +4628,7 @@ namespace Mono.CSharp {
 
 					if (p_mod == Parameter.Modifier.PARAMS) {
 						if (chose_params_expanded) {
-							params_initializers = new ArrayList (arg_count - a_idx);
+							params_initializers = new ArrayInitializer (arg_count - a_idx, a.Expr.Location);
 							pt = TypeManager.GetElementType (pt);
 						}
 					}
@@ -4721,7 +4720,7 @@ namespace Mono.CSharp {
 				pt = pd.Types [param_count - 1];
 				pt = TypeManager.GetElementType (pt);
 				has_unsafe_arg |= pt.IsPointer;
-				params_initializers = new ArrayList (0);
+				params_initializers = new ArrayInitializer (0, loc);
 			}
 
 			//
@@ -4729,8 +4728,7 @@ namespace Mono.CSharp {
 			//
 			if (params_initializers != null) {
 				arguments.Add (new Argument (
-						       new ArrayCreation (new TypeExpression (pt, loc), "[]",
-									  params_initializers, loc).Resolve (ec)));
+					new ArrayCreation (new TypeExpression (pt, loc), "[]", params_initializers, loc).Resolve (ec)));
 				arg_count++;
 			}
 

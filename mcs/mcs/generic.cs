@@ -14,7 +14,6 @@ using System;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Globalization;
-using System.Collections;
 using System.Collections.Generic;
 using System.Text;
 using System.Text.RegularExpressions;
@@ -1950,10 +1949,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public partial class TypeManager
+	partial class TypeManager
 	{
-		static public Type activator_type;
-	
 		public static TypeContainer LookupGenericTypeContainer (Type t)
 		{
 			t = DropGenericTypeArguments (t);

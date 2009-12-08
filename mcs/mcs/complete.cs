@@ -15,7 +15,7 @@
 //
 namespace Mono.CSharp {
 	using System;
-	using System.Collections;
+	using System.Collections.Generic;
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Text;
@@ -50,7 +50,7 @@ namespace Mono.CSharp {
 			this.Prefix = prefix;
 		}
 
-		public static void AppendResults (ArrayList results, string prefix, IEnumerable names)
+		public static void AppendResults (List<string> results, string prefix, IEnumerable<string> names)
 		{
 			foreach (string name in names){
 				if (name == null)
@@ -72,13 +72,13 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			ArrayList results = new ArrayList ();
+			var results = new List<string> ();
 
 			AppendResults (results, Prefix, Evaluator.GetVarNames ());
 			AppendResults (results, Prefix, ec.CurrentTypeDefinition.NamespaceEntry.CompletionGetTypesStartingWith (Prefix));
 			AppendResults (results, Prefix, Evaluator.GetUsingList ());
 			
-			throw new CompletionResult (Prefix, (string []) results.ToArray (typeof (string)));
+			throw new CompletionResult (Prefix, results.ToArray ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -151,7 +151,7 @@ namespace Mono.CSharp {
 					return null;
 			}
 
-			ArrayList results = new ArrayList ();
+			var results = new List<string> ();
 			if (expr_resolved is Namespace){
 				Namespace nexpr = expr_resolved as Namespace;
 				string namespaced_partial;
@@ -195,7 +195,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			throw new CompletionResult (partial_name == null ? "" : partial_name, (string []) results.ToArray (typeof (string)));
+			throw new CompletionResult (partial_name == null ? "" : partial_name, results.ToArray ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

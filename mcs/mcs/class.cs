@@ -12,7 +12,6 @@
 //
 
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -172,7 +171,7 @@ namespace Mono.CSharp {
 		List<MemberCore> operators;
 
 		// Holds the compiler generated classes
-		ArrayList compiler_generated;
+		List<CompilerGeneratedClass> compiler_generated;
 
 		//
 		// Pointers to the default constructor and the default static constructor
@@ -505,7 +504,7 @@ namespace Mono.CSharp {
 			Report.Debug (64, "ADD COMPILER GENERATED CLASS", this, c);
 
 			if (compiler_generated == null)
-				compiler_generated = new ArrayList ();
+				compiler_generated = new List<CompilerGeneratedClass> ();
 
 			compiler_generated.Add (c);
 		}
@@ -807,7 +806,7 @@ namespace Mono.CSharp {
 
 		TypeExpr[] GetNormalPartialBases (ref TypeExpr base_class)
 		{
-			ArrayList ifaces = new ArrayList (0);
+			var ifaces = new List<TypeExpr> (0);
 			if (iface_exprs != null)
 				ifaces.AddRange (iface_exprs);
 
@@ -843,7 +842,7 @@ namespace Mono.CSharp {
 			if (ifaces.Count == 0)
 				return null;
 
-			return (TypeExpr[])ifaces.ToArray (typeof (TypeExpr));
+			return ifaces.ToArray ();
 		}
 
 		//
@@ -919,7 +918,7 @@ namespace Mono.CSharp {
 
 		bool CheckGenericInterfaces (Type[] ifaces)
 		{
-			ArrayList already_checked = new ArrayList ();
+			var already_checked = new List<Type> ();
 
 			for (int i = 0; i < ifaces.Length; i++) {
 				Type iface = ifaces [i];
@@ -1431,7 +1430,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		protected virtual void DefineContainerMembers (IList mcal) // IList<MemberCore>
+		protected virtual void DefineContainerMembers (System.Collections.IList mcal) // IList<MemberCore>
 		{
 			if (mcal != null) {
 				foreach (MemberCore mc in mcal) {
@@ -1531,7 +1530,7 @@ namespace Mono.CSharp {
 
 		public MethodInfo[] GetMethods ()
 		{
-			ArrayList members = new ArrayList ();
+			var members = new List<MethodInfo> ();
 
 			Define ();
 
@@ -1589,9 +1588,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			MethodInfo[] retMethods = new MethodInfo [members.Count];
-			members.CopyTo (retMethods, 0);
-			return retMethods;
+			return members.ToArray ();
 		}
 		
 		// Indicated whether container has StructLayout attribute set Explicit
@@ -2382,10 +2379,10 @@ namespace Mono.CSharp {
 		/// </summary>
 		void VerifyClsName ()
 		{
-			Hashtable base_members = base_cache == null ? 
-				new Hashtable () :
+			Dictionary<string, object> base_members = base_cache == null ?
+				new Dictionary<string, object> () :
 				base_cache.GetPublicMembers ();
-			Hashtable this_members = new Hashtable ();
+			var this_members = new Dictionary<string, object> ();
 
 			foreach (var entry in defined_names) {
 				MemberCore mc = entry.Value;
@@ -2396,10 +2393,9 @@ namespace Mono.CSharp {
 				string basename = name.Substring (name.LastIndexOf ('.') + 1);
 
 				string lcase = basename.ToLower (System.Globalization.CultureInfo.InvariantCulture);
-				object found = base_members [lcase];
-				if (found == null) {
-					found = this_members [lcase];
-					if (found == null) {
+				object found;
+				if (!base_members.TryGetValue (lcase, out found)) {
+					if (!this_members.TryGetValue (lcase, out found)) {
 						this_members.Add (lcase, mc);
 						continue;
 					}
@@ -2687,7 +2683,7 @@ namespace Mono.CSharp {
 				while (top_level.Parent != null)
 					top_level = top_level.Parent;
 
-				ArrayList candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name);
+				var candidates = NamespaceEntry.NS.LookupExtensionMethod (extensionType, this, name);
 				if (candidates != null)
 					return new ExtensionMethodGroupExpr (candidates, NamespaceEntry, extensionType, loc);
 			}
@@ -2777,7 +2773,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override void DefineContainerMembers (IList list)
+		protected override void DefineContainerMembers (System.Collections.IList list)
 		{
 			if (list == null)
 				return;
@@ -4459,7 +4455,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (!Parameters.IsEmpty) {
-				ArrayList al = (ArrayList)Parent.PartialContainer.MemberCache.Members [Name];
+				var al = Parent.PartialContainer.MemberCache.Members [Name];
 				if (al.Count > 1)
 					MemberCache.VerifyClsParameterConflict (al, this, MethodBuilder, Report);
 			}
@@ -4862,7 +4858,7 @@ namespace Mono.CSharp {
 			}
 			
  			if (!Parameters.IsEmpty) {
- 				ArrayList al = (ArrayList)Parent.MemberCache.Members [ConstructorInfo.ConstructorName];
+ 				var al = Parent.MemberCache.Members [ConstructorInfo.ConstructorName];
  				if (al.Count > 2)
  					MemberCache.VerifyClsParameterConflict (al, this, ConstructorBuilder, Report);
  

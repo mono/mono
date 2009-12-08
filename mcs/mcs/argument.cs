@@ -12,7 +12,6 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Mono.CSharp
@@ -224,10 +223,10 @@ namespace Mono.CSharp
 			this.args.AddRange (args.args);
 		}
 
-		public ArrayList CreateDynamicBinderArguments (ResolveContext rc)
+		public ArrayInitializer CreateDynamicBinderArguments (ResolveContext rc)
 		{
-			var all = new ArrayList (args.Count);
 			Location loc = Location.Null;
+			var all = new ArrayInitializer (args.Count, loc);
 
 			MemberAccess binder = DynamicExpressionStatement.GetBinderNamespace (loc);
 

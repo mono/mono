@@ -16,15 +16,10 @@
 //       great spot to put an `error' because you can reproduce it with this input:
 //	 "public X { }"
 //
-// Possible optimization:
-//   Run memory profiler with parsing only, and consider dropping 
-//   arraylists where not needed.   Some pieces can use linked lists.
-
 
 using System.Text;
 using System.IO;
 using System;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Mono.CSharp
@@ -80,12 +75,6 @@ namespace Mono.CSharp
 		ParametersCompiled indexer_parameters;
 
 		/// <summary>
-		///   Hack to help create non-typed array initializer
-		/// </summary>
-		public static FullNamedExpression current_array_type;
-		FullNamedExpression pushed_current_array_type;
-
-		/// <summary>
 		///   Used to determine if we are parsing the get/set pair
 		///   of an indexer or a property
 		/// </summmary>
@@ -96,12 +85,12 @@ namespace Mono.CSharp
 		///
 		/// An out-of-band stack.
 		///
-		static Stack oob_stack;
+		static Stack<object> oob_stack;
 
 		///
 		/// Switch stack.
 		///
-		Stack switch_stack;
+		Stack<Block> switch_stack;
 
 		///
 		/// Controls the verbosity of the errors produced by the parser
@@ -146,8 +135,7 @@ namespace Mono.CSharp
 		//
 		public Undo undo;
 		
-		// Stack<ToplevelBlock>
-		Stack linq_clause_blocks;
+		Stack<Block> linq_clause_blocks;
 
 		// A counter to create new class names in interactive mode
 		static int class_count;
@@ -159,8 +147,8 @@ namespace Mono.CSharp
 		// share the bucket for very common constructs which can never
 		// be recursive
 		//
-		static ArrayList parameters_bucket = new ArrayList (6);
-		static ArrayList variables_bucket = new ArrayList (6);
+		static List<Parameter> parameters_bucket = new List<Parameter> (6);
+		static List<object> variables_bucket = new List<object> (6);
 %}
 
 %token EOF
@@ -1018,7 +1006,7 @@ constant_declaration
 	  SEMICOLON
 	  {
 		int modflags = (int) $2;
-		foreach (VariableDeclaration constant in (ArrayList) $5){
+		foreach (VariableDeclaration constant in (List<object>) $5){
 			Location l = constant.Location;
 			if ((modflags & Modifiers.STATIC) != 0) {
 				Report.Error (504, l, "The constant `{0}' cannot be marked static", current_container.GetSignatureForError () + "." + (string) constant.identifier);
@@ -1027,7 +1015,7 @@ constant_declaration
 
 			Const c = new Const (
 				current_class, (FullNamedExpression) $4, (string) constant.identifier, 
-				(Expression) constant.expression_or_array_initializer, modflags, 
+				constant.GetInitializer ((FullNamedExpression) $4), modflags, 
 				(Attributes) $1, l);
 
 			if (RootContext.Documentation != null) {
@@ -1050,7 +1038,7 @@ constant_declarators
 	| constant_declarators COMMA constant_declarator
 	  {
 		if ($3 != null) {
-			ArrayList constants = (ArrayList) $1;
+			var constants = (List<object>) $1;
 			constants.Add ($3);
 		}
 	  }
@@ -1064,7 +1052,7 @@ constant_declarator
 	  constant_initializer
 	  {
 	  	--lexer.parsing_block;
-		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, $4);
+		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, (Expression) $4);
 	  }
 	| IDENTIFIER
 	  {
@@ -1092,12 +1080,10 @@ field_declaration
 		
 		int mod = (int) $2;
 
-		current_array_type = null;
-
-		foreach (VariableMemberDeclaration var in (ArrayList) $4){
+		foreach (VariableMemberDeclaration var in (List<object>) $4){
 			Field field = new Field (current_class, type, mod, var.MemberName, (Attributes) $1);
 
-			field.Initializer = var.expression_or_array_initializer;
+			field.Initializer = var.GetInitializer (type);
 
 			if (RootContext.Documentation != null) {
 				field.DocComment = Lexer.consume_doc_comment ();
@@ -1118,11 +1104,9 @@ field_declaration
 			
 			int mod = (int) $2;
 
-			current_array_type = null;
-
-			foreach (VariableDeclaration var in (ArrayList) $5) {
+			foreach (VariableDeclaration var in (List<VariableDeclaration>) $5) {
 				FixedField field = new FixedField (current_class, type, mod, var.identifier,
-					(Expression)var.expression_or_array_initializer, (Attributes) $1, var.Location);
+					var.GetInitializer (type), (Attributes) $1, var.Location);
 
 				if (RootContext.Documentation != null) {
 					field.DocComment = Lexer.consume_doc_comment ();
@@ -1145,14 +1129,14 @@ field_declaration
 fixed_variable_declarators
 	: fixed_variable_declarator
 	  {
-		ArrayList decl = new ArrayList (2);
-		decl.Add ($1);
+		var decl = new List<VariableDeclaration> (2);
+		decl.Add ((VariableDeclaration)$1);
 		$$ = decl;
   	  }
 	| fixed_variable_declarators COMMA fixed_variable_declarator
 	  {
-		ArrayList decls = (ArrayList) $1;
-		decls.Add ($3);
+		var decls = (List<VariableDeclaration>) $1;
+		decls.Add ((VariableDeclaration)$3);
 		$$ = $1;
 	  }
 	;
@@ -1160,7 +1144,7 @@ fixed_variable_declarators
 fixed_variable_declarator
 	: IDENTIFIER OPEN_BRACKET expression CLOSE_BRACKET
 	  {
-		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, $3);
+		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, (Expression) $3);
 	  }
 	| IDENTIFIER OPEN_BRACKET CLOSE_BRACKET
 	  {
@@ -1180,7 +1164,7 @@ local_variable_declarators
 	  }
 	| local_variable_declarators COMMA local_variable_declarator
 	  {
-		ArrayList decls = (ArrayList) $1;
+		var decls = (List<object>) $1;
 		decls.Add ($3);
 		$$ = $1;
 	  }
@@ -1189,7 +1173,7 @@ local_variable_declarators
 local_variable_declarator
 	: IDENTIFIER ASSIGN local_variable_initializer
 	  {
-		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, $3);
+		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, (Expression) $3);
 	  }
 	| IDENTIFIER
 	  {
@@ -1229,7 +1213,7 @@ variable_declarators
 	  }
 	| variable_declarators COMMA variable_declarator
 	  {
-		ArrayList decls = (ArrayList) $1;
+		var decls = (List<object>) $1;
 		decls.Add ($3);
 		$$ = $1;
 	  }
@@ -1244,7 +1228,7 @@ variable_declarator
 	  variable_initializer
 	  {
 	  	--lexer.parsing_block;
-		$$ = new VariableMemberDeclaration ((MemberName) $1, $4);
+		$$ = new VariableMemberDeclaration ((MemberName) $1, (Expression) $4);
 	  }
 	| member_declaration_name
 	  {
@@ -1433,32 +1417,21 @@ opt_formal_parameter_list
 formal_parameter_list
 	: fixed_parameters
 	  { 
-		ArrayList pars_list = (ArrayList) $1;
-
-		Parameter [] pars = new Parameter [pars_list.Count];
-		pars_list.CopyTo (pars);
-
-	  	$$ = new ParametersCompiled (compiler, pars); 
+		var pars_list = (List<Parameter>) $1;
+	  	$$ = new ParametersCompiled (compiler, pars_list.ToArray ());
 	  } 
 	| fixed_parameters COMMA parameter_array
 	  {
-		ArrayList pars_list = (ArrayList) $1;
-		pars_list.Add ($3);
+		var pars_list = (List<Parameter>) $1;
+		pars_list.Add ((Parameter) $3);
 
-		Parameter [] pars = new Parameter [pars_list.Count];
-		pars_list.CopyTo (pars);
-
-		$$ = new ParametersCompiled (compiler, pars); 
+		$$ = new ParametersCompiled (compiler, pars_list.ToArray ()); 
 	  }
 	| fixed_parameters COMMA arglist_modifier
 	  {
-		ArrayList pars_list = (ArrayList) $1;
+		var pars_list = (List<Parameter>) $1;
 		pars_list.Add (new ArglistParameter (GetLocation ($3)));
-
-		Parameter [] pars = new Parameter [pars_list.Count];
-		pars_list.CopyTo (pars);
-
-		$$ = new ParametersCompiled (compiler, pars, true);
+		$$ = new ParametersCompiled (compiler, pars_list.ToArray (), true);
 	  }
 	| parameter_array COMMA error
 	  {
@@ -1471,14 +1444,11 @@ formal_parameter_list
 	  {
 		if ($3 != null)
 			Report.Error (231, ((Parameter) $3).Location, "A params parameter must be the last parameter in a formal parameter list");
-			
-		ArrayList pars_list = (ArrayList) $1;
+
+		var pars_list = (List<Parameter>) $1;
 		pars_list.Add (new ArglistParameter (GetLocation ($3)));
 
-		Parameter [] pars = new Parameter [pars_list.Count];
-		pars_list.CopyTo (pars);
-
-		$$ = new ParametersCompiled (compiler, pars, true);
+		$$ = new ParametersCompiled (compiler, pars_list.ToArray (), true);
 	  }
 	| arglist_modifier COMMA error
 	  {
@@ -1489,14 +1459,11 @@ formal_parameter_list
 	| fixed_parameters COMMA ARGLIST COMMA error 
 	  {
 		Report.Error (257, GetLocation ($3), "An __arglist parameter must be the last parameter in a formal parameter list");
-		
-		ArrayList pars_list = (ArrayList) $1;
+
+		var pars_list = (List<Parameter>) $1;
 		pars_list.Add (new ArglistParameter (GetLocation ($3)));
 
-		Parameter [] pars = new Parameter [pars_list.Count];
-		pars_list.CopyTo (pars);
-
-		$$ = new ParametersCompiled (compiler, pars, true);
+		$$ = new ParametersCompiled (compiler, pars_list.ToArray (), true);
 	  }
 	| parameter_array 
 	  {
@@ -1520,7 +1487,7 @@ fixed_parameters
 	  }
 	| fixed_parameters COMMA fixed_parameter
 	  {
-		ArrayList pars = (ArrayList) $1;
+		var pars = (List<Parameter>) $1;
 		Parameter p = (Parameter) $3;
 		if (p != null) {
 			if (p.HasExtensionMethodModifier)
@@ -2273,18 +2240,14 @@ event_declaration
 	  opt_modifiers
 	  EVENT type variable_declarators SEMICOLON
 	  {
-		current_array_type = null;
-		foreach (VariableMemberDeclaration var in (ArrayList) $5) {
+		foreach (VariableMemberDeclaration var in (List<object>) $5) {
 
 			EventField e = new EventField (
 				current_class, (FullNamedExpression) $4, (int) $2, var.MemberName, (Attributes) $1);
 				
-			if (var.expression_or_array_initializer != null) {
-				if (current_container.Kind == Kind.Interface) {
-					Report.Error (68, e.Location, "`{0}': event in interface cannot have initializer", e.GetSignatureForError ());
-				}
-
-				e.Initializer = var.expression_or_array_initializer;
+			e.Initializer = var.GetInitializer ((FullNamedExpression) $4);
+			if (current_container.Kind == Kind.Interface && e.Initializer != null) {
+				Report.Error (68, e.Location, "`{0}': event in interface cannot have initializer", e.GetSignatureForError ());
 			}
 			
 			if (var.MemberName.Left != null) {
@@ -2518,9 +2481,9 @@ enum_declaration
 
 
 		EnumMember em = null;
-		foreach (VariableDeclaration ev in (ArrayList) $7) {
+		foreach (VariableDeclaration ev in (IList<VariableDeclaration>) $7) {
 			em = new EnumMember (
-				e, em, ev.identifier, (Expression) ev.expression_or_array_initializer,
+				e, em, ev.identifier, ev.GetInitializer ((FullNamedExpression) $5),
 				ev.OptAttributes, ev.Location);
 
 //			if (RootContext.Documentation != null)
@@ -2581,24 +2544,21 @@ enum_body
 	;
 
 opt_enum_member_declarations
-	: /* empty */			{ $$ = new ArrayList (0); }
+	: /* empty */			{ $$ = new VariableDeclaration [0]; }
 	| enum_member_declarations opt_comma { $$ = $1; }
 	;
 
 enum_member_declarations
 	: enum_member_declaration 
 	  {
-		ArrayList l = new ArrayList (4);
-
-		l.Add ($1);
+		var l = new List<VariableDeclaration> (4);
+		l.Add ((VariableDeclaration) $1);
 		$$ = l;
 	  }
 	| enum_member_declarations COMMA enum_member_declaration
 	  {
-		ArrayList l = (ArrayList) $1;
-
-		l.Add ($3);
-
+		var l = (List<VariableDeclaration>) $1;
+		l.Add ((VariableDeclaration) $3);
 		$$ = l;
 	  }
 	;
@@ -2628,7 +2588,7 @@ enum_member_declaration
 	  { 
 		--lexer.parsing_block;	  
 		VariableDeclaration vd = new VariableDeclaration (
-			(Tokenizer.LocatedToken) $2, $5, (Attributes) $1);
+			(Tokenizer.LocatedToken) $2, (Expression) $5, (Attributes) $1);
 
 		if (RootContext.Documentation != null)
 			vd.DocComment = ConsumeStoredComment ();
@@ -2925,7 +2885,7 @@ type_expression_or_array
 	| type_expression rank_specifiers
 	  {
 		string rank_specifiers = (string) $2;
-		$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, rank_specifiers);
+		$$ = new ComposedCast ((FullNamedExpression) $1, rank_specifiers);
 	  }
 	;
 	
@@ -2938,7 +2898,7 @@ type_expression
 			$$ = new ComposedCast (name.GetTypeExpression (), "?", lexer.Location);
 		} else {
 			if (name.Left == null && name.Name == "var")
-				$$ = current_array_type = new VarExpr (name.Location);
+				$$ = new VarExpr (name.Location);
 			else
 				$$ = name.GetTypeExpression ();
 		}
@@ -3205,7 +3165,7 @@ member_initializer
 	  }
 	| OPEN_BRACE expression_list CLOSE_BRACE
 	  {
-	  	$$ = new CollectionElementInitializer ((ArrayList)$2, GetLocation ($1));
+	  	$$ = new CollectionElementInitializer ((List<Expression>)$2, GetLocation ($1));
 	  }
 	| OPEN_BRACE CLOSE_BRACE
 	  {
@@ -3338,22 +3298,20 @@ element_access
 			Error_ExpectingTypeName (expr);
 			$$ = TypeManager.system_object_expr;
 		}
-		
-		current_array_type = (FullNamedExpression)$$;
 	  }
 	;
 
 expression_list
 	: expression
 	  {
-		ArrayList list = new ArrayList (4);
-		list.Add ($1);
+		var list = new List<Expression> (4);
+		list.Add ((Expression) $1);
 		$$ = list;
 	  }
 	| expression_list COMMA expression
 	  {
-		ArrayList list = (ArrayList) $1;
-		list.Add ($3);
+		var list = (List<Expression>) $1;
+		list.Add ((Expression) $3);
 		$$ = list;
 	  }
 	;
@@ -3445,21 +3403,21 @@ array_creation_expression
 	  opt_rank_specifier	// shift/reduce on OPEN_BRACE
 	  opt_array_initializer
 	  {
-		$$ = new ArrayCreation ((FullNamedExpression) $1, (ArrayList) $3, (string) $5, (ArrayList) $6, GetLocation ($1));
+		$$ = new ArrayCreation ((FullNamedExpression) $1, (List<Expression>) $3, (string) $5, (ArrayInitializer) $6, GetLocation ($1));
 	  }
 	| new_expr_start rank_specifiers opt_array_initializer
 	  {
 	  	if ($3 == null)
 	  		Report.Error (1586, GetLocation ($1), "Array creation must have array size or array initializer");
 
-		$$ = new ArrayCreation ((FullNamedExpression) $1, (string) $2, (ArrayList) $3, GetLocation ($1));
+		$$ = new ArrayCreation ((FullNamedExpression) $1, (string) $2, (ArrayInitializer) $3, GetLocation ($1));
 	  }
 	| NEW rank_specifiers array_initializer
 	  {
 		if (RootContext.Version <= LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "implicitly typed arrays");
 	  
-		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayList) $3, GetLocation ($1));
+		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayInitializer) $3, GetLocation ($1));
 	  }
 	| new_expr_start error
 	  {
@@ -3625,38 +3583,37 @@ opt_array_initializer
 array_initializer
 	: OPEN_BRACE CLOSE_BRACE
 	  {
-		$$ = new ArrayList (0);
+		$$ = new ArrayInitializer (0, GetLocation ($1));
 	  }
 	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
 	  {
-		$$ = $2;
+		$$ = new ArrayInitializer ((List<Expression>) $2, GetLocation ($1));
 	  }
 	;
 
 variable_initializer_list
 	: variable_initializer
 	  {
-		ArrayList list = new ArrayList (4);
-		list.Add ($1);
+		var list = new List<Expression> (4);
+		list.Add ((Expression) $1);
 		$$ = list;
 	  }
 	| variable_initializer_list COMMA variable_initializer
 	  {
-		ArrayList list = (ArrayList) $1;
-		list.Add ($3);
+		var list = (List<Expression>) $1;
+		list.Add ((Expression) $3);
 		$$ = list;
 	  }
 	| error
 	  {
 	  	Error_SyntaxError (yyToken);
-	  	$$ = new ArrayList ();
+	  	$$ = new List<Expression> ();
 	  }
 	;
 
 typeof_expression
 	: TYPEOF
       {
-	  	pushed_current_array_type = current_array_type;
 	  	lexer.TypeOfParsing = true;
 	  }
 	  open_parens_any typeof_type_expression CLOSE_PARENS
@@ -3667,7 +3624,6 @@ typeof_expression
 			$$ = new TypeOfVoid (GetLocation ($1));
 		else
 			$$ = new TypeOf (type, GetLocation ($1));
-		current_array_type = pushed_current_array_type;
 	  }
 	;
 	
@@ -4088,14 +4044,14 @@ assignment_expression
 lambda_parameter_list
 	: lambda_parameter
 	  {
-		ArrayList pars = new ArrayList (4);
-		pars.Add ($1);
+		var pars = new List<Parameter> (4);
+		pars.Add ((Parameter) $1);
 
 		$$ = pars;
 	  }
 	| lambda_parameter_list COMMA lambda_parameter
 	  {
-		ArrayList pars = (ArrayList) $1;
+		var pars = (List<Parameter>) $1;
 		Parameter p = (Parameter)$3;
 		if (pars[0].GetType () != p.GetType ()) {
 			Report.Error (748, p.Location, "All lambda parameters must be typed either explicitly or implicitly");
@@ -4129,8 +4085,8 @@ lambda_parameter
 opt_lambda_parameter_list
 	: /* empty */			{ $$ = ParametersCompiled.EmptyReadOnlyParameters; }
 	| lambda_parameter_list		{ 
-		ArrayList pars_list = (ArrayList) $1;
-		$$ = new ParametersCompiled (compiler, (Parameter[])pars_list.ToArray (typeof (Parameter)));
+		var pars_list = (List<Parameter>) $1;
+		$$ = new ParametersCompiled (compiler, pars_list.ToArray ());
 	  }
 	;
 
@@ -4558,22 +4514,18 @@ labeled_statement
 declaration_statement
 	: local_variable_declaration SEMICOLON
 	  {
-		current_array_type = null;
 		if ($1 != null){
-			DictionaryEntry de = (DictionaryEntry) $1;
-			Expression e = (Expression) de.Key;
-
-			$$ = declare_local_variables (e, (ArrayList) de.Value, e.Location);
+			var de = (Tuple<FullNamedExpression, List<object>>) $1;
+			$$ = declare_local_variables (de.Item1, de.Item2, de.Item1.Location);
 		}
 	  }
 
 	| local_constant_declaration SEMICOLON
 	  {
-		current_array_type = null;
 		if ($1 != null){
-			DictionaryEntry de = (DictionaryEntry) $1;
+			var de = (Tuple<FullNamedExpression, List<object>>) $1;
 
-			$$ = declare_local_constants ((Expression) de.Key, (ArrayList) de.Value);
+			$$ = declare_local_constants (de.Item1, de.Item2);
 		}
 	  }
 	;
@@ -4616,7 +4568,7 @@ variable_type
 			if (rank_or_nullable.Length == 0) {
 				SimpleName sn = expr as SimpleName;
 				if (sn != null && sn.Name == "var")
-					$$ = current_array_type = new VarExpr (sn.Location);
+					$$ = new VarExpr (sn.Location);
 				else
 					$$ = $1;
 			} else {
@@ -4632,7 +4584,7 @@ variable_type
 		if ((string) $2 == "")
 			$$ = $1;
 		else
-			$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, (string) $2, lexer.Location);
+			$$ = new ComposedCast ((FullNamedExpression) $1, (string) $2, lexer.Location);
 	  }
 	| VOID opt_rank_specifier
 	  {
@@ -4677,7 +4629,7 @@ local_variable_type
 			if (rank == "")
 				$$ = $1;
 			else
-				$$ = current_array_type = new ComposedCast ((FullNamedExpression) $1, rank);
+				$$ = new ComposedCast ((FullNamedExpression) $1, rank);
 		} else {
 			$$ = null;
 		}
@@ -4690,13 +4642,13 @@ local_variable_declaration
 		if ($1 != null) {
 			VarExpr ve = $1 as VarExpr;
 			if (ve != null) {
-				if (((VariableDeclaration)((ArrayList)$2) [0]).expression_or_array_initializer == null)
+				if (!((VariableDeclaration) ((List<object>)$2) [0]).HasInitializer)
 					ve.VariableInitializersCount = 0;
 				else
-					ve.VariableInitializersCount = ((ArrayList)$2).Count;
+					ve.VariableInitializersCount = ((List<object>)$2).Count;
 			}
 				
-			$$ = new DictionaryEntry ($1, $2);
+			$$ = new Tuple<FullNamedExpression, List<object>> ((FullNamedExpression) $1, (List<object>) $2);
 		} else
 			$$ = null;
 	  }
@@ -4706,7 +4658,7 @@ local_constant_declaration
 	: CONST variable_type constant_declarators
 	  {
 		if ($2 != null)
-			$$ = new DictionaryEntry ($2, $3);
+			$$ = new Tuple<FullNamedExpression, List<object>> ((FullNamedExpression) $2, (List<object>) $3);
 		else
 			$$ = null;
 	  }
@@ -4797,7 +4749,7 @@ switch_statement
 	: SWITCH open_parens_any
 	  { 
 		if (switch_stack == null)
-			switch_stack = new Stack (2);
+			switch_stack = new Stack<Block> (2);
 		switch_stack.Push (current_block);
 	  }
 	  expression CLOSE_PARENS 
@@ -4914,13 +4866,12 @@ for_statement
 		start_block (l);  
 		Block assign_block = current_block;
 
-		if ($3 is DictionaryEntry){
-			DictionaryEntry de = (DictionaryEntry) $3;
+		if ($3 is Tuple<FullNamedExpression, List<object>>){
+			var de = (Tuple<FullNamedExpression, List<object>>) $3;
 			
-			Expression type = (Expression) de.Key;
-			ArrayList var_declarators = (ArrayList) de.Value;
+			var type = de.Item1;
 
-			foreach (VariableDeclaration decl in var_declarators){
+			foreach (VariableDeclaration decl in de.Item2){
 
 				LocalInfo vi;
 
@@ -4928,7 +4879,7 @@ for_statement
 				if (vi == null)
 					continue;
 
-				Expression expr = decl.expression_or_array_initializer;
+				Expression expr = decl.GetInitializer (type);
 					
 				LocalVariableReference var;
 				var = new LocalVariableReference (assign_block, decl.identifier, l);
@@ -5196,20 +5147,17 @@ opt_identifier
 catch_clause 
 	: CATCH opt_catch_args 
 	  {
-		Expression type = null;
-		
 		if ($2 != null) {
-			DictionaryEntry cc = (DictionaryEntry) $2;
-			type = (Expression) cc.Key;
-			var lt = (Tokenizer.LocatedToken) cc.Value;
+			var cc = (Tuple<FullNamedExpression, Tokenizer.LocatedToken>) $2;
+			var lt = cc.Item2;
 
 			if (lt != null){
-				ArrayList one = new ArrayList (2);
+				List<object> one = new List<object> (1);
 
 				one.Add (new VariableDeclaration (lt, null));
 
 				start_block (lexer.Location);
-				current_block = declare_local_variables (type, one, lt.Location);
+				current_block = declare_local_variables (cc.Item1, one, lt.Location);
 			}
 		}
 	  } block {
@@ -5218,9 +5166,9 @@ catch_clause
 		Block var_block = null;
 
 		if ($2 != null){
-			DictionaryEntry cc = (DictionaryEntry) $2;
-			type = (Expression) cc.Key;
-			var lt = (Tokenizer.LocatedToken) cc.Value;
+			var cc = (Tuple<FullNamedExpression, Tokenizer.LocatedToken>) $2;
+			type = cc.Item1;
+			var lt = cc.Item2;
 
 			if (lt != null){
 				id = lt.Value;
@@ -5240,7 +5188,7 @@ opt_catch_args
 catch_args 
 	: open_parens_any type opt_identifier CLOSE_PARENS 
 	  {
-		$$ = new DictionaryEntry ($2, $3);
+		$$ = new Tuple<FullNamedExpression, Tokenizer.LocatedToken> ((FullNamedExpression)$2, (Tokenizer.LocatedToken) $3);
 	  }
 	| open_parens_any CLOSE_PARENS 
 	  {
@@ -5345,21 +5293,18 @@ using_statement
 		start_block (lexer.Location);
 		Block assign_block = current_block;
 
-		DictionaryEntry de = (DictionaryEntry) $3;
+		var de = (Tuple<FullNamedExpression, List<object>>) $3;
 		Location l = GetLocation ($1);
 
-		Expression type = (Expression) de.Key;
-		ArrayList var_declarators = (ArrayList) de.Value;
+		var vars = new Stack<Tuple<LocalVariableReference, Expression>> ();
 
-		Stack vars = new Stack ();
-
-		foreach (VariableDeclaration decl in var_declarators) {
-			LocalInfo vi = current_block.AddVariable (type, decl.identifier, decl.Location);
+		foreach (VariableDeclaration decl in de.Item2) {
+			LocalInfo vi = current_block.AddVariable (de.Item1, decl.identifier, decl.Location);
 			if (vi == null)
 				continue;
 			vi.SetReadOnlyContext (LocalInfo.ReadOnlyContext.Using);
 
-			Expression expr = decl.expression_or_array_initializer;
+			Expression expr = decl.GetInitializer (de.Item1);
 			if (expr == null) {
 				Report.Error (210, l, "You must provide an initializer in a fixed or using statement declaration");
 				continue;
@@ -5372,7 +5317,7 @@ using_statement
 			// This is so that it is not a warning on using variables
 			vi.Used = true;
 
-			vars.Push (new DictionaryEntry (var, expr));
+			vars.Push (new Tuple<LocalVariableReference, Expression> (var, expr));
 
 			// Assign a = new SimpleAssign (var, expr, decl.Location);
 			// assign_block.AddStatement (new StatementExpression (a));
@@ -5385,12 +5330,12 @@ using_statement
 	  embedded_statement
 	  {
 		Statement stmt = (Statement) $6;
-		Stack vars = (Stack) $5;
+		var vars = (Stack<Tuple<LocalVariableReference, Expression>>) $5;
 		Location l = GetLocation ($1);
 
 		while (vars.Count > 0) {
-			  DictionaryEntry de = (DictionaryEntry) vars.Pop ();
-			  stmt = new Using ((Expression) de.Key, (Expression) de.Value, stmt, l);
+			  var de = vars.Pop ();
+			  stmt = new Using (de.Item1, de.Item2, stmt, l);
 		}
 		current_block.AddStatement (stmt);
 		$$ = end_block (lexer.Location);
@@ -5533,7 +5478,7 @@ select_or_group_clause
 	| GROUP
 	  {
 	  	if (linq_clause_blocks == null)
-	  		linq_clause_blocks = new Stack ();
+	  		linq_clause_blocks = new Stack<Block> ();
 	  		
 	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  	linq_clause_blocks.Push (current_block);
@@ -5612,7 +5557,7 @@ join_clause
 	: JOIN IDENTIFIER IN
 	  {
 		if (linq_clause_blocks == null)
-			linq_clause_blocks = new Stack ();
+			linq_clause_blocks = new Stack<Block> ();
 	  		
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 		linq_clause_blocks.Push (current_block);
@@ -5664,7 +5609,7 @@ join_clause
 	| JOIN type IDENTIFIER IN
 	  {
 		if (linq_clause_blocks == null)
-			linq_clause_blocks = new Stack ();
+			linq_clause_blocks = new Stack<Block> ();
 	  		
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 		linq_clause_blocks.Push (current_block);
@@ -5907,42 +5852,54 @@ close_brace_or_complete_completion
 // </summary>
 class VariableDeclaration {
 	public string identifier;
-	public Expression expression_or_array_initializer;
+	Expression initializer;
 	public Location Location;
 	public Attributes OptAttributes;
 	public string DocComment;
 
-	public VariableDeclaration (Tokenizer.LocatedToken lt, object eoai, Attributes opt_attrs)
+	public VariableDeclaration (Tokenizer.LocatedToken lt, Expression initializer, Attributes opt_attrs)
 	{
 		this.identifier = lt.Value;
-		if (eoai is ArrayList) {
-			this.expression_or_array_initializer = new ArrayCreation (CSharpParser.current_array_type, "", (ArrayList)eoai, lt.Location);
-		} else {
-			this.expression_or_array_initializer = (Expression)eoai;
-		}
+		this.initializer = initializer;
 		this.Location = lt.Location;
 		this.OptAttributes = opt_attrs;
 	}
 
-	public VariableDeclaration (Tokenizer.LocatedToken lt, object eoai) : this (lt, eoai, null)
+	public VariableDeclaration (Tokenizer.LocatedToken lt, Expression initializer)
+		: this (lt, initializer, null)
 	{
+	}
+
+	public Expression GetInitializer (FullNamedExpression type)
+	{
+		if (initializer is ArrayInitializer)
+			return new ArrayCreation (type, "", (ArrayInitializer)initializer, Location);
+
+		return initializer;
+	}
+
+	public bool HasInitializer {
+		get { return initializer != null; }
 	}
 }
 
 class VariableMemberDeclaration
 {
 	public readonly MemberName MemberName;
-	public Expression expression_or_array_initializer;
+	Expression initializer;
 	
-	public VariableMemberDeclaration (MemberName mn, object initializer)
+	public VariableMemberDeclaration (MemberName mn, Expression initializer)
 	{
 		MemberName = mn;
-		
-		if (initializer is ArrayList) {
-			this.expression_or_array_initializer = new ArrayCreation (CSharpParser.current_array_type, "", (ArrayList)initializer, mn.Location);
-		} else {
-			this.expression_or_array_initializer = (Expression)initializer;
-		}
+		this.initializer = initializer;
+	}
+
+	public Expression GetInitializer (FullNamedExpression type)
+	{
+		if (initializer is ArrayInitializer)
+			return new ArrayCreation (type, "", (ArrayInitializer)initializer, MemberName.Location);
+
+		return initializer;
 	}
 }
 
@@ -6039,7 +5996,7 @@ MakeName (MemberName class_name)
 	}
 }
 
-Block declare_local_variables (Expression type, ArrayList variable_declarators, Location loc)
+Block declare_local_variables (FullNamedExpression type, List<object> variable_declarators, Location loc)
 {
 	Block implicit_block;
 
@@ -6065,7 +6022,8 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 			foreach (VariableDeclaration decl in variable_declarators){
 				// We can not use the super-handy f.Initializer, because
 				// multiple lines would force code to be executed out of sync
-				if (decl.expression_or_array_initializer != null){
+				var init = decl.GetInitializer (type);
+				if (init != null){
 				        string id = "$" + decl.identifier;
 					LocalInfo vi = current_block.AddVariable (type, id, decl.Location);					
 
@@ -6074,7 +6032,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 
 					LocalVariableReference var;
 					var = new LocalVariableReferenceWithClassSideEffect (current_container, decl.identifier, current_block, id, vi, decl.Location);
-					Assign assign = new SimpleAssign (var, decl.expression_or_array_initializer, decl.Location);
+					Assign assign = new SimpleAssign (var, init, decl.Location);
 					current_block.AddStatement (new StatementExpression (assign));
 					assign = new SimpleAssign (new SimpleName (decl.identifier, decl.Location), var);
 					current_block.AddStatement (new StatementExpression (assign));
@@ -6115,13 +6073,12 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 	foreach (VariableDeclaration decl in variable_declarators){
 
 		if (implicit_block.AddVariable (type, decl.identifier, decl.Location) != null) {
-			if (decl.expression_or_array_initializer != null){
+			if (decl.HasInitializer){
 				Assign assign;
-				Expression expr = decl.expression_or_array_initializer;
 				
 				var lvr = new LocalVariableReference (implicit_block, decl.identifier, loc);
 
-				assign = new SimpleAssign (lvr, expr, decl.Location);
+				assign = new SimpleAssign (lvr, decl.GetInitializer (type), decl.Location);
 
 				implicit_block.AddStatement (new StatementExpression (assign));
 			}
@@ -6131,7 +6088,7 @@ Block declare_local_variables (Expression type, ArrayList variable_declarators, 
 	return implicit_block;
 }
 
-Block declare_local_constants (Expression type, ArrayList declarators)
+Block declare_local_constants (FullNamedExpression type, List<object> declarators)
 {
 	Block implicit_block;
 
@@ -6141,7 +6098,7 @@ Block declare_local_constants (Expression type, ArrayList declarators)
 		implicit_block = current_block;
 
 	foreach (VariableDeclaration decl in declarators){
-		implicit_block.AddConstant (type, decl.identifier, (Expression) decl.expression_or_array_initializer, decl.Location);
+		implicit_block.AddConstant (type, decl.identifier, decl.GetInitializer (type), decl.Location);
 	}
 	
 	return implicit_block;
@@ -6191,7 +6148,7 @@ public Tokenizer Lexer {
 
 static CSharpParser ()
 {
-	oob_stack = new Stack ();
+	oob_stack = new Stack<object> ();
 }
 
 public CSharpParser (SeekableStreamReader reader, CompilationUnit file, CompilerContext ctx)
@@ -6364,7 +6321,7 @@ void Error_SyntaxError (int error_code, int token, string msg)
 string GetExpecting ()
 {
 	int [] tokens = yyExpectingTokens (yyExpectingState);
-	ArrayList names = new ArrayList (tokens.Length);
+	var names = new List<string> (tokens.Length);
 	bool has_type = false;
 	bool has_identifier = false;
 	for (int i = 0; i < tokens.Length; i++){

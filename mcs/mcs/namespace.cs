@@ -9,7 +9,6 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 using System;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 
@@ -111,9 +110,9 @@ namespace Mono.CSharp {
 		//
 		// Returns the types starting with the given prefix
 		//
-		public ICollection CompletionGetTypesStartingWith (string prefix)
+		public ICollection<string> CompletionGetTypesStartingWith (string prefix)
 		{
-			Hashtable result = null;
+			Dictionary<string, string> result = null;
 
 			foreach (Assembly a in referenced_assemblies){
 				Type [] mtypes = a.GetTypes ();
@@ -121,15 +120,15 @@ namespace Mono.CSharp {
 				foreach (Type t in mtypes){
 					string f = t.FullName;
 
-					if (f.StartsWith (prefix) && (result == null || !result.Contains (f))){
+					if (f.StartsWith (prefix) && (result == null || !result.ContainsKey (f))){
 						if (result == null)
-							result = new Hashtable ();
+							result = new Dictionary<string, string> ();
 
 						result [f] = f;
 					}
 				}
 			}
-			return result == null ? result : result.Keys;
+			return result == null ? null : result.Keys;
 		}
 		
 		protected static void Error_AmbiguousPredefinedType (CompilerContext ctx, Location loc, string name, Type type)
@@ -555,10 +554,10 @@ namespace Mono.CSharp {
 		//
 		// Completes types with the given `prefix' and stores the results in `result'
 		//
-		public void CompletionGetTypesStartingWith (string prefix, Hashtable result)
+		public void CompletionGetTypesStartingWith (string prefix, Dictionary<string, string> result)
 		{
 			int l = fullname.Length + 1;
-			ICollection res = root.CompletionGetTypesStartingWith (fullname + "." + prefix);
+			var res = root.CompletionGetTypesStartingWith (fullname + "." + prefix);
 
 			if (res == null)
 				return;
@@ -579,7 +578,7 @@ namespace Mono.CSharp {
 				if (p != -1)
 					x = x.Substring (0, p) + "<";
 
-				if (!result.Contains (x))
+				if (!result.ContainsKey (x))
 					result [x] = x;
 			}
 		}
@@ -603,16 +602,15 @@ namespace Mono.CSharp {
 		/// 
 		/// Looks for extension method in this namespace
 		/// 
-		public ArrayList LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name)
+		public List<MethodBase> LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name)
 		{
-			ArrayList found = null;
+			List<MethodBase> found = null;
 
 			// TODO: problematic
 			var invocation_assembly = CodeGen.Assembly.Builder;
 
 			if (declspaces != null) {
-				IEnumerator e = declspaces.Values.GetEnumerator ();
-				e.Reset ();
+				var e = declspaces.Values.GetEnumerator ();
 				while (e.MoveNext ()) {
 					Class c = e.Current as Class;
 					if (c == null)
@@ -621,7 +619,7 @@ namespace Mono.CSharp {
 					if ((c.ModFlags & Modifiers.METHOD_EXTENSION) == 0)
 						continue;
 
-					ArrayList res = c.MemberCache.FindExtensionMethods (invocation_assembly, extensionType, name, c != currentClass);
+					var res = c.MemberCache.FindExtensionMethods (invocation_assembly, extensionType, name, c != currentClass);
 					if (res == null)
 						continue;
 
@@ -637,7 +635,7 @@ namespace Mono.CSharp {
 
 			foreach (Type t in external_exmethod_classes) {
 				MemberCache m = TypeHandle.GetMemberCache (t);
-				ArrayList res = m.FindExtensionMethods (invocation_assembly, extensionType, name, true);
+				var res = m.FindExtensionMethods (invocation_assembly, extensionType, name, true);
 				if (res == null)
 					continue;
 
@@ -683,7 +681,7 @@ namespace Mono.CSharp {
 	//
 	public class NamespaceEntry : IMemberContext {
 
-		class UsingEntry {
+		public class UsingEntry {
 			readonly MemberName name;
 			Namespace resolved;
 			
@@ -734,7 +732,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		class UsingAliasEntry {
+		public class UsingAliasEntry {
 			public readonly string Alias;
 			public Location Location;
 
@@ -806,7 +804,7 @@ namespace Mono.CSharp {
 
 		// Namespace using import block
 		List<UsingAliasEntry> using_aliases;
-		ArrayList using_clauses;
+		List<UsingEntry> using_clauses;
 		public bool DeclarationFound;
 		// End
 
@@ -815,11 +813,11 @@ namespace Mono.CSharp {
 		static readonly Namespace [] empty_namespaces = new Namespace [0];
 		Namespace [] namespace_using_table;
 
-		static ArrayList entries = new ArrayList ();
+		static List<NamespaceEntry> entries = new List<NamespaceEntry> ();
 
 		public static void Reset ()
 		{
-			entries = new ArrayList ();
+			entries = new List<NamespaceEntry> ();
 		}
 
 		public NamespaceEntry (NamespaceEntry parent, CompilationUnit file, string name)
@@ -850,7 +848,7 @@ namespace Mono.CSharp {
 		// Populates the Namespace with some using declarations, used by the
 		// eval mode. 
 		//
-		public void Populate (ArrayList source_using_aliases, ArrayList source_using_clauses)
+		public void Populate (List<UsingAliasEntry> source_using_aliases, List<UsingEntry> source_using_clauses)
 		{
 			foreach (UsingAliasEntry uae in source_using_aliases){
 				if (using_aliases == null)
@@ -861,7 +859,7 @@ namespace Mono.CSharp {
 
 			foreach (UsingEntry ue in source_using_clauses){
 				if (using_clauses == null)
-					using_clauses = new ArrayList ();
+					using_clauses = new List<UsingEntry> ();
 				
 				using_clauses.Add (ue);
 			}
@@ -872,7 +870,7 @@ namespace Mono.CSharp {
 		// arrays that might already have the same information;  Used by the
 		// C# Eval mode.
 		//
-		public void Extract (ArrayList out_using_aliases, ArrayList out_using_clauses)
+		public void Extract (List<UsingAliasEntry> out_using_aliases, List<UsingEntry> out_using_clauses)
 		{
 			if (using_aliases != null){
 				foreach (UsingAliasEntry uae in using_aliases){
@@ -959,7 +957,7 @@ namespace Mono.CSharp {
 			}
 
 			if (using_clauses == null) {
-				using_clauses = new ArrayList ();
+				using_clauses = new List<UsingEntry> ();
 			} else {
 				foreach (UsingEntry old_entry in using_clauses) {
 					if (name.Equals (old_entry.MemberName)) {
@@ -1035,9 +1033,9 @@ namespace Mono.CSharp {
 		///
 		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
 		{
-			ArrayList candidates = null;
+			List<MethodBase> candidates = null;
 			foreach (Namespace n in GetUsingTable ()) {
-				ArrayList a = n.LookupExtensionMethod (extensionType, null, name);
+				var a = n.LookupExtensionMethod (extensionType, null, name);
 				if (a == null)
 					continue;
 
@@ -1082,9 +1080,9 @@ namespace Mono.CSharp {
 			return resolved;
 		}
 
-		public ICollection CompletionGetTypesStartingWith (string prefix)
+		public ICollection<string> CompletionGetTypesStartingWith (string prefix)
 		{
-			Hashtable result = new Hashtable ();
+			var result = new Dictionary<string, string> ();
 			
 			for (NamespaceEntry curr_ns = this; curr_ns != null; curr_ns = curr_ns.ImplicitParent){
 				foreach (Namespace using_ns in GetUsingTable ()){
@@ -1193,7 +1191,7 @@ namespace Mono.CSharp {
 				return namespace_using_table;
 			}
 
-			ArrayList list = new ArrayList (using_clauses.Count);
+			var list = new List<Namespace> (using_clauses.Count);
 
 			foreach (UsingEntry ue in using_clauses) {
 				Namespace using_ns = ue.Resolve (Doppelganger);
@@ -1203,7 +1201,7 @@ namespace Mono.CSharp {
 				list.Add (using_ns);
 			}
 
-			namespace_using_table = (Namespace[])list.ToArray (typeof (Namespace));
+			namespace_using_table = list.ToArray ();
 			return namespace_using_table;
 		}
 

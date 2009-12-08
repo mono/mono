@@ -13,7 +13,6 @@
 using System;
 using System.Reflection;
 using System.Reflection.Emit;
-using System.Collections;
 using System.Text;
 
 namespace Mono.CSharp {
@@ -1184,7 +1183,7 @@ namespace Mono.CSharp {
 
 		public Expression CreateExpressionTree (BlockContext ec, Location loc)
 		{
-			var initializers = new ArrayList (Count);
+			var initializers = new ArrayInitializer (Count, loc);
 			foreach (Parameter p in FixedParameters) {
 				//
 				// Each parameter expression is stored to local variable

@@ -3256,7 +3256,7 @@ namespace Mono.CSharp {
 /// <summary>
 ///   There is exactly one instance of this class per type.
 /// </summary>
-public sealed class TypeHandle : IMemberContainer {
+sealed class TypeHandle : IMemberContainer {
 	public readonly IMemberContainer BaseType;
 
 	readonly int id = ++next_id;

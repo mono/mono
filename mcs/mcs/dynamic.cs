@@ -9,7 +9,6 @@
 //
 
 using System;
-using System.Collections;
 using System.Reflection.Emit;
 
 #if NET_4_0
@@ -613,7 +612,7 @@ namespace Mono.CSharp
 			if (member != null && member.HasTypeArguments) {
 				TypeArguments ta = member.TypeArguments;
 				if (ta.Resolve (ec)) {
-					ArrayList targs = new ArrayList (ta.Count);
+					var targs = new ArrayInitializer (ta.Count, loc);
 					foreach (Type t in ta.Arguments)
 						targs.Add (new TypeOf (new TypeExpression (t, loc), loc));
 
@@ -628,7 +627,9 @@ namespace Mono.CSharp
 			Expression real_args;
 			if (args == null) {
 				// Cannot be null because .NET trips over
-				real_args = new ArrayCreation (new MemberAccess (GetBinderNamespace (loc), "CSharpArgumentInfo", loc), "[]", new ArrayList (0), loc);
+				real_args = new ArrayCreation (
+					new MemberAccess (GetBinderNamespace (loc), "CSharpArgumentInfo", loc), "[]",
+					new ArrayInitializer (0, loc), loc);
 			} else {
 				real_args = new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc);
 			}

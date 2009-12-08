@@ -13,7 +13,6 @@
 
 using System;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection.Emit;
@@ -1315,7 +1314,7 @@ namespace Mono.CSharp {
 			if (this is GenericMethod)
 				the_parent = null;
 
-			ArrayList list = new ArrayList ();
+			var list = new List<TypeParameter> ();
 			if (the_parent != null && the_parent.IsGeneric) {
 				// FIXME: move generics info out of DeclSpace
 				TypeParameter[] parent_params = the_parent.TypeParameters;
@@ -1456,12 +1455,12 @@ namespace Mono.CSharp {
 				}
 			}
 
-			IDictionary cache = TypeManager.AllClsTopLevelTypes;
+			var cache = TypeManager.AllClsTopLevelTypes;
 			if (cache == null)
 				return true;
 
 			string lcase = Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
-			if (!cache.Contains (lcase)) {
+			if (!cache.ContainsKey (lcase)) {
 				cache.Add (lcase, this);
 				return true;
 			}
@@ -1550,7 +1549,7 @@ namespace Mono.CSharp {
 			return List.GetEnumerator ();
 		}
 
-		IEnumerator IEnumerable.GetEnumerator ()
+		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
 		{
 			return List.GetEnumerator ();
 		}
@@ -1692,8 +1691,12 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MemberCache {
 		public readonly IMemberContainer Container;
-		protected Hashtable member_hash;
-		protected Hashtable method_hash;
+		protected Dictionary<string, List<CacheEntry>> member_hash;
+		protected Dictionary<string, List<CacheEntry>> method_hash;
+
+		Dictionary<string, object> locase_table;
+
+		static List<MethodInfo> overrides = new List<MethodInfo> ();
 
 		/// <summary>
 		///   Create a new MemberCache for the given IMemberContainer `container'.
@@ -1710,7 +1713,7 @@ namespace Mono.CSharp {
 			if (Container.BaseCache != null)
 				member_hash = SetupCache (Container.BaseCache);
 			else
-				member_hash = new Hashtable ();
+				member_hash = new Dictionary<string, List<CacheEntry>> ();
 
 			// If this is neither a dynamic type nor an interface, create a special
 			// method cache with all declared and inherited methods.
@@ -1719,8 +1722,8 @@ namespace Mono.CSharp {
 			    // !(type.IsGenericType && (type.GetGenericTypeDefinition () is TypeBuilder)) &&
 			    !TypeManager.IsGenericType (type) && !TypeManager.IsGenericParameter (type) &&
 			    (Container.BaseCache == null || Container.BaseCache.method_hash != null)) {
-				method_hash = new Hashtable ();
-				AddMethods (type);
+					method_hash = new Dictionary<string, List<CacheEntry>> ();
+					AddMethods (type);
 			}
 
 			// Add all members from the current class.
@@ -1733,7 +1736,7 @@ namespace Mono.CSharp {
 		{
 			this.Container = container;
 			if (baseType == null)
-				this.member_hash = new Hashtable ();
+				this.member_hash = new Dictionary<string, List<CacheEntry>> ();
 			else
 				this.member_hash = SetupCache (TypeManager.LookupMemberCache (baseType));
 		}
@@ -1746,7 +1749,7 @@ namespace Mono.CSharp {
 			//
 			this.Container = null;
 
-			member_hash = new Hashtable ();
+			member_hash = new Dictionary<string, List<CacheEntry>> ();
 			if (ifaces == null)
 				return;
 
@@ -1763,7 +1766,7 @@ namespace Mono.CSharp {
 			if (Container.BaseCache != null)
 				member_hash = SetupCache (Container.BaseCache);
 			else
-				member_hash = new Hashtable ();
+				member_hash = new Dictionary<string, List<CacheEntry>> ();
 
 			if (base_class != null)
 				AddCacheContents (TypeManager.LookupMemberCache (base_class));
@@ -1779,16 +1782,16 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Bootstrap this member cache by doing a deep-copy of our base.
 		/// </summary>
-		static Hashtable SetupCache (MemberCache base_class)
+		static Dictionary<string, List<CacheEntry>> SetupCache (MemberCache base_class)
 		{
 			if (base_class == null)
-				return new Hashtable ();
+				return new Dictionary<string, List<CacheEntry>> ();
 
-			Hashtable hash = new Hashtable (base_class.member_hash.Count);
-			IDictionaryEnumerator it = base_class.member_hash.GetEnumerator ();
+			var hash = new Dictionary<string, List<CacheEntry>> (base_class.member_hash.Count);
+			var it = base_class.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
-				hash.Add (it.Key, ((ArrayList) it.Value).Clone ());
-			 }
+				hash.Add (it.Current.Key, new List<CacheEntry> (it.Current.Value));
+			}
                                 
 			return hash;
 		}
@@ -1817,15 +1820,15 @@ namespace Mono.CSharp {
 		/// </summary>
 		void AddCacheContents (MemberCache cache)
 		{
-			IDictionaryEnumerator it = cache.member_hash.GetEnumerator ();
+			var it = cache.member_hash.GetEnumerator ();
 			while (it.MoveNext ()) {
-				ArrayList list = (ArrayList) member_hash [it.Key];
-				if (list == null)
-					member_hash [it.Key] = list = new ArrayList ();
+				List<CacheEntry> list;
+				if (!member_hash.TryGetValue (it.Current.Key, out list))
+					member_hash [it.Current.Key] = list = new List<CacheEntry> ();
 
-				ArrayList entries = (ArrayList) it.Value;
+				var entries = it.Current.Value;
 				for (int i = entries.Count-1; i >= 0; i--) {
-					CacheEntry entry = (CacheEntry) entries [i];
+					var entry = entries [i];
 
 					if (entry.Container != cache.Container)
 						break;
@@ -1890,9 +1893,9 @@ namespace Mono.CSharp {
 				string name, MemberInfo member)
 		{
 			// We use a name-based hash table of ArrayList's.
-			ArrayList list = (ArrayList) member_hash [name];
-			if (list == null) {
-				list = new ArrayList (1);
+			List<CacheEntry> list;
+			if (!member_hash.TryGetValue (name, out list)) {
+				list = new List<CacheEntry> (1);
 				member_hash.Add (name, list);
 			}
 
@@ -1939,8 +1942,6 @@ namespace Mono.CSharp {
 			AddMethods (BindingFlags.Instance | BindingFlags.NonPublic, type);
 		}
 
-		static ArrayList overrides = new ArrayList ();
-
 		void AddMethods (BindingFlags bf, Type type)
 		{
 			MethodBase [] members = type.GetMethods (bf);
@@ -1951,9 +1952,9 @@ namespace Mono.CSharp {
 				string name = member.Name;
 
 				// We use a name-based hash table of ArrayList's.
-				ArrayList list = (ArrayList) method_hash [name];
-				if (list == null) {
-					list = new ArrayList (1);
+				List<CacheEntry> list;
+				if (!method_hash.TryGetValue (name, out list)) {
+					list = new List<CacheEntry> (1);
 					method_hash.Add (name, list);
 				}
 
@@ -2048,7 +2049,7 @@ namespace Mono.CSharp {
 		///   number to speed up the searching process.
 		/// </summary>
 		[Flags]
-		protected enum EntryType {
+		public enum EntryType {
 			None		= 0x000,
 
 			Instance	= 0x001,
@@ -2073,7 +2074,7 @@ namespace Mono.CSharp {
 			MaskType	= Constructor|Event|Field|Method|Property|NestedType
 		}
 
-		protected class CacheEntry {
+		public class CacheEntry {
 			public readonly IMemberContainer Container;
 			public EntryType EntryType;
 			public readonly MemberInfo Member;
@@ -2098,7 +2099,7 @@ namespace Mono.CSharp {
 		///   and checks whether we can abort the search since we've already found what
 		///   we were looking for.
 		/// </summary>
-		protected bool DoneSearching (ArrayList list)
+		protected bool DoneSearching (IList<MemberInfo> list)
 		{
 			//
 			// We've found exactly one member in the current class and it's not
@@ -2135,8 +2136,8 @@ namespace Mono.CSharp {
 		///   The lookup process will automatically restart itself in method-only
 		///   search mode if it discovers that it's about to return methods.
 		/// </summary>
-		ArrayList global = new ArrayList ();
-		bool using_global = false;
+		List<MemberInfo> global = new List<MemberInfo> ();
+		bool using_global;
 		
 		static MemberInfo [] emptyMemberInfo = new MemberInfo [0];
 		
@@ -2152,16 +2153,16 @@ namespace Mono.CSharp {
 			// then we restart a method search if the first match is a method.
 			bool do_method_search = !method_search && (method_hash != null);
 
-			ArrayList applicable;
+			List<CacheEntry> applicable;
 
 			// If this is a method-only search, we try to use the method cache if
 			// possible; a lookup in the method cache will return a MemberInfo with
 			// the correct ReflectedType for inherited methods.
 			
 			if (method_search && (method_hash != null))
-				applicable = (ArrayList) method_hash [name];
+				method_hash.TryGetValue (name, out applicable);
 			else
-				applicable = (ArrayList) member_hash [name];
+				member_hash.TryGetValue (name, out applicable);
 
 			if (applicable == null)
 				return emptyMemberInfo;
@@ -2280,12 +2281,12 @@ namespace Mono.CSharp {
 		// find the nested type @name in @this.
 		public Type FindNestedType (string name)
 		{
-			ArrayList applicable = (ArrayList) member_hash [name];
-			if (applicable == null)
+			List<CacheEntry> applicable;
+			if (!member_hash.TryGetValue (name, out applicable))
 				return null;
 			
 			for (int i = applicable.Count-1; i >= 0; i--) {
-				CacheEntry entry = (CacheEntry) applicable [i];
+				CacheEntry entry = applicable [i];
 				if ((entry.EntryType & EntryType.NestedType & EntryType.MaskType) != 0)
 					return (Type) entry.Member;
 			}
@@ -2295,8 +2296,8 @@ namespace Mono.CSharp {
 
 		public MemberInfo FindBaseEvent (Type invocation_type, string name)
 		{
-			ArrayList applicable = (ArrayList) member_hash [name];
-			if (applicable == null)
+			List<CacheEntry> applicable;
+			if (!member_hash.TryGetValue (name, out applicable))
 				return null;
 
 			//
@@ -2304,7 +2305,7 @@ namespace Mono.CSharp {
 			//
 			for (int i = applicable.Count - 1; i >= 0; i--) 
 			{
-				CacheEntry entry = (CacheEntry) applicable [i];
+				CacheEntry entry = applicable [i];
 				if ((entry.EntryType & EntryType.Event) == 0)
 					continue;
 				
@@ -2318,13 +2319,14 @@ namespace Mono.CSharp {
 		//
 		// Looks for extension methods with defined name and extension type
 		//
-		public ArrayList FindExtensionMethods (Assembly thisAssembly, Type extensionType, string name, bool publicOnly)
+		public List<MethodBase> FindExtensionMethods (Assembly thisAssembly, Type extensionType, string name, bool publicOnly)
 		{
-			ArrayList entries;
+			List<CacheEntry> entries;
 			if (method_hash != null)
-				entries = (ArrayList)method_hash [name];
-			else
-				entries = (ArrayList)member_hash [name];
+				method_hash.TryGetValue (name, out entries);
+			else {
+				member_hash.TryGetValue (name, out entries);
+			}
 
 			if (entries == null)
 				return null;
@@ -2332,7 +2334,7 @@ namespace Mono.CSharp {
 			EntryType entry_type = EntryType.Static | EntryType.Method | EntryType.NotExtensionMethod;
 			EntryType found_entry_type = entry_type & ~EntryType.NotExtensionMethod;
 
-			ArrayList candidates = null;
+			List<MethodBase> candidates = null;
 			foreach (CacheEntry entry in entries) {
 				if ((entry.EntryType & entry_type) == found_entry_type) {
 					MethodBase mb = (MethodBase)entry.Member;
@@ -2359,7 +2361,7 @@ namespace Mono.CSharp {
 
 					//if (implicit conversion between ex_type and extensionType exist) {
 						if (candidates == null)
-							candidates = new ArrayList (2);
+							candidates = new List<MethodBase> (2);
 						candidates.Add (mb);
 					//}
 				}
@@ -2378,11 +2380,11 @@ namespace Mono.CSharp {
 		//
 		public MemberInfo FindMemberToOverride (Type invocation_type, string name, AParametersCollection parameters, GenericMethod generic_method, bool is_property)
 		{
-			ArrayList applicable;
+			List<CacheEntry> applicable;
 			if (method_hash != null && !is_property)
-				applicable = (ArrayList) method_hash [name];
+				method_hash.TryGetValue (name, out applicable);
 			else
-				applicable = (ArrayList) member_hash [name];
+				member_hash.TryGetValue (name, out applicable);
 			
 			if (applicable == null)
 				return null;
@@ -2390,7 +2392,7 @@ namespace Mono.CSharp {
 			// Walk the chain of methods, starting from the top.
 			//
 			for (int i = applicable.Count - 1; i >= 0; i--) {
-				CacheEntry entry = (CacheEntry) applicable [i];
+				CacheEntry entry = applicable [i];
 				
 				if ((entry.EntryType & (is_property ? (EntryType.Property | EntryType.Field) : EntryType.Method)) == 0)
 					continue;
@@ -2520,10 +2522,10 @@ namespace Mono.CSharp {
  		/// </summary>
  		public MemberInfo FindMemberWithSameName (string name, bool ignore_complex_types, MemberInfo ignore_member)
  		{
- 			ArrayList applicable = null;
+			List<CacheEntry> applicable = null;
  
  			if (method_hash != null)
- 				applicable = (ArrayList) method_hash [name];
+				method_hash.TryGetValue (name, out applicable);
  
  			if (applicable != null) {
  				for (int i = applicable.Count - 1; i >= 0; i--) {
@@ -2535,9 +2537,8 @@ namespace Mono.CSharp {
  
  			if (member_hash == null)
  				return null;
- 			applicable = (ArrayList) member_hash [name];
- 			
- 			if (applicable != null) {
+
+			if (member_hash.TryGetValue (name, out applicable)) {
  				for (int i = applicable.Count - 1; i >= 0; i--) {
  					CacheEntry entry = (CacheEntry) applicable [i];
  					if ((entry.EntryType & EntryType.Public) != 0 & entry.Member != ignore_member) {
@@ -2559,21 +2560,20 @@ namespace Mono.CSharp {
   			return null;
   		}
 
- 		Hashtable locase_table;
- 
+
  		/// <summary>
  		/// Builds low-case table for CLS Compliance test
  		/// </summary>
- 		public Hashtable GetPublicMembers ()
+		public Dictionary<string, object> GetPublicMembers ()
  		{
  			if (locase_table != null)
  				return locase_table;
- 
- 			locase_table = new Hashtable ();
- 			foreach (DictionaryEntry entry in member_hash) {
- 				ArrayList members = (ArrayList)entry.Value;
+
+			locase_table = new Dictionary<string, object> ();
+ 			foreach (var entry in member_hash) {
+ 				var members = entry.Value;
  				for (int ii = 0; ii < members.Count; ++ii) {
- 					CacheEntry member_entry = (CacheEntry) members [ii];
+ 					CacheEntry member_entry = members [ii];
  
  					if ((member_entry.EntryType & EntryType.Public) == 0)
  						continue;
@@ -2614,7 +2614,7 @@ namespace Mono.CSharp {
  			return locase_table;
  		}
  
- 		public Hashtable Members {
+ 		public IDictionary<string, List<CacheEntry>> Members {
  			get {
  				return member_hash;
  			}
@@ -2625,12 +2625,12 @@ namespace Mono.CSharp {
  		/// </summary>
  		/// 
 		// TODO: refactor as method is always 'this'
- 		public static void VerifyClsParameterConflict (ArrayList al, MethodCore method, MemberInfo this_builder, Report Report)
+ 		public static void VerifyClsParameterConflict (IList<CacheEntry> al, MethodCore method, MemberInfo this_builder, Report Report)
  		{
  			EntryType tested_type = (method is Constructor ? EntryType.Constructor : EntryType.Method) | EntryType.Public;
  
  			for (int i = 0; i < al.Count; ++i) {
- 				MemberCache.CacheEntry entry = (MemberCache.CacheEntry) al [i];
+ 				var entry = al [i];
  		
  				// skip itself
  				if (entry.Member == this_builder)
@@ -2673,8 +2673,8 @@ namespace Mono.CSharp {
 
 		public bool CheckExistingMembersOverloads (MemberCore member, string name, ParametersCompiled parameters, Report Report)
 		{
-			ArrayList entries = (ArrayList)member_hash [name];
-			if (entries == null)
+			List<CacheEntry> entries;
+			if (!member_hash.TryGetValue (name, out entries))
 				return true;
 
 			int method_param_count = parameters.Count;

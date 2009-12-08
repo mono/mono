@@ -15,7 +15,6 @@ using System.Text;
 using System.Reflection;
 using System.Reflection.Emit;
 using System.Diagnostics;
-using System.Collections;
 using System.Collections.Generic;
 
 namespace Mono.CSharp {
@@ -3750,7 +3749,7 @@ namespace Mono.CSharp {
 						continue;
 
 					value = (string) sl.Converted;
-					ArrayList init_args = new ArrayList (2);
+					var init_args = new List<Expression> (2);
 					init_args.Add (new StringLiteral (value, sl.Location));
 					init_args.Add (new IntConstant (counter, loc));
 					init.Add (new CollectionElementInitializer (init_args, loc));

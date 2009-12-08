@@ -1,3 +1,9 @@
+2009-12-08  Marek Safar  <marek.safar@gmail.com>
+
+	*.cs: Moving to generics world.
+
+	cs-parser.jay: Removed current_array_type.
+
 2009-12-07  Marek Safar  <marek.safar@gmail.com>
 
 	*.cs: Moving to generics world.
