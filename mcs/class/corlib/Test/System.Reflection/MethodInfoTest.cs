@@ -31,6 +31,7 @@ using NUnit.Framework;
 using System;
 using System.Threading;
 using System.Reflection;
+using System.Reflection.Emit;
 using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 
@@ -524,6 +525,37 @@ namespace MonoTests.System.Reflection
 				Assert.IsNotNull (ex.Message, "#4");
 				Assert.IsNull (ex.ParamName, "#5");
 			}
+		}
+
+		[Test]
+		public void MakeGenericMethodWithNonGenericMethodDefinitionMethod ()
+		{
+			MethodInfo gmi = this.GetType ().GetMethod ("SimpleGenericMethod");
+			MethodInfo inst = gmi.MakeGenericMethod (typeof (int), typeof (double));
+			try {
+				inst.MakeGenericMethod (typeof (int), typeof (double));
+				Assert.Fail ("#1");
+			} catch (InvalidOperationException ex) {
+			}
+		}
+
+		public TFoo SimpleGenericMethod2<TFoo, TBar> () { return default (TFoo); }
+		/*Test for the uggly broken behavior of SRE.*/
+		[Test]
+		public void MakeGenericMethodWithSreTypeResultsInStupidMethodInfo ()
+		{
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "MonoTests.System.Reflection.Emit.MethodInfoTest";
+			AssemblyBuilder assembly = Thread.GetDomain ().DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.RunAndSave, ".");
+			ModuleBuilder module = assembly.DefineDynamicModule ("module1", "tst.dll");
+			TypeBuilder tb = module.DefineType ("Test", TypeAttributes.Public);
+
+			MethodInfo gmi = this.GetType ().GetMethod ("SimpleGenericMethod2");
+			MethodInfo ins = gmi.MakeGenericMethod (typeof (int), tb);
+
+			Assert.AreSame (tb, ins.GetGenericArguments () [1], "#1");
+			/*broken ReturnType*/
+			Assert.AreSame (gmi.GetGenericArguments () [0], ins.ReturnType, "#2");
 		}
 
 		public static int? pass_nullable (int? i)
