@@ -43,8 +43,9 @@ namespace System.Reflection.Emit
 		Type instantiation;
 		MethodInfo base_method; /*This is the base method definition, it must be non-inflated and belong to a non-inflated type.*/
 		Type[] method_arguments;
-		MethodOnTypeBuilderInst generic_method_definition;
 		#endregion
+		MethodInfo generic_method_definition;
+		int is_compiler_context = -1;
 
 		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodBuilder base_method)
 		{
@@ -69,6 +70,32 @@ namespace System.Reflection.Emit
 			this.generic_method_definition = gmd;
 		}
 
+		internal MethodOnTypeBuilderInst (MethodInfo method, Type[] typeArguments)
+		{
+			this.instantiation = method.DeclaringType;
+			this.base_method = ExtractBaseMethod (method);
+			this.method_arguments = new Type [typeArguments.Length];
+			typeArguments.CopyTo (this.method_arguments, 0);
+			this.generic_method_definition = method;
+		}
+
+		static MethodInfo ExtractBaseMethod (MethodInfo info)
+		{
+			if (info is MethodBuilder)
+				return info;
+			if (info is MethodOnTypeBuilderInst)
+				return ((MethodOnTypeBuilderInst)info).base_method;
+
+			if (info.IsGenericMethod)
+			  	info = info.GetGenericMethodDefinition ();
+
+			Type t = info.DeclaringType;
+			if (!t.IsGenericType || t.IsGenericTypeDefinition)
+				return info;
+
+			return (MethodInfo)t.Module.ResolveMethod (info.MetadataToken);
+		}
+
 		internal Type[] GetTypeArgs ()
 		{
 			if (!instantiation.IsGenericType || instantiation.IsGenericParameter)
@@ -78,7 +105,18 @@ namespace System.Reflection.Emit
 		}
 
 		internal bool IsCompilerContext {
-			get { return instantiation.IsCompilerContext; }
+			get {
+				if (is_compiler_context == -1) {
+					bool is_cc = false;
+					is_cc |= instantiation.IsCompilerContext;
+					if (!is_cc && method_arguments != null) {
+						foreach (Type t in method_arguments)
+							is_cc |= t.IsCompilerContext;
+					}
+					is_compiler_context = is_cc ? 1 : 0;
+				}
+				return is_compiler_context == 1;
+			}
 		}
 
 		//
@@ -244,7 +282,7 @@ namespace System.Reflection.Emit
 
 		public override MethodInfo GetGenericMethodDefinition ()
 		{
-			return (MethodInfo)generic_method_definition ?? base_method;
+			return generic_method_definition ?? base_method;
 		}
 
 		public override bool ContainsGenericParameters {

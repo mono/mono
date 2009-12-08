@@ -1,5 +1,10 @@
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoMethod.cs (MakeGenericMethod): If any of the arguments is
+	a non system type, inflate to a MethodOnTypeBuilderInst.
+
+2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* ParameterInfo.cs: Add constructor that takes an array of ParameterInfo
 	objects.
 

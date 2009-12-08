@@ -364,9 +364,24 @@ namespace System.Reflection {
 		{
 			if (methodInstantiation == null)
 				throw new ArgumentNullException ("methodInstantiation");
-			foreach (Type type in methodInstantiation)
+
+			if (!IsGenericMethodDefinition)
+				throw new InvalidOperationException ("not a generic method definition");
+
+			/*FIXME add GetGenericArgumentsLength() internal vcall to speed this up*/
+			if (GetGenericArguments ().Length != methodInstantiation.Length)
+				throw new ArgumentException ("Incorrect length");
+
+			bool hasUserType = false;
+			foreach (Type type in methodInstantiation) {
 				if (type == null)
 					throw new ArgumentNullException ();
+				if (!(type is MonoType))
+					hasUserType = true;
+			}
+
+			if (hasUserType)
+				return new MethodOnTypeBuilderInst (this, methodInstantiation);
 
 			MethodInfo ret = MakeGenericMethod_impl (methodInstantiation);
 			if (ret == null)

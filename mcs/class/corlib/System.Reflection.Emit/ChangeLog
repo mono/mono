@@ -1,5 +1,11 @@
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MethodOnTypeBuilderInst.cs: Add new constructor that takes a MethodInfo
+	as base method. Change how compiler context is calculated to take the
+	instantiation vector into account.
+
+2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MethodOnTypeBuilderInst.cs: Change base_method type from MethodBuilder to
 	MethodInfo.
 
