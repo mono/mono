@@ -1715,24 +1715,39 @@ namespace System.Web.Compilation
 			if (tca == TypeConverterAttribute.Default)
 				tca = null;
 			
-			if (tca == null)
-				return null;
+			if (tca != null) {
+				string typeName = tca.ConverterTypeName;
+				if (typeName == null || typeName.Length == 0)
+					return null;
 
-			string typeName = tca.ConverterTypeName;
-			if (typeName == null || typeName.Length == 0)
-				return null;
+				Type t = null;
+				try {
+					t = HttpApplication.LoadType (typeName);
+				} catch (Exception) {
+					// ignore
+				}
 
-			Type t = null;
-			try {
-				t = HttpApplication.LoadType (typeName);
-			} catch (Exception) {
-				// ignore
+				if (t == null)
+					return null;
+
+				return (TypeConverter) Activator.CreateInstance (t);
 			}
 
-			if (t == null)
+			TypeDescriptionProvider prov = TypeDescriptor.GetProvider (member.ReflectedType);
+			if (prov == null)
 				return null;
 
-			return (TypeConverter) Activator.CreateInstance (t);
+			ICustomTypeDescriptor desc = prov.GetTypeDescriptor (member.ReflectedType);
+			PropertyDescriptorCollection coll = desc != null ? desc.GetProperties () : null;
+
+			if (coll == null || coll.Count == 0)
+				return null;
+
+			PropertyDescriptor pd = coll.Find (member.Name, false);
+			if (pd == null)
+				return null;
+
+			return pd.Converter;
 		}
 		
 		CodeExpression CreateNullableExpression (Type type, CodeExpression inst, bool nullable)
@@ -1945,7 +1960,11 @@ namespace System.Web.Compilation
 						return CreateNullableExpression (originalType, GenerateInstance (idesc, true),
 										 wasNullable);
 
-					return new CodeCastExpression (type, GenerateInstance (idesc, true));
+					CodeExpression instance = GenerateInstance (idesc, true);
+					if (type.IsPublic)
+						return new CodeCastExpression (type, instance);
+					else
+						return instance;
 				}
 
 				CodeExpression exp = GenerateObjectInstance (value, false);

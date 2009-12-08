@@ -1,3 +1,7 @@
+2009-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* Type.cs: added overloads for the == and != operators (4.0).
+
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Type.cs: Add virtual property IsCompilerContext to cleanup

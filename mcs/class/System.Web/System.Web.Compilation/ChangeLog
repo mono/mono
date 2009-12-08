@@ -1,3 +1,11 @@
+2009-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: GetConverterForMember looks up
+	member type converters using type description providers in
+	addition to custom attributes.
+	Result of GenerateInstance isn't cast to the target type if the
+	type isn't public.
+
 2009-11-13  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateBuildProvider.cs: if directive has empty string as a

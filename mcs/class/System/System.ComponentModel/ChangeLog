@@ -1,3 +1,18 @@
+2009-12-08  Marek Habersack  <mhabersack@novell.com>
+
+	* TypeDescriptor.cs: AddProvider overloads must refresh the
+	instance and type when called.
+	If GetProvider (object) fails to look up provider for the passed
+	instance, it attempts to look up provider for the instance's
+	type.
+	GetProvider (Type) looks for providers using all the parent types
+	of the passed type if no provider for it is found.
+	WrappedTypeDescriptionProvider.GetTypeDescriptor chains up to the
+	wrapped type, if present.
+
+	* TypeDescriptionProvider.cs: GetTypeDescriptor properly returns
+	the value obtained from parent in GetTypeDescriptor.
+
 2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* TypeConverterAttribute.cs: Add missing [ComVisible] for SL2/3 builds
