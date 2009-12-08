@@ -1,3 +1,8 @@
+2009-12-08  Chris Toshok  <toshok@ximian.com>
+
+	* JsonSerializationReader.cs (DeserializeGenericCollection): in
+	the 2.1 case we still need to convert the List<> to an array.
+
 2009-12-07  Chris Toshok  <toshok@ximian.com>
 
 	* JsonReaderWriterFactory.cs (CreateJsonReader): pass null for the
