@@ -1,3 +1,8 @@
+2009-12-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Disable SSA for now for methods with clauses,
+	as it causes failures on x86.
+
 2009-12-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* driver.c: Fail gracefully with --compile-all if mono_method_signature
