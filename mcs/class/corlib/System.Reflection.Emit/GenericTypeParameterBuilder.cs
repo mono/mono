@@ -81,13 +81,20 @@ namespace System.Reflection.Emit
 			initialize ();
 		}
 
+
+		internal override bool IsCompilerContext {
+			get {
+				return tbuilder.IsCompilerContext;
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void initialize ();
 
 		[ComVisible (true)]
 		public override bool IsSubclassOf (Type c)
 		{
-			if (!((ModuleBuilder)tbuilder.Module).assemblyb.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw not_supported ();
 			if (BaseType == null)
 				return false;
@@ -100,7 +107,7 @@ namespace System.Reflection.Emit
 #if NET_4_0
 			return TypeAttributes.Public;
 #else
-			if (((ModuleBuilder)tbuilder.Module).assemblyb.IsCompilerContext)
+			if (IsCompilerContext)
 				return TypeAttributes.Public;
 			throw not_supported ();
 #endif
@@ -359,7 +366,7 @@ namespace System.Reflection.Emit
 
 		public override GenericParameterAttributes GenericParameterAttributes {
 			get {
-				if (((ModuleBuilder)tbuilder.Module).assemblyb.IsCompilerContext)
+				if (IsCompilerContext)
 					return attrs;
 				throw new NotSupportedException ();
 			}
@@ -371,7 +378,7 @@ namespace System.Reflection.Emit
 
 		public override Type[] GetGenericParameterConstraints ()
 		{
-			if (!((ModuleBuilder)tbuilder.Module).assemblyb.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw new InvalidOperationException ();
 			if (base_type == null) {
 				if (iface_constraints != null)

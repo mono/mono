@@ -1610,7 +1610,7 @@ namespace System.Reflection.Emit
 			return created.GetInterfaceMap (interfaceType);
 		}
 
-		internal bool IsCompilerContext {
+		internal override bool IsCompilerContext {
 			get {
 				return pmodule.assemblyb.IsCompilerContext;
 			}

@@ -84,7 +84,7 @@ namespace System.Reflection.Emit
 
 		public override string ToString ()
 		{
-			if (!((ModuleBuilder)instantiation.generic_type.Module).assemblyb.IsCompilerContext)
+			if (!instantiation.IsCompilerContext)
 				return fb.FieldType.ToString () + " " + Name;
 			return FieldType.ToString () + " " + Name;
 		}
@@ -106,7 +106,7 @@ namespace System.Reflection.Emit
 
 		public override int MetadataToken {
 			get {
-				if (!((ModuleBuilder)instantiation.generic_type.Module).assemblyb.IsCompilerContext)
+				if (!instantiation.IsCompilerContext)
 					throw new InvalidOperationException ();
 				return fb.MetadataToken;
 			} 
@@ -114,7 +114,7 @@ namespace System.Reflection.Emit
 
 		public override Type FieldType {
 			get {
-				if (!((ModuleBuilder)instantiation.generic_type.Module).assemblyb.IsCompilerContext)
+				if (!instantiation.IsCompilerContext)
 					throw new NotSupportedException ();
 				return instantiation.InflateType (fb.FieldType);
 			}

@@ -97,7 +97,7 @@ namespace System.Reflection.Emit
 
 		public override ParameterInfo[] GetParameters ()
 		{
-			if (!((ModuleBuilder)cb.Module).assemblyb.IsCompilerContext && !instantiation.generic_type.is_created)
+			if (!instantiation.IsCompilerContext && !instantiation.generic_type.is_created)
 				throw new NotSupportedException ();
 
 			ParameterInfo [] res = new ParameterInfo [cb.parameters.Length];
@@ -110,7 +110,7 @@ namespace System.Reflection.Emit
 
 		public override int MetadataToken {
 			get {
-				if (!((ModuleBuilder)cb.Module).assemblyb.IsCompilerContext)
+				if (!instantiation.IsCompilerContext)
 					return base.MetadataToken;
 				return cb.MetadataToken;
 			}

@@ -1,3 +1,8 @@
+2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs: Add virtual property IsCompilerContext to cleanup
+	compiler context resolution across SRE.
+
 2009-12-05  Mark Probst  <mark.probst@gmail.com>
 
 	* String.cs: A new LOS_limit variable which gives the maximum

@@ -62,6 +62,12 @@ namespace System.Reflection.Emit {
 			return _tb;
 		}
 
+		internal override bool IsCompilerContext {
+			get {
+				return _tb.IsCompilerContext;
+			}
+		}
+
 		public override Assembly Assembly {
 			get {
 				return _tb.Assembly;

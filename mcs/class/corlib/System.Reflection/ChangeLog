@@ -1,3 +1,8 @@
+2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs: Implement IsCompilerContext property and replace
+	all checks to use it.
+
 2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (InflateType): Add a type argument parameter and

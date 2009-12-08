@@ -1,3 +1,21 @@
+2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DerivedTypes.cs: Implement IsCompilerContext property and replace
+	all checks to use it.
+
+	* EnumBuilder.cs: Ditto.
+
+	* GenericTypeParameterBuilder.cs: Ditto.
+
+	* TypeBuilder.cs: Ditto.
+
+	* FieldOnTypeBuilderInst.cs: Replace ad-hoc check for compiler context
+	with proper call to generic instance type.
+
+	* MethodOnTypeBuilderInst.cs: Ditto.
+
+	* ConstructorOnTypeBuilderInst.cs: Ditto.
+
 2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodBuilder.cs (MakeGenericMethod): Don't rely on the runtime to

@@ -1142,6 +1142,12 @@ namespace System {
 			return FullName;
 		}
 
+		internal virtual bool IsCompilerContext {
+			get {
+					return false;
+			}
+		}
+
 		internal bool IsSystemType {
 			get {
 				return _impl.Value != IntPtr.Zero;

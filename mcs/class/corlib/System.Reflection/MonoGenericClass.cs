@@ -73,6 +73,12 @@ namespace System.Reflection
 			this.type_arguments = args;
 		}
 
+		internal override bool IsCompilerContext {
+			get {
+				return generic_type.IsCompilerContext;
+			}
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
 
@@ -168,7 +174,7 @@ namespace System.Reflection
 
 		public override Type[] GetInterfaces ()
 		{
-			if (!generic_type.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw new NotSupportedException ();
 			return GetInterfacesInternal ();
 		}
@@ -225,7 +231,7 @@ namespace System.Reflection
 		
 		public override MethodInfo[] GetMethods (BindingFlags bf)
 		{
-			if (!generic_type.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw new NotSupportedException ();
 
 			ArrayList l = new ArrayList ();
@@ -307,7 +313,7 @@ namespace System.Reflection
 
 		public override ConstructorInfo[] GetConstructors (BindingFlags bf)
 		{
-			if (!generic_type.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw new NotSupportedException ();
 
 			ArrayList l = new ArrayList ();
@@ -380,7 +386,7 @@ namespace System.Reflection
 
 		public override FieldInfo[] GetFields (BindingFlags bf)
 		{
-			if (!generic_type.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw new NotSupportedException ();
 
 			ArrayList l = new ArrayList ();
@@ -453,7 +459,7 @@ namespace System.Reflection
 
 		public override PropertyInfo[] GetProperties (BindingFlags bf)
 		{
-			if (!generic_type.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw new NotSupportedException ();
 
 			ArrayList l = new ArrayList ();
@@ -529,7 +535,7 @@ namespace System.Reflection
 
 		public override EventInfo[] GetEvents (BindingFlags bf)
 		{
-			if (!generic_type.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw new NotSupportedException ();
 
 			ArrayList l = new ArrayList ();
@@ -659,7 +665,7 @@ namespace System.Reflection
 		string format_name (bool full_name, bool assembly_qualified)
 		{
 			StringBuilder sb = new StringBuilder (generic_type.FullName);
-			bool compiler_ctx = generic_type.IsCompilerContext;
+			bool compiler_ctx = IsCompilerContext;
 
 			sb.Append ("[");
 			for (int i = 0; i < type_arguments.Length; ++i) {
@@ -758,7 +764,7 @@ namespace System.Reflection
 
 		public override EventInfo GetEvent (string name, BindingFlags bindingAttr)
 		{
-			if (!generic_type.IsCompilerContext)
+			if (!IsCompilerContext)
 				throw new NotSupportedException ();
 			foreach (var evt in GetEvents (bindingAttr)) {
 				if (evt.Name == name)

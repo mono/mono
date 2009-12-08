@@ -78,7 +78,7 @@ namespace System.Reflection.Emit
 		}
 
 		internal bool IsCompilerContext {
-			get { return ((ModuleBuilder)base_method.Module).assemblyb.IsCompilerContext; }
+			get { return instantiation.IsCompilerContext; }
 		}
 
 		//
