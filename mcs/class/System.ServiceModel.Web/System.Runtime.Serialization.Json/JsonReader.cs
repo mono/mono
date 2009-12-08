@@ -43,6 +43,11 @@ namespace System.Runtime.Serialization.Json
 			pushback = new Stack<int>();
 		}
 
+		public PushbackReader (Stream stream) : base (stream, true)
+		{
+			pushback = new Stack<int>();
+		}
+
 		public override void Close ()
 		{
 			pushback.Clear ();
@@ -154,7 +159,10 @@ namespace System.Runtime.Serialization.Json
 
 		public void SetInput (Stream stream, Encoding encoding, XmlDictionaryReaderQuotas quotas, OnXmlDictionaryReaderClose onClose)
 		{
-			reader = new PushbackReader (stream, encoding ?? Encoding.UTF8);
+			if (encoding != null)
+				reader = new PushbackReader (stream, encoding);
+			else
+				reader = new PushbackReader (stream);
 			if (quotas == null)
 				throw new ArgumentNullException ("quotas");
 			this.quotas = quotas;

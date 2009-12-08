@@ -1,3 +1,16 @@
+2009-12-07  Chris Toshok  <toshok@ximian.com>
+
+	* JsonReaderWriterFactory.cs (CreateJsonReader): pass null for the
+	encoding parameter instead of calling Detect.  The jsonreader's
+	PushbackReader will autodetect.
+	(Detect): remove.  a BufferedStream created from an unseekable
+	stream is itself unseekable, which makes it just as useless.  This
+	breaks netflix's isostore file parsing.
+
+	* JsonReader.cs (PushbackReader): add a ctor which doesn't take an
+	encoding, for the autodetecting reader case.  for this ctor, pass
+	true to StreamReader's ctor for detectEncodingFromByteOrderMarks.
+
 2009-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* JsonSerializationReader.cs (DeserializeGenericCollection): this
