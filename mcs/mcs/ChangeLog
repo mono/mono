@@ -1,5 +1,9 @@
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* typemanager.cs (MakeGenericMethod): Fix stupid mistake.
+
+2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* typemanager.cs: Add MakeGenericMethod that checks if the method
 	is really the generic method definition.
 

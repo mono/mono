@@ -2774,7 +2774,7 @@ namespace Mono.CSharp {
 	{
 		if (!gmd.IsGenericMethodDefinition)
 			gmd = gmd.GetGenericMethodDefinition ();
-		return gmd.MakeGenericMethod (type_arguments.Arguments);		
+		return gmd.MakeGenericMethod (methodArguments);		
 	}
 #endregion
 
