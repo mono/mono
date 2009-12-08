@@ -2572,7 +2572,7 @@ namespace Mono.CSharp {
 				// A compile-time error occurs if the other operand is of type sbyte, short, int, or long
 				//
 				if (type == TypeManager.int32_type || type == TypeManager.int64_type ||
-					type == TypeManager.sbyte_type || type == TypeManager.sbyte_type)
+					type == TypeManager.short_type || type == TypeManager.sbyte_type)
 					return false;
 			}
 

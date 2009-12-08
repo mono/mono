@@ -1,5 +1,10 @@
 2009-12-08  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #561369
+	expression.cs (DoNumericPromotion): Fixed typo.
+
+2009-12-08  Marek Safar  <marek.safar@gmail.com>
+
 	*.cs: Moving to generics world.
 
 	cs-parser.jay: Removed current_array_type.
