@@ -1,3 +1,9 @@
+2009-12-07 Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Ping.cs: Try to detect the path to the bin command, since different
+	Unix systems store it in different places.
+	Fixes #519272.
+
 2009-10-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* GatewayIPAddressInformationCollection.cs:

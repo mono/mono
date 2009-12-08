@@ -28,6 +28,7 @@
 //
 #if NET_2_0
 using System;
+using System.IO;
 using System.Text;
 using System.Diagnostics;
 using System.Globalization;
@@ -56,7 +57,12 @@ namespace System.Net.NetworkInformation {
 		}
 		
 		const int DefaultCount = 1;
-		const string PingBinPath = "/bin/ping";
+		static readonly string [] PingBinPaths = new string [] {
+			"/bin/ping",
+			"/sbin/ping",
+			"/usr/sbin/ping"
+		};
+		static readonly string PingBinPath;
 		const int default_timeout = 4000; // 4 sec.
 		const int identifier = 1; // no need to be const, but there's no place to change it.
 
@@ -79,9 +85,20 @@ namespace System.Net.NetworkInformation {
 				CheckLinuxCapabilities ();
 				if (!canSendPrivileged && WindowsIdentity.GetCurrent ().Name == "root")
 					canSendPrivileged = true;
+			
+				// Since different Unix systems can have different path to bin, we try some
+				// of the known ones.
+				foreach (string ping_path in PingBinPaths)
+					if (File.Exists (ping_path)) {
+						PingBinPath = ping_path;
+						break;
+					}
 			}
 			else
 				canSendPrivileged = true;
+
+			if (PingBinPath == null)
+				PingBinPath = "/bin/ping"; // default, fallback value
 		}
 		
 		public Ping ()
