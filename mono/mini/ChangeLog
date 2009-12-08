@@ -16,6 +16,12 @@
 	* driver.c: Fail gracefully with --compile-all if mono_method_signature
 	returns NULL (e.g. a bad assembly).
 
+2009-12-08  Geoff Norton  <gnorton@novell.com>
+
+	* debugger-agent.c:  Refactor the mono_runtime_invoke guarding against
+	stepping out into native code.  There were issues with nested invokes
+	like .cctors.
+
 2009-12-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Do the disable_llvm checks early
