@@ -38,9 +38,7 @@ namespace DbLinq.Oracle
     partial class OracleSchemaLoader : SchemaLoader
     {
         private readonly Vendor.IVendor vendor = new OracleVendor();
-        public override IVendor Vendor { get { return vendor; } }
-
-        public override System.Type DataContextType { get { return typeof(OracleDataContext); } }
+        public override IVendor Vendor { get { return vendor; } set { } }
 
         protected override void LoadConstraints(Database schema, SchemaName schemaName, IDbConnection conn, NameFormat nameFormat, Names names)
         {

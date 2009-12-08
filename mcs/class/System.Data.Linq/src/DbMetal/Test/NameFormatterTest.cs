@@ -57,7 +57,16 @@ namespace DbLinqTest
             get
             {
                 Reference.DbLinqLocalizations();
-                return new NameFormat(false, Case.PascalCase, new CultureInfo("en-us"));
+                return new NameFormat(false, Case.NetCase, new CultureInfo("en-us"));
+            }
+        }
+
+        private NameFormat EnglishNameFormatCamelCase
+        {
+            get
+            {
+                Reference.DbLinqLocalizations();
+                return new NameFormat(false, Case.camelCase, new CultureInfo("en-us"));
             }
         }
 
@@ -125,5 +134,22 @@ namespace DbLinqTest
             }
         }
 
+        [Test]
+        public void GetWordsTest_MyColumnName()
+        {
+            try
+            {
+                ObjectFactory.Current.Register(typeof(EnglishWords));
+                var nf = new NameFormatter();
+                ColumnName cn = nf.GetColumnName("MY_COLUMN_NAME_", WordsExtraction.FromDictionary, EnglishNameFormat);
+                Assert.AreEqual("MyColumnName", cn.PropertyName);
+                cn = nf.GetColumnName("MY_COLUMN_NAME_", WordsExtraction.FromDictionary, EnglishNameFormatCamelCase);
+                Assert.AreEqual("myColumnName", cn.PropertyName);
+            }
+            finally
+            {
+                ObjectFactory.Current.Unregister(typeof(EnglishWords));
+            }
+        }
     }
 }

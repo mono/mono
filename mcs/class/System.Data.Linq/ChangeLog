@@ -1,3 +1,10 @@
+2009-12-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/**/*, examples/**/*: Sync with DbLinq r1293.  This adds 
+	  SchemaLoader support for Microsoft SQL Server, allowing sqlmetal to 
+	  generate entity stubs against SQL Server databases.
+	* System.Data.Linq.dll.sources: Add files to the build.
+
 2009-11-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* System.Data.Linq.dll.sources: Use MySqlDataContext.cs instead of

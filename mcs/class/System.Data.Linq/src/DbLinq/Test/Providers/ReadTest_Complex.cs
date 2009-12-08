@@ -184,9 +184,6 @@ using Id = System.Int32;
 
 #endif
 
-#if !DEBUG && POSTGRES
-        [Explicit]
-#endif
         [Test]
         public void F7_ExplicitJoin()
         {
@@ -624,7 +621,7 @@ using Id = System.Int32;
             //int productCount = q.Count();
 
             var products = from p in db.Products
-                           where ids.Contains(p.ProductID)
+                           where ids.Contains((Id) p.ProductID)
                            select p;
 
             Assert.AreEqual(3, products.Count());

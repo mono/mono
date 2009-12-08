@@ -171,11 +171,7 @@ namespace DbLinq.Schema.Implementation
         /// <returns></returns>
         public string ToNetCase(string part)
         {
-            if (part.Length <= 2)
-                part = part.ToUpper();
-            else
-                part = ToPascalCase(part);
-            return part;
+            return ToPascalCase(part);
         }
 
         /// <summary>

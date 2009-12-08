@@ -52,6 +52,7 @@ src/DbLinq.Sqlite/SqliteSqlProvider.cs
 src/DbLinq.Sqlite/SqliteVendor.cs
 src/DbLinq.SqlServer/SqlServerDataContext.cs
 src/DbLinq.SqlServer/SqlServerExpressionTranslator.cs
+src/DbLinq.SqlServer/SqlServerSchemaLoader.cs
 src/DbLinq.SqlServer/SqlServerSqlProvider.cs
 src/DbLinq.SqlServer/SqlServerTypeConversions.cs
 src/DbLinq.SqlServer/SqlServerVendor.cs
@@ -299,6 +300,7 @@ src/DbLinq/Util/ThreadSafeDictionary.cs
 src/DbLinq/Util/TypeConvert.cs
 src/DbLinq/Util/TypeExtensions.cs
 src/DbLinq/Util/TypeLoader.cs
+src/DbLinq/Vendor/DbSchemaLoader.cs
 src/DbLinq/Vendor/IDataName.cs
 src/DbLinq/Vendor/IDataTableColumn.cs
 src/DbLinq/Vendor/IDataType.cs

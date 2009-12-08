@@ -360,6 +360,7 @@
     <Compile Include="Util\Page.cs" />
     <Compile Include="Util\TypeExtensions.cs" />
     <Compile Include="Util\TypeLoader.cs" />
+    <Compile Include="Vendor\DbSchemaLoader.cs" />
     <Compile Include="Vendor\IDataTableColumn.cs" />
     <Compile Include="Vendor\IDataName.cs" />
     <Compile Include="Vendor\IDataType.cs" />

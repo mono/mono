@@ -35,9 +35,6 @@ using nwind;
     [TestFixture]
     public class Join : TestBase
     {
-#if !DEBUG && POSTGRES
-        [Explicit]
-#endif
         [Test(Description = "This sample uses foreign key navigation in the from clause to select all orders for customers in London")]
         public void LinqToSqlJoin01()
         {
@@ -53,9 +50,6 @@ using nwind;
             Assert.IsTrue(list[0].CustomerID != null, "Missing CustomerID");
         }
 
-#if !DEBUG && POSTGRES
-        [Explicit]
-#endif
         [Test(Description = "This sample uses foreign key navigation in the from clause to select all orders for customers in London")]
         public void LinqToSqlJoin01_b()
         {
@@ -83,9 +77,6 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && POSTGRES
-        [Explicit]
-#endif
         [Test(Description = "This sample uses foreign key navigation in the from clause to filter for employees in Seattle, and also list their territories")]
         public void LinqToSqlJoin03()
         {
@@ -101,9 +92,6 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && POSTGRES
-        [Explicit]
-#endif
         [Test(Description = "SelectMany - Self-Join.  filter for pairs of employees where one employee reports to the other and where both employees are from the same City")]
         public void LinqToSqlJoin04()
         {
@@ -223,9 +211,6 @@ using nwind;
         /// <summary>
         /// This sample shows how to construct a join where one side is nullable and the other isn't.
         /// </summary>
-#if !DEBUG && POSTGRES
-        [Explicit]
-#endif
         [Test(Description = "GroupJoin - Nullable\\Nonnullable Key Relationship")]
         public void LinqToSqlJoin10()
         {

@@ -56,7 +56,7 @@ using nwind;
             Assert.Greater(customer.Orders.Count, 0);
         }
 
-#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
+#if !DEBUG && (SQLITE || (MSSQL && !L2SQL))
         [Explicit]
 #endif
         [Test]

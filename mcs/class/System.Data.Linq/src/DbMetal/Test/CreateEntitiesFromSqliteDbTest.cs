@@ -48,7 +48,7 @@ namespace DbMetal_Test_Sqlite
     public class CreateEntitiesFromSqliteDbTest
     {
         [Test]
-        public void Create()
+        public void CreateViaProvider()
         {
 #if MONO_STRICT
             var app = "sqlmetal";
@@ -83,6 +83,40 @@ namespace DbMetal_Test_Sqlite
                 Console.Error.Write(stderr.GetStringBuilder().ToString());
             Assert.AreEqual(0, stderr.GetStringBuilder().Length);
             FileAssert.AreEqual(Path.Combine(testdir, "Northwind.Expected.Sqlite-" + app + ".cs"), "Northwind.Sqlite.cs");
+            File.Delete("Northwind.Sqlite.cs");
+        }
+
+        [Test]
+        public void CreateViaDbSchemaLoader()
+        {
+#if MONO_STRICT
+            var app                     = "sqlmetal";
+            var dbConnectionProvider    = "Mono.Data.Sqlite.SqliteConnection, Mono.Data.Sqlite";
+            var dbLinqSchemaLoader      = "DbLinq.Vendor.DbSchemaLoader, System.Data.Linq";
+            var sqlDialect              = "DbLinq.Sqlite.SqliteVendor, System.Data.Linq";
+#else
+            var app                     = "DbMetal";
+            var dbConnectionProvider    = "System.Data.SQLite.SQLiteConnection, System.Data.SQLite";
+            var dbLinqSchemaLoader      = "DbLinq.Vendor.DbSchemaLoader, DbLinq";
+            var sqlDialect              = "DbLinq.Sqlite.SqliteVendor, DbLinq.Sqlite";
+#endif
+            var bd = AppDomain.CurrentDomain.BaseDirectory;
+            var testdir = Path.Combine(bd, Path.Combine("..", "tests"));
+            var expectedDir = Path.Combine(testdir, "expected");
+
+            Program.Main(new string[]{
+                "/code:Northwind.Sqlite.cs",
+                "/conn:Data Source=" + Path.Combine(testdir, "Northwind.db3"),
+                "/database:Northwind",
+                "/databaseConnectionProvider=" + dbConnectionProvider,
+                "/dbLinqSchemaLoaderProvider=" + dbLinqSchemaLoader,
+                "--generate-timestamps-",
+                "/namespace:nwind",
+                "/pluralize",
+                "/sqlDialectType=" + sqlDialect,
+            });
+
+            FileAssert.AreEqual(Path.Combine(expectedDir, "Northwind.Sqlite+DbSchemaLoader-" + app + ".cs"), "Northwind.Sqlite.cs");
             File.Delete("Northwind.Sqlite.cs");
         }
     }

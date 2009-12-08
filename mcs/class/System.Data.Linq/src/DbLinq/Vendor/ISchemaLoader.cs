@@ -39,11 +39,7 @@ namespace DbLinq.Vendor
         /// <summary>
         /// Underlying vendor
         /// </summary>
-        IVendor Vendor { get; }
-        /// <summary>
-        /// Vendor typed DataContext type
-        /// </summary>
-        System.Type DataContextType { get; }
+        IVendor Vendor { get; set; }
         /// <summary>
         /// Connection used to read schema
         /// </summary>

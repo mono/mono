@@ -55,7 +55,7 @@ CREATE TABLE "Employees" (
 	"Extension" nvarchar (4) NULL ,
 	"Photo" "image" NULL ,
 	"Notes" "ntext" NULL ,
-	"ReportsTo" "int" NULL ,
+	"ReportsTo" INTEGER NULL ,
 	"PhotoPath" nvarchar (255) NULL ,
 	CONSTRAINT "PK_Employees" PRIMARY KEY 
 	(
@@ -130,11 +130,11 @@ CREATE TABLE "Suppliers" (
 CREATE TABLE "Orders" (
 	"OrderID" INTEGER NOT NULL ,
 	"CustomerID" nchar (5) NULL ,
-	"EmployeeID" "int" NULL ,
+	"EmployeeID" INTEGER NULL ,
 	"OrderDate" "datetime" NULL ,
 	"RequiredDate" "datetime" NULL ,
 	"ShippedDate" "datetime" NULL ,
-	"ShipVia" "int" NULL ,
+	"ShipVia" INTEGER NULL ,
 	"Freight" "money" NULL CONSTRAINT "DF_Orders_Freight" DEFAULT (0),
 	"ShipName" nvarchar (40) NULL ,
 	"ShipAddress" nvarchar (60) NULL ,
@@ -169,8 +169,8 @@ CREATE TABLE "Orders" (
 CREATE TABLE "Products" (
 	"ProductID" INTEGER NOT NULL ,
 	"ProductName" nvarchar (40) NOT NULL ,
-	"SupplierID" "int" NULL ,
-	"CategoryID" "int" NULL ,
+	"SupplierID" INTEGER NULL ,
+	"CategoryID" INTEGER NULL ,
 	"QuantityPerUnit" nvarchar (20) NULL ,
 	"UnitPrice" "money" NULL CONSTRAINT "DF_Products_UnitPrice" DEFAULT (0),
 	"UnitsInStock" "smallint" NULL CONSTRAINT "DF_Products_UnitsInStock" DEFAULT (0),
@@ -200,8 +200,8 @@ CREATE TABLE "Products" (
 );
 
 CREATE TABLE "Order Details" (
-	"OrderID" "int" NOT NULL ,
-	"ProductID" "int" NOT NULL ,
+	"OrderID" INTEGER NOT NULL ,
+	"ProductID" INTEGER NOT NULL ,
 	"UnitPrice" "money" NOT NULL CONSTRAINT "DF_Order_Details_UnitPrice" DEFAULT (0),
 	"Quantity" "smallint" NOT NULL CONSTRAINT "DF_Order_Details_Quantity" DEFAULT (1),
 	"Discount" "real" NOT NULL CONSTRAINT "DF_Order_Details_Discount" DEFAULT (0),
@@ -8868,7 +8868,7 @@ CREATE TABLE [CustomerDemographics]
 
 	
 CREATE TABLE [Region] 
-	( [RegionID] [int] NOT NULL ,
+	( [RegionID] INTEGER NOT NULL ,
 	[RegionDescription] [nchar] (50) NOT NULL,
 	CONSTRAINT [PK_Region] PRIMARY KEY
 	(
@@ -8880,7 +8880,7 @@ CREATE TABLE [Region]
 CREATE TABLE [Territories] 
 	([TerritoryID] [nvarchar] (20) NOT NULL ,
 	[TerritoryDescription] [nchar] (50) NOT NULL ,
-        [RegionID] [int] NOT NULL,
+        [RegionID] INTEGER NOT NULL,
 	CONSTRAINT [PK_Territories] PRIMARY KEY
 	(
 		[TerritoryID]
@@ -8895,7 +8895,7 @@ CREATE TABLE [Territories]
 
 
 CREATE TABLE [EmployeeTerritories] 
-	([EmployeeID] [int] NOT NULL,
+	([EmployeeID] INTEGER NOT NULL,
 	[TerritoryID] [nvarchar] (20) NOT NULL ,
 	CONSTRAINT [PK_EmployeeTerritories] PRIMARY KEY
 	(

@@ -107,13 +107,13 @@
     <Compile Include="Schema\NameAliasesLoader.cs" />
     <Compile Include="Utility\VariablesExtension.cs" />
     <Compile Include="Program.cs" />
-    <Compile Include="AbstractParameters.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Configuration\ProvidersSection.cs" />
     <Compile Include="Parameters.cs" />
     <Compile Include="Schema\TableAlias.cs" />
     <Compile Include="Generator\Implementation\SchemaLoaderFactory.cs" />
     <Compile Include="Utility\EnvironmentExtension.cs" />
+    <Compile Include="Mono\Options.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="..\DbLinq.snk">
@@ -196,7 +196,7 @@
     <PostBuildEvent>rem this is what I call loose coupling
 copy "$(SolutionDir)..\lib\Npgsql.dll" "$(TargetDir)"
 copy "$(SolutionDir)..\lib\Mono.Security.dll" "$(TargetDir)"
-copy "$(SolutionDir)..\lib\Ingres.Client.dll" "$(TargetDir)"
+copy "$(SolutionDir)..\lib\Ingres.Stereo.dll" "$(TargetDir)"
 copy "$(SolutionDir)..\lib\Oracle.DataAccess.dll" "$(TargetDir)"
 copy "$(SolutionDir)..\lib\MySql.Data.dll" "$(TargetDir)"
 copy "$(SolutionDir)..\lib\System.Data.SQLite.dll" "$(TargetDir)"
