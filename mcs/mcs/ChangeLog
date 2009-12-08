@@ -1,5 +1,11 @@
 2009-12-08  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #561149
+	anonymous.cs: Use actual type parameters when checking for generic
+	method host.
+
+2009-12-08  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #561369
 	expression.cs (DoNumericPromotion): Fixed typo.
 

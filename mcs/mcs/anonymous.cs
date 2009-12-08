@@ -1503,7 +1503,7 @@ namespace Mono.CSharp {
 
 			MemberName member_name;
 			GenericMethod generic_method;
-			if (storey == null && mc.MemberName.IsGeneric) {
+			if (storey == null && mc.MemberName.TypeArguments != null) {
 				member_name = new MemberName (name, mc.MemberName.TypeArguments.Clone (), Location);
 
 				generic_method = new GenericMethod (parent.NamespaceEntry, parent, member_name,
