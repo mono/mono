@@ -659,21 +659,22 @@ namespace System.Reflection.Emit {
 		{
 			if (local == null)
 				throw new ArgumentNullException ("local");
+			if (local.ilgen != this)
+				throw new ArgumentException ("Trying to emit a local from a different ILGenerator.");
 
 			uint pos = local.position;
 			bool load_addr = false;
 			bool is_store = false;
+			bool is_load = false;
 			make_room (6);
-
-			if (local.ilgen != this)
-				throw new ArgumentException ("Trying to emit a local from a different ILGenerator.");
 
 			/* inline the code from ll_emit () to optimize il code size */
 			if (opcode.StackBehaviourPop == StackBehaviour.Pop1) {
 				cur_stack --;
 				is_store = true;
-			} else {
+			} else if (opcode.StackBehaviourPush == StackBehaviour.Push1 || opcode.StackBehaviourPush == StackBehaviour.Pushi) {
 				cur_stack++;
+				is_load = true;
 				if (cur_stack > max_stack)
 					max_stack = cur_stack;
 				load_addr = opcode.StackBehaviourPush == StackBehaviour.Pushi;
@@ -701,7 +702,7 @@ namespace System.Reflection.Emit {
 						code [code_len++] = (byte)(pos & 0xff);
 						code [code_len++] = (byte)((pos >> 8) & 0xff);
 					}
-				} else {
+				} else if (is_load) {
 					if (pos < 4) {
 						code [code_len++] = (byte)(0x06 + pos);
 					} else if (pos < 256) {
@@ -713,6 +714,8 @@ namespace System.Reflection.Emit {
 						code [code_len++] = (byte)(pos & 0xff);
 						code [code_len++] = (byte)((pos >> 8) & 0xff);
 					}
+				} else {
+					ll_emit (opcode);
 				}
 			}
 		}

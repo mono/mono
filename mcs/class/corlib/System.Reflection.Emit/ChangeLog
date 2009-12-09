@@ -1,3 +1,8 @@
+2009-12-09  Jb Evain  <jbevain@novell.com>
+
+	* ILGenerator.cs (Emit(OpCode,LocalBuilder)): deal with
+	opcodes not related to locals.
+
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInst.cs: Add new constructor that takes a MethodInfo
