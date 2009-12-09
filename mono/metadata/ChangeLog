@@ -1,3 +1,19 @@
+2009-12-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Add mono_verifier_verify_string_signature to check
+	user string blobs.
+
+	* verify-internals.h: Add new function to the internal API.
+
+	* verify.c (do_ldstr): Call into mono_verifier_verify_string_signature to
+	check if it's a valid string.
+
+	* object.c (mono_ldstr): Ditto.
+
+	Fixes #561943.
+
+	Backport of r147941.
+
 2009-12-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_from_typeref): Bounds check idx against the 
