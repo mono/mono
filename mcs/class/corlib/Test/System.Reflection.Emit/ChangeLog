@@ -1,3 +1,8 @@
+2009-12-09  Jb Evain  <jbevain@novell.com>
+
+	* ILGeneratorTest.cs: add a test for Emit(OpCode,LocalBuilder)
+	when the opcode is not related to locals.
+
 2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MethodBuilderTest.cs: Add (copy from TypeBuilderTest) test 

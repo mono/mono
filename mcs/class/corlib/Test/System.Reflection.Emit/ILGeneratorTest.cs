@@ -426,5 +426,23 @@ namespace MonoTests.System.Reflection.Emit
 				throw tie.InnerException;
 			}
 		}
+
+		[Test]
+		public void TestEmitLocalInfoWithNopOpCode ()
+		{
+			var method_builder = tb.DefineMethod ("linop", MethodAttributes.Public | MethodAttributes.Static, typeof (bool), Type.EmptyTypes);
+			il_gen = method_builder.GetILGenerator ();
+
+			var local = il_gen.DeclareLocal (typeof (int));
+			il_gen.Emit (OpCodes.Nop, local);
+			il_gen.Emit (OpCodes.Ldc_I4_1);
+			il_gen.Emit (OpCodes.Ret);
+
+			var type = tb.CreateType ();
+			var method = type.GetMethod ("linop");
+
+			Assert.IsNotNull (method);
+			Assert.IsTrue ((bool) method.Invoke (null, new object [0]));
+		}
 	}
 }
