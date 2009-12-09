@@ -39,7 +39,8 @@ namespace System.Globalization {
 	[Serializable]
 	[ComVisible(true)]
 	public class StringInfo {
-		public StringInfo()
+
+		public StringInfo () : this (string.Empty)
 		{
 		}
 
