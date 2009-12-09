@@ -58,12 +58,12 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public void AddRestrictions (DynamicMetaObject arg)
 		{
-			restrictions.Merge (CreateRestrictionsOnTarget (arg));
+			restrictions = restrictions.Merge (CreateRestrictionsOnTarget (arg));
 		}
 
 		public void AddRestrictions (DynamicMetaObject[] args)
 		{
-			restrictions.Merge (CreateRestrictionsOnTarget (args));
+			restrictions = restrictions.Merge (CreateRestrictionsOnTarget (args));
 		}
 
 		public DynamicMetaObject Bind (Type callingType, DynamicMetaObject target)

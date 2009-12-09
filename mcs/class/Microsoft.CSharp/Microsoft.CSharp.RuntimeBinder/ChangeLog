@@ -1,3 +1,7 @@
+2009-12-09  Marek Safar  <marek.safar@gmail.com>
+
+	* CSharpBinder.cs: Actually use merged restrictions.
+
 2009-11-18  Marek Safar  <marek.safar@gmail.com>
 
 	* CSharpBinder.cs: Fixed unsafe initialization.
