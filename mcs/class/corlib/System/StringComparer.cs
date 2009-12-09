@@ -205,6 +205,9 @@ namespace System
 
 		public override int GetHashCode (string s)
 		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+
 			if (_ignoreCase)
 				return s.GetCaseInsensitiveHashCode ();
 			else

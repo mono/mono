@@ -1,3 +1,8 @@
+2009-12-09  Jb Evain  <jbevain@novell.com>
+
+	* StringComparer.cs (GetHashCode): properly throw
+	an ANE instead of an NRE.
+
 2009-12-09  Miguel de Icaza  <miguel@novell.com>
 
 	* Enum.cs: Add new .NET 4.0 API.
