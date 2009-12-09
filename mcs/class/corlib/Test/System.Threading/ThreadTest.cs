@@ -792,6 +792,13 @@ namespace MonoTests.System.Threading
 			Assert.IsTrue (interruptedExceptionThrown, "ThreadInterruptedException expected.");
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TestQueueUserWorkItemNullCallback ()
+		{
+			ThreadPool.QueueUserWorkItem (null, null);
+		}
+
 		private void Test_Interrupt_Worker (object o)
 		{
 			Thread t = o as Thread;
