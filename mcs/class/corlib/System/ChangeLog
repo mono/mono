@@ -1,3 +1,7 @@
+2009-12-09  Miguel de Icaza  <miguel@novell.com>
+
+	* Enum.cs: Add new .NET 4.0 API.
+
 2009-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* Type.cs: added overloads for the == and != operators (4.0).

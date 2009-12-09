@@ -963,5 +963,14 @@ namespace System
 			}
 			return retVal;
 		}
+#if NET_4_0
+		public bool HasFlag (Enum flag)
+		{
+			ulong mvalue = Convert.ToUInt64 (get_value (), null);
+			ulong fvalue = Convert.ToUInt64 (flag, null);
+
+			return ((mvalue & fvalue) == fvalue);
+		}
+#endif
 	}
 }
