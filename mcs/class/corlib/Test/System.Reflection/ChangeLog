@@ -1,3 +1,8 @@
+2009-12-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodBaseTest.cs: Remove all NET_2_0 directives. Add test
+	for GetCurrentMethod and generics.
+
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodInfoTest.cs: Add some tests for MS compatible behavior of

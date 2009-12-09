@@ -33,7 +33,6 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Reflection
 {
-#if NET_2_0
 	public class Generic<T> {
 		public void Foo () {
 		}
@@ -53,12 +52,37 @@ namespace MonoTests.System.Reflection
 
 		}
 	}
-#endif
+
 
 	[TestFixture]
 	public class MethodBaseTest
 	{
-#if NET_2_0
+		public static MethodInfo Where<T> (T a) {
+			return (MethodInfo) MethodBase.GetCurrentMethod ();
+		}
+
+		public class Foo<K>
+		{
+			public static MethodInfo Where<T> (T a, K b) {
+				return (MethodInfo) MethodBase.GetCurrentMethod ();
+			}
+		}
+
+		[Test]
+		public void GetCurrentMethodDropsAllGenericArguments ()
+		{
+			MethodInfo a = Where<int> (10);
+			MethodInfo b = Foo<int>.Where <double> (10, 10);
+
+			Assert.IsTrue (a.IsGenericMethodDefinition, "#1");
+			Assert.IsTrue (b.IsGenericMethodDefinition, "#2");
+
+			Assert.IsTrue (b.DeclaringType.IsGenericTypeDefinition, "#3");
+
+			Assert.AreSame (a, typeof (MethodBaseTest).GetMethod ("Where"), "#4");
+			Assert.AreSame (b, typeof (Foo<>).GetMethod ("Where"), "#5");
+		}
+
 		[Test] // GetMethodFromHandle (RuntimeMethodHandle)
 		public void GetMethodFromHandle1_Handle_Generic ()
 		{
@@ -79,7 +103,6 @@ namespace MonoTests.System.Reflection
 				// GetMethodFromHandle
 			}
 		}
-#endif
 
 		[Test] // GetMethodFromHandle (RuntimeMethodHandle)
 		public void GetMethodFromHandle1_Handle_Zero ()
@@ -112,7 +135,6 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (0, parameters.Length, "#5");
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetMethodFromHandle_NonGenericType_DeclaringTypeZero ()
 		{
@@ -304,7 +326,5 @@ namespace MonoTests.System.Reflection
 			} catch (ArgumentException) {
 			}
 		}
-
-#endif
 	}
 }
