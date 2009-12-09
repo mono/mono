@@ -1,3 +1,8 @@
+2009-12-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (start_runtime_invoke): Fix a crash if this is called
+	on the debugger thread.
+
 2009-12-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Add more SIMD opcodes.
