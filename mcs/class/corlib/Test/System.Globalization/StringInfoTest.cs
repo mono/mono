@@ -61,6 +61,13 @@ namespace MonoTests.System.Globalization
 		}
 
 		[Test]
+		public void DefaultConstructor ()
+		{
+			var info = new StringInfo ();
+			Assert.AreEqual (string.Empty, info.String);
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void SubstringByTextElementsOutOfRange1 ()
 		{
