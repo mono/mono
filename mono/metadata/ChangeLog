@@ -1,3 +1,8 @@
+2009-12-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_GetCurrentMethod): Drop all generic arguments
+	from a method before returning it. This is the expected behavior.
+
 2009-12-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (inflate_method): Handle the case of a regular system type.
