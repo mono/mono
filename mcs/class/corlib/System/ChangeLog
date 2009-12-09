@@ -1,3 +1,10 @@
+2009-12-09  Jb Evain  <jbevain@novell.com>
+
+	* StringComparer.cs (GetHashCode): properly throw an
+	ANE instead of triggering a NRE.
+
+	backports r147932.
+
 2009-12-08  Jb Evain  <jbevain@novell.com>
 
 	* Enum.cs (IConvertible.ToType): properly convert enum values
