@@ -1,3 +1,8 @@
+2009-12-09  Jb Evain  <jbevain@novell.com>
+
+	* ThreadPool.cs (QueueUserWorkItem): properly throw
+	an ANE instead of triggering a NRE when being passed a null callback.
+
 2009-11-02  Miguel de Icaza  <miguel@novell.com>
 
 	* Jumbo patch to drop support for pre-NET_2_0 code:

@@ -80,6 +80,9 @@ namespace System.Threading {
 
 		public static bool QueueUserWorkItem (WaitCallback callBack, object state)
 		{
+			if (callBack == null)
+				throw new ArgumentNullException ("callBack");
+
 #if NET_2_1 && !MONOTOUCH
 			callBack = MoonlightHandler (callBack);
 #endif
