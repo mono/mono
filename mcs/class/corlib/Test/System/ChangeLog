@@ -1,3 +1,8 @@
+2009-12-09  Jb Evain  <jbevain@novell.com>
+
+	* StringComparerTest.cs: add test for null passed to a ordinal
+	comparer GetHashCode.
+
 2009-12-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	TypeTest.cs: Remove NET_2_0.

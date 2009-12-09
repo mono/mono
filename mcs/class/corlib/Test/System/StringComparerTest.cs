@@ -216,6 +216,13 @@ namespace MonoTests.System
 			Assert.IsNotNull (sc);
 		}
 
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void GetNullOrdinalHashCode ()
+		{
+			StringComparer.Ordinal.GetHashCode (null);
+		}
+
 		private static readonly byte [] _serializedCurrentCulture = new byte [] {
 			0x00, 0x01, 0x00, 0x00, 0x00, 0xff, 0xff, 0xff, 0xff, 0x01, 0x00,
 			0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x01, 0x00, 0x00, 0x00,
