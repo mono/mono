@@ -360,7 +360,7 @@ namespace Mono.CSharp {
 					return false;
 				}
 			} else {
-				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN | Modifiers.PARTIAL)) == 0) {
+				if ((ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN | Modifiers.PARTIAL)) == 0 && !(Parent is Delegate)) {
 					if (RootContext.Version >= LanguageVersion.V_3) {
 						Property.PropertyMethod pm = this as Property.PropertyMethod;
 						if (pm is Indexer.GetIndexerMethod || pm is Indexer.SetIndexerMethod)

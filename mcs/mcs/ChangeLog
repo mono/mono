@@ -1,5 +1,13 @@
 2009-12-10  Marek Safar  <marek.safar@gmail.com>
 
+	* decl.cs, anonymous.cs, class.cs: Sealed Define it's now main entry
+	point.
+	
+	* parameter.cs, delegate.cs, dynamic.cs: Don't use builder methods
+	directly.
+
+2009-12-10  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay, statement.cs: Handle parser error in code
 	completition.
 

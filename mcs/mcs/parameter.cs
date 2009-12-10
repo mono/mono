@@ -722,6 +722,18 @@ namespace Mono.CSharp {
 		protected IParameterData [] parameters;
 		protected Type [] types;
 
+		public ParametersCompiled AsCompiled {
+			get { return (ParametersCompiled) this; }
+		}
+
+		public CallingConventions CallingConvention {
+			get {
+				return has_arglist ?
+					CallingConventions.VarArgs :
+					CallingConventions.Standard;
+			}
+		}
+
 		public int Count {
 			get { return parameters.Length; }
 		}
@@ -1143,16 +1155,6 @@ namespace Mono.CSharp {
 		{
 			for (int i = 0; i < FixedParameters.Length; ++i) {
 				this [i].ResolveVariable (i);
-			}
-		}
-
-		public CallingConventions CallingConvention
-		{
-			get {
-				if (HasArglist)
-					return CallingConventions.VarArgs;
-				else
-					return CallingConventions.Standard;
 			}
 		}
 

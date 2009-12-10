@@ -1789,8 +1789,11 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		void DefineOverrides ()
+		protected override bool DoDefineMembers ()
 		{
+			if (!base.DoDefineMembers ())
+				return false;
+
 			Location loc = Location;
 
 			Method equals = new Method (this, null, TypeManager.system_boolean_expr,
@@ -1955,14 +1958,7 @@ namespace Mono.CSharp {
 			tostring.Block = tostring_block;
 			tostring.Define ();
 			AddMethod (tostring);
-		}
 
-		public override bool Define ()
-		{
-			if (!base.Define ())
-				return false;
-
-			DefineOverrides ();
 			return true;
 		}
 

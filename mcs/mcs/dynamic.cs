@@ -448,6 +448,7 @@ namespace Mono.CSharp
 
 				d.DefineType ();
 				d.Define ();
+				d.Emit ();
 
 				parent.AddDelegate (d);
 				del_type = new TypeExpression (d.TypeBuilder, loc);

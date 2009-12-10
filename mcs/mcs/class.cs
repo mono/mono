@@ -545,7 +545,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected Type BaseType {
+		protected virtual Type BaseType {
 			get {
 				return TypeBuilder.BaseType;
 			}
@@ -1293,7 +1293,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Populates our TypeBuilder with fields and methods
 		/// </summary>
-		public override bool Define ()
+		public sealed override bool Define ()
 		{
 			if (members_defined)
 				return members_defined_ok;
@@ -2648,11 +2648,11 @@ namespace Mono.CSharp {
 			c.Block = new ToplevelBlock (Compiler, ParametersCompiled.EmptyReadOnlyParameters, Location);
 		}
 
-		public override bool Define ()
+		protected override bool DoDefineMembers ()
 		{
 			CheckProtectedModifier ();
 
-			base.Define ();
+			base.DoDefineMembers ();
 
 			if (default_static_constructor != null)
 				default_static_constructor.Define ();
@@ -2819,7 +2819,7 @@ namespace Mono.CSharp {
 			base.DefineContainerMembers (list);
 		}
 
-		public override bool Define ()
+		protected override bool DoDefineMembers ()
 		{
 			if ((ModFlags & Modifiers.ABSTRACT) == Modifiers.ABSTRACT && (ModFlags & (Modifiers.SEALED | Modifiers.STATIC)) != 0) {
 				Report.Error (418, Location, "`{0}': an abstract class cannot be sealed or static", GetSignatureForError ());
@@ -2829,11 +2829,6 @@ namespace Mono.CSharp {
 				Report.Error (441, Location, "`{0}': a class cannot be both static and sealed", GetSignatureForError ());
 			}
 
-			return base.Define ();
-		}
-
-		protected override bool DoDefineMembers ()
-		{
 			if (InstanceConstructors == null && !IsStatic)
 				DefineDefaultConstructor (false);
 
