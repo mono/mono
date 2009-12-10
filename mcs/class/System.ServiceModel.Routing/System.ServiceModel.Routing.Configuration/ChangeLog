@@ -1,0 +1,16 @@
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BackupEndpointCollection.cs
+	  BackupEndpointElement.cs
+	  BackupListCollection.cs
+	  FilterElement.cs
+	  FilterElementCollection.cs
+	  FilterTableCollection.cs
+	  FilterTableEntryCollection.cs
+	  FilterTableEntryElement.cs
+	  FilterType.cs
+	  NamespaceElement.cs
+	  NamespaceElementCollection.cs
+	  RoutingExtensionElement.cs
+	  RoutingSection.cs
+	  SoapProcessingExtensionElement.cs : initial checkin.

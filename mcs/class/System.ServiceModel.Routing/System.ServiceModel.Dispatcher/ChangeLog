@@ -1,0 +1,4 @@
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointNameMessageFilter.cs  StrictAndMessageFilter.cs:
+	  initial checkin.
