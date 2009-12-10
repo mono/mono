@@ -1,3 +1,10 @@
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationInvokerHandler.cs : fix async operation handling. Since
+	  the entire handler chain is designed to be in synchronous, one
+	  single handler must not leave its work incomplete (async). Just
+	  wait for the async process completion within the handler.
+
 2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : fix regression; ServiceBehaviorAttribute
