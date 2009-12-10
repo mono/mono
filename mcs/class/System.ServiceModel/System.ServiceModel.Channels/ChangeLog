@@ -1,3 +1,7 @@
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : WebException.Response might be null.
+
 2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ReplyChannelBase.cs : added listener property.

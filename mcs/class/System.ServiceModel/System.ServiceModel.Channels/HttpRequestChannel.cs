@@ -184,6 +184,10 @@ namespace System.ServiceModel.Channels
 				resstr = res.GetResponseStream ();
 			} catch (WebException we) {
 				res = we.Response;
+				if (res == null) {
+					channelResult.Complete (we);
+					return;
+				}
 				try {
 					// The response might contain SOAP fault. It might not.
 					resstr = res.GetResponseStream ();
