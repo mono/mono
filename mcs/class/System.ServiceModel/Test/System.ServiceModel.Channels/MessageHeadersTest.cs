@@ -331,13 +331,8 @@ namespace MonoTests.System.ServiceModel.Channels
 			h.GetReaderAtHeader (0);
 		}
 
-		// I doubt things wrt this work fine on WinFX; sometimes it
-		// does *not* raise an error, while sometimes it does. And it
-		// is basically consistent on every run against the same
-		// *_test.dll binary. Huh.
 		[Test]
 		[ExpectedException (typeof (MessageHeaderException))] // multiple headers: "Action"
-		[Category ("NotWorking")]
 		public void CopyHeadersFrom ()
 		{
 			Message msg = Message.CreateMessage (MessageVersion.Default, "urn:myaction");

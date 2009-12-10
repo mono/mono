@@ -1,5 +1,9 @@
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeadersTest.cs : enable working test and remove old comment.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeadersTest.cs : make sure null can be set as a
 	  WS-Addressing header when version is None.
 
