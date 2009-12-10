@@ -1,3 +1,8 @@
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : make sure null can be set as a
+	  WS-Addressing header when version is None.
+
 2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpTransportBindingElementTest.cs : added GetProperty() tests.

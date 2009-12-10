@@ -126,6 +126,17 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		public void SetWSAddressingHeadersNullToNonSoap ()
+		{
+			Message m = Message.CreateMessage (MessageVersion.None, "test", 1);
+			m.Headers.From = null;
+			m.Headers.MessageId = null;
+			m.Headers.ReplyTo = null;
+			m.Headers.FaultTo = null;
+			m.Headers.RelatesTo = null;
+		}
+
+		[Test]
 		public void TestInsert ()
 		{
 			Message m = Message.CreateMessage (MessageVersion.Default, "test", 1);

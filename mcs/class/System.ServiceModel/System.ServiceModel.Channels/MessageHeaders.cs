@@ -338,7 +338,7 @@ namespace System.ServiceModel.Channels
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
 			set {
-				if (version.Addressing == AddressingVersion.None)
+				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("FaultTo", Constants.WSA1);
@@ -353,7 +353,7 @@ namespace System.ServiceModel.Channels
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
 			set { 
-				if (version.Addressing == AddressingVersion.None)
+				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("From", Constants.WSA1);
@@ -372,7 +372,7 @@ namespace System.ServiceModel.Channels
 				return idx < 0 ? null : new UniqueId (GetHeader<string> (idx));
 			}
 			set {
-				if (version.Addressing == AddressingVersion.None)
+				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("MessageID", Constants.WSA1);
@@ -389,7 +389,7 @@ namespace System.ServiceModel.Channels
 				return idx < 0 ? null : new UniqueId (GetHeader<string> (idx));
 			}
 			set {
-				if (version.Addressing == AddressingVersion.None)
+				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("MessageID", Constants.WSA1);
@@ -405,7 +405,7 @@ namespace System.ServiceModel.Channels
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
 			set {
-				if (version.Addressing == AddressingVersion.None)
+				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
 				RemoveAll ("ReplyTo", Constants.WSA1);

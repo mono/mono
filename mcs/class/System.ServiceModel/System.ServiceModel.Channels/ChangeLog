@@ -1,5 +1,9 @@
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeaders.cs : null can be set as a WS-Addressing header item.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpRequestChannel.cs : WebException.Response might be null.
 
 2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
