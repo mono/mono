@@ -1,3 +1,8 @@
+2009-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-x86.c (mono_arch_patch_callsite): Patch the code when using valgrind,
+	newer valgrind versions seems to handle this fine.
+
 2009-12-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (start_runtime_invoke): Fix a crash if this is called
