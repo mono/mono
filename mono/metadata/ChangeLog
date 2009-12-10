@@ -1,3 +1,13 @@
+2009-12-10  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c (mono_generic_class_get_class),
+	metadata.c (free_generic_class): Allocate generic MonoClass's from
+	the image mempool, not via malloc.  The problem with malloc is
+	that when unloading a domain those classes are freed before
+	clearing the heap and SGen needs the classes.  Rewriting the
+	unloading code to do the free later would be more work and there's
+	no point in using malloc anyway.
+
 2009-12-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* loader.c (mono_method_signature): Always call mono_loader_unlock 
