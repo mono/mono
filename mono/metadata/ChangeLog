@@ -1,3 +1,9 @@
+2009-12-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* loader.c (mono_method_signature): Always call mono_loader_unlock 
+	before returning.
+	[Backport r147991]
+
 2009-12-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: Add mono_verifier_verify_string_signature to check
