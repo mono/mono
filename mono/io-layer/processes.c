@@ -2127,7 +2127,9 @@ static gchar *get_process_name_from_proc (pid_t pid)
 	g_free (filename);
 #elif defined(PLATFORM_MACOSX)
 	memset (buf, '\0', sizeof(buf));
+#  if !defined (__mono_ppc__)
 	proc_name (pid, buf, sizeof(buf));
+#  endif
 	if (strlen (buf) > 0)
 		ret = g_strdup (buf);
 #else

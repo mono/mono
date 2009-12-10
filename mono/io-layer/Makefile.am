@@ -135,7 +135,9 @@ endif
 libwapiinclude_HEADERS = $(OTHER_H)
 endif
 if PLATFORM_DARWIN
+if X86
 libwapi_la_LIBADD = -lproc
+endif
 endif
 
 
