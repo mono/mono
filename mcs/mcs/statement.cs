@@ -2122,7 +2122,7 @@ namespace Mono.CSharp {
 			//
 			int statement_count = statements.Count;
 			for (int ix = 0; ix < statement_count; ix++){
-				Statement s = (Statement) statements [ix];
+				Statement s = statements [ix];
 				// Check possible empty statement (CS0642)
 				if (ix + 1 < statement_count && ec.Report.WarningLevel >= 3 &&
 					statements [ix + 1] is ExplicitBlock)

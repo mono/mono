@@ -1,5 +1,10 @@
 2009-12-10  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-parser.jay, statement.cs: Handle parser error in code
+	completition.
+
+2009-12-10  Marek Safar  <marek.safar@gmail.com>
+
 	* ecore.cs: Ignore base imported methods when they are already
 	in method bag.
 	
