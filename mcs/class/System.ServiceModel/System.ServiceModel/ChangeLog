@@ -1,3 +1,8 @@
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : a bit more kindful error message.
+	* ClientProxyGenerator.cs : fix async parameter offset.
+
 2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : in AddBaseAddress(), use base_addresses

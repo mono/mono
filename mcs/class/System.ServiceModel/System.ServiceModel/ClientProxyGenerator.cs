@@ -170,7 +170,7 @@ namespace System.ServiceModel
 				if (!par.IsOut)
 					b.Assign (
 						new CodeArrayItem (paramsRef, new CodeLiteral (i)),
-						new CodeCast (typeof (object), m.GetArg (i + 1)));
+						new CodeCast (typeof (object), m.GetArg (i)));
 			}
 			CodeMethodCall argMethodInfo = new CodeMethodCall (typeof (MethodBase), "GetCurrentMethod");
 			CodeLiteral argOperName = new CodeLiteral (name);
