@@ -33,41 +33,109 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
 using Mono.Unix.Native;
+using System.Runtime.InteropServices;
 
 namespace System.IO.MemoryMappedFiles
 {
 	public class MemoryMappedFile : IDisposable {
-
+		MemoryMappedFileAccess fileAccess;
+		string name;
 		FileStream stream;
-
-		[MonoTODO]
+		long fileCapacity;
+		bool keepOpen;
+		
 		public static MemoryMappedFile CreateFromFile (FileStream fileStream) {
 			if (fileStream == null)
 				throw new ArgumentNullException ("fileStream");
-			return new MemoryMappedFile () { stream = fileStream };
+
+			return new MemoryMappedFile () {
+				stream = fileStream,
+				fileAccess = MemoryMappedFileAccess.ReadWrite
+			};
 		}
 
-		[MonoTODO]
-		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName) {
-			throw new NotImplementedException ();
-		}		
-
-		[MonoTODO]
-		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName, long capacity) {
-			throw new NotImplementedException ();
-		}		
-
-		[MonoTODO]
-		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName, long capacity, MemoryMappedFileAccess access) {
-			throw new NotImplementedException ();
-		}		
-
-		/*
-		[MonoTODO]
-		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability inheritability, bool leaveOpen) {
-			throw new NotImplementedException ();
+		public static MemoryMappedFile CreateFromFile (string path)
+		{
+			return CreateFromFile (path, FileMode.Open, null, 0, MemoryMappedFileAccess.ReadWrite);
 		}
-		*/	
+
+
+		public static MemoryMappedFile CreateFromFile (string path, FileMode mode)
+		{
+			return CreateFromFile (path, mode, null, 0, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		public static MemoryMappedFile CreateFromFile (string path, FileMode mode, string mapName)
+		{
+			return CreateFromFile (path, mode, mapName, 0, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		public static MemoryMappedFile CreateFromFile (string path, FileMode mode, string mapName, long capacity)
+		{
+			return CreateFromFile (path, mode, mapName, capacity, MemoryMappedFileAccess.ReadWrite);
+		}
+
+		public static MemoryMappedFile CreateFromFile (string path, FileMode mode, string mapName, long capacity, MemoryMappedFileAccess access)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+			if (mapName != null && mapName.Length == 0)
+				throw new ArgumentException ("mapName");
+			var fileStream = File.Open (path, mode);
+
+			if ((capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length)){
+				fileStream.Close ();
+				throw new ArgumentException ("capacity");
+			}
+			return new MemoryMappedFile () {
+				stream = fileStream,
+				fileAccess = access,
+				name = mapName,
+				fileCapacity = capacity
+					};
+		}
+
+		public static void ConfigureUnixFD (IntPtr handle, HandleInheritability h)
+		{
+			// TODO: Mono.Posix is lacking O_CLOEXEC definitions for fcntl.
+		}
+
+
+		[DllImport("kernel32.dll", SetLastError = true)]
+		static extern bool SetHandleInformation (IntPtr hObject, int dwMask, int dwFlags);
+		public static void ConfigureWindowsFD (IntPtr handle, HandleInheritability h)
+		{
+			SetHandleInformation (handle, 1 /* FLAG_INHERIT */, h == HandleInheritability.None ? 0 : 1);
+		}
+
+		[MonoLimitation ("memoryMappedFileSecurity is currently ignored")]
+		public static MemoryMappedFile CreateFromFile (FileStream fileStream, string mapName, long capacity, MemoryMappedFileAccess access,
+							       MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability inheritability,
+							       bool leaveOpen)
+		{
+			if (fileStream == null)
+				throw new ArgumentNullException ("fileStream");
+			if (mapName != null && mapName.Length == 0)
+				throw new ArgumentException ("mapName");
+			if ((capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length))
+				throw new ArgumentException ("capacity");
+
+			if (MonoUtil.IsUnix)
+				ConfigureUnixFD (fileStream.Handle, inheritability);
+			else
+				ConfigureWindowsFD (fileStream.Handle, inheritability);
+				
+			return new MemoryMappedFile () {
+				stream = fileStream,
+				fileAccess = access,
+				name = mapName,
+				fileCapacity = capacity,
+				keepOpen = leaveOpen
+			};
+		}
+
 
 		[MonoTODO]
 			public static MemoryMappedFile CreateNew (string mapName, long capacity) {
@@ -132,10 +200,20 @@ namespace System.IO.MemoryMappedFiles
 		MemoryMappedFile () {
 		}
 
-		[MonoTODO]
-		public void Dispose () {
+		public void Dispose ()
+		{
+			Dispose (true);
 		}
 
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing){
+				if (stream != null && keepOpen == false)
+					stream.Close ();
+				stream = null;
+			}
+		}
+		
 		[MonoTODO]
 		public SafeMemoryMappedFileHandle SafeMemoryMappedFileHandle {
 			get {
@@ -145,7 +223,36 @@ namespace System.IO.MemoryMappedFiles
 
 		static int pagesize;
 
-		internal static unsafe void MapPosix (FileStream file, long offset, long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff, out ulong map_size) {
+		static MmapProts ToUnixProts (MemoryMappedFileAccess access)
+		{
+			MmapProts prots;
+			
+			switch (access){
+			case MemoryMappedFileAccess.ReadWrite:
+				return MmapProts.PROT_WRITE | MmapProts.PROT_READ;
+				break;
+				
+			case MemoryMappedFileAccess.Write:
+				return MmapProts.PROT_WRITE;
+				
+			case MemoryMappedFileAccess.CopyOnWrite:
+				return MmapProts.PROT_WRITE | MmapProts.PROT_READ;
+				
+			case MemoryMappedFileAccess.ReadExecute:
+				return MmapProts.PROT_EXEC;
+				
+			case MemoryMappedFileAccess.ReadWriteExecute:
+				return MmapProts.PROT_WRITE | MmapProts.PROT_READ | MmapProts.PROT_EXEC;
+				
+			case MemoryMappedFileAccess.Read:
+			default:
+				return MmapProts.PROT_READ;
+			}
+			
+		}
+
+		internal static unsafe void MapPosix (FileStream file, long offset, long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff, out ulong map_size)
+		{
 			if (pagesize == 0)
 				pagesize = Syscall.getpagesize ();
 
@@ -161,8 +268,17 @@ namespace System.IO.MemoryMappedFiles
 
 			// FIXME: Need to determine the unix fd for the file, Handle is only
 			// equal to it by accident
+			//
+			// The new API no longer uses FileStream everywhere, but exposes instead
+			// the filename (with one exception), we could move this API to use
+			// file descriptors instead of the FileStream plus its Handle.
+			//
 			map_size = (ulong)size;
-			map_addr = Syscall.mmap (IntPtr.Zero, map_size, MmapProts.PROT_READ, MmapFlags.MAP_SHARED, (int)file.Handle, real_offset);
+			map_addr = Syscall.mmap (IntPtr.Zero, map_size,
+						 ToUnixProts (access),
+						 access == MemoryMappedFileAccess.CopyOnWrite ? MmapFlags.MAP_PRIVATE : MmapFlags.MAP_SHARED,
+						 (int)file.Handle, real_offset);
+			
 			if (map_addr == (IntPtr)(-1))
 				throw new IOException ("mmap failed for " + file + "(" + offset + ", " + size + ")");
 		}

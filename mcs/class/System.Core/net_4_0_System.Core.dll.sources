@@ -11,10 +11,12 @@ System/TimeZoneInfo.AdjustmentRule.cs
 System/TimeZoneInfo.cs
 System/TimeZoneInfo.TransitionTime.cs
 System/TimeZoneNotFoundException.cs
+System/Util.cs
 System.IO.MemoryMappedFiles/MemoryMappedFile.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileAccess.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileOptions.cs
 System.IO.MemoryMappedFiles/MemoryMappedFileRights.cs
+System.IO.MemoryMappedFiles/MemoryMappedFileSecurity.cs
 System.IO.MemoryMappedFiles/MemoryMappedViewStream.cs
 System.IO.MemoryMappedFiles/MemoryMappedViewAccessor.cs
 System.Runtime.CompilerServices/DynamicAttribute.cs

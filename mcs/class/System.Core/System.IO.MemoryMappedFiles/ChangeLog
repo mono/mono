@@ -1,3 +1,9 @@
+2009-12-10  Miguel de Icaza  <miguel@novell.com>
+
+	* MemoryMappedFile.cs: Updated to the new Beta API, fill in some
+	blanks, map some new flags, obey some settings, throw some
+	exceptions. 
+
 2009-09-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* MemoryMappedViewAccessor.cs: New net 4.0 class.

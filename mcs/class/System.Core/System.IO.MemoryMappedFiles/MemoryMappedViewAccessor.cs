@@ -42,12 +42,13 @@ namespace System.IO.MemoryMappedFiles
 		ulong mmap_size;
 		SafeMemoryMappedViewHandle handle;
 
-		internal MemoryMappedViewAccessor (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
+		internal MemoryMappedViewAccessor (FileStream file, long offset, long size, MemoryMappedFileAccess access)
+		{
 			monitor = new Object ();
-			if (Environment.OSVersion.Platform < PlatformID.Unix)
-				throw new NotImplementedException ("Not implemented on windows.");
-			else
+			if (MonoUtil.IsUnix)
 				CreatePosix (file, offset, size, access);
+			else
+				throw new NotImplementedException ("Not implemented on windows.");
 		}
 
 		unsafe void CreatePosix (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
