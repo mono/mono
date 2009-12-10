@@ -1,5 +1,10 @@
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestChannel.cs : when HTTP response was error, do not try
+	  to read message but just raise an error.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeaders.cs : null can be set as a WS-Addressing header item.
 
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>

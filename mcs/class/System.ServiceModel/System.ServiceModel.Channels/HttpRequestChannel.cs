@@ -196,7 +196,12 @@ namespace System.ServiceModel.Channels
 					return;
 				}
 			}
-			
+
+			var hrr = (HttpWebResponse) res;
+			if ((int) hrr.StatusCode >= 400) {
+				channelResult.Complete (new WebException (String.Format ("There was an error on processing web request: Status code {0}({1}): {2}", (int) hrr.StatusCode, hrr.StatusCode, hrr.StatusDescription)));
+			}
+
 			try {
 				using (var responseStream = resstr) {
 					MemoryStream ms = new MemoryStream ();
