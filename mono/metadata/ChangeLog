@@ -1,5 +1,18 @@
 2009-12-10  Mark Probst  <mark.probst@gmail.com>
 
+	* domain.c, domain-internals.h: New function mono_domain_unset().
+
+	* appdomain.c (unload_thread_main): Detach the thread again at the
+	end.
+
+	* threads.c: When a thread exists or is detached, unset its domain
+	so that it's NULL when, for example, a pthread destructor runs.
+
+	* sgen-gc.c: Assert that there is no domain set after a thread is
+	done.
+
+2009-12-10  Mark Probst  <mark.probst@gmail.com>
+
 	* class.c (mono_generic_class_get_class),
 	metadata.c (free_generic_class): Allocate generic MonoClass's from
 	the image mempool, not via malloc.  The problem with malloc is
