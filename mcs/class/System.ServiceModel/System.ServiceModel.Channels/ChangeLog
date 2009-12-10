@@ -1,5 +1,10 @@
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestChannel.cs : avoid adding duplicate headers. Basically
+	  default WebHeaderCollection items are overwritten.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpRequestChannel.cs : when HTTP response was error, do not try
 	  to read message but just raise an error.
 

@@ -138,6 +138,7 @@ namespace System.ServiceModel.Channels
 			string pname = HttpRequestMessageProperty.Name;
 			if (message.Properties.ContainsKey (pname)) {
 				HttpRequestMessageProperty hp = (HttpRequestMessageProperty) message.Properties [pname];
+				web_request.Headers.Clear ();
 				web_request.Headers.Add (hp.Headers);
 				web_request.Method = hp.Method;
 				// FIXME: do we have to handle hp.QueryString ?
