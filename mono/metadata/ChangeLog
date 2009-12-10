@@ -1,5 +1,10 @@
 2009-12-10  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Don't access class names in debugging code when
+	unloading a domain, because they might not be valid anymore.
+
+2009-12-10  Mark Probst  <mark.probst@gmail.com>
+
 	* domain.c, domain-internals.h: New function mono_domain_unset().
 
 	* appdomain.c (unload_thread_main): Detach the thread again at the
