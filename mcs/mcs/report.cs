@@ -20,12 +20,8 @@ namespace Mono.CSharp {
 	//
 	// Errors and warnings manager
 	//
-	public class Report {
-		/// <summary>  
-		///   Whether errors should be throw an exception
-		/// </summary>
-		public bool Fatal;
-		
+	public class Report
+	{
 		/// <summary>  
 		///   Whether warnings should be considered errors
 		/// </summary>
@@ -396,9 +392,6 @@ namespace Mono.CSharp {
 			extra_information.Clear ();
 
 			printer.Print (msg);
-
-			if (Fatal)
-				throw new Exception (msg.Text);
 		}
 
 		public void Error (int code, Location loc, string format, string arg)
@@ -882,6 +875,8 @@ namespace Mono.CSharp {
 		{
 		}
 
+		public bool Fatal { get; set; }
+
 		static int NameToCode (string s)
 		{
 			switch (s) {
@@ -977,6 +972,9 @@ namespace Mono.CSharp {
 
 			if (Stacktrace)
 				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
+
+			if (Fatal)
+				throw new Exception (msg.Text);
 		}
 
 		public static string FriendlyStackTrace (Exception e)

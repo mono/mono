@@ -786,7 +786,9 @@ namespace Mono.CSharp {
 
 		static internal FieldInfo LookupField (string name)
 		{
-			FieldInfo fi =  (FieldInfo) fields [name];
+			FieldInfo fi;
+			if (!fields.TryGetValue (name, out fi))
+				return null;
 
 			return fi;
 		}

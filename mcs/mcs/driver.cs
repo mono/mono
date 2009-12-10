@@ -68,6 +68,7 @@ namespace Mono.CSharp
 		bool want_debugging_support;
 		bool parse_only;
 		bool timestamps;
+		bool fatal_errors;
 		
 		//
 		// Whether to load the initial config file (what CSC.RSP has by default)
@@ -298,10 +299,12 @@ namespace Mono.CSharp
 		public static int Main (string[] args)
 		{
 			Location.InEmacs = Environment.GetEnvironmentVariable ("EMACS") == "t";
-
-			Driver d = Driver.Create (args, true, new ConsoleReportPrinter ());
+			var crp = new ConsoleReportPrinter ();
+			Driver d = Driver.Create (args, true, crp);
 			if (d == null)
 				return 1;
+
+			crp.Fatal = d.fatal_errors;
 
 			if (d.Compile () && d.Report.Errors == 0) {
 				if (d.Report.Warnings > 0) {
@@ -987,7 +990,7 @@ namespace Mono.CSharp
 				return true;
 				
 			case "--fatal":
-				Report.Fatal = true;
+				fatal_errors = true;
 				return true;
 				
 			case "--nowarn":

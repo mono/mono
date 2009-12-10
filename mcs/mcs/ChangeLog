@@ -1,3 +1,12 @@
+2009-12-10  Marek Safar  <marek.safar@gmail.com>
+
+	* ecore.cs: Ignore base imported methods when they are already
+	in method bag.
+	
+	* eval.cs: Handle non-existent keys.
+	
+	* report.cs, driver.cs: Make fatal work with console printer only.
+
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* typemanager.cs (MakeGenericMethod): Fix stupid mistake.
@@ -13,13 +22,13 @@
 2009-12-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #561149
-	anonymous.cs: Use actual type parameters when checking for generic
+	* anonymous.cs: Use actual type parameters when checking for generic
 	method host.
 
 2009-12-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #561369
-	expression.cs (DoNumericPromotion): Fixed typo.
+	* expression.cs (DoNumericPromotion): Fixed typo.
 
 2009-12-08  Marek Safar  <marek.safar@gmail.com>
 

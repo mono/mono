@@ -4232,6 +4232,8 @@ namespace Mono.CSharp {
 							candidate_overrides = new List<MethodBase> ();
 						candidate_overrides.Add (m);
 						m = TypeManager.TryGetBaseDefinition (m);
+						if (m != null && Array.Exists (Methods, l => l == m))
+							continue;
 					}
 					if (m != null)
 						Methods [j++] = m;
