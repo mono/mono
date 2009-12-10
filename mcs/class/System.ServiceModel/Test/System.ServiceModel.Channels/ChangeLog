@@ -1,5 +1,10 @@
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeadersTest.cs : added another CopyHeadersFrom() test to
+	  make sure there is no duplicate.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeadersTest.cs : enable working test and remove old comment.
 
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>

@@ -342,6 +342,16 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		public void CopyHeadersFrom2 ()
+		{
+			Message msg = Message.CreateMessage (MessageVersion.Default, "urn:myaction");
+			Message msg2 = Message.CreateMessage (MessageVersion.Default, "urn:myaction2");
+			msg2.Headers.Action = null;
+			msg2.Headers.CopyHeadersFrom (msg);
+			Assert.AreEqual ("urn:myaction", msg2.Headers.Action);
+		}
+
+		[Test]
 		public void AddressingNoneAndAction ()
 		{
 			MessageHeaders h = new MessageHeaders (MessageVersion.Soap12);
