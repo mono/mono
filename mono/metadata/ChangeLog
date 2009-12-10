@@ -1,5 +1,10 @@
 2009-12-10  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c (find_in_remsets): Also search the generic store
+	remsets.
+
+2009-12-10  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Don't access class names in debugging code when
 	unloading a domain, because they might not be valid anymore.
 
