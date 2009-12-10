@@ -1,5 +1,8 @@
 2009-12-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.h: Rename this to mini-unwind.h to avoid conflicts with the gcc
+	unwind.h header file.
+
 	* tramp-x86.c (mono_arch_patch_callsite): Patch the code when using valgrind,
 	newer valgrind versions seems to handle this fine.
 
