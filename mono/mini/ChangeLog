@@ -1,5 +1,8 @@
 2009-12-10  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (add_wrappers): Avoid generating synchronized wrappers for
+	generic methods.
+
 	* unwind.h: Rename this to mini-unwind.h to avoid conflicts with the gcc
 	unwind.h header file.
 
