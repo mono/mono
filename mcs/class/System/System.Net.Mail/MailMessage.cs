@@ -43,16 +43,17 @@ namespace System.Net.Mail {
 		AlternateViewCollection alternateViews;
 		AttachmentCollection attachments;
 		MailAddressCollection bcc;
+		MailAddressCollection replyTo;		
 		string body;
 		MailPriority priority;
-		MailAddress replyTo, sender;
+		MailAddress sender;
 		DeliveryNotificationOptions deliveryNotificationOptions;
 		MailAddressCollection cc;
 		MailAddress from;
 		NameValueCollection headers;
 		MailAddressCollection to;
 		string subject;
-		Encoding subjectEncoding, bodyEncoding;
+		Encoding subjectEncoding, bodyEncoding, headersEncoding = Encoding.UTF8;
 		bool isHtml;
 
 		#endregion // Fields
@@ -66,6 +67,7 @@ namespace System.Net.Mail {
 			attachments = new AttachmentCollection ();
 			bcc = new MailAddressCollection ();
 			cc = new MailAddressCollection ();
+			replyTo = new MailAddressCollection ();
 			headers = new NameValueCollection ();
 
 			headers.Add ("MIME-Version", "1.0");
@@ -181,9 +183,38 @@ namespace System.Net.Mail {
 			set { priority = value; }
 		}
 
-		public MailAddress ReplyTo {
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		Encoding HeadersEncoding {
+			get { return headersEncoding; }
+			set { headersEncoding = value; } 
+		}
+
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		MailAddressCollection ReplyToList {
 			get { return replyTo; }
-			set { replyTo = value; }
+		}
+
+#if NET_4_0
+		[Obsolete ("Use ReplyToList instead")]
+#endif
+		public MailAddress ReplyTo {
+			get {
+				if (replyTo.Count == 0)
+					return null;
+				return replyTo [0];
+			}
+			set {
+				replyTo.Clear ();
+				replyTo.Add (value);
+			}
 		}
 
 		public MailAddress Sender {
