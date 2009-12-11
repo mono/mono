@@ -297,7 +297,7 @@ namespace Mono.CSharp {
 					next_part.GetSignatureForError ());
 			}
 
-			if ((tc.ModFlags & Modifiers.Accessibility) != (next_part.ModFlags & Modifiers.Accessibility) &&
+			if ((tc.ModFlags & Modifiers.AccessibilityMask) != (next_part.ModFlags & Modifiers.AccessibilityMask) &&
 				((tc.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0 &&
 				 (next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) == 0)) {
 				Report.SymbolRelatedToPreviousError (tc);
@@ -310,9 +310,9 @@ namespace Mono.CSharp {
 				tc.partial_parts = new List<TypeContainer> (1);
 
 			if ((next_part.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
-				tc.ModFlags |= next_part.ModFlags & ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.Accessibility);
+				tc.ModFlags |= next_part.ModFlags & ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.AccessibilityMask);
 			} else if ((tc.ModFlags & Modifiers.DEFAULT_ACCESS_MODIFER) != 0) {
-				tc.ModFlags &= ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.Accessibility);
+				tc.ModFlags &= ~(Modifiers.DEFAULT_ACCESS_MODIFER | Modifiers.AccessibilityMask);
 				tc.ModFlags |= next_part.ModFlags;
 			} else {
 				tc.ModFlags |= next_part.ModFlags;
@@ -595,7 +595,7 @@ namespace Mono.CSharp {
 		
 		protected override TypeAttributes TypeAttr {
 			get {
-				return Modifiers.TypeAttr (ModFlags, IsTopLevel) | base.TypeAttr;
+				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) | base.TypeAttr;
 			}
 		}
 
@@ -1630,7 +1630,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		private void FindMembers_NestedTypes (int modflags,
+		private void FindMembers_NestedTypes (Modifiers modflags,
 						      BindingFlags bf, MemberFilter filter, object criteria,
 							  ref List<MemberInfo> members)
 		{
@@ -1692,14 +1692,14 @@ namespace Mono.CSharp {
 		{
 			List<MemberInfo> members = null;
 
-			int modflags = 0;
+			Modifiers modflags = 0;
 			if ((bf & BindingFlags.Public) != 0)
 				modflags |= Modifiers.PUBLIC | Modifiers.PROTECTED |
 					Modifiers.INTERNAL;
 			if ((bf & BindingFlags.NonPublic) != 0)
 				modflags |= Modifiers.PRIVATE;
 
-			int static_mask = 0, static_flags = 0;
+			Modifiers static_mask = 0, static_flags = 0;
 			switch (bf & (BindingFlags.Static | BindingFlags.Instance)) {
 			case BindingFlags.Static:
 				static_mask = static_flags = Modifiers.STATIC;
@@ -2048,7 +2048,7 @@ namespace Mono.CSharp {
 				return;
 
 			foreach (MemberCore mc in al) {
-				if ((mc.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE)
+				if ((mc.ModFlags & Modifiers.AccessibilityMask) != Modifiers.PRIVATE)
 					continue;
 
 				if (!mc.IsUsed && (mc.caching_flags & Flags.Excluded) == 0) {
@@ -2070,7 +2070,7 @@ namespace Mono.CSharp {
 				if (fields != null){
 					bool is_type_exposed = Kind == Kind.Struct || IsExposedFromAssembly ();
 					foreach (FieldBase f in fields) {
-						if ((f.ModFlags & Modifiers.Accessibility) != Modifiers.PRIVATE) {
+						if ((f.ModFlags & Modifiers.AccessibilityMask) != Modifiers.PRIVATE) {
 							if (is_type_exposed)
 								continue;
 
@@ -2279,11 +2279,11 @@ namespace Mono.CSharp {
 		//
 		public bool MethodModifiersValid (MemberCore mc)
 		{
-			const int vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
-			const int va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
-			const int nv = (Modifiers.NEW | Modifiers.VIRTUAL);
+			const Modifiers vao = (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE);
+			const Modifiers va = (Modifiers.VIRTUAL | Modifiers.ABSTRACT);
+			const Modifiers nv = (Modifiers.NEW | Modifiers.VIRTUAL);
 			bool ok = true;
-			int flags = mc.ModFlags;
+			var flags = mc.ModFlags;
 			
 			//
 			// At most one of static, virtual or override
@@ -2298,7 +2298,7 @@ namespace Mono.CSharp {
 
 			if (Kind == Kind.Struct){
 				if ((flags & va) != 0){
-					Modifiers.Error_InvalidModifier (mc.Location, "virtual or abstract", Report);
+					ModifiersExtensions.Error_InvalidModifier (mc.Location, "virtual or abstract", Report);
 					ok = false;
 				}
 			}
@@ -2632,7 +2632,7 @@ namespace Mono.CSharp {
 			// If the class is abstract, the default constructor is protected
 			// The default static constructor is private
 
-			int mods;
+			Modifiers mods;
 			if (is_static) {
 				mods = Modifiers.STATIC | Modifiers.PRIVATE;
 			} else {
@@ -2704,7 +2704,7 @@ namespace Mono.CSharp {
 
 	// TODO: should be sealed
 	public class Class : ClassOrStruct {
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -2717,12 +2717,12 @@ namespace Mono.CSharp {
 
 		public const TypeAttributes StaticClassAttribute = TypeAttributes.Abstract | TypeAttributes.Sealed;
 
-		public Class (NamespaceEntry ns, DeclSpace parent, MemberName name, int mod,
+		public Class (NamespaceEntry ns, DeclSpace parent, MemberName name, Modifiers mod,
 			      Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Class)
 		{
-			int accmods = Parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
-			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, Location, Report);
+			var accmods = Parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
+			this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, accmods, Location, Report);
 
 			if (IsStatic && RootContext.Version == LanguageVersion.ISO_1) {
 				Report.FeatureIsNotAvailable (Location, "static classes");
@@ -2956,7 +2956,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Modifiers allowed in a struct declaration
 		// </summary>
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW       |
 			Modifiers.PUBLIC    |
 			Modifiers.PROTECTED |
@@ -2965,17 +2965,12 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Struct (NamespaceEntry ns, DeclSpace parent, MemberName name,
-			       int mod, Attributes attrs)
+			       Modifiers mod, Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Struct)
 		{
-			int accmods;
+			var accmods = parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			
-			if (parent.Parent == null)
-				accmods = Modifiers.INTERNAL;
-			else
-				accmods = Modifiers.PRIVATE;
-			
-			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, Location, Report);
+			this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, accmods, Location, Report);
 
 			this.ModFlags |= Modifiers.SEALED;
 		}
@@ -3099,7 +3094,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Modifiers allowed in a class declaration
 		/// </summary>
-		public const int AllowedModifiers =
+		public const Modifiers AllowedModifiers =
 			Modifiers.NEW       |
 			Modifiers.PUBLIC    |
 			Modifiers.PROTECTED |
@@ -3107,18 +3102,13 @@ namespace Mono.CSharp {
 		 	Modifiers.UNSAFE    |
 			Modifiers.PRIVATE;
 
-		public Interface (NamespaceEntry ns, DeclSpace parent, MemberName name, int mod,
+		public Interface (NamespaceEntry ns, DeclSpace parent, MemberName name, Modifiers mod,
 				  Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Interface)
 		{
-			int accmods;
+			var accmods = parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 
-			if (parent.Parent == null)
-				accmods = Modifiers.INTERNAL;
-			else
-				accmods = Modifiers.PRIVATE;
-
-			this.ModFlags = Modifiers.Check (AllowedModifiers, mod, accmods, name.Location, Report);
+			this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, accmods, name.Location, Report);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
@@ -3174,7 +3164,7 @@ namespace Mono.CSharp {
 	public abstract class PropertyBasedMember : InterfaceMemberBase
 	{
 		public PropertyBasedMember (DeclSpace parent, GenericMethod generic,
-			FullNamedExpression type, int mod, int allowed_mod,
+			FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
 			MemberName name, Attributes attrs)
 			: base (parent, generic, type, mod, allowed_mod, name, attrs)
 		{
@@ -3201,7 +3191,7 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 
 		public MethodCore (DeclSpace parent, GenericMethod generic,
-			FullNamedExpression type, int mod, int allowed_mod,
+			FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
 			MemberName name, Attributes attrs, ParametersCompiled parameters)
 			: base (parent, generic, type, mod, allowed_mod, name, attrs)
 		{
@@ -3337,11 +3327,11 @@ namespace Mono.CSharp {
 		//
 		protected MethodInfo base_method;
 
-		readonly int explicit_mod_flags;
+		readonly Modifiers explicit_mod_flags;
 		public MethodAttributes flags;
 
 		public InterfaceMemberBase (DeclSpace parent, GenericMethod generic,
-				   FullNamedExpression type, int mod, int allowed_mod,
+				   FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
 				   MemberName name, Attributes attrs)
 			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs)
@@ -3569,7 +3559,7 @@ namespace Mono.CSharp {
 			} else {
 				Parent.PartialContainer.MethodModifiersValid (this);
 
-				flags = Modifiers.MethodAttr (ModFlags);
+				flags = ModifiersExtensions.MethodAttr (ModFlags);
 			}
 
 			if (IsExplicitImpl) {
@@ -3592,7 +3582,7 @@ namespace Mono.CSharp {
 					Parent.PartialContainer.VerifyImplements (this);
 				}
 
-				Modifiers.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location, Report);
+				ModifiersExtensions.Check (Modifiers.AllowedExplicitImplFlags, explicit_mod_flags, 0, Location, Report);
 			}
 
 			return base.Define ();
@@ -3678,7 +3668,7 @@ namespace Mono.CSharp {
 			}
 
 			Report.Error (507, loc, "`{0}': cannot change access modifiers when overriding `{1}' inherited member `{2}'",
-				this_name, Modifiers.GetDescription (ma), base_name);
+				this_name, ModifiersExtensions.GetDescription (ma), base_name);
 		}
 
 		protected static string Error722 {
@@ -3756,8 +3746,8 @@ namespace Mono.CSharp {
 
 		static string[] attribute_targets = new string [] { "method", "return" };
 
-		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, FullNamedExpression type, int mod,
-				int allowed_mod, MemberName name,
+		protected MethodOrOperator (DeclSpace parent, GenericMethod generic, FullNamedExpression type, Modifiers mod,
+				Modifiers allowed_mod, MemberName name,
 				Attributes attrs, ParametersCompiled parameters)
 			: base (parent, generic, type, mod, allowed_mod, name,
 					attrs, parameters)
@@ -3779,7 +3769,7 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Type == pa.DllImport) {
-				const int extern_static = Modifiers.EXTERN | Modifiers.STATIC;
+				const Modifiers extern_static = Modifiers.EXTERN | Modifiers.STATIC;
 				if ((ModFlags & extern_static) != extern_static) {
 					Report.Error (601, a.Location, "The DllImport attribute must be specified on a method marked `static' and `extern'");
 				}
@@ -4108,7 +4098,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Modifiers allowed in a class declaration
 		/// </summary>
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -4122,13 +4112,13 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.EXTERN;
 
-		const int AllowedInterfaceModifiers =
+		const Modifiers AllowedInterfaceModifiers = 
 			Modifiers.NEW | Modifiers.UNSAFE;
 
 		Method partialMethodImplementation;
 
 		public Method (DeclSpace parent, GenericMethod generic,
-			       FullNamedExpression return_type, int mod,
+			       FullNamedExpression return_type, Modifiers mod,
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
 				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
@@ -4136,7 +4126,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected Method (DeclSpace parent, FullNamedExpression return_type, int mod, int amod,
+		protected Method (DeclSpace parent, FullNamedExpression return_type, Modifiers mod, Modifiers amod,
 					MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, null, return_type, mod, amod, name, attrs, parameters)
 		{
@@ -4601,7 +4591,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Modifiers allowed for a constructor.
 		// </summary>
-		public const int AllowedModifiers =
+		public const Modifiers AllowedModifiers =
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
@@ -4616,7 +4606,7 @@ namespace Mono.CSharp {
 		// The spec claims that static is not permitted, but
 		// my very own code has static constructors.
 		//
-		public Constructor (DeclSpace parent, string name, int mod, Attributes attrs, ParametersCompiled args,
+		public Constructor (DeclSpace parent, string name, Modifiers mod, Attributes attrs, ParametersCompiled args,
 				    ConstructorInitializer init, Location loc)
 			: base (parent, null, null, mod, AllowedModifiers,
 				new MemberName (name, loc), attrs, args)
@@ -4947,7 +4937,7 @@ namespace Mono.CSharp {
 		// Protected data.
 		//
 		protected InterfaceMemberBase member;
-		protected int modifiers;
+		protected Modifiers modifiers;
 		protected MethodAttributes flags;
 		protected Type declaring_type;
 		protected MethodInfo parent_method;
@@ -4966,7 +4956,7 @@ namespace Mono.CSharp {
 		}
 
 		public MethodData (InterfaceMemberBase member,
-				   int modifiers, MethodAttributes flags, IMethodData method)
+				   Modifiers modifiers, MethodAttributes flags, IMethodData method)
 		{
 			this.member = member;
 			this.modifiers = modifiers;
@@ -4975,8 +4965,8 @@ namespace Mono.CSharp {
 			this.method = method;
 		}
 
-		public MethodData (InterfaceMemberBase member, 
-				   int modifiers, MethodAttributes flags, 
+		public MethodData (InterfaceMemberBase member,
+				   Modifiers modifiers, MethodAttributes flags, 
 				   IMethodData method, MethodBuilder builder,
 				   GenericMethod generic, MethodInfo parent_method)
 			: this (member, modifiers, flags, method)
@@ -5218,7 +5208,7 @@ namespace Mono.CSharp {
 
 	public class Destructor : MethodOrOperator
 	{
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.UNSAFE |
 			Modifiers.EXTERN;
 
@@ -5226,7 +5216,7 @@ namespace Mono.CSharp {
 
 		public static readonly string MetadataName = "Finalize";
 
-		public Destructor (DeclSpace parent, int mod, ParametersCompiled parameters, Attributes attrs, Location l)
+		public Destructor (DeclSpace parent, Modifiers mod, ParametersCompiled parameters, Attributes attrs, Location l)
 			: base (parent, null, TypeManager.system_void_expr, mod, AllowedModifiers,
 				new MemberName (MetadataName, l), attrs, parameters)
 		{
@@ -5309,13 +5299,13 @@ namespace Mono.CSharp {
 		public readonly GenericMethod GenericMethod;
 
 		protected MemberBase (DeclSpace parent, GenericMethod generic,
-				      FullNamedExpression type, int mod, int allowed_mod, int def_mod,
+					  FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers def_mod,
 				      MemberName name, Attributes attrs)
 			: base (parent, name, attrs)
 		{
 			this.ds = generic != null ? generic : (DeclSpace) parent;
 			this.type_name = type;
-			ModFlags = Modifiers.Check (allowed_mod, mod, def_mod, Location, Report);
+			ModFlags = ModifiersExtensions.Check (allowed_mod, mod, def_mod, Location, Report);
 			GenericMethod = generic;
 			if (GenericMethod != null)
 				GenericMethod.ModFlags = ModFlags;
@@ -5445,8 +5435,8 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "field" };
 
-		protected FieldBase (DeclSpace parent, FullNamedExpression type, int mod,
-				     int allowed_mod, MemberName name, Attributes attrs)
+		protected FieldBase (DeclSpace parent, FullNamedExpression type, Modifiers mod,
+				     Modifiers allowed_mod, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod, allowed_mod | Modifiers.ABSTRACT, Modifiers.PRIVATE,
 				name, attrs)
 		{
@@ -5670,7 +5660,7 @@ namespace Mono.CSharp {
 		FieldBuilder element;
 		Expression size_expr;
 
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -5678,7 +5668,7 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE |
 			Modifiers.UNSAFE;
 
-		public FixedField (DeclSpace parent, FullNamedExpression type, int mod, string name,
+		public FixedField (DeclSpace parent, FullNamedExpression type, Modifiers mod, string name,
 			Expression size_expr, Attributes attrs, Location loc):
 			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), attrs)
 		{
@@ -5706,7 +5696,7 @@ namespace Mono.CSharp {
 			element = fixed_buffer_type.DefineField (FixedElementName, MemberType, FieldAttributes.Public);
 			RootContext.RegisterCompilerGeneratedType (fixed_buffer_type);
 			
-			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, Modifiers.FieldAttr (ModFlags));
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, ModifiersExtensions.FieldAttr (ModFlags));
 			Parent.MemberCache.AddMember (FieldBuilder, this);
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
 
@@ -5845,7 +5835,7 @@ namespace Mono.CSharp {
 		// <summary>
 		//   Modifiers allowed in a class declaration
 		// </summary>
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -5856,7 +5846,7 @@ namespace Mono.CSharp {
 			Modifiers.UNSAFE |
 			Modifiers.READONLY;
 
-		public Field (DeclSpace parent, FullNamedExpression type, int mod, MemberName name,
+		public Field (DeclSpace parent, FullNamedExpression type, Modifiers mod, MemberName name,
 			      Attributes attrs)
 			: base (parent, type, mod, AllowedModifiers, name, attrs)
 		{
@@ -5925,7 +5915,7 @@ namespace Mono.CSharp {
 				}
 
 				FieldBuilder = Parent.TypeBuilder.DefineField (
-					Name, MemberType, required_modifier, null, Modifiers.FieldAttr (ModFlags));
+					Name, MemberType, required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
 
 				// Don't cache inaccessible fields
 				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
@@ -5987,7 +5977,7 @@ namespace Mono.CSharp {
 		//
 		// Null if the accessor is empty, or a Block if not
 		//
-		public const int AllowedModifiers = 
+		public const Modifiers AllowedModifiers = 
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
 			Modifiers.INTERNAL |
@@ -5996,16 +5986,16 @@ namespace Mono.CSharp {
 		public ToplevelBlock Block;
 		public Attributes Attributes;
 		public Location Location;
-		public int ModFlags;
+		public Modifiers ModFlags;
 		public ParametersCompiled Parameters;
 		
-		public Accessor (ToplevelBlock b, int mod, Attributes attrs, ParametersCompiled p, Location loc)
+		public Accessor (ToplevelBlock b, Modifiers mod, Attributes attrs, ParametersCompiled p, Location loc)
 		{
 			Block = b;
 			Attributes = attrs;
 			Location = loc;
 			Parameters = p;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod, 0, loc, RootContext.ToplevelTypes.Compiler.Report);
+			ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, 0, loc, RootContext.ToplevelTypes.Compiler.Report);
 		}
 	}
 
@@ -6431,7 +6421,7 @@ namespace Mono.CSharp {
 				//
 				// Check for custom access modifier
 				//
-				if ((ModFlags & Modifiers.Accessibility) == 0) {
+				if ((ModFlags & Modifiers.AccessibilityMask) == 0) {
 					ModFlags |= method.ModFlags;
 					flags = method.flags;
 				} else {
@@ -6444,9 +6434,9 @@ namespace Mono.CSharp {
 					}
 
 					CheckModifiers (ModFlags);
-					ModFlags |= (method.ModFlags & (~Modifiers.Accessibility));
+					ModFlags |= (method.ModFlags & (~Modifiers.AccessibilityMask));
 					ModFlags |= Modifiers.PROPERTY_CUSTOM;
-					flags = Modifiers.MethodAttr (ModFlags);
+					flags = ModifiersExtensions.MethodAttr (ModFlags);
 					flags |= (method.flags & (~MethodAttributes.MemberAccessMask));
 				}
 
@@ -6480,12 +6470,12 @@ namespace Mono.CSharp {
 			{
 				return method.GetSignatureForError () + '.' + prefix.Substring (0, 3);
 			}
-			
-			void CheckModifiers (int modflags)
+
+			void CheckModifiers (Modifiers modflags)
 			{
-				modflags &= Modifiers.Accessibility;
-				int flags = 0;
-				int mflags = method.ModFlags & Modifiers.Accessibility;
+				modflags &= Modifiers.AccessibilityMask;
+				Modifiers flags = 0;
+				Modifiers mflags = method.ModFlags & Modifiers.AccessibilityMask;
 
 				if ((mflags & Modifiers.PUBLIC) != 0) {
 					flags |= Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE;
@@ -6495,8 +6485,7 @@ namespace Mono.CSharp {
 						flags |= Modifiers.PROTECTED | Modifiers.INTERNAL;
 
 					flags |= Modifiers.PRIVATE;
-				}
-				else if ((mflags & Modifiers.INTERNAL) != 0)
+				} else if ((mflags & Modifiers.INTERNAL) != 0)
 					flags |= Modifiers.PRIVATE;
 
 				if ((mflags == modflags) || (modflags & (~flags)) != 0) {
@@ -6521,8 +6510,8 @@ namespace Mono.CSharp {
 
 		protected bool define_set_first = false;
 
-		public PropertyBase (DeclSpace parent, FullNamedExpression type, int mod_flags,
-				     int allowed_mod, MemberName name,
+		public PropertyBase (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags,
+				     Modifiers allowed_mod, MemberName name,
 				     Attributes attrs, bool define_set_first)
 			: base (parent, null, type, mod_flags, allowed_mod, name, attrs)
 		{
@@ -6572,15 +6561,15 @@ namespace Mono.CSharp {
 			//
 			// Accessors modifiers check
 			//
-			if ((Get.ModFlags & Modifiers.Accessibility) != 0 &&
-				(Set.ModFlags & Modifiers.Accessibility) != 0) {
+			if ((Get.ModFlags & Modifiers.AccessibilityMask) != 0 &&
+				(Set.ModFlags & Modifiers.AccessibilityMask) != 0) {
 				Report.Error (274, Location, "`{0}': Cannot specify accessibility modifiers for both accessors of the property or indexer",
 						GetSignatureForError ());
 			}
 
 			if ((ModFlags & Modifiers.OVERRIDE) == 0 && 
-				(Get.IsDummy && (Set.ModFlags & Modifiers.Accessibility) != 0) ||
-				(Set.IsDummy && (Get.ModFlags & Modifiers.Accessibility) != 0)) {
+				(Get.IsDummy && (Set.ModFlags & Modifiers.AccessibilityMask) != 0) ||
+				(Set.IsDummy && (Get.ModFlags & Modifiers.AccessibilityMask) != 0)) {
 				Report.Error (276, Location, 
 					      "`{0}': accessibility modifiers on accessors may only be used if the property or indexer has both a get and a set accessor",
 					      GetSignatureForError ());
@@ -6638,7 +6627,7 @@ namespace Mono.CSharp {
 					get_accessor_access = get_accessor.Attributes & MethodAttributes.MemberAccessMask;
 
 					if (!Get.IsDummy && !CheckAccessModifiers (
-						Modifiers.MethodAttr (Get.ModFlags) & MethodAttributes.MemberAccessMask, get_accessor_access, get_accessor))
+						ModifiersExtensions.MethodAttr (Get.ModFlags) & MethodAttributes.MemberAccessMask, get_accessor_access, get_accessor))
 						Error_CannotChangeAccessModifiers (Get.Location, get_accessor, get_accessor_access, ".get");
 				}
 
@@ -6653,7 +6642,7 @@ namespace Mono.CSharp {
 					set_accessor_access = set_accessor.Attributes & MethodAttributes.MemberAccessMask;
 
 					if (!Set.IsDummy && !CheckAccessModifiers (
-						Modifiers.MethodAttr (Set.ModFlags) & MethodAttributes.MemberAccessMask, set_accessor_access, set_accessor))
+						ModifiersExtensions.MethodAttr (Set.ModFlags) & MethodAttributes.MemberAccessMask, set_accessor_access, set_accessor))
 						Error_CannotChangeAccessModifiers (Set.Location, set_accessor, set_accessor_access, ".set");
 				}
 			}
@@ -6763,7 +6752,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -6777,10 +6766,10 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.VIRTUAL;
 
-		const int AllowedInterfaceModifiers =
+		const Modifiers AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public Property (DeclSpace parent, FullNamedExpression type, int mod,
+		public Property (DeclSpace parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first)
 			: this (parent, type, mod, name, attrs, get_block, set_block,
@@ -6788,7 +6777,7 @@ namespace Mono.CSharp {
 		{
 		}
 		
-		public Property (DeclSpace parent, FullNamedExpression type, int mod,
+		public Property (DeclSpace parent, FullNamedExpression type, Modifiers mod,
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first, Block current_block)
 			: base (parent, type, mod,
@@ -7082,7 +7071,7 @@ namespace Mono.CSharp {
 
 		static readonly string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
 
-		public EventProperty (DeclSpace parent, FullNamedExpression type, int mod_flags,
+		public EventProperty (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags,
 				      MemberName name,
 				      Attributes attrs, Accessor add, Accessor remove)
 			: base (parent, type, mod_flags, name, attrs)
@@ -7176,7 +7165,7 @@ namespace Mono.CSharp {
 		public Field BackingField;
 		public Expression Initializer;
 
-		public EventField (DeclSpace parent, FullNamedExpression type, int mod_flags, MemberName name, Attributes attrs)
+		public EventField (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, name, attrs)
 		{
 			Add = new AddDelegateMethod (this);
@@ -7354,7 +7343,7 @@ namespace Mono.CSharp {
 		}
 
 
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -7368,7 +7357,7 @@ namespace Mono.CSharp {
 			Modifiers.ABSTRACT |
 			Modifiers.EXTERN;
 
-		const int AllowedInterfaceModifiers =
+		const Modifiers AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
 		public AEventAccessor Add, Remove;
@@ -7377,7 +7366,7 @@ namespace Mono.CSharp {
 
 		ParametersCompiled parameters;
 
-		protected Event (DeclSpace parent, FullNamedExpression type, int mod_flags, MemberName name, Attributes attrs)
+		protected Event (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod_flags,
 				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs)
@@ -7554,7 +7543,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -7567,12 +7556,12 @@ namespace Mono.CSharp {
 			Modifiers.EXTERN |
 			Modifiers.ABSTRACT;
 
-		const int AllowedInterfaceModifiers =
+		const Modifiers AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
 		public readonly ParametersCompiled parameters;
 
-		public Indexer (DeclSpace parent, FullNamedExpression type, MemberName name, int mod,
+		public Indexer (DeclSpace parent, FullNamedExpression type, MemberName name, Modifiers mod,
 				ParametersCompiled parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block, bool define_set_first)
 			: base (parent, type, mod,
@@ -7717,7 +7706,7 @@ namespace Mono.CSharp {
 
 	public class Operator : MethodOrOperator {
 
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.PUBLIC |
 			Modifiers.UNSAFE |
 			Modifiers.EXTERN |
@@ -7800,7 +7789,7 @@ namespace Mono.CSharp {
 		}
 		
 		public Operator (DeclSpace parent, OpType type, FullNamedExpression ret_type,
-				 int mod_flags, ParametersCompiled parameters,
+				 Modifiers mod_flags, ParametersCompiled parameters,
 				 ToplevelBlock block, Attributes attrs, Location loc)
 			: base (parent, null, ret_type, mod_flags, AllowedModifiers,
 				new MemberName (GetMetadataName (type), loc), attrs, parameters)
@@ -7821,7 +7810,7 @@ namespace Mono.CSharp {
 		
 		public override bool Define ()
 		{
-			const int RequiredModifiers = Modifiers.PUBLIC | Modifiers.STATIC;
+			const Modifiers RequiredModifiers = Modifiers.PUBLIC | Modifiers.STATIC;
 			if ((ModFlags & RequiredModifiers) != RequiredModifiers){
 				Report.Error (558, Location, "User-defined operator `{0}' must be declared static and public", GetSignatureForError ());
 			}

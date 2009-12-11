@@ -28,7 +28,7 @@ namespace Mono.CSharp {
 		bool resolved;
 		bool define_called;
 
-		public const int AllowedModifiers =
+		public const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Const (DeclSpace parent, FullNamedExpression type, string name,
-			      Expression expr, int mod_flags, Attributes attrs, Location loc)
+			      Expression expr, Modifiers mod_flags, Attributes attrs, Location loc)
 			: base (parent, type, mod_flags, AllowedModifiers,
 				new MemberName (name, loc), attrs)
 		{
@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 			//if ((ModFlags & Modifiers.PRIVATE) != 0 && RootContext.Optimize)
 			//	return true;
 
-			FieldAttributes field_attr = FieldAttributes.Static | Modifiers.FieldAttr (ModFlags);
+			FieldAttributes field_attr = FieldAttributes.Static | ModifiersExtensions.FieldAttr (ModFlags);
 			// Decimals cannot be emitted into the constant blob.  So, convert to 'readonly'.
 			if (ttype == TypeManager.decimal_type) {
 				field_attr |= FieldAttributes.InitOnly;

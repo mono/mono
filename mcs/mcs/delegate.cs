@@ -39,9 +39,9 @@ namespace Mono.CSharp {
 		Expression instance_expr;
 		ReturnParameter return_attributes;
 
-		const int MethodModifiers = Modifiers.PUBLIC | Modifiers.VIRTUAL;
+		const Modifiers MethodModifiers = Modifiers.PUBLIC | Modifiers.VIRTUAL;
 
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -50,13 +50,13 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
  		public Delegate (NamespaceEntry ns, DeclSpace parent, FullNamedExpression type,
-				 int mod_flags, MemberName name, ParametersCompiled param_list,
+				 Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
 				 Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Delegate)
 
 		{
 			this.ReturnType = type;
-			ModFlags        = Modifiers.Check (AllowedModifiers, mod_flags,
+			ModFlags        = ModifiersExtensions.Check (AllowedModifiers, mod_flags,
 							   IsTopLevel ? Modifiers.INTERNAL :
 							   Modifiers.PRIVATE, name.Location, Report);
 			Parameters      = param_list;
@@ -300,7 +300,7 @@ namespace Mono.CSharp {
 
 		protected override TypeAttributes TypeAttr {
 			get {
-				return Modifiers.TypeAttr (ModFlags, IsTopLevel) |
+				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) |
 					TypeAttributes.Class | TypeAttributes.Sealed |
 					base.TypeAttr;
 			}

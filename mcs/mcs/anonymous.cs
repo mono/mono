@@ -24,12 +24,12 @@ namespace Mono.CSharp {
 			return "<" + host + ">" + typePrefix + "__" + name + id.ToString ("X");
 		}
 		
-		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, int mod)
+		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, Modifiers mod)
 			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED | Modifiers.SEALED, null)
 		{
 		}
 
-		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic, MemberName name, int mod)
+		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic, MemberName name, Modifiers mod)
 			: this (parent, name, mod)
 		{
 			if (generic != null) {
@@ -70,7 +70,7 @@ namespace Mono.CSharp {
 
 		sealed class HoistedGenericField : Field
 		{
-			public HoistedGenericField (DeclSpace parent, FullNamedExpression type, int mod, string name,
+			public HoistedGenericField (DeclSpace parent, FullNamedExpression type, Modifiers mod, string name,
 				  Attributes attrs, Location loc)
 				: base (parent, type, mod, new MemberName (name, loc), attrs)
 			{
@@ -178,7 +178,7 @@ namespace Mono.CSharp {
 			if (!IsGeneric)
 				return AddCompilerGeneratedField (name, field_type);
 
-			const int mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
+			const Modifiers mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
 			Field f = new HoistedGenericField (this, field_type, mod, name, null, Location);
 			AddField (f);
 			return f;
@@ -186,7 +186,7 @@ namespace Mono.CSharp {
 
 		protected Field AddCompilerGeneratedField (string name, FullNamedExpression type)
 		{
-			const int mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
+			const Modifiers mod = Modifiers.INTERNAL | Modifiers.COMPILER_GENERATED;
 			Field f = new Field (this, type, mod, new MemberName (name, Location), null);
 			AddField (f);
 			return f;
@@ -1252,7 +1252,7 @@ namespace Mono.CSharp {
 
 			public AnonymousMethodMethod (DeclSpace parent, AnonymousExpression am, AnonymousMethodStorey storey,
 							  GenericMethod generic, TypeExpr return_type,
-							  int mod, string real_name, MemberName name,
+							  Modifiers mod, string real_name, MemberName name,
 							  ParametersCompiled parameters)
 				: base (parent, generic, return_type, mod | Modifiers.COMPILER_GENERATED,
 						name, parameters, null)
@@ -1484,7 +1484,7 @@ namespace Mono.CSharp {
 			// 3, an instance method in compiler generated storey when any hoisted variable exists
 			//
 
-			int modifiers;
+			Modifiers modifiers;
 			if (Block.HasCapturedVariable || Block.HasCapturedThis) {
 				storey = FindBestMethodStorey ();
 				modifiers = storey != null ? Modifiers.INTERNAL : Modifiers.PRIVATE;

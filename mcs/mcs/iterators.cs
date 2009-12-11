@@ -177,7 +177,7 @@ namespace Mono.CSharp {
 		{
 			readonly IteratorStorey host;
 
-			public IteratorMethod (IteratorStorey host, FullNamedExpression returnType, int mod, MemberName name)
+			public IteratorMethod (IteratorStorey host, FullNamedExpression returnType, Modifiers mod, MemberName name)
 				: base (host, null, returnType, mod | Modifiers.DEBUGGER_HIDDEN | Modifiers.COMPILER_GENERATED,
 				  name, ParametersCompiled.EmptyReadOnlyParameters, null)
 			{
@@ -873,7 +873,7 @@ namespace Mono.CSharp {
 			throw new NotSupportedException ("ET");
 		}
 
-		public static void CreateIterator (IMethodData method, TypeContainer parent, int modifiers, CompilerContext ctx)
+		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers, CompilerContext ctx)
 		{
 			bool is_enumerable;
 			Type iterator_type;

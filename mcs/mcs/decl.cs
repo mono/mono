@@ -271,8 +271,8 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Modifier flags that the user specified in the source code
 		/// </summary>
-		private int mod_flags;
-		public int ModFlags {
+		private Modifiers mod_flags;
+		public Modifiers ModFlags {
 			set {
 				mod_flags = value;
 				if ((value & Modifiers.COMPILER_GENERATED) != 0)
@@ -514,7 +514,7 @@ namespace Mono.CSharp {
 			ProtectedOrInternal = (0 << 0) | (X << 1) | (X << 2),
 		}
 
-		static AccessLevel GetAccessLevelFromModifiers (int flags)
+		static AccessLevel GetAccessLevelFromModifiers (Modifiers flags)
 		{
 			if ((flags & Modifiers.INTERNAL) != 0) {
 
@@ -1799,7 +1799,7 @@ namespace Mono.CSharp {
 		//
 		// Converts ModFlags to BindingFlags
 		//
-		static BindingFlags GetBindingFlags (int modifiers)
+		static BindingFlags GetBindingFlags (Modifiers modifiers)
 		{
 			BindingFlags bf;
 			if ((modifiers & Modifiers.STATIC) != 0)
@@ -2774,7 +2774,7 @@ namespace Mono.CSharp {
 					Method method_a = member as Method;
 					Method method_b = TypeManager.GetMethod ((MethodBase) ce.Member) as Method;
 					if (method_a != null && method_b != null && (method_a.ModFlags & method_b.ModFlags & Modifiers.PARTIAL) != 0) {
-						const int partial_modifiers = Modifiers.STATIC | Modifiers.UNSAFE;
+						const Modifiers partial_modifiers = Modifiers.STATIC | Modifiers.UNSAFE;
 						if (method_a.IsPartialDefinition == method_b.IsPartialImplementation) {
 							if ((method_a.ModFlags & partial_modifiers) == (method_b.ModFlags & partial_modifiers) ||
 								method_a.Parent.IsUnsafe && method_b.Parent.IsUnsafe) {

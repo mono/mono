@@ -4,47 +4,49 @@
 using System;
 using System.Reflection;
 
-namespace Mono.CSharp {
-	public class Modifiers {
-
+namespace Mono.CSharp
+{
+	[Flags]
+	public enum Modifiers
+	{
 		//
 		// The ordering of the following 4 constants
 		// has been carefully done.
 		//
-		public const int PROTECTED = 0x0001;
-		public const int PUBLIC    = 0x0002;
-		public const int PRIVATE   = 0x0004;
-		public const int INTERNAL  = 0x0008;
-		public const int NEW       = 0x0010;
-		public const int ABSTRACT  = 0x0020;
-		public const int SEALED    = 0x0040;
-		public const int STATIC    = 0x0080;
-		public const int READONLY  = 0x0100;
-		public const int VIRTUAL   = 0x0200;
-		public const int OVERRIDE  = 0x0400;
-		public const int EXTERN    = 0x0800;
-		public const int VOLATILE  = 0x1000;
-		public const int UNSAFE    = 0x2000;
-		private const int TOP      = 0x4000;
-
-		public const int PROPERTY_CUSTOM = 0x4000; // Custom property modifier
+		PROTECTED = 0x0001,
+		PUBLIC    = 0x0002,
+		PRIVATE   = 0x0004,
+		INTERNAL  = 0x0008,
+		NEW       = 0x0010,
+		ABSTRACT  = 0x0020,
+		SEALED    = 0x0040,
+		STATIC    = 0x0080,
+		READONLY  = 0x0100,
+		VIRTUAL   = 0x0200,
+		OVERRIDE  = 0x0400,
+		EXTERN    = 0x0800,
+		VOLATILE  = 0x1000,
+		UNSAFE    = 0x2000,
+		TOP       = 0x4000,
 
 		//
 		// Compiler specific flags
 		//
-		public const int PARTIAL				= 0x20000;
-		public const int DEFAULT_ACCESS_MODIFER	= 0x40000;
-		public const int METHOD_EXTENSION		= 0x80000;
-		public const int COMPILER_GENERATED		= 0x100000;
-		public const int BACKING_FIELD			= 0x200000;
-		public const int DEBUGGER_HIDDEN		= 0x400000;
+		PROPERTY_CUSTOM 		= 0x4000,
+		PARTIAL					= 0x20000,
+		DEFAULT_ACCESS_MODIFER	= 0x40000,
+		METHOD_EXTENSION		= 0x80000,
+		COMPILER_GENERATED		= 0x100000,
+		BACKING_FIELD			= 0x200000,
+		DEBUGGER_HIDDEN			= 0x400000,
 
-		public const int Accessibility =
-			PUBLIC | PROTECTED | INTERNAL | PRIVATE;
-		public const int AllowedExplicitImplFlags =
-			UNSAFE | EXTERN;
-		
-		static public string Name (int i)
+		AccessibilityMask = PUBLIC | PROTECTED | INTERNAL | PRIVATE,
+		AllowedExplicitImplFlags = UNSAFE | EXTERN,
+	}
+
+	static class ModifiersExtensions
+	{
+		static public string Name (Modifiers i)
 		{
 			string s = "";
 			
@@ -104,92 +106,92 @@ namespace Mono.CSharp {
 			throw new NotImplementedException (ma.ToString ());
 		}
 
-		public static TypeAttributes TypeAttr (int mod_flags, bool is_toplevel)
+		public static TypeAttributes TypeAttr (Modifiers mod_flags, bool is_toplevel)
 		{
 			TypeAttributes t = 0;
 
 			if (is_toplevel){
-				if ((mod_flags & PUBLIC) != 0)
+				if ((mod_flags & Modifiers.PUBLIC) != 0)
 					t = TypeAttributes.Public;
-				else if ((mod_flags & PRIVATE) != 0)
+				else if ((mod_flags & Modifiers.PRIVATE) != 0)
 					t = TypeAttributes.NotPublic;
 			} else {
-				if ((mod_flags & PUBLIC) != 0)
+				if ((mod_flags & Modifiers.PUBLIC) != 0)
 					t = TypeAttributes.NestedPublic;
-				else if ((mod_flags & PRIVATE) != 0)
+				else if ((mod_flags & Modifiers.PRIVATE) != 0)
 					t = TypeAttributes.NestedPrivate;
-				else if ((mod_flags & (PROTECTED | INTERNAL)) == (PROTECTED | INTERNAL))
+				else if ((mod_flags & (Modifiers.PROTECTED | Modifiers.INTERNAL)) == (Modifiers.PROTECTED | Modifiers.INTERNAL))
 					t = TypeAttributes.NestedFamORAssem;
-				else if ((mod_flags & PROTECTED) != 0)
+				else if ((mod_flags & Modifiers.PROTECTED) != 0)
 					t = TypeAttributes.NestedFamily;
-				else if ((mod_flags & INTERNAL) != 0)
+				else if ((mod_flags & Modifiers.INTERNAL) != 0)
 					t = TypeAttributes.NestedAssembly;
 			}
-			
-			if ((mod_flags & SEALED) != 0)
+
+			if ((mod_flags & Modifiers.SEALED) != 0)
 				t |= TypeAttributes.Sealed;
-			if ((mod_flags & ABSTRACT) != 0)
+			if ((mod_flags & Modifiers.ABSTRACT) != 0)
 				t |= TypeAttributes.Abstract;
 
 			return t;
 		}
 
-		public static FieldAttributes FieldAttr (int mod_flags)
+		public static FieldAttributes FieldAttr (Modifiers mod_flags)
 		{
 			FieldAttributes fa = 0;
 
-			if ((mod_flags & PUBLIC) != 0)
+			if ((mod_flags & Modifiers.PUBLIC) != 0)
 				fa |= FieldAttributes.Public;
-			if ((mod_flags & PRIVATE) != 0)
+			if ((mod_flags & Modifiers.PRIVATE) != 0)
 				fa |= FieldAttributes.Private;
-			if ((mod_flags & PROTECTED) != 0){
-				if ((mod_flags & INTERNAL) != 0)
+			if ((mod_flags & Modifiers.PROTECTED) != 0) {
+				if ((mod_flags & Modifiers.INTERNAL) != 0)
 					fa |= FieldAttributes.FamORAssem;
 				else 
 					fa |= FieldAttributes.Family;
 			} else {
-				if ((mod_flags & INTERNAL) != 0)
+				if ((mod_flags & Modifiers.INTERNAL) != 0)
 					fa |= FieldAttributes.Assembly;
 			}
-			
-			if ((mod_flags & STATIC) != 0)
+
+			if ((mod_flags & Modifiers.STATIC) != 0)
 				fa |= FieldAttributes.Static;
-			if ((mod_flags & READONLY) != 0)
+			if ((mod_flags & Modifiers.READONLY) != 0)
 				fa |= FieldAttributes.InitOnly;
 
 			return fa;
 		}
 
-		public static MethodAttributes MethodAttr (int mod_flags)
+		public static MethodAttributes MethodAttr (Modifiers mod_flags)
 		{
 			MethodAttributes ma = MethodAttributes.HideBySig;
 
-			if ((mod_flags & PUBLIC) != 0)
+			if ((mod_flags & Modifiers.PUBLIC) != 0)
 				ma |= MethodAttributes.Public;
-			else if ((mod_flags & PRIVATE) != 0)
+			else if ((mod_flags & Modifiers.PRIVATE) != 0)
 				ma |= MethodAttributes.Private;
-			else if ((mod_flags & PROTECTED) != 0){
-				if ((mod_flags & INTERNAL) != 0)
+			else if ((mod_flags & Modifiers.PROTECTED) != 0) {
+				if ((mod_flags & Modifiers.INTERNAL) != 0)
 					ma |= MethodAttributes.FamORAssem;
 				else 
 					ma |= MethodAttributes.Family;
 			} else {
-				if ((mod_flags & INTERNAL) != 0)
+				if ((mod_flags & Modifiers.INTERNAL) != 0)
 					ma |= MethodAttributes.Assembly;
 			}
 
-			if ((mod_flags & STATIC) != 0)
+			if ((mod_flags & Modifiers.STATIC) != 0)
 				ma |= MethodAttributes.Static;
-			if ((mod_flags & ABSTRACT) != 0){
+			if ((mod_flags & Modifiers.ABSTRACT) != 0) {
 				ma |= MethodAttributes.Abstract | MethodAttributes.Virtual;
 			}
-			if ((mod_flags & SEALED) != 0)
+			if ((mod_flags & Modifiers.SEALED) != 0)
 				ma |= MethodAttributes.Final;
 
-			if ((mod_flags & VIRTUAL) != 0)
+			if ((mod_flags & Modifiers.VIRTUAL) != 0)
 				ma |= MethodAttributes.Virtual;
 
-			if ((mod_flags & OVERRIDE) != 0)
+			if ((mod_flags & Modifiers.OVERRIDE) != 0)
 				ma |= MethodAttributes.Virtual;
 			else {
 				if ((ma & MethodAttributes.Virtual) != 0)
@@ -204,13 +206,12 @@ namespace Mono.CSharp {
 		//   Returns the new mask.  Side effect: reports any
 		//   incorrect attributes. 
 		// </summary>
-		public static int Check (int allowed, int mod, int def_access, Location l, Report Report)
+		public static Modifiers Check (Modifiers allowed, Modifiers mod, Modifiers def_access, Location l, Report Report)
 		{
-			int invalid_flags  = (~allowed) & (mod & (Modifiers.TOP - 1));
+			int invalid_flags = (~(int) allowed) & ((int) mod & ((int) Modifiers.TOP - 1));
 			int i;
 
 			if (invalid_flags == 0){
-				int a = mod;
 
 				if ((mod & Modifiers.UNSAFE) != 0){
 					RootContext.CheckUnsafeOption (l, Report);
@@ -220,10 +221,10 @@ namespace Mono.CSharp {
 				// If no accessibility bits provided
 				// then provide the defaults.
 				//
-				if ((mod & Accessibility) == 0){
+				if ((mod & Modifiers.AccessibilityMask) == 0) {
 					mod |= def_access;
 					if (def_access != 0)
-						mod |= DEFAULT_ACCESS_MODIFER;
+						mod |= Modifiers.DEFAULT_ACCESS_MODIFER;
 					return mod;
 				}
 
@@ -233,6 +234,7 @@ namespace Mono.CSharp {
 				// allowed, that is why they are placed on bits
 				// 1 and 4 (so the shift 3 basically merges them)
 				//
+				int a = (int) mod;
 				a &= 15;
 				a |= (a >> 3);
 				a = ((a & 2) >> 1) + (a & 5);
@@ -242,12 +244,12 @@ namespace Mono.CSharp {
 				
 				return mod;
 			}
-			
-			for (i = 1; i <= TOP; i <<= 1){
+
+			for (i = 1; i <= (int) Modifiers.TOP; i <<= 1) {
 				if ((i & invalid_flags) == 0)
 					continue;
 
-				Error_InvalidModifier (l, Name (i), Report);
+				Error_InvalidModifier (l, Name ((Modifiers) i), Report);
 			}
 
 			return allowed & mod;

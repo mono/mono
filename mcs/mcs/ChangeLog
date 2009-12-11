@@ -1,3 +1,9 @@
+2009-12-11  Marek Safar  <marek.safar@gmail.com>
+
+	* modifiers.cs, decl.cs, iterators.cs, const.cs, anonymous.cs,
+	class.cs, delegate.cs, cs-parser.jay, enum.cs: Turn modifiers into
+	enum for easier debugging.
+
 2009-12-10  Marek Safar  <marek.safar@gmail.com>
 
 	* decl.cs, anonymous.cs, class.cs: Sealed Define it's now main entry

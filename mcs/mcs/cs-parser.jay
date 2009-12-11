@@ -933,7 +933,7 @@ struct_declaration
 	  type_declaration_name
 	  { 
 		MemberName name = MakeName ((MemberName) $6);
-		push_current_class (new Struct (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
+		push_current_class (new Struct (current_namespace, current_class, name, (Modifiers) $2, (Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -1005,7 +1005,7 @@ constant_declaration
 	  constant_declarators
 	  SEMICOLON
 	  {
-		int modflags = (int) $2;
+		var modflags = (Modifiers) $2;
 		foreach (VariableDeclaration constant in (List<object>) $5){
 			Location l = constant.Location;
 			if ((modflags & Modifiers.STATIC) != 0) {
@@ -1078,7 +1078,7 @@ field_declaration
 		if (type == TypeManager.system_void_expr)
 			Report.Error (670, GetLocation ($3), "Fields cannot have void type");
 		
-		int mod = (int) $2;
+		var mod = (Modifiers) $2;
 
 		foreach (VariableMemberDeclaration var in (List<object>) $4){
 			Field field = new Field (current_class, type, mod, var.MemberName, (Attributes) $1);
@@ -1102,7 +1102,7 @@ field_declaration
 	  { 
 			FullNamedExpression type = (FullNamedExpression) $4;
 			
-			int mod = (int) $2;
+			var mod = (Modifiers) $2;
 
 			foreach (VariableDeclaration var in (List<VariableDeclaration>) $5) {
 				FixedField field = new FixedField (current_class, type, mod, var.identifier,
@@ -1311,7 +1311,7 @@ method_header
 			generic.SetParameterInfo ((List<Constraints>) $10);
 		}
 
-		method = new Method (current_class, generic, (FullNamedExpression) $3, (int) $2,
+		method = new Method (current_class, generic, (FullNamedExpression) $3, (Modifiers) $2,
 				     name, current_local_parameters, (Attributes) $1);
 
 		current_generic_method = generic;
@@ -1354,10 +1354,10 @@ method_header
 			generic.SetParameterInfo ((List<Constraints>) $11);
 		}
 
-		int modifiers = (int) $2;
+		var modifiers = (Modifiers) $2;
 
 
-		const int invalid_partial_mod = Modifiers.Accessibility | Modifiers.ABSTRACT | Modifiers.EXTERN |
+		const Modifiers invalid_partial_mod = Modifiers.AccessibilityMask | Modifiers.ABSTRACT | Modifiers.EXTERN |
 			Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.SEALED | Modifiers.VIRTUAL;
 
 		if ((modifiers & invalid_partial_mod) != 0) {
@@ -1390,7 +1390,7 @@ method_header
 	  {
 		MemberName name = (MemberName) $5;
 		Report.Error (1585, name.Location, 
-			"Member modifier `{0}' must precede the member type and name", Modifiers.Name ((int) $4));
+			"Member modifier `{0}' must precede the member type and name", ModifiersExtensions.Name ((Modifiers) $4));
 
 		Method method = new Method (current_class, null, TypeManager.system_void_expr,
 					    0, name, (ParametersCompiled) $7, (Attributes) $1);
@@ -1708,7 +1708,7 @@ property_declaration
 		MemberName name = (MemberName) $4;
 		FullNamedExpression ptype = (FullNamedExpression) $3;
 
-		prop = new Property (current_class, ptype, (int) $2,
+		prop = new Property (current_class, ptype, (Modifiers) $2,
 				     name, (Attributes) $1, get_block, set_block, order, current_block);
 
 		if (ptype == TypeManager.system_void_expr)
@@ -1788,7 +1788,7 @@ get_accessor_declaration
 			Report.Error (1007, GetLocation ($3), "Property accessor already defined");
 			break;
 		}
-		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, current_local_parameters, GetLocation ($3));
+		Accessor accessor = new Accessor ((ToplevelBlock) $5, (Modifiers) $2, (Attributes) $1, current_local_parameters, GetLocation ($3));
 		has_get = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
@@ -1823,7 +1823,7 @@ set_accessor_declaration
 			Report.Error (1007, GetLocation ($3), "Property accessor already defined");
 			break;
 		}
-		Accessor accessor = new Accessor ((ToplevelBlock) $5, (int) $2, (Attributes) $1, current_local_parameters, GetLocation ($3));
+		Accessor accessor = new Accessor ((ToplevelBlock) $5, (Modifiers) $2, (Attributes) $1, current_local_parameters, GetLocation ($3));
 		has_set = true;
 		current_local_parameters = null;
 		lexer.PropertyParsing = true;
@@ -1860,7 +1860,7 @@ interface_declaration
 	  type_declaration_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
-		push_current_class (new Interface (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
+		push_current_class (new Interface (current_namespace, current_class, name, (Modifiers) $2, (Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -1943,7 +1943,7 @@ operator_declaration
 
 		OperatorDeclaration decl = (OperatorDeclaration) $3;
 		Operator op = new Operator (
-			current_class, decl.optype, decl.ret_type, (int) $2, 
+			current_class, decl.optype, decl.ret_type, (Modifiers) $2, 
 			current_local_parameters,
 			(ToplevelBlock) $5, (Attributes) $1, decl.location);
 
@@ -2143,7 +2143,7 @@ constructor_declarator
 	  opt_constructor_initializer
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
-		int mods = (int) $2;
+		var mods = (Modifiers) $2;
 		ConstructorInitializer ci = (ConstructorInitializer) $9;
 
 		Constructor c = new Constructor (current_class, lt.Value, mods,
@@ -2152,7 +2152,7 @@ constructor_declarator
 		if (lt.Value != current_container.MemberName.Name) {
 			Report.Error (1520, c.Location, "Class, struct, or interface method must have a return type");
 		} else if ((mods & Modifiers.STATIC) != 0) {
-			if ((mods & Modifiers.Accessibility) != 0){
+			if ((mods & Modifiers.AccessibilityMask) != 0){
 				Report.Error (515, c.Location,
 					"`{0}': static constructor cannot have an access modifier",
 					c.GetSignatureForError ());
@@ -2222,7 +2222,7 @@ destructor_declaration
 		} else if (current_container.Kind != Kind.Class){
 			Report.Error (575, lt.Location, "Only class types can contain destructor");
 		} else {
-			Destructor d = new Destructor (current_class, (int) $2,
+			Destructor d = new Destructor (current_class, (Modifiers) $2,
 				ParametersCompiled.EmptyReadOnlyParameters, (Attributes) $1, lt.Location);
 			if (RootContext.Documentation != null)
 				d.DocComment = ConsumeStoredComment ();
@@ -2243,7 +2243,7 @@ event_declaration
 		foreach (VariableMemberDeclaration var in (List<object>) $5) {
 
 			EventField e = new EventField (
-				current_class, (FullNamedExpression) $4, (int) $2, var.MemberName, (Attributes) $1);
+				current_class, (FullNamedExpression) $4, (Modifiers) $2, var.MemberName, (Attributes) $1);
 				
 			e.Initializer = var.GetInitializer ((FullNamedExpression) $4);
 			if (current_container.Kind == Kind.Interface && e.Initializer != null) {
@@ -2300,7 +2300,7 @@ event_declaration
 			$$ = null;
 		else {
 			Event e = new EventProperty (
-				current_class, (FullNamedExpression) $4, (int) $2, name,
+				current_class, (FullNamedExpression) $4, (Modifiers) $2, name,
 				(Attributes) $1, accessors.get_or_add, accessors.set_or_remove);
 			if (RootContext.Documentation != null) {
 				e.DocComment = Lexer.consume_doc_comment ();
@@ -2428,7 +2428,7 @@ indexer_declaration
 		bool order = accessors != null ? accessors.declared_in_reverse : false;
 
 		Indexer indexer = new Indexer (current_class, (FullNamedExpression) $3,
-			(MemberName)$4, (int) $2, (ParametersCompiled) $7, (Attributes) $1,
+			(MemberName)$4, (Modifiers) $2, (ParametersCompiled) $7, (Attributes) $1,
 			get_block, set_block, order);
 				       
 		if ($3 == TypeManager.system_void_expr)
@@ -2473,7 +2473,7 @@ enum_declaration
 		}
 
 		name = MakeName (name);
-		Enum e = new Enum (current_namespace, current_class, (TypeExpr) $5, (int) $2,
+		Enum e = new Enum (current_namespace, current_class, (TypeExpr) $5, (Modifiers) $2,
 				   name, (Attributes) $1);
 		
 		if (RootContext.Documentation != null)
@@ -2614,7 +2614,7 @@ delegate_declaration
 		ParametersCompiled p = (ParametersCompiled) $8;
 
 		Delegate del = new Delegate (current_namespace, current_class, (FullNamedExpression) $4,
-					     (int) $2, name, p, (Attributes) $1);
+					     (Modifiers) $2, name, p, (Attributes) $1);
 
 		if (RootContext.Documentation != null) {
 			del.DocComment = Lexer.consume_doc_comment ();
@@ -4167,7 +4167,7 @@ class_declaration
 	  type_declaration_name
 	  {
 		MemberName name = MakeName ((MemberName) $6);
-		push_current_class (new Class (current_namespace, current_class, name, (int) $2, (Attributes) $1), $3);
+		push_current_class (new Class (current_namespace, current_class, name, (Modifiers) $2, (Attributes) $1), $3);
 	  }
 	  opt_class_base
 	  opt_type_parameter_constraints_clauses
@@ -4209,14 +4209,14 @@ modifiers
 	: modifier
 	| modifiers modifier
 	  { 
-		int m1 = (int) $1;
-		int m2 = (int) $2;
+		var m1 = (Modifiers) $1;
+		var m2 = (Modifiers) $2;
 
 		if ((m1 & m2) != 0) {
 			Location l = lexer.Location;
-			Report.Error (1004, l, "Duplicate `{0}' modifier", Modifiers.Name (m2));
+			Report.Error (1004, l, "Duplicate `{0}' modifier", ModifiersExtensions.Name (m2));
 		}
-		$$ = (int) (m1 | m2);
+		$$ = m1 | m2;
 	  }
 	;
 

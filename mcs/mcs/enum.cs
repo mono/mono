@@ -127,7 +127,7 @@ namespace Mono.CSharp {
 
 		TypeExpr base_type;
 
-		const int AllowedModifiers =
+		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
 			Modifiers.PROTECTED |
@@ -135,12 +135,12 @@ namespace Mono.CSharp {
 			Modifiers.PRIVATE;
 
 		public Enum (NamespaceEntry ns, DeclSpace parent, TypeExpr type,
-			     int mod_flags, MemberName name, Attributes attrs)
+			     Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (ns, parent, name, attrs, Kind.Enum)
 		{
 			this.base_type = type;
-			int accmods = IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE;
-			ModFlags = Modifiers.Check (AllowedModifiers, mod_flags, accmods, Location, Report);
+			var accmods = IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE;
+			ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod_flags, accmods, Location, Report);
 		}
 
 		public void AddEnumMember (EnumMember em)
@@ -215,7 +215,7 @@ namespace Mono.CSharp {
 
 		protected override TypeAttributes TypeAttr {
 			get {
-				return Modifiers.TypeAttr (ModFlags, IsTopLevel) |
+				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) |
 					TypeAttributes.Class | TypeAttributes.Sealed | base.TypeAttr;
 			}
 		}
