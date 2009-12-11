@@ -90,6 +90,117 @@ namespace System.Reflection.Emit
 		}
 	}
 
+	internal class GenericInstanceKey {
+		Type gtd;
+		internal Type[] args;
+
+		internal GenericInstanceKey (Type gtd, Type[] args)
+		{
+			this.gtd = gtd;
+			this.args = args;
+		}
+
+		static bool IsBoundedVector (Type type) {
+			ArrayType at = type as ArrayType;
+			if (at != null)
+				return at.GetEffectiveRank () == 1;
+			return type.ToString ().EndsWith ("[*]", StringComparison.Ordinal); /*Super uggly hack, SR doesn't allow one to query for it */
+		}
+
+		static bool TypeEquals (Type a, Type b) {
+			if (a == b)
+				return true;
+
+			if (a.HasElementType) {
+				if (!b.HasElementType)
+					return false;
+				if (!TypeEquals (a.GetElementType (), b.GetElementType ()))
+					return false;
+				if (a.IsArray) {
+					if (!b.IsArray)
+						return false;
+					int rank = a.GetArrayRank ();
+					if (rank != b.GetArrayRank ())
+						return false;
+					if (rank == 1 && IsBoundedVector (a) != IsBoundedVector (b))
+						return false;
+				} else if (a.IsByRef) {
+					if (!b.IsByRef)
+						return false;
+				} else if (a.IsPointer) {
+					if (!b.IsPointer)
+						return false;
+				}
+				return true;
+			}
+
+			if (a.IsGenericType) {
+				if (!b.IsGenericType)
+					return false;
+				if (a.IsGenericParameter)
+					return a == b;
+				if (a.IsGenericParameter) //previous test should have caught it
+					return false;
+
+				if (a.IsGenericTypeDefinition) {
+					if (!b.IsGenericTypeDefinition)
+						return false;
+				} else {
+					if (b.IsGenericTypeDefinition)
+						return false;
+					if (!TypeEquals (a.GetGenericTypeDefinition (), b.GetGenericTypeDefinition ()))
+						return false;
+
+					Type[] argsA = a.GetGenericArguments ();
+					Type[] argsB = b.GetGenericArguments ();
+					for (int i = 0; i < argsA.Length; ++i) {
+						if (!TypeEquals (argsA [i], argsB [i]))
+							return false;
+					}
+				}
+			}
+
+			/*
+			Now only non-generic, non compound types are left. To properly deal with user
+			types we would have to call UnderlyingSystemType, but we let them have their
+			own instantiation as this is MS behavior and mcs (pre C# 4.0, at least) doesn't
+			depend on proper UT canonicalization.
+			*/
+			return a == b;
+		}
+
+		public override bool Equals (object obj)
+		{
+			GenericInstanceKey other = obj as GenericInstanceKey;
+			if (other == null)
+				return false;
+			if (gtd != other.gtd)
+				return false;
+			for (int i = 0; i < args.Length; ++i) {
+				Type a = args [i];
+				Type b = other.args [i];
+				/*
+				We must cannonicalize as much as we can. Using equals means that some resulting types
+				won't have the exact same types as the argument ones. 
+				For example, flyweight types used array, pointer and byref will should this behavior.
+				MCS seens to be resilient to this problem so hopefully this won't show up.   
+				*/
+				if (a != b && !a.Equals (b))
+					return false;
+			}
+			return true;
+		}
+
+		public override int GetHashCode ()
+		{
+			int hash = gtd.GetHashCode ();
+			for (int i = 0; i < args.Length; ++i)
+				hash ^= args [i].GetHashCode ();
+			return hash;
+		}
+	}
+
+
 	[ComVisible (true)]
 	[ComDefaultInterface (typeof (_AssemblyBuilder))]
 	[ClassInterface (ClassInterfaceType.None)]
@@ -136,6 +247,7 @@ namespace System.Reflection.Emit
 		NativeResourceType native_resource;
 		readonly bool is_compiler_context;
 		string versioninfo_culture;
+		Hashtable generic_instances = new Hashtable ();
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern void basic_init (AssemblyBuilder ab);
@@ -1047,6 +1159,21 @@ namespace System.Reflection.Emit
 				an.SetPublicKeyToken (sn.PublicKeyToken);
 			}
 			return an;
+		}
+
+		/*Warning, @typeArguments must be a mscorlib internal array. So make a copy before passing it in*/
+		internal Type MakeGenericType (TypeBuilder gtd, Type[] typeArguments)
+		{
+			if (!IsCompilerContext)
+				return new MonoGenericClass (gtd, typeArguments);
+
+			GenericInstanceKey key = new GenericInstanceKey (gtd, typeArguments);
+			MonoGenericClass res = (MonoGenericClass)generic_instances [key];
+			if (res == null) {
+				res = new MonoGenericClass (gtd, typeArguments);
+				generic_instances [key] = res;
+			}
+			return res;
 		}
 
 		void _AssemblyBuilder.GetIDsOfNames([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)

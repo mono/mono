@@ -332,6 +332,11 @@ namespace System.Reflection.Emit
 			this.rank = rank;
 		}
 
+		internal int GetEffectiveRank ()
+		{
+			return rank;
+		}
+
 		protected override bool IsArrayImpl ()
 		{
 			return true;

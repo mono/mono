@@ -1,3 +1,13 @@
+2009-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AssemblyBuilder.cs: Add MakeGenericType method while takes care of doing
+	generic instance canonicalization under compiler context.
+
+	* DerivedTypes.cs: Add ArrayType::GetEffectiveRank to make it possible to
+	distinguish between [] and [*].
+
+	* TypeBuilder.cs: Implement MakeGenericType in managed code.
+
 2009-12-09  Jb Evain  <jbevain@novell.com>
 
 	* ILGenerator.cs (Emit(OpCode,LocalBuilder)): deal with

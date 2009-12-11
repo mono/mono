@@ -1,5 +1,14 @@
 2009-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoGenericClass.cs: Add new register_with_runtime icall to make
+	sure that a managed code instantiated MGC will be returned when
+	the generic instantiation happens in unmanaged code.
+	
+	This is a temporary workaround while Type::MakeGenericType doesn't
+	handle user types properly.
+
+2009-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoGenericClass.cs: Make this class inherit from Type instead of
 	MonoType. Implement some missing methods and make sure we can still
 	be used as a byref type.

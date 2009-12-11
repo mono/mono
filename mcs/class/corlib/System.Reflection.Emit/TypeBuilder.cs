@@ -1378,10 +1378,26 @@ namespace System.Reflection.Emit
 			return new ByRefType (this);
 		}
 
-		[MonoTODO]
 		public override Type MakeGenericType (params Type [] typeArguments)
 		{
-			return base.MakeGenericType (typeArguments);
+			//return base.MakeGenericType (typeArguments);
+
+			if (!IsGenericTypeDefinition)
+				throw new InvalidOperationException ("not a generic type definition");
+			if (typeArguments == null)
+				throw new ArgumentNullException ("typeArguments");
+
+			if (generic_params.Length != typeArguments.Length)
+				throw new ArgumentException (String.Format ("The type or method has {0} generic parameter(s) but {1} generic argument(s) where provided. A generic argument must be provided for each generic parameter.", generic_params.Length, typeArguments.Length), "typeArguments");
+
+			foreach (Type t in typeArguments) {
+				if (t == null)
+					throw new ArgumentNullException ("typeArguments");				
+			}
+
+			Type[] copy = new Type [typeArguments.Length];
+			typeArguments.CopyTo (copy, 0);
+			return pmodule.assemblyb.MakeGenericType (this, copy);
 		}
 
 		public override Type MakePointerType ()

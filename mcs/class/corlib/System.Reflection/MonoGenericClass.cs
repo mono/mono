@@ -72,6 +72,7 @@ namespace System.Reflection
 		{
 			this.generic_type = tb;
 			this.type_arguments = args;
+			register_with_runtime (this); /*Temporary hack while*/
 		}
 
 		internal override bool IsCompilerContext {
@@ -88,6 +89,9 @@ namespace System.Reflection
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern bool IsByRefImpl (Type type);
+
+ 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+ 		internal static extern void register_with_runtime (Type type);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
