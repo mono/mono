@@ -847,7 +847,6 @@ namespace MonoTests.System
 		}
 
 		[Test]
-		[Category ("NotDotNet")]
 		public void GetCustomAttributeOnBadSreTypes ()
 		{
 			AssemblyName assemblyName = new AssemblyName ();
@@ -859,7 +858,10 @@ namespace MonoTests.System
 			var tb = module.DefineType ("ns.type", TypeAttributes.Public);
 			tb.DefineGenericParameters ("T");
 			var ginst = tb.MakeGenericType (typeof (int));
-			Assert.IsNull (Attribute.GetCustomAttribute (ginst, typeof (ObsoleteAttribute)), "#1");
+			try {
+				Attribute.GetCustomAttribute (ginst, typeof (ObsoleteAttribute));
+				Assert.Fail ("#1");
+			} catch (NotSupportedException) {}
 		}
 #endif
 
