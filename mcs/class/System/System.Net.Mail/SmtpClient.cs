@@ -165,8 +165,9 @@ namespace System.Net.Mail {
 #endif
 
 #if NET_4_0
-		public string TargetName { get; set; }
+		public
 #endif
+		string TargetName { get; set; }
 
 		public ICredentialsByHost Credentials {
 			get { return credentials; }
