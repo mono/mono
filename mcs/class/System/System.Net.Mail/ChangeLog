@@ -1,5 +1,8 @@
 2009-12-11  Miguel de Icaza  <miguel@novell.com>
 
+	* SmtpClient.cs: Add half-implemented feature, TargetName for the
+	SPN SMTP system.
+	
 	* SmtpClient.cs, MailMessage.cs: Add 4.0 APIs.
 
 2009-08-20  Sebastien Pouliot  <sebastien@ximian.com>

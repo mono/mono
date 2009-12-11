@@ -1,3 +1,7 @@
+2009-12-11  Miguel de Icaza  <miguel@novell.com>
+
+	* SmtpNetworkElement.cs: Add new "targetName" property for smtp. 
+
 2009-11-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ConnectionManagementElement.cs: bump maxconnection to 6.

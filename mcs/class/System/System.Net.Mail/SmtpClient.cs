@@ -123,6 +123,11 @@ namespace System.Net.Mail {
 			if (cfg != null) {
 				this.host = cfg.Network.Host;
 				this.port = cfg.Network.Port;
+				TargetName = cfg.Network.TargetName;
+				if (this.TargetName == null)
+					TargetName = "SMTPSVC/" + (host != null ? host : "");
+
+				
 				if (cfg.Network.UserName != null) {
 					string password = String.Empty;
 
@@ -157,6 +162,10 @@ namespace System.Net.Mail {
 				return clientCertificates;
 			}
 		}
+#endif
+
+#if NET_4_0
+		public string TargetName { get; set; }
 #endif
 
 		public ICredentialsByHost Credentials {
