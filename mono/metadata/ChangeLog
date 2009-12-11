@@ -1,3 +1,15 @@
+2009-12-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c: Add mono_reflection_register_with_runtime icall to
+	allow a MonoGenericClass to register itself as the managed mirror of
+	a given generic instance.
+	This is a temporary workaround until all MGC instantiation happens in
+	managed code.
+
+	* object-internals.h: Ditto.
+
+	* icall-def.h: Ditto.
+
 2009-12-10  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c (find_in_remsets): Also search the generic store
