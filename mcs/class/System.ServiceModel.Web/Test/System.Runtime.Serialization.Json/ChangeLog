@@ -1,3 +1,7 @@
+2009-12-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReaderTest.cs : another number parse case.
+
 2009-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializerTest.cs : added ignored test case that

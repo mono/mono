@@ -1,3 +1,8 @@
+2009-12-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : e- and e+ was resulting in wrong parse error.
+	  This should fix part of bug #531904.
+
 2009-12-08  Chris Toshok  <toshok@ximian.com>
 
 	* JsonSerializationReader.cs (DeserializeGenericCollection): in

@@ -687,6 +687,11 @@ namespace System.Runtime.Serialization.Json
 						throw XmlError ("Invalid JSON number token. '.' must not occur after 'E' or 'e'");
 					floating = true;
 					break;
+				case '+':
+				case '-':
+					if (prev == 'E' || prev == 'e')
+						break;
+					goto default;
 				default:
 					if (!IsNumber (ch)) {
 						PushbackChar (ch);
