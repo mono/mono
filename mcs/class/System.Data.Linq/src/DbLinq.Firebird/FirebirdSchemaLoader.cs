@@ -40,9 +40,7 @@ namespace DbLinq.Firebird
     partial class FirebirdSchemaLoader : SchemaLoader
     {
         private readonly IVendor vendor = new FirebirdVendor();
-        public override IVendor Vendor { get { return vendor; } }
-
-        public override System.Type DataContextType { get { return typeof(FirebirdDataContext); } }
+        public override IVendor Vendor { get { return vendor; } set { } }
 
         protected override TableName CreateTableName(string dbTableName, string dbSchema, INameAliases nameAliases, NameFormat nameFormat)
         {
@@ -209,7 +207,7 @@ namespace DbLinq.Firebird
         /// <returns></returns>
         protected override System.Type MapDbType(string columnName, IDataType dataType)
         {
-            switch (dataType.Type)
+            switch (dataType.SqlType)
             {
             // string
             case "CSTRING":

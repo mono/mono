@@ -34,7 +34,7 @@ namespace DbLinq.Ingres
     {
         protected virtual string GetFullType(IDataTableColumn column)
         {
-            switch (column.Type.ToLower())
+            switch (column.SqlType.ToLower())
             {
             case "c":
             case "char":
@@ -44,13 +44,13 @@ namespace DbLinq.Ingres
             case "long varchar":
             case "text":
             case "integer":
-                return column.Type + "(" + column.Length + ")";
+                return column.SqlType + "(" + column.Length + ")";
 
             case "decimal":
-                return column.Type + "(" + column.Length + ", " + column.Scale + ")";
+                return column.SqlType + "(" + column.Length + ", " + column.Scale + ")";
 
             default:
-                return column.Type;
+                return column.SqlType;
             }
         }
 
@@ -63,7 +63,7 @@ namespace DbLinq.Ingres
             column.ColumnName = rdr.GetAsString(field++).Trim();
             string nullableStr = rdr.GetAsString(field++);
             column.Nullable = nullableStr == "Y";
-            column.Type = rdr.GetAsString(field++).Trim();
+            column.SqlType = rdr.GetAsString(field++).Trim();
             column.DefaultValue = rdr.GetAsString(field++);
             column.Generated = column.DefaultValue != null && column.DefaultValue.StartsWith("next value for");
 

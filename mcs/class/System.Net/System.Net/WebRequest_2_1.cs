@@ -48,6 +48,15 @@ namespace System.Net {
 		public abstract string Method { get; set; }
 		public abstract Uri RequestUri { get; }
 
+		public virtual IWebRequestCreate CreatorInstance { 
+			get { return null; }
+		}
+
+		public virtual ICredentials Credentials {
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
+		}
+
 		static WebRequest ()
 		{
 			registred_prefixes = new Dictionary<string, IWebRequestCreate> (StringComparer.OrdinalIgnoreCase);
@@ -66,6 +75,11 @@ namespace System.Net {
 		internal virtual IAsyncResult BeginGetResponse (AsyncCallback callback, object state, bool policy)
 		{
 			return BeginGetResponse (callback, state);
+		}
+
+		public static WebRequest Create (string requestUriString)
+		{
+			return Create (new Uri (requestUriString));
 		}
 
 		public static WebRequest Create (Uri uri)
@@ -126,6 +140,12 @@ namespace System.Net {
 			FieldInfo fi = GetType ().GetField ("progress_delegate", BindingFlags.Instance | BindingFlags.NonPublic);
 			if (fi != null)
 				fi.SetValue (this, progress_delegate);
+		}
+
+		static Exception NotImplemented ()
+		{
+			// hide the "normal" NotImplementedException from corcompare-like tools
+			return new NotImplementedException ();
 		}
 	}
 }

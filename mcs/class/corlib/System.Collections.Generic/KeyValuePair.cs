@@ -42,16 +42,18 @@ namespace System.Collections.Generic {
 
 		public TKey Key {
 			get { return key; }
+			private set { key = value; }
 		}
 
 		public TValue Value {
 			get { return value; }
+			private set { this.value = value; }
 		}
 		
 		public KeyValuePair (TKey key, TValue value)
 		{
-			this.key = key;
-			this.value = value;
+			Key = key;
+			Value = value;
 		}
 
 		public override string ToString()

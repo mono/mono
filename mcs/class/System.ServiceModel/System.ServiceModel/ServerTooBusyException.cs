@@ -31,7 +31,7 @@ using System.Runtime.Serialization;
 
 namespace System.ServiceModel {
 	[Serializable]
-	public class ServerTooBusyException : SystemException
+	public class ServerTooBusyException : CommunicationException
 	{
 		public ServerTooBusyException () : base () {}
 		public ServerTooBusyException (string msg) : base (msg) {}

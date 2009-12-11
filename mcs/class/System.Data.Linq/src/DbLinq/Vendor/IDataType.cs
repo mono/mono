@@ -36,7 +36,11 @@ namespace DbLinq.Vendor
         /// <summary>
         /// The base type, like 'number', 'varchar'
         /// </summary>
-        string Type { get; set; }
+        string SqlType { get; set; }
+        /// <summary>
+        /// The managed type to use, like System.Int32
+        /// </summary>
+        string ManagedType { get; set; }
         /// <summary>
         /// For all types, the possibility to have a NULL
         /// </summary>

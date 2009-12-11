@@ -5,7 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //  Jb Evain  <jbevain@novell.com>
 //
-// (c) 2007 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2007, 2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,8 +31,6 @@
 
 #if NET_2_1
 
-using System;
-
 namespace System.Net {
 
 	public abstract class HttpWebResponse : WebResponse {
@@ -40,6 +38,16 @@ namespace System.Net {
 		public abstract string Method { get; }
 		public abstract HttpStatusCode StatusCode { get; }
 		public abstract string StatusDescription { get; }
+
+		public virtual CookieCollection Cookies { 
+			get { throw NotImplemented (); }
+		}
+
+		static Exception NotImplemented ()
+		{
+			// hide the "normal" NotImplementedException from corcompare-like tools
+			return new NotImplementedException ();
+		}
 	}
 }
 

@@ -1,4 +1,11 @@
-// HttpStatusCode.cs
+//
+// System.Data.SqlClient.SortOrder.cs
+//
+// Author:
+//   Jonathan Pobst (monkey@jpobst.com)
+//
+//
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -20,14 +27,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_1
+using System;
 
-namespace System.Net {
-	public enum HttpStatusCode {
-		OK = 200,
-		NotFound = 404,
+namespace System.Data.SqlClient
+{
+	public enum SortOrder
+	{
+		Ascending = 0,
+		Descending = 1,
+		Unspecified = -1		
 	}
 }
-
-#endif
-

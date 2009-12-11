@@ -256,13 +256,25 @@ namespace System.Runtime.Serialization.Json
 					c.Add (elem);
 				}
 #if NET_2_1
-				ret = c;
+				if (collectionType.IsArray) {
+					Array array = Array.CreateInstance (elementType, c.Count);
+					c.CopyTo (array, 0);
+					ret = array;
+				}
+				else
+					ret = c;
 #else
 				ret = collectionType.IsArray ? ((ArrayList) c).ToArray (elementType) : c;
 #endif
 			} else {
 				object c = Activator.CreateInstance (collectionType);
 				MethodInfo add = collectionType.GetMethod ("Add", new Type [] {elementType});
+				if (add == null) {
+					var icoll = typeof (ICollection<>).MakeGenericType (elementType);
+					if (icoll.IsAssignableFrom (c.GetType ()))
+						add = icoll.GetMethod ("Add");
+				}
+				
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (!reader.IsStartElement ("item"))
 						throw SerializationError (String.Format ("Expected element 'item', but found '{0}' in namespace '{1}'", reader.LocalName, reader.NamespaceURI));

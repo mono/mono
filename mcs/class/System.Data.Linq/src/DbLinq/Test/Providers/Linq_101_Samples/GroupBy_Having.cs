@@ -54,6 +54,7 @@ using nwind;
 
 
 
+#if !INGRES
 #if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
@@ -69,7 +70,9 @@ using nwind;
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0);
         }
+#endif
 
+#if !INGRES
 #if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
@@ -85,7 +88,9 @@ using nwind;
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0);
         }
+#endif
 
+#if !INGRES
 #if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
@@ -101,9 +106,9 @@ using nwind;
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0);
         }
+#endif
 
-
-
+#if !INGRES
 #if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
@@ -119,6 +124,7 @@ using nwind;
             var list = q.ToList();
             Assert.IsTrue(list.Count > 0);
         }
+#endif
 
 #if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]

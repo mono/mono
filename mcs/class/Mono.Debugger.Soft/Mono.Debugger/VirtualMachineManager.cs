@@ -16,6 +16,12 @@ namespace Mono.Debugger
 		public bool Valgrind {
 			get; set;
 		}
+		
+		public ProcessLauncher CustomProcessLauncher {
+			get; set;
+		}
+
+		public delegate Process ProcessLauncher (ProcessStartInfo info);
 	}
 
 	public class VirtualMachineManager
@@ -30,7 +36,7 @@ namespace Mono.Debugger
 			Socket accepted = null;
 			try {
 				accepted = socket.Accept ();
-			} catch (ObjectDisposedException) {
+			} catch (Exception) {
 				throw;
 			}
 
@@ -71,7 +77,11 @@ namespace Mono.Debugger
 			if (options != null && options.Valgrind)
 				info.FileName = "valgrind";
 				
-			Process p = Process.Start (info);
+			Process p;
+			if (options != null && options.CustomProcessLauncher != null)
+				p = options.CustomProcessLauncher (info);
+			else
+				p = Process.Start (info);
 			
 			p.Exited += delegate (object sender, EventArgs eargs) {
 				socket.Close ();
@@ -111,7 +121,7 @@ namespace Mono.Debugger
 			if (con_sock != null) {
 				try {
 					con_acc = con_sock.Accept ();
-				} catch (ObjectDisposedException) {
+				} catch (Exception) {
 					try {
 						dbg_sock.Close ();
 					} catch {}
@@ -121,7 +131,7 @@ namespace Mono.Debugger
 						
 			try {
 				dbg_acc = dbg_sock.Accept ();
-			} catch (ObjectDisposedException) {
+			} catch (Exception) {
 				if (con_sock != null) {
 					try {
 						con_sock.Close ();

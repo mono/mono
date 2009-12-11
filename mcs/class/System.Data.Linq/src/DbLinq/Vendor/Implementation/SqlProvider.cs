@@ -1656,6 +1656,7 @@ namespace DbLinq.Vendor.Implementation
             switch (nameL)
             {
             case "user":
+            case "default":
             case "bit":
             case "int":
             case "smallint":

@@ -36,9 +36,9 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Ingres.Client, Version=2.0.0.0, Culture=neutral, PublicKeyToken=7ab2d069d405ce41, processorArchitecture=MSIL">
+    <Reference Include="Ingres.Stereo, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\lib\Ingres.Client.dll</HintPath>
+      <HintPath>..\..\lib\Ingres.Stereo.dll</HintPath>
     </Reference>
     <Reference Include="Npgsql, Version=1.0.0.0, Culture=neutral, PublicKeyToken=5d8b90d52f46fda7, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>

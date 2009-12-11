@@ -31,7 +31,7 @@ using System.Runtime.Serialization;
 
 namespace System.ServiceModel {
 	[Serializable]
-	public class CommunicationObjectAbortedException : SystemException
+	public class CommunicationObjectAbortedException : CommunicationException
 	{
 		public CommunicationObjectAbortedException () : base () {}
 		public CommunicationObjectAbortedException (string msg) : base (msg) {}

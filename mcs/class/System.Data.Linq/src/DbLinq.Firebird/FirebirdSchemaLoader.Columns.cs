@@ -43,7 +43,7 @@ namespace DbLinq.Firebird
             column.TableName = rdr.GetAsString(field++).Trim();
             column.ColumnName = rdr.GetAsString(field++).Trim();
             column.Nullable = rdr.GetAsBool(field++);
-            column.Type = rdr.GetAsString(field++).Trim();
+            column.SqlType = rdr.GetAsString(field++).Trim();
             column.Generated = rdr.GetAsBool(field++);
             //column.Unsigned = column.FullType.Contains("unsigned");
             column.PrimaryKey = rdr.GetAsBool(field++);

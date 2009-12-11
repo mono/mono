@@ -931,12 +931,20 @@ public abstract class Encoding
 								defaultEncoding = GetEncoding (code_page);
 							}
 						} catch (NotSupportedException) {
+#if NET_2_1 && !MONOTOUCH
+							defaultEncoding = UTF8;
+#else
 							// code_page is not supported on underlying platform
 							defaultEncoding = UTF8Unmarked;
+#endif
 						} catch (ArgumentException) {
 							// code_page_name is not a valid code page, or is 
 							// not supported by underlying OS
+#if NET_2_1 && !MONOTOUCH
+							defaultEncoding = UTF8;
+#else
 							defaultEncoding = UTF8Unmarked;
+#endif
 						}
 #if NET_2_0
 						defaultEncoding.is_readonly = true;

@@ -30,7 +30,8 @@ using System.Collections.Generic;
 
 namespace System.ServiceModel {
 
-	public class ServiceKnownTypeAttribute : Attribute
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)] 
+	public sealed class ServiceKnownTypeAttribute : Attribute
 	{
 		public ServiceKnownTypeAttribute (string methodName)
 			: this (methodName, null)

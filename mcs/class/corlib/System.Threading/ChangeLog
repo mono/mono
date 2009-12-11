@@ -1,3 +1,10 @@
+2009-12-09  Jb Evain  <jbevain@novell.com>
+
+	* ThreadPool.cs (QueueUserWorkItem): properly throw
+	an ANE instead of triggering a NRE when being passed a null callback.
+
+	backports r147934.
+
 2009-11-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Thread.cs (set_CurrentUICulture): Delay setting in_currentculture

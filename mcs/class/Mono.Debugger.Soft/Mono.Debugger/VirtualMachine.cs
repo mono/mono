@@ -173,6 +173,8 @@ namespace Mono.Debugger
 				throw new ObjectCollectedException ();
 			case ErrorCode.INVALID_FRAMEID:
 				throw new InvalidStackFrameException ();
+			case ErrorCode.NOT_SUSPENDED:
+				throw new InvalidOperationException ("The vm is not suspended.");
 			default:
 				throw new CommandException (args.ErrorCode);
 			}

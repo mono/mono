@@ -57,6 +57,12 @@ namespace DbMetal.Configuration
             {
                 get { return (string)this["databaseConnection"]; }
             }
+
+            [ConfigurationProperty("sqlDialectType", IsRequired = false)]
+            public string SqlDialectType
+            {
+                get { return (string)this["sqlDialectType"]; }
+            }
         }
 
         public class ProvidersCollection : ConfigurationElementCollection

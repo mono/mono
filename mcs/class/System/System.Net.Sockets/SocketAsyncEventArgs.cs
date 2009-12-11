@@ -52,6 +52,8 @@ namespace System.Net.Sockets
 				throw new SecurityException ();
 			return ((bool) check_socket_policy.Invoke (null, new object [1] { endpoint }));
 		}
+
+		public Exception ConnectByNameError { get; internal set; }
 #endif
 
 		public event EventHandler<SocketAsyncEventArgs> Completed;
@@ -226,15 +228,19 @@ namespace System.Net.Sockets
 						try {
 							if (curSocket.AddressFamily == addr.AddressFamily) {
 								error = TryConnect (new IPEndPoint (addr, dep.Port));
-								if (error == SocketError.Success)
+								if (error == SocketError.Success) {
+									ConnectByNameError = null;
 									break;
+								}
 							}
 						}
-						catch (SocketException) {
+						catch (SocketException se) {
+							ConnectByNameError = se;
 							error = SocketError.AccessDenied;
 						}
 					}
 				} else {
+					ConnectByNameError = null;
 					error = TryConnect (RemoteEndPoint);
 				}
 #else

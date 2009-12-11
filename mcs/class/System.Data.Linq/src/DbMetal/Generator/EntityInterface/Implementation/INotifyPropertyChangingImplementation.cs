@@ -80,7 +80,7 @@ namespace DbMetal.Generator.EntityInterface.Implementation
 
         public override void WritePropertyBeforeSet(CodeWriter writer, DbLinq.Schema.Dbml.Column property, GenerationContext context)
         {
-            writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression("On" + property.Name + "Changing", "value")));
+            writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression("On" + property.Member + "Changing", "value")));
             writer.WriteLine(writer.GetStatement(writer.GetMethodCallExpression(sendPropertyChangingMethod)));
         }
     }

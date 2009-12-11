@@ -255,6 +255,11 @@ namespace System.Runtime.Serialization
 			return ReadObject (XmlDictionaryReader.CreateDictionaryReader (reader));
 		}
 
+		public override object ReadObject (XmlReader reader, bool verifyObjectName)
+		{
+			return ReadObject (XmlDictionaryReader.CreateDictionaryReader (reader), verifyObjectName);
+		}
+
 		[MonoTODO]
 		public override object ReadObject (XmlDictionaryReader reader, bool verifyObjectName)
 		{
@@ -321,6 +326,12 @@ namespace System.Runtime.Serialization
 			// rootType and object graph type.
 			while (known_types.Count > startTypeCount)
 				known_types.RemoveAt (startTypeCount);
+		}
+
+		public override void WriteObjectContent (XmlWriter writer, object graph)
+		{
+			XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (writer);
+			WriteObjectContent (w, graph);
 		}
 
 		// SP1

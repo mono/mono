@@ -1,3 +1,8 @@
+2009-12-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.dll.sources: Add existing files that are 
+	part of Silverlight 3 (but were not in Silverlight 2)
+
 2009-11-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.dll.sources: Remove build/common/*.cs files

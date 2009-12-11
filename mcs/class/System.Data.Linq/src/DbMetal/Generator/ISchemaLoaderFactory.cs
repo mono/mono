@@ -51,9 +51,9 @@ namespace DbMetal.Generator
         /// (e.g. DbLinq.Oracle.OracleSchemaLoader and System.Data.OracleClient.OracleConnection),
         /// return an instance of the OracleSchemaLoader.
         /// </summary>
-        ISchemaLoader Load(Parameters parameters, Type dbLinqSchemaLoaderType, Type databaseConnectionType);
+        ISchemaLoader Load(Parameters parameters, Type dbLinqSchemaLoaderType, Type databaseConnectionType, Type sqlDialectType);
 
-        ISchemaLoader Load(Parameters parameters, string dbLinqSchemaLoaderTypeName, string databaseConnectionTypeName);
+        ISchemaLoader Load(Parameters parameters, string dbLinqSchemaLoaderTypeName, string databaseConnectionTypeName, string sqlDialectTypeName);
 
         /// <summary>
         /// Log output

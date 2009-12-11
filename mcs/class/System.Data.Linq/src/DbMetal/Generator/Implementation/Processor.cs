@@ -35,6 +35,8 @@ using DbLinq.Util;
 using DbLinq.Vendor;
 using DbMetal.Schema;
 
+using Mono.Options;
+
 namespace DbMetal.Generator.Implementation
 {
 #if !MONO_STRICT
@@ -75,26 +77,28 @@ namespace DbMetal.Generator.Implementation
 
             else
             {
-                bool readLineAtExit = false;
-
                 parameters.WriteHeader();
 
                 try
                 {
-                    foreach (var parametersBatch in parameters.GetBatch(args))
-                    {
-                        ProcessSchema(parametersBatch);
-                        if (parametersBatch.ReadLineAtExit)
-                            readLineAtExit = true;
-                    }
+                    parameters.Parse(args);
                 }
-                catch (ArgumentException e)
+                catch (Exception e)
                 {
                     Output.WriteErrorLine(Log, e.Message);
                     PrintUsage(parameters);
                     return;
                 }
-                if (readLineAtExit)
+
+                if (parameters.Help)
+                {
+                    PrintUsage(parameters);
+                    return;
+                }
+
+                ProcessSchema(parameters);
+
+                if (parameters.ReadLineAtExit)
                 {
                     // '-readLineAtExit' flag: useful when running from Visual Studio
                     Console.ReadKey();

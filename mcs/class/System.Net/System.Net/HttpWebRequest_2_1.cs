@@ -92,7 +92,8 @@ namespace System.Net {
 			}
 		}
 
-		public CookieContainer CookieContainer {
+		// FIXME: should throw NIE - but that will break some sites until we have really splitted browser/client stacks
+		public virtual CookieContainer CookieContainer {
 			get;
 			set;
 		}

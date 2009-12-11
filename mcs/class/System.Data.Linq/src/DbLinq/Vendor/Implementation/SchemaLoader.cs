@@ -50,12 +50,7 @@ namespace DbLinq.Vendor.Implementation
         /// Underlying vendor
         /// </summary>
         /// <value></value>
-        public abstract IVendor Vendor { get; }
-        /// <summary>
-        /// Vendor typed DataContext type
-        /// </summary>
-        /// <value></value>
-        public abstract System.Type DataContextType { get; }
+        public abstract IVendor Vendor { get; set; }
         /// <summary>
         /// Connection used to read schema
         /// </summary>

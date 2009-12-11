@@ -58,7 +58,7 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && (POSTGRES)
+#if !DEBUG && POSTGRES
         [Explicit]
 #endif
         [Test]
@@ -155,7 +155,7 @@ using nwind;
             Assert.IsTrue(list.Count > 0);
         }
 
-#if !DEBUG && (POSTGRES)
+#if !DEBUG && POSTGRES
         [Explicit]
 #endif
         [Test]

@@ -31,7 +31,7 @@ using System.Runtime.Serialization;
 
 namespace System.ServiceModel {
 	[Serializable]
-	public class ServiceActivationException : SystemException
+	public class ServiceActivationException : CommunicationException
 	{
 		public ServiceActivationException () : base () {}
 		public ServiceActivationException (string msg) : base (msg) {}

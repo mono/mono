@@ -41,9 +41,7 @@ namespace DbLinq.Ingres
     partial class IngresSchemaLoader : SchemaLoader
     {
         private readonly Vendor.IVendor vendor = new IngresVendor();
-        public override Vendor.IVendor Vendor { get { return vendor; } }
-
-        public override System.Type DataContextType { get { return typeof(IngresDataContext); } }
+        public override Vendor.IVendor Vendor { get { return vendor; } set { } }
 
         protected override void LoadConstraints(Database schema, SchemaName schemaName, IDbConnection conn, NameFormat nameFormat, Names names)
         {
@@ -94,7 +92,7 @@ namespace DbLinq.Ingres
 
         protected override System.Type MapDbType(string columnName, IDataType dataType)
         {
-            switch (dataType.Type.ToLower())
+            switch (dataType.SqlType.ToLower())
             {
             case "float":
                 return typeof(Double);

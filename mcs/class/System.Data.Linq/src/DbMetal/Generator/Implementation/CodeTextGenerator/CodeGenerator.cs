@@ -93,18 +93,25 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                 if (string.IsNullOrEmpty(entityNamespace))
                     entityNamespace = dbSchema.EntityNamespace;
 
+                bool generateDataContext = true;
+                var types = context.Parameters.GenerateTypes;
+                if (types.Count > 0)
+                    generateDataContext = types.Contains(dbSchema.Class);
+
                 if (contextNamespace == entityNamespace)
                 {
                     using (WriteNamespace(codeWriter, contextNamespace))
                     {
-                        WriteDataContext(codeWriter, dbSchema, context);
+                        if (generateDataContext)
+                            WriteDataContext(codeWriter, dbSchema, context);
                         WriteClasses(codeWriter, dbSchema, context);
                     }
                 }
                 else
                 {
-                    using (WriteNamespace(codeWriter, contextNamespace))
-                        WriteDataContext(codeWriter, dbSchema, context);
+                    if (generateDataContext)
+                        using (WriteNamespace(codeWriter, contextNamespace))
+                            WriteDataContext(codeWriter, dbSchema, context);
                     using (WriteNamespace(codeWriter, entityNamespace))
                         WriteClasses(codeWriter, dbSchema, context);
                 }

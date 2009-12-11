@@ -52,7 +52,7 @@ using nwind;
         {
             Northwind db = CreateDB();
 #if INGRES && !MONO_STRICT
-            var q = (from p in db.Products where p.Discontinued == 0 select p)
+            var q = (from p in db.Products where p.Discontinued == "N" select p)
                 .Count();
 #else
             var q = (from p in db.Products where !p.Discontinued select p)
@@ -242,6 +242,7 @@ WHERE ([t0].[UnitPrice] = @x2) AND (((@x1 IS NULL) AND ([t0].[CategoryID] IS NUL
         }
 
 
+#if !INGRES
 #if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
         [Explicit]
 #endif
@@ -263,7 +264,7 @@ WHERE ([t0].[UnitPrice] = @x2) AND (((@x1 IS NULL) AND ([t0].[CategoryID] IS NUL
             var list = categories.ToList();
             Assert.IsTrue(list.Count > 0, "Got categorized products > 0");
         }
-
+#endif
 
 
     }
