@@ -1,3 +1,9 @@
+2009-12-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c: Applied patch from Matt McClellan (matt@mc-c.net). Add a check
+	for 2 parameter sched_setaffinity in older glibc versions. Fixes
+	#564000.
+
 2009-12-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Call handle_exception_clauses () in the same
