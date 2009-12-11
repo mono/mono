@@ -1282,10 +1282,7 @@ applications that hard-code Windows paths.  Set to a colon-separated
 list of "drive" to strip drive letters, or "case" to do
 case-insensitive file matching in every directory in a path.  "all"
 enables all rewriting methods.  (Backslashes are always mapped to
-slashes if this variable is set to a valid option). Additional option "report" can 
-be set (it is not included in "all") to make mapping code print the names of
-files in case a mismatch is found, together with a stack trace showing which managed method
-the misnamed file has been requested from.
+slashes if this variable is set to a valid option).
 .fi
 .Sp
 For example, this would work from the shell:
@@ -1305,6 +1302,28 @@ directive instead, like this:
 
 .fi
 See mod_mono(8) for more details.
+
+Additionally. Mono includes a profiler module which allows one to track what
+adjustements to file paths IOMAP code needs to do. The tracking code reports
+the managed location (full stack trace) from which the IOMAP-ed call was made and,
+on process exit, the locations where all the IOMAP-ed strings were created in
+managed code. The latter report is only approximate as it is not always possible
+to estimate the actual location where the string was created. The code uses simple
+heuristics - it analyzes stack trace leading back to the string allocation location
+and ignores all the managed code which lives in assemblies installed in GAC as well as in the
+class libraries shipped with Mono (since they are assumed to be free of case-sensitivity
+issues). It then reports the first location in the user's code - in most cases this will be
+the place where the string is allocated or very close to the location. The reporting code
+is implemented as a custom profiler module (see the "PROFILING" section) and can be loaded
+in the following way:
+.fi
+.Sp
+.nf
+
+	mono --profile=iomap yourapplication.exe
+
+.fi
+Note, however, that Mono currently supports only one profiler module at a time.
 .TP
 \fBMONO_MANAGED_WATCHER\fR
 If set to "disabled", System.IO.FileSystemWatcher will use a file watcher 

@@ -1,3 +1,8 @@
+2009-12-11  Marek Habersack  <mhabersack@novell.com>
+
+	* method-to-ir.c (mini_redirect_call): do not redirect the
+	InternalAllocateStr internal call if string profiling is enabled.
+
 2009-12-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Avoid generating synchronized wrappers for

@@ -1,3 +1,10 @@
+2009-12-11  Marek Habersack  <mhabersack@novell.com>
+
+	* mono-io-portability.c: moved all the reporting code to the IOMAP
+	profiler module.
+	(mono_portability_find_file_internal): calls mono_profiler_iomap
+	whenever an adjustement is made.
+
 2009-12-02  Mark Probst  <mark.probst@gmail.com>
 
 	* mono-hash.c: Don't use MONO_ROOT_SETREF for setting keys and

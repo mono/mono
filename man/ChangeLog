@@ -1,3 +1,7 @@
+2009-12-11  Marek Habersack  <mhabersack@novell.com>
+
+	* mono.1: documented the IOMAP report profiler module
+
 2009-11-23  Marek Habersack  <mhabersack@novell.com>
 
 	* mono.1: documented the 'report' option for MONO_IOMAP

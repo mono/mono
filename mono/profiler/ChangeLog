@@ -1,3 +1,9 @@
+2009-12-11  Marek Habersack  <mhabersack@novell.com>
+
+	* mono-profiler-iomap.c: added
+
+	* Makefile.am: added IOMAP profiler
+
 2009-10-14  Massimiliano Mantione <massi@ximian.com>
 	* mono-profiler-logging.c: Removed MAX_STATISTICAL_CALL_CHAIN_DEPTH
 	definition (it belongs to the runtime), and implemented	support for

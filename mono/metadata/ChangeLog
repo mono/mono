@@ -1,3 +1,17 @@
+2009-12-11  Marek Habersack  <mhabersack@novell.com>
+
+	* string-icalls.c (ves_icall_System_String_InternalAllocateStr):
+	if string profiling is enabled, call
+	mono_profiler_string_allocation
+
+	* profiler.h: added two MonoProfileFlags -
+	MONO_PROFILE_IOMAP_EVENTS and MONO_PROFILE_STRING_ALLOC as well as
+	installation functions for the hooks below.
+
+	* profiler-private.h, profiler.c: added two hooks:
+	mono_profiler_string_allocation called whenever a string is
+	allocated by InternalAllocateStr and mono_profiler_iomap called
+	whenever IOMAP code performs an adjustement on a file path.
 
 Fri Dec 11 18:24:04 CET 2009 Paolo Molaro <lupus@ximian.com>
 
