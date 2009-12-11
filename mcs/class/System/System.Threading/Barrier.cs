@@ -29,14 +29,15 @@ using System;
 
 namespace System.Threading
 {
-	public class Barrier
+	public class Barrier : IDisposable
 	{
-		readonly Action<Barrier> postPhaseAction;
+		const int MAX_PARTICIPANTS = 32767;
+		Action<Barrier> postPhaseAction;
 		
 		int participants;
 		CountdownEvent cntd;
 		AtomicBoolean cleaned = new AtomicBoolean ();
-		int phase;
+		long phase;
 		
 		public Barrier (int participants) : this (participants, null)
 		{
@@ -44,25 +45,56 @@ namespace System.Threading
 		
 		public Barrier (int participants, Action<Barrier> postPhaseAction)
 		{
+			if (participants < 0 || participants > MAX_PARTICIPANTS)
+				throw new ArgumentOutOfRangeException ("participants");
+			
 			this.participants = participants;
 			this.postPhaseAction = postPhaseAction;
 			
 			InitCountdownEvent ();
 		}
-		
+
+		public void Dispose ()
+		{
+			Dispose (true);
+		}
+
+		protected virtual void Dispose (bool disposing)
+		{
+			if (disposing){
+				if (cntd != null){
+					cntd.Dispose ();
+					cntd = null;
+				}
+				cleaned = null;
+				postPhaseAction = null;
+			}
+		}
+			
 		void InitCountdownEvent ()
 		{
 			cleaned = new AtomicBoolean ();
 			cntd = new CountdownEvent (participants);
 		}
 		
-		public int AddParticipant ()
+		public long AddParticipant ()
 		{
 			return AddParticipants (1);
 		}
-		
-		public int AddParticipants (int participantCount)
+
+		static Exception GetDisposed ()
 		{
+			return new ObjectDisposedException ("Barrier");
+		}
+		
+		public long AddParticipants (int participantCount)
+		{
+			if (cleaned == null)
+				throw GetDisposed ();
+			
+			if (participantCount < 0)
+				throw new InvalidOperationException ();
+			
 			// Basically, we try to add ourselves and return
 			// the phase. If the call return false, we repeatdly try
 			// to add ourselves for the next phase
@@ -81,32 +113,47 @@ namespace System.Threading
 		
 		public void RemoveParticipants (int participantCount)
 		{
+			if (cleaned == null)
+				throw GetDisposed ();
+			if (participantCount < 0)
+				throw new ArgumentOutOfRangeException ("participantCount");
+			
 			cntd.Signal (participantCount);
 			Interlocked.Add (ref participants, -participantCount);
 		}
 		
 		public void SignalAndWait ()
 		{
+			if (cleaned == null)
+				throw GetDisposed ();
 			SignalAndWait ((c) => { c.Wait (); return true; });
 		}
 		
 		public bool SignalAndWait (int millisecondTimeout)
 		{
+			if (cleaned == null)
+				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (millisecondTimeout));
 		}
 		
 		public bool SignalAndWait (TimeSpan ts)
 		{
+			if (cleaned == null)
+				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (ts));
 		}
 		
 		public bool SignalAndWait (int millisecondTimeout, CancellationToken token)
 		{
+			if (cleaned == null)
+				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (millisecondTimeout, token));
 		}
 		
 		public bool SignalAndWait (TimeSpan ts, CancellationToken token)
 		{
+			if (cleaned == null)
+				throw GetDisposed ();
 			return SignalAndWait ((c) => c.Wait (ts, token));
 		}
 		
@@ -150,7 +197,7 @@ namespace System.Threading
 			cl.Value = true;
 		}
 		
-		public int CurrentPhaseNumber {
+		public long CurrentPhaseNumber {
 			get {
 				return phase;
 			}
