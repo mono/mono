@@ -1,5 +1,10 @@
 2009-12-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_type_get_full): Produce warning instead of simply swallowing
+	the error.
+
+2009-12-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c: Add mono_reflection_register_with_runtime icall to
 	allow a MonoGenericClass to register itself as the managed mirror of
 	a given generic instance.
