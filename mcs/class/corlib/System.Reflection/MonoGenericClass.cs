@@ -47,10 +47,12 @@ namespace System.Reflection
 	 * NotImplementedException for many of the methods but we can't do that as gmcs
 	 * depends on them.
 	 */
-	internal class MonoGenericClass : MonoType
+	internal class MonoGenericClass : Type
 	{
 		#region Keep in sync with object-internals.h
 #pragma warning disable 649
+		/*Hack do keep layout equals as of extending MonoType FIXME: remove this on the corlib version bump. */
+		object mono_type_placeholder;
 		internal TypeBuilder generic_type;
 		Type[] type_arguments;
 		bool initialized;
@@ -61,13 +63,12 @@ namespace System.Reflection
 		int event_count;
 
 		internal MonoGenericClass ()
-			: base (null)
 		{
 			// this should not be used
 			throw new InvalidOperationException ();
 		}
 
-		internal MonoGenericClass (TypeBuilder tb, Type[] args) : base (null)
+		internal MonoGenericClass (TypeBuilder tb, Type[] args)
 		{
 			this.generic_type = tb;
 			this.type_arguments = args;
@@ -81,6 +82,12 @@ namespace System.Reflection
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern Type GetElementType (Type type);
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern bool IsByRefImpl (Type type);
 
 		private const BindingFlags flags = BindingFlags.Public | BindingFlags.NonPublic |
 		BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
@@ -642,6 +649,14 @@ namespace System.Reflection
 			get { return this; }
 		}
 
+		public override Assembly Assembly {
+			get { return generic_type.Assembly; }
+		}
+
+		public override Module Module {
+			get { return generic_type.Module; }
+		}
+
 		public override string Name {
 			get { return generic_type.Name; }
 		}
@@ -698,6 +713,52 @@ namespace System.Reflection
 			return format_name (false, false);
 		}
 
+		public override Type GetGenericTypeDefinition ()
+		{
+			return generic_type;
+		}
+
+		public override Type[] GetGenericArguments ()
+		{
+			Type[] ret = new Type [type_arguments.Length];
+			type_arguments.CopyTo (ret, 0);
+			return ret;
+		}
+
+		public override bool ContainsGenericParameters {
+			get {
+				/*FIXME remove this once compound types are not instantiated using MGC*/
+				if (HasElementType)
+					return GetElementType ().ContainsGenericParameters;
+
+				foreach (Type t in type_arguments) {
+					if (t.ContainsGenericParameters)
+						return true;
+				}
+				return false;
+			}
+		}
+
+		public override bool IsGenericTypeDefinition {
+			get { return false; }
+		}
+
+		public override bool IsGenericType {
+			get { return !HasElementType; }
+		}
+
+		public override Type DeclaringType {
+			get { return InflateType (generic_type.DeclaringType); }
+		}
+
+		public override RuntimeTypeHandle TypeHandle {
+			get {
+				if (!IsCompilerContext)
+					throw new NotSupportedException ();
+				return _impl;
+			}
+		}
+
 		public override Type MakeArrayType ()
 		{
 			return new ArrayType (this, 0);
@@ -720,10 +781,17 @@ namespace System.Reflection
 			return new PointerType (this);
 		}
 
-		/*public override Type GetElementType ()
+		public override Type GetElementType ()
 		{
-			throw new NotSupportedException ();
-		}*/
+			if (!HasElementType)
+				throw new NotSupportedException ();
+			return GetElementType (this);
+		}
+
+		protected override bool HasElementTypeImpl ()
+		{
+			return IsByRefImpl ();
+		}
 
 		protected override bool IsCOMObjectImpl ()
 		{
@@ -735,7 +803,6 @@ namespace System.Reflection
 			return false;
 		}
 
-		/*
 		protected override bool IsArrayImpl ()
 		{
 			return false;
@@ -743,13 +810,13 @@ namespace System.Reflection
 
 		protected override bool IsByRefImpl ()
 		{
-			return false;
+			return IsByRefImpl (this);
 		}
 
 		protected override bool IsPointerImpl ()
 		{
 			return false;
-		}*/
+		}
 
 		protected override TypeAttributes GetAttributeFlagsImpl ()
 		{

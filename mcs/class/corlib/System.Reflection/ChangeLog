@@ -1,3 +1,9 @@
+2009-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs: Make this class inherit from Type instead of
+	MonoType. Implement some missing methods and make sure we can still
+	be used as a byref type.
+
 2009-12-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoMethod.cs (MakeGenericMethod): If any of the arguments is
