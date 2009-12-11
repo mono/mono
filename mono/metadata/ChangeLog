@@ -1,5 +1,8 @@
 2009-12-11  Marek Habersack  <mhabersack@novell.com>
 
+	* object.c (mono_ldstr, mono_ldstr_metadata_sig): added calls to
+	mono_profiler_string_allocation
+
 	* string-icalls.c (ves_icall_System_String_InternalAllocateStr):
 	if string profiling is enabled, call
 	mono_profiler_string_allocation
