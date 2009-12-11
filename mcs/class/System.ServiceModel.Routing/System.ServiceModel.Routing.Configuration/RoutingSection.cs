@@ -11,31 +11,74 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Routing.Configuration
 {
+	static class RoutingConfigurationExtension
+	{
+		public static ServiceEndpoint CreateEndpoint (this ChannelEndpointElement el)
+		{
+			// FIXME: implement
+			throw new NotImplementedException ();
+		}
+
+		public static MessageFilter CreateFilter (this FilterElement el, RoutingSection sec)
+		{
+			switch (el.FilterType) {
+			case FilterType.Action:
+				return new ActionMessageFilter (el.FilterData);
+			case FilterType.EndpointAddress:
+				return new EndpointAddressMessageFilter (new EndpointAddress (el.FilterData), false);
+			case FilterType.PrefixEndpointAddress:
+				return new PrefixEndpointAddressMessageFilter (new EndpointAddress (el.FilterData), false);
+			case FilterType.And:
+				var fe1 = (FilterElement) sec.Filters [el.Filter1];
+				var fe2 = (FilterElement) sec.Filters [el.Filter2];
+				return new StrictAndMessageFilter (fe1.CreateFilter (sec), fe2.CreateFilter (sec));
+			case FilterType.Custom:
+				return (MessageFilter) Activator.CreateInstance (Type.GetType (el.CustomType));
+			case FilterType.EndpointName:
+				return new EndpointNameMessageFilter (el.FilterData);
+			case FilterType.MatchAll:
+				return new MatchAllMessageFilter ();
+			case FilterType.XPath:
+				return new XPathMessageFilter (el.FilterData);
+			default:
+				throw new ArgumentOutOfRangeException ("FilterType");
+			}
+		}
+	}
+
 	public class RoutingSection : ConfigurationSection
 	{
+		static ServiceModelSectionGroup wcfRootSection = ConfigurationManager.GetSection ("system.serviceModel") as ServiceModelSectionGroup;
+
+		static ServiceEndpoint CreateServiceEndpoint (string name)
+		{
+			// FIXME: might be service endpoints.
+			var endpoints = wcfRootSection.Client.Endpoints;
+			return ((ChannelEndpointElement) endpoints [name]).CreateEndpoint ();
+		}
+
 		[MonoTODO]
 		public static MessageFilterTable<IEnumerable<ServiceEndpoint>> CreateFilterTable (string name)
 		{
-			throw new NotImplementedException ();
-			/*
-			// FIXME: I feel messed.
 			var sec = (RoutingSection) ConfigurationManager.GetSection ("system.serviceModel/routing");
-			var endpoints = ((ServiceModelSectionGroup) ConfigurationManager.GetSection ("system.serviceModel")).Client.Endpoints;
+
+			var filters = new Dictionary<string,MessageFilter> ();
 			var table = new MessageFilterTable<IEnumerable<ServiceEndpoint>> ();
 			var ftec = (FilterTableEntryCollection) sec.FilterTables [name];
 			foreach (FilterTableEntryElement fte in ftec) {
-				var filter = table.Keys.FirstOrDefault (f => ((EndpointNameMessageFilter) f).Name == fte.FilterName);
-				if (filter == null) {
-					filter = new EndpointNameMessageFilter (fte.EndpointName);
-					table.Add (filter, new List<ServiceEndpoint> ());
+				MessageFilter filter;
+				if (filters.TryGetValue (fte.FilterName, out filter)) {
+					var filterElement = (FilterElement) sec.Filters [fte.FilterName];
+					filter = filterElement.CreateFilter (sec);
 				}
-				var list = table [filter];
+				table.Add (filter, new List<ServiceEndpoint> (), fte.Priority);
+				var list = (List<ServiceEndpoint>) table [filter];
+				list.Add (CreateServiceEndpoint (fte.EndpointName));
 				var bec = (BackupEndpointCollection) sec.BackupLists [fte.BackupList];
-				foreach (var bee in bec)
-					list.Add (endpoints [bee.EndpointName]);
+				foreach (BackupEndpointElement bee in bec)
+					list.Add (CreateServiceEndpoint (bee.EndpointName));
 			}
 			return table;
-			*/
 		}
 
 		public RoutingSection ()

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Configuration;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
@@ -31,6 +32,15 @@ namespace System.ServiceModel.Routing.Configuration
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			return ((FilterElement) element).Name;
+		}
+
+		public new FilterElement this [string name] {
+			get {
+				foreach (FilterElement fe in this)
+					if (fe.Name == name)
+						return fe;
+				return null;
+			}
 		}
 
 		public override bool IsReadOnly ()

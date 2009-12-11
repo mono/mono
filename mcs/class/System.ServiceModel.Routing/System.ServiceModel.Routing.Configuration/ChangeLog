@@ -1,3 +1,8 @@
+2009-12-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* RoutingSection.cs : sorted out most of the configuration stuff.
+	* FilterElementCollection.cs : added missing indexer.
+
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BackupEndpointCollection.cs
