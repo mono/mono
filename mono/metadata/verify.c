@@ -113,6 +113,19 @@ enum {
 				(__ctx)->valid = 0; \
 		} \
 	} while (0)
+
+#define CHECK_ADD4_OVERFLOW_UN(a, b) ((guint32)(0xFFFFFFFFU) - (guint32)(b) < (guint32)(a))
+#define CHECK_ADD8_OVERFLOW_UN(a, b) ((guint64)(0xFFFFFFFFFFFFFFFFUL) - (guint64)(b) < (guint64)(a))
+
+#if SIZEOF_VOID_P == 4
+#define CHECK_ADDP_OVERFLOW_UN(a,b) CHECK_ADD4_OVERFLOW_UN(a, b)
+#else
+#define CHECK_ADDP_OVERFLOW_UN(a,b) CHECK_ADD8_OVERFLOW_UN(a, b)
+#endif
+
+#define ADDP_IS_GREATER_OR_OVF(a, b, c) (((a) + (b) > (c)) || CHECK_ADDP_OVERFLOW_UN (a, b))
+#define ADD_IS_GREATER_OR_OVF(a, b, c) (((a) + (b) > (c)) || CHECK_ADD4_OVERFLOW_UN (a, b))
+
 /*Flags to be used with ILCodeDesc::flags */
 enum {
 	/*Instruction has not been processed.*/
@@ -400,6 +413,7 @@ mono_class_has_default_constructor (MonoClass *klass)
 	for (i = 0; i < klass->method.count; ++i) {
 		method = klass->methods [i];
 		if (mono_method_is_constructor (method) &&
+			mono_method_signature (method) &&
 			mono_method_signature (method)->param_count == 0 &&
 			(method->flags & METHOD_ATTRIBUTE_MEMBER_ACCESS_MASK) == METHOD_ATTRIBUTE_PUBLIC)
 			return TRUE;
@@ -2376,9 +2390,7 @@ handle_enum:
 		}
 
 	default:
-		VERIFIER_DEBUG ( printf ("unknown type %02x in eval stack type\n", type->type); );
-		g_assert_not_reached ();
-		return 0;
+		return TYPE_INV;
 	}
 }
 
@@ -2947,6 +2959,20 @@ verify_delegate_compatibility (VerifyContext *ctx, MonoClass *delegate, ILStackD
 	invoke = mono_get_delegate_invoke (delegate);
 	method = funptr->method;
 
+	if (!method || !mono_method_signature (method)) {
+		char *name = mono_type_get_full_name (delegate);
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid method on stack to create delegate %s construction at 0x%04x", name, ctx->ip_offset));
+		g_free (name);
+		return;
+	}
+
+	if (!invoke || !mono_method_signature (invoke)) {
+		char *name = mono_type_get_full_name (delegate);
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Delegate type %s with bad Invoke method at 0x%04x", name, ctx->ip_offset));
+		g_free (name);
+		return;
+	}
+
 	is_static_ldftn = (ip_offset > 5 && IS_LOAD_FUN_PTR (CEE_LDFTN)) && method->flags & METHOD_ATTRIBUTE_STATIC;
 
 	if (is_static_ldftn)
@@ -3366,6 +3392,13 @@ do_invoke_method (VerifyContext *ctx, int method_token, gboolean virtual)
 
 	if (!(sig = mono_method_get_signature_full (method, ctx->image, method_token, ctx->generic_context)))
 		sig = mono_method_get_signature (method, ctx->image, method_token);
+
+	if (!sig) {
+		char *name = mono_type_get_full_name (method->klass);
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Could not resolve signature of %s:%s at 0x%04x", name, method->name, ctx->ip_offset));
+		g_free (name);
+		return;
+	}
 
 	param_count = sig->param_count + sig->hasthis;
 	if (!check_underflow (ctx, param_count))
@@ -3949,6 +3982,11 @@ do_newobj (VerifyContext *ctx, int token)
 
 	//FIXME use mono_method_get_signature_full
 	sig = mono_method_signature (method);
+	if (!sig) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Invalid constructor signature to newobj at 0x%04x", ctx->ip_offset));
+		return;
+	}
+
 	if (!check_underflow (ctx, sig->param_count))
 		return;
 
@@ -4552,12 +4590,15 @@ do_localloc (VerifyContext *ctx)
 static void
 do_ldstr (VerifyContext *ctx, guint32 token)
 {
+	GSList *error = NULL;
 	if (mono_metadata_token_code (token) != MONO_TOKEN_STRING) {
 		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid string token %x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 		return;
 	}
 
-	if (!ctx->image->dynamic && mono_metadata_token_index (token) >= ctx->image->heap_us.size) {
+	if (!ctx->image->dynamic && !mono_verifier_verify_string_signature (ctx->image, mono_metadata_token_index (token), &error)) {
+		if (error)
+			ctx->list = g_slist_concat (ctx->list, error);
 		ADD_VERIFY_ERROR2 (ctx, g_strdup_printf ("Invalid string index %x at 0x%04x", token, ctx->ip_offset), MONO_EXCEPTION_BAD_IMAGE);
 		return;
 	}
@@ -4855,7 +4896,7 @@ verify_clause_relationship (VerifyContext *ctx, MonoExceptionClause *clause, Mon
 }
 
 #define code_bounds_check(size) \
-	if (ip + size > end) {\
+	if (ADDP_IS_GREATER_OR_OVF (ip, size, end)) {\
 		ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Code overrun starting with 0x%x at 0x%04x", *ip, ctx.ip_offset)); \
 		break; \
 	} \
@@ -4967,11 +5008,25 @@ mono_method_verify (MonoMethod *method, int level)
 	for (i = 0; i < ctx.num_locals; ++i) {
 		if (!mono_type_is_valid_in_context (&ctx, ctx.locals [i]))
 			break;
+		if (get_stack_type (ctx.locals [i]) == TYPE_INV) {
+			char *name = mono_type_full_name (ctx.locals [i]);
+			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid local %i of type %s", i, name));
+			g_free (name);
+			break;
+		}
+		
 	}
 
 	for (i = 0; i < ctx.max_args; ++i) {
 		if (!mono_type_is_valid_in_context (&ctx, ctx.params [i]))
 			break;
+
+		if (get_stack_type (ctx.params [i]) == TYPE_INV) {
+			char *name = mono_type_full_name (ctx.params [i]);
+			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Invalid parameter %i of type %s", i, name));
+			g_free (name);
+			break;
+		}
 	}
 
 	if (!ctx.valid)
@@ -4981,20 +5036,23 @@ mono_method_verify (MonoMethod *method, int level)
 		MonoExceptionClause *clause = ctx.header->clauses + i;
 		VERIFIER_DEBUG (printf ("clause try %x len %x filter at %x handler at %x len %x\n", clause->try_offset, clause->try_len, clause->data.filter_offset, clause->handler_offset, clause->handler_len); );
 
-		if (clause->try_offset > ctx.code_size || clause->try_offset + clause->try_len > ctx.code_size)
+		if (clause->try_offset > ctx.code_size || ADD_IS_GREATER_OR_OVF (clause->try_offset, clause->try_len, ctx.code_size))
 			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("try clause out of bounds at 0x%04x", clause->try_offset));
 
 		if (clause->try_len <= 0)
 			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("try clause len <= 0 at 0x%04x", clause->try_offset));
 
-		if (clause->handler_offset > ctx.code_size || clause->handler_offset + clause->handler_len > ctx.code_size)
+		if (clause->handler_offset > ctx.code_size || ADD_IS_GREATER_OR_OVF (clause->handler_offset, clause->handler_len, ctx.code_size))
 			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("handler clause out of bounds at 0x%04x", clause->try_offset));
 
 		if (clause->handler_len <= 0)
-			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("try clause len <= 0 at 0x%04x", clause->try_offset));
+			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("handler clause len <= 0 at 0x%04x", clause->try_offset));
 
-		if (clause->try_offset < clause->handler_offset && clause->try_offset + clause->try_len > HANDLER_START (clause))
+		if (clause->try_offset < clause->handler_offset && ADD_IS_GREATER_OR_OVF (clause->try_offset, clause->try_len, HANDLER_START (clause)))
 			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("try block (at 0x%04x) includes handler block (at 0x%04x)", clause->try_offset, clause->handler_offset));
+
+		if (clause->flags == MONO_EXCEPTION_CLAUSE_FILTER && clause->data.filter_offset > ctx.code_size)
+			ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("filter clause out of bounds at 0x%04x", clause->try_offset));
 
 		for (n = i + 1; n < ctx.header->num_clauses && ctx.valid; ++n)
 			verify_clause_relationship (&ctx, clause, ctx.header->clauses + n);
@@ -5009,6 +5067,11 @@ mono_method_verify (MonoMethod *method, int level)
 			ctx.code [clause->handler_offset + clause->handler_len].flags |= IL_CODE_FLAG_WAS_TARGET;
 
 		if (clause->flags == MONO_EXCEPTION_CLAUSE_NONE) {
+			if (!clause->data.catch_class) {
+				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Catch clause %d with invalid type", i));
+				break;
+			}
+		
 			init_stack_with_value_at_exception_boundary (&ctx, ctx.code + clause->handler_offset, clause->data.catch_class);
 		}
 		else if (clause->flags == MONO_EXCEPTION_CLAUSE_FILTER) {
@@ -5383,16 +5446,22 @@ mono_method_verify (MonoMethod *method, int level)
 			need_merge = 1;
 			break;
 
-		case CEE_SWITCH:
+		case CEE_SWITCH: {
+			guint32 entries;
 			code_bounds_check (5);
-			n = read32 (ip + 1);
-			code_bounds_check (5 + sizeof (guint32) * n);
-			
-			do_switch (&ctx, n, (ip + 5));
-			start = 1;
-			ip += 5 + sizeof (guint32) * n;
-			break;
+			entries = read32 (ip + 1);
 
+			if (entries > 0xFFFFFFFFU / sizeof (guint32))
+				ADD_VERIFY_ERROR (&ctx, g_strdup_printf ("Too many switch entries %x at 0x%04x", entries, ctx.ip_offset));
+
+			ip += 5;
+			code_bounds_check (sizeof (guint32) * entries);
+			
+			do_switch (&ctx, entries, ip);
+			start = 1;
+			ip += sizeof (guint32) * entries;
+			break;
+		}
 		case CEE_LDIND_I1:
 		case CEE_LDIND_U1:
 		case CEE_LDIND_I2:

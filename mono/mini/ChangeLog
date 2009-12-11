@@ -1,3 +1,108 @@
+2009-12-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_wrappers): Avoid generating synchronized wrappers for
+	generic methods.
+
+2009-12-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (start_runtime_invoke): Fix a crash if this is called
+	on the debugger thread.
+
+2009-12-08  Geoff Norton  <gnorton@novell.com>
+
+	* debugger-agent.c:  Refactor the mono_runtime_invoke guarding against
+	stepping out into native code.  There were issues with nested invokes
+	like .cctors.
+
+2009-12-08  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* driver.c: Fail gracefully with --compile-all if mono_method_signature
+	returns NULL (e.g. a bad assembly).
+
+2009-12-07  Geoff Norton  <gnorton@novell.com>
+
+	* debugger-agent.c:  Darwin can colesce signals, so we need to handle
+	the interrupt_count slightly differently.  Native threads were never
+	marked as resumed.
+
+2009-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (buffer_add_value): Treat I/U as a valuetype, so the
+	client can distinguish between intptrs and longs.
+
+2009-12-04  Geoff Norton  <gnorton@novell.com>
+
+	* debugger-agent.c: When doing a func-eval invoke on a suspended runtime, 
+	we need to track the original suspend count so the thread properly
+	wakes up in resume_thread.
+
+2009-12-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_create_static_rgctx_trampoline): Use a cache
+	keyed on the method+addr pair, since addr could be either the method addr or
+	an unbox trampoline in the AOT case. Fixes #560246.
+
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Call handle_exception_clauses () in the same
+	place it was called before too.
+
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_jit_runtime_invoke): Avoid the call to mono_class_setup_vtable ()
+	if no security manager is present, to speed up the AOT case. Call
+	mono_class_vtable () full with raise_on_error == TRUE instead.
+
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Call handle_exception_clauses earlier so
+	the local optimization passes can take its result into account. Fixes
+	#559876.
+
+	* exceptions.cs: Add a test.
+
+2009-01-24  Steven Munroe  <munroesj@us.ibm.com>
+
+	This patch is contributed under the terms of the MIT/X11 license
+
+        * cpu-ppc64.md (load_memindex): Add loadi8_memindex.
+
+2009-12-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Rework the handling of stack traces of running threads to
+	avoid crashes if compute_frames () tries to walk the stack of running thread.
+
+	* mini.c (mono_print_method_from_ip): Use mini_jit_info_table_find.
+
+	* mini-exceptions.c (mono_jit_walk_stack_from_ctx_in_thread): Set frame->lmf.
+
+	* mini.h (StackFrameInfo): Add an 'lmf' field.
+
+2009-12-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (suspend_current): Always set really_suspended.
+
+2009-12-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (clear_event_request): Clear method entry/exit requests too.
+
+	* exceptions-x86.c (mono_arch_get_restore_context): Restore EAX too.
+
+2009-12-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (vm_commands): Don't allow invokes on threads which are not
+	really suspended.
+
+2009-12-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-ppc64.md (store_memindex): Add storei8_memindex.
+
+2009-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-trampolines.c: Fix MSVC build.
+
+	Backport of r147245.
+
 2009-12-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-trampolines.c: Check for mono_method_get_vtable_slot failures.

@@ -133,7 +133,7 @@ win32_handle_stack_overflow (EXCEPTION_POINTERS* ep, struct sigcontext *sctx)
 	do {
 		MonoContext new_ctx;
 
-		mono_arch_find_jit_info_ext (domain, jit_tls, &rji, &rji, &ctx, &new_ctx, &lmf, &frame);
+		mono_arch_find_jit_info_ext (domain, jit_tls, &rji, &ctx, &new_ctx, &lmf, &frame);
 		if (!frame.ji) {
 			g_warning ("Exception inside function without unwind info");
 			g_assert_not_reached ();
@@ -270,7 +270,7 @@ mono_arch_get_restore_context (void)
 		return start;
 
 	/* restore_contect (MonoContext *ctx) */
-	/* we do not restore X86_EAX, X86_EDX */
+	/* we do not restore X86_EDX */
 
 	start = code = mono_global_codeman_reserve (128);
 	
@@ -289,6 +289,8 @@ mono_arch_get_restore_context (void)
 	x86_mov_reg_membase (code, X86_ESP, X86_EAX,  G_STRUCT_OFFSET (MonoContext, esp), 4);
 	/* restore EBP */
 	x86_mov_reg_membase (code, X86_EBP, X86_EAX,  G_STRUCT_OFFSET (MonoContext, ebp), 4);
+	/* restore EAX */
+	x86_mov_reg_membase (code, X86_EAX, X86_EAX,  G_STRUCT_OFFSET (MonoContext, eax), 4);
 
 	/* jump to the saved IP */
 	x86_jump_reg (code, X86_EDX);

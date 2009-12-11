@@ -117,12 +117,14 @@ loadi2_memindex: dest:i src1:b src2:i len:4
 loadu2_memindex: dest:i src1:b src2:i len:4
 loadi4_memindex: dest:i src1:b src2:i len:4
 loadu4_memindex: dest:i src1:b src2:i len:4
+loadi8_memindex: dest:i src1:b src2:i len:4
 loadr4_memindex: dest:f src1:b src2:i len:4
 loadr8_memindex: dest:f src1:b src2:i len:4
 store_memindex: dest:b src1:i src2:i len:4
 storei1_memindex: dest:b src1:i src2:i len:4
 storei2_memindex: dest:b src1:i src2:i len:4
 storei4_memindex: dest:b src1:i src2:i len:4
+storei8_memindex: dest:b src1:i src2:i len:4
 storer4_memindex: dest:b src1:i src2:i len:8
 storer8_memindex: dest:b src1:i src2:i len:4
 loadu4_mem: dest:i len:8

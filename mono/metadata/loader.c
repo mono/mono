@@ -585,6 +585,7 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
 			guint32 cols [MONO_METHOD_SIZE];
 			MonoMethod *method;
 			const char *m_name;
+			MonoMethodSignature *other_sig;
 
 			mono_metadata_decode_table_row (klass->image, MONO_TABLE_METHOD, klass->method.first + i, cols, MONO_METHOD_SIZE);
 
@@ -596,7 +597,8 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
 				continue;
 
 			method = mono_get_method (klass->image, MONO_TOKEN_METHOD_DEF | (klass->method.first + i + 1), klass);
-			if (method && (sig->call_convention != MONO_CALL_VARARG) && mono_metadata_signature_equal (sig, mono_method_signature (method)))
+			other_sig = mono_method_signature (method);
+			if (method && other_sig && (sig->call_convention != MONO_CALL_VARARG) && mono_metadata_signature_equal (sig, other_sig))
 				return method;
 		}
 	}
@@ -990,6 +992,7 @@ method_from_memberref (MonoImage *image, guint32 idx, MonoGenericContext *typesp
 static MonoMethod *
 method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 idx)
 {
+	MonoError error;
 	MonoMethod *method;
 	MonoClass *klass;
 	MonoTableInfo *tables = image->tables;
@@ -1014,8 +1017,13 @@ method_from_methodspec (MonoImage *image, MonoGenericContext *context, guint32 i
 	g_assert (param_count);
 
 	inst = mono_metadata_parse_generic_inst (image, NULL, param_count, ptr, &ptr);
-	if (context && inst->is_open)
-		inst = mono_metadata_inflate_generic_inst (inst, context);
+	if (context && inst->is_open) {
+		inst = mono_metadata_inflate_generic_inst (inst, context, &error);
+		if (!mono_error_ok (&error)) {
+			mono_error_cleanup (&error); /*FIXME don't swallow error message.*/
+			return NULL;
+		}
+	}
 
 	if ((token & MONO_METHODDEFORREF_MASK) == MONO_METHODDEFORREF_METHODDEF)
 		method = mono_get_method_full (image, MONO_TOKEN_METHOD_DEF | nindex, NULL, context);
@@ -1488,6 +1496,8 @@ mono_get_method_from_token (MonoImage *image, guint32 token, MonoClass *klass,
 
 	if (!klass) { /*FIXME put this before the image alloc*/
 		guint32 type = mono_metadata_typedef_from_method (image, token);
+		if (!type)
+			return NULL;
 		klass = mono_class_get (image, MONO_TOKEN_TYPE_DEF | type);
 		if (klass == NULL)
 			return NULL;
@@ -2039,7 +2049,6 @@ mono_loader_lock_is_owned_by_self (void)
 MonoMethodSignature*
 mono_method_signature (MonoMethod *m)
 {
-	MonoError error;
 	int idx;
 	int size;
 	MonoImage* img;
@@ -2047,7 +2056,6 @@ mono_method_signature (MonoMethod *m)
 	gboolean can_cache_signature;
 	MonoGenericContainer *container;
 	MonoMethodSignature *signature = NULL;
-	int *pattrs;
 	guint32 sig_offset;
 
 	/* We need memory barriers below because of the double-checked locking pattern */ 
@@ -2092,16 +2100,8 @@ mono_method_signature (MonoMethod *m)
 	can_cache_signature = !(m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) && !(m->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) && !container;
 
 	/* If the method has parameter attributes, that can modify the signature */
-	pattrs = mono_metadata_get_param_attrs_checked (img, idx, &error);
-	if (!mono_error_ok (&error)) {
-		mono_error_cleanup (&error);
-		g_warning (mono_error_get_message (&error)); /*Since the error message is been swallowed let's produce a warning at least.*/
-		return NULL;
-	}
-	if (pattrs) {
+	if (mono_metadata_method_has_param_attrs (img, idx))
 		can_cache_signature = FALSE;
-		g_free (pattrs);
-	}
 
 	if (can_cache_signature)
 		signature = g_hash_table_lookup (img->method_signatures, sig);
@@ -2130,15 +2130,18 @@ mono_method_signature (MonoMethod *m)
 	if (signature->generic_param_count) {
 		if (!container || !container->is_method) {
 			g_warning ("Signature claims method has generic parameters, but generic_params table says it doesn't for method 0x%08x from image %s", idx, img->name);
+			mono_loader_unlock ();
 			return NULL;
 		}
 		if (container->type_argc != signature->generic_param_count) {
-			g_warning ("Inconsistent generic parameter count.  Signature says %d, generic_params table says %dfor method 0x%08x from image %s",
+			g_warning ("Inconsistent generic parameter count.  Signature says %d, generic_params table says %d for method 0x%08x from image %s",
 				 signature->generic_param_count, container->type_argc, idx, img->name);
+			mono_loader_unlock ();
 			return NULL;
 		}
 	} else if (container && container->is_method && container->type_argc) {
 		g_warning ("generic_params table claims method has generic parameters, but signature says it doesn't for method 0x%08x from image %s", idx, img->name);
+		mono_loader_unlock ();
 		return NULL;
 	}
 	if (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL)
@@ -2169,6 +2172,7 @@ mono_method_signature (MonoMethod *m)
 		case PINVOKE_ATTRIBUTE_CALL_CONV_GENERICINST:
 		default:
 			g_warning ("unsupported calling convention : 0x%04x for method 0x%08x from image %s", piinfo->piflags, idx, img->name);
+			mono_loader_unlock ();
 			return NULL;
 		}
 		signature->call_convention = conv;

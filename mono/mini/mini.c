@@ -250,7 +250,7 @@ mono_print_method_from_ip (void *ip)
 	MonoDomain *domain = mono_domain_get ();
 	FindTrampUserData user_data;
 	
-	ji = mono_jit_info_table_find (domain, ip);
+	ji = mini_jit_info_table_find (domain, ip, &domain);
 	if (!ji) {
 		user_data.ip = ip;
 		user_data.method = NULL;
@@ -3446,6 +3446,20 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->opt &= ~MONO_OPT_BRANCH;
 	}
 
+	/* todo: remove code when we have verified that the liveness for try/catch blocks
+	 * works perfectly 
+	 */
+	/* 
+	 * Currently, this can't be commented out since exception blocks are not
+	 * processed during liveness analysis.
+	 * It is also needed, because otherwise the local optimization passes would
+	 * delete assignments in cases like this:
+	 * r1 <- 1
+	 * <something which throws>
+	 * r1 <- 2
+	 */
+	mono_liveness_handle_exception_clauses (cfg);
+
 	/*g_print ("numblocks = %d\n", cfg->num_bblocks);*/
 
 	if (!COMPILE_LLVM (cfg))
@@ -3647,12 +3661,8 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		g_list_free (regs);
 	}
 
-	/* todo: remove code when we have verified that the liveness for try/catch blocks
-	 * works perfectly 
-	 */
-	/* 
-	 * Currently, this can't be commented out since exception blocks are not
-	 * processed during liveness analysis.
+	/*
+	 * Have to call this again to process variables added since the first call.
 	 */
 	mono_liveness_handle_exception_clauses (cfg);
 
@@ -4489,19 +4499,25 @@ mono_jit_runtime_invoke (MonoMethod *method, void *obj, void **params, MonoObjec
 	mono_domain_unlock (domain);		
 
 	if (!info) {
-		mono_class_setup_vtable (method->klass);
-		if (method->klass->exception_type != MONO_EXCEPTION_NONE) {
-			if (exc)
-				*exc = (MonoObject*)mono_class_get_exception_for_failure (method->klass);
-			else
-				mono_raise_exception (mono_class_get_exception_for_failure (method->klass));
-			return NULL;
+		if (mono_security_get_mode () == MONO_SECURITY_MODE_CORE_CLR) {
+			/* 
+			 * This might be redundant since mono_class_vtable () already does this,
+			 * but keep it just in case for moonlight.
+			 */
+			mono_class_setup_vtable (method->klass);
+			if (method->klass->exception_type != MONO_EXCEPTION_NONE) {
+				if (exc)
+					*exc = (MonoObject*)mono_class_get_exception_for_failure (method->klass);
+				else
+					mono_raise_exception (mono_class_get_exception_for_failure (method->klass));
+				return NULL;
+			}
 		}
 
 		info = g_new0 (RuntimeInvokeInfo, 1);
 
 		invoke = mono_marshal_get_runtime_invoke (method, FALSE);
-		info->vtable = mono_class_vtable (domain, method->klass);
+		info->vtable = mono_class_vtable_full (domain, method->klass, TRUE);
 		g_assert (info->vtable);
 
 		if (method->klass->rank && (method->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) &&
@@ -4938,7 +4954,6 @@ mini_create_jit_domain_info (MonoDomain *domain)
 	info->jump_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->jit_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->delegate_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
-	info->static_rgctx_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->llvm_vcall_trampoline_hash = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	info->runtime_invoke_hash = g_hash_table_new_full (mono_aligned_addr_hash, NULL, NULL, runtime_invoke_info_free);
 	info->seq_points = g_hash_table_new (mono_aligned_addr_hash, NULL);
@@ -4996,7 +5011,8 @@ mini_free_jit_domain_info (MonoDomain *domain)
 	g_hash_table_destroy (info->jump_trampoline_hash);
 	g_hash_table_destroy (info->jit_trampoline_hash);
 	g_hash_table_destroy (info->delegate_trampoline_hash);
-	g_hash_table_destroy (info->static_rgctx_trampoline_hash);
+	if (info->static_rgctx_trampoline_hash)
+		g_hash_table_destroy (info->static_rgctx_trampoline_hash);
 	g_hash_table_destroy (info->llvm_vcall_trampoline_hash);
 	g_hash_table_destroy (info->runtime_invoke_hash);
 

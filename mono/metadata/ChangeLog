@@ -1,3 +1,188 @@
+2009-12-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* loader.c (mono_method_signature): Always call mono_loader_unlock 
+	before returning.
+	[Backport r147991]
+
+2009-12-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c: Add mono_verifier_verify_string_signature to check
+	user string blobs.
+
+	* verify-internals.h: Add new function to the internal API.
+
+	* verify.c (do_ldstr): Call into mono_verifier_verify_string_signature to
+	check if it's a valid string.
+
+	* object.c (mono_ldstr): Ditto.
+
+	Fixes #561943.
+
+	Backport of r147941.
+
+2009-12-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_from_typeref): Bounds check idx against the 
+	assemblyref table.
+
+	Backport of r147797.
+
+2009-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	Applied patch from Laurent Etiemble (laurent.etiemble@gmail.com).
+
+	* mono/metadata/assembly.c: When opening an assembly image, pass the real
+	names in addition to the runtime generated one.
+
+	* mono/metadata/image.h: Add a function to take the real name of the assembly
+	image.
+
+	* mono/metadata/image.c: If a real name has been passed to load an assembly,
+	use it instead of the runtime generated one.
+
+	Code is contributed under MIT/X11 license.
+
+2009-12-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (emit_marshal_vtype): Do the klass == date_time_class checks
+	before the other checks to prevent problems if the DateTime class is blittable.
+	Hopefully fixes #559600.
+
+2009-12-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (find_method_in_class): Ignore methods with broken signatures.
+
+	Fixes #559906.
+
+	Backport of r147557.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (get_stack_type): Return that the type is invalid instead of
+	asserting.
+
+	* verify.c (mono_method_verify): Verify that all locals and arguments
+	have valid stack types.
+
+	Fixes #559913.
+
+	Backport of r147485.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Bounds check the filter offset. Make all
+	bounds checking overflow aware.
+
+	Fixes #559910.
+
+	Backport of r147472.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Check for invalid method signatures.
+
+	Fixes #553450.
+
+	Backport of r147464.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_fields): Fail an enum without an instance field.
+
+	Fixes #558042.
+
+	Backport of r147455.
+
+Wed Dec 2 16:35:49 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: remove asserts for invalid type token in
+	mono_class_name_from_token(), mono_assembly_name_from_token() and
+	mono_class_create_from_typedef () (fixes bug #553318).
+
+Wed Dec 2 15:48:19 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, class.c, loader.c: remove assert after bsearch() for
+	incorrect assemblies (bug #553322).
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (mono_metadata_inflate_generic_inst): Add MonoError parameter.
+
+	* metadata-internals.h: Change signature of mono_metadata_inflate_generic_inst. 
+
+	* class.c (inflate_generic_type): Use new version of mono_metadata_inflate_generic_inst.
+
+	* class.c (inflate_generic_context): Ditto.
+
+	* loader.c (method_from_methodspec): Ditto.
+
+	Fixes #558230.
+
+	Backport of r147436.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_type_retrieve_from_typespec): Use MonoError machinery to report errors.
+
+	* class.c (mono_class_create_from_typespec): Ditto.
+
+	* class.c (mono_class_get_full): Fix for change on the above 2 functions.
+
+	* class.c (mono_type_get_full): Fix for change on the above 2 functions.
+
+	Fixes #558184.
+
+	Backport of r147427.
+
+2009-12-02  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_class_has_default_constructor): Check fror broken signatures.
+
+	* verify.c (verify_delegate_compatibility): Ditto.
+
+	* verify.c (do_newobj): Ditto.
+
+	Fixes #558046.
+
+	Backport of r147422.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Check for catch clauses with broken
+	types.
+
+	Fixes #558465.
+
+	Backport of r147261.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (code_bounds_check): Do proper overflow checking.
+
+	* verify.c (mono_method_verify): The number of switch entries is
+	an unsigned int. Properly bounds check it.
+
+	Fixes #558594.
+
+	Backport of r147259.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c: Kill mono_metadata_get_param_attrs_checked. Add
+	mono_metadata_method_has_param_attrs which only checks if a given param
+	list has a non zero flags entry.
+
+	* metadata.c (mono_metadata_get_param_attrs): Add param_count parameter
+	to inform how many params should we expect to decode.
+
+	* loader.c (mono_method_signature): Use mono_metadata_method_has_param_attrs
+	as it's faster than mono_metadata_get_param_attrs.
+
+	* metadata-internals.h: Fix mono_metadata_get_param_attrs signature and
+	add mono_metadata_method_has_param_attrs.
+
+	Backport of r147244.
+
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_vtable_general): Check for mono_method_get_vtable_slot

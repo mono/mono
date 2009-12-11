@@ -113,6 +113,11 @@ typedef struct
 	MonoContext ctx;
 	MonoDebugMethodJitInfo *jit;
 	int flags;
+	/*
+	 * Whenever ctx is set. This is FALSE for the last frame of running threads, since
+	 * the frame can become invalid.
+	 */
+	gboolean has_ctx;
 } StackFrame;
 
 typedef struct
@@ -129,6 +134,7 @@ typedef struct
 	 */
 	MonoMethod *method;
 	gpointer *args;
+	guint32 suspend_count;
 } InvokeData;
 
 typedef struct {
@@ -180,6 +186,31 @@ typedef struct {
 	 * Number of times this thread has been resumed using resume_thread ().
 	 */
 	guint32 resume_count;
+
+	MonoInternalThread *thread;
+
+	/*
+	 * Information about the frame which transitioned to native code for running
+	 * threads.
+	 */
+	StackFrameInfo async_last_frame;
+
+	/*
+	 * The context where the stack walk can be started for running threads.
+	 */
+	MonoContext async_ctx;
+
+	gboolean has_async_ctx;
+
+	/*
+	 * The lmf where the stack walk can be started for running threads.
+	 */
+	gpointer async_lmf;
+
+	/*
+ 	 * The callee address of the last mono_runtime_invoke call
+	 */
+	gpointer invoke_addr;
 } DebuggerTlsData;
 
 /* 
@@ -490,6 +521,7 @@ static DebuggerProfiler debugger_profiler;
 
 /* The single step request instance */
 static MonoSingleStepReq *ss_req = NULL;
+static gpointer ss_invoke_addr = NULL;
 
 #ifdef MONO_ARCH_SOFT_DEBUG_SUPPORTED
 /* Number of single stepping operations in progress */
@@ -1672,6 +1704,36 @@ suspend_init (void)
 	MONO_SEM_INIT (&suspend_sem, 0);
 }
 
+typedef struct
+{
+	StackFrameInfo last_frame;
+	gboolean last_frame_set;
+	MonoContext ctx;
+	gpointer lmf;
+} GetLastFrameUserData;
+
+static gboolean
+get_last_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
+{
+	GetLastFrameUserData *data = user_data;
+
+	if (info->type == FRAME_TYPE_MANAGED_TO_NATIVE)
+		return FALSE;
+
+	if (!data->last_frame_set) {
+		/* Store the last frame */
+		memcpy (&data->last_frame, info, sizeof (StackFrameInfo));
+		data->last_frame_set = TRUE;
+		return FALSE;
+	} else {
+		/* Store the context/lmf for the frame above the last frame */
+		memcpy (&data->ctx, ctx, sizeof (MonoContext));
+		data->lmf = info->lmf;
+
+		return TRUE;
+	}
+}
+
 /*
  * mono_debugger_agent_thread_interrupt:
  *
@@ -1691,6 +1753,17 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 		return FALSE;
 
 	/*
+	 * OSX can (and will) coalesce signals, so sending multiple pthread_kills does not
+	 * guarantee the signal handler will be called that many times.  Instead of tracking
+	 * interrupt_count on osx, we use this as a boolean flag to determine if a interrupt
+	 * has been requested that hasn't been handled yet, otherwise we can have threads
+	 * refuse to die when VM_EXIT is called
+	 */
+#if defined(__APPLE__)
+	if (InterlockedCompareExchange (&tls->interrupt_count, 0, 1) == 0)
+		return FALSE;
+#else
+	/*
 	 * We use interrupt_count to determine whenever this interrupt should be processed
 	 * by us or the normal interrupt processing code in the signal handler.
 	 * There is no race here with notify_thread (), since the signal is sent after
@@ -1700,6 +1773,7 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 		return FALSE;
 
 	InterlockedDecrement (&tls->interrupt_count);
+#endif
 
 	// FIXME: Races when the thread leaves managed code before hitting a single step
 	// event.
@@ -1717,18 +1791,40 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 		 */
 		if (!tls->suspended && !tls->suspending) {
 			MonoContext ctx;
+			GetLastFrameUserData data;
 
-			/* 
-			 * FIXME: This is dangerous as the thread is not really suspended, but
-			 * without this, we can't print stack traces for threads executing
-			 * native code.
-			 * Maybe do a stack walk now, and save its result ?
-			 */
 			mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 			// FIXME: printf is not signal safe, but this is only used during
 			// debugger debugging
 			DEBUG (1, printf ("[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)GetCurrentThreadId (), mono_arch_ip_from_context (sigctx)));
-			save_thread_context (&ctx);
+			//save_thread_context (&ctx);
+
+			if (!tls->thread)
+				/* Already terminated */
+				return TRUE;
+
+			/*
+			 * We are in a difficult position: we want to be able to provide stack
+			 * traces for this thread, but we can't use the current ctx+lmf, since
+			 * the thread is still running, so it might return to managed code,
+			 * making these invalid.
+			 * So we start a stack walk and save the first frame, along with the
+			 * parent frame's ctx+lmf. This (hopefully) works because the thread will be 
+			 * suspended when it returns to managed code, so the parent's ctx should
+			 * remain valid.
+			 */
+			data.last_frame_set = FALSE;
+			mono_jit_walk_stack_from_ctx_in_thread (get_last_frame, mono_domain_get (), &ctx, FALSE, tls->thread, mono_get_lmf (), &data);
+			if (data.last_frame_set) {
+				memcpy (&tls->async_last_frame, &data.last_frame, sizeof (StackFrameInfo));
+				memcpy (&tls->async_ctx, &data.ctx, sizeof (MonoContext));
+				tls->async_lmf = data.lmf;
+				tls->has_async_ctx = TRUE;
+				tls->domain = mono_domain_get ();
+				memcpy (&tls->ctx, &ctx, sizeof (MonoContext));
+			} else {
+				tls->has_async_ctx = FALSE;
+			}
 
 			tls->suspended = TRUE;
 			MONO_SEM_POST (&suspend_sem);
@@ -1746,6 +1842,20 @@ static void CALLBACK notify_thread_apc (ULONG_PTR param)
 #endif /* HOST_WIN32 */
 
 /*
+ * reset_native_thread_suspend_state:
+ * 
+ *   Reset the suspended flag on native threads
+ */
+static void
+reset_native_thread_suspend_state (gpointer key, gpointer value, gpointer user_data)
+{
+	DebuggerTlsData *tls = value;
+
+	if (!tls->really_suspended && tls->suspended)
+		tls->suspended = FALSE;
+}
+
+/*
  * notify_thread:
  *
  *   Notify a thread that it needs to suspend.
@@ -1759,11 +1869,25 @@ notify_thread (gpointer key, gpointer value, gpointer user_data)
 
 	if (GetCurrentThreadId () != tid) {
 		DEBUG(1, fprintf (log_file, "[%p] Interrupting %p...\n", (gpointer)GetCurrentThreadId (), (gpointer)tid));
+
+		/*
+		 * OSX can (and will) coalesce signals, so sending multiple pthread_kills does not
+		 * guarantee the signal handler will be called that many times.  Instead of tracking
+		 * interrupt_count on osx, we use this as a boolean flag to determine if a interrupt
+		 * has been requested that hasn't been handled yet, otherwise we can have threads
+		 * refuse to die when VM_EXIT is called
+		 */
+#if defined(__APPLE__)
+		if (InterlockedCompareExchange (&tls->interrupt_count, 1, 0) == 1)
+			return;
+#else
 		/*
 		 * Maybe we could use the normal interrupt infrastructure, but that does a lot
 		 * of things like breaking waits etc. which we don't want.
 		 */
 		InterlockedIncrement (&tls->interrupt_count);
+#endif
+
 		/* This is _not_ equivalent to ves_icall_System_Threading_Thread_Abort () */
 #ifdef HOST_WIN32
 		QueueUserAPC (notify_thread_apc, thread->handle, NULL);
@@ -1862,6 +1986,7 @@ resume_vm (void)
 	if (suspend_count == 0) {
 		// FIXME: Is it safe to call this inside the lock ?
 		stop_single_stepping ();
+		mono_g_hash_table_foreach (thread_to_tls, reset_native_thread_suspend_state, NULL);
 	}
 
 	/* Signal this even when suspend_count > 0, since some threads might have resume_count > 0 */
@@ -1898,7 +2023,7 @@ resume_thread (MonoInternalThread *thread)
 
 	DEBUG(1, fprintf (log_file, "[%p] Resuming thread...\n", (gpointer)thread->tid));
 
-	tls->resume_count ++;
+	tls->resume_count += suspend_count;
 
 	/* 
 	 * Signal suspend_count without decreasing suspend_count, the threads will wake up
@@ -1960,10 +2085,10 @@ suspend_current (void)
 	mono_mutex_lock (&suspend_mutex);
 
 	tls->suspending = FALSE;
+	tls->really_suspended = TRUE;
 
 	if (!tls->suspended) {
 		tls->suspended = TRUE;
-		tls->really_suspended = TRUE;
 		MONO_SEM_POST (&suspend_sem);
 	}
 
@@ -2005,6 +2130,7 @@ suspend_current (void)
 
 	/* The frame info becomes invalid after a resume */
 	tls->has_context = FALSE;
+	tls->has_async_ctx = FALSE;
 	invalidate_frames (NULL);
 }
 
@@ -2155,7 +2281,10 @@ process_frame (StackFrameInfo *info, MonoContext *ctx, gpointer user_data)
 	frame = g_new0 (StackFrame, 1);
 	frame->method = method;
 	frame->il_offset = info->il_offset;
-	frame->ctx = *ctx;
+	if (ctx) {
+		frame->ctx = *ctx;
+		frame->has_ctx = TRUE;
+	}
 	frame->domain = info->domain;
 
 	ud->frames = g_slist_append (ud->frames, frame);
@@ -2179,7 +2308,14 @@ compute_frame_info (MonoInternalThread *thread, DebuggerTlsData *tls)
 
 	user_data.tls = tls;
 	user_data.frames = NULL;
-	if (tls->has_context) {
+	if (tls->terminated) {
+		tls->frame_count = 0;
+		return;
+	} if (!tls->really_suspended && tls->has_async_ctx) {
+		/* Have to use the state saved by the signal handler */
+		process_frame (&tls->async_last_frame, NULL, &user_data);
+		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, &tls->async_ctx, FALSE, thread, tls->async_lmf, &user_data);
+	} else if (tls->has_context) {
 		mono_jit_walk_stack_from_ctx_in_thread (process_frame, tls->domain, &tls->ctx, FALSE, thread, tls->lmf, &user_data);
 	} else {
 		// FIXME:
@@ -2537,6 +2673,8 @@ thread_startup (MonoProfiler *prof, gsize tid)
 	// FIXME: Free this somewhere
 	tls = g_new0 (DebuggerTlsData, 1);
 	tls->resume_event = CreateEvent (NULL, FALSE, FALSE, NULL);
+	MONO_GC_REGISTER_ROOT (tls->thread);
+	tls->thread = thread;
 	TlsSetValue (debugger_tls_id, tls);
 
 	DEBUG (1, fprintf (log_file, "[%p] Thread started, obj=%p, tls=%p.\n", (gpointer)tid, thread, tls));
@@ -2569,6 +2707,8 @@ thread_end (MonoProfiler *prof, gsize tid)
 		tls->terminated = TRUE;
 		mono_g_hash_table_remove (tid_to_thread_obj, (gpointer)tid);
 		/* Can't remove from tid_to_thread, as that would defeat the check in thread_start () */
+		MONO_GC_UNREGISTER_ROOT (tls->thread);
+		tls->thread = NULL;
 	}
 	mono_loader_unlock ();
 
@@ -2609,6 +2749,22 @@ assembly_unload (MonoProfiler *prof, MonoAssembly *assembly)
 static void
 start_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 {
+#if defined(HOST_WIN32) && !defined(__GNUC__)
+	gpointer stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));
+#else
+	gpointer stackptr = __builtin_frame_address (1);
+#endif
+	MonoInternalThread *thread = mono_thread_internal_current ();
+	DebuggerTlsData *tls;
+
+	mono_loader_lock ();
+	
+	tls = mono_g_hash_table_lookup (thread_to_tls, thread);
+	/* Could be the debugger thread with assembly/type load hooks */
+	if (tls)
+		tls->invoke_addr = stackptr;
+
+	mono_loader_unlock ();
 }
 
 static void
@@ -2618,10 +2774,10 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 #if defined(HOST_WIN32) && !defined(__GNUC__)
 	gpointer stackptr = ((guint64)_AddressOfReturnAddress () - sizeof (void*));
 #else
-	gpointer stackptr = __builtin_frame_address (0);
+	gpointer stackptr = __builtin_frame_address (1);
 #endif
 
-	if (ss_req == NULL || ss_req->start_sp > stackptr || ss_req->thread != mono_thread_internal_current ())
+	if (ss_req == NULL || stackptr != ss_invoke_addr || ss_req->thread != mono_thread_internal_current ())
 		return;
 
 	/*
@@ -2629,6 +2785,8 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 	 * a step out, it may return to native code, and thus never end.
 	 */
 	mono_loader_lock ();
+	ss_invoke_addr = NULL;
+
 	for (i = 0; i < event_requests->len; ++i) {
 		EventRequest *req = g_ptr_array_index (event_requests, i);
 
@@ -2640,7 +2798,6 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 		}
 	}
 	mono_loader_unlock ();
-
 }
 
 static void
@@ -2923,7 +3080,7 @@ set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req)
 	bp->req = req;
 	bp->children = g_ptr_array_new ();
 
-	DEBUG(1, fprintf (log_file, "[dbg] Setting breakpoint at %s:0x%x.\n", mono_method_full_name (method, TRUE), (int)il_offset));
+	DEBUG(1, fprintf (log_file, "[dbg] Setting breakpoint at %s:0x%x.\n", method ? mono_method_full_name (method, TRUE) : "<all>", (int)il_offset));
 
 	domain = mono_domain_get ();
 	mono_domain_lock (domain);
@@ -3341,6 +3498,17 @@ start_single_stepping (void)
 
 	if (val == 1)
 		mono_arch_start_single_stepping ();
+
+	if (ss_req != NULL && ss_invoke_addr == NULL) {
+		DebuggerTlsData *tls;
+	
+		mono_loader_lock ();
+	
+ 		tls = mono_g_hash_table_lookup (thread_to_tls, ss_req->thread);
+		ss_invoke_addr = tls->invoke_addr;
+		
+		mono_loader_unlock ();
+	}
 #else
 	g_assert_not_reached ();
 #endif
@@ -3542,6 +3710,8 @@ buffer_add_value (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain)
 		break;
 	case MONO_TYPE_I:
 	case MONO_TYPE_U:
+		/* Treat it as a vtype */
+		goto handle_vtype;
 	case MONO_TYPE_PTR: {
 		gssize val = *(gssize*)addr;
 		
@@ -3815,6 +3985,10 @@ clear_event_request (int req_id, int etype)
 				clear_breakpoint (req->info);
 			if (req->event_kind == EVENT_KIND_STEP)
 				ss_stop (req);
+			if (req->event_kind == EVENT_KIND_METHOD_ENTRY)
+				clear_breakpoint (req->info);
+			if (req->event_kind == EVENT_KIND_METHOD_EXIT)
+				clear_breakpoint (req->info);
 			g_ptr_array_remove_index_fast (event_requests, i);
 			g_free (req);
 			break;
@@ -4052,7 +4226,7 @@ invoke_method (void)
 
 	if (invoke->flags & INVOKE_FLAG_SINGLE_THREADED) {
 		g_assert (tls->resume_count);
-		tls->resume_count --;
+		tls->resume_count -= invoke->suspend_count;
 	}
 
 	DEBUG (1, printf ("[%p] Invoke finished, resume_count = %d.\n", (gpointer)GetCurrentThreadId (), tls->resume_count));
@@ -4236,6 +4410,10 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		mono_loader_unlock ();
 		g_assert (tls);
 
+		if (!tls->really_suspended)
+			/* The thread is still running native code, can't do invokes */
+			return ERR_NOT_SUSPENDED;
+
 		/* 
 		 * Store the invoke data into tls, the thread will execute it after it is
 		 * resumed.
@@ -4248,6 +4426,7 @@ vm_commands (int command, int id, guint8 *p, guint8 *end, Buffer *buf)
 		tls->invoke->p = g_malloc (end - p);
 		memcpy (tls->invoke->p, p, end - p);
 		tls->invoke->endp = tls->invoke->p + (end - p);
+		tls->invoke->suspend_count = suspend_count;
 
 		if (flags & INVOKE_FLAG_SINGLE_THREADED)
 			resume_thread (THREAD_TO_INTERNAL (thread));
@@ -5312,6 +5491,10 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 		return ERR_INVALID_FRAMEID;
 
 	frame = tls->frames [i];
+
+	if (!frame->has_ctx)
+		// FIXME:
+		return ERR_INVALID_FRAMEID;
 
 	if (!frame->jit) {
 		frame->jit = mono_debug_find_method (frame->method, frame->domain);

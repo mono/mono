@@ -466,7 +466,8 @@ mono_metadata_parse_mh_full                 (MonoImage             *image,
 					     MonoGenericContainer  *container,
 					     const char            *ptr);
 
-int* mono_metadata_get_param_attrs          (MonoImage *m, int def);
+int* mono_metadata_get_param_attrs          (MonoImage *m, int def, int param_count) MONO_INTERNAL;
+gboolean mono_metadata_method_has_param_attrs (MonoImage *m, int def) MONO_INTERNAL;
 
 guint
 mono_metadata_generic_context_hash          (const MonoGenericContext *context) MONO_INTERNAL;
@@ -491,9 +492,7 @@ mono_metadata_lookup_generic_class          (MonoClass		   *gclass,
 					     MonoGenericInst	   *inst,
 					     gboolean		    is_dynamic) MONO_INTERNAL;
 
-MonoGenericInst *
-mono_metadata_inflate_generic_inst          (MonoGenericInst       *ginst,
-					     MonoGenericContext    *context) MONO_INTERNAL;
+MonoGenericInst * mono_metadata_inflate_generic_inst  (MonoGenericInst *ginst, MonoGenericContext *context, MonoError *error) MONO_INTERNAL;
 
 void mono_dynamic_stream_reset  (MonoDynamicStream* stream) MONO_INTERNAL;
 void mono_assembly_addref       (MonoAssembly *assembly) MONO_INTERNAL;
@@ -562,8 +561,6 @@ gboolean mono_image_load_cli_data (MonoImage *image) MONO_INTERNAL;
 void mono_image_load_names (MonoImage *image) MONO_INTERNAL;
 
 MonoImage *mono_image_open_raw (const char *fname, MonoImageOpenStatus *status) MONO_INTERNAL;
-
-int* mono_metadata_get_param_attrs_checked (MonoImage *m, int def, MonoError *error) MONO_INTERNAL;
 
 #endif /* __MONO_METADATA_INTERNALS_H__ */
 
