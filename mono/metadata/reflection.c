@@ -1629,9 +1629,10 @@ fieldref_encode_signature (MonoDynamicImage *assembly, MonoImage *field_image, M
 	/* encode custom attributes before the type */
 	if (type->num_mods) {
 		for (i = 0; i < type->num_mods; ++i) {
-			if (field_image) {
+			if (field_image && (type->modifiers [i].token & 0xff000000)) {
 				MonoClass *class = mono_class_get (field_image, type->modifiers [i].token);
-				g_assert (class);
+				if (!class)
+					g_error ("Can't lookup custom mod token %08x", type->modifiers [i].token);
 				token = mono_image_typedef_or_ref (assembly, &class->byval_arg);
 			} else {
 				token = type->modifiers [i].token;

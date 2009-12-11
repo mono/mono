@@ -1,3 +1,10 @@
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (fieldref_encode_signature): For some reason 2.4 doesn't
+	behave like 2.8 on this part. So add an extra guard for the token kind.
+
+	Fixes #563909.
+
 2009-12-05  Zoltan Varga  <vargaz@gmail.com>
 
 	Applied patch from Laurent Etiemble (laurent.etiemble@gmail.com).
