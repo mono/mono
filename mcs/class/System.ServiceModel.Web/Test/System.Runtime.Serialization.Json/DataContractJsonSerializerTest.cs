@@ -1256,6 +1256,22 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.AreEqual (@"{""Bar"":null,""Foo"":""foo""}", s, "#1");
 		}
 
+		[Test]
+		public void TestNonpublicDeserialization ()
+		{
+			string s1= @"{""Bar"":""bar"", ""Foo"":""foo"", ""Baz"":""baz""}";
+			TestData o1 = ((TestData)(new DataContractJsonSerializer (typeof (TestData)).ReadObject (JsonReaderWriterFactory.CreateJsonReader (Encoding.UTF8.GetBytes (s1), new XmlDictionaryReaderQuotas ()))));
+
+			Assert.AreEqual (null, o1.Baz, "#1");
+
+                        string s2 = @"{""TestData"":[{""key"":""key1"",""value"":""value1""}]}";
+                        KeyValueTestData o2 = ((KeyValueTestData)(new DataContractJsonSerializer (typeof (KeyValueTestData)).ReadObject (JsonReaderWriterFactory.CreateJsonReader (Encoding.UTF8.GetBytes (s2), new XmlDictionaryReaderQuotas ()))));
+
+			Assert.AreEqual (1, o2.TestData.Count, "#2");
+			Assert.AreEqual ("key1", o2.TestData[0].Key, "#3");
+			Assert.AreEqual ("value1", o2.TestData[0].Value, "#4");
+		}
+
 		// [Test] use this case if you want to check lame silverlight parser behavior. Seealso #549756
 		public void QuotelessDeserialization ()
 		{
@@ -1418,6 +1434,12 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		[DataMember]
 		string Member1 = "foo";
 	}
+
+	[Serializable]
+	public class KeyValueTestData {
+		public List<KeyValuePair<string,string>> TestData = new List<KeyValuePair<string,string>>();
+	}
+
 }
 
 [DataContract]
