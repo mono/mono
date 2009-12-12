@@ -2053,7 +2053,7 @@ mono_llvm_emit_method (MonoCompile *cfg)
 					LLVM_FAILURE (ctx, "rgctx reg");
 				}
 
-				pindexes = mono_mempool_alloc0 (cfg->mempool, sig->param_count + 2);
+				pindexes = mono_mempool_alloc0 (cfg->mempool, (sig->param_count + 2) * sizeof (guint32));
 
 				/* FIXME: Avoid creating duplicate methods */
 

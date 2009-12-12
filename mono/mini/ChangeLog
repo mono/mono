@@ -1,5 +1,10 @@
 2009-12-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Allocate the 'pindexes' array with the
+	proper size.
+
+2009-12-12  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c: Encode the this argument of vtype methods as a struct, not
 	as a primitive type.
 
