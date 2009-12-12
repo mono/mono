@@ -1,5 +1,8 @@
 #include System.Web.dll.sources
 
+System.Web/IHtmlString.cs
+System.Web/HtmlString.cs
+
 System.Web.Routing/PageRouteHandler.cs
 System.Web.UI.WebControls/IDataBoundControl.cs
 System.Web.UI.WebControls/IDataBoundItemControl.cs
