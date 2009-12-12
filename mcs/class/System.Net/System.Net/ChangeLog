@@ -1,3 +1,9 @@
+2009-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WebClient_2_1.cs: When creating the request we need to copy over
+	any headers the user set on us. We also need to wrap
+	InvalidOperationExceptions in WebExceptions.
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* HttpStatusCode_2_1.cs: Remove. SL3 provides all status code 
