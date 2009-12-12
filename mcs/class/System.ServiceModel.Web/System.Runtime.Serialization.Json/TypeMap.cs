@@ -84,9 +84,28 @@ namespace System.Runtime.Serialization.Json
 			var l = new List<TypeMapMember> ();
 			foreach (var fi in type.GetFields ())
 				l.Add (new TypeMapField (fi, null));
-			foreach (var pi in type.GetProperties (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance))
+
+			PropertyInfo[] properties;
+
+			// FIXME: this hack for property visibility
+			// emulates some of the special case code MS
+			// has.  a stack trace seen in testing showed
+			// a method called
+			// ReadKeyValuePairOfstringstringFromJson, so
+			// presumably they're dynamically creating
+			// methods to deserialize certain (possibly
+			// all generic?) types from json.
+
+			// see DataContractJsonSerializerTest.TestNonpublicDeserialization.
+			if (type == typeof (KeyValuePair<,>))
+				properties = type.GetProperties (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+			else 
+				properties = type.GetProperties ();
+
+			foreach (var pi in properties) {
 				if (pi.CanRead && pi.CanWrite)
 					l.Add (new TypeMapProperty (pi, null));
+			}
 			l.Sort ((x, y) => x.Order != y.Order ? x.Order - y.Order : String.Compare (x.Name, y.Name, StringComparison.Ordinal));
 			return new TypeMap (type, null, l.ToArray ());
 		}
@@ -280,6 +299,7 @@ namespace System.Runtime.Serialization.Json
 
 		public override void SetMemberValue (object owner, object value)
 		{
+			Console.Error.WriteLine ("SetMemberValue ({0},{1}", property, value);
 			property.SetValue (owner, value, null);
 		}
 	}
