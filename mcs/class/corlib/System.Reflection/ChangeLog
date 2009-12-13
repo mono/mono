@@ -1,3 +1,8 @@
+2009-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs: Change it to support a non-sre generic type
+	definition.
+
 2009-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs: Add new register_with_runtime icall to make

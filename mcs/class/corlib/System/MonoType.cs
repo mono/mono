@@ -89,10 +89,19 @@ namespace System
 								       Type[] types,
 								       ParameterModifier[] modifiers)
 		{
+			ConstructorInfo[] methods = GetConstructors (bindingAttr);
+			return GetConstructorImpl (methods, bindingAttr, binder, callConvention, types, modifiers);
+		}
+
+		internal static ConstructorInfo GetConstructorImpl (ConstructorInfo[] methods, BindingFlags bindingAttr,
+								       Binder binder,
+								       CallingConventions callConvention,
+								       Type[] types,
+								       ParameterModifier[] modifiers)
+		{
 			if (bindingAttr == BindingFlags.Default)
 				bindingAttr = BindingFlags.Public | BindingFlags.Instance;
 
-			ConstructorInfo[] methods = GetConstructors (bindingAttr);
 			ConstructorInfo found = null;
 			MethodBase[] match;
 			int count = 0;
@@ -675,7 +684,7 @@ namespace System
 			return res;
 		}
 
-		private MethodBase CheckMethodSecurity (MethodBase mb)
+		static MethodBase CheckMethodSecurity (MethodBase mb)
 		{
 #if NET_2_1
 			return mb;

@@ -1,5 +1,21 @@
 2009-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* AssemblyBuilder.cs (MakeGenericType): Accept a Type as argument.
+
+	* ConstructorOnTypeBuilderInst.cs: Change it to support an underlying
+	non-sre constructor.
+
+	* MethodOnTypeBuilderInst.cs: Change it to support an underlying
+	non-sre method.
+
+	* FieldOnTypeBuilderInst.cs: Change it to support an underlying
+	non-sre field.
+
+	* EventOnTypeBuilderInst.cs: Change it to support an underlying
+	non-sre event.
+
+2009-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* AssemblyBuilder.cs: Add MakeGenericType method while takes care of doing
 	generic instance canonicalization under compiler context.
 

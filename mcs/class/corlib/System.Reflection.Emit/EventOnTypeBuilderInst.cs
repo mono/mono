@@ -40,46 +40,57 @@ namespace System.Reflection.Emit
 	internal class EventOnTypeBuilderInst : EventInfo
 	{
 		MonoGenericClass instantiation;
-		EventBuilder evt;
+		EventBuilder event_builder;
+		EventInfo event_info;
 
 		internal EventOnTypeBuilderInst (MonoGenericClass instantiation, EventBuilder evt)
 		{
 			this.instantiation = instantiation;
-			this.evt = evt;
+			this.event_builder = evt;
+		}
+
+		internal EventOnTypeBuilderInst (MonoGenericClass instantiation, EventInfo evt)
+		{
+			this.instantiation = instantiation;
+			this.event_info = evt;
 		}
 
 		public override EventAttributes Attributes {
-			get { return evt.attrs; }
+			get { return event_builder != null ? event_builder.attrs : event_info.Attributes; }
 		}
 
 		public override MethodInfo GetAddMethod (bool nonPublic)
 		{
-			if (evt.add_method == null || (!nonPublic && !evt.add_method.IsPublic))
+			MethodInfo add = event_builder != null ? event_builder.add_method : event_info.GetAddMethod (nonPublic);
+			if (add == null || (!nonPublic && !add.IsPublic))
 				return null;
-			return TypeBuilder.GetMethod (instantiation, evt.add_method);
+			return TypeBuilder.GetMethod (instantiation, add);
 		}
 
 		public override MethodInfo GetRaiseMethod (bool nonPublic)
 		{
-			if (evt.raise_method == null || (!nonPublic && !evt.raise_method.IsPublic))
+			MethodInfo raise = event_builder != null ? event_builder.raise_method : event_info.GetRaiseMethod (nonPublic);
+			if (raise == null || (!nonPublic && !raise.IsPublic))
 				return null;
-			return TypeBuilder.GetMethod (instantiation, evt.raise_method);
+			return TypeBuilder.GetMethod (instantiation, raise);
 		}
 
 		public override MethodInfo GetRemoveMethod (bool nonPublic)
 		{
-			if (evt.remove_method == null || (!nonPublic && !evt.remove_method.IsPublic))
+			MethodInfo remove = event_builder != null ? event_builder.remove_method : event_info.GetRemoveMethod (nonPublic);
+			if (remove == null || (!nonPublic && !remove.IsPublic))
 				return null;
-			return TypeBuilder.GetMethod (instantiation, evt.remove_method);
+			return TypeBuilder.GetMethod (instantiation, remove);
 		}
 
 		public override MethodInfo[] GetOtherMethods (bool nonPublic)
 		{
-			if (evt.other_methods == null)
+			MethodInfo[] other = event_builder != null ? event_builder.other_methods : event_info.GetOtherMethods (nonPublic);
+			if (other == null)
 				return new MethodInfo [0];
 
 			ArrayList ar = new ArrayList ();
-			foreach (MethodInfo method in evt.other_methods) {
+			foreach (MethodInfo method in other) {
 				if (nonPublic || method.IsPublic)
 					ar.Add (TypeBuilder.GetMethod (instantiation, method));
 			}
@@ -93,7 +104,7 @@ namespace System.Reflection.Emit
 		}
 
 		public override string Name {
-			get { return evt.name; }
+			get { return event_builder != null ? event_builder.name : event_info.Name; }
 		}
 
 		public override Type ReflectedType {

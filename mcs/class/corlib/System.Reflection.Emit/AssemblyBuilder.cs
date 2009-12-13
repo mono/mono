@@ -1162,7 +1162,7 @@ namespace System.Reflection.Emit
 		}
 
 		/*Warning, @typeArguments must be a mscorlib internal array. So make a copy before passing it in*/
-		internal Type MakeGenericType (TypeBuilder gtd, Type[] typeArguments)
+		internal Type MakeGenericType (Type gtd, Type[] typeArguments)
 		{
 			if (!IsCompilerContext)
 				return new MonoGenericClass (gtd, typeArguments);

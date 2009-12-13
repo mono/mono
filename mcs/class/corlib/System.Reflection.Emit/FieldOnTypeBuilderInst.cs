@@ -40,10 +40,10 @@ namespace System.Reflection.Emit
 	{
 		#region Keep in sync with object-internals.h
 		internal MonoGenericClass instantiation;
-		internal FieldBuilder fb;
+		internal FieldInfo fb;
 		#endregion
 
-		public FieldOnTypeBuilderInst (MonoGenericClass instantiation, FieldBuilder fb) {
+		public FieldOnTypeBuilderInst (MonoGenericClass instantiation, FieldInfo fb) {
 			this.instantiation = instantiation;
 			this.fb = fb;
 		}

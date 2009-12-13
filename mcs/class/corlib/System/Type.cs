@@ -1198,6 +1198,25 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		static extern Type MakeGenericType (Type gt, Type [] types);
 
+		static AssemblyBuilder PeelAssemblyBuilder (Type type)
+		{
+			if (type.Assembly is AssemblyBuilder)
+				return (AssemblyBuilder)type.Assembly;
+
+			if (type.HasElementType)
+				return PeelAssemblyBuilder (type.GetElementType ());
+
+			if (!type.IsGenericType || type.IsGenericParameter || type.IsGenericTypeDefinition)
+				return null;
+
+			foreach (Type arg in type.GetGenericArguments ()) {
+				AssemblyBuilder ab = PeelAssemblyBuilder (arg);
+				if (ab != null)
+					return ab;
+			}
+			return null;
+		}
+
 		public virtual Type MakeGenericType (params Type[] typeArguments)
 		{
 			if (IsUserType)
@@ -1209,16 +1228,26 @@ namespace System {
 			if (GetGenericArguments().Length != typeArguments.Length)
 				throw new ArgumentException (String.Format ("The type or method has {0} generic parameter(s) but {1} generic argument(s) where provided. A generic argument must be provided for each generic parameter.", GetGenericArguments ().Length, typeArguments.Length), "typeArguments");
 
+			bool hasUserType = false;
+			AssemblyBuilder compilerContext = null;
+
 			Type[] systemTypes = new Type[typeArguments.Length];
 			for (int i = 0; i < typeArguments.Length; ++i) {
 				Type t = typeArguments [i];
 				if (t == null)
 					throw new ArgumentNullException ("typeArguments");
-				if (!(t is EnumBuilder || t is TypeBuilder))
-					t = t.UnderlyingSystemType;
-				if (t == null || !t.IsSystemType)
-					throw new ArgumentNullException ("typeArguments");
+
+				if (!(t is MonoType))
+					hasUserType = true;
+				if (t.IsCompilerContext)
+					compilerContext = PeelAssemblyBuilder (t);
 				systemTypes [i] = t;
+			}
+
+			if (hasUserType) {
+				if (compilerContext != null)
+					return compilerContext.MakeGenericType (this, typeArguments);
+				return new MonoGenericClass (this, typeArguments);
 			}
 
 			Type res = MakeGenericType (this, systemTypes);

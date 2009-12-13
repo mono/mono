@@ -1,3 +1,11 @@
+2009-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoType.cs: Make the GetConstructorImpl machinery available
+	to be used by others.
+
+	* Type.cs (MakeGenericType): Is any of the arguments is not a system
+	type create an instance of MonoGenericClass instead. 
+
 2009-12-09  Jb Evain  <jbevain@novell.com>
 
 	* StringComparer.cs (GetHashCode): properly throw

@@ -47,18 +47,10 @@ namespace System.Reflection.Emit
 		MethodInfo generic_method_definition;
 		int is_compiler_context = -1;
 
-		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodBuilder base_method)
+		public MethodOnTypeBuilderInst (MonoGenericClass instantiation, MethodInfo base_method)
 		{
 			this.instantiation = instantiation;
 			this.base_method = base_method;
-		}
-
-		internal MethodOnTypeBuilderInst (MethodBuilder base_method, Type[] typeArguments)
-		{
-			this.instantiation = base_method.TypeBuilder;
-			this.base_method = base_method;
-			this.method_arguments = new Type [typeArguments.Length];
-			typeArguments.CopyTo (this.method_arguments, 0);
 		}
 
 		internal MethodOnTypeBuilderInst (MethodOnTypeBuilderInst gmd, Type[] typeArguments)
@@ -76,7 +68,8 @@ namespace System.Reflection.Emit
 			this.base_method = ExtractBaseMethod (method);
 			this.method_arguments = new Type [typeArguments.Length];
 			typeArguments.CopyTo (this.method_arguments, 0);
-			this.generic_method_definition = method;
+			if (base_method != method)
+				this.generic_method_definition = method;
 		}
 
 		static MethodInfo ExtractBaseMethod (MethodInfo info)
@@ -151,17 +144,23 @@ namespace System.Reflection.Emit
 
 		public override bool IsDefined (Type attributeType, bool inherit)
 		{
-			throw new NotSupportedException ();
+			if (!IsCompilerContext)
+				throw new NotSupportedException ();
+			return base_method.IsDefined (attributeType, inherit);
 		}
 
 		public override object [] GetCustomAttributes (bool inherit)
 		{
-			throw new NotSupportedException ();
+			if (!IsCompilerContext)
+				throw new NotSupportedException ();
+			return base_method.GetCustomAttributes (inherit);
 		}
 
 		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
 		{
-			throw new NotSupportedException ();
+			if (!IsCompilerContext)
+				throw new NotSupportedException ();
+			return base_method.GetCustomAttributes (attributeType, inherit);
 		}
 
 		public override string ToString ()
