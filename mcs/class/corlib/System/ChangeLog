@@ -1,5 +1,9 @@
 2009-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Environment.cs: Bump corlib version.
+
+2009-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoType.cs: Make the GetConstructorImpl machinery available
 	to be used by others.
 

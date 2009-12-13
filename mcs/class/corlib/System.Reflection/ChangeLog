@@ -1,5 +1,9 @@
 2009-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoGenericClass.cs: Remove useless field.
+
+2009-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoGenericClass.cs: Change it to support a non-sre generic type
 	definition.
 

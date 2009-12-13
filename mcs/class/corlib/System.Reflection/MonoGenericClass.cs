@@ -51,8 +51,6 @@ namespace System.Reflection
 	{
 		#region Keep in sync with object-internals.h
 #pragma warning disable 649
-		/*Hack do keep layout equals as of extending MonoType FIXME: remove this on the corlib version bump. */
-		object mono_type_placeholder;
 		internal Type generic_type;
 		Type[] type_arguments;
 		bool initialized;
