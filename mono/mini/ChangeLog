@@ -1,5 +1,10 @@
 2009-12-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_eh_frame): Initialize the clauses from the info in the
+	FDE.
+
+	* unwind.c (mono_unwind_decode_fde): Implement decoding of a couple more formats.
+
 	* mini-llvm.c: Export mono_personality for AOT.
 
 	* mini.c (mini_method_compile): Fix some problems with llvm+aot+clauses.
