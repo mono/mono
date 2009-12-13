@@ -1,5 +1,8 @@
 2009-12-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c mini-llvm.c: Fix support for monitor enter/exit trampolines
+	in the LLVM backend on AMD64.
+
 	* aot-runtime.c (decode_eh_frame): Initialize the clauses from the info in the
 	FDE.
 
