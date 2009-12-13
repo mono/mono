@@ -1,5 +1,18 @@
 2009-12-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ops.h (OP_IMPLICIT_EXCEPTION): New opcode marking the place where an
+	implicit exception can occur.
+
+	* ir-emit.h (MONO_EMIT_NEW_IMPLICIT_EXCEPTION): New macro to emit an
+	OP_IMPLICIT_EXCEPTION instruction.
+
+	* ir-emit.h (MONO_EMIT_NEW_CHECK_THIS): New macro.
+
+	* method-to-ir.c: Use MONO_EMIT_NEW_CHECK_THIS in a few places.
+
+	* mini-llvm.c: Handle OP_IMPLICIT_EXCEPTION by disabling llvm if it occurs
+	inside a protected block.
+
 	* mini-llvm.c: Revert the last change, the signature of monitor entry/exit
 	trampolines doesn't include the argument.
 
