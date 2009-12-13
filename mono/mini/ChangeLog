@@ -1,5 +1,10 @@
 2009-12-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Add some comments as to why LLVM is currently
+	disabled for methods with clauses.
+
+	* mini-llvm.c: Enable support for catch clauses.
+
 	* mini-exceptions.c (mono_resume_unwind): New function to resume unwinding at the
 	end of an LLVM compiled finally clause.
 	(mono_handle_exception_internal): Save the exception handling state in TLS
