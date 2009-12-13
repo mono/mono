@@ -1,5 +1,8 @@
 2009-12-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c: Revert the last change, the signature of monitor entry/exit
+	trampolines doesn't include the argument.
+
 	* mini-llvm.c (mono_llvm_emit_method): Enable calls to monitor entry/exit
 	trampolines on amd64.
 
