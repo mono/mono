@@ -1,5 +1,11 @@
 2009-12-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object-internals.h: Remove useless field from MonoReflectionGenericClass.
+
+	* appdomain.c: Bump corlib version.
+
+2009-12-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	To properly support user types, MonoGenericClass has to be used for regular, non SRE,
 	types as well since otherwise generic instances would not return UT as arguments but
 	their undelying system type.
