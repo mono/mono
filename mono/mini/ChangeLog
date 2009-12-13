@@ -1,3 +1,21 @@
+2009-12-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_resume_unwind): New function to resume unwinding at the
+	end of an LLVM compiled finally clause.
+	(mono_handle_exception_internal): Save the exception handling state in TLS
+	before calling an LLVM compiled finally clause, so mono_resume_unwind () can
+	resume unwinding from that point.
+
+	* unwind.c (mono_unwind_get_ops_from_fde): Rename this to
+	mono_unwind_decode_fde, decode the Language Specific Data Area (LSDA) too,
+	to obtain the addresses of the exception handling regions.
+
+	* mini-llvm.c: Add beginnings of support for exception handling, currently only
+	finally clauses are supported.
+
+	* mini.c (mini_method_compile): Add support for LLVM code with exception
+	handlers.
+
 2009-12-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Allocate the 'pindexes' array with the
