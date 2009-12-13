@@ -1,3 +1,30 @@
+2009-12-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	To properly support user types, MonoGenericClass has to be used for regular, non SRE,
+	types as well since otherwise generic instances would not return UT as arguments but
+	their undelying system type.
+
+	* object-internals.h: Change field types of MonoGenericClass and *OnTypeBuilderInst
+	to reflect the fact that they can have now multiple different types.
+
+	* reflection.c (mono_image_get_field_on_inst_token): Handle MonoField.
+
+	* reflection.c (mono_image_get_ctor_on_inst_token): Handle MonoCMethod.
+
+	* reflection.c (mono_image_get_method_on_inst_token): Handle MonoMethod.
+
+	* reflection.c (mono_reflection_register_with_runtime): Init super types
+	if the image is not dynamic.
+
+	* reflection.c (mono_reflection_bind_generic_parameters): In case of a MonoGenericClass,
+	check if the generic type definition is a TypeBuilder.
+
+	* reflection.c (mono_reflection_generic_class_initialize): If the generic type definition
+	doesn't belong to a dynamic image, skip initialization.
+
+	* reflection.c (resolve_object): Properly handle *OnTypeBuilderInst types where their
+	base definition is not a dynamic type.
+
 2009-12-11  Marek Habersack  <mhabersack@novell.com>
 
 	* object.c (mono_ldstr, mono_ldstr_metadata_sig): added calls to
