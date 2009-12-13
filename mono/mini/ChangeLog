@@ -1,3 +1,13 @@
+2009-12-13 Jonathan Chambers <joncham@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Handle a NULL
+	sigctx being passed in, as we have no CONTEXT available in the APC.
+	
+	(mono_debugger_agent_cleanup): Use explicit cond wait implementation
+	for now.
+
+	Code contributed under MIT/X11 license.
+
 2009-12-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c mini-llvm.c: Fix support for monitor enter/exit trampolines
