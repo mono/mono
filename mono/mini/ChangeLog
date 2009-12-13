@@ -1,5 +1,11 @@
 2009-12-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Enable calls to monitor entry/exit
+	trampolines on amd64.
+
+	* mini-amd64.h (MONO_ARCH_MONITOR_OBJECT_REG): Use MONO_AMD64_ARG_REG1 instead
+	of RDI.
+
 	* mini.c (mini_method_compile): Add some comments as to why LLVM is currently
 	disabled for methods with clauses.
 
