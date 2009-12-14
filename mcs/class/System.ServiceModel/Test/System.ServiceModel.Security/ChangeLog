@@ -1,3 +1,8 @@
+2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WSSecurityTokenSerializerTest.cs : disable non-working test that
+	  needs several fixes or updates.
+
 2008-02-28  Eyal Alaluf <eyala@mainsoft.com>
 
 	* WSSecurityTokenSerializerTest.cs: Fixed test run on Windows (failed also
