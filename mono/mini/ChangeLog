@@ -2797,6 +2797,12 @@ Wed Jan 13 15:54:53 CET 2010 Paolo Molaro <lupus@ximian.com>
 	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Fix the LLVM support
 	by merging the LLVM and !MAP_32BIT cases.
 
+2009-12-14  Geoff Norton  <gnorton@novell.com>
+
+	* debugger-agent.c: The end_runtime_invoke guard isn't working on 
+	AMD64 as __builtin_frame_address (1) returns NULL.  Disable the 
+	behaviour by default, and make it runtime configurable.
+	
 2009-12-13 Jonathan Chambers <joncham@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Handle a NULL
