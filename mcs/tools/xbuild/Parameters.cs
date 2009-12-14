@@ -224,20 +224,18 @@ namespace Mono.XBuild.CommandLine {
 		
 		internal void ProcessTarget (string s)
 		{
-			string[] temp = s.Split (':');
-			targets = temp [1].Split (';');
+			TryProcessMultiOption (s, "Target names must be specified as /t:Target1;Target2",
+						out targets);
 		}
 		
 		internal bool ProcessProperty (string s)
 		{
-			int colon = s.IndexOf (':');
-			if (colon + 1 == s.Length) {
-				ErrorUtilities.ReportError (5, "Property name and value expected as /p:<prop name>=<prop value>");
+			string[] splitProperties;
+			if (!TryProcessMultiOption (s, "Property name and value expected as /p:<prop name>=<prop value>",
+						out splitProperties))
 				return false;
-			}
 
-			string [] splittedProperties = s.Substring (colon + 1).Split (';');
-			foreach (string st in splittedProperties) {
+			foreach (string st in splitProperties) {
 				if (st.IndexOf ('=') < 0) {
 					ErrorUtilities.ReportError (5,
 							"Invalid syntax. Property name and value expected as " +
@@ -250,7 +248,20 @@ namespace Mono.XBuild.CommandLine {
 
 			return true;
 		}
-		
+
+		bool TryProcessMultiOption (string s, string error_message, out string[] values)
+		{
+			values = null;
+			int colon = s.IndexOf (':');
+			if (colon + 1 == s.Length) {
+				ErrorUtilities.ReportError (5, error_message);
+				return false;
+			}
+
+			values = s.Substring (colon + 1).Split (';');
+			return true;
+		}
+
 		internal void ProcessLogger (string s)
 		{
 			loggers.Add (new LoggerInfo (s));

@@ -1,5 +1,12 @@
 2009-12-14  Ankit Jain  <jankit@novell.com>
 
+	* Parameters.cs (TryProcessMultiOption): New.
+	(ProcessTarget):
+	(ProcessProperty): Refactor to use TryProcessMultiOption,
+	and accept ":" in target name or property name/value pair.
+
+2009-12-14  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #562056.
 	* Parameters.cs: Property name/value pairs can be separated by ':'.
 
