@@ -67,6 +67,7 @@ namespace System.Web.Compilation
 		StringReader fileReader;
 		bool _internal;
 		int _internalLineOffset;
+		int _internalPositionOffset;
 		AspParser outer;
 		
 		EventHandlerList events = new EventHandlerList ();
@@ -102,11 +103,12 @@ namespace System.Web.Compilation
 			tokenizer = new AspTokenizer (this.fileReader);
 		}
 
-		public AspParser (string filename, TextReader input, int startLineOffset, AspParser outer)
+		public AspParser (string filename, TextReader input, int startLineOffset, int positionOffset, AspParser outer)
 			: this (filename, input)
 		{
 			this._internal = true;
 			this._internalLineOffset = startLineOffset;
+			this._internalPositionOffset = positionOffset;
 			this.outer = outer;
 		}
 		
@@ -121,10 +123,18 @@ namespace System.Web.Compilation
 		}
 #endif
 		
+		public int BeginPosition {
+			get { return beginPosition; }
+		}
+
+		public int EndPosition {
+			get { return endPosition; }
+		}
+
 		public int BeginLine {
 			get {
-				if (Internal)
-					return beginLine + InternalLineOffset;
+				if (_internal)
+					return beginLine + _internalLineOffset;
 
 				return beginLine;
 			}
@@ -136,8 +146,8 @@ namespace System.Web.Compilation
 
 		public int EndLine {
 			get {
-				if (Internal)
-					return endLine + InternalLineOffset;
+				if (_internal)
+					return endLine + _internalLineOffset;
 				return endLine;
 			}
 		}
@@ -146,22 +156,12 @@ namespace System.Web.Compilation
 			get { return endColumn; }
 		}
 
-		public bool Internal {
-			get { return _internal; }
-			set { _internal = value; }
-		}
-
-		public int InternalLineOffset {
-			get { return _internalLineOffset; }
-			set { _internalLineOffset = value; }
-		}
-		
 		public string FileText {
 			get {
 				string ret = null;
 				
-				if (Internal && outer != null)
-					ret = outer.FileText;
+				if (_internal && outer != null)
+				 	ret = outer.FileText;
 				
 				if (ret == null && fileText != null)
 					ret = fileText;
@@ -178,9 +178,9 @@ namespace System.Web.Compilation
 				string text = FileText;
 				int start, len;
 				
-				if (Internal && outer != null) {
-					start = beginPosition + InternalLineOffset;
-					len = (endPosition + InternalLineOffset) - start;
+				if (_internal && outer != null) {
+					start = beginPosition + _internalPositionOffset;
+					len = (endPosition + _internalPositionOffset) - start;
 				} else {
 					start = beginPosition;
 					len = endPosition - beginPosition;
@@ -195,7 +195,7 @@ namespace System.Web.Compilation
 
 		public string Filename {
 			get {
-				if (Internal && outer != null)
+				if (_internal && outer != null)
 					return outer.Filename;
 				
 				return filename;

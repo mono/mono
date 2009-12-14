@@ -44,7 +44,7 @@ namespace System.Web.UI.WebControls {
 		{
 			if (value is string) {
 				string	s = ((string)value).Trim();
-				return ColorTranslator.FromHtml (s);
+					return ColorTranslator.FromHtml (s);
 			}
 			
 			return base.ConvertFrom (context, culture, value);
