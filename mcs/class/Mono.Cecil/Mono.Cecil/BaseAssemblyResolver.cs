@@ -132,30 +132,38 @@ namespace Mono.Cecil {
 					typeof (object).Module.FullyQualifiedName).FullName
 				).FullName;
 
+			string runtime_path = null;
 			if (OnMono ()) {
 				if (reference.Version.Major == 1)
-					path = Path.Combine (path, "1.0");
+					runtime_path = "1.0";
 				else if (reference.Version.Major == 2) {
 					if (reference.Version.Minor == 1)
-						path = Path.Combine (path, "2.1");
+						runtime_path = "2.1";
 					else
-						path = Path.Combine (path, "2.0");
+						runtime_path = "2.0";
 				} else if (reference.Version.Major == 4)
-					path = Path.Combine (path, "4.0");
-				else
-					throw new NotSupportedException ("Version not supported: " + reference.Version);
+					runtime_path = "4.0";
 			} else {
-				if (reference.Version.ToString () == "1.0.3300.0")
-					path = Path.Combine (path, "v1.0.3705");
-				else if (reference.Version.ToString () == "1.0.5000.0")
-					path = Path.Combine (path, "v1.1.4322");
-				else if (reference.Version.ToString () == "2.0.0.0")
-					path = Path.Combine (path, "v2.0.50727");
-				else if (reference.Version.ToString () == "4.0.0.0")
-					path = Path.Combine (path, "v4.0.21006");
-				else
-					throw new NotSupportedException ("Version not supported: " + reference.Version);
+				switch (reference.Version.ToString ()) {
+				case "1.0.3300.0":
+					runtime_path = "v1.0.3705";
+					break;
+				case "1.0.5000.0":
+					runtime_path = "v1.1.4322";
+					break;
+				case "2.0.0.0":
+					runtime_path = "v2.0.50727";
+					break;
+				case "4.0.0.0":
+					runtime_path = "v4.0.21006";
+					break;
+				}
 			}
+
+			if (runtime_path == null)
+				throw new NotSupportedException ("Version not supported: " + reference.Version);
+
+			path = Path.Combine (path, runtime_path);
 
 			if (File.Exists (Path.Combine (path, "mscorlib.dll")))
 				return AssemblyFactory.GetAssembly (Path.Combine (path, "mscorlib.dll"));

@@ -1,3 +1,8 @@
+2009-12-14  Sebastien Pouliot  <sebastien at ximian.com>
+
+	* Mono.Cecil/BaseAssemblyResolver.cs: Update to .net fx 4 beta2
+	version number and reduce code duplication.
+
 2009-10-25  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/BaseAssemblyResolver.cs
