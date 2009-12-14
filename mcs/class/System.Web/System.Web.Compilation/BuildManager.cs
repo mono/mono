@@ -1099,6 +1099,9 @@ namespace System.Web.Compilation
 			bool rethrow = false;
 			
 			foreach (CompilerError error in results.Errors) {
+				if (error.IsWarning)
+					continue;
+				
 				bp = abuilder.GetBuildProviderForPhysicalFilePath (error.FileName);
 				if (bp == null) {
 					bp = FindBuildProviderForPhysicalPath (error.FileName, group, req);
