@@ -1,5 +1,7 @@
 2009-12-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_emit_rgctx_method_call_full): Fix a warning.
+
 	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Fix the LLVM support
 	by merging the LLVM and !MAP_32BIT cases.
 
@@ -7,7 +9,7 @@
 
 	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Handle a NULL
 	sigctx being passed in, as we have no CONTEXT available in the APC.
-	
+
 	(mono_debugger_agent_cleanup): Use explicit cond wait implementation
 	for now.
 
