@@ -31,19 +31,22 @@
 using System;
 using System.IO;
 using System.Runtime.InteropServices;
+using System.IO.MemoryMappedFiles;
 using Microsoft.Win32.SafeHandles;
 
 namespace Microsoft.Win32.SafeHandles
 {
 	public sealed class SafeMemoryMappedViewHandle : SafeBuffer {
-
 		internal SafeMemoryMappedViewHandle (IntPtr handle, long size) : base (true) {
 			this.handle = handle;
 			Initialize ((ulong)size);
 		}
 
-		[MonoTODO]
 		protected override bool ReleaseHandle () {
+			if (this.handle != (IntPtr) (-1)){
+				if (MonoUtil.IsUnix)
+					return MemoryMappedFile.UnmapPosix (this.handle, ByteLength);
+			}
 			throw new NotImplementedException ();
 		}
 	}

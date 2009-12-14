@@ -138,12 +138,14 @@ namespace System.IO.MemoryMappedFiles
 
 
 		[MonoTODO]
-			public static MemoryMappedFile CreateNew (string mapName, long capacity) {
+		public static MemoryMappedFile CreateNew (string mapName, long capacity)
+		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-			public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access) {
+		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access) 
+		{
 			throw new NotImplementedException ();
 		}
 
@@ -171,33 +173,40 @@ namespace System.IO.MemoryMappedFiles
 		}
 		*/
 
-		public MemoryMappedViewStream CreateViewStream () {
+		public MemoryMappedViewStream CreateViewStream ()
+		{
 			return CreateViewStream (0, 0);
 		}
 
-		public MemoryMappedViewStream CreateViewStream (long offset, long size) {
+		public MemoryMappedViewStream CreateViewStream (long offset, long size)
+		{
 			return CreateViewStream (offset, size, MemoryMappedFileAccess.ReadWrite);
 		}
 
 		[MonoTODO]
-		public MemoryMappedViewStream CreateViewStream (long offset, long size, MemoryMappedFileAccess access) {
+		public MemoryMappedViewStream CreateViewStream (long offset, long size, MemoryMappedFileAccess access)
+		{
 			return new MemoryMappedViewStream (stream, offset, size, access);
 		}
 
-		public MemoryMappedViewAccessor CreateViewAccessor () {
+		public MemoryMappedViewAccessor CreateViewAccessor ()
+		{
 			return CreateViewAccessor (0, 0);
 		}
 
-		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size) {
+		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size)
+		{
 			return CreateViewAccessor (offset, size, MemoryMappedFileAccess.ReadWrite);
 		}
 
 		[MonoTODO]
-		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size, MemoryMappedFileAccess access) {
+		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size, MemoryMappedFileAccess access)
+		{
 			return new MemoryMappedViewAccessor (stream, offset, size, access);
 		}
 
-		MemoryMappedFile () {
+		MemoryMappedFile ()
+		{
 		}
 
 		public void Dispose ()
@@ -251,7 +260,7 @@ namespace System.IO.MemoryMappedFiles
 			
 		}
 
-		internal static unsafe void MapPosix (FileStream file, long offset, long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff, out ulong map_size)
+		internal static unsafe void MapPosix (FileStream file, long offset, long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff)
 		{
 			if (pagesize == 0)
 				pagesize = Syscall.getpagesize ();
@@ -273,8 +282,7 @@ namespace System.IO.MemoryMappedFiles
 			// the filename (with one exception), we could move this API to use
 			// file descriptors instead of the FileStream plus its Handle.
 			//
-			map_size = (ulong)size;
-			map_addr = Syscall.mmap (IntPtr.Zero, map_size,
+			map_addr = Syscall.mmap (IntPtr.Zero, (ulong) size,
 						 ToUnixProts (access),
 						 access == MemoryMappedFileAccess.CopyOnWrite ? MmapFlags.MAP_PRIVATE : MmapFlags.MAP_SHARED,
 						 (int)file.Handle, real_offset);
@@ -283,11 +291,14 @@ namespace System.IO.MemoryMappedFiles
 				throw new IOException ("mmap failed for " + file + "(" + offset + ", " + size + ")");
 		}
 
-		internal static void UnmapPosix (IntPtr map_addr, ulong map_size) {
-			int err = Syscall.munmap (map_addr, map_size);
-			if (err != 0)
-				/* This shouldn't happen */
-				throw new IOException ("munmap failed for address " + map_addr + ", size=" + map_size);
+		internal static void FlushPosix (FileStream file)
+		{
+			Syscall.fsync ((int) file.Handle);
+		}
+		
+		internal static bool UnmapPosix (IntPtr map_addr, ulong map_size)
+		{
+			return Syscall.munmap (map_addr, map_size) == 0;
 		}
 
 	}

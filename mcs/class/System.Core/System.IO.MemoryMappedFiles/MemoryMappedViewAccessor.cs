@@ -35,23 +35,40 @@ using Microsoft.Win32.SafeHandles;
 
 namespace System.IO.MemoryMappedFiles
 {
-	public class MemoryMappedViewAccessor : IDisposable {
-
-		object monitor;
+	public class MemoryMappedViewAccessor : UnmanagedMemoryAccessor {
+		FileStream file;
 		IntPtr mmap_addr;
-		ulong mmap_size;
 		SafeMemoryMappedViewHandle handle;
 
 		internal MemoryMappedViewAccessor (FileStream file, long offset, long size, MemoryMappedFileAccess access)
 		{
-			monitor = new Object ();
+			this.file = file;
 			if (MonoUtil.IsUnix)
-				CreatePosix (file, offset, size, access);
+				CreatePosix (offset, size, access);
 			else
 				throw new NotImplementedException ("Not implemented on windows.");
 		}
 
-		unsafe void CreatePosix (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
+		static FileAccess ToFileAccess (MemoryMappedFileAccess access)
+		{
+			switch (access){
+			case MemoryMappedFileAccess.CopyOnWrite:
+			case MemoryMappedFileAccess.ReadWrite:
+			case MemoryMappedFileAccess.ReadWriteExecute:
+				return FileAccess.ReadWrite;
+				break;
+				
+			case MemoryMappedFileAccess.Write:
+				return FileAccess.Write;
+				
+			case MemoryMappedFileAccess.ReadExecute:
+			case MemoryMappedFileAccess.Read:
+			default:
+				return FileAccess.Read;
+			}
+		}
+		
+		unsafe void CreatePosix (long offset, long size, MemoryMappedFileAccess access) {
 			long fsize = file.Length;
 
 			if (size == 0 || size > fsize)
@@ -59,9 +76,10 @@ namespace System.IO.MemoryMappedFiles
 
 			int offset_diff;
 
-			MemoryMappedFile.MapPosix (file, offset, size, access, out mmap_addr, out offset_diff, out mmap_size);
+			MemoryMappedFile.MapPosix (file, offset, size, access, out mmap_addr, out offset_diff);
 
 			handle = new SafeMemoryMappedViewHandle ((IntPtr)((long)mmap_addr + offset_diff), size);
+			Initialize (handle, 0, size, ToFileAccess (access));
 		}
 
 		public SafeMemoryMappedViewHandle SafeMemoryMappedViewHandle {
@@ -74,13 +92,12 @@ namespace System.IO.MemoryMappedFiles
 			Dispose (true);
 		}
 
-		public void Dispose (bool disposing) {
-			lock (monitor) {
-				if (mmap_addr != (IntPtr)(-1)) {
-					MemoryMappedFile.UnmapPosix (mmap_addr, mmap_size);
-					mmap_addr = (IntPtr)(-1);
-				}
-			}
+		public void Flush ()
+		{
+			if (MonoUtil.IsUnix)
+				MemoryMappedFile.FlushPosix (file);
+			else
+				throw new NotImplementedException ("Not implemented on Windows");
 		}
 	}
 }

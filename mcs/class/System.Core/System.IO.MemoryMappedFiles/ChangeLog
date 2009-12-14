@@ -1,3 +1,16 @@
+2009-12-13  Miguel de Icaza  <miguel@novell.com>
+
+	* MemoryMappedViewAccessor.cs: Derive from
+	UnmanagedMemoryAccessor, remove explicit IDisposable inheritance.
+	(CreatePosix): Call Initialize on the base class to initialize. 
+	(Dispose): Kill methods. 
+	(Flush): Add.
+	(MapPosix): no need to return out mmap_size, it is always size.
+
+	* MemoryMappedFile.cs: Add FlushPosix.
+
+	* MemoryMappedViewStream.cs: Update API.
+	
 2009-12-10  Miguel de Icaza  <miguel@novell.com>
 
 	* MemoryMappedFile.cs: Updated to the new Beta API, fill in some
