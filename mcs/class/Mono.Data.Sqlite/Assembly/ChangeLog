@@ -1,3 +1,7 @@
+2009-12-14  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: 4.0 assembly must have a different version than 2.0
+
 2009-10-22  Jonathan Pryor  <jpryor@novell.com>
 
 	* AssemblyInfo.cs: Use Consts.FxVersion when building for MONOTOUCH.

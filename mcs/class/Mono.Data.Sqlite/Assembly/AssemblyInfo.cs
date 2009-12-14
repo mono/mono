@@ -48,7 +48,11 @@ using System.Runtime.ConstrainedExecution;
 // You can specify all the values or you can default the Revision and Build Numbers 
 // by using the '*' as shown below:
 #if !MONOTOUCH
-[assembly: AssemblyVersion("2.0.0.0")]
+  #if NET_4_0
+    [assembly: AssemblyVersion("4.0.0.0")]
+  #else // NET_4_0
+    [assembly: AssemblyVersion("2.0.0.0")]
+  #endif // NET_4_0
 #else   // !MONOTOUCH
 [assembly: AssemblyVersion(Consts.FxVersion)]
 #endif  // !MONOTOUCH
