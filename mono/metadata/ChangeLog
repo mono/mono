@@ -1,5 +1,14 @@
 2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (fieldref_encode_signature): For some reason 2.4 doesn't
+	behave like 2.8 on this part. So add an extra guard for the token kind.
+
+	Fixes #563909.
+
+	Backport of r148100 from mono-2-4.
+
+2009-12-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata.c (inflated_method_in_image): Avoid calling
 	mono_method_signature () if the method does not already have a signature.
 
