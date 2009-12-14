@@ -1,3 +1,7 @@
+2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WSHttpBindingTest.cs : leave non-working test to get fixed later.
+
 2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BasicHttpBindingTest.cs : added transport security related tests.
