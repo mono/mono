@@ -1,5 +1,9 @@
 2009-12-14  Marek Habersack  <mhabersack@novell.com>
 
+	* BuildManager.cs: RemoveFailedAssemblies ignores warnings to
+	avoid throwing exceptions when the requested virtual path
+	compilation produces warnings and no errors. Fixes bug #561723 
+
 	* AspParser.cs: PlainText should calculate the boundaries of
 	text using character offset, not line offset. Fixes bug #562286
 	InternalLineOffset and Internal properties need not exist.
