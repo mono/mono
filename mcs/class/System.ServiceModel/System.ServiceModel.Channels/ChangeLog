@@ -1,3 +1,7 @@
+2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReaderBodyWriter.cs : don't try to write empty xml.
+
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestChannel.cs : avoid adding duplicate headers. Basically
