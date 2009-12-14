@@ -1,3 +1,9 @@
+2009-12-13  Miguel de Icaza  <miguel@novell.com>
+
+	* SafeBuffer.cs: When comparing the end, we only need to compare
+	source+size being bigger than last_byte, not bigger or equal,
+	otherwise we can not access the last element.
+
 2009-11-08  Miguel de Icaza  <miguel@novell.com>
 
 	* Marshal.cs: Expose copy_*_unamnaged to SafeBuffer.

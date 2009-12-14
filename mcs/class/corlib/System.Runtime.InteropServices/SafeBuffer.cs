@@ -101,8 +101,9 @@ namespace System.Runtime.InteropServices
 
 			unsafe {
 				byte *source = (((byte *) handle) + byteOffset);
-				if (source >= last_byte || source + Marshal.SizeOf (typeof (T)) >= last_byte)
+				if (source >= last_byte || source + Marshal.SizeOf (typeof (T)) > last_byte){
 					throw new ArgumentException ("byteOffset");
+				}
 
 				return (T) Marshal.PtrToStructure ((IntPtr) source, typeof (T));
 			}
@@ -116,7 +117,7 @@ namespace System.Runtime.InteropServices
 			unsafe {
 				int size = Marshal.SizeOf (typeof (T)) * count;
 				byte *source = (((byte *) handle) + byteOffset);
-				if (source >= last_byte || source + size >= last_byte)
+				if (source >= last_byte || source + size > last_byte)
 					throw new ArgumentException ("byteOffset");
 				
 				Marshal.copy_from_unmanaged ((IntPtr) source, index, array, count);
@@ -130,7 +131,7 @@ namespace System.Runtime.InteropServices
 
 			unsafe {
 				byte *target = (((byte *) handle) + byteOffset);
-				if (target >= last_byte || target + Marshal.SizeOf (typeof (T)) >= last_byte)
+				if (target >= last_byte || target + Marshal.SizeOf (typeof (T)) > last_byte)
 					throw new ArgumentException ("byteOffset");
 
 				Marshal.StructureToPtr (value, (IntPtr) target, false);
@@ -146,7 +147,7 @@ namespace System.Runtime.InteropServices
 			unsafe {
 				byte *target = ((byte *) handle) + byteOffset;
 				int size = Marshal.SizeOf (typeof (T)) * count;
-				if (target >= last_byte || target + size >= last_byte)
+				if (target >= last_byte || target + size > last_byte)
 					throw new ArgumentException ("would overrite");
 				
 				Marshal.copy_to_unmanaged (array, index, (IntPtr) target, count);
