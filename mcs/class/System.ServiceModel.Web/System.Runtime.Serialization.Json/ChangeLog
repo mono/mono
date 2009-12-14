@@ -1,3 +1,9 @@
+2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeMap.cs : handle [Serializable] objects such as KeyValuePair<,>
+	  like we do in 2.0. Removed previous workarounds. (Do not serialize
+	  and deserialize nonpublic members in "default" mappings.)
+
 2009-12-11  Chris Toshok  <toshok@ximian.com>
 
 	* TypeMap.cs (CreateDefaultTypeMap): only include non-public
