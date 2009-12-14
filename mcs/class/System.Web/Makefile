@@ -187,7 +187,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/TagsNestedInClientTag.aspx \
 	Test/mainsoft/NunitWebResources/GlobalResourcesLocalization.aspx \
 	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx \
-	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx.cs
+	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx.cs \
+	Test/mainsoft/NunitWebResources/NestedParserFileText.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifeq (net_2_0, $(PROFILE))

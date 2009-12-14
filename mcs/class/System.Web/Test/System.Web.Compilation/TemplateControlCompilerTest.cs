@@ -77,6 +77,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ContentPlaceHolderInTemplate.master", "ContentPlaceHolderInTemplate.master");
 			WebTest.CopyResource (GetType (), "LinkInHeadWithEmbeddedExpression.aspx", "LinkInHeadWithEmbeddedExpression.aspx");
 			WebTest.CopyResource (GetType (), "ExpressionInListControl.aspx", "ExpressionInListControl.aspx");
+			WebTest.CopyResource (GetType (), "NestedParserFileText.aspx", "NestedParserFileText.aspx");
 #endif
 		}
 		
@@ -214,6 +215,13 @@ namespace MonoTests.System.Web.Compilation {
 		{
 			// Just test if it throws an exception
 			new WebTest ("DuplicateControlsInClientComment.aspx").Run ();
+		}
+		
+		[Test (Description="Bug #562286")]
+		public void NestedParserFileText ()
+		{
+			// Just test if it doesn't throw an exception
+			new WebTest ("NestedParserFileText.aspx").Run ();
 		}
 #endif
 
