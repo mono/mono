@@ -2887,7 +2887,6 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test] //bug #331199
-		//FIXME: 2.0 SP 1 has a diferent behavior
 		public void MakeGenericType_UserDefinedType ()
 		{
 			Type ut = new UserType (typeof (int));
@@ -2898,7 +2897,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Type arg = t.GetGenericArguments () [0];
 			Assert.IsNotNull (arg, "#B1");
 			Assert.IsFalse (arg.IsGenericType, "#B2");
-			Assert.AreEqual (typeof (int), arg, "#B3");
+			Assert.AreEqual (ut, arg, "#B3");
 		}
 
 		[Category ("NotWorking")]
@@ -3490,7 +3489,7 @@ PublicKeyToken=b77a5c561934e089"));
 	
 		public override Type UnderlyingSystemType { get { return this.type; } }
 	
-		public override Assembly Assembly { get { return this.type.Assembly; } }
+		public override Assembly Assembly { get { return this.type == null ? null : this.type.Assembly; } }
 	
 		public override string AssemblyQualifiedName { get { return null; } }
 	

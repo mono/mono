@@ -1,3 +1,12 @@
+2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs: Remove IsByRef hack.
+
+2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs (format_name): Avoid calling AssemblyQualifiedName as mcs DynamicObject
+	doesn't implement it.
+
 2009-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs: Remove useless field.

@@ -90,12 +90,6 @@ namespace System.Reflection
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
 
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern Type GetElementType (Type type);
-
-		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-		static extern bool IsByRefImpl (Type type);
-
  		[MethodImplAttribute(MethodImplOptions.InternalCall)]
  		internal static extern void register_with_runtime (Type type);
 
@@ -811,7 +805,15 @@ namespace System.Reflection
 				if (i > 0)
 					sb.Append (",");
 				
-				string name = full_name ? type_arguments [i].AssemblyQualifiedName : type_arguments [i].ToString ();
+				string name;
+				if (full_name) {
+					string assemblyName = type_arguments [i].Assembly.FullName;
+					name = type_arguments [i].FullName;
+					if (name != null && assemblyName != null)
+						name = name + ", " + assemblyName;
+				} else {
+					name = type_arguments [i].ToString ();
+				}
 				if (name == null) {
 					if (compiler_ctx && type_arguments [i].IsGenericParameter)
 						name = type_arguments [i].Name;
@@ -907,14 +909,12 @@ namespace System.Reflection
 
 		public override Type GetElementType ()
 		{
-			if (!HasElementType)
-				throw new NotSupportedException ();
-			return GetElementType (this);
+			throw new NotSupportedException ();
 		}
 
 		protected override bool HasElementTypeImpl ()
 		{
-			return IsByRefImpl ();
+			return false;
 		}
 
 		protected override bool IsCOMObjectImpl ()
@@ -934,7 +934,7 @@ namespace System.Reflection
 
 		protected override bool IsByRefImpl ()
 		{
-			return IsByRefImpl (this);
+			return false;
 		}
 
 		protected override bool IsPointerImpl ()

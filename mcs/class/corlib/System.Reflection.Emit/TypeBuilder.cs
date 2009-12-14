@@ -1791,8 +1791,12 @@ namespace System.Reflection.Emit
 
 		public static ConstructorInfo GetConstructor (Type type, ConstructorInfo constructor)
 		{
+			/*FIXME I would expect the same checks of GetMethod here*/
 			if (type == null)
 				throw new ArgumentException ("Type is not generic", "type");
+
+			if (constructor == null)
+				throw new NullReferenceException (); //MS raises this instead of an ArgumentNullException
 
 			ConstructorInfo res = type.GetConstructor (constructor);
 			if (res == null)
@@ -1833,6 +1837,8 @@ namespace System.Reflection.Emit
 				throw new ArgumentException ("method declaring type is not a generic type definition", "method");
 			if (method.DeclaringType != type.GetGenericTypeDefinition ())
 				throw new ArgumentException ("method declaring type is not the generic type definition of type", "method");
+			if (method == null)
+				throw new NullReferenceException (); //MS raises this instead of an ArgumentNullException
 
 			MethodInfo res = type.GetMethod (method);
 			if (res == null)

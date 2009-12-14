@@ -1,3 +1,7 @@
+2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Fix test that checked for old and wrong behavior of mono.
+
 2009-12-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* AttributeTest.cs: Fix a NotDotNet test since mono now implements

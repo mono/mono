@@ -1,3 +1,8 @@
+2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Type.cs (IsCompilerContext): The default implementation now checks if the
+	type's assembly is under compiler context or not.
+
 2009-12-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Environment.cs: Bump corlib version.

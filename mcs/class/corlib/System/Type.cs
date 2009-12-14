@@ -1158,7 +1158,8 @@ namespace System {
 
 		internal virtual bool IsCompilerContext {
 			get {
-					return false;
+				AssemblyBuilder builder = Assembly as AssemblyBuilder;
+				return builder != null && builder.IsCompilerContext;
 			}
 		}
 
