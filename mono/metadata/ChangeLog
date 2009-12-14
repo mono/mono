@@ -1,3 +1,11 @@
+2009-12-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_reflection_type_get_handle): Properly fail in case of a broken
+	user type.
+
+	* reflection.c (mono_reflection_register_with_runtime): Throws in case a bad user type
+	is used.
+
 2009-12-14  Miguel de Icaza  <miguel@novell.com>
 
 	* verify.c (mono_method_verify): The Unused opcodes produce an
