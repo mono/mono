@@ -1,3 +1,8 @@
+2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	support.cs (DynamicType): Assembly property returns the assembly builder.
+	This is required due to how compiler context works in corlib.
+
 2009-12-14  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #564376

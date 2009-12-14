@@ -344,7 +344,7 @@ namespace Mono.CSharp {
 	class DynamicType : Type
 	{
 		public override Assembly Assembly {
-			get { return UnderlyingSystemType.Assembly; }
+			get { return CodeGen.Assembly.Builder; }
 		}
 
 		public override string AssemblyQualifiedName {
