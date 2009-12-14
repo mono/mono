@@ -1,3 +1,13 @@
+2009-12-14  Miguel de Icaza  <miguel@novell.com>
+ 
+ 	* method-to-ir.c (mono_method_to_ir): CEE_UNUSUED opcodes now
+ 	raise an invalid program exception.   
+ 
+ 	For other opcodes that we might not handle use a g_warning and
+ 	raise the exception.   Beats termination.
+ 
+ 	Fixes #561724
+
 2009-12-13 Jonathan Chambers <joncham@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Handle a NULL
