@@ -230,14 +230,13 @@ namespace Mono.XBuild.CommandLine {
 		
 		internal bool ProcessProperty (string s)
 		{
-			string[] parameter, splittedProperties, property;
-			parameter = s.Split (':');
-			if (parameter.Length != 2) {
+			int colon = s.IndexOf (':');
+			if (colon + 1 == s.Length) {
 				ErrorUtilities.ReportError (5, "Property name and value expected as /p:<prop name>=<prop value>");
 				return false;
 			}
 
-			splittedProperties = parameter [1].Split (';');
+			string [] splittedProperties = s.Substring (colon + 1).Split (';');
 			foreach (string st in splittedProperties) {
 				if (st.IndexOf ('=') < 0) {
 					ErrorUtilities.ReportError (5,
@@ -245,7 +244,7 @@ namespace Mono.XBuild.CommandLine {
 							"<prop name>=[<prop value>]");
 					return false;
 				}
-				property = st.Split ('=');
+				string [] property = st.Split ('=');
 				properties.SetProperty (property [0], property.Length == 2 ? property [1] : "");
 			}
 
