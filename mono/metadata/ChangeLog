@@ -1,3 +1,16 @@
+2009-12-15  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c (mono_generic_class_get_class): Allocate the generic
+	class via malloc again, so that it can be freed when any one of
+	the images of its constituent types is closed.
+
+	* metadata.c: When closing an image, don't free generic insts and
+	generic classes right away, but put them into a list for later
+	freeing.
+
+	* image.c, metadata-internals.h: Store the free list and in the
+	second pass of closing an image, free it.
+
 2009-12-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_generic_class_get_object): Assert if this is ever called.
