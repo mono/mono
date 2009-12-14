@@ -1,3 +1,8 @@
+2009-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* loader.c (mono_method_get_header): Move assert after the verifier
+	has been called on the method header.
+	[Backport r148406]
 
 Fri Dec 11 18:24:04 CET 2009 Paolo Molaro <lupus@ximian.com>
 
