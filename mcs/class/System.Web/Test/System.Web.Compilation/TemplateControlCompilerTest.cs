@@ -80,6 +80,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ExpressionInListControl.aspx", "ExpressionInListControl.aspx");
 			WebTest.CopyResource (GetType (), "PreprocessorDirectivesInMarkup.aspx", "PreprocessorDirectivesInMarkup.aspx");
 			WebTest.CopyResource (GetType (), "OneLetterIdentifierInCodeRender.aspx", "OneLetterIdentifierInCodeRender.aspx");
+			WebTest.CopyResource (GetType (), "NestedParserFileText.aspx", "NestedParserFileText.aspx");
 #endif
 		}
 		
@@ -245,6 +246,13 @@ namespace MonoTests.System.Web.Compilation {
 			string originalHtml = @"bDoR called";
 
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		[Test (Description="Bug #562286")]
+		public void NestedParserFileText ()
+		{
+			// Just test if it doesn't throw an exception
+			new WebTest ("NestedParserFileText.aspx").Run ();
 		}
 #endif		
 		[Test (Description="Bug #323719")]

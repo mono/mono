@@ -817,7 +817,9 @@ namespace System.Web.Compilation
 
 		void ParseAttributeTag (string code, ILocation location)
 		{
-			AspParser parser = new AspParser ("@@attribute_tag@@", new StringReader (code), location.BeginLine - 1, location as AspParser);
+			AspParser outerParser = location as AspParser;
+			int positionOffset = outerParser != null ? outerParser.BeginPosition : 0;
+			AspParser parser = new AspParser ("@@attribute_tag@@", new StringReader (code), location.BeginLine - 1, positionOffset, outerParser);
 			parser.Error += new ParseErrorHandler (ParseError);
 			parser.TagParsed += new TagParsedHandler (TagParsed);
 			parser.TextParsed += new TextParsedHandler (TextParsed);
@@ -1084,7 +1086,7 @@ namespace System.Web.Compilation
 				FlushText (true);
 				return;
 			}
-			
+
 			IList blocks = SplitTextIntoBlocks (text);
 			foreach (TextBlock block in blocks) {
 				switch (block.Type) {
@@ -1113,8 +1115,10 @@ namespace System.Web.Compilation
 							condEndif = true;
 						} else
 							condEndif = false;
-						
-						AspParser parser = new AspParser ("@@comment_code@@", new StringReader (blockToParse), location.BeginLine - 1, location as AspParser);
+
+						AspParser outerParser = location as AspParser;
+						int positionOffset = outerParser != null ? outerParser.BeginPosition : 0;
+						AspParser parser = new AspParser ("@@comment_code@@", new StringReader (blockToParse), location.BeginLine - 1, positionOffset, outerParser);
 						parser.Error += new ParseErrorHandler (ParseError);
 						parser.TagParsed += new TagParsedHandler (TagParsed);
 						parser.TextParsed += new TextParsedHandler (TextParsed);
@@ -1555,7 +1559,9 @@ namespace System.Web.Compilation
 			
 			void DoParse (string str)
 			{
-				AspParser parser = new AspParser ("@@code_render@@", new StringReader (str), location.BeginLine - 1, location as AspParser);
+				AspParser outerParser = location as AspParser;
+				int positionOffset = outerParser != null ? outerParser.BeginPosition : 0;
+				AspParser parser = new AspParser ("@@code_render@@", new StringReader (str), location.BeginLine - 1, positionOffset, outerParser);
 				parser.Error += new ParseErrorHandler (ParseError);
 				parser.TagParsed += new TagParsedHandler (TagParsed);
 				parser.TextParsed += new TextParsedHandler (TextParsed);

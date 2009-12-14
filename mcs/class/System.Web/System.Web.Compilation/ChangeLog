@@ -1,3 +1,13 @@
+2009-12-14  Marek Habersack  <mhabersack@novell.com>
+
+	* AspParser.cs: PlainText should calculate the boundaries of
+	text using character offset, not line offset. Fixes bug #562286
+	InternalLineOffset and Internal properties need not exist.
+
+	* AspGenerator.cs: AspParser inner parser constructor takes 5
+	parameters now - accepts character offset of the current outer
+	parser's position.
+
 2009-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: GetConverterForMember looks up
