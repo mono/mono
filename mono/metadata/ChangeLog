@@ -1,5 +1,14 @@
 2009-12-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_generic_class_get_object): Assert if this is ever called.
+
+	* reflection.c (mono_reflection_register_with_runtime): Only register dynamic
+	types in type_hash.
+
+	* reflection.c (resolve_object): Call ensure_complete_type on the inflated field.
+
+2009-12-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_reflection_type_get_handle): Properly fail in case of a broken
 	user type.
 
