@@ -1,3 +1,13 @@
+2009-12-14  Miguel de Icaza  <miguel@novell.com>
+
+	* MemoryMappedFile.cs: Make this by default use the native
+	interface (Mono.Unix.Native.Syscall) to map files and only support
+	the FileStream.Handle when the user explicitly uses this API.
+
+	The reason is that currently the code depends on the io-layer
+	keeping parity between our handles and Unix file descriptors, this
+	removes this dependency for most cases. 
+
 2009-12-13  Miguel de Icaza  <miguel@novell.com>
 
 	* MemoryMappedViewAccessor.cs: Derive from

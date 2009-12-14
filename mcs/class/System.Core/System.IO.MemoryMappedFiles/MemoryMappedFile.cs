@@ -33,6 +33,7 @@ using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
 using Mono.Unix.Native;
+using Mono.Unix;
 using System.Runtime.InteropServices;
 
 namespace System.IO.MemoryMappedFiles
@@ -40,11 +41,20 @@ namespace System.IO.MemoryMappedFiles
 	public class MemoryMappedFile : IDisposable {
 		MemoryMappedFileAccess fileAccess;
 		string name;
-		FileStream stream;
 		long fileCapacity;
+
+		//
+		// We allow the use of either the FileStream/keepOpen combo
+		// or a Unix file descriptor.  This way we avoid the dependency on
+		// Mono's io-layer having the Unix file descriptors mapped to
+		// the same io-layer handle
+		//
+		FileStream stream;
 		bool keepOpen;
+		int unix_fd;
 		
-		public static MemoryMappedFile CreateFromFile (FileStream fileStream) {
+		public static MemoryMappedFile CreateFromFile (FileStream fileStream)
+		{
 			if (fileStream == null)
 				throw new ArgumentNullException ("fileStream");
 
@@ -75,6 +85,53 @@ namespace System.IO.MemoryMappedFiles
 			return CreateFromFile (path, mode, mapName, capacity, MemoryMappedFileAccess.ReadWrite);
 		}
 
+		//
+		// Turns the FileMode into the first half of open(2) flags
+		//
+		static OpenFlags ToUnixMode (FileMode mode)
+		{
+			switch (mode){
+			case FileMode.CreateNew:
+				return OpenFlags.O_CREAT | OpenFlags.O_EXCL;
+				
+			case FileMode.Create:
+				return OpenFlags.O_CREAT | OpenFlags.O_TRUNC;
+				
+			case FileMode.OpenOrCreate:
+				return OpenFlags.O_CREAT;
+				
+			case FileMode.Truncate:
+				return OpenFlags.O_TRUNC;
+				
+			case FileMode.Append:
+				return OpenFlags.O_APPEND;
+			default:
+			case FileMode.Open:
+				return 0;
+			}
+		}
+
+		//
+		// Turns the MemoryMappedFileAccess into the second half of open(2) flags
+		//
+		static OpenFlags ToUnixMode (MemoryMappedFileAccess access)
+		{
+			switch (access){
+			case MemoryMappedFileAccess.CopyOnWrite:
+			case MemoryMappedFileAccess.ReadWriteExecute:
+			case MemoryMappedFileAccess.ReadWrite:
+				return OpenFlags.O_RDWR;
+				
+			case MemoryMappedFileAccess.Write:
+				return OpenFlags.O_WRONLY;
+
+			case MemoryMappedFileAccess.ReadExecute:
+			case MemoryMappedFileAccess.Read:
+			default:
+				return OpenFlags.O_RDONLY;
+			}
+		}
+
 		public static MemoryMappedFile CreateFromFile (string path, FileMode mode, string mapName, long capacity, MemoryMappedFileAccess access)
 		{
 			if (path == null)
@@ -83,18 +140,29 @@ namespace System.IO.MemoryMappedFiles
 				throw new ArgumentException ("path");
 			if (mapName != null && mapName.Length == 0)
 				throw new ArgumentException ("mapName");
-			var fileStream = File.Open (path, mode);
 
-			if ((capacity == 0 && fileStream.Length == 0) || (capacity > fileStream.Length)){
-				fileStream.Close ();
-				throw new ArgumentException ("capacity");
-			}
+			int fd;
+			if (MonoUtil.IsUnix){
+				Stat buf;
+				if (Syscall.stat (path, out buf) == -1)
+					UnixMarshal.ThrowExceptionForLastError ();
+
+				if ((capacity == 0 && buf.st_size == 0) || (capacity > buf.st_size))
+					throw new ArgumentException ("capacity");
+				
+				fd = Syscall.open (path, ToUnixMode (mode) | ToUnixMode (access), FilePermissions.DEFFILEMODE);
+
+				if (fd == -1)
+					UnixMarshal.ThrowExceptionForLastError ();
+			} else
+				throw new NotImplementedException ();
+			
 			return new MemoryMappedFile () {
-				stream = fileStream,
+				unix_fd = fd,
 				fileAccess = access,
 				name = mapName,
 				fileCapacity = capacity
-					};
+			};
 		}
 
 		public static void ConfigureUnixFD (IntPtr handle, HandleInheritability h)
@@ -136,25 +204,25 @@ namespace System.IO.MemoryMappedFiles
 			};
 		}
 
-
-		[MonoTODO]
+		[MonoLimitation ("CreateNew requires that mapName be a file name on Unix")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity)
 		{
-			throw new NotImplementedException ();
+			return CreateNew (mapName, capacity, MemoryMappedFileAccess.ReadWrite, MemoryMappedFileOptions.DelayAllocatePages, null, 0);
 		}
 
-		[MonoTODO]
+		[MonoLimitation ("CreateNew requires that mapName be a file name on Unix")]
 		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access) 
 		{
-			throw new NotImplementedException ();
+			return CreateNew (mapName, capacity, access, MemoryMappedFileOptions.DelayAllocatePages, null, 0);
 		}
 
-		/*
-		[MonoTODO]
-			public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability handleInheritability) {
-			throw new NotImplementedException ();
+		[MonoLimitation ("CreateNew requires that mapName be a file name on Unix; options and memoryMappedFileSecurity are ignored")]
+		public static MemoryMappedFile CreateNew (string mapName, long capacity, MemoryMappedFileAccess access,
+							  MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity,
+							  HandleInheritability handleInheritability)
+		{
+			return CreateFromFile (mapName, FileMode.CreateNew, mapName, capacity, access);
 		}
-		*/
 
 		[MonoTODO]
 			public static MemoryMappedFile CreateOrOpen (string mapName, long capacity) {
@@ -183,10 +251,9 @@ namespace System.IO.MemoryMappedFiles
 			return CreateViewStream (offset, size, MemoryMappedFileAccess.ReadWrite);
 		}
 
-		[MonoTODO]
 		public MemoryMappedViewStream CreateViewStream (long offset, long size, MemoryMappedFileAccess access)
 		{
-			return new MemoryMappedViewStream (stream, offset, size, access);
+			return new MemoryMappedViewStream (stream != null ? (int)stream.Handle : unix_fd, offset, size, access);
 		}
 
 		public MemoryMappedViewAccessor CreateViewAccessor ()
@@ -199,10 +266,11 @@ namespace System.IO.MemoryMappedFiles
 			return CreateViewAccessor (offset, size, MemoryMappedFileAccess.ReadWrite);
 		}
 
-		[MonoTODO]
 		public MemoryMappedViewAccessor CreateViewAccessor (long offset, long size, MemoryMappedFileAccess access)
 		{
-			return new MemoryMappedViewAccessor (stream, offset, size, access);
+			int file_handle = stream != null ? (int) stream.Handle : unix_fd;
+			
+			return new MemoryMappedViewAccessor (file_handle, offset, size, access);
 		}
 
 		MemoryMappedFile ()
@@ -217,8 +285,14 @@ namespace System.IO.MemoryMappedFiles
 		protected virtual void Dispose (bool disposing)
 		{
 			if (disposing){
-				if (stream != null && keepOpen == false)
-					stream.Close ();
+				if (stream != null){
+					if (keepOpen == false)
+						stream.Close ();
+					unix_fd = -1;
+				}
+				if (unix_fd != -1)
+					Syscall.close (unix_fd);
+				unix_fd = -1;
 				stream = null;
 			}
 		}
@@ -257,15 +331,16 @@ namespace System.IO.MemoryMappedFiles
 			default:
 				return MmapProts.PROT_READ;
 			}
-			
 		}
 
-		internal static unsafe void MapPosix (FileStream file, long offset, long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff)
+		internal static unsafe void MapPosix (int file_handle, long offset, long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff)
 		{
 			if (pagesize == 0)
 				pagesize = Syscall.getpagesize ();
 
-			long fsize = file.Length;
+			Stat buf;
+			Syscall.fstat (file_handle, out buf);
+			long fsize = buf.st_size;
 
 			if (size == 0 || size > fsize)
 				size = fsize;
@@ -285,17 +360,12 @@ namespace System.IO.MemoryMappedFiles
 			map_addr = Syscall.mmap (IntPtr.Zero, (ulong) size,
 						 ToUnixProts (access),
 						 access == MemoryMappedFileAccess.CopyOnWrite ? MmapFlags.MAP_PRIVATE : MmapFlags.MAP_SHARED,
-						 (int)file.Handle, real_offset);
-			
+						 file_handle, real_offset);
+
 			if (map_addr == (IntPtr)(-1))
-				throw new IOException ("mmap failed for " + file + "(" + offset + ", " + size + ")");
+				throw new IOException ("mmap failed for fd#" + file_handle + "(" + offset + ", " + size + ")");
 		}
 
-		internal static void FlushPosix (FileStream file)
-		{
-			Syscall.fsync ((int) file.Handle);
-		}
-		
 		internal static bool UnmapPosix (IntPtr map_addr, ulong map_size)
 		{
 			return Syscall.munmap (map_addr, map_size) == 0;

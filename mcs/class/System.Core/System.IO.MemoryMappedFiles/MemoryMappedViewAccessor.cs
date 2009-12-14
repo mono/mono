@@ -32,17 +32,18 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Microsoft.Win32.SafeHandles;
+using Mono.Unix.Native;
 
 namespace System.IO.MemoryMappedFiles
 {
 	public class MemoryMappedViewAccessor : UnmanagedMemoryAccessor {
-		FileStream file;
+		int file_handle;
 		IntPtr mmap_addr;
 		SafeMemoryMappedViewHandle handle;
 
-		internal MemoryMappedViewAccessor (FileStream file, long offset, long size, MemoryMappedFileAccess access)
+		internal MemoryMappedViewAccessor (int file_handle, long offset, long size, MemoryMappedFileAccess access)
 		{
-			this.file = file;
+			this.file_handle = file_handle;
 			if (MonoUtil.IsUnix)
 				CreatePosix (offset, size, access);
 			else
@@ -68,15 +69,11 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 		
-		unsafe void CreatePosix (long offset, long size, MemoryMappedFileAccess access) {
-			long fsize = file.Length;
-
-			if (size == 0 || size > fsize)
-				size = fsize;
-
+		unsafe void CreatePosix (long offset, long size, MemoryMappedFileAccess access)
+		{
 			int offset_diff;
 
-			MemoryMappedFile.MapPosix (file, offset, size, access, out mmap_addr, out offset_diff);
+			MemoryMappedFile.MapPosix (file_handle, offset, size, access, out mmap_addr, out offset_diff);
 
 			handle = new SafeMemoryMappedViewHandle ((IntPtr)((long)mmap_addr + offset_diff), size);
 			Initialize (handle, 0, size, ToFileAccess (access));
@@ -95,7 +92,7 @@ namespace System.IO.MemoryMappedFiles
 		public void Flush ()
 		{
 			if (MonoUtil.IsUnix)
-				MemoryMappedFile.FlushPosix (file);
+				Syscall.fsync (file_handle);
 			else
 				throw new NotImplementedException ("Not implemented on Windows");
 		}

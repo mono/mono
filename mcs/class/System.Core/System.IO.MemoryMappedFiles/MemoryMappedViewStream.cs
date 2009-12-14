@@ -30,32 +30,30 @@
 
 using System;
 using System.IO;
+using Mono.Unix.Native;
 
 namespace System.IO.MemoryMappedFiles
 {
 	public sealed class MemoryMappedViewStream : UnmanagedMemoryStream {
-
 		IntPtr mmap_addr;
 		ulong mmap_size;
 		object monitor;
-
-		internal MemoryMappedViewStream (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
+		int fd;
+		
+		internal MemoryMappedViewStream (int fd, long offset, long size, MemoryMappedFileAccess access) {
+			this.fd = fd;
 			monitor = new Object ();
 			if (MonoUtil.IsUnix)
-				CreateStreamPosix (file, offset, size, access);
+				CreateStreamPosix (fd, offset, size, access);
 			else
 				throw new NotImplementedException ("Not implemented on windows.");
 		}
 
-		unsafe void CreateStreamPosix (FileStream file, long offset, long size, MemoryMappedFileAccess access) {
-			long fsize = file.Length;
-
-			if (size == 0 || size > fsize)
-				size = fsize;
-
+		unsafe void CreateStreamPosix (int fd, long offset, long size, MemoryMappedFileAccess access)
+		{
 			int offset_diff;
 			mmap_size = (ulong) size;
-			MemoryMappedFile.MapPosix (file, offset, size, access, out mmap_addr, out offset_diff);
+			MemoryMappedFile.MapPosix (fd, offset, size, access, out mmap_addr, out offset_diff);
 			
 			FileAccess faccess;
 
@@ -86,6 +84,13 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 
+		public override void Flush ()
+		{
+			if (MonoUtil.IsUnix)
+				Syscall.fsync (fd);
+			else
+				throw new NotImplementedException ("Not implemented on Windows");
+		}
 	}
 }
 
