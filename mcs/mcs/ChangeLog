@@ -1,3 +1,9 @@
+2009-12-14  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #564376
+	* assign.cs (LocalTemporary): Removed no longer needed special
+	by-ref handling.
+
 2009-12-11  Marek Safar  <marek.safar@gmail.com>
 
 	* modifiers.cs, decl.cs, iterators.cs, const.cs, anonymous.cs,

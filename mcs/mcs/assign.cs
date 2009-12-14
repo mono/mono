@@ -222,10 +222,6 @@ namespace Mono.CSharp {
 				throw new InternalErrorException ("Emit without Store, or after Release");
 
 			ig.Emit (OpCodes.Ldloc, builder);
-
-			// we need to copy from the pointer
-			if (builder.LocalType.IsByRef)
-				LoadFromPtr (ig, type);
 		}
 
 		#region IAssignMethod Members
