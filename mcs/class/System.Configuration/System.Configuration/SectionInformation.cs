@@ -44,7 +44,7 @@ namespace System.Configuration
 		bool restart_on_external_changes;
 		bool require_permission;
 
-		string config_source;
+		string config_source = String.Empty;
 		bool force_update, is_declared, is_locked;
 		string name, type_name;
 		string raw_xml;
@@ -89,7 +89,12 @@ namespace System.Configuration
 
 		public string ConfigSource {
 			get { return config_source; }
-			set { config_source = value; }
+			set {
+				if (value == null)
+					value = String.Empty;
+
+				config_source = value; 
+			}
 		}
 
 		public bool ForceSave {
@@ -148,7 +153,12 @@ namespace System.Configuration
 
 		public string Type {
 			get { return type_name; }
-			set { type_name = value; }
+			set {
+				if (value == null || value.Length == 0)
+					throw new ArgumentException ("Value cannot be null or empty.");
+
+				type_name = value; 
+			}
 		}
 
 		public ConfigurationSection GetParentSection ()

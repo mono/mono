@@ -1,3 +1,10 @@
+2009-12-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SectionInformation.cs: ConfigSource should never be null, but empty.
+	Also, the Type property should throw an argument exception if the
+	new value is null or empty.
+	Fixes #458185.
+
 2009-10-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Configuration.cs: make this work again with bundled configuration
