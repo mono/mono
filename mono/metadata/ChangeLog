@@ -1,3 +1,8 @@
+2009-12-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* pedump.c: Add partial-md mode that doesn't perform full metadata verification. It does the
+	same amount done by a core-clr enabled runtime.
+
 2009-12-15  Marek Habersack  <mhabersack@novell.com>
 
 	* appdomain.c (mono_make_shadow_copy): make sure access mode of
