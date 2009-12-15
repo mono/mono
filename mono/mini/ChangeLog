@@ -1,5 +1,9 @@
 2009-12-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* method-to-ir.c (mini_emit_memcpy): Assert if size is too big.
+
+2009-12-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-x86.c (mono_arch_allocate_vars): Fail compilation if the frame size is
 	bigger than MONO_ARCH_MAX_FRAME_SIZE.
 
