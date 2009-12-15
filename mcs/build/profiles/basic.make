@@ -22,6 +22,9 @@ NO_TEST = yes
 NO_INSTALL = yes
 FRAMEWORK_VERSION = 2.0
 
+# Verbose basic only
+# V = 1
+
 #
 # Copy from rules.make because I don't know how to unset MCS_FLAGS
 #
@@ -81,6 +84,8 @@ endif
 
 $(PROFILE_EXE): $(topdir)/build/common/basic-profile-check.cs
 	$(BOOTSTRAP_MCS) /warn:0 /out:$@ $<
+	echo -n "Bootstrap compiler: " 1>&2
+	$(BOOTSTRAP_MCS) --version 1>&2
 
 $(PROFILE_OUT): $(PROFILE_EXE)
 	$(PROFILE_RUNTIME) $< > $@ 2>&1
