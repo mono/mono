@@ -1,5 +1,9 @@
 2009-12-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_fields): Fail valuetypes that are bigger than 1Mb.
+
+2009-12-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* pedump.c: Add partial-md mode that doesn't perform full metadata verification. It does the
 	same amount done by a core-clr enabled runtime.
 
