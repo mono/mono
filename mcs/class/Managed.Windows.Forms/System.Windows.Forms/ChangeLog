@@ -1,3 +1,10 @@
+2009-12-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Control.cs: When changing the cursor and updating it, do update the
+	cursor immediately even if there's a child control under the current
+	cursor position - this is exactly what .net does.
+	Fixes #555780.
+
 2009-11-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* DataGrid.cs: In OnLeave, do cancel or end current edit, depending on

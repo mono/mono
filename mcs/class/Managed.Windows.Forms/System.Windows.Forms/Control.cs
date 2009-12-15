@@ -2010,7 +2010,7 @@ namespace System.Windows.Forms
 
 			Point pt = PointToClient (Cursor.Position);
 
-			if ((!bounds.Contains (pt) && !Capture) || (GetChildAtPoint (pt) != null))
+			if (!bounds.Contains (pt) && !Capture)
 				return;
 
 			if (cursor != null || use_wait_cursor) {
