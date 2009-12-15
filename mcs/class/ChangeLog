@@ -1,3 +1,7 @@
+2009-12-15  Marek Safar  <marek.safar@gmail.com>
+
+	* Makefile: Add System.Core to 2.1 bootstrap.
+
 2009-12-07  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Add System.Core to basic.
