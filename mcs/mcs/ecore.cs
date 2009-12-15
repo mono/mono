@@ -17,10 +17,7 @@ namespace Mono.CSharp {
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Text;
-
-#if NET_4_0
 	using SLE = System.Linq.Expressions;
-#endif
 
 	/// <remarks>
 	///   The ExprClass class contains the is used to pass the 
@@ -1263,7 +1260,6 @@ namespace Mono.CSharp {
 			return texpr;
 		}
 
-#if NET_4_0
 		//
 		// Implemented by all expressions which support conversion from
 		// compiler expression to invokable runtime expression. Used by
@@ -1273,7 +1269,6 @@ namespace Mono.CSharp {
 		{
 			throw new NotImplementedException ("MakeExpression for " + GetType ());
 		}
-#endif
 
 		public virtual void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -1371,14 +1366,12 @@ namespace Mono.CSharp {
 			return child.GetAttributableValue (ec, value_type, out value);
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return ctx.HasSet (BuilderContext.Options.CheckedScope) ?
 				SLE.Expression.ConvertChecked (child.MakeExpression (ctx), type) :
 				SLE.Expression.Convert (child.MakeExpression (ctx), type);
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -2304,12 +2297,10 @@ namespace Mono.CSharp {
 			expr.EmitBranchable (ec, target, on_true);
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return orig_expr.MakeExpression (ctx);
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -5333,7 +5324,6 @@ namespace Mono.CSharp {
 			return TypeBuilder.GetField (constructed_generic_type, FieldInfo);
 		}
 
-#if NET_4_0
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
 		{
 			return MakeExpression (ctx);
@@ -5343,7 +5333,6 @@ namespace Mono.CSharp {
 		{
 			return SLE.Expression.Field (InstanceExpression.MakeExpression (ctx), FieldInfo);
 		}
-#endif
 		
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -5501,7 +5490,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-#if NET_4_0
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), setter);
@@ -5511,7 +5499,6 @@ namespace Mono.CSharp {
 		{
 			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), getter);
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

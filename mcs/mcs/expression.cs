@@ -16,11 +16,8 @@ namespace Mono.CSharp {
 	using System.Reflection;
 	using System.Reflection.Emit;
 	using System.Text;
-
-#if NET_4_0
 	using System.Linq;
 	using SLE = System.Linq.Expressions;
-#endif
 
 	//
 	// This is an user operator expression, automatically created during
@@ -74,12 +71,10 @@ namespace Mono.CSharp {
 			mg.EmitCall (ec, arguments);
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.Call ((MethodInfo) mg, Arguments.MakeExpression (arguments, ctx));
 		}
-#endif
 
 		public MethodGroupExpr Method {
 			get { return mg; }
@@ -595,7 +590,6 @@ namespace Mono.CSharp {
 			throw new NotImplementedException (oper.ToString ());
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			var expr = Expr.MakeExpression (ctx);
@@ -606,13 +600,14 @@ namespace Mono.CSharp {
 				return is_checked ? SLE.Expression.NegateChecked (expr) : SLE.Expression.Negate (expr);
 			case Operator.LogicalNot:
 				return SLE.Expression.Not (expr);
+#if NET_4_0
 			case Operator.OnesComplement:
 				return SLE.Expression.OnesComplement (expr);
+#endif
 			default:
 				throw new NotImplementedException (Oper.ToString ());
 			}
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -2728,7 +2723,6 @@ namespace Mono.CSharp {
 			return expr;
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			var le = left.MakeExpression (ctx);
@@ -2776,7 +2770,6 @@ namespace Mono.CSharp {
 				throw new NotImplementedException (oper.ToString ());
 			}
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -3912,7 +3905,6 @@ namespace Mono.CSharp {
 				concat.Emit (ec);
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			if (arguments.Count != 2)
@@ -3921,7 +3913,6 @@ namespace Mono.CSharp {
 			var concat = TypeManager.string_type.GetMethod ("Concat", new[] { typeof (object), typeof (object) });
 			return SLE.Expression.Add (arguments[0].Expr.MakeExpression (ctx), arguments[1].Expr.MakeExpression (ctx), concat);
 		}
-#endif
 		
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -5312,7 +5303,6 @@ namespace Mono.CSharp {
 			target.expr = expr.Clone (clonectx);
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return MakeExpression (ctx, mg.InstanceExpression, (MethodInfo) mg, arguments);
@@ -5323,7 +5313,6 @@ namespace Mono.CSharp {
 			var instance_expr = instance == null ? null : instance.MakeExpression (ctx);
 			return SLE.Expression.Call (instance_expr, mi, Arguments.MakeExpression (args, ctx));
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -5752,12 +5741,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.New ((ConstructorInfo) method, Arguments.MakeExpression (Arguments, ctx));
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -7793,14 +7780,12 @@ namespace Mono.CSharp {
 				Expr.EmitBranchable (ec, target, on_true);
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			using (ctx.With (BuilderContext.Options.AllCheckStateFlags, true)) {
 				return Expr.MakeExpression (ctx);
 			}
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -8338,6 +8323,7 @@ namespace Mono.CSharp {
 				ea.Expr.MakeExpression (ctx),
 				Arguments.MakeExpression (ea.Arguments, ctx));
 		}
+#endif
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
@@ -8345,7 +8331,6 @@ namespace Mono.CSharp {
 				ea.Expr.MakeExpression (ctx),
 				Arguments.MakeExpression (ea.Arguments, ctx));
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -8726,13 +8711,13 @@ namespace Mono.CSharp {
 					SLE.Expression.Call (instance_expr.MakeExpression (ctx), set, args),
 					value [0]);
 		}
+#endif
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			var args = Arguments.MakeExpression (arguments, ctx);
 			return SLE.Expression.Call (instance_expr.MakeExpression (ctx), get, args);
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
@@ -9081,12 +9066,10 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpSignature (method);
 		}
 
-#if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.Convert (source.MakeExpression (ctx), type, method);
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

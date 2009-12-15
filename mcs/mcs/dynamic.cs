@@ -10,10 +10,10 @@
 
 using System;
 using System.Reflection.Emit;
+using SLE = System.Linq.Expressions;
 
 #if NET_4_0
 using System.Dynamic;
-using SLE = System.Linq.Expressions;
 #endif
 
 namespace Mono.CSharp
@@ -73,6 +73,7 @@ namespace Mono.CSharp
 		{
 			public Type RuntimeType;
 			public Type LimitType;
+			public SLE.Expression Expression;
 		}
 #endif
 
@@ -125,7 +126,6 @@ namespace Mono.CSharp
 
 		#endregion
 
-#if NET_4_0
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
 		{
 			return obj.Expression;
@@ -135,7 +135,6 @@ namespace Mono.CSharp
 		{
 			return SLE.Expression.Convert (obj.Expression, type);
 		}
-#endif
 
 		public DynamicMetaObject MetaObject {
 			get { return obj; }

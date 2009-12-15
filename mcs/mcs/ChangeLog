@@ -1,3 +1,7 @@
+2009-12-15  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Clean up NET_4_0 conditional where possible.
+
 2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	support.cs (DynamicType): Assembly property returns the assembly builder.

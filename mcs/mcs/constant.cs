@@ -267,12 +267,10 @@ namespace Mono.CSharp {
 			// CloneTo: Nothing, we do not keep any state on this expression
 		}
 
-#if NET_4_0
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			return System.Linq.Expressions.Expression.Constant (GetTypedValue (), type);
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

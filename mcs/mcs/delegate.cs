@@ -828,12 +828,10 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Pop);
 		}
 
-#if NET_4_0
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			return Invocation.MakeExpression (ctx, InstanceExpr, method, arguments);
 		}
-#endif
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{

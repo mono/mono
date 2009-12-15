@@ -81,12 +81,10 @@ namespace Mono.CSharp {
 			get { return true; }
 		}
 
-#if NET_4_0
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
 			return System.Linq.Expressions.Expression.Constant (null);
 		}
-#endif
 	}
 
 	//

@@ -418,7 +418,6 @@ namespace Mono.CSharp
 			args.Insert (index, arg);
 		}
 
-#if NET_4_0
 		public static System.Linq.Expressions.Expression[] MakeExpression (Arguments args, BuilderContext ctx)
 		{
 			if (args == null || args.Count == 0)
@@ -432,7 +431,6 @@ namespace Mono.CSharp
 
 			return exprs;
 		}
-#endif
 
 		public void MarkReorderedArgument (NamedArgument a)
 		{
