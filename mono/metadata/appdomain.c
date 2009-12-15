@@ -1127,6 +1127,12 @@ shadow_copy_sibling (gchar *src, gint srclen, const char *extension, gchar *targ
 	
 	DeleteFile (dest);
 	copy_result = CopyFile (orig, dest, FALSE);
+
+	/* Fix for bug #556884 - make sure the files have the correct mode so that they can be
+	 * overwritten when updated in their original locations. */
+	if (copy_result)
+		copy_result = SetFileAttributes (dest, FILE_ATTRIBUTE_NORMAL);
+
 	g_free (orig);
 	g_free (dest);
 	
@@ -1451,6 +1457,12 @@ mono_make_shadow_copy (const char *filename)
 	dest = g_utf8_to_utf16 (shadow, strlen (shadow), NULL, NULL, NULL);
 	DeleteFile (dest);
 	copy_result = CopyFile (orig, dest, FALSE);
+
+	/* Fix for bug #556884 - make sure the files have the correct mode so that they can be
+	 * overwritten when updated in their original locations. */
+	if (copy_result)
+		copy_result = SetFileAttributes (dest, FILE_ATTRIBUTE_NORMAL);
+
 	g_free (dest);
 	g_free (orig);
 
