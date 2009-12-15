@@ -23,11 +23,6 @@ cs0457.cs
 cs1540-6.cs
 cs1540-9.cs
 
-# UT Runtime bugs
-dcs1966-2.cs NO ERROR
-dcs1966.cs
-dcs1968.cs
-
 # the error message has an assembly version in it
 cs1685.cs
 gcs1685.cs
