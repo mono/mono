@@ -1263,6 +1263,7 @@ namespace System
 			int low = index;
 			int high = index + length - 1;
 			
+#if !BOOTSTRAP_BASIC			
 			if (comparer == null) {
 				if (keys is int[]) {
 					qsort (keys as int[], items as object[], low, high);
@@ -1297,6 +1298,7 @@ namespace System
 					return;
 				}				
 			}
+#endif
 			
 			low = MoveNullKeysToFront (keys, items, low, high, comparer == null);
 			if (low == high)
@@ -1515,6 +1517,7 @@ namespace System
 			// Check for value types which can be sorted without Compare () method
 			//
 			if (comparer == null) {
+#if !BOOTSTRAP_BASIC				
 				switch (Type.GetTypeCode (typeof (TKey))) {
 				case TypeCode.Int32:
 					qsort (keys as Int32[], items, low, high);
@@ -1556,7 +1559,7 @@ namespace System
 					qsort (keys as UInt64[], items, low, high);
 					return;
 				}
-
+#endif
 				// Using Comparer<TKey> adds a small overload, but with value types it
 				// helps us to not box them.
 				if (typeof (IComparable<TKey>).IsAssignableFrom (typeof (TKey)) &&
