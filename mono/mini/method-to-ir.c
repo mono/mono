@@ -1704,6 +1704,9 @@ mini_emit_memcpy (MonoCompile *cfg, int destreg, int doffset, int srcreg, int so
 	if (align == 0)
 		align = 4;
 
+	/*FIXME arbitrary hack to avoid unbound code expansion.*/
+	g_assert (size < 10000);
+
 	if (align < 4) {
 		/* This could be optimized further if neccesary */
 		while (size >= 1) {
@@ -9775,13 +9778,27 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				readonly = TRUE;
 				ip += 2;
 				break;
+
+			case CEE_UNUSED56:
+			case CEE_UNUSED57:
+			case CEE_UNUSED70:
+			case CEE_UNUSED:
+			case CEE_UNUSED99:
+				UNVERIFIED;
+				
 			default:
-				g_error ("opcode 0xfe 0x%02x not handled", ip [1]);
+				g_warning ("opcode 0xfe 0x%02x not handled", ip [1]);
+				UNVERIFIED;
 			}
 			break;
 		}
+		case CEE_UNUSED58:
+		case CEE_UNUSED1:
+			UNVERIFIED;
+
 		default:
-			g_error ("opcode 0x%02x not handled", *ip);
+			g_warning ("opcode 0x%02x not handled", *ip);
+			UNVERIFIED;
 		}
 	}
 	if (start_new_bblock != 1)

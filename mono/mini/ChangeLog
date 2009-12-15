@@ -1,3 +1,67 @@
+2009-12-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mini_emit_memcpy): Assert if size is too big.
+
+	Backport of r148504.
+
+2009-12-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-x86.c (mono_arch_allocate_vars): Fail compilation if the frame size is
+	bigger than MONO_ARCH_MAX_FRAME_SIZE.
+
+	* mini-x86.c (mono_arch_emit_prolog): Handle huge frames.
+
+	* mini-x86.h: Define MONO_ARCH_MAX_FRAME_SIZE to be 1Mb.
+
+	* mini-amd64.c / mini-amd64.h: Same fixes as of above.
+
+	* mini.c (mini_method_compile): Check if mono_arch_allocate_vars failed
+	the compilation.
+
+	Backport of r148502.
+
+2009-12-14  Miguel de Icaza  <miguel@novell.com>
+ 
+ 	* method-to-ir.c (mono_method_to_ir): CEE_UNUSUED opcodes now
+ 	raise an invalid program exception.   
+ 
+ 	For other opcodes that we might not handle use a g_warning and
+ 	raise the exception.   Beats termination.
+ 
+ 	Fixes #561724
+
+2009-12-14  Geoff Norton  <gnorton@novell.com>
+
+	* debugger-agent.c: The end_runtime_invoke guard isn't working on 
+	AMD64 as __builtin_frame_address (1) returns NULL.  Disable the 
+	behaviour by default, and make it runtime configurable.
+	
+2009-12-13 Jonathan Chambers <joncham@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Handle a NULL
+	sigctx being passed in, as we have no CONTEXT available in the APC.
+	
+	(mono_debugger_agent_cleanup): Use explicit cond wait implementation
+	for now.
+
+	Code contributed under MIT/X11 license.
+
+2009-12-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Allocate the 'pindexes' array with the
+	proper size.
+
+2009-12-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Encode the this argument of vtype methods as a struct, not
+	as a primitive type.
+
+2009-12-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c: Applied patch from Matt McClellan (matt@mc-c.net). Add a check
+	for 2 parameter sched_setaffinity in older glibc versions. Fixes
+	#564000.
+
 2009-12-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (add_wrappers): Avoid generating synchronized wrappers for

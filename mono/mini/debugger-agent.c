@@ -102,6 +102,7 @@ typedef struct {
 	GSList *onthrow;
 	int timeout;
 	char *launch;
+	gboolean embedding;
 } AgentConfig;
 
 typedef struct
@@ -500,6 +501,8 @@ static HANDLE debugger_thread_handle;
 
 static int log_level;
 
+static gboolean embedding;
+
 static FILE *log_file;
 
 /* Classes whose class load event has been sent */
@@ -670,6 +673,8 @@ mono_debugger_agent_parse_options (char *options)
 			agent_config.timeout = atoi (arg + 8);
 		} else if (strncmp (arg, "launch=", 7) == 0) {
 			agent_config.launch = g_strdup (arg + 7);
+		} else if (strncmp (arg, "embedding=", 9) == 0) {
+			agent_config.embedding = atoi (arg + 9) == 1;
 		} else {
 			print_usage ();
 			exit (1);
@@ -734,6 +739,8 @@ mono_debugger_agent_init (void)
 	pending_assembly_loads = g_ptr_array_new ();
 
 	log_level = agent_config.log_level;
+
+	embedding = agent_config.embedding;
 
 	if (agent_config.log_file) {
 		log_file = fopen (agent_config.log_file, "w+");
@@ -841,7 +848,17 @@ mono_debugger_agent_cleanup (void)
 	if (GetCurrentThreadId () != debugger_thread_id) {
 		mono_mutex_lock (&debugger_thread_exited_mutex);
 		if (!debugger_thread_exited)
+		{
+#ifdef HOST_WIN32
+			if (WAIT_TIMEOUT == WaitForSingleObject(debugger_thread_exited_cond, 0)) {
+				mono_mutex_unlock (&debugger_thread_exited_mutex);
+				Sleep(0);
+				mono_mutex_lock (&debugger_thread_exited_mutex);
+			}
+#else
 			mono_cond_wait (&debugger_thread_exited_cond, &debugger_thread_exited_mutex);
+#endif
+		}
 		mono_mutex_unlock (&debugger_thread_exited_mutex);
 	}
 
@@ -1793,7 +1810,6 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			MonoContext ctx;
 			GetLastFrameUserData data;
 
-			mono_arch_sigctx_to_monoctx (sigctx, &ctx);
 			// FIXME: printf is not signal safe, but this is only used during
 			// debugger debugging
 			DEBUG (1, printf ("[%p] Received interrupt while at %p, treating as suspended.\n", (gpointer)GetCurrentThreadId (), mono_arch_ip_from_context (sigctx)));
@@ -1814,7 +1830,10 @@ mono_debugger_agent_thread_interrupt (void *sigctx, MonoJitInfo *ji)
 			 * remain valid.
 			 */
 			data.last_frame_set = FALSE;
-			mono_jit_walk_stack_from_ctx_in_thread (get_last_frame, mono_domain_get (), &ctx, FALSE, tls->thread, mono_get_lmf (), &data);
+			if (sigctx) {
+				mono_arch_sigctx_to_monoctx (sigctx, &ctx);
+				mono_jit_walk_stack_from_ctx_in_thread (get_last_frame, mono_domain_get (), &ctx, FALSE, tls->thread, mono_get_lmf (), &data);
+			}
 			if (data.last_frame_set) {
 				memcpy (&tls->async_last_frame, &data.last_frame, sizeof (StackFrameInfo));
 				memcpy (&tls->async_ctx, &data.ctx, sizeof (MonoContext));
@@ -2777,7 +2796,7 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 	gpointer stackptr = __builtin_frame_address (1);
 #endif
 
-	if (ss_req == NULL || stackptr != ss_invoke_addr || ss_req->thread != mono_thread_internal_current ())
+	if (!embedding || ss_req == NULL || stackptr != ss_invoke_addr || ss_req->thread != mono_thread_internal_current ())
 		return;
 
 	/*
@@ -3666,18 +3685,45 @@ mono_debugger_agent_handle_unhandled_exception (MonoException *exc, MonoContext 
 }
 
 /*
- * buffer_add_value:
+ * buffer_add_value_full:
  *
  *   Add the encoding of the value at ADDR described by T to the buffer.
+ * AS_VTYPE determines whenever to treat primitive types as primitive types or
+ * vtypes.
  */
 static void
-buffer_add_value (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain)
+buffer_add_value_full (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain,
+					   gboolean as_vtype)
 {
 	MonoObject *obj;
 
 	if (t->byref) {
 		g_assert (*(void**)addr);
 		addr = *(void**)addr;
+	}
+
+	if (as_vtype) {
+		switch (t->type) {
+		case MONO_TYPE_BOOLEAN:
+		case MONO_TYPE_I1:
+		case MONO_TYPE_U1:
+		case MONO_TYPE_CHAR:
+		case MONO_TYPE_I2:
+		case MONO_TYPE_U2:
+		case MONO_TYPE_I4:
+		case MONO_TYPE_U4:
+		case MONO_TYPE_R4:
+		case MONO_TYPE_I8:
+		case MONO_TYPE_U8:
+		case MONO_TYPE_R8:
+		case MONO_TYPE_I:
+		case MONO_TYPE_U:
+		case MONO_TYPE_PTR:
+			goto handle_vtype;
+			break;
+		default:
+			break;
+		}
 	}
 
 	switch (t->type) {
@@ -3772,7 +3818,7 @@ buffer_add_value (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain)
 				continue;
 			if (mono_field_is_deleted (f))
 				continue;
-			buffer_add_value (buf, f->type, (guint8*)addr + f->offset - sizeof (MonoObject), domain);
+			buffer_add_value_full (buf, f->type, (guint8*)addr + f->offset - sizeof (MonoObject), domain, FALSE);
 		}
 		break;
 	}
@@ -3786,6 +3832,12 @@ buffer_add_value (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain)
 	default:
 		NOT_IMPLEMENTED;
 	}
+}
+
+static void
+buffer_add_value (Buffer *buf, MonoType *t, void *addr, MonoDomain *domain)
+{
+	buffer_add_value_full (buf, t, addr, domain, FALSE);
 }
 
 static ErrorCode
@@ -3902,7 +3954,7 @@ decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 }
 
 static void
-add_var (Buffer *buf, MonoType *t, MonoDebugVarInfo *var, MonoContext *ctx, MonoDomain *domain)
+add_var (Buffer *buf, MonoType *t, MonoDebugVarInfo *var, MonoContext *ctx, MonoDomain *domain, gboolean as_vtype)
 {
 	guint32 flags;
 	int reg;
@@ -3916,7 +3968,7 @@ add_var (Buffer *buf, MonoType *t, MonoDebugVarInfo *var, MonoContext *ctx, Mono
 	case MONO_DEBUG_VAR_ADDRESS_MODE_REGISTER:
 		reg_val = mono_arch_context_get_int_reg (ctx, reg);
 
-		buffer_add_value (buf, t, &reg_val, domain);
+		buffer_add_value_full (buf, t, &reg_val, domain, as_vtype);
 		break;
 	case MONO_DEBUG_VAR_ADDRESS_MODE_REGOFFSET:
 		addr = mono_arch_context_get_int_reg (ctx, reg);
@@ -3924,7 +3976,7 @@ add_var (Buffer *buf, MonoType *t, MonoDebugVarInfo *var, MonoContext *ctx, Mono
 
 		//printf ("[R%d+%d] = %p\n", reg, var->offset, addr);
 
-		buffer_add_value (buf, t, addr, domain);
+		buffer_add_value_full (buf, t, addr, domain, as_vtype);
 		break;
 	case MONO_DEBUG_VAR_ADDRESS_MODE_DEAD:
 		NOT_IMPLEMENTED;
@@ -5519,13 +5571,13 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 
 				var = &jit->params [pos];
 
-				add_var (buf, sig->params [pos], &jit->params [pos], &frame->ctx, frame->domain);
+				add_var (buf, sig->params [pos], &jit->params [pos], &frame->ctx, frame->domain, FALSE);
 			} else {
 				g_assert (pos >= 0 && pos < jit->num_locals);
 
 				var = &jit->locals [pos];
 				
-				add_var (buf, header->locals [pos], &jit->locals [pos], &frame->ctx, frame->domain);
+				add_var (buf, header->locals [pos], &jit->locals [pos], &frame->ctx, frame->domain, FALSE);
 			}
 		}
 		break;
@@ -5536,14 +5588,14 @@ frame_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 				MonoObject *p = NULL;
 				buffer_add_value (buf, &mono_defaults.object_class->byval_arg, &p, frame->domain);
 			} else {
-				add_var (buf, &frame->method->klass->this_arg, jit->this_var, &frame->ctx, frame->domain);
+				add_var (buf, &frame->method->klass->this_arg, jit->this_var, &frame->ctx, frame->domain, TRUE);
 			}
 		} else {
 			if (!sig->hasthis) {
 				MonoObject *p = NULL;
 				buffer_add_value (buf, &frame->method->klass->byval_arg, &p, frame->domain);
 			} else {
-				add_var (buf, &frame->method->klass->byval_arg, jit->this_var, &frame->ctx, frame->domain);
+				add_var (buf, &frame->method->klass->byval_arg, jit->this_var, &frame->ctx, frame->domain, TRUE);
 			}
 		}
 		break;

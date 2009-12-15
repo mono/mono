@@ -1,3 +1,32 @@
+2009-12-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_fields): Fail valuetypes that are bigger than 1Mb.
+
+	Backport of r148503.
+
+2009-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* appdomain.c (mono_make_shadow_copy): make sure access mode of
+	the target files is reset to writable by owner and readable by
+	everyone else to prevent problems when updating shadow copies of
+	files whose source is read-only. Fixes bug #556884
+
+2009-12-14  Miguel de Icaza  <miguel@novell.com>
+
+	* verify.c (mono_method_verify): The Unused opcodes produce an
+	InvalidProgramException on .NET
+	
+2009-12-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* loader.c (mono_method_get_header): Move assert after the verifier
+	has been called on the method header.
+	[Backport r148406]
+
+Fri Dec 11 18:24:04 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c: fixed race condition while getting the target of a
+	disappearing link (bug #522233).
+
 2009-12-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* loader.c (mono_method_signature): Always call mono_loader_unlock 
