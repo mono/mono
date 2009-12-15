@@ -102,7 +102,8 @@ namespace System.Web.UI.WebControls
 		IOrderedDictionary _currentDeletingItemValues;
 		
 		int _firstIdAfterLayoutTemplate = 0;
-		
+
+		bool usingFakeData;
 #region Events
 		// Event keys
 		static readonly object ItemCancellingEvent = new object ();
@@ -777,7 +778,12 @@ namespace System.Web.UI.WebControls
 					// OnTotalRowCountAvailable is called now - so that any
 					// pagers can create child controls.
 					object[] data = new object [c];
-					CreateChildControls (data, false);
+					usingFakeData = true;
+					try {
+						CreateChildControls (data, false);
+					} finally {
+						usingFakeData = false;
+					}
 				}
 			}
 			
@@ -803,6 +809,7 @@ namespace System.Web.UI.WebControls
 
 				int totalRowCount = 0;
 				if (haveDataToPage && view.CanPage) {
+					pagedDataSource.AllowServerPaging = true;
 					if (view.CanRetrieveTotalRowCount)
 						totalRowCount = SelectArguments.TotalRowCount;
 					else {
@@ -819,14 +826,14 @@ namespace System.Web.UI.WebControls
 			} else {
 				if (!(dataSource is ICollection))
 					throw new InvalidOperationException ("dataSource does not implement the ICollection interface and dataBinding is false.");
-				pagedDataSource.TotalRowCount = 0;
+				pagedDataSource.TotalRowCount = _totalRowCount;
 				_totalRowCount = -1;
 			}
 
 			pagedDataSource.StartRowIndex = StartRowIndex;
 			pagedDataSource.MaximumRows = MaximumRows;
 			pagedDataSource.DataSource = dataSource;
-			
+
 			bool emptySet = false;
 			if (dataSource != null) {
 				if (GroupItemCount <= 1 && GroupTemplate == null)
@@ -850,7 +857,7 @@ namespace System.Web.UI.WebControls
 			} else
 				emptySet = true;
 
-			if (emptySet) {
+			if (!usingFakeData && emptySet) {
 				Controls.Clear ();
 				CreateEmptyDataItem ();
 			}

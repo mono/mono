@@ -37,7 +37,7 @@ using System.Web.UI.WebControls;
 
 using NUnit.Framework;
 
-namespace Tests.System.Web.UI.WebControls
+namespace MonoTests.System.Web.UI.WebControls
 {
 	class DataPagerFieldCollectionPoker : DataPagerFieldCollection
 	{
