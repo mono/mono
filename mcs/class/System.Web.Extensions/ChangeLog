@@ -1,3 +1,8 @@
+2009-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions_test.dll.sources: added
+	System.Web.UI.WebControls/ListViewPagedDataSourceTest.cs
+
 2009-07-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (TEST_MCS_FLAGS): Reference SystemWebTestShim.

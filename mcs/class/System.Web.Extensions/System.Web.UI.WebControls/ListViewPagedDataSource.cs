@@ -139,11 +139,11 @@ namespace System.Web.UI.WebControls
 
 			IList list = ds as IList;
 			if (list != null)
-				return new ListEnumerator (list, StartRowIndex, Count);
+				return new ListEnumerator (list, AllowServerPaging ? 0 : StartRowIndex, Count);
 
 			ICollection collection = ds as ICollection;
 			if (collection != null)
-				return new CollectionEnumerator (collection, StartRowIndex, Count);
+				return new CollectionEnumerator (collection, AllowServerPaging ? 0 : StartRowIndex, Count);
 			
 			return ds.GetEnumerator ();
 		}
@@ -180,8 +180,7 @@ namespace System.Web.UI.WebControls
 					return maxRows;
 
 				// LAMESPEC: MSDN says that DataSourceCount should be subtracted
-				// from StartRowIndex, but that would result in a negative number,
-				// which is not what we want.
+				// from StartRowIndex
 				return DataSourceCount - StartRowIndex;
 			}
 		}

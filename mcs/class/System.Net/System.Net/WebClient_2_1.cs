@@ -153,6 +153,8 @@ namespace System.Net {
 		{
 			WebRequest request = GetWebRequest (uri);
 			request.Method = DetermineMethod (uri, method);
+			foreach (string header in Headers.AllKeys)
+				request.Headers.SetHeader (header, Headers [header]);
 			return request;
 		}
 
@@ -415,6 +417,9 @@ namespace System.Net {
 			catch (WebException web) {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
 				ex = web;
+			}
+			catch (InvalidOperationException ioe) {
+				ex = new WebException ("An exception occurred during a WebClient request", ioe);
 			}
 			catch (Exception e) {
 				ex = e;

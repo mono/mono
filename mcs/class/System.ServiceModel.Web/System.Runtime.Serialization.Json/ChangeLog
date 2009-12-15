@@ -1,3 +1,10 @@
+2009-12-11  Chris Toshok  <toshok@ximian.com>
+
+	* TypeMap.cs (CreateDefaultTypeMap): only include non-public
+	property info when dealing with KeyValuePair<,>.  This is *not*
+	the way MS handles it, but we emulate things much better with this
+	hack.
+
 2009-12-08  Chris Toshok  <toshok@ximian.com>
 
 	* JsonSerializationReader.cs (DeserializeGenericCollection): in

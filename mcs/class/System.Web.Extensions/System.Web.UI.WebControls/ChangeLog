@@ -1,3 +1,23 @@
+2009-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* NextPreviousPagerField.cs: HandleEvent doesn't call
+	DataPager.SetPageProperties with negative start index. Also, if
+	_totalRowCount is <= 0, new start index is not calculated using
+	it. Fixes bug #545417
+
+	* ListViewPagedDataSource.cs: when server paging is on, data items
+	are counted from index 0 instead of from the value stored in
+	StartRowIndex. Fixes bug #545417
+
+	* ListView.cs: CreateChildControls doesn't create empty data item
+	if called with fake data.
+	When a view reports it can page data, ListViewPagedDataSource
+	passed to item creation methods has AllowServerPaging set to
+	true. Fixes bug #545417
+	When CreateChildControls is called with fake data,
+	ListViewPagedDataSource has its TotalRowCount property set to the
+	actual total row count, not zero. Fixes bug #545417
+
 2009-09-15  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: CreateChildControls calls EnsureDataBound only if
