@@ -1,3 +1,10 @@
+2009-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* appdomain.c (mono_make_shadow_copy): make sure access mode of
+	the target files is reset to writable by owner and readable by
+	everyone else to prevent problems when updating shadow copies of
+	files whose source is read-only. Fixes bug #556884
+
 2009-12-15  Mark Probst  <mark.probst@gmail.com>
 
 	* class.c (mono_generic_class_get_class): Allocate the generic
