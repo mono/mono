@@ -1608,6 +1608,8 @@ namespace Mono.CSharp {
 			if (TypeManager.GetConstant (fi) != null)
 				return null;
 
+			fi = TypeManager.GetGenericFieldDefinition (fi);
+
 			IFixedBuffer ifb;
 			if (!fixed_buffer_cache.TryGetValue (fi, out ifb)) {
 				PredefinedAttribute pa = PredefinedAttributes.Get.FixedBuffer;
