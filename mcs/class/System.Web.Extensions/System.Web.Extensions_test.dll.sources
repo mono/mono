@@ -45,4 +45,5 @@ System.Web.UI/ScriptReferenceBaseTest.cs
 System.Web.UI/UpdateProgressTest.cs
 System.Web.UI.WebControls/EventRecorder.cs
 System.Web.UI.WebControls/ListViewTest.cs
+System.Web.UI.WebControls/ListViewPagedDataSourceTest.cs
 System.Web.UI.WebControls/DataPagerFieldCollectionTest.cs

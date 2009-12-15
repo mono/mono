@@ -33,7 +33,7 @@ using System.Collections.Generic;
 using System.Diagnostics;
 using System.Reflection;
 
-namespace Tests.System.Web.UI.WebControls
+namespace MonoTests.System.Web.UI.WebControls
 {
 	[Serializable]
 	public sealed class EventRecorder : List <string>

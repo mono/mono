@@ -1,3 +1,8 @@
+2009-12-15  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web.Extensions_test.dll.sources: added
+	System.Web.UI.WebControls/ListViewPagedDataSourceTest.cs
+
 2009-10-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : add -r:System.ServiceModel.

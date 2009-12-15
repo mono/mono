@@ -42,7 +42,7 @@ using NUnit.Framework;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
 
-namespace Tests.System.Web.UI.WebControls
+namespace MonoTests.System.Web.UI.WebControls
 {
 	public sealed class ListViewPoker : ListView
 	{
