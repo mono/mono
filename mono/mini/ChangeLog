@@ -1,3 +1,19 @@
+2009-12-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-x86.c (mono_arch_allocate_vars): Fail compilation if the frame size is
+	bigger than MONO_ARCH_MAX_FRAME_SIZE.
+
+	* mini-x86.c (mono_arch_emit_prolog): Handle huge frames.
+
+	* mini-x86.h: Define MONO_ARCH_MAX_FRAME_SIZE to be 1Mb.
+
+	* mini-amd64.c / mini-amd64.h: Same fixes as of above.
+
+	* mini.c (mini_method_compile): Check if mono_arch_allocate_vars failed
+	the compilation.
+
+	Backport of r148502.
+
 2009-12-14  Miguel de Icaza  <miguel@novell.com>
  
  	* method-to-ir.c (mono_method_to_ir): CEE_UNUSUED opcodes now
