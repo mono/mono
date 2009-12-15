@@ -4253,14 +4253,12 @@ namespace Mono.CSharp {
 				Expression conv = Convert.ImplicitConversion (ec, true_expr, false_type, loc);
 				if (conv != null) {
 					//
-					// Check if both can convert implicitl to each other's type
+					// Check if both can convert implicitly to each other's type
 					//
 					if (Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
 						ec.Report.Error (172, loc,
-							   "Can not compute type of conditional expression " +
-							   "as `" + TypeManager.CSharpName (true_expr.Type) +
-							   "' and `" + TypeManager.CSharpName (false_expr.Type) +
-							   "' convert implicitly to each other");
+							"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
+							TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
 						return null;
 					}
 					type = false_type;
