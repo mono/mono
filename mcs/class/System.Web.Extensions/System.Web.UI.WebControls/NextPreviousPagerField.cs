@@ -277,7 +277,7 @@ namespace System.Web.UI.WebControls
 					newStartIndex = _totalRowCount - lastPageMod;
 			} else if (String.Compare (commandName, DataControlCommands.NextPageCommandArgument, StringComparison.OrdinalIgnoreCase) == 0) {
 				newStartIndex = _startRowIndex + pageSize;
-				if (newStartIndex > _totalRowCount)
+				if (_totalRowCount >= 0 && newStartIndex > _totalRowCount)
 					newStartIndex = _totalRowCount - pageSize;
 			} else if (String.Compare (commandName, DataControlCommands.PreviousPageCommandArgument, StringComparison.OrdinalIgnoreCase) == 0) {
 				newStartIndex = _startRowIndex - pageSize;
@@ -285,7 +285,7 @@ namespace System.Web.UI.WebControls
 					newStartIndex = 0;
 			}
 
-			if (newStartIndex != -1)
+			if (newStartIndex >= 0)
 				DataPager.SetPageProperties (newStartIndex, pageSize, true);
 		}
 
