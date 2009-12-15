@@ -1,3 +1,7 @@
+2009-12-15  Marek Safar  <marek.safar@gmail.com>
+
+	* Array.cs: Optimize sort operations on all primitive types.
+
 2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Type.cs (IsCompilerContext): The default implementation now checks if the

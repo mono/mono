@@ -1082,18 +1082,6 @@ namespace System
 			return new Swapper (array.slow_swapper);
 		}
 
-		static Swapper get_swapper<T> (T [] array)
-		{
-			if (array is int[])
-				return new Swapper (array.int_swapper);
-			if (array is double[])
-				return new Swapper (array.double_swapper);
-
-			// gmcs refuses to compile this
-			//return new Swapper (array.generic_swapper<T>);
-			return new Swapper (array.slow_swapper);
-		}
-
 		[ReliabilityContractAttribute (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static void Reverse (Array array)
 		{
@@ -1272,24 +1260,44 @@ namespace System
 			if (length <= 1)
 				return;
 
+			int low = index;
+			int high = index + length - 1;
+			
 			if (comparer == null) {
-				Swapper iswapper = (items != null ? get_swapper (items) : null);
-				if (keys is double[]) {
-					combsort (keys as double[], index, length, iswapper);
+				if (keys is int[]) {
+					qsort (keys as int[], items as object[], low, high);
 					return;
 				}
-				if (keys is int[]) {
-					combsort (keys as int[], index, length, iswapper);
+				if (keys is long[]) {
+					qsort (keys as long[], items as object[], low, high);
 					return;
 				}
 				if (keys is char[]) {
-					combsort (keys as char[], index, length, iswapper);
+					qsort (keys as char[], items as object[], low, high);
 					return;
 				}
+				if (keys is double[]) {
+					qsort (keys as double[], items as object[], low, high);
+					return;
+				}
+				if (keys is uint[]) {
+					qsort (keys as uint[], items as object[], low, high);
+					return;
+				}
+				if (keys is ulong[]) {
+					qsort (keys as ulong[], items as object[], low, high);
+					return;
+				}
+				if (keys is byte[]) {
+					qsort (keys as byte[], items as object[], low, high);
+					return;
+				}
+				if (keys is ushort[]) {
+					qsort (keys as ushort[], items as object[], low, high);
+					return;
+				}				
 			}
 			
-			int low = index;
-			int high = index + length - 1;
 			low = MoveNullKeysToFront (keys, items, low, high, comparer == null);
 			if (low == high)
 				return;
@@ -1327,88 +1335,6 @@ namespace System
 			double val = array [i];
 			array [i] = array [j];
 			array [j] = val;
-		}
-
-		static int new_gap (int gap)
-		{
-			gap = (gap * 10) / 13;
-			if (gap == 9 || gap == 10)
-				return 11;
-			if (gap < 1)
-				return 1;
-			return gap;
-		}
-
-		/* we use combsort because it's fast enough and very small, since we have
-		 * several specialized versions here.
-		 */
-		static void combsort (double[] array, int start, int size, Swapper swap_items)
-		{
-			int gap = size;
-			while (true) {
-				gap = new_gap (gap);
-				bool swapped = false;
-				int end = start + size - gap;
-				for (int i = start; i < end; i++) {
-					int j = i + gap;
-					if (array [i] > array [j]) {
-						double val = array [i];
-						array [i] = array [j];
-						array [j] = val;
-						swapped = true;
-						if (swap_items != null)
-							swap_items (i, j);
-					}
-				}
-				if (gap == 1 && !swapped)
-					break;
-			}
-		}
-
-		static void combsort (int[] array, int start, int size, Swapper swap_items)
-		{
-			int gap = size;
-			while (true) {
-				gap = new_gap (gap);
-				bool swapped = false;
-				int end = start + size - gap;
-				for (int i = start; i < end; i++) {
-					int j = i + gap;
-					if (array [i] > array [j]) {
-						int val = array [i];
-						array [i] = array [j];
-						array [j] = val;
-						swapped = true;
-						if (swap_items != null)
-							swap_items (i, j);
-					}
-				}
-				if (gap == 1 && !swapped)
-					break;
-			}
-		}
-
-		static void combsort (char[] array, int start, int size, Swapper swap_items)
-		{
-			int gap = size;
-			while (true) {
-				gap = new_gap (gap);
-				bool swapped = false;
-				int end = start + size - gap;
-				for (int i = start; i < end; i++) {
-					int j = i + gap;
-					if (array [i] > array [j]) {
-						char val = array [i];
-						array [i] = array [j];
-						array [j] = val;
-						swapped = true;
-						if (swap_items != null)
-							swap_items (i, j);
-					}
-				}
-				if (gap == 1 && !swapped)
-					break;
-			}
 		}
 
 		private static void qsort (Array keys, Array items, int low0, int high0, IComparer comparer)
@@ -1581,22 +1507,53 @@ namespace System
 		{
 			if (keys.Length <= 1)
 				return;
+
+			int low = index;
+			int high = index + length - 1;
 			
 			//
 			// Check for value types which can be sorted without Compare () method
 			//
 			if (comparer == null) {
-				Swapper iswapper = (items != null ? get_swapper<TValue> (items) : null);
-				if (keys is double[]) {
-					combsort (keys as double[], index, length, iswapper);
+				switch (Type.GetTypeCode (typeof (TKey))) {
+				case TypeCode.Int32:
+					qsort (keys as Int32[], items, low, high);
 					return;
-				}
-				if (keys is int[]) {
-					combsort (keys as int[], index, length, iswapper);
+				case TypeCode.Int64:
+					qsort (keys as Int64[], items, low, high);
 					return;
-				}
-				if (keys is char[]) {
-					combsort (keys as char[], index, length, iswapper);
+				case TypeCode.Byte:
+					qsort (keys as byte[], items, low, high);
+					return;
+				case TypeCode.Char:
+					qsort (keys as char[], items, low, high);
+					return;
+				case TypeCode.DateTime:
+					qsort (keys as DateTime[], items, low, high);
+					return;
+				case TypeCode.Decimal:
+					qsort (keys as decimal[], items, low, high);
+					return;
+				case TypeCode.Double:
+					qsort (keys as double[], items, low, high);
+					return;
+				case TypeCode.Int16:
+					qsort (keys as Int16[], items, low, high);
+					return;
+				case TypeCode.SByte:
+					qsort (keys as SByte[], items, low, high);
+					return;
+				case TypeCode.Single:
+					qsort (keys as Single[], items, low, high);
+					return;
+				case TypeCode.UInt16:
+					qsort (keys as UInt16[], items, low, high);
+					return;	
+				case TypeCode.UInt32:
+					qsort (keys as UInt32[], items, low, high);
+					return;
+				case TypeCode.UInt64:
+					qsort (keys as UInt64[], items, low, high);
 					return;
 				}
 
@@ -1606,20 +1563,19 @@ namespace System
 						typeof (TKey).IsValueType)
 					comparer = Comparer<TKey>.Default;
 			}
-			
-			int low = index;
-			int high = index + length - 1;
+
 			low = MoveNullKeysToFront<TKey, TValue> (keys, items, low, high, comparer == null);
+
 			if (low == high)
 				return;
  
 			try {
-				qsort<TKey, TValue> (keys, items, low, high, comparer);
+				qsort (keys, items, low, high, comparer);
 			} catch (Exception e) {
 				throw new InvalidOperationException (Locale.GetText ("The comparer threw an exception."), e);
 			}
 		}
-
+		
 		public static void Sort<T> (T [] array, Comparison<T> comparison)
 		{
 			if (array == null)
@@ -1647,6 +1603,36 @@ namespace System
 				throw new InvalidOperationException (Locale.GetText ("Comparison threw an exception."), e);
 			}
 		}
+		
+		public static void qsort<T, U> (T[] array, U[] items, int low0, int high0) where T : IComparable<T>
+		{
+			int low = low0;
+			int high = high0;
+
+			// Be careful with overflows
+			int mid = low + ((high - low) / 2);
+			var keyPivot = array [mid];
+
+			while (true) {
+				// Move the walls in
+				while (low < high0 && keyPivot.CompareTo (array [low]) > 0)
+					++low;
+				while (high > low0 && keyPivot.CompareTo (array [high]) < 0)
+					--high;
+
+				if (low <= high) {
+					swap (array, items, low, high);
+					++low;
+					--high;
+				} else
+					break;
+			}
+
+			if (low0 < high)
+				qsort (array, items, low0, high);
+			if (low < high0)
+				qsort (array, items, low, high0);
+		}		
 
 		private static void qsort<K, V> (K [] keys, V [] items, int low0, int high0, IComparer<K> comparer)
 		{
