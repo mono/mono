@@ -118,12 +118,11 @@ class Test
 		if (!da.TransformFlags.SequenceEqual (new bool[] { false, true }))
 			return 43;
 
-// FIXME
-//		da = t.GetMember ("v")[0].GetCustomAttributes (ca, false)[0] as DynamicAttribute;
-//		if (da == null)
-//			return 44;
-//		if (!da.TransformFlags.SequenceEqual (new bool[] { false, true, false, false, true }))
-//			return 45;
+		da = t.GetMember ("v")[0].GetCustomAttributes (ca, false)[0] as DynamicAttribute;
+		if (da == null)
+			return 44;
+		if (!da.TransformFlags.SequenceEqual (new bool[] { false, true, false, false, true }))
+			return 45;
 
 		t = typeof (Del);
 
