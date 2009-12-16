@@ -1,3 +1,7 @@
+2009-12-16  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs: Avoid crash, fixes 554898
+
 2009-09-07  Marek Safar  <marek.safar@gmail.com>
 
 	* repl.cs: Disabled Report.Stderr hacking.
