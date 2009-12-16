@@ -10674,6 +10674,37 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (InvalidOperationException) {}
 		}
 
+		[Test]
+		public void ConcreteTypeDontLeakGenericParamFromItSelf ()
+		{
+            var tb = module.DefineType (genTypeName ());
+			var gps = tb.DefineGenericParameters ("T");
+            var mb = tb.DefineMethod ("m", MethodAttributes.Public | MethodAttributes.Static);
+            mb.SetParameters (gps);
+            mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+            var ti = tb.CreateType ();
+            var mi = ti.GetMethod ("m");
+			var arg0 = mi.GetParameters () [0].ParameterType;
+
+			Assert.AreNotSame (arg0, gps [0], "#1");
+		}
+
+		[Test]
+		public void ConcreteTypeDontLeakGenericParamFromMethods ()
+		{
+            var tb = module.DefineType (genTypeName ());
+            var mb = tb.DefineMethod("m", MethodAttributes.Public | MethodAttributes.Static);
+            var gps = mb.DefineGenericParameters ("T");
+            mb.SetParameters (gps);
+            mb.GetILGenerator ().Emit (OpCodes.Ret);
+
+            var ti = tb.CreateType ();
+            var mi = ti.GetMethod ("m");
+ 			var arg0 = mi.GetParameters () [0].ParameterType;
+
+			Assert.AreNotSame (arg0, gps [0], "#1");
+		}
 #if NET_2_0
 		[Test]
 		public void DeclaringMethodReturnsNull ()
