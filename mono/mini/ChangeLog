@@ -1,3 +1,7 @@
+2009-12-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_resolve_patch_target): Comment out an assert which could be hit.
+
 2009-12-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mini_emit_memcpy): Assert if size is too big.
