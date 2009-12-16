@@ -1,3 +1,10 @@
+2009-12-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs : added workaround for strange stream
+	  consumption error raised by HttpTransport + Binary encoder example.
+	* BinaryMessageEncodingBindingElement.cs:
+	  only SOAP 1.2 is allowed for this encoder.
+
 2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReaderBodyWriter.cs : don't try to write empty xml.
