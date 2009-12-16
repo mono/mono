@@ -4715,7 +4715,7 @@ statement_expression
 	| error
 	  {
 		Error_SyntaxError (yyToken);
-		$$ = null;
+		$$ = EmptyStatement.Value;
 	  }
 	;
 
