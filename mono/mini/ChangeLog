@@ -1,3 +1,10 @@
+2009-12-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-x86.h: Forgot to add a 0x to MONO_ARCH_MAX_FRAME_SIZE define
+	making max stack 10x smaller.
+
+	Backport of r148570.
+
 2009-12-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mini_emit_memcpy): Assert if size is too big.

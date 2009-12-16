@@ -1,3 +1,8 @@
+2009-12-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_from_param): Avoid a crash if a dynamic
+	param doesn't have custom attributes. Fixes #565117.
+
 2009-12-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_fields): Fail valuetypes that are bigger than 1Mb.
