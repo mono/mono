@@ -1,5 +1,8 @@
 2009-12-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_custom_attrs_from_param): Avoid a crash if a dynamic
+	param doesn't have custom attributes. Fixes #565117.
+
 	* class.c (mono_bounded_array_class_get): Make these classes PUBLIC. Fixes
 	#565120.
 
