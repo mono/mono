@@ -242,7 +242,7 @@ namespace Mono {
 
 		public int ReadEvalPrintLoop ()
 		{
-			if (startup_files.Length == 0)
+			if (startup_files != null && startup_files.Length == 0)
 				InitTerminal ();
 
 			InitializeUsing ();
