@@ -1,3 +1,7 @@
+2009-12-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (arch_emit_autoreg): Align code to 4 in the ppc case.
+
 2009-12-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-x86.h: Forgot to add a 0x to MONO_ARCH_MAX_FRAME_SIZE define
