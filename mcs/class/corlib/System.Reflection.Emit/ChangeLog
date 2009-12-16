@@ -1,3 +1,7 @@
+2009-12-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* FieldOnTypeBuilderInst.cs: Add more CompilerContext hacks.
+
 2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilder.cs (GetConstructor/GetMethod): Fail with a NRE if method/ctor

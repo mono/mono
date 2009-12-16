@@ -70,16 +70,25 @@ namespace System.Reflection.Emit
 			}
 		}
 
-		public override bool IsDefined (Type attributeType, bool inherit) {
-			throw new NotSupportedException ();
+		public override bool IsDefined (Type attributeType, bool inherit)
+		{
+			if (!instantiation.IsCompilerContext)
+				throw new NotSupportedException ();
+			return fb.IsDefined (attributeType, inherit);
 		}
 
-		public override object [] GetCustomAttributes (bool inherit) {
-			throw new NotSupportedException ();
+		public override object [] GetCustomAttributes (bool inherit)
+		{
+			if (!instantiation.IsCompilerContext)
+				throw new NotSupportedException ();
+			return fb.GetCustomAttributes (inherit);
 		}
 
-		public override object [] GetCustomAttributes (Type attributeType, bool inherit) {
-			throw new NotSupportedException ();
+		public override object [] GetCustomAttributes (Type attributeType, bool inherit)
+		{
+			if (!instantiation.IsCompilerContext)
+				throw new NotSupportedException ();
+			return fb.GetCustomAttributes (attributeType, inherit);
 		}
 
 		public override string ToString ()
