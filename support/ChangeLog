@@ -1,3 +1,11 @@
+2009-12-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* zlib-helper.c: when finishing uncompressing a buffer, we might need
+	more than one call to deflate with Z_FINISH since the uncompressed
+	data can take more space than the allocated buffer.
+
+	Fixes the IPY+Chiron test case.
+
 2009-10-24 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* zlib-helper.c: stop trying to decompress when we get Z_STREAM_END.
