@@ -1,5 +1,9 @@
 2009-12-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_type_get_object): Guard against NULL generic param owner.
+
+2009-12-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_type_get_object): If the type is VAR or MVAR check
 	if the owner class has not been finished before returning reflection_info.	
 
