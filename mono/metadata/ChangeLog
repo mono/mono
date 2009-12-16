@@ -1,5 +1,14 @@
 2009-12-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class-internals.h (MonoDynamicGenericClass): Kill property and event related fields
+	as they are no longer used.
+	
+	 * metadata.c (free_generic_class_dependents): Remove reference to previous fields
+
+	* reflection.c (mono_reflection_generic_class_initialize): Ditto.
+
+2009-12-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_type_get_object): If the type is VAR or MVAR check
 	if the owner class has not been finished before returning reflection_info.	
 
