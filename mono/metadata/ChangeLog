@@ -1,3 +1,13 @@
+2009-12-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_custom_attrs_from_param): Avoid a crash if a dynamic
+	param doesn't have custom attributes. Fixes #565117.
+
+Fri Dec 11 18:24:04 CET 2009 Paolo Molaro <lupus@ximian.com>
+
+	* boehm-gc.c: fixed race condition while getting the target of a
+	disappearing link (bug #522233).
+
 2009-12-15  Marek Habersack  <mhabersack@novell.com>
 
 	* appdomain.c (mono_make_shadow_copy): make sure access mode of
