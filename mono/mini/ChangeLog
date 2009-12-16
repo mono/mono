@@ -1,3 +1,8 @@
+2009-12-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-x86.h: Forgot to add a 0x to MONO_ARCH_MAX_FRAME_SIZE define
+	making max stack 10x smaller.
+
 2009-12-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_resolve_patch_target): Comment out an assert which could be hit.
