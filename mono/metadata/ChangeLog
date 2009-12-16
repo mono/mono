@@ -1,3 +1,12 @@
+2009-12-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_type_get_object): If the type is VAR or MVAR check
+	if the owner class has not been finished before returning reflection_info.	
+
+	Fixes #565127.
+
+	Backport of r148575.
+
 2009-12-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_custom_attrs_from_param): Avoid a crash if a dynamic
