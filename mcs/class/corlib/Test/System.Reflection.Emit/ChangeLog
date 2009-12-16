@@ -1,3 +1,7 @@
+2009-12-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* MethodBuilderTest.cs: Add a test for #565117.
+
 2009-12-09  Jb Evain  <jbevain@novell.com>
 
 	* ILGeneratorTest.cs: add a test for Emit(OpCode,LocalBuilder)

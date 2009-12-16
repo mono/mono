@@ -757,6 +757,7 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (0, cattrs.Length, "#A4");
 #endif
 
+			cattrs = pi [1].GetCustomAttributes (true);
 			Assert.AreEqual ("foo", pi [1].DefaultValue, "#B1");
 		}
 
