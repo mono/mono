@@ -1,3 +1,8 @@
+2009-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Fix the encoding of unmanaged calling
+	conventions.
+
 2009-12-16  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_type_get_object): Guard against NULL generic param owner.
