@@ -1305,6 +1305,7 @@ namespace MonoTests.System.Xml
 				xtr.Read ();
 		}
 
+#if NET_2_0
 		[Test]
 		public void ParsingWithNSMgrSubclass ()
 		{
@@ -1320,7 +1321,6 @@ namespace MonoTests.System.Xml
 			while (xr2.Read ()) {}
 
 		}
-
 
 		// The MyNS subclass chains namespace lookups
 		class MyNS : XmlNamespaceManager {
@@ -1341,5 +1341,6 @@ namespace MonoTests.System.Xml
 				return String.Empty;
 			}
 		}
+#endif
 	}
 }
