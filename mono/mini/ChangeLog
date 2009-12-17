@@ -1,3 +1,11 @@
+2009-12-17  Marek Habersack  <mhabersack@novell.com>
+
+	* mini.c (mono_get_runtime_build_info): include Mono version in
+	the returned value.
+
+	* driver.c (mono_main): VERSION is now included in the string
+	returned from mono_get_runtime_build_info()
+
 2009-12-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Add support for CALLI with unmanaged
