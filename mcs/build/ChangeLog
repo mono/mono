@@ -1,3 +1,7 @@
+2009-12-17  Marek Safar  <marek.safar@gmail.com>
+
+	* common/basic.make: Use bootstrap compiler only for compilation.
+
 2009-12-02  Marek Safar  <marek.safar@gmail.com>
 
 	* common/basic-profile-check.cs: Bump bootstrap requirement to Mono
