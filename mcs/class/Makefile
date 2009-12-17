@@ -133,10 +133,10 @@ net_2_0_only_dirs := \
 net_2_1_dirs := \
 	corlib			\
 	Mono.CompilerServices.SymbolWriter \
+	System.Core		\
 	System			\
 	System.Net		\
 	System.XML		\
-	System.Core		\
 	System.Xml.Linq	\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
