@@ -3011,6 +3011,13 @@ public class StringTest
 		}
 	}
 
+	[Test]
+	public void PadRight2 ()
+	{
+		Assert.AreEqual ("100000000000", "1".PadRight (12, '0'), "#1");
+		Assert.AreEqual ("000000000000", "".PadRight (12, '0'), "#2");
+	}
+
 	[Test] // Remove (Int32, Int32)
 	public void Remove2 ()
 	{

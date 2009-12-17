@@ -1,3 +1,8 @@
+2009-12-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringTest.cs: Add test case for right padding an empty string
+	[Backport r148706]
+
 2009-11-24  Jb Evain  <jbevain@novell.com>
 
 	* ArrayTest.cs: test that we don't allow the use of the IList indexer

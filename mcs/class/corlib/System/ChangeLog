@@ -1,3 +1,8 @@
+2009-12-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* String.cs: Fix #565602 right-padding empty strings.
+	[Backport r148706]
+
 2009-12-09  Jb Evain  <jbevain@novell.com>
 
 	* StringComparer.cs (GetHashCode): properly throw an
