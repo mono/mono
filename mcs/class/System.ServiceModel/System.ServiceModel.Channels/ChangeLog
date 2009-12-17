@@ -1,3 +1,8 @@
+2009-12-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestContext.cs : for DestinationUnreachable message, this
+	  channel returns 400 in .NET.
+
 2009-12-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BinaryMessageEncoder.cs : added workaround for strange stream
