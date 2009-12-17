@@ -1,3 +1,7 @@
+2009-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c: Handle OP_LADD_OVF_UN. Place all alloca's into the entry bb.
+
 2009-12-17  Marek Habersack  <mhabersack@novell.com>
 
 	* mini.c (mono_get_runtime_build_info): include Mono version in
