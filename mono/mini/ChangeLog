@@ -1,3 +1,10 @@
+2009-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Add support for CALLI with unmanaged
+	signatures. Fixes #565143.
+
+	* jit-icalls.c (mono_get_native_calli_wrapper): New JIT icall.
+
 2009-12-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (arch_emit_autoreg): Align code to 4 in the ppc case.
