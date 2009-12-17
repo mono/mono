@@ -21,6 +21,7 @@ ecore.cs
 enum.cs
 eval.cs
 expression.cs
+field.cs
 flowanalysis.cs
 generic.cs
 iterators.cs

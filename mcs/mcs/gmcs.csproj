@@ -90,6 +90,7 @@
     <Compile Include="symbolwriter.cs" />
     <Compile Include="typemanager.cs" />
     <Compile Include="linq.cs" />
+    <Compile Include="field.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

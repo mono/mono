@@ -133,6 +133,7 @@
     <Compile Include="typemanager.cs">
     </Compile>
     <Compile Include="linq.cs" />
+    <Compile Include="field.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
