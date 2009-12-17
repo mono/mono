@@ -1,3 +1,10 @@
+2009-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Add support for CALLI with unmanaged
+	signatures. Fixes #565143.
+
+	* jit-icalls.c (mono_get_native_calli_wrapper): New JIT icall.
+
 2009-12-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* driver.c: Applied patch from Matt McClellan (matt@mc-c.net). Add a check
