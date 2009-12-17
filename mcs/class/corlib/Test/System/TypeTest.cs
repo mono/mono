@@ -3166,6 +3166,51 @@ PublicKeyToken=b77a5c561934e089"));
 			} catch (ArgumentException) {}
 		}
 
+		[Test] //Bug #564379
+		public void GetMethodsReturnPublicMethodsInInterfaces ()
+		{
+			Type t = typeof (NonClosingStream);
+			MethodInfo[] methods = t.GetMethods (BindingFlags.Public | BindingFlags.Instance);
+
+			Assert.AreEqual (5, methods.Length, "#1");
+			int id = 2;
+
+			foreach (var m in methods) {
+				if (m.Name.Equals ("ToString"))
+					Assert.IsTrue (m.DeclaringType == typeof (NonClosingStream), "#" + id);
+				else if (m.Name.Equals ("Dispose") && m.GetParameters ().Length == 0)
+					Assert.IsTrue (m.DeclaringType == typeof (Stream), "#" + id);
+				else if (m.Name.Equals ("Equals") || m.Name.Equals ("GetHashCode") || m.Name.Equals ("GetType"))
+					Assert.IsTrue (m.DeclaringType == typeof (object), "#" + id);
+				else
+					Assert.Fail ("invalid method " + m);
+				++id;
+			}
+		}
+
+		public abstract class Stream : IDisposable
+		{
+			public void Dispose ()
+			{
+				Console.WriteLine ("stream::dispose");
+			}
+
+			protected virtual void Dispose (bool disposing)
+			{
+			}
+		}
+
+		public class NonClosingStream 
+			: Stream, IDisposable
+		{
+			void  IDisposable.Dispose()
+			{
+				Console.WriteLine ("ncs::dispose");
+			}
+
+			public override string ToString () { return ""; }
+		}
+
 		static bool ContainsProperty (PropertyInfo [] props, string name)
 		{
 			foreach (PropertyInfo p in props)

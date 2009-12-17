@@ -1,3 +1,7 @@
+2009-12-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Add tests for #564379.
+
 2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Fix test that checked for old and wrong behavior of mono.
