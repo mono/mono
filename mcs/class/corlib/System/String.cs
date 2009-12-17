@@ -1485,7 +1485,7 @@ namespace System
 
 			if (totalWidth < this.length)
 				return this;
-			if (this.Length == 0)
+			if (totalWidth == 0)
 				return String.Empty;
 
 			String tmp = InternalAllocateStr (totalWidth);

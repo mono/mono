@@ -1,3 +1,7 @@
+2009-12-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringTest.cs: Add test case for right padding an empty string
+
 2009-12-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Add tests for #564379.
