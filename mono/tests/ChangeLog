@@ -1,3 +1,7 @@
+2009-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c pinvoke2.cs: Add a test for calling pinvoke methods using calli.
+
 2009-10-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* pinvoke2.cs libtest.c: Add a test for marshalling DateTime to unmanaged code.
