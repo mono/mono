@@ -1,3 +1,8 @@
+2009-12-17  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Managed implementation of the specialized generic
+	store write barrier.
+
 2009-12-17  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_Type_GetMethodsByName): Don't pin virtual methods if they are newslot.
