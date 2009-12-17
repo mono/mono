@@ -352,27 +352,35 @@ namespace System.Reflection
 			// Walk up our class hierarchy and retrieve methods from our
 			// parent classes.
 			//
-
-			Type current_type = this;
-			do {
-				MonoGenericClass gi = current_type as MonoGenericClass;
-				if (gi != null)
-					l.AddRange (gi.GetMethodsInternal (bf, this));
-				else if (current_type is TypeBuilder)
-					l.AddRange (current_type.GetMethods (bf));
-				else {
-					// If we encounter a `MonoType', its
-					// GetMethodsByName() will return all the methods
-					// from its parent type(s), so we can stop here.
-					MonoType mt = (MonoType) current_type;
-					l.AddRange (mt.GetMethodsByName (null, bf, false, this));
-					break;
+			if (!(generic_type is TypeBuilder)) {
+				foreach (var method in generic_type.GetMethods (bf)) {
+					var m = method;
+					if (m.DeclaringType.IsGenericTypeDefinition)
+						m = TypeBuilder.GetMethod (this, m);
+					l.Add (m);
 				}
+			} else {
+				Type current_type = this;
+				do {
+					MonoGenericClass gi = current_type as MonoGenericClass;
+					if (gi != null)
+						l.AddRange (gi.GetMethodsInternal (bf, this));
+					else if (current_type is TypeBuilder)
+						l.AddRange (current_type.GetMethods (bf));
+					else {
+						// If we encounter a `MonoType', its
+						// GetMethodsByName() will return all the methods
+						// from its parent type(s), so we can stop here.
+						MonoType mt = (MonoType) current_type;
+						l.AddRange (mt.GetMethodsByName (null, bf, false, this));
+						break;
+					}
 
-				if ((bf & BindingFlags.DeclaredOnly) != 0)
-					break;
-				current_type = current_type.BaseType;
-			} while (current_type != null);
+					if ((bf & BindingFlags.DeclaredOnly) != 0)
+						break;
+					current_type = current_type.BaseType;
+				} while (current_type != null);
+			}
 
 			MethodInfo[] result = new MethodInfo [l.Count];
 			l.CopyTo (result);
@@ -381,6 +389,9 @@ namespace System.Reflection
 
 		MethodInfo[] GetMethodsInternal (BindingFlags bf, MonoGenericClass reftype)
 		{
+			if (reftype != this)
+				bf |= BindingFlags.DeclaredOnly; /*To avoid duplicates*/
+
 			MethodInfo[] methods = GetMethodsFromGTDWithHint (bf);
 			if (methods.Length == 0)
 				return new MethodInfo [0];
@@ -415,7 +426,8 @@ namespace System.Reflection
 				}
 				if (!match)
 					continue;
-				c = TypeBuilder.GetMethod (this, c);
+				if (c.DeclaringType.IsGenericTypeDefinition)
+					c = TypeBuilder.GetMethod (this, c);
 				l.Add (c);
 			}
 

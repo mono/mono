@@ -1,3 +1,14 @@
+2009-12-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClass.cs (GetMethods): When the GTD is not a typebuilder,
+	calling GetMethods on it will return everything we need so no need to
+	do the crazy loop.
+	The returned methods might contains some that are not from a generic type
+	so we need to guard against this as well.
+
+	* MonoGenericClass.cs (GetMethodsInternal): Guard against methods that don't
+	belong to a GTD as well.
+
 2009-12-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs: Remove IsByRef hack.
