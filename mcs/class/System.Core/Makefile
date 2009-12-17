@@ -14,17 +14,17 @@ ifeq (4.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:CODEPLEX_40
 endif
 
-ifeq (net_4_0, $(PROFILE))
+FULL_PROFILE := $(filter net_2_0 net_4_0 net_2_1_raw, $(PROFILE))
+ifdef FULL_PROFILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
+ifneq (basic, $(PROFILE))
 CLR_PROFILE := $(filter 2.0 4.0, $(FRAMEWORK_VERSION))
-ifeq (basic, $(PROFILE))
-CLR_PROFILE :=
 endif
 
 ifdef CLR_PROFILE
-LIB_MCS_FLAGS += -r:Mono.Posix -unsafe
+LIB_MCS_FLAGS += -r:../lib/$(PROFILE)/Mono.Posix -unsafe
 endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
