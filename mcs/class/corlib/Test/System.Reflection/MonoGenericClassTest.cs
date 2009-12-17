@@ -8,6 +8,8 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
 using System.Threading;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -71,6 +73,35 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]", inst.FullName, "#3");
 			Assert.AreEqual ("foo.type[[System.Double, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]], MonoTests.System.Reflection.Emit.MonoGenericClassTest, Version=0.0.0.0, Culture=neutral, PublicKeyToken=null", inst.AssemblyQualifiedName, "#4");
 			Assert.AreEqual ("foo.type[System.Double,System.String]", inst.ToString (), "#5");
+		}
+
+		static void CheckInst (string prefix, Type inst, int a, int b)
+		{
+			var resA = inst.GetMethods (BindingFlags.Public | BindingFlags.Instance | BindingFlags.DeclaredOnly);
+			var resB = inst.GetMethods (BindingFlags.Public | BindingFlags.Instance);
+
+			Assert.AreEqual (a, resA.Length, prefix + 1);
+			Assert.AreEqual (b, resB.Length, prefix + 2);
+		}
+
+		[Test]
+		[Category ("NotDotNet")]
+		public void GetMethodsWorkWithFunkyInstantiations ()
+		{
+			SetUp (AssemblyBuilderAccess.RunAndSave | (AssemblyBuilderAccess)0x800);
+			TypeBuilder tb = module.DefineType ("Base", TypeAttributes.Public, typeof (object));
+
+			var a = typeof (IList<>).GetGenericArguments () [0];
+			var b = tb.DefineGenericParameters ("T") [0];
+
+			CheckInst ("#A", typeof (Collection<>).MakeGenericType (new Type [] {a}), 12, 16);
+			CheckInst ("#B", typeof (Collection<>).MakeGenericType (new Type[] { b }), 12, 16);
+
+			var tb2 = module.DefineType ("Child", TypeAttributes.Public, typeof (Collection<>).MakeGenericType (tb.MakeGenericType (typeof (int))));
+			tb2.DefineGenericParameters ("K");
+
+			CheckInst ("#C", tb2.MakeGenericType (typeof (double)), 0, 16);
+			
 		}
 
 		[Test]

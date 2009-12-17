@@ -1,3 +1,8 @@
+2009-12-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoGenericClassTest.cs: Test for some corner cases of
+	GetMethod that must work under compiler context.
+
 2009-12-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodBaseTest.cs: Remove all NET_2_0 directives. Add test
