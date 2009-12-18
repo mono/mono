@@ -1,5 +1,10 @@
 2009-12-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-ppc.c (mono_ppc_set_func_into_sigctx): New helper function to set
+	a function into a sigctx which can handle function pointers.
+
+	* mini-ppc.c: Implement soft debugger support on ppc64.
+
 	* mini-ppc.c: Implement soft debugger support.
 
 2009-12-17  Zoltan Varga  <vargaz@gmail.com>
