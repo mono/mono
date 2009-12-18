@@ -1,3 +1,8 @@
+2009-12-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_argument_info): Allocate memory for CallInfo using
+	alloca as g_malloc is not signal safe.
+
 2009-12-17  Marek Habersack  <mhabersack@novell.com>
 
 	* mini.c (mono_get_runtime_build_info): include Mono version in
