@@ -198,6 +198,7 @@ namespace MonoTests.I18N.CJK
 			Assert.AreEqual ("\u001B$0", Encoding.GetEncoding (50220).GetString (new byte [] {0x1B, 0x24, 0x30}), "#1");
 		}
 
+#if NET_2_0
 		[Test]
 		public void CP50220BrokenESC2 ()
 		{
@@ -211,6 +212,7 @@ namespace MonoTests.I18N.CJK
 			// neither ...
 			Assert.AreEqual ("\u001B$0", Encoding.GetEncoding (50220, new EncoderExceptionFallback (), new DecoderExceptionFallback ()).GetString (new byte [] {0x1B, 0x24, 0x30}), "#2");
 		}
+#endif
 
 		[Test]
 #if !NET_2_0
