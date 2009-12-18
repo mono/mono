@@ -1,3 +1,8 @@
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AllEnums.cs :
+	  added ServiceContractGenerationOptions.EventBasedAsynchronousMethods.
+
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : a bit more kindful error message.
