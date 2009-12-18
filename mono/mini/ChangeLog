@@ -1,3 +1,7 @@
+2009-12-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c: Implement soft debugger support.
+
 2009-12-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c: Handle OP_LADD_OVF_UN. Place all alloca's into the entry bb.
