@@ -1,3 +1,9 @@
+2009-12-18  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectStateFormatter.cs: ObjectFormatter.WriteObject checks
+	whether candidate converter can convert from string now. Fixes bug
+	#565547
+
 2009-11-14  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControl.cs: if writer is null in
