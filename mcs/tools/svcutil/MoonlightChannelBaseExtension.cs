@@ -178,7 +178,7 @@ namespace Mono.ServiceContractTool
 			// anything but this brutal removal.
 			foreach (CodeNamespace cns in context.ServiceContractGenerator.TargetCompileUnit.Namespaces)
 				foreach (CodeTypeDeclaration ct in cns.Types)
-					if (ct != ml_context.ClientType)
+					if (ct != ml_context.ClientType && !ct.Name.EndsWith ("EventArgs", StringComparison.Ordinal))
 						ct.BaseTypes.Clear ();
 		}
 	}

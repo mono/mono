@@ -1,5 +1,10 @@
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MoonlightChannelBaseExtension.cs : do not remove base EventArgs.
+
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+
 	* how-client-proxy-is-created.txt : brief summary of code generation
 	  behavior (it is rather about ServiceContractGenerator, but would
 	  rather fit here).
