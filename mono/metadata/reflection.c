@@ -5053,6 +5053,7 @@ mono_image_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 
 	assembly->run = assemblyb->access != 2;
 	assembly->save = assemblyb->access != 1;
+	assembly->domain = domain;
 
 	image = create_dynamic_mono_image (assembly, mono_string_to_utf8 (assemblyb->name), g_strdup ("RefEmit_YouForgotToDefineAModule"));
 	image->initial_image = TRUE;
@@ -7352,11 +7353,12 @@ mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ig
 static MonoType*
 mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *assembly, MonoTypeNameParse *info, gboolean ignorecase)
 {
-	MonoReflectionAssemblyBuilder *abuilder = (MonoReflectionAssemblyBuilder*)mono_assembly_get_object (mono_domain_get (), assembly);
+	MonoReflectionAssemblyBuilder *abuilder;
 	MonoType *type;
 	int i;
 
 	g_assert (assembly->dynamic);
+	abuilder = (MonoReflectionAssemblyBuilder*)mono_assembly_get_object (((MonoDynamicAssembly*)assembly)->domain, assembly);
 
 	/* Enumerate all modules */
 
