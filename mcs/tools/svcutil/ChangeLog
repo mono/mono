@@ -1,5 +1,11 @@
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* how-client-proxy-is-created.txt : brief summary of code generation
+	  behavior (it is rather about ServiceContractGenerator, but would
+	  rather fit here).
+
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Driver.cs, MoonlightChannelBaseExtension.cs, CommandLineOptions.cs:
 	  Added event-based async generator support (/tcv:35).
 	  Some refactoring on async method generation.

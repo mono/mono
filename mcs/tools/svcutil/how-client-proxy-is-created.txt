@@ -1,0 +1,80 @@
+-- From this service contract ... ----------------------------------------------
+
+
+[ServiceContract]
+interface IFoo
+{
+	[OperationContract]
+	BazType BarOper (...);
+}
+
+
+-- A client like this is created (interface types too, which are simple) -------
+
+
+
+public class FooClient : ClientBase<IFoo>, IFoo {
+
+public .ctor()
+public .ctor(string)
+public .ctor(Binding,EndpointAddress)
+public .ctor(string,EndpointAddress)
+public .ctor(string,string)
+public void BarOperAsync(...)
+public void BarOperAsync(..., object userState)
+{
+	if (onBeginBarOperDelegate == null)
+		onBeginBarOperDelegate = new BeginOperationDelegate (OnBeginBarOper)
+	if (onEndBarOperDelegate == null)
+		onEndBarOperDelegate = new EndOperationDelegate (OnEndBarOper)
+	if (onBarOperCompletedDelegate == null)
+		onBarOperCompletedDelegate = new SendOrPostCallback (OnBarOperCompleted);
+	InvokeAsync (onBeginBarOperDelegate, new object [] {arg1, arg2, ...}, onEndBarOperDelegate, onBarOperCompletedDelegate, userState);
+}
+protected IFoo CreateChannel() [ml]
+IAsyncResult IFoo.BeginBarOper(..., AsyncCallback, object)
+{
+	return base.BeginInvoke ("BarOper", new object [] {arg1, arg2, ...}, callback, state);
+}
+BazType IFoo.EndBarOper(IAsyncResult , out ...)
+{
+	object [] ret = EndInvoke ("BarOper", result);
+	/*optionally*/ outArg1 = ret [1]; outArg2 = ret [2] ...
+	return (BazType) ret [0];
+}
+private void OnBarOperCompleted(object state)
+{
+	if (BarOperCompleted != null) {
+		var args = (InvokeAsyncCompletedEventArgs) state;
+		BarOperCompleted (new BarOperCompletedEventArgs (args.Results, args.Error, args.Cancelled, args.UserState));
+	}
+}
+private IAsyncResult OnBeginBarOper(object [] inValues, AsyncCallback, object)
+{
+	var arg1 = inValues [0]; var arg2 = inValues [1]; ...
+	return BeginBarOper (arg1, arg2, ..., callback, state);
+}
+private object [] OnEndBarOper(IAsyncResult)
+{
+	xxx outarg1;
+	yyy outarg2;
+	...
+	var ret = EndBarOper (result, out outarg1, out outarg2, ...);
+	return new object [] {ret, outarg1, outarg2...};
+}
+public event EventHandler<BarOperCompletedEventArgs> BarOperCompleted
+private SendOrPostCallback onBarOperCompletedDelegate
+private ClientBase<IFoo>.BeginOperationDelegate onBeginBarOperDelegate
+private ClientBase<IFoo>.EndOperationDelegate onEndBarOperDelegate
+
+public class BarOperCompletedEventArgs : AsyncCompletedEventArgs
+{
+	public BarOperCompletedEventArgs (object [] results, Exception ex, bool cancelled, object userState)
+	{
+		this.results = results;
+	}
+	object [] results;
+	public BazType Result { get { (BazType) results [0]; } }
+}
+
+}
