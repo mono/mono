@@ -1,3 +1,16 @@
+2009-12-18  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web_test.dll.sources: added
+	mainsoft/NunitWeb/NunitWeb/Tests/Author.cs
+	mainsoft/NunitWeb/NunitWeb/Tests/AuthorConverter.cs
+	mainsoft/NunitWeb/NunitWeb/Tests/Book.cs
+	mainsoft/NunitWeb/NunitWeb/Tests/BookType.cs
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/mainsoft/NunitWebResources/StateFormatter_CorrectConverter.aspx
+	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx
+	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx.cs
+
 2009-12-14  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (TEST_RESOURCE_FILES): added
