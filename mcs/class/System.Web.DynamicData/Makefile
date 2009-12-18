@@ -172,7 +172,7 @@ NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -r:System.ComponentModel.DataAnnotations.dll -r:System.Configuration.dll $(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll
 
-EXTRA_DISTFILES =
+EXTRA_DISTFILES = $(foreach resource,$(TEST_RESOURCE_FILES), $(shell echo $(subst \`,\\\`,$(resource)) | cut -d ',' -f 1))
 
 # This is a .NET 3.5+ assembly
 VALID_PROFILE := $(filter net_2_0 net_4_0, $(PROFILE))
