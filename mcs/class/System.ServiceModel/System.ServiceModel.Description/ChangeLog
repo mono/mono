@@ -1,5 +1,10 @@
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceContractGenerator.cs :
+	  add support for EventBasedAsynchronousMethods (3.5 SP1 / 2.1).
+
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceMetadataExtension.cs : added a couple of FIXME comments.
 
 2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>

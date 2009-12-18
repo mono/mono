@@ -29,12 +29,15 @@ using System;
 using System.CodeDom;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.ComponentModel;
 using System.Configuration;
+using System.Linq;
 using System.Reflection;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Configuration;
+using System.Threading;
 using System.Xml.Schema;
 using System.Xml.Serialization;
 
@@ -103,7 +106,11 @@ namespace System.ServiceModel.Description
 		}
 
 		bool GenerateAsync {
-			get { return (options & ServiceContractGenerationOptions.AsynchronousMethods) != 0; }
+			get { return GenerateEventBasedAsync || (options & ServiceContractGenerationOptions.AsynchronousMethods) != 0; }
+		}
+
+		bool GenerateEventBasedAsync {
+			get { return (options & ServiceContractGenerationOptions.EventBasedAsynchronousMethods) != 0; }
 		}
 
 		public Dictionary<ContractDescription,Type> ReferencedTypes {
@@ -255,6 +262,10 @@ namespace System.ServiceModel.Description
 
 			// service contract methods
 			AddImplementationClientMethods (type, cd);
+
+			if (GenerateEventBasedAsync)
+				foreach (var od in cd.Operations)
+					GenerateEventBasedAsyncSupport (type, od);
 		}
 
 		void GenerateChannelInterface (ContractDescription cd, CodeNamespace cns)
@@ -468,6 +479,214 @@ namespace System.ServiceModel.Description
 				else
 					cm.Statements.Add (new CodeMethodReturnStatement (call));
 			}
+		}
+
+		CodeMemberMethod FindByName (CodeTypeDeclaration type, string name)
+		{
+			foreach (var m in type.Members) {
+				var method = m as CodeMemberMethod;
+				if (method != null && method.Name == "Begin" + name || method.Name == name)
+					return method;
+			}
+			return null;
+		}
+
+		void GenerateEventBasedAsyncSupport (CodeTypeDeclaration type, OperationDescription od)
+		{
+			var method = FindByName (type, od.Name);
+			bool methodAsync = method.Name.StartsWith ("Begin", StringComparison.Ordinal);
+
+			var thisExpr = new CodeThisReferenceExpression ();
+			var baseExpr = new CodeBaseReferenceExpression ();
+			var nullExpr = new CodePrimitiveExpression (null);
+			var asyncResultType = new CodeTypeReference (typeof (IAsyncResult));
+
+			// OnBeginXxx() implementation
+			var cm = new CodeMemberMethod () {
+				Name = "OnBegin" + od.Name,
+				Attributes = MemberAttributes.Private | MemberAttributes.Final,
+				ReturnType = asyncResultType
+				};
+			type.Members.Add (cm);
+
+			AddMethodParam (cm, typeof (object []), "args");
+			AddMethodParam (cm, typeof (AsyncCallback), "asyncCallback");
+			AddMethodParam (cm, typeof (object), "userState");
+
+			var call = new CodeMethodInvokeExpression (
+				thisExpr,
+				"Begin" + od.Name);
+			for (int idx = 0; idx < method.Parameters.Count - (methodAsync ? 2 : 0); idx++) {
+				var p = method.Parameters [idx];
+				cm.Statements.Add (new CodeVariableDeclarationStatement (p.Type, p.Name, new CodeCastExpression (p.Type, new CodeArrayIndexerExpression (new CodeArgumentReferenceExpression ("args"), new CodePrimitiveExpression (idx)))));
+				call.Parameters.Add (new CodeVariableReferenceExpression (p.Name));
+			}
+			call.Parameters.Add (new CodeArgumentReferenceExpression ("asyncCallback"));
+			call.Parameters.Add (new CodeArgumentReferenceExpression ("userState"));
+			cm.Statements.Add (new CodeMethodReturnStatement (call));
+
+			// OnEndXxx() implementation
+			cm = new CodeMemberMethod () {
+				Name = "OnEnd" + od.Name,
+				Attributes = MemberAttributes.Private | MemberAttributes.Final,
+				ReturnType = new CodeTypeReference (typeof (object [])) };
+			type.Members.Add (cm);
+
+			AddMethodParam (cm, typeof (IAsyncResult), "result");
+
+			var outArgRefs = new List<CodeVariableReferenceExpression> ();
+
+			for (int idx = 0; idx < method.Parameters.Count; idx++) {
+				var p = method.Parameters [idx];
+				if (p.Direction != FieldDirection.In) {
+					cm.Statements.Add (new CodeVariableDeclarationStatement (p.Type, p.Name));
+					outArgRefs.Add (new CodeVariableReferenceExpression (p.Name)); // FIXME: should this work? They need "out" or "ref" modifiers.
+				}
+			}
+
+			call = new CodeMethodInvokeExpression (
+				thisExpr,
+				"End" + od.Name,
+				new CodeArgumentReferenceExpression ("result"));
+			call.Parameters.AddRange (outArgRefs.Cast<CodeExpression> ().ToArray ()); // questionable
+
+			cm.Statements.Add (new CodeVariableDeclarationStatement (typeof (object), "__ret", call));
+			var retCreate = new CodeArrayCreateExpression (typeof (object));
+			retCreate.Initializers.Add (new CodeVariableReferenceExpression ("__ret"));
+			foreach (var outArgRef in outArgRefs)
+				retCreate.Initializers.Add (new CodeVariableReferenceExpression (outArgRef.VariableName));
+
+			cm.Statements.Add (new CodeMethodReturnStatement (retCreate));
+
+			// OnXxxCompleted() implementation
+			cm = new CodeMemberMethod () {
+				Name = "On" + od.Name + "Completed",
+				Attributes = MemberAttributes.Private | MemberAttributes.Final };
+			type.Members.Add (cm);
+
+			AddMethodParam (cm, typeof (object), "state");
+
+			var iaargs = new CodeTypeReference ("InvokeAsyncCompletedEventArgs"); // avoid messy System.Type instance for generic nested type :|
+			var iaref = new CodeVariableReferenceExpression ("args");
+			var methodEventArgs = new CodeObjectCreateExpression (new CodeTypeReference (od.Name + "CompletedEventArgs"),
+				new CodePropertyReferenceExpression (iaref, "Results"),
+				new CodePropertyReferenceExpression (iaref, "Error"),
+				new CodePropertyReferenceExpression (iaref, "Cancelled"),
+				new CodePropertyReferenceExpression (iaref, "UserState"));
+			cm.Statements.Add (new CodeConditionStatement (
+				new CodeBinaryOperatorExpression (
+					new CodeEventReferenceExpression (thisExpr, od.Name + "Completed"), CodeBinaryOperatorType.IdentityInequality, nullExpr),
+				new CodeVariableDeclarationStatement (iaargs, "args", new CodeCastExpression (iaargs, new CodeArgumentReferenceExpression ("state"))),
+				new CodeExpressionStatement (new CodeMethodInvokeExpression (thisExpr, od.Name + "Completed", thisExpr, methodEventArgs))));
+
+			// delegate fields
+			type.Members.Add (new CodeMemberField (new CodeTypeReference ("BeginOperationDelegate"), "onBegin" + od.Name + "Delegate"));
+			type.Members.Add (new CodeMemberField (new CodeTypeReference ("EndOperationDelegate"), "onEnd" + od.Name + "Delegate"));
+			type.Members.Add (new CodeMemberField (new CodeTypeReference (typeof (SendOrPostCallback)), "on" + od.Name + "CompletedDelegate"));
+
+			// XxxCompletedEventArgs class
+			var argsType = new CodeTypeDeclaration (od.Name + "CompletedEventArgs");
+			argsType.BaseTypes.Add (new CodeTypeReference (typeof (AsyncCompletedEventArgs)));
+			type.Members.Add (argsType);
+
+			var argsCtor = new CodeConstructor () {
+				Attributes = MemberAttributes.Public | MemberAttributes.Final };
+			argsCtor.Parameters.Add (new CodeParameterDeclarationExpression (typeof (object []), "results"));
+			argsCtor.Parameters.Add (new CodeParameterDeclarationExpression (typeof (Exception), "error"));
+			argsCtor.Parameters.Add (new CodeParameterDeclarationExpression (typeof (bool), "cancelled"));
+			argsCtor.Parameters.Add (new CodeParameterDeclarationExpression (typeof (object), "userState"));
+			argsCtor.BaseConstructorArgs.Add (new CodeArgumentReferenceExpression ("error"));
+			argsCtor.BaseConstructorArgs.Add (new CodeArgumentReferenceExpression ("cancelled"));
+			argsCtor.BaseConstructorArgs.Add (new CodeArgumentReferenceExpression ("userState"));
+			var resultsField = new CodeFieldReferenceExpression (thisExpr, "results");
+			argsCtor.Statements.Add (new CodeAssignStatement (resultsField, new CodeArgumentReferenceExpression ("results")));
+			argsType.Members.Add (argsCtor);
+
+			argsType.Members.Add (new CodeMemberField (typeof (object []), "results"));
+
+			var resultProp = new CodeMemberProperty {
+				Name = "Result",
+				Type = method.ReturnType,
+				Attributes = MemberAttributes.Public | MemberAttributes.Final };
+			resultProp.GetStatements.Add (new CodeMethodReturnStatement (new CodeCastExpression (method.ReturnType, new CodeArrayIndexerExpression (resultsField, new CodePrimitiveExpression (0)))));
+			argsType.Members.Add (resultProp);
+
+			// event field
+			var handlerType = new CodeTypeReference (typeof (EventHandler<>));
+			handlerType.TypeArguments.Add (new CodeTypeReference (argsType.Name));
+			type.Members.Add (new CodeMemberEvent () {
+				Name = od.Name + "Completed",
+				Type = handlerType,
+				Attributes = MemberAttributes.Public | MemberAttributes.Final });
+
+			// XxxAsync() implementations
+			bool hasAsync = false;
+			foreach (int __x in Enumerable.Range (0, 2)) {
+				cm = new CodeMemberMethod ();
+				type.Members.Add (cm);
+				cm.Name = od.Name + "Async";
+				cm.Attributes = MemberAttributes.Public 
+						| MemberAttributes.Final;
+
+				var inArgs = new List<CodeParameterDeclarationExpression > ();
+
+				for (int idx = 0; idx < method.Parameters.Count - (methodAsync ? 2 : 0); idx++) {
+					var pd = method.Parameters [idx];
+					inArgs.Add (pd);
+					cm.Parameters.Add (pd);
+				}
+
+				// First one is overload without asyncState arg.
+				if (!hasAsync) {
+					call = new CodeMethodInvokeExpression (thisExpr, cm.Name, inArgs.ConvertAll<CodeExpression> (decl => new CodeArgumentReferenceExpression (decl.Name)).ToArray ());
+					call.Parameters.Add (nullExpr);
+					cm.Statements.Add (new CodeExpressionStatement (call));
+					hasAsync = true;
+					continue;
+				}
+
+				// Second one is the primary one.
+
+				cm.Parameters.Add (new CodeParameterDeclarationExpression (typeof (object), "userState"));
+
+				// if (onBeginBarOperDelegate == null) onBeginBarOperDelegate = new BeginOperationDelegate (OnBeginBarOper);
+				// if (onEndBarOperDelegate == null) onEndBarOperDelegate = new EndOperationDelegate (OnEndBarOper);
+				// if (onBarOperCompletedDelegate == null) onBarOperCompletedDelegate = new BeginOperationDelegate (OnBarOperCompleted);
+				var beginOperDelegateRef = new CodeFieldReferenceExpression (thisExpr, "onBegin" + od.Name + "Delegate");
+				var endOperDelegateRef = new CodeFieldReferenceExpression (thisExpr, "onEnd" + od.Name + "Delegate");
+				var operCompletedDelegateRef = new CodeFieldReferenceExpression (thisExpr, "on" + od.Name + "CompletedDelegate");
+
+				var ifstmt = new CodeConditionStatement (
+					new CodeBinaryOperatorExpression (beginOperDelegateRef, CodeBinaryOperatorType.IdentityEquality, nullExpr),
+					new CodeAssignStatement (beginOperDelegateRef, new CodeDelegateCreateExpression (new CodeTypeReference ("BeginOperationDelegate"), thisExpr, "OnBegin" + od.Name)));
+				cm.Statements.Add (ifstmt);
+				ifstmt = new CodeConditionStatement (
+					new CodeBinaryOperatorExpression (endOperDelegateRef, CodeBinaryOperatorType.IdentityEquality, nullExpr),
+					new CodeAssignStatement (endOperDelegateRef, new CodeDelegateCreateExpression (new CodeTypeReference ("EndOperationDelegate"), thisExpr, "OnEnd" + od.Name)));
+				cm.Statements.Add (ifstmt);
+				ifstmt = new CodeConditionStatement (
+					new CodeBinaryOperatorExpression (operCompletedDelegateRef, CodeBinaryOperatorType.IdentityEquality, nullExpr),
+					new CodeAssignStatement (operCompletedDelegateRef, new CodeDelegateCreateExpression (new CodeTypeReference (typeof (SendOrPostCallback)), thisExpr, "On" + od.Name + "Completed")));
+				cm.Statements.Add (ifstmt);
+
+				// InvokeAsync (onBeginBarOperDelegate, inValues, onEndBarOperDelegate, onBarOperCompletedDelegate, userState);
+
+				inArgs.Add (new CodeParameterDeclarationExpression (typeof (object), "userState"));
+
+				var args = new List<CodeExpression> ();
+				args.Add (beginOperDelegateRef);
+				args.Add (new CodeArrayCreateExpression (typeof (object), inArgs.ConvertAll<CodeExpression> (decl => new CodeArgumentReferenceExpression (decl.Name)).ToArray ()));
+				args.Add (endOperDelegateRef);
+				args.Add (new CodeFieldReferenceExpression (thisExpr, "on" + od.Name + "CompletedDelegate"));
+				args.Add (new CodeArgumentReferenceExpression ("userState"));
+				call = new CodeMethodInvokeExpression (baseExpr, "InvokeAsync", args.ToArray ());
+				cm.Statements.Add (new CodeExpressionStatement (call));
+			}
+		}
+
+		void AddMethodParam (CodeMemberMethod cm, Type type, string name)
+		{
+			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (type), name));
 		}
 
 		private CodeExpression[] ExportMessages (MessageDescriptionCollection messages, CodeMemberMethod method, bool return_args)
