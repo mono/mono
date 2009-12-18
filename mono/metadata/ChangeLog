@@ -1,5 +1,7 @@
 2009-12-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* sgen-gc.c: Include mono/utils/memcheck.h.
+
 	* reflection.c (mono_reflection_get_type_internal_dynamic): Use assembly->domain
 	instead of the current domain, since the two might not match if this is called
 	from the debugger.

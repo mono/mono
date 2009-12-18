@@ -1,5 +1,8 @@
 2009-12-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* *.c: Include mono/utils/memcheck.h, and remove #ifdef HAVE_VALGRIND_MEMCHECK_H
+	checks, they are no longer needed.
+
 	* exceptions-ppc.c (mono_ppc_set_func_into_sigctx): New helper function to set
 	a function into a sigctx which can handle function pointers.
 

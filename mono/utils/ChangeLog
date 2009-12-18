@@ -1,3 +1,9 @@
+2009-12-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* valgrind.h memcheck.h: New files containing the BSD licensed valgrind
+	headers so we can use the valgrind user requests even if mono is compiled on
+	a system where they are not installed.
+
 2009-12-11  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-io-portability.c: moved all the reporting code to the IOMAP
