@@ -1,5 +1,9 @@
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientBase.cs : remove extra CWLs.
+
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AllEnums.cs :
 	  added ServiceContractGenerationOptions.EventBasedAsynchronousMethods.
 
