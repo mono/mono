@@ -1,5 +1,8 @@
 2009-12-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c (mono_arch_patch_callsite): Fix the call to
+	VALGRIND_DISCARD_TRANSLATIONS.
+
 	* *.c: Include mono/utils/memcheck.h, and remove #ifdef HAVE_VALGRIND_MEMCHECK_H
 	checks, they are no longer needed.
 
