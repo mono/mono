@@ -1,5 +1,14 @@
 2009-12-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* reflection.c (mono_reflection_get_type_internal_dynamic): Use assembly->domain
+	instead of the current domain, since the two might not match if this is called
+	from the debugger.
+
+	* metadata-internals.h (MonoDynamicAssembly): Add a 'domain' field to specify the
+	domain which created this assembly.
+
+2009-12-18  Zoltan Varga  <vargaz@gmail.com>
+
 	* debug-helpers.c (dis_one): Avoid a glib assert on empty strings.
 
 2009-12-17  Mark Probst  <mark.probst@gmail.com>
