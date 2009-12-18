@@ -249,9 +249,6 @@ using nwind;
         }
 
 
-#if !DEBUG && (POSTGRES || (MSSQL && !L2SQL))
-        [Explicit]
-#endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
         [Test(Description = "Delete - Simple. This sample uses the Remove method to delete an OrderDetail from the OrderDetails Table object. The call to SubmitChanges persists this deletion to the database.")]
         public void LinqToSqlInsert06()
@@ -298,9 +295,6 @@ using nwind;
             //db.SubmitChanges();
         }
 
-#if !DEBUG && (POSTGRES || (MSSQL && !L2SQL))
-        [Explicit]
-#endif
         [Linq101SamplesModified("Console and ObjectDummper references deleted")]
         [Test(Description = "Delete - One-to-Many. This sample uses the Remove method to delete an Order and Order Detail from the Order Details and Orders tables. First deleting Order Details and then deleting from Orders. The call to SubmitChanges persists this deletion to the database.")]
         public void LinqToSqlInsert07()
