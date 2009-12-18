@@ -58,9 +58,6 @@ using nwind;
             }
         }
 
-#if !DEBUG && (SQLITE || POSTGRES || (MSSQL && !L2SQL))
-        [Explicit]
-#endif
         [Test]
         public void TransactionRollbackDelete()
         {

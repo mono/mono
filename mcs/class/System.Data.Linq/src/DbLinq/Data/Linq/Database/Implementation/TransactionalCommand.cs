@@ -50,6 +50,9 @@ namespace DbLinq.Data.Linq.Database.Implementation
         private readonly IDatabaseTransaction _transaction;
 
         private readonly IDbCommand _command;
+
+        private readonly bool haveHigherTransaction;
+
         /// <summary>
         /// Gets the command.
         /// </summary>
@@ -81,7 +84,8 @@ namespace DbLinq.Data.Linq.Database.Implementation
         public void Commit()
         {
             // TODO: do not commit if participating in a higher transaction
-            _transaction.Commit();
+            if (!haveHigherTransaction)
+                _transaction.Commit();
         }
 
         public TransactionalCommand(string commandText, bool createTransaction, DataContext dataContext)
@@ -90,13 +94,18 @@ namespace DbLinq.Data.Linq.Database.Implementation
             // the OpenConnection() checks that the connection is already open
             // TODO: see if we can move this here (in theory the final DataContext shouldn't use)
             _connection = dataContext.DatabaseContext.OpenConnection();
-            // the transaction is optional
-            if (createTransaction)
-                _transaction = dataContext.DatabaseContext.Transaction();
+                
             _command = dataContext.DatabaseContext.CreateCommand();
+            haveHigherTransaction = dataContext.Transaction != null;
+            // the transaction is optional
+            if (createTransaction && !haveHigherTransaction)
+            {
+                _transaction = dataContext.DatabaseContext.Transaction();
+                _command.Transaction = _transaction.Transaction;
+            }
+            else
+                _command.Transaction = dataContext.Transaction;
             Command.CommandText = commandText;
-            if (createTransaction)
-                Command.Transaction = _transaction.Transaction;
         }
 
     }
