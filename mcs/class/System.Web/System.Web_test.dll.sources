@@ -37,6 +37,10 @@ mainsoft/NunitWeb/NunitWeb/WebTest.cs
 mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
 mainsoft/NunitWeb/NunitWeb/Tests/TagsNestedInClientTag.cs
 mainsoft/NunitWeb/NunitWeb/Tests/TestSiteMapProvider.cs
+mainsoft/NunitWeb/NunitWeb/Tests/Author.cs
+mainsoft/NunitWeb/NunitWeb/Tests/AuthorConverter.cs
+mainsoft/NunitWeb/NunitWeb/Tests/Book.cs
+mainsoft/NunitWeb/NunitWeb/Tests/BookType.cs
 System.Web/AppBrowsersTest.cs
 System.Web/HttpBrowserCapabilitiesTest.cs
 System.Web/HttpCacheVaryByContentEncodingsTest.cs
@@ -133,6 +137,7 @@ System.Web.UI.HtmlControls/HtmlTextAreaTest.cs
 System.Web.UI/DataSourceSelectArgumentsTest.cs
 System.Web.UI/HtmlTextWriterTest.cs
 System.Web.UI/MinimizableAttributeTypeConverterTest.cs
+System.Web.UI/ObjectStateFormatterTest.cs
 System.Web.UI/OutputCacheParametersTest.cs
 System.Web.UI/PageParserTest.cs
 System.Web.UI/PageParserFilterTest.cs

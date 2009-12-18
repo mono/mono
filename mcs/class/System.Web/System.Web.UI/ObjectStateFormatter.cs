@@ -439,7 +439,8 @@ namespace System.Web.UI {
 						// consisting of a call to ToString() with no
 						// reverse conversion supported. This leads to
 						// problems when deserializing the object.
-						if (converter == null || converter.GetType () == typeof (TypeConverter) || !converter.CanConvertTo (typeof (string)))
+						if (converter == null || converter.GetType () == typeof (TypeConverter) ||
+						    !converter.CanConvertTo (typeof (string)) || !converter.CanConvertFrom (typeof (string)))
 							fmt = binaryObjectFormatter;
 						else {
 							typeConverterFormatter.Converter = converter;
