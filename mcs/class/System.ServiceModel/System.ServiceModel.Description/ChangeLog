@@ -1,6 +1,13 @@
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceContractGenerator.cs :
+	  EventArgs are not nested classes.
+	  Result property of EventArgs is not IAsyncResult. It should be
+	  pulled from EndXxx() method, not from BeginXxx().
+
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs :
 	  add support for EventBasedAsynchronousMethods (3.5 SP1 / 2.1).
 
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>

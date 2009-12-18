@@ -265,7 +265,7 @@ namespace System.ServiceModel.Description
 
 			if (GenerateEventBasedAsync)
 				foreach (var od in cd.Operations)
-					GenerateEventBasedAsyncSupport (type, od);
+					GenerateEventBasedAsyncSupport (type, od, cns);
 		}
 
 		void GenerateChannelInterface (ContractDescription cd, CodeNamespace cns)
@@ -485,15 +485,16 @@ namespace System.ServiceModel.Description
 		{
 			foreach (var m in type.Members) {
 				var method = m as CodeMemberMethod;
-				if (method != null && method.Name == "Begin" + name || method.Name == name)
+				if (method != null && method.Name == name)
 					return method;
 			}
 			return null;
 		}
 
-		void GenerateEventBasedAsyncSupport (CodeTypeDeclaration type, OperationDescription od)
+		void GenerateEventBasedAsyncSupport (CodeTypeDeclaration type, OperationDescription od, CodeNamespace cns)
 		{
-			var method = FindByName (type, od.Name);
+			var method = FindByName (type, od.Name) ?? FindByName (type, "Begin" + od.Name);
+			var endMethod = method.Name == od.Name ? null : FindByName (type, "End" + od.Name);
 			bool methodAsync = method.Name.StartsWith ("Begin", StringComparison.Ordinal);
 
 			var thisExpr = new CodeThisReferenceExpression ();
@@ -587,7 +588,7 @@ namespace System.ServiceModel.Description
 			// XxxCompletedEventArgs class
 			var argsType = new CodeTypeDeclaration (od.Name + "CompletedEventArgs");
 			argsType.BaseTypes.Add (new CodeTypeReference (typeof (AsyncCompletedEventArgs)));
-			type.Members.Add (argsType);
+			cns.Types.Add (argsType);
 
 			var argsCtor = new CodeConstructor () {
 				Attributes = MemberAttributes.Public | MemberAttributes.Final };
@@ -606,9 +607,9 @@ namespace System.ServiceModel.Description
 
 			var resultProp = new CodeMemberProperty {
 				Name = "Result",
-				Type = method.ReturnType,
+				Type = endMethod != null ? endMethod.ReturnType : method.ReturnType,
 				Attributes = MemberAttributes.Public | MemberAttributes.Final };
-			resultProp.GetStatements.Add (new CodeMethodReturnStatement (new CodeCastExpression (method.ReturnType, new CodeArrayIndexerExpression (resultsField, new CodePrimitiveExpression (0)))));
+			resultProp.GetStatements.Add (new CodeMethodReturnStatement (new CodeCastExpression (resultProp.Type, new CodeArrayIndexerExpression (resultsField, new CodePrimitiveExpression (0)))));
 			argsType.Members.Add (resultProp);
 
 			// event field
