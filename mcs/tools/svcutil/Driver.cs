@@ -230,6 +230,9 @@ namespace Mono.ServiceContractTool
 				go |= ServiceContractGenerationOptions.ClientClass;
 			if (co.GenerateTypedMessages)
 				go |= ServiceContractGenerationOptions.TypedMessages;
+			if ((co.TargetClientVersion35 && co.GenerateAsync) || co.GenerateMoonlightProxy)
+				go |= ServiceContractGenerationOptions.EventBasedAsynchronousMethods;
+
 			return go;
 		}
 

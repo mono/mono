@@ -31,11 +31,13 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Reflection;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.Threading;
 
 namespace Mono.ServiceContractTool
 {
@@ -170,6 +172,14 @@ namespace Mono.ServiceContractTool
 							new CodeTypeReference (name),
 							new CodeThisReferenceExpression ()))));
 			parentClass.Members.Add (creator);
+
+			// clear IExtensibleDataObject. Since there is *no* way 
+			// to identify the type of a TypeReference, I cannot do 
+			// anything but this brutal removal.
+			foreach (CodeNamespace cns in context.ServiceContractGenerator.TargetCompileUnit.Namespaces)
+				foreach (CodeTypeDeclaration ct in cns.Types)
+					if (ct != ml_context.ClientType)
+						ct.BaseTypes.Clear ();
 		}
 	}
 
@@ -279,16 +289,18 @@ namespace Mono.ServiceContractTool
 			var type = ml_context.ChannelType;
 			var od = context.Operation;
 
+			var baseExpr = new CodeBaseReferenceExpression ();
+			var asyncResultType = new CodeTypeReference (typeof (IAsyncResult));
+
 			// BeginXxx() implementation
-			CodeMemberMethod cm = new CodeMemberMethod ();
+			CodeMemberMethod cm = new CodeMemberMethod () {
+				Name = "Begin" + od.Name,
+				Attributes = MemberAttributes.Public | MemberAttributes.Final,
+				ReturnType = asyncResultType
+				};
 			type.Members.Add (cm);
-			cm.Name = "Begin" + od.Name;
-			cm.Attributes = MemberAttributes.Public 
-					| MemberAttributes.Final;
 
 			var inArgs = new List<CodeParameterDeclarationExpression > ();
-			var outArgs = new List<CodeParameterDeclarationExpression > ();
-
 			foreach (CodeParameterDeclarationExpression p in context.BeginMethod.Parameters) {
 				inArgs.Add (p);
 				cm.Parameters.Add (p);
@@ -296,65 +308,52 @@ namespace Mono.ServiceContractTool
 			inArgs.RemoveAt (inArgs.Count - 1);
 			inArgs.RemoveAt (inArgs.Count - 1);
 
-//			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (typeof (AsyncCallback)), "asyncCallback"));
-//			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (typeof (object)), "userState"));
-			cm.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
-
-			var argsDecl = new CodeVariableDeclarationStatement (
-				typeof (object []),
-				"args",
-				new CodeArrayCreateExpression (typeof (object), inArgs.ConvertAll<CodeExpression> (decl => new CodeArgumentReferenceExpression (decl.Name)).ToArray ()));
-			cm.Statements.Add (argsDecl);
-
-			var args = new List<CodeExpression> ();
-			args.Add (new CodePrimitiveExpression (od.Name));
-			args.Add (new CodeVariableReferenceExpression ("args"));
-			args.Add (new CodeArgumentReferenceExpression ("asyncCallback"));
-			args.Add (new CodeArgumentReferenceExpression ("userState"));
-
-			CodeExpression call = new CodeMethodInvokeExpression (
-				new CodeBaseReferenceExpression (),
+			var call = new CodeMethodInvokeExpression (
+				baseExpr,
 				"BeginInvoke",
-				args.ToArray ());
-
-			if (cm.ReturnType.BaseType == "System.Void")
-				cm.Statements.Add (new CodeExpressionStatement (call));
-			else
-				cm.Statements.Add (new CodeMethodReturnStatement (call));
+				new CodePrimitiveExpression (od.Name),
+				new CodeArrayCreateExpression (typeof (object), inArgs.ConvertAll<CodeExpression> (decl => new CodeArgumentReferenceExpression (decl.Name)).ToArray ()),
+				new CodeArgumentReferenceExpression ("asyncCallback"),
+				new CodeArgumentReferenceExpression ("userState"));
+			cm.Statements.Add (new CodeMethodReturnStatement (call));
 
 			// EndXxx() implementation
 
-			cm = new CodeMemberMethod ();
-			cm.Attributes = MemberAttributes.Public 
-					| MemberAttributes.Final;
+			cm = new CodeMemberMethod () {
+				Name = "End" + od.Name,
+				Attributes = MemberAttributes.Public | MemberAttributes.Final,
+				ReturnType = context.EndMethod.ReturnType };
 			type.Members.Add (cm);
-			cm.Name = "End" + od.Name;
 
-			var res = new CodeParameterDeclarationExpression (new CodeTypeReference (typeof (IAsyncResult)), "result");
-			cm.Parameters.Add (res);
+			AddMethodParam (cm, typeof (IAsyncResult), "result");
 
-			cm.ReturnType = context.EndMethod.ReturnType;
+			var outArgs = new List<CodeParameterDeclarationExpression > ();
 
 			string resultArgName = "result";
-			argsDecl = new CodeVariableDeclarationStatement (
+			var argsDecl = new CodeVariableDeclarationStatement (
 				typeof (object []),
 				"args",
 				new CodeArrayCreateExpression (typeof (object), new CodePrimitiveExpression (outArgs.Count)));
 			cm.Statements.Add (argsDecl);
 
-			call = new CodeCastExpression (
+			var cast = new CodeCastExpression (
 				context.EndMethod.ReturnType,
 				new CodeMethodInvokeExpression (
-				new CodeBaseReferenceExpression (),
+				baseExpr,
 				"EndInvoke",
 				new CodePrimitiveExpression (od.Name),
 				new CodeVariableReferenceExpression ("args"),
 				new CodeArgumentReferenceExpression (resultArgName)));
 
 			if (cm.ReturnType.BaseType == "System.Void")
-				cm.Statements.Add (new CodeExpressionStatement (call));
+				cm.Statements.Add (new CodeExpressionStatement (cast));
 			else
-				cm.Statements.Add (new CodeMethodReturnStatement (call));
+				cm.Statements.Add (new CodeMethodReturnStatement (cast));
+		}
+
+		void AddMethodParam (CodeMemberMethod cm, Type type, string name)
+		{
+			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (type), name));
 		}
 	}
 }

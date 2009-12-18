@@ -59,6 +59,9 @@ namespace Mono.ServiceContractTool
 		[Option ("Generate typed messages.", "typedMessage", "tm")]
 		public bool GenerateTypedMessages;
 
+		[Option ("Indicate target client version is 3.5", "targetClientVersion:Version35", "tcv:Version35")]
+		public bool TargetClientVersion35;
+
 		bool generate_moonlight_proxy;
 
 		[Option ("Generate moonlight client. (This option may vanish.)", "moonlight")]
@@ -80,6 +83,14 @@ namespace Mono.ServiceContractTool
 				if (!value)
 					return;
 				generate_moonlight_proxy = true;
+				// FIXME: since ServiceContractGenerator at 
+				// least for now generates only either sync or
+				// async stuff, and since Moonlight-compatible
+				// profile now emits event-based operations,
+				// it became impossible to generate sync methods
+				// in MonoTouch profile. It might be able to get
+				// fixed, but might be not.
+				GenerateAsync = true;
 			}
 		}
 
