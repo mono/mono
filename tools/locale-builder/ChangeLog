@@ -1,3 +1,18 @@
+2009-12-18  Dimitar Dobrev  <dpldobrev@yahoo.com>
+
+	* langs/ka.xml: added a file with the settings of the neutral
+	Georgian culture
+	* locales/ka-GE.xml: added a file with the settings of the 
+	specific Georgian culture
+	* supp/ka-GE.xml: added a file with the date and time formats 
+	of the Georgian culture
+	* lcids.xml: added entries for the neutral and specific 
+	Georgian culture
+	* Makefile.am: included supp/ka-GE.xml in the build and dist the new
+	we're not downloading from primates.ximian.com.
+
+	[Fixes bug 564910].
+
 2009-11-05  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Driver.cs: Generate locale data for neutral cultures too. Moonlight

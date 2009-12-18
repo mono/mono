@@ -18,6 +18,7 @@
   <lcid name="ja" id="0x0011" parent="0x007F" specific="0x0411" iso2="ja" iso3="jpn" win="JPN" icu_name="Japanese" />
   <lcid name="en-PH" id="0x3409" parent="0x0009" specific="0x3409" iso2="en" iso3="eng" win="ENP" icu_name="English (Philippines)" />
   <lcid name="nl" id="0x0013" parent="0x007F" specific="0x0413" iso2="nl" iso3="nld" win="NLD" icu_name="Dutch" />
+  <lcid name="ka" id="0x0037" parent="0x007F" specific="0x0437" iso2="ka" iso3="kat" win="KAT" icu_name="Georgian" />
   <lcid name="ko" id="0x0012" parent="0x007F" specific="0x0412" iso2="ko" iso3="kor" win="KOR" icu_name="Korean" />
   <lcid name="ar-SA" id="0x0401" parent="0x0001" specific="0x0401" iso2="ar" iso3="ara" win="ARA" icu_name="Arabic (Saudi Arabia)" />
   <lcid name="bg-BG" id="0x0402" parent="0x0002" specific="0x0402" iso2="bg" iso3="bul" win="BGR" icu_name="Bulgarian (Bulgaria)" />
@@ -36,6 +37,7 @@
   <lcid name="be" id="0x0023" parent="0x007F" specific="0x0423" iso2="be" iso3="bel" win="BEL" icu_name="Belarusian" />
   <lcid name="id" id="0x0021" parent="0x007F" specific="0x0421" iso2="id" iso3="ind" win="IND" icu_name="Indonesian" />
   <lcid name="et" id="0x0025" parent="0x007F" specific="0x0425" iso2="et" iso3="est" win="ETI" icu_name="Estonian" />
+  <lcid name="ka-GE" id="0x0437" parent="0x0037" specific="0x0437" iso2="ka" iso3="kat" win="KAT" icu_name="Georgian (Georgia)" />
   <lcid name="ko-KR" id="0x0412" parent="0x0012" specific="0x0412" iso2="ko" iso3="kor" win="KOR" icu_name="Korean (South Korea)" />
   <lcid name="nl-NL" id="0x0413" parent="0x0013" specific="0x0413" iso2="nl" iso3="nld" win="NLD" icu_name="Dutch (Netherlands)" />
   <lcid name="no" id="0x0014" parent="0x007F" specific="0x0414" iso2="no" iso3="nor" win="NOR" icu_name="Norwegian" />
