@@ -1,3 +1,7 @@
+2009-12-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Added stripped xml to avoid licensing issues.
+
 2009-08-31  Michael Barker  <mike@middlesoft.co.uk>
 
 	* Updated to version 1.6 of the RabbitMQ libraries
@@ -8,8 +12,8 @@
 
 2009-05-25  Michael Barker  <mike@middlesoft.co.uk>
 
-    * Removed amqp spec files and modified generated code to fix licensing 
-    issues.
+	* Removed amqp spec files and modified generated code to fix licensing 
+	issues.
 
 2009-05-21  Michael Barker  <mike@middlesoft.co.uk>
 
