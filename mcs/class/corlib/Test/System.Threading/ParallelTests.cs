@@ -42,20 +42,9 @@ namespace ParallelFxTests
 	[TestFixture()]
 	public class ParallelTests
 	{
-		//int[] pixels;
-		//RayTracerApp rayTracer;
-		
-		public void Setup()
-		{
-			/*Stream stream = Assembly.GetAssembly(typeof(ParallelTests)).GetManifestResourceStream("raytracer-output.xml");
-			Console.WriteLine(stream == null);
-			XmlSerializer serializer = new XmlSerializer(typeof(int[]));
-			pixels = (int[])serializer.Deserialize(stream);
-			rayTracer = new RayTracerApp();*/
-		}
 		
 		[Test]
-		public void ParallelForTestCase()
+		public void ParallelForTestCase ()
 		{
 			ParallelTestHelper.Repeat (() => {
 				int[] expected = Enumerable.Range (1, 1000).Select ((e) => e * 2).ToArray ();
@@ -64,19 +53,38 @@ namespace ParallelFxTests
 				
 				Parallel.For (0, actual.Length, (i) => { actual[i] *= 2; sw.SpinOnce (); });
 				
-				CollectionAssert.AreEquivalent (expected, actual, "#1, same pixels");
-				CollectionAssert.AreEqual (expected, actual, "#2, pixels in order");
+				CollectionAssert.AreEquivalent (expected, actual, "#1, same");
+				CollectionAssert.AreEqual (expected, actual, "#2, in order");
 			});
 		}
 
-		[Test, ExpectedException(typeof(AggregateException))]
-		public void ParallelForExceptionTestCase()
+		[Test, ExpectedException (typeof (AggregateException))]
+		public void ParallelForExceptionTestCase ()
 		{
 			Parallel.For(1, 100, delegate (int i) { throw new Exception("foo"); });
 		}
 		
 		[Test]
-		public void ParallelForEachTestCase()
+		public void ParallelForSmallRangeTest ()
+		{
+			ParallelTestHelper.Repeat (() => {
+				int test = -1;
+				Parallel.For (0, 1, (i) => test = i);
+				
+				Assert.AreEqual (0, test, "#1");
+			});
+		}
+		
+		[Test]
+		public void ParallelForNoOperationTest ()
+		{
+			bool launched = false;
+			Parallel.For (4, 1, (i) => launched = true);
+			Assert.IsFalse (launched, "#1");
+		}
+		
+		[Test]
+		public void ParallelForEachTestCase ()
 		{
 			ParallelTestHelper.Repeat (() => {
 				IEnumerable<int> e = Enumerable.Repeat(1, 500);
@@ -84,17 +92,17 @@ namespace ParallelFxTests
 				SpinWait sw = new SpinWait ();
 				int count = 0;
 				
-				Parallel.ForEach (e, (element) => { Interlocked.Increment(ref count); queue.Enqueue (element); sw.SpinOnce (); });
+				Parallel.ForEach (e, (element) => { Interlocked.Increment (ref count); queue.Enqueue (element); sw.SpinOnce (); });
 				
 				Assert.AreEqual (500, count, "#1");
 				CollectionAssert.AreEquivalent (e, queue, "#2");
 			});
 		}
 		
-		[Test, ExpectedException(typeof(AggregateException))]
-		public void ParallelForEachExceptionTestCse()
+		[Test, ExpectedException (typeof (AggregateException))]
+		public void ParallelForEachExceptionTestCase ()
 		{
-			IEnumerable<int> e = Enumerable.Repeat(1, 10);
+			IEnumerable<int> e = Enumerable.Repeat (1, 10);
 			Parallel.ForEach (e, delegate (int element) { throw new Exception ("foo"); });
 		}
 		
