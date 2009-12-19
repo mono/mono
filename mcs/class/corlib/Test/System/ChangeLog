@@ -1,3 +1,7 @@
+2009-12-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* StringTest.cs: Add tests for IndexOf ("", startIndex, count).
+
 2009-12-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StringTest.cs: Add test case for right padding an empty string

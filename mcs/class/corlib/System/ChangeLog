@@ -1,3 +1,8 @@
+2009-12-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* String.cs: Fix the various IndexOf and LastIndexOf methods so they handle
+	"" and a non-zero startIndex correctly. Fixes #566106.
+
 2009-12-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* String.cs: Fix #565602 right-padding empty strings.
