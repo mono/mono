@@ -1,3 +1,8 @@
+2009-12-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* String.cs: Fix the various IndexOf and LastIndexOf methods so they handle
+	"" and a non-zero startIndex correctly. Fixes #566106.
+
 2009-11-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Random.cs: Fix case where the diff between min and max
