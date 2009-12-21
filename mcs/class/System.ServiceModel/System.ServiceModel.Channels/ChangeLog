@@ -1,3 +1,8 @@
+2009-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageFault.cs : support EnvelopeVersion.None as well, as almost
+	  the same as SOAP12.
+
 2009-12-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestContext.cs : for DestinationUnreachable message, this

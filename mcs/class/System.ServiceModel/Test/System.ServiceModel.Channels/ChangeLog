@@ -1,3 +1,7 @@
+2009-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageFaultTest.cs : add CreateFault test with MessageVersion.None.
+
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageHeadersTest.cs : added another CopyHeadersFrom() test to

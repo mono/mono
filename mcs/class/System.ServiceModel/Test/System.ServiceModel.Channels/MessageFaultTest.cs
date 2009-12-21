@@ -21,6 +21,15 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		public void CreateFaultMessageVersionNone ()
+		{
+			var msg = Message.CreateMessage (MessageVersion.None, new FaultCode ("DestinationUnreachable"), "typical error", null);
+			var fault = MessageFault.CreateFault (msg, 0x10000);
+			Assert.AreEqual ("DestinationUnreachable", fault.Code.Name, "#1");
+			Assert.AreEqual ("typical error", fault.Reason.ToString (), "#2");
+		}
+
+		[Test]
 		[ExpectedException (typeof (CommunicationException))]
 		public void CreateFaultIncomplete ()
 		{
