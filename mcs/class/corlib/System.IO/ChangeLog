@@ -1,3 +1,8 @@
+2009-12-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* File.cs (ReadAllBytes): We cannot assume that a single call to
+	Read will return all the data we require.
+
 2009-11-24  Marek Safar <marek.safar@gmail.com>
 
 	* StreamReader.cs, FileStream.cs: Use recycle buffer to avoid

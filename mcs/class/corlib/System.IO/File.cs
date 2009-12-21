@@ -493,19 +493,22 @@ namespace System.IO
 		//
 		public static byte [] ReadAllBytes (string path)
 		{
-			using (FileStream s = Open (path, FileMode.Open, FileAccess.Read, FileShare.Read)){
+			using (FileStream s = OpenRead (path)) {
 				long size = s.Length;
-
-				//
-				// Is this worth supporting?
-				// 
+				// limited to 2GB according to http://msdn.microsoft.com/en-us/library/system.io.file.readallbytes.aspx
 				if (size > Int32.MaxValue)
-					throw new ArgumentException ("Reading more than 4gigs with this call is not supported");
-				
-				byte [] result = new byte [s.Length];
+					throw new IOException ("Reading more than 2GB with this call is not supported");
 
-				s.Read (result, 0, (int) size);
-
+				int pos = 0;
+				int count = (int) size;
+				byte [] result = new byte [size];
+				while (count > 0) {
+					int n = s.Read (result, pos, count);
+					if (n == 0)
+						throw new IOException ("Unexpected end of stream");
+					pos += n;
+					count -= n;
+				}
 				return result;
 			}
 		}
