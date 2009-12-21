@@ -1,3 +1,7 @@
+2009-12-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Add an LLVM_CFLAGS automake variable.
+
 2009-12-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Applied patch from Matt McClellan (matt@mc-c.net). Add a check
