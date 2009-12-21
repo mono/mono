@@ -1,3 +1,7 @@
+2009-12-21  Marek Habersack  <mhabersack@novell.com>
+
+	* Int32.cs: treat terminating null as whitespace
+
 2009-12-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* String.cs: Fix the various IndexOf and LastIndexOf methods so they handle
