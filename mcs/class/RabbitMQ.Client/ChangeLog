@@ -1,3 +1,7 @@
+2009-12-19  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Added stripped xml to avoid licensing issues.
+
 2009-05-27  Andrew Jorgensen  <ajorgensen@novell.com>
 
 	* Makefile: Fixed dist
