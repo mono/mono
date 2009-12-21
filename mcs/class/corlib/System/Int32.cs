@@ -102,7 +102,7 @@ namespace System {
 			for (int i = position; i < len; i++){
 				char c = s [i];
 				
-				if (!Char.IsWhiteSpace (c)){
+				if (c != 0 && !Char.IsWhiteSpace (c)){
 					if (!tryParse)
 						exc = GetFormatException ();
 					return false;
