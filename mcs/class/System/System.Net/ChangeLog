@@ -1,3 +1,8 @@
+2009-12-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnectionGroup.cs:
+	* ServicePoint.cs: implemented CloseConnectionGroup().
+
 2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CookieCollection.cs: Seal inner CookieCollectionPathComparer
