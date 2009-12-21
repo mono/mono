@@ -1,3 +1,8 @@
+2009-12-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-ppc.c (mono_ppc_set_func_into_sigctx): Fix the cross-compiler
+	build.
+
 2009-12-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_get_argument_info): Allocate memory for CallInfo using
