@@ -233,6 +233,11 @@ public class Int32Test
 		// numbers, but we should not crash
 		
 		Int32.Parse ("123", new DateTimeFormatInfo ());
+
+		Assert.AreEqual (734561, Int64.Parse ("734561\0"), "C#43");
+		Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0    \0"), "C#44");
+		Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0    "), "C#45");
+		Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0"), "C#46");
 	}
 
 #if NET_2_0	
