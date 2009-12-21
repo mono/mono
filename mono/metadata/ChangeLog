@@ -1,3 +1,7 @@
+2009-12-18  Dimitar Dobrev  <dpldobrev@yahoo.com>
+
+	* culture-info-tables.h: regenerated it to include the Georgian culture.
+
 2009-12-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_reflection_get_type_internal_dynamic): Use assembly->domain
