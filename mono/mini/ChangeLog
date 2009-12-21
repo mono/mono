@@ -1,5 +1,28 @@
 2009-12-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_add_seq_point): New helper function.
+	(mono_save_seq_point_info): New function to save sequence point info, extracted
+	from mini_method_compile ().
+
+	* mini-<ARCH>.c: Call mono_add_seq_point to remember sequence points.
+
+	* mini.h (MonoSeqPointInfo): New structure containing information about
+	the sequence points of a JITted method.
+	(MonoBasicBlock): Add 'seq_points' and 'last_seq_point' fields. Remove unused
+	'bucket' field.
+
+	* mini.c debugger-agent.c aot-compiler.c aot-runtime.c: Change the way sequence
+	point information is stored, use a MonoSeqPointInfo structure instead of a
+	GPtrArray. For each seq point, compute a list of successor seq points.
+
+	* debugger-agent.c: Use the successor list to implement step-over more
+	efficiently: instead of single stepping until a different line/IL offset is
+	reached, place breakpoints into all successor seq points.
+
+	* mini.h: Bump AOT file format version.
+
+2009-12-21  Zoltan Varga  <vargaz@gmail.com>
+
 	* Makefile.am (AM_CFLAGS): Include LLVM_CFLAGS.
 
 	* mini-llvm.c: Avoid defining the __STDC_... macros if already defined.
