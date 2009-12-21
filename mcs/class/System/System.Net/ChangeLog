@@ -1,3 +1,8 @@
+2009-12-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnectionGroup.cs:
+	* ServicePoint.cs: implemented CloseConnectionGroup().
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Net/DnsEndPoint.cs: Moved from System.Net (where the

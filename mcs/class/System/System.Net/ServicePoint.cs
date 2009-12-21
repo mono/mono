@@ -298,10 +298,17 @@ namespace System.Net
 		}
 #endif
 #if NET_2_0
-		[MonoNotSupported ("")]
 		public bool CloseConnectionGroup (string connectionGroupName)
 		{
-			throw new NotImplementedException ();
+			lock (locker) {
+				WebConnectionGroup cncGroup = GetConnectionGroup (connectionGroupName);
+				if (cncGroup != null) {
+					cncGroup.Close ();
+					return true;
+				}
+			}
+
+			return false;
 		}
 #endif
 
