@@ -1,5 +1,11 @@
 2009-12-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am (AM_CFLAGS): Include LLVM_CFLAGS.
+
+	* mini-llvm.c: Avoid defining the __STDC_... macros if already defined.
+
+2009-12-21  Zoltan Varga  <vargaz@gmail.com>
+
 	* exceptions-ppc.c (mono_ppc_set_func_into_sigctx): Fix the cross-compiler
 	build.
 
