@@ -1,3 +1,9 @@
+2009-12-22  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #565849.
+	* CreateItem.cs: Use DirectoryScanner to handle wildcards.
+	(IsExcluded): Remove.
+
 2009-11-26  Ankit Jain  <jankit@novell.com>
 
 	* ManagedCompiler.cs (AddResponseFileCommands): *mcs doesn't

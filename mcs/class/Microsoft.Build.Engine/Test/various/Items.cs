@@ -1418,9 +1418,9 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			string documentString = @"
 				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
 					<ItemGroup>
-						<ItemsRel Include='dir\**\*.dll' />
+						<ItemsRel Include='dir\**\*.dll' Exclude='*\x*.dll' />
 						<ItemsRelExpanded Include=""@(ItemsRel->'%(FullPath)')"" />
-						<ItemsAbs Include='$(MSBuildProjectDirectory)\dir\**\*.dll' />
+						<ItemsAbs Include='$(MSBuildProjectDirectory)\dir\**\*.dll' Exclude='*\x*.dll' />
 					</ItemGroup>
 
 					<Target Name='Main'>
@@ -1443,7 +1443,6 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 					logger.CheckLoggedAny (prefix + PathCombine (full_base_dir, aaa, "foo.dll"),
 										MessageImportance.Normal,  "A1");
 					logger.CheckLoggedAny (prefix + PathCombine (full_base_dir, bb, "bar.dll"), MessageImportance.Normal, "A2");
-					logger.CheckLoggedAny (prefix + PathCombine (full_base_dir, "xyz.dll"), MessageImportance.Normal, "A3");
 				}
 			} catch (AssertionException) {
 				logger.DumpMessages ();

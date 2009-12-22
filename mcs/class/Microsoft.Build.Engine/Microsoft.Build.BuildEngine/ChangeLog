@@ -1,3 +1,9 @@
+2009-12-22  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #565849.
+	* DirectoryScanner.cs (Excludes): Change from string to ITaskItem[] .
+	* BuildItem.cs: Track api changes.
+
 2009-12-02  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #559990.
