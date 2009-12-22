@@ -1,3 +1,13 @@
+2009-12-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_method_get_signature_full): Check if the returned signature is compatible
+	with the one from the original method.
+
+	* metadata-verify.c (mono_verifier_is_sig_compatible): New function to verify signature
+	compatibility.
+
+	* verify-internals.h: Add new function to the internal API.
+
 2009-12-18  Dimitar Dobrev  <dpldobrev@yahoo.com>
 
 	* culture-info-tables.h: regenerated it to include the Georgian culture.
