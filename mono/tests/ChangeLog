@@ -1,3 +1,7 @@
+2009-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs dtest-app.cs: Add more single stepping tests.
+
 2009-12-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c pinvoke2.cs: Add a test for calling pinvoke methods using calli.
