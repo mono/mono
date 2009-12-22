@@ -1,3 +1,8 @@
+2009-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_klass_ref): Avoid a crash if a decode_klass_ref () call
+	fails. Fixes #566689.
+
 2009-12-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_add_seq_point): New helper function.
