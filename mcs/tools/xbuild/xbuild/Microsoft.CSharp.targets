@@ -33,7 +33,7 @@
 			DebugType="$(DebugType)"
 			DefineConstants="$(DefineConstants)"
 			DelaySign="$(DelaySign)"
-			DisabledWarnings="$(_DisabledWarnings)"
+			DisabledWarnings="$(NoWarn)"
 			DocumentationFile="@(DocFileItem)"
 			EmitDebugInformation="$(DebugSymbols)"
 			ErrorReport="$(ErrorReport)"
