@@ -1,3 +1,7 @@
+2009-12-22  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlForm.cs: RenderChildren is slightly more efficient now.
+
 2009-11-13  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs: reverted part of the previous patch - action is not

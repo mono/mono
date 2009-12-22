@@ -406,15 +406,19 @@ namespace System.Web.UI.HtmlControls
 #endif		
 		override void RenderChildren (HtmlTextWriter w)
 		{
-			if (!inited) {
-				Page.RegisterViewStateHandler ();
+			Page page = Page;
+			
+			if (!inited && page != null) {
+				page.RegisterViewStateHandler ();
 #if NET_2_0
-				Page.RegisterForm (this);
+				page.RegisterForm (this);
 #endif
 			}
-			Page.OnFormRender (w, ClientID);
+			if (page != null)
+				page.OnFormRender (w, ClientID);
 			base.RenderChildren (w);
-			Page.OnFormPostRender (w, ClientID);
+			if (page != null)
+				page.OnFormPostRender (w, ClientID);
 		}
 
 #if NET_2_0

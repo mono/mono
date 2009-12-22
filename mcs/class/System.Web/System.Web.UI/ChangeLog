@@ -1,3 +1,15 @@
+2009-12-22  Marek Habersack  <mhabersack@novell.com>
+
+	* Page.cs: form javascript declaration block is rendered only if
+	necessary. Fixes bug #566541
+
+	* ClientScriptManager.cs: added internal property ScriptsPresent
+	used to determine if it is necessary to render form javascript
+	declaration block.
+	Hidden fields block is output without indenting the controls and
+	without rendering trailing empty line.
+	Made Write{Begin,End}ScriptBlock slightly faster.
+
 2009-12-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectStateFormatter.cs: ObjectFormatter.WriteObject checks

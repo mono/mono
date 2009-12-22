@@ -66,6 +66,21 @@ namespace System.Web.UI
 		bool _hasRegisteredForEventValidationOnCallback;
 		bool _pageInRender;
 		bool _initCallBackRegistered;
+		bool _webFormClientScriptRendered;
+		bool _webFormClientScriptRequired;
+		
+		internal bool ScriptsPresent {
+			get {
+				return _webFormClientScriptRequired ||
+					_initCallBackRegistered ||
+					_hasRegisteredForEventValidationOnCallback ||
+					clientScriptBlocks != null ||
+					startupScriptBlocks != null ||
+					submitStatements != null ||
+					registeredArrayDeclares != null ||
+					expandoAttributes != null;
+			}
+		}
 #endif
 		
 		internal ClientScriptManager (Page page)
@@ -180,9 +195,6 @@ namespace System.Web.UI
 			page.RequiresPostBackScript ();
 			_webFormClientScriptRequired = true;
 		}
-
-		bool _webFormClientScriptRendered;
-		bool _webFormClientScriptRequired;
 
 		internal void WriteWebFormClientScript (HtmlTextWriter writer) {
 			if (!_webFormClientScriptRendered && _webFormClientScriptRequired) {
@@ -309,6 +321,7 @@ namespace System.Web.UI
 				registeredArrayDeclares.Add (arrayName, new ArrayList());
 	
 			((ArrayList) registeredArrayDeclares[arrayName]).Add(arrayValue);
+			page.RequiresFormScriptDeclaration ();
 		}
 
 		void RegisterScript (ref ScriptEntry scriptList, Type type, string key, string script, bool addScriptTags)
@@ -627,25 +640,22 @@ namespace System.Web.UI
 #if NET_2_0
 		internal const string SCRIPT_BLOCK_START = "//<![CDATA[";
 		internal const string SCRIPT_BLOCK_END = "//]]>";
+		internal const string SCRIPT_ELEMENT_START = @"<script type=""text/javascript"">" + SCRIPT_BLOCK_START;
 #else
 		internal const string SCRIPT_BLOCK_START = "<!--";
 		internal const string SCRIPT_BLOCK_END ="// -->";
+		internal const string SCRIPT_ELEMENT_START = @"<script language=""javascript"" type=""text/javascript"">" + SCRIPT_BLOCK_START;
 #endif
+		internal const string SCRIPT_ELEMENT_END = SCRIPT_BLOCK_END + "</script>";
 		
 		internal static void WriteBeginScriptBlock (HtmlTextWriter writer)
 		{
-			writer.WriteLine ("<script"+
-#if !NET_2_0
-				" language=\"javascript\""+
-#endif
-				" type=\"text/javascript\">");
-			writer.WriteLine (SCRIPT_BLOCK_START);
+			writer.WriteLine (SCRIPT_ELEMENT_START);
 		}
 
 		internal static void WriteEndScriptBlock (HtmlTextWriter writer)
 		{
-			writer.WriteLine (SCRIPT_BLOCK_END);
-			writer.WriteLine ("</script>");
+			writer.WriteLine (SCRIPT_ELEMENT_END);
 		}
 		
 		internal void WriteHiddenFields (HtmlTextWriter writer)
@@ -654,18 +664,28 @@ namespace System.Web.UI
 				return;
 
 #if NET_2_0
+			writer.WriteLine ();
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);
+			int oldIndent = writer.Indent;
+			writer.Indent = 0;
 #endif
+			bool first = true;
 			foreach (string key in hiddenFields.Keys) {
 				string value = hiddenFields [key] as string;
+				if (first)
+					first = false;
+				else
+					writer.WriteLine ();
 #if NET_2_0
-				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
+				writer.Write ("<input type=\"hidden\" name=\"{0}\" id=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
 #else
-				writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
+				writer.Write ("<input type=\"hidden\" name=\"{0}\" value=\"{1}\" />", key, HttpUtility.HtmlAttributeEncode (value));
 #endif
 			}
 #if NET_2_0
+			writer.Indent = oldIndent;
 			writer.RenderEndTag (); // DIV
+			writer.WriteLine ();
 #endif
 			hiddenFields = null;
 		}
