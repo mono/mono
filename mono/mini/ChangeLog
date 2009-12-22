@@ -1,5 +1,11 @@
 2009-12-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (ss_start): Implement step over for the last sequence
+	point in methods.
+
+	* mini.c (mono_save_seq_point_info): Don't link sequence points which don't
+	have the STEP_LOC flag set.
+
 	* aot-runtime.c (decode_klass_ref): Avoid a crash if a decode_klass_ref () call
 	fails. Fixes #566689.
 
