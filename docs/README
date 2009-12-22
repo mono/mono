@@ -64,10 +64,8 @@ PROGRAMS
 * convert.cs
 
 	Converts an HTML file into a valid XML document, uses the
-	AgilityPack.dll.  The sources to this DLL live in GNOME CVS
-	module beagle/Filters/AgilityPack.
-
-	A binary is shipped for our convenience.
+	AgilityPack.dll.  The sources to this DLL live in the 
+        HtmlAgilityPack folder, and are a prerequisite for convert.exe.
 
 DATAFILES:
 ---------
