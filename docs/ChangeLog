@@ -1,3 +1,16 @@
+2009-12-22  Jo Shields  <directhex@apebox.org>
+	* HtmlAgilityPack/LICENSE: Include upstream license (Ms-PL) since the
+	  file headers don't specify it
+
+2009-12-22  Jo Shields  <directhex@apebox.org>
+
+	* HtmlAgilityPack/*: Bundle HtmlAgilityPack 1.4~beta2 from
+	  http://www.codeplex.com/htmlagilitypack in source form.
+
+	* AgilityPack.dll: Remove binary assembly, use source instead.
+
+	* docs.make Makefile.am README: Reflect above changes
+
 2008-12-12  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-porting.txt: Added some details about function descriptors
