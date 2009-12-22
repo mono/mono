@@ -13,7 +13,6 @@ ASSEMBLED_DOCS = \
 
 EXTRA_DIST = \
 	abc-removal.txt		\
-	AgilityPack.dll		\
 	api-style.css		\
 	assembly-bundle		\
 	check-exports		\
@@ -68,12 +67,14 @@ EXTRA_DIST = \
 dist-hook:
 	$(mkdir_p)  $(distdir)/sources
 	$(mkdir_p)  $(distdir)/svgs
+	$(mkdir_p)  $(distdir)/HtmlAgilityPack
 	cp sources/*  $(distdir)/sources
 	cp svgs/*     $(distdir)/svgs
+	cp HtmlAgilityPack/*     $(distdir)/HtmlAgilityPack
 
 clean-local:
 	-rm -Rf $(srcdir)/html
-	-rm -f $(srcdir)/deploy/* $(srcdir)/convert.exe*
+	-rm -f $(srcdir)/deploy/* $(srcdir)/convert.exe* $(srcdir)/AgilityPack.dll*
 	-cd $(srcdir) && rm -f $(ASSEMBLED_DOCS)
 
 monoapi.zip: monoapi.tree
@@ -103,3 +104,5 @@ extract: $(srcdir)/deploy/.stamp
 convert.exe: convert.cs AgilityPack.dll
 	cd $(srcdir) && $(MAKE) PROFILE=net_2_0 -f docs.make topdir=$(mcs_topdir_from_srcdir) convert.exe
 
+AgilityPack.dll:
+	cd $(srcdir) && $(MAKE) PROFILE=net_2_0 -f docs.make topdir=$(mcs_topdir_from_srcdir) AgilityPack.dll

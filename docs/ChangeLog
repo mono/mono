@@ -1,3 +1,12 @@
+2009-12-22  Jo Shields  <directhex@apebox.org>
+
+	* HtmlAgilityPack/*: Bundle HtmlAgilityPack 1.4~beta2 from 
+          http://www.codeplex.com/htmlagilitypack in source form.
+
+	* AgilityPack.dll: Remove binary assembly, use source instead.
+
+	* docs.make Makefile.am README: Reflect above changes
+
 2009-02-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (EXTRA_DIST): Remove removed files.

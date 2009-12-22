@@ -10,6 +10,9 @@ ASSEMBLED_DOCS = \
 convert.exe: convert.cs AgilityPack.dll
 	$(CSCOMPILE) -out:$@ $< -r:AgilityPack.dll
 
+AgilityPack.dll:
+	$(CSCOMPILE) -target:library -out:$@ HtmlAgilityPack/*.cs
+
 monoapi.zip: monoapi.tree
 	@test -f $@ || { rm -f $< && $(MAKE) $<; }
 monoapi.tree: toc.xml docs.make
