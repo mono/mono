@@ -1,3 +1,7 @@
+2009-12-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlBinaryDictionaryReader.cs : slightly more descriptive errmsg.
+
 2009-12-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XmlDictionaryReader.cs: Fix ReadValueAsBase64 return value and
