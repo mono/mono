@@ -1,3 +1,7 @@
+2009-12-21  Rodrigo Kumpera  <kumpera@gmail.com>
+
+	* get.c (get_type): Don't crash if the type is not found.
+
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
 	* dis-cil.c:
