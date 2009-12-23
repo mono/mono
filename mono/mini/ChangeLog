@@ -1,3 +1,8 @@
+2009-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_create_llvm_imt_trampoline): Fix the LLVM build on
+	platforms without mono_arch_get_llvm_imt_trampoline ().
+
 2009-12-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_klass_ref): Avoid a crash if a decode_klass_ref () call
