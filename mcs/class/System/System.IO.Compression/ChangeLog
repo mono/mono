@@ -1,3 +1,8 @@
+2009-12-23  Geoff Norton  <gnorton@novell.com>
+
+	* DeflateStream.cs: Ensure our callbacks go into the correct
+	static methods.
+
 2009-09-14 Jonathan Pryor <jpryor@novell.com>
 
 	* DeflateStream.cs: MonoTouch reverse callbacks need to be static
