@@ -1,3 +1,8 @@
+2009-12-23  Jo Shields  <directhex@apebox.org>
+
+	* docs/specs/Makefile: Use compiled Mono, not system Mono (fixes 
+	  broken build on systems without Mono already installed)
+
 2009-12-19  Michael Barker  <mike@middlesoft.co.uk>
 
 	* Added stripped xml to avoid licensing issues.
