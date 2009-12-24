@@ -1,5 +1,11 @@
 2009-12-24  Mark Probst  <mark.probst@gmail.com>
 
+	* metadata-internals.h, reflection.c: Use the
+	MonoDynamicImage.handleref hash table only with unmanaged keys,
+	and add a managed hash table handleref_managed for managed keys.
+
+2009-12-24  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Unset to-space bumper between collections.  It might
 	become invalid due to degraded allocations.
 
