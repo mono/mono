@@ -1,3 +1,8 @@
+2009-12-24  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Unset to-space bumper between collections.  It might
+	become invalid due to degraded allocations.
+
 2009-12-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (mono_method_get_signature_full): Check if the returned signature is compatible
