@@ -5,8 +5,9 @@
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //      Daniel Nauck    (dna(at)mono-project(dot)de)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (c) Copyright 2004 Novell, Inc. (http://www.ximian.com)
+// Copyright (C) 2004,2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -48,11 +49,10 @@ namespace System.Net {
 		Uri commentUri;
 		bool discard;
 		string domain;
-//		bool expired;
 		DateTime expires;
-#if NET_2_0		
+#if NET_2_0
 		bool httpOnly;
-#endif		
+#endif
 		string name;
 		string path;
 		string port;
@@ -70,11 +70,11 @@ namespace System.Net {
 		{
 			expires = DateTime.MinValue;
 			timestamp = DateTime.Now;
-			domain = "";
-			name = "";
-			val = "";
-			comment = "";
-			port = "";
+			domain = String.Empty;
+			name = String.Empty;
+			val = String.Empty;
+			comment = String.Empty;
+			port = String.Empty;
 		}
 
 		public Cookie (string name, string value)
@@ -113,7 +113,22 @@ namespace System.Net {
 
 		public string Domain {
 			get { return domain; }
-			set { domain = value == null ? String.Empty : value; }
+			set {
+				if (IsNullOrEmpty (value)) {
+					domain = String.Empty;
+					ExactDomain = true;
+				} else {
+					domain = value;
+					ExactDomain = (value [0] != '.');
+				}
+			}
+		}
+
+		private bool exact_domain;
+
+		internal bool ExactDomain { 
+			get { return exact_domain; }
+			set { exact_domain = value; }
 		}
 
 		public bool Expired {
@@ -131,21 +146,17 @@ namespace System.Net {
 			get { return expires; }
 			set { expires = value; }
 		}
-
-#if NET_2_0	
-		public bool HttpOnly
-		{
+#if NET_2_0
+		public bool HttpOnly {
 			get { return httpOnly; }
 			set { httpOnly = value; }
 		}
 #endif
-
 		public string Name {
 			get { return name; }
 			set { 
-				if (value == null || value.Length == 0) {
+				if (IsNullOrEmpty (value))
 					throw new CookieException ("Name cannot be empty");
-				}			
 				
 				if (value [0] == '$' || value.IndexOfAny (reservedCharsName) != -1) {
 					// see CookieTest, according to MS implementation
@@ -159,14 +170,14 @@ namespace System.Net {
 		}
 
 		public string Path {
-			get { return (path == null || path == "") ? String.Empty : path; }
+			get { return (path == null) ? String.Empty : path; }
 			set { path = (value == null) ? String.Empty : value; }
 		}
 
 		public string Port {
 			get { return port; }
 			set { 
-				if (value == null || value.Length == 0) {
+				if (IsNullOrEmpty (value)) {
 					port = String.Empty;
 					return;
 				}
@@ -265,6 +276,11 @@ namespace System.Net {
 		// see also bug #316017
 		public override string ToString () 
 		{
+			return ToString (null);
+		}
+
+		internal string ToString (Uri uri)
+		{
 			if (name.Length == 0) 
 				return String.Empty;
 
@@ -278,10 +294,13 @@ namespace System.Net {
 			if (version == 0)
 				return result.ToString ();
 
-			if (path != null && path.Length != 0)
+			if (!IsNullOrEmpty (path))
 				result.Append ("; $Path=").Append (path);
-				
-			if (domain != null && domain.Length != 0)
+			else if (uri != null)
+				result.Append ("; $Path=/").Append (path);
+
+			bool append_domain = (uri == null) || (uri.Host != domain);
+			if (append_domain && !IsNullOrEmpty (domain))
 				result.Append ("; $Domain=").Append (domain);			
 	
 			if (port != null && port.Length != 0)
@@ -333,6 +352,11 @@ namespace System.Net {
 			}
 			return true;
 	    	}	    
+
+		static bool IsNullOrEmpty (string s)
+		{
+			return ((s == null) || (s.Length == 0));
+		}
 	}
 }
 

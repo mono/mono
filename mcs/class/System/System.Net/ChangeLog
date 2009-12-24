@@ -1,3 +1,12 @@
+2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Cookie.cs: Re-work ToString to be useable in more cases. Fix
+	some issues found by Gendarme.
+	* CookieContainer.cs: Fix 2.0 NonWorking (and new) unit tests.
+	Implement removing oldest cookies when limits are reached.
+	* CookieCollection.cs: Fix sort to be closer to MS implementation
+	(but still not 100% identical). Fix some issues found by Gendarme
+
 2009-10-23  Alexandre Gomes  <alexmipego@gmail.com>
 
 	* WebClient.cs: Fixed GetWebRequest overriding problems, bug: 

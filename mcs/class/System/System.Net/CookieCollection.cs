@@ -4,8 +4,9 @@
 // Authors:
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2004,2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -29,35 +30,64 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.Serialization;
+#if NET_2_0
+using System.Collections.Generic;
+#endif
 
 namespace System.Net 
 {
 	[Serializable]
-	public class CookieCollection : ICollection, IEnumerable
-	{
-		class CookieCollectionPathComparer : IComparer
-		{
-			int IComparer.Compare (object p1, object p2)
+#if NET_2_1
+	public sealed class CookieCollection : ICollection, IEnumerable {
+#else
+	public class CookieCollection : ICollection, IEnumerable {
+#endif
+		// not 100% identical to MS implementation
+#if NET_2_0
+		sealed class CookieCollectionComparer : IComparer<Cookie> {
+			public int Compare (Cookie x, Cookie y)
 			{
-				Cookie c1 = p1 as Cookie;
-				Cookie c2 = p2 as Cookie;
-
-				if (c1 == null || c2 == null)
+				if (x == null || y == null)
 					return 0;
 				
-				return (c2.Path.Length - c1.Path.Length);
+				int c1 = x.Name.Length + x.Value.Length;
+				int c2 = y.Name.Length + y.Value.Length;
+
+				return (c1 - c2);
 			}
 		}
-		
-		ArrayList list = new ArrayList (4);
 
-		internal ArrayList List {
+		List<Cookie> list = new List<Cookie> ();
+
+		internal IList<Cookie> List {
 			get { return list; }
 		}
+#else
+		sealed class CookieCollectionComparer : IComparer {
+			public int Compare (object x, object y)
+			{
+				if (x == null || y == null)
+					return 0;
+				
+				Cookie c1 = (Cookie) x;
+				Cookie c2 = (Cookie) y;
+
+				return (c1.Name.Length + c1.Value.Length - c2.Name.Length - c2.Value.Length);
+			}
+		}
+
+		ArrayList list = new ArrayList ();
+
+		internal IList List {
+			get { return list; }
+		}
+#endif
+
+		static CookieCollectionComparer Comparer = new CookieCollectionComparer ();
+
 		// ICollection
 		public int Count {
 			get { return list.Count; }
@@ -71,17 +101,15 @@ namespace System.Net
 			get { return this; }
 		}
 
-		public void CopyTo (Array array, int arrayIndex)
+		public void CopyTo (Array array, int index)
 		{
-			list.CopyTo (array, arrayIndex);
+			(list as IList).CopyTo (array, index);
 		}
 
-#if NET_2_0
 		public void CopyTo (Cookie [] array, int index)
 		{
 			list.CopyTo (array, index);
 		}
-#endif
 
 		// IEnumerable
 		public IEnumerator GetEnumerator ()
@@ -110,12 +138,10 @@ namespace System.Net
 				list [pos] = cookie;
 		}
 
-		internal void SortByPath ()
+		internal void Sort ()
 		{
-			if (list == null || list.Count == 0)
-				return;
-
-			list.Sort (new CookieCollectionPathComparer ());
+			if (list.Count > 0)
+				list.Sort (Comparer);
 		}
 		
 		int SearchCookie (Cookie cookie)

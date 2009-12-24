@@ -1,3 +1,10 @@
+2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CookieContainerTest.cs: Split many tests into smaller test 
+	cases. Add test cases for DefaultPerDomainCookieLimit and
+	DefaultCookieLimit. Remove all, but one 1.x, [Category 
+	("NotWorking")] since everything works now.
+
 2009-07-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebHeaderCollectionTest.cs: test for allowed characters in headers.
