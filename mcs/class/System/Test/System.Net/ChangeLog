@@ -1,3 +1,10 @@
+2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CookieContainerTest.cs: Split many tests into smaller test 
+	cases. Add test cases for DefaultPerDomainCookieLimit and
+	DefaultCookieLimit. Remove all [Category ("NotWorking")] since
+	everything works now.
+
 2009-10-23  Alexandre Gomes  <alexmipego@gmail.com>
 
 	* WebClientTest.cs: Test for GetWebRequest overriding

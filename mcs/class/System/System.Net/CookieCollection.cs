@@ -4,8 +4,9 @@
 // Authors:
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// (c) Copyright 2004 Novell, Inc. (http://www.novell.com)
+// Copyright (C) 2004,2009 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -29,8 +30,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.Serialization;
 
@@ -42,23 +43,25 @@ namespace System.Net
 #else
 	public class CookieCollection : ICollection, IEnumerable {
 #endif
-		sealed class CookieCollectionPathComparer : IComparer
-		{
-			int IComparer.Compare (object p1, object p2)
+		// not 100% identical to MS implementation
+		sealed class CookieCollectionComparer : IComparer<Cookie> {
+			public int Compare (Cookie x, Cookie y)
 			{
-				Cookie c1 = p1 as Cookie;
-				Cookie c2 = p2 as Cookie;
-
-				if (c1 == null || c2 == null)
+				if (x == null || y == null)
 					return 0;
 				
-				return (c2.Path.Length - c1.Path.Length);
+				int c1 = x.Name.Length + x.Value.Length;
+				int c2 = y.Name.Length + y.Value.Length;
+
+				return (c1 - c2);
 			}
 		}
-		
-		ArrayList list = new ArrayList (4);
 
-		internal ArrayList List {
+		static CookieCollectionComparer Comparer = new CookieCollectionComparer ();
+
+		List<Cookie> list = new List<Cookie> ();
+
+		internal IList<Cookie> List {
 			get { return list; }
 		}
 		// ICollection
@@ -74,17 +77,15 @@ namespace System.Net
 			get { return this; }
 		}
 
-		public void CopyTo (Array array, int arrayIndex)
+		public void CopyTo (Array array, int index)
 		{
-			list.CopyTo (array, arrayIndex);
+			(list as IList).CopyTo (array, index);
 		}
 
-#if NET_2_0
 		public void CopyTo (Cookie [] array, int index)
 		{
 			list.CopyTo (array, index);
 		}
-#endif
 
 		// IEnumerable
 		public IEnumerator GetEnumerator ()
@@ -113,12 +114,10 @@ namespace System.Net
 				list [pos] = cookie;
 		}
 
-		internal void SortByPath ()
+		internal void Sort ()
 		{
-			if (list == null || list.Count == 0)
-				return;
-
-			list.Sort (new CookieCollectionPathComparer ());
+			if (list.Count > 0)
+				list.Sort (Comparer);
 		}
 		
 		int SearchCookie (Cookie cookie)
@@ -128,7 +127,7 @@ namespace System.Net
 			string path = cookie.Path;
 
 			for (int i = list.Count - 1; i >= 0; i--) {
-				Cookie c = (Cookie) list [i];
+				Cookie c = list [i];
 				if (c.Version != cookie.Version)
 					continue;
 
@@ -161,7 +160,7 @@ namespace System.Net
 				if (index < 0 || index >= list.Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-				return (Cookie) list [index];
+				return list [index];
 			}
 		}
 

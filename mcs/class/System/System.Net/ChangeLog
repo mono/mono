@@ -1,3 +1,13 @@
+2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Cookie.cs: Re-work ToString to be useable in more cases. Fix
+	some issues found by Gendarme.
+	* CookieContainer.cs: Fix all NonWorking (and new) unit tests.
+	Implement removing oldest cookies when limits are reached.
+	* CookieCollection.cs: Move to generics internally. Fix sort to 
+	be closer to MS implementation (but still not 100% identical).
+	Fix some issues found by Gendarme.
+
 2009-12-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnectionGroup.cs:
