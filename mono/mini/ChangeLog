@@ -1,3 +1,9 @@
+2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* method-to-ir.c (mono_method_to_ir): Avoid SIGSEGV when
+	mono_method_get_signature returns NULL. Fix #567084
+	[Backport r148889]
+
 2009-12-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_create_llvm_imt_trampoline): Fix the LLVM build on
