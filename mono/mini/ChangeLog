@@ -1,3 +1,8 @@
+2009-12-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_klass_ref): Don't call mono_class_init (), its not
+	needed.
+
 2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* method-to-ir.c (mono_method_to_ir): Avoid SIGSEGV when
