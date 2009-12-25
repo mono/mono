@@ -3,9 +3,10 @@
 	* method-to-ir.c (mono_method_to_ir): Avoid SIGSEGV when
 	mono_method_get_signature returns NULL. Fix #567084
 
-2009-12-23  Zoltan Varga  <vargaz@gmail.com>
+2009-12-25  Zoltan Varga  <vargaz@gmail.com>
 
-	* mini-x86.h (MONO_ARCH_LLVM_SUPPORTED): Define this to fix the x86 llvm build.
+	* aot-runtime.c (find_extra_method): Call mono_aot_wrapper_name only once,
+	instead of once for each module.
 
 2009-12-22  Zoltan Varga  <vargaz@gmail.com>
 
