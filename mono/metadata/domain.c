@@ -1883,6 +1883,13 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	appdomains_list [domain->domain_id] = NULL;
 	mono_appdomains_unlock ();
 
+	/* must do this early as it accesses fields and types */
+	if (domain->special_static_fields) {
+		mono_alloc_special_static_data_free (domain->special_static_fields);
+		g_hash_table_destroy (domain->special_static_fields);
+		domain->special_static_fields = NULL;
+	}
+
 	/*
 	 * We must destroy all these hash tables here because they
 	 * contain references to managed objects belonging to the
@@ -1929,12 +1936,6 @@ mono_domain_free (MonoDomain *domain, gboolean force)
 	domain->null_reference_ex = NULL;
 	domain->stack_overflow_ex = NULL;
 	domain->entry_assembly = NULL;
-	/* must do this early as it accesses fields and types */
-	if (domain->special_static_fields) {
-		mono_alloc_special_static_data_free (domain->special_static_fields);
-		g_hash_table_destroy (domain->special_static_fields);
-		domain->special_static_fields = NULL;
-	}
 
 	g_free (domain->friendly_name);
 	domain->friendly_name = NULL;

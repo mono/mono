@@ -1,3 +1,9 @@
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (mono_domain_free): Backport part of r143047. Free special static
+	fields earlier to avoid crashes if the types they refer to are freed. Fixes
+	#565923.
+
 2009-12-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* loader.c (mono_method_get_signature_full): Check if the returned signature is compatible
