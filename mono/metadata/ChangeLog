@@ -1,3 +1,13 @@
+2009-12-25  Mark Probst  <mark.probst@gmail.com>
+
+	* class-internals.c: Add mono_class_inflate_generic_method_full_checked and make
+	mono_class_inflate_generic_method_full internal.
+
+	* class.c (inflate_generic_context): Now takes a MonoError argument.
+
+	* class.c (mono_class_inflate_generic_method_full): Now calls the _checked and abort on
+	errors.
+
 2009-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* generic-sharing.c (instantiate_other_info): Avoid creating jump trampolines since
