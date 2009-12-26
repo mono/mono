@@ -1,3 +1,8 @@
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (instantiate_other_info): Avoid creating jump trampolines since
+	they cannot be patched. Partly fixes #564408.
+
 2009-12-24  Mark Probst  <mark.probst@gmail.com>
 
 	* metadata-internals.h, reflection.c: Use the
