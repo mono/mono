@@ -151,10 +151,14 @@ namespace System.ServiceModel.Channels
 			writer = new MyBinaryWriter (buffer);
 		}
 
+		static readonly byte [] empty_bytes = new byte [0];
+
 		public byte [] ReadSizedChunk ()
 		{
 			int length = reader.ReadVariableInt ();
-			
+			if (length == 0)
+				return empty_bytes;
+
 			if (length > 65536)
 				throw new InvalidOperationException ("The message is too large.");
 
@@ -292,6 +296,10 @@ namespace System.ServiceModel.Channels
 		// FIXME: support timeout
 		public Message ReadUnsizedMessage (TimeSpan timeout)
 		{
+			// Encoding type 7 is expected
+			if (EncodingRecord != EncodingBinary)
+				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
+
 			var packetType = s.ReadByte ();
 
 			if (packetType == EndRecord)
@@ -299,19 +307,17 @@ namespace System.ServiceModel.Channels
 			if (packetType != UnsizedEnvelopeRecord)
 				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
 
-			// Encoding type 7 is expected
-			if (EncodingRecord != EncodingBinary)
-				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
+			var ms = new MemoryStream ();
+			while (true) {
+				byte [] buffer = ReadSizedChunk ();
+				if (buffer.Length == 0) // i.e. it is UnsizedMessageTerminator (which is '0')
+					break;
+				ms.Write (buffer, 0, buffer.Length);
+			}
+			ms.Seek (0, SeekOrigin.Begin);
 
-			byte [] buffer = ReadSizedChunk ();
-			var ms = new MemoryStream (buffer, 0, buffer.Length);
-
-			// FIXME: supply maxSizeOfHeaders.
-			Message msg = Encoder.ReadMessage (ms, 0x10000);
-
-			var terminator = s.ReadByte ();
-			if (terminator != UnsizedMessageTerminator)
-				throw new InvalidOperationException (String.Format ("Unsized message terminator is expected. Got '{0}' (&#x{1:X};).", (char) terminator, terminator));
+			// FIXME: supply correct maxSizeOfHeaders.
+			Message msg = Encoder.ReadMessage (ms, (int) ms.Length);
 
 			return msg;
 		}

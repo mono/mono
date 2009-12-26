@@ -1,3 +1,9 @@
+2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpBinaryFrameManager.cs : unsized envelope record may have more
+	  than one data block, so consume them accordingly. This should fix
+	  large buffer consumption.
+
 2009-12-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageFault.cs : support EnvelopeVersion.None as well, as almost
