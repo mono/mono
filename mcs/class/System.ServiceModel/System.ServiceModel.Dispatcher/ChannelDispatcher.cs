@@ -547,6 +547,8 @@ namespace System.ServiceModel.Dispatcher
 				var reply = (IReplyChannel) result.AsyncState;
 				if (reply.EndTryReceiveRequest (result, out rc))
 					ProcessRequest (reply, rc);
+				else
+					reply.Close ();
 			}
 
 			void TryReceiveDone (IAsyncResult result)
@@ -555,6 +557,8 @@ namespace System.ServiceModel.Dispatcher
 				var input = (IInputChannel) result.AsyncState;
 				if (input.EndTryReceive (result, out msg))
 					ProcessInput (input, msg);
+				else
+					input.Close ();
 			}
 
 			void SendEndpointNotFound (RequestContext rc, EndpointNotFoundException ex) 
