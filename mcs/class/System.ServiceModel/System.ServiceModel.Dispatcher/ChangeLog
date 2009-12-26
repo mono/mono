@@ -1,3 +1,7 @@
+2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntime.cs : shortened code and scattered monotodos.
+
 2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationInvokerHandler.cs : fix async operation handling. Since
