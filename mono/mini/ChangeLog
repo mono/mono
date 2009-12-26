@@ -1,3 +1,7 @@
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-trampolines.c (common_call_trampoline): Add assert for NULL resolved generic method.
+
 2009-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c: Use mono_arch_get_this_arg_from_call () to avoid the slow
