@@ -1,3 +1,15 @@
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.c: Add mono_class_inflate_generic_method_full_checked and make
+	mono_class_inflate_generic_method_full internal.
+
+	* class.c (inflate_generic_context): Now takes a MonoError argument.
+
+	* class.c (mono_class_inflate_generic_method_full): Now calls the _checked and abort on
+	errors.
+
+	Backport of r148904.
+
 2009-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* domain.c (mono_domain_free): Backport part of r143047. Free special static
