@@ -1,3 +1,9 @@
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-trampolines.c (common_call_trampoline): Add assert for NULL resolved generic method.
+
+	Backport of r148905.
+
 2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* method-to-ir.c (mono_method_to_ir): Avoid SIGSEGV when

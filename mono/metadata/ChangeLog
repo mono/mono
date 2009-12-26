@@ -1,5 +1,32 @@
 2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Rework all uses of mono_class_setup_methods to accept that it can fail now.
+
+	* class.c (mono_class_setup_methods): This function now can fail the class. Do so for generic
+	instances if the GTD did.
+
+	* class.c (mono_class_setup_properties): Ditto.
+
+	* class.c (mono_class_setup_events): Ditto.
+
+	* class.c (mono_class_setup_vtable): Fail early if the type is already broken.
+
+	* class.c (mono_class_setup_vtable_general): Add a few more missing broken type checks.	Sanitize
+	error setting.
+
+	* class.c (mono_class_init): Fail if GTD did.
+
+	* cominterop.c:
+	* generic-sharing.c:
+	* icall.c:
+	* loader.c:
+	* object.c:
+	* verify.c: Properly handle failure of mono_class_setup_methods.
+
+	Backport of r148905.
+
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class-internals.c: Add mono_class_inflate_generic_method_full_checked and make
 	mono_class_inflate_generic_method_full internal.
 

@@ -446,6 +446,7 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 		}
 
 		g_assert (klass);
+		g_assert (actual_method);
 		g_assert (actual_method->klass == klass);
 
 		if (actual_method->is_inflated)
