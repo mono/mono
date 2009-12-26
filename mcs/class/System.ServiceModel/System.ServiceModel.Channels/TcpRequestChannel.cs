@@ -66,6 +66,7 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
+			CreateClient (timeout);
 		}
 
 		void CreateClient (TimeSpan timeout)
@@ -78,15 +79,15 @@ namespace System.ServiceModel.Channels
 				Encoder = this.Encoder,
 				Via = this.Via,
 				EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
-			frame.ProcessPreambleInitiator ();
-			frame.ProcessPreambleAckInitiator ();
 		}
 
 		public override Message Request (Message input, TimeSpan timeout)
 		{
 			DateTime start = DateTime.Now;
 
-			CreateClient (timeout);
+			// FIXME: use timeouts.
+			frame.ProcessPreambleInitiator ();
+			frame.ProcessPreambleAckInitiator ();
 
 			if (input.Headers.To == null)
 				input.Headers.To = RemoteAddress.Uri;
@@ -95,6 +96,8 @@ namespace System.ServiceModel.Channels
 
 			frame.WriteUnsizedMessage (input, timeout - (DateTime.Now - start));
 
+			// LAMESPEC: it contradicts the protocol described at section 3.1.1.1.1 in [MC-NMF].
+			// Moving this WriteEndRecord() after ReadUnsizedMessage() causes TCP connection blocking.
 			frame.WriteEndRecord ();
 
 			var ret = frame.ReadUnsizedMessage (timeout - (DateTime.Now - start));

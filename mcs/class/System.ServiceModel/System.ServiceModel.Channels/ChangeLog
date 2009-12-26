@@ -1,5 +1,16 @@
 2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpBinaryFrameManager.cs : If preamble byte is not available from
+	  the client stream, detect it to close the reply or input channel.
+	* TcpRequestChannel.cs : send preamble at each request time.
+	  It differentiates communication behavior on such cases that involve
+	  single open and multiple requests.
+	* TcpReplyChannel.cs : close the channel only when the channel is
+	  oeprated to close i.e. do not close the socket every time.
+	  Process preambles on each request (the same as request channel).
+
+2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpBinaryFrameManager.cs : unsized envelope record may have more
 	  than one data block, so consume them accordingly. This should fix
 	  large buffer consumption.

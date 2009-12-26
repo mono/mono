@@ -211,11 +211,13 @@ namespace System.ServiceModel.Channels
 			s.WriteByte (PreambleAckRecord);
 		}
 
-		public void ProcessPreambleRecipient ()
+		public bool ProcessPreambleRecipient ()
 		{
 			bool preambleEnd = false;
 			while (!preambleEnd) {
 				int b = s.ReadByte ();
+				if (b < 0)
+					return false;
 				switch (b) {
 				case VersionRecord:
 					if (s.ReadByte () != 1)
@@ -246,6 +248,7 @@ namespace System.ServiceModel.Channels
 					throw new ProtocolException (String.Format ("Unexpected record type {0:X2}", b));
 				}
 			}
+			return true;
 		}
 
 		XmlBinaryReaderSession reader_session;
