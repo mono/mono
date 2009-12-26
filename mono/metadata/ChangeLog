@@ -1,3 +1,12 @@
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* monitor.c (ves_icall_System_Threading_Monitor_Monitor_wait): Don't close the
+	wait handle if the wait is interrupted, since it is still in mon->wait_list, and
+	we can't remove it from it since we don't hold the lock.
+	(mon_new): Free the orphaned events here when a mon structure is added to the
+	freelist. Fixes #561239. Thanks to Mike Rieker <wmrieker@nii.net> for tracking
+	this down.
+
 2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Rework all uses of mono_class_setup_methods to accept that it can fail now.
