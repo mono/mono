@@ -1,3 +1,10 @@
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c: Use mono_arch_get_this_arg_from_call () to avoid the slow
+	mono_get_generic_context_from_code () call.
+
+	* mini-<ARCH>.c: Get rid of mono_arch_find_this_arg (), it is no longer used.
+
 2009-12-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_klass_ref): Don't call mono_class_init (), its not
