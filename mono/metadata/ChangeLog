@@ -1,5 +1,14 @@
 2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (init_stack_with_value_at_exception_boundary): Do stack overflow checking here
+	as max stack might be zero.
+
+	Fixes #562320.
+
+	Backport of r148911.
+
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	Rework all uses of mono_class_setup_methods to accept that it can fail now.
 
 	* class.c (mono_class_setup_methods): This function now can fail the class. Do so for generic
