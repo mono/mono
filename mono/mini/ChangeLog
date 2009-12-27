@@ -1,3 +1,8 @@
+2009-12-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_wrappers): Don't use dyn runtime invoke for methods with
+	nullable parameters. Fixes #567351.
+
 2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-trampolines.c (common_call_trampoline): Add assert for NULL resolved generic method.
