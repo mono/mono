@@ -1,3 +1,7 @@
+2009-12-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* invalid_try_catch_with_zero_max_stack.il: Regression test for bug #562320.
+
 2009-08-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_generic_type_definition_on_boxing_position.cs: Valid encoding of GTD on
