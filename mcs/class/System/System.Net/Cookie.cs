@@ -124,7 +124,12 @@ namespace System.Net {
 			}
 		}
 
-		internal bool ExactDomain { get; set; }
+		private bool exact_domain;
+
+		internal bool ExactDomain { 
+			get { return exact_domain; }
+			set { exact_domain = value; }
+		}
 
 		public bool Expired {
 			get { 

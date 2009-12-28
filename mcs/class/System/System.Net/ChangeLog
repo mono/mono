@@ -1,3 +1,8 @@
+2009-12-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Cookie.cs: Don't use automatic properties to let older mcs
+	(e.g. bootstrap) compile this for NET_1_1 profile
+
 2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Cookie.cs: Re-work ToString to be useable in more cases. Fix
