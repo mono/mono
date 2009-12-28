@@ -6413,6 +6413,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (context_used) {
 					vtable_arg = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD_RGCTX);
 				} else {
+					mono_class_vtable (cfg->domain, cmethod->klass);
+					CHECK_TYPELOAD (cmethod->klass);
+
 					EMIT_NEW_METHOD_RGCTX_CONST (cfg, vtable_arg, cmethod);
 				}
 
@@ -7515,6 +7518,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						vtable_arg = emit_get_rgctx_method (cfg, context_used,
 							cmethod, MONO_RGCTX_INFO_METHOD_RGCTX);
 					} else {
+						mono_class_vtable (cfg->domain, cmethod->klass);
+						CHECK_TYPELOAD (cmethod->klass);
+
 						EMIT_NEW_METHOD_RGCTX_CONST (cfg, vtable_arg, cmethod);
 					}
 				} else {
