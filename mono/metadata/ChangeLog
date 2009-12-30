@@ -1,3 +1,7 @@
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* marshal.c (mono_mb_emit_restore_result): Properly handle generic enums.
+
 2009-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* monitor.c (ves_icall_System_Threading_Monitor_Monitor_wait): Don't close the

@@ -1,3 +1,11 @@
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c:
+	* method-to.ir.c:
+	* mini-*.c: Properly handle generic enums.
+
+	Fixes #566294
+
 2009-12-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Handle the failure of mono_class_vtable ()
