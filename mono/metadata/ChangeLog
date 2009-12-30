@@ -1,3 +1,9 @@
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* marshal.c (mono_mb_emit_restore_result): Properly handle generic enums.
+
+	Backport of r148941.
+
 2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (init_stack_with_value_at_exception_boundary): Do stack overflow checking here
