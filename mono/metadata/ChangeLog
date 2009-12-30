@@ -1,5 +1,12 @@
 2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_methods): Use checked version of mono_class_inflate_generic_method_full
+	so we can properly fail types instead of crashing.
+
+	Fixes #567676.
+
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (reflection_methodbuilder_to_mono_method): Assert in case of a broken
 	generic method.
 
