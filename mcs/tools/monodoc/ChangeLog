@@ -1,3 +1,9 @@
+2009-12-30  Jonathan Pryor  <jpryor@novell.com>
+
+	* Lucene.Net/Lucene.Net/QueryParser/QueryParser.cs: Fix crash when 
+	  searching for "()".  Fixes #423853.  
+	  Thanks to Benoît Tuduri <bento78@gmail.com>.
+
 2009-12-03  Jonathan Pryor  <jpryor@novell.com>
 
 	* Resources/mdoc-html-utils.xsl: Add support for generating namespace
