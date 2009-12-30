@@ -1,5 +1,10 @@
 2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (reflection_methodbuilder_to_mono_method): Assert in case of a broken
+	generic method.
+
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* marshal.c (mono_mb_emit_restore_result): Properly handle generic enums.
 
 2009-12-26  Zoltan Varga  <vargaz@gmail.com>
