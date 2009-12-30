@@ -1,5 +1,14 @@
 2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_methods): Use checked version of mono_class_inflate_generic_method_full
+	so we can properly fail types instead of crashing.
+
+	Fixes #567676.
+
+	Backpor of r148948.
+
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* marshal.c (mono_mb_emit_restore_result): Properly handle generic enums.
 
 	Backport of r148941.
