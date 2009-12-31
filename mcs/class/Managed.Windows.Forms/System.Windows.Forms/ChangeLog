@@ -1,3 +1,11 @@
+2009-12-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUICarbon.cs: Implement the overriden AudibleAlert
+	function in XplatUICarbon.  Currently it throws
+	NotImplementedException which will kill a WinForms application showing
+	a dialog box.
+	Patch by  Erik Ylvisaker (erik@agatelib.org).
+
 2009-11-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 [merge the very last changes from trunk, -r 144884:145790]

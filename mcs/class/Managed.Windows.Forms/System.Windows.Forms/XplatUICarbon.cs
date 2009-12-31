@@ -792,7 +792,7 @@ namespace System.Windows.Forms {
 		}
 
 		internal override void AudibleAlert() {
-			throw new NotImplementedException();
+			AlertSoundPlay ();
 		}
 
 		internal override void CaretVisible (IntPtr hwnd, bool visible) {
@@ -2369,6 +2369,9 @@ namespace System.Windows.Forms {
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static short GetMBarHeight ();
 		
+		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
+		extern static void AlertSoundPlay ();
+
 		#region Cursor imports
 		[DllImport("/System/Library/Frameworks/Carbon.framework/Versions/Current/Carbon")]
 		extern static Carbon.HIRect CGDisplayBounds (IntPtr displayID);
