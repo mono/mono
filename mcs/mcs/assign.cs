@@ -340,8 +340,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if ((RootContext.Version == LanguageVersion.ISO_1) &&
-				   (source is MethodGroupExpr)){
+			if ((RootContext.Version == LanguageVersion.ISO_1) && (source is MethodGroupExpr)){
 				((MethodGroupExpr) source).ReportUsageError (ec);
 				return null;
 			}
