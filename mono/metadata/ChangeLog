@@ -1,5 +1,9 @@
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix a memory leak.
+
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
 	* appdomain.c (zero_static_data): Fix a warning.
 
 	* locales.c (construct_culture_from_specific_name): Applied patch from
