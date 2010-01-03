@@ -2269,7 +2269,7 @@ namespace System
 
 			public void CopyTo (T [] array, int index)
 			{
-				array.CopyTo (array, index);
+				this.array.CopyTo (array, index);
 			}
 
 			IEnumerator IEnumerable.GetEnumerator ()
