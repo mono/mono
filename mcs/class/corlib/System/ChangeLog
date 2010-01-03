@@ -1,5 +1,9 @@
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* Array.cs: Fix ArrayReadOnlyList.CopyTo. Fixes #564095.
+
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
 	* DateTime.cs (TryParseExact): Handle exceptions. Fixes #567857.
 
 2009-12-21  Marek Habersack  <mhabersack@novell.com>
