@@ -1,5 +1,7 @@
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (zero_static_data): Fix a warning.
+
 	* locales.c (construct_culture_from_specific_name): Applied patch from
 	José Antonio Sánchez Lázaro <jasl@darcysoft.es>. Fix a crash if a culture was
 	not found. Fixes #567900.
