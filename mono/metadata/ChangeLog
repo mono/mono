@@ -1,5 +1,16 @@
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* metadata-internals.h (MonoImageSet): New structure representing a set of
+	MonoImages, which own a collection of generic instances.
+
+	* metadata.c: Get rid of the global generic caches, instead assign each generic
+	instance to the image set which consists of all the images referenced by the
+	instance. This greatly speeds up mono_metadata_clean_for_image (), and allows
+	the memory used by generic instances to be allocated from a per image-set mempool
+	later.
+
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
 	* marshal.c (mono_marshal_get_runtime_invoke): Fix a memory leak.
 
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
