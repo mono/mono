@@ -1,5 +1,7 @@
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_free_jit_domain_info): Free the seq point hash tables.
+
 	* mini-llvm.c (mono_llvm_emit_method): Handle OP_ABS.
 
 2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
