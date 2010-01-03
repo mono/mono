@@ -15,7 +15,7 @@ namespace System.Transactions
 	[Serializable]
 	public class TransactionAbortedException : TransactionException
 	{
-		protected TransactionAbortedException ()
+		public TransactionAbortedException ()
 		{
 		}
 
