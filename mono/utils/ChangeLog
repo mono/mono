@@ -1,3 +1,8 @@
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-path.c (mono_path_resolve_symlinks): Use g_strfreev () to free the
+	result of g_strplit.
+
 2009-12-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* valgrind.h memcheck.h: New files containing the BSD licensed valgrind
