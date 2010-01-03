@@ -444,5 +444,14 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsNotNull (method);
 			Assert.IsTrue ((bool) method.Invoke (null, new object [0]));
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void LdObjByRef () {
+			DefineBasicMethod ();
+			ILGenerator ig = il_gen;
+
+			ig.Emit (OpCodes.Ldtoken, typeof (int).MakeByRefType ());
+		}
 	}
 }
