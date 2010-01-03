@@ -1,3 +1,7 @@
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* TransactionAbortedException.cs: Make the default ctor public. Fixes #567872.
+
 2009-02-02  Raja R Harinath  <harinath@hurrynot.org>
 
 	Fix #463999
