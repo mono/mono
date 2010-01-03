@@ -1,3 +1,9 @@
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* locales.c (construct_culture_from_specific_name): Applied patch from
+	José Antonio Sánchez Lázaro <jasl@darcysoft.es>. Fix a crash if a culture was
+	not found. Fixes #567900.
+
 2009-12-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (resolve_object): Fix the encoding of unmanaged calling
