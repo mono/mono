@@ -1,3 +1,7 @@
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* ILGenerator.cs (Emit): Disallow byref types. Fixes #564411.
+
 2009-12-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* FieldOnTypeBuilderInst.cs: Add more CompilerContext hacks.
