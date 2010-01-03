@@ -1,5 +1,9 @@
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix a memory leak.
+
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
 	* locales.c (construct_culture_from_specific_name): Applied patch from
 	José Antonio Sánchez Lázaro <jasl@darcysoft.es>. Fix a crash if a culture was
 	not found. Fixes #567900.

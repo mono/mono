@@ -5308,6 +5308,8 @@ handle_enum:
 	mono_mb_emit_ldloc (mb, 0);
 	mono_mb_emit_byte (mb, CEE_RET);
 
+	g_free (tmp_nullable_locals);
+
 	if (need_direct_wrapper) {
 		res = mono_mb_create_and_cache (cache, method, mb, csig, sig->param_count + 16);
 		res->skip_visibility = 1;
