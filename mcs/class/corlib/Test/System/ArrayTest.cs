@@ -2827,6 +2827,22 @@ public class ArrayTest
 	}
 
 	[Test]
+	public void ReadOnly_CopyTo ()
+	{
+		int[] arr = new int [2];
+		arr [0] = 3;
+		arr [1] = 5;
+		IList<int> a = Array.AsReadOnly (arr);
+
+		int[] arr2 = new int [3];
+		a.CopyTo (arr2, 1);
+
+		Assert.AreEqual (0, arr2 [0]);
+		Assert.AreEqual (3, arr2 [1]);
+		Assert.AreEqual (5, arr2 [2]);
+	}
+
+	[Test]
 	public void Resize ()
 	{
 		int [] arr = new int [] { 1, 3, 5 };
