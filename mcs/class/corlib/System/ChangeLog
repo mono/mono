@@ -1,3 +1,7 @@
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* DateTime.cs (TryParseExact): Handle exceptions. Fixes #567857.
+
 2009-12-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Int32.cs: treat terminating null as whitespace
