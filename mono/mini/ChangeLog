@@ -1,3 +1,7 @@
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Handle OP_ABS.
+
 2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c:
