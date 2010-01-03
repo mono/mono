@@ -1,5 +1,8 @@
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* mempool-internals.h (g_list_prepend_mempool): Define this and related functions
+	as inline functions instead of defining them in mempool.c.
+
 	* metadata-internals.h (MonoImageSet): New structure representing a set of
 	MonoImages, which own a collection of generic instances.
 
