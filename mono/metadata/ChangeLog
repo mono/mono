@@ -1,3 +1,8 @@
+2010-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* verify.c (verify_valuetype_layout_with_target): Fix case
+	that can lead to infinite recursion. Fix bug #567861
+
 2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (count_virtual_methods): Remove the assert and now
