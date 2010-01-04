@@ -69,7 +69,7 @@ mono_convert_imt_slot_to_vtable_slot (gpointer* slot, gpointer *regs, guint8 *co
 		mono_vtable_build_imt_slot (vt, mono_method_get_imt_slot (imt_method));
 
 		if (impl_method)
-			*impl_method = mono_class_get_vtable_entry (vt->klass, interface_offset + imt_method->slot);
+			*impl_method = mono_class_get_vtable_entry (vt->klass, interface_offset + mono_method_get_vtable_slot (imt_method));
 #if DEBUG_IMT
 		printf ("mono_convert_imt_slot_to_vtable_slot: method = %s.%s.%s, imt_method = %s.%s.%s\n",
 				method->klass->name_space, method->klass->name, method->name, 
