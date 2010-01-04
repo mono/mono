@@ -1,3 +1,11 @@
+2010-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MemoryStream.cs: Don't clear the bytes beyond Length when shrinking
+	it. Instead just save the related information for it and do it when
+	Length grows and touchs that dirty region. Refactor the code where
+	needed to avoid duplication as well.
+	Fixes #327053.
+
 2009-12-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* File.cs (ReadAllBytes): We cannot assume that a single call to
