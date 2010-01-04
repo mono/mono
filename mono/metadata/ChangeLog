@@ -1,3 +1,17 @@
+2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_init): Do class verification at the beginning. Add
+	some asserts to avoid tripping into invalid memory.
+
+	* object.c (compute_class_bitmap): Replace a g_assert_not_reached with a
+	g_error and a decent message.
+
+	* verify.c (mono_verifier_verify_class): Verify for invalid super type.
+
+	Fixes #567548.
+
+	Backport of r149028.
+
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Fix a memory leak.
