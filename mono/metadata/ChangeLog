@@ -1,5 +1,10 @@
 2010-01-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_runtime_invoke): Make a copy of the signature
+	from the image mempool, so it is not leaked.
+
+2010-01-04  Zoltan Varga  <vargaz@gmail.com>
+
 	* metadata-internals.h (_MonoImage): Remove unused generic_class_cache field.
 
 2010-01-04  Sebastien Pouliot  <sebastien@ximian.com>
