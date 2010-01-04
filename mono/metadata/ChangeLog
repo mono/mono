@@ -1,5 +1,20 @@
 2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (count_virtual_methods): Remove the assert and now
+	fail properly.
+	
+	* class.c (setup_interface_offsets): This can fail now.
+
+	* class.c (mono_class_setup_vtable_general): Check for parent vtable
+	errors. Check setup_interface_offsets errors.
+
+	* class.c (setup_interface_offsets): Simplify the return error logic
+	and remove class_init_ok.
+
+	Fixes #560327.
+
+2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_init): Do class verification at the beginning. Add
 	some asserts to avoid tripping into invalid memory.
 
