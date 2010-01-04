@@ -1,3 +1,8 @@
+2010-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MemoryStreamTest.cs: Activate ZeroingOnExpandTest as we have fixed
+	this issue.
+
 2009-12-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* FileTest.cs: New test for File.Copy throwing an exception if src and
