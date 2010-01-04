@@ -1,3 +1,8 @@
+2010-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Avoid calling mono_class_vtable () in
+	one case if AOTing, since the class might not be a concrete class.
+
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c abcremoval.c: Remove the duplicate g_slist_append_mempool
