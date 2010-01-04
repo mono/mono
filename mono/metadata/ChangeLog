@@ -1,3 +1,8 @@
+2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Properly check for broken parent. Ignore
+	types that are meant to not have a parent.
+
 2010-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Make a copy of the signature

@@ -1,3 +1,8 @@
+2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_compile_is_broken): Skip methods from serialization's
+	internal assembly.
+
 2010-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Fix a few memory leaks introduced by the
