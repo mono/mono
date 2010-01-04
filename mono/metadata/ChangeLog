@@ -5,6 +5,11 @@
 
 2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* pedump.c: Run code verifier even if image verification fails
+	due to a failed type we. This allows more errors to be shown.
+
+2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (count_virtual_methods): Remove the assert and now
 	fail properly.
 	
