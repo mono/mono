@@ -111,7 +111,8 @@ namespace System.Windows.Forms
 
 				if (groupBoxText != String.Empty) {
 					if (textColor == Color.Empty)
-						textColor = SystemColors.ControlText;
+						textColor = state == GroupBoxState.Normal ? SystemColors.ControlText :
+							SystemColors.GrayText;
 					TextRenderer.DrawText (g, groupBoxText, font, new Point (bounds.Left + 8, bounds.Top), textColor, flags);
 				}
 			}
