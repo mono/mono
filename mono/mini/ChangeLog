@@ -1,3 +1,13 @@
+2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mini_method_compile): Verify the method before calling
+	mono_compile_create_vars as this might crash since it uses method
+	information.
+
+	Fixes #560196.
+
+	Backport of r149045.
+
 2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c:
