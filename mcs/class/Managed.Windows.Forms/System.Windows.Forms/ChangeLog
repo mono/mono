@@ -1,3 +1,9 @@
+2010-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* GroupBoxRenderer.cs: Properly use SystemColors.GrayText to draw to
+	text of the group box if it is disabled.
+	Fixes #567847.
+
 2009-12-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Control.cs: When changing the cursor and updating it, do update the
