@@ -1,3 +1,9 @@
+2010-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Call
+	mono_method_get_vtable_slot () instead of accessing imt_method->slot directly,
+	to fix an AOT case.
+
 2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mini_method_compile): Verify the method before calling
