@@ -205,13 +205,38 @@ namespace System.Web.Compilation
 			mainClass.Members.Add (method);
 		}
 
+		static CodeExpression GetExpressionForValueAndType (object value, Type valueType)
+		{
+			// Put short circuit types here
+			if (valueType == typeof (TimeSpan)) {
+				CodeMethodReferenceExpression mref = new CodeMethodReferenceExpression (
+					new CodeTypeReferenceExpression (typeof (TimeSpan)),
+					"Parse");
+
+				return new CodeMethodInvokeExpression (
+					mref,
+					new CodeExpression[] { new CodePrimitiveExpression (((TimeSpan) value).ToString ()) }
+				);
+			}
+
+			throw new HttpException (String.Format ("Unable to create assign expression for type '{0}'.", valueType));
+		}
+		
 		static CodeAssignStatement CreatePropertyAssign (CodeExpression expr, string name, object value)
 		{
-			CodePropertyReferenceExpression prop;
-			prop = new CodePropertyReferenceExpression (expr, name);
-			CodePrimitiveExpression prim;
-			prim = new CodePrimitiveExpression (value);
-			return new CodeAssignStatement (prop, prim);
+			CodeExpression rhs;
+			if (value == null || value is string)
+				rhs = new CodePrimitiveExpression (value);
+			else {
+				Type vt = value.GetType ();
+
+				if (vt.IsPrimitive)
+					rhs = new CodePrimitiveExpression (value);
+				else
+					rhs = GetExpressionForValueAndType (value, vt);
+			}
+			
+			return new CodeAssignStatement (new CodePropertyReferenceExpression (expr, name), rhs);
 		}
 
 		static CodeAssignStatement CreatePropertyAssign (string name, object value)
