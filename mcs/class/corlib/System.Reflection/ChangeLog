@@ -1,3 +1,9 @@
+2010-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ParameterInfo.cs (DefaultProperty): Add support for DateTime defaults.
+
+	* ParameterInfo.cs: Implements RawDefaultProperty.
+
 2009-12-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs (GetMethods): When the GTD is not a typebuilder,

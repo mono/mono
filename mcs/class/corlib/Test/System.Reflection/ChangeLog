@@ -1,3 +1,8 @@
+2010-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ParameterInfoTest.cs: Add a test for default values from custom
+	attributes.
+
 2009-12-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClassTest.cs: Test for some corner cases of

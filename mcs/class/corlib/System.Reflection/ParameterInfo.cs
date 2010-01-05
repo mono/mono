@@ -117,7 +117,12 @@ namespace System.Reflection
 					DecimalConstantAttribute[] attrs = (DecimalConstantAttribute[])GetCustomAttributes (typeof (DecimalConstantAttribute), false);
 					if (attrs.Length > 0)
 						return attrs [0].Value;
-				}					
+				} if (ClassImpl == typeof (DateTime)) {
+					/* default values for DateTime are encoded using a custom attribute */
+					DateTimeConstantAttribute[] attrs = (DateTimeConstantAttribute[])GetCustomAttributes (typeof (DateTimeConstantAttribute), false);
+					if (attrs.Length > 0)
+						return new DateTime (attrs [0].Ticks);
+				}
 				return DefaultValueImpl;
 			}
 		}
@@ -230,10 +235,10 @@ namespace System.Reflection
 			return types;
 		}
 
-		[MonoTODO]
 		public virtual object RawDefaultValue {
 			get {
-				throw new NotImplementedException ();
+				/*FIXME right now DefaultValue doesn't throw for reflection-only assemblies. Change this once the former is fixed.*/
+				return DefaultValue;
 			}
 		}
 
