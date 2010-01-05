@@ -569,7 +569,7 @@ namespace System.Web.Compilation
 					bp.GenerateCode (abuilder);
 				} catch (Exception ex) {
 					if (String.Compare (bvp, vpabsolute, stringComparer) == 0) {
-						if (ex is CompilationException)
+						if (ex is CompilationException || ex is ParseException)
 							throw;
 						
 						throw new HttpException ("Code generation failed.", ex);

@@ -1,9 +1,12 @@
 2010-01-05  Marek Habersack  <mhabersack@novell.com>
 
+	* PageCompiler.cs: improved CreatePropertyAssign, it doesn't
+	always use CodePrimitiveExpression now.
+
 	* BuildManager.cs: in GenerateAssembly, if compilation fails for
 	the requested path and exception thrown is of type
-	CompilationException, do not wrap it in HttpException, just
-	rethrow.
+	CompilationException or ParseException, do not wrap it in
+	HttpException, just rethrow.
 
 	* AppResourcesCompiler.cs: the culture files dictionary is
 	case-insensitive now. Otherwise culture files with culture name
