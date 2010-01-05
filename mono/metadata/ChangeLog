@@ -1,3 +1,10 @@
+2010-01-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Properly check for broken parent. Ignore
+	types that are meant to not have a parent.
+
+	Backport of r149053.
+
 2010-01-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* pedump.c: Backport earlier fixes from Rodrigo Kumpera since

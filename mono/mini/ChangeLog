@@ -1,3 +1,10 @@
+2010-01-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_compile_is_broken): Skip methods from serialization's
+	internal assembly.
+
+	Backport of r149053.
+
 2010-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Call
