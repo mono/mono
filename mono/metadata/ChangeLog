@@ -1,3 +1,8 @@
+2010-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* pedump.c: Backport earlier fixes from Rodrigo Kumpera since
+	they are useful for testing ML
+
 2010-01-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* verify.c (verify_valuetype_layout_with_target): Fix case
