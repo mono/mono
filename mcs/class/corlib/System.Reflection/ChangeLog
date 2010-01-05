@@ -1,5 +1,9 @@
 2010-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ParameterInfo.cs (DefaultProperty): Fix small typo.
+
+2010-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* ParameterInfo.cs (DefaultProperty): Add support for DateTime defaults.
 
 	* ParameterInfo.cs: Implements RawDefaultProperty.
