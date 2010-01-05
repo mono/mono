@@ -1,5 +1,8 @@
 2010-01-05  Marek Habersack  <mhabersack@novell.com>
 
+	* PageCompiler.cs: improved CreatePropertyAssign, it doesn't
+	always use CodePrimitiveExpression now.
+
 	* AppResourcesCompiler.cs: the culture files dictionary is
 	case-insensitive now. Otherwise culture files with culture name
 	cased differently will cause overlapped i/o on response files
