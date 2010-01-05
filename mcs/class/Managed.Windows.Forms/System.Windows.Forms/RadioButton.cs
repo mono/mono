@@ -182,7 +182,7 @@ namespace System.Windows.Forms {
 			ThemeEngine.Current.CalculateRadioButtonTextAndImageLayout (this, Point.Empty, out glyph_rectangle, out text_rectangle, out image_rectangle);
 
 			// Draw our button
-			if (FlatStyle != FlatStyle.System)
+			if (FlatStyle != FlatStyle.System && Appearance != Appearance.Button)
 				ThemeEngine.Current.DrawRadioButton (pe.Graphics, this, glyph_rectangle, text_rectangle, image_rectangle, pe.ClipRectangle);
 			else
 				ThemeEngine.Current.DrawRadioButton (pe.Graphics, this.ClientRectangle, this);
