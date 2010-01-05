@@ -1,3 +1,16 @@
+2010-01-05  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: in GenerateAssembly, if compilation fails for
+	the requested path and exception thrown is of type
+	CompilationException, do not wrap it in HttpException, just
+	rethrow.
+
+	* AppResourcesCompiler.cs: the culture files dictionary is
+	case-insensitive now. Otherwise culture files with culture name
+	cased differently will cause overlapped i/o on response files
+	while building satellite assemblies and, in effect, compilation
+	will fail.
+
 2009-12-14  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: RemoveFailedAssemblies ignores warnings to
