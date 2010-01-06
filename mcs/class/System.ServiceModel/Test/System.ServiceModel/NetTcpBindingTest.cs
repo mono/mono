@@ -58,9 +58,18 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsNotNull (tx, "#tx1");
 		}
 
+		// Those connection tests are somehow blocked by some tests
+		// I disabled recently (see svn history) but while those broken
+		// tests examine almost nothing, these tests below does, so I
+		// rather enabled them.
+		//
+		// Those tests somehow got broken in Nov. 2009 probably because
+		// of some underlying net layer and not due to those ignored
+		// tests though. But those tests leave channels open, so they
+		// are bad enough to be disabled.
+
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
-		public void SimpleConnection ()
+		public void BufferedConnection ()
 		{
 			var host = new ServiceHost (typeof (Foo));
 			var bindingsvc = new NetTcpBinding ();
@@ -69,6 +78,32 @@ namespace MonoTests.System.ServiceModel
 			host.Open (TimeSpan.FromSeconds (5));
 			try {
 				var bindingcli = new NetTcpBinding ();
+				bindingcli.Security.Mode = SecurityMode.None;
+				var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("net.tcp://localhost/")).CreateChannel ();
+				Assert.AreEqual (5, cli.Add (1, 4));
+				Assert.AreEqual ("monkey science", cli.Join ("monkey", "science"));
+			} finally {
+				host.Close (TimeSpan.FromSeconds (5));
+				var t = new TcpListener (808);
+				t.Start ();
+				t.Stop ();
+			}
+			Assert.IsTrue (Foo.AddCalled, "#1");
+			Assert.IsTrue (Foo.JoinCalled, "#2");
+		}
+
+		[Test]
+		public void StreamedConnection ()
+		{
+			var host = new ServiceHost (typeof (Foo));
+			var bindingsvc = new NetTcpBinding ();
+			bindingsvc.TransferMode = TransferMode.Streamed;
+			bindingsvc.Security.Mode = SecurityMode.None;
+			host.AddServiceEndpoint (typeof (IFoo), bindingsvc, "net.tcp://localhost/");
+			host.Open (TimeSpan.FromSeconds (5));
+			try {
+				var bindingcli = new NetTcpBinding ();
+				bindingcli.TransferMode = TransferMode.Streamed;
 				bindingcli.Security.Mode = SecurityMode.None;
 				var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("net.tcp://localhost/")).CreateChannel ();
 				Assert.AreEqual (5, cli.Add (1, 4));
