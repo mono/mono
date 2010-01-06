@@ -1,3 +1,8 @@
+2010-01-06  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources : ended up to remove
+	  mannerless tests that block other tests.
+
 2009-12-03  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel_test.dll.sources:
