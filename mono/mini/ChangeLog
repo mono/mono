@@ -1,3 +1,19 @@
+2010-01-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Pass the info in MonoExceptionClause
+	as the type info to llvm.eh.selector.
+	(exception_cb): Use the type info for filling out some fields of
+	MonoJitExceptionInfo like the flags and the exception class. This is needed
+	because the LLVM produced exception handling clauses might not match the original
+	IL clauses, i.e. there might be more than one LLVM clause for one IL clause.
+
+	* unwind.c (mono_unwind_decode_fde): Extract the LSDA decoding code into a
+	separate function. Add an extra argument which returns the type infos
+	corresponding to the exception clauses.
+
+	* mini.c (mini_method_compile): Enable LLVM compilation of methods having
+	exception handling clauses.
+
 2010-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Call
