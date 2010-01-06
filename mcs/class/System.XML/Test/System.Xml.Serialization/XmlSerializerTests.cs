@@ -2412,6 +2412,35 @@ namespace MonoTests.System.XmlSerialization
 			new XmlSerializer (typeof (XmlSerializableImplicitConvertible), attrOverrides).Serialize (TextWriter.Null, x);
 		}
 
+		[Test] // bug #566370
+		public void SerializeEnumWithCSharpKeyword ()
+		{
+			var ser = new XmlSerializer (typeof (DoxCompoundKind));
+			for (int i = 0; i < 100; i++) // test serialization code generator
+				ser.Serialize (Console.Out, DoxCompoundKind.@class);
+		}
+
+		public enum DoxCompoundKind
+		{
+			[XmlEnum("class")]
+			@class,
+			[XmlEnum("struct")]
+			@struct,
+			union,
+			[XmlEnum("interface")]
+			@interface,
+			protocol,
+			category,
+			exception,
+			file,
+			[XmlEnum("namespace")]
+			@namespace,
+			group,
+			page,
+			example,
+			dir
+		}
+
 		#region GenericsSeralizationTests
 
 #if NET_2_0

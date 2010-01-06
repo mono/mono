@@ -586,7 +586,7 @@ namespace System.Xml.Serialization
 
 			WriteLineInd ("switch (val) {");
 			for (int i = 0; i < emap.EnumNames.Length; i++)
-				WriteLine ("case " + map.TypeData.CSharpFullName + "." + emap.EnumNames[i] + ": return " + GetLiteral (emap.XmlNames[i]) + ";");
+				WriteLine ("case " + map.TypeData.CSharpFullName + ".@" + emap.EnumNames[i] + ": return " + GetLiteral (emap.XmlNames[i]) + ";");
 
 			if (emap.IsFlags) {
 				WriteLineInd ("default:");
@@ -2421,7 +2421,7 @@ namespace System.Xml.Serialization
 			WriteLineInd ("{");
 			foreach (EnumMap.EnumMapMember mem in map.Members)
 			{
-				WriteLine ("case " + GetLiteral (mem.XmlName) + ": return " + typeMap.TypeData.CSharpFullName + "." + mem.EnumName + ";");
+				WriteLine ("case " + GetLiteral (mem.XmlName) + ": return " + typeMap.TypeData.CSharpFullName + ".@" + mem.EnumName + ";");
 			}
 			WriteLineInd ("default:");
 			WriteLine ("throw CreateUnknownConstantException (" + val + ", typeof(" + typeMap.TypeData.CSharpFullName + "));");
