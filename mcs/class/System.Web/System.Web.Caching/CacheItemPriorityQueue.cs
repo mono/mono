@@ -96,10 +96,15 @@ namespace System.Web.Caching
 					if (lastParent == null) {
 						lastParent = firstParent = firstParent.Left;
 						lastAdded = null;
+
+						if (lastParent == null) {
+							lastParent = root;
+							firstParent = root;
+						}
 					}
 				}
 
-				node.Parent = lastParent;			
+				node.Parent = lastParent;	
 				if (lastParent.Left == null)
 					lastParent.Left = node;
 				else
@@ -135,7 +140,7 @@ namespace System.Web.Caching
 			
 				if (root.Left == null && root.Right == null) {
 					ret = root.Data;
-					root = null;
+					root = lastAdded = firstParent = lastParent = null;
 					if (ret.Disabled)
 						return null;
 				
