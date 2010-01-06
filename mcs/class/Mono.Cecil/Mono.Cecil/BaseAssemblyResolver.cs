@@ -81,7 +81,7 @@ namespace Mono.Cecil {
 					return assembly;
 			}
 
-#if !CF_1_0 && !CF_2_0
+#if !CF_1_0 && !CF_2_0 && !NO_SYSTEM_DLL
 			if (name.Name == "mscorlib") {
 				assembly = GetCorlib (name);
 				if (assembly != null)
@@ -120,7 +120,7 @@ namespace Mono.Cecil {
 			return version.Major == 0 && version.Minor == 0 && version.Build == 0 && version.Revision == 0;
 		}
 
-#if !CF_1_0 && !CF_2_0
+#if !CF_1_0 && !CF_2_0 && !NO_SYSTEM_DLL
 		static AssemblyDefinition GetCorlib (AssemblyNameReference reference)
 		{
 			SR.AssemblyName corlib = typeof (object).Assembly.GetName ();

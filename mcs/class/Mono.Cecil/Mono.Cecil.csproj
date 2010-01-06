@@ -25,7 +25,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>bin\Debug\</OutputPath>
-    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -36,6 +36,14 @@
     <DefineConstants>TRACE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug - No System.dll|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <OutputPath>bin\Debug - No System.dll\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NO_SYSTEM_DLL;NET_2_0</DefineConstants>
+    <DebugType>full</DebugType>
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <ErrorReport>prompt</ErrorReport>
   </PropertyGroup>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <ItemGroup>
@@ -310,6 +318,7 @@
     <Compile Include="Mono.Cecil\ModuleDefinitionCollection.cs" />
     <Compile Include="Mono.Cecil\ModuleReference.cs" />
     <Compile Include="Mono.Cecil\ModuleReferenceCollection.cs" />
+    <Compile Include="Mono.Cecil\NameObjectCollectionBase.cs" />
     <Compile Include="Mono.Cecil\NativeType.cs" />
     <Compile Include="Mono.Cecil\NestedTypeCollection.cs" />
     <Compile Include="Mono.Cecil\NullReferenceImporter.cs" />

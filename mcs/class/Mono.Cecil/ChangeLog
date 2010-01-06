@@ -1,3 +1,13 @@
+2010-01-06	Rodrigo B. de Oliveira <rodrigo@unity.com>
+
+	* Mono.Cecil.csproj
+	  Mono.Cecil/NameObjectCollectionBase.cs
+	  Mono.Cecil/BaseAssemblyResolver.cs
+	  Mono.Cecil/DefaultAssemblyResolver.cs:
+	  	support for compiling Mono.Cecil without
+	  	any references to System.dll using the newly introduced
+	  	"Debug - No System.dll" configuration in Mono.Cecil.csproj;
+
 2009-12-14  Sebastien Pouliot  <sebastien at ximian.com>
 
 	* Mono.Cecil/BaseAssemblyResolver.cs: Update to .net fx 4 beta2
