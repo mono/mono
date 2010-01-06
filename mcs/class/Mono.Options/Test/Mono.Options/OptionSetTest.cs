@@ -329,10 +329,10 @@ namespace Tests.Mono.Options
 			expected.WriteLine ("      --long-desc3           OnlyOnePeriod.");
 			expected.WriteLine ("                               AndNoWhitespaceShouldBeSupportedEvenWithLongDesc-");
 			expected.WriteLine ("                               riptions");
-			expected.WriteLine ("      --long-desc4           Lots of spaces in the middle 1 2 3 4 5 6 7 8 9 0");
-			expected.WriteLine ("                               1 2 3 4 5 and more until the end.");
+			expected.WriteLine ("      --long-desc4           Lots of spaces in the middle 1 2 3 4 5 6 7 8 9 0 1");
+			expected.WriteLine ("                               2 3 4 5 and more until the end.");
 			expected.WriteLine ("      --long-desc5           Lots of spaces in the middle - . - . - . - . - . -");
-			expected.WriteLine ("                                . - . - and more until the end.");
+			expected.WriteLine ("                               . - . - and more until the end.");
  			expected.WriteLine ("  -o, --out=DIRECTORY        The DIRECTORY to place the generated files and");
 			expected.WriteLine ("                               directories.");
  			expected.WriteLine ("                               ");
@@ -344,7 +344,7 @@ namespace Tests.Mono.Options
 			StringWriter actual = new StringWriter ();
 			p.WriteOptionDescriptions (actual);
 
-			Assert.AreEqual (actual.ToString (), expected.ToString ());
+			Assert.AreEqual (expected.ToString (), actual.ToString ());
 		}
 
 		[Test]

@@ -1,5 +1,12 @@
 2009-04-18  Jonathan Pryor  <jpryor@novell.com>
 
+	* Options.cs: "Code sharing": Use StringCodea.WrappedLines() from
+	  Cadenza for the line wrapping algorithm.  (Only fitting as
+	  WrappedLines() came from Mono.Options in the first place!)
+	  Patch thanks to Federico Di Gregorio.
+
+2009-04-18  Jonathan Pryor  <jpryor@novell.com>
+
 	* Options.cs: GetLineEnd() shouldn't skip the start character, as it
 	  may contain '\n' (thus preventing the following text from being
 	  properly indented).
