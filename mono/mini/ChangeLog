@@ -1,5 +1,8 @@
 2010-01-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Extract the JIT info creation code into a
+	separate function.
+
 	* mini-llvm.c (mono_llvm_emit_method): Pass the info in MonoExceptionClause
 	as the type info to llvm.eh.selector.
 	(exception_cb): Use the type info for filling out some fields of
