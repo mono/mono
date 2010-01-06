@@ -28,6 +28,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Net.Sockets;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -180,6 +181,92 @@ namespace MonoTests.System.ServiceModel.Channels
 					}
 				}
 */
+			}
+		}
+
+		[Test]
+		public void ConnectionTcpTransport ()
+		{
+			var host = new ServiceHost (typeof (Foo));
+			var bindingsvc = new CustomBinding (new BindingElement [] {
+				new BinaryMessageEncodingBindingElement (),
+				new TcpTransportBindingElement () });
+			host.AddServiceEndpoint (typeof (IFoo), bindingsvc, "net.tcp://localhost:37564/");
+			host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().IncludeExceptionDetailInFaults = true;
+			host.Open (TimeSpan.FromSeconds (5));
+			try {
+				for (int i = 0; i < 2; i++) {
+					var bindingcli = new NetTcpBinding ();
+					bindingcli.Security.Mode = SecurityMode.None;
+					var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("net.tcp://localhost:37564/")).CreateChannel ();
+					Assert.AreEqual ("test for echo", cli.Echo ("TEST FOR ECHO"), "#1");
+					var sid = cli.SessionId;
+					Assert.AreEqual (3000, cli.Add (1000, 2000), "#2");
+					Assert.AreEqual (sid, cli.SessionId, "#3");
+					cli.Close ();
+				}
+			} finally {
+				host.Close (TimeSpan.FromSeconds (5));
+				var t = new TcpListener (37564);
+				t.Start ();
+				t.Stop ();
+			}
+		}
+
+		[Test]
+		public void ConnectionHttpTransport ()
+		{
+			var host = new ServiceHost (typeof (Foo));
+			var bindingsvc = new CustomBinding (new BindingElement [] {
+				new BinaryMessageEncodingBindingElement (),
+				new HttpTransportBindingElement () });
+			host.AddServiceEndpoint (typeof (IFoo), bindingsvc, "http://localhost:37564/");
+			host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().IncludeExceptionDetailInFaults = true;
+			host.Open (TimeSpan.FromSeconds (5));
+			try {
+				for (int i = 0; i < 2; i++) {
+					var bindingcli = new CustomBinding (new BindingElement [] {
+						new BinaryMessageEncodingBindingElement (),
+						new HttpTransportBindingElement () });
+					var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("http://localhost:37564/")).CreateChannel ();
+					Assert.AreEqual ("test for echo", cli.Echo ("TEST FOR ECHO"), "#1");
+					var sid = cli.SessionId;
+					Assert.AreEqual (3000, cli.Add (1000, 2000), "#2");
+					Assert.AreEqual (sid, cli.SessionId, "#3");
+					cli.Close ();
+				}
+			} finally {
+				host.Close (TimeSpan.FromSeconds (5));
+				var t = new TcpListener (37564);
+				t.Start ();
+				t.Stop ();
+			}
+		}
+
+		public interface IFooClient : IFoo, IClientChannel
+		{
+		}
+
+		[ServiceContract]
+		public interface IFoo
+		{
+			[OperationContract]
+			string Echo (string msg);
+
+			[OperationContract]
+			uint Add (uint v1, uint v2);
+		}
+
+		class Foo : IFoo
+		{
+			public string Echo (string msg)
+			{
+				return msg.ToLower ();
+			}
+
+			public uint Add (uint v1, uint v2)
+			{
+				return v1 + v2;
 			}
 		}
 

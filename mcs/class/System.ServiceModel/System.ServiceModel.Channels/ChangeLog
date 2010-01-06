@@ -1,3 +1,9 @@
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs : enable workaround buffering only when
+	  the argument stream does *not* support seek. This fixes some
+	  net.tcp connection problem.
+
 2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpBinaryFrameManager.cs : If preamble byte is not available from

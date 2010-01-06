@@ -245,16 +245,18 @@ namespace System.ServiceModel.Channels
 			if (contentType != ContentType)
 				throw new ProtocolException ("Only content type 'application/soap+msbin1' is allowed.");
 
-// FIXME: remove this extraneous buffering. It is somehow required for HTTP + binary encoding binding ...
-var tmpms = new MemoryStream ();
-var bytes = new byte [4096];
-int len;
-do {
-	len = stream.Read (bytes, 0, bytes.Length);
-	tmpms.Write (bytes, 0, len);
-} while (len > 0);
-tmpms.Seek (0, SeekOrigin.Begin);
-stream = tmpms;
+			// FIXME: remove this extraneous buffering. It is somehow required for HTTP + binary encoding binding. The culprit is probably in binary xml reader or writer, but not sure.
+			if (!stream.CanSeek) {
+				var tmpms = new MemoryStream ();
+				var bytes = new byte [4096];
+				int len;
+				do {
+					len = stream.Read (bytes, 0, bytes.Length);
+					tmpms.Write (bytes, 0, len);
+				} while (len > 0);
+				tmpms.Seek (0, SeekOrigin.Begin);
+				stream = tmpms;
+			}
 
 			return Message.CreateMessage (
 				XmlDictionaryReader.CreateBinaryReader (stream, soap_dictionary, owner != null ? owner.Owner.ReaderQuotas : new XmlDictionaryReaderQuotas (), session ? CurrentReaderSession : null),
