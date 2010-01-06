@@ -1,3 +1,7 @@
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_verifier_verify_class): Properly check for broken parent. Ignore
