@@ -1,3 +1,9 @@
+2010-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Convert.cs: Fix line endings in ToBase64String (bug #568778)
+	and also the default line length. Code changed to not require
+	a BinaryReader over a MemoryStream to reduce memory requirements.
+
 2010-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* TermInfoDriver.cs (GetCursorPosition): Avoid waiting 1 sec here.

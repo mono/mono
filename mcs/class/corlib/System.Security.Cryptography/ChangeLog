@@ -1,3 +1,8 @@
+2010-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ToBase64Transform.cs: Static-ify some methods to make it easier 
+	to use from System.Convert
+
 2009-12-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CryptoConfig_2_1.cs: Add mapping for SHA256 since it's used 
