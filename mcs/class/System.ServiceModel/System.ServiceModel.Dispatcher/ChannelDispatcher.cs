@@ -378,6 +378,7 @@ namespace System.ServiceModel.Dispatcher
 					} catch (Exception ex) {
 						Console.WriteLine ("Exception during finishing channel acceptance.");
 						Console.WriteLine (ex);
+						creator_handle.Set ();
 					}
 				};
 				return delegate {

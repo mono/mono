@@ -1,3 +1,8 @@
+2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : make sure to unlock channel acceptor wait
+	  handle when the delegated method resulted in an error.
+
 2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : close such channels that failed to receive
