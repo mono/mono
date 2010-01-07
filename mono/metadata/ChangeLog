@@ -1,5 +1,9 @@
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object.c: Update docs.
+
+2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object.c (add_imt_builder_entry): Improve DEBUG_IMT spew.
 
 	* object.c (build_imt_slots): Interfaces with variant generic arguments use the
