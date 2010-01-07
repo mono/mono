@@ -1,5 +1,17 @@
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* method-to-ir.c: All types with variant arguments must fallback to the
+	slow path. This makes cast of variant delegates work.
+
+	* mini-trampolines.c (mono_get_vcall_slot_addr): Add new variance_used out
+	argument that is set to TRUE is the returned vtable slot is for a variant
+	interface. Changed a g_print + g_assert_not_reached to a g_error.
+
+	* mini-trampilines.c (common_call_trampoline): Handle variant interfaces in
+	a similar fashion of generic virtual methods.
+
+2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* helpers.c (mono_disassemble_code): Fix a g_hash_table warning
 	when cfg is null.
 

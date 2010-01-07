@@ -1,5 +1,19 @@
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object.c (add_imt_builder_entry): Improve DEBUG_IMT spew.
+
+	* object.c (build_imt_slots): Interfaces with variant generic arguments use the
+	fallback trampoline as well.
+
+	* class.c (mono_class_interface_offset_with_variance): Add new non_exact_match
+	out argument that is set to TRUE if the match was direct. 
+
+	* class.c (mono_class_is_assignable_from): Delegates require variance testing as well.
+
+	* class-internal.h: Update prototype of mono_class_interface_offset_with_variance.
+
+2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: Add mono_class_interface_offset_with_variance function that does same
 	as mono_class_interface_offset but takes variance into account.
 
