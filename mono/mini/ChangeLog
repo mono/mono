@@ -1,5 +1,10 @@
 2010-01-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (mono_xdebug_flush): Export it so it is present in
+	stripped binaries as well.
+
+2010-01-07  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-trampolines.c (common_call_trampoline): Add an rgctx trampoline if a shared
 	method is called from LLVM compiled code, as that code can't pass an rgctx arg.
 
