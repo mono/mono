@@ -124,7 +124,8 @@ namespace System.ServiceModel.Channels
 
 		void DiscardSession ()
 		{
-			frame.WriteEndRecord ();
+			if (client.Connected)
+				frame.WriteEndRecord ();
 			session = null;
 		}
 
@@ -174,9 +175,6 @@ namespace System.ServiceModel.Channels
 				message = Receive (timeout);
 				if (message != null)
 					return true;
-				// received EndRecord, so close the session and return false instead.
-				// (Closing channel here might not be a good idea, but right now I have no better way.)
-				Close (timeout - (DateTime.Now - start));
 				return false;
 			} catch (TimeoutException) {
 				message = null;

@@ -1,3 +1,18 @@
+2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs :
+	  Write EndRecord only when the connection is available.
+	  Remove hack - do let ChannelDispatcher close the channel.
+	* TcpBinaryFrameManager.cs :
+	  The socket may be disconnected when trying to read a sized message,
+	  so check some socket exceptions.
+	  In case the client silently shuts down without EndRecord and
+	  reconnects to the server with preamble while expecting a sized
+	  message (which is so lame, but that's what .NET often does), refresh
+	  preamble and continue.
+
+	  This fixes some cases of bug #567949 but not all.
+
 2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BinaryMessageEncoder.cs : enable workaround buffering only when

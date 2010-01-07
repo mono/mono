@@ -213,9 +213,13 @@ namespace System.ServiceModel.Channels
 
 		public bool ProcessPreambleRecipient ()
 		{
+			return ProcessPreambleRecipient (-1);
+		}
+		bool ProcessPreambleRecipient (int initialByte)
+		{
 			bool preambleEnd = false;
 			while (!preambleEnd) {
-				int b = s.ReadByte ();
+				int b = initialByte < 0 ? s.ReadByte () : initialByte;
 				if (b < 0)
 					return false;
 				switch (b) {
@@ -258,11 +262,27 @@ namespace System.ServiceModel.Channels
 		{
 			// FIXME: implement full [MC-NMF].
 
-			var packetType = s.ReadByte ();
+			int packetType;
+			try {
+				packetType = s.ReadByte ();
+			} catch (IOException) {
+				// it is already disconnected
+				return null;
+			} catch (SocketException) {
+				// it is already disconnected
+				return null;
+			}
 			if (packetType == EndRecord)
 				return null;
-			if (packetType != SizedEnvelopeRecord)
-				throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
+			if (packetType != SizedEnvelopeRecord) {
+				if (is_service_side) {
+					// reconnect
+					ProcessPreambleRecipient (packetType);
+					ProcessPreambleAckRecipient ();
+				}
+				else
+					throw new NotImplementedException (String.Format ("Packet type {0:X} is not implemented", packetType));
+			}
 
 			byte [] buffer = ReadSizedChunk ();
 
