@@ -1,5 +1,15 @@
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* helpers.c (mono_disassemble_code): Fix a g_hash_table warning
+	when cfg is null.
+
+	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Convert a given
+	method using a variance aware function.
+
+	* mini-x86.c: Add support for dumping IMT thunks if DEBUG_IMT is defined.
+
+2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c (mono_method_to_ir): Casts to variant interfaces
 	do an icall for now.
 
