@@ -1,3 +1,7 @@
+2010-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Consts.cs.in: Update FX version for SL3 latest released version
+
 2009-12-03  Marek Safar  <marek.safar@gmail.com>
 
 	* Consts.cs.in: Add WindowsBase_3_0.
