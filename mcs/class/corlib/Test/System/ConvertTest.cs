@@ -2835,6 +2835,53 @@ namespace MonoTests.System {
 			string s = Convert.ToBase64String (bs, Base64FormattingOptions.None);
 			Assert.IsTrue (!s.Contains ("\n"), "no new line");
 		}
+
+		static string ToBase64 (int len, Base64FormattingOptions options)
+		{
+			return Convert.ToBase64String (new byte [len], options);
+		}
+
+		[Test]
+		public void Base64String_LineEnds_InsertLineBreaks ()
+		{
+			string base64 = ToBase64 (0, Base64FormattingOptions.InsertLineBreaks);
+			Assert.IsFalse (base64.EndsWith (Environment.NewLine), "0-le");
+			Assert.AreEqual (String.Empty, base64, "0");
+
+			base64 = ToBase64 (1, Base64FormattingOptions.InsertLineBreaks);
+			Assert.IsFalse (base64.EndsWith (Environment.NewLine), "1-le");
+			Assert.AreEqual ("AA==", base64, "1");
+
+			base64 = ToBase64 (57, Base64FormattingOptions.InsertLineBreaks);
+			Assert.IsFalse (base64.Contains (Environment.NewLine), "57-nl"); // one lines
+			Assert.IsFalse (base64.EndsWith (Environment.NewLine), "57-le");
+			Assert.AreEqual ("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", base64, "55");
+
+			base64 = ToBase64 (58, Base64FormattingOptions.InsertLineBreaks);
+			Assert.IsTrue (base64.Contains (Environment.NewLine), "58-nl"); // two lines
+			Assert.IsTrue (base64.EndsWith ("AA=="), "58-le"); // no NewLine
+		}
+
+		[Test]
+		public void Base64String_LineEnds_None ()
+		{
+			string base64 = ToBase64 (0, Base64FormattingOptions.None);
+			Assert.IsFalse (base64.EndsWith (Environment.NewLine), "0-le");
+			Assert.AreEqual (String.Empty, base64, "0");
+
+			base64 = ToBase64 (1, Base64FormattingOptions.None);
+			Assert.IsFalse (base64.EndsWith (Environment.NewLine), "1-le");
+			Assert.AreEqual ("AA==", base64, "1");
+
+			base64 = ToBase64 (57, Base64FormattingOptions.None);
+			Assert.IsFalse (base64.Contains (Environment.NewLine), "57-nl"); // one lines
+			Assert.IsFalse (base64.EndsWith (Environment.NewLine), "57-le");
+			Assert.AreEqual ("AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAA", base64, "55");
+
+			base64 = ToBase64 (58, Base64FormattingOptions.None);
+			Assert.IsFalse (base64.Contains (Environment.NewLine), "58-nl"); // one lines
+			Assert.IsTrue (base64.EndsWith ("AA=="), "58-le"); // no NewLine
+		}
 #endif
 		/* Have experienced some problems with FromBase64CharArray using mono. Something 
 		 * about error in a unicode file.

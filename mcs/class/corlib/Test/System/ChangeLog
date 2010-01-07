@@ -1,3 +1,9 @@
+2010-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConvertTest.cs: Add test case for #568778 and the default
+	line length.
+	[Backport r149171]
+
 2009-12-21  Marek Habersack  <mhabersack@novell.com>
 
 	* Int32Test.cs, Int64Test.cs, Int16Test.cs, ByteTest.cs: added
