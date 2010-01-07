@@ -37,6 +37,8 @@ namespace System.Security.Cryptography {
 #endif
 	public class ToBase64Transform : ICryptoTransform {
 
+		private const int inputBlockSize = 3;
+		private const int outputBlockSize = 4;
 		private bool m_disposed;
 
 		public ToBase64Transform ()
@@ -57,11 +59,11 @@ namespace System.Security.Cryptography {
 		}
 
 		public int InputBlockSize {
-			get { return 3; }
+			get { return inputBlockSize; }
 		}
 
 		public int OutputBlockSize {
-			get { return 4; }
+			get { return outputBlockSize; }
 		}
 
 		public void Clear() 
@@ -120,6 +122,12 @@ namespace System.Security.Cryptography {
 //			if (inputCount != this.InputBlockSize)
 //				throw new CryptographicException (Locale.GetText ("Invalid input length"));
 
+			InternalTransformBlock (inputBuffer, inputOffset, inputCount, outputBuffer, outputOffset);
+			return this.OutputBlockSize;
+		}
+
+		internal static void InternalTransformBlock (byte[] inputBuffer, int inputOffset, int inputCount, byte[] outputBuffer, int outputOffset)
+		{
 			byte[] lookup = Base64Constants.EncodeTable;
 
 			int b1 = inputBuffer [inputOffset];
@@ -130,8 +138,6 @@ namespace System.Security.Cryptography {
 			outputBuffer [outputOffset+1] = lookup [((b1 << 4) & 0x30) | (b2 >> 4)];
 			outputBuffer [outputOffset+2] = lookup [((b2 << 2) & 0x3c) | (b3 >> 6)];
 			outputBuffer [outputOffset+3] = lookup [b3 & 0x3f];
-
-			return this.OutputBlockSize;
 		}
 
 		public byte[] TransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
@@ -151,10 +157,10 @@ namespace System.Security.Cryptography {
 		}
 		
 		// Mono System.Convert depends on the ability to process multiple blocks		
-		internal byte[] InternalTransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
+		internal static byte[] InternalTransformFinalBlock (byte[] inputBuffer, int inputOffset, int inputCount)
 		{
-			int blockLen = this.InputBlockSize;
-			int outLen = this.OutputBlockSize;
+			int blockLen = inputBlockSize;
+			int outLen = outputBlockSize;
 			int fullBlocks = inputCount / blockLen;
 			int tail = inputCount % blockLen;
 
@@ -165,10 +171,7 @@ namespace System.Security.Cryptography {
 			int outputOffset = 0;
 
 			for (int i = 0; i < fullBlocks; i++) {
-
-				TransformBlock (inputBuffer, inputOffset,
-				                blockLen, res, outputOffset);
-
+				InternalTransformBlock (inputBuffer, inputOffset, blockLen, res, outputOffset);
 				inputOffset += blockLen;
 				outputOffset += outLen;
 			}

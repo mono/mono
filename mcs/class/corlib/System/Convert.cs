@@ -111,7 +111,6 @@ namespace System {
 
 		// Fields
 		public static readonly object DBNull = System.DBNull.Value;
-		static ToBase64Transform toBase64Transform = new ToBase64Transform();
 	
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		extern static byte [] InternalFromBase64String (string str, bool allowWhitespaceOnly);
@@ -180,7 +179,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException ("offsetIn + length > array.Length");
 
 			// note: normally ToBase64Transform doesn't support multiple block processing
-			byte[] outArr = toBase64Transform.InternalTransformFinalBlock (inArray, offsetIn, length);
+			byte[] outArr = ToBase64Transform.InternalTransformFinalBlock (inArray, offsetIn, length);
 			
 			char[] cOutArr = new ASCIIEncoding ().GetChars (outArr);
 			
@@ -212,7 +211,7 @@ namespace System {
 				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
 			
 			// note: normally ToBase64Transform doesn't support multiple block processing
-			byte[] outArr = toBase64Transform.InternalTransformFinalBlock (inArray, offset, length);
+			byte[] outArr = ToBase64Transform.InternalTransformFinalBlock (inArray, offset, length);
 			
 			return (new ASCIIEncoding ().GetString (outArr));
 		}
@@ -237,10 +236,13 @@ namespace System {
 			if (offset > inArray.Length - length)
 				throw new ArgumentOutOfRangeException ("offset + length > array.Length");
 
+			if (length == 0)
+				return String.Empty;
+
 			if (options == Base64FormattingOptions.InsertLineBreaks)
 				return ToBase64StringBuilderWithLine (inArray, offset, length).ToString ();
 			else
-				return Encoding.ASCII.GetString (toBase64Transform.InternalTransformFinalBlock (inArray, offset, length));
+				return Encoding.ASCII.GetString (ToBase64Transform.InternalTransformFinalBlock (inArray, offset, length));
 		}
 
 		[ComVisible (false)]
@@ -257,13 +259,16 @@ namespace System {
 			if (offsetIn > inArray.Length - length)
 				throw new ArgumentOutOfRangeException ("offsetIn + length > array.Length");
 
+			if (length == 0)
+				return 0;
+
 			// note: normally ToBase64Transform doesn't support multiple block processing
 			if (options == Base64FormattingOptions.InsertLineBreaks) {
 				StringBuilder sb = ToBase64StringBuilderWithLine (inArray, offsetIn, length);
 				sb.CopyTo (0, outArray, offsetOut, sb.Length);
 				return sb.Length;
 			} else {
-				byte[] outArr = toBase64Transform.InternalTransformFinalBlock (inArray, offsetIn, length);
+				byte[] outArr = ToBase64Transform.InternalTransformFinalBlock (inArray, offsetIn, length);
 			
 				char[] cOutArr = Encoding.ASCII.GetChars (outArr);
 			
@@ -276,23 +281,30 @@ namespace System {
 			}
 		}
 
+		private const int MaxBytesPerLine = 57;
+
 		static StringBuilder ToBase64StringBuilderWithLine (byte [] inArray, int offset, int length)
 		{
-			BinaryReader reader = new BinaryReader (new MemoryStream (inArray, offset, length));
-			byte[] b = null;
-
 			StringBuilder sb = new StringBuilder ();
-			do {
-				// 54 bytes of input makes for 72 bytes of output.
-				b = reader.ReadBytes (54);
-				if (b.Length > 0)
-					sb.AppendLine (Encoding.ASCII.GetString (toBase64Transform.InternalTransformFinalBlock (b, 0, b.Length)));
-			} while (b.Length > 0);
+
+			int remainder;
+			int full = Math.DivRem (length, MaxBytesPerLine, out remainder);
+			for (int i = 0; i < full; i ++) {
+				byte[] data = ToBase64Transform.InternalTransformFinalBlock (inArray, offset, MaxBytesPerLine);
+				sb.AppendLine (Encoding.ASCII.GetString (data));
+				offset += MaxBytesPerLine;
+			}
+			// we never complete (i.e. the last line) with a new line
+			if (remainder == 0) {
+				int nll = Environment.NewLine.Length;
+				sb.Remove (sb.Length - nll, nll);
+			} else {
+				byte[] data = ToBase64Transform.InternalTransformFinalBlock (inArray, offset, remainder);
+				sb.Append (Encoding.ASCII.GetString (data));
+			}
 			return sb;
 		}
 #endif
-
-
 		
 		// ========== Boolean Conversions ========== //
 	
