@@ -1,3 +1,7 @@
+2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBaseTest.cs : another mannerless test here.
+
 2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetTcpBindingTest.cs : enable some tests and added streamed mode
