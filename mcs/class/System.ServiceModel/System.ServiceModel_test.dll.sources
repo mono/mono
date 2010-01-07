@@ -164,6 +164,4 @@ FeatureBased/Features.Client/UntypedMessageTesterProxy.cs
 FeatureBased/Features.Contracts/FaultsTester.cs
 FeatureBased/Features.Contracts/KnownTypeTester.cs
 FeatureBased/Features.Contracts/UntypedMessageTester.cs
-FeatureBased/Features.Serialization/KnownTypeTest.cs
-FeatureBased/Features.Serialization/UntypedMessageTest.cs
 FeatureBased/Features.Serialization/XmlComparer.cs
