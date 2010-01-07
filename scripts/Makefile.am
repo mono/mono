@@ -36,6 +36,7 @@ bin_SCRIPTS = \
 	$(MDOC_COMPAT)		\
 	mod$(SCRIPT_SUFFIX)	\
 	mono-test-install	\
+	peverify			\
 	mono-heapviz
 
 if INSTALL_4_0
@@ -142,6 +143,7 @@ EXTRA_DIST =			\
 	mono-service.in		\
 	mono-find-provides.in	\
 	mono-find-requires.in	\
+	peverify.in			\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
@@ -181,6 +183,9 @@ REWRITE2_1 = $(REWRITE) -e 's,@''framework_version@,2.1,g'
 REWRITE4 = $(REWRITE) -e 's,@''framework_version@,4.0,g'
 REWRITE2_DEBUG = $(REWRITE_DEBUG) -e 's,@''framework_version@,2.0,g'
 
+peverify: peverify.in Makefile
+	$(REWRITE_COMMON) $(srcdir)/peverify.in > $@.tmp
+	mv -f $@.tmp $@
 
 mono-service: mono-service.in Makefile
 	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp

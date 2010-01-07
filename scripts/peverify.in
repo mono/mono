@@ -1,0 +1,2 @@
+#!/bin/sh
+exec @bindir@/pedump $MONO_OPTIONS --verify metadata,code "$@"
