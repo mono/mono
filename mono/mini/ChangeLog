@@ -1,3 +1,8 @@
+2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_to_ir): Casts to variant interfaces
+	do an icall for now.
+
 2010-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Add an ugly hack to fix #564695.
