@@ -1,5 +1,14 @@
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c: Add mono_class_interface_offset_with_variance function that does same
+	as mono_class_interface_offset but takes variance into account.
+
+	* class-internal.h: Export mono_class_interface_offset_with_variance.
+
+	* object.c: Fix and improve DEBUG_IMT. Added an assert for IMT thunk building.
+
+2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object.c:
 	* icall.c:
 	* class.c: Add some FIXME for due to variant generic arguments.
