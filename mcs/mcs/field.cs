@@ -25,6 +25,7 @@ namespace Mono.CSharp
 	abstract public class FieldBase : MemberBase
 	{
 		public FieldBuilder FieldBuilder;
+		protected FieldSpec spec;
 		public Status status;
 		protected Expression initializer;
 
@@ -115,6 +116,11 @@ namespace Mono.CSharp
  			return true;
  		}
 
+		public virtual Constant ConvertInitializer (ResolveContext rc, Constant expr)
+		{
+			return expr.ConvertImplicitly (rc, MemberType);
+		}
+
 		protected override void DoMemberTypeDependentChecks ()
 		{
 			base.DoMemberTypeDependentChecks ();
@@ -173,6 +179,9 @@ namespace Mono.CSharp
 		}
 
 		public Expression Initializer {
+			get {
+				return initializer;
+			}
 			set {
 				if (value != null) {
 					this.initializer = value;
@@ -187,6 +196,10 @@ namespace Mono.CSharp
 
 				return AttributeTester.IsClsCompliant (FieldBuilder.FieldType);
 			}
+		}
+
+		public FieldSpec Spec {
+			get { return spec; }
 		}
 
 		public override string[] ValidAttributeTargets 
@@ -214,42 +227,51 @@ namespace Mono.CSharp
 		}
 	}
 
-	interface IFixedBuffer
+	//
+	// Field specification
+	//
+	public class FieldSpec : MemberSpec
 	{
-		FieldInfo Element { get; }
-		Type ElementType { get; }
-	}
+		FieldInfo info;
 
-	public class FixedFieldExternal: IFixedBuffer
-	{
-		FieldInfo element_field;
-
-		public FixedFieldExternal (FieldInfo fi)
+		public FieldSpec (IMemberDetails details, FieldInfo info, Modifiers modifiers)
+			: base (details, info.Name, modifiers)
 		{
-			element_field = fi.FieldType.GetField (FixedField.FixedElementName);
+			this.info = info;
 		}
 
-		#region IFixedField Members
+		public bool IsReadOnly {
+			get { return (modifiers & Modifiers.READONLY) != 0; }
+		}
 
-		public FieldInfo Element {
+		public FieldInfo MetaInfo {
 			get {
-				return element_field;
+				return info;
+			}
+			set {
+				info = value;
 			}
 		}
 
-		public Type ElementType {
+		// Obsolete
+		public Type DeclaringType {
 			get {
-				return element_field.FieldType;
+				return MetaInfo.DeclaringType;
 			}
 		}
 
-		#endregion
+		// Obsolete
+		public Type FieldType {
+			get {
+				 return MetaInfo.FieldType;
+			}
+		}
 	}
 
 	/// <summary>
 	/// Fixed buffer implementation
 	/// </summary>
-	public class FixedField : FieldBase, IFixedBuffer
+	public class FixedField : FieldBase
 	{
 		public const string FixedElementName = "FixedElementField";
 		static int GlobalCounter = 0;
@@ -257,8 +279,6 @@ namespace Mono.CSharp
 		static FieldInfo[] fi;
 
 		TypeBuilder fixed_buffer_type;
-		FieldBuilder element;
-		Expression size_expr;
 
 		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
@@ -275,16 +295,22 @@ namespace Mono.CSharp
 			if (RootContext.Version < LanguageVersion.ISO_2)
 				Report.FeatureIsNotAvailable (loc, "fixed size buffers");
 
-			this.size_expr = size_expr;
+			initializer = new ConstInitializer (this, size_expr);
 		}
 
-		public override bool Define()
+		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
+		{
+			return expr.ImplicitConversionRequired (rc, TypeManager.int32_type, Location);
+		}
+
+		public override bool Define ()
 		{
 			if (!base.Define ())
 				return false;
 
 			if (!TypeManager.IsPrimitiveType (MemberType)) {
-				Report.Error (1663, Location, "`{0}': Fixed size buffers type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double",
+				Report.Error (1663, Location,
+					"`{0}': Fixed size buffers type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double",
 					GetSignatureForError ());
 			}			
 			
@@ -293,10 +319,12 @@ namespace Mono.CSharp
 			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name, Parent.Module.DefaultCharSetType |
 				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type);
 			
-			element = fixed_buffer_type.DefineField (FixedElementName, MemberType, FieldAttributes.Public);
+			var element = fixed_buffer_type.DefineField (FixedElementName, MemberType, FieldAttributes.Public);
 			RootContext.RegisterCompilerGeneratedType (fixed_buffer_type);
 			
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, ModifiersExtensions.FieldAttr (ModFlags));
+			spec = new FixedFieldSpec (this, FieldBuilder, element, ModFlags);
+
 			Parent.MemberCache.AddMember (FieldBuilder, this);
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
 
@@ -319,11 +347,7 @@ namespace Mono.CSharp
 		public override void Emit()
 		{
 			ResolveContext rc = new ResolveContext (this);
-			Constant c = size_expr.ResolveAsConstant (rc, this);
-			if (c == null)
-				return;
-			
-			IntConstant buffer_size_const = c.ImplicitConversionRequired (rc, TypeManager.int32_type, Location) as IntConstant;
+			IntConstant buffer_size_const = initializer.Resolve (rc) as IntConstant;
 			if (buffer_size_const == null)
 				return;
 
@@ -410,8 +434,17 @@ namespace Mono.CSharp
 				mi.Invoke (fixed_buffer_type, new object [] { ta });
 			}
 		}
+	}
 
-		#region IFixedField Members
+	class FixedFieldSpec : FieldSpec
+	{
+		readonly FieldInfo element;
+
+		public FixedFieldSpec (IMemberDetails details, FieldInfo info, FieldInfo element, Modifiers modifiers)
+			 : base (details, info, modifiers)
+		{
+			this.element = element;
+		}
 
 		public FieldInfo Element {
 			get {
@@ -421,11 +454,9 @@ namespace Mono.CSharp
 
 		public Type ElementType {
 			get {
-				return MemberType;
+				return element.FieldType;
 			}
 		}
-
-		#endregion
 	}
 
 	//
@@ -517,6 +548,8 @@ namespace Mono.CSharp
 				FieldBuilder = Parent.TypeBuilder.DefineField (
 					Name, MemberType, required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
 
+				spec = new FieldSpec (this, FieldBuilder, ModFlags);
+
 				// Don't cache inaccessible fields
 				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
 					Parent.MemberCache.AddMember (FieldBuilder, this);
@@ -531,7 +564,7 @@ namespace Mono.CSharp
 
 			if (initializer != null) {
 				((TypeContainer) Parent).RegisterFieldForInitialization (this,
-					new FieldInitializer (FieldBuilder, initializer, this));
+					new FieldInitializer (this, initializer, this));
 			} else {
 				if (Parent.PartialContainer.Kind == Kind.Struct)
 					CheckStructLayout (member_type, (ModFlags & Modifiers.STATIC) != 0);

@@ -247,7 +247,8 @@ namespace Mono.CSharp {
 	///   Base representation for members.  This is used to keep track
 	///   of Name, Location and Modifier flags, and handling Attributes.
 	/// </summary>
-	public abstract class MemberCore : Attributable, IMemberContext {
+	public abstract class MemberCore : Attributable, IMemberContext, IMemberDetails
+	{
 		/// <summary>
 		///   Public name
 		/// </summary>
@@ -881,6 +882,72 @@ namespace Mono.CSharp {
 		}
 
 		#endregion
+	}
+
+	public abstract class MemberSpec
+	{
+		[Flags]
+		enum StateFlags
+		{
+			Obsolete_Undetected = 1,	// Obsolete attribute has not been detected yet
+			Obsolete = 1 << 1			// Member has obsolete attribute
+		}
+
+		protected readonly Modifiers modifiers;
+		readonly string name;
+		StateFlags state;
+		IMemberDetails details;
+
+		protected MemberSpec (IMemberDetails details, string name, Modifiers modifiers)
+		{
+			this.details = details;
+			this.name = name;
+			this.modifiers = modifiers;
+
+			state = StateFlags.Obsolete_Undetected;
+		}
+
+		public ObsoleteAttribute GetObsoleteAttribute ()
+		{
+			if ((state & (StateFlags.Obsolete | StateFlags.Obsolete_Undetected)) == 0)
+				return null;
+
+			state &= ~StateFlags.Obsolete_Undetected;
+
+			var oa = details.GetObsoleteAttribute ();
+			if (oa != null)
+				state |= StateFlags.Obsolete;
+
+			return oa;
+		}
+
+		// TODO: Obsolete, remove after MemberCache
+		public IMemberDetails MemberDetails {
+			get { return details; }
+		}
+		
+		public string Name {
+			get { return name; }
+		}
+
+		public bool IsStatic {
+			get { return (modifiers & Modifiers.STATIC) != 0; }
+		}
+	}
+
+	public interface IMemberDetails
+	{
+		ObsoleteAttribute GetObsoleteAttribute ();
+	}
+
+	public class MethodSpec : MemberSpec
+	{
+		public MethodInfo MetaInfo;
+
+		protected MethodSpec (IMemberDetails details, string name, Modifiers modifiers)
+			: base (details, name, modifiers)
+		{
+		}
 	}
 
 	/// <summary>

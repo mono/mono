@@ -597,15 +597,15 @@ namespace Mono.CSharp {
 					prop_infos.Add (pi);
 					
 				} else {
-					FieldInfo fi = ((FieldExpr) member).FieldInfo;
+					var fi = ((FieldExpr) member).Spec;
 
-					if (fi.IsInitOnly || fi.IsStatic) {
+					if (fi.IsReadOnly || fi.IsStatic) {
 						Error_InvalidNamedArgument (ec, a);
 						return false;
 					}
 
 					if (!IsValidArgumentType (member.Type)) {
-						ec.Report.SymbolRelatedToPreviousError (fi);
+						ec.Report.SymbolRelatedToPreviousError (fi.MetaInfo);
 						Error_InvalidNamedArgumentType (ec, a);
 						return false;
 					}
@@ -614,14 +614,14 @@ namespace Mono.CSharp {
 					if (!a.Expr.GetAttributableValue (ec, member.Type, out value))
 						return false;
 
-					FieldBase fb = TypeManager.GetField (fi);
+					FieldBase fb = TypeManager.GetField (fi.MetaInfo);
 					if (fb != null)
 						obsolete_attr = fb.GetObsoleteAttribute ();
 					else
-						obsolete_attr = AttributeTester.GetMemberObsoleteAttribute (fi);
+						obsolete_attr = AttributeTester.GetMemberObsoleteAttribute (fi.MetaInfo);
 
  					field_values.Add (value);
-					field_infos.Add (fi);
+					field_infos.Add (fi.MetaInfo);
 				}
 
 				if (obsolete_attr != null && !context.IsObsolete)
@@ -1494,7 +1494,7 @@ namespace Mono.CSharp {
 		static Dictionary<Type, ObsoleteAttribute> analyzed_types_obsolete;
 		static Dictionary<MemberInfo, ObsoleteAttribute> analyzed_member_obsolete;
 		static Dictionary<MethodBase, bool> analyzed_method_excluded;
-		static Dictionary<FieldInfo, IFixedBuffer> fixed_buffer_cache;
+//		static Dictionary<FieldInfo, IFixedBuffer> fixed_buffer_cache;
 
 		static AttributeTester ()
 		{
@@ -1511,7 +1511,7 @@ namespace Mono.CSharp {
 			analyzed_types_obsolete = new Dictionary<Type, ObsoleteAttribute> (ReferenceEquality<Type>.Default);
 			analyzed_member_obsolete = new Dictionary<MemberInfo, ObsoleteAttribute> (ReferenceEquality<MemberInfo>.Default);
 			analyzed_method_excluded = new Dictionary<MethodBase, bool> (ReferenceEquality<MethodBase>.Default);
-			fixed_buffer_cache = new Dictionary<FieldInfo, IFixedBuffer> (ReferenceEquality<FieldInfo>.Default);
+//			fixed_buffer_cache = new Dictionary<FieldInfo, IFixedBuffer> (ReferenceEquality<FieldInfo>.Default);
 		}
 
 		public enum Result {
@@ -1590,44 +1590,6 @@ namespace Mono.CSharp {
 			analyzed_types.Add (type, result);
 			return result;
 		}        
-        
-		/// <summary>
-		/// Returns IFixedBuffer implementation if field is fixed buffer else null.
-		/// </summary>
-		public static IFixedBuffer GetFixedBuffer (FieldInfo fi)
-		{
-			// Fixed buffer helper type is generated as value type
-			if (TypeManager.IsReferenceType (fi.FieldType))
-				return null;
-
-			FieldBase fb = TypeManager.GetField (fi);
-			if (fb != null) {
-				return fb as IFixedBuffer;
-			}
-			
-			if (TypeManager.GetConstant (fi) != null)
-				return null;
-
-			fi = TypeManager.GetGenericFieldDefinition (fi);
-
-			IFixedBuffer ifb;
-			if (!fixed_buffer_cache.TryGetValue (fi, out ifb)) {
-				PredefinedAttribute pa = PredefinedAttributes.Get.FixedBuffer;
-				if (!pa.IsDefined)
-					return null;
-
-				if (!fi.IsDefined (pa.Type, false)) {
-					fixed_buffer_cache.Add (fi, null);
-					return null;
-				}
-				
-				IFixedBuffer iff = new FixedFieldExternal (fi);
-				fixed_buffer_cache.Add (fi, iff);
-				return iff;
-			}
-
-			return ifb;
-		}
 
 		public static void VerifyModulesClsCompliance (CompilerContext ctx)
 		{

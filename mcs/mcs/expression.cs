@@ -209,7 +209,7 @@ namespace Mono.CSharp {
 				if (expr_type == TypeManager.uint32_type) {
 					UIntLiteral uil = e as UIntLiteral;
 					if (uil != null) {
-						if (uil.Value == 2147483648)
+						if (uil.Value == int.MaxValue + (uint) 1)
 							return new IntLiteral (int.MinValue, e.Location);
 						return new LongLiteral (-uil.Value, e.Location);
 					}
@@ -4026,7 +4026,7 @@ namespace Mono.CSharp {
 			} else {
 				FieldExpr fe = left as FieldExpr;
 				if (fe != null)
-					element = AttributeTester.GetFixedBuffer (fe.FieldInfo).ElementType;
+					element = ((FixedFieldSpec) (fe.Spec)).ElementType;
 				else
 					element = op_type;
 			}
@@ -7925,7 +7925,7 @@ namespace Mono.CSharp {
 
 			FieldExpr fe = Expr as FieldExpr;
 			if (fe != null) {
-				IFixedBuffer ff = AttributeTester.GetFixedBuffer (fe.FieldInfo);
+				var ff = fe.Spec as FixedFieldSpec;
 				if (ff != null) {
 					return MakePointerAccess (ec, ff.ElementType);
 				}

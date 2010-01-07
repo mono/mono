@@ -182,7 +182,7 @@ namespace Mono.CSharp {
 
 	static Dictionary<FieldInfo, FieldBase> fieldbuilders_to_fields;
 	static Dictionary<PropertyInfo, PropertyBase> propertybuilder_to_property;
-	static Dictionary<FieldInfo, IConstant> fields;
+	static Dictionary<FieldInfo, ConstSpec> fields;
 	static Dictionary<EventInfo, EventField> events;
 	static Dictionary<Assembly, bool> assembly_internals_vis_attrs;
 	static Dictionary<GenericTypeParameterBuilder, TypeParameter> builder_to_type_param;
@@ -254,7 +254,7 @@ namespace Mono.CSharp {
 
 		fieldbuilders_to_fields = new Dictionary<FieldInfo, FieldBase> (ReferenceEquality<FieldInfo>.Default);
 		propertybuilder_to_property = new Dictionary<PropertyInfo, PropertyBase> (ReferenceEquality<PropertyInfo>.Default);
-		fields = new Dictionary<FieldInfo, IConstant> (ReferenceEquality<FieldInfo>.Default);
+		fields = new Dictionary<FieldInfo, ConstSpec> (ReferenceEquality<FieldInfo>.Default);
 		type_hash = new DoubleHash ();
 		assembly_internals_vis_attrs = new Dictionary<Assembly, bool> ();
 		iface_cache = new Dictionary<Type, Type[]> (ReferenceEquality<Type>.Default);
@@ -1833,17 +1833,17 @@ namespace Mono.CSharp {
 		return null;
 	}
 
-	public static void RegisterConstant (FieldInfo fb, IConstant ic)
+	public static void RegisterConstant (FieldInfo fb, ConstSpec ic)
 	{
 		fields.Add (fb, ic);
 	}
 
-	public static IConstant GetConstant (FieldInfo fb)
+	public static ConstSpec GetConstant (FieldInfo fb)
 	{
 		if (fb == null)
 			return null;
 
-		IConstant ic;
+		ConstSpec ic;
 		if (fields.TryGetValue (fb, out ic))
 			return ic;
 
@@ -1876,7 +1876,11 @@ namespace Mono.CSharp {
 	//
 	static public FieldBase GetField (FieldInfo fb)
 	{
-		fb = GetGenericFieldDefinition (fb);
+		return GetFieldCore (GetGenericFieldDefinition (fb));
+	}
+
+	static public FieldBase GetFieldCore (FieldInfo fb)
+	{
 		FieldBase f;
 		if (fieldbuilders_to_fields.TryGetValue (fb, out f))
 			return f;
@@ -1943,10 +1947,10 @@ namespace Mono.CSharp {
 			return true;
 
 		foreach (FieldBase field in tc.Fields) {
-			if (field.FieldBuilder == null || field.FieldBuilder.IsStatic)
+			if (field.Spec == null || field.Spec.IsStatic)
 				continue;
 
-			Type ftype = field.FieldBuilder.FieldType;
+			Type ftype = field.Spec.FieldType;
 			TypeContainer ftc = LookupTypeContainer (ftype);
 			if (ftc == null)
 				continue;

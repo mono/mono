@@ -651,7 +651,7 @@ namespace Mono.CSharp {
 				int i;
 				ExpressionStatement [] init = new ExpressionStatement [initialized_static_fields.Count];
 				for (i = 0; i < initialized_static_fields.Count; ++i) {
-					FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
+					FieldInitializer fi = initialized_static_fields [i];
 					ExpressionStatement s = fi.ResolveStatement (ec);
 					if (s == null) {
 						s = EmptyExpressionStatement.Instance;
@@ -663,7 +663,7 @@ namespace Mono.CSharp {
 				}
 
 				for (i = 0; i < initialized_static_fields.Count; ++i) {
-					FieldInitializer fi = (FieldInitializer) initialized_static_fields [i];
+					FieldInitializer fi = initialized_static_fields [i];
 					//
 					// Need special check to not optimize code like this
 					// static int a = b = 5;
@@ -6264,7 +6264,7 @@ namespace Mono.CSharp {
 
 			Parent.PartialContainer.AddField (field);
 
-			FieldExpr fe = new FieldExpr (field.FieldBuilder, Location);
+			FieldExpr fe = new FieldExpr (field, Location);
 			if ((field.ModFlags & Modifiers.STATIC) == 0)
 				fe.InstanceExpression = new CompilerGeneratedThis (fe.Type, Location);
 
@@ -6485,8 +6485,8 @@ namespace Mono.CSharp {
 	public class EventProperty: Event {
 		abstract class AEventPropertyAccessor : AEventAccessor
 		{
-			protected AEventPropertyAccessor (Event method, Accessor accessor, string prefix):
-				base (method, accessor, prefix)
+			protected AEventPropertyAccessor (EventProperty method, Accessor accessor, string prefix)
+				: base (method, accessor, prefix)
 			{
 			}
 
@@ -6504,7 +6504,7 @@ namespace Mono.CSharp {
 
 		sealed class AddDelegateMethod: AEventPropertyAccessor
 		{
-			public AddDelegateMethod (Event method, Accessor accessor):
+			public AddDelegateMethod (EventProperty method, Accessor accessor):
 				base (method, accessor, AddPrefix)
 			{
 			}
@@ -6512,7 +6512,7 @@ namespace Mono.CSharp {
 
 		sealed class RemoveDelegateMethod: AEventPropertyAccessor
 		{
-			public RemoveDelegateMethod (Event method, Accessor accessor):
+			public RemoveDelegateMethod (EventProperty method, Accessor accessor):
 				base (method, accessor, RemovePrefix)
 			{
 			}
@@ -6552,7 +6552,7 @@ namespace Mono.CSharp {
 	public class EventField : Event {
 		abstract class EventFieldAccessor : AEventAccessor
 		{
-			protected EventFieldAccessor (Event method, string prefix)
+			protected EventFieldAccessor (EventField method, string prefix)
 				: base (method, prefix)
 			{
 			}
@@ -6565,11 +6565,10 @@ namespace Mono.CSharp {
 						mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.Synchronized);
 					}
 
-					// TODO: because we cannot use generics yet
-					FieldInfo field_info = ((EventField) method).BackingField.FieldBuilder;
+					var field_info = ((EventField) method).BackingField;
 					FieldExpr f_expr = new FieldExpr (field_info, Location);
 					if ((method.ModFlags & Modifiers.STATIC) == 0)
-						f_expr.InstanceExpression = new CompilerGeneratedThis (field_info.FieldType, Location);
+						f_expr.InstanceExpression = new CompilerGeneratedThis (field_info.Spec.FieldType, Location);
 
 					block = new ToplevelBlock (Compiler, ParameterInfo, Location);
 					block.AddStatement (new StatementExpression (
@@ -6586,7 +6585,7 @@ namespace Mono.CSharp {
 
 		sealed class AddDelegateMethod: EventFieldAccessor
 		{
-			public AddDelegateMethod (Event method):
+			public AddDelegateMethod (EventField method):
 				base (method, AddPrefix)
 			{
 			}
@@ -6598,7 +6597,7 @@ namespace Mono.CSharp {
 
 		sealed class RemoveDelegateMethod: EventFieldAccessor
 		{
-			public RemoveDelegateMethod (Event method):
+			public RemoveDelegateMethod (EventField method):
 				base (method, RemovePrefix)
 			{
 			}

@@ -329,6 +329,17 @@ namespace Mono.CSharp {
 
 		}
 
+		public void Error_ExpressionMustBeConstant (ResolveContext rc, Location loc, string e_name)
+		{
+			rc.Report.Error (133, loc, "The expression being assigned to `{0}' must be constant", e_name);
+		}
+
+		public void Error_ConstantCanBeInitializedWithNullOnly (ResolveContext rc, Type type, Location loc, string name)
+		{
+			rc.Report.Error (134, loc, "A constant `{0}' of reference type `{1}' can only be initialized with null",
+				name, TypeManager.CSharpName (type));
+		}
+
 		public static void Error_InvalidExpressionStatement (Report Report, Location loc)
 		{
 			Report.Error (201, loc, "Only assignment, call, increment, decrement, and new object " +
@@ -502,24 +513,6 @@ namespace Mono.CSharp {
 			return Resolve (rc, ResolveFlags.VariableOrValue | ResolveFlags.MethodGroup);
 		}
 
-		public Constant ResolveAsConstant (ResolveContext ec, MemberCore mc)
-		{
-			Expression e = Resolve (ec);
-			if (e == null)
-				return null;
-
-			Constant c = e as Constant;
-			if (c != null)
-				return c;
-
-			if (type != null && TypeManager.IsReferenceType (type))
-				Const.Error_ConstantCanBeInitializedWithNullOnly (type, loc, mc.GetSignatureForError (), ec.Report);
-			else
-				Const.Error_ExpressionMustBeConstant (loc, mc.GetSignatureForError (), ec.Report);
-
-			return null;
-		}
-
 		/// <summary>
 		///   Resolves an expression for LValue assignment
 		/// </summary>
@@ -611,9 +604,10 @@ namespace Mono.CSharp {
 				return new EventExpr ((EventInfo) mi, loc);
 			else if (mi is FieldInfo) {
 				FieldInfo fi = (FieldInfo) mi;
-				if (fi.IsLiteral || (fi.IsInitOnly && fi.FieldType == TypeManager.decimal_type))
-					return new ConstantExpr (fi, loc);
-				return new FieldExpr (fi, loc);
+				var spec = Import.CreateField (fi);
+				if (spec is ConstSpec)
+					return new ConstantExpr ((ConstSpec) spec, loc);
+				return new FieldExpr (spec, loc);
 			} else if (mi is PropertyInfo)
 				return new PropertyExpr (container_type, (PropertyInfo) mi, loc);
 			else if (mi is Type) {
@@ -2835,7 +2829,7 @@ namespace Mono.CSharp {
 				if (RootContext.EvalMode){
 					FieldInfo fi = Evaluator.LookupField (Name);
 					if (fi != null)
-						return new FieldExpr (fi, loc).Resolve (ec);
+						return new FieldExpr (Import.CreateField (fi), loc).Resolve (ec);
 				}
 
 				if (almost_matched != null)
@@ -4743,9 +4737,9 @@ namespace Mono.CSharp {
 
 	public class ConstantExpr : MemberExpr
 	{
-		FieldInfo constant;
+		ConstSpec constant;
 
-		public ConstantExpr (FieldInfo constant, Location loc)
+		public ConstantExpr (ConstSpec constant, Location loc)
 		{
 			this.constant = constant;
 			this.loc = loc;
@@ -4760,31 +4754,11 @@ namespace Mono.CSharp {
 		}
 
 		public override bool IsStatic {
-			get { return constant.IsStatic; }
+			get { return true; }
 		}
 
 		public override Type DeclaringType {
 			get { return constant.DeclaringType; }
-		}
-
-		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc, SimpleName original)
-		{
-			constant = TypeManager.GetGenericFieldDefinition (constant);
-
-			IConstant ic = TypeManager.GetConstant (constant);
-			if (ic == null) {
-				if (constant.IsLiteral) {
-					ic = new ExternalConstant (constant, ec.Compiler);
-				} else {
-					ic = ExternalConstant.CreateDecimal (constant, ec);
-					// HACK: decimal field was not resolved as constant
-					if (ic == null)
-						return new FieldExpr (constant, loc).ResolveMemberAccess (ec, left, loc, original);
-				}
-				TypeManager.RegisterConstant (constant, ic);
-			}
-
-			return base.ResolveMemberAccess (ec, left, loc, original);
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -4794,13 +4768,19 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			IConstant ic = TypeManager.GetConstant (constant);
-			if (ic.ResolveValue ()) {
-				if (!rc.IsObsolete)
-					ic.CheckObsoleteness (loc);
+//			constant.IsUsed = true;
+
+			if (!rc.IsObsolete) {
+				var oa = constant.GetObsoleteAttribute ();
+				if (oa != null)
+					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (constant.MetaInfo), loc, rc.Report);
 			}
 
-			return ic.CreateConstantReference (rc, loc);
+			// Constants are resolved on-demand
+			var c = constant.Value.Resolve (rc) as Constant;
+
+			// Creates reference expression to the constant value
+			return Constant.CreateConstant (rc, c.Type, c.GetValue (), loc);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -4810,7 +4790,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.GetFullNameSignature (constant);
+			return TypeManager.GetFullNameSignature (constant.MetaInfo);
 		}
 	}
 
@@ -4818,7 +4798,7 @@ namespace Mono.CSharp {
 	///   Fully resolved expression that evaluates to a Field
 	/// </summary>
 	public class FieldExpr : MemberExpr, IDynamicAssign, IMemoryLocation, IVariableReference {
-		public FieldInfo FieldInfo;
+		protected FieldSpec spec;
 		readonly Type constructed_generic_type;
 		VariableInfo variable_info;
 		
@@ -4829,15 +4809,22 @@ namespace Mono.CSharp {
 		{
 			loc = l;
 		}
-		
-		public FieldExpr (FieldInfo fi, Location l)
+
+		public FieldExpr (FieldSpec spec, Location loc)
 		{
-			FieldInfo = fi;
-			type = TypeManager.TypeToCoreType (fi.FieldType);
+			this.spec = spec;
+			this.loc = loc;
+
+			type = TypeManager.TypeToCoreType (spec.FieldType);
+		}
+		
+		public FieldExpr (FieldBase fi, Location l)
+			: this (fi.Spec, l)
+		{
 			loc = l;
 		}
 
-		public FieldExpr (FieldInfo fi, Type genericType, Location l)
+		public FieldExpr (Field fi, Type genericType, Location l)
 			: this (fi, l)
 		{
 			if (TypeManager.IsGenericTypeDefinition (genericType))
@@ -4847,31 +4834,37 @@ namespace Mono.CSharp {
 
 		public override string Name {
 			get {
-				return FieldInfo.Name;
+				return spec.Name;
 			}
 		}
 
 		public override bool IsInstance {
 			get {
-				return !FieldInfo.IsStatic;
+				return !spec.IsStatic;
 			}
 		}
 
 		public override bool IsStatic {
 			get {
-				return FieldInfo.IsStatic;
+				return spec.IsStatic;
+			}
+		}
+
+		public FieldSpec Spec {
+			get {
+				return spec;
 			}
 		}
 
 		public override Type DeclaringType {
 			get {
-				return FieldInfo.DeclaringType;
+				return spec.MetaInfo.DeclaringType;
 			}
 		}
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.GetFullNameSignature (FieldInfo);
+			return TypeManager.GetFullNameSignature (spec.MetaInfo);
 		}
 
 		public VariableInfo VariableInfo {
@@ -4883,7 +4876,7 @@ namespace Mono.CSharp {
 		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
 								SimpleName original)
 		{
-			FieldInfo fi = TypeManager.GetGenericFieldDefinition (FieldInfo);
+			FieldInfo fi = TypeManager.GetGenericFieldDefinition (spec.MetaInfo);
 			Type t = fi.FieldType;
 
 			if (t.IsPointer && !ec.IsUnsafe) {
@@ -4928,7 +4921,7 @@ namespace Mono.CSharp {
 
 		Expression DoResolve (ResolveContext ec, bool lvalue_instance, bool out_access)
 		{
-			if (!FieldInfo.IsStatic){
+			if (!IsStatic){
 				if (InstanceExpression == null){
 					//
 					// This can happen when referencing an instance field using
@@ -4967,17 +4960,17 @@ namespace Mono.CSharp {
 			}
 
 			if (!ec.IsObsolete) {
-				FieldBase f = TypeManager.GetField (FieldInfo);
+				FieldBase f = TypeManager.GetField (spec.MetaInfo);
 				if (f != null) {
 					f.CheckObsoleteness (loc);
 				} else {
-					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (FieldInfo);
+					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (spec.MetaInfo);
 					if (oa != null)
-						AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (FieldInfo), loc, ec.Report);
+						AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (spec.MetaInfo), loc, ec.Report);
 				}
 			}
 
-			IFixedBuffer fb = AttributeTester.GetFixedBuffer (FieldInfo);
+			var fb = spec as FixedFieldSpec;
 			IVariableReference var = InstanceExpression as IVariableReference;
 			
 			if (fb != null) {
@@ -4987,9 +4980,9 @@ namespace Mono.CSharp {
 				}
 
 				if (InstanceExpression.eclass != ExprClass.Variable) {
-					ec.Report.SymbolRelatedToPreviousError (FieldInfo);
+					ec.Report.SymbolRelatedToPreviousError (spec.MetaInfo);
 					ec.Report.Error (1708, loc, "`{0}': Fixed size buffers can only be accessed through locals or fields",
-						TypeManager.GetFullNameSignature (FieldInfo));
+						TypeManager.GetFullNameSignature (spec.MetaInfo));
 				} else if (var != null && var.IsHoisted) {
 					AnonymousMethodExpression.Error_AddressOfCapturedVar (ec, var, loc);
 				}
@@ -5004,10 +4997,10 @@ namespace Mono.CSharp {
 				return this;
 
 			VariableInfo vi = var.VariableInfo;
-			if (!vi.IsFieldAssigned (ec, FieldInfo.Name, loc))
+			if (!vi.IsFieldAssigned (ec, Name, loc))
 				return null;
 
-			variable_info = vi.GetSubStruct (FieldInfo.Name);
+			variable_info = vi.GetSubStruct (Name);
 			return this;
 		}
 
@@ -5052,9 +5045,9 @@ namespace Mono.CSharp {
 		{
 			IVariableReference var = InstanceExpression as IVariableReference;
 			if (var != null && var.VariableInfo != null)
-				var.VariableInfo.SetFieldAssigned (ec, FieldInfo.Name);
+				var.VariableInfo.SetFieldAssigned (ec, Name);
 
-			bool lvalue_instance = !FieldInfo.IsStatic && TypeManager.IsValueType (FieldInfo.DeclaringType);
+			bool lvalue_instance = !spec.IsStatic && TypeManager.IsValueType (spec.MetaInfo.DeclaringType);
 			bool out_access = right_side == EmptyExpression.OutAccess.Instance || right_side == EmptyExpression.LValueMemberOutAccess;
 
 			Expression e = DoResolve (ec, lvalue_instance, out_access);
@@ -5062,7 +5055,7 @@ namespace Mono.CSharp {
 			if (e == null)
 				return null;
 
-			FieldBase fb = TypeManager.GetField (FieldInfo);
+			FieldBase fb = TypeManager.GetField (spec.MetaInfo);
 			if (fb != null) {
 				fb.SetAssigned ();
 
@@ -5074,7 +5067,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (FieldInfo.IsInitOnly) {
+			if (spec.IsReadOnly) {
 				// InitOnly fields can only be assigned in constructors or initializers
 				if (!ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.ConstructorScope))
 					return Report_AssignToReadonly (ec, right_side);
@@ -5083,7 +5076,7 @@ namespace Mono.CSharp {
 					Type ctype = ec.CurrentType;
 
 					// InitOnly fields cannot be assigned-to in a different constructor from their declaring type
-					if (!TypeManager.IsEqual (ctype, FieldInfo.DeclaringType))
+					if (!TypeManager.IsEqual (ctype, DeclaringType))
 						return Report_AssignToReadonly (ec, right_side);
 					// static InitOnly fields cannot be assigned-to in an instance constructor
 					if (IsStatic && !ec.IsStatic)
@@ -5122,7 +5115,7 @@ namespace Mono.CSharp {
 
 		public override int GetHashCode ()
 		{
-			return FieldInfo.GetHashCode ();
+			return spec.GetHashCode ();
 		}
 		
 		public bool IsFixed {
@@ -5152,7 +5145,7 @@ namespace Mono.CSharp {
 			if (fe == null)
 				return false;
 
-			if (FieldInfo != fe.FieldInfo)
+			if (spec.MetaInfo != fe.spec.MetaInfo)
 				return false;
 
 			if (InstanceExpression == null || fe.InstanceExpression == null)
@@ -5166,7 +5159,7 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 			bool is_volatile = false;
 
-			FieldBase f = TypeManager.GetField (FieldInfo);
+			var f = TypeManager.GetField (spec.MetaInfo);
 			if (f != null){
 				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					is_volatile = true;
@@ -5174,7 +5167,7 @@ namespace Mono.CSharp {
 				f.SetMemberIsUsed ();
 			}
 			
-			if (FieldInfo.IsStatic){
+			if (IsStatic){
 				if (is_volatile)
 					ig.Emit (OpCodes.Volatile);
 
@@ -5187,7 +5180,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsStruct (type) && TypeManager.IsEqual (type, ec.MemberContext.CurrentType)) {
 					LoadFromPtr (ig, type);
 				} else {
-					IFixedBuffer ff = AttributeTester.GetFixedBuffer (FieldInfo);
+					var ff = spec as FixedFieldSpec;
 					if (ff != null) {
 						ig.Emit (OpCodes.Ldflda, GetConstructedFieldInfo ());
 						ig.Emit (OpCodes.Ldflda, ff.Element);
@@ -5202,7 +5195,7 @@ namespace Mono.CSharp {
 
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
-				if (!FieldInfo.IsStatic) {
+				if (!IsStatic) {
 					temp = new LocalTemporary (this.Type);
 					temp.Store (ec);
 				}
@@ -5211,8 +5204,8 @@ namespace Mono.CSharp {
 
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
-			FieldAttributes fa = FieldInfo.Attributes;
-			bool is_static = (fa & FieldAttributes.Static) != 0;
+			//FieldAttributes fa = FieldInfo.Attributes;
+			//bool is_static = (fa & FieldAttributes.Static) != 0;
 			ILGenerator ig = ec.ig;
 
 			prepared = prepare_for_load;
@@ -5221,13 +5214,13 @@ namespace Mono.CSharp {
 			source.Emit (ec);
 			if (leave_copy) {
 				ec.ig.Emit (OpCodes.Dup);
-				if (!FieldInfo.IsStatic) {
+				if (!IsStatic) {
 					temp = new LocalTemporary (this.Type);
 					temp.Store (ec);
 				}
 			}
 
-			FieldBase f = TypeManager.GetField (FieldInfo);
+			FieldBase f = TypeManager.GetField (spec.MetaInfo);
 			if (f != null){
 				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					ig.Emit (OpCodes.Volatile);
@@ -5235,7 +5228,7 @@ namespace Mono.CSharp {
 				f.SetAssigned ();
 			}
 
-			if (is_static)
+			if (IsStatic)
 				ig.Emit (OpCodes.Stsfld, GetConstructedFieldInfo ());
 			else
 				ig.Emit (OpCodes.Stfld, GetConstructedFieldInfo ());
@@ -5254,7 +5247,7 @@ namespace Mono.CSharp {
 
 		public override void EmitSideEffect (EmitContext ec)
 		{
-			FieldBase f = TypeManager.GetField (FieldInfo);
+			FieldBase f = TypeManager.GetField (spec.MetaInfo);
 			bool is_volatile = f != null && (f.ModFlags & Modifiers.VOLATILE) != 0;
 
 			if (is_volatile || is_marshal_by_ref ())
@@ -5272,7 +5265,7 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			FieldBase f = TypeManager.GetField (FieldInfo);
+			FieldBase f = TypeManager.GetField (spec.MetaInfo);
 			if (f != null){				
 				if ((mode & AddressOp.Store) != 0)
 					f.SetAssigned ();
@@ -5285,10 +5278,10 @@ namespace Mono.CSharp {
 			// get the address of the copy.
 			//
 			bool need_copy;
-			if (FieldInfo.IsInitOnly){
+			if (spec.IsReadOnly){
 				need_copy = true;
 				if (ec.HasSet (EmitContext.Options.ConstructorScope)){
-					if (FieldInfo.IsStatic){
+					if (IsStatic){
 						if (ec.IsStatic)
 							need_copy = false;
 					} else
@@ -5307,7 +5300,7 @@ namespace Mono.CSharp {
 			}
 
 
-			if (FieldInfo.IsStatic){
+			if (IsStatic){
 				ig.Emit (OpCodes.Ldsflda, GetConstructedFieldInfo ());
 			} else {
 				if (!prepared)
@@ -5319,9 +5312,9 @@ namespace Mono.CSharp {
 		FieldInfo GetConstructedFieldInfo ()
 		{
 			if (constructed_generic_type == null)
-				return FieldInfo;
+				return spec.MetaInfo;
 
-			return TypeBuilder.GetField (constructed_generic_type, FieldInfo);
+			return TypeBuilder.GetField (constructed_generic_type, spec.MetaInfo);
 		}
 
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
@@ -5331,12 +5324,12 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.Field (InstanceExpression.MakeExpression (ctx), FieldInfo);
+			return SLE.Expression.Field (InstanceExpression.MakeExpression (ctx), spec.MetaInfo);
 		}
 		
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
-			FieldInfo = storey.MutateField (FieldInfo);
+			storey.MutateField (spec);
 			base.MutateHoistedGenericType (storey);
 		}		
 	}
@@ -5924,7 +5917,7 @@ namespace Mono.CSharp {
 					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))
 						Error_AssignmentEventOnly (ec);
 					
-					FieldExpr ml = new FieldExpr (mi.BackingField.FieldBuilder, loc);
+					FieldExpr ml = new FieldExpr (mi.BackingField, loc);
 
 					InstanceExpression = null;
 				

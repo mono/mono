@@ -464,7 +464,7 @@ namespace Mono.CSharp {
 		ExpressionStatement resolved;
 		IMemberContext rc;
 
-		public FieldInitializer (FieldBuilder field, Expression expression, IMemberContext rc)
+		public FieldInitializer (FieldBase field, Expression expression, IMemberContext rc)
 			: base (new FieldExpr (field, expression.Location), expression, expression.Location)
 		{
 			this.rc = rc;

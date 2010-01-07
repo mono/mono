@@ -19,22 +19,9 @@ using System.Globalization;
 
 namespace Mono.CSharp {
 
-	public class EnumMember : Const {
-		protected readonly Enum ParentEnum;
-		protected readonly Expression ValueExpr;
-		readonly EnumMember prev_member;
-
-		public EnumMember (Enum parent, EnumMember prev_member, string name, Expression expr,
-				   Attributes attrs, Location loc)
-			: base (parent, new EnumTypeExpr (parent), name, expr, Modifiers.PUBLIC,
-				attrs, loc)
-		{
-			this.ParentEnum = parent;
-			this.ValueExpr = expr;
-			this.prev_member = prev_member;
-		}
-
-		protected class EnumTypeExpr : TypeExpr
+	public class EnumMember : Const
+	{
+		class EnumTypeExpr : TypeExpr
 		{
 			public readonly Enum Enum;
 
@@ -55,6 +42,14 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public EnumMember (Enum parent, EnumMember prev_member, string name, Expression expr,
+				   Attributes attrs, Location loc)
+			: base (parent, new EnumTypeExpr (parent), name, null, Modifiers.PUBLIC,
+				attrs, loc)
+		{
+			initializer = new EnumInitializer (this, expr, prev_member);
+		}
+
 		static bool IsValidEnumType (Type t)
 		{
 			return (t == TypeManager.int32_type || t == TypeManager.uint32_type || t == TypeManager.int64_type ||
@@ -63,8 +58,24 @@ namespace Mono.CSharp {
 				TypeManager.IsEnumType (t));
 		}
 
-		public object Value {
-			get { return ResolveValue () ? value.GetValue () : null; }
+		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
+		{
+			if (expr is EnumConstant)
+				expr = ((EnumConstant) expr).Child;
+
+			var underlying = ((Enum) Parent).UnderlyingType;
+			if (expr != null) {
+				expr = expr.ImplicitConversionRequired (rc, underlying, Location);
+				if (expr != null && !IsValidEnumType (expr.Type)) {
+					Enum.Error_1008 (Location, Report);
+					expr = null;
+				}
+			}
+
+			if (expr == null)
+				expr = New.Constantify (underlying);
+
+			return new EnumConstant (expr, MemberType).Resolve (rc);
 		}
 
 		public override bool Define ()
@@ -74,47 +85,46 @@ namespace Mono.CSharp {
 
 			const FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal;
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, attr);
+			spec = new ConstSpec (this, FieldBuilder, ModFlags, initializer);
+
 			Parent.MemberCache.AddMember (FieldBuilder, this);
-			TypeManager.RegisterConstant (FieldBuilder, this);
+			TypeManager.RegisterConstant (FieldBuilder, (ConstSpec) spec);
+
 			return true;
 		}
-	
-		protected override Constant DoResolveValue (ResolveContext ec)
+	}
+
+	class EnumInitializer : ConstInitializer
+	{
+		EnumMember prev;
+
+		public EnumInitializer (Const field, Expression init, EnumMember prev)
+			: base (field, init)
 		{
-			if (ValueExpr != null) {
-				Constant c = ValueExpr.ResolveAsConstant (ec, this);
-				if (c == null)
-					return null;
+			this.prev = prev;
+		}
 
-				if (c is EnumConstant)
-					c = ((EnumConstant)c).Child;
+		protected override Expression DoResolveInitializer (ResolveContext rc)
+		{
+			if (expr != null)
+				return base.DoResolveInitializer (rc);
 
-				c = c.ImplicitConversionRequired (ec, ParentEnum.UnderlyingType, Location);
-				if (c == null)
-					return null;
-
-				if (!IsValidEnumType (c.Type)) {
-					Enum.Error_1008 (Location, ec.Report);
-					return null;
-				}
-
-				return new EnumConstant (c, MemberType).Resolve (ec);
-			}
-
-			if (prev_member == null)
-				return new EnumConstant (New.Constantify (ParentEnum.UnderlyingType), MemberType).Resolve (ec);
-
-			if (!prev_member.ResolveValue ())
-				return null;
+			if (prev == null)
+				return field.ConvertInitializer (rc, null);
 
 			try {
-				return ((EnumConstant) prev_member.value).Increment ();
+				var ec = prev.Initializer.Resolve (rc) as EnumConstant;
+				expr = ec.Increment ().Resolve (rc);
 			} catch (OverflowException) {
-				Report.Error (543, Location, "The enumerator value `{0}' is too " +
-					      "large to fit in its type `{1}'", GetSignatureForError (),
-					      TypeManager.CSharpName (ParentEnum.UnderlyingType));
-				return null;
-			}
+				rc.Report.Error (543, field.Location,
+					"The enumerator value `{0}' is outside the range of enumerator underlying type `{1}'",
+					field.GetSignatureForError (),
+					TypeManager.CSharpName (((Enum) field.Parent).UnderlyingType));
+
+				expr = field.ConvertInitializer (rc, null);
+			}		
+
+			return expr;
 		}
 	}
 

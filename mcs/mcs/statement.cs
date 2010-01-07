@@ -1975,14 +1975,14 @@ namespace Mono.CSharp {
 
 				Constant ce = e as Constant;
 				if (ce == null) {
-					Const.Error_ExpressionMustBeConstant (vi.Location, name, ec.Report);
+					e.Error_ExpressionMustBeConstant (ec, vi.Location, name);
 					continue;
 				}
 
 				e = ce.ConvertImplicitly (ec, variable_type);
 				if (e == null) {
 					if (TypeManager.IsReferenceType (variable_type))
-						Const.Error_ConstantCanBeInitializedWithNullOnly (variable_type, vi.Location, vi.Name, ec.Report);
+						ce.Error_ConstantCanBeInitializedWithNullOnly (ec, variable_type, vi.Location, vi.Name);
 					else
 						ce.Error_ValueCannotBeConverted (ec, vi.Location, variable_type, false);
 					continue;
@@ -3770,7 +3770,7 @@ namespace Mono.CSharp {
 			Expression initializer = new NewInitialize (string_dictionary_type, args,
 				new CollectionOrObjectInitializers (init, loc), loc);
 
-			switch_cache_field = new FieldExpr (field.FieldBuilder, loc);
+			switch_cache_field = new FieldExpr (field, loc);
 			string_dictionary = new SimpleAssign (switch_cache_field, initializer.Resolve (ec));
 		}
 

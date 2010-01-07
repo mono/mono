@@ -11,7 +11,6 @@
 
 using System;
 using System.Text;
-using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
@@ -1152,10 +1151,10 @@ namespace Mono.CSharp
 			bool ok = true;
 			FlowBranching branching = ec.CurrentBranching;
 			for (int i = 0; i < struct_info.Count; i++) {
-				FieldInfo field = struct_info.Fields [i];
+				var field = struct_info.Fields [i];
 
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
-					FieldBase fb = TypeManager.GetField (field);
+					FieldBase fb = TypeManager.GetField (field.MetaInfo);
 					if (fb is Property.BackingField) {
 						ec.Report.Error (843, loc,
 							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling default contructor",
@@ -1163,7 +1162,7 @@ namespace Mono.CSharp
 					} else {
 						ec.Report.Error (171, loc,
 							"Field `{0}' must be fully assigned before control leaves the constructor",
-							TypeManager.GetFullNameSignature (field));
+							TypeManager.GetFullNameSignature (field.MetaInfo));
 					}
 					ok = false;
 				}
@@ -1180,7 +1179,7 @@ namespace Mono.CSharp
 
 		class StructInfo {
 			public readonly Type Type;
-			public readonly FieldInfo[] Fields;
+			public readonly FieldSpec[] Fields;
 			public readonly TypeInfo[] StructFields;
 			public readonly int Count;
 			public readonly int CountPublic;
@@ -1206,38 +1205,38 @@ namespace Mono.CSharp
 				if (TypeManager.IsBeingCompiled (type)) {
 					TypeContainer tc = TypeManager.LookupTypeContainer (TypeManager.DropGenericTypeArguments (type));
 
-					ArrayList public_fields = new ArrayList ();
-					ArrayList non_public_fields = new ArrayList ();
+					var public_fields = new List<FieldSpec> ();
+					var non_public_fields = new List<FieldSpec> ();
 
 					//
 					// TODO: tc != null is needed because FixedBuffers are not cached
 					//
-					if (tc != null) {					
-					var fields = tc.Fields;
+					if (tc != null) {
+						var fields = tc.Fields;
 
-					if (fields != null) {
-						foreach (FieldBase field in fields) {
-							if ((field.ModFlags & Modifiers.STATIC) != 0)
-								continue;
-							if ((field.ModFlags & Modifiers.PUBLIC) != 0)
-								public_fields.Add (field.FieldBuilder);
-							else
-								non_public_fields.Add (field.FieldBuilder);
+						if (fields != null) {
+							foreach (FieldBase field in fields) {
+								if ((field.ModFlags & Modifiers.STATIC) != 0)
+									continue;
+								if ((field.ModFlags & Modifiers.PUBLIC) != 0)
+									public_fields.Add (field.Spec);
+								else
+									non_public_fields.Add (field.Spec);
+							}
 						}
-					}
 					}
 
 					CountPublic = public_fields.Count;
 					CountNonPublic = non_public_fields.Count;
 					Count = CountPublic + CountNonPublic;
 
-					Fields = new FieldInfo [Count];
+					Fields = new FieldSpec [Count];
 					public_fields.CopyTo (Fields, 0);
 					non_public_fields.CopyTo (Fields, CountPublic);
 				} else if (type is GenericTypeParameterBuilder) {
 					CountPublic = CountNonPublic = Count = 0;
 
-					Fields = new FieldInfo [0];
+					Fields = new FieldSpec [0];
 				} else {
 					FieldInfo[] public_fields = type.GetFields (
 						BindingFlags.Instance|BindingFlags.Public);
@@ -1248,9 +1247,12 @@ namespace Mono.CSharp
 					CountNonPublic = non_public_fields.Length;
 					Count = CountPublic + CountNonPublic;
 
-					Fields = new FieldInfo [Count];
-					public_fields.CopyTo (Fields, 0);
-					non_public_fields.CopyTo (Fields, CountPublic);
+					Fields = new FieldSpec [Count];
+					for (int i = 0; i < CountPublic; ++i)
+						Fields [i] = Import.CreateField (public_fields[i]);
+
+					for (int i = 0; i < CountNonPublic; ++i)
+						Fields [i + CountPublic] = Import.CreateField (non_public_fields[i]);
 				}
 
 				struct_field_hash = new Dictionary<string, TypeInfo> ();
@@ -1263,7 +1265,7 @@ namespace Mono.CSharp
 				InTransit = true;
 
 				for (int i = 0; i < Count; i++) {
-					FieldInfo field = (FieldInfo) Fields [i];
+					var field = Fields [i];
 
 					sinfo [i] = GetStructInfo (field.FieldType);
 					if (sinfo [i] == null)
@@ -1282,7 +1284,7 @@ namespace Mono.CSharp
 
 				TotalLength = Length + 1;
 				for (int i = 0; i < Count; i++) {
-					FieldInfo field = (FieldInfo) Fields [i];
+					var field = Fields [i];
 
 					if (sinfo [i] == null)
 						continue;
@@ -1575,11 +1577,11 @@ namespace Mono.CSharp
 		// Invariant: vector == null || shared == null
 		//            i.e., at most one of 'vector' and 'shared' can be non-null.  They can both be null -- that means all-ones
 		// The object in 'shared' cannot be modified, while 'vector' can be freely modified
-		BitArray vector, shared;
+		System.Collections.BitArray vector, shared;
 
 		MyBitVector ()
 		{
-			shared = new BitArray (0, false);
+			shared = new System.Collections.BitArray (0, false);
 		}
 
 		public MyBitVector (MyBitVector InheritsFrom, int Count)
@@ -1590,7 +1592,7 @@ namespace Mono.CSharp
 			this.Count = Count;
 		}
 
-		BitArray MakeShared (int new_count)
+		System.Collections.BitArray MakeShared (int new_count)
 		{
 			// Post-condition: vector == null
 
@@ -1646,7 +1648,7 @@ namespace Mono.CSharp
 			if (Count == 0 || new_vector.Count == 0)
 				return this;
 
-			BitArray o = new_vector.vector != null ? new_vector.vector : new_vector.shared;
+			var o = new_vector.vector != null ? new_vector.vector : new_vector.shared;
 
 			if (o == null) {
 				int n = new_vector.Count;
@@ -1690,7 +1692,7 @@ namespace Mono.CSharp
 			if (Count == 0)
 				return this;
 
-			BitArray o = new_vector.vector != null ? new_vector.vector : new_vector.shared;
+			var o = new_vector.vector != null ? new_vector.vector : new_vector.shared;
 
 			if (o == null) {
 				for (int i = new_vector.Count; i < Count; ++i)
@@ -1800,11 +1802,11 @@ namespace Mono.CSharp
 		{
 			// Post-condition: vector != null
 			if (shared == null) {
-				vector = new BitArray (Count, true);
+				vector = new System.Collections.BitArray (Count, true);
 				return;
 			}
 
-			vector = new BitArray (shared);
+			vector = new System.Collections.BitArray (shared);
 			if (Count != vector.Count)
 				vector.Length = Count;
 			shared = null;
@@ -1812,7 +1814,7 @@ namespace Mono.CSharp
 
 		StringBuilder Dump (StringBuilder sb)
 		{
-			BitArray dump = vector == null ? shared : vector;
+			var dump = vector == null ? shared : vector;
 			if (dump == null)
 				return sb.Append ("/");
 			if (dump == shared)

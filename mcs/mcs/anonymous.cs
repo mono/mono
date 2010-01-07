@@ -83,7 +83,7 @@ namespace Mono.CSharp {
 
 				AnonymousMethodStorey parent = ((AnonymousMethodStorey) Parent).GetGenericStorey ();
 				if (parent != null)
-					member_type = parent.MutateType (member_type);
+					member_type = parent.MutateType (MemberType);
 
 				return true;
 			}
@@ -327,8 +327,8 @@ namespace Mono.CSharp {
 					//
 					Expression instace_expr = GetStoreyInstanceExpression (ec);
 					FieldExpr f_set_expr = TypeManager.IsGenericType (instace_expr.Type) ?
-						new FieldExpr (sf.Field.FieldBuilder, instace_expr.Type, Location) :
-						new FieldExpr (sf.Field.FieldBuilder, Location);
+						new FieldExpr (sf.Field, instace_expr.Type, Location) :
+						new FieldExpr (sf.Field, Location);
 					f_set_expr.InstanceExpression = instace_expr;
 
 					SimpleAssign a = new SimpleAssign (f_set_expr, sf.Storey.GetStoreyInstanceExpression (ec));
@@ -452,7 +452,7 @@ namespace Mono.CSharp {
 			//
 			// Storey was cached to local field
 			//
-			FieldExpr f_ind = new FieldExpr (f.FieldBuilder, Location);
+			FieldExpr f_ind = new FieldExpr (f, Location);
 			f_ind.InstanceExpression = new CompilerGeneratedThis (TypeBuilder, Location);
 			return f_ind;
 		}
@@ -528,20 +528,20 @@ namespace Mono.CSharp {
 			return ctor;
 		}
 		
-		public FieldInfo MutateField (FieldInfo field)
+		public void MutateField (FieldSpec fs)
 		{
+			var field = fs.MetaInfo;
 			if (TypeManager.IsGenericType (field.DeclaringType)) {
 				Type t = MutateGenericType (field.DeclaringType);
 				if (t != field.DeclaringType) {
 					field = TypeManager.DropGenericTypeArguments (field.DeclaringType).GetField (field.Name, TypeManager.AllMembers);
-					if (TypeManager.IsBeingCompiled (field))
-						return TypeBuilder.GetField (t, field);
-
-					return FieldInfo.GetFieldFromHandle (field.FieldHandle, t.TypeHandle);						
+					if (TypeManager.IsBeingCompiled (field)) {
+						fs.MetaInfo = TypeBuilder.GetField (t, field);
+					} else {
+						fs.MetaInfo = FieldInfo.GetFieldFromHandle (field.FieldHandle, t.TypeHandle);
+					}
 				}
 			}
-
-			return field;
 		}		
 
 		protected Type MutateArrayType (Type array)
@@ -684,8 +684,8 @@ namespace Mono.CSharp {
 				// change storey generic types to method generic types (VAR -> MVAR)
 				//
 				cached_outer_access = storey.MemberName.IsGeneric ?
-					new FieldExpr (field.FieldBuilder, storey.Instance.Type, field.Location) :
-					new FieldExpr (field.FieldBuilder, field.Location);
+					new FieldExpr (field, storey.Instance.Type, field.Location) :
+					new FieldExpr (field, field.Location);
 
 				cached_outer_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
 				return cached_outer_access;
@@ -702,8 +702,8 @@ namespace Mono.CSharp {
 
 			if (inner_access == null) {
 				inner_access = field.Parent.MemberName.IsGeneric ?
-					new FieldExpr (field.FieldBuilder, field.Parent.CurrentType, field.Location) :
-					new FieldExpr (field.FieldBuilder, field.Location);
+					new FieldExpr (field, field.Parent.CurrentType, field.Location) :
+					new FieldExpr (field, field.Location);
 							
 				inner_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
 				cached_inner_access.Add (ec.CurrentAnonymousMethod, inner_access);
@@ -1592,7 +1592,7 @@ namespace Mono.CSharp {
 			Label l_initialized = ig.DefineLabel ();
 
 			if (am_cache != null) {
-				ig.Emit (OpCodes.Ldsfld, am_cache.FieldBuilder);
+				ig.Emit (OpCodes.Ldsfld, am_cache.Spec.MetaInfo);
 				ig.Emit (OpCodes.Brtrue_S, l_initialized);
 			}
 
@@ -1637,9 +1637,9 @@ namespace Mono.CSharp {
 			ig.Emit (OpCodes.Newobj, constructor_method);
 
 			if (am_cache != null) {
-				ig.Emit (OpCodes.Stsfld, am_cache.FieldBuilder);
+				ig.Emit (OpCodes.Stsfld, am_cache.Spec.MetaInfo);
 				ig.MarkLabel (l_initialized);
-				ig.Emit (OpCodes.Ldsfld, am_cache.FieldBuilder);
+				ig.Emit (OpCodes.Ldsfld, am_cache.Spec.MetaInfo);
 			}
 		}
 

@@ -223,7 +223,7 @@ namespace Mono.CSharp {
 					if (host.hoisted_this != null) {
 						init = new List<Expression> (host.hoisted_params == null ? 1 : host.HoistedParameters.Count + 1);
 						HoistedThis ht = host.hoisted_this;
-						FieldExpr from = new FieldExpr (ht.Field.FieldBuilder, loc);
+						FieldExpr from = new FieldExpr (ht.Field, loc);
 						from.InstanceExpression = CompilerGeneratedThis.Instance;
 						init.Add (new ElementInitializer (ht.Field.Name, from, loc));
 					}
@@ -236,7 +236,7 @@ namespace Mono.CSharp {
 							HoistedParameter hp = (HoistedParameter) host.hoisted_params [i];
 							HoistedParameter hp_cp = (HoistedParameter) host.hoisted_params_copy [i];
 
-							FieldExpr from = new FieldExpr (hp_cp.Field.FieldBuilder, loc);
+							FieldExpr from = new FieldExpr (hp_cp.Field, loc);
 							from.InstanceExpression = CompilerGeneratedThis.Instance;
 
 							init.Add (new ElementInitializer (hp.Field.Name, from, loc));
@@ -273,7 +273,7 @@ namespace Mono.CSharp {
 					Label label_init = ig.DefineLabel ();
 
 					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldflda, host.PC.FieldBuilder);
+					ig.Emit (OpCodes.Ldflda, host.PC.Spec.MetaInfo);
 					IntConstant.EmitInt (ig, (int) Iterator.State.Start);
 					IntConstant.EmitInt (ig, (int) Iterator.State.Uninitialized);
 					ig.Emit (OpCodes.Call, TypeManager.int_interlocked_compare_exchange);
@@ -381,8 +381,8 @@ namespace Mono.CSharp {
 
 			protected override Expression DoResolve (ResolveContext ec)
 			{
-				FieldInfo = field.FieldBuilder;
-				type = TypeManager.TypeToCoreType (FieldInfo.FieldType);
+				spec = field.Spec;
+				type = TypeManager.TypeToCoreType (spec.FieldType);
 				InstanceExpression = new CompilerGeneratedThis (type, Location);
 				return base.DoResolve (ec);
 			}
@@ -624,11 +624,11 @@ namespace Mono.CSharp {
 			ILGenerator ig = ec.ig;
 
 			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec.MetaInfo);
 
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
 
 			// We only care if the PC is zero (start executing) or non-zero (don't do anything)
 			ig.Emit (OpCodes.Brtrue, move_next_error);
@@ -656,13 +656,13 @@ namespace Mono.CSharp {
 
 			current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
 			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec.MetaInfo);
 			ig.Emit (OpCodes.Stloc, current_pc);
 
 			// We're actually in state 'running', but this is as good a PC value as any if there's an abnormal exit
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
 
 			Label [] labels = new Label [1 + resume_points.Count];
 			labels [0] = ig.DefineLabel ();
@@ -697,7 +697,7 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
 
 			ig.MarkLabel (move_next_error);
 			ig.Emit (OpCodes.Ldc_I4_0);
@@ -734,13 +734,13 @@ namespace Mono.CSharp {
 			if (labels != null) {
 				current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
 				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, IteratorHost.PC.FieldBuilder);
+				ig.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec.MetaInfo);
 				ig.Emit (OpCodes.Stloc, current_pc);
 			}
 
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
 
 			if (labels != null) {
 				//SymbolWriter.StartIteratorDispatcher (ec.ig);
@@ -774,12 +774,12 @@ namespace Mono.CSharp {
 			// Store the new current
 			ig.Emit (OpCodes.Ldarg_0);
 			expr.Emit (ec);
-			ig.Emit (OpCodes.Stfld, IteratorHost.CurrentField.FieldBuilder);
+			ig.Emit (OpCodes.Stfld, IteratorHost.CurrentField.Spec.MetaInfo);
 
 			// store resume program-counter
 			ig.Emit (OpCodes.Ldarg_0);
 			IntConstant.EmitInt (ig, resume_pc);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.FieldBuilder);
+			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
 
 			// mark finally blocks as disabled
 			if (unwind_protect && skip_finally != null) {
@@ -860,7 +860,7 @@ namespace Mono.CSharp {
 				ig.Emit (OpCodes.Dup);
 				IntConstant.EmitInt (ig, (int)State.Uninitialized);
 
-				FieldInfo field = IteratorHost.PC.FieldBuilder;
+				FieldInfo field = IteratorHost.PC.Spec.MetaInfo;
 				if (Storey.MemberName.IsGeneric)
 					field = TypeBuilder.GetField (Storey.Instance.Type, field);
 
