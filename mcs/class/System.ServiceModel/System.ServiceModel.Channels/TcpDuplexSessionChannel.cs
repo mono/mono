@@ -165,7 +165,11 @@ namespace System.ServiceModel.Channels
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
-			return frame.ReadSizedMessage ();
+			var ret = frame.ReadSizedMessage ();
+			// FIXME: this may not be precise, but connection might be reused for some weird socket state transition (that's what happens). So as a workaround, avoid closing the session by sending EndRecord from this channel at OnClose().
+			if (ret == null)
+				session = null;
+			return ret;
 		}
 		
 		public override bool TryReceive (TimeSpan timeout, out Message message)

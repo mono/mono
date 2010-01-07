@@ -272,6 +272,10 @@ namespace System.ServiceModel.Channels
 				// it is already disconnected
 				return null;
 			}
+			// FIXME: .NET never results in -1, so there may be implementation mismatch in Socket (but might be in other places)
+			if (packetType == -1)
+				return null;
+			// FIXME: The client should wait for EndRecord, but if we try to send it, the socket blocks and becomes unable to work anymore.
 			if (packetType == EndRecord)
 				return null;
 			if (packetType != SizedEnvelopeRecord) {

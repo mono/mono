@@ -1,5 +1,15 @@
 2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpBinaryFrameManager.cs : treat EOF as interrupted stream too (it
+	  does not happen when communicating with .NET client but happens with
+	  mono). Seealso FIXME comment.
+	* TcpDuplexSessionChannel.cs : do not try to close session when it
+	  failed to read sized message. The connection is already dead.
+
+	  Fixed bug #567949.
+
+2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs :
 	  Write EndRecord only when the connection is available.
 	  Remove hack - do let ChannelDispatcher close the channel.
