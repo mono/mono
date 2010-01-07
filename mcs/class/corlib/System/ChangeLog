@@ -1,3 +1,8 @@
+2010-01-07  Jb Evain  <jbevain@novell.com>
+
+	* MonoType.cs (.MemberType): return the proper member type
+	for generic parameters.
+
 2010-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Convert.cs: Fix line endings in ToBase64String (bug #568778)

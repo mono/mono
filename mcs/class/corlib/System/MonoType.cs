@@ -593,7 +593,7 @@ namespace System
 
 		public override MemberTypes MemberType {
 			get {
-				if (DeclaringType != null)
+				if (DeclaringType != null && !IsGenericParameter)
 					return MemberTypes.NestedType;
 				else
 					return MemberTypes.TypeInfo;

@@ -1,3 +1,8 @@
+2010-01-07  Jb Evain  <jbevain@novell.com>
+
+	* TypeTest.cs: add test for the MemberType of
+	a generic parameter.
+
 2010-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConvertTest.cs: Add test case for #568778 and the default

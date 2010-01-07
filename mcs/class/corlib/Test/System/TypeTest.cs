@@ -1734,6 +1734,15 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (0, mi.Length);
 		}
 
+		[Test]
+		public void GenericParameterMemberType ()
+		{
+			var t = typeof (Foo<>).GetGenericArguments () [0];
+			Assert.IsNotNull (t);
+
+			Assert.AreEqual (MemberTypes.TypeInfo, t.MemberType);
+		}
+
 		public class ByRef0
 		{
 			public int field;
