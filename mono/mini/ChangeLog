@@ -1,5 +1,10 @@
 2010-01-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Add an ugly hack to fix #564695.
+	If LLVM decides to set the code model to Large, reset it to Default.
+
+2010-01-07  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c (mono_xdebug_flush): Export it so it is present in
 	stripped binaries as well.
 
