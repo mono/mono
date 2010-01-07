@@ -1,5 +1,15 @@
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object.c:
+	* icall.c:
+	* class.c: Add some FIXME for due to variant generic arguments.
+
+	object.c (mono_object_isinst_mbyref): Interfaces with variant generic arguments
+	can't use the simple bitfield check, so call mono_class_is_assignable_from if
+	the bitfield check fails.
+
+2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_is_assignable_from): Rework the generics variance code
 	to be easier to read and fix bugs in the case a non generic type implements a variant
 	interface.
