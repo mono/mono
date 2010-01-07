@@ -1,3 +1,7 @@
+2010-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* TermInfoDriver.cs (GetCursorPosition): Avoid waiting 1 sec here.
+
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* Array.cs: Fix ArrayReadOnlyList.CopyTo. Fixes #564095.

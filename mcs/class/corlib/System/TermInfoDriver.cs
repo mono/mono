@@ -478,7 +478,7 @@ namespace System {
 			int b;
 
 			// First, get any data in the input buffer.  Merely reduces the likelyhood of getting an error
-			int inqueue = ConsoleDriver.InternalKeyAvailable (1000);
+			int inqueue = ConsoleDriver.InternalKeyAvailable (0);
 			while (inqueue-- > 0){
 				b = stdin.Read ();
 				AddToBuffer (b);
