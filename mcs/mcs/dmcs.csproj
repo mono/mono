@@ -106,6 +106,7 @@
     </Compile>
     <Compile Include="location.cs">
     </Compile>
+    <Compile Include="method.cs" />
     <Compile Include="modifiers.cs">
     </Compile>
     <Compile Include="namespace.cs">

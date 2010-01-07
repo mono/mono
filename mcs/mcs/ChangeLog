@@ -1,5 +1,9 @@
 2010-01-07  Marek Safar  <marek.safar@gmail.com>
 
+	* method.cs: Move all method based declarations into a new file.
+
+2010-01-07  Marek Safar  <marek.safar@gmail.com>
+
 	* *.cs: Extract field specification.
 
 2009-12-17  Marek Safar  <marek.safar@gmail.com>

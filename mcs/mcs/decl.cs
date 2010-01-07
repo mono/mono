@@ -884,6 +884,10 @@ namespace Mono.CSharp {
 		#endregion
 	}
 
+	//
+	// Base member specification. A member specification contains
+	// member details which can alter in the context (e.g. generic instances)
+	//
 	public abstract class MemberSpec
 	{
 		[Flags]
@@ -938,16 +942,6 @@ namespace Mono.CSharp {
 	public interface IMemberDetails
 	{
 		ObsoleteAttribute GetObsoleteAttribute ();
-	}
-
-	public class MethodSpec : MemberSpec
-	{
-		public MethodInfo MetaInfo;
-
-		protected MethodSpec (IMemberDetails details, string name, Modifiers modifiers)
-			: base (details, name, modifiers)
-		{
-		}
 	}
 
 	/// <summary>

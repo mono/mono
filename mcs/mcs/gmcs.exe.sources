@@ -31,6 +31,7 @@ lambda.cs
 linq.cs
 literal.cs
 location.cs
+method.cs
 modifiers.cs
 namespace.cs
 nullable.cs
