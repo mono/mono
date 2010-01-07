@@ -1790,6 +1790,7 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (0, mi.Length);
 		}
 
+#if NET_2_0
 		[Test]
 		public void GenericParameterMemberType ()
 		{
@@ -1798,6 +1799,7 @@ PublicKeyToken=b77a5c561934e089"));
 
 			Assert.AreEqual (MemberTypes.TypeInfo, t.MemberType);
 		}
+#endif
 
 		public class ByRef0
 		{
