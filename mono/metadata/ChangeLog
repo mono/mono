@@ -1,3 +1,7 @@
+2010-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Remove some code duplication.
+
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* object.c: Update docs.
