@@ -1091,7 +1091,7 @@ namespace System.Xml
 			case BF.Int32:
 				return (int) current.TypedValue;
 			}
-			throw new InvalidOperationException ("Current content is not an integer");
+			throw new InvalidOperationException (String.Format ("Current content is not an integer. (Internal value type:{0:X02})", (int) node.ValueType));
 		}
 
 		public override long ReadContentAsLong ()
