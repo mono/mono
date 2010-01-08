@@ -1,5 +1,9 @@
 2010-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_Type_GetInterfaceMapData): This function is generics variance aware.
+
+2010-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_is_assignable_from_slow): Support variant
 	generic delegates.
 
