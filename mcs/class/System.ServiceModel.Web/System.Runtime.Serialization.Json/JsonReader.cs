@@ -126,13 +126,11 @@ namespace System.Runtime.Serialization.Json
 		public JsonReader (byte [] buffer, int offset, int count, Encoding encoding, XmlDictionaryReaderQuotas quotas, OnXmlDictionaryReaderClose onClose)
 		{
 			SetInput (buffer, offset, count, encoding, quotas, onClose);
-			LameSilverlightLiteralParser = true;
 		}
 
 		public JsonReader (Stream stream, Encoding encoding, XmlDictionaryReaderQuotas quotas, OnXmlDictionaryReaderClose onClose)
 		{
 			SetInput (stream, encoding, quotas, onClose);
-			LameSilverlightLiteralParser = true;
 		}
 
 		internal bool LameSilverlightLiteralParser { get; set; }
@@ -689,6 +687,11 @@ namespace System.Runtime.Serialization.Json
 						throw XmlError ("Invalid JSON number token. '.' must not occur after 'E' or 'e'");
 					floating = true;
 					break;
+				case '+':
+				case '-':
+					if (prev == 'E' || prev == 'e')
+						break;
+					goto default;
 				default:
 					if (!IsNumber (ch)) {
 						PushbackChar (ch);

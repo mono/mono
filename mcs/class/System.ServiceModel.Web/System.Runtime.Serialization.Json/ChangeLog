@@ -1,9 +1,24 @@
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeMap.cs : forward port r145077 (see change line for 2009-10-29).
+
+2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeMap.cs : handle [Serializable] objects such as KeyValuePair<,>
+	  like we do in 2.0. Removed previous workarounds. (Do not serialize
+	  and deserialize nonpublic members in "default" mappings.)
+
 2009-12-11  Chris Toshok  <toshok@ximian.com>
 
 	* TypeMap.cs (CreateDefaultTypeMap): only include non-public
 	property info when dealing with KeyValuePair<,>.  This is *not*
 	the way MS handles it, but we emulate things much better with this
 	hack.
+
+2009-12-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : e- and e+ was resulting in wrong parse error.
+	  This should fix part of bug #531904.
 
 2009-12-08  Chris Toshok  <toshok@ximian.com>
 
@@ -49,7 +64,7 @@
 	named, e.g., "falsifiable", and we'd need 4 characters worth of
 	pushback to recognize that correctly.
 
-2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+2009-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializer.cs, JsonReader.cs : Silverlight uses
 	  LAME parser that allows object member name as *raw* string
@@ -60,6 +75,11 @@
 	*  JsonSerializationReader.cs : reuse generic collection search
 	  logic in KnownTypeCollection.cs. Fixed bug #551671.
 
+2009-10-30  Andreia Gaita  <avidigal@novell.com>
+
+	* DataContractJsonSerializer.cs: SL accepts keys without "", so tweak
+	the data to fix the quotes before passing it to the deserializer
+
 2009-10-29  Chris Toshok  <toshok@ximian.com>
 
 	* TypeMap.cs (Deserialize): use
@@ -67,10 +87,7 @@
 	Activator.CreateInstance, since we shouldn't be invoking the
 	default ctor.
 
-2009-10-30  Andreia Gaita  <avidigal@novell.com>
-
-	* DataContractJsonSerializer.cs: SL accepts keys without "", so tweak
-	the data to fix the quotes before passing it to the deserializer
+	(forward ported to trunk on 2010-01-08 by atsushi)
 
 2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 

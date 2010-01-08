@@ -683,6 +683,12 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		}
 
 		[Test]
+		public void ReadInvalidNumber10 () // bug #531904
+		{
+			ReadToEnd (CreateReader ("4.29153442382814E-05"));
+		}
+
+		[Test]
 		[ExpectedException (typeof (XmlException))]
 		public void ReadInvalidObjectContent ()
 		{

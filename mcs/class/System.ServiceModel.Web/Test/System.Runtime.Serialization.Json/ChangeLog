@@ -3,7 +3,11 @@
 	* DataContractJsonSerializerTest.cs: add a test case for
 	non-public properties.
 
-2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+2009-12-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReaderTest.cs : another number parse case.
+
+2009-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializerTest.cs : added ignored test case that
 	  verifies 2.1 behavior (with another case that justifies removal
