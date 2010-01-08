@@ -471,5 +471,24 @@ namespace MonoTests.System.Linq.Expressions {
 			Assert.AreEqual (typeof (string), method.GetGenericArguments () [0]);
 			Assert.AreEqual (typeof (int), method.GetGenericArguments () [1]);
 		}
+
+		[Test]
+		public void CallNullableGetValueOrDefault () // #568989
+		{
+			var value = Expression.Parameter (typeof (int?), "value");
+			var default_parameter = Expression.Parameter (typeof (int), "default");
+
+			var getter = Expression.Lambda<Func<int?, int, int>> (
+				Expression.Call (
+					value,
+					"GetValueOrDefault",
+					Type.EmptyTypes,
+					default_parameter),
+				value,
+				default_parameter).Compile ();
+
+			Assert.AreEqual (2, getter (null, 2));
+			Assert.AreEqual (4, getter (4, 2));
+		}
 	}
 }
