@@ -1,10 +1,10 @@
 //
-// TransportSecurityBindingElement.cs
+// TransportSecurityBindingElementTest.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2009 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,68 +25,27 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System.Collections.Generic;
+using System;
 using System.Collections.ObjectModel;
+using System.Net;
 using System.Net.Security;
+using System.ServiceModel;
 using System.ServiceModel.Channels;
-using System.ServiceModel.Description;
 using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
+using System.Security.Cryptography.Xml;
+using NUnit.Framework;
 
-namespace System.ServiceModel.Channels
+namespace MonoTests.System.ServiceModel.Security
 {
-	public sealed class TransportSecurityBindingElement
-#if NET_2_1
-		: SecurityBindingElement
-#else
-		: SecurityBindingElement, IPolicyExportExtension
-#endif
+	[TestFixture]
+	public class TransportSecurityBindingElementTest
 	{
-		public TransportSecurityBindingElement ()
+		[Test]
+		public void DefaultValues ()
 		{
+			var be = new TransportSecurityBindingElement ();
 		}
 
-		private TransportSecurityBindingElement (
-			TransportSecurityBindingElement other)
-			: base (other)
-		{
-		}
-
-		public override BindingElement Clone ()
-		{
-			return new TransportSecurityBindingElement (this);
-		}
-
-		[MonoTODO]
-		protected override IChannelFactory<TChannel>
-			BuildChannelFactoryCore<TChannel> (
-			BindingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-#if !NET_2_1
-		[MonoTODO]
-		protected override IChannelListener<TChannel>
-			BuildChannelListenerCore<TChannel> (
-			BindingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public override T GetProperty<T> (BindingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		void IPolicyExportExtension.ExportPolicy (
-			MetadataExporter exporter,
-			PolicyConversionContext policyContext)
-		{
-			throw new NotImplementedException ();
-		}
-#endif
 	}
 }

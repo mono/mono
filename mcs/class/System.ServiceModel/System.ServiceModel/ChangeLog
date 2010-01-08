@@ -1,10 +1,32 @@
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientBase.cs : remove extra CWLs.
+
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AllEnums.cs :
+	  added ServiceContractGenerationOptions.EventBasedAsynchronousMethods.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : a bit more kindful error message.
+	* ClientProxyGenerator.cs : fix async parameter offset.
+
+2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : in AddBaseAddress(), use base_addresses
+	  instead of Description. It could be called in InitializeDescription.
+
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicHttpBinding.cs : handle transport security properties.
+
 2009-12-02  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CommunicationObjectAbortedException.cs, ServerTooBusyException.cs,
 	ServiceActivationException.cs: Fix base class
 	* ServiceKnownTypeAttribute.cs: Seal type and add missing 
 	[AttributeUsage] attribute
-	[Backport r147513]
 
 2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
@@ -12,8 +34,17 @@
 
 2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientBase.cs, ChannelFactory_1.cs, ChannelFactory.cs :
+	  more SL3 changes.
+
+2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SilverlightClientConfigLoader.cs : do not enter infinite loop at
 	  empty <binding> element.
+
+2009-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddress10.cs : added it to the 2.1 build for SL3 API.
 
 2009-11-05  Geoff Norton  <gnorton@novell.com>
 

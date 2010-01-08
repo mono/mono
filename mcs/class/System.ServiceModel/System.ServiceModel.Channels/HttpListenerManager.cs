@@ -111,8 +111,8 @@ namespace System.ServiceModel.Channels
 			opened_listeners = new Dictionary<Uri, HttpListener> ();
 		}
 
-		public HttpSimpleListenerManager (IChannelListener channelListener)
-			: base (channelListener)
+		public HttpSimpleListenerManager (IChannelListener channelListener, HttpTransportBindingElement source)
+			: base (channelListener, source)
 		{
 		}
 
@@ -121,6 +121,9 @@ namespace System.ServiceModel.Channels
 			lock (opened_listeners) {
 				if (!opened_listeners.ContainsKey (channelListener.Uri)) {
 					HttpListener listener = new HttpListener ();
+					listener.AuthenticationSchemes = Source.AuthenticationScheme;
+					listener.Realm = Source.Realm;
+					listener.UnsafeConnectionNtlmAuthentication = Source.UnsafeConnectionNtlmAuthentication;
 
 					string uriString = channelListener.Uri.ToString ();
 					if (!uriString.EndsWith ("/", StringComparison.Ordinal))
@@ -167,8 +170,8 @@ namespace System.ServiceModel.Channels
 	{
 		SvcHttpHandler http_handler;
 
-		public AspNetListenerManager (IChannelListener channelListener)
-			: base (channelListener)
+		public AspNetListenerManager (IChannelListener channelListener, HttpTransportBindingElement source)
+			: base (channelListener, source)
 		{
 			http_handler = SvcHttpHandlerFactory.GetHandlerForListener (channelListener);
 		}
@@ -209,19 +212,21 @@ namespace System.ServiceModel.Channels
 		AutoResetEvent wait_http_ctx = new AutoResetEvent (false);
 		List<HttpContextInfo> pending = new List<HttpContextInfo> ();
 
-public MetadataPublishingInfo MexInfo { get { return mex_info; } }
+		public MetadataPublishingInfo MexInfo { get { return mex_info; } }
+		public HttpTransportBindingElement Source { get; private set; }
 
 		static HttpListenerManager ()
 		{
 			registered_channels = new Dictionary<Uri, List<IChannelListener>> ();
 		}
 
-		protected HttpListenerManager (IChannelListener channelListener)
+		protected HttpListenerManager (IChannelListener channelListener, HttpTransportBindingElement source)
 		{
 			this.channel_listener = channelListener;
 			// FIXME: this cast should not be required, but current JIT somehow causes an internal error.
 			mex_info = ((IChannelListener) channelListener).GetProperty<MetadataPublishingInfo> ();
 			wsdl_instance = mex_info != null ? mex_info.Instance : null;
+			Source = source;
 		}
 
 		public void Open (TimeSpan timeout)

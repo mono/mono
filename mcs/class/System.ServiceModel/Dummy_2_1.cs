@@ -10,8 +10,6 @@ namespace System.ServiceModel
 }
 namespace System.ServiceModel.Channels
 {
-	[DataContract]
-	public class EndpointAddress10 {}
 	public interface ITransportTokenAssertionProvider {}
 }
 namespace System.ServiceModel.Configuration
@@ -30,7 +28,6 @@ namespace System.ServiceModel.Description
 }
 namespace System.ServiceModel.Dispatcher
 {
-	public interface IDispatchMessageFormatter {}
 }
 namespace System.ServiceModel.Security
 {

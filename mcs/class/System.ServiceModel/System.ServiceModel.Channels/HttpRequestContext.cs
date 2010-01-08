@@ -56,6 +56,19 @@ namespace System.ServiceModel.Channels
 			if (msg == null)
 				throw new ArgumentNullException ("msg");
 
+			// Handle DestinationUnreacheable as 400 (it is what .NET does).
+			if (msg.IsFault) {
+				// FIXME: isn't there any better way?
+				var mb = msg.CreateBufferedCopy (0x10000);
+				var fault = MessageFault.CreateFault (mb.CreateMessage (), 0x10000);
+				if (fault.Code.Name == "DestinationUnreachable") {
+					ctx.Response.StatusCode = 400;
+					return;
+				}
+				else
+					msg = mb.CreateMessage ();
+			}
+
 			// FIXME: should this be done here?
 			if (channel.MessageVersion.Addressing.Equals (AddressingVersion.None))
 				msg.Headers.Action = null; // prohibited

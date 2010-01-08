@@ -1,3 +1,38 @@
+2010-01-07  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources : ended up to remove
+	  *all* mannerless serialization tests.
+
+2010-01-06  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources : ended up to remove
+	  mannerless tests that block other tests.
+
+2009-12-03  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources:
+	  added HttpsTransportBindingElementTest.cs.
+
+2009-11-26  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources : fix file name case,
+	  which was not caught on windows.
+
+2009-11-25  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources, Dummy_2_1.cs:
+	  reflected a couple of SL3 updates.
+
+2009-11-17  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_System.ServiceModel.dll.sources :
+	  add binary message encoder support.
+
+2009-11-12  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_4_0_System.ServiceModel.dll.sources : 4.0 dll contains
+	  syndication stuff (moved from Sys.SM.Web.dll).
+
 2009-10-07  Astushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_System.ServiceModel.dll.sources :

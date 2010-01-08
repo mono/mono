@@ -77,12 +77,14 @@ namespace System.ServiceModel.Channels
 					"FIXME_InternalError",
 					version.Addressing.Namespace);
 
+#if !NET_2_1
 			// FIXME: set correct fault reason.
 			if (ctx.EndpointDispatcher.ChannelDispatcher.IncludeExceptionDetailInFaults) {
 				ExceptionDetail detail = new ExceptionDetail (error);
 				return Message.CreateMessage (version, fc,
 					"error occured", detail, ctx.IncomingMessageHeaders != null ? ctx.IncomingMessageHeaders.Action : null);
 			}
+#endif
 			return Message.CreateMessage (version, fc, "error occured", ctx.IncomingMessageHeaders.Action);
 		}
 

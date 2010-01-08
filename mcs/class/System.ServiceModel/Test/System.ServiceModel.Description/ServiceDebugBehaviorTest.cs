@@ -70,7 +70,7 @@ namespace MonoTests.System.ServiceModel.Description
 				host.AddServiceEndpoint (typeof (IMyContract), new BasicHttpBinding (), "e1");
 
 				Assert.AreEqual (0, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #1");
-
+				try {
 				host.Open ();
 
 				Assert.AreEqual (2, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #2");
@@ -95,8 +95,9 @@ namespace MonoTests.System.ServiceModel.Description
 
 				DispatchRuntime dr = ed.DispatchRuntime;
 				// TODO
-
+				} finally {
 				host.Close ();
+				}
 			}
 		}
 
@@ -108,11 +109,14 @@ namespace MonoTests.System.ServiceModel.Description
 
 				Assert.AreEqual (0, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #1");
 
+				try {
 				host.Open ();
 
 				Assert.AreEqual (1, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #2");
 
+				} finally {
 				host.Close ();
+				}
 			}
 		}
 
@@ -124,11 +128,13 @@ namespace MonoTests.System.ServiceModel.Description
 
 				Assert.AreEqual (0, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #1");
 
+				try {
 				host.Open ();
 
 				Assert.AreEqual (1, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #2");
-
+				} finally {
 				host.Close ();
+				}
 			}
 		}
 
@@ -140,6 +146,7 @@ namespace MonoTests.System.ServiceModel.Description
 
 				Assert.AreEqual (0, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #1");
 
+				try {
 				host.Open ();
 
 				Assert.AreEqual (2, host.ChannelDispatchers.Count, "ChannelDispatchers.Count #2");
@@ -171,8 +178,9 @@ namespace MonoTests.System.ServiceModel.Description
 				Assert.AreEqual ("*", dispOp.ReplyAction, "Operation.ReplyAction");
 				Assert.AreEqual ("Get", dispOp.Name, "Operation.Name");
 				//Assert.IsNotNull (dispOp.Invoker, "Operation.Invoker");
-
+				} finally {
 				host.Close ();
+				}
 			}
 		}
 
@@ -181,13 +189,14 @@ namespace MonoTests.System.ServiceModel.Description
 			using (ServiceHost host = new ServiceHost (typeof (MyService), CreateUri ("http://localhost:37564"))) {
 				host.AddServiceEndpoint (typeof (IMyContract), new BasicHttpBinding (), "");
 				host.Description.Behaviors.Find<ServiceDebugBehavior> ().HttpHelpPageUrl = new Uri ("http://localhost:37564/help");
-
+				try {
 				host.Open ();
 
 				Assert.IsNotNull (host.Extensions.Find<ServiceMetadataExtension> (), "ServiceMetadataExtension #1");
 				Assert.AreEqual (1, host.Extensions.FindAll<ServiceMetadataExtension> ().Count, "ServiceMetadataExtension #2");
-
+				} finally {
 				host.Close ();
+				}
 			}
 		}
 
@@ -200,13 +209,15 @@ namespace MonoTests.System.ServiceModel.Description
 				ServiceMetadataExtension extension = new ServiceMetadataExtension ();
 				host.Extensions.Add (extension);
 
+				try {
 				host.Open ();
 
 				Assert.IsNotNull (host.Extensions.Find<ServiceMetadataExtension> (), "ServiceMetadataExtension #1");
 				Assert.AreEqual (1, host.Extensions.FindAll<ServiceMetadataExtension> ().Count, "ServiceMetadataExtension #2");
 				Assert.AreEqual (extension, host.Extensions.Find<ServiceMetadataExtension> (), "ServiceMetadataExtension #3");
-
+				} finally {
 				host.Close ();
+				}
 			}
 		}
 

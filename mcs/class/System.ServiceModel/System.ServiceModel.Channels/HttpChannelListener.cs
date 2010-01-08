@@ -66,7 +66,7 @@ namespace System.ServiceModel.Channels
 
 		protected override HttpListenerManager CreateListenerManager ()
 		{
-			return new HttpSimpleListenerManager (this);
+			return new HttpSimpleListenerManager (this, Source);
 		}
 	}
 
@@ -93,14 +93,13 @@ namespace System.ServiceModel.Channels
 
 		protected override HttpListenerManager CreateListenerManager ()
 		{
-			return new AspNetListenerManager (this);
+			return new AspNetListenerManager (this, Source);
 		}
 	}
 
 	internal abstract class HttpChannelListenerBase<TChannel> : InternalChannelListenerBase<TChannel>
 		where TChannel : class, IChannel
 	{
-		HttpTransportBindingElement source;
 		BindingContext context;
 		List<TChannel> channels = new List<TChannel> ();
 		MessageEncoder encoder;
@@ -110,6 +109,12 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (context)
 		{
+			this.Source = source;
+			// The null Uri check looks weird, but it seems the listener can be built without it.
+			// See HttpTransportBindingElementTest.BuildChannelListenerWithoutListenUri().
+			if (Uri != null && source.Scheme != Uri.Scheme)
+				throw new ArgumentException (String.Format ("Requested listen uri scheme must be {0}, but was {1}.", source.Scheme, Uri.Scheme));
+
 			foreach (BindingElement be in context.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
@@ -120,6 +125,8 @@ namespace System.ServiceModel.Channels
 			if (encoder == null)
 				encoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
 		}
+
+		public HttpTransportBindingElement Source { get; private set; }
 
 		public HttpListenerManager ListenerManager {
 			get {  return httpChannelManager; }

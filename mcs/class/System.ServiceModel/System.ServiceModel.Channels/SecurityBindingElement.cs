@@ -27,12 +27,14 @@
 //
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.IdentityModel.Selectors;
-using System.IdentityModel.Tokens;
 using System.ServiceModel.Description;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
+#if !NET_2_1
+using System.IdentityModel.Selectors;
+using System.IdentityModel.Tokens;
 using System.ServiceModel.Security.Tokens;
+#endif
 
 namespace System.ServiceModel.Channels
 {
@@ -40,22 +42,24 @@ namespace System.ServiceModel.Channels
 	{
 		internal SecurityBindingElement ()
 		{
+#if !NET_2_1
 			DefaultAlgorithmSuite = SecurityAlgorithmSuite.Default;
 			MessageSecurityVersion = MessageSecurityVersion.Default;
-			IncludeTimestamp = true;
 			KeyEntropyMode = SecurityKeyEntropyMode.CombinedEntropy;
 			endpoint = new SupportingTokenParameters ();
 			operation = new Dictionary<string,SupportingTokenParameters> ();
 			opt_endpoint = new SupportingTokenParameters ();
 			opt_operation = new Dictionary<string,SupportingTokenParameters> ();
-			client_settings = new LocalClientSecuritySettings ();
 			service_settings = new LocalServiceSecuritySettings ();
+#endif
+			IncludeTimestamp = true;
+			LocalClientSettings = new LocalClientSecuritySettings ();
 		}
 
 		internal SecurityBindingElement (SecurityBindingElement other)
 		{
+#if !NET_2_1
 			alg_suite = other.alg_suite;
-			include_timestamp = other.include_timestamp;
 			key_entropy_mode = other.key_entropy_mode;
 			security_header_layout = other.security_header_layout;
 			msg_security_version = other.msg_security_version;
@@ -67,37 +71,35 @@ namespace System.ServiceModel.Channels
 			opt_operation = new Dictionary<string,SupportingTokenParameters> ();
 			foreach (KeyValuePair<string,SupportingTokenParameters> p in other.opt_operation)
 				opt_operation.Add (p.Key, p.Value.Clone ());
-			client_settings = other.client_settings.Clone ();
 			service_settings = other.service_settings.Clone ();
+#endif
+			IncludeTimestamp = other.IncludeTimestamp;
+			LocalClientSettings = other.LocalClientSettings.Clone ();
 		}
 
+#if !NET_2_1
 		SecurityAlgorithmSuite alg_suite;
-		bool include_timestamp;
 		SecurityKeyEntropyMode key_entropy_mode;
 		SecurityHeaderLayout security_header_layout;
 		MessageSecurityVersion msg_security_version;
 		SupportingTokenParameters endpoint, opt_endpoint;
 		IDictionary<string,SupportingTokenParameters> operation, opt_operation;
-		LocalClientSecuritySettings client_settings;
 		LocalServiceSecuritySettings service_settings;
+#endif
 
+		public bool IncludeTimestamp { get; set; }
+
+		public LocalClientSecuritySettings LocalClientSettings { get; private set; }
+
+#if !NET_2_1
 		public SecurityAlgorithmSuite DefaultAlgorithmSuite {
 			get { return alg_suite; }
 			set { alg_suite = value; }
 		}
 
-		public bool IncludeTimestamp {
-			get { return include_timestamp; }
-			set { include_timestamp = value; }
-		}
-
 		public SecurityKeyEntropyMode KeyEntropyMode {
 			get { return key_entropy_mode; }
 			set { key_entropy_mode = value; }
-		}
-
-		public LocalClientSecuritySettings LocalClientSettings {
-			get { return client_settings; }
 		}
 
 		public LocalServiceSecuritySettings LocalServiceSettings {
@@ -129,17 +131,12 @@ namespace System.ServiceModel.Channels
 		public IDictionary<string,SupportingTokenParameters> OptionalOperationSupportingTokenParameters {
 			get { return opt_operation; }
 		}
+#endif
 
 		[MonoTODO ("It supports only IRequestSessionChannel")]
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)
 		{
 			return context.CanBuildInnerChannelFactory<TChannel> ();
-		}
-
-		[MonoTODO ("It probably supports only IReplySessionChannel")]
-		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
-		{
-			return context.CanBuildInnerChannelListener<TChannel> ();
 		}
 
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
@@ -148,11 +145,25 @@ namespace System.ServiceModel.Channels
 			return BuildChannelFactoryCore<TChannel> (context);
 		}
 
+		protected abstract IChannelFactory<TChannel>
+			BuildChannelFactoryCore<TChannel> (BindingContext context);
+
+#if !NET_2_1
+		[MonoTODO ("It probably supports only IReplySessionChannel")]
+		public override bool CanBuildChannelListener<TChannel> (BindingContext context)
+		{
+			return context.CanBuildInnerChannelListener<TChannel> ();
+		}
+
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
 			return BuildChannelListenerCore<TChannel> (context);
 		}
+
+		protected abstract IChannelListener<TChannel> 
+			BuildChannelListenerCore<TChannel> (BindingContext context)
+			where TChannel : class, IChannel;
 
 		public virtual void SetKeyDerivation (bool requireDerivedKeys)
 		{
@@ -169,15 +180,16 @@ namespace System.ServiceModel.Channels
 		{
 			return base.ToString ();
 		}
-
-		protected abstract IChannelFactory<TChannel>
-			BuildChannelFactoryCore<TChannel> (BindingContext context);
-
-		protected abstract IChannelListener<TChannel> 
-			BuildChannelListenerCore<TChannel> (BindingContext context)
-			where TChannel : class, IChannel;
+#else
+		[MonoTODO]
+		public override T GetProperty<T> (BindingContext context)
+		{
+			return null;
+		}
+#endif
 
 		#region Factory methods
+#if !NET_2_1
 		public static SymmetricSecurityBindingElement 
 			CreateAnonymousForCertificateBindingElement ()
 		{
@@ -197,7 +209,9 @@ namespace System.ServiceModel.Channels
 		public static TransportSecurityBindingElement 
 			CreateCertificateOverTransportBindingElement (MessageSecurityVersion version)
 		{
-			throw new NotImplementedException ();
+			var be = new TransportSecurityBindingElement () { MessageSecurityVersion = version };
+			be.EndpointSupportingTokenParameters.SignedEncrypted.Add (new X509SecurityTokenParameters ());
+			return be;
 		}
 
 		[MonoTODO]
@@ -431,15 +445,21 @@ namespace System.ServiceModel.Channels
 			be.EndpointSupportingTokenParameters.SignedEncrypted.Add (utp);
 			return be;
 		}
+#endif
 
 		[MonoTODO]
 		public static TransportSecurityBindingElement 
 			CreateUserNameOverTransportBindingElement ()
 		{
-			throw new NotImplementedException ();
+			var be = new TransportSecurityBindingElement ();
+#if !NET_2_1 // FIXME: there should be whatever else to do for 2.1 instead.
+			be.EndpointSupportingTokenParameters.SignedEncrypted.Add (new UserNameSecurityTokenParameters ());
+#endif
+			return be;
 		}
 		#endregion
 
+#if !NET_2_1
 		// It seems almost internal, hardcoded like this (I tried
 		// custom parameters that sets IssuedTokenSecurityTokenParameters
 		// like below ones, but that didn't trigger this method).
@@ -454,5 +474,6 @@ namespace System.ServiceModel.Channels
 				parameters.IssuerBindingContext = issuerBindingContext;
 			}
 		}
+#endif
 	}
 }

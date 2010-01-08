@@ -126,6 +126,17 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		public void SetWSAddressingHeadersNullToNonSoap ()
+		{
+			Message m = Message.CreateMessage (MessageVersion.None, "test", 1);
+			m.Headers.From = null;
+			m.Headers.MessageId = null;
+			m.Headers.ReplyTo = null;
+			m.Headers.FaultTo = null;
+			m.Headers.RelatesTo = null;
+		}
+
+		[Test]
 		public void TestInsert ()
 		{
 			Message m = Message.CreateMessage (MessageVersion.Default, "test", 1);
@@ -320,19 +331,24 @@ namespace MonoTests.System.ServiceModel.Channels
 			h.GetReaderAtHeader (0);
 		}
 
-		// I doubt things wrt this work fine on WinFX; sometimes it
-		// does *not* raise an error, while sometimes it does. And it
-		// is basically consistent on every run against the same
-		// *_test.dll binary. Huh.
 		[Test]
 		[ExpectedException (typeof (MessageHeaderException))] // multiple headers: "Action"
-		[Category ("NotWorking")]
 		public void CopyHeadersFrom ()
 		{
 			Message msg = Message.CreateMessage (MessageVersion.Default, "urn:myaction");
 			Message msg2 = Message.CreateMessage (MessageVersion.Default, "urn:myaction2");
 			msg2.Headers.CopyHeadersFrom (msg);
 			Assert.AreEqual ("urn:myaction2", msg2.Headers.Action);
+		}
+
+		[Test]
+		public void CopyHeadersFrom2 ()
+		{
+			Message msg = Message.CreateMessage (MessageVersion.Default, "urn:myaction");
+			Message msg2 = Message.CreateMessage (MessageVersion.Default, "urn:myaction2");
+			msg2.Headers.Action = null;
+			msg2.Headers.CopyHeadersFrom (msg);
+			Assert.AreEqual ("urn:myaction", msg2.Headers.Action);
 		}
 
 		[Test]

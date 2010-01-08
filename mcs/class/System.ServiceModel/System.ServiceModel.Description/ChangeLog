@@ -1,3 +1,27 @@
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs :
+	  EventArgs are not nested classes.
+	  Result property of EventArgs is not IAsyncResult. It should be
+	  pulled from EndXxx() method, not from BeginXxx().
+
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs :
+	  add support for EventBasedAsynchronousMethods (3.5 SP1 / 2.1).
+
+2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : added a couple of FIXME comments.
+
+2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientCredentials.cs : more SL3 changes.
+
+2009-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientCredentials.cs : it is part of SL3 API, so adjusted for it.
+
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : channelDispatchers is keyed by URL,

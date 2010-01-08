@@ -62,6 +62,10 @@ namespace System.ServiceModel.Channels
 
 		ChannelListenerBase listener;
 
+		public ChannelListenerBase Listener {
+			get { return listener; }
+		}
+
 		public abstract EndpointAddress LocalAddress { get; }
 
 		public override T GetProperty<T> ()

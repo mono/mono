@@ -334,10 +334,14 @@ namespace System.ServiceModel.Dispatcher
 			TimeSpan close_timeout;
 			Func<IAsyncResult> channel_acceptor;
 			List<IChannel> channels = new List<IChannel> ();
+			AddressFilterMode address_filter_mode;
 
 			public ListenerLoopManager (ChannelDispatcher owner)
 			{
 				this.owner = owner;
+				var sba = owner.Host != null ? owner.Host.Description.Behaviors.Find<ServiceBehaviorAttribute> () : null;
+				if (sba != null)
+					address_filter_mode = sba.AddressFilterMode;
 			}
 
 			public void Setup (TimeSpan openTimeout)
@@ -374,6 +378,7 @@ namespace System.ServiceModel.Dispatcher
 					} catch (Exception ex) {
 						Console.WriteLine ("Exception during finishing channel acceptance.");
 						Console.WriteLine (ex);
+						creator_handle.Set ();
 					}
 				};
 				return delegate {
@@ -543,6 +548,8 @@ namespace System.ServiceModel.Dispatcher
 				var reply = (IReplyChannel) result.AsyncState;
 				if (reply.EndTryReceiveRequest (result, out rc))
 					ProcessRequest (reply, rc);
+				else
+					reply.Close ();
 			}
 
 			void TryReceiveDone (IAsyncResult result)
@@ -551,6 +558,8 @@ namespace System.ServiceModel.Dispatcher
 				var input = (IInputChannel) result.AsyncState;
 				if (input.EndTryReceive (result, out msg))
 					ProcessInput (input, msg);
+				else
+					input.Close ();
 			}
 
 			void SendEndpointNotFound (RequestContext rc, EndpointNotFoundException ex) 
@@ -623,9 +632,11 @@ namespace System.ServiceModel.Dispatcher
 
 			bool MessageMatchesEndpointDispatcher (Message req, EndpointDispatcher endpoint)
 			{
+				// FIXME: handle AddressFilterMode.Prefix too.
+
 				Uri to = req.Headers.To;
 				if (to == null)
-					return false;
+					return address_filter_mode == AddressFilterMode.Any;
 				if (to.AbsoluteUri == Constants.WsaAnonymousUri)
 					return false;
 				return endpoint.AddressFilter.Match (req) && endpoint.ContractFilter.Match (req);

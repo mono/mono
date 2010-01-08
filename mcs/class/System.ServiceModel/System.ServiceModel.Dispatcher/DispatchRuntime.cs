@@ -39,74 +39,44 @@ using System.Web.Security;
 
 namespace System.ServiceModel.Dispatcher
 {
-	[MonoTODO]
 	public sealed class DispatchRuntime
 	{
-		EndpointDispatcher endpoint_dispatcher;
-		AuditLogLocation audit_log_location;
-		bool automatic_input_session_shutdown = true;
-		bool suppress_audio_failure = true;
-		bool completes_tx_on_close, ignore_tx_msg_props, inpersonate;
-		bool release_tx_complete;
-		bool validate_must_understand = true;
 		ClientRuntime callback_client_runtime;
-		ConcurrencyMode concurrency_mode;
-		InstanceContext instance_context;
-		IInstanceProvider instance_provider;
-		IInstanceContextProvider instance_context_provider;
-		AuditLevel msg_auth_audit_level, svc_auth_audit_level;
-		IDispatchOperationSelector operation_selector;
-		PrincipalPermissionMode perm_mode =
-			PrincipalPermissionMode.UseWindowsGroups;
-		SynchronizationContext sync_context;
-		Type type;
-		DispatchOperation unhandled_dispatch_oper;
-		RoleProvider role_provider;
-		ServiceAuthorizationManager auth_manager;
 
-		SynchronizedCollection<IInputSessionShutdown>
-			shutdown_handlers =
-			new SynchronizedCollection<IInputSessionShutdown> ();
-		SynchronizedCollection<IInstanceContextInitializer> 
-			inst_ctx_initializers =
-			new SynchronizedCollection<IInstanceContextInitializer> ();
-		SynchronizedCollection<IDispatchMessageInspector>
-			msg_inspectors =
-			new SynchronizedCollection<IDispatchMessageInspector> ();
 		DispatchOperation.DispatchOperationCollection operations =
 			new DispatchOperation.DispatchOperationCollection ();
-		ReadOnlyCollection<IAuthorizationPolicy> ext_auth_policies;
 
 
 		internal DispatchRuntime (EndpointDispatcher dispatcher)
 		{
-			endpoint_dispatcher = dispatcher;
-			unhandled_dispatch_oper = new DispatchOperation (
+			EndpointDispatcher = dispatcher;
+			UnhandledDispatchOperation = new DispatchOperation (
 				this, "*", "*", "*");
+
+			AutomaticInputSessionShutdown = true;
+			PrincipalPermissionMode = PrincipalPermissionMode.UseWindowsGroups; // silly default value for us.
+			SuppressAuditFailure = true;
+			ValidateMustUnderstand = true;
+
+			InputSessionShutdownHandlers = new SynchronizedCollection<IInputSessionShutdown> ();
+			InstanceContextInitializers = new SynchronizedCollection<IInstanceContextInitializer> ();
+			MessageInspectors = new SynchronizedCollection<IDispatchMessageInspector> ();
 		}
 
-		public AuditLogLocation SecurityAuditLogLocation {
-			get { return audit_log_location; }
-			set { audit_log_location = value; }
-		}
+		[MonoTODO]
+		public AuditLogLocation SecurityAuditLogLocation { get; set; }
 
-		public bool AutomaticInputSessionShutdown {
-			get { return automatic_input_session_shutdown; }
-			set { automatic_input_session_shutdown = value; }
-		}
+		[MonoTODO]
+		public bool AutomaticInputSessionShutdown { get; set; }
 
 		public ChannelDispatcher ChannelDispatcher {
-			get { return endpoint_dispatcher.ChannelDispatcher; }
+			get { return EndpointDispatcher.ChannelDispatcher; }
 		}
 
-		public ConcurrencyMode ConcurrencyMode {
-			get { return concurrency_mode; }
-			set { concurrency_mode = value; }
-		}
+		[MonoTODO]
+		public ConcurrencyMode ConcurrencyMode { get; set; }
 
-		public EndpointDispatcher EndpointDispatcher {
-			get { return endpoint_dispatcher; }
-		}
+		public EndpointDispatcher EndpointDispatcher { get; private set; }
 
 		// FIXME: this is somewhat compromized solution to workaround
 		// an issue that this runtime-creation-logic could result in
@@ -125,116 +95,66 @@ namespace System.ServiceModel.Dispatcher
 			internal set { callback_client_runtime = value; }
 		}
 
-		public ReadOnlyCollection<IAuthorizationPolicy> ExternalAuthorizationPolicies {
-			get { return ext_auth_policies; }
-			set { ext_auth_policies = value; }
-		}
+		[MonoTODO]
+		public ReadOnlyCollection<IAuthorizationPolicy> ExternalAuthorizationPolicies { get; set; }
 
-		public bool IgnoreTransactionMessageProperty {
-			get { return ignore_tx_msg_props; }
-			set { ignore_tx_msg_props = value; }
-		}
+		[MonoTODO]
+		public bool IgnoreTransactionMessageProperty { get; set; }
 
-		public bool ImpersonateCallerForAllOperations {
-			get { return inpersonate; }
-			set { inpersonate = value; }
-		}
+		[MonoTODO]
+		public bool ImpersonateCallerForAllOperations { get; set; }
 
-		public SynchronizedCollection<IInputSessionShutdown> 
-			InputSessionShutdownHandlers {
-			get { return shutdown_handlers; }
-		}
+		[MonoTODO]
+		public SynchronizedCollection<IInputSessionShutdown> InputSessionShutdownHandlers { get; private set; }
 
-		public SynchronizedCollection<IInstanceContextInitializer> InstanceContextInitializers {
-			get { return inst_ctx_initializers; }
-		}
+		[MonoTODO]
+		public SynchronizedCollection<IInstanceContextInitializer> InstanceContextInitializers { get; private set; }
 
-		public IInstanceProvider InstanceProvider {
-			get { return instance_provider; }
-			set { instance_provider = value; }
-		}
+		public IInstanceProvider InstanceProvider { get; set; }
 
-		public IInstanceContextProvider InstanceContextProvider {
-			get { return instance_context_provider; }
-			set { instance_context_provider = value; }
-		}
+		public IInstanceContextProvider InstanceContextProvider { get; set; }
 
-		public AuditLevel MessageAuthenticationAuditLevel {
-			get { return msg_auth_audit_level; }
-			set { msg_auth_audit_level = value; }
-		}
+		[MonoTODO]
+		public AuditLevel MessageAuthenticationAuditLevel { get; set; }
 
-		public SynchronizedCollection<IDispatchMessageInspector> MessageInspectors {
-			get { return msg_inspectors; }
-		}
+		public SynchronizedCollection<IDispatchMessageInspector> MessageInspectors { get; private set; }
 
 		public SynchronizedKeyedCollection<string,DispatchOperation> Operations {
 			get { return operations; }
 		}
 
-		public IDispatchOperationSelector OperationSelector {
-			get { return operation_selector; }
-			set { operation_selector = value; }
-		}
+		public IDispatchOperationSelector OperationSelector { get; set; }
 
-		public PrincipalPermissionMode PrincipalPermissionMode {
-			get { return perm_mode; }
-			set { perm_mode = value; }
-		}
+		[MonoTODO]
+		public PrincipalPermissionMode PrincipalPermissionMode { get; set; }
 
-		public bool ReleaseServiceInstanceOnTransactionComplete {
-			get { return release_tx_complete; }
-			set { release_tx_complete = value; }
-		}
+		[MonoTODO]
+		public bool ReleaseServiceInstanceOnTransactionComplete { get; set; }
 
-		public RoleProvider RoleProvider {
-			get { return role_provider; }
-			set { role_provider = value; }
-		}
+		[MonoTODO]
+		public RoleProvider RoleProvider { get; set; }
 
-		public AuditLevel ServiceAuthorizationAuditLevel {
-			get { return svc_auth_audit_level; }
-			set { svc_auth_audit_level = value; }
-		}
+		[MonoTODO]
+		public AuditLevel ServiceAuthorizationAuditLevel { get; set; }
 
-		public ServiceAuthorizationManager ServiceAuthorizationManager {
-			get { return auth_manager; }
-			set { auth_manager = value; }
-		}
+		[MonoTODO]
+		public ServiceAuthorizationManager ServiceAuthorizationManager { get; set; }
 
-		public InstanceContext SingletonInstanceContext {
-			get { return instance_context; }
-			set { instance_context = value; }
-		}
+		public InstanceContext SingletonInstanceContext { get; set; }
 
-		public bool SuppressAuditFailure {
-			get { return suppress_audio_failure; }
-			set { suppress_audio_failure = value; }
-		}
+		[MonoTODO]
+		public bool SuppressAuditFailure { get; set; }
 
-		public SynchronizationContext SynchronizationContext {
-			get { return sync_context; }
-			set { sync_context = value; }
-		}
+		[MonoTODO]
+		public SynchronizationContext SynchronizationContext { get; set; }
 
-		public bool TransactionAutoCompleteOnSessionClose {
-			get { return completes_tx_on_close; }
-			set { completes_tx_on_close = value; }
-		}
+		[MonoTODO]
+		public bool TransactionAutoCompleteOnSessionClose { get; set; }
 
-		public Type Type {
-			get { return type; }
-			set { type = value; }
-		}
+		public Type Type { get; set; }
 
-		public DispatchOperation UnhandledDispatchOperation {
-			get { return unhandled_dispatch_oper; }
-			set { unhandled_dispatch_oper = value; }
-		}
+		public DispatchOperation UnhandledDispatchOperation { get; set; }
 
-		public bool ValidateMustUnderstand {
-			get { return validate_must_understand; }
-			set { validate_must_understand = value; }
-		}
+		public bool ValidateMustUnderstand { get; set; }
 	}
 }

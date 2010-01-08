@@ -118,6 +118,7 @@ namespace MonoTests.System.ServiceModel.Security.Tokens
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void Open ()
 		{
 			IssuedSecurityTokenProvider p = SetupProvider (new BasicHttpBinding ());

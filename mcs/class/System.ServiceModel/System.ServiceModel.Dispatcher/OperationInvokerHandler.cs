@@ -4,6 +4,7 @@ using System.Text;
 using System.ServiceModel.Channels;
 using System.ServiceModel;
 using System.Reflection;
+using System.Threading;
 
 namespace System.ServiceModel.Dispatcher
 {
@@ -24,8 +25,6 @@ namespace System.ServiceModel.Dispatcher
 			mrc.Operation = operation;
 			try {				
 				DoProcessRequest (mrc);
-				if (!operation.Invoker.IsSynchronous)
-					return true;
 				if (!mrc.Operation.IsOneWay)
 					Reply (mrc, true);
 			} catch (TargetInvocationException ex) {
@@ -49,30 +48,11 @@ namespace System.ServiceModel.Dispatcher
 			if (operation.Invoker.IsSynchronous) {
 				object result = operation.Invoker.Invoke (instance, parameters, out outParams);
 				HandleInvokeResult (mrc, outParams, result);
-			} else {// asynchronous
-				InvokeAsynchronous (mrc, instance, parameters);
-			}			
-		}
-
-		void InvokeAsynchronous (MessageProcessingContext mrc, object instance, object [] parameters)
-		{
-			DispatchOperation operation = mrc.Operation;
-			DispatchRuntime dispatchRuntime = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
-			operation.Invoker.InvokeBegin (instance, parameters,
-					delegate (IAsyncResult res) {						
-						try {
-							object result;
-							result = operation.Invoker.InvokeEnd (instance, out parameters, res);
-							HandleInvokeResult (mrc, parameters, result);
-							Reply (mrc, true);
-						} catch (Exception ex) {
-							mrc.ReplyMessage = BuildExceptionMessage (mrc, ex, dispatchRuntime.ChannelDispatcher.IncludeExceptionDetailInFaults);
-							if (!mrc.Operation.IsOneWay)
-								Reply (mrc, false);
-							ProcessCustomErrorHandlers (mrc, ex);
-						}				
-					},
-					null);			
+			} else {
+				var ar = operation.Invoker.InvokeBegin (instance, parameters, null, null);
+				object result = operation.Invoker.InvokeEnd (instance, out outParams, ar);
+				HandleInvokeResult (mrc, outParams, result);
+			}
 		}
 
 		void Reply (MessageProcessingContext mrc, bool useTimeout)

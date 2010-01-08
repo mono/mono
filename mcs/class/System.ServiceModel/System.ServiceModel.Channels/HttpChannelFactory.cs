@@ -44,6 +44,7 @@ namespace System.ServiceModel.Channels
 		public HttpChannelFactory (HttpTransportBindingElement source, BindingContext ctx)
 			: base (source, ctx)
 		{
+			ClientCredentials = ctx.BindingParameters.Find<ClientCredentials> ();
 			foreach (BindingElement be in ctx.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
@@ -58,6 +59,8 @@ namespace System.ServiceModel.Channels
 		public MessageEncoder MessageEncoder {
 			get { return encoder; }
 		}
+
+		public ClientCredentials ClientCredentials { get; private set; }
 
 		protected override TChannel OnCreateChannel (
 			EndpointAddress address, Uri via)

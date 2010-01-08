@@ -33,23 +33,30 @@ namespace System.ServiceModel.Channels
 	[MonoTODO]
 	public sealed class LocalClientSecuritySettings
 	{
+#if !NET_2_1
 		bool cache_cookies = true;
 		int cookie_renewal = 60;
 		bool detect_replays = true;
 		IdentityVerifier verifier = IdentityVerifier.CreateDefault ();
-		TimeSpan max_clock_skew = TimeSpan.FromMinutes (5);
 		TimeSpan max_cookie_cache_time = TimeSpan.MaxValue;
 		bool reconnect = true;
 		int replay_cache_size = 900000;
-		TimeSpan replay_window = TimeSpan.FromMinutes (5);
 		TimeSpan renewal_interval = TimeSpan.FromHours (10);
 		TimeSpan rollover_interval = TimeSpan.FromMinutes (5);
-		TimeSpan validity_duration = TimeSpan.FromMinutes (5);
+#endif
 
 		public LocalClientSecuritySettings ()
 		{
+			MaxClockSkew = TimeSpan.FromMinutes (5);
+			ReplayWindow = TimeSpan.FromMinutes (5);
+			TimestampValidityDuration = TimeSpan.FromMinutes (5);
 		}
 
+		public TimeSpan MaxClockSkew { get; set; }
+		public TimeSpan ReplayWindow { get; set; }
+		public TimeSpan TimestampValidityDuration { get; set; }
+
+#if !NET_2_1
 		public bool CacheCookies {
 			get { return cache_cookies; }
 			set { cache_cookies = value; }
@@ -66,10 +73,6 @@ namespace System.ServiceModel.Channels
 			get { return verifier; }
 			set { verifier = value; }
 		}
-		public TimeSpan MaxClockSkew {
-			get { return max_clock_skew; }
-			set { max_clock_skew = value; }
-		}
 		public TimeSpan MaxCookieCachingTime {
 			get { return max_cookie_cache_time; }
 			set { max_cookie_cache_time = value; }
@@ -82,10 +85,6 @@ namespace System.ServiceModel.Channels
 			get { return replay_cache_size; }
 			set { replay_cache_size = value; }
 		}
-		public TimeSpan ReplayWindow {
-			get { return replay_window; }
-			set { replay_window = value; }
-		}
 		public TimeSpan SessionKeyRenewalInterval {
 			get { return renewal_interval; }
 			set { renewal_interval = value; }
@@ -94,11 +93,7 @@ namespace System.ServiceModel.Channels
 			get { return rollover_interval; }
 			set { rollover_interval = value; }
 		}
-
-		public TimeSpan TimestampValidityDuration {
-			get { return validity_duration; }
-			set { validity_duration = value; }
-		}
+#endif
 
 		[MonoTODO ("What happens to IdentityVerifier?")]
 		public LocalClientSecuritySettings Clone ()

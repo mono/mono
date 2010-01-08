@@ -369,6 +369,7 @@ namespace System.ServiceModel.Description
 		InternalTypes = 4,
 		ClientClass = 8,
 		TypedMessages = 16,
+		EventBasedAsynchronousMethods = 32,
 	}
 }
 

@@ -23,7 +23,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 				t.Start ();
 				t.Stop ();
 			} catch (Exception ex) {
-				Assert.Fail ("Port {0} is not open. It is likely previous tests have failed and the port is kept opened");
+				Assert.Fail (String.Format ("Port {0} is not open. It is likely previous tests have failed and the port is kept opened", uri.Port));
 			}
 			return uri;
 		}

@@ -446,13 +446,14 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void BuildListenerWithoutServiceCertificate ()
 		{
 			ServiceHost host = new ServiceHost (typeof (Foo));
 			WSHttpBinding binding = new WSHttpBinding ();
 			binding.Security.Message.ClientCredentialType =
 				MessageCredentialType.IssuedToken;
-			host.AddServiceEndpoint ("Foo", binding, "http://localhost:8080");
+			host.AddServiceEndpoint (typeof (Foo).FullName, binding, "http://localhost:8080");
 			host.Open ();
 		}
 

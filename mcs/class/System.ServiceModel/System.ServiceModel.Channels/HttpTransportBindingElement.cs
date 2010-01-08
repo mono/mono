@@ -181,15 +181,14 @@ namespace System.ServiceModel.Channels
 			return new HttpTransportBindingElement (this);
 		}
 
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
 			// http://blogs.msdn.com/drnick/archive/2007/04/10/interfaces-for-getproperty-part-1.aspx
 #if !NET_2_1
 			if (typeof (T) == typeof (ISecurityCapabilities))
-				throw new NotImplementedException ();
+				return (T) (object) new HttpBindingProperties (this);
 			if (typeof (T) == typeof (IBindingDeliveryCapabilities))
-				throw new NotImplementedException ();
+				return (T) (object) new HttpBindingProperties (this);
 #endif
 			if (typeof (T) == typeof (TransferMode))
 				return (T) (object) TransferMode;
@@ -217,6 +216,61 @@ namespace System.ServiceModel.Channels
 			WsdlEndpointConversionContext context)
 		{
 			throw new NotImplementedException ();
+		}
+
+		class HttpBindingProperties : ISecurityCapabilities, IBindingDeliveryCapabilities
+		{
+			HttpTransportBindingElement source;
+
+			public HttpBindingProperties (HttpTransportBindingElement source)
+			{
+				this.source = source;
+			}
+
+			public bool AssuresOrderedDelivery {
+				get { return false; }
+			}
+
+			public bool QueuedDelivery {
+				get { return false; }
+			}
+
+			public ProtectionLevel SupportedRequestProtectionLevel {
+				get { return ProtectionLevel.None; }
+			}
+
+			public ProtectionLevel SupportedResponseProtectionLevel {
+				get { return ProtectionLevel.None; }
+			}
+
+			public bool SupportsClientAuthentication {
+				get { return source.AuthenticationScheme != AuthenticationSchemes.Anonymous; }
+			}
+
+			public bool SupportsServerAuthentication {
+				get {
+					switch (source.AuthenticationScheme) {
+					case AuthenticationSchemes.Negotiate:
+						return true;
+					default:
+						return false;
+					}
+				}
+			}
+
+			public bool SupportsClientWindowsIdentity {
+				get {
+					switch (source.AuthenticationScheme) {
+					case AuthenticationSchemes.Basic:
+					case AuthenticationSchemes.Digest: // hmm... why? but they return true on .NET
+					case AuthenticationSchemes.Negotiate:
+					case AuthenticationSchemes.Ntlm:
+						return true;
+					default:
+						return false;
+					}
+				}
+			}
 		}
 #endif
 	}

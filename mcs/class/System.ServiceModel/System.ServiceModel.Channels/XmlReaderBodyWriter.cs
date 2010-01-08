@@ -64,6 +64,8 @@ namespace System.ServiceModel.Channels
 		protected override void OnWriteBodyContents (
 			XmlDictionaryWriter writer)
 		{
+			if (reader == null && String.IsNullOrEmpty (xml))
+				return;
 			XmlReader r = reader ?? XmlReader.Create (new StringReader (xml));
 			r.MoveToContent ();
 			writer.WriteNode (r, false);
