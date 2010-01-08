@@ -1,3 +1,11 @@
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescriptionGenerator.cs : fix GetCallbackContract() to
+	  correctly retrieve ServiceContractAttribute from the service type,
+	  not the callback type. This ended up to get the bug #567672 sample
+	  working (but it will break at some stage as it involves some
+	  non-implemented classes).
+
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceContractGenerator.cs :

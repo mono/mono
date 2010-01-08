@@ -35,6 +35,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Transactions;
+using System.Threading;
 using NUnit.Framework;
 
 namespace MonoTests.System.ServiceModel
@@ -124,5 +125,77 @@ namespace MonoTests.System.ServiceModel
 			[OperationContract]
 			void Block (string s);
 		}
+
+		#region "bug #567672"
+		[Test]
+		public void CallbackExample1 ()
+		{
+			//Start service and use net.tcp binding
+			ServiceHost eventServiceHost = new ServiceHost (typeof (GreetingsService));
+			NetTcpBinding tcpBindingpublish = new NetTcpBinding ();
+			tcpBindingpublish.Security.Mode = SecurityMode.None;
+			eventServiceHost.AddServiceEndpoint (typeof (IGreetings), tcpBindingpublish, "net.tcp://localhost:8000/GreetingsService");
+			eventServiceHost.Open ();
+
+			//Create client proxy
+			NetTcpBinding clientBinding = new NetTcpBinding ();
+			clientBinding.Security.Mode = SecurityMode.None;
+			EndpointAddress ep = new EndpointAddress ("net.tcp://localhost:8000/GreetingsService");
+			ClientCallback cb = new ClientCallback ();
+			IGreetings proxy = DuplexChannelFactory<IGreetings>.CreateChannel (new InstanceContext (cb), clientBinding, ep);
+
+			//Call service
+			proxy.SendMessage ();
+
+			//Wait for callback - sort of hack, but better than using wait handle to possibly block tests.
+			Thread.Sleep (1000);
+
+			//Cleanup
+			eventServiceHost.Close ();
+
+			Assert.IsTrue (CallbackSent, "#1");
+			Assert.IsTrue (CallbackReceived, "#1");
+		}
+
+		public static bool CallbackSent, CallbackReceived;
+
+		//Service implementation
+		[ServiceBehavior (ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
+		public class GreetingsService : IGreetings
+		{
+			public void SendMessage ()
+			{
+				//Make a callback
+				IGreetingsCallback clientCallback = OperationContext.Current.GetCallbackChannel<IGreetingsCallback> ();
+
+				clientCallback.ShowMessage ("Mono and WCF are GREAT!");
+				CallbackBehaviorAttributeTest.CallbackSent = true;
+			}
+		}
+
+		// Client callback interface implementation
+		[CallbackBehavior (ConcurrencyMode = ConcurrencyMode.Reentrant, UseSynchronizationContext = false)]
+		public class ClientCallback : IGreetingsCallback
+		{
+			public void ShowMessage (string message)
+			{
+				CallbackBehaviorAttributeTest.CallbackReceived = true;
+			}
+		}
+
+		[ServiceContract (CallbackContract = typeof (IGreetingsCallback))]
+		public interface IGreetings
+		{
+			[OperationContract (IsOneWay = true)]
+			void SendMessage ();
+		}
+
+		[ServiceContract]
+		public interface IGreetingsCallback
+		{
+			[OperationContract (IsOneWay = true)]
+			void ShowMessage (string message);
+		}
+		#endregion
 	}
 }

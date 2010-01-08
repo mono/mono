@@ -1,5 +1,11 @@
 2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceProxyGenerator.cs, ServiceRuntimeChannel.cs :
+	  Pass service type to correctly retrieve ServiceContractAttribute
+	  from the service type, not callback type.
+
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : to open duplex callback channel, it must
 	  ensure to open the channel itself (not only its inner channel).
 

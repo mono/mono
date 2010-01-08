@@ -1,3 +1,9 @@
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs, InputOrReplyRequestProcessor.cs :
+	  Pass service type to correctly retrieve ServiceContractAttribute
+	  from the service type, not callback type.
+
 2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : make sure to unlock channel acceptor wait
