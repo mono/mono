@@ -1,0 +1,11 @@
+#include System.Runtime.Serialization.dll.sources
+
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/DataContractJsonSerializer.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/IXmlJsonReaderInitializer.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/IXmlJsonWriterInitializer.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/JsonReader.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/JsonReaderWriterFactory.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/JsonSerializationReader.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/JsonSerializationWriter.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/JsonWriter.cs
+../System.ServiceModel.Web/System.Runtime.Serialization.Json/TypeMap.cs
