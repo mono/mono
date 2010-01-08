@@ -1,3 +1,7 @@
+2010-01-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_iface_with_variant_constraint.cs: Constraints can be variant.
+
 2009-12-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* invalid_try_catch_with_zero_max_stack.il: Regression test for bug #562320.
