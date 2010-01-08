@@ -1,3 +1,10 @@
+2010-01-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Add some comments about why aot+clauses
+	is not supported yet.
+
+	* unwind.c (DW_EH_PE_absptr): Add more DW_EH_PE_ constants.
+
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c: All types with variant arguments must fallback to the
