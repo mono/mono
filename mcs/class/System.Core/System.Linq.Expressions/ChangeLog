@@ -1,3 +1,8 @@
+2010-01-08  Jb Evain  <jbevain@novell.com>
+
+	* Expression.cs (Call): properly deal with zero length array
+	of type arguments for non generic methods. Fixes #568989.
+
 2009-12-02 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Expression.cs: expression can be null for static getters. Patch from
