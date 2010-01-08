@@ -3197,6 +3197,33 @@ PublicKeyToken=b77a5c561934e089"));
 			}
 		}
 
+#if NET_4_0
+		interface IGetInterfaceMap<in T>
+		{
+		    string Bar (T t);
+		}
+
+		class GetInterfaceMap : IGetInterfaceMap<object>
+		{
+		    public string Bar (object t)
+		    {
+		        return t.GetType ().FullName;
+		    }
+		}
+
+		[Test]
+		public void GetInterfaceMapWorksWithVariantIfaces ()
+		{
+			InterfaceMapping res = typeof (GetInterfaceMap).GetInterfaceMap (typeof (IGetInterfaceMap <object>));
+			Assert.AreEqual (typeof (IGetInterfaceMap <object>), res.InterfaceType);
+			Assert.AreEqual (typeof (object), res.InterfaceMethods [0].GetParameters () [0].ParameterType);
+
+			res = typeof (GetInterfaceMap).GetInterfaceMap (typeof (IGetInterfaceMap <string>));
+			Assert.AreEqual (typeof (IGetInterfaceMap <string>), res.InterfaceType);
+			Assert.AreEqual (typeof (string), res.InterfaceMethods [0].GetParameters () [0].ParameterType);
+		}
+#endif
+
 		public abstract class Stream : IDisposable
 		{
 			public void Dispose ()

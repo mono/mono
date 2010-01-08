@@ -1,3 +1,7 @@
+2010-01-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Test for variant use of GetInterfaceMap.
+
 2010-01-07  Jb Evain  <jbevain@novell.com>
 
 	* TypeTest.cs: add test for the MemberType of
