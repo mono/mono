@@ -1,5 +1,8 @@
 2010-01-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_exception_debug_info): Set jinfo->from_llvm for LLVM
+	compiled methods.
+
 	* mini-llvm-cpp.cpp: Remove the unused ctx variable.
 
 	* mini-llvm.c (mono_llvm_emit_method): Add some comments about why aot+clauses
