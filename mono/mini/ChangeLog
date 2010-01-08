@@ -1,5 +1,12 @@
 2010-01-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (load_image): Add a SET_ERROR argument to set the loader
+	error if loading an assembly fails.
+	(mono_aot_plt_resolve): Return NULL instead of asserting if loading fails.
+
+	* mini-trampolines.c (mono_aot_plt_trampoline): Throw a pending loader error
+	if exists.
+
 	* aot-runtime.c (decode_exception_debug_info): Set jinfo->from_llvm for LLVM
 	compiled methods.
 
