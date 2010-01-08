@@ -269,13 +269,8 @@ $(makefrag) $(test_response) $(test_makefrag) $(btest_response) $(btest_makefrag
 
 Q_MDOC_UP=$(if $(V),,@echo "MDOC-UP [$(PROFILE)] $(notdir $(@))";)
 MDOC_UP  =$(Q_MDOC_UP) \
-	if `echo $(PROFILE) | grep ^net_1_ > /dev/null 2>/dev/null` ; then    \
-		$(RUNTIME) $(topdir)/tools/mdoc/monodocer1.exe                      \
-			-path:Documentation/en -assembly:$(the_lib) ;                     \
-	else                                                                  \
 		$(RUNTIME) $(topdir)/tools/mdoc/mdoc.exe update --delete            \
-			-o Documentation/en $(the_lib) ;                                  \
-	fi
+			-o Documentation/en $(the_lib)
 
 doc-update-local: $(the_libdir)/.doc-stamp
 

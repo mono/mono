@@ -1,3 +1,10 @@
+2010-01-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* library.make: Update $(MDOC_UP) to remove the net_1_ detection.
+	  mdoc 2.4 moved to Cecil and stopped building monodocer1, rendering 
+	  the check meaningless, and current trunk doesn't build the 1.0
+	  profile anyway, making the check more meaningless.
+
 2009-12-17  Marek Safar  <marek.safar@gmail.com>
 
 	* common/basic.make: Use bootstrap compiler only for compilation.
