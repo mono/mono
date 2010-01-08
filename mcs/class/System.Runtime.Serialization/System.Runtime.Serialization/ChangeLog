@@ -1,3 +1,9 @@
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs, KnownTypeCollection.cs : differentiate
+	  [DataContract(Namespace=null)] and [DataContract(Namespace="")].
+	  Fixed bug #568763.
+
 2009-12-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DataContractSerializer.cs: Add two missing methods for FX3.0 

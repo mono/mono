@@ -527,7 +527,7 @@ namespace System.Runtime.Serialization
 				ns = DefaultClrNamespaceBase + type.Namespace;
 
 			if (name == null)
-				name = type.Namespace == null || type.Namespace.Length == 0 ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
+				name = type.Namespace == null ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
 
 			return new QName (name, ns);
 		}

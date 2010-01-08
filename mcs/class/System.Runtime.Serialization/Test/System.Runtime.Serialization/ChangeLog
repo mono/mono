@@ -1,3 +1,7 @@
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSrializerTest.cs : added test for bug #568763.
+
 2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractExporterTest.cs : disable some tests that started
