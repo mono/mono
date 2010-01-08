@@ -1,5 +1,13 @@
 2010-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_is_assignable_from_slow): Support variant
+	generic delegates.
+
+	* class.c (mono_class_implement_interface_slow): Support types with
+	variant generic arguments.
+
+2010-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Remove some code duplication.
 
 2010-01-07  Rodrigo Kumpera  <rkumpera@novell.com>
