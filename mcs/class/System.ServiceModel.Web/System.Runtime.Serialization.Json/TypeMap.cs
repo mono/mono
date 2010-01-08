@@ -33,6 +33,7 @@ using System.Globalization;
 using System.IO;
 using System.Linq;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
 
@@ -168,12 +169,7 @@ namespace System.Runtime.Serialization.Json
 		public object Deserialize (JsonSerializationReader jsr)
 		{
 			XmlReader reader = jsr.Reader;
-#if NET_2_1
-			// should it reject non-public constructor?
-			object ret = Activator.CreateInstance (type);
-#else
-			object ret = Activator.CreateInstance (type, true);
-#endif
+			object ret = FormatterServices.GetUninitializedObject (type);
 			Dictionary<TypeMapMember,bool> filled = new Dictionary<TypeMapMember,bool> ();
 
 			reader.ReadStartElement ();

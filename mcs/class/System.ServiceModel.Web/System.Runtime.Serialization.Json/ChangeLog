@@ -1,3 +1,7 @@
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeMap.cs : forward port r145077 (see change line for 2009-10-29).
+
 2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeMap.cs : handle [Serializable] objects such as KeyValuePair<,>
@@ -75,6 +79,15 @@
 
 	* DataContractJsonSerializer.cs: SL accepts keys without "", so tweak
 	the data to fix the quotes before passing it to the deserializer
+
+2009-10-29  Chris Toshok  <toshok@ximian.com>
+
+	* TypeMap.cs (Deserialize): use
+	FormatterServices.GetUninitializedObject instead of
+	Activator.CreateInstance, since we shouldn't be invoking the
+	default ctor.
+
+	(forward ported to trunk on 2010-01-08 by atsushi)
 
 2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
