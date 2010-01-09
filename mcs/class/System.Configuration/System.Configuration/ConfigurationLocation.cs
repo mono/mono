@@ -36,6 +36,8 @@ namespace System.Configuration {
 
 	public class ConfigurationLocation
 	{
+		static readonly char[] pathTrimChars = { '/' };
+		
 		string path;
 		Configuration configuration;
 		Configuration parent;
@@ -57,6 +59,8 @@ namespace System.Configuration {
 					case '\\':
 						throw new ConfigurationErrorsException ("<location> path attribute must be a relative virtual path.  It cannot start with any of ' ' '.' '/' or '\\'.");
 				}
+
+				path = path.TrimEnd (pathTrimChars);
 			}
 			
 			this.path = path;

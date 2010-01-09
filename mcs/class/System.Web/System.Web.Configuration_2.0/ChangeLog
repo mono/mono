@@ -1,3 +1,13 @@
+2010-01-09  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: GetSection properly handles looking
+	up and caching of <location> instances. Part of fix for bug
+	#568441
+
+	* WebConfigurationHost.cs: GetConfigPathFromLocationSubPath
+	calculatesthe path relative to the current config file path. Part
+	of fix for bug #568441
+
 2009-12-02  Marek Habersack  <mhabersack@novell.com>
 
 	* CompilationSection.cs: added two properties -
