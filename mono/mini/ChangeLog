@@ -1,3 +1,8 @@
+2010-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (transport_connect): comment out freeaddrinfo calls under win32,
+	since it is not supported in win2000.
+
 2010-01-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Add an ugly hack to fix #564695.
