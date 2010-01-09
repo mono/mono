@@ -63,13 +63,14 @@ namespace System.Configuration {
 			this.system = parent.system;
 			this.rootGroup = parent.rootGroup;
 			this.locationSubPath = locationSubPath;
+			this.configPath = parent.ConfigPath;
 		}
 		
 		internal Configuration (InternalConfigurationSystem system, string locationSubPath)
 		{
 			hasFile = true;
 			this.system = system;
-			
+
 			system.InitForConfiguration (ref locationSubPath, out configPath, out locationConfigPath);
 			
 			Configuration parent = null;
@@ -85,18 +86,21 @@ namespace System.Configuration {
 		
 		internal Configuration FindLocationConfiguration (string relativePath, Configuration defaultConfiguration)
 		{
-			ConfigurationLocation loc = Locations.Find (relativePath);
-			
 			Configuration parentConfig = defaultConfiguration;
-			
-			if (LocationConfigPath != null) {
+
+			if (!String.IsNullOrEmpty (LocationConfigPath)) {
 				Configuration parentFile = GetParentWithFile ();
 				if (parentFile != null) {
-					string parentRelativePath = system.Host.GetConfigPathFromLocationSubPath (LocationConfigPath, relativePath);
+					string parentRelativePath = system.Host.GetConfigPathFromLocationSubPath (configPath, relativePath);
 					parentConfig = parentFile.FindLocationConfiguration (parentRelativePath, defaultConfiguration);
 				}
 			}
 
+			string relConfigPath = configPath.Substring (1) + "/";
+			if (relativePath.StartsWith (relConfigPath, StringComparison.Ordinal))
+				relativePath = relativePath.Substring (relConfigPath.Length);
+
+			ConfigurationLocation loc = Locations.Find (relativePath);
 			if (loc == null)
 				return parentConfig;
 			
