@@ -3,6 +3,7 @@
 //
 // Authors:
 //  Lluis Sanchez Gual (lluis@novell.com)
+//  Marek Habersack <mhabersack@novell.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -23,7 +24,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -87,9 +88,19 @@ namespace System.Web.Configuration
 			throw new NotImplementedException ();
 		}
 		
-		public virtual string GetConfigPathFromLocationSubPath (string configPath, string locatinSubPath)
+		public virtual string GetConfigPathFromLocationSubPath (string configPath, string locationSubPath)
 		{
-			return configPath + "/" + locatinSubPath;
+			if (!String.IsNullOrEmpty (locationSubPath) && !String.IsNullOrEmpty (configPath)) {
+				string relConfigPath = configPath.Length == 1 ? null : configPath.Substring (1) + "/";
+				if (relConfigPath != null && locationSubPath.StartsWith (relConfigPath, StringComparison.Ordinal))
+					locationSubPath = locationSubPath.Substring (relConfigPath.Length);
+			}
+			
+			string ret = configPath + "/" + locationSubPath;
+			if (!String.IsNullOrEmpty (ret) && ret [0] == '/')
+				return ret.Substring (1);
+			
+			return ret;
 		}
 		
 		public virtual Type GetConfigType (string typeName, bool throwOnError)
@@ -185,17 +196,14 @@ namespace System.Web.Configuration
 				locationConfigPath = null;
 			} else {
 				int i;
-				if (locationSubPath == null)
-				{
+				if (locationSubPath == null) {
 					configPath = fullPath;
 					if (configPath.Length > 1)
 						configPath = VirtualPathUtility.RemoveTrailingSlash (configPath);
-				}
-				else
+				} else
 					configPath = locationSubPath;
-
-				if (configPath == HttpRuntime.AppDomainAppVirtualPath
-				    || configPath == "/")
+				
+				if (configPath == HttpRuntime.AppDomainAppVirtualPath || configPath == "/")
 					i = -1;
 				else
 					i = configPath.LastIndexOf ("/");

@@ -4,6 +4,7 @@
 // Authors:
 // 	Lluis Sanchez Gual (lluis@novell.com)
 // 	Chris Toshok (toshok@ximian.com)
+//      Marek Habersack <mhabersack@novell.com>
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -24,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
 //
 
 #if NET_2_0
@@ -50,7 +51,8 @@ namespace System.Web.Configuration {
 	public static class WebConfigurationManager
 	{
 		const int SAVE_LOCATIONS_CHECK_INTERVAL = 6000; // milliseconds
-		
+
+		static readonly char[] pathTrimChars = { '/' };
 		static readonly object suppressAppReloadLock = new object ();
 		static readonly object saveLocationsCacheLock = new object ();
 #if SYSTEMCORE_DEP
@@ -411,30 +413,58 @@ namespace System.Web.Configuration {
 			return GetSection (sectionName, path, HttpContext.Current);
 		}
 
+		static bool LookUpLocation (string relativePath, ref _Configuration defaultConfiguration)
+		{
+			if (String.IsNullOrEmpty (relativePath))
+				return false;
+
+			_Configuration cnew = defaultConfiguration.FindLocationConfiguration (relativePath, defaultConfiguration);
+			if (cnew == defaultConfiguration)
+				return false;
+
+			defaultConfiguration = cnew;
+			return true;
+		}
+
 		internal static object GetSection (string sectionName, string path, HttpContext context)
 		{
-			// FindWebConfig must not be used here with its result being passed to
-			// OpenWebConfiguration below. The reason is that if we have a request for
-			// ~/somepath/, but FindWebConfig returns ~/ and the ~/web.config contains
-			// <location path="somepath"> then OpenWebConfiguration will NOT return the
-			// contents of <location>, thus leading to bugs (ignored authorization
-			// section for instance)
-			string config_vdir = FindWebConfig (path);
-			if (String.IsNullOrEmpty (config_vdir))
-				config_vdir = "/";
-
-			int sectionCacheKey = GetSectionCacheKey (sectionName, config_vdir);
-			object cachedSection;
+			if (String.IsNullOrEmpty (sectionName))
+				return null;
+			
+			_Configuration c = OpenWebConfiguration (path, null, null, null, null, null, false);
+			string configPath = c.ConfigPath;
+			int baseCacheKey = 0;
+			int cacheKey;
+			bool pathPresent = !String.IsNullOrEmpty (path);
+			string locationPath = null;
 			bool locked = false;
 
+			if (pathPresent)
+				locationPath = "location_" + path;
+			
+			baseCacheKey = sectionName.GetHashCode ();
+			if (configPath != null)
+				baseCacheKey ^= configPath.GetHashCode ();
+			
 			try {
 #if SYSTEMCORE_DEP
 				sectionCacheLock.EnterReadLock ();
 #endif
 				locked = true;
 				
-				if (sectionCache.TryGetValue (sectionCacheKey, out cachedSection) && cachedSection != null)
-					return cachedSection;
+				object o;
+				if (pathPresent) {
+					cacheKey = baseCacheKey ^ locationPath.GetHashCode ();
+					if (sectionCache.TryGetValue (cacheKey, out o))
+						return o;
+				
+					cacheKey = baseCacheKey ^ path.GetHashCode ();
+					if (sectionCache.TryGetValue (cacheKey, out o))
+						return o;
+				}
+				
+				if (sectionCache.TryGetValue (baseCacheKey, out o))
+					return o;
 			} finally {
 #if SYSTEMCORE_DEP
 				if (locked)
@@ -442,14 +472,38 @@ namespace System.Web.Configuration {
 #endif
 			}
 
-			HttpRequest req = context != null ? context.Request : null;
-			_Configuration c = OpenWebConfiguration (path, /* path */
-								 null, /* site */
-					 			 req != null ? VirtualPathUtility.GetDirectory (req.Path) : null, /* locationSubPath */
-								 null, /* server */
-								 null, /* userName */
-								 null, /* password */
-								 false  /* path from FindWebConfig */);
+			string cachePath = null;
+			if (pathPresent) {
+				string relPath;
+				
+				if (VirtualPathUtility.IsRooted (path)) {
+					if (path [0] == '~')
+						relPath = path.Substring (2);
+					else if (path [0] == '/')
+						relPath = path.Substring (1);
+					else
+						relPath = path;
+				} else
+					relPath = path;
+
+				_Configuration cnew;
+
+				HttpRequest req = context != null ? context.Request : null;
+				if (req != null) {
+					string vdir = VirtualPathUtility.GetDirectory (req.Path);
+					if (vdir != null) {
+						vdir = vdir.TrimEnd (pathTrimChars);
+						if (String.Compare (c.ConfigPath, vdir, StringComparison.Ordinal) != 0 && LookUpLocation (vdir.Trim (pathTrimChars), ref c))
+							cachePath = path;
+					}
+				}
+				
+				if (LookUpLocation (relPath, ref c))
+					cachePath = locationPath;
+				else
+					cachePath = path;
+			}
+
 			ConfigurationSection section = c.GetSection (sectionName);
 			if (section == null)
 				return null;
@@ -461,18 +515,20 @@ namespace System.Web.Configuration {
 				collection = new KeyValueMergedCollection (HttpContext.Current, (NameValueCollection) value);
 				value = collection;
 			}
-
-			AddSectionToCache (sectionCacheKey, value);
-			return value;
 #else
 #if MONOWEB_DEP
 			object value = SettingsMappingManager.MapSection (get_runtime_object.Invoke (section, new object [0]));
 #else
 			object value = null;
 #endif
-			AddSectionToCache (sectionCacheKey, value);
-			return value;
 #endif
+			if (cachePath != null)
+				cacheKey = baseCacheKey ^ cachePath.GetHashCode ();
+			else
+				cacheKey = baseCacheKey;
+			
+			AddSectionToCache (cacheKey, value);
+			return value;
 		}
 		
 		static string MapPath (HttpRequest req, string virtualPath)
@@ -638,13 +694,6 @@ namespace System.Web.Configuration {
 #endif
 			}
 		}
-
-		static int GetSectionCacheKey (string sectionName, string vdir)
-		{
-			return (sectionName != null ? sectionName.GetHashCode () : 0) ^
-				((vdir != null ? vdir.GetHashCode () : 0) + 37);
-		}
-
 		
 #region stuff copied from WebConfigurationSettings
 #if TARGET_J2EE
