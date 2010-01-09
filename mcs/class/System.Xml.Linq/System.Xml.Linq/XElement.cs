@@ -109,6 +109,25 @@ namespace System.Xml.Linq
 			return element.Value == null ? (DateTime?) null : XmlConvert.ToDateTime (element.Value, XmlDateTimeSerializationMode.RoundtripKind);
 		}
 
+#if !TARGET_JVM // Same as for System.Xml.XmlConvert.ToDateTimeOffset
+
+		public static explicit operator DateTimeOffset (XElement element)
+		{
+			if (element == null)
+				throw new ArgumentNullException ("element");
+			return XmlConvert.ToDateTimeOffset (element.Value);
+		}
+
+		public static explicit operator DateTimeOffset? (XElement element)
+		{
+			if (element == null)
+				return null;
+			
+			return element.Value == null ? (DateTimeOffset?) null : XmlConvert.ToDateTimeOffset (element.Value);
+		}
+
+#endif
+
 		public static explicit operator decimal (XElement element)
 		{
 			if (element == null)
