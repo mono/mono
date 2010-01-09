@@ -1,3 +1,8 @@
+2010-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (transport_connect): comment out freeaddrinfo calls under win32,
+	since it is not supported in win2000.
+
 2010-01-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (load_image): Add a SET_ERROR argument to set the loader
