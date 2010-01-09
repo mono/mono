@@ -537,21 +537,31 @@ namespace System.Windows.Forms
 		public int Value {
 			get { return position; }
 			set {
-				if (value < Minimum || value > Maximum)
-					throw new ArgumentException(
-						string.Format("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
-				
-				if (position != value) {													
-					position = value;					
-
-					// XXX any reason we don't call OnValueChanged here?
-					EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
-					if (eh != null)
-						eh (this, EventArgs.Empty);
-
-					Invalidate (thumb_area);
-				}				
+				SetValue (value, false);
 			}
+		}
+
+		void SetValue (int value, bool fire_onscroll)
+		{
+			if (value < Minimum || value > Maximum)
+				throw new ArgumentException(
+						String.Format ("'{0}' is not a valid value for 'Value'. 'Value' should be between 'Minimum' and 'Maximum'", value));
+
+			if (position == value)
+				return;
+
+			position = value;
+
+			// OnScroll goes before OnValueChanged
+			if (fire_onscroll)
+				OnScroll (EventArgs.Empty);
+
+			// XXX any reason we don't call OnValueChanged here?
+			EventHandler eh = (EventHandler)(Events [ValueChangedEvent]);
+			if (eh != null)
+				eh (this, EventArgs.Empty);
+
+			Invalidate (thumb_area);
 		}
 
 		#endregion //Public Properties
@@ -695,14 +705,14 @@ namespace System.Windows.Forms
 		private void UpdatePos (int newPos, bool update_trumbpos)
 		{
 			if (newPos < minimum){
-				Value = minimum;
+				SetValue (minimum, true);
 			}
 			else {
 				if (newPos > maximum) {
-					Value = maximum;
+					SetValue (maximum, true);
 				}
 				else {
-					Value = newPos;
+					SetValue (newPos, true);
 				}
 			}
 		}
@@ -712,7 +722,6 @@ namespace System.Windows.Forms
     		{    			
 			UpdatePos (position + LargeChange, true);
 			Invalidate (thumb_area);
-			OnScroll (new EventArgs ());
     		}
 
 			// Used by UIA implementation, so making internal
@@ -720,21 +729,18 @@ namespace System.Windows.Forms
     		{
 			UpdatePos (position - LargeChange, true);
 			Invalidate (thumb_area);
-			OnScroll (new EventArgs ());
     		}
 
 		private void SmallIncrement ()
     		{    			
 			UpdatePos (position + SmallChange, true);
 			Invalidate (thumb_area);
-			OnScroll (new EventArgs ());
     		}
 
     		private void SmallDecrement ()
     		{
 			UpdatePos (position - SmallChange, true);
 			Invalidate (thumb_area);
-			OnScroll (new EventArgs ());	
     		}
     		
 		private void OnMouseUpTB (object sender, MouseEventArgs e)
@@ -821,13 +827,9 @@ namespace System.Windows.Forms
     			mouse_moved = true;
 
     			/* Moving the thumb */
-    			if (thumb_pressed) {
-    				int old_value = Value;
-				Value = ThemeEngine.Current.TrackBarValueFromMousePosition (e.X, e.Y, this);			
-    				
-    				if (Value != old_value)
-    					OnScroll (EventArgs.Empty);
-			}
+    			if (thumb_pressed)
+				SetValue (ThemeEngine.Current.TrackBarValueFromMousePosition (e.X, e.Y, this), true);
+
 			ThumbEntered = GetRealThumbRectangle ().Contains (e.Location);
     		}
 
@@ -892,16 +894,16 @@ namespace System.Windows.Forms
 
 			case Keys.Home:
 				if (horiz)
-					Value = Minimum;
+					SetValue (Minimum, true);
 				else
-					Value = Maximum;
+					SetValue (Maximum, true);
 				break;
 
 			case Keys.End:
 				if (horiz)
-					Value = Maximum;
+					SetValue (Maximum, true);
 				else
-					Value = Minimum;
+					SetValue (Minimum, true);
 				break;
 
 			default:

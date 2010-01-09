@@ -1,3 +1,11 @@
+2010-01-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TrackBar.cs: Move our events code to a single method, allowing it to
+	optionally fire the Scroll event. This way we both avoid the
+	duplicated calls to OnScroll and also will be able to fire Scroll
+	*before* OnValueChanged in other places.
+	Fixes #568026.
+
 2010-01-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RadioButton.cs: When drawing, if Appearance is Button use the old
