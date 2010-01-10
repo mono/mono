@@ -1,3 +1,12 @@
+2010-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_print_thread_dump_from_ctx): New helper function
+	callable from gdb.
+
+2010-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_print_method_from_ip): Fix the lookup of trampolines.
+
 2010-01-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (transport_connect): comment out freeaddrinfo calls under win32,
