@@ -1847,14 +1847,8 @@ mono_handle_native_sigsegv (int signal, void *ctx)
 	abort ();
 }
 
-/*
- * mono_print_thread_dump:
- *
- *   Print information about the current thread to stdout.
- * SIGCTX can be NULL, allowing this to be called from gdb.
- */
-void
-mono_print_thread_dump (void *sigctx)
+static void
+mono_print_thread_dump_internal (void *sigctx, MonoContext *start_ctx)
 {
 	MonoThread *thread = mono_thread_current ();
 #if defined(__i386__) || defined(__x86_64__)
@@ -1882,7 +1876,9 @@ mono_print_thread_dump (void *sigctx)
 #endif
 
 #ifdef MONO_ARCH_HAVE_SIGCTX_TO_MONOCTX
-	if (!sigctx)
+	if (start_ctx) {
+		memcpy (&ctx, start_ctx, sizeof (MonoContext));
+	} else if (!sigctx)
 		MONO_INIT_CONTEXT_FROM_FUNC (&ctx, mono_print_thread_dump);
 	else
 		mono_arch_sigctx_to_monoctx (sigctx, &ctx);
@@ -1895,4 +1891,22 @@ mono_print_thread_dump (void *sigctx)
 	fprintf (stdout, "%s", text->str);
 	g_string_free (text, TRUE);
 	fflush (stdout);
+}
+
+/*
+ * mono_print_thread_dump:
+ *
+ *   Print information about the current thread to stdout.
+ * SIGCTX can be NULL, allowing this to be called from gdb.
+ */
+void
+mono_print_thread_dump (void *sigctx)
+{
+	mono_print_thread_dump_internal (sigctx, NULL);
+}
+
+void
+mono_print_thread_dump_from_ctx (MonoContext *ctx)
+{
+	mono_print_thread_dump_internal (NULL, ctx);
 }
