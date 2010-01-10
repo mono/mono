@@ -145,12 +145,10 @@ namespace System.ServiceModel
 						continue;
 					}
 					switch (reader.LocalName) {
-					// FIXME: binary encoder must be included in 2.1 profile.
-					// Since they are internal only, they have to be specially handled by linker.
-//					case "binaryMessageEncoding":
-//						b.MessageEncoding = new BinaryMessageEncodingBindingElement ();
-//						reader.Skip ();
-//						break;
+					case "binaryMessageEncoding":
+						b.MessageEncoding = new BinaryMessageEncodingBindingElement ();
+						reader.Skip ();
+						break;
 					case "textMessageEncoding":
 						b.MessageEncoding = new TextMessageEncodingBindingElement ();
 						reader.Skip ();

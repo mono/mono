@@ -1,3 +1,8 @@
+2010-01-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SilverlightClientConfigLoader.cs : uncomment binary message
+	  encoding element which was internal-only in SL2 but public in SL3.
+
 2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceProxyGenerator.cs, ServiceRuntimeChannel.cs :
