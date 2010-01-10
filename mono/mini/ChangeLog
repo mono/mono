@@ -1,3 +1,11 @@
+2010-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_emit_method_call_full): Avoid the virt->nonvirt
+	optimization if the called method is gshared and marshalbyref, since gshared
+	methods can' have wrappers. Fixes #569390.
+
+	* generics.cs: Add a test.
+
 2010-01-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Call
