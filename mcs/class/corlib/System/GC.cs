@@ -32,6 +32,7 @@
 
 using System.Runtime.CompilerServices;
 using System.Runtime.ConstrainedExecution;
+using System.Security.Permissions;
 
 namespace System
 {
@@ -103,5 +104,45 @@ namespace System
 		public static void RemoveMemoryPressure (long bytesAllocated) {
 			RecordPressure (-bytesAllocated);
 		}
+
+#if NET_4_0
+		[PermissionSetAttribute (SecurityAction.LinkDemand, Name = "FullTrust")]
+		[MonoTODO]
+		public static GCNotificationStatus WaitForFullGCApproach () {
+			throw new NotImplementedException ();
+		}
+
+		[PermissionSetAttribute (SecurityAction.LinkDemand, Name = "FullTrust")]
+		[MonoTODO]
+		public static GCNotificationStatus WaitForFullGCApproach (int millisecondsTimeout) {
+			throw new NotImplementedException ();
+		}
+
+		[PermissionSetAttribute (SecurityAction.LinkDemand, Name = "FullTrust")]
+		[MonoTODO]
+		public static GCNotificationStatus WaitForFullGCComplete () {
+			throw new NotImplementedException ();
+		}
+
+		[PermissionSetAttribute (SecurityAction.LinkDemand, Name = "FullTrust")]
+		[MonoTODO]
+		public static GCNotificationStatus WaitForFullGCComplete (int millisecondsTimeout) {
+			throw new NotImplementedException ();
+		}
+
+		[PermissionSetAttribute (SecurityAction.LinkDemand, Name = "FullTrust")]
+		public static void RegisterForFullGCNotification (int maxGenerationThreshold, int largeObjectHeapThreshold) {
+			if (maxGenerationThreshold < 1 || maxGenerationThreshold > 99)
+				throw new ArgumentOutOfRangeException ("maxGenerationThreshold", maxGenerationThreshold, "maxGenerationThreshold must be between 1 and 99 inclusive");
+			if (largeObjectHeapThreshold < 1 || largeObjectHeapThreshold > 99)
+				throw new ArgumentOutOfRangeException ("largeObjectHeapThreshold", largeObjectHeapThreshold, "largeObjectHeapThreshold must be between 1 and 99 inclusive");
+			throw new NotImplementedException ();
+		}
+
+		[PermissionSetAttribute (SecurityAction.LinkDemand, Name = "FullTrust")]
+		public static void CancelFullGCNotification () {
+			throw new NotImplementedException ();
+		}
+#endif
 	}
 }
