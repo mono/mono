@@ -135,11 +135,11 @@ namespace System.Net {
 			return true;
 		}
 
-		internal void SetupProgressDelegate (Delegate progress_delegate)
+		internal void SetupProgressDelegate (Action<long,long,object> progress)
 		{
-			FieldInfo fi = GetType ().GetField ("progress_delegate", BindingFlags.Instance | BindingFlags.NonPublic);
+			FieldInfo fi = GetType ().GetField ("progress", BindingFlags.Instance | BindingFlags.NonPublic);
 			if (fi != null)
-				fi.SetValue (this, progress_delegate);
+				fi.SetValue (this, progress);
 		}
 
 		static Exception NotImplemented ()
