@@ -1,3 +1,8 @@
+2010-01-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Int32.cs: Implement support for exponent in the Parse methods.
+	Fixes #542464.
+
 2010-01-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* GC.cs: Add stubs for new net 4.0 methods.
