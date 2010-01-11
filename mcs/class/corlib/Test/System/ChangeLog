@@ -1,3 +1,8 @@
+2010-01-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Int32Test.cs: Add test case for exponent support in the Parse
+	methods.
+
 2010-01-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Test for variant use of GetInterfaceMap.
