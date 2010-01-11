@@ -287,6 +287,42 @@ namespace MonoTests.System.Windows.Forms
 				return this.ProcessCmdKey (ref m, keys);
 			}
 		}
+
+		[Test]
+		public void EventsTest ()
+		{
+			ToolStripMenuItem tsmi = new ToolStripMenuItem ("Sample");
+			tsmi.CheckStateChanged += new EventHandler (tsmi_CheckStateChanged);
+			tsmi.CheckedChanged += new EventHandler (tsmi_CheckedChanged);
+			event_log = String.Empty;
+
+			Assert.AreEqual (false, tsmi.Checked, "#A1");
+			Assert.AreEqual (CheckState.Unchecked, tsmi.CheckState, "#A2");
+
+			tsmi.Checked = true;
+			Assert.AreEqual (true, tsmi.Checked, "#B1");
+			Assert.AreEqual (CheckState.Checked, tsmi.CheckState, "#B2");
+			Assert.AreEqual ("CheckedChanged=True;CheckStateChanged=Checked;", event_log, "#B3");
+
+			event_log = String.Empty;
+
+			tsmi.CheckState = CheckState.Unchecked;
+			Assert.AreEqual (false, tsmi.Checked, "#C1");
+			Assert.AreEqual (CheckState.Unchecked, tsmi.CheckState, "#C2");
+			Assert.AreEqual ("CheckedChanged=False;CheckStateChanged=Unchecked;", event_log, "#C3");
+		}
+
+		string event_log;
+
+		void tsmi_CheckedChanged (object sender, EventArgs e)
+		{
+			event_log += "CheckedChanged=" + ((ToolStripMenuItem)sender).Checked + ";";
+		}
+
+		void tsmi_CheckStateChanged (object sender, EventArgs e)
+		{
+			event_log += "CheckStateChanged=" + ((ToolStripMenuItem)sender).CheckState + ";";
+		}
 	}
 }
 #endif
