@@ -1,3 +1,18 @@
+2010-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* InternalWebRequestStreamWrapper.cs: New. Moved (and adapted) 
+	from Moonlight System.Windows.Browser assembly.
+	* InternalWebResponseStreamWrapper.cs: New. Moved (and adapted) 
+	from Moonlight System.Windows.Browser assembly.
+	* WebClient_2_1.cs: Remove custom delegate declaration (Gendarme's
+	AvoidDeclaringCustomDelegatesRule). Remove locking over a variable
+	(Gendarme's ReviewLockUsedOnlyForOperationsOnVariablesRule). 
+	Avoid potential race with event handlers (Gendarme's 
+	ProtectCallsToEventDelegatesRule). Implement OnWriteStreamClosed
+	* WebRequest_2_1.cs: Signature change from delegate to 
+	Action<long,long,object>. Found using Gendarme's
+	AvoidDeclaringCustomDelegatesRule
+
 2009-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WebClient_2_1.cs: When creating the request we need to copy over
