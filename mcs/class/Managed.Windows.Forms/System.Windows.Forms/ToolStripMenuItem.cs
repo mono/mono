@@ -109,11 +109,7 @@ namespace System.Windows.Forms
 				}
 			}
 			set {
-				if (this.checked_state != (value ? CheckState.Checked : CheckState.Unchecked)) {
-					this.checked_state = value ? CheckState.Checked : CheckState.Unchecked;
-					this.Invalidate ();
-					this.OnCheckedChanged (EventArgs.Empty);
-				}
+				CheckState = value ? CheckState.Checked : CheckState.Unchecked;
 			}
 		}
 
@@ -138,8 +134,12 @@ namespace System.Windows.Forms
 				if (!Enum.IsDefined (typeof (CheckState), value))
 					throw new InvalidEnumArgumentException (string.Format ("Enum argument value '{0}' is not valid for CheckState", value));
 
+				if (value == checked_state)
+					return;
+
 				this.checked_state = value;
 				this.Invalidate ();
+				this.OnCheckedChanged (EventArgs.Empty);
 				this.OnCheckStateChanged (EventArgs.Empty);
 			}
 		}
