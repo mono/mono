@@ -86,6 +86,14 @@
 
 #undef DEBUG
 
+/* 
+ * Some older versions of libc provide IPV6 support without defining the AI_ADDRCONFIG
+ * flag for getaddrinfo.
+ */
+#ifndef AI_ADDRCONFIG
+#define AI_ADDRCONFIG 0
+#endif
+
 static gint32 convert_family(MonoAddressFamily mono_family)
 {
 	gint32 family=-1;

@@ -1,3 +1,8 @@
+2010-01-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* socket-io.c (AI_ADDRCONFIG): Applied patch from John Lightsey (jd@cpanel.net).
+	Fixes build on rh 7.3.
+
 2009-12-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_bounded_array_class_get): Make these classes PUBLIC. Fixes
