@@ -1,3 +1,10 @@
+2010-01-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Int32.cs: Implement support for exponent in the Parse methods.
+	Fixes #542464.
+
+	Backport r149356.
+
 2010-01-07  Jb Evain  <jbevain@novell.com>
 
 	* MonoType.cs (.MemberType): return the proper member type
