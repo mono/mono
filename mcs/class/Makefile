@@ -133,9 +133,9 @@ net_2_1_dirs := \
 	corlib			\
 	Mono.CompilerServices.SymbolWriter \
 	System			\
-	System.Net		\
 	System.XML		\
 	System.Core		\
+	System.Net		\
 	System.Xml.Linq	\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
