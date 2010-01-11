@@ -1,3 +1,12 @@
+2010-01-10  Aaron Bockover  <abockover@novell.com>
+
+	* assembly.c (mono_set_rootdir): Support finding the mono paths on OS X
+	at runtime in the same way as on Windows, which yields a relocatable
+	Mono. Uses dyld's _NSGetExecutablePath and realpath to resolve the path
+	of the running mono process.
+
+	On TARGET_ARM, fallback () will always be executed.
+
 2010-01-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_Type_GetInterfaceMapData): This function is generics variance aware.
