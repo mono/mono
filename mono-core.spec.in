@@ -498,6 +498,9 @@ Authors:
 %_prefix/lib/mono/gac/RabbitMQ.Client
 %_prefix/lib/mono/1.0/RabbitMQ.Client.dll
 %_prefix/lib/mono/2.0/RabbitMQ.Client.dll
+%_prefix/lib/mono/gac/RabbitMQ.Client.Apigen
+%_prefix/lib/mono/1.0/RabbitMQ.Client.Apigen.dll
+%_prefix/lib/mono/2.0/RabbitMQ.Client.Apigen.dll
 %_prefix/lib/mono/gac/System.Messaging
 %_prefix/lib/mono/1.0/System.Messaging.dll
 %_prefix/lib/mono/2.0/System.Messaging.dll
