@@ -1,3 +1,8 @@
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (instantiate_other_info): Avoid creating jump trampolines since
+	they cannot be patched. Partly fixes #564408.
+
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Fix a memory leak.

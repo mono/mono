@@ -775,12 +775,12 @@ instantiate_other_info (MonoDomain *domain, MonoRuntimeGenericContextOtherInfoTe
 	case MONO_RGCTX_INFO_METHOD:
 		return data;
 	case MONO_RGCTX_INFO_GENERIC_METHOD_CODE:
-		return mono_create_ftnptr (mono_domain_get (),
-				mono_runtime_create_jump_trampoline (mono_domain_get (), data, TRUE));
+		/*
+		 * We can't create a jump trampoline here, as it cannot be patched.
+		 */
+		return mono_create_ftnptr (mono_domain_get (), mono_compile_method (data));
 	case MONO_RGCTX_INFO_REMOTING_INVOKE_WITH_CHECK:
-		return mono_create_ftnptr (mono_domain_get (),
-				mono_runtime_create_jump_trampoline (mono_domain_get (),
-						mono_marshal_get_remoting_invoke_with_check (data), TRUE));
+		return mono_create_ftnptr (mono_domain_get (), mono_compile_method (mono_marshal_get_remoting_invoke_with_check (data)));
 	case MONO_RGCTX_INFO_CLASS_FIELD:
 		return data;
 	case MONO_RGCTX_INFO_METHOD_RGCTX: {
