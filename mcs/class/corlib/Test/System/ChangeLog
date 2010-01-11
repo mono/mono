@@ -1,3 +1,8 @@
+2010-01-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Int32Test.cs: Add test case for exponent support in the Parse
+	methods.
+
 2010-01-07  Jb Evain  <jbevain@novell.com>
 
 	* TypeTest.cs: add test for the MemberType of
