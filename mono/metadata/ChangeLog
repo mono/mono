@@ -1,3 +1,8 @@
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (instantiate_other_info): Avoid creating jump trampolines since
+	they cannot be patched. Partly fixes #564408.
+
 2010-01-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* assembly.c: fix MONO_PATH debug output.
