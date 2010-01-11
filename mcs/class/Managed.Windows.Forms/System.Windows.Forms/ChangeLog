@@ -1,3 +1,9 @@
+2010-01-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripMenuItem.cs: Put the Checked/CheckState logic in a single
+	place and synchronize the events properly. Fixes a lack of
+	coordination between the events - which should be fired together.
+
 2010-01-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TrackBar.cs: Move our events code to a single method, allowing it to
