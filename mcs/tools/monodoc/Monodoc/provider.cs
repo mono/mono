@@ -1313,6 +1313,43 @@ public class RootTree : Tree {
 		return (HelpSource) help_sources [id];
 	}
 	
+	//
+	// Fetches the node title
+	//
+	public string GetTitle (string url)
+	{
+		Node match_node;
+
+		if (url == null || url.StartsWith ("root:"))
+			return "Mono Documentation";
+		
+		if (url.Length > 2 && url [1] == ':'){
+			switch (url [0]){
+			case 'N':
+				return url.Substring (2) + " Namespace";
+
+			case 'T':
+				string s = TypeLookup (url, out match_node);
+				if (match_node != null)
+					return match_node.Caption;
+				return url.Substring (2) + " type";
+
+		case 'M':
+		case 'F':
+		case 'P':
+		case 'E':
+		case 'C':
+		case 'O':
+			MemberLookup (url.Substring (0,2), url, out match_node);
+			if (match_node != null)
+				return match_node.Caption;
+			break;
+			}
+		}
+		
+		return "Mono Documentation";
+	}
+	
 	string home_cache;
 	/// <summary>
 	///    Allows every HelpSource to try to provide the content for this
