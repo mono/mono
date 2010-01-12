@@ -396,13 +396,29 @@ namespace System.Xml {
 		{
 			if (s == null)
 				throw new ArgumentNullException();
-			if (s == "INF")
+
+			int sidx = 0;
+			while (sidx < s.Length && Char.IsWhiteSpace (s [sidx]))
+				sidx++;
+			if (sidx == s.Length)
+				throw new FormatException ();
+			int sEndPos = s.Length - 1;
+			while (Char.IsWhiteSpace (s [sEndPos]))
+				sEndPos--;
+
+			if (TryParseStringConstant ("INF", s, sidx, sEndPos))
 				return Double.PositiveInfinity;
-			if (s == "-INF")
+			if (TryParseStringConstant ("-INF", s, sidx, sEndPos))
 				return Double.NegativeInfinity;
-			if (s == "NaN")
+			if (TryParseStringConstant ("NaN", s, sidx, sEndPos))
 				return Double.NaN;
+
 			return Double.Parse (s, floatStyle, CultureInfo.InvariantCulture);
+		}
+
+		static bool TryParseStringConstant (string format, string s, int start, int end)
+		{
+			return end - start + 1 == format.Length && String.CompareOrdinal (format, 0, s, start, format.Length) == 0;
 		}
 
 		public static Guid ToGuid (string s)

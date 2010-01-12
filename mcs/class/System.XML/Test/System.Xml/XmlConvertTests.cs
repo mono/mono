@@ -208,6 +208,11 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (0.0d/0.0d, XmlConvert.ToDouble ("NaN"));
 			Assert.AreEqual (789324, XmlConvert.ToDouble ("789324"));
 			Assert.AreEqual (42, XmlConvert.ToDouble ("  42  "));
+			Assert.AreEqual (double.NaN, XmlConvert.ToDouble ("  NaN  "));
+			Assert.AreEqual (double.PositiveInfinity, XmlConvert.ToDouble ("  Infinity  "));
+			Assert.AreEqual (double.NegativeInfinity, XmlConvert.ToDouble ("  -Infinity "));
+			Assert.AreEqual (double.PositiveInfinity, XmlConvert.ToDouble ("  INF"));
+			Assert.AreEqual (double.NegativeInfinity, XmlConvert.ToDouble ("  -INF "));
 		}
 		
 		[Test]

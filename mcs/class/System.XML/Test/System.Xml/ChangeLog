@@ -1,5 +1,10 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvertTests.cs : another double parse test for string with
+	  spaces, for string constants such as NaN.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvertTests.cs : add double parse test for string with spaces.
 
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
