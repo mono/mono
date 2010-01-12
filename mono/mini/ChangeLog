@@ -1,3 +1,7 @@
+2010-01-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (emit_line_number_info): Fix the eglib case so it doesn't crash.
+
 2010-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_parse_options): Allow onthrow without
