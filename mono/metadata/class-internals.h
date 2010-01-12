@@ -847,7 +847,7 @@ MonoMethod*
 mono_class_get_vtable_entry (MonoClass *class, int offset) MONO_INTERNAL;
 
 GPtrArray*
-mono_class_get_implemented_interfaces (MonoClass *klass) MONO_INTERNAL;
+mono_class_get_implemented_interfaces (MonoClass *klass, MonoError *error) MONO_INTERNAL;
 
 int
 mono_class_get_vtable_size (MonoClass *klass) MONO_INTERNAL;

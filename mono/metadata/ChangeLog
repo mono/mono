@@ -1,5 +1,17 @@
 2010-01-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_get_implemented_interfaces): Now take a MonoError argument.
+
+	* class.c:
+	* cominterop.c:
+	* icall.c:
+	* object.c: 
+	* class-internals.h: Adjust for new signature of mono_class_get_implemented_interfaces.
+
+	Backport of r149414.
+
+2010-01-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_setup_interfaces): Now take a MonoError argument and
 	it can fail loading the type.
 
