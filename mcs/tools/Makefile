@@ -12,7 +12,6 @@ per_profile_dirs = \
 	monop		\
 	mono-service	\
 	mono-xsd	\
-	monodoc		\
 	resgen		\
 	wsdl
 
@@ -22,6 +21,7 @@ net_2_0_dirs := \
 	corcompare	\
 	mono-xmltool	\
 	xbuild		\
+	monodoc		\
 	mdoc		\
 	mono-shlib-cop	\
 	sgen		\
