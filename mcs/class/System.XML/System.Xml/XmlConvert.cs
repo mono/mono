@@ -842,7 +842,7 @@ namespace System.Xml {
 
 		public static string ToString (DateTimeOffset value)
 		{
-			return ToString (value, "yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+			return ToString (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz");
 		}
 
 		public static string ToString (DateTimeOffset value, string format)
