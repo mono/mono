@@ -68,6 +68,8 @@ namespace System.Xml.Linq
 				// Valid XML values are `true' and `false', not `True' and `False' that boolean returns
 				return o.ToString().ToLower();
 			default:
+				if (o is TimeSpan)
+					return XmlConvert.ToString ((TimeSpan) o);
 				return o.ToString ();
 			}
 		}
@@ -107,7 +109,7 @@ namespace System.Xml.Linq
 			else if (o is string)
 				return new XText ((string) o);
 			else
-				return new XText (o.ToString ());
+				return new XText (ToString (o));
 		}
 
 		public static object GetDetachedObject (XObject child)

@@ -1,5 +1,10 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XUtil.cs : to create an XNode from an object, do not use ToString()
+	  directly. Handle TimeSpan in xsd manner.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XUtil.cs, XElement.cs, XAttribute.cs : unlike XmlConvert, casts to
 	  DateTime seem also support general conversion (parse) from strings.
 
