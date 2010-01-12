@@ -1,3 +1,7 @@
+2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NetworkCredentialTest.cs: New. Unit tests.
+
 2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CookieContainerTest.cs: Split many tests into smaller test 

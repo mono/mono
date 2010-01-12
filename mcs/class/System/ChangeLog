@@ -1,3 +1,7 @@
+2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System_test.dll.sources: Add NetworkCredentialTest.cs to the tests
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.dll.sources: Add (moved) System.Net/DnsEndPoint.cs

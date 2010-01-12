@@ -1,3 +1,7 @@
+2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NetworkCredential.cs: Fix properties to never return null.
+
 2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Cookie.cs: Re-work ToString to be useable in more cases. Fix
