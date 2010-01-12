@@ -1,3 +1,7 @@
+2010-01-12  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Introduced non-generic method specification.
+
 2010-01-07  Marek Safar  <marek.safar@gmail.com>
 
 	* method.cs: Move all method based declarations into a new file.

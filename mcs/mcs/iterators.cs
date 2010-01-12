@@ -276,7 +276,7 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ldflda, host.PC.Spec.MetaInfo);
 					IntConstant.EmitInt (ig, (int) Iterator.State.Start);
 					IntConstant.EmitInt (ig, (int) Iterator.State.Uninitialized);
-					ig.Emit (OpCodes.Call, TypeManager.int_interlocked_compare_exchange);
+					ig.Emit (OpCodes.Call, (MethodInfo) TypeManager.int_interlocked_compare_exchange.MetaInfo);
 
 					IntConstant.EmitInt (ig, (int) Iterator.State.Uninitialized);
 					ig.Emit (OpCodes.Bne_Un_S, label_init);
@@ -362,7 +362,7 @@ namespace Mono.CSharp {
 
 			protected override Expression DoResolve (ResolveContext ec)
 			{
-				Methods = new MethodBase [] { method.MethodBuilder };
+				Methods = new [] { method.Spec };
 				type = method.Parent.TypeBuilder;
 				InstanceExpression = new CompilerGeneratedThis (type, Location);
 				return base.DoResolve (ec);

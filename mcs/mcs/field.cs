@@ -234,8 +234,8 @@ namespace Mono.CSharp
 	{
 		FieldInfo info;
 
-		public FieldSpec (IMemberDetails details, FieldInfo info, Modifiers modifiers)
-			: base (details, info.Name, modifiers)
+		public FieldSpec (IMemberDefinition definition, FieldInfo info, Modifiers modifiers)
+			: base (definition, info.Name, modifiers)
 		{
 			this.info = info;
 		}
@@ -253,8 +253,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		// Obsolete
-		public Type DeclaringType {
+		public override Type DeclaringType {
 			get {
 				return MetaInfo.DeclaringType;
 			}
@@ -440,8 +439,8 @@ namespace Mono.CSharp
 	{
 		readonly FieldInfo element;
 
-		public FixedFieldSpec (IMemberDetails details, FieldInfo info, FieldInfo element, Modifiers modifiers)
-			 : base (details, info, modifiers)
+		public FixedFieldSpec (IMemberDefinition definition, FieldInfo info, FieldInfo element, Modifiers modifiers)
+			 : base (definition, info, modifiers)
 		{
 			this.element = element;
 		}
