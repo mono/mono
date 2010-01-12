@@ -98,7 +98,7 @@ namespace System.Xml.Linq
 		{
 			if (element == null)
 				throw new ArgumentNullException ("element");
-			return XmlConvert.ToDateTime (element.Value, XmlDateTimeSerializationMode.RoundtripKind);
+			return XUtil.ToDateTime (element.Value);
 		}
 
 		public static explicit operator DateTime? (XElement element)
@@ -106,7 +106,7 @@ namespace System.Xml.Linq
 			if (element == null)
 				return null;
 			
-			return element.Value == null ? (DateTime?) null : XmlConvert.ToDateTime (element.Value, XmlDateTimeSerializationMode.RoundtripKind);
+			return element.Value == null ? (DateTime?) null : XUtil.ToDateTime (element.Value);
 		}
 
 #if !TARGET_JVM // Same as for System.Xml.XmlConvert.ToDateTimeOffset

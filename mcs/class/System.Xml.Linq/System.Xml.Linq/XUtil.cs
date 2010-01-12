@@ -45,6 +45,15 @@ namespace System.Xml.Linq
 			return XmlConvert.ToBoolean (s.ToLowerInvariant ());
 		}
 
+		public static DateTime ToDateTime (string s)
+		{
+			try {
+				return XmlConvert.ToDateTime (s, XmlDateTimeSerializationMode.RoundtripKind);
+			} catch {
+				return DateTime.Parse (s);
+			}
+		}
+
 		public static string ToString (object o)
 		{
 			if (o == null)
