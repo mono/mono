@@ -72,9 +72,11 @@ TEST_ILS := $(wildcard *-lib.il)
 eval-test: 
 	$(CSCOMPILE) eval-test.cs -r:Mono.CSharp.dll
 	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) eval-test.exe
-
-check: eval-test
+	
+build-compiler-lib:
 	cd ../class/Mono.CSharp && $(MAKE) NO_DIR_CHECK=yes
+
+check: build-compiler-lib eval-test
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS)
 
 test-local:
