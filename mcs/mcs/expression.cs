@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 			this.arguments = args;
 			this.expr_tree = expr_tree;
 
-			type = TypeManager.TypeToCoreType (((MethodSpec) mg).ReturnType);
+			type = TypeManager.TypeToCoreType (((MethodInfo) mg).ReturnType);
 			eclass = ExprClass.Value;
 			this.loc = loc;
 		}
@@ -73,8 +73,7 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			var method = ((MethodSpec) mg).MetaInfo as MethodInfo;
-			return SLE.Expression.Call (method, Arguments.MakeExpression (arguments, ctx));
+			return SLE.Expression.Call ((MethodInfo) mg, Arguments.MakeExpression (arguments, ctx));
 		}
 
 		public MethodGroupExpr Method {
@@ -2812,7 +2811,7 @@ namespace Mono.CSharp {
 			if (is_equality)
 				return ResolveUserOperator (ec, l, r);
 
-			MethodSpec method;
+			MethodInfo method;
 			Arguments args = new Arguments (2);
 			args.Add (new Argument (left));
 			args.Add (new Argument (right));
@@ -2833,7 +2832,7 @@ namespace Mono.CSharp {
 				method = TypeManager.delegate_remove_delegate_delegate;
 			}
 
-			MethodGroupExpr mg = new MethodGroupExpr (new [] { method }, TypeManager.delegate_type, loc);
+			MethodGroupExpr mg = new MethodGroupExpr (new MemberInfo [] { method }, TypeManager.delegate_type, loc);
 			mg = mg.OverloadResolve (ec, ref args, false, loc);
 
 			return new ClassCast (new UserOperatorCall (mg, args, CreateExpressionTree, loc), l);
@@ -3312,7 +3311,7 @@ namespace Mono.CSharp {
 						if (left is NullLiteral || right is NullLiteral)
 							oper_expr = ReducedExpression.Create (this, oper_expr);
 					} else if (l != r) {
-						var mi = union.BestCandidate;
+						MethodInfo mi = (MethodInfo) union;
 						
 						//
 						// Two System.Delegate(s) are never equal
@@ -3854,7 +3853,7 @@ namespace Mono.CSharp {
 			if (++pos == arguments.Count)
 				return expr;
 
-			left = new Argument (new EmptyExpression (method.BestCandidate.ReturnType));
+			left = new Argument (new EmptyExpression (((MethodInfo)method).ReturnType));
 			return CreateExpressionAddCall (ec, left, expr, pos);
 		}
 
@@ -3938,13 +3937,13 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			var method = mg.BestCandidate;
+			MethodInfo method = (MethodInfo)mg;
 			type = TypeManager.TypeToCoreType (method.ReturnType);
-			AParametersCollection pd = method.Parameters;
+			AParametersCollection pd = TypeManager.GetParameterData (method);
 			if (!TypeManager.IsEqual (type, type) || !TypeManager.IsEqual (type, pd.Types [0]) || !TypeManager.IsEqual (type, pd.Types [1])) {
 				ec.Report.Error (217, loc,
 					"A user-defined operator `{0}' must have parameters and return values of the same type in order to be applicable as a short circuit operator",
-					TypeManager.CSharpSignature (method.MetaInfo));
+					TypeManager.CSharpSignature (method));
 				return null;
 			}
 
@@ -3954,7 +3953,7 @@ namespace Mono.CSharp {
 			if (op_true == null || op_false == null) {
 				ec.Report.Error (218, loc,
 					"The type `{0}' must have operator `true' and operator `false' defined when `{1}' is used as a short circuit operator",
-					TypeManager.CSharpName (type), TypeManager.CSharpSignature (method.MetaInfo));
+					TypeManager.CSharpName (type), TypeManager.CSharpSignature (method));
 				return null;
 			}
 
@@ -4994,7 +4993,7 @@ namespace Mono.CSharp {
 			if (dynamic_arg || dynamic_member)
 				return DoResolveDynamic (ec, member_expr);
 
-			var method = mg.BestCandidate;
+			MethodInfo method = (MethodInfo)mg;
 			if (method != null) {
 				type = TypeManager.TypeToCoreType (method.ReturnType);
 
@@ -5091,24 +5090,24 @@ namespace Mono.CSharp {
 			return mg.OverloadResolve (ec, ref arguments, false, loc);
 		}
 
-		public static bool IsSpecialMethodInvocation (ResolveContext ec, MethodSpec method, Location loc)
+		public static bool IsSpecialMethodInvocation (ResolveContext ec, MethodBase method, Location loc)
 		{
-			if (!TypeManager.IsSpecialMethod (method.MetaInfo))
+			if (!TypeManager.IsSpecialMethod (method))
 				return false;
 
 			if (ec.HasSet (ResolveContext.Options.InvokeSpecialName))
 				return false;
 
-			ec.Report.SymbolRelatedToPreviousError (method.MetaInfo);
+			ec.Report.SymbolRelatedToPreviousError (method);
 			ec.Report.Error (571, loc, "`{0}': cannot explicitly call operator or accessor",
-				TypeManager.CSharpSignature (method.MetaInfo, true));
+				TypeManager.CSharpSignature (method, true));
 	
 			return true;
 		}
 
-		static Type[] GetVarargsTypes (MethodSpec mb, Arguments arguments)
+		static Type[] GetVarargsTypes (MethodBase mb, Arguments arguments)
 		{
-			AParametersCollection pd = mb.Parameters;
+			AParametersCollection pd = TypeManager.GetParameterData (mb);
 			
 			Argument a = arguments [pd.Count - 1];
 			Arglist list = (Arglist) a.Expr;
@@ -5119,14 +5118,14 @@ namespace Mono.CSharp {
 		/// <summary>
 		/// This checks the ConditionalAttribute on the method 
 		/// </summary>
-		public static bool IsMethodExcluded (MethodSpec method, Location loc)
+		public static bool IsMethodExcluded (MethodBase method, Location loc)
 		{
 			if (method.IsConstructor)
 				return false;
 
-			var mb = TypeManager.DropGenericMethodArguments (method.MetaInfo);
-			if (TypeManager.IsBeingCompiled (mb)) {
-				IMethodData md = TypeManager.GetMethod (mb);
+			method = TypeManager.DropGenericMethodArguments (method);
+			if (TypeManager.IsBeingCompiled (method)) {
+				IMethodData md = TypeManager.GetMethod (method);
 				if (md != null)
 					return md.IsExcluded ();
 
@@ -5135,7 +5134,7 @@ namespace Mono.CSharp {
 				return false;
 			}
 
-			return AttributeTester.IsConditionalMethodExcluded (mb, loc);
+			return AttributeTester.IsConditionalMethodExcluded (method, loc);
 		}
 
 		/// <remarks>
@@ -5155,7 +5154,7 @@ namespace Mono.CSharp {
 		/// </remarks>
 		public static void EmitCall (EmitContext ec, bool is_base,
 					     Expression instance_expr,
-					     MethodSpec method, Arguments Arguments, Location loc)
+					     MethodBase method, Arguments Arguments, Location loc)
 		{
 			EmitCall (ec, is_base, instance_expr, method, Arguments, loc, false, false);
 		}
@@ -5168,7 +5167,7 @@ namespace Mono.CSharp {
 		// only have been evaluated once.
 		public static void EmitCall (EmitContext ec, bool is_base,
 					     Expression instance_expr,
-					     MethodSpec method, Arguments Arguments, Location loc,
+					     MethodBase method, Arguments Arguments, Location loc,
 		                             bool dup_args, bool omit_args)
 		{
 			ILGenerator ig = ec.ig;
@@ -5260,9 +5259,9 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Constrained, instance_expr.Type);
 			}
 
-			if ((method.MetaInfo.CallingConvention & CallingConventions.VarArgs) != 0) {
+			if ((method.CallingConvention & CallingConventions.VarArgs) != 0) {
 				Type[] varargs_types = GetVarargsTypes (method, Arguments);
-				ig.EmitCall (call_op, (MethodInfo) method.MetaInfo, varargs_types);
+				ig.EmitCall (call_op, (MethodInfo) method, varargs_types);
 				return;
 			}
 
@@ -5272,10 +5271,10 @@ namespace Mono.CSharp {
 			// and DoFoo is not virtual, you can omit the callvirt,
 			// because you don't need the null checking behavior.
 			//
-			if (method.IsConstructor)
-				ig.Emit (call_op, (ConstructorInfo) method.MetaInfo);
+			if (method is MethodInfo)
+				ig.Emit (call_op, (MethodInfo) method);
 			else
-				ig.Emit (call_op, (MethodInfo) method.MetaInfo);
+				ig.Emit (call_op, (ConstructorInfo) method);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -5306,13 +5305,13 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return MakeExpression (ctx, mg.InstanceExpression, (MethodSpec) mg, arguments);
+			return MakeExpression (ctx, mg.InstanceExpression, (MethodInfo) mg, arguments);
 		}
 
-		public static SLE.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodSpec mi, Arguments args)
+		public static SLE.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodInfo mi, Arguments args)
 		{
 			var instance_expr = instance == null ? null : instance.MakeExpression (ctx);
-			return SLE.Expression.Call (instance_expr, (MethodInfo) mi.MetaInfo, Arguments.MakeExpression (args, ctx));
+			return SLE.Expression.Call (instance_expr, mi, Arguments.MakeExpression (args, ctx));
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -5558,8 +5557,8 @@ namespace Mono.CSharp {
 		{
 			ILGenerator ig = ec.ig;
 
-			MethodInfo ci = (MethodInfo) TypeManager.activator_create_instance.MetaInfo;
-			ci = ci.MakeGenericMethod (new Type [] { type });
+			MethodInfo ci = TypeManager.activator_create_instance.MakeGenericMethod (
+				new Type [] { type });
 
 			GenericConstraints gc = TypeManager.GetTypeParameterConstraints (type);
 			if (gc.HasReferenceTypeConstraint || gc.HasClassConstraint) {
@@ -5643,7 +5642,7 @@ namespace Mono.CSharp {
 				}
 
 				if (vr != null) {
-					ig.Emit (OpCodes.Call, (ConstructorInfo) method.BestCandidate.MetaInfo);
+					ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 					return false;
 				}
 			}
@@ -5651,7 +5650,7 @@ namespace Mono.CSharp {
 			if (is_type_parameter)
 				return DoEmitTypeParameter (ec);			
 
-			ConstructorInfo ci = (ConstructorInfo) method.BestCandidate.MetaInfo;
+			ConstructorInfo ci = (ConstructorInfo) method;
 #if MS_COMPATIBLE
 			if (TypeManager.IsGenericType (type) && type.IsGenericTypeDefinition)
 				ci = TypeBuilder.GetConstructor (type, ci);
@@ -5725,7 +5724,7 @@ namespace Mono.CSharp {
 				if (Arguments != null)
 					Arguments.Emit (ec);
 
-				ec.ig.Emit (OpCodes.Call, (ConstructorInfo) method.BestCandidate.MetaInfo);
+				ec.ig.Emit (OpCodes.Call, (ConstructorInfo) method);
 			}
 			
 			value_target.AddressOf (ec, mode);
@@ -5744,7 +5743,7 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.New ((ConstructorInfo) method.BestCandidate.MetaInfo, Arguments.MakeExpression (Arguments, ctx));
+			return SLE.Expression.New ((ConstructorInfo) method, Arguments.MakeExpression (Arguments, ctx));
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -6349,7 +6348,8 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Dup);
 			ig.Emit (OpCodes.Ldtoken, fb);
-			ig.Emit (OpCodes.Call, (MethodInfo) TypeManager.void_initializearray_array_fieldhandle.MetaInfo);
+			ig.Emit (OpCodes.Call,
+				 TypeManager.void_initializearray_array_fieldhandle);
 		}
 
 		//
@@ -7013,7 +7013,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldtoken, TypeManager.TypeToReflectionType (typearg));
-			ec.ig.Emit (OpCodes.Call, (MethodInfo) TypeManager.system_type_get_type_from_handle.MetaInfo);
+			ec.ig.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 
 		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
@@ -7072,23 +7072,23 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class TypeOfMethod : TypeOfMember<MethodSpec>
+	class TypeOfMethod : TypeOfMember
 	{
-		public TypeOfMethod (MethodSpec method, Location loc)
+		public TypeOfMethod (MethodBase method, Location loc)
 			: base (method, loc)
 		{
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			if (member.IsConstructor) {
-				type = TypeManager.ctorinfo_type;
-				if (type == null)
-					type = TypeManager.ctorinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "ConstructorInfo", Kind.Class, true);
-			} else {
+			if (member is MethodInfo) {
 				type = TypeManager.methodinfo_type;
 				if (type == null)
 					type = TypeManager.methodinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "MethodInfo", Kind.Class, true);
+			} else {
+				type = TypeManager.ctorinfo_type;
+				if (type == null)
+					type = TypeManager.ctorinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "ConstructorInfo", Kind.Class, true);
 			}
 
 			return base.DoResolve (ec);
@@ -7096,10 +7096,10 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			if (member.IsConstructor)
-				ec.ig.Emit (OpCodes.Ldtoken, (ConstructorInfo) member.MetaInfo);
+			if (member is ConstructorInfo)
+				ec.ig.Emit (OpCodes.Ldtoken, (ConstructorInfo) member);
 			else
-				ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo) member.MetaInfo);
+				ec.ig.Emit (OpCodes.Ldtoken, (MethodInfo) member);
 
 			base.Emit (ec);
 			ec.ig.Emit (OpCodes.Castclass, type);
@@ -7113,7 +7113,7 @@ namespace Mono.CSharp {
 			get { return "RuntimeMethodHandle"; }
 		}
 
-		protected override MethodSpec TypeFromHandle {
+		protected override MethodInfo TypeFromHandle {
 			get {
 				return TypeManager.methodbase_get_type_from_handle;
 			}
@@ -7122,7 +7122,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override MethodSpec TypeFromHandleGeneric {
+		protected override MethodInfo TypeFromHandleGeneric {
 			get {
 				return TypeManager.methodbase_get_type_from_handle_generic;
 			}
@@ -7136,11 +7136,11 @@ namespace Mono.CSharp {
 		}
 	}
 
-	abstract class TypeOfMember<T> : Expression where T : MemberSpec
+	abstract class TypeOfMember : Expression
 	{
-		protected readonly T member;
+		protected readonly MemberInfo member;
 
-		protected TypeOfMember (T member, Location loc)
+		protected TypeOfMember (MemberInfo member, Location loc)
 		{
 			this.member = member;
 			this.loc = loc;
@@ -7157,7 +7157,7 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			bool is_generic = TypeManager.IsGenericType (member.DeclaringType);
-			var mi = is_generic ? TypeFromHandleGeneric : TypeFromHandle;
+			MethodInfo mi = is_generic ? TypeFromHandleGeneric : TypeFromHandle;
 
 			if (mi == null) {
 				Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", TypeName, Kind.Class, true);
@@ -7184,7 +7184,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			bool is_generic = TypeManager.IsGenericType (member.DeclaringType);
-			MethodSpec mi;
+			MethodInfo mi;
 			if (is_generic) {
 				mi = TypeFromHandleGeneric;
 				ec.ig.Emit (OpCodes.Ldtoken, member.DeclaringType);
@@ -7192,19 +7192,19 @@ namespace Mono.CSharp {
 				mi = TypeFromHandle;
 			}
 
-			ec.ig.Emit (OpCodes.Call, (MethodInfo) mi.MetaInfo);
+			ec.ig.Emit (OpCodes.Call, mi);
 		}
 
 		protected abstract string GetMethodName { get; }
 		protected abstract string RuntimeHandleName { get; }
-		protected abstract MethodSpec TypeFromHandle { get; set; }
-		protected abstract MethodSpec TypeFromHandleGeneric { get; set; }
+		protected abstract MethodInfo TypeFromHandle { get; set; }
+		protected abstract MethodInfo TypeFromHandleGeneric { get; set; }
 		protected abstract string TypeName { get; }
 	}
 
-	class TypeOfField : TypeOfMember<FieldSpec>
+	class TypeOfField : TypeOfMember
 	{
-		public TypeOfField (FieldSpec field, Location loc)
+		public TypeOfField (FieldInfo field, Location loc)
 			: base (field, loc)
 		{
 		}
@@ -7220,7 +7220,7 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldtoken, member.MetaInfo);
+			ec.ig.Emit (OpCodes.Ldtoken, (FieldInfo) member);
 			base.Emit (ec);
 		}
 
@@ -7232,7 +7232,7 @@ namespace Mono.CSharp {
 			get { return "RuntimeFieldHandle"; }
 		}
 
-		protected override MethodSpec TypeFromHandle {
+		protected override MethodInfo TypeFromHandle {
 			get {
 				return TypeManager.fieldinfo_get_field_from_handle;
 			}
@@ -7241,7 +7241,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override MethodSpec TypeFromHandleGeneric {
+		protected override MethodInfo TypeFromHandleGeneric {
 			get {
 				return TypeManager.fieldinfo_get_field_from_handle_generic;
 			}
@@ -8358,7 +8358,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			protected override int GetApplicableParametersCount (MethodSpec method, AParametersCollection parameters)
+			protected override int GetApplicableParametersCount (MethodBase method, AParametersCollection parameters)
 			{
 				//
 				// Here is the trick, decrease number of arguments by 1 when only
@@ -8376,7 +8376,7 @@ namespace Mono.CSharp {
 		class Indexers
 		{
 			// Contains either property getter or setter
-			public List<MethodSpec> Methods;
+			public List<MethodBase> Methods;
 			public List<PropertyInfo> Properties;
 
 			Indexers ()
@@ -8394,11 +8394,11 @@ namespace Mono.CSharp {
 						accessor = property.GetSetMethod (true);
 
 					if (Methods == null) {
-						Methods = new List<MethodSpec> ();
+						Methods = new List<MethodBase> ();
 						Properties = new List<PropertyInfo> ();
 					}
 
-					Methods.Add (Import.CreateMethod (accessor));
+					Methods.Add (accessor);
 					Properties.Add (property);
 				}
 			}
@@ -8458,7 +8458,7 @@ namespace Mono.CSharp {
 		//
 		// Points to our "data" repository
 		//
-		MethodSpec get, set;
+		MethodInfo get, set;
 		bool is_base_indexer;
 		bool prepared;
 		LocalTemporary temp;
@@ -8568,10 +8568,10 @@ namespace Mono.CSharp {
 				return expr.Resolve (ec);
 			}
 
-			var mi = (MethodSpec) mg;
+			MethodInfo mi = (MethodInfo) mg;
 			PropertyInfo pi = null;
 			for (int i = 0; i < ilist.Methods.Count; ++i) {
-				if (ilist.Methods [i].MetaInfo == mi.MetaInfo) {
+				if (ilist.Methods [i] == mi) {
 					pi = (PropertyInfo) ilist.Properties [i];
 					break;
 				}
@@ -8581,15 +8581,11 @@ namespace Mono.CSharp {
 			if (type.IsPointer && !ec.IsUnsafe)
 				UnsafeError (ec, loc);
 
-			MethodSpec accessor = null;
+			MethodInfo accessor;
 			if (right_side == null) {
-				var m = pi.GetGetMethod (true);
-				if (m != null)
-					accessor = get = Import.CreateMethod (m);
+				accessor = get = pi.GetGetMethod (true);
 			} else {
-				var m = pi.GetSetMethod (true);
-				if (m != null)
-					accessor = set = Import.CreateMethod (m);
+				accessor = set = pi.GetSetMethod (true);
 				if (accessor == null && pi.GetGetMethod (true) != null) {
 					ec.Report.SymbolRelatedToPreviousError (pi);
 					ec.Report.Error (200, loc, "The read only property or indexer `{0}' cannot be assigned to",
@@ -8616,19 +8612,14 @@ namespace Mono.CSharp {
 
 			bool must_do_cs1540_check;
 			if (!IsAccessorAccessible (ec.CurrentType, accessor, out must_do_cs1540_check)) {
-				if (set == null) {
-					var m = pi.GetSetMethod (true);
-					if (m != null)
-						set = Import.CreateMethod (m);
-				} else {
-					var m = pi.GetGetMethod (true);
-					if (m != null)
-						get = Import.CreateMethod (m);
-				}
+				if (set == null)
+					set = pi.GetSetMethod (true);
+				else
+					get = pi.GetGetMethod (true);
 
 				if (set != null && get != null &&
-					(set.MetaInfo.Attributes & MethodAttributes.MemberAccessMask) != (get.MetaInfo.Attributes & MethodAttributes.MemberAccessMask)) {
-					ec.Report.SymbolRelatedToPreviousError (accessor.MetaInfo);
+					(set.Attributes & MethodAttributes.MemberAccessMask) != (get.Attributes & MethodAttributes.MemberAccessMask)) {
+					ec.Report.SymbolRelatedToPreviousError (accessor);
 					ec.Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because a `{1}' accessor is inaccessible",
 						TypeManager.GetFullNameSignature (pi), GetAccessorName (right_side != null));
 				} else {
@@ -8707,7 +8698,7 @@ namespace Mono.CSharp {
 		
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.CSharpSignature (get != null ? get.MetaInfo : set.MetaInfo, false);
+			return TypeManager.CSharpSignature (get != null ? get : set, false);
 		}
 
 #if NET_4_0
@@ -8717,7 +8708,7 @@ namespace Mono.CSharp {
 			var args = Arguments.MakeExpression (arguments, ctx).Concat (value);
 
 			return SLE.Expression.Block (
-					SLE.Expression.Call (instance_expr.MakeExpression (ctx), (MethodInfo) set.MetaInfo, args),
+					SLE.Expression.Call (instance_expr.MakeExpression (ctx), set, args),
 					value [0]);
 		}
 #endif
@@ -8725,15 +8716,15 @@ namespace Mono.CSharp {
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			var args = Arguments.MakeExpression (arguments, ctx);
-			return SLE.Expression.Call (instance_expr.MakeExpression (ctx), (MethodInfo) get.MetaInfo, args);
+			return SLE.Expression.Call (instance_expr.MakeExpression (ctx), get, args);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			if (get != null)
-				storey.MutateGenericMethod (get);
+				get = storey.MutateGenericMethod (get);
 			if (set != null)
-				storey.MutateGenericMethod (set);
+				set = storey.MutateGenericMethod (set);
 
 			instance_expr.MutateHoistedGenericType (storey);
 			if (arguments != null)
@@ -9028,10 +9019,10 @@ namespace Mono.CSharp {
 	}	
 
 	public class UserCast : Expression {
-		MethodSpec method;
+		MethodInfo method;
 		Expression source;
 		
-		public UserCast (MethodSpec method, Expression source, Location l)
+		public UserCast (MethodInfo method, Expression source, Location l)
 		{
 			this.method = method;
 			this.source = source;
@@ -9056,7 +9047,7 @@ namespace Mono.CSharp {
 			
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method.MetaInfo);
+			ObsoleteAttribute oa = AttributeTester.GetMethodObsoleteAttribute (method);
 			if (oa != null)
 				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, ec.Report);
 
@@ -9067,23 +9058,23 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			source.Emit (ec);
-			ec.ig.Emit (OpCodes.Call, (MethodInfo) method.MetaInfo);
+			ec.ig.Emit (OpCodes.Call, method);
 		}
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.CSharpSignature (method.MetaInfo);
+			return TypeManager.CSharpSignature (method);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.Convert (source.MakeExpression (ctx), type, (MethodInfo) method.MetaInfo);
+			return SLE.Expression.Convert (source.MakeExpression (ctx), type, method);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			source.MutateHoistedGenericType (storey);
-			storey.MutateGenericMethod (method);
+			method = storey.MutateGenericMethod (method);
 		}
 	}
 
@@ -9854,7 +9845,7 @@ namespace Mono.CSharp {
 
 			var init = new ArrayInitializer (parameters.Count, loc);
 			foreach (Property p in anonymous_type.Properties)
-				init.Add (new TypeOfMethod (Import.CreateMethod (TypeBuilder.GetMethod (type, p.GetBuilder)), loc));
+				init.Add (new TypeOfMethod (TypeBuilder.GetMethod (type, p.GetBuilder), loc));
 
 			var ctor_args = new ArrayInitializer (Arguments.Count, loc);
 			foreach (Argument a in Arguments)

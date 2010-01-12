@@ -2166,7 +2166,7 @@ namespace Mono.CSharp {
 		///   when resolving an Invocation or a DelegateInvocation and the user
 		///   did not explicitly specify type arguments.
 		/// </summary>
-		public static int InferTypeArguments (ResolveContext ec, Arguments arguments, ref MethodSpec method)
+		public static int InferTypeArguments (ResolveContext ec, Arguments arguments, ref MethodBase method)
 		{
 			ATypeInference ti = ATypeInference.CreateInstance (arguments);
 			Type[] i_args = ti.InferMethodArguments (ec, method);
@@ -2176,7 +2176,7 @@ namespace Mono.CSharp {
 			if (i_args.Length == 0)
 				return 0;
 
-			method = method.Inflate (i_args);
+			method = ((MethodInfo) method).MakeGenericMethod (i_args);
 			return 0;
 		}
 
@@ -2220,7 +2220,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public abstract Type[] InferMethodArguments (ResolveContext ec, MethodSpec method);
+		public abstract Type[] InferMethodArguments (ResolveContext ec, MethodBase method);
 //		public abstract Type[] InferDelegateArguments (ResolveContext ec, MethodBase method);
 	}
 
@@ -2271,14 +2271,14 @@ namespace Mono.CSharp {
 			return context.InferredTypeArguments;
 		}
 */
-		public override Type[] InferMethodArguments (ResolveContext ec, MethodSpec method)
+		public override Type[] InferMethodArguments (ResolveContext ec, MethodBase method)
 		{
-			var method_generic_args = method.GetGenericArguments ();
+			Type[] method_generic_args = method.GetGenericArguments ();
 			TypeInferenceContext context = new TypeInferenceContext (method_generic_args);
 			if (!context.UnfixedVariableExists)
 				return Type.EmptyTypes;
 
-			AParametersCollection pd = method.Parameters;
+			AParametersCollection pd = TypeManager.GetParameterData (method);
 			if (!InferInPhases (ec, context, pd))
 				return null;
 
@@ -2389,13 +2389,13 @@ namespace Mono.CSharp {
 					t_i = t_i.GetGenericArguments () [0];
 				}
 
-				var mi = Delegate.GetInvokeMethod (ec.Compiler, t_i, t_i);
+				MethodInfo mi = Delegate.GetInvokeMethod (ec.Compiler, t_i, t_i);
 				Type rtype = mi.ReturnType;
 
 #if MS_COMPATIBLE
 				// Blablabla, because reflection does not work with dynamic types
-//				Type[] g_args = t_i.GetGenericArguments ();
-//				rtype = g_args[rtype.GenericParameterPosition];
+				Type[] g_args = t_i.GetGenericArguments ();
+				rtype = g_args[rtype.GenericParameterPosition];
 #endif
 
 				if (tic.IsReturnTypeNonDependent (ec, mi, rtype))
@@ -2625,17 +2625,17 @@ namespace Mono.CSharp {
 				if (t.IsGenericParameter)
 					continue;
 
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
+				MethodInfo invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
 				Type rtype = invoke.ReturnType;
 				if (!rtype.IsGenericParameter && !rtype.IsGenericType)
 					continue;
 
 #if MS_COMPATIBLE
 				// Blablabla, because reflection does not work with dynamic types
-//				if (rtype.IsGenericParameter) {
-//					Type [] g_args = t.GetGenericArguments ();
-//					rtype = g_args [rtype.GenericParameterPosition];
-//				}
+				if (rtype.IsGenericParameter) {
+					Type [] g_args = t.GetGenericArguments ();
+					rtype = g_args [rtype.GenericParameterPosition];
+				}
 #endif
 				// Remove dependent types, they cannot be fixed yet
 				RemoveDependentTypes (types_to_fix, rtype);
@@ -2784,7 +2784,7 @@ namespace Mono.CSharp {
 		// Tests whether all delegate input arguments are fixed and generic output type
 		// requires output type inference 
 		//
-		public bool IsReturnTypeNonDependent (ResolveContext ec, MethodSpec invoke, Type returnType)
+		public bool IsReturnTypeNonDependent (ResolveContext ec, MethodInfo invoke, Type returnType)
 		{
 			if (returnType.IsGenericParameter) {
 				if (IsFixed (returnType))
@@ -2805,7 +2805,7 @@ namespace Mono.CSharp {
 			}
 
 			// All generic input arguments have to be fixed
-			AParametersCollection d_parameters = invoke.Parameters;
+			AParametersCollection d_parameters = TypeManager.GetParameterData (invoke);
 			return AllTypesAreFixed (d_parameters.Types);
 		}
 		
@@ -2966,18 +2966,18 @@ namespace Mono.CSharp {
 			AnonymousMethodExpression ame = e as AnonymousMethodExpression;
 			if (ame != null) {
 				Type rt = ame.InferReturnType (ec, this, t);
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
+				MethodInfo invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
 
 				if (rt == null) {
-					AParametersCollection pd = invoke.Parameters;
+					AParametersCollection pd = TypeManager.GetParameterData (invoke);
 					return ame.Parameters.Count == pd.Count ? 1 : 0;
 				}
 
 				Type rtype = invoke.ReturnType;
 #if MS_COMPATIBLE
 				// Blablabla, because reflection does not work with dynamic types
-//				Type [] g_args = t.GetGenericArguments ();
-//				rtype = g_args [rtype.GenericParameterPosition];
+				Type [] g_args = t.GetGenericArguments ();
+				rtype = g_args [rtype.GenericParameterPosition];
 #endif
 				return LowerBoundInference (rt, rtype) + 1;
 			}
@@ -2993,19 +2993,19 @@ namespace Mono.CSharp {
 				if (!TypeManager.IsDelegateType (t))
 					return 0;
 
-				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
+				MethodInfo invoke = Delegate.GetInvokeMethod (ec.Compiler, t, t);
 				Type rtype = invoke.ReturnType;
 #if MS_COMPATIBLE
 				// Blablabla, because reflection does not work with dynamic types
-//				Type [] g_args = t.GetGenericArguments ();
-//				rtype = g_args [rtype.GenericParameterPosition];
+				Type [] g_args = t.GetGenericArguments ();
+				rtype = g_args [rtype.GenericParameterPosition];
 #endif
 
 				if (!TypeManager.IsGenericType (rtype))
 					return 0;
 
 				MethodGroupExpr mg = (MethodGroupExpr) e;
-				Arguments args = DelegateCreation.CreateDelegateMethodArguments (invoke.Parameters, e.Location);
+				Arguments args = DelegateCreation.CreateDelegateMethodArguments (TypeManager.GetParameterData (invoke), e.Location);
 				mg = mg.OverloadResolve (ec, ref args, true, e.Location);
 				if (mg == null)
 					return 0;

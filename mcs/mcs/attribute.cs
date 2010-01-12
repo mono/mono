@@ -401,7 +401,7 @@ namespace Mono.CSharp {
 			}
 
 			ResolveContext rc = new ResolveContext (context, ResolveContext.Options.ConstantScope);
-			var ctor = ResolveConstructor (rc);
+			ConstructorInfo ctor = ResolveConstructor (rc);
 			if (ctor == null) {
 				if (Type is TypeBuilder && 
 				    TypeManager.LookupDeclSpace (Type).MemberCache == null)
@@ -414,13 +414,12 @@ namespace Mono.CSharp {
 			ApplyModuleCharSet (rc);
 
 			try {
-				var ctor_meta = (ConstructorInfo) ctor.MetaInfo;
 				// SRE does not allow private ctor but we want to report all source code errors
-				if (ctor.MetaInfo.IsPrivate)
+				if (ctor.IsPrivate)
 					return null;
 
 				if (NamedArguments == null) {
-					cb = new CustomAttributeBuilder (ctor_meta, pos_values);
+					cb = new CustomAttributeBuilder (ctor, pos_values);
 
 					if (pos_values.Length == 0)
 						att_cache.Add (Type, cb);
@@ -433,7 +432,7 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				cb = new CustomAttributeBuilder (ctor_meta, pos_values,
+				cb = new CustomAttributeBuilder (ctor, pos_values,
 						prop_info_arr, prop_values_arr,
 						field_info_arr, field_values_arr);
 
@@ -446,7 +445,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected virtual MethodSpec ResolveConstructor (ResolveContext ec)
+		protected virtual ConstructorInfo ResolveConstructor (ResolveContext ec)
 		{
 			if (PosArguments != null) {
 				bool dynamic;
@@ -469,11 +468,13 @@ namespace Mono.CSharp {
 			if (mg == null)
 				return null;
 			
-			var constructor = (MethodSpec) mg;
+			ConstructorInfo constructor = (ConstructorInfo)mg;
 			if (PosArguments == null) {
 				pos_values = EmptyObject;
 				return constructor;
 			}
+
+			AParametersCollection pd = TypeManager.GetParameterData (constructor);
 
 			if (!PosArguments.GetAttributableValue (ec, out pos_values))
 				return null;
@@ -506,7 +507,7 @@ namespace Mono.CSharp {
 			}
 
 			if (Type == pa.MethodImpl && pos_values.Length == 1 &&
-				constructor.Parameters.Types [0] == TypeManager.short_type &&
+				pd.Types [0] == TypeManager.short_type &&
 				!System.Enum.IsDefined (typeof (MethodImplOptions), pos_values [0].ToString ())) {
 				Error_AttributeEmitError ("Incorrect argument value.");
 				return null;
@@ -1356,7 +1357,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override MethodSpec ResolveConstructor (ResolveContext ec)
+		protected override ConstructorInfo ResolveConstructor (ResolveContext ec)
 		{
 			try {
 				Enter ();

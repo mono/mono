@@ -4138,7 +4138,7 @@ namespace Mono.CSharp {
 
 			temp.EmitAssign (ec, expr);
 			temp.Emit (ec);
-			ig.Emit (OpCodes.Call, (MethodInfo) TypeManager.void_monitor_enter_object.MetaInfo);
+			ig.Emit (OpCodes.Call, TypeManager.void_monitor_enter_object);
 		}
 
 		protected override void EmitTryBody (EmitContext ec)
@@ -4149,7 +4149,7 @@ namespace Mono.CSharp {
 		protected override void EmitFinallyBody (EmitContext ec)
 		{
 			temp.Emit (ec);
-			ec.ig.Emit (OpCodes.Call, (MethodInfo) TypeManager.void_monitor_exit_object.MetaInfo);
+			ec.ig.Emit (OpCodes.Call, TypeManager.void_monitor_exit_object);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -4945,7 +4945,7 @@ namespace Mono.CSharp {
 				local_copy.Emit (ec);
 				ig.Emit (OpCodes.Brfalse, skip);
 				local_copy.Emit (ec);
-				ig.Emit (OpCodes.Callvirt, (MethodInfo) TypeManager.void_dispose_void.MetaInfo);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				ig.MarkLabel (skip);
 				return;
 			}
@@ -4957,14 +4957,14 @@ namespace Mono.CSharp {
 			if (!(ml is MethodGroupExpr)) {
 				local_copy.Emit (ec);
 				ig.Emit (OpCodes.Box, expr_type);
-				ig.Emit (OpCodes.Callvirt, (MethodInfo) TypeManager.void_dispose_void.MetaInfo);
+				ig.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
 				return;
 			}
 
-			MethodSpec mi = null;
+			MethodInfo mi = null;
 
-			foreach (var mk in ((MethodGroupExpr) ml).Methods) {
-				if (mk.Parameters.IsEmpty) {
+			foreach (MethodInfo mk in ((MethodGroupExpr) ml).Methods) {
+				if (TypeManager.GetParameterData (mk).Count == 0) {
 					mi = mk;
 					break;
 				}
@@ -4976,7 +4976,7 @@ namespace Mono.CSharp {
 			}
 
 			local_copy.AddressOf (ec, AddressOp.Load);
-			ig.Emit (OpCodes.Call, (MethodInfo) mi.MetaInfo);
+			ig.Emit (OpCodes.Call, mi);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -5374,7 +5374,7 @@ namespace Mono.CSharp {
 
 			MethodGroupExpr get_enumerator;
 			PropertyExpr get_current;
-			MethodSpec move_next;
+			MethodInfo move_next;
 			Expression var_type;
 			Type enumerator_type;
 			bool enumerator_found;
@@ -5394,7 +5394,7 @@ namespace Mono.CSharp {
 				throw new NotImplementedException ();
 			}
 
-			bool GetEnumeratorFilter (ResolveContext ec, MethodSpec mi)
+			bool GetEnumeratorFilter (ResolveContext ec, MethodInfo mi)
 			{
 				Type return_type = mi.ReturnType;
 
@@ -5487,7 +5487,7 @@ namespace Mono.CSharp {
 				
 					if ((TypeManager.GetParameterData (mi).Count == 0) &&
 					    TypeManager.TypeToCoreType (mi.ReturnType) == TypeManager.bool_type) {
-						move_next = Import.CreateMethod (mi);
+						move_next = mi;
 						return true;
 					}
 				}
@@ -5521,9 +5521,8 @@ namespace Mono.CSharp {
 					TypeManager.CSharpName (expr.Type));
 			}
 
-			bool IsOverride (MethodSpec ms)
+			bool IsOverride (MethodInfo m)
 			{
-				MethodInfo m = (MethodInfo) ms.MetaInfo;
 				m = (MethodInfo) TypeManager.DropGenericMethodArguments (m);
 
 				if (!m.IsVirtual || ((m.Attributes & MethodAttributes.NewSlot) != 0))
@@ -5543,16 +5542,16 @@ namespace Mono.CSharp {
 				if (mg == null)
 					return false;
 
-				MethodSpec result = null;
-				MethodSpec tmp_move_next = null;
+				MethodInfo result = null;
+				MethodInfo tmp_move_next = null;
 				PropertyExpr tmp_get_cur = null;
 				Type tmp_enumerator_type = enumerator_type;
-				foreach (var mi in mg.Methods) {
-					if (!mi.Parameters.IsEmpty)
+				foreach (MethodInfo mi in mg.Methods) {
+					if (TypeManager.GetParameterData (mi).Count != 0)
 						continue;
 			
 					// Check whether GetEnumerator is public
-					if ((mi.MetaInfo.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
+					if ((mi.Attributes & MethodAttributes.Public) != MethodAttributes.Public)
 						continue;
 
 					if (IsOverride (mi))
@@ -5582,10 +5581,10 @@ namespace Mono.CSharp {
 							    TypeManager.ImplementsInterface (result.DeclaringType, mi.DeclaringType))
 								continue;
 
-							ec.Report.SymbolRelatedToPreviousError (result.MetaInfo);
-							ec.Report.SymbolRelatedToPreviousError (mi.MetaInfo);
+							ec.Report.SymbolRelatedToPreviousError (result);
+							ec.Report.SymbolRelatedToPreviousError (mi);
 							ec.Report.Warning (278, 2, loc, "`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
-									TypeManager.CSharpName (t), "enumerable", TypeManager.CSharpSignature (result.MetaInfo), TypeManager.CSharpSignature (mi.MetaInfo));
+									TypeManager.CSharpName (t), "enumerable", TypeManager.CSharpSignature (result), TypeManager.CSharpSignature (mi));
 							return false;
 						}
 					}
@@ -5601,7 +5600,7 @@ namespace Mono.CSharp {
 					move_next = tmp_move_next;
 					get_current = tmp_get_cur;
 					enumerator_type = tmp_enumerator_type;
-					var mi = new [] { result };
+					MethodInfo[] mi = new MethodInfo[] { (MethodInfo) result };
 					get_enumerator = new MethodGroupExpr (mi, enumerator_type, loc);
 
 					if (t != expr.Type) {
@@ -5679,7 +5678,7 @@ namespace Mono.CSharp {
 
 				Expression move_next_expr;
 				{
-					var mi = new [] { move_next };
+					MemberInfo[] mi = new MemberInfo[] { move_next };
 					MethodGroupExpr mg = new MethodGroupExpr (mi, var_type.Type, loc);
 					mg.InstanceExpression = enumerator;
 

@@ -35,7 +35,6 @@ namespace Mono.CSharp {
 	{
 		public readonly ParametersCompiled Parameters;
 		protected ToplevelBlock block;
-		protected MethodSpec spec;
 
 		public MethodCore (DeclSpace parent, GenericMethod generic,
 			FullNamedExpression type, Modifiers mod, Modifiers allowed_mod,
@@ -131,10 +130,6 @@ namespace Mono.CSharp {
 			return base.EnableOverloadChecks (overload);
 		}
 
-		public MethodSpec Spec {
-			get { return spec; }
-		}
-
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -154,88 +149,13 @@ namespace Mono.CSharp {
 		}
 	}
 
-	interface IGenericMethodDefinition : IMemberDefinition
-	{
-		MethodInfo MakeGenericMethod (Type[] targs);
-	}
-
 	public class MethodSpec : MemberSpec
 	{
-		MethodBase metaInfo;
-		readonly AParametersCollection parameters;
+		public MethodInfo MetaInfo;
 
-		public MethodSpec (IMemberDefinition details, MethodBase info, AParametersCollection parameters, Modifiers modifiers)
-			: base (details, info.Name, modifiers)
+		protected MethodSpec (IMemberDetails details, string name, Modifiers modifiers)
+			: base (details, name, modifiers)
 		{
-			this.MetaInfo = info;
-			this.parameters = parameters;
-		}
-
-		public override Type DeclaringType {
-			get {
-				return MetaInfo.DeclaringType;
-			}
-		}
-
-		public Type[] GetGenericArguments ()
-		{
-			return MetaInfo.GetGenericArguments ();
-		}
-
-		public MethodSpec Inflate (Type[] targs)
-		{
-			// TODO: Only create MethodSpec and inflate parameters, defer the call for later
-			var mb = ((IGenericMethodDefinition) definition).MakeGenericMethod (targs);
-
-			// TODO: Does not work on .NET
-			var par = TypeManager.GetParameterData (mb);
-
-			return new MethodSpec (definition, mb, par, modifiers);
-		}
-
-		public bool IsAbstract {
-			get {
-				return (modifiers & Modifiers.ABSTRACT) != 0;
-			}
-		}
-
-		public bool IsConstructor {
-			get {
-				return MetaInfo.IsConstructor;
-			}
-		}
-
-		public bool IsGenericMethod {
-			get {
-				return MetaInfo.IsGenericMethod;
-			}
-		}
-
-		// When is virtual or abstract
-		public bool IsVirtual {
-			get {
-				return (modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT)) != 0;
-			}
-		}
-
-		public MethodBase MetaInfo {
-			get {
-				return metaInfo;
-			}
-			set {
-				metaInfo = value;
-			}
-		}
-
-		public AParametersCollection Parameters {
-			get { return parameters; }
-		}
-
-		public Type ReturnType {
-			get {
-				return IsConstructor ?
-					TypeManager.void_type : ((MethodInfo) MetaInfo).ReturnType;
-			}
 		}
 	}
 
@@ -347,8 +267,6 @@ namespace Mono.CSharp {
 					MethodBase mb = new PartialMethodDefinitionInfo (this);
 					Parent.MemberCache.AddMember (mb, this);
 					TypeManager.AddMethod (mb, this);
-
-					spec = new MethodSpec (this, mb, Parameters, ModFlags);
 				}
 
 				return true;
@@ -361,8 +279,6 @@ namespace Mono.CSharp {
 				return false;
 					
 			MethodBuilder = MethodData.MethodBuilder;
-
-			spec = new MethodSpec (this, MethodBuilder, Parameters, ModFlags);
 
 			if (TypeManager.IsGenericMethod (MethodBuilder))
 				Parent.MemberCache.AddGenericMember (MethodBuilder, this);
@@ -599,8 +515,8 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class Method : MethodOrOperator, IGenericMethodDefinition
-	{
+	public class Method : MethodOrOperator {
+
 		/// <summary>
 		///   Modifiers allowed in a class declaration
 		/// </summary>
@@ -840,7 +756,7 @@ namespace Mono.CSharp {
 							Report.Warning (402, 4, Location, "`{0}': an entry point cannot be generic or in a generic type",
 								GetSignatureForError ());
 						} else {
-							SetIsUsed ();
+							SetMemberIsUsed ();
 							RootContext.EntryPoint = this;
 						}
 					} else {
@@ -917,11 +833,6 @@ namespace Mono.CSharp {
 
 			base_ret_type = TypeManager.TypeToCoreType (mi.ReturnType);
 			return mi;
-		}
-
-		public MethodInfo MakeGenericMethod (Type[] targs)
-		{
-			return MethodBuilder.MakeGenericMethod (targs);
 		}
 
 		public void SetPartialDefinition (Method methodDefinition)
@@ -1046,9 +957,9 @@ namespace Mono.CSharp {
 			if (!ec.IsStatic)
 				base_constructor_group.InstanceExpression = ec.GetThis (loc);
 			
-			var base_ctor = base_constructor_group.BestCandidate;
+			ConstructorInfo base_ctor = (ConstructorInfo)base_constructor_group;
 
-			if (base_ctor.MetaInfo == caller_builder){
+			if (base_ctor == caller_builder){
 				ec.Report.Error (516, loc, "Constructor `{0}' cannot call itself", TypeManager.CSharpSignature (caller_builder));
 			}
 						
@@ -1236,8 +1147,6 @@ namespace Mono.CSharp {
 			ConstructorBuilder = Parent.TypeBuilder.DefineConstructor (
 				ca, CallingConventions,
 				Parameters.GetEmitTypes ());
-
-			spec = new MethodSpec (this, ConstructorBuilder, Parameters, ModFlags);
 
 			if (Parent.PartialContainer.IsComImport) {
 				if (!IsDefault ()) {
@@ -1428,7 +1337,7 @@ namespace Mono.CSharp {
 		string GetSignatureForError ();
 		bool IsExcluded ();
 		bool IsClsComplianceRequired ();
-		void SetIsUsed ();
+		void SetMemberIsUsed ();
 		void EmitExtraSymbolInfo (SourceMethod source);
 	}
 

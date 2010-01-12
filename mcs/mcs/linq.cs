@@ -94,18 +94,18 @@ namespace Mono.CSharp.Linq
 				return rmg;
 			}
 
-			public bool AmbiguousCall (ResolveContext ec, MethodSpec ambiguous)
+			public bool AmbiguousCall (ResolveContext ec, MethodBase ambiguous)
 			{
-				ec.Report.SymbolRelatedToPreviousError (mg.BestCandidate.MetaInfo);
-				ec.Report.SymbolRelatedToPreviousError (ambiguous.MetaInfo);
+				ec.Report.SymbolRelatedToPreviousError ((MethodInfo) mg);
+				ec.Report.SymbolRelatedToPreviousError (ambiguous);
 				ec.Report.Error (1940, loc, "Ambiguous implementation of the query pattern `{0}' for source type `{1}'",
 					mg.Name, mg.InstanceExpression.GetSignatureForError ());
 				return true;
 			}
 
-			public bool NoExactMatch (ResolveContext ec, MethodSpec method)
+			public bool NoExactMatch (ResolveContext ec, MethodBase method)
 			{
-				var pd = method.Parameters;
+				AParametersCollection pd = TypeManager.GetParameterData (method);
 				Type source_type = pd.ExtensionMethodType;
 				if (source_type != null) {
 					Argument a = arguments [0];
@@ -125,7 +125,7 @@ namespace Mono.CSharp.Linq
 					}
 				}
 
-				if (!method.IsGenericMethod)
+				if (!TypeManager.IsGenericMethod (method))
 					return false;
 
 				if (mg.Name == "SelectMany") {

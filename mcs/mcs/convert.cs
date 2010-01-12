@@ -879,7 +879,7 @@ namespace Mono.CSharp {
 		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
 		///   for explicit and implicit conversion operators.
 		/// </summary>
-		static public Type FindMostSpecificSource (IList<MethodSpec> list,
+		static public Type FindMostSpecificSource (IList<MethodInfo> list,
 							   Expression source, bool apply_explicit_conv_rules)
 		{
 			var src_types_set = new List<Type> ();
@@ -888,8 +888,9 @@ namespace Mono.CSharp {
 			// If any operator converts from S then Sx = S
 			//
 			Type source_type = source.Type;
-			foreach (var mb in list){
-				Type param_type = mb.Parameters.Types [0];
+			foreach (MethodBase mb in list){
+				AParametersCollection pd = TypeManager.GetParameterData (mb);
+				Type param_type = pd.Types [0];
 
 				if (param_type == source_type)
 					return param_type;
@@ -924,7 +925,7 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  Finds the most specific target Tx according to section 13.4.4
 		/// </summary>
-		static public Type FindMostSpecificTarget (IList<MethodSpec> list,
+		static public Type FindMostSpecificTarget (IList<MethodInfo> list,
 							   Type target, bool apply_explicit_conv_rules)
 		{
 			var tgt_types_set = new List<Type> ();
@@ -932,7 +933,7 @@ namespace Mono.CSharp {
 			//
 			// If any operator converts to T then Tx = T
 			//
-			foreach (var mi in list){
+			foreach (MethodInfo mi in list){
 				Type ret_type = TypeManager.TypeToCoreType (mi.ReturnType);
 				if (ret_type == target)
 					return ret_type;
@@ -988,7 +989,7 @@ namespace Mono.CSharp {
 			return UserDefinedConversion (ec, source, target, loc, true, true);
 		}
 
-		static void AddConversionOperators (List<MethodSpec> list,
+		static void AddConversionOperators (List<MethodInfo> list,
 						    Expression source, Type target_type,
 						    bool look_for_explicit,
 						    MethodGroupExpr mg)
@@ -1012,8 +1013,8 @@ namespace Mono.CSharp {
 					target_type = TypeManager.uint64_type;
 			}
 
-			foreach (var m in mg.Methods) {
-				AParametersCollection pd = m.Parameters;
+			foreach (MethodInfo m in mg.Methods) {
+				AParametersCollection pd = TypeManager.GetParameterData (m);
 				Type return_type = TypeManager.TypeToCoreType (m.ReturnType);
 				Type arg_type = pd.Types [0];
 
@@ -1052,9 +1053,9 @@ namespace Mono.CSharp {
 		///   Compute the user-defined conversion operator from source_type to target_type.
 		///   `look_for_explicit' controls whether we should also include the list of explicit operators
 		/// </summary>
-		static MethodSpec GetConversionOperator (CompilerContext ctx, Type container_type, Expression source, Type target_type, bool look_for_explicit)
+		static MethodInfo GetConversionOperator (CompilerContext ctx, Type container_type, Expression source, Type target_type, bool look_for_explicit)
 		{
-			var ops = new List<MethodSpec> (4);
+			var ops = new List<MethodInfo> (4);
 
 			Type source_type = source.Type;
 
@@ -1089,12 +1090,12 @@ namespace Mono.CSharp {
 			if (most_specific_target == null)
 				return null;
 
-			MethodSpec method = null;
+			MethodInfo method = null;
 
-			foreach (var m in ops) {
+			foreach (MethodInfo m in ops) {
 				if (TypeManager.TypeToCoreType (m.ReturnType) != most_specific_target)
 					continue;
-				if (m.Parameters.Types [0] != most_specific_source)
+				if (TypeManager.GetParameterData (m).Types [0] != most_specific_source)
 					continue;
 				// Ambiguous: more than one conversion operator satisfies the signature.
 				if (method != null)
@@ -1113,7 +1114,7 @@ namespace Mono.CSharp {
 								bool look_for_explicit, bool return_convert)
 		{
 			Type source_type = source.Type;
-			MethodSpec method = null;
+			MethodInfo method = null;
 			Expression expr = null;
 
 			object o;
@@ -1129,7 +1130,7 @@ namespace Mono.CSharp {
 			}			
 
 			if (!(source is Constant) && hash.Lookup (source_type, target, out o)) {
-				method = (MethodSpec) o;
+				method = (MethodInfo) o;
 			} else {
 				if (TypeManager.IsDynamicType (source_type))
 					return null;
@@ -1138,7 +1139,7 @@ namespace Mono.CSharp {
 			}
 
 			if (method != null) {
-				Type most_specific_source = method.Parameters.Types[0];
+				Type most_specific_source = TypeManager.GetParameterData (method).Types[0];
 
 				//
 				// This will do the conversion to the best match that we

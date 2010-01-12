@@ -2074,7 +2074,7 @@ namespace Mono.CSharp {
 							if (is_type_exposed)
 								continue;
 
-							f.SetIsUsed ();
+							f.SetMemberIsUsed ();
 						}				
 						
 						if (!f.IsUsed){
@@ -4569,7 +4569,7 @@ namespace Mono.CSharp {
 		{
 			if (my_event != null) {
 //				my_event.SetAssigned ();
-				my_event.SetIsUsed ();
+				my_event.SetMemberIsUsed ();
 			}
 		}
 	}
@@ -4630,7 +4630,7 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			SetIsUsed ();
+			SetMemberIsUsed ();
 			return true;
 		}
 
@@ -4745,7 +4745,7 @@ namespace Mono.CSharp {
 			}
 
 			if (!HasBackingField) {
-				SetIsUsed ();
+				SetMemberIsUsed ();
 				return true;
 			}
 
@@ -4753,10 +4753,10 @@ namespace Mono.CSharp {
 			// we are using FieldExpr instead of EventExpr for event access in that
 			// case.  When this issue will be fixed this hack can be removed.
 			if (TypeManager.IsGenericType (MemberType) || Parent.IsGeneric)
-				SetIsUsed ();
+				SetMemberIsUsed ();
 
 			if (Add.IsInterfaceImplementation)
-				SetIsUsed ();
+				SetMemberIsUsed ();
 
 			TypeManager.RegisterEventField (EventBuilder, this);
 

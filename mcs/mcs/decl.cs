@@ -247,7 +247,7 @@ namespace Mono.CSharp {
 	///   Base representation for members.  This is used to keep track
 	///   of Name, Location and Modifier flags, and handling Attributes.
 	/// </summary>
-	public abstract class MemberCore : Attributable, IMemberContext, IMemberDefinition
+	public abstract class MemberCore : Attributable, IMemberContext, IMemberDetails
 	{
 		/// <summary>
 		///   Public name
@@ -462,7 +462,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public void SetIsUsed ()
+		public void SetMemberIsUsed ()
 		{
 			caching_flags |= Flags.IsUsed;
 		}
@@ -900,18 +900,16 @@ namespace Mono.CSharp {
 		protected readonly Modifiers modifiers;
 		readonly string name;
 		StateFlags state;
-		protected IMemberDefinition definition;
+		IMemberDetails details;
 
-		protected MemberSpec (IMemberDefinition definition, string name, Modifiers modifiers)
+		protected MemberSpec (IMemberDetails details, string name, Modifiers modifiers)
 		{
-			this.definition = definition;
+			this.details = details;
 			this.name = name;
 			this.modifiers = modifiers;
 
 			state = StateFlags.Obsolete_Undetected;
 		}
-
-		public abstract Type DeclaringType { get; }
 
 		public ObsoleteAttribute GetObsoleteAttribute ()
 		{
@@ -920,15 +918,16 @@ namespace Mono.CSharp {
 
 			state &= ~StateFlags.Obsolete_Undetected;
 
-			var oa = definition.GetObsoleteAttribute ();
+			var oa = details.GetObsoleteAttribute ();
 			if (oa != null)
 				state |= StateFlags.Obsolete;
 
 			return oa;
 		}
 
-		public IMemberDefinition MemberDefinition {
-			get { return definition; }
+		// TODO: Obsolete, remove after MemberCache
+		public IMemberDetails MemberDetails {
+			get { return details; }
 		}
 		
 		public string Name {
@@ -940,14 +939,9 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// Member details which are same between all member
-	// specifications
-	//
-	public interface IMemberDefinition
+	public interface IMemberDetails
 	{
 		ObsoleteAttribute GetObsoleteAttribute ();
-		void SetIsUsed ();
 	}
 
 	/// <summary>
@@ -2386,7 +2380,7 @@ namespace Mono.CSharp {
 		//
 		// Looks for extension methods with defined name and extension type
 		//
-		public List<MethodSpec> FindExtensionMethods (Assembly thisAssembly, Type extensionType, string name, bool publicOnly)
+		public List<MethodBase> FindExtensionMethods (Assembly thisAssembly, Type extensionType, string name, bool publicOnly)
 		{
 			List<CacheEntry> entries;
 			if (method_hash != null)
@@ -2401,7 +2395,7 @@ namespace Mono.CSharp {
 			EntryType entry_type = EntryType.Static | EntryType.Method | EntryType.NotExtensionMethod;
 			EntryType found_entry_type = entry_type & ~EntryType.NotExtensionMethod;
 
-			List<MethodSpec> candidates = null;
+			List<MethodBase> candidates = null;
 			foreach (CacheEntry entry in entries) {
 				if ((entry.EntryType & entry_type) == found_entry_type) {
 					MethodBase mb = (MethodBase)entry.Member;
@@ -2426,9 +2420,11 @@ namespace Mono.CSharp {
 						continue;
 					}
 
-					if (candidates == null)
-						candidates = new List<MethodSpec> (2);
-					candidates.Add (Import.CreateMethod (mb));
+					//if (implicit conversion between ex_type and extensionType exist) {
+						if (candidates == null)
+							candidates = new List<MethodBase> (2);
+						candidates.Add (mb);
+					//}
 				}
 			}
 

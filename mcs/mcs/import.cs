@@ -19,7 +19,7 @@ namespace Mono.CSharp
 	{
 		public static FieldSpec CreateField (FieldInfo fi)
 		{
-			// TODO MemberCache: remove
+			// TODO: remove after MemberCache fix
 			var cs = TypeManager.GetConstant (fi);
 			if (cs != null)
 				return cs;
@@ -48,18 +48,18 @@ namespace Mono.CSharp
 					break;
 			}
 
-			// TODO MemberCache: Remove completely and use only Imported
-			IMemberDefinition definition;
+			// TODO: Remove completely
+			IMemberDetails details;
 			var gfd = TypeManager.GetGenericFieldDefinition (fi);
 			fb = TypeManager.GetFieldCore (gfd);
 			if (fb != null) {
-				definition = fb;
+				details = fb;
 			} else {
 				cs = TypeManager.GetConstant (gfd);
 				if (cs != null)
-					definition = cs.MemberDefinition;
+					details = cs.MemberDetails;
 				else
-					definition = new ImportedMemberDefinition (fi);
+					details = new ImportedMemberDetails (fi);
 			}
 
 			if ((fa & FieldAttributes.Literal) != 0) {
@@ -71,14 +71,14 @@ namespace Mono.CSharp
 					c = Constant.CreateConstantFromValue (fi.FieldType, gfd.GetValue (gfd), Location.Null);
 				}
 
-				return new ConstSpec (definition, fi, mod, c);
+				return new ConstSpec (details, fi, mod, c);
 			}
 
 			if ((fa & FieldAttributes.InitOnly) != 0) {
 				if (fi.FieldType == TypeManager.decimal_type) {
 					var dc = ReadDecimalConstant (gfd);
 					if (dc != null)
-						return new ConstSpec (definition, fi, mod, dc);
+						return new ConstSpec (details, fi, mod, dc);
 				}
 
 				mod |= Modifiers.READONLY;
@@ -94,66 +94,14 @@ namespace Mono.CSharp
 						 // TODO: Remove this after MemberCache fix
 					} else if (gfd.IsDefined (pa.Type, false)) {
 						var element_field = fi.FieldType.GetField (FixedField.FixedElementName);
-						return new FixedFieldSpec (definition, fi, element_field, mod);
+						return new FixedFieldSpec (details, fi, element_field, mod);
 					}
 				}
 			}
 
 			// TODO: volatile
 
-			return new FieldSpec (definition, fi, mod);
-		}
-
-		public static MethodSpec CreateMethod (MethodBase mb)
-		{
-			// TODO MemberCache: Remove
-			MethodCore mc = TypeManager.GetMethod (mb) as MethodCore;
-			if (mc != null)
-				return mc.Spec;
-
-			Modifiers mod = 0;
-			var ma = mb.Attributes;
-			switch (ma & MethodAttributes.MemberAccessMask) {
-				case MethodAttributes.Public:
-					mod = Modifiers.PUBLIC;
-					break;
-				case MethodAttributes.Assembly:
-					mod = Modifiers.INTERNAL;
-					break;
-				case MethodAttributes.Family:
-					mod = Modifiers.PROTECTED;
-					break;
-				case MethodAttributes.FamORAssem:
-					mod = Modifiers.PROTECTED | Modifiers.INTERNAL;
-					break;
-				default:
-					mod = Modifiers.PRIVATE;
-					break;
-			}
-
-			if ((ma & MethodAttributes.Static) != 0)
-				mod |= Modifiers.STATIC;
-			if ((ma & MethodAttributes.Virtual) != 0)
-				mod |= Modifiers.VIRTUAL;
-			if ((ma & MethodAttributes.Abstract) != 0)
-				mod |= Modifiers.ABSTRACT;
-			if ((ma & MethodAttributes.Final) != 0)
-				mod |= Modifiers.SEALED;
-
-			IMemberDefinition definition;
-			var gmd = mb as MethodInfo;
-			if (gmd != null && gmd.IsGenericMethodDefinition) {
-				definition = new ImportedGenericMethodDefinition (gmd);
-			} else if (mb.IsGenericMethod) {	// TODO MemberCache: Remove me
-				definition = new ImportedGenericMethodDefinition ((MethodInfo) TypeManager.DropGenericMethodArguments (mb));
-			} else {
-				definition = new ImportedMemberDefinition (mb);
-			}
-
-			// TODO MemberCache: Use AParametersCollection p = ParametersImported.Create (mb);
-			AParametersCollection p = TypeManager.GetParameterData (mb);
-			MethodSpec ms = new MethodSpec (definition, mb, p, mod);
-			return ms;
+			return new FieldSpec (details, fi, mod);
 		}
 
 		//
@@ -175,11 +123,11 @@ namespace Mono.CSharp
 		}
 	}
 
-	class ImportedMemberDefinition : IMemberDefinition
+	class ImportedMemberDetails : IMemberDetails
 	{
-		protected readonly ICustomAttributeProvider provider;
+		readonly ICustomAttributeProvider provider;
 
-		public ImportedMemberDefinition (ICustomAttributeProvider provider)
+		public ImportedMemberDetails (ICustomAttributeProvider provider)
 		{
 			this.provider = provider;
 		}
@@ -191,24 +139,6 @@ namespace Mono.CSharp
 				return null;
 
 			return res [0] as ObsoleteAttribute;
-		}
-
-		public void SetIsUsed ()
-		{
-			// Not interested for imported members
-		}
-	}
-
-	class ImportedGenericMethodDefinition : ImportedMemberDefinition, IGenericMethodDefinition
-	{
-		public ImportedGenericMethodDefinition (MethodInfo provider)
-			: base (provider)
-		{
-		}
-
-		public MethodInfo MakeGenericMethod (Type[] targs)
-		{
-			return ((MethodInfo) provider).MakeGenericMethod (targs);
 		}
 	}
 }
