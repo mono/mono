@@ -1,5 +1,9 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XUtil.cs : format float and double values as round-trippable.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XUtil.cs : to create an XNode from an object, do not use ToString()
 	  directly. Handle TimeSpan in xsd manner.
 
