@@ -52,7 +52,7 @@ namespace Microsoft.Build.BuildEngine {
 					groupingCollection.Add (big);
 				// FIXME: add nested chooses
 				} else if (xe.Name == "PropertyGroup") {
-					BuildPropertyGroup bpg = new BuildPropertyGroup ();
+					BuildPropertyGroup bpg = new BuildPropertyGroup (xe, parentProject, null, true);
 					//bpg.BindToXml (xe);
 					groupingCollection.Add (bpg);
 				} else
