@@ -64,13 +64,12 @@ LOCAL_RUNTIME_FLAGS = --verify-all
 TOPTIONS += '-il:ver-il-gmcs.xml'
 endif
 
-COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 TEST_ILS := $(wildcard *-lib.il)
 
 eval-test: 
-	$(CSCOMPILE) eval-test.cs -r:$(COMPILER)
+	$(CSCOMPILE) eval-test.cs -r:Mono.CSharp.dll
 	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) eval-test.exe
 
 check: eval-test
