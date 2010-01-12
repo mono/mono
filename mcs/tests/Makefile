@@ -64,6 +64,7 @@ LOCAL_RUNTIME_FLAGS = --verify-all
 TOPTIONS += '-il:ver-il-gmcs.xml'
 endif
 
+COMPILER = $(topdir)/class/lib/$(PROFILE)/$(COMPILER_NAME).exe
 TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNTIME_FLAGS) $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 
 TEST_ILS := $(wildcard *-lib.il)
