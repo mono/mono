@@ -274,10 +274,11 @@ namespace System.Text.RegularExpressions {
 		}
 
 #if !NET_2_1
-		// The new rx engine has blocking bugs like
+		// The new rx engine seems to be working now, but
+		// potential problems are being tracked down here:
 		// https://bugzilla.novell.com/show_bug.cgi?id=470827
 		static readonly bool old_rx =
-			Environment.GetEnvironmentVariable ("MONO_NEW_RX") == null;
+			Environment.GetEnvironmentVariable ("MONO_OLD_RX") != null;
 #endif
 
 		private static IMachineFactory CreateMachineFactory (string pattern, RegexOptions options) 
