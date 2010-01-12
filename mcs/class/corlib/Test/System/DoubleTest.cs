@@ -221,6 +221,16 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
+		public void ParseAllowWhitespaces ()
+		{
+			NumberStyles style = NumberStyles.Float;
+			double.Parse (" 32 ");
+			double.Parse ("  Infinity  ");
+			double.Parse ("  -Infinity  ");
+			double.Parse ("  NaN  ");
+		}
+
 		[Test] // bug #81630
 		public void Parse_Whitespace ()
 		{
