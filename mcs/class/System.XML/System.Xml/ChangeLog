@@ -1,5 +1,10 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : handle Infinity and -Infinity here due to the
+	  commented reason.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvert.cs : ToSingle(string) should do the same as ToDouble().
 
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>

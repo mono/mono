@@ -415,12 +415,17 @@ namespace System.Xml {
 			while (Char.IsWhiteSpace (s [sEndPos]))
 				sEndPos--;
 
+			if (TryParseStringConstant ("NaN", s, sidx, sEndPos))
+				return Single.NaN;
 			if (TryParseStringConstant ("INF", s, sidx, sEndPos))
 				return Single.PositiveInfinity;
 			if (TryParseStringConstant ("-INF", s, sidx, sEndPos))
 				return Single.NegativeInfinity;
-			if (TryParseStringConstant ("NaN", s, sidx, sEndPos))
-				return Single.NaN;
+			// Handle these here because Single.Parse("Infinity") is invalid while XmlConvert.ToSingle("Infinity") is valid.
+			if (TryParseStringConstant ("Infinity", s, sidx, sEndPos))
+				return Single.PositiveInfinity;
+			if (TryParseStringConstant ("-Infinity", s, sidx, sEndPos))
+				return Single.NegativeInfinity;
 			return 0;
 		}
 
