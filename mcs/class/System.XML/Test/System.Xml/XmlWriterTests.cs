@@ -559,6 +559,21 @@ namespace MonoTests.System.Xml
 			w.Close ();
 			AssertType.AreEqual ("<hoge />", sw.ToString ());
 		}
+
+		[Test]
+		public void WriteStringDifferentBehavior ()
+		{
+			// Messy implementation difference.
+			// from XmlTextWriter -> <foo />
+			// from XmlWriter.XCreate() -> <foo></foo>
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw);
+			xw.WriteStartElement ("foo");
+			xw.WriteString ("");
+			xw.WriteEndElement ();
+			xw.Close ();
+			AssertType.AreEqual ("<?xml version='1.0' encoding='utf-16'?><foo></foo>".Replace ('\'', '"'), sw.ToString ());
+		}
 #endif
 
 	}

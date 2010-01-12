@@ -1102,7 +1102,7 @@ namespace Mono.Xml
 
 		public override void WriteString (string text)
 		{
-			if (text == null || text.Length == 0)
+			if (text == null || (text.Length == 0 && !v2))
 				return; // do nothing, including state transition.
 			ShiftStateContent ("Text", true);
 

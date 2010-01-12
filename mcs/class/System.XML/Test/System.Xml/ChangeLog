@@ -1,3 +1,8 @@
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriterTests.cs : added a corner case test for empty string handling
+	  difference between XmlTextWriter and XmlWriter.Create().
+
 2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvertTests.cs : add test for DateTimeOffset roundtrip.
