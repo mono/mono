@@ -5,7 +5,7 @@
 //	Jb Evain  <jbevain@novell.com>
 //	Sebastien Pouliot <sebastien@ximian.com>
 //
-// Copyright (C) 2008-2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2008-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -40,7 +40,7 @@ namespace System.Net {
 
 	public abstract class WebRequest {
 
-		static Type browser_http_request;
+		static IWebRequestCreate default_creator;
 		static Dictionary<string, IWebRequestCreate> registred_prefixes;
 
 		public abstract string ContentType { get; set; }
@@ -48,6 +48,7 @@ namespace System.Net {
 		public abstract string Method { get; set; }
 		public abstract Uri RequestUri { get; }
 
+		// custom registered prefixes return null (unless they override this)
 		public virtual IWebRequestCreate CreatorInstance { 
 			get { return null; }
 		}
@@ -89,36 +90,34 @@ namespace System.Net {
 			if (!uri.IsAbsoluteUri)
 				throw new InvalidOperationException ("Uri is not absolute.");
 
-			switch (uri.Scheme) {
-			case "http":
-			case "https":
-				// we don't use whatever has been registred but our own
-				return CreateBrowserWebRequest (uri);
-			default:
-				IWebRequestCreate creator;
-				if (registred_prefixes.TryGetValue (uri.Scheme, out creator)) {
-					return creator.Create (uri);
-				} else {
-					throw new NotSupportedException (string.Format ("Scheme {0} not supported", uri.Scheme));
+			IWebRequestCreate creator = null;
+			if (!registred_prefixes.TryGetValue (uri.Scheme, out creator)) {
+				switch (uri.Scheme) {
+				case "http":
+				case "https":
+					creator = default_creator;
+					break;
 				}
 			}
+
+			if (creator == null)
+				throw new NotSupportedException (string.Format ("Scheme {0} not supported", uri.Scheme));
+
+			return creator.Create (uri);
 		}
 
-		static WebRequest CreateBrowserWebRequest (Uri uri)
+		internal static void RegisterDefaultStack (IWebRequestCreate creator)
 		{
-			if (browser_http_request == null) {
-				var assembly = Assembly.Load ("System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
-				if (assembly == null)
-					throw new InvalidOperationException ("Can not load System.Windows.Browser");
-
-				browser_http_request = assembly.GetType ("System.Windows.Browser.Net.BrowserHttpWebRequest");
-				if (browser_http_request == null)
-					throw new InvalidOperationException ("Can not get BrowserHttpWebRequest");
-			}
-
-			return (WebRequest) Activator.CreateInstance (browser_http_request, new object [] { uri });
+			default_creator = creator;
 		}
 
+		// We can register for
+		// * a protocol (e.g. http) for all requests
+		// * a protocol (e.g. https) for a domain
+		// * a protocol (e.g. http) for a single request
+		//
+		// See "How to: Specify Browser or Client HTTP Handling" for more details
+		// http://msdn.microsoft.com/en-us/library/dd920295%28VS.95%29.aspx
 		public static bool RegisterPrefix (string prefix, IWebRequestCreate creator)
 		{
 			if (prefix == null)
@@ -126,8 +125,6 @@ namespace System.Net {
 			if (creator == null)
 				throw new ArgumentNullException ("creator");
 
-			// LAMESPEC: according to doc registering http or https will fail. Actually this is not true
-			// the registration works but the class being registred won't be used for http[s]
 			if (registred_prefixes.ContainsKey (prefix))
 				return false;
 

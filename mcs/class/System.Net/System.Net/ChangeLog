@@ -1,3 +1,8 @@
+2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebRequest_2_1.cs: Rework registration wrt the two, browser
+	and client, stacks offered in SL3. Only global works now.
+
 2010-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* InternalWebRequestStreamWrapper.cs: New. Moved (and adapted) 
