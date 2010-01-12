@@ -4,8 +4,7 @@
 // Author: Duncan Mak (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
-//
-
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,7 +40,6 @@ namespace System.Net
 		
 		// Constructors
 		public NetworkCredential ()
-			: base ()
 		{
 		}
 
@@ -60,21 +58,18 @@ namespace System.Net
 
 		// Properties
 
-		public string Domain
-		{
-			get { return domain; }
+		public string Domain {
+			get { return domain == null ? String.Empty : domain; }
 			set { domain = value; }
 		}
 
-		public string UserName
-		{
-			get { return userName; }
+		public string UserName {
+			get { return userName == null ? String.Empty : userName; }
 			set { userName = value; }			
 		}
 
-		public string Password
-		{
-			get { return password; }
+		public string Password {
+			get { return password == null ? String.Empty : password; }
 			set { password = value; }
 		}
 

@@ -1,3 +1,8 @@
+2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System_test.dll.sources: Add NetworkCredentialTest.cs to the tests
+	[Backport r149401]
+
 2009-12-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_System.dll.sources: Add existing files that are 
