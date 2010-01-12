@@ -52,10 +52,12 @@ post-profile-cleanup:
 PROFILE_EXE = $(depsdir)/basic-profile-check.exe
 PROFILE_OUT = $(PROFILE_EXE:.exe=.out)
 
+MAKE_Q=$(if $(V),,-s)
+
 do-profile-check: $(depsdir)/.stamp
 	@ok=:; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
-	$(MAKE) -s $(PROFILE_OUT) > /dev/null || ok=false; \
+	$(MAKE) $(MAKE_Q) $(PROFILE_OUT) || ok=false; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
 	if $$ok; then :; else \
 	    if test -f $(topdir)/class/lib/monolite/gmcs.exe; then \

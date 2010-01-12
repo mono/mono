@@ -1,3 +1,7 @@
+2010-01-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* profiles/basic.make (do-profile-check): Honor the V=1 flag.
+
 2010-01-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* library.make: Update $(MDOC_UP) to remove the net_1_ detection.
