@@ -426,11 +426,17 @@ mono_class_has_default_constructor (MonoClass *klass)
 static gboolean
 mono_class_interface_implements_interface (MonoClass *candidate, MonoClass *iface)
 {
+	MonoError error;
 	int i;
 	do {
 		if (candidate == iface)
 			return TRUE;
-		mono_class_setup_interfaces (candidate);
+		mono_class_setup_interfaces (candidate, &error);
+		if (!mono_error_ok (&error)) {
+			mono_error_cleanup (&error);
+			return FALSE;
+		}
+
 		for (i = 0; i < candidate->interface_count; ++i) {
 			if (candidate->interfaces [i] == iface || mono_class_interface_implements_interface (candidate->interfaces [i], iface))
 				return TRUE;
@@ -4705,6 +4711,7 @@ do_ckfinite (VerifyContext *ctx)
 static void
 merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean start, gboolean external) 
 {
+	MonoError error;
 	int i, j, k;
 	stack_init (ctx, to);
 
@@ -4771,7 +4778,12 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 				}
 			}
 
-			mono_class_setup_interfaces (old_class);
+			mono_class_setup_interfaces (old_class, &error);
+			if (!mono_error_ok (&error)) {
+				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot merge stacks due to a TypeLoadException %s at 0x%04x", mono_error_get_message (&error), ctx->ip_offset));
+				mono_error_cleanup (&error);
+				goto end_verify;
+			}
 			for (j = 0; j < old_class->interface_count; ++j) {
 				for (k = 0; k < new_class->interface_count; ++k) {
 					if (mono_metadata_type_equal (&old_class->interfaces [j]->byval_arg, &new_class->interfaces [k]->byval_arg)) {
