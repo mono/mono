@@ -417,6 +417,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt16 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt16 here);
+			//try {
+			//	XmlConvert.ToUInt16 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]
@@ -445,6 +455,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt32 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt32 here);
+			//try {
+			//	XmlConvert.ToUInt32 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]
@@ -473,6 +493,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt64 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt64 here);
+			//try {
+			//	XmlConvert.ToUInt64 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]

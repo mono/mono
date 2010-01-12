@@ -1,5 +1,10 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvertTests.cs : added commented-out tests for the remaining
+	  parse tests by Tiaan Geldenhuys for XLinq, with the reason why.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvertTests.cs : float parse should do the same. Fix NaN test.
 
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
