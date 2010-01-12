@@ -1,3 +1,8 @@
+2010-01-11  Miguel de Icaza  <miguel@novell.com>
+
+	* valgrind.h, memcheck.h: Add guards to prevent the gcc features
+	from being included in non-GCC builds like the Windows build.
+
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-path.c (mono_path_resolve_symlinks): Use g_strfreev () to free the
