@@ -397,6 +397,15 @@ namespace System.Xml {
 			if (s == null)
 				throw new ArgumentNullException();
 
+			float f = TryParseStringFloatConstants (s);
+			if (f != 0)
+				return f;
+
+			return Double.Parse (s, floatStyle, CultureInfo.InvariantCulture);
+		}
+
+		static float TryParseStringFloatConstants (string s)
+		{
 			int sidx = 0;
 			while (sidx < s.Length && Char.IsWhiteSpace (s [sidx]))
 				sidx++;
@@ -407,13 +416,12 @@ namespace System.Xml {
 				sEndPos--;
 
 			if (TryParseStringConstant ("INF", s, sidx, sEndPos))
-				return Double.PositiveInfinity;
+				return Single.PositiveInfinity;
 			if (TryParseStringConstant ("-INF", s, sidx, sEndPos))
-				return Double.NegativeInfinity;
+				return Single.NegativeInfinity;
 			if (TryParseStringConstant ("NaN", s, sidx, sEndPos))
-				return Double.NaN;
-
-			return Double.Parse (s, floatStyle, CultureInfo.InvariantCulture);
+				return Single.NaN;
+			return 0;
 		}
 
 		static bool TryParseStringConstant (string format, string s, int start, int end)
@@ -455,12 +463,11 @@ namespace System.Xml {
 		{
 			if (s == null)
 				throw new ArgumentNullException();
-			if (s == "INF")
-				return Single.PositiveInfinity;
-			if (s == "-INF")
-				return Single.NegativeInfinity;
-			if (s == "NaN")
-				return Single.NaN;
+
+			float f = TryParseStringFloatConstants (s);
+			if (f != 0)
+				return f;
+
 			return Single.Parse(s, floatStyle, CultureInfo.InvariantCulture);
 		}
 

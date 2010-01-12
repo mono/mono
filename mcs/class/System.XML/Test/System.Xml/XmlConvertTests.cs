@@ -340,9 +340,18 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
-		public void ToSingle ()//not done
+		public void ToSingle ()
 		{
-			
+			Assert.AreEqual (1.0d/0.0d, XmlConvert.ToSingle ("INF"));
+			Assert.AreEqual (-1.0d/0.0d, XmlConvert.ToSingle ("-INF"));
+			Assert.AreEqual (0.0d/0.0d, XmlConvert.ToSingle ("NaN"));
+			Assert.AreEqual (789324, XmlConvert.ToSingle ("789324"));
+			Assert.AreEqual (42, XmlConvert.ToSingle ("  42  "));
+			Assert.AreEqual (float.NaN, XmlConvert.ToSingle ("  NaN  "));
+			Assert.AreEqual (float.PositiveInfinity, XmlConvert.ToSingle ("  Infinity  "));
+			Assert.AreEqual (float.NegativeInfinity, XmlConvert.ToSingle ("  -Infinity "));
+			Assert.AreEqual (float.PositiveInfinity, XmlConvert.ToSingle ("  INF"));
+			Assert.AreEqual (float.NegativeInfinity, XmlConvert.ToSingle ("  -INF "));
 		}
 		
 		[Test]

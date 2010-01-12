@@ -1,5 +1,9 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvertTests.cs : float parse should do the same. Fix NaN test.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvertTests.cs : another double parse test for string with
 	  spaces, for string constants such as NaN.
 
