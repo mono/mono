@@ -207,6 +207,7 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (-1.0d/0.0d, XmlConvert.ToDouble ("-INF"));
 			Assert.AreEqual (0.0d/0.0d, XmlConvert.ToDouble ("NaN"));
 			Assert.AreEqual (789324, XmlConvert.ToDouble ("789324"));
+			Assert.AreEqual (42, XmlConvert.ToDouble ("  42  "));
 		}
 		
 		[Test]

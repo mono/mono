@@ -44,8 +44,14 @@ namespace System.Xml {
 		const NumberStyles floatStyle = NumberStyles.AllowCurrencySymbol |
 			NumberStyles.AllowExponent | 
 			NumberStyles.AllowDecimalPoint |
-			NumberStyles.AllowLeadingSign;
+			NumberStyles.AllowLeadingSign |
+			NumberStyles.AllowLeadingWhite |
+			NumberStyles.AllowTrailingWhite;
 		
+		const NumberStyles integerStyle = NumberStyles.Integer |
+			NumberStyles.AllowLeadingWhite |
+			NumberStyles.AllowTrailingWhite;
+
 		static readonly string [] datetimeFormats = {
 		  // dateTime
 		  "yyyy-MM-ddTHH:mm:sszzz",
@@ -410,23 +416,23 @@ namespace System.Xml {
 
 		public static short ToInt16(string s)
 		{
-			return Int16.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return Int16.Parse (s, integerStyle, CultureInfo.InvariantCulture);
 		}
 
 		public static int ToInt32(string s)
 		{
-			return Int32.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return Int32.Parse (s, integerStyle, CultureInfo.InvariantCulture);
 		}
 
 		public static long ToInt64(string s)
 		{
-			return Int64.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return Int64.Parse (s, integerStyle, CultureInfo.InvariantCulture);
 		}
 
 		[CLSCompliant (false)]
 		public static SByte ToSByte(string s)
 		{
-			return SByte.Parse(s, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return SByte.Parse(s, integerStyle, CultureInfo.InvariantCulture);
 		}
 
 		public static float ToSingle(string s)

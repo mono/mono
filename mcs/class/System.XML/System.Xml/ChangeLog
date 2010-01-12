@@ -1,5 +1,10 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : ToDouble(string) and ToIntXX(string) allows
+	  whitespaces.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvert.cs : ToString(DateTimeOffset) does not emit extra
 	  fraction numbers.
 
