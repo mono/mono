@@ -1,3 +1,8 @@
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XUtil.cs, XElement.cs, XAttribute.cs : unlike XmlConvert, casts to
+	  boolean seem also to handle case-insensitive true/false strings.
+
 2010-01-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElement.cs : add DateTimeOffset implicit operator.

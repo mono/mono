@@ -83,7 +83,7 @@ namespace System.Xml.Linq
 		{
 			if (element == null)
 				throw new ArgumentNullException ("element");
-			return XmlConvert.ToBoolean (element.Value);
+			return XUtil.ConvertToBoolean (element.Value);
 		}
 
 		public static explicit operator bool? (XElement element)
@@ -91,7 +91,7 @@ namespace System.Xml.Linq
 			if (element == null)
 				return null;
 			
-			return element.Value == null ? (bool?) null : XmlConvert.ToBoolean (element.Value);
+			return element.Value == null ? (bool?) null : XUtil.ConvertToBoolean (element.Value);
 		}
 
 		public static explicit operator DateTime (XElement element)

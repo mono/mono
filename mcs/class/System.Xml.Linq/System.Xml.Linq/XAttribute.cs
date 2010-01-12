@@ -64,7 +64,7 @@ namespace System.Xml.Linq
 		{
 			if (attribute == null)
 				throw new ArgumentNullException ("attribute");
-			return XmlConvert.ToBoolean (attribute.value);
+			return XUtil.ConvertToBoolean (attribute.value);
 		}
 
 		public static explicit operator bool? (XAttribute attribute)
@@ -72,7 +72,7 @@ namespace System.Xml.Linq
 			if (attribute == null)
 				return null;
 			
-			return attribute.value == null ? (bool?) null : XmlConvert.ToBoolean (attribute.value);
+			return attribute.value == null ? (bool?) null : XUtil.ConvertToBoolean (attribute.value);
 		}
 
 		public static explicit operator DateTime (XAttribute attribute)

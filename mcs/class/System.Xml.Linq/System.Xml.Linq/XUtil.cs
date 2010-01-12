@@ -40,7 +40,11 @@ namespace System.Xml.Linq
 		public const string XmlnsNamespace =
 			"http://www.w3.org/2000/xmlns/";
 
-		// FIXME: implement
+		public static bool ConvertToBoolean (string s)
+		{
+			return XmlConvert.ToBoolean (s.ToLowerInvariant ());
+		}
+
 		public static string ToString (object o)
 		{
 			if (o == null)
