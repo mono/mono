@@ -1,5 +1,10 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : fix some cosmetic compatibility bugs:
+	  ArgumentException -> FormatException.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlWriter.cs : handle a corner case for empty string handling 
 	  difference between XmlTextWriter and XmlWriter.Create().
 

@@ -602,7 +602,7 @@ namespace System.Xml {
 		public static TimeSpan ToTimeSpan(string s)
 		{
 			if (s.Length == 0)
-				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+				throw new FormatException ("Invalid format string for duration schema datatype.");
 
 			int start = 0;
 			if (s [0] == '-')
@@ -610,7 +610,7 @@ namespace System.Xml {
 			bool minusValue = (start == 1);
 
 			if (s [start] != 'P')
-				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+				throw new FormatException ("Invalid format string for duration schema datatype.");
 			start++;
 
 			int parseStep = 0;
@@ -705,7 +705,7 @@ namespace System.Xml {
 				start = i;
 			}
 			if (error)
-				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+				throw new FormatException ("Invalid format string for duration schema datatype.");
 			TimeSpan ts = new TimeSpan (days, hours, minutes, seconds);
 			if (minusValue)
 				return TimeSpan.FromTicks (- (ts.Ticks + ticks));
