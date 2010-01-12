@@ -74,6 +74,8 @@ namespace System.Xml.Linq
 			default:
 				if (o is TimeSpan)
 					return XmlConvert.ToString ((TimeSpan) o);
+				if (o is DateTimeOffset)
+					return XmlConvert.ToString ((DateTimeOffset) o);
 				return o.ToString ();
 			}
 		}

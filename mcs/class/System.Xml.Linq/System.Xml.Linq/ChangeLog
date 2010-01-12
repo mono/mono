@@ -1,5 +1,9 @@
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XUtil.cs : for DateTimeOffset, use XmlConvert to format string.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XUtil.cs : format float and double values as round-trippable.
 
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
