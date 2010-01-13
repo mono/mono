@@ -1,6 +1,11 @@
 2010-01-13  Astushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_raw_System.ServiceModel.dll.sources :
+	  add EndpointAddressBuilder.cs.
+
+2010-01-13  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources :
 	  add FaultContractInfo.cs.
 
 2010-01-13  Astushi Enomoto  <atsushi@ximian.com>

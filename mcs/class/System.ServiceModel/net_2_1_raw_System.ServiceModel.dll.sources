@@ -178,6 +178,7 @@ System.ServiceModel/DefaultCommunicationTimeouts.cs
 System.ServiceModel/Dummy.cs
 System.ServiceModel/EndpointAddress.cs
 System.ServiceModel/EndpointAddress10.cs
+System.ServiceModel/EndpointAddressBuilder.cs
 System.ServiceModel/EndpointNotFoundException.cs
 System.ServiceModel/EnvelopeVersion.cs
 System.ServiceModel/ExceptionDetail.cs
