@@ -33,9 +33,6 @@ namespace System.Text
 	[Serializable]
 	public sealed class DecoderFallbackException : ArgumentException
 	{
-		const string defaultMessage =
-			"Failed to decode the input byte sequence to Unicode characters.";
-
 		public DecoderFallbackException ()
 			: this (null)
 		{

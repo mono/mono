@@ -41,7 +41,6 @@ namespace System
 	{
 		const int MBIG = int.MaxValue;
 		const int MSEED = 161803398;
-		const int MZ = 0;
 
 		int inext, inextp;
 		int [] SeedArray = new int [56];

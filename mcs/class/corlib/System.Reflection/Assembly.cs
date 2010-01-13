@@ -61,9 +61,9 @@ namespace System.Reflection {
 		}
 
 		// Note: changes to fields must be reflected in _MonoReflectionAssembly struct (object-internals.h)
-#pragma warning disable 169
+#pragma warning disable 649
 		private IntPtr _mono_assembly;
-#pragma warning restore 169
+#pragma warning restore 649
 
 		private ResolveEventHolder resolve_event_holder;
 		private Evidence _evidence;

@@ -143,7 +143,6 @@ namespace Microsoft.Win32
 		{
 			RegistryValueKind type = 0;
 			int size = 0;
-			object obj = null;
 			IntPtr handle = GetHandle (rkey);
 			int result = RegQueryValueEx (handle, name, IntPtr.Zero, ref type, IntPtr.Zero, ref size);
 

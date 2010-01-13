@@ -82,8 +82,8 @@ namespace System.Security.Policy {
 		private const string ServiceControllerPermissionClass = "System.ServiceProcess.ServiceControllerPermission, " + Consts.AssemblySystem_ServiceProcess;
 		private const string OleDbPermissionClass = "System.Data.OleDb.OleDbPermission, " + Consts.AssemblySystem_Data;
 		private const string SqlClientPermissionClass = "System.Data.SqlClient.SqlClientPermission, " + Consts.AssemblySystem_Data;
-		private const string DataProtectionPermissionClass = "System.Security.Permissions.DataProtectionPermission, " + Consts.AssemblySystem_Security;
-		private const string StorePermissionClass = "System.Security.Permissions.StorePermission, " + Consts.AssemblySystem_Security;
+//		private const string DataProtectionPermissionClass = "System.Security.Permissions.DataProtectionPermission, " + Consts.AssemblySystem_Security;
+//		private const string StorePermissionClass = "System.Security.Permissions.StorePermission, " + Consts.AssemblySystem_Security;
 
 		private static Version _fxVersion;
 		private static byte[] _ecmaKey = new byte [16] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x04, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00 };

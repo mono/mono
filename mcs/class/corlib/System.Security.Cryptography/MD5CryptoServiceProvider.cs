@@ -35,7 +35,6 @@ namespace System.Security.Cryptography {
 	[ComVisible (true)]
 	public sealed class MD5CryptoServiceProvider : MD5 {
 		private const int BLOCK_SIZE_BYTES =  64;
-		private const int HASH_SIZE_BYTES  =  16;
 		private uint[] _H;
 		private uint[] buff;
 		private ulong count;

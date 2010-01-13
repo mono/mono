@@ -35,8 +35,6 @@ namespace System.Security.Permissions {
 	[ComVisible (true)]
 	public sealed class IsolatedStorageFilePermission : IsolatedStoragePermission, IBuiltInPermission {
 
-		private const int version = 1;
-
 		// Constructors
 
 		public IsolatedStorageFilePermission (PermissionState state)

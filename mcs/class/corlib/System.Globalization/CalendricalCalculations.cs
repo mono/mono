@@ -1849,8 +1849,6 @@ internal class CCHijriCalendar {
 
 internal class CCEastAsianLunisolarCalendar
 {
-	const int initial_epact = 29; // at 1900
-
 	public static int fixed_from_dmy (int day, int month, int year)
 	{
 		/*

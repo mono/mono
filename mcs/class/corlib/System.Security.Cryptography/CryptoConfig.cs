@@ -106,7 +106,7 @@ public partial      class CryptoConfig {
 	private const string oidSHA512 = "2.16.840.1.101.3.4.2.3";
 	// new in 2.0
 //	private const string oidRSA = "1.2.840.113549.1.1.1";
-	private const string oidDSA = "1.2.840.10040.4.1";
+//	private const string oidDSA = "1.2.840.10040.4.1";
 	private const string oidDES = "1.3.14.3.2.7";
 	private const string oid3DES = "1.2.840.113549.3.7";
 	private const string oidRC2 = "1.2.840.113549.3.2";
@@ -157,7 +157,7 @@ public partial      class CryptoConfig {
 	private const string nameRIPEMD160a = "RIPEMD160";
 	private const string nameRIPEMD160b = "RIPEMD-160";
 	private const string nameRIPEMD160c = "System.Security.Cryptography.RIPEMD160";
-	private const string nameHMACa = "HMAC";
+//	private const string nameHMACa = "HMAC";
 	private const string nameHMACb = "System.Security.Cryptography.HMAC";
 	private const string nameHMACMD5a = "HMACMD5";
 	private const string nameHMACMD5b = "System.Security.Cryptography.HMACMD5";

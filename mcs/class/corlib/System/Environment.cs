@@ -54,7 +54,9 @@ namespace System {
 		 * Changes which are already detected at runtime, like the addition
 		 * of icalls, do not require an increment.
 		 */
+#pragma warning disable 169
 		private const int mono_corlib_version = 89;
+#pragma warning restore 169
 
 		[ComVisible (true)]
 		public enum SpecialFolder

@@ -42,7 +42,6 @@ namespace System.Security.Cryptography {
 	internal class SHA1Internal {
 	
 		private const int BLOCK_SIZE_BYTES =  64;
-		private const int HASH_SIZE_BYTES  =  20;
 		private uint[] _H;  // these are my chaining variables
 		private ulong count;
 		private byte[] _ProcessingBuffer;   // Used to start data when passed less than a block worth.

@@ -77,7 +77,6 @@ namespace System.Runtime.Remoting.Channels
 	internal class CrossAppDomainChannel : IChannel, IChannelSender, IChannelReceiver 
 	{
 		private const String _strName = "MONOCAD";
-		private const String _strBaseURI = "MONOCADURI";
 		
 		private static Object s_lock = new Object();
 

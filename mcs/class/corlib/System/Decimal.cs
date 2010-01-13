@@ -64,11 +64,8 @@ namespace System
 		private static readonly Decimal MaxValueDiv10 = MaxValue / 10;
 
 		// some constants
-		private const int DECIMAL_DIVIDE_BY_ZERO = 5;
 		private const uint MAX_SCALE = 28;
-		private const int iMAX_SCALE = 28;
 		private const uint SIGN_FLAG = 0x80000000;
-		private const uint SCALE_MASK = 0x00FF0000;
 		private const int SCALE_SHIFT = 16;
 		private const uint RESERVED_SS32_BITS = 0x7F00FFFF;
 
