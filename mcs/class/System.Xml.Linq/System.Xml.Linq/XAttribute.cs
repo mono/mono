@@ -64,7 +64,7 @@ namespace System.Xml.Linq
 		{
 			if (attribute == null)
 				throw new ArgumentNullException ("attribute");
-			return XmlConvert.ToBoolean (attribute.value);
+			return XUtil.ConvertToBoolean (attribute.value);
 		}
 
 		public static explicit operator bool? (XAttribute attribute)
@@ -72,14 +72,14 @@ namespace System.Xml.Linq
 			if (attribute == null)
 				return null;
 			
-			return attribute.value == null ? (bool?) null : XmlConvert.ToBoolean (attribute.value);
+			return attribute.value == null ? (bool?) null : XUtil.ConvertToBoolean (attribute.value);
 		}
 
 		public static explicit operator DateTime (XAttribute attribute)
 		{
 			if (attribute == null)
 				throw new ArgumentNullException ("attribute");
-			return XmlConvert.ToDateTime (attribute.value, XmlDateTimeSerializationMode.RoundtripKind);
+			return XUtil.ToDateTime (attribute.value);
 		}
 
 		public static explicit operator DateTime? (XAttribute attribute)
@@ -87,7 +87,7 @@ namespace System.Xml.Linq
 			if (attribute == null)
 				return null;
 			
-			return attribute.value == null ? (DateTime?) null : XmlConvert.ToDateTime (attribute.value, XmlDateTimeSerializationMode.RoundtripKind);
+			return attribute.value == null ? (DateTime?) null : XUtil.ToDateTime (attribute.value);
 		}
 
 		public static explicit operator decimal (XAttribute attribute)
