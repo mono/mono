@@ -92,10 +92,9 @@ namespace System.Net {
 			}
 		}
 
-		// FIXME: should throw NIE - but that will break some sites until we have really splitted browser/client stacks
 		public virtual CookieContainer CookieContainer {
-			get;
-			set;
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
 		}
 
 		public override string Method {

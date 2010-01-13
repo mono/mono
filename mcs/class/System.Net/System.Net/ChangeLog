@@ -1,3 +1,15 @@
+2010-01-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebRequest_2_1.cs: Throw for CookieContainer. It is 
+	implemented only in the client http stack (and for a limited
+	time in the browser stack too ;-)
+	* InternalWebRequestStreamWrapper.cs: Keep the MemoryStream data
+	available after closing/disposing (by user) since our own code
+	will need it later (e.g. when posting like DRT287)
+	* WebHeaderCollection_2_1.cs: Provide an argument to 
+	ArgumentException. Found by Gendarme's ArgumentException
+	InstantiateArgumentExceptionCorrectlyRule
+
 2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebRequest_2_1.cs: Rework registration wrt the two, browser
