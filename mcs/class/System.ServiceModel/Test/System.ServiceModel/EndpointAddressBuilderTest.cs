@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.IO;
 using System.ServiceModel;
 using System.Text;
 using System.Xml;
@@ -43,6 +44,22 @@ namespace MonoTests.System.ServiceModel
 		public void ToEndpointAddressWithoutReader ()
 		{
 			new EndpointAddressBuilder ().ToEndpointAddress ();
+		}
+
+		[Test]
+		public void UsageExample ()
+		{
+			var eb = new EndpointAddressBuilder ();
+			var dr = XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader ("<foo/>")));
+			eb.SetExtensionReader (dr);
+			Assert.AreEqual (ReadState.EndOfFile, dr.ReadState, "#1");
+			var xr = eb.GetReaderAtExtensions ();
+			xr.ReadOuterXml ();
+			xr = eb.GetReaderAtExtensions (); // do not return the same XmlReader
+			Assert.AreEqual (ReadState.Interactive, xr.ReadState, "#2");
+			xr.ReadOuterXml ();
+			eb.SetExtensionReader (null); // allowed
+			Assert.IsNull (eb.GetReaderAtExtensions (), "#3");
 		}
 	}
 }

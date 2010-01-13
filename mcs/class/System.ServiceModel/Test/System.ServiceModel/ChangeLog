@@ -1,3 +1,7 @@
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddressBuilderTest.cs : add usage example test.
+
 2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CallbackBehaviorAttributeTest.cs : added callback example from

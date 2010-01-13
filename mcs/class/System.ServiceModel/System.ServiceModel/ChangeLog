@@ -1,5 +1,9 @@
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EndpointAddressBuilder.cs : reader getters were broken.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EndpointAddressBuilder.cs : implement.
 
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>

@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.ObjectModel;
+using System.IO;
 using System.Linq;
 using System.Xml;
 using System.ServiceModel.Channels;
@@ -71,7 +72,7 @@ namespace System.ServiceModel
 		{
 			if (extension == null)
 				return null;
-			var r = XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (extension));
+			var r = XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (extension)));
 			r.MoveToContent ();
 			return r;
 		}
@@ -80,7 +81,7 @@ namespace System.ServiceModel
 		{
 			if (metadata == null)
 				return null;
-			var r = XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (metadata));
+			var r = XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (metadata)));
 			r.MoveToContent ();
 			return r;
 		}
