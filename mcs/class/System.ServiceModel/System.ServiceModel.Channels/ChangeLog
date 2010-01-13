@@ -1,5 +1,13 @@
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpChannelFactory.cs, TcpChannelFactory.cs,
+	  ChannelFactoryBase.cs, NamedPipeChannelFactory.cs
+	  PeerChannelFactory.cs, HttpRequestChannel.cs:
+	  fix ChannelFactoryBase API; move On(Begin/End)Open() to internal
+	  type and made required changes.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpCookieContainerBindingElement.cs : new.
 	* IHttpCookieContainer.cs : fix type name.
 	* HttpRequestChannel.cs, HttpChannelFactory.cs : support above.

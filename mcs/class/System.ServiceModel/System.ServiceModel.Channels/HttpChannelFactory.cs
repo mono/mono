@@ -75,7 +75,7 @@ namespace System.ServiceModel.Channels
 		{
 			ThrowIfDisposedOrNotOpen ();
 
-			if (Source.Scheme != address.Uri.Scheme)
+			if (Transport.Scheme != address.Uri.Scheme)
 				throw new ArgumentException (String.Format ("Argument EndpointAddress has unsupported URI scheme: {0}", address.Uri.Scheme));
 
 			if (MessageEncoder.MessageVersion.Addressing.Equals (AddressingVersion.None) &&
