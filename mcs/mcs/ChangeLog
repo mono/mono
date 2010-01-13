@@ -1,3 +1,7 @@
+2010-01-13  Marek Safar  <marek.safar@gmail.com>
+
+	* property.cs: Move all property based declarations into a new file.
+
 2010-01-13  Marek Safar  <marek.safar at gmail.com>
 
 	* expression.cs (Conditional): Resolve reduced expression.
