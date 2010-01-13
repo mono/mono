@@ -74,6 +74,7 @@ System.ServiceModel.Channels/CustomBinding.cs
 System.ServiceModel.Channels/FaultConverter.cs
 System.ServiceModel.Channels/HtmlizedException.cs
 System.ServiceModel.Channels/HttpChannelFactory.cs
+System.ServiceModel.Channels/HttpCookieContainerBindingElement.cs
 System.ServiceModel.Channels/HttpRequestChannel.cs
 System.ServiceModel.Channels/HttpRequestMessageProperty.cs
 System.ServiceModel.Channels/HttpResponseMessageProperty.cs

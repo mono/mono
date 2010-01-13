@@ -1,3 +1,9 @@
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpCookieContainerBindingElement.cs : new.
+	* IHttpCookieContainer.cs : fix type name.
+	* HttpRequestChannel.cs, HttpChannelFactory.cs : support above.
+
 2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpBinaryFrameManager.cs : treat EOF as interrupted stream too (it

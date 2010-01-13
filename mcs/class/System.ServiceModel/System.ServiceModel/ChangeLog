@@ -1,3 +1,7 @@
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicHttpBinding.cs : add SL3 EnableHttpCookieContainer support.
+
 2010-01-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SilverlightClientConfigLoader.cs : uncomment binary message

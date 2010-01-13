@@ -4,7 +4,7 @@ using System.Net;
 namespace System.ServiceModel.Channels
 {
 	// SL-only interface.
-	public interface IHttpCookieContainer
+	public interface IHttpCookieContainerManager
 	{
 		CookieContainer CookieContainer { get; set; }
 	}
