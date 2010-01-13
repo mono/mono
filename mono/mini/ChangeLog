@@ -1,3 +1,10 @@
+
+Wed Jan 13 15:54:53 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* jit.h, method-to-ir.c: added ability to set the policy for
+	inserting breakpoints from the break IL instruction or the
+	Debugger.Break () API call.
+
 2010-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_parse_options): Allow onthrow without
