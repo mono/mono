@@ -128,7 +128,7 @@ namespace System.ServiceModel.Channels
 		protected override void OnEndClose (IAsyncResult result)
 		{
 			// base impl. will call this.OnClose()
-			return base.OnEndClose (result);
+			base.OnEndClose (result);
 		}
 
 		protected void ValidateCreateChannel ()

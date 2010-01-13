@@ -1,5 +1,13 @@
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelFactoryBase.cs : fix build.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelBase.cs : cosmetic API fix for SL3.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelFactoryBase.cs :
 	  implement On{Begin/End}Close() on the generic type.
 
