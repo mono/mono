@@ -243,30 +243,18 @@ namespace System {
 			NumberFormatInfo format = NumberFormatInfo.GetInstance(provider);
 			if (format == null) throw new Exception("How did this happen?");
 			
-			if (s == format.NaNSymbol) {
-				result = Double.NaN;
-				return true;
-			}
-			if (s == format.PositiveInfinitySymbol) {
-				result = Double.PositiveInfinity;
-				return true;
-			}
-			if (s == format.NegativeInfinitySymbol) {
-				result = Double.NegativeInfinity;
-				return true;
-			}
-
 			//
 			// validate and prepare string for C
 			//
 			int len = s.Length;
-			byte [] b = new byte [len + 1];
 			int didx = 0;
 			int sidx = 0;
 			char c;
+			bool allow_leading_white = (style & NumberStyles.AllowLeadingWhite) != 0;
+			bool allow_trailing_white = ((style & NumberStyles.AllowTrailingWhite) != 0);
 			
-			if ((style & NumberStyles.AllowLeadingWhite) != 0){
-				while (sidx < len && Char.IsWhiteSpace (c = s [sidx]))
+			if (allow_leading_white) {
+				while (sidx < len && Char.IsWhiteSpace (s [sidx]))
 				       sidx++;
 
 				if (sidx == len) {
@@ -275,8 +263,25 @@ namespace System {
 					return false;
 				}
 			}
+			int sEndPos = s.Length - 1;
+			if (allow_trailing_white)
+				while (Char.IsWhiteSpace (s [sEndPos]))
+					sEndPos--;
 
-			bool allow_trailing_white = ((style & NumberStyles.AllowTrailingWhite) != 0);
+			if (TryParseStringConstant (format.NaNSymbol, s, sidx, sEndPos)) {
+				result = double.NaN;
+				return true;
+			}
+			if (TryParseStringConstant (format.PositiveInfinitySymbol, s, sidx, sEndPos)) {
+				result = double.PositiveInfinity;
+				return true;
+			}
+			if (TryParseStringConstant (format.NegativeInfinitySymbol, s, sidx, sEndPos)) {
+				result = double.NegativeInfinity;
+				return true;
+			}
+
+			byte [] b = new byte [len + 1];
 
 			//
 			// Machine state
@@ -478,6 +483,11 @@ namespace System {
 					return true;
 				}
 			}
+		}
+
+		static bool TryParseStringConstant (string format, string s, int start, int end)
+		{
+			return end - start + 1 == format.Length && String.CompareOrdinal (format, 0, s, start, format.Length) == 0;
 		}
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
