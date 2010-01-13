@@ -1886,7 +1886,7 @@
 						</xsl:choose>
 					</xsl:variable>
 
-					<xsl:variable name="linkid">
+					<xsl:variable name="linkfile">
 						<xsl:if test="not(parent::Members/@FullName = $TypeFullName)">
 							<xsl:call-template name="GetLinkTargetHtml">
 								<xsl:with-param name="type">
@@ -1904,7 +1904,11 @@
 								<xsl:with-param name="cref" />
 							</xsl:call-template>
 						</xsl:if>
+					</xsl:variable>
+
+					<xsl:variable name="linkid">
 						<xsl:if test="$html-anchor">
+							<xsl:value-of select="$linkfile" />
 							<xsl:text>#</xsl:text>
 						</xsl:if>
 						<xsl:value-of select="$local-id" />

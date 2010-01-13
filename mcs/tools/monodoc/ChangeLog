@@ -1,3 +1,19 @@
+2010-01-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* Resources/mdoc-html-utils.xsl: Fix regression caused by 2009-12-02
+	  commit adding GetLinkTargetHtml().  The problem was that when
+	  running within ASP.NET/monodoc ~all extension method links would be
+	  'javascript:alert("...")M:Foo.Method(...)', which is clearly wrong.
+	  This occurred because $linkid's generation would always call
+	  GetLinkTargetHtml() with a $cref value of '', thus the monodoc
+	  GetLinkTarget() would return '', so GetLinkTargetHtml() would return
+	  the javascript "not found" alert.  Thus, we can't expect
+	  GetLinkTargetHtml() with $cref='' to work under monodoc, but it's
+	  ~required to work sanely under 'mdoc export-html'.
+	  Solution is to not call GetLinkTargetHtml() here UNLESS we're doing
+	  'mdoc export-html' generation, which we assume to be the case if
+	  $html-anchor is true.
+
 2009-12-30  Jonathan Pryor  <jpryor@novell.com>
 
 	* Lucene.Net/Lucene.Net/QueryParser/QueryParser.cs: Fix crash when 
