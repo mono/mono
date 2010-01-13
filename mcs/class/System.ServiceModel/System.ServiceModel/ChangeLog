@@ -1,5 +1,10 @@
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ExceptionDetail.cs : uncomment DataMember (likely commented out due
+	  to missing default serialization in the past).
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EndpointAddressBuilder.cs : reader getters were broken.
 
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
