@@ -118,6 +118,19 @@ namespace System.ServiceModel.Channels
 			base.OnClose (timeout - (DateTime.Now - start));
 		}
 
+		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			// base impl. will call this.OnClose()
+			// FIXME: use async BeginClose/EndClose on the channels.
+			return base.OnBeginClose (timeout, callback, state);
+		}
+
+		protected override void OnEndClose (IAsyncResult result)
+		{
+			// base impl. will call this.OnClose()
+			return base.OnEndClose (result);
+		}
+
 		protected void ValidateCreateChannel ()
 		{
 			ThrowIfDisposedOrNotOpen ();
