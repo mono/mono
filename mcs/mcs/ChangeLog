@@ -1,5 +1,9 @@
 2010-01-13  Marek Safar  <marek.safar at gmail.com>
 
+	* expression.cs (Conditional): Resolve reduced expression.
+
+2010-01-13  Marek Safar  <marek.safar at gmail.com>
+
 	* *.cs: Introduced non-generic method specification.
 
 2010-01-07  Marek Safar  <marek.safar@gmail.com>

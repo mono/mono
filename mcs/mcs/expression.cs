@@ -4270,7 +4270,7 @@ namespace Mono.CSharp {
 			if (c != null){
 				bool is_false = c.IsDefaultValue;
 				ec.Report.Warning (429, 4, is_false ? true_expr.Location : false_expr.Location, "Unreachable expression code detected");
-				return ReducedExpression.Create (is_false ? false_expr : true_expr, this);
+				return ReducedExpression.Create (is_false ? false_expr : true_expr, this).Resolve (ec);
 			}
 
 			return this;
