@@ -28,7 +28,7 @@
     <Optimize>true</Optimize>
     <DefineConstants>TRACE;NET_2_0;MS_COMPATIBLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
-    <DefineConstants>TRACE;NET_2_0;MS_COMPATIBLE;GMCS_SOURCE</DefineConstants>
+    <DefineConstants>TRACE;NET_2_0;MS_COMPATIBLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <OutputPath>.</OutputPath>
@@ -61,6 +61,7 @@
     <Compile Include="convert.cs" />
     <Compile Include="dynamic.cs" />
     <Compile Include="eval.cs" />
+    <Compile Include="import.cs" />
     <Compile Include="lambda.cs" />
     <Compile Include="cs-parser.cs" />
     <Compile Include="cs-tokenizer.cs" />
@@ -76,6 +77,7 @@
     <Compile Include="iterators.cs" />
     <Compile Include="literal.cs" />
     <Compile Include="location.cs" />
+    <Compile Include="method.cs" />
     <Compile Include="modifiers.cs" />
     <Compile Include="namespace.cs" />
     <Compile Include="nullable.cs" />
