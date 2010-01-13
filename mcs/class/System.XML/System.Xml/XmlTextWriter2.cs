@@ -229,6 +229,7 @@ namespace Mono.Xml
 		XmlNodeInfo [] elements = new XmlNodeInfo [10];
 		Stack new_local_namespaces = new Stack ();
 		ArrayList explicit_nsdecls = new ArrayList ();
+		NamespaceHandling namespace_handling;
 
 		bool indent;
 		int indent_count = 2;
@@ -308,6 +309,7 @@ namespace Mono.Xml
 
 			check_character_validity = settings.CheckCharacters;
 			newline_handling = settings.NewLineHandling;
+			namespace_handling = settings.NamespaceHandling;
 		}
 #endif
 
@@ -969,7 +971,11 @@ namespace Mono.Xml
 					    value.Length == 0)
 						throw ArgumentError ("Non-empty prefix must be mapped to non-empty namespace URI.");
 					string existing = nsmanager.LookupNamespace (preserved_name, false);
-					explicit_nsdecls.Add (preserved_name);
+
+					// consider OmitDuplicates here.
+					if ((namespace_handling & NamespaceHandling.OmitDuplicates) == 0 || existing != value)
+						explicit_nsdecls.Add (preserved_name);
+
 					if (open_count > 0) {
 
 						if (v2 &&
@@ -1096,7 +1102,7 @@ namespace Mono.Xml
 
 		public override void WriteString (string text)
 		{
-			if (text == null || text.Length == 0)
+			if (text == null || (text.Length == 0 && !v2))
 				return; // do nothing, including state transition.
 			ShiftStateContent ("Text", true);
 

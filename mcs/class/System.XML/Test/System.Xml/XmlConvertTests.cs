@@ -207,6 +207,12 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (-1.0d/0.0d, XmlConvert.ToDouble ("-INF"));
 			Assert.AreEqual (0.0d/0.0d, XmlConvert.ToDouble ("NaN"));
 			Assert.AreEqual (789324, XmlConvert.ToDouble ("789324"));
+			Assert.AreEqual (42, XmlConvert.ToDouble ("  42  "));
+			Assert.AreEqual (double.NaN, XmlConvert.ToDouble ("  NaN  "));
+			Assert.AreEqual (double.PositiveInfinity, XmlConvert.ToDouble ("  Infinity  "));
+			Assert.AreEqual (double.NegativeInfinity, XmlConvert.ToDouble ("  -Infinity "));
+			Assert.AreEqual (double.PositiveInfinity, XmlConvert.ToDouble ("  INF"));
+			Assert.AreEqual (double.NegativeInfinity, XmlConvert.ToDouble ("  -INF "));
 		}
 		
 		[Test]
@@ -334,9 +340,18 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
-		public void ToSingle ()//not done
+		public void ToSingle ()
 		{
-			
+			Assert.AreEqual (1.0d/0.0d, XmlConvert.ToSingle ("INF"));
+			Assert.AreEqual (-1.0d/0.0d, XmlConvert.ToSingle ("-INF"));
+			Assert.AreEqual (0.0d/0.0d, XmlConvert.ToSingle ("NaN"));
+			Assert.AreEqual (789324, XmlConvert.ToSingle ("789324"));
+			Assert.AreEqual (42, XmlConvert.ToSingle ("  42  "));
+			Assert.AreEqual (float.NaN, XmlConvert.ToSingle ("  NaN  "));
+			Assert.AreEqual (float.PositiveInfinity, XmlConvert.ToSingle ("  Infinity  "));
+			Assert.AreEqual (float.NegativeInfinity, XmlConvert.ToSingle ("  -Infinity "));
+			Assert.AreEqual (float.PositiveInfinity, XmlConvert.ToSingle ("  INF"));
+			Assert.AreEqual (float.NegativeInfinity, XmlConvert.ToSingle ("  -INF "));
 		}
 		
 		[Test]
@@ -402,6 +417,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt16 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt16 here);
+			//try {
+			//	XmlConvert.ToUInt16 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]
@@ -430,6 +455,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt32 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt32 here);
+			//try {
+			//	XmlConvert.ToUInt32 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]
@@ -458,6 +493,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt64 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt64 here);
+			//try {
+			//	XmlConvert.ToUInt64 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]
@@ -686,6 +731,12 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("#3");
 			} catch (FormatException) {
 			}
+		}
+
+		[Test] // see http://smdn.invisiblefulmoon.net/misc/forum/programming/#n10
+		public void DateTimeOffsetTimezoneRoundtrip ()
+		{
+			Assert.AreEqual (new DateTimeOffset (2009, 11, 05, 20, 16, 22, TimeSpan.FromHours (9)),  XmlConvert.ToDateTimeOffset ("2009-11-05T20:16:22+09:00"), "#1");
 		}
 #endif
 	}

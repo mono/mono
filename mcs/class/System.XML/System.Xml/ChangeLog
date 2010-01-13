@@ -1,3 +1,49 @@
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : handle Infinity and -Infinity here due to the
+	  commented reason.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToSingle(string) should do the same as ToDouble().
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToDouble(string) should handle NaN, INF and -INF
+	  with whitespace allowed.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToDouble(string) and ToIntXX(string) allows
+	  whitespaces.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToString(DateTimeOffset) does not emit extra
+	  fraction numbers.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : fix some cosmetic compatibility bugs:
+	  ArgumentException -> FormatException.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : handle a corner case for empty string handling 
+	  difference between XmlTextWriter and XmlWriter.Create().
+
+2009-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NamespaceHandling.cs, XmlWriterSettings.cs, XmlTextWriter2.cs:
+	  implement NamespaceHandling support for Moonlight.
+
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : fix DateTimeOffset roundtrip by giving format
+	  strings in refined order. Patch by Santa Marta, at:
+	  http://irc.gimite.net/channel/mono-jp/archive/20091105
+	  ( http://smdn.invisiblefulmoon.net/misc/forum/programming/#n10 )
+
 2009-11-13  Andreia Gaita  <avidigal@novell.com>
 
 	* XmlNamespaceManager.cs: XmlReader.Read calls LookupNamespace via

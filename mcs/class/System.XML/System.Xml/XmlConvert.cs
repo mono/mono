@@ -44,18 +44,16 @@ namespace System.Xml {
 		const NumberStyles floatStyle = NumberStyles.AllowCurrencySymbol |
 			NumberStyles.AllowExponent | 
 			NumberStyles.AllowDecimalPoint |
-			NumberStyles.AllowLeadingSign;
+			NumberStyles.AllowLeadingSign |
+			NumberStyles.AllowLeadingWhite |
+			NumberStyles.AllowTrailingWhite;
 		
+		const NumberStyles integerStyle = NumberStyles.Integer |
+			NumberStyles.AllowLeadingWhite |
+			NumberStyles.AllowTrailingWhite;
+
 		static readonly string [] datetimeFormats = {
 		  // dateTime
-		  "yyyy-MM-ddTHH:mm:ss",
-		  "yyyy-MM-ddTHH:mm:ss.f",
-		  "yyyy-MM-ddTHH:mm:ss.ff",
-		  "yyyy-MM-ddTHH:mm:ss.fff",
-		  "yyyy-MM-ddTHH:mm:ss.ffff",
-		  "yyyy-MM-ddTHH:mm:ss.fffff",
-		  "yyyy-MM-ddTHH:mm:ss.ffffff",
-		  "yyyy-MM-ddTHH:mm:ss.fffffff",
 		  "yyyy-MM-ddTHH:mm:sszzz",
 		  "yyyy-MM-ddTHH:mm:ss.fzzz",
 		  "yyyy-MM-ddTHH:mm:ss.ffzzz",
@@ -72,6 +70,14 @@ namespace System.Xml {
 		  "yyyy-MM-ddTHH:mm:ss.fffffZ",
 		  "yyyy-MM-ddTHH:mm:ss.ffffffZ",
 		  "yyyy-MM-ddTHH:mm:ss.fffffffZ",
+		  "yyyy-MM-ddTHH:mm:ss",
+		  "yyyy-MM-ddTHH:mm:ss.f",
+		  "yyyy-MM-ddTHH:mm:ss.ff",
+		  "yyyy-MM-ddTHH:mm:ss.fff",
+		  "yyyy-MM-ddTHH:mm:ss.ffff",
+		  "yyyy-MM-ddTHH:mm:ss.fffff",
+		  "yyyy-MM-ddTHH:mm:ss.ffffff",
+		  "yyyy-MM-ddTHH:mm:ss.fffffff",
 		  // time
 		  "HH:mm:ss",
 		  "HH:mm:ss.f",
@@ -390,13 +396,42 @@ namespace System.Xml {
 		{
 			if (s == null)
 				throw new ArgumentNullException();
-			if (s == "INF")
-				return Double.PositiveInfinity;
-			if (s == "-INF")
-				return Double.NegativeInfinity;
-			if (s == "NaN")
-				return Double.NaN;
+
+			float f = TryParseStringFloatConstants (s);
+			if (f != 0)
+				return f;
+
 			return Double.Parse (s, floatStyle, CultureInfo.InvariantCulture);
+		}
+
+		static float TryParseStringFloatConstants (string s)
+		{
+			int sidx = 0;
+			while (sidx < s.Length && Char.IsWhiteSpace (s [sidx]))
+				sidx++;
+			if (sidx == s.Length)
+				throw new FormatException ();
+			int sEndPos = s.Length - 1;
+			while (Char.IsWhiteSpace (s [sEndPos]))
+				sEndPos--;
+
+			if (TryParseStringConstant ("NaN", s, sidx, sEndPos))
+				return Single.NaN;
+			if (TryParseStringConstant ("INF", s, sidx, sEndPos))
+				return Single.PositiveInfinity;
+			if (TryParseStringConstant ("-INF", s, sidx, sEndPos))
+				return Single.NegativeInfinity;
+			// Handle these here because Single.Parse("Infinity") is invalid while XmlConvert.ToSingle("Infinity") is valid.
+			if (TryParseStringConstant ("Infinity", s, sidx, sEndPos))
+				return Single.PositiveInfinity;
+			if (TryParseStringConstant ("-Infinity", s, sidx, sEndPos))
+				return Single.NegativeInfinity;
+			return 0;
+		}
+
+		static bool TryParseStringConstant (string format, string s, int start, int end)
+		{
+			return end - start + 1 == format.Length && String.CompareOrdinal (format, 0, s, start, format.Length) == 0;
 		}
 
 		public static Guid ToGuid (string s)
@@ -410,35 +445,34 @@ namespace System.Xml {
 
 		public static short ToInt16(string s)
 		{
-			return Int16.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return Int16.Parse (s, integerStyle, CultureInfo.InvariantCulture);
 		}
 
 		public static int ToInt32(string s)
 		{
-			return Int32.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return Int32.Parse (s, integerStyle, CultureInfo.InvariantCulture);
 		}
 
 		public static long ToInt64(string s)
 		{
-			return Int64.Parse (s, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return Int64.Parse (s, integerStyle, CultureInfo.InvariantCulture);
 		}
 
 		[CLSCompliant (false)]
 		public static SByte ToSByte(string s)
 		{
-			return SByte.Parse(s, NumberStyles.Integer, CultureInfo.InvariantCulture);
+			return SByte.Parse(s, integerStyle, CultureInfo.InvariantCulture);
 		}
 
 		public static float ToSingle(string s)
 		{
 			if (s == null)
 				throw new ArgumentNullException();
-			if (s == "INF")
-				return Single.PositiveInfinity;
-			if (s == "-INF")
-				return Single.NegativeInfinity;
-			if (s == "NaN")
-				return Single.NaN;
+
+			float f = TryParseStringFloatConstants (s);
+			if (f != 0)
+				return f;
+
 			return Single.Parse(s, floatStyle, CultureInfo.InvariantCulture);
 		}
 
@@ -602,7 +636,7 @@ namespace System.Xml {
 		public static TimeSpan ToTimeSpan(string s)
 		{
 			if (s.Length == 0)
-				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+				throw new FormatException ("Invalid format string for duration schema datatype.");
 
 			int start = 0;
 			if (s [0] == '-')
@@ -610,7 +644,7 @@ namespace System.Xml {
 			bool minusValue = (start == 1);
 
 			if (s [start] != 'P')
-				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+				throw new FormatException ("Invalid format string for duration schema datatype.");
 			start++;
 
 			int parseStep = 0;
@@ -705,7 +739,7 @@ namespace System.Xml {
 				start = i;
 			}
 			if (error)
-				throw new ArgumentException ("Invalid format string for duration schema datatype.");
+				throw new FormatException ("Invalid format string for duration schema datatype.");
 			TimeSpan ts = new TimeSpan (days, hours, minutes, seconds);
 			if (minusValue)
 				return TimeSpan.FromTicks (- (ts.Ticks + ticks));
@@ -842,7 +876,7 @@ namespace System.Xml {
 
 		public static string ToString (DateTimeOffset value)
 		{
-			return ToString (value, "yyyy-MM-ddTHH:mm:ss.fffffffzzz");
+			return ToString (value, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz");
 		}
 
 		public static string ToString (DateTimeOffset value, string format)

@@ -21,15 +21,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_1
-
 namespace System.Xml {
 
 	[Flags]
-	public enum NamespaceHandling {
+#if NET_2_1
+	public
+#else
+	internal
+#endif
+	enum NamespaceHandling {
 		Default,
 		OmitDuplicates = 1,
 	}
 }
-
-#endif
