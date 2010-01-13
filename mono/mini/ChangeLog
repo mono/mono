@@ -1,3 +1,8 @@
+2010-01-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_aot_module): Add more comments to explain why referenced
+	assemblies need to be eagerly loaded.
+
 2010-01-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (emit_line_number_info): Fix the eglib case so it doesn't crash.
