@@ -1,3 +1,9 @@
+2010-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: when the server returns several different
+	authentication methods, pick the one that works.
+	Fixes bug #562043.
+
 2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Cookie.cs: Re-work ToString to be useable in more cases. Fix
