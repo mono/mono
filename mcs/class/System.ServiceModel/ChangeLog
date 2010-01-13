@@ -1,6 +1,11 @@
 2010-01-13  Astushi Enomoto  <atsushi@ximian.com>
 
 	* net_2_1_raw_System.ServiceModel.dll.sources :
+	  add FaultContractInfo.cs.
+
+2010-01-13  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources :
 	  add HttpCookieContainerBindingElement.cs.
 
 2010-01-07  Astushi Enomoto  <atsushi@ximian.com>

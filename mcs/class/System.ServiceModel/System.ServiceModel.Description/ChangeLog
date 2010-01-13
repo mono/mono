@@ -1,3 +1,7 @@
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescriptionGenerator.cs : fill Operation.Faults.
+
 2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescriptionGenerator.cs : fix GetCallbackContract() to

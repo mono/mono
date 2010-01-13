@@ -31,19 +31,18 @@ namespace System.ServiceModel.Dispatcher
 {
 	public class FaultContractInfo
 	{
-		string action;
-		Type detail;
-
 		public FaultContractInfo (string action, Type detail)
 		{
+			if (action == null)
+				throw new ArgumentNullException ("action");
+			if (detail == null)
+				throw new ArgumentNullException ("detail");
+			Action = action;
+			Detail = detail;
 		}
 
-		public string Action {
-			get { return action; }
-		}
+		public string Action { get; private set; }
 
-		public Type Detail {
-			get { return detail; }
-		}
+		public Type Detail { get; private set; }
 	}
 }

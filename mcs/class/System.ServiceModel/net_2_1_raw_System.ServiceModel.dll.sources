@@ -149,6 +149,7 @@ System.ServiceModel.Description/ServiceEndpoint.cs
 System.ServiceModel.Dispatcher/BaseMessagesFormatter.cs
 System.ServiceModel.Dispatcher/ClientOperation.cs
 System.ServiceModel.Dispatcher/ClientRuntime.cs
+System.ServiceModel.Dispatcher/FaultContractInfo.cs
 System.ServiceModel.Dispatcher/IChannelInitializer.cs
 System.ServiceModel.Dispatcher/IClientMessageFormatter.cs
 System.ServiceModel.Dispatcher/IClientMessageInspector.cs
