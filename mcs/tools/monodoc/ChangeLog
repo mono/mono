@@ -1,5 +1,15 @@
 2010-01-13  Jonathan Pryor  <jpryor@novell.com>
 
+	* Mono.Documentation/XmlDocUtils.cs: XmlDocUtils.AddExtensionMethods()
+	  wasn't adding extension methods which matched *interfaces* of base
+	  classes.  Result: Mono.Options.OptionSet (which inherits
+	  System.Collections.ObjectModel.KeyedCollection`2 which inherits from
+	  System.Collections.ObjectModel.Collection`1 which implements
+	  System.Collections.Generic.IEnumerable`1) wasn't getting any of the
+	  LINQ extension methods (which is bad).  Fix this.
+
+2010-01-13  Jonathan Pryor  <jpryor@novell.com>
+
 	* Resources/mdoc-html-utils.xsl: Fix regression caused by 2009-12-02
 	  commit adding GetLinkTargetHtml().  The problem was that when
 	  running within ASP.NET/monodoc ~all extension method links would be
