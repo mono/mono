@@ -16,9 +16,10 @@ namespace System.Net {
 
 	internal sealed class InternalWebRequestStreamWrapper : Stream {
 
-		Stream stream;
+		MemoryStream stream;
+		byte[] data;
 		
-		internal InternalWebRequestStreamWrapper (Stream s)
+		internal InternalWebRequestStreamWrapper (MemoryStream s)
 		{
 			stream = s;
 		}
@@ -64,6 +65,9 @@ namespace System.Net {
 		public override void Close ()
 		{
 			try {
+				// When we POST data then the actual bytes are needed after the stream is closed (e.g. DRT287)
+				// However a MemoryStream will clear itself and throw ObjectDisposedException in such case
+				data = stream.ToArray ();
 				stream.Close ();
 			}
 			finally {
@@ -102,7 +106,13 @@ namespace System.Net {
 			return stream.Seek (offset, origin);
 		}
 
-		internal Stream InnerStream {
+		internal byte[] GetData ()
+		{
+			// hold a copy of the data if the stream was closed
+			return data;
+		}
+
+		internal MemoryStream InnerStream {
 			get { return stream; }
 		}
 
