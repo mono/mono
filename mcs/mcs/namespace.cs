@@ -602,9 +602,9 @@ namespace Mono.CSharp {
 		/// 
 		/// Looks for extension method in this namespace
 		/// 
-		public List<MethodBase> LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name)
+		public List<MethodSpec> LookupExtensionMethod (Type extensionType, ClassOrStruct currentClass, string name)
 		{
-			List<MethodBase> found = null;
+			List<MethodSpec> found = null;
 
 			// TODO: problematic
 			var invocation_assembly = CodeGen.Assembly.Builder;
@@ -1033,7 +1033,7 @@ namespace Mono.CSharp {
 		///
 		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
 		{
-			List<MethodBase> candidates = null;
+			List<MethodSpec> candidates = null;
 			foreach (Namespace n in GetUsingTable ()) {
 				var a = n.LookupExtensionMethod (extensionType, null, name);
 				if (a == null)

@@ -10,14 +10,16 @@
 //
 //
 
+using System;
+using System.Collections.Generic;
+using System.Diagnostics;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Text;
+using SLE = System.Linq.Expressions;
+using System.Linq;
+
 namespace Mono.CSharp {
-	using System;
-	using System.Collections.Generic;
-	using System.Diagnostics;
-	using System.Reflection;
-	using System.Reflection.Emit;
-	using System.Text;
-	using SLE = System.Linq.Expressions;
 
 	/// <remarks>
 	///   The ExprClass class contains the is used to pass the 
@@ -147,9 +149,9 @@ namespace Mono.CSharp {
 			return TypeManager.CSharpName (type);
 		}
 
-		public static bool IsAccessorAccessible (Type invocation_type, MethodInfo mi, out bool must_do_cs1540_check)
+		public static bool IsAccessorAccessible (Type invocation_type, MethodSpec mi, out bool must_do_cs1540_check)
 		{
-			MethodAttributes ma = mi.Attributes & MethodAttributes.MemberAccessMask;
+			MethodAttributes ma = mi.MetaInfo.Attributes & MethodAttributes.MemberAccessMask;
 
 			must_do_cs1540_check = false; // by default we do not check for this
 
@@ -674,12 +676,12 @@ namespace Mono.CSharp {
 
 			if (mi.Length > 1) {
 				bool is_interface = qualifier_type != null && qualifier_type.IsInterface;
-				var methods = new List<MethodBase> (2);
+				var methods = new List<MethodSpec> (2);
 				List<MemberInfo> non_methods = null;
 
-				foreach (MemberInfo m in mi) {
+				foreach (var m in mi) {
 					if (m is MethodBase) {
-						methods.Add ((MethodBase) m);
+						methods.Add (Import.CreateMethod ((MethodBase) m));
 						continue;
 					}
 
@@ -716,23 +718,23 @@ namespace Mono.CSharp {
 					return ExprClassFromMemberInfo (container_type, (MemberInfo)non_methods [0], loc);
 
 				if (non_methods != null && non_methods.Count > 0) {
-					MethodBase method = (MethodBase) methods [0];
+					var method = methods [0];
 					MemberInfo non_method = (MemberInfo) non_methods [0];
 					if (method.DeclaringType == non_method.DeclaringType) {
 						// Cannot happen with C# code, but is valid in IL
-						ctx.Report.SymbolRelatedToPreviousError (method);
+						ctx.Report.SymbolRelatedToPreviousError (method.MetaInfo);
 						ctx.Report.SymbolRelatedToPreviousError (non_method);
 						ctx.Report.Error (229, loc, "Ambiguity between `{0}' and `{1}'",
 							      TypeManager.GetFullNameSignature (non_method),
-							      TypeManager.CSharpSignature (method));
+							      TypeManager.CSharpSignature (method.MetaInfo));
 						return null;
 					}
 
 					if (is_interface) {
-						ctx.Report.SymbolRelatedToPreviousError (method);
+						ctx.Report.SymbolRelatedToPreviousError (method.MetaInfo);
 						ctx.Report.SymbolRelatedToPreviousError (non_method);
 						ctx.Report.Warning (467, 2, loc, "Ambiguity between method `{0}' and non-method `{1}'. Using method `{0}'",
-								TypeManager.CSharpSignature (method), TypeManager.GetFullNameSignature (non_method));
+								TypeManager.CSharpSignature (method.MetaInfo), TypeManager.GetFullNameSignature (non_method));
 					}
 				}
 
@@ -740,7 +742,7 @@ namespace Mono.CSharp {
 			}
 
 			if (mi [0] is MethodBase)
-				return new MethodGroupExpr (mi, queried_type, loc);
+				return new MethodGroupExpr (mi.Select (l => Import.CreateMethod ((MethodBase) l)).ToArray (), queried_type, loc);
 
 			return ExprClassFromMemberInfo (container_type, mi [0], loc);
 		}
@@ -877,13 +879,16 @@ namespace Mono.CSharp {
 
 		protected virtual Expression Error_MemberLookupFailed (ResolveContext ec, Type type, MemberInfo[] members)
 		{
+			List<MethodSpec> methods = new List<MethodSpec> ();
 			for (int i = 0; i < members.Length; ++i) {
 				if (!(members [i] is MethodBase))
 					return null;
+
+				methods.Add (Import.CreateMethod (members[i] as MethodBase));
 			}
 
 			// By default propagate the closest candidates upwards
-			return new MethodGroupExpr (members, type, loc, true);
+			return new MethodGroupExpr (methods.ToArray (), type, loc, true);
 		}
 
 		protected virtual void Error_NegativeArrayIndex (ResolveContext ec, Location loc)
@@ -3245,7 +3250,7 @@ namespace Mono.CSharp {
 		public Expression ExtensionExpression;
 		Argument extension_argument;
 
-		public ExtensionMethodGroupExpr (List<MethodBase> list, NamespaceEntry n, Type extensionType, Location l)
+		public ExtensionMethodGroupExpr (List<MethodSpec> list, NamespaceEntry n, Type extensionType, Location l)
 			: base (list, extensionType, l)
 		{
 			this.namespace_entry = n;
@@ -3311,13 +3316,13 @@ namespace Mono.CSharp {
 	{
 		public interface IErrorHandler
 		{
-			bool AmbiguousCall (ResolveContext ec, MethodBase ambiguous);
-			bool NoExactMatch (ResolveContext ec, MethodBase method);
+			bool AmbiguousCall (ResolveContext ec, MethodSpec ambiguous);
+			bool NoExactMatch (ResolveContext ec, MethodSpec method);
 		}
 
-		public IErrorHandler CustomErrorHandler;		
-		public MethodBase [] Methods;
-		MethodBase best_candidate;
+		public IErrorHandler CustomErrorHandler;
+		public MethodSpec [] Methods;
+		MethodSpec best_candidate;
 		// TODO: make private
 		public TypeArguments type_arguments;
  		bool identical_type_name;
@@ -3325,31 +3330,31 @@ namespace Mono.CSharp {
 		Type delegate_type;
 		Type queried_type;
 		
-		public MethodGroupExpr (MemberInfo [] mi, Type type, Location l)
+		public MethodGroupExpr (MethodSpec [] mi, Type type, Location l)
 			: this (type, l)
 		{
-			Methods = new MethodBase [mi.Length];
+			Methods = new MethodSpec[mi.Length];
 			mi.CopyTo (Methods, 0);
 		}
 
-		public MethodGroupExpr (MemberInfo[] mi, Type type, Location l, bool inacessibleCandidatesOnly)
+		public MethodGroupExpr (MethodSpec[] mi, Type type, Location l, bool inacessibleCandidatesOnly)
 			: this (mi, type, l)
 		{
 			has_inaccessible_candidates_only = inacessibleCandidatesOnly;
 		}
 
-		public MethodGroupExpr (List<MethodBase> list, Type type, Location l)
+		public MethodGroupExpr (List<MethodSpec> list, Type type, Location l)
 			: this (type, l)
 		{
 			try {
 				Methods = list.ToArray ();
 			} catch {
-				foreach (MemberInfo m in list){
-					if (!(m is MethodBase)){
-						Console.WriteLine ("Name " + m.Name);
-						Console.WriteLine ("Found a: " + m.GetType ().FullName);
-					}
-				}
+				//foreach (MemberInfo m in list){
+				//    if (!(m is MethodBase)){
+				//        Console.WriteLine ("Name " + m.Name);
+				//        Console.WriteLine ("Found a: " + m.GetType ().FullName);
+				//    }
+				//}
 				throw;
 			}
 
@@ -3370,6 +3375,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public MethodSpec BestCandidate {
+			get {
+				return best_candidate;
+			}
+		}
+
 		public Type DelegateType {
 			set {
 				delegate_type = value;
@@ -3385,9 +3396,9 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			if (best_candidate != null)
-				return TypeManager.CSharpSignature (best_candidate);
+				return TypeManager.CSharpSignature (best_candidate.MetaInfo);
 			
-			return TypeManager.CSharpSignature (Methods [0]);
+			return TypeManager.CSharpSignature (Methods [0].MetaInfo);
 		}
 
 		public override string Name {
@@ -3401,7 +3412,7 @@ namespace Mono.CSharp {
 				if (best_candidate != null)
 					return !best_candidate.IsStatic;
 
-				foreach (MethodBase mb in Methods)
+				foreach (var mb in Methods)
 					if (!mb.IsStatic)
 						return true;
 
@@ -3414,22 +3425,17 @@ namespace Mono.CSharp {
 				if (best_candidate != null)
 					return best_candidate.IsStatic;
 
-				foreach (MethodBase mb in Methods)
+				foreach (var mb in Methods)
 					if (mb.IsStatic)
 						return true;
 
 				return false;
 			}
 		}
-		
-		public static explicit operator ConstructorInfo (MethodGroupExpr mg)
-		{
-			return (ConstructorInfo)mg.best_candidate;
-		}
 
-		public static explicit operator MethodInfo (MethodGroupExpr mg)
+		public static explicit operator MethodSpec (MethodGroupExpr mg)
 		{
-			return (MethodInfo)mg.best_candidate;
+			return mg.best_candidate;
 		}
 
 		//
@@ -3541,11 +3547,11 @@ namespace Mono.CSharp {
 		///     true  if candidate is better than the current best match
 		/// </remarks>
 		static bool BetterFunction (ResolveContext ec, Arguments args, int argument_count,
-			MethodBase candidate, bool candidate_params,
-			MethodBase best, bool best_params)
+			MethodSpec candidate, bool candidate_params,
+			MethodSpec best, bool best_params)
 		{
-			AParametersCollection candidate_pd = TypeManager.GetParameterData (candidate);
-			AParametersCollection best_pd = TypeManager.GetParameterData (best);
+			AParametersCollection candidate_pd = candidate.Parameters;
+			AParametersCollection best_pd = best.Parameters;
 		
 			bool better_at_least_one = false;
 			bool same = true;
@@ -3607,10 +3613,10 @@ namespace Mono.CSharp {
 			//
 			// The two methods have equal parameter types.  Now apply tie-breaking rules
 			//
-			if (TypeManager.IsGenericMethod (best)) {
-				if (!TypeManager.IsGenericMethod (candidate))
+			if (best.IsGenericMethod) {
+				if (!candidate.IsGenericMethod)
 					return true;
-			} else if (TypeManager.IsGenericMethod (candidate)) {
+			} else if (candidate.IsGenericMethod) {
 				return false;
 			}
 
@@ -3698,7 +3704,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			IMethodData md = TypeManager.GetMethod (best_candidate);
+			IMethodData md = TypeManager.GetMethod (best_candidate.MetaInfo);
 			if (md != null && md.IsExcluded ())
 				ec.Report.Error (765, loc,
 					"Partial methods with only a defining declaration or removed conditional methods cannot be used in an expression tree");
@@ -3736,23 +3742,23 @@ namespace Mono.CSharp {
 			Invocation.EmitCall (ec, IsBase, InstanceExpression, best_candidate, arguments, loc);			
 		}
 
-		void Error_AmbiguousCall (ResolveContext ec, MethodBase ambiguous)
+		void Error_AmbiguousCall (ResolveContext ec, MethodSpec ambiguous)
 		{
 			if (CustomErrorHandler != null && CustomErrorHandler.AmbiguousCall (ec, ambiguous))
 				return;
 
-			ec.Report.SymbolRelatedToPreviousError (best_candidate);
+			ec.Report.SymbolRelatedToPreviousError (best_candidate.MetaInfo);
 			ec.Report.Error (121, loc, "The call is ambiguous between the following methods or properties: `{0}' and `{1}'",
-				TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (best_candidate));
+				TypeManager.CSharpSignature (ambiguous), TypeManager.CSharpSignature (best_candidate.MetaInfo));
 		}
 
-		protected virtual void Error_InvalidArguments (ResolveContext ec, Location loc, int idx, MethodBase method,
+		protected virtual void Error_InvalidArguments (ResolveContext ec, Location loc, int idx, MethodSpec method,
 													Argument a, AParametersCollection expected_par, Type paramType)
 		{
 			ExtensionMethodGroupExpr emg = this as ExtensionMethodGroupExpr;
 
 			if (a is CollectionElementInitializer.ElementInitializerArgument) {
-				ec.Report.SymbolRelatedToPreviousError (method);
+				ec.Report.SymbolRelatedToPreviousError (method.MetaInfo);
 				if ((expected_par.FixedParameters [idx].ModFlags & Parameter.Modifier.ISBYREF) != 0) {
 					ec.Report.Error (1954, loc, "The best overloaded collection initalizer method `{0}' cannot have 'ref', or `out' modifier",
 						TypeManager.CSharpSignature (method));
@@ -3764,7 +3770,7 @@ namespace Mono.CSharp {
 				ec.Report.Error (1594, loc, "Delegate `{0}' has some invalid arguments",
 					TypeManager.CSharpName (method.DeclaringType));
 			} else {
-				ec.Report.SymbolRelatedToPreviousError (method);
+				ec.Report.SymbolRelatedToPreviousError (method.MetaInfo);
 				if (emg != null) {
 					ec.Report.Error (1928, loc,
 						"Type `{0}' does not contain a member `{1}' and the best extension method overload `{2}' has some invalid arguments",
@@ -3819,7 +3825,7 @@ namespace Mono.CSharp {
 				      Name, arg_count.ToString ());
 		}
 		
-		protected virtual int GetApplicableParametersCount (MethodBase method, AParametersCollection parameters)
+		protected virtual int GetApplicableParametersCount (MethodSpec method, AParametersCollection parameters)
 		{
 			return parameters.Count;
 		}		
@@ -3838,11 +3844,11 @@ namespace Mono.CSharp {
 		/// 0 = the best, int.MaxValue = the worst
 		///
 		public int IsApplicable (ResolveContext ec,
-						ref Arguments arguments, int arg_count, ref MethodBase method, ref bool params_expanded_form)
+						ref Arguments arguments, int arg_count, ref MethodSpec method, ref bool params_expanded_form)
 		{
-			MethodBase candidate = method;
+			var candidate = method;
 
-			AParametersCollection pd = TypeManager.GetParameterData (candidate);
+			AParametersCollection pd = candidate.Parameters;
 			int param_count = GetApplicableParametersCount (candidate, pd);
 			int optional_count = 0;
 
@@ -3854,7 +3860,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				int args_gap = Math.Abs (arg_count - param_count);
+				int args_gap = System.Math.Abs (arg_count - param_count);
 				if (optional_count != 0) {
 					if (args_gap > optional_count)
 						return int.MaxValue - 10000 + args_gap - optional_count;
@@ -3940,26 +3946,25 @@ namespace Mono.CSharp {
 			//
 			// 1. Handle generic method using type arguments when specified or type inference
 			//
-			if (TypeManager.IsGenericMethod (candidate)) {
+			if (candidate.IsGenericMethod) {
 				if (type_arguments != null) {
 					Type [] g_args = candidate.GetGenericArguments ();
 					if (g_args.Length != type_arguments.Count)
-						return int.MaxValue - 20000 + Math.Abs (type_arguments.Count - g_args.Length);
+						return int.MaxValue - 20000 + System.Math.Abs (type_arguments.Count - g_args.Length);
 
-					// TODO: Don't create new method, create Parameters only
-					method = TypeManager.MakeGenericMethod ((MethodInfo) candidate, type_arguments.Arguments);
+					method = candidate.Inflate (type_arguments.Arguments);
 					candidate = method;
-					pd = TypeManager.GetParameterData (candidate);
+					pd = candidate.Parameters;
 				} else {
 					int score = TypeManager.InferTypeArguments (ec, arguments, ref candidate);
 					if (score != 0)
 						return score - 20000;
 
-					if (TypeManager.IsGenericMethodDefinition (candidate))
+					if (TypeManager.IsGenericMethodDefinition (candidate.MetaInfo))
 						throw new InternalErrorException ("A generic method `{0}' definition took part in overload resolution",
-							TypeManager.CSharpSignature (candidate));
+							TypeManager.CSharpSignature (candidate.MetaInfo));
 
-					pd = TypeManager.GetParameterData (candidate);
+					pd = candidate.Parameters;
 				}
 			} else {
 				if (type_arguments != null)
@@ -4088,9 +4093,9 @@ namespace Mono.CSharp {
 			if (mg2 == null)
 				return mg1;
 
-			var all = new List<MethodBase> (mg1.Methods);
-			foreach (MethodBase m in mg2.Methods){
-				if (!TypeManager.ArrayContainsMethod (mg1.Methods, m, false))
+			var all = new List<MethodSpec> (mg1.Methods);
+			foreach (var m in mg2.Methods){
+				if (!TypeManager.ArrayContainsMethod (mg1.Methods.Select (l => l.MetaInfo).ToArray (), m.MetaInfo, false))
 					all.Add (m);
 			}
 
@@ -4144,13 +4149,11 @@ namespace Mono.CSharp {
 		{
 			base.MutateHoistedGenericType (storey);
 
-			MethodInfo mi = best_candidate as MethodInfo;
-			if (mi != null) {
-				best_candidate = storey.MutateGenericMethod (mi);
-				return;
+			if (best_candidate.IsConstructor) {
+				storey.MutateConstructor (best_candidate);
+			} else {
+				storey.MutateGenericMethod (best_candidate);				
 			}
-
-			best_candidate = storey.MutateConstructor ((ConstructorInfo) this);
 		}
 
 		/// <summary>
@@ -4174,8 +4177,8 @@ namespace Mono.CSharp {
 		{
 			bool method_params = false;
 			Type applicable_type = null;
-			var candidates = new List<MethodBase> (2);
-			List<MethodBase> candidate_overrides = null;
+			var candidates = new List<MethodSpec> (2);
+			List<MethodSpec> candidate_overrides = null;
 
 			//
 			// Used to keep a map between the candidate
@@ -4184,8 +4187,8 @@ namespace Mono.CSharp {
 			//
 			// false is normal form, true is expanded form
 			//
-			Dictionary<MethodBase, MethodBase> candidate_to_form = null;
-			Dictionary<MethodBase, Arguments> candidates_expanded = null;
+			Dictionary<MethodSpec, MethodSpec> candidate_to_form = null;
+			Dictionary<MethodSpec, Arguments> candidates_expanded = null;
 			Arguments candidate_args = Arguments;
 
 			int arg_count = Arguments != null ? Arguments.Count : 0;
@@ -4210,18 +4213,20 @@ namespace Mono.CSharp {
 				// with non-C# libraries which change the visibility of overrides (#75636)
 				//
 				int j = 0;
+				MethodBase mb = null;
 				for (int i = 0; i < Methods.Length; ++i) {
-					MethodBase m = Methods [i];
+					var m = Methods [i];
+					mb = m.MetaInfo;
 					if (TypeManager.IsOverride (m)) {
 						if (candidate_overrides == null)
-							candidate_overrides = new List<MethodBase> ();
+							candidate_overrides = new List<MethodSpec> ();
 						candidate_overrides.Add (m);
-						m = TypeManager.TryGetBaseDefinition (m);
-						if (m != null && Array.Exists (Methods, l => l == m))
+						mb = TypeManager.TryGetBaseDefinition (mb);
+						if (mb != null && Array.Exists (Methods, l => l.MetaInfo == mb))
 							continue;
 					}
-					if (m != null)
-						Methods [j++] = m;
+					if (mb != null)
+						Methods [j++] = Import.CreateMethod (mb);
 				}
 				nmethods = j;
 			}
@@ -4260,14 +4265,14 @@ namespace Mono.CSharp {
 				
 				if (params_expanded_form) {
 					if (candidate_to_form == null)
-						candidate_to_form = new Dictionary<MethodBase, MethodBase> (4, ReferenceEquality<MethodBase>.Default);
-					MethodBase candidate = Methods [i];
+						candidate_to_form = new Dictionary<MethodSpec, MethodSpec> (4, ReferenceEquality<MethodSpec>.Default);
+					var candidate = Methods [i];
 					candidate_to_form [candidate] = candidate;
 				}
 				
 				if (candidate_args != Arguments) {
 					if (candidates_expanded == null)
-						candidates_expanded = new Dictionary<MethodBase, Arguments> (4, ReferenceEquality<MethodBase>.Default);
+						candidates_expanded = new Dictionary<MethodSpec, Arguments> (4, ReferenceEquality<MethodSpec>.Default);
 
 					candidates_expanded.Add (Methods [i], candidate_args);
 					candidate_args = Arguments;
@@ -4372,7 +4377,7 @@ namespace Mono.CSharp {
 					int j = finalized; // where to put the next finalized candidate
 					int k = finalized; // where to put the next undiscarded candidate
 					for (int i = finalized; i < candidate_top; ++i) {
-						MethodBase candidate = candidates [i];
+						var candidate = candidates [i];
 						Type decl_type = candidate.DeclaringType;
 
 						if (decl_type == applicable_type) {
@@ -4418,9 +4423,9 @@ namespace Mono.CSharp {
 			}
 
 			for (int ix = 1; ix < candidate_top; ix++) {
-				MethodBase candidate = (MethodBase) candidates [ix];
+				var candidate = candidates [ix];
 
-				if (candidate == best_candidate)
+				if (candidate.MetaInfo == best_candidate.MetaInfo)
 					continue;
 
 				bool cand_params = candidate_to_form != null && candidate_to_form.ContainsKey (candidate);
@@ -4436,11 +4441,11 @@ namespace Mono.CSharp {
 			// Now check that there are no ambiguities i.e the selected method
 			// should be better than all the others
 			//
-			MethodBase ambiguous = null;
+			MethodSpec ambiguous = null;
 			for (int ix = 1; ix < candidate_top; ix++) {
-				MethodBase candidate = candidates [ix];
+				var candidate = candidates [ix];
 
-				if (candidate == best_candidate)
+				if (candidate.MetaInfo == best_candidate.MetaInfo)
 					continue;
 
 				bool cand_params = candidate_to_form != null && candidate_to_form.ContainsKey (candidate);
@@ -4449,7 +4454,7 @@ namespace Mono.CSharp {
 					candidate, cand_params)) 
 				{
 					if (!may_fail)
-						ec.Report.SymbolRelatedToPreviousError (candidate);
+						ec.Report.SymbolRelatedToPreviousError (candidate.MetaInfo);
 					ambiguous = candidate;
 				}
 			}
@@ -4470,29 +4475,29 @@ namespace Mono.CSharp {
 				if (candidate_overrides != null) {
 					Type[] gen_args = null;
 					bool gen_override = false;
-					if (TypeManager.IsGenericMethod (best_candidate))
-						gen_args = TypeManager.GetGenericArguments (best_candidate);
+					if (best_candidate.IsGenericMethod)
+						gen_args = TypeManager.GetGenericArguments (best_candidate.MetaInfo);
 
-					foreach (MethodBase candidate in candidate_overrides) {
-						if (TypeManager.IsGenericMethod (candidate)) {
+					foreach (var candidate in candidate_overrides) {
+						if (candidate.IsGenericMethod) {
 							if (gen_args == null)
 								continue;
 
-							if (gen_args.Length != TypeManager.GetGenericArguments (candidate).Length)
+							if (gen_args.Length != TypeManager.GetGenericArguments (candidate.MetaInfo).Length)
 								continue;
 						} else {
 							if (gen_args != null)
 								continue;
 						}
 						
-						if (IsOverride (candidate, best_candidate)) {
+						if (IsOverride (candidate.MetaInfo, best_candidate.MetaInfo)) {
 							gen_override = true;
 							best_candidate = candidate;
 						}
 					}
 
 					if (gen_override && gen_args != null) {
-						best_candidate = ((MethodInfo) best_candidate).MakeGenericMethod (gen_args);
+						best_candidate = best_candidate.Inflate (gen_args);
 					}
 				}
 			}
@@ -4512,7 +4517,7 @@ namespace Mono.CSharp {
 
 			MethodBase the_method = TypeManager.DropGenericMethodArguments (best_candidate);
 			if (TypeManager.IsGenericMethodDefinition (the_method) &&
-			    !ConstraintChecker.CheckConstraints (ec, the_method, best_candidate, loc))
+			    !ConstraintChecker.CheckConstraints (ec, the_method, best_candidate.MetaInfo, loc))
 				return null;
 
 			//
@@ -4524,37 +4529,37 @@ namespace Mono.CSharp {
 
 			IMethodData data = TypeManager.GetMethod (the_method);
 			if (data != null)
-				data.SetMemberIsUsed ();
+				data.SetIsUsed ();
 
 			Arguments = candidate_args;
 			return this;
 		}
 
-		bool NoExactMatch (ResolveContext ec, ref Arguments Arguments, IDictionary<MethodBase, MethodBase> candidate_to_form)
+		bool NoExactMatch (ResolveContext ec, ref Arguments Arguments, IDictionary<MethodSpec, MethodSpec> candidate_to_form)
 		{
-			AParametersCollection pd = TypeManager.GetParameterData (best_candidate);
+			AParametersCollection pd = best_candidate.Parameters;
 			int arg_count = Arguments == null ? 0 : Arguments.Count;
 
 			if (arg_count == pd.Count || pd.HasParams) {
-				if (TypeManager.IsGenericMethodDefinition (best_candidate)) {
+				if (TypeManager.IsGenericMethodDefinition (best_candidate.MetaInfo)) {
 					if (type_arguments == null) {
 						ec.Report.Error (411, loc,
 							"The type arguments for method `{0}' cannot be inferred from " +
 							"the usage. Try specifying the type arguments explicitly",
-							TypeManager.CSharpSignature (best_candidate));
+							TypeManager.CSharpSignature (best_candidate.MetaInfo));
 						return true;
 					}
 
-					Type[] g_args = TypeManager.GetGenericArguments (best_candidate);
+					Type[] g_args = TypeManager.GetGenericArguments (best_candidate.MetaInfo);
 					if (type_arguments.Count != g_args.Length) {
-						ec.Report.SymbolRelatedToPreviousError (best_candidate);
+						ec.Report.SymbolRelatedToPreviousError (best_candidate.MetaInfo);
 						ec.Report.Error (305, loc, "Using the generic method `{0}' requires `{1}' type argument(s)",
-							TypeManager.CSharpSignature (best_candidate),
+							TypeManager.CSharpSignature (best_candidate.MetaInfo),
 							g_args.Length.ToString ());
 						return true;
 					}
 				} else {
-					if (type_arguments != null && !TypeManager.IsGenericMethod (best_candidate)) {
+					if (type_arguments != null && !best_candidate.IsGenericMethod) {
 						Error_TypeArgumentsCannotBeUsed (ec.Report, loc);
 						return true;
 					}
@@ -4567,9 +4572,9 @@ namespace Mono.CSharp {
 						// base class (CS1540).  If the qualifier_type is a base of the
 						// ec.CurrentType and the lookup succeeds with the latter one,
 						// then we are in this situation.
-						Error_CannotAccessProtected (ec, loc, best_candidate, queried_type, ec.CurrentType);
+						Error_CannotAccessProtected (ec, loc, best_candidate.MetaInfo, queried_type, ec.CurrentType);
 					} else {
-						ec.Report.SymbolRelatedToPreviousError (best_candidate);
+						ec.Report.SymbolRelatedToPreviousError (best_candidate.MetaInfo);
 						ErrorIsInaccesible (loc, GetSignatureForError (), ec.Report);
 					}
 				}
@@ -4591,11 +4596,11 @@ namespace Mono.CSharp {
 		}
 
 		public bool VerifyArgumentsCompat (ResolveContext ec, ref Arguments arguments,
-							  int arg_count, MethodBase method,
+							  int arg_count, MethodSpec method,
 							  bool chose_params_expanded,
 							  bool may_fail, Location loc)
 		{
-			AParametersCollection pd = TypeManager.GetParameterData (method);
+			AParametersCollection pd = method.Parameters;
 			int param_count = GetApplicableParametersCount (method, pd);
 
 			int errors = ec.Report.Errors;
@@ -4604,7 +4609,7 @@ namespace Mono.CSharp {
 			int a_idx = 0, a_pos = 0;
 			Argument a = null;
 			ArrayInitializer params_initializers = null;
-			bool has_unsafe_arg = method is MethodInfo ? ((MethodInfo) method).ReturnType.IsPointer : false;
+			bool has_unsafe_arg = method.ReturnType.IsPointer;
 
 			for (; a_idx < arg_count; a_idx++, ++a_pos) {
 				a = arguments [a_idx];
@@ -4643,16 +4648,16 @@ namespace Mono.CSharp {
 									"The delegate `{0}' does not contain a parameter named `{1}'",
 									TypeManager.CSharpName (DeclaringType), na.Name);
 							} else {
-								ec.Report.SymbolRelatedToPreviousError (best_candidate);
+								ec.Report.SymbolRelatedToPreviousError (best_candidate.MetaInfo);
 								ec.Report.Error (1739, na.Location,
 									"The best overloaded method match for `{0}' does not contain a parameter named `{1}'",
-									TypeManager.CSharpSignature (method), na.Name);
+									TypeManager.CSharpSignature (method.MetaInfo), na.Name);
 							}
 						} else if (arguments[name_index] != a) {
 							if (DeclaringType != null && TypeManager.IsDelegateType (DeclaringType))
 								ec.Report.SymbolRelatedToPreviousError (DeclaringType);
 							else
-								ec.Report.SymbolRelatedToPreviousError (best_candidate);
+								ec.Report.SymbolRelatedToPreviousError (best_candidate.MetaInfo);
 
 							ec.Report.Error (1744, na.Location,
 								"Named argument `{0}' cannot be used for a parameter which has positional argument specified",
@@ -4768,7 +4773,7 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-//			constant.IsUsed = true;
+			constant.MemberDefinition.SetIsUsed ();
 
 			if (!rc.IsObsolete) {
 				var oa = constant.GetObsoleteAttribute ();
@@ -4911,7 +4916,7 @@ namespace Mono.CSharp {
 
 		public Expression CreateTypeOfExpression ()
 		{
-			return new TypeOfField (GetConstructedFieldInfo (), loc);
+			return new TypeOfField (Import.CreateField (GetConstructedFieldInfo ()), loc);
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -5164,7 +5169,7 @@ namespace Mono.CSharp {
 				if ((f.ModFlags & Modifiers.VOLATILE) != 0)
 					is_volatile = true;
 
-				f.SetMemberIsUsed ();
+				f.SetIsUsed ();
 			}
 			
 			if (IsStatic){
@@ -5270,7 +5275,7 @@ namespace Mono.CSharp {
 				if ((mode & AddressOp.Store) != 0)
 					f.SetAssigned ();
 				if ((mode & AddressOp.Load) != 0)
-					f.SetMemberIsUsed ();
+					f.SetIsUsed ();
 			}
 
 			//
@@ -5345,7 +5350,7 @@ namespace Mono.CSharp {
 	public class PropertyExpr : MemberExpr, IDynamicAssign
 	{
 		public readonly PropertyInfo PropertyInfo;
-		MethodInfo getter, setter;
+		MethodSpec getter, setter;
 		bool is_static;
 
 		TypeArguments targs;
@@ -5442,13 +5447,19 @@ namespace Mono.CSharp {
 
 				PropertyInfo pi = (PropertyInfo) group [0];
 
-				if (getter == null)
-					getter = pi.GetGetMethod (true);
+				if (getter == null) {
+					var m = pi.GetGetMethod (true);
+					if (m != null)
+						getter = Import.CreateMethod (m);
+				}
 
-				if (setter == null)
-					setter = pi.GetSetMethod (true);
+				if (setter == null) {
+					var m = pi.GetSetMethod (true);
+					if (m != null)
+						setter = Import.CreateMethod (m);
+				}
 
-				MethodInfo accessor = getter != null ? getter : setter;
+				var accessor = getter != null ? getter : setter;
 
 				if (!accessor.IsVirtual)
 					return;
@@ -5468,7 +5479,7 @@ namespace Mono.CSharp {
 				MethodBase the_getter = TypeManager.DropGenericMethodArguments (getter);
 				IMethodData md = TypeManager.GetMethod (the_getter);
 				if (md != null)
-					md.SetMemberIsUsed ();
+					md.SetIsUsed ();
 
 				is_static = getter.IsStatic;
 			}
@@ -5477,7 +5488,7 @@ namespace Mono.CSharp {
 				MethodBase the_setter = TypeManager.DropGenericMethodArguments (setter);
 				IMethodData md = TypeManager.GetMethod (the_setter);
 				if (md != null)
-					md.SetMemberIsUsed ();
+					md.SetIsUsed ();
 
 				is_static = setter.IsStatic;
 			}
@@ -5485,12 +5496,12 @@ namespace Mono.CSharp {
 
 		public SLE.Expression MakeAssignExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), setter);
+			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) setter.MetaInfo);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), getter);
+			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) getter.MetaInfo);
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -5500,9 +5511,9 @@ namespace Mono.CSharp {
 
 			type = storey.MutateType (type);
 			if (getter != null)
-				getter = storey.MutateGenericMethod (getter);
+				storey.MutateGenericMethod (getter);
 			if (setter != null)
-				setter = storey.MutateGenericMethod (setter);
+				storey.MutateGenericMethod (setter);
 		}
 
 		bool InstanceResolve (ResolveContext ec, bool lvalue_instance, bool must_do_cs1540_check)
@@ -5538,22 +5549,22 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		void Error_PropertyNotFound (ResolveContext ec, MethodInfo mi, bool getter)
+		void Error_PropertyNotFound (ResolveContext ec, MethodSpec mi, bool getter)
 		{
 			// TODO: correctly we should compare arguments but it will lead to bigger changes
-			if (mi is MethodBuilder) {
+			if (mi.MetaInfo is MethodBuilder) {
 				Error_TypeDoesNotContainDefinition (ec, loc, PropertyInfo.DeclaringType, Name);
 				return;
 			}
 			
 			StringBuilder sig = new StringBuilder (TypeManager.CSharpName (mi.DeclaringType));
 			sig.Append ('.');
-			AParametersCollection iparams = TypeManager.GetParameterData (mi);
+			AParametersCollection iparams = mi.Parameters;
 			sig.Append (getter ? "get_" : "set_");
 			sig.Append (Name);
 			sig.Append (iparams.GetSignatureForError ());
 
-			ec.Report.SymbolRelatedToPreviousError (mi);
+			ec.Report.SymbolRelatedToPreviousError (mi.MetaInfo);
 			ec.Report.Error (1546, loc, "Property `{0}' is not supported by the C# language. Try to call the accessor method `{1}' directly",
 				Name, sig.ToString ());
 		}
@@ -5561,7 +5572,7 @@ namespace Mono.CSharp {
 		public bool IsAccessibleFrom (Type invocation_type, bool lvalue)
 		{
 			bool dummy;
-			MethodInfo accessor = lvalue ? setter : getter;
+			var accessor = lvalue ? setter : getter;
 			if (accessor == null && lvalue)
 				accessor = getter;
 			return accessor != null && IsAccessorAccessible (invocation_type, accessor, out dummy);
@@ -5672,21 +5683,21 @@ namespace Mono.CSharp {
 				return null;
 			}
 
-			if (TypeManager.GetParameterData (setter).Count != 1){
+			if (setter.Parameters.Count != 1){
 				Error_PropertyNotFound (ec, setter, false);
 				return null;
 			}
 
 			bool must_do_cs1540_check;
 			if (!IsAccessorAccessible (ec.CurrentType, setter, out must_do_cs1540_check)) {
-				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (setter) as PropertyBase.PropertyMethod;
+				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (setter.MetaInfo) as PropertyBase.PropertyMethod;
 				if (pm != null && pm.HasCustomAccessModifier) {
 					ec.Report.SymbolRelatedToPreviousError (pm);
 					ec.Report.Error (272, loc, "The property or indexer `{0}' cannot be used in this context because the set accessor is inaccessible",
 						TypeManager.CSharpSignature (setter));
 				}
 				else {
-					ec.Report.SymbolRelatedToPreviousError (setter);
+					ec.Report.SymbolRelatedToPreviousError (setter.MetaInfo);
 					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (setter), ec.Report);
 				}
 				return null;
@@ -5793,7 +5804,7 @@ namespace Mono.CSharp {
 			}
 
 			if (getter != null) {
-				if (TypeManager.GetParameterData (getter).Count != 0) {
+				if (!getter.Parameters.IsEmpty) {
 					Error_PropertyNotFound (ec, getter, true);
 					return false;
 				}
@@ -5818,14 +5829,14 @@ namespace Mono.CSharp {
 
 			if (getter != null &&
 				!IsAccessorAccessible (ec.CurrentType, getter, out must_do_cs1540_check)) {
-				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (getter) as PropertyBase.PropertyMethod;
+				PropertyBase.PropertyMethod pm = TypeManager.GetMethod (getter.MetaInfo) as PropertyBase.PropertyMethod;
 				if (pm != null && pm.HasCustomAccessModifier) {
 					ec.Report.SymbolRelatedToPreviousError (pm);
 					ec.Report.Error (271, loc, "The property or indexer `{0}' cannot be used in this context because the get accessor is inaccessible",
-						TypeManager.CSharpSignature (getter));
+						TypeManager.CSharpSignature (getter.MetaInfo));
 				} else {
-					ec.Report.SymbolRelatedToPreviousError (getter);
-					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (getter), ec.Report);
+					ec.Report.SymbolRelatedToPreviousError (getter.MetaInfo);
+					ErrorIsInaccesible (loc, TypeManager.CSharpSignature (getter.MetaInfo), ec.Report);
 				}
 
 				return false;
@@ -5847,15 +5858,15 @@ namespace Mono.CSharp {
 		public readonly EventInfo EventInfo;
 
 		bool is_static;
-		MethodInfo add_accessor, remove_accessor;
+		MethodSpec add_accessor, remove_accessor;
 
 		public EventExpr (EventInfo ei, Location loc)
 		{
 			EventInfo = ei;
 			this.loc = loc;
 
-			add_accessor = TypeManager.GetAddMethod (ei);
-			remove_accessor = TypeManager.GetRemoveMethod (ei);
+			add_accessor = Import.CreateMethod (TypeManager.GetAddMethod (ei));
+			remove_accessor = Import.CreateMethod (TypeManager.GetRemoveMethod (ei));
 			if (add_accessor.IsStatic || remove_accessor.IsStatic)
 				is_static = true;
 
@@ -5948,7 +5959,7 @@ namespace Mono.CSharp {
 				return false;
 
 			if (IsBase && add_accessor.IsAbstract) {
-				Error_CannotCallAbstractBase (ec, TypeManager.CSharpSignature(add_accessor));
+				Error_CannotCallAbstractBase (ec, TypeManager.CSharpSignature(add_accessor.MetaInfo));
 				return false;
 			}
 

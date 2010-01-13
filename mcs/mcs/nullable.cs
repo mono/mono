@@ -55,10 +55,10 @@ namespace Mono.CSharp.Nullable
 	{
 		public readonly Type Type;
 		public readonly Type UnderlyingType;
-		public MethodInfo HasValue;
-		public MethodInfo Value;
-		public MethodInfo GetValueOrDefault;
-		public ConstructorInfo Constructor;
+		public MethodSpec HasValue;
+		public MethodSpec Value;
+		public MethodSpec GetValueOrDefault;
+		public MethodSpec Constructor;
 
 		public NullableInfo (Type type)
 		{
@@ -69,8 +69,8 @@ namespace Mono.CSharp.Nullable
 			PropertyInfo value_pi = TypeManager.GetPredefinedProperty (type, "Value", Location.Null, Type.EmptyTypes);
 			GetValueOrDefault = TypeManager.GetPredefinedMethod (type, "GetValueOrDefault", Location.Null, Type.EmptyTypes);
 
-			HasValue = has_value_pi.GetGetMethod (false);
-			Value = value_pi.GetGetMethod (false);
+			HasValue = Import.CreateMethod (has_value_pi.GetGetMethod (false));
+			Value = Import.CreateMethod (value_pi.GetGetMethod (false));
 
 			// When compiling corlib
 			if (TypeManager.IsBeingCompiled (type)) {
@@ -79,19 +79,19 @@ namespace Mono.CSharp.Nullable
 				// TODO: check for correct overload
 				Constructor c = ((Constructor) tc.InstanceConstructors [0]);
 
-				Constructor = TypeBuilder.GetConstructor (type, c.ConstructorBuilder);
+				Constructor = Import.CreateMethod (TypeBuilder.GetConstructor (type, c.ConstructorBuilder));
 				return;
 			}
 
 #if MS_COMPATIBLE
-			if (TypeManager.IsBeingCompiled (UnderlyingType)) {
-				ConstructorInfo cinfo = TypeManager.DropGenericTypeArguments (type).GetConstructors ()[0];
-				Constructor = TypeBuilder.GetConstructor (type, cinfo);
-				return;
-			}
+//			if (TypeManager.IsBeingCompiled (UnderlyingType)) {
+//				ConstructorInfo cinfo = TypeManager.DropGenericTypeArguments (type).GetConstructors ()[0];
+//				Constructor = TypeBuilder.GetConstructor (type, cinfo);
+//				return;
+//			}
 #endif
 
-			Constructor = type.GetConstructor (new Type[] { UnderlyingType });
+			Constructor = Import.CreateMethod (type.GetConstructor (new Type[] { UnderlyingType }));
 		}
 	}
 
@@ -212,10 +212,10 @@ namespace Mono.CSharp.Nullable
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
 			type = storey.MutateType (type);
-			info.Constructor = storey.MutateConstructor (info.Constructor);
-			info.HasValue = storey.MutateGenericMethod (info.HasValue);
-			info.GetValueOrDefault = storey.MutateGenericMethod (info.GetValueOrDefault);
-			info.Value = storey.MutateGenericMethod (info.Value);
+			storey.MutateConstructor (info.Constructor);
+			storey.MutateGenericMethod (info.HasValue);
+			storey.MutateGenericMethod (info.GetValueOrDefault);
+			storey.MutateGenericMethod (info.Value);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -281,7 +281,7 @@ namespace Mono.CSharp.Nullable
 			public override void Emit (EmitContext ec)
 			{
 				expr.Emit (ec);
-				ec.ig.Emit (OpCodes.Newobj, info.Constructor);
+				ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) info.Constructor.MetaInfo);
 			}
 		}
 	}
@@ -327,7 +327,7 @@ namespace Mono.CSharp.Nullable
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
-			ec.ig.Emit (OpCodes.Newobj, info.Constructor);
+			ec.ig.Emit (OpCodes.Newobj, (ConstructorInfo) info.Constructor.MetaInfo);
 		}
 	}
 
@@ -519,7 +519,7 @@ namespace Mono.CSharp.Nullable
 				EmitOperator (ec, ni.UnderlyingType);
 			}
 
-			ig.Emit (OpCodes.Newobj, ni.Constructor);
+			ig.Emit (OpCodes.Newobj, (ConstructorInfo) ni.Constructor.MetaInfo);
 			ig.Emit (OpCodes.Br_S, end_label);
 
 			ig.MarkLabel (is_null_label);
@@ -573,7 +573,7 @@ namespace Mono.CSharp.Nullable
 		bool left_null_lifted, right_null_lifted;
 		Expression left_orig, right_orig;
 		Expression user_operator;
-		ConstructorInfo wrap_ctor;
+		MethodSpec wrap_ctor;
 
 		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right,
 					     Location loc)
@@ -804,7 +804,7 @@ namespace Mono.CSharp.Nullable
 			EmitOperator (ec, left.Type);
 
 			if (wrap_ctor != null)
-				ig.Emit (OpCodes.Newobj, wrap_ctor);
+				ig.Emit (OpCodes.Newobj, (ConstructorInfo) wrap_ctor.MetaInfo);
 
 			ig.Emit (OpCodes.Br_S, end_label);
 			ig.MarkLabel (is_null_label);

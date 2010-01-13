@@ -489,43 +489,44 @@ namespace Mono.CSharp {
 		//
 		// Changes method type arguments (MVAR) to storey (VAR) type arguments
 		//
-		public MethodInfo MutateGenericMethod (MethodInfo method)
+		public void MutateGenericMethod (MethodSpec ms)
 		{
+			var method = (MethodInfo) ms.MetaInfo;
 			Type [] t_args = TypeManager.GetGenericArguments (method);
 			if (TypeManager.IsGenericType (method.DeclaringType)) {
 				Type t = MutateGenericType (method.DeclaringType);
 				if (t != method.DeclaringType) {
 					method = (MethodInfo) TypeManager.DropGenericMethodArguments (method);
 					if (TypeManager.IsBeingCompiled (method))
-						method = TypeBuilder.GetMethod (t, method);
+						ms.MetaInfo = TypeBuilder.GetMethod (t, method);
 					else
-						method = (MethodInfo) MethodInfo.GetMethodFromHandle (method.MethodHandle, t.TypeHandle);
+						ms.MetaInfo = MethodInfo.GetMethodFromHandle (method.MethodHandle, t.TypeHandle);
 				}				
 			}
 
 			if (t_args == null || t_args.Length == 0)
-				return method;
+				return;
 
 			for (int i = 0; i < t_args.Length; ++i)
 				t_args [i] = MutateType (t_args [i]);
 
-			return method.GetGenericMethodDefinition ().MakeGenericMethod (t_args);
+			method = (MethodInfo) ms.MetaInfo;
+			ms.MetaInfo = method.GetGenericMethodDefinition ().MakeGenericMethod (t_args);
 		}
 
-		public ConstructorInfo MutateConstructor (ConstructorInfo ctor)
+		public void MutateConstructor (MethodSpec ms)
 		{
+			var ctor = (ConstructorInfo) ms.MetaInfo;
 			if (TypeManager.IsGenericType (ctor.DeclaringType)) {
 				Type t = MutateGenericType (ctor.DeclaringType);
 				if (t != ctor.DeclaringType) {
 					ctor = (ConstructorInfo) TypeManager.DropGenericMethodArguments (ctor);
 					if (TypeManager.IsBeingCompiled (ctor))
-						return TypeBuilder.GetConstructor (t, ctor);
-						
-					return (ConstructorInfo) ConstructorInfo.GetMethodFromHandle (ctor.MethodHandle, t.TypeHandle);
+						ms.MetaInfo = TypeBuilder.GetConstructor (t, ctor);
+					else
+						ms.MetaInfo = ConstructorInfo.GetMethodFromHandle (ctor.MethodHandle, t.TypeHandle);
 				}
 			}
-
-			return ctor;
 		}
 		
 		public void MutateField (FieldSpec fs)
@@ -1053,7 +1054,7 @@ namespace Mono.CSharp {
 			// needed for the anonymous method.  We create the method here.
 			//
 
-			MethodInfo invoke_mb = Delegate.GetInvokeMethod (ec.Compiler,
+			var invoke_mb = Delegate.GetInvokeMethod (ec.Compiler,
 				ec.CurrentType, delegate_type);
 			Type return_type = TypeManager.TypeToCoreType (invoke_mb.ReturnType);
 
@@ -1629,12 +1630,12 @@ namespace Mono.CSharp {
 
 			ig.Emit (OpCodes.Ldftn, delegate_method);
 
-			ConstructorInfo constructor_method = Delegate.GetConstructor (ec.MemberContext.Compiler, ec.CurrentType, type);
+			var constructor_method = Delegate.GetConstructor (ec.MemberContext.Compiler, ec.CurrentType, type);
 #if MS_COMPATIBLE
-            if (type.IsGenericType && type is TypeBuilder)
-                constructor_method = TypeBuilder.GetConstructor (type, constructor_method);
+//            if (type.IsGenericType && type is TypeBuilder)
+//                constructor_method = TypeBuilder.GetConstructor (type, constructor_method);
 #endif
-			ig.Emit (OpCodes.Newobj, constructor_method);
+			ig.Emit (OpCodes.Newobj, (ConstructorInfo) constructor_method.MetaInfo);
 
 			if (am_cache != null) {
 				ig.Emit (OpCodes.Stsfld, am_cache.Spec.MetaInfo);

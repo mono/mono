@@ -153,8 +153,8 @@ namespace Mono.CSharp {
 	{
 		Expression value;
 
-		public ConstSpec (IMemberDetails details, FieldInfo fi, Modifiers mod, Expression value)
-			: base (details, fi, mod)
+		public ConstSpec (IMemberDefinition definition, FieldInfo fi, Modifiers mod, Expression value)
+			: base (definition, fi, mod)
 		{
 			this.value = value;
 		}
