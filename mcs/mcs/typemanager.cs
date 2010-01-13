@@ -132,9 +132,9 @@ namespace Mono.CSharp {
 	static public MethodSpec void_initializearray_array_fieldhandle;
 	static public MethodSpec delegate_combine_delegate_delegate;
 	static public MethodSpec delegate_remove_delegate_delegate;
-	static public PropertyInfo int_get_offset_to_string_data;
+	static public PropertySpec int_get_offset_to_string_data;
 	static public MethodSpec int_interlocked_compare_exchange;
-	static public PropertyInfo ienumerator_getcurrent;
+	static public PropertySpec ienumerator_getcurrent;
 	public static MethodSpec methodbase_get_type_from_handle;
 	public static MethodSpec methodbase_get_type_from_handle_generic;
 	public static MethodSpec fieldinfo_get_field_from_handle;
@@ -906,9 +906,12 @@ namespace Mono.CSharp {
 		return (FieldInfo) GetPredefinedMember (t, name, MemberTypes.Field, loc, args);
 	}
 
-	public static PropertyInfo GetPredefinedProperty (Type t, string name, Location loc, params Type [] args)
+	public static PropertySpec GetPredefinedProperty (Type t, string name, Location loc, params Type [] args)
 	{
-		return (PropertyInfo) GetPredefinedMember (t, name, MemberTypes.Property, loc, args);
+		var p = GetPredefinedMember (t, name, MemberTypes.Property, loc, args) as PropertyInfo;
+		if (p == null)
+			return null;
+		return Import.CreateProperty (p);
 	}
 
 	/// <remarks>

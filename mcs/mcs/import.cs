@@ -156,6 +156,13 @@ namespace Mono.CSharp
 			return ms;
 		}
 
+		public static PropertySpec CreateProperty (PropertyInfo pi)
+		{
+			var definition = new ImportedMemberDefinition (pi);
+			var mod = Modifiers.PRIVATE;	// TODO: modifiers
+			return new PropertySpec (definition, pi, mod);
+		}
+
 		//
 		// Decimal constants cannot be encoded in the constant blob, and thus are marked
 		// as IsInitOnly ('readonly' in C# parlance).  We get its value from the 
@@ -195,7 +202,7 @@ namespace Mono.CSharp
 
 		public void SetIsUsed ()
 		{
-			// Not interested for imported members
+			// Unused for imported members
 		}
 	}
 

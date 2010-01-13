@@ -928,7 +928,7 @@ namespace Mono.CSharp {
 					pa.Type, Location.Null, Type.EmptyTypes);
 				PropertyInfo [] pis = new PropertyInfo [1];
 				pis [0] = TypeManager.GetPredefinedProperty (pa.Type,
-					"WrapNonExceptionThrows", Location.Null, TypeManager.bool_type);
+					"WrapNonExceptionThrows", Location.Null, TypeManager.bool_type).MetaInfo;
 				object [] pargs = new object [1];
 				pargs [0] = true;
 				Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));

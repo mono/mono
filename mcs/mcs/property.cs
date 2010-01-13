@@ -85,6 +85,29 @@ namespace Mono.CSharp
 		}
 	}
 
+	public class PropertySpec : MemberSpec
+	{
+		PropertyInfo info;
+
+		public PropertySpec (IMemberDefinition definition, PropertyInfo info, Modifiers modifiers)
+			: base (definition, info.Name, modifiers)
+		{
+			this.info = info;
+		}
+
+		public override Type DeclaringType {
+			get { return info.DeclaringType; }
+		}
+
+		public PropertyInfo MetaInfo {
+			get { return info; }
+		}
+
+		public Type PropertyType {
+			get { return info.PropertyType; }
+		}
+	}
+
 	//
 	// Properties and Indexers both generate PropertyBuilders, we use this to share 
 	// their common bits.

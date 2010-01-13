@@ -611,7 +611,7 @@ namespace Mono.CSharp {
 					return new ConstantExpr ((ConstSpec) spec, loc);
 				return new FieldExpr (spec, loc);
 			} else if (mi is PropertyInfo)
-				return new PropertyExpr (container_type, (PropertyInfo) mi, loc);
+				return new PropertyExpr (container_type, Import.CreateProperty ((PropertyInfo) mi), loc);
 			else if (mi is Type) {
 				return new TypeExpression ((System.Type) mi, loc);
 			}
@@ -5349,7 +5349,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class PropertyExpr : MemberExpr, IDynamicAssign
 	{
-		public readonly PropertyInfo PropertyInfo;
+		PropertySpec spec;
 		MethodSpec getter, setter;
 		bool is_static;
 
@@ -5358,20 +5358,19 @@ namespace Mono.CSharp {
 		LocalTemporary temp;
 		bool prepared;
 
-		public PropertyExpr (Type container_type, PropertyInfo pi, Location l)
+		public PropertyExpr (Type container_type, PropertySpec spec, Location l)
 		{
-			PropertyInfo = pi;
-			is_static = false;
+			this.spec = spec;
 			loc = l;
 
-			type = TypeManager.TypeToCoreType (pi.PropertyType);
+			type = TypeManager.TypeToCoreType (spec.PropertyType);
 
 			ResolveAccessors (container_type);
 		}
 
 		public override string Name {
 			get {
-				return PropertyInfo.Name;
+				return spec.Name;
 			}
 		}
 
@@ -5417,13 +5416,13 @@ namespace Mono.CSharp {
 
 		public override Type DeclaringType {
 			get {
-				return PropertyInfo.DeclaringType;
+				return spec.DeclaringType;
 			}
 		}
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.GetFullNameSignature (PropertyInfo);
+			return TypeManager.GetFullNameSignature (spec.MetaInfo);
 		}
 
 		void FindAccessors (Type invocation_type)
@@ -5432,11 +5431,11 @@ namespace Mono.CSharp {
 				BindingFlags.Static | BindingFlags.Instance |
 				BindingFlags.DeclaredOnly;
 
-			Type current = PropertyInfo.DeclaringType;
+			Type current = spec.DeclaringType;
 			for (; current != null; current = current.BaseType) {
 				MemberInfo[] group = TypeManager.MemberLookup (
 					invocation_type, invocation_type, current,
-					MemberTypes.Property, flags, PropertyInfo.Name, null);
+					MemberTypes.Property, flags, spec.Name, null);
 
 				if (group == null)
 					continue;
@@ -5516,6 +5515,12 @@ namespace Mono.CSharp {
 				storey.MutateGenericMethod (setter);
 		}
 
+		public PropertyInfo PropertyInfo {
+			get {
+				return spec.MetaInfo;
+			}
+		}
+
 		bool InstanceResolve (ResolveContext ec, bool lvalue_instance, bool must_do_cs1540_check)
 		{
 			if (is_static) {
@@ -5541,8 +5546,8 @@ namespace Mono.CSharp {
 			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.CurrentType) &&
 			    !TypeManager.IsNestedChildOf (ec.CurrentType, InstanceExpression.Type) &&
 			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.CurrentType)) {
-				ec.Report.SymbolRelatedToPreviousError (PropertyInfo);
-				Error_CannotAccessProtected (ec, loc, PropertyInfo, InstanceExpression.Type, ec.CurrentType);
+				ec.Report.SymbolRelatedToPreviousError (spec.MetaInfo);
+				Error_CannotAccessProtected (ec, loc, spec.MetaInfo, InstanceExpression.Type, ec.CurrentType);
 				return false;
 			}
 
@@ -5553,7 +5558,7 @@ namespace Mono.CSharp {
 		{
 			// TODO: correctly we should compare arguments but it will lead to bigger changes
 			if (mi.MetaInfo is MethodBuilder) {
-				Error_TypeDoesNotContainDefinition (ec, loc, PropertyInfo.DeclaringType, Name);
+				Error_TypeDoesNotContainDefinition (ec, loc, spec.DeclaringType, Name);
 				return;
 			}
 			
@@ -5619,19 +5624,19 @@ namespace Mono.CSharp {
 			// Only base will allow this invocation to happen.
 			//
 			if (IsBase && getter.IsAbstract) {
-				Error_CannotCallAbstractBase (ec, TypeManager.GetFullNameSignature (PropertyInfo));
+				Error_CannotCallAbstractBase (ec, TypeManager.GetFullNameSignature (spec.MetaInfo));
 			}
 
-			if (PropertyInfo.PropertyType.IsPointer && !ec.IsUnsafe){
+			if (spec.PropertyType.IsPointer && !ec.IsUnsafe){
 				UnsafeError (ec, loc);
 			}
 
 			if (!ec.IsObsolete) {
-				PropertyBase pb = TypeManager.GetProperty (PropertyInfo);
+				PropertyBase pb = TypeManager.GetProperty (spec.MetaInfo);
 				if (pb != null) {
 					pb.CheckObsoleteness (loc);
 				} else {
-					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (PropertyInfo);
+					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (spec.MetaInfo);
 					if (oa != null)
 						AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, ec.Report);
 				}
@@ -5645,9 +5650,9 @@ namespace Mono.CSharp {
 			eclass = ExprClass.PropertyAccess;
 
 			if (right_side == EmptyExpression.OutAccess.Instance) {
-				if (ec.CurrentBlock.Toplevel.GetParameterReference (PropertyInfo.Name, loc) is MemberAccess) {
+				if (ec.CurrentBlock.Toplevel.GetParameterReference (spec.Name, loc) is MemberAccess) {
 					ec.Report.Error (1939, loc, "A range variable `{0}' may not be passes as `ref' or `out' parameter",
-					    PropertyInfo.Name);
+					    spec.Name);
 				} else {
 					right_side.DoResolveLValue (ec, this);
 				}
@@ -5668,9 +5673,9 @@ namespace Mono.CSharp {
 				if (getter == null)
 					return null;
 
-				if (ec.CurrentBlock.Toplevel.GetParameterReference (PropertyInfo.Name, loc) is MemberAccess) {
+				if (ec.CurrentBlock.Toplevel.GetParameterReference (spec.Name, loc) is MemberAccess) {
 					ec.Report.Error (1947, loc, "A range variable `{0}' cannot be assigned to. Consider using `let' clause to store the value",
-						PropertyInfo.Name);
+						spec.Name);
 				} else {
 					ec.Report.Error (200, loc, "Property or indexer `{0}' cannot be assigned to (it is read only)",
 						GetSignatureForError ());
@@ -5703,26 +5708,26 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			if (!InstanceResolve (ec, TypeManager.IsStruct (PropertyInfo.DeclaringType), must_do_cs1540_check))
+			if (!InstanceResolve (ec, TypeManager.IsStruct (spec.DeclaringType), must_do_cs1540_check))
 				return null;
 			
 			//
 			// Only base will allow this invocation to happen.
 			//
 			if (IsBase && setter.IsAbstract){
-				Error_CannotCallAbstractBase (ec, TypeManager.GetFullNameSignature (PropertyInfo));
+				Error_CannotCallAbstractBase (ec, TypeManager.GetFullNameSignature (spec.MetaInfo));
 			}
 
-			if (PropertyInfo.PropertyType.IsPointer && !ec.IsUnsafe) {
+			if (spec.PropertyType.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (ec, loc);
 			}
 
 			if (!ec.IsObsolete) {
-				PropertyBase pb = TypeManager.GetProperty (PropertyInfo);
+				PropertyBase pb = TypeManager.GetProperty (spec.MetaInfo);
 				if (pb != null) {
 					pb.CheckObsoleteness (loc);
 				} else {
-					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (PropertyInfo);
+					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (spec.MetaInfo);
 					if (oa != null)
 						AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, ec.Report);
 				}
@@ -5822,7 +5827,7 @@ namespace Mono.CSharp {
 
 				if (InstanceExpression != EmptyExpression.Null) {
 					ec.Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks the `get' accessor",
-						TypeManager.GetFullNameSignature (PropertyInfo));
+						TypeManager.GetFullNameSignature (spec.MetaInfo));
 					return false;
 				}
 			}

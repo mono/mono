@@ -65,12 +65,12 @@ namespace Mono.CSharp.Nullable
 			Type = type;
 			UnderlyingType = TypeManager.TypeToCoreType (TypeManager.GetTypeArguments (type) [0]);
 
-			PropertyInfo has_value_pi = TypeManager.GetPredefinedProperty (type, "HasValue", Location.Null, Type.EmptyTypes);
-			PropertyInfo value_pi = TypeManager.GetPredefinedProperty (type, "Value", Location.Null, Type.EmptyTypes);
+			var has_value_pi = TypeManager.GetPredefinedProperty (type, "HasValue", Location.Null, Type.EmptyTypes);
+			var value_pi = TypeManager.GetPredefinedProperty (type, "Value", Location.Null, Type.EmptyTypes);
 			GetValueOrDefault = TypeManager.GetPredefinedMethod (type, "GetValueOrDefault", Location.Null, Type.EmptyTypes);
 
-			HasValue = Import.CreateMethod (has_value_pi.GetGetMethod (false));
-			Value = Import.CreateMethod (value_pi.GetGetMethod (false));
+			HasValue = Import.CreateMethod (has_value_pi.MetaInfo.GetGetMethod (false));
+			Value = Import.CreateMethod (value_pi.MetaInfo.GetGetMethod (false));
 
 			// When compiling corlib
 			if (TypeManager.IsBeingCompiled (type)) {
