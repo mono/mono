@@ -1,5 +1,9 @@
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeaders.cs : implement SetAction().
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelFactoryBase.cs : fix build.
 
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
