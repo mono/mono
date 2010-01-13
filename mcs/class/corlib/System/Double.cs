@@ -266,20 +266,6 @@ namespace System {
 				result = double.NegativeInfinity;
 				return true;
 			}
-			/*
-			if (s == format.NaNSymbol) {
-				result = Double.NaN;
-				return true;
-			}
-			if (s == format.PositiveInfinitySymbol) {
-				result = Double.PositiveInfinity;
-				return true;
-			}
-			if (s == format.NegativeInfinitySymbol) {
-				result = Double.NegativeInfinity;
-				return true;
-			}
-			*/
 
 			byte [] b = new byte [len + 1];
 

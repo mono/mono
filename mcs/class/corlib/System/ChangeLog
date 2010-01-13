@@ -1,3 +1,7 @@
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Double.cs : no need to preserve old code.
+
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Double.cs : AllowLeading/TrailingWhite should also check those
