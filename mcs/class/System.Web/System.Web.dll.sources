@@ -261,6 +261,7 @@ System.Web.Hosting/DefaultVirtualFile.cs
 System.Web.Hosting/DefaultVirtualPathProvider.cs
 System.Web.Hosting/HostingEnvironment.cs
 System.Web.Hosting/IAppDomainFactory.cs
+System.Web.Hosting/IApplicationHost.cs
 System.Web.Hosting/IAppManagerAppDomainFactory.cs
 System.Web.Hosting/IISAPIRuntime.cs
 System.Web.Hosting/IRegisteredObject.cs

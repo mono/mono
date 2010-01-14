@@ -1,0 +1,7 @@
+2010-01-14  Marek Habersack  <mhabersack@novell.com>
+
+	* Helpers.cs, ITestCase.cs, ITestRunner.cs, StandaloneTest.cs,
+	TestCallback.cs, TestCaseAttribute.cs,
+	TestCaseFailureException.cs, TestRunItem.cs, TestRunner.cs,
+	TestWorkerRequest.cs: added
+

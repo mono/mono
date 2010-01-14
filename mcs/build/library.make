@@ -181,9 +181,9 @@ dist-local: dist-default
 	for f in `$(topdir)/tools/removecomments.sh $(wildcard *$(LIBRARY).sources)` $(TEST_FILES) ; do \
 	  case $$f in \
 	  ../*) : ;; \
-	  *) dest=`dirname $$f` ; \
+	  *) dest=`dirname "$$f"` ; \
 	     case $$subs in *" $$dest "*) : ;; *) subs=" $$dest$$subs" ; $(MKINSTALLDIRS) $(distdir)/$$dest ;; esac ; \
-	     cp -p $$f $(distdir)/$$dest || exit 1 ;; \
+	     cp -p "$$f" $(distdir)/$$dest || exit 1 ;; \
 	  esac ; done ; \
 	for d in . $$subs ; do \
 	  case $$d in .) : ;; *) test ! -f $$d/ChangeLog || cp -p $$d/ChangeLog $(distdir)/$$d ;; esac ; done

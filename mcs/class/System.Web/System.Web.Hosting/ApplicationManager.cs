@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
 //
-// Copyright (C) 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2006-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -52,6 +52,23 @@ namespace System.Web.Hosting {
 				ShutdownAll ();
 		}
 
+		[MonoTODO ("Need to take advantage of the configuration mapping capabilities of IApplicationHost")]
+		[SecurityPermissionAttribute(SecurityAction.Demand, Unrestricted = true)]
+		public IRegisteredObject CreateObject (IApplicationHost appHost, Type type)
+		{
+			if (appHost == null)
+				throw new ArgumentNullException ("appHost");
+			if (type == null)
+				throw new ArgumentNullException ("type");
+
+			return CreateObject (appHost.GetSiteID (),
+					     type,
+					     appHost.GetVirtualPath (),
+					     appHost.GetPhysicalPath (),
+					     true,
+					     true);
+		}
+		
 		public IRegisteredObject CreateObject (string appId, Type type, string virtualPath,
 							string physicalPath, bool failIfExists)
 		{
@@ -67,7 +84,7 @@ namespace System.Web.Hosting {
 			if (!VirtualPathUtility.IsAbsolute (virtualPath))
 				throw new ArgumentException ("Relative path no allowed.", "virtualPath");
 
-			if (physicalPath == null || physicalPath == "")
+			if (String.IsNullOrEmpty (physicalPath))
 				throw new ArgumentException ("Cannot be null or empty", "physicalPath");
 
 			// 'type' is not checked. If it's null, we'll throw a NullReferenceException

@@ -36,6 +36,7 @@ using System.Net;
 using System.Text;
 using System.Collections;
 using System.Reflection;
+
 using NUnit.Framework;
 
 namespace MonoTests.stand_alone.WebHarness
@@ -70,17 +71,27 @@ namespace MonoTests.stand_alone.WebHarness
 
 		public static string GetControlFromPageHtml (string str)
 		{
-			if (str == null || str == string.Empty)
+			return GetControlFromPageHtml (str, BEGIN_TAG, END_TAG);
+		}
+		
+		public static string GetControlFromPageHtml (string str, string beginTag, string endTag)
+		{
+			if (str == null || str.Length == 0)
 				throw new ArgumentException ("internal error: str is null or empty");
-			int beginPos = str.IndexOf (BEGIN_TAG);
-			int endPos = str.IndexOf (END_TAG);
+			if (beginTag == null || beginTag.Length == 0)
+				throw new ArgumentNullException ("beginTag");
+			if (endTag == null || endTag.Length == 0)
+				throw new ArgumentNullException ("endTag");
+			
+			int beginPos = str.IndexOf (beginTag);
+			int endPos = str.IndexOf (endTag);
 			if (beginPos == -1)
-				throw new Exception ("internal error: BEGIN_TAG is missing. Full source: "+str);
+				throw new InvalidOperationException (String.Format ("internal error: begin tag ('{0}') is missing. Full source: {1}", beginTag, str));
 			if (endPos == -1)
-				throw new Exception ("internal error: END_TAG is missing. Full source: "+str);
+				throw new InvalidOperationException (String.Format ("internal error: end tag ('{0}') is missing. Full source: {1}", endTag, str));
 				
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (str.Substring (beginPos + BEGIN_TAG.Length, endPos - beginPos - BEGIN_TAG.Length));
+			sb.Append (str.Substring (beginPos + beginTag.Length, endPos - beginPos - beginTag.Length));
 			return sb.ToString ();
 		}
 

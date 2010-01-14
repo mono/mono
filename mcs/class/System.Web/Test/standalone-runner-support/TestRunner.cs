@@ -1,10 +1,8 @@
 //
-// System.Web.IConfigMapPath
-//
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2009 Novell, Inc
+// (C) 2010 Novell, Inc http://novell.com/
 //
 
 //
@@ -27,24 +25,41 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
-using System.Security.Permissions;
-using System.Web.Configuration;
+using System.IO;
+using System.Text;
+using System.Web;
+using System.Web.Hosting;
 
-namespace System.Web.Hosting
+namespace StandAloneRunnerSupport
 {
-	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public interface IApplicationHost
+	public sealed class TestRunner : MarshalByRefObject, IRegisteredObject, ITestRunner
 	{
-		IConfigMapPathFactory GetConfigMapPathFactory ();
-		IntPtr GetConfigToken ();
-		string GetPhysicalPath ();
-		string GetSiteID ();
-		string GetSiteName ();
-		string GetVirtualPath ();
-		void MessageReceived ();
+		public TestRunner ()
+		{
+			AppDomain ad = AppDomain.CurrentDomain;
+
+			ad.SetData ("BEGIN_CODE_MARKER", Helpers.BEGIN_CODE_MARKER);
+			ad.SetData ("END_CODE_MARKER", Helpers.END_CODE_MARKER);
+		}
+		
+		public string Run (string url)
+		{
+			var output = new StringWriter ();
+			try {
+				Uri uri = new Uri (url, UriKind.RelativeOrAbsolute);
+				var wr = new TestWorkerRequest (uri.AbsolutePath, uri.Query, output);
+				
+				HttpRuntime.ProcessRequest (wr);
+				return output.ToString ();
+			} finally {
+				output.Close ();
+			}
+		}
+		
+		public void Stop (bool immediate)
+		{
+			HostingEnvironment.UnregisterObject (this);
+		}
 	}
 }
-#endif

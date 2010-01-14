@@ -1,10 +1,8 @@
 //
-// System.Web.IConfigMapPath
-//
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2009 Novell, Inc
+// (C) 2010 Novell, Inc http://novell.com/
 //
 
 //
@@ -27,24 +25,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
-using System.Security.Permissions;
-using System.Web.Configuration;
+using System.Collections.Generic;
+using System.Web;
+using System.Web.Hosting;
 
-namespace System.Web.Hosting
+using MonoTests.stand_alone.WebHarness;
+
+namespace StandAloneRunnerSupport
 {
-	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public interface IApplicationHost
+	public sealed class Helpers
 	{
-		IConfigMapPathFactory GetConfigMapPathFactory ();
-		IntPtr GetConfigToken ();
-		string GetPhysicalPath ();
-		string GetSiteID ();
-		string GetSiteName ();
-		string GetVirtualPath ();
-		void MessageReceived ();
+		public const string BEGIN_CODE_MARKER = "<!-- @CODE_BEGIN@ -->";
+		public const string END_CODE_MARKER = "<!-- @CODE_END@ -->";
+		
+		public static string ExtractCodeFromHtml (string html)
+		{
+			AppDomain ad = AppDomain.CurrentDomain;
+			return HtmlDiff.GetControlFromPageHtml (html, BEGIN_CODE_MARKER, END_CODE_MARKER);
+		}
+
+		public static void ExtractAndCompareCodeFromHtml (string html, string original, string msg)
+		{
+			string rendered = ExtractCodeFromHtml (html);
+			HtmlDiff.AssertAreEqual (original, rendered, msg);
+		}
 	}
 }
-#endif

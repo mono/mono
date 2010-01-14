@@ -1,3 +1,9 @@
+2010-01-14  Marek Habersack  <mhabersack@novell.com>
+
+	* executable.make, library.make, rules.make: quote file name
+	wherever referenced in dist* targets, so that files with spaces in
+	name work fine.
+
 2010-01-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* profiles/basic.make (do-profile-check): Honor the V=1 flag.

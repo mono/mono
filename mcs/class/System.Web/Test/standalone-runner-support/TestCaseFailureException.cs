@@ -1,10 +1,8 @@
 //
-// System.Web.IConfigMapPath
-//
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2009 Novell, Inc
+// (C) 2010 Novell, Inc http://novell.com/
 //
 
 //
@@ -27,24 +25,32 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
-using System.Security.Permissions;
-using System.Web.Configuration;
 
-namespace System.Web.Hosting
+namespace StandAloneRunnerSupport
 {
-	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public interface IApplicationHost
+	public class TestCaseFailureException : Exception
 	{
-		IConfigMapPathFactory GetConfigMapPathFactory ();
-		IntPtr GetConfigToken ();
-		string GetPhysicalPath ();
-		string GetSiteID ();
-		string GetSiteName ();
-		string GetVirtualPath ();
-		void MessageReceived ();
+		public string Details {
+			get; set;
+		}
+
+		public TestCaseFailureException (string message)
+			: this (message, null, null)
+		{}
+
+		public TestCaseFailureException (string message, string details)
+			: this (message, details, null)
+		{}
+
+		public TestCaseFailureException (string message, Exception innerException)
+			: this (message, null, innerException)
+		{}
+		
+		public TestCaseFailureException (string message, string details, Exception innerException)
+			: base (message, innerException)
+		{
+			Details = details;
+		}	
 	}
 }
-#endif

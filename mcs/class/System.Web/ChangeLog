@@ -1,3 +1,11 @@
+2010-01-14  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Web_standalone_test.dll.sources,
+	standalone-runner-support.dll.sources: added
+
+	* Makefile: Added targets to build and run standalone tests.
+	Added standalone tests and test tools to EXTRA_DISTFILES
+
 2009-12-18  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web_test.dll.sources: added

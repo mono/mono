@@ -1,3 +1,8 @@
+2010-01-14  Marek Habersack  <mhabersack@novell.com>
+
+	* NunitWebTest.cs: added new overload of GetControlFromPageHtml
+	which takes begin and end markers as parameters.
+
 2008-01-07  Dean Brettle <dean@brettle.com> 
 
 	* HtmlAgilityPack/AssemblyInfo.cs: made assembly delay signed so that 

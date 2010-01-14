@@ -1,0 +1,6 @@
+2010-01-14  Marek Habersack  <mhabersack@novell.com>
+
+	* standalone-runner.cs: added
+
+	* Makefile: added build targets for standalone-runner.exe
+

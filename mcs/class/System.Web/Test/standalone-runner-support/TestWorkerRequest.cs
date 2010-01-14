@@ -1,10 +1,8 @@
 //
-// System.Web.IConfigMapPath
-//
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2009 Novell, Inc
+// (C) 2010 Novell, Inc http://novell.com/
 //
 
 //
@@ -27,24 +25,30 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
-using System.Security.Permissions;
-using System.Web.Configuration;
+using System.IO;
+using System.Web;
+using System.Web.Hosting;
 
-namespace System.Web.Hosting
+namespace StandAloneRunnerSupport
 {
-	[AspNetHostingPermissionAttribute(SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public interface IApplicationHost
+	sealed class TestWorkerRequest : SimpleWorkerRequest
 	{
-		IConfigMapPathFactory GetConfigMapPathFactory ();
-		IntPtr GetConfigToken ();
-		string GetPhysicalPath ();
-		string GetSiteID ();
-		string GetSiteName ();
-		string GetVirtualPath ();
-		void MessageReceived ();
+		string page;
+		string query;
+		string appVirtualDir;
+		
+		public TestWorkerRequest (string page, string query, TextWriter output)
+			: base (page, query, output)
+		{
+			this.page = page;
+			this.query = query;
+			this.appVirtualDir = GetAppPath ();
+		}
+
+		public override string GetFilePath ()
+		{
+			return page;
+		}
 	}
 }
-#endif

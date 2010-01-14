@@ -181,8 +181,8 @@ dist-default:
 	if test -f makefile; then m=m; fi; \
 	if test -f GNUmakefile; then m=GNUm; fi; \
 	for f in $${m}akefile $(DISTFILES) ; do \
-	    dest=`dirname $(distdir)/$$f` ; \
-	    $(MKINSTALLDIRS) $$dest && cp -p $$f $$dest || exit 1 ; \
+	    dest=`dirname "$(distdir)/$$f"` ; \
+	    $(MKINSTALLDIRS) $$dest && cp -p "$$f" $$dest || exit 1 ; \
 	done
 	if test -d Documentation ; then \
 		find . -name '*.xml' > .files ; \
