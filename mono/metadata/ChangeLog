@@ -1,3 +1,8 @@
+2010-01-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (build_imt_slots): Avoid asserting when static methods are
+	encountered in an interface.
+
 2010-01-13  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c (to_space_expand): Fix assertion.
