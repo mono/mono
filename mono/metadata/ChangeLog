@@ -1,3 +1,17 @@
+2010-01-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_type_has_exceptions): Check the generic instance. It can fail
+	independently of the GTD.
+
+	* class.c (mono_class_setup_fields): Fail if field has negative offset.
+
+	* class.c (mono_class_setup_fields): Fail if valuetype has zero size. Add sizeof(MonoObject)
+	to the upper limit since instance_size includes this amount.
+
+	* class.c (mono_class_layout_fields): Check if the types of the static fields have failed.
+
+	Fixes #569544.
+
 2010-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (build_imt_slots): Compute the vtable slot correctly for interfaces
