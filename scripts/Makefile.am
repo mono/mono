@@ -147,7 +147,8 @@ EXTRA_DIST =			\
 	mono-test-install	\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
-	patch-quiet.sh
+	patch-quiet.sh		\
+	get-cygwin-deps.sh
 
 if USE_JIT
 mono_interp = mono
