@@ -444,8 +444,8 @@ public class HelpSource {
 	DateTime zipFileWriteTime;
 	string name;
 	TraceLevel trace_level = TraceLevel.Warning;
-	bool nozip;
-	string base_dir;
+	protected bool nozip;
+	protected string base_dir;
 
 	public HelpSource (string base_filename, bool create)
 	{

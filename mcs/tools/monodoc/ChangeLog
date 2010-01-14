@@ -1,5 +1,12 @@
 2010-01-13  Jonathan Pryor  <jpryor@novell.com>
 
+	* Monodoc/provider.cs, Monodoc/ecma-provider.cs: Improve cache support
+	  by having EcmaHelpSource.GetTextFromUrl() look for cached contents.
+	  This greatly speeds up type member listings (e.g. T:...List`1/*),
+	  e.g. from ~2.0s to 0.06s.
+
+2010-01-13  Jonathan Pryor  <jpryor@novell.com>
+
 	* Mono.Documentation/XmlDocUtils.cs: XmlDocUtils.AddExtensionMethods()
 	  wasn't adding extension methods which matched *interfaces* of base
 	  classes.  Result: Mono.Options.OptionSet (which inherits
