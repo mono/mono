@@ -230,4 +230,15 @@ namespace Mono.CSharp {
 			}
 		}
 	}
+
+	public class EnumSpec : TypeSpec
+	{
+		public EnumSpec (MemberKind kind, ITypeDefinition definition, TypeSpec underlyingType, Type info, string name, Modifiers modifiers)
+			: base (kind, definition, info, name, modifiers)
+		{
+			this.UnderlyingType = underlyingType;
+		}
+
+		public TypeSpec UnderlyingType { get; private set; }
+	}
 }

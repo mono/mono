@@ -235,7 +235,7 @@ namespace Mono.CSharp
 		FieldInfo info;
 
 		public FieldSpec (IMemberDefinition definition, FieldInfo info, Modifiers modifiers)
-			: base (definition, info.Name, modifiers)
+			: base (MemberKind.Field, definition, info.Name, modifiers)
 		{
 			this.info = info;
 		}

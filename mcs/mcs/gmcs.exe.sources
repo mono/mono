@@ -31,6 +31,7 @@ lambda.cs
 linq.cs
 literal.cs
 location.cs
+membercache.cs
 method.cs
 modifiers.cs
 namespace.cs
@@ -44,6 +45,7 @@ roottypes.cs
 statement.cs
 support.cs
 typemanager.cs
+typespec.cs
 symbolwriter.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs

@@ -89,8 +89,8 @@ namespace Mono.CSharp
 	{
 		PropertyInfo info;
 
-		public PropertySpec (IMemberDefinition definition, PropertyInfo info, Modifiers modifiers)
-			: base (definition, info.Name, modifiers)
+		public PropertySpec (MemberKind kind, IMemberDefinition definition, PropertyInfo info, Modifiers modifiers)
+			: base (kind, definition, info.Name, modifiers)
 		{
 			this.info = info;
 		}

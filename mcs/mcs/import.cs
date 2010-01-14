@@ -5,7 +5,7 @@
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
-// Copyright 2009 Novell, Inc
+// Copyright 2009, 2010 Novell, Inc
 //
 
 using System;
@@ -152,7 +152,29 @@ namespace Mono.CSharp
 
 			// TODO MemberCache: Use AParametersCollection p = ParametersImported.Create (mb);
 			AParametersCollection p = TypeManager.GetParameterData (mb);
-			MethodSpec ms = new MethodSpec (definition, mb, p, mod);
+
+			MemberKind kind;
+			if (mb.IsConstructor) {
+				kind = MemberKind.Constructor;
+			} else {
+				//
+				// Detect operators and destructors
+				//
+				string name = mb.Name;
+				kind = MemberKind.Method;
+				if (!mb.DeclaringType.IsInterface && name.Length > 6) {
+					if ((mod & Modifiers.STATIC) != 0 && name[2] == '_' && name[1] == 'p' && name[0] == 'o') {
+						var op_type = Operator.GetType (name);
+						if (op_type.HasValue) {
+							kind = MemberKind.Operator;
+						}
+					} else if (p.IsEmpty && (mod & Modifiers.STATIC) == 0 && name == Destructor.MetadataName) {
+						kind = MemberKind.Destructor;
+					}
+				}
+			}
+				
+			MethodSpec ms = new MethodSpec (kind, definition, mb, p, mod);
 			return ms;
 		}
 
@@ -160,7 +182,66 @@ namespace Mono.CSharp
 		{
 			var definition = new ImportedMemberDefinition (pi);
 			var mod = Modifiers.PRIVATE;	// TODO: modifiers
-			return new PropertySpec (definition, pi, mod);
+			return new PropertySpec (MemberKind.Property | MemberKind.Indexer, definition, pi, mod);
+		}
+
+		static TypeSpec CreateType (Type type)
+		{
+			Modifiers mod = 0;
+			var ma = type.Attributes;
+			switch (ma & TypeAttributes.VisibilityMask) {
+				case TypeAttributes.Public:
+				case TypeAttributes.NestedPublic:
+					mod = Modifiers.PUBLIC;
+					break;
+                case TypeAttributes.NestedPrivate:
+					mod = Modifiers.PRIVATE;
+					break;
+				case TypeAttributes.NestedFamily:
+					mod = Modifiers.PROTECTED;
+					break;
+				case TypeAttributes.NestedFamORAssem:
+					mod = Modifiers.PROTECTED | Modifiers.INTERNAL;
+					break;
+				default:
+					mod = Modifiers.INTERNAL;
+					break;
+			}
+
+			var type_def = TypeManager.DropGenericTypeArguments (type);
+
+			MemberKind kind;
+			if (type_def.IsInterface)
+				kind = MemberKind.Interface;
+			else if (type_def.IsEnum)
+				kind = MemberKind.Enum;
+			else if (type_def.IsClass) {
+				if (type_def.BaseType == TypeManager.multicast_delegate_type)
+					kind = MemberKind.Delegate;
+				else
+					kind = MemberKind.Class;
+			} else {
+				kind = MemberKind.Struct;
+			}
+
+			if (type.IsGenericType) {
+				throw new NotImplementedException ();
+			}
+
+			var definition = new ImportedTypeDefinition (type_def);
+			var spec = new TypeSpec (kind, definition, type, type.Name, mod);
+
+			// TODO: BaseType for class only?
+
+			return spec;
+		}
+
+		public static TypeSpec ImportType (Type type)
+		{
+			if (type.IsDefined (typeof (CompilerGeneratedAttribute), false))
+				return null;
+
+			return CreateType (type);
 		}
 
 		//
@@ -216,6 +297,19 @@ namespace Mono.CSharp
 		public MethodInfo MakeGenericMethod (Type[] targs)
 		{
 			return ((MethodInfo) provider).MakeGenericMethod (targs);
+		}
+	}
+
+	class ImportedTypeDefinition : ImportedMemberDefinition, ITypeDefinition
+	{
+		public ImportedTypeDefinition (Type type)
+			: base (type)
+		{
+		}
+
+		public void LoadMembers (MemberCache cache)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }

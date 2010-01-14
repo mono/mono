@@ -106,6 +106,7 @@
     </Compile>
     <Compile Include="location.cs">
     </Compile>
+    <Compile Include="membercache.cs" />
     <Compile Include="method.cs" />
     <Compile Include="modifiers.cs">
     </Compile>
@@ -137,6 +138,7 @@
     </Compile>
     <Compile Include="linq.cs" />
     <Compile Include="field.cs" />
+    <Compile Include="typespec.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />

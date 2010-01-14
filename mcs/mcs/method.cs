@@ -164,8 +164,8 @@ namespace Mono.CSharp {
 		MethodBase metaInfo;
 		readonly AParametersCollection parameters;
 
-		public MethodSpec (IMemberDefinition details, MethodBase info, AParametersCollection parameters, Modifiers modifiers)
-			: base (details, info.Name, modifiers)
+		public MethodSpec (MemberKind kind, IMemberDefinition details, MethodBase info, AParametersCollection parameters, Modifiers modifiers)
+			: base (kind, details, info.Name, modifiers)
 		{
 			this.MetaInfo = info;
 			this.parameters = parameters;
@@ -190,7 +190,7 @@ namespace Mono.CSharp {
 			// TODO: Does not work on .NET
 			var par = TypeManager.GetParameterData (mb);
 
-			return new MethodSpec (definition, mb, par, modifiers);
+			return new MethodSpec (Kind, definition, mb, par, modifiers);
 		}
 
 		public bool IsAbstract {
@@ -338,6 +338,14 @@ namespace Mono.CSharp {
 				ModFlags |= Modifiers.DEBUGGER_HIDDEN;
 			}
 
+			MemberKind kind;
+			if (this is Operator)
+				kind = MemberKind.Operator;
+			else if (this is Destructor)
+				kind = MemberKind.Destructor;
+			else
+				kind = MemberKind.Method;
+
 			if (IsPartialDefinition) {
 				caching_flags &= ~Flags.Excluded_Undetected;
 				caching_flags |= Flags.Excluded;
@@ -348,7 +356,7 @@ namespace Mono.CSharp {
 					Parent.MemberCache.AddMember (mb, this);
 					TypeManager.AddMethod (mb, this);
 
-					spec = new MethodSpec (this, mb, Parameters, ModFlags);
+					spec = new MethodSpec (kind, this, mb, Parameters, ModFlags);
 				}
 
 				return true;
@@ -362,7 +370,7 @@ namespace Mono.CSharp {
 					
 			MethodBuilder = MethodData.MethodBuilder;
 
-			spec = new MethodSpec (this, MethodBuilder, Parameters, ModFlags);
+			spec = new MethodSpec (kind, this, MethodBuilder, Parameters, ModFlags);
 
 			if (TypeManager.IsGenericMethod (MethodBuilder))
 				Parent.MemberCache.AddGenericMember (MethodBuilder, this);
@@ -1237,7 +1245,7 @@ namespace Mono.CSharp {
 				ca, CallingConventions,
 				Parameters.GetEmitTypes ());
 
-			spec = new MethodSpec (this, ConstructorBuilder, Parameters, ModFlags);
+			spec = new MethodSpec (MemberKind.Constructor, this, ConstructorBuilder, Parameters, ModFlags);
 
 			if (Parent.PartialContainer.IsComImport) {
 				if (!IsDefault ()) {
@@ -2312,6 +2320,16 @@ namespace Mono.CSharp {
 				if (names [i] [0] == name)
 					return names [i] [1];
 			}
+			return null;
+		}
+
+		public static OpType? GetType (string metadata_name)
+		{
+			for (int i = 0; i < names.Length; ++i) {
+				if (names[i][1] == metadata_name)
+					return (OpType) i;
+			}
+
 			return null;
 		}
 

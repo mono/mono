@@ -1,3 +1,9 @@
+2010-01-14  Marek Safar  <marek.safar@gmail.com>
+
+	* membercache.cs: Extracted from decl.cs.
+	
+	* *.cs: Put more infrastructure in place.
+
 2010-01-13  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Add property specification, unused yet.
