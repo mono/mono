@@ -1,3 +1,8 @@
+2010-01-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* UnmanagedMemoryStream.cs: Read: don't read bytes one-by-one, read all
+	at once.
+
 2010-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MemoryStream.cs: Don't clear the bytes beyond Length when shrinking
