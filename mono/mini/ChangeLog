@@ -1,5 +1,7 @@
 2010-01-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c: Fix a few LLVM problems.
+
 	* mini-llvm.c (simd_class_to_llvm_type): Fix compilation on !x86/amd64.
 
 2010-01-13  Mark Probst  <mark.probst@gmail.com>
