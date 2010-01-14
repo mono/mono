@@ -1,3 +1,8 @@
+2010-01-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* UnmanagedMemoryStream.cs: Read: don't read bytes one-by-one, read all
+	at once.
+
 2009-12-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* File.cs (ReadAllBytes): We cannot assume that a single call to
