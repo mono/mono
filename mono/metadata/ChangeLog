@@ -1,5 +1,8 @@
 2010-01-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (build_imt_slots): Compute the vtable slot correctly for interfaces
+	with static methods.
+
 	* object.c (build_imt_slots): Avoid asserting when static methods are
 	encountered in an interface.
 
