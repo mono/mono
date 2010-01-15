@@ -1181,6 +1181,37 @@ mono_type_has_exceptions (MonoType *type)
 	return FALSE;
 }
 
+static gboolean
+mono_class_is_broken_valuetype (MonoClass *class)
+{
+	if (!class->valuetype)
+		return FALSE;
+	if (class->instance_size > (int)(0x100000 + sizeof (MonoObject)))
+		return TRUE;
+	if (class->instance_size > 0)
+		return FALSE;
+
+	/*We must ignore SRE unfinished types since they can have invalid sizes*/
+	if (class->image->dynamic && !class->wastypebuilder)
+		return FALSE;
+
+	if (class->generic_class && class->generic_class->container_class->image->dynamic && !class->generic_class->container_class->wastypebuilder)
+		return FALSE;
+
+	if (class->generic_class) {
+		int i;
+		MonoGenericInst *ginst = class->generic_class->context.class_inst;
+		for (i = 0; i < ginst->type_argc; ++i) {
+			MonoClass *arg = mono_class_from_mono_type (ginst->type_argv [i]);
+			if (arg->image->dynamic && !arg->wastypebuilder)
+				return FALSE;
+			if (arg->generic_class && arg->generic_class->container_class->image->dynamic && !arg->generic_class->container_class->wastypebuilder)
+				return FALSE;
+		}
+	}
+	return TRUE;
+}
+
 /** 
  * mono_class_setup_fields:
  * @class: The class to initialize
@@ -1404,7 +1435,7 @@ mono_class_setup_fields (MonoClass *class)
 	mono_class_layout_fields (class);
 
 	/*valuetypes can't be neither bigger than 1Mb or empty. */
-	if (class->valuetype && (class->instance_size <= 0 || class->instance_size > (0x100000 + sizeof (MonoObject))))
+	if (mono_class_is_broken_valuetype (class))
 		mono_class_set_failure (class, MONO_EXCEPTION_TYPE_LOAD, NULL);
 }
 

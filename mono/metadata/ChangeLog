@@ -1,3 +1,8 @@
+2010-01-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_fields): Guard against unfinished types. This
+	happens only on 2.6 and not trunk because trunk better deals with unfinished types. 
+
 2010-01-14  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_type_has_exceptions): Check the generic instance. It can fail
