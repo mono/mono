@@ -1,3 +1,7 @@
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XAttribute.cs : escape whitespace chars in ToString().
+
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XUtil.cs : for DateTimeOffset, use XmlConvert to format string.
