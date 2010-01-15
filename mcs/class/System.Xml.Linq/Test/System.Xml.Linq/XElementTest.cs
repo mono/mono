@@ -453,7 +453,8 @@ namespace MonoTests.System.Xml.Linq
 		/// <remarks>
 		/// Provides functionality similar to Assert.Throws that is available on newer versions of NUnit.
 		/// </remarks>
-		private static T AssertThrows<T> (Action code, string message, params object[] args) where T : Exception {
+		private static T AssertThrows<T> (Action code, string message, params object[] args) where T : Exception
+		{
 			Exception actual = null;
 			try {
 				code ();
@@ -1029,13 +1030,13 @@ namespace MonoTests.System.Xml.Linq
 
 			// Perform some round-trip tests with numbers
 			XElement x;
-			decimal @decimal = -41051609414188012238960097189m;
-			double @double = 8.5506609919892972E+307d;
-			float @float = -1.70151961E+37f;
-			int @int = -1051251773;
-			long @long = 4596767133891939716L;
-			uint @uint = 4106628142u;
-			ulong @ulong = 10713797297298255927UL;
+			const decimal @decimal = -41051609414188012238960097189m;
+			const double @double = 8.5506609919892972E+307d;
+			const float @float = -1.70151961E+37f;
+			const int @int = -1051251773;
+			const long @long = 4596767133891939716L;
+			const uint @uint = 4106628142u;
+			const ulong @ulong = 10713797297298255927UL;
 			x = new XElement ("x", @decimal);
 			Assert.IsNotNull ((decimal?) new XElement (x), "x:decimal?:null");
 			Assert.AreEqual (@decimal, ((decimal?) new XElement (x)).Value, "x:decimal?:value");
@@ -1064,22 +1065,46 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNotNull ((ulong?) new XElement (x), "x:ulong?:null");
 			Assert.AreEqual (@ulong, ((ulong?) new XElement (x)).Value, "x:ulong?:value");
 			Assert.AreEqual (@ulong, (ulong) new XElement (x), "x:ulong");
+			x = new XElement ("x", double.NaN);
+			Assert.IsNotNull ((double?) new XElement (x), "NaN:double?:null");
+			Assert.AreEqual (double.NaN, ((double?) new XElement (x)).Value, "NaN:double?:value");
+			Assert.AreEqual (double.NaN, (double) new XElement (x), "NaN:double");
+			x = new XElement ("x", float.NaN);
+			Assert.IsNotNull ((float?) new XElement (x), "NaN:float?:null");
+			Assert.AreEqual (float.NaN, ((float?) new XElement (x)).Value, "NaN:float?:value");
+			Assert.AreEqual (float.NaN, (float) new XElement (x), "NaN:float");
+			x = new XElement ("x", double.PositiveInfinity);
+			Assert.IsNotNull ((double?) new XElement (x), "+Inf:double?:null");
+			Assert.AreEqual (double.PositiveInfinity, ((double?) new XElement (x)).Value, "+Inf:double?:value");
+			Assert.AreEqual (double.PositiveInfinity, (double) new XElement (x), "+Inf:double");
+			x = new XElement ("x", float.PositiveInfinity);
+			Assert.IsNotNull ((float?) new XElement (x), "+Inf:float?:null");
+			Assert.AreEqual (float.PositiveInfinity, ((float?) new XElement (x)).Value, "+Inf:float?:value");
+			Assert.AreEqual (float.PositiveInfinity, (float) new XElement (x), "+Inf:float");
+			x = new XElement ("x", double.NegativeInfinity);
+			Assert.IsNotNull ((double?) new XElement (x), "-Inf:double?:null");
+			Assert.AreEqual (double.NegativeInfinity, ((double?) new XElement (x)).Value, "-Inf:double?:value");
+			Assert.AreEqual (double.NegativeInfinity, (double) new XElement (x), "-Inf:double");
+			x = new XElement ("x", float.NegativeInfinity);
+			Assert.IsNotNull ((float?) new XElement (x), "-Inf:float?:null");
+			Assert.AreEqual (float.NegativeInfinity, ((float?) new XElement (x)).Value, "-Inf:float?:value");
+			Assert.AreEqual (float.NegativeInfinity, (float) new XElement (x), "-Inf:float");
 
 			// Perform overflow tests with numbers
-			AssertThrows<OverflowException> (() => { decimal z = (decimal) new XElement("z", "91051609414188012238960097189"); }, "z:decimal");
-			AssertThrows<OverflowException> (() => { decimal? z = (decimal?) new XElement("z", "91051609414188012238960097189"); }, "z:decimal?");
-			AssertThrows<OverflowException> (() => { double z = (double) new XElement("z", "8.5506609919892972E+654"); }, "z:double");
-			AssertThrows<OverflowException> (() => { double? z = (double?) new XElement("z", "8.5506609919892972E+654"); }, "z:double?");
-			AssertThrows<OverflowException> (() => { float z = (float) new XElement("z", @double); }, "z:float");
-			AssertThrows<OverflowException> (() => { float? z = (float?) new XElement("z", @double); }, "z:float?");
-			AssertThrows<OverflowException> (() => { int z = (int) new XElement("z", @long); }, "z:int");
-			AssertThrows<OverflowException> (() => { int? z = (int?) new XElement("z", @long); }, "z:int?");
-			AssertThrows<OverflowException> (() => { long z = (long) new XElement("z", @decimal); }, "z:long");
-			AssertThrows<OverflowException> (() => { long? z = (long?) new XElement("z", @decimal); }, "z:long?");
-			AssertThrows<OverflowException> (() => { uint z = (uint) new XElement("z", @ulong); }, "z:uint");
-			AssertThrows<OverflowException> (() => { uint? z = (uint?) new XElement("z", @ulong); }, "z:uint?");
-			AssertThrows<OverflowException> (() => { ulong z = (ulong) new XElement("z", -@decimal); }, "z:ulong");
-			AssertThrows<OverflowException> (() => { ulong? z = (ulong?) new XElement("z", -@decimal); }, "z:ulong?");
+			AssertThrows<OverflowException> (() => { decimal z = (decimal) new XElement ("z", "91051609414188012238960097189"); }, "z:decimal");
+			AssertThrows<OverflowException> (() => { decimal? z = (decimal?) new XElement ("z", "91051609414188012238960097189"); }, "z:decimal?");
+			AssertThrows<OverflowException> (() => { double z = (double) new XElement ("z", "8.5506609919892972E+654"); }, "z:double");
+			AssertThrows<OverflowException> (() => { double? z = (double?) new XElement ("z", "8.5506609919892972E+654"); }, "z:double?");
+			AssertThrows<OverflowException> (() => { float z = (float) new XElement ("z", @double); }, "z:float");
+			AssertThrows<OverflowException> (() => { float? z = (float?) new XElement ("z", @double); }, "z:float?");
+			AssertThrows<OverflowException> (() => { int z = (int) new XElement ("z", @long); }, "z:int");
+			AssertThrows<OverflowException> (() => { int? z = (int?) new XElement ("z", @long); }, "z:int?");
+			AssertThrows<OverflowException> (() => { long z = (long) new XElement ("z", @decimal); }, "z:long");
+			AssertThrows<OverflowException> (() => { long? z = (long?) new XElement ("z", @decimal); }, "z:long?");
+			AssertThrows<OverflowException> (() => { uint z = (uint) new XElement ("z", @ulong); }, "z:uint");
+			AssertThrows<OverflowException> (() => { uint? z = (uint?) new XElement ("z", @ulong); }, "z:uint?");
+			AssertThrows<OverflowException> (() => { ulong z = (ulong) new XElement ("z", -@decimal); }, "z:ulong");
+			AssertThrows<OverflowException> (() => { ulong? z = (ulong?) new XElement ("z", -@decimal); }, "z:ulong?");
 		}
 
 		[Test]
@@ -1101,8 +1126,8 @@ namespace MonoTests.System.Xml.Linq
 			Assert.AreEqual (true, (bool) new XElement ("t", "true"), "#8");
 			Assert.AreEqual (false, (bool) new XElement ("F", "False"), "#9");
 			Assert.AreEqual (true, (bool) new XElement ("T", "True"), "#10");
-			Assert.AreEqual (false, (bool)new XElement("fs", " false  "), "#11");
-			Assert.AreEqual (true, (bool)new XElement("ts", "  true "), "#12");
+			Assert.AreEqual (false, (bool)new XElement ("fs", " false  "), "#11");
+			Assert.AreEqual (true, (bool)new XElement ("ts", "  true "), "#12");
 			Assert.IsNotNull ((bool?) new XElement ("Tc", new XCData (" \t True  \n  ")), "#13a");
 			Assert.AreEqual (true, ((bool?) new XElement ("Tc", new XCData (" \t True  \n  "))).Value, "#13b");
 			Assert.AreEqual (false, (bool)new XElement ("fc", new XCData (" false  ")), "#14");
@@ -1122,10 +1147,10 @@ namespace MonoTests.System.Xml.Linq
 			Guid rn = new Guid (new byte[16] { 0xF9, 0x46, 0x41, 0xA8, 0xA5, 0x03, 0xF1, 0x4A, 0xAD, 0x97, 0x7B, 0xC7, 0x79, 0x57, 0x2B, 0x79 });
 			Guid rp = new Guid (new byte[16] { 0x51, 0x6B, 0x8A, 0x17, 0xEF, 0x11, 0xFB, 0x48, 0x83, 0xBD, 0x57, 0xB4, 0x99, 0xF9, 0xC1, 0xE6 });
 			Guid rz = Guid.Empty;
-			Guid rx = Guid.NewGuid();
+			Guid rx = Guid.NewGuid ();
 
 			XElement b = new XElement ("b", "  {7ECEBF9A-2907-439c-807D-4820B919EA57}");
-			XElement d = new XElement ("d",  "26575b21-14cd-445e-8ffa-e2bc247b2ec9");
+			XElement d = new XElement ("d", "26575b21-14cd-445e-8ffa-e2bc247b2ec9");
 			XElement n = new XElement ("n", "a84146f903A54af1ad977bC779572b79\r\n");
 			XElement p = new XElement ("p", "  (178a6b51-11ef-48fb-83bd-57b499f9c1e6)  \t ");
 			XElement z = new XElement ("z", " \t \n 00000000-0000-0000-0000-000000000000 ");
@@ -1134,18 +1159,35 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNotNull ((Guid?) new XElement (b), "#1a");
 			Assert.AreEqual (rb, ((Guid?) new XElement (b)).Value, "#1b");
 			Assert.AreEqual (rb, (Guid) new XElement (b), "#1c");
+			Assert.AreEqual (rb, (Guid) new XElement ("r", rb), "#1d");
+			Assert.IsNotNull ((Guid?) new XElement ("r", rb), "#1e");
+			Assert.AreEqual (rb, ((Guid?) new XElement ("r", rb)).Value, "#1f");
+
 			Assert.IsNotNull ((Guid?) new XElement (d), "#2a");
 			Assert.AreEqual (rd, ((Guid?) new XElement (d)).Value, "#2b");
 			Assert.AreEqual (rd, (Guid) new XElement (d), "#2c");
+			Assert.AreEqual (rd, (Guid) new XElement ("r", rd), "#2d");
+			Assert.IsNotNull ((Guid?) new XElement ("r", rd), "#2e");
+			Assert.AreEqual (rd, ((Guid?) new XElement ("r", rd)).Value, "#2f");
+
 			Assert.IsNotNull ((Guid?) new XElement (n), "#3a");
 			Assert.AreEqual (rn, ((Guid?) new XElement (n)).Value, "#3b");
 			Assert.AreEqual (rn, (Guid) new XElement (n), "#3c");
+			Assert.AreEqual (rn, (Guid) new XElement ("r", rn), "#3d");
+			Assert.IsNotNull ((Guid?) new XElement ("r", rn), "#3e");
+			Assert.AreEqual (rn, ((Guid?) new XElement ("r", rn)).Value, "#3f");
+
 			Assert.IsNotNull ((Guid?) new XElement (p), "#4a");
 			Assert.AreEqual (rp, ((Guid?) new XElement (p)).Value, "#4b");
 			Assert.AreEqual (rp, (Guid) new XElement (p), "#4c");
+			Assert.AreEqual (rp, (Guid) new XElement ("r", rp), "#4d");
+			Assert.IsNotNull ((Guid?) new XElement ("r", rp), "#4e");
+			Assert.AreEqual (rp, ((Guid?) new XElement ("r", rp)).Value, "#4f");
+
 			Assert.IsNotNull ((Guid?) new XElement (z), "#5a");
 			Assert.AreEqual (rz, ((Guid?) new XElement (z)).Value, "#5b");
 			Assert.AreEqual (rz, (Guid) new XElement (z), "#5c");
+
 			Assert.IsNotNull ((Guid?) new XElement (x), "#6a");
 			Assert.AreEqual (rx, ((Guid?) new XElement (x)).Value, "#6b");
 			Assert.AreEqual (rx, (Guid) new XElement (x), "#6c");
@@ -1158,6 +1200,8 @@ namespace MonoTests.System.Xml.Linq
 			DateTime rb = new DateTime (2001, 2, 3, 4, 5, 6, 789, DateTimeKind.Local);
 			DateTime rc = new DateTime (2010, 1, 2, 0, 0, 0, 0, DateTimeKind.Utc);
 			DateTime rd = new DateTime (1956, 11, 2, 0, 34, 0);
+			DateTime re = new DateTime (635085111683456297L, DateTimeKind.Utc);
+			DateTime rf = re.ToLocalTime ();
 			DateTime rx = DateTime.Now;
 			DateTime rz = DateTime.UtcNow;
 
@@ -1165,36 +1209,70 @@ namespace MonoTests.System.Xml.Linq
 			XElement b = new XElement ("b", "2001-02-03T04:05:06.789" + DateTime.Now.ToString ("zzz"));
 			XElement c = new XElement ("c", "2010-01-02T00:00:00Z");
 			XElement d = new XElement ("d", "  Nov 2, 1956  12:34 AM \r\n   \t");
+			XElement e = new XElement ("e", "  2013-07-04T05:06:08.3456297Z   ");  // UTC, all the way
+			XElement f = new XElement ("f", "  2013-07-04T05:06:08.3456297+00:00   ");  // UTC initially, but should be converted automatically to local time
 			XElement x = new XElement ("x", rx);
 			XElement z = new XElement ("z", rz);
 
 			Assert.IsNotNull ((DateTime?) new XElement (a), "#1a");
 			Assert.AreEqual (ra, ((DateTime?) new XElement (a)).Value, "#1b");
 			Assert.AreEqual (ra, (DateTime) new XElement (a), "#1c");
+			Assert.AreEqual (ra, (DateTime) new XElement ("r", ra), "#1d");
+			Assert.IsNotNull ((DateTime?) new XElement ("r", ra), "#1e");
+			Assert.AreEqual (ra, ((DateTime?) new XElement ("r", ra)).Value, "#1f");
+
 			Assert.IsNotNull ((DateTime?) new XElement (b), "#2a");
 			Assert.AreEqual (rb, ((DateTime?) new XElement (b)).Value, "#2b");
 			Assert.AreEqual (rb, (DateTime) new XElement (b), "#2c");
+			Assert.AreEqual (rb, (DateTime) new XElement ("r", rb), "#2d");
+			Assert.IsNotNull ((DateTime?) new XElement ("r", rb), "#2e");
+			Assert.AreEqual (rb, ((DateTime?) new XElement ("r", rb)).Value, "#2f");
+
 			Assert.IsNotNull ((DateTime?) new XElement (c), "#3a");
 			Assert.AreEqual (rc, ((DateTime?) new XElement (c)).Value, "#3b");
 			Assert.AreEqual (rc, (DateTime) new XElement (c), "#3c");
+			Assert.AreEqual (rc, (DateTime) new XElement ("r", rc), "#3d");
+			Assert.IsNotNull ((DateTime?) new XElement ("r", rc), "#3e");
+			Assert.AreEqual (rc, ((DateTime?) new XElement ("r", rc)).Value, "#3f");
+
 			Assert.IsNotNull ((DateTime?) new XElement (d), "#4a");
 			Assert.AreEqual (rd, ((DateTime?) new XElement (d)).Value, "#4b");
 			Assert.AreEqual (rd, (DateTime) new XElement (d), "#4c");
+			Assert.AreEqual (rd, (DateTime) new XElement ("r", rd), "#4d");
+			Assert.IsNotNull ((DateTime?) new XElement ("r", rd), "#4e");
+			Assert.AreEqual (rd, ((DateTime?) new XElement ("r", rd)).Value, "#4f");
+
 			Assert.IsNotNull ((DateTime?) new XElement (x), "#5a");
 			Assert.AreEqual (rx, ((DateTime?) new XElement (x)).Value, "#5b");
 			Assert.AreEqual (rx, (DateTime) new XElement (x), "#5c");
+
 			Assert.IsNotNull ((DateTime?) new XElement (z), "#6a");
 			Assert.AreEqual (rz, ((DateTime?) new XElement (z)).Value, "#6b");
 			Assert.AreEqual (rz, (DateTime) new XElement (z), "#6c");
+
+			Assert.IsNotNull ((DateTime?) new XElement (e), "#7a");
+			Assert.AreEqual (re, ((DateTime?) new XElement (e)).Value, "#7b");
+			Assert.AreEqual (re, (DateTime) new XElement (e), "#7c");
+			Assert.AreEqual (re, (DateTime) new XElement ("r", re), "#7d");
+			Assert.IsNotNull ((DateTime?) new XElement ("r", re), "#7e");
+			Assert.AreEqual (re, ((DateTime?) new XElement ("r", re)).Value, "#7f");
+
+			Assert.IsNotNull ((DateTime?) new XElement (f), "#8a");
+			Assert.AreEqual (rf, ((DateTime?) new XElement (f)).Value, "#8b");
+			Assert.AreEqual (rf, (DateTime) new XElement (f), "#8c");
+			Assert.AreEqual (rf, (DateTime) new XElement ("r", rf), "#8d");
+			Assert.IsNotNull ((DateTime?) new XElement ("r", rf), "#8e");
+			Assert.AreEqual (rf, ((DateTime?) new XElement ("r", rf)).Value, "#8f");
 		}
 
 		[Test]
 		public void CastDateTimeOffsets ()
 		{
-			DateTimeOffset ra = new DateTimeOffset (1987, 1, 23, 21, 45, 36, 89, TimeSpan.FromHours(+13.75));  // e.g., Chatham Islands (daylight-savings time)
+			DateTimeOffset ra = new DateTimeOffset (1987, 1, 23, 21, 45, 36, 89, TimeSpan.FromHours (+13.75));  // e.g., Chatham Islands (daylight-savings time)
 			DateTimeOffset rb = new DateTimeOffset (2001, 2, 3, 4, 5, 6, 789, DateTimeOffset.Now.Offset);  // Local time
 			DateTimeOffset rc = new DateTimeOffset (2010, 1, 2, 0, 0, 0, 0, TimeSpan.Zero);  // UTC
-			DateTimeOffset rd = new DateTimeOffset (1956, 11, 2, 12, 34, 10, TimeSpan.FromHours(-3.5));
+			DateTimeOffset rd = new DateTimeOffset (1956, 11, 2, 12, 34, 10, TimeSpan.FromHours (-3.5));
+			DateTimeOffset re = new DateTimeOffset (630646468235678363, TimeSpan.FromHours (-1));  // UTC-1, also with full resolution and a fractional second that might lose a tick on Mono 2.6.1
 			DateTimeOffset rx = DateTimeOffset.Now;
 			DateTimeOffset rz = DateTimeOffset.UtcNow;
 
@@ -1202,27 +1280,49 @@ namespace MonoTests.System.Xml.Linq
 			XElement b = new XElement ("b", "2001-02-03T04:05:06.789" + DateTimeOffset.Now.ToString ("zzz"));
 			XElement c = new XElement ("c", "2010-01-02T00:00:00Z");
 			XElement d = new XElement ("d", "  Nov 2, 1956  12:34:10 PM   -3:30 \r\n   \t");
+			XElement e = new XElement ("e", " \t   \n  1999-06-10T21:27:03.5678363-01:00 ");
 			XElement x = new XElement ("x", rx);
 			XElement z = new XElement ("z", rz);
 
 			Assert.IsNotNull ((DateTimeOffset?) new XElement (a), "#1a");
 			Assert.AreEqual (ra, ((DateTimeOffset?) new XElement (a)).Value, "#1b");
 			Assert.AreEqual (ra, (DateTimeOffset) new XElement (a), "#1c");
+			Assert.AreEqual (ra, (DateTimeOffset) new XElement ("r", ra), "#1d");
+			Assert.IsNotNull ((DateTimeOffset?) new XElement ("r", ra), "#1e");
+			Assert.AreEqual (ra, ((DateTimeOffset?) new XElement ("r", ra)).Value, "#1f");
+
 			Assert.IsNotNull ((DateTimeOffset?) new XElement (b), "#2a");
 			Assert.AreEqual (rb, ((DateTimeOffset?) new XElement (b)).Value, "#2b");
 			Assert.AreEqual (rb, (DateTimeOffset) new XElement (b), "#2c");
+			Assert.AreEqual (rb, (DateTimeOffset) new XElement ("r", rb), "#2d");
+			Assert.IsNotNull ((DateTimeOffset?) new XElement ("r", rb), "#2e");
+			Assert.AreEqual (rb, ((DateTimeOffset?) new XElement ("r", rb)).Value, "#2f");
+
 			Assert.IsNotNull ((DateTimeOffset?) new XElement (c), "#3a");
 			Assert.AreEqual (rc, ((DateTimeOffset?) new XElement (c)).Value, "#3b");
 			Assert.AreEqual (rc, (DateTimeOffset) new XElement (c), "#3c");
+			Assert.AreEqual (rc, (DateTimeOffset) new XElement ("r", rc), "#3d");
+			Assert.IsNotNull ((DateTimeOffset?) new XElement ("r", rc), "#3e");
+			Assert.AreEqual (rc, ((DateTimeOffset?) new XElement ("r", rc)).Value, "#3f");
+
 			AssertThrows<FormatException> (() => { DateTimeOffset? r = (DateTimeOffset?) new XElement (d); }, "#4a");
 			AssertThrows<FormatException> (() => { DateTimeOffset r = (DateTimeOffset) new XElement (d); }, "#4b");
-			Assert.AreEqual (rd, DateTimeOffset.Parse (d.Value), "#4c");
+			Assert.AreEqual (rd, DateTimeOffset.Parse (d.Value), "#4c");  // Sanity check: Okay for standalone DateTimeOffset but not as XML as in above
+
 			Assert.IsNotNull ((DateTimeOffset?) new XElement (x), "#5a");
 			Assert.AreEqual (rx, ((DateTimeOffset?) new XElement (x)).Value, "#5b");
 			Assert.AreEqual (rx, (DateTimeOffset) new XElement (x), "#5c");
+
 			Assert.IsNotNull ((DateTimeOffset?) new XElement (z), "#6a");
 			Assert.AreEqual (rz, ((DateTimeOffset?) new XElement (z)).Value, "#6b");
 			Assert.AreEqual (rz, (DateTimeOffset) new XElement (z), "#6c");
+
+			Assert.IsNotNull ((DateTimeOffset?) new XElement (e), "#7a");
+			Assert.AreEqual (re, ((DateTimeOffset?) new XElement (e)).Value, "#7b");
+			Assert.AreEqual (re, (DateTimeOffset) new XElement (e), "#7c");
+			Assert.AreEqual (re, (DateTimeOffset) new XElement ("r", re), "#7d");
+			Assert.IsNotNull ((DateTimeOffset?) new XElement ("r", re), "#7e");
+			Assert.AreEqual (re, ((DateTimeOffset?) new XElement ("r", re)).Value, "#7f");
 		}
 
 		[Test]
@@ -1232,6 +1332,7 @@ namespace MonoTests.System.Xml.Linq
 			TimeSpan rb = -new TimeSpan (3, 4, 5, 6, 789);
 			TimeSpan rc = new TimeSpan (2, 0, 0, 0, 0);
 			TimeSpan rd = new TimeSpan (0, 0, 0, 1);
+			TimeSpan re = new TimeSpan (1L);  // one tick, the smallest interval
 			TimeSpan rx = DateTimeOffset.Now.Offset;
 			TimeSpan rz = TimeSpan.Zero;
 
@@ -1239,27 +1340,52 @@ namespace MonoTests.System.Xml.Linq
 			XElement b = new XElement ("b", "-P3DT4H5M6.789S");
 			XElement c = new XElement ("c", "P2D");
 			XElement d = new XElement ("d", "PT1S");
+			XElement e = new XElement ("e", "     PT0.0000001S  \t \n   ");
 			XElement x = new XElement ("x", rx);
 			XElement z = new XElement ("z", rz);
 
 			Assert.IsNotNull ((TimeSpan?) new XElement (a), "#1a");
 			Assert.AreEqual (ra, ((TimeSpan?) new XElement (a)).Value, "#1b");
 			Assert.AreEqual (ra, (TimeSpan) new XElement (a), "#1c");
+			Assert.AreEqual (ra, (TimeSpan) new XElement ("r", ra), "#1d");
+			Assert.IsNotNull ((TimeSpan?) new XElement ("r", ra), "#1e");
+			Assert.AreEqual (ra, ((TimeSpan?) new XElement ("r", ra)).Value, "#1f");
+
 			Assert.IsNotNull ((TimeSpan?) new XElement (b), "#2a");
 			Assert.AreEqual (rb, ((TimeSpan?) new XElement (b)).Value, "#2b");
 			Assert.AreEqual (rb, (TimeSpan) new XElement (b), "#2c");
+			Assert.AreEqual (rb, (TimeSpan) new XElement ("r", rb), "#2d");
+			Assert.IsNotNull ((TimeSpan?) new XElement ("r", rb), "#2e");
+			Assert.AreEqual (rb, ((TimeSpan?) new XElement ("r", rb)).Value, "#2f");
+
 			Assert.IsNotNull ((TimeSpan?) new XElement (c), "#3a");
 			Assert.AreEqual (rc, ((TimeSpan?) new XElement (c)).Value, "#3b");
 			Assert.AreEqual (rc, (TimeSpan) new XElement (c), "#3c");
+			Assert.AreEqual (rc, (TimeSpan) new XElement ("r", rc), "#3d");
+			Assert.IsNotNull ((TimeSpan?) new XElement ("r", rc), "#3e");
+			Assert.AreEqual (rc, ((TimeSpan?) new XElement ("r", rc)).Value, "#3f");
+
 			Assert.IsNotNull ((TimeSpan?) new XElement (d), "#4a");
 			Assert.AreEqual (rd, ((TimeSpan?) new XElement (d)).Value, "#4b");
 			Assert.AreEqual (rd, (TimeSpan) new XElement (d), "#4c");
+			Assert.AreEqual (rd, (TimeSpan) new XElement ("r", rd), "#4d");
+			Assert.IsNotNull ((TimeSpan?) new XElement ("r", rd), "#4e");
+			Assert.AreEqual (rd, ((TimeSpan?) new XElement ("r", rd)).Value, "#4f");
+
 			Assert.IsNotNull ((TimeSpan?) new XElement (x), "#5a");
 			Assert.AreEqual (rx, ((TimeSpan?) new XElement (x)).Value, "#5b");
 			Assert.AreEqual (rx, (TimeSpan) new XElement (x), "#5c");
+
 			Assert.IsNotNull ((TimeSpan?) new XElement (z), "#6a");
 			Assert.AreEqual (rz, ((TimeSpan?) new XElement (z)).Value, "#6b");
 			Assert.AreEqual (rz, (TimeSpan) new XElement (z), "#6c");
+
+			Assert.IsNotNull ((TimeSpan?) new XElement (e), "#7a");
+			Assert.AreEqual (re, ((TimeSpan?) new XElement (e)).Value, "#7b");
+			Assert.AreEqual (re, (TimeSpan) new XElement (e), "#7c");
+			Assert.AreEqual (re, (TimeSpan) new XElement ("r", re), "#7d");
+			Assert.IsNotNull ((TimeSpan?) new XElement ("r", re), "#7e");
+			Assert.AreEqual (re, ((TimeSpan?) new XElement ("r", re)).Value, "#7f");
 		}
 #pragma warning restore 219
 
