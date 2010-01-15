@@ -1,3 +1,8 @@
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* profiles/net_4_0_bootstrap.make : MCS also needs MONO_PATH to
+	  net_2_0 to load System.Core.dll. Fix build (mostly for windows).
+
 2010-01-14  Marek Habersack  <mhabersack@novell.com>
 
 	* executable.make, library.make, rules.make: quote file name
