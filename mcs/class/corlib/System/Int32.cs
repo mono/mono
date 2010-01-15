@@ -586,7 +586,7 @@ namespace System {
 			
 			if (!negative && !AllowHexSpecifier){
 				if (tryParse){
-					long lval = -number;
+					long lval = -((long)number);
 
 					if (lval < MinValue || lval > MaxValue)
 						return false;
