@@ -1247,7 +1247,7 @@ namespace Mono.CSharp {
 		{
 			TypeExpr texpr = TypeManager.expression_type_expr;
 			if (texpr == null) {
-				Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Linq.Expressions", "Expression", Kind.Class, true);
+				Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Linq.Expressions", "Expression", MemberKind.Class, true);
 				if (t == null)
 					return null;
 

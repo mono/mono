@@ -385,7 +385,7 @@ namespace Mono.CSharp {
 	public static TypeContainer LookupInterface (Type t)
 	{
 		TypeContainer tc = LookupTypeContainer (t);
-		if ((tc == null) || (tc.Kind != Kind.Interface))
+		if ((tc == null) || (tc.Kind != MemberKind.Interface))
 			return null;
 
 		return tc;
@@ -793,7 +793,7 @@ namespace Mono.CSharp {
 	// Looks up a type, and aborts if it is not found.  This is used
 	// by predefined types required by the compiler
 	//
-	public static Type CoreLookupType (CompilerContext ctx, string ns_name, string name, Kind type_kind, bool required)
+	public static Type CoreLookupType (CompilerContext ctx, string ns_name, string name, MemberKind type_kind, bool required)
 	{
 		Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, true);
 		Expression expr = ns.Lookup (ctx, name, Location.Null);
@@ -816,7 +816,7 @@ namespace Mono.CSharp {
 
 		DeclSpace ds = (DeclSpace)RootContext.ToplevelTypes.GetDefinition (t.FullName);
 		if (ds is Delegate) {
-			if (type_kind == Kind.Delegate)
+			if (type_kind == MemberKind.Delegate)
 				return t;
 		} else {
 			TypeContainer tc = (TypeContainer)ds;
@@ -921,64 +921,64 @@ namespace Mono.CSharp {
 	/// </remarks>
 	public static bool InitCoreTypes (CompilerContext ctx)
 	{
-		object_type   = CoreLookupType (ctx, "System", "Object", Kind.Class, true);
+		object_type   = CoreLookupType (ctx, "System", "Object", MemberKind.Class, true);
 		system_object_expr.Type = object_type;
-		value_type    = CoreLookupType (ctx, "System", "ValueType", Kind.Class, true);
+		value_type    = CoreLookupType (ctx, "System", "ValueType", MemberKind.Class, true);
 		system_valuetype_expr.Type = value_type;
-		attribute_type = CoreLookupType (ctx, "System", "Attribute", Kind.Class, true);
+		attribute_type = CoreLookupType (ctx, "System", "Attribute", MemberKind.Class, true);
 
-		int32_type    = CoreLookupType (ctx, "System", "Int32", Kind.Struct, true);
+		int32_type    = CoreLookupType (ctx, "System", "Int32", MemberKind.Struct, true);
 		system_int32_expr.Type = int32_type;
-		int64_type    = CoreLookupType (ctx, "System", "Int64", Kind.Struct, true);
+		int64_type    = CoreLookupType (ctx, "System", "Int64", MemberKind.Struct, true);
 		system_int64_expr.Type = int64_type;
-		uint32_type   = CoreLookupType (ctx, "System", "UInt32", Kind.Struct, true);
+		uint32_type   = CoreLookupType (ctx, "System", "UInt32", MemberKind.Struct, true);
 		system_uint32_expr.Type = uint32_type;
-		uint64_type   = CoreLookupType (ctx, "System", "UInt64", Kind.Struct, true);
+		uint64_type   = CoreLookupType (ctx, "System", "UInt64", MemberKind.Struct, true);
 		system_uint64_expr.Type = uint64_type;
-		byte_type     = CoreLookupType (ctx, "System", "Byte", Kind.Struct, true);
+		byte_type     = CoreLookupType (ctx, "System", "Byte", MemberKind.Struct, true);
 		system_byte_expr.Type = byte_type;
-		sbyte_type    = CoreLookupType (ctx, "System", "SByte", Kind.Struct, true);
+		sbyte_type    = CoreLookupType (ctx, "System", "SByte", MemberKind.Struct, true);
 		system_sbyte_expr.Type = sbyte_type;
-		short_type    = CoreLookupType (ctx, "System", "Int16", Kind.Struct, true);
+		short_type    = CoreLookupType (ctx, "System", "Int16", MemberKind.Struct, true);
 		system_int16_expr.Type = short_type;
-		ushort_type   = CoreLookupType (ctx, "System", "UInt16", Kind.Struct, true);
+		ushort_type   = CoreLookupType (ctx, "System", "UInt16", MemberKind.Struct, true);
 		system_uint16_expr.Type = ushort_type;
 
-		ienumerator_type     = CoreLookupType (ctx, "System.Collections", "IEnumerator", Kind.Interface, true);
-		ienumerable_type     = CoreLookupType (ctx, "System.Collections", "IEnumerable", Kind.Interface, true);
-		idisposable_type     = CoreLookupType (ctx, "System", "IDisposable", Kind.Interface, true);
+		ienumerator_type     = CoreLookupType (ctx, "System.Collections", "IEnumerator", MemberKind.Interface, true);
+		ienumerable_type     = CoreLookupType (ctx, "System.Collections", "IEnumerable", MemberKind.Interface, true);
+		idisposable_type     = CoreLookupType (ctx, "System", "IDisposable", MemberKind.Interface, true);
 
 		// HACK: DefineType immediately resolves iterators (very wrong)
-		generic_ienumerator_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerator`1", Kind.Interface, false);
+		generic_ienumerator_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerator`1", MemberKind.Interface, false);
 
-		char_type     = CoreLookupType (ctx, "System", "Char", Kind.Struct, true);
+		char_type     = CoreLookupType (ctx, "System", "Char", MemberKind.Struct, true);
 		system_char_expr.Type = char_type;
-		string_type   = CoreLookupType (ctx, "System", "String", Kind.Class, true);
+		string_type   = CoreLookupType (ctx, "System", "String", MemberKind.Class, true);
 		system_string_expr.Type = string_type;
-		float_type    = CoreLookupType (ctx, "System", "Single", Kind.Struct, true);
+		float_type    = CoreLookupType (ctx, "System", "Single", MemberKind.Struct, true);
 		system_single_expr.Type = float_type;
-		double_type   = CoreLookupType (ctx, "System", "Double", Kind.Struct, true);
+		double_type   = CoreLookupType (ctx, "System", "Double", MemberKind.Struct, true);
 		system_double_expr.Type = double_type;
-		decimal_type  = CoreLookupType (ctx, "System", "Decimal", Kind.Struct, true);
+		decimal_type  = CoreLookupType (ctx, "System", "Decimal", MemberKind.Struct, true);
 		system_decimal_expr.Type = decimal_type;
-		bool_type     = CoreLookupType (ctx, "System", "Boolean", Kind.Struct, true);
+		bool_type     = CoreLookupType (ctx, "System", "Boolean", MemberKind.Struct, true);
 		system_boolean_expr.Type = bool_type;
-		intptr_type = CoreLookupType (ctx, "System", "IntPtr", Kind.Struct, true);
+		intptr_type = CoreLookupType (ctx, "System", "IntPtr", MemberKind.Struct, true);
 		system_intptr_expr.Type = intptr_type;
-		uintptr_type = CoreLookupType (ctx, "System", "UIntPtr", Kind.Struct, true);
+		uintptr_type = CoreLookupType (ctx, "System", "UIntPtr", MemberKind.Struct, true);
 
-		multicast_delegate_type = CoreLookupType (ctx, "System", "MulticastDelegate", Kind.Class, true);
-		delegate_type           = CoreLookupType (ctx, "System", "Delegate", Kind.Class, true);
+		multicast_delegate_type = CoreLookupType (ctx, "System", "MulticastDelegate", MemberKind.Class, true);
+		delegate_type           = CoreLookupType (ctx, "System", "Delegate", MemberKind.Class, true);
 
-		enum_type	= CoreLookupType (ctx, "System", "Enum", Kind.Class, true);
-		array_type	= CoreLookupType (ctx, "System", "Array", Kind.Class, true);
-		void_type	= CoreLookupType (ctx, "System", "Void", Kind.Struct, true);
+		enum_type	= CoreLookupType (ctx, "System", "Enum", MemberKind.Class, true);
+		array_type	= CoreLookupType (ctx, "System", "Array", MemberKind.Class, true);
+		void_type	= CoreLookupType (ctx, "System", "Void", MemberKind.Struct, true);
 		system_void_expr.Type = void_type;
-		type_type	= CoreLookupType (ctx, "System", "Type", Kind.Class, true);
-		exception_type = CoreLookupType (ctx, "System", "Exception", Kind.Class, true);
+		type_type	= CoreLookupType (ctx, "System", "Type", MemberKind.Class, true);
+		exception_type = CoreLookupType (ctx, "System", "Exception", MemberKind.Class, true);
 
-		runtime_field_handle_type = CoreLookupType (ctx, "System", "RuntimeFieldHandle", Kind.Struct, true);
-		runtime_handle_type = CoreLookupType (ctx, "System", "RuntimeTypeHandle", Kind.Struct, true);
+		runtime_field_handle_type = CoreLookupType (ctx, "System", "RuntimeFieldHandle", MemberKind.Struct, true);
+		runtime_handle_type = CoreLookupType (ctx, "System", "RuntimeTypeHandle", MemberKind.Struct, true);
 
 		PredefinedAttributes.Get.ParamArray.Initialize (ctx, false);
 		PredefinedAttributes.Get.Out.Initialize (ctx, false);
@@ -1004,12 +1004,12 @@ namespace Mono.CSharp {
 		//
 		PredefinedAttributes.Get.Initialize (ctx);
 
-		runtime_argument_handle_type = CoreLookupType (ctx, "System", "RuntimeArgumentHandle", Kind.Struct, false);
-		asynccallback_type = CoreLookupType (ctx, "System", "AsyncCallback", Kind.Delegate, false);
-		iasyncresult_type = CoreLookupType (ctx, "System", "IAsyncResult", Kind.Interface, false);
-		typed_reference_type = CoreLookupType (ctx, "System", "TypedReference", Kind.Struct, false);
-		arg_iterator_type = CoreLookupType (ctx, "System", "ArgIterator", Kind.Struct, false);
-		mbr_type = CoreLookupType (ctx, "System", "MarshalByRefObject", Kind.Class, false);
+		runtime_argument_handle_type = CoreLookupType (ctx, "System", "RuntimeArgumentHandle", MemberKind.Struct, false);
+		asynccallback_type = CoreLookupType (ctx, "System", "AsyncCallback", MemberKind.Delegate, false);
+		iasyncresult_type = CoreLookupType (ctx, "System", "IAsyncResult", MemberKind.Interface, false);
+		typed_reference_type = CoreLookupType (ctx, "System", "TypedReference", MemberKind.Struct, false);
+		arg_iterator_type = CoreLookupType (ctx, "System", "ArgIterator", MemberKind.Struct, false);
+		mbr_type = CoreLookupType (ctx, "System", "MarshalByRefObject", MemberKind.Class, false);
 
 		//
 		// Optional attributes, used for error reporting only
@@ -1020,19 +1020,19 @@ namespace Mono.CSharp {
 		//        c.Define ();
 		//}
 
-		generic_ilist_type = CoreLookupType (ctx, "System.Collections.Generic", "IList`1", Kind.Interface, false);
-		generic_icollection_type = CoreLookupType (ctx, "System.Collections.Generic", "ICollection`1", Kind.Interface, false);
-		generic_ienumerable_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerable`1", Kind.Interface, false);
-		generic_nullable_type = CoreLookupType (ctx, "System", "Nullable`1", Kind.Struct, false);
+		generic_ilist_type = CoreLookupType (ctx, "System.Collections.Generic", "IList`1", MemberKind.Interface, false);
+		generic_icollection_type = CoreLookupType (ctx, "System.Collections.Generic", "ICollection`1", MemberKind.Interface, false);
+		generic_ienumerable_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerable`1", MemberKind.Interface, false);
+		generic_nullable_type = CoreLookupType (ctx, "System", "Nullable`1", MemberKind.Struct, false);
 
 		//
 		// Optional types which are used as types and for member lookup
 		//
-		runtime_helpers_type = CoreLookupType (ctx, "System.Runtime.CompilerServices", "RuntimeHelpers", Kind.Class, false);
+		runtime_helpers_type = CoreLookupType (ctx, "System.Runtime.CompilerServices", "RuntimeHelpers", MemberKind.Class, false);
 
 		// New in .NET 3.5
 		// Note: extension_attribute_type is already loaded
-		expression_type = CoreLookupType (ctx, "System.Linq.Expressions", "Expression`1", Kind.Class, false);
+		expression_type = CoreLookupType (ctx, "System.Linq.Expressions", "Expression`1", MemberKind.Class, false);
 
 		if (!RootContext.StdLib) {
 			//
@@ -1493,7 +1493,7 @@ namespace Mono.CSharp {
 		if (tc == null)
 			return false;
 
-		return tc.Kind == Kind.Interface;
+		return tc.Kind == MemberKind.Interface;
 	}
 
 	public static bool IsSubclassOf (Type type, Type base_type)
@@ -1946,7 +1946,7 @@ namespace Mono.CSharp {
 	public static bool CheckStructCycles (TypeContainer tc, Dictionary<TypeContainer, object> seen,
 						  Dictionary<TypeContainer, object> hash)
 	{
-		if ((tc.Kind != Kind.Struct) || IsBuiltinType (tc.TypeBuilder))
+		if ((tc.Kind != MemberKind.Struct) || IsBuiltinType (tc.TypeBuilder))
 			return true;
 
 		//

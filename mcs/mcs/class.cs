@@ -31,15 +31,6 @@ using Mono.CompilerServices.SymbolWriter;
 
 namespace Mono.CSharp {
 
-	public enum Kind {
-		Root,
-		Struct,
-		Class,
-		Interface,
-		Enum,
-		Delegate
-	}
-
 	/// <summary>
 	///   This is the base class for structs and classes.  
 	/// </summary>
@@ -129,7 +120,7 @@ namespace Mono.CSharp {
 
 
 		// Whether this is a struct, class or interface
-		public readonly Kind Kind;
+		public readonly MemberKind Kind;
 
 		// Holds a list of classes and structures
 		protected List<TypeContainer> types;
@@ -225,7 +216,7 @@ namespace Mono.CSharp {
 		PendingImplementation pending;
 
 		public TypeContainer (NamespaceEntry ns, DeclSpace parent, MemberName name,
-				      Attributes attrs, Kind kind)
+				      Attributes attrs, MemberKind kind)
 			: base (ns, parent, name, attrs)
 		{
 			if (parent != null && parent.NamespaceEntry != ns)
@@ -356,7 +347,7 @@ namespace Mono.CSharp {
 			}
 
 			if (isexplicit) {
-				if (Kind == Kind.Interface) {
+				if (Kind == MemberKind.Interface) {
 					Report.Error (541, mc.Location,
 						"`{0}': explicit interface declaration can only be declared in a class or struct",
 						mc.GetSignatureForError ());
@@ -431,7 +422,7 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (Kind == Kind.Struct && first_nonstatic_field.Parent != field.Parent) {
+			if (Kind == MemberKind.Struct && first_nonstatic_field.Parent != field.Parent) {
 				Report.SymbolRelatedToPreviousError (first_nonstatic_field.Parent);
 				Report.Warning (282, 3, field.Location,
 					"struct instance field `{0}' found in different declaration from instance field `{1}'",
@@ -759,7 +750,7 @@ namespace Mono.CSharp {
 				if (fne_resolved == null)
 					continue;
 
-				if (i == 0 && Kind == Kind.Class && !fne_resolved.Type.IsInterface) {
+				if (i == 0 && Kind == MemberKind.Class && !fne_resolved.Type.IsInterface) {
 					if (fne_resolved is DynamicTypeExpr)
 						Report.Error (1965, Location, "Class `{0}' cannot derive from the dynamic type",
 							GetSignatureForError ());
@@ -780,14 +771,14 @@ namespace Mono.CSharp {
 						}
 					}
 
-					if (Kind == Kind.Interface && !IsAccessibleAs (fne_resolved.Type)) {
+					if (Kind == MemberKind.Interface && !IsAccessibleAs (fne_resolved.Type)) {
 						Report.Error (61, fne.Location,
 							"Inconsistent accessibility: base interface `{0}' is less accessible than interface `{1}'",
 							fne_resolved.GetSignatureForError (), GetSignatureForError ());
 					}
 				} else {
 					Report.SymbolRelatedToPreviousError (fne_resolved.Type);
-					if (Kind != Kind.Class) {
+					if (Kind != MemberKind.Class) {
 						Report.Error (527, fne.Location, "Type `{0}' in interface list is not an interface", fne_resolved.GetSignatureForError ());
 					} else if (base_class != null)
 						Report.Error (1721, fne.Location, "`{0}': Classes cannot have multiple base classes (`{1}' and `{2}')",
@@ -950,17 +941,17 @@ namespace Mono.CSharp {
 		{
 			try {
 				Type default_parent = null;
-				if (Kind == Kind.Struct)
+				if (Kind == MemberKind.Struct)
 					default_parent = TypeManager.value_type;
-				else if (Kind == Kind.Enum)
+				else if (Kind == MemberKind.Enum)
 					default_parent = TypeManager.enum_type;
-				else if (Kind == Kind.Delegate)
+				else if (Kind == MemberKind.Delegate)
 					default_parent = TypeManager.multicast_delegate_type;
 
 				//
 				// Sets .size to 1 for structs with no instance fields
 				//
-				int type_size = Kind == Kind.Struct && first_nonstatic_field == null ? 1 : 0;
+				int type_size = Kind == MemberKind.Struct && first_nonstatic_field == null ? 1 : 0;
 
 				if (IsTopLevel){
 					if (GlobalRootNamespace.Instance.IsNamespace (Name)) {
@@ -1345,7 +1336,7 @@ namespace Mono.CSharp {
 					baseContainer.Define();				
 				
 				member_cache = new MemberCache (base_type.Type, this);
-			} else if (Kind == Kind.Interface) {
+			} else if (Kind == MemberKind.Interface) {
 				member_cache = new MemberCache (null, this);
 				Type [] ifaces = TypeManager.GetInterfaces (TypeBuilder);
 				for (int i = 0; i < ifaces.Length; ++i)
@@ -1384,7 +1375,7 @@ namespace Mono.CSharp {
 			DefineContainerMembers (constants);
 			DefineContainerMembers (fields);
 
-			if (Kind == Kind.Struct || Kind == Kind.Class) {
+			if (Kind == MemberKind.Struct || Kind == MemberKind.Class) {
 				pending = PendingImplementation.GetPendingImplementations (this);
 
 				if (requires_delayed_unmanagedtype_check) {
@@ -2068,7 +2059,7 @@ namespace Mono.CSharp {
 				CheckMemberUsage (constants, "constant");
 
 				if (fields != null){
-					bool is_type_exposed = Kind == Kind.Struct || IsExposedFromAssembly ();
+					bool is_type_exposed = Kind == MemberKind.Struct || IsExposedFromAssembly ();
 					foreach (FieldBase f in fields) {
 						if ((f.ModFlags & Modifiers.AccessibilityMask) != Modifiers.PRIVATE) {
 							if (is_type_exposed)
@@ -2233,11 +2224,11 @@ namespace Mono.CSharp {
 			
 			if (Types != null){
 				foreach (TypeContainer tc in Types)
-					if (tc.Kind == Kind.Struct)
+					if (tc.Kind == MemberKind.Struct)
 						tc.CloseType ();
 
 				foreach (TypeContainer tc in Types)
-					if (tc.Kind != Kind.Struct)
+					if (tc.Kind != MemberKind.Struct)
 						tc.CloseType ();
 			}
 
@@ -2296,7 +2287,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (Kind == Kind.Struct){
+			if (Kind == MemberKind.Struct){
 				if ((flags & va) != 0){
 					ModifiersExtensions.Error_InvalidModifier (mc.Location, "virtual or abstract", Report);
 					ok = false;
@@ -2511,7 +2502,7 @@ namespace Mono.CSharp {
 
 		bool IMemberContainer.IsInterface {
 			get {
-				return Kind == Kind.Interface;
+				return Kind == MemberKind.Interface;
 			}
 		}
 
@@ -2557,7 +2548,7 @@ namespace Mono.CSharp {
 		Dictionary<SecurityAction, PermissionSet> declarative_security;
 
 		public ClassOrStruct (NamespaceEntry ns, DeclSpace parent,
-				      MemberName name, Attributes attrs, Kind kind)
+				      MemberName name, Attributes attrs, MemberKind kind)
 			: base (ns, parent, name, attrs, kind)
 		{
 		}
@@ -2719,7 +2710,7 @@ namespace Mono.CSharp {
 
 		public Class (NamespaceEntry ns, DeclSpace parent, MemberName name, Modifiers mod,
 			      Attributes attrs)
-			: base (ns, parent, name, attrs, Kind.Class)
+			: base (ns, parent, name, attrs, MemberKind.Class)
 		{
 			var accmods = Parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, accmods, Location, Report);
@@ -2853,7 +2844,7 @@ namespace Mono.CSharp {
 				else if (Name != "System.Object")
 					base_class = TypeManager.system_object_expr;
 			} else {
-				if (Kind == Kind.Class && TypeManager.IsGenericParameter (base_class.Type)){
+				if (Kind == MemberKind.Class && TypeManager.IsGenericParameter (base_class.Type)){
 					Report.Error (
 						689, base_class.Location,
 						"Cannot derive from `{0}' because it is a type parameter",
@@ -2966,7 +2957,7 @@ namespace Mono.CSharp {
 
 		public Struct (NamespaceEntry ns, DeclSpace parent, MemberName name,
 			       Modifiers mod, Attributes attrs)
-			: base (ns, parent, name, attrs, Kind.Struct)
+			: base (ns, parent, name, attrs, MemberKind.Struct)
 		{
 			var accmods = parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			
@@ -3104,7 +3095,7 @@ namespace Mono.CSharp {
 
 		public Interface (NamespaceEntry ns, DeclSpace parent, MemberName name, Modifiers mod,
 				  Attributes attrs)
-			: base (ns, parent, name, attrs, Kind.Interface)
+			: base (ns, parent, name, attrs, MemberKind.Interface)
 		{
 			var accmods = parent.Parent == null ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 
@@ -3191,7 +3182,7 @@ namespace Mono.CSharp {
 			: base (parent, generic, type, mod, allowed_mod, Modifiers.PRIVATE,
 				name, attrs)
 		{
-			IsInterface = parent.PartialContainer.Kind == Kind.Interface;
+			IsInterface = parent.PartialContainer.Kind == MemberKind.Interface;
 			IsExplicitImpl = (MemberName.Left != null);
 			explicit_mod_flags = mod;
 		}

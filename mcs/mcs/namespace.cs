@@ -278,7 +278,7 @@ namespace Mono.CSharp {
 			// Do very early lookup because type is required when we cache
 			// imported extension types in ComputeNamespaces
 			//
-			Type extension_attribute_type = TypeManager.CoreLookupType (ctx, "System.Runtime.CompilerServices", "ExtensionAttribute", Kind.Class, false);
+			Type extension_attribute_type = TypeManager.CoreLookupType (ctx, "System.Runtime.CompilerServices", "ExtensionAttribute", MemberKind.Class, false);
 
 			foreach (RootNamespace rn in root_namespaces.Values) {
 				rn.ComputeNamespace (ctx, extension_attribute_type);

@@ -303,22 +303,22 @@ namespace Mono.CSharp
 
 			if (TypeManager.binder_type == null) {
 				var t = TypeManager.CoreLookupType (rc.Compiler,
-					"Microsoft.CSharp.RuntimeBinder", "Binder", Kind.Class, true);
+					"Microsoft.CSharp.RuntimeBinder", "Binder", MemberKind.Class, true);
 				if (t != null)
 					TypeManager.binder_type = new TypeExpression (t, Location.Null);
 			}
 
 			if (TypeManager.call_site_type == null)
 				TypeManager.call_site_type = TypeManager.CoreLookupType (rc.Compiler,
-					"System.Runtime.CompilerServices", "CallSite", Kind.Class, true);
+					"System.Runtime.CompilerServices", "CallSite", MemberKind.Class, true);
 
 			if (TypeManager.generic_call_site_type == null)
 				TypeManager.generic_call_site_type = TypeManager.CoreLookupType (rc.Compiler,
-					"System.Runtime.CompilerServices", "CallSite`1", Kind.Class, true);
+					"System.Runtime.CompilerServices", "CallSite`1", MemberKind.Class, true);
 
 			if (TypeManager.binder_flags == null) {
 				TypeManager.binder_flags = TypeManager.CoreLookupType (rc.Compiler,
-					"Microsoft.CSharp.RuntimeBinder", "CSharpBinderFlags", Kind.Enum, true);
+					"Microsoft.CSharp.RuntimeBinder", "CSharpBinderFlags", MemberKind.Enum, true);
 			}
 
 			eclass = ExprClass.Value;
@@ -419,7 +419,7 @@ namespace Mono.CSharp
 			if (!has_ref_out_argument) {
 				string d_name = is_statement ? "Action`" : "Func`";
 
-				Type t = TypeManager.CoreLookupType (ctx, "System", d_name + (dyn_args_count + default_args), Kind.Delegate, false);
+				Type t = TypeManager.CoreLookupType (ctx, "System", d_name + (dyn_args_count + default_args), MemberKind.Delegate, false);
 				if (t != null) {
 					if (!is_statement)
 						targs [targs.Length - 1] = new TypeExpression (type, loc);

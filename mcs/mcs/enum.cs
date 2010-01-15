@@ -146,7 +146,7 @@ namespace Mono.CSharp {
 
 		public Enum (NamespaceEntry ns, DeclSpace parent, TypeExpr type,
 			     Modifiers mod_flags, MemberName name, Attributes attrs)
-			: base (ns, parent, name, attrs, Kind.Enum)
+			: base (ns, parent, name, attrs, MemberKind.Enum)
 		{
 			this.base_type = type;
 			var accmods = IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE;

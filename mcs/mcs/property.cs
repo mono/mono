@@ -306,7 +306,7 @@ namespace Mono.CSharp
 					ModFlags |= method.ModFlags;
 					flags = method.flags;
 				} else {
-					if (container.Kind == Kind.Interface)
+					if (container.Kind == MemberKind.Interface)
 						Report.Error (275, Location, "`{0}': accessibility modifiers may not be used on accessors in an interface",
 							GetSignatureForError ());
 
@@ -683,7 +683,7 @@ namespace Mono.CSharp
 				 MemberName name, Attributes attrs, Accessor get_block,
 				 Accessor set_block, bool define_set_first, Block current_block)
 			: base (parent, type, mod,
-				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs, define_set_first)
 		{
 			if (get_block == null)
@@ -1253,7 +1253,7 @@ namespace Mono.CSharp
 
 		protected Event (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod_flags,
-				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs)
 		{
 		}
@@ -1489,7 +1489,7 @@ namespace Mono.CSharp
 				ParametersCompiled parameters, Attributes attrs,
 				Accessor get_block, Accessor set_block, bool define_set_first)
 			: base (parent, type, mod,
-				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs, define_set_first)
 		{
 			this.parameters = parameters;

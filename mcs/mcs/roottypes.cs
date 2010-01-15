@@ -29,7 +29,7 @@ namespace Mono.CSharp
 		protected Assembly assembly;
 
 		public ModuleContainer (Assembly assembly)
-			: base (null, null, MemberName.Null, null, Kind.Root)
+			: base (null, null, MemberName.Null, null, 0)
 		{
 			this.assembly = assembly;
 		}
@@ -147,7 +147,7 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 
 			if (is_unsafe) {
-				Type t = TypeManager.CoreLookupType (context, "System.Security", "UnverifiableCodeAttribute", Kind.Class, true);
+				Type t = TypeManager.CoreLookupType (context, "System.Security", "UnverifiableCodeAttribute", MemberKind.Class, true);
 				if (t != null) {
 					ConstructorInfo unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, Type.EmptyTypes);
 					if (unverifiable_code_ctor != null)

@@ -252,13 +252,13 @@ namespace Mono.CSharp {
 			// make sure that we define the structs in order as well.
 			//
 			foreach (TypeContainer tc in type_container_resolve_order){
-				if (tc.Kind == Kind.Struct && tc.Parent == root){
+				if (tc.Kind == MemberKind.Struct && tc.Parent == root){
 					tc.CloseType ();
 				}
 			}
 
 			foreach (TypeContainer tc in type_container_resolve_order){
-				if (!(tc.Kind == Kind.Struct && tc.Parent == root))
+				if (!(tc.Kind == MemberKind.Struct && tc.Parent == root))
 					tc.CloseType ();					
 			}
 			

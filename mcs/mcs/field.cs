@@ -337,7 +337,7 @@ namespace Mono.CSharp
 			if (!IsUnsafe)
 				Expression.UnsafeError (Report, Location);
 
-			if (Parent.PartialContainer.Kind != Kind.Struct) {
+			if (Parent.PartialContainer.Kind != MemberKind.Struct) {
 				Report.Error (1642, Location, "`{0}': Fixed size buffer fields may only be members of structs",
 					GetSignatureForError ());
 			}
@@ -538,7 +538,7 @@ namespace Mono.CSharp
 				if ((ModFlags & Modifiers.VOLATILE) != 0) {
 					if (TypeManager.isvolatile_type == null)
 						TypeManager.isvolatile_type = TypeManager.CoreLookupType (Compiler,
-							"System.Runtime.CompilerServices", "IsVolatile", Kind.Class, true);
+							"System.Runtime.CompilerServices", "IsVolatile", MemberKind.Class, true);
 
 					if (TypeManager.isvolatile_type != null)
 						required_modifier = new Type [] { TypeManager.isvolatile_type };
@@ -565,7 +565,7 @@ namespace Mono.CSharp
 				((TypeContainer) Parent).RegisterFieldForInitialization (this,
 					new FieldInitializer (this, initializer, this));
 			} else {
-				if (Parent.PartialContainer.Kind == Kind.Struct)
+				if (Parent.PartialContainer.Kind == MemberKind.Struct)
 					CheckStructLayout (member_type, (ModFlags & Modifiers.STATIC) != 0);
 			}
 

@@ -5482,7 +5482,7 @@ namespace Mono.CSharp {
 				}
 
 				if (TypeManager.activator_create_instance == null) {
-					Type activator_type = TypeManager.CoreLookupType (ec.Compiler, "System", "Activator", Kind.Class, true);
+					Type activator_type = TypeManager.CoreLookupType (ec.Compiler, "System", "Activator", MemberKind.Class, true);
 					if (activator_type != null) {
 						TypeManager.activator_create_instance = TypeManager.GetPredefinedMethod (
 							activator_type, "CreateInstance", loc, Type.EmptyTypes);
@@ -7084,11 +7084,11 @@ namespace Mono.CSharp {
 			if (member.IsConstructor) {
 				type = TypeManager.ctorinfo_type;
 				if (type == null)
-					type = TypeManager.ctorinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "ConstructorInfo", Kind.Class, true);
+					type = TypeManager.ctorinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "ConstructorInfo", MemberKind.Class, true);
 			} else {
 				type = TypeManager.methodinfo_type;
 				if (type == null)
-					type = TypeManager.methodinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "MethodInfo", Kind.Class, true);
+					type = TypeManager.methodinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", "MethodInfo", MemberKind.Class, true);
 			}
 
 			return base.DoResolve (ec);
@@ -7160,8 +7160,8 @@ namespace Mono.CSharp {
 			var mi = is_generic ? TypeFromHandleGeneric : TypeFromHandle;
 
 			if (mi == null) {
-				Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", TypeName, Kind.Class, true);
-				Type handle_type = TypeManager.CoreLookupType (ec.Compiler, "System", RuntimeHandleName, Kind.Class, true);
+				Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", TypeName, MemberKind.Class, true);
+				Type handle_type = TypeManager.CoreLookupType (ec.Compiler, "System", RuntimeHandleName, MemberKind.Class, true);
 
 				if (t == null || handle_type == null)
 					return null;
@@ -7212,7 +7212,7 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			if (TypeManager.fieldinfo_type == null)
-				TypeManager.fieldinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", TypeName, Kind.Class, true);
+				TypeManager.fieldinfo_type = TypeManager.CoreLookupType (ec.Compiler, "System.Reflection", TypeName, MemberKind.Class, true);
 
 			type = TypeManager.fieldinfo_type;
 			return base.DoResolve (ec);

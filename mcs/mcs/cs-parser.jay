@@ -1266,7 +1266,7 @@ method_declaration
 		method.Block = (ToplevelBlock) $3;
 		current_container.AddMethod (method);
 		
-		if (current_container.Kind == Kind.Interface && method.Block != null) {
+		if (current_container.Kind == MemberKind.Interface && method.Block != null) {
 			Report.Error (531, method.Location, "`{0}': interface members cannot have a definition", method.GetSignatureForError ());
 		}
 
@@ -1717,7 +1717,7 @@ property_declaration
 		if (accessors == null)
 			Report.Error (548, prop.Location, "`{0}': property or indexer must have at least one accessor", prop.GetSignatureForError ());
 
-		if (current_container.Kind == Kind.Interface) {
+		if (current_container.Kind == MemberKind.Interface) {
 			if (prop.Get.Block != null)
 				Report.Error (531, prop.Location, "`{0}.get': interface members cannot have a definition", prop.GetSignatureForError ());
 
@@ -2219,7 +2219,7 @@ destructor_declaration
 		var lt = (Tokenizer.LocatedToken) $5;
 		if (lt.Value != current_container.MemberName.Name){
 			Report.Error (574, lt.Location, "Name of destructor must match name of class");
-		} else if (current_container.Kind != Kind.Class){
+		} else if (current_container.Kind != MemberKind.Class){
 			Report.Error (575, lt.Location, "Only class types can contain destructor");
 		} else {
 			Destructor d = new Destructor (current_class, (Modifiers) $2,
@@ -2246,7 +2246,7 @@ event_declaration
 				current_class, (FullNamedExpression) $4, (Modifiers) $2, var.MemberName, (Attributes) $1);
 				
 			e.Initializer = var.GetInitializer ((FullNamedExpression) $4);
-			if (current_container.Kind == Kind.Interface && e.Initializer != null) {
+			if (current_container.Kind == MemberKind.Interface && e.Initializer != null) {
 				Report.Error (68, e.Location, "`{0}': event in interface cannot have initializer", e.GetSignatureForError ());
 			}
 			
@@ -2284,7 +2284,7 @@ event_declaration
 	  {
 		MemberName name = (MemberName) $5;
 		
-		if (current_container.Kind == Kind.Interface) {
+		if (current_container.Kind == MemberKind.Interface) {
 			Report.Error (69, GetLocation ($3), "Event in interface cannot have add or remove accessors");
 			$8 = new Accessors (null, null);
 		} else if ($8 == null) {
@@ -2437,7 +2437,7 @@ indexer_declaration
 		if (accessors == null)
 			Report.Error (548, indexer.Location, "`{0}': property or indexer must have at least one accessor", indexer.GetSignatureForError ());
 
-		if (current_container.Kind == Kind.Interface) {
+		if (current_container.Kind == MemberKind.Interface) {
 			if (indexer.Get.Block != null)
 				Report.Error (531, indexer.Location, "`{0}.get': interface members cannot have a definition", indexer.GetSignatureForError ());
 

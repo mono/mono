@@ -4122,7 +4122,7 @@ namespace Mono.CSharp {
 			temp.Resolve (ec);
 
 			if (TypeManager.void_monitor_enter_object == null || TypeManager.void_monitor_exit_object == null) {
-				Type monitor_type = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Monitor", Kind.Class, true);
+				Type monitor_type = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Monitor", MemberKind.Class, true);
 				TypeManager.void_monitor_enter_object = TypeManager.GetPredefinedMethod (
 					monitor_type, "Enter", loc, TypeManager.object_type);
 				TypeManager.void_monitor_exit_object = TypeManager.GetPredefinedMethod (

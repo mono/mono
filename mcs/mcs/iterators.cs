@@ -255,7 +255,7 @@ namespace Mono.CSharp {
 						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, host_method.MemberType, loc);
 
 					if (TypeManager.int_interlocked_compare_exchange == null) {
-						Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Interlocked", Kind.Class, true);
+						Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Interlocked", MemberKind.Class, true);
 						if (t != null) {
 							TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (
 								t, "CompareExchange", loc, TypeManager.int32_type,
@@ -563,7 +563,7 @@ namespace Mono.CSharp {
 
 			reset.Block = new ToplevelBlock (Compiler, Location);
 
-			Type ex_type = TypeManager.CoreLookupType (Compiler, "System", "NotSupportedException", Kind.Class, true);
+			Type ex_type = TypeManager.CoreLookupType (Compiler, "System", "NotSupportedException", MemberKind.Class, true);
 			if (ex_type == null)
 				return;
 

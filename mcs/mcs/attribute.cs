@@ -2044,7 +2044,7 @@ namespace Mono.CSharp {
 					return false;
 			}
 
-			type = TypeManager.CoreLookupType (compiler, ns, name, Kind.Class, !canFail);
+			type = TypeManager.CoreLookupType (compiler, ns, name, MemberKind.Class, !canFail);
 			if (type == null) {
 				type = NotFound;
 				return false;

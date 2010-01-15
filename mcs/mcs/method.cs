@@ -635,7 +635,7 @@ namespace Mono.CSharp {
 			       FullNamedExpression return_type, Modifiers mod,
 			       MemberName name, ParametersCompiled parameters, Attributes attrs)
 			: base (parent, generic, return_type, mod,
-				parent.PartialContainer.Kind == Kind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
+				parent.PartialContainer.Kind == MemberKind.Interface ? AllowedInterfaceModifiers : AllowedModifiers,
 				name, attrs, parameters)
 		{
 		}
@@ -1192,7 +1192,7 @@ namespace Mono.CSharp {
 				Parent.MemberCache.CheckExistingMembersOverloads (this, ConstructorInfo.ConstructorName,
 					Parameters, Report);
 
-			if (Parent.PartialContainer.Kind == Kind.Struct) {
+			if (Parent.PartialContainer.Kind == MemberKind.Struct) {
 				if (Parameters.Count == 0) {
 					Report.Error (568, Location, 
 						"Structs cannot contain explicit parameterless constructors");
@@ -1296,12 +1296,12 @@ namespace Mono.CSharp {
 			if (block != null) {
 				// If this is a non-static `struct' constructor and doesn't have any
 				// initializer, it must initialize all of the struct's fields.
-				if ((Parent.PartialContainer.Kind == Kind.Struct) &&
+				if ((Parent.PartialContainer.Kind == MemberKind.Struct) &&
 					((ModFlags & Modifiers.STATIC) == 0) && (Initializer == null))
 					block.AddThisVariable (Parent, Location);
 
 				if (block != null && (ModFlags & Modifiers.STATIC) == 0){
-					if (Parent.PartialContainer.Kind == Kind.Class && Initializer == null)
+					if (Parent.PartialContainer.Kind == MemberKind.Class && Initializer == null)
 						Initializer = new GeneratedBaseInitializer (Location);
 
 					if (Initializer != null) {

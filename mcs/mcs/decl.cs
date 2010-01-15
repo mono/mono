@@ -345,7 +345,7 @@ namespace Mono.CSharp {
 
 		protected bool CheckAbstractAndExtern (bool has_block)
 		{
-			if (Parent.PartialContainer.Kind == Kind.Interface)
+			if (Parent.PartialContainer.Kind == MemberKind.Interface)
 				return true;
 
 			if (has_block) {
@@ -389,7 +389,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & Modifiers.PROTECTED) == 0)
 				return;
 
-			if (Parent.PartialContainer.Kind == Kind.Struct) {
+			if (Parent.PartialContainer.Kind == MemberKind.Struct) {
 				Report.Error (666, Location, "`{0}': Structs cannot contain protected members",
 					GetSignatureForError ());
 				return;

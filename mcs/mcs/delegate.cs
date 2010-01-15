@@ -52,7 +52,7 @@ namespace Mono.CSharp {
  		public Delegate (NamespaceEntry ns, DeclSpace parent, FullNamedExpression type,
 				 Modifiers mod_flags, MemberName name, ParametersCompiled param_list,
 				 Attributes attrs)
-			: base (ns, parent, name, attrs, Kind.Delegate)
+			: base (ns, parent, name, attrs, MemberKind.Delegate)
 
 		{
 			this.ReturnType = type;

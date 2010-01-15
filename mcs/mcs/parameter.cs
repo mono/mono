@@ -649,7 +649,7 @@ namespace Mono.CSharp {
 
 			Type p_type = TypeManager.parameter_expression_type;
 			if (p_type == null) {
-				p_type = TypeManager.CoreLookupType (ec.Compiler, "System.Linq.Expressions", "ParameterExpression", Kind.Class, true);
+				p_type = TypeManager.CoreLookupType (ec.Compiler, "System.Linq.Expressions", "ParameterExpression", MemberKind.Class, true);
 				TypeManager.parameter_expression_type = p_type;
 			}
 

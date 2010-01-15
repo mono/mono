@@ -1,5 +1,9 @@
 2010-01-15  Marek Safar  <marek.safar@gmail.com>
 
+	* *.cs: Use only 1 member kind enum.
+
+2010-01-15  Marek Safar  <marek.safar@gmail.com>
+
 	* *.cs: Add event specification.
 
 2010-01-14  Marek Safar  <marek.safar@gmail.com>

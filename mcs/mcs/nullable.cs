@@ -37,7 +37,7 @@ namespace Mono.CSharp.Nullable
 		{
 			if (TypeManager.generic_nullable_type == null) {
 				TypeManager.generic_nullable_type = TypeManager.CoreLookupType (ec.Compiler,
-					"System", "Nullable`1", Kind.Struct, true);
+					"System", "Nullable`1", MemberKind.Struct, true);
 			}
 
 			TypeArguments args = new TypeArguments (underlying);
