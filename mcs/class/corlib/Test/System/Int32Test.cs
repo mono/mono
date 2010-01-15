@@ -333,6 +333,7 @@ public class Int32Test
 
 		double OverInt = (double)Int32.MaxValue + 1;
 		Assert.AreEqual (false, Int32.TryParse (OverInt.ToString (), out result));
+		Assert.AreEqual (false, Int32.TryParse (OverInt.ToString (), NumberStyles.None, CultureInfo.InvariantCulture, out result));
 
 		Assert.AreEqual (false, Int32.TryParse ("$42", NumberStyles.Integer, null, out result));
 		Assert.AreEqual (false, Int32.TryParse ("%42", NumberStyles.Integer, Nfi, out result));
