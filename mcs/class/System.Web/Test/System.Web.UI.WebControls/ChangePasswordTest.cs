@@ -132,6 +132,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[TestFixtureSetUp]
 		public void CopyTestResources ()
 		{
+			WebTest.CopyResource (GetType (), "ChangePasswordContainer_FindControl.aspx", "ChangePasswordContainer_FindControl.aspx");
 		}
 
 		[Test]
@@ -794,6 +795,23 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (Membership.Provider.GetType (), typeof (FakeMembershipProvider), "Membership.Provider.GetType ()");
 		}
 
+		[Test]
+		public void ChangePasswordContainer_FindControl ()
+		{
+			WebTest t = new WebTest ("ChangePasswordContainer_FindControl.aspx");
+			t.Invoker = PageInvoker.CreateOnLoad (new PageDelegate (ChangePasswordContainer_FindControl_OnLoad));
+			t.Run ();
+		}
+
+		public static void ChangePasswordContainer_FindControl_OnLoad (Page p)
+		{
+			ChangePassword cp = p.FindControl ("ChangePassword1") as ChangePassword;
+			Assert.IsNotNull (cp, "#A1");
+			
+			RequiredFieldValidator rfv = cp.ChangePasswordTemplateContainer.FindControl ("text1required") as RequiredFieldValidator;
+			Assert.IsNotNull (rfv, "#A2");
+		}
+		
 		[TestFixtureTearDown]
 		public void TearDown ()
 		{
