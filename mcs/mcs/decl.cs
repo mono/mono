@@ -891,15 +891,15 @@ namespace Mono.CSharp {
 	public abstract class MemberSpec
 	{
 		[Flags]
-		enum StateFlags
+		protected enum StateFlags
 		{
 			Obsolete_Undetected = 1,	// Obsolete attribute has not been detected yet
 			Obsolete = 1 << 1			// Member has obsolete attribute
 		}
 
-		protected readonly Modifiers modifiers;
+		readonly Modifiers modifiers;
 		readonly string name;
-		StateFlags state;
+		protected StateFlags state;
 		protected IMemberDefinition definition;
 		public readonly MemberKind Kind;
 
@@ -930,6 +930,10 @@ namespace Mono.CSharp {
 
 		public IMemberDefinition MemberDefinition {
 			get { return definition; }
+		}
+
+		public Modifiers Modifiers {
+			get { return modifiers; }
 		}
 		
 		public string Name {

@@ -183,7 +183,7 @@ namespace Mono.CSharp {
 	static Dictionary<FieldInfo, FieldBase> fieldbuilders_to_fields;
 	static Dictionary<PropertyInfo, PropertyBase> propertybuilder_to_property;
 	static Dictionary<FieldInfo, ConstSpec> fields;
-	static Dictionary<EventInfo, EventField> events;
+	static Dictionary<EventInfo, EventSpec> events;
 	static Dictionary<Assembly, bool> assembly_internals_vis_attrs;
 	static Dictionary<GenericTypeParameterBuilder, TypeParameter> builder_to_type_param;
 	static Dictionary<Type, Type[]> iface_cache;
@@ -1917,20 +1917,20 @@ namespace Mono.CSharp {
 		return ei.GetRemoveMethod (true);
 	}
 
-	static public void RegisterEventField (EventInfo einfo, EventField e)
+	static public void RegisterEventField (EventInfo einfo, EventSpec e)
 	{
 		if (events == null)
-			events = new Dictionary<EventInfo, EventField> (ReferenceEquality<EventInfo>.Default);
+			events = new Dictionary<EventInfo, EventSpec> (ReferenceEquality<EventInfo>.Default);
 
 		events.Add (einfo, e);
 	}
 
-	static public EventField GetEventField (EventInfo ei)
+	static public EventSpec GetEventField (EventInfo ei)
 	{
 		if (events == null)
 			return null;
 
-		EventField value;
+		EventSpec value;
 		if (events.TryGetValue (ei, out value))
 			return value;
 

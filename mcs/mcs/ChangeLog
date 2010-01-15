@@ -1,3 +1,7 @@
+2010-01-15  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Add event specification.
+
 2010-01-14  Marek Safar  <marek.safar@gmail.com>
 
 	* membercache.cs: Extracted from decl.cs.

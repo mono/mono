@@ -241,7 +241,7 @@ namespace Mono.CSharp
 		}
 
 		public bool IsReadOnly {
-			get { return (modifiers & Modifiers.READONLY) != 0; }
+			get { return (Modifiers & Modifiers.READONLY) != 0; }
 		}
 
 		public FieldInfo MetaInfo {
@@ -324,7 +324,7 @@ namespace Mono.CSharp
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, ModifiersExtensions.FieldAttr (ModFlags));
 			spec = new FixedFieldSpec (this, FieldBuilder, element, ModFlags);
 
-			Parent.MemberCache.AddMember (FieldBuilder, this);
+			Parent.MemberCache.AddMember (FieldBuilder, spec);
 			TypeManager.RegisterFieldBase (FieldBuilder, this);
 
 			return true;
@@ -551,7 +551,7 @@ namespace Mono.CSharp
 
 				// Don't cache inaccessible fields
 				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
-					Parent.MemberCache.AddMember (FieldBuilder, this);
+					Parent.MemberCache.AddMember (FieldBuilder, spec);
 				}
 
 				TypeManager.RegisterFieldBase (FieldBuilder, this);

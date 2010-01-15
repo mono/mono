@@ -140,6 +140,8 @@ namespace Mono.CSharp
 				if (!method_data.Define (parent, method.GetFullName (MemberName), Report))
 					return null;
 
+				Spec = new MethodSpec (MemberKind.Method, this, method_data.MethodBuilder, ParameterInfo, ModFlags);
+
 				return method_data.MethodBuilder;
 			}
 
@@ -213,6 +215,8 @@ namespace Mono.CSharp
 
 				if (!method_data.Define (parent, method.GetFullName (MemberName), Report))
 					return null;
+
+				Spec = new MethodSpec (MemberKind.Method, this, method_data.MethodBuilder, ParameterInfo, ModFlags);
 
 				return method_data.MethodBuilder;
 			}
@@ -475,6 +479,27 @@ namespace Mono.CSharp
 				DefineSet (!define_set_first);
 		}
 
+		protected void DefineBuilders (MemberKind kind, Type[] parameterTypes)
+		{
+			// FIXME - PropertyAttributes.HasDefault ?
+
+			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
+				GetFullName (MemberName), PropertyAttributes.None, MemberType, parameterTypes);
+
+			if (!Get.IsDummy) {
+				PropertyBuilder.SetGetMethod (GetBuilder);
+				Parent.MemberCache.AddMember (GetBuilder, Get.Spec);
+			}
+
+			if (!Set.IsDummy) {
+				PropertyBuilder.SetSetMethod (SetBuilder);
+				Parent.MemberCache.AddMember (SetBuilder, Set.Spec);
+			}
+
+			var spec = new PropertySpec (kind, this, PropertyBuilder, ModFlags);
+			Parent.MemberCache.AddMember (PropertyBuilder, spec);
+		}
+
 		protected abstract PropertyInfo ResolveBaseProperty ();
 
 		// TODO: rename to Resolve......
@@ -722,23 +747,8 @@ namespace Mono.CSharp
 			if (!CheckBase ())
 				return false;
 
-			// FIXME - PropertyAttributes.HasDefault ?
-
-			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				GetFullName (MemberName), PropertyAttributes.None, MemberType, null);
-
-			if (!Get.IsDummy) {
-				PropertyBuilder.SetGetMethod (GetBuilder);
-				Parent.MemberCache.AddMember (GetBuilder, Get);
-			}
-
-			if (!Set.IsDummy) {
-				PropertyBuilder.SetSetMethod (SetBuilder);
-				Parent.MemberCache.AddMember (SetBuilder, Set);
-			}
-			
+			DefineBuilders (MemberKind.Property, null);
 			TypeManager.RegisterProperty (PropertyBuilder, this);
-			Parent.MemberCache.AddMember (PropertyBuilder, this);
 			return true;
 		}
 
@@ -1090,8 +1100,6 @@ namespace Mono.CSharp
 			if (Add.IsInterfaceImplementation)
 				SetIsUsed ();
 
-			TypeManager.RegisterEventField (EventBuilder, this);
-
 			BackingField = new Field (Parent,
 				new TypeExpression (MemberType, Location),
 				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
@@ -1105,14 +1113,13 @@ namespace Mono.CSharp
 			return BackingField.Define ();
 		}
 
-		bool HasBackingField {
+		public bool HasBackingField {
 			get {
 				return !IsInterface && (ModFlags & Modifiers.ABSTRACT) == 0;
 			}
 		}
 
-		public override string[] ValidAttributeTargets 
-		{
+		public override string[] ValidAttributeTargets {
 			get {
 				return HasBackingField ? attribute_targets : attribute_targets_interface;
 			}
@@ -1191,6 +1198,8 @@ namespace Mono.CSharp
 
 				MethodBuilder mb = method_data.MethodBuilder;
 				ParameterInfo.ApplyAttributes (mb);
+				Spec = new MethodSpec (MemberKind.Method, this, mb, ParameterInfo, method.ModFlags);
+
 				return mb;
 			}
 
@@ -1312,9 +1321,15 @@ namespace Mono.CSharp
 			EventBuilder.SetAddOnMethod (AddBuilder);
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
-			Parent.MemberCache.AddMember (EventBuilder, this);
-			Parent.MemberCache.AddMember (AddBuilder, Add);
-			Parent.MemberCache.AddMember (RemoveBuilder, Remove);
+			var spec = new EventSpec (this, EventBuilder, ModFlags, Add.Spec, Remove.Spec) {
+				EventType = MemberType
+			};
+
+			TypeManager.RegisterEventField (EventBuilder, spec);
+
+			Parent.MemberCache.AddMember (EventBuilder, spec);
+			Parent.MemberCache.AddMember (AddBuilder, Add.Spec);
+			Parent.MemberCache.AddMember (RemoveBuilder, Remove.Spec);
 			
 			return true;
 		}
@@ -1349,6 +1364,40 @@ namespace Mono.CSharp
 		//
 		public override string DocCommentHeader {
 			get { return "E:"; }
+		}
+	}
+
+	public class EventSpec : MemberSpec
+	{
+		EventInfo info;
+
+		public EventSpec (IMemberDefinition definition, EventInfo info, Modifiers modifiers, MethodSpec add, MethodSpec remove)
+			: base (MemberKind.Event, definition, info.Name, modifiers)
+		{
+			this.info = info;
+			this.AccessorAdd = add;
+			this.AccessorRemove = remove;
+
+			// TODO MemberCache: Remove
+			if (TypeManager.IsBeingCompiled (info))
+				state &= ~MemberSpec.StateFlags.Obsolete_Undetected;
+		}
+
+		public MethodSpec AccessorAdd { get; private set; }
+		public MethodSpec AccessorRemove { get; private set; }
+
+		public override Type DeclaringType {
+			get { return info.DeclaringType; }
+		}
+
+		public Type EventType { get; set; }
+
+		public bool IsAbstract {
+			get { return (Modifiers & Modifiers.ABSTRACT) != 0; }
+		}
+
+		public EventInfo MetaInfo {
+			get { return info; }
 		}
 	}
  
@@ -1514,24 +1563,8 @@ namespace Mono.CSharp
 			if (!CheckBase ())
 				return false;
 
-			//
-			// Now name the parameters
-			//
-			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				GetFullName (MemberName), PropertyAttributes.None, MemberType, parameters.GetEmitTypes ());
-
-			if (!Get.IsDummy) {
-				PropertyBuilder.SetGetMethod (GetBuilder);
-				Parent.MemberCache.AddMember (GetBuilder, Get);
-			}
-
-			if (!Set.IsDummy) {
-				PropertyBuilder.SetSetMethod (SetBuilder);
-				Parent.MemberCache.AddMember (SetBuilder, Set);
-			}
-				
+			DefineBuilders (MemberKind.Indexer, parameters.GetEmitTypes ());
 			TypeManager.RegisterIndexer (PropertyBuilder, parameters);
-			Parent.MemberCache.AddMember (PropertyBuilder, this);
 			return true;
 		}
 

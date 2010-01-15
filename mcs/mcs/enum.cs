@@ -87,7 +87,7 @@ namespace Mono.CSharp {
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, attr);
 			spec = new ConstSpec (this, FieldBuilder, ModFlags, initializer);
 
-			Parent.MemberCache.AddMember (FieldBuilder, this);
+			Parent.MemberCache.AddMember (FieldBuilder, spec);
 			TypeManager.RegisterConstant (FieldBuilder, (ConstSpec) spec);
 
 			return true;

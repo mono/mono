@@ -104,6 +104,25 @@ namespace Mono.CSharp
 			return new FieldSpec (definition, fi, mod);
 		}
 
+		public static EventSpec CreateEvent (EventInfo ei)
+		{
+			// TODO MemberCache: Remove
+			var ef = TypeManager.GetEventField (ei);
+			if (ef != null)
+				return ef;
+
+			var add_accessor = CreateMethod (TypeManager.GetAddMethod (ei));
+			var remove_accessor = CreateMethod (TypeManager.GetRemoveMethod (ei));
+
+			if (add_accessor.Modifiers != remove_accessor.Modifiers)
+				throw new NotImplementedException ("Different accessor modifiers " + ei.Name);
+
+			var definition = new ImportedMemberDefinition (ei);
+			return new EventSpec (definition, ei, add_accessor.Modifiers, add_accessor, remove_accessor) {
+				EventType = ei.EventHandlerType
+			};
+		}
+
 		public static MethodSpec CreateMethod (MethodBase mb)
 		{
 			// TODO MemberCache: Remove

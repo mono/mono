@@ -528,9 +528,9 @@ namespace Mono.CSharp {
 			AddMembers (mt, BindingFlags.Instance | BindingFlags.NonPublic, container);
 		}
 
-		public void AddMember (MemberInfo mi, MemberCore mc)
+		public void AddMember (MemberInfo mi, MemberSpec mc)
 		{
-			AddMember (mi.MemberType, GetBindingFlags (mc.ModFlags), Container, mi.Name, mi);
+			AddMember (mi.MemberType, GetBindingFlags (mc.Modifiers), Container, mi.Name, mi);
 		}
 
 		public void AddGenericMember (MemberInfo mi, InterfaceMemberBase mc)

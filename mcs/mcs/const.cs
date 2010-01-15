@@ -80,7 +80,7 @@ namespace Mono.CSharp {
 			spec = new ConstSpec (this, FieldBuilder, ModFlags, initializer);
 
 			TypeManager.RegisterConstant (FieldBuilder, (ConstSpec) spec);
-			Parent.MemberCache.AddMember (FieldBuilder, this);
+			Parent.MemberCache.AddMember (FieldBuilder, spec);
 
 			if ((field_attr & FieldAttributes.InitOnly) != 0)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,

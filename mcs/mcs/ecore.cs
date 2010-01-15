@@ -151,26 +151,24 @@ namespace Mono.CSharp {
 
 		public static bool IsAccessorAccessible (Type invocation_type, MethodSpec mi, out bool must_do_cs1540_check)
 		{
-			MethodAttributes ma = mi.MetaInfo.Attributes & MethodAttributes.MemberAccessMask;
+			var ma = mi.Modifiers & Modifiers.AccessibilityMask;
 
 			must_do_cs1540_check = false; // by default we do not check for this
 
-			if (ma == MethodAttributes.Public)
+			if (ma == Modifiers.PUBLIC)
 				return true;
 			
 			//
 			// If only accessible to the current class or children
 			//
-			if (ma == MethodAttributes.Private)
+			if (ma == Modifiers.PRIVATE)
 				return TypeManager.IsPrivateAccessible (invocation_type, mi.DeclaringType) ||
 					TypeManager.IsNestedChildOf (invocation_type, mi.DeclaringType);
 
-			if (TypeManager.IsThisOrFriendAssembly (invocation_type.Assembly, mi.DeclaringType.Assembly)) {
-				if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
-					return true;
-			} else {
-				if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamANDAssem)
-					return false;
+			if ((ma & Modifiers.INTERNAL) != 0) {
+				var b = TypeManager.IsThisOrFriendAssembly (invocation_type.Assembly, mi.DeclaringType.Assembly);
+				if (b || ma == Modifiers.INTERNAL)
+					return b;
 			}
 
 			// Family and FamANDAssem require that we derive.
@@ -603,7 +601,7 @@ namespace Mono.CSharp {
 		public static Expression ExprClassFromMemberInfo (Type container_type, MemberInfo mi, Location loc)
 		{
 			if (mi is EventInfo)
-				return new EventExpr ((EventInfo) mi, loc);
+				return new EventExpr (Import.CreateEvent ((EventInfo) mi), loc);
 			else if (mi is FieldInfo) {
 				FieldInfo fi = (FieldInfo) mi;
 				var spec = Import.CreateField (fi);
@@ -5859,51 +5857,37 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Fully resolved expression that evaluates to an Event
 	/// </summary>
-	public class EventExpr : MemberExpr {
-		public readonly EventInfo EventInfo;
+	public class EventExpr : MemberExpr
+	{
+		readonly EventSpec spec;
 
-		bool is_static;
-		MethodSpec add_accessor, remove_accessor;
-
-		public EventExpr (EventInfo ei, Location loc)
+		public EventExpr (EventSpec spec, Location loc)
 		{
-			EventInfo = ei;
+			this.spec = spec;
 			this.loc = loc;
-
-			add_accessor = Import.CreateMethod (TypeManager.GetAddMethod (ei));
-			remove_accessor = Import.CreateMethod (TypeManager.GetRemoveMethod (ei));
-			if (add_accessor.IsStatic || remove_accessor.IsStatic)
-				is_static = true;
-
-			if (EventInfo is MyEventBuilder){
-				MyEventBuilder eb = (MyEventBuilder) EventInfo;
-				type = eb.EventType;
-				eb.SetUsed ();
-			} else
-				type = EventInfo.EventHandlerType;
 		}
 
 		public override string Name {
 			get {
-				return EventInfo.Name;
+				return spec.Name;
 			}
 		}
 
 		public override bool IsInstance {
 			get {
-				return !is_static;
+				return !spec.IsStatic;
 			}
 		}
 
 		public override bool IsStatic {
 			get {
-				return is_static;
+				return spec.IsStatic;
 			}
 		}
 
 		public override Type DeclaringType {
 			get {
-				return EventInfo.DeclaringType;
+				return spec.DeclaringType;
 			}
 		}
 		
@@ -5920,13 +5904,14 @@ namespace Mono.CSharp {
 			// If the event is local to this class, we transform ourselves into a FieldExpr
 			//
 
-			if (EventInfo.DeclaringType == ec.CurrentType ||
-			    TypeManager.IsNestedChildOf(ec.CurrentType, EventInfo.DeclaringType)) {
+			if (spec.DeclaringType == ec.CurrentType ||
+			    TypeManager.IsNestedChildOf(ec.CurrentType, spec.DeclaringType)) {
 					
 				// TODO: Breaks dynamic binder as currect context fields are imported and not compiled
-				EventField mi = TypeManager.GetEventField (EventInfo);
+				EventField mi = TypeManager.GetEventField (spec.MetaInfo).MemberDefinition as EventField;
 
-				if (mi != null) {
+				if (mi != null && mi.HasBackingField) {
+					mi.SetIsUsed ();
 					if (!ec.IsObsolete)
 						mi.CheckObsoleteness (loc);
 
@@ -5949,7 +5934,7 @@ namespace Mono.CSharp {
 
 		bool InstanceResolve (ResolveContext ec, bool must_do_cs1540_check)
 		{
-			if (is_static) {
+			if (IsStatic) {
 				InstanceExpression = null;
 				return true;
 			}
@@ -5963,8 +5948,8 @@ namespace Mono.CSharp {
 			if (InstanceExpression == null)
 				return false;
 
-			if (IsBase && add_accessor.IsAbstract) {
-				Error_CannotCallAbstractBase (ec, TypeManager.CSharpSignature(add_accessor.MetaInfo));
+			if (IsBase && spec.IsAbstract) {
+				Error_CannotCallAbstractBase (ec, TypeManager.CSharpSignature(spec.MetaInfo));
 				return false;
 			}
 
@@ -5978,8 +5963,8 @@ namespace Mono.CSharp {
 			    !TypeManager.IsInstantiationOfSameGenericType (InstanceExpression.Type, ec.CurrentType) &&
 			    !TypeManager.IsNestedChildOf (ec.CurrentType, InstanceExpression.Type) &&
 			    !TypeManager.IsSubclassOf (InstanceExpression.Type, ec.CurrentType)) {
-				ec.Report.SymbolRelatedToPreviousError (EventInfo);
-				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo), ec.Report);
+				ec.Report.SymbolRelatedToPreviousError (spec.MetaInfo);
+				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (spec.MetaInfo), ec.Report);
 				return false;
 			}
 
@@ -5989,8 +5974,8 @@ namespace Mono.CSharp {
 		public bool IsAccessibleFrom (Type invocation_type)
 		{
 			bool dummy;
-			return IsAccessorAccessible (invocation_type, add_accessor, out dummy) &&
-				IsAccessorAccessible (invocation_type, remove_accessor, out dummy);
+			return IsAccessorAccessible (invocation_type, spec.AccessorAdd, out dummy) &&
+				IsAccessorAccessible (invocation_type, spec.AccessorRemove, out dummy);
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -6010,10 +5995,10 @@ namespace Mono.CSharp {
 			eclass = ExprClass.EventAccess;
 
 			bool must_do_cs1540_check;
-			if (!(IsAccessorAccessible (ec.CurrentType, add_accessor, out must_do_cs1540_check) &&
-			      IsAccessorAccessible (ec.CurrentType, remove_accessor, out must_do_cs1540_check))) {
-				ec.Report.SymbolRelatedToPreviousError (EventInfo);
-				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (EventInfo), ec.Report);
+			if (!(IsAccessorAccessible (ec.CurrentType, spec.AccessorAdd, out must_do_cs1540_check) &&
+			      IsAccessorAccessible (ec.CurrentType, spec.AccessorRemove, out must_do_cs1540_check))) {
+				ec.Report.SymbolRelatedToPreviousError (spec.MetaInfo);
+				ErrorIsInaccesible (loc, TypeManager.CSharpSignature (spec.MetaInfo), ec.Report);
 				return null;
 			}
 
@@ -6026,15 +6011,13 @@ namespace Mono.CSharp {
 			}
 
 			if (!ec.IsObsolete) {
-				EventField ev = TypeManager.GetEventField (EventInfo);
-				if (ev != null) {
-					ev.CheckObsoleteness (loc);
-				} else {
-					ObsoleteAttribute oa = AttributeTester.GetMemberObsoleteAttribute (EventInfo);
-					if (oa != null)
-						AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, ec.Report);
-				}
+				var oa = spec.GetObsoleteAttribute ();
+				if (oa != null)
+					AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, ec.Report);
 			}
+
+			spec.MemberDefinition.SetIsUsed ();
+			type = spec.EventType;
 			
 			return this;
 		}		
@@ -6049,19 +6032,21 @@ namespace Mono.CSharp {
 		{
 			ec.Report.Error (70, loc,
 				"The event `{0}' can only appear on the left hand side of += or -= when used outside of the type `{1}'",
-				GetSignatureForError (), TypeManager.CSharpName (EventInfo.DeclaringType));
+				GetSignatureForError (), TypeManager.CSharpName (spec.DeclaringType));
 		}
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.CSharpSignature (EventInfo);
+			return TypeManager.CSharpSignature (spec.MetaInfo);
 		}
 
 		public void EmitAddOrRemove (EmitContext ec, bool is_add, Expression source)
 		{
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (source));
-			Invocation.EmitCall (ec, IsBase, InstanceExpression, is_add ? add_accessor : remove_accessor, args, loc);
+			Invocation.EmitCall (ec, IsBase, InstanceExpression,
+				is_add ? spec.AccessorAdd : spec.AccessorRemove,
+				args, loc);
 		}
 	}
 

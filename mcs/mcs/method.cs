@@ -190,12 +190,12 @@ namespace Mono.CSharp {
 			// TODO: Does not work on .NET
 			var par = TypeManager.GetParameterData (mb);
 
-			return new MethodSpec (Kind, definition, mb, par, modifiers);
+			return new MethodSpec (Kind, definition, mb, par, Modifiers);
 		}
 
 		public bool IsAbstract {
 			get {
-				return (modifiers & Modifiers.ABSTRACT) != 0;
+				return (Modifiers & Modifiers.ABSTRACT) != 0;
 			}
 		}
 
@@ -214,7 +214,7 @@ namespace Mono.CSharp {
 		// When is virtual or abstract
 		public bool IsVirtual {
 			get {
-				return (modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE)) != 0;
+				return (Modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE)) != 0;
 			}
 		}
 
@@ -353,10 +353,10 @@ namespace Mono.CSharp {
 				// Add to member cache only when a partial method implementation has not been found yet
 				if ((caching_flags & Flags.PartialDefinitionExists) == 0) {
 					MethodBase mb = new PartialMethodDefinitionInfo (this);
-					Parent.MemberCache.AddMember (mb, this);
-					TypeManager.AddMethod (mb, this);
 
 					spec = new MethodSpec (kind, this, mb, Parameters, ModFlags);
+					Parent.MemberCache.AddMember (mb, spec);
+					TypeManager.AddMethod (mb, this);
 				}
 
 				return true;
@@ -375,7 +375,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericMethod (MethodBuilder))
 				Parent.MemberCache.AddGenericMember (MethodBuilder, this);
 			
-			Parent.MemberCache.AddMember (MethodBuilder, this);
+			Parent.MemberCache.AddMember (MethodBuilder, spec);
 
 			return true;
 		}
@@ -1255,7 +1255,7 @@ namespace Mono.CSharp {
 				ConstructorBuilder.SetImplementationFlags (MethodImplAttributes.InternalCall);
 			}
 			
-			Parent.MemberCache.AddMember (ConstructorBuilder, this);
+			Parent.MemberCache.AddMember (ConstructorBuilder, spec);
 			TypeManager.AddMethod (ConstructorBuilder, this);
 			
 			// It's here only to report an error
@@ -2020,8 +2020,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override bool IsUsed
-		{
+		public override bool IsUsed {
 			get {
 				if (IsDummy)
 					return false;
@@ -2029,6 +2028,8 @@ namespace Mono.CSharp {
 				return base.IsUsed;
 			}
 		}
+
+		public MethodSpec Spec { get; protected set; }
 
 		//
 		//   Represents header string for documentation comment.
