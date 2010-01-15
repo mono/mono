@@ -1,5 +1,8 @@
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* ir-emit.h (MONO_EMIT_NEW_ICOMPARE_IMM): Use sizeof (mgreg_t) instead of
+	sizeof (void*).
+
         * unwind.c (mono_unwind_frame): Use mgreg_t instead of gssize.
 
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
