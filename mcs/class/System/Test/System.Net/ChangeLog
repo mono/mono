@@ -1,3 +1,8 @@
+2010-01-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* HttpWebRequestTest.cs: Mark test WriteServerAborts as
+	NotWorking.  Documented on bug #312968.
+
 2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NetworkCredentialTest.cs: New. Unit tests.

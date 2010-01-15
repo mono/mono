@@ -2113,6 +2113,7 @@ namespace MonoTests.System.Net
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void WriteServerAborts ()
 		{
 			ManualResetEvent abort = new ManualResetEvent (false);
