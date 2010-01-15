@@ -1,5 +1,9 @@
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+        * unwind.c (mono_unwind_frame): Use mgreg_t instead of gssize.
+
+2010-01-15  Zoltan Varga  <vargaz@gmail.com>
+
 	* ir-emit.h (MONO_EMIT_NEW_CHECK_THIS): Emit an explicit null check if the
 	flag is set.
 
