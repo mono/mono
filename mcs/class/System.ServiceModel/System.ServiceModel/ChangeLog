@@ -1,3 +1,9 @@
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SilverlightClientConfigLoader.cs : add another loop blocker.
+	  Do not reject binding configuration with no basic http binding.
+	  In SL3 it may be custom and such configuration should be valid.
+
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ExceptionDetail.cs : uncomment DataMember (likely commented out due

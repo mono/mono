@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
+#if NET_2_1
 using System;
 using System.Collections.Generic;
 using System.ServiceModel.Channels;
@@ -41,7 +41,7 @@ namespace System.ServiceModel
 	// Since System.Configuration is not supported in SL, this config
 	// loader has to be created without depending on it.
 
-	internal class SilverlightClientConfigLoader
+	public class SilverlightClientConfigLoader
 	{
 		public SilverlightClientConfiguration Load (XmlReader reader)
 		{
@@ -161,6 +161,8 @@ namespace System.ServiceModel
 						b.Transport = new HttpsTransportBindingElement ();
 						reader.Skip ();
 						break;
+					default:
+						throw new XmlException (String.Format ("Unexpected configuration element '{0}'", reader.LocalName));
 					}
 				}
 				reader.ReadEndElement ();
@@ -245,9 +247,6 @@ namespace System.ServiceModel
 
 			EndpointConfiguration GetEndpointConfiguration (string name)
 			{
-				if (Client.Endpoints.Count == 0)
-					throw new InvalidOperationException ("Endpoint configuration can be acquired only after loading is done.");
-
 				foreach (var e in Client.Endpoints)
 					if (e.Name == name || name == "*")
 						return e;
@@ -256,9 +255,6 @@ namespace System.ServiceModel
 
 			BindingConfiguration GetConfiguredHttpBinding (EndpointConfiguration endpoint)
 			{
-				if (Bindings.BasicHttpBinding.Count == 0)
-					throw new InvalidOperationException ("Binding configuration can be acquired only after loading is done.");
-
 				foreach (var b in Bindings.All ())
 					if (b.Name == endpoint.BindingConfiguration)
 						return b;
@@ -399,3 +395,4 @@ namespace System.ServiceModel
 		}
 	}
 }
+#endif
