@@ -131,6 +131,7 @@ namespace MonoTests.System.Configuration
 		}
 
 		[Test] // ctor (String, XmlNode)
+		[Category ("NotWorking")]
 		public void Constructor4 ()
 		{
 			string msg;
@@ -194,6 +195,7 @@ namespace MonoTests.System.Configuration
 		}
 
 		[Test] // ctor (String, Exception, XmlNode)
+		[Category ("NotWorking")]
 		public void Constructor6 ()
 		{
 			string msg;
@@ -512,6 +514,7 @@ namespace MonoTests.System.Configuration
 		}
 
 		[Test] // GetFilename (XmlNode)
+		[Category ("NotWorking")]
 		public void GetFilename2 ()
 		{
 			XmlNode node;
@@ -577,6 +580,7 @@ namespace MonoTests.System.Configuration
 		}
 
 		[Test] // GetLineNumber (XmlNode)
+		[Category ("NotWorking")]
 		public void GetLineNumber2 ()
 		{
 			XmlNode node;

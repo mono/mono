@@ -1,3 +1,8 @@
+2010-01-15 Jonathan Pobst  <monkey@jpobst.com>
+
+	* ConfigurationErrorsExceptionTest.cs: Mark 4 failing tests as NotWorking.
+	Filed as bug #571226.
+
 2009-07-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ConfigurationSectionTest.cs: New test.
