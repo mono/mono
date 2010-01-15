@@ -447,6 +447,14 @@ namespace MonoTests.System {
 		}
 
 		[Test]
+		public void ParseExactPreserveFractions ()
+		{
+			var s = "1999-06-10T21:27:03.1147764+02:00";
+			var d = DateTimeOffset.ParseExact (s, "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz", CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+			Assert.AreEqual (630646468231147764, d.Ticks, "#1");
+		}
+
+		[Test]
 		public void EqualsObject ()
 		{
 			DateTimeOffset offset1 = new DateTimeOffset ();

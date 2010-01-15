@@ -1,3 +1,12 @@
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.cs : In AddMilliseconds(), it seems fractional
+	  milliseconds are first rounded and then added.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeOffset.cs : preserve fractions (it is somehow dropped).
+
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Double.cs : no need to preserve old code.
