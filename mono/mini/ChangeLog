@@ -1,3 +1,12 @@
+2010-01-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (mono_aot_plt_resolve): Reenable the previous assert for
+	ftnptrs created by us, handle RGCTX_FETCH correctly.
+	(mono_aot_get_lazy_fetch_trampoline): Add an ftnptr.
+
+	* mini-trampolines.c (mono_create_generic_class_init_trampoline): Remove the
+	ftnptr added by mono_aot_get_named_code ().
+
 2010-01-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c: Fix a few LLVM problems.
