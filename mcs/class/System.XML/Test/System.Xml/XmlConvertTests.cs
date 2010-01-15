@@ -738,6 +738,13 @@ namespace MonoTests.System.Xml
 		{
 			Assert.AreEqual (new DateTimeOffset (2009, 11, 05, 20, 16, 22, TimeSpan.FromHours (9)),  XmlConvert.ToDateTimeOffset ("2009-11-05T20:16:22+09:00"), "#1");
 		}
+
+		[Test]
+		public void DateTimeOffsetWithWhitespace ()
+		{
+			var s = "   2010-01-02T00:00:00Z \t";
+			XmlConvert.ToDateTime (s);
+		}
 #endif
 	}
 }

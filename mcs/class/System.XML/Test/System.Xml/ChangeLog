@@ -1,3 +1,8 @@
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvertTests.cs : add test for ToDateTimeOffset() with date
+	  string with spaces.
+
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvertTests.cs : added commented-out tests for the remaining

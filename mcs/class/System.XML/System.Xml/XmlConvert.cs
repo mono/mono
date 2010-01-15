@@ -871,7 +871,10 @@ namespace System.Xml {
 
 		public static DateTimeOffset ToDateTimeOffset (string s, string [] formats)
 		{
-			return DateTimeOffset.ParseExact (s, formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
+					       DateTimeStyles.AllowTrailingWhite |
+					       DateTimeStyles.AssumeUniversal;
+			return DateTimeOffset.ParseExact (s, formats, CultureInfo.InvariantCulture, style);
 		}
 
 		public static string ToString (DateTimeOffset value)
