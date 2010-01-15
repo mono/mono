@@ -54,6 +54,20 @@ namespace System.Xml {
 
 		static readonly string [] datetimeFormats = {
 		  // dateTime
+#if NET_2_0
+		  "yyyy-MM-ddTHH:mm:sszzz",
+		  "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
+		  "yyyy-MM-ddTHH:mm:ssZ",
+		  "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ",
+		  "yyyy-MM-ddTHH:mm:ss",
+		  "yyyy-MM-ddTHH:mm:ss.FFFFFFF",
+		  "HH:mm:ss",
+		  "HH:mm:ss.FFFFFFF",
+		  "HH:mm:sszzz",
+		  "HH:mm:ss.FFFFFFFzzz",
+		  "HH:mm:ssZ",
+		  "HH:mm:ss.FFFFFFFZ",
+#else // it is not required in trunk but should make it easy to backport...
 		  "yyyy-MM-ddTHH:mm:sszzz",
 		  "yyyy-MM-ddTHH:mm:ss.fzzz",
 		  "yyyy-MM-ddTHH:mm:ss.ffzzz",
@@ -103,6 +117,7 @@ namespace System.Xml {
 		  "HH:mm:ss.fffffZ",
 		  "HH:mm:ss.ffffffZ",
 		  "HH:mm:ss.fffffffZ",
+#endif
 		  // date
 		  "yyyy-MM-dd",
 		  "yyyy-MM-ddzzz",
@@ -542,19 +557,25 @@ namespace System.Xml {
 			builder.Append ('P');
 			if (value.Days > 0)
 				builder.Append (value.Days).Append ('D');
-			if (value.Days > 0 || value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0) {
+			long ticks = value.Ticks % TimeSpan.TicksPerMillisecond;
+			if (value.Days > 0 || value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0 || ticks > 0) {
 				builder.Append('T');
 				if (value.Hours > 0)
 					builder.Append (value.Hours).Append ('H');
 				if (value.Minutes > 0) 
 					builder.Append (value.Minutes).Append ('M');
-				if (value.Seconds > 0 || value.Milliseconds > 0) {
+				if (value.Seconds > 0 || value.Milliseconds > 0 || ticks > 0) {
 					builder.Append (value.Seconds);
-					long ticks = value.Ticks % TimeSpan.TicksPerMillisecond;
+					bool trimZero = true;
 					if (ticks > 0)
 						builder.Append ('.').AppendFormat ("{0:0000000}", value.Ticks % TimeSpan.TicksPerSecond);
 					else if (value.Milliseconds > 0)
 						builder.Append ('.').AppendFormat ("{0:000}", value.Milliseconds);
+					else
+						trimZero = false;
+					if (trimZero)
+						while (builder [builder.Length - 1] == '0')
+							builder.Remove (builder.Length - 1, 1);
 
 					builder.Append ('S');
 				}
@@ -635,6 +656,7 @@ namespace System.Xml {
 
 		public static TimeSpan ToTimeSpan(string s)
 		{
+			s = s.Trim (XmlChar.WhitespaceChars);
 			if (s.Length == 0)
 				throw new FormatException ("Invalid format string for duration schema datatype.");
 
@@ -871,7 +893,10 @@ namespace System.Xml {
 
 		public static DateTimeOffset ToDateTimeOffset (string s, string [] formats)
 		{
-			return DateTimeOffset.ParseExact (s, formats, CultureInfo.InvariantCulture, DateTimeStyles.AssumeUniversal);
+			DateTimeStyles style = DateTimeStyles.AllowLeadingWhite |
+					       DateTimeStyles.AllowTrailingWhite |
+					       DateTimeStyles.AssumeUniversal;
+			return DateTimeOffset.ParseExact (s, formats, CultureInfo.InvariantCulture, style);
 		}
 
 		public static string ToString (DateTimeOffset value)

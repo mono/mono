@@ -370,7 +370,13 @@ namespace MonoTests.System.Xml
 			// bug #77252
 			TimeSpan t1 = TimeSpan.FromTicks (
 				TimeSpan.TicksPerSecond + 1);
-			Assert.AreEqual ("PT1.0000001S", XmlConvert.ToString (t1));
+			Assert.AreEqual ("PT1.0000001S", XmlConvert.ToString (t1), "#1");
+
+			// XAttributeTest.CastTimeSpans():#5d
+			t1 = new TimeSpan (2710L);
+			Assert.AreEqual ("PT0.000271S", XmlConvert.ToString (t1), "#2");
+			t1 = new TimeSpan (27100000L);
+			Assert.AreEqual ("PT2.71S", XmlConvert.ToString (t1), "#3");
 		}
 
 		[Test]
@@ -389,6 +395,8 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (TimeSpan.MinValue, XmlConvert.ToTimeSpan ("-P10675199DT2H48M5.4775808S"), "#7");
 
 			Assert.AreEqual (TimeSpan.MaxValue, XmlConvert.ToTimeSpan ("P10675199DT2H48M5.4775807S"), "#8");
+
+			Assert.AreEqual (TimeSpan.FromDays (2), XmlConvert.ToTimeSpan (" \r\n   \tP2D  "), "#9");
 		}
 		
 		[Test]
@@ -737,6 +745,13 @@ namespace MonoTests.System.Xml
 		public void DateTimeOffsetTimezoneRoundtrip ()
 		{
 			Assert.AreEqual (new DateTimeOffset (2009, 11, 05, 20, 16, 22, TimeSpan.FromHours (9)),  XmlConvert.ToDateTimeOffset ("2009-11-05T20:16:22+09:00"), "#1");
+		}
+
+		[Test]
+		public void DateTimeOffsetWithWhitespace ()
+		{
+			var s = "   2010-01-02T00:00:00Z \t";
+			XmlConvert.ToDateTime (s);
 		}
 #endif
 	}
