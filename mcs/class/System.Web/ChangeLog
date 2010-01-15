@@ -1,3 +1,8 @@
+2010-01-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (TEST_RESOURCE_FILES): added
+	Test/mainsoft/NunitWebResources/ChangePasswordContainer_FindControl.aspx
+
 2010-01-14  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web_standalone_test.dll.sources,

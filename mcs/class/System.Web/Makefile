@@ -197,7 +197,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/NestedParserFileText.aspx \
 	Test/mainsoft/NunitWebResources/StateFormatter_CorrectConverter.aspx \
 	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx \
-	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx.cs
+	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx.cs \
+	Test/mainsoft/NunitWebResources/ChangePasswordContainer_FindControl.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))

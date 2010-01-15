@@ -1148,7 +1148,7 @@ namespace System.Web.UI.WebControls
 
 		#endregion
 
-			class BaseChangePasswordContainer : Table, INamingContainer, INonBindingContainer
+		class BaseChangePasswordContainer : Table, INamingContainer, INonBindingContainer
 		{
 			protected readonly ChangePassword _owner = null;
 			TableCell _containerCell = null;
@@ -1182,6 +1182,15 @@ namespace System.Web.UI.WebControls
 			{
 				ApplyStyle (_owner.ControlStyle);
 				base.OnPreRender (e);
+			}
+
+			protected override void EnsureChildControls ()
+			{
+				base.EnsureChildControls ();
+
+				// it's the owner who adds controls, not us
+				if (_owner != null)
+					_owner.EnsureChildControls ();
 			}
 		}
 
