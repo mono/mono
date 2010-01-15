@@ -1,5 +1,9 @@
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_AOT_FILE_VERSION): Bump this because of the IMT hashing changes.
+
+2010-01-15  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-runtime.c (mono_aot_plt_resolve): Reenable the previous assert for
 	ftnptrs created by us, handle RGCTX_FETCH correctly.
 	(mono_aot_get_lazy_fetch_trampoline): Add an ftnptr.
