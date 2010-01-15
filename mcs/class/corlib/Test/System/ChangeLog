@@ -1,5 +1,9 @@
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DateTimeTest.cs : added test for rounding milliseconds.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DateTimeOffsetTest.cs : add ParseExact() case that should preserve
 	  fractions.
 

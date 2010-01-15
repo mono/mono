@@ -541,7 +541,7 @@ namespace System
 					(value * TimeSpan.TicksPerMillisecond) < long.MinValue) {
 				throw new ArgumentOutOfRangeException();
 			}
-			long msticks = (long) (value * TimeSpan.TicksPerMillisecond);
+			long msticks = (long) Math.Round (value * TimeSpan.TicksPerMillisecond);
 
 			return AddTicks (msticks);
 		}
