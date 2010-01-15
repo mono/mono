@@ -54,6 +54,20 @@ namespace System.Xml {
 
 		static readonly string [] datetimeFormats = {
 		  // dateTime
+#if NET_2_0
+		  "yyyy-MM-ddTHH:mm:sszzz",
+		  "yyyy-MM-ddTHH:mm:ss.FFFFFFFzzz",
+		  "yyyy-MM-ddTHH:mm:ssZ",
+		  "yyyy-MM-ddTHH:mm:ss.FFFFFFFZ",
+		  "yyyy-MM-ddTHH:mm:ss",
+		  "yyyy-MM-ddTHH:mm:ss.FFFFFFF",
+		  "HH:mm:ss",
+		  "HH:mm:ss.FFFFFFF",
+		  "HH:mm:sszzz",
+		  "HH:mm:ss.FFFFFFFzzz",
+		  "HH:mm:ssZ",
+		  "HH:mm:ss.FFFFFFFZ",
+#else // it is not required in trunk but should make it easy to backport...
 		  "yyyy-MM-ddTHH:mm:sszzz",
 		  "yyyy-MM-ddTHH:mm:ss.fzzz",
 		  "yyyy-MM-ddTHH:mm:ss.ffzzz",
@@ -103,6 +117,7 @@ namespace System.Xml {
 		  "HH:mm:ss.fffffZ",
 		  "HH:mm:ss.ffffffZ",
 		  "HH:mm:ss.fffffffZ",
+#endif
 		  // date
 		  "yyyy-MM-dd",
 		  "yyyy-MM-ddzzz",

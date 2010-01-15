@@ -1,5 +1,9 @@
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : shorten format string patterns.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvert.cs : DateTimeOffset parse is sloppy.
 
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
