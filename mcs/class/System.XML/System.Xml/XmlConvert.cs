@@ -650,6 +650,7 @@ namespace System.Xml {
 
 		public static TimeSpan ToTimeSpan(string s)
 		{
+			s = s.Trim (XmlChar.WhitespaceChars);
 			if (s.Length == 0)
 				throw new FormatException ("Invalid format string for duration schema datatype.");
 

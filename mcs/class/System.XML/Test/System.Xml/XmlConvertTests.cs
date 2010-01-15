@@ -389,6 +389,8 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (TimeSpan.MinValue, XmlConvert.ToTimeSpan ("-P10675199DT2H48M5.4775808S"), "#7");
 
 			Assert.AreEqual (TimeSpan.MaxValue, XmlConvert.ToTimeSpan ("P10675199DT2H48M5.4775807S"), "#8");
+
+			Assert.AreEqual (TimeSpan.FromDays (2), XmlConvert.ToTimeSpan (" \r\n   \tP2D  "), "#9");
 		}
 		
 		[Test]
