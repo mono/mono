@@ -1,3 +1,7 @@
+2010-01-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Array.cs: Implement IStructuralComparer.
+
 2010-01-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Int32.cs: In Parse() cast the parsed value to long *before* changing

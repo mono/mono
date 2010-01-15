@@ -44,6 +44,9 @@ namespace System
 	[ComVisible (true)]
 	// FIXME: We are doing way to many double/triple exception checks for the overloaded functions"
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
+#if NET_4_0
+		, IStructuralComparable
+#endif
 	{
 		// Constructor
 		private Array ()
@@ -429,6 +432,37 @@ namespace System
 		{
 			return new SimpleEnumerator (this);
 		}
+
+#if NET_4_0
+		public int CompareTo (object other, IComparer comparer)
+		{
+			if (other == null)
+				return 1;
+
+			Array arr = other as Array;
+			if (arr == null)
+				throw new ArgumentException ("Not an array", "other");
+
+			int len = GetLength (0);
+			if (len != arr.GetLength (0))
+				throw new ArgumentException ("Not of the same length", "other");
+
+			if (Rank > 1)
+				throw new ArgumentException ("Array must be single dimentional");
+
+			if (Rank > 1 || arr.Rank > 1)
+				throw new ArgumentException ("Array must be single dimentional", "other");
+
+			for (int i = 0; i < len; ++i) {
+				object a = GetValue (i);
+				object b = arr.GetValue (i);
+				int r = comparer.Compare (a, b);
+				if (r != 0)
+					return r;
+			}
+			return 0;
+		}
+#endif
 
 		[ReliabilityContractAttribute (Consistency.WillNotCorruptState, Cer.Success)]
 		public int GetUpperBound (int dimension)

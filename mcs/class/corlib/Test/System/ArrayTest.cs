@@ -3110,5 +3110,114 @@ public class ArrayTest
 		IList array = new int [1, 1];
 		int a = (int) array [0];
 	}
+
+#if NET_4_0
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CompareToWithJaggedArray () {
+		IStructuralComparable a = new int[][] { new int [] { 1,2 }, new int [] { 3,4 }};
+		IStructuralComparable b = new int[][] { new int [] { 1,2 }, new int [] { 3,4 }};
+		a.CompareTo (b, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CompareToWithArrayOfTheWrongKind () {
+		IStructuralComparable a = new int[] { 1, 2 };
+		IStructuralComparable b = new double[] { 1, 2 };
+		a.CompareTo (b, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CompareToWithNonArrayType () {
+		IStructuralComparable a = new int[] { 1, 2 };
+		a.CompareTo (99, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CompareToWithNonArrayOfDifferentSize () {
+		IStructuralComparable a = new int[] { 1, 2 };
+		IStructuralComparable b = new int[] { 1, 2, 3 };
+		a.CompareTo (b, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CompareToWithMultiDimArray1 () {
+		IStructuralComparable a = new int [2,2] { {10, 10 }, { 10, 10 } };
+		IStructuralComparable b = new int [2,2] { {10, 10 }, { 10, 10 } };
+		a.CompareTo (b, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CompareToWithMultiDimArray2 () {
+		IStructuralComparable a = new int [2] { 10, 10 };
+		IStructuralComparable b = new int [2,2] { {10, 10 }, { 10, 10 } };
+		a.CompareTo (b, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void CompareToWithMultiDimArray3 () {
+		IStructuralComparable a = new int [4] { 10, 10, 10, 10 };
+		IStructuralComparable b = new int [2,2] { {10, 10 }, { 10, 10 } };
+		a.CompareTo (b, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
+	public void CompareToWithBoundedArray1 () {
+		IStructuralComparable a = new int [2] { 10, 10 };
+		Array ab = Array.CreateInstance (typeof (int), new int[] { 2 }, new int [] { 5 });
+		IStructuralComparable b = ab;
+		ab.SetValue (10, 5);
+		ab.SetValue (10, 6);
+
+		a.CompareTo (b, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (IndexOutOfRangeException))]
+	public void CompareToWithBoundedArray2 () {
+		IStructuralComparable a = new int [2] { 10, 10 };
+		Array ab = Array.CreateInstance (typeof (int), new int[] { 2 }, new int [] { 5 });
+		IStructuralComparable b = ab;
+		ab.SetValue (10, 5);
+		ab.SetValue (10, 6);
+
+		//Yes, CompareTo simply doesn't work with bounded arrays!
+		b.CompareTo (b, Comparer<object>.Default);
+	}
+
+	[Test]
+	[ExpectedException (typeof (NullReferenceException))]
+	public void CompareToWithNullComparer () {
+		IStructuralComparable a = new int[] { 1, 2 };
+		IStructuralComparable b = new int[] { 1, 2 };
+		a.CompareTo (b, null);
+	}
+
+	[Test]
+	public void CompareToWithNullArray () {
+		IStructuralComparable a = new int[] { 1, 2 };
+		Assert.AreEqual (1, a.CompareTo (null, Comparer<object>.Default));
+	}
+
+	[Test]
+	public void CompareToWithGoodArrays () {
+		IStructuralComparable a = new int[] { 10, 20 };
+		Assert.AreEqual (0, a.CompareTo (a, Comparer<object>.Default));
+		Assert.AreEqual (0, a.CompareTo (new int [] { 10, 20 }, Comparer<object>.Default));
+		Assert.AreEqual (-1, a.CompareTo (new int [] { 11, 20 }, Comparer<object>.Default));
+		Assert.AreEqual (-1, a.CompareTo (new int [] { 10, 21 }, Comparer<object>.Default));
+		Assert.AreEqual (1, a.CompareTo (new int [] { 9, 20 }, Comparer<object>.Default));
+		Assert.AreEqual (1, a.CompareTo (new int [] { 10, 19 }, Comparer<object>.Default));
+	}
+
+#endif
+
 }
 }

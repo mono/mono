@@ -1,3 +1,7 @@
+2010-01-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ArrayTest.cs: Tests for IStructuralComparer::CompareTo.
+
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : added test for rounding milliseconds.
