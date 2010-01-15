@@ -557,19 +557,25 @@ namespace System.Xml {
 			builder.Append ('P');
 			if (value.Days > 0)
 				builder.Append (value.Days).Append ('D');
-			if (value.Days > 0 || value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0) {
+			long ticks = value.Ticks % TimeSpan.TicksPerMillisecond;
+			if (value.Days > 0 || value.Hours > 0 || value.Minutes > 0 || value.Seconds > 0 || value.Milliseconds > 0 || ticks > 0) {
 				builder.Append('T');
 				if (value.Hours > 0)
 					builder.Append (value.Hours).Append ('H');
 				if (value.Minutes > 0) 
 					builder.Append (value.Minutes).Append ('M');
-				if (value.Seconds > 0 || value.Milliseconds > 0) {
+				if (value.Seconds > 0 || value.Milliseconds > 0 || ticks > 0) {
 					builder.Append (value.Seconds);
-					long ticks = value.Ticks % TimeSpan.TicksPerMillisecond;
+					bool trimZero = true;
 					if (ticks > 0)
 						builder.Append ('.').AppendFormat ("{0:0000000}", value.Ticks % TimeSpan.TicksPerSecond);
 					else if (value.Milliseconds > 0)
 						builder.Append ('.').AppendFormat ("{0:000}", value.Milliseconds);
+					else
+						trimZero = false;
+					if (trimZero)
+						while (builder [builder.Length - 1] == '0')
+							builder.Remove (builder.Length - 1, 1);
 
 					builder.Append ('S');
 				}

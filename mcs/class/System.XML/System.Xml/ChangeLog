@@ -1,5 +1,10 @@
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvert.cs : Do not ignore ticks which are less than a
+	  millisecond. Remove trailing zeros for milliseconds and ticks.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvert.cs : trim spaces when parsing TimeSpan.
 
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>

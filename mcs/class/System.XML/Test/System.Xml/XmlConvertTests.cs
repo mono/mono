@@ -370,7 +370,13 @@ namespace MonoTests.System.Xml
 			// bug #77252
 			TimeSpan t1 = TimeSpan.FromTicks (
 				TimeSpan.TicksPerSecond + 1);
-			Assert.AreEqual ("PT1.0000001S", XmlConvert.ToString (t1));
+			Assert.AreEqual ("PT1.0000001S", XmlConvert.ToString (t1), "#1");
+
+			// XAttributeTest.CastTimeSpans():#5d
+			t1 = new TimeSpan (2710L);
+			Assert.AreEqual ("PT0.000271S", XmlConvert.ToString (t1), "#2");
+			t1 = new TimeSpan (27100000L);
+			Assert.AreEqual ("PT2.71S", XmlConvert.ToString (t1), "#3");
 		}
 
 		[Test]

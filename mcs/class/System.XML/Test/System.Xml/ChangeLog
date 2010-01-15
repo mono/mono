@@ -1,5 +1,10 @@
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlConvertTests.cs : add test for ToString(TimeSpan) with small
+	  ticks.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlConvertTests.cs : add test for ToTimeSpan() with spaces.
 
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
