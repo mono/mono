@@ -1,21 +1,65 @@
-if ! which wget > /dev/null 2>&1; then 
-	echo "You must have the 'wget' package installed. Its in the 'web' section in the cygwin setup program."
+#!/bin/bash
+
+#
+# This script will download and install the dependencies needed for compiling
+# mono on cygwin
+#
+
+# Check for required packages
+
+commands="wget unzip automake autoconf libtool make bison"
+
+failed=0
+for i in $commands; do
+	if ! which $i > /dev/null 2>&1; then 
+		echo "You must have the '$i' package installed."
+		failed=1
+	fi
+done
+
+if [ $failed = 1 ]; then
 	exit 1
 fi
 
-if ! which unzip > /dev/null 2>&1; then 
-	echo "You must have the 'unzip' package installed."
-	exit 1
+dir=cygwin-deps
+mkdir -p $dir
+
+echo -n "Downloading deps... "
+if [ ! -f $dir/glib-2.6.6.zip ]; then
+	wget -P $dir ftp://ftp.gtk.org/pub/gtk/v2.6/win32/glib-2.6.6.zip || exit 1
 fi
+if [ ! -f $dir/glib-dev-2.6.6.zip ]; then
+	wget -P $dir ftp://ftp.gtk.org/pub/gtk/v2.6/win32/glib-dev-2.6.6.zip || exit 1
+fi
+if [ ! -f $dir/gettext-runtime-0.17-1.zip ]; then
+	wget -P $dir http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-runtime-0.17-1.zip
+fi
+if [ ! -f $dir/libiconv-1.13-mingw32-dev.tar.gz ]; then
+	wget -P $dir http://sourceforge.net/projects/mingw/files/MinGW%20libiconv/release%201.13/libiconv-1.13-mingw32-dev.tar.gz/download
+fi
+echo "done."
 
-# Download glib for win32
-rm -rf cygwin-deps
-mkdir -p cygwin-deps
-wget -P cygwin-deps ftp://ftp.gtk.org/pub/gtk/v2.6/win32/glib-2.6.6.zip || exit 1
-wget -P cygwin-deps ftp://ftp.gtk.org/pub/gtk/v2.6/win32/glib-dev-2.6.6.zip || exit 1
-wget -P cygwin-deps http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-0.14.5.zip || exit 1
-wget -P cygwin-deps http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/gettext-dev-0.14.5.zip || exit 1
-wget -P cygwin-deps http://ftp.gnome.org/pub/gnome/binaries/win32/dependencies/libiconv-1.9.1.bin.woe32.zip || exit 1
+echo -n "Extracting to cygwin-deps/ ..."
+(cd $dir && for i in *.zip; do unzip -oq $i || exit 1; done) || exit 1
+(cd $dir && for i in *.tar.gz; do tar xzf $i || exit 1; done) || exit 1
+# This is needed because windows can't use dll's without an x flag.
+chmod a+x $dir/bin/*.dll
+echo "done."
 
-cd cygwin-deps && unzip glib-2.6.6.zip && unzip glib-dev-2.6.6.zip && unzip gettext-0.14.5.zip && unzip gettext-dev-0.14.5.zip && \
-	unzip libiconv-1.9.1.bin.woe32.zip
+echo -n "Patching PC files... "
+prefix=$PWD/$dir
+find $dir -name "*.pc" > $dir/pc-files
+for i in `cat $dir/pc-files`; do
+	(sed -e "s,^prefix=.*,prefix=$prefix,g" < $i > $i.tmp && mv $i.tmp $i) || exit 1
+done
+rm -f $dir/pc-files
+echo "done."
+
+# Create an environment shell file
+rm -f $dir/env.sh
+echo "export PKG_CONFIG_PATH=\"$PWD/$dir/lib/pkgconfig:\$PKG_CONFIG\"" >> $dir/env.sh
+echo "export PATH=\"$PWD/$dir/bin:\$PATH\"" >> $dir/env.sh
+
+echo "Source $dir/env.sh into your environment using:"
+echo ". $dir/env.sh"
+echo "Then run mono's configure."
