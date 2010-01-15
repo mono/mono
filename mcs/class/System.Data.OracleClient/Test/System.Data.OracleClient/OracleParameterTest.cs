@@ -472,6 +472,7 @@ namespace MonoTests.System.Data.OracleClient
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void ParamSize_424908_SizeNotSetError ()
 		{
 

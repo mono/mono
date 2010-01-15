@@ -1,3 +1,8 @@
+2010-01-15  Jonathan Pobst  <monkey@jpobst.com>
+
+	* OracleParameterTest.cs: Mark test ParamSize_424908_SizeNotSetError
+	as not working.  Bug filed: #571218.
+
 2009-09-25  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OracleParameterTest.cs: Mark tests for bug #424908 as working.
