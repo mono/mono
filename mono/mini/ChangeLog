@@ -1,5 +1,8 @@
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_emit_exceptions): Compute the size of the exception
+	throwing code correctly.
+
 	* mini.h (MONO_AOT_FILE_VERSION): Bump this because of the IMT hashing changes.
 
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
