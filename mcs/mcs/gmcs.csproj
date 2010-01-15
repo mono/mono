@@ -77,6 +77,7 @@
     <Compile Include="iterators.cs" />
     <Compile Include="literal.cs" />
     <Compile Include="location.cs" />
+    <Compile Include="membercache.cs" />
     <Compile Include="method.cs" />
     <Compile Include="modifiers.cs" />
     <Compile Include="namespace.cs" />
@@ -84,6 +85,7 @@
     <Compile Include="..\tools\monop\outline.cs" />
     <Compile Include="parameter.cs" />
     <Compile Include="pending.cs" />
+    <Compile Include="property.cs" />
     <Compile Include="report.cs" />
     <Compile Include="rootcontext.cs" />
     <Compile Include="roottypes.cs" />
@@ -93,6 +95,7 @@
     <Compile Include="typemanager.cs" />
     <Compile Include="linq.cs" />
     <Compile Include="field.cs" />
+    <Compile Include="typespec.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
