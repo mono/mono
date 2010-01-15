@@ -1,3 +1,8 @@
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeOffsetTest.cs : add ParseExact() case that should preserve
+	  fractions.
+
 2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DoubleTest.cs : add test for AllowLeading/TrailingSpace flags.

@@ -582,7 +582,8 @@ namespace System
 			if (second < 0)		second = 0;
 			if (fraction < 0)	fraction = 0;
 			if (year > 0 && month > 0 && day > 0) {
-				result = new DateTimeOffset (year, month, day, hour, minute, second, (int) (1000 * fraction), offset);
+				result = new DateTimeOffset (year, month, day, hour, minute, second, 0, offset);
+				result = result.AddSeconds (fraction);
 				if ((styles & DateTimeStyles.AdjustToUniversal) != 0)
 					result = result.ToUniversalTime ();
 				return true;
