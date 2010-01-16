@@ -1,3 +1,8 @@
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call_body): Always use near calls when AOTing even if
+	NOMAP32BIT or optimize_for_xen is set.
+
 2010-01-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_emit_method_call_full): Avoid the virt->nonvirt
