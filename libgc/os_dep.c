@@ -2088,6 +2088,16 @@ void GC_default_push_other_roots GC_PROTO((void))
 }
 
 # endif /* GC_SOLARIS_THREADS || GC_PTHREADS */
+#ifdef SN_TARGET_PS3
+void GC_default_push_other_roots GC_PROTO((void))
+{
+	printf ("WARNING WARNING WARNING\nGC_default_push_other_roots is not implemented\n");
+}
+void GC_push_thread_structures GC_PROTO((void))
+{
+	printf ("WARNING WARNING WARNING\nGC_default_push_thread_structures is not implemented\n");
+}
+#endif
 
 void (*GC_push_other_roots) GC_PROTO((void)) = GC_default_push_other_roots;
 
