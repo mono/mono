@@ -1,3 +1,7 @@
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest-app.cs dtest.cs: Add tests for handling vtypes with IntPtr fields.
+
 2009-12-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* bug-561239.cs: New test for bug #561239.
