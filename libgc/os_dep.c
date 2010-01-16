@@ -2077,14 +2077,19 @@ void GC_default_push_other_roots GC_PROTO((void))
 
 # endif /* SRC_M3 */
 
-# if defined(GC_SOLARIS_THREADS) || defined(GC_PTHREADS) || \
+# if defined(GC_SOLARIS_THREADS) || defined(GC_PTHREADS) || defined(SN_TARGET_PS3) || \
      defined(GC_WIN32_THREADS)
-
-extern void GC_push_all_stacks();
 
 void GC_default_push_other_roots GC_PROTO((void))
 {
-    GC_push_all_stacks();
+	printf ("WARNING WARNING WARNING WARNING WARNING\n"
+			"GC_default_push_other_roots has not been implemented\n");
+}
+
+void GC_push_thread_structures ()
+{
+	printf ("WARNING WARNING WARNING WARNING WARNING\n"
+			"GC_push_thread_structures not been implemented\n");
 }
 
 # endif /* GC_SOLARIS_THREADS || GC_PTHREADS */

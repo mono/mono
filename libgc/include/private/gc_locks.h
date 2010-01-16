@@ -76,6 +76,12 @@
 #    define LOCK() RT0u__inCritical++
 #    define UNLOCK() RT0u__inCritical--
 #  endif
+#  ifdef SN_TARGET_PS3
+#    include <pthread.h>
+     extern pthread_mutex_t GC_allocate_ml;
+#      define LOCK()   pthread_mutex_lock(&GC_allocate_ml)
+#      define UNLOCK() pthread_mutex_unlock(&GC_allocate_ml)
+#  endif
 #  ifdef GC_SOLARIS_THREADS
 #    include <thread.h>
 #    include <signal.h>

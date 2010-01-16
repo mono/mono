@@ -64,7 +64,10 @@
 			/* Used only for assertions, and to prevent	 */
 			/* recursive reentry in the system call wrapper. */
 #		endif 
-#    	      else
+#    	      elif defined(SN_TARGET_PS3)
+		  #include <pthread.h>
+		  pthread_mutex_t GC_allocate_ml;
+#             else
 	          --> declare allocator lock here
 #	      endif
 #	   endif
@@ -481,6 +484,10 @@ GC_bool GC_is_initialized = FALSE;
 
 void GC_init()
 {
+#if defined(SN_TARGET_PS3)
+	pthread_mutexattr_t mattr;
+#endif
+
     DCL_LOCK_STATE;
     
     DISABLE_SIGNALS();
@@ -498,6 +505,13 @@ void GC_init()
 	  InitializeCriticalSection (&GC_allocate_ml);
     }
 #endif /* MSWIN32 */
+#if defined(SN_TARGET_PS3)
+	pthread_mutexattr_init (&mattr);
+		
+	pthread_mutex_init (&GC_allocate_ml, &mattr);
+	pthread_mutexattr_destroy (&mattr);
+		
+#endif
 
     LOCK();
     GC_init_inner();
