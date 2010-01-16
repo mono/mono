@@ -1,5 +1,12 @@
 2010-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+       * mini-trampolines.c (mono_create_static_rgctx_trampoline): Add an assert.
+
+        * aot-runtime.c (mono_aot_get_method): Handle ftnptr's correctly for the
+        ICollection<T> wrappers.
+
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (decode_value): Fix the decoding of I/U/PTR.
 
 2010-01-16  Zoltan Varga  <vargaz@gmail.com>
