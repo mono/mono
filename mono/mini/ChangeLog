@@ -1,3 +1,8 @@
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c aot-runtime.c: Get rid of mono_aot_str_hash (), use
+	mono_metadata_str_hash () instead.
+
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* ir-emit.h (MONO_EMIT_NEW_ICOMPARE_IMM): Use sizeof (mgreg_t) instead of
