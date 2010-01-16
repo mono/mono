@@ -1,3 +1,7 @@
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c (get_image_set): Remove an assert which can happen in normal use.
+
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* metadata.c (mono_metadata_str_hash): New helper function to compute a stable
