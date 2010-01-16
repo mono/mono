@@ -1,5 +1,10 @@
 2010-01-16  Zoltan Varga  <vargaz@gmail.com>
 
+        * generic-sharing.c (instantiate_other_info): Don't create ftnptr's from the
+        result of mono_compile_method (), it already includes an ftnptr.
+
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
 	* metadata.c (get_image_set): Remove an assert which can happen in normal use.
 
 2010-01-15  Zoltan Varga  <vargaz@gmail.com>
