@@ -49,6 +49,11 @@ namespace System.Json
 			return AsEnumerable ().GetEnumerator ();
 		}
 
+		IEnumerator IEnumerable.GetEnumerator ()
+		{
+			return AsEnumerable ().GetEnumerator ();
+		}
+			
 		JsonPairEnumerable AsEnumerable ()
 		{
 			return map ?? source;
