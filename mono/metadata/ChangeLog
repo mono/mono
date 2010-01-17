@@ -1,3 +1,11 @@
+2010-01-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-pinning.c (evacuate_pin_staging_area): Don't assert if there are no
+	pinned objects.
+
+	* sgen-gc.c (create_allocator): Add the missing n > MONO_ARRAY_MAX_INDEX check
+	to the array allocator.
+
 2010-01-16  Zoltan Varga  <vargaz@gmail.com>
 
         * generic-sharing.c (instantiate_other_info): Don't create ftnptr's from the
