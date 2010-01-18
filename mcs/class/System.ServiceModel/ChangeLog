@@ -1,3 +1,7 @@
+2010-01-18  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : added new security version types.
+
 2010-01-15  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources: add SL config loader here

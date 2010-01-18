@@ -1,3 +1,7 @@
+2010-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageSecurityVersion.cs : add new 3.5 members.
+
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SilverlightClientConfigLoader.cs : add another loop blocker.

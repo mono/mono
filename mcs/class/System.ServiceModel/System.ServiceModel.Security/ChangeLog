@@ -1,3 +1,8 @@
+2010-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SecureConversationVersion.cs, SecurityPolicyVersion.cs,
+	  TrustVersion.cs : add new 3.5 classes.
+
 2007-04-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WSSecurityTokenSerializer.cs : write GenericXmlSecurityToken (btw

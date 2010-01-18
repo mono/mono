@@ -98,12 +98,20 @@ namespace System.ServiceModel
 
 		class MessageSecurityVersionImpl : MessageSecurityVersion
 		{
-			bool wss11, basic_profile;
+			bool wss11, basic_profile, use2007;
 
-			public MessageSecurityVersionImpl (bool wss11, bool basicProfile)
+			public MessageSecurityVersionImpl (bool wss11, bool basicProfile, bool use2007)
 			{
 				this.wss11 = wss11;
 				this.basic_profile = basicProfile;
+				this.use2007 = use2007;
+				if (use2007) {
+					SecureConversationVersion = SecureConversationVersion.Default;
+					TrustVersion = TrustVersion.Default;
+				} else {
+					SecureConversationVersion = SecureConversationVersion.WSSecureConversationFeb2005;
+					TrustVersion = TrustVersion.WSTrustFeb2005;
+				}
 			}
 
 			public override BasicSecurityProfileVersion BasicSecurityProfileVersion {
@@ -117,17 +125,24 @@ namespace System.ServiceModel
 			public override SecurityVersion SecurityVersion {
 				get { return wss11 ? SecurityVersion.WSSecurity11 : SecurityVersion.WSSecurity10; }
 			}
+
+			public override SecurityPolicyVersion SecurityPolicyVersion {
+				get { return use2007 ? SecurityPolicyVersion.WSSecurityPolicy12 : SecurityPolicyVersion.WSSecurityPolicy11; }
+			}
 		}
 
 		// Static members
 
-		static MessageSecurityVersion wss10_basic, wss11, wss11_basic;
+		static MessageSecurityVersion wss10_basic, wss11, wss11_basic, wss10_2007_basic, wss11_2007_basic, wss11_2007;
 
 		static MessageSecurityVersion ()
 		{
-			wss10_basic = new MessageSecurityVersionImpl (false, true);
-			wss11 = new MessageSecurityVersionImpl (true, false);
-			wss11_basic = new MessageSecurityVersionImpl (true, true);
+			wss10_basic = new MessageSecurityVersionImpl (false, true, false);
+			wss11 = new MessageSecurityVersionImpl (true, false, false);
+			wss11_basic = new MessageSecurityVersionImpl (true, true, false);
+			wss10_2007_basic = new MessageSecurityVersionImpl (false, true, true);
+			wss11_2007_basic = new MessageSecurityVersionImpl (true, true, true);
+			wss11_2007 = new MessageSecurityVersionImpl (true, false, true);
 		}
 
 		public static MessageSecurityVersion Default {
@@ -148,6 +163,18 @@ namespace System.ServiceModel
 			get { return wss11_basic; }
 		}
 
+		public static MessageSecurityVersion WSSecurity10WSTrust13WSSecureConversation13WSSecurityPolicy12BasicSecurityProfile10 {
+			get { return wss10_2007_basic; }
+		}
+
+		public static MessageSecurityVersion WSSecurity11WSTrust13WSSecureConversation13WSSecurityPolicy12BasicSecurityProfile10 {
+			get { return wss11_2007_basic; }
+		}
+
+		public static MessageSecurityVersion WSSecurity11WSTrust13WSSecureConversation13WSSecurityPolicy12 {
+			get { return wss11_2007; }
+		}
+
 		// Instance members
 
 		MessageSecurityVersion ()
@@ -159,5 +186,12 @@ namespace System.ServiceModel
 		public abstract SecurityTokenVersion SecurityTokenVersion { get; }
 
 		public abstract SecurityVersion SecurityVersion { get; }
+
+		public SecureConversationVersion SecureConversationVersion { get; internal set; }
+
+		public abstract SecurityPolicyVersion SecurityPolicyVersion { get; }
+
+		public TrustVersion TrustVersion { get; internal set; }
+
 	}
 }
