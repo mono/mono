@@ -1,0 +1,117 @@
+using System;
+using System.Collections.Generic;
+using System.Text;
+using System.Reflection;
+using C = Mono.Cecil;
+using Mono.Cecil.Metadata;
+
+namespace Mono.Debugger.Soft
+{
+	public class PropertyInfoMirror : Mirror {
+
+		TypeMirror parent;
+		string name;
+		PropertyAttributes attrs;
+		MethodMirror get_method, set_method;
+		CustomAttributeDataMirror[] cattrs;
+
+		public PropertyInfoMirror (TypeMirror parent, long id, string name, MethodMirror get_method, MethodMirror set_method, PropertyAttributes attrs) : base (parent.VirtualMachine, id) {
+			this.parent = parent;
+			this.name = name;
+			this.attrs = attrs;
+			this.get_method = get_method;
+			this.set_method = set_method;
+		}
+
+		public TypeMirror DeclaringType {
+			get {
+				return parent;
+			}
+		}
+
+		public string Name {
+			get {
+				return name;
+			}
+		}
+
+		public TypeMirror PropertyType {
+			get {
+				if (get_method != null)
+					return get_method.ReturnType;
+				else {
+					ParameterInfoMirror[] parameters = set_method.GetParameters ();
+					
+					return parameters [parameters.Length - 1].ParameterType;
+				}
+			}
+		}
+
+		public PropertyAttributes Attributes {
+			get {
+				return attrs;
+			}
+		}
+
+		public bool IsSpecialName {
+			get {return (Attributes & PropertyAttributes.SpecialName) != 0;}
+		}
+
+		public MethodMirror GetGetMethod ()
+		{
+			return GetGetMethod (false);
+		}
+
+		public MethodMirror GetGetMethod (bool nonPublic)
+		{
+			if (get_method != null && (nonPublic || get_method.IsPublic))
+				return get_method;
+			else
+				return null;
+		}
+
+		public MethodMirror GetSetMethod ()
+		{
+			return GetSetMethod (false);
+		}
+
+		public MethodMirror GetSetMethod (bool nonPublic)
+		{
+			if (set_method != null && (nonPublic || set_method.IsPublic))
+				return set_method;
+			else
+				return null;
+		}
+
+		public ParameterInfoMirror[] GetIndexParameters()
+		{
+			if (get_method != null)
+				return get_method.GetParameters ();
+			return new ParameterInfoMirror [0];
+		}
+
+		public CustomAttributeDataMirror[] GetCustomAttributes (bool inherit) {
+			return GetCAttrs (null, inherit);
+		}
+
+		public CustomAttributeDataMirror[] GetCustomAttributes (TypeMirror attributeType, bool inherit) {
+			if (attributeType == null)
+				throw new ArgumentNullException ("attributeType");
+			return GetCAttrs (attributeType, inherit);
+		}
+
+		CustomAttributeDataMirror[] GetCAttrs (TypeMirror type, bool inherit) {
+			// FIXME: Handle inherit
+			if (cattrs == null) {
+				CattrInfo[] info = vm.conn.Type_GetPropertyCustomAttributes (DeclaringType.Id, id, 0, false);
+				cattrs = CustomAttributeDataMirror.Create (vm, info);
+			}
+			var res = new List<CustomAttributeDataMirror> ();
+			foreach (var attr in cattrs)
+				if (type == null || attr.Constructor.DeclaringType == type)
+					res.Add (attr);
+			return res.ToArray ();
+		}
+	}
+}
+
