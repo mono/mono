@@ -1,3 +1,7 @@
+2010-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs: Upgrade after debugging namespace change.
+
 2010-01-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest-app.cs dtest.cs: Add tests for handling vtypes with IntPtr fields.
