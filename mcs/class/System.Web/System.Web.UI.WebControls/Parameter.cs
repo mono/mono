@@ -68,6 +68,149 @@ namespace System.Web.UI.WebControls {
 		{
 			this.DefaultValue = defaultValue;
 		}
+
+		public Parameter (string name, DbType dbType) : this (name)
+		{
+			this.DbType = dbType;
+		}
+
+		public Parameter (string name, DbType dbType, string defaultValue) : this (name, dbType)
+		{
+			this.DefaultValue = defaultValue;
+		}
+
+		public static TypeCode ConvertDbTypeToTypeCode (DbType dbType)
+		{
+			switch (dbType) {
+				case DbType.AnsiString:
+				case DbType.AnsiStringFixedLength:
+				case DbType.StringFixedLength:
+				case DbType.String:
+					return TypeCode.String;
+
+				case DbType.Binary:
+				case DbType.Guid:
+				case DbType.Object:
+				case DbType.Xml:
+				case DbType.DateTimeOffset:
+					return TypeCode.Object;
+
+				case DbType.Byte:
+					return TypeCode.Byte;
+
+				case DbType.Boolean:
+					return TypeCode.Boolean;
+
+				case DbType.Currency:
+				case DbType.Decimal:
+				case DbType.VarNumeric:
+					return TypeCode.Decimal;
+
+				case DbType.Date:
+				case DbType.DateTime:
+				case DbType.DateTime2:
+				case DbType.Time:
+					return TypeCode.DateTime;
+
+				case DbType.Double:
+					return TypeCode.Double;
+				
+				case DbType.Int16:
+					return TypeCode.Int16;
+
+				case DbType.Int32:
+					return TypeCode.Int32;
+
+				case DbType.Int64:
+					return TypeCode.Int64;
+				
+				case DbType.SByte:
+					return TypeCode.SByte;
+
+				case DbType.Single:
+					return TypeCode.Single;
+
+				case DbType.UInt16:
+					return TypeCode.UInt16;
+
+				case DbType.UInt32:
+					return TypeCode.UInt32;
+
+				case DbType.UInt64:
+					return TypeCode.UInt64;
+
+				default:
+					return TypeCode.Object;
+			}
+		}
+
+		public static DbType ConvertTypeCodeToDbType (TypeCode typeCode)
+		{
+			switch (typeCode) {
+				case TypeCode.Empty:
+				case TypeCode.Object:
+				case TypeCode.DBNull:					
+					return DbType.Object;
+
+				case TypeCode.Boolean:
+					return DbType.Boolean;
+
+				case TypeCode.Char:
+					return DbType.StringFixedLength;
+
+				case TypeCode.SByte:
+					return DbType.SByte;
+
+				case TypeCode.Byte:
+					return DbType.Byte;
+
+				case TypeCode.Int16:
+					return DbType.Int16;
+
+				case TypeCode.UInt16:
+					return DbType.UInt16;
+
+				case TypeCode.Int32:
+					return DbType.Int32;
+
+				case TypeCode.UInt32:
+					return DbType.UInt32;
+
+				case TypeCode.Int64:
+					return DbType.Int64;
+
+				case TypeCode.UInt64:
+					return DbType.UInt64;
+
+				case TypeCode.Single:
+					return DbType.Single;
+
+				case TypeCode.Double:
+					return DbType.Double;
+
+				case TypeCode.Decimal:
+					return DbType.Decimal;
+
+				case TypeCode.DateTime:
+					return DbType.DateTime;
+
+				case TypeCode.String:
+					return DbType.String;
+
+				default:
+					return DbType.Object;
+			}
+		}
+
+		public DbType GetDatabaseType ()
+		{
+			DbType dt = this.DbType;
+
+			if (dt != DbType.Object)
+				throw new InvalidOperationException ("The DbType property is already set to a value other than DbType.Object.");
+
+			return ConvertTypeCodeToDbType (this.Type);
+		}
 		
 		protected virtual Parameter Clone ()
 		{
@@ -224,8 +367,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute (TypeCode.Empty)]
 		[WebCategoryAttribute ("Parameter"), 
 		WebSysDescriptionAttribute("Represents type of the parameter.")]
-		public TypeCode Type
-		{
+		public TypeCode Type {
 			get { return (TypeCode) ViewState.GetInt ("Type", (int)TypeCode.Empty); }
 			set {
 				
