@@ -1,3 +1,10 @@
+2010-01-18  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Make minor collection section allowance adaptive,
+	depending on the amount of memory reclaimed in the last major
+	collection.  If more memory was reclaimed (i.e. more garbage
+	produced), do the next collection earlier.
+
 2010-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (parse_type): Fail a type signature if it has a recursive reference
