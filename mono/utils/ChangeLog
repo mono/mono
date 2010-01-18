@@ -1,3 +1,7 @@
+2010-01-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mono-error.c: Call va_end/va_start before reusing 'args'.
+
 2010-01-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-hash.c: fix the null-gc build.
