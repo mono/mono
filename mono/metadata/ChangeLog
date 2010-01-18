@@ -1,3 +1,9 @@
+2010-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_from_typeref): Fail loading of self-referencing typeref tokens.
+
+	Fixes #569579.
+
 2010-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (mono_gc_base_init): Add 'conservative_stack_mark' option to turn
