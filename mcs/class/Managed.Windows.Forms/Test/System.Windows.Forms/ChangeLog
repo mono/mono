@@ -1,3 +1,7 @@
+2010-01-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBoxTest.cs: New test for the Modified property.
+
 2010-01-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripMenuItemTest: New test for the events related to the check
