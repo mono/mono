@@ -1,3 +1,11 @@
+2010-01-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* UInt64.cs: Implement a lightweight version of the Parse method for
+	the overload that does not take IFormatProvider/NumberStyle
+	parameters - this gets us a nice speed up, just like we do for the
+	other number types.
+	Fixes #338022.
+
 2010-01-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Array.cs: Implement IStructuralComparer.

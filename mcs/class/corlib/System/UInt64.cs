@@ -89,7 +89,87 @@ namespace System
 		[CLSCompliant (false)]
 		public static ulong Parse (string s)
 		{
-			return Parse (s, NumberStyles.Integer, null);
+			Exception exc;
+			ulong result;
+
+			if (!Parse (s, false, out result, out exc))
+				throw exc;
+
+			return result;
+		}
+
+		internal static bool Parse (string s, bool tryParse, out ulong result, out Exception exc)
+		{
+			ulong val = 0;
+			int len;
+			int i;
+			bool digits_seen = false;
+			bool has_negative_sign = false;
+
+			exc = null;
+			result = 0;
+
+			if (s == null) {
+				if (!tryParse)
+					exc = new ArgumentNullException ("s");
+				return false;
+			}
+
+			len = s.Length;
+
+			char c;
+			for (i = 0; i < len; i++) {
+				c = s [i];
+				if (!Char.IsWhiteSpace (c))
+					break;
+			}
+
+			if (i == len) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
+
+			if (s [i] == '+')
+				i++;
+			else if (s [i] == '-') {
+				i++;
+				has_negative_sign = true;
+			}
+
+			// Actual number stuff
+			for (; i < len; i++) {
+				c = s [i];
+
+				if (c >= '0' && c <= '9') {
+					uint d = (uint) (c - '0');
+
+					if (val > MaxValue / 10 || (val == MaxValue / 10 && d > MaxValue % 10)) {
+						if (!tryParse)
+							exc = new OverflowException ("Value is too large.");
+						return false;
+					}
+
+					val = (val * 10) + d;
+					digits_seen = true;
+				} else if (!Int32.ProcessTrailingWhitespace (tryParse, s, i, ref exc))
+					return false;
+			}
+
+			if (!digits_seen) {
+				if (!tryParse)
+					exc = Int32.GetFormatException ();
+				return false;
+			}
+
+			if (has_negative_sign && val > 0) {
+				if (!tryParse)
+					exc = new OverflowException ("Negative number.");
+				return false;
+			}
+
+			result = val;
+			return true;
 		}
 
 		[CLSCompliant (false)]
@@ -351,7 +431,7 @@ namespace System
 		public static bool TryParse (string s, out ulong result) 
 		{
 			Exception exc;
-			if (!Parse (s, NumberStyles.Integer, null, true, out result, out exc)) {
+			if (!Parse (s, true, out result, out exc)) {
 				result = 0;
 				return false;
 			}
