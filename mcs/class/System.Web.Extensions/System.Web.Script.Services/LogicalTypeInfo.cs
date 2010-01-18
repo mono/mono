@@ -47,6 +47,14 @@ using System.ServiceModel.Description;
 
 namespace System.Web.Script.Services
 {
+	internal sealed class JsonResult
+	{
+		public readonly object d;
+		public JsonResult (object result) {
+			d = result;
+		}
+	}
+
 	internal abstract class LogicalTypeInfo
 	{
 		public static LogicalTypeInfo CreateTypeInfo (Type t, string filePath)
@@ -427,8 +435,12 @@ if (typeof({0}) === 'undefined') {{", className);
 					XmlTextWriter xwriter = new XmlTextWriter (writer);
 					xwriter.Formatting = Formatting.None;
 					_xmlSer.Serialize (xwriter, result);
-				} else
+				}
+				else
+				{
+					result = new JsonResult (result);
 					AsmxLogicalTypeInfo.JSSerializer.Serialize (result, writer);
+				}
 			}
 
 			public override string MethodName { get { return String.IsNullOrEmpty (WebMethod.MessageName) ? MethodInfo.Name : WebMethod.MessageName; } }
