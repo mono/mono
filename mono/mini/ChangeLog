@@ -1,3 +1,14 @@
+2010-01-18  Bill Holmes  <billholmes54@gmail.com>
+
+	* debugger-agent.c : Changing the PLATFORM_WIN32 preprocessor check to
+	  HOST_WIN32.  Also including winsock2. to define struct in_addr.
+
+	* mini-amd64.h : Changing the PLATFORM_WIN32 preprocessor check to HOST_WIN32.
+
+	* mini-x86.h : Changing the PLATFORM_WIN32 preprocessor check to HOST_WIN32.
+
+	Code is contributed under MIT/X11 license.
+
 2010-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MonoCompile): Add 'disable_out_of_line_bblocks' flag.
