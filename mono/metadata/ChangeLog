@@ -1,3 +1,11 @@
+2010-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_from_typeref): Fail loading of self-referencing typeref tokens.
+
+	Fixes #569579.
+
+	Backport of r149760.
+
 2010-01-15  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_setup_fields): Guard against unfinished types. This
