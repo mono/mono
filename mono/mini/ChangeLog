@@ -1,5 +1,12 @@
 2010-01-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-gc.c: Change the GC map to use a ref/noref/pin value instead of just
+	a ref/noref value + a global pin flag, so parts of stack frames can still be
+	precisely marked even if they include stuff which needs pinning. Improve logging.
+	Fix many bugs. Not enabled yet.
+
+	* gc-test.cs: Add a few tests.
+
 	* liveness.c (mono_analyze_liveness): Make the debug output controllable by
 	the normal -v options. Avoid propagating liveness information through bblocks
 	which end with a NOT_REACHED opcode.
