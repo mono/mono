@@ -1,5 +1,14 @@
 2010-01-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MonoCompile): Add 'disable_out_of_line_bblocks' flag.
+
+	* branch-opts.c (mono_optimize_branches): Honor the new flag.
+
+	* mini.c (mini_method_compile): Set the new flag when running under the
+	debugger.
+
+2010-01-18  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.c (mono_jit_compile_method_inner): Avoid reading cfg->prof_options
 	after cfg has been freed.
 
