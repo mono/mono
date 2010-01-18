@@ -1,3 +1,8 @@
+2010-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_jit_compile_method_inner): Avoid reading cfg->prof_options
+	after cfg has been freed.
+
 2010-01-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* branch-opts.c (mono_branch_optimize_exception_target): Stop the optimization
