@@ -1,5 +1,14 @@
 2010-01-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MonoCompile): Add 'disable_out_of_line_bblocks' flag.
+
+	* branch-opts.c (mono_optimize_branches): Honor the new flag.
+
+	* mini.c (mini_method_compile): Set the new flag when running under the
+	debugger.
+
+2010-01-18  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-gc.c: Change the GC map to use a ref/noref/pin value instead of just
 	a ref/noref value + a global pin flag, so parts of stack frames can still be
 	precisely marked even if they include stuff which needs pinning. Improve logging.
