@@ -1,5 +1,10 @@
 2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* object.c (mono_object_get_virtual_method): Handle generic interfaces with variant
+	arguments.
+
+2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_Remoting_RemotingServices_GetVirtualMethod): This
 	function is generics variance aware.
 
