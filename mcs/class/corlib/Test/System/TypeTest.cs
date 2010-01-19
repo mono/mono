@@ -2055,6 +2055,15 @@ PublicKeyToken=b77a5c561934e089"));
 		}
 
 		[Test]
+		public void GetGenericMethodDefinitionOverInflatedMethodOnGTD () {
+			var l = typeof (List<>);
+			var m = l.GetMethod ("ConvertAll");
+			var infl = m.MakeGenericMethod (typeof (int));
+			var res = m.GetGenericMethodDefinition ();
+			Assert.AreEqual (m, res, "#1");
+		}
+
+		[Test]
 		public void InvokeMember_OutParam ()
 		{
 			object[] args = new object[] { new string [0] };

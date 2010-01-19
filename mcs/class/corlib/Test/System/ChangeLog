@@ -1,3 +1,8 @@
+2010-01-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Add test for GetGenericMethodDefinition of inflated
+	generic methods on a GTD.
+
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeTest.cs : commented out ParseExact() case that tests
