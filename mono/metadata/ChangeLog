@@ -6,6 +6,12 @@
 
 2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (store_local): Better error message.
+	
+	Backport of r149845.
+
+2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition): Handle inflated generic methods
 	on a GTD.
 
