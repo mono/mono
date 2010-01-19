@@ -1,3 +1,10 @@
+2010-01-19  Sylvain Dupont <duposyl@gmail.com>
+
+	* cominterop.c marshal.c: Added support for marshalling in, in/byref,
+	  in/out, in/out/byref parameters of type SAFEARRAY[VARIANT].
+
+	Code is contributed under MIT/X11 license.
+
 2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition): Handle inflated generic methods

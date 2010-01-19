@@ -1,3 +1,11 @@
+2010-01-19  Sylvain Dupont <duposyl@gmail.com>
+
+	* cominterop.cs libtest.c: Added tests for marshalling
+	  in, in/byref, in/out, in/out/byref parameters of type
+	  SAFEARRAY[VARIANT].
+
+	Code is contributed under MIT/X11 license.
+
 2010-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs dtest-app.cs: Add a test for single stepping + out of line bblocks.
