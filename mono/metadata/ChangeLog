@@ -1,5 +1,9 @@
 2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (store_local): Better error message.
+
+2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* object.c (mono_object_get_virtual_method): Handle generic interfaces with variant
 	arguments.
 
