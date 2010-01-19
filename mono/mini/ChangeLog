@@ -1,3 +1,11 @@
+2010-01-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* unwind.c (mono_unwind_decode_fde): Fix an assert on x86.
+
+	* mini-x86.h (MONO_CONTEXT_SET_LLVM_EXC_REG): Define this for x86.
+
+	* mini-llvm.c: Disable OP_THROW on x86, it doesn't work yet.
+
 2010-01-18  Bill Holmes  <billholmes54@gmail.com>
 
 	* debugger-agent.c : Changing the PLATFORM_WIN32 preprocessor check to
