@@ -1,5 +1,12 @@
 2010-01-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs: When use manually setting DropDownHeight, ignore the
+	MaxDropDownHeight property - also rename our field 'count' to
+	'visible_items_count' to avoid confusion as much as possible.
+	Fixes an issue with several items, showing an incorrect layout.
+
+2010-01-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* RichTextBox.cs: SelectedText should set Modified to true. Observe
 	that this is happening just here, not for the Text property, and
 	neither for the TextBoxBase impl.
