@@ -1,3 +1,11 @@
+2010-01-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit-icalls.c (mono_array_new_3): New jit icall.
+
+	* aot-compiler.c aot-runtime.c: Add support for ElementAddr wrappers.
+
+	* arrays.cs: Add a test for 3 dimensional arrays.
+
 2010-01-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MonoCompile): Add 'disable_out_of_line_bblocks' flag.
