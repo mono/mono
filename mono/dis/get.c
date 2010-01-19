@@ -2298,7 +2298,14 @@ get_constant (MonoImage *m, MonoTypeEnum t, guint32 blob_index)
 
 		/* Crazy solaris systems doesn't have isnormal */
 #ifdef HAVE_FINITE
+#ifdef HAVE_ISFINITE
+		/* On HPUX (ia64 at least) the test for HAVE_FINITE succeeds
+		 * even though it doesn't exist.  HAVE_ISFINITE works though.
+		 */
+		normal = isfinite (r);
+#else
 		normal = finite (r);
+#endif
 #else
 		normal = isnormal (r);
 #endif
@@ -2318,7 +2325,14 @@ get_constant (MonoImage *m, MonoTypeEnum t, guint32 blob_index)
 
 		/* Crazy solaris systems doesn't have isnormal */
 #ifdef HAVE_FINITE
+#ifdef HAVE_ISFINITE
+		/* On HPUX (ia64 at least) the test for HAVE_FINITE succeeds
+		 * even though it doesn't exist.  HAVE_ISFINITE works though.
+		 */
+		normal = isfinite (r);
+#else
 		normal = finite (r);
+#endif
 #else
 		normal = isnormal (r);
 #endif

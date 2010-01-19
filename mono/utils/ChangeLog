@@ -1,3 +1,9 @@
+2010-01-12  Dick Porter  <dporter@codicesoftware.com>
+
+	* dlmalloc.h: Check for more defines for ia64-hpux
+
+	* mono-mmap.c: MADV_FREE isn't defined on ia64-hpux
+
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-path.c (mono_path_resolve_symlinks): Use g_strfreev () to free the

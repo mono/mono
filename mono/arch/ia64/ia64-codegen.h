@@ -120,10 +120,19 @@ typedef enum {
 } Ia64ApplicationRegister;
 
 /* disassembly */
+#if G_BYTE_ORDER == G_BIG_ENDIAN
+#define ia64_bundle_template(code) (GUINT64_TO_LE(*(guint64*)(gpointer)code) & 0x1f)
+#define ia64_bundle_ins1(code) ((GUINT64_TO_LE(*(guint64*)(gpointer)code) >> 5) & 0x1ffffffffff)
+#define ia64_bundle_ins2(code) ((GUINT64_TO_LE(*(guint64*)(gpointer)code) >> 46) | ((GUINT64_TO_LE(((guint64*)(gpointer)code)[1]) & 0x7fffff) << 18))
+#define ia64_bundle_ins3(code) ((GUINT64_TO_LE(((guint64*)(gpointer)code)[1])) >> 23)
+#elif G_BYTE_ORDER == G_LITTLE_ENDIAN
 #define ia64_bundle_template(code) ((*(guint64*)(gpointer)code) & 0x1f)
 #define ia64_bundle_ins1(code) (((*(guint64*)(gpointer)code) >> 5) & 0x1ffffffffff)
 #define ia64_bundle_ins2(code) (((*(guint64*)(gpointer)code) >> 46) | ((((guint64*)(gpointer)code)[1] & 0x7fffff) << 18))
 #define ia64_bundle_ins3(code) ((((guint64*)(gpointer)code)[1]) >> 23)
+#else
+#error "FIXME"
+#endif
 
 #define ia64_ins_opcode(ins) (((guint64)(ins)) >> 37)
 #define ia64_ins_qp(ins) (((guint64)(ins)) & 0x3f)
@@ -284,10 +293,17 @@ void ia64_emit_bundle (Ia64CodegenState *code, gboolean flush);
      code.dep_info [code.dep_info_pos ++] = 0; \
 } while (0)
 
-#if G_BYTE_ORDER != G_LITTLE_ENDIAN
-#error "FIXME"
-#endif
-
+#if G_BYTE_ORDER == G_BIG_ENDIAN
+#define ia64_emit_bundle_template(code, template, i1, i2, i3) do { \
+    guint64 *buf64 = (guint64*)(gpointer)(code)->buf; \
+    guint64 dw1, dw2; \
+    dw1 = GUINT64_FROM_LE ((((guint64)(template)) & 0x1f) | ((guint64)(i1) << 5) | ((((guint64)(i2)) & 0x3ffff) << 46)); \
+    dw2 = GUINT64_FROM_LE ((((guint64)(i2)) >> 18) | (((guint64)(i3)) << 23)); \
+    buf64[0] = dw1; \
+    buf64[1] = dw2; \
+    (code)->buf += 16; \
+} while (0)
+#elif G_BYTE_ORDER == G_LITTLE_ENDIAN
 #define ia64_emit_bundle_template(code, template, i1, i2, i3) do { \
     guint64 *buf64 = (guint64*)(gpointer)(code)->buf; \
     guint64 dw1, dw2; \
@@ -297,6 +313,9 @@ void ia64_emit_bundle (Ia64CodegenState *code, gboolean flush);
     buf64[1] = dw2; \
     (code)->buf += 16; \
 } while (0)
+#else
+#error "FIXME"
+#endif
 
 #ifdef IA64_SIMPLE_EMIT_BUNDLE
 

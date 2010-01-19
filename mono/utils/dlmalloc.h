@@ -148,9 +148,13 @@ void* dlvalloc(size_t);
 */
 int dlmallopt(int, int);
 
+#ifndef M_TRIM_THRESHOLD
 #define M_TRIM_THRESHOLD     (-1)
+#endif
 #define M_GRANULARITY        (-2)
+#ifndef M_MMAP_THRESHOLD
 #define M_MMAP_THRESHOLD     (-3)
+#endif
 
 
 /*
@@ -164,7 +168,7 @@ int dlmallopt(int, int);
 */
 size_t dlmalloc_footprint(void);
 
-#if !NO_MALLINFO
+#if 0
 /*
   mallinfo()
   Returns (by copy) a struct containing various summary statistics:

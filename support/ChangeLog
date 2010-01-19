@@ -1,3 +1,7 @@
+2010-01-12  Dick Porter  <dporter@codicesoftware.com>
+
+	* serial.c: More includes for ia64-hpux
+
 2009-12-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* zlib-helper.c: when finishing uncompressing a buffer, we might need

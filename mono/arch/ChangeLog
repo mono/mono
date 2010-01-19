@@ -1,3 +1,7 @@
+2010-01-12  Dick Porter  <dporter@codicesoftware.com>
+
+	* ia64/ia64-codegen.h: First attempt at big-endian support
+
 2009-08-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* arm/arm-codegen.h: Add armv6 MOVW/MOVT.

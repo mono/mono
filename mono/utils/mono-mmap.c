@@ -382,7 +382,9 @@ mono_mprotect (void *addr, size_t length, int flags)
 		memset (addr, 0, length);
 #ifdef HAVE_MADVISE
 		madvise (addr, length, MADV_DONTNEED);
+#ifdef MADV_FREE
 		madvise (addr, length, MADV_FREE);
+#endif
 #else
 		posix_madvise (addr, length, POSIX_MADV_DONTNEED);
 #endif

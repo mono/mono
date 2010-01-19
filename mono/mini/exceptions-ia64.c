@@ -23,6 +23,10 @@
 #include <string.h>
 #include <sys/ucontext.h>
 
+#ifdef _HAVE_UC_GET_IP
+#include <sys/uc_access.h>
+#endif
+
 #include <mono/arch/ia64/ia64-codegen.h>
 #include <mono/metadata/appdomain.h>
 #include <mono/metadata/tabledefs.h>
@@ -633,5 +637,13 @@ mono_arch_ip_from_context (void *sigctx)
 {
 	ucontext_t *ctx = (ucontext_t*)sigctx;
 
+#ifdef _HAVE_UC_GET_IP
+	guint64 ret;
+
+	__uc_get_ip (ctx, &ret);
+
+	return (gpointer)ret;
+#else
 	return (gpointer)ctx->uc_mcontext.sc_ip;
+#endif
 }

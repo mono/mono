@@ -20,6 +20,10 @@
 #include <sys/filio.h>
 #endif
 
+/* HPUX needs this */
+#include <sys/strtio.h>
+#include <sys/modem.h>
+
 /* sys/time.h (for timeval) is required when using osx 10.3 (but not 10.4) */
 #ifdef __APPLE__
 #include <sys/time.h>

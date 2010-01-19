@@ -1,3 +1,8 @@
+2010-01-12  Dick Porter  <dporter@codicesoftware.com>
+
+	* get.c: ia64-hpux needs to use isfinite () even though the test
+	for finite () succeeds.
+
 2009-12-21  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* get.c (get_type): Don't crash if the type is not found.

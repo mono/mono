@@ -1,3 +1,8 @@
+2010-01-12  Dick Porter  <dporter@codicesoftware.com>
+
+	* exceptions-ia64.c (mono_arch_ip_from_context): Use the ia64-hpux
+	library for getting ip.
+
 2010-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_parse_options): Allow onthrow without
