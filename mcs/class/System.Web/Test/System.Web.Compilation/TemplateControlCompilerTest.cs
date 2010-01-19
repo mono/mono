@@ -81,6 +81,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "PreprocessorDirectivesInMarkup.aspx", "PreprocessorDirectivesInMarkup.aspx");
 			WebTest.CopyResource (GetType (), "OneLetterIdentifierInCodeRender.aspx", "OneLetterIdentifierInCodeRender.aspx");
 			WebTest.CopyResource (GetType (), "NestedParserFileText.aspx", "NestedParserFileText.aspx");
+			WebTest.CopyResource (GetType (), "TagWithExpressionWithinAttribute.aspx", "TagWithExpressionWithinAttribute.aspx");
 #endif
 		}
 		
@@ -253,6 +254,13 @@ namespace MonoTests.System.Web.Compilation {
 		{
 			// Just test if it doesn't throw an exception
 			new WebTest ("NestedParserFileText.aspx").Run ();
+		}
+
+		[Test (Description="Bug #568631")]
+		public void TagWithExpressionWithinAttribute ()
+		{
+			// Just test if it doesn't throw an exception
+			new WebTest ("TagWithExpressionWithinAttribute.aspx").Run ();
 		}
 #endif		
 		[Test (Description="Bug #323719")]
