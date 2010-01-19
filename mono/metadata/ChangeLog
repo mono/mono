@@ -15,36 +15,11 @@
 	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition): Handle inflated generic methods
 	on a GTD.
 
-2010-01-18  Mark Probst  <mark.probst@gmail.com>
+2010-01-19  Zoltan Varga  <vargaz@gmail.com>
 
-	* sgen-gc.c: Make minor collection section allowance adaptive,
-	depending on the amount of memory reclaimed in the last major
-	collection.  If more memory was reclaimed (i.e. more garbage
-	produced), do the next collection earlier.
-
-2010-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
-
-	* metadata-verify.c (parse_type): Fail a type signature if it has a recursive reference
-	to itself.
-
-	* metadata-verify.c (mono_verifier_verify_typespec_signature): Change signature to take
-	the token as parameter.
-
-	* verify-internals.h: Ditto.
-
-	* metadata.c (mono_type_create_from_typespec): Pass token to verifier.
-
-	Fixes #571460.
-
-2010-01-18  Mark Probst  <mark.probst@gmail.com>
-
-	* sgen-gc.c: Make store_remset_buffer_index long.
-
-2010-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
-
-	* class.c (mono_class_from_typeref): Fail loading of self-referencing typeref tokens.
-
-	Fixes #569579.
+	* marshal.c (mono_marshal_wrapper_info_from_wrapper): New helper function to
+	return a point to a wrapper specific info structure describing the wrapper.
+	(mono_marshal_get_array_address): Store the rank+elem_size in the wrapper info.
 
 2010-01-18  Zoltan Varga  <vargaz@gmail.com>
 
