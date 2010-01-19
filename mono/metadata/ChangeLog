@@ -1,3 +1,8 @@
+2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_Remoting_RemotingServices_GetVirtualMethod): This
+	function is generics variance aware.
+
 2010-01-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c (mono_security_core_clr_can_access_internals):
