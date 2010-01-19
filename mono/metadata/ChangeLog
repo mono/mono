@@ -1,3 +1,10 @@
+2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition): Handle inflated generic methods
+	on a GTD.
+
+	Backport of r149808.
+
 2010-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* socket-io.c (AI_ADDRCONFIG): Applied patch from John Lightsey (jd@cpanel.net).
