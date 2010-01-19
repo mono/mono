@@ -701,6 +701,32 @@ namespace MonoTests.System.Reflection
 			}
 		}
 #endif
+#if NET_4_0
+		interface IMethodInvoke<out T>
+		{
+		    T Test ();
+		}
+
+		class MethodInvoke : IMethodInvoke<object>
+		{
+		    public object Test ()
+		    {
+		        return "MethodInvoke";
+		    }
+		}
+
+		[Test]
+		public void GetInterfaceMapWorksWithVariantIfaces ()
+		{
+			var m0 = typeof (IMethodInvoke<object>).GetMethod ("Test");
+			var m1 = typeof (IMethodInvoke<string>).GetMethod ("Test");
+			var obj = new MethodInvoke ();
+
+			Assert.AreEqual ("MethodInvoke", m0.Invoke (obj, new Object [0]));
+			Assert.AreEqual ("MethodInvoke", m1.Invoke (obj, new Object [0]));
+		}
+#endif
+
 	}
 	
 #if NET_2_0
