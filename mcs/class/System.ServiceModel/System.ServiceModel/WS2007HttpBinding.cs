@@ -35,5 +35,25 @@ namespace System.ServiceModel
 	[MonoTODO]
 	public class WS2007HttpBinding : WSHttpBinding
 	{
+		public WS2007HttpBinding ()
+			: base ()
+		{
+		}
+
+		public WS2007HttpBinding (SecurityMode mode)
+			: base (mode)
+		{
+		}
+
+		public WS2007HttpBinding (SecurityMode mode, bool reliableSessionEnabled)
+			: base (mode, reliableSessionEnabled)
+		{
+		}
+
+		[MonoTODO]
+		public WS2007HttpBinding (string configurationName)
+			: base (configurationName)
+		{
+		}
 	}
 }

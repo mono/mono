@@ -1,3 +1,8 @@
+2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WS2007FederationHttpBinding.cs, WS2007HttpBinding.cs:
+	  add missing constructors.
+
 2010-01-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageSecurityVersion.cs : add new 3.5 members.
