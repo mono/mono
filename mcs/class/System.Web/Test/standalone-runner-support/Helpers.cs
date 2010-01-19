@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Text;
 using System.Web;
 using System.Web.Hosting;
 
@@ -49,6 +50,30 @@ namespace StandAloneRunnerSupport
 		{
 			string rendered = ExtractCodeFromHtml (html);
 			HtmlDiff.AssertAreEqual (original, rendered, msg);
+		}
+
+		public static string StripWebResourceAxdQuery (string origHtml)
+		{
+			if (String.IsNullOrEmpty (origHtml))
+				return origHtml;
+			
+			// Naive approach, enough for now
+			int idx = origHtml.IndexOf ("\"/WebResource.axd");
+			if (idx == -1)
+				return origHtml;
+
+			var sb = new StringBuilder ();
+			sb.Append (origHtml.Substring (0, idx));
+			sb.Append ('"');
+			idx++;
+			int idx2 = origHtml.IndexOf ("\"", idx);
+			string webRes;
+			sb.Append ("/WebResource.axd");
+			
+			if (idx2 > -1)
+				sb.Append (origHtml.Substring (idx2));
+
+			return sb.ToString ();
 		}
 	}
 }

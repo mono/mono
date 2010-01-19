@@ -1,3 +1,12 @@
+2010-01-19  Marek Habersack  <mhabersack@novell.com>
+
+	* StaticSiteMapProvider.cs: AddNode checks the url of node
+	returned by FindSiteMapNode to see if it indeed was a
+	duplicate. It is necessary if application derives from
+	StaticSiteMapProvider and overrides FindSiteMapNode to return
+	RootNode if rawUrl doesn't match any existing node. Fixes bug
+	#570194
+
 2010-01-09  Marek Habersack  <mhabersack@novell.com>
 
 	* VirtualPathUtility.cs: small optimizations for GetDirectory

@@ -45,10 +45,23 @@ namespace StandAloneRunnerSupport
 		
 		public string Run (string url)
 		{
+			if (String.IsNullOrEmpty (url))
+				throw new ArgumentNullException ("url");
+			
 			var output = new StringWriter ();
 			try {
-				Uri uri = new Uri (url, UriKind.RelativeOrAbsolute);
-				var wr = new TestWorkerRequest (uri.AbsolutePath, uri.Query, output);
+				string fullUrl = "http://localhost";
+				if (url [0] == '/')
+					fullUrl += url;
+				else
+					fullUrl += "/" + url;
+				
+				Uri uri = new Uri (fullUrl, UriKind.RelativeOrAbsolute);
+				string query = uri.Query;
+				if (!String.IsNullOrEmpty (query) && query [0] == '?')
+					query = query.Substring (1);
+				
+				var wr = new TestWorkerRequest (uri.AbsolutePath, query, output);
 				
 				HttpRuntime.ProcessRequest (wr);
 				return output.ToString ();

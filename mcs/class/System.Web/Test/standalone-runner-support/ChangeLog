@@ -1,3 +1,14 @@
+2010-01-19  Marek Habersack  <mhabersack@novell.com>
+
+	* TestRunner.cs: Run makes sure Uri parser is passed a full url,
+	or otherwise it won't be parsed correctly (will not parse the
+	query part if an URL similar to '/file.html?query=value' is
+	passed)
+
+	* Helpers.cs: added a simple and naive method to extract query
+	from WebResource.axd URLs. This is necessary because the query
+	will be different each time the test is ran.
+
 2010-01-14  Marek Habersack  <mhabersack@novell.com>
 
 	* Helpers.cs, ITestCase.cs, ITestRunner.cs, StandaloneTest.cs,

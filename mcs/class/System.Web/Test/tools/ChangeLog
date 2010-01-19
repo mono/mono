@@ -1,3 +1,8 @@
+2010-01-19  Marek Habersack  <mhabersack@novell.com>
+
+	* standalone-runner.cs: reformatted summary message to match
+	NUnit's more closely.
+
 2010-01-14  Marek Habersack  <mhabersack@novell.com>
 
 	* standalone-runner.cs: added

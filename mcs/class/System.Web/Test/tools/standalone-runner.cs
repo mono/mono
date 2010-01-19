@@ -133,13 +133,14 @@ namespace StandAloneRunner
 			
 				foreach (string r in reports) {
 					repCounter++;
-					Console.WriteLine (numFormat + FormatLines (indent, r, Environment.NewLine, true), repCounter);
+					Console.Write (numFormat, repCounter);
+					Console.WriteLine (FormatLines (indent, r, Environment.NewLine, true));
 				}
 			} else
 				Console.WriteLine ();
 			
-			Console.WriteLine ("Total tests: {0}; Run: {1}; Failed: {2}; Not run: {3}; Time taken: {4}",
-					   tests.Count, runCounter, failedCounter, tests.Count - runCounter, end - start);
+			Console.WriteLine ("Tests run: {0}; Total tests: {1}; Failed: {2}; Not run: {3}; Time taken: {4}",
+					   runCounter, tests.Count, failedCounter, tests.Count - runCounter, end - start);
 		}
 
 		static string FormatReport (StandaloneTest test)
