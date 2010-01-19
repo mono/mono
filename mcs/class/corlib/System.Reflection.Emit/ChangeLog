@@ -1,3 +1,7 @@
+2010-01-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* EventOnTypeBuilderInst.cs: Fix build.
+
 2010-01-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* ILGenerator.cs (Emit): Disallow byref types. Fixes #564411.
