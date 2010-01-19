@@ -25,9 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if USE_DEPRECATED
-// This class is not deprecated, but most of members and depending classes
-// have changed, so most of the code is not reusable.
 
 using System;
 using System.Collections.ObjectModel;
@@ -45,65 +42,75 @@ namespace MonoTests.System.ServiceModel.Description
 		[Test]
 		public void DefaultValues ()
 		{
-			ServiceAuthorizationBehavior b =
-				new ServiceAuthorizationBehavior ();
-			Assert.IsNull (b.AuthorizationDomain, "#1");
-			Assert.IsFalse (b.ImpersonateCallerForAllServiceOperations,
-				"#2");
-			Assert.IsNull (b.OperationRequirement, "#3");
-			Assert.AreEqual (PrincipalPermissionMode.UseWindowsGroups,
-				b.PrincipalPermissionMode, "#4");
+			var b = new ServiceAuthorizationBehavior ();
+			Assert.IsNull (b.ExternalAuthorizationPolicies, "#1-1");
+			Assert.IsFalse (b.ImpersonateCallerForAllOperations, "#1-2");
+			Assert.AreEqual (PrincipalPermissionMode.UseWindowsGroups, b.PrincipalPermissionMode, "#1-3");
+
+			ServiceHost host = new ServiceHost (typeof (TestService));
+			b = host.Description.Behaviors.Find<ServiceAuthorizationBehavior> ();
+			Assert.IsNull (b.ExternalAuthorizationPolicies, "#2-1");
+			Assert.IsFalse (b.ImpersonateCallerForAllOperations, "#2-2");
+			Assert.AreEqual (PrincipalPermissionMode.UseWindowsGroups, b.PrincipalPermissionMode, "#2-3");
+		}
+
+		[Test]
+		public void Validate ()
+		{
+			var b = new ServiceAuthorizationBehavior ();
+			IServiceBehavior sb = b;
+			sb.Validate (new ServiceDescription (),
+			new ServiceHost (typeof (object)));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void ImpersonateCallerWithNoValidOperation ()
+		{
+			ServiceHost host = new ServiceHost (typeof (TestService));
+			var b = host.Description.Behaviors.Find<ServiceAuthorizationBehavior> ();
+			b.ImpersonateCallerForAllOperations = true;
+			b.PrincipalPermissionMode = PrincipalPermissionMode.None;
+
+			host.AddServiceEndpoint (typeof (TestService), new BasicHttpBinding (), new Uri ("http://localhost:37564"));
+
+			host.Open ();
 		}
 
 		[Test]
 		public void ApplyBehavior ()
 		{
-			ServiceHost host = new ServiceHost (typeof (object));
-			EndpointDispatcher d = new EndpointDispatcher (host, "a", "");
-			DispatchRuntime db = d.Behavior;
-			EndpointDispatcher d2 = new EndpointDispatcher (host, "a", "");
-			DispatchRuntime db2 = d2.Behavior;
-
-			ServiceAuthorizationBehavior b =
-				new ServiceAuthorizationBehavior ();
-			b.ImpersonateCallerForAllServiceOperations = true;
-			b.OperationRequirement = new MyRequirement ();
+			ServiceHost host = new ServiceHost (typeof (TestService2));
+			var b = host.Description.Behaviors.Find<ServiceAuthorizationBehavior> ();
+			b.ImpersonateCallerForAllOperations = false;
 			b.PrincipalPermissionMode = PrincipalPermissionMode.None;
 
-			Collection<DispatchRuntime> c =
-				new Collection<DispatchRuntime> (
-					new DispatchRuntime [] {db, db2});
-			Collection<BindingParameterCollection> pc =
-				new Collection<BindingParameterCollection> (
-					new BindingParameterCollection [] {
-						new BindingParameterCollection ()});
-			((IServiceBehavior) b).ApplyBehavior (null, host, c, pc);
+			host.AddServiceEndpoint (typeof (TestService2), new BasicHttpBinding (), new Uri ("http://localhost:37564"));
 
-			Assert.IsNull (db.AuthorizationDomain, "#1-1");
-			Assert.IsTrue (db.ImpersonateCallerForAllServiceOperations, "#1-2");
-			Assert.AreEqual (typeof (MyRequirement),
-				db.OperationRequirement.GetType (), "#1-3");
+			host.Open ();
+			var ed = ((ChannelDispatcher) host.ChannelDispatchers [0]).Endpoints [0];
+			var db = ed.DispatchRuntime;
+			host.Close ();
+
+			Assert.IsFalse (db.ImpersonateCallerForAllOperations, "#1");
 			Assert.AreEqual (PrincipalPermissionMode.None,
-				db.PrincipalPermissionMode, "#1-4");
-			Assert.IsNull (db2.AuthorizationDomain, "#2-1");
-			Assert.IsTrue (db2.ImpersonateCallerForAllServiceOperations, "#2-2");
-			/*
-			Assert.AreEqual (typeof (MyRequirement),
-				db2.OperationRequirement.GetType (), "#2-3");
-			Assert.AreEqual (PrincipalPermissionMode.None,
-				db2.PrincipalPermissionMode, "#2-4");
-			*/
+				db.PrincipalPermissionMode, "#2");
 		}
 
-		/*
-		class MyRequirement : OperationRequirement
+		[ServiceContract]
+		public class TestService
 		{
-			public override bool AccessCheck (OperationContext ctx)
-			{
-				return true;
-			}
+			[OperationContract]
+			public void Foo () {}
 		}
-		*/
+
+		[ServiceContract]
+		public class TestService2
+		{
+			[OperationContract]
+			[OperationBehavior (Impersonation = ImpersonationOption.Allowed)]
+			public void Foo () {}
+		}
 	}
 }
-#endif
