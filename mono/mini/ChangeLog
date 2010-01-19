@@ -1,5 +1,12 @@
 2010-01-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c (mono_arch_get_throw_corlib_exception): Emit xdebug info.
+	(mono_arch_find_jit_info_ext): Disable the popping of arguments when LLVM is
+	used.
+
+	* mini-llvm.c (emit_cond_system_exception): Abort when an implicit exception is
+	thrown on x86.
+
 	* unwind.c (mono_unwind_decode_fde): Fix an assert on x86.
 
 	* mini-x86.h (MONO_CONTEXT_SET_LLVM_EXC_REG): Define this for x86.
