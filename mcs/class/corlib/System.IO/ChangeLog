@@ -1,3 +1,8 @@
+2010-01-19  Alan McGovern  <amcgovern@novell.com>
+	* BufferedStream.cs: Patch by Tom Philpot to optimise ReadByte and
+	WriteByte significantly by making them fulfill their request by
+	directly reading from the buffer.
+
 2010-01-14  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* UnmanagedMemoryStream.cs: Read: don't read bytes one-by-one, read all

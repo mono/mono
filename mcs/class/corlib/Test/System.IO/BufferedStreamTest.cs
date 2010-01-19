@@ -243,6 +243,15 @@ public class BufferedStreamTest {
 	}
 
 	[Test]
+	[ExpectedException(typeof(NotSupportedException))]
+	public void ReadByte_CantRead () 
+	{
+		WriteOnlyStream wo = new WriteOnlyStream ();
+		BufferedStream stream = new BufferedStream (wo);
+		stream.ReadByte ();
+	}
+
+	[Test]
 	[ExpectedException(typeof(ArgumentOutOfRangeException))]
 	public void Read_OffsetNegative () 
 	{
@@ -342,6 +351,15 @@ public class BufferedStreamTest {
 		ReadOnlyStream ro = new ReadOnlyStream ();
 		BufferedStream stream = new BufferedStream (ro);
 		stream.Write (new byte [1], 0, 1);
+	}
+
+	[Test]
+	[ExpectedException(typeof(NotSupportedException))]
+	public void WriteByte_CantWrite () 
+	{
+		ReadOnlyStream ro = new ReadOnlyStream ();
+		BufferedStream stream = new BufferedStream (ro);
+		stream.WriteByte (0);
 	}
 
 	[Test]
