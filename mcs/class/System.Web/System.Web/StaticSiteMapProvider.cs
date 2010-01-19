@@ -39,11 +39,13 @@ namespace System.Web
 {
 	public abstract class StaticSiteMapProvider : SiteMapProvider
 	{
+		static readonly StringComparison stringComparison = HttpRuntime.CaseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
+		
 		Dictionary<string, SiteMapNode> keyToNode;
 		Dictionary<SiteMapNode, SiteMapNode> nodeToParent;
 		Dictionary<SiteMapNode, SiteMapNodeCollection> nodeToChildren;
 		Dictionary<string, SiteMapNode> urlToNode;
-			
+		
 		protected StaticSiteMapProvider ()
 		{
 			keyToNode = new Dictionary<string, SiteMapNode> ();
@@ -58,13 +60,15 @@ namespace System.Web
 				throw new ArgumentNullException ("node");
 
 			lock (this_lock) {
-				if (FindSiteMapNodeFromKey (node.Key) != null && node.Provider == this)
-					throw new InvalidOperationException (string.Format ("A node with key '{0}' already exists.",node.Key));
+				string nodeKey = node.Key;
+				if (FindSiteMapNodeFromKey (nodeKey) != null && node.Provider == this)
+					throw new InvalidOperationException (string.Format ("A node with key '{0}' already exists.",nodeKey));
 
-				if (!String.IsNullOrEmpty (node.Url)) {
-					string url = MapUrl (node.Url);
-					
-					if (FindSiteMapNode (url) != null)
+				string nodeUrl = node.Url;
+				if (!String.IsNullOrEmpty (nodeUrl)) {
+					string url = MapUrl (nodeUrl);
+					SiteMapNode foundNode = FindSiteMapNode (url);
+					if (foundNode != null && String.Compare (foundNode.Url, url, stringComparison) == 0)
 						throw new InvalidOperationException (String.Format (
 							"Multiple nodes with the same URL '{0}' were found. " + 
 							"StaticSiteMapProvider requires that sitemap nodes have unique URLs.",
@@ -73,7 +77,7 @@ namespace System.Web
 
 					urlToNode.Add (url, node);
 				}
-				keyToNode.Add (node.Key, node);
+				keyToNode.Add (nodeKey, node);
 
 				if (node == RootNode)
 					return;
@@ -113,10 +117,10 @@ namespace System.Web
 			SiteMapNode node;
 			if (VirtualPathUtility.IsAppRelative (rawUrl))
 				rawUrl = VirtualPathUtility.ToAbsolute (rawUrl, HttpRuntime.AppDomainAppVirtualPath, false);
-			
+
 			if (!urlToNode.TryGetValue (rawUrl, out node))
 				return null;
-			
+
 			return CheckAccessibility (node);
 		}
 
