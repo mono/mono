@@ -538,6 +538,7 @@ namespace MonoTests.SystemWeb.Framework
 #if INSIDE_SYSTEM_WEB
 			CopyResource (typeof (WebTest), "Common.resx", "App_GlobalResources/Common.resx");
 			CopyResource (typeof (WebTest), "Common.fr-FR.resx", "App_GlobalResources/Common.fr-FR.resx");
+			CopyResource (typeof (WebTest), "Resource1.resx", "App_GlobalResources/Resource1.resx");
 #endif
 			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
 #else

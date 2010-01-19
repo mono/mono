@@ -212,7 +212,7 @@ namespace System.Web.Compilation
 		
 		internal static Regex DirectiveRegex = new Regex (@"<%\s*@(\s*(?<attrname>\w[\w:]*(?=\W))(\s*(?<equal>=)\s*""(?<attrval>[^""]*)""|\s*(?<equal>=)\s*'(?<attrval>[^']*)'|\s*(?<equal>=)\s*(?<attrval>[^\s%>]*)|(?<equal>)(?<attrval>\s*?)))*\s*?%>", RegexOptions.Compiled | RegexOptions.IgnoreCase);
 
-		static readonly Regex runatServer = new Regex (@"<[\w:\.]+.*?runat=[""']?server[""']?.*?/?>",
+		static readonly Regex runatServer = new Regex (@"<[\w:\.]+.*?runat=[""']?server[""']?.*(?:/>|>)",
 							       RegexOptions.Compiled | RegexOptions.Singleline |
 							       RegexOptions.Multiline | RegexOptions.IgnoreCase |
 							       RegexOptions.CultureInvariant);
