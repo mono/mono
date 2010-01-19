@@ -18,6 +18,7 @@
 /mono-*.tar.gz
 /*.pc
 /mono.spec
+/mono-core.spec
 /semantic.cache
 /stamp-h
 /stamp-h.in
@@ -29,3 +30,8 @@
 /install-sh
 /doltlibtool
 /doltcompile
+/libtool.m4
+/ltoptions.m4
+/ltsugar.m4
+/lt~obsolete.m4
+/ltversion.m4
