@@ -1,3 +1,7 @@
+2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : another error audit.
+
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FaultContractInfo.cs : implement.

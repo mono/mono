@@ -421,8 +421,11 @@ namespace System.ServiceModel.Dispatcher
 					stop_handle.Close ();
 					stop_handle = null;
 				}
-				if (owner.Listener.State != CommunicationState.Closed)
+				if (owner.Listener.State != CommunicationState.Closed) {
+					// FIXME: log it
+					Console.WriteLine ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ());
 					owner.Listener.Abort ();
+				}
 				if (loop_thread != null && loop_thread.IsAlive)
 					loop_thread.Abort ();
 				loop_thread = null;

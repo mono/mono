@@ -1,3 +1,9 @@
+2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CommunicationObject.cs : when process state changes, lock the
+	  object to make sure the state transition is valid.
+	  Change OnClosed/OnClosing to do the way OnOpened/OnOpening does.
+
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageHeaders.cs : implement SetAction().

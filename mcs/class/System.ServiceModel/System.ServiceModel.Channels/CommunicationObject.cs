@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Reflection;
 using System.ServiceModel;
 using System.Threading;
 
@@ -36,7 +37,7 @@ namespace System.ServiceModel.Channels
 		object mutex;
 		CommunicationState state = CommunicationState.Created;
 		TimeSpan default_open_timeout = TimeSpan.FromMinutes (1), default_close_timeout = TimeSpan.FromMinutes (1);
-		bool aborted, on_closed_called;
+		bool aborted;
 
 		protected CommunicationObject ()
 			: this (new object ())
@@ -184,14 +185,20 @@ namespace System.ServiceModel.Channels
 
 		void ProcessClosing ()
 		{
-			if (State == CommunicationState.Faulted)
-				throw new CommunicationObjectFaultedException ();
-			state = CommunicationState.Closing;
-			OnClosing ();
+			lock (ThisLock) {
+				if (State == CommunicationState.Faulted)
+					throw new CommunicationObjectFaultedException ();
+				OnClosing ();
+				if (state != CommunicationState.Closing) {
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnClosing method that does not call base OnClosing method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnClosing", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
+					state = CommunicationState.Faulted;
+				}
+			}
 		}
 
 		protected virtual void OnClosing ()
 		{
+			state = CommunicationState.Closing;
 			// This means, if this method is overriden, then
 			// Opening event is surpressed.
 			if (Closing != null)
@@ -200,20 +207,22 @@ namespace System.ServiceModel.Channels
 
 		void ProcessClosed ()
 		{
-			state = CommunicationState.Closed;
-			on_closed_called = false;
-			OnClosed ();
-			if (!on_closed_called)
-				throw new InvalidOperationException ("OnClosed method is implemented but it did not call its base OnClosed method");
+			lock (ThisLock) {
+				OnClosed ();
+				if (state != CommunicationState.Closed) {
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnClosed method that does not call base OnClosed method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnClosed", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
+					state = CommunicationState.Faulted;
+				}
+			}
 		}
 
 		protected virtual void OnClosed ()
 		{
+			state = CommunicationState.Closed;
 			// This means, if this method is overriden, then
 			// Closed event is surpressed.
 			if (Closed != null)
 				Closed (this, new EventArgs ());
-			on_closed_called = true;
 		}
 
 		protected abstract void OnEndClose (IAsyncResult result);
@@ -233,10 +242,12 @@ namespace System.ServiceModel.Channels
 
 		void ProcessOpened ()
 		{
-			OnOpened ();
-			if (state != CommunicationState.Opened) {
-				throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpened method that does not call base OnOpened method.", this.GetType ()));
-				state = CommunicationState.Faulted;
+			lock (ThisLock) {
+				OnOpened ();
+				if (state != CommunicationState.Opened) {
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpened method that does not call base OnOpened method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnOpened", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
+					state = CommunicationState.Faulted;
+				}
 			}
 		}
 
@@ -249,11 +260,13 @@ namespace System.ServiceModel.Channels
 
 		void ProcessOpening ()
 		{
-			ThrowIfDisposedOrImmutable ();
-			OnOpening ();
-			if (state != CommunicationState.Opening) {
-				throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpening method that does not call base OnOpening method.", this.GetType ()));
-				state = CommunicationState.Faulted;
+			lock (ThisLock) {
+				ThrowIfDisposedOrImmutable ();
+				OnOpening ();
+				if (state != CommunicationState.Opening) {
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpening method that does not call base OnOpening method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnOpening", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
+					state = CommunicationState.Faulted;
+				}
 			}
 		}
 
