@@ -1,5 +1,10 @@
 2010-01-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (encode_method_ref): Use mono_marshal_wrapper_info_from_wrapper
+	() in one place.
+	(mono_aot_wrapper_name): Remove the special handling of delegate invoke wrappers,
+	its no longer needed.
+
 	* method-to-ir.c (mono_method_to_ir): Fix a warning.
 
 	* exceptions-<ARCH>.c: Introduce a MONO_ARCH_HAVE_THROW_EXCEPTION_BY_NAME
