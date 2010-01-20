@@ -1,3 +1,7 @@
+2010-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Tuples.cs: explicitly implement IStructural*.
+
 2010-01-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* UInt64.cs: Implement a lightweight version of the Parse method for

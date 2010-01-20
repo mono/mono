@@ -77,19 +77,22 @@ namespace System
 			get { return item1; }
 		}
 
-		public int CompareTo (object obj)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo (obj, Comparer<object>.Default);
+			return ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);
 		}
 
-		[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }
+		[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override bool Equals (object obj)
 		{
-			return Equals (obj, EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);
 		}
 
-		public bool Equals (object other, IEqualityComparer comparer)
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1>;
 			if (t == null) {
@@ -102,10 +105,10 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return GetHashCode (EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).GetHashCode (EqualityComparer<object>.Default);
 		}
 
-		public int GetHashCode (IEqualityComparer comparer)
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
 			return comparer.GetHashCode (item1);
 		}
@@ -136,19 +139,22 @@ namespace System
 			get { return item2; }
 		}
 
-		public int CompareTo (object obj)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo (obj, Comparer<object>.Default);
+			return ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);
 		}
 
-		[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }
+		[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override bool Equals (object obj)
 		{
-			return Equals (obj, EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);
 		}
 
-		public bool Equals (object other, IEqualityComparer comparer)
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2>;
 			if (t == null) {
@@ -162,10 +168,10 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return GetHashCode (EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).GetHashCode (EqualityComparer<object>.Default);
 		}
 
-		public int GetHashCode (IEqualityComparer comparer)
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
 			int h = comparer.GetHashCode (item1);
 			h = (h << 5) - h + comparer.GetHashCode (item2);
@@ -204,19 +210,22 @@ namespace System
 			get { return item3; }
 		}
 
-		public int CompareTo (object obj)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo (obj, Comparer<object>.Default);
+			return ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);
 		}
 
-		[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }
+		[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override bool Equals (object obj)
 		{
-			return Equals (obj, EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);
 		}
 
-		public bool Equals (object other, IEqualityComparer comparer)
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3>;
 			if (t == null) {
@@ -231,10 +240,10 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return GetHashCode (EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).GetHashCode (EqualityComparer<object>.Default);
 		}
 
-		public int GetHashCode (IEqualityComparer comparer)
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
 			int h = comparer.GetHashCode (item1);
 			h = (h << 5) - h + comparer.GetHashCode (item2);
@@ -280,19 +289,22 @@ namespace System
 			get { return item4; }
 		}
 
-		public int CompareTo (object obj)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo (obj, Comparer<object>.Default);
+			return ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);
 		}
 
-		[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }
+		[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override bool Equals (object obj)
 		{
-			return Equals (obj, EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);
 		}
 
-		public bool Equals (object other, IEqualityComparer comparer)
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4>;
 			if (t == null) {
@@ -308,10 +320,10 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return GetHashCode (EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).GetHashCode (EqualityComparer<object>.Default);
 		}
 
-		public int GetHashCode (IEqualityComparer comparer)
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
 			int h = comparer.GetHashCode (item1);
 			h = (h << 5) - h + comparer.GetHashCode (item2);
@@ -364,19 +376,22 @@ namespace System
 			get { return item5; }
 		}
 
-		public int CompareTo (object obj)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo (obj, Comparer<object>.Default);
+			return ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);
 		}
 
-		[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }
+		[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override bool Equals (object obj)
 		{
-			return Equals (obj, EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);
 		}
 
-		public bool Equals (object other, IEqualityComparer comparer)
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4, T5>;
 			if (t == null) {
@@ -393,10 +408,10 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return GetHashCode (EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).GetHashCode (EqualityComparer<object>.Default);
 		}
 
-		public int GetHashCode (IEqualityComparer comparer)
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
 			int h = comparer.GetHashCode (item1);
 			h = (h << 5) - h + comparer.GetHashCode (item2);
@@ -456,19 +471,22 @@ namespace System
 			get { return item6; }
 		}
 
-		public int CompareTo (object obj)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo (obj, Comparer<object>.Default);
+			return ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);
 		}
 
-		[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }
+		[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override bool Equals (object obj)
 		{
-			return Equals (obj, EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);
 		}
 
-		public bool Equals (object other, IEqualityComparer comparer)
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4, T5, T6>;
 			if (t == null) {
@@ -486,10 +504,10 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return GetHashCode (EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).GetHashCode (EqualityComparer<object>.Default);
 		}
 
-		public int GetHashCode (IEqualityComparer comparer)
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
 			int h = comparer.GetHashCode (item1);
 			h = (h << 5) - h + comparer.GetHashCode (item2);
@@ -556,19 +574,22 @@ namespace System
 			get { return item7; }
 		}
 
-		public int CompareTo (object obj)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo (obj, Comparer<object>.Default);
+			return ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);
 		}
 
-		[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }
+		[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override bool Equals (object obj)
 		{
-			return Equals (obj, EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);
 		}
 
-		public bool Equals (object other, IEqualityComparer comparer)
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4, T5, T6, T7>;
 			if (t == null) {
@@ -587,10 +608,10 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return GetHashCode (EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).GetHashCode (EqualityComparer<object>.Default);
 		}
 
-		public int GetHashCode (IEqualityComparer comparer)
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
 			int h = comparer.GetHashCode (item1);
 			h = (h << 5) - h + comparer.GetHashCode (item2);
@@ -652,19 +673,22 @@ namespace System
 			get { return rest; }
 		}
 
-		public int CompareTo (object obj)
+		int IComparable.CompareTo (object obj)
 		{
-			return CompareTo (obj, Comparer<object>.Default);
+			return ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);
 		}
 
-		[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }
+		[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public override bool Equals (object obj)
 		{
-			return Equals (obj, EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);
 		}
 
-		public bool Equals (object other, IEqualityComparer comparer)
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
 		{
 			var t = other as Tuple<T1, T2, T3, T4, T5, T6, T7, TRest>;
 			if (t == null) {
@@ -684,10 +708,10 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return GetHashCode (EqualityComparer<object>.Default);
+			return ((IStructuralEquatable) this).GetHashCode (EqualityComparer<object>.Default);
 		}
 
-		public int GetHashCode (IEqualityComparer comparer)
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
 		{
 			int h = comparer.GetHashCode (item1);
 			h = (h << 5) - h + comparer.GetHashCode (item2);
@@ -705,6 +729,7 @@ namespace System
 			return String.Format ("({0}, {1}, {2}, {3}, {4}, {5}, {6}, {7})", item1, item2, item3, item4, item5, item6, item7, rest);
 		}
 	}
+
 }
 	
 #endif
@@ -757,22 +782,25 @@ public class TupleGen
 			}
 
 			Console.WriteLine ();
-			Console.WriteLine ("\t\tpublic int CompareTo (object obj)");
+			Console.WriteLine ("\t\tint IComparable.CompareTo (object obj)");
 			Console.WriteLine ("\t\t{");
-			Console.WriteLine ("\t\t\treturn CompareTo (obj, Comparer<object>.Default);");
+			Console.WriteLine ("\t\t\treturn ((IStructuralComparable) this).CompareTo (obj, Comparer<object>.Default);");
 			Console.WriteLine ("\t\t}");
 			
 			Console.WriteLine ();
-			Console.WriteLine ("\t\t[MonoTODO] public int CompareTo (object other, IComparer comparer) { throw new NotImplementedException (); }");
+			Console.WriteLine ("\t\t[MonoTODO] int IStructuralComparable.CompareTo (object other, IComparer comparer)");
+			Console.WriteLine ("\t\t{");
+			Console.WriteLine ("\t\t\tthrow new NotImplementedException ();");
+			Console.WriteLine ("\t\t}");
 			
 			Console.WriteLine ();
 			Console.WriteLine ("\t\tpublic override bool Equals (object obj)");
 			Console.WriteLine ("\t\t{");
-			Console.WriteLine ("\t\t\treturn Equals (obj, EqualityComparer<object>.Default);");
+			Console.WriteLine ("\t\t\treturn ((IStructuralEquatable) this).Equals (obj, EqualityComparer<object>.Default);");
 			Console.WriteLine ("\t\t}");
 			
 			Console.WriteLine ();
-			Console.WriteLine ("\t\tpublic bool Equals (object other, IEqualityComparer comparer)");
+			Console.WriteLine ("\t\tbool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)");
 			Console.WriteLine ("\t\t{");
 			Console.WriteLine ("\t\t\tvar t = other as {0};", type_name);
 			Console.WriteLine ("\t\t\tif (t == null) {");
@@ -803,7 +831,7 @@ public class TupleGen
 			Console.WriteLine ("\t\t}");
 			
 			Console.WriteLine ();
-			Console.WriteLine ("\t\tpublic int GetHashCode (IEqualityComparer comparer)");
+			Console.WriteLine ("\t\tint IStructuralEquatable.GetHashCode (IEqualityComparer comparer)");
 			Console.WriteLine ("\t\t{");
 			if (arity == 1) {
 				Console.WriteLine ("\t\t\treturn comparer.GetHashCode ({0});", GetItemName (arity));
