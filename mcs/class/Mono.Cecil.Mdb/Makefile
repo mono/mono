@@ -5,7 +5,9 @@ LIBRARY = Mono.Cecil.Mdb.dll
 LIBRARY_SNK = ../mono.snk
 LIBRARY_PACKAGE = none
 
-LIB_MCS_FLAGS = /r:$(corlib) /r:Mono.Cecil.dll /d:CECIL -keyfile:$(LIBRARY_SNK)
+CECIL = $(topdir)/class/lib/$(PROFILE)/Mono.Cecil.dll
+
+LIB_MCS_FLAGS = /r:$(corlib) /r:$(CECIL) /d:CECIL -keyfile:$(LIBRARY_SNK)
 
 NO_TEST = yes
 
