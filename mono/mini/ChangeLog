@@ -1,5 +1,9 @@
 2010-01-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-<ARCH>.c: Introduce a MONO_ARCH_HAVE_THROW_EXCEPTION_BY_NAME
+	define for platforms still using it (s390). Get rid of the
+	mono_arch_get_throw_exception_by_name () routines on all other platforms.
+
 	* exceptions-x86.c: Rework the throw trampolines so there is only one function
 	which can generate throw/rethrow/corlib trampolines for llvm/not llvm code.
 
@@ -8,7 +12,7 @@
 
 	* mini-llvm.c: Enable throwing exceptions on x86.
 
-	* mini-posix.c (SIG_HANDLER_SIGNATURE): Avoid 
+	* mini-posix.c (SIG_HANDLER_SIGNATURE): Avoid
 	"Thread (nil) may have been prematurely finalized" messages if this is called
 	on a thread not registered with the runtime.
 
