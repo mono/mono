@@ -1,3 +1,8 @@
+2010-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Calculate the target class of the delegete invoke wrappers using
+	get_wrapper_target_class.
+
 2010-01-19  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Fix warnings.
