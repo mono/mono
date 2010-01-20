@@ -1,3 +1,7 @@
+2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AddressHeaderTest.cs : add reader and writer tests.
+
 2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BinaryMessageEncodingBindingElementTest.cs : added test for

@@ -1,5 +1,10 @@
 2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AddressHeader.cs : implement remaining bits.
+	  Eliminate dependency on NetDataContractSerializer.
+
+2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CommunicationObject.cs : in Fault(), do similar work as previous
 	  change does.
 
