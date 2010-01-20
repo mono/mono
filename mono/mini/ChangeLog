@@ -1,5 +1,8 @@
 2010-01-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c: Rework the throw trampolines so there is only one function
+	which can generate throw/rethrow/corlib trampolines for llvm/not llvm code.
+
 	* exceptions-x86.c: Add LLVM specific throw trampolines which doesn't assume
 	the caller pushed the arguments.
 
