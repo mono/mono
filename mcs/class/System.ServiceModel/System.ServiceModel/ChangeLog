@@ -1,3 +1,8 @@
+2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : a stability workaround to make nunit test
+	  stopper almost reproducible.
+
 2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WS2007FederationHttpBinding.cs, WS2007HttpBinding.cs:

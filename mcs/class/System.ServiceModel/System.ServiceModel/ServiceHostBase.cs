@@ -442,10 +442,6 @@ namespace System.ServiceModel
 			ServicesSection services = ConfigUtil.ServicesSection;
 		}
 
-		void DoOpen (TimeSpan timeout)
-		{
-		}
-
 		[MonoTODO]
 		protected override sealed void OnAbort ()
 		{
@@ -495,6 +491,9 @@ namespace System.ServiceModel
 			InitializeRuntime ();
 			foreach (var cd in ChannelDispatchers)
 				cd.Open (timeout - (DateTime.Now - start));
+
+			// FIXME: remove this hack. It should make sure that each ChannelDispatcher's loop has started, using WaitHandle.WaitAll() or something similar.
+			System.Threading.Thread.Sleep (300);
 		}
 
 		protected override void OnEndClose (IAsyncResult result)
