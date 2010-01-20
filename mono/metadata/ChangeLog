@@ -1,3 +1,8 @@
+2010-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* icall.c: don't raise AppDomain.TypeResolve when the type is loaded
+	from the current assembly or mscorlib. Fixes bug #322957.
+
 2010-01-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c: Calculate the target class of the delegete invoke wrappers using
