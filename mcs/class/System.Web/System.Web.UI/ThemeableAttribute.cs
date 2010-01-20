@@ -5,7 +5,7 @@
 //	Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2004 Novell, Inc. (http://www.novell.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,17 +27,15 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI {
-	
+namespace System.Web.UI 
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]		
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Property, AllowMultiple = false, Inherited = true)]
 	public sealed class ThemeableAttribute : Attribute {
 
 		bool themeable;
@@ -92,4 +90,3 @@ namespace System.Web.UI {
 		}
 	}
 }
-#endif

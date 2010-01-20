@@ -47,13 +47,9 @@ using System.Diagnostics;
 using System.Security.Cryptography;
 using System.Web.Configuration;
 
-namespace System.Web.UI {
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	sealed class ObjectStateFormatter : IFormatter, IStateFormatter
+namespace System.Web.UI
+{
+	public sealed class ObjectStateFormatter : IFormatter, IStateFormatter
 	{
 		Page page;
 		HashAlgorithm algo;
@@ -79,16 +75,8 @@ namespace System.Web.UI {
 					if (vkey == null)
 						return false;
 					return true;
-				} else {
-				
-#if NET_2_0
+				} else				
 					return page.EnableViewStateMac;
-#elif NET_1_1
-					return page.EnableViewStateMacInternal;
-#else
-					return false;
-#endif
-				}
 			}
 		}
 
@@ -101,13 +89,8 @@ namespace System.Web.UI {
 			
 			byte [] algoKey;
 			if (page != null) {
-#if NET_2_0
 				MachineKeySection mconfig = (MachineKeySection) WebConfigurationManager.GetWebApplicationSection ("system.web/machineKey");
 				algoKey = MachineKeySectionUtils.ValidationKeyBytes (mconfig);
-#else
-				MachineKeyConfig mconfig = HttpContext.GetAppConfig ("system.web/machineKey") as MachineKeyConfig;
-				algoKey = mconfig.ValidationKey;
-#endif
 			} else
 				algoKey = vkey;
 
@@ -146,48 +129,36 @@ namespace System.Web.UI {
 		{
 			if (inputString == null)
 				throw new ArgumentNullException ("inputString");
-#if NET_2_0
 			if (inputString.Length == 0)
 				throw new ArgumentNullException ("inputString");
-#else
-			if (inputString == "")
-				return "";
-#endif
+
 			byte [] buffer = Convert.FromBase64String (inputString);
 			int length;
 			if (buffer == null || (length = buffer.Length) == 0)
 				throw new ArgumentNullException ("inputString");
 			if (page != null && EnableMac)
 				length = ValidateInput (GetAlgo (), buffer, 0, length);
-#if NET_2_0
+
 			bool isEncrypted = ((int)buffer [--length] == 1)? true : false;
-#endif
 			Stream ms = new MemoryStream (buffer, 0, length, false, false);
-#if NET_2_0
 			if (isEncrypted)
 				ms = new CryptoStream (ms, page.GetCryptoTransform (CryptoStreamMode.Read), CryptoStreamMode.Read);
-#endif
 			return Deserialize (ms);
 		}
 		
 		public string Serialize (object stateGraph)
 		{
 			if (stateGraph == null)
-				return "";
+				return String.Empty;
 			
 			MemoryStream ms = new MemoryStream ();
 			Stream output = ms;
-#if NET_2_0
 			bool needEncryption = page == null ? false : page.NeedViewStateEncryption;
 			if (needEncryption){
 				output = new CryptoStream (output, page.GetCryptoTransform (CryptoStreamMode.Write), CryptoStreamMode.Write);
 			}
-#endif
 			Serialize (output, stateGraph);
-#if NET_2_0
-			ms.WriteByte((byte)(needEncryption? 1 : 0));
-#endif
-			
+			ms.WriteByte((byte)(needEncryption? 1 : 0));			
 #if TRACE
 			ms.WriteTo (File.OpenWrite (Path.GetTempFileName ()));
 #endif

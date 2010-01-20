@@ -5,7 +5,7 @@
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,13 +30,8 @@
 namespace System.Web.UI {
 
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple = true)]
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	sealed class WebResourceAttribute : Attribute {
-
+	public sealed class WebResourceAttribute : Attribute
+	{
 		public WebResourceAttribute (string webResource, string contentType)
 		{
 			this.webResource = webResource;

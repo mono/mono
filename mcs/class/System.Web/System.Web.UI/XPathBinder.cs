@@ -28,15 +28,16 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
 using System.Xml.XPath;
 using System.Xml;
 
-namespace System.Web.UI {
-	public sealed class XPathBinder {
+namespace System.Web.UI 
+{
+	public sealed class XPathBinder 
+	{
 		XPathBinder ()
 		{
 		}
@@ -115,5 +116,4 @@ namespace System.Web.UI {
 		
 	}
 }
-#endif
 

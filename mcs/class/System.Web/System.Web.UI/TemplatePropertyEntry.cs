@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Web.UI
 {
 	public class TemplatePropertyEntry : BuilderPropertyEntry
@@ -40,4 +39,3 @@ namespace System.Web.UI
 		public bool BindableTemplate { get { throw new NotImplementedException (); } }
 	}
 }
-#endif

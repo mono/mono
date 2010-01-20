@@ -8,7 +8,7 @@
 //   Marek Habersack (mhabersack@novell.com)
 //
 // (C) 2002,2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2003-2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2003-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.ComponentModel;
 using System.ComponentModel.Design;
@@ -45,43 +46,32 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Caching;
+using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.Util;
+using System.Web.UI.Adapters;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Reflection;
-#if NET_2_0
-using System.Web.Compilation;
-using System.Web.UI.Adapters;
-using System.Collections.Generic;
-#endif
 
 namespace System.Web.UI
 {
 // CAS
 [AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 [AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if !NET_2_0
-[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
-#endif
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 [ToolboxItem (false)]
-#if NET_2_0
 [Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
-#else
-[Designer ("Microsoft.VSDesigner.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VSDesigner, typeof (IRootDesigner))]
-#endif
+
 public partial class Page : TemplateControl, IHttpHandler
 {
-#if NET_2_0
 	static string machineKeyConfigPath = "system.web/machineKey";
 	bool _eventValidation = true;
 	object [] _savedControlState;
 	bool _doLoadPreviousPage;
 	string _focusedControlID;
 	bool _hasEnabledControlArray;
-#endif
 	bool _viewState;
 	bool _viewStateMac;
 	string _errorPage;
@@ -123,28 +113,14 @@ public partial class Page : TemplateControl, IHttpHandler
 	HttpSessionState _session;
 	
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
-	public
-#else
-	protected
-#endif
-	const string postEventArgumentID = "__EVENTARGUMENT";
+	public const string postEventArgumentID = "__EVENTARGUMENT";
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
-	public
-#else
-	protected
-#endif
-	const string postEventSourceID = "__EVENTTARGET";
+	public const string postEventSourceID = "__EVENTTARGET";
 
-#if NET_2_0
 	const string ScrollPositionXID = "__SCROLLPOSITIONX";
 	const string ScrollPositionYID = "__SCROLLPOSITIONY";
 	const string EnabledControlArrayID = "__enabledControlArray";
-#endif
-
-#if NET_2_0
 	internal const string LastFocusID = "__LASTFOCUS";
 	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
 	internal const string CallbackSourceID = "__CALLBACKTARGET";
@@ -179,7 +155,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	ViewStateEncryptionMode viewStateEncryptionMode;
 	bool controlRegisteredForViewStateEncryption = false;
-#endif
 
 	#region Constructors	
 	public Page ()
@@ -187,8 +162,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		scriptManager = new ClientScriptManager (this);
 		Page = this;
 		ID = "__Page";
-		
-#if NET_2_0
 		PagesSection ps = WebConfigurationManager.GetSection ("system.web/pages") as PagesSection;
 		if (ps != null) {
 			asyncTimeout = ps.AsyncTimeout;
@@ -199,7 +172,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
 			_viewState = true;
 		}
-#endif
 	}
 
 	#endregion		
@@ -214,25 +186,17 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected bool AspCompatMode {
-#if NET_2_0
 		get { return false; }
-#endif
 		set { throw new NotImplementedException (); }
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public bool Buffer {
 		get { return Response.BufferOutput; }
 		set { Response.BufferOutput = value; }
 	}
-#else
-	protected bool Buffer {
-		set { Response.BufferOutput = value; }
-	}
-#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -244,9 +208,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-#if NET_2_0
 	[EditorBrowsableAttribute (EditorBrowsableState.Advanced)]
-#endif
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false), DefaultValue ("")]
 	[WebSysDescription ("Value do override the automatic browser detection and force the page to use the specified browser.")]
@@ -260,39 +222,22 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public int CodePage {
 		get { return Response.ContentEncoding.CodePage; }
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
-#else
-	protected int CodePage {
-		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
-	}
-#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public string ContentType {
 		get { return Response.ContentType; }
 		set { Response.ContentType = value; }
 	}
-#else
-	protected string ContentType {
-		set { Response.ContentType = value; }
-	}
-#endif
 
-#if NET_2_0
-	protected internal
-#else
-	protected
-#endif
-	override HttpContext Context {
+	protected internal override HttpContext Context {
 		get {
 			if (_context == null)
 				return HttpContext.Current;
@@ -301,7 +246,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
@@ -309,14 +253,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		get { return Thread.CurrentThread.CurrentCulture.Name; }
 		set { Thread.CurrentThread.CurrentCulture = GetPageCulture (value, Thread.CurrentThread.CurrentCulture); }
 	}
-#else
-	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected string Culture {
-		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
-	}
-#endif
 
-#if NET_2_0
 	public virtual bool EnableEventValidation {
 		get { return _eventValidation; }
 		set {
@@ -325,7 +262,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			_eventValidation = value;
 		}
 	}
-#endif
 
 	[Browsable (false)]
 	public override bool EnableViewState {
@@ -333,27 +269,18 @@ public partial class Page : TemplateControl, IHttpHandler
 		set { _viewState = value; }
 	}
 
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
-	public
-#else
-	protected
-#endif
-	bool EnableViewStateMac {
+	public bool EnableViewStateMac {
 		get { return _viewStateMac; }
 		set { _viewStateMac = value; }
 	}
 
-#if NET_1_1
 	internal bool EnableViewStateMacInternal {
 		get { return _viewStateMac; }
 		set { _viewStateMac = value; }
 	}
-#endif
 	
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false), DefaultValue ("")]
@@ -369,9 +296,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected ArrayList FileDependencies {
 		set {
@@ -381,9 +306,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[Browsable (false)]
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#endif
 	public override string ID {
 		get { return base.ID; }
 		set { base.ID = value; }
@@ -392,13 +315,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
 	public bool IsPostBack {
-		get {
-#if NET_2_0
-			return isPostBack;
-#else
-			return _requestValueCollection != null;
-#endif
-		}
+		get { return isPostBack; }
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never), Browsable (false)]
@@ -413,17 +330,13 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (!is_validated)
 				throw new HttpException (Locale.GetText ("Page.IsValid cannot be called before validation has taken place. It should be queried in the event handler for a control that has CausesValidation=True and initiated the postback, or after a call to Page.Validate."));
 
-#if NET_2_0
 			foreach (IValidator val in Validators)
 				if (!val.IsValid)
 					return false;
 			return true;
-#else
-			return ValidateCollection (_validators);
-#endif
 		}
 	}
-#if NET_2_0
+
 	public IDictionary Items {
 		get {
 			if (items == null)
@@ -431,32 +344,22 @@ public partial class Page : TemplateControl, IHttpHandler
 			return items;
 		}
 	}
-#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public int LCID {
 		get { return Thread.CurrentThread.CurrentCulture.LCID; }
 		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
 	}
-#else
-	protected int LCID {
-		set { Thread.CurrentThread.CurrentCulture = new CultureInfo (value); }
-	}
-#endif
 
-#if NET_2_0
 	[Browsable (false)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public bool MaintainScrollPositionOnPostBack {
 		get { return _maintainScrollPositionOnPostBack; }
 		set { _maintainScrollPositionOnPostBack = value; }
 	}
-#endif
 
-#if NET_2_0
 	public PageAdapter PageAdapter {
 		get {
 			return Adapter as PageAdapter;
@@ -514,9 +417,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	internal IScriptManager ScriptManager {
 		get { return (IScriptManager) Items [typeof (IScriptManager)]; }
 	}
-
-#endif
-
 #if !TARGET_J2EE
 	internal string theForm {
 		get {
@@ -550,18 +450,12 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public string ResponseEncoding {
 		get { return Response.ContentEncoding.WebName; }
 		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
 	}
-#else
-	protected string ResponseEncoding {
-		set { Response.ContentEncoding = Encoding.GetEncoding (value); }
-	}
-#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -591,17 +485,14 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-#if NET_2_0
 	[FilterableAttribute (false)]
 	[Obsolete]
-#endif
 	[Browsable (false)]
 	public bool SmartNavigation {
 		get { return _smartNavigation; }
 		set { _smartNavigation = value; }
 	}
 
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Filterable (false)]
 	[Browsable (false)]
@@ -657,9 +548,6 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif	
 	}
 
-#endif
-
-#if NET_2_0
 	[Localizable (true)] 
 	[Bindable (true)] 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -680,7 +568,6 @@ public partial class Page : TemplateControl, IHttpHandler
 				_title = value;
 		}
 	}
-#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -689,53 +576,27 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public bool TraceEnabled {
 		get { return Trace.IsEnabled; }
 		set { Trace.IsEnabled = value; }
 	}
-#else
-	protected bool TraceEnabled {
-		set { Trace.IsEnabled = value; }
-	}
-#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
 	public TraceMode TraceModeValue {
 		get { return Trace.TraceMode; }
 		set { Trace.TraceMode = value; }
 	}
-#else
-	protected TraceMode TraceModeValue {
-		set { Trace.TraceMode = value; }
-	}
-#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected int TransactionMode {
-#if NET_2_0
 		get { return _transactionMode; }
-#endif
 		set { _transactionMode = value; }
 	}
 
-#if !NET_2_0
-	//
-	// This method is here just to remove the warning about "_transactionMode" not being
-	// used.  We probably will use it internally at some point.
-	//
-	internal int GetTransactionMode ()
-	{
-		return _transactionMode;
-	}
-#endif
-	
-#if NET_2_0
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[BrowsableAttribute (false)]
@@ -743,12 +604,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		get { return Thread.CurrentThread.CurrentUICulture.Name; }
 		set { Thread.CurrentThread.CurrentUICulture = GetPageCulture (value, Thread.CurrentThread.CurrentUICulture); }
 	}
-#else
-	[EditorBrowsable (EditorBrowsableState.Never)]
-	protected string UICulture {
-		set { Thread.CurrentThread.CurrentUICulture = new CultureInfo (value); }
-	}
-#endif
 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Browsable (false)]
@@ -783,7 +638,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	#region Methods
 
-#if NET_2_0
 	CultureInfo GetPageCulture (string culture, CultureInfo deflt)
 	{
 		if (culture == null)
@@ -808,7 +662,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		return ret;
 	}
-#endif
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected IAsyncResult AspCompatBeginProcessRequest (HttpContext context,
@@ -827,11 +680,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	protected virtual HtmlTextWriter CreateHtmlTextWriter (TextWriter tw)
 	{
-#if NET_2_0
 		if (Request.BrowserMightHaveSpecialWriter)
 			return Request.Browser.CreateHtmlTextWriter(tw);
 		else
-#endif
 			return new HtmlTextWriter (tw);
 	}
 
@@ -842,11 +693,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
-	protected 
-#if NET_2_0
-	internal
-#endif
-	virtual NameValueCollection DeterminePostBackMode ()
+	protected internal virtual NameValueCollection DeterminePostBackMode ()
 	{
 		// if request was transfered from other page such Transfer
 		if (_context.IsProcessingInclude)
@@ -894,14 +741,12 @@ public partial class Page : TemplateControl, IHttpHandler
 		return coll;
 	}
 
-#if NET_2_0
 	public override Control FindControl (string id) {
 		if (id == ID)
 			return this;
 		else
 			return base.FindControl (id);
 	}
-#endif
 
 	Control FindControl (string id, bool decode) {
 #if TARGET_J2EE
@@ -911,36 +756,28 @@ public partial class Page : TemplateControl, IHttpHandler
 		return FindControl (id);
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackClientEvent (Control control, string argument)
 	{
 		return scriptManager.GetPostBackEventReference (control, argument);
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackClientHyperlink (Control control, string argument)
 	{
 		return scriptManager.GetPostBackClientHyperlink (control, argument);
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackEventReference (Control control)
 	{
 		return scriptManager.GetPostBackEventReference (control, "");
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackEventReference (Control control, string argument)
 	{
@@ -954,12 +791,10 @@ public partial class Page : TemplateControl, IHttpHandler
 	
 	internal void RequiresPostBackScript ()
 	{
-#if NET_2_0
 		if (requiresPostBackScript)
 			return;
 		ClientScript.RegisterHiddenField (postEventSourceID, String.Empty);
 		ClientScript.RegisterHiddenField (postEventArgumentID, String.Empty);
-#endif
 		requiresPostBackScript = true;
 		RequiresFormScriptDeclaration ();
 	}
@@ -970,7 +805,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		return 0;
 	}
 
-#if NET_2_0
 	[MonoTODO("The following properties of OutputCacheParameters are silently ignored: CacheProfile, SqlDependency")]
 	protected internal virtual void InitOutputCache(OutputCacheParameters cacheSettings)
 	{
@@ -988,18 +822,13 @@ public partial class Page : TemplateControl, IHttpHandler
 				cache.SetNoStore ();
 		}
 	}
-#endif
-
-#if NET_2_0
 	[MonoTODO ("varyByContentEncoding is not currently used")]
-	protected virtual
-#endif
-	void InitOutputCache(int duration,
-			     string varyByContentEncoding,
-			     string varyByHeader,
-			     string varyByCustom,
-			     OutputCacheLocation location,
-			     string varyByParam)
+	protected virtual void InitOutputCache(int duration,
+					       string varyByContentEncoding,
+					       string varyByHeader,
+					       string varyByCustom,
+					       OutputCacheLocation location,
+					       string varyByParam)
 	{
 		HttpResponse response = Response;
 		HttpCachePolicy cache = response.Cache;
@@ -1050,7 +879,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				foreach (string h in hdrs)
 					cache.VaryByHeaders [h.Trim ()] = true;
 			}
-#if NET_2_0
+
 			if (PageAdapter != null) {
 				if (PageAdapter.CacheVaryByParams != null) {
 					foreach (string p in PageAdapter.CacheVaryByParams)
@@ -1061,7 +890,6 @@ public partial class Page : TemplateControl, IHttpHandler
 						cache.VaryByHeaders [h] = true;
 				}
 			}
-#endif
 		}
 
 		response.IsCached = true;
@@ -1080,21 +908,13 @@ public partial class Page : TemplateControl, IHttpHandler
 		InitOutputCache (duration, null, varyByHeader, varyByCustom, location, varyByParam);
 	}
 
-#if NET_2_0
 	[Obsolete]
-#else
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public bool IsClientScriptBlockRegistered (string key)
 	{
 		return scriptManager.IsClientScriptBlockRegistered (key);
 	}
 
-#if NET_2_0
 	[Obsolete]
-#else
-	[EditorBrowsable (EditorBrowsableState.Advanced)]
-#endif
 	public bool IsStartupScriptRegistered (string key)
 	{
 		return scriptManager.IsStartupScriptRegistered (key);
@@ -1105,7 +925,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		return Request.MapPath (virtualPath);
 	}
 
-#if NET_2_0
 	protected internal override void Render (HtmlTextWriter writer)
 	{
 		if (MaintainScrollPositionOnPostBack) {
@@ -1143,29 +962,15 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 		base.Render (writer);
 	}
-#endif
 
 	void RenderPostBackScript (HtmlTextWriter writer, string formUniqueID)
 	{
-#if ONLY_1_1
-		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventSourceID);
-		writer.WriteLine ("<input type=\"hidden\" name=\"{0}\" value=\"\" />", postEventArgumentID);
-#endif
 		writer.WriteLine ();
-		
 		ClientScriptManager.WriteBeginScriptBlock (writer);
-
-#if NET_1_1
 		RenderClientScriptFormDeclaration (writer, formUniqueID);
-#endif
-#if NET_2_0
 		writer.WriteLine (WebFormScriptReference + "._form = " + theForm + ";");
 		writer.WriteLine (WebFormScriptReference + ".__doPostBack = function (eventTarget, eventArgument) {");
 		writer.WriteLine ("\tif(" + theForm + ".onsubmit && " + theForm + ".onsubmit() == false) return;");
-#else
-		writer.WriteLine ("__doPostBack = function (eventTarget, eventArgument) {");
-		writer.WriteLine ("\tif(document.ValidatorOnSubmit && !ValidatorOnSubmit()) return;");
-#endif
 		writer.WriteLine ("\t" + theForm + "." + postEventSourceID + ".value = eventTarget;");
 		writer.WriteLine ("\t" + theForm + "." + postEventArgumentID + ".value = eventArgument;");
 		writer.WriteLine ("\t" + theForm + ".submit();");
@@ -1178,12 +983,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (formScriptDeclarationRendered)
 			return;
 		
-#if NET_2_0
 		if (PageAdapter != null) {
  			writer.WriteLine ("\tvar {0} = {1};\n", theForm, PageAdapter.GetPostBackFormReference(formUniqueID));
-		} else
-#endif
-		{
+		} else {
 			writer.WriteLine ("\tvar {0};\n\tif (document.getElementById) {{ {0} = document.getElementById ('{1}'); }}", theForm, formUniqueID);
 			writer.WriteLine ("\telse {{ {0} = document.{1}; }}", theForm, formUniqueID);
 		}
@@ -1205,13 +1007,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		renderingForm = true;
 		writer.WriteLine ();
 
-#if NET_2_0
 		if (requiresFormScriptDeclaration || (scriptManager != null && scriptManager.ScriptsPresent) || PageAdapter != null) {
 			ClientScriptManager.WriteBeginScriptBlock (writer);
 			RenderClientScriptFormDeclaration (writer, formUniqueID);
 			ClientScriptManager.WriteEndScriptBlock (writer);
 		}
-#endif
 
 		if (handleViewState)
 #if TARGET_J2EE
@@ -1233,9 +1033,8 @@ public partial class Page : TemplateControl, IHttpHandler
 			RenderPostBackScript (writer, formUniqueID);
 			postBackScriptRendered = true;
 		}
-#if NET_2_0
+
 		scriptManager.WriteWebFormClientScript (writer);
-#endif
 		scriptManager.WriteClientScriptBlocks (writer);
 	}
 
@@ -1251,17 +1050,12 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	internal void OnFormPostRender (HtmlTextWriter writer, string formUniqueID)
 	{
-#if NET_2_0
 		scriptManager.SaveEventValidationState ();
 		scriptManager.WriteExpandoAttributes (writer);
-#endif
 		scriptManager.WriteHiddenFields (writer);
 		if (!postBackScriptRendered && requiresPostBackScript)
 			RenderPostBackScript (writer, formUniqueID);
-#if NET_2_0
 		scriptManager.WriteWebFormClientScript (writer);
-#endif
-
 		scriptManager.WriteArrayDeclares (writer);
 		scriptManager.WriteStartupScriptBlocks (writer);
 		renderingForm = false;
@@ -1339,11 +1133,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 	public virtual void ProcessRequest (HttpContext context)
-#else
-	public void ProcessRequest (HttpContext context)
-#endif
 	{
 		SetContext (context);
 #if TARGET_J2EE
@@ -1425,7 +1215,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			_appUICulture = null;
 	}
 	
-#if NET_2_0
 	delegate void ProcessRequestDelegate (HttpContext context);
 
 	sealed class DummyAsyncResult : IAsyncResult
@@ -1484,20 +1273,14 @@ public partial class Page : TemplateControl, IHttpHandler
 	protected void AsyncPageEndProcessRequest (IAsyncResult result) 
 	{
 	}
-#endif
 	
 	void InternalProcessRequest ()
 	{
-#if NET_2_0
-		if (PageAdapter != null) {
+		if (PageAdapter != null)
 			_requestValueCollection = PageAdapter.DeterminePostBackMode();
-		} else
-#endif
-		{
+		else
 			_requestValueCollection = this.DeterminePostBackMode();
-		}
 
-#if NET_2_0
 		// http://msdn2.microsoft.com/en-us/library/ms178141.aspx
 		if (_requestValueCollection != null) {
 			if (!isCrossPagePostBack && _requestValueCollection [PreviousPageID] != null && _requestValueCollection [PreviousPageID] != Request.FilePath) {
@@ -1525,16 +1308,13 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		InitializeTheme ();
 		ApplyMasterPage ();
-#endif
 		Trace.Write ("aspx.page", "Begin Init");
 		InitRecursive (null);
 		Trace.Write ("aspx.page", "End Init");
 
-#if NET_2_0
 		Trace.Write ("aspx.page", "Begin InitComplete");
 		OnInitComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End InitComplete");
-#endif
 			
 		renderingForm = false;	
 
@@ -1560,14 +1340,10 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void RestorePageState ()
 	{
-#if NET_2_0
 		if (IsPostBack || IsCallback) {
 			if (_requestValueCollection != null)
 				scriptManager.RestoreEventValidationState (
 					_requestValueCollection [ClientScriptManager.EventStateFieldName]);
-#else
-		if (IsPostBack) {
-#endif
 			Trace.Write ("aspx.page", "Begin LoadViewState");
 			LoadPageViewState ();
 			Trace.Write ("aspx.page", "End LoadViewState");
@@ -1576,24 +1352,14 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void ProcessPostData ()
 	{
-
-#if NET_2_0
 		if (IsPostBack || IsCallback) {
-#else
-		if (IsPostBack) {
-#endif
 			Trace.Write ("aspx.page", "Begin ProcessPostData");
 			ProcessPostData (_requestValueCollection, false);
 			Trace.Write ("aspx.page", "End ProcessPostData");
 		}
 
 		ProcessLoad ();
-
-#if NET_2_0
 		if (IsPostBack || IsCallback) {
-#else
-		if (IsPostBack) {
-#endif
 			Trace.Write ("aspx.page", "Begin ProcessPostData Second Try");
 			ProcessPostData (secondPostData, true);
 			Trace.Write ("aspx.page", "End ProcessPostData Second Try");
@@ -1602,11 +1368,9 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void ProcessLoad ()
 	{ 
-#if NET_2_0
 		Trace.Write ("aspx.page", "Begin PreLoad");
 		OnPreLoad (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End PreLoad");
-#endif
 
 		Trace.Write ("aspx.page", "Begin Load");
 		LoadRecursive ();
@@ -1615,12 +1379,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void ProcessRaiseEvents ()
 	{
-
-#if NET_2_0
 		if (IsPostBack || IsCallback) {
-#else
-		if (IsPostBack) {
-#endif
 			Trace.Write ("aspx.page", "Begin Raise ChangedEvents");
 			RaiseChangedEvents ();
 			Trace.Write ("aspx.page", "End Raise ChangedEvents");
@@ -1632,8 +1391,6 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	bool ProcessLoadComplete ()
 	{
-		
-#if NET_2_0
 		Trace.Write ("aspx.page", "Begin LoadComplete");
 		OnLoadComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End LoadComplete");
@@ -1655,37 +1412,30 @@ public partial class Page : TemplateControl, IHttpHandler
 			callbackOutput.Flush ();
 			return true;
 		}
-#endif
 		
 		Trace.Write ("aspx.page", "Begin PreRender");
 		PreRenderRecursiveInternal ();
 		Trace.Write ("aspx.page", "End PreRender");
 		
-#if NET_2_0
 		ExecuteRegisteredAsyncTasks ();
 
 		Trace.Write ("aspx.page", "Begin PreRenderComplete");
 		OnPreRenderComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End PreRenderComplete");
-#endif
 
 		Trace.Write ("aspx.page", "Begin SaveViewState");
 		SavePageViewState ();
 		Trace.Write ("aspx.page", "End SaveViewState");
 		
-#if NET_2_0
 		Trace.Write ("aspx.page", "Begin SaveStateComplete");
 		OnSaveStateComplete (EventArgs.Empty);
 		Trace.Write ("aspx.page", "End SaveStateComplete");
-#endif // NET_2_0
 		return false;
 	}
 
 	internal void RenderPage ()
 	{
-#if NET_2_0
 		scriptManager.ResetEventValidationState ();
-#endif
 		
 		//--
 		Trace.Write ("aspx.page", "Begin Render");
@@ -1724,9 +1474,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	
 	void RaisePostBackEvents ()
 	{
-#if NET_2_0
 		Control targetControl;
-#endif
 		if (requiresRaiseEvent != null) {
 			RaisePostBackEvent (requiresRaiseEvent, null);
 			return;
@@ -1750,12 +1498,8 @@ public partial class Page : TemplateControl, IHttpHandler
 			return;
 		}
 
-#if NET_2_0
 		targetControl = FindControl (eventTarget, true);
 		IPostBackEventHandler target = targetControl as IPostBackEventHandler;
-#else
-		IPostBackEventHandler target = FindControl (eventTarget) as IPostBackEventHandler;
-#endif
 			
 		if (target == null)
 			return;
@@ -1781,27 +1525,21 @@ public partial class Page : TemplateControl, IHttpHandler
 		sourceControl.RaisePostBackEvent (eventArgument);
 	}
 	
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterArrayDeclaration (string arrayName, string arrayValue)
 	{
 		scriptManager.RegisterArrayDeclaration (arrayName, arrayValue);
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterClientScriptBlock (string key, string script)
 	{
 		scriptManager.RegisterClientScriptBlock (key, script);
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterHiddenField (string hiddenFieldName, string hiddenFieldInitialValue)
 	{
@@ -1814,9 +1552,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterOnSubmitStatement (string key, string script)
 	{
@@ -1831,10 +1567,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterRequiresPostBack (Control control)
 	{
-#if NET_2_0
 		if (!(control is IPostBackDataHandler))
 			throw new HttpException ("The control to register does not implement the IPostBackDataHandler interface.");
-#endif
 		
 		if (_requiresPostBack == null)
 			_requiresPostBack = new ArrayList ();
@@ -1851,9 +1585,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		requiresRaiseEvent = control;
 	}
 
-#if NET_2_0
 	[Obsolete]
-#endif
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterStartupScript (string key, string script)
 	{
@@ -1896,17 +1628,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		set { _savedViewState = value; }
 	}
 
-#if NET_2_0
-	protected virtual 
-#else
-	internal
-#endif
-	PageStatePersister PageStatePersister {
+
+	protected virtual PageStatePersister PageStatePersister {
 		get {
-#if NET_2_0
 			if (page_state_persister == null && PageAdapter != null)
 					page_state_persister = PageAdapter.GetStatePersister();					
-#endif
 			if (page_state_persister == null)
 				page_state_persister = new HiddenFieldPageStatePersister (this);
 			return page_state_persister;
@@ -1927,14 +1653,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		Pair sState = LoadPageStateFromPersistenceMedium () as Pair;
 		if (sState != null) {
-			if (allow_load
-#if NET_2_0
-			    || isCrossPagePostBack
-#endif
-			) {
-#if NET_2_0
+			if (allow_load || isCrossPagePostBack) {
 				LoadPageControlState (sState.Second);
-#endif
+
 				Pair vsr = sState.First as Pair;
 				if (vsr != null) {
 					LoadViewStateRecursive (vsr.First);
@@ -1949,10 +1670,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (!handleViewState)
 			return;
 
-#if NET_2_0
 		object controlState = SavePageControlState ();
-#endif
-
 		Pair vsr = null;
 		object viewState = null;
 		
@@ -1965,11 +1683,7 @@ public partial class Page : TemplateControl, IHttpHandler
 
 		Pair pair = new Pair ();
 		pair.First = vsr;
-#if NET_2_0
 		pair.Second = controlState;
-#else
-		pair.Second = null;
-#endif
 		if (pair.First == null && pair.Second == null)
 			SavePageStateToPersistenceMedium (null);
 		else
@@ -1983,27 +1697,22 @@ public partial class Page : TemplateControl, IHttpHandler
 		ValidateCollection (_validators);
 	}
 
-#if NET_2_0
 	internal bool AreValidatorsUplevel ()
 	{
 		return AreValidatorsUplevel (String.Empty);
 	}
 
 	internal bool AreValidatorsUplevel (string valGroup)
-#else
-	internal virtual bool AreValidatorsUplevel ()
-#endif
 	{
 		bool uplevel = false;
 
 		foreach (IValidator v in Validators) {
 			BaseValidator bv = v as BaseValidator;
-			if (bv == null) continue;
+			if (bv == null)
+				continue;
 
-#if NET_2_0
 			if (valGroup != bv.ValidationGroup)
 				continue;
-#endif
 			if (bv.GetRenderUplevel()) {
 				uplevel = true;
 				break;
@@ -2033,10 +1742,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		if (Context == null)
 			return;
-#if NET_2_0
 		if (IsCallback)
 			return;
-#endif
 		if (!renderingForm)
 			throw new HttpException ("Control '" +
 						 control.ClientID +
@@ -2048,23 +1755,14 @@ public partial class Page : TemplateControl, IHttpHandler
 	protected override void FrameworkInitialize ()
 	{
 		base.FrameworkInitialize ();
-#if NET_2_0
 		InitializeStyleSheet ();
-#endif
 	}
-
 #endregion
 	
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	ClientScriptManager ClientScript {
+	public ClientScriptManager ClientScript {
 		get { return scriptManager; }
 	}
 
-#if NET_2_0
 	internal static readonly object InitCompleteEvent = new object ();
 	internal static readonly object LoadCompleteEvent = new object ();
 	internal static readonly object PreInitEvent = new object ();
@@ -2810,11 +2508,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				}
 #else
 				IHttpHandler handler;
-#if NET_2_0
 				handler = BuildManager.CreateInstanceFromVirtualPath (prevPage, typeof (IHttpHandler)) as IHttpHandler;
-#else
-				handler = PageParser.GetCompiledPageInstance (prevPage, Server.MapPath (prevPage), Context);
-#endif
 				previousPage = (Page) handler;
 				previousPage.isCrossPagePostBack = true;
 				Server.Execute (handler, null, true, _context.Request.CurrentExecutionFilePath, null, false, false);
@@ -2822,7 +2516,6 @@ public partial class Page : TemplateControl, IHttpHandler
 			} 
 		}
 	}
-
 
 	Hashtable contentTemplates;
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -2890,9 +2583,6 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	#endif
-
-#if NET_2_0
 	[MonoTODO ("Not implemented.  Only used by .net aspx parser")]
 	protected object GetWrappedFileDependencies (string [] list)
 	{
@@ -2908,6 +2598,5 @@ public partial class Page : TemplateControl, IHttpHandler
 	protected internal void AddWrappedFileDependencies (object virtualFileDependencies)
 	{
 	}
-#endif
 }
 }

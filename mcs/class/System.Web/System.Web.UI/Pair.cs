@@ -4,7 +4,7 @@
 // Author:
 //        Ben Maurer <bmaurer@novell.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,17 +28,13 @@
 
 using System.Security.Permissions;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI 
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[Serializable]
-	public sealed class Pair {
-#else
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class Pair {
-#endif
+	public sealed class Pair 
+	{
 		public Pair (object first, object second)
 		{
 			First = first;

@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,25 +36,17 @@ using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.Util;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public abstract class TemplateControlParser
-#if NET_2_0
-		: BaseTemplateParser 
-#else
-		: TemplateParser
-#endif
+	public abstract class TemplateControlParser : BaseTemplateParser 
 	{
-
 		bool autoEventWireup = true;
 		bool enableViewState = true;
-#if NET_2_0
 		CompilationMode compilationMode = CompilationMode.Always;
 		TextReader reader;
-#endif
 
 		protected TemplateControlParser ()
 		{
@@ -64,26 +56,17 @@ namespace System.Web.UI {
 		internal override void LoadConfigDefaults ()
 		{
 			base.LoadConfigDefaults ();
-#if NET_2_0
 			PagesSection ps = PagesConfig;
-#else
-			PagesConfiguration ps = PagesConfig;
-#endif
-
-#if NET_1_1
 			autoEventWireup = ps.AutoEventWireup;
 			enableViewState = ps.EnableViewState;
-#endif
-#if NET_2_0
 			compilationMode = ps.CompilationMode;
-#endif
 		}
 		
 		internal override void ProcessMainAttributes (Hashtable atts)
 		{
 			autoEventWireup = GetBool (atts, "AutoEventWireup", autoEventWireup);
 			enableViewState = GetBool (atts, "EnableViewState", enableViewState);
-#if NET_2_0
+
 			string cmode = GetString (atts, "CompilationMode", compilationMode.ToString ());
 			if (!String.IsNullOrEmpty (cmode)) {
 				if (String.Compare (cmode, "always", StringComparison.InvariantCultureIgnoreCase) == 0)
@@ -95,7 +78,6 @@ namespace System.Web.UI {
 				else
 					ThrowParseException ("Invalid value of the CompilationMode attribute");
 			}
-#endif
 			atts.Remove ("TargetSchema"); // Ignored
 
 			base.ProcessMainAttributes (atts);
@@ -126,11 +108,6 @@ namespace System.Web.UI {
 				string ns = GetString (atts, "Namespace", null);
 				string assembly = GetString (atts, "Assembly", null);
 
-#if !NET_2_0
-				if (ns != null && assembly == null)
-					ThrowParseException ("Need an Assembly attribute with Namespace.");
-#endif
-				
 				if (ns == null && assembly != null)
 					ThrowParseException ("Need a Namespace attribute with Assembly.");
 				
@@ -151,11 +128,6 @@ namespace System.Web.UI {
 				if (tagname != null && src == null)
 					ThrowParseException ("Need a Src attribute with TagName.");
 
-#if !NET_2_0
-				if (!StrUtils.EndsWith (src, ".ascx", true))
-					ThrowParseException ("Source file extension for controls must be .ascx");
-#endif
-				
 				RegisterCustomControl (tagprefix, tagname, src);
 				return;
 			}
@@ -177,22 +149,15 @@ namespace System.Web.UI {
 					else
 						vp = control;
 				
-#if NET_2_0
 				string virtualPath = GetString (atts, "VirtualPath", null);
 				if (virtualPath != null)
 					if (vp != null)
 						dupe = true;
 					else
 						vp = virtualPath;
-#endif
 				
-				if (vp == null) {
-#if NET_2_0
+				if (vp == null)
 					ThrowParseException ("Must provide one of the 'page', 'control' or 'virtualPath' attributes");
-#else
-					ThrowParseException ("Must provide one of the 'page' or 'control' attributes");
-#endif
-				}
 				
 				if (dupe)
 					ThrowParseException ("Only one attribute can be specified.");
@@ -200,17 +165,7 @@ namespace System.Web.UI {
 				AddDependency (vp);
 				
 				Type ctype;
-#if NET_2_0
 				ctype = BuildManager.GetCompiledType (vp);
-#else
-				string filepath = MapPath (vp);
-				if (is_page) {
-					PageParser pp = new PageParser (page, filepath, Context);
-					ctype = pp.CompileIntoType ();
-				} else {
-					ctype = UserControlParser.GetCompiledType (vp, filepath, Dependencies, Context);
-				}
-#endif
 				
 				AddAssembly (ctype.Assembly, true);
 				if (atts.Count != 0)
@@ -239,7 +194,6 @@ namespace System.Web.UI {
 			get { return enableViewState; }
 		}
 		
-#if NET_2_0
 		internal CompilationMode CompilationMode {
 			get { return compilationMode; }
 		}
@@ -248,7 +202,6 @@ namespace System.Web.UI {
 			get { return reader; }
 			set { reader = value; }
 		}
-#endif
 	}
 }
 

@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-#if NET_2_0
 using System;
 
 namespace System.Web.UI
@@ -38,5 +36,3 @@ namespace System.Web.UI
 		string Text { get; set; }
 	}
 }
-#endif
-

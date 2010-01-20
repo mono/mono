@@ -4,7 +4,7 @@
 // Duncan Mak  (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,23 +37,19 @@ namespace System.Web.UI {
 	public sealed class PersistChildrenAttribute : Attribute
 	{
 		bool persist;
-#if NET_2_0
 		bool usesCustomPersistence;
-#endif		
 		
 		public PersistChildrenAttribute (bool persist)
 		{
 			this.persist = persist;
 		}
 
-#if NET_2_0
 		public PersistChildrenAttribute (bool persist,
 						 bool usesCustomPersistence)
 		{
 			this.persist = persist;
 			this.usesCustomPersistence = usesCustomPersistence;
 		}
-#endif		
 		
 		public static readonly PersistChildrenAttribute Default = new PersistChildrenAttribute (true);
 		public static readonly PersistChildrenAttribute Yes = new PersistChildrenAttribute (true);
@@ -63,14 +59,12 @@ namespace System.Web.UI {
 			get { return persist; }
 		}
 
-#if NET_2_0
 		public bool UsesCustomPersistence 
 		{
 			get {
 				return (usesCustomPersistence);
 			}
 		}
-#endif
 		
 		public override bool Equals (object obj)
 		{
@@ -78,11 +72,7 @@ namespace System.Web.UI {
 			if (pobj == null)
 				return false;
 
-			return (pobj.persist == persist
-#if NET_2_0
-				&& pobj.usesCustomPersistence == usesCustomPersistence
-#endif
-				);
+			return (pobj.persist == persist && pobj.usesCustomPersistence == usesCustomPersistence);
 		}
 
 		public override int GetHashCode ()

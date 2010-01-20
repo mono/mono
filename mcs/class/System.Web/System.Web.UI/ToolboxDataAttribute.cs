@@ -24,18 +24,18 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 
 using System.Security.Permissions;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[AttributeUsage(AttributeTargets.Class)]
-	public sealed class ToolboxDataAttribute : Attribute {
-
+	public sealed class ToolboxDataAttribute : Attribute
+	{
 		public static readonly ToolboxDataAttribute Default = new ToolboxDataAttribute (String.Empty);
 
 		string data;
@@ -66,11 +66,7 @@ namespace System.Web.UI {
 
 		public override bool IsDefaultAttribute ()
 		{
-#if NET_2_0
 			return ((data == null) || (data.Length == 0));
-#else
-			return ((data != null) && (data.Length == 0));
-#endif
 		}
 	}
 }

@@ -28,24 +28,24 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Web.UI
 {
 	public class EventEntry
 	{
-		public EventEntry () { throw new NotImplementedException (); }
+		public EventEntry ()
+		{}
+		
 		public string HandlerMethodName {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get;
+			set;
 		}
 		public Type HandlerType {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get;
+			set;
 		}
 		public string Name {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get;
+			set;
 		}
 	}
 }
-#endif

@@ -5,7 +5,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Andreas Nahr
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,15 +35,7 @@ namespace System.Web.UI {
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	public static class DesignTimeTemplateParser {
-#else
-	public sealed class DesignTimeTemplateParser {
-
-		DesignTimeTemplateParser ()
-		{
-		}
-#endif
 		[SecurityPermission (SecurityAction.Demand, ControlThread = true, UnmanagedCode = true)]
 		public static Control ParseControl (DesignTimeParseData data)
 		{
@@ -75,7 +67,7 @@ namespace System.Web.UI {
 			// Parse data
 			return NewParser;
 		}
-#if NET_2_0
+
 		[MonoTODO("Not implemented")]
 		[SecurityPermission (SecurityAction.Demand, ControlThread = true, UnmanagedCode = true)]
 		public static Control[] ParseControls (DesignTimeParseData data)
@@ -89,6 +81,5 @@ namespace System.Web.UI {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	} 
 }

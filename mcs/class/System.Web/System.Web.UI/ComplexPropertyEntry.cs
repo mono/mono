@@ -28,19 +28,25 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 namespace System.Web.UI
 {
 	public class ComplexPropertyEntry : BuilderPropertyEntry
 	{
+		internal ComplexPropertyEntry (bool isCollectionItem, bool readOnly)
+		{
+			this.IsCollectionItem = isCollectionItem;
+			this.ReadOnly = readOnly;
+		}
+		
 		public bool IsCollectionItem {
-			get { throw new NotImplementedException (); }
+			get;
+			private set;
 		}
 
 		public bool ReadOnly {
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+			get;
+			set;
 		}
 	}
 }
-#endif
+

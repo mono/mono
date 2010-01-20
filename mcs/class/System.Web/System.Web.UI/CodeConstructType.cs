@@ -4,7 +4,7 @@
 // Authors:
 //	Marek Safar (marek.safar@gmail.com)
 //
-// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2009-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Web.UI
 {
 	public enum CodeConstructType
@@ -38,5 +36,3 @@ namespace System.Web.UI
 		ScriptTag = 3
 	}
 }
-
-#endif

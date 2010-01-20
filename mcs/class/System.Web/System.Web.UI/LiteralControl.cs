@@ -6,7 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) Bob Smith
-// Copyright (C) 2002-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2002-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,10 +38,7 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ToolboxItem(false)]
-        public class LiteralControl : Control
-#if NET_2_0
-	, ITextControl
-#endif	
+        public class LiteralControl : Control, ITextControl
         {
                 string _text;
 
@@ -61,16 +58,11 @@ namespace System.Web.UI {
                 public virtual string Text {
                         get { return _text; }
                         set {
-                                _text = (value == null) ? "" : value;
+                                _text = (value == null) ? String.Empty : value;
                         }
                 }
 
-#if NET_2_0
-		protected internal
-#else		
-                protected
-#endif		
-		override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
                 {
                         writer.Write (_text);
                 }

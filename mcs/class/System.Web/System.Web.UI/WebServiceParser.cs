@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,8 +31,8 @@ using System.IO;
 using System.Security.Permissions;
 using System.Web.Compilation;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -43,7 +43,6 @@ namespace System.Web.UI {
 		{
 		}
 
-#if NET_2_0
 		internal WebServiceParser (HttpContext context, VirtualPath virtualPath, TextReader reader)
 			: this (context, virtualPath, null, reader)
 		{
@@ -53,28 +52,10 @@ namespace System.Web.UI {
 			: base (context, virtualPath.Original, physicalPath, reader)
 		{
 		}
-#endif
 
 		public static Type GetCompiledType (string inputFile, HttpContext context)
 		{
-#if NET_2_0
 			return BuildManager.GetCompiledType (inputFile);
-#else
-			string physPath;
-			HttpRequest req = context != null ? context.Request : null;
-			
-			if (req != null)
-				physPath = req.MapPath (inputFile);
-			else // likely to fail
-				physPath = inputFile;
-			
-			WebServiceParser parser = new WebServiceParser (context, inputFile, physPath);
-			Type type = parser.GetCompiledTypeFromCache ();
-			if (type != null)
-				return type;
-
-			return WebServiceCompiler.CompileIntoType (parser);
-#endif
 		}
 
 		protected override string DefaultDirectiveName {

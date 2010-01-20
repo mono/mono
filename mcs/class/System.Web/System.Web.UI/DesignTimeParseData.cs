@@ -7,7 +7,7 @@
 //
 
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,18 +42,16 @@ namespace System.Web.UI {
 		string text;
 	        IDesignerHost host;
 		string durl;
-#if NET_2_0
 		string filter;
 		bool theme;
 		ICollection collection;
-#endif
 		
 		public DesignTimeParseData (IDesignerHost designerHost, string parseText)
 		{
 			host = designerHost;
 			text = parseText;
 		}
-#if NET_2_0
+
 		public DesignTimeParseData (IDesignerHost designerHost, string parseText, string filter)
 			: this (designerHost, parseText)
 		{
@@ -64,7 +62,6 @@ namespace System.Web.UI {
 		{
 			this.collection = collection;
 		}
-#endif
 
 		public EventHandler DataBindingHandler {
 			get {
@@ -97,7 +94,7 @@ namespace System.Web.UI {
 				return text;
 			}
 		}
-#if NET_2_0
+
 		public string Filter {
 			get { return filter; }
 		}
@@ -111,6 +108,5 @@ namespace System.Web.UI {
 		public ICollection UserControlRegisterEntries {
 			get { return collection; }
 		}
-#endif
 	}
 }

@@ -4,7 +4,7 @@
 // Duncan Mak  (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,13 +40,8 @@ namespace System.Web.UI {
 		string varyByControls;
 		string varyByCustom;
 		string varyByParams;
-#if NET_1_1
 		bool shared;
-#endif
-#if NET_2_0
 		string sqlDependency;
-#endif
-
 		
 		public PartialCachingAttribute (int duration)
 		{
@@ -62,7 +57,6 @@ namespace System.Web.UI {
 			this.varyByCustom = varyByCustom;
 		}
 
-#if NET_1_1
 		public PartialCachingAttribute (int duration, string varyByParams, string varyByControls,
 						string varyByCustom, bool shared)
 		{
@@ -72,8 +66,7 @@ namespace System.Web.UI {
 			this.varyByCustom = varyByCustom;
 			this.shared = shared;
 		}
-#endif
-#if NET_2_0
+
 		public PartialCachingAttribute (int duration, string varyByParams, string varyByControls,
 						string varyByCustom, string sqlDependency, bool shared)
 		{
@@ -84,7 +77,6 @@ namespace System.Web.UI {
 			this.sqlDependency = sqlDependency;
 			this.shared = shared;
 		}
-#endif
 
 		public int Duration {
 			get { return duration; }
@@ -102,15 +94,12 @@ namespace System.Web.UI {
 			get { return varyByCustom; }
 		}
 
-#if NET_1_1
 		public bool Shared {
 			get { return shared; }
 		}
-#endif
-#if NET_2_0
+
 		public string SqlDependency {
 			get { return sqlDependency; }
 		}
-#endif
 	}
 }

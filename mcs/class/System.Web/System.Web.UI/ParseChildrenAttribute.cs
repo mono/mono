@@ -6,7 +6,7 @@
 // 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,13 +41,10 @@ namespace System.Web.UI {
 		bool childrenAsProperties;
 		string defaultProperty;
 		public static readonly ParseChildrenAttribute Default = new ParseChildrenAttribute ();
-		
-#if NET_2_0
 		public static readonly ParseChildrenAttribute ParseAsChildren = new ParseChildrenAttribute (false);
 		public static readonly ParseChildrenAttribute ParseAsProperties = new ParseChildrenAttribute (true);
 
 		Type childType = typeof(System.Web.UI.Control);
-#endif
 
 		// LAMESPEC
 		public ParseChildrenAttribute ()
@@ -69,13 +66,12 @@ namespace System.Web.UI {
 			if (childrenAsProperties)
 				this.defaultProperty = defaultProperty;
 		}
-#if NET_2_0
+
 		public ParseChildrenAttribute (Type childControlType)
 		{
 			childType = childControlType;
 			defaultProperty = "";
 		}
-#endif
 
 		public bool ChildrenAsProperties {
 
@@ -90,11 +86,9 @@ namespace System.Web.UI {
 			set { defaultProperty = value; }
 		}
 
-#if NET_2_0
 		public Type ChildControlType {
 			get { return childType; }
 		}
-#endif
 
 		public override bool Equals (object obj)
 		{

@@ -5,7 +5,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,48 +32,34 @@ using System.Security.Permissions;
 using System.Web.Compilation;
 using System.Web.UI.HtmlControls;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class RootBuilder : TemplateBuilder {
-
+	public class RootBuilder : TemplateBuilder
+	{
 		Hashtable built_objects;
-
+		static Hashtable htmlControls;
+		static Hashtable htmlInputControls;
+		AspComponentFoundry foundry;
+		
 		public RootBuilder ()
 		{
 			foundry = new AspComponentFoundry ();
 			Line = 1;
 		}
-#else
-	public sealed class RootBuilder : TemplateBuilder {
-#endif
-		static Hashtable htmlControls;
-		static Hashtable htmlInputControls;
-		AspComponentFoundry foundry;
 
 		static RootBuilder ()
 		{
-#if NET_2_0
 			htmlControls = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-			htmlControls = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-						      CaseInsensitiveComparer.DefaultInvariant); 
-#endif
-
 			htmlControls.Add ("A", typeof (HtmlAnchor));
 			htmlControls.Add ("BUTTON", typeof (HtmlButton));
 			htmlControls.Add ("FORM", typeof (HtmlForm));
-#if NET_2_0
 			htmlControls.Add ("HEAD", typeof (HtmlHead));
-#endif
 			htmlControls.Add ("IMG", typeof (HtmlImage));
 			htmlControls.Add ("INPUT", "INPUT");
-#if NET_2_0
 			htmlControls.Add ("LINK", typeof (HtmlLink));
 			htmlControls.Add ("META", typeof (HtmlLink));
-#endif
 			htmlControls.Add ("SELECT", typeof (HtmlSelect));
 			htmlControls.Add ("TABLE", typeof (HtmlTable));
 			htmlControls.Add ("TD", typeof (HtmlTableCell));
@@ -81,32 +67,18 @@ namespace System.Web.UI {
 			htmlControls.Add ("TR", typeof (HtmlTableRow));
 			htmlControls.Add ("TEXTAREA", typeof (HtmlTextArea));
 
-#if NET_2_0
 			htmlInputControls = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
-#else
-			htmlInputControls = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
-							   CaseInsensitiveComparer.DefaultInvariant);
-#endif
 
 			htmlInputControls.Add ("BUTTON", typeof (HtmlInputButton));
-#if NET_2_0
 			htmlInputControls.Add ("SUBMIT", typeof (HtmlInputSubmit));
 			htmlInputControls.Add ("RESET", typeof (HtmlInputReset));
-#else
-			htmlInputControls.Add ("SUBMIT", typeof (HtmlInputButton));
-			htmlInputControls.Add ("RESET", typeof (HtmlInputButton));
-#endif
 			htmlInputControls.Add ("CHECKBOX", typeof (HtmlInputCheckBox));
 			htmlInputControls.Add ("FILE", typeof (HtmlInputFile));
 			htmlInputControls.Add ("HIDDEN", typeof (HtmlInputHidden));
 			htmlInputControls.Add ("IMAGE", typeof (HtmlInputImage));
 			htmlInputControls.Add ("RADIO", typeof (HtmlInputRadioButton));
 			htmlInputControls.Add ("TEXT", typeof (HtmlInputText));
-#if NET_2_0
 			htmlInputControls.Add ("PASSWORD", typeof (HtmlInputPassword));
-#else
-			htmlInputControls.Add ("PASSWORD", typeof (HtmlInputText));
-#endif
 		}
 
 		public RootBuilder (TemplateParser parser)
@@ -126,7 +98,6 @@ namespace System.Web.UI {
 			AspComponent component = foundry.GetComponent (tagName);
 			
 			if (component != null) {
-#if NET_2_0
 				if (!String.IsNullOrEmpty (component.Source)) {
 					TemplateParser parser = Parser;
 
@@ -141,7 +112,6 @@ namespace System.Web.UI {
 						Parser.AddDependency (component.Source);
 					}
 				}
-#endif
 				return component.Type;
 			} else if (component != null && component.Prefix != String.Empty)
 				throw new Exception ("Unknown server tag '" + tagName + "'");
@@ -180,7 +150,7 @@ namespace System.Web.UI {
 					foundry = value;
 			}
 		}
-#if NET_2_0
+
 		// FIXME: it's empty (but not null) when using the new default ctor
 		// but I'm not sure when something should gets in...
 		public IDictionary BuiltObjects {
@@ -190,6 +160,5 @@ namespace System.Web.UI {
 				return built_objects;
 			}
 		}
-#endif
 	}
 }

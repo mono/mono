@@ -24,7 +24,7 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 
 using System.Reflection;
 using System.ComponentModel;
@@ -34,16 +34,8 @@ namespace System.Web.UI {
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
-	public static class PropertyConverter {
-#else
-	public sealed class PropertyConverter {
-
-		PropertyConverter ()
-		{
-			// no instantiation for you
-		}
-#endif
+	public static class PropertyConverter
+	{
 		public static object EnumFromString (Type enumType, string value)
 		{
 			object res = null;

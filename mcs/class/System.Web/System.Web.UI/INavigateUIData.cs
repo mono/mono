@@ -28,8 +28,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-namespace System.Web.UI {
+namespace System.Web.UI 
+{
 	public interface INavigateUIData {
 		string Name { get; }
 		string NavigateUrl { get; }
@@ -37,5 +37,4 @@ namespace System.Web.UI {
 		string Description { get; }
 	}
 }
-#endif
 

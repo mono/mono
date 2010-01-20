@@ -33,7 +33,6 @@ using System.Collections;
 using System.ComponentModel;
 using System.Globalization;
 
-#if NET_2_0
 namespace System.Web.UI
 {
 	public class DataSourceCacheDurationConverter : Int32Converter
@@ -90,4 +89,3 @@ namespace System.Web.UI
 		}
 	}
 }
-#endif

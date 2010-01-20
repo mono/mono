@@ -6,7 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,8 +35,8 @@ using System.Security.Permissions;
 using System.Web.Caching;
 using System.Web.SessionState;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -46,19 +46,10 @@ namespace System.Web.UI {
 	[ToolboxItem (false)]
 	[Designer ("System.Web.UI.Design.UserControlDesigner, " + Consts.AssemblySystem_Design, typeof (IDesigner))]
 	[ParseChildren (true)]
-#if NET_2_0
 	[Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
-#else
-	[RootDesignerSerializer ("Microsoft.VSDesigner.WebForms.RootCodeDomSerializer, " + Consts.AssemblyMicrosoft_VSDesigner, "System.ComponentModel.Design.Serialization.CodeDomSerializer, " + Consts.AssemblySystem_Design, true)]
-#endif
-	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor
-#if NET_2_0
-		, INamingContainer, IFilterResolutionService, INonBindingContainer
-#endif
+	public class UserControl : TemplateControl, IAttributeAccessor, IUserControlDesignerAccessor, INamingContainer, IFilterResolutionService, INonBindingContainer
 	{
-#if NET_2_0
 		ControlCachePolicy cachePolicy;
-#endif
 		bool initialized;
 		AttributeCollection attributes;
 		StateBag attrBag;
@@ -111,7 +102,6 @@ namespace System.Web.UI {
 			}
 		}
 
-#if NET_2_0
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		public ControlCachePolicy CachePolicy 
@@ -127,7 +117,6 @@ namespace System.Web.UI {
 				return cachePolicy;
 			}
 		}
-#endif		
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
@@ -243,12 +232,7 @@ namespace System.Web.UI {
 
 		}
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif
-		override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			InitializeAsUserControl (Page);
 
@@ -300,7 +284,7 @@ namespace System.Web.UI {
 			}
 			set { ViewState["!DesignTimeTagName"] = value; }
 		}
-#if NET_2_0
+
 		[MonoTODO ("Not implemented")]
 		int IFilterResolutionService.CompareFilters (string filter1, string filter2)
 		{
@@ -312,6 +296,5 @@ namespace System.Web.UI {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

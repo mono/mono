@@ -29,7 +29,8 @@
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Web.UI {
+namespace System.Web.UI
+{
         class ResourceBasedLiteralControl : LiteralControl
 	{
 		IntPtr ptr;
@@ -58,12 +59,7 @@ namespace System.Web.UI {
 			}
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			if (length == -1) {
 				writer.Write (base.Text);

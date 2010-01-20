@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,12 +28,10 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
+using System.ComponentModel;
 using System.Reflection;
 using System.Security.Permissions;
-#if NET_2_0
-using System.ComponentModel;
-using System.Collections.Generic;
-#endif
 
 namespace System.Web.UI {
 
@@ -44,10 +42,8 @@ namespace System.Web.UI {
 
 		string text;
 		TemplateContainerAttribute containerAttribute;
-#if NET_2_0
 		TemplateInstanceAttribute instanceAttribute;
 		List <TemplateBinding> bindings;
-#endif
 
 		public TemplateBuilder ()
 		{
@@ -59,11 +55,9 @@ namespace System.Web.UI {
 			if (ats.Length > 0)
 				containerAttribute = (TemplateContainerAttribute) ats [0];
 
-#if NET_2_0
 			ats = prov.GetCustomAttributes (typeof (TemplateInstanceAttribute), true);
 			if (ats.Length > 0)
 				instanceAttribute = (TemplateInstanceAttribute) ats [0];
-#endif
 		}
 
 		public virtual string Text {
@@ -75,7 +69,6 @@ namespace System.Web.UI {
 			get { return containerAttribute != null ? containerAttribute.ContainerType : null; }
 		}
 		
-#if NET_2_0
 		internal TemplateInstance? TemplateInstance {
 			get { return instanceAttribute != null ? instanceAttribute.Instances : (TemplateInstance?)null; }
 		}
@@ -99,7 +92,6 @@ namespace System.Web.UI {
 		{
 			return base.BuildObject ();
 		}
-#endif
 
 		public override void Init (TemplateParser parser,
 					  ControlBuilder parentBuilder,
@@ -130,7 +122,6 @@ namespace System.Web.UI {
 		}
 	}
 	
-#if NET_2_0
 	internal class TemplateBinding
 	{
 		public Type ControlType;
@@ -146,6 +137,5 @@ namespace System.Web.UI {
 			FieldName = fieldName;
 		}
 	}
-#endif
 }
 

@@ -4,7 +4,7 @@
 // Authors:
 //	Sanjay Gupta (gsanjay@novell.com)
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,13 +27,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-namespace System.Web.UI {
-	public enum VerificationRule {
+namespace System.Web.UI 
+{
+	public enum VerificationRule 
+	{
 		Required = 0,
 		Prohibited = 1,
 		NotEmptyString = 2
 	} 
 }
-#endif
 

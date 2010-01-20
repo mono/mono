@@ -4,7 +4,7 @@
 // Authors:
 //      Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -32,12 +32,7 @@ using System;
 
 namespace System.Web.UI
 {
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	interface IStateFormatter
+	public interface IStateFormatter
 	{
 		object Deserialize (string serializationState);
 		string Serialize (object state);

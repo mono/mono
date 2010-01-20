@@ -4,7 +4,7 @@
 // Duncan Mak  (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,12 +41,8 @@ namespace System.Web.UI {
 		ArrayList removed;
 
 		EventHandlerList events = new EventHandlerList ();
-#if NET_2_0
-		public 
-#else
-		internal
-#endif
-		event EventHandler Changed {
+		
+		public event EventHandler Changed {
 			add { events.AddHandler (changedEvent, value); }
 			remove { events.RemoveHandler (changedEvent, value); }
 		}
@@ -126,12 +122,10 @@ namespace System.Web.UI {
 			list.Remove (propertyName);
 		}
 
-#if NET_2_0
 		public bool Contains (string propertyName)
 		{
 			return list.Contains (propertyName);
 		}
-#endif
 
 		internal void RaiseChanged ()
 		{

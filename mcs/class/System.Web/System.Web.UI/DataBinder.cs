@@ -6,7 +6,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,12 +29,10 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.ComponentModel;
 using System.Reflection;
 using System.Security.Permissions;
-#if NET_2_0
-using System.Collections.Generic;
-#endif
 
 namespace System.Web.UI {
 
@@ -197,7 +195,6 @@ namespace System.Web.UI {
 			return FormatResult (result, format);
 		}
 
-		#if NET_2_0
 		[ThreadStatic]
 		static Dictionary<Type, PropertyInfo> dataItemCache;
 	
@@ -236,7 +233,6 @@ namespace System.Web.UI {
 			bool flag;
 			return GetDataItem (container, out flag); 
 		}
-		#endif
 	}
 }
 

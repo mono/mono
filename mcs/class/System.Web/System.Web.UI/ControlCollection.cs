@@ -5,7 +5,7 @@
 //	Duncan Mak  (duncan@ximian.com)
 //	Gonzalo Paniagua Javier (gonzalo@novell.com)
 //
-// Copyright (c) 2002-2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2002-2010 Novell, Inc. (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -51,11 +51,7 @@ namespace System.Web.UI {
 			this.owner = owner;
 		}
 
-		public
-#if NET_2_0
-		virtual
-#endif
-		int Count {
+		public virtual int Count {
 			get { return count; }
 		}
 
@@ -159,11 +155,7 @@ namespace System.Web.UI {
 			return (controls != null && Array.IndexOf (controls, c) != -1);
 		}
 
-		public
-#if NET_2_0
-		virtual
-#endif
-		void CopyTo (Array array, int index)
+		public virtual void CopyTo (Array array, int index)
 		{
 			if (controls == null)
 				return;
@@ -186,11 +178,7 @@ namespace System.Web.UI {
 				array.SetValue (controls [i], i + index);
 		}
 
-		public
-#if NET_2_0
-		virtual
-#endif
-		IEnumerator GetEnumerator ()
+		public virtual IEnumerator GetEnumerator ()
 		{
 			return new SimpleEnumerator (this);
 		}

@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -60,8 +60,6 @@ namespace System.Web.UI
 		string errorPage;
 		bool validateRequest;
 		string clientTarget;
-
-#if NET_2_0
 		bool async;
 		int asyncTimeout = -1;
 		string masterPage;
@@ -75,7 +73,6 @@ namespace System.Web.UI
 		int maxPageStateFieldLength = -1;
 		Type previousPageType;
 		string previousPageVirtualPath;
-#endif
 
 		public PageParser ()
 		{
@@ -84,10 +81,7 @@ namespace System.Web.UI
 		
 		internal PageParser (string virtualPath, string inputFile, HttpContext context)
 		{
-#if NET_2_0
 			this.VirtualPath = new VirtualPath (virtualPath);
-#endif
-
 			Context = context;
 			BaseVirtualDir = VirtualPathUtility.GetDirectory (virtualPath, false);
 			InputFile = inputFile;
@@ -96,7 +90,6 @@ namespace System.Web.UI
 			LoadConfigDefaults ();
 		}
 
-#if NET_2_0
 		internal PageParser (VirtualPath virtualPath, TextReader reader, HttpContext context)
 			: this (virtualPath, null, reader, context)
 		{
@@ -116,23 +109,17 @@ namespace System.Web.UI
 			AddApplicationAssembly ();
 			LoadConfigDefaults ();
 		}
-#endif
 
 		internal override void LoadConfigDefaults ()
 		{
 			base.LoadConfigDefaults ();
-#if NET_2_0
 			PagesSection ps = PagesConfig;
-#else
-			PagesConfiguration ps = PagesConfig;
-#endif			
 
 			notBuffer = !ps.Buffer;
 			enableSessionState = ps.EnableSessionState;
 			enableViewStateMac = ps.EnableViewStateMac;
 			smartNavigation = ps.SmartNavigation;
 			validateRequest = ps.ValidateRequest;
-#if NET_2_0
 			masterPage = ps.MasterPageFile;
 			if (masterPage.Length == 0)
 				masterPage = null;
@@ -145,25 +132,16 @@ namespace System.Web.UI
 			if (styleSheetTheme.Length == 0)
 				styleSheetTheme = null;
 			maintainScrollPositionOnPostBack = ps.MaintainScrollPositionOnPostBack;
-#endif
 		}
 		
-		public static IHttpHandler GetCompiledPageInstance (string virtualPath,
-								    string inputFile, 
-								    HttpContext context)
+		public static IHttpHandler GetCompiledPageInstance (string virtualPath, string inputFile, HttpContext context)
 		{
-#if NET_2_0
 			bool isFake = false;
 
 			if (!String.IsNullOrEmpty (inputFile))
 				isFake = !inputFile.StartsWith (HttpRuntime.AppDomainAppPath);
 			
 			return BuildManager.CreateInstanceFromVirtualPath (new VirtualPath (virtualPath, inputFile, isFake), typeof (IHttpHandler)) as IHttpHandler;
-#else
-			PageParser pp = new PageParser (virtualPath, inputFile, context);
-			IHttpHandler h = (IHttpHandler) pp.GetCompiledInstance ();
-			return h;
-#endif
 		}
 		
 		internal override void ProcessMainAttributes (Hashtable atts)
@@ -252,9 +230,7 @@ namespace System.Web.UI
 				
 				CultureInfo ci = null;
 				try {
-#if NET_2_0
 					if (!culture.StartsWith ("auto"))
-#endif
 						ci = new CultureInfo (culture);
 				} catch {
 					ThrowParseException ("Unsupported Culture: " + culture);
@@ -275,9 +251,7 @@ namespace System.Web.UI
 			if (uiculture != null) {
 				CultureInfo ci = null;
 				try {
-#if NET_2_0
 					if (!uiculture.StartsWith ("auto"))
-#endif
 						ci = new CultureInfo (uiculture);
 				} catch {
 					ThrowParseException ("Unsupported Culture: " + uiculture);
@@ -320,7 +294,6 @@ namespace System.Web.UI
 			clientTarget = GetString (atts, "ClientTarget", null);
 			if (clientTarget != null) {
 				clientTarget = clientTarget.Trim ();
-#if NET_2_0
 				ClientTargetSection sec = GetConfigSection <ClientTargetSection> ("system.web/clientTarget");
 				ClientTarget ct = null;
 				
@@ -334,30 +307,9 @@ namespace System.Web.UI
 							clientTarget));
 				}
 				clientTarget = ct.UserAgent;
-#else
-				NameValueCollection coll;
-				coll = (NameValueCollection) HttpContext.GetAppConfig ("system.web/clientTarget");
-				object ct = null;
-				
-				if (coll != null) {
-					ct = coll [clientTarget];
-					if (ct == null)
-						ct = coll [clientTarget.ToLower (Helpers.InvariantCulture)];
-				}
-				
-				if (ct == null) {
-					ThrowParseException (String.Format (
-							"ClientTarget '{0}' is an invalid alias. See the " +
-							"documentation for <clientTarget> config. section.",
-							clientTarget));
-				}
-				clientTarget = (string) ct;
-#endif
 			}
 
 			notBuffer = !GetBool (atts, "Buffer", true);
-			
-#if NET_2_0
 			async = GetBool (atts, "Async", false);
 			string asyncTimeoutVal = GetString (atts, "AsyncTimeout", null);
 			if (asyncTimeoutVal != null) {
@@ -382,7 +334,7 @@ namespace System.Web.UI
 			styleSheetTheme = GetString (atts, "StyleSheetTheme", styleSheetTheme);
 			enable_event_validation = GetBool (atts, "EnableEventValidation", enable_event_validation);
 			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", maintainScrollPositionOnPostBack);
-#endif
+
 			// Ignored by now
 			GetString (atts, "EnableViewStateMac", null);
 			GetString (atts, "SmartNavigation", null);
@@ -390,7 +342,6 @@ namespace System.Web.UI
 			base.ProcessMainAttributes (atts);
 		}
 		
-#if NET_2_0
 		internal override void AddDirective (string directive, Hashtable atts)
 		{
 			bool isMasterType = String.Compare ("MasterType", directive, StringComparison.OrdinalIgnoreCase) == 0;
@@ -437,7 +388,6 @@ namespace System.Web.UI
 			} else
 				base.AddDirective (directive, atts);
 		}
-#endif
 		
 		static string SuggestCulture (string culture)
 		{
@@ -451,12 +401,7 @@ namespace System.Web.UI
 
 		public static Type GetCompiledPageType (string virtualPath, string inputFile, HttpContext context)
 		{
-#if NET_2_0
 			return BuildManager.GetCompiledType (virtualPath);
-#else
-			PageParser pp = new PageParser (virtualPath, inputFile, context);
-			return pp.CompileIntoType ();
-#endif
 		}
 		
 		protected override Type CompileIntoType ()
@@ -498,15 +443,9 @@ namespace System.Web.UI
 			get { return tracemode; }
 		}		
 
-#if NET_2_0
 		internal override string DefaultBaseTypeName {
 			get { return PagesConfig.PageBaseType; }
 		}
-#else
-		internal override string DefaultBaseTypeName {
-			get { return "System.Web.UI.Page"; }
-		}
-#endif
 		
 		internal override string DefaultDirectiveName {
 			get { return "page"; }
@@ -552,7 +491,6 @@ namespace System.Web.UI
 			get { return notBuffer; }
 		}
 
-#if NET_2_0
 		internal bool Async {
 			get { return async; }
 		}
@@ -608,7 +546,6 @@ namespace System.Web.UI
 				return previousPageType;
 			}
 		}
-#endif
 	}
 }
 

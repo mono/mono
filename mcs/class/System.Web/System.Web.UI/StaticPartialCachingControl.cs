@@ -5,7 +5,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2003 Andreas Nahr
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -53,7 +53,6 @@ namespace System.Web.UI {
 			this.buildMethod = buildMethod;
 		}
 
-#if NET_2_0
 		[MonoTODO("Consider sqlDependency parameter")]
 		public static void BuildCachedControl (Control parent, string ctrlID, string guid,
 				int duration, string varyByParams, string varyByControls,
@@ -63,7 +62,6 @@ namespace System.Web.UI {
 				duration, varyByParams, varyByControls,
 				varyByCustom, buildMethod);
 		}
-#endif
 
 		public static void BuildCachedControl (Control parent, string ctrlID, string guid,
 				int duration, string varyByParams, string varyByControls,

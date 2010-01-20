@@ -6,7 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // Copyright (C) Matthijs ter Woord, 2004
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,12 +39,11 @@ namespace System.Web.UI
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class Html32TextWriter : HtmlTextWriter {
-#if NET_2_0
+	public class Html32TextWriter : HtmlTextWriter
+	{
 		bool div_table_substitution;
 		bool bold;
 		bool italic;
-#endif
 
 		public Html32TextWriter (TextWriter writer) : base (writer)
 		{
@@ -54,7 +53,6 @@ namespace System.Web.UI
 		{
 		}
 
-#if NET_2_0
 		[MonoTODO ("no effect on html generation")]
 		public bool ShouldPerformDivTableSubstitution {
 			get { return div_table_substitution; }
@@ -72,7 +70,6 @@ namespace System.Web.UI
 			get { return italic; }
 			set { italic = value; }
 		}
-#endif
 
 		public override void RenderBeginTag (HtmlTextWriterTag tagKey)
 		{
@@ -88,13 +85,13 @@ namespace System.Web.UI
 		{
 			if (tagKey == HtmlTextWriterTag.Unknown ||
 			    !Enum.IsDefined (typeof (HtmlTextWriterTag), tagKey))
-				return "";
+				return String.Empty;
 
 			return tagKey.ToString ().ToLower (Helpers.InvariantCulture);
 			/* The code below is here just in case we need to split things up
 			switch (tagkey) {
 			case HtmlTextWriterTag.Unknown:
-				return "";
+				return String.Empty;
 			case HtmlTextWriterTag.A:
 				return "a";
 			case HtmlTextWriterTag.Acronym:
@@ -288,7 +285,7 @@ namespace System.Web.UI
 			case HtmlTextWriterTag.Xml:
 				return "xml";
 			default:
-				return "";
+				return String.Empty;
 			}
 			*/
 		}

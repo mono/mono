@@ -33,15 +33,13 @@ using System.Web;
 
 namespace System.Web.UI
 {
-        public enum OutputCacheLocation
-        {
-                Any,
-                Client,
-                Downstream,
-                Server,
-                None,
-#if NET_1_1
+	public enum OutputCacheLocation
+	{
+		Any,
+		Client,
+		Downstream,
+		Server,
+		None,
 		ServerAndClient
-#endif
-        }
+	}
 }

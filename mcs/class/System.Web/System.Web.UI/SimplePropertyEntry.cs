@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// Copyright (c) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (c) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 namespace System.Web.UI
 {
 	public class SimplePropertyEntry : PropertyEntry {
@@ -47,5 +46,4 @@ namespace System.Web.UI
 		}
 	}
 }
-#endif // NET_2_0
 

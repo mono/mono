@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,22 +26,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Security.Permissions;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI 
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[AttributeUsage (AttributeTargets.Class)]
-	public sealed class SupportsEventValidationAttribute : Attribute {
-
+	public sealed class SupportsEventValidationAttribute : Attribute 
+	{
 		public SupportsEventValidationAttribute ()
 		{
 		}
 	}
 }
-
-#endif

@@ -6,7 +6,7 @@
 // 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -48,11 +48,7 @@ namespace System.Web.UI {
 		
 		internal CssStyleCollection ()
 		{
-#if NET_2_0
 			style = new ListDictionary (StringComparer.OrdinalIgnoreCase);
-#else
-			style = new ListDictionary ();
-#endif
 		}
 
 		internal CssStyleCollection (StateBag bag) : this ()
@@ -116,13 +112,8 @@ namespace System.Web.UI {
 
 		static void AppendStyle (StringBuilder sb, string key, string value)
 		{
-#if NET_2_0
 			if (String.Compare (key, "background-image", StringComparison.OrdinalIgnoreCase) == 0 &&
 			    value.Length >= 3 && String.Compare ("url", 0, value, 0, 3, StringComparison.OrdinalIgnoreCase) != 0)
-#else
-			if (key == "background-image" && 0 != String.Compare ("url", value.Substring (0, 3), true,
-									      Helpers.InvariantCulture))
-#endif
 				sb.AppendFormat ("{0}:url({1});", key, HttpUtility.UrlPathEncode (value));
 			else
 				sb.AppendFormat ("{0}:{1};", key, value);
@@ -168,12 +159,7 @@ namespace System.Web.UI {
 				bag [AttributeCollection.StyleAttribute] = _value.ToString ();
 		}
 
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		void Add (HtmlTextWriterStyle key, string value)
+		public void Add (HtmlTextWriterStyle key, string value)
 		{
 			Add (HtmlTextWriter.StaticGetStyleName (key), value);
 		}
@@ -194,7 +180,7 @@ namespace System.Web.UI {
 			else
 				BagToValue ();
 		}
-#if NET_2_0
+
 		public string this [HtmlTextWriterStyle key] {
 			get { return style [HtmlTextWriter.StaticGetStyleName (key)] as string; }
 			set { Add (HtmlTextWriter.StaticGetStyleName (key), value); }
@@ -205,11 +191,7 @@ namespace System.Web.UI {
 			Remove (HtmlTextWriter.StaticGetStyleName (key));
 		}
 
-		public
-#else
-		internal
-#endif
-		string Value {
+		public string Value {
 			get { return _value.ToString (); }
 			set {
 				SetValueInternal (value);

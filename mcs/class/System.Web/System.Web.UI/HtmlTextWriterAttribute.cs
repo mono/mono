@@ -4,7 +4,7 @@
 // Author:
 //        Ben Maurer <bmaurer@novell.com>
 //
-// (c) 2005 Novell
+// (c) 2005-2010 Novell
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,10 +26,8 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web.UI {
-#if !NET_2_0
-	[Serializable]
-#endif
+namespace System.Web.UI
+{
 	public enum HtmlTextWriterAttribute {
 		Accesskey,
 		Align,
@@ -71,7 +69,6 @@ namespace System.Web.UI {
 		Value,
 		Width,
 		Wrap,
-#if NET_2_0
 		Abbr,
 		AutoComplete,
 		Axis,
@@ -86,6 +83,5 @@ namespace System.Web.UI {
 		Shape,
 		Usemap,
 		VCardName
-#endif
 	}
 }

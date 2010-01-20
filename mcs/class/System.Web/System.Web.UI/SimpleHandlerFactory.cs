@@ -4,7 +4,7 @@
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// (C) 2002,2003 Ximian, Inc (http://www.ximian.com)
+// (C) 2002-2010 Ximian, Inc (http://www.ximian.com)
 //
 
 //
@@ -40,15 +40,7 @@ namespace System.Web.UI
 							string virtualPath,
 							string path)
 		{
-#if NET_2_0
 			return BuildManager.CreateInstanceFromVirtualPath (virtualPath, typeof (IHttpHandler)) as IHttpHandler;
-#else
-			Type type = WebHandlerParser.GetCompiledType (context, virtualPath, path);
-			if (!(typeof (IHttpHandler).IsAssignableFrom (type)))
-				throw new HttpException ("Type does not implement IHttpHandler: " + type.FullName);
-
-			return Activator.CreateInstance (type) as IHttpHandler;
-#endif
 		}
 
 		public virtual void ReleaseHandler (IHttpHandler handler)

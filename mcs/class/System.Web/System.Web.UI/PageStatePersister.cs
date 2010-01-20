@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,12 +28,7 @@
 
 namespace System.Web.UI
 {
-#if NET_2_0
-	public
-#else
-	internal
-#endif
-	abstract class PageStatePersister
+	public abstract class PageStatePersister
 	{
 		object control_state;
 		object view_state;

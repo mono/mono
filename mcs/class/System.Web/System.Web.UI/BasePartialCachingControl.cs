@@ -54,9 +54,7 @@ namespace System.Web.UI
 		bool slidingExpiration;
 		
 		Control control;
-#if NET_2_0
 		ControlCachePolicy cachePolicy;
-#endif
 		
 		protected BasePartialCachingControl()
 		{
@@ -112,23 +110,13 @@ namespace System.Web.UI
 			}
 		}
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif
-		override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			control = CreateControl ();
 			Controls.Add (control);
 		}
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif
-		override void Render (HtmlTextWriter output)
+		protected internal override void Render (HtmlTextWriter output)
 		{
 			Cache cache = HttpRuntime.InternalCache;
 			string key = CreateKey ();
@@ -158,7 +146,6 @@ namespace System.Web.UI
 						      CacheItemPriority.Normal, null);
 		}
 
-#if NET_2_0
 		public ControlCachePolicy CachePolicy 
 		{
 			get {
@@ -168,7 +155,6 @@ namespace System.Web.UI
 				return cachePolicy;
 			}
 		}
-#endif
 
 		public CacheDependency Dependency {
 			get {return dependency;}

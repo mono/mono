@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 internal enum PageLifeCycle
 {
 	Unknown = 1,
@@ -46,4 +45,3 @@ internal enum PageLifeCycle
 	Unload,
 	End
 }
-#endif

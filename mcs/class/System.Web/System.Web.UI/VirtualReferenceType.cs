@@ -4,7 +4,7 @@
 // Author:
 //        Chris Toshok <toshok@ximian.com>
 //
-// (c) 2006 Novell
+// (c) 2006-2010 Novell
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,9 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-namespace System.Web.UI {
-	public enum VirtualReferenceType {
+namespace System.Web.UI 
+{
+	public enum VirtualReferenceType 
+	{
 		Page,
 		UserControl,
 		Master,
@@ -36,4 +37,3 @@ namespace System.Web.UI {
 		Other
 	}
 }
-#endif

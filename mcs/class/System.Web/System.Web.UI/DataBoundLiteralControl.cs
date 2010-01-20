@@ -6,7 +6,7 @@
 // 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -38,10 +38,7 @@ namespace System.Web.UI {
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ToolboxItem(false)]
-	public sealed class DataBoundLiteralControl : Control
-#if NET_2_0
-	, ITextControl
-#endif
+	public sealed class DataBoundLiteralControl : Control, ITextControl
 	{
 		int staticLiteralsCount;
 		string [] staticLiterals;
@@ -86,12 +83,7 @@ namespace System.Web.UI {
 			}
 		}
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif
-		override void Render (HtmlTextWriter output)
+		protected internal override void Render (HtmlTextWriter output)
 		{
 			int stLength = staticLiterals == null ? 0 : staticLiterals.Length;
 			int dbLength = dataBoundLiterals.Length;
@@ -124,7 +116,6 @@ namespace System.Web.UI {
 			staticLiterals [index] = s;
 		}
 
-#if NET_2_0
 		string ITextControl.Text {
 			get {
 				return Text;
@@ -133,7 +124,6 @@ namespace System.Web.UI {
 				throw new NotSupportedException ();
 			}
 		}
-#endif		
 	}
 }
 

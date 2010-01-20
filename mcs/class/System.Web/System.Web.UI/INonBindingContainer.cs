@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2008 Novell, Inc. (http://www.novell.com)
+// (C) 2008-2010 Novell, Inc. (http://www.novell.com)
 //
 
 //

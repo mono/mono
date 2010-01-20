@@ -7,7 +7,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -40,29 +40,24 @@ using System.IO;
 using System.Runtime.InteropServices;
 using System.Text;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
-	public abstract class TemplateControl : Control, INamingContainer, IFilterResolutionService {
-#else
-	public abstract class TemplateControl : Control, INamingContainer {
-#endif
+	public abstract class TemplateControl : Control, INamingContainer, IFilterResolutionService
+	{
 		static readonly Assembly _System_Web_Assembly = typeof (TemplateControl).Assembly;
 		static object abortTransaction = new object ();
 		static object commitTransaction = new object ();
 		static object error = new object ();
 		static string [] methodNames = { "Page_Init",
-#if NET_2_0
 						 "Page_PreInit",
 						 "Page_PreLoad",
 						 "Page_LoadComplete",
 						 "Page_PreRenderComplete",
 						 "Page_SaveStateComplete",
 						 "Page_InitComplete",
-#endif
 						 "Page_Load",
 						 "Page_DataBind",
 						 "Page_PreRender",
@@ -76,17 +71,13 @@ namespace System.Web.UI {
 					    BindingFlags.NonPublic |
 					    BindingFlags.Instance;
 
-#if NET_2_0
 		string _appRelativeVirtualPath;
-#endif
 		StringResourceData resource_data;
 		
 		#region Constructor
 		protected TemplateControl ()
 		{
-#if NET_2_0
 			TemplateControl = this;
-#endif
 			Construct ();
 		}
 
@@ -94,9 +85,7 @@ namespace System.Web.UI {
 
 		#region Properties
 		[EditorBrowsable (EditorBrowsableState.Never)]
-#if NET_2_0
 		[Obsolete]
-#endif
 		protected virtual int AutoHandlers {
 			get { return 0; }
 			set { }
@@ -107,12 +96,10 @@ namespace System.Web.UI {
 			get { return true; }
 		}
 
-#if NET_2_0
 		public string AppRelativeVirtualPath {
 			get { return _appRelativeVirtualPath; }
 			set { _appRelativeVirtualPath = value; }
 		}
-#endif
 
 		#endregion
 
@@ -167,14 +154,8 @@ namespace System.Web.UI {
 				if (evinfo.noParams) {
 					NoParamsInvoker npi = new NoParamsInvoker (this, evinfo.method);
 					evinfo.evt.AddEventHandler (this, npi.FakeDelegate);
-				} else {
-					evinfo.evt.AddEventHandler (this, Delegate.CreateDelegate (
-#if NET_2_0
-							typeof (EventHandler), this, evinfo.method));
-#else
-							typeof (EventHandler), this, evinfo.methodName));
-#endif
-				}
+				} else
+					evinfo.evt.AddEventHandler (this, Delegate.CreateDelegate (typeof (EventHandler), this, evinfo.method));
 			}
 		}
 
@@ -240,23 +221,13 @@ namespace System.Web.UI {
 				throw new ArgumentNullException ("virtualPath");
 
 			string vpath = UrlUtils.Combine (TemplateSourceDirectory, virtualPath);
-#if NET_2_0
 			return BuildManager.GetCompiledType (vpath);
-#else
-			string realpath = Context.Request.MapPath (vpath);
-			return UserControlParser.GetCompiledType (vpath, realpath, Context);
-#endif
 		}
 
 		public Control LoadControl (string virtualPath)
 		{
-#if NET_2_0
 			if (virtualPath == null)
 				throw new ArgumentNullException ("virtualPath");
-#else
-			if (virtualPath == null)
-				throw new HttpException ("virtualPath is null");
-#endif
 			Type type = GetTypeFromControlPath (virtualPath);
 			
 			return LoadControl (type, null);
@@ -286,13 +257,8 @@ namespace System.Web.UI {
 
 		public ITemplate LoadTemplate (string virtualPath)
 		{
-#if NET_2_0
 			if (virtualPath == null)
 				throw new ArgumentNullException ("virtualPath");
-#else
-			if (virtualPath == null)
-				throw new HttpException ("virtualPath is null");
-#endif
 			Type t = GetTypeFromControlPath (virtualPath);
 			return new SimpleTemplate (t);
 		}
@@ -318,15 +284,11 @@ namespace System.Web.UI {
 				eh (this, e);
 		}
 
-#if !NET_2_0
-	        [MonoTODO ("Not implemented, always returns null")]
-#endif
 		public Control ParseControl (string content)
 		{
 			if (content == null)
 				throw new ArgumentNullException ("content");
 
-#if NET_2_0
 			// FIXME: This method needs to be rewritten in some sane way - the way it is now,
 			// is a kludge. New version should not use
 			// UserControlParser.GetCompiledType, but instead resort to some other way
@@ -354,26 +316,19 @@ namespace System.Web.UI {
 
 			parsedControl = null;
 			return ret;
-#else
-			return null;
-#endif
 		}
 
-#if NET_2_0
 	        [MonoTODO ("Parser filters not implemented yet. Calls ParseControl (string) for now.")]
 		public Control ParseControl (string content, bool ignoreParserFilter)
 		{
 			return ParseControl (content);
 		}
-#endif
 	
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public object ReadStringResource ()
 		{
 			return ReadStringResource (GetType ());
 		}
-#endif
 
 		class StringResourceData {
 			public IntPtr Ptr;
@@ -381,7 +336,6 @@ namespace System.Web.UI {
 			public int MaxOffset;
 		}
 
-#if NET_2_0
 		protected object GetGlobalResourceObject (string className, string resourceKey)
 		{
 			return HttpContext.GetGlobalResourceObject (className, resourceKey);
@@ -429,7 +383,6 @@ namespace System.Web.UI {
 		internal override TemplateControl TemplateControlInternal {
 			get { return this; }
 		}
-#endif
 		
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		public static object ReadStringResource (Type t)
@@ -539,7 +492,6 @@ namespace System.Web.UI {
 			}
 		}
 
-#if NET_2_0
 		protected internal object Eval (string expression)
 		{
 			return DataBinder.Eval (Page.GetDataItem(), expression);
@@ -593,6 +545,5 @@ namespace System.Web.UI {
 		{
 			throw new NotImplementedException ();
 		}
-#endif
 	}
 }

@@ -4,7 +4,7 @@
 // Duncan Mak  (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,13 +32,9 @@ namespace System.Web.UI {
 
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
 	[Serializable]
-	public sealed class Triplet {
-#else
-	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class Triplet {
-#endif
+	public sealed class Triplet
+	{
 		public object First;
 		public object Second;
 		public object Third;

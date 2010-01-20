@@ -4,7 +4,7 @@
 // Duncan Mak  (duncan@ximian.com)
 //
 // (C) Ximian, Inc.
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,8 +29,8 @@
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI {
-
+namespace System.Web.UI
+{
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
@@ -38,8 +38,6 @@ namespace System.Web.UI {
 	public sealed class TemplateContainerAttribute : Attribute
 	{
 		Type containerType;
-		
-#if NET_2_0
 		BindingDirection direction;
 		
 		public TemplateContainerAttribute (Type containerType, BindingDirection direction)
@@ -51,7 +49,6 @@ namespace System.Web.UI {
 		public BindingDirection BindingDirection {
 			get { return direction; }
 		}
-#endif
 		
 		public TemplateContainerAttribute (Type containerType)
 		{

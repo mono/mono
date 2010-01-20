@@ -6,7 +6,7 @@
 // 	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) 2002 Ximian, Inc. (http://www.ximian.com
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -180,7 +180,6 @@ namespace System.Web.UI {
 			}
 		}
 
-#if NET_2_0
 		internal void CopyFrom (AttributeCollection attributeCollection)
 		{
 			if (attributeCollection == null || attributeCollection.Count == 0)
@@ -189,6 +188,5 @@ namespace System.Web.UI {
 			foreach (string key in attributeCollection.bag.Keys)
 				this.Add (key, attributeCollection [key]);
 		}
-#endif
 	}
 }

@@ -4,7 +4,7 @@
 // Authors:
 // 	Sanjay Gupta gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System;
 using System.ComponentModel;
 using System.Collections;
@@ -150,4 +149,3 @@ namespace System.Web.UI {
 
     	}
 }
-#endif

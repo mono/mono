@@ -5,7 +5,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ximian, Inc (http://www.ximian.com)
-// (C) 2008 Novell, Inc (http://novell.com/)
+// (C) 2008-2010 Novell, Inc (http://novell.com/)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -41,7 +41,6 @@ namespace System.Web.UI
 		{
 		}
 
-#if NET_2_0
 		internal WebHandlerParser (HttpContext context, VirtualPath virtualPath, TextReader reader)
 			: this (context, virtualPath, null, reader)
 		{
@@ -51,7 +50,6 @@ namespace System.Web.UI
 			: base (context, virtualPath.Original, physicalPath, reader)
 		{
 		}
-#endif
 
 		public static Type GetCompiledType (HttpContext context, string virtualPath, string physicalPath)
 		{

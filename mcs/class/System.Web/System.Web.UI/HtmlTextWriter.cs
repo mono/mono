@@ -4,7 +4,7 @@
 // Author:
 //        Ben Maurer <bmaurer@novell.com>
 //
-// (c) 2005 Novell
+// (c) 2005-2010 Novell, Inc (http://novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,20 +47,9 @@ namespace System.Web.UI {
 
 		static HtmlTextWriter ()
 		{
-#if NET_2_0
 			_tagTable = new Hashtable (tags.Length, StringComparer.OrdinalIgnoreCase);
 			_attributeTable = new Hashtable (htmlattrs.Length, StringComparer.OrdinalIgnoreCase);
 			_styleTable = new Hashtable (htmlstyles.Length, StringComparer.OrdinalIgnoreCase);
-#else
-			_tagTable = new Hashtable (tags.Length, 
-				CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
-			
-			_attributeTable = new Hashtable (htmlattrs.Length, 
-				CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
-			
-			_styleTable = new Hashtable (htmlstyles.Length, 
-				CaseInsensitiveHashCodeProvider.Default, CaseInsensitiveComparer.Default);
-#endif
 			foreach (HtmlTag tag in tags)
 				_tagTable.Add (tag.name, tag);
 
@@ -162,9 +151,7 @@ namespace System.Web.UI {
 				styles [styles_pos] = new AddedStyle ();
 #endif
 			styles [styles_pos].name = name;
-#if NET_2_0
 			value = HttpUtility.HtmlAttributeEncode (value);
-#endif
 			styles [styles_pos].value = value;
 			styles [styles_pos].key = key;
 		}
@@ -228,11 +215,8 @@ namespace System.Web.UI {
 				for (int i = 0; i <= styles_pos; i++) {
 					AddedStyle a = styles [i];
 					if (OnStyleAttributeRender (a.name, a.value, a.key)) {
-#if NET_2_0
-						if (a.key == HtmlTextWriterStyle.BackgroundImage) {
+						if (a.key == HtmlTextWriterStyle.BackgroundImage)
 							a.value = String.Concat ("url(", HttpUtility.UrlPathEncode (a.value), ")");
-						}
-#endif
 						WriteStyleAttribute (a.name, a.value, false);
 					}
 				}
@@ -482,7 +466,7 @@ namespace System.Web.UI {
 						break;
 					case TagType.Block:
 						Indent--;
-						WriteLineNoTabs ("");
+						WriteLineNoTabs (String.Empty);
 						WriteEndTag (TagName);
 
 						break;
@@ -981,7 +965,7 @@ namespace System.Web.UI {
 		}
 
 		static HtmlTag [] tags = {
-			new HtmlTag (HtmlTextWriterTag.Unknown,    "",                  TagType.Block),
+			new HtmlTag (HtmlTextWriterTag.Unknown,    String.Empty,        TagType.Block),
 			new HtmlTag (HtmlTextWriterTag.A,          "a",                 TagType.Inline),
 			new HtmlTag (HtmlTextWriterTag.Acronym,    "acronym",           TagType.Inline),
 			new HtmlTag (HtmlTextWriterTag.Address,    "address",           TagType.Block),
@@ -1121,7 +1105,6 @@ namespace System.Web.UI {
 			new HtmlAttribute (HtmlTextWriterAttribute.Value,             "value"),
 			new HtmlAttribute (HtmlTextWriterAttribute.Width,             "width"),
 			new HtmlAttribute (HtmlTextWriterAttribute.Wrap,              "wrap"),
-#if NET_2_0
 			new HtmlAttribute (HtmlTextWriterAttribute.Abbr,              "abbr"),
 			new HtmlAttribute (HtmlTextWriterAttribute.AutoComplete,      "autocomplete"),
 			new HtmlAttribute (HtmlTextWriterAttribute.Axis,              "axis"),
@@ -1136,7 +1119,6 @@ namespace System.Web.UI {
 			new HtmlAttribute (HtmlTextWriterAttribute.Shape,             "shape"),
 			new HtmlAttribute (HtmlTextWriterAttribute.Usemap,            "usemap"),
 			new HtmlAttribute (HtmlTextWriterAttribute.VCardName,         "vcard_name"),
-#endif
 		};
 
 		static HtmlStyle [] htmlstyles = {
@@ -1154,7 +1136,6 @@ namespace System.Web.UI {
 			new HtmlStyle (HtmlTextWriterStyle.Height,             "height"),
 			new HtmlStyle (HtmlTextWriterStyle.TextDecoration,     "text-decoration"),
 			new HtmlStyle (HtmlTextWriterStyle.Width,              "width"),
-#if NET_2_0
 			new HtmlStyle (HtmlTextWriterStyle.ListStyleImage,     "list-style-image"),
 			new HtmlStyle (HtmlTextWriterStyle.ListStyleType,      "list-style-type"),
 			new HtmlStyle (HtmlTextWriterStyle.Cursor,             "cursor"),
@@ -1184,10 +1165,8 @@ namespace System.Web.UI {
 			new HtmlStyle (HtmlTextWriterStyle.Visibility,         "visibility"),
 			new HtmlStyle (HtmlTextWriterStyle.WhiteSpace,         "white-space"),
 			new HtmlStyle (HtmlTextWriterStyle.ZIndex,             "z-index"),
-#endif
 		};
 
-#if NET_2_0
 		public virtual bool IsValidFormAttribute (string attribute)
 		{
 			return true;
@@ -1257,6 +1236,5 @@ namespace System.Web.UI {
 		public virtual void EndRender ()
 		{
 		}
-#endif
 	}
 }

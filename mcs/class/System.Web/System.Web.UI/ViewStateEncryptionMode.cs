@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Web.UI
 {
 	public enum ViewStateEncryptionMode
@@ -39,5 +37,3 @@ namespace System.Web.UI
 		Never
 	}
 }
-
-#endif

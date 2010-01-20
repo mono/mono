@@ -6,7 +6,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
 // (C) 2003 Ben Maurer
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,8 +37,8 @@ namespace System.Web.UI {
 
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class LosFormatter {
-
+	public sealed class LosFormatter
+	{
 		ObjectStateFormatter osf;
 		
 		public LosFormatter ()
@@ -46,19 +46,12 @@ namespace System.Web.UI {
 			osf = new ObjectStateFormatter ();
 		}
 
-#if NET_1_1
-		public LosFormatter (bool enableMac, string macKeyModifier)
-			: this (enableMac, Convert.FromBase64String (macKeyModifier))
+		public LosFormatter (bool enableMac, string macKeyModifier) : this (enableMac, Convert.FromBase64String (macKeyModifier))
 		{
 		}
-#endif
+
 		[MonoTODO]
-#if NET_2_0
-		public
-#else
-		internal
-#endif
-		LosFormatter (bool enableMac, byte[] macKeyModifier)
+		public LosFormatter (bool enableMac, byte[] macKeyModifier)
 		{
 			if (enableMac)
 				osf = new ObjectStateFormatter (macKeyModifier);
