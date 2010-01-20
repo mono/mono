@@ -1,3 +1,8 @@
+2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs : disable connection tests, with analyzed
+	  reason why it's blocking, for each.
+
 2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EndpointAddressBuilderTest.cs : add usage example test.

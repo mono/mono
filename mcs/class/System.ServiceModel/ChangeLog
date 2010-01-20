@@ -1,3 +1,8 @@
+2010-01-20  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources: move back some FeatureBased
+	  tests.
+
 2010-01-18  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources : added new security version types.
