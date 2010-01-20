@@ -1,12 +1,11 @@
 //
-// System.Web.HttpCacheVaryByContentEncodings
 //
 // Authors:
-//   Marek Habersack (mhabersack@novell.com)
-//
-// (C) 2007-2009 Novell, Inc (http://novell.com)
+//      Marek Habersack <mhabersack@novell.com>
 //
 
+//
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,43 +27,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.Collections.Generic;
-using System.Security.Permissions;
 
-namespace System.Web 
+namespace System.Web.SessionState
 {
-	[AspNetHostingPermissionAttribute(SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class HttpCacheVaryByContentEncodings
+	public enum SessionStateBehavior
 	{
-		Dictionary <string, bool> encodings;
-
-#if NET_4_0
-		public
-#else
-		internal
-#endif
-		HttpCacheVaryByContentEncodings ()
-		{
-			encodings = new Dictionary <string, bool> ();
-		}
-		
-		public bool this [string contentEncoding] {
-			get {
-				if (contentEncoding == null)
-					throw new ArgumentNullException ("contentEncoding");
-
-				if (encodings.ContainsKey (contentEncoding))
-					return encodings [contentEncoding];
-
-				return false;
-			}
-			
-			set {
-				if (contentEncoding == null)
-					throw new ArgumentNullException ("contentEncoding");
-
-				encodings [contentEncoding] = value;
-			}
-		}
+		Default,
+		Required,
+		ReadOnly,
+		Disabled
 	}
 }

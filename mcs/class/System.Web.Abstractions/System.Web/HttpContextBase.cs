@@ -36,6 +36,7 @@ using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.Caching;
 using System.Web.Profile;
+using System.Web.SessionState;
 
 namespace System.Web
 {
@@ -140,7 +141,12 @@ namespace System.Web
 			NotImplemented ();
 			return null;
 		}
-
+#if NET_4_0
+		public virtual void RemapHandler (IHttpHandler handler)
+		{
+			NotImplemented ();
+		}
+#endif
 		public virtual void RewritePath (string path)
 		{
 			NotImplemented ();
@@ -160,5 +166,11 @@ namespace System.Web
 		{
 			NotImplemented ();
 		}
+#if NET_4_0
+		public virtual void SetSessionStateBehavior (SessionStateBehavior sessionStateBehavior)
+		{
+			NotImplemented ();
+		}
+#endif
 	}
 }

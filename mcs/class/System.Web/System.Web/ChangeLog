@@ -1,3 +1,15 @@
+2010-01-20  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContext.cs: implemented the 4.0 SetSessionStateBehavior
+	method
+
+	* HttpCacheVaryByContentEncodings.cs, HttpCacheVaryByHeaders.cs,
+	HttpCacheVaryByParams.cs : parameterless constructors are public
+	in 4.0
+
+	* HttpApplication.cs: implemented the 4.0
+	GetOutputCacheProviderName method
+
 2010-01-19  Marek Habersack  <mhabersack@novell.com>
 
 	* StaticSiteMapProvider.cs: AddNode checks the url of node

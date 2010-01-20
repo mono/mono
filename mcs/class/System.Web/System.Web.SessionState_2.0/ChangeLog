@@ -1,3 +1,7 @@
+2010-01-20  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateBehavior.cs: added (4.0)
+
 2009-10-19  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateModule.cs: enabled SQL session state provider.

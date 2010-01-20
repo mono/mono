@@ -75,7 +75,7 @@ namespace System.Web
 		Timer timer;
 		Thread thread;
 		bool _isProcessingInclude;
-
+		
 		[ThreadStatic]
 		static ResourceProviderFactory provider_factory;
 
@@ -110,13 +110,14 @@ namespace System.Web
 			WorkerRequest = wr;
 			request = new HttpRequest (WorkerRequest, this);
 			response = new HttpResponse (WorkerRequest, this);
+			SessionStateBehavior = SessionStateBehavior.Default;
 		}
 
 		public HttpContext (HttpRequest request, HttpResponse response)
 		{
 			this.request = request;
 			this.response = response;
-			
+			SessionStateBehavior = SessionStateBehavior.Default;
 		}
 
 		internal bool IsProcessingInclude {
@@ -646,8 +647,14 @@ namespace System.Web
 				req.QueryStringRaw = queryString;
 		}
 
-#region internals
+#if NET_4_0
+		public void SetSessionStateBehavior (SessionStateBehavior sessionStateBehavior)
+		{
+			SessionStateBehavior = sessionStateBehavior;
+		}
+#endif
 		
+#region internals
 		internal void SetSession (HttpSessionState state)
 		{
 			session_state = state;
@@ -691,6 +698,13 @@ namespace System.Web
 			}
 		}
 
+#if NET_4_0
+		internal SessionStateBehavior SessionStateBehavior {
+			get;
+			private set;
+		}
+#endif
+		
 #if !TARGET_J2EE
 		void TimeoutReached(object state) {
 			HttpRuntime.QueuePendingRequest (false);

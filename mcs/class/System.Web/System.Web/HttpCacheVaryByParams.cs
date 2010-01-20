@@ -42,7 +42,12 @@ namespace System.Web
 		bool ignore_parms;
 		Hashtable parms;
 
-		internal HttpCacheVaryByParams ()
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		HttpCacheVaryByParams ()
 		{
 			/* the parameter names are meant to be case insensitive */
 			parms = new Hashtable (StringComparer.InvariantCultureIgnoreCase);

@@ -1,3 +1,8 @@
+2010-01-20  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCacheSection.cs: implemented the Providers and
+	DefaultProviderName 4.0 properties.
+
 2010-01-09  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: GetSection properly handles looking

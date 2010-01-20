@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -31,9 +31,8 @@
 using System;
 using System.Configuration;
 
-#if NET_2_0
-
-namespace System.Web.Configuration {
+namespace System.Web.Configuration
+{
 
 	public sealed class OutputCacheSection : ConfigurationSection
 	{
@@ -42,6 +41,10 @@ namespace System.Web.Configuration {
 		static ConfigurationProperty omitVaryStarProp;
 		static ConfigurationProperty sendCacheControlHeaderProp;
 		static ConfigurationProperty enableKernelCacheForVaryByStarProp;
+#if NET_4_0
+		static ConfigurationProperty providersProp;
+		static ConfigurationProperty defaultProviderNameProp;
+#endif
 		
 		static ConfigurationPropertyCollection properties;
 
@@ -51,8 +54,11 @@ namespace System.Web.Configuration {
 			enableOutputCacheProp = new ConfigurationProperty ("enableOutputCache", typeof (bool), true);
 			omitVaryStarProp = new ConfigurationProperty ("omitVaryStar", typeof (bool), false);
 			sendCacheControlHeaderProp = new ConfigurationProperty ("sendCacheControlHeader", typeof (bool), true);
-			enableKernelCacheForVaryByStarProp = new ConfigurationProperty ("enableKernelCacheForVaryByStar",
-											typeof (bool), false);
+			enableKernelCacheForVaryByStarProp = new ConfigurationProperty ("enableKernelCacheForVaryByStar", typeof (bool), false);
+#if NET_4_0
+			providersProp = new ConfigurationProperty ("providers", typeof (ProviderSettingsCollection));
+			defaultProviderNameProp = new ConfigurationProperty ("defaultProvider", typeof (string), "AspNetInternalProvider");
+#endif
 			
 			properties = new ConfigurationPropertyCollection ();
 
@@ -61,6 +67,10 @@ namespace System.Web.Configuration {
 			properties.Add (omitVaryStarProp);
 			properties.Add (sendCacheControlHeaderProp);
 			properties.Add (enableKernelCacheForVaryByStarProp);
+#if NET_4_0
+			properties.Add (providersProp);
+			properties.Add (defaultProviderNameProp);
+#endif
 		}
 
 		[ConfigurationProperty ("enableFragmentCache", DefaultValue = "True")]
@@ -93,6 +103,20 @@ namespace System.Web.Configuration {
 			set { base[sendCacheControlHeaderProp] = value; }
 		}
 
+#if NET_4_0
+		[StringValidatorAttribute(MinLength = 1)]
+		[ConfigurationPropertyAttribute("defaultProvider", DefaultValue = "AspNetInternalProvider")]
+		public string DefaultProviderName {
+			get { return base [defaultProviderNameProp] as string; }
+			set { base [defaultProviderNameProp] = value; }
+		}
+		
+		[ConfigurationPropertyAttribute("providers")]
+		public ProviderSettingsCollection Providers {
+			get { return base [providersProp] as ProviderSettingsCollection; }
+		}
+#endif
+		
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
@@ -101,5 +125,4 @@ namespace System.Web.Configuration {
 
 }
 
-#endif
 
