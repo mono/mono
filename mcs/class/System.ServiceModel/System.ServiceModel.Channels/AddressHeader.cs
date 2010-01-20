@@ -178,7 +178,7 @@ namespace System.ServiceModel.Channels
 			protected override void OnWriteAddressHeaderContents (XmlDictionaryWriter writer)
 			{
 				if (value == null)
-					writer.WriteAttributeString ("i", "nil", XmlSchema.InstanceNamespace, "true");
+					writer.WriteAttributeString ("i", "nil", "http://www.w3.org/2001/XMLSchema-instance", "true");
 				else
 					this.formatter.WriteObject (writer, value);
 			}
