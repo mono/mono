@@ -1,5 +1,7 @@
 2010-01-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Fix a warning.
+
 	* exceptions-<ARCH>.c: Introduce a MONO_ARCH_HAVE_THROW_EXCEPTION_BY_NAME
 	define for platforms still using it (s390). Get rid of the
 	mono_arch_get_throw_exception_by_name () routines on all other platforms.
