@@ -1,3 +1,16 @@
+2010-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-x86.c: Add LLVM specific throw trampolines which doesn't assume
+	the caller pushed the arguments.
+
+	* mini-llvm.c: Enable throwing exceptions on x86.
+
+	* mini-posix.c (SIG_HANDLER_SIGNATURE): Avoid 
+	"Thread (nil) may have been prematurely finalized" messages if this is called
+	on a thread not registered with the runtime.
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Ditto.
+
 2010-01-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* jit-icalls.c (mono_array_new_3): New jit icall.
