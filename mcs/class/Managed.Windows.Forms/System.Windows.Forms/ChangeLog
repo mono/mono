@@ -1,5 +1,11 @@
 2010-01-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs: When the normal drop down window is closed, make sure
+	that the auto complete list -if any- is closed as well, instead of
+	stay open without need.
+
+2010-01-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TextBox.cs: When showing the autocomplete listbox, make sure it's on
 	top, by calling the raw XplatUI.SetZOrder for it, since we can't
 	properly call BringToFront on it as it is parentless. This fixes an
