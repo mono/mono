@@ -93,11 +93,9 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
-		[MonoTODO]
 		protected void Fault ()
 		{
-			state = CommunicationState.Faulted;
-			OnFaulted ();
+			ProcessFaulted ();
 		}
 
 		public IAsyncResult BeginClose (AsyncCallback callback,
@@ -229,11 +227,24 @@ namespace System.ServiceModel.Channels
 
 		protected abstract void OnEndOpen (IAsyncResult result);
 
-		[MonoTODO]
+		void ProcessFaulted ()
+		{
+			lock (ThisLock) {
+				if (State == CommunicationState.Faulted)
+					throw new CommunicationObjectFaultedException ();
+				OnFaulted ();
+				if (state != CommunicationState.Faulted) {
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnFaulted method that does not call base OnFaulted method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnFaulted", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
+					state = CommunicationState.Faulted; // FIXME: am not sure if this makes sense ...
+				}
+			}
+		}
+
 		protected virtual void OnFaulted ()
 		{
+			state = CommunicationState.Faulted;
 			// This means, if this method is overriden, then
-			// Opened event is surpressed.
+			// Faulted event is surpressed.
 			if (Faulted != null)
 				Faulted (this, new EventArgs ());
 		}
