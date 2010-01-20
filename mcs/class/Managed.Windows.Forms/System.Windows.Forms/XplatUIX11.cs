@@ -2570,7 +2570,7 @@ namespace System.Windows.Forms {
 			}
 		}
 
-		internal override void AudibleAlert() {
+		internal override void AudibleAlert(AlertType alert) {
 			XBell(DisplayHandle, 0);
 			return;
 		}
@@ -3355,7 +3355,7 @@ namespace System.Windows.Forms {
 							case HitTest.HTBOTTOMLEFT:	handle = Cursors.SizeNESW.handle; break;
 							case HitTest.HTBOTTOMRIGHT:	handle = Cursors.SizeNWSE.handle; break;
 							case HitTest.HTERROR:		if ((msg.LParam.ToInt32() >> 16) == (int)Msg.WM_LBUTTONDOWN) {
-												AudibleAlert();
+												AudibleAlert(AlertType.Default);
 											}
 											handle = Cursors.Default.handle;
 											break;
