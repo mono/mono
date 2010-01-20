@@ -1,5 +1,8 @@
 2010-01-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* xdebug.c: New file extracted from aot-compiler.c, containing the XDEBUG
+	related code.
+
 	* aot-compiler.c (encode_method_ref): Use mono_marshal_wrapper_info_from_wrapper
 	() in one place.
 	(mono_aot_wrapper_name): Remove the special handling of delegate invoke wrappers,
