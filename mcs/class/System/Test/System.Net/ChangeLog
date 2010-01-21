@@ -1,3 +1,7 @@
+2010-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CookieContainerTest.cs: Additional test cases from Tom Philpot
+
 2010-01-15  Jonathan Pobst  <monkey@jpobst.com>
 
 	* HttpWebRequestTest.cs: Mark test WriteServerAborts as

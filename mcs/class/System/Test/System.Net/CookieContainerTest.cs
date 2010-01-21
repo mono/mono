@@ -1566,5 +1566,72 @@ namespace MonoTests.System.Net {
 			Assert.AreEqual (CookieContainer.DefaultCookieLimit, cc.Count, "Count");
 			// so one (yes '1' ;-) was removed
 		}
+
+		[Test]
+		public void SaveAndLoadViaAddUriCookie ()
+		{
+			Cookie cookie = new Cookie ("name", "value")
+			{
+				Domain = ".example.com",
+				Expires = new DateTime (2015, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+				HttpOnly = true,
+				Secure = true,
+			};
+
+			Uri uri = new Uri ("https://www.example.com/path/file");
+			CookieContainer container = new CookieContainer ();
+			container.Add (uri, cookie);
+			CookieCollection collection = container.GetCookies (uri);
+			Assert.AreEqual (collection.Count, 1, "#A1");
+			Cookie cloned = collection [0];
+			
+			Assert.AreEqual (cookie.Comment, cloned.Comment, "#A2");
+			Assert.AreEqual (cookie.CommentUri, cloned.CommentUri, "#A3");
+			Assert.AreEqual (cookie.Domain, cloned.Domain, "#A4");
+			Assert.AreEqual (cookie.Discard, cloned.Discard, "#A5");
+			Assert.AreEqual (cookie.Expired, cloned.Expired, "#A6");
+			Assert.AreEqual (cookie.Expires.ToUniversalTime (), cloned.Expires.ToUniversalTime (), "#A7");
+			Assert.AreEqual (cookie.HttpOnly, cloned.HttpOnly, "#A8");
+			Assert.AreEqual (cookie.Name, cloned.Name, "#A9");
+			Assert.AreEqual (cookie.Path, cloned.Path, "#A10");
+			Assert.AreEqual (cookie.Port, cloned.Port, "#A11");
+			Assert.AreEqual (cookie.Value, cloned.Value, "#A12");
+			Assert.AreEqual (cookie.Version, cloned.Version, "#A13");
+			Assert.AreEqual (cookie.Secure, cloned.Secure, "#A14");
+		}
+
+		[Test]
+		public void SaveAndLoadViaSetCookies ()
+		{
+			Cookie cookie = new Cookie ("name", "value")
+			{
+				Domain = ".example.com",
+				Expires = new DateTime (2015, 1, 1, 0, 0, 0, DateTimeKind.Utc),
+				HttpOnly = true,
+				Secure = true,
+			};
+
+			Uri uri = new Uri ("https://www.example.com/path/file");
+			CookieContainer container = new CookieContainer ();
+			container.SetCookies (uri, "name=value; domain=.example.com; expires=Thu, 01-Jan-2015 00:00:00 GMT; HttpOnly; secure");
+			CookieCollection collection = container.GetCookies (uri);
+			Assert.AreEqual (collection.Count, 1, "#A1");
+			Cookie cloned = collection [0];
+			
+			Assert.AreEqual (cookie.Comment, cloned.Comment, "#A2");
+			Assert.AreEqual (cookie.CommentUri, cloned.CommentUri, "#A3");
+			Assert.AreEqual (cookie.Domain, cloned.Domain, "#A4");
+			Assert.AreEqual (cookie.Discard, cloned.Discard, "#A5");
+			Assert.AreEqual (cookie.Expired, cloned.Expired, "#A6");
+			Assert.AreEqual (cookie.Expires.ToUniversalTime (), cloned.Expires.ToUniversalTime (), "#A7");
+			Assert.AreEqual (cookie.HttpOnly, cloned.HttpOnly, "#A8");
+			Assert.AreEqual (cookie.Name, cloned.Name, "#A9");
+			Assert.AreEqual (cookie.Path, "", "#A10");
+			Assert.AreEqual (cloned.Path, "/path/file", "#A11");
+			Assert.AreEqual (cookie.Port, cloned.Port, "#A12");
+			Assert.AreEqual (cookie.Value, cloned.Value, "#A13");
+			Assert.AreEqual (cookie.Version, cloned.Version, "#A14");
+			Assert.AreEqual (cookie.Secure, cloned.Secure, "#A15");
+		}
 	}
 }

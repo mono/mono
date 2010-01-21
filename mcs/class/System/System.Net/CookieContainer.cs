@@ -36,6 +36,7 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace System.Net 
 {
@@ -146,7 +147,16 @@ namespace System.Net
 			if (cookie.Value.Length > maxCookieSize)
 				throw new CookieException ("value is larger than MaxCookieSize.");
 
-			AddCookie (cookie);
+			// .NET's Add (Cookie) is fundamentally broken and does not copy properties
+			// like Secure, HttpOnly and Expires so we clone the parts that .NET
+			// does keep before calling AddCookie
+			Cookie c = new Cookie (cookie.Name, cookie.Value);
+			c.Path = (cookie.Path.Length == 0) ? "/" : cookie.Path;
+			c.Domain = cookie.Domain;
+			c.ExactDomain = cookie.ExactDomain;
+			c.Version = cookie.Version;
+			
+			AddCookie (c);
 		}
 
 		void AddCookie (Cookie cookie)
@@ -169,6 +179,12 @@ namespace System.Net
 			c.Domain = cookie.Domain;
 			c.ExactDomain = cookie.ExactDomain;
 			c.Version = cookie.Version;
+			c.Expires = cookie.Expires;
+			c.CommentUri = cookie.CommentUri;
+			c.Comment = cookie.Comment;
+			c.Discard = cookie.Discard;
+			c.HttpOnly = cookie.HttpOnly;
+			c.Secure = cookie.Secure;
 
 			cookies.Add (c);
 			CheckExpiration ();
@@ -373,10 +389,25 @@ namespace System.Net
 				return;
 			
 			// Cookies must be separated by ',' (like documented on MSDN)
+			// but expires uses DAY, DD-MMM-YYYY HH:MM:SS GMT, so simple ',' search is wrong.
+			// See http://msdn.microsoft.com/en-us/library/aa384321%28VS.85%29.aspx
 			string [] jar = cookieHeader.Split (',');
-			foreach (string cookie in jar) {
+			string tmpCookie;
+			for (int i = 0; i < jar.Length; i++) {
+				tmpCookie = jar [i];
+
+				if (jar.Length > i + 1
+					&& Regex.IsMatch (jar[i],
+						@".*expires\s*=\s*(Mon|Tue|Wed|Thu|Fri|Sat|Sun)",
+						RegexOptions.IgnoreCase) 
+					&& Regex.IsMatch (jar[i+1],
+						@"\s\d{2}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4} \d{2}:\d{2}:\d{2} GMT",
+						RegexOptions.IgnoreCase)) {
+					tmpCookie = new StringBuilder (tmpCookie).Append (",").Append (jar [++i]).ToString ();
+				}
+
 				try {
-					Cookie c = Parse (cookie);
+					Cookie c = Parse (tmpCookie);
 
 					// add default values from URI if missing from the string
 					if (c.Path.Length == 0) {
@@ -392,7 +423,7 @@ namespace System.Net
 						c.ExactDomain = true;
 					}
 
-					Add (c);
+					AddCookie (c);
 				}
 				catch (Exception e) {
 					string msg = String.Format ("Could not parse cookies for '{0}'.", uri);
@@ -429,6 +460,18 @@ namespace System.Net
 						// here mono.com means "*.mono.com"
 						c.ExactDomain = false;
 					}
+					break;
+				case "expires":
+				case "$expires":
+					if (c.Expires == DateTime.MinValue)
+						c.Expires = DateTime.SpecifyKind (DateTime.ParseExact (value,
+							@"ddd, dd-MMM-yyyy HH:mm:ss G\MT", CultureInfo.InvariantCulture), DateTimeKind.Utc);
+						break;
+				case "httponly":
+					c.HttpOnly = true;
+					break;
+				case "secure":
+					c.Secure = true;
 					break;
 				default:
 					if (c.Name.Length == 0) {
