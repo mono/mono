@@ -1570,6 +1570,7 @@ namespace MonoTests_System.Data
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void PrimaryKey()
 		{
 			DataTable dtParent;

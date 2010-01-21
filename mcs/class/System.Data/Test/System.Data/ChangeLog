@@ -1,3 +1,8 @@
+2010-01-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DataTableTest2.cs: Mark PrimaryKey test as NotWorking.
+	Bug filed as 572722.
+
 2009-10-13  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* DataSetTest2.cs (Bug537229_BinFormatSerializer_Test): Added new.
