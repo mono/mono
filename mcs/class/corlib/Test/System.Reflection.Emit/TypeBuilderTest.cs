@@ -11066,5 +11066,18 @@ namespace MonoTests.System.Reflection.Emit
 		}
 #endif
 #endif
+
+		//Test for #572660
+        [Test]
+        public void CircularArrayType()
+        {
+			var assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(new AssemblyName("Test"), AssemblyBuilderAccess.RunAndSave);
+			var moduleBuilder = assemblyBuilder.DefineDynamicModule("Test", "Test.dll", true);
+			var typeBuilder = moduleBuilder.DefineType("Foo", TypeAttributes.Public);
+			var fieldBuilder = typeBuilder.DefineField("Foos", typeBuilder.MakeArrayType(), FieldAttributes.Public);
+
+			var fooType = typeBuilder.CreateType();
+			Assert.AreSame(fooType.MakeArrayType(), fooType.GetField("Foos").FieldType);
+        }
 	}
 }
