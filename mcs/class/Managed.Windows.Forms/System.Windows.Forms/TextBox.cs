@@ -996,6 +996,8 @@ namespace System.Windows.Forms {
 				HighlightedIndex = -1;
 
 				Show ();
+				// make sure we are on top - call the raw routine, since we are parentless
+				XplatUI.SetZOrder (Handle, IntPtr.Zero, true, false);
 				Invalidate ();
 			}
 
