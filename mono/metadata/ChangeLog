@@ -1,5 +1,12 @@
 2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (parse_generic_inst): Fail a type signature if it 
+	has a recursive reference to itself.
+
+	Fixes #571863.
+
+2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_method_signature): Fix error message.
 
 2010-01-21  Mark Probst  <mark.probst@gmail.com>
