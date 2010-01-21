@@ -1,6 +1,7 @@
 thisdir = tools/xbuild
 SUBDIRS = 
 include ../../build/rules.make
+HAS_NUNIT_TEST = yes
 
 LOCAL_MCS_FLAGS = -r:Microsoft.Build.Framework.dll -r:Microsoft.Build.Utilities.dll -r:Microsoft.Build.Engine.dll
 PROGRAM = xbuild.exe
@@ -36,4 +37,6 @@ EXTRA_DISTFILES = \
 	xbuild/MSBuild/Microsoft.Build.Core.xsd		\
 	xbuild/Microsoft.VisualBasic.targets \
 	xbuild/Microsoft.WebApplication.targets
+	
+	
 
