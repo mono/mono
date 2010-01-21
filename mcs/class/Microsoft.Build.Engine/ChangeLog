@@ -1,3 +1,10 @@
+2010-01-21	Rodrigo B. de Oliveira <rodrigo@unity3d.com>
+
+	* Microsoft.Build.BuildEngine/BuildWhen.cs
+	* Microsoft.Build.BuildEngine/PropertyReference.cs:
+		support for nested Choose elements + fixed bug where the project reference
+		would be null during condition evaluation.
+		
 2010-01-12	Rodrigo B. de Oliveira <rodrigo@unity3d.com>
 
 	* Microsoft.Build.BuildEngine/BuildWhen.cs

@@ -55,6 +55,9 @@ namespace Microsoft.Build.BuildEngine {
 		// so, always true, ignore @options
 		public string ConvertToString (Project project, ExpressionOptions options)
 		{
+			if (project == null)
+				throw new ArgumentNullException ("project");
+			
 			BuildProperty bp = project.EvaluatedProperties [name];
 			if (bp == null)
 				return String.Empty;

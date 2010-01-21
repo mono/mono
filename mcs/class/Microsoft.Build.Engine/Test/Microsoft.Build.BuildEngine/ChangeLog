@@ -1,3 +1,10 @@
+2010-01-21	Rodrigo B. de Oliveira <rodrigo@unity3d.com>
+
+	* BuildChooseTest.cs
+	* BuildPropertyTest.cs:
+		test cases for nested Choose elements and different property
+		evaluation scenarios.
+		
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
 	* ProjectTest.cs (TestBatchedMetadataRefInOutput): New.
