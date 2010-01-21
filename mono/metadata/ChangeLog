@@ -1,3 +1,11 @@
+2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (typebuilder_setup_fields): Pretend field setup already
+	happened before starting to encode the actual fields. This avoid ciclic
+	dependencies and eventual crashes.
+
+	Fixes #572660.
+
 2010-01-21  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, gc-internal.h, object.c: Make string allocation
