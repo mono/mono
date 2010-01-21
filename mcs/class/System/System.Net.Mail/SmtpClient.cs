@@ -764,6 +764,7 @@ namespace System.Net.Mail {
 					Send (message);
 				} catch (Exception ex) {
 					ea.Result = ex;
+					throw ex;
 				}
 			};
 			worker.WorkerSupportsCancellation = true;

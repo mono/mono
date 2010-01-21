@@ -1,3 +1,9 @@
+2010-01-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SmtpClient.cs: rethrow inner exception so that
+	AsyncCompletedEventArgs.Error gets the right value on error. Patch
+	by Dimitar Dobrev.
+
 2009-12-11  Miguel de Icaza  <miguel@novell.com>
 
 	* SmtpClient.cs: Add half-implemented feature, TargetName for the
