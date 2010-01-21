@@ -1,3 +1,7 @@
+2010-01-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SslStreamSecurityBindingElementTest.cs : reduce extra base dep.
+
 2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AddressHeaderTest.cs : add reader and writer tests.
