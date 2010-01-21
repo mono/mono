@@ -256,6 +256,7 @@ System.Web.UI.Design.WebControls/LabelDesigner.cs
 System.Web.UI.Design.WebControls/BaseDataBoundControlDesigner.cs
 System.Web.UI.Design.WebControls/DataBoundControlDesigner.cs
 System.Web.UI.Design.WebControls/DataListComponentEditor.cs
+System.Web.UI.Design.WebControls/HierarchicalDataBoundControlDesigner.cs
 System.Web.UI.Design.Util/DummyClass.cs
 System.Windows.Forms.Design/AnchorEditor.cs
 System.Windows.Forms.Design/AxImporter.cs

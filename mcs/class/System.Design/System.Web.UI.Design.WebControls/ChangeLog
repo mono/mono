@@ -1,3 +1,7 @@
+2010-01-21  Marek Habersack  <mhabersack@novell.com>
+
+	* HierarchicalDataBoundControlDesigner.cs: added
+
 2009-05-26  Marek Habersack  <mhabersack@novell.com>
 
 	* ListControlDesigner.cs: updated to match MSDN specs, added 2.0
