@@ -110,14 +110,18 @@ namespace System.Web
 			WorkerRequest = wr;
 			request = new HttpRequest (WorkerRequest, this);
 			response = new HttpResponse (WorkerRequest, this);
+#if NET_4_0
 			SessionStateBehavior = SessionStateBehavior.Default;
+#endif
 		}
 
 		public HttpContext (HttpRequest request, HttpResponse response)
 		{
 			this.request = request;
 			this.response = response;
+#if NET_4_0
 			SessionStateBehavior = SessionStateBehavior.Default;
+#endif
 		}
 
 		internal bool IsProcessingInclude {
