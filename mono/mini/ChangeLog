@@ -1,3 +1,7 @@
+2010-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (can_marshal_struct): Allow marshalling enums.
+
 2010-01-21  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.c: Do not abort if LLVM is not supported, print a
