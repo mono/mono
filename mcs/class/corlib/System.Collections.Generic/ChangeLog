@@ -1,3 +1,8 @@
+2010-01-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Dictionary.cs: Always create the keys, fixes compatibility
+	between Mono and .NET.  Patch from John Lenz <jlenz2@math.uiuc.edu>
+
 2009-12-06  Chris Toshok  <toshok@ximian.com>
 
 	* KeyValuePair.cs: we need setters for Key and Value so they can

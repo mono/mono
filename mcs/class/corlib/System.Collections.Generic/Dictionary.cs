@@ -502,10 +502,9 @@ namespace System.Collections.Generic {
 			info.AddValue ("Version", generation);
 			info.AddValue ("Comparer", hcp);
 			KeyValuePair<TKey, TValue> [] data = null;
-			if (count > 0) {
-				data = new KeyValuePair<TKey,TValue> [count];
+			data = new KeyValuePair<TKey,TValue> [count];
+			if (count > 0)
 				CopyTo (data, 0);
-			}
 			info.AddValue ("HashSize", table.Length);
 			info.AddValue ("KeyValuePairs", data);
 		}
