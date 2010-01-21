@@ -55,8 +55,13 @@ namespace System.Web.Caching
 			add { events.AddHandler (dependencyChangedEvent, value); }
 			remove { events.RemoveHandler (dependencyChangedEvent, value); }
 		}
-		
-		public CacheDependency (): this (null, null, null, DateTime.Now)
+
+#if NET_4_0
+		protected
+#else
+		public
+#endif
+		CacheDependency (): this (null, null, null, DateTime.Now)
 		{
 		}
 		

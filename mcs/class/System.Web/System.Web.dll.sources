@@ -20,8 +20,10 @@ System.Web.Caching/CacheItemRemovedCallback.cs
 System.Web.Caching/CacheItemRemovedReason.cs
 System.Web.Caching/CachedRawResponse.cs
 System.Web.Caching/CachedVaryBy.cs
+System.Web.Caching/DatabaseNotEnabledForNotificationException.cs
 System.Web.Caching/OutputCacheModule.cs
 System.Web.Caching/SqlCacheDependency.cs
+System.Web.Caching/TableNotEnabledForNotificationException.cs
 System.Web/CapabilitiesLoader.cs
 System.Web/BrowserCapabilities.cs
 System.Web.Compilation/ApplicationFileBuildProvider.cs

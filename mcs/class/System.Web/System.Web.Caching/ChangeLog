@@ -1,3 +1,14 @@
+2010-01-21  Marek Habersack  <mhabersack@novell.com>
+
+	* DatabaseNotEnabledForNotificationException.cs, OutputCache.cs,
+	FileResponseElement.cs, HeaderElement.cs, IOutputCacheEntry.cs,
+	MemoryResponseElement.cs, OutputCacheProvider.cs,
+	ResponseElement.cs, OutputCacheProviderCollection.cs,
+	SubstitutionResponseElement.cs,
+	TableNotEnabledForNotificationException.cs: added
+
+	* CacheDependency.cs: default constructor is protected in 4.0
+
 2010-01-06  Marek Habersack  <mhabersack@novell.com>
 
 	* CacheItemPriorityQueue.cs: make sure lastParent is never null if

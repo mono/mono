@@ -3,6 +3,15 @@
 System.Web/IHtmlString.cs
 System.Web/HtmlString.cs
 
+System.Web.Caching/FileResponseElement.cs
+System.Web.Caching/HeaderElement.cs
+System.Web.Caching/IOutputCacheEntry.cs
+System.Web.Caching/MemoryResponseElement.cs
+System.Web.Caching/OutputCache.cs
+System.Web.Caching/OutputCacheProvider.cs
+System.Web.Caching/OutputCacheProviderCollection.cs
+System.Web.Caching/ResponseElement.cs
+System.Web.Caching/SubstitutionResponseElement.cs
 System.Web.SessionState_2.0/SessionStateBehavior.cs
 System.Web.Routing/PageRouteHandler.cs
 System.Web.UI.WebControls/IDataBoundControl.cs

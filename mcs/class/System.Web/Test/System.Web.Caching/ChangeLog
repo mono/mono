@@ -1,3 +1,9 @@
+2010-01-21  Marek Habersack  <mhabersack@novell.com>
+
+	* FileResponseElementTest.cs, HeaderElementTest.cs,
+	MemoryResponseElementTest.cs, SubstitutionResponseElementTest.cs:
+	added 
+
 2008-06-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AggregateCacheDependencyTest.cs: mark wrong, timing-
