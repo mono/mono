@@ -1,3 +1,10 @@
+2010-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IPEndPoint.cs: When throwing an ArgumentException in Create()
+	because of a mismatch in the address family, use a more informative
+	message. Patch by Juho Vähä-Herttu<juhovh@iki.fi>.
+	Fixes #505105.
+
 2010-01-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CookieContainer.cs: Fix to cloning and expiration. Patch
