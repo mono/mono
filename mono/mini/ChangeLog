@@ -1,3 +1,8 @@
+2010-01-21  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.c: Do not abort if LLVM is not supported, print a
+	warning and add the information to the Mono JIT information.
+
 2010-01-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* ir-emit.h (MONO_EMIT_NULL_CHECK): Don't emit an OP_IMPLICIT_EXCEPTION when
