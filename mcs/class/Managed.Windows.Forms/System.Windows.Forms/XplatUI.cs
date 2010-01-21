@@ -464,11 +464,11 @@ namespace System.Windows.Forms {
 			driver.Activate(handle);
 		}
 
-		internal static void AudibleAlert() {
+		internal static void AudibleAlert(AlertType alert) {
 			#if DriverDebug
 				Console.WriteLine("AudibleAlert(): Called");
 			#endif
-			driver.AudibleAlert();
+			driver.AudibleAlert(alert);
 		}
 
 		internal static bool CalculateWindowRect(ref Rectangle ClientRect, CreateParams cp, Menu menu, out Rectangle WindowRect) {
