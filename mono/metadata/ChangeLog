@@ -1,3 +1,8 @@
+2010-01-21  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c, gc-internal.h, object.c: Make string allocation
+	atomic and remove the half-constructed hack in SGen.
+
 2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c (parse_generic_inst): Fail a type signature if it 
