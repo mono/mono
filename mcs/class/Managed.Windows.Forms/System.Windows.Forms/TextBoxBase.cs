@@ -1597,7 +1597,7 @@ namespace System.Windows.Forms
 						OnTextChanged(EventArgs.Empty);
 
 					} else {
-						XplatUI.AudibleAlert();
+						XplatUI.AudibleAlert(AlertType.Default);
 					}
 					return;
 				} else if (ch == 8) {

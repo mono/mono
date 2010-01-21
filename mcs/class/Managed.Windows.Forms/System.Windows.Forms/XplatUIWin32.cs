@@ -1568,8 +1568,24 @@ namespace System.Windows.Forms {
 			Console.WriteLine("Xplat version $revision: $");
 		}
 
-		internal override void AudibleAlert() {
-			Win32PlaySound("Default", IntPtr.Zero, SndFlags.SND_ALIAS | SndFlags.SND_ASYNC | SndFlags.SND_NOSTOP | SndFlags.SND_NOWAIT);
+		string GetSoundAlias (AlertType alert)
+		{
+			switch (alert) {
+				case AlertType.Error:
+					return "SystemHand";
+				case AlertType.Question:
+					return "SystemQuestion";
+				case AlertType.Warning:
+					return "SystemExclamation";
+				case AlertType.Information:
+					return "SystemAsterisk";
+				default:
+					return "SystemDefault";
+			}
+		}
+
+		internal override void AudibleAlert(AlertType alert) {
+			Win32PlaySound(GetSoundAlias (alert), IntPtr.Zero, SndFlags.SND_ALIAS_ID | SndFlags.SND_ASYNC | SndFlags.SND_NOSTOP | SndFlags.SND_NOWAIT);
 		}
 
 		internal override void GetDisplaySize(out Size size) {
