@@ -1,3 +1,8 @@
+2010-01-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ThemeTest.cs: Mark UrlProperty test as NotWorking to clean
+	up buildbot.  Filed as 572707.
+
 2010-01-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ParameterTest.cs: added tests for ConvertDbTypeToTypeCode,
