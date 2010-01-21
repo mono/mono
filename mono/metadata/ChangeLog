@@ -1,5 +1,15 @@
 2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (typebuilder_setup_fields): Pretend field setup already
+	happened before starting to encode the actual fields. This avoid ciclic
+	dependencies and eventual crashes.
+
+	Fixes #572660.
+
+	Backport of r150008.
+
+2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (parse_generic_inst): Fail a type signature if it 
 	has a recursive reference to itself.
 
