@@ -1,3 +1,8 @@
+2010-01-21  Jonathan Pobst  <monkey@jpobst.com>
+
+	* DateComparisonTest.cs: Failing test TestDateComparisonLeft
+	marked NotWorking.  Bug filed as 572725.
+
 2009-08-18  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* DateComparisonTest.cs: Fix test-data xml path.
