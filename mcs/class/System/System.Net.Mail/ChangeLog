@@ -1,3 +1,9 @@
+2010-01-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SmtpClient.cs: rethrow inner exception so that
+	AsyncCompletedEventArgs.Error gets the right value on error. Patch
+	by Dimitar Dobrev.
+
 2009-08-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SmtpClient.cs: Honor ServicePointManager.
