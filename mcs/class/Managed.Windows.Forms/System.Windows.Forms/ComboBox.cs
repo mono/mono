@@ -1598,6 +1598,12 @@ namespace System.Windows.Forms
 				listbox_ctrl.Dispose ();
 				listbox_ctrl = null;
 			}
+#if NET_2_0
+			 // The auto complete list could have been shown after the listbox,
+			 // so make sure it's hidden.
+			 if (textbox_ctrl != null)
+				 textbox_ctrl.HideAutoCompleteList ();
+#endif
 		}
 		
 		private int FindStringCaseInsensitive (string search)
