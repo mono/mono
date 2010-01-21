@@ -69,6 +69,7 @@ namespace System.Windows.Forms
 			string help_keyword;
 			HelpNavigator help_navigator;
 			object help_param;
+			AlertType		alert_type;
 			#endregion	// MessageBoxFrom Local Variables
 			
 			#region MessageBoxForm Constructors
@@ -81,26 +82,31 @@ namespace System.Windows.Forms
 				switch (icon) {
 					case MessageBoxIcon.None: {
 						icon_image = null;
+						alert_type = AlertType.Default;
 						break;
 					}
 
 					case MessageBoxIcon.Error: {		// Same as MessageBoxIcon.Hand and MessageBoxIcon.Stop
 						icon_image = SystemIcons.Error;
+						alert_type = AlertType.Error;
 						break;
 					}
 
 					case MessageBoxIcon.Question: {
  						icon_image = SystemIcons.Question;
+						alert_type = AlertType.Question;
 						break;
 					}
 
 					case MessageBoxIcon.Asterisk: {		// Same as MessageBoxIcon.Information
 						icon_image = SystemIcons.Information;
+						alert_type = AlertType.Information;
 						break;
 					}
 
 					case MessageBoxIcon.Warning: {		// Same as MessageBoxIcon.Exclamation:
 						icon_image = SystemIcons.Warning;
+						alert_type = AlertType.Warning;
 						break;
 					}
 				}
@@ -190,7 +196,7 @@ namespace System.Windows.Forms
 				if (Owner != null)
 					TopMost = Owner.TopMost;
 					
-				XplatUI.AudibleAlert ();
+				XplatUI.AudibleAlert (alert_type);
 				this.ShowDialog ();
 
 				return this.DialogResult;

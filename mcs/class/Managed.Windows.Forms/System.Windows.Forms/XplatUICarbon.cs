@@ -791,7 +791,7 @@ namespace System.Windows.Forms {
 			ActiveWindow = handle;
 		}
 
-		internal override void AudibleAlert() {
+		internal override void AudibleAlert(AlertType alert) {
 			AlertSoundPlay ();
 		}
 
