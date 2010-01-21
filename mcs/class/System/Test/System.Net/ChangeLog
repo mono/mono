@@ -1,3 +1,8 @@
+2010-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CookieContainerTest.cs: Additional test cases from Tom Philpot
+	[Backport r149976 + NET_1_1 fixes]
+
 2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* NetworkCredentialTest.cs: New. Unit tests.

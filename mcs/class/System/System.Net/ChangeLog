@@ -1,3 +1,9 @@
+2010-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CookieContainer.cs: Fix to cloning and expiration. Patch
+	by Tom Philpot <tom.philpot@logos.com>
+	[Backport r149976 + NET_1_1 fixes]
+
 2010-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: when the server returns several different
