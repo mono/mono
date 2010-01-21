@@ -1051,6 +1051,10 @@ mono_arch_notify_pending_exc (void)
 {
 	MonoLMF *lmf = mono_get_lmf ();
 
+	if (!lmf)
+		/* Not yet started */
+		return;
+
 	if (lmf->rsp == 0)
 		/* Initial LMF */
 		return;
