@@ -1,3 +1,7 @@
+2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_method_signature): Fix error message.
+
 2010-01-21  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Reuse to-space sections between nursery collections.
