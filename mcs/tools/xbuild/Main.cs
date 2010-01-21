@@ -137,6 +137,10 @@ namespace Mono.XBuild.CommandLine {
 				ErrorUtilities.ReportError (0, show_stacktrace ? ile.ToString () : ile.Message);
 			}
 
+			catch (CommandLineException cle) {
+				ErrorUtilities.ReportError(cle.ErrorCode, show_stacktrace ? cle.ToString() : cle.Message);
+			}
+
 			catch (Exception) {
 				throw;
 			}

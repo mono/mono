@@ -20,8 +20,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #if NET_2_0
-
-using System;
 using NUnit.Framework;
 using Mono.XBuild.CommandLine;
 using System.IO;
@@ -43,14 +41,15 @@ namespace xbuild.tests
 					"/p:idea_build_server_build_id=\"13852\" " +
 					"/p:path_separator=\":\"";
 			File.WriteAllText (responseFile, contents);
-			
-			var binPath = "bin";
-			var parameters = new Parameters (binPath);
+			var parameters = new Parameters ("bin");
 			parameters.ParseArguments (
-			    new [] { string.Format ("@\"{0}\"", responseFile), "\"project.xml\""});
+			    new [] { "/noautorsp", string.Format ("@\"{0}\"", responseFile), "\"project.xml\""});
 			
 			var properties = parameters.Properties;
 			Assert.AreEqual(3, properties.Count);
+			Assert.AreEqual("9090", properties["idea_build_agent_port"].Value);
+			Assert.AreEqual("13852", properties["idea_build_server_build_id"].Value);
+			Assert.AreEqual(":", properties["path_separator"].Value);
 		}
 	}
 }
