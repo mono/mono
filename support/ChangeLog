@@ -1,3 +1,8 @@
+2010-01-22 Leszek Ciesielski <skolima@gmail.com>
+	
+	* serial.c: baud rate 460800 by Thad Thompson <TThompson@nucsafe.com>
+	* serial.c: report errors from every function
+
 2009-12-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* zlib-helper.c: when finishing uncompressing a buffer, we might need
