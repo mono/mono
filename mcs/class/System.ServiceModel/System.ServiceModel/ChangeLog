@@ -1,5 +1,10 @@
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : fix complicated IMetadataExchange handling to
+	  pass nunit tests (treat mex binding as special case).
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DuplexClientRuntimeChannel.cs : do not try to iterate channel
 	  acceptor when it is being closed.
 

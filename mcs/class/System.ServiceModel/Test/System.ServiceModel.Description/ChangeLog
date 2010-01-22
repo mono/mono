@@ -1,3 +1,8 @@
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataBehaviorTest.cs : check name constant (MSDN is
+	  wrong here).
+
 2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceAuthorizationBehaviorTest.cs : it's updated and enabled.

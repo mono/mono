@@ -197,7 +197,7 @@ namespace System.ServiceModel
 			Uri address, Uri listenUri)
 		{
 			EndpointAddress ea = BuildEndpointAddress (address, binding);
-			ContractDescription cd = GetContract (implementedContract);
+			ContractDescription cd = GetContract (implementedContract, binding.Name == "MetadataExchangeHttpBinding");
 			if (cd == null)
 				throw new InvalidOperationException (String.Format ("Contract '{0}' was not found in the implemented contracts in this service host.", implementedContract));
 			return AddServiceEndpointCore (cd, binding, ea, listenUri);
@@ -218,7 +218,7 @@ namespace System.ServiceModel
 
 		ContractDescription mex_contract, help_page_contract;
 
-		ContractDescription GetContract (string name)
+		ContractDescription GetContract (string name, bool mexBinding)
 		{
 			// FIXME: not sure if they should really be special cases.
 			switch (name) {
@@ -234,30 +234,19 @@ namespace System.ServiceModel
 				// if it was added only IMetadataExchange 
 				// endpoint (and you'll see the word
 				// "infrastructure" in the exception message).
-				if (Description.Behaviors.Find<ServiceMetadataBehavior> () == null)
+				if (mexBinding && Description.Behaviors.Find<ServiceMetadataBehavior> () == null)
 					break;
 				if (mex_contract == null)
 					mex_contract = ContractDescription.GetContract (typeof (IMetadataExchange));
 				return mex_contract;
 			}
 
-			// FIXME: probably type-to-contract-name mapping is wrong. 
-			// This "loopup by type name" incorrectly allows
-			// "System.ServiceModel.Description.IMetadataExchange",
-			// but disabling this results in couple of regressions.
-			// So I keep enabling it so far. But it smells wrong.
 			Type type = PopulateType (name);
+			if (type == null)
+				return null;
 
 			foreach (ContractDescription cd in ImplementedContracts.Values) {
-				if (type == null) {
-					if (cd.Name == name)
-						return cd;
-					continue;
-				}
-
-				// FIXME: This check is a negative side effect 
-				// of the above hack. (but it should not still 
-				// skip name-based match). Seealso above FIXMEs.
+				// This check is a negative side effect of the above match-by-name design.
 				if (cd.ContractType == typeof (IMetadataExchange))
 					continue;
 

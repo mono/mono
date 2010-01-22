@@ -1,5 +1,9 @@
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostTest.cs : add a few more comments.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CallbackBehaviorAttributeTest.cs : enable the test again.
 
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
