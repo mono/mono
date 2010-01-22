@@ -1,3 +1,7 @@
+2010-01-22  Leszek Ciesielski <skolima@gmail.com>
+
+	* SerialPortStream.cs: Check for error on every native call
+
 2009-11-28  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* WinSerialStream.cs: Make CommStat a struct instead of a class to

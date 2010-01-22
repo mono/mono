@@ -147,7 +147,10 @@ namespace System.IO.Ports
 				throw new TimeoutException();
 			}
 
-			return read_serial (fd, buffer, offset, count);
+			if (read_serial (fd, buffer, offset, count) == -1)
+				ThrowIOException ();
+
+			return count;
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)
@@ -176,6 +179,7 @@ namespace System.IO.Ports
 				throw new ArgumentException ("offset+count",
 							     "The size of the buffer is less than offset + count.");
 
+			// FIXME: this reports every write error as timeout
 			if (write_serial (fd, buffer, offset, count, write_timeout) < 0)
 				throw new TimeoutException("The operation has timed-out");
 		}
@@ -229,27 +233,35 @@ namespace System.IO.Ports
 		
 		public int BytesToRead {
 			get {
-				return get_bytes_in_buffer (fd, 1);
+				int result = get_bytes_in_buffer (fd, 1);
+				if (result == -1)
+					ThrowIOException ();
+				return result;
 			}
 		}
 
 		public int BytesToWrite {
 			get {
-				return get_bytes_in_buffer (fd, 0);
+				int result = get_bytes_in_buffer (fd, 0);
+				if (result == -1)
+					ThrowIOException ();
+				return result;
 			}
 		}
 
 		[DllImport ("MonoPosixHelper", SetLastError = true)]
-		static extern void discard_buffer (int fd, bool inputBuffer);
+		static extern int discard_buffer (int fd, bool inputBuffer);
 
 		public void DiscardInBuffer ()
 		{
-			discard_buffer (fd, true);
+			if (discard_buffer (fd, true) != 0)
+				ThrowIOException();
 		}
 
 		public void DiscardOutBuffer ()
 		{
-			discard_buffer (fd, false);
+			if (discard_buffer (fd, false) != 0)
+				ThrowIOException();
 		}
 		
 		[DllImport ("MonoPosixHelper", SetLastError = true)]
@@ -286,7 +298,8 @@ namespace System.IO.Ports
 		public void SetBreakState (bool value)
 		{
 			if (value)
-				breakprop (fd);
+				if (breakprop (fd) == -1)
+					ThrowIOException ();
 		}
 
 		[DllImport ("libc")]
