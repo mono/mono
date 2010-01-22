@@ -158,8 +158,9 @@ namespace System.Net.Sockets
 			if (e == null)
 				return;
 			
-			if (e.Completed != null)
-				e.Completed (e.curSocket, e);
+			EventHandler<SocketAsyncEventArgs> handler = e.Completed;
+			if (handler != null)
+				handler (e.curSocket, e);
 		}
 
 		public void SetBuffer (int offset, int count)

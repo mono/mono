@@ -1,3 +1,8 @@
+2010-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketAsyncEventArgs.cs: Apply Gendarme's ProtectCallToEventDelegatesRule
+	[Backport r150033]
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SocketAsyncEventArgs.cs: Implement ConnectByNameError for 
