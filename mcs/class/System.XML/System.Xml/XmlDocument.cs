@@ -104,8 +104,8 @@ namespace System.Xml
 			resolver = new XmlUrlResolver ();
 			
 			Type type = GetType ();
-			optimal_create_element = type.GetMethod ("CreateElement", optimal_create_types).DeclaringType == type;
-			optimal_create_attribute = type.GetMethod ("CreateAttribute", optimal_create_types).DeclaringType == type;
+			optimal_create_element = type.GetMethod ("CreateElement", optimal_create_types).DeclaringType == typeof (XmlDocument);
+			optimal_create_attribute = type.GetMethod ("CreateAttribute", optimal_create_types).DeclaringType == typeof (XmlDocument);
 		}
 		#endregion
 
