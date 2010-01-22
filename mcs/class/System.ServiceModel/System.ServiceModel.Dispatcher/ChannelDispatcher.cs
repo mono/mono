@@ -594,7 +594,7 @@ namespace System.ServiceModel.Dispatcher
 					if (rc != null)
 						rc.Close ();
 					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-					if (reply.State != CommunicationState.Closed)
+					if (loop && reply.State != CommunicationState.Closed)
 						ProcessRequestOrInput (reply);
 				}
 			}
@@ -612,7 +612,7 @@ namespace System.ServiceModel.Dispatcher
 					Console.WriteLine (ex);
 				} finally {
 					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-					if (input.State != CommunicationState.Closed)
+					if (loop && input.State != CommunicationState.Closed)
 						ProcessRequestOrInput (input);
 				}
 			}
