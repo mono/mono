@@ -1,3 +1,10 @@
+2010-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Activator.cs: When calling CreateInstance() and no default .ctor is
+	found for the type, don't pass the member argument to the
+	MissingMethodException, to have a better and simpler error message.
+	Fixes #396986.
+
 2010-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Tuples.cs: explicitly implement IStructural*.
