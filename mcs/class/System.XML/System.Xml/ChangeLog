@@ -1,3 +1,8 @@
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDocument.cs : fix type check for optimal node creation.
+	  Fixed bug #571336, #571226 and #572738.
+
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : Do not ignore ticks which are less than a
