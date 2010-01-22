@@ -338,6 +338,7 @@ System.Web.Caching/CacheDependencyCas.cs
 System.Web.Caching/FileResponseElementTest.cs
 System.Web.Caching/HeaderElementTest.cs
 System.Web.Caching/MemoryResponseElementTest.cs
+System.Web.Caching/OutputCacheTest.cs
 System.Web.Caching/SubstitutionResponseElementTest.cs
 System.Web.Configuration/HttpCapabilitiesBaseCas.cs
 System.Web.Handlers/TraceHandlerCas.cs

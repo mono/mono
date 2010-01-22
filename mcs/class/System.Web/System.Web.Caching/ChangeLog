@@ -1,3 +1,11 @@
+2010-01-22  Marek Habersack  <mhabersack@novell.com>
+
+	* SubstitutionResponseElement.cs: implemented correct
+	(de)serialization of the Callback delegate.
+
+	* OutputCache.cs: implemented Serialize, Deserialize,
+	DefaultProviderName and Providers.
+
 2010-01-21  Marek Habersack  <mhabersack@novell.com>
 
 	* DatabaseNotEnabledForNotificationException.cs, OutputCache.cs,

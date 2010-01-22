@@ -26,6 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System;
+using System.Reflection;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Web;
 
@@ -35,6 +38,9 @@ namespace System.Web.Caching
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Unrestricted)]
 	public class SubstitutionResponseElement : ResponseElement
 	{
+		string typeName;
+		string methodName;
+		
 		public HttpResponseSubstitutionCallback Callback {
 			get;
 			private set;
@@ -46,6 +52,17 @@ namespace System.Web.Caching
 				throw new ArgumentNullException ("callback");
 
 			this.Callback = callback;
+
+			MethodInfo mi = callback.Method;
+			this.typeName = mi.DeclaringType.AssemblyQualifiedName;
+			this.methodName = mi.Name;
+		}
+
+		[OnDeserialized]
+		void ObjectDeserialized (StreamingContext context)
+		{
+			Type type = Type.GetType (typeName, true);
+			Callback = Delegate.CreateDelegate (typeof (HttpResponseSubstitutionCallback), type, methodName, false, true) as HttpResponseSubstitutionCallback;
 		}
 	}
 }

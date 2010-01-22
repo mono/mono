@@ -26,7 +26,9 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Configuration;
 using System.IO;
+using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
 using System.Web;
 using System.Web.Configuration;
@@ -35,12 +37,23 @@ namespace System.Web.Caching
 {
 	public static class OutputCache
 	{
+		static readonly object initLock = new object ();
+		static bool initialized;
+		static string defaultProviderName;
+		static OutputCacheProviderCollection providers;
+		
 		public static string DefaultProviderName {
-			get { throw new NotImplementedException (); }
+			get {
+				Init ();
+				return defaultProviderName;
+			}
 		}
 
 		public static OutputCacheProviderCollection Providers {
-			get { throw new NotImplementedException (); }
+			get {
+				Init ();
+				return providers;
+			}
 		}
 		
 		[SecurityPermission (SecurityAction.Assert, Flags = SecurityPermissionFlag.SerializationFormatter)]
@@ -49,20 +62,67 @@ namespace System.Web.Caching
 			if (stream == null)
 				throw new ArgumentNullException ("stream");
 
-			throw new NotImplementedException ();
-			
+			object o = new BinaryFormatter ().Deserialize (stream);
+			if (o == null || IsInvalidType (o))
+				throw new ArgumentException ("The provided parameter is not of a supported type for serialization and/or deserialization.");
+
+			return o;
 		}
 
 		[SecurityPermission (SecurityAction.Assert, Flags = SecurityPermissionFlag.SerializationFormatter)]
 		public static void Serialize (Stream stream, object data)
 		{
 			if (stream == null)
-				throw new ArgumentNullException ("stream");
-			
-			if (data == null)
-				throw new ArgumentNullException ("data");
+				throw new ArgumentNullException ("stream");			
 
-			throw new NotImplementedException ();
+			// LAMESPEC: data == null doesn't throw ArgumentNullException
+			if (data == null || IsInvalidType (data))
+				throw new ArgumentException ("The provided parameter is not of a supported type for serialization and/or deserialization.");
+			
+			new BinaryFormatter ().Serialize (stream, data);
+		}
+
+		static bool IsInvalidType (object data)
+		{
+			return !(data is MemoryResponseElement) &&
+				!(data is FileResponseElement) &&
+				!(data is SubstitutionResponseElement);
+		}
+
+		static void Init ()
+		{
+			if (initialized)
+				return;
+
+			lock (initLock) {
+				if (initialized)
+					return;
+				
+				var cfg = WebConfigurationManager.GetWebApplicationSection ("system.web/caching/outputCache") as OutputCacheSection;
+				ProviderSettingsCollection cfgProviders = cfg.Providers;
+
+				defaultProviderName = cfg.DefaultProviderName;
+				if (cfgProviders != null && cfgProviders.Count > 0) {
+					var coll = new OutputCacheProviderCollection ();
+
+					foreach (ProviderSettings ps in cfgProviders)
+						coll.Add (LoadProvider (ps));
+
+					coll.SetReadOnly ();
+					providers = coll;
+				}
+
+				initialized = true;
+			}
+		}
+
+		static OutputCacheProvider LoadProvider (ProviderSettings ps)
+		{
+			Type type = HttpApplication.LoadType (ps.Type, true);
+			var ret = Activator.CreateInstance (type) as OutputCacheProvider;
+			ret.Initialize (ps.Name, ps.Parameters);
+
+			return ret;
 		}
 	}
 }
