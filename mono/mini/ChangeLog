@@ -1,5 +1,8 @@
 2010-01-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm-cpp.cpp: Remove uses of dynamic_cast, it no longer works with llvm
+	classes, since llvm is compiled with -fno-rtti.
+
 	* mini.h (COMPILE_SOFT_FLOAT): New macro, similar to COMPILE_LLVM.
 
 	* method-to-ir.c ir-emit.h: Use if (COMPILE_SOFT_FLOAT) in a few places since
