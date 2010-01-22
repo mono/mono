@@ -1,5 +1,10 @@
 2010-01-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_notify_pending_exc): Avoid a crash if the
+	thread has not fully started yet.
+
+2010-01-21  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c (can_marshal_struct): Allow marshalling enums.
 
 2010-01-21  Miguel de Icaza  <miguel@novell.com>
