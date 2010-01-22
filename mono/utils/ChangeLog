@@ -1,3 +1,7 @@
+2010-01-22 Miguel de Icaza (miguel@novell.com)
+
+	* mono-dl.c: Always strdup the return value, for consistency.
+
 2010-01-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mono-error.c: Call va_end/va_start before reusing 'args'.

@@ -1,3 +1,8 @@
+2010-01-22 Miguel de Icaza (miguel@novell.com)
+
+	* loader.c: Since we do nothing with the error returned, pass NULL
+	to ignore the error.
+
 2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (typebuilder_setup_fields): Pretend field setup already
