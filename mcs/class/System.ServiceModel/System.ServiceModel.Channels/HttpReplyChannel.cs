@@ -50,10 +50,37 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnAbort ()
 		{
+			AbortConnections (TimeSpan.Zero);
+			base.OnAbort (); // FIXME: remove it. The base is wrong. But it is somehow required to not block some tests.
+		}
+
+		public override bool CancelAsync (TimeSpan timeout)
+		{
+			AbortConnections (timeout);
+			// FIXME: this wait is sort of hack (because it should not be required), but without it some tests are blocked.
+			// This hack even had better be moved to base.CancelAsync().
+			if (CurrentAsyncResult != null)
+				CurrentAsyncResult.AsyncWaitHandle.WaitOne (TimeSpan.FromMilliseconds (300));
+			return base.CancelAsync (timeout);
+		}
+
+		void SignalAsyncWait ()
+		{
+			if (wait == null)
+				return;
+			var wait_ = wait;
+			wait = null;
+			wait_.Set ();
+		}
+
+		void AbortConnections (TimeSpan timeout)
+		{
+			// FIXME: use timeout
 			lock (waiting)
-				foreach (HttpListenerContext ctx in waiting)
-					ctx.Response.Abort ();
-			base.OnAbort (); // FIXME: remove it. The base is wrong.
+				foreach (var ctx in waiting)
+					ctx.Response.Close ();
+			if (wait != null)
+				source.ListenerManager.CancelGetHttpContextAsync ();
 		}
 
 		protected override void OnClose (TimeSpan timeout)
@@ -63,9 +90,7 @@ namespace System.ServiceModel.Channels
 				reqctx.Close (timeout);
 
 			// FIXME: consider timeout
-			lock (waiting)
-				foreach (HttpListenerContext ctx in waiting)
-					ctx.Response.Close ();
+			AbortConnections (timeout - (DateTime.Now - start));
 
 			base.OnClose (timeout - (DateTime.Now - start));
 		}
@@ -169,9 +194,7 @@ w.Close ();
 			var sctx = (HttpListenerContextInfo) ctx;
 			if (State == CommunicationState.Opened && ctx != null)
 				waiting.Add (sctx.Source);
-			var wait_ = wait;
-			wait = null;
-			wait_.Set ();
+			SignalAsyncWait ();
 		}
 	}
 

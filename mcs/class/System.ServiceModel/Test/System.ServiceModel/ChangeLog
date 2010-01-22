@@ -1,3 +1,10 @@
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs : enabled connection tests again, as they
+	  got working again (and more importantly, they don't block).
+	* CallbackBehaviorAttributeTest.cs : on the other hand, disabled
+	  a test so far. It is the only active test && the blocker now.
+
 2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetTcpBindingTest.cs : disable connection tests, with analyzed

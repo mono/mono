@@ -270,6 +270,11 @@ namespace System.ServiceModel.Channels
 		protected abstract void OnRegister (IChannelListener listener, TimeSpan timeout);
 		protected abstract void OnUnregister (IChannelListener listener, bool abort);
 
+		public void CancelGetHttpContextAsync ()
+		{
+			wait_http_ctx.Set ();
+		}
+
 		// Do not directly handle retrieved HttpListenerContexts when
 		// the listener received ones.
 		// Instead, iterate every listeners to find the most-likely-
