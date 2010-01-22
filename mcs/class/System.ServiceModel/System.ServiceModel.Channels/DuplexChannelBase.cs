@@ -166,7 +166,13 @@ namespace System.ServiceModel.Channels
 			return Receive (this.DefaultReceiveTimeout);
 		}
 
-		public abstract Message Receive (TimeSpan timeout);
+		public virtual Message Receive (TimeSpan timeout)
+		{
+			Message msg;
+			if (!TryReceive (timeout, out msg))
+				throw new TimeoutException ();
+			return msg;
+		}
 
 		// TryReceive
 
@@ -184,16 +190,7 @@ namespace System.ServiceModel.Channels
 			return try_receive_handler.EndInvoke (out message, result);
 		}
 		
-		public virtual bool TryReceive (TimeSpan timeout, out Message message)
-		{
-			try {
-				message = Receive (timeout);
-				return true;
-			} catch (TimeoutException) {
-				message = null;
-				return false;
-			}
-		}
+		public abstract bool TryReceive (TimeSpan timeout, out Message message);
 
 		// WaitForMessage
 

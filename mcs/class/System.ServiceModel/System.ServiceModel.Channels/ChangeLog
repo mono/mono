@@ -1,5 +1,11 @@
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs, PeerDuplexChannel.cs,
+	  DuplexChannelBase.cs : Receive() should rather use TryReceive().
+	  It should not be in reverse order.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpReplyChannel.cs, HttpListenerManager.cs :
 	  Implement async cancellation in the expected manner (though with
 	  some hack). This mostly removed nunit blockers.

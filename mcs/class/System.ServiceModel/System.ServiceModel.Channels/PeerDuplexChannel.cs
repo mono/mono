@@ -256,15 +256,18 @@ namespace System.ServiceModel.Channels
 		Queue<Message> queue = new Queue<Message> ();
 		AutoResetEvent receive_handle = new AutoResetEvent (false);
 
-		public override Message Receive (TimeSpan timeout)
+		public override bool TryReceive (TimeSpan timeout, out Message message)
 		{
 			ThrowIfDisposedOrNotOpen ();
 			DateTime start = DateTime.Now;
 
-			if (queue.Count > 0)
-				return queue.Dequeue ();
-			receive_handle.WaitOne ();
-			return queue.Dequeue ();
+			if (queue.Count > 0 || receive_handle.WaitOne (timeout)) {
+				message = queue.Dequeue ();
+				return message == null;
+			} else {
+				message = null;
+				return false;
+			}
 		}
 
 		public override bool WaitForMessage (TimeSpan timeout)

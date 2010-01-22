@@ -153,37 +153,20 @@ namespace System.ServiceModel.Channels
 			frame.WriteSizedMessage (message);
 		}
 		
-		public override Message Receive ()
-		{
-			return Receive (DefaultReceiveTimeout);
-		}
-		
-		public override Message Receive (TimeSpan timeout)
+		public override bool TryReceive (TimeSpan timeout, out Message message)
 		{
 			ThrowIfDisposedOrNotOpen ();
 
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
-			var ret = frame.ReadSizedMessage ();
+			message = frame.ReadSizedMessage ();
 			// FIXME: this may not be precise, but connection might be reused for some weird socket state transition (that's what happens). So as a workaround, avoid closing the session by sending EndRecord from this channel at OnClose().
-			if (ret == null)
+			if (message == null) {
 				session = null;
-			return ret;
-		}
-		
-		public override bool TryReceive (TimeSpan timeout, out Message message)
-		{
-			try {
-				DateTime start = DateTime.Now;
-				message = Receive (timeout);
-				if (message != null)
-					return true;
-				return false;
-			} catch (TimeoutException) {
-				message = null;
 				return false;
 			}
+			return true;
 		}
 		
 		public override bool WaitForMessage (TimeSpan timeout)
