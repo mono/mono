@@ -1,5 +1,9 @@
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* CallbackBehaviorAttributeTest.cs : enable the test again.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* NetTcpBindingTest.cs : enabled connection tests again, as they
 	  got working again (and more importantly, they don't block).
 	* CallbackBehaviorAttributeTest.cs : on the other hand, disabled

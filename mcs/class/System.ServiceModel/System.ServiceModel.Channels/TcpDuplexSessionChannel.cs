@@ -157,6 +157,13 @@ namespace System.ServiceModel.Channels
 		{
 			ThrowIfDisposedOrNotOpen ();
 
+			// FIXME: there seems to be some pipeline or channel-
+			// recycling issues, which could be mostly workarounded 
+			// by delaying input receiver.
+			// This place is not ideal, but it covers both loops in
+			// ChannelDispatcher and DuplexClientRuntimeChannel.
+			Thread.Sleep (50);
+
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;

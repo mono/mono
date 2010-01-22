@@ -1,5 +1,10 @@
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpDuplexSessionChannel.cs : added a workaround receiver delay
+	  that somehow makes callback client to not cause infinite loop.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TcpDuplexSessionChannel.cs, PeerDuplexChannel.cs,
 	  DuplexChannelBase.cs : Receive() should rather use TryReceive().
 	  It should not be in reverse order.
