@@ -1,3 +1,7 @@
+2010-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketAsyncEventArgs.cs: Apply Gendarme's ProtectCallToEventDelegatesRule
+
 2009-12-04  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Net.Sockets/SocketAsyncEventArgs.cs: Implement 
