@@ -188,8 +188,8 @@ namespace System.ServiceModel.Channels
 					throw new CommunicationObjectFaultedException ();
 				OnClosing ();
 				if (state != CommunicationState.Closing) {
-					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnClosing method that does not call base OnClosing method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnClosing", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 					state = CommunicationState.Faulted;
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnClosing method that does not call base OnClosing method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnClosing", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 				}
 			}
 		}
@@ -208,8 +208,8 @@ namespace System.ServiceModel.Channels
 			lock (ThisLock) {
 				OnClosed ();
 				if (state != CommunicationState.Closed) {
-					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnClosed method that does not call base OnClosed method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnClosed", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 					state = CommunicationState.Faulted;
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnClosed method that does not call base OnClosed method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnClosed", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 				}
 			}
 		}
@@ -234,8 +234,8 @@ namespace System.ServiceModel.Channels
 					throw new CommunicationObjectFaultedException ();
 				OnFaulted ();
 				if (state != CommunicationState.Faulted) {
-					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnFaulted method that does not call base OnFaulted method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnFaulted", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 					state = CommunicationState.Faulted; // FIXME: am not sure if this makes sense ...
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnFaulted method that does not call base OnFaulted method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnFaulted", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 				}
 			}
 		}
@@ -256,8 +256,8 @@ namespace System.ServiceModel.Channels
 			lock (ThisLock) {
 				OnOpened ();
 				if (state != CommunicationState.Opened) {
-					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpened method that does not call base OnOpened method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnOpened", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 					state = CommunicationState.Faulted;
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpened method that does not call base OnOpened method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnOpened", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 				}
 			}
 		}
@@ -275,8 +275,8 @@ namespace System.ServiceModel.Channels
 				ThrowIfDisposedOrImmutable ();
 				OnOpening ();
 				if (state != CommunicationState.Opening) {
-					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpening method that does not call base OnOpening method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnOpening", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 					state = CommunicationState.Faulted;
+					throw new InvalidOperationException (String.Format ("Communication object {0} has an overriden OnOpening method that does not call base OnOpening method (declared in {1} type).", this.GetType (), GetType ().GetMethod ("OnOpening", BindingFlags.NonPublic | BindingFlags.Instance).DeclaringType));
 				}
 			}
 		}
