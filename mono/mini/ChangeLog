@@ -1,3 +1,10 @@
+2010-01-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoDebugOptions): Add an option to init stack frames by writing
+	0x2a into them in method prologs.
+
+	* mini-amd64.c (mono_arch_emit_prolog): Implement it.
+
 2010-01-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm-cpp.cpp: Remove uses of dynamic_cast, it no longer works with llvm
