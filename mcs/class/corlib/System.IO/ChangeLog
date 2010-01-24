@@ -1,3 +1,13 @@
+2010-01-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* StreamReader.cs: When detecting the encoding we usually check the
+	four first bytes looking for either UTF32 or UTF8 BOM, since they share
+	the first two bytes, but if we happen to have less than 4 bytes at
+	detection time, just check for Unicode and use it as the current
+	encoding - this is exactly what .Net does, and it is specially visible
+	with NetworkStream.
+	Fixes #534137.
+
 2010-01-19  Alan McGovern  <amcgovern@novell.com>
 	* BufferedStream.cs: Patch by Tom Philpot to optimise ReadByte and
 	WriteByte significantly by making them fulfill their request by

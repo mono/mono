@@ -311,6 +311,11 @@ namespace System.IO {
 					this.encoding = Encoding.BigEndianUnicode;
 					return 2;
 				}
+				if (input_buffer [0] == 0xff && input_buffer [1] == 0xfe && count < 4) {
+					// If we don't have enough bytes we can't check for UTF32, so use Unicode
+					this.encoding = Encoding.Unicode;
+					return 2;
+				}
 
 				if (count < 3)
 					return 0;
