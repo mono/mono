@@ -501,8 +501,11 @@ namespace System.Collections.Generic {
 
 			info.AddValue ("Version", generation);
 			info.AddValue ("Comparer", hcp);
-			KeyValuePair<TKey, TValue> [] data = null;
-			data = new KeyValuePair<TKey,TValue> [count];
+			// MS.NET expects either *no* KeyValuePairs field (when count = 0)
+			// or a non-null KeyValuePairs field. We don't omit the field to
+			// remain compatible with older monos, but we also doesn't serialize
+			// it as null to make MS.NET happy.
+			KeyValuePair<TKey, TValue> [] data = new KeyValuePair<TKey,TValue> [count];
 			if (count > 0)
 				CopyTo (data, 0);
 			info.AddValue ("HashSize", table.Length);
@@ -514,14 +517,34 @@ namespace System.Collections.Generic {
 			if (serialization_info == null)
 				return;
 
-			generation = serialization_info.GetInt32 ("Version");
-			hcp = (IEqualityComparer<TKey>) serialization_info.GetValue ("Comparer", typeof (IEqualityComparer<TKey>));
+			int hashSize = 0;
+			KeyValuePair<TKey, TValue> [] data = null;
 
-			int hashSize = serialization_info.GetInt32 ("HashSize");
-			KeyValuePair<TKey, TValue> [] data =
-				(KeyValuePair<TKey, TValue> [])
-				serialization_info.GetValue ("KeyValuePairs", typeof (KeyValuePair<TKey, TValue> []));
+			// We must use the enumerator because MS.NET doesn't
+			// serialize "KeyValuePairs" for count = 0.
+			SerializationInfoEnumerator e = serialization_info.GetEnumerator ();
+			while (e.MoveNext ()) {
+				switch (e.Name) {
+				case "Version":
+					generation = (int) e.Value;
+					break;
 
+				case "Comparer":
+					hcp = (IEqualityComparer<TKey>) e.Value;
+					break;
+
+				case "HashSize":
+					hashSize = (int) e.Value;
+					break;
+
+				case "KeyValuePairs":
+					data = (KeyValuePair<TKey, TValue> []) e.Value;
+					break;
+				}
+			}
+
+			if (hcp == null)
+				hcp = EqualityComparer<TKey>.Default;
 			if (hashSize < INITIAL_SIZE)
 				hashSize = INITIAL_SIZE;
 			InitArrays (hashSize);

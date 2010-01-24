@@ -1,3 +1,8 @@
+2010-01-24  Robert Jordan  <robertj@gmx.net>
+
+	* Dictionary.cs: Fix deserialization compatibility with MS.NET.
+	Fixes bug #474009.
+
 2010-01-20  Miguel de Icaza  <miguel@novell.com>
 
 	* Dictionary.cs: Always create the keys, fixes compatibility

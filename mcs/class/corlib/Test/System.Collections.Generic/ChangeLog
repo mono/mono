@@ -1,3 +1,7 @@
+2010-01-24  Robert Jordan  <robertj@gmx.net>
+
+	* DictionaryTest.cs: Add test case for bug #474009.
+
 2009-09-22  Raja R Harinath  <harinath@hurrynot.org>
 
 	* DictionaryTest.cs (ICollectionCopyTo): Test various odd
