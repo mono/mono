@@ -1,3 +1,7 @@
+2010-01-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* StreamReaderTest.cs: New test for encoding detection.
+
 2010-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MemoryStreamTest.cs: Activate ZeroingOnExpandTest as we have fixed
