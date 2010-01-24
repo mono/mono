@@ -1,5 +1,29 @@
 2010-01-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Improve the processing MONO_VERBOSE_METHOD so
+	it supports class names as well.
+
+	* mini.h (MonoCompile): Add a few flags to control JIT behavior which are
+	needed by the GC map code.
+
+	* mini.c (mini_method_compile): Call a function in mini-gc.c to set the new
+	flags if needed.
+
+	* method-to-ir.c (mono_method_to_ir): Emit initialization code for ref variables
+	if cfg->init_ref_vars is set.
+
+	* liveness.c (optimize_initlocals): Disable the initlocals opt for ref vars if
+	cfg->disable_initlocals_op_refs is set.
+
+	* method-to-ir.c (mono_spill_global_vars): Compute more precise live ranges
+	using liveness info if cfg->compute_precise_live_ranges is set.
+
+	* mini-gc.c: Ongoing work. Improve logging and debugging support. Handle
+	volatile variables correctly. Add comments about the live ranges. Not enabled
+	yet.
+
+2010-01-24  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.h (MonoDebugOptions): Add an option to init stack frames by writing
 	0x2a into them in method prologs.
 
