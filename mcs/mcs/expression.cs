@@ -1735,17 +1735,21 @@ namespace Mono.CSharp {
 				if (left == TypeManager.decimal_type)
 					return b.ResolveUserOperator (ec, b.left.Type, b.right.Type);
 
-				var c = b.right as IntegralConstant;
+				var c = b.right as Constant;
 				if (c != null) {
 					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.BitwiseOr || b.oper == Operator.Subtraction))
-						return ReducedExpression.Create (b.left, b);
+						return ReducedExpression.Create (b.left, b).Resolve (ec);
+					if ((b.oper == Operator.Multiply || b.oper == Operator.Division) && c.IsOneInteger)
+						return ReducedExpression.Create (b.left, b).Resolve (ec);
 					return b;
 				}
 
-				c = b.left as IntegralConstant;
+				c = b.left as Constant;
 				if (c != null) {
 					if (c.IsDefaultValue && (b.oper == Operator.Addition || b.oper == Operator.BitwiseOr))
-						return ReducedExpression.Create (b.right, b);
+						return ReducedExpression.Create (b.right, b).Resolve (ec);
+					if (b.oper == Operator.Multiply && c.IsOneInteger)
+						return ReducedExpression.Create (b.right, b).Resolve (ec);
 					return b;
 				}
 
@@ -4069,7 +4073,7 @@ namespace Mono.CSharp {
 
 				left.Emit (ec);
 
-				Constant right_const = right as Constant;
+				var right_const = right as Constant;
 				if (right_const != null) {
 					//
 					// Optimize 0-based arithmetic
@@ -4077,16 +4081,16 @@ namespace Mono.CSharp {
 					if (right_const.IsDefaultValue)
 						return;
 
-					if (size != 0) {
-						// TODO: Should be the checks resolve context sensitive?
-						ResolveContext rc = new ResolveContext (ec.MemberContext);
-						right = ConstantFold.BinaryFold (rc, Binary.Operator.Multiply, new IntConstant (size, right.Location).Resolve (rc), right_const, loc);
-						if (right == null)
-							return;
-					} else {
-						ig.Emit (OpCodes.Sizeof, element);
-						right = EmptyExpression.Null;
-					}
+					if (size != 0)
+						right = new IntConstant (size, right.Location);
+					else
+						right = new SizeOf (new TypeExpression (element, right.Location), right.Location);
+					
+					// TODO: Should be the checks resolve context sensitive?
+					ResolveContext rc = new ResolveContext (ec.MemberContext, ResolveContext.Options.UnsafeScope);
+					right = new Binary (Binary.Operator.Multiply, right, right_const).Resolve (rc);
+					if (right == null)
+						return;
 				}
 
 				right.Emit (ec);

@@ -248,6 +248,10 @@ namespace Mono.CSharp {
 		public virtual bool IsLiteral {
 			get { return false; }
 		}
+		
+		public virtual bool IsOneInteger {
+			get { return false; }
+		}		
 
 		//
 		// Returns true iff 1) the stack type of this is one of Object, 
@@ -317,7 +321,7 @@ namespace Mono.CSharp {
 					GetValue ().ToString (), TypeManager.CSharpName (target));
 			}
 		}
-
+		
 		public abstract Constant Increment ();
 	}
 	
@@ -419,6 +423,12 @@ namespace Mono.CSharp {
 				return Value == 0;
 			}
 		}
+
+		public override bool IsOneInteger {
+			get {
+				return Value == 1;
+			}
+		}		
 
 		public override bool IsNegative {
 			get {
@@ -632,6 +642,12 @@ namespace Mono.CSharp {
 			}
 		}
 		
+		public override bool IsOneInteger {
+			get {
+				return Value == 1;
+			}
+		}		
+		
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
 		}
@@ -730,6 +746,12 @@ namespace Mono.CSharp {
 				return Value < 0;
 			}
 		}
+		
+		public override bool IsOneInteger {
+			get {
+				return Value == 1;
+			}
+		}		
 
 		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
 		{
@@ -833,6 +855,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 		}
+		
+		public override bool IsOneInteger {
+			get {
+				return Value == 1;
+			}
+		}		
 	
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
@@ -986,6 +1014,12 @@ namespace Mono.CSharp {
 				return Value < 0;
 			}
 		}
+		
+		public override bool IsOneInteger {
+			get {
+				return Value == 1;
+			}
+		}		
 
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
@@ -1156,6 +1190,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 		}
+		
+		public override bool IsOneInteger {
+			get {
+				return Value == 1;
+			}
+		}		
 
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
@@ -1285,6 +1325,12 @@ namespace Mono.CSharp {
 				return Value < 0;
 			}
 		}
+		
+		public override bool IsOneInteger {
+			get {
+				return Value == 1;
+			}
+		}		
 
 		public override bool IsZeroInteger {
 			get { return Value == 0; }
@@ -1415,6 +1461,12 @@ namespace Mono.CSharp {
 				return false;
 			}
 		}
+		
+		public override bool IsOneInteger {
+			get {
+				return Value == 1;
+			}
+		}		
 
 		public override bool IsZeroInteger {
 			get { return Value == 0; }

@@ -1590,6 +1590,10 @@ namespace Mono.CSharp {
 		public override bool IsNull {
 			get { return child.IsNull; }
 		}
+		
+		public override bool IsOneInteger {
+			get { return child.IsOneInteger; }
+		}
 
 		public override bool IsZeroInteger {
 			get { return child.IsZeroInteger; }

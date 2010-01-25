@@ -1,3 +1,9 @@
+2010-01-25  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #573312
+	* constant.cs, expression.cs, ecore.cs: Emit correct offset for
+	pointer index of unknown size types greater than 2.
+
 2010-01-15  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Use only 1 member kind enum.
