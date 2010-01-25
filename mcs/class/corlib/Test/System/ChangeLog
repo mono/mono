@@ -1,3 +1,8 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SingleTest.cs : test for parsing MaxValue and PositiveInfinity.
+	  Patch by Tiaan Geldenhuys.
+
 2010-01-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Add test for GetGenericMethodDefinition of inflated

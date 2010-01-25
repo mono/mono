@@ -46,6 +46,10 @@ namespace System
 		public const float PositiveInfinity =  1.0f / 0.0f;
 		public const float NegativeInfinity = -1.0f / 0.0f;
 
+		// Maximum allowed rounding-error so that float.MaxValue can round-trip successfully; calculated 
+		// using: (double.Parse (float.MaxValue.ToString ("r")) - (double) float.MaxValue).ToString ("r")
+		private const double MaxValueEpsilon = 3.6147112457961776e29d;
+
 		internal float m_value;
 
 		public int CompareTo (object value)
@@ -166,7 +170,7 @@ namespace System
 		{
 			double parsed_value = Double.Parse (
 				s, (NumberStyles.Float | NumberStyles.AllowThousands), null);
-			if (parsed_value > (double) float.MaxValue)
+			if (parsed_value - (double) float.MaxValue > MaxValueEpsilon && (!double.IsPositiveInfinity (parsed_value)))
 				throw new OverflowException();
 
 			return (float) parsed_value;
@@ -176,7 +180,7 @@ namespace System
 		{
 			double parsed_value = Double.Parse (
 				s, (NumberStyles.Float | NumberStyles.AllowThousands), provider);
-			if (parsed_value > (double) float.MaxValue)
+			if (parsed_value - (double) float.MaxValue > MaxValueEpsilon && (!double.IsPositiveInfinity (parsed_value)))
 				throw new OverflowException();
 
 			return (float) parsed_value;
@@ -185,7 +189,7 @@ namespace System
 		public static float Parse (string s, NumberStyles style)
 		{
 			double parsed_value = Double.Parse (s, style, null);
-			if (parsed_value > (double) float.MaxValue)
+			if (parsed_value - (double) float.MaxValue > MaxValueEpsilon && (!double.IsPositiveInfinity (parsed_value)))
 				throw new OverflowException();
 
 			return (float) parsed_value;
@@ -194,7 +198,7 @@ namespace System
 		public static float Parse (string s, NumberStyles style, IFormatProvider provider) 
 		{
 			double parsed_value = Double.Parse (s, style, provider);
-			if (parsed_value > (double) float.MaxValue)
+			if (parsed_value - (double) float.MaxValue > MaxValueEpsilon && (!double.IsPositiveInfinity (parsed_value)))
 				throw new OverflowException();
 
 			return (float) parsed_value;
@@ -206,7 +210,7 @@ namespace System
 			if (!Double.Parse (s, style, provider, true, out parsed_value, out exc)) {
 				result = 0;
 				return false;
-			} else if (parsed_value > (double) float.MaxValue) {
+			} else if (parsed_value - (double) float.MaxValue > MaxValueEpsilon && (!double.IsPositiveInfinity (parsed_value))) {
 				result = 0;
 				return false;
 			}
