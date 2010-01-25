@@ -1,3 +1,8 @@
+2010-01-25  Jb Evain  <jbevain@novell.com>
+
+	* QueryableTransformer.cs (ReplaceQueryableMethod): fix
+	exception message.
+
 2009-12-03  Marek Safar  <marek.safar@gmail.com>
 
 	* EnumerableExecutor.cs, EnumerableExecutor_T.cs, EnumerableQuery.cs
