@@ -1,3 +1,9 @@
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* System.Net.dll.sources: Add UdpAnySourceMulticastClient and
+	UdpSingleSourceMulticastClient stubs (with some validations)
+	for SL4 (required to compile tests)
+
 2010-01-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Net.dll.sources: Add InternalWebRequestStreamWrapper.cs

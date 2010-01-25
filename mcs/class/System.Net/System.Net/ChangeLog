@@ -1,3 +1,8 @@
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UdpAnySourceMulticastClient.cs: New. Stub for SL4
+	* UdpSingleSourceMulticastClient.cs: New. Stub for SL4
+
 2010-01-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWebRequest_2_1.cs: Throw for CookieContainer. It is 
