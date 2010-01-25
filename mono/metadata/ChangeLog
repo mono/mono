@@ -1,3 +1,8 @@
+2010-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Array_SetValueImpl): Handle nullable types correctly.
+	Fixes #573322.
+
 2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
