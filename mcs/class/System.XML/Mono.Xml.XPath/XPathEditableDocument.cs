@@ -206,7 +206,20 @@ namespace Mono.Xml.XPath
 
 		public override void WriteRaw (string raw)
 		{
-			throw new NotSupportedException ();
+			XmlReader reader = new XmlTextReader(new System.IO.StringReader(raw));
+			WriteRaw(reader);
+		}
+
+		private void WriteRaw(XmlReader reader)
+		{
+			if (reader != null && reader.NodeType == XmlNodeType.Element)
+			{
+				WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+				WriteAttributes (reader, true);
+				WriteRaw (reader.ReadSubtree ());
+				WriteEndElement ();
+
+			}
 		}
 
 		public override void WriteSurrogateCharEntity (char msb, char lsb)
