@@ -48,17 +48,12 @@ namespace System.ComponentModel
 
 		public override bool CanConvertFrom(ITypeDescriptorContext context, Type sourceType)
 		{
-			if (sourceType == typeof (string)) 
-				return true;
-			return base.CanConvertFrom (context, sourceType);
+			return sourceType == typeof (string) || base.CanConvertFrom (context, sourceType);
 		}
 
 		public override bool CanConvertTo(ITypeDescriptorContext context, Type t)
 		{
-			if (t == typeof (string))
-				return true;
-
-			return base.CanConvertTo (context, t);
+			return t.IsPrimitive || base.CanConvertTo (context, t);
 		}
 
 		public override object ConvertFrom(ITypeDescriptorContext context, CultureInfo culture, object value)
@@ -109,6 +104,9 @@ namespace System.ComponentModel
 				return ConvertToString (value, numberFormatInfo);
 			}
 #endif
+
+			if (destinationType.IsPrimitive)
+				return Convert.ChangeType (value, destinationType, culture);
 
 			return base.ConvertTo (context, culture, value, destinationType);
 		}

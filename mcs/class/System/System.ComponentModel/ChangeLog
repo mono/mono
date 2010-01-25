@@ -1,3 +1,8 @@
+2010-01-15  Alexandre Gomes  <alexmipego@gmail.com>
+
+	* BaseNumberConverter.cs: Fixed CanConvertTo and ConvertTo when
+	targeting primitive types.
+
 2009-12-08  Marek Habersack  <mhabersack@novell.com>
 
 	* TypeDescriptor.cs: AddProvider overloads must refresh the
