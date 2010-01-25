@@ -4799,7 +4799,7 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>147</size>
+        <size>145</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
@@ -28153,7 +28153,7 @@
         <size>17</size>
       </method>
       <method name="Int32 Main()">
-        <size>84</size>
+        <size>86</size>
       </method>
     </type>
   </test>
@@ -34480,7 +34480,7 @@
         <size>73</size>
       </method>
       <method name="Void Or()">
-        <size>137</size>
+        <size>129</size>
       </method>
       <method name="Int32 Main()">
         <size>70</size>
@@ -34948,7 +34948,7 @@
         <size>79</size>
       </method>
       <method name="Void TestOr(Boolean)">
-        <size>92</size>
+        <size>88</size>
       </method>
       <method name="Void Test(Boolean)">
         <size>13</size>
@@ -35016,7 +35016,7 @@
         <size>11</size>
       </method>
       <method name="Void Main()">
-        <size>169</size>
+        <size>167</size>
       </method>
     </type>
   </test>
@@ -37129,6 +37129,24 @@
       </method>
       <method name="Int32 Main()">
         <size>168</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-740.cs">
+    <type name="FixedTest">
+      <method name="Int32 Main()">
+        <size>318</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="FixedTest+TValue">
+      <method name="System.String ToString()">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor(Int64)">
+        <size>28</size>
       </method>
     </type>
   </test>
@@ -42901,7 +42919,7 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>147</size>
+        <size>145</size>
       </method>
       <method name="Void Dispose()">
         <size>8</size>
