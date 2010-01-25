@@ -3230,6 +3230,34 @@ public class ArrayTest
 		Assert.AreEqual (1, a.CompareTo (new int [] { 10, 19 }, Comparer<object>.Default));
 	}
 
+	[Test]
+	public void IStructuralEquatable_Equals ()
+	{
+		IStructuralEquatable array = new int[] {1, 2, 3};
+		IStructuralEquatable array2 = new int[] {1, 2, 3};
+		Assert.AreEqual (false, array.Equals (null, null));
+		Assert.AreEqual (true, array.Equals (array, null));
+		Assert.AreEqual (true, array.Equals (array2, EqualityComparer<int>.Default));
+	}
+
+	[Test]
+	[ExpectedException (typeof (NullReferenceException))]
+	public void IStructuralEquatable_Equals_NoComparer ()
+	{
+		IStructuralEquatable array = new int[] {1, 2, 3};
+		IStructuralComparable array2 = new int[] {1, 2, 3};
+		array.Equals (array2, null);
+	}
+
+	[Test]
+	[ExpectedException (typeof (ArgumentException))]
+	public void IStructuralEquatable_Equals_ComparerThrows ()
+	{
+		IStructuralEquatable array = new int[] {1, 2, 3};
+		IStructuralComparable array2 = new int[] {1, 2, 3};
+		array.Equals (array2, EqualityComparer<long>.Default);
+	}
+
 #endif
 
 }
