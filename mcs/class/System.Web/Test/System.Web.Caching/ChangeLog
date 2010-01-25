@@ -1,3 +1,7 @@
+2010-01-25  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlCacheDependencyTest.cs: added
+
 2010-01-22  Marek Habersack  <mhabersack@novell.com>
 
 	* OutputCacheTest.cs: added

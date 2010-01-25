@@ -1,3 +1,19 @@
+2010-01-25  Marek Habersack  <mhabersack@novell.com>
+
+	* SqlCacheDependency.cs: added parameter checks to the
+	constructors.
+	Partially implemented 4.0 method CreateOutputCacheDependency
+
+	* CacheItemUpdateReason.cs, CacheItemUpdateCallback.cs: added
+
+	* CacheItem.cs: added OnUpdateCallback field
+
+	* Cache.cs: implemented support for cache item update callback
+	(3.5+)
+
+	* AggregateCacheDependency.cs: added undocumented
+	DependencyDispose method override
+
 2010-01-22  Marek Habersack  <mhabersack@novell.com>
 
 	* SubstitutionResponseElement.cs: implemented correct

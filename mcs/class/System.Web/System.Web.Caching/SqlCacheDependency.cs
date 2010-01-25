@@ -27,7 +27,7 @@
 //
 
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 using System.Security.Permissions;
 using System.Data.SqlClient;
 using System.Web;
@@ -42,11 +42,72 @@ namespace System.Web.Caching
 		[MonoTODO ("What to do with the sqlCmd?")]
 		public SqlCacheDependency (SqlCommand sqlCmd)
 		{
+			if (sqlCmd == null)
+				throw new ArgumentNullException ("sqlCmd");
 		}
 
 		[MonoTODO ("What are the params good for?")]
 		public SqlCacheDependency (string databaseEntryName, string tableName)
 		{
+			if (databaseEntryName == null)
+				throw new ArgumentNullException ("databaseEntryName");
+
+			if (tableName == null)
+				throw new ArgumentNullException ("tableName");
+		}
+
+#if NET_4_0
+		[MonoTODO ("Needs more testing - especially the return value and database+table lookup.")]
+		public static CacheDependency CreateOutputCacheDependency (string dependency)
+		{
+			if (dependency == null)
+				throw new HttpException (InvalidDependencyFormatMessage (dependency));
+
+			if (dependency.Length == 0)
+				throw new ArgumentException (InvalidDependencyFormatMessage (dependency), "dependency");
+
+			int colon;
+			string[] pairs = dependency.Split (';');
+			var dependencies = new List <SqlCacheDependency> ();
+
+			foreach (string pair in pairs) {
+				colon = pair.IndexOf (':');
+				if (colon == -1)
+					throw new ArgumentException (InvalidDependencyFormatMessage (dependency), "dependency");
+
+				dependencies.Add (new SqlCacheDependency (pair.Substring (0, colon), pair.Substring (colon + 1)));
+			}
+
+			switch (dependencies.Count) {
+				case 0:
+					return null;
+
+				case 1:
+					return dependencies [0];
+
+				default:
+					var acd = new AggregateCacheDependency ();
+					acd.Add (dependencies.ToArray ());
+					return acd;
+			}
+		}
+
+		static string InvalidDependencyFormatMessage (string dependency)
+		{
+			return String.Format (@"The '' SqlDependency attribute for OutputCache directive is invalid.
+
+For SQL Server 7.0 and SQL Server 2000, the valid format is ""database:tablename"", and table name must conform to the format of regular identifiers in SQL. To specify multiple pairs of values, use the ';' separator between pairs. (To specify ':', '\' or ';', prefix it with the '\' escape character.)
+
+For dependencies that use SQL Server 9.0 notifications, specify the value 'CommandNotification'.", dependency);
+		}
+#endif
+		
+		protected override void DependencyDispose ()
+		{
+			// MSDN doesn't document it as being part of the class, but assembly
+			// comparison shows that it does exist in this type, so we're just calling
+			// the base class here
+			base.DependencyDispose ();
 		}
 		
 		public override string GetUniqueID ()

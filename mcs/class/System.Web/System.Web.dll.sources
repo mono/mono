@@ -18,6 +18,8 @@ System.Web.Caching/CacheItemPriority.cs
 System.Web.Caching/CacheItemPriorityQueue.cs
 System.Web.Caching/CacheItemRemovedCallback.cs
 System.Web.Caching/CacheItemRemovedReason.cs
+System.Web.Caching/CacheItemUpdateCallback.cs
+System.Web.Caching/CacheItemUpdateReason.cs
 System.Web.Caching/CachedRawResponse.cs
 System.Web.Caching/CachedVaryBy.cs
 System.Web.Caching/DatabaseNotEnabledForNotificationException.cs

@@ -1,10 +1,8 @@
 //
-// System.Web.Caching.CacheItem
-//
 // Author(s):
-//  Lluis Sanchez <lluis@ximian.com>
+//  Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2005-2009 Novell, Inc (http://novell.com)
+// (C) 2010 Novell, Inc (http://novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -26,25 +24,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Threading;
 
 namespace System.Web.Caching
 {
-	sealed class CacheItem
-	{
-		public object Value;
-		public string Key;
-		public CacheDependency Dependency;
-		public DateTime AbsoluteExpiration;
-		public TimeSpan SlidingExpiration;
-		public CacheItemPriority Priority;
-		public CacheItemRemovedCallback OnRemoveCallback;
-		public CacheItemUpdateCallback OnUpdateCallback;
-		public DateTime LastChange;
-		public long ExpiresAt;
-		public bool Disabled;
-		
-		public Timer Timer;
-	}
+	public delegate void CacheItemUpdateCallback (string key,
+						      CacheItemUpdateReason reason,
+						      out object expensiveObject,
+						      out CacheDependency dependency,
+						      out DateTime absoluteExpiration,
+						      out TimeSpan slidingExpiration);
 }

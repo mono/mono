@@ -340,6 +340,7 @@ System.Web.Caching/HeaderElementTest.cs
 System.Web.Caching/MemoryResponseElementTest.cs
 System.Web.Caching/OutputCacheTest.cs
 System.Web.Caching/SubstitutionResponseElementTest.cs
+System.Web.Caching/SqlCacheDependencyTest.cs
 System.Web.Configuration/HttpCapabilitiesBaseCas.cs
 System.Web.Handlers/TraceHandlerCas.cs
 System.Web.Hosting/AppDomainFactoryCas.cs
