@@ -60,6 +60,10 @@ namespace System.Collections.Generic {
 
 		bool IEqualityComparer.Equals (object x, object y)
 		{
+			if (!(x is T))
+				throw new ArgumentException ("Argument is not compatible", "x");
+			if (!(y is T))
+				throw new ArgumentException ("Argument is not compatible", "y");
 			return Equals ((T)x, (T)y);
 		}
 		
