@@ -1,3 +1,8 @@
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs : support FirstDayOfWeek. Fixed bug #567944.
+	  Patch by Jose Antonio Sanchez Lazaro.
+
 2009-03-05  Marek Habersack  <mhabersack@novell.com>
 
 	* locales/en_TT.xml: added here since openi18n.org times out and
