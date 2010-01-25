@@ -1,3 +1,9 @@
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataContractJsonSerializerTest.cs: Add non-working test cases
+	for null-string, known types and handling floating point special
+	values
+
 2009-12-11  Chris Toshok  <toshok@ximian.com>
 
 	* DataContractJsonSerializerTest.cs: add a test case for
