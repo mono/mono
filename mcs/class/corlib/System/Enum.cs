@@ -520,13 +520,27 @@ namespace System
 			if (value.Length == 0)
 				throw new ArgumentException ("An empty string is not considered a valid value.");
 
+			object result;
+			Exception exc;
+			if (!Parse (enumType, value, ignoreCase, out result))
+				throw new ArgumentException (String.Format ("The requested value '{0}' was not found.", value));
+
+			return result;
+		}
+
+		static bool Parse<TEnum> (Type enumType, string value, bool ignoreCase, out TEnum result)
+		{
+			result = default (TEnum);
+
 			MonoEnumInfo info;
 			MonoEnumInfo.GetInfo (enumType, out info);
 
 			// is 'value' a named constant?
 			int loc = FindName (info.name_hash, info.names, value, ignoreCase);
-			if (loc >= 0)
-				return info.values.GetValue (loc);
+			if (loc >= 0) {
+				result = (TEnum) info.values.GetValue (loc);
+				return true;
+			}
 
 			TypeCode typeCode = ((Enum) info.values.GetValue (0)).GetTypeCode ();
 
@@ -537,59 +551,88 @@ namespace System
 				for (int i = 0; i < names.Length; ++i) {
 					loc = FindName (info.name_hash, info.names, names [i].Trim (), ignoreCase);
 					if (loc < 0)
-						throw new ArgumentException ("The requested value was not found.");
+						return false;
+
 					retVal |= GetValue (info.values.GetValue (loc), typeCode);
 				}
-				return ToObject (enumType, retVal);
+				result = (TEnum) ToObject (enumType, retVal);
+				return true;
 			}
 
 			// is 'value' a number?
 			switch (typeCode) {
 			case TypeCode.SByte:
 				sbyte sb;
-				if (SByte.TryParse (value, out sb))
-					return ToObject (enumType, sb);
+				if (!SByte.TryParse (value, out sb))
+					return false;
+				result = (TEnum) ToObject (enumType, sb);
 				break;
 			case TypeCode.Byte:
 				byte b;
-				if (Byte.TryParse (value, out b))
-					return ToObject (enumType, b);
+				if (!Byte.TryParse (value, out b))
+					return false;
+				result = (TEnum) ToObject (enumType, b);
 				break;
 			case TypeCode.Int16:
 				short i16;
-				if (Int16.TryParse (value, out i16))
-					return ToObject (enumType, i16);
+				if (!Int16.TryParse (value, out i16))
+					return false;
+				result = (TEnum) ToObject (enumType, i16);
 				break;
 			case TypeCode.UInt16:
 				ushort u16;
-				if (UInt16.TryParse (value, out u16))
-					return ToObject (enumType, u16);
+				if (!UInt16.TryParse (value, out u16))
+					return false;
+				result = (TEnum) ToObject (enumType, u16);
 				break;
 			case TypeCode.Int32:
 				int i32;
-				if (Int32.TryParse (value, out i32))
-					return ToObject (enumType, i32);
+				if (!Int32.TryParse (value, out i32))
+					return false;
+				result = (TEnum) ToObject (enumType, i32);
 				break;
 			case TypeCode.UInt32:
 				uint u32;
-				if (UInt32.TryParse (value, out u32))
-					return ToObject (enumType, u32);
+				if (!UInt32.TryParse (value, out u32))
+					return false;
+				result = (TEnum) ToObject (enumType, u32);
 				break;
 			case TypeCode.Int64:
 				long i64;
-				if (Int64.TryParse (value, out i64))
-					return ToObject (enumType, i64);
+				if (!Int64.TryParse (value, out i64))
+					return false;
+				result = (TEnum) ToObject (enumType, i64);
 				break;
 			case TypeCode.UInt64:
 				ulong u64;
-				if (UInt64.TryParse (value, out u64))
-					return ToObject (enumType, u64);
+				if (!UInt64.TryParse (value, out u64))
+					return false;
+				result = (TEnum) ToObject (enumType, u64);
 				break;
 			default:
 				break;
 			}
-			throw new ArgumentException (String.Format ("The requested value '{0}' was not found.", value));
+
+			return true;
 		}
+
+#if BOOTSTRAP_NET_4_0 || NET_4_0
+		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
+		{
+			return TryParse (value, false, out result);
+		}
+
+		public static bool TryParse<TEnum> (string value, bool ignoreCase, out TEnum result) where TEnum : struct
+		{
+			Type tenum_type = typeof (TEnum);
+			result = default (TEnum);
+
+			if (value == null || value.Trim ().Length == 0 || !tenum_type.IsEnum)
+				return false;
+
+			return Parse (tenum_type, value, ignoreCase, out result);
+		}
+#endif
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern int compare_value_to (object other);

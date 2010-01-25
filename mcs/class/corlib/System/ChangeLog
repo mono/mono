@@ -1,3 +1,8 @@
+2010-01-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Enum.cs: Implement TryParse and do the required refactoring of our
+	Parse method to support it.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Single.cs : parse MaxValue and PositiveInfinity as expected.
