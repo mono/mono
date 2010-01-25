@@ -1,3 +1,7 @@
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition): Handle inflated generic methods
