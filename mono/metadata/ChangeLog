@@ -1,3 +1,8 @@
+2010-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Array_SetValueImpl): Handle nullable types correctly.
+	Fixes #573322.
+
 2010-01-23  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-pinning.c (evacuate_pin_staging_area): Don't assume
