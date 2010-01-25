@@ -1,3 +1,8 @@
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.Web.dll.sources: Use custom
+	version of DataContractJsonSerializer for Moonlight
+
 2009-11-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* common_System.ServiceModel.Web.dll.sources,
