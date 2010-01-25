@@ -1,3 +1,9 @@
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataContractJsonSerializer_2_1.cs: New. Simpler version for 
+	Moonlight since it does not inherit from the same base type nor
+	does it overrides any base methods.
+
 2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeMap.cs : forward port r145077 (see change line for 2009-10-29).
