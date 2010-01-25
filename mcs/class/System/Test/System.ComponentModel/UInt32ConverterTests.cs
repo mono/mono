@@ -41,6 +41,7 @@ namespace MonoTests.System.ComponentModel
 		{
 			Assert.IsTrue (converter.CanConvertTo (typeof (string)), "#1");
 			Assert.IsFalse (converter.CanConvertTo (typeof (object)), "#2");
+			Assert.IsTrue (converter.CanConvertTo (typeof (int)), "#3");
 		}
 
 		[Test]
