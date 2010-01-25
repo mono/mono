@@ -64,7 +64,7 @@ do-profile-check: $(depsdir)/.stamp
 		$(MAKE) -s do-profile-check-monolite ; \
 	    else \
 		echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2; \
-                echo "*** You need a C# compiler version 2.0 or better installed to build MCS" 1>&2 ; \
+                echo "*** You need Mono version 2.4 or better installed to build MCS" 1>&2 ; \
                 echo "*** Read INSTALL.txt for information on how to bootstrap a Mono installation." 1>&2 ; \
 	        exit 1; fi; fi
 
