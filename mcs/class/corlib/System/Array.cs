@@ -45,7 +45,7 @@ namespace System
 	// FIXME: We are doing way to many double/triple exception checks for the overloaded functions"
 	public abstract class Array : ICloneable, ICollection, IList, IEnumerable
 #if NET_4_0
-		, IStructuralComparable
+		, IStructuralComparable, IStructuralEquatable
 #endif
 	{
 		// Constructor
@@ -434,7 +434,7 @@ namespace System
 		}
 
 #if NET_4_0
-		public int CompareTo (object other, IComparer comparer)
+		int IStructuralComparable.CompareTo (object other, IComparer comparer)
 		{
 			if (other == null)
 				return 1;
@@ -448,10 +448,10 @@ namespace System
 				throw new ArgumentException ("Not of the same length", "other");
 
 			if (Rank > 1)
-				throw new ArgumentException ("Array must be single dimentional");
+				throw new ArgumentException ("Array must be single dimensional");
 
-			if (Rank > 1 || arr.Rank > 1)
-				throw new ArgumentException ("Array must be single dimentional", "other");
+			if (arr.Rank > 1)
+				throw new ArgumentException ("Array must be single dimensional", "other");
 
 			for (int i = 0; i < len; ++i) {
 				object a = GetValue (i);
@@ -461,6 +461,36 @@ namespace System
 					return r;
 			}
 			return 0;
+		}
+
+		bool IStructuralEquatable.Equals (object other, IEqualityComparer comparer)
+		{
+			Array o = other as Array;
+			if (o == null || o.Length != Length)
+				return false;
+
+			if (Object.ReferenceEquals (other, this))
+				return true;
+
+			for (int i = 0; i < Length; i++) {
+				object this_item = this.GetValue (i);
+				object other_item = o.GetValue (i);
+				if (!comparer.Equals (this_item, other_item))
+					return false;
+			}
+			return true;
+		}
+
+ 
+		int IStructuralEquatable.GetHashCode (IEqualityComparer comparer)
+		{
+			if (comparer == null)
+				throw new ArgumentNullException ("comparer");
+
+			int hash = 0;
+			for (int i = 0; i < Length; i++)
+				hash = ((hash << 7) + hash) ^ GetValue (i).GetHashCode ();
+			return hash;
 		}
 #endif
 
@@ -1641,7 +1671,7 @@ namespace System
 			}
 		}
 		
-		public static void qsort<T, U> (T[] array, U[] items, int low0, int high0) where T : IComparable<T>
+		private static void qsort<T, U> (T[] array, U[] items, int low0, int high0) where T : IComparable<T>
 		{
 			int low = low0;
 			int high = high0;

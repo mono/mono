@@ -1,3 +1,8 @@
+2010-01-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Array.cs: updates to the API from beta2.
+	* _AppDomain.cs: no GetLifeTimeService() in 4.0
+
 2010-01-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Enum.cs: Implement TryParse and do the required refactoring of our
