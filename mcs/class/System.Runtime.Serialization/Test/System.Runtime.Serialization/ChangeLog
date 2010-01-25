@@ -1,6 +1,10 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : added test for bug #560155.
+
 2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
 
-	* XmlObjectSrializerTest.cs : added test for bug #568763.
+	* XmlObjectSerializerTest.cs : added test for bug #568763.
 
 2009-09-28  Atsushi Enomoto  <atsushi@ximian.com>
 
