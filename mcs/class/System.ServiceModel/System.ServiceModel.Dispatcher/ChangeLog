@@ -1,3 +1,10 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : actually instance context provider could be
+	  null through the entire service run.
+
+	  Fixed all current nunit failures!
+
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : do not try to iterate channel acceptor when
