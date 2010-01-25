@@ -693,6 +693,74 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
+		public void CastExtremes ()
+		{
+			// Test extremes/constants where round-trips should work in specific ways
+			Assert.AreEqual (decimal.MaxValue, (decimal) new XAttribute ("k", decimal.MaxValue), "MaxValue:decimal");
+			Assert.AreEqual (decimal.MinValue, (decimal) new XAttribute ("k", decimal.MinValue), "MinValue:decimal");
+			Assert.AreEqual (decimal.MinusOne, (decimal) new XAttribute ("k", decimal.MinusOne), "MinusOne:decimal");
+			Assert.AreEqual (decimal.One, (decimal) new XAttribute ("k", decimal.One), "One:decimal");
+			Assert.AreEqual (decimal.Zero, (decimal) new XAttribute ("k", decimal.Zero), "Zero:decimal");
+			Assert.AreEqual (double.MaxValue, (double) new XAttribute ("k", double.MaxValue), "MaxValue:double");
+			Assert.AreEqual (double.MinValue, (double) new XAttribute ("k", double.MinValue), "MinValue:double");
+			Assert.AreEqual (double.Epsilon, (double) new XAttribute ("k", double.Epsilon), "Epsilon:double");
+			Assert.AreEqual (double.NaN, (double) new XAttribute ("k", double.NaN), "NaN:double");
+			Assert.AreEqual (double.NegativeInfinity, (double) new XAttribute ("k", double.NegativeInfinity), "-Inf:double");
+			Assert.AreEqual (double.PositiveInfinity, (double) new XAttribute ("k", double.PositiveInfinity), "+Inf:double");
+			Assert.AreEqual (float.MaxValue, (float) new XAttribute ("k", float.MaxValue), "MaxValue:float");
+			Assert.AreEqual (float.MinValue, (float) new XAttribute ("k", float.MinValue), "MinValue:float");
+			Assert.AreEqual (float.Epsilon, (float) new XAttribute ("k", float.Epsilon), "Epsilon:float");
+			Assert.AreEqual (float.NaN, (float) new XAttribute ("k", float.NaN), "NaN:float");
+			Assert.AreEqual (float.NegativeInfinity, (float) new XAttribute ("k", float.NegativeInfinity), "-Inf:float");
+			Assert.AreEqual (float.PositiveInfinity, (float) new XAttribute ("k", float.PositiveInfinity), "+Inf:float");
+			Assert.AreEqual (int.MaxValue, (int) new XAttribute ("k", int.MaxValue), "MaxValue:int");
+			Assert.AreEqual (int.MinValue, (int) new XAttribute ("k", int.MinValue), "MinValue:int");
+			Assert.AreEqual (long.MaxValue, (long) new XAttribute ("k", long.MaxValue), "MaxValue:long");
+			Assert.AreEqual (long.MinValue, (long) new XAttribute ("k", long.MinValue), "MinValue:long");
+			Assert.AreEqual (uint.MaxValue, (uint) new XAttribute ("k", uint.MaxValue), "MaxValue:uint");
+			Assert.AreEqual (uint.MinValue, (uint) new XAttribute ("k", uint.MinValue), "MinValue:uint");
+			Assert.AreEqual (ulong.MaxValue, (ulong) new XAttribute ("k", ulong.MaxValue), "MaxValue:ulong");
+			Assert.AreEqual (ulong.MinValue, (ulong) new XAttribute ("k", ulong.MinValue), "MinValue:ulong");
+			Assert.AreEqual (decimal.MaxValue, (decimal?) new XAttribute ("k", decimal.MaxValue), "MaxValue:decimal?");
+			Assert.AreEqual (decimal.MinValue, (decimal?) new XAttribute ("k", decimal.MinValue), "MinValue:decimal?");
+			Assert.AreEqual (decimal.MinusOne, (decimal?) new XAttribute ("k", decimal.MinusOne), "MinusOne:decimal?");
+			Assert.AreEqual (decimal.One, (decimal?) new XAttribute ("k", decimal.One), "One:decimal?");
+			Assert.AreEqual (decimal.Zero, (decimal?) new XAttribute ("k", decimal.Zero), "Zero:decimal?");
+			Assert.AreEqual (double.MaxValue, (double?) new XAttribute ("k", double.MaxValue), "MaxValue:double?");
+			Assert.AreEqual (double.MinValue, (double?) new XAttribute ("k", double.MinValue), "MinValue:double?");
+			Assert.AreEqual (double.Epsilon, (double?) new XAttribute ("k", double.Epsilon), "Epsilon:double?");
+			Assert.AreEqual (double.NaN, (double?) new XAttribute ("k", double.NaN), "NaN:double?");
+			Assert.AreEqual (double.NegativeInfinity, (double?) new XAttribute ("k", double.NegativeInfinity), "-Inf:double?");
+			Assert.AreEqual (double.PositiveInfinity, (double?) new XAttribute ("k", double.PositiveInfinity), "+Inf:double?");
+			Assert.AreEqual (float.MaxValue, (float?) new XAttribute ("k", float.MaxValue), "MaxValue:float?");
+			Assert.AreEqual (float.MinValue, (float?) new XAttribute ("k", float.MinValue), "MinValue:float?");
+			Assert.AreEqual (float.Epsilon, (float?) new XAttribute ("k", float.Epsilon), "Epsilon:float?");
+			Assert.AreEqual (float.NaN, (float?) new XAttribute ("k", float.NaN), "NaN:float?");
+			Assert.AreEqual (float.NegativeInfinity, (float?) new XAttribute ("k", float.NegativeInfinity), "-Inf:float?");
+			Assert.AreEqual (float.PositiveInfinity, (float?) new XAttribute ("k", float.PositiveInfinity), "+Inf:float?");
+			Assert.AreEqual (int.MaxValue, (int?) new XAttribute ("k", int.MaxValue), "MaxValue:int?");
+			Assert.AreEqual (int.MinValue, (int?) new XAttribute ("k", int.MinValue), "MinValue:int?");
+			Assert.AreEqual (long.MaxValue, (long?) new XAttribute ("k", long.MaxValue), "MaxValue:long?");
+			Assert.AreEqual (long.MinValue, (long?) new XAttribute ("k", long.MinValue), "MinValue:long?");
+			Assert.AreEqual (uint.MaxValue, (uint?) new XAttribute ("k", uint.MaxValue), "MaxValue:uint?");
+			Assert.AreEqual (uint.MinValue, (uint?) new XAttribute ("k", uint.MinValue), "MinValue:uint?");
+			Assert.AreEqual (ulong.MaxValue, (ulong?) new XAttribute ("k", ulong.MaxValue), "MaxValue:ulong?");
+			Assert.AreEqual (ulong.MinValue, (ulong?) new XAttribute ("k", ulong.MinValue), "MinValue:ulong?");
+			Assert.AreEqual (DateTime.MaxValue, (DateTime) new XAttribute ("k", DateTime.MaxValue), "MaxValue:DateTime");
+			Assert.AreEqual (DateTime.MinValue, (DateTime) new XAttribute ("k", DateTime.MinValue), "MinValue:DateTime");
+			Assert.AreEqual (DateTime.MaxValue, (DateTime?) new XAttribute ("k", DateTime.MaxValue), "MaxValue:DateTime?");
+			Assert.AreEqual (DateTime.MinValue, (DateTime?) new XAttribute ("k", DateTime.MinValue), "MinValue:DateTime?");
+			Assert.AreEqual (DateTimeOffset.MaxValue, (DateTimeOffset) new XAttribute ("k", DateTimeOffset.MaxValue), "MaxValue:DateTimeOffset");
+			Assert.AreEqual (DateTimeOffset.MinValue, (DateTimeOffset) new XAttribute ("k", DateTimeOffset.MinValue), "MinValue:DateTimeOffset");
+			Assert.AreEqual (DateTimeOffset.MaxValue, (DateTimeOffset?) new XAttribute ("k", DateTimeOffset.MaxValue), "MaxValue:DateTimeOffset?");
+			Assert.AreEqual (DateTimeOffset.MinValue, (DateTimeOffset?) new XAttribute ("k", DateTimeOffset.MinValue), "MinValue:DateTimeOffset?");
+			Assert.AreEqual (TimeSpan.MaxValue, (TimeSpan) new XAttribute ("k", TimeSpan.MaxValue), "MaxValue:TimeSpan");
+			Assert.AreEqual (TimeSpan.MinValue, (TimeSpan) new XAttribute ("k", TimeSpan.MinValue), "MinValue:TimeSpan");
+			Assert.AreEqual (TimeSpan.MaxValue, (TimeSpan?) new XAttribute ("k", TimeSpan.MaxValue), "MaxValue:TimeSpan?");
+			Assert.AreEqual (TimeSpan.MinValue, (TimeSpan?) new XAttribute ("k", TimeSpan.MinValue), "MinValue:TimeSpan?");
+		}
+
+		[Test]
 		public void CastBooleans ()
 		{
 			Assert.IsNotNull ((bool?) new XAttribute ("fq", "false"), "#1a");
@@ -719,6 +787,8 @@ namespace MonoTests.System.Xml.Linq
 			Assert.IsNotNull ((bool?) new XAttribute ("x", false), "#14a");
 			Assert.IsFalse (((bool?) new XAttribute ("x", false)).Value, "#14b");
 			Assert.IsFalse ((bool) new XAttribute ("x", false), "#14c");
+			Assert.IsTrue ((bool) new XAttribute ("x", bool.TrueString), "#15a");
+			Assert.IsFalse ((bool) new XAttribute ("x", bool.FalseString), "#15b");
 		}
 
 		[Test]

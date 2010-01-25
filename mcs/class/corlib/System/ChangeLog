@@ -1,3 +1,8 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Single.cs : parse MaxValue and PositiveInfinity as expected.
+	  Patch by Tiaan Geldenhuys.
+
 2010-01-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* Int32.cs: In Parse() cast the parsed value to long *before* changing

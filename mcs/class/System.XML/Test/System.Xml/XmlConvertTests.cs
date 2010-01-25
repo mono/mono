@@ -362,6 +362,9 @@ namespace MonoTests.System.Xml
 				XmlConvert.ToString (new DateTime (2003, 5, 5));
 			Assert.AreEqual (33, dateString.Length);
 			Assert.AreEqual (dateString.Substring (0, 27), "2003-05-05T00:00:00.0000000");
+
+			// Must not throw an exception...
+			Assert.IsNotNull ("-P10675199DT2H48M5.4775808S", XmlConvert.ToString (TimeSpan.MinValue));
 		}
 
 		[Test]

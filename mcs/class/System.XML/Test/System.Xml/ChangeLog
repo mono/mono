@@ -1,3 +1,8 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvertTest.cs : test convert TimeSpan.MinValue to string.
+	  Patch by Tiaan Geldenhuys.
+
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvertTests.cs : add test for ToString(TimeSpan) with small

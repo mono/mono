@@ -1,3 +1,8 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : convert TimeSpan.MinValue to correct string.
+	  Patch by Tiaan Geldenhuys.
+
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDocument.cs : fix type check for optimal node creation.
