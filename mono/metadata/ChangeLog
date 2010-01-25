@@ -1,3 +1,7 @@
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (typebuilder_setup_fields): Pretend field setup already
