@@ -3111,6 +3111,19 @@ public class ArrayTest
 		int a = (int) array [0];
 	}
 
+	[Test]
+	public void SetValue_Nullable () {
+		Array array = Array.CreateInstance (typeof (int?), 7);
+
+		object o = 42;
+
+		array.SetValue (o, 0);
+		Assert.AreEqual (42, array.GetValue (0));
+
+		array.SetValue (null, 0);
+		Assert.AreEqual (null, array.GetValue (0));
+	}
+
 #if NET_4_0
 	[Test]
 	[ExpectedException (typeof (ArgumentException))]

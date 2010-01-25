@@ -1,3 +1,7 @@
+2010-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* ArrayTest.cs: Add a test for SetValue () + nullables.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SingleTest.cs : test for parsing MaxValue and PositiveInfinity.
