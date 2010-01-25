@@ -665,6 +665,34 @@ namespace Mono.Tools.LocaleBuilder {
                                 if (pm != String.Empty)
                                         df.PMDesignator = pm;
 */
+				ni2 = (XPathNodeIterator) ni.Current.Evaluate
+("week/firstDay");
+				if (ni2.MoveNext ()) {
+					XPathNavigator weekday_nav = ni2.Current;
+					switch (weekday_nav.GetAttribute ("day", String.Empty)) {
+					case "sun":
+						df.FirstDayOfWeek = 0;
+						break;
+					case "mon":
+						df.FirstDayOfWeek = 1;
+						break;
+					case "tue":
+						df.FirstDayOfWeek = 2;
+						break;
+					case "wed":
+						df.FirstDayOfWeek = 3;
+						break;
+					case "thu":
+						df.FirstDayOfWeek = 4;
+						break;
+					case "fri":
+						df.FirstDayOfWeek = 5;
+						break;
+					case "sat":
+						df.FirstDayOfWeek = 6;
+						break;
+					}
+				}
 			}
 
                         string date_sep = (string) nav.Evaluate ("string(ldml/dates/symbols/dateSeparator)");
