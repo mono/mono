@@ -147,10 +147,10 @@ namespace System.IO.Ports
 				throw new TimeoutException();
 			}
 
-			if (read_serial (fd, buffer, offset, count) == -1)
+			int result = read_serial (fd, buffer, offset, count);
+			if (result == -1)
 				ThrowIOException ();
-
-			return count;
+			return result;
 		}
 
 		public override long Seek (long offset, SeekOrigin origin)

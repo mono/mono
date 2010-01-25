@@ -1,3 +1,8 @@
+2010-01-25  Leszek Ciesielski <skolima@gmail.com>
+
+	* SerialPortStream.cs: Read was returning requested count instead
+	of actual bytes read. Thanks to Thad Thompson for spotting this.
+
 2010-01-22  Leszek Ciesielski <skolima@gmail.com>
 
 	* SerialPortStream.cs: Check for error on every native call
