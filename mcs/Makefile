@@ -52,6 +52,7 @@ net_2_0_centum_tests := \
 	class/Microsoft.Build.Engine		\
 	class/System.Runtime.Serialization	\
 	class/System.IdentityModel		\
+	class/System.ServiceModel		\
 	class/System.ServiceModel.Web		\
 	class/Mono.C5
 
