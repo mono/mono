@@ -1,3 +1,8 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory_1.cs, ChannelFactory.cs : fix default constructor
+	  handling and ensure service endpoint at opening the factory.
+
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : fix complicated IMetadataExchange handling to

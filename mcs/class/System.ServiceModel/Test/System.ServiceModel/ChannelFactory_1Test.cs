@@ -66,6 +66,14 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		public void EndpointAddressAfterCreateChannel ()
+		{
+			var f = new ChannelFactory<ITestService> (new BasicHttpBinding ());
+			f.CreateChannel (new EndpointAddress ("http://localhost:37564"), null);
+			Assert.IsNull (f.Endpoint.Address, "#1");
+		}
+
+		[Test]
 		[Ignore ("fails under .NET; I never bothered to fix the test")]
 		public void CtorNullArgsAllowed ()
 		{
@@ -128,7 +136,17 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void ConfigEmptyCtor ()
 		{
+			// It has no valid configuration, but goes on.
 			new ChannelFactory<ICtorUseCase1> ();
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void ConfigEmptyCtor2 ()
+		{
+			var cf = new ChannelFactory<ICtorUseCase1> ();
+			// It cannot go on further.
+			cf.CreateChannel ();
 		}
 
 		[Test]

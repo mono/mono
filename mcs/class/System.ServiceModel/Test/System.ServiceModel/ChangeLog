@@ -1,3 +1,8 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory_1Test.cs : added a couple of error check tests for
+	  constructors and CreateChannel() overloads.
+
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostTest.cs : add a few more comments.
