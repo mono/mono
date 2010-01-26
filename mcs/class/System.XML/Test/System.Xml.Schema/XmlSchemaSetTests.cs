@@ -209,6 +209,15 @@ type=""xsd:string"" use=""required""/>
 			// (and conformance error as its result)
 			xss.Compile ();
 		}
+
+		[Test]
+		public void AddWithNullTargetNS () // bug #571650
+		{
+			var xsdraw = "<xs:schema xmlns:xs='http://www.w3.org/2001/XMLSchema'><xs:element name='foo' /></xs:schema>";
+			var schemas = new XmlSchemaSet ();
+			var xsd = schemas.Add ("", XmlReader.Create (new StringReader (xsdraw)));
+			Assert.IsNull (xsd.TargetNamespace, "#1");
+		}
 	}
 }
 #endif

@@ -163,7 +163,7 @@ namespace System.Xml.Schema
 		{
 			XmlSchema schema = XmlSchema.Read (reader, ValidationEventHandler);
 			if (schema.TargetNamespace == null)
-				schema.TargetNamespace = targetNamespace;
+				schema.TargetNamespace = targetNamespace == String.Empty ? null : targetNamespace; // this weirdness is due to bug #571660.
 			else if (targetNamespace != null && schema.TargetNamespace != targetNamespace)
 				throw new XmlSchemaException ("The actual targetNamespace in the schema does not match the parameter.");
 			Add (schema);
