@@ -80,6 +80,16 @@ public class MyTest {
 		if (res.Length != 4){
 			throw new Exception ("Epxected 4 completions (Capacity Chars Length MaxCapacity)");
 		}
+
+		// These should return "partial"
+		object eval_result;
+		bool result_set;
+		string sres  = Evaluator.Evaluate ("1+", out eval_result, out result_set);
+		if (result_set)
+			throw new Exception ("No result should have been set");
+		if (sres != "1+")
+			throw new Exception ("The result should have been the input string, since we have a partial input");
+		
 	}
 	
 }
