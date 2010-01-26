@@ -6,8 +6,10 @@ Microsoft.Win32/RegistryKey.cs
 Microsoft.Win32/RegistryKeyPermissionCheck.cs
 Microsoft.Win32/Registry.cs
 Microsoft.Win32/RegistryHive.cs
+Microsoft.Win32/RegistryOptions.cs
 Microsoft.Win32/RegistryValueKind.cs
 Microsoft.Win32/RegistryValueOptions.cs
+Microsoft.Win32/RegistryView.cs
 Microsoft.Win32/UnixRegistryApi.cs
 Microsoft.Win32/Win32RegistryApi.cs
 Microsoft.Win32/Win32ResultCode.cs
@@ -16,6 +18,7 @@ Microsoft.Win32.SafeHandles/CriticalHandleMinusOneIsInvalid.cs
 Microsoft.Win32.SafeHandles/SafeHandleZeroOrMinusOneIsInvalid.cs
 Microsoft.Win32.SafeHandles/SafeHandleMinusOneIsInvalid.cs
 Microsoft.Win32.SafeHandles/SafeFileHandle.cs
+Microsoft.Win32.SafeHandles/SafeRegistryHandle.cs
 Microsoft.Win32.SafeHandles/SafeWaitHandle.cs
 Mono.Globalization.Unicode/CodePointIndexer.cs
 Mono.Globalization.Unicode/MSCompatUnicodeTable.cs
