@@ -31,6 +31,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Security;
 using System.Xml;
 
 namespace System.Runtime.Serialization.Json {
@@ -80,6 +81,10 @@ namespace System.Runtime.Serialization.Json {
 						"root", r.LocalName, r.NamespaceURI));
 				}
 				return new JsonSerializationReader (this, r, type, true).ReadRoot ();
+			} catch (FieldAccessException fae) {
+				throw new SecurityException ("Deserialization has failed", fae);
+			} catch (MethodAccessException mae) {
+				throw new SecurityException ("Deserialization has failed", mae);
 			} catch (SerializationException) {
 				throw;
 			} catch (Exception ex) {
@@ -94,6 +99,10 @@ namespace System.Runtime.Serialization.Json {
 					writer.WriteStartElement ("root");
 					new JsonSerializationWriter (this, writer, type, false).WriteObjectContent (graph, true, false);
 					writer.WriteEndElement ();
+				} catch (FieldAccessException fae) {
+					throw new SecurityException ("Serialization has failed", fae);
+				} catch (MethodAccessException mae) {
+					throw new SecurityException ("Serialization has failed", mae);
 				} catch (NotImplementedException) {
 					throw;
 				} catch (InvalidDataContractException) {

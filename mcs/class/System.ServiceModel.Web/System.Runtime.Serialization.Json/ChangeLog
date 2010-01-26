@@ -1,3 +1,9 @@
+2010-01-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataContractJsonSerializer_2_1.cs: Don't hide [Field|Method]
+	AccessException inside a SerializationException but in a 
+	SecurityException.
+
 2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DataContractJsonSerializer_2_1.cs: New. Simpler version for 
