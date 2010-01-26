@@ -198,22 +198,41 @@ namespace System.IO {
 
 		public FileSystemInfo [] GetFileSystemInfos (string searchPattern)
 		{
+			return GetFileSystemInfos (searchPattern, SearchOption.TopDirectoryOnly);
+		}
+
+#if NET_4_0
+		public
+#endif
+		FileSystemInfo [] GetFileSystemInfos (string searchPattern, SearchOption searchOption)
+		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
-
+			if (searchOption != SearchOption.TopDirectoryOnly && searchOption != SearchOption.AllDirectories)
+				throw new ArgumentOutOfRangeException ("searchOption", "Must be TopDirectoryOnly or AllDirectories");
 			if (!Directory.Exists (FullPath))
 				throw new IOException ("Invalid directory");
+
+			List<FileSystemInfo> infos = new List<FileSystemInfo> ();
+			InternalGetFileSystemInfos (searchPattern, searchOption, infos);
+			return infos.ToArray ();
+		}
+
+		void InternalGetFileSystemInfos (string searchPattern, SearchOption searchOption, List<FileSystemInfo> infos)
+		{
+			// UnauthorizedAccessExceptions might happen here and break everything for SearchOption.AllDirectories
 			string [] dirs = Directory.GetDirectories (FullPath, searchPattern);
 			string [] files = Directory.GetFiles (FullPath, searchPattern);
 
-			FileSystemInfo[] infos = new FileSystemInfo [dirs.Length + files.Length];
-			int i = 0;
-			foreach (string dir in dirs)
-				infos [i++] = new DirectoryInfo (dir);
-			foreach (string file in files)
-				infos [i++] = new FileInfo (file);
+			Array.ForEach<string> (dirs, (dir) => { infos.Add (new DirectoryInfo (dir)); });
+			Array.ForEach<string> (files, (file) => { infos.Add (new FileInfo (file)); });
+			if (dirs.Length == 0 || searchOption == SearchOption.TopDirectoryOnly)
+				return;
 
-			return infos;
+			foreach (string dir in dirs) {
+				DirectoryInfo dinfo = new DirectoryInfo (dir);
+				dinfo.InternalGetFileSystemInfos (searchPattern, searchOption, infos);
+			}
 		}
 
 		// directory management methods
