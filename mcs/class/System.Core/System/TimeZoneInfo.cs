@@ -358,7 +358,11 @@ namespace System
 			return hash_code;
 		}
 
+#if NET_4_0
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+#else
 		public void GetObjectData (SerializationInfo info, StreamingContext context)
+#endif
 		{
 			throw new NotImplementedException ();
 		}
@@ -512,7 +516,11 @@ namespace System
 			return false;
 		}
 
+#if NET_4_0
+		void IDeserializationCallback.OnDeserialization (object sender)
+#else
 		public void OnDeserialization (object sender)
+#endif
 		{
 			throw new NotImplementedException ();
 		}
