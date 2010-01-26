@@ -185,6 +185,80 @@ namespace MonoTests.System.Xml
 			doc.Schemas.Add (XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null));
 			doc.Validate (null);
 		}
+
+		public void Bug502251 ()
+		{
+			string xsd = @"
+   <xs:schema id='foo' targetNamespace='foo' 
+     elementFormDefault='qualified' 
+     xmlns='foo'     
+     xmlns:xs='http://www.w3.org/2001/XMLSchema'>
+
+ <xs:group name='LayoutElementTypes'>
+  <xs:choice>   
+   <xs:element name='Rows' type='Rows' />
+   <xs:element name='Conditional' type='Conditional' />   
+  </xs:choice>
+ </xs:group>
+
+ <xs:complexType name='Element' abstract='true'>
+  <xs:attribute name='id' type='xs:ID' use='optional'/>
+ </xs:complexType>
+
+ <xs:complexType name='SingleChildElement' abstract='true'>
+  <xs:complexContent>
+   <xs:extension base='Element'>
+    <xs:group ref='LayoutElementTypes' minOccurs='1' maxOccurs='1' />
+   </xs:extension>
+  </xs:complexContent>
+ </xs:complexType>
+
+ <xs:complexType name='Rows'>
+  <xs:complexContent>
+   <xs:extension base='Element'>
+    <xs:sequence minOccurs='1' maxOccurs='unbounded'>
+     <xs:element name='Row' type='Row' />
+    </xs:sequence>    
+         </xs:extension>
+  </xs:complexContent>
+ </xs:complexType> 
+
+   <xs:complexType name='Row'>
+  <xs:complexContent>
+   <xs:extension base='SingleChildElement'>    
+   </xs:extension>    
+  </xs:complexContent>
+ </xs:complexType>
+
+ <xs:complexType name='Conditional'>
+  <xs:complexContent>
+   <xs:extension base='Element'>    
+   </xs:extension>
+  </xs:complexContent>
+ </xs:complexType>
+
+ <xs:complexType name='Layout'>
+  <xs:complexContent>
+   <xs:extension base='SingleChildElement'>
+   </xs:extension>
+  </xs:complexContent>
+ </xs:complexType>
+
+ <xs:element name='Layout' type='Layout' />
+</xs:schema>";
+
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml (@"<Layout xmlns='foo'>
+  <Rows>
+    <Row><Conditional/></Row>     
+  </Rows>
+</Layout>");
+
+			XmlSchema schema = XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null);
+
+			doc.Schemas.Add (schema);
+			doc.Validate (null);
+		}
 	}
 }
 
