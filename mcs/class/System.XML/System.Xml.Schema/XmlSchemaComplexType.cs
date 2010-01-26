@@ -589,8 +589,10 @@ namespace System.Xml.Schema
 
 			CollectSchemaComponent (h, schema);
 
-			ValidateContentFirstPass (h, schema);
-
+			ValidateBaseXmlSchemaType (h, schema);
+			
+			ValidateParticle (h, schema);
+			
 			FillContentTypeParticle (h, schema);
 
 			// 3.4.6: Properties Correct
@@ -650,15 +652,16 @@ namespace System.Xml.Schema
 			XmlSchemaUtil.ValidateAttributesResolved (attributeUses,
 				h, schema, attributes, anyAttribute, ref attributeWildcard, null, false);
 		}
-
-		private void ValidateContentFirstPass (ValidationEventHandler h, XmlSchema schema)
+		
+		private void ValidateBaseXmlSchemaType (ValidationEventHandler h, XmlSchema schema)
 		{
-			if (ContentModel != null) {
-				errorCount += contentModel.Validate (h, schema);
-				if (BaseXmlSchemaTypeInternal != null)
-					errorCount += BaseXmlSchemaTypeInternal.Validate (h, schema);
-			}
-			else if (Particle != null) {
+			if (ContentModel != null && BaseXmlSchemaTypeInternal != null)
+				errorCount += BaseXmlSchemaTypeInternal.Validate (h, schema);
+		}
+
+		private void ValidateParticle (ValidationEventHandler h, XmlSchema schema)
+		{	
+			if (ContentModel == null && Particle != null) {
 				errorCount += particle.Validate (h, schema);
 				XmlSchemaGroupRef pgrp = Particle as XmlSchemaGroupRef;
 				if (pgrp != null) {
@@ -673,6 +676,8 @@ namespace System.Xml.Schema
 
 		private void ValidateContentModel (ValidationEventHandler h, XmlSchema schema)
 		{
+			errorCount += contentModel.Validate (h, schema);
+			
 			XmlSchemaType baseType = BaseXmlSchemaTypeInternal;
 
 			// Here we check 3.4.6 Properties Correct :: 2. and 3.
