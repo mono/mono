@@ -1,3 +1,8 @@
+2010-01-26  Geoff Norton  <gnorton@novell.com>
+
+	* aot-compiler.c: Fix a logic error introduced when guarding against enums
+	with struct marshalability.
+
 2010-01-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Improve the processing MONO_VERBOSE_METHOD so
