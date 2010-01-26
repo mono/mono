@@ -62,9 +62,6 @@ static gboolean optimize_for_xen = TRUE;
 #define CALLCONV_IS_STDCALL(call_conv) ((call_conv) == MONO_CALL_STDCALL)
 #endif
 
-/* amd64_mov_reg_imm () */
-#define BREAKPOINT_SIZE 8
-
 /* This mutex protects architecture specific caches */
 #define mono_mini_arch_lock() EnterCriticalSection (&mini_arch_mutex)
 #define mono_mini_arch_unlock() LeaveCriticalSection (&mini_arch_mutex)
@@ -81,6 +78,15 @@ static gpointer ss_trigger_page;
 
 /* Enabled breakpoints read from this trigger page */
 static gpointer bp_trigger_page;
+
+/* The size of the breakpoint sequence */
+static int breakpoint_size;
+
+/* The size of the breakpoint instruction causing the actual fault */
+static int breakpoint_fault_size;
+
+/* The size of the single step instruction causing the actual fault */
+static int single_step_fault_size;
 
 #ifdef PLATFORM_WIN32
 /* On Win64 always reserve first 32 bytes for first four arguments */
@@ -910,10 +916,27 @@ mono_arch_cpu_init (void)
 void
 mono_arch_init (void)
 {
+	int flags;
+
 	InitializeCriticalSection (&mini_arch_mutex);
 
-	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
-	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), MONO_MMAP_READ|MONO_MMAP_32BIT);
+#ifdef MONO_ARCH_NOMAP32BIT
+	flags = MONO_MMAP_READ;
+	/* amd64_mov_reg_imm () + amd64_mov_reg_membase () */
+	breakpoint_size = 13;
+	breakpoint_fault_size = 3;
+	/* amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4); */
+	single_step_fault_size = 5;
+#else
+	flags = MONO_MMAP_READ|MONO_MMAP_32BIT;
+	/* amd64_mov_reg_mem () */
+	breakpoint_size = 8;
+	breakpoint_fault_size = 8;
+	single_step_fault_size = 8;
+#endif
+
+	ss_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
+	bp_trigger_page = mono_valloc (NULL, mono_pagesize (), flags);
 	mono_mprotect (bp_trigger_page, mono_pagesize (), 0);
 }
 
@@ -1597,6 +1620,14 @@ mono_arch_create_vars (MonoCompile *cfg)
 			printf ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
 		}
+	}
+
+	if (cfg->gen_seq_points) {
+		MonoInst *ins;
+
+	    ins = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_LOCAL);
+		ins->flags |= MONO_INST_VOLATILE;
+		cfg->arch.ss_trigger_page_var = ins;
 	}
 
 #ifdef MONO_AMD64_NO_PUSHES
@@ -3506,13 +3537,24 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * We do this _before_ the breakpoint, so single stepping after
 			 * a breakpoint is hit will step to the next IL offset.
 			 */
-			g_assert (((guint64)ss_trigger_page >> 32) == 0);
+			if (ins->flags & MONO_INST_SINGLE_STEP_LOC) {
+				if (((guint64)ss_trigger_page >> 32) == 0)
+					amd64_mov_reg_mem (code, AMD64_R11, (guint64)ss_trigger_page, 4);
+				else {
+					MonoInst *var = cfg->arch.ss_trigger_page_var;
 
-			if (ins->flags & MONO_INST_SINGLE_STEP_LOC)
-				amd64_mov_reg_mem (code, AMD64_R11, (guint64)ss_trigger_page, 4);
+					amd64_mov_reg_membase (code, AMD64_R11, var->inst_basereg, var->inst_offset, 8);
+					amd64_alu_membase_imm_size (code, X86_CMP, AMD64_R11, 0, 0, 4);
+				}
+			}
 
 			il_offset = ins->inst_imm;
 
+			/* 
+			 * This is the address which is saved in seq points, 
+			 * get_ip_for_single_step () / get_ip_for_breakpoint () needs to compute this
+			 * from the address of the instruction causing the fault.
+			 */
 			if (!cfg->seq_points)
 				cfg->seq_points = g_ptr_array_new ();
 			g_ptr_array_add (cfg->seq_points, GUINT_TO_POINTER (il_offset));
@@ -3521,7 +3563,7 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			 * A placeholder for a possible breakpoint inserted by
 			 * mono_arch_set_breakpoint ().
 			 */
-			for (i = 0; i < BREAKPOINT_SIZE; ++i)
+			for (i = 0; i < breakpoint_size; ++i)
 				x86_nop (code);
 			break;
 		}
@@ -6175,6 +6217,17 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 		}
 	}
 
+	/* Initialize ss_trigger_page_var */
+	if (cfg->arch.ss_trigger_page_var) {
+		MonoInst *var = cfg->arch.ss_trigger_page_var;
+
+		g_assert (!cfg->compile_aot);
+		g_assert (var->opcode == OP_REGOFFSET);
+
+		amd64_mov_reg_imm (code, AMD64_R11, (guint64)ss_trigger_page);
+		amd64_mov_membase_reg (code, var->inst_basereg, var->inst_offset, AMD64_R11, 8);
+	}
+
 	cfg->code_len = code - cfg->native_code;
 
 	g_assert (cfg->code_len < cfg->code_size);
@@ -7418,11 +7471,14 @@ mono_arch_set_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	 * instead.
 	 */
 	g_assert (code [0] == 0x90);
+	if (breakpoint_size == 8) {
+		amd64_mov_reg_mem (code, AMD64_R11, (guint64)bp_trigger_page, 4);
+	} else {
+		amd64_mov_reg_imm_size (code, AMD64_R11, (guint64)bp_trigger_page, 8);
+		amd64_mov_reg_membase (code, AMD64_R11, AMD64_R11, 0, 4);
+	}
 
-	g_assert (((guint64)bp_trigger_page >> 32) == 0);
-
-	amd64_mov_reg_mem (code, AMD64_R11, (guint64)bp_trigger_page, 4);
-	g_assert (code - orig_code == BREAKPOINT_SIZE);
+	g_assert (code - orig_code == breakpoint_size);
 }
 
 /*
@@ -7436,8 +7492,52 @@ mono_arch_clear_breakpoint (MonoJitInfo *ji, guint8 *ip)
 	guint8 *code = ip;
 	int i;
 
-	for (i = 0; i < BREAKPOINT_SIZE; ++i)
+	for (i = 0; i < breakpoint_size; ++i)
 		x86_nop (code);
+}
+
+gboolean
+mono_arch_is_breakpoint_event (void *info, void *sigctx)
+{
+#ifdef PLATFORM_WIN32
+	EXCEPTION_RECORD* einfo = (EXCEPTION_RECORD*)info;
+	return FALSE;
+#else
+	siginfo_t* sinfo = (siginfo_t*) info;
+	/* Sometimes the address is off by 4 */
+	if (sinfo->si_addr >= bp_trigger_page && (guint8*)sinfo->si_addr <= (guint8*)bp_trigger_page + 128)
+		return TRUE;
+	else
+		return FALSE;
+#endif
+}
+
+/*
+ * mono_arch_get_ip_for_breakpoint:
+ *
+ *   Convert the ip in CTX to the address where a breakpoint was placed.
+ */
+guint8*
+mono_arch_get_ip_for_breakpoint (MonoJitInfo *ji, MonoContext *ctx)
+{
+	guint8 *ip = MONO_CONTEXT_GET_IP (ctx);
+
+	/* ip points to the instruction causing the fault */
+	ip -= (breakpoint_size - breakpoint_fault_size);
+
+	return ip;
+}
+
+/*
+ * mono_arch_skip_breakpoint:
+ *
+ *   Modify CTX so the ip is placed after the breakpoint instruction, so when
+ * we resume, the instruction is not executed again.
+ */
+void
+mono_arch_skip_breakpoint (MonoContext *ctx)
+{
+	MONO_CONTEXT_SET_IP (ctx, (guint8*)MONO_CONTEXT_GET_IP (ctx) + breakpoint_fault_size);
 }
 	
 /*
@@ -7484,38 +7584,6 @@ mono_arch_is_single_step_event (void *info, void *sigctx)
 #endif
 }
 
-gboolean
-mono_arch_is_breakpoint_event (void *info, void *sigctx)
-{
-#ifdef PLATFORM_WIN32
-	EXCEPTION_RECORD* einfo = (EXCEPTION_RECORD*)info;
-	return FALSE;
-#else
-	siginfo_t* sinfo = (siginfo_t*) info;
-	/* Sometimes the address is off by 4 */
-	if (sinfo->si_addr >= bp_trigger_page && (guint8*)sinfo->si_addr <= (guint8*)bp_trigger_page + 128)
-		return TRUE;
-	else
-		return FALSE;
-#endif
-}
-
-/*
- * mono_arch_get_ip_for_breakpoint:
- *
- *   Convert the ip in CTX to the address where a breakpoint was placed.
- */
-guint8*
-mono_arch_get_ip_for_breakpoint (MonoJitInfo *ji, MonoContext *ctx)
-{
-	guint8 *ip = MONO_CONTEXT_GET_IP (ctx);
-
-	/* size of xor r11, r11 */
-	ip -= 0;
-
-	return ip;
-}
-
 /*
  * mono_arch_get_ip_for_single_step:
  *
@@ -7526,22 +7594,9 @@ mono_arch_get_ip_for_single_step (MonoJitInfo *ji, MonoContext *ctx)
 {
 	guint8 *ip = MONO_CONTEXT_GET_IP (ctx);
 
-	/* Size of amd64_mov_reg_mem (r11) */
-	ip += 8;
+	ip += single_step_fault_size;
 
 	return ip;
-}
-
-/*
- * mono_arch_skip_breakpoint:
- *
- *   Modify CTX so the ip is placed after the breakpoint instruction, so when
- * we resume, the instruction is not executed again.
- */
-void
-mono_arch_skip_breakpoint (MonoContext *ctx)
-{
-	MONO_CONTEXT_SET_IP (ctx, (guint8*)MONO_CONTEXT_GET_IP (ctx) + BREAKPOINT_SIZE);
 }
 
 /*
@@ -7553,7 +7608,7 @@ mono_arch_skip_breakpoint (MonoContext *ctx)
 void
 mono_arch_skip_single_step (MonoContext *ctx)
 {
-	MONO_CONTEXT_SET_IP (ctx, (guint8*)MONO_CONTEXT_GET_IP (ctx) + 8);
+	MONO_CONTEXT_SET_IP (ctx, (guint8*)MONO_CONTEXT_GET_IP (ctx) + single_step_fault_size);
 }
 
 /*
