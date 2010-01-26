@@ -1,3 +1,8 @@
+2010-01-26  Marek Habersack  <mhabersack@novell.com>
+
+	* SearchOption.cs: included in 2.1 build as internal to fix
+	the build.
+
 2010-01-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* DirectoryInfo.cs: new overload for GetFileSystemInfos().

@@ -31,10 +31,12 @@
 using System.Runtime.InteropServices;
 
 namespace System.IO {
-
+#if !NET_2_1 || MONOTOUCH
 	[ComVisible (true)]
 	[Serializable]
-	public enum SearchOption {
+	public
+#endif
+	enum SearchOption {
 		TopDirectoryOnly = 0,
 		AllDirectories = 1
 	}

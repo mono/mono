@@ -1,3 +1,8 @@
+2010-01-26  Marek Habersack  <mhabersack@novell.com>
+
+	* net_2_1_raw_corlib.dll.sources: added System.IO/SearchOption.cs
+	to fix the build.
+
 2009-12-03  Marek Habersack  <mhabersack@novell.com>
 
 	* corlib.dll.sources: added
