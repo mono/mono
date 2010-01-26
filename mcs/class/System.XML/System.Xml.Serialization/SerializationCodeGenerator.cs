@@ -971,15 +971,19 @@ namespace System.Xml.Serialization
 		void GenerateWriteAnyElementContent (XmlTypeMapMemberAnyElement member, string memberValue)
 		{
 			bool singleElement = (member.TypeData.Type == typeof (XmlElement));
-			string var;
+			string var, var2;
 			
+			var2 = GetObTempVar ();
 			if (singleElement)
 				var = memberValue;
 			else {
 				var = GetObTempVar ();
-				WriteLineInd ("foreach (XmlNode " + var + " in " + memberValue + ") {");
+				WriteLineInd ("foreach (object " + var2 + " in " + memberValue + ") {");
 			}
-			
+			WriteLine ("XmlNode " + var + " = " + var2 + " as XmlNode;");
+			WriteLine ("if (" + var + " == null && " + var2 + "!= null) throw new InvalidOperationException (\"A member with XmlAnyElementAttribute can only serialize and deserialize certain XmlNode types.");
+			WriteLineUni ("}");
+
 			string elem = GetObTempVar ();
 			WriteLine ("XmlNode " + elem + " = " + var + ";");
 			WriteLine ("if (" + elem + " is XmlElement) {");

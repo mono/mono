@@ -2831,6 +2831,19 @@ namespace MonoTests.System.XmlSerialization
 			Assert.AreEqual (Infoset (xml), WriterText);
 			xs.Deserialize (new StringReader (xml));
 		}
+
+		[Test]
+		public void XmlAnyElementForObjects () // bug #553032
+		{
+			new XmlSerializer (typeof (XmlAnyElementForObjectsType));
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void XmlAnyElementForObjects2 () // bug #553032-2
+		{
+			new XmlSerializer (typeof (XmlAnyElementForObjectsType)).Serialize (TextWriter.Null, new XmlAnyElementForObjectsType ());
+		}
 #endif
 
 		#endregion //GenericsSeralizationTests
@@ -2982,6 +2995,12 @@ namespace MonoTests.System.XmlSerialization
 		{
 		        [XmlArrayItem (typeof (XmlSchemaProviderQNameBecomesRootNameType))]
 		        public object [] Foo = new object [] {new XmlSchemaProviderQNameBecomesRootNameType ()};
+		}
+
+		public class XmlAnyElementForObjectsType
+		{
+			[XmlAnyElement]
+			public object [] arr = new object [] {3,4,5};
 		}
 #endif
 
