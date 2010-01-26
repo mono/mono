@@ -36,6 +36,7 @@ namespace System.Security.Authentication
 	public enum CipherAlgorithmType 
 	{
 		None       = 0,
+		Null	   = 0x6000,
 		Aes        = 0x6611,
 		Aes128     = 0x660e,
 		Aes192     = 0x660f,
