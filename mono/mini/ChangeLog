@@ -1,3 +1,7 @@
+2010-01-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* dwarfwriter.c (emit_type): Treat MONO_TYPE_PTR as 'I' not 'I4'.
+
 2010-01-26  Geoff Norton  <gnorton@novell.com>
 
 	* aot-compiler.c: Fix a logic error introduced when guarding against enums
