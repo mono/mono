@@ -1,3 +1,8 @@
+2010-01-26  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #573329
+	* eval.cs: Don't disable error reporting completely on silent mode.
+	
 2010-01-25  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #573312

@@ -651,14 +651,10 @@ namespace Mono.CSharp {
 			if (mode == ParseMode.GetCompletions)
 				parser.Lexer.CompleteOnEOF = true;
 
-			bool disable_error_reporting;
+			ReportPrinter old_printer = null;
 			if ((mode == ParseMode.Silent || mode == ParseMode.GetCompletions) && CSharpParser.yacc_verbose_flag == 0)
-				disable_error_reporting = true;
-			else
-				disable_error_reporting = false;
+				old_printer = ctx.Report.SetPrinter (new StreamReportPrinter (TextWriter.Null));
 
-			if (disable_error_reporting)
-				ctx.Report.DisableReporting ();
 			try {
 				parser.parse ();
 			} finally {
@@ -670,8 +666,8 @@ namespace Mono.CSharp {
 					parser = null;
 				}
 
-				if (disable_error_reporting)
-					ctx.Report.EnableReporting ();
+				if (old_printer != null)
+					ctx.Report.SetPrinter (old_printer);
 			}
 			return parser;
 		}
