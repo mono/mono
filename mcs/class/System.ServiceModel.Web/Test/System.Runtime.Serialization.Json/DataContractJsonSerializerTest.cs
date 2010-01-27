@@ -1325,7 +1325,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("Wrong test case. See bug #573691")]
 		public void ReadWriteObject_Single_SpecialCases ()
 		{
 			Assert.IsTrue (Single.IsNaN ((float) ReadWriteObject (typeof (float), Single.NaN, "NaN")));
@@ -1334,7 +1334,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[Ignore ("Wrong test case. See bug #573691")]
 		public void ReadWriteObject_Double_SpecialCases ()
 		{
 			Assert.IsTrue (Double.IsNaN ((double) ReadWriteObject (typeof (double), Double.NaN, "NaN")));

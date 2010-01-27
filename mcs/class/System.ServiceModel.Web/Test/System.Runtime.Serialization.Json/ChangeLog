@@ -1,3 +1,8 @@
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : invalidate previous non-working
+	  tests.
+
 2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DataContractJsonSerializerTest.cs: Add non-working test cases
