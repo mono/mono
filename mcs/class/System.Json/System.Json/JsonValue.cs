@@ -123,13 +123,14 @@ namespace System.Json
 
 		internal string EscapeString (string src)
 		{
-			// FIXME: not sure if null is allowed.
 			if (src == null)
 				return null;
 
 			for (int i = 0; i < src.Length; i++)
 				if (src [i] == '"' || src [i] == '\\') {
-					var sb = new StringBuilder ().Append (src, 0, i - 1);
+					var sb = new StringBuilder ();
+					if (i > 0)
+						sb.Append (src, 0, i - 1);
 					return DoEscapeString (sb, src, i);
 			}
 			return src;

@@ -144,6 +144,7 @@ namespace System.Json
 			}
 		}
 
+		// It could return either int, long or decimal, depending on the parsed value.
 		JsonPrimitive ReadNumericLiteral ()
 		{
 			bool negative = false;
@@ -195,8 +196,14 @@ namespace System.Json
 
 			c = PeekChar ();
 			if (c != 'e' && c != 'E') {
-				if (!hasFrac)
-					return new JsonPrimitive (negative ? -val : val);
+				if (!hasFrac) {
+					if (negative && int.MinValue <= -val ||
+					    !negative && val <= int.MaxValue)
+						return new JsonPrimitive ((int) (negative ? -val : val));
+					if (negative && long.MinValue <= -val ||
+					    !negative && val <= long.MaxValue)
+						return new JsonPrimitive ((long) (negative ? -val : val));
+				}
 				var v = val + frac;
 				return new JsonPrimitive (negative ? -v : v);
 			}
