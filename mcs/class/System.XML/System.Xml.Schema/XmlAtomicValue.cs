@@ -285,6 +285,8 @@ namespace System.Xml.Schema
 			case XmlTypeCode.Short:
 			case XmlTypeCode.UnsignedShort:
 				return ValueAsInt;
+			case XmlTypeCode.Decimal:
+				return ValueAsDecimal;
 			case XmlTypeCode.Double:
 			case XmlTypeCode.Float:
 				return ValueAsDouble;
@@ -340,6 +342,8 @@ namespace System.Xml.Schema
 					return ValueAsBoolean;
 				case XmlTypeCode.DateTime:
 					return ValueAsDateTime;
+				case XmlTypeCode.Decimal:
+					return ValueAsDecimal;
 				case XmlTypeCode.Float:
 				case XmlTypeCode.Double:
 					return ValueAsDouble;
@@ -367,6 +371,9 @@ namespace System.Xml.Schema
 				case XmlTypeCode.Float:
 				case XmlTypeCode.Double:
 					stringValue = XQueryConvert.DoubleToString (ValueAsDouble);
+					break;
+				case XmlTypeCode.Decimal:
+					stringValue = XQueryConvert.DecimalToString (ValueAsDecimal);
 					break;
 				case XmlTypeCode.NonPositiveInteger:
 				case XmlTypeCode.NonNegativeInteger:
@@ -476,6 +483,37 @@ namespace System.Xml.Schema
 				}
 
 				throw new InvalidCastException (String.Format ("Conversion from {0} to {1} is not supported", schemaType.QualifiedName, XmlSchemaSimpleType.XsDateTime.QualifiedName));
+			}
+		}
+
+		// Unlike the other ValueAs...() functions, this is not part
+		// of the XPathItem abstract class, so it's not an override
+		public decimal ValueAsDecimal {
+			get {
+				switch (xmlTypeCode) {
+				case XmlTypeCode.Boolean:
+					return XQueryConvert.BooleanToDecimal (booleanValue);
+				case XmlTypeCode.Decimal:
+					return decimalValue;
+				case XmlTypeCode.Double:
+					return XQueryConvert.DoubleToDecimal (doubleValue);
+				case XmlTypeCode.Long:
+					return XQueryConvert.IntegerToDecimal (longValue);
+				case XmlTypeCode.Int:
+					return XQueryConvert.IntToDecimal (intValue);
+				case XmlTypeCode.Float:
+					return XQueryConvert.FloatToDecimal (floatValue);
+				case XmlTypeCode.String:
+					return XQueryConvert.StringToDecimal (stringValue);
+				case XmlTypeCode.None:
+				case XmlTypeCode.Item:
+				case XmlTypeCode.AnyAtomicType:
+					if (objectValue is decimal)
+						return (decimal) objectValue;
+					break;
+				}
+
+				throw new InvalidCastException (String.Format ("Conversion from {0} to {1} is not supported", schemaType.QualifiedName, XmlSchemaSimpleType.XsDecimal.QualifiedName));
 			}
 		}
 

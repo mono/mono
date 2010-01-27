@@ -1,3 +1,8 @@
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaValidatorTests.cs : added test for bug #557452, by
+	  Luke Ravitch.
+
 2010-01-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaValidatorTests.cs : added test for bug #502251, by

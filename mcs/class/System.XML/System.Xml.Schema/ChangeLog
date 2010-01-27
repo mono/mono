@@ -1,3 +1,9 @@
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAtomicValue.cs: handle Decimal here to process xs:decimal as
+	  a valid base type for simple types. patch by Luke Ravitch,
+	  Fixed bug #557452.
+
 2010-01-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaComplexType.cs : validate base type first and then
