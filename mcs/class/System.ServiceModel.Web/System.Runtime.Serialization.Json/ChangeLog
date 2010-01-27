@@ -1,5 +1,10 @@
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* JsonSerializationReader.cs : oops, wrong fix, should consume the
+	  reader.
+
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JsonSerializationReader.cs : "null" for string should be read as
 	  null, not String.Empty. Fixed bug #573690.
 

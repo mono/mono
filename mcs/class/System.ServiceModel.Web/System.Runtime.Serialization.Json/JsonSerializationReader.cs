@@ -80,7 +80,12 @@ namespace System.Runtime.Serialization.Json
 					throw new SerializationException (String.Format ("The only expected DBNull value string is '{{}}'. Tha actual input was '{0}'.", dbn));
 				return DBNull.Value;
 			case TypeCode.String:
-				return isNull ? null : reader.ReadElementContentAsString ();
+				if (isNull) {
+					reader.ReadElementContentAsString ();
+					return null;
+				}
+				else
+					return reader.ReadElementContentAsString ();
 			case TypeCode.Single:
 				return reader.ReadElementContentAsFloat ();
 			case TypeCode.Double:
@@ -111,7 +116,12 @@ namespace System.Runtime.Serialization.Json
 				if (type == typeof (Guid)) {
 					return new Guid (reader.ReadElementContentAsString ());
 				} else if (type == typeof (Uri)) {
-					return isNull ? null : new Uri (reader.ReadElementContentAsString ());
+					if (isNull) {
+						reader.ReadElementContentAsString ();
+						return null;
+					}
+					else
+						return new Uri (reader.ReadElementContentAsString ());
 				} else if (type == typeof (XmlQualifiedName)) {
 					string s = reader.ReadElementContentAsString ();
 					int idx = s.IndexOf (':');
