@@ -1,3 +1,11 @@
+2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-error-internals.h: Add mono_error_set_not_verifiable.
+
+	* mono-error.h: Add MONO_ERROR_NOT_VERIFIABLE.
+
+	* mono-error.c: Implement mono_error_set_not_verifiable.
+
 2010-01-26  U-anarquia\miguel  <miguel@anarquia>
 
 	* mono-dl.c: Removed debugging messages for the embeddable version
