@@ -1,5 +1,12 @@
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* JsonReader.cs : It seems it can either return int, long or decimal
+	  depending on the value. Users cannot really predict what type of
+	  the primitive value can be returned and casts to specific types
+	  very likely fail. doh.
+
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JsonReader.cs : use decimal instead of int to parse decimal part
 	  of numeric value. It can parse bigger value than int now (like
 	  tweet id).
