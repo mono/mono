@@ -1,3 +1,8 @@
+2010-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_field_get_value_object): Handle nullable types correctly.
+	Fixes #572874.
+
 2010-01-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Array_SetValueImpl): Handle nullable types correctly.
