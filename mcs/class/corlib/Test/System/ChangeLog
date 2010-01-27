@@ -1,3 +1,7 @@
+2010-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* ValueTypeTest.cs: Add a test for Equals () + nullables.
+
 2010-01-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* EnumTest.cs: New tests for the new TryParse method.

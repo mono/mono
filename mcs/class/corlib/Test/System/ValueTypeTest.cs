@@ -36,6 +36,10 @@ namespace MonoTests.System
 		}
 	}
 
+	struct NullableStruct {
+		public Nullable<int> f;
+	}
+
 	[TestFixture]
 	public class ValueTypeTest 
 	{
@@ -45,6 +49,26 @@ namespace MonoTests.System
 			Blah a = new Blah ("abc", 1);
 			Blah b = new Blah (string.Format ("ab{0}", 'c'), 1);
 			Assert.AreEqual (a.Equals (b), true, "#01");
+		}
+
+		[Test]
+		public void TestEquals_Nullable ()
+		{
+			NullableStruct f1 = new NullableStruct { f = 5 };
+			NullableStruct f2 = new NullableStruct { f = 5 };
+			Assert.IsTrue (f1.Equals (f2));
+
+			f1 = new NullableStruct { f = null };
+			f2 = new NullableStruct { f = null };
+			Assert.IsTrue (f1.Equals (f2));
+
+			f1 = new NullableStruct { f = 1 };
+			f2 = new NullableStruct { f = 2 };
+			Assert.IsFalse (f1.Equals (f2));
+
+			f1 = new NullableStruct { f = 1 };
+			f2 = new NullableStruct { f = null };
+			Assert.IsFalse (f1.Equals (f2));
 		}
 
 		[Test]
