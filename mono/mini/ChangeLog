@@ -1,5 +1,8 @@
 2010-01-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* abcremoval.c (process_block): Fix the if (region) check so abcrem actually
+	works.
+
 	* mini-amd64.c: Make the soft debugger work on platforms without MAP_32BIT.
 	Fixes #573988.
 
