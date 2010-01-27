@@ -1972,7 +1972,8 @@ namespace System {
 		public bool IsWellFormedOriginalString ()
 		{
 			// funny, but it does not use the Parser's IsWellFormedOriginalString().
-			return EscapeString (OriginalString) == OriginalString;
+			// Also, it seems we need to *not* escape hex.
+			return EscapeString (OriginalString, false, false, true) == OriginalString;
 		}
 
 		// static methods

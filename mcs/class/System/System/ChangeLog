@@ -1,3 +1,9 @@
+2010-01-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Uri.cs: In IsWellFormedOriginalString(), call to our internal
+	EscapeString() method since we need to tell it to *not* escape '#'
+	(hex). Fixes #549135.
+
 2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Uri.cs: Hide protected EscapeString and Unescape for SL2/3
