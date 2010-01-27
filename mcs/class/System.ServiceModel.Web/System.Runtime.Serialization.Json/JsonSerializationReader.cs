@@ -71,6 +71,8 @@ namespace System.Runtime.Serialization.Json
 			if (serialized_object_count ++ == serializer.MaxItemsInObjectGraph)
 				throw SerializationError (String.Format ("The object graph exceeded the maximum object count '{0}' specified in the serializer", serializer.MaxItemsInObjectGraph));
 
+			bool isNull = reader.GetAttribute ("type") == "null";
+
 			switch (Type.GetTypeCode (type)) {
 			case TypeCode.DBNull:
 				string dbn = reader.ReadElementContentAsString ();
@@ -78,7 +80,7 @@ namespace System.Runtime.Serialization.Json
 					throw new SerializationException (String.Format ("The only expected DBNull value string is '{{}}'. Tha actual input was '{0}'.", dbn));
 				return DBNull.Value;
 			case TypeCode.String:
-				return reader.ReadElementContentAsString ();
+				return isNull ? null : reader.ReadElementContentAsString ();
 			case TypeCode.Single:
 				return reader.ReadElementContentAsFloat ();
 			case TypeCode.Double:
@@ -109,7 +111,7 @@ namespace System.Runtime.Serialization.Json
 				if (type == typeof (Guid)) {
 					return new Guid (reader.ReadElementContentAsString ());
 				} else if (type == typeof (Uri)) {
-					return new Uri (reader.ReadElementContentAsString ());
+					return isNull ? null : new Uri (reader.ReadElementContentAsString ());
 				} else if (type == typeof (XmlQualifiedName)) {
 					string s = reader.ReadElementContentAsString ();
 					int idx = s.IndexOf (':');

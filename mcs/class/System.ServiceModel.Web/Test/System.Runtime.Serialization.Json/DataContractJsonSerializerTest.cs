@@ -1292,7 +1292,6 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ReadWriteNullObject ()
 		{
 			DataContractJsonSerializer dcjs = new DataContractJsonSerializer (typeof (string));
