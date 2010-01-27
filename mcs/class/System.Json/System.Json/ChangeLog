@@ -1,5 +1,9 @@
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* JsonReader.cs : oops, added previous change to wrong position.
+
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JsonReader.cs : It seems it can either return int, long or decimal
 	  depending on the value. Users cannot really predict what type of
 	  the primitive value can be returned and casts to specific types

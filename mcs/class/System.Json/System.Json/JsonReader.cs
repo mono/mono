@@ -196,17 +196,15 @@ namespace System.Json
 
 			c = PeekChar ();
 			if (c != 'e' && c != 'E') {
-				if (!hasFrac)
-					return new JsonPrimitive (negative ? -val : val);
-				var v = val + frac;
-				if (frac == 0) {
-					if (negative && int.MinValue <= -v ||
-					    !negative && v <= int.MaxValue)
-						return new JsonPrimitive ((int) (negative ? -v : v));
-					if (negative && long.MinValue <= -v ||
-					    !negative && v <= long.MaxValue)
-						return new JsonPrimitive ((long) (negative ? -v : v));
+				if (!hasFrac) {
+					if (negative && int.MinValue <= -val ||
+					    !negative && val <= int.MaxValue)
+						return new JsonPrimitive ((int) (negative ? -val : val));
+					if (negative && long.MinValue <= -val ||
+					    !negative && val <= long.MaxValue)
+						return new JsonPrimitive ((long) (negative ? -val : val));
 				}
+				var v = val + frac;
 				return new JsonPrimitive (negative ? -v : v);
 			}
 
