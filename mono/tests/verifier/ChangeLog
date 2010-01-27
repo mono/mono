@@ -1,3 +1,8 @@
+2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Makefile, *.sh, *.il: Change status of a bunch of a tests to reflect the metadata
+	verifier. First pass into making the test suite works under OSX.
+
 2010-01-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_iface_with_variant_constraint.cs: Constraints can be variant.
