@@ -1,3 +1,13 @@
+2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-error-internals.h: Add mono_error_set_not_verifiable.
+
+	* mono-error.h: Add MONO_ERROR_NOT_VERIFIABLE.
+
+	* mono-error.c: Implement mono_error_set_not_verifiable.
+
+	Backport of r150306.
+
 2010-01-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mono-error.c: Call va_end/va_start before reusing 'args'.
