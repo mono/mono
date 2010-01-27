@@ -155,7 +155,7 @@ namespace System.Json
 			}
 
 			int c;
-			int val = 0;
+			decimal val = 0;
 			int x = 0;
 			bool zeroStart = PeekChar () == '0';
 			for (; ; x++) {

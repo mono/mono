@@ -1,3 +1,9 @@
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : use decimal instead of int to parse decimal part
+	  of numeric value. It can parse bigger value than int now (like
+	  tweet id).
+
 2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonReader.cs : \uXXXX parser was totally wrong, giving wrong #.
