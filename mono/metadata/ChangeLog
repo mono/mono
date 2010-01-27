@@ -1,5 +1,10 @@
 2010-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* pedump.c (main): Properly set the verifier mode when running the metadata
+	verifier.
+
+2010-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verify_class_for_overlapping_reference_fields): Properly verify
 	overlapping fields now that we're called before has_references is set.
 
