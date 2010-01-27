@@ -1,3 +1,8 @@
+2010-01-26  U-anarquia\miguel  <miguel@anarquia>
+
+	* mono-dl.c: Removed debugging messages for the embeddable version
+	of mono-dl.
+
 2010-01-22 Miguel de Icaza (miguel@novell.com)
 
 	* mono-dl.c: Always strdup the return value, for consistency.
