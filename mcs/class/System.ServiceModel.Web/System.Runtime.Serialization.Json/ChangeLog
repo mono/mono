@@ -1,5 +1,10 @@
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataContractJsonSerializer.cs : KnownTypes does not include root
+	  type. Fixed bug #573689.
+
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JsonSerializationReader.cs : oops, wrong fix, should consume the
 	  reader.
 

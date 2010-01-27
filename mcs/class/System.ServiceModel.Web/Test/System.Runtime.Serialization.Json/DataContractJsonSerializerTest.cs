@@ -1287,8 +1287,10 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		[Category ("NotWorking")]
 		public void TypeIsNotPartsOfKnownTypes ()
 		{
-			DataContractJsonSerializer dcjs = new DataContractJsonSerializer (typeof (string));
-			Assert.AreEqual (0, dcjs.KnownTypes.Count, "KnownTypes");
+			var dcs = new DataContractSerializer (typeof (string));
+			Assert.AreEqual (0, dcs.KnownTypes.Count, "KnownTypes #1");
+			var dcjs = new DataContractJsonSerializer (typeof (string));
+			Assert.AreEqual (0, dcjs.KnownTypes.Count, "KnownTypes #2");
 		}
 
 		[Test]

@@ -1,5 +1,10 @@
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataContractJsonSerializerTest.cs :
+	  enable TypeIsNotPartsOfKnownTypes(), and add more related tests.
+
+2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DataContractJsonSerializerTest.cs : make some tests narrow down
 	  possible cause of errors to detect expected errors more precisely.
 
