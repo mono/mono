@@ -1,3 +1,7 @@
+2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* large-gc-bitmap.cs: Respect the 1Mb size limit for valuetype types.
+
 2010-01-19  Sylvain Dupont <duposyl@gmail.com>
 
 	* cominterop.cs libtest.c: Added tests for marshalling
