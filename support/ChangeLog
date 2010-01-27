@@ -1,3 +1,7 @@
+2010-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* serial.c: Fix the OSX build.
+
 2010-01-22 Leszek Ciesielski <skolima@gmail.com>
 	
 	* serial.c: baud rate 460800 by Thad Thompson <TThompson@nucsafe.com>

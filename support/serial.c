@@ -159,9 +159,12 @@ set_attributes (int fd, int baud_rate, MonoParity parity, int dataBits, MonoStop
 	/* setup baudrate */
 	switch (baud_rate)
 	{
+/*This is not defined on OSX and *BSD */
+#if defined(B460800)
 	case 460800:
 	    baud_rate = B460800;
 	    break;
+#endif
 	case 230400: 
 	    baud_rate = B230400;
 	    break;
