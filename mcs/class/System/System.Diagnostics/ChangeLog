@@ -1,3 +1,7 @@
+2010-01-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Stopwatch.cs: add new Restart().
+
 2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Debug_2_1.cs: Change type to sealed to match SL2/3

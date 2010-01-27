@@ -117,6 +117,15 @@ namespace System.Diagnostics
 			elapsed += GetTimestamp () - started;
 			is_running = false;
 		}
+
+#if NET_4_0
+		public void Restart ()
+		{
+			started = GetTimestamp ();
+			elapsed = 0;
+			is_running = true;
+		}
+#endif
 	}
 }
 
