@@ -97,7 +97,7 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		[Test]
 		public void ConstructorMisc ()
 		{
-			new DataContractJsonSerializer (typeof (GlobalSample1));
+			new DataContractJsonSerializer (typeof (GlobalSample1)).WriteObject (new MemoryStream (), new GlobalSample1 ());
 		}
 
 		[Test]
@@ -1421,16 +1421,22 @@ namespace MonoTests.System.Runtime.Serialization.Json
 	[DataContract (Name = "")]
 	public class DCWithEmptyName
 	{
+		[DataMember]
+		public string Foo;
 	}
 
 	[DataContract (Name = null)]
 	public class DCWithNullName
 	{
+		[DataMember]
+		public string Foo;
 	}
 
 	[DataContract (Namespace = "")]
 	public class DCWithEmptyNamespace
 	{
+		[DataMember]
+		public string Foo;
 	}
 
 	[Serializable]
