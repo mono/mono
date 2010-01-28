@@ -1,3 +1,12 @@
+2010-01-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WebClient_2_1.cs: The async events must be invoked on a threadpool
+	thread if the async method wasn't executed on the main thread, so save
+	the synchronization context when the async method is called, and post
+	the event to that synchronization context when done. This is also
+	required when the async methods are executed on the main thread, since
+	HttpWebRequest callbacks are now always executed on a threadpool thread.
+
 2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UdpAnySourceMulticastClient.cs: New. Stub for SL4
