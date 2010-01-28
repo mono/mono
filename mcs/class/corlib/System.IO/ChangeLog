@@ -1,3 +1,7 @@
+2010-01-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* UnmanagedMemoryStream.cs: fix a regression from my previous patch.
+
 2010-01-26  Marek Habersack  <mhabersack@novell.com>
 
 	* SearchOption.cs: included in 2.1 build as internal to fix

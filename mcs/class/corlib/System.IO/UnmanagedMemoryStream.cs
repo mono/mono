@@ -323,14 +323,15 @@ namespace System.IO
 #if NET_4_0
 			if (safebuffer != null) {
 				unsafe {
-					byte *src = null;
+					byte *dest = null;
 					try {
-						safebuffer.AcquirePointer (ref src);
-						fixed (byte *dest = buffer) {
-							String.memcpy (dest + offset, src + current_position, count);
+						safebuffer.AcquirePointer (ref dest);
+						fixed (byte *src = buffer) {
+							dest += current_position;
+							String.memcpy (dest, src + offset, count);
 						}
 					} finally {
-						if (src != null)
+						if (dest != null)
 							safebuffer.ReleasePointer ();
 					}
 				}
@@ -338,8 +339,9 @@ namespace System.IO
 #endif
 			{
 				unsafe {
-					fixed (byte *dest = buffer) {
-						String.memcpy (dest + offset, (byte *) initial_pointer + current_position, count);
+					fixed (byte *src = buffer) {
+						byte *dest = (byte *) initial_pointer + current_position;
+						String.memcpy (dest, src + offset, count);
 					}
 				}
 			}
