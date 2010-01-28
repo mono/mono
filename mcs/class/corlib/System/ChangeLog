@@ -1,5 +1,10 @@
 2010-01-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* AppDomain.cs: LoadSatellite: add a boolean parameter specifiying
+	whether we should throw on exceptions or not.
+
+2010-01-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* TimeSpan.cs: TryParse: Handle null values to not throw ANEs.
 
 2010-01-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
