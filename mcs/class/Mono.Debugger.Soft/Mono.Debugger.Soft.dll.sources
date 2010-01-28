@@ -3,6 +3,7 @@ Mono.Debugger.Soft/ExceptionEvent.cs
 Mono.Debugger.Soft/ModuleMirror.cs
 Mono.Debugger.Soft/AppDomainMirror.cs
 Mono.Debugger.Soft/AssemblyLoadEvent.cs
+Mono.Debugger.Soft/AssemblyUnloadEvent.cs
 Mono.Debugger.Soft/VMStartEvent.cs
 Mono.Debugger.Soft/StackFrame.cs
 Mono.Debugger.Soft/CustomAttributeDataMirror.cs
