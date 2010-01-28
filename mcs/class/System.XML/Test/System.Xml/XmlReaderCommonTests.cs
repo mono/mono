@@ -2179,6 +2179,30 @@ namespace MonoTests.System.Xml
 				Assert.AreEqual (XmlNodeType.Element, readerXml.NodeType, "#2");
 			}
 		}
+		
+		[Test]
+		public void ReadContentAsBase64_3 () // bug #543332			
+		{
+			byte [] fakeState = new byte[25];
+			byte [] fixedSizeBuffer = new byte [25];
+			byte [] readDataBuffer = new byte [25];
+			var ms = new MemoryStream ();
+			var xw = XmlWriter.Create (ms);
+			xw.WriteStartElement ("root");
+			xw.WriteBase64 (fakeState, 0, fakeState.Length);
+			xw.WriteEndElement ();
+			xw.Close ();
+			var reader = XmlReader.Create (new MemoryStream (ms.ToArray ()));
+			reader.MoveToContent ();
+			// we cannot completely trust the length read to indicate the end.
+			int bytesRead;
+			bytesRead = reader.ReadElementContentAsBase64 (fixedSizeBuffer, 0, fixedSizeBuffer.Length);
+			Assert.AreEqual (25, bytesRead, "#1");
+			Assert.AreEqual (XmlNodeType.Text, reader.NodeType, "#2");
+			bytesRead = reader.ReadElementContentAsBase64 (fixedSizeBuffer, 0, fixedSizeBuffer.Length);
+			Assert.AreEqual (0, bytesRead, "#3");
+			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#4");
+		}
 #endif
 	}
 }

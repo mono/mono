@@ -1,3 +1,8 @@
+2010-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReaderBinarySupport.cs : eliminate possible extra buffer
+	  storing of zeros. Fixed bug #543332.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : convert TimeSpan.MinValue to correct string.

@@ -213,7 +213,7 @@ namespace System.Xml
 				b = (byte) (GetBase64Byte (chars [i]) << 2);
 				if (bufIndex < bufLast)
 					buffer [bufIndex] = b;
-				else {
+				else if (b != 0) {
 					if (base64CacheStartsAt < 0)
 						base64CacheStartsAt = 0;
 					base64Cache [0] = b;
@@ -229,14 +229,17 @@ namespace System.Xml
 					buffer [bufIndex] += work;
 					bufIndex++;
 				}
-				else
+				else if (work != 0) {
+					if (base64CacheStartsAt < 0)
+						base64CacheStartsAt = 0;
 					base64Cache [0] += work;
+				}
 
 				work = (byte) ((b & 0xf) << 4);
 				if (bufIndex < bufLast) {
 					buffer [bufIndex] = work;
 				}
-				else {
+				else if (work != 0) {
 					if (base64CacheStartsAt < 0)
 						base64CacheStartsAt = 1;
 					base64Cache [1] = work;
@@ -252,13 +255,16 @@ namespace System.Xml
 					buffer [bufIndex] += work;
 					bufIndex++;
 				}
-				else
+				else if (work != 0) {
+					if (base64CacheStartsAt < 0)
+						base64CacheStartsAt = 1;
 					base64Cache [1] += work;
+				}
 
 				work = (byte) ((b & 3) << 6);
 				if (bufIndex < bufLast)
 					buffer [bufIndex] = work;
-				else {
+				else if (work != 0) {
 					if (base64CacheStartsAt < 0)
 						base64CacheStartsAt = 2;
 					base64Cache [2] = work;
@@ -272,8 +278,11 @@ namespace System.Xml
 					buffer [bufIndex] += work;
 					bufIndex++;
 				}
-				else
+				else if (work != 0) {
+					if (base64CacheStartsAt < 0)
+						base64CacheStartsAt = 2;
 					base64Cache [2] += work;
+				}
 			}
 			int ret = System.Math.Min (bufLast - offset, bufIndex - offset);
 			if (ret < length && charsLength > 0)
