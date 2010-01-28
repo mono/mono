@@ -1,3 +1,13 @@
+2010-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs : when Options.AsynchronousMethods is
+	  specified, generate async methods *as well as* sync methods (i.e.
+	  not exclusively).
+
+	  In moonlight proxy generator (svcutil -moonlight) mode, sync
+	  methods will be removed at svcutil itself.
+	  This fix brings sync proxy methods back to monotouch.
+
 2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceAuthorizationBehavior.cs : implement (it does almost
