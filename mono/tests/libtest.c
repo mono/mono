@@ -3214,6 +3214,12 @@ lookup_mono_symbol (const char *symbol_name)
 		return NULL;
 }
 
+gpointer
+mono_test_marshal_lookup_symbol (const char *symbol_name)
+{
+	return lookup_mono_symbol (symbol_name);
+}
+
 /**
  * test_method_thunk:
  *

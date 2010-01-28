@@ -202,7 +202,7 @@ mono_convert_imt_slot_to_vtable_slot (gpointer* slot, mgreg_t *regs, guint8 *cod
 				context.method_inst = ((MonoMethodInflated*)imt_method)->context.method_inst;
 				impl = mono_class_inflate_generic_method (impl, &context);
 			} else {
-				impl = mono_class_get_vtable_entry (vt->klass, interface_offset + imt_method->slot);
+				impl = mono_class_get_vtable_entry (vt->klass, interface_offset + mono_method_get_vtable_slot (imt_method));
 			}
 
 			if (mono_method_needs_static_rgctx_invoke (impl, FALSE))
@@ -446,6 +446,7 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 		}
 
 		g_assert (klass);
+		g_assert (actual_method);
 		g_assert (actual_method->klass == klass);
 
 		if (actual_method->is_inflated)
@@ -1374,7 +1375,12 @@ mono_create_llvm_vcall_trampoline (MonoMethod *method)
 gpointer
 mono_create_llvm_imt_trampoline (MonoDomain *domain, MonoMethod *m, int vt_offset)
 {
+#ifdef MONO_ARCH_HAVE_LLVM_IMT_TRAMPOLINE
 	return mono_arch_get_llvm_imt_trampoline (domain, m, vt_offset);
+#else
+	g_assert_not_reached ();
+	return NULL;
+#endif
 }
 #endif
 

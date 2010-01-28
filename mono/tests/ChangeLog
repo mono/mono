@@ -1,3 +1,7 @@
+2009-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* libtest.c pinvoke2.cs: Add a test for calling pinvoke methods using calli.
+
 2009-11-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c (mono_test_marshal_bool_in): Use 'short' as the type of the

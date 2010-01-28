@@ -260,6 +260,11 @@ ves_icall_System_Array_SetValueImpl (MonoArray *this, MonoObject *value, guint32
 	ea = (gpointer*)((char*)this->vector + (pos * esize));
 	va = (gpointer*)((char*)value + sizeof (MonoObject));
 
+	if (mono_class_is_nullable (ec)) {
+		mono_nullable_init ((guint8*)ea, value, ec);
+		return;
+	}
+
 	if (!value) {
 		memset (ea, 0,  esize);
 		return;
@@ -1318,18 +1323,26 @@ type_from_name (const char *str, MonoBoolean ignoreCase)
 		 *        Dec 10, 2005 - Martin.
 		 */
 
-		if (dest)
+		if (dest) {
 			assembly = dest->klass->image->assembly;
-		else {
+			type_resolve = TRUE;
+		} else {
 			g_warning (G_STRLOC);
 		}
 	}
 
-	if (assembly)
+	if (assembly) {
+		/* When loading from the current assembly, AppDomain.TypeResolve will not be called yet */
 		type = mono_reflection_get_type (assembly->image, &info, ignoreCase, &type_resolve);
-	
+	}
+
 	if (!info.assembly.name && !type) /* try mscorlib */
 		type = mono_reflection_get_type (NULL, &info, ignoreCase, &type_resolve);
+
+	if (assembly && !type && type_resolve) {
+		type_resolve = FALSE; /* This will invoke TypeResolve if not done in the first 'if' */
+		type = mono_reflection_get_type (assembly->image, &info, ignoreCase, &type_resolve);
+	}
 
 	mono_reflection_free_type_info (&info);
 	g_free (temp_str);
@@ -2060,6 +2073,7 @@ ves_icall_get_event_info (MonoReflectionMonoEvent *event, MonoEventInfo *info)
 static MonoArray*
 ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 {
+	MonoError error;
 	MonoDomain *domain = mono_object_domain (type); 
 	MonoArray *intf;
 	GPtrArray *ifaces = NULL;
@@ -2081,8 +2095,12 @@ ves_icall_Type_GetInterfaces (MonoReflectionType* type)
 	slots = mono_bitset_new (class->max_interface_id + 1, 0);
 
 	for (parent = class; parent; parent = parent->parent) {
-		GPtrArray *tmp_ifaces = mono_class_get_implemented_interfaces (parent);
-		if (tmp_ifaces) {
+		GPtrArray *tmp_ifaces = mono_class_get_implemented_interfaces (parent, &error);
+		if (!mono_error_ok (&error)) {
+			mono_bitset_free (slots);
+			mono_error_raise_exception (&error);
+			return NULL;
+		} else if (tmp_ifaces) {
 			for (i = 0; i < tmp_ifaces->len; ++i) {
 				MonoClass *ic = g_ptr_array_index (tmp_ifaces, i);
 
@@ -2687,7 +2705,9 @@ ves_icall_MonoMethod_GetGenericMethodDefinition (MonoReflectionMethod *method)
 
 	if (imethod->context.class_inst) {
 		MonoClass *klass = ((MonoMethod *) imethod)->klass;
-		result = mono_class_inflate_generic_method_full (result, klass, mono_class_get_context (klass));
+		/*Generic methods gets the context of the GTD.*/
+		if (mono_class_get_context (klass))
+			result = mono_class_inflate_generic_method_full (result, klass, mono_class_get_context (klass));
 	}
 
 	return mono_method_get_object (mono_object_domain (method), result, NULL);
@@ -3475,7 +3495,8 @@ handle_parent:
 			g_assert (method->slot < nslots);
 			if (method_slots [method->slot >> 5] & (1 << (method->slot & 0x1f)))
 				continue;
-			method_slots [method->slot >> 5] |= 1 << (method->slot & 0x1f);
+			if (!(method->flags & METHOD_ATTRIBUTE_NEW_SLOT))
+				method_slots [method->slot >> 5] |= 1 << (method->slot & 0x1f);
 		}
 
 		if (method->name [0] == '.' && (strcmp (method->name, ".ctor") == 0 || strcmp (method->name, ".cctor") == 0))
@@ -4728,6 +4749,8 @@ mono_method_get_equivalent_method (MonoMethod *method, MonoClass *klass)
 	}
 
 	mono_class_setup_methods (method->klass);
+	if (method->klass->exception_type)
+		return NULL;
 	for (i = 0; i < method->klass->method.count; ++i) {
 		if (method->klass->methods [i] == method) {
 			offset = i;
@@ -4735,6 +4758,8 @@ mono_method_get_equivalent_method (MonoMethod *method, MonoClass *klass)
 		}	
 	}
 	mono_class_setup_methods (klass);
+	if (klass->exception_type)
+		return NULL;
 	g_assert (offset >= 0 && offset < klass->method.count);
 	return klass->methods [offset];
 }
@@ -4747,8 +4772,11 @@ ves_icall_System_Reflection_MethodBase_GetMethodFromHandleInternalType (MonoMeth
 		klass = mono_class_from_mono_type (type);
 		if (mono_class_get_generic_type_definition (method->klass) != mono_class_get_generic_type_definition (klass)) 
 			return NULL;
-		if (method->klass != klass)
+		if (method->klass != klass) {
 			method = mono_method_get_equivalent_method (method, klass);
+			if (!method)
+				return NULL;
+		}
 	} else
 		klass = method->klass;
 	return mono_method_get_object (mono_domain_get (), method, klass);

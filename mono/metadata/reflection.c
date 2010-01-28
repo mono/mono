@@ -5053,6 +5053,7 @@ mono_image_basic_init (MonoReflectionAssemblyBuilder *assemblyb)
 
 	assembly->run = assemblyb->access != 2;
 	assembly->save = assemblyb->access != 1;
+	assembly->domain = domain;
 
 	image = create_dynamic_mono_image (assembly, mono_string_to_utf8 (assemblyb->name), g_strdup ("RefEmit_YouForgotToDefineAModule"));
 	image->initial_image = TRUE;
@@ -6303,9 +6304,28 @@ mono_type_get_object (MonoDomain *domain, MonoType *type)
 	}
 
 	if (klass->reflection_info && !klass->wastypebuilder) {
+		gboolean is_type_done = TRUE;
+		/* Generic parameters have reflection_info set but they are not finished together with their enclosing type.
+		 * We must ensure that once a type is finished we don't return a GenericTypeParameterBuilder.
+		 * We can't simply close the types as this will interfere with other parts of the generics machinery.
+		*/
+		if (klass->byval_arg.type == MONO_TYPE_MVAR || klass->byval_arg.type == MONO_TYPE_VAR) {
+			MonoGenericParam *gparam = klass->byval_arg.data.generic_param;
+
+			if (gparam->owner && gparam->owner->is_method) {
+				MonoMethod *method = gparam->owner->owner.method;
+				if (method && mono_class_get_generic_type_definition (method->klass)->wastypebuilder)
+					is_type_done = FALSE;
+			} else if (gparam->owner && !gparam->owner->is_method) {
+				MonoClass *klass = gparam->owner->owner.klass;
+				if (klass && mono_class_get_generic_type_definition (klass)->wastypebuilder)
+					is_type_done = FALSE;
+			}
+		} 
+
 		/* g_assert_not_reached (); */
 		/* should this be considered an error condition? */
-		if (!type->byref) {
+		if (is_type_done && !type->byref) {
 			mono_domain_unlock (domain);
 			mono_loader_unlock ();
 			return klass->reflection_info;
@@ -7333,11 +7353,12 @@ mono_reflection_get_type (MonoImage* image, MonoTypeNameParse *info, gboolean ig
 static MonoType*
 mono_reflection_get_type_internal_dynamic (MonoImage *rootimage, MonoAssembly *assembly, MonoTypeNameParse *info, gboolean ignorecase)
 {
-	MonoReflectionAssemblyBuilder *abuilder = (MonoReflectionAssemblyBuilder*)mono_assembly_get_object (mono_domain_get (), assembly);
+	MonoReflectionAssemblyBuilder *abuilder;
 	MonoType *type;
 	int i;
 
 	g_assert (assembly->dynamic);
+	abuilder = (MonoReflectionAssemblyBuilder*)mono_assembly_get_object (((MonoDynamicAssembly*)assembly)->domain, assembly);
 
 	/* Enumerate all modules */
 
@@ -10421,6 +10442,14 @@ typebuilder_setup_fields (MonoClass *klass, MonoError *error)
 	klass->fields = image_g_new0 (image, MonoClassField, klass->field.count);
 	mono_class_alloc_ext (klass);
 	klass->ext->field_def_values = image_g_new0 (image, MonoFieldDefaultValue, klass->field.count);
+	/*
+	This is, guess what, a hack.
+	The issue is that the runtime doesn't know how to setup the fields of a typebuider and crash.
+	On the static path no field class is resolved, only types are built. This is the right thing to do
+	but we suck.
+	Setting size_inited is harmless because we're doing the same job as mono_class_setup_fields anyway.
+	*/
+	klass->size_inited = 1;
 
 	for (i = 0; i < klass->field.count; ++i) {
 		fb = mono_array_get (tb->fields, gpointer, i);
@@ -11187,13 +11216,14 @@ resolve_object (MonoImage *image, MonoObject *obj, MonoClass **handle_class, Mon
 		sig->explicit_this = helper->call_conv & 64 ? 1 : 0;
 		sig->hasthis = helper->call_conv & 32 ? 1 : 0;
 
-		if (helper->call_conv == 0) /* unmanaged */
+		if (helper->unmanaged_call_conv) { /* unmanaged */
 			sig->call_convention = helper->unmanaged_call_conv - 1;
-		else
-			if (helper->call_conv & 0x02)
-				sig->call_convention = MONO_CALL_VARARG;
-		else
+			sig->pinvoke = TRUE;
+		} else if (helper->call_conv & 0x02) {
+			sig->call_convention = MONO_CALL_VARARG;
+		} else {
 			sig->call_convention = MONO_CALL_DEFAULT;
+		}
 
 		sig->param_count = nargs;
 		/* TODO: Copy type ? */

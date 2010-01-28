@@ -57,6 +57,7 @@
 #include "ir-emit.h"
 
 #include "jit-icalls.h"
+#include "jit.h"
 #include "debugger-agent.h"
 
 #define BRANCH_COST 100
@@ -1097,7 +1098,8 @@ type_from_stack_type (MonoInst *ins) {
 static G_GNUC_UNUSED int
 type_to_stack_type (MonoType *t)
 {
-	switch (mono_type_get_underlying_type (t)->type) {
+	t = mono_type_get_underlying_type (t);
+	switch (t->type) {
 	case MONO_TYPE_I1:
 	case MONO_TYPE_U1:
 	case MONO_TYPE_BOOLEAN:
@@ -2304,12 +2306,17 @@ mono_emit_method_call_full (MonoCompile *cfg, MonoMethod *method, MonoMethodSign
 		if ((!cfg->compile_aot || enable_for_aot) && 
 			(!(method->flags & METHOD_ATTRIBUTE_VIRTUAL) || 
 			 (MONO_METHOD_IS_FINAL (method) &&
-			  method->wrapper_type != MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK))) {
+			  method->wrapper_type != MONO_WRAPPER_REMOTING_INVOKE_WITH_CHECK)) &&
+			!(method->klass->marshalbyref && context_used)) {
 			/* 
 			 * the method is not virtual, we just need to ensure this is not null
 			 * and then we can call the method directly.
 			 */
 			if (method->klass->marshalbyref || method->klass == mono_defaults.object_class) {
+				/* 
+				 * The check above ensures method is not gshared, this is needed since
+				 * gshared methods can't have wrappers.
+				 */
 				method = call->method = mono_marshal_get_remoting_invoke_with_check (method);
 			}
 
@@ -3766,6 +3773,53 @@ mini_emit_ldelema_ins (MonoCompile *cfg, MonoMethod *cmethod, MonoInst **sp, uns
 	return addr;
 }
 
+static MonoBreakPolicy
+always_insert_breakpoint (MonoMethod *method)
+{
+	return MONO_BREAK_POLICY_ALWAYS;
+}
+
+static MonoBreakPolicyFunc break_policy_func = always_insert_breakpoint;
+
+/**
+ * mono_set_break_policy:
+ * policy_callback: the new callback function
+ *
+ * Allow embedders to decide wherther to actually obey breakpoint instructions
+ * (both break IL instructions and Debugger.Break () method calls), for example
+ * to not allow an app to be aborted by a perfectly valid IL opcode when executing
+ * untrusted or semi-trusted code.
+ *
+ * @policy_callback will be called every time a break point instruction needs to
+ * be inserted with the method argument being the method that calls Debugger.Break()
+ * or has the IL break instruction. The callback should return #MONO_BREAK_POLICY_NEVER
+ * if it wants the breakpoint to not be effective in the given method.
+ * #MONO_BREAK_POLICY_ALWAYS is the default.
+ */
+void
+mono_set_break_policy (MonoBreakPolicyFunc policy_callback)
+{
+	if (policy_callback)
+		break_policy_func = policy_callback;
+	else
+		break_policy_func = always_insert_breakpoint;
+}
+
+static gboolean
+should_insert_brekpoint (MonoMethod *method) {
+	switch (break_policy_func (method)) {
+	case MONO_BREAK_POLICY_ALWAYS:
+		return TRUE;
+	case MONO_BREAK_POLICY_NEVER:
+		return FALSE;
+	case MONO_BREAK_POLICY_ON_DBG:
+		return mono_debug_using_mono_debugger ();
+	default:
+		g_warning ("Incorrect value returned from break policy callback");
+		return FALSE;
+	}
+}
+
 static MonoInst*
 mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSignature *fsig, MonoInst **args)
 {
@@ -4124,7 +4178,10 @@ mini_emit_inst_for_method (MonoCompile *cfg, MonoMethod *cmethod, MonoMethodSign
 	} else if (cmethod->klass->image == mono_defaults.corlib) {
 		if (cmethod->name [0] == 'B' && strcmp (cmethod->name, "Break") == 0
 				&& strcmp (cmethod->klass->name, "Debugger") == 0) {
-			MONO_INST_NEW (cfg, ins, OP_BREAK);
+			if (should_insert_brekpoint (cfg->method))
+				MONO_INST_NEW (cfg, ins, OP_BREAK);
+			else
+				MONO_INST_NEW (cfg, ins, OP_NOP);
 			MONO_ADD_INS (cfg->cbb, ins);
 			return ins;
 		}
@@ -5836,7 +5893,10 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			MONO_ADD_INS (bblock, ins);
 			break;
 		case CEE_BREAK:
-			MONO_INST_NEW (cfg, ins, OP_BREAK);
+			if (should_insert_brekpoint (cfg->method))
+				MONO_INST_NEW (cfg, ins, OP_BREAK);
+			else
+				MONO_INST_NEW (cfg, ins, OP_NOP);
 			ip++;
 			MONO_ADD_INS (bblock, ins);
 			break;
@@ -6189,6 +6249,21 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					fsig = mono_metadata_parse_signature (image, token);
 
 				n = fsig->param_count + fsig->hasthis;
+
+				if (method->dynamic && fsig->pinvoke) {
+					MonoInst *args [3];
+
+					/*
+					 * This is a call through a function pointer using a pinvoke
+					 * signature. Have to create a wrapper and call that instead.
+					 * FIXME: This is very slow, need to create a wrapper at JIT time
+					 * instead based on the signature.
+					 */
+					EMIT_NEW_IMAGECONST (cfg, args [0], method->klass->image);
+					EMIT_NEW_PCONST (cfg, args [1], fsig);
+					args [2] = addr;
+					addr = mono_emit_jit_icall (cfg, mono_get_native_calli_wrapper, args);
+				}
 			} else {
 				MonoMethod *cil_method;
 				
@@ -6398,6 +6473,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (context_used) {
 					vtable_arg = emit_get_rgctx_method (cfg, context_used, cmethod, MONO_RGCTX_INFO_METHOD_RGCTX);
 				} else {
+					mono_class_vtable (cfg->domain, cmethod->klass);
+					CHECK_TYPELOAD (cmethod->klass);
+
 					EMIT_NEW_METHOD_RGCTX_CONST (cfg, vtable_arg, cmethod);
 				}
 
@@ -7474,6 +7552,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (!cmethod)
 				goto load_error;
 			fsig = mono_method_get_signature (cmethod, image, token);
+			if (!fsig)
+				goto load_error;
 
 			mono_save_token_info (cfg, image, token, cmethod);
 
@@ -7498,6 +7578,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 						vtable_arg = emit_get_rgctx_method (cfg, context_used,
 							cmethod, MONO_RGCTX_INFO_METHOD_RGCTX);
 					} else {
+						mono_class_vtable (cfg->domain, cmethod->klass);
+						CHECK_TYPELOAD (cmethod->klass);
+
 						EMIT_NEW_METHOD_RGCTX_CONST (cfg, vtable_arg, cmethod);
 					}
 				} else {
@@ -7582,6 +7665,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					alloc = mono_emit_jit_icall (cfg, mono_array_new_1, sp);
 				else if (fsig->param_count == 2)
 					alloc = mono_emit_jit_icall (cfg, mono_array_new_2, sp);
+				else if (fsig->param_count == 3)
+					alloc = mono_emit_jit_icall (cfg, mono_array_new_3, sp);
 				else
 					alloc = handle_array_new (cfg, fsig->param_count, sp, ip);
 			} else if (cmethod->string_ctor) {

@@ -604,6 +604,13 @@ find_method_in_class (MonoClass *klass, const char *name, const char *qname, con
 	}
 
 	mono_class_setup_methods (klass);
+	/*
+	We can't fail lookup of methods otherwise the runtime will fail with MissingMethodException instead of TypeLoadException.
+	See mono/tests/generic-type-load-exception.2.il
+	FIXME we should better report this error to the caller
+	 */
+	if (!klass->methods)
+		return NULL;
 	for (i = 0; i < klass->method.count; ++i) {
 		MonoMethod *m = klass->methods [i];
 		MonoMethodSignature *msig;
@@ -772,9 +779,9 @@ mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 to
 		return mono_method_signature (method);
 
 	if (table == MONO_TABLE_METHODSPEC) {
-		g_assert (!(method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) &&
-			  mono_method_signature (method));
-		g_assert (method->is_inflated);
+		/* the verifier (do_invoke_method) will turn the NULL into a verifier error */
+		if ((method->flags & METHOD_ATTRIBUTE_PINVOKE_IMPL) || !method->is_inflated)
+			return NULL;
 
 		return mono_method_signature (method);
 	}
@@ -807,6 +814,14 @@ mono_method_get_signature_full (MonoMethod *method, MonoImage *image, guint32 to
 		sig = cache_memberref_sig (image, sig_idx, sig);
 	}
 
+	if (!mono_verifier_is_sig_compatible (image, method, sig)) {
+		guint32 class = cols [MONO_MEMBERREF_CLASS] & MONO_MEMBERREF_PARENT_MASK;
+		const char *fname = mono_metadata_string_heap (image, cols [MONO_MEMBERREF_NAME]);
+
+		mono_loader_set_error_bad_image (g_strdup_printf ("Incompatible method signature class token 0x%08x field name %s token 0x%08x on image %s", class, fname, token, image->name));
+		return NULL;
+	}
+
 	if (context) {
 		MonoMethodSignature *cached;
 
@@ -836,7 +851,7 @@ mono_method_search_in_array_class (MonoClass *klass, const char *name, MonoMetho
 	int i;
 
 	mono_class_setup_methods (klass);
-
+	g_assert (!klass->exception_type); /*FIXME this should not fail, right?*/
 	for (i = 0; i < klass->method.count; ++i) {
 		MonoMethod *method = klass->methods [i];
 		if (strcmp (method->name, name) == 0 && sig->param_count == method->signature->param_count)
@@ -2294,6 +2309,8 @@ mono_method_get_index (MonoMethod *method) {
 		return mono_metadata_token_index (method->token);
 
 	mono_class_setup_methods (klass);
+	if (klass->exception_type)
+		return 0;
 	for (i = 0; i < klass->method.count; ++i) {
 		if (method == klass->methods [i]) {
 			if (klass->image->uncompressed_metadata)

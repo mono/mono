@@ -1,3 +1,194 @@
+2010-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (mono_arch_notify_pending_exc): Avoid a crash if the
+	thread has not fully started yet.
+
+2010-01-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (can_marshal_struct): Allow marshalling enums.
+
+2010-01-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-posix.c (SIG_HANDLER_SIGNATURE): Avoid
+	"Thread (nil) may have been prematurely finalized" messages if this is called
+	on a thread not registered with the runtime.
+
+	* mini-exceptions.c (mono_handle_native_sigsegv): Ditto.
+
+2010-01-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* jit-icalls.c (mono_array_new_3): New jit icall.
+
+	* aot-compiler.c aot-runtime.c: Add support for ElementAddr wrappers.
+
+	* arrays.cs: Add a test for 3 dimensional arrays.
+
+2010-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoCompile): Add 'disable_out_of_line_bblocks' flag.
+
+	* branch-opts.c (mono_optimize_branches): Honor the new flag.
+
+	* mini.c (mini_method_compile): Set the new flag when running under the
+	debugger.
+
+2010-01-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_jit_compile_method_inner): Avoid reading cfg->prof_options
+	after cfg has been freed.
+
+2010-01-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* branch-opts.c (mono_branch_optimize_exception_target): Stop the optimization
+	if a clause is skipped because it uses the exception object, since it could
+	have caught the exception.
+
+	* exceptions.cs: Add a test.
+
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (decode_value): Fix the decoding of I/U/PTR.
+
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (emit_call_body): Always use near calls when AOTing even if
+	NOMAP32BIT or optimize_for_xen is set.
+
+
+Wed Jan 13 15:54:53 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* jit.h, method-to-ir.c: added ability to set the policy for
+	inserting breakpoints from the break IL instruction or the
+	Debugger.Break () API call.
+
+2010-01-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_parse_options): Allow onthrow without
+	an argument which matches any exception.
+
+2010-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_emit_method_call_full): Avoid the virt->nonvirt
+	optimization if the called method is gshared and marshalbyref, since gshared
+	methods can' have wrappers. Fixes #569390.
+
+	* generics.cs: Add a test.
+
+2010-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-exceptions.c (mono_print_thread_dump_from_ctx): New helper function
+	callable from gdb.
+
+2010-01-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_print_method_from_ip): Fix the lookup of trampolines.
+
+2010-01-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (transport_connect): comment out freeaddrinfo calls under win32,
+	since it is not supported in win2000.
+
+2010-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Add an ugly hack to fix #564695.
+	If LLVM decides to set the code model to Large, reset it to Default.
+
+2010-01-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_xdebug_flush): Export it so it is present in
+	stripped binaries as well.
+
+2010-01-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mono_compile_is_broken): Skip methods from serialization's
+	internal assembly.
+
+	Backport of r149053.
+
+2010-01-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_convert_imt_slot_to_vtable_slot): Call
+	mono_method_get_vtable_slot () instead of accessing imt_method->slot directly,
+	to fix an AOT case.
+
+2009-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c (mini_method_compile): Verify the method before calling
+	mono_compile_create_vars as this might crash since it uses method
+	information.
+
+	Fixes #560196.
+
+	Backport of r149045.
+
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.c:
+	* method-to.ir.c:
+	* mini-*.c: Properly handle generic enums.
+
+	Fixes #566294
+
+	Backport of r148941.
+
+2009-12-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Handle the failure of mono_class_vtable ()
+	in a few more places.
+
+2009-12-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_wrappers): Don't use dyn runtime invoke for methods with
+	nullable parameters. Fixes #567351.
+
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-trampolines.c (common_call_trampoline): Add assert for NULL resolved generic method.
+
+	Backport of r148905.
+
+2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* method-to-ir.c (mono_method_to_ir): Avoid SIGSEGV when
+	mono_method_get_signature returns NULL. Fix #567084
+	[Backport r148889]
+
+2009-12-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_create_llvm_imt_trampoline): Fix the LLVM build on
+	platforms without mono_arch_get_llvm_imt_trampoline ().
+
+2009-12-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (decode_klass_ref): Avoid a crash if a decode_klass_ref () call
+	fails. Fixes #566689.
+
+2009-12-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (AM_CFLAGS): Include LLVM_CFLAGS.
+
+	* mini-llvm.c: Avoid defining the __STDC_... macros if already defined.
+
+2009-12-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-x86.c (mono_arch_get_argument_info): Allocate memory for CallInfo using
+	alloca as g_malloc is not signal safe.
+
+2009-12-17  Marek Habersack  <mhabersack@novell.com>
+
+	* mini.c (mono_get_runtime_build_info): include Mono version in
+	the returned value.
+
+	* driver.c (mono_main): VERSION is now included in the string
+	returned from mono_get_runtime_build_info()
+
+2009-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Add support for CALLI with unmanaged
+	signatures. Fixes #565143.
+
+	* jit-icalls.c (mono_get_native_calli_wrapper): New JIT icall.
+
 2009-12-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-x86.h: Forgot to add a 0x to MONO_ARCH_MAX_FRAME_SIZE define

@@ -106,6 +106,7 @@ supp_data_files = 	\
 	supp/it_CH.xml	\
 	supp/it_IT.xml	\
 	supp/ja.xml	\
+	supp/ka_GE.xml	\
 	supp/ko_KR.xml	\
 	supp/lt_LT.xml	\
 	supp/lv.xml	\
@@ -130,7 +131,15 @@ supp_data_files = 	\
 	supp/uk.xml	\
 	supp/vi.xml
 
-EXTRA_DIST = $(locale_builder_sources) $(supp_data_files) lcids.xml supplementalData.xml textinfo.xml
+extra_langs = \
+	langs/ka.xml	
+
+extra_locales = \
+	locales/ka_GE.xml
+
+EXTRA_DIST = $(locale_builder_sources) $(supp_data_files) lcids.xml supplementalData.xml textinfo.xml \
+	$(extra_langs) $(extra_locales)
+
 
 locale-builder.exe: $(locale_builder_sources)
 	$(MCS) $(MCSFLAGS) /out:$@ $^

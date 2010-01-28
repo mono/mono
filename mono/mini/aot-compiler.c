@@ -1442,6 +1442,18 @@ encode_method_ref (MonoAotCompile *acfg, MonoMethod *method, guint8 *buf, guint8
 			encode_method_ref (acfg, m, p, &p);
 			break;
 		}
+		case MONO_WRAPPER_MANAGED_TO_MANAGED:
+			if (!strcmp (method->name, "ElementAddr")) {
+				ElementAddrWrapperInfo *info = mono_marshal_wrapper_info_from_wrapper (method);
+
+				g_assert (info);
+				encode_value (MONO_AOT_WRAPPER_ELEMENT_ADDR, p, &p);
+				encode_value (info->rank, p, &p);
+				encode_value (info->elem_size, p, &p);
+			} else {
+				g_assert_not_reached ();
+			}
+			break;
 		default:
 			g_assert_not_reached ();
 		}
@@ -1755,7 +1767,7 @@ can_marshal_struct (MonoClass *klass)
 		case MONO_TYPE_STRING:
 			break;
 		case MONO_TYPE_VALUETYPE:
-			if (!can_marshal_struct (mono_class_from_mono_type (field->type)))
+			if (!mono_class_from_mono_type (field->type)->enumtype && can_marshal_struct (mono_class_from_mono_type (field->type)))
 				can_marshal = FALSE;
 			break;
 		default:
@@ -1820,8 +1832,14 @@ add_wrappers (MonoAotCompile *acfg)
 #ifdef MONO_ARCH_DYN_CALL_SUPPORTED
 		if (!method->klass->contextbound) {
 			MonoDynCallInfo *info = mono_arch_dyn_call_prepare (sig);
+			gboolean has_nullable = FALSE;
 
-			if (info) {
+			for (j = 0; j < sig->param_count; j++) {
+				if (sig->params [j]->type == MONO_TYPE_GENERICINST && mono_class_is_nullable (mono_class_from_mono_type (sig->params [j])))
+					has_nullable = TRUE;
+			}
+
+			if (info && !has_nullable) {
 				/* Supported by the dynamic runtime-invoke wrapper */
 				skip = TRUE;
 				g_free (info);
@@ -3553,6 +3571,11 @@ can_encode_patch (MonoAotCompile *acfg, MonoJumpInfo *patch_info)
 			case MONO_WRAPPER_REMOTING_INVOKE:
 			case MONO_WRAPPER_UNKNOWN:
 				break;
+			case MONO_WRAPPER_MANAGED_TO_MANAGED:
+				if (!strcmp (method->name, "ElementAddr"))
+					return TRUE;
+				else
+					return FALSE;
 			default:
 				//printf ("Skip (wrapper call): %d -> %s\n", patch_info->type, mono_method_full_name (patch_info->data.method, TRUE));
 				return FALSE;
@@ -3756,6 +3779,8 @@ compile_method (MonoAotCompile *acfg, MonoMethod *method)
 					}
 					add_generic_class (acfg, m->klass);
 				}
+				if (m->wrapper_type == MONO_WRAPPER_MANAGED_TO_MANAGED && !strcmp (m->name, "ElementAddr"))
+					add_extra_method_with_depth (acfg, m, depth + 1);
 				break;
 			}
 			case MONO_PATCH_INFO_VTABLE: {
@@ -5817,7 +5842,7 @@ xdebug_end_emit (MonoImageWriter *w, MonoDwarfWriter *dw, MonoMethod *method)
  *   This could be called from inside gdb to flush the debugging information not yet
  * registered with gdb.
  */
-static void
+void
 mono_xdebug_flush (void)
 {
 	if (xdebug_w)

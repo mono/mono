@@ -248,9 +248,10 @@ mono_print_method_from_ip (void *ip)
 	char *method;
 	MonoDebugSourceLocation *source;
 	MonoDomain *domain = mono_domain_get ();
+	MonoDomain *target_domain = mono_domain_get ();
 	FindTrampUserData user_data;
 	
-	ji = mini_jit_info_table_find (domain, ip, &domain);
+	ji = mini_jit_info_table_find (domain, ip, &target_domain);
 	if (!ji) {
 		user_data.ip = ip;
 		user_data.method = NULL;
@@ -267,9 +268,9 @@ mono_print_method_from_ip (void *ip)
 		return;
 	}
 	method = mono_method_full_name (ji->method, TRUE);
-	source = mono_debug_lookup_source_location (ji->method, (guint32)((guint8*)ip - (guint8*)ji->code_start), domain);
+	source = mono_debug_lookup_source_location (ji->method, (guint32)((guint8*)ip - (guint8*)ji->code_start), target_domain);
 
-	g_print ("IP %p at offset 0x%x of method %s (%p %p)[domain %p - %s]\n", ip, (int)((char*)ip - (char*)ji->code_start), method, ji->code_start, (char*)ji->code_start + ji->code_size, domain, domain->friendly_name);
+	g_print ("IP %p at offset 0x%x of method %s (%p %p)[domain %p - %s]\n", ip, (int)((char*)ip - (char*)ji->code_start), method, ji->code_start, (char*)ji->code_start + ji->code_size, target_domain, target_domain->friendly_name);
 
 	if (source)
 		g_print ("%s:%d\n", source->source_file, source->row);
@@ -629,7 +630,9 @@ mono_type_to_load_membase (MonoCompile *cfg, MonoType *type)
 	if (type->byref)
 		return OP_LOAD_MEMBASE;
 
-	switch (mono_type_get_underlying_type (type)->type) {
+	type = mono_type_get_underlying_type (type);
+
+	switch (type->type) {
 	case MONO_TYPE_I1:
 		return OP_LOADI1_MEMBASE;
 	case MONO_TYPE_U1:
@@ -1274,6 +1277,23 @@ mini_method_verify (MonoCompile *cfg, MonoMethod *method)
 	}
 	method->verification_success = 1;
 	return FALSE;
+}
+
+/*Returns true is something went wrong*/
+static gboolean
+mono_compile_is_broken (MonoCompile *cfg)
+{
+	MonoMethod *method = cfg->method;
+	MonoMethod *method_definition = method;
+	gboolean dont_verify = mini_assembly_can_skip_verification (cfg->domain, method);
+	dont_verify |= method->klass->image->assembly->corlib_internal;
+
+	while (method_definition->is_inflated) {
+		MonoMethodInflated *imethod = (MonoMethodInflated *) method_definition;
+		method_definition = imethod->declaring;
+	}
+
+	return !dont_verify && mini_method_verify (cfg, method_definition);
 }
 
 static void
@@ -3275,6 +3295,9 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 		cfg->opt &= ~MONO_OPT_COPYPROP;
 		cfg->opt &= ~MONO_OPT_CONSPROP;
 		cfg->opt &= ~MONO_OPT_GSHARED;
+
+		/* This is needed for the soft debugger, which doesn't like code after the epilog */
+		cfg->disable_out_of_line_bblocks = TRUE;
 	}
 
 	if (mono_using_xdebug) {
@@ -3389,6 +3412,10 @@ mini_method_compile (MonoMethod *method, guint32 opts, MonoDomain *domain, gbool
 	 * created by this.
 	 */
 	//cfg->enable_extended_bblocks = TRUE;
+
+	/*We must verify the method before doing any IR generation as mono_compile_create_vars can assert.*/
+	if (mono_compile_is_broken (cfg))
+		return cfg;
 
 	/*
 	 * create MonoInst* which represents arguments and local variables
@@ -4215,11 +4242,11 @@ mono_jit_compile_method_inner (MonoMethod *method, MonoDomain *target_domain, in
 	}
 
 	if (ex) {
-		mono_destroy_compile (cfg);
-		*jit_ex = ex;
-
 		if (cfg->prof_options & MONO_PROFILE_JIT_COMPILATION)
 			mono_profiler_method_end_jit (method, NULL, MONO_PROFILE_FAILED);
+
+		mono_destroy_compile (cfg);
+		*jit_ex = ex;
 
 		return NULL;
 	}
@@ -5381,6 +5408,8 @@ mini_init (const char *filename, const char *runtime_version)
 	register_icall (mono_create_corlib_exception_2, "mono_create_corlib_exception_2", "object int object object", TRUE);
 	register_icall (mono_array_new_1, "mono_array_new_1", "object ptr int", FALSE);
 	register_icall (mono_array_new_2, "mono_array_new_2", "object ptr int int", FALSE);
+	register_icall (mono_array_new_3, "mono_array_new_3", "object ptr int int int", FALSE);
+	register_icall (mono_get_native_calli_wrapper, "mono_get_native_calli_wrapper", "ptr ptr ptr ptr", FALSE);
 #endif
 
 	mono_generic_sharing_init ();
@@ -5592,9 +5621,9 @@ char*
 mono_get_runtime_build_info (void)
 {
 	if (mono_build_date)
-		return g_strdup_printf ("%s %s", FULL_VERSION, mono_build_date);
+		return g_strdup_printf ("%s (%s %s)", VERSION, FULL_VERSION, mono_build_date);
 	else
-		return g_strdup_printf ("%s", FULL_VERSION);
+		return g_strdup_printf ("%s (%s)", VERSION, FULL_VERSION);
 }
 
 static void

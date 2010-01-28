@@ -666,6 +666,8 @@ mono_debugger_agent_parse_options (char *options)
 		} else if (strncmp (arg, "onthrow=", 8) == 0) {
 			/* We support multiple onthrow= options */
 			agent_config.onthrow = g_slist_append (agent_config.onthrow, g_strdup (arg + 8));
+		} else if (strncmp (arg, "onthrow", 7) == 0) {
+			agent_config.onthrow = g_slist_append (agent_config.onthrow, g_strdup (""));
 		} else if (strncmp (arg, "help", 4) == 0) {
 			print_usage ();
 			exit (0);
@@ -673,8 +675,8 @@ mono_debugger_agent_parse_options (char *options)
 			agent_config.timeout = atoi (arg + 8);
 		} else if (strncmp (arg, "launch=", 7) == 0) {
 			agent_config.launch = g_strdup (arg + 7);
-		} else if (strncmp (arg, "embedding=", 9) == 0) {
-			agent_config.embedding = atoi (arg + 9) == 1;
+		} else if (strncmp (arg, "embedding=", 10) == 0) {
+			agent_config.embedding = atoi (arg + 10) == 1;
 		} else {
 			print_usage ();
 			exit (1);
@@ -959,7 +961,15 @@ transport_connect (const char *host, int port)
 				break;
 			}
 
+#ifndef PLATFORM_WIN32
+			/*
+			 * this function is not present on win2000 which we still support, and the
+			 * workaround described here:
+			 * http://msdn.microsoft.com/en-us/library/ms737931(VS.85).aspx
+			 * only works with MSVC.
+			 */
 			freeaddrinfo (result);
+#endif
 		}
 
 		DEBUG (1, fprintf (log_file, "Listening on %s:%d (timeout=%d ms)...\n", host, port, agent_config.timeout));
@@ -1003,7 +1013,10 @@ transport_connect (const char *host, int port)
 
 		conn_fd = sfd;
 
+#ifndef PLATFORM_WIN32
+		/* See the comment above */
 		freeaddrinfo (result);
+#endif
 
 		if (rp == 0) {
 			fprintf (stderr, "debugger-agent: Unable to connect to %s:%d\n", host, port);
@@ -3637,7 +3650,7 @@ mono_debugger_agent_handle_exception (MonoException *exc, MonoContext *ctx)
 			char *ex_type = l->data;
 			char *f = mono_type_full_name (&exc->object.vtable->klass->byval_arg);
 
-			if (!strcmp (ex_type, f))
+			if (!strcmp (ex_type, "") || !strcmp (ex_type, f))
 				found = TRUE;
 
 			g_free (f);
@@ -3846,8 +3859,11 @@ decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 	int err;
 	int type = decode_byte (buf, &buf, limit);
 
-	if (type != t->type && !MONO_TYPE_IS_REFERENCE (t)) {
-		DEBUG(1, fprintf (log_file, "Expected value of type %d, got %d.\n", t->type, type));
+	if (type != t->type && !MONO_TYPE_IS_REFERENCE (t) &&
+		!(t->type == MONO_TYPE_I && type == MONO_TYPE_VALUETYPE) &&
+		!(t->type == MONO_TYPE_U && type == MONO_TYPE_VALUETYPE) &&
+		!(t->type == MONO_TYPE_PTR && type == MONO_TYPE_I8)) {
+		DEBUG(1, fprintf (log_file, "[%p] Expected value of type 0x%0x, got 0x%0x.\n", (gpointer)GetCurrentThreadId (), t->type, type));
 		return ERR_INVALID_ARGUMENT;
 	}
 
@@ -3888,6 +3904,16 @@ decode_value (MonoType *t, MonoDomain *domain, guint8 *addr, guint8 *buf, guint8
 	case MONO_TYPE_R8:
 		*(guint64*)addr = decode_long (buf, &buf, limit);
 		break;
+	case MONO_TYPE_PTR:
+		/* We send these as I8, so we get them back as such */
+		g_assert (type == MONO_TYPE_I8);
+		*(gssize*)addr = decode_long (buf, &buf, limit);
+		break;
+	case MONO_TYPE_I:
+	case MONO_TYPE_U:
+		/* We send these as vtypes, so we get them back as such */
+		g_assert (type == MONO_TYPE_VALUETYPE);
+		/* Fall through */
 	case MONO_TYPE_VALUETYPE: {
 		gboolean is_enum = decode_byte (buf, &buf, limit);
 		MonoClass *klass;

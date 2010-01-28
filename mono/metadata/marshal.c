@@ -2460,6 +2460,12 @@ mono_marshal_method_from_wrapper (MonoMethod *wrapper)
 	return res;
 }
 
+gpointer
+mono_marshal_wrapper_info_from_wrapper (MonoMethod *wrapper)
+{
+	return mono_method_get_wrapper_data (wrapper, 1);
+}
+
 MonoMethod *
 mono_marshal_get_delegate_begin_invoke (MonoMethod *method)
 {
@@ -2607,7 +2613,7 @@ mono_mb_emit_restore_result (MonoMethodBuilder *mb, MonoType *return_type)
 		mono_mb_emit_byte (mb, mono_type_to_ldind (return_type));
 		break;
 	case MONO_TYPE_GENERICINST:
-		if (!mono_type_generic_inst_is_valuetype (return_type))
+		if (!mono_type_generic_inst_is_valuetype (t))
 			break;
 		/* fall through */
 	case MONO_TYPE_VALUETYPE: {
@@ -4308,6 +4314,7 @@ mono_marshal_get_runtime_invoke (MonoMethod *method, gboolean virtual)
 			continue;
 		}
 
+		/*FIXME 'this doesn't handle generic enums. Shouldn't we?*/
 		type = sig->params [i]->type;
 handle_enum:
 		switch (type) {
@@ -4483,6 +4490,8 @@ handle_enum:
 	mono_mb_patch_branch (mb, pos);
 	mono_mb_emit_ldloc (mb, 0);
 	mono_mb_emit_byte (mb, CEE_RET);
+
+	g_free (tmp_nullable_locals);
 
 	if (need_direct_wrapper) {
 		mb->skip_visibility = 1;
@@ -9506,6 +9515,8 @@ mono_marshal_get_array_address (int rank, int elem_size)
 		}
 	}
 	if (!cached) {
+		ElementAddrWrapperInfo *info;
+
 		if (elem_addr_cache_next >= elem_addr_cache_size) {
 			int new_size = elem_addr_cache_size + 4;
 			ArrayElemAddr *new_array = g_new0 (ArrayElemAddr, new_size);
@@ -9517,6 +9528,12 @@ mono_marshal_get_array_address (int rank, int elem_size)
 		elem_addr_cache [elem_addr_cache_next].rank = rank;
 		elem_addr_cache [elem_addr_cache_next].elem_size = elem_size;
 		elem_addr_cache [elem_addr_cache_next].method = ret;
+
+		info = mono_image_alloc0 (mono_defaults.corlib, sizeof (ElementAddrWrapperInfo));
+		info->rank = rank;
+		info->elem_size = elem_size;
+
+		mono_marshal_method_set_wrapper_data (ret, info);
 	}
 	mono_marshal_unlock ();
 	return ret;

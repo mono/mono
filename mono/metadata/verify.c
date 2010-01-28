@@ -409,6 +409,8 @@ mono_class_has_default_constructor (MonoClass *klass)
 	int i;
 
 	mono_class_setup_methods (klass);
+	if (klass->exception_type)
+		return FALSE;
 
 	for (i = 0; i < klass->method.count; ++i) {
 		method = klass->methods [i];
@@ -424,11 +426,17 @@ mono_class_has_default_constructor (MonoClass *klass)
 static gboolean
 mono_class_interface_implements_interface (MonoClass *candidate, MonoClass *iface)
 {
+	MonoError error;
 	int i;
 	do {
 		if (candidate == iface)
 			return TRUE;
-		mono_class_setup_interfaces (candidate);
+		mono_class_setup_interfaces (candidate, &error);
+		if (!mono_error_ok (&error)) {
+			mono_error_cleanup (&error);
+			return FALSE;
+		}
+
 		for (i = 0; i < candidate->interface_count; ++i) {
 			if (candidate->interfaces [i] == iface || mono_class_interface_implements_interface (candidate->interfaces [i], iface))
 				return TRUE;
@@ -2497,6 +2505,11 @@ init_stack_with_value_at_exception_boundary (VerifyContext *ctx, ILCodeDesc *cod
 		return;
 	}
 
+	if (!ctx->max_stack) {
+		ADD_VERIFY_ERROR (ctx, g_strdup_printf ("Stack overflow at 0x%04x", ctx->ip_offset));
+		return;
+	}
+
 	stack_init (ctx, code);
 	set_stack_value (ctx, code->stack, type, FALSE);
 	ctx->exception_types = g_slist_prepend (ctx->exception_types, type);
@@ -3111,10 +3124,15 @@ store_local (VerifyContext *ctx, guint32 arg)
 	if (check_underflow (ctx, 1)) {
 		value = stack_pop(ctx);
 		if (!verify_stack_type_compatibility (ctx, ctx->locals [arg], value)) {
-			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type [%s], type [%s] was expected in local store at 0x%04x",
-					stack_slot_get_name (value),
-					mono_type_get_stack_name (ctx->locals [arg]),
-					ctx->ip_offset));	
+			char *expected = mono_type_full_name (ctx->locals [arg]);
+			char *found = stack_slot_full_name (value);
+			CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Incompatible type '%s' on stack cannot be stored to local %d with type '%s' at 0x%04x",
+					found,
+					arg,
+					expected,
+					ctx->ip_offset));
+			g_free (expected);
+			g_free (found);	
 		}
 	}
 }
@@ -4698,6 +4716,7 @@ do_ckfinite (VerifyContext *ctx)
 static void
 merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean start, gboolean external) 
 {
+	MonoError error;
 	int i, j, k;
 	stack_init (ctx, to);
 
@@ -4764,7 +4783,12 @@ merge_stacks (VerifyContext *ctx, ILCodeDesc *from, ILCodeDesc *to, gboolean sta
 				}
 			}
 
-			mono_class_setup_interfaces (old_class);
+			mono_class_setup_interfaces (old_class, &error);
+			if (!mono_error_ok (&error)) {
+				CODE_NOT_VERIFIABLE (ctx, g_strdup_printf ("Cannot merge stacks due to a TypeLoadException %s at 0x%04x", mono_error_get_message (&error), ctx->ip_offset));
+				mono_error_cleanup (&error);
+				goto end_verify;
+			}
 			for (j = 0; j < old_class->interface_count; ++j) {
 				for (k = 0; k < new_class->interface_count; ++k) {
 					if (mono_metadata_type_equal (&old_class->interfaces [j]->byval_arg, &new_class->interfaces [k]->byval_arg)) {
@@ -6198,7 +6222,7 @@ verify_valuetype_layout_with_target (MonoClass *class, MonoClass *target_class)
 
 		field_class = mono_class_get_generic_type_definition (mono_class_from_mono_type (field->type));
 
-		if (field_class == target_class || !verify_valuetype_layout_with_target (field_class, target_class))
+		if (field_class == target_class || class == field_class || !verify_valuetype_layout_with_target (field_class, target_class))
 			return FALSE;
 	}
 
@@ -6225,6 +6249,14 @@ verify_valuetype_layout (MonoClass *class)
 gboolean
 mono_verifier_verify_class (MonoClass *class)
 {
+	/*Neither <Module>, object or ifaces have parent.*/
+	if (!class->parent &&
+		class != mono_defaults.object_class && 
+		!MONO_CLASS_IS_INTERFACE (class) &&
+		(!class->image->dynamic && class->type_token != 0x2000001)) /*<Module> is the first type in the assembly*/
+		return FALSE;
+	if (class->parent && MONO_CLASS_IS_INTERFACE (class->parent))
+		return FALSE;
 	if (class->generic_container && (class->flags & TYPE_ATTRIBUTE_LAYOUT_MASK) == TYPE_ATTRIBUTE_EXPLICIT_LAYOUT)
 		return FALSE;
 	if (!verify_class_for_overlapping_reference_fields (class))

@@ -1019,6 +1019,7 @@ typedef struct {
 	guint            disable_omit_fp : 1;
 	guint            disable_vreg_to_lvreg : 1;
 	guint            disable_deadce_vars : 1;
+	guint            disable_out_of_line_bblocks : 1;
 	guint            extend_live_ranges : 1;
 	guint            has_got_slots : 1;
 	guint            uses_rgctx_reg : 1;
@@ -1501,7 +1502,7 @@ void     mono_xdebug_init                   (char *xdebug_opts) MONO_INTERNAL;
 void     mono_save_xdebug_info              (MonoCompile *cfg) MONO_INTERNAL;
 void     mono_save_trampoline_xdebug_info   (const char *tramp_name, guint8 *code, guint32 code_size, GSList *unwind_info) MONO_INTERNAL;
 /* This is an exported function */
-void     mono_xdebug_emit                   (void) MONO_INTERNAL;
+void     mono_xdebug_flush                  (void) MONO_INTERNAL;
 
 /* LLVM backend */
 void     mono_llvm_init                     (void) MONO_INTERNAL;
@@ -1748,6 +1749,7 @@ gboolean mono_handle_exception                  (MonoContext *ctx, gpointer obj,
 						 gpointer original_ip, gboolean test_only) MONO_INTERNAL;
 void     mono_handle_native_sigsegv             (int signal, void *sigctx) MONO_INTERNAL;
 void     mono_print_thread_dump                 (void *sigctx);
+void     mono_print_thread_dump_from_ctx        (MonoContext *ctx);
 void     mono_jit_walk_stack                    (MonoStackWalk func, gboolean do_il_offset, gpointer user_data) MONO_INTERNAL;
 void     mono_jit_walk_stack_from_ctx           (MonoStackWalk func, MonoContext *ctx, gboolean do_il_offset, gpointer user_data) MONO_INTERNAL;
 void     mono_jit_walk_stack_from_ctx_in_thread (MonoJitStackWalk func, MonoDomain *domain, MonoContext *start_ctx, gboolean do_il_offset, MonoThread *thread, MonoLMF *lmf, gpointer user_data) MONO_INTERNAL;
@@ -1974,10 +1976,11 @@ void SIG_HANDLER_SIGNATURE (mono_sigsegv_signal_handler) MONO_INTERNAL;
 void SIG_HANDLER_SIGNATURE (mono_sigint_signal_handler)  MONO_INTERNAL;
 gboolean SIG_HANDLER_SIGNATURE (mono_chain_signal) MONO_INTERNAL;
 
-/* for MONO_WRAPPER_UNKNOWN subtypes */
+/* for MONO_WRAPPER_UNKNOWN/MANAGED_TO_MANAGED subtypes */
 enum {
 	MONO_AOT_WRAPPER_MONO_ENTER,
 	MONO_AOT_WRAPPER_MONO_EXIT,
+	MONO_AOT_WRAPPER_ELEMENT_ADDR,
 	MONO_AOT_WRAPPER_LAST
 };
 

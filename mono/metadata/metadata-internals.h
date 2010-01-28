@@ -294,6 +294,7 @@ struct _MonoDynamicAssembly {
 	guint32 strong_name_size;
 	guint8 run;
 	guint8 save;
+	MonoDomain *domain;
 };
 
 struct _MonoDynamicImage {

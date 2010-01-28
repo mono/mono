@@ -217,7 +217,7 @@ typedef struct {
 
 typedef struct {
 	const char *data;
-	guint32 size;
+	guint32 size, token;
 	GSList *errors;
 	int valid;
 	MonoImage *image;
@@ -1267,6 +1267,12 @@ parse_generic_inst (VerifyContext *ctx, const char **_ptr, const char *end)
 	if (!is_valid_coded_index (ctx, TYPEDEF_OR_REF_DESC, token))
 		FAIL (ctx, g_strdup_printf ("GenericInst: invalid TypeDefOrRef token %x", token));
 
+	if (ctx->token) {
+		if (mono_metadata_token_index (ctx->token) == get_coded_index_token (TYPEDEF_OR_REF_DESC, token) &&
+			mono_metadata_token_table (ctx->token) == get_coded_index_table (TYPEDEF_OR_REF_DESC, token))
+			FAIL (ctx, g_strdup_printf ("Type: Recurside generic instance specification (%x). A type signature can't reference itself", ctx->token));
+	}
+
 	if (!safe_read_cint (count, ptr, end))
 		FAIL (ctx, g_strdup ("GenericInst: Not enough room for argument count"));
 
@@ -1319,6 +1325,11 @@ parse_type (VerifyContext *ctx, const char **_ptr, const char *end)
 	
 		if (!is_valid_coded_index (ctx, TYPEDEF_OR_REF_DESC, token))
 			FAIL (ctx, g_strdup_printf ("Type: invalid TypeDefOrRef token %x", token));
+		if (ctx->token) {
+			if (mono_metadata_token_index (ctx->token) == get_coded_index_token (TYPEDEF_OR_REF_DESC, token) &&
+				mono_metadata_token_table (ctx->token) == get_coded_index_table (TYPEDEF_OR_REF_DESC, token))
+				FAIL (ctx, g_strdup_printf ("Type: Recurside type specification (%x). A type signature can't reference itself", ctx->token));
+		}
 		break;
 
 	case MONO_TYPE_VAR:
@@ -2901,10 +2912,11 @@ verify_typespec_table_full (VerifyContext *ctx)
 
 	for (i = 0; i < table->rows; ++i) {
 		mono_metadata_decode_row (table, i, data, MONO_TYPESPEC_SIZE);
-
+		ctx->token = (i + 1) | MONO_TOKEN_TYPE_SPEC;
 		if (!is_valid_typespec_blob (ctx, data [MONO_TYPESPEC_SIGNATURE]))
 			ADD_ERROR (ctx, g_strdup_printf ("Invalid TypeSpec row %d Signature field %08x", i, data [MONO_TYPESPEC_SIGNATURE]));
 	}
+	ctx->token = 0;
 }
 
 #define INVALID_IMPLMAP_FLAGS_BITS ~((1 << 0) | (1 << 1) | (1 << 2) | (1 << 6) | (1 << 8) | (1 << 9) | (1 << 10))
@@ -3642,7 +3654,7 @@ mono_verifier_verify_standalone_signature (MonoImage *image, guint32 offset, GSL
 }
 
 gboolean
-mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, guint32 token, GSList **error_list)
 {
 	VerifyContext ctx;
 
@@ -3651,6 +3663,7 @@ mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, GSLis
 
 	init_verify_context (&ctx, image, error_list);
 	ctx.stage = STAGE_TABLES;
+	ctx.token = token;
 
 	is_valid_typespec_blob (&ctx, offset);
 	return cleanup_context (&ctx, error_list);
@@ -3708,6 +3721,33 @@ mono_verifier_verify_string_signature (MonoImage *image, guint32 offset, GSList 
 	return cleanup_context (&ctx, error_list);
 }
 
+gboolean
+mono_verifier_is_sig_compatible (MonoImage *image, MonoMethod *method, MonoMethodSignature *signature)
+{
+	MonoMethodSignature *original_sig;
+	if (!mono_verifier_is_enabled_for_image (image))
+		return TRUE;
+
+	original_sig = mono_method_signature (method);
+	if (original_sig->call_convention == MONO_CALL_VARARG) {
+		if (original_sig->hasthis != signature->hasthis)
+			return FALSE;
+		if (original_sig->call_convention != signature->call_convention)
+			return FALSE;
+		if (original_sig->explicit_this != signature->explicit_this)
+			return FALSE;
+		if (original_sig->call_convention != signature->call_convention)
+			return FALSE;
+		if (original_sig->pinvoke != signature->pinvoke)
+			return FALSE;
+		if (original_sig->sentinelpos != signature->sentinelpos)
+			return FALSE;
+	} else if (!mono_metadata_signature_equal (signature, original_sig)) {
+		return FALSE;
+	}
+
+	return TRUE;
+}
 
 #else
 gboolean
@@ -3765,7 +3805,7 @@ mono_verifier_verify_standalone_signature (MonoImage *image, guint32 offset, GSL
 }
 
 gboolean
-mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, GSList **error_list)
+mono_verifier_verify_typespec_signature (MonoImage *image, guint32 offset, guint32 token, GSList **error_list)
 {
 	return TRUE;
 }
@@ -3778,6 +3818,12 @@ mono_verifier_verify_methodspec_signature (MonoImage *image, guint32 offset, GSL
 
 gboolean
 mono_verifier_verify_string_signature (MonoImage *image, guint32 offset, GSList **error_list)
+{
+	return TRUE;
+}
+
+gboolean
+mono_verifier_is_sig_compatible (MonoImage *image, MonoMethod *method, MonoMethodSignature *signature)
 {
 	return TRUE;
 }

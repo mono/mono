@@ -95,6 +95,9 @@ mono_branch_optimize_exception_target (MonoCompile *cfg, MonoBasicBlock *bb, con
 					} 
 
 					return NULL;
+				} else {
+					/* Branching to an outer clause could skip inner clauses */
+					return NULL;
 				}
 			} else {
 				/* Branching to an outer clause could skip inner clauses */
@@ -1420,7 +1423,7 @@ mono_optimize_branches (MonoCompile *cfg)
 				}
 
 				if (bb->last_ins && MONO_IS_COND_BRANCH_NOFP (bb->last_ins)) {
-					if (bb->last_ins->inst_false_bb && bb->last_ins->inst_false_bb->out_of_line && (bb->region == bb->last_ins->inst_false_bb->region)) {
+					if (bb->last_ins->inst_false_bb && bb->last_ins->inst_false_bb->out_of_line && (bb->region == bb->last_ins->inst_false_bb->region) && !cfg->disable_out_of_line_bblocks) {
 						/* Reverse the branch */
 						bb->last_ins->opcode = mono_reverse_branch_op (bb->last_ins->opcode);
 						bbn = bb->last_ins->inst_false_bb;

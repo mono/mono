@@ -1,3 +1,344 @@
+2010-01-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* icall.c (ves_icall_System_Array_SetValueImpl): Handle nullable types correctly.
+	Fixes #573322.
+
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
+2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (typebuilder_setup_fields): Pretend field setup already
+	happened before starting to encode the actual fields. This avoid ciclic
+	dependencies and eventual crashes.
+
+	Fixes #572660.
+
+	Backport of r150008.
+
+2010-01-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (parse_generic_inst): Fail a type signature if it 
+	has a recursive reference to itself.
+
+	Fixes #571863.
+
+	Backport of r149969.
+
+2010-01-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* icall.c: don't raise AppDomain.TypeResolve when the type is loaded
+	from the current assembly or mscorlib. Fixes bug #322957.
+
+2010-01-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c (mono_security_core_clr_can_access_internals):
+	Handle the case where 'basedir' can be NULL (e.g. SRE assemblies)
+	[Backport r149823]
+
+2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (store_local): Better error message.
+	
+	Backport of r149845.
+
+2010-01-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_MonoMethod_GetGenericMethodDefinition): Handle inflated generic methods
+	on a GTD.
+
+	Backport of r149808.
+
+2010-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (parse_type): Fail a type signature if it has a recursive reference
+	to itself.
+
+	* metadata-verify.c (mono_verifier_verify_typespec_signature): Change signature to take
+	the token as parameter.
+
+	* verify-internals.h: Ditto.
+
+	* metadata.c (mono_type_create_from_typespec): Pass token to verifier.
+
+	Fixes #571460.
+
+	Backport of r149776.
+
+2010-01-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_from_typeref): Fail loading of self-referencing typeref tokens.
+
+	Fixes #569579.
+
+	Backport of r149760.
+
+2010-01-15  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_fields): Guard against unfinished types. This
+	happens only on 2.6 and not trunk because trunk better deals with unfinished types. 
+
+2010-01-14  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_type_has_exceptions): Check the generic instance. It can fail
+	independently of the GTD.
+
+	* class.c (mono_class_setup_fields): Fail if field has negative offset.
+
+	* class.c (mono_class_setup_fields): Fail if valuetype has zero size. Add sizeof(MonoObject)
+	to the upper limit since instance_size includes this amount.
+
+	* class.c (mono_class_layout_fields): Check if the types of the static fields have failed.
+
+	Fixes #569544.
+
+	Backport of r149575.
+
+2010-01-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_get_implemented_interfaces): Now take a MonoError argument.
+
+	* class.c:
+	* cominterop.c:
+	* icall.c:
+	* object.c: 
+	* class-internals.h: Adjust for new signature of mono_class_get_implemented_interfaces.
+
+	Backport of r149414.
+
+2010-01-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_interfaces): Now take a MonoError argument and
+	it can fail loading the type.
+
+	* class.c: Add mono_class_inflate_generic_class_checked.
+
+	* class.c:
+	* verify.c:
+	* class-internals.h: Adjust for new signature of mono_class_setup_interfaces.
+
+	Backport of r149413.
+
+2010-01-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* socket-io.c (AI_ADDRCONFIG): Applied patch from John Lightsey (jd@cpanel.net).
+	Fixes build on rh 7.3.
+
+2009-12-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_bounded_array_class_get): Make these classes PUBLIC. Fixes
+	#565120.
+
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* monitor.c (ves_icall_System_Threading_Monitor_Monitor_wait): Don't close the
+	wait handle if the wait is interrupted, since it is still in mon->wait_list, and
+	we can't remove it from it since we don't hold the lock.
+	(mon_new): Free the orphaned events here when a mon structure is added to the
+	freelist. Fixes #561239. Thanks to Mike Rieker <wmrieker@nii.net> for tracking
+	this down.
+
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (instantiate_other_info): Avoid creating jump trampolines since
+	they cannot be patched. Partly fixes #564408.
+
+2010-01-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* assembly.c: fix MONO_PATH debug output.
+
+2010-01-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Properly check for broken parent. Ignore
+	types that are meant to not have a parent.
+
+	Backport of r149053.
+
+2010-01-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* pedump.c: Backport earlier fixes from Rodrigo Kumpera since
+	they are useful for testing ML
+
+2010-01-04  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* verify.c (verify_valuetype_layout_with_target): Fix case
+	that can lead to infinite recursion. Fix bug #567861
+	[Backport r149042]
+
+2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (count_virtual_methods): Remove the assert and now
+	fail properly.
+	
+	* class.c (setup_interface_offsets): This can fail now.
+
+	* class.c (mono_class_setup_vtable_general): Check for parent vtable
+	errors. Check setup_interface_offsets errors.
+
+	* class.c (setup_interface_offsets): Simplify the return error logic
+	and remove class_init_ok.
+
+	Fixes #560327.
+
+	Backport of r149031.
+
+2010-01-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_init): Do class verification at the beginning. Add
+	some asserts to avoid tripping into invalid memory.
+
+	* object.c (compute_class_bitmap): Replace a g_assert_not_reached with a
+	g_error and a decent message.
+
+	* verify.c (mono_verifier_verify_class): Verify for invalid super type.
+
+	Fixes #567548.
+
+	Backport of r149028.
+
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Fix a memory leak.
+
+2010-01-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* locales.c (construct_culture_from_specific_name): Applied patch from
+	José Antonio Sánchez Lázaro <jasl@darcysoft.es>. Fix a crash if a culture was
+	not found. Fixes #567900.
+
+2009-12-31  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* loader.c (mono_method_get_signature_full): Remove two asserts.
+	Return NULL instead so that the verifier can handle both cases 
+	gracefully. Fix bug #564897
+	[Backport r148951]
+
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_setup_methods): Use checked version of mono_class_inflate_generic_method_full
+	so we can properly fail types instead of crashing.
+
+	Fixes #567676.
+
+	Backpor of r148948.
+
+2009-12-30  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* marshal.c (mono_mb_emit_restore_result): Properly handle generic enums.
+
+	Backport of r148941.
+
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (init_stack_with_value_at_exception_boundary): Do stack overflow checking here
+	as max stack might be zero.
+
+	Fixes #562320.
+
+	Backport of r148911.
+
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	Rework all uses of mono_class_setup_methods to accept that it can fail now.
+
+	* class.c (mono_class_setup_methods): This function now can fail the class. Do so for generic
+	instances if the GTD did.
+
+	* class.c (mono_class_setup_properties): Ditto.
+
+	* class.c (mono_class_setup_events): Ditto.
+
+	* class.c (mono_class_setup_vtable): Fail early if the type is already broken.
+
+	* class.c (mono_class_setup_vtable_general): Add a few more missing broken type checks.	Sanitize
+	error setting.
+
+	* class.c (mono_class_init): Fail if GTD did.
+
+	* cominterop.c:
+	* generic-sharing.c:
+	* icall.c:
+	* loader.c:
+	* object.c:
+	* verify.c: Properly handle failure of mono_class_setup_methods.
+
+	Backport of r148905.
+
+2009-12-26  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class-internals.c: Add mono_class_inflate_generic_method_full_checked and make
+	mono_class_inflate_generic_method_full internal.
+
+	* class.c (inflate_generic_context): Now takes a MonoError argument.
+
+	* class.c (mono_class_inflate_generic_method_full): Now calls the _checked and abort on
+	errors.
+
+	Backport of r148904.
+
+2009-12-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (mono_domain_free): Backport part of r143047. Free special static
+	fields earlier to avoid crashes if the types they refer to are freed. Fixes
+	#565923.
+
+2009-12-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* loader.c (mono_method_get_signature_full): Check if the returned signature is compatible
+	with the one from the original method.
+
+	* metadata-verify.c (mono_verifier_is_sig_compatible): New function to verify signature
+	compatibility.
+
+	* verify-internals.h: Add new function to the internal API.
+
+	Fixes #566295.
+
+	Backport of r148828.
+
+2009-12-18  Dimitar Dobrev  <dpldobrev@yahoo.com>
+
+	* culture-info-tables.h: regenerated it to include the Georgian culture.
+
+2009-12-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_get_type_internal_dynamic): Use assembly->domain
+	instead of the current domain, since the two might not match if this is called
+	from the debugger.
+
+	* metadata-internals.h (MonoDynamicAssembly): Add a 'domain' field to specify the
+	domain which created this assembly.
+
+2009-12-17  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_Type_GetMethodsByName): Don't pin virtual methods if they are newslot.
+	A private virtual newslot method is used to implement an interface method without exposing
+	it to users. When querying for public instance methods, such method would hide a public one
+	on a parent type.
+
+	Fixes #564379.
+
+	Backport of r148694.
+
+2009-12-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Fix the encoding of unmanaged calling
+	conventions.
+
+2009-12-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_type_get_object): Guard against NULL generic param owner.
+
+2009-12-16  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_type_get_object): If the type is VAR or MVAR check
+	if the owner class has not been finished before returning reflection_info.	
+
+	Fixes #565127.
+
+	Backport of r148575.
+
 2009-12-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_custom_attrs_from_param): Avoid a crash if a dynamic

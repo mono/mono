@@ -985,7 +985,7 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 {
 	guint i, fr, gr;
 	int n = sig->hasthis + sig->param_count;
-	guint32 simpletype;
+	MonoType *simpletype;
 	guint32 stack_size = 0;
 	CallInfo *cinfo = g_malloc0 (sizeof (CallInfo) + sizeof (ArgInfo) * n);
 
@@ -1020,8 +1020,8 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 			n++;
 			continue;
 		}
-		simpletype = mini_type_get_underlying_type (NULL, sig->params [i])->type;
-		switch (simpletype) {
+		simpletype = mini_type_get_underlying_type (NULL, sig->params [i]);
+		switch (simpletype->type) {
 		case MONO_TYPE_BOOLEAN:
 		case MONO_TYPE_I1:
 		case MONO_TYPE_U1:
@@ -1056,7 +1056,7 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 			n++;
 			break;
 		case MONO_TYPE_GENERICINST:
-			if (!mono_type_generic_inst_is_valuetype (sig->params [i])) {
+			if (!mono_type_generic_inst_is_valuetype (simpletype)) {
 				cinfo->args [n].size = sizeof (gpointer);
 				add_general (&gr, &stack_size, cinfo->args + n, TRUE);
 				n++;
@@ -1230,8 +1230,8 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 	}
 
 	{
-		simpletype = mini_type_get_underlying_type (NULL, sig->ret)->type;
-		switch (simpletype) {
+		simpletype = mini_type_get_underlying_type (NULL, sig->ret);
+		switch (simpletype->type) {
 		case MONO_TYPE_BOOLEAN:
 		case MONO_TYPE_I1:
 		case MONO_TYPE_U1:
@@ -1261,7 +1261,7 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 			cinfo->ret.regtype = RegTypeFP;
 			break;
 		case MONO_TYPE_GENERICINST:
-			if (!mono_type_generic_inst_is_valuetype (sig->ret)) {
+			if (!mono_type_generic_inst_is_valuetype (simpletype)) {
 				cinfo->ret.reg = ppc_r3;
 				break;
 			}
