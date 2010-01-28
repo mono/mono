@@ -73,7 +73,7 @@ namespace System.Net {
 			finally {
 				// if used from WebClient then notify that the stream was closed
 				if (WebClient != null)
-					WebClient.WriteStreamClosedCallback ();
+					WebClient.WriteStreamClosedCallback (WebClientData);
 			}
 		}
 
@@ -117,6 +117,10 @@ namespace System.Net {
 		}
 
 		internal WebClient WebClient {
+			get; set;
+		}
+
+		internal object WebClientData {
 			get; set;
 		}
 	}

@@ -351,9 +351,13 @@ namespace System.Net {
 			Stream stream = null;
 			Exception ex = null;
 			bool cancel = false;
+			InternalWebRequestStreamWrapper internal_stream;
+
 			try {
 				stream = request.EndGetRequestStream (result);
-				(stream as InternalWebRequestStreamWrapper).WebClient = this;
+				internal_stream = (InternalWebRequestStreamWrapper) stream;
+				internal_stream.WebClient = this;
+				internal_stream.WebClientData = callback_data;
 			}
 			catch (WebException web) {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
@@ -369,13 +373,15 @@ namespace System.Net {
 			}
 		}
 
-		internal void WriteStreamClosedCallback ()
+		internal void WriteStreamClosedCallback (object WebClientData)
 		{
 			try {
-				request.BeginGetResponse (OpenWriteAsyncResponseCallback, null);
+				request.BeginGetResponse (OpenWriteAsyncResponseCallback, WebClientData);
 			}
 			catch (Exception e) {
-				OnWriteStreamClosed (new WriteStreamClosedEventArgs (e));
+				((CallbackData) WebClientData).sync_context.Post (delegate (object sender) {
+					OnWriteStreamClosed (new WriteStreamClosedEventArgs (e));
+				}, null);
 			}
 		}
 
@@ -386,7 +392,9 @@ namespace System.Net {
 				ProcessResponse (response);
 			}
 			catch (Exception e) {
-				OnWriteStreamClosed (new WriteStreamClosedEventArgs (e));
+				((CallbackData) result.AsyncState).sync_context.Post (delegate (object sender) {
+					OnWriteStreamClosed (new WriteStreamClosedEventArgs (e));
+				}, null);
 			}
 		}
 

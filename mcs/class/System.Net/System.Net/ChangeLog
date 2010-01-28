@@ -1,3 +1,11 @@
+2010-01-29  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WebClient_2_1.cs: Ensure the WriteStreamClosed event is emitted on
+	the correct thread (by using the stored SynchronizationContext).
+
+	* InternalWebRequestStreamWrapper.cs: Add a WebClientData field which
+	is passed to the WriteStreamClosedCallback.
+
 2010-01-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WebClient_2_1.cs: The async events must be invoked on a threadpool
