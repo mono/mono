@@ -329,6 +329,10 @@ namespace System
 
 		public static bool TryParse (string s, out TimeSpan result)
 		{
+			if (s == null) {
+				result = TimeSpan.Zero;
+				return false;
+			}
 			try {
 				result = Parse (s);
 				return true;

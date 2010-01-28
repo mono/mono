@@ -1,3 +1,7 @@
+2010-01-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* TimeSpan.cs: TryParse: Handle null values to not throw ANEs.
+
 2010-01-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Array.cs: updates to the API from beta2.
