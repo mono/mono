@@ -603,8 +603,6 @@ namespace System.Linq
 			if (list != null) {
 				if (list.Count != 0)
 					return list [0];
-
-				throw new InvalidOperationException ();
 			} else {
 				using (var enumerator = source.GetEnumerator ()) {
 					if (enumerator.MoveNext ())
@@ -612,7 +610,7 @@ namespace System.Linq
 				}
 			}
 
-			throw new InvalidOperationException ();
+			throw new InvalidOperationException ("The source sequence is empty");
 		}
 
 		public static TSource First<TSource> (this IEnumerable<TSource> source, Func<TSource, bool> predicate)
