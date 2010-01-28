@@ -503,61 +503,33 @@ namespace Mono.CSharp {
 				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, Report);
 		}
 
-		// Access level of a type.
-		const int X = 1;
-		enum AccessLevel
-		{ // Each column represents `is this scope larger or equal to Blah scope'
-			// Public    Assembly   Protected
-			Protected = (0 << 0) | (0 << 1) | (X << 2),
-			Public = (X << 0) | (X << 1) | (X << 2),
-			Private = (0 << 0) | (0 << 1) | (0 << 2),
-			Internal = (0 << 0) | (X << 1) | (0 << 2),
-			ProtectedOrInternal = (0 << 0) | (X << 1) | (X << 2),
-		}
-
-		static AccessLevel GetAccessLevelFromModifiers (Modifiers flags)
-		{
-			if ((flags & Modifiers.INTERNAL) != 0) {
-
-				if ((flags & Modifiers.PROTECTED) != 0)
-					return AccessLevel.ProtectedOrInternal;
-				else
-					return AccessLevel.Internal;
-
-			} else if ((flags & Modifiers.PROTECTED) != 0)
-				return AccessLevel.Protected;
-			else if ((flags & Modifiers.PRIVATE) != 0)
-				return AccessLevel.Private;
-			else
-				return AccessLevel.Public;
-		}
-
 		//
 		// Returns the access level for type `t'
 		//
-		static AccessLevel GetAccessLevelFromType (Type t)
+		static Modifiers GetAccessLevelFromType (Type type)
 		{
-			if (t.IsPublic)
-				return AccessLevel.Public;
-			if (t.IsNestedPrivate)
-				return AccessLevel.Private;
-			if (t.IsNotPublic)
-				return AccessLevel.Internal;
+			var ma = type.Attributes;
+			Modifiers mod;
+			switch (ma & TypeAttributes.VisibilityMask) {
+			case TypeAttributes.Public:
+			case TypeAttributes.NestedPublic:
+				mod = Modifiers.PUBLIC;
+				break;
+			case TypeAttributes.NestedPrivate:
+				mod = Modifiers.PRIVATE;
+				break;
+			case TypeAttributes.NestedFamily:
+				mod = Modifiers.PROTECTED;
+				break;
+			case TypeAttributes.NestedFamORAssem:
+				mod = Modifiers.PROTECTED | Modifiers.INTERNAL;
+				break;
+			default:
+				mod = Modifiers.INTERNAL;
+				break;
+			}
 
-			if (t.IsNestedPublic)
-				return AccessLevel.Public;
-			if (t.IsNestedAssembly)
-				return AccessLevel.Internal;
-			if (t.IsNestedFamily)
-				return AccessLevel.Protected;
-			if (t.IsNestedFamORAssem)
-				return AccessLevel.ProtectedOrInternal;
-			if (t.IsNestedFamANDAssem)
-				throw new NotImplementedException ("NestedFamANDAssem not implemented, cant make this kind of type from c# anyways");
-
-			// nested private is taken care of
-
-			throw new Exception ("I give up, what are you?");
+			return mod;
 		}
 
 		//
@@ -588,27 +560,27 @@ namespace Mono.CSharp {
 
 			for (Type p_parent = null; p != null; p = p_parent) {
 				p_parent = p.DeclaringType;
-				AccessLevel pAccess = GetAccessLevelFromType (p);
-				if (pAccess == AccessLevel.Public)
+				var pAccess = GetAccessLevelFromType (p);
+				if (pAccess == Modifiers.PUBLIC)
 					continue;
 
 				bool same_access_restrictions = false;
 				for (MemberCore mc = this; !same_access_restrictions && mc != null && mc.Parent != null; mc = mc.Parent) {
-					AccessLevel al = GetAccessLevelFromModifiers (mc.ModFlags);
+					var al = mc.ModFlags & Modifiers.AccessibilityMask;
 					switch (pAccess) {
-					case AccessLevel.Internal:
-						if (al == AccessLevel.Private || al == AccessLevel.Internal)
+					case Modifiers.INTERNAL:
+						if (al == Modifiers.PRIVATE || al == Modifiers.INTERNAL)
 							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
 						
 						break;
-						
-					case AccessLevel.Protected:
-						if (al == AccessLevel.Protected) {
+
+					case Modifiers.PROTECTED:
+						if (al == Modifiers.PROTECTED) {
 							same_access_restrictions = mc.Parent.IsBaseType (p_parent);
 							break;
 						}
-						
-						if (al == AccessLevel.Private) {
+
+						if (al == Modifiers.PRIVATE) {
 							//
 							// When type is private and any of its parents derives from
 							// protected type then the type is accessible
@@ -621,23 +593,22 @@ namespace Mono.CSharp {
 						}
 						
 						break;
-						
-					case AccessLevel.ProtectedOrInternal:
-						if (al == AccessLevel.Protected)
-							same_access_restrictions = mc.Parent.IsBaseType (p_parent);
-						else if (al == AccessLevel.Internal)
+
+					case Modifiers.PROTECTED | Modifiers.INTERNAL:
+						if (al == Modifiers.INTERNAL)
 							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
-						else if (al == AccessLevel.ProtectedOrInternal)
+						else if (al == Modifiers.PROTECTED)
+							same_access_restrictions = mc.Parent.IsBaseType (p_parent);
+						else if (al == (Modifiers.PROTECTED | Modifiers.INTERNAL))
 							same_access_restrictions = mc.Parent.IsBaseType (p_parent) &&
 								TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
-						
 						break;
-						
-					case AccessLevel.Private:
+
+					case Modifiers.PRIVATE:
 						//
 						// Both are private and share same parent
 						//
-						if (al == AccessLevel.Private) {
+						if (al == Modifiers.PRIVATE) {
 							var decl = mc.Parent;
 							do {
 								same_access_restrictions = TypeManager.IsEqual (decl.TypeBuilder, p_parent);
@@ -1240,18 +1211,11 @@ namespace Mono.CSharp {
 
 		public bool IsBaseType (Type baseType)
 		{
-			if (TypeManager.IsInterfaceType (baseType))
-				throw new NotImplementedException ();
+			// We are called from RootDeclspace
+			if (TypeBuilder == null)
+				return false;
 
-			Type type = TypeBuilder;
-			while (type != null) {
-				if (TypeManager.IsEqual (type, baseType))
-					return true;
-
-				type = type.BaseType;
-			}
-
-			return false;
+			return TypeManager.IsSubclassOf (TypeBuilder, baseType);
 		}
 
 		private Type LookupNestedTypeInHierarchy (string name)

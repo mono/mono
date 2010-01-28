@@ -1,3 +1,7 @@
+2010-01-28  Marek Safar  <marek.safar@gmail.com>
+
+	* decl.cs: Use only one set of modifiers.
+
 2010-01-26  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #573329
