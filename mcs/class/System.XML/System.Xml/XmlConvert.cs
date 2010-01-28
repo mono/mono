@@ -551,6 +551,8 @@ namespace System.Xml {
 
 			StringBuilder builder = new StringBuilder ();
 			if (value.Ticks < 0) {
+				if (value == TimeSpan.MinValue)
+					return "-P10675199DT2H48M5.4775808S";  // There's one fewer tick on the positive side, so we cannot Negate this value; just hard-code it
 				builder.Append ('-');
 				value = value.Negate ();
 			}
