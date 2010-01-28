@@ -965,6 +965,10 @@ namespace Mono.Debugger.Soft
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								EventHandler.AssemblyLoad (req_id, thread_id, id);
+							} else if (kind == EventKind.ASSEMBLY_UNLOAD) {
+								long thread_id = r.ReadId ();
+								long id = r.ReadId ();
+								EventHandler.AssemblyUnload (req_id, thread_id, id);
 							} else if (kind == EventKind.TYPE_LOAD) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
@@ -1703,6 +1707,8 @@ namespace Mono.Debugger.Soft
 		void ThreadDeath (int req_id, long thread_id, long id);
 
 		void AssemblyLoad (int req_id, long thread_id, long id);
+
+		void AssemblyUnload (int req_id, long thread_id, long id);
 
 		void TypeLoad (int req_id, long thread_id, long id);
 
