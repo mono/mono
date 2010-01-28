@@ -2445,7 +2445,7 @@ namespace System.Xml.Serialization
 			WriteLineUni ("}");
 			WriteLine ("else UnknownNode (null);");
 			WriteLine ("");
-			WriteLine ("return null;");
+			WriteLine ("return default (" + typeMap.TypeData.CSharpFullName + ");");
 		}
 
 		void GenerateReadInitCallbacks ()
@@ -2657,7 +2657,7 @@ namespace System.Xml.Serialization
 		
 		string GetUniqueName (string uniqueGroup, object ob, string name)
 		{
-			name = name.Replace ("[]","_array");
+			name = CodeIdentifier.MakeValid (name.Replace ("[]","_array"));
 			Hashtable names = (Hashtable) _uniqueNames [uniqueGroup];
 			if (names == null) {
 				names = new Hashtable ();
@@ -2716,7 +2716,7 @@ namespace System.Xml.Serialization
 		
 		string GetUniqueClassName (string s)
 		{
-			return classNames.AddUnique (s, null);
+			return classNames.AddUnique (CodeIdentifier.MakeValid (s), null);
 		}
 		
 		string GetReadObjectCall (XmlTypeMapping typeMap, string isNullable, string checkType)
