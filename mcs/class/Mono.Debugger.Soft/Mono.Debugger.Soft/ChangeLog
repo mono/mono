@@ -1,3 +1,9 @@
+2010-01-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyUnloadEvent: New file.
+
+	* VirtualMachine.cs Connection.cs: Add support for assembly unload events.
+
 2009-12-05  Lluis Sanchez  <lluis@novell.com>
 
 	* StructMirror.cs: Fix field indexer for structs with static fields.

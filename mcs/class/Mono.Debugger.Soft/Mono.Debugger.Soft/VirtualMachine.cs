@@ -492,6 +492,10 @@ namespace Mono.Debugger.Soft
 			vm.queue_event (new AssemblyLoadEvent (vm, req_id, thread_id, id));
         }
 
+		public void AssemblyUnload (int req_id, long thread_id, long id) {
+			vm.queue_event (new AssemblyUnloadEvent (vm, req_id, thread_id, id));
+        }
+
 		public void TypeLoad (int req_id, long thread_id, long id) {
 			vm.queue_event (new TypeLoadEvent (vm, req_id, thread_id, id));
         }
