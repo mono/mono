@@ -585,13 +585,13 @@ namespace System {
 			return Load (assemblyRef, null);
 		}
 
-		internal Assembly LoadSatellite (AssemblyName assemblyRef)
+		internal Assembly LoadSatellite (AssemblyName assemblyRef, bool throwOnError)
 		{
 			if (assemblyRef == null)
 				throw new ArgumentNullException ("assemblyRef");
 
 			Assembly result = LoadAssembly (assemblyRef.FullName, null, false);
-			if (result == null)
+			if (result == null && throwOnError)
 				throw new FileNotFoundException (null, assemblyRef.Name);
 			return result;
 		}

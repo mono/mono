@@ -471,7 +471,7 @@ namespace System.Reflection {
 			Assembly assembly;
 
 			try {
-				assembly = AppDomain.CurrentDomain.LoadSatellite (aname);
+				assembly = AppDomain.CurrentDomain.LoadSatellite (aname, false);
 				if (assembly != null)
 					return assembly;
 			} catch (FileNotFoundException) {
