@@ -1,3 +1,7 @@
+2010-01-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* TimeSpan.cs: TryParse: Handle null values to not throw ANEs.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Single.cs : parse MaxValue and PositiveInfinity as expected.
