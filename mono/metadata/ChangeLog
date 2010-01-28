@@ -1,3 +1,8 @@
+2010-01-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (mono_domain_free): Send the END_UNLOAD profiler event before
+	calling the JIT domain cleanup hook.
+
 2010-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* pedump.c (main): Properly set the verifier mode when running the metadata
