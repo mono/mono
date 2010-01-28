@@ -1,3 +1,9 @@
+2010-01-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_init): Call appdomain_unload at the
+	end of the appdomain unload process, after assemblies have been unloaded.
+	Fixes #574842.
+
 2010-01-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* abcremoval.c (process_block): Fix the if (region) check so abcrem actually
