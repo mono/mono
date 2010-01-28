@@ -1,3 +1,44 @@
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* UdpAnySourceMulticastClient.cs: New. Stub for SL4
+	* UdpSingleSourceMulticastClient.cs: New. Stub for SL4
+	[Backport r150127]
+
+2010-01-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebRequest_2_1.cs: Throw for CookieContainer. It is 
+	implemented only in the client http stack (and for a limited
+	time in the browser stack too ;-)
+	* InternalWebRequestStreamWrapper.cs: Keep the MemoryStream data
+	available after closing/disposing (by user) since our own code
+	will need it later (e.g. when posting like DRT287)
+	* WebHeaderCollection_2_1.cs: Provide an argument to 
+	ArgumentException. Found by Gendarme's ArgumentException
+	InstantiateArgumentExceptionCorrectlyRule
+	[Backport r149484]
+
+2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebRequest_2_1.cs: Rework registration wrt the two, browser
+	and client, stacks offered in SL3. Only global works now.
+	[Backport r149423]
+
+2010-01-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* InternalWebRequestStreamWrapper.cs: New. Moved (and adapted) 
+	from Moonlight System.Windows.Browser assembly.
+	* InternalWebResponseStreamWrapper.cs: New. Moved (and adapted) 
+	from Moonlight System.Windows.Browser assembly.
+	* WebClient_2_1.cs: Remove custom delegate declaration (Gendarme's
+	AvoidDeclaringCustomDelegatesRule). Remove locking over a variable
+	(Gendarme's ReviewLockUsedOnlyForOperationsOnVariablesRule). 
+	Avoid potential race with event handlers (Gendarme's 
+	ProtectCallsToEventDelegatesRule). Implement OnWriteStreamClosed
+	* WebRequest_2_1.cs: Signature change from delegate to 
+	Action<long,long,object>. Found using Gendarme's
+	AvoidDeclaringCustomDelegatesRule
+	[Backport r149327]
+
 2009-12-12  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WebClient_2_1.cs: When creating the request we need to copy over

@@ -167,8 +167,8 @@ namespace System.IO
 					return (0);
 				else {
 					int progress = current_position + count < length ? count : (int) (length - current_position);
-					for (int i = 0; i < progress; i++)
-						buffer [offset + i] = Marshal.ReadByte (initial_pointer, (int) current_position++);
+					Marshal.Copy (new IntPtr (initial_pointer.ToInt64 () + current_position), buffer, offset, progress);
+					current_position += progress;
 					return progress;
 				}
 			}

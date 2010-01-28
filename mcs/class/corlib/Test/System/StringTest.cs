@@ -1824,6 +1824,14 @@ public class StringTest
 		Assert.AreEqual (-1, string.Empty.IndexOf ("abc", 0, 0), "#J10");
 	}
 
+#if NET_2_0
+       [Test]
+       public void IndexOf7_Empty () {
+		Assert.AreEqual (1, "FOO".IndexOf ("", 1, 2, StringComparison.Ordinal));
+		Assert.AreEqual (1, "FOO".IndexOf ("", 1, 2, StringComparison.OrdinalIgnoreCase));
+       }
+#endif
+
 	[Test] // IndexOf (String, Int32, Int32)
 	public void IndexOf7_Count_Negative ()
 	{
@@ -3009,6 +3017,13 @@ public class StringTest
 			Assert.IsNotNull (ex.Message, "#4");
 			Assert.AreEqual ("totalWidth", ex.ParamName, "#5");
 		}
+	}
+
+	[Test]
+	public void PadRight2 ()
+	{
+		Assert.AreEqual ("100000000000", "1".PadRight (12, '0'), "#1");
+		Assert.AreEqual ("000000000000", "".PadRight (12, '0'), "#2");
 	}
 
 	[Test] // Remove (Int32, Int32)

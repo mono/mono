@@ -76,8 +76,18 @@ namespace MonoTests.Features
 	public abstract class TestFixtureBase<TClient, TServer, IServer> where TClient : new() where TServer: new()
 	{
 		ServiceHost _hostBase;
+		ChannelFactory<IServer> factory;
 
 		protected TestFixtureBase () { }		
+
+		[TearDown]
+		public void TearDown ()
+		{
+			if (_hostBase != null)
+				_hostBase.Close ();
+			if (factory != null)
+				factory.Close ();
+		}
 
 		[SetUp]
 		public virtual void Run (){
@@ -169,7 +179,7 @@ namespace MonoTests.Features
 
 		public IServer Client {
 			get {
-				ChannelFactory<IServer> factory = new ChannelFactory<IServer> (new BasicHttpBinding (), new EndpointAddress (getEndpoint ()));
+				factory = new ChannelFactory<IServer> (new BasicHttpBinding (), new EndpointAddress (getEndpoint ()));
 				return factory.CreateChannel ();
 			}
 		}

@@ -6,7 +6,7 @@
 //	Gonzalo Paniagua (gonzalo@ximian.com)
 //
 // (C) 2003 Ben Maurer
-// (c) Copyright 2004-2008 Novell, Inc. (http://www.novell.com)
+// (c) Copyright 2004-2010 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -254,7 +254,7 @@ namespace System.Web.UI {
 
 #region Object Readers/Writers
 		
-		class WriterContext
+		sealed class WriterContext
 		{
 			Hashtable cache;
 			short nextKey = 0;
@@ -286,7 +286,7 @@ namespace System.Web.UI {
 			}
 		}
 		
-		class ReaderContext
+		sealed class ReaderContext
 		{
 			ArrayList cache;
 			
@@ -331,6 +331,9 @@ namespace System.Web.UI {
 				new ObjectArrayFormatter ().Register ();
 				new UnitFormatter ().Register ();
 				new FontUnitFormatter ().Register ();
+#if NET_2_0
+				new IndexedStringFormatter ().Register ();
+#endif
 				
 				new ColorFormatter ().Register ();
 
@@ -439,7 +442,8 @@ namespace System.Web.UI {
 						// consisting of a call to ToString() with no
 						// reverse conversion supported. This leads to
 						// problems when deserializing the object.
-						if (converter == null || converter.GetType () == typeof (TypeConverter) || !converter.CanConvertTo (typeof (string)))
+						if (converter == null || converter.GetType () == typeof (TypeConverter) ||
+						    !converter.CanConvertTo (typeof (string)) || !converter.CanConvertFrom (typeof (string)))
 							fmt = binaryObjectFormatter;
 						else {
 							typeConverterFormatter.Converter = converter;
@@ -531,7 +535,37 @@ namespace System.Web.UI {
 				get { return 2; }
 			}
 		}
-		
+#if NET_2_0
+		class IndexedStringFormatter : StringFormatter
+		{
+			protected override void Write (BinaryWriter w, object o, WriterContext ctx)
+			{
+				IndexedString s = o as IndexedString;
+
+				if (s == null)
+					throw new InvalidOperationException ("object is not of the IndexedString type");
+				
+				base.Write (w, s.Value, ctx);
+			}
+			
+			protected override object Read (byte token, BinaryReader r, ReaderContext ctx)
+			{
+				string s = base.Read (token, r, ctx) as string;
+				if (String.IsNullOrEmpty (s))
+					throw new InvalidOperationException ("string must not be null or empty.");
+				
+				return new IndexedString (s);
+			}
+			
+			protected override Type Type {
+				get { return typeof (IndexedString); }
+			}
+			
+			protected override int NumberOfIds {
+				get { return 2; }
+			}
+		}
+#endif
 		class Int64Formatter : ObjectFormatter
 		{
 			protected override void Write (BinaryWriter w, object o, WriterContext ctx)

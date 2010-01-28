@@ -1,3 +1,8 @@
+2009-12-18  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/**/*: Sync with DbLinq r1294.  This is DbLinq 0.19.  Fixes
+	  DataContext.Transaction.
+
 2009-12-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/**/*, examples/**/*: Sync with DbLinq r1293.  This adds 

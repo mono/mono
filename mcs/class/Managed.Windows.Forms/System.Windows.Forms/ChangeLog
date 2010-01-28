@@ -1,3 +1,80 @@
+2010-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ComboBox.cs: When the normal drop down window is closed, make sure
+	that the auto complete list -if any- is closed as well, instead of
+	stay open without need.
+
+2010-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+ 	* TextBox.cs: When showing the autocomplete listbox, make sure it's on
+ 	top, by calling the raw XplatUI.SetZOrder for it, since we can't
+ 	properly call BringToFront on it as it is parentless. This fixes an
+ 	issue when using this feature with ComboBox's own parentless listbox.
+ 	Fixes the remaining bits of #489339.
+
+2010-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUI.cs:
+ 	* XplatUIDriver:
+	* XplatUICarbon:
+ 	* XplatUIWin32:
+ 	* XplatUIX11.cs: 
+ 	* XplatUIStructs: Implement support for different kind of audible
+ 	alerts in Windows, and update the requiered classes.
+ 	* MessageBox.cs: 
+ 	* TextBoxBase.cs: Update calls to XplatUI.AudibleAlert.
+ 	Fixes #473725.
+
+2010-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When use manually setting DropDownHeight, ignore the
+	MaxDropDownHeight property - also rename our field 'count' to
+	'visible_items_count' to avoid confusion as much as possible.
+	Fixes an issue with several items, showing an incorrect layout.
+
+2010-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBox.cs: SelectedText should set Modified to true. Observe
+	that this is happening just here, not for the Text property, and
+	neither for the TextBoxBase impl.
+	Fixes #569950.
+
+2010-01-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripMenuItem.cs: Put the Checked/CheckState logic in a single
+	place and synchronize the events properly. Fixes a lack of
+	coordination between the events - which should be fired together.
+
+2010-01-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TrackBar.cs: Move our events code to a single method, allowing it to
+	optionally fire the Scroll event. This way we both avoid the
+	duplicated calls to OnScroll and also will be able to fire Scroll
+	*before* OnValueChanged in other places.
+	Fixes #568026.
+
+2010-01-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RadioButton.cs: When drawing, if Appearance is Button use the old
+	normal routine in the theme engine, instead of using the one in 2.0,
+	since this last one doesn't support proper rendering of the control as
+	a button.
+	Fixes #567904.
+
+2010-01-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* GroupBoxRenderer.cs: Properly use SystemColors.GrayText to draw to
+	text of the group box if it is disabled.
+	Fixes #567847.
+
+2009-12-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUICarbon.cs: Implement the overriden AudibleAlert
+	function in XplatUICarbon.  Currently it throws
+	NotImplementedException which will kill a WinForms application showing
+	a dialog box.
+	Patch by  Erik Ylvisaker (erik@agatelib.org).
+
 2009-11-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 [merge the very last changes from trunk, -r 144884:145790]

@@ -1043,7 +1043,7 @@ namespace System.Linq.Expressions {
 			if (method == null)
 				return null;
 
-			if (!method.IsGenericMethod && args == null)
+			if (!method.IsGenericMethod && (args == null || args.Length == 0))
 				return method;
 
 			if (args.Length == method.GetGenericArguments ().Length)
@@ -2097,7 +2097,7 @@ namespace System.Linq.Expressions {
 					throw new ArgumentNullException ("expression");
 				if (!expression.Type.IsAssignableTo (propertyAccessor.DeclaringType))
 					throw new ArgumentException ("expression");
-			} 
+			}
 			//
 			// .NET does not mandate that if the property is static, that the expression must be null
 			// fixes a bug exposed by Orchard's ContentItemRecordAlteration.Alteration

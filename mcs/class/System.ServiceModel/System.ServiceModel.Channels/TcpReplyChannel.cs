@@ -55,13 +55,22 @@ namespace System.ServiceModel.Channels
 
 		public override RequestContext ReceiveRequest (TimeSpan timeout)
 		{
-			// It is used while it is already closed.
-			if (client == null || !client.Connected)
+			DateTime start = DateTime.Now;
+
+			if (client == null)
 				return null;
 
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
+
+			// FIXME: use timeout
+			if (!frame.ProcessPreambleRecipient ())
+				return null;
+			frame.ProcessPreambleAckRecipient ();
+
 			var msg = frame.ReadUnsizedMessage (timeout);
+			// LAMESPEC: it contradicts the protocol explanation at section 3.1.1.1.1 in [MC-NMF].
+			// Moving ReadEndRecord() after context's WriteUnsizedMessage() causes TCP connection blocking.
 			frame.ReadEndRecord ();
 			return new TcpRequestContext (this, msg);
 		}
@@ -98,9 +107,8 @@ namespace System.ServiceModel.Channels
 
 				DateTime start = DateTime.Now;
 				owner.frame.WriteUnsizedMessage (message, timeout);
+				// FIXME: consider timeout here too.
 				owner.frame.WriteEndRecord ();
-				owner.client.Close ();
-				owner.client = null;
 			}
 		}
 
@@ -110,7 +118,9 @@ namespace System.ServiceModel.Channels
 				DateTime start = DateTime.Now;
 				context = ReceiveRequest (timeout);
 				return context != null;
-			} catch (TimeoutException) {
+			} catch (Exception ex) {
+				// FIXME: log it?
+				// Console.WriteLine (ex);
 				context = null;
 				return false;
 			}
@@ -123,19 +133,18 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			client.Close ();
+			client = null;
+			base.OnClose (timeout);
 		}
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
+			// FIXME: use timeout
 			if (client == null)
 				client = ((TcpChannelListener<IReplyChannel>) Manager).AcceptTcpClient (timeout);
-
-			// FIXME: use timeout
 			NetworkStream ns = client.GetStream ();
 			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, true) { Encoder = this.Encoder, EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
-			frame.ProcessPreambleRecipient ();
-			frame.ProcessPreambleAckRecipient ();
 		}
 	}
 }

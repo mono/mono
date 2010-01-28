@@ -1,3 +1,76 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : convert TimeSpan.MinValue to correct string.
+	  Patch by Tiaan Geldenhuys.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDocument.cs : fix type check for optimal node creation.
+	  Fixed bug #571336, #571226 and #572738.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : Do not ignore ticks which are less than a
+	  millisecond. Remove trailing zeros for milliseconds and ticks.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : trim spaces when parsing TimeSpan.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : shorten format string patterns.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : DateTimeOffset parse is sloppy.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : handle Infinity and -Infinity here due to the
+	  commented reason.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToSingle(string) should do the same as ToDouble().
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToDouble(string) should handle NaN, INF and -INF
+	  with whitespace allowed.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToDouble(string) and ToIntXX(string) allows
+	  whitespaces.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : ToString(DateTimeOffset) does not emit extra
+	  fraction numbers.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : fix some cosmetic compatibility bugs:
+	  ArgumentException -> FormatException.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlWriter.cs : handle a corner case for empty string handling 
+	  difference between XmlTextWriter and XmlWriter.Create().
+
+2009-11-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NamespaceHandling.cs, XmlWriterSettings.cs, XmlTextWriter2.cs:
+	  implement NamespaceHandling support for Moonlight.
+
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlConvert.cs : fix DateTimeOffset roundtrip by giving format
+	  strings in refined order. Patch by Santa Marta, at:
+	  http://irc.gimite.net/channel/mono-jp/archive/20091105
+	  ( http://smdn.invisiblefulmoon.net/misc/forum/programming/#n10 )
+
 2009-11-13  Andreia Gaita  <avidigal@novell.com>
 
 	* XmlNamespaceManager.cs: XmlReader.Read calls LookupNamespace via

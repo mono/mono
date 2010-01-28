@@ -227,6 +227,23 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.AreEqual (expected, sw.ToString ());
 		}
 
+		// DCEmpty
+
+		[Test]
+		public void SerializeEmptyNoNSClass ()
+		{
+			var ser = new DataContractSerializer (typeof (DCEmptyNoNS));
+			SerializeEmptyNoNSClass (ser, "<DCEmptyNoNS xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" />");
+		}
+
+		void SerializeEmptyNoNSClass (XmlObjectSerializer ser, string expected)
+		{
+			var sw = new StringWriter ();
+			using (var w = XmlWriter.Create (sw, settings)) {
+				ser.WriteObject (w, new DCEmptyNoNS ());
+			}
+			Assert.AreEqual (expected, sw.ToString ());
+		}
 		// string (primitive)
 
 		[Test]
@@ -1436,6 +1453,11 @@ namespace MonoTests.System.Runtime.Serialization
 	{
 		// serializer doesn't touch it.
 		public string Foo = "TEST";
+	}
+
+	[DataContract (Namespace = "")]
+	public class DCEmptyNoNS
+	{
 	}
 
 	[DataContract]

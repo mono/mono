@@ -1,3 +1,30 @@
+2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBaseTest.cs : another mannerless test here.
+
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs : enable some tests and added streamed mode
+	  test. Commented on these changes.
+
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory_1Test.cs : ignore another couple of blocking tests.
+
+2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WSHttpBindingTest.cs : leave non-working test to get fixed later.
+
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicHttpBindingTest.cs : added transport security related tests.
+
+2009-12-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs :
+	  I have to disable a lot of connective tests that somehow blocks
+	  test runs. No idea why it started to happen though.
+
 2009-10-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBaseTest.cs : add test for checking non-mex contract

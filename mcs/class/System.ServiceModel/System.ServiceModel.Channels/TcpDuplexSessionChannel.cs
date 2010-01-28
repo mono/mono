@@ -124,7 +124,8 @@ namespace System.ServiceModel.Channels
 
 		void DiscardSession ()
 		{
-			frame.WriteEndRecord ();
+			if (client.Connected)
+				frame.WriteEndRecord ();
 			session = null;
 		}
 
@@ -164,7 +165,11 @@ namespace System.ServiceModel.Channels
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
 			client.ReceiveTimeout = (int) timeout.TotalMilliseconds;
-			return frame.ReadSizedMessage ();
+			var ret = frame.ReadSizedMessage ();
+			// FIXME: this may not be precise, but connection might be reused for some weird socket state transition (that's what happens). So as a workaround, avoid closing the session by sending EndRecord from this channel at OnClose().
+			if (ret == null)
+				session = null;
+			return ret;
 		}
 		
 		public override bool TryReceive (TimeSpan timeout, out Message message)
@@ -174,9 +179,6 @@ namespace System.ServiceModel.Channels
 				message = Receive (timeout);
 				if (message != null)
 					return true;
-				// received EndRecord, so close the session and return false instead.
-				// (Closing channel here might not be a good idea, but right now I have no better way.)
-				Close (timeout - (DateTime.Now - start));
 				return false;
 			} catch (TimeoutException) {
 				message = null;

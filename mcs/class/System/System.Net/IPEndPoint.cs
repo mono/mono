@@ -92,7 +92,9 @@ namespace System.Net {
 				throw new ArgumentNullException ("socketAddress");
 
 			if (socketAddress.Family != AddressFamily)
-				throw new ArgumentException ("socketAddress");
+				throw new ArgumentException ("The IPEndPoint was created using " + AddressFamily + 
+						" AddressFamily but SocketAddress contains " + socketAddress.Family + 
+						" instead, please use the same type.");
 
 			SocketAddress sockaddr = socketAddress;
 			int size =sockaddr.Size;

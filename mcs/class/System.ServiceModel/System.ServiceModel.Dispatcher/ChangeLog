@@ -1,3 +1,39 @@
+2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : make sure to unlock channel acceptor wait
+	  handle when the delegated method resulted in an error.
+
+2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : close such channels that failed to receive
+	  request or input.
+
+2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntime.cs : shortened code and scattered monotodos.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationInvokerHandler.cs : fix async operation handling. Since
+	  the entire handler chain is designed to be in synchronous, one
+	  single handler must not leave its work incomplete (async). Just
+	  wait for the async process completion within the handler.
+
+2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : fix regression; ServiceBehaviorAttribute
+	  could be set explicitly null.
+
+2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : handle AddressFilterMode (.Any only yet).
+	* OperationInvokerHandler.cs : fix wrong IAsyncResult use.
+
+2009-12-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InstanceBehavior.cs : allow nonpublic instance.
+	* DefaultOperationInvoker.cs : do use IsSynchronous correctly.
+
 2009-10-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : disable concurrent channel acceptance

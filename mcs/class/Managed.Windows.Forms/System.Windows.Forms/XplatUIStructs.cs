@@ -874,5 +874,13 @@ namespace System.Windows.Forms {
 		SC_MONITORPOWER = 0xF170,
 		SC_CONTEXTHELP  = 0xF180
 	}
+
+	internal enum AlertType {
+		Default		= 1,
+		Error		= 2,
+		Question	= 3,
+		Warning		= 4,
+		Information	= 5
+	}
 }
 

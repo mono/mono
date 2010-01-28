@@ -47,17 +47,20 @@ PROFILE_CS  = $(depsdir)/basic-profile-check.cs
 PROFILE_EXE = $(PROFILE_CS:.cs=.exe)
 PROFILE_OUT = $(PROFILE_CS:.cs=.out)
 
+MAKE_Q=$(if $(V),,-s)
+
 do-profile-check:
 	@ok=:; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
-	$(MAKE) -s $(PROFILE_OUT) > /dev/null || ok=false; \
+	$(MAKE) $(MAKE_Q) $(PROFILE_OUT) || ok=false; \
 	rm -f $(PROFILE_EXE) $(PROFILE_OUT); \
 	if $$ok; then :; else \
 	    if test -f $(topdir)/class/lib/monolite/mcs.exe; then \
 		$(MAKE) -s do-profile-check-monolite ; \
 	    else \
 		echo "*** The compiler '$(BOOTSTRAP_MCS)' doesn't appear to be usable." 1>&2; \
-                echo "*** You need a C# compiler installed to build MCS (make sure mcs works from the command line)" 1>&2 ; \
+                echo "*** You need a C# 1.0 compiler installed to build MCS (make sure mcs works from the command line)" 1>&2 ; \
+				echo "*** mcs/gmcs from mono > 2.6 will not work, since they target NET 2.0." 1>&2 ; \
                 echo "*** Read INSTALL.txt for information on how to bootstrap a Mono installation." 1>&2 ; \
 	        exit 1; fi; fi
 

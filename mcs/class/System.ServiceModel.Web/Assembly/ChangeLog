@@ -1,3 +1,8 @@
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Fix attributes for Moonlight
+	[Backport r150147]
+
 2009-01-14  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyInfo.cs: fix the public key for the NET_2_1 case.

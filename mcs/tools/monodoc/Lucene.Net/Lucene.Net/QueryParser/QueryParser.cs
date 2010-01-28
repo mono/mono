@@ -108,7 +108,7 @@ namespace Monodoc.Lucene.Net.QueryParsers
 		static public Query Parse(System.String query, System.String field, Analyzer analyzer)
 		{
 			QueryParser parser = new QueryParser(field, analyzer);
-			return parser.Parse(query);
+			return parser.Parse(Escape(query));
 		}
 		
 		/// <summary>Constructs a query parser.</summary>

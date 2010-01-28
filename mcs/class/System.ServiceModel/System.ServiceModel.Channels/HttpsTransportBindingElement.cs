@@ -40,7 +40,7 @@ namespace System.ServiceModel.Channels
 		: HttpTransportBindingElement, ITransportTokenAssertionProvider,
 		IPolicyExportExtension, IWsdlExportExtension
 	{
-		bool req_cli_cert = true;
+		bool req_cli_cert = false;
 
 		public HttpsTransportBindingElement ()
 		{
@@ -50,11 +50,7 @@ namespace System.ServiceModel.Channels
 			HttpsTransportBindingElement other)
 			: base (other)
 		{
-#if NET_2_1
 			req_cli_cert = other.req_cli_cert;
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 		public bool RequireClientCertificate {
@@ -66,15 +62,10 @@ namespace System.ServiceModel.Channels
 			get { return Uri.UriSchemeHttps; }
 		}
 
-		[MonoTODO]
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
-#if NET_2_1
 			return base.BuildChannelFactory <TChannel> (context);
-#else
-			throw new NotImplementedException ();
-#endif
 		}
 
 #if !NET_2_1
@@ -83,7 +74,7 @@ namespace System.ServiceModel.Channels
 			BuildChannelListener<TChannel> (
 			BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return base.BuildChannelListener <TChannel> (context);
 		}
 #endif
 

@@ -292,6 +292,23 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Modified ()
+		{
+			RichTextBox rtb = new RichTextBox ();
+			Assert.AreEqual (false, rtb.Modified, "#A1");
+
+			rtb.SelectedText = "mono";
+			Assert.AreEqual (true, rtb.Modified, "#B1");
+
+			rtb.Modified = false;
+			Assert.AreEqual (false, rtb.Modified, "#C1");
+
+			// Only SelectedText seems to cause a change in Modified, as opposed to Text
+			rtb.Text = "moon";
+			Assert.AreEqual (false, rtb.Modified, "#D1");
+		}
+
+		[Test]
 		public void ReadOnly_BackColor_Set ()
 		{
 			RichTextBox rtb = new RichTextBox ();

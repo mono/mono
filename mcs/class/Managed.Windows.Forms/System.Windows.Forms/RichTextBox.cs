@@ -443,6 +443,8 @@ namespace System.Windows.Forms {
 			}
 
 			set {
+				// TextBox/TextBoxBase don't set Modified in this same property
+				Modified = true;
 				base.SelectedText = value;
 			}
 		}

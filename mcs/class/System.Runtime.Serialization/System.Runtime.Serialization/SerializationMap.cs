@@ -100,9 +100,9 @@ namespace System.Runtime.Serialization
 		{
 			KnownTypes = knownTypes;
 			RuntimeType = type;
-			if (qname.Namespace == String.Empty)
+			if (qname.Namespace == null)
 				qname = new QName (qname.Name,
-					"http://schemas.datacontract.org/2004/07/" + type.Namespace);
+					KnownTypeCollection.DefaultClrNamespaceBase + type.Namespace);
 
 			XmlName = qname;
 			Members = new List<DataMemberInfo> ();

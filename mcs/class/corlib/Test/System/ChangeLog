@@ -1,3 +1,62 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SingleTest.cs : test for parsing MaxValue and PositiveInfinity.
+	  Patch by Tiaan Geldenhuys.
+
+2010-01-15  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* Int32Test.cs: Test for TryParse with MaxValue + 1.
+
+2010-01-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* DateTimeTest.cs: Fix the tests (DateTimeStyles.AssumeUniversal is
+	2.0 only).
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeTest.cs : added test for rounding milliseconds.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeOffsetTest.cs : add ParseExact() case that should preserve
+	  fractions.
+
+2010-01-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DoubleTest.cs : add test for AllowLeading/TrailingSpace flags.
+
+2010-01-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Int32Test.cs: Add test case for exponent support in the Parse
+	methods.
+
+2010-01-07  Jb Evain  <jbevain@novell.com>
+
+	* TypeTest.cs: add test for the MemberType of
+	a generic parameter.
+
+	backport r149175.
+
+2010-01-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ConvertTest.cs: Add test case for #568778 and the default
+	line length.
+	[Backport r149171]
+
+2009-12-21  Marek Habersack  <mhabersack@novell.com>
+
+	* Int32Test.cs, Int64Test.cs, Int16Test.cs, ByteTest.cs: added
+	tests for formats with trailing null chars.
+
+2009-12-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* StringTest.cs: Add tests for IndexOf ("", startIndex, count).
+
+2009-12-17  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* StringTest.cs: Add test case for right padding an empty string
+	[Backport r148706]
+
 2009-11-24  Jb Evain  <jbevain@novell.com>
 
 	* ArrayTest.cs: test that we don't allow the use of the IList indexer

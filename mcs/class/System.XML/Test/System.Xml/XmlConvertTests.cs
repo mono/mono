@@ -207,6 +207,12 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (-1.0d/0.0d, XmlConvert.ToDouble ("-INF"));
 			Assert.AreEqual (0.0d/0.0d, XmlConvert.ToDouble ("NaN"));
 			Assert.AreEqual (789324, XmlConvert.ToDouble ("789324"));
+			Assert.AreEqual (42, XmlConvert.ToDouble ("  42  "));
+			Assert.AreEqual (double.NaN, XmlConvert.ToDouble ("  NaN  "));
+			Assert.AreEqual (double.PositiveInfinity, XmlConvert.ToDouble ("  Infinity  "));
+			Assert.AreEqual (double.NegativeInfinity, XmlConvert.ToDouble ("  -Infinity "));
+			Assert.AreEqual (double.PositiveInfinity, XmlConvert.ToDouble ("  INF"));
+			Assert.AreEqual (double.NegativeInfinity, XmlConvert.ToDouble ("  -INF "));
 		}
 		
 		[Test]
@@ -334,9 +340,18 @@ namespace MonoTests.System.Xml
 		}
 		
 		[Test]
-		public void ToSingle ()//not done
+		public void ToSingle ()
 		{
-			
+			Assert.AreEqual (1.0d/0.0d, XmlConvert.ToSingle ("INF"));
+			Assert.AreEqual (-1.0d/0.0d, XmlConvert.ToSingle ("-INF"));
+			Assert.AreEqual (0.0d/0.0d, XmlConvert.ToSingle ("NaN"));
+			Assert.AreEqual (789324, XmlConvert.ToSingle ("789324"));
+			Assert.AreEqual (42, XmlConvert.ToSingle ("  42  "));
+			Assert.AreEqual (float.NaN, XmlConvert.ToSingle ("  NaN  "));
+			Assert.AreEqual (float.PositiveInfinity, XmlConvert.ToSingle ("  Infinity  "));
+			Assert.AreEqual (float.NegativeInfinity, XmlConvert.ToSingle ("  -Infinity "));
+			Assert.AreEqual (float.PositiveInfinity, XmlConvert.ToSingle ("  INF"));
+			Assert.AreEqual (float.NegativeInfinity, XmlConvert.ToSingle ("  -INF "));
 		}
 		
 		[Test]
@@ -347,6 +362,9 @@ namespace MonoTests.System.Xml
 				XmlConvert.ToString (new DateTime (2003, 5, 5));
 			Assert.AreEqual (33, dateString.Length);
 			Assert.AreEqual (dateString.Substring (0, 27), "2003-05-05T00:00:00.0000000");
+
+			// Must not throw an exception...
+			Assert.IsNotNull ("-P10675199DT2H48M5.4775808S", XmlConvert.ToString (TimeSpan.MinValue));
 		}
 
 		[Test]
@@ -355,7 +373,13 @@ namespace MonoTests.System.Xml
 			// bug #77252
 			TimeSpan t1 = TimeSpan.FromTicks (
 				TimeSpan.TicksPerSecond + 1);
-			Assert.AreEqual ("PT1.0000001S", XmlConvert.ToString (t1));
+			Assert.AreEqual ("PT1.0000001S", XmlConvert.ToString (t1), "#1");
+
+			// XAttributeTest.CastTimeSpans():#5d
+			t1 = new TimeSpan (2710L);
+			Assert.AreEqual ("PT0.000271S", XmlConvert.ToString (t1), "#2");
+			t1 = new TimeSpan (27100000L);
+			Assert.AreEqual ("PT2.71S", XmlConvert.ToString (t1), "#3");
 		}
 
 		[Test]
@@ -374,6 +398,8 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (TimeSpan.MinValue, XmlConvert.ToTimeSpan ("-P10675199DT2H48M5.4775808S"), "#7");
 
 			Assert.AreEqual (TimeSpan.MaxValue, XmlConvert.ToTimeSpan ("P10675199DT2H48M5.4775807S"), "#8");
+
+			Assert.AreEqual (TimeSpan.FromDays (2), XmlConvert.ToTimeSpan (" \r\n   \tP2D  "), "#9");
 		}
 		
 		[Test]
@@ -402,6 +428,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt16 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt16 here);
+			//try {
+			//	XmlConvert.ToUInt16 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]
@@ -430,6 +466,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt32 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt32 here);
+			//try {
+			//	XmlConvert.ToUInt32 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]
@@ -458,6 +504,16 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("0x10000");
 			} catch (FormatException) {
 			}
+			// LAMESPEC: it is not fixable as there is no public
+			// member of UInt64 that treats this as FormatException
+			// while others above as either OverflowException or
+			// FormatException respectively.
+			// (.NET uses internal member in UInt64 here);
+			//try {
+			//	XmlConvert.ToUInt64 ("-101");
+			//	Assert.Fail ("-101");
+			//} catch (FormatException) {
+			//}
 		}
 		
 		[Test]
@@ -686,6 +742,19 @@ namespace MonoTests.System.Xml
 				Assert.Fail ("#3");
 			} catch (FormatException) {
 			}
+		}
+
+		[Test] // see http://smdn.invisiblefulmoon.net/misc/forum/programming/#n10
+		public void DateTimeOffsetTimezoneRoundtrip ()
+		{
+			Assert.AreEqual (new DateTimeOffset (2009, 11, 05, 20, 16, 22, TimeSpan.FromHours (9)),  XmlConvert.ToDateTimeOffset ("2009-11-05T20:16:22+09:00"), "#1");
+		}
+
+		[Test]
+		public void DateTimeOffsetWithWhitespace ()
+		{
+			var s = "   2010-01-02T00:00:00Z \t";
+			XmlConvert.ToDateTime (s);
 		}
 #endif
 	}

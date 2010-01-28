@@ -87,6 +87,38 @@ namespace System.ServiceModel.Channels
 			web_request.Method = "POST";
 			web_request.ContentType = Encoder.ContentType;
 
+#if !NET_2_1 // until we support NetworkCredential like SL4 will do.
+			// client authentication (while SL3 has NetworkCredential class, it is not implemented yet. So, it is non-SL only.)
+			var httpbe = (HttpTransportBindingElement) source.Source;
+			string authType = null;
+			switch (httpbe.AuthenticationScheme) {
+			// AuthenticationSchemes.Anonymous is the default, ignored.
+			case AuthenticationSchemes.Basic:
+				authType = "Basic";
+				break;
+			case AuthenticationSchemes.Digest:
+				authType = "Digest";
+				break;
+			case AuthenticationSchemes.Ntlm:
+				authType = "Ntlm";
+				break;
+			case AuthenticationSchemes.Negotiate:
+				authType = "Negotiate";
+				break;
+			}
+			if (authType != null) {
+				var cred = source.ClientCredentials;
+				string user = cred != null ? cred.UserName.UserName : null;
+				string pwd = cred != null ? cred.UserName.Password : null;
+				if (String.IsNullOrEmpty (user))
+					throw new InvalidOperationException (String.Format ("Use ClientCredentials to specify a user name for required HTTP {0} authentication.", authType));
+				var nc = new NetworkCredential (user, pwd);
+				web_request.Credentials = nc;
+				// FIXME: it is said required in SL4, but it blocks full WCF.
+				//web_request.UseDefaultCredentials = false;
+			}
+#endif
+
 #if !NET_2_1 // FIXME: implement this to not depend on Timeout property
 			web_request.Timeout = (int) timeout.TotalMilliseconds;
 #endif
@@ -106,6 +138,7 @@ namespace System.ServiceModel.Channels
 			string pname = HttpRequestMessageProperty.Name;
 			if (message.Properties.ContainsKey (pname)) {
 				HttpRequestMessageProperty hp = (HttpRequestMessageProperty) message.Properties [pname];
+				web_request.Headers.Clear ();
 				web_request.Headers.Add (hp.Headers);
 				web_request.Method = hp.Method;
 				// FIXME: do we have to handle hp.QueryString ?
@@ -152,6 +185,10 @@ namespace System.ServiceModel.Channels
 				resstr = res.GetResponseStream ();
 			} catch (WebException we) {
 				res = we.Response;
+				if (res == null) {
+					channelResult.Complete (we);
+					return;
+				}
 				try {
 					// The response might contain SOAP fault. It might not.
 					resstr = res.GetResponseStream ();
@@ -160,7 +197,12 @@ namespace System.ServiceModel.Channels
 					return;
 				}
 			}
-			
+
+			var hrr = (HttpWebResponse) res;
+			if ((int) hrr.StatusCode >= 400) {
+				channelResult.Complete (new WebException (String.Format ("There was an error on processing web request: Status code {0}({1}): {2}", (int) hrr.StatusCode, hrr.StatusCode, hrr.StatusDescription)));
+			}
+
 			try {
 				using (var responseStream = resstr) {
 					MemoryStream ms = new MemoryStream ();

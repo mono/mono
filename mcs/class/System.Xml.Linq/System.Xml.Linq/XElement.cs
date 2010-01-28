@@ -83,7 +83,7 @@ namespace System.Xml.Linq
 		{
 			if (element == null)
 				throw new ArgumentNullException ("element");
-			return XmlConvert.ToBoolean (element.Value);
+			return XUtil.ConvertToBoolean (element.Value);
 		}
 
 		public static explicit operator bool? (XElement element)
@@ -91,14 +91,14 @@ namespace System.Xml.Linq
 			if (element == null)
 				return null;
 			
-			return element.Value == null ? (bool?) null : XmlConvert.ToBoolean (element.Value);
+			return element.Value == null ? (bool?) null : XUtil.ConvertToBoolean (element.Value);
 		}
 
 		public static explicit operator DateTime (XElement element)
 		{
 			if (element == null)
 				throw new ArgumentNullException ("element");
-			return XmlConvert.ToDateTime (element.Value, XmlDateTimeSerializationMode.RoundtripKind);
+			return XUtil.ToDateTime (element.Value);
 		}
 
 		public static explicit operator DateTime? (XElement element)
@@ -106,8 +106,27 @@ namespace System.Xml.Linq
 			if (element == null)
 				return null;
 			
-			return element.Value == null ? (DateTime?) null : XmlConvert.ToDateTime (element.Value, XmlDateTimeSerializationMode.RoundtripKind);
+			return element.Value == null ? (DateTime?) null : XUtil.ToDateTime (element.Value);
 		}
+
+#if !TARGET_JVM // Same as for System.Xml.XmlConvert.ToDateTimeOffset
+
+		public static explicit operator DateTimeOffset (XElement element)
+		{
+			if (element == null)
+				throw new ArgumentNullException ("element");
+			return XmlConvert.ToDateTimeOffset (element.Value);
+		}
+
+		public static explicit operator DateTimeOffset? (XElement element)
+		{
+			if (element == null)
+				return null;
+			
+			return element.Value == null ? (DateTimeOffset?) null : XmlConvert.ToDateTimeOffset (element.Value);
+		}
+
+#endif
 
 		public static explicit operator decimal (XElement element)
 		{

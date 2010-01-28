@@ -58,7 +58,11 @@ namespace System.ServiceModel.Channels
 
 		public override MessageVersion MessageVersion {
 			get { return version; }
-			set { version = value; }
+			set {
+				if (!version.Envelope.Equals (EnvelopeVersion.Soap12))
+					throw new InvalidOperationException ("Binary message encoding binding element only supports SOAP 1.2.");
+				version = value;
+			}
 		}
 
 		public int MaxSessionSize {

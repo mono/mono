@@ -31,6 +31,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.Data;
 using System.Text;
 using System.ComponentModel;
 using System.Reflection;
@@ -62,6 +63,12 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		public ControlParameter (string name, TypeCode type, string controlID, string propertyName) : base (name, type)
+		{
+			ControlID = controlID;
+			PropertyName = propertyName;
+		}
+
+		public ControlParameter (string name, DbType dbType, string controlID, string propertyName) : base (name, dbType)
 		{
 			ControlID = controlID;
 			PropertyName = propertyName;

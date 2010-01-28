@@ -1,3 +1,45 @@
+2010-01-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IPEndPoint.cs: When throwing an ArgumentException in Create()
+	because of a mismatch in the address family, use a more informative
+	message. Patch by Juho Vähä-Herttu<juhovh@iki.fi>.
+	Fixes #505105.
+
+2010-01-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CookieContainer.cs: Fix to cloning and expiration. Patch
+	by Tom Philpot <tom.philpot@logos.com>
+	[Backport r149976 + NET_1_1 fixes]
+
+2010-01-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: when the server returns several different
+	authentication methods, pick the one that works.
+	Fixes bug #562043.
+
+2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* NetworkCredential.cs: Fix properties to never return null.
+
+2009-12-28  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Cookie.cs: Don't use automatic properties to let older mcs
+	(e.g. bootstrap) compile this for NET_1_1 profile
+
+2009-12-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Cookie.cs: Re-work ToString to be useable in more cases. Fix
+	some issues found by Gendarme.
+	* CookieContainer.cs: Fix 2.0 NonWorking (and new) unit tests.
+	Implement removing oldest cookies when limits are reached.
+	* CookieCollection.cs: Fix sort to be closer to MS implementation
+	(but still not 100% identical). Fix some issues found by Gendarme
+
+2009-12-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnectionGroup.cs:
+	* ServicePoint.cs: implemented CloseConnectionGroup().
+
 2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CookieCollection.cs: Seal inner CookieCollectionPathComparer

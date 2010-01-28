@@ -233,6 +233,64 @@ public class Int32Test
 		// numbers, but we should not crash
 		
 		Int32.Parse ("123", new DateTimeFormatInfo ());
+
+		Assert.AreEqual (734561, Int64.Parse ("734561\0"), "C#43");
+		Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0    \0"), "C#44");
+		Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0    "), "C#45");
+		Assert.AreEqual (734561, Int64.Parse ("734561\0\0\0"), "C#46");
+	}
+
+    	[Test]
+	public void TestParseExponent ()
+	{
+		Assert.AreEqual (2, Int32.Parse ("2E0", NumberStyles.AllowExponent), "A#1");
+		Assert.AreEqual (20, Int32.Parse ("2E1", NumberStyles.AllowExponent), "A#2");
+		Assert.AreEqual (200, Int32.Parse ("2E2", NumberStyles.AllowExponent), "A#3");
+		Assert.AreEqual (2000000, Int32.Parse ("2E6", NumberStyles.AllowExponent), "A#4");
+		Assert.AreEqual (200, Int32.Parse ("2E+2", NumberStyles.AllowExponent), "A#5");
+
+		try {
+			Int32.Parse ("2E");
+			Assert.Fail ("B#1");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int32.Parse ("2E3.0", NumberStyles.AllowExponent); // decimal notation for the exponent
+			Assert.Fail ("B#2");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int32.Parse ("2E 2", NumberStyles.AllowExponent);
+			Assert.Fail ("B#3");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int32.Parse ("2E2 ", NumberStyles.AllowExponent);
+			Assert.Fail ("B#4");
+		} catch (FormatException) {
+		}
+
+		try {
+			Int32.Parse ("2E66", NumberStyles.AllowExponent); // final result overflow
+			Assert.Fail ("B#5");
+		} catch (OverflowException) {
+		}
+
+		try {
+			long exponent = (long)Int32.MaxValue + 10;
+			Int32.Parse ("2E" + exponent.ToString (), NumberStyles.AllowExponent);
+			Assert.Fail ("B#6");
+		} catch (OverflowException) {
+		}
+
+		try {
+			Int32.Parse ("2E-1", NumberStyles.AllowExponent); // negative exponent
+			Assert.Fail ("B#7");
+		} catch (OverflowException) {
+		}
 	}
 
 #if NET_2_0	
@@ -275,6 +333,7 @@ public class Int32Test
 
 		double OverInt = (double)Int32.MaxValue + 1;
 		Assert.AreEqual (false, Int32.TryParse (OverInt.ToString (), out result));
+		Assert.AreEqual (false, Int32.TryParse (OverInt.ToString (), NumberStyles.None, CultureInfo.InvariantCulture, out result));
 
 		Assert.AreEqual (false, Int32.TryParse ("$42", NumberStyles.Integer, null, out result));
 		Assert.AreEqual (false, Int32.TryParse ("%42", NumberStyles.Integer, Nfi, out result));

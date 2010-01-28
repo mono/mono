@@ -1,3 +1,143 @@
+2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpBinaryFrameManager.cs : treat EOF as interrupted stream too (it
+	  does not happen when communicating with .NET client but happens with
+	  mono). Seealso FIXME comment.
+	* TcpDuplexSessionChannel.cs : do not try to close session when it
+	  failed to read sized message. The connection is already dead.
+
+	  Fixed bug #567949.
+
+2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs :
+	  Write EndRecord only when the connection is available.
+	  Remove hack - do let ChannelDispatcher close the channel.
+	* TcpBinaryFrameManager.cs :
+	  The socket may be disconnected when trying to read a sized message,
+	  so check some socket exceptions.
+	  In case the client silently shuts down without EndRecord and
+	  reconnects to the server with preamble while expecting a sized
+	  message (which is so lame, but that's what .NET often does), refresh
+	  preamble and continue.
+
+	  This fixes some cases of bug #567949 but not all.
+
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs : enable workaround buffering only when
+	  the argument stream does *not* support seek. This fixes some
+	  net.tcp connection problem.
+
+2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpBinaryFrameManager.cs : If preamble byte is not available from
+	  the client stream, detect it to close the reply or input channel.
+	* TcpRequestChannel.cs : send preamble at each request time.
+	  It differentiates communication behavior on such cases that involve
+	  single open and multiple requests.
+	* TcpReplyChannel.cs : close the channel only when the channel is
+	  oeprated to close i.e. do not close the socket every time.
+	  Process preambles on each request (the same as request channel).
+
+2009-12-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpBinaryFrameManager.cs : unsized envelope record may have more
+	  than one data block, so consume them accordingly. This should fix
+	  large buffer consumption.
+
+2009-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageFault.cs : support EnvelopeVersion.None as well, as almost
+	  the same as SOAP12.
+
+2009-12-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestContext.cs : for DestinationUnreachable message, this
+	  channel returns 400 in .NET.
+
+2009-12-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs : added workaround for strange stream
+	  consumption error raised by HttpTransport + Binary encoder example.
+	* BinaryMessageEncodingBindingElement.cs:
+	  only SOAP 1.2 is allowed for this encoder.
+
+2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlReaderBodyWriter.cs : don't try to write empty xml.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : avoid adding duplicate headers. Basically
+	  default WebHeaderCollection items are overwritten.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : when HTTP response was error, do not try
+	  to read message but just raise an error.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeaders.cs : null can be set as a WS-Addressing header item.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : WebException.Response might be null.
+
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ReplyChannelBase.cs : added listener property.
+	* SecurityChannelListener.cs : quick async impl, as ServiceHost has
+	  been updated to prefer async by default, a while ago.
+
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElement.cs : finished all GetProperty() values.
+
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : disabled carelessly added
+	  "UseDefaultCredentials = false" line. It blocked basic auth.
+
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs, HttpChannelFactory.cs,
+	  HttpChannelListener.cs, HttpListenerManager.cs :
+	  implemented http client authentication and some of corresponding
+	  service code. Only client works so far.
+
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpsTransportBindingElement.cs, HttpChannelListener.cs :
+	  added URI scheme check.
+
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TransportSecurityBindingElement.cs : fix 2.1 build.
+
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpsTransportBindingElement.cs :
+	  RequireClientCertificate is false by default.
+	  Remove extra #if NET_2_1.
+	* SecurityBindingElement.cs :
+	  Implement some transport security factory methods.
+	* TransportSecurityBindingElement.cs :
+	  It is not ISecurityCapabilities anymore.
+
+2009-11-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeaders.cs
+	  SecurityBindingElement.cs
+	  LocalClientSecuritySettings.cs
+	  TransportSecurityBindingElement.cs
+	  FaultConverter.cs : They are now part of SL3 API.
+
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncodingBindingElement.cs : changes for 2.1 build.
+
 2009-11-05  Geoff Norton  <gnorton@novell.com>
 
 	* HttpsTransportBindingElement.cs: Implement basic https transport

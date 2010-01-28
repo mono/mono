@@ -1282,6 +1282,65 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			string s2 = @"{FooMember:"" \""{dummy:string}\""""}";
 			ds.ReadObject (new MemoryStream (Encoding.UTF8.GetBytes (s2)));
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void TypeIsNotPartsOfKnownTypes ()
+		{
+			DataContractJsonSerializer dcjs = new DataContractJsonSerializer (typeof (string));
+			Assert.AreEqual (0, dcjs.KnownTypes.Count, "KnownTypes");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ReadWriteNullObject ()
+		{
+			DataContractJsonSerializer dcjs = new DataContractJsonSerializer (typeof (string));
+			using (MemoryStream ms = new MemoryStream ()) {
+				dcjs.WriteObject (ms, null);
+				ms.Position = 0;
+				using (StreamReader sr = new StreamReader (ms)) {
+					string data = sr.ReadToEnd ();
+					Assert.AreEqual ("null", data, "WriteObject(stream,null)");
+
+					ms.Position = 0;
+					Assert.IsNull (dcjs.ReadObject (ms), "ReadObject(stream)");
+				}
+			};
+		}
+
+		object ReadWriteObject (Type type, object obj, string expected)
+		{
+			using (MemoryStream ms = new MemoryStream ()) {
+				DataContractJsonSerializer dcjs = new DataContractJsonSerializer (type);
+				dcjs.WriteObject (ms, obj);
+				ms.Position = 0;
+				using (StreamReader sr = new StreamReader (ms)) {
+					Assert.AreEqual (expected, sr.ReadToEnd (), "WriteObject");
+
+					ms.Position = 0;
+					return dcjs.ReadObject (ms);
+				}
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ReadWriteObject_Single_SpecialCases ()
+		{
+			Assert.IsTrue (Single.IsNaN ((float) ReadWriteObject (typeof (float), Single.NaN, "NaN")));
+			Assert.IsTrue (Single.IsNegativeInfinity ((float) ReadWriteObject (typeof (float), Single.NegativeInfinity, "-INF")));
+			Assert.IsTrue (Single.IsPositiveInfinity ((float) ReadWriteObject (typeof (float), Single.PositiveInfinity, "INF")));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void ReadWriteObject_Double_SpecialCases ()
+		{
+			Assert.IsTrue (Double.IsNaN ((double) ReadWriteObject (typeof (double), Double.NaN, "NaN")));
+			Assert.IsTrue (Double.IsNegativeInfinity ((double) ReadWriteObject (typeof (double), Double.NegativeInfinity, "-INF")));
+			Assert.IsTrue (Double.IsPositiveInfinity ((double) ReadWriteObject (typeof (double), Double.PositiveInfinity, "INF")));
+		}
 	}
 
 	public class TestData

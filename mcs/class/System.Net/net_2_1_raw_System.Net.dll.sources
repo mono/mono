@@ -6,6 +6,8 @@ System.Net/Dns_2_1.cs
 System.Net/DnsEndPoint_2_1.cs
 System.Net/HttpWebRequest_2_1.cs
 System.Net/HttpWebResponse_2_1.cs
+System.Net/InternalWebRequestStreamWrapper.cs
+System.Net/InternalWebResponseStreamWrapper.cs
 System.Net/WebExceptionStatus_2_1.cs
 System.Net/WebHeaderCollection_2_1.cs
 System.Net/WebClient_2_1.cs
@@ -18,6 +20,8 @@ System.Net.Sockets/SocketException_2_1.cs
 System.Net.Sockets/ProtocolType_2_1.cs
 System.Net.Sockets/SocketAsyncOperation_2_1.cs
 System.Net.Sockets/SocketType_2_1.cs
+System.Net.Sockets/UdpAnySourceMulticastClient.cs
+System.Net.Sockets/UdpSingleSourceMulticastClient.cs
 System.Net.NetworkInformation/NetworkChange_2_1.cs
 System.Net.NetworkInformation/NetworkInterface_2_1.cs
 ../System/System.Net/Cookie.cs

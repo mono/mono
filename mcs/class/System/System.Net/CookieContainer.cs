@@ -4,10 +4,11 @@
 // Authors:
 // 	Lawrence Pit (loz@cable.a2000.nl)
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
+//	Sebastien Pouliot  <sebastien@ximian.com>
 //
 // (c) 2003 Ximian, Inc. (http://www.ximian.com)
 // (c) Copyright 2004 Ximian, Inc. (http://www.ximian.com)
-//
+// Copyright (C) 2009 Novell, Inc (http://www.novell.com)
 
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -35,11 +36,11 @@ using System.Collections;
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Text;
+using System.Text.RegularExpressions;
 
 namespace System.Net 
 {
 	[Serializable]
-	[MonoTODO ("Need to remove older/unused cookies if it reaches the maximum capacity")]
 #if NET_2_1
 	public sealed class CookieContainer {
 #else
@@ -49,7 +50,6 @@ namespace System.Net
 		public const int DefaultCookieLimit = 300;
 		public const int DefaultPerDomainCookieLimit = 20;
 
-		int count;
 		int capacity = DefaultCookieLimit;
 		int perDomainCapacity = DefaultPerDomainCookieLimit;
 		int maxCookieSize = DefaultCookieLengthLimit;
@@ -99,7 +99,7 @@ namespace System.Net
 		// properties
 		
 		public int Count { 
-			get { return count; }
+			get { return (cookies == null) ? 0 : cookies.Count; }
 		}
 		
 		public int Capacity {
@@ -137,7 +137,7 @@ namespace System.Net
 			if (cookie == null)
 				throw new ArgumentNullException ("cookie");
 
-			if (cookie.Domain == "")
+			if (cookie.Domain.Length == 0)
 #if NET_2_0
 				throw new ArgumentException ("Cookie domain not set.", "cookie.Domain");
 #else
@@ -147,7 +147,16 @@ namespace System.Net
 			if (cookie.Value.Length > maxCookieSize)
 				throw new CookieException ("value is larger than MaxCookieSize.");
 
-			AddCookie (cookie);
+			// .NET's Add (Cookie) is fundamentally broken and does not copy properties
+			// like Secure, HttpOnly and Expires so we clone the parts that .NET
+			// does keep before calling AddCookie
+			Cookie c = new Cookie (cookie.Name, cookie.Value);
+			c.Path = (cookie.Path.Length == 0) ? "/" : cookie.Path;
+			c.Domain = cookie.Domain;
+			c.ExactDomain = cookie.ExactDomain;
+			c.Version = cookie.Version;
+			
+			AddCookie (c);
 		}
 
 		void AddCookie (Cookie cookie)
@@ -155,13 +164,57 @@ namespace System.Net
 			if (cookies == null)
 				cookies = new CookieCollection ();
 
-			if (count + 1 > capacity)
-				throw new CookieException ("Capacity exceeded");
+			if (cookies.Count >= capacity)
+				RemoveOldest (null);
 
-			cookies.Add (cookie);
-			count = cookies.Count;
+			// try to avoid counting per-domain
+			if (cookies.Count >= perDomainCapacity) {
+				if (CountDomain (cookie.Domain) >= perDomainCapacity)
+					RemoveOldest (cookie.Domain);
+			}
+
+			// clone the important parts of the cookie
+			Cookie c = new Cookie (cookie.Name, cookie.Value);
+			c.Path = (cookie.Path.Length == 0) ? "/" : cookie.Path;
+			c.Domain = cookie.Domain;
+			c.ExactDomain = cookie.ExactDomain;
+			c.Version = cookie.Version;
+			c.Expires = cookie.Expires;
+			c.CommentUri = cookie.CommentUri;
+			c.Comment = cookie.Comment;
+			c.Discard = cookie.Discard;
+#if NET_2_0
+			c.HttpOnly = cookie.HttpOnly;
+#endif
+			c.Secure = cookie.Secure;
+
+			cookies.Add (c);
 			CheckExpiration ();
 
+		}
+
+		int CountDomain (string domain)
+		{
+			int count = 0;
+			foreach (Cookie c in cookies) {
+				if (CheckDomain (domain, c.Domain, true))
+					count++;
+			}
+			return count;
+		}
+
+		void RemoveOldest (string domain)
+		{
+			int n = 0;
+			DateTime oldest = DateTime.MaxValue;
+			for (int i = 0; i < cookies.Count; i++) {
+				Cookie c = cookies [i];
+				if ((c.TimeStamp < oldest) && ((domain == null) || (domain == c.Domain))) {
+					oldest = c.TimeStamp;
+					n = i;
+				}
+			}
+			cookies.List.RemoveAt (n);
 		}
 
 		// Only needs to be called from AddCookie (Cookie) and GetCookies (Uri)
@@ -170,22 +223,10 @@ namespace System.Net
 			if (cookies == null)
 				return;
 
-			ArrayList removed = null;
 			for (int i = cookies.Count - 1; i >= 0; i--) {
 				Cookie cookie = cookies [i];
-				if (cookie.Expired) {
-					if (removed == null)
-						removed = new ArrayList ();
-					removed.Add (i);
-				}
-			}
-
-			if (removed != null) {
-				// We went backwards above, so this works.
-				ArrayList list = cookies.List;
-				foreach (int n in removed) {
-					list.RemoveAt (n);
-				}
+				if (cookie.Expired)
+					cookies.List.RemoveAt (i);
 			}
 		}
 
@@ -200,16 +241,16 @@ namespace System.Net
 
 		void Cook (Uri uri, Cookie cookie)
 		{
-			if (cookie.Name == null || cookie.Name == "")
+			if (IsNullOrEmpty (cookie.Name))
 				throw new CookieException ("Invalid cookie: name");
 
 			if (cookie.Value == null)
 				throw new CookieException ("Invalid cookie: value");
 
-			if (uri != null && cookie.Domain == "")
+			if (uri != null && cookie.Domain.Length == 0)
 				cookie.Domain = uri.Host;
 
-			if (cookie.Version == 0 && (cookie.Path == null || cookie.Path == "")) {
+			if (cookie.Version == 0 && IsNullOrEmpty (cookie.Path)) {
 				if (uri != null) {
 					cookie.Path = uri.AbsolutePath;
 				} else {
@@ -217,7 +258,7 @@ namespace System.Net
 				}
 			}
 
-			if (cookie.Port == "" && uri != null && !uri.IsDefaultPort) {
+			if (cookie.Port.Length == 0 && uri != null && !uri.IsDefaultPort) {
 				cookie.Port = "\"" + uri.Port.ToString () + "\"";
 			}
 		}
@@ -230,8 +271,10 @@ namespace System.Net
 			if (cookie == null)
 				throw new ArgumentNullException ("cookie");
 
-			Cook (uri, cookie);
-			AddCookie (cookie);
+			if (!cookie.Expired) {
+				Cook (uri, cookie);
+				AddCookie (cookie);
+			}
 		}
 
 		public void Add (Uri uri, CookieCollection cookies)
@@ -242,9 +285,11 @@ namespace System.Net
 			if (cookies == null)
 				throw new ArgumentNullException ("cookies");
 
-			foreach (Cookie c in cookies) {
-				Cook (uri, c);
-				AddCookie (c);
+			foreach (Cookie cookie in cookies) {
+				if (!cookie.Expired) {
+					Cook (uri, cookie);
+					AddCookie (cookie);
+				}
 			}
 		}		
 
@@ -259,7 +304,9 @@ namespace System.Net
 
 			StringBuilder result = new StringBuilder ();
 			foreach (Cookie cookie in coll) {
-				result.Append (cookie.ToString ());
+				// don't include the domain since it can be infered from the URI
+				// include empty path as '/'
+				result.Append (cookie.ToString (uri));
 				result.Append ("; ");
 			}
 
@@ -269,26 +316,25 @@ namespace System.Net
 			return result.ToString ();
 		}
 
-		static bool CheckDomain (string domain, string host)
+		static bool CheckDomain (string domain, string host, bool exact)
 		{
-			if (domain == String.Empty)
+			if (domain.Length == 0)
 				return false;
 
-			int hlen = host.Length;
-			int dlen = domain.Length;
-			if (hlen < dlen)
+			if (exact)
+				return (String.Compare (host, domain, true, CultureInfo.InvariantCulture) == 0);
+
+			// check for allowed sub-domains - without string allocations
+			if (!CultureInfo.InvariantCulture.CompareInfo.IsSuffix (host, domain, CompareOptions.IgnoreCase))
 				return false;
 
-			if (hlen == dlen)
-				return (String.Compare (domain, host, true, CultureInfo.InvariantCulture) == 0);
-
-			if (domain [0] != '.') {
-				domain = "." + domain;
-				dlen++;
-			}
-
-			string subdomain = host.Substring (hlen - dlen);
-			return (String.Compare (subdomain, domain, true, CultureInfo.InvariantCulture) == 0);
+			// mono.com -> www.mono.com is OK but supermono.com NOT OK
+			if (domain [0] == '.')
+				return true;
+			int p = host.Length - domain.Length - 1;
+			if (p < 0)
+				return false;
+			return (host [p] == '.');
 		}
 
 		public CookieCollection GetCookies (Uri uri)
@@ -303,10 +349,10 @@ namespace System.Net
 
 			foreach (Cookie cookie in cookies) {
 				string domain = cookie.Domain;
-				if (!CheckDomain (domain, uri.Host))
+				if (!CheckDomain (domain, uri.Host, cookie.ExactDomain))
 					continue;
 
-				if (cookie.Port != "" && cookie.Ports != null && uri.Port != -1) {
+				if (cookie.Port.Length > 0 && cookie.Ports != null && uri.Port != -1) {
 					if (Array.IndexOf (cookie.Ports, uri.Port) == -1)
 						continue;
 				}
@@ -330,7 +376,7 @@ namespace System.Net
 				coll.Add (cookie);
 			}
 
-			coll.SortByPath ();
+			coll.Sort ();
 			return coll;
 		}
 
@@ -340,120 +386,119 @@ namespace System.Net
 				throw new ArgumentNullException ("uri");
 			
 			if (cookieHeader == null)
-				throw new ArgumentNullException ("cookieHeader");
+				throw new ArgumentNullException ("cookieHeader");			
 			
-			ParseAndAddCookies (uri, cookieHeader);
-		}
-
-		// GetCookieValue, GetCookieName and ParseAndAddCookies copied from HttpRequest.cs
-		static string GetCookieValue (string str, int length, ref int i)
-		{
-			if (i >= length)
-				return null;
-
-			int k = i;
-			while (k < length && Char.IsWhiteSpace (str [k]))
-				k++;
-
-			int begin = k;
-			while (k < length && str [k] != ';')
-				k++;
-
-			i = k;
-			return str.Substring (begin, i - begin).Trim ();
-		}
-
-		static string GetCookieName (string str, int length, ref int i)
-		{
-			if (i >= length)
-				return null;
-
-			int k = i;
-			while (k < length && Char.IsWhiteSpace (str [k]))
-				k++;
-
-			int begin = k;
-			while (k < length && str [k] != ';' &&  str [k] != '=')
-				k++;
-
-			i = k + 1;
-			return str.Substring (begin, k - begin).Trim ();
-		}
-
-		static string GetDir (string path)
-		{
-			if (path == null || path == "")
-				return "/";
-
-			int last = path.LastIndexOf ('/');
-			if (last == -1)
-				return "/" + path;
-
-			return path.Substring (0, last + 1);
-		}
-		
-		void ParseAndAddCookies (Uri uri, string header)
-		{
-			if (header.Length == 0)
+			if (cookieHeader.Length == 0)
 				return;
+			
+			// Cookies must be separated by ',' (like documented on MSDN)
+			// but expires uses DAY, DD-MMM-YYYY HH:MM:SS GMT, so simple ',' search is wrong.
+			// See http://msdn.microsoft.com/en-us/library/aa384321%28VS.85%29.aspx
+			string [] jar = cookieHeader.Split (',');
+			string tmpCookie;
+			for (int i = 0; i < jar.Length; i++) {
+				tmpCookie = jar [i];
 
-			string [] name_values = header.Trim ().Split (';');
-			int length = name_values.Length;
-			Cookie cookie = null;
-			int pos;
-			CultureInfo inv = CultureInfo.InvariantCulture;
-			bool havePath = false;
-			bool haveDomain = false;
-
-			for (int i = 0; i < length; i++) {
-				pos = 0;
-				string name_value = name_values [i].Trim ();
-				string name = GetCookieName (name_value, name_value.Length, ref pos);
-				if (name == null || name == "")
-					throw new CookieException ("Name is empty.");
-
-				string value = GetCookieValue (name_value, name_value.Length, ref pos);
-				if (cookie != null) {
-					if (!havePath && String.Compare (name, "$Path", true, inv) == 0 ||
-					    String.Compare (name, "path", true, inv) == 0) {
-					    	havePath = true;
-						cookie.Path = value;
-						continue;
-					}
-					
-					if (!haveDomain && String.Compare (name, "$Domain", true, inv) == 0 ||
-				            String.Compare (name, "domain", true, inv) == 0) {
-						cookie.Domain = value;
-					    	haveDomain = true;
-						continue;
-					}
-
-					if (!havePath)
-						cookie.Path = GetDir (uri.AbsolutePath);
-
-					if (!haveDomain)
-						cookie.Domain = uri.Host;
-
-					havePath = false;
-					haveDomain = false;
-					Add (cookie);
-					cookie = null;
+				if (jar.Length > i + 1
+					&& Regex.IsMatch (jar[i],
+						@".*expires\s*=\s*(Mon|Tue|Wed|Thu|Fri|Sat|Sun)",
+						RegexOptions.IgnoreCase) 
+					&& Regex.IsMatch (jar[i+1],
+						@"\s\d{2}-(Jan|Feb|Mar|Apr|May|Jun|Jul|Aug|Sep|Oct|Nov|Dec)-\d{4} \d{2}:\d{2}:\d{2} GMT",
+						RegexOptions.IgnoreCase)) {
+					tmpCookie = new StringBuilder (tmpCookie).Append (",").Append (jar [++i]).ToString ();
 				}
-				cookie = new Cookie (name, value);
-			}
 
-			if (cookie != null) {
-				if (!havePath)
-					cookie.Path = GetDir (uri.AbsolutePath);
+				try {
+					Cookie c = Parse (tmpCookie);
 
-				if (!haveDomain)
-					cookie.Domain = uri.Host;
+					// add default values from URI if missing from the string
+					if (c.Path.Length == 0) {
+						c.Path = uri.AbsolutePath;
+					} else if (!uri.AbsolutePath.StartsWith (c.Path)) {
+						string msg = String.Format ("'Path'='{0}' is invalid with URI", c.Path);
+						throw new CookieException (msg);
+					}
 
-				Add (cookie);
+					if (c.Domain.Length == 0) {
+						c.Domain = uri.Host;
+						// don't consider domain "a.b.com" as ".a.b.com"
+						c.ExactDomain = true;
+					}
+
+					AddCookie (c);
+				}
+				catch (Exception e) {
+					string msg = String.Format ("Could not parse cookies for '{0}'.", uri);
+					throw new CookieException (msg, e);
+				}
 			}
 		}
 
-	} // CookieContainer
+		static Cookie Parse (string s)
+		{
+			string [] parts = s.Split (';');
+			Cookie c = new Cookie ();
+			for (int i = 0; i < parts.Length; i++) {
+				string key, value;
+				int sep = parts[i].IndexOf ('=');
+				if (sep == -1) {
+					key = parts [i].Trim ();
+					value = String.Empty;
+				} else {
+					key = parts [i].Substring (0, sep).Trim ();
+					value = parts [i].Substring (sep + 1).Trim ();
+				}
 
-} // System.Net
+				switch (key.ToLower (CultureInfo.InvariantCulture)) {
+				case "path":
+				case "$path":
+					if (c.Path.Length == 0)
+						c.Path = value;
+					break;
+				case "domain":
+				case "$domain":
+					if (c.Domain.Length == 0) {
+						c.Domain = value;
+						// here mono.com means "*.mono.com"
+						c.ExactDomain = false;
+					}
+					break;
+				case "expires":
+				case "$expires":
+					if (c.Expires == DateTime.MinValue) {
+#if NET_2_0
+						c.Expires = DateTime.SpecifyKind (DateTime.ParseExact (value,
+							@"ddd, dd-MMM-yyyy HH:mm:ss G\MT", CultureInfo.InvariantCulture), DateTimeKind.Utc);
+#else
+						c.Expires = DateTime.ParseExact (value, @"ddd, dd-MMM-yyyy HH:mm:ss G\MT", 
+							CultureInfo.InvariantCulture).ToUniversalTime ();
+#endif
+					}
+					break;
+#if NET_2_0
+				case "httponly":
+					c.HttpOnly = true;
+					break;
+#endif
+				case "secure":
+					c.Secure = true;
+					break;
+				default:
+					if (c.Name.Length == 0) {
+						c.Name = key;
+						c.Value = value;
+					}
+					break;
+				}
+			}
+			return c;
+		}
+
+		static bool IsNullOrEmpty (string s)
+		{
+			return ((s == null) || (s.Length == 0));
+		}
+	}
+}
 

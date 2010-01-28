@@ -1155,6 +1155,13 @@ public class EcmaHelpSource : HelpSource {
 	
 	string GetTextFromUrl (string url)
 	{
+		if (nozip) {
+			string path = XmlDocUtils.GetCachedFileName (base_dir, url);
+			if (File.Exists (path))
+				return File.OpenText (path).ReadToEnd ();
+			return null;
+		}
+
 		string rest, rest2;
 		Node node;
 

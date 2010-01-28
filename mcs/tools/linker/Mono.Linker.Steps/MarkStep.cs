@@ -385,6 +385,8 @@ namespace Mono.Linker.Steps {
 				MarkMethodsIf (type.Constructors, IsSpecialSerializationConstructorPredicate);
 			}
 
+			MarkTypeSpecialCustomAttributes (type);
+
 			MarkGenericParameterProvider (type);
 
 			if (type.IsValueType)
@@ -404,6 +406,90 @@ namespace Mono.Linker.Steps {
 			Annotations.Mark (type);
 
 			ApplyPreserveInfo (type);
+		}
+
+		void MarkTypeSpecialCustomAttributes (TypeDefinition type)
+		{
+			if (!type.HasCustomAttributes)
+				return;
+
+			foreach (CustomAttribute attribute in type.CustomAttributes) {
+				switch (attribute.Constructor.DeclaringType.FullName) {
+				case "System.Xml.Serialization.XmlSchemaProviderAttribute":
+					MarkXmlSchemaProvider (type, attribute);
+					break;
+				}
+			}
+		}
+
+		void MarkMethodSpecialCustomAttributes (MethodDefinition method)
+		{
+			if (!method.HasCustomAttributes)
+				return;
+
+			foreach (CustomAttribute attribute in method.CustomAttributes) {
+				switch (attribute.Constructor.DeclaringType.FullName) {
+				case "System.Web.Services.Protocols.SoapHeaderAttribute":
+					MarkSoapHeader (method, attribute);
+					break;
+				}
+			}
+		}
+
+		void MarkXmlSchemaProvider (TypeDefinition type, CustomAttribute attribute)
+		{
+			string method_name;
+			if (!TryGetStringArgument (attribute, out method_name))
+				return;
+
+			MarkNamedMethod (type, method_name);
+		}
+
+		static bool TryGetStringArgument (CustomAttribute attribute, out string argument)
+		{
+			argument = null;
+
+			if (!attribute.Resolved || attribute.ConstructorParameters.Count < 1)
+				return false;
+
+			argument = attribute.ConstructorParameters [0] as string;
+
+			return argument != null;
+		}
+
+		void MarkNamedMethod (TypeDefinition type, string method_name)
+		{
+			if (!type.HasMethods)
+				return;
+
+			foreach (MethodDefinition method in type.Methods) {
+				if (method.Name != method_name)
+					continue;
+
+				MarkMethod (method);
+			}
+		}
+
+		void MarkSoapHeader (MethodDefinition method, CustomAttribute attribute)
+		{
+			string field_name;
+			if (!TryGetStringArgument (attribute, out field_name))
+				return;
+
+			MarkNamedField (method.DeclaringType, field_name);
+		}
+
+		void MarkNamedField (TypeDefinition type, string field_name)
+		{
+			if (!type.HasFields)
+				return;
+
+			foreach (FieldDefinition field in type.Fields) {
+				if (field.Name != field_name)
+					continue;
+
+				MarkField (field);
+			}
 		}
 
 		void MarkGenericParameterProvider (IGenericParameterProvider provider)
@@ -708,6 +794,8 @@ namespace Mono.Linker.Steps {
 				foreach (MethodReference ov in method.Overrides)
 					MarkMethod (ov);
 			}
+
+			MarkMethodSpecialCustomAttributes (method);
 
 			if (method.IsVirtual)
 				_virtual_methods.Add (method);

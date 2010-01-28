@@ -600,7 +600,7 @@ namespace System
 					(value * TimeSpan.TicksPerMillisecond) < long.MinValue) {
 				throw new ArgumentOutOfRangeException();
 			}
-			long msticks = (long) (value * TimeSpan.TicksPerMillisecond);
+			long msticks = (long) Math.Round (value * TimeSpan.TicksPerMillisecond);
 
 			return AddTicks (msticks);
 		}
@@ -1940,11 +1940,16 @@ namespace System
 						  DateTimeStyles style,
 						  out DateTime result)
 		{
-			DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
+			try {
+				DateTimeFormatInfo dfi = DateTimeFormatInfo.GetInstance (provider);
 
-			bool longYear = false;
-			Exception e = null;
-			return ParseExact (s, formats, dfi, style, out result, true, ref longYear, false, ref e);
+				bool longYear = false;
+				Exception e = null;
+				return ParseExact (s, formats, dfi, style, out result, true, ref longYear, false, ref e);
+			} catch {
+				result = MinValue;
+				return false;
+			}
 		}
 #endif
 

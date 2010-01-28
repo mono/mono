@@ -1,3 +1,9 @@
+2010-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DateTimeConstantAttribute.cs: Add internal Ticks property.
+
+	Backport of r149083.
+
 2009-10-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MethodBaseTest.cs: Add new, working, test for non-generic

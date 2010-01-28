@@ -64,7 +64,7 @@ namespace System.Xml.Linq
 		{
 			if (attribute == null)
 				throw new ArgumentNullException ("attribute");
-			return XmlConvert.ToBoolean (attribute.value);
+			return XUtil.ConvertToBoolean (attribute.value);
 		}
 
 		public static explicit operator bool? (XAttribute attribute)
@@ -72,14 +72,14 @@ namespace System.Xml.Linq
 			if (attribute == null)
 				return null;
 			
-			return attribute.value == null ? (bool?) null : XmlConvert.ToBoolean (attribute.value);
+			return attribute.value == null ? (bool?) null : XUtil.ConvertToBoolean (attribute.value);
 		}
 
 		public static explicit operator DateTime (XAttribute attribute)
 		{
 			if (attribute == null)
 				throw new ArgumentNullException ("attribute");
-			return XmlConvert.ToDateTime (attribute.value, XmlDateTimeSerializationMode.RoundtripKind);
+			return XUtil.ToDateTime (attribute.value);
 		}
 
 		public static explicit operator DateTime? (XAttribute attribute)
@@ -87,8 +87,27 @@ namespace System.Xml.Linq
 			if (attribute == null)
 				return null;
 			
-			return attribute.value == null ? (DateTime?) null : XmlConvert.ToDateTime (attribute.value, XmlDateTimeSerializationMode.RoundtripKind);
+			return attribute.value == null ? (DateTime?) null : XUtil.ToDateTime (attribute.value);
 		}
+
+#if !TARGET_JVM // Same as for System.Xml.XmlConvert.ToDateTimeOffset
+
+		public static explicit operator DateTimeOffset (XAttribute attribute)
+		{
+			if (attribute == null)
+				throw new ArgumentNullException ("attribute");
+			return XmlConvert.ToDateTimeOffset (attribute.value);
+		}
+
+		public static explicit operator DateTimeOffset? (XAttribute attribute)
+		{
+			if (attribute == null)
+				return null;
+			
+			return attribute.value == null ? (DateTimeOffset?) null : XmlConvert.ToDateTimeOffset (attribute.value);
+		}
+
+#endif
 
 		public static explicit operator decimal (XAttribute attribute)
 		{
@@ -288,7 +307,7 @@ namespace System.Xml.Linq
 			this.value = XUtil.ToString (value);
 		}
 
-		static readonly char [] escapeChars = new char [] {'<', '>', '&', '"'};
+		static readonly char [] escapeChars = new char [] {'<', '>', '&', '"', '\r', '\n', '\t'};
 
 		public override string ToString ()
 		{
@@ -312,6 +331,9 @@ namespace System.Xml.Linq
 				case '<': sb.Append ("&lt;"); break;
 				case '>': sb.Append ("&gt;"); break;
 				case '"': sb.Append ("&quot;"); break;
+				case '\r': sb.Append ("&#xD;"); break;
+				case '\n': sb.Append ("&#xA;"); break;
+				case '\t': sb.Append ("&#x9;"); break;
 				}
 				start = idx + 1;
 			} while (true);

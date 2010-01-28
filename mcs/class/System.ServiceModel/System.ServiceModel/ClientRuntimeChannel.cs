@@ -553,8 +553,13 @@ namespace System.ServiceModel
 			if (op.SerializeRequest)
 				msg = op.GetFormatter ().SerializeRequest (
 					version, parameters);
-			else
+			else {
+				if (parameters.Length != 1)
+					throw new ArgumentException (String.Format ("Argument parameters does not match the expected input. It should contain only a Message, but has {0} parameters", parameters.Length));
+				if (!(parameters [0] is Message))
+					throw new ArgumentException (String.Format ("Argument should be only a Message, but has {0}", parameters [0] != null ? parameters [0].GetType ().FullName : "null"));
 				msg = (Message) parameters [0];
+			}
 
 			context = context ?? OperationContext.Current;
 			if (context != null) {

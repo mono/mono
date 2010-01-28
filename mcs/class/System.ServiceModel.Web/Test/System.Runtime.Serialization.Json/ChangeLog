@@ -1,9 +1,20 @@
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DataContractJsonSerializerTest.cs: Add non-working test cases
+	for null-string, known types and handling floating point special
+	values
+	[Backport r150141]
+
 2009-12-11  Chris Toshok  <toshok@ximian.com>
 
 	* DataContractJsonSerializerTest.cs: add a test case for
 	non-public properties.
 
-2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+2009-12-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReaderTest.cs : another number parse case.
+
+2009-11-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializerTest.cs : added ignored test case that
 	  verifies 2.1 behavior (with another case that justifies removal

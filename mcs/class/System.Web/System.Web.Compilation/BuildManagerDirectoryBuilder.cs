@@ -186,6 +186,7 @@ namespace System.Web.Compilation
 					depDir = VirtualPathUtility.GetDirectory (s); // dependencies are assumed to contain absolute paths
 					if (cache.ContainsKey (depDir))
 						continue;
+					cache.Add (depDir, true);
 					AddVirtualDir (GetVirtualDirectory (s), bpcoll, cache);
 				}
 			}

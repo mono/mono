@@ -394,53 +394,73 @@ namespace DbLinq.Data.Linq
             if (this.objectTrackingEnabled == false)
                 throw new InvalidOperationException("Object tracking is not enabled for the current data context instance.");
             using (DatabaseContext.OpenConnection()) //ConnMgr will close connection for us
-            using (IDatabaseTransaction transaction = DatabaseContext.Transaction())
             {
-                var queryContext = new QueryContext(this);
-
-                // There's no sense in updating an entity when it's going to 
-                // be deleted in the current transaction, so do deletes first.
-                foreach (var entityTrack in CurrentTransactionEntities.EnumerateAll().ToList())
+                if (Transaction != null)
+                    SubmitChangesImpl(failureMode);
+                else
                 {
-                    switch (entityTrack.EntityState)
+                    using (IDatabaseTransaction transaction = DatabaseContext.Transaction())
                     {
-                        case EntityState.ToDelete:
-                            var deleteQuery = QueryBuilder.GetDeleteQuery(entityTrack.Entity, queryContext);
-                            QueryRunner.Delete(entityTrack.Entity, deleteQuery);
-
-                            UnregisterDelete(entityTrack.Entity);
-                            AllTrackedEntities.RegisterToDelete(entityTrack.Entity);
-                            AllTrackedEntities.RegisterDeleted(entityTrack.Entity);
-                            break;
-                        default:
-                            // ignore.
-                            break;
+                        try
+                        {
+                            Transaction = (DbTransaction) transaction.Transaction;
+                            SubmitChangesImpl(failureMode);
+                            // TODO: handle conflicts (which can only occur when concurrency mode is implemented)
+                            transaction.Commit();
+                        }
+                        finally
+                        {
+                            Transaction = null;
+                        }
                     }
                 }
-                foreach (var entityTrack in CurrentTransactionEntities.EnumerateAll()
-                        .Concat(AllTrackedEntities.EnumerateAll())
-                        .ToList())
+            }
+        }
+
+        void SubmitChangesImpl(ConflictMode failureMode)
+        {
+            var queryContext = new QueryContext(this);
+
+            // There's no sense in updating an entity when it's going to 
+            // be deleted in the current transaction, so do deletes first.
+            foreach (var entityTrack in CurrentTransactionEntities.EnumerateAll().ToList())
+            {
+                switch (entityTrack.EntityState)
                 {
-                    switch (entityTrack.EntityState)
-                    {
-                        case EntityState.ToInsert:
-                            foreach (var toInsert in GetReferencedObjects(entityTrack.Entity))
-                            {
-                                InsertEntity(toInsert, queryContext);
-                            }
-                            break;
-                        case EntityState.ToWatch:
-                            foreach (var toUpdate in GetReferencedObjects(entityTrack.Entity))
-                            {
-                                UpdateEntity(toUpdate, queryContext);
-                            }
-                            break;
-                        default:
-                            throw new ArgumentOutOfRangeException();
-                    }
+                    case EntityState.ToDelete:
+                        var deleteQuery = QueryBuilder.GetDeleteQuery(entityTrack.Entity, queryContext);
+                        QueryRunner.Delete(entityTrack.Entity, deleteQuery);
+
+                        UnregisterDelete(entityTrack.Entity);
+                        AllTrackedEntities.RegisterToDelete(entityTrack.Entity);
+                        AllTrackedEntities.RegisterDeleted(entityTrack.Entity);
+                        break;
+                    default:
+                        // ignore.
+                        break;
                 }
-                // TODO: handle conflicts (which can only occur when concurrency mode is implemented)
-                transaction.Commit();
+            }
+            foreach (var entityTrack in CurrentTransactionEntities.EnumerateAll()
+                    .Concat(AllTrackedEntities.EnumerateAll())
+                    .ToList())
+            {
+                switch (entityTrack.EntityState)
+                {
+                    case EntityState.ToInsert:
+                        foreach (var toInsert in GetReferencedObjects(entityTrack.Entity))
+                        {
+                            InsertEntity(toInsert, queryContext);
+                        }
+                        break;
+                    case EntityState.ToWatch:
+                        foreach (var toUpdate in GetReferencedObjects(entityTrack.Entity))
+                        {
+                            UpdateEntity(toUpdate, queryContext);
+                        }
+                        break;
+                    default:
+                        throw new ArgumentOutOfRangeException();
+                }
             }
         }
 

@@ -33,29 +33,29 @@ using System.Security;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 
-// General Information about the System.ServiceModel assembly
+// General Information about the System.ServiceModel.Web assembly
 
 [assembly: AssemblyVersion (Consts.FxVersion)]
+[assembly: AssemblyFileVersion (Consts.FxFileVersion)]
 [assembly: SatelliteContractVersion (Consts.FxVersion)]
 
 [assembly: AssemblyTitle ("System.ServiceModel.Web.dll")]
 [assembly: AssemblyDescription ("System.ServiceModel.Web.dll")]
-[assembly: AssemblyConfiguration ("Development version")]
 [assembly: AssemblyCompany ("MONO development team")]
 [assembly: AssemblyProduct ("MONO CLI")]
 [assembly: AssemblyCopyright ("(c) 2003 Various Authors")]
-[assembly: AssemblyTrademark ("")]
 
 [assembly: CLSCompliant (true)]
 [assembly: AssemblyDefaultAlias ("System.ServiceModel.Web.dll")]
-[assembly: AssemblyInformationalVersion ("3.5.594.0")]
 [assembly: NeutralResourcesLanguage ("en-US")]
 
 [assembly: ComVisible (false)]
 
 [assembly: AssemblyDelaySign (true)]
 #if NET_2_1
+[assembly: AssemblyInformationalVersion (Consts.FxFileVersion)]
 [assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
+[assembly: AssemblyInformationalVersion ("3.5.594.0")]
 [assembly: AssemblyKeyFile("../winfx.pub")]
 #endif

@@ -1347,15 +1347,19 @@ namespace System.Net
 			if (isProxy && (proxy == null || proxy.Credentials == null))
 				return false;
 
-			string authHeader = response.Headers [(isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate"];
-			if (authHeader == null)
+			string [] authHeaders = response.Headers.GetValues ( (isProxy) ? "Proxy-Authenticate" : "WWW-Authenticate");
+			if (authHeaders == null || authHeaders.Length == 0)
 				return false;
 
 			ICredentials creds = (!isProxy) ? credentials : proxy.Credentials;
-			Authorization auth = AuthenticationManager.Authenticate (authHeader, this, creds);
+			Authorization auth = null;
+			foreach (string authHeader in authHeaders) {
+				auth = AuthenticationManager.Authenticate (authHeader, this, creds);
+				if (auth != null)
+					break;
+			}
 			if (auth == null)
 				return false;
-
 			webHeaders [(isProxy) ? "Proxy-Authorization" : "Authorization"] = auth.Message;
 			authCompleted = auth.Complete;
 			is_ntlm_auth = (auth.Module.AuthenticationType == "NTLM");

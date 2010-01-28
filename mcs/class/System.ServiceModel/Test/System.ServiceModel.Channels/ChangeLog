@@ -1,3 +1,35 @@
+2010-01-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncodingBindingElementTest.cs : added test for
+	  connection-based tests for both TCP and HTTP (they give difference:
+	  see BinaryMessageEncoder.cs change too).
+
+2009-12-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageFaultTest.cs : add CreateFault test with MessageVersion.None.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : added another CopyHeadersFrom() test to
+	  make sure there is no duplicate.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : enable working test and remove old comment.
+
+2009-12-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeadersTest.cs : make sure null can be set as a
+	  WS-Addressing header when version is None.
+
+2009-12-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElementTest.cs : added GetProperty() tests.
+
+2009-12-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpsTransportBindingElementTest.cs : new test.
+
 2009-09-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessagePropertiesTest.cs : new test.

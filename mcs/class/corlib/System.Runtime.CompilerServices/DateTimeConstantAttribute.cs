@@ -48,6 +48,10 @@ namespace System.Runtime.CompilerServices {
 			this.ticks = ticks;
 		}
 
+		internal long Ticks {
+			get { return ticks; }
+		}
+
 		public override object Value {
 			get { return ticks; }
 		}

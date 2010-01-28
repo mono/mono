@@ -9,7 +9,7 @@
 //	Stephane Delcroix (sdelcroix@novell.com)
 //
 // Copyright 2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright 2006, 2008, 2009 Novell, Inc. (http://www.novell.com)
+// Copyright 2006, 2008, 2009-2010 Novell, Inc. (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -39,8 +39,6 @@ namespace System.Net {
 
 	// note: this type is effectively sealed to transparent code since it's default .ctor is marked with [SecuritySafeCritical]
 	public class WebClient {
-
-		private delegate void ProgressChangedDelegate (long read, long length, object state);
 
 		WebHeaderCollection headers;
 		WebHeaderCollection responseHeaders;
@@ -190,9 +188,7 @@ namespace System.Net {
 
 		void CompleteAsync ()
 		{
-			lock (locker) {
-				is_busy = false;
-			}
+			is_busy = false;
 		}
 
 		//    DownloadStringAsync
@@ -336,6 +332,7 @@ namespace System.Net {
 			bool cancel = false;
 			try {
 				stream = request.EndGetRequestStream (result);
+				(stream as InternalWebRequestStreamWrapper).WebClient = this;
 			}
 			catch (WebException web) {
 				cancel = (web.Status == WebExceptionStatus.RequestCanceled);
@@ -347,6 +344,27 @@ namespace System.Net {
 			finally {
 				OnOpenWriteCompleted (
 					new OpenWriteCompletedEventArgs (stream, ex, cancel, result.AsyncState));
+			}
+		}
+
+		internal void WriteStreamClosedCallback ()
+		{
+			try {
+				request.BeginGetResponse (OpenWriteAsyncResponseCallback, null);
+			}
+			catch (Exception e) {
+				OnWriteStreamClosed (new WriteStreamClosedEventArgs (e));
+			}
+		}
+
+		private void OpenWriteAsyncResponseCallback (IAsyncResult result)
+		{
+			try {
+				WebResponse response = request.EndGetResponse (result);
+				ProcessResponse (response);
+			}
+			catch (Exception e) {
+				OnWriteStreamClosed (new WriteStreamClosedEventArgs (e));
 			}
 		}
 
@@ -432,50 +450,56 @@ namespace System.Net {
 
 		protected virtual void OnDownloadProgressChanged (DownloadProgressChangedEventArgs e)
 		{
-			if (DownloadProgressChanged != null) {
-				DownloadProgressChanged (this, e);
-			}
+			DownloadProgressChangedEventHandler handler = DownloadProgressChanged;
+			if (handler != null)
+				handler (this, e);
 		}
 		
 		protected virtual void OnOpenReadCompleted (OpenReadCompletedEventArgs args)
 		{
 			CompleteAsync ();
-			if (OpenReadCompleted != null) {
-				OpenReadCompleted (this, args);
-			}
+			OpenReadCompletedEventHandler handler = OpenReadCompleted;
+			if (handler != null)
+				handler (this, args);
 		}
 
 		protected virtual void OnDownloadStringCompleted (DownloadStringCompletedEventArgs args)
 		{
 			CompleteAsync ();
-			if (DownloadStringCompleted != null) {
-				DownloadStringCompleted (this, args);
-			}
+			DownloadStringCompletedEventHandler handler = DownloadStringCompleted;
+			if (handler != null)
+				handler (this, args);
 		}
 
 		protected virtual void OnOpenWriteCompleted (OpenWriteCompletedEventArgs args)
 		{
 			CompleteAsync ();
-			if (OpenWriteCompleted != null)
-				OpenWriteCompleted (this, args);
+			OpenWriteCompletedEventHandler handler = OpenWriteCompleted;
+			if (handler != null)
+				handler (this, args);
 		}
 
 		protected virtual void OnUploadProgressChanged (UploadProgressChangedEventArgs e)
 		{
-			if (UploadProgressChanged != null)
-				UploadProgressChanged (this, e);
+			UploadProgressChangedEventHandler handler = UploadProgressChanged;
+			if (handler != null)
+				handler (this, e);
 		}
 
 		protected virtual void OnUploadStringCompleted (UploadStringCompletedEventArgs args)
 		{
 			CompleteAsync ();
-			if (UploadStringCompleted != null)
-				UploadStringCompleted (this, args);
+			UploadStringCompletedEventHandler handler = UploadStringCompleted;
+			if (handler != null)
+				handler (this, args);
 		}
 
 		protected virtual void OnWriteStreamClosed (WriteStreamClosedEventArgs e)
 		{
-			throw new NotImplementedException ();
+			CompleteAsync ();
+			WriteStreamClosedEventHandler handler = WriteStreamClosed;
+			if (handler != null)
+				handler (this, e);
 		}
 
 		protected virtual WebRequest GetWebRequest (Uri address)
@@ -488,7 +512,7 @@ namespace System.Net {
 
 			WebRequest request = WebRequest.Create (uri);
 
-			request.SetupProgressDelegate ((ProgressChangedDelegate) delegate (long read, long length, object state) {
+			request.SetupProgressDelegate (delegate (long read, long length, object state) {
 				OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, state));
 			});
 			return request;

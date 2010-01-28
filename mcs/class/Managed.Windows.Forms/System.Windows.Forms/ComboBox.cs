@@ -1598,6 +1598,12 @@ namespace System.Windows.Forms
 				listbox_ctrl.Dispose ();
 				listbox_ctrl = null;
 			}
+#if NET_2_0
+			 // The auto complete list could have been shown after the listbox,
+			 // so make sure it's hidden.
+			 if (textbox_ctrl != null)
+				 textbox_ctrl.HideAutoCompleteList ();
+#endif
 		}
 		
 		private int FindStringCaseInsensitive (string search)
@@ -2522,11 +2528,11 @@ namespace System.Windows.Forms
 				else { // DropDown or DropDownList
 					
 					width = owner.DropDownWidth;
-					int count = (owner.Items.Count <= owner.MaxDropDownItems) ? owner.Items.Count : owner.MaxDropDownItems;
+					int visible_items_count = (owner.Items.Count <= owner.MaxDropDownItems) ? owner.Items.Count : owner.MaxDropDownItems;
 					
 					if (owner.DrawMode == DrawMode.OwnerDrawVariable) {
 						height = 0;
-						for (int i = 0; i < count; i++) {
+						for (int i = 0; i < visible_items_count; i++) {
 							height += owner.GetItemHeight (i);
 						}
 
@@ -2535,14 +2541,15 @@ namespace System.Windows.Forms
 					} else	{
 #if NET_2_0
 						if (owner.DropDownHeight == default_drop_down_height) { // ignore DropDownHeight
-							height = owner.ItemHeight * count;
+							height = owner.ItemHeight * visible_items_count;
 							show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
 						} else {
+							// ignore visible items count, and use manual height instead
 							height = owner.DropDownHeight;
-							show_scrollbar = (count * owner.ItemHeight) > height;
+							show_scrollbar = (owner.Items.Count * owner.ItemHeight) > height;
 						}
 #else		
-						height = owner.ItemHeight * count;
+						height = owner.ItemHeight * visible_items_count;
 						show_scrollbar = owner.Items.Count > owner.MaxDropDownItems;
 #endif
 					}

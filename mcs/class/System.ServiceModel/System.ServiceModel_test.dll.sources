@@ -17,6 +17,7 @@ System.ServiceModel.Channels/HandlerBodyWriter.cs
 System.ServiceModel.Channels/HandlerTransportBindingElement.cs
 System.ServiceModel.Channels/HttpRequestMessagePropertyTest.cs
 System.ServiceModel.Channels/HttpTransportBindingElementTest.cs
+System.ServiceModel.Channels/HttpsTransportBindingElementTest.cs
 System.ServiceModel.Channels/InterceptorBindingElement.cs
 System.ServiceModel.Channels/InvalidBindingElement.cs
 System.ServiceModel.Channels/LocalClientSecuritySettingsTest.cs
@@ -163,8 +164,4 @@ FeatureBased/Features.Client/UntypedMessageTesterProxy.cs
 FeatureBased/Features.Contracts/FaultsTester.cs
 FeatureBased/Features.Contracts/KnownTypeTester.cs
 FeatureBased/Features.Contracts/UntypedMessageTester.cs
-FeatureBased/Features.Serialization/FaultsTest.cs
-FeatureBased/Features.Serialization/KnownTypeTest.cs
-FeatureBased/Features.Serialization/MessageContractTest.cs
-FeatureBased/Features.Serialization/UntypedMessageTest.cs
 FeatureBased/Features.Serialization/XmlComparer.cs

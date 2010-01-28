@@ -36,8 +36,11 @@ using System.ServiceModel.Security.Tokens;
 namespace System.ServiceModel.Channels
 {
 	public sealed class TransportSecurityBindingElement
-		: SecurityBindingElement,
-		  ISecurityCapabilities, IPolicyExportExtension
+#if NET_2_1
+		: SecurityBindingElement
+#else
+		: SecurityBindingElement, IPolicyExportExtension
+#endif
 	{
 		public TransportSecurityBindingElement ()
 		{
@@ -47,7 +50,11 @@ namespace System.ServiceModel.Channels
 			TransportSecurityBindingElement other)
 			: base (other)
 		{
-			throw new NotImplementedException ();
+		}
+
+		public override BindingElement Clone ()
+		{
+			return new TransportSecurityBindingElement (this);
 		}
 
 		[MonoTODO]
@@ -58,6 +65,7 @@ namespace System.ServiceModel.Channels
 			throw new NotImplementedException ();
 		}
 
+#if !NET_2_1
 		[MonoTODO]
 		protected override IChannelListener<TChannel>
 			BuildChannelListenerCore<TChannel> (
@@ -67,41 +75,9 @@ namespace System.ServiceModel.Channels
 		}
 
 		[MonoTODO]
-		public override BindingElement Clone ()
-		{
-			return new TransportSecurityBindingElement (this);
-		}
-
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
 			throw new NotImplementedException ();
-		}
-
-		#region explicit interface implementations
-		[MonoTODO]
-		ProtectionLevel ISecurityCapabilities.SupportedRequestProtectionLevel {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		ProtectionLevel ISecurityCapabilities.SupportedResponseProtectionLevel {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsClientAuthentication {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsClientWindowsIdentity {
-			get { throw new NotImplementedException (); }
-		}
-
-		[MonoTODO]
-		bool ISecurityCapabilities.SupportsServerAuthentication {
-			get { throw new NotImplementedException (); }
 		}
 
 		[MonoTODO]
@@ -111,6 +87,6 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
-		#endregion
+#endif
 	}
 }

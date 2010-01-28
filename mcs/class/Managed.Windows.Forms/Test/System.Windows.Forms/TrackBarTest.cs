@@ -283,6 +283,33 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.AreEqual(handle, handle, "Removes warning");
 		}
+
+		[Test]
+		public void EventsTest ()
+		{
+			TrackBar trackbar = new TrackBar ();
+			trackbar.Maximum = 10;
+			trackbar.Minimum = 1;
+			trackbar.LargeChange = 2;
+
+			trackbar.ValueChanged += new EventHandler (trackbar_ValueChanged);
+			trackbar.Scroll += new EventHandler (trackbar_Scroll);
+
+			trackbar.Value = 6;
+			Assert.AreEqual ("ValueChanged=6;", event_log, "#A1");
+		}
+
+		string event_log;
+
+		void trackbar_Scroll (object sender, EventArgs e)
+		{
+			event_log += "Scroll=" + ((TrackBar)sender).Value + ";";
+		}
+
+		void trackbar_ValueChanged (object sender, EventArgs e)
+		{
+			event_log += "ValueChanged=" + ((TrackBar)sender).Value + ";";
+		}
 	}
 }
 

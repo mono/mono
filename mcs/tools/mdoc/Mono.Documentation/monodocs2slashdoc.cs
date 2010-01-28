@@ -133,14 +133,17 @@ public class MDocToMSXDocConverter : MDocCommand {
 	}
 	
 	private static void AddNamespaceSummary(XmlDocument nsSummaries, string basepath, string currentNs) {
-		string filename = Path.Combine(basepath, currentNs + ".xml");
-		if (File.Exists(filename)) 	{
-			XmlDocument nsSummary = new XmlDocument();
-			nsSummary.Load(filename);
-			XmlElement ns = nsSummaries.CreateElement("namespace");
-			nsSummaries.DocumentElement.AppendChild(ns);
-			ns.SetAttribute("name", currentNs);
-			ns.InnerText = nsSummary.SelectSingleNode("/Namespace/Docs/summary").InnerText;
+		foreach (var filename in new [] {
+				Path.Combine(basepath, currentNs + ".xml"),
+				Path.Combine(basepath, "ns-" + currentNs + ".xml")}) {
+			if (File.Exists(filename)) 	{
+				XmlDocument nsSummary = new XmlDocument();
+				nsSummary.Load(filename);
+				XmlElement ns = nsSummaries.CreateElement("namespace");
+				nsSummaries.DocumentElement.AppendChild(ns);
+				ns.SetAttribute("name", currentNs);
+				ns.InnerText = nsSummary.SelectSingleNode("/Namespace/Docs/summary").InnerText;
+			}
 		}
 	}
 	

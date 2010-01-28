@@ -1,3 +1,7 @@
+2009-10-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : \uXXXX parser was totally wrong, giving wrong #.
+
 2009-09-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonValue.cs, JsonReader.cs, JsonPrimitive.cs :

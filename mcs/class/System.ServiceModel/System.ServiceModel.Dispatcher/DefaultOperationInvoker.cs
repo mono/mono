@@ -38,10 +38,12 @@ namespace System.ServiceModel.Dispatcher
 	{
 		readonly OperationDescription od;
 		readonly ParameterInfo [] in_params, out_params;
+		readonly bool is_synchronous;
 
 		public DefaultOperationInvoker (OperationDescription od)
 		{
 			this.od = od;
+			is_synchronous = od.SyncMethod != null;
 			var mi = od.SyncMethod ?? od.BeginMethod;
 			var il = new List<ParameterInfo> ();
 			var ol = new List<ParameterInfo> ();
@@ -59,7 +61,7 @@ namespace System.ServiceModel.Dispatcher
 		}
 
 		public bool IsSynchronous {
-			get { return true; }
+			get { return is_synchronous; }
 		}
 
 		public object [] AllocateInputs ()

@@ -51,6 +51,26 @@ namespace System.Net
 			queue = new Queue ();
 		}
 
+		public void Close ()
+		{
+			//TODO: what do we do with the queue? Empty it out and abort the requests?
+			//TODO: abort requests or wait for them to finish
+			lock (connections) {
+				WeakReference cncRef = null;
+
+				int end = connections.Count;
+				ArrayList removed = null;
+				for (int i = 0; i < end; i++) {
+					cncRef = (WeakReference) connections [i];
+					WebConnection cnc = cncRef.Target as WebConnection;
+					if (cnc != null) {
+						cnc.Close (false);
+					}
+				}
+				connections.Clear ();
+			}
+		}
+
 		public WebConnection GetConnection (HttpWebRequest request)
 		{
 			WebConnection cnc = null;

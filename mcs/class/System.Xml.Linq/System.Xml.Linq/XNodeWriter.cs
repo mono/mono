@@ -273,6 +273,8 @@ namespace System.Xml.Linq
 			XElement el = current as XElement;
 			if (el == null)
 				throw new InvalidOperationException ("Current state is not acceptable for startAttribute.");
+			if (prefix == null)
+				prefix = String.Empty;
 
 			// special case: in XmlWriter context, xmlns="blah" is
 			// passeed as localName = "xmlns", ns = w3c_xmlns.

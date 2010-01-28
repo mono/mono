@@ -259,7 +259,7 @@ namespace System.Net {
 			case "vary":
 			case "www-authenticate":
 			case "x-flash-version":
-				throw new ArgumentException ();
+				throw new ArgumentException ("header");
 			default:
 				return;
 			}

@@ -210,6 +210,7 @@ System.Net/HttpListener2Test.cs
 System.Net/HttpListenerRequestTest.cs
 System.Net/IPAddressTest.cs
 System.Net/IPEndPointTest.cs
+System.Net/NetworkCredentialTest.cs
 System.Net/ServicePointManagerTest.cs
 System.Net/ServicePointTest.cs
 System.Net/SocketPermissionAttributeTest.cs

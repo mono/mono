@@ -96,6 +96,7 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_09.sitemap \
 	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.resx \
 	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.fr-FR.resx \
+	Test/mainsoft/NunitWebResources/App_GlobalResources/Resource1.resx \
 	Test/mainsoft/NunitWebResources/menuclass.aspx \
 	Test/mainsoft/NunitWebResources/FormView.aspx \
 	Test/mainsoft/NunitWebResources/PostBackMenuTest.aspx \
@@ -195,7 +196,12 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/GlobalResourcesLocalization.aspx \
 	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx \
 	Test/mainsoft/NunitWebResources/TableSections_Bug551666.aspx.cs \
-	Test/mainsoft/NunitWebResources/NestedParserFileText.aspx
+	Test/mainsoft/NunitWebResources/NestedParserFileText.aspx \
+	Test/mainsoft/NunitWebResources/StateFormatter_CorrectConverter.aspx \
+	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx \
+	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx.cs \
+	Test/mainsoft/NunitWebResources/ChangePasswordContainer_FindControl.aspx \
+	Test/mainsoft/NunitWebResources/TagWithExpressionWithinAttribute.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))

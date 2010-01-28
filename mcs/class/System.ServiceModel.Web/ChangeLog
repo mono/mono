@@ -1,3 +1,26 @@
+2010-01-26  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* monotouch_System.ServiceModel.Web.dll.sources: Don't inherit from
+	net_2_1_raw*.sources when you require a superset of moonlight API
+	[Backport r150214]
+
+2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.Web.dll.sources: Use custom
+	version of DataContractJsonSerializer for Moonlight
+	[Backport r150153]
+
+2009-11-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* common_System.ServiceModel.Web.dll.sources,
+	  net_2_0_System.ServiceModel.Web.dll.sources,
+	  net_4_0_System.ServiceModel.Web.dll.sources :
+
+	  in 4.0 profile, some types are moved from this
+	  assembly, so extract common basis and include
+	  it in 2.0 and 4.0 profile sources (4.0 is
+	  equivalent to common so far).
+
 2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* monotouch_System.ServiceModel.Web.dll.sources:

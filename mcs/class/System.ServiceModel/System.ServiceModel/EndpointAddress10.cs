@@ -31,20 +31,26 @@ using System.Collections.ObjectModel;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.Serialization;
-using System.Security.Cryptography.X509Certificates;
-using System.Security.Cryptography.Xml;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Text;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
+#if !NET_2_1
+using System.Security.Cryptography.X509Certificates;
+using System.Security.Cryptography.Xml;
+#endif
 
 namespace System.ServiceModel
 {
 	[XmlSchemaProvider ("GetSchema")]
 	[XmlRoot ("EndpointReference", Namespace = "http://www.w3.org/2005/08/addressing")]
+#if NET_2_1
+	internal class EndpointAddress10 : IXmlSerializable
+#else
 	public class EndpointAddress10 : IXmlSerializable
+#endif
 	{
 		static readonly Uri w3c_anonymous = new Uri (Constants.WsaAnonymousUri);
 		EndpointAddress address;
@@ -63,6 +69,7 @@ namespace System.ServiceModel
 			return new EndpointAddress10 (address);
 		}
 
+#if !NET_2_1
 		public static XmlQualifiedName GetSchema (XmlSchemaSet xmlSchemaSet)
 		{
 			if (xmlSchemaSet == null)
@@ -70,6 +77,7 @@ namespace System.ServiceModel
 			xmlSchemaSet.Add (XmlSchema.Read (typeof (EndpointAddress10).Assembly.GetManifestResourceStream ("ws-addr.xsd"), null));
 			return new XmlQualifiedName ("EndpointReferenceType", Constants.WSA1);
 		}
+#endif
 
 		public EndpointAddress ToEndpointAddress ()
 		{
@@ -102,6 +110,7 @@ namespace System.ServiceModel
 					ah.WriteAddressHeader (writer);
 
 			writer.WriteStartElement ("Identity", Constants.WsaIdentityUri);
+#if !NET_2_1
 			X509CertificateEndpointIdentity x509 =
 				address.Identity as X509CertificateEndpointIdentity;
 			if (x509 != null) {
@@ -115,6 +124,7 @@ namespace System.ServiceModel
 				DataContractSerializer ds = new DataContractSerializer (address.Identity.IdentityClaim.GetType ());
 				ds.WriteObject (writer, address.Identity.IdentityClaim);
 			}
+#endif
 			writer.WriteEndElement ();
 		}
 	}

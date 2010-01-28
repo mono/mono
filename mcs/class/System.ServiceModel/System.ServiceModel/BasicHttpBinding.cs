@@ -27,6 +27,7 @@
 //
 using System;
 using System.Collections.Generic;
+using System.Net;
 using System.Net.Security;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -178,14 +179,17 @@ namespace System.ServiceModel
 			switch (Security.Mode) {
 #if !NET_2_1
 			case BasicHttpSecurityMode.Message:
-			case BasicHttpSecurityMode.TransportWithMessageCredential:
 				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
 					throw new InvalidOperationException ("When Message security is enabled in a BasicHttpBinding, the message security credential type must be BasicHttpMessageCredentialType.Certificate.");
-				return new BindingElementCollection (new BindingElement [] {
+				goto case BasicHttpSecurityMode.TransportWithMessageCredential;
+			case BasicHttpSecurityMode.TransportWithMessageCredential:
+				SecurityBindingElement sec;
+				if (Security.Message.ClientCredentialType != BasicHttpMessageCredentialType.Certificate)
 					// FIXME: pass proper security token parameters.
-					new AsymmetricSecurityBindingElement (),
-					BuildMessageEncodingBindingElement (),
-					GetTransport ()});
+					sec = SecurityBindingElement.CreateCertificateOverTransportBindingElement ();
+				else
+					sec = new AsymmetricSecurityBindingElement ();
+				return new BindingElementCollection (new BindingElement [] {sec, BuildMessageEncodingBindingElement (), GetTransport ()});
 #endif
 			default:
 				return new BindingElementCollection (new BindingElement [] {
@@ -216,30 +220,59 @@ namespace System.ServiceModel
 
 		TransportBindingElement GetTransport ()
 		{
-			HttpTransportBindingElement transportBindingElement;
+			HttpTransportBindingElement h;
 			switch (Security.Mode) {
 			case BasicHttpSecurityMode.Transport:
 			case BasicHttpSecurityMode.TransportWithMessageCredential:
-				transportBindingElement
-					= new HttpsTransportBindingElement ();
+				h = new HttpsTransportBindingElement ();
 				break;
 			default:
-				transportBindingElement
-					= new HttpTransportBindingElement ();
+				h = new HttpTransportBindingElement ();
 				break;
 			}
 
-			transportBindingElement.AllowCookies = AllowCookies;
-			transportBindingElement.BypassProxyOnLocal = BypassProxyOnLocal;
-			transportBindingElement.HostNameComparisonMode = HostNameComparisonMode;
-			transportBindingElement.MaxBufferPoolSize = MaxBufferPoolSize;
-			transportBindingElement.MaxBufferSize = MaxBufferSize;
-			transportBindingElement.MaxReceivedMessageSize = MaxReceivedMessageSize;
-			transportBindingElement.ProxyAddress = ProxyAddress;
-			transportBindingElement.UseDefaultWebProxy = UseDefaultWebProxy;
-			transportBindingElement.TransferMode = TransferMode;
+			h.AllowCookies = AllowCookies;
+			h.BypassProxyOnLocal = BypassProxyOnLocal;
+			h.HostNameComparisonMode = HostNameComparisonMode;
+			h.MaxBufferPoolSize = MaxBufferPoolSize;
+			h.MaxBufferSize = MaxBufferSize;
+			h.MaxReceivedMessageSize = MaxReceivedMessageSize;
+			h.ProxyAddress = ProxyAddress;
+			h.UseDefaultWebProxy = UseDefaultWebProxy;
+			h.TransferMode = TransferMode;
 
-			return transportBindingElement;
+#if !NET_2_1
+			switch (Security.Mode) {
+			case BasicHttpSecurityMode.Transport:
+				switch (Security.Transport.ClientCredentialType) {
+				case HttpClientCredentialType.Certificate:
+					var https = (HttpsTransportBindingElement) h;
+					https.RequireClientCertificate = true;
+					break;
+				}
+				break;
+			case BasicHttpSecurityMode.TransportCredentialOnly:
+				switch (Security.Transport.ClientCredentialType) {
+				case HttpClientCredentialType.Basic:
+					h.AuthenticationScheme = AuthenticationSchemes.Basic;
+					break;
+				case HttpClientCredentialType.Ntlm:
+					h.AuthenticationScheme = AuthenticationSchemes.Ntlm;
+					break;
+				case HttpClientCredentialType.Windows:
+					h.AuthenticationScheme = AuthenticationSchemes.Negotiate;
+					break;
+				case HttpClientCredentialType.Digest:
+					h.AuthenticationScheme = AuthenticationSchemes.Digest;
+					break;
+				case HttpClientCredentialType.Certificate:
+					throw new InvalidOperationException ("Certificate-based client authentication is not supported by 'TransportCredentialOnly' mode.");
+				}
+				break;
+			}
+#endif
+
+			return h;
 		}
 
 		// explicit interface implementations

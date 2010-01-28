@@ -173,11 +173,9 @@ namespace System.ServiceModel
 			}
 		}
 
-#if !NET_2_1
 		public ClientCredentials ClientCredentials {
 			get { return ChannelFactory.Credentials; }
 		}
-#endif
 
 		public ServiceEndpoint Endpoint {
 			get { return factory.Endpoint; }
@@ -234,9 +232,9 @@ namespace System.ServiceModel
 			EventHandler a = delegate {
 				try {
 					callback (args); 
-					Console.WriteLine ("ClientBase<TChannel>: operationCompletedCallback is successfully done (unless the callback has further async operations)");
+					//Console.WriteLine ("ClientBase<TChannel>: operationCompletedCallback is successfully done (unless the callback has further async operations)");
 				} catch (Exception ex) {
-					Console.WriteLine ("ClientBase<TChannel> caught an error during operationCompletedCallback: " + ex);
+					//Console.WriteLine ("ClientBase<TChannel> caught an error during operationCompletedCallback: " + ex);
 					throw;
 				}
 			};
@@ -268,10 +266,10 @@ namespace System.ServiceModel
 					if (operationCompletedCallback != null)
 						RunCompletedCallback (operationCompletedCallback, new InvokeAsyncCompletedEventArgs (results, error, cancelled, userState));
 				} catch (Exception ex) {
-					Console.WriteLine ("Exception during operationCompletedCallback" + ex);
+					//Console.WriteLine ("Exception during operationCompletedCallback" + ex);
 					throw;
 				}
-				Console.WriteLine ("System.ServiceModel.ClientBase<TChannel>: web service invocation is successfully done (operationCompletedCallback may not be).");
+				//Console.WriteLine ("System.ServiceModel.ClientBase<TChannel>: web service invocation is successfully done (operationCompletedCallback may not be).");
 			};
 			begin_async_result = beginOperationDelegate (inValues, cb, userState);
 		}

@@ -569,8 +569,13 @@ namespace System.Web.Compilation {
 				try {
 					bp.GenerateCode (abuilder);
 				} catch (Exception ex) {
-					if (String.Compare (bvp, vpabsolute, stringComparer) == 0)
+					if (String.Compare (bvp, vpabsolute, stringComparer) == 0) {
+						if (ex is CompilationException || ex is ParseException)
+							throw;
+						
 						throw new HttpException ("Code generation failed.", ex);
+					}
+					
 					if (failedBuildProviders == null)
 						failedBuildProviders = new List <BuildProvider> ();
 					failedBuildProviders.Add (bp);

@@ -1,3 +1,17 @@
+2010-01-15  Alexandre Gomes  <alexmipego@gmail.com>
+
+	* ByteConverterTests.cs:
+	* DoubleConverterTests.cs:
+	* Int32ConverterTests.cs:
+	* Int16ConverterTests.cs:
+	* Int64ConverterTests.cs:
+	* SingleConverterTests.cs:
+	* UInt32ConverterTests.cs:
+	* SByteConverterTests.cs:
+	* UInt16ConverterTests.cs:
+	* UInt64ConverterTests.cs: Added tests to verify CanConvertTo when
+	targeting primitive types.
+	
 2009-09-29  Alan McGovern  <amcgovern@novell.com>
 
 	* CategoryAttributeTest.cs: Added new test file.

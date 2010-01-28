@@ -1,3 +1,14 @@
+2010-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ParameterInfo.cs (DefaultProperty): Fix small typo.
+
+2010-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ParameterInfoTest.cs: Add a test for default values from custom
+	attributes.
+
+	Backport of r149083.
+
 2009-11-03  Marek Habersack  <mhabersack@novell.com>
 
 	* Assembly.cs: GetSatelliteAssembly must catch

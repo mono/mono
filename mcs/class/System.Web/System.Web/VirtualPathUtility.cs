@@ -102,15 +102,16 @@ namespace System.Web {
 			if (normalize)
 				virtualPath = Normalize (virtualPath);
 
-			if (IsAppRelative (virtualPath) && virtualPath.Length < 3) { // "~" or "~/"
+			int vpLen = virtualPath.Length;
+			if (IsAppRelative (virtualPath) && vpLen < 3) { // "~" or "~/"
 				virtualPath = ToAbsolute (virtualPath);
+				vpLen = virtualPath.Length;
 			}
 			
-			if (virtualPath.Length == 1 && virtualPath [0] == '/') { // "/"
+			if (vpLen == 1 && virtualPath [0] == '/') // "/"
 				return null;
-			}
 
-			int last = virtualPath.LastIndexOf ('/', virtualPath.Length - 2, virtualPath.Length - 2);
+			int last = virtualPath.LastIndexOf ('/', vpLen - 2, vpLen - 2);
 			if (last > 0)
 				return virtualPath.Substring (0, last + 1);
 			else
