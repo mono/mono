@@ -1,3 +1,8 @@
+2010-01-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* zlib-helper.c: no need for sync flush when compressing.
+	Thanks to Hin-Tak Leung.
+
 2010-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* serial.c: Fix the OSX build.
