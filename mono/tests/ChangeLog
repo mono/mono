@@ -1,3 +1,7 @@
+2010-01-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs: Add minimal tests for assembly unloading.
+
 2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* large-gc-bitmap.cs: Respect the 1Mb size limit for valuetype types.
