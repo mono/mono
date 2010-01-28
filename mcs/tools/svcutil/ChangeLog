@@ -1,3 +1,13 @@
+2010-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Driver.cs, MoonlightChannelBaseExtension.cs, CommandLineOptions.cs:
+	  Now that ServiceContractGenerator generates both sync and async
+	  methods, it has to explicitly remove sync methods from moonlight
+	  proxies since they are not supported.
+	  Also now we can generate sync proxies for monotouch, so
+	  differentiate them again to support sync proxy generation (if you
+	  don't want to generate sync methods, just use -moonlight).
+
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MoonlightChannelBaseExtension.cs : do not remove base EventArgs.

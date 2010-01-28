@@ -62,7 +62,7 @@ namespace Mono.ServiceContractTool
 		[Option ("Indicate target client version is 3.5", "targetClientVersion:Version35", "tcv:Version35")]
 		public bool TargetClientVersion35;
 
-		bool generate_moonlight_proxy;
+		bool generate_moonlight_proxy, generate_monotouch_proxy;
 
 		[Option ("Generate moonlight client. (This option may vanish.)", "moonlight")]
 		public bool GenerateMoonlightProxy {
@@ -78,19 +78,12 @@ namespace Mono.ServiceContractTool
 		[Option ("Generate MonoTouch client. (This option may vanish.)", "monotouch")]
 		public bool GenerateMonoTouchProxy {
 			// this is a hack. It does not differentiate from GenerateMoonlightProxy on getter.
-			get { return generate_moonlight_proxy; }
+			get { return generate_monotouch_proxy; }
 			set {
 				if (!value)
 					return;
-				generate_moonlight_proxy = true;
-				// FIXME: since ServiceContractGenerator at 
-				// least for now generates only either sync or
-				// async stuff, and since Moonlight-compatible
-				// profile now emits event-based operations,
-				// it became impossible to generate sync methods
-				// in MonoTouch profile. It might be able to get
-				// fixed, but might be not.
-				GenerateAsync = true;
+				GenerateMoonlightProxy = true;
+				generate_monotouch_proxy = true;
 			}
 		}
 

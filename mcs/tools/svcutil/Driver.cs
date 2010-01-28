@@ -96,9 +96,9 @@ namespace Mono.ServiceContractTool
 			foreach (ContractDescription cd in contracts) {
 				if (co.GenerateMoonlightProxy) {
 					var moonctx = new MoonlightChannelBaseContext ();
-					cd.Behaviors.Add (new MoonlightChannelBaseContractExtension (moonctx, co.GenerateAsync));
+					cd.Behaviors.Add (new MoonlightChannelBaseContractExtension (moonctx, co.GenerateMonoTouchProxy));
 					foreach (var od in cd.Operations)
-						od.Behaviors.Add (new MoonlightChannelBaseOperationExtension (moonctx, co.GenerateAsync));
+						od.Behaviors.Add (new MoonlightChannelBaseOperationExtension (moonctx, co.GenerateMonoTouchProxy));
 					generator.GenerateServiceContractType (cd);
 					moonctx.Fixup ();
 				}

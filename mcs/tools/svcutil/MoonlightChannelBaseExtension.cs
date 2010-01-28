@@ -77,14 +77,14 @@ namespace Mono.ServiceContractTool
 
 	class MoonlightChannelBaseContractExtension : IContractBehavior, IServiceContractGenerationExtension
 	{
-		public MoonlightChannelBaseContractExtension (MoonlightChannelBaseContext mlContext, bool generateAsync)
+		public MoonlightChannelBaseContractExtension (MoonlightChannelBaseContext mlContext, bool generateSync)
 		{
 			ml_context = mlContext;
-			generate_async = generateAsync;
+			generate_sync = generateSync;
 		}
 
 		MoonlightChannelBaseContext ml_context;
-		bool generate_async;
+		bool generate_sync;
 
 		// IContractBehavior
 		public void AddBindingParameters (ContractDescription contractDescription, ServiceEndpoint endpoint, BindingParameterCollection bindingParameters)
@@ -131,6 +131,9 @@ namespace Mono.ServiceContractTool
 			ContractDescription cd = context.Contract;
 			ml_context.FindClientType (context);
 			var parentClass = ml_context.ClientType;
+
+			if (!generate_sync)
+				EliminateSync ();
 
 			string name = cd.Name + "Channel";
 			if (name [0] == 'I')
@@ -181,18 +184,78 @@ namespace Mono.ServiceContractTool
 					if (ct != ml_context.ClientType && !ct.Name.EndsWith ("EventArgs", StringComparison.Ordinal))
 						ct.BaseTypes.Clear ();
 		}
+
+		void EliminateSync ()
+		{
+			var type = context.ContractType;
+
+			// remove such OperationContract methods that do not have AsyncPattern parameter. It is sort of hack as it does not check the value (it might be "false").
+			var l = new List<CodeMemberMethod> ();
+			foreach (CodeMemberMethod cm in type.Members) {
+				bool isOperation = false, isAsync = false;
+				foreach (CodeAttributeDeclaration att in cm.CustomAttributes) {
+					if (att.Name == "System.ServiceModel.OperationContractAttribute")
+						isOperation = true;
+					else
+						continue;
+					foreach (CodeAttributeArgument aa in att.Arguments) {
+						if (aa.Name == "AsyncPattern") {
+							isAsync = true;
+							break;
+						}
+					}
+					if (isAsync)
+						break;
+				}
+				if (isOperation && !isAsync)
+					l.Add (cm);
+			}
+			foreach (var cm in l)
+				type.Members.Remove (cm);
+
+			// remove corresponding client implementation methods. 
+			// It is sort of hack as it only checks method and 
+			// parameter names (ideally we want to check parameter
+			// types, but there is no way to compare 
+			// CodeTypeReferences).
+			var lc = new List<CodeMemberMethod> ();
+			foreach (var cm_ in ml_context.ClientType.Members) {
+				var cm = cm_ as CodeMemberMethod;
+				if (cm == null)
+					continue;
+				foreach (var sm in l) {
+					if (cm.Name != sm.Name || cm.Parameters.Count != sm.Parameters.Count)
+						continue;
+					bool diff = false;
+					for (int i = 0; i < cm.Parameters.Count; i++) {
+						var cp = cm.Parameters [i];
+						var sp = sm.Parameters [i];
+						if (cp.Direction != sp.Direction || cp.Name != sp.Name) {
+							diff = true;
+							break;
+						}
+					}
+					if (diff)
+						continue;
+					lc.Add (cm);
+					break;
+				}
+			}
+			foreach (var cm in lc)
+				ml_context.ClientType.Members.Remove (cm);
+		}
 	}
 
 	class MoonlightChannelBaseOperationExtension : IOperationBehavior, IOperationContractGenerationExtension
 	{
-		public MoonlightChannelBaseOperationExtension (MoonlightChannelBaseContext mlContext, bool generateAsync)
+		public MoonlightChannelBaseOperationExtension (MoonlightChannelBaseContext mlContext, bool generateSync)
 		{
 			ml_context = mlContext;
-			generate_async = generateAsync;
+			generate_sync = generateSync;
 		}
 
 		MoonlightChannelBaseContext ml_context;
-		bool generate_async;
+		bool generate_sync;
 
 		// IOperationBehavior
 
@@ -235,13 +298,12 @@ namespace Mono.ServiceContractTool
 
 		public void Fixup ()
 		{
-			if (generate_async)
-				FixupAsync ();
-			else
+			if (generate_sync)
 				FixupSync ();
+			FixupAsync ();
 		}
 
-		public void FixupSync ()
+		void FixupSync ()
 		{
 			var type = ml_context.ChannelType;
 			var od = context.Operation;
