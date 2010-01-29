@@ -1,5 +1,19 @@
 2010-01-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.h (MONO_INST_FAULT): New instruction flag for loads which can cause
+	a fault, only used by the LLVM backend.
+
+	* ir-emit.h: Add _FAULT variants of the LOAD_MEMBASE macros. Mark
+	OP_CHECK_THIS with OP_IMPLICIT_EXCEPTION.
+
+	* method-to-ir.c: Use the new LOAD_MEMBASE_FAULT opcodes, get rid of the
+	calls to MONO_EMIT_NULL_CHECK which is automatically done by the new macros.
+
+	* mini-llvm.c: Only generate volatile loads from load instructions which have
+	the MONO_INST_FAULT flag set.
+
+2010-01-29  Zoltan Varga  <vargaz@gmail.com>
+
 	* unwind.c (mono_unwind_decode_fde): Fix the decoding of the LSDA offset on
 	64 bit platforms.
 
