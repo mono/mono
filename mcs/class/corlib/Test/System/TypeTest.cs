@@ -1562,6 +1562,19 @@ namespace MonoTests.System
 			Assert.AreEqual (2, t2.Length);
 		}
 
+		[Test]
+		public void GetInterfacesGenericVarWithConstraints ()
+		{
+			var a = typeof (TypeTest).GetMethod ("GenericMethod");
+
+			var p = a.GetParameters ();
+			var i = p[0].ParameterType.GetElementType ();
+			i.GetInterfaces ();
+		}
+
+		public static void GenericMethod<T> (T[] arr) where T: IComparable<T> {
+		}
+
 		public int AField;
 
 		[Test]

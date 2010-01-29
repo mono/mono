@@ -1,3 +1,7 @@
+2010-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeTest.cs: Add a test for #574819.
+
 2010-01-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* VersionTest.cs: New tests for Parse and TryParse.
