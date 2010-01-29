@@ -4580,6 +4580,12 @@ mono_class_from_generic_parameter (MonoGenericParam *param, MonoImage *image, gb
 
 	mono_class_setup_supertypes (klass);
 
+	if (count - pos > 0) {
+		mono_class_setup_vtable (klass->parent);
+		g_assert (!klass->parent->exception_type);
+		setup_interface_offsets (klass, klass->parent->vtable_size);
+	}
+
 	mono_memory_barrier ();
 
 	param->pklass = klass;

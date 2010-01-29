@@ -1,3 +1,8 @@
+2010-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (make_generic_param_class): Initialize interface offsets since we
+	set klass->inited. Fixes #574819.
+
 2010-01-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (mono_field_get_value_object): Handle nullable types correctly.
