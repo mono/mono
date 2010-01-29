@@ -1,3 +1,8 @@
+2010-01-29  Geoff Norton  <gnorton@novell.com>
+
+	* include/private/gcconfig.h: Don't define NO_PTHREAD_TRYLOCK on darwin-x86
+	Patch from Tom Philpot (tom.philpot@gmail.com)
+
 2009-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* misc.c (GC_get_suspend_signal): New API function to return the suspend signal

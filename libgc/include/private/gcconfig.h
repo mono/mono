@@ -327,9 +327,6 @@
 #    endif
 #    include <unistd.h>
 #    define GETPAGESIZE() getpagesize()
-      /* There seems to be some issues with trylock hanging on darwin. This
-         should be looked into some more */
-#     define NO_PTHREAD_TRYLOCK
 #   elif defined(__arm__)
 #    define ARM
 #    define mach_type_known
