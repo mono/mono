@@ -250,5 +250,117 @@ namespace MonoTests.System
 			Assert.AreEqual (1, v1235.CompareTo (v1234), "1235-1234");
 		}
 #endif
+
+#if BOOTSTRAP_NET_4_0 || NET_4_0
+		[Test]
+		public void Parse ()
+		{
+			Assert.AreEqual (new Version (1, 7), Version.Parse ("1.7"), "#A1");
+			Assert.AreEqual (new Version (1, 7, 3), Version.Parse ("1.7.3"), "#A2");
+			Assert.AreEqual (new Version (1, 7, 3, 4001), Version.Parse ("1.7.3.4001"), "#A3");
+			Assert.AreEqual (new Version (2, 9), Version.Parse ("  2.9  "), "#A4");
+			Assert.AreEqual (new Version (2, 9, 3), Version.Parse ("2. 9. 3"), "#A5");
+
+			try {
+				Version.Parse (null);
+				Assert.Fail ("#EXC1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				Version.Parse ("1");
+				Assert.Fail ("#EXC2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Version.Parse ("1.4.7.8.9");
+				Assert.Fail ("#EXC3");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				Version.Parse ("1.2.a.7");
+				Assert.Fail ("#EXC4");
+			} catch (FormatException) {
+			}
+
+			try {
+				Version.Parse ("1.2.");
+				Assert.Fail ("#EXC5");
+			} catch (FormatException) {
+			}
+
+			try {
+				Version.Parse ("1.2.0." + ((long)Int32.MaxValue + 1).ToString ());
+				Assert.Fail ("#EXC6");
+			} catch (OverflowException) {
+			}
+
+			try {
+				Version.Parse ("1.3.-6.0");
+				Assert.Fail ("#EXC7");
+			} catch (ArgumentOutOfRangeException) {
+			}
+		}
+
+		[Test]
+		public void TryParse ()
+		{
+			Version result;
+			bool success;
+
+			success = Version.TryParse ("1.7", out result);
+			Assert.AreEqual (new Version (1, 7), result, "#A1");
+			Assert.AreEqual (true, success, "#A2");
+
+			success = Version.TryParse ("1.7.3", out result);
+			Assert.AreEqual (new Version (1, 7, 3), result, "#B1");
+			Assert.AreEqual (true, success, "#B2");
+
+			success = Version.TryParse ("1.7.0.4001", out result);
+			Assert.AreEqual (new Version (1, 7, 0, 4001), result, "#C1");
+			Assert.AreEqual (true, success, "#C2");
+
+			success = Version.TryParse ("  2.9  ", out result);
+			Assert.AreEqual (new Version (2, 9), result, "#D1");
+			Assert.AreEqual (true, success, "#D2");
+
+			success = Version.TryParse ("2. 9. 3", out result);
+			Assert.AreEqual (new Version (2, 9, 3), result, "#E1");
+			Assert.AreEqual (true, success, "#E2");
+
+			//
+			// Errors
+			//
+			success = Version.TryParse (null, out result);
+			Assert.AreEqual (null, result, "#F1");
+			Assert.AreEqual (false, success, "#F2");
+
+			success = Version.TryParse ("1", out result);
+			Assert.AreEqual (null, result, "#G1");
+			Assert.AreEqual (false, success, "#G2");
+
+			success = Version.TryParse ("1.4.7.8.9", out result);
+			Assert.AreEqual (null, result, "#H1");
+			Assert.AreEqual (false, success, "#H2");
+
+			success = Version.TryParse ("1.2.a.7", out result);
+			Assert.AreEqual (null, result, "#I1");
+			Assert.AreEqual (false, success, "#I2");
+
+			success = Version.TryParse ("1.2.", out result);
+			Assert.AreEqual (null, result, "#J1");
+			Assert.AreEqual (false, success, "#J2");
+
+			success = Version.TryParse ("1.2.0." + ((long)Int32.MaxValue + 1).ToString (), out result);
+			Assert.AreEqual (null, result, "#K1");
+			Assert.AreEqual (false, success, "#K2");
+
+			success = Version.TryParse ("1.-6", out result);
+			Assert.AreEqual (null, result, "#L1");
+			Assert.AreEqual (false, success, "#L2");
+		}
+#endif
 	}
 }
