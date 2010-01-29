@@ -1,3 +1,7 @@
+2010-01-29  Mike Kestner <mkestner@novell.com>
+
+	* System.Net/WebUtilityTest.cs: port of tests from System.Web.
+
 2009-05-14  Jonathan Pryor  <jpryor@novell.com>
 
 	* test-config-file: Revert the prior change, as this breaks 1.0

@@ -871,6 +871,7 @@ System.Net/WebProxy.cs
 System.Net/WebRequest.cs
 System.Net/WebRequestMethods.cs
 System.Net/WebResponse.cs
+System.Net/WebUtility.cs
 System/NewsStyleUriParser.cs
 System.Security.AccessControl/SemaphoreAccessRule.cs
 System.Security.AccessControl/SemaphoreAuditRule.cs

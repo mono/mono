@@ -1,3 +1,8 @@
+2010-01-29  Mike Kestner <mkestner@novell.com>
+
+	* System.dll.sources: add System.Net/WebUtility.cs.
+	* System_test.dll.sources: add WebUtilityTest.cs to tests.
+
 2010-01-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System_test.dll.sources: Add NetworkCredentialTest.cs to the tests
