@@ -188,10 +188,10 @@ public class ByteTest : Assertion
 			Assert(NumberFormatInfo.CurrentInfo.CurrencySymbol+"42, NumberStyles.Integer, Nfi", typeof(FormatException) == e.GetType());
 		}
 
-		Assert.AreEqual (734, Int64.Parse ("734\0"), "#1");
-		Assert.AreEqual (734, Int64.Parse ("734\0\0\0    \0"), "#2");
-		Assert.AreEqual (734, Int64.Parse ("734\0\0\0    "), "#3");
-		Assert.AreEqual (734, Int64.Parse ("734\0\0\0"), "#4");
+		Assert (734 == Int64.Parse ("734\0"));
+		Assert (734 == Int64.Parse ("734\0\0\0    \0"));
+		Assert (734 == Int64.Parse ("734\0\0\0    "));
+		Assert (734 == Int64.Parse ("734\0\0\0"));
 	}
 
 	[Test]

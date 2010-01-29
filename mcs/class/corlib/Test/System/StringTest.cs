@@ -1851,8 +1851,8 @@ public class StringTest : TestCase
 #if NET_2_0
        [Test]
        public void IndexOf7_Empty () {
-		Assert.AreEqual (1, "FOO".IndexOf ("", 1, 2, StringComparison.Ordinal));
-		Assert.AreEqual (1, "FOO".IndexOf ("", 1, 2, StringComparison.OrdinalIgnoreCase));
+		   AssertEquals (1, "FOO".IndexOf ("", 1, 2, StringComparison.Ordinal));
+		   AssertEquals (1, "FOO".IndexOf ("", 1, 2, StringComparison.OrdinalIgnoreCase));
        }
 #endif
 
