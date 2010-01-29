@@ -306,6 +306,56 @@ namespace System {
 			return v1.CompareTo (v2) <= 0;
 		}
 
+#if BOOSTRAP_NET_4_0 || NET_4_0
+		public static Version Parse (string input)
+		{
+			// Exactly the same as calling Version(string) .ctor
+			return new Version (input);
+		}
+
+		// Implemented the TryParse separated from the Parse impl due to its
+		// small size, and because the Parse one depends on the exceptions thrown by
+		// Int32.Parse to match .Net, and detecting such exceptions here is not worth it.
+		public static bool TryParse (string input, out Version result)
+		{
+			int n;
+			string [] vals;
+			int [] values; // actual parsed values
+
+			result = null;
+
+			if (input == null)
+				return false;
+
+			vals = input.Split (new Char [] {'.'});
+			n = vals.Length;
+
+			if (n < 2 || n > 4)
+				return false;
+
+			values = new int [n];
+			for (int i = 0; i < n; i++) {
+				int part;
+				if (!Int32.TryParse (vals [i], out part) || part < 0)
+					return false;
+
+				values [i] = part;
+			}
+
+			result = new Version ();
+			if (n > 0)
+				result._Major = values [0];
+			if (n > 1)
+				result._Minor = values [1];
+			if (n > 2)
+				result._Build = values [2];
+			if (n > 3)
+				result._Revision = values [3];
+
+			return true;
+		}
+#endif
+
 		// a very gentle way to construct a Version object which takes 
 		// the first four numbers in a string as the version
 		internal static Version CreateFromString (string info)

@@ -1,3 +1,7 @@
+2010-01-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Version.cs: Implement Parse and TryParse.
+
 2010-01-28  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* AppDomain.cs: LoadSatellite: add a boolean parameter specifiying
