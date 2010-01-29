@@ -1,3 +1,8 @@
+2010-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* unwind.c (mono_unwind_decode_fde): Fix the decoding of the LSDA offset on
+	64 bit platforms.
+
 2010-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_save_seq_point_info): Fix the handling of bblocks without
