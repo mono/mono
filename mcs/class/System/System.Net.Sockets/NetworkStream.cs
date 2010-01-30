@@ -303,6 +303,9 @@ namespace System.Net.Sockets
 			}
 			socket = null;
 			access = 0;
+
+			if (disposing)
+				GC.SuppressFinalize (this);
 		}
 
 		public override int EndRead (IAsyncResult ar)
@@ -339,11 +342,12 @@ namespace System.Net.Sockets
 			// network streams are non-buffered, this is a no-op
 		}
 
+#if !NET_2_0
 		void IDisposable.Dispose ()
 		{
 			Dispose (true);
-			GC.SuppressFinalize (this);
 		}
+#endif
 
 		public override int Read ([In,Out] byte [] buffer, int offset, int size)
 		{
