@@ -1,5 +1,10 @@
 2010-01-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_emit_prolog): Fix full aot support for native to
+	managed wrappers.
+
+2010-01-30  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c (add_wrappers): Commit the hack which generates
 	native-to-managed wrappers for methods decorated with the MonoPInvokeCallback
 	custom attribute.
