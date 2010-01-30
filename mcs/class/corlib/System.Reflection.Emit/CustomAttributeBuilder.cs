@@ -94,6 +94,20 @@ namespace System.Reflection.Emit {
 			return true;
 		}
 
+		private bool IsValidParam (object o, Type paramType)
+		{
+			Type t = o.GetType ();
+			if (!IsValidType (t))
+				return false;
+			if (paramType == typeof (object)) {
+				if (t.IsArray && t.GetArrayRank () == 1)
+					return IsValidType (t.GetElementType ());
+				if (!t.IsPrimitive && !typeof (Type).IsAssignableFrom (t) && t != typeof (string) && !t.IsEnum)
+					return false;
+			}
+			return true;
+		}
+
 		private void Initialize (ConstructorInfo con, object [] constructorArgs,
 				PropertyInfo [] namedProperties, object [] propertyValues,
 				FieldInfo [] namedFields, object [] fieldValues)
@@ -170,10 +184,13 @@ namespace System.Reflection.Emit {
 					Type paramType = pi.ParameterType;
 					if (!IsValidType (paramType))
 						throw new ArgumentException ("Argument " + i + " does not have a valid type.");
-					if (constructorArgs [i] != null)
+					if (constructorArgs [i] != null) {
 						if (!(paramType is TypeBuilder) && !paramType.IsEnum && !paramType.IsInstanceOfType (constructorArgs [i]))
 							if (!paramType.IsArray)
 								throw new ArgumentException ("Value of argument " + i + " does not match parameter type: " + paramType + " -> " + constructorArgs [i]);
+						if (!IsValidParam (constructorArgs [i], paramType))
+							throw new ArgumentException ("Cannot emit a CustomAttribute with argument of type " + constructorArgs [i].GetType () + ".");
+					}
 				}
 				i ++;
 			}

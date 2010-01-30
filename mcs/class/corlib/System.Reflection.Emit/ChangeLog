@@ -1,3 +1,8 @@
+2010-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* CustomAttributeBuilder.cs (Initialize): Add more argument checking to avoid
+	assertions in the runtime. Fixes #574353.
+
 2010-01-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* EventOnTypeBuilderInst.cs: Fix build.
