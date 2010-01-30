@@ -1,3 +1,8 @@
+2010-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_managed_wrapper): Avoid constructing the
+	custom attr so this function works in cross-compiling mode.
+
 2010-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (make_generic_param_class): Initialize interface offsets since we
