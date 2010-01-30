@@ -1,3 +1,7 @@
+2010-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* CustomAttributeBuilderTest.cs: Add a test for #574353.
+
 2010-01-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Add tests for #572660.

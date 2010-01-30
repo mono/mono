@@ -631,6 +631,20 @@ namespace MonoTests.System.Reflection.Emit
 				null // <-- here is the error
 				);
 		}
+
+		class C {
+			public C (object i) {
+			}
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void ObjectParam_UserDefinedClass ()
+		{
+			var cab = new CustomAttributeBuilder(
+						 typeof (C).GetConstructors ()[0],
+						 new object[] { new C (1) });
+		}
 	}
 }
 
