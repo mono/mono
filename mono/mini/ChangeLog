@@ -1,3 +1,9 @@
+2010-01-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (add_wrappers): Commit the hack which generates
+	native-to-managed wrappers for methods decorated with the MonoPInvokeCallback
+	custom attribute.
+
 2010-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_INST_FAULT): New instruction flag for loads which can cause
