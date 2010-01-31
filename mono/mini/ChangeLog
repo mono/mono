@@ -1,3 +1,10 @@
+2010-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Add a call to llvm.invariant.start
+	to tell LLVM that the got is constant, not used yet.
+
+	* aot-compiler.c: Pass more optimization flags to llvm's 'opt'.
+
 2010-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_arch_emit_prolog): Fix full aot support for native to
