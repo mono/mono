@@ -1,3 +1,7 @@
+2010-01-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* Directory.cs (Exists): Never throw an exception. Fixes #565152.
+
 2010-01-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* UnmanagedMemoryStream.cs: fix a regression from my previous patch.
