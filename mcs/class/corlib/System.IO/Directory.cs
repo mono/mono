@@ -214,19 +214,8 @@ namespace System.IO
 			bool exists;
 			
 			exists = MonoIO.ExistsDirectory (path, out error);
-			if (error != MonoIOError.ERROR_SUCCESS &&
-			    error != MonoIOError.ERROR_PATH_NOT_FOUND &&
-			    error != MonoIOError.ERROR_INVALID_HANDLE &&
-			    error != MonoIOError.ERROR_ACCESS_DENIED) {
-
-				// INVALID_HANDLE might happen if the file is moved
-				// while testing for the existence, a kernel issue
-				// according to Larry Ewing.
-				
-				throw MonoIO.GetException (path, error);
-			}
-
-			return(exists);
+			/* This should not throw exceptions */
+			return exists;
 		}
 
 		public static DateTime GetLastAccessTime (string path)
