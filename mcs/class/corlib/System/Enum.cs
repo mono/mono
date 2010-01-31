@@ -521,7 +521,6 @@ namespace System
 				throw new ArgumentException ("An empty string is not considered a valid value.");
 
 			object result;
-			Exception exc;
 			if (!Parse (enumType, value, ignoreCase, out result))
 				throw new ArgumentException (String.Format ("The requested value '{0}' was not found.", value));
 
