@@ -110,6 +110,7 @@ namespace System.Reflection
 			return tb.GetConstructorsInternal (flags);
 		}
 
+		/*
 		MethodInfo[] GetMethodsFromGTD (BindingFlags bf)
 		{
 			TypeBuilder tb = generic_type as TypeBuilder;
@@ -122,6 +123,7 @@ namespace System.Reflection
 
 			return res;
 		}
+		*/
 
 		FieldInfo[] GetFieldsFromGTD (BindingFlags bf)
 		{
