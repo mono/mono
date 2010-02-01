@@ -1,8 +1,12 @@
 2010-02-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_get_global_int_regs): Reserve r29 for holding the
+	vtable address in AOT code.
+
+2010-02-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-codegen.c: Remove support for CEE_ opcodes which cannot occur in
 	MonoInst's.
-
 
 Mon Feb 1 16:29:10 CET 2010 Paolo Molaro <lupus@ximian.com>
 
