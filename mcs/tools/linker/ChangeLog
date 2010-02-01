@@ -1,3 +1,7 @@
+2010-02-01  Jb Evain  <jbevain@novell.com>
+
+	* MarkStep.cs: SoapHeader can either take a field or a property.
+
 2010-01-14  Jb Evain  <jbevain@novell.com>
 
 	* MarkStep.cs: preserve fields specified by the
