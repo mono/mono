@@ -36,7 +36,8 @@ namespace System.Web.UI
 	public class ScriptBehaviorDescriptor : ScriptComponentDescriptor
 	{
 		string _name;
-
+		bool _nameSet;
+		
 		public ScriptBehaviorDescriptor (string type, string elementID)
 			: base (type) {
 			if (String.IsNullOrEmpty (elementID))
@@ -67,6 +68,7 @@ namespace System.Web.UI
 			}
 			set {
 				_name = value;
+				_nameSet = true;
 			}
 		}
 
@@ -78,7 +80,11 @@ namespace System.Web.UI
 			return Type;
 		}
 
-		protected internal override string GetScript () {
+		protected internal override string GetScript ()
+		{
+			if (_nameSet && !String.IsNullOrEmpty (_name))
+				AddProperty ("name", _name);
+			
 			return base.GetScript ();
 		}
 	}
