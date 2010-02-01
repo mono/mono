@@ -1,3 +1,8 @@
+2010-02-01  Jb Evain  <jbevain@novell.com>
+
+	* SoapProtocolImporter.cs: properly generate the SoapHeader
+	attribute on NET_2_0.
+
 2009-09-30  Miguel de Icaza  <miguel@novell.com>
 
 	* ExtensionManager.cs: Initialize the NET_2_0 pieces with

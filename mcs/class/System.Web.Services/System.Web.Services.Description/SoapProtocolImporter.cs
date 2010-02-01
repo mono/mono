@@ -677,7 +677,12 @@ namespace System.Web.Services.Description {
 			}
 			
 			CodeAttributeDeclaration att = new CodeAttributeDeclaration ("System.Web.Services.Protocols.SoapHeaderAttribute");
+#if NET_2_0
+			att.Arguments.Add (GetArg (propName));
+#else
 			att.Arguments.Add (GetArg (varName));
+#endif
+
 #if ONLY_1_0
 			att.Arguments.Add (GetArg ("Required", false));
 #endif
