@@ -1,5 +1,11 @@
 2010-02-01  Mark Probst  <mark.probst@gmail.com>
 
+	* object.c, domain.c: When using SGen, we must register
+	vtable->type as a root if it's not a MonoType, because then it
+	wasn't pin-alloced.
+
+2010-02-01  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Reset to_space_bumper to to_space_section->next_data
 	at the start of nursery collections, because we might have had
 	degraded allocations which changed next_data.
