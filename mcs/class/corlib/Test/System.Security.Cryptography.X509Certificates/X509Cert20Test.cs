@@ -724,6 +724,8 @@ mgk3bWUV6ChegutbguiKrI/DbO7wPiDLxw==
 				if (RunningOnWindows ())
 					throw;
 			}
+		    catch (DirectoryNotFoundException) {
+			}
 			catch (Exception e) {
 				Assert.Fail (e.ToString ());
 			}
