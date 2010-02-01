@@ -1,3 +1,8 @@
+
+Mon Feb 1 16:29:10 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* genmdesc.pl: remove dependency on external cpp.
+
 2010-02-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mini_emit_ldelema_1_ins): Avoid emitting an OP_SEXT_I4 when
