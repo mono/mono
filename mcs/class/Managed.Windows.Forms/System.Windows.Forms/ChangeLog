@@ -1,3 +1,10 @@
+2010-02-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ComboBox.cs: When creating DrawItemEventArgs pass the fore color and
+	back color arguments depending on the higlight/focus state, just like
+	.net.
+	Fixes #572643.
+
 2010-01-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When the normal drop down window is closed, make sure

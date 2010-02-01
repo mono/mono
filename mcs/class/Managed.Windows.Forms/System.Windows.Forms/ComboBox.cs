@@ -1504,6 +1504,8 @@ namespace System.Windows.Forms
 			// No edit control, we paint the edit ourselves
 			if (dropdown_style == ComboBoxStyle.DropDownList) {
 				DrawItemState state = DrawItemState.None;
+				Color back_color = BackColor;
+				Color fore_color = ForeColor;
 				Rectangle item_rect = text_area;
 				item_rect.X += border;
 				item_rect.Y += border;
@@ -1513,10 +1515,12 @@ namespace System.Windows.Forms
 				if (Focused) {
 					state = DrawItemState.Selected;
 					state |= DrawItemState.Focus;
+					back_color = SystemColors.Highlight;
+					fore_color = SystemColors.HighlightText;
 				}
 				
 				state |= DrawItemState.ComboBoxEdit;
-				HandleDrawItem (new DrawItemEventArgs (dc, Font, item_rect, SelectedIndex, state, ForeColor, BackColor));
+				HandleDrawItem (new DrawItemEventArgs (dc, Font, item_rect, SelectedIndex, state, fore_color, back_color));
 			}
 			
 			if (show_dropdown_button) {
@@ -2620,9 +2624,13 @@ namespace System.Windows.Forms
 							continue;
 
 						DrawItemState state = DrawItemState.None;
+						Color back_color = owner.BackColor;
+						Color fore_color = owner.ForeColor;
 
 						if (i == HighlightedIndex) {
 							state |= DrawItemState.Selected;
+							back_color = SystemColors.Highlight;
+							fore_color = SystemColors.HighlightText;
 							
 							if (owner.DropDownStyle == ComboBoxStyle.DropDownList) {
 								state |= DrawItemState.Focus;
@@ -2630,7 +2638,7 @@ namespace System.Windows.Forms
 						}
 
 						owner.HandleDrawItem (new DrawItemEventArgs (dc, owner.Font, item_rect,
-							i, state, owner.ForeColor, owner.BackColor));
+							i, state, fore_color, back_color));
 					}
 				}
 			}
