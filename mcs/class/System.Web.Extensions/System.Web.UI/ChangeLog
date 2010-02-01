@@ -1,3 +1,16 @@
+2010-02-02  Marek Habersack  <mhabersack@novell.com>
+
+	* ScriptManager.cs: adjusted script rendering to match .NET
+	formatting.
+
+	* ScriptComponentDescriptor.cs: GetScript adds ID value (if
+	present) to the set of properties.
+	GetScript rewritten to use StringBuilder.
+
+	* ScriptBehaviorDescriptor.cs: GetScript adds Name, if present and
+	set by the user, to the descriptor's set of properties. The name
+	must be rendered to the client.
+
 2009-09-28  Marek Habersack  <mhabersack@novell.com>
 
 	* UpdatePanel.cs: RenderChildren stores the alternative writer in

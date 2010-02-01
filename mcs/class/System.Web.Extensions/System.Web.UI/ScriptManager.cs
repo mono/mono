@@ -987,7 +987,8 @@ namespace System.Web.UI
 			RegisterScriptDescriptors ((Control) scriptControl, scriptControl.GetScriptDescriptors ());
 		}
 
-		void RegisterScriptDescriptors (Control control, IEnumerable<ScriptDescriptor> scriptDescriptors) {
+		void RegisterScriptDescriptors (Control control, IEnumerable<ScriptDescriptor> scriptDescriptors)
+		{
 			if (scriptDescriptors == null)
 				return;
 
@@ -999,6 +1000,7 @@ namespace System.Web.UI
 				}
 				else
 					sb.AppendLine ("Sys.Application.add_init(function() {");
+				sb.Append ("\t");
 				sb.AppendLine (scriptDescriptor.GetScript ());
 				sb.AppendLine ("});");
 			}

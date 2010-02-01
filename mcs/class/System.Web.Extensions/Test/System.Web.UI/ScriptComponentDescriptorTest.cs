@@ -48,7 +48,8 @@ namespace Tests.System.Web.UI
 		}
 
 		[Test]
-		public void ScriptComponentDescriptor_Defaults () {
+		public void ScriptComponentDescriptor_Defaults ()
+		{
 			PokerScriptComponentDescriptor scd = new PokerScriptComponentDescriptor ("My.Type");
 
 			Assert.AreEqual ("My.Type", scd.Type, "Type");
@@ -56,7 +57,11 @@ namespace Tests.System.Web.UI
 			Assert.AreEqual (String.Empty, scd.ClientID, "ClientID");
 
 			string script = scd.DoGetScript ();
-			Assert.AreEqual ("$create(My.Type, null, null, null);", script);
+			Assert.AreEqual ("$create(My.Type, null, null, null);", script, "#A1");
+
+			scd.ID = "SomeID";
+			script = scd.DoGetScript ();
+			Assert.AreEqual ("$create(My.Type, {\"id\":\"SomeID\"}, null, null);", script, "#A2");
 		}
 
 		[Test]
