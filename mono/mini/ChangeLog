@@ -1,3 +1,9 @@
+
+Mon Feb 1 14:29:43 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* genmdesc.c, genmdesc.pl, cpu-x86.md: introduced templates to make
+	it easier to group instructions and reduce duplication.
+
 2010-02-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* decompose.c: Move the array/soft float decompose routines here from
