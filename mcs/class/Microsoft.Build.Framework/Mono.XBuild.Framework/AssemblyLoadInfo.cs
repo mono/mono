@@ -49,6 +49,7 @@ namespace Mono.XBuild.Framework {
 		{
 			this.assemblyName = new AssemblyName (assemblyName);
 			this.className = className;
+			assemblyNameString = null;
 			infoType = LoadInfoType.AssemblyName;
 		}
 		

@@ -1,10 +1,4 @@
-//
-// TargetDotNetFrameworkVersion.cs: Represents framework version.
-//
-// Author:
-//   Marek Sieradzki (marek.sieradzki@gmail.com)
-//
-// (C) 2005 Marek Sieradzki
+// (C) 2009 Rodrigo B. de Oliveira
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,19 +20,39 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 #if NET_2_0
+using NUnit.Framework;
+using Mono.XBuild.CommandLine;
+using System.IO;
 
-namespace Microsoft.Build.Utilities
+namespace xbuild.tests
 {
-	// If changing something here then update
-	// ToolLocationHelper.GetPathToDotNetFramework also
-	public enum TargetDotNetFrameworkVersion
+	[TestFixture]
+	public class ParametersTest
 	{
-		Version11,
-		Version20,
-		Version30,
-		Version35,
-		VersionLatest = Version35
+		/// <summary>
+		/// Tests TeamCity style xbuild integration.
+		/// </summary>
+		[Test]
+		public void TeamCityStyleResponseFile ()
+		{
+			var responseFile = Path.GetTempFileName ();
+			var contents = 
+					"/p:idea_build_agent_port=\"9090\" " +
+					"/p:idea_build_server_build_id=\"13852\" " +
+					"/p:path_separator=\":\"";
+			File.WriteAllText (responseFile, contents);
+			var parameters = new Parameters ("bin");
+			parameters.ParseArguments (
+			    new [] { "/noautorsp", string.Format ("@\"{0}\"", responseFile), "\"project.xml\""});
+			
+			var properties = parameters.Properties;
+			Assert.AreEqual(3, properties.Count);
+			Assert.AreEqual("9090", properties["idea_build_agent_port"].Value);
+			Assert.AreEqual("13852", properties["idea_build_server_build_id"].Value);
+			Assert.AreEqual(":", properties["path_separator"].Value);
+		}
 	}
 }
 
 #endif
+

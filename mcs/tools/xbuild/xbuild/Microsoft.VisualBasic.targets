@@ -77,8 +77,9 @@
 			WarningsNotAsErrors="$(WarningsNotAsErrors)"
 			Win32Icon="$(Win32Icon)"
 			Win32Resource="$(Win32Resource)"
+			ToolExe="$(VbcToolExe)"
+			ToolPath="$(VbcToolPath)"
 			/>
-			<!-- ToolPath="$(CscToolPath)" -->
 
 	</Target>
 

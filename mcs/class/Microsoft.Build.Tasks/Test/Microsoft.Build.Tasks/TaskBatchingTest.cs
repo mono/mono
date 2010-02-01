@@ -5,6 +5,7 @@
 //   Ankit Jain (jankit@novell.com)
 //
 // Copyright 2008 Novell, Inc (http://www.novell.com)
+// Copyright 2009 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -610,6 +611,309 @@ namespace MonoTests.Microsoft.Build.Tasks
 			testLogger.CheckLoggedMessageHead ("Item4: %(item2.Identity)", "A2");
 			Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
 		}
+
+		[Test]
+		public void TestBatchingWithUnbatchedItems () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<Item1 Include=""One""/>
+		<Item1 Include=""Two""/>
+
+		<B Include=""abc""/>
+	</ItemGroup>
+	<Target Name='1'>
+		<Message Text=""Item1: %(Item1.Identity) | B: @(B)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			try {
+				testLogger.CheckLoggedMessageHead ("Item1: One | B: abc", "A1");
+				testLogger.CheckLoggedMessageHead ("Item1: Two | B: abc", "A2");
+
+				Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+			} catch (AssertionException) {
+				testLogger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestPropertiesWithBatchedReferences () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<Item1 Include=""One""/>
+		<Item1 Include=""Two""/>
+
+		<Item1Ref Include=""@(Item1)""/>
+	</ItemGroup>
+	<PropertyGroup>
+		<Prop1>@(Item1)</Prop1>
+		<Prop2>@(Item1Ref)</Prop2>
+	</PropertyGroup>
+	<Target Name='1'>
+		<Message Text=""Item1: %(Item1.Identity) | Prop1: $(Prop1) | Prop2: $(Prop2)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			try {
+				testLogger.CheckLoggedMessageHead ("Item1: One | Prop1: One | Prop2: One;Two", "A1");
+				testLogger.CheckLoggedMessageHead ("Item1: Two | Prop1: Two | Prop2: One;Two", "A2");
+
+				Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+			} catch (AssertionException) {
+				testLogger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestPropertiesWithDynamicItems () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<Item1 Include=""One""/>
+		<Item1 Include=""Two""/>
+
+		<Item2 Include=""Z""/>
+		<Item2Ref Include=""@(Item2)"" />
+	</ItemGroup>
+	<PropertyGroup>
+		<Prop1>@(Item2)</Prop1>
+		<Prop2>@(Item2Ref)</Prop2>
+	</PropertyGroup>
+	<Target Name='1'>
+		<Message Text=""Item1: %(Item1.Identity) | Prop1: $(Prop1) | Prop2: $(Prop2)""/>
+		<Message Text=""Item2: @(Item2) | Item2Ref: @(Item2Ref)""/>
+		<CreateItem Include=""A;B"">
+			<Output TaskParameter=""Include"" ItemName=""Item2""/>
+		</CreateItem>
+		<Message Text=""Item1: %(Item1.Identity) | Prop1: $(Prop1) | Prop2: $(Prop2)""/>
+		<Message Text=""Item2: @(Item2) | Item2Ref: @(Item2Ref)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			try {
+
+				testLogger.CheckLoggedMessageHead ("Item1: One | Prop1: Z | Prop2: Z", "A1");
+				testLogger.CheckLoggedMessageHead ("Item1: Two | Prop1: Z | Prop2: Z", "A2");
+				testLogger.CheckLoggedMessageHead ("Item2: Z | Item2Ref: Z", "A3");
+
+				testLogger.CheckLoggedMessageHead ("Item1: One | Prop1: Z;A;B | Prop2: Z", "A4");
+				testLogger.CheckLoggedMessageHead ("Item1: Two | Prop1: Z;A;B | Prop2: Z", "A5");
+				testLogger.CheckLoggedMessageHead ("Item2: Z;A;B | Item2Ref: Z", "A3");
+
+				Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+			} catch (AssertionException) {
+				testLogger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestTargetInvocationFromBatchedTask () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<Item1 Include=""One""/>
+		<Item1 Include=""Two""/>
+
+		<Item1Ref Include=""@(Item1)"" />
+	</ItemGroup>
+	<PropertyGroup>
+		<Prop1>@(Item1)</Prop1>
+		<Prop2>@(Item1Ref)</Prop2>
+	</PropertyGroup>
+	<Target Name='1'>
+		<CallTarget Targets='foo' Condition="" '%(Item1.Identity)' != ''"" />
+		<Message Text=""Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""Prop1: $(Prop1) Prop2: $(Prop2)""/>
+	</Target>
+	<Target Name='foo'>
+		<Message Text=""(foo) Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""(foo) Prop1: $(Prop1) Prop2: $(Prop2)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			try {
+				testLogger.CheckLoggedMessageHead ("(foo) Item1: One;Two Item1Ref: One;Two", "A1");
+				testLogger.CheckLoggedMessageHead ("(foo) Prop1: One;Two Prop2: One;Two", "A2");
+
+				testLogger.CheckLoggedMessageHead ("Item1: One;Two Item1Ref: One;Two", "A3");
+				testLogger.CheckLoggedMessageHead ("Prop1: One;Two Prop2: One;Two", "A4");
+
+				Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+			} catch (AssertionException) {
+				testLogger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestTargetInvocationFromBatchedTarget () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<Item1 Include=""One""/>
+		<Item1 Include=""Two""/>
+
+		<Item1Ref Include=""@(Item1)"" />
+	</ItemGroup>
+	<PropertyGroup>
+		<Prop1>@(Item1)</Prop1>
+		<Prop2>@(Item1Ref)</Prop2>
+	</PropertyGroup>
+	<Target Name='1' Inputs=""%(Item1.Identity)"" Outputs=""Nonexistant.foobar"">
+		<Message Text=""Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""Prop1: $(Prop1) Prop2: $(Prop2)""/>
+
+		<CallTarget Targets='foo' />
+
+		<Message Text=""Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""Prop1: $(Prop1) Prop2: $(Prop2)""/>
+	</Target>
+	<Target Name='foo' Condition="" '@(Item1)' != 'One' "">
+		<Message Text=""(foo) Item1: @(Item1) Item1Ref: @(Item1Ref)""/>
+		<Message Text=""(foo) Prop1: $(Prop1) Prop2: $(Prop2)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+
+			try {
+				testLogger.CheckLoggedMessageHead ("Item1: One Item1Ref: One;Two", "A1");
+				testLogger.CheckLoggedMessageHead ("Prop1: One Prop2: One;Two", "A2");
+
+				testLogger.CheckLoggedMessageHead ("(foo) Item1: One;Two Item1Ref: One;Two", "A3");
+				testLogger.CheckLoggedMessageHead ("(foo) Prop1: One;Two Prop2: One;Two", "A4");
+
+				testLogger.CheckLoggedMessageHead ("Item1: One Item1Ref: One;Two", "A5");
+				testLogger.CheckLoggedMessageHead ("Prop1: One Prop2: One;Two", "A6");
+
+				//second batch, foo has already run, so doesn't execute again
+				testLogger.CheckLoggedMessageHead ("Item1: Two Item1Ref: One;Two", "A7");
+				testLogger.CheckLoggedMessageHead ("Prop1: Two Prop2: One;Two", "A8");
+
+				testLogger.CheckLoggedMessageHead ("Item1: Two Item1Ref: One;Two", "A9");
+				testLogger.CheckLoggedMessageHead ("Prop1: Two Prop2: One;Two", "A10");
+
+				Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+			} catch (AssertionException) {
+				testLogger.DumpMessages ();
+				throw;
+			}
+		}
+
+		[Test]
+		public void TestBatchingWithUnqualifiedMetadataReference () {
+			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+	<ItemGroup>
+		<Item1 Include=""One""><Md>1</Md></Item1>
+		<Item1 Include=""Two""><Md>2</Md></Item1>
+		<Item1Ref Include=""@(Item1)"" />
+
+		<Item2 Include=""Three""><Md>3</Md></Item2>
+		<Item2 Include=""Four""><Md>4</Md></Item2>
+		<Item2Ref Include=""@(Item2)"" />
+	</ItemGroup>
+	<PropertyGroup>
+		<Prop1>@(Item1)</Prop1>
+		<Prop1Ref>@(Item1Ref)</Prop1Ref>
+
+		<Prop2>@(Item2)</Prop2>
+		<Prop2Ref>@(Item2Ref)</Prop2Ref>
+	</PropertyGroup>
+	<Target Name='1'>
+		<Message Text=""For md: %(Md) Item1: @(Item1) Item1Ref: @(Item1Ref) Item2: @(Item2) Item2Ref: @(Item2Ref) " +
+					  @" Prop1: $(Prop1) Prop1Ref: $(Prop1Ref) Prop2: $(Prop2) Prop2Ref: $(Prop2Ref)""/>
+	</Target>
+</Project>";
+
+			Engine engine = new Engine (Consts.BinPath);
+			Project project = engine.CreateNewProject ();
+
+			TestMessageLogger testLogger = new TestMessageLogger ();
+			engine.RegisterLogger (testLogger);
+
+			project.LoadXml (projectString);
+			if (!project.Build ("1")) {
+
+				testLogger.DumpMessages ();
+				Assert.Fail ("Build failed");
+			}
+			testLogger.DumpMessages ();
+
+			try {
+				testLogger.CheckLoggedAny ("For md: 3 Item1:  Item1Ref:  Item2: Three Item2Ref: Three  Prop1:  Prop1Ref:  Prop2: Three Prop2Ref: Three", MessageImportance.Normal, "A1");
+				testLogger.CheckLoggedAny ("For md: 4 Item1:  Item1Ref:  Item2: Four Item2Ref: Four  Prop1:  Prop1Ref:  Prop2: Four Prop2Ref: Four", MessageImportance.Normal, "A2");
+				testLogger.CheckLoggedAny ("For md: 1 Item1: One Item1Ref: One Item2:  Item2Ref:   Prop1: One Prop1Ref: One Prop2:  Prop2Ref: ", MessageImportance.Normal, "A3");
+				testLogger.CheckLoggedAny ("For md: 2 Item1: Two Item1Ref: Two Item2:  Item2Ref:   Prop1: Two Prop1Ref: Two Prop2:  Prop2Ref: ", MessageImportance.Normal, "A4");
+
+				Assert.AreEqual (0, testLogger.NormalMessageCount, "Unexpected extra messages found");
+			} catch (AssertionException) {
+				testLogger.DumpMessages ();
+				throw;
+			}
+		}
+
 
 		//Target batching
 

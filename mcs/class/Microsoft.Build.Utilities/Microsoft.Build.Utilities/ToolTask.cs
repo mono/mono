@@ -47,8 +47,7 @@ namespace Microsoft.Build.Utilities
 		StringDictionary	environmentOverride;
 		int			exitCode;
 		int			timeout;
-		string			toolPath;
-		Process			process;
+		string			toolPath, toolExe;
 		Encoding		responseFileEncoding;
 		MessageImportance	standardErrorLoggingImportance;
 		MessageImportance	standardOutputLoggingImportance;
@@ -77,6 +76,7 @@ namespace Microsoft.Build.Utilities
 			this.toolPath = MonoLocationHelper.GetBinDir ();
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
+			this.environmentOverride = new StringDictionary ();
 		}
 
 		static ToolTask ()
@@ -421,6 +421,20 @@ namespace Microsoft.Build.Utilities
 			set { timeout = value; }
 		}
 
+		public virtual string ToolExe
+		{
+			get {
+				if (toolExe == null)
+					return ToolName;
+				else
+					return toolExe;
+			}
+			set {
+				if (!String.IsNullOrEmpty (value))
+					toolExe = value;
+			}
+		}
+
 		protected abstract string ToolName
 		{
 			get;
@@ -429,7 +443,10 @@ namespace Microsoft.Build.Utilities
 		public string ToolPath
 		{
 			get { return toolPath; }
-			set { toolPath  = value; }
+			set {
+				if (!String.IsNullOrEmpty (value))
+					toolPath  = value;
+			}
 		}
 	}
 }

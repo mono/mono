@@ -6,13 +6,14 @@
 ./Lib1/bin/Release/Lib1.deploy.txt
 ./Lib1/bin/Release/Lib1.dll
 ./Lib1/bin/Release/Lib1.dll.config
+./Lib1/bin/Release/Lib1.dll.mdb
 ./Lib1/bin/Release/Lib2.dll
 ./Lib1/bin/Release/Lib2.dll.mdb
 ./Lib1/bin/Release/lib2_folder/Lib2.deploy.txt
 ./Lib1/bin/Release/Lib3.dll
+./Lib1/bin/Release/Lib3.dll.mdb
 ./Lib1/bin/Release/Lib4.dll
 ./Lib1/bin/Release/Lib4.dll.mdb
-./Lib1/obj/Lib1.csproj.FilesWrittenAbsolute.txt
 ./Lib1/obj/Release/en-US/Lib1.resources.dll
 ./Lib1/obj/Release/fr-CA/Lib1.resources.dll
 ./Lib1/obj/Release/fr-FR/Lib1.resources.dll
@@ -20,7 +21,9 @@
 ./Lib1/obj/Release/Lib1.Book.fr-CA.resources
 ./Lib1/obj/Release/Lib1.Book.resources
 ./Lib1/obj/Release/Lib1.Choco.foo.resources
+./Lib1/obj/Release/Lib1.csproj.FilesWrittenAbsolute.txt
 ./Lib1/obj/Release/Lib1.dll
+./Lib1/obj/Release/Lib1.dll.mdb
 ./Lib1/obj/Release/Lib1.InvalidCulture.foo.txt
 ./Lib1/obj/Release/Lib1.Lib1.foo.txt
 ./Lib1/obj/Release/Lib1.Publisher.fr-CA.resources
@@ -38,6 +41,7 @@
 ./Lib2/obj/Debug/Lib2.Book.fr-CA.resources
 ./Lib2/obj/Debug/Lib2.Book.resources
 ./Lib2/obj/Debug/Lib2.Choco.foo.resources
+./Lib2/obj/Debug/Lib2.csproj.FilesWrittenAbsolute.txt
 ./Lib2/obj/Debug/Lib2.dll
 ./Lib2/obj/Debug/Lib2.dll.mdb
 ./Lib2/obj/Debug/Lib2.InvalidCulture.bar.txt
@@ -45,15 +49,16 @@
 ./Lib2/obj/Debug/Lib2.Publisher.fr-CA.resources
 ./Lib2/obj/Debug/Lib2.Publisher.fr-FR.resources
 ./Lib2/obj/Debug/Lib2.Publisher.resources
-./Lib2/obj/Lib2.csproj.FilesWrittenAbsolute.txt
 ./Lib3/bin/Release/Lib3.dll
-./Lib3/obj/Lib3.csproj.FilesWrittenAbsolute.txt
+./Lib3/bin/Release/Lib3.dll.mdb
+./Lib3/obj/Release/Lib3.csproj.FilesWrittenAbsolute.txt
 ./Lib3/obj/Release/Lib3.dll
+./Lib3/obj/Release/Lib3.dll.mdb
 ./Lib4/bin/Debug/Lib4.dll
 ./Lib4/bin/Debug/Lib4.dll.mdb
+./Lib4/obj/Debug/Lib4.csproj.FilesWrittenAbsolute.txt
 ./Lib4/obj/Debug/Lib4.dll
 ./Lib4/obj/Debug/Lib4.dll.mdb
-./Lib4/obj/Lib4.csproj.FilesWrittenAbsolute.txt
 ./Lib5/bin/Debug/en-US/Lib5.resources.dll
 ./Lib5/bin/Debug/fr-CA/Lib5.resources.dll
 ./Lib5/bin/Debug/fr-FR/Lib5.resources.dll
@@ -68,6 +73,7 @@
 ./Lib5/obj/Debug/Lib5.Book.fr-CA.resources
 ./Lib5/obj/Debug/Lib5.Book.resources
 ./Lib5/obj/Debug/Lib5.Choco.foo.resources
+./Lib5/obj/Debug/Lib5.csproj.FilesWrittenAbsolute.txt
 ./Lib5/obj/Debug/Lib5.dll
 ./Lib5/obj/Debug/Lib5.dll.mdb
 ./Lib5/obj/Debug/Lib5.InvalidCulture.foo.txt
@@ -75,7 +81,6 @@
 ./Lib5/obj/Debug/Lib5.Publisher.fr-CA.resources
 ./Lib5/obj/Debug/Lib5.Publisher.fr-FR.resources
 ./Lib5/obj/Debug/Lib5.Publisher.resources
-./Lib5/obj/Lib5.csproj.FilesWrittenAbsolute.txt
 ./Project01/bin/Debug/abc.dll
 ./Project01/bin/Debug/bar.dll
 ./Project01/bin/Debug/en-US/Lib1.resources.dll
@@ -86,6 +91,7 @@
 ./Project01/bin/Debug/fr-FR/Lib2.resources.dll
 ./Project01/bin/Debug/Lib1.deploy.txt
 ./Project01/bin/Debug/Lib1.dll
+./Project01/bin/Debug/Lib1.dll.mdb
 ./Project01/bin/Debug/Lib2.dll
 ./Project01/bin/Debug/Lib2.dll.mdb
 ./Project01/bin/Debug/lib2_folder/Lib2.deploy.txt
@@ -93,6 +99,6 @@
 ./Project01/bin/Debug/Lib4.dll.mdb
 ./Project01/bin/Debug/Project01.exe
 ./Project01/bin/Debug/Project01.exe.mdb
+./Project01/obj/Debug/Main.csproj.FilesWrittenAbsolute.txt
 ./Project01/obj/Debug/Project01.exe
 ./Project01/obj/Debug/Project01.exe.mdb
-./Project01/obj/Main.csproj.FilesWrittenAbsolute.txt

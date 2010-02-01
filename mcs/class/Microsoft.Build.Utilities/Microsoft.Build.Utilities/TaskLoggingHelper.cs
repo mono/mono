@@ -47,6 +47,7 @@ namespace Microsoft.Build.Utilities
 		{
 			if (taskInstance != null)
 				this.buildEngine = taskInstance.BuildEngine;
+			taskName = null;
 		}
 
 		[MonoTODO]

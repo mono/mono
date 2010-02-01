@@ -35,8 +35,7 @@ namespace Microsoft.Build.Utilities
 	public static class ToolLocationHelper
 	{
 		static string lib_mono_dir;
-		static string mono_1_0_dir;
-		static string mono_2_0_dir;
+		static string [] mono_dir;
 
 		static ToolLocationHelper ()
 		{
@@ -51,8 +50,13 @@ namespace Microsoft.Build.Utilities
 			t2 = t1.Parent;
 
 			lib_mono_dir = t2.FullName;
-			mono_1_0_dir = Path.Combine (lib_mono_dir, "1.0");
-			mono_2_0_dir = Path.Combine (lib_mono_dir, "2.0");
+
+			mono_dir = new string [] {
+				Path.Combine (lib_mono_dir, "1.0"),
+				Path.Combine (lib_mono_dir, "2.0"),
+				Path.Combine (lib_mono_dir, "2.0"),
+				Path.Combine (lib_mono_dir, "3.5")
+			};
 		}
 
 		[MonoTODO]
@@ -75,12 +79,7 @@ namespace Microsoft.Build.Utilities
 
 		public static string GetPathToDotNetFramework (TargetDotNetFrameworkVersion version)
 		{
-			if (version == TargetDotNetFrameworkVersion.Version11)
-				return mono_1_0_dir;
-			else if (version == TargetDotNetFrameworkVersion.Version20)
-				return mono_2_0_dir;
-			else
-				throw new ArgumentException ("version");
+			return mono_dir [(int)version];
 		}
 
 		[MonoTODO]

@@ -59,7 +59,12 @@ namespace Microsoft.Build.Tasks {
 			if (Bag ["CodePage"] != null)
 				commandLine.AppendSwitchIfNotNull ("/codepage:", CodePage.ToString ());
 
-			commandLine.AppendSwitchIfNotNull ("/debug:", DebugType);
+			if (!String.IsNullOrEmpty (DebugType) &&
+				String.Compare (DebugType, "pdbonly", true) == 0)
+				// *mcs doesn't support "pdbonly", map it to "full"
+				commandLine.AppendSwitch ("/debug:full");
+			else
+				commandLine.AppendSwitchIfNotNull ("/debug:", DebugType);
 
 			if (Bag ["DelaySign"] != null)
 				if (DelaySign)

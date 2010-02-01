@@ -349,35 +349,35 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		}
 
 		[Test]
-                public void TestValueXml ()
-                {
-                        BuildPropertyGroup [] bpgs = new BuildPropertyGroup [1];
-                        BuildProperty [] props;
-                        XmlDocument xd;
-                        XmlNode node;
+		public void TestValueXml ()
+		{
+			BuildPropertyGroup [] bpgs = new BuildPropertyGroup [1];
+			BuildProperty [] props;
+			XmlDocument xd;
+			XmlNode node;
 
-                        string documentString = @"
-                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
-                                        <PropertyGroup>
-                                                <Name>Value</Name>
-                                        </PropertyGroup>
-                                </Project>
-                        ";
+			string documentString = @"
+					<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+							<PropertyGroup>
+									<Name>Value</Name>
+							</PropertyGroup>
+					</Project>
+			";
 
-                        engine = new Engine (Consts.BinPath);
+			engine = new Engine (Consts.BinPath);
 
-                        project = engine.CreateNewProject ();
-                        project.LoadXml (documentString);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
 
-                        project.PropertyGroups.CopyTo (bpgs, 0);
-                        bpgs[0].AddNewProperty("XmlProp", "<XmlStuff></XmlStuff>");
+			project.PropertyGroups.CopyTo (bpgs, 0);
+			bpgs[0].AddNewProperty("XmlProp", "<XmlStuff></XmlStuff>");
 
-                        xd = new XmlDocument ();
-                        xd.LoadXml (project.Xml);
+			xd = new XmlDocument ();
+			xd.LoadXml (project.Xml);
 			Console.WriteLine(project.Xml);
-                        node = xd.SelectSingleNode ("tns:Project/tns:PropertyGroup/tns:XmlProp/tns:XmlStuff", TestNamespaceManager.NamespaceManager);
-                        Assert.IsNotNull (node, "A1");
-                }
+			node = xd.SelectSingleNode ("tns:Project/tns:PropertyGroup/tns:XmlProp/tns:XmlStuff", TestNamespaceManager.NamespaceManager);
+			Assert.IsNotNull (node, "A1");
+		}
 
 	}
 }

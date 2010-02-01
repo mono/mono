@@ -171,7 +171,6 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			BuildItemGroup big;
 			BuildPropertyGroup bpg;
-			Import import;
 			LinkedListNode <object> evaluate_iterator;
 
 			if (type == EvaluationType.Property) {

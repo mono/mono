@@ -16,6 +16,7 @@
 		<OutputPath Condition="'$(OutputPath)' != '' and !HasTrailingSlash('$(OutputPath)')">$(OutputPath)\</OutputPath> 
 		<OutputPath Condition=" '$(Platform)'=='' and '$(Configuration)'=='' and '$(OutputPath)'=='' ">bin\Debug\</OutputPath>
 		<WarningLevel Condition="'$(WarningLevel)' == ''" >2</WarningLevel>
+		<TargetFrameworkVersion Condition="'$(TargetFrameworkVersion)' == ''">v2.0</TargetFrameworkVersion>
 	</PropertyGroup>
 
 	<PropertyGroup>
@@ -82,7 +83,15 @@
 		/>
 
 		<GetFrameworkPath>
-			<Output TaskParameter="Path" PropertyName="TargetFrameworkPath"/>
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.5'"
+				TaskParameter="FrameworkVersion35Path"
+				ItemName="TargetFrameworkDirectories"/>
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
+				TaskParameter="FrameworkVersion30Path"
+				ItemName="TargetFrameworkDirectories"/>
+			<Output Condition="'$(TargetFrameworkVersion)' == 'v2.0' or '$(TargetFrameworkVersion)' == 'v3.0' or '$(TargetFrameworkVersion)' == 'v3.5'" 
+				TaskParameter="FrameworkVersion20Path"
+				ItemName="TargetFrameworkDirectories"/>
 		</GetFrameworkPath>
 	</Target>
 
@@ -125,7 +134,7 @@
 			AssemblyFiles="@(ChildProjectReferences)"
 			SearchPaths="$(AssemblySearchPaths)"
 			CandidateAssemblyFiles="@(Content);@(None)"
-			TargetFrameworkDirectories="$(TargetFrameworkPath)"
+			TargetFrameworkDirectories="@(TargetFrameworkDirectories)"
 			AllowedAssemblyExtensions="$(AllowedReferenceAssemblyFileExtensions)"
 			AllowedRelatedFileExtensions="$(AllowedReferenceRelatedFileExtensions)"
 			FindDependencies="true"
@@ -366,6 +375,8 @@
 			DelaySign="$(DelaySign)"
 			EmbedResources = "@(ManifestResourceWithCulture);@(ManifestNonResxWithCultureOnDisk)"
 			KeyFile="$(KeyOriginatorFile)"
+			ToolExe="$(AlToolExe)"
+			ToolPath="$(AlToolPath)"
 			OutputAssembly = "$(IntermediateOutputPath)%(Culture)\$(AssemblyName).resources.dll" >
 			<Output TaskParameter="OutputAssembly" ItemName="FileWrites"/>
 		</AL>
@@ -546,13 +557,12 @@
 
 	<!-- this gets invoked in two cases, from CoreBuildDependsOn, if the build completes
 	     successfully, OR from OnError in CoreBuild, if the build failed and $(RunPostBuildEvent)
-	     is 'Always' or 'OnOutputUpdated' -->
+	     is 'Always' or 'OnOutputUpdated'. Invoke $(PostBuildEvent) if its either Empty (== OnBuildSuccess)
+	     or OnBuildSuccess or Always OR (OnOutputUpdated and output assembly got updated) -->
 	<Target Name="PostBuildEvent"
 		Condition="'$(PostBuildEvent)' != '' and
-			('$(RunPostBuildEvent)' == 'Always' or '$(RunPostBuildEvent)' == 'OnBuildSuccess' or
-			  ('$(RunPostBuildEvent)' == 'OnOutputUpdated' and
-			    '$(_AssemblyModifiedTimeBeforeCompile)' != '$(_AssemblyModifiedTimeAfterCompile)')
-			)"
+			('$(RunPostBuildEvent)' != 'OnOutputUpdated' or
+			  '$(_AssemblyModifiedTimeBeforeCompile)' != '$(_AssemblyModifiedTimeAfterCompile)')"
 		DependsOnTargets="$(PostBuildEventDependsOn)">
 
 		<Exec WorkingDirectory="$(OutDir)" Command="$(PostBuildEvent)" />
@@ -598,7 +608,7 @@
 	<Target Name="_RecordCleanFile"
 		DependsOnTargets="_GetCompileOutputsForClean">
 		<WriteLinesToFile
-			File="$(BaseIntermediateOutputPath)$(CleanFile)"
+			File="$(IntermediateOutputPath)$(CleanFile)"
 			Lines="@(FileWrites->'%(FullPath)')"
 			Overwrite="true"/>
 	</Target>
@@ -626,7 +636,7 @@
 	<!-- Get the list of files written, for clean -->
 	<Target Name="_GetCleanFileWrites"
 		DependsOnTargets="_GetCompileOutputsForClean">
-		<ReadLinesFromFile File="$(BaseIntermediateOutputPath)$(CleanFile)">
+		<ReadLinesFromFile File="$(IntermediateOutputPath)$(CleanFile)">
 			<Output TaskParameter="Lines" ItemName="FileWrites"/>
 		</ReadLinesFromFile>
 	</Target>

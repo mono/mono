@@ -38,8 +38,7 @@ namespace Microsoft.Build.BuildEngine {
 	internal class DirectoryScanner {
 		
 		DirectoryInfo	baseDirectory;
-		ITaskItem[]	includes;
-		string		excludes;
+		ITaskItem[]	includes, excludes;
 		ITaskItem[]	matchedItems;
 
 		static bool _runningOnWindows;
@@ -58,25 +57,19 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			Dictionary <string, bool> excludedItems;
 			List <ITaskItem> includedItems;
-			string[] splitInclude, splitExclude;
+			string[] splitExclude;
 			
 			if (includes == null)
 				throw new ArgumentNullException ("Includes");
-			if (excludes == null)
-				throw new ArgumentNullException ("Excludes");
 			if (baseDirectory == null)
 				throw new ArgumentNullException ("BaseDirectory");
 			
 			excludedItems = new Dictionary <string, bool> ();
 			includedItems = new List <ITaskItem> ();
 			
-			splitExclude = excludes.Split (new char[] {';'}, StringSplitOptions.RemoveEmptyEntries);
-			
-			if (excludes != String.Empty) {
-				foreach (string si in splitExclude) {
-					ProcessExclude (si, excludedItems);
-				}
-			}
+			if (excludes != null)
+				foreach (ITaskItem excl in excludes)
+					ProcessExclude (excl.ItemSpec, excludedItems);
 
 			foreach (ITaskItem include_item in includes)
 				ProcessInclude (include_item, excludedItems, includedItems);
@@ -221,7 +214,7 @@ namespace Microsoft.Build.BuildEngine {
 			set { includes = value; }
 		}
 		
-		public string Excludes {
+		public ITaskItem[] Excludes {
 			get { return excludes; }
 			set { excludes = value; }
 		}

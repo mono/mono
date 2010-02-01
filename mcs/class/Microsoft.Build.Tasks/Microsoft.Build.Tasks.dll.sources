@@ -112,3 +112,4 @@ Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceReader.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/PoResourceWriter.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/TxtResourceReader.cs
 Mono.XBuild.Tasks.GenerateResourceInternal/TxtResourceWriter.cs
+../Microsoft.Build.Engine/Microsoft.Build.BuildEngine/DirectoryScanner.cs

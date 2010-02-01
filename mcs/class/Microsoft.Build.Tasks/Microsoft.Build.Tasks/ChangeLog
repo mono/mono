@@ -1,3 +1,36 @@
+2009-12-22  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #565849.
+	* CreateItem.cs: Use DirectoryScanner to handle wildcards.
+	(IsExcluded): Remove.
+
+2009-11-26  Ankit Jain  <jankit@novell.com>
+
+	* ManagedCompiler.cs (AddResponseFileCommands): *mcs doesn't
+	support /debug:pdbonly, so map it to /debug:full .
+
+2009-11-10  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (ToolExe): New.
+	* Csc.cs:
+	* AL.cs: Use ToolExe instead of ToolName to construct
+	tool's full path.
+
+2009-11-09  Ankit Jain  <jankit@novell.com>
+
+	* GetFrameworkPath.cs (FrameworkVersion11Path):
+	(FrameworkVersion20Path):
+	(FrameworkVersion30Path):
+	(FrameworkVersion35Path): New.
+
+2009-10-13  Ankit Jain  <jankit@novell.com>
+
+	* ResolveAssemblyReference.cs: Fix warnings.
+
+2009-10-13  Ankit Jain  <jankit@novell.com>
+
+	* ResolveAssemblyReference.cs: Log only unique conflict warnings.
+
 2009-10-12  Ankit Jain  <jankit@novell.com>
 
 	* ResolveAssemblyReference.cs: Remove unnecessary tab in the warning

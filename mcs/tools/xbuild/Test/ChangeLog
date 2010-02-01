@@ -1,0 +1,9 @@
+2010-01-21	Rodrigo B. de Oliveira <rodrigo@unity3d.com>
+
+	* ParametersTest.cs: /noautorsp + test for each property value
+	
+2010-01-21	Rodrigo B. de Oliveira <rodrigo@unity3d.com>
+
+	* xbuild.tests/ParametersTest.cs
+	* xbuild.tests/xbuild.tests.csproj: 
+		NUnit tests for the Parameters class

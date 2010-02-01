@@ -33,7 +33,7 @@
 			DebugType="$(DebugType)"
 			DefineConstants="$(DefineConstants)"
 			DelaySign="$(DelaySign)"
-			DisabledWarnings="$(_DisabledWarnings)"
+			DisabledWarnings="$(NoWarn)"
 			DocumentationFile="@(DocFileItem)"
 			EmitDebugInformation="$(DebugSymbols)"
 			ErrorReport="$(ErrorReport)"
@@ -62,8 +62,9 @@
 			WarningsAsErrors="$(WarningsAsErrors)"
 			Win32Icon="$(Win32Icon)"
 			Win32Resource="$(Win32Resource)"
-			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)" />
-			<!-- ToolPath="$(CscToolPath)" -->
+			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
+			ToolExe="$(CscToolExe)"
+			ToolPath="$(CscToolPath)" />
 
 	</Target>
 

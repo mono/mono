@@ -1,3 +1,56 @@
+2009-12-22  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #565849.
+	* DirectoryScanner.cs (Excludes): Change from string to ITaskItem[] .
+	* BuildItem.cs: Track api changes.
+
+2009-12-02  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #559990.
+	* Engine.cs (UnloadAllProjects): Don't remove items from the collection
+	being iterated over. Patch by Laurent Etiemble
+	<laurent.etiemble@gmail.com>
+
+2009-11-28  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #547753.
+	* BatchingImplBase.cs (DumpBucket*): New. Useful for debugging.
+	* Project.cs (Batch): New. Contains the perBatchItems and the
+	commonItems for the batch.
+	Use a stack of batches, instead of directly setting the current
+	batch items.
+	(PushBatch): New.
+	(PopBatch): New.
+	(SetBatchedItems): Make this private.
+	(GlobalProperties.set): Re-evaluating the project is not required
+	for this.
+	* TargetBatchingImpl.cs: Use the new Push/PopBatch instead of directly
+	setting the batches.
+	* TaskBatchingImpl.cs: Likewise. Refactor slightly to PopBatch in
+	finally block.
+	* Target.cs (Build): Reset the current batch to nil before evaluating
+	and building this target.
+
+2009-11-28  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (TryGetEvaluatedItemByNameBatched): Item could be
+	available in either perBatchItemsByName or commonItemsByName
+	or the evaluatedItemsByName collection. Allows the use of
+	items which are not batched, but are consumed in case of batching.
+
+2009-11-26  Ankit Jain  <jankit@novell.com>
+
+	* TargetBatchingImpl.cs (BuildTargetNeeded): Expand metadata
+	refs also, for Inputs and Outputs.
+
+2009-10-13  Ankit Jain  <jankit@novell.com>
+
+	* DirectoryScanner.cs:
+	* ExpressionCollection.cs:
+	* GroupingCollection.cs:
+	* Project.cs:
+	* Target.cs: Fix warnings.
+
 2009-10-12  Ankit Jain  <jankit@novell.com>
 
 	* Target.cs (TargetFile): New. Gives the name of the file

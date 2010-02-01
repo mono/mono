@@ -275,5 +275,130 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
             Assert.AreEqual ("B", project.EvaluatedItems[0].Name, "A4");
             Assert.AreEqual (1, project.EvaluatedItemsIgnoringCondition.Count, "A5");
         }
+		
+		[Test]
+        public void ChooseWhenPropertyGroup () {
+            
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+                    <Choose>
+                        <When Condition=""'$(Configuration)' == ''"">
+					        <PropertyGroup>
+						        <Foo>Bar</Foo>
+					        </PropertyGroup>
+                        </When>
+                        <Otherwise>
+					        <PropertyGroup>
+						        <Foo>Baz</Foo>
+					        </PropertyGroup>
+                        </Otherwise>
+                    </Choose>
+				</Project>
+			";
+
+			Engine engine = new Engine (Consts.BinPath);
+            Project project = engine.CreateNewProject ();
+            project.LoadXml (documentString);
+			
+			Assert.AreEqual ("Bar", project.GetEvaluatedProperty ("Foo"), "A1");
+        }
+		
+		[Test]
+        public void ChooseOtherwisePropertyGroup () {
+            
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+                    <Choose>
+                        <When Condition=""'$(Configuration)' == 'dummy'"">
+					        <PropertyGroup>
+						        <Foo>Bar</Foo>
+					        </PropertyGroup>
+                        </When>
+                        <Otherwise>
+					        <PropertyGroup>
+						        <Foo>Baz</Foo>
+					        </PropertyGroup>
+                        </Otherwise>
+                    </Choose>
+				</Project>
+			";
+
+			Engine engine = new Engine (Consts.BinPath);
+            Project project = engine.CreateNewProject ();
+            project.LoadXml (documentString);
+			
+			Assert.AreEqual ("Baz", project.GetEvaluatedProperty ("Foo"), "A1");
+        }
+		
+		[Test]
+        public void NestedChooseInOtherwise () {
+            
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+                    <Choose>
+                        <When Condition=""'$(Configuration)' == 'dummy'"">
+					        <PropertyGroup>
+						        <Foo>Bar</Foo>
+					        </PropertyGroup>
+                        </When>
+                        <Otherwise>
+							<Choose>
+								<When Condition="" 'foo' == 'bar' "">
+									<PropertyGroup>
+										<Foo>Baz</Foo>
+									</PropertyGroup>
+								</When>
+								<Otherwise>
+									<PropertyGroup>
+										<Foo>Baz</Foo>
+									</PropertyGroup>
+								</Otherwise>
+							</Choose>
+                        </Otherwise>
+                    </Choose>
+				</Project>
+			";
+
+			Engine engine = new Engine (Consts.BinPath);
+            Project project = engine.CreateNewProject ();
+            project.LoadXml (documentString);
+			
+			Assert.AreEqual ("Baz", project.GetEvaluatedProperty ("Foo"), "A1");
+        }
+		
+		
+		[Test]
+		public void UndefinedPropertyInExistsCondition()
+		{
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<PropertyGroup>
+						<Foo>Bar</Foo>
+					</PropertyGroup>
+					<Choose>
+						<When Condition = "" '$(teamcity_dotnet_nunitlauncher_msbuild_task)' == '' "" >
+							<Choose>
+								<When Condition=""Exists('$(UndefinedProperty)\Foo\Bar')"">
+									<PropertyGroup>
+										<Exists>yes</Exists>
+									</PropertyGroup>
+								</When>
+								<Otherwise>
+									<PropertyGroup>
+										<Exists>no</Exists>
+									</PropertyGroup>
+								</Otherwise>
+							</Choose>
+						</When>
+					</Choose>
+				</Project>
+			";
+
+			Engine engine = new Engine (Consts.BinPath);
+            Project project = engine.CreateNewProject ();
+            project.LoadXml (documentString);
+			
+			Assert.AreEqual ("no", project.GetEvaluatedProperty ("Exists"), "A1");
+		}
 	}
 }

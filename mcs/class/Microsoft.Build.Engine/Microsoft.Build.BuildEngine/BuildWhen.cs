@@ -39,26 +39,31 @@ namespace Microsoft.Build.BuildEngine {
 	
 		public BuildWhen (XmlElement whenElement, Project parentProject)
 		{
-		
 			this.parentProject = parentProject;
-			this.groupingCollection = new GroupingCollection (null);
+			this.groupingCollection = new GroupingCollection (parentProject);
 			if (whenElement == null)
 				throw new ArgumentNullException ("whenElement");
 			this.whenElement = whenElement;
 			foreach (XmlElement xe in whenElement.ChildNodes) {
-				if (xe.Name == "ItemGroup") {
-					BuildItemGroup big = new BuildItemGroup (xe, parentProject, null, true);
-					//big.BindToXml (xe);
-					groupingCollection.Add (big);
-				// FIXME: add nested chooses
-				} else if (xe.Name == "PropertyGroup") {
-					BuildPropertyGroup bpg = new BuildPropertyGroup ();
-					//bpg.BindToXml (xe);
-					groupingCollection.Add (bpg);
-				} else
-					throw new InvalidProjectFileException ("Invalid element in When.");
+				switch (xe.Name) {
+					case "ItemGroup":
+						BuildItemGroup big = new BuildItemGroup (xe, parentProject, null, true);
+						//big.BindToXml (xe);
+						groupingCollection.Add (big);
+						break;
+					case "PropertyGroup":
+						BuildPropertyGroup bpg = new BuildPropertyGroup (xe, parentProject, null, true);
+						//bpg.BindToXml (xe);
+						groupingCollection.Add (bpg);
+						break;
+					case "Choose":
+						BuildChoose bc = new BuildChoose (xe, parentProject);
+						groupingCollection.Add (bc);
+						break;
+					default:
+						throw new InvalidProjectFileException ( string.Format ("Invalid element '{0}' in When.", xe.Name));
+				}
 			}
-		
 		}
 
 		public void Evaluate()

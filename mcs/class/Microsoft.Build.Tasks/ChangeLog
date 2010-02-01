@@ -1,3 +1,8 @@
+2009-12-22  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks.dll.sources: Add DirectoryScanner.cs
+	from Build.Engine, required by CreateItem.
+
 2009-10-12  Ankit Jain  <jankit@novell.com>
 
 	* Makefile: Add reference to Microsoft.Build.Engine .

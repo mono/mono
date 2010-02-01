@@ -261,8 +261,7 @@ namespace Microsoft.Build.BuildEngine {
 
 			DirectoryScanner directoryScanner;
 			Expression includeExpr, excludeExpr;
-			ITaskItem[] includes;
-			string excludes;
+			ITaskItem[] includes, excludes;
 
 			includeExpr = new Expression ();
 			includeExpr.Parse (Include, ParseOptions.AllowItemsNoMetadataAndSplit);
@@ -271,7 +270,8 @@ namespace Microsoft.Build.BuildEngine {
 			
 			includes = (ITaskItem[]) includeExpr.ConvertTo (project, typeof (ITaskItem[]),
 								ExpressionOptions.ExpandItemRefs);
-			excludes = (string) excludeExpr.ConvertTo (project, typeof (string), ExpressionOptions.ExpandItemRefs);
+			excludes = (ITaskItem[]) excludeExpr.ConvertTo (project, typeof (ITaskItem[]),
+								ExpressionOptions.ExpandItemRefs);
 
 			this.finalItemSpec = (string) includeExpr.ConvertTo (project, typeof (string),
 							ExpressionOptions.ExpandItemRefs);

@@ -1,3 +1,7 @@
+2009-10-13  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyLoadInfo.cs: Fix warning.
+
 2007-01-02  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* AssemblyLoadInfo.cs: Used AssemblyName constructor instead of
