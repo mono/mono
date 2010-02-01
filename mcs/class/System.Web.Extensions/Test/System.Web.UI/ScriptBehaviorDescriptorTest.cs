@@ -48,7 +48,8 @@ namespace Tests.System.Web.UI
 		}
 
 		[Test]
-		public void ScriptBehaviorDescriptor_Defaults () {
+		public void ScriptBehaviorDescriptor_Defaults ()
+		{
 			PokerScriptBehaviorDescriptor scd = new PokerScriptBehaviorDescriptor ("My.Type", "Element1");
 
 			Assert.AreEqual ("My.Type", scd.Type, "Type");
@@ -58,7 +59,15 @@ namespace Tests.System.Web.UI
 			Assert.AreEqual ("Element1", scd.ElementID, "ElementID");
 
 			string script = scd.DoGetScript ();
-			Assert.AreEqual ("$create(My.Type, null, null, null, $get(\"Element1\"));", script);
+			Assert.AreEqual ("$create(My.Type, null, null, null, $get(\"Element1\"));", script, "#A1");
+
+			scd.ID = "SomeID";
+			script = scd.DoGetScript ();
+			Assert.AreEqual ("$create(My.Type, {\"id\":\"SomeID\"}, null, null, $get(\"Element1\"));", script, "#A2");
+
+			scd.Name = "SomeName";
+			script = scd.DoGetScript ();
+			Assert.AreEqual ("$create(My.Type, {\"id\":\"SomeID\",\"name\":\"SomeName\"}, null, null, $get(\"Element1\"));", script, "#A3");
 		}
 
 		[Test]

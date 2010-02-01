@@ -134,7 +134,7 @@ namespace System.Web.UI
 
 			AddEntry (ref _properties, String.Format ("\"{0}\"", name), script);
 		}
-
+		
 		void AddEntry (ref IDictionary<string, string> dictionary, string key, string value) {
 			if (dictionary == null)
 				dictionary = new SortedDictionary<string, string> ();
@@ -144,43 +144,62 @@ namespace System.Web.UI
 				dictionary [key] = value;
 		}
 
-		protected internal override string GetScript () {
-			if (String.IsNullOrEmpty (FormID)) {
-				if (String.IsNullOrEmpty (ElementIDInternal))
-					return String.Format ("$create({0}, {1}, {2}, {3});", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences ());
-				else
-					return String.Format ("$create({0}, {1}, {2}, {3}, $get(\"{4}\"));", Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences (), ElementIDInternal);
-			}
-			else {
-				if (String.IsNullOrEmpty (ElementIDInternal))
-					return String.Format ("$create($get(\"{0}\"), {1}, {2}, {3}, {4});", FormID, Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences ());
-				else
-					return String.Format ("$create($get(\"{0}\"), {1}, {2}, {3}, {4}, $get(\"{5}\"));", FormID, Type, GetSerializedProperties (), GetSerializedEvents (), GetSerializedReferences (), ElementIDInternal);
-			}
+		protected internal override string GetScript ()
+		{
+			string id = ID;
+			if (id != String.Empty)
+				AddProperty ("id", id);
+			
+			bool haveFormID = String.IsNullOrEmpty (FormID) == false;
+			bool haveElementID = String.IsNullOrEmpty (ElementIDInternal) == false;
+			var sb = new StringBuilder ("$create(");
+
+			if (haveFormID)
+				sb.Append ("$get(\"");
+			sb.Append (Type);
+			if (haveFormID)
+				sb.Append ("\")");
+
+			WriteSerializedProperties (sb);
+			WriteSerializedEvents (sb);
+			WriteSerializedReferences (sb);
+
+			if (haveElementID)
+				sb.AppendFormat (", $get(\"{0}\")", ElementIDInternal);
+
+			sb.Append (");");
+
+			return sb.ToString ();
 		}
 
-		internal static string SerializeDictionary (IDictionary<string, string> dictionary) {
+		internal static string SerializeDictionary (IDictionary<string, string> dictionary)
+		{
 			if (dictionary == null || dictionary.Count == 0)
 				return "null";
 			StringBuilder sb = new StringBuilder ("{");
-			foreach (string key in dictionary.Keys) {
+			foreach (string key in dictionary.Keys)
 				sb.AppendFormat ("{0}:{1},", key, dictionary [key]);
-			}
 			sb.Length--;
 			sb.Append ("}");
 			return sb.ToString ();
 		}
 
-		string GetSerializedProperties () {
-			return SerializeDictionary (_properties);
+		void WriteSerializedProperties (StringBuilder sb)
+		{
+			sb.Append (", ");
+			sb.Append (SerializeDictionary (_properties));
 		}
 
-		string GetSerializedEvents () {
-			return SerializeDictionary (_events);
+		void WriteSerializedEvents (StringBuilder sb)
+		{
+			sb.Append (", ");
+			sb.Append (SerializeDictionary (_events));
 		}
 
-		string GetSerializedReferences () {
-			return SerializeDictionary (_references);
+		void WriteSerializedReferences (StringBuilder sb)
+		{
+			sb.Append (", ");
+			sb.Append (SerializeDictionary (_references));
 		}
 	}
 }
