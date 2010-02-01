@@ -1358,6 +1358,8 @@ WYpnKQqsKIzlSqv9wwXs7B1iA7ZdvHk3TAnSnLP1o2H7ME05UnZPKCvraONdezon
 				if (RunningOnWindows ())
 					throw;
 			}
+			catch (DirectoryNotFoundException) {
+			}
 			catch (Exception e) {
 				Assert.Fail (e.ToString ());
 			}
