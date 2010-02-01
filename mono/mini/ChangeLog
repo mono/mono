@@ -1,3 +1,8 @@
+2010-02-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c: Remove support for CEE_ opcodes which cannot occur in
+	MonoInst's.
+
 
 Mon Feb 1 16:29:10 CET 2010 Paolo Molaro <lupus@ximian.com>
 
@@ -7,7 +12,6 @@ Mon Feb 1 16:29:10 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* method-to-ir.c (mini_emit_ldelema_1_ins): Avoid emitting an OP_SEXT_I4 when
 	using LLVM, its not needed, and abcrem can't handle it.
-
 
 Mon Feb 1 14:29:43 CET 2010 Paolo Molaro <lupus@ximian.com>
 
