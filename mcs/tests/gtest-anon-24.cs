@@ -10,6 +10,10 @@ class Disposable<T> : IDisposable
 	}
 }
 
+interface IFoo<TOne,TTwo>
+{
+}
+
 class Test
 {
 	static Func<T[]> For<T> (List<T> list)
@@ -29,6 +33,18 @@ class Test
 		T l = t;
 		return () => {
 			throw new ApplicationException (l.ToString ());
+		};
+	}
+	
+	static Func<Type> TypeOf<T> (T t)
+	{
+		T l = t;
+		return () => {
+			l = t;
+			var e = typeof (Disposable <T>);
+			e = typeof (Disposable <>);
+			e = typeof (IFoo <,>);
+			return typeof (T);
 		};
 	}
 	
@@ -181,6 +197,10 @@ class Test
 		var t10 = ArrayMultiMutate (new string [][] { new string [] { "a", "b", "c" }, new string [] { "1", "2", "3" }, new string [] { "A", "B", "C" }});
 		if (t10 () [2] [2] != null)
 			return 10;
+		
+		var t11 = TypeOf ("b");
+		if (t11 () != typeof (string))
+			return 11;
 
 		Console.WriteLine ("OK");
 		return 0;

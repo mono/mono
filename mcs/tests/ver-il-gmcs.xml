@@ -12664,7 +12664,7 @@
         <size>26</size>
       </method>
       <method name="Int32 Main()">
-        <size>431</size>
+        <size>468</size>
       </method>
     </type>
     <type name="Test+&lt;For&gt;c__AnonStorey0`1[T]">
@@ -12683,86 +12683,95 @@
         <size>23</size>
       </method>
     </type>
-    <type name="Test+&lt;Do&gt;c__AnonStorey2`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T &lt;&gt;m__2()">
-        <size>28</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Lock&gt;c__AnonStorey3`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T &lt;&gt;m__3()">
-        <size>65</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Catch&gt;c__AnonStorey4`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T &lt;&gt;m__4()">
-        <size>48</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Finally&gt;c__AnonStorey5`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T &lt;&gt;m__5()">
-        <size>50</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Using&gt;c__AnonStorey6`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T &lt;&gt;m__6()">
-        <size>7</size>
-      </method>
-    </type>
-    <type name="Test+&lt;Switch&gt;c__AnonStorey7`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="T &lt;&gt;m__7()">
-        <size>35</size>
-      </method>
-    </type>
-    <type name="Test+&lt;ForForeach&gt;c__AnonStorey8`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="System.Collections.Generic.List`1[T] &lt;&gt;m__8()">
-        <size>56</size>
-      </method>
-    </type>
     <type name="Test">
       <method name="Void ArrayMutate[T](T[])">
         <size>27</size>
       </method>
-    </type>
-    <type name="Test+&lt;ArrayMutate&gt;c__AnonStorey9`1[T]">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
-      <method name="Void &lt;&gt;m__9(Int32)">
-        <size>36</size>
-      </method>
-    </type>
-    <type name="Test">
       <method name="System.Func`1[T[][]] ArrayMultiMutate[T](T[][])">
         <size>26</size>
       </method>
+      <method name="System.Func`1[System.Type] TypeOf[T](T)">
+        <size>38</size>
+      </method>
     </type>
-    <type name="Test+&lt;ArrayMultiMutate&gt;c__AnonStoreyA`1[T]">
+    <type name="Test+&lt;TypeOf&gt;c__AnonStorey2`1[T]">
+      <method name="System.Type &lt;&gt;m__2()">
+        <size>56</size>
+      </method>
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="T[][] &lt;&gt;m__A()">
+    </type>
+    <type name="Test+&lt;Do&gt;c__AnonStorey3`1[T]">
+      <method name="T &lt;&gt;m__3()">
+        <size>28</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Lock&gt;c__AnonStorey4`1[T]">
+      <method name="T &lt;&gt;m__4()">
+        <size>65</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Catch&gt;c__AnonStorey5`1[T]">
+      <method name="T &lt;&gt;m__5()">
         <size>48</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Finally&gt;c__AnonStorey6`1[T]">
+      <method name="T &lt;&gt;m__6()">
+        <size>50</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Using&gt;c__AnonStorey7`1[T]">
+      <method name="T &lt;&gt;m__7()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Switch&gt;c__AnonStorey8`1[T]">
+      <method name="T &lt;&gt;m__8()">
+        <size>35</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ForForeach&gt;c__AnonStorey9`1[T]">
+      <method name="System.Collections.Generic.List`1[T] &lt;&gt;m__9()">
+        <size>56</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ArrayMutate&gt;c__AnonStoreyA`1[T]">
+      <method name="Void &lt;&gt;m__A(Int32)">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;ArrayMultiMutate&gt;c__AnonStoreyB`1[T]">
+      <method name="T[][] &lt;&gt;m__B()">
+        <size>48</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
