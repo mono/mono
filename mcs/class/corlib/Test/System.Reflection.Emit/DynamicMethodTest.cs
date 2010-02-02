@@ -357,6 +357,32 @@ namespace MonoTests.System.Reflection.Emit
 			IntInvoker hi = (IntInvoker) dm.CreateDelegate (typeof (IntInvoker));
 			Assert.AreEqual (99, hi (), "#1");	
 		}
+
+		// #575955
+		[Test]
+		public void Module_GetMethod () {
+			AssemblyName assemblyName = new AssemblyName ();
+			assemblyName.Name = "foo";
+
+			AssemblyBuilder assembly =
+				AppDomain.CurrentDomain.DefineDynamicAssembly (
+															   assemblyName, AssemblyBuilderAccess.RunAndSave);
+
+			ModuleBuilder module = assembly.DefineDynamicModule ("foo.dll");
+
+			var d = new DynamicMethod ("foo", typeof (int), new Type [] { typeof (int[,]) }, module);
+			var ig = d.GetILGenerator ();
+			ig.Emit (OpCodes.Ldarg_0);
+			ig.Emit (OpCodes.Ldc_I4, 1);
+			ig.Emit (OpCodes.Ldc_I4, 1);
+			ig.Emit (OpCodes.Call, module.GetArrayMethod (typeof (int[,]), "Get", CallingConventions.Standard, typeof (int), new Type [] { typeof (int), typeof (int) }));
+			ig.Emit (OpCodes.Ret);
+		
+			var del = (Func<int[,], int>)d.CreateDelegate (typeof (Func<int[,], int>));
+			int[,] arr = new int [10, 10];
+			arr [1, 1] = 5;
+			Assert.AreEqual (5, del (arr));
+		}
 	}
 }
 
