@@ -1,3 +1,8 @@
+2010-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_magic_trampoline): Fix a problem where the callsite
+	was not patched if the callee needed an rgctx trampoline.
+
 2010-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_init): Call appdomain_unload at the
