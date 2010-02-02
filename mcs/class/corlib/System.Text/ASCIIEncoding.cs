@@ -79,7 +79,6 @@ public class ASCIIEncoding : Encoding
 	public override int GetBytes (char[] chars, int charIndex, int charCount,
 				      byte[] bytes, int byteIndex)
 	{
-		// well, yes, I know this #if is ugly, but I think it is the simplest switch.
 		EncoderFallbackBuffer buffer = null;
 		char [] fallback_chars = null;
 		
@@ -139,7 +138,6 @@ public class ASCIIEncoding : Encoding
 	// Convenience wrappers for "GetBytes".
 	public override int GetBytes (String chars, int charIndex, int charCount, byte[] bytes, int byteIndex)
 	{
-// I know this #if is ugly, but I think it is the simplest switch.
 		EncoderFallbackBuffer buffer = null;
 		char [] fallback_chars = null;
 		return GetBytes (chars, charIndex, charCount, bytes, byteIndex,
@@ -213,7 +211,6 @@ public class ASCIIEncoding : Encoding
 	// Get the characters that result from decoding a byte buffer.
 	public override int GetChars (byte[] bytes, int byteIndex, int byteCount, char[] chars, int charIndex)
 	{
-// well, yes, I know this #if is ugly, but I think it is the simplest switch.
 		DecoderFallbackBuffer buffer = null;
 		return GetChars (bytes, byteIndex, byteCount, chars,
 			charIndex, ref buffer);
