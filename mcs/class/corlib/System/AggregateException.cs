@@ -115,7 +115,7 @@ namespace System
 			return this.Message;
 		}
 		
-		const string baseMessage = "Exception(s) occurred while inside the Parallel loop. {0}.";
+		const string baseMessage = "Exception(s) occurred : {0}.";
 		static string GetFormattedMessage (string customMessage, IEnumerable<Exception> inner)
 		{
 			System.Text.StringBuilder finalMessage

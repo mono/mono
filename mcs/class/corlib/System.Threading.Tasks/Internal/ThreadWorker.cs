@@ -29,7 +29,7 @@ using System.Collections.Concurrent;
 
 namespace System.Threading.Tasks
 {
-	internal class ThreadWorker: IDisposable
+	internal class ThreadWorker : IDisposable
 	{
 		static Random r = new Random ();
 		
@@ -66,12 +66,6 @@ namespace System.Threading.Tasks
 		{
 			this.others          = others;
 
-//			if (!string.IsNullOrEmpty (Environment.GetEnvironmentVariable ("USE_CYCLIC"))) {
-//				Console.WriteLine ("Using cyclic deque");
-//				this.dDeque = new CyclicDeque<Task> ();
-//			} else {
-//				this.dDeque = new DynamicDeque<Task> ();
-//			}
 			this.dDeque = new CyclicDeque<Task> ();
 			
 			this.sharedWorkQueue = sharedWorkQueue;
@@ -217,6 +211,8 @@ namespace System.Threading.Tasks
 		// Almost same as above but with an added predicate and treating one item at a time. 
 		// It's used by Scheduler Participate(...) method for special waiting case like
 		// Task.WaitAll(someTasks) or Task.WaitAny(someTasks)
+		// Predicate should be really fast and not blocking as it is called a good deal of time
+		// Also, the method skip tasks that are LongRunning to avoid blocking (Task are not LongRunning by default)
 		public static void WorkerMethod (Func<bool> predicate, IProducerConsumerCollection<Task> sharedWorkQueue,
 		                                 ThreadWorker[] others)
 		{
@@ -226,7 +222,10 @@ namespace System.Threading.Tasks
 				// Dequeue only one item as we have restriction
 				if (sharedWorkQueue.TryTake (out value)) {
 					if (value != null) {
-						value.Execute (null);
+						if (CheckTaskFitness (value))
+							value.Execute (null);
+						else
+							sharedWorkQueue.TryAdd (value);
 					}
 				}
 				
@@ -243,7 +242,10 @@ namespace System.Threading.Tasks
 					
 					if (other.dDeque.PopTop (out value) == PopResult.Succeed) {
 						if (value != null) {
-							value.Execute (null);
+							if (CheckTaskFitness (value))
+								value.Execute (null);
+							else
+								sharedWorkQueue.TryAdd (value);
 						}
 					}
 					
@@ -254,9 +256,14 @@ namespace System.Threading.Tasks
 			}
 		}
 		
+		static bool CheckTaskFitness (Task t)
+		{
+			return (t.CreationOptions | TaskCreationOptions.LongRunning) > 0;
+		}
+		
 		public bool Finished {
 			get {
-				return started == 0;	
+				return started == 0;
 			}
 		}
 		

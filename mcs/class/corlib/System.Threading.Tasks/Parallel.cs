@@ -42,6 +42,18 @@ namespace System.Threading.Tasks
 			return scheduler.MaximumConcurrencyLevel;
 		}
 		
+		static int GetBestWorkerNumber (int from, int to, ParallelOptions options, out int step)
+		{
+			int num = Math.Min (GetBestWorkerNumber (),
+			                    options != null && options.MaxDegreeOfParallelism != -1 ? options.MaxDegreeOfParallelism : int.MaxValue);
+			// Integer range that each task process
+			step = Math.Min (5, (to - from) / num);
+			if (step <= 0)
+				step = 1;
+			
+			return num;
+		}
+		
 		static void HandleExceptions (IEnumerable<Task> tasks)
 		{
 			HandleExceptions (tasks, null);
@@ -51,7 +63,7 @@ namespace System.Threading.Tasks
 		{
 			List<Exception> exs = new List<Exception> ();
 			foreach (Task t in tasks) {
-				if (t.Exception != null && !(t.Exception is TaskCanceledException))
+				if (t.Exception != null)
 					exs.Add (t.Exception);
 			}
 			
@@ -63,20 +75,15 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		static void InitTasks (Task[] tasks, Action action, int count)
+		static void InitTasks (Task[] tasks, int count, Action action, ParallelOptions options)
 		{
-			InitTasks (tasks, count, () => Task.Factory.StartNew (action, TaskCreationOptions.DetachedFromParent));
-		}
-		
-		static void InitTasks (Task[] tasks, Action action, int count, TaskScheduler scheduler)
-		{
-			InitTasks (tasks, count, () => Task.Factory.StartNew (action, TaskCreationOptions.DetachedFromParent, scheduler));
-		}
-		
-		static void InitTasks (Task[] tasks, int count, Func<Task> taskCreator)
-		{
+			TaskCreationOptions creation = TaskCreationOptions.LongRunning;
+			
 			for (int i = 0; i < count; i++) {
-				tasks [i] = taskCreator ();
+				if (options == null)
+					tasks [i] = Task.Factory.StartNew (action, creation);
+				else
+					tasks [i] = Task.Factory.StartNew (action, options.CancellationToken, creation, options.TaskScheduler);
 			}
 		}
 		#region For
@@ -106,8 +113,8 @@ namespace System.Threading.Tasks
 		{
 			return For<TLocal> (from, to, null, init, action, destruct);
 		}
+	
 		
-		[MonoTODO]
 		public static ParallelLoopResult For<TLocal> (int from, int to, ParallelOptions options, 
 		                                              Func<TLocal> init, 
 		                                              Func<int, ParallelLoopState, TLocal, TLocal> action,
@@ -117,52 +124,53 @@ namespace System.Threading.Tasks
 				throw new ArgumentNullException ("action");
 			
 			// Number of task to be launched (normally == Env.ProcessorCount)
-			int num = Math.Min (GetBestWorkerNumber (), 
-			                    options != null && options.MaxDegreeOfParallelism != -1 ? options.MaxDegreeOfParallelism : int.MaxValue);
-			// Integer range that each task process
-			int step = Math.Min (5, (to - from) / num);
-			if (step <= 0)
-				step = 1;
-			
-			throw new NotImplementedException ();
-/*
+			int step;
+			int num = GetBestWorkerNumber (from, to, options, out step);
+
 			// Each worker put the indexes it's responsible for here
 			// so that other worker may steal if they starve.
-			ConcurrentBag<int> bag = new ConcurrentBag<int> ();
+			SimpleConcurrentBag<int> bag = new SimpleConcurrentBag<int> (num);
 			Task[] tasks = new Task [num];
 			ParallelLoopState.ExternalInfos infos = new ParallelLoopState.ExternalInfos ();
 			
+			Func<ParallelLoopState, bool> cancellationTokenTest = (s) => {
+				if (options != null && options.CancellationToken.IsCancellationRequested) {
+					s.Stop ();
+					return true;
+				}
+				return false;
+			};
+			
+			Func<int, bool> breakTest = (i) => infos.LowestBreakIteration != null && infos.LowestBreakIteration > i;
+			
 			int currentIndex = from;
-		
+			
 			Action workerMethod = delegate {
 				int index, actual;
 				TLocal local = (init == null) ? default (TLocal) : init ();
 				
-				ParallelLoopState state = new ParallelLoopState (tasks, infos);
+				ParallelLoopState state = new ParallelLoopState (infos);
+				int workIndex = bag.GetNextIndex ();
 				
 				try {
-					while ((index = Interlocked.Add (ref currentIndex, step) - step) < to) {
+					while (currentIndex < to && (index = Interlocked.Add (ref currentIndex, step) - step) < to) {
 						if (infos.IsStopped.Value)
 							return;
 						
-						if (options != null && options.CancellationToken.IsCancellationRequested) {
-							state.Stop ();
+						if (cancellationTokenTest (state))
 							return;
-						}
 						
 						for (int i = index; i < to && i < index + step; i++)
-							bag.Add (i);
+							bag.Add (workIndex, i);
 						
-						for (int i = index; i < to && i < index + step && bag.TryTake (out actual); i++) {
+						for (int i = index; i < to && i < index + step && bag.TryTake (workIndex, out actual); i++) {
 							if (infos.IsStopped.Value)
 								return;
 							
-							if (options != null && options.CancellationToken.IsCancellationRequested) {
-								state.Stop ();
+							if (cancellationTokenTest (state))
 								return;
-							}
 							
-							if (infos.LowestBreakIteration != null && infos.LowestBreakIteration > actual)
+							if (breakTest (actual))
 								return;
 							
 							state.CurrentIteration = actual;
@@ -170,16 +178,14 @@ namespace System.Threading.Tasks
 						}
 					}
 					
-					while (bag.TryTake (out actual)) {
+					while (bag.TrySteal (workIndex, out actual)) {
 						if (infos.IsStopped.Value)
 							return;
 						
-						if (options != null && options.CancellationToken.IsCancellationRequested) {
-							state.Stop ();
+						if (cancellationTokenTest (state))
 							return;
-						}
 						
-						if (infos.LowestBreakIteration != null && infos.LowestBreakIteration > actual)
+						if (breakTest (actual))
 							continue;
 						
 						state.CurrentIteration = actual;
@@ -190,11 +196,8 @@ namespace System.Threading.Tasks
 						destruct (local);
 				}
 			};
-		
-			if (options != null && options.TaskScheduler != null)
-				InitTasks (tasks, workerMethod, num, options.TaskScheduler);
-			else
-				InitTasks (tasks, workerMethod, num);
+
+			InitTasks (tasks, num, workerMethod, options);
 			
 			try {
 				Task.WaitAll (tasks);
@@ -202,14 +205,12 @@ namespace System.Threading.Tasks
 				HandleExceptions (tasks, infos);
 			}
 			
-			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped.Value || infos.IsExceptional));
-*/			
+			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped.Value || infos.IsExceptional));	
 		}
 
 		#endregion
 		
 		#region Foreach
-		[MonoTODO]
 		static ParallelLoopResult ForEach<TSource, TLocal> (Func<int, IList<IEnumerator<TSource>>> enumerable, ParallelOptions options,
 		                                                    Func<TLocal> init, Func<TSource, ParallelLoopState, TLocal, TLocal> action,
 		                                                    Action<TLocal> destruct)
@@ -220,19 +221,27 @@ namespace System.Threading.Tasks
 			Task[] tasks = new Task[num];
 			ParallelLoopState.ExternalInfos infos = new ParallelLoopState.ExternalInfos ();
 			
-			throw new NotImplementedException ();
-/*			
-			ConcurrentBag<TSource> bag = new ConcurrentBag<TSource> ();
+			SimpleConcurrentBag<TSource> bag = new SimpleConcurrentBag<TSource> (num);
 			const int bagCount = 5;
 			
 			IList<IEnumerator<TSource>> slices = enumerable (num);
+			
 			int sliceIndex = 0;
+			
+			Func<ParallelLoopState, bool> cancellationTokenTest = (s) => {
+				if (options != null && options.CancellationToken.IsCancellationRequested) {
+					s.Stop ();
+					return true;
+				}
+				return false;
+			};
 
 			Action workerMethod = delegate {
 				IEnumerator<TSource> slice = slices[Interlocked.Increment (ref sliceIndex) - 1];
 				
 				TLocal local = (init != null) ? init () : default (TLocal);
-				ParallelLoopState state = new ParallelLoopState (tasks, infos);
+				ParallelLoopState state = new ParallelLoopState (infos);
+				int workIndex = bag.GetNextIndex ();
 				
 				try {
 					bool cont = true;
@@ -242,36 +251,30 @@ namespace System.Threading.Tasks
 						if (infos.IsStopped.Value)
 							return;
 						
-						if (options != null && options.CancellationToken.IsCancellationRequested) {
-							state.Stop ();
+						if (cancellationTokenTest (state))
 							return;
-						}
 						
 						for (int i = 0; i < bagCount && (cont = slice.MoveNext ()); i++) {
-							bag.Add (slice.Current);
+							bag.Add (workIndex, slice.Current);
 						}
 						
-						for (int i = 0; i < bagCount && bag.TryTake (out element); i++) {
+						for (int i = 0; i < bagCount && bag.TryTake (workIndex, out element); i++) {
 							if (infos.IsStopped.Value)
 								return;
 							
-							if (options != null && options.CancellationToken.IsCancellationRequested) {
-								state.Stop ();
+							if (cancellationTokenTest (state))
 								return;
-							}
 							
 							local = action (element, state, local);
 						}
 					}
 					
-					while (bag.TryTake (out element)) {
+					while (bag.TrySteal (workIndex, out element)) {
 						if (infos.IsStopped.Value)
 							return;
 						
-						if (options != null && options.CancellationToken.IsCancellationRequested) {
-							state.Stop ();
+						if (cancellationTokenTest (state))
 							return;
-						}
 						
 						local = action (element, state, local);
 					}
@@ -281,10 +284,7 @@ namespace System.Threading.Tasks
 				}
 			};
 			
-			if (options != null && options.TaskScheduler != null)
-				InitTasks (tasks, workerMethod, num, options.TaskScheduler);
-			else
-				InitTasks (tasks, workerMethod, num);
+			InitTasks (tasks, num, workerMethod, options);
 			
 			try {
 				Task.WaitAll (tasks);
@@ -293,7 +293,7 @@ namespace System.Threading.Tasks
 			}
 			
 			return new ParallelLoopResult (infos.LowestBreakIteration, !(infos.IsStopped.Value || infos.IsExceptional));
-			*/
+			
 		}
 		
 		public static ParallelLoopResult ForEach<TSource> (IEnumerable<TSource> enumerable, Action<TSource> action)
@@ -436,32 +436,6 @@ namespace System.Threading.Tasks
 			                                                    init, (e, s, l) => action (e.Value, s, e.Key, l), destruct);
 		}
 		#endregion
-		
-		/* Disabled as this is an API addition
-		#region While		
-		public static void While (Func<bool> predicate, Action body)
-		{
-			if (body == null)
-				throw new ArgumentNullException ("body");
-			if (predicate == null)
-				throw new ArgumentNullException ("predicate");
-			
-			int num = GetBestWorkerNumber ();
-			
-			Task[] tasks = new Task [num];
-			
-			Action action = delegate {
-				while (predicate ())
-				body ();
-			};
-			
-			InitTasks (tasks, action, num);
-			Task.WaitAll (tasks);
-			HandleExceptions (tasks);
-		}
-		
-		#endregion
-		*/
 
 		#region Invoke
 		public static void Invoke (params Action[] actions)
@@ -479,7 +453,7 @@ namespace System.Threading.Tasks
 			if (actions == null)
 				throw new ArgumentNullException ("actions");
 			
-			Invoke (actions, (Action a) => Task.Factory.StartNew (a, TaskCreationOptions.None, parallelOptions.TaskScheduler));
+			Invoke (actions, (Action a) => Task.Factory.StartNew (a, CancellationToken.None, TaskCreationOptions.None, parallelOptions.TaskScheduler));
 		}
 		
 		static void Invoke (Action[] actions, Func<Action, Task> taskCreator)

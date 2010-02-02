@@ -30,7 +30,7 @@ using NUnit;
 using NUnit.Core;
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Threading
 {
 	[TestFixtureAttribute]
 	public class LazyInitTests

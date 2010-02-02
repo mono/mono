@@ -1,7 +1,9 @@
 //
 // System.OperationCanceledException.cs
 //
-
+// Authors:
+//   Zoltan Varga  <vargaz@freemail.hu>
+//   Jérémie Laval <jeremie.laval@gmail.com>
 //
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
@@ -27,6 +29,7 @@
 
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.Threading;
 
 namespace System
 {
@@ -35,6 +38,9 @@ namespace System
 	public class OperationCanceledException : SystemException
 	{
 		const int Result = unchecked ((int)0x8013153b);
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+		CancellationToken? token;
+#endif
 
 		// Constructors
 		public OperationCanceledException ()
@@ -59,5 +65,36 @@ namespace System
 			: base (info, context)
 		{
 		}
+		
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+		public OperationCanceledException (CancellationToken token)
+			: this ()
+		{
+			this.token = token;
+		}
+		
+		public OperationCanceledException (string message, CancellationToken token)
+			: this (message)
+		{
+			this.token = token;
+		}
+		
+		public OperationCanceledException (string message, Exception innerException, CancellationToken token)
+			: base (message, innerException)
+		{
+			this.token = token;
+		}
+		
+		public CancellationToken CancellationToken {
+			get {
+				if (token == null)
+					return CancellationToken.None;
+				return token.Value;
+			}
+			private set {
+				token = value;
+			}
+		}
+#endif
 	}
 }

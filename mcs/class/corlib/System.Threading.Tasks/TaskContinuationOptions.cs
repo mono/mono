@@ -32,9 +32,8 @@ namespace System.Threading.Tasks
 	{
 		None = 0x0,
 		PreferFairness = 0x1,
-		RespectParentCancellation = 0x2,
 		LongRunning = 0x4,
-		DetachedFromParent = 0x8,
+		AttachedToParent = 0x8,
 		ExecuteSynchronously = 0x10,
 		NotOnRanToCompletion = 0x20,
 		NotOnFaulted = 0x40,

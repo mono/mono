@@ -33,7 +33,7 @@ namespace System.Collections.Concurrent
 {
 	
 	public class ConcurrentQueue<T> : IProducerConsumerCollection<T>, IEnumerable<T>, ICollection,
-	                                  IEnumerable, ISerializable, IDeserializationCallback
+	                                  IEnumerable
 	{
 		class Node
 		{
@@ -54,12 +54,6 @@ namespace System.Collections.Concurrent
 		{
 			foreach (T item in enumerable)
 				Enqueue (item);
-		}
-		
-		[MonoTODO]
-		protected ConcurrentQueue (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
 		}
 		
 		public void Enqueue (T item)
@@ -97,10 +91,7 @@ namespace System.Collections.Concurrent
 			Enqueue (item);
 			return true;
 		}
-		
-		/// <summary>
-		/// </summary>
-		/// <returns></returns>
+
 		public bool TryDequeue (out T value)
 		{
 			value = default (T);
@@ -131,9 +122,6 @@ namespace System.Collections.Concurrent
 			return true;
 		}
 		
-		/// <summary>
-		/// </summary>
-		/// <returns></returns>
 		public bool TryPeek (out T value)
 		{
 			if (IsEmpty) {
@@ -199,31 +187,8 @@ namespace System.Collections.Concurrent
 			return dest;
 		}
 		
-		[MonoTODO]
-		protected virtual void GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		[MonoTODO]
-		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
-		{
-			GetObjectData (info, context);
-		}
-		
 		bool ICollection.IsSynchronized {
 			get { return true; }
-		}
-
-		[MonoTODO]
-		protected virtual void OnDeserialization (object sender)
-		{
-			throw new NotImplementedException ();
-		}
-		
-		void IDeserializationCallback.OnDeserialization (object sender)
-		{
-			OnDeserialization (sender);
 		}
 
 		bool IProducerConsumerCollection<T>.TryTake (out T item)

@@ -31,7 +31,7 @@ using System.Collections.Concurrent;
 
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Collections.Concurrent
 {
 	
 	

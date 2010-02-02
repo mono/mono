@@ -1,3 +1,8 @@
+2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* corlib.dll.sources: Add System.Threading.Tasks/SimpleConcurrentBag.cs
+	and System.Threading.Tasks/UnobservedTaskExceptionEventArgs.cs
+
 2010-01-26  Marek Habersack  <mhabersack@novell.com>
 
 	* net_2_1_raw_corlib.dll.sources: added System.IO/SearchOption.cs

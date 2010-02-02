@@ -47,15 +47,6 @@ namespace System.Threading.Tasks
 			}
 		}
 		
-		public new Exception Exception {
-			get {
-				return base.Exception;
-			}
-			internal set {
-				base.Exception = value;
-			}
-		}
-		
 		public static new TaskFactory<TResult> Factory {
 			get {
 				return factory;
@@ -67,7 +58,20 @@ namespace System.Threading.Tasks
 			
 		}
 		
-		public Task (Func<TResult> function, TaskCreationOptions options) : this ((o) => function (), null, options)
+		public Task (Func<TResult> function, CancellationToken token)
+			: this ((o) => function (), null, token, TaskCreationOptions.None)
+		{
+			
+		}
+		
+		public Task (Func<TResult> function, TaskCreationOptions options)
+			: this ((o) => function (), null, CancellationToken.None, options)
+		{
+			
+		}
+		
+		public Task (Func<TResult> function, CancellationToken token, TaskCreationOptions options)
+			: this ((o) => function (), null, token, options)
 		{
 			
 		}
@@ -77,8 +81,20 @@ namespace System.Threading.Tasks
 			
 		}
 		
+		public Task (Func<object, TResult> function, object state, CancellationToken token)
+			: this (function, state, token, TaskCreationOptions.None)
+		{
+			
+		}
+		
 		public Task (Func<object, TResult> function, object state, TaskCreationOptions options)
-			: base (null, state, options)
+			: this (function, state, CancellationToken.None, options)
+		{
+			
+		}
+		
+		public Task (Func<object, TResult> function, object state, CancellationToken token, TaskCreationOptions options)
+			: base (null, state, token, options)
 		{
 			this.function = function;
 			this.state = state;
@@ -100,17 +116,23 @@ namespace System.Threading.Tasks
 		
 		public Task ContinueWith (Action<Task<TResult>> a, TaskContinuationOptions options)
 		{
-			return ContinueWith (a, options, TaskScheduler.Current);
+			return ContinueWith (a, CancellationToken.None, options, TaskScheduler.Current);
+		}
+		
+		public Task ContinueWith (Action<Task<TResult>> a, CancellationToken token)
+		{
+			return ContinueWith (a, token, TaskContinuationOptions.None, TaskScheduler.Current);
 		}
 		
 		public Task ContinueWith (Action<Task<TResult>> a, TaskScheduler scheduler)
 		{
-			return ContinueWith (a, TaskContinuationOptions.None, scheduler);
+			return ContinueWith (a, CancellationToken.None, TaskContinuationOptions.None, scheduler);
 		}
 		
-		public Task ContinueWith (Action<Task<TResult>> a, TaskContinuationOptions options, TaskScheduler scheduler)
+		public Task ContinueWith (Action<Task<TResult>> a, CancellationToken token,
+		                          TaskContinuationOptions options, TaskScheduler scheduler)
 		{
-			Task t = new Task ((o) => a ((Task<TResult>)o), this, TaskCreationOptions.None);
+			Task t = new Task ((o) => a ((Task<TResult>)o), this, token, GetCreationOptions (options));
 			ContinueWithCore (t, options, scheduler);
 			
 			return t;
@@ -121,20 +143,26 @@ namespace System.Threading.Tasks
 			return ContinueWith<TNewResult> (a, TaskContinuationOptions.None);
 		}
 		
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, CancellationToken token)
+		{
+			return ContinueWith<TNewResult> (a, token, TaskContinuationOptions.None, TaskScheduler.Current);
+		}
+		
 		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, TaskContinuationOptions options)
 		{
-			return ContinueWith<TNewResult> (a, options, TaskScheduler.Current);
+			return ContinueWith<TNewResult> (a, CancellationToken.None, options, TaskScheduler.Current);
 		}
 		
 		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, TaskScheduler scheduler)
 		{
-			return ContinueWith<TNewResult> (a, TaskContinuationOptions.None, scheduler);
+			return ContinueWith<TNewResult> (a, CancellationToken.None, TaskContinuationOptions.None, scheduler);
 		}
 		
-		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, TaskContinuationOptions options,
+		public Task<TNewResult> ContinueWith<TNewResult> (Func<Task<TResult>, TNewResult> a, CancellationToken token,
+		                                                  TaskContinuationOptions options,
 		                                                  TaskScheduler scheduler)
 		{
-			Task<TNewResult> t = new Task<TNewResult> ((o) => a ((Task<TResult>)o), this, TaskCreationOptions.None);
+			Task<TNewResult> t = new Task<TNewResult> ((o) => a ((Task<TResult>)o), this, token, GetCreationOptions (options));
 			ContinueWithCore (t, options, scheduler);
 			
 			return t;

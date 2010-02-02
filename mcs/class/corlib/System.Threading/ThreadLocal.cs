@@ -34,7 +34,7 @@ namespace System.Threading
 {
 	[HostProtectionAttribute(SecurityAction.LinkDemand, Synchronization = true, 
 	                         ExternalThreading = true)]
-	public class ThreadLocal<T>
+	public class ThreadLocal<T> : IDisposable
 	{
 		readonly Func<T> initializer;
 		LocalDataStoreSlot localStore;
@@ -56,6 +56,16 @@ namespace System.Threading
 			
 			localStore = Thread.AllocateDataSlot ();
 			this.initializer = initializer;
+		}
+		
+		public void Dispose ()
+		{
+			Dispose(true);
+		}
+		
+		protected virtual void Dispose (bool dispManagedRes)
+		{
+			
 		}
 		
 		public bool IsValueCreated {

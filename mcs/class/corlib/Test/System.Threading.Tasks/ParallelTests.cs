@@ -47,8 +47,9 @@ namespace MonoTests.System.Threading.Tasks
 		[Test]
 		public void ParallelForTestCase ()
 		{
-			ParallelTestHelper.Repeat (() => {
-				int[] expected = Enumerable.Range (1, 1000).Select ((e) => e * 2).ToArray ();
+			int[] expected = Enumerable.Range (1, 1000).Select ((e) => e * 2).ToArray ();
+			
+			ParallelTestHelper.Repeat (() => {	
 				int[] actual = Enumerable.Range (1, 1000).ToArray ();
 				SpinWait sw = new SpinWait ();
 				
@@ -106,21 +107,6 @@ namespace MonoTests.System.Threading.Tasks
 			IEnumerable<int> e = Enumerable.Repeat (1, 10);
 			Parallel.ForEach (e, delegate (int element) { throw new Exception ("foo"); });
 		}
-		
-		/* Disabled as this is an API addition
-		[Test]
-		public void ParallelWhileTestCase()
-		{
-			ParallelTestHelper.Repeat (() => {
-				int i = 0;
-				int count = 0;
-				
-				Parallel.While (() => Interlocked.Increment (ref i) <= 10, () => Interlocked.Increment (ref count));
-				
-				Assert.Greater(i, 10, "#1");
-				Assert.AreEqual(10, count, "#2");
-			});
-		}*/
 	}
 }
 #endif

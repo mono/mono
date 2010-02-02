@@ -1,4 +1,3 @@
-#if NET_4_0
 // SemaphoreSlim.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -26,69 +25,69 @@
 using System;
 using System.Diagnostics;
 
+#if NET_4_0
 namespace System.Threading
 {
 	public class SemaphoreSlim : IDisposable
 	{
 		readonly int max;
-		
 		int currCount;
-
 		bool isDisposed;
-		
-		SpinWait wait = new SpinWait ();
-		
+
+		ManualResetEvent handle;
+
 		public SemaphoreSlim (int initial) : this (initial, int.MaxValue)
 		{
 		}
-		
+
 		public SemaphoreSlim (int initial, int max)
 		{
 			if (initial < 0 || initial > max || max < 0)
 				throw new ArgumentOutOfRangeException ("The initial  argument is negative, initial is greater than max, or max is not positive.");
-			
+
 			this.max = max;
 			this.currCount = initial;
+			this.handle = new ManualResetEvent (initial == 0);
 		}
-		
+
 		~SemaphoreSlim ()
 		{
 			Dispose(false);
 		}
-		
+
 		public void Dispose ()
 		{
 			Dispose(true);
 		}
-		
+
 		protected virtual void Dispose (bool managedRes)
 		{
 			isDisposed = true;
 		}
-		
+
 		void CheckState ()
 		{
 			if (isDisposed)
 				throw new ObjectDisposedException ("The SemaphoreSlim has been disposed.");
 		}
-		
+
 		public int CurrentCount {
 			get {
 				return currCount;
 			}
 		}
-		
+
 		public int Release ()
 		{
 			return Release(1);
 		}
-		
+
 		public int Release (int releaseCount)
 		{
 			CheckState ();
-			if (releaseCount < 0)
-				throw new ArgumentOutOfRangeException ("releaseCount", "	The releaseCount must be positive.");
-			
+			if (releaseCount < 1)
+				throw new ArgumentOutOfRangeException ("releaseCount", "releaseCount is less than 1");
+
 			// As we have to take care of the max limit we resort to CAS
 			int oldValue, newValue;
 			do {
@@ -96,67 +95,89 @@ namespace System.Threading
 				newValue = (currCount + releaseCount);
 				newValue = newValue > max ? max : newValue;
 			} while (Interlocked.CompareExchange (ref currCount, newValue, oldValue) != oldValue);
-			
+
+			handle.Reset ();
+
 			return oldValue;
 		}
-		
+
 		public void Wait ()
 		{
-			CheckState ();
-			do {
-				int result = Interlocked.Decrement (ref currCount);
-				if (result >= 0)
-					break;
-				
-				// We revert back the operation
-				Interlocked.Increment (ref currCount);
-				while (Thread.VolatileRead (ref currCount) <= 0) {
-					wait.SpinOnce ();
-				}
-			} while (true);
+			Wait (CancellationToken.None);
 		}
-		
+
 		public bool Wait (TimeSpan ts)
 		{
-			CheckState();
-			return Wait ((int)ts.TotalMilliseconds);
+			return Wait ((int)ts.TotalMilliseconds, CancellationToken.None);
 		}
-		
+
 		public bool Wait (int millisecondsTimeout)
+		{
+			return Wait (millisecondsTimeout, CancellationToken.None);
+		}
+
+		public void Wait (CancellationToken token)
+		{
+			Wait (-1, token);
+		}
+
+		public bool Wait (TimeSpan ts, CancellationToken token)
+		{
+			CheckState();
+			return Wait ((int)ts.TotalMilliseconds, token);
+		}
+
+		public bool Wait (int millisecondsTimeout, CancellationToken token)
 		{
 			CheckState ();
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout",
 				                                       "millisecondsTimeout is a negative number other than -1");
-			if (millisecondsTimeout == -1) {
-				Wait ();
-				return true;
-			}
-			
+
+			Watch sw = Watch.StartNew ();
+
+			Func<bool> stopCondition =
+				() => token.IsCancellationRequested || (millisecondsTimeout >= 0 && sw.ElapsedMilliseconds > millisecondsTimeout);
+
 			do {
-				int result = Interlocked.Decrement (ref currCount);
-				if (result >= 0)
-					break;
-				
-				// We revert back the operation
-				result = Interlocked.Increment (ref currCount);
-				Watch sw = Watch.StartNew ();
-				while (Thread.VolatileRead (ref currCount) <= 0) {
-					if (sw.ElapsedMilliseconds > millisecondsTimeout) {
-						sw.Stop ();
+				bool shouldWait;
+				int result;
+
+				do {
+					if (stopCondition ())
 						return false;
-					}
+
+					shouldWait = true;
+					result = currCount;
+
+					if (result > 0)
+						shouldWait = false;
+					else
+						break;
+				} while (Interlocked.CompareExchange (ref currCount, result - 1, result) != result);
+
+				if (!shouldWait) {
+					if (result == 1)
+						handle.Set ();
+					break;
+				}
+
+				SpinWait wait = new SpinWait ();
+
+				while (Thread.VolatileRead (ref currCount) <= 0) {
+					if (stopCondition ())
+						return false;
+
 					wait.SpinOnce ();
 				}
 			} while (true);
-			
+
 			return true;
 		}
-		
-		[MonoTODO ("Cf CountdownEvent for ManualResetEvent usage")]
+
 		public WaitHandle AvailableWaitHandle {
 			get {
-				return null;
+				return handle;
 			}
 		}
 	}

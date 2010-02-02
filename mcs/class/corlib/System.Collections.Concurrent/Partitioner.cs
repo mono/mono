@@ -41,14 +41,44 @@ namespace System.Collections.Concurrent
 			return new EnumerablePartitioner<TSource> (source);
 		}
 		
-	  public static OrderablePartitioner<TSource> Create<TSource> (TSource[] source, bool loadBalance)
+		public static OrderablePartitioner<TSource> Create<TSource> (TSource[] source, bool loadBalance)
 		{
 			return Create ((IList<TSource>)source, loadBalance);
 		}
 		
-	  public static OrderablePartitioner<TSource> Create<TSource> (IList<TSource> source, bool loadBalance)
+		public static OrderablePartitioner<TSource> Create<TSource> (IList<TSource> source, bool loadBalance)
 		{
 			return new ListPartitioner<TSource> (source);
+		}
+		
+		[MonoTODO("What range size is supposed to be in context and what the result returned looks like")]
+		public static OrderablePartitioner<Tuple<int, int>> Create (int fromInclusive,
+		                                                             int toExclusive)
+		{
+			return Create (fromInclusive, toExclusive, 1);
+		}
+		
+		[MonoTODO("What range size is supposed to be in context and what the result returned looks like")]
+		public static OrderablePartitioner<Tuple<int, int>> Create (int fromInclusive,
+		                                                             int toExclusive,
+		                                                             int rangeSize)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		[MonoTODO("What range size is supposed to be in context and what the result returned looks like")]
+		public static OrderablePartitioner<Tuple<long, long>> Create (long fromInclusive,
+		                                                               long toExclusive)
+		{
+			return Create (fromInclusive, toExclusive, 1);
+		}
+		
+		[MonoTODO("What range size is supposed to be in context and what the result returned looks like")]
+		public static OrderablePartitioner<Tuple<long, long>> Create (long fromInclusive,
+		                                                               long toExclusive,
+		                                                               long rangeSize)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 	

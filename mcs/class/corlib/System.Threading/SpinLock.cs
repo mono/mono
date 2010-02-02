@@ -1,4 +1,3 @@
-#if NET_4_0
 // SpinLock.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -26,6 +25,7 @@
 using System;
 using System.Runtime.ConstrainedExecution;
 
+#if NET_4_0
 namespace System.Threading
 {
 	public struct SpinLock
@@ -75,6 +75,11 @@ namespace System.Threading
 		
 		public void Enter (ref bool lockTaken)
 		{
+			if (lockTaken)
+				throw new ArgumentException ("lockTaken", "lockTaken must be initialized to false");
+			if (isThreadOwnerTrackingEnabled && IsHeldByCurrentThread)
+				throw new LockRecursionException ();
+			
 			try {
 				Enter ();
 				lockTaken = lockState == isOwned && Thread.CurrentThread.ManagedThreadId == threadWhoTookLock;
@@ -87,22 +92,20 @@ namespace System.Threading
 		{
 			int result = Interlocked.Exchange (ref lockState, isOwned);
 			
-			//Thread.BeginCriticalRegion();
 			while (result == isOwned) {
-				// If resource available, set it to in-use and return
-				if (result == isFree) {
-					result = Interlocked.Exchange (ref lockState, isOwned);
-					if (result == isFree)
-						break;
-				}
+				sw.SpinOnce ();
 				
 				// Efficiently spin, until the resource looks like it might 
 				// be free. NOTE: Just reading here (as compared to repeatedly 
 				// calling Exchange) improves performance because writing 
 				// forces all CPUs to update this value
-				//while (Thread.VolatileRead (ref lockState) == isOwned) {
-					sw.SpinOnce ();
-				//}
+				result = Thread.VolatileRead (ref lockState);
+				
+				if (result == isFree) {
+					result = Interlocked.Exchange (ref lockState, isOwned);
+					if (result == isFree)
+						break;
+				}
 			}
 			
 			CheckAndSetThreadId ();
@@ -110,8 +113,6 @@ namespace System.Threading
 		
 		bool TryEnter ()
 		{
-			//Thread.BeginCriticalRegion();
-
 			// If resource available, set it to in-use and return
 			if (Interlocked.Exchange (ref lockState, isOwned) == isFree) {
 				CheckAndSetThreadId ();
@@ -122,11 +123,7 @@ namespace System.Threading
 		
 		public void TryEnter (ref bool lockTaken)
 		{
-			try {
-				lockTaken = TryEnter ();
-			} catch {
-				lockTaken = false;
-			}
+			TryEnter (-1, ref lockTaken);
 		}
 		
 		public void TryEnter (TimeSpan timeout, ref bool lockTaken)
@@ -136,24 +133,32 @@ namespace System.Threading
 		
 		public void TryEnter (int milliSeconds, ref bool lockTaken)
 		{
-			//Thread.BeginCriticalRegion();
+			if (milliSeconds < -1)
+				throw new ArgumentOutOfRangeException ("milliSeconds", "millisecondsTimeout is a negative number other than -1");
+			if (lockTaken)
+				throw new ArgumentException ("lockTaken", "lockTaken must be initialized to false");
+			if (isThreadOwnerTrackingEnabled && IsHeldByCurrentThread)
+				throw new LockRecursionException ();
 			
 			Watch sw = Watch.StartNew ();
 			
-			while (sw.ElapsedMilliseconds < milliSeconds) {
-				TryEnter (ref lockTaken);
+			while (milliSeconds == -1 || sw.ElapsedMilliseconds < milliSeconds) {
+				lockTaken = TryEnter ();
 			}
+			
 			sw.Stop ();
 		}
 
-		//[ReliabilityContractAttribute]
 		public void Exit () 
 		{ 
 			Exit (false);
 		}
 
 		public void Exit (bool flushReleaseWrites) 
-		{ 
+		{
+			if (isThreadOwnerTrackingEnabled && !IsHeldByCurrentThread)
+				throw new SynchronizationLockException ("Current thread is not the owner of this lock");
+				
 			threadWhoTookLock = int.MinValue;
 			
 			// Mark the resource as available
@@ -162,7 +167,6 @@ namespace System.Threading
 			} else {
 				Interlocked.Exchange (ref lockState, isFree);
 			}
-			//Thread.EndCriticalRegion();
 		}
 	}
 	

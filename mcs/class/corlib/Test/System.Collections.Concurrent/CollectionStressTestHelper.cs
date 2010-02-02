@@ -37,7 +37,7 @@ using MonoTests.System.Threading.Tasks;
 using NUnit;
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Collections.Concurrent
 {
 	public enum CheckOrderingType {
 		InOrder,

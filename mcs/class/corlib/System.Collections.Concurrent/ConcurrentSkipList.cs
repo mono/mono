@@ -54,7 +54,7 @@ namespace System.Collections.Concurrent
 			public readonly Node[]   Nexts;
 			public volatile bool     Marked;
 			public volatile bool     FullyLinked;
-			public readonly SpinLock SpinLock;
+			public readonly object   Lock;
 
 			public Node (int key, T value, int heightValue)
 			{
@@ -62,7 +62,7 @@ namespace System.Collections.Concurrent
 				Value = value;
 				TopLayer = heightValue;
 				Nexts = new Node [heightValue + 1];
-				SpinLock = new SpinLock (false);
+				Lock = new object ();
 				Marked = FullyLinked = false;
 			}
 		}
@@ -218,13 +218,10 @@ namespace System.Collections.Concurrent
 					if (!isMarked) {
 						toDelete = succs [found];
 						topLayer = toDelete.TopLayer;
-						bool taken = false;
-						do {
-							toDelete.SpinLock.Enter (ref taken);
-						} while (!taken);
+						Monitor.Enter (toDelete.Lock);
 						// Now that we have the lock, check if the node hasn't already been marked
 						if (toDelete.Marked) {
-							toDelete.SpinLock.Exit (true);
+							Monitor.Exit (toDelete.Lock);
 							return false;
 						}
 						toDelete.Marked = true;
@@ -240,7 +237,7 @@ namespace System.Collections.Concurrent
 						for (int layer = topLayer; layer >= 0; layer--) {
 							preds [layer].Nexts [layer] = toDelete.Nexts [layer];
 						}
-						toDelete.SpinLock.Exit (true);
+						Monitor.Exit (toDelete.Lock);
 					} finally {
 						Unlock (preds, highestLocked);
 					}
@@ -278,17 +275,14 @@ namespace System.Collections.Concurrent
 				return false;
 			
 			try {
-				bool taken = false;
-				do {
-					succs [found].SpinLock.Enter (ref taken);
-				} while (!taken);
+				Monitor.Enter (succs [found].Lock);
 				Node node = succs [found];
 				if (node.FullyLinked && !node.Marked) {
 					value = node.Value;
 					return true;
 				}
 			} finally {
-				succs [found].SpinLock.Exit (true);
+				Monitor.Exit (succs [found].Lock);
 			}
 			
 			return false;
@@ -327,7 +321,7 @@ namespace System.Collections.Concurrent
 		void Unlock(Node[] preds, int highestLocked)
 		{
 			for (int i = 0; i <= highestLocked; i++) {
-				preds [i].SpinLock.Exit (true);
+				Monitor.Exit (preds [i].Lock);
 			}
 		}
 
@@ -341,10 +335,7 @@ namespace System.Collections.Concurrent
 				succ = succs [layer];
 				if (pred != prevPred) {
 					// Possible optimization : limit topLayer to the first refused lock
-					bool taken = false;
-					do {
-						pred.SpinLock.Enter (ref taken);
-					} while (!taken);
+					Monitor.Enter (pred.Lock);
 					highestLocked = layer;
 					prevPred = pred;
 				}

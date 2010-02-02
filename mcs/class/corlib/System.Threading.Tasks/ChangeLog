@@ -1,3 +1,18 @@
+2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Future.cs:
+	* Parallel.cs:
+	* ParallelLoopState.cs:
+	* Task.cs:
+	* TaskCompletionSource.cs:
+	* TaskContinuationOptions.cs:
+	* TaskCreationOptions.cs:
+	* TaskFactory.cs:
+	* TaskScheduler.cs:
+	* UnobservedTaskExceptionEventArgs.cs: Port to .NET 4 beta 2 API
+	* SimpleConcurrentBag.cs: Add a simpler implementation of ConcurrentBag
+	for use with parallel loops as ConcurrentBag was moved to System
+
 2009-08-19  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Task.cs: Refactor Wait methods.

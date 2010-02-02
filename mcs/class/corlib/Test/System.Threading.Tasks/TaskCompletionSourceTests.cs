@@ -31,7 +31,7 @@ using System.Threading.Tasks;
 
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
 	public class TaskCompletionSourceTests
@@ -85,10 +85,14 @@ namespace ParallelFxTests
 			Assert.IsNotNull (completionSource.Task, "#1");
 			Assert.IsTrue (completionSource.TrySetException (e), "#2");
 			Assert.AreEqual (TaskStatus.Faulted, completionSource.Task.Status, "#3");
-			Assert.AreEqual (e, completionSource.Task.Exception, "#4");
+			Assert.IsInstanceOfType (typeof (AggregateException), completionSource.Task.Exception, "#4.1");
+			
+			AggregateException aggr = (AggregateException)completionSource.Task.Exception;
+			Assert.AreEqual (1, aggr.InnerExceptions.Count, "#4.2");
+			Assert.AreEqual (e, aggr.InnerExceptions[0], "#4.3");
+			
 			Assert.IsFalse (completionSource.TrySetResult (42), "#5");
 			Assert.AreEqual (TaskStatus.Faulted, completionSource.Task.Status, "#6");
-			Assert.AreEqual (e, completionSource.Task.Exception, "#7");
 			Assert.IsFalse (completionSource.TrySetCanceled (), "#8");
 			Assert.AreEqual (TaskStatus.Faulted, completionSource.Task.Status, "#9");
 		}

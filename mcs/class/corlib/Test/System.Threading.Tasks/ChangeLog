@@ -1,3 +1,12 @@
+2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* FutureTests.cs:
+	* ParallelTestHelper.cs:
+	* ParallelTests.cs:
+	* SnziTests.cs:
+	* TaskCompletionSourceTests.cs:
+	* TaskTest.cs: Update namespace and tested methods
+
 2009-07-30  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* FutureTests.cs:

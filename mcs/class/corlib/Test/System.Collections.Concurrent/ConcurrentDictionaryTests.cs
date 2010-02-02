@@ -31,7 +31,7 @@ using System.Collections.Concurrent;
 using NUnit;
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Collections.Concurrent
 {
 	[TestFixture]
 	public class ConcurrentDictionaryTests
@@ -75,6 +75,7 @@ namespace ParallelFxTests
 					int own = Interlocked.Increment (ref index);
 					
 					while (!map.TryAdd ("monkey" + own.ToString (), 3));
+					
 				}, 4);
 				
 				Assert.AreEqual (7, map.Count);

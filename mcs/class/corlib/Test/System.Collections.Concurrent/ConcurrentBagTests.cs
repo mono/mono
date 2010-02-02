@@ -36,7 +36,7 @@ using System.Linq;
 using NUnit;
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Collections.Concurrent
 {
 	[TestFixture]
 	public class ConcurrentBagTests

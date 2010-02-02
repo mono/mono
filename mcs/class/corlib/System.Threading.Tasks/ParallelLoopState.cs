@@ -38,12 +38,10 @@ namespace System.Threading.Tasks
 			public long? LowestBreakIteration;
 		}
 		
-		Task[] tasks;
 		ExternalInfos extInfos;
 		
-		internal ParallelLoopState (Task[] tasks, ExternalInfos extInfos)
+		internal ParallelLoopState (ExternalInfos extInfos)
 		{
-			this.tasks = tasks;
 			this.extInfos = extInfos;
 		}
 		
@@ -85,14 +83,7 @@ namespace System.Threading.Tasks
 		
 		public void Stop ()
 		{
-			bool result = extInfos.IsStopped.Exchange (true);
-			if (!result) {
-				foreach (var t in tasks) {
-					if (t == null)
-						continue;
-					t.Cancel ();
-				}
-			}
+			extInfos.IsStopped.Exchange (true);
 		}
 	}
 	

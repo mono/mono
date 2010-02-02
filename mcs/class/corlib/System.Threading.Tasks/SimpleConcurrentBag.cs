@@ -1,6 +1,6 @@
 #if NET_4_0
 // 
-// CancellationTokenTests.cs
+// SimpleConcurrentBag.cs
 //  
 // Author:
 //       Jérémie "Garuma" Laval <jeremie.laval@gmail.com>
@@ -28,16 +28,62 @@
 using System;
 using System.Threading;
 
-using NUnit.Framework;
-
-namespace MonoTests.System.Threading
+namespace System.Threading.Tasks
 {
-	[TestFixtureAttribute]
-	public class CancellationTokenTests
-	{
 
-		public CancellationTokenTests ()
+	internal class SimpleConcurrentBag<T>
+	{
+		readonly IDequeOperations<T>[] deques;
+		readonly bool unique;
+		int index = -1;
+		
+		[ThreadStatic]
+		int stealIndex;
+		
+		public SimpleConcurrentBag (int num)
 		{
+			deques = new CyclicDeque<T>[num];
+			for (int i = 0; i < deques.Length; i++) {
+				deques[i] = new CyclicDeque<T> ();
+			}
+			unique = num <= 1;
+		}
+		
+		public int GetNextIndex ()
+		{
+			return Interlocked.Increment (ref index);
+		}
+		
+		public bool TryTake (int index, out T value)
+		{
+			value = default (T);
+			
+			return deques[index].PopBottom (out value) == PopResult.Succeed;
+		}
+		
+		public bool TrySteal (int index, out T value)
+		{
+			value = default (T);
+			
+			if (unique)
+				return false;
+			
+			const int roundThreshold = 3;
+			
+			for (int round = 0; round < roundThreshold; ++round) {
+				if (stealIndex == index)
+					stealIndex = (stealIndex + 1) % deques.Length;
+			
+				if (deques[(stealIndex = (stealIndex + 1) % deques.Length)].PopTop (out value) == PopResult.Succeed)
+					return true;
+			}
+			
+			return false;
+		}
+		
+		public void Add (int index, T value)
+		{
+			deques[index].PushBottom (value);
 		}
 	}
 }

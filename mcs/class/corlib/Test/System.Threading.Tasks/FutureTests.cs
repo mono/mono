@@ -29,7 +29,7 @@ using System.Threading.Tasks;
 
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
 	public class FutureTests
@@ -62,31 +62,6 @@ namespace ParallelFxTests
 			Assert.IsTrue (result, "#2");
 			Assert.AreEqual (10, cont.Result);
 		}
-		
-		/* Not pertinent anymore
-		 * [Test]
-		public void EmptyTaskTestCase()
-		{
-			Task<int> f = Task.Factory.StartNew<int>(delegate {});
-			f.Value = 3;
-			
-			Assert.AreEqual(3, f.Value, "#1");
-		}
-			
-		/*[Test, ExpectedExceptionAttribute()]
-		public void ManualSetWhenFunctionProvidedTestCase()
-		{
-			Task<int> f = InitTestTask();
-			f.Value = 2;
-		}
-		
-		/*[Test, ExpectedExceptionAttribute()]
-		public void ManualSetTwoTimesTestCase()
-		{
-			Task<int> f = Task.Factory.StartNew<int>();
-			f.Value = 2;
-			f.Value = 3;
-		}*/
 	}
 }
 #endif

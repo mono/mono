@@ -41,7 +41,6 @@ namespace MonoTests.System.Threading.Tasks
 		public static void Repeat (Action action, int numRun)
 		{
 			for (int i = 0; i < numRun; i++) {
-			  //Console.WriteLine ("Run " + i.ToString ());
 				action ();
 			}
 		}

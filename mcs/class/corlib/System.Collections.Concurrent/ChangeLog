@@ -1,3 +1,12 @@
+2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ConcurrentDictionary.cs:
+	* ConcurrentQueue.cs:
+	* ConcurrentStack.cs:
+	* Partitioner.cs: Port to .NET 4 beta 2 API
+
+	* ConcurrentSkipList.cs: Use Monitor for locking
+
 2009-08-19  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Partitioner.cs: Fix infinite recursion when calling Create

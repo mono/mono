@@ -27,32 +27,36 @@ using System;
 using System.Diagnostics;
 
 namespace System.Threading
-{	
+{
 	public class ManualResetEventSlim : IDisposable
 	{
-		const int defaultSpinCount = 20;
 		const int isSet    = 1;
 		const int isNotSet = 0;
-		readonly int spinCount;
-		readonly SpinWait sw = new SpinWait ();
+		const int defaultSpinCount = 20;
 
 		int state;
+		readonly int spinCount;
 
-		
-		public ManualResetEventSlim () : this(false, 20)
+		ManualResetEvent handle;
+
+		public ManualResetEventSlim () : this(false, defaultSpinCount)
 		{
 		}
-		
-		public ManualResetEventSlim (bool initState) : this (initState, 20)
+
+		public ManualResetEventSlim (bool initState) : this (initState, defaultSpinCount)
 		{
 		}
-		
+
 		public ManualResetEventSlim (bool initState, int spinCount)
 		{
+			if (spinCount < 0)
+				throw new ArgumentOutOfRangeException ("spinCount is less than 0", "spinCount");
+
 			this.state = initState ? isSet : isNotSet;
 			this.spinCount = spinCount;
+			this.handle = new ManualResetEvent (initState);
 		}
-		
+
 		public bool IsSet {
 			get {
 				return state == isSet;
@@ -64,84 +68,88 @@ namespace System.Threading
 				return spinCount;
 			}
 		}
-		
+
 		public void Reset ()
 		{
 			Interlocked.Exchange (ref state, isNotSet);
 		}
-		
+
 		public void Set ()
 		{
 			Interlocked.Exchange (ref state, isSet);
 		}
-		
+
 		public void Wait ()
 		{
-			// First spin
-			for (int i = 0; i < spinCount && state == isNotSet; i++)
-				sw.SpinOnce ();
-			
-			// Then, fallback to classic Sleep's yielding
-			while (state == isNotSet)
-				Thread.Sleep (0);
+			Wait (CancellationToken.None);
 		}
-		
+
 		public bool Wait (int millisecondsTimeout)
+		{
+			return Wait (millisecondsTimeout, CancellationToken.None);
+		}
+
+		public bool Wait (TimeSpan ts)
+		{
+			return Wait ((int)ts.TotalMilliseconds, CancellationToken.None);
+		}
+
+		public void Wait (CancellationToken token)
+		{
+			Wait (-1, token);
+		}
+
+		public bool Wait (int millisecondsTimeout, CancellationToken token)
 		{
 			if (millisecondsTimeout < -1)
 				throw new ArgumentOutOfRangeException ("millisecondsTimeout",
 				                                       "millisecondsTimeout is a negative number other than -1");
-			
-			if (millisecondsTimeout == -1) {
-				Wait ();
-				return true;
-			}
-			
+
 			Watch s = Watch.StartNew ();
-			
-			// First spin
-			for (int i = 0; i < spinCount && state == isNotSet; i++) {
-				if (s.ElapsedMilliseconds >= millisecondsTimeout)
-					return false;
-				
-				sw.SpinOnce ();
-			}
-			
-			// Then, fallback to classic Sleep's yielding
+			SpinWait sw = new SpinWait ();
+			int count = 0;
+
 			while (state == isNotSet) {
-				if (s.ElapsedMilliseconds >= millisecondsTimeout)
+				if (token.IsCancellationRequested)
 					return false;
-				
-				sw.SpinOnce ();
+
+				if (millisecondsTimeout > -1 && s.ElapsedMilliseconds > millisecondsTimeout)
+					return false;
+
+				if (count < spinCount) {
+				    sw.SpinOnce ();
+					count++;
+				} else {
+					Thread.Sleep (0);
+				}
 			}
-			
+
 			return true;
 		}
-		
-		public bool Wait (TimeSpan ts)
+
+		public bool Wait (TimeSpan ts, CancellationToken token)
 		{
-			return Wait ((int)ts.TotalMilliseconds);
+			return Wait ((int)ts.TotalMilliseconds, token);
 		}
-		
-		[MonoTODO]
+
 		public WaitHandle WaitHandle {
 			get {
-				return null;
+				return handle;
 			}
 		}
-		
-		#region IDisposable implementation 
+
+		#region IDisposable implementation
 		public void Dispose ()
 		{
 			Dispose(true);
 		}
-		
+
 		protected virtual void Dispose(bool managedRes)
 		{
-			
+
 		}
-		#endregion 
-		
+		#endregion
+
 	}
 }
 #endif

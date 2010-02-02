@@ -30,7 +30,7 @@ using System.Collections.Concurrent;
 using NUnit;
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Collections.Concurrent
 {
 	[TestFixtureAttribute]
 	public class ConcurrentSkipListTests

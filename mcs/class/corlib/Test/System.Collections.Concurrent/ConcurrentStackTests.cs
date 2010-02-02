@@ -29,7 +29,7 @@ using System.Linq;
 using System.Collections.Concurrent;
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Collections.Concurrent
 {
 	[TestFixture()]
 	public class ConcurrentStackTests

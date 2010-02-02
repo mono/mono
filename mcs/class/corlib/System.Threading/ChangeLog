@@ -1,3 +1,13 @@
+2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* CancellationToken.cs:
+	* CancellationTokenSource.cs:
+	* ManualResetEventSlim.cs:
+	* SemaphoreSlim.cs:
+	* SpinLock.cs:
+	* SpinWait.cs:
+	* ThreadLocal.cs: Port to .NET 4 beta 2 API
+
 2009-12-09  Jb Evain  <jbevain@novell.com>
 
 	* ThreadPool.cs (QueueUserWorkItem): properly throw

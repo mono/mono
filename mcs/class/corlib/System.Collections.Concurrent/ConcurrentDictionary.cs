@@ -66,7 +66,6 @@ namespace System.Collections.Concurrent
 		ConcurrentSkipList<Basket> container
 			= new ConcurrentSkipList<Basket> ((value) => value[0].GetHashCode ());
 		int count;
-		int stamp = int.MinValue;
 		IEqualityComparer<TKey> comparer;
 		
 		public ConcurrentDictionary () : this (EqualityComparer<TKey>.Default)
@@ -125,10 +124,7 @@ namespace System.Collections.Concurrent
 		}
 		
 		public bool TryAdd (TKey key, TValue value)
-		{
-			Interlocked.Increment (ref count);
-			Interlocked.Increment (ref stamp);
-			
+		{			
 			Basket basket;
 			// Add a value to an existing basket
 			if (TryGetBasket (key, out basket)) {
@@ -144,8 +140,16 @@ namespace System.Collections.Concurrent
 				// Add a new basket
 				basket = new Basket ();
 				basket.Add (new Pair (key, value));
-				return container.TryAdd (basket);
+				
+				if (container.TryAdd (basket)) {
+					Interlocked.Increment (ref count);
+					return true;
+				} else {
+					return false;
+				}
 			}
+			
+			Interlocked.Increment (ref count);
 			
 			return true;
 		}
@@ -153,6 +157,30 @@ namespace System.Collections.Concurrent
 		void ICollection<KeyValuePair<TKey,TValue>>.Add (KeyValuePair<TKey, TValue> pair)
 		{
 			Add (pair.Key, pair.Value);
+		}
+		
+		public TValue AddOrUpdate (TKey key, Func<TKey, TValue> addValueFactory, Func<TKey, TValue, TValue> updateValueFactory)
+		{
+			Basket basket;
+			TValue temp;
+			
+			if (!TryGetBasket (key, out basket)) {
+				Add (key, (temp = addValueFactory (key)));
+			} else {
+				lock (basket) {
+					Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
+					if (pair == null)
+						throw new InvalidOperationException ("pair is null, shouldn't be");
+					pair.Value = (temp = updateValueFactory (key, pair.Value));
+				}
+			}
+			
+			return temp;
+		}
+		
+		public TValue AddOrUpdate (TKey key, TValue addValue, Func<TKey, TValue, TValue> updateValueFactory)
+		{
+			return AddOrUpdate (key, (_) => addValue, updateValueFactory);
 		}
 		
 		TValue GetValue (TKey key)
@@ -215,9 +243,35 @@ namespace System.Collections.Concurrent
 					if (pair == null)
 						throw new InvalidOperationException ("pair is null, shouldn't be");
 					pair.Value = value;
-					Interlocked.Increment (ref stamp);
 				}
 			}
+		}
+		
+		public TValue GetOrAdd (TKey key, Func<TKey, TValue> valueFactory)
+		{
+			Basket basket;
+			TValue temp = default (TValue);
+			
+			if (TryGetBasket (key, out basket)) {
+				Pair pair = null;
+				lock (basket) {
+					pair = basket.Find ((p) => comparer.Equals (p.Key, key));
+					if (pair != null)
+						temp = pair.Value;
+				}
+				
+				if (pair == null)
+					Add (key, (temp = valueFactory (key)));
+			} else {
+				Add (key, (temp = valueFactory (key)));
+			}
+			
+			return temp;
+		}
+		
+		public TValue GetOrAdd (TKey key, TValue value)
+		{
+			return GetOrAdd (key, (_) => value);
 		}
 		
 		public bool TryRemove(TKey key, out TValue value)

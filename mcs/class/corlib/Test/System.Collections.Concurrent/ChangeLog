@@ -1,3 +1,14 @@
+2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* CollectionStressTestHelper.cs:
+	* ConcurrentBagTests.cs:
+	* ConcurrentDictionaryTests.cs:
+	* ConcurrentQueueTests.cs:
+	* ConcurrentSkipListTests.cs:
+	* ConcurrentStackTests.cs:
+	* ParallelConcurrentQueueTests.cs:
+	* ParallelConcurrentStackTests.cs: Update namespaces and tested methods
+
 2009-08-11  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* BlockingCollectionTests.cs: Moved file.

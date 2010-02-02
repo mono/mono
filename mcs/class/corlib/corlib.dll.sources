@@ -1513,8 +1513,8 @@ System.Collections.Concurrent/ConcurrentDictionary.cs
 System.Collections.Concurrent/Partitioner.cs
 System.Collections.Concurrent/ConcurrentQueue.cs
 System.Collections.Concurrent/ConcurrentSkipList.cs
-System.Collections.Concurrent/Partitionners/ListPartitioner.cs
-System.Collections.Concurrent/Partitionners/EnumerablePartitioner.cs
+System.Collections.Concurrent/Partitioners/ListPartitioner.cs
+System.Collections.Concurrent/Partitioners/EnumerablePartitioner.cs
 System.Collections.Concurrent/IProducerConsumerCollection.cs
 System.Collections.Concurrent/ConcurrentStack.cs
 System.Threading/LazyInitializer.cs
@@ -1536,3 +1536,5 @@ System.Threading.Tasks/Parallel.cs
 System.Threading.Tasks/ParallelLoopResult.cs
 System.Threading.Tasks/ParallelLoopState.cs
 System/AggregateException.cs
+System.Threading.Tasks/SimpleConcurrentBag.cs
+System.Threading.Tasks/UnobservedTaskExceptionEventArgs.cs

@@ -1,3 +1,9 @@
+2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* CancellationTokenTests.cs:
+	* LazyInitTests.cs:
+	* ThreadLazyTests.cs: Update namespace and tested methods
+
 2009-12-09  Jb Evain  <jbevain@novell.com>
 
 	* ThreadTest.cs: add a test for a null callback passed to
