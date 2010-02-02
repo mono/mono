@@ -1,5 +1,7 @@
 2010-02-02  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Add support for unaligned loads.
+
 	* mini-amd64.c (mono_arch_emit_prolog): Initialize lmf->rsp in the prolog too
 	so async stack walks don't crash.
 
