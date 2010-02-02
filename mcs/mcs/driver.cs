@@ -222,11 +222,10 @@ namespace Mono.CSharp
 			Console.WriteLine (
 				"Other flags in the compiler\n" +
 				"   --fatal            Makes errors fatal\n" +
+				"   --lint             Enhanced warnings\n" +
 				"   --parse            Only parses the source file\n" +
-				"   --typetest         Tests the tokenizer's built-in type parser\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
 				"   --timestamp        Displays time stamps of various compiler events\n" +
-				"   --expect-error X   Expect that error X will be encountered\n" +
 				"   -v                 Verbose parsing (for debugging the parser)\n" + 
 				"   --mcs-debug X      Sets MCS debugging level to X\n");
 		}
@@ -988,6 +987,10 @@ namespace Mono.CSharp
 				}
 				link_paths.Add (args [++i]);
 				return true;
+
+			case "--lint":
+				RootContext.EnhancedWarnings = true;
+				return true;
 				
 			case "--nostdlib":
 				Report.Warning (-29, 1, "Compatibility: Use -nostdlib instead of --nostdlib");
@@ -1181,6 +1184,7 @@ namespace Mono.CSharp
 				RootContext.Optimize = false;
 				return true;
 
+			// TODO: Not supported by csc 3.5+
 			case "/incremental":
 			case "/incremental+":
 			case "/incremental-":

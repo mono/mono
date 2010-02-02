@@ -50,6 +50,7 @@ namespace Mono.CSharp {
 		public static bool VerifyClsCompliance = true;
 		public static bool Optimize = true;
 		public static LanguageVersion Version;
+		public static bool EnhancedWarnings;
 
 		public static MetadataVersion MetadataCompatibilityVersion;
 
