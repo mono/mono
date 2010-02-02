@@ -1,5 +1,10 @@
 2010-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandlerFactory.cs : lock when it tries to acquire
+	  HttpHandler.
+
+2010-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : add another workaround for blocking
 	  concurrent calls.
 

@@ -59,6 +59,8 @@ namespace System.ServiceModel.Channels {
 
 		public IHttpHandler GetHandler (HttpContext context, string requestType, string url, string pathTranslated)
 		{
+			lock (handlers) {
+
 			if (handlers.ContainsKey (url))
 				return handlers [url];
 			
@@ -71,6 +73,8 @@ namespace System.ServiceModel.Channels {
 			handlers [url] = handler;
 
 			return handler;
+
+			}
 		}
 
 		public void ReleaseHandler (IHttpHandler handler)
