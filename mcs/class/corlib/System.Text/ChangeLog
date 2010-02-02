@@ -1,3 +1,7 @@
+2010-02-02  Jb Evain  <jbevain@novell.com>
+
+	* ASCIIEncoding.cs, Latin1Encoding.cs: remove duplicated code.
+
 2009-12-09  Chris Toshok  <toshok@ximian.com>
 
 	* Encoding.cs (get_Default): moonlight defaults to UTF8, not

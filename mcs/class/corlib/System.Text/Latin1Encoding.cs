@@ -88,50 +88,14 @@ internal class Latin1Encoding : Encoding
 		      ref EncoderFallbackBuffer buffer,
 		      ref char [] fallback_chars)
 	{
-		if (chars == null) {
+		if (chars == null)
 			throw new ArgumentNullException ("chars");
-		}
-		if (bytes == null) {
-			throw new ArgumentNullException ("bytes");
-		}
-		if (charIndex < 0 || charIndex > chars.Length) {
-			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
-		}
-		if (charCount < 0 || charCount > (chars.Length - charIndex)) {
-			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_Array"));
-		}
-		if (byteIndex < 0 || byteIndex > bytes.Length) {
-			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
-		}
-		if ((bytes.Length - byteIndex) < charCount) {
-			throw new ArgumentException (_("Arg_InsufficientSpace"));
-		}
-		int count = charCount;
-		char ch;
-		while (count-- > 0) {
-			ch = chars [charIndex++];
-			if (ch < (char)0x0100) {
-				bytes [byteIndex++] = (byte)ch;
-			} else if (ch >= '\uFF01' && ch <= '\uFF5E') {
-				bytes [byteIndex++] = (byte)(ch - 0xFEE0);
-			} else {
-				if (buffer == null)
-					buffer = EncoderFallback.CreateFallbackBuffer ();
-				if (Char.IsSurrogate (ch) && count > 1 &&
-				    Char.IsSurrogate (chars [charIndex]))
-					buffer.Fallback (ch, chars [charIndex], charIndex++ - 1);
-				else
-					buffer.Fallback (ch, charIndex - 1);
-				if (fallback_chars == null || fallback_chars.Length < buffer.Remaining)
-					fallback_chars = new char [buffer.Remaining];
-				for (int i = 0; i < fallback_chars.Length; i++)
-					fallback_chars [i] = buffer.GetNextChar ();
-				byteIndex += GetBytes (fallback_chars, 0, 
-					fallback_chars.Length, bytes, byteIndex,
-					ref buffer, ref fallback_chars);
+
+		unsafe {
+			fixed (char *cptr = chars) {
+				return InternalGetBytes (cptr, chars.Length, charIndex, charCount, bytes, byteIndex, ref buffer, ref fallback_chars);
 			}
 		}
-		return charCount;
 	}
 
 	// Convenience wrappers for "GetBytes".
@@ -149,28 +113,36 @@ internal class Latin1Encoding : Encoding
 		      ref EncoderFallbackBuffer buffer,
 		      ref char [] fallback_chars)
 	{
-		if (s == null) {
+		if (s == null)
 			throw new ArgumentNullException ("s");
+
+		unsafe {
+			fixed (char *chars = s) {
+				return InternalGetBytes (chars, s.Length, charIndex, charCount, bytes, byteIndex, ref buffer, ref fallback_chars);
+			}
 		}
-		if (bytes == null) {
+	}
+
+	unsafe int InternalGetBytes (char *chars, int charLength, int charIndex, int charCount,
+		      byte[] bytes, int byteIndex,
+		      ref EncoderFallbackBuffer buffer,
+		      ref char [] fallback_chars)
+	{
+		if (bytes == null)
 			throw new ArgumentNullException ("bytes");
-		}
-		if (charIndex < 0 || charIndex > s.Length) {
-			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_StringIndex"));
-		}
-		if (charCount < 0 || charCount > (s.Length - charIndex)) {
-			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_StringRange"));
-		}
-		if (byteIndex < 0 || byteIndex > bytes.Length) {
+		if (charIndex < 0 || charIndex > charLength)
+			throw new ArgumentOutOfRangeException ("charIndex", _("ArgRange_Array"));
+		if (charCount < 0 || charCount > (charLength - charIndex))
+			throw new ArgumentOutOfRangeException ("charCount", _("ArgRange_Array"));
+		if (byteIndex < 0 || byteIndex > bytes.Length)
 			throw new ArgumentOutOfRangeException ("byteIndex", _("ArgRange_Array"));
-		}
-		if ((bytes.Length - byteIndex) < charCount) {
+		if ((bytes.Length - byteIndex) < charCount)
 			throw new ArgumentException (_("Arg_InsufficientSpace"));
-		}
+
 		int count = charCount;
 		char ch;
 		while (count-- > 0) {
-			ch = s [charIndex++];
+			ch = chars [charIndex++];
 			if (ch < (char)0x0100) {
 				bytes [byteIndex++] = (byte)ch;
 			} else if (ch >= '\uFF01' && ch <= '\uFF5E') {
@@ -179,8 +151,8 @@ internal class Latin1Encoding : Encoding
 				if (buffer == null)
 					buffer = EncoderFallback.CreateFallbackBuffer ();
 				if (Char.IsSurrogate (ch) && count > 1 &&
-				    Char.IsSurrogate (s [charIndex]))
-					buffer.Fallback (ch, s [charIndex], charIndex++ - 1);
+				    Char.IsSurrogate (chars [charIndex]))
+					buffer.Fallback (ch, chars [charIndex], charIndex++ - 1);
 				else
 					buffer.Fallback (ch, charIndex - 1);
 				if (fallback_chars == null || fallback_chars.Length < buffer.Remaining)
