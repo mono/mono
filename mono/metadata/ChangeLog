@@ -1,3 +1,7 @@
+2010-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Handle MonoArrayMethod. Fixes #575955.
+
 2010-02-01  Mark Probst  <mark.probst@gmail.com>
 
 	* object.c, domain.c: When using SGen, we must register
