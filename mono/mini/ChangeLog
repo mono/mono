@@ -1,3 +1,8 @@
+2010-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (common_call_trampoline): Fix a problem where the callsite
+	was not patched if the callee needed an rgctx trampoline.
+
 2010-02-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_arch_get_global_int_regs): Reserve r29 for holding the
