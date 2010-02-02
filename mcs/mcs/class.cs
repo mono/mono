@@ -2054,9 +2054,11 @@ namespace Mono.CSharp {
 			// Check for internal or private fields that were never assigned
 			//
 			if (Report.WarningLevel >= 3) {
-				CheckMemberUsage (properties, "property");
-				CheckMemberUsage (methods, "method");
-				CheckMemberUsage (constants, "constant");
+				if (RootContext.EnhancedWarnings) {
+					CheckMemberUsage (properties, "property");
+					CheckMemberUsage (methods, "method");
+					CheckMemberUsage (constants, "constant");
+				}
 
 				if (fields != null){
 					bool is_type_exposed = Kind == MemberKind.Struct || IsExposedFromAssembly ();

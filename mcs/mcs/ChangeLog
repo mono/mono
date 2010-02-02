@@ -1,5 +1,11 @@
 2010-02-02  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #574991
+	* rootcontext.cs, class.cs, driver.cs: Hide enhanced warnings behind
+	--lint.
+
+2010-02-02  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #575986
 	* expression.cs: Don't mutate typeof type definitions.
 
