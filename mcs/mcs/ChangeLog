@@ -1,3 +1,8 @@
+2010-02-02  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #575986
+	* expression.cs: Don't mutate typeof type definitions.
+
 2010-01-28  Marek Safar  <marek.safar@gmail.com>
 
 	* decl.cs: Use only one set of modifiers.
