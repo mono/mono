@@ -324,6 +324,8 @@ namespace System.ServiceModel.Channels
 		{
 			lock (registered_channels) {
 				lm.pending.Add (ctx);
+				// FIXME: this should not be required, but it somehow saves some failures wrt concurrent calls.
+				Thread.Sleep (100);
 				lm.wait_http_ctx.Set ();
 			}
 		}

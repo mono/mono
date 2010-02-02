@@ -1,5 +1,10 @@
 2010-02-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs : add another workaround for blocking
+	  concurrent calls.
+
+2010-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : small refactoring.
 
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
