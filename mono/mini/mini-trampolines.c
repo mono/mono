@@ -101,7 +101,7 @@ mono_convert_imt_slot_to_vtable_slot (gpointer* slot, gpointer *regs, guint8 *co
 gpointer
 mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 {
-	gpointer addr;
+	gpointer addr, compiled_method;
 	gpointer *vtable_slot;
 	gboolean generic_shared = FALSE;
 	MonoMethod *declaring = NULL;
@@ -289,7 +289,7 @@ mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 			m = mono_marshal_get_synchronized_wrapper (m);
 	}
 
-	addr = mono_compile_method (m);
+	addr = compiled_method = mono_compile_method (m);
 	g_assert (addr);
 
 	mono_debugger_trampoline_compiled (code, m, addr);
@@ -367,7 +367,7 @@ mono_magic_trampoline (gssize *regs, guint8 *code, MonoMethod *m, guint8* tramp)
 				MonoJitInfo *ji = 
 					mono_jit_info_table_find (mono_domain_get (), (char*)code);
 				MonoJitInfo *target_ji = 
-					mono_jit_info_table_find (mono_domain_get (), mono_get_addr_from_ftnptr (addr));
+					mono_jit_info_table_find (mono_domain_get (), mono_get_addr_from_ftnptr (compiled_method));
 
 				if (mono_method_same_domain (ji, target_ji))
 					mono_arch_patch_callsite (ji->code_start, code, addr);
