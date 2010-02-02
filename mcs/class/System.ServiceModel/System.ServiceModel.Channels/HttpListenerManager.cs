@@ -157,7 +157,7 @@ namespace System.ServiceModel.Channels
 			http_listener = null;
 		}
 
-		public override void KickContextReceiver (IChannelListener listener, Action<HttpContextInfo> contextReceivedCallback)
+		protected override void KickContextReceiver (IChannelListener listener, Action<HttpContextInfo> contextReceivedCallback)
 		{
 			http_listener.BeginGetContext (delegate (IAsyncResult result) {
 				var hctx = http_listener.EndGetContext (result);
@@ -192,7 +192,7 @@ namespace System.ServiceModel.Channels
 
 		Func<IChannelListener,HttpContext> wait_delegate;
 
-		public override void KickContextReceiver (IChannelListener listener, Action<HttpContextInfo> contextReceivedCallback)
+		protected override void KickContextReceiver (IChannelListener listener, Action<HttpContextInfo> contextReceivedCallback)
 		{
 			if (wait_delegate == null)
 				wait_delegate = new Func<IChannelListener,HttpContext> (http_handler.WaitForRequest);
@@ -302,25 +302,30 @@ namespace System.ServiceModel.Channels
 			}
 		}
 
-		public abstract void KickContextReceiver (IChannelListener listener, Action<HttpContextInfo> contextReceiverCallback);
+		protected abstract void KickContextReceiver (IChannelListener listener, Action<HttpContextInfo> contextReceiverCallback);
 
 		void DispatchHttpListenerContext (HttpContextInfo ctx)
 		{
 			if (wsdl_instance == null) {
-				pending.Add (ctx);
-				wait_http_ctx.Set ();
+				AddListenerContext (this, ctx);
 				return;
 			}
 			foreach (var l in registered_channels [channel_listener.Uri]) {
 				var lm = l.GetProperty<HttpListenerManager> ();
 				if (lm.FilterHttpContext (ctx)) {
-					lm.pending.Add (ctx);
-					lm.wait_http_ctx.Set ();
+					AddListenerContext (lm, ctx);
 					return;
 				}
 			}
-			pending.Add (ctx);
-			wait_http_ctx.Set ();
+			AddListenerContext (this, ctx);
+		}
+
+		static void AddListenerContext (HttpListenerManager lm, HttpContextInfo ctx)
+		{
+			lock (registered_channels) {
+				lm.pending.Add (ctx);
+				lm.wait_http_ctx.Set ();
+			}
 		}
 
 		const UriComponents cmpflag = UriComponents.HttpRequestUrl ^ UriComponents.Query;

@@ -1,3 +1,7 @@
+2010-02-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpListenerManager.cs : small refactoring.
+
 2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs : added a workaround receiver delay
