@@ -1,3 +1,9 @@
+2010-02-02	Rodrigo B. de Oliveira	<rodrigo@unity3d.com>
+
+	* AssemblyResolver.cs:
+		guard against non existing framework directory
+		(for scenarios where lib/mono/3.5 is not available).
+
 2009-12-22  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #565849.
