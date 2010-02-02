@@ -347,7 +347,7 @@ namespace System.Threading.Tasks
 				} catch (Exception e) {
 					exception = new AggregateException (e);
 					status = TaskStatus.Faulted;
-					if (taskScheduler.FireUnobservedEvent (Exception).Observed)
+					if (taskScheduler.FireUnobservedEvent (exception).Observed)
 						exceptionObserved = true;
 				}
 			} else {
@@ -371,8 +371,14 @@ namespace System.Threading.Tasks
 		internal void ChildCompleted ()
 		{
 			childTasks.Signal ();
-			if (childTasks.IsSet && status == TaskStatus.WaitingForChildrenToComplete)
+			if (childTasks.IsSet && status == TaskStatus.WaitingForChildrenToComplete) {
 				status = TaskStatus.RanToCompletion;
+				
+				// Let continuation creation process
+				EventHandler tempCompleted = completed;
+				if (tempCompleted != null) 
+					tempCompleted (this, EventArgs.Empty);
+			}
 		}
 
 		internal virtual void InnerInvoke ()
@@ -392,16 +398,16 @@ namespace System.Threading.Tasks
 			
 			// Don't override Canceled or Faulted
 			if (status == TaskStatus.Running) {
-				if (childTasks.IsSet )
+				if (childTasks.IsSet) {
 					status = TaskStatus.RanToCompletion;
-				else
+					// Let continuation creation process
+					EventHandler tempCompleted = completed;
+					if (tempCompleted != null)
+						tempCompleted (this, EventArgs.Empty);
+				} else {
 					status = TaskStatus.WaitingForChildrenToComplete;
+				}
 			}
-			
-			// Call the event in the correct style
-			EventHandler tempCompleted = completed;
-			if (tempCompleted != null) 
-				tempCompleted (this, EventArgs.Empty);
 			
 			// Reset the current thingies
 			current = null;

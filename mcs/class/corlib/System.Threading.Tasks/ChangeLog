@@ -1,5 +1,11 @@
 2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* Task.cs: Fix autocomplete mistake (s/Exception/exception/).
+	Let continuation processing happens at the right moment when
+	task has child.
+
+2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* Future.cs:
 	* Parallel.cs:
 	* ParallelLoopState.cs:
