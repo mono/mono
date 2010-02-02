@@ -6992,7 +6992,8 @@ namespace Mono.CSharp {
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
 		{
-			typearg = storey.MutateType (typearg);
+			if (!TypeManager.IsGenericTypeDefinition (typearg))
+				typearg = storey.MutateType (typearg);
 		}
 
 		public Type TypeArgument {
