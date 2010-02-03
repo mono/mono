@@ -113,7 +113,7 @@ namespace Microsoft.Build.BuildEngine {
 			if (!Path.IsPathRooted (file) && directory != null && directory != String.Empty)
 				file = Path.Combine (directory, file);
 		
-			return File.Exists (file);
+			return File.Exists (file) || Directory.Exists (file);
 		}
 
 		static bool HasTrailingSlash (string file, Project context)
