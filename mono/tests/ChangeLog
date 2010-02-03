@@ -1,3 +1,13 @@
+2010-02-03  Sylvain Dupont <duposyl@gmail.com>
+
+	backport of r149817
+
+	* cominterop.cs libtest.c: Added tests for marshalling
+	  in, in/byref, in/out, in/out/byref parameters of type
+	  SAFEARRAY[VARIANT].
+
+	Code is contributed under MIT/X11 license.
+
 2009-12-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* libtest.c pinvoke2.cs: Add a test for calling pinvoke methods using calli.
