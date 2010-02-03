@@ -1,3 +1,8 @@
+2010-02-03  Astushi Enomoto  <atsushi@ximian.com>
+
+	* HTTP_listener_notes.txt: I couldn't help but write about it to
+	  not keep myself confused by this complicated stuff.
+
 2010-01-20  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel_test.dll.sources: move back some FeatureBased
