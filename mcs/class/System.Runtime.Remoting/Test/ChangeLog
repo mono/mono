@@ -1,5 +1,10 @@
 2010-02-03  Jonathan Pobst  <monkey@jpobst.com>
 
+	* HttpCalls.cs: Disable all tests here due to excessive
+	sporadic failures.  Filed as bug #576724.
+
+2010-02-03  Jonathan Pobst  <monkey@jpobst.com>
+
 	* BaseCalls.cs: Mark tests as NotWorking.  Reported as bug #576618.
 
 2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
