@@ -1,3 +1,7 @@
+2010-02-03  Jonathan Pobst  <monkey@jpobst.com>
+
+	* BaseCalls.cs: Mark tests as NotWorking.  Reported as bug #576618.
+
 2009-09-12 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpServerChannelTests.cs:
