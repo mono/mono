@@ -1,3 +1,9 @@
+2010-02-03  Bill Holmes  <billholmes54@gmail.com>
+
+	* debugger-agent.c : Fixing MSVC builds.
+
+	Code is contributed under MIT/X11 license.
+
 2010-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c (mono_arch_emit_prolog): Initialize lmf->rsp in the prolog too

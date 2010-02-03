@@ -42,6 +42,9 @@
 
 /* Definitions to make backporting to 2.6 easier */
 #ifdef PLATFORM_WIN32
+#ifdef _MSC_VER
+#include <winsock2.h>
+#endif
 #define HOST_WIN32
 #define TARGET_WIN32
 #endif
