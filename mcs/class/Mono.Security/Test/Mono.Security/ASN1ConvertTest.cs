@@ -42,7 +42,7 @@ namespace MonoTests.Mono.Security {
 #if NET_2_0
 			Assert.AreEqual (DateTimeKind.Utc, actual.Kind, "Kind");
 #endif
-			AssertDate (expected, actual, "DateTime");
+			AssertDate (expected, actual.ToLocalTime(), "DateTime");
 		}
 
 		[Test]
@@ -55,7 +55,7 @@ namespace MonoTests.Mono.Security {
 #if NET_2_0
 			Assert.AreEqual (DateTimeKind.Utc, actual.Kind, "Kind");
 #endif
-			AssertDate (expected, actual, "DateTime");
+			AssertDate (expected, actual.ToLocalTime(), "DateTime");
 		}
 
 		[Test]
@@ -68,7 +68,7 @@ namespace MonoTests.Mono.Security {
 #if NET_2_0
 			Assert.AreEqual (DateTimeKind.Utc, actual.Kind, "Kind");
 #endif
-			AssertDate (expected, actual, "DateTime");
+			AssertDate (expected, actual.ToLocalTime(), "DateTime");
 		}
 
 		[Test]
