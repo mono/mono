@@ -72,7 +72,8 @@ namespace System.Text.RegularExpressions
 				int gcount = m.Groups.Count;
 				for (int gindex = 1; gindex < gcount; gindex++) {
 					Group grp = m.Groups [gindex];
-					splits.Add (input.Substring (grp.Index, grp.Length));
+					if (grp.Length > 0)
+						splits.Add (input.Substring (grp.Index, grp.Length));
 				}
 
 				if (regex.RightToLeft)

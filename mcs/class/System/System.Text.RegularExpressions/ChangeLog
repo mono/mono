@@ -1,3 +1,8 @@
+2010-02-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* BaseMachine.cs (Split): Don't add empty strings if they don't come from
+	the first capture group. Fixes #566117.
+
 2010-01-12  Miguel de Icaza  <miguel@novell.com>
 
 	* Regex.cs: Re-enable the new regex compiler as the bug seems to
