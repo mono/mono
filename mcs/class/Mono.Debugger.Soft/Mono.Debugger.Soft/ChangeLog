@@ -1,5 +1,9 @@
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* TypeMirror.cs (EnumUnderlyingType): New property.
+
+	* EnumMirror.cs: Use it.
+
 	* VirtualMachine.cs (CreateEnumMirror): New method to create an EnumMirror.
 
 	* AppDomainMirror.cs (GetCorrespondingType): New method to return a TypeMirror
