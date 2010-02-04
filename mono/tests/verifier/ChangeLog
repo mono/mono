@@ -1,3 +1,10 @@
+2010-02-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* invalid_branch_in_between_prefix_and_instruction.il:
+	* invalid_empty_filter_block.il:
+	* make_endfilter_test.sh
+	* make_endfinally_test.sh: Bunch of OSX and test fixes.
+
 2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Makefile, *.sh, *.il: Change status of a bunch of a tests to reflect the metadata
