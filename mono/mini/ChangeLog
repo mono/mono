@@ -1,5 +1,7 @@
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (type_commands): Return the enumness if the type as well.
+
 	* image-writer.c: Reduce the amount of #ifdefs a bit.
 
 	* aot-compiler.c: Reduce the amount of #ifdefs. Add beginnings of support for
