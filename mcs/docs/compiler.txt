@@ -1037,8 +1037,8 @@
 ** Enhancing Completion
 
 	Code completion is a process that will be curated over time.  
-	Just like producing good error reports or warnings is an
-	iterative process to find a good balance, the code completion
+	Just like producing good error reports and warnings is an
+	iterative process, to find a good balance, the code completion
 	engine in the compiler will require tuning to find the right
 	balance for the end user. 
 
@@ -1211,7 +1211,9 @@
 	`--fatal' flag is passed to the compiler, the Report.Error
 	routine will throw an exception.  This can be used to pinpoint
 	the location of the bug and examine the variables around the
-	error location.
+	error location.	 If you pass a number to --fatal the exception
+	will only be thrown when the error count reaches the specified
+	count. 
 
 	Warnings can be turned into errors by using the `--werror'
 	flag to the compiler. 
