@@ -232,14 +232,18 @@ namespace System.Web.Compilation
 				if (reader.Name == "preserve" && reader.HasAttributes) {
 					reader.MoveToNextAttribute ();
 					string val = reader.Value;
+					// 1 -> app_code subfolder - add the assembly to CodeAssemblies
 					// 2 -> ashx
 					// 3 -> ascx, aspx
-					// 6 -> app_code - nothing to do here
+					// 6 -> app_code - add the assembly to CodeAssemblies
 					// 8 -> global.asax
 					// 9 -> App_GlobalResources - set the assembly for HttpContext
 					if (reader.Name == "resultType" && (val == "2" || val == "3" || val == "8"))
 						LoadPageData (reader, true);
-					else if (val == "9") {
+					else if (val == "1" || val == "6") {
+						PreCompilationData pd = LoadPageData (reader, false);
+						CodeAssemblies.Add (Assembly.Load (pd.AssemblyFileName));
+					} else if (val == "9") {
 						PreCompilationData pd = LoadPageData (reader, false);
 						HttpContext.AppGlobalResourcesAssembly = Assembly.Load (pd.AssemblyFileName);
 					}
