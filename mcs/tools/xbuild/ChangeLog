@@ -1,3 +1,10 @@
+2010-02-04  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets (_RecordCleanFile): Append list of
+	current build files to list of previous build files.
+	(_GetCleanFileWrites): Rename items to be obvious of the contents.
+	(CoreClean): Delete the file list also.
+
 2010-01-21	Rodrigo B. de Oliveira <rodrigo@unity3d.com>
 
 	* Main.cs
