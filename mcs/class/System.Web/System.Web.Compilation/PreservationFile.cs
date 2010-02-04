@@ -38,7 +38,11 @@ namespace System.Web.Compilation
 	enum BuildResultTypeCode
 	{
 		Unknown = 0,
-		AspxPage = 3,
+		AppCodeSubFolder = 1,
+		Handler = 2,
+		PageOrControl = 3,
+		AppCode = 6,
+		Global = 8,
 		TopLevelAssembly = 9
 	}
 
