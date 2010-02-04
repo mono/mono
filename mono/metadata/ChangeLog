@@ -1,3 +1,12 @@
+2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-basic-block.c:
+	* mono-basic-block.h: New implementation of a basic block formation pass.
+	The formation pass does static liveness analysis as well to detect dead
+	basic blocks.
+
+	backport of r150887.
+
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_native_wrapper): Emit a null check for the
