@@ -45,10 +45,11 @@ namespace System.ServiceModel.Channels {
 		public WcfListenerInfo ()
 		{
 			Pending = new List<HttpContext> ();
+			ProcessRequestHandles = new List<ManualResetEvent> ();
 		}
 
 		public IChannelListener Listener { get; set; }
-		public AutoResetEvent ProcessRequestHandle { get; set; }
+		public List<ManualResetEvent> ProcessRequestHandles { get; private set; }
 		public List<HttpContext> Pending { get; private set; }
 	}
 
@@ -70,6 +71,7 @@ namespace System.ServiceModel.Channels {
 		ServiceHostBase host;
 		WcfListenerInfoCollection listeners = new WcfListenerInfoCollection ();
 		Dictionary<HttpContext,AutoResetEvent> wcf_wait_handles = new Dictionary<HttpContext,AutoResetEvent> ();
+		AutoResetEvent wait_for_request_handle = new AutoResetEvent (false);
 		int close_state;
 
 		public SvcHttpHandler (Type type, Type factoryType, string path)
@@ -93,8 +95,14 @@ namespace System.ServiceModel.Channels {
 			if (close_state > 0)
 				return null;
 
-			if (listeners [listener].Pending.Count == 0)
-				listeners [listener].ProcessRequestHandle.WaitOne ();
+			var wait = new ManualResetEvent (false);
+			var info = listeners [listener];
+			if (info.Pending.Count == 0) {
+				info.ProcessRequestHandles.Add (wait);
+				wait_for_request_handle.Set ();
+				wait.WaitOne ();
+				info.ProcessRequestHandles.Remove (wait);
+			}
 
 			var ctx = listeners [listener].Pending [0];
 			listeners [listener].Pending.RemoveAt (0);
@@ -147,7 +155,8 @@ namespace System.ServiceModel.Channels {
 			lock (i) {
 				i.Pending.Add (context);
 				wcf_wait_handles [context] = wait;
-				i.ProcessRequestHandle.Set ();
+				if (i.ProcessRequestHandles.Count > 0)
+					i.ProcessRequestHandles [0].Set ();
 			}
 
 			wait.WaitOne ();
@@ -173,9 +182,8 @@ namespace System.ServiceModel.Channels {
 
 		public void RegisterListener (IChannelListener listener)
 		{
-			listeners.Add (new WcfListenerInfo () {
-				Listener = listener,
-				ProcessRequestHandle = new AutoResetEvent (false) });
+			lock (type_lock)
+				listeners.Add (new WcfListenerInfo () {Listener = listener});
 		}
 
 		public void UnregisterListener (IChannelListener listener)

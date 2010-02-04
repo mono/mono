@@ -45,5 +45,4 @@ There is not a few bugs on service implementations and there often are reasons:
 - ServiceThrottle is currently disabled to serve only 1 request per channel listener. ASP.NET channels somehow fails to manage multiple concurrent channels.
 -- On the other hand, TCP duplex channels used to fail to serve requests when the throttle is 1. It was due to failure in managing closed channels (while it is duplex and hence it has to maintain channels until it is explicitly closed, clients often, or mostly, disconnects without any notice. So it had to be changed to explicitly check if the connection is available at any beginning of the request processing).
 -- It still fails to handle repeating requests, or some sequence of operations, onto the same channel.
--- ASP.NET integration somehow fails to serve the first request, which is caused by a missing SvcHttpHandler registration.
-
+-- When there is more than one endpoint definition in web.config, it somehow fails to build appropriate HttpHandler chain (bug #573795).

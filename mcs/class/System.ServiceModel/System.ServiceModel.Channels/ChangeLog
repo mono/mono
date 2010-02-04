@@ -1,5 +1,13 @@
 2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs : a wait handle could be used for more than one
+	  requests and hence it sometimes blocked one reply channel. Now
+	  it creates a wait handle for each ASP.NET request so that such
+	  multiple use should not occur. This should fix blocking on
+	  concurrent requests (it indeed fixes as long as I can see).
+
+2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AspNetReplyChannel.cs : remove garbage output.
 
 2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
