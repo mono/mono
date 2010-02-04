@@ -113,6 +113,10 @@ namespace Mono.Debugger.Soft
 			return new PrimitiveValue (vm, value);
 		}
 
+		public EnumMirror CreateEnumMirror (TypeMirror type, PrimitiveValue value) {
+			return new EnumMirror (this, type, value);
+		}
+
 		//
 		// Methods to create event request objects
 		//

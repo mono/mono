@@ -41,7 +41,7 @@ namespace Mono.Debugger.Soft
 		public string ns, name, full_name;
 		public long assembly, module, base_type, element_type;
 		public int token, rank, attributes;
-		public bool is_byref, is_pointer, is_primitive, is_valuetype;
+		public bool is_byref, is_pointer, is_primitive, is_valuetype, is_enum;
 		public long[] nested;
 	}
 
@@ -1445,6 +1445,7 @@ namespace Mono.Debugger.Soft
 			res.is_pointer = (b & 2) != 0;
 			res.is_primitive = (b & 4) != 0;
 			res.is_valuetype = (b & 8) != 0;
+			res.is_enum = (b & 16) != 0;
 
 			int nested_len = r.ReadInt ();
 			res.nested = new long [nested_len];
