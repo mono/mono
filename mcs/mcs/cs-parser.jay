@@ -3049,6 +3049,16 @@ open_parens_any
 	| OPEN_PARENS_LAMBDA
 	;
 
+// 
+// Use this production to accept closing parenthesis or 
+// performing completion
+//
+close_parens
+	: CLOSE_PARENS
+	| COMPLETE_COMPLETION
+	;
+
+
 parenthesized_expression
 	: OPEN_PARENS expression CLOSE_PARENS
 	  {
@@ -3098,7 +3108,7 @@ member_access
 	;
 
 invocation_expression
-	: primary_expression open_parens_any opt_argument_list CLOSE_PARENS
+	: primary_expression open_parens_any opt_argument_list close_parens
 	  {
 		$$ = new Invocation ((Expression) $1, (Arguments) $3);
 	  }

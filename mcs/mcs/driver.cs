@@ -68,7 +68,7 @@ namespace Mono.CSharp
 		bool want_debugging_support;
 		bool parse_only;
 		bool timestamps;
-		bool fatal_errors;
+		internal int fatal_errors;
 		
 		//
 		// Whether to load the initial config file (what CSC.RSP has by default)
@@ -217,7 +217,7 @@ namespace Mono.CSharp
 		{
 			Console.WriteLine (
 				"Other flags in the compiler\n" +
-				"   --fatal            Makes errors fatal\n" +
+				"   --fatal[=COUNT]    Makes errors after COUNT fatal\n" +
 				"   --lint             Enhanced warnings\n" +
 				"   --parse            Only parses the source file\n" +
 				"   --stacktrace       Shows stack trace at error location\n" +
@@ -992,10 +992,6 @@ namespace Mono.CSharp
 				RootContext.StdLib = false;
 				return true;
 				
-			case "--fatal":
-				fatal_errors = true;
-				return true;
-				
 			case "--nowarn":
 				Report.Warning (-29, 1, "Compatibility: Use -nowarn instead of --nowarn");
 				if ((i + 1) >= args.Length){
@@ -1066,6 +1062,17 @@ namespace Mono.CSharp
 				Report.Warning (-29, 1, "Compatibility: Use -noconfig option instead of --noconfig");
 				load_default_config = false;
 				return true;
+
+			default:
+				if (arg.StartsWith ("--fatal")){
+					if (arg.StartsWith ("--fatal=")){
+						if (!Int32.TryParse (arg.Substring (8), out fatal_errors))
+							fatal_errors = 1;
+					} else
+						fatal_errors = 1;
+					return true;
+				}
+				break;
 			}
 
 			return false;

@@ -1,3 +1,23 @@
+2010-02-03  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.cs: Change the --fatal flag to allow a number to be
+	passed, this ignores the first N fatal errors.   Useful to debug
+	errors that do not happen on the first hit.
+
+	* cs-parser.jay (invocation_expression): accept both the
+	CLOSE_PARENS and COMPLETE_COMPLETION, this allows completions
+	inside an invocation.
+
+	* driver.cs: Expose FatalErrors.
+
+	* eval.cs: Initialize the printer's Fatal property from the
+	Driver's FatalError flag, this allows csharp --fatal to work
+	again. 
+
+	Add support for calling Describe (typeof (TYPE)) if the expression
+	entered is a TYPE.
+	
+
 2010-02-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #574991

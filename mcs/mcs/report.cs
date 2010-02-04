@@ -875,7 +875,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public bool Fatal { get; set; }
+		public int Fatal { get; set; }
 
 		static int NameToCode (string s)
 		{
@@ -966,6 +966,7 @@ namespace Mono.CSharp {
 			return sb.ToString ();
 		}
 
+		int print_count;
 		public override void Print (AbstractMessage msg)
 		{
 			base.Print (msg);
@@ -973,7 +974,7 @@ namespace Mono.CSharp {
 			if (Stacktrace)
 				Console.WriteLine (FriendlyStackTrace (new StackTrace (true)));
 
-			if (Fatal)
+			if (++print_count == Fatal)
 				throw new Exception (msg.Text);
 		}
 

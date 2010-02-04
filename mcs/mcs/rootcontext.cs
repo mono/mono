@@ -23,8 +23,8 @@ namespace Mono.CSharp {
 	{
 		ISO_1		= 1,
 		ISO_2		= 2,
-		V_3			= 3,
-		V_4			= 4,
+		V_3		= 3,
+		V_4		= 4,
 		Future		= 100,
 
 		Default		= LanguageVersion.V_4,

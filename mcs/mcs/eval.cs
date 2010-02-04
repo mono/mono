@@ -85,7 +85,11 @@ namespace Mono.CSharp {
 			InitAndGetStartupFiles (args);
 		}
 
-
+		internal static ReportPrinter SetPrinter (ReportPrinter report_printer)
+		{
+			return ctx.Report.SetPrinter (report_printer);
+		}				
+		
 		/// <summary>
 		///   Optional initialization for the Evaluator.
 		/// </summary>
@@ -142,9 +146,13 @@ namespace Mono.CSharp {
 			CompilerCallableEntryPoint.PartialReset ();
 			
 			// Workaround for API limitation where full message printer cannot be passed
-			ReportPrinter printer = MessageOutput == Console.Out || MessageOutput == Console.Error ?
-				new ConsoleReportPrinter (MessageOutput) :
-				new StreamReportPrinter (MessageOutput);
+			ReportPrinter printer;
+			if (MessageOutput == Console.Out || MessageOutput == Console.Error){
+				var console_reporter = new ConsoleReportPrinter (MessageOutput);
+				console_reporter.Fatal = driver.fatal_errors;
+				printer = console_reporter;
+			} else
+				printer = new StreamReportPrinter (MessageOutput);
 
 			ctx = new CompilerContext (new Report (printer));
 			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
@@ -305,7 +313,7 @@ namespace Mono.CSharp {
 			// Either null (on error) or the compiled method.
 			return compiled;
 		}
-		
+
 		//
 		// Todo: Should we handle errors, or expect the calling code to setup
 		// the recording themselves?
@@ -351,7 +359,7 @@ namespace Mono.CSharp {
 			// The code execution does not need to keep the compiler lock
 			//
 			object retval = typeof (NoValueSet);
-			
+
 			try {
 				invoke_thread = System.Threading.Thread.CurrentThread;
 				invoking = true;
@@ -428,7 +436,7 @@ namespace Mono.CSharp {
 					} catch (CompletionResult cr){
 						prefix = cr.BaseText;
 						return cr.Result;
-					}
+					} 
 				} finally {
 					parser.undo.ExecuteUndo ();
 				}
@@ -653,7 +661,7 @@ namespace Mono.CSharp {
 
 			ReportPrinter old_printer = null;
 			if ((mode == ParseMode.Silent || mode == ParseMode.GetCompletions) && CSharpParser.yacc_verbose_flag == 0)
-				old_printer = ctx.Report.SetPrinter (new StreamReportPrinter (TextWriter.Null));
+				old_printer = SetPrinter (new StreamReportPrinter (TextWriter.Null));
 
 			try {
 				parser.parse ();
@@ -667,7 +675,7 @@ namespace Mono.CSharp {
 				}
 
 				if (old_printer != null)
-					ctx.Report.SetPrinter (old_printer);
+					SetPrinter (old_printer);
 			}
 			return parser;
 		}
@@ -894,7 +902,12 @@ namespace Mono.CSharp {
 				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
 			}
 		}
-		
+
+		/// <summary>
+		///   If true, turns type expressions into valid expressions
+		///   and calls the describe method on it
+		/// </summary>
+		public static bool DescribeTypeExpressions;
 	}
 
 	
@@ -1152,10 +1165,33 @@ namespace Mono.CSharp {
 			CloneContext cc = new CloneContext ();
 			Expression clone = source.Clone (cc);
 
+			var old_printer = Evaluator.SetPrinter (new StreamReportPrinter (TextWriter.Null));
 			clone = clone.Resolve (ec);
-			if (clone == null)
-				return null;
+			if (clone == null){
+				//
+				// A useful feature for the REPL: if we can resolve the expression
+				// as a type, Describe the type;
+				//
+				if (Evaluator.DescribeTypeExpressions){
+					clone = source.Clone (cc);
+					clone = clone.Resolve (ec, ResolveFlags.Type);
+					if (clone == null){
+						Evaluator.SetPrinter (old_printer);
+						clone = source.Clone (cc);
+						clone = clone.Resolve (ec);
+						return null;
+					}
 
+					Arguments args = new Arguments (1);
+					args.Add (new Argument (new TypeOf (source, Location)));
+					source = new Invocation (new SimpleName ("Describe", Location), args).Resolve (ec);
+				} else {
+					Evaluator.SetPrinter (old_printer);
+					return null;
+				}
+			}
+			Evaluator.SetPrinter (old_printer);
+	
 			// This means its really a statement.
 			if (clone.Type == TypeManager.void_type){
 				source = source.Resolve (ec);
