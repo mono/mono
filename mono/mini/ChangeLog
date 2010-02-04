@@ -1,5 +1,10 @@
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (decode_value): Fix decoding of vtype instances. Fixes
+	#561962.
+
+2010-02-04  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-llvm.c: Init the jit module only when first JITting.
 
 	* aot-compiler.c (emit_plt): Fix the naming of plt entries of llvm+darwin.
