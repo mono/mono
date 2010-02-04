@@ -1,3 +1,11 @@
+2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_to_ir): Use the new basic block formation pass
+	to avoid JIT'ng dead basic blocks. This is the same behavior as the
+	runtime MS verifier.
+
+	backport of r150888.
+
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (decode_value): Fix decoding of vtype instances. Fixes
