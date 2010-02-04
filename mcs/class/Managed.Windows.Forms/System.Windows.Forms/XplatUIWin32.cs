@@ -1588,6 +1588,9 @@ namespace System.Windows.Forms {
 			Win32PlaySound(GetSoundAlias (alert), IntPtr.Zero, SndFlags.SND_ALIAS_ID | SndFlags.SND_ASYNC | SndFlags.SND_NOSTOP | SndFlags.SND_NOWAIT);
 		}
 
+		internal override void BeginMoveResize (IntPtr handle) {
+		}
+
 		internal override void GetDisplaySize(out Size size) {
 			RECT	rect;
 

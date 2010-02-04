@@ -160,7 +160,7 @@ namespace System.Windows.Forms {
 		//private static IntPtr _NET_SHOWING_DESKTOP;
 		//private static IntPtr _NET_CLOSE_WINDOW;
 		//private static IntPtr _NET_MOVERESIZE_WINDOW;
-		//private static IntPtr _NET_WM_MOVERESIZE;
+		private static IntPtr _NET_WM_MOVERESIZE;
 		//private static IntPtr _NET_RESTACK_WINDOW;
 		//private static IntPtr _NET_REQUEST_FRAME_EXTENTS;
 		private static IntPtr _NET_WM_NAME;
@@ -577,7 +577,7 @@ namespace System.Windows.Forms {
 				//"_NET_SHOWING_DESKTOP",
 				//"_NET_CLOSE_WINDOW",
 				//"_NET_MOVERESIZE_WINDOW",
-				//"_NET_WM_MOVERESIZE",
+				"_NET_WM_MOVERESIZE",
 				//"_NET_RESTACK_WINDOW",
 				//"_NET_REQUEST_FRAME_EXTENTS",
 				"_NET_WM_NAME",
@@ -653,7 +653,7 @@ namespace System.Windows.Forms {
 			//_NET_SHOWING_DESKTOP = atoms [off++];
 			//_NET_CLOSE_WINDOW = atoms [off++];
 			//_NET_MOVERESIZE_WINDOW = atoms [off++];
-			//_NET_WM_MOVERESIZE = atoms [off++];
+			_NET_WM_MOVERESIZE = atoms [off++];
 			//_NET_RESTACK_WINDOW = atoms [off++];
 			//_NET_REQUEST_FRAME_EXTENTS = atoms [off++];
 			_NET_WM_NAME = atoms [off++];
@@ -718,6 +718,10 @@ namespace System.Windows.Forms {
 		}
 
 		private void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2) {
+			SendNetWMMessage (window, message_type, l0, l1, l2, IntPtr.Zero);
+		}
+
+		private void SendNetWMMessage(IntPtr window, IntPtr message_type, IntPtr l0, IntPtr l1, IntPtr l2, IntPtr l3) {
 			XEvent	xev;
 
 			xev = new XEvent();
@@ -729,6 +733,7 @@ namespace System.Windows.Forms {
 			xev.ClientMessageEvent.ptr1 = l0;
 			xev.ClientMessageEvent.ptr2 = l1;
 			xev.ClientMessageEvent.ptr3 = l2;
+			xev.ClientMessageEvent.ptr4 = l3;
 			XSendEvent(DisplayHandle, RootWindow, false, new IntPtr ((int) (EventMask.SubstructureRedirectMask | EventMask.SubstructureNotifyMask)), ref xev);
 		}
 
@@ -4611,6 +4616,22 @@ namespace System.Windows.Forms {
 			XTranslateCoordinates (DisplayHandle, hwnd.WholeWindow, RootWindow, x, y, out screen_x, out screen_y, out dummy);
 			return (HitTest) NativeWindow.WndProc (hwnd.client_window, Msg.WM_NCHITTEST, IntPtr.Zero, 
 							       (IntPtr) (screen_y << 16 | screen_x & 0xFFFF));
+		}
+
+		// Our very basic implementation of MoveResize - we can extend it later
+		// *if* needed
+		internal override void BeginMoveResize (IntPtr handle)
+		{
+			// We *need* to ungrab the pointer in the current display
+			XplatUI.UngrabWindow (Grab.Hwnd);
+
+			int x_root, y_root;
+			GetCursorPos (IntPtr.Zero, out x_root, out y_root);
+
+			Hwnd hwnd = Hwnd.ObjectFromHandle (handle);
+			SendNetWMMessage (hwnd.whole_window, _NET_WM_MOVERESIZE, (IntPtr) x_root, (IntPtr) y_root,
+					(IntPtr) NetWmMoveResize._NET_WM_MOVERESIZE_SIZE_BOTTOMRIGHT, 
+					(IntPtr) 1); // left button
 		}
 
 		internal override bool GetText(IntPtr handle, out string text) {

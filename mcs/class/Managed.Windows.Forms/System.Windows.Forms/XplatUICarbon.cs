@@ -795,6 +795,9 @@ namespace System.Windows.Forms {
 			AlertSoundPlay ();
 		}
 
+		internal override void BeginMoveResize (IntPtr handle) {
+		}
+
 		internal override void CaretVisible (IntPtr hwnd, bool visible) {
 			if (Caret.Hwnd == hwnd) {
 				if (visible) {

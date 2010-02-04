@@ -471,6 +471,11 @@ namespace System.Windows.Forms {
 			driver.AudibleAlert(alert);
 		}
 
+		internal static void BeginMoveResize (IntPtr handle)
+		{
+			driver.BeginMoveResize (handle);
+		}
+
 		internal static bool CalculateWindowRect(ref Rectangle ClientRect, CreateParams cp, Menu menu, out Rectangle WindowRect) {
 			#if DriverDebug
 				Console.WriteLine("CalculateWindowRect({0}, {1}, {2}): Called", ClientRect, cp, menu);

@@ -276,6 +276,8 @@ namespace System.Windows.Forms {
 		#region XplatUI Driver Methods
 		internal abstract void AudibleAlert(AlertType alert);
 
+		internal abstract void BeginMoveResize (IntPtr handle); // init a window manager driven resize event
+
 		internal abstract void EnableThemes();
 
 		internal abstract void GetDisplaySize(out Size size);

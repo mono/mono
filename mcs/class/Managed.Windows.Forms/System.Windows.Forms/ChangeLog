@@ -1,3 +1,17 @@
+2010-02-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* StatusStrip.cs:
+	* XplatX11.cs:
+	* X11Structs: Implement the new BeginMoveResize method, designed to
+	instruct the window manager to init a resize operation on a top level
+	form. This is used by StatusStrip.
+	* XplatUI.cs:
+	* XplatUIDriver.cs:
+	* XplatUIWin32.cs:
+	* XplatUICarbon.cs: Fill the gaps by creating stubs and updating the
+	method calls.
+	Fixes #573299.
+
 2010-02-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ComboBox.cs: When creating DrawItemEventArgs pass the fore color and
