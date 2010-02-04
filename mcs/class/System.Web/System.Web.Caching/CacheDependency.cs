@@ -96,17 +96,25 @@ namespace System.Web.Caching
 		
 		public CacheDependency (string[] filenames, string[] cachekeys, CacheDependency dependency, DateTime start)
 		{
-			if (filenames != null) {
-				watchers = new FileSystemWatcher [filenames.Length];
-				for (int n=0; n<filenames.Length; n++) {
+			int flen = filenames != null ? filenames.Length : 0;
+			
+			if (flen > 0) {
+				watchers = new FileSystemWatcher [flen];
+				string filename;
+				
+				for (int n = 0; n < flen; n++) {
+					filename = filenames [n];
+					if (String.IsNullOrEmpty (filename))
+						continue;
+					
 					FileSystemWatcher watcher = new FileSystemWatcher ();
-					if (Directory.Exists (filenames [n])) {
-						watcher.Path = filenames [n];
-					} else {
-						string parentPath = Path.GetDirectoryName (filenames [n]);
+					if (Directory.Exists (filename))
+						watcher.Path = filename;
+					else {
+						string parentPath = Path.GetDirectoryName (filename);
 						if (parentPath != null && Directory.Exists (parentPath)) {
 							watcher.Path = parentPath;
-							watcher.Filter = Path.GetFileName (filenames [n]);
+							watcher.Filter = Path.GetFileName (filename);
 						} else
 							continue;
 					}
@@ -130,17 +138,18 @@ namespace System.Web.Caching
 
 		public virtual string GetUniqueID ()
 		{
-			StringBuilder sb = new StringBuilder ();
+			var sb = new StringBuilder ();
+			
 			lock (locker) {
 				if (watchers != null)
 					foreach (FileSystemWatcher fsw in watchers)
 						if (fsw != null && fsw.Path != null && fsw.Path.Length != 0)
-							sb.AppendFormat ("_{0}", fsw.Path);
+							sb.Append ("_" + fsw.Path);
 			}
 
 			if (cachekeys != null)
 				foreach (string key in cachekeys)
-					sb.AppendFormat ("_{0}", key);
+					sb.AppendFormat ("_" + key);
 			return sb.ToString ();
 		}
 		
@@ -151,10 +160,12 @@ namespace System.Web.Caching
 
 		bool DoOnChanged ()
 		{
-			if (DateTime.Now < start)
+			DateTime now = DateTime.Now;
+			
+			if (now < start)
 				return false;
 			hasChanged = true;
-			utcLastModified = DateTime.UtcNow;
+			utcLastModified = now.ToUniversalTime ();
 			DisposeWatchers ();
 			
 			if (cache != null)
@@ -270,7 +281,5 @@ namespace System.Web.Caching
 		{
 			OnDependencyChanged (sender, e);
 		}
-
-
 	}
 }

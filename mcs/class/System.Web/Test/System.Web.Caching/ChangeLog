@@ -1,3 +1,9 @@
+2010-02-03  Marek Habersack  <mhabersack@novell.com>
+
+	* CacheItemPriorityQueueTest_generated.cs: added
+
+	* CacheItemPriorityQueueTest.cs: added
+
 2010-01-25  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlCacheDependencyTest.cs: added

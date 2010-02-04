@@ -1,3 +1,8 @@
+2010-02-04  Marek Habersack  <mhabersack@novell.com>
+
+	* Helpers.cs: added a helper method for checking of HTML mentions
+	any .NET exceptions.
+
 2010-01-19  Marek Habersack  <mhabersack@novell.com>
 
 	* TestRunner.cs: Run makes sure Uri parser is passed a full url,

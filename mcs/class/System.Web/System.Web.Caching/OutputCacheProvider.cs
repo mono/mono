@@ -30,13 +30,16 @@ using System.Configuration.Provider;
 
 namespace System.Web.Caching
 {
-	public abstract class OutputCacheProvider : ProviderBase
+#if NET_4_0
+	public 
+#endif
+	abstract class OutputCacheProvider : ProviderBase
 	{
 		protected OutputCacheProvider ()
 		{}
 
-		public abstract object Add (string key, Object entry, DateTime utcExpiry);
-		public abstract Object Get (string key);
+		public abstract object Add (string key, object entry, DateTime utcExpiry);
+		public abstract object Get (string key);
 		public abstract void Remove (string key);
 		public abstract void Set (string key, object entry, DateTime utcExpiry);
 	}

@@ -1,3 +1,8 @@
+2010-02-03  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: added back InternalsVisibleTo for the test
+	assembly - it's needed to access CacheItemPriorityQueue
+
 2009-07-07  Raja R Harinath  <harinath@hurrynot.org>
 
 	* AssemblyInfo.cs: Don't make internals visible to System.Web_test.

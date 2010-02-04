@@ -140,6 +140,9 @@ namespace System.Web.Caching
 			CacheItem ret = null;
 			if (!cache.TryGetValue (key, out ret))
 				return null;
+			if (timedItems != null)
+				timedItems.OnItemDisable (ret);
+			
 			ret.Disabled = true;
 			cache.Remove (key);
 			
@@ -356,10 +359,10 @@ namespace System.Web.Caching
 				expirationTimerPeriod = 4294967294;
 			else
 				expirationTimerPeriod = remaining;
-			
+
 			if (expirationTimer == null)
 				expirationTimer = new Timer (new TimerCallback (ExpireItems), null, expirationTimerPeriod, expirationTimerPeriod);
-			else if (expirationTimerPeriod > remaining)
+			else
 				expirationTimer.Change (expirationTimerPeriod, expirationTimerPeriod);
 			
 			timedItems.Enqueue (item);
@@ -531,30 +534,39 @@ namespace System.Web.Caching
 		{
 			DateTime now = DateTime.Now;
 			CacheItem item = timedItems.Peek ();
+			bool locked = false;
 
-			while (item != null) {
-				if (!item.Disabled && item.ExpiresAt > now.Ticks)
-					break;
-				if (item.Disabled) {
+			try {
+				cacheLock.EnterWriteLock ();
+				locked = true;
+
+				while (item != null) {
+					if (!item.Disabled && item.ExpiresAt > now.Ticks)
+						break;
+					if (item.Disabled) {
+						item = timedItems.Dequeue ();
+						continue;
+					}
+
 					item = timedItems.Dequeue ();
-					continue;
+					if (!NeedsUpdate (item, CacheItemUpdateReason.Expired, true))
+						Remove (item.Key, CacheItemRemovedReason.Expired, false, true);
+					item = timedItems.Peek ();
 				}
-				
-				item = timedItems.Dequeue ();
-				if (!NeedsUpdate (item, CacheItemUpdateReason.Expired, true))
-					Remove (item.Key, CacheItemRemovedReason.Expired, true, true);
-				item = timedItems.Peek ();
+			} finally {
+				if (locked)
+					cacheLock.ExitWriteLock ();
 			}
 
 			if (item != null) {
 				long remaining = Math.Max (0, (long)(item.AbsoluteExpiration - now).TotalMilliseconds);
-				if (expirationTimerPeriod > remaining) {
+				if (expirationTimerPeriod != remaining && remaining > 0) {
 					expirationTimerPeriod = remaining;
 					expirationTimer.Change (expirationTimerPeriod, expirationTimerPeriod);
 				}
 				return;
 			}
-			
+
 			expirationTimer.Change (Timeout.Infinite, Timeout.Infinite);
 			expirationTimerPeriod = 0;
 		}

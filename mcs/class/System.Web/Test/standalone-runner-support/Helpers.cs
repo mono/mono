@@ -75,5 +75,24 @@ namespace StandAloneRunnerSupport
 
 			return sb.ToString ();
 		}
+
+		public static bool HasException (string html, Type exceptionType)
+		{
+			if (exceptionType == null)
+				throw new ArgumentNullException ("exceptionType");
+
+			return HasException (html, exceptionType.FullName);
+		}
+		
+		public static bool HasException (string html, string exceptionType)
+		{
+			if (String.IsNullOrEmpty (exceptionType))
+				throw new ArgumentNullException ("exceptionType");
+			
+			if (String.IsNullOrEmpty (html))
+				return false;
+			
+			return html.IndexOf ("[" + exceptionType + "]:") != -1;
+		}
 	}
 }

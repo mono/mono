@@ -1,10 +1,11 @@
 //
 // System.Web.Caching.CachedVaryBy
 //
-// Author(s):
+// Authors:
 //  Jackson Harper (jackson@ximian.com)
+//  Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2003 Novell, Inc (http://www.novell.com)
+// (C) 2003-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -33,17 +34,18 @@ using System;
 using System.Globalization;
 using System.Text;
 using System.Collections;
+using System.Collections.Generic;
 using System.Web.Util;
 
-namespace System.Web.Caching {
-
-	internal sealed class CachedVaryBy {
-
+namespace System.Web.Caching
+{
+	sealed class CachedVaryBy
+	{
 		string[] prms;
 		string[] headers;
 		string custom;
 		string key;
-		ArrayList item_list;
+		List <string> item_list;
 		bool wildCardParams;
 		
 		internal CachedVaryBy (HttpCachePolicy policy, string key)
@@ -52,11 +54,11 @@ namespace System.Web.Caching {
 			headers = policy.VaryByHeaders.GetHeaderNames (policy.OmitVaryStar);
 			custom = policy.GetVaryByCustom ();
 			this.key = key;
-			item_list = new ArrayList ();
+			item_list = new List <string> ();
 			wildCardParams = policy.VaryByParams ["*"];
 		}
 
-		internal ArrayList ItemList {
+		internal List <string> ItemList {
 			get { return item_list; }
 		}
 
@@ -66,74 +68,114 @@ namespace System.Web.Caching {
 		
 		internal string CreateKey (string file_path, HttpContext context)
 		{
-			StringBuilder builder = new StringBuilder ();
-			HttpApplication app = context.ApplicationInstance;
-			HttpRequest request = context.Request;
-			string newLine = Environment.NewLine;
-			
-			builder.Append ("CachedRawResponse" + newLine);
-			builder.Append (file_path);
-			builder.Append (newLine);
-			builder.Append ("METHOD:" + request.HttpMethod);
-			builder.Append (newLine);
+			if (String.IsNullOrEmpty (file_path))
+				throw new ArgumentNullException ("file_path");
 
+			StringBuilder builder = new StringBuilder ("vbk"); // VaryBy Key
+			HttpRequest request = context != null ? context.Request : null;
+			string name, value;
+			
+			builder.Append (file_path);
+			if (request == null)
+				return builder.ToString ();
+			
+			builder.Append (request.HttpMethod);
+			
 			if (wildCardParams) {
+				builder.Append ("WQ"); // Wildcard, Query
 				foreach (string p in request.QueryString) {
-					// FIXME: QueryString might contain a null key if a page gets called like this: page.aspx?arg (w/out the "=")
-					if (p == null) continue;
-					builder.Append ("VPQ:");
-					builder.Append (p.ToLower (Helpers.InvariantCulture));
-					builder.Append ('=');
-					builder.Append (request.QueryString [p]);
-					builder.Append (newLine);
+					if (p == null)
+						continue;
+					
+					builder.Append ('N'); // Name
+					builder.Append (p.ToLowerInvariant ());
+					value = request.QueryString [p];
+					if (String.IsNullOrEmpty (value))
+						continue;
+					
+					builder.Append ('V'); // Value
+					builder.Append (value);
 				}
+
+				builder.Append ('F'); // Form
 				foreach (string p in request.Form) {
-					// FIXME: can this be null, too?
-					if (p == null) continue;
-					builder.Append ("VPF:");
-					builder.Append (p.ToLower (Helpers.InvariantCulture));
-					builder.Append ('=');
-					builder.Append (request.Form [p]);
-					builder.Append (newLine);
+					if (p == null)
+						continue;
+					
+					builder.Append ('N'); // Name
+					builder.Append (p.ToLowerInvariant ());
+
+					value = request.Form [p];
+					if (String.IsNullOrEmpty (value))
+						continue;
+					
+					builder.Append ('V'); // Value
+					builder.Append (value);
 				}
 			} else if (prms != null) {
-				for (int i=0; i<prms.Length; i++) {
-					if (request.QueryString [prms [i]] != null) {
-						builder.Append ("VPQ:");
-						builder.Append (prms [i].ToLower (Helpers.InvariantCulture));
-						builder.Append ('=');
-						builder.Append (request.QueryString [prms [i]]);
-						builder.Append (newLine);
+				StringBuilder fprms = null;
+				builder.Append ("SQ"); // Specified, Query
+				
+				for (int i = 0; i < prms.Length; i++) {
+					name = prms [i];
+					if (String.IsNullOrEmpty (name))
+						continue;
+
+					value = request.QueryString [name];
+					if (value != null) {
+						builder.Append ('N'); // Name
+						builder.Append (name.ToLowerInvariant ());
+
+						if (value.Length > 0) {
+							builder.Append ('V'); // Value
+							builder.Append (value);
+						}
 					}
-					if (request.Form [prms [i]] != null) {
-						builder.Append ("VPF:");
-						builder.Append (prms [i].ToLower (Helpers.InvariantCulture));
-						builder.Append ('=');
-						builder.Append (request.Form [prms [i]]);
-						builder.Append (newLine);
+
+					value = request.Form [name];
+					if (value != null) {
+						if (fprms == null)
+							fprms = new StringBuilder ('F'); // Form
+						
+						builder.Append ('N'); // Name
+						builder.Append (name.ToLowerInvariant ());
+						if (value.Length > 0) {
+							builder.Append ('V'); // Value
+							builder.Append (value);
+						}
 					}
 				}
+				if (fprms != null)
+					builder.Append (fprms.ToString ());
 			}
 			
 			if (headers != null) {
-				for (int i=0; i<headers.Length; i++) {
-					builder.Append ("VH:");
-					builder.Append (headers [i].ToLower (Helpers.InvariantCulture));
-					builder.Append ('=');
-					builder.Append (request.Headers [headers [i]]);
-					builder.Append (newLine);
+				builder.Append ('H'); // Headers
+				
+				for (int i=0; i < headers.Length; i++) {
+					builder.Append ('N'); // Name
+
+					name = headers [i];
+					builder.Append (name.ToLowerInvariant ());
+
+					value = request.Headers [name];
+					if (String.IsNullOrEmpty (value))
+						continue;
+					
+					builder.Append ('V'); // Value
+					builder.Append (value);
 				}
 			}
 
 			if (custom != null) {
-				string s = app.GetVaryByCustomString (context, custom);
-				builder.Append ("VC:");
+				builder.Append ('C'); // Custom
+				string s = context.ApplicationInstance.GetVaryByCustomString (context, custom);
+				builder.Append ('N'); // Name
 				builder.Append (custom);
-				builder.Append ('=');
+				builder.Append ('V'); // Value
 				builder.Append (s != null ? s : "__null__");
-				builder.Append (newLine);
 			}
-
+			
 			return builder.ToString ();
 		}
 	}

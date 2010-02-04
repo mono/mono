@@ -37,6 +37,8 @@ namespace System.Web.Caching
 {
 	public static class OutputCache
 	{
+		internal const string DEFAULT_PROVIDER_NAME = "AspNetInternalProvider";
+		
 		static readonly object initLock = new object ();
 		static bool initialized;
 		static string defaultProviderName;
@@ -45,6 +47,9 @@ namespace System.Web.Caching
 		public static string DefaultProviderName {
 			get {
 				Init ();
+				if (String.IsNullOrEmpty (defaultProviderName))
+					return DEFAULT_PROVIDER_NAME;
+				
 				return defaultProviderName;
 			}
 		}
@@ -118,7 +123,10 @@ namespace System.Web.Caching
 
 		static OutputCacheProvider LoadProvider (ProviderSettings ps)
 		{
-			Type type = HttpApplication.LoadType (ps.Type, true);
+			Type type = HttpApplication.LoadType (ps.Type, false);
+			if (type == null)
+				throw new ConfigurationErrorsException (String.Format ("Could not load type '{0}'.", ps.Type));
+			
 			var ret = Activator.CreateInstance (type) as OutputCacheProvider;
 			ret.Initialize (ps.Name, ps.Parameters);
 

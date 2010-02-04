@@ -1,3 +1,11 @@
+2010-02-03  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: GetOutputCacheProviderName returns the value
+	of OutputCache.DefaultProviderName
+
+	* HttpRuntime.cs: internal cache is used to hold the dependencies
+	now.
+
 2010-01-20  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContext.cs: implemented the 4.0 SetSessionStateBehavior

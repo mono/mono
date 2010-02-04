@@ -16,6 +16,7 @@ System.Web.Caching/CacheItem.cs
 System.Web.Caching/CacheItemEnumerator.cs
 System.Web.Caching/CacheItemPriority.cs
 System.Web.Caching/CacheItemPriorityQueue.cs
+System.Web.Caching/CacheItemPriorityQueueDebug.cs
 System.Web.Caching/CacheItemRemovedCallback.cs
 System.Web.Caching/CacheItemRemovedReason.cs
 System.Web.Caching/CacheItemUpdateCallback.cs
@@ -23,8 +24,11 @@ System.Web.Caching/CacheItemUpdateReason.cs
 System.Web.Caching/CachedRawResponse.cs
 System.Web.Caching/CachedVaryBy.cs
 System.Web.Caching/DatabaseNotEnabledForNotificationException.cs
+System.Web.Caching/InMemoryOutputCacheProvider.cs
 System.Web.Caching/OutputCacheModule.cs
+System.Web.Caching/OutputCacheProvider.cs
 System.Web.Caching/SqlCacheDependency.cs
+System.Web.Caching/SqlCacheDependencyAdmin.cs
 System.Web.Caching/TableNotEnabledForNotificationException.cs
 System.Web/CapabilitiesLoader.cs
 System.Web/BrowserCapabilities.cs

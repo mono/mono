@@ -1,3 +1,49 @@
+2010-02-03  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCache.cs: DefaultProviderName checks if there was any
+	provider configured and, if not, returns a built-in provider's
+	name.
+
+	* SqlCacheDependencyAdmin.cs: added
+
+	* OutputCacheProviderCollection.cs: added
+
+	* OutputCacheProvider.cs: added
+
+	* OutputCacheModule.cs: uses the 4.0 extensible output cache
+	provider model now (also internally in the 2.0 profile)
+	OutputCacheProvider is retrieved on every request using
+	HttpApplication.GetOutputCacheProviderName (4.0+). In the 2.0
+	profile an instance of InMemoryOutputCacheProvider is always
+	returned.
+
+	* InMemoryOutputCacheProvider.cs: default output cache provider
+	for ASP.NET 4.0, also used internally in the  2.0 profile.
+
+	* CachedVaryBy.cs: made the generated key shorter
+
+	* CacheItemPriorityQueueDebug.cs: debugging support for
+	CacheItemPriorityQueue. Most of the code is compiled only when the
+	DEBUG macro is defined. Debugging support includes recording of
+	the queue operations sequence which is output to an XML file on
+	appdomain shutdown. The recorded sequence files can be used to
+	generate NUnit test cases for the priority queue (see
+	../Test/tools/README)
+
+	* CacheItemPriorityQueue.cs: rewritten using an array based heap
+	instead of a binary tree based one - implementation is simpler,
+	faster and more elegant. Heap is initially 32 entries long and
+	its size is doubled every time it fills up. After reaching a
+	threshold (8192 entries currently) it is shrunk to the number of
+	items + 1/3 of item count in order to preserve memory.
+
+	* CacheItem.cs: added a Guid field to easier distinguish items
+	(mostly for debugging purposes)
+
+	* CacheDependency.cs: minor performance improvements
+
+	* Cache.cs: better handling of timer periods
+
 2010-01-25  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlCacheDependency.cs: added parameter checks to the

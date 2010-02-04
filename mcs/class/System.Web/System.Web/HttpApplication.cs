@@ -833,9 +833,8 @@ namespace System.Web
 #if NET_4_0
 		public virtual string GetOutputCacheProviderName (HttpContext context)
 		{
-			var ocs = WebConfigurationManager.GetWebApplicationSection ("system.web/caching/outputCache") as OutputCacheSection;
-
-			return ocs.DefaultProviderName;
+			// LAMESPEC: doesn't throw ProviderException if context is null
+			return OutputCache.DefaultProviderName;
 		}
 #endif
 		

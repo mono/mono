@@ -44,7 +44,17 @@ namespace System.Web.Caching
 		public DateTime LastChange;
 		public long ExpiresAt;
 		public bool Disabled;
-		
 		public Timer Timer;
+		public Guid Guid;
+		
+		public CacheItem ()
+		{
+			Guid = Guid.NewGuid ();
+		}
+		
+		public override string ToString ()
+		{
+			return String.Format ("CacheItem [{0}]\n[{1}][{2}][{3}]", this.Guid, Key, Disabled, ExpiresAt > 0 ? new DateTime (ExpiresAt).ToString () : "0");
+		}
 	}
 }

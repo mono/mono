@@ -33,9 +33,7 @@ namespace System.Web.Caching
 	public sealed class OutputCacheProviderCollection : ProviderCollection
 	{
 		public OutputCacheProvider this [string name] {
-			get {
-				throw new NotImplementedException ();
-			}
+			get { return base [name] as OutputCacheProvider; }
 		}
 		
 		public OutputCacheProviderCollection ()
@@ -54,7 +52,7 @@ namespace System.Web.Caching
 
 		public void CopyTo (OutputCacheProvider[] array, int index)
 		{
-			throw new NotImplementedException ();
+			base.CopyTo (array, index);
 		}
 	}
 }

@@ -305,11 +305,11 @@ endif
 
 CLASSLIB_DIR = $(topdir)/class/lib/$(PROFILE)
 
-STANDALONE_RUNNER_SUPPORT_MCS_FLAGS = -d:STANDALONE_TEST -debug:full -r:System.Web.dll -r:nunit.framework.dll
+STANDALONE_RUNNER_SUPPORT_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -d:STANDALONE_TEST -debug:full -r:System.Web.dll -r:nunit.framework.dll
 STANDALONE_RUNNER_SUPPORT_ASSEMBLY = $(CLASSLIB_DIR)/standalone-runner-support.dll
 STANDALONE_RUNNER_SUPPORT_MAKEFRAG = $(depsdir)/$(PROFILE)_standalone-runner-support.dll.makefrag
 
-STANDALONE_TEST_MCS_FLAGS = -debug:full -r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -r:System.Web.dll -r:nunit.framework.dll
+STANDALONE_TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -debug:full -r:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -r:System.Web.dll -r:nunit.framework.dll
 STANDALONE_TEST_ASSEMBLY = System.Web_standalone_test_$(PROFILE).dll
 STANDALONE_TEST_MAKEFRAG = $(depsdir)/$(STANDALONE_TEST_ASSEMBLY).makefrag
 

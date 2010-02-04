@@ -1,10 +1,8 @@
 //
-// System.Web.Caching.CacheItem
-//
 // Author(s):
 //  Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2009 Novell, Inc (http://novell.com)
+// (C) 2009-2010 Novell, Inc (http://novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,51 +25,68 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
+using System.IO;
 using System.Text;
 using System.Threading;
+using System.Xml;
 
 namespace System.Web.Caching
 {
-	sealed class CacheItemPriorityQueue
+	sealed partial class CacheItemPriorityQueue
 	{
-		sealed class Node
-		{
-			public CacheItem Data;
+		const int INITIAL_HEAP_SIZE = 32;
+		const int HEAP_RESIZE_THRESHOLD = 8192;
 		
-			public Node Left;
-			public Node Right;
-			public Node Parent;
-			public Node Next;
-			public Node Prev;
+		CacheItem[] heap;
+		int heapSize = 0;
+		int heapCount = 0;
+		ReaderWriterLockSlim queueLock;
 
-			public CacheItem SwapData (CacheItem newData)
-			{
-				CacheItem ret = Data;
-				Data = newData;
-				
-				return ret;
-			}
+		public int Count {
+			get { return heapCount; }
+		}
 
-			public Node (CacheItem data)
-			{
-				Data = data;
-			}
+		public int Size {
+			get { return heapSize; }
 		}
 		
-		Node root;
-		Node lastAdded;
-		Node firstParent;
-		Node lastParent;
-
-#if SYSTEMCORE_DEP
-		ReaderWriterLockSlim queueLock;
-#endif
-
 		public CacheItemPriorityQueue ()
 		{
-#if SYSTEMCORE_DEP
 			queueLock = new ReaderWriterLockSlim ();
-#endif
+			InitDebugMode ();
+		}
+
+		CacheItem[] GetHeapWithGrow ()
+		{
+			if (heap == null) {
+				heap = new CacheItem [INITIAL_HEAP_SIZE];
+				heapSize = INITIAL_HEAP_SIZE;
+				heapCount = 0;
+				return heap;
+			}
+
+			if (heapCount >= heapSize) {
+				heapSize <<= 1;
+				Array.Resize <CacheItem> (ref heap, heapSize);
+			}
+
+			return heap;
+		}
+
+		CacheItem[] GetHeapWithShrink ()
+		{
+			if (heap == null)
+				return null;
+
+			if (heapSize > HEAP_RESIZE_THRESHOLD) {
+				int halfTheSize = heapSize >> 1;
+
+				if (heapCount < halfTheSize)
+					Array.Resize <CacheItem> (ref heap, halfTheSize + (heapCount / 3));
+			}
+			
+			return heap;
 		}
 		
 		public void Enqueue (CacheItem item)
@@ -79,199 +94,115 @@ namespace System.Web.Caching
 			if (item == null)
 				return;
 
-#if SYSTEMCORE_DEP
 			bool locked = false;
+			CacheItem[] heap;
+			
 			try {
 				queueLock.EnterWriteLock ();
 				locked = true;
-#endif
-				Node node = new Node (item);
-				if (root == null) {
-					root = lastAdded = lastParent = firstParent = node;
-					return;
-				}
-
-				if (lastParent.Left != null && lastParent.Right != null) {
-					lastParent = lastParent.Next;
-					if (lastParent == null) {
-						lastParent = firstParent = firstParent.Left;
-						lastAdded = null;
-
-						if (lastParent == null) {
-							lastParent = root;
-							firstParent = root;
-						}
-					}
-				}
-
-				node.Parent = lastParent;	
-				if (lastParent.Left == null)
-					lastParent.Left = node;
-				else
-					lastParent.Right = node;
-
-				if (lastAdded != null) {
-					lastAdded.Next = node;
-					node.Prev = lastAdded;
-				}
-			
-				lastAdded = node;
-				BubbleUp (node);
-#if SYSTEMCORE_DEP
+				heap = GetHeapWithGrow ();
+				heap [heapCount++] = item;
+				BubbleUp (heap);
+				
+				AddSequenceEntry (item, EDSequenceEntryType.Enqueue);
 			} finally {
 				if (locked)
 					queueLock.ExitWriteLock ();
 			}
-#endif
 		}
 
 		public CacheItem Dequeue ()
 		{
 			CacheItem ret = null;
-#if SYSTEMCORE_DEP
+			CacheItem[] heap;
 			bool locked = false;
+			int index;
+			
 			try {
 				queueLock.EnterWriteLock ();
 				locked = true;
-#endif
-				if (root == null)
+				heap = GetHeapWithShrink ();
+				if (heap == null || heapCount == 0)
 					return null;
 
-			
-				if (root.Left == null && root.Right == null) {
-					ret = root.Data;
-					root = lastAdded = firstParent = lastParent = null;
-					if (ret.Disabled)
-						return null;
+				ret = heap [0];
+				index = --heapCount;
+				heap [0] = heap [index];
+				heap [index] = null;
 				
-					return ret;
-				}
+				if (heapCount > 0)
+					BubbleDown (heap);
 
-				ret = root.Data;
-				do {
-					Node last = lastAdded;
-					if (last == null)
-						return null;
-				
-					if (last.Prev == null) {
-						Node parent = last.Parent;
-						while (true) {
-							if (parent.Next == null)
-								break;
-							parent = parent.Next;
-						}
-						lastAdded = parent;
-					} else {
-						lastAdded = last.Prev;
-						lastAdded.Next = null;
-					}
-
-					if (last.Parent.Left == last)
-						last.Parent.Left = null;
-					else
-						last.Parent.Right = null;
-			
-					root.Data = last.Data;
-					BubbleDown (root);
-				} while (ret.Disabled);
-#if SYSTEMCORE_DEP
+				AddSequenceEntry (ret, EDSequenceEntryType.Dequeue);
+				return ret;
 			} finally {
 				if (locked)
 					queueLock.ExitWriteLock ();
 			}
-#endif
-			return ret;
 		}
 
 		public CacheItem Peek ()
 		{
-#if SYSTEMCORE_DEP
 			bool locked = false;
+			CacheItem ret;
+			
 			try {
 				queueLock.EnterReadLock ();
 				locked = true;
-#endif
-				if (root == null)
+				if (heap == null || heapCount == 0)
 					return null;
-#if SYSTEMCORE_DEP
+
+				ret = heap [0];
+				AddSequenceEntry (ret, EDSequenceEntryType.Peek);
+				
+				return ret;
 			} finally {
 				if (locked)
 					queueLock.ExitReadLock ();
 			}
-#endif
-			return root.Data;
 		}
 		
-		void BubbleDown (Node item)
+		void BubbleDown (CacheItem[] heap)
 		{
-			if (item == null || (item.Left == null && item.Right == null))
-				return;
+			int index = 0;
+			int left = 1;
+			int right = 2;
+			CacheItem item = heap [0];
+			int selected = (right < heapCount && heap [right].ExpiresAt < heap [left].ExpiresAt) ? 2 : 1;
 
-			if (item.Left == null)
-				SwapBubbleDown (item, item.Right);
-			else if (item.Right == null)
-				SwapBubbleDown (item, item.Left);
-			else {
-				if (item.Left.Data.ExpiresAt < item.Right.Data.ExpiresAt)
-					SwapBubbleDown (item, item.Left);
-				else
-					SwapBubbleDown (item, item.Right);
+			while (selected < heapCount && heap [selected].ExpiresAt < item.ExpiresAt) {
+				heap [index] = heap [selected];
+				index = selected;
+				left = (index << 1) + 1;
+				right = left + 1;
+				selected = right < heapCount && heap [right].ExpiresAt < heap [left].ExpiresAt ? right : left;
 			}
-		}
-
-		void SwapBubbleDown (Node item, Node otherItem)
-		{
-			if (otherItem.Data.ExpiresAt < item.Data.ExpiresAt) {
-				item.Data = otherItem.SwapData (item.Data);
-				BubbleDown (otherItem);
-			}
+			heap [index] = item;
 		}
 		
-		void BubbleUp (Node item)
+		void BubbleUp (CacheItem[] heap)
 		{
-			if (item == null || item.Data == null)
+			int index, parentIndex;
+			CacheItem parent, item;
+			
+			if (heapCount <= 1)
 				return;
 			
-			Node parent = item.Parent;
-			if (parent == null)
-				return;
-			
-			if (item.Data.ExpiresAt > parent.Data.ExpiresAt)
-				return;
+			index = heapCount - 1;
+			parentIndex = (index - 1) >> 1;
 
-			item.Data = parent.SwapData (item.Data);
-			
-			BubbleUp (parent);
-		}
-		
-		public string GetDotScript ()
-		{
-			StringBuilder sb = new StringBuilder ();
-
-			sb.Append ("graph CacheItemPriorityQueue {\n");
-			sb.Append ("\tnode [color=lightblue, style=filled];\n");
-			if (root != null) {
-				if (root.Left == null && root.Right == null)
-					sb.AppendFormat ("\t{0};", root.Data.ExpiresAt);
-				else
-					TraverseTree (sb, root);
-			}
-			sb.Append ("}\n");
-
-			return sb.ToString ();
-		}
-
-		void TraverseTree (StringBuilder sb, Node root)
-		{
-			if (root.Left != null) {
-				sb.AppendFormat ("\t{0} -- {1};\n", root.Data.ExpiresAt, root.Left.Data.ExpiresAt);
-				TraverseTree (sb, root.Left);
+			item = heap [index];
+			while (index > 0) {
+				parent = heap [parentIndex];
+				if (heap [index].ExpiresAt >= parent.ExpiresAt)
+					break;
+				
+				heap [index] = parent;
+				index = parentIndex;
+				parentIndex = (index - 1) >> 1;
 			}
 
-			if (root.Right != null) {
-				sb.AppendFormat ("\t{0} -- {1};\n", root.Data.ExpiresAt, root.Right.Data.ExpiresAt);
-				TraverseTree (sb, root.Right);
-			}
+			heap [index] = item;
 		}
 	}
 }
