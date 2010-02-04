@@ -1,5 +1,7 @@
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* dtest.cs: Add a test for TypeMirror.EnumUnderlyingType.
+
 	* dtest.cs dtest-app.cs: Add tests for TypeMirror.IsEnum and
 	VirtualMachine.CreateEnumMirror ().
 
