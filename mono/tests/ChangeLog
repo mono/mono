@@ -1,3 +1,8 @@
+2010-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs dtest-app.cs: Add tests for TypeMirror.IsEnum and
+	VirtualMachine.CreateEnumMirror ().
+
 2010-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs: Add minimal tests for assembly unloading.
