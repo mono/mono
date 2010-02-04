@@ -1,3 +1,9 @@
+2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : now I can enable service throttling to
+	  handle more than one concurrent channels as ASP.NET reply channel
+	  got fixed.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : actually instance context provider could be
