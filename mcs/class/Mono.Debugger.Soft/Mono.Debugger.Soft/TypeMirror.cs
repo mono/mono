@@ -573,6 +573,19 @@ namespace Mono.Debugger.Soft
 			return false;
 		}
 
+		// Same as Enum.GetUnderlyingType ()
+		public TypeMirror EnumUnderlyingType {
+			get {
+				if (!IsEnum)
+					throw new ArgumentException ("Type is not an enum type.");
+				foreach (FieldInfoMirror f in GetFields ()) {
+					if (!f.IsStatic)
+						return f.FieldType;
+				}
+				throw new NotImplementedException ();
+			}
+		}
+
 		/*
 		 * Creating the custom attributes themselves could modify the behavior of the
 		 * debuggee, so we return objects similar to the CustomAttributeData objects

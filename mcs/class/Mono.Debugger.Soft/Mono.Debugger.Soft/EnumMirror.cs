@@ -18,7 +18,7 @@ namespace Mono.Debugger.Soft
 				throw new ArgumentNullException ("value");
 			if (!type.IsEnum)
 				throw new ArgumentException ("type must be an enum type", "type");
-			TypeMirror t = GetUnderlyingType (type);
+			TypeMirror t = type.EnumUnderlyingType;
 			if (value.Value == null || !value.Value.GetType ().IsPrimitive || t != vm.RootDomain.GetCorrespondingType (value.Value.GetType ()))
 				throw new ArgumentException ("Value '" + value.Value + "' does not match the type of the enum.");
 		}
@@ -43,14 +43,6 @@ namespace Mono.Debugger.Soft
 				}
 				return Value.ToString ();
 			}
-		}
-
-		public TypeMirror GetUnderlyingType (TypeMirror t) {
-			foreach (FieldInfoMirror f in t.GetFields ()) {
-				if (!f.IsStatic)
-					return f.FieldType;
-			}
-			throw new NotImplementedException ();
 		}
 	}
 }
