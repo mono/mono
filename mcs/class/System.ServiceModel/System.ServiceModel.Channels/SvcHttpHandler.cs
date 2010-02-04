@@ -62,6 +62,8 @@ namespace System.ServiceModel.Channels {
 
 	internal class SvcHttpHandler : IHttpHandler
 	{
+		static object type_lock = new object ();
+
 		Type type;
 		Type factory_type;
 		string path;
@@ -183,6 +185,8 @@ namespace System.ServiceModel.Channels {
 
 		void EnsureServiceHost ()
 		{
+			lock (type_lock) {
+
 			if (host != null)
 				return;
 
@@ -199,6 +203,8 @@ namespace System.ServiceModel.Channels {
 
 			// Not precise, but it needs some wait time to have all channels start requesting. And it is somehow required.
 			Thread.Sleep (500);
+
+			}
 		}
 	}
 }
