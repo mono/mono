@@ -1,3 +1,7 @@
+2010-02-04  Miguel de Icaza  <miguel@novell.com>
+
+	* Take advantage of the Describe feature.
+
 2009-12-16  Miguel de Icaza  <miguel@novell.com>
 
 	* repl.cs: Avoid crash, fixes 554898
