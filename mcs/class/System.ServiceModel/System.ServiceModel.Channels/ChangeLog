@@ -1,5 +1,9 @@
 2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* AspNetReplyChannel.cs : remove garbage output.
+
+2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs : Use lock when it tries to create the service
 	  host.
 
