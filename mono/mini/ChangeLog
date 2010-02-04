@@ -1,3 +1,10 @@
+2010-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_compile_assembly): Handle asmonly+llvm mode.
+
+	* mini-llvm.c (mono_llvm_emit_method): Don't make the 'type_info' symbols
+	global.
+
 2010-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Add support for unaligned loads.
