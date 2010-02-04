@@ -1,3 +1,9 @@
+2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	*  ClientCredentials.cs, ContractDescription.cs,
+	  IEndpointBehavior.cs, IOperationBehavior.cs : add monotouch support
+	  for client behavior.
+
 2010-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceContractGenerator.cs : when Options.AsynchronousMethods is
