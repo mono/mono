@@ -25,3 +25,4 @@ Microsoft.Build.Tasks/TestEngine.cs
 Microsoft.Build.Tasks/TestMessageLogger.cs
 Microsoft.Build.Tasks/TaskBatchingTest.cs
 Microsoft.Build.Tasks/WarningTest.cs
+Microsoft.Build.Tasks/WriteLinesToFileTest.cs

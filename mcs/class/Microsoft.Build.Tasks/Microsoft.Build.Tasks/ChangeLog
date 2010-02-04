@@ -1,3 +1,8 @@
+2010-02-04  Ankit Jain  <jankit@novell.com>
+
+	* WriteLinesToFile.cs: Delete the file if there is nothing to
+	be written and overwrite==true.
+
 2010-02-02	Rodrigo B. de Oliveira	<rodrigo@unity3d.com>
 
 	* AssemblyResolver.cs:
