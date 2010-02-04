@@ -1,3 +1,15 @@
+2010-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachine.cs (CreateEnumMirror): New method to create an EnumMirror.
+
+	* AppDomainMirror.cs (GetCorrespondingType): New method to return a TypeMirror
+	corresponding to a primitive type.
+
+	* TypeMirror.cs (IsEnum): Implement.
+
+	* EnumMirror.cs (.ctor): New internal constructor called from CreateEnumMirror
+	which does lots of error checking.
+
 2010-01-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyUnloadEvent: New file.

@@ -150,9 +150,7 @@ namespace Mono.Debugger.Soft
 
 		public bool IsEnum {
 			get {
-				// FIXME:
-				return false;
-				//return IsSubclassOf (typeof (Enum));
+				return GetInfo ().is_enum;
 			}
 		}
 

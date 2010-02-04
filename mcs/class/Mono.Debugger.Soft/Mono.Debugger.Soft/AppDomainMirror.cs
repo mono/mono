@@ -56,6 +56,24 @@ namespace Mono.Debugger.Soft
 			return vm.GetObject<StringMirror> (vm.conn.Domain_CreateString (id, s));
 		}
 
+		TypeMirror[] primitiveTypes = new TypeMirror [32];
+		
 
+		public TypeMirror GetCorrespondingType (Type t) {
+			if (t == null)
+				throw new ArgumentNullException ("t");
+			TypeCode tc = Type.GetTypeCode (t);
+
+			if (tc == TypeCode.Empty || tc == TypeCode.Object)
+				throw new ArgumentException ("t must be a primitive type", "t");
+
+			int tc_index = (int)tc;
+			if (primitiveTypes [tc_index] == null) {
+				primitiveTypes [tc_index] = Corlib.GetType ("System." + t.Name, false, false);
+				if (primitiveTypes [tc_index] == null)
+					throw new NotImplementedException ();
+			}
+			return primitiveTypes [tc_index];
+		}
     }
 }
