@@ -1,5 +1,7 @@
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c: Init the jit module only when first JITting.
+
 	* aot-compiler.c (emit_plt): Fix the naming of plt entries of llvm+darwin.
 
 	* mini-llvm.c (get_plt_entry): Make the plt entries have hidden visibility.
