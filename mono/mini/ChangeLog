@@ -1,5 +1,7 @@
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (get_plt_entry): Make the plt entries have hidden visibility.
+
 	* mini-llvm.c (mono_llvm_emit_aot_module): Remove the dummy got after it is
 	replaced with the real got.
 
