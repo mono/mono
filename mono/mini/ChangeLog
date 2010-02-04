@@ -1,3 +1,7 @@
+2010-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (type_commands): Return the enumness if the type as well.
+
 2010-02-03  Bill Holmes  <billholmes54@gmail.com>
 
 	* debugger-agent.c : Fixing MSVC builds.
