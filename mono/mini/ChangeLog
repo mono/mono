@@ -1,5 +1,8 @@
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_aot_module): Remove the dummy got after it is
+	replaced with the real got.
+
 	* debugger-agent.c (type_commands): Return the enumness if the type as well.
 
 	* image-writer.c: Reduce the amount of #ifdefs a bit.
