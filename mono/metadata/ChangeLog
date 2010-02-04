@@ -1,5 +1,13 @@
 2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): Use the new basic block formation pass
+	to avoid verifying dead basic blocks. This is the same behavior as the
+	runtime MS verifier. 
+
+	backport of r150888.
+
+2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mono-basic-block.c:
 	* mono-basic-block.h: New implementation of a basic block formation pass.
 	The formation pass does static liveness analysis as well to detect dead
