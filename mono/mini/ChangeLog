@@ -1,5 +1,10 @@
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.c: Reduce the amount of #ifdefs a bit.
+
+	* aot-compiler.c: Reduce the amount of #ifdefs. Add beginnings of support for
+	llvm on darwin/arm.
+
 	* aot-compiler.c (mono_compile_assembly): Handle asmonly+llvm mode.
 
 	* mini-llvm.c (mono_llvm_emit_method): Don't make the 'type_info' symbols
