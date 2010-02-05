@@ -1,5 +1,9 @@
 2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	*  HttpTransportBindingElement.cs : ... and add MONOTOUCH on #ifs.
+
+2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	*  HttpRequestChannel.cs, HttpTransportBindingElement.cs :
 	  enable authentication schemes on monotouch.
 
