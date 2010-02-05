@@ -178,10 +178,22 @@ namespace System.Reflection {
 
 		public override ParameterInfo[] GetIndexParameters()
 		{
-			CachePropertyInfo (PInfo.GetMethod);
-			if (info.get_method != null)
-				return info.get_method.GetParameters ();
-			return new ParameterInfo [0];
+			CachePropertyInfo (PInfo.GetMethod | PInfo.SetMethod);
+			ParameterInfo[] res;
+			if (info.get_method != null) {
+				res = info.get_method.GetParameters ();
+			} else if (info.set_method != null) {
+				ParameterInfo[] src = info.set_method.GetParameters ();
+				res = new ParameterInfo [src.Length - 1];
+				Array.Copy (src, res, res.Length);
+			} else
+				return new ParameterInfo [0];
+
+			for (int i = 0; i < res.Length; ++i) {
+				ParameterInfo pinfo = res [i];
+				res [i] = new ParameterInfo (pinfo, this);
+			}
+			return res;	
 		}
 		
 		public override MethodInfo GetSetMethod (bool nonPublic)

@@ -157,7 +157,10 @@ namespace System.Reflection {
 
 		public override ParameterInfo[] GetParameters ()
 		{
-			return MonoMethodInfo.GetParametersInfo (mhandle, this);
+			ParameterInfo[] src = MonoMethodInfo.GetParametersInfo (mhandle, this);
+			ParameterInfo[] res = new ParameterInfo [src.Length];
+			src.CopyTo (res, 0);
+			return res;
 		}
 
 		/*
@@ -171,7 +174,8 @@ namespace System.Reflection {
 		{
 			if (binder == null)
 				binder = Binder.DefaultBinder;
-			ParameterInfo[] pinfo = GetParameters ();
+			/*Avoid allocating an array every time*/
+			ParameterInfo[] pinfo = MonoMethodInfo.GetParametersInfo (mhandle, this);
 
 			if ((parameters == null && pinfo.Length != 0) || (parameters != null && parameters.Length != pinfo.Length))
 				throw new TargetParameterCountException ("parameters do not match signature");

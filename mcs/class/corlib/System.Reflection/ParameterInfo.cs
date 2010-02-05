@@ -46,6 +46,7 @@ namespace System.Reflection
 		protected int PositionImpl;
 		protected ParameterAttributes AttrsImpl;
 		private UnmanagedMarshal marshalAs;
+		//ParameterInfo parent;
 
 		protected ParameterInfo () {
 		}
@@ -62,6 +63,15 @@ namespace System.Reflection
 				this.PositionImpl = position - 1;
 				this.AttrsImpl = ParameterAttributes.None;
 			}
+		}
+
+		internal ParameterInfo (ParameterInfo pinfo, MemberInfo member) {
+			this.ClassImpl = pinfo.ParameterType;
+			this.MemberImpl = member;
+			this.NameImpl = pinfo.Name;
+			this.PositionImpl = pinfo.Position;
+			this.AttrsImpl = pinfo.Attributes;
+			//this.parent = pinfo;
 		}
 
 		/* to build a ParameterInfo for the return type of a method */
@@ -177,14 +187,29 @@ namespace System.Reflection
 			get {return PositionImpl;}
 		}
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern int GetMetadataToken ();
+
 #if NET_2_0 || BOOTSTRAP_NET_2_0
 		public
 #else
 		internal
 #endif
-		extern int MetadataToken {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
+		int MetadataToken {
+			get {
+				if (MemberImpl is PropertyInfo) {
+					PropertyInfo prop = (PropertyInfo)MemberImpl;
+					MethodInfo mi = prop.GetGetMethod (true);
+					if (mi == null)
+						mi = prop.GetSetMethod (true);
+					/*TODO expose and use a GetParametersNoCopy()*/
+					return mi.GetParameters () [PositionImpl].MetadataToken;
+				} else if (MemberImpl is MethodBase) {
+					return GetMetadataToken ();
+				}
+				throw new ArgumentException ("Can't produce MetadataToken for member of type " + MemberImpl.GetType ());
+			}
+
 		}
 
 		public virtual object[] GetCustomAttributes (bool inherit)
