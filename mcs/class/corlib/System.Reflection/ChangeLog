@@ -1,3 +1,16 @@
+2010-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoMethod.cs (GetParameters): Must return a copy instead of the interned array.
+
+	* MonoMethod.cs (Invoke): Skip array clone in GetParameters.
+
+	* MonoProperty.cs (GetIndexParameters): Properly handle write-only indexed properties.
+	Return a ParameterInfo object bound to the properly and not to the method.
+
+	* ParameterInfo.cs: Add new constructor that copies all fields but Member.
+
+	* ParameterInfo.cs (MetadataToken): Properly handle tokens of non-method members.
+
 2010-01-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* MonoGenericClass.cs: Fix a warning.
