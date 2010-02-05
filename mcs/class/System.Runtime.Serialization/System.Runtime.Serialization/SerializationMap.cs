@@ -547,9 +547,6 @@ namespace System.Runtime.Serialization
 					GetDataMemberAttribute (fi);
 				if (dma == null)
 					continue;
-				if (fi.IsInitOnly)
-					throw new InvalidDataContractException (String.Format (
-							"DataMember field {0} must not be read-only.", fi));
 				data_members.Add (CreateDataMemberInfo (dma, fi, fi.FieldType));
 			}
 
