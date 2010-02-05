@@ -1,5 +1,9 @@
 2010-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* PropertyInfoTest.cs: Make tests for GetIndexParameters() work.
+
+2010-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	*  MethodInfoTest.cs: New test for GetParameters() returning the interned array.
 
 	* PropertyInfoTest.cs: New tests for GetIndexParameters().
