@@ -93,7 +93,7 @@ namespace System.ServiceModel.Channels
 				((HttpWebRequest) web_request).CookieContainer = cmgr.CookieContainer;
 #endif
 
-#if !NET_2_1 // until we support NetworkCredential like SL4 will do.
+#if !NET_2_1 || MONOTOUCH // until we support NetworkCredential like SL4 will do.
 			// client authentication (while SL3 has NetworkCredential class, it is not implemented yet. So, it is non-SL only.)
 			var httpbe = (HttpTransportBindingElement) source.Transport;
 			string authType = null;

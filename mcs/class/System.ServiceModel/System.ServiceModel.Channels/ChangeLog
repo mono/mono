@@ -1,3 +1,8 @@
+2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	*  HttpRequestChannel.cs, HttpTransportBindingElement.cs :
+	  enable authentication schemes on monotouch.
+
 2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SvcHttpHandler.cs : a wait handle could be used for more than one

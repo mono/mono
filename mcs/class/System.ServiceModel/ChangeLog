@@ -1,3 +1,7 @@
+2010-02-05  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy_2_1.cs : remove AuthenticationSchemes. It blocks MT support.
+
 2010-02-04  Astushi Enomoto  <atsushi@ximian.com>
 
 	* Dummy.cs, net_2_1_raw_System.ServiceModel.dll.sources : add some

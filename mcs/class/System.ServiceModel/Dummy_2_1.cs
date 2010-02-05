@@ -31,10 +31,6 @@ namespace System.ServiceModel.Security
 {
 	class Dummy {}
 }
-namespace System.Net
-{
-	public enum AuthenticationSchemes {Anonymous}
-}
 namespace System.Net.Security
 {
 	public enum ProtectionLevel {None}
