@@ -1,5 +1,10 @@
 2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBaseTest.cs : on unixy filesystems "/foobar"
+	  is parsed as an absolute URI.
+
+2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* NetTcpBindingTest.cs : port 808 is not generally available
 	  for non-privileged users.
 
