@@ -1,3 +1,8 @@
+2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs : port 808 is not generally available
+	  for non-privileged users.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory_1Test.cs : added a couple of error check tests for
