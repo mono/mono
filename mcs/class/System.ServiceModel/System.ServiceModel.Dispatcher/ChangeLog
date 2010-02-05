@@ -1,3 +1,36 @@
+2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : now I can enable service throttling to
+	  handle more than one concurrent channels as ASP.NET reply channel
+	  got fixed.
+
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : actually instance context provider could be
+	  null through the entire service run.
+
+	  Fixed all current nunit failures!
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : do not try to iterate channel acceptor when
+	  it is being closed.
+
+2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : another error audit.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FaultContractInfo.cs : implement.
+	* DispatchOperation.cs, ClientOperation.cs: fill Faults.
+
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs, InputOrReplyRequestProcessor.cs :
+	  Pass service type to correctly retrieve ServiceContractAttribute
+	  from the service type, not callback type.
+
 2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : make sure to unlock channel acceptor wait

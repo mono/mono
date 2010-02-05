@@ -35,12 +35,12 @@ namespace System.ServiceModel.Channels
 		public XmlDictionaryReaderQuotas ReaderQuotas { get; private set; }
 	}
 
-	internal class TcpChannelFactory<TChannel> : ChannelFactoryBase<TChannel>
+	internal class TcpChannelFactory<TChannel> : TransportChannelFactoryBase<TChannel>
 	{
 		TcpChannelInfo info;
 
-		[MonoTODO]
 		public TcpChannelFactory (TcpTransportBindingElement source, BindingContext ctx)
+			: base (source, ctx)
 		{
 			MessageEncoder encoder = null;
 			XmlDictionaryReaderQuotas quotas = null;
@@ -75,11 +75,6 @@ namespace System.ServiceModel.Channels
 				return (TChannel) (object) new TcpRequestChannel (this, info, address, targetUri);
 
 			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
-		}
-
-		[MonoTODO]
-		protected override void OnOpen (TimeSpan timeout)
-		{
 		}
 	}
 }

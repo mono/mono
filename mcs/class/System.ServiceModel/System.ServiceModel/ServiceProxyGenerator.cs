@@ -37,9 +37,9 @@ namespace System.ServiceModel
 {
 	internal class ServiceProxyGenerator : ProxyGeneratorBase
 	{
-		public static Type CreateCallbackProxyType (Type type)
+		public static Type CreateCallbackProxyType (Type serviceType, Type callbackType)
 		{
-			var cd = ContractDescriptionGenerator.GetCallbackContract (type);
+			var cd = ContractDescriptionGenerator.GetCallbackContract (serviceType, callbackType);
 			string modname = "dummy";
 			Type crtype = typeof (DuplexServiceRuntimeChannel);
 
@@ -47,7 +47,7 @@ namespace System.ServiceModel
 			CodeClass c = new CodeModule (modname).CreateClass (
 				"__callbackproxy_" + cd.Name,
 				crtype,
-				new Type [] {type});
+				new Type [] {callbackType});
 
 			//
 			// public __callbackproxy_MyContract (

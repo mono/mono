@@ -51,5 +51,26 @@ namespace MonoTests.System.ServiceModel.Channels
 			Assert.IsFalse (h.Equals (null), "#1"); // never throw nullref
 			Assert.IsTrue (h.Equals (h2), "#2");
 		}
+
+		[Test]
+		public void GetAddressHeaderReader ()
+		{
+			var h = AddressHeader.CreateAddressHeader ("foo", String.Empty, null);
+			var r = h.GetAddressHeaderReader ();
+			r.MoveToContent ();
+			Assert.AreEqual ("foo", r.LocalName, "#1");
+			Assert.AreEqual ("true", r.GetAttribute ("nil", XmlSchema.InstanceNamespace), "#2");
+		}
+
+		[Test]
+		public void WriteAddressHeader ()
+		{
+			var h = AddressHeader.CreateAddressHeader ("foo", "urn:foo", null);
+			var sw = new StringWriter ();
+			var xw = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw));
+			h.WriteAddressHeader (xw);
+			xw.Close ();
+			Assert.AreEqual ("<?xml version=\"1.0\" encoding=\"utf-16\"?><foo i:nil=\"true\" xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" xmlns=\"urn:foo\" />", sw.ToString (), "#1");
+		}
 	}
 }

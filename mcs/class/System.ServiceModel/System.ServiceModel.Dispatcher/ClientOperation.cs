@@ -60,6 +60,9 @@ namespace System.ServiceModel.Dispatcher
 		IClientMessageFormatter formatter, actual_formatter;
 		SynchronizedCollection<IParameterInspector> inspectors
 			= new SynchronizedCollection<IParameterInspector> ();
+#if !NET_2_1
+		SynchronizedCollection<FaultContractInfo> fault_contract_infos;
+#endif
 
 		public ClientOperation (ClientRuntime parent,
 			string name, string action)
@@ -103,7 +106,15 @@ namespace System.ServiceModel.Dispatcher
 
 #if !NET_2_1
 		public SynchronizedCollection<FaultContractInfo> FaultContractInfos {
-			get { throw new NotImplementedException (); }
+			get {
+				if (fault_contract_infos == null) {
+					var l = new SynchronizedCollection<FaultContractInfo> ();
+					foreach (var f in Description.Faults)
+						l.Add (new FaultContractInfo (f.Action, f.DetailType));
+					fault_contract_infos = l;
+				}
+				return fault_contract_infos;
+			}
 		}
 #endif
 

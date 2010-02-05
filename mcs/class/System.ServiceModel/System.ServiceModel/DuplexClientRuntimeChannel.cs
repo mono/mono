@@ -164,7 +164,7 @@ namespace System.ServiceModel
 				Console.WriteLine (ex);
 			} finally {
 				// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-				if (input.State != CommunicationState.Closed)
+				if (loop && input.State != CommunicationState.Closed)
 					ProcessRequestOrInput (input);
 			}
 		}

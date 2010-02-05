@@ -39,7 +39,7 @@ using NUnit.Framework;
 namespace MonoTests.System.ServiceModel.Channels
 {
 	[TestFixture]
-	public class SslStreamSecurityBindingElementTest : BindingElementTest
+	public class SslStreamSecurityBindingElementTest
 	{
 		[Test]
 		[Category ("NotWorking")]

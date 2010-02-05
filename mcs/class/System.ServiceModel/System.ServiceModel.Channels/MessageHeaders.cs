@@ -431,5 +431,13 @@ namespace System.ServiceModel.Channels
 		public UnderstoodHeaders UnderstoodHeaders {
 			get { throw new NotImplementedException (); }
 		}
+
+		public void SetAction (XmlDictionaryString action)
+		{
+			if (action == null)
+				Action = null;
+			else
+				Action = action.Value;
+		}
 	}
 }

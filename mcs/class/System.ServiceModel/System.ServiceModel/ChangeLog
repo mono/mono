@@ -1,3 +1,71 @@
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory_1.cs, ChannelFactory.cs : fix default constructor
+	  handling and ensure service endpoint at opening the factory.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : fix complicated IMetadataExchange handling to
+	  pass nunit tests (treat mex binding as special case).
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexClientRuntimeChannel.cs : do not try to iterate channel
+	  acceptor when it is being closed.
+
+2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : a stability workaround to make nunit test
+	  stopper almost reproducible.
+
+2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WS2007FederationHttpBinding.cs, WS2007HttpBinding.cs:
+	  add missing constructors.
+
+2010-01-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageSecurityVersion.cs : add new 3.5 members.
+
+2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SilverlightClientConfigLoader.cs : add another loop blocker.
+	  Do not reject binding configuration with no basic http binding.
+	  In SL3 it may be custom and such configuration should be valid.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ExceptionDetail.cs : uncomment DataMember (likely commented out due
+	  to missing default serialization in the past).
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddressBuilder.cs : reader getters were broken.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddressBuilder.cs : implement.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BasicHttpBinding.cs : add SL3 EnableHttpCookieContainer support.
+
+2010-01-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SilverlightClientConfigLoader.cs : uncomment binary message
+	  encoding element which was internal-only in SL2 but public in SL3.
+
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceProxyGenerator.cs, ServiceRuntimeChannel.cs :
+	  Pass service type to correctly retrieve ServiceContractAttribute
+	  from the service type, not callback type.
+
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : to open duplex callback channel, it must
+	  ensure to open the channel itself (not only its inner channel).
+
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientBase.cs : remove extra CWLs.

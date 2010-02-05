@@ -1,3 +1,36 @@
+2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	*  ClientCredentials.cs, ContractDescription.cs,
+	  IEndpointBehavior.cs, IOperationBehavior.cs : add monotouch support
+	  for client behavior.
+
+2010-01-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs : when Options.AsynchronousMethods is
+	  specified, generate async methods *as well as* sync methods (i.e.
+	  not exclusively).
+
+	  In moonlight proxy generator (svcutil -moonlight) mode, sync
+	  methods will be removed at svcutil itself.
+	  This fix brings sync proxy methods back to monotouch.
+
+2010-01-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceAuthorizationBehavior.cs : implement (it does almost
+	  nothing though).
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescriptionGenerator.cs : fill Operation.Faults.
+
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescriptionGenerator.cs : fix GetCallbackContract() to
+	  correctly retrieve ServiceContractAttribute from the service type,
+	  not the callback type. This ended up to get the bug #567672 sample
+	  working (but it will break at some stage as it involves some
+	  non-implemented classes).
+
 2009-12-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceContractGenerator.cs :

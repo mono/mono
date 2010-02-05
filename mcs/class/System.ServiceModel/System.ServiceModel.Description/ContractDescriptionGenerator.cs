@@ -29,6 +29,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Linq;
 using System.Net.Security;
 using System.Reflection;
 using System.Runtime.Serialization;
@@ -91,28 +92,28 @@ namespace System.ServiceModel.Description
 			return null;
 		}
 
-		public static ContractDescription GetCallbackContract (Type type)
+		public static ContractDescription GetCallbackContract (Type serviceType, Type callbackType)
 		{
-			return GetContract (type, null, true);
+			return GetContract (callbackType, null, serviceType);
 		}
 
 		public static ContractDescription GetContract (
 			Type givenContractType, Type givenServiceType)
 		{
-			return GetContract (givenContractType, givenServiceType, false);
+			return GetContract (givenContractType, givenServiceType, null);
 		}
 
-		static ContractDescription GetContract (Type givenContractType, Type givenServiceType, bool assumeServiceContract)
+		static ContractDescription GetContract (Type givenContractType, Type givenServiceType, Type serviceTypeForCallback)
 		{
 			// FIXME: serviceType should be used for specifying attributes like OperationBehavior.
 
 			Type exactContractType = null;
 			ServiceContractAttribute sca = null;
 			Dictionary<Type, ServiceContractAttribute> contracts = 
-				GetServiceContractAttributes (givenServiceType ?? givenContractType);
+				GetServiceContractAttributes (serviceTypeForCallback ?? givenServiceType ?? givenContractType);
 			if (contracts.ContainsKey(givenContractType)) {
 				exactContractType = givenContractType;
-				sca = contracts[givenContractType];
+				sca = contracts [givenContractType];
 			} else {
 				foreach (Type t in contracts.Keys)
 					if (t.IsAssignableFrom(givenContractType)) {
@@ -127,10 +128,10 @@ namespace System.ServiceModel.Description
 			if (exactContractType == null)
 				exactContractType = givenContractType;
 			if (sca == null) {
-				if (assumeServiceContract)
-					sca = new ServiceContractAttribute ();
+				if (serviceTypeForCallback != null)
+					sca = contracts.Values.First ();
 				else
-					throw new InvalidOperationException (String.Format ("Attempted to get contract type from '{0}' which neither is a service contract nor does it inherit service contract.", givenContractType));
+					throw new InvalidOperationException (String.Format ("Attempted to get contract type from '{0}' which neither is a service contract nor does it inherit service contract.", serviceTypeForCallback ?? givenContractType));
 			}
 			string name = sca.Name ?? exactContractType.Name;
 			string ns = sca.Namespace ?? "http://tempuri.org/";
@@ -244,6 +245,8 @@ namespace System.ServiceModel.Description
 				foreach (ServiceKnownTypeAttribute a in serviceMethod.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false))
 					foreach (Type t in a.GetTypes ())
 						od.KnownTypes.Add (t);
+				foreach (FaultContractAttribute a in serviceMethod.GetCustomAttributes (typeof (FaultContractAttribute), false))
+					od.Faults.Add (new FaultDescription (a.Action) { DetailType = a.DetailType, Name = a.Name, Namespace = a.Namespace });
 				cd.Operations.Add (od);
 			}
 			else if (oca.AsyncPattern && od.BeginMethod != null ||

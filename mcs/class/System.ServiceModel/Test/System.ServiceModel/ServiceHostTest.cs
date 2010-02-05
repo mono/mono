@@ -161,7 +161,8 @@ namespace MonoTests.System.ServiceModel
 		public void AddServiceEndpoint5 ()
 		{
 			ServiceHost host = new ServiceHost (typeof (Baz), new Uri ("http://localhost/echo"));
-			// Full type name is expected here.
+
+			// Full type name is expected here (see AddServiceEndpoint4).
 			host.AddServiceEndpoint ("IBaz", new BasicHttpBinding (), "rel");
 		}
 
@@ -187,6 +188,7 @@ namespace MonoTests.System.ServiceModel
 		public void AddServiceEndpointMetadataExchange ()
 		{
 			ServiceHost host = new ServiceHost (typeof (MyMetadataExchange));
+			// strange, but unlike above, it is accepted. The only difference I can see is the binding name.
 			host.AddServiceEndpoint ("IMetadataExchange",
 						 new BasicHttpBinding (),
 						 "http://localhost:8080");

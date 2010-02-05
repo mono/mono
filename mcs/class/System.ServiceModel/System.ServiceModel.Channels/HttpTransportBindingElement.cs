@@ -42,15 +42,17 @@ namespace System.ServiceModel.Channels
 			unsafe_ntlm_auth;
 		bool use_default_proxy = true, keep_alive_enabled = true;
 		int max_buffer_size = 0x10000;
-		AuthenticationSchemes auth_scheme =
-			AuthenticationSchemes.Anonymous;
-		AuthenticationSchemes proxy_auth_scheme =
-			AuthenticationSchemes.Anonymous;
 		HostNameComparisonMode host_cmp_mode;
 		Uri proxy_address;
 		string realm = String.Empty;
 		TransferMode transfer_mode;
 		IDefaultCommunicationTimeouts timeouts;
+#if !NET_2_1
+		AuthenticationSchemes auth_scheme =
+			AuthenticationSchemes.Anonymous;
+		AuthenticationSchemes proxy_auth_scheme =
+			AuthenticationSchemes.Anonymous;
+#endif
 		// If you add fields, do not forget them in copy constructor.
 
 		public HttpTransportBindingElement ()
@@ -67,24 +69,33 @@ namespace System.ServiceModel.Channels
 			use_default_proxy = other.use_default_proxy;
 			keep_alive_enabled = other.keep_alive_enabled;
 			max_buffer_size = other.max_buffer_size;
-			auth_scheme = other.auth_scheme;
-			proxy_auth_scheme = other.proxy_auth_scheme;
 			host_cmp_mode = other.host_cmp_mode;
 			proxy_address = other.proxy_address;
 			realm = other.realm;
 			transfer_mode = other.transfer_mode;
 			// FIXME: it does not look safe
 			timeouts = other.timeouts;
+#if !NET_2_1
+			auth_scheme = other.auth_scheme;
+			proxy_auth_scheme = other.proxy_auth_scheme;
+#endif
 		}
+
+#if !NET_2_1
+		public AuthenticationSchemes AuthenticationScheme {
+			get { return auth_scheme; }
+			set { auth_scheme = value; }
+		}
+
+		public AuthenticationSchemes ProxyAuthenticationScheme {
+			get { return proxy_auth_scheme; }
+			set { proxy_auth_scheme = value; }
+		}
+#endif
 
 		public bool AllowCookies {
 			get { return allow_cookies; }
 			set { allow_cookies = value; }
-		}
-
-		public AuthenticationSchemes AuthenticationScheme {
-			get { return auth_scheme; }
-			set { auth_scheme = value; }
 		}
 
 		public bool BypassProxyOnLocal {
@@ -110,11 +121,6 @@ namespace System.ServiceModel.Channels
 		public Uri ProxyAddress {
 			get { return proxy_address; }
 			set { proxy_address = value; }
-		}
-
-		public AuthenticationSchemes ProxyAuthenticationScheme {
-			get { return proxy_auth_scheme; }
-			set { proxy_auth_scheme = value; }
 		}
 
 		public string Realm {

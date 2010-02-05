@@ -56,7 +56,7 @@ namespace System.ServiceModel
 			private set;
 		}
 
-		//[DataMember]
+		[DataMember]
 		public ExceptionDetail InnerException {
 			get;
 			private set;

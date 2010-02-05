@@ -435,6 +435,10 @@ namespace System.ServiceModel
 			if (AllowInitializationUI)
 				DisplayInitializationUI ();
 			OperationDescription od = SelectOperation (method, operationName, parameters);
+
+			if (State != CommunicationState.Opened)
+				Open ();
+
 			if (!od.IsOneWay)
 				return Request (od, parameters);
 			else {
@@ -458,18 +462,12 @@ namespace System.ServiceModel
 
 		void Output (OperationDescription od, object [] parameters)
 		{
-			if (OutputChannel.State != CommunicationState.Opened)
-				OutputChannel.Open ();
-
 			ClientOperation op = runtime.Operations [od.Name];
 			Send (CreateRequest (op, parameters), OperationTimeout);
 		}
 
 		object Request (OperationDescription od, object [] parameters)
 		{
-			if (OperationChannel.State != CommunicationState.Opened)
-				OperationChannel.Open ();
-
 			ClientOperation op = runtime.Operations [od.Name];
 			object [] inspections = new object [runtime.MessageInspectors.Count];
 			Message req = CreateRequest (op, parameters);

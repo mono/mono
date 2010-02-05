@@ -35,5 +35,27 @@ namespace System.ServiceModel
 	[MonoTODO]
 	public class WS2007FederationHttpBinding : WSFederationHttpBinding
 	{
+		public WS2007FederationHttpBinding ()
+			: base ()
+		{
+		}
+
+		public WS2007FederationHttpBinding (
+			WSFederationHttpSecurityMode securityMode)
+			: base (securityMode)
+		{
+		}
+
+		public WS2007FederationHttpBinding (WSFederationHttpSecurityMode securityMode, bool reliableSessionEnabled)
+			: base (securityMode, reliableSessionEnabled)
+		{
+		}
+
+		[MonoTODO]
+		public WS2007FederationHttpBinding (string configurationName)
+			: base (configurationName)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

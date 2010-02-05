@@ -77,7 +77,7 @@ namespace System.ServiceModel.Channels
 			// FIXME: is distination really like this?
 			Uri destination = message.Headers.To;
 			if (destination == null) {
-				if (source.Source.ManualAddressing)
+				if (source.Transport.ManualAddressing)
 					throw new InvalidOperationException ("When manual addressing is enabled on the transport, every request messages must be set its destination address.");
 				 else
 				 	destination = Via ?? RemoteAddress.Uri;
@@ -87,9 +87,15 @@ namespace System.ServiceModel.Channels
 			web_request.Method = "POST";
 			web_request.ContentType = Encoder.ContentType;
 
-#if !NET_2_1 // until we support NetworkCredential like SL4 will do.
+#if NET_2_1
+			var cmgr = source.GetProperty<IHttpCookieContainerManager> ();
+			if (cmgr != null)
+				((HttpWebRequest) web_request).CookieContainer = cmgr.CookieContainer;
+#endif
+
+#if !NET_2_1 || MONOTOUCH // until we support NetworkCredential like SL4 will do.
 			// client authentication (while SL3 has NetworkCredential class, it is not implemented yet. So, it is non-SL only.)
-			var httpbe = (HttpTransportBindingElement) source.Source;
+			var httpbe = (HttpTransportBindingElement) source.Transport;
 			string authType = null;
 			switch (httpbe.AuthenticationScheme) {
 			// AuthenticationSchemes.Anonymous is the default, ignored.

@@ -58,33 +58,22 @@ namespace MonoTests.System.ServiceModel
 			Assert.IsNotNull (tx, "#tx1");
 		}
 
-		// Those connection tests are somehow blocked by some tests
-		// I disabled recently (see svn history) but while those broken
-		// tests examine almost nothing, these tests below does, so I
-		// rather enabled them.
-		//
-		// Those tests somehow got broken in Nov. 2009 probably because
-		// of some underlying net layer and not due to those ignored
-		// tests though. But those tests leave channels open, so they
-		// are bad enough to be disabled.
-
 		[Test]
 		public void BufferedConnection ()
 		{
 			var host = new ServiceHost (typeof (Foo));
-			var bindingsvc = new NetTcpBinding ();
-			bindingsvc.Security.Mode = SecurityMode.None;
-			host.AddServiceEndpoint (typeof (IFoo), bindingsvc, "net.tcp://localhost/");
+			var bindingsvc = new CustomBinding (new BinaryMessageEncodingBindingElement (), new TcpTransportBindingElement ());
+			host.AddServiceEndpoint (typeof (IFoo), bindingsvc, "net.tcp://localhost:37564/");
 			host.Open (TimeSpan.FromSeconds (5));
 			try {
-				var bindingcli = new NetTcpBinding ();
+				var bindingcli = new NetTcpBinding () { TransactionFlow = false };
 				bindingcli.Security.Mode = SecurityMode.None;
-				var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("net.tcp://localhost/")).CreateChannel ();
+				var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("net.tcp://localhost:37564/")).CreateChannel ();
 				Assert.AreEqual (5, cli.Add (1, 4));
 				Assert.AreEqual ("monkey science", cli.Join ("monkey", "science"));
 			} finally {
 				host.Close (TimeSpan.FromSeconds (5));
-				var t = new TcpListener (808);
+				var t = new TcpListener (37564);
 				t.Start ();
 				t.Stop ();
 			}
@@ -96,21 +85,19 @@ namespace MonoTests.System.ServiceModel
 		public void StreamedConnection ()
 		{
 			var host = new ServiceHost (typeof (Foo));
-			var bindingsvc = new NetTcpBinding ();
-			bindingsvc.TransferMode = TransferMode.Streamed;
-			bindingsvc.Security.Mode = SecurityMode.None;
-			host.AddServiceEndpoint (typeof (IFoo), bindingsvc, "net.tcp://localhost/");
+			var bindingsvc = new CustomBinding (new BinaryMessageEncodingBindingElement (), new TcpTransportBindingElement () { TransferMode = TransferMode.Streamed });
+			host.AddServiceEndpoint (typeof (IFoo), bindingsvc, "net.tcp://localhost:37564/");
 			host.Open (TimeSpan.FromSeconds (5));
 			try {
-				var bindingcli = new NetTcpBinding ();
+				var bindingcli = new NetTcpBinding () { TransactionFlow = false };
 				bindingcli.TransferMode = TransferMode.Streamed;
 				bindingcli.Security.Mode = SecurityMode.None;
-				var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("net.tcp://localhost/")).CreateChannel ();
+				var cli = new ChannelFactory<IFooClient> (bindingcli, new EndpointAddress ("net.tcp://localhost:37564/")).CreateChannel ();
 				Assert.AreEqual (5, cli.Add (1, 4));
 				Assert.AreEqual ("monkey science", cli.Join ("monkey", "science"));
 			} finally {
 				host.Close (TimeSpan.FromSeconds (5));
-				var t = new TcpListener (808);
+				var t = new TcpListener (37564);
 				t.Start ();
 				t.Stop ();
 			}

@@ -358,10 +358,6 @@ namespace System.ServiceModel.Dispatcher
 
 			public void Start ()
 			{
-				foreach (var ed in owner.Endpoints)
-					if (ed.DispatchRuntime.InstanceContextProvider == null)
-						ed.DispatchRuntime.InstanceContextProvider = new DefaultInstanceContextProvider ();
-
 				if (loop_thread == null)
 					loop_thread = new Thread (new ThreadStart (Loop));
 				loop_thread.Start ();
@@ -421,8 +417,11 @@ namespace System.ServiceModel.Dispatcher
 					stop_handle.Close ();
 					stop_handle = null;
 				}
-				if (owner.Listener.State != CommunicationState.Closed)
+				if (owner.Listener.State != CommunicationState.Closed) {
+					// FIXME: log it
+					Console.WriteLine ("Channel listener '{0}' is not closed. Aborting.", owner.Listener.GetType ());
 					owner.Listener.Abort ();
+				}
 				if (loop_thread != null && loop_thread.IsAlive)
 					loop_thread.Abort ();
 				loop_thread = null;
@@ -467,9 +466,8 @@ namespace System.ServiceModel.Dispatcher
 				// http://social.msdn.microsoft.com/Forums/en-US/wcf/thread/3faa4a5e-8602-4dbe-a181-73b3f581835e
 
 				while (loop) {
-					// FIXME: enable throttling and allow more than one connection to process at a time.
-					while (loop && channels.Count < 1) {
-//					while (loop && channels.Count < owner.ServiceThrottle.MaxConcurrentSessions) {
+					// FIXME: also consider MaxConcurrentCalls
+					while (loop && channels.Count < owner.ServiceThrottle.MaxConcurrentSessions) {
 						channel_acceptor ();
 						creator_handle.WaitOne (); // released by ChannelAccepted()
 					}
@@ -591,7 +589,7 @@ namespace System.ServiceModel.Dispatcher
 					if (rc != null)
 						rc.Close ();
 					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-					if (reply.State != CommunicationState.Closed)
+					if (loop && reply.State != CommunicationState.Closed)
 						ProcessRequestOrInput (reply);
 				}
 			}
@@ -609,7 +607,7 @@ namespace System.ServiceModel.Dispatcher
 					Console.WriteLine (ex);
 				} finally {
 					// unless it is closed by session/call manager, move it back to the loop to receive the next message.
-					if (input.State != CommunicationState.Closed)
+					if (loop && input.State != CommunicationState.Closed)
 						ProcessRequestOrInput (input);
 				}
 			}

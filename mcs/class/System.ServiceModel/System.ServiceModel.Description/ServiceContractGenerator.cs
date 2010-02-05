@@ -320,53 +320,15 @@ namespace System.ServiceModel.Description
 			foreach (OperationDescription od in cd.Operations) {
 				CodeMemberMethod syncMethod = null, beginMethod = null, endMethod = null;
 
-				CodeMemberMethod cm = new CodeMemberMethod ();
-				type.Members.Add (cm);
-				if (GenerateAsync) {
-					cm.Name = "Begin" + od.Name;
-					beginMethod = cm;
-				} else {
-					cm.Name = od.Name;
-					syncMethod = cm;
-				}
 				CodeTypeReference returnTypeFromMessageContract = null;
+				syncMethod = GenerateOperationMethod (type, cd, od, false, out returnTypeFromMessageContract);
+				type.Members.Add (syncMethod);
 
-				if (od.SyncMethod != null) {
-					ExportParameters (cm, od.SyncMethod.GetParameters ());
-					if (GenerateAsync) {
-						AddBeginAsyncArgs (cm);
-						cm.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
-					}
-					else
-						cm.ReturnType = new CodeTypeReference (od.SyncMethod.ReturnType);
-				} else {
-					ExportMessages (od.Messages, cm, false);
-					returnTypeFromMessageContract = cm.ReturnType;
-					if (GenerateAsync) {
-						AddBeginAsyncArgs (cm);
-						cm.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
-					}
-				}
-
-				// [OperationContract (Action = "...", ReplyAction = "..")]
-				CodeAttributeDeclaration ad =
-					new CodeAttributeDeclaration (
-						new CodeTypeReference (
-							typeof (OperationContractAttribute)));
-				foreach (MessageDescription md in od.Messages) {
-					if (md.Direction == MessageDirection.Input)
-						ad.Arguments.Add (new CodeAttributeArgument ("Action", new CodePrimitiveExpression (md.Action)));
-					else
-						ad.Arguments.Add (new CodeAttributeArgument ("ReplyAction", new CodePrimitiveExpression (md.Action)));
-				}
-				if (GenerateAsync)
-					ad.Arguments.Add (new CodeAttributeArgument ("AsyncPattern", new CodePrimitiveExpression (true)));
-				cm.CustomAttributes.Add (ad);
-
-				// For async mode, add EndXxx() too.
 				if (GenerateAsync) {
+					beginMethod = GenerateOperationMethod (type, cd, od, true, out returnTypeFromMessageContract);
+					type.Members.Add (beginMethod);
 
-					cm = new CodeMemberMethod ();
+					var cm = new CodeMemberMethod ();
 					type.Members.Add (cm);
 					cm.Name = "End" + od.Name;
 					endMethod = cm;
@@ -388,6 +350,48 @@ namespace System.ServiceModel.Description
 			}
 		}
 
+		CodeMemberMethod GenerateOperationMethod (CodeTypeDeclaration type, ContractDescription cd, OperationDescription od, bool async, out CodeTypeReference returnType)
+		{
+			CodeMemberMethod cm = new CodeMemberMethod ();
+
+			if (async)
+				cm.Name = "Begin" + od.Name;
+			else
+				cm.Name = od.Name;
+
+			if (od.SyncMethod != null) {
+				ExportParameters (cm, od.SyncMethod.GetParameters ());
+				if (async) {
+					AddBeginAsyncArgs (cm);
+					cm.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
+				}
+				else
+					cm.ReturnType = new CodeTypeReference (od.SyncMethod.ReturnType);
+				returnType = new CodeTypeReference (od.SyncMethod.ReturnType);
+			} else {
+				ExportMessages (od.Messages, cm, false);
+				returnType = cm.ReturnType;
+				if (async) {
+					AddBeginAsyncArgs (cm);
+					cm.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
+				}
+			}
+
+			// [OperationContract (Action = "...", ReplyAction = "..")]
+			var ad = new CodeAttributeDeclaration (new CodeTypeReference (typeof (OperationContractAttribute)));
+			foreach (MessageDescription md in od.Messages) {
+				if (md.Direction == MessageDirection.Input)
+					ad.Arguments.Add (new CodeAttributeArgument ("Action", new CodePrimitiveExpression (md.Action)));
+				else
+					ad.Arguments.Add (new CodeAttributeArgument ("ReplyAction", new CodePrimitiveExpression (md.Action)));
+			}
+			if (async)
+				ad.Arguments.Add (new CodeAttributeArgument ("AsyncPattern", new CodePrimitiveExpression (true)));
+			cm.CustomAttributes.Add (ad);
+
+			return cm;
+		}
+
 		void ExportParameters (CodeMemberMethod method, ParameterInfo [] parameters)
 		{
 			foreach (ParameterInfo pi in parameters)
@@ -400,52 +404,16 @@ namespace System.ServiceModel.Description
 		void AddImplementationClientMethods (CodeTypeDeclaration type, ContractDescription cd)
 		{
 			foreach (OperationDescription od in cd.Operations) {
-				CodeMemberMethod cm = new CodeMemberMethod ();
-				type.Members.Add (cm);
-				if (GenerateAsync)
-					cm.Name = "Begin" + od.Name;
-				else
-					cm.Name = od.Name;
-				cm.Attributes = MemberAttributes.Public 
-						| MemberAttributes.Final;
+				CodeMemberMethod cm;
 				CodeTypeReference returnTypeFromMessageContract = null;
+				cm = GenerateImplementationClientMethod (type, cd, od, false, out returnTypeFromMessageContract);
+				type.Members.Add (cm);
 
-				List<CodeExpression> args = new List<CodeExpression> ();
-				if (od.SyncMethod != null) {
-					ParameterInfo [] pars = od.SyncMethod.GetParameters ();
-					ExportParameters (cm, pars);
-					cm.ReturnType = new CodeTypeReference (od.SyncMethod.ReturnType);
-					int i = 0;
-					foreach (ParameterInfo pi in pars)
-						args.Add (new CodeArgumentReferenceExpression (pi.Name));
-				} else {
-					args.AddRange (ExportMessages (od.Messages, cm, true));
-					returnTypeFromMessageContract = cm.ReturnType;
-					if (GenerateAsync) {
-						AddBeginAsyncArgs (cm);
-						cm.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
-					}
-				}
-				if (GenerateAsync) {
-					args.Add (new CodeArgumentReferenceExpression ("asyncCallback"));
-					args.Add (new CodeArgumentReferenceExpression ("userState"));
-				}
-
-				CodeExpression call = new CodeMethodInvokeExpression (
-					new CodePropertyReferenceExpression (
-						new CodeBaseReferenceExpression (),
-						"Channel"),
-					cm.Name,
-					args.ToArray ());
-
-				if (cm.ReturnType.BaseType == "System.Void")
-					cm.Statements.Add (new CodeExpressionStatement (call));
-				else
-					cm.Statements.Add (new CodeMethodReturnStatement (call));
-
-				// For async mode, add EndXxx() too.
 				if (!GenerateAsync)
 					continue;
+
+				cm = GenerateImplementationClientMethod (type, cd, od, true, out returnTypeFromMessageContract);
+				type.Members.Add (cm);
 
 				// EndXxx() implementation
 
@@ -467,7 +435,7 @@ namespace System.ServiceModel.Description
 				if (od.EndMethod != null)
 					resultArgName = od.EndMethod.GetParameters () [0].Name;
 
-				call = new CodeMethodInvokeExpression (
+				var call = new CodeMethodInvokeExpression (
 					new CodePropertyReferenceExpression (
 						new CodeBaseReferenceExpression (),
 						"Channel"),
@@ -479,6 +447,51 @@ namespace System.ServiceModel.Description
 				else
 					cm.Statements.Add (new CodeMethodReturnStatement (call));
 			}
+		}
+
+		CodeMemberMethod GenerateImplementationClientMethod (CodeTypeDeclaration type, ContractDescription cd, OperationDescription od, bool async, out CodeTypeReference returnTypeFromMessageContract)
+		{
+			CodeMemberMethod cm = new CodeMemberMethod ();
+			if (async)
+				cm.Name = "Begin" + od.Name;
+			else
+				cm.Name = od.Name;
+			cm.Attributes = MemberAttributes.Public | MemberAttributes.Final;
+			returnTypeFromMessageContract = null;
+
+			List<CodeExpression> args = new List<CodeExpression> ();
+			if (od.SyncMethod != null) {
+				ParameterInfo [] pars = od.SyncMethod.GetParameters ();
+				ExportParameters (cm, pars);
+				cm.ReturnType = new CodeTypeReference (od.SyncMethod.ReturnType);
+				int i = 0;
+				foreach (ParameterInfo pi in pars)
+					args.Add (new CodeArgumentReferenceExpression (pi.Name));
+			} else {
+				args.AddRange (ExportMessages (od.Messages, cm, true));
+				returnTypeFromMessageContract = cm.ReturnType;
+				if (async) {
+					AddBeginAsyncArgs (cm);
+					cm.ReturnType = new CodeTypeReference (typeof (IAsyncResult));
+				}
+			}
+			if (async) {
+				args.Add (new CodeArgumentReferenceExpression ("asyncCallback"));
+				args.Add (new CodeArgumentReferenceExpression ("userState"));
+			}
+
+			CodeExpression call = new CodeMethodInvokeExpression (
+				new CodePropertyReferenceExpression (
+					new CodeBaseReferenceExpression (),
+					"Channel"),
+				cm.Name,
+				args.ToArray ());
+
+			if (cm.ReturnType.BaseType == "System.Void")
+				cm.Statements.Add (new CodeExpressionStatement (call));
+			else
+				cm.Statements.Add (new CodeMethodReturnStatement (call));
+			return cm;
 		}
 
 		CodeMemberMethod FindByName (CodeTypeDeclaration type, string name)

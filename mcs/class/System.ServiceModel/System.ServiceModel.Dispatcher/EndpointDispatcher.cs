@@ -123,7 +123,7 @@ namespace System.ServiceModel.Dispatcher
 			//Build the dispatch operations
 			DispatchRuntime db = this.DispatchRuntime;
 			if (!isCallback && se.Contract.CallbackContractType != null) {
-				var ccd = ContractDescriptionGenerator.GetCallbackContract (se.Contract.CallbackContractType);
+				var ccd = ContractDescriptionGenerator.GetCallbackContract (db.Type, se.Contract.CallbackContractType);
 				db.CallbackClientRuntime = ccd.CreateClientRuntime ();
 				db.CallbackClientRuntime.CallbackClientType = ccd.ContractType;
 			}

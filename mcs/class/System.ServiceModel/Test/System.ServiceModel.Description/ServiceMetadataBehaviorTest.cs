@@ -265,6 +265,8 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.IsNull (behavior.HttpsGetUrl, "HttpsGetUrl");
 			Assert.IsNotNull (behavior.MetadataExporter, "MetadataExporter #1");
 			Assert.AreEqual (typeof (WsdlExporter), behavior.MetadataExporter.GetType (), "MetadataExporter #2");
+
+			Assert.AreEqual ("IMetadataExchange", ServiceMetadataBehavior.MexContractName, "MexContractName");
 		}
 	}
 }

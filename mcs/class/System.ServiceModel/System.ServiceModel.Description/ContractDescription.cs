@@ -153,7 +153,7 @@ namespace System.ServiceModel.Description
 			foreach (OperationDescription od in Operations) {
 				if (!proxy.Operations.Contains (od.Name))
 					PopulateClientOperation (proxy, od);
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 				foreach (IOperationBehavior ob in od.Behaviors)
 					ob.ApplyClientBehavior (od, proxy.Operations [od.Name]);
 #endif

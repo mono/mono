@@ -43,12 +43,13 @@ namespace System.ServiceModel.Channels
 		MessageEncoder MessageEncoder { get; }
 	}
 
-	internal class PeerChannelFactory<TChannel> : ChannelFactoryBase<TChannel>, IPeerChannelManager
+	internal class PeerChannelFactory<TChannel> : TransportChannelFactoryBase<TChannel>, IPeerChannelManager
 	{
 		PeerTransportBindingElement source;
 		MessageEncoder encoder;
 
 		public PeerChannelFactory (PeerTransportBindingElement source, BindingContext ctx)
+			: base (source, ctx)
 		{
 			this.source = source;
 			foreach (BindingElement be in ctx.RemainingBindingElements) {

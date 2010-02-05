@@ -1,3 +1,42 @@
+2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs : port 808 is not generally available
+	  for non-privileged users.
+
+2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelFactory_1Test.cs : added a couple of error check tests for
+	  constructors and CreateChannel() overloads.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostTest.cs : add a few more comments.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CallbackBehaviorAttributeTest.cs : enable the test again.
+
+2010-01-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs : enabled connection tests again, as they
+	  got working again (and more importantly, they don't block).
+	* CallbackBehaviorAttributeTest.cs : on the other hand, disabled
+	  a test so far. It is the only active test && the blocker now.
+
+2010-01-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBindingTest.cs : disable connection tests, with analyzed
+	  reason why it's blocking, for each.
+
+2010-01-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddressBuilderTest.cs : add usage example test.
+
+2010-01-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CallbackBehaviorAttributeTest.cs : added callback example from
+	  bug #567672.
+
 2010-01-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBaseTest.cs : another mannerless test here.

@@ -22,8 +22,6 @@ namespace System.ServiceModel.Description
 	public interface IPolicyImportExtension {}
 	public interface IWsdlExportExtension {}
 	public interface IWsdlImportExtension {}
-	public interface IEndpointBehavior {}
-	public interface IOperationBehavior {}
 	public interface IContractBehavior {}
 }
 namespace System.ServiceModel.Dispatcher
@@ -32,10 +30,6 @@ namespace System.ServiceModel.Dispatcher
 namespace System.ServiceModel.Security
 {
 	class Dummy {}
-}
-namespace System.Net
-{
-	public enum AuthenticationSchemes {Anonymous}
 }
 namespace System.Net.Security
 {

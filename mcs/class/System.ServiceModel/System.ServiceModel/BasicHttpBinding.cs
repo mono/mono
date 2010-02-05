@@ -91,6 +91,10 @@ namespace System.ServiceModel
 			set { bypass_proxy_on_local = value; }
 		}
 
+#if NET_2_1
+		public bool EnableHttpCookieContainer { get; set; }
+#endif
+
 		public HostNameComparisonMode HostNameComparisonMode {
 			get { return host_name_comparison_mode; }
 			set { host_name_comparison_mode = value; }
@@ -176,6 +180,7 @@ namespace System.ServiceModel
 		public override BindingElementCollection
 			CreateBindingElements ()
 		{
+			var list = new List<BindingElement> ();
 			switch (Security.Mode) {
 #if !NET_2_1
 			case BasicHttpSecurityMode.Message:
@@ -189,14 +194,20 @@ namespace System.ServiceModel
 					sec = SecurityBindingElement.CreateCertificateOverTransportBindingElement ();
 				else
 					sec = new AsymmetricSecurityBindingElement ();
-				return new BindingElementCollection (new BindingElement [] {sec, BuildMessageEncodingBindingElement (), GetTransport ()});
+				list.Add (sec);
+				break;
 #endif
-			default:
-				return new BindingElementCollection (new BindingElement [] {
-					BuildMessageEncodingBindingElement (),
-					GetTransport ()});
 			}
 
+#if NET_2_1
+			if (EnableHttpCookieContainer)
+				list.Add (new HttpCookieContainerBindingElement ());
+#endif
+
+			list.Add (BuildMessageEncodingBindingElement ());
+			list.Add (GetTransport ());
+
+			return new BindingElementCollection (list.ToArray ());
 		}
 
 		MessageEncodingBindingElement BuildMessageEncodingBindingElement ()

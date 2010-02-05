@@ -37,13 +37,14 @@ using System.Xml;
 
 namespace System.ServiceModel.Channels
 {
-	internal class NamedPipeChannelFactory<TChannel> : ChannelFactoryBase<TChannel>
+	internal class NamedPipeChannelFactory<TChannel> : TransportChannelFactoryBase<TChannel>
 	{
 		NamedPipeTransportBindingElement source;
 		MessageEncoder encoder;
 		XmlDictionaryReaderQuotas quotas;
 
 		public NamedPipeChannelFactory (NamedPipeTransportBindingElement source, BindingContext ctx)
+			: base (source, ctx)
 		{
 			foreach (BindingElement be in ctx.RemainingBindingElements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
@@ -78,10 +79,6 @@ namespace System.ServiceModel.Channels
 				return (TChannel) (object) new NamedPipeRequestChannel (this, encoder, address, targetUri);
 
 			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
-		}
-
-		protected override void OnOpen (TimeSpan timeout)
-		{
 		}
 	}
 }

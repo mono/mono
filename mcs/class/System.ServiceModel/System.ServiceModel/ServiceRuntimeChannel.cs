@@ -41,7 +41,7 @@ namespace System.ServiceModel
 		{
 			// setup callback ClientRuntimeChannel.
 			var crt = runtime.CallbackClientRuntime;
-			var cd = ContractDescriptionGenerator.GetCallbackContract (crt.CallbackClientType);
+			var cd = ContractDescriptionGenerator.GetCallbackContract (runtime.Type, crt.CallbackClientType);
 			client = new ClientRuntimeChannel (crt, cd, this.DefaultOpenTimeout, this.DefaultCloseTimeout, channel, null,
 							   runtime.ChannelDispatcher.MessageVersion, this.RemoteAddress, null);
 		}

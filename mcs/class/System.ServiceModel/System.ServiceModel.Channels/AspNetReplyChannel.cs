@@ -150,7 +150,6 @@ namespace System.ServiceModel.Channels
 
 		public override bool WaitForRequest (TimeSpan timeout)
 		{
-Console.WriteLine ("Enter AspNetReplyChannel.WaitForRequest");
 			if (wait != null)
 				throw new InvalidOperationException ("Another wait operation is in progress");
 			try {
@@ -158,7 +157,6 @@ Console.WriteLine ("Enter AspNetReplyChannel.WaitForRequest");
 				listener.ListenerManager.GetHttpContextAsync (timeout, HttpContextAcquired);
 				if (wait != null) // in case callback is done before WaitOne() here.
 					return wait.WaitOne (timeout, false);
-Console.WriteLine ("Exit AspNetReplyChannel.WaitForRequest");
 				return waiting.Count > 0;
 			} finally {
 				wait = null;
@@ -167,7 +165,6 @@ Console.WriteLine ("Exit AspNetReplyChannel.WaitForRequest");
 
 		void HttpContextAcquired (HttpContextInfo ctx)
 		{
-Console.WriteLine ("Enter HttpContextAcquired: {0}", ctx != null ? ctx.RequestUrl : null);
 			if (wait == null)
 				throw new InvalidOperationException ("WaitForRequest operation has not started");
 			var sctx = (AspNetHttpContextInfo) ctx;
@@ -176,7 +173,6 @@ Console.WriteLine ("Enter HttpContextAcquired: {0}", ctx != null ? ctx.RequestUr
 			var wait_ = wait;
 			wait = null;
 			wait_.Set ();
-Console.WriteLine ("Exit HttpContextAcquired: {0}", ctx != null ? ctx.RequestUrl : null);
 		}
 	}
 }

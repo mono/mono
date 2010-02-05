@@ -1,9 +1,11 @@
 //
 // System.ServiceModel.AddressHeader.cs
 //
-// Author: Duncan Mak (duncan@novell.com)
+// Authors:
+//	Duncan Mak (duncan@novell.com)
+//	Atsushi Enomoto (atsushi@ximian.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005,2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,9 +28,11 @@
 //
 
 using System;
+using System.IO;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Xml;
+using System.Xml.Schema;
 
 namespace System.ServiceModel.Channels
 {
@@ -69,10 +73,14 @@ namespace System.ServiceModel.Channels
 			return o.Name == this.Name && o.Namespace == this.Namespace; 
 		}
 
-		[MonoTODO]
 		public virtual XmlDictionaryReader GetAddressHeaderReader ()
 		{
-			throw new NotImplementedException ();
+			var sw = new StringWriter ();
+			var s = new XmlWriterSettings () { OmitXmlDeclaration = true };
+			var xw = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw, s));
+			WriteAddressHeader (xw);
+			xw.Close ();
+			return XmlDictionaryReader.CreateDictionaryReader (XmlReader.Create (new StringReader (sw.ToString ())));
 		}
 
 		public override int GetHashCode ()
@@ -87,7 +95,7 @@ namespace System.ServiceModel.Channels
 
 		public T GetValue<T> (XmlObjectSerializer formatter)
 		{
-			throw new NotImplementedException ();
+			return (T) formatter.ReadObject (GetAddressHeaderReader ());
 		}
 
 		protected abstract void OnWriteAddressHeaderContents (XmlDictionaryWriter writer);
@@ -151,12 +159,8 @@ namespace System.ServiceModel.Channels
 			
 			internal DefaultAddressHeader (string name, string ns, object value, XmlObjectSerializer formatter)
 			{
-				if (formatter == null) {
-					if (value == null)
-						formatter = new NetDataContractSerializer ();
-					else
-						formatter = new DataContractSerializer (value.GetType ());
-				}
+				if (formatter == null)
+					formatter = value != null ? new DataContractSerializer (value.GetType ()) : null;
 				this.name = name;
 				this.ns = ns;
 				this.formatter = formatter;
@@ -173,7 +177,10 @@ namespace System.ServiceModel.Channels
 
 			protected override void OnWriteAddressHeaderContents (XmlDictionaryWriter writer)
 			{
-				this.formatter.WriteObject (writer, value);
+				if (value == null)
+					writer.WriteAttributeString ("i", "nil", "http://www.w3.org/2001/XMLSchema-instance", "true");
+				else
+					this.formatter.WriteObject (writer, value);
 			}
 		}
 		

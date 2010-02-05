@@ -1,3 +1,55 @@
+2010-02-05  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy_2_1.cs : remove AuthenticationSchemes. It blocks MT support.
+
+2010-02-04  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy.cs, net_2_1_raw_System.ServiceModel.dll.sources : add some
+	  classes out of dummy, for monotouch (hidden in 2.1 profile).
+
+2010-02-04  Astushi Enomoto  <atsushi@ximian.com>
+
+	* HTTP_listener_notes.txt: Fixed some wrong description, simplified
+	  some, and updated some.
+
+2010-02-04  Astushi Enomoto  <atsushi@ximian.com>
+
+	* HTTP_listener_notes.txt: some notes updated.
+
+2010-02-03  Astushi Enomoto  <atsushi@ximian.com>
+
+	* HTTP_listener_notes.txt: I couldn't help but write about it to
+	  not keep myself confused by this complicated stuff.
+
+2010-01-20  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources: move back some FeatureBased
+	  tests.
+
+2010-01-18  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : added new security version types.
+
+2010-01-15  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources: add SL config loader here
+	  for easy debugging under 2.0 profile.
+
+2010-01-13  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources :
+	  add EndpointAddressBuilder.cs.
+
+2010-01-13  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources :
+	  add FaultContractInfo.cs.
+
+2010-01-13  Astushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_1_raw_System.ServiceModel.dll.sources :
+	  add HttpCookieContainerBindingElement.cs.
+
 2010-01-07  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel_test.dll.sources : ended up to remove

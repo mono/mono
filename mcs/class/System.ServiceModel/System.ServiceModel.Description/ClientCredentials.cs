@@ -133,16 +133,18 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
-		void IEndpointBehavior.AddBindingParameters (ServiceEndpoint endpoint,
-			BindingParameterCollection parameters)
-		{
-			parameters.Add (this);
-		}
-
 		void IEndpointBehavior.ApplyDispatchBehavior (ServiceEndpoint endpoint,
 			EndpointDispatcher dispatcher)
 		{
 			// documented as to have no effect.
+		}
+#endif
+
+#if !NET_2_1 || MONOTOUCH
+		void IEndpointBehavior.AddBindingParameters (ServiceEndpoint endpoint,
+			BindingParameterCollection parameters)
+		{
+			parameters.Add (this);
 		}
 
 		[MonoTODO]

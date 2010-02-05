@@ -59,8 +59,7 @@ namespace System.ServiceModel.Dispatcher
 		IOperationInvoker invoker;
 		SynchronizedCollection<IParameterInspector> inspectors
 			= new SynchronizedCollection<IParameterInspector> ();
-		SynchronizedCollection<FaultContractInfo> fault_contract_infos
-			= new SynchronizedCollection<FaultContractInfo> ();
+		SynchronizedCollection<FaultContractInfo> fault_contract_infos;
 		SynchronizedCollection<ICallContextInitializer> ctx_initializers
 			= new SynchronizedCollection<ICallContextInitializer> ();
 
@@ -107,7 +106,15 @@ namespace System.ServiceModel.Dispatcher
 		}
 
 		public SynchronizedCollection<FaultContractInfo> FaultContractInfos {
-			get { return fault_contract_infos; }
+			get {
+				if (fault_contract_infos == null) {
+					var l = new SynchronizedCollection<FaultContractInfo> ();
+					foreach (var f in Description.Faults)
+						l.Add (new FaultContractInfo (f.Action, f.DetailType));
+					fault_contract_infos = l;
+				}
+				return fault_contract_infos;
+			}
 		}
 
 		public IDispatchMessageFormatter Formatter {

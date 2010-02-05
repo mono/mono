@@ -85,13 +85,22 @@ namespace System.ServiceModel.Description
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase)
 		{
+			foreach (ChannelDispatcher cd in serviceHostBase.ChannelDispatchers)
+				foreach (var ed in cd.Endpoints) {
+					var dr = ed.DispatchRuntime;
+					dr.ExternalAuthorizationPolicies = ExternalAuthorizationPolicies;
+					dr.ImpersonateCallerForAllOperations = ImpersonateCallerForAllOperations;
+					dr.PrincipalPermissionMode = PrincipalPermissionMode;
+					dr.RoleProvider = RoleProvider;
+					dr.ServiceAuthorizationManager = ServiceAuthorizationManager;
+				}
 		}
 
 		[MonoTODO]
 		void IServiceBehavior.Validate (
 			ServiceDescription description,
 			ServiceHostBase serviceHostBase)
-		{			
+		{
 		}
 	}
 }
