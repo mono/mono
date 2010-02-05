@@ -1,3 +1,7 @@
+2010-02-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall-def.h: Rename get_MetadataToken to GetMetadataToken.
+
 2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): Use the new basic block formation pass
