@@ -1,3 +1,10 @@
+2010-02-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextProvider.cs: In ToString() if we are a password, use the
+	prompt char in the places where no char has been filled in yet, instead of
+	putting the password char.
+	Fixes #360407.
+
 2010-01-15  Alexandre Gomes  <alexmipego@gmail.com>
 
 	* BaseNumberConverter.cs: Fixed CanConvertTo and ConvertTo when
