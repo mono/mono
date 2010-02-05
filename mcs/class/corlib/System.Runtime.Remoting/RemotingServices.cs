@@ -126,7 +126,8 @@ namespace System.Runtime.Remoting
 
 			if (reqMsg.MethodBase.IsGenericMethod) {
 				Type[] genericArguments = reqMsg.MethodBase.GetGenericArguments ();
-				method = ((MethodInfo)method).MakeGenericMethod (genericArguments);
+				MethodInfo gmd = ((MethodInfo)method).GetGenericMethodDefinition ();
+				method = gmd.MakeGenericMethod (genericArguments);
 			}
 
 			object oldContext = CallContext.SetCurrentCallContext (reqMsg.LogicalCallContext);
