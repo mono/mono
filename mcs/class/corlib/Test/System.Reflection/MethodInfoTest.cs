@@ -638,6 +638,19 @@ namespace MonoTests.System.Reflection
 			Assert.AreSame (mi2, mi4.GetGenericMethodDefinition (), "#C3");
 		}
 
+		public void TestMethod123(int a, int b) {}
+
+		[Test]
+		public void GetParametersDontReturnInternedArray ()
+		{
+			var method = typeof (MethodInfoTest).GetMethod ("TestMethod123");
+			var parms = method.GetParameters ();
+			Assert.AreNotSame (parms, method.GetParameters (), "#1");
+
+			parms [0] = null;
+			Assert.IsNotNull (method.GetParameters () [0], "#2");
+		}
+
 		[Test]
 		public void Bug354757 ()
 		{
