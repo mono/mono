@@ -47,7 +47,7 @@ namespace System.ServiceModel.Channels
 		string realm = String.Empty;
 		TransferMode transfer_mode;
 		IDefaultCommunicationTimeouts timeouts;
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		AuthenticationSchemes auth_scheme =
 			AuthenticationSchemes.Anonymous;
 		AuthenticationSchemes proxy_auth_scheme =
@@ -75,13 +75,13 @@ namespace System.ServiceModel.Channels
 			transfer_mode = other.transfer_mode;
 			// FIXME: it does not look safe
 			timeouts = other.timeouts;
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 			auth_scheme = other.auth_scheme;
 			proxy_auth_scheme = other.proxy_auth_scheme;
 #endif
 		}
 
-#if !NET_2_1
+#if !NET_2_1 || MONOTOUCH
 		public AuthenticationSchemes AuthenticationScheme {
 			get { return auth_scheme; }
 			set { auth_scheme = value; }
