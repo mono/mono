@@ -278,7 +278,8 @@ namespace MonoTests.System.Reflection
 		[Test]
 		public void GetIndexerReturnsObjectsBoundToTheProperty ()
 		{
-
+			RunTest (typeof (TestA), false);
+			RunTest (typeof (TestB), true);
 		}
 
 		public class TestA {
