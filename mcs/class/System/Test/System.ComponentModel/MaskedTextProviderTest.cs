@@ -5269,6 +5269,43 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual (false, mtp.VerifyEscapeChar ('\x20', 1), "#0");
 			MaskedTextProviderTest.AssertProperties (mtp, "VerifyEscapeCharTest", 1, true, false, 1, 0, CultureInfo.GetCultureInfo ("es-ES"), 1, true, false, false, 0, 3, @"abc", true, true, '\x0', '\x5F', true, true, true, @"abc", @"abc", @"abc", @"abc", @"a", @"abc", @"a");
 		}
+
+		[Test]
+		public void ToDisplayString ()
+		{
+			MaskedTextProvider mtp;
+
+			mtp = new MaskedTextProvider ("##-##");
+			mtp.PasswordChar = '*';
+			Assert.AreEqual ("__-__", mtp.ToDisplayString ());
+
+			mtp.Add ("666");
+			Assert.AreEqual ("**-*_", mtp.ToDisplayString ());
+		}
+
+		// Test the interaction between includePasswordChar and includePromptChar
+		// in a password mask
+		[Test]
+		public void ToString_PasswordTest ()
+		{
+			MaskedTextProvider mtp;
+
+			mtp = new MaskedTextProvider ("####");
+			mtp.PasswordChar = '*';
+			Assert.AreEqual ("____", mtp.ToString (true, true, true, 0, mtp.Length), "#A1");
+			Assert.AreEqual ("____", mtp.ToString (false, true, true, 0, mtp.Length), "#A2");
+
+			mtp.Add ("314");
+			Assert.AreEqual ("314_", mtp.ToString (true, true, true, 0, mtp.Length), "#B1");
+			Assert.AreEqual ("***_", mtp.ToString (false, true, true, 0, mtp.Length), "#B2");
+
+			mtp.Clear ();
+
+			mtp.InsertAt ("666", 1);
+			Assert.AreEqual ("_666", mtp.ToString (true, true, true, 0, mtp.Length), "#C1");
+			Assert.AreEqual ("_***", mtp.ToString (false, true, true, 0, mtp.Length), "#C2");
+		}
+
 		[Test]
 		public void ToString_False_FalseTest ()
 		{
@@ -5315,6 +5352,11 @@ namespace MonoTests.System.ComponentModel
 			Assert.AreEqual ("   a", mtp.ToString (false, false), "#16");
 			mtp.InsertAt ('a', 9);
 			Assert.AreEqual ("   a     a", mtp.ToString (false, false), "#17");
+
+			mtp = new MaskedTextProvider ("aaa");
+			mtp.PasswordChar = '*';
+			mtp.InsertAt ('a', 2);
+			Assert.AreEqual ("  a", mtp.ToString (false, false), "#18");
 		}
 		[Test]
 		public void ToString_bool_bool_bool_int_int_Test00043 ()

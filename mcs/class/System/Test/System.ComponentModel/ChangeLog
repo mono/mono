@@ -1,3 +1,8 @@
+2010-02-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MaskedTextProviderTest.cs: New tests for ToString and
+	ToDisplayString, specifically when IsPassword is true. 
+
 2010-01-15  Alexandre Gomes  <alexmipego@gmail.com>
 
 	* ByteConverterTests.cs:
