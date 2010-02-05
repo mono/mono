@@ -1,3 +1,9 @@
+2010-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	*  MethodInfoTest.cs: New test for GetParameters() returning the interned array.
+
+	* PropertyInfoTest.cs: New tests for GetIndexParameters().
+
 2010-01-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodInfoTest.cs: Add a test for Invoke with generic variant

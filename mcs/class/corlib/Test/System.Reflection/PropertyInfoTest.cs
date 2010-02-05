@@ -247,6 +247,54 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+		static void RunTest (Type t, bool use_getter) {
+			var p = t.GetProperty ("Item");
+			var idx = p.GetIndexParameters ();
+			var m_args = t.GetMethod (use_getter ? "get_Item" : "set_Item").GetParameters ();
+
+			Assert.AreEqual (2, idx.Length, "#1");
+
+			Assert.AreEqual (typeof (double), idx [0].ParameterType, "#2");
+			Assert.AreEqual (p, idx [0].Member, "#3");
+			Assert.AreEqual ("a", idx [0].Name, "#4");
+			Assert.AreEqual (0, idx [0].Position, "#5");
+			Assert.AreEqual (m_args [0].MetadataToken, idx [0].MetadataToken, "#6");
+			Assert.AreEqual (ParameterAttributes.None, idx [0].Attributes, "#7");
+
+			Assert.AreEqual (typeof (string), idx [1].ParameterType, "#8");
+			Assert.AreEqual (p, idx [1].Member, "#9");
+			Assert.AreEqual ("b", idx [1].Name, "#10");
+			Assert.AreEqual (1, idx [1].Position, "#11");
+			Assert.AreEqual (m_args [1].MetadataToken, idx [1].MetadataToken, "#12");
+			Assert.AreEqual (ParameterAttributes.None, idx [1].Attributes, "#13");
+
+			var idx2 = p.GetIndexParameters ();
+
+			//No interning exposed
+			Assert.AreNotSame (idx, idx2, "#14");
+			Assert.AreNotSame (idx [0], idx2 [1], "#15");
+		}
+
+		[Test]
+		public void GetIndexerReturnsObjectsBoundToTheProperty ()
+		{
+
+		}
+
+		public class TestA {
+			public int this[double a, string b] {
+				set {}
+			}
+		}
+
+		public class TestB {
+			public int this[double a, string b] {
+				get { return 1; }
+				set {}
+			}
+		}
+
+
 #if NET_2_0
 		public class A<T>
 		{
@@ -284,6 +332,7 @@ namespace MonoTests.System.Reflection
 			Assert.AreEqual (typeof (string).FullName, property.GetValue (instance, null));
 		}
 #endif
+
 
 		static bool HasAttribute (object [] attrs, Type attributeType)
 		{
