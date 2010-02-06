@@ -1,3 +1,9 @@
+2010-02-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_code): Change the way the 'methods' symbol is emitted
+	when using LLVM. Instead of emitting it as an LLVM method, emit it using
+	the assembly directive '.set' so it points to the first LLVM emitted method.
+
 2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mini_method_verify): Report the method which failed to verify.
