@@ -3594,7 +3594,7 @@ namespace Mono.CSharp {
 		public readonly GenericMethod GenericMethod;
 
 		protected MemberBase (DeclSpace parent, GenericMethod generic,
-					  FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers def_mod,
+				      FullNamedExpression type, Modifiers mod, Modifiers allowed_mod, Modifiers def_mod,
 				      MemberName name, Attributes attrs)
 			: base (parent, name, attrs)
 		{
