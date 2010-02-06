@@ -985,7 +985,7 @@ namespace Mono.Terminal {
 			public bool NextAvailable ()
 			{
 				int next = (cursor + 1) % history.Length;
-				if (count == 0 || next > head)
+				if (count == 0 || next >= head)
 					return false;
 
 				return true;
