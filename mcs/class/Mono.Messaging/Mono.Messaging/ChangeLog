@@ -1,3 +1,7 @@
+2010-02-06  Michael Barker  <mike@middlesoft.co.uk>
+
+	* ConnectionException.cs: Added additional text to aid debugging.
+
 2009-07-20  Michael Barker  <mike@middlesoft.co.uk>
 
 	* MessagingProviderLocator.cs: Changed System.Exceptions to
@@ -105,3 +109,4 @@
 	* MessagingProviderLocator.cs: New
 	* MonoMessagingException.cs: New
 	* QueueReference.cs: New
+
