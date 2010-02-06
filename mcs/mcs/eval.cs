@@ -726,8 +726,10 @@ namespace Mono.CSharp {
 			}
 			
 			RootContext.EmitCode ();
-			if (Report.Errors != 0)
+			if (Report.Errors != 0){
+				undo.ExecuteUndo ();
 				return null;
+			}
 			
 			RootContext.CloseTypes ();
 

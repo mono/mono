@@ -1,3 +1,9 @@
+2010-02-06  Miguel de Icaza  <miguel@novell.com>
+
+	* eval.cs (CompileBlock): Also undo if there are problems during
+	semantic analysis, fixes various cases where invalid C# code would
+	be reported, but the internal changes would not be undone.
+
 2010-02-03  Miguel de Icaza  <miguel@novell.com>
 
 	* driver.cs: Change the --fatal flag to allow a number to be
