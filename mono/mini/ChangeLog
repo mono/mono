@@ -1,5 +1,9 @@
 2010-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (handle_castclass): Use the icall for classes with variant
+	generic params as well.
+	(handle_isinst): Ditto.
+
 	* method-to-ir.c: Make isninst/castclass checks in gshared code more efficient
 	instead of always calling an icall.
 
