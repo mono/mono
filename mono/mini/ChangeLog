@@ -1,5 +1,8 @@
 2010-02-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Make isninst/castclass checks in gshared code more efficient
+	instead of always calling an icall.
+
 	* aot-compiler.c (emit_llvm_file): Take into account trampolines etc when
 	computing the size of the got.
 
