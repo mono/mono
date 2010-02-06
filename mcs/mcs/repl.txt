@@ -25,6 +25,68 @@ Documentation for the REPL mode for MCS can be found here:
 
 	MD addin for "csharp"
 
+* Supporting class-level declarations
+
+	It currently has a few problems:
+
+	* Support for overwritting existing defined
+	  classes is not supported.
+
+	* The usability is not as useful, since the defaults
+	  for C# are still to make members private, we should
+	  change this default to be public in those cases.
+
+	* The "using" statements are not exposed to the
+	  underlying "class" declarations, so the following
+	  code after a few using statements fail:
+
+	  csharp> class X { public void Foo () { Console.WriteLine ("Foo"); } }
+	  {interactive}(1,33): error CS0103: The name `Console' does not exist in the current context
+
+	* The error lookup system lacks information from types, for
+          example this causes an unsupported call into a TypeBuilder:
+
+	  csharp>class D { void DD () {} }
+	  csharp>var d = new D ();
+	  csharp>d.DD ();
+
+		Internal compiler error at Internal(1,1):: exception caught while emitting MethodBuilder [Class0::Host]
+		System.NotSupportedException: The invoked member is not supported in a dynamic module.
+		  at System.Reflection.Emit.AssemblyBuilder.get_Location () [0x00000] in <filename unknown>:0 
+		  at Mono.CSharp.Report.SymbolRelatedToPreviousError (System.Reflection.MemberInfo mi) [0x00000] in
+		  at Mono.CSharp.MethodGroupExpr.NoExactMatch (Mono.CSharp.ResolveContext ec, 
+					    Mono.CSharp.Arguments& Arguments, IDictionary`2 c
+
+
+	  The above is caused by TypeManager.LookupDeclSpace (dt)
+	  failing to return a value (it returns null) so our code
+	  assumes we have an Assembly instead of an assemblybuilder.
+
+	  
+
+* Declaring a class twice produces an internal parse error:
+
+  class X {}
+  class X {}
+
+  The second declaration will no longer be parsed, so it could even
+  contain junk, and wont be flagged.   We probably need to allow for
+  type redefinition in REPL modes, the exception from the second is:
+
+  csharp -v -v
+  > class X {}
+  > class X {}
+
+    System.ArgumentException: An element with the same key already exists in the dictionary.
+      at System.Collections.Generic.Dictionary`2[System.String,Mono.CSharp.DeclSpace].Add (System.String key, Mono.CSharp.DeclSpace value) [0x00000] in <filename unknown>:0 
+      at Mono.CSharp.Namespace.AddDeclSpace (System.String name, Mono.CSharp.DeclSpace ds) [0x00000] in <filename unknown>:0 
+      at Mono.CSharp.ModuleCompiled.AddMemberType (Mono.CSharp.DeclSpace ds) [0x00000] in <filename unknown>:0 
+      at Mono.CSharp.TypeContainer.AddTypeContainer (Mono.CSharp.TypeContainer tc) [0x00000] in <filename unknown>:0 
+      at Mono.CSharp.CSharpParser.push_current_class (Mono.CSharp.TypeContainer tc, System.Object partial_token) [0x00000] in <filename unknown>:0 
+      at Mono.CSharp.CSharpParser.yyparse (yyInput yyLex) [0x00000] in <filename unknown>:0 
+      at Mono.CSharp.CSharpParser.yyparse (yyInput yyLex, System.Object yyd) [0x00000] in <filename unknown>:0 
+      at Mono.CSharp.CSharpParser.parse () [0x00000] in <filename unknown>:0 
+    
 * Mix statements with other top-level declarations.
 
 csharp> class Y {static void Main () {Console.WriteLine ("Foo"); }}
@@ -102,16 +164,3 @@ Class1
 	This is easy to implement, just retry the parse with a
 	semicolon, the question is whether this is a good idea to do
 	in the first place or not.
-
-* Tab Completion
-
-	Implement tab completion on names, variables and type lookups.
-
-	This could be implemented by having the TAB key force the
-	expression to be evaluated with a special COMPLETE token
-	at the end.
-
-	Then the various productions (one by one) would have to
-	add support for COMPLETE, and having Resolve methods be
-	aware of this.
-
