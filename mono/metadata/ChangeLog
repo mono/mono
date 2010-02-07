@@ -1,5 +1,15 @@
 2010-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_wrapper_info): Rename from
+	mono_marshal_wrapper_info_from_wrapper.
+
+	* marshal.c (mono_marshal_set_wrapper_info): Rename from
+	mono_marshal_method_set_wrapper_data, and export.
+
+	* boehm-gc.c sgen-gc.c null-gc.c: Get rid of mono_gc_get_allocator_type, store
+	the allocator type in a AllocatorWrapperInfo structure instead, which is accesible
+	by calling mono_marshal_get_wrapper_info ().
+
 	* sgen-gc.c (mono_gc_get_managed_allocator): Add a specialized allocator for
 	small objects which does no size checks.
 
@@ -11,7 +21,7 @@
 
 	* verify.c (mono_method_verify): Use the new basic block formation pass
 	to avoid verifying dead basic blocks. This is the same behavior as the
-	runtime MS verifier. 
+	runtime MS verifier.
 
 2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
