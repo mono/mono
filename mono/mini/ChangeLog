@@ -1,3 +1,8 @@
+2010-02-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Place a seq point just before a RET.
+	Fixes #564538.
+
 2010-02-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (handle_castclass): Use the icall for classes with variant
