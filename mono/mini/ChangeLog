@@ -1,5 +1,7 @@
 2010-02-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Add support for MONO_WRAPPER_WRITE_BARRIER.
+
 	* aot-compiler.c (encode_method_ref): Update after the removal of
 	mono_gc_get_managed_allocator_type ().
 
