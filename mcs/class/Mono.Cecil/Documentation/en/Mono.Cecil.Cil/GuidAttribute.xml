@@ -1,0 +1,114 @@
+<Type Name="GuidAttribute" FullName="Mono.Cecil.Cil.GuidAttribute">
+  <TypeSignature Language="C#" Value="public sealed class GuidAttribute : Attribute" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Attribute</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Attributes>
+    <Attribute>
+      <AttributeName>System.AttributeUsage(System.AttributeTargets.Field)</AttributeName>
+    </Attribute>
+  </Attributes>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public GuidAttribute (uint a, ushort b, ushort c, byte d, byte e, byte f, byte g, byte h, byte i, byte j, byte k);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="a" Type="System.UInt32" />
+        <Parameter Name="b" Type="System.UInt16" />
+        <Parameter Name="c" Type="System.UInt16" />
+        <Parameter Name="d" Type="System.Byte" />
+        <Parameter Name="e" Type="System.Byte" />
+        <Parameter Name="f" Type="System.Byte" />
+        <Parameter Name="g" Type="System.Byte" />
+        <Parameter Name="h" Type="System.Byte" />
+        <Parameter Name="i" Type="System.Byte" />
+        <Parameter Name="j" Type="System.Byte" />
+        <Parameter Name="k" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="a">To be added.</param>
+        <param name="b">To be added.</param>
+        <param name="c">To be added.</param>
+        <param name="d">To be added.</param>
+        <param name="e">To be added.</param>
+        <param name="f">To be added.</param>
+        <param name="g">To be added.</param>
+        <param name="h">To be added.</param>
+        <param name="i">To be added.</param>
+        <param name="j">To be added.</param>
+        <param name="k">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetGuidFromValue">
+      <MemberSignature Language="C#" Value="public static Guid GetGuidFromValue (int value, Type enumeration);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="value" Type="System.Int32" />
+        <Parameter Name="enumeration" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="value">To be added.</param>
+        <param name="enumeration">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetValueFromGuid">
+      <MemberSignature Language="C#" Value="public static int GetValueFromGuid (Guid id, Type enumeration);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="id" Type="System.Guid" />
+        <Parameter Name="enumeration" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="id">To be added.</param>
+        <param name="enumeration">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Guid">
+      <MemberSignature Language="C#" Value="public Guid Guid { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,859 @@
+<Type Name="BaseMetadataTableVisitor" FullName="Mono.Cecil.Metadata.BaseMetadataTableVisitor">
+  <TypeSignature Language="C#" Value="public abstract class BaseMetadataTableVisitor : Mono.Cecil.Metadata.IMetadataTableVisitor" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>Mono.Cecil.Metadata.IMetadataTableVisitor</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected BaseMetadataTableVisitor ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetRowVisitor">
+      <MemberSignature Language="C#" Value="public abstract Mono.Cecil.Metadata.IMetadataRowVisitor GetRowVisitor ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Metadata.IMetadataRowVisitor</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TerminateTableCollection">
+      <MemberSignature Language="C#" Value="public virtual void TerminateTableCollection (Mono.Cecil.Metadata.TableCollection coll);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="coll" Type="Mono.Cecil.Metadata.TableCollection" />
+      </Parameters>
+      <Docs>
+        <param name="coll">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyOSTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyOSTable (Mono.Cecil.Metadata.AssemblyOSTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.AssemblyOSTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyProcessorTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyProcessorTable (Mono.Cecil.Metadata.AssemblyProcessorTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.AssemblyProcessorTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyRefOSTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyRefOSTable (Mono.Cecil.Metadata.AssemblyRefOSTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.AssemblyRefOSTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyRefProcessorTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyRefProcessorTable (Mono.Cecil.Metadata.AssemblyRefProcessorTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.AssemblyRefProcessorTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyRefTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyRefTable (Mono.Cecil.Metadata.AssemblyRefTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.AssemblyRefTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyTable (Mono.Cecil.Metadata.AssemblyTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.AssemblyTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitClassLayoutTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitClassLayoutTable (Mono.Cecil.Metadata.ClassLayoutTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ClassLayoutTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitConstantTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitConstantTable (Mono.Cecil.Metadata.ConstantTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ConstantTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitCustomAttributeTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitCustomAttributeTable (Mono.Cecil.Metadata.CustomAttributeTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.CustomAttributeTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitDeclSecurityTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitDeclSecurityTable (Mono.Cecil.Metadata.DeclSecurityTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.DeclSecurityTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitEventMapTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitEventMapTable (Mono.Cecil.Metadata.EventMapTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.EventMapTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitEventPtrTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitEventPtrTable (Mono.Cecil.Metadata.EventPtrTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.EventPtrTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitEventTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitEventTable (Mono.Cecil.Metadata.EventTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.EventTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitExportedTypeTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitExportedTypeTable (Mono.Cecil.Metadata.ExportedTypeTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ExportedTypeTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldLayoutTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldLayoutTable (Mono.Cecil.Metadata.FieldLayoutTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.FieldLayoutTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldMarshalTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldMarshalTable (Mono.Cecil.Metadata.FieldMarshalTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.FieldMarshalTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldPtrTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldPtrTable (Mono.Cecil.Metadata.FieldPtrTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.FieldPtrTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldRVATable">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldRVATable (Mono.Cecil.Metadata.FieldRVATable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.FieldRVATable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldTable (Mono.Cecil.Metadata.FieldTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.FieldTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFileTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitFileTable (Mono.Cecil.Metadata.FileTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.FileTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitGenericParamConstraintTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitGenericParamConstraintTable (Mono.Cecil.Metadata.GenericParamConstraintTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.GenericParamConstraintTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitGenericParamTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitGenericParamTable (Mono.Cecil.Metadata.GenericParamTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.GenericParamTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitImplMapTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitImplMapTable (Mono.Cecil.Metadata.ImplMapTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ImplMapTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitInterfaceImplTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitInterfaceImplTable (Mono.Cecil.Metadata.InterfaceImplTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.InterfaceImplTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitManifestResourceTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitManifestResourceTable (Mono.Cecil.Metadata.ManifestResourceTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ManifestResourceTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMemberRefTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitMemberRefTable (Mono.Cecil.Metadata.MemberRefTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.MemberRefTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodImplTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodImplTable (Mono.Cecil.Metadata.MethodImplTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.MethodImplTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodPtrTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodPtrTable (Mono.Cecil.Metadata.MethodPtrTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.MethodPtrTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodSemanticsTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodSemanticsTable (Mono.Cecil.Metadata.MethodSemanticsTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.MethodSemanticsTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodSpecTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodSpecTable (Mono.Cecil.Metadata.MethodSpecTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.MethodSpecTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodTable (Mono.Cecil.Metadata.MethodTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.MethodTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitModuleRefTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitModuleRefTable (Mono.Cecil.Metadata.ModuleRefTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ModuleRefTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitModuleTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitModuleTable (Mono.Cecil.Metadata.ModuleTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ModuleTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitNestedClassTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitNestedClassTable (Mono.Cecil.Metadata.NestedClassTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.NestedClassTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitParamPtrTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitParamPtrTable (Mono.Cecil.Metadata.ParamPtrTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ParamPtrTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitParamTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitParamTable (Mono.Cecil.Metadata.ParamTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.ParamTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitPropertyMapTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitPropertyMapTable (Mono.Cecil.Metadata.PropertyMapTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.PropertyMapTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitPropertyPtrTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitPropertyPtrTable (Mono.Cecil.Metadata.PropertyPtrTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.PropertyPtrTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitPropertyTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitPropertyTable (Mono.Cecil.Metadata.PropertyTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.PropertyTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitStandAloneSigTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitStandAloneSigTable (Mono.Cecil.Metadata.StandAloneSigTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.StandAloneSigTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitTableCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitTableCollection (Mono.Cecil.Metadata.TableCollection coll);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="coll" Type="Mono.Cecil.Metadata.TableCollection" />
+      </Parameters>
+      <Docs>
+        <param name="coll">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitTypeDefTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitTypeDefTable (Mono.Cecil.Metadata.TypeDefTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.TypeDefTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitTypeRefTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitTypeRefTable (Mono.Cecil.Metadata.TypeRefTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.TypeRefTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitTypeSpecTable">
+      <MemberSignature Language="C#" Value="public virtual void VisitTypeSpecTable (Mono.Cecil.Metadata.TypeSpecTable table);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.TypeSpecTable" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

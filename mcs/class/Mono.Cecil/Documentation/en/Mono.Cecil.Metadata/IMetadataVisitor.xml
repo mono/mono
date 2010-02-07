@@ -1,0 +1,212 @@
+<Type Name="IMetadataVisitor" FullName="Mono.Cecil.Metadata.IMetadataVisitor">
+  <TypeSignature Language="C#" Value="public interface IMetadataVisitor" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="TerminateMetadataRoot">
+      <MemberSignature Language="C#" Value="public void TerminateMetadataRoot (Mono.Cecil.Metadata.MetadataRoot root);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Mono.Cecil.Metadata.MetadataRoot" />
+      </Parameters>
+      <Docs>
+        <param name="root">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitBlobHeap">
+      <MemberSignature Language="C#" Value="public void VisitBlobHeap (Mono.Cecil.Metadata.BlobHeap heap);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="heap" Type="Mono.Cecil.Metadata.BlobHeap" />
+      </Parameters>
+      <Docs>
+        <param name="heap">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitGuidHeap">
+      <MemberSignature Language="C#" Value="public void VisitGuidHeap (Mono.Cecil.Metadata.GuidHeap heap);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="heap" Type="Mono.Cecil.Metadata.GuidHeap" />
+      </Parameters>
+      <Docs>
+        <param name="heap">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMetadataRoot">
+      <MemberSignature Language="C#" Value="public void VisitMetadataRoot (Mono.Cecil.Metadata.MetadataRoot root);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="root" Type="Mono.Cecil.Metadata.MetadataRoot" />
+      </Parameters>
+      <Docs>
+        <param name="root">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMetadataRootHeader">
+      <MemberSignature Language="C#" Value="public void VisitMetadataRootHeader (Mono.Cecil.Metadata.MetadataRoot.MetadataRootHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Metadata.MetadataRoot+MetadataRootHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMetadataStream">
+      <MemberSignature Language="C#" Value="public void VisitMetadataStream (Mono.Cecil.Metadata.MetadataStream stream);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="Mono.Cecil.Metadata.MetadataStream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMetadataStreamCollection">
+      <MemberSignature Language="C#" Value="public void VisitMetadataStreamCollection (Mono.Cecil.Metadata.MetadataStreamCollection streams);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="streams" Type="Mono.Cecil.Metadata.MetadataStreamCollection" />
+      </Parameters>
+      <Docs>
+        <param name="streams">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMetadataStreamHeader">
+      <MemberSignature Language="C#" Value="public void VisitMetadataStreamHeader (Mono.Cecil.Metadata.MetadataStream.MetadataStreamHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Metadata.MetadataStream+MetadataStreamHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitStringsHeap">
+      <MemberSignature Language="C#" Value="public void VisitStringsHeap (Mono.Cecil.Metadata.StringsHeap heap);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="heap" Type="Mono.Cecil.Metadata.StringsHeap" />
+      </Parameters>
+      <Docs>
+        <param name="heap">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitTablesHeap">
+      <MemberSignature Language="C#" Value="public void VisitTablesHeap (Mono.Cecil.Metadata.TablesHeap heap);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="heap" Type="Mono.Cecil.Metadata.TablesHeap" />
+      </Parameters>
+      <Docs>
+        <param name="heap">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitUserStringsHeap">
+      <MemberSignature Language="C#" Value="public void VisitUserStringsHeap (Mono.Cecil.Metadata.UserStringsHeap heap);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="heap" Type="Mono.Cecil.Metadata.UserStringsHeap" />
+      </Parameters>
+      <Docs>
+        <param name="heap">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

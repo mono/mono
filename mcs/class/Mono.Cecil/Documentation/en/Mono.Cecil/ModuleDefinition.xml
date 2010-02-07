@@ -1,0 +1,1063 @@
+<Type Name="ModuleDefinition" FullName="Mono.Cecil.ModuleDefinition">
+  <TypeSignature Language="C#" Value="public sealed class ModuleDefinition : Mono.Cecil.ModuleReference, Mono.Cecil.ICustomAttributeProvider, Mono.Cecil.IReflectionVisitable" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Cecil.ModuleReference</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>Mono.Cecil.ICustomAttributeProvider</InterfaceName>
+    </Interface>
+    <Interface>
+      <InterfaceName>Mono.Cecil.IReflectionVisitable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ModuleDefinition (string name, Mono.Cecil.AssemblyDefinition asm);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="asm">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ModuleDefinition (string name, Mono.Cecil.AssemblyDefinition asm, bool main);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+        <Parameter Name="main" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="asm">To be added.</param>
+        <param name="main">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Accept">
+      <MemberSignature Language="C#" Value="public override void Accept (Mono.Cecil.IReflectionStructureVisitor visitor);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="visitor" Type="Mono.Cecil.IReflectionStructureVisitor" />
+      </Parameters>
+      <Docs>
+        <param name="visitor">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Accept">
+      <MemberSignature Language="C#" Value="public void Accept (Mono.Cecil.IReflectionVisitor visitor);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="visitor" Type="Mono.Cecil.IReflectionVisitor" />
+      </Parameters>
+      <Docs>
+        <param name="visitor">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Assembly">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.AssemblyDefinition Assembly { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="AssemblyReferences">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.AssemblyNameReferenceCollection AssemblyReferences { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyNameReferenceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CustomAttributes">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.CustomAttributeCollection CustomAttributes { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.CustomAttributeCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ExternTypes">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.ExternTypeCollection ExternTypes { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.ExternTypeCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromByteArray">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.CustomAttribute FromByteArray (Mono.Cecil.MethodReference ctor, byte[] data);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.CustomAttribute</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ctor" Type="Mono.Cecil.MethodReference" />
+        <Parameter Name="data" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="ctor">To be added.</param>
+        <param name="data">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FromByteArray">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.SecurityDeclaration FromByteArray (Mono.Cecil.SecurityAction action, byte[] declaration);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.SecurityDeclaration</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="action" Type="Mono.Cecil.SecurityAction" />
+        <Parameter Name="declaration" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="action">To be added.</param>
+        <param name="declaration">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="FullLoad">
+      <MemberSignature Language="C#" Value="public void FullLoad ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAsByteArray">
+      <MemberSignature Language="C#" Value="public byte[] GetAsByteArray (Mono.Cecil.CustomAttribute ca);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ca" Type="Mono.Cecil.CustomAttribute" />
+      </Parameters>
+      <Docs>
+        <param name="ca">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAsByteArray">
+      <MemberSignature Language="C#" Value="public byte[] GetAsByteArray (Mono.Cecil.SecurityDeclaration dec);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Byte[]</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dec" Type="Mono.Cecil.SecurityDeclaration" />
+      </Parameters>
+      <Docs>
+        <param name="dec">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="HasCustomAttributes">
+      <MemberSignature Language="C#" Value="public bool HasCustomAttributes { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Image">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Binary.Image Image { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Binary.Image</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldReference Import (Mono.Cecil.FieldReference field);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="Mono.Cecil.FieldReference" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MethodReference Import (Mono.Cecil.MethodReference meth);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MethodReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meth" Type="Mono.Cecil.MethodReference" />
+      </Parameters>
+      <Docs>
+        <param name="meth">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeReference Import (Mono.Cecil.TypeReference type);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Cecil.TypeReference" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldReference Import (System.Reflection.FieldInfo field);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="System.Reflection.FieldInfo" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MethodReference Import (System.Reflection.MethodBase meth);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MethodReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meth" Type="System.Reflection.MethodBase" />
+      </Parameters>
+      <Docs>
+        <param name="meth">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeReference Import (Type type);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldReference Import (Mono.Cecil.FieldReference field, Mono.Cecil.MethodDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="Mono.Cecil.FieldReference" />
+        <Parameter Name="context" Type="Mono.Cecil.MethodDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldReference Import (Mono.Cecil.FieldReference field, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="Mono.Cecil.FieldReference" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MethodReference Import (Mono.Cecil.MethodReference meth, Mono.Cecil.MethodDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MethodReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meth" Type="Mono.Cecil.MethodReference" />
+        <Parameter Name="context" Type="Mono.Cecil.MethodDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="meth">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MethodReference Import (Mono.Cecil.MethodReference meth, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MethodReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meth" Type="Mono.Cecil.MethodReference" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="meth">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeReference Import (Mono.Cecil.TypeReference type, Mono.Cecil.MethodDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Cecil.TypeReference" />
+        <Parameter Name="context" Type="Mono.Cecil.MethodDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeReference Import (Mono.Cecil.TypeReference type, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Cecil.TypeReference" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldReference Import (System.Reflection.FieldInfo field, Mono.Cecil.MethodDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="System.Reflection.FieldInfo" />
+        <Parameter Name="context" Type="Mono.Cecil.MethodDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldReference Import (System.Reflection.FieldInfo field, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="System.Reflection.FieldInfo" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MethodReference Import (System.Reflection.MethodBase meth, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MethodReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meth" Type="System.Reflection.MethodBase" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="meth">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeReference Import (Type type, Mono.Cecil.MethodDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="context" Type="Mono.Cecil.MethodDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Import">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeReference Import (Type type, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="System.Type" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inject">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeDefinition Inject (Mono.Cecil.TypeDefinition type);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inject">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldDefinition Inject (Mono.Cecil.FieldDefinition field, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="Mono.Cecil.FieldDefinition" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inject">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MethodDefinition Inject (Mono.Cecil.MethodDefinition meth, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MethodDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meth" Type="Mono.Cecil.MethodDefinition" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="meth">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inject">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeDefinition Inject (Mono.Cecil.TypeDefinition type, Mono.Cecil.IImporter importer);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Cecil.TypeDefinition" />
+        <Parameter Name="importer" Type="Mono.Cecil.IImporter" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="importer">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inject">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeDefinition Inject (Mono.Cecil.TypeDefinition type, Mono.Cecil.TypeDefinition context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Cecil.TypeDefinition" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inject">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldDefinition Inject (Mono.Cecil.FieldDefinition field, Mono.Cecil.TypeDefinition context, Mono.Cecil.IImporter importer);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="Mono.Cecil.FieldDefinition" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+        <Parameter Name="importer" Type="Mono.Cecil.IImporter" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <param name="context">To be added.</param>
+        <param name="importer">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inject">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MethodDefinition Inject (Mono.Cecil.MethodDefinition meth, Mono.Cecil.TypeDefinition context, Mono.Cecil.IImporter importer);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MethodDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="meth" Type="Mono.Cecil.MethodDefinition" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+        <Parameter Name="importer" Type="Mono.Cecil.IImporter" />
+      </Parameters>
+      <Docs>
+        <param name="meth">To be added.</param>
+        <param name="context">To be added.</param>
+        <param name="importer">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Inject">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeDefinition Inject (Mono.Cecil.TypeDefinition type, Mono.Cecil.TypeDefinition context, Mono.Cecil.IImporter importer);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Cecil.TypeDefinition" />
+        <Parameter Name="context" Type="Mono.Cecil.TypeDefinition" />
+        <Parameter Name="importer" Type="Mono.Cecil.IImporter" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="context">To be added.</param>
+        <param name="importer">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadSymbols">
+      <MemberSignature Language="C#" Value="public void LoadSymbols ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LoadSymbols">
+      <MemberSignature Language="C#" Value="public void LoadSymbols (Mono.Cecil.Cil.ISymbolReader reader);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="reader" Type="Mono.Cecil.Cil.ISymbolReader" />
+      </Parameters>
+      <Docs>
+        <param name="reader">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LookupByToken">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.IMetadataTokenProvider LookupByToken (Mono.Cecil.Metadata.MetadataToken token);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.IMetadataTokenProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="token" Type="Mono.Cecil.Metadata.MetadataToken" />
+      </Parameters>
+      <Docs>
+        <param name="token">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="LookupByToken">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.IMetadataTokenProvider LookupByToken (Mono.Cecil.Metadata.TokenType table, int rid);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.IMetadataTokenProvider</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="table" Type="Mono.Cecil.Metadata.TokenType" />
+        <Parameter Name="rid" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="table">To be added.</param>
+        <param name="rid">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Main">
+      <MemberSignature Language="C#" Value="public bool Main { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="MemberReferences">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MemberReferenceCollection MemberReferences { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MemberReferenceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ModuleReferences">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.ModuleReferenceCollection ModuleReferences { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.ModuleReferenceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Mvid">
+      <MemberSignature Language="C#" Value="public Guid Mvid { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Guid</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resources">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.ResourceCollection Resources { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.ResourceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveSymbols">
+      <MemberSignature Language="C#" Value="public void SaveSymbols ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveSymbols">
+      <MemberSignature Language="C#" Value="public void SaveSymbols (Mono.Cecil.Cil.ISymbolWriter writer);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="writer" Type="Mono.Cecil.Cil.ISymbolWriter" />
+      </Parameters>
+      <Docs>
+        <param name="writer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveSymbols">
+      <MemberSignature Language="C#" Value="public void SaveSymbols (string outputDirectory);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="outputDirectory" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="outputDirectory">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveSymbols">
+      <MemberSignature Language="C#" Value="public void SaveSymbols (string outputDirectory, Mono.Cecil.Cil.ISymbolWriter writer);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="outputDirectory" Type="System.String" />
+        <Parameter Name="writer" Type="Mono.Cecil.Cil.ISymbolWriter" />
+      </Parameters>
+      <Docs>
+        <param name="outputDirectory">To be added.</param>
+        <param name="writer">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ToString">
+      <MemberSignature Language="C#" Value="public override string ToString ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TypeReferences">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeReferenceCollection TypeReferences { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeReferenceCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Types">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeDefinitionCollection Types { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeDefinitionCollection</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>To be added.</summary>
+        <value>To be added.</value>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

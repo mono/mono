@@ -1,0 +1,52 @@
+<Type Name="IAssemblyResolver" FullName="Mono.Cecil.IAssemblyResolver">
+  <TypeSignature Language="C#" Value="public interface IAssemblyResolver" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.AssemblyDefinition Resolve (Mono.Cecil.AssemblyNameReference name);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="Mono.Cecil.AssemblyNameReference" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Resolve">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.AssemblyDefinition Resolve (string fullName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="fullName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="fullName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

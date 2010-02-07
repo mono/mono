@@ -1,0 +1,285 @@
+<Type Name="BaseStructureVisitor" FullName="Mono.Cecil.BaseStructureVisitor">
+  <TypeSignature Language="C#" Value="public abstract class BaseStructureVisitor : Mono.Cecil.IReflectionStructureVisitor" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>Mono.Cecil.IReflectionStructureVisitor</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected BaseStructureVisitor ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TerminateAssemblyDefinition">
+      <MemberSignature Language="C#" Value="public virtual void TerminateAssemblyDefinition (Mono.Cecil.AssemblyDefinition asm);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="asm">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyDefinition">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyDefinition (Mono.Cecil.AssemblyDefinition asm);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="asm">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyLinkedResource">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyLinkedResource (Mono.Cecil.AssemblyLinkedResource res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Cecil.AssemblyLinkedResource" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyNameDefinition">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyNameDefinition (Mono.Cecil.AssemblyNameDefinition name);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="Mono.Cecil.AssemblyNameDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyNameReference">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyNameReference (Mono.Cecil.AssemblyNameReference name);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="Mono.Cecil.AssemblyNameReference" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyNameReferenceCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyNameReferenceCollection (Mono.Cecil.AssemblyNameReferenceCollection names);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="names" Type="Mono.Cecil.AssemblyNameReferenceCollection" />
+      </Parameters>
+      <Docs>
+        <param name="names">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitCollection">
+      <MemberSignature Language="C#" Value="protected void VisitCollection (System.Collections.ICollection coll);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="coll" Type="System.Collections.ICollection" />
+      </Parameters>
+      <Docs>
+        <param name="coll">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitEmbeddedResource">
+      <MemberSignature Language="C#" Value="public virtual void VisitEmbeddedResource (Mono.Cecil.EmbeddedResource res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Cecil.EmbeddedResource" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitLinkedResource">
+      <MemberSignature Language="C#" Value="public virtual void VisitLinkedResource (Mono.Cecil.LinkedResource res);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="res" Type="Mono.Cecil.LinkedResource" />
+      </Parameters>
+      <Docs>
+        <param name="res">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitModuleDefinition">
+      <MemberSignature Language="C#" Value="public virtual void VisitModuleDefinition (Mono.Cecil.ModuleDefinition module);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="module" Type="Mono.Cecil.ModuleDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="module">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitModuleDefinitionCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitModuleDefinitionCollection (Mono.Cecil.ModuleDefinitionCollection modules);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="modules" Type="Mono.Cecil.ModuleDefinitionCollection" />
+      </Parameters>
+      <Docs>
+        <param name="modules">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitModuleReference">
+      <MemberSignature Language="C#" Value="public virtual void VisitModuleReference (Mono.Cecil.ModuleReference module);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="module" Type="Mono.Cecil.ModuleReference" />
+      </Parameters>
+      <Docs>
+        <param name="module">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitModuleReferenceCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitModuleReferenceCollection (Mono.Cecil.ModuleReferenceCollection modules);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="modules" Type="Mono.Cecil.ModuleReferenceCollection" />
+      </Parameters>
+      <Docs>
+        <param name="modules">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitResourceCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitResourceCollection (Mono.Cecil.ResourceCollection resources);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="resources" Type="Mono.Cecil.ResourceCollection" />
+      </Parameters>
+      <Docs>
+        <param name="resources">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

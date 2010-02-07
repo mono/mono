@@ -1,0 +1,36 @@
+<Type Name="ISymbolWriter" FullName="Mono.Cecil.Cil.ISymbolWriter">
+  <TypeSignature Language="C#" Value="public interface ISymbolWriter : IDisposable" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>System.IDisposable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Write">
+      <MemberSignature Language="C#" Value="public void Write (Mono.Cecil.Cil.MethodBody body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="body" Type="Mono.Cecil.Cil.MethodBody" />
+      </Parameters>
+      <Docs>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

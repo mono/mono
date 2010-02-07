@@ -1,0 +1,56 @@
+<Type Name="ISymbolStoreFactory" FullName="Mono.Cecil.Cil.ISymbolStoreFactory">
+  <TypeSignature Language="C#" Value="public interface ISymbolStoreFactory" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateReader">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.ISymbolReader CreateReader (Mono.Cecil.ModuleDefinition module, string assemblyFileName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.ISymbolReader</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="module" Type="Mono.Cecil.ModuleDefinition" />
+        <Parameter Name="assemblyFileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="module">To be added.</param>
+        <param name="assemblyFileName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateWriter">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.ISymbolWriter CreateWriter (Mono.Cecil.ModuleDefinition module, string assemblyFileName);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.ISymbolWriter</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="module" Type="Mono.Cecil.ModuleDefinition" />
+        <Parameter Name="assemblyFileName" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="module">To be added.</param>
+        <param name="assemblyFileName">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

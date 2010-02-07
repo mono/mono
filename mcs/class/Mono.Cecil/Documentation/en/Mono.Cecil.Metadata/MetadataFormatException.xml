@@ -1,0 +1,16 @@
+<Type Name="MetadataFormatException" FullName="Mono.Cecil.Metadata.MetadataFormatException">
+  <TypeSignature Language="C#" Value="public class MetadataFormatException : Mono.Cecil.Binary.ImageFormatException" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Cecil.Binary.ImageFormatException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

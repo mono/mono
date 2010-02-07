@@ -1,0 +1,213 @@
+<Type Name="BaseCodeVisitor" FullName="Mono.Cecil.Cil.BaseCodeVisitor">
+  <TypeSignature Language="C#" Value="public abstract class BaseCodeVisitor : Mono.Cecil.Cil.ICodeVisitor" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>Mono.Cecil.Cil.ICodeVisitor</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected BaseCodeVisitor ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TerminateMethodBody">
+      <MemberSignature Language="C#" Value="public virtual void TerminateMethodBody (Mono.Cecil.Cil.MethodBody body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="body" Type="Mono.Cecil.Cil.MethodBody" />
+      </Parameters>
+      <Docs>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitExceptionHandler">
+      <MemberSignature Language="C#" Value="public virtual void VisitExceptionHandler (Mono.Cecil.Cil.ExceptionHandler eh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="eh" Type="Mono.Cecil.Cil.ExceptionHandler" />
+      </Parameters>
+      <Docs>
+        <param name="eh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitExceptionHandlerCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitExceptionHandlerCollection (Mono.Cecil.Cil.ExceptionHandlerCollection seh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="seh" Type="Mono.Cecil.Cil.ExceptionHandlerCollection" />
+      </Parameters>
+      <Docs>
+        <param name="seh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitInstruction">
+      <MemberSignature Language="C#" Value="public virtual void VisitInstruction (Mono.Cecil.Cil.Instruction instr);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instr" Type="Mono.Cecil.Cil.Instruction" />
+      </Parameters>
+      <Docs>
+        <param name="instr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitInstructionCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitInstructionCollection (Mono.Cecil.Cil.InstructionCollection instructions);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instructions" Type="Mono.Cecil.Cil.InstructionCollection" />
+      </Parameters>
+      <Docs>
+        <param name="instructions">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodBody">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodBody (Mono.Cecil.Cil.MethodBody body);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="body" Type="Mono.Cecil.Cil.MethodBody" />
+      </Parameters>
+      <Docs>
+        <param name="body">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitScope">
+      <MemberSignature Language="C#" Value="public virtual void VisitScope (Mono.Cecil.Cil.Scope s);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="s" Type="Mono.Cecil.Cil.Scope" />
+      </Parameters>
+      <Docs>
+        <param name="s">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitScopeCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitScopeCollection (Mono.Cecil.Cil.ScopeCollection scopes);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="scopes" Type="Mono.Cecil.Cil.ScopeCollection" />
+      </Parameters>
+      <Docs>
+        <param name="scopes">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitVariableDefinition">
+      <MemberSignature Language="C#" Value="public virtual void VisitVariableDefinition (Mono.Cecil.Cil.VariableDefinition var);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="var" Type="Mono.Cecil.Cil.VariableDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="var">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitVariableDefinitionCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitVariableDefinitionCollection (Mono.Cecil.Cil.VariableDefinitionCollection variables);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="variables" Type="Mono.Cecil.Cil.VariableDefinitionCollection" />
+      </Parameters>
+      <Docs>
+        <param name="variables">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

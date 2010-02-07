@@ -1,0 +1,300 @@
+<Type Name="AssemblyFactory" FullName="Mono.Cecil.AssemblyFactory">
+  <TypeSignature Language="C#" Value="public sealed class AssemblyFactory" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="CreateReflectionAssembly">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Assembly CreateReflectionAssembly (Mono.Cecil.AssemblyDefinition asm);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="asm">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="CreateReflectionAssembly">
+      <MemberSignature Language="C#" Value="public static System.Reflection.Assembly CreateReflectionAssembly (Mono.Cecil.AssemblyDefinition asm, AppDomain domain);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Reflection.Assembly</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+        <Parameter Name="domain" Type="System.AppDomain" />
+      </Parameters>
+      <Docs>
+        <param name="asm">To be added.</param>
+        <param name="domain">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefineAssembly">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition DefineAssembly (string name, Mono.Cecil.AssemblyKind kind);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="kind" Type="Mono.Cecil.AssemblyKind" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="kind">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefineAssembly">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition DefineAssembly (string name, Mono.Cecil.TargetRuntime rt, Mono.Cecil.AssemblyKind kind);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="name" Type="System.String" />
+        <Parameter Name="rt" Type="Mono.Cecil.TargetRuntime" />
+        <Parameter Name="kind" Type="Mono.Cecil.AssemblyKind" />
+      </Parameters>
+      <Docs>
+        <param name="name">To be added.</param>
+        <param name="rt">To be added.</param>
+        <param name="kind">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="DefineAssembly">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition DefineAssembly (string assemblyName, string moduleName, Mono.Cecil.TargetRuntime rt, Mono.Cecil.AssemblyKind kind);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assemblyName" Type="System.String" />
+        <Parameter Name="moduleName" Type="System.String" />
+        <Parameter Name="rt" Type="Mono.Cecil.TargetRuntime" />
+        <Parameter Name="kind" Type="Mono.Cecil.AssemblyKind" />
+      </Parameters>
+      <Docs>
+        <param name="assemblyName">To be added.</param>
+        <param name="moduleName">To be added.</param>
+        <param name="rt">To be added.</param>
+        <param name="kind">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAssembly">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition GetAssembly (byte[] assembly);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assembly" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="assembly">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAssembly">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition GetAssembly (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAssembly">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition GetAssembly (string file);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="file" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="file">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAssemblyManifest">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition GetAssemblyManifest (byte[] assembly);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="assembly" Type="System.Byte[]" />
+      </Parameters>
+      <Docs>
+        <param name="assembly">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAssemblyManifest">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition GetAssemblyManifest (System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="stream">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetAssemblyManifest">
+      <MemberSignature Language="C#" Value="public static Mono.Cecil.AssemblyDefinition GetAssemblyManifest (string file);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.AssemblyDefinition</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="file" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="file">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAssembly">
+      <MemberSignature Language="C#" Value="public static void SaveAssembly (Mono.Cecil.AssemblyDefinition asm, out byte[] assembly);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+        <Parameter Name="assembly" Type="System.Byte[]&amp;" RefType="out" />
+      </Parameters>
+      <Docs>
+        <param name="asm">To be added.</param>
+        <param name="assembly">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAssembly">
+      <MemberSignature Language="C#" Value="public static void SaveAssembly (Mono.Cecil.AssemblyDefinition asm, System.IO.Stream stream);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+        <Parameter Name="stream" Type="System.IO.Stream" />
+      </Parameters>
+      <Docs>
+        <param name="asm">To be added.</param>
+        <param name="stream">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="SaveAssembly">
+      <MemberSignature Language="C#" Value="public static void SaveAssembly (Mono.Cecil.AssemblyDefinition asm, string file);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="asm" Type="Mono.Cecil.AssemblyDefinition" />
+        <Parameter Name="file" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="asm">To be added.</param>
+        <param name="file">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

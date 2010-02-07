@@ -1,0 +1,17 @@
+<Type Name="IMetadataRow" FullName="Mono.Cecil.Metadata.IMetadataRow">
+  <TypeSignature Language="C#" Value="public interface IMetadataRow : Mono.Cecil.Metadata.IMetadataRowVisitable" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>Mono.Cecil.Metadata.IMetadataRowVisitable</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

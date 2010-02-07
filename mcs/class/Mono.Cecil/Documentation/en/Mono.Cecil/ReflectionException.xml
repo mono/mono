@@ -1,0 +1,16 @@
+<Type Name="ReflectionException" FullName="Mono.Cecil.ReflectionException">
+  <TypeSignature Language="C#" Value="public sealed class ReflectionException : Mono.Cecil.Metadata.MetadataFormatException" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Cecil.Metadata.MetadataFormatException</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>

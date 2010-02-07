@@ -1,0 +1,843 @@
+<Type Name="BaseMetadataRowVisitor" FullName="Mono.Cecil.Metadata.BaseMetadataRowVisitor">
+  <TypeSignature Language="C#" Value="public abstract class BaseMetadataRowVisitor : Mono.Cecil.Metadata.IMetadataRowVisitor" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces>
+    <Interface>
+      <InterfaceName>Mono.Cecil.Metadata.IMetadataRowVisitor</InterfaceName>
+    </Interface>
+  </Interfaces>
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="protected BaseMetadataRowVisitor ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="TerminateRowCollection">
+      <MemberSignature Language="C#" Value="public virtual void TerminateRowCollection (Mono.Cecil.Metadata.RowCollection coll);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="coll" Type="Mono.Cecil.Metadata.RowCollection" />
+      </Parameters>
+      <Docs>
+        <param name="coll">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyOSRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyOSRow (Mono.Cecil.Metadata.AssemblyOSRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.AssemblyOSRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyProcessorRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyProcessorRow (Mono.Cecil.Metadata.AssemblyProcessorRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.AssemblyProcessorRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyRefOSRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyRefOSRow (Mono.Cecil.Metadata.AssemblyRefOSRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.AssemblyRefOSRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyRefProcessorRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyRefProcessorRow (Mono.Cecil.Metadata.AssemblyRefProcessorRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.AssemblyRefProcessorRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyRefRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyRefRow (Mono.Cecil.Metadata.AssemblyRefRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.AssemblyRefRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitAssemblyRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitAssemblyRow (Mono.Cecil.Metadata.AssemblyRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.AssemblyRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitClassLayoutRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitClassLayoutRow (Mono.Cecil.Metadata.ClassLayoutRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ClassLayoutRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitConstantRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitConstantRow (Mono.Cecil.Metadata.ConstantRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ConstantRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitCustomAttributeRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitCustomAttributeRow (Mono.Cecil.Metadata.CustomAttributeRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.CustomAttributeRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitDeclSecurityRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitDeclSecurityRow (Mono.Cecil.Metadata.DeclSecurityRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.DeclSecurityRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitEventMapRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitEventMapRow (Mono.Cecil.Metadata.EventMapRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.EventMapRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitEventPtrRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitEventPtrRow (Mono.Cecil.Metadata.EventPtrRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.EventPtrRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitEventRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitEventRow (Mono.Cecil.Metadata.EventRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.EventRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitExportedTypeRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitExportedTypeRow (Mono.Cecil.Metadata.ExportedTypeRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ExportedTypeRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldLayoutRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldLayoutRow (Mono.Cecil.Metadata.FieldLayoutRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.FieldLayoutRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldMarshalRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldMarshalRow (Mono.Cecil.Metadata.FieldMarshalRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.FieldMarshalRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldPtrRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldPtrRow (Mono.Cecil.Metadata.FieldPtrRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.FieldPtrRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldRow (Mono.Cecil.Metadata.FieldRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.FieldRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFieldRVARow">
+      <MemberSignature Language="C#" Value="public virtual void VisitFieldRVARow (Mono.Cecil.Metadata.FieldRVARow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.FieldRVARow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitFileRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitFileRow (Mono.Cecil.Metadata.FileRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.FileRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitGenericParamConstraintRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitGenericParamConstraintRow (Mono.Cecil.Metadata.GenericParamConstraintRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.GenericParamConstraintRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitGenericParamRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitGenericParamRow (Mono.Cecil.Metadata.GenericParamRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.GenericParamRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitImplMapRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitImplMapRow (Mono.Cecil.Metadata.ImplMapRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ImplMapRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitInterfaceImplRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitInterfaceImplRow (Mono.Cecil.Metadata.InterfaceImplRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.InterfaceImplRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitManifestResourceRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitManifestResourceRow (Mono.Cecil.Metadata.ManifestResourceRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ManifestResourceRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMemberRefRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitMemberRefRow (Mono.Cecil.Metadata.MemberRefRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.MemberRefRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodImplRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodImplRow (Mono.Cecil.Metadata.MethodImplRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.MethodImplRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodPtrRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodPtrRow (Mono.Cecil.Metadata.MethodPtrRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.MethodPtrRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodRow (Mono.Cecil.Metadata.MethodRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.MethodRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodSemanticsRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodSemanticsRow (Mono.Cecil.Metadata.MethodSemanticsRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.MethodSemanticsRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitMethodSpecRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitMethodSpecRow (Mono.Cecil.Metadata.MethodSpecRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.MethodSpecRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitModuleRefRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitModuleRefRow (Mono.Cecil.Metadata.ModuleRefRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ModuleRefRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitModuleRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitModuleRow (Mono.Cecil.Metadata.ModuleRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ModuleRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitNestedClassRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitNestedClassRow (Mono.Cecil.Metadata.NestedClassRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.NestedClassRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitParamPtrRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitParamPtrRow (Mono.Cecil.Metadata.ParamPtrRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ParamPtrRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitParamRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitParamRow (Mono.Cecil.Metadata.ParamRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.ParamRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitPropertyMapRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitPropertyMapRow (Mono.Cecil.Metadata.PropertyMapRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.PropertyMapRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitPropertyPtrRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitPropertyPtrRow (Mono.Cecil.Metadata.PropertyPtrRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.PropertyPtrRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitPropertyRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitPropertyRow (Mono.Cecil.Metadata.PropertyRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.PropertyRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitRowCollection">
+      <MemberSignature Language="C#" Value="public virtual void VisitRowCollection (Mono.Cecil.Metadata.RowCollection coll);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="coll" Type="Mono.Cecil.Metadata.RowCollection" />
+      </Parameters>
+      <Docs>
+        <param name="coll">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitStandAloneSigRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitStandAloneSigRow (Mono.Cecil.Metadata.StandAloneSigRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.StandAloneSigRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitTypeDefRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitTypeDefRow (Mono.Cecil.Metadata.TypeDefRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.TypeDefRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitTypeRefRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitTypeRefRow (Mono.Cecil.Metadata.TypeRefRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.TypeRefRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitTypeSpecRow">
+      <MemberSignature Language="C#" Value="public virtual void VisitTypeSpecRow (Mono.Cecil.Metadata.TypeSpecRow row);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="row" Type="Mono.Cecil.Metadata.TypeSpecRow" />
+      </Parameters>
+      <Docs>
+        <param name="row">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

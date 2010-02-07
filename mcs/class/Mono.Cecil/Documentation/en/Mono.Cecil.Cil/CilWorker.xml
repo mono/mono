@@ -1,0 +1,797 @@
+<Type Name="CilWorker" FullName="Mono.Cecil.Cil.CilWorker">
+  <TypeSignature Language="C#" Value="public sealed class CilWorker" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Append">
+      <MemberSignature Language="C#" Value="public void Append (Mono.Cecil.Cil.Instruction instr);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instr" Type="Mono.Cecil.Cil.Instruction" />
+      </Parameters>
+      <Docs>
+        <param name="instr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.CallSite site);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="site" Type="Mono.Cecil.CallSite" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="site">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.Cil.Instruction label);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="label" Type="Mono.Cecil.Cil.Instruction" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="label">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.Cil.Instruction[] labels);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="labels" Type="Mono.Cecil.Cil.Instruction[]" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="labels">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.Cil.VariableDefinition var);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="var" Type="Mono.Cecil.Cil.VariableDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="var">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.FieldReference field);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="field" Type="Mono.Cecil.FieldReference" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="field">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.MethodReference method);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="method" Type="Mono.Cecil.MethodReference" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="method">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.ParameterDefinition param);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="param" Type="Mono.Cecil.ParameterDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="param">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.TypeReference type);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="type" Type="Mono.Cecil.TypeReference" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, byte b);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="b" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, double d);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, int i);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="i" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="i">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, long l);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="l" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="l">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, sbyte b);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="b" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, float f);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="f" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="f">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Create">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Create (Mono.Cecil.Cil.OpCode opcode, string str);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="str" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="str">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.CallSite site);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="site" Type="Mono.Cecil.CallSite" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="site">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.Cil.Instruction target);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="target" Type="Mono.Cecil.Cil.Instruction" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="target">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.Cil.Instruction[] targets);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="targets" Type="Mono.Cecil.Cil.Instruction[]" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="targets">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.Cil.VariableDefinition var);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="var" Type="Mono.Cecil.Cil.VariableDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="var">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.FieldReference field);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="field" Type="Mono.Cecil.FieldReference" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="field">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.MethodReference meth);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="meth" Type="Mono.Cecil.MethodReference" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="meth">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.ParameterDefinition param);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="param" Type="Mono.Cecil.ParameterDefinition" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="param">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, Mono.Cecil.TypeReference type);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="type" Type="Mono.Cecil.TypeReference" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="type">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, byte b);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="b" Type="System.Byte" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, double d);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="d" Type="System.Double" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="d">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, int i);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="i" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="i">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, long l);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="l" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="l">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, sbyte b);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="b" Type="System.SByte" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="b">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, float f);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="f" Type="System.Single" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="f">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Emit">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.Instruction Emit (Mono.Cecil.Cil.OpCode opcode, string str);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.Instruction</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="opcode" Type="Mono.Cecil.Cil.OpCode" />
+        <Parameter Name="str" Type="System.String" />
+      </Parameters>
+      <Docs>
+        <param name="opcode">To be added.</param>
+        <param name="str">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="GetBody">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.Cil.MethodBody GetBody ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.Cil.MethodBody</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InsertAfter">
+      <MemberSignature Language="C#" Value="public void InsertAfter (Mono.Cecil.Cil.Instruction target, Mono.Cecil.Cil.Instruction instr);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.Cecil.Cil.Instruction" />
+        <Parameter Name="instr" Type="Mono.Cecil.Cil.Instruction" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="instr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="InsertBefore">
+      <MemberSignature Language="C#" Value="public void InsertBefore (Mono.Cecil.Cil.Instruction target, Mono.Cecil.Cil.Instruction instr);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="target" Type="Mono.Cecil.Cil.Instruction" />
+        <Parameter Name="instr" Type="Mono.Cecil.Cil.Instruction" />
+      </Parameters>
+      <Docs>
+        <param name="target">To be added.</param>
+        <param name="instr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Remove">
+      <MemberSignature Language="C#" Value="public void Remove (Mono.Cecil.Cil.Instruction instr);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="instr" Type="Mono.Cecil.Cil.Instruction" />
+      </Parameters>
+      <Docs>
+        <param name="instr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Replace">
+      <MemberSignature Language="C#" Value="public void Replace (Mono.Cecil.Cil.Instruction old, Mono.Cecil.Cil.Instruction instr);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="old" Type="Mono.Cecil.Cil.Instruction" />
+        <Parameter Name="instr" Type="Mono.Cecil.Cil.Instruction" />
+      </Parameters>
+      <Docs>
+        <param name="old">To be added.</param>
+        <param name="instr">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

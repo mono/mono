@@ -1,0 +1,320 @@
+<Type Name="IBinaryVisitor" FullName="Mono.Cecil.Binary.IBinaryVisitor">
+  <TypeSignature Language="C#" Value="public interface IBinaryVisitor" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="TerminateImage">
+      <MemberSignature Language="C#" Value="public void TerminateImage (Mono.Cecil.Binary.Image img);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="img" Type="Mono.Cecil.Binary.Image" />
+      </Parameters>
+      <Docs>
+        <param name="img">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitCLIHeader">
+      <MemberSignature Language="C#" Value="public void VisitCLIHeader (Mono.Cecil.Binary.CLIHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Binary.CLIHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitDataDirectoriesHeader">
+      <MemberSignature Language="C#" Value="public void VisitDataDirectoriesHeader (Mono.Cecil.Binary.PEOptionalHeader.DataDirectoriesHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Binary.PEOptionalHeader+DataDirectoriesHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitDebugHeader">
+      <MemberSignature Language="C#" Value="public void VisitDebugHeader (Mono.Cecil.Binary.DebugHeader dh);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="dh" Type="Mono.Cecil.Binary.DebugHeader" />
+      </Parameters>
+      <Docs>
+        <param name="dh">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitDOSHeader">
+      <MemberSignature Language="C#" Value="public void VisitDOSHeader (Mono.Cecil.Binary.DOSHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Binary.DOSHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitExportTable">
+      <MemberSignature Language="C#" Value="public void VisitExportTable (Mono.Cecil.Binary.ExportTable et);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="et" Type="Mono.Cecil.Binary.ExportTable" />
+      </Parameters>
+      <Docs>
+        <param name="et">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitHintNameTable">
+      <MemberSignature Language="C#" Value="public void VisitHintNameTable (Mono.Cecil.Binary.HintNameTable hnt);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="hnt" Type="Mono.Cecil.Binary.HintNameTable" />
+      </Parameters>
+      <Docs>
+        <param name="hnt">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitImage">
+      <MemberSignature Language="C#" Value="public void VisitImage (Mono.Cecil.Binary.Image img);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="img" Type="Mono.Cecil.Binary.Image" />
+      </Parameters>
+      <Docs>
+        <param name="img">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitImportAddressTable">
+      <MemberSignature Language="C#" Value="public void VisitImportAddressTable (Mono.Cecil.Binary.ImportAddressTable iat);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="iat" Type="Mono.Cecil.Binary.ImportAddressTable" />
+      </Parameters>
+      <Docs>
+        <param name="iat">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitImportLookupTable">
+      <MemberSignature Language="C#" Value="public void VisitImportLookupTable (Mono.Cecil.Binary.ImportLookupTable ilt);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="ilt" Type="Mono.Cecil.Binary.ImportLookupTable" />
+      </Parameters>
+      <Docs>
+        <param name="ilt">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitImportTable">
+      <MemberSignature Language="C#" Value="public void VisitImportTable (Mono.Cecil.Binary.ImportTable it);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="it" Type="Mono.Cecil.Binary.ImportTable" />
+      </Parameters>
+      <Docs>
+        <param name="it">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitNTSpecificFieldsHeader">
+      <MemberSignature Language="C#" Value="public void VisitNTSpecificFieldsHeader (Mono.Cecil.Binary.PEOptionalHeader.NTSpecificFieldsHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Binary.PEOptionalHeader+NTSpecificFieldsHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitPEFileHeader">
+      <MemberSignature Language="C#" Value="public void VisitPEFileHeader (Mono.Cecil.Binary.PEFileHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Binary.PEFileHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitPEOptionalHeader">
+      <MemberSignature Language="C#" Value="public void VisitPEOptionalHeader (Mono.Cecil.Binary.PEOptionalHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Binary.PEOptionalHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitSection">
+      <MemberSignature Language="C#" Value="public void VisitSection (Mono.Cecil.Binary.Section section);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="section" Type="Mono.Cecil.Binary.Section" />
+      </Parameters>
+      <Docs>
+        <param name="section">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitSectionCollection">
+      <MemberSignature Language="C#" Value="public void VisitSectionCollection (Mono.Cecil.Binary.SectionCollection coll);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="coll" Type="Mono.Cecil.Binary.SectionCollection" />
+      </Parameters>
+      <Docs>
+        <param name="coll">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="VisitStandardFieldsHeader">
+      <MemberSignature Language="C#" Value="public void VisitStandardFieldsHeader (Mono.Cecil.Binary.PEOptionalHeader.StandardFieldsHeader header);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="header" Type="Mono.Cecil.Binary.PEOptionalHeader+StandardFieldsHeader" />
+      </Parameters>
+      <Docs>
+        <param name="header">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

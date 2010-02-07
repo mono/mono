@@ -1,0 +1,346 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Cecil" Version="0.6.9.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.CLSCompliant(false)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyConfiguration("")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyCopyright("(C) 2005 - 2007, Jb Evain")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyDescription("Library for reading and writing CIL images")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyProduct("Mono.Cecil")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Reflection.AssemblyTitle("Mono.Cecil")</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+        <Attribute>
+          <AttributeName>System.Runtime.InteropServices.ComVisible(false)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>To be added.</Remarks>
+  <Copyright>To be added.</Copyright>
+  <Types>
+    <Namespace Name="Mono.Cecil">
+      <Type Name="ArrayDimension" Kind="Class" />
+      <Type Name="ArrayDimensionCollection" Kind="Class" />
+      <Type Name="ArrayMarshalSpec" Kind="Class" />
+      <Type Name="ArrayType" Kind="Class" />
+      <Type Name="AssemblyDefinition" Kind="Class" />
+      <Type Name="AssemblyFactory" Kind="Class" />
+      <Type Name="AssemblyFlags" Kind="Enumeration" />
+      <Type Name="AssemblyHashAlgorithm" Kind="Enumeration" />
+      <Type Name="AssemblyKind" Kind="Enumeration" />
+      <Type Name="AssemblyLinkedResource" Kind="Class" />
+      <Type Name="AssemblyNameDefinition" Kind="Class" />
+      <Type Name="AssemblyNameReference" Kind="Class" />
+      <Type Name="AssemblyNameReferenceCollection" Kind="Class" />
+      <Type Name="BaseAssemblyResolver" Kind="Class" />
+      <Type Name="BaseReflectionVisitor" Kind="Class" />
+      <Type Name="BaseStructureVisitor" Kind="Class" />
+      <Type Name="CallSite" Kind="Class" />
+      <Type Name="Constants" Kind="Class" />
+      <Type Name="ConstraintCollection" Kind="Class" />
+      <Type Name="ConstructorCollection" Kind="Class" />
+      <Type Name="CustomAttribute" Kind="Class" />
+      <Type Name="CustomAttributeCollection" Kind="Class" />
+      <Type Name="CustomMarshalerSpec" Kind="Class" />
+      <Type Name="DefaultAssemblyResolver" Kind="Class" />
+      <Type Name="DefaultImporter" Kind="Class" />
+      <Type Name="EmbeddedResource" Kind="Class" />
+      <Type Name="EventAttributes" Kind="Enumeration" />
+      <Type Name="EventDefinition" Kind="Class" />
+      <Type Name="EventDefinitionCollection" Kind="Class" />
+      <Type Name="EventReference" Kind="Class" />
+      <Type Name="ExternTypeCollection" Kind="Class" />
+      <Type Name="FieldAttributes" Kind="Enumeration" />
+      <Type Name="FieldDefinition" Kind="Class" />
+      <Type Name="FieldDefinitionCollection" Kind="Class" />
+      <Type Name="FieldReference" Kind="Class" />
+      <Type Name="FileAttributes" Kind="Enumeration" />
+      <Type Name="FixedArraySpec" Kind="Class" />
+      <Type Name="FixedSysStringSpec" Kind="Class" />
+      <Type Name="FunctionPointerType" Kind="Class" />
+      <Type Name="GenericArgumentCollection" Kind="Class" />
+      <Type Name="GenericContext" Kind="Class" />
+      <Type Name="GenericInstanceMethod" Kind="Class" />
+      <Type Name="GenericInstanceType" Kind="Class" />
+      <Type Name="GenericParameter" Kind="Class" />
+      <Type Name="GenericParameterAttributes" Kind="Enumeration" />
+      <Type Name="GenericParameterCollection" Kind="Class" />
+      <Type Name="IAnnotationProvider" Kind="Interface" />
+      <Type Name="IAssemblyResolver" Kind="Interface" />
+      <Type Name="ICustomAttributeProvider" Kind="Interface" />
+      <Type Name="IGenericInstance" Kind="Interface" />
+      <Type Name="IGenericParameterProvider" Kind="Interface" />
+      <Type Name="IHasConstant" Kind="Interface" />
+      <Type Name="IHasMarshalSpec" Kind="Interface" />
+      <Type Name="IHasSecurity" Kind="Interface" />
+      <Type Name="IImporter" Kind="Interface" />
+      <Type Name="IMemberDefinition" Kind="Interface" />
+      <Type Name="IMemberReference" Kind="Interface" />
+      <Type Name="IMetadataScope" Kind="Interface" />
+      <Type Name="IMetadataTokenProvider" Kind="Interface" />
+      <Type Name="IMethodSignature" Kind="Interface" />
+      <Type Name="ImportContext" Kind="Class" />
+      <Type Name="InterfaceCollection" Kind="Class" />
+      <Type Name="IReflectionStructureVisitable" Kind="Interface" />
+      <Type Name="IReflectionStructureVisitor" Kind="Interface" />
+      <Type Name="IReflectionVisitable" Kind="Interface" />
+      <Type Name="IReflectionVisitor" Kind="Interface" />
+      <Type Name="IRequireResolving" Kind="Interface" />
+      <Type Name="LinkedResource" Kind="Class" />
+      <Type Name="ManifestResourceAttributes" Kind="Enumeration" />
+      <Type Name="MarshalSpec" Kind="Class" />
+      <Type Name="MemberReference" Kind="Class" />
+      <Type Name="MemberReferenceCollection" Kind="Class" />
+      <Type Name="MethodAttributes" Kind="Enumeration" />
+      <Type Name="MethodCallingConvention" Kind="Enumeration" />
+      <Type Name="MethodDefinition" Kind="Class" />
+      <Type Name="MethodDefinitionCollection" Kind="Class" />
+      <Type Name="MethodImplAttributes" Kind="Enumeration" />
+      <Type Name="MethodReference" Kind="Class" />
+      <Type Name="MethodReturnType" Kind="Class" />
+      <Type Name="MethodSemanticsAttributes" Kind="Enumeration" />
+      <Type Name="MethodSpecification" Kind="Class" />
+      <Type Name="ModifierOptional" Kind="Class" />
+      <Type Name="ModifierRequired" Kind="Class" />
+      <Type Name="ModType" Kind="Class" />
+      <Type Name="ModuleDefinition" Kind="Class" />
+      <Type Name="ModuleDefinitionCollection" Kind="Class" />
+      <Type Name="ModuleReference" Kind="Class" />
+      <Type Name="ModuleReferenceCollection" Kind="Class" />
+      <Type Name="NativeType" Kind="Enumeration" />
+      <Type Name="NestedTypeCollection" Kind="Class" />
+      <Type Name="OverrideCollection" Kind="Class" />
+      <Type Name="ParameterAttributes" Kind="Enumeration" />
+      <Type Name="ParameterDefinition" Kind="Class" />
+      <Type Name="ParameterDefinitionCollection" Kind="Class" />
+      <Type Name="ParameterReference" Kind="Class" />
+      <Type Name="PinnedType" Kind="Class" />
+      <Type Name="PInvokeAttributes" Kind="Enumeration" />
+      <Type Name="PInvokeInfo" Kind="Class" />
+      <Type Name="PointerType" Kind="Class" />
+      <Type Name="PropertyAttributes" Kind="Enumeration" />
+      <Type Name="PropertyDefinition" Kind="Class" />
+      <Type Name="PropertyDefinitionCollection" Kind="Class" />
+      <Type Name="PropertyReference" Kind="Class" />
+      <Type Name="ReferenceType" Kind="Class" />
+      <Type Name="ReflectionException" Kind="Class" />
+      <Type Name="Resource" Kind="Class" />
+      <Type Name="ResourceCollection" Kind="Class" />
+      <Type Name="SafeArraySpec" Kind="Class" />
+      <Type Name="SecurityAction" Kind="Enumeration" />
+      <Type Name="SecurityDeclaration" Kind="Class" />
+      <Type Name="SecurityDeclarationCollection" Kind="Class" />
+      <Type Name="SentinelType" Kind="Class" />
+      <Type Name="TargetRuntime" Kind="Enumeration" />
+      <Type Name="TypeAttributes" Kind="Enumeration" />
+      <Type Name="TypeDefinition" Kind="Class" />
+      <Type Name="TypeDefinitionCollection" Kind="Class" />
+      <Type Name="TypeReference" Kind="Class" />
+      <Type Name="TypeReferenceCollection" Kind="Class" />
+      <Type Name="TypeSpecification" Kind="Class" />
+      <Type Name="VariantType" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="Mono.Cecil.Binary">
+      <Type Name="BaseImageVisitor" Kind="Class" />
+      <Type Name="CLIHeader" Kind="Class" />
+      <Type Name="DataDirectory" Kind="Structure" />
+      <Type Name="DebugHeader" Kind="Class" />
+      <Type Name="DebugStoreType" Kind="Enumeration" />
+      <Type Name="DOSHeader" Kind="Class" />
+      <Type Name="ExportTable" Kind="Class" />
+      <Type Name="HintNameTable" Kind="Class" />
+      <Type Name="IBinaryVisitable" Kind="Interface" />
+      <Type Name="IBinaryVisitor" Kind="Interface" />
+      <Type Name="Image" Kind="Class" />
+      <Type Name="ImageCharacteristics" Kind="Enumeration" />
+      <Type Name="ImageFormatException" Kind="Class" />
+      <Type Name="ImportAddressTable" Kind="Class" />
+      <Type Name="ImportLookupTable" Kind="Class" />
+      <Type Name="ImportTable" Kind="Class" />
+      <Type Name="PEFileHeader" Kind="Class" />
+      <Type Name="PEOptionalHeader" Kind="Class" />
+      <Type Name="PEOptionalHeader+DataDirectoriesHeader" Kind="Class" />
+      <Type Name="PEOptionalHeader+NTSpecificFieldsHeader" Kind="Class" />
+      <Type Name="PEOptionalHeader+StandardFieldsHeader" Kind="Class" />
+      <Type Name="ResourceDataEntry" Kind="Class" />
+      <Type Name="ResourceDirectoryEntry" Kind="Class" />
+      <Type Name="ResourceDirectoryString" Kind="Class" />
+      <Type Name="ResourceDirectoryTable" Kind="Class" />
+      <Type Name="ResourceNode" Kind="Class" />
+      <Type Name="RuntimeImage" Kind="Enumeration" />
+      <Type Name="RVA" Kind="Structure" />
+      <Type Name="Section" Kind="Class" />
+      <Type Name="SectionCharacteristics" Kind="Enumeration" />
+      <Type Name="SectionCollection" Kind="Class" />
+      <Type Name="SubSystem" Kind="Enumeration" />
+    </Namespace>
+    <Namespace Name="Mono.Cecil.Cil">
+      <Type Name="BaseCodeVisitor" Kind="Class" />
+      <Type Name="CilWorker" Kind="Class" />
+      <Type Name="Code" Kind="Enumeration" />
+      <Type Name="Document" Kind="Class" />
+      <Type Name="DocumentHashAlgorithm" Kind="Enumeration" />
+      <Type Name="DocumentLanguage" Kind="Class" />
+      <Type Name="DocumentLanguageVendor" Kind="Class" />
+      <Type Name="DocumentType" Kind="Class" />
+      <Type Name="ExceptionHandler" Kind="Class" />
+      <Type Name="ExceptionHandlerCollection" Kind="Class" />
+      <Type Name="ExceptionHandlerType" Kind="Enumeration" />
+      <Type Name="FlowControl" Kind="Enumeration" />
+      <Type Name="GuidAttribute" Kind="Class" />
+      <Type Name="ICodeVisitable" Kind="Interface" />
+      <Type Name="ICodeVisitor" Kind="Interface" />
+      <Type Name="Instruction" Kind="Class" />
+      <Type Name="InstructionCollection" Kind="Class" />
+      <Type Name="IScopeProvider" Kind="Interface" />
+      <Type Name="ISymbolReader" Kind="Interface" />
+      <Type Name="ISymbolStoreFactory" Kind="Interface" />
+      <Type Name="ISymbolWriter" Kind="Interface" />
+      <Type Name="IVariableDefinitionProvider" Kind="Interface" />
+      <Type Name="MethodBody" Kind="Class" />
+      <Type Name="OpCode" Kind="Structure" />
+      <Type Name="OpCodes" Kind="Class" />
+      <Type Name="OpCodeType" Kind="Enumeration" />
+      <Type Name="OperandType" Kind="Enumeration" />
+      <Type Name="Scope" Kind="Class" />
+      <Type Name="ScopeCollection" Kind="Class" />
+      <Type Name="SequencePoint" Kind="Class" />
+      <Type Name="StackBehaviour" Kind="Enumeration" />
+      <Type Name="VariableDefinition" Kind="Class" />
+      <Type Name="VariableDefinitionCollection" Kind="Class" />
+      <Type Name="VariableReference" Kind="Class" />
+    </Namespace>
+    <Namespace Name="Mono.Cecil.Metadata">
+      <Type Name="AssemblyOSRow" Kind="Class" />
+      <Type Name="AssemblyOSTable" Kind="Class" />
+      <Type Name="AssemblyProcessorRow" Kind="Class" />
+      <Type Name="AssemblyProcessorTable" Kind="Class" />
+      <Type Name="AssemblyRefOSRow" Kind="Class" />
+      <Type Name="AssemblyRefOSTable" Kind="Class" />
+      <Type Name="AssemblyRefProcessorRow" Kind="Class" />
+      <Type Name="AssemblyRefProcessorTable" Kind="Class" />
+      <Type Name="AssemblyRefRow" Kind="Class" />
+      <Type Name="AssemblyRefTable" Kind="Class" />
+      <Type Name="AssemblyRow" Kind="Class" />
+      <Type Name="AssemblyTable" Kind="Class" />
+      <Type Name="BaseMetadataRowVisitor" Kind="Class" />
+      <Type Name="BaseMetadataTableVisitor" Kind="Class" />
+      <Type Name="BaseMetadataVisitor" Kind="Class" />
+      <Type Name="BlobHeap" Kind="Class" />
+      <Type Name="ClassLayoutRow" Kind="Class" />
+      <Type Name="ClassLayoutTable" Kind="Class" />
+      <Type Name="CodedIndex" Kind="Enumeration" />
+      <Type Name="ConstantRow" Kind="Class" />
+      <Type Name="ConstantTable" Kind="Class" />
+      <Type Name="CustomAttributeRow" Kind="Class" />
+      <Type Name="CustomAttributeTable" Kind="Class" />
+      <Type Name="DeclSecurityRow" Kind="Class" />
+      <Type Name="DeclSecurityTable" Kind="Class" />
+      <Type Name="ElementType" Kind="Enumeration" />
+      <Type Name="EventMapRow" Kind="Class" />
+      <Type Name="EventMapTable" Kind="Class" />
+      <Type Name="EventPtrRow" Kind="Class" />
+      <Type Name="EventPtrTable" Kind="Class" />
+      <Type Name="EventRow" Kind="Class" />
+      <Type Name="EventTable" Kind="Class" />
+      <Type Name="ExportedTypeRow" Kind="Class" />
+      <Type Name="ExportedTypeTable" Kind="Class" />
+      <Type Name="FieldLayoutRow" Kind="Class" />
+      <Type Name="FieldLayoutTable" Kind="Class" />
+      <Type Name="FieldMarshalRow" Kind="Class" />
+      <Type Name="FieldMarshalTable" Kind="Class" />
+      <Type Name="FieldPtrRow" Kind="Class" />
+      <Type Name="FieldPtrTable" Kind="Class" />
+      <Type Name="FieldRow" Kind="Class" />
+      <Type Name="FieldRVARow" Kind="Class" />
+      <Type Name="FieldRVATable" Kind="Class" />
+      <Type Name="FieldTable" Kind="Class" />
+      <Type Name="FileRow" Kind="Class" />
+      <Type Name="FileTable" Kind="Class" />
+      <Type Name="GenericParamConstraintRow" Kind="Class" />
+      <Type Name="GenericParamConstraintTable" Kind="Class" />
+      <Type Name="GenericParamRow" Kind="Class" />
+      <Type Name="GenericParamTable" Kind="Class" />
+      <Type Name="GuidHeap" Kind="Class" />
+      <Type Name="IMetadataRow" Kind="Interface" />
+      <Type Name="IMetadataRowVisitable" Kind="Interface" />
+      <Type Name="IMetadataRowVisitor" Kind="Interface" />
+      <Type Name="IMetadataTable" Kind="Interface" />
+      <Type Name="IMetadataTableVisitable" Kind="Interface" />
+      <Type Name="IMetadataTableVisitor" Kind="Interface" />
+      <Type Name="IMetadataVisitable" Kind="Interface" />
+      <Type Name="IMetadataVisitor" Kind="Interface" />
+      <Type Name="ImplMapRow" Kind="Class" />
+      <Type Name="ImplMapTable" Kind="Class" />
+      <Type Name="InterfaceImplRow" Kind="Class" />
+      <Type Name="InterfaceImplTable" Kind="Class" />
+      <Type Name="ManifestResourceRow" Kind="Class" />
+      <Type Name="ManifestResourceTable" Kind="Class" />
+      <Type Name="MemberRefRow" Kind="Class" />
+      <Type Name="MemberRefTable" Kind="Class" />
+      <Type Name="MetadataFormatException" Kind="Class" />
+      <Type Name="MetadataHeap" Kind="Class" />
+      <Type Name="MetadataRoot" Kind="Class" />
+      <Type Name="MetadataRoot+MetadataRootHeader" Kind="Class" />
+      <Type Name="MetadataStream" Kind="Class" />
+      <Type Name="MetadataStream+MetadataStreamHeader" Kind="Class" />
+      <Type Name="MetadataStreamCollection" Kind="Class" />
+      <Type Name="MetadataToken" Kind="Structure" />
+      <Type Name="MethodImplRow" Kind="Class" />
+      <Type Name="MethodImplTable" Kind="Class" />
+      <Type Name="MethodPtrRow" Kind="Class" />
+      <Type Name="MethodPtrTable" Kind="Class" />
+      <Type Name="MethodRow" Kind="Class" />
+      <Type Name="MethodSemanticsRow" Kind="Class" />
+      <Type Name="MethodSemanticsTable" Kind="Class" />
+      <Type Name="MethodSpecRow" Kind="Class" />
+      <Type Name="MethodSpecTable" Kind="Class" />
+      <Type Name="MethodTable" Kind="Class" />
+      <Type Name="ModuleRefRow" Kind="Class" />
+      <Type Name="ModuleRefTable" Kind="Class" />
+      <Type Name="ModuleRow" Kind="Class" />
+      <Type Name="ModuleTable" Kind="Class" />
+      <Type Name="NestedClassRow" Kind="Class" />
+      <Type Name="NestedClassTable" Kind="Class" />
+      <Type Name="ParamPtrRow" Kind="Class" />
+      <Type Name="ParamPtrTable" Kind="Class" />
+      <Type Name="ParamRow" Kind="Class" />
+      <Type Name="ParamTable" Kind="Class" />
+      <Type Name="PropertyMapRow" Kind="Class" />
+      <Type Name="PropertyMapTable" Kind="Class" />
+      <Type Name="PropertyPtrRow" Kind="Class" />
+      <Type Name="PropertyPtrTable" Kind="Class" />
+      <Type Name="PropertyRow" Kind="Class" />
+      <Type Name="PropertyTable" Kind="Class" />
+      <Type Name="RowCollection" Kind="Class" />
+      <Type Name="StandAloneSigRow" Kind="Class" />
+      <Type Name="StandAloneSigTable" Kind="Class" />
+      <Type Name="StringsHeap" Kind="Class" />
+      <Type Name="TableCollection" Kind="Class" />
+      <Type Name="TablesHeap" Kind="Class" />
+      <Type Name="TokenType" Kind="Enumeration" />
+      <Type Name="TypeDefRow" Kind="Class" />
+      <Type Name="TypeDefTable" Kind="Class" />
+      <Type Name="TypeRefRow" Kind="Class" />
+      <Type Name="TypeRefTable" Kind="Class" />
+      <Type Name="TypeSpecRow" Kind="Class" />
+      <Type Name="TypeSpecTable" Kind="Class" />
+      <Type Name="UserStringsHeap" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Cecil</Title>
+</Overview>

@@ -1,0 +1,77 @@
+<Type Name="IImporter" FullName="Mono.Cecil.IImporter">
+  <TypeSignature Language="C#" Value="public interface IImporter" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="ImportFieldReference">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.FieldReference ImportFieldReference (Mono.Cecil.FieldReference field, Mono.Cecil.ImportContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.FieldReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="field" Type="Mono.Cecil.FieldReference" />
+        <Parameter Name="context" Type="Mono.Cecil.ImportContext" />
+      </Parameters>
+      <Docs>
+        <param name="field">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportMethodReference">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.MethodReference ImportMethodReference (Mono.Cecil.MethodReference method, Mono.Cecil.ImportContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.MethodReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="method" Type="Mono.Cecil.MethodReference" />
+        <Parameter Name="context" Type="Mono.Cecil.ImportContext" />
+      </Parameters>
+      <Docs>
+        <param name="method">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ImportTypeReference">
+      <MemberSignature Language="C#" Value="public Mono.Cecil.TypeReference ImportTypeReference (Mono.Cecil.TypeReference type, Mono.Cecil.ImportContext context);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.6.9.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Cecil.TypeReference</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="type" Type="Mono.Cecil.TypeReference" />
+        <Parameter Name="context" Type="Mono.Cecil.ImportContext" />
+      </Parameters>
+      <Docs>
+        <param name="type">To be added.</param>
+        <param name="context">To be added.</param>
+        <summary>To be added.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,16 @@
+<Type Name="ImageFormatException" FullName="Mono.Cecil.Binary.ImageFormatException">
+  <TypeSignature Language="C#" Value="public class ImageFormatException : Exception" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Cecil</AssemblyName>
+    <AssemblyVersion>0.6.9.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Exception</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>To be added.</summary>
+    <remarks>To be added.</remarks>
+  </Docs>
+  <Members />
+</Type>
