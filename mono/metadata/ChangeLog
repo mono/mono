@@ -1,3 +1,8 @@
+2010-02-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c (mono_gc_get_managed_allocator): Add a specialized allocator for
+	small objects which does no size checks.
+
 2010-02-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall-def.h: Rename get_MetadataToken to GetMetadataToken.
