@@ -105,6 +105,9 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern AppDomainSetup getSetup ();
 
+#if NET_2_1
+		internal
+#endif
 		AppDomainSetup SetupInformationNoCopy {
 			get { return getSetup (); }
 		}
