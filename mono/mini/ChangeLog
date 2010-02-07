@@ -1,3 +1,8 @@
+2010-02-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Place a seq point just before a RET.
+	Fixes #564538.
+
 2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mini_method_verify): Report the method which failed to verify.
