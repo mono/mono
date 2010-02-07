@@ -152,7 +152,7 @@ namespace System.Web.Caching
 			}
 
 			try {
-				string filePath = Path.Combine (HttpRuntime.AppDomainAppPath, String.Format ("cache_pq_sequence_{0}.seq", DateTime.UtcNow.ToString ("yyyy-MM-dd_hh:mm:ss")));
+				string filePath = Path.Combine (HttpRuntime.AppDomainAppPath, String.Format ("cache_pq_sequence_{0}.seq", DateTime.UtcNow.ToString ("yyyy-MM-dd_hh-mm-ss")));
 				var settings = new XmlWriterSettings ();
 				settings.Indent = true;
 				settings.IndentChars = "\t";
