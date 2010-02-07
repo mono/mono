@@ -143,7 +143,7 @@
 		>
 			<Output TaskParameter="ResolvedFiles" ItemName="ResolvedFiles"/>
 			<Output TaskParameter="ResolvedFiles" ItemName="ReferencePath"/>
-			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolveAssemblyReferenceResolvedFiles"/>
+			<Output TaskParameter="ResolvedDependencyFiles" ItemName="_ResolvedDependencyFiles"/>
 			<Output TaskParameter="RelatedFiles" ItemName="_ReferenceRelatedPaths"/>
 			<Output TaskParameter="SatelliteFiles" ItemName="ReferenceSatellitePaths"/>
 			<Output TaskParameter="CopyLocalFiles" ItemName="ReferenceCopyLocalPaths"/>
@@ -252,6 +252,7 @@
 			ResolveReferences;
 			CopyFilesMarkedCopyLocal;
 			BuildResources;
+			CompileLicxFiles;
 			Compile;
 			PrepareForRun;
 			DeployOutputFiles;
@@ -299,7 +300,13 @@
 	</Target>
 
 	<Target Name="SplitResourcesByCulture" DependsOnTargets="AssignTargetPaths">
-		<AssignCulture Files="@(EmbeddedResourceWithTargetPath)">
+		<!-- Extract .licx files into @(LicxFiles) -->
+		<CreateItem Include="@(EmbeddedResourceWithTargetPath)" Condition="'%(Extension)' == '.licx'">
+			<Output TaskParameter="Include" ItemName="LicxFiles"/>
+		</CreateItem>
+
+		<!-- Split *remaining* resource files into various groups.. -->
+		<AssignCulture Files="@(EmbeddedResourceWithTargetPath)" Condition="'%(Extension)' != '.licx'">
 			<Output TaskParameter="AssignedFilesWithNoCulture" ItemName="ResourcesWithNoCulture"/>
 			<Output TaskParameter="AssignedFilesWithCulture" ItemName="ResourcesWithCulture"/>
 		</AssignCulture>
@@ -388,6 +395,28 @@
 			Condition = "'@(ManifestResourceWithCulture)' != '' or '@(ManifestNonResxWithCultureOnDisk)' != ''">
 			<Output TaskParameter = "Include" ItemName = "IntermediateSatelliteAssemblies" />
 		</CreateItem>
+	</Target>
+
+	<PropertyGroup>
+		<CompileLicxFilesDependsOn></CompileLicxFilesDependsOn>
+	</PropertyGroup>
+
+	<Target Name = "CompileLicxFiles"
+		Condition = "'@(LicxFiles)' != ''"
+		DependsOnTargets = "$(CompileLicxFilesDependsOn)"
+		Outputs = "$(IntermediateOutputPath)$(TargetFileName).licenses">
+		<LC
+			Sources = "@(LicxFiles)"
+			LicenseTarget = "$(TargetFileName)"
+			OutputDirectory = "$(IntermediateOutputPath)"
+			OutputLicense = "$(IntermediateOutputPath)$(TargetFileName).licenses"
+			ReferencedAssemblies = "@(ReferencePath);@(_ResolvedDependencyFiles)"
+			ToolPath = "$(LCToolPath)"
+			ToolExe = "$(LCToolExe)">
+
+			<Output TaskParameter="OutputLicense" ItemName="CompiledLicenseFile"/>
+			<Output TaskParameter="OutputLicense" ItemName="FileWrites"/>
+		</LC>
 	</Target>
 
 	<!-- Assign target paths to files that will need to be copied along with the project -->
