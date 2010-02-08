@@ -14137,6 +14137,38 @@
       </method>
     </type>
   </test>
+  <test name="gtest-anon-58.cs">
+    <type name="Test">
+      <method name="X Foo[X](Boolean)">
+        <size>45</size>
+      </method>
+      <method name="X FooNested[X](Boolean)">
+        <size>66</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;Foo&gt;c__AnonStorey0`1[X]">
+      <method name="X &lt;&gt;m__0()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;FooNested&gt;c__AnonStorey1`1[X]">
+      <method name="Call`1[X] &lt;&gt;m__1()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-6.cs">
     <type name="X">
       <method name="Void .ctor()">
