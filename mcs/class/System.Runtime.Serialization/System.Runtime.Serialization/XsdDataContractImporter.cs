@@ -227,6 +227,10 @@ namespace System.Runtime.Serialization
 					to_remove.Add (type);
 					continue;
 				}
+				if (type_name.Namespace == KnownTypeCollection.MSArraysNamespace) {
+					to_remove.Add (type);
+					continue;
+				}
 
 				imported_names [type_name] = type_name;
 

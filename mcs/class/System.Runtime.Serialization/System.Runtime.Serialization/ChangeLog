@@ -1,5 +1,9 @@
 2010-02-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XsdDataContractImporter.cs : do not add primitive ArrayOfxxx types.
+
+2010-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XsdDataContractImporter.cs : some generated attributes are put
 	  on enums too.
 

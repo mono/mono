@@ -1,3 +1,8 @@
+2010-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporterTest.cs : add test that ArrayOfxxx type
+	  is not added.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : added test for bug #560155.

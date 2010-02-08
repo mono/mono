@@ -33,18 +33,17 @@
 //
 
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
-
+using System.IO;
+using System.Runtime.Serialization;
+using System.ServiceModel.Description;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Runtime.Serialization;
-
+using Microsoft.CSharp;
 using NUnit.Framework;
-using System.ServiceModel.Description;
 
 namespace MonoTests.System.Runtime.Serialization
 {
@@ -371,6 +370,20 @@ namespace MonoTests.System.Runtime.Serialization
 			xsdi.Import (xss);
 			//Importing same data contract again with same importer
 			Assert.AreEqual (0, ccu.Namespaces.Count, "#i49");
+		}
+
+		[Test]
+		public void ImportSkipArrayOfPrimitives ()
+		{
+			var ccu = new CodeCompileUnit ();
+			var xdi = new XsdDataContractImporter (ccu);
+			var xss = new XmlSchemaSet ();
+			xss.Add (null, "Test/Resources/Schemas/schema1.xsd");
+			xss.Add (null, "Test/Resources/Schemas/schema2.xsd");
+			xdi.Import (xss);
+			var sw = new StringWriter ();
+			new CSharpCodeProvider ().GenerateCodeFromCompileUnit (ccu, sw, null);
+			Assert.IsTrue (sw.ToString ().IndexOf ("ArrayOfint") < 0, "#1");
 		}
 
 		/* Helper methods */
