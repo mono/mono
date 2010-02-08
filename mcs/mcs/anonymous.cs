@@ -552,7 +552,7 @@ namespace Mono.CSharp {
 				Type t = MutateGenericType (field.DeclaringType);
 				if (t != field.DeclaringType) {
 					field = TypeManager.DropGenericTypeArguments (field.DeclaringType).GetField (field.Name, TypeManager.AllMembers);
-					if (field.Module == Module.Builder)
+					if (t.GetType ().FullName == "System.Reflection.MonoGenericClass")
 						return TypeBuilder.GetField (t, field);
 
 					return FieldInfo.GetFieldFromHandle (field.FieldHandle, t.TypeHandle);						
