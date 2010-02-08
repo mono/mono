@@ -1,5 +1,10 @@
 2010-02-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* domain.c (mono_jit_info_table_find): Avoid looking in the root domain, since
+	the caller has no way of knowing the domain which owns the returned MonoJitInfo.
+
+	* appdomain.c (create_exceptions): Call mono_thread_push/popappdomain_ref ().
+
 	* verify.c (mono_type_get_stack_name): Fix a warning.
 
 2010-02-07  Zoltan Varga  <vargaz@gmail.com>
