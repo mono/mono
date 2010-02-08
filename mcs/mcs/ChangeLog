@@ -1,3 +1,8 @@
+2010-02-08  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #577029
+	* anonymous.cs: Fixed TypeBuilder* check.
+
 2010-02-06  Miguel de Icaza  <miguel@novell.com>
 
 	* eval.cs (CompileBlock): Also undo if there are problems during
@@ -23,7 +28,6 @@
 	Add support for calling Describe (typeof (TYPE)) if the expression
 	entered is a TYPE.
 	
-
 2010-02-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #574991

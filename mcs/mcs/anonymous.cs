@@ -536,7 +536,10 @@ namespace Mono.CSharp {
 				Type t = MutateGenericType (field.DeclaringType);
 				if (t != field.DeclaringType) {
 					field = TypeManager.DropGenericTypeArguments (field.DeclaringType).GetField (field.Name, TypeManager.AllMembers);
-					if (TypeManager.IsBeingCompiled (field)) {
+					
+					// HACK: TypeBuilder has to be used when a type is of TypeBuilder* but there is no
+					// way how to find out (use type comparison when this becomes an issue)
+					if (t.GetType ().FullName == "System.Reflection.MonoGenericClass") {
 						fs.MetaInfo = TypeBuilder.GetField (t, field);
 					} else {
 						fs.MetaInfo = FieldInfo.GetFieldFromHandle (field.FieldHandle, t.TypeHandle);
