@@ -81,6 +81,7 @@ Microsoft.Build.Tasks/GetFrameworkPath.cs
 Microsoft.Build.Tasks/GetFrameworkSdkPath.cs
 Microsoft.Build.Tasks.Hosting/ICscHostObject.cs
 Microsoft.Build.Tasks.Hosting/IVbcHostObject.cs
+Microsoft.Build.Tasks/LC.cs
 Microsoft.Build.Tasks/MakeDir.cs
 Microsoft.Build.Tasks/ManagedCompiler.cs
 Microsoft.Build.Tasks/Message.cs

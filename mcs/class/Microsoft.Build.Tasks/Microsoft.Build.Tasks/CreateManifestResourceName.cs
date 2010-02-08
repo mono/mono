@@ -72,7 +72,7 @@ namespace Microsoft.Build.Tasks {
 
 					manifestResourceNames [i] = new TaskItem (item);
 					manifestResourceNames [i].ItemSpec = CreateManifestName (
-								filename, null, rootNamespace,
+								filename, item.GetMetadata ("TargetPath"), rootNamespace,
 								dependentUponFileName, binaryStream);
 				} finally {
 					if (binaryStream != null)

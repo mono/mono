@@ -15,6 +15,7 @@ Microsoft.Build.Tasks/ErrorTest.cs
 Microsoft.Build.Tasks/FindAppConfigFileTest.cs
 Microsoft.Build.Tasks/GetFrameworkPathTest.cs
 Microsoft.Build.Tasks/GetFrameworkSdkPathTest.cs
+Microsoft.Build.Tasks/LCTest.cs
 Microsoft.Build.Tasks/MakeDirTest.cs
 Microsoft.Build.Tasks/ManagedCompilerTest.cs
 Microsoft.Build.Tasks/MessageTest.cs
@@ -25,3 +26,4 @@ Microsoft.Build.Tasks/TestEngine.cs
 Microsoft.Build.Tasks/TestMessageLogger.cs
 Microsoft.Build.Tasks/TaskBatchingTest.cs
 Microsoft.Build.Tasks/WarningTest.cs
+Microsoft.Build.Tasks/WriteLinesToFileTest.cs

@@ -45,9 +45,10 @@ namespace Microsoft.Build.Tasks {
 							      string dependentUponFileName,
 							      Stream binaryStream)
 		{
+			string filename_to_use = String.IsNullOrEmpty (linkFileName) ? fileName : linkFileName;
 			if (String.IsNullOrEmpty (dependentUponFileName) || binaryStream == null)
 				return GetResourceIdFromFileName
-					(Path.GetFileName (fileName), rootNamespace);
+					(Path.GetFileName (filename_to_use), rootNamespace);
 
 			string ns = null;
 			string classname = null;
@@ -77,10 +78,10 @@ namespace Microsoft.Build.Tasks {
 				}
 
 				if (classname == null)
-					return GetResourceIdFromFileName (fileName, rootNamespace);
+					return GetResourceIdFromFileName (filename_to_use, rootNamespace);
 
 				string culture, extn, only_filename;
-				if (AssignCulture.TrySplitResourceName (fileName, out only_filename, out culture, out extn))
+				if (AssignCulture.TrySplitResourceName (filename_to_use, out only_filename, out culture, out extn))
 					extn = "." + culture;
 				else
 					extn = String.Empty;

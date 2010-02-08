@@ -1,3 +1,4 @@
+
 using System;
 using System.Collections.Generic;
 using System.IO;
@@ -13,41 +14,53 @@ namespace MonoTests.Microsoft.Build.Tasks
 	{
 
 		string [,] resx_no_culture_files, resx_with_culture_files;
-		string [,] non_resx_no_culture_files, non_resx_with_culture_files;
-
+		string [,] non_resx_no_culture_files, non_resx_with_culture_files; 
 		public CreateVisualBasicManifestResourceNameTest ()
 		{
+			string junk_file = Path.Combine ("Test", Path.Combine ("resources", "junk.txt"));
 			string sample_vb_path = Path.Combine ("Test", Path.Combine ("resources", "Sample.vb"));
+			string curdir = Path.GetDirectoryName (Environment.CurrentDirectory);
+
+			/* {Include, LogicalName, DependentUpon, TargetPath} */
 			resx_no_culture_files = new string [,] {
 				// With dependent file
-				{ "foo with space.resx", null, sample_vb_path },
-				{ "foo with space.resx", "RandomName", sample_vb_path },
+				{ "foo with space.resx", null, sample_vb_path, null },
+				{ "foo with space.resx", "RandomName", sample_vb_path, null },
+				{ "foo with space.resx", "RandomName", sample_vb_path, "bar with space.resx" },
 
-				{ "Test/resources/foo with space.resx", null, "Sample.vb" },
-				{ "Test/resources/foo with space.resx", "RandomName", "Sample.vb" },
+				// can't find a C# class in the .vb file
+				{ "foo with space.resx", "RandomName", junk_file, "bar with space.resx" },
+
+				{ "Test/resources/foo with space.resx", null, "Sample.vb", null },
+				{ "Test/resources/foo with space.resx", "RandomName", "Sample.vb", null },
+				{ "Test/resources/foo with space.resx", "RandomName", "Sample.vb", "bar with space.resx"},
 
 				// W/o dependent file
-				{ "foo with space.resx", null, null },
-				{ "foo with space.resx", "RandomName", null },
+				{ "foo with space.resx", null, null, null },
+				{ "foo with space.resx", "RandomName", null, null },
 
-				{ "Test/resources/foo with space.resx", null, null },
-				{ "Test/resources/foo with space.resx", "RandomName", null },
+				{ "Test/resources folder/foo with space.resx", null, null, null },
+				{ "Test/resources folder/foo with space.resx", "RandomName", null, null },
 			};
 
 			resx_with_culture_files = new string [,] {
 				// With dependent file
-				{ "foo with space.de.resx", null, sample_vb_path },
-				{ "foo with space.de.resx", "RandomName", sample_vb_path },
+				{ "foo with space.de.resx", null, sample_vb_path, null },
+				{ "foo with space.de.resx", "RandomName", sample_vb_path, null },
+				{ "foo with space.de.resx", "RandomName", sample_vb_path, "bar with space.fr.resx" },
 
-				{ "Test/resources/foo with space.de.resx", null, "Sample.vb" },
-				{ "Test/resources/foo with space.de.resx", "RandomName", "Sample.vb" },
+				// can't find a C# class in the .vb file
+				{ "foo with space.de.resx", "RandomName", junk_file, "bar with space.fr.resx" },
+
+				{ "Test/resources/foo with space.de.resx", null, "Sample.vb", null },
+				{ "Test/resources/foo with space.de.resx", "RandomName", "Sample.vb", null},
 
 				// W/o dependent file
-				{ "foo with space.de.resx", null, null },
-				{ "foo with space.de.resx", "RandomName", null },
+				{ "foo with space.de.resx", null, null, null },
+				{ "foo with space.de.resx", "RandomName", null, null },
 
-				{ "Test/resources folder/foo with space.de.resx", null, null },
-				{ "Test/resources folder/foo with space.de.resx", "RandomName", null }
+				{ "Test/resources folder/foo with space.de.resx", null, null, null },
+				{ "Test/resources folder/foo with space.de.resx", "RandomName", null, null }
 			};
 
 			non_resx_no_culture_files = new string [,] {
@@ -74,11 +87,14 @@ namespace MonoTests.Microsoft.Build.Tasks
 			CheckResourceNames (resx_no_culture_files, new string [] {
 				// w/ dependent file
 				"Mono.Tests.Sample", "Mono.Tests.Sample",
+				"Mono.Tests.Sample", "bar with space",
 				"Mono.Tests.Sample", "Mono.Tests.Sample",
 
 				// W/o dependent file
-				"foo with space", "foo with space" ,
-				"foo with space", "foo with space"}, null);
+				"Mono.Tests.Sample", "foo with space" ,
+				"foo with space", "foo with space",
+				"foo with space",
+			}, null);
 		}
 
 		[Test]
@@ -88,10 +104,13 @@ namespace MonoTests.Microsoft.Build.Tasks
 			CheckResourceNames (resx_no_culture_files, new string [] {
 				// With dependent file
 				"RN1.RN2.Mono.Tests.Sample", "RN1.RN2.Mono.Tests.Sample",
+				"RN1.RN2.Mono.Tests.Sample", "RN1.RN2.bar with space",
 				"RN1.RN2.Mono.Tests.Sample", "RN1.RN2.Mono.Tests.Sample",
+
 				// W/o dependent file
+				"RN1.RN2.Mono.Tests.Sample", "RN1.RN2.foo with space",
 				"RN1.RN2.foo with space", "RN1.RN2.foo with space",
-				"RN1.RN2.foo with space", "RN1.RN2.foo with space"},
+				"RN1.RN2.foo with space"},
 				"RN1.RN2");
 		}
 
@@ -101,7 +120,10 @@ namespace MonoTests.Microsoft.Build.Tasks
 			CheckResourceNames (resx_with_culture_files, new string [] {
 				// With dependent file
 				 "Mono.Tests.Sample.de", "Mono.Tests.Sample.de",
+				 "Mono.Tests.Sample.fr", "bar with space.fr",
+
 				 "Mono.Tests.Sample.de", "Mono.Tests.Sample.de",
+
 				// W/o dependent file
 				 "foo with space.de", "foo with space.de",
 				 "foo with space.de", "foo with space.de" }, null);
@@ -113,6 +135,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 			CheckResourceNames (resx_with_culture_files, new string [] {
 				// With dependent file
 				 "RN1.RN2.Mono.Tests.Sample.de", "RN1.RN2.Mono.Tests.Sample.de",
+				 "RN1.RN2.Mono.Tests.Sample.fr", "RN1.RN2.bar with space.fr",
 				 "RN1.RN2.Mono.Tests.Sample.de", "RN1.RN2.Mono.Tests.Sample.de",
 				// W/o dependent file
 				 "RN1.RN2.foo with space.de", "RN1.RN2.foo with space.de",
@@ -126,6 +149,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 			CheckResourceNames (non_resx_with_culture_files, new string [] {
 				Path.Combine ("de", "foo with space.txt"), Path.Combine ("de", "foo with space.txt"),
 				Path.Combine ("de", "foo with space.txt"), Path.Combine ("de", "foo with space.txt")}, null);
+
 		}
 
 		[Test]
@@ -155,6 +179,53 @@ namespace MonoTests.Microsoft.Build.Tasks
 				"RN1.RN2");
 		}
 
+		[Test]
+		public void TestExternalResourcesNoRootNamespaceWithTargetPath ()
+		{
+			CheckResourceNames (new string[,] {
+					{"../folder/foo.txt", null, null, "abc.txt"},
+					{"../folder/foo.de.txt", null, null, "xyz.txt"}},
+					new string[] { "abc.txt", "xyz.txt" }, null);
+		}
+
+		[Test]
+		public void TestExternalResourcesWithRootNamespaceWithTargetPath ()
+		{
+			CheckResourceNames (new string[,] {
+					{"../folder/foo.txt", null, null, "abc.txt"},
+					{"../folder/foo.de.txt", null, null, "xyz.txt"}},
+					new string[] { "RN.abc.txt", "RN.xyz.txt" }, "RN");
+		}
+
+		[Test]
+		public void TestExternalResourcesNoRootNamespaceNoTargetPath ()
+		{
+			CheckResourceNames (new string[,] {
+					{"../folder/foo.txt", null, null},
+					{"../folder/foo.de.txt", null, null}},
+					new string[] { "foo.txt", Path.Combine ("de", "foo.txt") }, null);
+		}
+
+		[Test]
+		public void TestExternalResourcesWithRootNamespaceNoTargetPath ()
+		{
+			CheckResourceNames (new string[,] {
+					{"../folder/foo.txt", null, null},
+					{"../folder/foo.de.txt", null, null}},
+					new string[] { "RN.foo.txt", Path.Combine ("de", "RN.foo.txt") }, "RN");
+		}
+
+		[Test]
+		public void TestInvalidCulture ()
+		{
+			string [,] files = new string [,] {
+				{ "Foo.invalid.txt", null, null },
+				{ "Foo.invalid.resx", null, null }
+			};
+			CheckResourceNames (files, new string [] {"RN1.RN2.Foo.invalid.txt", "RN1.RN2.Foo.invalid"},
+				"RN1.RN2");
+		}
+
 		void CheckResourceNames (string [,] files, string [] names, string rootNamespace)
 		{
 			Assert.AreEqual (files.GetUpperBound (0) + 1, names.Length, "Number of files and names must match");
@@ -171,6 +242,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 				Assert.Fail ("Build failed");
 			}
 
+			bool has_targetpaths = files.GetUpperBound (1) == 3;
 			BuildItemGroup group = project.GetEvaluatedItemsByName ("ResourceNames");
 			Assert.AreEqual (names.Length, group.Count, "A2");
 			for (int i = 0; i <= files.GetUpperBound (0); i++) {
@@ -181,6 +253,8 @@ namespace MonoTests.Microsoft.Build.Tasks
 				Assert.AreEqual (files [i, 2] != null, group [i].HasMetadata ("DependentUpon"), "A6 #" + (i + 1));
 				if (files [i, 2] != null)
 					Assert.AreEqual (files [i, 2], group [i].GetMetadata ("DependentUpon"), "A7 #" + (i + 1));
+				if (has_targetpaths && files [i, 3] != null)
+					Assert.AreEqual (files [i, 3], group [i].GetMetadata ("TargetPath"), "A8 #" + (i + 1));
 			}
 		}
 
@@ -189,9 +263,12 @@ namespace MonoTests.Microsoft.Build.Tasks
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("<Project xmlns=\"http://schemas.microsoft.com/developer/msbuild/2003\">\n");
 
+			bool has_targetpaths = files.GetUpperBound (1) == 3;
 			sb.Append ("\t<ItemGroup>\n");
 			for (int i = 0; i <= files.GetUpperBound (0); i ++) {
 				sb.AppendFormat ("\t\t<ResourceFiles Include = \"{0}\">\n", files [i, 0]);
+				if (has_targetpaths && files [i, 3] != null)
+					sb.AppendFormat ("\t\t\t<TargetPath>{0}</TargetPath>\n", files [i, 3]);
 				if (files [i, 1] != null)
 					sb.AppendFormat ("\t\t\t<LogicalName>{0}</LogicalName>\n", files [i, 1]);
 				if (files [i, 2] != null)

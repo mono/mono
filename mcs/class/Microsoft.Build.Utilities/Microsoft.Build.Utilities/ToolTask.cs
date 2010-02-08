@@ -308,7 +308,6 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
-		[MonoTODO]
 		protected virtual string GenerateCommandLineCommands ()
 		{
 			return null;
@@ -316,7 +315,6 @@ namespace Microsoft.Build.Utilities
 
 		protected abstract string GenerateFullPathToTool ();
 
-		[MonoTODO]
 		protected virtual string GenerateResponseFileCommands ()
 		{
 			return null;
@@ -356,7 +354,7 @@ namespace Microsoft.Build.Utilities
 
 		protected virtual bool SkipTaskExecution()
 		{
-			return false;
+			return !ValidateParameters ();
 		}
 
 		protected virtual bool ValidateParameters()

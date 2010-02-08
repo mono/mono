@@ -1,3 +1,8 @@
+2010-02-06  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (SkipTaskExecution): Use ValidateParameters method.
+	Remove some MonoTODOs.
+
 2009-11-25  Ankit Jain  <jankit@novell.com>
 
 	* ToolLocationHelper.cs: Set directory for 3.0 framework

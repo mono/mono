@@ -118,6 +118,9 @@ namespace Microsoft.Build.Tasks {
 
 		public ResolvedReference FindInTargetFramework (ITaskItem reference, string framework_dir, bool specific_version)
 		{
+			if (!Directory.Exists (framework_dir))
+				return null;
+			
 			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
 			TargetFrameworkAssemblies gac_asm;
 			if (!target_framework_cache.TryGetValue (framework_dir, out gac_asm)) {

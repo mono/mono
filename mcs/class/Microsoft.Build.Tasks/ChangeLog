@@ -1,3 +1,13 @@
+2010-02-06  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks.dll.sources: Add LC.cs
+	* Microsoft.Build.Tasks_test.dll.sources: Add LCTest.cs
+
+2010-02-04  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Tasks_test.dll.sources: Added
+	WriteLinesToFileTest.cs
+
 2009-12-22  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Tasks.dll.sources: Add DirectoryScanner.cs
