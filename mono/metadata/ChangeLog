@@ -1,3 +1,7 @@
+2010-02-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* verify.c (mono_type_get_stack_name): Fix a warning.
+
 2010-02-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_wrapper_info): Rename from
