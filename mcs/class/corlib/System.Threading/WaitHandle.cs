@@ -54,6 +54,14 @@ namespace System.Threading
 			if (length > 64)
 				throw new NotSupportedException ("Too many handles");
 
+			if (handles.Length == 0) {
+				// MS throws different exceptions from the different methods.
+				if (waitAll)
+					throw new ArgumentNullException ("waitHandles");
+				else
+					throw new ArgumentException ();
+			}
+
 #if false
 			//
 			// Although we should thrown an exception if this is an STA thread,
