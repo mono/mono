@@ -1,5 +1,8 @@
 2010-02-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* image-writer.c (asm_writer_emit_global): Don't prepend the global prefix, it
+	should be done by the caller.
+
 	* mini-llvm.c (mono_llvm_emit_method): Don't make the debug symbols global.
 
 	* aot-compiler.c (emit_code): Add the llvm label prefix before 'methods'.
