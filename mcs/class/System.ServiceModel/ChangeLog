@@ -1,3 +1,8 @@
+2010-02-08  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources:
+	  renamed MetadataBundle.cs to MetadataSet.cs.
+
 2010-02-05  Astushi Enomoto  <atsushi@ximian.com>
 
 	* Dummy_2_1.cs : remove AuthenticationSchemes. It blocks MT support.
