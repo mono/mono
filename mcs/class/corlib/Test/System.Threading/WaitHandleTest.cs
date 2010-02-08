@@ -300,6 +300,21 @@ namespace MonoTests.System.Threading {
 		{
 			Assert.IsTrue (Single [0].WaitOne (TimeSpan.MaxValue), "WaitOne");
 		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void WaitAll_Empty ()
+		{
+			WaitHandle.WaitAll (new WaitHandle [0]);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void WaitAny_Empty ()
+		{
+			WaitHandle.WaitAny (new WaitHandle [0]);
+		}
+
 	}
 }
 
