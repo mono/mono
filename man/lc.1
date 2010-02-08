@@ -24,7 +24,7 @@ resource at runtime to make sure the developer was licensed to use this
 control. The most common way of making sure the component was properly
 licensed is by using license resources. At compile time the developer
 uses the \fIlc\fP tool to convert a licenses.licx file to a 
-programname.exe.resources file and embed that as a managed resource 
+programname.exe.licenses file and embed that as a managed resource
 during compilation.
 .SH RUNTIME OPTIONS
 The following options are available:
@@ -52,7 +52,7 @@ Gives more verbose output about the license compiling process.
 \fB--help\fR, \fB-h\fR
 Displays usage instructions.
 .TP
-\fB--output=path\fR, \fB-o path\fR
+\fB--outdir=path\fR, \fB-o path\fR
 Target path file the licenses resource. By default the license
 compiler emits the resource in the current directory. The filename
 will always match the target assembly passed to --target with .licenses 

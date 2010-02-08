@@ -1,3 +1,7 @@
+2010-02-08  Ankit Jain  <jankit@novell.com>
+
+	* lc.1: Fix typos.
+
 2009-12-11  Marek Habersack  <mhabersack@novell.com>
 
 	* mono.1: documented the IOMAP report profiler module
