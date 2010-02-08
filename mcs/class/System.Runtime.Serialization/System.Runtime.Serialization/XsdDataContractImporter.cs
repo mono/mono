@@ -234,10 +234,6 @@ namespace System.Runtime.Serialization
 				//Custom Attributes
 				type.CustomAttributes.Clear ();
 
-				if (type.IsEnum)
-					//FIXME: Add test case for this
-					continue;
-	
 				type.CustomAttributes.Add (
 					new CodeAttributeDeclaration (
 						new CodeTypeReference ("System.CodeDom.Compiler.GeneratedCodeAttribute"),
@@ -248,6 +244,10 @@ namespace System.Runtime.Serialization
 					new CodeAttributeDeclaration (
 						new CodeTypeReference ("System.Runtime.Serialization.DataContractAttribute")));
 
+				if (type.IsEnum)
+					//FIXME: Add test case for this
+					continue;
+	
 				//BaseType and interface
 				type.BaseTypes.Add (new CodeTypeReference (typeof (object)));
 				type.BaseTypes.Add (new CodeTypeReference ("System.Runtime.Serialization.IExtensibleDataObject"));
