@@ -1,3 +1,8 @@
+2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XUtil.cs: Avoid using ToLowerInvariant since it is not 
+	available in Silverlight.
+
 2010-02-09  Chris Toshok  <toshok@ximian.com>
 
 	* XDocument.cs: add the Load (Stream) overloads.

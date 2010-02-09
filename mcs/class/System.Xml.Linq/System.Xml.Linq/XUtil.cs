@@ -27,6 +27,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Globalization;
 using System.IO;
 using System.Text;
 using System.Xml;
@@ -42,7 +43,7 @@ namespace System.Xml.Linq
 
 		public static bool ConvertToBoolean (string s)
 		{
-			return XmlConvert.ToBoolean (s.ToLowerInvariant ());
+			return XmlConvert.ToBoolean (s.ToLower (CultureInfo.InvariantCulture));
 		}
 
 		public static DateTime ToDateTime (string s)
