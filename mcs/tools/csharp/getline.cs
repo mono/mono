@@ -22,9 +22,6 @@
 //    Console needs a way of updating its position after things have been written
 //    behind its back (P/Invoke puts for example).
 //    System.Console needs to get the DELETE character, and report accordingly.
-//    Typing before the program start causes the cursor position to be wrong
-//              This is caused by Console not reading all the available data
-//              before sending the report-position sequence and reading it back.
 //
 #if NET_2_0 || NET_1_1
 #define IN_MCS_BUILD
@@ -769,13 +766,22 @@ namespace Mono.Terminal {
 			ConsoleKeyInfo cki;
 
 			while (!done){
+				ConsoleModifiers mod;
+				
 				cki = Console.ReadKey (true);
+				if (cki.Key == ConsoleKey.Escape){
+					cki = Console.ReadKey (true);
 
+					mod = ConsoleModifiers.Alt;
+				} else
+					mod = cki.Modifiers;
+				
 				bool handled = false;
+
 				foreach (Handler handler in handlers){
 					ConsoleKeyInfo t = handler.CKI;
 
-					if (t.Key == cki.Key && t.Modifiers == cki.Modifiers){
+					if (t.Key == cki.Key && t.Modifiers == mod){
 						handled = true;
 						handler.KeyHandler ();
 						last_handler = handler.KeyHandler;
