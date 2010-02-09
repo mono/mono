@@ -1,3 +1,8 @@
+2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporter.cs : add appropriate code namespaces
+	  imported from xsd namespace.
+
 2010-02-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractImporter.cs : do not add primitive ArrayOfxxx types.

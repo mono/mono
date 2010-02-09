@@ -386,6 +386,29 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.IsTrue (sw.ToString ().IndexOf ("ArrayOfint") < 0, "#1");
 		}
 
+		[Test]
+		public void ImportGivesAppropriateNamespaces ()
+		{
+			var ccu = new CodeCompileUnit ();
+			var xdi = new XsdDataContractImporter (ccu);
+			var xss = new XmlSchemaSet ();
+			xss.Add (null, "Test/Resources/Schemas/schema1.xsd");
+			xss.Add (null, "Test/Resources/Schemas/schema2.xsd");
+			xss.Add (null, "Test/Resources/Schemas/schema3.xsd");
+			xdi.Import (xss);
+			var sw = new StringWriter ();
+			bool t = false, te = false;
+			foreach (CodeNamespace cns in ccu.Namespaces) {
+				if (cns.Name == "tempuri.org")
+					t = true;
+				else if (cns.Name == "tempuri.org.ext")
+					te = true;
+				Assert.AreEqual ("GetSearchDataResponse", cns.Types [0].Name, "#1." + cns.Name);
+			}
+			Assert.IsTrue (t, "t");
+			Assert.IsTrue (t, "te");
+		}
+
 		/* Helper methods */
 		private void CheckDC (CodeTypeDeclaration type, string name, Dictionary<string, string> members, string msg)
 		{

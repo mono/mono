@@ -206,6 +206,7 @@ namespace System.Runtime.Serialization
 				return;
 
 			CodeNamespace cns = new CodeNamespace ();
+			cns.Name = FromXmlnsToClrName (mapping.Namespace);
 
 			XmlCodeExporter xce = new XmlCodeExporter (cns);
 			xce.ExportTypeMapping (mapping);
@@ -303,7 +304,33 @@ namespace System.Runtime.Serialization
 			foreach (CodeTypeDeclaration type in to_remove)
 				cns.Types.Remove (type);
 
-			CodeCompileUnit.Namespaces.Add (cns);
+			if (cns.Types.Count > 0)
+				CodeCompileUnit.Namespaces.Add (cns);
+		}
+
+		const string default_ns_prefix = "http://schemas.datacontract.org/2004/07/";
+
+		string FromXmlnsToClrName (string xns)
+		{
+			if (xns.StartsWith (default_ns_prefix, StringComparison.Ordinal))
+				xns = xns.Substring (default_ns_prefix.Length);
+			else {
+				Uri u;
+				string tmp;
+				if (Uri.TryCreate (xns, UriKind.Absolute, out u) && (tmp = MakeStringNamespaceComponentsValid (u.GetComponents (UriComponents.Host | UriComponents.Path, UriFormat.Unescaped))).Length > 0)
+					xns = tmp;
+			}
+			return MakeStringNamespaceComponentsValid (xns);
+		}
+
+		static readonly char [] split_tokens = new char [] {'/', '.'};
+
+		string MakeStringNamespaceComponentsValid (string ns)
+		{
+			var arr = ns.Split (split_tokens, StringSplitOptions.RemoveEmptyEntries);
+			for (int i = 0; i < arr.Length; i++)
+				arr [i] = CodeIdentifier.MakeValid (arr [i]);
+			return String.Join (".", arr);
 		}
 
 		private string GetNamespace (CodeTypeDeclaration type)
