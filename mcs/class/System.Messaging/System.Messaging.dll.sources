@@ -40,6 +40,7 @@ System.Messaging/MessagingDescriptionAttribute.cs
 ../../build/common/MonoTODOAttribute.cs
 System.Messaging/PeekCompletedEventArgs.cs
 System.Messaging/PeekCompletedEventHandler.cs
+System.Messaging/QueueAccessMode.cs
 System.Messaging/ReceiveCompletedEventArgs.cs
 System.Messaging/ReceiveCompletedEventHandler.cs
 System.Messaging/StandardAccessRights.cs
