@@ -1,3 +1,15 @@
+2010-02-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (param_info_get_type_modifiers): Handle the case when the member object is a
+	property. This happens which instances returned by PropertyInfo::GetIndexParameters ().
+
+	* reflection.c (mono_reflection_get_custom_attrs_info): Ditto.
+
+	* object-internals.h: Export mono_class_is_reflection_method_or_constructor as part of
+	the internal API.
+
+	Fixes #574434.
+
 2010-02-09  Mark Probst  <mark.probst@gmail.com>
 
 	* threads.c: Removed two assertions that were too strict.  Added a
