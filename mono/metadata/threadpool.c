@@ -1481,12 +1481,17 @@ ves_icall_System_Threading_ThreadPool_GetMinThreads (gint *workerThreads, gint *
 MonoBoolean
 ves_icall_System_Threading_ThreadPool_SetMinThreads (gint workerThreads, gint completionPortThreads)
 {
+	int max_threads;
+	int max_io_threads;
+
 	MONO_ARCH_SAVE_REGS;
 
-	if (workerThreads < 0 || workerThreads > mono_max_worker_threads)
+	max_threads = InterlockedCompareExchange (&mono_max_worker_threads, -1, -1);
+	if (workerThreads <= 0 || workerThreads > max_threads)
 		return FALSE;
 
-	if (completionPortThreads < 0 || completionPortThreads > mono_io_max_worker_threads)
+	max_io_threads = InterlockedCompareExchange (&mono_io_max_worker_threads, -1, -1);
+	if (completionPortThreads <= 0 || completionPortThreads > max_io_threads)
 		return FALSE;
 
 	InterlockedExchange (&mono_min_worker_threads, workerThreads);
@@ -1498,12 +1503,20 @@ ves_icall_System_Threading_ThreadPool_SetMinThreads (gint workerThreads, gint co
 MonoBoolean
 ves_icall_System_Threading_ThreadPool_SetMaxThreads (gint workerThreads, gint completionPortThreads)
 {
+	gint32 min_threads;
+	gint32 min_io_threads;
+	gint32 cpu_count;
+
 	MONO_ARCH_SAVE_REGS;
 
-	if (workerThreads < mono_max_worker_threads)
+	cpu_count = mono_cpu_count ();
+	min_threads = InterlockedCompareExchange (&mono_min_worker_threads, -1, -1);
+	if (workerThreads < min_threads || workerThreads < cpu_count)
 		return FALSE;
 
-	if (completionPortThreads < mono_io_max_worker_threads)
+	/* We don't really have the concept of completion ports. Do we care here? */
+	min_io_threads = InterlockedCompareExchange (&mono_io_min_worker_threads, -1, -1);
+	if (completionPortThreads < min_io_threads || completionPortThreads < cpu_count)
 		return FALSE;
 
 	InterlockedExchange (&mono_max_worker_threads, workerThreads);

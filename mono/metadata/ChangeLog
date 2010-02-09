@@ -1,3 +1,10 @@
+2010-02-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: Fixes for SetMinThreads and SetMaxThreads.
+	Closes bug #566057.
+
+	* exception.c: fix typo in comment.
+
 2010-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (resolve_object): Handle MonoArrayMethod. Fixes #575955.
