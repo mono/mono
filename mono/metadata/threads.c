@@ -518,7 +518,6 @@ static void thread_cleanup (MonoThread *thread)
 	g_assert (thread != NULL);
 
 	if (thread->abort_state_handle) {
-		g_assert (thread->abort_exc);
 		mono_gchandle_free (thread->abort_state_handle);
 		thread->abort_state_handle = 0;
 	}
@@ -1095,8 +1094,6 @@ void ves_icall_System_Threading_Thread_Thread_free_internal (MonoThread *this,
 		g_free (this->synch_cs);
 		this->synch_cs = NULL;
 	}
-
-	g_assert (!this->abort_exc && !this->abort_state_handle);
 }
 
 static void mono_thread_start (MonoThread *thread)
@@ -2244,6 +2241,14 @@ ves_icall_System_Threading_Thread_Abort (MonoThread *thread, MonoObject *state)
 		thread->abort_state_handle = 0;
 	}
 	thread->abort_exc = NULL;
+
+	/*
+	 * abort_exc is set in mono_thread_execute_interruption(),
+	 * triggered by the call to signal_thread_state_change(),
+	 * below.  There's a point between where we have
+	 * abort_state_handle set, but abort_exc NULL, but that's not
+	 * a problem.
+	 */
 
 	LeaveCriticalSection (thread->synch_cs);
 
