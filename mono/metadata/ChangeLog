@@ -1,3 +1,102 @@
+2010-02-09  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (param_info_get_type_modifiers): Handle the case when the member object is a
+	property. This happens which instances returned by PropertyInfo::GetIndexParameters ().
+
+	* reflection.c (mono_reflection_get_custom_attrs_info): Ditto.
+
+	* object-internals.h: Export mono_class_is_reflection_method_or_constructor as part of
+	the internal API.
+
+	Fixes #574434.
+
+	Backport of r151093.
+
+2010-02-09  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c: Removed two assertions that were too strict.  Added a
+	clarifying comment.  Fixes #577090.
+
+	Backport of r151074.
+
+2010-02-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (mono_jit_info_table_find): Avoid looking in the root domain, since
+	the caller has no way of knowing the domain which owns the returned MonoJitInfo.
+
+	* appdomain.c (create_exceptions): Call mono_thread_push/popappdomain_ref ().
+
+2010-02-05  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall-def.h: Rename get_MetadataToken to GetMetadataToken.
+
+2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_method_verify): Use the new basic block formation pass
+	to avoid verifying dead basic blocks. This is the same behavior as the
+	runtime MS verifier. 
+
+	backport of r150888.
+
+2010-02-04  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-basic-block.c:
+	* mono-basic-block.h: New implementation of a basic block formation pass.
+	The formation pass does static liveness analysis as well to detect dead
+	basic blocks.
+
+	backport of r150887.
+
+2010-02-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_native_wrapper): Emit a null check for the
+	'this' argument in icalls.
+
+2010-02-03 Sylvain Dupont <duposyl@gmail.com>
+
+	backport of r149817
+
+	* cominterop.c marshal.c: Added support for marshalling in, in/byref,
+	  in/out, in/out/byref parameters of type SAFEARRAY[VARIANT].
+
+	Code is contributed under MIT/X11 license.
+
+2010-02-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (resolve_object): Handle MonoArrayMethod. Fixes #575955.
+
+2010-01-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (make_generic_param_class): Initialize interface offsets since we
+	set klass->inited. Fixes #574819.
+
+2010-01-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* domain.c (mono_domain_free): Send the END_UNLOAD profiler event before
+	calling the JIT domain cleanup hook.
+
+2010-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* pedump.c (main): Properly set the verifier mode when running the metadata
+	verifier.
+
+	Backport of r150304.
+
+2010-01-28  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_class_for_overlapping_reference_fields): Properly verify
+	overlapping fields now that we're called before has_references is set.
+
+	* pedump.c (dump_verify_info): Clear any loader error before verifying another
+	method. Otherwise all sort of weird stuff happens.
+
+	Backport of r150303.
+
+2010-01-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (mono_field_get_value_object): Handle nullable types correctly.
+	Fixes #572874.
+
 2010-01-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Array_SetValueImpl): Handle nullable types correctly.
