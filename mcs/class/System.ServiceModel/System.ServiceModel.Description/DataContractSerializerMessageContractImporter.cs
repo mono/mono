@@ -204,8 +204,12 @@ namespace System.ServiceModel.Description
 		{
 			if (qname.Namespace != "http://www.w3.org/2001/XMLSchema")
 				return null;
+			return GetCLRTypeName (qname.Name);
+		}
 
-			switch (qname.Name) {
+		internal static string GetCLRTypeName (string name)
+		{
+			switch (name) {
 			case "anyURI":
 				return "System.String";
 			case "boolean":

@@ -1,0 +1,4 @@
+2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* service1.wsdl, schema1.xsd, schema2.xsd : new test files (small
+	  repro for bug #577139).

@@ -1,3 +1,7 @@
+2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WsdlImporterTest.cs : added test for processing ArrayOfXxx types.
+
 2010-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceContractGeneratorTest.cs : add test for async method

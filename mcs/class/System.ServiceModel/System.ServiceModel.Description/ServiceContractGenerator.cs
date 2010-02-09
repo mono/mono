@@ -703,6 +703,15 @@ namespace System.ServiceModel.Description
 			cm.Parameters.Add (new CodeParameterDeclarationExpression (new CodeTypeReference (type), name));
 		}
 
+		const string ms_arrays_ns = "http://schemas.microsoft.com/2003/10/Serialization/Arrays";
+
+		string GetCodeTypeName (QName mappedTypeName)
+		{
+			if (mappedTypeName.Namespace == ms_arrays_ns)
+				return DataContractSerializerMessageContractImporter.GetCLRTypeName (mappedTypeName.Name.Substring ("ArrayOf".Length)) + "[]";
+			return mappedTypeName.Name;
+		}
+
 		private CodeExpression[] ExportMessages (MessageDescriptionCollection messages, CodeMemberMethod method, bool return_args)
 		{
 			CodeExpression [] args = null;
@@ -710,7 +719,7 @@ namespace System.ServiceModel.Description
 				if (md.Direction == MessageDirection.Output) {
 					if (md.Body.ReturnValue != null) {
 						ExportDataContract (md.Body.ReturnValue.XmlTypeMapping);	
-						method.ReturnType = new CodeTypeReference (md.Body.ReturnValue.TypeName.Name);
+						method.ReturnType = new CodeTypeReference (GetCodeTypeName (md.Body.ReturnValue.TypeName));
 					}
 					continue;
 				}
@@ -724,7 +733,7 @@ namespace System.ServiceModel.Description
 
 					method.Parameters.Add (
 						new CodeParameterDeclarationExpression (
-							new CodeTypeReference (parts [i].TypeName.Name),
+							new CodeTypeReference (GetCodeTypeName (parts [i].TypeName)),
 							parts [i].Name));
 
 					if (return_args)
@@ -773,6 +782,11 @@ namespace System.ServiceModel.Description
 				QName type_name = new QName (type.Name, ns);
 				if (imported_names.ContainsKey (type_name)) {
 					//Type got reemitted, so remove it!
+					to_remove.Add (type);
+					continue;
+				}
+				if (ns == ms_arrays_ns) {
+					//Do not emit arrays as an independent type.
 					to_remove.Add (type);
 					continue;
 				}

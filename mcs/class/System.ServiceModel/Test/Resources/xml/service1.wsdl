@@ -1,0 +1,20 @@
+<wsdl:definitions name="FooService" targetNamespace="http://tempuri.org/" xmlns:wsdl="http://schemas.xmlsoap.org/wsdl/" xmlns:tns="http://tempuri.org/" xmlns:xsd="http://www.w3.org/2001/XMLSchema">
+  <wsdl:types>
+    <xsd:schema targetNamespace="http://tempuri.org/Imports">
+      <xsd:import schemaLocation="schema1.xsd" namespace="http://tempuri.org/" />
+      <xsd:import schemaLocation="schema2.xsd" namespace="http://schemas.microsoft.com/2003/10/Serialization/Arrays" />
+    </xsd:schema>
+  </wsdl:types>
+  <wsdl:message name="GetSearchData_InputMessage">
+    <wsdl:part name="parameters" element="tns:GetSearchData" />
+  </wsdl:message>
+  <wsdl:message name="GetSearchData_OutputMessage">
+    <wsdl:part name="parameters" element="tns:GetSearchDataResponse" />
+  </wsdl:message>
+  <wsdl:portType name="FooService">
+    <wsdl:operation name="GetSearchData">
+      <wsdl:input message="tns:GetSearchData_InputMessage" />
+      <wsdl:output message="tns:GetSearchData_OutputMessage" />
+    </wsdl:operation>
+  </wsdl:portType>
+</wsdl:definitions>
