@@ -166,7 +166,7 @@ namespace Microsoft.Win32 {
 					values [name] = Convert.FromBase64String (se.Text);
 					break;
 				case "string":
-					values [name] = se.Text;
+					values [name] = se.Text == null ? String.Empty : se.Text;
 					break;
 				case "expand":
 					values [name] = new ExpandString (se.Text);

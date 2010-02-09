@@ -1,3 +1,12 @@
+2010-02-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* UnixRegistryApi.cs: When retrieving the registry keys from file in a
+	unix system, if the value returned by a SecurityElement is null,
+	use String.Empty, since at this point we know that this registry key
+	*exists* and *cannot* have a null value, as specified in the public
+	api.
+	Fixes #543206.
+
 2009-11-21  Miguel de Icaza  <miguel@novell.com>
 
 	* RegistryKey.cs: Implement a GetValueKind and a handful of
