@@ -73,6 +73,11 @@ namespace System.Messaging
 		{
 		}
 		
+		public MessageQueue (string path, QueueAccessMode accessMode) :
+			this (GetMessageQueue (path))
+		{
+		}
+
 		internal MessageQueue (IMessageQueue delegateQueue)
 		{
 			this.delegateQueue = delegateQueue;
