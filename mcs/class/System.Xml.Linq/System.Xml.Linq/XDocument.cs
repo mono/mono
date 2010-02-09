@@ -101,6 +101,16 @@ namespace System.Xml.Linq
 			}
 		}
 
+		public static XDocument Load (Stream stream)
+		{
+			return Load (new StreamReader (stream), LoadOptions.None);
+		}
+
+		public static XDocument Load (Stream stream, LoadOptions options)
+		{
+			return Load (new StreamReader (stream), options);
+		}
+
 		public static XDocument Load (TextReader reader)
 		{
 			return Load (reader, LoadOptions.None);

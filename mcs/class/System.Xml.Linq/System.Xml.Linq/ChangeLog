@@ -1,3 +1,7 @@
+2010-02-09  Chris Toshok  <toshok@ximian.com>
+
+	* XDocument.cs: add the Load (Stream) overloads.
+
 2010-01-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XAttribute.cs : escape whitespace chars in ToString().
