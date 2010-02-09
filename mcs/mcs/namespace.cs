@@ -118,6 +118,9 @@ namespace Mono.CSharp {
 				Type [] mtypes = a.GetTypes ();
 
 				foreach (Type t in mtypes){
+					if (t.IsNotPublic)
+						continue;
+					
 					string f = t.FullName;
 
 					if (f.StartsWith (prefix) && (result == null || !result.ContainsKey (f))){
