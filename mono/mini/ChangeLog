@@ -1,8 +1,13 @@
+2010-02-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* unwind.c (mono_unwind_frame): Use read32 for reading a 32 bit value, since it
+	might be unaligned.
+
 2010-02-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_code): Create the ut trampolines here, so they work for
 	llvm methods too.
-
+	
 	* aot-compiler.c (emit_code): Don't add the llvm label prefix to 'methods', since
 	it is not an LLVM generated symbol.
 
