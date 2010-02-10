@@ -1,5 +1,9 @@
 2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile: does extra dist fail to accept *.xml ?
+
+2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile: add test xml files to extra dist.
 
 2010-02-08  Astushi Enomoto  <atsushi@ximian.com>

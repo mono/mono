@@ -40,8 +40,7 @@ TEST_EXTRA_FILES = \
 	System.ServiceModel_test_net_3_0.dll.config \
 	Test/config/* \
 	Test/Resources/* \
-	Test/Resources/xml/*.wsdl \
-	Test/Resources/xml/*.xsd \
+	Test/Resources/xml/* \
 	Test/System.ServiceModel.Description/dump.xml
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) $(TEST_EXTRA_FILES)
