@@ -563,6 +563,7 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
+		[Ignore ("Until make dist gets fixed I won't enable any of new external-source-dependent tests")]
 		public void ImportMethodWithArrayOfint ()
 		{
 			var ms = GetMetadataSetFromWsdl ("Test/Resources/xml/service1.wsdl");

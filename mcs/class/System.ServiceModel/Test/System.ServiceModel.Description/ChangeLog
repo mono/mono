@@ -1,3 +1,10 @@
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WsdlImporterTest.cs : ignore whatever make dist broke.
+
+	  Until make dist gets fixed I won't enable any of new external-
+	  source-dependent tests.
+
 2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WsdlImporterTest.cs : added test for processing ArrayOfXxx types.

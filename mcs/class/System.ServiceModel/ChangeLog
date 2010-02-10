@@ -1,5 +1,9 @@
 2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile: sigh, just disable it. make dist is somehow broken.
+
+2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile: does extra dist fail to accept *.xml ?
 
 2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
