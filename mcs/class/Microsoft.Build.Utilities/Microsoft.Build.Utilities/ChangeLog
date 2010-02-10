@@ -1,5 +1,13 @@
 2010-02-10  Ankit Jain  <jankit@novell.com>
 
+	* ProcessService.cs (globalEnvironmentVariablesOverride): Use
+	ProcessStringDictionary instead of StringDictionary.
+	ProcessStringDictionary retains the case of the keys (env vars
+	here).
+	* ToolTask.cs (environmentOverride): Likewise.
+
+2010-02-10  Ankit Jain  <jankit@novell.com>
+
 	* ToolTask.cs (ExecuteTool): Use the virtual method
 	Standard*LoggingImportance, instead of the underlying field.
 	(LogEventsFromTextOutput): Use @importance argument for LogMessage.

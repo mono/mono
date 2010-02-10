@@ -40,11 +40,13 @@ using System.Text.RegularExpressions;
 using Microsoft.Build.Framework;
 using Mono.XBuild.Utilities;
 
+using SCS = System.Collections.Specialized;
+
 namespace Microsoft.Build.Utilities
 {
 	public abstract class ToolTask : Task
 	{
-		StringDictionary	environmentOverride;
+		SCS.ProcessStringDictionary	environmentOverride;
 		int			exitCode;
 		int			timeout;
 		string			toolPath, toolExe;
@@ -76,7 +78,7 @@ namespace Microsoft.Build.Utilities
 			this.toolPath = MonoLocationHelper.GetBinDir ();
 			this.responseFileEncoding = Encoding.UTF8;
 			this.timeout = Int32.MaxValue;
-			this.environmentOverride = new StringDictionary ();
+			this.environmentOverride = new SCS.ProcessStringDictionary ();
 		}
 
 		static ToolTask ()
