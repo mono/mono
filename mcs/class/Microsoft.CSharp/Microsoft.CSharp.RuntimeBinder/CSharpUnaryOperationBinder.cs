@@ -39,8 +39,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
 		readonly CSharpBinderFlags flags;
+		readonly Type context;
 		
-		public CSharpUnaryOperationBinder (ExpressionType operation, CSharpBinderFlags flags, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpUnaryOperationBinder (ExpressionType operation, CSharpBinderFlags flags, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (operation)
 		{
 			this.argumentInfo = argumentInfo.ToReadOnly ();
@@ -48,6 +49,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				throw new ArgumentException ("Unary operation requires 1 argument");
 
 			this.flags = flags;
+			this.context = context;
 		}
 	
 
@@ -90,7 +92,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 
-			return binder.Bind ();
+			return binder.Bind (context);
 		}
 	}
 }

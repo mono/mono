@@ -40,8 +40,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 	{
 		IList<CSharpArgumentInfo> argumentInfo;
 		readonly CSharpBinderFlags flags;
+		readonly Type context;
 		
-		public CSharpBinaryOperationBinder (ExpressionType operation, CSharpBinderFlags flags, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public CSharpBinaryOperationBinder (ExpressionType operation, CSharpBinderFlags flags, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
 			: base (operation)
 		{
 			this.argumentInfo = new ReadOnlyCollectionBuilder<CSharpArgumentInfo> (argumentInfo);
@@ -49,6 +50,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				throw new ArgumentException ("Binary operation requires 2 arguments");
 
 			this.flags = flags;
+			this.context = context;
 		}
 
 		Compiler.Binary.Operator GetOperator (out bool isCompound)
@@ -151,7 +153,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			binder.AddRestrictions (target);
 			binder.AddRestrictions (arg);
 
-			return binder.Bind ();
+			return binder.Bind (context);
 		}
 	}
 }

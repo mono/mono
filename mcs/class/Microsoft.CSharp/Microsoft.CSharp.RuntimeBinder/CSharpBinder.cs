@@ -79,15 +79,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return Bind (callingType);
 		}
 
-		public DynamicMetaObject Bind ()
-		{
-			// Not ideal but fixes possible NRE during resolve accessibility checking
-			var callingType = typeof (CSharpBinder);
-
-			return Bind (callingType);
-		}
-
-		DynamicMetaObject Bind (Type callingType)
+		public DynamicMetaObject Bind (Type callingType)
 		{
 			var ctx = CreateDefaultCompilerContext ();
 
@@ -148,7 +140,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			bool is_compile_time;
 
 			if (info != null) {
-				if ((info.Flags & CSharpArgumentInfoFlags.LiteralConstant) != 0) {
+				if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0) {
 					InitializeCompiler (null);
 					return Compiler.Constant.CreateConstantFromValue (value.LimitType, value.Value, Compiler.Location.Null);
 				}

@@ -35,7 +35,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 	{
 		None				= 0,
 		UseCompileTimeType	= 1,
-		LiteralConstant		= 2,
+		Constant			= 2,
 		NamedArgument		= 4,
 		IsRef				= 8,
 		IsOut				= 16,

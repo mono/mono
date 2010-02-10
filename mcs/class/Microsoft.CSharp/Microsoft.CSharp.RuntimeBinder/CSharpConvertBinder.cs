@@ -37,11 +37,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 	class CSharpConvertBinder : ConvertBinder
 	{
 		readonly CSharpBinderFlags flags;
+		readonly Type context;
 
-		public CSharpConvertBinder (Type type, CSharpBinderFlags flags)
+		public CSharpConvertBinder (Type type, Type context, CSharpBinderFlags flags)
 			: base (type, (flags & CSharpBinderFlags.ConvertExplicit) != 0)
 		{
 			this.flags = flags;
+			this.context = context;
 		}
 
 		public override DynamicMetaObject FallbackConvert (DynamicMetaObject target, DynamicMetaObject errorSuggestion)
@@ -59,7 +61,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);
 
-			return binder.Bind ();
+			return binder.Bind (context);
 		}
 	}
 }

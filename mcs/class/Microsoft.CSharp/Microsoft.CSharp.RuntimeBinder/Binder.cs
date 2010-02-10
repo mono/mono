@@ -37,14 +37,14 @@ namespace Microsoft.CSharp.RuntimeBinder
 {
 	public static class Binder
 	{
-		public static CallSiteBinder BinaryOperation (CSharpBinderFlags flags, ExpressionType operation, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public static CallSiteBinder BinaryOperation (CSharpBinderFlags flags, ExpressionType operation, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
 		{
-			return new CSharpBinaryOperationBinder (operation, flags, argumentInfo);
+			return new CSharpBinaryOperationBinder (operation, flags, context, argumentInfo);
 		}
 		
-		public static CallSiteBinder Convert (CSharpBinderFlags flags, Type type)
+		public static CallSiteBinder Convert (CSharpBinderFlags flags, Type context, Type type)
 		{
-			return new CSharpConvertBinder (type, flags);
+			return new CSharpConvertBinder (type, context, flags);
 		}
 		
 		public static CallSiteBinder GetIndex (CSharpBinderFlags flags, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
@@ -88,9 +88,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 			return new CSharpSetMemberBinder (name, context, argumentInfo);
 		}
 		
-		public static CallSiteBinder UnaryOperation (CSharpBinderFlags flags, ExpressionType operation, IEnumerable<CSharpArgumentInfo> argumentInfo)
+		public static CallSiteBinder UnaryOperation (CSharpBinderFlags flags, ExpressionType operation, Type context, IEnumerable<CSharpArgumentInfo> argumentInfo)
 		{
-			return new CSharpUnaryOperationBinder (operation, flags, argumentInfo);
+			return new CSharpUnaryOperationBinder (operation, flags, context, argumentInfo);
 		}
 	}
 }
