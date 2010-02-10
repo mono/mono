@@ -1,3 +1,9 @@
+2010-02-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: When calculating the layout for the tab pages, take
+	into account the ImageList size info if it exists, even if it is
+	empty.
+
 2010-02-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* StatusStrip.cs:

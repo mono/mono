@@ -1267,7 +1267,7 @@ namespace System.Windows.Forms {
 				width = MeasureStringWidth (DeviceContext, page.Text, page.Font);
 				width += (Padding.X * 2) + 2;
 
-				if (ImageList != null && page.ImageIndex >= 0 && page.ImageIndex < ImageList.Images.Count) {
+				if (ImageList != null && page.ImageIndex >= 0) {
 					width += ImageList.ImageSize.Width + ThemeEngine.Current.TabControlImagePadding.X;
 
 					int image_size = ImageList.ImageSize.Height + ThemeEngine.Current.TabControlImagePadding.Y;
