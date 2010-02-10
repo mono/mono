@@ -1,3 +1,7 @@
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs : moved soap_dictionary to Constants.
+
 2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	*  HttpTransportBindingElement.cs : ... and add MONOTOUCH on #ifs.

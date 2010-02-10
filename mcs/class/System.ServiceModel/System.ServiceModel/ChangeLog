@@ -1,5 +1,9 @@
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Constants.cs : moved SoapDictionary from BinaryMessageEncoder.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : cosmetic attribute reordering.
 
 2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
