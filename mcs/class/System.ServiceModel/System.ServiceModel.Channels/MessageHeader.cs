@@ -287,10 +287,7 @@ namespace System.ServiceModel.Channels
 			protected override void OnWriteHeaderContents (XmlDictionaryWriter writer,
 								       MessageVersion version)
 			{
-				if (value is EndpointAddress)
-					((EndpointAddress) value).WriteTo (version.Addressing, writer, name, ns);
-				else
-					this.formatter.WriteObjectContent (writer, value);
+				this.formatter.WriteObjectContent (writer, value);
 			}
 
 			public object Value { get { return value; } }
