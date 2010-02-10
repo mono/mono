@@ -1,3 +1,13 @@
+2010-02-09  Miguel de Icaza  <miguel@novell.com>
+
+	* console-unix.c: On OSX Control-Y is assigned to
+	VDSUSP (non-Posix), the
+	suspend-program-next-time-it-tries-to-read-input command (this is
+	different than C-z, which suspends immediately).
+
+	Do the same thing that bash does and ignore this setting,
+	making our repl/getline support pasting.
+
 2010-02-10  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Simple plausibility check for scan_starts.
