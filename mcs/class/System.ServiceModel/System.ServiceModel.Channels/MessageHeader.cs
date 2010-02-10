@@ -122,7 +122,13 @@ namespace System.ServiceModel.Channels
 
 		protected virtual void OnWriteStartHeader (XmlDictionaryWriter writer, MessageVersion version)
 		{
-			writer.WriteStartElement (this.Name, this.Namespace);
+			var dic = Constants.SoapDictionary;
+			XmlDictionaryString name, ns;
+			var prefix = writer.LookupPrefix (Namespace);
+			if (dic.TryLookup (Name, out name) && dic.TryLookup (Namespace, out ns))
+				writer.WriteStartElement (prefix, name, ns);
+			else
+				writer.WriteStartElement (prefix, this.Name, this.Namespace);
 			WriteHeaderAttributes (writer, version);
 		}
 
@@ -162,23 +168,24 @@ namespace System.ServiceModel.Channels
 
 		protected void WriteHeaderAttributes (XmlDictionaryWriter writer, MessageVersion version)
 		{
+			var dic = Constants.SoapDictionary;
 			if (Id != null)
-				writer.WriteAttributeString ("u", "Id", Constants.WsuNamespace, Id);
+				writer.WriteAttributeString ("u", dic.Add ("Id"), dic.Add (Constants.WsuNamespace), Id);
 			if (Actor != String.Empty) {
 				if (version.Envelope == EnvelopeVersion.Soap11) 
-					writer.WriteAttributeString ("s", "actor", version.Envelope.Namespace, Actor);
+					writer.WriteAttributeString ("s", dic.Add ("actor"), dic.Add (version.Envelope.Namespace), Actor);
 
 				if (version.Envelope == EnvelopeVersion.Soap12) 
-					writer.WriteAttributeString ("s", "role", version.Envelope.Namespace, Actor);
+					writer.WriteAttributeString ("s", dic.Add ("role"), dic.Add (version.Envelope.Namespace), Actor);
 			}
 
 			// mustUnderstand is the same across SOAP 1.1 and 1.2
 			if (MustUnderstand == true)
-				writer.WriteAttributeString ("s", "mustUnderstand", version.Envelope.Namespace, "1");
+				writer.WriteAttributeString ("s", dic.Add ("mustUnderstand"), dic.Add (version.Envelope.Namespace), "1");
 
 			// relay is only available on SOAP 1.2
 			if (Relay == true && version.Envelope == EnvelopeVersion.Soap12)
-				writer.WriteAttributeString ("s", "relay", version.Envelope.Namespace, "true");
+				writer.WriteAttributeString ("s", dic.Add ("relay"), dic.Add (version.Envelope.Namespace), "true");
 		}
 
 		public void WriteHeaderContents (XmlDictionaryWriter writer, MessageVersion version)

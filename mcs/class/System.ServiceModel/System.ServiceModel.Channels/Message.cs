@@ -137,8 +137,9 @@ namespace System.ServiceModel.Channels
 
 		void WriteXsiNil (XmlDictionaryWriter writer)
 		{
-			writer.WriteStartElement ("z", "anyType", Constants.MSSerialization);
-			writer.WriteAttributeString ("i", "nil", "http://www.w3.org/2001/XMLSchema-instance", "true");
+			var dic = Constants.SoapDictionary;
+			writer.WriteStartElement ("z", dic.Add ("anyType"), dic.Add (Constants.MSSerialization));
+			writer.WriteAttributeString ("i", dic.Add ("nil"), dic.Add ("http://www.w3.org/2001/XMLSchema-instance"), "true");
 			writer.WriteEndElement ();
 		}
 
@@ -270,20 +271,22 @@ namespace System.ServiceModel.Channels
 		protected virtual void OnWriteStartBody (
 			XmlDictionaryWriter writer)
 		{
-			writer.WriteStartElement ("s", "Body", Version.Envelope.Namespace);
+			var dic = Constants.SoapDictionary;
+			writer.WriteStartElement ("s", dic.Add ("Body"), dic.Add (Version.Envelope.Namespace));
 			if (BodyId != null)
-				writer.WriteAttributeString ("u", "Id", Constants.WsuNamespace, BodyId);
+				writer.WriteAttributeString ("u", dic.Add ("Id"), dic.Add (Constants.WsuNamespace), BodyId);
 		}
 
 		protected virtual void OnWriteStartEnvelope (
 			XmlDictionaryWriter writer)
 		{
-			writer.WriteStartElement ("s", "Envelope", Version.Envelope.Namespace);
+			var dic = Constants.SoapDictionary;
+			writer.WriteStartElement ("s", dic.Add ("Envelope"), dic.Add (Version.Envelope.Namespace));
 			if (Headers.Action != null && Version.Addressing.Namespace != MessageVersion.None.Addressing.Namespace)
-				writer.WriteXmlnsAttribute ("a", Version.Addressing.Namespace);
+				writer.WriteXmlnsAttribute ("a", dic.Add (Version.Addressing.Namespace));
 			foreach (MessageHeaderInfo h in Headers)
 				if (h.Id != null) {
-					writer.WriteXmlnsAttribute ("u", Constants.WsuNamespace);
+					writer.WriteXmlnsAttribute ("u", dic.Add (Constants.WsuNamespace));
 					break;
 				}
 		}
@@ -291,7 +294,8 @@ namespace System.ServiceModel.Channels
 		protected virtual void OnWriteStartHeaders (
 			XmlDictionaryWriter writer)
 		{
-			writer.WriteStartElement ("s", "Header", Version.Envelope.Namespace);
+			var dic = Constants.SoapDictionary;
+			writer.WriteStartElement ("s", dic.Add ("Header"), dic.Add (Version.Envelope.Namespace));
 		}
 
 		#region factory methods
