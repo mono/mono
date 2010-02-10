@@ -334,7 +334,7 @@ namespace System.ServiceModel.Channels
 
 		void AddEndpointAddressHeader (string name, string ns, EndpointAddress address)
 		{
-			RemoveAll ("FaultTo", Constants.WSA1);
+			RemoveAll ("FaultTo", Constants.WsaNamespace);
 			if (address == null)
 				return;
 			if (MessageVersion.Addressing.Equals (AddressingVersion.WSAddressing10))
@@ -347,7 +347,7 @@ namespace System.ServiceModel.Channels
 
 		public EndpointAddress FaultTo {
 			get {
-				int idx = FindHeader ("FaultTo", Constants.WSA1);
+				int idx = FindHeader ("FaultTo", Constants.WsaNamespace);
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
 			set { AddEndpointAddressHeader ("FaultTo", Constants.WsaNamespace, value); }
@@ -367,16 +367,16 @@ namespace System.ServiceModel.Channels
 
 		public UniqueId MessageId {
 			get { 
-				int idx = FindHeader ("MessageID", Constants.WSA1);
+				int idx = FindHeader ("MessageID", Constants.WsaNamespace);
 				return idx < 0 ? null : new UniqueId (GetHeader<string> (idx));
 			}
 			set {
 				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
-				RemoveAll ("MessageID", Constants.WSA1);
+				RemoveAll ("MessageID", Constants.WsaNamespace);
 				if (value != null)
-					Add (MessageHeader.CreateHeader ("MessageID", Constants.WSA1, value.ToString ()));
+					Add (MessageHeader.CreateHeader ("MessageID", Constants.WsaNamespace, value.ToString ()));
 			}
 		}
 
@@ -384,23 +384,23 @@ namespace System.ServiceModel.Channels
 
 		public UniqueId RelatesTo {
 			get { 
-				int idx = FindHeader ("RelatesTo", Constants.WSA1);
+				int idx = FindHeader ("RelatesTo", Constants.WsaNamespace);
 				return idx < 0 ? null : new UniqueId (GetHeader<string> (idx));
 			}
 			set {
 				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
-				RemoveAll ("MessageID", Constants.WSA1);
+				RemoveAll ("MessageID", Constants.WsaNamespace);
 				if (value != null)
-					Add (MessageHeader.CreateHeader ("RelatesTo", Constants.WSA1, value.ToString ()));
+					Add (MessageHeader.CreateHeader ("RelatesTo", Constants.WsaNamespace, value.ToString ()));
 			}
 
 		}
 
 		public EndpointAddress ReplyTo {
 			get {
-				int idx = FindHeader ("ReplyTo", Constants.WSA1);
+				int idx = FindHeader ("ReplyTo", Constants.WsaNamespace);
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
 			set { AddEndpointAddressHeader ("ReplyTo", Constants.WsaNamespace, value); }

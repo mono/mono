@@ -1,5 +1,10 @@
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Constants.cs, EndpointAddress10.cs :
+	  Remove duplicate constant (WSA1).
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Constants.cs : moved SoapDictionary from BinaryMessageEncoder.
 
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>

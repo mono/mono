@@ -31,8 +31,6 @@ namespace System.ServiceModel
 {
 	internal class Constants
 	{
-		public const string WSA1 = "http://www.w3.org/2005/08/addressing";
-
 		public const string WSBasicSecurityProfileCore1 = "http://ws-i.org/profiles/basic-security/core/1.0";
 
 		public const string WsaAnonymousUri = "http://www.w3.org/2005/08/addressing/anonymous";

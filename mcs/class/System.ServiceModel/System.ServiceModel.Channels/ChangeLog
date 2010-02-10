@@ -1,5 +1,9 @@
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeaders.cs : remove duplicate constant.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeader.cs, MessageHeaders.cs: MessageHeader does not treat
 	  EndpointAddress as a special case. Instead, each MessageHeaders
 	  property should convert it to appropriate serializable objects.

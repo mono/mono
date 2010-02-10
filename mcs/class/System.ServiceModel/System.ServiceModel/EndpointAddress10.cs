@@ -75,7 +75,7 @@ namespace System.ServiceModel
 			if (xmlSchemaSet == null)
 				throw new ArgumentNullException ("xmlSchemaSet");
 			xmlSchemaSet.Add (XmlSchema.Read (typeof (EndpointAddress10).Assembly.GetManifestResourceStream ("ws-addr.xsd"), null));
-			return new XmlQualifiedName ("EndpointReferenceType", Constants.WSA1);
+			return new XmlQualifiedName ("EndpointReferenceType", Constants.WsaNamespace);
 		}
 #endif
 
@@ -98,7 +98,7 @@ namespace System.ServiceModel
 		{
 			if (writer == null)
 				throw new ArgumentNullException ("writer");
-			writer.WriteStartElement ("Address", Constants.WSA1);
+			writer.WriteStartElement ("Address", Constants.WsaNamespace);
 			writer.WriteString (address.Uri.AbsoluteUri);
 			writer.WriteEndElement ();
 
