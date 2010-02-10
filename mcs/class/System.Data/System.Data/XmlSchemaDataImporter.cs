@@ -1257,7 +1257,7 @@ namespace System.Data
 			string providerName = null;
 			string connString = null;
 			DbProviderFactory provider = null;
-			XmlElement e, tablesElement = null;
+			XmlElement e, tablesElement = null, firstChild;
 			
 			foreach (XmlNode n in el.ChildNodes) {
 				e = n as XmlElement;
@@ -1266,9 +1266,9 @@ namespace System.Data
 					continue;
 				
 #if !MONOTOUCH
-				if (e.LocalName == "Connections") {
-					providerName = ((XmlElement)e.FirstChild).GetAttribute ("Provider");
-					connString = ((XmlElement)e.FirstChild).GetAttribute ("AppSettingsPropertyName");
+				if (e.LocalName == "Connections" && (firstChild = e.FirstChild as XmlElement) != null) {
+					providerName = firstChild.GetAttribute ("Provider");
+					connString = firstChild.GetAttribute ("AppSettingsPropertyName");
 					provider = DbProviderFactories.GetFactory (providerName);
 					continue;
 				}

@@ -1,3 +1,9 @@
+2010-02-10  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlSchemaDataImporter.cs: the <connections> element might be
+	empty - make sure FirstChild of the element is not null before
+	attempting to use it. Fixes bug #578587
+
 2009-10-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* DataTable.cs: Reuse old utility methods for raising DataTable 
