@@ -186,7 +186,6 @@ namespace System.Xml
 			WriteEndElement ();
 		}
 
-		[MonoTODO ("make use of dictionary reader optimization")]
 		public virtual void WriteNode (XmlDictionaryReader reader,
 			bool defattr)
 		{
@@ -197,7 +196,11 @@ namespace System.Xml
 			case XmlNodeType.Element:
 				// gratuitously copied from System.XML/System.Xml/XmlWriter.cs:WriteNode(XmlReader,bool)
 				// as there doesn't seem to be a way to hook into attribute writing w/o handling Element.
-				WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+				XmlDictionaryString ename, ens;
+				if (reader.TryGetLocalNameAsDictionaryString (out ename) && reader.TryGetLocalNameAsDictionaryString (out ens))
+					WriteStartElement (reader.Prefix, ename, ens);
+				else
+					WriteStartElement (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 				// Well, I found that MS.NET took this way, since
 				// there was a error-prone SgmlReader that fails
 				// MoveToNextAttribute().
@@ -237,7 +240,11 @@ namespace System.Xml
 			if (!defattr && reader.IsDefault)
 				return;
 
-			WriteStartAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
+			XmlDictionaryString name, ns;
+			if (reader.TryGetLocalNameAsDictionaryString (out name) && reader.TryGetLocalNameAsDictionaryString (out ns))
+				WriteStartAttribute (reader.Prefix, name, ns);
+			else
+				WriteStartAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 #if NET_2_1
 			// no ReadAttributeValue() in 2.1 profile.
 			WriteTextNode (reader, true);

@@ -1,5 +1,10 @@
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDictionaryWriter.cs : try to lookup dictionary string in
+	  WriteNode(). This is part of #577139 fix (probably).
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlBinaryDictionaryWriter.cs : for text '0' and '1', write 0x80 and
 	  0x82 instead of 0x99 [0x30|0x31]. This cosmetic fix gives identical
 	  writer output for #577139 (and yet it still doesn't work).
