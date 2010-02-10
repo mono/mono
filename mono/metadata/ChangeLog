@@ -1,5 +1,11 @@
 2010-02-10  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Don't consider it a missing remset if the target
+	object is pinned - we might have done the store but not added the
+	remset yet.
+
+2010-02-10  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: When checking for missing remsets, don't assert on
 	the first one, but print them all and then assert.
 
