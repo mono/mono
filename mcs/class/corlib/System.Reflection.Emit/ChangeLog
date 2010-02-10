@@ -1,3 +1,10 @@
+2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ModuleBuilder.cs: Do not use reflection to create SymbolWriterImpl
+	for Moonlight since the code is bundled inside mscorlib.dll to avoid
+	having a non-platform assembly poking the internals of mscorlib.dll
+	[Backport r151176]
+
 2009-10-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MethodBuilder.cs: Add missing 'names' validations in 

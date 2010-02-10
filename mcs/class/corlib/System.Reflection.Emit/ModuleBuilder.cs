@@ -103,6 +103,9 @@ namespace System.Reflection.Emit {
 			}
 
 			if (emitSymbolInfo) {
+#if NET_2_1 && !MONOTOUCH
+				symbolWriter = new Mono.CompilerServices.SymbolWriter.SymbolWriterImpl (this);
+#else
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");
 				if (asm == null)
 					throw new ExecutionEngineException ("The assembly for default symbol writer cannot be loaded");
@@ -112,6 +115,7 @@ namespace System.Reflection.Emit {
 					throw new ExecutionEngineException ("The type that implements the default symbol writer interface cannot be found");
 
 				symbolWriter = (ISymbolWriter) Activator.CreateInstance (t, new object[] { this });
+#endif
 				string fileName = fqname;
 				if (assemblyb.AssemblyDir != null)
 					fileName = Path.Combine (assemblyb.AssemblyDir, fileName);
