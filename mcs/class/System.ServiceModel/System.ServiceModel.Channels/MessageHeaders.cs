@@ -339,8 +339,10 @@ namespace System.ServiceModel.Channels
 				return;
 			if (MessageVersion.Addressing.Equals (AddressingVersion.WSAddressing10))
 				Add (MessageHeader.CreateHeader (name, ns, EndpointAddress10.FromEndpointAddress (address)));
+#if !NET_2_1
 			else if (MessageVersion.Addressing.Equals (AddressingVersion.WSAddressingAugust2004))
 				Add (MessageHeader.CreateHeader (name, ns, EndpointAddressAugust2004.FromEndpointAddress (address)));
+#endif
 			else
 				throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 		}
