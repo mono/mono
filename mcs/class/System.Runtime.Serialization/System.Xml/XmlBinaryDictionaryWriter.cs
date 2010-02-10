@@ -305,6 +305,10 @@ namespace System.Xml
 
 			if (blen == 0)
 				writer.Write (BF.EmptyText);
+			else if (count == 1 && buffer [0] == '0')
+				writer.Write (BF.Zero);
+			else if (count == 1 && buffer [0] == '1')
+				writer.Write (BF.One);
 			else if (blen < 0x100) {
 				writer.Write (BF.Chars8);
 				writer.Write ((byte) blen);
