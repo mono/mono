@@ -17,6 +17,9 @@ namespace CorCompare {
 				throw new ArgumentNullException ("typeref");
 
 			TypeDefinition td = typeref.Resolve ();
+			if (td == null)
+				return false;
+			
 			return td.IsPublic;
 		}
 

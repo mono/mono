@@ -11,6 +11,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
+using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Security.Permissions;
 using System.Text;
@@ -126,6 +127,49 @@ namespace CorCompare
 		}
 	}
 
+	class TypeForwardedToData : BaseData
+	{
+		AssemblyDefinition ass;
+
+		public TypeForwardedToData (XmlDocument document, XmlNode parent, AssemblyDefinition ass)
+			: base (document, parent)
+		{
+			this.ass = ass;
+		}
+
+		public override void DoOutput ()
+		{
+			XmlNode natts = parent.SelectSingleNode("attributes");
+			if (natts == null) {
+				natts = document.CreateElement ("attributes", null);
+				parent.AppendChild (natts);
+			}
+			
+			foreach (TypeReference tref in ass.MainModule.ExternTypes) {
+				TypeDefinition def = tref.Resolve ();
+				if (def == null)
+					continue;
+
+				if (((uint)def.Attributes & 0x200000u) == 0)
+					continue;
+
+				XmlNode node = document.CreateElement ("attribute");
+				AddAttribute (node, "name", typeof (TypeForwardedToAttribute).FullName);
+				XmlNode properties = node.AppendChild (document.CreateElement ("properties"));
+				XmlNode property = properties.AppendChild (document.CreateElement ("property"));
+				AddAttribute (property, "name", "Destination");
+				AddAttribute (property, "value", Utils.CleanupTypeName (tref));
+				natts.AppendChild (node);
+			}
+		}
+
+		public static void OutputForwarders (XmlDocument document, XmlNode parent, AssemblyDefinition ass)
+		{
+			TypeForwardedToData tftd = new TypeForwardedToData (document, parent, ass);
+			tftd.DoOutput ();
+		}
+	}
+	
 	class AssemblyData : BaseData
 	{
 		AssemblyDefinition ass;
@@ -146,6 +190,7 @@ namespace CorCompare
 			AddAttribute (nassembly, "name", aname.Name);
 			AddAttribute (nassembly, "version", aname.Version.ToString ());
 			parent.AppendChild (nassembly);
+			TypeForwardedToData.OutputForwarders (document, nassembly, ass);
 			AttributeData.OutputAttributes (document, nassembly, ass.CustomAttributes);
 			TypeDefinitionCollection typesCollection = ass.MainModule.Types;
 			if (typesCollection == null || typesCollection.Count == 0)
