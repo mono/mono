@@ -30,6 +30,9 @@
 using System;
 using System.Reflection;
 using System.Runtime.InteropServices;
+using System.Threading;
+using System.Reflection.Emit;
+using System.IO;
 
 using NUnit.Framework;
 
@@ -319,6 +322,81 @@ namespace MonoTests.System.Reflection
 		public class TestD {
 			public int this[params double[] a] {
 				set { }
+			}
+		}
+
+		static string CreateTempAssembly ()
+		{
+			FileStream f = null;
+			string path;
+			Random rnd;
+			int num = 0;
+
+			rnd = new Random ();
+			do {
+				num = rnd.Next ();
+				num++;
+				path = Path.Combine (Path.GetTempPath (), "tmp" + num.ToString ("x") + ".dll");
+
+				try {
+					f = new FileStream (path, FileMode.CreateNew);
+				} catch { }
+			} while (f == null);
+
+			f.Close ();
+
+
+			return "tmp" + num.ToString ("x") + ".dll";
+		}
+
+		public class TestE {
+			public int PropE {
+				get { return 99; }
+			}
+		}
+
+		[Test]
+		public void ConstantValue () {
+			/*This test looks scary because we can't generate a default value with C# */
+			var assemblyName = new AssemblyName ();
+			assemblyName.Name = "MonoTests.System.Reflection.Emit.PropertyInfoTest";
+			string an = CreateTempAssembly ();
+
+			var assembly = Thread.GetDomain ().DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.RunAndSave, Path.GetTempPath ());
+			var module = assembly.DefineDynamicModule ("module1", an);
+
+			var tb = module.DefineType ("Test", TypeAttributes.Public);
+			var prop = tb.DefineProperty ("Prop", PropertyAttributes.HasDefault, typeof (string), new Type [0]);
+
+			var getter = tb.DefineMethod ("get_Prop", MethodAttributes.Public, typeof (string), new Type [0]);
+			var ilgen = getter.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldnull);
+			ilgen.Emit (OpCodes.Ret);
+
+			var setter = tb.DefineMethod ("set_Prop", MethodAttributes.Public, null, new Type [1] { typeof (string) });
+			setter.GetILGenerator ().Emit (OpCodes.Ret);
+
+			prop.SetConstant ("test");
+			prop.SetGetMethod (getter);
+			prop.SetSetMethod (setter);
+
+			tb.CreateType ();
+
+			File.Delete (Path.Combine (Path.GetTempPath (), an));
+			assembly.Save (an);
+
+			var asm = Assembly.LoadFrom (Path.Combine (Path.GetTempPath (), an));
+			var t = asm.GetType ("Test");
+			var p = t.GetProperty ("Prop");
+			Assert.AreEqual ("test", p.GetConstantValue (), "#1");
+
+			File.Delete (Path.Combine (Path.GetTempPath (), an));
+
+			var pa = typeof (TestE).GetProperty ("PropE");
+			try {
+				pa.GetConstantValue ();
+				Assert.Fail ("#2");
+			} catch (InvalidOperationException) {
 			}
 		}
 
