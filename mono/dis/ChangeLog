@@ -1,3 +1,11 @@
+2010-02-10  Miguel de Icaza  <miguel@novell.com>
+
+	* main.c (dis_method_list): Show method implementation flags as
+	well when calling --method.
+
+	get.c: Moved some code here from main.c so it could be reused by
+	dump.c
+
 2009-12-21  Rodrigo Kumpera  <kumpera@gmail.com>
 
 	* get.c (get_type): Don't crash if the type is not found.
