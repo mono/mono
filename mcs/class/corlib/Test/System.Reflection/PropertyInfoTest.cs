@@ -276,7 +276,7 @@ namespace MonoTests.System.Reflection
 		}
 
 		[Test]
-		public void GetIndexerReturnsObjectsBoundToTheProperty ()
+		public void GetIndexParameterReturnsObjectsBoundToTheProperty ()
 		{
 			RunTest (typeof (TestA), false);
 			RunTest (typeof (TestB), true);
@@ -295,6 +295,32 @@ namespace MonoTests.System.Reflection
 			}
 		}
 
+		[Test]
+		public void GetIndexParameterReturnedObjectsCustomAttributes () {
+			var pa = typeof (TestC).GetProperty ("Item").GetIndexParameters () [0];
+			Assert.IsTrue (pa.IsDefined (typeof (ParamArrayAttribute), false), "#1");
+
+			var pb = typeof (TestD).GetProperty ("Item").GetIndexParameters () [0];
+			Assert.IsTrue (pb.IsDefined (typeof (ParamArrayAttribute), false), "#2");
+
+			Assert.AreEqual (1, Attribute.GetCustomAttributes (pa).Length, "#3");
+			Assert.AreEqual (1, Attribute.GetCustomAttributes (pb).Length, "#4");
+
+			Assert.AreEqual (0, pa.GetOptionalCustomModifiers ().Length, "#5");
+			Assert.AreEqual (0, pb.GetRequiredCustomModifiers ().Length, "#6");
+		}
+
+		public class TestC {
+			public int this[params double[] a] {
+				get { return 99; }
+			}
+		}
+
+		public class TestD {
+			public int this[params double[] a] {
+				set { }
+			}
+		}
 
 #if NET_2_0
 		public class A<T>

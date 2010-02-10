@@ -1,3 +1,7 @@
+2010-02-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* PropertyInfoTest.cs: Tests for custom attributes from PropertyInfo::GetIndexParameters.
+
 2010-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* PropertyInfoTest.cs: Make tests for GetIndexParameters() work.
