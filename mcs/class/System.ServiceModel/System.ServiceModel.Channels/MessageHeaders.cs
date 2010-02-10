@@ -332,19 +332,25 @@ namespace System.ServiceModel.Channels
 			get { return l.Count; }
 		}
 
+		void AddEndpointAddressHeader (string name, string ns, EndpointAddress address)
+		{
+			RemoveAll ("FaultTo", Constants.WSA1);
+			if (address == null)
+				return;
+			if (MessageVersion.Addressing.Equals (AddressingVersion.WSAddressing10))
+				Add (MessageHeader.CreateHeader (name, ns, EndpointAddress10.FromEndpointAddress (address)));
+			else if (MessageVersion.Addressing.Equals (AddressingVersion.WSAddressingAugust2004))
+				Add (MessageHeader.CreateHeader (name, ns, EndpointAddressAugust2004.FromEndpointAddress (address)));
+			else
+				throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
+		}
+
 		public EndpointAddress FaultTo {
 			get {
 				int idx = FindHeader ("FaultTo", Constants.WSA1);
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
-			set {
-				if (version.Addressing == AddressingVersion.None && value != null)
-					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
-
-				RemoveAll ("FaultTo", Constants.WSA1);
-				if (value != null)
-					Add (MessageHeader.CreateHeader ("FaultTo", Constants.WSA1, EndpointAddress10.FromEndpointAddress (value)));
-			}
+			set { AddEndpointAddressHeader ("FaultTo", Constants.WsaNamespace, value); }
 		}
 
 		public EndpointAddress From {
@@ -352,14 +358,7 @@ namespace System.ServiceModel.Channels
 				int idx = FindHeader ("From", version.Addressing.Namespace);
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
-			set { 
-				if (version.Addressing == AddressingVersion.None && value != null)
-					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
-
-				RemoveAll ("From", Constants.WSA1);
-				if (value != null)
-					Add (MessageHeader.CreateHeader ("From", Constants.WSA1, EndpointAddress10.FromEndpointAddress (value)));
-			}
+			set { AddEndpointAddressHeader ("From", Constants.WsaNamespace, value); }
 		}
 
 		public MessageHeaderInfo this [int index] {
@@ -404,14 +403,7 @@ namespace System.ServiceModel.Channels
 				int idx = FindHeader ("ReplyTo", Constants.WSA1);
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
-			set {
-				if (version.Addressing == AddressingVersion.None && value != null)
-					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
-
-				RemoveAll ("ReplyTo", Constants.WSA1);
-				if (value != null)
-					Add (MessageHeader.CreateHeader ("ReplyTo", Constants.WSA1, EndpointAddress10.FromEndpointAddress (value)));
-			}
+			set { AddEndpointAddressHeader ("ReplyTo", Constants.WsaNamespace, value); }
 		}
 
 		public Uri To {

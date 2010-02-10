@@ -53,7 +53,6 @@ namespace System.ServiceModel.Channels
 		static bool default_is_ref = false;
 		static bool default_must_understand = false;
 		static bool default_relay = false;
-		static Type [] knownTypes = new Type [1] {typeof (EndpointAddress10)};
 
 		public static MessageHeader CreateHeader (string name, string ns, object value)
 		{
@@ -86,7 +85,7 @@ namespace System.ServiceModel.Channels
 		public static MessageHeader CreateHeader (string name, string ns, object value, 
 						   bool must_understand, string actor, bool relay)
 		{
-			return CreateHeader (name, ns, value, new DataContractSerializer (value.GetType (), knownTypes),
+			return CreateHeader (name, ns, value, new DataContractSerializer (value.GetType ()),
 					must_understand, actor, relay);
 		}
 
