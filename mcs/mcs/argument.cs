@@ -240,7 +240,7 @@ namespace Mono.CSharp
 				var constant = a.Expr as Constant;
 				if (constant != null && constant.IsLiteral) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
-						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "LiteralConstant", loc));
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "Constant", loc));
 				} else if (a.ArgType == Argument.AType.Ref) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
 						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsRef", loc));

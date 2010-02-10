@@ -1,3 +1,7 @@
+2010-02-10  Marek Safar  <marek.safar@gmail.com>
+
+	* argument.cs, dynamic.cs, expression.cs: Track RC API changes.
+
 2010-02-08  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #577029

@@ -516,11 +516,12 @@ namespace Mono.CSharp
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
-			Arguments binder_args = new Arguments (2);
+			Arguments binder_args = new Arguments (3);
 
 			flags |= ec.HasSet (ResolveContext.Options.CheckedScope) ? CSharpBinderFlags.CheckedContext : 0;
 
 			binder_args.Add (new Argument (new BinderFlags (flags, this)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));						
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			return new Invocation (GetBinder ("Convert", loc), binder_args);
 		}
@@ -759,7 +760,7 @@ namespace Mono.CSharp
 
 		public Expression CreateCallSiteBinder (ResolveContext ec, Arguments args)
 		{
-			Arguments binder_args = new Arguments (3);
+			Arguments binder_args = new Arguments (4);
 
 			MemberAccess sle = new MemberAccess (new MemberAccess (
 				new QualifiedAliasMember (QualifiedAliasMember.GlobalAlias, "System", loc), "Linq", loc), "Expressions", loc);
@@ -768,6 +769,7 @@ namespace Mono.CSharp
 
 			binder_args.Add (new Argument (new BinderFlags (flags, this)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), name, loc)));
+			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
 			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder ("UnaryOperation", loc), binder_args);
