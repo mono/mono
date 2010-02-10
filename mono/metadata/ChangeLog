@@ -1,5 +1,9 @@
 2010-02-10  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Simple plausibility check for scan_starts.
+
+2010-02-10  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Round up when calculating the number of scan starts.
 
 2010-02-10  Rodrigo Kumpera  <rkumpera@novell.com>
