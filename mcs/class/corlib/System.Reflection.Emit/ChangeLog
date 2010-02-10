@@ -1,3 +1,9 @@
+2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ModuleBuilder.cs: Do not use reflection to create SymbolWriterImpl
+	for Moonlight since the code is bundled inside mscorlib.dll to avoid
+	having a non-platform assembly poking the internals of mscorlib.dll
+
 2010-01-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* CustomAttributeBuilder.cs (Initialize): Add more argument checking to avoid

@@ -1,3 +1,9 @@
+2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Mono.CompilerServices.SymbolWriter does not
+	need to access mscorlib.dll internals anymore (ArrayList and
+	Hashtable)
+
 2009-11-30  Andrés G. Aragoneses  <aaragoneses@novell.com>
 
         * AssemblyInfo.cs: Remove the MOON_A11Y_INTERNAL_HACK define

@@ -1,3 +1,8 @@
+2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_corlib.dll.sources: Add Mono.CompilerServices.
+	SymbolWriter source files directly into mscorlib 2.1
+
 2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* corlib.dll.sources: Add System.Threading.Tasks/SimpleConcurrentBag.cs
