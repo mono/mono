@@ -51,6 +51,8 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern Type[] GetTypeModifiers (MonoProperty prop, bool optional);
 
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern object get_default_value (MonoProperty prop);
 	}
 
 	[Flags]
@@ -199,6 +201,17 @@ namespace System.Reflection {
 				return info.set_method;
 			else
 				return null;
+		}
+
+
+		/*TODO verify for attribute based default values, just like ParameterInfo*/
+		public override object GetConstantValue ()
+		{
+			return MonoPropertyInfo.get_default_value (this);
+		}
+
+		public override object GetRawConstantValue() {
+			return MonoPropertyInfo.get_default_value (this);
 		}
 
 		// According to MSDN the inherit parameter is ignored here and

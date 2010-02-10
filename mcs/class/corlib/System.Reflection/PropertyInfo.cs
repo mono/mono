@@ -110,12 +110,10 @@ namespace System.Reflection {
 			return Type.EmptyTypes;
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual object GetConstantValue () {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO("Not implemented")]
 		public virtual object GetRawConstantValue() {
 			throw new NotImplementedException ();
 		}

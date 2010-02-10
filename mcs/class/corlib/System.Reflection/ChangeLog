@@ -1,3 +1,9 @@
+2010-02-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* PropertyInfo.cs: Remove a pair of MonoTODO.
+
+	* MonoProperty.cs: Implement GetConstantValue and GetRawConstantValue.
+
 2010-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoMethod.cs (GetParameters): Must return a copy instead of the interned array.
