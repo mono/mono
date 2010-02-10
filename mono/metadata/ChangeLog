@@ -1,5 +1,10 @@
 2010-02-10  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: When checking for missing remsets, don't assert on
+	the first one, but print them all and then assert.
+
+2010-02-10  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c (find_in_remset_loc): Handle the small bitmap case.
 
 2010-02-09  Miguel de Icaza  <miguel@novell.com>
