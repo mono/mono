@@ -166,8 +166,8 @@ namespace Microsoft.Build.Utilities
 					return -1;
 				}
 
-				ProcessOutputFile (output, standardOutputLoggingImportance);
-				ProcessOutputFile (error, standardErrorLoggingImportance);
+				ProcessOutputFile (output, StandardOutputLoggingImportance);
+				ProcessOutputFile (error, StandardErrorLoggingImportance);
 
 				Log.LogMessage (MessageImportance.Low, "Tool {0} execution finished.", pathToTool);
 				return exitCode;
@@ -250,7 +250,7 @@ namespace Microsoft.Build.Utilities
 				Log.LogError (subcategory, code, null, filename, lineNumber, columnNumber, endLineNumber,
 					endColumnNumber, text, null);
 			} else {
-				Log.LogMessage (singleLine);
+				Log.LogMessage (importance, singleLine);
 			}
 		}
 		
@@ -340,7 +340,6 @@ namespace Microsoft.Build.Utilities
 			return HostObjectInitializationStatus.NoActionReturnSuccess;
 		}
 
-		[MonoTODO]
 		protected virtual void LogToolCommand (string message)
 		{
 			Log.LogMessage (MessageImportance.Normal, message);

@@ -1,3 +1,10 @@
+2010-02-10  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (ExecuteTool): Use the virtual method
+	Standard*LoggingImportance, instead of the underlying field.
+	(LogEventsFromTextOutput): Use @importance argument for LogMessage.
+	(LogToolCommand): Remove MonoTODO.
+
 2010-02-06  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs (SkipTaskExecution): Use ValidateParameters method.
