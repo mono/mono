@@ -1,3 +1,10 @@
+2010-02-10  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #558739.
+	* GenerateResource (Resgen): New. Internal task to run resgen
+	with MONO_IOMAP=drive .
+	(Execute): Use the new Resgen task to compile the resources.
+
 2010-02-06  Ankit Jain  <jankit@novell.com>
 
 	* LC.cs: New.

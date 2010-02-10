@@ -70,7 +70,11 @@ namespace Microsoft.Build.Tasks {
 				foreach (ITaskItem source in sources) {
 					string sourceFile = source.ItemSpec;
 					string outputFile = Path.ChangeExtension (sourceFile, "resources");
-					CompileResourceFile (sourceFile, outputFile);
+
+					if (!CompileResourceFile (sourceFile, outputFile)) {
+						Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
+						return false;
+					}
 				}
 			} else {
 				if (sources.Length != outputResources.Length) {
@@ -79,14 +83,12 @@ namespace Microsoft.Build.Tasks {
 				}
 
 				for (int i = 0; i < sources.Length; i ++) {
-					string sourceFile = sources [i].ItemSpec;
-					string outputFile = outputResources [i].ItemSpec;
-
-					if (outputFile == String.Empty) {
+					if (String.IsNullOrEmpty (outputResources [i].ItemSpec)) {
 						Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
 						return false;
 					}
-					if (CompileResourceFile (sourceFile, outputFile) == false) {
+
+					if (!CompileResourceFile (sources [i].ItemSpec, outputResources [i].ItemSpec)) {
 						Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
 						return false;
 					}
@@ -99,6 +101,7 @@ namespace Microsoft.Build.Tasks {
 			return true;
 		}
 		
+#if false
 		private IResourceReader GetReader (Stream stream, string name)
 		{
 			string format = Path.GetExtension (name);
@@ -140,39 +143,18 @@ namespace Microsoft.Build.Tasks {
 				throw new Exception ("Unknown format in file " + name);
 			}
 		}
+#endif
 		
 		private bool CompileResourceFile (string sname, string dname )
 		{
-			FileStream source, dest;
-			IResourceReader reader;
-			IResourceWriter writer;
+			Resgen resgen = new Resgen ();
+			resgen.BuildEngine = this.BuildEngine;
+			resgen.UseSourcePath = true;
 
-			Log.LogMessage ("Compiling resource file '{0}' into '{1}'", sname, dname);
-			try {
-				source = new FileStream (sname, FileMode.Open, FileAccess.Read);
+			resgen.SourceFile = sname;
+			resgen.OutputFile = dname;
 
-				reader = GetReader (source, sname);
-
-				dest = new FileStream (dname, FileMode.Create, FileAccess.Write);
-				writer = GetWriter (dest, dname);
-
-				int rescount = 0;
-				foreach (DictionaryEntry e in reader) {
-					rescount++;
-					object val = e.Value;
-					if (val is string)
-						writer.AddResource ((string)e.Key, (string)e.Value);
-					else
-						writer.AddResource ((string)e.Key, e.Value);
-				}
-
-				reader.Close ();
-				writer.Close ();
-			} catch (Exception e) {
-				Log.LogErrorFromException (e);
-				return false;
-			}
-			return true;
+			return resgen.Execute ();
 		}
 
 		[Output]
@@ -281,6 +263,47 @@ namespace Microsoft.Build.Tasks {
 				useSourcePath = value;
 			}
 		}
+	}
+
+	class Resgen : ToolTaskExtension
+	{
+		public Resgen ()
+		{
+		}
+
+		protected internal override void AddCommandLineCommands (
+						 CommandLineBuilderExtension commandLine)
+		{
+			if (UseSourcePath)
+				commandLine.AppendSwitch ("/useSourcePath");
+
+			commandLine.AppendSwitch (String.Format ("/compile {0}{1}", SourceFile,
+						OutputFile != null ? "," + OutputFile : ""));
+		}
+
+		public override bool Execute ()
+		{
+			EnvironmentOverride ["MONO_IOMAP"] = "drive";
+			return base.Execute ();
+		}
+
+		protected override string GenerateFullPathToTool ()
+		{
+			return Path.Combine (ToolPath, ToolExe);
+		}
+
+		protected override MessageImportance StandardOutputLoggingImportance {
+			get { return MessageImportance.Low; }
+		}
+
+		protected override string ToolName {
+			get { return Utilities.RunningOnWindows ? "resgen2.bat" : "resgen2"; }
+		}
+
+		public string SourceFile { get; set; }
+		public string OutputFile { get; set; }
+
+		public bool UseSourcePath { get; set; }
 	}
 }
 
