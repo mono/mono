@@ -376,7 +376,7 @@ namespace System.ServiceModel.Channels
 
 				RemoveAll ("MessageID", Constants.WsaNamespace);
 				if (value != null)
-					Add (MessageHeader.CreateHeader ("MessageID", Constants.WsaNamespace, value.ToString ()));
+					Add (MessageHeader.CreateHeader ("MessageID", Constants.WsaNamespace, value));
 			}
 		}
 
@@ -393,7 +393,7 @@ namespace System.ServiceModel.Channels
 
 				RemoveAll ("MessageID", Constants.WsaNamespace);
 				if (value != null)
-					Add (MessageHeader.CreateHeader ("RelatesTo", Constants.WsaNamespace, value.ToString ()));
+					Add (MessageHeader.CreateHeader ("RelatesTo", Constants.WsaNamespace, value));
 			}
 
 		}

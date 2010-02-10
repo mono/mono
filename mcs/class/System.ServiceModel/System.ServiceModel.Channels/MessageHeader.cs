@@ -287,7 +287,11 @@ namespace System.ServiceModel.Channels
 			protected override void OnWriteHeaderContents (XmlDictionaryWriter writer,
 								       MessageVersion version)
 			{
-				this.formatter.WriteObjectContent (writer, value);
+				// FIXME: it's a nasty workaround just to avoid UniqueId output as a string, for bug #577139.
+				if (Value is UniqueId)
+					writer.WriteValue ((UniqueId) Value);
+				else
+					this.formatter.WriteObjectContent (writer, value);
 			}
 
 			public object Value { get { return value; } }

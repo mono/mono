@@ -1,5 +1,10 @@
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeader.cs, MessageHeaders.cs : add nasty workaround for
+	  typed UniqueId output.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeader.cs : no need to treat EndpointAddress as a special
 	  case here too.
 
