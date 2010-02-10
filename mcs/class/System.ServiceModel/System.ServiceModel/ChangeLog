@@ -1,5 +1,10 @@
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : and "To" header is also automatically
+	  added if AddressingVersion is WSA1. This likely fixes bug #577139.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Constants.cs, EndpointAddress10.cs :
 	  Remove duplicate constant (WSA1).
 
