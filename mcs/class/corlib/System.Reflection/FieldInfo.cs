@@ -256,6 +256,36 @@ namespace System.Reflection {
 			throw new NotSupportedException ("This non-CLS method is not implemented.");
 		}
 
+
+#if NET_4_0
+		public override bool Equals (object obj)
+		{
+			return obj == this;
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public static bool operator == (FieldInfo left, FieldInfo right)
+		{
+			if (left == right)
+				return true;
+			if (left == null ^ right == null)
+				return false;
+			return left.Equals (right);
+		}
+
+		public static bool operator != (FieldInfo left, FieldInfo right)
+		{
+			if (left == right)
+				return false;
+			if (left == null ^ right == null)
+				return true;
+			return !left.Equals (right);
+		}
+#endif
 		void _FieldInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();

@@ -1,5 +1,9 @@
 2010-02-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* FieldInfo.cs: Add some v4 bits.
+
+2010-02-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* EventInfo.cs: Add some v4 bits.
 
 2010-02-10 Rodrigo Kumpera  <rkumpera@novell.com>
