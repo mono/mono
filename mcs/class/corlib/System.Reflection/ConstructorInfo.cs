@@ -104,5 +104,36 @@ namespace System.Reflection {
 		{
 			return this.Invoke (parameters);
 		}
+
+#if NET_4_0
+		public override bool Equals (object obj)
+		{
+			return obj == this;
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public static bool operator == (ConstructorInfo left, ConstructorInfo right)
+		{
+			if (left == right)
+				return true;
+			if (left == null ^ right == null)
+				return false;
+			return left.Equals (right);
+		}
+
+		public static bool operator != (ConstructorInfo left, ConstructorInfo right)
+		{
+			if (left == right)
+				return false;
+			if (left == null ^ right == null)
+				return true;
+			return !left.Equals (right);
+		}
+#endif
+
 	}
 }

@@ -1,5 +1,9 @@
 2010-02-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ConstructorInfo.cs: Add some v4 bits.
+
+2010-02-10 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* PropertyInfo.cs: Remove a pair of MonoTODO.
 
 	* MonoProperty.cs: Implement GetConstantValue and GetRawConstantValue.
