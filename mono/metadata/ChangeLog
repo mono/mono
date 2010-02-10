@@ -1,5 +1,11 @@
 2010-02-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c: Add mono_class_get_property_default_value.
+
+	* class-internal.h: Export mono_class_get_property_default_value.
+
+2010-02-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_image_get_property_info): Encode the default value of a property.
 
 Wed Feb 10 14:48:45 CET 2010 Paolo Molaro <lupus@ximian.com>
