@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Resources;
 using System.Reflection;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Mono.XBuild.Tasks.GenerateResourceInternal;
 
 namespace Microsoft.Build.Tasks {
@@ -65,40 +66,41 @@ namespace Microsoft.Build.Tasks {
 			if (sources.Length == 0)
 				return true;
 
+			bool result = true;
 			List  <ITaskItem> temporaryFilesWritten = new List <ITaskItem> ();
 			if (outputResources == null) {
 				foreach (ITaskItem source in sources) {
 					string sourceFile = source.ItemSpec;
 					string outputFile = Path.ChangeExtension (sourceFile, "resources");
 
-					if (!CompileResourceFile (sourceFile, outputFile)) {
-						Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
-						return false;
-					}
+					result &= CompileResourceFile (sourceFile, outputFile);
+
+					ITaskItem newItem = new TaskItem (source);
+					source.ItemSpec = outputFile;
+
+					temporaryFilesWritten.Add (newItem);
 				}
 			} else {
 				if (sources.Length != outputResources.Length) {
-					Log.LogErrorFromException (new Exception ("Sources count is different than OutputResources count."));
+					Log.LogError ("Sources count is different than OutputResources count.");
 					return false;
 				}
 
 				for (int i = 0; i < sources.Length; i ++) {
 					if (String.IsNullOrEmpty (outputResources [i].ItemSpec)) {
-						Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
-						return false;
+						Log.LogError ("Filename of output can not be empty.");
+						result = false;
+						continue;
 					}
 
-					if (!CompileResourceFile (sources [i].ItemSpec, outputResources [i].ItemSpec)) {
-						Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
-						return false;
-					}
+					result &= CompileResourceFile (sources [i].ItemSpec, outputResources [i].ItemSpec);
 					temporaryFilesWritten.Add (outputResources [i]);
 				}
 			}
 			
 			filesWritten = temporaryFilesWritten.ToArray ();
-			
-			return true;
+
+			return result;
 		}
 		
 #if false
@@ -147,6 +149,18 @@ namespace Microsoft.Build.Tasks {
 		
 		private bool CompileResourceFile (string sname, string dname )
 		{
+			if (!File.Exists (sname)) {
+				Log.LogError ("Resource file '{0}' not found.", sname);
+				return false;
+			}
+
+			if (File.GetLastWriteTime (sname) <= File.GetLastWriteTime (dname)) {
+				Log.LogMessage (MessageImportance.Low,
+						"Resource file '{0}' is newer than the source file '{1}', skipping.",
+						dname, sname);
+				return true;
+			}
+
 			Resgen resgen = new Resgen ();
 			resgen.BuildEngine = this.BuildEngine;
 			resgen.UseSourcePath = true;

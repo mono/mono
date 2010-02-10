@@ -1,5 +1,13 @@
 2010-02-10  Ankit Jain  <jankit@novell.com>
 
+	* GenerateResource.cs (CompileResourceFile): Check File.Exists
+	for source file.
+	Don't build if the target is newer than the source file.
+	(Execute): Continue building all the resources, even if there
+	are failures for some files.
+
+2010-02-10  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #558739.
 	* GenerateResource (Resgen): New. Internal task to run resgen
 	with MONO_IOMAP=drive .
