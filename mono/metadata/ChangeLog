@@ -1,5 +1,16 @@
 2010-02-10  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c: Export mono_get_object_from_blob.
+
+	* object-internals.h: Ditto.
+
+	* icall.c: New icall property_info_get_default_value to get the default
+	value of a property. Since using this is not common, no caching is done.
+
+	* icall-def.h: Add new icall.
+
+2010-02-10  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c: Add mono_class_get_property_default_value.
 
 	* class-internal.h: Export mono_class_get_property_default_value.
