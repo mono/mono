@@ -1,5 +1,8 @@
 2010-02-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (exception_cb): Put the clause index into the type info instead
+	of putting the clause itself.
+
 	* mini-arm.c mini.c linear-scan.c: Disable more stuff when DISABLE_JIT is used.
 
 2010-02-09  Zoltan Varga  <vargaz@gmail.com>
@@ -15,7 +18,7 @@
 
 	* aot-compiler.c (emit_code): Create the ut trampolines here, so they work for
 	llvm methods too.
-	
+
 	* aot-compiler.c (emit_code): Don't add the llvm label prefix to 'methods', since
 	it is not an LLVM generated symbol.
 
