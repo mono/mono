@@ -106,8 +106,48 @@ This is currently an experimental feature as it is not complete.
 This instructs Mono to precompile code that has historically not been
 precompiled with AOT.   
 .TP
+.I outfile=[filename]
+Instructs the AOT compiler to save the output to the specified file.
+.TP
 .I write-symbols
 Instructs the AOT compiler to emit debug symbol information.
+.TP
+.I save-temps,keep-temps
+Instructs the AOT compiler to keep temporary files.
+.TP
+.I threads=[number]
+This is an experimental option for the AOT compiler to use multiple threads
+when compiling the methods.
+.TP
+.I nodebug
+Instructs the AOT compiler to not output any debugging information.
+.TP
+.I ntrampolines=[number]
+When compiling in full aot mode, the method trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 1024.
+.TP
+.I nrgctx-trampolines=[number]
+When compiling in full aot mode, the generic sharing trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 1024.
+.TP
+.I nimt-trampolines=[number]
+When compiling in full aot mode, the IMT trampolines must be precreated
+in the AOT image.  You can add additional method trampolines with this argument.
+Defaults to 128.
+.TP
+.I print-skipped-methods
+If the AOT compiler cannot compile a method for any reason, enabling this flag
+will output the skipped methods to the console.
+.TP
+.I autoreg
+The AOT compiler will emit a (ELF only) library initializer to automatically
+register the aot compiled module with the runtime.  This is only useful in static
+mode
+.TP
+.I asmonly
+Instructs the AOT compiler to output assembly code instead of an object file.
 .TP
 .I soft-debug
 This instructs the compiler to generate sequence point checks that

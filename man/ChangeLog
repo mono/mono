@@ -1,3 +1,7 @@
+2010-02-10  Geoff Norton  <gnorton@novell.com>
+
+	* mono.1: Document the aot compiler options.
+
 2010-02-08  Ankit Jain  <jankit@novell.com>
 
 	* lc.1: Fix typos.
