@@ -1,3 +1,10 @@
+2010-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* CP1250.cs CP1252.cs: Move the '--charCount' line to the beginning of the loop,
+	since it can be skipped in case of HandleFallback. Add brances around the
+	call to HandleFallback so the 'continue' call is only done if it is called.
+	Should fix #573682.
+
 2008-07-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CP1252.cs : continue after fallback was missing.
