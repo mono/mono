@@ -233,6 +233,37 @@ namespace System.Reflection {
 			throw new NotSupportedException ();
 		}
 
+
+#if NET_4_0
+		public override bool Equals (object obj)
+		{
+			return obj == this;
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public static bool operator == (MethodBase left, MethodBase right)
+		{
+			if ((object)left == (object)right)
+				return true;
+			if ((object)left == null ^ (object)right == null)
+				return false;
+			return left.Equals (right);
+		}
+
+		public static bool operator != (MethodBase left, MethodBase right)
+		{
+			if ((object)left == (object)right)
+				return false;
+			if ((object)left == null ^ (object)right == null)
+				return true;
+			return !left.Equals (right);
+		}
+#endif
+
 		void _MethodBase.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{
 			throw new NotImplementedException ();
