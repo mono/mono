@@ -1,3 +1,7 @@
+2010-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c mini.c linear-scan.c: Disable more stuff when DISABLE_JIT is used.
+
 2010-02-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* unwind.c (mono_unwind_frame): Use read32 for reading a 32 bit value, since it
