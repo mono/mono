@@ -1,3 +1,9 @@
+2010-02-11  Marek Habersack  <mhabersack@novell.com>
+
+	* Roles.cs: IsUserInRole checks if username is null or empty
+	before attempting to use it. Patch from Tiaan Geldenhuys
+	<tagdev@gmail.com>. thanks!
+
 2009-07-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SqliteMembershipProvider.cs:

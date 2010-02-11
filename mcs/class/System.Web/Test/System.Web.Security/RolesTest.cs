@@ -29,10 +29,15 @@
 #if NET_2_0
 
 using System;
+using System.IO;
 using System.Security.Principal;
+using System.Web;
 using System.Web.Security;
+using System.Web.UI;
 
+using MonoTests.SystemWeb.Framework;
 using NUnit.Framework;
+using System.Configuration.Provider;
 
 namespace MonoTests.System.Web.Security {
 
@@ -60,6 +65,28 @@ namespace MonoTests.System.Web.Security {
 			// - ApplicationName
 			// - Provider
 			// - Providers
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void IsUserInRole ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad ((Page p) => {
+						Assert.IsTrue (Roles.Enabled, "Enabled");
+						Assert.IsTrue (Roles.IsUserInRole ("true", "rolename"), "#1");
+						Assert.IsFalse (Roles.IsUserInRole ("false", "rolename"), "#2");
+
+						// NOTE: The next two tests do NOT throw an exception on MS 
+						//       .NET (even if the underlying membership-provider may, 
+						//       despite being documented differently on MSDN), but 
+						//       this convenient behaviour allows ASP.NET pages to run 
+						//       when roles are queried before the user is logged on
+						Assert.IsFalse (Roles.IsUserInRole (string.Empty, "rolename"), "#3a");
+						Assert.IsFalse (Roles.IsUserInRole ("rolename"), "#3b");
+					}));
+			t.Run ();
+			global::System.Diagnostics.Trace.WriteLineIf ((t.Response.StatusCode != global::System.Net.HttpStatusCode.OK), t.Response.Body);
+			Assert.AreEqual (global::System.Net.HttpStatusCode.OK, t.Response.StatusCode, "HttpStatusCode");
 		}
 	}
 }
