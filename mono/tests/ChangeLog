@@ -1,3 +1,7 @@
+2010-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs: Add a test for exception subclasses.
+
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs: Add a test for TypeMirror.EnumUnderlyingType.
