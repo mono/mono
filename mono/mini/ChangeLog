@@ -1,5 +1,8 @@
 2010-02-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (handle_isinst): Factor out the is_complex_isinst check into
+	a macro.
+
 	* mini-llvm.c (exception_cb): Put the clause index into the type info instead
 	of putting the clause itself.
 
