@@ -105,6 +105,7 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
+		[Category ("NotWorking")]
 		public void TestCreateHttpWkoSingleCall ()
 		{
 			WkObjectSinglecall2 ca = new WkObjectSinglecall2 ();
@@ -114,6 +115,7 @@ namespace MonoTests.Remoting
 		}
 		
 		[Test]
+		[Category ("NotWorking")]
 		public void TestCreateHttpWkoSingleton ()
 		{
 			WkObjectSingleton2 ca = new WkObjectSingleton2 ();

@@ -1,3 +1,9 @@
+2010-02-11  Jonathan Pobst  <monkey@jpobst.com>
+
+	* ActivationTests.cs: Disable TestCreateHttpWkoSingleCall and
+	TestCreateHttpWkoSingleton due to sporadic failures.
+	Filed as bug #579277.
+
 2010-02-03  Jonathan Pobst  <monkey@jpobst.com>
 
 	* HttpCalls.cs: Disable all tests here due to excessive
