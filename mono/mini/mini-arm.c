@@ -115,6 +115,8 @@ mono_arch_fregname (int reg)
 	return "unknown";
 }
 
+#ifndef DISABLE_JIT
+
 static guint8*
 emit_big_add (guint8 *code, int dreg, int sreg, int imm)
 {
@@ -225,6 +227,8 @@ emit_move_return_value (MonoCompile *cfg, MonoInst *ins, guint8 *code)
 
 	return code;
 }
+
+#endif /* #ifndef DISABLE_JIT */
 
 /*
  * mono_arch_get_argument_info:
@@ -565,6 +569,8 @@ mono_arch_cpu_optimizazions (guint32 *exclude_mask)
 	return opts;
 }
 
+#ifndef DISABLE_JIT
+
 static gboolean
 is_regsize_var (MonoType *t) {
 	if (t->byref)
@@ -663,6 +669,8 @@ mono_arch_regalloc_cost (MonoCompile *cfg, MonoMethodVar *vmv)
 	/* FIXME: */
 	return 2;
 }
+
+#endif /* #ifndef DISABLE_JIT */
 
 #ifndef __GNUC_PREREQ
 #define __GNUC_PREREQ(maj, min) (0)
@@ -1002,6 +1010,7 @@ get_call_info (MonoMethodSignature *sig, gboolean is_pinvoke)
 	return cinfo;
 }
 
+#ifndef DISABLE_JIT
 
 /*
  * Set var information according to the calling convention. arm version.
@@ -1478,6 +1487,8 @@ mono_arch_emit_setret (MonoCompile *cfg, MonoMethod *method, MonoInst *val)
 	MONO_EMIT_NEW_UNALU (cfg, OP_MOVE, cfg->ret->dreg, val->dreg);
 }
 
+#endif /* #ifndef DISABLE_JIT */
+
 gboolean 
 mono_arch_is_inst_imm (gint64 imm)
 {
@@ -1785,6 +1796,8 @@ mono_arch_finish_dyn_call (MonoDynCallInfo *info, guint8 *buf)
 		g_assert_not_reached ();
 	}
 }
+
+#ifndef DISABLE_JIT
 
 /*
  * Allow tracing to work with this interface (with an optional argument)
@@ -2422,6 +2435,8 @@ emit_float_to_int (MonoCompile *cfg, guchar *code, int dreg, int sreg, int size,
 	return code;
 }
 
+#endif /* #ifndef DISABLE_JIT */
+
 typedef struct {
 	guchar *code;
 	const guchar *target;
@@ -2754,6 +2769,8 @@ mono_arm_thumb_supported (void)
 	return thumb_supported;
 }
 
+#ifndef DISABLE_JIT
+
 /*
  * emit_load_volatile_arguments:
  *
@@ -2872,8 +2889,6 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 
 	return code;
 }
-
-#ifndef DISABLE_JIT
 
 void
 mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
@@ -4257,6 +4272,8 @@ mono_arch_patch_code (MonoMethod *method, MonoDomain *domain, guint8 *code, Mono
 	}
 }
 
+#ifndef DISABLE_JIT
+
 /*
  * Stack frame layout:
  * 
@@ -4819,6 +4836,8 @@ mono_arch_emit_exceptions (MonoCompile *cfg)
 	g_assert (cfg->code_len < cfg->code_size);
 
 }
+
+#endif /* #ifndef DISABLE_JIT */
 
 static gboolean tls_offset_inited = FALSE;
 
