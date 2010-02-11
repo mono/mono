@@ -98,6 +98,7 @@ public class CP1250 : ByteEncoding
 		while(charCount > 0)
 		{
 			ch = (int)(chars[charIndex++]);
+			--charCount;
 			if(ch >= 128) switch(ch)
 			{
 				case 0x0081:
@@ -233,17 +234,18 @@ public class CP1250 : ByteEncoding
 				{
 					if(ch >= 0xFF01 && ch <= 0xFF5E)
 						ch -= 0xFEE0;
-					else
+					else {
 #if NET_2_0
 						HandleFallback (ref buffer, chars, ref charIndex, ref charCount, bytes, ref byteIndex, ref byteCount);
+						continue;
 #else
 						ch = 0x3F;
 #endif
+					}
 				}
 				break;
 			}
 			bytes[byteIndex++] = (byte)ch;
-			--charCount;
 			--byteCount;
 		}
 	}
