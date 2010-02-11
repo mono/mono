@@ -1,5 +1,10 @@
 2010-02-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-generic-sharing.c (mini_type_get_underlying_type): Handle byref as well
+	by returning native int. Fixes #577984.
+
+2010-02-11  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-arm.c mini.c linear-scan.c: Disable more stuff when DISABLE_JIT is used.
 
 2010-02-10  Geoff Norton  <gnorton@novell.com>
