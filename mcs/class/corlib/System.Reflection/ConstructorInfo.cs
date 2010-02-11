@@ -118,18 +118,18 @@ namespace System.Reflection {
 
 		public static bool operator == (ConstructorInfo left, ConstructorInfo right)
 		{
-			if (left == right)
+			if ((object)left == (object)right)
 				return true;
-			if (left == null ^ right == null)
+			if ((object)left == null ^ (object)right == null)
 				return false;
 			return left.Equals (right);
 		}
 
 		public static bool operator != (ConstructorInfo left, ConstructorInfo right)
 		{
-			if (left == right)
+			if ((object)left == (object)right)
 				return false;
-			if (left == null ^ right == null)
+			if ((object)left == null ^ (object)right == null)
 				return true;
 			return !left.Equals (right);
 		}
