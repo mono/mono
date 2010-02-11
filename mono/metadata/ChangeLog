@@ -57,6 +57,10 @@ Wed Feb 10 14:48:45 CET 2010 Paolo Molaro <lupus@ximian.com>
 	* sgen-gc.c: introduced critical regions to allow some lockless
 	operations and increase scalability.
 
+2010-02-10  Geoff Norton  <gnorton@novell.com>
+
+	* reflection.c: Support building with DISABLE_REFLECTION
+
 2010-02-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: Fixes for SetMinThreads and SetMaxThreads.
