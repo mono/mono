@@ -1,5 +1,8 @@
 2010-02-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c: Remove the special casing of byref in a few places now that
+	mini_type_get_underlying_type () handles it.
+
 	* mini-generic-sharing.c (mini_type_get_underlying_type): Handle byref as well
 	by returning native int. Fixes #577984.
 
