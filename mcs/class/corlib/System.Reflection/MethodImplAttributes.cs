@@ -97,6 +97,10 @@ namespace System.Reflection {
 
 		/// <summary>
 		/// </summary>
+		NoOptimization = 64,
+
+		/// <summary>
+		/// </summary>
 		MaxMethodImplVal = 65535,
 	} // MethodImplAttributes
 

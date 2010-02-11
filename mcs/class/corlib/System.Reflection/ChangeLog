@@ -1,3 +1,7 @@
+2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodImplAttributes.cs: Add NoOptimization flag.
+
 2010-02-11  Marek Habersack  <mhabersack@novell.com>
 
 	* ConstructorInfo.cs, EventInfo.cs, FieldInfo.cs: fix 4.0 equality
