@@ -31,6 +31,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -162,5 +163,11 @@ namespace System.Reflection {
 			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
 				ToString(), MemberTypes.Event);
 		}
+
+#if NET_4_0
+		public override IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 	}
 }

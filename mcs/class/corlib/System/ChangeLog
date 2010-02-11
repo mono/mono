@@ -1,3 +1,7 @@
+2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoType.cs: Implement GetCustomAttributesData.
+
 2010-02-06  Chris Toshok  <toshok@ximian.com>
 
 	* AppDomain.cs (SetupInformationNoCopy): make this internal for

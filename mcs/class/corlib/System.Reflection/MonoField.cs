@@ -33,6 +33,7 @@
 //
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -156,6 +157,12 @@ namespace System.Reflection {
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public override extern object GetRawConstantValue ();
+
+#if NET_4_0
+		public override IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 
 		void CheckGeneric () {
 			if (DeclaringType.ContainsGenericParameters)

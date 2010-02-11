@@ -29,6 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -375,5 +376,11 @@ namespace System.Reflection {
 			MemberInfoSerializationHolder.Serialize (info, Name, ReflectedType,
 				ToString(), MemberTypes.Property);
 		}
+
+#if NET_4_0
+		public override IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 	}
 }

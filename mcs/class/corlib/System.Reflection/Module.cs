@@ -33,6 +33,7 @@ using System.Runtime.InteropServices;
 using System.Runtime.CompilerServices;
 using System.Security;
 using System.Security.Permissions;
+using System.Collections.Generic;
 
 namespace System.Reflection {
 
@@ -401,6 +402,12 @@ namespace System.Reflection {
 			else
 				return res;
 		}
+
+#if NET_4_0
+		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 
 		internal static Type MonoDebugger_ResolveType (Module module, int token)
 		{

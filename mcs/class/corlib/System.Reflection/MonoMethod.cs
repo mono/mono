@@ -28,6 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -435,6 +436,12 @@ namespace System.Reflection {
 		public override MethodBody GetMethodBody () {
 			return GetMethodBody (mhandle);
 		}
+
+#if NET_4_0
+		public override IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 	}
 	
 	internal class MonoCMethod : ConstructorInfo, ISerializable
@@ -590,5 +597,11 @@ namespace System.Reflection {
 		{
 			MemberInfoSerializationHolder.Serialize ( info, Name, ReflectedType, ToString(), MemberTypes.Constructor);
 		}
+
+#if NET_4_0
+		public override IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 	}
 }

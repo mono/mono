@@ -30,6 +30,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.CompilerServices;
@@ -683,6 +684,12 @@ namespace System
 
 			return res;
 		}
+
+#if NET_4_0
+		public override IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 
 		static MethodBase CheckMethodSecurity (MethodBase mb)
 		{

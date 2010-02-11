@@ -28,6 +28,7 @@
 using System.Reflection.Emit;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Collections.Generic;
 
 namespace System.Reflection
 {
@@ -266,6 +267,12 @@ namespace System.Reflection
 				return DefaultValue;
 			}
 		}
+
+#if NET_4_0
+		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 
 		void _ParameterInfo.GetIDsOfNames ([In] ref Guid riid, IntPtr rgszNames, uint cNames, uint lcid, IntPtr rgDispId)
 		{

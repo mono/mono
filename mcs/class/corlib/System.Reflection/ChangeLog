@@ -1,5 +1,18 @@
 2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MemberInfo.cs: Add GetCustomAttributesData.
+
+	* Assembly.cs:
+	* MemberInfo.cs:
+	* Module.cs:
+	* MonoEvent.cs:
+	* MonoField.cs:
+	* MonoMethod.cs:
+	* MonoProperty.cs:
+	* ParameterInfo.cs: Implement GetCustomAttributesData.
+
+2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MemberInfo.cs: Add some v4 bits.
 
 2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>

@@ -38,6 +38,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Collections;
+using System.Collections.Generic;
 using System.Configuration.Assemblies;
 
 using Mono.Security;
@@ -802,6 +803,12 @@ namespace System.Reflection {
 			return other._mono_assembly == _mono_assembly;
 		}
 		
+#if NET_4_0
+		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
+
 #if !NET_2_1 || MONOTOUCH
 		// Code Access Security
 
