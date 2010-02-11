@@ -1,3 +1,8 @@
+2010-02-12  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyStripper.cs: properly set the rva of methods with
+	no body.
+
 2010-01-06	Rodrigo B. de Oliveira <rodrigo@unity.com>
 
 	* Mono.Cecil.csproj

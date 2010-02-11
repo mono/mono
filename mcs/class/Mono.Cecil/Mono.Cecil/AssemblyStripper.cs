@@ -150,11 +150,14 @@ namespace Mono.Cecil {
 
 				MethodDefinition method = (MethodDefinition) assembly.MainModule.LookupByToken (methodToken);
 
-				method_rva = method_rva != RVA.Zero
-					? method_rva
-					: reflection_writer.CodeWriter.WriteMethodBody (method);
+				if (method.HasBody) {
+					method_rva = method_rva != RVA.Zero
+						? method_rva
+						: reflection_writer.CodeWriter.WriteMethodBody (method);
 
-				methodRow.RVA = method_rva;
+					methodRow.RVA = method_rva;
+				} else
+					methodRow.RVA = RVA.Zero;
 			}
 		}
 
