@@ -1,3 +1,8 @@
+2010-02-11  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* attrdefs.h:
+	* tabledefs.h: Add NoOptimization flag.
+
 2010-02-10  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Don't consider it a missing remset if the target
