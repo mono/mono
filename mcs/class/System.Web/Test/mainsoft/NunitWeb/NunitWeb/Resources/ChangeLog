@@ -1,3 +1,8 @@
+2010-02-11  Marek Habersack  <mhabersack@novell.com>
+
+	* Web.config, Web.mono.config: added test role manager
+	definition.
+
 2009-01-22  Marek Habersack  <mhabersack@novell.com>
 
 	* Web.mono.config: added numRecompilesBeforeAppRestart attribute

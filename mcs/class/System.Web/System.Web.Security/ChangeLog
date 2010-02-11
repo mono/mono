@@ -1,3 +1,9 @@
+2010-02-11  Marek Habersack  <mhabersack@novell.com>
+
+	* Roles.cs: IsUserInRole checks if username is null or empty
+	before attempting to use it. Patch from Tiaan Geldenhuys
+	<tagdev@gmail.com>. thanks!
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MembershipProvider.cs: Ensure password decryption is always

@@ -34,6 +34,7 @@ mainsoft/NunitWeb/NunitWeb/PostableRequest.cs
 mainsoft/NunitWeb/NunitWeb/PostableWorkerRequest.cs
 mainsoft/NunitWeb/NunitWeb/Response.cs
 mainsoft/NunitWeb/NunitWeb/StandardUrl.cs
+mainsoft/NunitWeb/NunitWeb/TestRoleProvider.cs
 mainsoft/NunitWeb/NunitWeb/WebTest.cs
 mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
 mainsoft/NunitWeb/NunitWeb/Tests/TagsNestedInClientTag.cs

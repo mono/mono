@@ -1,3 +1,11 @@
+2010-02-11  Marek Habersack  <mhabersack@novell.com>
+
+	* WebTest.cs: test environment setup enhancements. Contributed by
+	Tiaan Geldenhuys <tagdev@gmail.com>, thanks! 
+
+	* TestRoleProvider.cs: added. Contributed by Tiaan Geldenhuys
+	<tagdev@gmail.com>, thanks!
+
 2009-11-04  Marek Habersack  <mhabersack@novell.com>
 
 	* WebTest.cs: include App_GlobalResources only when compiling
