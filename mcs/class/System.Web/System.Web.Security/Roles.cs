@@ -153,11 +153,13 @@ namespace System.Web.Security {
 		
 		public static bool IsUserInRole (string rolename)
 		{
-			return Provider.IsUserInRole (CurrentUser, rolename);
+			return IsUserInRole (CurrentUser, rolename);
 		}
 		
 		public static bool IsUserInRole (string username, string rolename)
 		{
+			if (String.IsNullOrEmpty (username))
+				return false;
 			return Provider.IsUserInRole (username, rolename);
 		}
 		

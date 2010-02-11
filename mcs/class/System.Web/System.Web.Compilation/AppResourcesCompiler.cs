@@ -836,13 +836,13 @@ namespace System.Web.Compilation
 				throw new HttpException ("Failed to compile resource file", ex);
 			} finally {
 				if (reader != null)
-					reader.Close ();
-				else if (source != null)
-					source.Close ();
+					reader.Dispose ();
+				if (source != null)
+					source.Dispose ();
 				if (writer != null)
-					writer.Close ();
-				else if (destination != null)
-					destination.Close ();
+					writer.Dispose ();
+				if (destination != null)
+					destination.Dispose ();
 			}
 			
 			return resource;

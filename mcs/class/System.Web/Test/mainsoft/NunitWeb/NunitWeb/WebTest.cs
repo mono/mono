@@ -303,47 +303,64 @@ namespace MonoTests.SystemWeb.Framework
 		public static void CopyResource (Type type, string resourceName, string targetUrl)
 		{
 #if !TARGET_JVM
-			EnsureWorkingDirectories ();
-			EnsureDirectoryExists (Path.Combine (baseDir,
-				Path.GetDirectoryName (targetUrl)));
-			string targetFile = Path.Combine (baseDir, targetUrl);
 			using (Stream source = type.Assembly.GetManifestResourceStream (resourceName)) {
 				if (source == null)
 					throw new ArgumentException ("resource not found: " + resourceName, "resourceName");
 				byte[] array = new byte[source.Length];
 				source.Read (array, 0, array.Length);
+				CopyBinary (array, targetUrl);
+			}
+#endif
+		}
 
-				if (File.Exists(targetFile)) {
-					using (FileStream existing = File.OpenRead(targetFile)) {
-						bool equal = false;
-						if (array.Length == existing.Length) {
-							byte[] existingArray = new byte[array.Length];
-							existing.Read (existingArray, 0, existingArray.Length);
-							
-							equal = true;
-							for (int i = 0; i < array.Length; i ++) {
-								if (array[i] != existingArray[i]) {
-									equal = false;
-									break;
-								}
+		/// <summary>
+		/// Copy a chunk of data as a file into the web application.
+		/// </summary>
+		/// <param name="sourceArray">The array that contains the data to be written.</param>
+		/// <param name="targetUrl">The URL where the data will be available.</param>
+		/// <returns>The target filename where the data was stored.</returns>
+		/// <example><code>CopyBinary (System.Text.Encoding.UTF8.GetBytes ("Hello"), "App_Data/Greeting.txt");</code></example>
+		public static string CopyBinary (byte[] sourceArray, string targetUrl)
+		{
+#if TARGET_JVM
+			return null;
+#else
+			EnsureWorkingDirectories ();
+			EnsureDirectoryExists (Path.Combine (baseDir, Path.GetDirectoryName (targetUrl)));
+			string targetFile = Path.Combine (baseDir, targetUrl);
+
+			if (File.Exists(targetFile)) {
+				using (FileStream existing = File.OpenRead(targetFile)) {
+					bool equal = false;
+					if (sourceArray.Length == existing.Length) {
+						byte[] existingArray = new byte[sourceArray.Length];
+						existing.Read (existingArray, 0, existingArray.Length);
+						
+						equal = true;
+						for (int i = 0; i < sourceArray.Length; i ++) {
+							if (sourceArray[i] != existingArray[i]) {
+								equal = false;
+								break;
 							}
 						}
-						
-						if (equal) {
-							existing.Close ();
-							File.SetLastWriteTime (targetFile, DateTime.Now);
-							return;
-						}
-						
 					}
 					
-					CheckDomainIsDown ();
+					if (equal) {
+						existing.Close ();
+						File.SetLastWriteTime (targetFile, DateTime.Now);
+						return targetFile;
+					}
+					
 				}
-
-				using (FileStream target = new FileStream (targetFile, FileMode.Create)) {
-					target.Write (array, 0, array.Length);
-				}
+				
+				CheckDomainIsDown ();
 			}
+
+			using (FileStream target = new FileStream (targetFile, FileMode.Create)) {
+				target.Write (sourceArray, 0, sourceArray.Length);
+			}
+
+			return targetFile;
 #endif
 		}
 
@@ -371,9 +388,30 @@ namespace MonoTests.SystemWeb.Framework
 			return;
 #else
 			host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
+			if (host == null)
+				SetupHosting ();
+#endif
+		}
+		
+		public static void SetupHosting ()
+		{
+			SetupHosting (null);
+		}
+		
+		public static void SetupHosting (WebTestResourcesSetupAttribute.SetupHandler resHandler)
+		{
+#if !TARGET_JVM
+			if (host == null)
+				host = AppDomain.CurrentDomain.GetData (HOST_INSTANCE_NAME) as MyHost;
+#endif
 			if (host != null)
-				return;
-			WebTestResourcesSetupAttribute.SetupHandler resHandler = CheckResourcesSetupHandler ();
+				CleanApp ();
+#if TARGET_JVM
+			host = new MyHost ();
+			return;
+#else
+			if (resHandler == null)
+				resHandler = CheckResourcesSetupHandler ();
 			if (resHandler == null)
 				CopyResources ();
 			else
@@ -530,7 +568,7 @@ namespace MonoTests.SystemWeb.Framework
 			Directory.CreateDirectory (binDir);
 		}
 
-		private static void CopyResources ()
+		public static void CopyResources ()
 		{
 			CopyResource (typeof (WebTest), "My.ashx", "My.ashx");
 			CopyResource (typeof (WebTest), "Global.asax", "Global.asax");

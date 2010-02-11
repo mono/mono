@@ -1,3 +1,8 @@
+2010-02-11  Marek Habersack  <mhabersack@novell.com>
+
+	* RolesTest.cs: added a test for IsUserInRole. Patch from Tiaan
+	Geldenhuys <tagdev@gmail.com>, thanks!
+
 2007-02-10  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* FormsAuthenticationTest.cs: Fixed build using csc 1.x.
