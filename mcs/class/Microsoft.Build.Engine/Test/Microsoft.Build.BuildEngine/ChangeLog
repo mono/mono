@@ -1,3 +1,7 @@
+2010-02-11  Ankit Jain  <jankit@novell.com>
+
+	* ImportTest.cs (Add1): Fix test on windows.
+
 2010-01-21	Rodrigo B. de Oliveira <rodrigo@unity3d.com>
 
 	* BuildChooseTest.cs
