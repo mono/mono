@@ -1,3 +1,8 @@
+2010-02-12  Mark Probst  <mark.probst@gmail.com>
+
+	* reflection.c (ensure_complete_type): Check that reflection_info
+	is set, too.  Fixes crash of corlib testsuite with -O=-all.
+
 2010-02-11  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* attrdefs.h:
