@@ -1,5 +1,9 @@
 2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MemberInfo.cs: Add some v4 bits.
+
+2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MethodImplAttributes.cs: Add NoOptimization flag.
 
 2010-02-11  Marek Habersack  <mhabersack@novell.com>
