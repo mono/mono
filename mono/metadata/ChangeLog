@@ -1,3 +1,8 @@
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+        * generic-sharing.c (instantiate_other_info): Don't create ftnptr's from the
+        result of mono_compile_method (), it already includes an ftnptr.
+
 2010-02-10  Geoff Norton  <gnorton@novell.com>
 
 	* reflection.c: Support building with DISABLE_REFLECTION
