@@ -1,3 +1,7 @@
+2010-02-12  Miguel de Icaza  <miguel@novell.com>
+
+	* XmlWriterSettings.cs: Expose NamespaceHandling in NET 4.0 
+
 2010-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReaderBinarySupport.cs : eliminate possible extra buffer
