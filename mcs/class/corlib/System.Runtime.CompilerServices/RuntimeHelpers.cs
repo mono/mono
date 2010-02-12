@@ -88,6 +88,19 @@ namespace System.Runtime.CompilerServices
 			RunClassConstructor (type.Value);
 		}
 
+#if NET_4_0
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		static extern bool SufficientExecutionStack ();
+
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
+		public static void EnsureSufficientExecutionStack ()
+		{
+			if (SufficientExecutionStack ())
+				return;
+			throw new InsufficientExecutionStackException ();
+		}
+#endif
+
 		[MonoTODO("Currently a no-op")]
 		public static void ExecuteCodeWithGuaranteedCleanup (TryCode code, CleanupCode backoutCode, Object userData)
 		{

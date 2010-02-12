@@ -1,3 +1,8 @@
+
+Fri Feb 12 18:39:57 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* RuntimeHelpers.cs: implemented EnsureSufficientExecutionStack ().
+
 2010-01-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* DateTimeConstantAttribute.cs: Add internal Ticks property.
