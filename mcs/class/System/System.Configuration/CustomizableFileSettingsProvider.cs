@@ -613,7 +613,8 @@ namespace System.Configuration
 				config.SectionGroups.Add ("userSettings", userGroup);
 				ApplicationSettingsBase asb = context.CurrentSettings;
 				ClientSettingsSection cs = new ClientSettingsSection ();
-				userGroup.Sections.Add ((asb != null ? asb.GetType () : typeof (ApplicationSettingsBase)).FullName, cs);
+				string class_name = NormalizeInvalidXmlChars ((asb != null ? asb.GetType () : typeof (ApplicationSettingsBase)).FullName);
+				userGroup.Sections.Add (class_name, cs);
 			}
 
 			bool hasChanges = false;
@@ -688,6 +689,20 @@ namespace System.Configuration
 			}
 			config.Save (ConfigurationSaveMode.Minimal, true);
 #endif
+		}
+
+		// NOTE: We should add here all the chars that are valid in a name of a class (Ecma-wise),
+		// but invalid in an xml element name, and provide a better impl if we get too many of them.
+		string NormalizeInvalidXmlChars (string str)
+		{
+			char [] invalid_chars = new char [] { '+' };
+
+			if (str == null || str.IndexOfAny (invalid_chars) == -1)
+				return str;
+
+			// Replace with its hexadecimal values.
+			str = str.Replace ("+", "_x002B_");
+			return str;
 		}
 
 		private void LoadPropertyValue (SettingsPropertyCollection collection, SettingElement element, bool allowOverwrite)
@@ -772,6 +787,7 @@ namespace System.Configuration
 			if (values == null) {
 				values = new SettingsPropertyValueCollection ();
 				string groupName = context ["GroupName"] as string;
+				groupName = NormalizeInvalidXmlChars (groupName); // we likely saved the element removing the non valid xml chars.
 				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "applicationSettings", false, groupName);
 				LoadProperties (exeMapCurrent, collection, ConfigurationUserLevel.None, "userSettings", false, groupName);
 

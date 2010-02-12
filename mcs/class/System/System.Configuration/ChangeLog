@@ -1,3 +1,12 @@
+2010-02-12 Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* CustomizableLocalFileSettingsProvider.cs: The name of the child
+	class of Settings should be 'normalized' by replacing the chars that
+	are invalid in a xml element name with their corresponding hexadecimal
+	values. This is specially visible when using classes container in
+	other classes.
+	Fixes #471289.
+
 2009-08-31 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* CustomizableFileSettingsProvider.cs: reset the property value
