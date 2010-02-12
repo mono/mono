@@ -1,4 +1,8 @@
 
+Fri Feb 12 19:03:11 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* ReferenceAssemblyAttribute.cs: new attribute in 4.0.
+
 Fri Feb 12 18:39:57 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* RuntimeHelpers.cs: implemented EnsureSufficientExecutionStack ().
