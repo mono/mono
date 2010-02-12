@@ -79,6 +79,7 @@ namespace System.Xml.Linq
 			Add (source.Contents);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator bool (XElement element)
 		{
 			if (element == null)
@@ -86,6 +87,7 @@ namespace System.Xml.Linq
 			return XUtil.ConvertToBoolean (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator bool? (XElement element)
 		{
 			if (element == null)
@@ -94,6 +96,7 @@ namespace System.Xml.Linq
 			return element.Value == null ? (bool?) null : XUtil.ConvertToBoolean (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator DateTime (XElement element)
 		{
 			if (element == null)
@@ -101,6 +104,7 @@ namespace System.Xml.Linq
 			return XUtil.ToDateTime (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator DateTime? (XElement element)
 		{
 			if (element == null)
@@ -111,6 +115,7 @@ namespace System.Xml.Linq
 
 #if !TARGET_JVM // Same as for System.Xml.XmlConvert.ToDateTimeOffset
 
+		[CLSCompliant (false)]
 		public static explicit operator DateTimeOffset (XElement element)
 		{
 			if (element == null)
@@ -118,6 +123,7 @@ namespace System.Xml.Linq
 			return XmlConvert.ToDateTimeOffset (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator DateTimeOffset? (XElement element)
 		{
 			if (element == null)
@@ -128,6 +134,7 @@ namespace System.Xml.Linq
 
 #endif
 
+		[CLSCompliant (false)]
 		public static explicit operator decimal (XElement element)
 		{
 			if (element == null)
@@ -135,6 +142,7 @@ namespace System.Xml.Linq
 			return XmlConvert.ToDecimal (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator decimal? (XElement element)
 		{
 			if (element == null)
@@ -143,6 +151,7 @@ namespace System.Xml.Linq
 			return element.Value == null ? (decimal?) null : XmlConvert.ToDecimal (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator double (XElement element)
 		{
 			if (element == null)
@@ -150,6 +159,7 @@ namespace System.Xml.Linq
 			return XmlConvert.ToDouble (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator double? (XElement element)
 		{
 			if (element == null)
@@ -158,6 +168,7 @@ namespace System.Xml.Linq
 			return element.Value == null ? (double?) null : XmlConvert.ToDouble (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator float (XElement element)
 		{
 			if (element == null)
@@ -165,6 +176,7 @@ namespace System.Xml.Linq
 			return XmlConvert.ToSingle (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator float? (XElement element)
 		{
 			if (element == null)
@@ -173,6 +185,7 @@ namespace System.Xml.Linq
 			return element.Value == null ? (float?) null : XmlConvert.ToSingle (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator Guid (XElement element)
 		{
 			if (element == null)
@@ -180,6 +193,7 @@ namespace System.Xml.Linq
 			return XmlConvert.ToGuid (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator Guid? (XElement element)
 		{
 			if (element == null)
@@ -188,6 +202,7 @@ namespace System.Xml.Linq
 			return element.Value == null ? (Guid?) null : XmlConvert.ToGuid (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator int (XElement element)
 		{
 			if (element == null)
@@ -195,6 +210,7 @@ namespace System.Xml.Linq
 			return XmlConvert.ToInt32 (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator int? (XElement element)
 		{
 			if (element == null)
@@ -203,6 +219,7 @@ namespace System.Xml.Linq
 			return element.Value == null ? (int?) null : XmlConvert.ToInt32 (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator long (XElement element)
 		{
 			if (element == null)
@@ -210,6 +227,7 @@ namespace System.Xml.Linq
 			return XmlConvert.ToInt64 (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator long? (XElement element)
 		{
 			if (element == null)
@@ -252,6 +270,7 @@ namespace System.Xml.Linq
 			return element.Value == null ? (ulong?) null : XmlConvert.ToUInt64 (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator TimeSpan (XElement element)
 		{
 			if (element == null)
@@ -259,6 +278,7 @@ namespace System.Xml.Linq
 			return XmlConvert.ToTimeSpan (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator TimeSpan? (XElement element)
 		{
 			if (element == null)
@@ -267,6 +287,7 @@ namespace System.Xml.Linq
 			return element.Value == null ? (TimeSpan?) null : XmlConvert.ToTimeSpan (element.Value);
 		}
 
+		[CLSCompliant (false)]
 		public static explicit operator string (XElement element)
 		{
 			if (element == null)
@@ -495,7 +516,13 @@ namespace System.Xml.Linq
 		public void Save (string filename, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
-			s.Indent = options != SaveOptions.DisableFormatting;
+
+			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
+				s.Indent = true;
+#if NET_4_0
+			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
+				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
+#endif
 			using (XmlWriter w = XmlWriter.Create (filename, s)) {
 				Save (w);
 			}
@@ -509,7 +536,13 @@ namespace System.Xml.Linq
 		public void Save (TextWriter tw, SaveOptions options)
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
-			s.Indent = options != SaveOptions.DisableFormatting;
+			
+			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
+				s.Indent = true;
+#if NET_4_0
+			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
+				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
+#endif
 			using (XmlWriter w = XmlWriter.Create (tw, s)) {
 				Save (w);
 			}
@@ -520,6 +553,25 @@ namespace System.Xml.Linq
 			WriteTo (w);
 		}
 
+#if NET_4_0
+		public void Save (Stream stream)
+		{
+			Save (stream, SaveOptions.None);
+		}
+
+		public void Save (Stream stream, SaveOptions options)
+		{
+			XmlWriterSettings s = new XmlWriterSettings ();
+			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
+				s.Indent = true;
+			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
+				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
+
+			using (var writer = XmlWriter.Create (stream, s)){
+				Save (writer);
+			}
+		}
+#endif
 		public IEnumerable <XElement> AncestorsAndSelf ()
 		{
 			return GetAncestorList (null, true);

@@ -4,6 +4,7 @@
 Assembly/AssemblyInfo.cs
 System.Xml.Linq/Extensions.cs
 System.Xml.Linq/LoadOptions.cs
+System.Xml.Linq/ReaderOptions.cs
 System.Xml.Linq/SaveOptions.cs
 System.Xml.Linq/XAttribute.cs
 System.Xml.Linq/XCData.cs

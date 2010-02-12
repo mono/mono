@@ -32,6 +32,9 @@ namespace System.Xml.Linq
 	public enum SaveOptions
 	{
 		None = 0,
-		DisableFormatting = 1
+		DisableFormatting = 1,
+#if NET_4_0
+		OmitDuplicateNamespaces = 2
+#endif
 	}
 }

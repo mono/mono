@@ -78,7 +78,7 @@ namespace System.Xml.Linq
 		public void Save (string fileName)
 		{
 			using (TextWriter w = File.CreateText (fileName))
-				Save (w);
+				Save (w, SaveOptions.None);
 		}
 
 		public void Save (TextWriter textWriter)
@@ -101,10 +101,36 @@ namespace System.Xml.Linq
 		{
 			XmlWriterSettings s = new XmlWriterSettings ();
 			s.OmitXmlDeclaration = true;
-			s.Indent = options != SaveOptions.DisableFormatting;
+			
+			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
+				s.Indent = true;
+#if NET_4_0
+			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
+				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
+#endif
 			using (XmlWriter w = XmlWriter.Create (textWriter, s))
-				Save (w);
+				WriteTo (w);
 		}
+
+#if NET_4_0
+		public void Save (Stream stream)
+		{
+			Save (stream, SaveOptions.None);
+		}
+
+		public void Save (Stream stream, SaveOptions options)
+		{
+			XmlWriterSettings s = new XmlWriterSettings ();
+			if ((options & SaveOptions.DisableFormatting) == SaveOptions.None)
+				s.Indent = true;
+			if ((options & SaveOptions.OmitDuplicateNamespaces) == SaveOptions.OmitDuplicateNamespaces)
+				s.NamespaceHandling |= NamespaceHandling.OmitDuplicates;
+			
+			using (var writer = XmlWriter.Create (stream, s)){
+				WriteTo (writer);
+			}
+		}
+#endif
 
 		public override string ToString ()
 		{

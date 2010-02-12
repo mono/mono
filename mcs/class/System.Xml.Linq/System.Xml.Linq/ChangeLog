@@ -1,3 +1,21 @@
+2010-02-12  Miguel de Icaza  <miguel@novell.com>
+
+	* XStreamingElement.cs: Avoid an extra indirect call, by calling
+	the target methods directly.
+	
+	* XDocument.cs, XElement.cs, XStreamingElement.cs: Fix the
+	setting of the Indent flag, since this is an enumeration, testing
+	against SaveOptions.None was incorrect.  Check on the actual flag.
+
+	* XElement.cs, XDocument.cs, XStreamingElement.cs: Add support for
+	the new .NET 4.0 Save methods and the new OmitDuplicateNamespaces
+	flag to SaveOptions.
+
+	* XElement.cs, XDocument.cs, XNamespace.cs: Sprinkle
+	CLSCompliantAttribute to match the compare page.
+
+	* SaveOptions.cs: New setting for 4.0 OmitDuplicateNamespaces.
+
 2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* XUtil.cs: Avoid using ToLowerInvariant since it is not 

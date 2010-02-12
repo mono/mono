@@ -121,6 +121,7 @@ namespace System.Xml.Linq
 			return new XName (localName, ns.NamespaceName);
 		}
 
+		[CLSCompliant (false)]
 		public static implicit operator XNamespace (string s)
 		{
 			return s != null ? XNamespace.Get (s) : null;
