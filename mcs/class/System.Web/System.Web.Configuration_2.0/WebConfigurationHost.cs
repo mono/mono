@@ -71,10 +71,12 @@ namespace System.Web.Configuration
 			return new HttpConfigurationContext(configPath);
 		}
 		
-		public virtual string DecryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider,
-						      ProtectedConfigurationSection protectedSection)
+		public virtual string DecryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
 		{
-			throw new NotImplementedException ();
+			if (protectedSection == null)
+				throw new ArgumentNullException ("protectedSection");
+
+			return protectedSection.EncryptSection (encryptedXml, protectionProvider);
 		}
 		
 		public virtual void DeleteStream (string streamName)
@@ -82,10 +84,12 @@ namespace System.Web.Configuration
 			File.Delete (streamName);
 		}
 		
-		public virtual string EncryptSection (string encryptedXml, ProtectedConfigurationProvider protectionProvider,
-						      ProtectedConfigurationSection protectedSection)
+		public virtual string EncryptSection (string clearXml, ProtectedConfigurationProvider protectionProvider, ProtectedConfigurationSection protectedSection)
 		{
-			throw new NotImplementedException ();
+			if (protectedSection == null)
+				throw new ArgumentNullException ("protectedSection");
+
+			return protectedSection.EncryptSection (clearXml, protectionProvider);
 		}
 		
 		public virtual string GetConfigPathFromLocationSubPath (string configPath, string locationSubPath)

@@ -1,3 +1,7 @@
+2010-02-12  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationHost.cs: implemented {Encrypt,Decrypt}Section
+
 2010-01-20  Marek Habersack  <mhabersack@novell.com>
 
 	* OutputCacheSection.cs: implemented the Providers and
