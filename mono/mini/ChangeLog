@@ -1,3 +1,7 @@
+2010-02-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_check_inlining): Check for loader errors.
+
 2010-02-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-generic-sharing.c (mini_type_get_underlying_type): Handle byref as well
