@@ -82,7 +82,7 @@ using System.Web.Routing;
 [assembly: SecurityRules (SecurityRuleSet.Level2, SkipVerificationInFullTrust = true)]
 [assembly: SecurityTransparent]
 [assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteBase))]
-[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteCollection))
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteCollection))]
 [assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteData))]
 [assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.Route))]
 [assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.IRouteConstraint))]
