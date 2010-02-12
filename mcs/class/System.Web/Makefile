@@ -259,8 +259,8 @@ EXTRA_DISTFILES = \
 	SQLiteProviders_DatabaseSchema.sql \
 	$(shell find Test/standalone-runner-support/ -name "*.cs" -type f -printf "'%p' ") \
 	$(shell find Test/standalone-tests/ -name "*.cs" -type f -printf "'%p' " -o -name "*.cs.in" -type f -printf "'%p' ") \
-	$(shell find Test/standalone/ -type f -printf "'%p' ") \
-	$(shell find Test/tools/ -type f -printf "'%p' ") \
+	$(shell find Test/standalone/ -not -name .svn -o -prune -printf "'%p' ") \
+	$(shell find Test/tools/ -not -name .svn -o -prune -printf "'%p' ") \
 	System.Web_standalone_test.dll.sources \
 	standalone-runner-support.dll.sources
 

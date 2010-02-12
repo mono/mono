@@ -1,3 +1,7 @@
+2010-02-12  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): ignore .svn directories
+
 2010-02-11  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Web_test.dll.sources: added
