@@ -577,6 +577,7 @@ System.Resources/RuntimeResourceSet.cs
 System.Resources/SatelliteContractVersionAttribute.cs
 System.Resources/UltimateResourceFallbackLocation.cs
 System.Resources/Win32Resources.cs
+System.Runtime/AssemblyTargetedPatchBandAttribute.cs
 System.Runtime/GCLatencyMode.cs
 System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs

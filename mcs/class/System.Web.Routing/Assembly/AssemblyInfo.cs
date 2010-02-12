@@ -34,8 +34,11 @@ using System.Resources;
 using System.Security;
 using System.Security.Permissions;
 using System.Diagnostics;
+using System.Runtime;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
+using System.Runtime.Versioning;
+using System.Web.Routing;
 
 // General Information about the System.Web.Routing assembly
 // v3.5 Assembly
@@ -58,7 +61,9 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyKeyFile ("../winfx.pub")]
 
 [assembly: ComVisible (false)]
+#if !NET_4_0
 [assembly: ComCompatibleVersion (1, 0, 3300, 0)]
+#endif
 [assembly: AllowPartiallyTrustedCallers]
 
 [assembly: CompilationRelaxations (CompilationRelaxations.NoStringInterning)]
@@ -69,3 +74,26 @@ using System.Runtime.InteropServices;
 
 // FIXME: We get collisions with this internalsVisibleTo because of Consts.cs and MonoTodo
 //[assembly: InternalsVisibleTo ("System.ServiceModel.Web, PublicKey=0024000004800000940000000602000000240000525341310004000001000100b5fc90e7027f67871e773a8fde8938c81dd402ba65b9201d60593e96c492651e889cc13f1415ebb53fac1131ae0bd333c5ee6021672d9718ea31a8aebd0da0072f25d87dba6fc90ffd598ed4da35e44c398c454307e8e33b8426143daec9f596836f97c8f74750e5975c64e2189f45def46b2a2b1247adc3652bf5c308055da9")]
+
+#if NET_4_0
+[assembly: AssemblyTargetedPatchBandAttribute ("1.0.21-0")]
+[assembly: Dependency ("System.Web,", LoadHint.Always)]
+[assembly: TargetFramework (".NETFramework,Version=v4.0")]
+[assembly: SecurityRules (SecurityRuleSet.Level2, SkipVerificationInFullTrust = true)]
+[assembly: SecurityTransparent]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteBase))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteCollection))
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteData))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.Route))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.IRouteConstraint))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.IRouteHandler))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RequestContext))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.UrlRoutingModule))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.UrlRoutingHandler))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.HttpMethodConstraint))] 
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.VirtualPathData))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteTable))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteDirection))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.StopRoutingHandler))]
+[assembly: TypeForwardedToAttribute (typeof (System.Web.Routing.RouteValueDictionary))]
+#endif
