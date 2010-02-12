@@ -418,7 +418,7 @@ namespace System.IO
 		}
 
 #if NET_4_0
-		public override void ObjectInvariant ()
+		protected override void ObjectInvariant ()
 		{
 		}
 #endif
