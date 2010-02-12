@@ -284,7 +284,7 @@ namespace System.IO
 				destination.Write (buffer, 0, nread);
 		}
 
-		public virtual void ObjectInvariant ()
+		protected virtual void ObjectInvariant ()
 		{
 		}
 #endif
