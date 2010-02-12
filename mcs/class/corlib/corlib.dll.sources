@@ -582,6 +582,7 @@ System.Runtime/AssemblyTargetedPatchBandAttribute.cs
 System.Runtime/GCLatencyMode.cs
 System.Runtime/GCSettings.cs
 System.Runtime/MemoryFailPoint.cs
+System.Runtime/TargetedPatchingOptOutAttribute.cs
 System.Runtime.CompilerServices/AccessedThroughPropertyAttribute.cs
 System.Runtime.CompilerServices/ReferenceAssemblyAttribute.cs
 System.Runtime.CompilerServices/CallConvCdecl.cs
