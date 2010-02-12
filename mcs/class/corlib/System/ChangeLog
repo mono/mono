@@ -1,3 +1,8 @@
+
+Fri Feb 12 18:38:01 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* InsufficientExecutionStackException.cs: new exception type in 4.0.
+
 2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoType.cs: Implement GetCustomAttributesData.
