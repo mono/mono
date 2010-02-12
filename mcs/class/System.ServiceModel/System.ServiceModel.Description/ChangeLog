@@ -1,3 +1,8 @@
+2010-02-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializerMessageContractImporter.cs : handle duration
+	  and guid which s.w.svc does not handle. Fix part of bug #579011.
+
 2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractSerializerMessageContractImporter.cs,
