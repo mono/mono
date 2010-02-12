@@ -74,6 +74,7 @@ namespace Mono.Cecil {
 
 		// Additional flags
 		RTSpecialName		= 0x00000800,	// CLI provides 'special' behavior, depending upon the name of the Type
-		HasSecurity			= 0x00040000	 // Type has security associate with it
+		HasSecurity			= 0x00040000,	// Type has security associate with it
+		Forwarder			= 0x00200000,   // Exported type is a type forwarder
 	}
 }
