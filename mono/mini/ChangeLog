@@ -1,3 +1,7 @@
+2010-02-12  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_check_inlining): Check for loader errors.
+
 2010-02-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-amd64.c: Remove the special casing of byref in a few places now that
