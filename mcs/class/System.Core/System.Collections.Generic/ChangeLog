@@ -1,6 +1,11 @@
+2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HashSet.cs: fix and test for bug #579791.  Patch from Tiaan
+	Geldenhuys.
+
 2009-11-13  Marek Safar  <marek.safar@gmail.com>
 
-    * HasSet.cs: Add ISet, debugger view.
+	* HasSet.cs: Add ISet, debugger view.
 
 2009-07-30  Raja R Harinath  <harinath@hurrynot.org>
 
