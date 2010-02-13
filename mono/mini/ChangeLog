@@ -1,3 +1,9 @@
+2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* debugger-agent.c: handle incomplete reads and EINTR in
+	recv()/send(). This could have been causing random
+	disconnections.
+
 2010-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_exception_debug_info): Fix aot support for sequence
