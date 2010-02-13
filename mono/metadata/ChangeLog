@@ -1,3 +1,7 @@
+2010-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (mono_method_desc_search_in_image): Handle short names like
+	'int' for system classes.
 
 Fri Feb 12 18:36:02 CET 2010 Paolo Molaro <lupus@ximian.com>
 
