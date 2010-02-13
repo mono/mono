@@ -1,3 +1,8 @@
+2010-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c (mono_arch_allocate_vars): Allocate the seq point related vars first
+	so they have small offsets. Fixes #566311.
+
 2010-02-12  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_method_check_inlining): Check for loader errors.
