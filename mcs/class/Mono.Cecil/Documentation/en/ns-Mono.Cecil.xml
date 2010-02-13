@@ -1,6 +1,18 @@
 <Namespace Name="Mono.Cecil">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Representation for ECMA CLI Images.</summary>
+    <remarks>
+      <para>
+	The classes in this namespace are used to represent ECMA
+	Common Language Infrastructure (CLI) binary images.  These
+	represent assemblies, modules, types, methods, resources and
+	every other component that makes up the ECMA 335 files.
+      </para>
+      <para>
+	You can use the classes in Mono.Cecil to read existing ECMA
+	CLI images, creating CLI images and to modify these images
+	through the exposed API.
+      </para>
+    </remarks>
   </Docs>
 </Namespace>

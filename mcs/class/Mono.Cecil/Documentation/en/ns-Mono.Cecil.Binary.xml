@@ -1,6 +1,16 @@
 <Namespace Name="Mono.Cecil.Binary">
   <Docs>
-    <summary>To be added.</summary>
-    <remarks>To be added.</remarks>
+    <summary>Internal namespace used by Mono.Cecil.</summary>
+    <remarks>
+      <para>
+	The classes in this namespace are low-level routines to access
+	ECMA CLI images and deals mostly with PE headers and other
+	low-level components.   
+      </para>
+      <para>
+	The API exposed in this namespace is intended for use by
+	Mono.Cecil and is not in general useful for developers.
+      </para>
+    </remarks>
   </Docs>
 </Namespace>
