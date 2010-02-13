@@ -1,3 +1,9 @@
+2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* debugger-agent.c: handle incomplete reads and EINTR in
+	recv()/send(). This could have been causing random
+	disconnections.
+
 2010-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c (mono_arch_allocate_vars): Allocate the seq point related vars first
