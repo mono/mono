@@ -1,3 +1,8 @@
+2010-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (mono_method_desc_search_in_image): Handle short names like
+	'int' for system classes.
+
 2010-01-16  Zoltan Varga  <vargaz@gmail.com>
 
         * generic-sharing.c (instantiate_other_info): Don't create ftnptr's from the
