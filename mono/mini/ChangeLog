@@ -1,5 +1,8 @@
 2010-02-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_exception_debug_info): Fix aot support for sequence
+	points.
+
 	* mini-arm.c (mono_arch_allocate_vars): Allocate the seq point related vars first
 	so they have small offsets. Fixes #566311.
 
