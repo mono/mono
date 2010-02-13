@@ -157,7 +157,7 @@ namespace System.Collections.Generic {
 			int current = table [index] - 1;
 			while (current != NO_SLOT) {
 				Link link = links [current];
-				if (link.HashCode == hash && comparer.Equals (item, slots [current]))
+				if (link.HashCode == hash && ((hash == HASH_FLAG && (item == null || null == slots [current])) ? (item == null && null == slots [current]) : comparer.Equals (item, slots [current])))
 					return true;
 
 				current = link.Next;
@@ -230,6 +230,8 @@ namespace System.Collections.Generic {
 
 		int GetItemHashCode (T item)
 		{
+			if (item == null)
+				return HASH_FLAG;
 			return comparer.GetHashCode (item) | HASH_FLAG;
 		}
 
@@ -311,7 +313,7 @@ namespace System.Collections.Generic {
 			int prev = NO_SLOT;
 			do {
 				Link link = links [current];
-				if (link.HashCode == hashCode && comparer.Equals (slots [current], item))
+				if (link.HashCode == hashCode && ((hashCode == HASH_FLAG && (item == null || null == slots [current])) ? (item == null && null == slots [current]) : comparer.Equals (slots [current], item)))
 					break;
 
 				prev = current;
