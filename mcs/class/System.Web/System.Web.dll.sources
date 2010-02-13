@@ -197,6 +197,7 @@ System.Web.Configuration_2.0/OutputCacheSettingsSection.cs
 System.Web.Configuration_2.0/PagesEnableSessionState.cs
 System.Web.Configuration_2.0/PagesSection.cs
 System.Web.Configuration_2.0/PassportAuthentication.cs
+System.Web.Configuration_2.0/PositiveTimeSpanValidator.cs
 System.Web.Configuration_2.0/ProcessModelSection.cs
 System.Web.Configuration_2.0/ProcessModelComAuthenticationLevel.cs
 System.Web.Configuration_2.0/ProcessModelComImpersonationLevel.cs
@@ -345,6 +346,7 @@ System.Web.Mail/MailMessage.cs
 System.Web.Mail/MailMessageWrapper.cs
 System.Web.Mail/MailPriority.cs
 System.Web.Mail/MailUtil.cs
+System.Web.Mail/RelatedBodyPart.cs
 System.Web.Mail/SmtpClient.cs
 System.Web.Mail/SmtpException.cs
 System.Web.Mail/SmtpMail.cs
@@ -414,10 +416,12 @@ System.Web.Security/FormsIdentity.cs
 System.Web.Security/MembershipCreateStatus.cs
 System.Web.Security/MembershipCreateUserException.cs
 System.Web.Security/Membership.cs
+System.Web.Security/MembershipOnlineStatus.cs
 System.Web.Security/MembershipPasswordException.cs
 System.Web.Security/MembershipPasswordFormat.cs
 System.Web.Security/MembershipProviderCollection.cs
 System.Web.Security/MembershipProvider.cs
+System.Web.Security/MembershipSortOptions.cs
 System.Web.Security/MembershipUserCollection.cs
 System.Web.Security/MembershipUser.cs
 System.Web.Security/MembershipValidatePasswordEventHandler.cs
@@ -684,6 +688,7 @@ System.Web.UI/SupportsEventValidationAttribute.cs
 System.Web.UI/TagPrefixAttribute.cs
 System.Web.UI/TemplateBuilder.cs
 System.Web.UI/TemplateContainerAttribute.cs
+System.Web.UI/TemplateContentType.cs
 System.Web.UI/TemplateControl.cs
 System.Web.UI/TemplateControlParser.cs
 System.Web.UI/TemplateInstance.cs
@@ -696,6 +701,7 @@ System.Web.UI/ToolboxDataAttribute.cs
 System.Web.UI/Triplet.cs
 System.Web.UI/UnknownAttributeDescriptor.cs
 System.Web.UI/UrlPropertyAttribute.cs
+System.Web.UI/UrlTypes.cs
 System.Web.UI/UserControlControlBuilder.cs
 System.Web.UI/UserControl.cs
 System.Web.UI/UserControlParser.cs
@@ -1026,6 +1032,7 @@ System.Web.UI.WebControls/SiteMapNodeItemEventArgs.cs
 System.Web.UI.WebControls/SiteMapNodeItemEventHandler.cs
 System.Web.UI.WebControls/SiteMapNodeItemType.cs
 System.Web.UI.WebControls/SiteMapPath.cs
+System.Web.UI.WebControls/SiteMapViewType.cs
 System.Web.UI.WebControls/SortDirection.cs
 System.Web.UI.WebControls/SqlDataSourceCommandEventArgs.cs
 System.Web.UI.WebControls/SqlDataSourceCommandEventHandler.cs
@@ -1110,6 +1117,7 @@ System.Web.UI.WebControls.WebParts/IVersioningPersonalizable.cs
 System.Web.UI.WebControls.WebParts/IWebActionable.cs
 System.Web.UI.WebControls.WebParts/IWebEditable.cs
 System.Web.UI.WebControls.WebParts/IWebPart.cs
+System.Web.UI.WebControls.WebParts/IWebPartHttpHandler.cs
 System.Web.UI.WebControls.WebParts/IWebPartField.cs
 System.Web.UI.WebControls.WebParts/IWebPartParameters.cs
 System.Web.UI.WebControls.WebParts/IWebPartRow.cs

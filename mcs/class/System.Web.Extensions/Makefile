@@ -24,7 +24,9 @@ RESOURCE_FILES_DIST= \
 	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxTimer.debug.js	\
 	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxTimer.js		\
 	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxWebForms.debug.js\
-	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxWebForms.js
+	../MicrosoftAjaxLibrary/System.Web.Extensions/1.0.61025.0/MicrosoftAjaxWebForms.js \
+	Resources/MicrosoftAjaxExtension.js \
+	Resources/MicrosoftAjaxWebFormsExtension.js
 
 NUNIT_RESOURCE_FILES= \
 	Test/resources/Web.mono.config \

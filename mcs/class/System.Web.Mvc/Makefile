@@ -24,7 +24,7 @@ ifeq (2.0, $(FRAMEWORK_VERSION))
 LIB_MCS_FLAGS += -d:NET_3_5 -d:MONO
 endif
 
-EXTRA_DISTFILES = $(RESX_DIST)
+EXTRA_DISTFILES = $(RESX_DIST) license.htm
 
 # This is a .NET 3.5+ assembly - it must be built ONLY in the 2.0 profile
 VALID_PROFILE := $(filter net_2_0, $(PROFILE))

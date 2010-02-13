@@ -262,7 +262,8 @@ EXTRA_DISTFILES = \
 	$(shell find Test/standalone/ -not -name .svn -prune -o -printf "'%p' ") \
 	$(shell find Test/tools/ -not -name .svn -prune -o -printf "'%p' ") \
 	System.Web_standalone_test.dll.sources \
-	standalone-runner-support.dll.sources
+	standalone-runner-support.dll.sources \
+	ASPState.sql
 
 BUILT_SOURCES = System.Web/UplevelHelper.cs 
 
