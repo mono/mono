@@ -1492,6 +1492,9 @@ char*    mono_aot_wrapper_name              (MonoMethod *method) MONO_INTERNAL;
 MonoAotTrampInfo* mono_aot_tramp_info_create (const char *name, guint8 *code, guint32 code_len) MONO_INTERNAL;
 guint    mono_aot_str_hash                  (gconstpointer v1) MONO_INTERNAL;
 MonoMethod* mono_aot_get_array_helper_from_wrapper (MonoMethod *method) MONO_INTERNAL;
+void     mono_aot_set_make_unreadable       (gboolean unreadable) MONO_INTERNAL;
+gboolean mono_aot_is_pagefault              (void *ptr) MONO_INTERNAL;
+void     mono_aot_handle_pagefault          (void *ptr) MONO_INTERNAL;
 
 /* This is an exported function */
 void     mono_aot_register_globals          (gpointer *globals);
