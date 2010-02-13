@@ -84,6 +84,41 @@ namespace System {
 			ProgramFiles = 0x26,
 			MyPictures = 0x27,
 			CommonProgramFiles = 0x2b,
+#if NET_4_0
+			MyVideos = 0x0e,
+			NetworkShortcuts = 0x13,
+			Fonts = 0x14,
+			CommonStartMenu = 0x16,
+			CommonPrograms = 0x17,
+			CommonStartup = 0x18,
+			CommonDesktopDirectory = 0x19,
+			PrinterShortcuts = 0x1b,
+			Windows = 0x24,
+			UserProfile = 0x28,
+			SystemX86 = 0x29,
+			ProgramFilesX86 = 0x2a,
+			CommonProgramFilesX86 = 0x2c,
+			CommonTemplates = 0x2d,
+			CommonDocuments = 0x2e,
+			CommonAdminTools = 0x2f,
+			AdminTools = 0x30,
+			CommonMusic = 0x35,
+			CommonPictures = 0x36,
+			CommonVideos = 0x37,
+			Resources = 0x38,
+			LocalizedResources = 0x39,
+			CommonOemLinks = 0x3a,
+			CDBurning = 0x3b,
+#endif
+		}
+
+#if NET_4_0
+		public
+#endif
+		enum SpecialFolderOption {
+			None = 0,
+			DoNotVerify = 0x4000,
+			Create = 0x8000
 		}
 
 		/// <summary>
@@ -407,6 +442,14 @@ namespace System {
 		/// </summary>
 		public static string GetFolderPath (SpecialFolder folder)
 		{
+			return GetFolderPath (folder, SpecialFolderOption.None);
+		}
+#if NET_4_0
+		[MonoTODO ("Figure out the folder path for all the new values in SpecialFolder. Use the 'option' argument.")]
+		public
+#endif
+		static string GetFolderPath(SpecialFolder folder, SpecialFolderOption option)
+		{
 			string dir = null;
 
 			if (Environment.IsRunningOnWindows) {
@@ -659,11 +702,30 @@ namespace System {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
 
-		[MonoTODO ("Not implemented")]
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
 		{
 			throw new NotImplementedException ();
+		}
+#endif
+#if NET_4_0
+		[SecurityCritical]
+		public static void FailFast (string message, Exception exception)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static bool Is64BitOperatingSystem {
+			get { return IntPtr.Size == 8; } // FIXME: is this good enough?
+		}
+
+		public static bool Is64BitProcess {
+			get { return Is64BitOperatingSystem; }
+		}
+
+		[MonoTODO ("Add an internal call for this. Returns 4096 by now.")]
+		public static int SystemPageSize {
+			get { return 4096; }
 		}
 #endif
 
