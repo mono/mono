@@ -1,3 +1,8 @@
+2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* icall-def.h:
+	* icall.c: add internal call that returns the system page size.
+
 2010-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (mono_method_desc_search_in_image): Handle short names like
