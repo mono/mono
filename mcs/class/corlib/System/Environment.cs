@@ -723,9 +723,8 @@ namespace System {
 			get { return Is64BitOperatingSystem; }
 		}
 
-		[MonoTODO ("Add an internal call for this. Returns 4096 by now.")]
 		public static int SystemPageSize {
-			get { return 4096; }
+			get { return GetPageSize (); }
 		}
 #endif
 
@@ -771,6 +770,9 @@ namespace System {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static string internalGetHome ();
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static int GetPageSize ();
 
 		static internal bool IsUnix {
 			get {

@@ -1,3 +1,6 @@
+2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Environment.cs: implement SystemPageSize.
 
 Fri Feb 12 18:38:01 CET 2010 Paolo Molaro <lupus@ximian.com>
 
