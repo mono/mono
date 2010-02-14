@@ -481,29 +481,29 @@ namespace MonoTests.System.Collections.Generic
 		public void Enumerator_Current ()
 		{
 			var e1 = new SortedDictionary<int,int>.Enumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e1.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e1.Current; GC.KeepAlive (x);}));
 
 			var d = new SortedDictionary<int,int> ();
 			var e2 = d.GetEnumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x);}));
 			e2.MoveNext ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x);}));
 			e2.Dispose ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x);}));
 
 			var e3 = ((IEnumerable<KeyValuePair<int,int>>) d).GetEnumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x);}));
 			e3.MoveNext ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x);}));
 			e3.Dispose ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x);}));
 
 			var e4 = ((IEnumerable) d).GetEnumerator ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x);}));
 			e4.MoveNext ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x);}));
 			((IDisposable) e4).Dispose ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x);}));
 		}
 
 		[Test]
@@ -511,29 +511,29 @@ namespace MonoTests.System.Collections.Generic
 		public void KeyEnumerator_Current ()
 		{
 			var e1 = new SortedDictionary<int,int>.KeyCollection.Enumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e1.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e1.Current; GC.KeepAlive (x); }));
 
 			var d = new SortedDictionary<int,int> ().Keys;
 			var e2 = d.GetEnumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x); }));
 			e2.MoveNext ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x); }));
 			e2.Dispose ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x); }));
 
 			var e3 = ((IEnumerable<int>) d).GetEnumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x); }));
 			e3.MoveNext ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x); }));
 			e3.Dispose ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x); }));
 
 			var e4 = ((IEnumerable) d).GetEnumerator ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x); }));
 			e4.MoveNext ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x); }));
 			((IDisposable) e4).Dispose ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x); }));
 		}
 
 		[Test]
@@ -541,29 +541,29 @@ namespace MonoTests.System.Collections.Generic
 		public void ValueEnumerator_Current ()
 		{
 			var e1 = new SortedDictionary<int,int>.ValueCollection.Enumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e1.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e1.Current; GC.KeepAlive (x); }));
 
 			var d = new SortedDictionary<int,int> ().Values;
 			var e2 = d.GetEnumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x); }));
 			e2.MoveNext ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x); }));
 			e2.Dispose ();
-			Assert.IsFalse (Throws (delegate { var x = e2.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e2.Current; GC.KeepAlive (x); }));
 
 			var e3 = ((IEnumerable<int>) d).GetEnumerator ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x); }));
 			e3.MoveNext ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x); }));
 			e3.Dispose ();
-			Assert.IsFalse (Throws (delegate { var x = e3.Current; }));
+			Assert.IsFalse (Throws (delegate { var x = e3.Current; GC.KeepAlive (x); }));
 
 			var e4 = ((IEnumerable) d).GetEnumerator ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x); }));
 			e4.MoveNext ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x); }));
 			((IDisposable) e4).Dispose ();
-			Assert.IsTrue (Throws (delegate { var x = e4.Current; }));
+			Assert.IsTrue (Throws (delegate { var x = e4.Current; GC.KeepAlive (x); }));
 		}
 	}
 
