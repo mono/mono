@@ -1,5 +1,9 @@
 2010-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (SIG_HANDLER_SIGNATURE): Fix the windows build.
+
+2010-02-15  Zoltan Varga  <vargaz@gmail.com>
+
 	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline_full): Emit
 	xdebug info for these.
 
