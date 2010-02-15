@@ -31,7 +31,7 @@ using System.Runtime.InteropServices;
 
 #if NET_4_0
 
-namespace System.Runtime.CompilerServices {
+namespace System.Runtime {
 
 	[AttributeUsage (AttributeTargets.Constructor|AttributeTargets.Method, AllowMultiple=false, Inherited = false)] 
 	public sealed class TargetedPatchingOptOutAttribute : Attribute
