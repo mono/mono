@@ -89,7 +89,7 @@ namespace Mono.CSharp {
 		{
 			return ctx.Report.SetPrinter (report_printer);
 		}				
-		
+
 		/// <summary>
 		///   Optional initialization for the Evaluator.
 		/// </summary>
@@ -1167,14 +1167,14 @@ namespace Mono.CSharp {
 			CloneContext cc = new CloneContext ();
 			Expression clone = source.Clone (cc);
 
-			var old_printer = Evaluator.SetPrinter (new StreamReportPrinter (TextWriter.Null));
-			clone = clone.Resolve (ec);
-			if (clone == null){
-				//
-				// A useful feature for the REPL: if we can resolve the expression
-				// as a type, Describe the type;
-				//
-				if (Evaluator.DescribeTypeExpressions){
+			//
+			// A useful feature for the REPL: if we can resolve the expression
+			// as a type, Describe the type;
+			//
+			if (Evaluator.DescribeTypeExpressions){
+				var old_printer = Evaluator.SetPrinter (new StreamReportPrinter (TextWriter.Null));
+				clone = clone.Resolve (ec);
+				if (clone == null){
 					clone = source.Clone (cc);
 					clone = clone.Resolve (ec, ResolveFlags.Type);
 					if (clone == null){
@@ -1183,16 +1183,17 @@ namespace Mono.CSharp {
 						clone = clone.Resolve (ec);
 						return null;
 					}
-
+					
 					Arguments args = new Arguments (1);
 					args.Add (new Argument (new TypeOf (source, Location)));
 					source = new Invocation (new SimpleName ("Describe", Location), args).Resolve (ec);
-				} else {
-					Evaluator.SetPrinter (old_printer);
-					return null;
 				}
+				Evaluator.SetPrinter (old_printer);
+			} else {
+				clone = clone.Resolve (ec);
+				if (clone == null)
+					return null;
 			}
-			Evaluator.SetPrinter (old_printer);
 	
 			// This means its really a statement.
 			if (clone.Type == TypeManager.void_type){

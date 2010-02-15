@@ -454,7 +454,7 @@ namespace Mono.CSharp {
 			this.printer = printer;
 			return old;
 		}
-		
+
 		public int WarningLevel {
 			get {
 				return warning_level;
@@ -628,8 +628,7 @@ namespace Mono.CSharp {
 	//
 	// Generic base for any message writer
 	//
-	public abstract class ReportPrinter
-	{
+	public abstract class ReportPrinter {
 		/// <summary>  
 		///   Whether to dump a stack trace on errors. 
 		/// </summary>
