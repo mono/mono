@@ -1,3 +1,8 @@
+2010-02-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_get_vtable_trampoline): Make this take a 'slot_index' argument,
+	not used yet.
+
 2010-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (load_profile_files): Update after the profiler changes.
