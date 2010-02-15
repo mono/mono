@@ -1,5 +1,8 @@
 2010-02-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (common_call_trampoline): Use mini_jit_info_table_find ()
+	in a few places.
+
 	* mini.c (mini_get_vtable_trampoline): Make this take a 'slot_index' argument,
 	not used yet.
 
