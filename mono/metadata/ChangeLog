@@ -1,3 +1,8 @@
+2010-02-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c: Instead of using one vtable trampoline, allow the JIT to use one
+	vtable trampoline per vtable slot index. Not used yet.
+
 2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* icall-def.h:
