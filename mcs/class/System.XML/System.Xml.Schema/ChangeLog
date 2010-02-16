@@ -1,3 +1,8 @@
+2010-02-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaComplexType.cs : in modern .NET, xs:anyType has the
+	  appropriate qname.
+
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlAtomicValue.cs: handle Decimal here to process xs:decimal as
