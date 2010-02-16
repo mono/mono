@@ -903,8 +903,13 @@ namespace System.IO
 
 		protected override void Dispose (bool disposing)
 		{
+			Exception exc = null;
 			if (handle != MonoIO.InvalidHandle) {
-				FlushBuffer ();
+				try {
+					FlushBuffer ();
+				} catch (Exception e) {
+					exc = e;
+				}
 
 				if (owner) {
 					MonoIOError error;
@@ -934,6 +939,8 @@ namespace System.IO
 				buf = null;
 				GC.SuppressFinalize (this);
 			}
+			if (exc != null)
+				throw exc;
 		}
 
 #if !NET_2_1
