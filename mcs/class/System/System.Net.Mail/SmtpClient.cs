@@ -123,10 +123,11 @@ namespace System.Net.Mail {
 			if (cfg != null) {
 				this.host = cfg.Network.Host;
 				this.port = cfg.Network.Port;
+#if false
 				TargetName = cfg.Network.TargetName;
 				if (this.TargetName == null)
 					TargetName = "SMTPSVC/" + (host != null ? host : "");
-
+#endif
 				
 				if (cfg.Network.UserName != null) {
 					string password = String.Empty;
@@ -679,9 +680,10 @@ namespace System.Net.Mail {
 			SendHeader ("Priority", v);
 			if (message.Sender != null)
 				SendHeader ("Sender", EncodeAddress (message.Sender));
+#if false
 			if (message.ReplyToList.Count > 0)
 				SendHeader ("ReplyTo", EncodeAddresses (message.ReplyToList));
-
+#endif
 #if NET_4_0
 			foreach (string s in message.Headers.AllKeys)
 				SendHeader (s, ContentType.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
