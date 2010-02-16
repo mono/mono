@@ -123,6 +123,12 @@ namespace System.Net.Mail {
 			if (cfg != null) {
 				this.host = cfg.Network.Host;
 				this.port = cfg.Network.Port;
+#if false
+				TargetName = cfg.Network.TargetName;
+				if (this.TargetName == null)
+					TargetName = "SMTPSVC/" + (host != null ? host : "");
+#endif
+				
 				if (cfg.Network.UserName != null) {
 					string password = String.Empty;
 
@@ -158,6 +164,11 @@ namespace System.Net.Mail {
 			}
 		}
 #endif
+
+#if NET_4_0
+		public
+#endif
+		string TargetName { get; set; }
 
 		public ICredentialsByHost Credentials {
 			get { return credentials; }
@@ -669,12 +680,18 @@ namespace System.Net.Mail {
 			SendHeader ("Priority", v);
 			if (message.Sender != null)
 				SendHeader ("Sender", EncodeAddress (message.Sender));
-			if (message.ReplyTo != null)
-				SendHeader ("ReplyTo", EncodeAddress (message.ReplyTo));
-			
+#if false
+			if (message.ReplyToList.Count > 0)
+				SendHeader ("ReplyTo", EncodeAddresses (message.ReplyToList));
+#endif
+#if NET_4_0
+			foreach (string s in message.Headers.AllKeys)
+				SendHeader (s, ContentType.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
+#else
 			foreach (string s in message.Headers.AllKeys)
 				SendHeader (s, message.Headers [s]);
-
+#endif
+	
 			AddPriorityHeader (message);
 
 			boundaryIndex = 0;
@@ -881,8 +898,10 @@ try {
 					alt_boundary = GenerateBoundary ();
 					contentType = new ContentType ("multipart/related");
 					contentType.Boundary = alt_boundary;
-					contentType.Parameters ["type"] = "application/octet-stream";
+					
+					contentType.Parameters ["type"] = av.ContentType.ToString ();
 					StartSection (inner_boundary, contentType);
+					StartSection (alt_boundary, av.ContentType, av.TransferEncoding);
 				} else {
 					contentType = new ContentType (av.ContentType.ToString ());
 					StartSection (inner_boundary, contentType, av.TransferEncoding);
@@ -930,8 +949,7 @@ try {
 		private void SendLinkedResources (MailMessage message, LinkedResourceCollection resources, string boundary)
 		{
 			foreach (LinkedResource lr in resources) {
-				ContentType contentType = new ContentType (lr.ContentType.ToString ());
-				StartSection (boundary, contentType, lr.TransferEncoding);
+				StartSection (boundary, lr.ContentType, lr.TransferEncoding, lr);
 
 				switch (lr.TransferEncoding) {
 				case TransferEncoding.Base64:
@@ -1018,6 +1036,18 @@ try {
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());
 			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
+			SendData (string.Empty);
+		}
+
+		private void StartSection(string section, ContentType sectionContentType, TransferEncoding transferEncoding, LinkedResource lr)
+		{
+			SendData (String.Format("--{0}", section));
+			SendHeader ("content-type", sectionContentType.ToString ());
+			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
+
+			if (lr.ContentId != null && lr.ContentId.Length > 0)
+				SendHeader("content-ID", "<" + lr.ContentId + ">");
+
 			SendData (string.Empty);
 		}
 

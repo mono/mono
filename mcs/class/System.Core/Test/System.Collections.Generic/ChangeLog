@@ -1,3 +1,8 @@
+2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* System.Collections.Generic/HashSetTest.cs: fix and test for bug
+	#579791.  Patch from Tiaan Geldenhuys.
+
 2009-08-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* HashSetTest.cs: Fix warnings.

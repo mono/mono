@@ -59,7 +59,7 @@ namespace System.Web.Services.Protocols
 		public SoapDocumentationHandler (Type type, HttpContext context): base (type)
 		{
 			_url = context.Request.Url.ToString();
-			int i = _url.LastIndexOf ('?');
+			int i = _url.IndexOf ('?');
 			if (i != -1) _url = _url.Substring (0,i);
 			_typeStubInfo = (SoapTypeStubInfo) TypeStubManager.GetTypeStub (ServiceType, "Soap");
 			
