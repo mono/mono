@@ -914,8 +914,13 @@ namespace System.IO
 		protected virtual void Dispose (bool disposing)
 #endif
 		{
+			Exception exc = null;
 			if (handle != MonoIO.InvalidHandle) {
-				FlushBuffer ();
+				try {
+					FlushBuffer ();
+				} catch (Exception e) {
+					exc = e;
+				}
 
 				if (owner) {
 					MonoIOError error;
@@ -937,6 +942,8 @@ namespace System.IO
 			}
 			if (disposing)
 				GC.SuppressFinalize (this);
+ 			if (exc != null)
+ 				throw exc;
 		}
 
 #if NET_2_0 && !NET_2_1
