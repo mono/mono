@@ -49,6 +49,7 @@ namespace System.Net {
 		bool allow_read_buffering = true;
 		WebRequest request;
 		object locker;
+		object user_token;
 
 		public WebClient ()
 		{
@@ -148,8 +149,9 @@ namespace System.Net {
 		public event UploadStringCompletedEventHandler UploadStringCompleted;
 		public event WriteStreamClosedEventHandler WriteStreamClosed;
 
-		WebRequest SetupRequest (Uri uri, string method)
+		WebRequest SetupRequest (Uri uri, string method, object userToken)
 		{
+			user_token = userToken;
 			WebRequest request = GetWebRequest (uri);
 			request.Method = DetermineMethod (uri, method);
 			foreach (string header in Headers.AllKeys)
@@ -223,7 +225,7 @@ namespace System.Net {
 				SetBusy ();
 
 				try {
-					request = SetupRequest (address, "GET");
+					request = SetupRequest (address, "GET", userToken);
 					request.BeginGetResponse (new AsyncCallback (DownloadStringAsyncCallback), new CallbackData (userToken));
 				}
 				catch (Exception e) {
@@ -278,7 +280,7 @@ namespace System.Net {
 				SetBusy ();
 
 				try {
-					request = SetupRequest (address, "GET");
+					request = SetupRequest (address, "GET", userToken);
 					request.BeginGetResponse (new AsyncCallback (OpenReadAsyncCallback), new CallbackData (userToken));
 				}
 				catch (Exception e) {
@@ -334,7 +336,7 @@ namespace System.Net {
 				SetBusy ();
 
 				try {
-					request = SetupRequest (address, method);
+					request = SetupRequest (address, method, userToken);
 					request.BeginGetRequestStream (new AsyncCallback (OpenWriteAsyncCallback), new CallbackData (userToken));
 				}
 				catch (Exception e) {
@@ -421,7 +423,7 @@ namespace System.Net {
 				SetBusy ();
 
 				try {
-					request = SetupRequest (address, method);
+					request = SetupRequest (address, method, userToken);
 					request.BeginGetRequestStream (new AsyncCallback (UploadStringRequestAsyncCallback), new CallbackData (userToken, encoding.GetBytes (data)));
 				}
 				catch (Exception e) {
@@ -541,8 +543,8 @@ namespace System.Net {
 
 			WebRequest request = WebRequest.Create (uri);
 
-			request.SetupProgressDelegate (delegate (long read, long length, object state) {
-				OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, state));
+			request.SetupProgressDelegate (delegate (long read, long length) {
+				OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, user_token));
 			});
 			return request;
 		}

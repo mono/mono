@@ -132,7 +132,7 @@ namespace System.Net {
 			return true;
 		}
 
-		internal void SetupProgressDelegate (Action<long,long,object> progress)
+		internal void SetupProgressDelegate (Action<long,long> progress)
 		{
 			FieldInfo fi = GetType ().GetField ("progress", BindingFlags.Instance | BindingFlags.NonPublic);
 			if (fi != null)

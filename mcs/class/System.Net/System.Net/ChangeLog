@@ -1,3 +1,9 @@
+2010-02-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebClient_2_1.cs: Keep a copy of 'userToken' since we need to
+	supply it when calling OnDownloadProgressChanged
+	* WebRequest_2_1.cs (SetupProgressDelegate): Simplify signature
+
 2010-01-29  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WebClient_2_1.cs: Ensure the WriteStreamClosed event is emitted on
