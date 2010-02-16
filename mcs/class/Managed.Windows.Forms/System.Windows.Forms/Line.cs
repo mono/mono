@@ -180,8 +180,12 @@ namespace System.Windows.Forms
 
 		internal string Text {
 			get { return text.ToString(); }
-			set { 
-				text = new StringBuilder(value, value.Length > DEFAULT_TEXT_LEN ? value.Length : DEFAULT_TEXT_LEN);
+			set {
+				int prev_length = text.Length;
+				text = new StringBuilder(value, value.Length > DEFAULT_TEXT_LEN ? value.Length + 1 : DEFAULT_TEXT_LEN);
+
+				if (text.Length > prev_length)
+					Grow (text.Length - prev_length);
 			}
 		}
 		

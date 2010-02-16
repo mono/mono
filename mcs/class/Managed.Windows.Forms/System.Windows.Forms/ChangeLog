@@ -1,3 +1,10 @@
+2010-02-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* Line.cs: When setting the Text property, if the new text is larger
+	than the previous one, call Grow to update our internal 'widths'
+	array, to be properly in sync with the new text.
+	Fixes #569530.
+
 2010-02-10  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: When calculating the layout for the tab pages, take
