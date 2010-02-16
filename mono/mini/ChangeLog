@@ -1,3 +1,8 @@
+2010-02-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c aot-compiler.c aot-runtime.c unwind.c: Finish support
+	LLVM+AOT+exceptions, not enabled yet.
+
 2010-02-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (SIG_HANDLER_SIGNATURE): Fix the windows build.
