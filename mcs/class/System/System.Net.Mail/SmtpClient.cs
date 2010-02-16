@@ -896,8 +896,10 @@ try {
 					alt_boundary = GenerateBoundary ();
 					contentType = new ContentType ("multipart/related");
 					contentType.Boundary = alt_boundary;
-					contentType.Parameters ["type"] = "application/octet-stream";
+					
+					contentType.Parameters ["type"] = av.ContentType.ToString ();
 					StartSection (inner_boundary, contentType);
+					StartSection (alt_boundary, av.ContentType, av.TransferEncoding);
 				} else {
 					contentType = new ContentType (av.ContentType.ToString ());
 					StartSection (inner_boundary, contentType, av.TransferEncoding);
@@ -945,8 +947,7 @@ try {
 		private void SendLinkedResources (MailMessage message, LinkedResourceCollection resources, string boundary)
 		{
 			foreach (LinkedResource lr in resources) {
-				ContentType contentType = new ContentType (lr.ContentType.ToString ());
-				StartSection (boundary, contentType, lr.TransferEncoding);
+				StartSection (boundary, lr.ContentType, lr.TransferEncoding, lr);
 
 				switch (lr.TransferEncoding) {
 				case TransferEncoding.Base64:
@@ -1033,6 +1034,18 @@ try {
 			SendData (String.Format ("--{0}", section));
 			SendHeader ("content-type", sectionContentType.ToString ());
 			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
+			SendData (string.Empty);
+		}
+
+		private void StartSection(string section, ContentType sectionContentType, TransferEncoding transferEncoding, LinkedResource lr)
+		{
+			SendData (String.Format("--{0}", section));
+			SendHeader ("content-type", sectionContentType.ToString ());
+			SendHeader ("content-transfer-encoding", GetTransferEncodingName (transferEncoding));
+
+			if (lr.ContentId != null && lr.ContentId.Length > 0)
+				SendHeader("content-ID", "<" + lr.ContentId + ">");
+
 			SendData (string.Empty);
 		}
 

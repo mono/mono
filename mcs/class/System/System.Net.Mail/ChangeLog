@@ -1,3 +1,8 @@
+2010-02-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SmtpClient.cs: generate correct MIME when there are text and html
+	linked resources. Fixes bug #579984. Patch by Ásgeir Halldórsson.
+
 2010-01-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SmtpClient.cs: rethrow inner exception so that
