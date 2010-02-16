@@ -1,3 +1,9 @@
+2010-02-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* StreamWriter.cs:
+	* FileStream.cs: if flushing fails when disposing the stream, make
+	sure it is closed before throwing the exception. Fixes bug #579146.
+
 2009-12-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* File.cs (ReadAllBytes): We cannot assume that a single call to
