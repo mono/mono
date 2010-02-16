@@ -1,3 +1,9 @@
+2010-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-profiler-aot.c (output_image): Emit method names instead of tokens so
+	the info can be used for different versions of the same assembly. Don't append
+	the assembly guid to the file names.
+
 2010-01-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-profiler-logging.c (_ProfilerFileWriteBuffer): Use MONO_ZERO_LEN_ARRAY.

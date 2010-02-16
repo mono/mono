@@ -1113,6 +1113,32 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			cfg->sig_cookie += sizeof (gpointer);
 	}
 
+	/* Allocate these first so they have a small offset, OP_SEQ_POINT depends on this */
+	if (cfg->arch.seq_point_info_var) {
+		MonoInst *ins;
+
+		ins = cfg->arch.seq_point_info_var;
+
+		size = 4;
+		align = 4;
+		offset += align - 1;
+		offset &= ~(align - 1);
+		ins->opcode = OP_REGOFFSET;
+		ins->inst_basereg = frame_reg;
+		ins->inst_offset = offset;
+		offset += size;
+
+		ins = cfg->arch.ss_trigger_page_var;
+		size = 4;
+		align = 4;
+		offset += align - 1;
+		offset &= ~(align - 1);
+		ins->opcode = OP_REGOFFSET;
+		ins->inst_basereg = frame_reg;
+		ins->inst_offset = offset;
+		offset += size;
+	}
+
 	curinst = cfg->locals_start;
 	for (i = curinst; i < cfg->num_varinfo; ++i) {
 		inst = cfg->varinfo [i];
