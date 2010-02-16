@@ -1,3 +1,12 @@
+2010-02-16 Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* CustomizableLocalFileSettingsProvider.cs: When saving the
+	properties, ignore the properties marked with
+	ApplicationScopedSettingAttribute, as they are not serialized in .net 
+	by FileSettingsProvider (the default class used to save the config,
+	and the one using the class we are modifying).
+	Fixes #468658.
+
 2010-02-12 Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* CustomizableLocalFileSettingsProvider.cs: The name of the child

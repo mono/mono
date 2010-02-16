@@ -627,6 +627,10 @@ namespace System.Configuration
 				foreach (SettingsPropertyValue value in collection) {
 					if (checkUserLevel && value.Property.Attributes.Contains (typeof (SettingsManageabilityAttribute)) != isRoaming)
 						continue;
+					// The default impl does not save the ApplicationScopedSetting properties
+					if (value.Property.Attributes.Contains (typeof (ApplicationScopedSettingAttribute)))
+						continue;
+
 					hasChanges = true;
 					SettingElement element = userSection.Settings.Get (value.Name);
 					if (element == null) {
