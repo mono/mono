@@ -231,7 +231,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class SimpleMemberName
+	public class SimpleMemberName
 	{
 		public string Value;
 		public Location Location;
@@ -1411,7 +1411,7 @@ namespace Mono.CSharp {
 							--total;
 							continue;
 						}
-						if (constraints_at.TypeParameter == name.Name) {
+						if (constraints_at.TypeParameter.Value == name.Name) {
 							constraints = constraints_at;
 							constraints_list.RemoveAt(ii);
 							break;
@@ -1434,7 +1434,7 @@ namespace Mono.CSharp {
 			if (constraints_list != null && constraints_list.Count > 0) {
 				foreach (Constraints constraint in constraints_list) {
 					Report.Error(699, constraint.Location, "`{0}': A constraint references nonexistent type parameter `{1}'", 
-						GetSignatureForError (), constraint.TypeParameter);
+						GetSignatureForError (), constraint.TypeParameter.Value);
 				}
 			}
 		}

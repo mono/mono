@@ -16,7 +16,6 @@ using System.Reflection.Emit;
 using System.Globalization;
 using System.Collections.Generic;
 using System.Text;
-using System.Text.RegularExpressions;
 	
 namespace Mono.CSharp {
 
@@ -25,10 +24,6 @@ namespace Mono.CSharp {
 	///   The type parameter can come from a generic type definition or from reflection.
 	/// </summary>
 	public abstract class GenericConstraints {
-		public abstract string TypeParameter {
-			get;
-		}
-
 		public abstract GenericParameterAttributes Attributes {
 			get;
 		}
@@ -130,7 +125,6 @@ namespace Mono.CSharp {
 		Type base_type;
 		Type class_constraint;
 		Type[] iface_constraints;
-		string name;
 
 		public static GenericConstraints GetConstraints (Type t)
 		{
@@ -143,7 +137,6 @@ namespace Mono.CSharp {
 
 		private ReflectionConstraints (string name, Type[] constraints, GenericParameterAttributes attrs)
 		{
-			this.name = name;
 			this.attrs = attrs;
 
 			int interface_constraints_pos = 0;
@@ -171,11 +164,6 @@ namespace Mono.CSharp {
 			} else {
 				iface_constraints = Type.EmptyTypes;
 			}
-		}
-
-		public override string TypeParameter
-		{
-			get { return name; }
 		}
 
 		public override GenericParameterAttributes Attributes
@@ -209,43 +197,39 @@ namespace Mono.CSharp {
 		Contravariant	= -1
 	}
 
+	[Flags]
 	public enum SpecialConstraint
 	{
-		Constructor,
-		ReferenceType,
-		ValueType
+		None		= 0,
+		Constructor = 1 << 2,
+		Class		= 1 << 3,
+		Struct		= 1 << 4
 	}
 
-	/// <summary>
-	///   Tracks the constraints for a type parameter from a generic type definition.
-	/// </summary>
-	public class Constraints : GenericConstraints {
-		string name;
-		List<object> constraints;
-		Location loc;
-		
-		//
-		// name is the identifier, constraints is an arraylist of
-		// Expressions (with types) or `true' for the constructor constraint.
-		// 
-		public Constraints (string name, List<object> constraints, Location loc)
+	public class SpecialContraintExpr : FullNamedExpression
+	{
+		public SpecialContraintExpr (SpecialConstraint constraint, Location loc)
 		{
-			this.name = name;
-			this.constraints = constraints;
 			this.loc = loc;
+			this.Constraint = constraint;
 		}
 
-		public override string TypeParameter {
-			get {
-				return name;
-			}
-		}
+		public SpecialConstraint Constraint { get; private set; }
 
-		public Constraints Clone ()
+		protected override Expression DoResolve (ResolveContext rc)
 		{
-			return new Constraints (name, constraints, loc);
+			throw new NotImplementedException ();
 		}
+	}
 
+	//
+	// A set of parsed constraints for a type parameter
+	//
+	public class Constraints : GenericConstraints
+	{
+		SimpleMemberName tparam;
+		List<FullNamedExpression> constraints;
+		Location loc;
 		GenericParameterAttributes attrs;
 		TypeExpr class_constraint;
 		List<TypeExpr> iface_constraints;
@@ -256,6 +240,32 @@ namespace Mono.CSharp {
 		Type effective_base_type;
 		bool resolved;
 		bool resolved_types;
+		
+		//
+		// name is the identifier, constraints is an arraylist of
+		// Expressions (with types) or `true' for the constructor constraint.
+		// 
+		public Constraints (SimpleMemberName tparam, List<FullNamedExpression> constraints, Location loc)
+		{
+			this.tparam = tparam;
+			this.constraints = constraints;
+			this.loc = loc;
+		}
+
+		#region Properties
+
+		public SimpleMemberName TypeParameter {
+			get {
+				return tparam;
+			}
+		}
+
+		#endregion
+
+		public Constraints Clone ()
+		{
+			return new Constraints (tparam, constraints, loc);
+		}
 
 		/// <summary>
 		///   Resolve the constraints - but only resolve things into Expression's, not
@@ -272,34 +282,19 @@ namespace Mono.CSharp {
 			iface_constraints = new List<TypeExpr> (2);	// TODO: Too expensive allocation
 			type_param_constraints = new List<TypeExpr> ();
 
-			foreach (object obj in constraints) {
-				if (HasConstructorConstraint) {
-					Report.Error (401, loc,
-						      "The new() constraint must be the last constraint specified");
-					return false;
-				}
+			foreach (var obj in constraints) {
 
-				if (obj is SpecialConstraint) {
-					SpecialConstraint sc = (SpecialConstraint) obj;
+				if (obj is SpecialContraintExpr) {
+					SpecialConstraint sc = ((SpecialContraintExpr) obj).Constraint;
 
 					if (sc == SpecialConstraint.Constructor) {
 						if (!HasValueTypeConstraint) {
 							attrs |= GenericParameterAttributes.DefaultConstructorConstraint;
 							continue;
 						}
-
-						Report.Error (451, loc, "The `new()' constraint " +
-							"cannot be used with the `struct' constraint");
-						return false;
 					}
 
-					if ((num_constraints > 0) || HasReferenceTypeConstraint || HasValueTypeConstraint) {
-						Report.Error (449, loc, "The `class' or `struct' " +
-							      "constraint must be the first constraint specified");
-						return false;
-					}
-
-					if (sc == SpecialConstraint.ReferenceType)
+					if (sc == SpecialConstraint.Class)
 						attrs |= GenericParameterAttributes.ReferenceTypeConstraint;
 					else
 						attrs |= GenericParameterAttributes.NotNullableValueTypeConstraint;
@@ -307,13 +302,13 @@ namespace Mono.CSharp {
 				}
 
 				int errors = Report.Errors;
-				FullNamedExpression fn = ((Expression) obj).ResolveAsTypeStep (ec, false);
+				FullNamedExpression fn = obj.ResolveAsTypeStep (ec, false);
 
 				if (fn == null) {
 					if (errors != Report.Errors)
 						return false;
 
-					NamespaceEntry.Error_NamespaceNotFound (loc, ((Expression)obj).GetSignatureForError (), Report);
+					NamespaceEntry.Error_NamespaceNotFound (loc, obj.GetSignatureForError (), Report);
 					return false;
 				}
 
@@ -378,7 +373,7 @@ namespace Mono.CSharp {
 					Report.Error (405, loc,
 						      "Duplicate constraint `{0}' for type " +
 						      "parameter `{1}'.", iface_constraint.GetSignatureForError (),
-						      name);
+						      tparam.Value);
 					return false;
 				}
 
@@ -392,7 +387,7 @@ namespace Mono.CSharp {
 
 					Report.Error (405, loc,
 						      "Duplicate constraint `{0}' for type " +
-						      "parameter `{1}'.", expr.GetSignatureForError (), name);
+						      "parameter `{1}'.", expr.GetSignatureForError (), tparam.Value);
 					return false;
 				}
 
@@ -464,7 +459,7 @@ namespace Mono.CSharp {
 			if (constraints.HasValueTypeConstraint) {
 				Report.Error (456, loc,
 					"Type parameter `{0}' has the `struct' constraint, so it cannot be used as a constraint for `{1}'",
-					tparam.Name, name);
+					tparam.Name, this.tparam.Value);
 				return false;
 			}
 
@@ -484,7 +479,7 @@ namespace Mono.CSharp {
 						!Convert.ImplicitReferenceConversionExists (e2, prevConstraint.Type)) {
 						Report.Error (455, loc,
 							"Type parameter `{0}' inherits conflicting constraints `{1}' and `{2}'",
-							name, TypeManager.CSharpName (prevConstraint.Type), TypeManager.CSharpName (t2));
+							this.tparam.Value, TypeManager.CSharpName (prevConstraint.Type), TypeManager.CSharpName (t2));
 						return false;
 					}
 				}
@@ -1135,10 +1130,6 @@ namespace Mono.CSharp {
 				}
 
 				return t;
-			}
-
-			public override string TypeParameter {
-				get { return gc.TypeParameter; }
 			}
 
 			public override GenericParameterAttributes Attributes {

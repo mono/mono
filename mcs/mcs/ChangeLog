@@ -1,3 +1,8 @@
+2010-02-17  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, field.cs, decl.cs, cs-parser.jay: Simplify special
+	constraint parsing.
+
 2010-02-14  Miguel de Icaza  <miguel@novell.com>
 
 	* eval.cs: Do not do the report printer dance unless the user has

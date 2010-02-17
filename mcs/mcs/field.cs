@@ -291,9 +291,6 @@ namespace Mono.CSharp
 			Expression size_expr, Attributes attrs, Location loc):
 			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), attrs)
 		{
-			if (RootContext.Version < LanguageVersion.ISO_2)
-				Report.FeatureIsNotAvailable (loc, "fixed size buffers");
-
 			initializer = new ConstInitializer (this, size_expr);
 		}
 

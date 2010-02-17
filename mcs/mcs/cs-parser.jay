@@ -1107,6 +1107,9 @@ field_declaration
 			foreach (VariableDeclaration var in (List<VariableDeclaration>) $5) {
 				FixedField field = new FixedField (current_class, type, mod, var.identifier,
 					var.GetInitializer (type), (Attributes) $1, var.Location);
+					
+				if (RootContext.Version < LanguageVersion.ISO_2)
+					Report.FeatureIsNotAvailable (GetLocation ($3), "fixed size buffers");
 
 				if (RootContext.Documentation != null) {
 					field.DocComment = Lexer.consume_doc_comment ();
@@ -4267,23 +4270,28 @@ class_base
 opt_type_parameter_constraints_clauses
 	: /* empty */		{ $$ = null; }
 	| type_parameter_constraints_clauses 
-	  { $$ = $1; }
+	  {
+		$$ = $1;
+	  }
 	;
 
 type_parameter_constraints_clauses
-	: type_parameter_constraints_clause {
+	: type_parameter_constraints_clause
+	  {
 		var constraints = new List<Constraints> (1);
 		constraints.Add ((Constraints) $1);
 		$$ = constraints;
 	  }
-	| type_parameter_constraints_clauses type_parameter_constraints_clause {
+	| type_parameter_constraints_clauses type_parameter_constraints_clause
+	  {
 		var constraints = (List<Constraints>) $1;
 		Constraints new_constraint = (Constraints)$2;
 
 		foreach (Constraints c in constraints) {
-			if (new_constraint.TypeParameter == c.TypeParameter) {
-				Report.Error (409, new_constraint.Location, "A constraint clause has already been specified for type parameter `{0}'",
-					new_constraint.TypeParameter);
+			if (new_constraint.TypeParameter.Value == c.TypeParameter.Value) {
+				Report.Error (409, new_constraint.Location,
+					"A constraint clause has already been specified for type parameter `{0}'",
+					new_constraint.TypeParameter.Value);
 			}
 		}
 
@@ -4293,36 +4301,61 @@ type_parameter_constraints_clauses
 	; 
 
 type_parameter_constraints_clause
-	: WHERE IDENTIFIER COLON type_parameter_constraints {
+	: WHERE IDENTIFIER COLON type_parameter_constraints
+	  {
 		var lt = (Tokenizer.LocatedToken) $2;
-		$$ = new Constraints (lt.Value, (List<object>) $4, lt.Location);
+		$$ = new Constraints (new SimpleMemberName (lt.Value, lt.Location), (List<FullNamedExpression>) $4, GetLocation ($1));
 	  }
 	; 
 
 type_parameter_constraints
-	: type_parameter_constraint {
-		var constraints = new List<object> (1);
-		constraints.Add ($1);
+	: type_parameter_constraint
+	  {
+		var constraints = new List<FullNamedExpression> (1);
+		constraints.Add ((FullNamedExpression) $1);
 		$$ = constraints;
 	  }
-	| type_parameter_constraints COMMA type_parameter_constraint {
-		var constraints = (List<object>) $1;
+	| type_parameter_constraints COMMA type_parameter_constraint
+	  {
+		var constraints = (List<FullNamedExpression>) $1;
+		var prev = constraints [constraints.Count - 1] as SpecialContraintExpr;
+		if (prev != null && (prev.Constraint & SpecialConstraint.Constructor) != 0) {			
+			Report.Error (401, GetLocation ($2), "The `new()' constraint must be the last constraint specified");
+		}
+		
+		prev = $3 as SpecialContraintExpr;
+		if (prev != null) {
+			if ((prev.Constraint & (SpecialConstraint.Class | SpecialConstraint.Struct)) != 0) {
+				Report.Error (449, prev.Location, "The `class' or `struct' constraint must be the first constraint specified");			
+			} else {
+			 	prev = constraints [0] as SpecialContraintExpr;
+			 	if (prev != null && (prev.Constraint & SpecialConstraint.Struct) != 0) {			
+					Report.Error (451, GetLocation ($3), "The `new()' constraint cannot be used with the `struct' constraint");
+				}
+			}
+		}
 
-		constraints.Add ($3);
+		constraints.Add ((FullNamedExpression) $3);
 		$$ = constraints;
 	  }
 	;
 
 type_parameter_constraint
 	: type
-	| NEW OPEN_PARENS CLOSE_PARENS {
-		$$ = SpecialConstraint.Constructor;
+	  {
+	  	$$ = $1;
 	  }
-	| CLASS {
-		$$ = SpecialConstraint.ReferenceType;
+	| NEW OPEN_PARENS CLOSE_PARENS
+	  {
+		$$ = new SpecialContraintExpr (SpecialConstraint.Constructor, GetLocation ($1));
 	  }
-	| STRUCT {
-		$$ = SpecialConstraint.ValueType;
+	| CLASS
+	  {
+		$$ = new SpecialContraintExpr (SpecialConstraint.Class, GetLocation ($1));
+	  }
+	| STRUCT
+	  {
+		$$ = new SpecialContraintExpr (SpecialConstraint.Struct, GetLocation ($1));
 	  }
 	;
 
