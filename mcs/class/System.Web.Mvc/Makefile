@@ -39,7 +39,7 @@ endif
 
 include ../../build/library.make
 
-$(the_lib): $(RESOURCES)
+$(build_lib): $(RESOURCES)
 
 $(RESOURCES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`
