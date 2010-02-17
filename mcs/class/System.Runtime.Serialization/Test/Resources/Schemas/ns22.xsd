@@ -1,0 +1,17 @@
+<xs:schema targetNamespace="urn:bar" xmlns="urn:bar" xmlns:x="urn:bar"
+    xmlns:m="http://schemas.microsoft.com/2003/10/Serialization/"
+    elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:element name="E2" type="x:T2" nillable="true" />
+  <xs:complexType name="T2">
+    <xs:complexContent>
+      <xs:extension base="T1">
+        <xs:attribute ref="m:Ref" use="optional" />
+        <xs:attribute ref="m:Id" use="optional" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+  <xs:complexType name="T1">
+    <xs:sequence />
+  </xs:complexType>
+</xs:schema>

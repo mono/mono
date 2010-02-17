@@ -1,0 +1,12 @@
+<xs:schema targetNamespace="urn:bar" xmlns="urn:bar"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="E2" type="T2" />
+  <xs:complexType name="T2">
+    <xs:simpleContent>
+      <xs:extension base="xs:string">
+        <xs:attribute name="a1" type="xs:string" />
+        <xs:attribute name="a2" type="xs:int" />
+      </xs:extension>
+    </xs:simpleContent>
+  </xs:complexType>
+</xs:schema>

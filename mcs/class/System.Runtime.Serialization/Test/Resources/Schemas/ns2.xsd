@@ -1,0 +1,9 @@
+<xs:schema targetNamespace="urn:bar" xmlns="urn:bar"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="E1" type="T1" />
+  <xs:complexType name="T1">
+    <xs:sequence>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="E2" type="xs:string" />
+</xs:schema>

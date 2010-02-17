@@ -1,0 +1,15 @@
+<xs:schema targetNamespace="urn:foo" 
+    xmlns="urn:foo" xmlns:x="urn:bar"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:import namespace="urn:bar" schemaLocation="ns2.xsd" />
+
+  <xs:element name="E1" type="T1" />
+  <xs:complexType name="T1"><xs:complexContent>
+    <xs:extension base="x:T1">
+      <xs:sequence>
+        <xs:element name="T2" />
+      </xs:sequence>
+    </xs:extension>
+  </xs:complexContent></xs:complexType>
+  <xs:element name="T2" type="xs:string" />
+</xs:schema>

@@ -1,3 +1,8 @@
+2010-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporterTest.cs : added a bunch of tests for new
+	  implementation. Disable yet.
+
 2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractImporterTest.cs : add test that it gives

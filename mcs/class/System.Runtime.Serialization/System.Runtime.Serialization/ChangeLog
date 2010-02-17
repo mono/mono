@@ -1,3 +1,9 @@
+2010-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporter-new.cs : refresh implementation that is
+	  not based on xml serialization. Not enabled yet.
+	* KnownTypeCollection.cs : add cosmetic comment.
+
 2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractImporter.cs : add appropriate code namespaces

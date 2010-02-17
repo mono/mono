@@ -1,0 +1,26 @@
+<xs:schema targetNamespace="urn:bar" xmlns="urn:bar" xmlns:x="urn:bar"
+    xmlns:m="http://schemas.microsoft.com/2003/10/Serialization/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:element name="E2" type="T2" nillable="true" />
+  <xs:complexType name="T1">
+    <xs:sequence>
+      <xs:element name="c1" type="xs:string" nillable="true" />
+      <xs:element name="c2" type="xs:int" nillable="true" />
+      <xs:element name="c3" type="xs:duration" nillable="true" />
+      <xs:element name="c4" type="m:guid" nillable="true" />
+    </xs:sequence>
+  </xs:complexType>
+  <xs:complexType name="T2">
+    <xs:complexContent>
+      <xs:restriction base="T1">
+    <xs:sequence>
+      <xs:element name="c1" type="xs:string" nillable="true" />
+      <xs:element name="c2" type="xs:int" nillable="true" />
+      <xs:element name="c3" type="xs:duration" nillable="true" />
+      <xs:element name="c4" type="m:guid" nillable="false" />
+    </xs:sequence>
+      </xs:restriction>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

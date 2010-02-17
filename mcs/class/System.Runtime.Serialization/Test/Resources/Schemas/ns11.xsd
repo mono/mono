@@ -1,0 +1,11 @@
+<xs:schema targetNamespace="urn:bar" xmlns="urn:bar"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="E1" type="T1" />
+  <xs:complexType name="T1">
+    <xs:choice>
+      <xs:element name="c1" type="xs:string" />
+      <xs:element name="c2" type="xs:string" />
+      <xs:element name="c3" type="xs:string" />
+    </xs:choice>
+  </xs:complexType>
+</xs:schema>
