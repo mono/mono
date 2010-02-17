@@ -105,13 +105,31 @@ public class Stack<T>
 	}
 }
 
+class A<U>
+{
+	public class Test<T>
+	{
+		public static Nested<T> Foo ()
+		{
+			return null;
+		}
+		
+		public class Nested<X>
+		{
+		}
+	}
+}
+
 class X
 {
-	static void Main ()
+	static int Main ()
 	{
 		Stack<int> stack = new Stack<int> (1);
 		INode<int> node = stack.GetNode ();
 		Stack<int>.Foo<int> foo = stack.GetFoo (7);
 		Stack<int>.Bar<int> bar = stack.GetBar (8);
+
+		A<bool>.Test<string>.Nested<string> v = A<bool>.Test<string>.Foo ();
+		return 0;
 	}
 }

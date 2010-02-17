@@ -914,8 +914,28 @@
       <method name="Void .ctor()">
         <size>7</size>
       </method>
-      <method name="Void Main()">
-        <size>31</size>
+    </type>
+    <type name="A`1[U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+Test`1[U,T]">
+      <method name="A`1+Test`1+Nested`1[U,T,T] Foo()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A`1+Test`1+Nested`1[U,T,X]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X">
+      <method name="Int32 Main()">
+        <size>39</size>
       </method>
     </type>
   </test>
