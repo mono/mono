@@ -1,3 +1,8 @@
+2010-02-17  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile: RESX_RES is no more, it was replaced with
+	RESOURCES. Fixes bug #580594
+
 2009-08-13  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: build only in the 2.0 profile, or otherwise we'll end
