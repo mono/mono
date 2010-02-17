@@ -1,3 +1,9 @@
+2010-02-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: display a warning if the parsing the config file
+	produces any error.
+	Skip the BOM in UTF-8 files.
+
 2010-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (mono_method_desc_search_in_image): Handle short names like
@@ -5,8 +11,8 @@
 
 2010-01-16  Zoltan Varga  <vargaz@gmail.com>
 
-        * generic-sharing.c (instantiate_other_info): Don't create ftnptr's from the
-        result of mono_compile_method (), it already includes an ftnptr.
+	* generic-sharing.c (instantiate_other_info): Don't create ftnptr's from the
+	result of mono_compile_method (), it already includes an ftnptr.
 
 2010-02-10  Geoff Norton  <gnorton@novell.com>
 

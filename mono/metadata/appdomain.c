@@ -81,6 +81,7 @@ typedef struct
 	int runtime_count;
 	int assemblybinding_count;
 	MonoDomain *domain;
+	gchar *filename;
 } RuntimeConfig;
 
 CRITICAL_SECTION mono_delegate_section;
@@ -743,13 +744,25 @@ end_element (GMarkupParseContext *context,
 		runtime_config->assemblybinding_count--;
 }
 
+static void
+parse_error   (GMarkupParseContext *context, GError *error, gpointer user_data)
+{
+	RuntimeConfig *state = user_data;
+	const gchar *msg;
+	const gchar *filename;
+
+	filename = state && state->filename ? (gchar *) state->filename : "<unknown>";
+	msg = error && error->message ? error->message : "";
+	g_warning ("Error parsing %s: %s", filename, msg);
+}
+
 static const GMarkupParser
 mono_parser = {
 	start_element,
 	end_element,
 	NULL,
 	NULL,
-	NULL
+	parse_error
 };
 
 void
@@ -760,6 +773,7 @@ mono_set_private_bin_path_from_config (MonoDomain *domain)
 	gsize len;
 	GMarkupParseContext *context;
 	RuntimeConfig runtime_config;
+	gint offset;
 	
 	if (!domain || !domain->setup || !domain->setup->configuration_file)
 		return;
@@ -774,17 +788,22 @@ mono_set_private_bin_path_from_config (MonoDomain *domain)
 		g_free (config_file);
 		return;
 	}
-	g_free (config_file);
 
 	runtime_config.runtime_count = 0;
 	runtime_config.assemblybinding_count = 0;
 	runtime_config.domain = domain;
+	runtime_config.filename = config_file;
 	
+	offset = 0;
+	if (len > 3 && text [0] == '\xef' && text [1] == (gchar) '\xbb' && text [2] == '\xbf')
+		offset = 3; /* Skip UTF-8 BOM */
+
 	context = g_markup_parse_context_new (&mono_parser, 0, &runtime_config, NULL);
-	if (g_markup_parse_context_parse (context, text, len, NULL))
+	if (g_markup_parse_context_parse (context, text + offset, len - offset, NULL))
 		g_markup_parse_context_end_parse (context, NULL);
 	g_markup_parse_context_free (context);
 	g_free (text);
+	g_free (config_file);
 }
 
 MonoAppDomain *
