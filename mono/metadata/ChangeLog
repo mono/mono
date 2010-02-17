@@ -1,3 +1,11 @@
+2010-02-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: display a warning if the parsing the config file
+	produces any error.
+	Skip the BOM in UTF-8 files.
+	Copy the AppDomainSetup before setting the privateBinPath so that the
+	correct configuration file is read.
+
 2010-02-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c: Instead of using one vtable trampoline, allow the JIT to use one
