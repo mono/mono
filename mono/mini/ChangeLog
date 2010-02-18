@@ -1,3 +1,7 @@
+2010-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Fix SIZEOF in dynamic methods.
+
 2010-02-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (load_profile_files): Update after the profiler changes.
