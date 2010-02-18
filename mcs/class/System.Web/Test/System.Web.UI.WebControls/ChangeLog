@@ -1,5 +1,7 @@
 2010-02-18  Marek Habersack  <mhabersack@novell.com>
 
+	* CheckBoxListTest.cs: added tests for bugs #377703 and #578770
+
 	* TreeViewTest.cs: added test for bug #580692
 
 2010-01-21  Jonathan Pobst  <monkey@jpobst.com>

@@ -200,7 +200,10 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx \
 	Test/mainsoft/NunitWebResources/StateFormatter_CollectionConverter.aspx.cs \
 	Test/mainsoft/NunitWebResources/ChangePasswordContainer_FindControl.aspx \
-	Test/mainsoft/NunitWebResources/TagWithExpressionWithinAttribute.aspx
+	Test/mainsoft/NunitWebResources/TagWithExpressionWithinAttribute.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxList_Bug377703_1.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxList_Bug377703_2.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxList_Bug578770.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))

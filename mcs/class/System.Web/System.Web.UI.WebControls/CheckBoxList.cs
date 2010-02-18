@@ -239,8 +239,8 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 			if (item.Enabled)
 #endif
-				if (item.Selected != ischecked) {
-					item.Selected = ischecked;
+				if (ischecked && !item.Selected) {
+					item.Selected = true;
 					return true;
 				}
 
@@ -357,7 +357,10 @@ namespace System.Web.UI.WebControls {
 			check_box.AutoPostBack = AutoPostBack;
 			check_box.Checked = item.Selected;
 			check_box.TextAlign = TextAlign;
-			check_box.Enabled = Enabled;
+			if (!Enabled)
+				check_box.Enabled = false;
+			else
+				check_box.Enabled = item.Enabled;
 #if NET_2_0
 			check_box.ValidationGroup = ValidationGroup;
 			check_box.CausesValidation = CausesValidation;
