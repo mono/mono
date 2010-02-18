@@ -1142,7 +1142,7 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 	curinst = cfg->locals_start;
 	for (i = curinst; i < cfg->num_varinfo; ++i) {
 		inst = cfg->varinfo [i];
-		if ((inst->flags & MONO_INST_IS_DEAD) || inst->opcode == OP_REGVAR)
+		if ((ins->flags & MONO_INST_IS_DEAD) || ins->opcode == OP_REGVAR || ins->opcode == OP_REGOFFSET)
 			continue;
 
 		/* inst->backend.is_pinvoke indicates native sized value types, this is used by the
