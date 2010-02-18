@@ -1,5 +1,11 @@
 2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XsdDataContractImporter-new.cs, XsdDataContractImporter.cs :
+	  replaced implementation.
+	* ImportOptions.cs : add correct MonoTODOs.
+
+2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XsdDataContractImporter-new.cs : output [KnownType] to expose
 	  base/derived type relationship.
 

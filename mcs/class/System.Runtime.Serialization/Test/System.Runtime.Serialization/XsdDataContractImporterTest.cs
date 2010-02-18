@@ -409,8 +409,6 @@ namespace MonoTests.System.Runtime.Serialization
 			Assert.IsTrue (t, "te");
 		}
 
-#if false // FIXME: enable when we switch to the new implementation.
-
 		CodeCompileUnit DoImport (params string [] schemaFiles)
 		{
 			var ccu = new CodeCompileUnit ();
@@ -608,8 +606,6 @@ namespace MonoTests.System.Runtime.Serialization
 		{
 			DoImport ("Test/Resources/Schemas/ns27.xsd");
 		}
-
-#endif
 
 		/* Helper methods */
 		private void CheckDC (CodeTypeDeclaration type, string name, Dictionary<string, string> members, string msg)

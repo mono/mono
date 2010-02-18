@@ -55,11 +55,13 @@ namespace System.Runtime.Serialization
 			set { code_provider = value; }
 		}
 
+		[MonoTODO]
 		public IDataContractSurrogate DataContractSurrogate {
 			get { return surrogate; }
 			set { surrogate = value; }
 		}
 
+		[MonoTODO]
 		public bool EnableDataBinding {
 			get { return enable_data_binding; }
 			set { enable_data_binding = value; }
@@ -75,6 +77,7 @@ namespace System.Runtime.Serialization
 			set { generate_serializable = value; }
 		}
 
+		[MonoTODO]
 		public bool ImportXmlType {
 			get { return import_xml_type; }
 			set { import_xml_type = value; }
@@ -84,10 +87,12 @@ namespace System.Runtime.Serialization
 			get { return namespaces; }
 		}
 
+		[MonoTODO]
 		public ICollection<Type> ReferencedCollectionTypes {
 			get { return referenced_collection_types; }
 		}
 
+		[MonoTODO]
 		public ICollection<Type> ReferencedTypes {
 			get { return referenced_types; }
 		}

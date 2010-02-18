@@ -1,3 +1,7 @@
+2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporterTest.cs : enabled new tests.
+
 2010-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractImporterTest.cs : added a bunch of tests for new
