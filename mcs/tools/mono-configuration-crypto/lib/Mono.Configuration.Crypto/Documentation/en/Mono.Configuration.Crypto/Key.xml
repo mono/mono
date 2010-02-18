@@ -1,0 +1,185 @@
+<Type Name="Key" FullName="Mono.Configuration.Crypto.Key">
+  <TypeSignature Language="C#" Value="public class Key" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Configuration.Crypto</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Encryption key information.</summary>
+    <remarks>Encapsulates all information about encryption key read from a container.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Key (string file, bool machineStore);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="file" Type="System.String" />
+        <Parameter Name="machineStore" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="file">Source file path.</param>
+        <param name="machineStore">Whether to use global (machine) key store.</param>
+	<exception cref="T:System.ArgumentNullException">
+	  <paramref name="file"/> was <see langword="null"/> or empty.
+	</exception>
+        <summary>Reads key from an existing file.</summary>
+        <remarks>Given a path to an XML file with embedded key, it parses the file to retrieve all the information about the key. 
+File must be in the format written by <see cref="T:Mono.Security.Cryptography.KeyPairPersistence"/></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Key (string containerName, string keyValue, bool machineStore);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="containerName" Type="System.String" />
+        <Parameter Name="keyValue" Type="System.String" />
+        <Parameter Name="machineStore" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="containerName">Name of the key container to put the key in.</param>
+        <param name="keyValue">Value of the encryption key in XML format.</param>
+        <param name="machineStore">Whether to use global (machine) key store.</param>
+	<exception cref="T:System.ArgumentNullException">
+	  <list type="bullet">
+	    <item><term><paramref name="containerName"/> was <see langword="null"/> or empty.</term></item>
+	    <item><term><paramref name="keyValue"/> was <see langword="null"/> or empty.</term></item>
+	  </list>
+	</exception>
+        <summary>Create instance of Key which is not backed with any persisted data.</summary>
+        <remarks><para>This constructor is to be used when one wants to modify or create a key with specific value and to be stored in the named
+container. If the container doesn't exist, it will be created when <see cref="M:Save"/> is called. If container exists, its first key will
+be modified with the specified key value. The key value must follow the format used by <see cref="T:Mono.Security.Cryptography.KeyPairPersistence"/>.</para>
+<para><paramref name="keyValue"/> is not checked for correctness but an attempt is made to determine the <see cref="P:ProviderType"/>.</para>
+	  </remarks>
+      </Docs>
+    </Member>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public Key (string containerName, uint keySize, bool machineStore);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="containerName" Type="System.String" />
+        <Parameter Name="keySize" Type="System.UInt32" />
+        <Parameter Name="machineStore" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="containerName">Name of the key container to put the key in.</param>
+        <param name="keySize">Size of the key to be generated.</param>
+        <param name="machineStore">Whether to use global (machine) key store.</param>
+	<exception cref="T:System.ArgumentNullException">
+	  <paramref name="containerName"/> was <see langword="null"/> or empty.
+	</exception>
+        <summary>Generates a new key to be placed in a container.</summary>
+        <remarks>Generates an RSA keypair with the key of size <paramref name="keySize"/>. When the <see cref="M:Save"/> method is called, the keypair will be placed in the container named by
+<paramref name="containerName"/>.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ContainerName">
+      <MemberSignature Language="C#" Value="public string ContainerName { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Name of the key's container.</summary>
+        <value><see langword="null"/> or container name</value>
+        <remarks>Name of the container in which the key lives. Note that <see cref="T:Mono.Security.Cryptography.KeyPairPersistence"/> never stores
+the container name as-is in the persisted file, but rather it generates an MD5 hash out of it. So, in order to always refer to the same container you
+must set this property to the human-readable container name in cases when key was read from a persisted file or otherwise when saving such a key back
+to disk it will end up in a different container.
+</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="IsValid">
+      <MemberSignature Language="C#" Value="public bool IsValid { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Indicates whether the key is valid or not.</summary>
+        <value><see langword="true"/> or <see langword="false"/></value>
+        <remarks>The class performs basic validation on the key and sets this property accordingly.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="KeyValue">
+      <MemberSignature Language="C#" Value="public string KeyValue { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.String</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Value of the encryption key.</summary>
+        <value>XML code representing the key value</value>
+        <remarks>The key value must follow the format used by <see cref="T:Mono.Security.Cryptography.KeyPairPersistence"/>.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Local">
+      <MemberSignature Language="C#" Value="public bool Local { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Boolean</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Whether the key lives in local or global (machine) store.</summary>
+        <value><see langword="true"/> or <see langword="false"/></value>
+        <remarks></remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="ProviderType">
+      <MemberSignature Language="C#" Value="public int ProviderType { set; get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Int32</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Type of encryption provider.</summary>
+        <value>1, 13 or -1</value>
+        <remarks>Set to 1 for RSA encryption, 13 for DSA and -1 for invalid/unknown encryption provider.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Save">
+      <MemberSignature Language="C#" Value="public void Save ();" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters />
+      <Docs>
+        <summary>Saves key to a key container file.</summary>
+        <remarks>Key is written to key container file specified by the <see cref="P:ContainerName"/> property. Saved data follows the format used by
+<see cref="T:Mono.Security.Cryptography.KeyPairPersistence"/>.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

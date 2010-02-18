@@ -44,7 +44,8 @@ net_2_0_dirs := \
 	prj2make	\
 	mod		\
 	installvst	\
-	lc
+	lc		\
+	mono-configuration-crypto
 
 net_2_1_dirs := \
 	compiler-tester

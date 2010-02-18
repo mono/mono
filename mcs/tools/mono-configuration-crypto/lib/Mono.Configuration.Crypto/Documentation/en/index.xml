@@ -1,0 +1,22 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Configuration.Crypto" Version="0.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Remarks>Config file encryption utilities.</Remarks>
+  <Copyright>Copyright (c) 2010 Novell, Inc (http://novell.com/)</Copyright>
+  <Types>
+    <Namespace Name="Mono.Configuration.Crypto">
+      <Type Name="ConfigSection" Kind="Class" />
+      <Type Name="Key" Kind="Class" />
+      <Type Name="KeyContainer" Kind="Class" />
+      <Type Name="KeyContainerCollection" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Configuration.Crypto</Title>
+</Overview>

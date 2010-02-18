@@ -1,0 +1,90 @@
+<Type Name="ConfigSection" FullName="Mono.Configuration.Crypto.ConfigSection">
+  <TypeSignature Language="C#" Value="public class ConfigSection" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Configuration.Crypto</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Code to encrypt/decrypt configuration file sections.</summary>
+    <remarks>The ConfigSection class provides tools to encrypt/decrypt configuration file sections using configuration protection providers defined
+in the framework.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public ConfigSection ();" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters />
+      <Docs>
+        <summary>Initializes ConfigSection instance.</summary>
+      </Docs>
+    </Member>
+    <Member MemberName="Decrypt">
+      <MemberSignature Language="C#" Value="public void Decrypt (string configFile, string configSection, string containerName, bool useMachineStore);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="configFile" Type="System.String" />
+        <Parameter Name="configSection" Type="System.String" />
+        <Parameter Name="containerName" Type="System.String" />
+        <Parameter Name="useMachineStore" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+        <param name="configFile">Full path to the config file to process.</param>
+        <param name="configSection">Path, inside the config file, to the config section to process.</param>
+        <param name="containerName">Name of the container which holds the key to be used to decrypt the section.</param>
+        <param name="useMachineStore">If true, attempt to look up container in the global (machine) key store.</param>
+	<exception cref="T:System.ArgumentNullException">
+	  <list type="bullet">
+	    <item><term><paramref name="configFile"/> was <see langword="null"/> or empty</term></item>
+	    <item><term><paramref name="configSection"/> was <see langword="null"/> or empty</term></item>
+	    <item><term><paramref name="containerName"/> was <see langword="null"/> or empty</term></item>
+	  </list>
+	</exception>
+	<exception cref="T:System.InvalidOperationException">
+	    Specified section path doesn't refer to a valid configuration section.
+	</exception>
+        <summary>Decrypts the specified section.</summary>
+        <remarks>If a section exist but is not encrypted, no error is reported.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Encrypt">
+      <MemberSignature Language="C#" Value="public void Encrypt (string configFile, string configSection, string containerName, bool useMachineStore);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>System.Void</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="configFile" Type="System.String" />
+        <Parameter Name="configSection" Type="System.String" />
+        <Parameter Name="containerName" Type="System.String" />
+        <Parameter Name="useMachineStore" Type="System.Boolean" />
+      </Parameters>
+      <Docs>
+	<param name="configFile">Full path to the config file to process.</param>
+        <param name="configSection">Path, inside the config file, to the config section to process.</param>
+        <param name="containerName">Name of the container which holds the key to be used to decrypt the section.</param>
+        <param name="useMachineStore">If true, attempt to look up container in the global (machine) key store.</param>
+	<exception cref="T:System.InvalidOperationException">
+	    Specified section path doesn't refer to a valid configuration section or code failed to encrypt the section.
+	</exception>
+        <summary>Encrypts the specified section.</summary>
+        <remarks>If section is already encrypted, no error is reported.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

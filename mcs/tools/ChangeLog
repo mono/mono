@@ -1,3 +1,7 @@
+2010-02-18  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (net_2_0_dirs): added mono-configuration-crypto
+
 2010-01-12  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: monodoc should only be built under the 2.0 profile.

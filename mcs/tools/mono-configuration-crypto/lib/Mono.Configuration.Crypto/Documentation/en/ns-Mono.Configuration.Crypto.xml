@@ -1,0 +1,7 @@
+<Namespace Name="Mono.Configuration.Crypto">
+  <Docs>
+    <summary>Utility classes to encrypt/decrypt configuration file sections.</summary>
+    <remarks>Classes in this namespace provide tools for manipulation of Mono key store (both local and global) as well
+as encryption/decryption of configuration file sections.</remarks>
+  </Docs>
+</Namespace>
