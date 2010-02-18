@@ -1,3 +1,30 @@
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : and "To" header is also automatically
+	  added if AddressingVersion is WSA1. This likely fixes bug #577139.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Constants.cs, EndpointAddress10.cs :
+	  Remove duplicate constant (WSA1).
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Constants.cs : moved SoapDictionary from BinaryMessageEncoder.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : cosmetic attribute reordering.
+
+2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : when WSAddressing10 is used, set ReplyTo
+	  and MessageID. (found while fixing #577139).
+
+2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SilverlightClientConfigLoader.cs : public->internal.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelFactory_1.cs, ChannelFactory.cs : fix default constructor

@@ -49,6 +49,15 @@ namespace MonoTests.System.ServiceModel.Description
 					return t;
 			return default (T);
 		}
+
+		public static int Count<T> (this CollectionBase coll, Func<T,bool> func)
+		{
+			int c = 0;
+			foreach (T t in coll)
+				if (func (t))
+					c++;
+			return c;
+		}
 	}
 
 	[TestFixture]
@@ -62,11 +71,41 @@ namespace MonoTests.System.ServiceModel.Description
 			var cns = g.TargetCompileUnit.Namespaces [0];
 			Assert.AreEqual (3, cns.Types.Count, "#1");
 			var iface = cns.Types.FirstOrDefault<CodeTypeDeclaration> (t => t.Name == "ITestService");
+			Assert.AreEqual (2, iface.Members.Count, "#2-0");
 			Assert.IsNotNull (iface.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "DoWork"), "#2-1");
 			Assert.IsNotNull (iface.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "DoWork2"), "#2-2");
 			var proxy = cns.Types.FirstOrDefault<CodeTypeDeclaration> (t => t.Name == "TestServiceClient");
+			Assert.AreEqual (7, proxy.Members.Count, "#3-0");
+			Assert.AreEqual (5, proxy.Members.Count<CodeTypeMember> (m => m.Name == ".ctor"), "#3-0-2");
 			Assert.IsNotNull (proxy.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "DoWork"), "#3-1");
 			Assert.IsNotNull (proxy.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "DoWork2"), "#3-2");
+		}
+
+		[Test]
+		public void AsynchronousMethods ()
+		{
+			var g = new ServiceContractGenerator ();
+			g.Options |= ServiceContractGenerationOptions.AsynchronousMethods;
+			g.GenerateServiceContractType (ContractDescription.GetContract (typeof (ITestService)));
+			var cns = g.TargetCompileUnit.Namespaces [0];
+			Assert.AreEqual (3, cns.Types.Count, "#1");
+			var iface = cns.Types.FirstOrDefault<CodeTypeDeclaration> (t => t.Name == "ITestService");
+			Assert.AreEqual (6, iface.Members.Count, "#2-0");
+			Assert.IsNotNull (iface.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "DoWork"), "#2-1");
+			Assert.IsNotNull (iface.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "DoWork2"), "#2-2");
+			Assert.IsNotNull (iface.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "BeginDoWork"), "#2-3");
+			Assert.IsNotNull (iface.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "BeginDoWork2"), "#2-4");
+			Assert.IsNotNull (iface.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "EndDoWork"), "#2-5");
+			Assert.IsNotNull (iface.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "EndDoWork2"), "#2-6");
+			var proxy = cns.Types.FirstOrDefault<CodeTypeDeclaration> (t => t.Name == "TestServiceClient");
+			Assert.AreEqual (11, proxy.Members.Count, "#3-0");
+			Assert.AreEqual (5, proxy.Members.Count<CodeTypeMember> (m => m.Name == ".ctor"), "#3-0-2");
+			Assert.IsNotNull (proxy.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "DoWork"), "#3-1");
+			Assert.IsNotNull (proxy.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "DoWork2"), "#3-2");
+			Assert.IsNotNull (proxy.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "BeginDoWork"), "#3-3");
+			Assert.IsNotNull (proxy.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "BeginDoWork2"), "#3-4");
+			Assert.IsNotNull (proxy.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "EndDoWork"), "#3-5");
+			Assert.IsNotNull (proxy.Members.FirstOrDefault<CodeTypeMember> (m => m.Name == "EndDoWork2"), "#3-6");
 		}
 
 		[ServiceContract]

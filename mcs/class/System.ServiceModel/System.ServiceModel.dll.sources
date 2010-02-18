@@ -563,7 +563,6 @@ System.ServiceModel.Description/MessagePartDescription.cs
 System.ServiceModel.Description/MessagePartDescriptionCollection.cs
 System.ServiceModel.Description/MessagePropertyDescription.cs
 System.ServiceModel.Description/MessagePropertyDescriptionCollection.cs
-System.ServiceModel.Description/MetadataBundle.cs
 System.ServiceModel.Description/MetadataConversionError.cs
 System.ServiceModel.Description/MetadataExchangeBindings.cs
 System.ServiceModel.Description/MetadataExchangeClient.cs
@@ -574,6 +573,7 @@ System.ServiceModel.Description/MetadataReference.cs
 System.ServiceModel.Description/MetadataResolver.cs
 System.ServiceModel.Description/MetadataSection.cs
 System.ServiceModel.Description/MetadataSectionSerializerBase.cs
+System.ServiceModel.Description/MetadataSet.cs
 System.ServiceModel.Description/MustUnderstandBehavior.cs
 System.ServiceModel.Description/OperationContractGenerationContext.cs
 System.ServiceModel.Description/OperationDescription.cs

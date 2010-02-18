@@ -575,6 +575,15 @@ namespace System.ServiceModel
 				msg.Headers.MessageId = new UniqueId (OutputSession.Id);
 			msg.Properties.AllowOutputBatching = AllowOutputBatching;
 
+			if (msg.Version.Addressing.Equals (AddressingVersion.WSAddressing10)) {
+				if (msg.Headers.MessageId == null)
+					msg.Headers.MessageId = new UniqueId ();
+				if (msg.Headers.ReplyTo == null)
+					msg.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
+				if (msg.Headers.To == null)
+					msg.Headers.To = RemoteAddress.Uri;
+			}
+
 			return msg;
 		}
 

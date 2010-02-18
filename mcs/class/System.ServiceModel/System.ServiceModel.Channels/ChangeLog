@@ -1,3 +1,40 @@
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeaders.cs : add !NET_2_1.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeader.cs, MessageHeaders.cs : add nasty workaround for
+	  typed UniqueId output.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeader.cs : no need to treat EndpointAddress as a special
+	  case here too.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeaders.cs : remove duplicate constant.
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeader.cs, MessageHeaders.cs: MessageHeader does not treat
+	  EndpointAddress as a special case. Instead, each MessageHeaders
+	  property should convert it to appropriate serializable objects.
+
+	  (Our DataContractSerializer fails to reject EndpointAddress as
+	  serializable type, so it's rather a preparation step.)
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeader.cs, Message.cs : use dictionary string whenever
+	  applicable. The binary output on #577139 is getting closer (no
+	  idea if it is really about binary output though).
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BinaryMessageEncoder.cs : moved soap_dictionary to Constants.
+
 2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	*  HttpTransportBindingElement.cs : ... and add MONOTOUCH on #ifs.

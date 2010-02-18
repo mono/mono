@@ -289,7 +289,7 @@ namespace MonoTests.System.ServiceModel
 			var host = new ServiceHost (typeof (AllActions),
 				new Uri ("http://localhost:37564"));
 			var se = host.AddServiceEndpoint (typeof (AllActions),
-				new BasicHttpBinding (), "/foobar");
+				new BasicHttpBinding (), "foobar");
 			Assert.AreEqual ("http://localhost:37564/foobar", se.Address.Uri.AbsoluteUri, "#1");
 			Assert.AreEqual ("http://localhost:37564/foobar", se.ListenUri.AbsoluteUri, "#2");
 		}

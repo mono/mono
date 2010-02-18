@@ -29,20 +29,21 @@
 
 using System;
 using System.Collections.Generic;
-using System.Text;
-using System.ServiceModel.Description;
-using System.Web.Services;
-using System.IO;
-using System.Xml;
-using NUnit.Framework;
-using System.ServiceModel.Channels;
 using System.Collections.ObjectModel;
+using System.IO;
+using System.Text;
+using System.Web.Services;
+using System.Web.Services.Description;
 using System.ServiceModel;
+using System.ServiceModel.Channels;
+using System.ServiceModel.Description;
+using System.Xml;
+using System.Xml.Schema;
+using Microsoft.CSharp;
+using NUnit.Framework;
 
 using WSServiceDescription = System.Web.Services.Description.ServiceDescription;
 using SMBinding = System.ServiceModel.Channels.Binding;
-using System.Xml.Schema;
-using System.Web.Services.Description;
 
 namespace MonoTests.System.ServiceModel.Description
 {
@@ -549,5 +550,32 @@ namespace MonoTests.System.ServiceModel.Description
 
 		}
 
+		MetadataSet GetMetadataSetFromWsdl (string path)
+		{
+			var ms = new MetadataSet ();
+			var sd = WSServiceDescription.Read (XmlReader.Create (path));
+			ms.MetadataSections.Add (MetadataSection.CreateFromServiceDescription (sd));
+			foreach (XmlSchema xs in sd.Types.Schemas)
+				foreach (XmlSchemaImport import in xs.Includes)
+					using (var xr = XmlReader.Create (Path.Combine (Path.GetDirectoryName (path), import.SchemaLocation)))
+						ms.MetadataSections.Add (MetadataSection.CreateFromSchema (XmlSchema.Read (xr, null)));
+			return ms;
+		}
+
+		[Test]
+		[Ignore ("Until make dist gets fixed I won't enable any of new external-source-dependent tests")]
+		public void ImportMethodWithArrayOfint ()
+		{
+			var ms = GetMetadataSetFromWsdl ("Test/Resources/xml/service1.wsdl");
+			var imp = new WsdlImporter (ms);
+			var cg = new ServiceContractGenerator ();
+			var cd = imp.ImportAllContracts () [0];
+			cg.GenerateServiceContractType (cd);
+			var sw = new StringWriter ();
+			new CSharpCodeProvider ().GenerateCodeFromCompileUnit (
+				cg.TargetCompileUnit, sw, null);
+			// sort of hacky test
+			Assert.IsTrue (sw.ToString ().IndexOf ("int[] GetSearchData") > 0, "#1");
+		}
 	}
 }

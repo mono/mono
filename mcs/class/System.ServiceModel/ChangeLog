@@ -1,3 +1,20 @@
+2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: sigh, just disable it. make dist is somehow broken.
+
+2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: does extra dist fail to accept *.xml ?
+
+2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: add test xml files to extra dist.
+
+2010-02-08  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources:
+	  renamed MetadataBundle.cs to MetadataSet.cs.
+
 2010-02-05  Astushi Enomoto  <atsushi@ximian.com>
 
 	* Dummy_2_1.cs : remove AuthenticationSchemes. It blocks MT support.

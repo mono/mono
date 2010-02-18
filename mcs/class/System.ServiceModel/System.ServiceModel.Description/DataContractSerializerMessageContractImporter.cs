@@ -200,20 +200,32 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
-		string GetCLRTypeName (QName qname)
+		internal static string GetCLRTypeName (QName qname)
 		{
-			if (qname.Namespace != "http://www.w3.org/2001/XMLSchema")
-				return null;
+			switch (qname.Namespace) {
+			case "http://schemas.microsoft.com/2003/10/Serialization/":
+				if (qname.Name == "duration")
+					return "System.TimeSpan";
+				if (qname.Name == "guid")
+					return "System.Guid";
+				break;
+			case "http://www.w3.org/2001/XMLSchema":
+				return GetCLRTypeName (qname.Name);
+			}
+			return null;
+		}
 
-			switch (qname.Name) {
+		internal static string GetCLRTypeName (string xsdName)
+		{
+			switch (xsdName) {
 			case "anyURI":
 				return "System.String";
 			case "boolean":
 				return "System.Boolean";
 
-			/*FIXME: case "base64Binary":
+			//FIXME: case "base64Binary":
 			case "dateTime":
-			case "duration":*/
+				return "System.DateTime";
 			case "QName":
 				return "System.String";
 			case "decimal":
