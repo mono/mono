@@ -1,3 +1,7 @@
+2010-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Fix SIZEOF in dynamic methods.
+
 2010-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_magic_trampoline): Fix a problem where the callsite
