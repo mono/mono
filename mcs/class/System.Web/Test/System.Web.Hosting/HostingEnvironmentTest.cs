@@ -31,6 +31,8 @@ using System;
 using System.Web.Hosting;
 using NUnit.Framework;
 using System.Web;
+using System.Web.UI;
+using MonoTests.SystemWeb.Framework;
 
 namespace MonoTests.System.Web.Hosting {
 	[TestFixture]
@@ -38,15 +40,50 @@ namespace MonoTests.System.Web.Hosting {
 		[Test]
 		public void StaticDefaultValues ()
 		{
-			Assert.IsNull (HostingEnvironment.InitializationException);
-			Assert.IsFalse (HostingEnvironment.IsHosted);
-			Assert.IsNull (HostingEnvironment.ApplicationID);
-			Assert.IsNull (HostingEnvironment.ApplicationPhysicalPath);
-			Assert.IsNull (HostingEnvironment.ApplicationVirtualPath);
-			Assert.IsNull (HostingEnvironment.SiteName);
-			Assert.IsNotNull (HostingEnvironment.Cache);
-			Assert.AreEqual (ApplicationShutdownReason.None, HostingEnvironment.ShutdownReason);
-			Assert.IsNull (HostingEnvironment.VirtualPathProvider);
+			StaticDefaultValues (string.Empty);
+		}
+
+		private void StaticDefaultValues (string errorPrefix)
+		{
+			Assert.IsNull (HostingEnvironment.InitializationException, errorPrefix + "InitializationException");
+			Assert.IsFalse (HostingEnvironment.IsHosted, errorPrefix + "IsHosted");
+			Assert.IsNull (HostingEnvironment.ApplicationID, errorPrefix + "ApplicationID");
+			Assert.IsNull (HostingEnvironment.ApplicationPhysicalPath, errorPrefix + "ApplicationPhysicalPath");
+			Assert.IsNull (HostingEnvironment.ApplicationVirtualPath, errorPrefix + "ApplicationVirtualPath");
+			Assert.IsNull (HostingEnvironment.SiteName, errorPrefix + "SiteName");
+			Assert.IsNotNull (HostingEnvironment.Cache, errorPrefix + "Cache");
+			Assert.AreEqual (ApplicationShutdownReason.None, HostingEnvironment.ShutdownReason, errorPrefix + "None");
+			Assert.IsNull (HostingEnvironment.VirtualPathProvider, errorPrefix + "VirtualPathProvider");
+		}
+
+		[Test]
+		[Category ("NunitWeb")]
+		public void HostedDefaultValues () 
+		{
+			StaticDefaultValues ("Before:");
+
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (HostedDefaultValues_OnLoad));
+			t.Run ();
+			Assert.AreEqual (global::System.Net.HttpStatusCode.OK, t.Response.StatusCode, "HttpStatusCode");
+
+			StaticDefaultValues ("After:");
+		}
+
+		public static void HostedDefaultValues_OnLoad(Page p) 
+		{
+			Assert.IsNull (HostingEnvironment.InitializationException, "During:InitializationException");
+			Assert.IsTrue (HostingEnvironment.IsHosted, "During:IsHosted");
+			Assert.IsNotNull (HostingEnvironment.ApplicationID, "During:ApplicationID:Null");
+			Assert.IsNotEmpty (HostingEnvironment.ApplicationID, "During:ApplicationID:Empty");
+			Assert.IsNotNull (HostingEnvironment.ApplicationPhysicalPath, "During:ApplicationPhysicalPath:Null");
+			Assert.IsNotEmpty (HostingEnvironment.ApplicationPhysicalPath, "During:ApplicationPhysicalPath:Empty");
+			Assert.IsNotNull (HostingEnvironment.ApplicationVirtualPath, "During:ApplicationVirtualPath:Null");
+			Assert.IsNotEmpty (HostingEnvironment.ApplicationVirtualPath, "During:ApplicationVirtualPath:Empty");
+			Assert.IsNotNull (HostingEnvironment.SiteName, "During:SiteName:Null");
+			Assert.IsNotEmpty (HostingEnvironment.SiteName, "During:SiteName:Empty");
+			Assert.IsNotNull (HostingEnvironment.Cache, "During:Cache");
+			Assert.AreEqual (ApplicationShutdownReason.None, HostingEnvironment.ShutdownReason, "During:ShutdownReason");
+			Assert.IsNotNull (HostingEnvironment.VirtualPathProvider, "During:VirtualPathProvider");
 		}
 
 		[Test]
@@ -64,7 +101,6 @@ namespace MonoTests.System.Web.Hosting {
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void MapPath3 ()
 		{
 			Assert.IsNull (HostingEnvironment.MapPath ("hola"));
