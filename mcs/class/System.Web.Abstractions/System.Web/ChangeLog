@@ -1,3 +1,10 @@
+2010-02-18  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpFileCollectionWrapper.cs: Get (string) and this [string]
+	don't throw ArgumentNullException for non-existing entries. Fixes
+	bug #579241. Patch from Peter Johanson <peter@peterjohanson.com>,
+	thanks!
+
 2010-01-20  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContextBase.cs: implemented RemapHandler and

@@ -91,12 +91,20 @@ namespace System.Web
 
 		public override HttpPostedFileBase Get (int index)
 		{
-			return new HttpPostedFileWrapper (w.Get (index));
+			HttpPostedFile file = w.Get (index);
+			if (file == null)
+				return null;
+
+			return new HttpPostedFileWrapper (file);
 		}
 
 		public override HttpPostedFileBase Get (string name)
 		{
-			return new HttpPostedFileWrapper (w.Get (name));
+			HttpPostedFile file = w.Get (name);
+			if (file == null)
+				return null;
+
+			return new HttpPostedFileWrapper (file);
 		}
 
 		public override IEnumerator GetEnumerator ()
