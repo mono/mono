@@ -1,0 +1,2 @@
+#!/bin/sh
+exec @bindir@/@mono_interp@ $MONO_OPTIONS @mono_instdir@/mono-configuration-crypto/@framework_version@/@exe_name@.exe "$@"

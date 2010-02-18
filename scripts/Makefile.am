@@ -37,7 +37,8 @@ bin_SCRIPTS = \
 	mod$(SCRIPT_SUFFIX)	\
 	mono-test-install	\
 	peverify			\
-	mono-heapviz
+	mono-heapviz		\
+	$(scripts_mono_configuration_crypto)
 
 if INSTALL_4_0
 bin_SCRIPTS += $(scripts_4_0)
@@ -130,8 +131,9 @@ scripts_service = mono-service mono-service2
 scripts_nunit = nunit-console$(SCRIPT_SUFFIX) nunit-console2$(SCRIPT_SUFFIX)
 scripts_rpmhelpers = mono-find-provides mono-find-requires
 scripts_mcs = mcs$(SCRIPT_SUFFIX)
+scripts_mono_configuration_crypto = mono-configuration-crypto$(SCRIPT_SUFFIX)
 
-CLEANFILES = $(scripts_mcs) $(scripts_2_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
+CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_mcs) $(scripts_2_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
@@ -148,7 +150,8 @@ EXTRA_DIST =			\
 	mono-heapviz		\
 	$(MDOC_COMPAT)		\
 	patch-quiet.sh		\
-	get-cygwin-deps.sh
+	get-cygwin-deps.sh	\
+	mono-configuration-crypto.in
 
 if USE_JIT
 mono_interp = mono
@@ -230,6 +233,10 @@ $(scripts_2_0): $(SCRIPT_IN) Makefile
 $(scripts_4_0): $(SCRIPT_IN) Makefile
 	n=`echo $@ | sed 's,$(COMPAT_4_0_SUFFIX)$$,,'`; \
 	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	mv -f $@.tmp $@
+
+$(scripts_mono_configuration_crypto): mono-configuration-crypto.in
+	$(REWRITE2)  -e "s,@exe_name@,mono-configuration-crypto,g" $(srcdir)/mono-configuration-crypto.in > $@.tmp
 	mv -f $@.tmp $@
 
 $(MDOC_SUBCOMMANDS): Makefile

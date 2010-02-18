@@ -50,6 +50,7 @@ man_MANS = \
 	sqlsharp.1            \
 	wsdl.1                \
 	xbuild.1	      \
-	xsd.1
+	xsd.1		      \
+	mono-configuration-crypto.1
 
 EXTRA_DIST = $(man_MANS)

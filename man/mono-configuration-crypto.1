@@ -1,0 +1,94 @@
+.TH Mono "mono-configuration-crypto"
+.SH NAME
+mono-configuration-crypto, \- Mono configuration utility to manage encryption keys and encrypt/decrypt config file sections
+.SH SYNOPSIS
+.B mono-configuration-crypto <options>
+.SH DESCRIPTION
+mono-configuration-crypto is a utility to manage mono encryption key container store and to encrypt/decrypt config
+file sections.
+.SH OPTIONS
+.TP
+.B -h, -?, --help
+Show usage information
+
+.TP
+.B   -v, --verbose
+Show verbose information (including exception stacktraces)
+
+.TP
+.B   -m, --machine, --global
+Use machine (global) store for all the key actions. Note that on Unix machines global store is located in
+\fI/usr/share/.mono\fR and modifying it requires root user permissions.
+
+.TP
+.B   -u, --user, --local
+Use local (user) store for all the key actions. User key store is located in the \fI$HOME/.config/.mono\fR
+directory. This is the default location used by mono-configuration-crypto.
+
+.TP
+.B   -l, --list
+List all the key container names in the store. Note that some container names might be just GUID strings.
+
+.TP
+.B   -c, --create
+Creates an RSA public/private key pair. If the specified container (see the \fI-f\fR option) already exists, the
+operation will fail.
+
+.TP
+.B   -i, --import
+Imports key to a container. Imports a key from file (specified by the \fI-f\fR option) and puts it as the first key
+in the specified container (see the \fI-n\fR option). If container exists, its first key is replaced. If container
+doesn't exist, it is created. No validation is performed on the key value - this is left to the protection provider or
+encryption code which uses the key.
+
+.TP
+.B   -x, --export
+Exports key from a container. Exports a key from indicated container (see the \fI-n\fR option) and puts it in the
+specified file (see the \fI-f\fR option) as XML. The file can later be used to import the key.
+
+.TP
+.B   -r, --remove
+Remove a container. Physically removes the container file from disk.
+
+.TP
+.B   -f, --file=VALUE
+File name for import or export operations. All options which read or write anything to/from files require this option
+to be present on the command line.
+
+.TP
+.B   -cf, --config-file=VALUE
+Config file name. Specifies base name of the config file, used in encrypt and decrypt operations. Files are sought for
+case-insensitively. Defaults to \fIWeb.config\fR
+
+.TP
+.B   -n, --name=VALUE
+Container name. If this option is absent from the command line it defaults to \fIMonoFrameworkConfigurationKey\fR (the
+default key name used by System.Configuration section encryption/decryption code)
+
+.TP
+.B   -s, --size=VALUE
+Key size. Specifies the key length for the create operation (see the \fI-c\fR option). Defaults to 1024.
+
+.TP
+.B   -p, --path=VALUE
+Application physical path. Used when encrypting/decrypting configuration file sections to specify the directory in which
+the configuration file lives (see the \fI-cf\fR option). Defaults to current directory.
+
+.TP
+.B   -d, --dec, --decrypt=VALUE
+Decrypt configuration section. Configuration section must follow the format used when calling ConfigurationManager.GetSection,
+i.e.: path/to/section. Only sections known to the configuration system will be processed.
+
+.TP
+.B   -e, --enc, --encrypt=VALUE
+Encrypt configuration section. Configuration section must follow the format used when calling ConfigurationManager.GetSection,
+i.e.: path/to/section. Only sections known to the configuration system will be processed.
+
+.SH AUTHOR
+Marek Habersack
+.SH COPYRIGHT
+Copyright (C) 2010 Novell, Inc (http://novell.com)
+.SH MAILING LISTS
+Visit http://lists.ximian.com/mailman/listinfo/mono-devel-list for details.
+.SH WEB SITE
+Visit: http://mono-project.com for details
