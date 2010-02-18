@@ -1,3 +1,7 @@
+2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ns-readme.txt : another line of note.
+
 2010-02-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ns0,xsd ... ns27.xsd : new test files.

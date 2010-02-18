@@ -1,5 +1,10 @@
 2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XsdDataContractImporter-new.cs : output [KnownType] to expose
+	  base/derived type relationship.
+
+2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XsdDataContractImporter-new.cs : fix GenerateInternal.
 
 2010-02-17  Atsushi Enomoto  <atsushi@ximian.com>

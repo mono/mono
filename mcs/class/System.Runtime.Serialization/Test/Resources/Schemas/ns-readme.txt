@@ -1,5 +1,5 @@
 ns0.xsd : MS default serialization namespace.
-ns1.xsd : imports ns2.xsd, has duplicate name to ns2
+ns1.xsd : imports ns2.xsd, has duplicate name to ns2. Also check [KnownType].
 ns2.xsd : used with ns1.xsd, not much special.
 ns3.xsd : has simple content extension, seems like not supported in WCF.
 ns4.xsd : has required attributes, not supported in WCF.

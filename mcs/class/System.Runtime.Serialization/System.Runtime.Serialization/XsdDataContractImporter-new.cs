@@ -263,6 +263,12 @@ namespace System.Runtime.Serialization
 						CodeCompileUnit.Namespaces.Remove (cns);
 				}
 			}
+
+			foreach (var impinfo in imported_types)
+				for (; impinfo.KnownTypeOutputIndex < impinfo.KnownClrTypes.Count; impinfo.KnownTypeOutputIndex++)
+					td.CustomAttributes.Add (new CodeAttributeDeclaration (
+						new CodeTypeReference (typeof (KnownTypeAttribute)),
+						new CodeAttributeArgument (new CodeTypeOfExpression (impinfo.KnownClrTypes [impinfo.KnownTypeOutputIndex]))));
 		}
 
 		static readonly string ass_name = typeof (DataContractAttribute).Assembly.GetName ().Name;
@@ -619,6 +625,7 @@ namespace System.Runtime.Serialization
 			public XmlQualifiedName XsdTypeName { get; set; }
 			public XmlSchemaType XsdType { get; set; }
 			public List<CodeTypeReference> KnownClrTypes { get; private set; }
+			public int KnownTypeOutputIndex { get; set; } // updated while importing.
 		}
 	}
 }
