@@ -1,5 +1,7 @@
 2010-02-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (get_throw_trampoline): Add xdebug info.
+
 	* method-to-ir.c (mono_method_to_ir): Fix SIZEOF in dynamic methods.
 
 2010-02-16  Zoltan Varga  <vargaz@gmail.com>
