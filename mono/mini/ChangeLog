@@ -1,5 +1,10 @@
 2010-02-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c (mono_arch_get_restore_context): Changes this so it restores
+	edx/ecx too. This is needed to support OP_SEQ_POINT.
+
+2010-02-18  Zoltan Varga  <vargaz@gmail.com>
+
 	* method-to-ir.c (mono_method_to_ir): Fix SIZEOF in dynamic methods.
 
 2010-02-13  Zoltan Varga  <vargaz@gmail.com>
