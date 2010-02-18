@@ -1167,6 +1167,7 @@ namespace System.Web.UI.WebControls
 		void RegisterStyle (Style baseStyle, Style linkStyle) {
 			linkStyle.CopyTextStylesFrom (baseStyle);
 			linkStyle.BorderStyle = BorderStyle.None;
+			linkStyle.CssClass = baseStyle.CssClass;
 			baseStyle.Font.Reset ();
 			RegisterStyle (linkStyle);
 			RegisterStyle (baseStyle);
@@ -1648,6 +1649,12 @@ namespace System.Web.UI.WebControls
 					style.AddCssClass (nodeLinkStyle.CssClass);
 					style.AddCssClass (nodeLinkStyle.RegisteredCssClass);
 				}
+
+				if (levelLinkStyles != null && levelLinkStyles.Count > level) {
+					style.AddCssClass (levelLinkStyles [level].CssClass);
+					style.AddCssClass (levelLinkStyles [level].RegisteredCssClass);
+				}
+				
 				if (node.IsLeafNode) {
 					if (leafNodeStyle != null) {
 						style.AddCssClass (leafNodeLinkStyle.CssClass);
@@ -1666,10 +1673,7 @@ namespace System.Web.UI.WebControls
 						style.AddCssClass (parentNodeLinkStyle.RegisteredCssClass);
 					}
 				}
-				if (levelStyles != null && levelStyles.Count > level) {
-					style.AddCssClass (levelLinkStyles [level].CssClass);
-					style.AddCssClass (levelLinkStyles [level].RegisteredCssClass);
-				}
+				
 				if (nodeIsSelected) {
 					style.AddCssClass (selectedNodeLinkStyle.CssClass);
 					style.AddCssClass (selectedNodeLinkStyle.RegisteredCssClass);
@@ -1681,6 +1685,10 @@ namespace System.Web.UI.WebControls
 				if (nodeStyle != null) {
 					style.CopyFrom (nodeLinkStyle);
 				}
+
+				if (levelLinkStyles != null && levelLinkStyles.Count > level)
+					style.CopyFrom (levelLinkStyles [level]);
+				
 				if (node.IsLeafNode) {
 					if (node.IsLeafNode && leafNodeStyle != null) {
 						style.CopyFrom (leafNodeLinkStyle);
@@ -1696,9 +1704,7 @@ namespace System.Web.UI.WebControls
 						style.CopyFrom (parentNodeLinkStyle);
 					}
 				}
-				if (levelStyles != null && levelStyles.Count > level) {
-					style.CopyFrom (levelLinkStyles [level]);
-				}
+				
 				if (nodeIsSelected) {
 					style.CopyFrom (selectedNodeLinkStyle);
 				}

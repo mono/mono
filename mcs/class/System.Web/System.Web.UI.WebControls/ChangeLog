@@ -1,3 +1,8 @@
+2010-02-18  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeView.cs: RegisterStyle must copy CssClass in addition to
+	other style properties. Fixes bug #580692
+
 2010-01-18  Marek Habersack  <mhabersack@novell.com>
 
 	* Parameter.cs: added missing 3.5 APIs - constructors taking
