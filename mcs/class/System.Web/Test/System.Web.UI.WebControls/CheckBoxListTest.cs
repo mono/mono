@@ -125,8 +125,17 @@ namespace MonoTests.System.Web.UI.WebControls {
 	}
 
 	[TestFixture]
-	public class CheckBoxListTest {
-
+	public class CheckBoxListTest
+	{
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			Type t = GetType ();
+			WebTest.CopyResource (t, "CheckBoxList_Bug377703_1.aspx", "CheckBoxList_Bug377703_1.aspx");
+			WebTest.CopyResource (t, "CheckBoxList_Bug377703_2.aspx", "CheckBoxList_Bug377703_2.aspx");
+			WebTest.CopyResource (t, "CheckBoxList_Bug578770.aspx", "CheckBoxList_Bug578770.aspx");
+		}
+		
 		[Test]
 		public void Defaults ()
 		{
@@ -150,6 +159,196 @@ namespace MonoTests.System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
+		[Test]
+		public void CheckBoxList_Bug377708_1 ()
+		{
+			WebTest t = new WebTest ("CheckBoxList_Bug377703_1.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (CheckBoxList_Bug377708_1_OnInit);
+			string origHtmlFirst = @"<table id=""cbxl1"" border=""0"">
+	<tr>
+		<td><input id=""cbxl1_0"" type=""checkbox"" name=""cbxl1$0"" /><label for=""cbxl1_0"">x</label></td>
+
+	</tr><tr>
+		<td><input id=""cbxl1_1"" type=""checkbox"" name=""cbxl1$1"" /><label for=""cbxl1_1"">y</label></td>
+	</tr><tr>
+		<td><input id=""cbxl1_2"" type=""checkbox"" name=""cbxl1$2"" /><label for=""cbxl1_2"">z</label></td>
+	</tr>
+</table>";
+			string origHtmlSecond = @"<table id=""cbxl1"" border=""0"">
+	<tr>
+		<td><input id=""cbxl1_0"" type=""checkbox"" name=""cbxl1$0"" checked=""checked"" /><label for=""cbxl1_0"">x</label></td>
+
+	</tr><tr>
+		<td><input id=""cbxl1_1"" type=""checkbox"" name=""cbxl1$1"" /><label for=""cbxl1_1"">y</label></td>
+	</tr><tr>
+		<td><input id=""cbxl1_2"" type=""checkbox"" name=""cbxl1$2"" /><label for=""cbxl1_2"">z</label></td>
+	</tr>
+</table>";
+			string html = t.Run ();
+			string listHtml = HtmlDiff.GetControlFromPageHtml (html);
+
+			HtmlDiff.AssertAreEqual (origHtmlFirst, listHtml, "#A1");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("cbxl1$0");
+			fr.Controls ["cbxl1$0"].Value = "on";
+
+			fr.Controls.Add ("ctl01");
+			fr.Controls ["ctl01"].Value = "Click me twice to have the first Item become empty";
+
+			t.Request = fr;
+			html = t.Run ();
+
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("cbxl1$0");
+			fr.Controls ["cbxl1$0"].Value = "on";
+
+			fr.Controls.Add ("ctl01");
+			fr.Controls ["ctl01"].Value = "Click me twice to have the first Item become empty";
+
+			t.Request = fr;
+			html = t.Run ();
+
+			listHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origHtmlSecond, listHtml, "#A2");
+		}
+
+		public static void CheckBoxList_Bug377708_1_OnInit (Page p)
+		{
+			CheckBoxList cbxl1 = p.FindControl ("cbxl1") as CheckBoxList;
+			
+			cbxl1.DataSource = new[] {
+				new { ID = "x", Text = "X" },
+				new { ID = "y", Text = "Y" },
+				new { ID = "z", Text = "Z" },
+			};
+			cbxl1.DataValueField = "ID";
+			cbxl1.DataTextField = "ID";
+			cbxl1.DataBind();
+		}
+
+		[Test]
+		public void CheckBoxList_Bug377708_2 ()
+		{
+			WebTest t = new WebTest ("CheckBoxList_Bug377703_2.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (CheckBoxList_Bug377708_2_OnInit);
+			string origHtmlFirst = @"<table id=""cbxl2"" border=""0"">
+	<tr>
+		<td><input id=""cbxl2_0"" type=""checkbox"" name=""cbxl2$0"" /><label for=""cbxl2_0"">x</label></td>
+
+	</tr><tr>
+		<td><input id=""cbxl2_1"" type=""checkbox"" name=""cbxl2$1"" /><label for=""cbxl2_1"">y</label></td>
+	</tr><tr>
+		<td><input id=""cbxl2_2"" type=""checkbox"" name=""cbxl2$2"" /><label for=""cbxl2_2"">z</label></td>
+	</tr>
+</table>";
+			string origHtmlSecond = @"<table id=""cbxl2"" disabled=""disabled"" border=""0"">
+	<tr>
+		<td><span disabled=""disabled""><input id=""cbxl2_0"" type=""checkbox"" name=""cbxl2$0"" disabled=""disabled"" checked=""checked"" /><label for=""cbxl2_0"">x</label></span></td>
+
+	</tr><tr>
+		<td><span disabled=""disabled""><input id=""cbxl2_1"" type=""checkbox"" name=""cbxl2$1"" disabled=""disabled"" /><label for=""cbxl2_1"">y</label></span></td>
+	</tr><tr>
+		<td><span disabled=""disabled""><input id=""cbxl2_2"" type=""checkbox"" name=""cbxl2$2"" disabled=""disabled"" checked=""checked"" /><label for=""cbxl2_2"">z</label></span></td>
+	</tr>
+</table>";
+			string origHtmlThird = @"<table id=""cbxl2"" disabled=""disabled"" border=""0"">
+	<tr>
+		<td><span disabled=""disabled""><input id=""cbxl2_0"" type=""checkbox"" name=""cbxl2$0"" disabled=""disabled"" checked=""checked"" /><label for=""cbxl2_0"">x</label></span></td>
+
+	</tr><tr>
+		<td><span disabled=""disabled""><input id=""cbxl2_1"" type=""checkbox"" name=""cbxl2$1"" disabled=""disabled"" /><label for=""cbxl2_1"">y</label></span></td>
+	</tr><tr>
+		<td><span disabled=""disabled""><input id=""cbxl2_2"" type=""checkbox"" name=""cbxl2$2"" disabled=""disabled"" checked=""checked"" /><label for=""cbxl2_2"">z</label></span></td>
+	</tr>
+</table>";
+			string html = t.Run ();
+			string listHtml = HtmlDiff.GetControlFromPageHtml (html);
+
+			HtmlDiff.AssertAreEqual (origHtmlFirst, listHtml, "#A1");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("cbxl2$0");
+			fr.Controls ["cbxl2$0"].Value = "on";
+
+			fr.Controls.Add ("cbxl2$2");
+			fr.Controls ["cbxl2$2"].Value = "on";
+			
+			fr.Controls.Add ("ctl01");
+			fr.Controls ["ctl01"].Value = "Click to toggle enable status above";
+
+			t.Request = fr;
+			html = t.Run ();
+
+			listHtml = HtmlDiff.GetControlFromPageHtml (html);
+
+			HtmlDiff.AssertAreEqual (origHtmlSecond, listHtml, "#A2");
+			
+			fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("ctl02");
+			fr.Controls ["ctl02"].Value = "Click to refresh page";
+
+			t.Request = fr;
+			html = t.Run ();
+
+			listHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origHtmlThird, listHtml, "#A3");
+		}
+
+		public static void CheckBoxList_Bug377708_2_OnInit (Page p)
+		{
+			CheckBoxList cbxl2 = p.FindControl ("cbxl2") as CheckBoxList;
+			
+			cbxl2.DataSource = new[] {
+				new { ID = "x", Text = "X" },
+				new { ID = "y", Text = "Y" },
+				new { ID = "z", Text = "Z" },
+			};
+			cbxl2.DataValueField = "ID";
+			cbxl2.DataTextField = "ID";
+			cbxl2.DataBind();
+		}
+
+		[Test]
+		public void CheckBoxList_Bug578770 ()
+		{
+			WebTest t = new WebTest ("CheckBoxList_Bug578770.aspx");
+			t.Invoker = PageInvoker.CreateOnInit (CheckBoxList_Bug578770_OnInit);
+			string origHtml = @"<table id=""test"" border=""0"">
+
+	<tr>
+		<td><span disabled=""disabled""><input id=""test_0"" type=""checkbox"" name=""test$0"" disabled=""disabled"" /><label for=""test_0"">Sun</label></span></td>
+	</tr><tr>
+		<td><input id=""test_1"" type=""checkbox"" name=""test$1"" /><label for=""test_1"">Mon</label></td>
+	</tr><tr>
+		<td><input id=""test_2"" type=""checkbox"" name=""test$2"" /><label for=""test_2"">Tue</label></td>
+	</tr><tr>
+
+		<td><input id=""test_3"" type=""checkbox"" name=""test$3"" /><label for=""test_3"">Wed</label></td>
+	</tr><tr>
+		<td><input id=""test_4"" type=""checkbox"" name=""test$4"" /><label for=""test_4"">Thu</label></td>
+	</tr><tr>
+		<td><input id=""test_5"" type=""checkbox"" name=""test$5"" /><label for=""test_5"">Fri</label></td>
+	</tr><tr>
+		<td><input id=""test_6"" type=""checkbox"" name=""test$6"" /><label for=""test_6"">Sat</label></td>
+
+	</tr>
+</table>";
+			string html = t.Run ();
+			string listHtml = HtmlDiff.GetControlFromPageHtml (html);
+
+			HtmlDiff.AssertAreEqual (origHtml, listHtml, "#A1");
+		}
+
+		public static void CheckBoxList_Bug578770_OnInit (Page p)
+		{
+			CheckBoxList test = p.FindControl ("test") as CheckBoxList;
+			string[] weekDays = { "Sun", "Mon", "Tue", "Wed", "Thu", "Fri", "Sat" };
+			test.DataSource = weekDays;
+			test.DataBind();
+			test.Items[0].Enabled = false;
+		}
+		
 		[Test]
 		public void RaisePostDataChangedEvent ()
 		{

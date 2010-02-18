@@ -1,5 +1,7 @@
 2010-02-18  Marek Habersack  <mhabersack@novell.com>
 
+	* CheckBoxListTest.cs: added tests for bugs #377703 and #578770
+
 	* TreeView.cs: RegisterStyle must copy CssClass in addition to
 	other style properties. Fixes bug #580692
 
