@@ -32,6 +32,7 @@ using System.CodeDom.Compiler;
 using System.Collections.Generic;
 using System.IO;
 using System.Linq;
+using System.Reflection;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
@@ -238,8 +239,9 @@ namespace System.Runtime.Serialization
 			cns = GetCodeNamespace (qname);
 			clrRef = new CodeTypeReference (cns.Name.Length > 0 ? cns.Name + "." + qname.Name : qname.Name);
 
-			var td = new CodeTypeDeclaration ();
-			td.Name = CodeIdentifier.MakeValid (qname.Name);
+			var td = new CodeTypeDeclaration () {
+				Name = CodeIdentifier.MakeValid (qname.Name),
+				TypeAttributes = GenerateInternal ? TypeAttributes.NotPublic : TypeAttributes.Public };
 			cns.Types.Add (td);
 
 			var info = new TypeImportInfo () { ClrType = clrRef, XsdType = type,  XsdTypeName = qname };
@@ -306,7 +308,7 @@ namespace System.Runtime.Serialization
 			var field = new CodeMemberField (typeref_ext_class, "extensionDataField");
 			td.Members.Add (field);
 
-			var prop = new CodeMemberProperty () { Type = field.Type, Name = "ExtensionData", Attributes = MemberAttributes.Public | MemberAttributes.Final };
+			var prop = new CodeMemberProperty () { Type = field.Type, Name = "ExtensionData", Attributes = (GenerateInternal ? MemberAttributes.Assembly : MemberAttributes.Public) | MemberAttributes.Final };
 			prop.GetStatements.Add (new CodeMethodReturnStatement (
 				new CodeFieldReferenceExpression (
 				new CodeThisReferenceExpression (),
@@ -462,9 +464,13 @@ namespace System.Runtime.Serialization
 		static readonly CodeExpression this_expr = new CodeThisReferenceExpression ();
 		static readonly CodeExpression arg_value_expr = new CodePropertySetValueReferenceExpression ();
 
+		bool GenerateInternal {
+			get { return Options != null && Options.GenerateInternal; }
+		}
+
 		void AddProperty (CodeTypeDeclaration td, XmlSchemaElement xe)
 		{
-			var att = Options != null && Options.GenerateInternal ? MemberAttributes.Assembly : MemberAttributes.Public;
+			var att = GenerateInternal ? MemberAttributes.Assembly : MemberAttributes.Public;
 			var fi = new CodeMemberField () { Name = CodeIdentifier.MakeValid (xe.QualifiedName.Name + "Field"), Type = GetCodeTypeReference (xe.ElementSchemaType.QualifiedName, xe) };
 			td.Members.Add (fi);
 			var pi = new CodeMemberProperty () { Name = xe.QualifiedName.Name, Attributes = att, HasGet = true, HasSet = true, Type = fi.Type };
