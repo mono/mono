@@ -1,3 +1,16 @@
+2010-02-18  Marek Habersack  <mhabersack@novell.com>
+
+	* HostingEnvironment.cs: removed SetHostingId and added internal
+	setters to the SiteName and IsHosted properties.
+
+	* ApplicationHost.cs: set the ".appId" item in the new appdomain's
+	data, so that HttpRuntime.AppDomainAppId returns a non-null
+	value.
+	Set HostingEnvironment.{IsHosted, SiteName} in the new appdomain
+	instead of the original one.
+
+	All of the above fix bug #578880
+
 2009-10-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ApplicationHost.cs: set the shadow copy options calling the methods

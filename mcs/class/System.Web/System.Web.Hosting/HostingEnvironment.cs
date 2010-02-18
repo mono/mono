@@ -89,6 +89,7 @@ namespace System.Web.Hosting {
 
 		public static bool IsHosted {
 			get { return is_hosted; }
+			internal set { is_hosted = value; }
 		}
 
 		public static ApplicationShutdownReason ShutdownReason {
@@ -97,6 +98,7 @@ namespace System.Web.Hosting {
 
 		public static string SiteName {
 			get { return site_name; }
+			internal set { site_name = value; }
 		}
 
 		public static VirtualPathProvider VirtualPathProvider {
@@ -199,11 +201,6 @@ namespace System.Web.Hosting {
 			if (obj == null)
 				throw new ArgumentNullException ("obj");
 			Host.UnregisterObject (obj);
-		}
-
-		internal static void SetIsHosted (bool isHosted)
-		{
-			is_hosted = isHosted;
 		}
 	}
 }
