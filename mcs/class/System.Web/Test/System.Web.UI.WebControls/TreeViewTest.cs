@@ -738,6 +738,101 @@ namespace MonoTests.System.Web.UI.WebControls {
 			page.Form.Controls.Add (lce);
 		}
 
+		[Test (Description="Bug #580692")]
+		[Category ("NunitWeb")]
+		public void TreeView_Render_LevelStyle_CssClass ()
+		{
+			WebTest t = new WebTest (PageInvoker.CreateOnLoad (pageLoadRenderLevelStyleCssClass));
+#region HTML
+			string strTarget = @"<a href=""#treeview1_SkipLink""><img height=""0"" width=""0"" src=""/WebResource.axd?d=0d4cddf62c21b386a0c479d4b29c5a4c0a78811622d960d7&amp;t=634020843490000000"" alt=""Skip Navigation Links."" style=""border-width:0px;"" /></a><div id=""treeview1"">
+	<table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><a href=""javascript:__doPostBack('treeview1','ec|0')""><img alt=""Collapse Book"" src=""/WebResource.axd?d=2ffadef8bb28bb33bd311b2cae0874942ed83fb6bc74f1d5&amp;t=634020843490000000"" style=""border-width:0;"" /></a></td><td class=""TestCssClass1 treeview1_2"" style=""white-space:nowrap;""><a class=""treeview1_0 TestCssClass1 treeview1_1"" href=""javascript:__doPostBack('treeview1','sel|0')"">Book</a></td>
+		</tr><tr style=""height:0px;"">
+			<td></td>
+
+		</tr>
+	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr style=""height:0px;"">
+			<td></td>
+		</tr><tr>
+			<td><div style=""width:20px;height:1px;"">
+
+			</div></td><td><a href=""javascript:__doPostBack('treeview1','ec|0_0')""><img alt=""Collapse Chapter"" src=""/WebResource.axd?d=2ffadef8bb28bb33bd311b2cae0874942ed83fb6bc74f1d5&amp;t=634020843490000000"" style=""border-width:0;"" /></a></td><td class=""TestCssClass2 treeview1_4"" style=""white-space:nowrap;""><a class=""treeview1_0 TestCssClass2 treeview1_3"" href=""javascript:__doPostBack('treeview1','sel|0_0')"">Chapter</a></td>
+		</tr><tr style=""height:0px;"">
+
+			<td></td>
+		</tr>
+	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><div style=""width:20px;height:1px;"">
+
+			</div></td><td><div style=""width:20px;height:1px;"">
+
+			</div></td><td><img alt="""" src=""/WebResource.axd?d=2ffadef8bb28bb335d56d5a83863fb8971aa8a175d1537f9&amp;t=634020843490000000"" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sel|0_0_0')"">Section</a></td>
+
+		</tr>
+	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><div style=""width:20px;height:1px;"">
+
+			</div></td><td><div style=""width:20px;height:1px;"">
+
+			</div></td><td><img alt="""" src=""/WebResource.axd?d=2ffadef8bb28bb335d56d5a83863fb8971aa8a175d1537f9&amp;t=634020843490000000"" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sel|0_0_1')"">Section</a></td>
+		</tr>
+
+	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr style=""height:0px;"">
+			<td></td>
+		</tr><tr>
+			<td><div style=""width:20px;height:1px;"">
+
+			</div></td><td><a href=""javascript:__doPostBack('treeview1','ec|0_1')""><img alt=""Collapse Chapter"" src=""/WebResource.axd?d=2ffadef8bb28bb33bd311b2cae0874942ed83fb6bc74f1d5&amp;t=634020843490000000"" style=""border-width:0;"" /></a></td><td class=""TestCssClass2 treeview1_4"" style=""white-space:nowrap;""><a class=""treeview1_0 TestCssClass2 treeview1_3"" href=""javascript:__doPostBack('treeview1','sel|0_1')"">Chapter</a></td>
+		</tr><tr style=""height:0px;"">
+			<td></td>
+
+		</tr>
+	</table><table cellpadding=""0"" cellspacing=""0"" style=""border-width:0;"">
+		<tr>
+			<td><div style=""width:20px;height:1px;"">
+
+			</div></td><td><div style=""width:20px;height:1px;"">
+
+			</div></td><td><img alt="""" src=""/WebResource.axd?d=2ffadef8bb28bb335d56d5a83863fb8971aa8a175d1537f9&amp;t=634020843490000000"" /></td><td style=""white-space:nowrap;""><a class=""treeview1_0"" href=""javascript:__doPostBack('treeview1','sel|0_1_0')"">Section</a></td>
+		</tr>
+
+	</table>
+</div><a id=""treeview1_SkipLink""></a>";
+#endregion
+			string str = HtmlDiff.GetControlFromPageHtml (t.Run ());
+			HtmlDiff.AssertAreEqual (strTarget, str, "Render_LevelStyle_CssClass");
+		}
+
+		public static void pageLoadRenderLevelStyleCssClass (Page page) {
+			TreeView tv = new TreeView ();
+			tv.EnableClientScript = false;
+			tv.ID = "treeview1";
+
+			TreeNodeStyle tns = new TreeNodeStyle ();
+			tns.CssClass = "TestCssClass1";
+			tv.LevelStyles.Add (tns);
+			
+			tns = new TreeNodeStyle ();
+			tns.CssClass = "TestCssClass2";
+			tv.LevelStyles.Add (tns);
+			
+			XmlDataSource xmlds = new XmlDataSource ();
+			xmlds.EnableCaching = false;
+			xmlds.Data = xmlDataBind;
+			tv.DataSource = xmlds;
+			tv.DataBind ();
+			LiteralControl lcb = new LiteralControl (HtmlDiff.BEGIN_TAG);
+			LiteralControl lce = new LiteralControl (HtmlDiff.END_TAG);
+			page.Form.Controls.Add (lcb);
+			page.Form.Controls.Add (tv);
+			page.Form.Controls.Add (lce);
+		}
+		
 		[Test]
 		[Category ("NunitWeb")]
 		public void TreeView_Method_RenderTags () {
