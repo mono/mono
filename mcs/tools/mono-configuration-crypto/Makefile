@@ -7,3 +7,5 @@ all-local:
 install-local:
 
 dist-local:
+
+clean-local:
