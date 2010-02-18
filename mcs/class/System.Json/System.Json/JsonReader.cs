@@ -24,6 +24,7 @@ namespace System.Json
 		public JsonValue Read ()
 		{
 			JsonValue v = ReadCore ();
+			SkipSpaces ();
 			if (r.Read () >= 0)
 				throw JsonError (String.Format ("extra characters in JSON input"));
 			return v;

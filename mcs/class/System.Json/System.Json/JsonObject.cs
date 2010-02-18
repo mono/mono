@@ -105,7 +105,7 @@ namespace System.Json
 			if (value == null)
 				throw new ArgumentNullException ("value");
 			PopulateMap ();
-			map.Add (key, value);
+			map [key] = value;
 		}
 
 		public void Add (JsonPair pair)

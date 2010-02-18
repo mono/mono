@@ -1,3 +1,10 @@
+2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonReader.cs : line endings after a value should not result in
+	  a parse error.
+	* JsonObject.cs : duplicate object key "SHOULD" not be used, but
+	  they are not rejected. So, make it a bit sloppy.
+
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonReader.cs : oops, added previous change to wrong position.
