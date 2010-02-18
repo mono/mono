@@ -130,21 +130,23 @@ namespace System.Json
 				if (src [i] == '"' || src [i] == '\\') {
 					var sb = new StringBuilder ();
 					if (i > 0)
-						sb.Append (src, 0, i - 1);
+						sb.Append (src, 0, i);
 					return DoEscapeString (sb, src, i);
-			}
+				}
 			return src;
 		}
 
 		string DoEscapeString (StringBuilder sb, string src, int cur)
 		{
+			int start = cur;
 			for (int i = cur; i < src.Length; i++)
 				if (src [i] == '"' || src [i] == '\\') {
+					sb.Append (src, start, i - start);
 					sb.Append ('\\');
 					sb.Append (src [i++]);
-					return DoEscapeString (sb, src, i);
+					start = i;
 				}
-			sb.Append (src, cur, src.Length - cur);
+			sb.Append (src, start, src.Length - start);
 			return sb.ToString ();
 		}
 

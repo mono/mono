@@ -1,5 +1,10 @@
 2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* JsonValue.cs : fix string escaping, it was giving wrong output
+	  after \" and \\.
+
+2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JsonReader.cs : line endings after a value should not result in
 	  a parse error.
 	* JsonObject.cs : duplicate object key "SHOULD" not be used, but
