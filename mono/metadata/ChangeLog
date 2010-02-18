@@ -1,3 +1,13 @@
+2010-02-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_reflection_method_on_tb_inst_get_handle): Handle non
+	generic methods.
+
+	* reflection.c (mono_reflection_get_custom_attrs_info): Handle compiler context
+	cases for ParameterInfo.
+
+	Fixes #579493.
+
 2010-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_get_cctor): Fix support for dynamic classes, which doesn't
