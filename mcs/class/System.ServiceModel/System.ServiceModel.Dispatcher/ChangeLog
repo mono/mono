@@ -1,3 +1,8 @@
+2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : revert previous change - it could result
+	  in blocking some threads and block nunit completion.
+
 2010-02-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : now I can enable service throttling to
