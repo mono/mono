@@ -1,0 +1,12 @@
+2010-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ns0,xsd ... ns27.xsd : new test files.
+	* ns-readme.txt : description.
+
+2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* schema3.xsd : new test file.
+
+2010-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* schema1.xsd, schema2.xsd : new test files.

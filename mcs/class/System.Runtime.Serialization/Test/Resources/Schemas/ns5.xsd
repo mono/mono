@@ -1,0 +1,12 @@
+<xs:schema targetNamespace="urn:bar" xmlns="urn:bar" xmlns:x="urn:bar"
+    elementFormDefault="qualified" xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:element name="E2" type="x:T2" nillable="true" />
+  <xs:complexType name="T2">
+    <xs:complexContent>
+      <xs:extension base="xs:anyType">
+        <xs:attribute name="a1" type="xs:string" use="optional" />
+        <xs:attribute name="a2" type="xs:int" use="optional" />
+      </xs:extension>
+    </xs:complexContent>
+  </xs:complexType>
+</xs:schema>

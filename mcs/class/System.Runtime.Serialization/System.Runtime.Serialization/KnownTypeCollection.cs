@@ -266,6 +266,7 @@ namespace System.Runtime.Serialization
 			}
 		}
 
+		// FIXME: xsd types and ms serialization types should be differentiated.
 		internal static Type GetPrimitiveTypeFromName (string name)
 		{
 			switch (name) {

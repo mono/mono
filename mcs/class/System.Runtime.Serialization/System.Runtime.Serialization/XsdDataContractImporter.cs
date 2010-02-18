@@ -206,6 +206,7 @@ namespace System.Runtime.Serialization
 				return;
 
 			CodeNamespace cns = new CodeNamespace ();
+			cns.Name = FromXmlnsToClrName (mapping.Namespace);
 
 			XmlCodeExporter xce = new XmlCodeExporter (cns);
 			xce.ExportTypeMapping (mapping);
@@ -227,6 +228,10 @@ namespace System.Runtime.Serialization
 					to_remove.Add (type);
 					continue;
 				}
+				if (type_name.Namespace == KnownTypeCollection.MSArraysNamespace) {
+					to_remove.Add (type);
+					continue;
+				}
 
 				imported_names [type_name] = type_name;
 
@@ -234,10 +239,6 @@ namespace System.Runtime.Serialization
 				//Custom Attributes
 				type.CustomAttributes.Clear ();
 
-				if (type.IsEnum)
-					//FIXME: Add test case for this
-					continue;
-	
 				type.CustomAttributes.Add (
 					new CodeAttributeDeclaration (
 						new CodeTypeReference ("System.CodeDom.Compiler.GeneratedCodeAttribute"),
@@ -248,6 +249,10 @@ namespace System.Runtime.Serialization
 					new CodeAttributeDeclaration (
 						new CodeTypeReference ("System.Runtime.Serialization.DataContractAttribute")));
 
+				if (type.IsEnum)
+					//FIXME: Add test case for this
+					continue;
+	
 				//BaseType and interface
 				type.BaseTypes.Add (new CodeTypeReference (typeof (object)));
 				type.BaseTypes.Add (new CodeTypeReference ("System.Runtime.Serialization.IExtensibleDataObject"));
@@ -299,7 +304,33 @@ namespace System.Runtime.Serialization
 			foreach (CodeTypeDeclaration type in to_remove)
 				cns.Types.Remove (type);
 
-			CodeCompileUnit.Namespaces.Add (cns);
+			if (cns.Types.Count > 0)
+				CodeCompileUnit.Namespaces.Add (cns);
+		}
+
+		const string default_ns_prefix = "http://schemas.datacontract.org/2004/07/";
+
+		string FromXmlnsToClrName (string xns)
+		{
+			if (xns.StartsWith (default_ns_prefix, StringComparison.Ordinal))
+				xns = xns.Substring (default_ns_prefix.Length);
+			else {
+				Uri u;
+				string tmp;
+				if (Uri.TryCreate (xns, UriKind.Absolute, out u) && (tmp = MakeStringNamespaceComponentsValid (u.GetComponents (UriComponents.Host | UriComponents.Path, UriFormat.Unescaped))).Length > 0)
+					xns = tmp;
+			}
+			return MakeStringNamespaceComponentsValid (xns);
+		}
+
+		static readonly char [] split_tokens = new char [] {'/', '.'};
+
+		string MakeStringNamespaceComponentsValid (string ns)
+		{
+			var arr = ns.Split (split_tokens, StringSplitOptions.RemoveEmptyEntries);
+			for (int i = 0; i < arr.Length; i++)
+				arr [i] = CodeIdentifier.MakeValid (arr [i]);
+			return String.Join (".", arr);
 		}
 
 		private string GetNamespace (CodeTypeDeclaration type)

@@ -1,0 +1,20 @@
+<xs:schema targetNamespace="urn:bar" xmlns="urn:bar" xmlns:x="urn:bar"
+    xmlns:m="http://schemas.microsoft.com/2003/10/Serialization/"
+    xmlns:xs="http://www.w3.org/2001/XMLSchema" elementFormDefault="qualified">
+  <xs:element name="E1" type="T1" nillable="true" />
+  <xs:simpleType name="T1">
+    <xs:restriction base="xs:int">
+      <xs:enumeration value="0" />
+    </xs:restriction>
+  </xs:simpleType>
+  <xs:element name="E2" type="T2" nillable="true" />
+  <xs:simpleType name="T2">
+    <xs:list>
+      <xs:simpleType>
+        <xs:restriction base="xs:int">
+          <xs:enumeration value="1" />
+        </xs:restriction>
+      </xs:simpleType>
+    </xs:list>
+  </xs:simpleType>
+</xs:schema>

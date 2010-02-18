@@ -21,6 +21,7 @@ TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) /r:System.ServiceModel.dll
 
 EXTRA_DISTFILES = $(RESOURCE_FILES) \
 	Test/Resources/FrameworkTypes/* \
+	Test/Resources/Schemas/*.xsd \
 	Test/System.Runtime.Serialization/one.xml
 
 VALID_PROFILE := $(filter 2.0 2.1 4.0, $(FRAMEWORK_VERSION))

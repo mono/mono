@@ -33,18 +33,17 @@
 //
 
 using System;
+using System.CodeDom;
+using System.CodeDom.Compiler;
 using System.Collections.Generic;
-
+using System.IO;
+using System.Runtime.Serialization;
+using System.ServiceModel.Description;
 using System.Xml;
 using System.Xml.Schema;
 using System.Xml.Serialization;
-
-using System.CodeDom;
-using System.CodeDom.Compiler;
-using System.Runtime.Serialization;
-
+using Microsoft.CSharp;
 using NUnit.Framework;
-using System.ServiceModel.Description;
 
 namespace MonoTests.System.Runtime.Serialization
 {
@@ -372,6 +371,245 @@ namespace MonoTests.System.Runtime.Serialization
 			//Importing same data contract again with same importer
 			Assert.AreEqual (0, ccu.Namespaces.Count, "#i49");
 		}
+
+		[Test]
+		public void ImportSkipArrayOfPrimitives ()
+		{
+			var ccu = new CodeCompileUnit ();
+			var xdi = new XsdDataContractImporter (ccu);
+			var xss = new XmlSchemaSet ();
+			xss.Add (null, "Test/Resources/Schemas/schema1.xsd");
+			xss.Add (null, "Test/Resources/Schemas/schema2.xsd");
+			xdi.Import (xss);
+			var sw = new StringWriter ();
+			new CSharpCodeProvider ().GenerateCodeFromCompileUnit (ccu, sw, null);
+			Assert.IsTrue (sw.ToString ().IndexOf ("ArrayOfint") < 0, "#1");
+		}
+
+		[Test]
+		public void ImportGivesAppropriateNamespaces ()
+		{
+			var ccu = new CodeCompileUnit ();
+			var xdi = new XsdDataContractImporter (ccu);
+			var xss = new XmlSchemaSet ();
+			xss.Add (null, "Test/Resources/Schemas/schema1.xsd");
+			xss.Add (null, "Test/Resources/Schemas/schema2.xsd");
+			xss.Add (null, "Test/Resources/Schemas/schema3.xsd");
+			xdi.Import (xss);
+			var sw = new StringWriter ();
+			bool t = false, te = false;
+			foreach (CodeNamespace cns in ccu.Namespaces) {
+				if (cns.Name == "tempuri.org")
+					t = true;
+				else if (cns.Name == "tempuri.org.ext")
+					te = true;
+				Assert.AreEqual ("GetSearchDataResponse", cns.Types [0].Name, "#1." + cns.Name);
+			}
+			Assert.IsTrue (t, "t");
+			Assert.IsTrue (t, "te");
+		}
+
+#if false // FIXME: enable when we switch to the new implementation.
+
+		CodeCompileUnit DoImport (params string [] schemaFiles)
+		{
+			var ccu = new CodeCompileUnit ();
+			var xdi = new XsdDataContractImporter (ccu);
+			var xss = new XmlSchemaSet ();
+			foreach (var schemaFile in schemaFiles)
+				xss.Add (null, schemaFile);
+			xdi.Import (xss);
+
+			return ccu;
+		}
+
+		// FIXME: this set of tests need further assertion in each test case. Right now it just checks if things import or fail just fine.
+
+		[Test]
+		public void ImportTestX0 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns0.xsd");
+		}
+
+		[Test]
+		public void ImportTestX1 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns1.xsd");
+		}
+
+		[Test]
+		public void ImportTestX2 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns2.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX3 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns3.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX4 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns4.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX5 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns5.xsd");
+		}
+
+		[Test]
+		public void ImportTestX6 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns6.xsd",
+				  "Test/Resources/Schemas/ns0.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX7 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns7.xsd",
+				  "Test/Resources/Schemas/ns0.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX8 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns8.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX9 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns9.xsd");
+		}
+
+		[Test]
+		public void ImportTestX10 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns10.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX11 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns11.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX12 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns12.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX13 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns13.xsd");
+		}
+
+		[Test]
+		public void ImportTestX14 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns14.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX15 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns15.xsd");
+		}
+
+		[Test]
+		public void ImportTestX16 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns16.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX17 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns17.xsd");
+		}
+
+		[Test]
+		public void ImportTestX18 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns18.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX19 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns19.xsd");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidDataContractException))]
+		public void ImportTestX20 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns20.xsd");
+		}
+
+		[Test]
+		public void ImportTestX21 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns21.xsd");
+		}
+
+		[Test]
+		public void ImportTestX22 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns22.xsd");
+		}
+
+		[Test]
+		public void ImportTestX23 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns23.xsd");
+		}
+
+		[ExpectedException (typeof (InvalidDataContractException))]
+		[Test]
+		public void ImportTestX24 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns24.xsd");
+		}
+
+		[Test]
+		public void ImportTestX25 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns25.xsd");
+		}
+
+		[Test]
+		public void ImportTestX26 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns26.xsd");
+		}
+
+		[Test]
+		public void ImportTestX27 ()
+		{
+			DoImport ("Test/Resources/Schemas/ns27.xsd");
+		}
+
+#endif
 
 		/* Helper methods */
 		private void CheckDC (CodeTypeDeclaration type, string name, Dictionary<string, string> members, string msg)

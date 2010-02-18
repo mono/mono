@@ -1,3 +1,23 @@
+2010-02-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporter-new.cs : refresh implementation that is
+	  not based on xml serialization. Not enabled yet.
+	* KnownTypeCollection.cs : add cosmetic comment.
+
+2010-02-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporter.cs : add appropriate code namespaces
+	  imported from xsd namespace.
+
+2010-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporter.cs : do not add primitive ArrayOfxxx types.
+
+2010-02-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporter.cs : some generated attributes are put
+	  on enums too.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : allow readonly field as data member.
