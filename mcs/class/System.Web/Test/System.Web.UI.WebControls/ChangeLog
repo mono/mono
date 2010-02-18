@@ -1,3 +1,7 @@
+2010-02-18  Marek Habersack  <mhabersack@novell.com>
+
+	* TreeViewTest.cs: added test for bug #580692
+
 2010-01-21  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ThemeTest.cs: Mark UrlProperty test as NotWorking to clean
