@@ -42,7 +42,6 @@ namespace System.Web.UI.WebControls {
 		ArrayList items;
 		bool tracking;
 		bool dirty;
-		bool itemsEnabled;
 		int lastDirty = 0;
 #endregion	// Fields
 
@@ -52,11 +51,6 @@ namespace System.Web.UI.WebControls {
 		}
 #endregion	// Public Constructors
 
-		internal bool ItemsEnabled {
-			get { return itemsEnabled; }
-			set { itemsEnabled = value; }
-		}
-		
 #region Public Instance Properties
 		public int Capacity {
 			get {
@@ -278,20 +272,21 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		void IStateManager.LoadViewState (object savedState) {
+		void IStateManager.LoadViewState (object savedState)
+		{
 			Pair pair = savedState as Pair;
 			if (pair == null)
 				return;
 
 			bool newCollection = (bool) pair.First;
 			object [] itemsArray = (object []) pair.Second;
-            int count = itemsArray==null ? 0 : itemsArray.Length;
+			int count = itemsArray==null ? 0 : itemsArray.Length;
 
-            if (newCollection)
-                if (count > 0)
-                    items = new ArrayList(count);
-                else
-                    items = new ArrayList();
+			if (newCollection)
+				if (count > 0)
+					items = new ArrayList(count);
+				else
+					items = new ArrayList();
 
 			for (int i = 0; i < count; i++) {
 				ListItem item = new ListItem ();
@@ -322,17 +317,8 @@ namespace System.Web.UI.WebControls {
 			object [] itemsState = null;
 			if (count > 0)
 				itemsState = new object [count];
-#if NET_2_0
-			ListItem li;
-			bool enabled = ItemsEnabled;
-#endif
+
 			for (int i = 0; i < count; i++) {
-#if NET_2_0
-				li = items [i] as ListItem;
-				if (li != null && li.Enabled != enabled)
-					li.Enabled = enabled;
-#endif
-				
 				itemsState [i] = ((IStateManager) items [i]).SaveViewState ();
 				if (itemsState [i] != null)
 					itemsDirty = true;

@@ -1,5 +1,18 @@
 2010-02-18  Marek Habersack  <mhabersack@novell.com>
 
+	* ListItemCollection.cs: ItemsEnabled and associated code removed
+	- there's no need to alter ListItem's Enabled property when
+	loading view state.
+
+	* ListControl.cs: SaveViewState doesn't set the items collection's
+	ItemsEnabled property as it was removed from ListItemCollection
+
+	* CheckBoxList.cs: LoadPostData never unselects any item. A better
+	fix for bug #377703
+	RenderItem renders items as disabled when Enabled is false, but if
+	Enabled is true, item is rendered according to the value of its
+	own Enabled property. Fixes bug #578770
+
 	* TreeView.cs: RegisterStyle must copy CssClass in addition to
 	other style properties. Fixes bug #580692
 
