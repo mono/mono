@@ -205,7 +205,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/CheckBoxList_Bug377703_1.aspx \
 	Test/mainsoft/NunitWebResources/CheckBoxList_Bug377703_2.aspx \
 	Test/mainsoft/NunitWebResources/CheckBoxList_Bug578770.aspx \
-	Test/mainsoft/NunitWebResources/EnumConverter_Bug578586.aspx
+	Test/mainsoft/NunitWebResources/EnumConverter_Bug578586.aspx \
+	Test/mainsoft/NunitWebResources/ButtonColor_Bug325489.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
