@@ -44,6 +44,9 @@ using System.Collections;
 using System.Text;
 using System.Data;
 
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+
 namespace MonoTests.System.Web.UI.WebControls
 {
 	class SqlPoker : SqlDataSource
@@ -106,6 +109,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			SqlDataSourceTest.CustomEventParameterCollection = null;
 			SqlDataSourceTest.PassedParameters = "";
+
+			WebTest.CopyResource (GetType (), "SqlDataSource_OnInit_Bug572781.aspx", "SqlDataSource_OnInit_Bug572781.aspx");
 		}
 
 		[Test]
@@ -950,6 +955,29 @@ namespace MonoTests.System.Web.UI.WebControls
 			Hashtable oldvalue = new Hashtable ();
 			oldvalue.Add ("ProductID", 10);
 			view.Delete (null, null);
+		}
+
+		[Test]
+		public void SqlDataSource_OnInit_Bug572781 ()
+		{
+			WebTest t = new WebTest ("SqlDataSource_OnInit_Bug572781.aspx");
+			string origHtmlFirst = @" Init: button1. Init: sqlDataSource1<input type=""submit"" name=""button1"" value=""Click me!"" id=""button1"" />";
+			string origHtmlSecond = @" Init: button1. Init: sqlDataSource1<input type=""submit"" name=""button1"" value=""You clicked me"" id=""button1"" />";
+			string html;
+			string renderedHtml;
+
+			html = t.Run ();
+			renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origHtmlFirst, renderedHtml, "#A1");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("button1");
+			fr.Controls ["button1"].Value = "Click me!";
+			t.Request = fr;
+			
+			html = t.Run ();
+			renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origHtmlSecond, renderedHtml, "#A1");
 		}
 	}
 }

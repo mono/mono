@@ -1,5 +1,7 @@
 2010-02-19  Marek Habersack  <mhabersack@novell.com>
 
+	* SqlDataSourceTest.cs: added test for bug #572781
+
 	* ButtonTest.cs: added test for bug #325489
 
 2010-02-18  Marek Habersack  <mhabersack@novell.com>
