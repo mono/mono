@@ -85,7 +85,26 @@ namespace MonoTests.System.Web.UI.WebControls
 
 
 	[TestFixture]
-	public class ButtonTest {
+	public class ButtonTest
+	{
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "ButtonColor_Bug325489.aspx", "ButtonColor_Bug325489.aspx");
+		}
+
+#if NET_2_0
+		[Test]
+		public void ButtonColor_Bug325489 ()
+		{
+			WebTest t = new WebTest ("ButtonColor_Bug325489.aspx");
+			string origHtml = @"<input type=""submit"" name=""button1"" value="""" id=""button1"" style=""background-color:#316AC5;"" />";
+			string html = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+
+			HtmlDiff.AssertAreEqual (origHtml, renderedHtml, "#A1");
+		}
+#endif
 		
 		[Test]
 		public void Button_DefaultValues ()
