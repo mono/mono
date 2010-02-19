@@ -1,3 +1,15 @@
+2010-02-18  Gabriel Burt  <gabriel.burt@gmail.com>
+
+	* Normalization.cs: Implement algorithmic Hangul decomposition; Calling
+	string.Normalize on Korean characters now works properly (bnc#480152).
+	This reduces the number of errors in 'make test' from 27k to 4.8k.
+
+	* StringNormalizationTestSource.cs:
+	* Makefile: Use the local, working copy of Normalization etc,so as to make
+	modifying Normalization.cs and then testing your changes with 'make test'
+	possible.  Also, fix building/running of tests, patch by Alexander
+	Kojevnikov.
+
 2009-09-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Normalization.cs : Handle blocked characters which are not

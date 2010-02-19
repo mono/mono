@@ -11,14 +11,14 @@ SCRIPTS_TABLE = downloaded/Scripts.txt
 CB_CLASS_TABLE = downloaded/DerivedCombiningClass.txt
 CP932_TABLE = downloaded/CP932.TXT
 UCA_DATA = downloaded/core.zip
-NORM_TEST = downloaded/NormalizationTest.txt
+NORM_TEST_TABLE = downloaded/NormalizationTest.txt
 
 NORMGEN_FILENAME = create-normalization-source
 COLL_ELEM_FILENAME = create-collation-element-table
 MSTABLEGEN = create-mscompat-collation-table
 MSCOMPAT_FILENAME = MSCompatUnicodeTableGenerated.cs
 NORM_FILENAME = NormalizationGenerated.cs
-NORM_TEST_CS = StringNormalizationTest.cs
+NORM_TEST = StringNormalizationTest
 NORM_TESTGEN = create-normalization-tests
 
 all : collation normalization
@@ -29,12 +29,13 @@ normalization: $(NORM_FILENAME)
 
 collation : $(MSCOMPAT_FILENAME)
 
-norm-test : $(NORM_TEST_CS) $(NORM_TEST)
-	$(CS2COMPILE) $(NORM_TEST_CS) -d:TEST_STANDALONE
+norm-test : $(NORM_TEST_TABLE) $(NORM_TEST).cs
+	$(CS2COMPILE) -unsafe $(NORM_TEST).cs $(NORM_FILENAME) NormalizationTableUtil.cs CodePointIndexer.cs -d:TEST_STANDALONE
+	$(RUNTIME) $(NORM_TEST).exe
 
 distclean :
 	make clean
-	rm $(UCA_TABLE) $(NORM_TABLE) $(CB_CLASS_TABLE) $(CP932_TABLE) $(DERIV_CORE_PROP_TABLE) $(SCRIPTS_TABLE) $(NORM_TEST)
+	rm $(UCA_TABLE) $(NORM_TABLE) $(CB_CLASS_TABLE) $(CP932_TABLE) $(DERIV_CORE_PROP_TABLE) $(SCRIPTS_TABLE) $(NORM_TEST_TABLE)
 
 clean : clean-collation clean-normalization clean-mscompat clean-normtest
 
@@ -48,7 +49,7 @@ clean-mscompat :
 	rm -f $(MSCOMPAT_FILENAME) $(MSTABLEGEN).exe*
 
 clean-normtest :
-	rm -f $(NORM_TEST_CS) $(NORM_TESTGEN).exe*
+	rm -f $(NORM_TEST).* $(NORM_TESTGEN).exe*
 
 # collation element table
 CollationElementTable.cs : $(COLL_ELEM_FILENAME).exe CollationElementTable.template $(UCA_TABLE)
@@ -141,13 +142,17 @@ $(CP932_TABLE) :
 	touch downloaded/CP932.TXT
 
 $(UCA_DATA) :
+	rm -f core.zip
 	wget http://unicode.org/Public/cldr/1.3.0/core.zip
+	rm -fr common dtd
 	unzip core.zip
-	mv core.zip common downloaded
-	touch core.zip
+	rm -fr downloaded/common
+	mv common downloaded
+	mv core.zip downloaded
+	touch downloaded/core.zip
 
-$(NORM_TEST) : downloaded/NormalizationTest.txt
-	wget wget http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
+$(NORM_TEST_TABLE) : downloaded/NormalizationTest.txt
+	wget http://www.unicode.org/Public/UNIDATA/NormalizationTest.txt
 	mv NormalizationTest.txt downloaded/
 	touch downloaded/NormalizationTest.txt
 
@@ -167,7 +172,7 @@ sample :
 
 #StringNormalizationTest.cs
 
-$(NORM_TEST_CS) : StringNormalizationTestSource.cs $(NORM_TESTGEN).cs
+$(NORM_TEST).cs : $(NORM_TESTGEN).cs
 	$(CSCOMPILE) $(NORM_TESTGEN).cs
-	$(RUNTIME) ./$(NORM_TESTGEN).exe > $(NORM_TEST_CS)
+	$(RUNTIME) ./$(NORM_TESTGEN).exe > $(NORM_TEST).cs
 
