@@ -1,5 +1,9 @@
 2010-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* domain.c: Add v4 RC version string.
+
+2010-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mono-basic-block.c (mono_opcode_value_and_size): Use pointer variant
 	of overflow checking function.
 
