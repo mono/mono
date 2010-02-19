@@ -168,8 +168,12 @@ namespace System.IO.Packaging {
 			if (targetUri.IsAbsoluteUri)
 				throw new ArgumentException ("targetUri", "Absolute URIs are not supported");
 
-			// Need to trim first 7 chars as they are: "file://"
-			return new Uri (new Uri(sourcePartUri, targetUri).OriginalString.Substring(7), UriKind.Relative);
+			Uri uri = new Uri ("http://fake.com");
+			uri = new Uri (uri, sourcePartUri);
+			uri = new Uri (uri, targetUri);
+
+			// Trim out 'http://fake.com'
+			return new Uri (uri.OriginalString.Substring (15), UriKind.Relative); 
 		}
 	}
 

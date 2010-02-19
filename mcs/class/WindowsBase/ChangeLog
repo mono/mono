@@ -1,3 +1,8 @@
+2010-02-19  Alan McGovern  <amcgovern@novell.com>
+
+	* System.IO.Packaging/PackUriHelper.cs: Commit a fix for #570648 so
+	that PackUris can be combined properly.
+
 2009-11-21  Raja R Harinath  <harinath@hurrynot.org>
 
 	* System.Collections.ObjectModel/ObservableCollection.cs [NET_4_0]:
