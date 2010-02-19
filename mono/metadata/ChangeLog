@@ -1,3 +1,8 @@
+2010-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-basic-block.c (mono_opcode_value_and_size): Use pointer variant
+	of overflow checking function.
+
 2010-02-18  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_reflection_method_on_tb_inst_get_handle): Handle non
