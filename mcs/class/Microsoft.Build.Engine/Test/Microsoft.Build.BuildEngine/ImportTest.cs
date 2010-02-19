@@ -160,5 +160,54 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Assert.IsTrue (groups [0].IsImported, "A1");
 			Assert.AreEqual (1, groups [0].Count, "A2");
 		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestMissingImport1 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Import Project='Test/resources/NonExistantProject.proj'/>
+                                </Project>";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString, ProjectLoadSettings.None);
+		}
+
+		[Test]
+		public void TestMissingImport2 ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Import Project='Test/resources/NonExistantProject.proj'/>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString, ProjectLoadSettings.IgnoreMissingImports);
+
+			Assert.AreEqual (1, project.Imports.Count, "A1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidProjectFileException))]
+		public void TestMissingImportDefault ()
+		{
+			string documentString = @"
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"">
+					<Import Project='Test/resources/NonExistantProject.proj'/>
+                                </Project>
+                        ";
+
+			engine = new Engine (Consts.BinPath);
+
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+		}
+
 	}
 }

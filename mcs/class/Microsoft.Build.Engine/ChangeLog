@@ -1,3 +1,7 @@
+2010-02-19  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Engine.dll.sources: Add ProjectLoadSettings.cs .
+
 2010-01-21	Rodrigo B. de Oliveira <rodrigo@unity3d.com>
 
 	* Microsoft.Build.BuildEngine/BuildWhen.cs
