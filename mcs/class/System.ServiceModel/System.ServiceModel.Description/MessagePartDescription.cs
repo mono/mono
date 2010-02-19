@@ -94,6 +94,11 @@ namespace System.ServiceModel.Description
 			set { type = value; }
 		}
 
+#if !NET_2_1
+#if USE_DATA_CONTRACT_IMPORTER
+		internal XsdDataContractImporter Importer { get; set; }
+		internal System.CodeDom.CodeTypeReference CodeTypeReference { get; set; }
+#else
 		internal XmlQualifiedName TypeName {
 			get { return xml_schema_type_name; }
 			set { xml_schema_type_name = value; }
@@ -103,6 +108,7 @@ namespace System.ServiceModel.Description
 			get { return xml_type_mapping; }
 			set { xml_type_mapping = value; }
 		}
-
+#endif
+#endif
 	}
 }

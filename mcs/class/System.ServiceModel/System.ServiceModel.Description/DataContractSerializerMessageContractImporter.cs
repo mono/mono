@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.Text;
 using System.Web.Services.Description;
@@ -71,6 +72,11 @@ namespace System.ServiceModel.Description
 			if (this.importer != null || this.context != null)
 				throw new SystemException ("INTERNAL ERROR: unexpected recursion of ImportContract method call");
 
+#if USE_DATA_CONTRACT_IMPORTER
+			dc_importer = new XsdDataContractImporter ();
+			dc_importer.Import (importer.XmlSchemas);
+#endif
+
 			this.importer = importer;
 			this.context = context;
 			try {
@@ -83,6 +89,10 @@ namespace System.ServiceModel.Description
 
 		WsdlImporter importer;
 		WsdlContractConversionContext context;
+
+		XsdDataContractImporter dc_importer;
+
+#if !USE_DATA_CONTRACT_IMPORTER
 		XmlSchemaImporter schema_importer_;
 		XmlSchemaImporter schema_importer {
 			get {
@@ -112,6 +122,7 @@ namespace System.ServiceModel.Description
 				return xml_schemas_;
 			}
 		}
+#endif
 
 		void DoImportContract ()
 		{
@@ -179,15 +190,29 @@ namespace System.ServiceModel.Description
 			}
 		}
 		
+#if USE_DATA_CONTRACT_IMPORTER
+		void resolveElement (QName qname, List<MessagePartDescription> parts, string ns)
+		{
+			XmlSchemaElement element = (XmlSchemaElement) importer.XmlSchemas.GlobalElements [qname];
+			if (element == null)
+				//FIXME: What to do here?
+				throw new Exception ("Could not resolve : " + qname.ToString ());
+
+			var msg_part = new MessagePartDescription (qname.Name, qname.Namespace);
+			msg_part.Importer = dc_importer;
+			msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (importer.XmlSchemas, element));
+			parts.Add (msg_part);
+		}
+#else
 		void resolveElement (QName qname, List<MessagePartDescription> parts, string ns)
 		{
 			XmlSchemaElement element = (XmlSchemaElement) xml_schemas.Find (qname, typeof (XmlSchemaElement));
 			if (element == null)
 				//FIXME: What to do here?
 				throw new Exception ("Could not resolve : " + qname.ToString ());
-
 			resolveParticle (schema_importer, element, parts, ns, 2);
 		}
+#endif
 
 		void resolveType (QName qname, List<MessagePartDescription> parts, string ns)
 		{
@@ -262,6 +287,7 @@ namespace System.ServiceModel.Description
 			return null;
 		}
 
+#if !USE_DATA_CONTRACT_IMPORTER
 		void resolveParticle (XmlSchemaImporter schema_importer, 
 				XmlSchemaParticle particle, 
 				List<MessagePartDescription> parts, 
@@ -318,6 +344,7 @@ namespace System.ServiceModel.Description
 
 			parts.Add (msg_part);
 		}
+#endif
 
 		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
 			WsdlEndpointConversionContext context)

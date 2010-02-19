@@ -62,6 +62,8 @@ namespace System.ServiceModel.Description
 		ServiceContractGenerationContext contract_context;
 		List<OPair> operation_contexts = new List<OPair> ();
 
+		XsdDataContractImporter xsd_data_importer;
+
 		public ServiceContractGenerator ()
 			: this (null, null)
 		{
@@ -149,6 +151,9 @@ namespace System.ServiceModel.Description
 
 			if ((Options & ServiceContractGenerationOptions.ClientClass) != 0)
 				GenerateProxyClass (contractDescription, cns);
+
+			if (xsd_data_importer != null)
+				MergeCompileUnit (xsd_data_importer.CodeCompileUnit, ccu);
 
 			// Process extensions. Class first, then methods.
 			// (built-in ones must present before processing class extensions).
@@ -718,8 +723,12 @@ namespace System.ServiceModel.Description
 			foreach (MessageDescription md in messages) {
 				if (md.Direction == MessageDirection.Output) {
 					if (md.Body.ReturnValue != null) {
-						ExportDataContract (md.Body.ReturnValue.XmlTypeMapping);	
+						ExportDataContract (md.Body.ReturnValue);
+#if USE_DATA_CONTRACT_IMPORTER
+						method.ReturnType = md.Body.ReturnValue.CodeTypeReference;
+#else
 						method.ReturnType = new CodeTypeReference (GetCodeTypeName (md.Body.ReturnValue.TypeName));
+#endif
 					}
 					continue;
 				}
@@ -729,11 +738,15 @@ namespace System.ServiceModel.Description
 
 				MessagePartDescriptionCollection parts = md.Body.Parts;
 				for (int i = 0; i < parts.Count; i++) {
-					ExportDataContract (parts [i].XmlTypeMapping);	
+					ExportDataContract (parts [i]);
 
 					method.Parameters.Add (
 						new CodeParameterDeclarationExpression (
+#if USE_DATA_CONTRACT_IMPORTER
+							parts [i].CodeTypeReference,
+#else
 							new CodeTypeReference (GetCodeTypeName (parts [i].TypeName)),
+#endif
 							parts [i].Name));
 
 					if (return_args)
@@ -754,8 +767,44 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
-		private void ExportDataContract (XmlTypeMapping mapping)
+#if USE_DATA_CONTRACT_IMPORTER
+		void MergeCompileUnit (CodeCompileUnit from, CodeCompileUnit to)
 		{
+			foreach (CodeNamespace fns in from.Namespaces) {
+				foreach (CodeNamespace tns in to.Namespaces)
+					if (fns.Name == tns.Name) {
+						// namespaces are merged.
+						MergeNamespace (fns, tns);
+						continue;
+					}
+				to.Namespaces.Add (fns);
+			}
+		}
+
+		// existing type is skipped.
+		void MergeNamespace (CodeNamespace from, CodeNamespace to)
+		{
+			foreach (CodeTypeDeclaration ftd in from.Types) {
+				bool skip = false;
+				foreach (CodeTypeDeclaration ttd in to.Types)
+					if (ftd.Name == ttd.Name) {
+						skip = true;
+						break;
+					}
+				if (!skip)
+					to.Types.Add (ftd);
+			}
+		}
+#endif
+
+		private void ExportDataContract (MessagePartDescription md)
+		{
+#if USE_DATA_CONTRACT_IMPORTER
+			if (xsd_data_importer == null)
+				xsd_data_importer = md.Importer;
+#else
+			var mapping = md.XmlTypeMapping;
+
 			if (mapping == null)
 				return;
 
@@ -862,6 +911,7 @@ namespace System.ServiceModel.Description
 				cns.Types.Remove (type);
 
 			ccu.Namespaces.Add (cns);
+#endif
 		}
 		
 		private string GetXmlNamespace (CodeTypeDeclaration type)

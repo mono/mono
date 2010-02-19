@@ -1,3 +1,13 @@
+2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceContractGenerator.cs, MessagePartDescription.cs,
+	  DataContractSerializerMessageContractImporter.cs :
+	  add alternative implementation to use XsdDataContractImporter
+	  instead of XmlSchemaImporter hack.
+
+	  It requires -d:USE_DATA_CONTRACT_IMPORTER and not enabled yet, as
+	  it breaks some WSDL imports (such as memorabilia.hardrock.com).
+
 2010-02-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractSerializerMessageContractImporter.cs : handle duration
