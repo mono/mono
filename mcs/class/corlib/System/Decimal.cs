@@ -658,8 +658,9 @@ namespace System
 				result = d1;
 			}
 			else {
-				if (decimalIntDiv (out result, ref d1, ref d2) != 0)
+				if (decimalDiv (out result, ref d1, ref d2) != 0)
 					throw new OverflowException ();
+				result = Decimal.Truncate (result);
 
 				// FIXME: not really performant here
 				result = d1 - result * d2;
