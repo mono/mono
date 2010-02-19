@@ -577,6 +577,7 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (typeof (WebTest), "Common.resx", "App_GlobalResources/Common.resx");
 			CopyResource (typeof (WebTest), "Common.fr-FR.resx", "App_GlobalResources/Common.fr-FR.resx");
 			CopyResource (typeof (WebTest), "Resource1.resx", "App_GlobalResources/Resource1.resx");
+			CopyResource (typeof (WebTest), "EnumConverterControl.cs", "App_Code/EnumConverterControl.cs");
 #endif
 			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
 #else

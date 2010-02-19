@@ -1705,34 +1705,6 @@ namespace System.Web.Compilation
 
 		TypeConverter GetConverterForMember (MemberInfo member)
 		{
-			TypeConverterAttribute tca = null;
-			object[] attrs;
-			
-			attrs = member.GetCustomAttributes (typeof (TypeConverterAttribute), true);
-			if (attrs.Length > 0)
-				tca = attrs [0] as TypeConverterAttribute;
-
-			if (tca == TypeConverterAttribute.Default)
-				tca = null;
-			
-			if (tca != null) {
-				string typeName = tca.ConverterTypeName;
-				if (typeName == null || typeName.Length == 0)
-					return null;
-
-				Type t = null;
-				try {
-					t = HttpApplication.LoadType (typeName);
-				} catch (Exception) {
-					// ignore
-				}
-
-				if (t == null)
-					return null;
-
-				return (TypeConverter) Activator.CreateInstance (t);
-			}
-
 			TypeDescriptionProvider prov = TypeDescriptor.GetProvider (member.ReflectedType);
 			if (prov == null)
 				return null;
@@ -1803,14 +1775,13 @@ namespace System.Web.Compilation
 			}
 
 			if (type == typeof (string)) {
-				if (preConverted)
+				object[] urlAttr = member.GetCustomAttributes (typeof (UrlPropertyAttribute), true);
+				if (urlAttr.Length != 0)
+					str = HandleUrlProperty ((preConverted && convertedFromAttr is string) ? (string)convertedFromAttr : str, member);
+				else if (preConverted)
 					return CreateNullableExpression (originalType,
 									 new CodePrimitiveExpression ((string) convertedFromAttr),
 									 wasNullable);
-
-				object[] urlAttr = member.GetCustomAttributes (typeof (UrlPropertyAttribute), true);
-				if (urlAttr.Length != 0)
-					str = HandleUrlProperty (str, member);
 
 				return CreateNullableExpression (originalType, new CodePrimitiveExpression (str), wasNullable);
 			} else if (type == typeof (bool)) {
