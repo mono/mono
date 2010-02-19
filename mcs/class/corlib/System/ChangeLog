@@ -1,3 +1,8 @@
+
+Fri Feb 19 09:05:36 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* Decimal.cs: fixed Remainder (bug #576341).
+
 2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Environment.cs: implement SystemPageSize.

@@ -1126,6 +1126,17 @@ namespace MonoTests.System
 		}
 
 		[Test]
+		public void Remainder2 ()
+		{
+			decimal a = 20.0M;
+			decimal b = 10.0M;
+			decimal c = 10.00M;
+
+			Assert.AreEqual (0.00m, a % c, "20.0M % 10.00M");
+		
+		}
+
+		[Test]
 		[ExpectedException (typeof (DivideByZeroException))]
 		public void Divide_ByZero ()
 		{
