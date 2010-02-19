@@ -1,5 +1,11 @@
 2010-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* domain.c: Remove old v1 version strings. Let the runtime
+	default to 2.0 instead of failing because it can't find a
+	working 1.0 instalation.
+
+2010-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* domain.c: Add v4 RC version string.
 
 2010-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
