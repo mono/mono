@@ -288,7 +288,7 @@ namespace System.Runtime.Serialization
 			var ct = type as XmlSchemaComplexType;
 
 			// [DataContract(Name="foobar",Namespace="urn:foobar")] (optionally IsReference=true),
-			// or [CollectionDataContract(ditto)]
+			// or [CollectionDataContract(ditto, ItemType/KeyType/ValueType)]
 			var dca = new CodeAttributeDeclaration (
 				collectionArgs != null && collectionArgs.Length > 0 ? typeref_coll_contract : typeref_data_contract,
 				new CodeAttributeArgument ("Name", new CodePrimitiveExpression (name.Name)),
@@ -311,7 +311,7 @@ namespace System.Runtime.Serialization
 		}
 
 		static readonly CodeTypeReference typeref_ext_iface = new CodeTypeReference ("System.Runtime.Serialization.IExtensibleDataObject");
-		static readonly CodeTypeReference typeref_ext_class = new CodeTypeReference ("System.Runtime.Serialization.ExtensibleDataObject");
+		static readonly CodeTypeReference typeref_ext_class = new CodeTypeReference ("System.Runtime.Serialization.ExtensionDataObject");
 
 		void AddExtensionData (CodeTypeDeclaration td)
 		{
