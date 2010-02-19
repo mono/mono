@@ -1,5 +1,9 @@
 2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceContractGenerator.cs : add missing #ifs.
+
+2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceContractGenerator.cs, MessagePartDescription.cs,
 	  DataContractSerializerMessageContractImporter.cs :
 	  add alternative implementation to use XsdDataContractImporter

@@ -62,7 +62,9 @@ namespace System.ServiceModel.Description
 		ServiceContractGenerationContext contract_context;
 		List<OPair> operation_contexts = new List<OPair> ();
 
+#if USE_DATA_CONTRACT_IMPORTER
 		XsdDataContractImporter xsd_data_importer;
+#endif
 
 		public ServiceContractGenerator ()
 			: this (null, null)
@@ -152,8 +154,10 @@ namespace System.ServiceModel.Description
 			if ((Options & ServiceContractGenerationOptions.ClientClass) != 0)
 				GenerateProxyClass (contractDescription, cns);
 
+#if USE_DATA_CONTRACT_IMPORTER
 			if (xsd_data_importer != null)
 				MergeCompileUnit (xsd_data_importer.CodeCompileUnit, ccu);
+#endif
 
 			// Process extensions. Class first, then methods.
 			// (built-in ones must present before processing class extensions).
