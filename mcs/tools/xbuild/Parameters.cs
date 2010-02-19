@@ -30,6 +30,8 @@
 using System;
 using System.IO;
 using System.Collections;
+using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Reflection;
 using Microsoft.Build.BuildEngine;
@@ -110,6 +112,19 @@ namespace Mono.XBuild.CommandLine {
 				if (sln_files.Length == 0 && proj_files.Length == 0)
 					ReportError (3, "Please specify the project or solution file " +
 							"to build, as none was found in the current directory.");
+
+				if (sln_files.Length == 1 && proj_files.Length > 0) {
+					var projects_table = new Dictionary<string, string> ();
+					foreach (string pfile in SolutionParser.GetAllProjectFileNames (sln_files [0])) {
+						string full_path = Path.GetFullPath (pfile);
+						projects_table [full_path] = full_path;
+					}
+
+					if (!proj_files.Any (p => !projects_table.ContainsKey (Path.GetFullPath (p))))
+						// if all the project files in the cur dir, are referenced
+						// from the single .sln in the cur dir, then pick the sln
+						proj_files = new string [0];
+				}
 
 				if (sln_files.Length + proj_files.Length > 1)
 					ReportError (5, "Please specify the project or solution file " +

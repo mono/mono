@@ -885,6 +885,23 @@ namespace Mono.XBuild.CommandLine {
 
 			return levels [index];
 		}
+
+		public static IEnumerable<string> GetAllProjectFileNames (string solutionFile)
+		{
+			StreamReader reader = new StreamReader (solutionFile);
+			string line = reader.ReadToEnd ();
+			line = line.Replace ("\r\n", "\n");
+			string soln_dir = Path.GetDirectoryName (solutionFile);
+
+			Match m = projectRegex.Match (line);
+			while (m.Success) {
+				if (String.Compare (m.Groups [1].Value, solutionFolderGuid,
+						StringComparison.InvariantCultureIgnoreCase) != 0)
+					yield return Path.Combine (soln_dir, m.Groups [3].Value).Replace ("\\", "/");
+
+				m = m.NextMatch ();
+			}
+		}
 	}
 }
 

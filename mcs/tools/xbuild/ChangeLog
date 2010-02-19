@@ -1,3 +1,10 @@
+2010-02-19  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (GetAllProjectFileNames): New.
+	* Parameters.cs (ParseArguments): When no project file is specified,
+	if the cur dir has a single sln and >1 project files, and all the
+	project files are referenced by the sln, the pick the sln.
+
 2010-02-06  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets: Add targets for compiling
