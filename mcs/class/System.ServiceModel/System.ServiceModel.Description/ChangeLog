@@ -1,5 +1,10 @@
 2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataContractSerializerMessageContractImporter.cs :
+	  remove extra parameter passing.
+
+2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceContractGenerator.cs : add missing #ifs.
 
 2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>

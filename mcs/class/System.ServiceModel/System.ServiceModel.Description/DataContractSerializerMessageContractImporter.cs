@@ -210,7 +210,7 @@ namespace System.ServiceModel.Description
 			if (element == null)
 				//FIXME: What to do here?
 				throw new Exception ("Could not resolve : " + qname.ToString ());
-			resolveParticle (schema_importer, element, parts, ns, 2);
+			resolveParticle (element, parts, ns, 2);
 		}
 #endif
 
@@ -288,8 +288,7 @@ namespace System.ServiceModel.Description
 		}
 
 #if !USE_DATA_CONTRACT_IMPORTER
-		void resolveParticle (XmlSchemaImporter schema_importer, 
-				XmlSchemaParticle particle, 
+		void resolveParticle (XmlSchemaParticle particle, 
 				List<MessagePartDescription> parts, 
 				string ns, 
 				int depth)
@@ -302,7 +301,7 @@ namespace System.ServiceModel.Description
 
 				XmlSchemaGroupBase groupBase = particle as XmlSchemaGroupBase;
 				foreach (XmlSchemaParticle item in groupBase.Items)
-					resolveParticle (schema_importer, item, parts, ns, depth - 1);
+					resolveParticle (item, parts, ns, depth - 1);
 
 				return;
 			}
@@ -330,7 +329,7 @@ namespace System.ServiceModel.Description
 			}
 
 			if (depth > 0) {
-				resolveParticle (schema_importer, ct.ContentTypeParticle, parts, ns, depth - 1);
+				resolveParticle (ct.ContentTypeParticle, parts, ns, depth - 1);
 				return;
 			}
 
