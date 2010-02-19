@@ -79,6 +79,7 @@ namespace MonoTests.System.Web.Compilation {
 			WebTest.CopyResource (GetType (), "ExpressionInListControl.aspx", "ExpressionInListControl.aspx");
 			WebTest.CopyResource (GetType (), "NestedParserFileText.aspx", "NestedParserFileText.aspx");
 			WebTest.CopyResource (GetType (), "TagWithExpressionWithinAttribute.aspx", "TagWithExpressionWithinAttribute.aspx");
+			WebTest.CopyResource (GetType (), "EnumConverter_Bug578586.aspx", "EnumConverter_Bug578586.aspx");
 #endif
 		}
 		
@@ -230,6 +231,17 @@ namespace MonoTests.System.Web.Compilation {
 		{
 			// Just test if it doesn't throw an exception
 			new WebTest ("TagWithExpressionWithinAttribute.aspx").Run ();
+		}
+
+		[Test (Description="Bug #578586")]
+		public void EnumConverter_Bug578586 ()
+		{
+			WebTest t = new WebTest ("EnumConverter_Bug578586.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = @"<input type=""text"" value=""FlagOne"" name=""test"" id=""test"" />";
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
 #endif
 
