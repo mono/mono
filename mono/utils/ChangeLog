@@ -1,5 +1,11 @@
 2010-02-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* mono-semaphore.h: enable the #defines when io-layer is in use.
+	* Makefile.am: added new file.
+	* mono-semaphore.c: new mono_sem_timedwait() function.
+
+2010-02-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* mono-semaphore.h: set maximum count to 0x7fffffff.
 
 2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
