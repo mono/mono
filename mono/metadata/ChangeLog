@@ -1,3 +1,8 @@
+2010-02-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_suspend_all_other_threads): Ignore threads which have
+	the DONT_MANAGE flag set.
+
 2010-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* domain.c: Remove old v1 version strings. Let the runtime
