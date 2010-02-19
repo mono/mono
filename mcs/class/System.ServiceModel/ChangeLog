@@ -1,3 +1,9 @@
+2010-02-19  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile: enable USE_DATA_CONTRACT_IMPORTER as
+	  memorabilia.hardrock now works. (Will be removed when I remove
+	  relevant code.)
+
 2010-02-10  Astushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: sigh, just disable it. make dist is somehow broken.
