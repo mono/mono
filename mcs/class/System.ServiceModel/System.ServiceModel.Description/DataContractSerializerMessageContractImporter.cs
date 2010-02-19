@@ -198,10 +198,7 @@ namespace System.ServiceModel.Description
 				//FIXME: What to do here?
 				throw new Exception ("Could not resolve : " + qname.ToString ());
 
-			var msg_part = new MessagePartDescription (qname.Name, qname.Namespace);
-			msg_part.Importer = dc_importer;
-			msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (importer.XmlSchemas, element));
-			parts.Add (msg_part);
+			resolveParticle (element, parts, ns, 2);
 		}
 #else
 		void resolveElement (QName qname, List<MessagePartDescription> parts, string ns)
@@ -287,7 +284,6 @@ namespace System.ServiceModel.Description
 			return null;
 		}
 
-#if !USE_DATA_CONTRACT_IMPORTER
 		void resolveParticle (XmlSchemaParticle particle, 
 				List<MessagePartDescription> parts, 
 				string ns, 
@@ -316,6 +312,12 @@ namespace System.ServiceModel.Description
 			if (ct == null) {
 				//Not a complex type
 				XmlSchemaSimpleType simple = elem.ElementSchemaType as XmlSchemaSimpleType;
+#if USE_DATA_CONTRACT_IMPORTER
+				msg_part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
+				msg_part.Importer = dc_importer;
+				msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (importer.XmlSchemas, elem));
+				parts.Add (msg_part);
+#else
 				msg_part = new MessagePartDescription (
 						elem.Name, ns);
 				if (elem.SchemaType != null)
@@ -324,6 +326,7 @@ namespace System.ServiceModel.Description
 					msg_part.XmlTypeMapping = schema_importer.ImportSchemaType (elem.SchemaTypeName);
 				msg_part.TypeName = new QName (GetCLRTypeName (elem.SchemaTypeName), "");
 				parts.Add (msg_part);
+#endif
 
 				return;
 			}
@@ -334,6 +337,12 @@ namespace System.ServiceModel.Description
 			}
 
 			//depth <= 0
+#if USE_DATA_CONTRACT_IMPORTER
+			msg_part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
+			msg_part.Importer = dc_importer;
+			msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (importer.XmlSchemas, elem));
+			parts.Add (msg_part);
+#else
 			msg_part = new MessagePartDescription (elem.Name, ns);
 			if (elem.SchemaType != null)
 				msg_part.XmlTypeMapping = schema_importer.ImportTypeMapping (elem.QualifiedName);
@@ -342,8 +351,8 @@ namespace System.ServiceModel.Description
 			msg_part.TypeName = elem.SchemaTypeName;
 
 			parts.Add (msg_part);
-		}
 #endif
+		}
 
 		void IWsdlImportExtension.ImportEndpoint (WsdlImporter importer,
 			WsdlEndpointConversionContext context)
