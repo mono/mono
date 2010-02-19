@@ -369,6 +369,8 @@ namespace System.Web.UI.WebControls {
 				check_box.Attributes.Clear ();
 			if (item.HasAttributes)
 				check_box.Attributes.CopyFrom (item.Attributes);
+#else
+			check_box.Enabled = Enabled;
 #endif
 			check_box.RenderControl (writer);
 		}
