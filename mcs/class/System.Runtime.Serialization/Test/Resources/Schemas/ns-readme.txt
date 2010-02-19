@@ -34,3 +34,7 @@ ns24.xsd : ArrayOfint type contains two elements, not supported in WCF.
 ns25.xsd : uses ArrayOfint as a member type. Gives int[] instead of ArrayOfint.
 ns26.xsd : variation of ns25, uses custom simpleType. Gives ArrayOfint.
 ns27.xsd : variation of ns25, uses non-Arrays xmlns. Gives ArrayOfint.
+ns28.xsd : dictionary collection type.
+ns29.xsd : variation of ns28, removed Value. Error.
+ns30.xsd : variation of ns28, customized name. Shown in [DataMember].
+ns31.xsd : variation of ns28, removed IsDictionary appInfo. Becomes List<T>.

@@ -1,3 +1,7 @@
+2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporterTest.cs : added Dictionary export tests.
+
 2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractImporterTest.cs : enabled new tests.

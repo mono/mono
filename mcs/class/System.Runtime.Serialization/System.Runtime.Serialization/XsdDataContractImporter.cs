@@ -276,7 +276,7 @@ namespace System.Runtime.Serialization
 		static readonly CodeTypeReference typeref_data_contract = new CodeTypeReference (typeof (DataContractAttribute));
 		static readonly CodeTypeReference typeref_coll_contract = new CodeTypeReference (typeof (CollectionDataContractAttribute));
 
-		void AddTypeAttributes (CodeTypeDeclaration td, XmlSchemaType type, string collectionItemName)
+		void AddTypeAttributes (CodeTypeDeclaration td, XmlSchemaType type, params XmlSchemaElement [] collectionArgs)
 		{
 			var name = type.QualifiedName;
 			// [GeneratedCode (assembly_name, assembly_version)]
@@ -290,11 +290,17 @@ namespace System.Runtime.Serialization
 			// [DataContract(Name="foobar",Namespace="urn:foobar")] (optionally IsReference=true),
 			// or [CollectionDataContract(ditto)]
 			var dca = new CodeAttributeDeclaration (
-				collectionItemName != null ? typeref_coll_contract : typeref_data_contract,
+				collectionArgs != null && collectionArgs.Length > 0 ? typeref_coll_contract : typeref_data_contract,
 				new CodeAttributeArgument ("Name", new CodePrimitiveExpression (name.Name)),
 				new CodeAttributeArgument ("Namespace", new CodePrimitiveExpression (name.Namespace)));
-			if (collectionItemName != null)
-				dca.Arguments.Add (new CodeAttributeArgument ("ItemName", new CodePrimitiveExpression (collectionItemName)));
+			if (collectionArgs != null) {
+				if (collectionArgs.Length > 0)
+					dca.Arguments.Add (new CodeAttributeArgument ("ItemName", new CodePrimitiveExpression (CodeIdentifier.MakeValid (collectionArgs [0].QualifiedName.Name))));
+				if (collectionArgs.Length > 2) {
+					dca.Arguments.Add (new CodeAttributeArgument ("KeyName", new CodePrimitiveExpression (CodeIdentifier.MakeValid (collectionArgs [1].QualifiedName.Name))));
+					dca.Arguments.Add (new CodeAttributeArgument ("ValueName", new CodePrimitiveExpression (CodeIdentifier.MakeValid (collectionArgs [2].QualifiedName.Name))));
+				}
+			}
 			if (ct != null && ct.AttributeUses [new XmlQualifiedName ("Ref", KnownTypeCollection.MSSimpleNamespace)] != null)
 				dca.Arguments.Add (new CodeAttributeArgument ("IsReference", new CodePrimitiveExpression (true)));
 			td.CustomAttributes.Add (dca);
@@ -358,7 +364,7 @@ namespace System.Runtime.Serialization
 				throw new InvalidDataContractException (String.Format ("For flags enumeration '{0}', the base type for the simple type restriction must be XML schema string", qname));
 
 			td.IsEnum = true;
-			AddTypeAttributes (td, type, null);
+			AddTypeAttributes (td, type);
 			if (isFlag)
 				td.CustomAttributes.Add (new CodeAttributeDeclaration (new CodeTypeReference (typeof (FlagsAttribute))));
 
@@ -422,25 +428,52 @@ namespace System.Runtime.Serialization
 				if (!(child is XmlSchemaElement))
 					throw new InvalidDataContractException (String.Format ("Only local element is allowed as the content of the sequence of the top-level content of a complex type '{0}'. Other particles (sequence, choice, all, any, group ref) are not supported.", qname));
 
+			bool isDictionary = false;
+			if (type.Annotation != null) {
+				foreach (var ann in type.Annotation.Items) {
+					var ai = ann as XmlSchemaAppInfo;
+					if (ai != null && ai.Markup != null &&
+					    ai.Markup.Length > 0 &&
+					    ai.Markup [0].NodeType == XmlNodeType.Element &&
+					    ai.Markup [0].LocalName == "IsDictionary" &&
+					    ai.Markup [0].NamespaceURI == KnownTypeCollection.MSSimpleNamespace)
+						isDictionary = true;
+				}
+			}
+
 			if (seq.Items.Count == 1) {
 				var xe = (XmlSchemaElement) seq.Items [0];
 				if (xe.MaxOccursString == "unbounded") {
 					// import as a collection contract.
-					if (type.QualifiedName.Namespace == KnownTypeCollection.MSArraysNamespace &&
-					    IsPredefinedType (xe.ElementSchemaType.QualifiedName)) {
+					if (isDictionary) {
+						var kvt = xe.ElementSchemaType as XmlSchemaComplexType;
+						var seq2 = kvt != null ? kvt.Particle as XmlSchemaSequence : null;
+						var k = seq2 != null && seq2.Items.Count == 2 ? seq2.Items [0] as XmlSchemaElement : null;
+						var v = seq2 != null && seq2.Items.Count == 2 ? seq2.Items [1] as XmlSchemaElement : null;
+						if (k == null || v == null)
+							throw new InvalidDataContractException (String.Format ("Invalid Dictionary contract type '{0}'. A Dictionary schema type must have a sequence particle which contains exactly two schema elements for key and value.", type.QualifiedName));
+						Import (schemas, k.ElementSchemaType);
+						Import (schemas, v.ElementSchemaType);
+						td.BaseTypes.Add (new CodeTypeReference ("System.Collections.Generic.Dictionary", GetCodeTypeReference (k.ElementSchemaType.QualifiedName), GetCodeTypeReference (v.ElementSchemaType.QualifiedName)));
+						AddTypeAttributes (td, type, xe, k, v);
+						return true;
+					} else if (type.QualifiedName.Namespace == KnownTypeCollection.MSArraysNamespace &&
+						   IsPredefinedType (xe.ElementSchemaType.QualifiedName)) {
 						// then this CodeTypeDeclaration is to be removed, and CodeTypeReference to this type should be an array instead.
 						var cti = imported_types.First (i => i.XsdType == type);
 						cti.ClrType = new CodeTypeReference (GetCodeTypeReference (xe.ElementSchemaType.QualifiedName), 1);
-						
+					
 						return false;
 					}
 					else
 						Import (schemas, xe.ElementSchemaType);
 					td.BaseTypes.Add (new CodeTypeReference ("System.Collections.Generic.List", GetCodeTypeReference (xe.ElementSchemaType.QualifiedName)));
-					AddTypeAttributes (td, type, CodeIdentifier.MakeValid (xe.QualifiedName.Name));
+					AddTypeAttributes (td, type, xe);
 					return true;
 				}
 			}
+			if (isDictionary)
+				throw new InvalidDataContractException (String.Format ("complex type '{0}' is an invalid Dictionary type definition. A Dictionary must have a sequence particle with exactly two child elements", qname));
 
 			// import as a (normal) contract.
 			var elems = new List<XmlSchemaElement> ();
@@ -461,7 +494,7 @@ namespace System.Runtime.Serialization
 
 			} // if (seq != 0)
 
-			AddTypeAttributes (td, type, null);
+			AddTypeAttributes (td, type);
 			AddExtensionData (td);
 
 			return true;

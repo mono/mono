@@ -1,0 +1,22 @@
+<xs:schema
+    xmlns:tns="http://schemas.datacontract.org/2004/07/baz"
+    xmlns:ser="http://schemas.microsoft.com/2003/10/Serialization/"
+    elementFormDefault="qualified"
+    targetNamespace="http://schemas.datacontract.org/2004/07/baz" 
+    xmlns:xs="http://www.w3.org/2001/XMLSchema">
+  <xs:import namespace="http://schemas.microsoft.com/2003/10/Serialization/" />
+  <xs:complexType name="T3">
+    <xs:sequence>
+      <xs:element minOccurs="0" maxOccurs="unbounded" name="KeyValueOfstringduration">
+        <xs:complexType>
+          <xs:sequence>
+            <xs:element name="Key" nillable="true" type="xs:string" />
+            <xs:element name="Value" type="ser:duration" />
+          </xs:sequence>
+        </xs:complexType>
+      </xs:element>
+    </xs:sequence>
+  </xs:complexType>
+  <xs:element name="T3" nillable="true" type="tns:T3" />
+</xs:schema>
+

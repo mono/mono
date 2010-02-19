@@ -1,3 +1,7 @@
+2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractImporter.cs : added dictionary support.
+
 2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractImporter-new.cs, XsdDataContractImporter.cs :
