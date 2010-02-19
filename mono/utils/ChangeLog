@@ -1,3 +1,7 @@
+2010-02-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-semaphore.h: set maximum count to 0x7fffffff.
+
 2010-01-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mono-error-internals.h: Add mono_error_set_not_verifiable.
