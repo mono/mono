@@ -1,3 +1,11 @@
+2010-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (mono_debugger_agent_handle_exception): Receive two contexts,
+	one for the throw and one for the catch. Mark uncaught exceptions by a NULL
+	CATCH_TXT. Send normal exception events for unhandled exceptions too.
+	(mono_debugger_agent_handle_unhandled_exception): Remove this, merged into
+	handle_exception.
+
 2010-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c (mono_arch_get_restore_context): Changes this so it restores
