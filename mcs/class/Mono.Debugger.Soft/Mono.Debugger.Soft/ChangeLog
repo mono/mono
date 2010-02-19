@@ -1,3 +1,13 @@
+2010-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachine.cs (CreateExceptionRequest): Add an overload taking two
+	booleans which specify whenever to report caught/uncaught exceptions.
+
+	* ExceptionRequest.cs: Add public properties for them.
+
+	* Connections.cs: Pass the caught/uncaught flags to the debuggee. Bump protocol
+	minor version.
+
 2010-02-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* AssemblyMirror.cs: Add missing GetType () overloads.
