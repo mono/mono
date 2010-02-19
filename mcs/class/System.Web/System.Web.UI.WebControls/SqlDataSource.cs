@@ -130,6 +130,7 @@ namespace System.Web.UI.WebControls {
 
 		protected internal override void OnInit (EventArgs e)
 		{
+			base.OnInit (e);
 			Page.LoadComplete += OnPageLoadComplete;
 		}
 
