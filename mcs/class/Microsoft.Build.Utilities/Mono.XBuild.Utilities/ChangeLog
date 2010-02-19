@@ -1,3 +1,9 @@
+2010-02-19  Ankit Jain  <jankit@novell.com>
+
+	* ReservedNameUtils.cs (GetReservedMetadata): Add dictionary param
+	@metadata. Use this to check for existing value of "RecursiveDir"
+	metadata, use that if present.
+
 2009-10-08  Ankit Jain  <jankit@novell.com>
 
 	* ReservedNameUtils.cs: Fix 'RootDir', 'Directory'.

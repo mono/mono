@@ -865,6 +865,8 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			CheckItems (proj, "I2", "A7", "A A", "B B", "C C");
 		}
 
+
+
 		[Test]
 		[Category ("NotWorking")]
 		public void TestItemsInTarget2 ()
@@ -1420,12 +1422,13 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 					<ItemGroup>
 						<ItemsRel Include='dir\**\*.dll' Exclude='*\x*.dll' />
 						<ItemsRelExpanded Include=""@(ItemsRel->'%(FullPath)')"" />
-						<ItemsAbs Include='$(MSBuildProjectDirectory)\dir\**\*.dll' Exclude='*\x*.dll' />
+						<ItemsAbs Include='$(MSBuildProjectDirectory)\dir\**\*.dll'/>
 					</ItemGroup>
 
 					<Target Name='Main'>
+						<Message Text=""ItemsRel: %(ItemsRel.FullPath) RecDir: %(ItemsRel.RecursiveDir)""/>
 						<Message Text=""ItemsRelExpanded: %(ItemsRelExpanded.Identity)""/>
-						<Message Text='ItemsAbs: %(ItemsAbs.Identity)'/>
+						<Message Text='ItemsAbs: %(ItemsAbs.Identity) RecDir: %(ItemsAbs.RecursiveDir)'/>
 					</Target>
 				</Project>";
 
@@ -1434,16 +1437,29 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 				string projectdir = Path.Combine ("Test", "resources");
 				File.WriteAllText (Path.Combine (projectdir, "wild1.proj"), documentString);
 				proj.Load (Path.Combine (projectdir, "wild1.proj"));
-				if (!proj.Build ("Main"))
+				if (!proj.Build ("Main")) {
+					logger.DumpMessages ();
 					Assert.Fail ("Build failed");
-
+				}
 				string full_base_dir = Path.GetFullPath (basedir);
 
-				foreach (string prefix in new string[] { "ItemsRelExpanded: ", "ItemsAbs: " }) {
-					logger.CheckLoggedAny (prefix + PathCombine (full_base_dir, aaa, "foo.dll"),
-										MessageImportance.Normal,  "A1");
-					logger.CheckLoggedAny (prefix + PathCombine (full_base_dir, bb, "bar.dll"), MessageImportance.Normal, "A2");
-				}
+				logger.CheckLoggedAny (@"ItemsRel: "+ PathCombine (full_base_dir, aaa, "foo.dll") +
+							" RecDir: " + aaa + Path.DirectorySeparatorChar, MessageImportance.Normal, "A1");
+
+				logger.CheckLoggedAny (@"ItemsRel: " + PathCombine (full_base_dir, bb, "bar.dll") +
+							" RecDir: " + bb + Path.DirectorySeparatorChar, MessageImportance.Normal, "A2");
+
+				logger.CheckLoggedAny (@"ItemsRelExpanded: " + PathCombine (full_base_dir, aaa, "foo.dll"), MessageImportance.Normal, "A3");
+				logger.CheckLoggedAny (@"ItemsRelExpanded: " + PathCombine (full_base_dir, bb, "bar.dll"), MessageImportance.Normal, "A4");
+
+				logger.CheckLoggedAny (@"ItemsAbs: " + PathCombine (full_base_dir, aaa, "foo.dll") +
+							@" RecDir: " + aaa + Path.DirectorySeparatorChar, MessageImportance.Normal, "A5");
+				logger.CheckLoggedAny (@"ItemsAbs: " + PathCombine (full_base_dir, bb, "bar.dll") +
+							@" RecDir: " + bb + Path.DirectorySeparatorChar, MessageImportance.Normal, "A6");
+				logger.CheckLoggedAny (@"ItemsAbs: " + PathCombine (full_base_dir, "xyz.dll") +
+							@" RecDir: ", MessageImportance.Normal, "A7");
+
+				Assert.AreEqual (0, logger.NormalMessageCount, "Unexpected extra messages found");
 			} catch (AssertionException) {
 				logger.DumpMessages ();
 				throw;

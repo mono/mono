@@ -1,3 +1,7 @@
+2010-02-19  Ankit Jain  <jankit@novell.com>
+
+	* Items.cs (TestItemsWithWildcards): Check for RecursiveDir metadata also.
+
 2009-12-22  Ankit Jain  <jankit@novell.com>
 
 	* Items.cs (TestItemsWithWildcards): Add Exclude also, update

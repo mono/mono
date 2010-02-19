@@ -1,5 +1,12 @@
 2010-02-19  Ankit Jain  <jankit@novell.com>
 
+	* BuildItem.cs: Track api changes.
+	(SetMetadata): Allow RecursiveDir to be set, this is set by
+	DirectoryScanner.
+	* DirectoryScanner.cs (ProcessInclude): Set RecursiveDir metadata.
+
+2010-02-19  Ankit Jain  <jankit@novell.com>
+
 	* Import.cs (Evaluate): Add param @ignoreMissingImports.
 	* Project.cs (Load*): Add overloads with param @projectLoadSettings.
 	(Log*): Mark internal.

@@ -105,7 +105,7 @@ namespace Microsoft.Build.Utilities
 		public string GetMetadata (string metadataName)
 		{
 			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
-				return ReservedNameUtils.GetReservedMetadata (ItemSpec, metadataName);
+				return ReservedNameUtils.GetReservedMetadata (ItemSpec, metadataName, metadata);
 			else if (metadata.Contains (metadataName))
 				return (string) metadata [metadataName];
 			else
@@ -133,7 +133,10 @@ namespace Microsoft.Build.Utilities
 				throw new ArgumentNullException ("metadataName");
 			if (metadataValue == null)
 				throw new ArgumentNullException ("metadataValue");
-			if (ReservedNameUtils.IsReservedMetadataName (metadataName))
+
+			// allow RecursiveDir to be set, it gets set by DirectoryScanner
+			if (String.Compare (metadataName, "RecursiveDir", StringComparison.InvariantCultureIgnoreCase) != 0 &&
+				ReservedNameUtils.IsReservedMetadataName (metadataName))
 				throw new ArgumentException ("Can't modify reserved metadata");
 				
 			if (metadata.Contains (metadataName))
