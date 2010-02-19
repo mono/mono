@@ -13,12 +13,14 @@
 // statements even when the expression is incomplete (for example
 // completing inside a lambda
 //
+using System;
+using System.Collections.Generic;
+using System.Reflection;
+using System.Reflection.Emit;
+using System.Text;
+using Mono.CSharp.Linq;
+
 namespace Mono.CSharp {
-	using System;
-	using System.Collections.Generic;
-	using System.Reflection;
-	using System.Reflection.Emit;
-	using System.Text;
 
 	//
 	// A common base class for Completing expressions, it
@@ -250,4 +252,5 @@ namespace Mono.CSharp {
 			// Nothing
 		}
 	}
+	
 }

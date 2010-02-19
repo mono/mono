@@ -4152,7 +4152,7 @@ expression
 non_assignment_expression
 	: conditional_expression
 	| lambda_expression
-	| query_expression
+	| query_expression 
 	;
 
 constant_expression
@@ -5398,7 +5398,7 @@ using_statement
 // LINQ
 
 query_expression
-	: first_from_clause query_body
+	: first_from_clause query_body 
 	  {
 		lexer.query_parsing = false;
 			
@@ -5420,6 +5420,20 @@ query_expression
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
 	  }	
+
+	// Bubble up COMPLETE_COMPLETION productions
+	| first_from_clause COMPLETE_COMPLETION {
+	        lexer.query_parsing = false;
+		$$ = $1;
+
+		current_block.SetEndLocation (lexer.Location);
+		current_block = current_block.Parent;
+	  }
+	| nested_from_clause COMPLETE_COMPLETION {
+	        $$ = $1;
+		current_block.SetEndLocation (lexer.Location);
+		current_block = current_block.Parent;
+	  }
 	;
 	
 first_from_clause
@@ -5489,7 +5503,7 @@ from_clause
 	;	
 
 query_body
-	: opt_query_body_clauses select_or_group_clause opt_query_continuation
+	: opt_query_body_clauses select_or_group_clause opt_query_continuation 
 	  {
 	  	Linq.AQueryClause head = (Linq.AQueryClause)$2;
 		
@@ -5504,6 +5518,7 @@ query_body
 		
 		$$ = head;
 	  }
+	| opt_query_body_clauses COMPLETE_COMPLETION
 	;
 	
 select_or_group_clause
@@ -5558,7 +5573,7 @@ query_body_clauses
 	
 query_body_clause
 	: from_clause
-	| let_clause
+	| let_clause 
 	| where_clause
 	| join_clause
 	| orderby_clause

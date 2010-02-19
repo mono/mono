@@ -1,3 +1,11 @@
+2010-02-08  Miguel de Icaza  <miguel@novell.com>
+
+	* namespace.cs (CompletionGetTypesStartingWith): Do not include
+	private types in the completion results.
+
+	* cs-parser.jay: Bubble completions after "from x in ?" and "from x
+	... let ?"
+
 2010-02-17  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs, field.cs, decl.cs, cs-parser.jay: Simplify special
