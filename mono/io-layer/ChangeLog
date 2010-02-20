@@ -1,3 +1,7 @@
+2010-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* versioninfo.c (VerLanguageName): Remove code duplication a bit.
+
 2009-12-02  Miguel de Icaza  <miguel@novell.com>
 
 	* processes.c (EnumProcesses): Add support for OSX, patch from Tom
