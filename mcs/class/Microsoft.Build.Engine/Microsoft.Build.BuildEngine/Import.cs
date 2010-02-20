@@ -58,7 +58,7 @@ namespace Microsoft.Build.BuildEngine {
 		}
 
 		// FIXME: condition
-		internal void Evaluate ()
+		internal void Evaluate (bool ignoreMissingImports)
 		{
 			string filename = evaluatedProjectPath;
 			// NOTE: it's a hack to transform Microsoft.CSharp.Targets to Microsoft.CSharp.targets
@@ -66,7 +66,12 @@ namespace Microsoft.Build.BuildEngine {
 				filename = Path.ChangeExtension (filename, Path.GetExtension (filename));
 			
 			if (!File.Exists (filename)) {
-				throw new InvalidProjectFileException (String.Format ("Imported project: \"{0}\" does not exist.", filename));
+				if (ignoreMissingImports) {
+					project.LogWarning (project.FullFileName, "Could not find project file {0}, to import. Ignoring.", filename);
+					return;
+				} else {
+					throw new InvalidProjectFileException (String.Format ("Imported project: \"{0}\" does not exist.", filename));
+				}
 			}
 			
 			ImportedProject importedProject = new ImportedProject ();

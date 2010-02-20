@@ -37,6 +37,7 @@ using System.Collections.Generic;
 using System.Resources;
 using System.Reflection;
 using Microsoft.Build.Framework;
+using Microsoft.Build.Utilities;
 using Mono.XBuild.Tasks.GenerateResourceInternal;
 
 namespace Microsoft.Build.Tasks {
@@ -65,40 +66,44 @@ namespace Microsoft.Build.Tasks {
 			if (sources.Length == 0)
 				return true;
 
+			bool result = true;
 			List  <ITaskItem> temporaryFilesWritten = new List <ITaskItem> ();
 			if (outputResources == null) {
 				foreach (ITaskItem source in sources) {
 					string sourceFile = source.ItemSpec;
 					string outputFile = Path.ChangeExtension (sourceFile, "resources");
-					CompileResourceFile (sourceFile, outputFile);
+
+					result &= CompileResourceFile (sourceFile, outputFile);
+
+					ITaskItem newItem = new TaskItem (source);
+					source.ItemSpec = outputFile;
+
+					temporaryFilesWritten.Add (newItem);
 				}
 			} else {
 				if (sources.Length != outputResources.Length) {
-					Log.LogErrorFromException (new Exception ("Sources count is different than OutputResources count."));
+					Log.LogError ("Sources count is different than OutputResources count.");
 					return false;
 				}
 
 				for (int i = 0; i < sources.Length; i ++) {
-					string sourceFile = sources [i].ItemSpec;
-					string outputFile = outputResources [i].ItemSpec;
+					if (String.IsNullOrEmpty (outputResources [i].ItemSpec)) {
+						Log.LogError ("Filename of output can not be empty.");
+						result = false;
+						continue;
+					}
 
-					if (outputFile == String.Empty) {
-						Log.LogErrorFromException (new Exception ("Filename of output can not be empty."));
-						return false;
-					}
-					if (CompileResourceFile (sourceFile, outputFile) == false) {
-						Log.LogErrorFromException (new Exception ("Error during compiling resource file."));
-						return false;
-					}
+					result &= CompileResourceFile (sources [i].ItemSpec, outputResources [i].ItemSpec);
 					temporaryFilesWritten.Add (outputResources [i]);
 				}
 			}
 			
 			filesWritten = temporaryFilesWritten.ToArray ();
-			
-			return true;
+
+			return result;
 		}
 		
+#if false
 		private IResourceReader GetReader (Stream stream, string name)
 		{
 			string format = Path.GetExtension (name);
@@ -140,39 +145,30 @@ namespace Microsoft.Build.Tasks {
 				throw new Exception ("Unknown format in file " + name);
 			}
 		}
+#endif
 		
 		private bool CompileResourceFile (string sname, string dname )
 		{
-			FileStream source, dest;
-			IResourceReader reader;
-			IResourceWriter writer;
-
-			Log.LogMessage ("Compiling resource file '{0}' into '{1}'", sname, dname);
-			try {
-				source = new FileStream (sname, FileMode.Open, FileAccess.Read);
-
-				reader = GetReader (source, sname);
-
-				dest = new FileStream (dname, FileMode.Create, FileAccess.Write);
-				writer = GetWriter (dest, dname);
-
-				int rescount = 0;
-				foreach (DictionaryEntry e in reader) {
-					rescount++;
-					object val = e.Value;
-					if (val is string)
-						writer.AddResource ((string)e.Key, (string)e.Value);
-					else
-						writer.AddResource ((string)e.Key, e.Value);
-				}
-
-				reader.Close ();
-				writer.Close ();
-			} catch (Exception e) {
-				Log.LogErrorFromException (e);
+			if (!File.Exists (sname)) {
+				Log.LogError ("Resource file '{0}' not found.", sname);
 				return false;
 			}
-			return true;
+
+			if (File.GetLastWriteTime (sname) <= File.GetLastWriteTime (dname)) {
+				Log.LogMessage (MessageImportance.Low,
+						"Resource file '{0}' is newer than the source file '{1}', skipping.",
+						dname, sname);
+				return true;
+			}
+
+			Resgen resgen = new Resgen ();
+			resgen.BuildEngine = this.BuildEngine;
+			resgen.UseSourcePath = true;
+
+			resgen.SourceFile = sname;
+			resgen.OutputFile = dname;
+
+			return resgen.Execute ();
 		}
 
 		[Output]
@@ -281,6 +277,47 @@ namespace Microsoft.Build.Tasks {
 				useSourcePath = value;
 			}
 		}
+	}
+
+	class Resgen : ToolTaskExtension
+	{
+		public Resgen ()
+		{
+		}
+
+		protected internal override void AddCommandLineCommands (
+						 CommandLineBuilderExtension commandLine)
+		{
+			if (UseSourcePath)
+				commandLine.AppendSwitch ("/useSourcePath");
+
+			commandLine.AppendSwitch (String.Format ("/compile {0}{1}", SourceFile,
+						OutputFile != null ? "," + OutputFile : ""));
+		}
+
+		public override bool Execute ()
+		{
+			EnvironmentOverride ["MONO_IOMAP"] = "drive";
+			return base.Execute ();
+		}
+
+		protected override string GenerateFullPathToTool ()
+		{
+			return Path.Combine (ToolPath, ToolExe);
+		}
+
+		protected override MessageImportance StandardOutputLoggingImportance {
+			get { return MessageImportance.Low; }
+		}
+
+		protected override string ToolName {
+			get { return Utilities.RunningOnWindows ? "resgen2.bat" : "resgen2"; }
+		}
+
+		public string SourceFile { get; set; }
+		public string OutputFile { get; set; }
+
+		public bool UseSourcePath { get; set; }
 	}
 }
 

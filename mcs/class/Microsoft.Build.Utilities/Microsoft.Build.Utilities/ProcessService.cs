@@ -6,15 +6,17 @@ using System.Collections;
 using System.Collections.Specialized;
 using System.Diagnostics;
 
+using SCS = System.Collections.Specialized;
+
 namespace Microsoft.Build.Utilities
 {
 	internal static class ProcessService {
-		static StringDictionary globalEnvironmentVariablesOverride;
+		static SCS.ProcessStringDictionary globalEnvironmentVariablesOverride;
 
 		public static StringDictionary GlobalEnvironmentVariblesOverride {
 			get {
 				if (globalEnvironmentVariablesOverride == null)
-					globalEnvironmentVariablesOverride = new StringDictionary ();
+					globalEnvironmentVariablesOverride = new SCS.ProcessStringDictionary ();
 				return globalEnvironmentVariablesOverride;
 			}
 		}

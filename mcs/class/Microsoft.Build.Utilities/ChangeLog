@@ -1,3 +1,10 @@
+2010-02-10  Ankit Jain  <jankit@novell.com>
+
+	* Microsoft.Build.Utilities.dll.sources: Add ProcessStringDictionary.cs
+	from class/System/System.Collections.Specialized . This is required as
+	the StringDictionary in ToolTask, used for EnvironmentOverrides, is
+	inadequate, because environment vars are case sensitive on unix.
+
 2009-04-25  Jonathan Chambers  <joncham@gmail.com>
 
 	* Makefile: Adjust assembly name for 3.5 profile.

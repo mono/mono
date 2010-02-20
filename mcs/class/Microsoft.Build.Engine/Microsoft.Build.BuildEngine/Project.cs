@@ -77,6 +77,7 @@ namespace Microsoft.Build.BuildEngine {
 		bool				building;
 		BuildSettings			current_settings;
 		Stack<Batch>			batches;
+		ProjectLoadSettings		project_load_settings;
 
 
 		static string extensions_path;
@@ -101,6 +102,8 @@ namespace Microsoft.Build.BuildEngine {
 			fullFileName = String.Empty;
 			timeOfLastDirty = DateTime.Now;
 			current_settings = BuildSettings.None;
+			project_load_settings = ProjectLoadSettings.None;
+
 			encoding = null;
 
 			builtTargetKeys = new List<string> ();
@@ -422,6 +425,12 @@ namespace Microsoft.Build.BuildEngine {
 
 		public void Load (string projectFileName)
 		{
+			Load (projectFileName, ProjectLoadSettings.None);
+		}
+
+		public void Load (string projectFileName, ProjectLoadSettings settings)
+		{
+			project_load_settings = settings;
 			if (String.IsNullOrEmpty (projectFileName))
 				throw new ArgumentNullException ("projectFileName");
 
@@ -455,12 +464,24 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO ("Not tested")]
 		public void Load (TextReader textReader)
 		{
+			Load (textReader, ProjectLoadSettings.None);
+		}
+
+		public void Load (TextReader textReader, ProjectLoadSettings projectLoadSettings)
+		{
+			project_load_settings = projectLoadSettings;
 			fullFileName = String.Empty;
 			DoLoad (textReader);
 		}
 
 		public void LoadXml (string projectXml)
 		{
+			LoadXml (projectXml, ProjectLoadSettings.None);
+		}
+
+		public void LoadXml (string projectXml, ProjectLoadSettings projectLoadSettings)
+		{
+			project_load_settings = projectLoadSettings;
 			fullFileName = String.Empty;
 			DoLoad (new StringReader (projectXml));
 			MarkProjectAsDirty ();
@@ -974,7 +995,7 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			Imports.Add (import);
-			import.Evaluate ();
+			import.Evaluate (project_load_settings == ProjectLoadSettings.IgnoreMissingImports);
 		}
 		
 		void AddItemGroup (XmlElement xmlElement, ImportedProject importedProject)
@@ -1172,7 +1193,7 @@ namespace Microsoft.Build.BuildEngine {
 			return default (T);
 		}
 
-		void LogWarning (string filename, string message, params object[] messageArgs)
+		internal void LogWarning (string filename, string message, params object[] messageArgs)
 		{
 			BuildWarningEventArgs bwea = new BuildWarningEventArgs (
 				null, null, filename, 0, 0, 0, 0, String.Format (message, messageArgs),
@@ -1180,7 +1201,7 @@ namespace Microsoft.Build.BuildEngine {
 			ParentEngine.EventSource.FireWarningRaised (this, bwea);
 		}
 
-		void LogError (string filename, string message,
+		internal void LogError (string filename, string message,
 				     params object[] messageArgs)
 		{
 			BuildErrorEventArgs beea = new BuildErrorEventArgs (

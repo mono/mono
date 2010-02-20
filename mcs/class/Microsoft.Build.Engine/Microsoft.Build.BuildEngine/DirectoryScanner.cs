@@ -106,12 +106,18 @@ namespace Microsoft.Build.BuildEngine {
 						offset = 1;
 				}
 
+				string full_path = Path.GetFullPath (Path.Combine (Environment.CurrentDirectory, include_item.ItemSpec));
 				fileInfo = ParseIncludeExclude (separatedPath, offset, baseDirectory);
 
+				int wildcard_offset = full_path.IndexOf ("**");
 				foreach (FileInfo fi in fileInfo) {
 					if (!excludedItems.ContainsKey (fi.FullName)) {
 						TaskItem item = new TaskItem (include_item);
 						item.ItemSpec = fi.FullName;
+						string rec_dir = Path.GetDirectoryName (fi.FullName.Substring (wildcard_offset));
+						if (rec_dir.Length > 0)
+							rec_dir += Path.DirectorySeparatorChar;
+						item.SetMetadata ("RecursiveDir", rec_dir);
 						includedItems.Add (item);
 					}
 				}

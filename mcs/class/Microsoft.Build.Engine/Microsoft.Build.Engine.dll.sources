@@ -48,6 +48,7 @@ Microsoft.Build.BuildEngine/IReference.cs
 Microsoft.Build.BuildEngine/ItemReference.cs
 Microsoft.Build.BuildEngine/MetadataReference.cs
 Microsoft.Build.BuildEngine/Project.cs
+Microsoft.Build.BuildEngine/ProjectLoadSettings.cs
 Microsoft.Build.BuildEngine/PropertyPosition.cs
 Microsoft.Build.BuildEngine/PropertyReference.cs
 Microsoft.Build.BuildEngine/TargetCollection.cs
