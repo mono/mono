@@ -1,3 +1,11 @@
+2010-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mono_jit_create_remoting_trampoline): Call
+	mono_create_specific_trampoline () instead of
+	mono_arch_create_specific_trampoline ().
+
+	* mini-trampolines.c tramp-arm.c: Disable more stuff when DISABLE_JIT is set.
+
 2010-02-20  Geoff Norton  <gnorton@novell.com>
 
 	* aot-runtime.c: Ensure we dont leak a held lock when unwinding exceptions.
