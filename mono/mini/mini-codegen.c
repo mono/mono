@@ -2393,7 +2393,7 @@ mono_is_regsize_var (MonoType *t)
 	return FALSE;
 }
 
-#ifdef DISABLE_JIT
+#ifndef DISABLE_JIT
 
 /*
  * mono_peephole_ins:
