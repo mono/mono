@@ -1,3 +1,12 @@
+2010-02-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* unwind.c (mono_unwind_get_cie_program): New function, moved here from
+	aot-compiler.c, so it can be found even if DISABLE_JIT is set.
+
+	* aot-compiler.c xdebug.c: Update callers of mono_arch_unwind_get_cie_program ().
+
+	* mini-amd64.c: Fix DISABLE_JIT support.
+
 2010-02-20  Geoff Norton  <gnorton@novell.com>
 
 	* aot-runtime.c: Ensure we dont leak a held lock when unwinding exceptions.
