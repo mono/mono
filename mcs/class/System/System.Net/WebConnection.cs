@@ -147,12 +147,11 @@ namespace System.Net
 
 				if (hostEntry == null) {
 #if MONOTOUCH
-					Console.WriteLine ("start_wwan: {0}", start_wwan);
 					if (start_wwan != null) {
-						Console.WriteLine ("Calling start_wwan: {0}", sPoint.Address.ToString ());
 						start_wwan.Invoke (null, new object [1] { sPoint.Address });
+						hostEntry = sPoint.HostEntry;
 					}
-					if (hostEntry == null) {					
+					if (hostEntry == null) {
 #endif
 						status = sPoint.UsesProxy ? WebExceptionStatus.ProxyNameResolutionFailure :
 									    WebExceptionStatus.NameResolutionFailure;
