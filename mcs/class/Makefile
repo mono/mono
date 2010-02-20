@@ -160,6 +160,7 @@ monotouch_dirs := \
 	Mono.Data.Tds	\
 	System.Transactions	\
 	System.Data	\
+	Mono.Cairo	\
 	Mono.Data.Sqlite
 
 net_3_5_dirs := \
