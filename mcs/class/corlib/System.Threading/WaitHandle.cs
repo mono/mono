@@ -213,6 +213,13 @@ namespace System.Threading
 			GC.SuppressFinalize (this);
 		}
 
+#if NET_4_0
+		public void Dispose ()
+		{
+			Close ();
+		}
+#endif
+
 		public const int WaitTimeout = 258;
 
 		//

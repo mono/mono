@@ -68,7 +68,6 @@ namespace System.Threading {
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public static extern bool SetMinThreads (int workerThreads, int completionPortThreads);
 
-		[MonoTODO("The max number of threads cannot be decreased.")]
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public static extern bool SetMaxThreads (int workerThreads, int completionPortThreads);
