@@ -615,6 +615,7 @@ namespace Mono.Data.Sqlite
         row[SchemaTableColumn.DataType] = GetFieldType(n);
         row[SchemaTableOptionalColumn.IsHidden] = false;
 
+#if !MONOTOUCH
         strColumn = _command.Connection._sql.ColumnOriginalName(_activeStatement, n);
         if (String.IsNullOrEmpty(strColumn) == false) row[SchemaTableColumn.BaseColumnName] = strColumn;
 
@@ -626,6 +627,7 @@ namespace Mono.Data.Sqlite
 
         temp = _command.Connection._sql.ColumnDatabaseName(_activeStatement, n);
         if (String.IsNullOrEmpty(temp) == false) row[SchemaTableOptionalColumn.BaseCatalogName] = temp;
+#endif
 
         string dataType = null;
         // If we have a table-bound column, extract the extra information from it
