@@ -145,12 +145,12 @@ net_2_1_dirs := \
 monotouch_dirs := \
 	corlib	\
 	Mono.CompilerServices.SymbolWriter	\
+	System.Core	\
 	System	\
 	System.XML	\
 	Mono.Security	\
 	System	\
 	I18N		\
-	System.Core	\
 	System.Json	\
 	System.Xml.Linq	\
 	System.Runtime.Serialization	\
@@ -181,7 +181,7 @@ net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
 net_2_1_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter System.Core
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
-monotouch_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter
+monotouch_bootstrap_SUBDIRS := corlib System Mono.CompilerServices.SymbolWriter System.Core
 monotouch_SUBDIRS := $(monotouch_dirs)
 net_3_5_SUBDIRS := $(net_3_5_dirs)
 net_4_0_bootstrap_SUBDIRS := $(bootstrap_dirs) Mono.Posix System.Core
