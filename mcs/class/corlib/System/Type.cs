@@ -411,17 +411,29 @@ namespace System {
 
 		public override bool Equals (object o)
 		{
+#if NET_4_0
+			return Equals (o as Type);
+#else
 			if (o == this)
 				return true;
+
 			Type me = UnderlyingSystemType;
 			if (me == null)
 				return false;
 			return me.EqualsInternal (o as Type);
+#endif
 		}
 
-		public bool Equals (Type o) {
+#if NET_4_0
+		public virtual bool Equals (Type o)
+		{
+#else
+		public bool Equals (Type o)
+		{
+
 			if (o == this)
 				return true;
+#endif
 			if (o == null)
 				return false;
 			Type me = UnderlyingSystemType;

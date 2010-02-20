@@ -1,4 +1,7 @@
+2010-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Type.cs: Implement new v4 behavior for Equals.
+	
 Fri Feb 19 09:05:36 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* Decimal.cs: fixed Remainder (bug #576341).
