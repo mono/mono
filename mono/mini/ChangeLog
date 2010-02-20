@@ -1,3 +1,7 @@
+2010-02-20  Geoff Norton  <gnorton@novell.com>
+
+	* aot-runtime.c: Ensure we dont leak a held lock when unwinding exceptions.
+
 2010-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_handle_exception): Receive two contexts,
