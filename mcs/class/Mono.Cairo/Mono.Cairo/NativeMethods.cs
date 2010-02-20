@@ -41,7 +41,11 @@ namespace Cairo
 
 	internal static class NativeMethods
 	{
+#if MONOTOUCH
+		const string cairo = "__Internal";
+#else
 		const string cairo = "libcairo-2.dll";
+#endif
 		
 		//[DllImport (cairo)]
 		//internal static extern void cairo_append_path (IntPtr cr, Path path);
