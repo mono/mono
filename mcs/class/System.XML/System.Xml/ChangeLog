@@ -1,3 +1,8 @@
+2010-02-20  Geoff Norton  <gnorton@novell.com>
+
+	* XmlInputStream.cs: Disable this codepath on monotouch.  Fixes
+	#562155
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlConvert.cs : convert TimeSpan.MinValue to correct string.
