@@ -36,13 +36,6 @@ Documentation for the REPL mode for MCS can be found here:
 	  for C# are still to make members private, we should
 	  change this default to be public in those cases.
 
-	* The "using" statements are not exposed to the
-	  underlying "class" declarations, so the following
-	  code after a few using statements fail:
-
-	  csharp> class X { public void Foo () { Console.WriteLine ("Foo"); } }
-	  {interactive}(1,33): error CS0103: The name `Console' does not exist in the current context
-
 	* The error lookup system lacks information from types, for
           example this causes an unsupported call into a TypeBuilder:
 
