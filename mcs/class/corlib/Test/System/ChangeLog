@@ -1,3 +1,7 @@
+2010-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Test new v4 behavior for Equals.
+
 2010-01-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* Int32Test.cs: Fix a copy-paste error.

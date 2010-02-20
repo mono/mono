@@ -3244,6 +3244,39 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (typeof (IGetInterfaceMap <string>), res.InterfaceType);
 			Assert.AreEqual (typeof (string), res.InterfaceMethods [0].GetParameters () [0].ParameterType);
 		}
+
+
+		public class MyType : TypeDelegator {
+			public int eq, ust;
+
+			public override bool Equals (Type t) {
+				++eq;
+				return base.Equals (t);
+			}
+
+			public override Type UnderlyingSystemType  {
+				get { 
+					++ust;
+					return typeof (int);
+				}
+			}
+		}
+
+		public void NewV4EqualsBehavior ()
+		{
+			var ta = new MyType ();
+			var tb = new MyType ();
+			object a = ta, b = tb;
+
+			a.Equals (a);
+			Assert.AreEqual (1, ta.eq, "#1");
+			Assert.AreEqual (2, ta.ust, "#2");
+			a.Equals (b);
+			Assert.AreEqual (2, ta.eq, "#3");
+			Assert.AreEqual (3, ta.ust, "#4");
+			Assert.AreEqual (0, tb.eq, "#5");
+			Assert.AreEqual (1, tb.ust, "#6");
+		}
 #endif
 
 		public abstract class Stream : IDisposable
