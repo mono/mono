@@ -49,6 +49,14 @@ namespace System
 		, IComparable<DateTime>, IEquatable <DateTime>
 #endif
 	{
+#if MONOTOUCH
+		static DateTime () {
+			if (MonoTouchAOTHelper.FalseFlag) {
+				var comparer = new System.Collections.Generic.GenericComparer <DateTime> ();
+				var eqcomparer = new System.Collections.Generic.GenericEqualityComparer <DateTime> ();
+			}
+		}
+#endif
 		private TimeSpan ticks;
 
 #if NET_2_0

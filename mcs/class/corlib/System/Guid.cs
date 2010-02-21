@@ -46,6 +46,14 @@ namespace System {
 #else
 	public struct Guid : IFormattable, IComparable {
 #endif
+#if MONOTOUCH
+		static Guid () {
+			if (MonoTouchAOTHelper.FalseFlag) {
+				var comparer = new System.Collections.Generic.GenericComparer <Guid> ();
+				var eqcomparer = new System.Collections.Generic.GenericEqualityComparer <Guid> ();
+			}
+		}
+#endif
 		private int _a; //_timeLow;
 		private short _b; //_timeMid;
 		private short _c; //_timeHighAndVersion;

@@ -87,6 +87,9 @@ namespace System.Collections.Generic {
 	}
 	
 	[Serializable]
+#if MONOTOUCH
+	internal
+#endif
 	sealed class GenericComparer <T> : Comparer <T> where T : IComparable<T> {
 		public override int Compare (T x, T y)
 		{
