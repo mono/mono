@@ -1,3 +1,10 @@
+2010-02-21  Geoff Norton  <gnorton@novell.com>
+
+	* Makefile.am: Add CoreFoundation linkage on darwin to properly get the current
+	locale.
+	* locaes.c: When running on darwin, try to get the local from CoreFoundation 
+	before falling back to the posix lookup.
+
 2010-02-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_thread_suspend_all_other_threads): Ignore threads which have
