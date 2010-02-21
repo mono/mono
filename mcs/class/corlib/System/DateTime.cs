@@ -46,6 +46,14 @@ namespace System
 	[StructLayout (LayoutKind.Auto)]
 	public struct DateTime : IFormattable, IConvertible, IComparable, IComparable<DateTime>, IEquatable <DateTime>
 	{
+#if MONOTOUCH
+		static DateTime () {
+			if (MonoTouchAOTHelper.FalseFlag) {
+				var comparer = new System.Collections.Generic.GenericComparer <DateTime> ();
+				var eqcomparer = new System.Collections.Generic.GenericEqualityComparer <DateTime> ();
+			}
+		}
+#endif
 		private TimeSpan ticks;
 
 		DateTimeKind kind;

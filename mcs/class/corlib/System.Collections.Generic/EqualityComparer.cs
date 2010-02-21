@@ -88,6 +88,9 @@ namespace System.Collections.Generic {
 	}
 	
 	[Serializable]
+#if MONOTOUCH
+	internal
+#endif
 	sealed class GenericEqualityComparer <T> : EqualityComparer <T> where T : IEquatable <T> {
 
 		public override int GetHashCode (T obj)

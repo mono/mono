@@ -39,6 +39,14 @@ namespace System
 	[StructLayout (LayoutKind.Auto)]
 	public struct DateTimeOffset : IComparable, IFormattable, ISerializable, IDeserializationCallback, IComparable<DateTimeOffset>, IEquatable<DateTimeOffset>
 	{
+#if MONOTOUCH
+		static DateTimeOffset () {
+			if (MonoTouchAOTHelper.FalseFlag) {
+				var comparer = new System.Collections.Generic.GenericComparer <DateTimeOffset> ();
+				var eqcomparer = new System.Collections.Generic.GenericEqualityComparer <DateTimeOffset> ();
+			}
+		}
+#endif
 		public static readonly DateTimeOffset MaxValue = new DateTimeOffset (DateTime.MaxValue, TimeSpan.Zero);
 		public static readonly DateTimeOffset MinValue = new DateTimeOffset (DateTime.MinValue, TimeSpan.Zero);
 		

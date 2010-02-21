@@ -38,6 +38,14 @@ namespace System
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public struct TimeSpan : IComparable, IComparable<TimeSpan>, IEquatable <TimeSpan>
 	{
+#if MONOTOUCH
+		static TimeSpan () {
+			if (MonoTouchAOTHelper.FalseFlag) {
+				var comparer = new System.Collections.Generic.GenericComparer <TimeSpan> ();
+				var eqcomparer = new System.Collections.Generic.GenericEqualityComparer <TimeSpan> ();
+			}
+		}
+#endif
 		public static readonly TimeSpan MaxValue = new TimeSpan (long.MaxValue);
 		public static readonly TimeSpan MinValue = new TimeSpan (long.MinValue);
 		public static readonly TimeSpan Zero = new TimeSpan (0L);
