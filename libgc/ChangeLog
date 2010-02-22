@@ -1,3 +1,8 @@
+2010-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* obj_map.c (GC_add_map_entry): Speed this up for the common case where
+	GC_register_displacement () was never called.
+
 2010-01-29  Geoff Norton  <gnorton@novell.com>
 
 	* include/private/gcconfig.h: Don't define NO_PTHREAD_TRYLOCK on darwin-x86

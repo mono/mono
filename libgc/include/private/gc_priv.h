@@ -940,6 +940,7 @@ struct _GC_arrays {
 #   define MAP_SIZE MAP_ENTRIES
 #   define CPP_MAX_OFFSET (OFFSET_TOO_BIG - 1)	
 #   define MAX_OFFSET ((word)CPP_MAX_OFFSET)
+#   define INIT_MAP(map) memset((map), OBJ_INVALID, MAP_SIZE)
     /* The following are used only if GC_all_interior_ptrs != 0 */
 # 	define VALID_OFFSET_SZ \
 	  (CPP_MAX_OFFSET > WORDS_TO_BYTES(CPP_MAXOBJSZ)? \

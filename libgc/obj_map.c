@@ -22,6 +22,7 @@
 # include "private/gc_priv.h"
 
 map_entry_type * GC_invalid_map = 0;
+static max_valid_offset = 0;
 
 /* Invalidate the object map associated with a block.	Free blocks	*/
 /* are identified by invalid maps.					*/
@@ -76,6 +77,8 @@ word offset;
     if (!GC_valid_offsets[offset]) {
       GC_valid_offsets[offset] = TRUE;
       GC_modws_valid_offsets[offset % sizeof(word)] = TRUE;
+	  if (offset > max_valid_offset)
+		  max_valid_offset = offset;
       if (!GC_all_interior_pointers) {
         for (i = 0; i <= MAXOBJSZ; i++) {
           if (GC_obj_map[i] != 0) {
@@ -117,11 +120,9 @@ word sz;
 #   ifdef PRINTSTATS
         GC_printf1("Adding block map for size %lu\n", (unsigned long)sz);
 #   endif
-    for (displ = 0; displ < HBLKSIZE; displ++) {
-        MAP_ENTRY(new_map,displ) = OBJ_INVALID;
-    }
+	INIT_MAP(new_map);
     if (sz == 0) {
-        for(displ = 0; displ <= HBLKSIZE; displ++) {
+        for(displ = 0; displ <= max_valid_offset; displ++) {
             if (OFFSET_VALID(displ)) {
 		map_entry = BYTES_TO_WORDS(displ);
 		if (map_entry > MAX_OFFSET) map_entry = OFFSET_TOO_BIG;
@@ -132,7 +133,7 @@ word sz;
         for (obj_start = 0;
              obj_start + WORDS_TO_BYTES(sz) <= HBLKSIZE;
              obj_start += WORDS_TO_BYTES(sz)) {
-             for (displ = 0; displ < WORDS_TO_BYTES(sz); displ++) {
+             for (displ = 0; displ <= max_valid_offset; displ++) {
                  if (OFFSET_VALID(displ)) {
 		     map_entry = BYTES_TO_WORDS(displ);
 		     if (map_entry > MAX_OFFSET) map_entry = OFFSET_TOO_BIG;
