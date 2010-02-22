@@ -511,12 +511,13 @@ namespace System {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		internal extern static TypeCode GetTypeCodeInternal (Type type);
 
-		public static TypeCode GetTypeCode (Type type) {
+#if NET_4_0
+		protected virtual
+#endif
+		TypeCode GetTypeCodeImpl () {
+			Type type = this;
 			if (type is MonoType)
 				return GetTypeCodeInternal (type);
-			if (type == null)
-				/* MS.NET returns this */
-				return TypeCode.Empty;
 
 			type = type.UnderlyingSystemType;
 
@@ -524,6 +525,13 @@ namespace System {
 				return TypeCode.Object;
 			else
 				return GetTypeCodeInternal (type);
+		}
+
+		public static TypeCode GetTypeCode (Type type) {
+			if (type == null)
+				/* MS.NET returns this */
+				return TypeCode.Empty;
+			return type.GetTypeCodeImpl ();
 		}
 
 		[MonoTODO("This operation is currently not supported by Mono")]

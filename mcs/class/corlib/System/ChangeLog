@@ -1,3 +1,7 @@
+2010-02-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs: Implement new v4 GetTypeCodeImpl ().
+
 2010-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Type.cs: Implement new v4 behavior for Equals.
