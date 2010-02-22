@@ -1,3 +1,10 @@
+2010-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* decompose.c (mono_decompose_opcode): Handle OP_LCONV_TO_OVF_I8. Fixes
+	#581950.
+
+	* iltests.il.in: Add a test.
+
 2010-02-22  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini.c (mono_method_check_inlining): Use !mono_method_get_header_summary
