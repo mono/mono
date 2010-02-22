@@ -74,7 +74,12 @@ namespace System.ServiceModel.Description
 
 #if USE_DATA_CONTRACT_IMPORTER
 			dc_importer = new XsdDataContractImporter ();
-			dc_importer.Import (importer.XmlSchemas);
+			schema_set_in_use = new XmlSchemaSet ();
+			schema_set_in_use.Add (importer.XmlSchemas);
+			foreach (WSDL wsdl in importer.WsdlDocuments)
+				foreach (XmlSchema xs in wsdl.Types.Schemas)
+					schema_set_in_use.Add (xs);
+			dc_importer.Import (schema_set_in_use);
 #endif
 
 			this.importer = importer;
@@ -92,7 +97,9 @@ namespace System.ServiceModel.Description
 
 		XsdDataContractImporter dc_importer;
 
-#if !USE_DATA_CONTRACT_IMPORTER
+#if USE_DATA_CONTRACT_IMPORTER
+		XmlSchemaSet schema_set_in_use;
+#else
 		XmlSchemaImporter schema_importer_;
 		XmlSchemaImporter schema_importer {
 			get {
@@ -193,7 +200,7 @@ namespace System.ServiceModel.Description
 #if USE_DATA_CONTRACT_IMPORTER
 		void resolveElement (QName qname, List<MessagePartDescription> parts, string ns)
 		{
-			XmlSchemaElement element = (XmlSchemaElement) importer.XmlSchemas.GlobalElements [qname];
+			XmlSchemaElement element = (XmlSchemaElement) schema_set_in_use.GlobalElements [qname];
 			if (element == null)
 				//FIXME: What to do here?
 				throw new Exception ("Could not resolve : " + qname.ToString ());
@@ -315,7 +322,7 @@ namespace System.ServiceModel.Description
 #if USE_DATA_CONTRACT_IMPORTER
 				msg_part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
 				msg_part.Importer = dc_importer;
-				msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (importer.XmlSchemas, elem));
+				msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (schema_set_in_use, elem));
 				parts.Add (msg_part);
 #else
 				msg_part = new MessagePartDescription (
@@ -340,7 +347,7 @@ namespace System.ServiceModel.Description
 #if USE_DATA_CONTRACT_IMPORTER
 			msg_part = new MessagePartDescription (elem.QualifiedName.Name, elem.QualifiedName.Namespace);
 			msg_part.Importer = dc_importer;
-			msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (importer.XmlSchemas, elem));
+			msg_part.CodeTypeReference = dc_importer.GetCodeTypeReference (dc_importer.Import (schema_set_in_use, elem));
 			parts.Add (msg_part);
 #else
 			msg_part = new MessagePartDescription (elem.Name, ns);
