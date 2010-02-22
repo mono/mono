@@ -1,3 +1,10 @@
+2010-02-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* decompose.c (mono_decompose_opcode): Handle OP_LCONV_TO_OVF_I8. Fixes
+	#581950.
+
+	* iltests.il.in: Add a test.
+
 2009-11-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-arm.c: Use blx instead of mov pc, reg to improve support for thumb.
