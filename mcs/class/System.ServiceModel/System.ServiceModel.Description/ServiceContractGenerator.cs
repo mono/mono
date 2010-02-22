@@ -774,14 +774,19 @@ namespace System.ServiceModel.Description
 #if USE_DATA_CONTRACT_IMPORTER
 		void MergeCompileUnit (CodeCompileUnit from, CodeCompileUnit to)
 		{
+			if (from == to)
+				return;
 			foreach (CodeNamespace fns in from.Namespaces) {
+				bool merged = false;
 				foreach (CodeNamespace tns in to.Namespaces)
 					if (fns.Name == tns.Name) {
 						// namespaces are merged.
 						MergeNamespace (fns, tns);
-						continue;
+						merged = true;
+						break;
 					}
-				to.Namespaces.Add (fns);
+				if (!merged)
+					to.Namespaces.Add (fns);
 			}
 		}
 
