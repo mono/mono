@@ -461,7 +461,6 @@ namespace MonoTests.System.IO
 		}
 
 		[Test] // bug #327053
-		[Category ("NotWorking")]
 		public void ZeroingOnExpand ()
 		{
 			byte [] values = { 3, 2, 1 };

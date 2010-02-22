@@ -1,3 +1,8 @@
+2010-02-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MemoryStreamTest.cs: Activate ZeroingOnExpandTest as we have fixed
+	this issue.
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* UnmanagedMemoryStreamTest.cs: Add more test cases to cover all
