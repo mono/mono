@@ -1,3 +1,8 @@
+2010-02-22  Jeffrey Stedfast  <fejj@novell.com>
+
+	* threads.c (mono_thread_exit): Make sure that the main thread is
+	non-null before dereferencing it.
+
 2010-02-21  Geoff Norton  <gnorton@novell.com>
 
 	* Makefile.am: Add CoreFoundation linkage on darwin to properly get the current
