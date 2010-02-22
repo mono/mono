@@ -1,3 +1,15 @@
+2010-02-22  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c: Add mono_method_get_header_summary which returns minimal
+	information about the header of a method. This is the information used
+	by the inline oracle to reject methods.
+
+	This method doesn't decode local variables and doesn't cache it's result,
+	so it should cause a minimal reduction in memory usage.
+
+	* metadata-internals.h: Add MonoMethodHeaderSummary structure and
+	mono_method_get_header_summary.
+
 2009-09-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-helpers.c (dis_one): Avoid unaligned accesses on platforms where that is
