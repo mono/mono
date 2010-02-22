@@ -460,7 +460,70 @@ namespace MonoTests.System.IO
 			ms.SetLength (10);
 		}
 
-		[Test] // bug #327053
+        	[Test]
+		public void Capacity ()
+		{
+			MemoryStream ms = new MemoryStream ();
+
+			Assert.AreEqual (0, ms.Capacity, "#A1");
+			Assert.AreEqual (0, ms.GetBuffer ().Length, "#A2");
+
+			ms.WriteByte ((byte)'6');
+			Assert.AreEqual (256, ms.Capacity, "#B1");
+			Assert.AreEqual (256, ms.GetBuffer ().Length, "#B2");
+
+			// Shrink
+			ms.Capacity = 100;
+			Assert.AreEqual (100, ms.Capacity, "#C1");
+			Assert.AreEqual (100, ms.GetBuffer ().Length, "#C2");
+
+			// Grow
+			ms.Capacity = 120;
+			Assert.AreEqual (120, ms.Capacity, "#D1");
+			Assert.AreEqual (120, ms.GetBuffer ().Length, "#D2");
+
+			// Grow the buffer, reduce length -so we have a dirty area-
+			// and then we assign capacity to the same. The idea is that we should
+			// avoid creating a new internal buffer it's not needed.
+
+			ms = new MemoryStream ();
+			ms.Capacity = 8;
+			byte [] buff = new byte [] { 0x01, 0x02, 0x03, 0x04, 0x05 };
+			ms.Write (buff, 0, buff.Length);
+			Assert.AreEqual (8, ms.Capacity, "#E1");
+			Assert.AreEqual (8, ms.GetBuffer ().Length, "#E2");
+
+			// Reduce *length*, not capacity
+			byte [] buff_copy = ms.GetBuffer ();
+			ms.SetLength (3);
+			Assert.AreEqual (3, ms.Length, "#F1");
+			Assert.AreEqual (true, AreBuffersEqual (buff_copy, ms.GetBuffer ()), "#F2");
+
+			// Set Capacity to the very same value it has now
+			ms.Capacity = ms.Capacity;
+			Assert.AreEqual (true, AreBuffersEqual (buff_copy, ms.GetBuffer ()), "#G1"); // keep the same buffer
+
+			// Finally, growing it discards the prev buff
+			ms.Capacity = ms.Capacity + 1;
+			Assert.AreEqual (false, AreBuffersEqual (buff_copy, ms.GetBuffer ()), "#H1");
+		}
+
+		bool AreBuffersEqual (byte [] buff1, byte [] buff2)
+		{
+			if ((buff1 == null) != (buff2 == null))
+				return false;
+
+			if (buff1.Length != buff2.Length)
+				return false;
+
+			for (int i = 0; i < buff1.Length; i++)
+				if (buff1 [i] != buff2 [i])
+					return false;
+
+			return true;
+		}
+
+        	[Test] // bug #327053
 		public void ZeroingOnExpand ()
 		{
 			byte [] values = { 3, 2, 1 };

@@ -1,3 +1,7 @@
+2010-02-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MemoryStreamTest.cs: Add a new test for Capacity.
+
 2010-01-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* StreamReaderTest.cs: New test for encoding detection.
