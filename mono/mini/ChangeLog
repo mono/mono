@@ -1,3 +1,9 @@
+2009-11-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-arm.c: Use blx instead of mov pc, reg to improve support for thumb.
+
+	* mini-arm.c (mono_arm_thumb_supported): New helper function.
+
 2010-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Fix SIZEOF in dynamic methods.
