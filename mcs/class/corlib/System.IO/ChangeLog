@@ -1,3 +1,8 @@
+2010-02-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MemoryStream.cs: When setting Capacity, don't create a new buffer if
+	the new expected value is the same as the current one.
+
 2010-02-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StreamWriter.cs:

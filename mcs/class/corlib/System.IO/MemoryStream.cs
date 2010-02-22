@@ -163,6 +163,9 @@ namespace System.IO
 					throw new ArgumentOutOfRangeException ("value",
 					"New capacity cannot be negative or less than the current capacity " + value + " " + capacity);
 
+				if (value == internalBuffer.Length)
+					return;
+
 				byte [] newBuffer = null;
 				if (value != 0) {
 					newBuffer = new byte [value];
