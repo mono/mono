@@ -104,7 +104,9 @@ namespace System.ServiceModel.Description
 		internal MetadataSet GetMetadataInternal (EndpointAddress address, MetadataExchangeClientMode mode)
 		{
 			if (binding == null)
-				binding = MetadataExchangeBindings.CreateMexHttpBinding ();
+				binding = address.Uri.Scheme == Uri.UriSchemeHttps ?
+					MetadataExchangeBindings.CreateMexHttpsBinding () :
+					MetadataExchangeBindings.CreateMexHttpBinding ();
 
 			MetadataProxy proxy = new MetadataProxy (binding, address);
 			proxy.Open ();

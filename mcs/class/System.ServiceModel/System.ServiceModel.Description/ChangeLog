@@ -1,5 +1,10 @@
 2010-02-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MetadataExchangeClient.cs, MetadataExchangeBindings.cs:
+	  support https.
+
+2010-02-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceContractGenerator.cs : fix duplicate output.
 
 2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>

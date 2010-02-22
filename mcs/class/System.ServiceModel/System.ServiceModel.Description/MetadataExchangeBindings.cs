@@ -30,7 +30,6 @@ using System.Text;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
 	public static class MetadataExchangeBindings
 	{
 		public static Binding CreateMexHttpBinding ()
@@ -47,17 +46,30 @@ namespace System.ServiceModel.Description
 
 		public static Binding CreateMexHttpsBinding ()
 		{
-			throw new NotImplementedException ();
+			//FIXME: .net uses WSHttpBinding.. 
+			return new CustomBinding (
+				"MetadataExchangeHttpsBinding",
+				"http://schemas.microsoft.com/ws/2005/02/mex/bindings",
+				new TextMessageEncodingBindingElement (
+					MessageVersion.Soap12WSAddressing10, 
+					Encoding.UTF8),
+				new HttpsTransportBindingElement ());
 		}
 
 		public static Binding CreateMexNamedPipeBinding ()
 		{
-			throw new NotImplementedException ();
+			return new CustomBinding (
+				"MetadataExchangeNamedPipeBinding",
+				"http://schemas.microsoft.com/ws/2005/02/mex/bindings",
+				new NamedPipeTransportBindingElement ());
 		}
 
 		public static Binding CreateMexTcpBinding ()
 		{
-			throw new NotImplementedException ();
+			return new CustomBinding (
+				"MetadataExchangeTcpBinding",
+				"http://schemas.microsoft.com/ws/2005/02/mex/bindings",
+				new TcpTransportBindingElement ());
 		}
 	}
 }
