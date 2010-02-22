@@ -1,3 +1,11 @@
+2010-02-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* MemoryStream.cs: Don't clear the bytes beyond Length when shrinking
+	it. Instead just save the related information for it and do it when
+	Length grows and touchs that dirty region. Refactor the code where
+	needed to avoid duplication as well.
+	Fixes #327053.
+
 2010-02-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StreamWriter.cs:
