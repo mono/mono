@@ -1,3 +1,7 @@
+2010-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* System.IO.Ports: New test directory.
+
 2010-01-29  Mike Kestner <mkestner@novell.com>
 
 	* System.Net/WebUtilityTest.cs: port of tests from System.Web.
