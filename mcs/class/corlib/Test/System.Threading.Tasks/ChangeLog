@@ -1,3 +1,7 @@
+2010-02-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TaskTest.cs: Disable this since it deadlock corlib suite 100% of the times.
+
 2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* FutureTests.cs:
