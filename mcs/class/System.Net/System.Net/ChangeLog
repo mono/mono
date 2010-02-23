@@ -1,3 +1,12 @@
+2010-02-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebRequest_2_1.cs: Accept and ContentType properties do not
+	behave like Silverlight 2.0 (not related to browser/client stacks)
+	* WebHeaderCollection_2_1.cs: Range is now accepted in SL3 (not
+	related to browser/client stacks)
+	* WebRequest_2_1.cs: Fix registration to work on domains (new) 
+	and scheme (more correctly wrt new unit tests).
+
 2010-02-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebClient_2_1.cs: Keep a copy of 'userToken' since we need to

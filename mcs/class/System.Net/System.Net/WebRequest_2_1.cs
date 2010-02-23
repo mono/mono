@@ -91,17 +91,29 @@ namespace System.Net {
 				throw new InvalidOperationException ("Uri is not absolute.");
 
 			IWebRequestCreate creator = null;
-			if (!registred_prefixes.TryGetValue (uri.Scheme, out creator)) {
-				switch (uri.Scheme) {
-				case "http":
-				case "https":
-					creator = default_creator;
-					break;
+
+			// first we look if a domain is registred
+			string scheme = uri.Scheme + Uri.SchemeDelimiter;
+			string domain = scheme + uri.DnsSafeHost;
+			if (!registred_prefixes.TryGetValue (domain, out creator)) {
+				// next we look if the protocol is registred (the delimiter '://' is important)
+				if (!registred_prefixes.TryGetValue (scheme, out creator)) {
+					scheme = uri.Scheme; // without the delimiter
+					// then we default to SL
+					switch (scheme) {
+					case "http":
+					case "https":
+						creator = default_creator;
+						break;
+					default:
+						registred_prefixes.TryGetValue (scheme, out creator);
+						break;
+					}
 				}
 			}
 
 			if (creator == null)
-				throw new NotSupportedException (string.Format ("Scheme {0} not supported", uri.Scheme));
+				throw new NotSupportedException (string.Format ("Scheme {0} not supported", scheme));
 
 			return creator.Create (uri);
 		}
@@ -124,6 +136,12 @@ namespace System.Net {
 				throw new ArgumentNullException ("prefix");
 			if (creator == null)
 				throw new ArgumentNullException ("creator");
+
+			Uri uri;
+			if (Uri.TryCreate (prefix, UriKind.Absolute, out uri)) {
+				// if a valid URI is supplied then only register the scheme + domain
+				prefix = uri.Scheme + Uri.SchemeDelimiter + uri.DnsSafeHost;
+			}
 
 			if (registred_prefixes.ContainsKey (prefix))
 				return false;
