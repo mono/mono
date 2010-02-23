@@ -179,6 +179,12 @@ namespace Mono.Debugger.Soft
 		public long Type {
 			get; set;
 		}
+		public bool Caught {
+			get; set;
+		}
+		public bool Uncaught {
+			get; set;
+		}
 	}
 
 	class AssemblyModifier : Modifier {
@@ -223,7 +229,7 @@ namespace Mono.Debugger.Soft
 		 * and the debuggee's minor version is <= the library's minor version.
 		 */
 		public const int MAJOR_VERSION = 2;
-		public const int MINOR_VERSION = 0;
+		public const int MINOR_VERSION = 1;
 
 		enum WPSuspendPolicy {
 			NONE = 0,
@@ -1574,6 +1580,11 @@ namespace Mono.Debugger.Soft
 					} else if (mod is ExceptionModifier) {
 						w.WriteByte ((byte)ModifierKind.EXCEPTION_ONLY);
 						w.WriteId ((mod as ExceptionModifier).Type);
+						if (Version.MajorVersion > 2 || Version.MinorVersion > 0) {
+							/* This is only supported in protocol version 2.1 */
+							w.WriteBool ((mod as ExceptionModifier).Caught);
+							w.WriteBool ((mod as ExceptionModifier).Uncaught);
+						}
 					} else if (mod is AssemblyModifier) {
 						w.WriteByte ((byte)ModifierKind.ASSEMBLY_ONLY);
 						var amod = (mod as AssemblyModifier);

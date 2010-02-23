@@ -144,7 +144,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		public ExceptionEventRequest CreateExceptionRequest (TypeMirror exc_type) {
-			return new ExceptionEventRequest (this, exc_type);
+			return new ExceptionEventRequest (this, exc_type, true, true);
+		}
+
+		public ExceptionEventRequest CreateExceptionRequest (TypeMirror exc_type, bool caught, bool uncaught) {
+			return new ExceptionEventRequest (this, exc_type, caught, uncaught);
 		}
 
 		public void EnableEvents (params EventType[] events) {
