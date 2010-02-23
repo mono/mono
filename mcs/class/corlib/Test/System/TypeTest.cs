@@ -3262,6 +3262,7 @@ PublicKeyToken=b77a5c561934e089"));
 			}
 		}
 
+		[Test]
 		public void NewV4EqualsBehavior ()
 		{
 			var ta = new MyType ();
@@ -3276,6 +3277,49 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (3, ta.ust, "#4");
 			Assert.AreEqual (0, tb.eq, "#5");
 			Assert.AreEqual (1, tb.ust, "#6");
+		}
+
+		public enum MyRealEnum : short {
+			A,B,C
+		}
+
+		public class MyEnum : TypeDelegator {
+			public bool is_enum { get; set; }
+			public int fields { get; set; }
+
+			public override bool IsSubclassOf (Type c) {
+				return c == typeof (Enum) && is_enum;
+			}
+
+			public override FieldInfo[] GetFields (BindingFlags bindingAttr) {
+				if (fields == 0)
+					return null;
+				FieldInfo[] res = new FieldInfo [fields];
+				for (int i = 0; i < fields; ++i)
+					res [i] = typeof (MyRealEnum).GetField ("value__");
+				return res;
+			}
+		}
+
+		[Test]
+		public void GetEnumUnderlyingType () {
+
+			try {
+				new MyEnum () { is_enum = false }.GetEnumUnderlyingType ();
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {}
+
+			try {
+				new MyEnum () { is_enum = true, fields = 0 }.GetEnumUnderlyingType ();
+				Assert.Fail ("#2");
+			} catch (ArgumentException) {}
+
+			try {
+				new MyEnum () { is_enum = true, fields = 2 }.GetEnumUnderlyingType ();
+				Assert.Fail ("#3");
+			} catch (ArgumentException) {}
+
+			Assert.AreSame (typeof (short), new MyEnum () { is_enum = true, fields = 1 }.GetEnumUnderlyingType ());
 		}
 #endif
 

@@ -1,3 +1,7 @@
+2010-02-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs:  Test new v4 GetEnumUnderlyingType ().
+
 2010-02-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Test new v4 behavior for Equals.
