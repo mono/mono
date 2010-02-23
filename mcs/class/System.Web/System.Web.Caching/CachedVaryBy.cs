@@ -39,6 +39,9 @@ using System.Web.Util;
 
 namespace System.Web.Caching
 {
+#if NET_4_0
+	[Serializable]
+#endif
 	sealed class CachedVaryBy
 	{
 		string[] prms;

@@ -1,3 +1,8 @@
+2010-02-23  Marek Habersack  <mhabersack@novell.com>
+
+	* CachedVaryBy.cs: made serializable for 4.0+ (necessary for
+	extensible output caching)
+
 2010-02-03  Marek Habersack  <mhabersack@novell.com>
 
 	* OutputCache.cs: DefaultProviderName checks if there was any
