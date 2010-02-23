@@ -1,5 +1,10 @@
 2010-02-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MetadataResolver.cs : fix BeginResolve() overloads and use
+	  arguments as expected in Resolve().
+
+2010-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MetadataExchangeClient.cs : add missing members and implement some.
 
 2010-02-23  Atsushi Enomoto  <atsushi@ximian.com>
