@@ -46,7 +46,6 @@ using SMMessage = System.ServiceModel.Channels.Message;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO ("MetadataExchangeClientMode is not considered")]
 	public class MetadataExchangeClient
 	{
 		string scheme;
@@ -77,10 +76,47 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
+		[MonoTODO ("MetadataExchangeClientMode is not considered")]
 		public MetadataExchangeClient (Uri address, MetadataExchangeClientMode mode)
 		{
 			this.address = new EndpointAddress (address.AbsoluteUri);
 			this.mode = mode;
+		}
+
+		[MonoTODO]
+		public ICredentials HttpCredentials { get; set; }
+		[MonoTODO]
+		public int MaximumResolvedReferences { get; set; }
+
+		public TimeSpan OperationTimeout { get; set; }
+
+		[MonoTODO]
+		public bool ResolveMetadataReferences { get; set; }
+
+		public ClientCredentials SoapCredentials { get; set; }
+
+		[MonoTODO ("use dialect and identifier (but how?)")]
+		protected internal virtual ChannelFactory<IMetadataExchange> GetChannelFactory (EndpointAddress metadataAddress, string dialect, string identifier)
+		{
+			var se = new ServiceEndpoint (ContractDescription.GetContract (typeof (IMetadataExchange)), CreateBinding (metadataAddress), metadataAddress);
+			if (SoapCredentials != null) {
+				se.Behaviors.RemoveAll<ClientCredentials> ();
+				se.Behaviors.Add (SoapCredentials);
+			}
+			return new ChannelFactory<IMetadataExchange> (se);
+		}
+
+		[MonoTODO]
+		protected internal virtual HttpWebRequest GetWebRequest (Uri location, string dialect, string identifier)
+		{
+			throw new NotImplementedException ();
+		}
+
+		SMBinding CreateBinding (EndpointAddress address)
+		{
+			return address.Uri.Scheme == Uri.UriSchemeHttps ?
+				MetadataExchangeBindings.CreateMexHttpsBinding () :
+				MetadataExchangeBindings.CreateMexHttpBinding ();
 		}
 
 		// sync methods
@@ -103,13 +139,15 @@ namespace System.ServiceModel.Description
 
 		internal MetadataSet GetMetadataInternal (EndpointAddress address, MetadataExchangeClientMode mode)
 		{
-			if (binding == null)
-				binding = address.Uri.Scheme == Uri.UriSchemeHttps ?
-					MetadataExchangeBindings.CreateMexHttpsBinding () :
-					MetadataExchangeBindings.CreateMexHttpBinding ();
-
-			MetadataProxy proxy = new MetadataProxy (binding, address);
-			proxy.Open ();
+			// FIXME: give dialect and identifier
+			var cf = GetChannelFactory (address, null, null);
+			cf.Open ();
+			var proxy = cf.CreateChannel ();
+			var asClientChannel = proxy as IClientChannel;
+			if (asClientChannel == null)
+				throw new InvalidOperationException ("The channel factory must return an IClientChannel implementation");
+			asClientChannel.OperationTimeout = OperationTimeout;
+			asClientChannel.Open ();
 
 			SMMessage msg = SMMessage.CreateMessage ( 
 					MessageVersion.Soap12WSAddressing10, 
@@ -170,28 +208,8 @@ namespace System.ServiceModel.Description
 			return getter.BeginInvoke (() => GetMetadata (address, mode), callback, asyncState);
 		}
 	}
-	
-	internal class MetadataProxy : ClientBase<IMetadataExchange>, IMetadataExchange
+
+	interface IMetadataExchangeClient : IMetadataExchange, IClientChannel
 	{
-		public MetadataProxy (SMBinding binding, EndpointAddress address)
-			: base (binding, address)
-		{
-		}
-
-		public SMMessage Get (SMMessage msg)
-		{
-			return Channel.Get (msg);
-		}
-
-		public IAsyncResult BeginGet (SMMessage request, AsyncCallback callback , object state)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public SMMessage EndGet (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
 	}
-
 }

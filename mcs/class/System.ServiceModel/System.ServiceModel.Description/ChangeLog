@@ -1,5 +1,9 @@
 2010-02-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MetadataExchangeClient.cs : add missing members and implement some.
+
+2010-02-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* WsdlImporter.cs : handle soapAction in operation binding too.
 	  Now it successfully generates proxy generation for Twitterlight:
 	  http://twitterlight.claritycon.com/TwitterWebService.asmx?WSDL
