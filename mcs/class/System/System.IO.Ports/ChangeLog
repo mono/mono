@@ -1,3 +1,10 @@
+2010-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* SerialPort.cs: DiscardNull should *not* report any error if the port
+	is not open. We haven't implemented it yet, but added the needed
+	comment in case we forget when actually implementing it.
+	Fixes #512244.
+
 2010-01-25  Leszek Ciesielski <skolima@gmail.com>
 
 	* SerialPortStream.cs: Read was returning requested count instead

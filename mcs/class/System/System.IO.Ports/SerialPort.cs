@@ -217,11 +217,12 @@ namespace System.IO.Ports
 		[DefaultValue (false)]
 		public bool DiscardNull {
 			get {
-				CheckOpen ();
 				throw new NotImplementedException ();
 			}
 			set {
-				CheckOpen ();
+				// LAMESPEC: Msdn states that an InvalidOperationException exception
+				// is fired if the port is not open, which is *not* happening.
+
 				throw new NotImplementedException ();
 			}
 		}
