@@ -1,3 +1,7 @@
+2010-02-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Test new v4 GetEnumNames ().
+
 2010-02-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs:  Test new v4 GetEnumUnderlyingType ().

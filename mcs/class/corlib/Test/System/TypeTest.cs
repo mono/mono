@@ -3295,8 +3295,12 @@ PublicKeyToken=b77a5c561934e089"));
 				if (fields == 0)
 					return null;
 				FieldInfo[] res = new FieldInfo [fields];
-				for (int i = 0; i < fields; ++i)
-					res [i] = typeof (MyRealEnum).GetField ("value__");
+				for (int i = 0; i < fields; ++i) {
+					if ((bindingAttr & BindingFlags.Instance) != 0)
+						res [i] = typeof (MyRealEnum).GetField ("value__");
+					else
+						res [i] = typeof (MyRealEnum).GetField ("A");
+				}
 				return res;
 			}
 		}
@@ -3320,6 +3324,24 @@ PublicKeyToken=b77a5c561934e089"));
 			} catch (ArgumentException) {}
 
 			Assert.AreSame (typeof (short), new MyEnum () { is_enum = true, fields = 1 }.GetEnumUnderlyingType ());
+		}
+
+		[Test]
+		public void GetEnumNames () {
+			try {
+				new MyEnum () { is_enum = false }.GetEnumNames ();
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {}
+
+			var res = new MyEnum () { is_enum = true, fields = 1 }.GetEnumNames ();
+			Assert.AreEqual (1, res.Length, "#2");
+			Assert.AreEqual ("A", res [0], "#3");
+
+			res = typeof (MyRealEnum).GetEnumNames ();
+			Assert.AreEqual (3, res.Length, "#4");
+			Assert.AreEqual ("A", res [0], "#5");
+			Assert.AreEqual ("B", res [1], "#6");
+			Assert.AreEqual ("C", res [2], "#7");
 		}
 #endif
 
