@@ -207,7 +207,6 @@ namespace System.Resources
 					throw new ArgumentException ("Invalid ResX input.", ex);
 				}
 #endif
-
 				header.Verify ();
 			} finally {
 				if (fileName != null) {
@@ -263,9 +262,10 @@ namespace System.Resources
 			return null;
 		}
 
-		private string GetDataValue (bool meta)
+		private string GetDataValue (bool meta, out string comment)
 		{
 			string value = null;
+			comment = null;
 #if NET_2_0
 			while (xmlReader.Read ()) {
 				if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.LocalName == (meta ? "metadata" : "data"))
@@ -277,7 +277,9 @@ namespace System.Resources
 						value = xmlReader.ReadString ();
 						xmlReader.WhitespaceHandling = WhitespaceHandling.None;
 					} else if (xmlReader.Name.Equals ("comment")) {
-						xmlReader.Skip ();
+						xmlReader.WhitespaceHandling = WhitespaceHandling.Significant;
+						comment = xmlReader.ReadString ();
+						xmlReader.WhitespaceHandling = WhitespaceHandling.None;
 						if (xmlReader.NodeType == XmlNodeType.EndElement && xmlReader.LocalName == (meta ? "metadata" : "data"))
 							break;
 					}
@@ -329,7 +331,8 @@ namespace System.Resources
 				return;
 			}
 
-			string value = GetDataValue (meta);
+			string comment = null;
+			string value = GetDataValue (meta, out comment);
 			object obj = null;
 
 			if (mime_type != null && mime_type.Length > 0) {
@@ -380,7 +383,12 @@ namespace System.Resources
 					+ "was '{0}'.", obj));
 #if NET_2_0
 			if (useResXDataNodes)
-				hashtable [name] = new ResXDataNode(name, obj, pos);
+			{
+				ResXDataNode dataNode = new ResXDataNode(name, obj, pos);
+				dataNode.Comment = comment;
+				hashtable [name] = dataNode;
+				
+			}
 			else
 #endif
 			hashtable [name] = obj;
