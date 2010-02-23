@@ -1,3 +1,7 @@
+2010-02-23  Marek Safar  <marek.safar@gmail.com>
+
+	* Enumerable.cs: Implement Zip.
+
 2010-01-25  Jb Evain  <jbevain@novell.com>
 
 	* QueryableTransformer.cs (ReplaceQueryableMethod): fix
