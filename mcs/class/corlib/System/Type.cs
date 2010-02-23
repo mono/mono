@@ -455,7 +455,7 @@ namespace System {
 			return !Object.ReferenceEquals (left, right);
 		}
 
-
+		[MonoTODO ("Reimplement this in MonoType for bonus speed")]
 		public virtual Type GetEnumUnderlyingType () {
 			if (!IsEnum)
 				throw new ArgumentException ("Type is not an enumeration", "enumType");
@@ -466,6 +466,20 @@ namespace System {
 				throw new ArgumentException ("An enum must have exactly one instance field", "enumType");
 
 			return fields [0].FieldType;
+		}
+
+		[MonoTODO ("Reimplement this in MonoType for bonus speed")]
+		public virtual string[] GetEnumNames () {
+			if (!IsEnum)
+				throw new ArgumentException ("Type is not an enumeration", "enumType");
+
+			var fields = GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+
+			string [] result = new string [fields.Length];
+			for (int i = 0; i < fields.Length; ++i)
+				result [i] = fields [i].Name;
+
+			return result;
 		}
 #endif
 		
