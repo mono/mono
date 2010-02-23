@@ -1,3 +1,7 @@
+2010-02-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Better error message.
+
 2010-02-22  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c: Add mono_method_get_header_summary which returns minimal
