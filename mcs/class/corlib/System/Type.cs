@@ -454,6 +454,19 @@ namespace System {
 		{
 			return !Object.ReferenceEquals (left, right);
 		}
+
+
+		public virtual Type GetEnumUnderlyingType () {
+			if (!IsEnum)
+				throw new ArgumentException ("Type is not an enumeration", "enumType");
+
+			var fields = GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
+
+			if (fields == null || fields.Length != 1)
+				throw new ArgumentException ("An enum must have exactly one instance field", "enumType");
+
+			return fields [0].FieldType;
+		}
 #endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
