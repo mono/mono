@@ -1,3 +1,19 @@
+2010-02-23  Gabriel Burt  <gabriel.burt@gmail.com>
+
+	* Normalization.cs: Implement algorithmic Hangul decomposition; Calling
+	string.Normalize on Korean characters now works properly (bnc#480152).
+	This reduces the number of errors in 'make test' from 27k to 5.1k.
+
+	* StringNormalizationTestSource.cs:
+	* Makefile: Use the local, working copy of Normalization etc,so as to make
+	modifying Normalization.cs and then testing your changes with 'make test'
+	possible.  Also, fix building/running of tests, patch by Alexander
+	Kojevnikov.
+
+	* NormalizationTableUtil.cs : Backport fix some wrong ranges in
+	mapIdxToComposite. This fixes some Arabic normalization (and more), and
+	fixes generating NormalizationGenerated.cs.
+
 2008-11-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ucd.cs : Write type for *_count. Add notice to not edit

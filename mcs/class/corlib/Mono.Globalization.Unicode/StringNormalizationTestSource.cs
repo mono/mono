@@ -3,6 +3,8 @@ using System.Globalization;
 using System.Collections;
 using System.Text;
 
+using Mono.Globalization.Unicode;
+
 namespace MonoTests.System
 {
 	public class StringNormalizationTest
@@ -53,7 +55,19 @@ namespace MonoTests.System
 
 		void TestString (Testcase tc, string expected, NormalizationForm f)
 		{
-			string actual = tc.Source.Normalize (f);
+			string input = tc.Source;
+			string actual = null;
+			switch (f) {
+			default:
+				actual = Normalization.Normalize (input, 0); break;
+			case NormalizationForm.FormD:
+				actual = Normalization.Normalize (input, 1); break;
+			case NormalizationForm.FormKC:
+				actual = Normalization.Normalize (input, 2); break;
+			case NormalizationForm.FormKD:
+				actual = Normalization.Normalize (input, 3); break;
+			}
+
 			if (actual != expected)
 				Console.WriteLine ("Error: expected {0} but was {1} (for {2},type{3} form {4})",
 				expected, actual, tc.Source, tc.TestType, f);
