@@ -94,7 +94,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		[Test]
 		public void CreateFromFile_Null () {
 			AssertThrows<ArgumentNullException> (delegate () {
-					MemoryMappedFile.CreateFromFile (null);
+					MemoryMappedFile.CreateFromFile ((FileStream) null);
 				});
 		}
 

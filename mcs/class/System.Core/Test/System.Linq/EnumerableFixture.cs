@@ -2106,6 +2106,42 @@ namespace MonoTests.System.Linq
 		{
 			Assert.That (Enumerable.AsEnumerable<object> (null), Is.Null);
 		}
+		
+#if NET_4_0
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Zip_FirstSourceNull_ThrowsArgumentNullException ()
+		{
+			Enumerable.Zip<object, object, object> (null, new object [0], null);
+		}
+		
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Zip_SecondSourceNull_ThrowsArgumentNullException ()
+		{
+			new object [0].Zip<object, object, object> (null, null);
+		}		
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void Zip_ResultNull_ThrowsArgumentNullException ()
+		{
+			new object [0].Zip<object, object, object> (new object [0], null);
+		}		
+
+		[Test]
+		public void Zip ()
+		{
+			var a = new [] { 'a', 'b', 'c' };
+			var b = new [] { 1, 2, 3 };
+			a.Zip (b, (f, s) => f + s.ToString ()).AssertEquals ("a1", "b2", "c3");
+			
+			a = new [] { 'a' };
+			b = new [] { 100, 200, 300 };
+			a.Zip (b, (f, s) => f + s.ToString ()).AssertEquals ("a100");
+		}
+#endif
+
 
 		private Reader<T> Read<T> (params T [] source)
 		{
