@@ -219,6 +219,14 @@ namespace System.ServiceModel.Description
 						}
 					}
 
+					// fill Action from operation binding if required.
+					if (action == "") {
+						if (dir != MessageDirection.Input)
+							action = GetActionFromOperationBinding (wsdlPortType, op.Name);
+						else
+							action = "*";
+					}
+
 					msg_descr = new MessageDescription (action, dir);
 					/* FIXME: Headers ? */
 
@@ -233,6 +241,24 @@ namespace System.ServiceModel.Description
 				extension.ImportContract (this, context);
 
 			return cd;
+		}
+
+		string GetActionFromOperationBinding (PortType pt, string opName)
+		{
+			foreach (WSBinding binding in pt.ServiceDescription.Bindings) {
+				foreach (OperationBinding ob in binding.Operations) {
+					if (ob.Name != opName)
+						continue;
+					foreach (var ext in ob.Extensions) {
+						var sob = ext as SoapOperationBinding;
+						if (sob == null)
+							continue;
+						return sob.SoapAction;
+					}
+					return String.Empty;
+				}
+			}
+			return String.Empty;
 		}
 
 		public ServiceEndpoint ImportEndpoint (Port wsdlPort)
