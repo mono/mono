@@ -1,3 +1,8 @@
+2010-02-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Add support for the caught/uncaught flags on exception
+	event requests. Bump protocol minor version.
+
 2010-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* decompose.c (mono_decompose_long_opts): Handle OP_LCONV_TO_OVF_I8 here too.
