@@ -1,3 +1,7 @@
+2010-02-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* AssemblyMirror.cs: Add missing GetType () overloads.
+
 2010-02-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeMirror.cs (EnumUnderlyingType): New property.

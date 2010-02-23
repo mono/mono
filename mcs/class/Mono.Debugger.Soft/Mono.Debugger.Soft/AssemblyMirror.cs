@@ -71,6 +71,15 @@ namespace Mono.Debugger.Soft
 			return vm.GetType (vm.conn.Assembly_GetType (id, name, ignoreCase));
 		}
 
+		public TypeMirror GetType (String name, Boolean throwOnError)
+		{
+			return GetType (name, throwOnError, false);
+		}
+
+		public TypeMirror GetType (String name) {
+			return GetType (name, false, false);
+		}
+
 		/* 
 		 * An optional Cecil assembly which could be used to access metadata instead
 		 * of reading it from the debuggee.
