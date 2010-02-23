@@ -398,15 +398,17 @@ namespace System.Threading.Tasks
 			
 			// Don't override Canceled or Faulted
 			if (status == TaskStatus.Running) {
-				if (childTasks.IsSet) {
+				if (childTasks.IsSet)
 					status = TaskStatus.RanToCompletion;
-					// Let continuation creation process
-					EventHandler tempCompleted = completed;
-					if (tempCompleted != null)
-						tempCompleted (this, EventArgs.Empty);
-				} else {
+				else
 					status = TaskStatus.WaitingForChildrenToComplete;
-				}
+			}
+		
+			if (status != TaskStatus.WaitingForChildrenToComplete) {
+				// Let continuation creation process
+				EventHandler tempCompleted = completed;
+				if (tempCompleted != null)
+					tempCompleted (this, EventArgs.Empty);
 			}
 			
 			// Reset the current thingies
