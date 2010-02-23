@@ -338,11 +338,39 @@ namespace Mono.Globalization.Unicode
 		}
 		*/
 
+		const int HangulSBase = 0xAC00, HangulLBase = 0x1100,
+				  HangulVBase = 0x1161, HangulTBase = 0x11A7,
+				  HangulLCount = 19, HangulVCount = 21, HangulTCount = 28,
+				  HangulNCount = HangulVCount * HangulTCount,   // 588
+				  HangulSCount = HangulLCount * HangulNCount;   // 11172
+
+		private static bool GetCanonicalHangul (int s, int [] buf, int bufIdx)
+		{
+			int idx = s - HangulSBase;
+			if (idx < 0 || idx >= HangulSCount) {
+				return false;
+			}
+
+			int L = HangulLBase + idx / HangulNCount;
+			int V = HangulVBase + (idx % HangulNCount) / HangulTCount;
+			int T = HangulTBase + idx % HangulTCount;
+
+			buf [bufIdx++] = L;
+			buf [bufIdx++] = V;
+			if (T != HangulTBase) {
+				buf [bufIdx++] = T;
+			}
+			buf [bufIdx] = (char) 0;
+			return true;
+		}
+
 		public static void GetCanonical (int c, int [] buf, int bufIdx)
 		{
-			for (int i = CharMapIdx (c); mappedChars [i] != 0; i++)
-				buf [bufIdx++] = mappedChars [i];
-			buf [bufIdx] = (char) 0;
+			if (!GetCanonicalHangul (c, buf, bufIdx)) {
+				for (int i = CharMapIdx (c); mappedChars [i] != 0; i++)
+					buf [bufIdx++] = mappedChars [i];
+				buf [bufIdx] = (char) 0;
+			}
 		}
 
 		public static bool IsNormalized (string source, int type)
