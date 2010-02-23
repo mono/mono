@@ -455,7 +455,7 @@ namespace System {
 			return !Object.ReferenceEquals (left, right);
 		}
 
-		[MonoTODO ("Reimplement this in MonoType for bonus speed")]
+		[MonoInternalNote ("Reimplement this in MonoType for bonus speed")]
 		public virtual Type GetEnumUnderlyingType () {
 			if (!IsEnum)
 				throw new ArgumentException ("Type is not an enumeration", "enumType");
@@ -468,7 +468,7 @@ namespace System {
 			return fields [0].FieldType;
 		}
 
-		[MonoTODO ("Reimplement this in MonoType for bonus speed")]
+		[MonoInternalNote ("Reimplement this in MonoType for bonus speed")]
 		public virtual string[] GetEnumNames () {
 			if (!IsEnum)
 				throw new ArgumentException ("Type is not an enumeration", "enumType");
