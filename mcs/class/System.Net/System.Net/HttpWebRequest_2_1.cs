@@ -5,7 +5,7 @@
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //  Jb Evain  <jbevain@novell.com>
 //
-// Copyright (C) 2007, 2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2007, 2009-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -38,8 +38,9 @@ namespace System.Net {
 	// note: the NotImplementedException are needed to match MS implementation
 
 	// note: MS documents a lot of thing for this type but, in truth, all happens
-	// in a type that derive from HttpWebRequest. In Moonlight case this is
-	// BrowserHttpWebRequest and is located in System.Windows.Browser.dll
+	// in a type that derive from HttpWebRequest. In Moonlight case this is either
+	// * BrowserHttpWebRequest (browser stack) located in System.Windows.Browser.dll; or
+	// * System.Net.Browser.ClientHttpWebRequest (client stack) located in System.Windows.dll
 
 	public abstract class HttpWebRequest : WebRequest {
 
@@ -52,7 +53,13 @@ namespace System.Net {
 		public string Accept {
 			get { return Headers [HttpRequestHeader.Accept]; }
 			// this header cannot be set directly inside the collection (hence the helper)
-			set { Headers.SetHeader ("accept", value); }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("Accept");
+				if (value.Length == 0)
+					throw new ArgumentException ("Accept");
+				Headers.SetHeader ("accept", value);
+			}
 		}
 
 		public virtual bool AllowReadStreamBuffering {
@@ -63,7 +70,13 @@ namespace System.Net {
 		public override string ContentType {
 			get { return Headers [HttpRequestHeader.ContentType]; }
 			// this header cannot be set directly inside the collection (hence the helper)
-			set { Headers.SetHeader ("content-type", value); }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("ContentType");
+				if (value.Length == 0)
+					throw new ArgumentException ("ContentType");
+				Headers.SetHeader ("content-type", value);
+			}
 		}
 
 		public virtual bool HaveResponse {
