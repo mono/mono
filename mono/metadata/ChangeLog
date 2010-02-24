@@ -1,3 +1,7 @@
+2010-02-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* culture-info-table.h : regenerated.
+
 2010-02-22  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata.c: Add mono_method_get_header_summary which returns minimal
