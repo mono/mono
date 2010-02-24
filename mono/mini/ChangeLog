@@ -1,5 +1,9 @@
 2010-02-24  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Implement AOT support for fast TLS access.
+
+2010-02-24  Zoltan Varga  <vargaz@gmail.com>
+
 	* method-to-ir.c (mono_method_to_ir): Implement support for fast access to
 	ThreadStatic variables.
 
