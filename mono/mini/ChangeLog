@@ -1,3 +1,8 @@
+2010-02-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (notify_thread): Skip terminated threads, since their tls
+	data is not freed yet. Fixes #582460.
+
 2010-02-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c: Add support for the caught/uncaught flags on exception
