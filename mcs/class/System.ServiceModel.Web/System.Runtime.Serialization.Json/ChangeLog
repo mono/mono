@@ -1,3 +1,8 @@
+2010-02-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonWriter.cs : write NaN, INF, -INF as JSON string, not JSON number.
+	  Fixed bug #573691.
+
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializer.cs : KnownTypes does not include root
