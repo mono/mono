@@ -1,3 +1,8 @@
+
+Wed Feb 24 16:01:37 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: don't install the headers anymore, they are private.
+
 2010-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* versioninfo.c (VerLanguageName): Remove code duplication a bit.
