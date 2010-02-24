@@ -11993,6 +11993,30 @@
       </method>
     </type>
   </test>
+  <test name="gtest-472.cs">
+    <type name="C`1[T]">
+      <method name="Void CopyUnsafe(T[], System.Int64[])">
+        <size>1</size>
+      </method>
+      <method name="Boolean CopyUnsafe(T[], Int64)">
+        <size>2</size>
+      </method>
+      <method name="Void CopyUnsafe(T[])">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
