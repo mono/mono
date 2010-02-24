@@ -129,13 +129,16 @@ namespace System.Web.SessionState
 			} catch (Exception ex) {
 				throw new HttpException ("Failed to retrieve session state.", ex);
 			} finally {
-				if (reader != null)
-					reader.Dispose ();
 				if (stream != null)
 					stream.Dispose ();
 #if NET_4_0
+				if (reader != null)
+					reader.Dispose ();
 				if (gzip != null)
 					gzip.Dispose ();
+#else
+				if (reader != null)
+					((IDisposable)reader).Dispose ();
 #endif
 			}
 				
@@ -249,11 +252,15 @@ namespace System.Web.SessionState
 			} catch (Exception ex) {
 				throw new HttpException ("Failed to store session data.", ex);
 			} finally {
+
+#if NET_4_0
 				if (writer != null)
 					writer.Dispose ();
-#if NET_4_0
 				if (gzip != null)
 					gzip.Dispose ();
+#else
+				if (writer != null)
+					((IDisposable)writer).Dispose ();
 #endif
 				if (stream != null)
 					stream.Dispose ();

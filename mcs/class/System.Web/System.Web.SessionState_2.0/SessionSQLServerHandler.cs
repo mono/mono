@@ -363,11 +363,14 @@ namespace System.Web.SessionState
 				writer.Close ();
 				return Convert.ToBase64String (ms.ToArray ());
 			} finally {
+#if NET_4_0
 				if (writer != null)
 					writer.Dispose ();
-#if NET_4_0
 				if (gzip != null)
 					gzip.Dispose ();
+#else
+				if (writer != null)
+					((IDisposable)writer).Dispose ();
 #endif
 				if (ms != null)
 					ms.Dispose ();
@@ -405,11 +408,14 @@ namespace System.Web.SessionState
 
 				return new SessionStateStoreData (sessionItems, SessionStateUtility.GetSessionStaticObjects (context), timeout);
 			} finally {
+#if NET_4_0
 				if (reader != null)
 					reader.Dispose ();
-#if NET_4_0
 				if (gzip != null)
 					gzip.Dispose ();
+#else
+				if (reader != null)
+					((IDisposable)reader).Dispose ();
 #endif
 				if (ms != null)
 					ms.Dispose ();
