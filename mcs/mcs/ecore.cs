@@ -3579,8 +3579,8 @@ namespace Mono.CSharp {
 					bt = TypeManager.GetElementType (bt);
 					--b_idx;
 				}
-
-				if (ct == bt)
+				
+				if (TypeManager.IsEqual (ct, bt))
 					continue;
 
 				same = false;
