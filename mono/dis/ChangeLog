@@ -1,3 +1,8 @@
+
+Wed Feb 24 16:00:56 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: link to the new libmono version.
+
 2010-02-10  Miguel de Icaza  <miguel@novell.com>
 
 	* main.c (dis_method_list): Show method implementation flags as
