@@ -1,3 +1,14 @@
+
+Wed Feb 24 16:02:42 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.h: the MonoTypeNameParse guts are internal now.
+	* assembly.c, assembly.h, image.h: the MonoAssemblyName guts
+	are internal now, provide accessors as needed.
+	* metadata.h, metadata-internals.h: the MonoMethodSignature
+	guts are internal now.
+	* Makefile.am: mempool.h is an internal header now.
+	* *.h, *.c: remove glib.h usage from the public headers.
+
 2010-02-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* culture-info-table.h : regenerated.
