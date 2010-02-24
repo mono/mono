@@ -1,3 +1,8 @@
+
+Wed Feb 24 15:56:52 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, monograph.c: update to the new API/ABI.
+
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
 
 	* monograph.c: Fix printf warnings.
