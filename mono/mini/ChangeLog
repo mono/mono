@@ -1,3 +1,10 @@
+
+Wed Feb 24 15:58:03 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am: build the new ABI version of the libmono library.
+	* debugger-agent.c, mini.c: fix warnings with the new API.
+	* jit.h: don't depend on glib.h being included.
+
 2010-02-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Implement AOT support for fast TLS access.
