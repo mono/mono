@@ -1,10 +1,11 @@
 #include <mono/jit/jit.h>
+#include <glib.h>
 
 /*
  * Very simple mono embedding example.
  * This sample shows how to access metadata elements from an image.
  * Compile with: 
- * 	gcc -o test-metadata test-metadata.c `pkg-config --cflags --libs mono` -lm
+ * 	gcc -o test-metadata test-metadata.c `pkg-config --cflags --libs mono-2` -lm
  * Run with:
  * 	./test-metadata namespace name
  */

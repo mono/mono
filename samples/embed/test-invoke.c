@@ -5,12 +5,13 @@
 #include <mono/metadata/debug-helpers.h>
 #include <string.h>
 #include <stdlib.h>
+#include <glib.h>
 
 /*
  * Simple mono embedding example.
  * We show how to create objects and invoke methods and set fields in them.
  * Compile with: 
- * 	gcc -Wall -o test-invoke test-invoke.c `pkg-config --cflags --libs mono` -lm
+ * 	gcc -Wall -o test-invoke test-invoke.c `pkg-config --cflags --libs mono-2` -lm
  * 	mcs invoke.cs
  * Run with:
  * 	./test-invoke invoke.exe

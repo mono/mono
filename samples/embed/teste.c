@@ -5,7 +5,7 @@
 /*
  * Very simple mono embedding example.
  * Compile with: 
- * 	gcc -o teste teste.c `pkg-config --cflags --libs mono` -lm
+ * 	gcc -o teste teste.c `pkg-config --cflags --libs mono-2` -lm
  * 	mcs test.cs
  * Run with:
  * 	./teste test.exe
