@@ -81,55 +81,42 @@ namespace System.Web.SessionState {
 						  out SessionStateActions actions,
 						  bool exclusive)
 		{
-			Console.WriteLine ("RemoteStateServer.GetItem");
-			Console.WriteLine ("\tid == {0}", id);
 			locked = false;
 			lockAge = TimeSpan.MinValue;
 			lockId = Int32.MinValue;
 			actions = SessionStateActions.None;
 			
 			LockableStateServerItem item = Retrieve (id);
-			if (item == null || item.item.IsAbandoned ()) {
-				Console.WriteLine ("\tNo item for that id (abandoned == {0})", item != null ? item.item.IsAbandoned() : false);
+			if (item == null || item.item.IsAbandoned ())
 				return null;
-			}
 			
 			try {
-				Console.WriteLine ("\tacquiring reader lock");
 				item.rwlock.AcquireReaderLock (lockAcquireTimeout);
 				if (item.item.Locked) {
-					Console.WriteLine ("\titem is locked");
 					locked = true;
 					lockAge = DateTime.UtcNow.Subtract (item.item.LockedTime);
 					lockId = item.item.LockId;
 					return null;
 				}
-				Console.WriteLine ("\teleasing reader lock");
+
 				item.rwlock.ReleaseReaderLock ();
 				if (exclusive) {
-					Console.WriteLine ("\tacquiring writer lock");
 					item.rwlock.AcquireWriterLock (lockAcquireTimeout);
-					Console.WriteLine ("\tlocking the item");
 					item.item.Locked = true;
 					item.item.LockedTime = DateTime.UtcNow;
 					item.item.LockId++;
-					Console.WriteLine ("\tnew lock id == {0}", item.item.LockId);
 					lockId = item.item.LockId;
 				}
 			} catch {
 				throw;
 			} finally {
-				if (item.rwlock.IsReaderLockHeld) {
-					Console.WriteLine ("\treleasing reader lock [finally]");
+				if (item.rwlock.IsReaderLockHeld)
 					item.rwlock.ReleaseReaderLock ();
-				}
-				if (item.rwlock.IsWriterLockHeld) {
-					Console.WriteLine ("\treleasing writer lock [finally]");
+				
+				if (item.rwlock.IsWriterLockHeld)
 					item.rwlock.ReleaseWriterLock ();
-				}
 			}
 			
-			Console.WriteLine ("\treturning an item");
 			actions = item.item.Action;
 			return item.item;
 		}
@@ -167,43 +154,32 @@ namespace System.Web.SessionState {
 		internal void SetAndReleaseItemExclusive (string id, byte [] collection_data, byte [] sobjs_data,
 							  object lockId, int timeout, bool newItem)
 		{
-			Console.WriteLine ("RemoteStateServer.SetAndReleaseItemExclusive");
-			Console.WriteLine ("\tid == {0}", id);
 			LockableStateServerItem item = Retrieve (id);
 			bool fresh = false;
 			
 			if (newItem || item == null) {
-				Console.WriteLine ("\tnew item");
 				item = new LockableStateServerItem (new StateServerItem (collection_data, sobjs_data, timeout));
 				item.item.LockId = (Int32)lockId;
 				fresh = true;
 			} else {
-				if (item.item.LockId != (Int32)lockId) {
-					Console.WriteLine ("\tLockId mismatch ({0} != {1})", item.item.LockId, lockId);
+				if (item.item.LockId != (Int32)lockId)
 					return;
-				}
-				Console.WriteLine ("\tremoving from cache");
 				Remove (id, lockId);
 			}
 
 			try {
-				Console.WriteLine ("\tacquiring writer lock");
 				item.rwlock.AcquireWriterLock (lockAcquireTimeout);
 				item.item.Locked = false;
 				if (!fresh) {
-					Console.WriteLine ("\tnot fresh = updating data");
 					item.item.CollectionData = collection_data;
 					item.item.StaticObjectsData = sobjs_data;
 				}
-				Console.WriteLine ("\tInserting in cache");
 				Insert (id, item);
 			} catch {
 				throw;
 			} finally {
-				if (item.rwlock.IsWriterLockHeld) {
-					Console.WriteLine ("\treleasing writer lock [finally]");
+				if (item.rwlock.IsWriterLockHeld)
 					item.rwlock.ReleaseWriterLock ();
-				}
 			}
 		}
 		

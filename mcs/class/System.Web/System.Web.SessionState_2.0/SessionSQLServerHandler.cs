@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2009 Novell, Inc (http://novell.com/)
+// (C) 2009-2010 Novell, Inc (http://novell.com/)
 //
 
 // Code based on samples from MSDN
@@ -38,6 +38,7 @@ using System.Configuration.Provider;
 using System.Data;
 using System.Data.Common;
 using System.IO;
+using System.IO.Compression;
 using System.Reflection;
 using System.Web;
 using System.Web.Configuration;
@@ -49,7 +50,7 @@ namespace System.Web.SessionState
 	{
 		static readonly string defaultDbFactoryTypeName = "Mono.Data.Sqlite.SqliteFactory, Mono.Data.Sqlite, Version=2.0.0.0, Culture=neutral, PublicKeyToken=0738eb9f132ed756";
 		
-		SessionStateSection sessionConfig = null;
+		SessionStateSection sessionConfig;
 		string connectionString;
 		Type providerFactoryType;
 		DbProviderFactory providerFactory;
@@ -336,27 +337,83 @@ namespace System.Web.SessionState
 
 		string Serialize (SessionStateItemCollection items)
 		{
-			var ms = new MemoryStream ();
-			var writer = new BinaryWriter (ms);
+#if NET_4_0
+			GZipStream gzip = null;
+#endif
+			Stream output;
+			MemoryStream ms = null;
+			BinaryWriter writer = null;
+			
+			try {
+				ms = new MemoryStream ();
+#if NET_4_0
+				if (sessionConfig.CompressionEnabled)
+					output = gzip = new GZipStream (ms, CompressionMode.Compress, true);
+				else
+#endif
+					output = ms;
+				writer = new BinaryWriter (output);
 
-			if (items != null)
-				items.Serialize (writer);
-
-			writer.Close();
-			return Convert.ToBase64String (ms.ToArray ());
+				if (items != null)
+					items.Serialize (writer);
+#if NET_4_0
+				if (gzip != null)
+					gzip.Close ();
+#endif
+				writer.Close ();
+				return Convert.ToBase64String (ms.ToArray ());
+			} finally {
+				if (writer != null)
+					writer.Dispose ();
+#if NET_4_0
+				if (gzip != null)
+					gzip.Dispose ();
+#endif
+				if (ms != null)
+					ms.Dispose ();
+			}
 		}
 
 		SessionStateStoreData Deserialize (HttpContext context, string serializedItems, int timeout)
 		{
-			var ms = new MemoryStream (Convert.FromBase64String (serializedItems));
-			var sessionItems = new SessionStateItemCollection ();
+			MemoryStream ms = null;
+			Stream input;
+			BinaryReader reader = null;
+#if NET_4_0
+			GZipStream gzip = null;
+#endif
+			try {
+				ms = new MemoryStream (Convert.FromBase64String (serializedItems));
+				var sessionItems = new SessionStateItemCollection ();
 
-			if (ms.Length > 0) {
-				var reader = new BinaryReader(ms);
-				sessionItems = SessionStateItemCollection.Deserialize (reader);
+				if (ms.Length > 0) {
+#if NET_4_0
+					if (sessionConfig.CompressionEnabled)
+						input = gzip = new GZipStream (ms, CompressionMode.Decompress, true);
+					else
+#endif
+						input = ms;
+					
+					reader = new BinaryReader (input);
+					sessionItems = SessionStateItemCollection.Deserialize (reader);
+#if NET_4_0
+					if (gzip != null)
+						gzip.Close ();
+#endif
+					reader.Close ();
+				}
+
+				return new SessionStateStoreData (sessionItems, SessionStateUtility.GetSessionStaticObjects (context), timeout);
+			} finally {
+				if (reader != null)
+					reader.Dispose ();
+#if NET_4_0
+				if (gzip != null)
+					gzip.Dispose ();
+#endif
+				if (ms != null)
+					ms.Dispose ();
 			}
-
-			return new SessionStateStoreData (sessionItems, SessionStateUtility.GetSessionStaticObjects (context), timeout);
 		}
 
 		public override void ReleaseItemExclusive (HttpContext context, string id, object lockId)

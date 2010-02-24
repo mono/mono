@@ -1,10 +1,11 @@
 //
-// System.Web.Compilation.SessionStateItemCollection
+// System.Web.SessionStateServerHandler
 //
 // Authors:
 //   Marek Habersack (grendello@gmail.com)
 //
 // (C) 2006 Marek Habersack
+// (C) 2007-2010 Novell, Inc (http://novell.com/)
 //
 
 //
@@ -30,6 +31,7 @@
 #if NET_2_0
 using System.Collections.Specialized;
 using System.IO;
+using System.IO.Compression;
 using System.Web;
 using System.Web.Configuration;
 using System.Runtime.Remoting;
@@ -73,9 +75,6 @@ namespace System.Web.SessionState
 						       out SessionStateActions actions,
 						       bool exclusive)
 		{
-			Trace.WriteLine ("SessionStateServerHandler.GetItemInternal");
-			Trace.WriteLine ("\tid == " + id);
-			Trace.WriteLine ("\tpath == " + context.Request.FilePath);
 			locked = false;
 			lockAge = TimeSpan.MinValue;
 			lockId = Int32.MinValue;
@@ -91,23 +90,36 @@ namespace System.Web.SessionState
 								    out actions,
 								    exclusive);
 			
-			if (item == null) {
-				Trace.WriteLine ("\titem is null (locked == " + locked + ", actions == " + actions + ")");
+			if (item == null)
 				return null;
-			}
-			if (actions == SessionStateActions.InitializeItem) {
-				Trace.WriteLine ("\titem needs initialization");
+			
+			if (actions == SessionStateActions.InitializeItem)
 				return CreateNewStoreData (context, item.Timeout);
-			}
+			
 			SessionStateItemCollection items = null;
 			HttpStaticObjectsCollection sobjs = null;
 			MemoryStream stream = null;
 			BinaryReader reader = null;
+			Stream input = null;
+#if NET_4_0
+			GZipStream gzip = null;
+#endif
 			try {
 				if (item.CollectionData != null && item.CollectionData.Length > 0) {
 					stream = new MemoryStream (item.CollectionData);
-					reader = new BinaryReader (stream);
+#if NET_4_0					
+					if (config.CompressionEnabled)
+						input = gzip = new GZipStream (stream, CompressionMode.Decompress, true);
+					else
+#endif
+						input = stream;
+					reader = new BinaryReader (input);
 					items = SessionStateItemCollection.Deserialize (reader);
+#if NET_4_0
+					if (gzip != null)
+						gzip.Close ();
+#endif
+					reader.Close ();
 				} else
 					items = new SessionStateItemCollection ();
 				if (item.StaticObjectsData != null && item.StaticObjectsData.Length > 0)
@@ -118,7 +130,13 @@ namespace System.Web.SessionState
 				throw new HttpException ("Failed to retrieve session state.", ex);
 			} finally {
 				if (reader != null)
-					reader.Close ();
+					reader.Dispose ();
+				if (stream != null)
+					stream.Dispose ();
+#if NET_4_0
+				if (gzip != null)
+					gzip.Dispose ();
+#endif
 			}
 				
 			return new SessionStateStoreData (items,
@@ -150,7 +168,6 @@ namespace System.Web.SessionState
 
 		public override void Initialize (string name, NameValueCollection config)
 		{
-			Trace.WriteLine ("SessionStateServerHandler.Initialize");
 			this.config = (SessionStateSection) WebConfigurationManager.GetSection ("system.web/sessionState");
 			if (String.IsNullOrEmpty (name))
 				name = "Session Server handler";
@@ -190,7 +207,7 @@ namespace System.Web.SessionState
 			EnsureGoodId (id, true);
 			stateServer.ResetItemTimeout (id);
 		}
-		
+
 		public override void SetAndReleaseItemExclusive (HttpContext context,
 								 string id,
 								 SessionStateStoreData item,
@@ -202,14 +219,29 @@ namespace System.Web.SessionState
 			byte[] sobjs_data = null;
 			MemoryStream stream = null;
 			BinaryWriter writer = null;
+			Stream output = null;
+#if NET_4_0
+			GZipStream gzip = null;
+#endif
 			
 			try {
 				SessionStateItemCollection items = item.Items as SessionStateItemCollection;
 				if (items != null && items.Count > 0) {
 					stream = new MemoryStream ();
-					writer = new BinaryWriter (stream);
+#if NET_4_0
+					if (config.CompressionEnabled)
+						output = gzip = new GZipStream (stream, CompressionMode.Compress, true);
+					else
+#endif
+						output = stream;
+					writer = new BinaryWriter (output);
 					items.Serialize (writer);
-					collection_data = stream.GetBuffer ();
+#if NET_4_0
+					if (gzip != null)
+						gzip.Close ();
+#endif
+					writer.Close ();
+					collection_data = stream.ToArray ();
 				}
 				HttpStaticObjectsCollection sobjs = item.StaticObjects;
 				if (sobjs != null && sobjs.Count > 0)
@@ -218,7 +250,13 @@ namespace System.Web.SessionState
 				throw new HttpException ("Failed to store session data.", ex);
 			} finally {
 				if (writer != null)
-					writer.Close ();
+					writer.Dispose ();
+#if NET_4_0
+				if (gzip != null)
+					gzip.Dispose ();
+#endif
+				if (stream != null)
+					stream.Dispose ();
 			}
 			
 			stateServer.SetAndReleaseItemExclusive (id, collection_data, sobjs_data, lockId, item.Timeout, newItem);

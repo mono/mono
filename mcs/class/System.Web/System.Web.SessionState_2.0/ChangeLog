@@ -1,3 +1,8 @@
+2010-02-24  Marek Habersack  <mhabersack@novell.com>
+
+	* SessionStateServerHandler.cs, SessionSQLServerHandler.cs: added
+	support for session state compression (4.0)
+
 2010-01-20  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateBehavior.cs: added (4.0)
