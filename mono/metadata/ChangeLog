@@ -1,4 +1,9 @@
 
+Wed Feb 24 17:45:27 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, class.h, object.h: make MonoRemoteClass
+	and mono_remote_class() internal.
+
 Wed Feb 24 17:05:18 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* metadata-internals.h, class-internals.h, metadata.h: make the
