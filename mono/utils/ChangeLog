@@ -1,3 +1,10 @@
+
+Wed Feb 24 15:50:55 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mono-publib.h, mono-publib.c: new public header file to allow
+	the removal of gli from the other public headers.
+	* Makefile.am: install only the public header mono-publib.h.
+
 2010-02-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-semaphore.h: enable the #defines when io-layer is in use.
