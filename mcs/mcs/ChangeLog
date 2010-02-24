@@ -1,5 +1,11 @@
 2010-02-24  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #582579
+	* decl.cs (IsExposedFromAssembly): Use PartialContainer for parent
+	modifiers.
+
+2010-02-24  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #581804
 	* ecore.cs: Fixed type comparison.
 

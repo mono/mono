@@ -655,7 +655,7 @@ namespace Mono.CSharp {
 			if ((ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 				return false;
 			
-			DeclSpace parentContainer = Parent;
+			DeclSpace parentContainer = Parent.PartialContainer;
 			while (parentContainer != null && parentContainer.ModFlags != 0) {
 				if ((parentContainer.ModFlags & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
 					return false;
