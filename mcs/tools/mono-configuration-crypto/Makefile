@@ -6,6 +6,6 @@ all-local:
 
 install-local:
 
-dist-local:
+dist-local: dist-default
 
 clean-local:
