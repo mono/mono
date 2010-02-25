@@ -1,3 +1,8 @@
+2010-02-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WebClient_2_1.cs: Emit DownloadProgressChanged events on the correct
+	thread too.
+
 2010-02-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWebRequest_2_1.cs: Accept and ContentType properties do not
