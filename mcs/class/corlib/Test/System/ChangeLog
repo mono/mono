@@ -1,5 +1,9 @@
 2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeTest.cs: Test new v4 GetEnumValue ().
+
+2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeTest.cs: Test new v4 GetEnumValues ().
 
 2010-02-23 Rodrigo Kumpera  <rkumpera@novell.com>

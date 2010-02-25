@@ -3283,6 +3283,10 @@ PublicKeyToken=b77a5c561934e089"));
 			A,B,C
 		}
 
+
+		public enum MyRealEnum2 : byte {
+			A,B,C
+		}
 		public class MyEnum : TypeDelegator {
 			public bool is_enum { get; set; }
 			public int fields { get; set; }
@@ -3364,6 +3368,92 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (MyRealEnum.A, res [0], "#5");
 			Assert.AreEqual (MyRealEnum.B, res [1], "#6");
 			Assert.AreEqual (MyRealEnum.C, res [2], "#7");
+		}
+
+		[Test]
+		public void GetEnumValue () {
+			try {
+				typeof (MyRealEnum).GetEnumName (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) { }
+
+			try {
+				new MyEnum () { is_enum = false }.GetEnumName (99);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) { }
+
+
+			Assert.IsNull (new MyEnum () { fields = 1, is_enum = true }.GetEnumName (77), "#3");
+			Assert.AreEqual ("A", new MyEnum () { fields = 1, is_enum = true }.GetEnumName (0), "#4");
+			Assert.AreEqual ("A", new MyEnum () { fields = 1, is_enum = true }.GetEnumName (MyRealEnum.A), "#5");
+			Assert.AreEqual ("A", new MyEnum () { fields = 1, is_enum = true }.GetEnumName (MyRealEnum2.A), "#6");
+
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName (MyRealEnum.A), "#7");
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((short)0), "#8");
+			Assert.AreEqual ("C", typeof (MyRealEnum).GetEnumName (2), "#9");
+			Assert.IsNull (typeof (MyRealEnum).GetEnumName (9), "#10");
+
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((byte)0), "#11");
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((sbyte)0), "#12");
+			try {
+				typeof (MyRealEnum).GetEnumName (false);
+				Assert.Fail ("#13");
+			} catch (ArgumentException) { }
+
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((short)0), "#14");
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((ushort)0), "#15");
+			try {
+				typeof (MyRealEnum).GetEnumName ('c');
+				Assert.Fail ("#16");
+			} catch (ArgumentException) { }
+
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((int)0), "#17");
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((uint)0), "#18");
+
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((long)0), "#19");
+			Assert.AreEqual ("A", typeof (MyRealEnum).GetEnumName ((ulong)0), "#20");
+
+			try {
+				typeof (MyRealEnum).GetEnumName ((float)0);
+				Assert.Fail ("#21");
+			} catch (ArgumentException) { }
+			try {
+				typeof (MyRealEnum).GetEnumName ((double)0);
+				Assert.Fail ("#22");
+			} catch (ArgumentException) { }
+
+
+			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((byte)0), "#23");
+			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((sbyte)0), "#24");
+			try {
+				typeof (MyRealEnum2).GetEnumName (false);
+				Assert.Fail ("#22", "#25");
+			} catch (ArgumentException) { }
+
+			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((short)0), "#26");
+			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((ushort)0), "#27");
+
+			try {
+				typeof (MyRealEnum2).GetEnumName ('c');
+				Assert.Fail ("#28");
+			} catch (ArgumentException) { }
+
+			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((int)0), "#29");
+			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((uint)0), "#30");
+
+			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((long)0), "#31");
+			Assert.AreEqual ("A", typeof (MyRealEnum2).GetEnumName ((ulong)0), "#32");
+
+			try {
+				typeof (MyRealEnum2).GetEnumName ((float)0);
+				Assert.Fail ("#33");
+			} catch (ArgumentException) { }
+			try {
+				typeof (MyRealEnum2).GetEnumName ((double)0);
+				Assert.Fail ("#34");
+			} catch (ArgumentException) { }
+
+			Assert.IsNull (typeof (MyRealEnum2).GetEnumName (12345), "#35");
 		}
 #endif
 
