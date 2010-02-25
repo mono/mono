@@ -1,3 +1,6 @@
+2010-02-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Get rid of mono_setup_vtable_in_class_init.
 
 Wed Feb 24 15:58:03 CET 2010 Paolo Molaro <lupus@ximian.com>
 
