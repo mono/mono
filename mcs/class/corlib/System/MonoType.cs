@@ -689,6 +689,14 @@ namespace System
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
+
+
+		public override Array GetEnumValues () {
+			if (!IsEnum)
+				throw new ArgumentException ("Type is not an enumeration", "enumType");
+
+			return Enum.GetValues (this);
+		}
 #endif
 
 		static MethodBase CheckMethodSecurity (MethodBase mb)

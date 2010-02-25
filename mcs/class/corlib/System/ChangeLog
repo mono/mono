@@ -1,3 +1,9 @@
+2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs: Implement new v4 GetEnumValues ().
+
+	* MonoType.cs: Ditto.
+
 2010-02-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Type.cs: Use the right kind of annotations.

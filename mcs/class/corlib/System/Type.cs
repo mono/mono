@@ -481,6 +481,13 @@ namespace System {
 
 			return result;
 		}
+
+		public virtual Array GetEnumValues () {
+			if (!IsEnum)
+				throw new ArgumentException ("Type is not an enumeration", "enumType");
+
+			throw new NotImplementedException ();
+		}
 #endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
