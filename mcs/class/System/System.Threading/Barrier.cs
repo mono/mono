@@ -81,7 +81,8 @@ namespace System.Threading
 		
 		public void RemoveParticipants (int participantCount)
 		{
-			cntd.Signal (participantCount);
+			if (cntd.Signal (participantCount))
+				PostPhaseAction (cleaned);
 			Interlocked.Add (ref participants, -participantCount);
 		}
 		
@@ -121,7 +122,6 @@ namespace System.Threading
 			} else {
 				result = true;
 				PostPhaseAction (cl);
-				phase++;
 			}
 			
 			return result;
@@ -143,11 +143,14 @@ namespace System.Threading
 		
 		void PostPhaseAction (AtomicBoolean cl)
 		{
-			postPhaseAction (this);
+			if (postPhaseAction != null)
+				postPhaseAction (this);
 			
 			InitCountdownEvent ();
 			
 			cl.Value = true;
+			
+			phase++;
 		}
 		
 		public int CurrentPhaseNumber {
