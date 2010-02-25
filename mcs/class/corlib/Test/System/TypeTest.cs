@@ -3343,6 +3343,28 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual ("B", res [1], "#6");
 			Assert.AreEqual ("C", res [2], "#7");
 		}
+
+		[Test]
+		public void GetEnumValues () {
+			try {
+				new MyEnum () { is_enum = false }.GetEnumValues ();
+				Assert.Fail ("#1");
+			} catch (ArgumentException) {}
+
+			try {
+				new MyEnum () { is_enum = true }.GetEnumValues ();
+				Assert.Fail ("#2");
+			} catch (NotImplementedException) {}
+
+			var array = typeof (MyRealEnum).GetEnumValues ();
+			Assert.AreEqual (typeof (MyRealEnum[]), array.GetType (), "#3");
+			MyRealEnum[] res = (MyRealEnum[])array;
+
+			Assert.AreEqual (3, res.Length, "#4");
+			Assert.AreEqual (MyRealEnum.A, res [0], "#5");
+			Assert.AreEqual (MyRealEnum.B, res [1], "#6");
+			Assert.AreEqual (MyRealEnum.C, res [2], "#7");
+		}
 #endif
 
 		public abstract class Stream : IDisposable
