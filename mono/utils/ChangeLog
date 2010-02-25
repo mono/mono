@@ -1,4 +1,12 @@
 
+Thu Feb 25 11:59:22 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mono-logger.h, Makefile.am: expose in the API the ability to
+	set trace mask and level.
+	* mono-logger-internal.h: new header for mono internal use.
+	* mono-logger.c: fixed mono_trace_set_mask_string() to not change
+	the passed string argument.
+
 Wed Feb 24 15:50:55 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* mono-publib.h, mono-publib.c: new public header file to allow
