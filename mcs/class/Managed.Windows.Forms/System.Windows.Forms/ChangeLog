@@ -1,3 +1,8 @@
+2010-02-25  Ivan Zlatev  <ivan@ivanz.com>
+
+	* DataGridViewCheckBoxCell.cs: Toggle the checkbox on Space key press.
+	[Fixes bug #574259]
+
 2010-02-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RichTextBox.cs: When retrieving SelectedRtf/Rtf properly escape any

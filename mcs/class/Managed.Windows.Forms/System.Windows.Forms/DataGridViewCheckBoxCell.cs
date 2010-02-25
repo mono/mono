@@ -292,7 +292,12 @@ namespace System.Windows.Forms {
 
 			if (!IsInEditMode)
 				DataGridView.BeginEdit (false);
-				
+			
+			ToggleCheckState ();
+		}
+
+		private void ToggleCheckState ()
+		{
 			CheckState cs = GetCurrentValue ();
 
 			if (threeState) {
@@ -310,6 +315,7 @@ namespace System.Windows.Forms {
 			}
 
 			editingCellValueChanged = true;
+			DataGridView.InvalidateCell (this);
 		}
 
 		protected override void OnContentDoubleClick (DataGridViewCellEventArgs e)
@@ -330,7 +336,9 @@ namespace System.Windows.Forms {
 			// when activated by the SPACE key, this method updates the cell's user interface
 			if (!ReadOnly && (e.KeyData & Keys.Space) == Keys.Space) {
 				check_state = PushButtonState.Normal;
-				DataGridView.InvalidateCell (this);
+				if (!IsInEditMode)
+					DataGridView.BeginEdit (false);
+				ToggleCheckState ();
 			}
 		}
 
