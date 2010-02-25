@@ -1,3 +1,7 @@
+2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodBody.cs: Add v4 bits.
+
 2010-02-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodBody.cs: Add v4 bits.
