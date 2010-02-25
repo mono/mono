@@ -932,14 +932,8 @@ namespace System.Windows.Forms
 				if (control == null)
 					throw new ArgumentException ("control", "Cannot add null controls");
 
-				bool owner_permits_toplevels = (owner is MdiClient) || (owner is Form && ((Form)owner).IsMdiContainer);
-				bool child_is_toplevel = ((Control) control).GetTopLevel ();
-				bool child_is_mdichild = (control is Form && ((Form) control).IsMdiChild);
-
-				if (child_is_toplevel && !(owner_permits_toplevels && child_is_mdichild))
-					throw new ArgumentException ("Cannot add a top level control to a control.", "control");
-
-				return list.Add (control);
+				this.Add ((Control)control);
+				return this.IndexOf ((Control)control);
 			}
 
 #if !NET_2_0
@@ -974,8 +968,7 @@ namespace System.Windows.Forms
 				if (!(control is Control))
 					throw new ArgumentException ("Object of type Control required", "control");
 
-				all_controls = null;
-				list.Remove (control);
+				this.Remove ((Control)control);
 			}
 
 			Object ICloneable.Clone ()

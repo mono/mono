@@ -1,5 +1,12 @@
 2010-02-25  Ivan Zlatev  <ivan@ivanz.com>
 
+	* Control.cs: ControllCollaction IList implementation wasn't calling the 
+	Add implementation causing ParentChanged and all sorts of other events not to 
+	get fired.
+	[Fixes bug #580042]
+
+2010-02-25  Ivan Zlatev  <ivan@ivanz.com>
+
 	* DataGridView.cs: If we are setting a new data source and it is 
 	data bindable clear DataMember before binding.
 	[Fixes bug #554296]
