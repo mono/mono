@@ -1,5 +1,8 @@
 2010-02-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* threads.h: Move some internal functions which were added to this header by
+	mistake to threads-types.h.
+
 	* class.c (mono_class_init): Get rid of mono_setup_vtable_in_class_init.
 
 Wed Feb 24 17:45:27 CET 2010 Paolo Molaro <lupus@ximian.com>
