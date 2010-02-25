@@ -1,3 +1,8 @@
+2010-02-25  Geoff Norton  <gnorton@novell.com>
+
+	* wait.c: If any of our handles are shared, we need to do
+	a polling wait so we're notified of the signal change.
+
 2009-11-13 Jonathan Chambers <joncham@gmail.com>
 
 	* mono-mutex.h: Implementation for Windows platform.
