@@ -1,3 +1,8 @@
+2010-02-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (do_invoke_method): Fix invoking of static methods on vtypes.
+	Fixes #582991.
+
 2010-02-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (notify_thread): Skip terminated threads, since their tls
