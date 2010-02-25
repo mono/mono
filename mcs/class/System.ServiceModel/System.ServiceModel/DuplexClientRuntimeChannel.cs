@@ -34,9 +34,10 @@ using System.ServiceModel.Security;
 using System.Threading;
 using System.Xml;
 
-namespace System.ServiceModel
+namespace System.ServiceModel.MonoInternal
 {
-	internal class DuplexClientRuntimeChannel
+	// FIXME: This is a quick workaround for bug #571907
+	public class DuplexClientRuntimeChannel
 		: ClientRuntimeChannel, IDuplexContextChannel
 	{
 		public DuplexClientRuntimeChannel (ServiceEndpoint endpoint,

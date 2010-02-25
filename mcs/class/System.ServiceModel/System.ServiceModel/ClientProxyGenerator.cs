@@ -33,6 +33,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Mono.CodeGeneration;
+using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel
 {
@@ -80,6 +81,8 @@ namespace System.ServiceModel
 
 	internal class ProxyGeneratorBase
 	{
+		static readonly List<Type> generated_proxy_types = new List<Type> ();
+
 		protected static Type CreateProxyTypeOperations (Type crtype, CodeClass c, ContractDescription cd)
 		{
 			// member implementation
@@ -96,10 +99,9 @@ namespace System.ServiceModel
 					GenerateEndMethodImpl (c, crtype.GetMethod ("EndProcess", bf), od.Name, od.EndMethod);
 			}
 
-			//Type zzz = c.CreateType ();
-			//((System.Reflection.Emit.AssemblyBuilder) zzz.Assembly).Save (modname + ".dll");
-			//return zzz;
-			return c.CreateType ();
+			Type ret = c.CreateType ();
+			generated_proxy_types.Add (ret);
+			return ret;
 		}
 
 		static void GenerateMethodImpl (CodeClass c, MethodInfo processMethod, string name, MethodInfo mi)

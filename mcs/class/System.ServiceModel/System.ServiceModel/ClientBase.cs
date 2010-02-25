@@ -33,6 +33,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.Threading;
+using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel
 {
