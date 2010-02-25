@@ -1,3 +1,7 @@
+2010-02-25  Geoff Norton  <gnorton@novell.com>
+
+	* wait.c: If any of our handles are shared, we need to do
+	a polling wait so we're notified of the signal change.
 
 Wed Feb 24 16:01:37 CET 2010 Paolo Molaro <lupus@ximian.com>
 
