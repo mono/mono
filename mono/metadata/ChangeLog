@@ -1,3 +1,9 @@
+
+Thu Feb 25 11:37:50 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.c, metadata.h: make MONO_TYPE_IS* functional without
+	direct access to the MonoType fields.
+
 2010-02-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.h: Move some internal functions which were added to this header by
