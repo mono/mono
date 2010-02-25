@@ -1,3 +1,8 @@
+2010-02-25  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Barrier.cs: Fix NRE with postPhaseAction delegate
+	Fix possible deadlock when removing participant(s)
+
 2009-12-11  Miguel de Icaza  <miguel@novell.com>
 
 	* Barrier.cs: Implement IDisposable, add a bunch of IDisposable
