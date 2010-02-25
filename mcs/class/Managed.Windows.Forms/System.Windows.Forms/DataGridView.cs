@@ -736,17 +736,23 @@ namespace System.Windows.Forms {
 				if (!(value == null || value is IList || value is IListSource || value is IBindingList || value is IBindingListView))
 					throw new NotSupportedException ("Type cannot be bound.");
 					
-				ClearBinding ();
+				if (value != DataSource) {
+					if (IsHandleCreated && value != null && BindingContext != null && BindingContext[value] != null)
+						DataMember = String.Empty;
+					ClearBinding ();
+	
+	
+					// Do not set dataSource prior to te BindingContext check because there is some lazy initialization 
+					// code which might result in double call to ReBind here and in OnBindingContextChanged
+					if (BindingContext != null) {
+						dataSource = value;
+						ReBind ();
+					} else {
+						dataSource = value;
+					}
 
-				// Do not set dataSource prior to te BindingContext check because there is some lazy initialization 
-				// code which might result in double call to ReBind here and in OnBindingContextChanged
-				if (BindingContext != null) {
-					dataSource = value;
-					ReBind ();
-				} else {
-					dataSource = value;
+					OnDataSourceChanged (EventArgs.Empty);
 				}
-				OnDataSourceChanged (EventArgs.Empty);
 			}
 		}
 

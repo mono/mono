@@ -1,5 +1,11 @@
 2010-02-25  Ivan Zlatev  <ivan@ivanz.com>
 
+	* DataGridView.cs: If we are setting a new data source and it is 
+	data bindable clear DataMember before binding.
+	[Fixes bug #554296]
+
+2010-02-25  Ivan Zlatev  <ivan@ivanz.com>
+
 	* DataGridViewCheckBoxCell.cs: Toggle the checkbox on Space key press.
 	[Fixes bug #574259]
 
