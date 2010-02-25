@@ -1,4 +1,9 @@
 
+Thu Feb 25 12:12:44 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* environment.c, environment.h, icall.c: make the GetOSVersionString()
+	icall internal.
+
 Thu Feb 25 11:37:50 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* metadata.c, metadata.h: make MONO_TYPE_IS* functional without
