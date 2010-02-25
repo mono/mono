@@ -488,6 +488,42 @@ namespace System {
 
 			throw new NotImplementedException ();
 		}
+
+		bool IsValidEnumType (Type type) {
+			return type.IsPrimitive || type.IsEnum;
+		}
+
+		[MonoInternalNote ("Reimplement this in MonoType for bonus speed")]
+		public virtual string GetEnumName (object value) {
+			if (value == null)
+				throw new ArgumentException ("Value is null", "value");
+			if (!IsValidEnumType (value.GetType ()))
+				throw new ArgumentException ("Value is not the enum or a valid enum underlying type", "value");
+			if (!IsEnum)
+				throw new ArgumentException ("Type is not an enumeration", "enumType");
+
+			object obj = null;
+			var fields = GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+			
+			for (int i = 0; i < fields.Length; ++i) {
+				var fv = fields [i].GetValue (null);
+				if (obj == null) {
+					try {
+						//XXX we can't use 'this' as argument as it might be an UserType
+						obj = Enum.ToObject (fv.GetType (), value);
+					} catch (OverflowException) {
+						return null;
+					} catch (InvalidCastException) {
+						throw new ArgumentException ("Value is not valid", "value");
+					}
+				}
+				if (fv.Equals (obj))
+					return fields [i].Name;
+			}
+
+			return null;
+		}
+
 #endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
