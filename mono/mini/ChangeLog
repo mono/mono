@@ -1,5 +1,19 @@
 2010-02-26  Martin Baulig  <martin@ximian.com>
 
+	* debug-debugger.c (MonoDebuggerInfo): Added `abort_runtime_invoke'.
+
+	* debug-mini.c
+	(MonoDebuggerThreadInfo): Added `internal_flags'.
+	(MonoDebuggerInternalThreadFlags): New enum.
+	(_mono_debugger_throw_exception): Don't signal the debugger if a
+	type abort was requested.
+	(_mono_debugger_unhandled_exception): Likewise.
+	(mono_debugger_abort_runtime_invoke): New method to abort an invocation.
+	(mono_debugger_runtime_invoke): If the debugger requested a thread
+	abort during the invocation, reset it here.
+
+2010-02-26  Martin Baulig  <martin@ximian.com>
+
 	* debug-mini.c (MonoDebuggerThreadInfo): Use `MonoInternalThread *'
 	instead of `MonoThread *'.
 
