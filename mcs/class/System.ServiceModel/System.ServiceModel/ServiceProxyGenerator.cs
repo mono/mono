@@ -32,6 +32,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using Mono.CodeGeneration;
+using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel
 {

@@ -5,6 +5,7 @@ using System.ServiceModel.Channels;
 using System.ServiceModel.Security;
 using System.ServiceModel.Security.Tokens;
 using System.Text;
+using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel.Dispatcher
 {

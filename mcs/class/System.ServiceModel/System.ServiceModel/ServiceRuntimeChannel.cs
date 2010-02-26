@@ -33,9 +33,10 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.MonoInternal;
 
-namespace System.ServiceModel
+namespace System.ServiceModel.MonoInternal
 {
-	internal class DuplexServiceRuntimeChannel : ServiceRuntimeChannel, IDuplexContextChannel
+	// FIXME: this is a (similar) workaround for bug 571907.
+	public class DuplexServiceRuntimeChannel : ServiceRuntimeChannel, IDuplexContextChannel
 	{
 		public DuplexServiceRuntimeChannel (IChannel channel, DispatchRuntime runtime)
 			: base (channel, runtime)
@@ -43,11 +44,17 @@ namespace System.ServiceModel
 			// setup callback ClientRuntimeChannel.
 			var crt = runtime.CallbackClientRuntime;
 			var cd = ContractDescriptionGenerator.GetCallbackContract (runtime.Type, crt.CallbackClientType);
+			callback_contract = cd;
 			client = new ClientRuntimeChannel (crt, cd, this.DefaultOpenTimeout, this.DefaultCloseTimeout, channel, null,
 							   runtime.ChannelDispatcher.MessageVersion, this.RemoteAddress, null);
 		}
 
 		ClientRuntimeChannel client;
+		ContractDescription callback_contract;
+
+		public ContractDescription Contract {
+			get { return callback_contract; }
+		}
 
 		public override bool AllowOutputBatching {
 			get { return client.AllowOutputBatching; }
@@ -103,7 +110,8 @@ namespace System.ServiceModel
 		}
 	}
 
-	internal class ServiceRuntimeChannel : CommunicationObject, IServiceChannel
+	// FIXME: this is a (similar) workaround for bug 571907.
+	public class ServiceRuntimeChannel : CommunicationObject, IServiceChannel
 	{
 		IExtensionCollection<IContextChannel> extensions;
 		readonly IChannel channel;

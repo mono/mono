@@ -1,3 +1,8 @@
+2010-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InputOrReplyRequestProcessor.cs : now ServiceRuntimeChannel is
+	  moved to fake public namespace.
+
 2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : revert previous change - it could result
