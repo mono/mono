@@ -1,3 +1,8 @@
+
+Fri Feb 26 19:23:18 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: reduce size of ridiculously large cache.
+
 2010-02-26  Martin Baulig  <martin@ximian.com>
 
 	* class-internals.h (MonoVTable): Added `init_aborted'.
