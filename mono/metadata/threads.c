@@ -3141,7 +3141,7 @@ void mono_thread_suspend_all_other_threads (void)
 			MonoThread *thread = wait->threads [i];
 			gboolean signal_suspend = FALSE;
 
-			if ((thread->tid == self) || mono_gc_is_finalizer_thread (thread)) {
+			if ((thread->tid == self) || mono_gc_is_finalizer_thread (thread) || (thread->flags & MONO_THREAD_FLAG_DONT_MANAGE)) {
 				//CloseHandle (wait->handles [i]);
 				wait->threads [i] = NULL; /* ignore this thread in next loop */
 				continue;
