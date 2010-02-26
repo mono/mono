@@ -1,3 +1,7 @@
+2010-02-26  Robert Jordan  <robertj@gmx.net>
+
+	* Remove MonoHttp (NET_1_1) from the build.
+
 2008-09-19  Michael Hutchinson  <mhutchinson@novell.com>
 
 	* System.Runtime.Remoting_test.dll.sources: add HttpBugtests.cs.

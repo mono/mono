@@ -31,9 +31,6 @@ using System.Collections;
 using System.IO;
 using System.Net;
 using System.Runtime.Remoting.Messaging;
-#if !NET_2_0
-using MonoHttp;
-#endif
 
 namespace System.Runtime.Remoting.Channels.Http
 {

@@ -33,9 +33,6 @@ using System.Net;
 using System.Net.Sockets;
 using System.Runtime.Remoting.Messaging;
 using System.IO;
-#if !NET_2_0
-using MonoHttp;
-#endif
 
 namespace System.Runtime.Remoting.Channels.Http
 {
