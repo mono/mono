@@ -48,15 +48,27 @@ scripts_2_0_umask = \
 	makecert$(SCRIPT_SUFFIX)		\
 	sn$(SCRIPT_SUFFIX)
 
+deprecated = 					\
+	cilc(SCRIPT_SUFFIX)			\
+	mjs(SCRIPT_SUFFIX)
+
 scripts_2_0 = \
-	cilc$(SCRIPT_SUFFIX)			\
+	csharp2$(SCRIPT_SUFFIX)			\
+	gacutil2$(SCRIPT_SUFFIX)		\
+	gmcs$(SCRIPT_SUFFIX)			\
+	mdoc$(SCRIPT_SUFFIX)                    \
+	monop2$(SCRIPT_SUFFIX) 			\
+	resgen2$(SCRIPT_SUFFIX)			\
+	wsdl2$(SCRIPT_SUFFIX)
+
+scripts_4_0 = \
+	dmcs$(SCRIPT_SUFFIX)			\
 	disco$(SCRIPT_SUFFIX)			\
 	dtd2xsd$(SCRIPT_SUFFIX)			\
 	dtd2rng$(SCRIPT_SUFFIX)			\
 	installvst$(SCRIPT_SUFFIX)		\
 	genxs$(SCRIPT_SUFFIX)			\
 	macpack$(SCRIPT_SUFFIX)			\
-	mjs$(SCRIPT_SUFFIX)			\
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
@@ -66,23 +78,15 @@ scripts_2_0 = \
 	certmgr$(SCRIPT_SUFFIX)			\
 	chktrust$(SCRIPT_SUFFIX)		\
 	csharp$(SCRIPT_SUFFIX)			\
-	gacutil2$(SCRIPT_SUFFIX)		\
-	gmcs$(SCRIPT_SUFFIX)			\
 	httpcfg$(SCRIPT_SUFFIX)			\
-	ilasm2$(SCRIPT_SUFFIX)			\
 	lc$(SCRIPT_SUFFIX)			\
 	mconfig$(SCRIPT_SUFFIX)			\
-	mkbundle2$(SCRIPT_SUFFIX)		\
-	mdoc$(SCRIPT_SUFFIX)                    \
 	monolinker$(SCRIPT_SUFFIX)		\
 	mono-api-info$(SCRIPT_SUFFIX) 		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
-	monop2$(SCRIPT_SUFFIX) 			\
 	mozroots$(SCRIPT_SUFFIX)		\
 	permview$(SCRIPT_SUFFIX)		\
-	resgen2$(SCRIPT_SUFFIX)			\
 	pdb2mdb$(SCRIPT_SUFFIX)			\
-	wsdl2$(SCRIPT_SUFFIX)			\
 	xsd$(SCRIPT_SUFFIX)			\
 	mono-xmltool$(SCRIPT_SUFFIX)		\
 	setreg$(SCRIPT_SUFFIX)			\
@@ -93,9 +97,6 @@ scripts_2_0 = \
 	sqlsharp$(SCRIPT_SUFFIX)		\
 	svcutil$(SCRIPT_SUFFIX)			\
 	xbuild$(SCRIPT_SUFFIX)
-
-scripts_4_0 = \
-	dmcs$(SCRIPT_SUFFIX)
 
 MDOC_SUBCOMMANDS = \
 	mdoc-assemble \
@@ -222,7 +223,8 @@ mcs$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
 	mv -f $@.tmp $@
 
 $(scripts_defaults): $(SCRIPT_IN) Makefile
-	$(REWRITE2) -e 's,@exe_name@,$@,g' $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
+	n=`echo $@ | sed 's,$(COMPAT_4_0_SUFFIX)$$,,'`; \
+	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/$(SCRIPT_IN) | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 $(scripts_2_0): $(SCRIPT_IN) Makefile
