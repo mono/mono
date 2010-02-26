@@ -1,3 +1,9 @@
+2009-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c: Fix the embedding of object pointers into JITted code in
+	the native-to-managed wrappers by allocating some GC tracked memory, and
+	embedding the address of that.
+
 2010-02-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_get_cctor): Fix support for dynamic classes, which doesn't
