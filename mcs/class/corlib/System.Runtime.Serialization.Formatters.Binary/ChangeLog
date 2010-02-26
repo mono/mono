@@ -1,3 +1,15 @@
+2010-02-26  Robert Jordan  <robertj@gmx.net>
+
+	* ObjectReader.cs (ReadType, GetDeserializationType):
+	Add throwOnError parameter that specifies whether to throw an
+ 	exception if the type/assembly is not found.
+
+	* ObjectReader.cs (ReadTypeMetadata): Ignore unresolvable
+ 	types while reading the type info. Fixes #430583.
+
+	* ObjectReader.cs (GetDeserializationType): Rethrow caught
+ 	exceptions as SerializationExceptions.
+
 2009-10-31  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BinaryCommon.cs: Disable MONO_REFLECTION_SERIALIZER override 

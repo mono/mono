@@ -621,8 +621,13 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				for (int n=0; n<fieldCount; n++)
 					codes [n] = (TypeTag) reader.ReadByte ();
 	
-				for (int n=0; n<fieldCount; n++)
-					types [n] = ReadType (reader, codes[n]);
+				for (int n=0; n<fieldCount; n++) {
+					Type t = ReadType (reader, codes[n], false);
+					// The field's type could not be resolved: assume it is an object.
+					if (t == null)
+						t = typeof (object);
+					types [n] = t;
+				}
 			}
 			
 			// Gets the type
@@ -816,6 +821,11 @@ namespace System.Runtime.Serialization.Formatters.Binary
 
 		private Type GetDeserializationType (long assemblyId, string className)
 		{
+			return GetDeserializationType (assemblyId, className, true);
+		}
+		
+		private Type GetDeserializationType (long assemblyId, string className, bool throwOnError)
+		{
 			Type t;
 			string assemblyName = (string)_registeredAssemblies[assemblyId];
 
@@ -824,15 +834,32 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				if (t != null)
 					return t;
 			}
-				
-			Assembly assembly = Assembly.Load (assemblyName);
-			t = assembly.GetType (className, true);
+
+			Assembly assembly;
+			try {
+				assembly = Assembly.Load (assemblyName);
+			} catch	(Exception ex) {
+				if (!throwOnError)
+					return null;
+				throw new SerializationException (String.Format ("Couldn't find assembly '{0}'", assemblyName), ex);
+			}
+
+			t = assembly.GetType (className);
 			if (t != null)
 				return t;
-			throw new SerializationException ("Couldn't find type '" + className + "'.");
+
+			if (!throwOnError)
+				return null;
+
+			throw new SerializationException (String.Format ("Couldn't find type '{0}' in assembly '{1}'", className, assemblyName));
 		}
 
 		public Type ReadType (BinaryReader reader, TypeTag code)
+		{
+			return ReadType (reader, code, true);
+		}
+		
+		public Type ReadType (BinaryReader reader, TypeTag code, bool throwOnError)
 		{
 			switch (code)
 			{
@@ -865,7 +892,7 @@ namespace System.Runtime.Serialization.Formatters.Binary
 				{
 					string name = reader.ReadString ();
 					long asmid = (long) reader.ReadUInt32();
-					return GetDeserializationType (asmid, name);
+					return GetDeserializationType (asmid, name, throwOnError);
 				}
 
 				case TypeTag.ArrayOfObject:
