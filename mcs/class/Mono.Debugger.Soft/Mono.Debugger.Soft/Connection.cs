@@ -1578,12 +1578,15 @@ namespace Mono.Debugger.Soft
 						w.WriteByte ((byte)ModifierKind.THREAD_ONLY);
 						w.WriteId ((mod as ThreadModifier).Thread);
 					} else if (mod is ExceptionModifier) {
+						var em = mod as ExceptionModifier;
 						w.WriteByte ((byte)ModifierKind.EXCEPTION_ONLY);
-						w.WriteId ((mod as ExceptionModifier).Type);
+						w.WriteId (em.Type);
 						if (Version.MajorVersion > 2 || Version.MinorVersion > 0) {
 							/* This is only supported in protocol version 2.1 */
-							w.WriteBool ((mod as ExceptionModifier).Caught);
-							w.WriteBool ((mod as ExceptionModifier).Uncaught);
+							w.WriteBool (em.Caught);
+							w.WriteBool (em.Uncaught);
+						} else if (!em.Caught || !em.Uncaught) {
+							throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 						}
 					} else if (mod is AssemblyModifier) {
 						w.WriteByte ((byte)ModifierKind.ASSEMBLY_ONLY);

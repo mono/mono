@@ -1,3 +1,8 @@
+2010-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* Connection.cs: Throw a NotSupportedException if the protocol version doesn't
+	support the caught/uncaught flags in an exception modifier.
+
 2010-02-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* VirtualMachine.cs (CreateExceptionRequest): Add an overload taking two
