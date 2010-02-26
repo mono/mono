@@ -1,3 +1,8 @@
+2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* PropertyInfo.cs: Small hack to avoid having cor-compare
+	flagging Get(Raw)ConstantValue as not implemented.
+
 2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodBody.cs: Add v4 bits.

@@ -110,12 +110,16 @@ namespace System.Reflection {
 			return Type.EmptyTypes;
 		}
 
+		NotImplementedException CreateNIE () {
+			return new NotImplementedException ();
+		}
+
 		public virtual object GetConstantValue () {
-			throw new NotImplementedException ();
+			throw CreateNIE ();
 		}
 
 		public virtual object GetRawConstantValue() {
-			throw new NotImplementedException ();
+			throw CreateNIE ();
 		}
 
 #if NET_4_0
