@@ -1,3 +1,9 @@
+2010-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (get_implicit_generic_array_interfaces): Call
+	mono_class_setup_interface_offsets () before accessing
+	eclass->interface_offsets_count. This only shows up on platforms without IMT for
+	some reason.
 
 Thu Feb 25 12:12:44 CET 2010 Paolo Molaro <lupus@ximian.com>
 
