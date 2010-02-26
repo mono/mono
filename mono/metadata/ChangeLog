@@ -1,5 +1,8 @@
 2010-02-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* generic-sharing.c: Removed, moved its contents to mini/mini-generic-sharing.c,
+	so all generic sharing code is in one place.
+
 	* class.c (get_implicit_generic_array_interfaces): Fix the last change so
 	we don't call setup_interface_offsets () for unfinished types.
 
