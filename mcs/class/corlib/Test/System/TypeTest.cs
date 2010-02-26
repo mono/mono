@@ -3287,6 +3287,11 @@ PublicKeyToken=b77a5c561934e089"));
 		public enum MyRealEnum2 : byte {
 			A,B,C
 		}
+
+		public enum MyRealEnum3 : short {
+			A,B,C
+		}
+
 		public class MyEnum : TypeDelegator {
 			public bool is_enum { get; set; }
 			public int fields { get; set; }
@@ -3454,6 +3459,56 @@ PublicKeyToken=b77a5c561934e089"));
 			} catch (ArgumentException) { }
 
 			Assert.IsNull (typeof (MyRealEnum2).GetEnumName (12345), "#35");
+		}
+
+		[Test]
+		public void IsEnumDefined () {
+			try {
+				typeof (MyRealEnum).IsEnumDefined (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentException) { }
+
+			try {
+				new MyEnum () { is_enum = false }.IsEnumDefined (99);
+				Assert.Fail ("#2");
+			} catch (ArgumentException) { }
+
+			try {
+				typeof (MyRealEnum).IsEnumDefined (0);
+				Assert.Fail ("#3");
+			} catch (ArgumentException) { }
+
+			try {
+				typeof (MyRealEnum).IsEnumDefined ((ushort)0);
+				Assert.Fail ("#4");
+			} catch (ArgumentException) { }
+
+			try {
+				typeof (MyRealEnum).IsEnumDefined (MyRealEnum3.A);
+				Assert.Fail ("#5");
+			} catch (ArgumentException) { }
+
+			try {
+				typeof (MyRealEnum).IsEnumDefined (true);
+				Assert.Fail ("#6");
+			} catch (InvalidOperationException) { }
+
+			try {
+				typeof (MyRealEnum).IsEnumDefined (MyRealEnum2.A);
+				Assert.Fail ("#7");
+			} catch (ArgumentException) { }
+
+			try {
+				typeof (MyRealEnum).IsEnumDefined (typeof (MyRealEnum));
+				Assert.Fail ("#8");
+			} catch (InvalidOperationException) { }
+
+			Assert.IsTrue (typeof (MyRealEnum).IsEnumDefined ((short)0), "#9");
+			Assert.IsFalse (typeof (MyRealEnum).IsEnumDefined ((short)88), "#10");
+			Assert.IsTrue (typeof (MyRealEnum).IsEnumDefined (MyRealEnum.A), "#11");
+			Assert.IsFalse (typeof (MyRealEnum).IsEnumDefined ("d"), "#12");
+			Assert.IsTrue  (typeof (MyRealEnum).IsEnumDefined ("A"), "#13");
+			Assert.IsFalse  (new MyEnum () { is_enum = true, fields = 1 }.IsEnumDefined ((short)99), "#14");
 		}
 #endif
 
