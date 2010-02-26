@@ -1445,6 +1445,7 @@ System.Threading/HostExecutionContext.cs
 System.Threading/HostExecutionContextManager.cs
 System.Threading/Interlocked.cs
 System.Threading/IOCompletionCallback.cs
+System.Threading/LazyThreadSafetyMode.cs
 System.Threading/LockCookie.cs
 System.Threading/LockQueue.cs
 System.Threading/LockRecursionException.cs
