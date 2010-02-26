@@ -1,3 +1,8 @@
+2010-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (get_implicit_generic_array_interfaces): Fix the last change so
+	we don't call setup_interface_offsets () for unfinished types.
+
 2010-02-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_thread_suspend_all_other_threads): Ignore threads which have
