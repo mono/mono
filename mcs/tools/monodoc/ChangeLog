@@ -1,3 +1,18 @@
+2010-02-26  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile: Add a System.Core.dll reference; embed monodoc.xml as a
+	  resource.
+	* Monodoc/provider.cs: Add a
+	  RootTree.LoadTree(string,XmlDocument,IEnumerable<string>) method.
+	  This is so 'mdoc export-html-webdoc' doesn't need to rely on the
+	  system-wide .source files (allowing execution w/o changing/replacing
+	  the system-wide .source files) and so MonoDevelop can support
+	  multiple .source files spread throughout the system sanely.
+	* Monodoc/ecma-provider.cs: Always add the extension methods contained
+	  in the current EcmaHelpSource, instead of implicitly requiring that
+	  the current EcmaHelpSource also be contained within
+	  RootTree.HelpSources.  This simplifies logic in 'mdoc'.
+
 2010-01-13  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/provider.cs, Monodoc/ecma-provider.cs: Improve cache support

@@ -6,6 +6,7 @@ LIBRARY = monodoc.dll
 LIBRARY_PACKAGE = monodoc
 
 RESOURCE_FILES = \
+	../../docs/monodoc.xml            \
 	Resources/base.css                \
 	Resources/ecmaspec-html-css.xsl   \
 	Resources/ecmaspec-html.xsl       \
@@ -43,6 +44,7 @@ LIB_MCS_FLAGS = \
 	/codepage:utf8                                                    \
 	/nowarn:169,164,162,168,219                                       \
 	/r:Commons.Xml.Relaxng                                            \
+	/resource:../../docs/monodoc.xml,monodoc.xml                      \
 	/resource:Resources/base.css,base.css                             \
 	/resource:Resources/ecmaspec-html-css.xsl,ecmaspec-html-css.xsl   \
 	/resource:Resources/ecmaspec-html.xsl,ecmaspec-html.xsl           \
@@ -62,6 +64,7 @@ LIB_MCS_FLAGS = \
 	/r:ICSharpCode.SharpZipLib                                        \
 	/r:$(corlib)                                                      \
 	/r:System.dll                                                     \
+	/r:System.Core.dll                                                \
 	/r:System.Web                                                     \
 	/r:System.Web.Services                                            \
 	/r:System.Xml.dll
