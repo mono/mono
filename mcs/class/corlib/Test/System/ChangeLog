@@ -1,5 +1,9 @@
 2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* LazyTest.cs: Add tests for lazy modes.
+
+2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeTest.cs: Test new v4 IsEnumDefined ().
 
 2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>

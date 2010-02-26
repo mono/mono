@@ -116,7 +116,6 @@ namespace MonoTests.System
 		public void EnsureSingleThreadSafeExecution () {
 			counter = 42;
 
-			//var l = new Lazy<int> (delegate () { return counter ++; }, LazyExecutionMode.NotThreadSafe);
 			var l = new Lazy<int> (delegate () { return counter ++; }, true);
 
 			object monitor = new object ();
@@ -148,6 +147,116 @@ namespace MonoTests.System
 				Assert.Fail ();
 			} catch (InvalidOperationException) {
 			}
+		}
+
+		[Test]
+		public void ModeNone ()
+		{
+			int x;
+			bool fail = true;
+			Lazy<int> lz = new Lazy<int> (() => { if (fail) throw new Exception (); else return 99; }, LazyThreadSafetyMode.None);
+			try {
+				x = lz.Value;
+				Assert.Fail ("#1");
+				Console.WriteLine (x);
+			} catch (Exception ex) { }
+
+			try {
+				x = lz.Value;
+				Assert.Fail ("#2");
+			} catch (Exception ex) { }
+
+			fail = false;
+			try {
+				x = lz.Value;
+				Assert.Fail ("#3");
+			} catch (Exception ex) { }
+
+			bool rec = true;
+			lz = new Lazy<int> (() => rec ? lz.Value : 99, LazyThreadSafetyMode.None);
+
+			try {
+				x = lz.Value;
+				Assert.Fail ("#4");
+			} catch (InvalidOperationException ex) { }
+
+			rec = false;
+			try {
+				x = lz.Value;
+				Assert.Fail ("#5");
+			} catch (InvalidOperationException ex) { }
+		}
+
+		[Test]
+		public void ModePublicationOnly () {
+			bool fail = true;
+			int invoke = 0;
+			Lazy<int> lz = new Lazy<int> (() => { ++invoke; if (fail) throw new Exception (); else return 99; }, LazyThreadSafetyMode.PublicationOnly);
+
+			try {
+				int x = lz.Value;
+				Assert.Fail ("#1");
+				Console.WriteLine (x);
+			} catch (Exception ex) { }
+
+			try {
+				int x = lz.Value;
+				Assert.Fail ("#2");
+			} catch (Exception ex) { }
+
+
+			Assert.AreEqual (2, invoke, "#3");
+			fail = false;
+			Assert.AreEqual (99,  lz.Value, "#4");
+			Assert.AreEqual (3, invoke, "#5");
+
+			invoke = 0;
+			bool rec = true;
+			lz = new Lazy<int> (() => { ++invoke; bool r = rec; rec = false; return r ? lz.Value : 88; }, 	LazyThreadSafetyMode.PublicationOnly);
+
+			Assert.AreEqual (88,  lz.Value, "#6");
+			Assert.AreEqual (2, invoke, "#7");
+		}
+
+		[Test]
+		public void ModeExecutionAndPublication () {
+			int invoke = 0;
+			bool fail = true;
+			Lazy<int> lz = new Lazy<int> (() => { ++invoke; if (fail) throw new Exception (); else return 99; }, LazyThreadSafetyMode.ExecutionAndPublication);
+
+			try {
+				int x = lz.Value;
+				Assert.Fail ("#1");
+				Console.WriteLine (x);
+			} catch (Exception ex) { }
+			Assert.AreEqual (1, invoke, "#2");
+
+			try {
+				int x = lz.Value;
+				Assert.Fail ("#3");
+			} catch (Exception ex) { }
+			Assert.AreEqual (1, invoke, "#4");
+
+			fail = false;
+			try {
+				int x = lz.Value;
+				Assert.Fail ("#5");
+			} catch (Exception ex) { }
+			Assert.AreEqual (1, invoke, "#6");
+
+			bool rec = true;
+			lz = new Lazy<int> (() => rec ? lz.Value : 99, LazyThreadSafetyMode.ExecutionAndPublication);
+
+			try {
+				int x = lz.Value;
+				Assert.Fail ("#7");
+			} catch (InvalidOperationException ex) { }
+
+			rec = false;
+			try {
+				int x = lz.Value;
+				Assert.Fail ("#8");
+			} catch (InvalidOperationException ex) { }
 		}
 	}
 }
