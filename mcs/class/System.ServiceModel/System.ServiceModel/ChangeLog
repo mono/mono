@@ -1,5 +1,16 @@
 2010-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs, ClientProxyGenerator.cs:
+	  Add disabled code, enabled by -d:USE_OD_REFERENCE_IN_PROXY:
+
+	  In generated proxy, avoid using GetCurrentMethod() and pass
+	  interface methods to the base ClientRuntimeChannel.
+
+	  (Disabled by default for breakage at
+	   CallbackBehaviorAttributeTest.CallbackExample1.)
+
+2010-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceRuntimeChannel.cs, DuplexChannelFactory.cs,
 	  DuplexClientRuntimeChannel.cs, ClientRuntimeChannel.cs,
 	  ClientProxyGenerator.cs, ClientBase.cs : add workaround fix for

@@ -112,7 +112,7 @@ namespace System.ServiceModel
 			// parameters [0] = arg1;
 			// parameters [1] = arg2;
 			// ...
-			// (return) Process (MethodBase.GetCurrentMethod(), operName, parameters);
+			// (return) Process (Contract.Operations [operName].SyncMethod, operName, parameters);
 			ParameterInfo [] pinfos = mi.GetParameters ();
 			CodeVariableDeclaration paramsDecl = new CodeVariableDeclaration (typeof (object []), "parameters");
 			b.CurrentBlock.Add (paramsDecl);
@@ -127,7 +127,11 @@ namespace System.ServiceModel
 						new CodeCast (typeof (object),
 							new CodeArgumentReference (par.ParameterType, par.Position + 1, "arg" + i)));
 			}
+#if USE_OD_REFERENCE_IN_PROXY
+			CodePropertyReference argMethodInfo = GetOperationMethod (m, b, name, "SyncMethod");
+#else
 			CodeMethodCall argMethodInfo = new CodeMethodCall (typeof (MethodBase), "GetCurrentMethod");
+#endif
 			CodeLiteral argOperName = new CodeLiteral (name);
 			CodeVariableReference retValue = null;
 			if (mi.ReturnType == typeof (void))
@@ -152,6 +156,23 @@ namespace System.ServiceModel
 				b.Return (retValue);
 		}
 
+		static CodePropertyReference GetOperationMethod (CodeMethod m, CodeBuilder b, string name, string methodPropertyName)
+		{
+			return new CodePropertyReference (
+				b.CallFunc (
+					// this.Contract.Operations
+					new CodePropertyReference (
+						new CodePropertyReference (
+							m.GetThis (),
+							typeof (ClientRuntimeChannel).GetProperty ("Contract")),
+						typeof (ContractDescription).GetProperty ("Operations")),
+					// .Find (name)
+					typeof (OperationDescriptionCollection).GetMethod ("Find"),
+					new CodeLiteral (name)),
+				// .SyncMethod
+				typeof (OperationDescription).GetProperty (methodPropertyName));
+		}
+
 		static void GenerateBeginMethodImpl (CodeClass c, MethodInfo beginProcessMethod, string name, MethodInfo mi)
 		{
 			CodeMethod m = c.ImplementMethod (mi);
@@ -160,7 +181,7 @@ namespace System.ServiceModel
 			// parameters [0] = arg1;
 			// parameters [1] = arg2;
 			// ...
-			// (return) BeginProcess (MethodBase.GetCurrentMethod(), operName, parameters, asyncCallback, userState);
+			// (return) BeginProcess (Contract.Operations [operName].BeginMethod, operName, parameters, asyncCallback, userState);
 			ParameterInfo [] pinfos = mi.GetParameters ();
 			CodeVariableDeclaration paramsDecl = new CodeVariableDeclaration (typeof (object []), "parameters");
 			b.CurrentBlock.Add (paramsDecl);
@@ -174,7 +195,11 @@ namespace System.ServiceModel
 						new CodeArrayItem (paramsRef, new CodeLiteral (i)),
 						new CodeCast (typeof (object), m.GetArg (i)));
 			}
+#if USE_OD_REFERENCE_IN_PROXY
+			CodePropertyReference argMethodInfo = GetOperationMethod (m, b, name, "BeginMethod");
+#else
 			CodeMethodCall argMethodInfo = new CodeMethodCall (typeof (MethodBase), "GetCurrentMethod");
+#endif
 			CodeLiteral argOperName = new CodeLiteral (name);
 
 			ParameterInfo p = pinfos [pinfos.Length - 2];
@@ -216,7 +241,11 @@ namespace System.ServiceModel
 							new CodeArgumentReference (par.ParameterType, par.Position + 1, "arg" + i)));
 			}
 			*/
+#if USE_OD_REFERENCE_IN_PROXY
+			CodePropertyReference argMethodInfo = GetOperationMethod (m, b, name, "EndMethod");
+#else
 			CodeMethodCall argMethodInfo = new CodeMethodCall (typeof (MethodBase), "GetCurrentMethod");
+#endif
 			CodeLiteral argOperName = new CodeLiteral (name);
 			
 			CodeVariableReference retValue = null;

@@ -95,6 +95,10 @@ namespace System.ServiceModel.MonoInternal
 			}
 		}
 
+		public ContractDescription Contract {
+			get { return contract; }
+		}
+
 		public ClientRuntime Runtime {
 			get { return runtime; }
 		}
