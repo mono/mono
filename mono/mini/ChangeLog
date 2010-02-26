@@ -1,3 +1,8 @@
+2010-02-26  Martin Baulig  <martin@ximian.com>
+
+	* debug-mini.c (MonoDebuggerThreadInfo): Use `MonoInternalThread *'
+	instead of `MonoThread *'.
+
 2010-02-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (mono_aot_find_jit_info): Use a merge sort for sorting the
