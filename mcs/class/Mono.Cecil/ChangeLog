@@ -2,6 +2,7 @@
 
 	* Mono.Cecil/ReflectionReader.cs: don't cache everything
 	that is context dependent.
+	Based on a patch by Frank Laub  <frank.laub@gmail.com>
 
 2010-02-13  Jb Evain  <jbevain@novell.com>
 
