@@ -490,7 +490,7 @@ namespace System {
 		}
 
 		bool IsValidEnumType (Type type) {
-			return type.IsPrimitive || type.IsEnum;
+			return (type.IsPrimitive && type != typeof (bool) && type != typeof (double) && type != typeof (float)) || type.IsEnum;
 		}
 
 		[MonoInternalNote ("Reimplement this in MonoType for bonus speed")]
@@ -524,6 +524,47 @@ namespace System {
 			return null;
 		}
 
+		[MonoInternalNote ("Reimplement this in MonoType for bonus speed")]
+		public virtual bool IsEnumDefined (object value) {
+			if (value == null)
+				throw new ArgumentException ("Value is null", "value");
+			if (!IsEnum)
+				throw new ArgumentException ("Type is not an enumeration", "enumType");
+
+			Type vt = value.GetType ();
+			if (!IsValidEnumType (vt) && vt != typeof (string))
+				throw new InvalidOperationException ("Value is not the enum or a valid enum underlying type");
+
+			var fields = GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static);
+
+			if (value is string) {
+				for (int i = 0; i < fields.Length; ++i) {
+					if (fields [i].Name.Equals (value))
+						return true;
+				}
+			} else {
+				if (vt != this && vt != GetEnumUnderlyingType ())
+					throw new ArgumentException ("Value is not the enum or a valid enum underlying type", "value");
+
+				object obj = null;
+				for (int i = 0; i < fields.Length; ++i) {
+					var fv = fields [i].GetValue (null);
+					if (obj == null) {
+						try {
+							//XXX we can't use 'this' as argument as it might be an UserType
+							obj = Enum.ToObject (fv.GetType (), value);
+						} catch (OverflowException) {
+							return false;
+						} catch (InvalidCastException) {
+							throw new ArgumentException ("Value is not valid", "value");
+						}
+					}
+					if (fv.Equals (obj))
+						return true;
+				}
+			}
+			return false;
+		}
 #endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

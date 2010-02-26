@@ -1,3 +1,7 @@
+2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs: Implement new v4 IsEnumDefined ().
+
 2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Type.cs: Implement new v4 GetEnumValue ().
