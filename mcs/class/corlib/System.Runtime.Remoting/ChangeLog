@@ -1,3 +1,8 @@
+2010-02-26  Robert Jordan  <robertj@gmx.net>
+
+	* ObjRef.cs (GetRealObject): Refine to server type only when
+	necessary. Fixes #504886.
+
 2010-02-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* RemotingServices.cs (InternalExecuteMessage): Properly
