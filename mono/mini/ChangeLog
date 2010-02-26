@@ -1,3 +1,8 @@
+2010-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-generic-sharing.c: Move the contents of ../metadata/generic-sharing.c
+	here.
+
 2010-02-26  Robert Jordan  <robertj@gmx.net>
 
 	* tasklets.c (continuation_store): Return from an error condition
