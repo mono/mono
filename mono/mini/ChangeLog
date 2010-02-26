@@ -1,3 +1,8 @@
+2010-02-26  Robert Jordan  <robertj@gmx.net>
+
+	* tasklets.c (continuation_store): Return from an error condition
+	immediately.
+
 2010-02-26  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.c (MonoDebuggerInfo): Added `abort_runtime_invoke'.
