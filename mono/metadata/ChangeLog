@@ -1,3 +1,9 @@
+2010-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* image.c: Add an unload hook which is called before an image is unloaded.
+
+	* generic-sharing.c: Use the unload hook to unregister per-image data, to avoid
+	metadata.c having to depend on generic sharing.
 
 Fri Feb 26 19:23:18 CET 2010 Paolo Molaro <lupus@ximian.com>
 
