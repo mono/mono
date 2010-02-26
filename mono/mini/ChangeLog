@@ -1,3 +1,8 @@
+2010-02-26  Robert Jordan  <robertj@gmx.net>
+
+	* tasklets.c (continuation_store): Return from an error condition
+	immediately.
+
 2010-02-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (do_invoke_method): Fix invoking of static methods on vtypes.
