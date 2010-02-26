@@ -1,5 +1,10 @@
 2010-02-13  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/MethodReturnType.cs: avoid creating an
+	inner parameter if not necessary.
+
+2010-02-13  Jb Evain  <jbevain@novell.com>
+
 	* TypeAttributes.cs: add Forwarder flag.
 
 2010-02-12  Jb Evain  <jbevain@novell.com>

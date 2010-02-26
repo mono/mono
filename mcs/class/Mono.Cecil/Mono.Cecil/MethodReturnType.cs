@@ -27,6 +27,7 @@
 //
 
 using System;
+
 using Mono.Cecil.Metadata;
 
 namespace Mono.Cecil {
@@ -66,7 +67,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasCustomAttributes {
-			get { return Parameter.HasCustomAttributes; }
+			get { return m_param != null && m_param.HasCustomAttributes; }
 		}
 
 		public CustomAttributeCollection CustomAttributes {
@@ -74,7 +75,7 @@ namespace Mono.Cecil {
 		}
 
 		public bool HasConstant {
-			get { return Parameter.HasConstant; }
+			get { return m_param != null && m_param.HasConstant; }
 		}
 
 		public object Constant {
