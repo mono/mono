@@ -67,7 +67,10 @@ namespace Mono.Interop
 		{
 			// called from unmanaged code after .ctor is invoked
 			// we need .ctor to create unmanaged object and thus IUnknown property value
-			AddProxy (com_object.IUnknown, this);
+			if (FindProxy(com_object.IUnknown) == null)
+				AddProxy (com_object.IUnknown, this);
+			else
+				System.Threading.Interlocked.Increment (ref ref_count);
 		}
 
 		ComInteropProxy (IntPtr pUnk)
