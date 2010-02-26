@@ -1,5 +1,10 @@
 2010-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientProxyGenerator.cs : type cache should be like this
+	  (by kumpera).
+
+2010-02-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs, ClientProxyGenerator.cs:
 	  Add disabled code, enabled by -d:USE_OD_REFERENCE_IN_PROXY:
 

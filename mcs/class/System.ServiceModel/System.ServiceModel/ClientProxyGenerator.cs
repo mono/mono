@@ -37,10 +37,44 @@ using System.ServiceModel.MonoInternal;
 
 namespace System.ServiceModel
 {
+	internal class ClientProxyKey {
+		Type contractInterface;
+		ContractDescription cd;
+		bool duplex;
+
+		public ClientProxyKey (Type contractInterface, ContractDescription cd, bool duplex) {
+			this.contractInterface = contractInterface;
+			this.cd = cd;
+			this.duplex = duplex;
+		}
+
+
+		public override int GetHashCode () {
+			return contractInterface.GetHashCode () ^ cd.GetHashCode ();
+		}
+
+		public override bool Equals (object o) {
+			ClientProxyKey key = o as ClientProxyKey;
+			if (key == null)
+				return false;
+			return contractInterface == key.contractInterface && cd == key.cd && duplex == duplex;
+		}
+	}
+
 	internal class ClientProxyGenerator : ProxyGeneratorBase
 	{
+		static Dictionary<ClientProxyKey, Type> proxy_cache = new Dictionary<ClientProxyKey, Type> ();
+
+
 		public static Type CreateProxyType (Type contractInterface, ContractDescription cd, bool duplex)
 		{
+			ClientProxyKey key = new ClientProxyKey (contractInterface, cd, duplex);
+			Type res;
+			lock (proxy_cache) {
+				if (proxy_cache.TryGetValue (key, out res))
+					return res;
+			}
+
 			string modname = "dummy";
 			Type crtype =
 #if !NET_2_1
@@ -75,14 +109,17 @@ namespace System.ServiceModel
 				new CodeArgumentReference (typeof (ChannelFactory), 2, "arg1"),
 				new CodeArgumentReference (typeof (EndpointAddress), 3, "arg2"),
 				new CodeArgumentReference (typeof (Uri), 4, "arg3"));
-			return CreateProxyTypeOperations (crtype, c, cd);
+			res = CreateProxyTypeOperations (crtype, c, cd);
+
+			lock (proxy_cache) {
+				proxy_cache [key] = res;
+			}
+			return res;
 		}
 	}
 
 	internal class ProxyGeneratorBase
 	{
-		static readonly List<Type> generated_proxy_types = new List<Type> ();
-
 		protected static Type CreateProxyTypeOperations (Type crtype, CodeClass c, ContractDescription cd)
 		{
 			// member implementation
@@ -100,7 +137,6 @@ namespace System.ServiceModel
 			}
 
 			Type ret = c.CreateType ();
-			generated_proxy_types.Add (ret);
 			return ret;
 		}
 
