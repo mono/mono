@@ -13,12 +13,15 @@
 //
 namespace Monodoc {
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.Collections;
 using System.Diagnostics;
 using System.Configuration;
+using System.Reflection;
 using System.Text.RegularExpressions;
 using System.Xml;
 using System.Xml.XPath;
@@ -869,17 +872,37 @@ public class RootTree : Tree {
 				basedir = d.SelectSingleNode ("config/path").Attributes ["docsPath"].Value;
 			}
 		}
-		XmlDocument doc = new XmlDocument ();
 
-		RootTree root = new RootTree ();
-		root.basedir = basedir;
-		
 		//
 		// Load the layout
 		//
+		XmlDocument doc = new XmlDocument ();
 		string layout = Path.Combine (basedir, "monodoc.xml");
 		doc.Load (layout);
-		XmlNodeList nodes = doc.SelectNodes ("/node/node");
+
+		return LoadTree (basedir, doc, 
+				Directory.GetFiles (Path.Combine (basedir, "sources"))
+				.Where (file => file.EndsWith (".source")));
+	}
+
+	public static RootTree LoadTree (string indexDir, XmlDocument docTree, IEnumerable<string> sourceFiles)
+	{
+		if (docTree == null) {
+			docTree = new XmlDocument ();
+			using (var defTree = typeof(RootTree).Assembly.GetManifestResourceStream ("monodoc.xml"))
+				docTree.Load (defTree);
+		}
+
+		sourceFiles = sourceFiles ?? new string [0];
+
+		//
+		// Load the layout
+		//
+
+		RootTree root = new RootTree ();
+		root.basedir = indexDir;
+
+		XmlNodeList nodes = docTree.SelectNodes ("/node/node");
 
 		root.name_to_node ["root"] = root;
 		root.name_to_node ["libraries"] = root;
@@ -894,7 +917,8 @@ public class RootTree : Tree {
 		//
 		// Load the sources
 		//
-		root.AddSource (Path.Combine (basedir, "sources"));
+		foreach (var sourceFile in sourceFiles)
+			root.AddSourceFile (sourceFile);
 		
 		foreach (string path in UncompiledHelpSources) {
 			EcmaUncompiledHelpSource hs = new EcmaUncompiledHelpSource(path);
@@ -919,70 +943,75 @@ public class RootTree : Tree {
 
 	public void AddSource (string sources_dir)
 	{
-		Node third_party = LookupEntryPoint ("various") ?? this;
-
 		string [] files = Directory.GetFiles (sources_dir);
 
 		foreach (string file in files){
 			if (!file.EndsWith (".source"))
 				continue;
+			AddSourceFile (file);
+		}
+	}
 
-			XmlDocument doc = new XmlDocument ();
-			try {
-				doc.Load (file);
-			} catch {
-				Console.Error.WriteLine ("Error: Could not load source file {0}", file);
+	public void AddSourceFile (string sourceFile)
+	{
+		Node third_party = LookupEntryPoint ("various") ?? this;
+
+		XmlDocument doc = new XmlDocument ();
+		try {
+			doc.Load (sourceFile);
+		}
+		catch {
+			Console.Error.WriteLine ("Error: Could not load source file {0}", sourceFile);
+			return;
+		}
+
+		XmlNodeList extra_nodes = doc.SelectNodes ("/monodoc/node");
+		if (extra_nodes.Count > 0)
+			Populate (third_party, extra_nodes);
+
+		XmlNodeList sources = doc.SelectNodes ("/monodoc/source");
+		if (sources == null){
+			Console.Error.WriteLine ("Error: No <source> section found in the {0} file", sourceFile);
+			return;
+		}
+		foreach (XmlNode source in sources){
+			XmlAttribute a = source.Attributes ["provider"];
+			if (a == null){
+				Console.Error.WriteLine ("Error: no provider in <source>");
 				continue;
 			}
-
-			XmlNodeList extra_nodes = doc.SelectNodes ("/monodoc/node");
-			if (extra_nodes.Count > 0)
-				Populate (third_party, extra_nodes);
-
-			XmlNodeList sources = doc.SelectNodes ("/monodoc/source");
-			if (sources == null){
-				Console.Error.WriteLine ("Error: No <source> section found in the {0} file", file);
+			string provider = a.InnerText;
+			a = source.Attributes ["basefile"];
+			if (a == null){
+				Console.Error.WriteLine ("Error: no basefile in <source>");
 				continue;
 			}
-			foreach (XmlNode source in sources){
-				XmlAttribute a = source.Attributes ["provider"];
-				if (a == null){
-					Console.Error.WriteLine ("Error: no provider in <source>");
-					continue;
-				}
-				string provider = a.InnerText;
-				a = source.Attributes ["basefile"];
-				if (a == null){
-					Console.Error.WriteLine ("Error: no basefile in <source>");
-					continue;
-				}
-				string basefile = a.InnerText;
-				a = source.Attributes ["path"];
-				if (a == null){
-					Console.Error.WriteLine ("Error: no path in <source>");
-					continue;
-				}
-				string path = a.InnerText;
-
-				string basefilepath = Path.Combine (sources_dir, basefile);
-				HelpSource hs = GetHelpSource (provider, basefilepath);
-				if (hs == null)
-					continue;
-				hs.RootTree = this;
-				help_sources.Add (hs);
-				name_to_hs [path] = hs;
-
-				Node parent = LookupEntryPoint (path);
-				if (parent == null){
-					Console.Error.WriteLine ("node `{0}' is not defined on the documentation map", path);
-					parent = third_party;
-				}
-
-				foreach (Node n in hs.Tree.Nodes){
-					parent.AddNode (n);
-				}
-				parent.Sort ();
+			string basefile = a.InnerText;
+			a = source.Attributes ["path"];
+			if (a == null){
+				Console.Error.WriteLine ("Error: no path in <source>");
+				continue;
 			}
+			string path = a.InnerText;
+
+			string basefilepath = Path.Combine (Path.GetDirectoryName (sourceFile), basefile);
+			HelpSource hs = GetHelpSource (provider, basefilepath);
+			if (hs == null)
+				continue;
+			hs.RootTree = this;
+			help_sources.Add (hs);
+			name_to_hs [path] = hs;
+
+			Node parent = LookupEntryPoint (path);
+			if (parent == null){
+				Console.Error.WriteLine ("node `{0}' is not defined on the documentation map", path);
+				parent = third_party;
+			}
+
+			foreach (Node n in hs.Tree.Nodes){
+				parent.AddNode (n);
+			}
+			parent.Sort ();
 		}
 	}
 	
