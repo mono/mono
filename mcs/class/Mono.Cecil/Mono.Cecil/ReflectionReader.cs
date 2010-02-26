@@ -148,8 +148,8 @@ namespace Mono.Cecil {
 			TypeSpecRow tsRow = tsTable [index];
 			TypeSpec ts = m_sigReader.GetTypeSpec (tsRow.Signature);
 
-			// don't cache generic instances
-			if (ts.Type.ElementType == ElementType.GenericInst)
+			// don't cache context dependent generic stuff
+			if (IsGenericTypeSpec (ts.Type.ElementType))
 				return CreateTypeSpecFromSig (ts, index, context);
 
 			TypeReference tspec = m_typeSpecs [index];
@@ -160,6 +160,13 @@ namespace Mono.Cecil {
 			m_typeSpecs [index] = tspec;
 
 			return tspec;
+		}
+
+		static bool IsGenericTypeSpec (ElementType etype)
+		{
+			return etype == ElementType.GenericInst
+				|| etype == ElementType.Var
+				|| etype == ElementType.MVar;
 		}
 
 		TypeReference CreateTypeSpecFromSig (TypeSpec ts, int index, GenericContext context)

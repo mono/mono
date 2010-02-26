@@ -1,5 +1,10 @@
 2010-02-13  Jb Evain  <jbevain@novell.com>
 
+	* Mono.Cecil/ReflectionReader.cs: don't cache everything
+	that is context dependent.
+
+2010-02-13  Jb Evain  <jbevain@novell.com>
+
 	* Mono.Cecil/MethodReturnType.cs: avoid creating an
 	inner parameter if not necessary.
 
