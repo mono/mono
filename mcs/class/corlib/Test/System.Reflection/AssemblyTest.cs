@@ -216,14 +216,15 @@ namespace MonoTests.System.Reflection
 			Assert.IsFalse (corlib_test.GlobalAssemblyCache, "GlobalAssemblyCache");
 
 			Assert.IsTrue (corlib_test.GetReferencedAssemblies ().Length > 0, "GetReferencedAssemblies");
-#if NET_2_0
 			Assert.AreEqual (0, corlib_test.HostContext, "HostContext");
+#if NET_4_0
+			Assert.AreEqual ("v4.0.21006", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
+#else
 			Assert.AreEqual ("v2.0.50727", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
+#endif
+
 			Assert.IsNotNull (corlib_test.ManifestModule, "ManifestModule");
 			Assert.IsFalse (corlib_test.ReflectionOnly, "ReflectionOnly");
-#elif NET_1_1
-			Assert.AreEqual ("v1.1.4322", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
-#endif
 		}
 #endif
 

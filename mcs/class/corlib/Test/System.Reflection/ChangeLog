@@ -1,3 +1,9 @@
+2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AssemblyTest.cs: Fix test under v4.
+
+	* MonoGenericClassTest.cs: Ditto.
+
 2010-02-10 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* PropertyInfoTest.cs: Tests for default value.
