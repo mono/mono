@@ -135,7 +135,7 @@ MonoMethod *
 mono_marshal_get_static_rgctx_invoke (MonoMethod *method) MONO_INTERNAL;
 
 MonoMethod *
-mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, MonoObject *this) MONO_INTERNAL;
+mono_marshal_get_managed_wrapper (MonoMethod *method, MonoClass *delegate_klass, MonoObject **this_loc) MONO_INTERNAL;
 
 gpointer
 mono_marshal_get_vtfixup_ftnptr (MonoImage *image, guint32 token, guint16 type) MONO_INTERNAL;
