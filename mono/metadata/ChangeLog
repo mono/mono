@@ -1,5 +1,8 @@
 2010-02-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* class.c (mono_class_generic_sharing_enabled): Move this to
+	generic-sharing.c.
+
 	* image.c: Add an unload hook which is called before an image is unloaded.
 
 	* generic-sharing.c: Use the unload hook to unregister per-image data, to avoid
