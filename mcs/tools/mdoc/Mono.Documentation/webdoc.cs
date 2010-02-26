@@ -50,30 +50,44 @@ namespace Mono.Documentation
 		{
 			string dir = null;
 			bool forceUpdate = false;
+			var formats = new Dictionary<string, List<string>> ();
+			var formatOptions = MDocAssembler.CreateFormatOptions (this, formats);
+			var sources = new List<string>();
 			var options = new OptionSet () {
 				{ "force-update",
 					"Always generate new files.  If not specified, will only generate " +
 					"files if the write time of the output directory is older than the " +
 					"write time of the source .tree/.zip files.",
 					v => forceUpdate = v != null },
+				formatOptions [0],
 				{ "o|out=",
 					"The {PREFIX} to place the generated files and directories.  " + 
 					"Default: \"`dirname FILE`/cache/\".\n" +
 					"Underneath {PREFIX}, `basename FILE .tree` directories will be " + 
 					"created which will contain the pre-generated HTML content.",
 					v => dir = v },
+				{ "r=",
+					"A {SOURCE} file to use for reference purposes.\n" +
+					"Extension methods are searched for among all {SOURCE}s which are referenced.\n" +
+					"This option may be specified multiple times.",
+					v => sources.Add (v) },
+				formatOptions [1],
 			};
-			List<string> files = Parse (options, args, "export-html-webdoc", 
+			Parse (options, args, "export-html-webdoc", 
 					"[OPTIONS]+ FILES",
 					"Export mdoc documentation within FILES to HTML for use by ASP.NET webdoc.\n\n" +
 					"FILES are .tree or .zip files as produced by 'mdoc assemble'.");
-			if (files == null)
-				return;
-			if (files.Count == 0)
+			if (formats.Values.All (files => files.Count == 0))
 				Error ("No files specified.");
 			HelpSource.use_css = true;
 			HelpSource.FullHtml = false;
 			SettingsHandler.Settings.EnableEditing = false;
+			foreach (var p in formats)
+				ProcessFiles (dir, forceUpdate, sources, p.Key, p.Value);
+		}
+
+		void ProcessFiles (string dir, bool forceUpdate, List<string> sources, string format, List<string> files)
+		{
 			foreach (var basePath in 
 					files.Select (f => 
 							Path.Combine (Path.GetDirectoryName (f), Path.GetFileNameWithoutExtension (f)))
@@ -91,7 +105,7 @@ namespace Mono.Documentation
 				Message (TraceLevel.Warning, "Processing files: {0}, {1}", treeFile, zipFile);
 				Directory.CreateDirectory (outDir);
 				ExtractZipFile (zipFile, outDir);
-				GenerateCache (basePath, treeFile, outDir);
+				GenerateCache (basePath, format, outDir, sources);
 			}
 		}
 
@@ -123,16 +137,16 @@ namespace Mono.Documentation
 			}
 		}
 
-		void GenerateCache (string basePath, string treeFile, string outDir)
+		void GenerateCache (string basePath, string format, string outDir, IEnumerable<string> sources)
 		{
-			Tree tree = new Tree (null, treeFile);
-			RootTree docRoot = RootTree.LoadTree ();
-			string helpSourceName = Path.GetFileName (basePath);
-			HelpSource hs = docRoot.HelpSources.Cast<HelpSource> ()
-				.FirstOrDefault (h => h.Name == helpSourceName);
+			var hs = RootTree.GetHelpSource (format, basePath);
 			if (hs == null) {
-				throw new Exception ("Only installed .tree and .zip files are supported.");
+				Error ("Unable to find a HelpSource for provider '{0}' and file '{1}.tree'.", format, basePath);
 			}
+			var tree = hs.Tree;
+			RootTree docRoot = RootTree.LoadTree (null, null, sources);
+			hs.RootTree = docRoot;
+			string helpSourceName = Path.GetFileName (basePath);
 			foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
 				var url = node.URL;
 				Message (TraceLevel.Info, "\tProcessing URL: {0}", url);
@@ -141,14 +155,7 @@ namespace Mono.Documentation
 				var file = XmlDocUtils.GetCachedFileName (outDir, url);
 				using (var o = File.AppendText (file)) {
 					Node _;
-					// Sometimes the HelpSource won't directly support a url.
-					// Case in point: the Tree will contain N:Enter.Namespace.Here nodes
-					// which aren't supported by HelpSource.GetText.
-					// If this happens, docRoot.RenderUrl() works.
-					// (And no, we can't always use docRoot.RenderUrl() for URLs like
-					// "ecma:0#Foo/", as that'll just grab the 0th stream contents from
-					// the first EcmaHelpSource found...
-					string contents = hs.GetText (url, out _) ?? docRoot.RenderUrl (url, out _);
+					string contents = hs.GetText (url, out _) ?? hs.RenderNamespaceLookup (url, out _);
 					o.Write (contents);
 				}
 			}

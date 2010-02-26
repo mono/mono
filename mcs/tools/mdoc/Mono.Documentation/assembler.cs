@@ -16,37 +16,49 @@ using Mono.Options;
 namespace Mono.Documentation {
 	
 public class MDocAssembler : MDocCommand {
-	public override void Run (IEnumerable<string> args)
+	static readonly string[] ValidFormats = {
+		"ecma", 
+		"ecmaspec", 
+		"error", 
+		"hb", 
+		"man", 
+		"simple", 
+		"xhtml"
+	};
+
+	public static Option[] CreateFormatOptions (MDocCommand self, Dictionary<string, List<string>> formats)
 	{
-		string[] validFormats = {
-			"ecma", 
-			"ecmaspec", 
-			"error", 
-			"hb", 
-			"man", 
-			"simple", 
-			"xhtml"
-		};
-		var formats = new Dictionary<string, List<string>> ();
-		string prefix = "tree";
 		string cur_format = "ecma";
 		var options = new OptionSet () {
 			{ "f|format=",
 				"The documentation {FORMAT} used in DIRECTORIES.  " + 
 					"Valid formats include:\n  " +
-					string.Join ("\n  ", validFormats) + "\n" +
+					string.Join ("\n  ", ValidFormats) + "\n" +
 					"If not specified, the default format is `ecma'.",
 				v => {
-					if (Array.IndexOf (validFormats, v) < 0)
-						Error ("Invalid documentation format: {0}.", v);
+					if (Array.IndexOf (ValidFormats, v) < 0)
+						self.Error ("Invalid documentation format: {0}.", v);
 					cur_format = v;
 				} },
+			{ "<>", v => AddFormat (self, formats, cur_format, v) },
+		};
+		return new Option[]{options[0], options[1]};
+	}
+
+	public override void Run (IEnumerable<string> args)
+	{
+		var formats = new Dictionary<string, List<string>> ();
+		string prefix = "tree";
+		string cur_format = "ecma";
+		var formatOptions = CreateFormatOptions (this, formats);
+		var options = new OptionSet () {
+			formatOptions [0],
 			{ "o|out=",
 				"Provides the output file prefix; the files {PREFIX}.zip and " + 
 					"{PREFIX}.tree will be created.\n" +
 					"If not specified, `tree' is the default PREFIX.",
 				v => prefix = v },
-			{ "<>", v => AddFormat (formats, cur_format, v) },
+			formatOptions [1],
 		};
 		List<string> extra = Parse (options, args, "assemble", 
 				"[OPTIONS]+ DIRECTORIES",
@@ -116,10 +128,10 @@ public class MDocAssembler : MDocCommand {
 		hs.Save ();
 	}
 
-	private void AddFormat (Dictionary<string, List<string>> d, string format, string file)
+	private static void AddFormat (MDocCommand self, Dictionary<string, List<string>> d, string format, string file)
 	{
 		if (format == null)
-			Error ("No format specified.");
+			self.Error ("No format specified.");
 		List<string> l;
 		if (!d.TryGetValue (format, out l)) {
 			l = new List<string> ();
