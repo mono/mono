@@ -1,3 +1,18 @@
+2010-02-26  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/assembler.cs: Allow other apps to get the same
+	  '--format' logic, specifically 'mdoc export-html-webdoc'.
+	* Mono.Documentation/webdoc.cs: Allow it to be more "stand-alone".
+	  Previously, it would depend upon the system-wide .source files.
+	  This is bad, because you might want to generate the 'cache'
+	  directory for a different installation, with a different set of
+	  .tree/.zip/.source files, and you might not want to replace your own
+	  and/or you often forget, as is the case with me.  Instead, allow a 
+	  format to be specified for .tree files, and allow additional .source 
+	  files to be referenced so that extension methods will be found within
+	  the specified sources.  This allows for a "stand-alone" method of 
+	  operation w/o depending upon the system-wide .source files.
+
 2010-01-11  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2slashdoc.cs: Fix NamespaceSummaries.xml
