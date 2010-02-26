@@ -1,3 +1,9 @@
+2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TaskContinuationOptions.cs: Use RC values.
+
+	* TaskCreationOptions.cs: Ditto.
+
 2010-02-23  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Task.cs: Fix for continuation processing not happening
