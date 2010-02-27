@@ -73,6 +73,7 @@ using System.Security.Permissions;
 using System.Security.Principal;
 using System.Threading;
 using System.Web.Caching;
+using System.Web.Compilation;
 using System.Web.Configuration;
 using System.Web.SessionState;
 using System.Web.UI;
@@ -877,8 +878,9 @@ namespace System.Web {
 						eh (this, EventArgs.Empty);
 					} catch (ThreadAbortException taex){
 						context.ClearError ();
-						if (FlagEnd.Value == taex.ExceptionState)
-							// This happens on Redirect() or End()
+						if (FlagEnd.Value == taex.ExceptionState || HttpRuntime.DomainUnloading)
+							// This happens on Redirect(), End() and
+							// when unloading the AppDomain
 							Thread.ResetAbort ();
 						else
 							// This happens on Thread.Abort()
@@ -940,7 +942,7 @@ namespace System.Web {
 					ProcessError (new HttpException ("The request timed out."));
 				else {
 					context.ClearError ();
-					if (FlagEnd.Value != obj)
+					if (FlagEnd.Value != obj && !HttpRuntime.DomainUnloading)
 						context.AddError (taex);
 				}
 

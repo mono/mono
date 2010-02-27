@@ -63,6 +63,7 @@ namespace System.Web {
 		static bool runningOnWindows;
 		static bool isunc;
 		static string monoVersion;
+		static bool domainUnloading;
 		
 #if TARGET_J2EE
 		static QueueManager queue_manager { get { return _runtime._queue_manager; } }
@@ -207,6 +208,10 @@ namespace System.Web {
 		}
 		
 #region AppDomain handling
+		internal static bool DomainUnloading {
+			get { return domainUnloading; }
+		}
+		
 		//
 		// http://radio.weblogs.com/0105476/stories/2002/07/12/executingAspxPagesWithoutAWebServer.html
 		//
@@ -616,6 +621,7 @@ namespace System.Web {
 			//
 			// TODO: call ReleaseResources
 			//
+			domainUnloading = true;
 			ThreadPool.QueueUserWorkItem (new WaitCallback (ShutdownAppDomain), null);
 		}
 #endif

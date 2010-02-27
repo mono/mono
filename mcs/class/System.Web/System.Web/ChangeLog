@@ -1,3 +1,10 @@
+2010-02-27  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: added internal property DomainUnloading.
+
+	* HttpApplication.cs: when app domain is unloading, catch
+	ThreadAbortExceptions and reset the abort.
+
 2010-01-19  Marek Habersack  <mhabersack@novell.com>
 
 	* StaticSiteMapProvider.cs: AddNode checks the url of node
