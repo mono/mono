@@ -27,6 +27,15 @@ Documentation for the REPL mode for MCS can be found here:
 
 * Supporting class-level declarations
 
+	Currently the evaluator has this feature disabled, to enable
+	it edit the eval.cs file and make this be the default:
+
+-				parser.Lexer.putback_char = Tokenizer.EvalUsingDeclarationsParserCharacter;
+-				//parser.Lexer.putback_char = Tokenizer.EvalCompilationUnitParserCharacter;
++				//parser.Lexer.putback_char = Tokenizer.EvalUsingDeclarationsParserCharacter;
++				parser.Lexer.putback_char = Tokenizer.EvalCompilationUnitParserCharacter;
+
+	
 	It currently has a few problems:
 
 	* Support for overwritting existing defined
