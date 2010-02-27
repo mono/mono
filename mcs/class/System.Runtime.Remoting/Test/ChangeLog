@@ -1,3 +1,7 @@
+2010-02-28  Robert Jordan  <robertj@gmx.net>
+
+	* BaseCalls.cs: Enable tests again. See bug #576618.
+
 2010-02-11  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ActivationTests.cs: Disable TestCreateHttpWkoSingleCall and

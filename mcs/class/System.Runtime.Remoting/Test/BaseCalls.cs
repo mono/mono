@@ -157,21 +157,18 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestInstancePrimitiveParamsInOut ()
 		{
 			RunTestPrimitiveParamsInOut (InternalGetInstanceSurrogate());
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestAbstractPrimitiveParamsInOut ()
 		{
 			RunTestPrimitiveParamsInOut (InternalGetAbstractSurrogate());
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestInterfacePrimitiveParamsInOut ()
 		{
 			RunTestPrimitiveParamsInOut (InternalGetInterfaceSurrogate());
@@ -196,21 +193,21 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
-		[Ignore ("Fails on MS")]
+		[Category ("NotDotNet")]
 		public void TestInstanceComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetInstanceSurrogate());
 		}
 
 		[Test]
-		[Ignore ("Fails on MS")]
+		[Category ("NotDotNet")]
 		public void TestAbstractComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetAbstractSurrogate());
 		}
 
 		[Test]
-		[Ignore ("Fails on MS")]
+		[Category ("NotDotNet")]
 		public void TestInterfaceComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetInterfaceSurrogate());
