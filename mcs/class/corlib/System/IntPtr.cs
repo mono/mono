@@ -201,21 +201,25 @@ namespace System
 		}
 
 #if NET_4_0
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static IntPtr Add (IntPtr pointer, int offset)
 		{
 			return (IntPtr) (unchecked (((byte *) pointer) + offset));
 		}
 
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static IntPtr Subtract (IntPtr pointer, int offset)
 		{
 			return (IntPtr) (unchecked (((byte *) pointer) - offset));
 		}
 
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static IntPtr operator + (IntPtr pointer, int offset)
 		{
 			return (IntPtr) (unchecked (((byte *) pointer) + offset));
 		}
 
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
 		public static IntPtr operator - (IntPtr pointer, int offset)
 		{
 			return (IntPtr) (unchecked (((byte *) pointer) - offset));
