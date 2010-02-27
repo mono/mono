@@ -143,6 +143,38 @@ namespace System
 			return *((int*)&f);
 		}
 
+#if	NET_4_0
+		public static bool operator==(float a, float b)
+		{
+			return a == b;
+		}
+
+		public static bool operator!=(float a, float b)
+		{
+			return a != b;
+		}
+
+		public static bool operator>(float a, float b)
+		{
+			return a > b;
+		}
+
+		public static bool operator>=(float a, float b)
+		{
+			return a >= b;
+		}
+
+		public static bool operator<(float a, float b)
+		{
+			return a < b;
+		}
+
+		public static bool operator<=(float a, float b)
+		{
+			return a <= b;
+		}
+#endif
+
 		public static bool IsInfinity (float f)
 		{
 			return (f == PositiveInfinity || f == NegativeInfinity);

@@ -1,5 +1,9 @@
 2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Float.cs: New v4 operators.
+
+2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* IntPtr.cs: Add some v4 custom attributes.
 
 2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
