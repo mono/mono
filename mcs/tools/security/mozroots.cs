@@ -95,7 +95,7 @@ namespace Mono.Tools {
 
 			Stream s = GetFile ();
 			if (s == null) {
-				WriteLine ("Couldn't retrieve the file using the supplied informations.", null);
+				WriteLine ("Couldn't retrieve the file using the supplied informations.");
 				return null;
 			}
 
