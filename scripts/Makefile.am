@@ -25,7 +25,7 @@ COMPAT_2_0_SUFFIX=2$(SCRIPT_SUFFIX)
 COMPAT_4_0_SUFFIX=4$(SCRIPT_SUFFIX)
 
 bin_SCRIPTS = \
-	$(scripts_2_0_umask)	\
+	$(scripts_4_0_umask)	\
 	$(scripts_defaults)	\
 	$(scripts_2_0)		\
 	$(scripts_service)	\
@@ -34,7 +34,6 @@ bin_SCRIPTS = \
 	$(scripts_mcs)		\
 	$(MDOC_SUBCOMMANDS)	\
 	$(MDOC_COMPAT)		\
-	mod$(SCRIPT_SUFFIX)	\
 	mono-test-install	\
 	peverify			\
 	mono-heapviz		\
@@ -44,7 +43,7 @@ if INSTALL_4_0
 bin_SCRIPTS += $(scripts_4_0)
 endif
 
-scripts_2_0_umask = \
+scripts_4_0_umask = \
 	makecert$(SCRIPT_SUFFIX)		\
 	sn$(SCRIPT_SUFFIX)
 
@@ -57,7 +56,6 @@ scripts_2_0 = \
 	csharp2$(SCRIPT_SUFFIX)			\
 	gacutil2$(SCRIPT_SUFFIX)		\
 	gmcs$(SCRIPT_SUFFIX)			\
-	mdoc$(SCRIPT_SUFFIX)                    \
 	monop2$(SCRIPT_SUFFIX) 			\
 	resgen2$(SCRIPT_SUFFIX)			\
 	wsdl2$(SCRIPT_SUFFIX)
@@ -70,6 +68,7 @@ scripts_4_0 = \
 	installvst$(SCRIPT_SUFFIX)		\
 	genxs$(SCRIPT_SUFFIX)			\
 	macpack$(SCRIPT_SUFFIX)			\
+	mdoc$(SCRIPT_SUFFIX)                    \
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
@@ -81,6 +80,7 @@ scripts_4_0 = \
 	httpcfg$(SCRIPT_SUFFIX)			\
 	lc$(SCRIPT_SUFFIX)			\
 	mconfig$(SCRIPT_SUFFIX)			\
+	mod$(SCRIPT_SUFFIX)			\
 	monolinker$(SCRIPT_SUFFIX)		\
 	mono-api-info$(SCRIPT_SUFFIX) 		\
 	mono-shlib-cop$(SCRIPT_SUFFIX) 		\
@@ -134,7 +134,7 @@ scripts_rpmhelpers = mono-find-provides mono-find-requires
 scripts_mcs = mcs$(SCRIPT_SUFFIX)
 scripts_mono_configuration_crypto = mono-configuration-crypto$(SCRIPT_SUFFIX)
 
-CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_mcs) $(scripts_2_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
+CLEANFILES = $(scripts_mono_configuration_crypto) $(scripts_mcs) $(scripts_4_0_umask) $(scripts_2_0) $(scripts_defaults) $(scripts_4_0) mono-service mono-service2 nunit-console nunit-console2 mono-find-provides mono-find-requires mod $(MDOC_SUBCOMMANDS)
 DISTCLEANFILES = $(pkgconfig_DATA) $(scripts_rpmhelpers)
 
 EXTRA_DIST =			\
@@ -193,7 +193,7 @@ peverify: peverify.in Makefile
 	mv -f $@.tmp $@
 
 mono-service: mono-service.in Makefile
-	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
+	$(REWRITE4) -e 's,@''exe_name@,$@,g' $(srcdir)/mono-service.in > $@.tmp
 	mv -f $@.tmp $@
 
 mono-service2: mono-service.in Makefile
@@ -214,8 +214,9 @@ mod$(SCRIPT_SUFFIX): mod.in Makefile
 	mv -f $@.tmp $@
 
 #FIXME: this is not the correct rule for bat files.
-$(scripts_2_0_umask): script_umask.in Makefile
-	$(REWRITE2) -e 's,@''exe_name@,$@,g' $(srcdir)/script_umask.in > $@.tmp
+$(scripts_4_0_umask): script_umask.in Makefile
+	n=`echo $@ | sed 's,$(COMPAT_4_0_SUFFIX)$$,,'`; \
+	$(REWRITE4) -e "s,@""exe_name@,$$n,g" $(srcdir)/script_umask.in | $(FILTER) > $@.tmp
 	mv -f $@.tmp $@
 
 mcs$(SCRIPT_SUFFIX): $(SCRIPT_IN) Makefile
