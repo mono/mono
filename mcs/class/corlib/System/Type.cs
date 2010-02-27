@@ -482,11 +482,15 @@ namespace System {
 			return result;
 		}
 
+		NotImplementedException CreateNIE () {
+			return new NotImplementedException ();
+		}
+
 		public virtual Array GetEnumValues () {
 			if (!IsEnum)
 				throw new ArgumentException ("Type is not an enumeration", "enumType");
 
-			throw new NotImplementedException ();
+			throw CreateNIE ();
 		}
 
 		bool IsValidEnumType (Type type) {

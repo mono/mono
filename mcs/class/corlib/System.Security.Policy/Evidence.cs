@@ -65,6 +65,9 @@ namespace System.Security.Policy {
 				Merge (evidence);	
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public Evidence (object[] hostEvidence, object[] assemblyEvidence)
 		{
 			if (null != hostEvidence)
@@ -77,6 +80,9 @@ namespace System.Security.Policy {
 		// Public Properties
 		//
 	
+#if NET_4_0
+		[Obsolete]
+#endif
 		public int Count {
 			get {
 				int count = 0;
@@ -128,12 +134,18 @@ namespace System.Security.Policy {
 		// Public Methods
 		//
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public void AddAssembly (object id) 
 		{
 			AssemblyEvidenceList.Add (id);
 			_hashCode = 0;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public void AddHost (object id) 
 		{
 			if (_locked && SecurityManager.SecurityEnabled) {
@@ -153,6 +165,9 @@ namespace System.Security.Policy {
 			_hashCode = 0;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public void CopyTo (Array array, int index) 
 		{
 			int hc = 0;
@@ -205,6 +220,9 @@ namespace System.Security.Policy {
 			return true;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public IEnumerator GetEnumerator () 
 		{
 			IEnumerator he = null;

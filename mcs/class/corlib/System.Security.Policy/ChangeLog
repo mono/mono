@@ -1,3 +1,7 @@
+2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Evidence.cs: Add some v4 bits.
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Evidence_2_1.cs: New.
