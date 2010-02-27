@@ -53,6 +53,7 @@ deprecated = 					\
 	mjs(SCRIPT_SUFFIX)
 
 scripts_2_0 = \
+	al2$(SCRIPT_SUFFIX)			\
 	csharp2$(SCRIPT_SUFFIX)			\
 	gacutil2$(SCRIPT_SUFFIX)		\
 	gmcs$(SCRIPT_SUFFIX)			\
@@ -72,7 +73,6 @@ scripts_4_0 = \
 	mono-cil-strip$(SCRIPT_SUFFIX)		\
 	prj2make$(SCRIPT_SUFFIX)		\
 	soapsuds$(SCRIPT_SUFFIX)		\
-	al2$(SCRIPT_SUFFIX)			\
 	caspol$(SCRIPT_SUFFIX)			\
 	cert2spc$(SCRIPT_SUFFIX)		\
 	certmgr$(SCRIPT_SUFFIX)			\
