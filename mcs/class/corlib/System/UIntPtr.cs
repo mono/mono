@@ -39,6 +39,7 @@
 using System.Globalization;
 using System.Runtime.Serialization;
 using System.Runtime.InteropServices;
+using System.Runtime.ConstrainedExecution;
 
 namespace System
 {
@@ -160,5 +161,31 @@ namespace System
 		public static int Size {
 			get { return sizeof (void*); }
 		}
+
+#if NET_4_0
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+		public static UIntPtr Add (UIntPtr pointer, int offset)
+		{
+			return (UIntPtr) (unchecked (((byte *) pointer) + offset));
+		}
+
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+		public static UIntPtr Subtract (UIntPtr pointer, int offset)
+		{
+			return (UIntPtr) (unchecked (((byte *) pointer) - offset));
+		}
+
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+		public static UIntPtr operator + (UIntPtr pointer, int offset)
+		{
+			return (UIntPtr) (unchecked (((byte *) pointer) + offset));
+		}
+
+		[ReliabilityContract (Consistency.MayCorruptInstance, Cer.MayFail)]
+		public static UIntPtr operator - (UIntPtr pointer, int offset)
+		{
+			return (UIntPtr) (unchecked (((byte *) pointer) - offset));
+		}
+#endif
 	}
 }
