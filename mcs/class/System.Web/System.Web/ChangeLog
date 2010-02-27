@@ -1,3 +1,10 @@
+2010-02-27  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: added internal property DomainUnloading.
+
+	* HttpApplication.cs: when app domain is unloading, catch
+	ThreadAbortExceptions and reset the abort.
+
 2010-02-03  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: GetOutputCacheProviderName returns the value
