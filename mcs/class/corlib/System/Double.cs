@@ -140,6 +140,38 @@ namespace System {
 			return (*((long*)&d)).GetHashCode ();
 		}
 
+#if	NET_4_0
+		public static bool operator==(double a, double b)
+		{
+			return a == b;
+		}
+
+		public static bool operator!=(double a, double b)
+		{
+			return a != b;
+		}
+
+		public static bool operator>(double a, double b)
+		{
+			return a > b;
+		}
+
+		public static bool operator>=(double a, double b)
+		{
+			return a >= b;
+		}
+
+		public static bool operator<(double a, double b)
+		{
+			return a < b;
+		}
+
+		public static bool operator<=(double a, double b)
+		{
+			return a <= b;
+		}
+#endif
+
 		public static bool IsInfinity (double d)
 		{
 			return (d == PositiveInfinity || d == NegativeInfinity);

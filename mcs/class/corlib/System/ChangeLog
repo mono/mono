@@ -1,5 +1,9 @@
 2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Double.cs: New v4 operators.
+
+2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Type.cs: Make cor-compare happy.
 
 2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
