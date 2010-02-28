@@ -1,17 +1,12 @@
-// CultureTypes.cs
 //
-// This code was automatically generated from
-// ECMA CLI XML Library Specification.
-// Generator: libgen.xsl [1.0; (C) Sergey Chaban (serge@wildwestsoftware.com)]
-// Created: Wed, 5 Sep 2001 06:35:02 UTC
-// Source file: all.xml
-// URL: http://devresource.hp.com/devresource/Docs/TechPapers/CSharp/all.xml
+// System.Globalization.TimeSpanStyles.cs
 //
-// (C) 2001 Ximian, Inc.  http://www.ximian.com
+// Authors:
+//	Gonzalo Paniagua Javier (gonzalo@novell.com)
+//
+// Copyright (c) 2010 Novell (http://www.novell.com)
+//
 
-//
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
 // "Software"), to deal in the Software without restriction, including
@@ -31,31 +26,16 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_4_0
 
+using System;
 
 namespace System.Globalization {
-
-
-	/// <summary>
-	/// </summary>
 	[Flags]
-	[System.Runtime.InteropServices.ComVisible(true)]
-	[System.Serializable]
-	public enum CultureTypes {
-		NeutralCultures = 1,
-		SpecificCultures = 2,
-		InstalledWin32Cultures = 4,
-		AllCultures = 7,
-		UserCustomCulture = 8,
-		ReplacementCultures = 16,
-#if NET_4_0
-		[Obsolete]
+	public enum TimeSpanStyles {
+		None,
+		AssumeNegative
+	}
+}
 #endif
-		WindowsOnlyCultures = 32,
-#if NET_4_0
-		[Obsolete]
-#endif
-		FrameworkCultures = 64,
-	} // CultureTypes
 
-} // System.Globalization

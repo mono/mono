@@ -356,6 +356,7 @@ System.Globalization/CodePageDataItem.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
 System.Globalization/CultureInfo.cs
+System.Globalization/CultureNotFoundException.cs
 System.Globalization/CultureTypes.cs
 System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
@@ -382,6 +383,7 @@ System.Globalization/TaiwanLunisolarCalendar.cs
 System.Globalization/TextElementEnumerator.cs
 System.Globalization/TextInfo.cs
 System.Globalization/ThaiBuddhistCalendar.cs
+System.Globalization/TimeSpanStyles.cs
 System.Globalization/UmAlQuraCalendar.cs
 System.Globalization/UnicodeCategory.cs
 System.IO/BinaryReader.cs

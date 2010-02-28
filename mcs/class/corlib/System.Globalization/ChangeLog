@@ -1,3 +1,9 @@
+2010-02-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* CultureNotFoundException.cs: new 4.0 type.
+	* CultureTypes.cs: add [Obsolete] for 2 values.
+	* TimeSpanStyles.cs: new 4.0 enum.
+
 2009-12-09  Jb Evain  <jbevain@novell.com>
 
 	* StringInfo.cs: default constructor falls back to an empty string info.
