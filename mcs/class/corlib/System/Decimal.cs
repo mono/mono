@@ -152,11 +152,20 @@ namespace System
 
 		public Decimal (float value) 
 		{
+			if (double2decimal (out this, value, 7) != 0)
+				throw new OverflowException ();
+#if false
+	// This code was introduced in June of 2004 to deal with a
+	// bug at the time with SqlMoney but we have no record
+	// of the bug.   Commented out while we find out why
+	// the unmanaged conversion was taken out and replaced
+	// with the double->string->decimal conversion below
 			if (value > (float)Decimal.MaxValue || value < (float)Decimal.MinValue ||
 				float.IsNaN (value) || float.IsNegativeInfinity (value) || float.IsPositiveInfinity (value)) {
 				throw new OverflowException (Locale.GetText (
 					"Value {0} is greater than Decimal.MaxValue or less than Decimal.MinValue", value));
 			}
+			
 			// we must respect the precision (double2decimal doesn't)
 			Decimal d = Decimal.Parse (value.ToString (CultureInfo.InvariantCulture),
 					NumberStyles.Float, CultureInfo.InvariantCulture);
@@ -164,10 +173,19 @@ namespace System
 			hi = d.hi;
 			lo = d.lo;
 			mid = d.mid;
+#endif
 		}
 
 		public Decimal (double value) 
 		{
+			if (double2decimal (out this, value, 15) != 0)
+				throw new OverflowException ();
+#if false
+	// This code was introduced in June of 2004 to deal with a
+	// bug at the time with SqlMoney but we have no record
+	// of the bug.   Commented out while we find out why
+	// the unmanaged conversion was taken out and replaced
+	// with the double->string->decimal conversion below
 			if (value > (double)Decimal.MaxValue || value < (double)Decimal.MinValue ||
 				double.IsNaN (value) || double.IsNegativeInfinity (value) || double.IsPositiveInfinity (value)) {
 				throw new OverflowException (Locale.GetText (
@@ -180,6 +198,7 @@ namespace System
 			hi = d.hi;
 			lo = d.lo;
 			mid = d.mid;
+#endif
 		}
 
 		public Decimal (int[] bits) 
@@ -1301,8 +1320,8 @@ namespace System
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int decimal2Int64 (ref Decimal val, out long result);
 
-//		[MethodImplAttribute(MethodImplOptions.InternalCall)]
-//		private static extern int double2decimal (out Decimal erg, double val, int digits);
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		private static extern int double2decimal (out Decimal erg, double val, int digits);
 
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private static extern int decimalIncr (ref Decimal d1, ref Decimal d2);

@@ -1,3 +1,13 @@
+2010-02-28  Miguel de Icaza  <miguel@novell.com>
+
+	* Decimal.cs: Enabling the unmanaged double to decimal and float
+	to decimal conversions code again as I am unable to find any
+	regressions in corlib, System.Data, the Silverlight test suite or
+	Rotor's test suite.
+
+	I am enabling it hoping that we can find the original problem that
+	lead us to use the slow path.
+
 2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* AggregateException.cs: Fix ctor vibility.
