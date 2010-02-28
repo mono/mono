@@ -44,10 +44,8 @@ namespace Mono.Security.X509 {
 
 #if INSIDE_CORLIB
 	internal class X509Certificate : ISerializable {
-#elif NET_2_0
-	public class X509Certificate : ISerializable {
 #else
-	public class X509Certificate {
+	public class X509Certificate : ISerializable {
 #endif
 
 		private ASN1 decoder;
@@ -272,13 +270,12 @@ namespace Mono.Security.X509 {
 				}
 				return _dsa; 
 			}
-#if NET_2_0
+
 			set {
 				_dsa = value;
 				if (value != null)
 					_rsa = null;
 			}
-#endif
 		}
 
 		public X509ExtensionCollection Extensions {
@@ -369,13 +366,12 @@ namespace Mono.Security.X509 {
 				}
 				return _rsa; 
 			}
-#if NET_2_0
+
 			set {
 				if (value != null)
 					_dsa = null;
 				_rsa = value;
 			}
-#endif
 		}
 	        
 		public virtual byte[] RawData {
@@ -545,7 +541,7 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-#if INSIDE_CORLIB || NET_2_0
+#if INSIDE_CORLIB
 		public ASN1 GetIssuerName ()
 		{
 			return issuer;

@@ -32,10 +32,8 @@ using System.IO;
 using System.Net;
 using System.Security.Cryptography;
 using System.Security.Cryptography.X509Certificates;
-#if NET_2_0
 using SNS = System.Net.Security;
 using SNCX = System.Security.Cryptography.X509Certificates;
-#endif
 
 namespace Mono.Security.Protocol.Tls {
 
@@ -61,7 +59,6 @@ namespace Mono.Security.Protocol.Tls {
                         // also saved from reflection
                         base.CheckCertRevocationStatus = ServicePointManager.CheckCertificateRevocationList;
 #endif
-#if NET_2_0
 			ClientCertSelection += delegate (X509CertificateCollection clientCerts, X509Certificate serverCertificate,
 				string targetHost, X509CertificateCollection serverRequestedCertificates) {
 				return ((clientCerts == null) || (clientCerts.Count == 0)) ? null : clientCerts [0];
@@ -70,7 +67,6 @@ namespace Mono.Security.Protocol.Tls {
 				X509Certificate2 cert = (certificate as X509Certificate2);
 				return (cert == null) ? null : cert.PrivateKey;
 			};
-#endif
                }
 
 		public bool TrustFailure {
@@ -91,9 +87,7 @@ namespace Mono.Security.Protocol.Tls {
 			// only one problem can be reported by this interface
 			_status = ((failed) ? certificateErrors [0] : 0);
 
-#if NET_2_0
 #pragma warning disable 618
-#endif
 			if (ServicePointManager.CertificatePolicy != null) {
 				ServicePoint sp = _request.ServicePoint;
 				bool res = ServicePointManager.CertificatePolicy.CheckValidationResult (sp, certificate, _request, _status);
@@ -101,10 +95,8 @@ namespace Mono.Security.Protocol.Tls {
 					return false;
 				failed = true;
 			}
-#if NET_2_0
 #pragma warning restore 618
-#endif
-#if NET_2_0
+
 			SNS.RemoteCertificateValidationCallback cb = ServicePointManager.ServerCertificateValidationCallback;
 			if (cb != null) {
 				SNS.SslPolicyErrors ssl_errors = 0;
@@ -122,7 +114,6 @@ namespace Mono.Security.Protocol.Tls {
 					ssl_errors |= SNS.SslPolicyErrors.RemoteCertificateChainErrors;
 				return cb (_request, cert2, chain, ssl_errors);
 			}
-#endif
 			return failed;
 		}
         }

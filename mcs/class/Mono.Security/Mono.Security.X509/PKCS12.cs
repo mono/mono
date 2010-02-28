@@ -329,14 +329,14 @@ namespace Mono.Security.X509 {
 			Password = password;
 			Decode (data);
 		}
-#if NET_2_0
+
 		public PKCS12 (byte[] data, byte[] password)
 			: this ()
 		{
 			_password = password;
 			Decode (data);
 		}
-#endif
+
 		private void Decode (byte[] data)
 		{
 			ASN1 pfx = new ASN1 (data);
