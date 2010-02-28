@@ -509,11 +509,6 @@ namespace Mono.Security.Cryptography {
 				}
 				total -= padding;
 				break;
-#else
-			case PaddingMode.PKCS7:
-				total -= padding;
-				break;
-
 			case PaddingMode.None:	// nothing to do - it's a multiple of block size
 			case PaddingMode.Zeros:	// nothing to do - user must unpad himself
 				break;
