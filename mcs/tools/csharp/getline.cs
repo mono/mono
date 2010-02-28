@@ -188,7 +188,7 @@ namespace Mono.Terminal {
 				Handler.Alt ((char) 8, ConsoleKey.Backspace, CmdDeleteBackword),
 				
 				// DEBUG
-				Handler.Control ('T', CmdDebug),
+				//Handler.Control ('T', CmdDebug),
 
 				// quote
 				Handler.Control ('Q', delegate { HandleChar (Console.ReadKey (true).KeyChar); })
