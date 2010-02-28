@@ -46,47 +46,56 @@ namespace Mono.Documentation
 {
 	public class MDocExportWebdocHtml : MDocCommand
 	{
+		class Options {
+			public Dictionary<string, List<string>> Formats = new Dictionary<string, List<string>>();
+			public List<string> Sources = new List<string>();
+			public bool UseSystemSources = true;
+			public bool ForceUpdate = false;
+			public string OutputDirectory = null;
+		}
+
 		public override void Run (IEnumerable<string> args)
 		{
-			string dir = null;
-			bool forceUpdate = false;
-			var formats = new Dictionary<string, List<string>> ();
-			var formatOptions = MDocAssembler.CreateFormatOptions (this, formats);
-			var sources = new List<string>();
+			var opts = new Options ();
+			var formatOptions = MDocAssembler.CreateFormatOptions (this, opts.Formats);
 			var options = new OptionSet () {
 				{ "force-update",
 					"Always generate new files.  If not specified, will only generate " +
 					"files if the write time of the output directory is older than the " +
 					"write time of the source .tree/.zip files.",
-					v => forceUpdate = v != null },
+					v => opts.ForceUpdate = v != null },
 				formatOptions [0],
+				formatOptions [1],
 				{ "o|out=",
 					"The {PREFIX} to place the generated files and directories.  " + 
 					"Default: \"`dirname FILE`/cache/\".\n" +
 					"Underneath {PREFIX}, `basename FILE .tree` directories will be " + 
 					"created which will contain the pre-generated HTML content.",
-					v => dir = v },
+					v => opts.OutputDirectory = v },
 				{ "r=",
 					"A {SOURCE} file to use for reference purposes.\n" +
 					"Extension methods are searched for among all {SOURCE}s which are referenced.\n" +
 					"This option may be specified multiple times.",
-					v => sources.Add (v) },
-				formatOptions [1],
+					v => opts.Sources.Add (v) },
+				{ "use-system-sources",
+					"Use the system-wide .source files for reference purposes. " +
+					"Default is " + (opts.UseSystemSources ? "enabled" : "disabled") + ".",
+					v => opts.UseSystemSources = v != null },
 			};
 			Parse (options, args, "export-html-webdoc", 
 					"[OPTIONS]+ FILES",
 					"Export mdoc documentation within FILES to HTML for use by ASP.NET webdoc.\n\n" +
 					"FILES are .tree or .zip files as produced by 'mdoc assemble'.");
-			if (formats.Values.All (files => files.Count == 0))
+			if (opts.Formats.Values.All (files => files.Count == 0))
 				Error ("No files specified.");
 			HelpSource.use_css = true;
 			HelpSource.FullHtml = false;
 			SettingsHandler.Settings.EnableEditing = false;
-			foreach (var p in formats)
-				ProcessFiles (dir, forceUpdate, sources, p.Key, p.Value);
+			foreach (var p in opts.Formats)
+				ProcessFiles (opts, p.Key, p.Value);
 		}
 
-		void ProcessFiles (string dir, bool forceUpdate, List<string> sources, string format, List<string> files)
+		void ProcessFiles (Options opts, string format, List<string> files)
 		{
 			foreach (var basePath in 
 					files.Select (f => 
@@ -96,16 +105,16 @@ namespace Mono.Documentation
 				string zipFile  = basePath + ".zip";
 				if (!Exists (treeFile) || !Exists (zipFile))
 					continue;
-				string outDir = dir != null 
-					? Path.Combine (dir, Path.GetFileName (basePath))
+				string outDir = opts.OutputDirectory != null 
+					? Path.Combine (opts.OutputDirectory, Path.GetFileName (basePath))
 					: XmlDocUtils.GetCacheDirectory (basePath);
-				if (!forceUpdate && Directory.Exists (outDir) &&
+				if (!opts.ForceUpdate && Directory.Exists (outDir) &&
 							MaxWriteTime (treeFile, zipFile) < Directory.GetLastWriteTime (outDir))
 					continue;
 				Message (TraceLevel.Warning, "Processing files: {0}, {1}", treeFile, zipFile);
 				Directory.CreateDirectory (outDir);
 				ExtractZipFile (zipFile, outDir);
-				GenerateCache (basePath, format, outDir, sources);
+				GenerateCache (opts, basePath, format, outDir);
 			}
 		}
 
@@ -137,14 +146,21 @@ namespace Mono.Documentation
 			}
 		}
 
-		void GenerateCache (string basePath, string format, string outDir, IEnumerable<string> sources)
+		void GenerateCache (Options opts, string basePath, string format, string outDir)
 		{
 			var hs = RootTree.GetHelpSource (format, basePath);
 			if (hs == null) {
 				Error ("Unable to find a HelpSource for provider '{0}' and file '{1}.tree'.", format, basePath);
 			}
 			var tree = hs.Tree;
-			RootTree docRoot = RootTree.LoadTree (null, null, sources);
+			RootTree docRoot = null;
+			if (!opts.UseSystemSources)
+				docRoot = RootTree.LoadTree (null, null, opts.Sources);
+			else {
+				docRoot = RootTree.LoadTree ();
+				foreach (var source in opts.Sources)
+					docRoot.AddSourceFile (source);
+			}
 			hs.RootTree = docRoot;
 			string helpSourceName = Path.GetFileName (basePath);
 			foreach (Node node in tree.TraverseDepthFirst<Node, Node> (t => t, t => t.Nodes.Cast<Node> ())) {
