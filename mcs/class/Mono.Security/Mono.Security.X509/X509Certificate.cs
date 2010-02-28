@@ -556,7 +556,9 @@ namespace Mono.Security.X509 {
 		{
 			Parse ((byte[]) info.GetValue ("raw", typeof (byte[])));
 		}
+#endif
 
+#if INSIDE_CORLIB || NET_2_0
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
