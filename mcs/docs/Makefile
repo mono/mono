@@ -32,7 +32,7 @@ MONODOC_SOURCES_INSTALL_FILES = \
 
 CLEAN_FILES += $(ASSEMBLED_DOCS)
 
-ifeq (net_2_0, $(PROFILE))
+ifeq (net_4_0, $(PROFILE))
 all-local: build-documentation
 endif
 
