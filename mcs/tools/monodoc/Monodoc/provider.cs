@@ -880,11 +880,20 @@ public class RootTree : Tree {
 		doc.Load (layout);
 
 		return LoadTree (basedir, doc, 
-				Directory.GetFiles (Path.Combine (basedir, "sources"))
-				.Where (file => file.EndsWith (".source")));
+				Where (Directory.GetFiles (Path.Combine (basedir, "sources")),
+					delegate (object file) {return file.ToString ().EndsWith (".source");}));
 	}
 
-	public static RootTree LoadTree (string indexDir, XmlDocument docTree, IEnumerable<string> sourceFiles)
+	delegate bool WherePredicate (object o);
+
+	static IEnumerable Where (IEnumerable source, WherePredicate predicate)
+	{
+		foreach (var e in source)
+			if (predicate (e))
+				yield return e;
+	}
+
+	public static RootTree LoadTree (string indexDir, XmlDocument docTree, IEnumerable/*<string>*/ sourceFiles)
 	{
 		if (docTree == null) {
 			docTree = new XmlDocument ();
@@ -916,7 +925,7 @@ public class RootTree : Tree {
 		//
 		// Load the sources
 		//
-		foreach (var sourceFile in sourceFiles)
+		foreach (string sourceFile in sourceFiles)
 			root.AddSourceFile (sourceFile);
 		
 		foreach (string path in UncompiledHelpSources) {

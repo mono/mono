@@ -1,3 +1,9 @@
+2010-02-28  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile: Remove System.Core.dll reference.
+	* Monodoc/provider.cs: Fix the build: monodoc.dll is build for the 1.1
+	  profile in Mono 2.6, so remove use of generics/etc.
+
 2010-02-26  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Add a System.Core.dll reference; embed monodoc.xml as a

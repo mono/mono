@@ -64,7 +64,6 @@ LIB_MCS_FLAGS = \
 	/r:ICSharpCode.SharpZipLib                                        \
 	/r:$(corlib)                                                      \
 	/r:System.dll                                                     \
-	/r:System.Core.dll                                                \
 	/r:System.Web                                                     \
 	/r:System.Web.Services                                            \
 	/r:System.Xml.dll
