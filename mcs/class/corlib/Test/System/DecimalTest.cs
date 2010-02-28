@@ -309,6 +309,8 @@ namespace MonoTests.System
 
 		ParseTest [] tab = {
 				new ParseTest("1.2345", 1.2345m),
+				new ParseTest("1.2345\0", 1.2345m),
+				new ParseTest("1.2345\0\0\0\0", 1.2345m),
 				new ParseTest("-9876543210", -9876543210m),
 				new ParseTest(NumberFormatInfo.InvariantInfo.CurrencySymbol 
 					+ " (  79,228,162,514,264,337,593,543,950,335.000 ) ", 
@@ -363,6 +365,13 @@ namespace MonoTests.System
 				d = Decimal.Parse ("79228162514264337593543950336");
 				Assert.Fail ("Expected OverflowException" + d);
 			} catch (OverflowException) {
+				//ok
+			}
+
+			try {
+				d = Decimal.Parse ("5\05");
+				Assert.Fail ("Expected FormatException" + d);
+			} catch (FormatException) {
 				//ok
 			}
 		}

@@ -954,6 +954,14 @@ namespace System
 				}
 				else
 				{
+					// trailing zero characters are allowed
+					if (ch == 0){
+						while (++pos < len && s [pos] == 0)
+							;
+						if (pos == len)
+							break;
+					}
+					
 					if (throwex)
 						ThrowAtPos (pos);
 					else
