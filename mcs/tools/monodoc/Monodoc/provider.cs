@@ -885,6 +885,13 @@ public class RootTree : Tree {
 				.Where (file => file.EndsWith (".source")));
 	}
 
+
+	// Compatibility shim w/ Mono 2.6
+	public static RootTree LoadTree (string indexDir, XmlDocument docTree, IEnumerable sourceFiles)
+	{
+		return LoadTree (indexDir, docTree, sourceFiles.Cast<string>());
+	}
+
 	public static RootTree LoadTree (string indexDir, XmlDocument docTree, IEnumerable<string> sourceFiles)
 	{
 		if (docTree == null) {

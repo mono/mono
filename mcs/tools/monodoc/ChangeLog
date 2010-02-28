@@ -1,3 +1,9 @@
+2010-02-28  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/provider.cs: Add
+	  RootTree.LoadTree(string,string,IEnumerable) for compatibility with
+	  Mono 2.6's monodoc.dll.
+
 2010-02-26  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Add a System.Core.dll reference; embed monodoc.xml as a
