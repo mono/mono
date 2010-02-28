@@ -1,3 +1,7 @@
+2010-02-28  Miguel de Icaza  <miguel@novell.com>
+
+	* Makefile: Process `docs' now on the 4.0 profile.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : finally System.ServiceModel.dll is on the centum tests.
