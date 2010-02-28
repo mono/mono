@@ -193,21 +193,21 @@ namespace MonoTests.Remoting
 		}
 
 		[Test]
-		[Ignore ("Fails on MS")]
+		[Category ("NotDotNet")]
 		public void TestInstanceComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetInstanceSurrogate());
 		}
 
 		[Test]
-		[Ignore ("Fails on MS")]
+		[Category ("NotDotNet")]
 		public void TestAbstractComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetAbstractSurrogate());
 		}
 
 		[Test]
-		[Ignore ("Fails on MS")]
+		[Category ("NotDotNet")]
 		public void TestInterfaceComplexParamsInOut ()
 		{
 			RunTestComplexParamsInOut (InternalGetInterfaceSurrogate());

@@ -1,3 +1,11 @@
+2010-02-28  Robert Jordan  <robertj@gmx.net>
+
+	* RealProxy.cs (PrivateInvoke): BeginInvoke return messages
+	do not have out args (by design). The issue has existed for many
+	years but it was invisible because mono_delegate_begin_invoke ()
+	has swallowed exceptions, which was fixed by Gonzalo in r141856.
+	Fixes a couple of disabled remoting tests (#576618).
+
 2009-09-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* RealProxy.cs: for a custom proxy, retrieve the OutArgs before

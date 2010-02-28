@@ -230,9 +230,12 @@ namespace System.Runtime.Remoting.Proxies
 				out_args = null;
 				throw exc.FixRemotingException();
 			}
-			else if (res_msg is IConstructionReturnMessage || mMsg.CallType == CallType.BeginInvoke) {
+			else if (res_msg is IConstructionReturnMessage) {
 				if (out_args == null)
 					out_args = res_msg.OutArgs;
+			}
+			else if (mMsg.CallType == CallType.BeginInvoke) {
+				// We don't have OutArgs in this case.
 			}
 			else if (mMsg.CallType == CallType.Sync) {
 				out_args = ProcessResponse (res_msg, mMsg);
