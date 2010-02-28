@@ -1,3 +1,8 @@
+2010-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (build_imt_slots): Compute the vtable slot correctly for interfaces
+	with static methods. Fixes #583817.
+
 2010-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (get_implicit_generic_array_interfaces): Fix the last change so
