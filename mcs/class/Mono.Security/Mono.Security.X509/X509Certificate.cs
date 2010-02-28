@@ -541,7 +541,6 @@ namespace Mono.Security.X509 {
 			}
 		}
 
-#if INSIDE_CORLIB
 		public ASN1 GetIssuerName ()
 		{
 			return issuer;
@@ -556,16 +555,13 @@ namespace Mono.Security.X509 {
 		{
 			Parse ((byte[]) info.GetValue ("raw", typeof (byte[])));
 		}
-#endif
 
-#if INSIDE_CORLIB || NET_2_0
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
 		public virtual void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
 			info.AddValue ("raw", m_encodedcert);
 			// note: we NEVER serialize the private key
 		}
-#endif
 
 		static byte[] PEM (string type, byte[] data) 
 		{
