@@ -1,5 +1,14 @@
 2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* AggregateException.cs: Fix ctor vibility.
+
+	* Type.cs: IsEnum and IsSerializable are virtual
+	properties now.
+
+	* Tuple.cs: Fix Tuple'8 Create method.
+
+2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* UIntPtr.cs: Add some v4 custom attributes.
 
 2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>

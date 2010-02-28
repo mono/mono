@@ -47,7 +47,7 @@ namespace System
 		{
 		}
 		
-		public AggregateException (SerializationInfo info, StreamingContext ctx)
+		protected AggregateException (SerializationInfo info, StreamingContext ctx)
 			: base (info, ctx)
 		{
 		}
