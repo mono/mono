@@ -1,7 +1,12 @@
 2010-02-28  Miguel de Icaza  <miguel@novell.com>
 
-	* Decimal.cs: Allow null trailing characters when parsing, this is
-	valid in .NET: "5\0" and "5\0\0\0\0", but "5\05" is not.
+	* Decimal.cs: If the NumberFormatInfo is broken and contains the
+	same character for grouping than is used for decimals, the decimal
+	separator gets a priority.  This issue was exposed by the
+	Silverlight Test suite.
+
+	Allow null trailing characters when parsing, this is valid in
+	.NET: "5\0" and "5\0\0\0\0", but "5\05" is not.
 
 	* Decimal.cs: Enabling the unmanaged double to decimal and float
 	to decimal conversions code again as I am unable to find any

@@ -827,7 +827,7 @@ namespace System
 					sb.Append(ch);
 					pos++;
 				}
-				else if (allowedThousands && ch == groupSep[0]) 
+				else if (allowedThousands && ch == groupSep[0] && ch != decimalSep [0]) 
 				{
 					int slen = groupSep.Length;
 					if (slen != 1 && s.IndexOf(groupSep, pos, slen) != pos) 

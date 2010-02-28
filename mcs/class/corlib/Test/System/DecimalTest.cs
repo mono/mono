@@ -77,7 +77,7 @@ namespace MonoTests.System
 		private int [] partsMaxValue = { -1, -1, -1, 0 };
 		private int [] partsMinValue = { -1, -1, -1, negativeBitValue };
 		private int [] parts6 = { 1234, 5678, 8888, negativeScale4Value };
-		private NumberFormatInfo NfiUser;
+		private NumberFormatInfo NfiUser, NfiBroken;
 
 		private CultureInfo old_culture;
 
@@ -108,6 +108,12 @@ namespace MonoTests.System
 			NfiUser.PercentNegativePattern = 2;
 			NfiUser.PercentPositivePattern = 2;
 			NfiUser.PercentSymbol = "%%%";
+
+			NfiBroken = new NumberFormatInfo ();
+			NfiBroken.NumberDecimalSeparator = ".";
+			NfiBroken.NumberGroupSeparator = ".";
+			NfiBroken.CurrencyDecimalSeparator = ".";
+			NfiBroken.CurrencyGroupSeparator = ".";
 		}
 
 		[TestFixtureTearDown]
@@ -275,6 +281,12 @@ namespace MonoTests.System
 			}
 		}
 
+		[Test]
+		public void TestBrokenNFI ()
+		{
+			Assert.AreEqual (5.3m, decimal.Parse ("5.3", NumberStyles.Number, NfiBroken), "Parsing with broken NFI");
+		}
+		
 		[Test]
 		[Category ("TargetJvmNotWorking")]
 		public void TestPercentPattern ()
