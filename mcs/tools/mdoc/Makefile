@@ -13,12 +13,12 @@ MDOC_COMMON_FLAGS = \
 	/resource:Resources/stylesheet.xsl,stylesheet.xsl                           \
 	/r:System.Web.dll                                                           \
 	/r:ICSharpCode.SharpZipLib.dll                                              \
-	/r:$(topdir)/class/lib/net_2_0/Mono.Cecil.dll
+	/r:$(topdir)/class/lib/net_4_0/Mono.Cecil.dll
 
 LOCAL_MCS_FLAGS = $(MDOC_COMMON_FLAGS) \
-	/r:$(topdir)/class/lib/net_2_0/monodoc.dll
+	/r:$(topdir)/class/lib/net_4_0/monodoc.dll
 PROGRAM = mdoc.exe
-PROGRAM_DEPS = $(topdir)/class/lib/net_2_0/monodoc.dll
+PROGRAM_DEPS = $(topdir)/class/lib/net_4_0/monodoc.dll
 
 ifdef NET
 all : copy-with-deps
@@ -26,10 +26,10 @@ all : copy-with-deps
 copy-with-deps:
 	-mkdir mdoc-net
 	cp $(PROGRAM) mdoc-net
-	cp $(topdir)/class/lib/net_2_0/Commons.Xml.Relaxng.dll mdoc-net
-	cp $(topdir)/class/lib/net_2_0/ICSharpCode.SharpZipLib.dll mdoc-net
-	cp $(topdir)/class/lib/net_2_0/Mono.Cecil.dll mdoc-net
-	cp $(topdir)/class/lib/net_2_0/monodoc.dll mdoc-net
+	cp $(topdir)/class/lib/net_4_0/Commons.Xml.Relaxng.dll mdoc-net
+	cp $(topdir)/class/lib/net_4_0/ICSharpCode.SharpZipLib.dll mdoc-net
+	cp $(topdir)/class/lib/net_4_0/Mono.Cecil.dll mdoc-net
+	cp $(topdir)/class/lib/net_4_0/monodoc.dll mdoc-net
 endif
 
 MONODOC_RESOURCES = \
