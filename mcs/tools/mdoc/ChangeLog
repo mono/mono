@@ -1,3 +1,10 @@
+2010-02-28  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/webdoc.cs: Add --use-system-sources option so
+	  that 'mdoc export-html-webdoc' will use the system-installed sources
+	  in addition to any -r'd sources (which was the behavior 2 commits
+	  ago).
+
 2010-02-26  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/assembler.cs: Allow other apps to get the same
