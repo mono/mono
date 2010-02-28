@@ -1,3 +1,8 @@
+2010-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (get_runtime_invoke_type): Avoid sharing byref with I, as the latter
+	needs an indirection.
+
 2010-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* generic-sharing.c: Removed, moved its contents to mini/mini-generic-sharing.c,
