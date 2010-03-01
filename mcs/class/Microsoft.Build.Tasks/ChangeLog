@@ -1,3 +1,8 @@
+2010-03-02  Ankit Jain  <jankit@novell.com>
+
+	Fix tests.
+	* Makefile (EXTRA_DISTFILES): Add Test/resources/junk.txt .
+
 2010-02-06  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Tasks.dll.sources: Add LC.cs
