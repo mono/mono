@@ -38,7 +38,8 @@ TEST_MCS_FLAGS = \
 EXTRA_DISTFILES = \
 	Test/resources/test.cs \
 	Test/resources/Sample.cs \
-	Test/resources/Sample.vb
+	Test/resources/Sample.vb \
+	Test/resources/junk.txt
 
 test-local: Test/resources/test.dll
 
