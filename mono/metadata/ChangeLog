@@ -1,3 +1,7 @@
+2010-03-01  Robert Jordan  <robertj@gmx.net>
+
+	* filewatcher.h: Include glib.h to fix the MSVC build.
+
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* class-internals.h (MonoClass): Get rid of the reflection_info field, add
