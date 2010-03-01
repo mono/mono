@@ -1,3 +1,7 @@
+2010-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs: Forgot a pair of #if NET_4_0.
+
 2010-02-28  Miguel de Icaza  <miguel@novell.com>
 
 	* Decimal.cs: If the NumberFormatInfo is broken and contains the

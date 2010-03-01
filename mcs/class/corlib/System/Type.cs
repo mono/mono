@@ -225,7 +225,11 @@ namespace System {
 			}
 		}
 
-		public virtual bool IsEnum {
+		public
+#if NET_4_0
+		virtual
+#endif
+		bool IsEnum {
 			get {
 				return IsSubclassOf (typeof (Enum));
 			}
@@ -327,7 +331,11 @@ namespace System {
 			}
 		}
 
-		public virtual bool IsSerializable {
+		public
+#if NET_4_0
+		virtual
+#endif
+		bool IsSerializable {
 			get {
 				if ((Attributes & TypeAttributes.Serializable) != 0)
 					return true;
