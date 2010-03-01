@@ -453,6 +453,17 @@ aligns stack frames to 16 bytes on x86, so that local floating point
 and SIMD variables can be properly aligned.  This option turns off the
 alignment, which usually saves one intruction per call, but might
 result in significantly lower floating point and SIMD performance.
+.TP
+\fB--jitmap\fR
+Generate a JIT method map in a /tmp/perf-PID.map file. This file is then
+used, for example, by the perf tool included in recent Linux kernels.
+Each line in the file has:
+.nf
+
+	HEXADDR HEXSIZE methodname
+
+.fi
+Currently this option is only supported on Linux.
 .SH JIT MAINTAINER OPTIONS
 The maintainer options are only used by those developing the runtime
 itself, and not typically of interest to runtime users or developers.
