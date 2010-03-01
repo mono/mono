@@ -218,15 +218,15 @@ namespace System.Drawing
 		/// </summary>
 		///
 		/// <remarks>
-		///	Creates a Point from an integer which holds the X
-		///	coordinate in the high order 16 bits and the Y
+		///	Creates a Point from an integer which holds the Y
+		///	coordinate in the high order 16 bits and the X
 		///	coordinate in the low order 16 bits.
 		/// </remarks>
 		
 		public Point (int dw)
 		{
-			x = dw >> 16;
-			y = dw & 0xffff;
+			y = dw >> 16;
+			x = dw & 0xffff;
 		}
 
 		/// <summary>
