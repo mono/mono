@@ -1,3 +1,8 @@
+2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SslStream.cs: don't do anything if a chain element has
+	no error.
+
 2009-08-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslStream.cs : Always use/provide a X509Chain even if this 

@@ -35,6 +35,9 @@ using System.Reflection;
 using System.Security.Cryptography.X509Certificates;
 using System.Text;
 using System.Threading;
+#if (NET_2_0 || MONOTOUCH) && SECURITY_DEP
+using Mono.Security.Protocol.Tls;
+#endif
 
 namespace System.Net
 {
@@ -352,6 +355,11 @@ namespace System.Net
 										request.ClientCertificates,
 										request, buffer};
 						nstream = (Stream) Activator.CreateInstance (sslStream, args);
+#if (NET_2_0 || MONOTOUCH) && SECURITY_DEP
+						SslClientStream scs = (SslClientStream) nstream;
+						var helper = new ServicePointManager.ChainValidationHelper (request);
+						scs.ServerCertValidation2 += new CertificateValidationCallback2 (helper.ValidateChain);
+#endif
 						certsAvailable = false;
 					}
 					// we also need to set ServicePoint.Certificate 

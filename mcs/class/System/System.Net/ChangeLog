@@ -1,3 +1,14 @@
+2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebConnection.cs: attach a validation callback to the new
+	event in Mono.Security.
+	* ServicePointManager.cs: added a new ValidationHelper
+	class that takes care of building the certificate chain and perform
+	all the check that were done in Mono.Security before. This way the 2.0
+	server certificate validation callback can get all the data it needs.
+
+	Fixes bug #584050.
+
 2010-01-29  Mike Kestner <mkestner@novell.com>
 
 	* HttpUtility.cs: port more of the methods from System.Web file.
