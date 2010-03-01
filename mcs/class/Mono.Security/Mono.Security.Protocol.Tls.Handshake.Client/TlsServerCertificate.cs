@@ -256,7 +256,7 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			// Ideally we should return the SecTrustResult
 #if !MONOTOUCH
 			if (System.IO.File.Exists (OSX509Certificates.SecurityLibrary)){
-#else
+#endif
 				OSX509Certificates.SecTrustResult trustResult =  OSX509Certificates.TrustEvaluateSsl (certificates);
 
 				// We could use the other values of trustResult to pass this extra information to the .NET 2 callback
