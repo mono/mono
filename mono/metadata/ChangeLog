@@ -1,3 +1,7 @@
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (unload_thread_main): Detach the thread at the end.
+
 2010-02-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (get_runtime_invoke_type): Avoid sharing byref with I, as the latter

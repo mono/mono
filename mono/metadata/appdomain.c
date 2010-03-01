@@ -2235,6 +2235,8 @@ unload_thread_main (void *arg)
 
 	mono_gc_collect (mono_gc_max_generation ());
 
+	mono_thread_detach (mono_thread_current ());
+
 	return 0;
 }
 
