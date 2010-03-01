@@ -196,8 +196,7 @@ namespace Mono.Debugger.Soft
 
 			// Test the connection
 			VersionInfo ver = conn.Version;
-			if ((ver.MajorVersion != Connection.MAJOR_VERSION) ||
-				(ver.MinorVersion > Connection.MINOR_VERSION))
+			if (ver.MajorVersion != Connection.MAJOR_VERSION)
 				throw new NotSupportedException (String.Format ("The debuggee implements protocol version {0}.{1}, while {2}.{3} is required.", ver.MajorVersion, ver.MinorVersion, Connection.MAJOR_VERSION, Connection.MINOR_VERSION));
 
 			long root_domain_id = conn.RootDomain;

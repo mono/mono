@@ -225,8 +225,10 @@ namespace Mono.Debugger.Soft
 
 		/*
 		 * Th version of the wire-protocol implemented by the library. The library
-		 * and the debuggee can communicate if they implement the same major version,
-		 * and the debuggee's minor version is <= the library's minor version.
+		 * and the debuggee can communicate if they implement the same major version.
+		 * If they implement a different minor version, they can communicate, but some
+		 * features might not be available. This allows older clients to communicate
+		 * with newer runtimes, and vice versa.
 		 */
 		public const int MAJOR_VERSION = 2;
 		public const int MINOR_VERSION = 1;
