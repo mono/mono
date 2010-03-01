@@ -76,6 +76,7 @@ namespace Mono.Security.Protocol.Tls
 
 		#endregion
 
+		public event CertificateValidationCallback2 ClientCertValidation2;
 		#region Constructors
 
 		public SslServerStream(
@@ -302,6 +303,18 @@ namespace Mono.Security.Protocol.Tls
 			}
 
 			return (errors != null && errors.Length == 0);
+		}
+
+		internal override bool HaveRemoteValidation2Callback {
+			get { return ClientCertValidation2 != null; }
+		}
+
+		internal override bool OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		{
+			CertificateValidationCallback2 cb = ClientCertValidation2;
+			if (cb != null)
+				return cb (collection);
+			return false;
 		}
 
 		internal bool RaiseClientCertificateValidation(

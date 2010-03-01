@@ -193,6 +193,13 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 			ClientContext		context			= (ClientContext)this.Context;
 			AlertDescription	description		= AlertDescription.BadCertificate;
 
+#if NET_2_0
+			if (context.SslStream.HaveRemoteValidation2Callback) {
+				if (context.SslStream.RaiseServerCertificateValidation2 (certificates))
+					return;
+				// Give a chance to the 1.x ICertificatePolicy callback
+			}
+#endif
 			// the leaf is the web server certificate
 			X509Certificate leaf = certificates [0];
 			X509Cert.X509Certificate cert = new X509Cert.X509Certificate (leaf.RawData);

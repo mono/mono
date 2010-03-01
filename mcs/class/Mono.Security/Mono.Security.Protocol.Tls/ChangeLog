@@ -1,3 +1,16 @@
+2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpsClientStream.cs: use Address instead
+	of RequestUri to get the right host name when the request is
+	redirected.
+
+	* SslStreamBase.cs:
+	* SslClientStream.cs:
+	* SslServerStream.cs:
+	added a new callback for certificate validation that gets all the
+	certificates received from the server/client. The callee should
+	build the chain and validate it.
+
 2009-10-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ServerContext.cs:

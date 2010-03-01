@@ -185,6 +185,8 @@ namespace Mono.Security.Protocol.Tls
 															X509CertificateCollection serverRequestedCertificates);
 
 		internal abstract bool OnRemoteCertificateValidation(X509Certificate certificate, int[] errors);
+		internal abstract bool OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection);
+		internal abstract bool HaveRemoteValidation2Callback { get; }
 
 		internal abstract AsymmetricAlgorithm OnLocalPrivateKeySelection(X509Certificate certificate, string targetHost);
 
@@ -203,6 +205,11 @@ namespace Mono.Security.Protocol.Tls
 		internal bool RaiseRemoteCertificateValidation(X509Certificate certificate, int[] errors)
 		{
 			return OnRemoteCertificateValidation(certificate, errors);
+		}
+
+		internal bool RaiseRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		{
+			return OnRemoteCertificateValidation2 (collection);
 		}
 
 		internal AsymmetricAlgorithm RaiseLocalPrivateKeySelection(
