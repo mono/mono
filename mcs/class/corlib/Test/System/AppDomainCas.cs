@@ -118,7 +118,6 @@ namespace MonoCasTests.System {
 		{
 			AppDomain.CreateDomain (null, null, null, null, false);
 		}
-#if NET_2_0
 		[Test]
 		[SecurityPermission (SecurityAction.Deny, ControlAppDomain = true)]
 		[ExpectedException (typeof (SecurityException))]
@@ -126,7 +125,6 @@ namespace MonoCasTests.System {
 		{
 			AppDomain.CreateDomain (null, null, null, null, false, null, null);
 		}
-#endif
 // see http://bugzilla.ximian.com/show_bug.cgi?id=74411
 		[Category ("NotWorking")]
 		[Test]

@@ -147,22 +147,7 @@ namespace MonoTests.Microsoft.Win32
 
 			name = new string ('a', 255);
 
-#if NET_2_0
 			Assert.IsNull (Registry.CurrentUser.OpenSubKey (name), "#B1");
-#else
-			try {
-				Registry.CurrentUser.OpenSubKey (name);
-				Assert.Fail ("#B1");
-			} catch (ArgumentException ex) {
-				// Registry subkeys should not be greater
-				// than or equal to 255 characters
-				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-				Assert.IsNull (ex.InnerException, "#B3");
-				Assert.IsNotNull (ex.Message, "#B4");
-				Assert.IsTrue (ex.Message.IndexOf ("255") != -1, "#B5");
-				Assert.IsNull (ex.ParamName, "#B6");
-			}
-#endif
 
 			name = new string ('a', 256);
 
@@ -625,7 +610,6 @@ namespace MonoTests.Microsoft.Win32
 
 				subKeyName = new string ('a', 255);
 
-#if NET_2_0
 				try {
 					using (RegistryKey createdKey = softwareKey.CreateSubKey (subKeyName)) {
 						Assert.IsNotNull (createdKey, "#B1");
@@ -634,20 +618,6 @@ namespace MonoTests.Microsoft.Win32
 				} finally {
 					softwareKey.DeleteSubKey (subKeyName);
 				}
-#else
-				try {
-					softwareKey.CreateSubKey (subKeyName);
-					Assert.Fail ("#B1");
-				} catch (ArgumentException ex) {
-					// Registry subkeys should not be greater
-					// than or equal to 255 characters
-					Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-					Assert.IsNull (ex.InnerException, "#B3");
-					Assert.IsNotNull (ex.Message, "#B4");
-					Assert.IsTrue (ex.Message.IndexOf ("255") != -1, "#B5");
-					Assert.IsNull (ex.ParamName, "#B6");
-				}
-#endif
 
 				subKeyName = new string ('a', 256);
 
@@ -680,11 +650,7 @@ namespace MonoTests.Microsoft.Win32
 					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 					Assert.AreEqual ("name", ex.ParamName, "#5");
-#else
-					Assert.AreEqual ("subkey", ex.ParamName, "#5");
-#endif
 				}
 			}
 		}
@@ -904,11 +870,7 @@ namespace MonoTests.Microsoft.Win32
 					Assert.IsNull (createdKey, "#A2");
 				}
 
-#if NET_2_0
 				subKeyName = new string ('a', 256);
-#else
-				subKeyName = new string ('a', 255);
-#endif
 
 				try {
 					softwareKey.DeleteSubKey (subKeyName);
@@ -943,11 +905,7 @@ namespace MonoTests.Microsoft.Win32
 						Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 						Assert.IsNull (ex.InnerException, "#3");
 						Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 						Assert.AreEqual ("name", ex.ParamName, "#5");
-#else
-						Assert.AreEqual ("subkey", ex.ParamName, "#5");
-#endif
 					}
 				} finally {
 					try {
@@ -1142,11 +1100,7 @@ namespace MonoTests.Microsoft.Win32
 					Assert.AreEqual (typeof (ArgumentNullException), ex.GetType (), "#2");
 					Assert.IsNull (ex.InnerException, "#3");
 					Assert.IsNotNull (ex.Message, "#4");
-#if NET_2_0
 					Assert.AreEqual ("name", ex.ParamName, "#5");
-#else
-					Assert.AreEqual ("subkey", ex.ParamName, "#5");
-#endif
 				}
 			}
 		}
@@ -1686,7 +1640,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
-#if NET_2_0
 		[Test]
 		public void GetValue_Expand ()
 		{
@@ -1785,7 +1738,6 @@ namespace MonoTests.Microsoft.Win32
 				}
 			}
 		}
-#endif
 
 		[Test]
 		public void GetValueNames ()
@@ -2120,25 +2072,10 @@ namespace MonoTests.Microsoft.Win32
 
 					name = new string ('a', 255);
 
-#if NET_2_0
 					createdKey.SetValue (name, "value2");
 					Assert.IsNotNull (createdKey.GetValue (name), "#B1");
 					createdKey.DeleteValue (name);
 					Assert.IsNull (createdKey.GetValue (name), "#B2");
-#else
-					try {
-						createdKey.SetValue (name, "value2");
-						Assert.Fail ("#B1");
-					} catch (ArgumentException ex) {
-						// Registry subkeys should not be greater
-						// than or equal to 255 characters
-						Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#B2");
-						Assert.IsNull (ex.InnerException, "#B3");
-						Assert.IsNotNull (ex.Message, "#B4");
-						Assert.IsTrue (ex.Message.IndexOf ("255") != -1, "#B5");
-						Assert.IsNull (ex.ParamName, "#B6");
-					}
-#endif
 
 					name = new string ('a', 256);
 
@@ -2538,7 +2475,6 @@ namespace MonoTests.Microsoft.Win32
 			}
 		}
 
-#if NET_2_0
 		[Test] // SetValue (String, Object, RegistryValueKind)
 		public void SetValue2_Key_ReadOnly ()
 		{
@@ -2767,7 +2703,6 @@ namespace MonoTests.Microsoft.Win32
 				Registry.CurrentUser.DeleteSubKeyTree (subKeyName);
 			}
 		}
-#endif
 
 		[Test]
 		public void SubKeyCount ()

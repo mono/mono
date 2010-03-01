@@ -1,3 +1,7 @@
+2010-03-01  Miguel de Icaza  <miguel@novell.com>
+
+	* More dropping of old NET_1_1 code.
+
 2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* net_2_1_raw_corlib.dll.sources: Add Mono.CompilerServices.

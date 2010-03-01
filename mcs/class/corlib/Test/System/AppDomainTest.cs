@@ -29,9 +29,7 @@
 using NUnit.Framework;
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Configuration.Assemblies;
 using System.Globalization;
 using System.IO;
@@ -232,7 +230,6 @@ namespace MonoTests.System
 			AssemblyName name = new AssemblyName ();
 			name.Name = "DefineDynamicAssembly1";
 
-#if NET_2_0
 			try {
 				AppDomain.CurrentDomain.DefineDynamicAssembly (
 					name, AssemblyBuilderAccess.Run |
@@ -247,12 +244,6 @@ namespace MonoTests.System
 				Assert.IsNotNull (ex.ParamName, "#6");
 				Assert.AreEqual ("access", ex.ParamName, "#7");
 			}
-#else
-			AssemblyBuilder ab = AppDomain.CurrentDomain.DefineDynamicAssembly (
-				name, AssemblyBuilderAccess.Run |
-				(AssemblyBuilderAccess) 666);
-			Assert.IsNotNull (ab, "#1");
-#endif
 		}
 
 		[Test] // DefineDynamicAssembly (AssemblyName, AssemblyBuilderAccess)

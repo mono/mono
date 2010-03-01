@@ -24,11 +24,7 @@ namespace MonoTests.System
 		private bool RunningOnWindows {
 			get {
 				int os = (int)Environment.OSVersion.Platform;
-#if NET_2_0
 				return (os != 4);
-#else
-				return (os != 128);
-#endif
 			}
 		}
 
@@ -87,7 +83,6 @@ namespace MonoTests.System
 			// sense only under Windows (i.e. reversed \\ for local files)
 			if (RunningOnWindows)
 				expected_path = "//" + expected_path;
-#if NET_2_0
 			try {
 				// under 2.0 the NotSupportedException is throw when getting 
 				// (and not setting) the ApplicationBase property
@@ -98,9 +93,6 @@ namespace MonoTests.System
 				if (!RunningOnWindows)
 					throw;
 			}
-#else
-			Assert.AreEqual (expected_path, setup.ApplicationBase);
-#endif
 		}
 
 		[Test]
@@ -128,7 +120,6 @@ namespace MonoTests.System
 		{
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = "lala:la";
-#if NET_2_0
 			try {
 				// under 2.0 the NotSupportedException is throw when getting 
 				// (and not setting) the ApplicationBase property
@@ -140,14 +131,6 @@ namespace MonoTests.System
 				if (!RunningOnWindows)
 					throw;
 			}
-#else
-			// under 1.x a "bad" path containing ":" will be returned "as-is"
-			// but the name is legal for linux so we return a full path
-			if (RunningOnWindows)
-				Assert.AreEqual ("lala:la", setup.ApplicationBase);
-			else
-				Assert.AreEqual (Path.GetFullPath ("lala:la"), setup.ApplicationBase);
-#endif
 		}
 
 		[Test]
@@ -157,7 +140,6 @@ namespace MonoTests.System
 			// This is failing because of (probably) a windows-ism, so don't worry
 			AppDomainSetup setup = new AppDomainSetup ();
 			setup.ApplicationBase = "file:///lala:la";
-#if NET_2_0
 			try {
 				// under 2.0 the NotSupportedException is throw when getting 
 				// (and not setting) the ApplicationBase property
@@ -169,14 +151,6 @@ namespace MonoTests.System
 				if (!RunningOnWindows)
 					throw;
 			}
-#else
-			// under 1.x a "bad" path containing ":" will be returned "as-is"
-			// but the name is legal for linux so we return a full path
-			if (RunningOnWindows)
-				Assert.AreEqual ("lala:la", setup.ApplicationBase);
-			else
-				Assert.AreEqual ("/lala:la", setup.ApplicationBase);
-#endif
 		}
 
 		[Test]
