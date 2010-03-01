@@ -1,5 +1,10 @@
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* VirtualMachine.cs: Allow working with runtimes implementing a different
+	minor version of the debugger protocol.
+
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* Connection.cs: Send the protocol version used by the client to the debuggee
 	after the handshake.
 
