@@ -1,3 +1,9 @@
+2010-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* CustomAttributeData.cs:
+	* ExceptionHandlingClause.cs:
+	* LocalVariableInfo.cs: Add some v4 bits.
+
 2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* PropertyInfo.cs: Small hack to avoid having cor-compare

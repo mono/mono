@@ -40,7 +40,12 @@ namespace System.Reflection {
 		internal ushort position;
 		#endregion
 
-		internal LocalVariableInfo () {
+#if NET_4_0
+		protected
+#else
+		internal
+#endif
+		LocalVariableInfo () {
 		}
 
 		public virtual bool IsPinned {

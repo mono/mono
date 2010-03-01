@@ -34,7 +34,12 @@ using System.Runtime.InteropServices;
 namespace System.Reflection {
 
 	[ComVisible (true)]
-	public sealed class ExceptionHandlingClause {
+#if NET_4_0
+	public
+#else
+	public sealed
+#endif
+	class ExceptionHandlingClause {
 		#region Sync with reflection.h
 		internal Type catch_type;
 		internal int filter_offset;
@@ -45,46 +50,79 @@ namespace System.Reflection {
 		internal int handler_length;
 		#endregion
 
-		internal ExceptionHandlingClause () {
+#if NET_4_0
+		protected
+#else
+		internal
+#endif
+		ExceptionHandlingClause () {
 		}
 
-		public Type CatchType {
+		public
+#if NET_4_0
+		virtual
+#endif
+		Type CatchType {
 			get {
 				return catch_type;
 			}
 		}
 
-		public int FilterOffset {
+		public
+#if NET_4_0
+		virtual
+#endif
+		int FilterOffset {
 			get {
 				return filter_offset;
 			}
 		}
 
-		public ExceptionHandlingClauseOptions Flags {
+		public
+#if NET_4_0
+		virtual
+#endif
+		ExceptionHandlingClauseOptions Flags {
 			get {
 				return flags;
 			}
 		}
 
-		public int HandlerLength {
+		public
+#if NET_4_0
+		virtual
+#endif
+		int HandlerLength {
 			get {
 				return handler_length;
 			}
 		}
 
-		public int HandlerOffset {
+		public
+#if NET_4_0
+		virtual
+#endif
+		int HandlerOffset {
 			get {
 				return handler_offset;
 			}
 		}
 
-		public int TryLength {
+		public
+#if NET_4_0
+		virtual
+#endif
+		int TryLength {
 			get {
 				return try_length;
 			}
 		}
 
-		public int TryOffset {
+		public
+#if NET_4_0
+		virtual
+#endif
+		int TryOffset {
 			get {
 				return try_offset;
 			}
