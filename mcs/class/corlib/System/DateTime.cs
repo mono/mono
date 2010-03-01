@@ -1254,6 +1254,9 @@ namespace System
 			if (format == null)
 				return false;
 
+			if (s == null)
+				return false;
+
 			if ((style & DateTimeStyles.AllowLeadingWhite) != 0) {
 				format = format.TrimStart (null);
 
