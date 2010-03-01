@@ -1,3 +1,8 @@
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (type_commands): Fix the setting of fields with a reference
+	type.
+
 2010-02-26  Robert Jordan  <robertj@gmx.net>
 
 	* tasklets.c (continuation_store): Return from an error condition
