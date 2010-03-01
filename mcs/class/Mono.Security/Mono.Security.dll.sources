@@ -36,6 +36,7 @@
 ./Mono.Security.Cryptography/SHA224.cs
 ./Mono.Security.Cryptography/SHA224Managed.cs
 ./Mono.Security.Cryptography/SymmetricTransform.cs
+./Mono.Security.X509/OSX509Certificates.cs
 ./Mono.Security.X509/PKCS12.cs
 ./Mono.Security.X509/X501Name.cs
 ./Mono.Security.X509/X509Builder.cs
