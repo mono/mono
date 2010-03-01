@@ -2417,6 +2417,15 @@ namespace MonoTests.System
 			// bug #444103.
 			DateTime.ParseExact ("12:00:00", "HH:mm:ss.FFFFFFF", null);
 		}
+               
+		[Test]
+		public void TryParseExact_NullString ()
+		{
+			DateTime dt;
+			DateTime.TryParseExact(null, "yyyy'-'MM'-'dd'T'HH':'mm':'ss'Z'", CultureInfo.InvariantCulture,
+					       DateTimeStyles.AssumeUniversal | DateTimeStyles.AdjustToUniversal, out dt);
+			Assert.AreEqual(default(DateTime), dt);
+		}
 #endif
 	}
 }

@@ -1,3 +1,8 @@
+2010-03-01  Miguel de Icaza  <miguel@novell.com>
+
+	* DateTime.cs (DoParse): patch from Tom Philpot, while using
+	TryParse if s is null, we should return false, not crash.
+
 2010-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Type.cs: Forgot a pair of #if NET_4_0.
