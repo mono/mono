@@ -1,5 +1,11 @@
 2010-02-28  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/webdoc.cs: Allow .source files to be provided to
+	  'mdoc export-html-webdoc', which will cause the .source files to be
+	  read and all referenced .tree/.zip files to be processed.
+
+2010-02-28  Jonathan Pryor <jpryor@novell.com>
+
 	* Mono.Documentation/webdoc.cs: Add --use-system-sources option so
 	  that 'mdoc export-html-webdoc' will use the system-installed sources
 	  in addition to any -r'd sources (which was the behavior 2 commits

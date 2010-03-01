@@ -12,6 +12,7 @@ LOCAL_MCS_FLAGS = \
 	/resource:Resources/overview.xsl,overview.xsl                               \
 	/resource:Resources/stylesheet.xsl,stylesheet.xsl                           \
 	/r:System.Web.dll                                                           \
+	/r:System.Xml.Linq.dll                                                      \
 	/r:ICSharpCode.SharpZipLib.dll                                              \
 	/r:$(topdir)/class/lib/net_1_1/monodoc.dll                                  \
 	/r:$(topdir)/class/lib/net_1_1/Mono.Cecil.dll
