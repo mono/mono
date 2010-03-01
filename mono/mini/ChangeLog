@@ -1,4 +1,10 @@
 
+Mon Mar 1 15:20:44 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mini-arm.c: make the arm cpu arch configurable with the
+	MONO_CPU_ARCH env var (for example: "armv4 thumb").
+	Bug #584198.
+
 Mon Mar 1 14:48:35 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* mini.c, mini.h, driver.c: added the --jitmap option to enable
