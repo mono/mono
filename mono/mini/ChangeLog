@@ -1,3 +1,10 @@
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (type_commands): Fix the setting of fields with a reference
+	type.
+
+2010-03-01  Robert Jordan  <robertj@gmx.net>
+
 
 Mon Mar 1 15:20:44 CET 2010 Paolo Molaro <lupus@ximian.com>
 
@@ -17,7 +24,7 @@ Mon Mar 1 14:43:55 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 2010-03-01  Robert Jordan  <robertj@gmx.net>
 
-	* Makefile.am: fix the non-static build. 
+	* Makefile.am: fix the non-static build.
 
 2010-02-26  Zoltan Varga  <vargaz@gmail.com>
 
