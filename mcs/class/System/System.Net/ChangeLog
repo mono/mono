@@ -1,3 +1,8 @@
+2010-03-01  Miguel de Icaza  <miguel@novell.com>
+
+	* WebHeaderCollection.cs: Apply 2 year old patch from Yves Bastide
+	that fixes the keys casing in the collection; Fixes 325491
+
 2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebConnection.cs: attach a validation callback to the new
