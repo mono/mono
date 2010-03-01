@@ -1,5 +1,9 @@
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (domain_commands): Add a new command to create a boxed value.
+
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (type_commands): Fix the setting of fields with a reference
 	type.
 
