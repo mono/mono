@@ -1,3 +1,7 @@
+2010-03-01  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile.am: fix the non-static build. 
+
 2010-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-generic-sharing.c: Move the contents of ../metadata/generic-sharing.c
