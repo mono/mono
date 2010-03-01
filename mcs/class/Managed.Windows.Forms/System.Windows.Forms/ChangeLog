@@ -1,3 +1,10 @@
+2010-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ComboBox.cs: When creating DrawItemEventArgs pass the fore color and
+	back color arguments depending on the higlight/focus state, just like
+	.net.
+	Fixes #572643.
+
 2010-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripMenuItem.cs: Don't try to use SystemColors.MenuText if fore
