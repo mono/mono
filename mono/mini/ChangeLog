@@ -1,4 +1,9 @@
 
+Mon Mar 1 14:48:35 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, mini.h, driver.c: added the --jitmap option to enable
+	support for the perf tool on Linux.
+
 Mon Mar 1 14:43:55 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* method-to-ir.c: make string.InsertenalSetChar() specialization
