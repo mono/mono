@@ -48,7 +48,7 @@ namespace Mono.Security.Protocol.Tls {
 
                 public HttpsClientStream (Stream stream, X509CertificateCollection clientCertificates,
 					HttpWebRequest request, byte [] buffer)
-                        : base (stream, request.RequestUri.Host, false, (Mono.Security.Protocol.Tls.SecurityProtocolType)
+                        : base (stream, request.Address.Host, false, (Mono.Security.Protocol.Tls.SecurityProtocolType)
 				ServicePointManager.SecurityProtocol, clientCertificates)
                 {
                         // this constructor permit access to the WebRequest to call
@@ -105,6 +105,9 @@ namespace Mono.Security.Protocol.Tls {
 #pragma warning restore 618
 #endif
 #if NET_2_0
+			if (HaveRemoteValidation2Callback)
+				return failed; // The validation already tried the 2.0 callback 
+
 			SNS.RemoteCertificateValidationCallback cb = ServicePointManager.ServerCertificateValidationCallback;
 			if (cb != null) {
 				SNS.SslPolicyErrors ssl_errors = 0;
