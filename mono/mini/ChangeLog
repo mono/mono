@@ -3,9 +3,6 @@
 	* debugger-agent.c (type_commands): Fix the setting of fields with a reference
 	type.
 
-2010-03-01  Robert Jordan  <robertj@gmx.net>
-
-
 Mon Mar 1 15:20:44 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* mini-arm.c: make the arm cpu arch configurable with the
