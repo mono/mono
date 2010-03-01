@@ -286,7 +286,8 @@ namespace Mono.Debugger.Soft
 			RESUME = 4,
 			EXIT = 5,
 			DISPOSE = 6,
-			INVOKE_METHOD = 7
+			INVOKE_METHOD = 7,
+			SET_PROTOCOL_VERSION = 8
 		}
 
 		enum CmdEvent {
@@ -849,6 +850,24 @@ namespace Mono.Debugger.Soft
 			receiver_thread.Start ();
 
 			Version = VM_GetVersion ();
+
+			//
+			// Tell the debuggee our protocol version, so newer debuggees can work
+			// with older clients
+			//
+
+			//
+			// Older debuggees might not support this request
+			EventHandler<ErrorHandlerEventArgs> OrigErrorHandler = ErrorHandler;
+			ErrorHandler = null;
+			ErrorHandler += delegate (object sender, ErrorHandlerEventArgs args) {
+				throw new NotSupportedException ();
+			};
+			try {
+				VM_SetProtocolVersion (MAJOR_VERSION, MINOR_VERSION);
+			} catch (NotSupportedException) {
+			}
+			ErrorHandler = OrigErrorHandler;
 		}
 
 		public EndPoint EndPoint {
@@ -1153,6 +1172,10 @@ namespace Mono.Debugger.Soft
 			info.MajorVersion = res.ReadInt ();
 			info.MinorVersion = res.ReadInt ();
 			return info;
+		}
+
+		public void VM_SetProtocolVersion (int major, int minor) {
+			SendReceive (CommandSet.VM, (int)CmdVM.SET_PROTOCOL_VERSION, new PacketWriter ().WriteInt (major).WriteInt (minor));
 		}
 
 		public long[] VM_GetThreads () {
