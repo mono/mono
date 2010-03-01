@@ -1,3 +1,7 @@
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* Array.cs (CreateArray): Disallow creation of arrays of unfinished types.
+
 2010-03-01  Miguel de Icaza  <miguel@novell.com>
 
 	* DateTime.cs (DoParse): patch from Tom Philpot, while using
