@@ -1,5 +1,11 @@
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c: Add a new command to communicate the protocol version used
+	by the client. This could be used to allow newer runtimes to communicate with
+	older clients.
+
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (domain_commands): Add a new command to create a boxed value.
 
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
