@@ -1,5 +1,10 @@
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* Connection.cs: Send the protocol version used by the client to the debuggee
+	after the handshake.
+
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* Location.cs: Implement ToString ().
 
 	* AppDomainMirror.cs (CreateBoxedValue): New method to create a boxed value from
