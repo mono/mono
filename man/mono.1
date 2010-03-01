@@ -1426,6 +1426,22 @@ For example:
 \fBMONO_NO_TLS\fR
 Disable inlining of thread local accesses. Try setting this if you get a segfault
 early on in the execution of mono.
+.TP
+\fBMONO_CPU_ARCH\fR
+Override the automatic cpu detection mechanism. Currently used only on arm.
+The format of the value is as follows:
+.nf
+
+	"armvV [thumb]"
+
+.fi
+where V is the architecture number 4, 5, 6, 7 and the options can be currently be
+"thunb". Example:
+.nf
+
+	MONO_CPU_ARCH="armv4 thumb" mono ...
+
+.fi
 .TP 
 \fBMONO_SHARED_DIR\fR
 If set its the directory where the ".wapi" handle state is stored.
