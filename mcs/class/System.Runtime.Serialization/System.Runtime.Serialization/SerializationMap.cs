@@ -78,7 +78,7 @@ namespace System.Runtime.Serialization
 	  exists (and raises InvalidOperationException if required).
 
 */
-	internal abstract class SerializationMap
+	internal abstract partial class SerializationMap
 	{
 		public const BindingFlags AllInstanceFlags =
 			BindingFlags.Public | BindingFlags.NonPublic |
@@ -461,7 +461,7 @@ namespace System.Runtime.Serialization
 		}
 	}
 
-	internal class XmlSerializableMap : SerializationMap
+	internal partial class XmlSerializableMap : SerializationMap
 	{
 		public XmlSerializableMap (Type type, QName qname, KnownTypeCollection knownTypes)
 			: base (type, qname, knownTypes)
@@ -494,7 +494,7 @@ namespace System.Runtime.Serialization
 #endif
 	}
 
-	internal class SharedContractMap : SerializationMap
+	internal partial class SharedContractMap : SerializationMap
 	{
 		public SharedContractMap (
 			Type type, QName qname, KnownTypeCollection knownTypes)
@@ -559,7 +559,7 @@ namespace System.Runtime.Serialization
 		}
 	}
 
-	internal class DefaultTypeMap : SerializationMap
+	internal partial class DefaultTypeMap : SerializationMap
 	{
 		public DefaultTypeMap (Type type, KnownTypeCollection knownTypes)
 			: base (type, KnownTypeCollection.GetContractQName (type, null, null), knownTypes)
@@ -590,13 +590,16 @@ namespace System.Runtime.Serialization
 
 	// FIXME: it still needs to consider ItemName/KeyName/ValueName
 	// (especially Dictionary collection is not likely considered yet.)
-	internal class CollectionContractTypeMap : CollectionTypeMap
+	internal partial class CollectionContractTypeMap : CollectionTypeMap
 	{
+		CollectionDataContractAttribute a;
+
 		public CollectionContractTypeMap (
 			Type type, CollectionDataContractAttribute a, Type elementType,
 			QName qname, KnownTypeCollection knownTypes)
 			: base (type, elementType, qname, knownTypes)
 		{
+			this.a = a;
 			IsReference = a.IsReference;
 		}
 
@@ -609,7 +612,7 @@ namespace System.Runtime.Serialization
 	{
 	}
 
-	internal class CollectionTypeMap : SerializationMap, ICollectionTypeMap
+	internal partial class CollectionTypeMap : SerializationMap, ICollectionTypeMap
 	{
 		Type element_type;
 		internal QName element_qname;
@@ -765,7 +768,7 @@ namespace System.Runtime.Serialization
 #endif
 	}
 
-	internal class DictionaryTypeMap : SerializationMap, ICollectionTypeMap
+	internal partial class DictionaryTypeMap : SerializationMap, ICollectionTypeMap
 	{
 		Type key_type, value_type;
 		QName dict_qname, item_qname, key_qname, value_qname;
@@ -955,7 +958,7 @@ namespace System.Runtime.Serialization
 #endif
 	}
 
-	internal class SharedTypeMap : SerializationMap
+	internal partial class SharedTypeMap : SerializationMap
 	{
 		public SharedTypeMap (
 			Type type, QName qname, KnownTypeCollection knownTypes)
@@ -996,7 +999,7 @@ namespace System.Runtime.Serialization
 		}
 	}
 
-	internal class EnumMap : SerializationMap
+	internal partial class EnumMap : SerializationMap
 	{
 		List<EnumMemberInfo> enum_members;
 		bool flag_attr;

@@ -1,3 +1,7 @@
+2010-03-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XsdDataContractExporterTest.cs : remove [NotWorking].
+
 2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractImporterTest.cs : added Dictionary export tests.

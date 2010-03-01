@@ -1,3 +1,9 @@
+2010-03-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.XsdExporter.cs, XsdDataContractExporter-new.cs:
+	  refresh implementation to reflect the latest WCF impl.
+	* SerializationMap.cs : make types partial.
+
 2010-02-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractImporter.cs : fix extension type name (and comment).

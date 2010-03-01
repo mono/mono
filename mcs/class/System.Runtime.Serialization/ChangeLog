@@ -1,3 +1,8 @@
+2010-03-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Runtime.Serialization.dll.sources: use new implementation
+	  (will be renamed later).
+
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile: add Test/Resources/Schemas/* to extra dist.
