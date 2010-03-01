@@ -609,9 +609,12 @@ internal class Win32ResFileReader {
 		return w1 | (w2 << 16);
 	}
 
-	private void read_padding () {
-		while ((res_file.Position % 4) != 0)
-			read_int16 ();
+	private bool read_padding () {
+		while ((res_file.Position % 4) != 0){
+			if (read_int16 () == -1)
+				return false;
+		}
+		return true;
 	}
 
 	NameOrId read_ordinal () {
@@ -652,8 +655,9 @@ internal class Win32ResFileReader {
 
 		while (true) {
 
-			read_padding ();
-
+			if (!read_padding ())
+				break;
+			
 			int data_size = read_int32 ();
 
 			if (data_size == -1)
@@ -665,8 +669,9 @@ internal class Win32ResFileReader {
 			NameOrId type = read_ordinal ();
 			NameOrId name = read_ordinal ();
 
-			read_padding ();
-
+			if (!read_padding ())
+				break;
+			
 			//int data_version = 
 			read_int32 ();
 			//int memory_flags =
@@ -682,7 +687,8 @@ internal class Win32ResFileReader {
 				continue;
 
 			byte[] data = new byte [data_size];
-			res_file.Read (data, 0, data_size);
+			if (res_file.Read (data, 0, data_size) != data_size)
+				break;
 
 			resources.Add (new Win32EncodedResource (type, name, language_id, data));
 		}
