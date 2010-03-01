@@ -43,5 +43,9 @@ namespace Mono.Debugger.Soft
 				return line_number;
 			}
 	    }
+
+		public override string ToString () {
+			return String.Format ("{0}+0x{1:x} at {2}:{3}", Method.FullName, ILOffset, SourceFile, LineNumber);
+		}
     }
 }

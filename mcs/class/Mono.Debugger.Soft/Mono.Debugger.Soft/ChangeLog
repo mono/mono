@@ -1,5 +1,7 @@
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* Location.cs: Implement ToString ().
+
 	* AppDomainMirror.cs (CreateBoxedValue): New method to create a boxed value from
 	a primitive value or struct.
 
