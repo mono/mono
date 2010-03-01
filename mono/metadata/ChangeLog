@@ -1,3 +1,22 @@
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* class-internals.h (MonoClass): Get rid of the reflection_info field, add
+	a GC handle instead. This is a bit slower to access, but avoids burdening the
+	GC with 100s of individual roots.
+
+	* reflection.c (mono_class_get_ref_info):
+	(mono_class_set_ref_info):
+	(mono_class_free_ref_info): New internal helper fuctions.
+
+	* reflection.c appdomain.c icall.c class.c: Use the new helper functions instead
+	of accessing klass->reflection_info directly.
+
+	* sgen-gc.c (alloc_complex_descriptor): Fix the computation of the number of
+	words.
+
+	* gc.c (alloc_handle): Create a GC descriptor for the 'entries' array, free
+	the previous array.
+
 2010-02-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (get_runtime_invoke_type): Avoid sharing byref with I, as the latter
