@@ -1,3 +1,9 @@
+
+Mon Mar 1 14:43:55 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* method-to-ir.c: make string.InsertenalSetChar() specialization
+	effective.
+
 2010-03-01  Robert Jordan  <robertj@gmx.net>
 
 	* Makefile.am: fix the non-static build. 
