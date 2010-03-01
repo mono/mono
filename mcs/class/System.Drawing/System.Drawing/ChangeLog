@@ -1,3 +1,8 @@
+2010-03-01  Miguel de Icaza  <miguel@novell.com>
+
+	* Point.cs: Fix #554635, our constructor that takes an int had the
+	values for X and Y swapped out.
+
 2009-10-13 Marek Safar  <marek.safar@gmail.com>
 
 	* KnownColors.cs: FindColorMatch has to match only predefined color
