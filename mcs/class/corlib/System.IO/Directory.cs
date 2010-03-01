@@ -154,7 +154,7 @@ namespace System.IO
 				 */
 				if (error == MonoIOError.ERROR_FILE_NOT_FOUND) {
 					if (File.Exists (path))
-						throw new IOException ("Directory does not exist, but a file of the same name exist.");
+						throw new IOException ("Directory does not exist, but a file of the same name exists.");
 					else
 						throw new DirectoryNotFoundException ("Directory does not exist.");
 				} else
