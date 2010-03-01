@@ -312,7 +312,8 @@ namespace Mono.Debugger.Soft
 			GET_ASSEMBLIES = 3,
 			GET_ENTRY_ASSEMBLY = 4,
 			CREATE_STRING = 5,
-			GET_CORLIB = 6
+			GET_CORLIB = 6,
+			CREATE_BOXED_VALUE = 7
 		}
 
 		enum CmdAssembly {
@@ -1245,6 +1246,10 @@ namespace Mono.Debugger.Soft
 
 		public long Domain_CreateString (long id, string s) {
 			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_STRING, new PacketWriter ().WriteId (id).WriteString (s)).ReadId ();
+		}
+
+		public long Domain_CreateBoxedValue (long id, long type_id, ValueImpl v) {
+			return SendReceive (CommandSet.APPDOMAIN, (int)CmdAppDomain.CREATE_BOXED_VALUE, new PacketWriter ().WriteId (id).WriteId (type_id).WriteValue (v)).ReadId ();
 		}
 
 		/*

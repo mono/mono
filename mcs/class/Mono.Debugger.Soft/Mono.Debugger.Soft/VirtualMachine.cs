@@ -183,6 +183,8 @@ namespace Mono.Debugger.Soft
 				throw new InvalidStackFrameException ();
 			case ErrorCode.NOT_SUSPENDED:
 				throw new InvalidOperationException ("The vm is not suspended.");
+			case ErrorCode.NOT_IMPLEMENTED:
+				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
 			default:
 				throw new CommandException (args.ErrorCode);
 			}

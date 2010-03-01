@@ -1,3 +1,8 @@
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* AppDomainMirror.cs (CreateBoxedValue): New method to create a boxed value from
+	a primitive value or struct.
+
 2010-02-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* Connection.cs: Throw a NotSupportedException if the protocol version doesn't

@@ -56,9 +56,25 @@ namespace Mono.Debugger.Soft
 			return vm.GetObject<StringMirror> (vm.conn.Domain_CreateString (id, s));
 		}
 
+		public ObjectMirror CreateBoxedValue (Value value) {
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			if (!(value is PrimitiveValue) && !(value is StructMirror))
+				throw new ArgumentException ("Value must be a PrimitiveValue or a StructMirror", "value");
+			if ((value is PrimitiveValue) && (value as PrimitiveValue).Value == null)
+				return null;
+
+			TypeMirror t = null;
+			if (value is PrimitiveValue)
+				t = GetCorrespondingType ((value as PrimitiveValue).Value.GetType ());
+			else
+				t = (value as StructMirror).Type;
+
+			return vm.GetObject<ObjectMirror> (vm.conn.Domain_CreateBoxedValue (id, t.Id, vm.EncodeValue (value)));
+		}
+
 		TypeMirror[] primitiveTypes = new TypeMirror [32];
 		
-
 		public TypeMirror GetCorrespondingType (Type t) {
 			if (t == null)
 				throw new ArgumentNullException ("t");
