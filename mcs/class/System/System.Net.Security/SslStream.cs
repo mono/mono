@@ -376,6 +376,8 @@ namespace System.Net.Security
 
 					// non-SSL specific X509 checks (i.e. RFC3280 related checks)
 					foreach (X509ChainStatus status in chain.ChainStatus) {
+						if (status.Status == X509ChainStatusFlags.NoError)
+							continue;
 						if ((status.Status & X509ChainStatusFlags.PartialChain) != 0)
 							errors |= SslPolicyErrors.RemoteCertificateNotAvailable;
 						else
