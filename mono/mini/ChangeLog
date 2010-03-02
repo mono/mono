@@ -1,3 +1,7 @@
+2010-03-02  Levi Bard  <levi@unity3d.com>
+
+	* debugger-agent.c: Invalidate thread stacks on domain unload.
+
 2010-02-26  Martin Baulig  <martin@ximian.com>
 
 	* debug-debugger.c (MonoDebuggerInfo): Added `abort_runtime_invoke'.
