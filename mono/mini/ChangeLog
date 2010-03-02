@@ -1,3 +1,7 @@
+2010-03-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* cpu-<ARCH>.md: dummy_use was missing src1:i.
+
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c: Add a log message printing the protocol version.
