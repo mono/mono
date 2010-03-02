@@ -2376,6 +2376,28 @@ make_transparent_proxy (MonoObject *obj, gboolean *failure, MonoObject **exc)
 	return (MonoObject*) transparent_proxy;
 }
 
+void
+mono_thread_internal_reset_abort (MonoThread *thread)
+{
+	ensure_synch_cs_set (thread);
+
+	EnterCriticalSection (thread->synch_cs);
+
+	thread->state &= ~ThreadState_AbortRequested;
+
+	if (thread->abort_exc) {
+		thread->abort_exc = NULL;
+		if (thread->abort_state_handle) {
+			mono_gchandle_free (thread->abort_state_handle);
+			/* This is actually not necessary - the handle
+			   only counts if the exception is set */
+			thread->abort_state_handle = 0;
+		}
+	}
+
+	LeaveCriticalSection (thread->synch_cs);
+}
+
 MonoObject*
 ves_icall_System_Threading_Thread_GetAbortExceptionState (MonoThread *thread)
 {

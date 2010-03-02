@@ -145,6 +145,8 @@ void ves_icall_System_Threading_Thread_MemoryBarrier (void) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_Interrupt_internal (MonoThread *this_obj) MONO_INTERNAL;
 void ves_icall_System_Threading_Thread_SpinWait_nop (void) MONO_INTERNAL;
 
+void mono_thread_internal_reset_abort (MonoThread *thread) MONO_INTERNAL;
+
 void mono_alloc_special_static_data_free (GHashTable *special_static_fields) MONO_INTERNAL;
 void mono_thread_free_local_slot_values (int slot, MonoBoolean thread_local) MONO_INTERNAL;
 void mono_thread_current_check_pending_interrupt (void) MONO_INTERNAL;
