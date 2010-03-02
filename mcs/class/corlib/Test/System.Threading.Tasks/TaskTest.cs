@@ -32,7 +32,6 @@ using NUnit.Framework;
 namespace MonoTests.System.Threading.Tasks
 {
 	[TestFixture]
-	[Category ("NotWorking")] //This hangs on my 4-core machine 100% of the time
 	public class TaskTests
 	{
 		Task[]      tasks;

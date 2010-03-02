@@ -62,19 +62,22 @@ namespace System.Threading.Tasks
 		CancellationToken token;			
 		
 		public Task (Action action) : this (action, TaskCreationOptions.None)
-		{	
+		{
+			
 		}
 		
 		public Task (Action action, TaskCreationOptions options) : this (action, CancellationToken.None, options)
-		{	
+		{
+			
 		}
 		
 		public Task (Action action, CancellationToken token) : this (action, token, TaskCreationOptions.None)
-		{	
+		{
+			
 		}
 		
 		public Task (Action action, CancellationToken token, TaskCreationOptions options)
-			: this ((o) => action (), null, token, options)
+			: this ((o) => { if (action != null) action (); }, null, token, options)
 		{
 		}
 		
@@ -232,10 +235,10 @@ namespace System.Threading.Tasks
 			continuation.scheduler = ProxifyScheduler (scheduler);
 			
 			AtomicBoolean launched = new AtomicBoolean ();
-			EventHandler action = delegate {
+			EventHandler action = delegate (object sender, EventArgs e) {
 				if (!predicate ()) return;
 				
-				if (!launched.Value && !launched.Exchange (true)) {
+				if (!launched.Value && launched.TrySet ()) {
 					if (!ContinuationStatusCheck (kind)) {
 						continuation.CancelReal ();
 						continuation.Dispose ();
@@ -243,12 +246,12 @@ namespace System.Threading.Tasks
 						return;
 					}
 					
-					CheckAndSchedule (continuation, kind, scheduler);
+					CheckAndSchedule (continuation, kind, scheduler, sender == null);
 				}
 			};
 			
 			if (IsCompleted) {
-				action (this, EventArgs.Empty);
+				action (null, EventArgs.Empty);
 				return;
 			}
 			
@@ -256,7 +259,7 @@ namespace System.Threading.Tasks
 			
 			// Retry in case completion was achieved but event adding was too late
 			if (IsCompleted)
-				action (this, EventArgs.Empty);
+				action (null, EventArgs.Empty);
 		}
 		
 		bool ContinuationStatusCheck (TaskContinuationOptions kind)
@@ -294,9 +297,10 @@ namespace System.Threading.Tasks
 			return true;
 		}
 		
-		void CheckAndSchedule (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler)
+		void CheckAndSchedule (Task continuation, TaskContinuationOptions options, TaskScheduler scheduler, bool fromCaller)
 		{
-			if (options == TaskContinuationOptions.None || (options & TaskContinuationOptions.ExecuteSynchronously) > 0)
+			if (!fromCaller 
+			    && (options == TaskContinuationOptions.None || (options & TaskContinuationOptions.ExecuteSynchronously) > 0))
 				continuation.ThreadStart ();
 			else
 				continuation.Start (scheduler);

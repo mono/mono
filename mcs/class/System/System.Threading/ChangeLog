@@ -1,3 +1,7 @@
+2010-03-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Barrier.cs: Remove dead comments
+
 2010-02-25  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Barrier.cs: Fix NRE with postPhaseAction delegate

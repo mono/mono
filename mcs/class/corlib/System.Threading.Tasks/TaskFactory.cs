@@ -124,6 +124,7 @@ namespace System.Threading.Tasks
 		public Task<TResult> StartNew<TResult> (Func<TResult> function, TaskCreationOptions options)
 		{
 			return StartNew<TResult> (function, token, options, scheduler);
+
 		}
 		
 		public Task<TResult> StartNew<TResult> (Func<TResult> function, CancellationToken token)
@@ -168,52 +169,53 @@ namespace System.Threading.Tasks
 		
 		#region Continue
 		
-		[MonoTODO]
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction)
 		{
 			return ContinueWhenAny (tasks, continuationAction, token, contOptions, scheduler);
 		}
 		
-		[MonoTODO]
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, CancellationToken token)
 		{
 			return ContinueWhenAny (tasks, continuationAction, token, contOptions, scheduler);
 		}
 		
-		[MonoTODO]
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, TaskContinuationOptions continuationOptions)
 		{
 			return ContinueWhenAny (tasks, continuationAction, token, continuationOptions, scheduler);
 		}
 
-		[MonoTODO]
 		public Task ContinueWhenAny (Task[] tasks, Action<Task> continuationAction, CancellationToken token, 
 		                             TaskContinuationOptions continuationOptions, TaskScheduler scheduler)
 		{
-			throw new NotImplementedException ();
+			AtomicBoolean trigger = new AtomicBoolean ();
+			Task commonContinuation = new Task (null);
+			
+			foreach (Task t in tasks) {
+				Task cont = new Task ((o) => { continuationAction ((Task)o); }, t, token, options);
+				t.ContinueWithCore (cont, continuationOptions, scheduler, trigger.TrySet);
+				cont.ContinueWithCore (commonContinuation, TaskContinuationOptions.None, scheduler);
+			}
+			
+			return commonContinuation;
 		}
 		
-		[MonoTODO]
 		public Task ContinueWhenAny<TAntecedentResult> (Task<TAntecedentResult>[] tasks, Action<Task<TAntecedentResult>> continuationAction)
 		{
 			return ContinueWhenAny (tasks, continuationAction, token, contOptions, scheduler);
 		}
 		
-		[MonoTODO]
 		public Task ContinueWhenAny<TAntecedentResult> (Task<TAntecedentResult>[] tasks, Action<Task<TAntecedentResult>> continuationAction,
 		                                                CancellationToken token)
 		{
 			return ContinueWhenAny (tasks, continuationAction, token, contOptions, scheduler);
 		}
 		
-		[MonoTODO]
 		public Task ContinueWhenAny<TAntecedentResult> (Task<TAntecedentResult>[] tasks, Action<Task<TAntecedentResult>> continuationAction,
 		                                                TaskContinuationOptions continuationOptions)
 		{
 			return ContinueWhenAny (tasks, continuationAction, token, continuationOptions, scheduler);
 		}
 
-		[MonoTODO]
 		public Task ContinueWhenAny<TAntecedentResult> (Task<TAntecedentResult>[] tasks, Action<Task<TAntecedentResult>> continuationAction,
 		                                                CancellationToken token, TaskContinuationOptions continuationOptions,
 		                                                TaskScheduler scheduler)
@@ -257,7 +259,7 @@ namespace System.Threading.Tasks
 		{
 			return ContinueWhenAny (tasks, continuationAction, token, contOptions, scheduler);
 		}
-		
+
 		[MonoTODO]
 		public Task<TResult> ContinueWhenAny<TAntecedentResult, TResult> (Task<TAntecedentResult>[] tasks,
 		                                                                  Func<Task<TAntecedentResult>, TResult> continuationAction,

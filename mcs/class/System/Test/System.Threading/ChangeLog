@@ -1,3 +1,7 @@
+2010-03-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* BarrierTest.cs: Add BarrierTest.
+
 2005-12-23  Dick Porter  <dick@ximian.com>
 
 	* SemaphoreTest.cs: Enable another test

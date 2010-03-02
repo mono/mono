@@ -180,10 +180,8 @@ namespace System.Threading
 				return false;
 			
 			SpinWait sw = new SpinWait ();
-			while (!cl.Value) {
-				//Console.WriteLine (cleaned);
+			while (!cl.Value)
 				sw.SpinOnce ();
-			}
 			
 			return true;
 		}

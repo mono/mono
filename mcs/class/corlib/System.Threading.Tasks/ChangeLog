@@ -1,3 +1,9 @@
+2010-03-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* Task.cs: If we add a continuation when the Task is already finished
+	forces its schedule as a Task instead of executing on the calling thread.
+	* TaskFactory.cs: Add ContinueWhenAny implementation when returning Task
+
 2010-02-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TaskContinuationOptions.cs: Use RC values.

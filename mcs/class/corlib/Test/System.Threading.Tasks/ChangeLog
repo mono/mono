@@ -1,3 +1,8 @@
+2010-03-02  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* TaskFactoryTest.cs: Add TaskFactoryTests
+	* TaskTest.cs: Re-enable TastTest
+
 2010-02-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TaskTest.cs: Disable this since it deadlock corlib suite 100% of the times.
