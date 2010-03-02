@@ -1,5 +1,14 @@
 2010-03-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* X11Keyboard.cs: When handling the key events, sometimes calling
+	either Xutf8LookupString or XLookupString with special chars (such
+	backspace and enter) can result in a buffer filled with garbage, or
+	empty - thus re-use the value returned by the same functions to fill
+	the gap.
+	Fixes #582691.
+
+2010-03-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* RichTextBox.cs: When retrieving SelectedRtf/Rtf properly escape any
 	RTF reserved char, so we don't end up messing around the actual rtf
 	values.

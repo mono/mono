@@ -485,6 +485,18 @@ namespace System.Windows.Forms {
 					return 1;
 				}
 
+				// For some special chars, such backspace and enter, looking up for a string
+				// can randomly fail to properly fill the buffer (either marshaling or X11), so we use
+				// the keysysm value to fill the gap
+				if (keysym == (int) XKeySym.XK_BackSpace) {
+					buffer = new string (new char [] { (char) 8 });
+					return 1;
+				}
+				if (keysym == (int) XKeySym.XK_Return) {
+					buffer = new string (new char [] { (char)13 });
+					return 1;
+				}
+
 				if (res != 0) {
 					buffer = lookup_buffer.ToString ();
 					res = buffer.Length;
