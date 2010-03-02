@@ -20,7 +20,6 @@ net_4_0_dirs := \
 	corcompare	\
 	mono-xmltool	\
 	xbuild		\
-	monodoc		\
 	mdoc		\
 	mono-shlib-cop	\
 	sgen		\
