@@ -37,5 +37,9 @@ namespace System.ServiceModel.Routing.Configuration
 		{
 			BaseRemove (element);
 		}
+
+		public new FilterTableEntryCollection this [string name] {
+			get { return (FilterTableEntryCollection) BaseGet (name); }
+		}
 	}
 }

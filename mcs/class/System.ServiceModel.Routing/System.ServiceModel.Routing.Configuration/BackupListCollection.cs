@@ -32,5 +32,9 @@ namespace System.ServiceModel.Routing.Configuration
 		{
 			BaseRemove (element);
 		}
+
+		public new BackupEndpointCollection this [string name] {
+			get { return (BackupEndpointCollection) BaseGet (name); }
+		}
 	}
 }
