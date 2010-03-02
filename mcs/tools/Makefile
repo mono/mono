@@ -18,6 +18,7 @@ per_profile_dirs = \
 net_4_0_dirs := \
 	$(per_profile_dirs) \
 	corcompare	\
+	monodoc		\
 	mono-xmltool	\
 	xbuild		\
 	mdoc		\
@@ -44,8 +45,7 @@ net_4_0_dirs := \
 	mono-configuration-crypto
 
 net_2_0_dirs := \
-	compiler-tester	\
-	monodoc
+	compiler-tester
 
 net_2_1_dirs := \
 	compiler-tester
