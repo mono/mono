@@ -1,3 +1,4 @@
 *.mdb
 *.exe
 *.o
+tools/gensources.sh.cs
