@@ -1,3 +1,7 @@
+2010-03-02  Raja R Harinath  <harinath@hurrynot.org>
+
+	* expression.cs (IndexerAccess.ResolveAccessor): Add CS1540 check.
+
 2010-03-02  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs: Missed few locations in previous fix.

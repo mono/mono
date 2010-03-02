@@ -8643,6 +8643,16 @@ namespace Mono.CSharp {
 			}
 
 			instance_expr.CheckMarshalByRefAccess (ec);
+
+			if (must_do_cs1540_check && (instance_expr != EmptyExpression.Null) &&
+			    !TypeManager.IsInstantiationOfSameGenericType (instance_expr.Type, ec.CurrentType) &&
+			    !TypeManager.IsNestedChildOf (ec.CurrentType, instance_expr.Type) &&
+			    !TypeManager.IsSubclassOf (instance_expr.Type, ec.CurrentType)) {
+				ec.Report.SymbolRelatedToPreviousError (accessor.MetaInfo);
+				Error_CannotAccessProtected (ec, loc, accessor.MetaInfo, instance_expr.Type, ec.CurrentType);
+				return null;
+			}
+
 			eclass = ExprClass.IndexerAccess;
 			return this;
 		}
