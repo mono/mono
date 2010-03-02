@@ -1,3 +1,7 @@
+2010-03-02  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile, mono-shlib-cop.cs: Remove Mono.GetOptions dependency.
+
 2008-10-16  Jonathan Pryor  <jpryor@novell.com>
 
 	* mono-shlib-cop.cs: Migrate from Mono.GetOptions to Mono.Options.

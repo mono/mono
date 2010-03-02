@@ -78,9 +78,6 @@ using Mono.Unix;
 [assembly: AssemblyTitle ("mono-shlib-cop")]
 [assembly: AssemblyCopyright ("(C) 2005 Jonathan Pryor")]
 [assembly: AssemblyDescription ("Looks up shared library dependencies of managed code")]
-[assembly: Mono.Author ("Jonathan Pryor")]
-[assembly: Mono.UsageComplement ("[ASSEMBLY]+ [-r:ASSEMBLY_REF]+")]
-[assembly: Mono.ReportBugsTo ("jonpryor@vt.edu")]
 
 namespace Mono.Unmanaged.Check {
 	[Serializable]
