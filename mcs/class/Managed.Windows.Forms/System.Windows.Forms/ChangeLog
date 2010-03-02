@@ -1,5 +1,11 @@
 2010-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* X11Keyboard.cs: Small correction for the previous patch: I forgot to
+	take into account the case where the buffer used in XLookupString is
+	not empty, but filled with garbage.
+
+2010-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* X11Keyboard.cs: When handling the key events, sometimes calling
 	either Xutf8LookupString or XLookupString with special chars (such
 	backspace and enter) can result in a buffer filled with garbage, or
