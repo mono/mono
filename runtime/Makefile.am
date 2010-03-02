@@ -24,17 +24,17 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
+if MOONLIGHT
+build_profiles = net_2_1_raw
+test_profiles = net_2_1_raw
+else
 build_profiles = net_2_0 net_3_5
 test_profiles = $(build_profiles)
+endif
 
 if INSTALL_4_0
 build_profiles += net_4_0
 #test_profiles += net_4_0
-endif
-
-if INSTALL_2_1
-build_profiles += net_2_1_raw
-test_profiles += net_2_1_raw
 endif
 
 if INSTALL_MONOTOUCH
@@ -78,14 +78,6 @@ if ENABLE_NUNIT_TESTS
 test_select =
 else
 test_select = ONLY_CENTUM_TESTS=yes
-endif
-
-if INSTALL_2_1
-moon-do-build: test-support-files
-	cd $(top_builddir)/../moon/class && $(MAKE) all
-else
-moon-do-build:
-	@:
 endif
 
 mcs-do-test-profiles:

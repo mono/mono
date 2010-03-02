@@ -1,3 +1,7 @@
+2010-03-02  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile.am: Renamed INSTALL_2_1 to MOONLIGHT.
+
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs: Add a test for CreateBoxedValue.
