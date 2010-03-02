@@ -95,8 +95,12 @@ namespace System.ServiceModel.Configuration
 		public HttpTransportSecurityElement Transport {
 			get { return (HttpTransportSecurityElement) base [transport]; }
 		}
-
-
+		
+		internal void ApplyConfiguration (WebHttpSecurity security)
+		{
+			security.Mode = Mode;
+			security.Transport.ClientCredentialType = Transport.ClientCredentialType;
+		}
 	}
 
 }

@@ -1,3 +1,8 @@
+2010-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.Web_test.dll.sources : add new test.
+	* Makefile : add new extra dist.
+
 2010-01-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* monotouch_System.ServiceModel.Web.dll.sources: Don't inherit from

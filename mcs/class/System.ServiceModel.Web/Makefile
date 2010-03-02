@@ -13,7 +13,9 @@ endif
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
-EXTRA_DISTFILES = $(RESOURCE_FILES)
+EXTRA_DISTFILES = $(RESOURCE_FILES) \
+	Test/config/webHttpBinding \
+	Test/config/webHttpBinding.config
 
 VALID_PROFILE := $(filter 2.0 2.1 4.0, $(FRAMEWORK_VERSION))
 ifndef VALID_PROFILE

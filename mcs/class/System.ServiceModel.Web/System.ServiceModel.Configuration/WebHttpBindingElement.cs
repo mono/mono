@@ -51,9 +51,9 @@ namespace System.ServiceModel.Configuration
 		 : StandardBindingElement,  IBindingConfigurationElement
 	{
 		// Static Fields
+		static bool base_merged;
 		static ConfigurationPropertyCollection properties;
 		static ConfigurationProperty allow_cookies;
-		static ConfigurationProperty binding_element_type;
 		static ConfigurationProperty bypass_proxy_on_local;
 		static ConfigurationProperty host_name_comparison_mode;
 		static ConfigurationProperty max_buffer_pool_size;
@@ -73,10 +73,6 @@ namespace System.ServiceModel.Configuration
 				typeof (bool), "false", new BooleanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
-			binding_element_type = new ConfigurationProperty ("",
-				typeof (Type), null, new TypeConverter (), null,
-				ConfigurationPropertyOptions.None);
-
 			bypass_proxy_on_local = new ConfigurationProperty ("bypassProxyOnLocal",
 				typeof (bool), "false", new BooleanConverter (), null,
 				ConfigurationPropertyOptions.None);
@@ -86,15 +82,15 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			max_buffer_pool_size = new ConfigurationProperty ("maxBufferPoolSize",
-				typeof (long), "524288", null/* FIXME: get converter for long*/, null,
+				typeof (long), "524288", new Int64Converter (), null,
 				ConfigurationPropertyOptions.None);
 
 			max_buffer_size = new ConfigurationProperty ("maxBufferSize",
-				typeof (int), "65536", null/* FIXME: get converter for int*/, null,
+				typeof (int), "65536", new Int32Converter (), null,
 				ConfigurationPropertyOptions.None);
 
 			max_received_message_size = new ConfigurationProperty ("maxReceivedMessageSize",
-				typeof (long), "65536", null/* FIXME: get converter for long*/, null,
+				typeof (long), "65536", new Int64Converter (), null,
 				ConfigurationPropertyOptions.None);
 
 			proxy_address = new ConfigurationProperty ("proxyAddress",
@@ -110,7 +106,7 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			write_encoding = new ConfigurationProperty ("writeEncoding",
-				typeof (Encoding), "utf-8", null/* FIXME: get converter for Encoding*/, null,
+				typeof (Encoding), "utf-8", new EncodingConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			transfer_mode = new ConfigurationProperty ("transferMode",
@@ -122,7 +118,6 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			properties.Add (allow_cookies);
-			properties.Add (binding_element_type);
 			properties.Add (bypass_proxy_on_local);
 			properties.Add (host_name_comparison_mode);
 			properties.Add (max_buffer_pool_size);
@@ -152,7 +147,7 @@ namespace System.ServiceModel.Configuration
 		}
 
 		protected override Type BindingElementType {
-			get { return (Type) base [binding_element_type]; }
+			get { return typeof (WebHttpBinding); }
 		}
 
 		[ConfigurationProperty ("bypassProxyOnLocal",
@@ -205,7 +200,16 @@ namespace System.ServiceModel.Configuration
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
-			get { return properties; }
+			get {
+				if (!base_merged) {
+					lock (properties) {
+						base_merged = true;
+						foreach (ConfigurationProperty p in base.Properties)
+							properties.Add (p);
+					}
+				}
+				return properties;
+			}
 		}
 
 		[ConfigurationProperty ("proxyAddress",
@@ -255,7 +259,21 @@ namespace System.ServiceModel.Configuration
 
 		protected override void OnApplyConfiguration (Binding binding)
 		{
-			throw new NotImplementedException ();
+			WebHttpBinding webBinding = (WebHttpBinding)binding;
+			
+			webBinding.AllowCookies = AllowCookies;
+			webBinding.BypassProxyOnLocal = BypassProxyOnLocal;
+			webBinding.HostNameComparisonMode = HostNameComparisonMode;
+			webBinding.MaxBufferPoolSize = MaxBufferPoolSize;
+			webBinding.MaxBufferSize = MaxBufferSize;
+			webBinding.MaxReceivedMessageSize = MaxReceivedMessageSize;
+			if(ProxyAddress != null)
+				webBinding.ProxyAddress = ProxyAddress;
+			webBinding.TransferMode = TransferMode;
+			webBinding.UseDefaultWebProxy = UseDefaultWebProxy;
+			webBinding.WriteEncoding = WriteEncoding;
+
+			Security.ApplyConfiguration(webBinding.Security);
 		}
 	}
 

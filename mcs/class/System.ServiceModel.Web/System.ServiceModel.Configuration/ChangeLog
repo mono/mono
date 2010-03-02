@@ -1,3 +1,10 @@
+2010-03-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EncodingConverter.cs, WebHttpBindingElement.cs,
+	  WebHttpSecurityElement.cs : implement OnApplyConfiguration(), fill
+	  some TypeConverters, and fix BindingElementType, based on the patch
+	  by Sander Rijken.
+
 2009-10-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebHttpElement.cs, WebScriptEnablingElement.cs : fix BehavirType.
