@@ -4464,8 +4464,8 @@ namespace Mono.CSharp {
 					// fixed (T* e_ptr = (e == null || e.Length == 0) ? null : converted [0])
 					//
 					converted = new Conditional (new BooleanExpression (new Binary (Binary.Operator.LogicalOr,
-						new Binary (Binary.Operator.Equality, e, new NullLiteral (loc)),
-						new Binary (Binary.Operator.Equality, new MemberAccess (e, "Length"), new IntConstant (0, loc)))),
+						new Binary (Binary.Operator.Equality, e, new NullLiteral (loc), loc),
+						new Binary (Binary.Operator.Equality, new MemberAccess (e, "Length"), new IntConstant (0, loc), loc), loc)),
 							new NullPointer (loc),
 							converted);
 
@@ -5132,7 +5132,7 @@ namespace Mono.CSharp {
 
 				public void ResolveIncrement (BlockContext ec)
 				{
-					increment = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, this));
+					increment = new StatementExpression (new UnaryMutator (UnaryMutator.Mode.PostIncrement, this, loc));
 					increment.Resolve (ec);
 				}
 

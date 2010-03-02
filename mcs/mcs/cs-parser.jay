@@ -2523,7 +2523,7 @@ opt_enum_base
 	 }
 	| COLON error
 	 {
-	 	Error_TypeExpected (lexer.Location);
+	 	Error_TypeExpected (GetLocation ($1));
 		$$ = TypeManager.system_int32_expr;
 	 }
 	;
@@ -3049,7 +3049,6 @@ boolean_literal
 open_parens_any
 	: OPEN_PARENS
 	| OPEN_PARENS_CAST
-	| OPEN_PARENS_LAMBDA
 	;
 
 // 
@@ -3261,11 +3260,11 @@ non_simple_argument
 	  { 
 		$$ = new Argument ((Expression) $2, Argument.AType.Out);
 	  }
-	| ARGLIST open_parens_any argument_list CLOSE_PARENS
+	| ARGLIST OPEN_PARENS argument_list CLOSE_PARENS
 	  {
 		$$ = new Argument (new Arglist ((Arguments) $3, GetLocation ($1)));
 	  }
-	| ARGLIST open_parens_any CLOSE_PARENS
+	| ARGLIST OPEN_PARENS CLOSE_PARENS
 	  {
 		$$ = new Argument (new Arglist (GetLocation ($1)));
 	  }	  
@@ -3379,14 +3378,14 @@ base_access
 post_increment_expression
 	: primary_expression OP_INC
 	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PostIncrement, (Expression) $1);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PostIncrement, (Expression) $1, GetLocation ($2));
 	  }
 	;
 
 post_decrement_expression
 	: primary_expression OP_DEC
 	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PostDecrement, (Expression) $1);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PostDecrement, (Expression) $1, GetLocation ($2));
 	  }
 	;
 
@@ -3784,11 +3783,11 @@ unary_expression
 	: primary_expression
 	| BANG prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2);
+		$$ = new Unary (Unary.Operator.LogicalNot, (Expression) $2, GetLocation ($1));
 	  }
 	| TILDE prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2);
+		$$ = new Unary (Unary.Operator.OnesComplement, (Expression) $2, GetLocation ($1));
 	  }
 	| cast_expression
 	;
@@ -3812,19 +3811,19 @@ prefixed_unary_expression
 	: unary_expression
 	| PLUS prefixed_unary_expression
 	  { 
-	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2);
+	  	$$ = new Unary (Unary.Operator.UnaryPlus, (Expression) $2, GetLocation ($1));
 	  } 
 	| MINUS prefixed_unary_expression 
 	  { 
-		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2);
+		$$ = new Unary (Unary.Operator.UnaryNegation, (Expression) $2, GetLocation ($1));
 	  }
 	| OP_INC prefixed_unary_expression 
 	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement, (Expression) $2);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreIncrement, (Expression) $2, GetLocation ($1));
 	  }
 	| OP_DEC prefixed_unary_expression 
 	  {
-		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement, (Expression) $2);
+		$$ = new UnaryMutator (UnaryMutator.Mode.PreDecrement, (Expression) $2, GetLocation ($1));
 	  }
 	| STAR prefixed_unary_expression
 	  {
@@ -3832,7 +3831,7 @@ prefixed_unary_expression
 	  }
 	| BITWISE_AND prefixed_unary_expression
 	  {
-		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2);
+		$$ = new Unary (Unary.Operator.AddressOf, (Expression) $2, GetLocation ($1));
 	  }
 	;
 
@@ -3841,17 +3840,17 @@ multiplicative_expression
 	| multiplicative_expression STAR prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Multiply, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| multiplicative_expression DIV prefixed_unary_expression
 	  {
 		$$ = new Binary (Binary.Operator.Division, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| multiplicative_expression PERCENT prefixed_unary_expression 
 	  {
 		$$ = new Binary (Binary.Operator.Modulus, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	;
 
@@ -3860,16 +3859,16 @@ additive_expression
 	| additive_expression PLUS multiplicative_expression 
 	  {
 		$$ = new Binary (Binary.Operator.Addition, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| additive_expression MINUS multiplicative_expression
 	  {
-		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
+		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
   	| parenthesized_expression MINUS multiplicative_expression
 	  {
 	  	// Shift/Reduce conflict
-		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
+		$$ = new Binary (Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, GetLocation ($2));
   	  }
 	| additive_expression AS type
 	  {
@@ -3886,12 +3885,12 @@ shift_expression
 	| shift_expression OP_SHIFT_LEFT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.LeftShift, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| shift_expression OP_SHIFT_RIGHT additive_expression
 	  {
 		$$ = new Binary (Binary.Operator.RightShift, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	; 
 
@@ -3900,22 +3899,22 @@ relational_expression
 	| relational_expression OP_LT shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.LessThan, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| relational_expression OP_GT shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterThan, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| relational_expression OP_LE shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.LessThanOrEqual, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| relational_expression OP_GE shift_expression
 	  {
 		$$ = new Binary (Binary.Operator.GreaterThanOrEqual, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	;
 
@@ -3924,12 +3923,12 @@ equality_expression
 	| equality_expression OP_EQ relational_expression
 	  {
 		$$ = new Binary (Binary.Operator.Equality, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| equality_expression OP_NE relational_expression
 	  {
 		$$ = new Binary (Binary.Operator.Inequality, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	; 
 
@@ -3938,7 +3937,7 @@ and_expression
 	| and_expression BITWISE_AND equality_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseAnd, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	;
 
@@ -3947,7 +3946,7 @@ exclusive_or_expression
 	| exclusive_or_expression CARRET and_expression
 	  {
 		$$ = new Binary (Binary.Operator.ExclusiveOr, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	;
 
@@ -3956,7 +3955,7 @@ inclusive_or_expression
 	| inclusive_or_expression BITWISE_OR exclusive_or_expression
 	  {
 		$$ = new Binary (Binary.Operator.BitwiseOr, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	;
 
@@ -3965,7 +3964,7 @@ conditional_and_expression
 	| conditional_and_expression OP_AND inclusive_or_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalAnd, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	;
 
@@ -3974,7 +3973,7 @@ conditional_or_expression
 	| conditional_or_expression OP_OR conditional_and_expression
 	  {
 		$$ = new Binary (Binary.Operator.LogicalOr, 
-			         (Expression) $1, (Expression) $3);
+			         (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	;
 	
@@ -4131,6 +4130,9 @@ lambda_expression
 	  }
 	| OPEN_PARENS_LAMBDA
 	  {
+		if (RootContext.Version <= LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (GetLocation ($1), "lambda expressions");
+	  
 	  	valid_param_mod = ParameterModifierType.Ref | ParameterModifierType.Out;
 	  }
 	  opt_lambda_parameter_list CLOSE_PARENS ARROW 

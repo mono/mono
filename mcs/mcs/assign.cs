@@ -657,7 +657,7 @@ namespace Mono.CSharp {
 			if (left == null)
 				left = new TargetExpression (target);
 
-			source = new Binary (op, left, right, true);
+			source = new Binary (op, left, right, true, loc);
 
 			if (target is DynamicMemberBinder) {
 				Arguments targs = ((DynamicMemberBinder) target).Arguments;

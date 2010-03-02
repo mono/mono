@@ -240,16 +240,16 @@ namespace Mono.CSharp
 				var constant = a.Expr as Constant;
 				if (constant != null && constant.IsLiteral) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
-						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "Constant", loc));
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "Constant", loc), loc);
 				} else if (a.ArgType == Argument.AType.Ref) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
-						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsRef", loc));
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsRef", loc), loc);
 				} else if (a.ArgType == Argument.AType.Out) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
-						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsOut", loc));
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsOut", loc), loc);
 				} else if (a.ArgType == Argument.AType.DynamicTypeName) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
-						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsStaticType", loc));
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "IsStaticType", loc), loc);
 				}
 
 				var arg_type = a.Expr.Type;
@@ -270,14 +270,14 @@ namespace Mono.CSharp
 					}
 
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
-						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "UseCompileTimeType", loc));
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "UseCompileTimeType", loc), loc);
 				}
 
 				string named_value;
 				NamedArgument na = a as NamedArgument;
 				if (na != null) {
 					info_flags = new Binary (Binary.Operator.BitwiseOr, info_flags,
-						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "NamedArgument", loc));
+						new MemberAccess (new MemberAccess (binder, info_flags_enum, loc), "NamedArgument", loc), loc);
 
 					named_value = na.Name;
 				} else {

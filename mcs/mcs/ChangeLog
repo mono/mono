@@ -1,5 +1,11 @@
 2010-03-02  Marek Safar  <marek.safar@gmail.com>
 
+	* cs-tokenizer.cs, argument.cs, dynamic.cs, assign.cs, anonymous.cs,
+	nullable.cs, expression.cs, statement.cs, cs-parser.jay, cfold.cs:
+	Report correct location for operator errors.
+
+2010-03-02  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs (IsDynamicType): Don't check external types when
 	the attribute is not external.
 

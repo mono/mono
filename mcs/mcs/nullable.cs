@@ -459,8 +459,8 @@ namespace Mono.CSharp.Nullable
 		Unwrap unwrap;
 		Expression user_operator;
 
-		public LiftedUnaryOperator (Unary.Operator op, Expression expr)
-			: base (op, expr)
+		public LiftedUnaryOperator (Unary.Operator op, Expression expr, Location loc)
+			: base (op, expr, loc)
 		{
 		}
 
@@ -575,11 +575,9 @@ namespace Mono.CSharp.Nullable
 		Expression user_operator;
 		MethodSpec wrap_ctor;
 
-		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right,
-					     Location loc)
-			: base (op, left, right)
+		public LiftedBinaryOperator (Binary.Operator op, Expression left, Expression right, Location loc)
+			: base (op, left, right, loc)
 		{
-			this.loc = loc;
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -1141,7 +1139,7 @@ namespace Mono.CSharp.Nullable
 			if (unwrap == null)
 				return null;
 
-			underlying = (UnaryMutator) new UnaryMutator (Mode, unwrap).Resolve (ec);
+			underlying = (UnaryMutator) new UnaryMutator (Mode, unwrap, loc).Resolve (ec);
 			if (underlying == null)
 				return null;
 

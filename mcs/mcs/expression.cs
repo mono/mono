@@ -123,11 +123,11 @@ namespace Mono.CSharp {
 		public Expression Expr;
 		Expression enum_conversion;
 
-		public Unary (Operator op, Expression expr)
+		public Unary (Operator op, Expression expr, Location loc)
 		{
 			Oper = op;
 			Expr = expr;
-			loc = expr.Location;
+			this.loc = loc;
 		}
 
 		// <summary>
@@ -442,7 +442,7 @@ namespace Mono.CSharp {
 			}
 
 			if (TypeManager.IsNullableType (Expr.Type))
-				return new Nullable.LiftedUnaryOperator (Oper, Expr).Resolve (ec);
+				return new Nullable.LiftedUnaryOperator (Oper, Expr, loc).Resolve (ec);
 
 			//
 			// Attempt to use a constant folding operation.
@@ -988,10 +988,10 @@ namespace Mono.CSharp {
 		// Holds the real operation
 		Expression operation;
 
-		public UnaryMutator (Mode m, Expression e)
+		public UnaryMutator (Mode m, Expression e, Location loc)
 		{
 			mode = m;
-			loc = e.Location;
+			this.loc = loc;
 			expr = e;
 		}
 
@@ -1130,7 +1130,7 @@ namespace Mono.CSharp {
 				// TODO: Cache this based on type when using EmptyExpression in
 				// context cache
 				Binary.Operator op = IsDecrement ? Binary.Operator.Subtraction : Binary.Operator.Addition;
-				operation = new Binary (op, operation, one);
+				operation = new Binary (op, operation, one, loc);
 				operation = operation.Resolve (ec);
 				if (operation != null && operation.Type != type)
 					operation = Convert.ExplicitNumericConversion (operation, type);
@@ -1687,7 +1687,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class Binary : Expression, IDynamicBinder
 	{
-
 		protected class PredefinedOperator {
 			protected readonly Type left;
 			protected readonly Type right;
@@ -1849,7 +1848,7 @@ namespace Mono.CSharp {
 				// b = b.left >> b.right & (0x1f|0x3f)
 				//
 				b.right = new Binary (Operator.BitwiseAnd,
-					b.right, new IntConstant (right_mask, b.right.Location)).Resolve (ec);
+					b.right, new IntConstant (right_mask, b.right.Location), b.loc).Resolve (ec);
 
 				//
 				// Expression tree representation does not use & mask
@@ -1982,18 +1981,18 @@ namespace Mono.CSharp {
 		static PredefinedOperator [] standard_operators;
 		static PredefinedOperator [] pointer_operators;
 		
-		public Binary (Operator oper, Expression left, Expression right, bool isCompound)
-			: this (oper, left, right)
+		public Binary (Operator oper, Expression left, Expression right, bool isCompound, Location loc)
+			: this (oper, left, right, loc)
 		{
 			this.is_compound = isCompound;
 		}
 
-		public Binary (Operator oper, Expression left, Expression right)
+		public Binary (Operator oper, Expression left, Expression right, Location loc)
 		{
 			this.oper = oper;
 			this.left = left;
 			this.right = right;
-			this.loc = left.Location;
+			this.loc = loc;
 		}
 
 		public Operator Oper {
@@ -2076,7 +2075,7 @@ namespace Mono.CSharp {
 
 		public static void Error_OperatorCannotBeApplied (ResolveContext ec, Expression left, Expression right, Operator oper, Location loc)
 		{
-			new Binary (oper, left, right).Error_OperatorCannotBeApplied (ec, left, right);
+			new Binary (oper, left, right, loc).Error_OperatorCannotBeApplied (ec, left, right);
 		}
 
 		public static void Error_OperatorCannotBeApplied (ResolveContext ec, Expression left, Expression right, string oper, Location loc)
@@ -4089,7 +4088,7 @@ namespace Mono.CSharp {
 					
 					// TODO: Should be the checks resolve context sensitive?
 					ResolveContext rc = new ResolveContext (ec.MemberContext, ResolveContext.Options.UnsafeScope);
-					right = new Binary (Binary.Operator.Multiply, right, right_const).Resolve (rc);
+					right = new Binary (Binary.Operator.Multiply, right, right_const, loc).Resolve (rc);
 					if (right == null)
 						return;
 				}
@@ -4253,7 +4252,7 @@ namespace Mono.CSharp {
 					// Check if both can convert implicitly to each other's type
 					//
 					if (Convert.ImplicitConversion (ec, false_expr, true_type, loc) != null) {
-						ec.Report.Error (172, loc,
+						ec.Report.Error (172, true_expr.Location,
 							"Type of conditional expression cannot be determined as `{0}' and `{1}' convert implicitly to each other",
 							TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
 						return null;
@@ -4263,7 +4262,7 @@ namespace Mono.CSharp {
 				} else if ((conv = Convert.ImplicitConversion (ec, false_expr, true_type, loc)) != null) {
 					false_expr = conv;
 				} else {
-					ec.Report.Error (173, loc,
+					ec.Report.Error (173, true_expr.Location,
 						"Type of conditional expression cannot be determined because there is no implicit conversion between `{0}' and `{1}'",
 						TypeManager.CSharpName (true_type), TypeManager.CSharpName (false_type));
 					return null;

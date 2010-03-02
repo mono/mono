@@ -837,7 +837,7 @@ namespace Mono.CSharp {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
 							new BoolConstant (left.IsNull == right.IsNull, left.Location).Resolve (ec),
-							new Binary (oper, left, right));
+							new Binary (oper, left, right, loc));
 					}
 
 					if (left is StringConstant && right is StringConstant)
@@ -879,7 +879,7 @@ namespace Mono.CSharp {
 					if (left.IsNull || right.IsNull) {
 						return ReducedExpression.Create (
 							new BoolConstant (left.IsNull != right.IsNull, left.Location).Resolve (ec),
-							new Binary (oper, left, right));
+							new Binary (oper, left, right, loc));
 					}
 
 					if (left is StringConstant && right is StringConstant)

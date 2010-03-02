@@ -358,7 +358,7 @@ namespace Mono.CSharp
 			
 			BlockContext bc = new BlockContext (ec.MemberContext, null, TypeManager.void_type);		
 			if (s.Resolve (bc)) {
-				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc)), s, loc);
+				Statement init = new If (new Binary (Binary.Operator.Equality, site_field_expr, new NullLiteral (loc), loc), s, loc);
 				init.Emit (ec);
 			}
 
@@ -482,7 +482,7 @@ namespace Mono.CSharp
 			type = TypeManager.bool_type;
 
 			condition = new If (
-				new Binary (Binary.Operator.Equality, this, new BoolLiteral (true, loc)),
+				new Binary (Binary.Operator.Equality, this, new BoolLiteral (true, loc), loc),
 				new StatementExpression (invoke), new StatementExpression (assignment),
 				loc);
 		}

@@ -289,7 +289,7 @@ namespace Mono.CSharp
 		// Values for the associated token returned
 		//
 		internal int putback_char; 	// Used by repl only
-		Object val;
+		object val;
 
 		//
 		// Pre-processor
@@ -353,6 +353,7 @@ namespace Mono.CSharp
 			public Stack<int> ifstack;
 			public int parsing_generic_less_than;
 			public int current_token;
+			public object val;
 
 			public Position (Tokenizer t)
 			{
@@ -372,6 +373,7 @@ namespace Mono.CSharp
 				}
 				parsing_generic_less_than = t.parsing_generic_less_than;
 				current_token = t.current_token;
+				val = t.val;
 			}
 		}
 		
@@ -394,6 +396,7 @@ namespace Mono.CSharp
 			ifstack = p.ifstack;
 			parsing_generic_less_than = p.parsing_generic_less_than;
 			current_token = p.current_token;
+			val = p.val;
 		}
 
 		// Do not reset the position, ignore it.
@@ -767,8 +770,7 @@ namespace Mono.CSharp
 
 		//
 		// Open parens micro parser. Detects both lambda and cast ambiguity.
-		//
-		
+		//	
 		int TokenizeOpenParens ()
 		{
 			int ptoken;
@@ -789,12 +791,8 @@ namespace Mono.CSharp
 					//
 					// Expression inside parens is lambda, (int i) => 
 					//
-					if (current_token == Token.ARROW) {
-						if (RootContext.Version <= LanguageVersion.ISO_2)
-							Report.FeatureIsNotAvailable (Location, "lambda expressions");
-
+					if (current_token == Token.ARROW)
 						return Token.OPEN_PARENS_LAMBDA;
-					}
 
 					//
 					// Expression inside parens is single type, (int[])
@@ -2664,8 +2662,10 @@ namespace Mono.CSharp
 				case ';':
 					return Token.SEMICOLON;
 				case '~':
+					val = LocatedToken.Create (ref_line, col);
 					return Token.TILDE;
 				case '?':
+					val = LocatedToken.Create (ref_line, col);
 					return TokenizePossibleNullableType ();
 				case '<':
 					if (parsing_generic_less_than++ > 0)
@@ -2700,6 +2700,7 @@ namespace Mono.CSharp
 					return Token.OP_GT;
 
 				case '+':
+					val = LocatedToken.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '+') {
 						d = Token.OP_INC;
@@ -2712,6 +2713,7 @@ namespace Mono.CSharp
 					return d;
 
 				case '-':
+					val = LocatedToken.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '-') {
 						d = Token.OP_DEC;
@@ -2726,6 +2728,7 @@ namespace Mono.CSharp
 					return d;
 
 				case '!':
+					val = LocatedToken.Create (ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_NE;
@@ -2733,6 +2736,7 @@ namespace Mono.CSharp
 					return Token.BANG;
 
 				case '=':
+					val = LocatedToken.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '='){
 						get_char ();
@@ -2746,6 +2750,7 @@ namespace Mono.CSharp
 					return Token.ASSIGN;
 
 				case '&':
+					val = LocatedToken.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '&'){
 						get_char ();
@@ -2758,6 +2763,7 @@ namespace Mono.CSharp
 					return Token.BITWISE_AND;
 
 				case '|':
+					val = LocatedToken.Create (ref_line, col);
 					d = peek_char ();
 					if (d == '|'){
 						get_char ();
@@ -2770,16 +2776,17 @@ namespace Mono.CSharp
 					return Token.BITWISE_OR;
 
 				case '*':
+					val = LocatedToken.Create (ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_MULT_ASSIGN;
 					}
-					val = LocatedToken.Create (ref_line, col);
 					return Token.STAR;
 
 				case '/':
 					d = peek_char ();
 					if (d == '='){
+						val = LocatedToken.Create (ref_line, col);
 						get_char ();
 						return Token.OP_DIV_ASSIGN;
 					}
@@ -2856,6 +2863,7 @@ namespace Mono.CSharp
 					return Token.DIV;
 
 				case '%':
+					val = LocatedToken.Create (ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_MOD_ASSIGN;
@@ -2863,6 +2871,7 @@ namespace Mono.CSharp
 					return Token.PERCENT;
 
 				case '^':
+					val = LocatedToken.Create (ref_line, col);
 					if (peek_char () == '='){
 						get_char ();
 						return Token.OP_XOR_ASSIGN;
@@ -2870,6 +2879,7 @@ namespace Mono.CSharp
 					return Token.CARRET;
 
 				case ':':
+					val = LocatedToken.Create (ref_line, col);
 					if (peek_char () == ':') {
 						get_char ();
 						return Token.DOUBLE_COLON;
