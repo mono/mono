@@ -1,3 +1,7 @@
+2010-02-27  Raja R Harinath  <harinath@hurrynot.org>
+
+	* rules.make (all-local $(STD_TARGETS:=-local)): Add empty targets.
+
 2010-02-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* library.make (install-local): Install the compiled aot lib too.

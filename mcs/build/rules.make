@@ -132,6 +132,9 @@ do-run-test:
 do-%: %-recursive
 	$(MAKE) $*-local
 
+.PHONY: all-local $(STD_TARGETS:=-local)
+all-local $(STD_TARGETS:=-local):
+
 csproj: do-csproj
 
 # The way this is set up, any profile-specific subdirs list should
