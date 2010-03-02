@@ -141,7 +141,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				var target_expr = CSharpBinder.CreateCompilerExpression (argumentInfo[0], target);
 				expr = new Compiler.CompoundAssign (oper, target_expr, right, left);
 			} else {
-				expr = new Compiler.Binary (oper, left, right);
+				expr = new Compiler.Binary (oper, left, right, Compiler.Location.Null);
 			}
 
 			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);

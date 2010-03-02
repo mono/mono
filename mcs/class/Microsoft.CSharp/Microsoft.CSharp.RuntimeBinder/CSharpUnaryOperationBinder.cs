@@ -77,11 +77,11 @@ namespace Microsoft.CSharp.RuntimeBinder
 				expr = new Compiler.BooleanExpression (expr);
 			} else {
 				if (Operation == ExpressionType.Increment)
-					expr = new Compiler.UnaryMutator (Compiler.UnaryMutator.Mode.PreIncrement, expr);
+					expr = new Compiler.UnaryMutator (Compiler.UnaryMutator.Mode.PreIncrement, expr, Compiler.Location.Null);
 				else if (Operation == ExpressionType.Decrement)
-					expr = new Compiler.UnaryMutator (Compiler.UnaryMutator.Mode.PreDecrement, expr);
+					expr = new Compiler.UnaryMutator (Compiler.UnaryMutator.Mode.PreDecrement, expr, Compiler.Location.Null);
 				else
-					expr = new Compiler.Unary (GetOperator (), expr);
+					expr = new Compiler.Unary (GetOperator (), expr, Compiler.Location.Null);
 
 				expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
 
