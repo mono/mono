@@ -1,3 +1,7 @@
+2010-03-02  Levi Bard  <levi@unity3d.com>
+
+	* debugger-agent.c: Invalidate thread stacks on domain unload.
+
 2010-03-02  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c: Emit dummy_use for stored reference after write
