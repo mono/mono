@@ -2249,7 +2249,7 @@ namespace System.Windows.Forms {
 
 		private void DoubleClickHandler (object sender, MouseEventArgs e) {
 			TreeNode node = GetNodeAtUseX (e.X,e.Y);
-			if(node != null) {
+			if(node != null && node.Nodes.Count > 0) {
 				node.Toggle();
 			}
 		}
