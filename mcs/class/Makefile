@@ -77,7 +77,6 @@ common_dirs := \
 	System.Drawing.Design		\
 	System.Design			\
 	Mono.Http			\
-	Microsoft.Vsa			\
 	Mono.Cairo                      \
 	IBM.Data.DB2			\
 	CustomMarshalers		\
