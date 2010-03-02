@@ -1,10 +1,10 @@
 //
-// System.Diagnostics.Contracts.ContractFailureKind.cs
+// System.Diagnostics.Contracts.ContractPublicRuntimeIgnoredAttribute.cs
 //
 // Authors:
-//    Miguel de Icaza (miguel@gnome.org)
+// 	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //
-// Copyright 2009 Novell (http://www.novell.com)
+// Copyright (c) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,23 +25,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-using System;
-
-namespace System.Diagnostics.Contracts {
-
 #if NET_4_0
-	public
-#else
-	internal
-#endif
-
-	enum ContractFailureKind {
-		Precondition,
-		Postcondition,
-		PostconditionOnException,
-		Invariant,
-		Assert,
-		Assume
+using System;
+namespace System.Diagnostics.Contracts {
+	[Conditional ("CONTRACTS_FULL")]
+	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Property, AllowMultiple=false, Inherited = true)]
+	public sealed class ContractRuntimeIgnoredAttribute : Attribute {
+		public ContractRuntimeIgnoredAttribute() {}
 	}
 }
+#endif
+

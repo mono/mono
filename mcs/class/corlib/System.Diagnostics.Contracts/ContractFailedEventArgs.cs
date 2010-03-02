@@ -1,5 +1,5 @@
 //
-// System.Diagnostics.Contracts.Contract.cs
+// System.Diagnostics.Contracts.ContractFailedEventArgs.cs
 //
 // Authors:
 //    Miguel de Icaza (miguel@gnome.org)
