@@ -45,7 +45,8 @@ net_4_0_dirs := \
 	mono-configuration-crypto
 
 net_2_0_dirs := \
-	compiler-tester
+	compiler-tester	\
+	monodoc
 
 net_2_1_dirs := \
 	compiler-tester
