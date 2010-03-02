@@ -45,12 +45,15 @@ net_4_0_dirs := \
 	lc		\
 	mono-configuration-crypto
 
+net_2_0_dirs := \
+	compiler-tester
+
 net_2_1_dirs := \
 	compiler-tester
 
 basic_SUBDIRS = gacutil security
 net_2_0_bootstrap_SUBDIRS = resgen culevel
-net_2_0_SUBDIRS := $(basic_SUBDIRS)
+net_2_0_SUBDIRS := $(basic_SUBDIRS) $(net_2_0_dirs)
 net_2_1_raw_SUBDIRS := $(net_2_1_dirs)
 net_2_1_SUBDIRS := $(net_2_1_dirs)
 net_4_0_bootstrap_SUBDIRS = resgen culevel
