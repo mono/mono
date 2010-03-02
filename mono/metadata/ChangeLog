@@ -1,3 +1,9 @@
+2010-03-02  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c, sgen-protocol.c, sgen-protocol.h: New facility for
+	writing binary log files (can be enabled by #define'ing
+	BINARY_PROTOCOL) for better debugging of timing-dependent bugs or
+	bugs in longer running programs.
 
 Mon Mar 1 19:35:32 CET 2010 Paolo Molaro <lupus@ximian.com>
 
