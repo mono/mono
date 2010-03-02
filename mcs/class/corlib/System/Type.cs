@@ -577,6 +577,23 @@ namespace System {
 			}
 			return false;
 		}
+
+
+	public static Type GetType (string typeName, Func<AssemblyName,Assembly> assemblyResolver, Func<Assembly,string,bool,Type> typeResolver)
+	{
+		return GetType (typeName, assemblyResolver, typeResolver, false, false);
+	}
+
+	public static Type GetType (string typeName, Func<AssemblyName,Assembly> assemblyResolver, Func<Assembly,string,bool,Type> typeResolver, bool throwOnError)
+	{
+		return GetType (typeName, assemblyResolver, typeResolver, throwOnError, false);
+	}
+
+	public static Type GetType (string typeName, Func<AssemblyName,Assembly> assemblyResolver, Func<Assembly,string,bool,Type> typeResolver, bool throwOnError, bool ignoreCase)
+	{
+		TypeSpec spec = TypeSpec.Parse (typeName);
+		return spec.Resolve (assemblyResolver, typeResolver, throwOnError, ignoreCase);
+	}
 #endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
