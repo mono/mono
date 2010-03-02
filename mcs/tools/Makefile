@@ -17,7 +17,6 @@ per_profile_dirs = \
 
 net_4_0_dirs := \
 	$(per_profile_dirs) \
-	cilc		\
 	corcompare	\
 	mono-xmltool	\
 	xbuild		\
@@ -41,7 +40,6 @@ net_4_0_dirs := \
 	dtd2rng		\
 	dtd2xsd		\
 	mjs		\
-	prj2make	\
 	mod		\
 	installvst	\
 	lc		\
