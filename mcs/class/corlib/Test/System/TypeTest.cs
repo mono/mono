@@ -3510,6 +3510,254 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsTrue  (typeof (MyRealEnum).IsEnumDefined ("A"), "#13");
 			Assert.IsFalse  (new MyEnum () { is_enum = true, fields = 1 }.IsEnumDefined ((short)99), "#14");
 		}
+
+
+
+		public class Outer {
+			public class Inner {}
+		}
+
+
+		public class Outer<T> {
+			public class Inner {}
+		}
+
+		[Test]
+		public void GetTypeWithDelegates () {
+			var tname = typeof (MyRealEnum).AssemblyQualifiedName;
+			var res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum), res, "#1");
+
+
+			tname = typeof (Dictionary<int, string>).AssemblyQualifiedName;
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (Dictionary<int, string>), res, "#2");
+
+
+			tname = typeof (Foo<int>).AssemblyQualifiedName;
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (Foo<int>), res, "#3");
+
+
+			tname = typeof (Outer.Inner).AssemblyQualifiedName;
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (Outer.Inner), res, "#4");
+
+
+			tname = typeof (Outer<double>.Inner).AssemblyQualifiedName;
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (Outer<double>.Inner), res, "#5");
+
+
+			tname = "System.Collections.Generic.List`1[System.Int32]";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (List<int>), res, "#6");
+
+
+			tname = typeof (Foo<>).FullName + "[,][]";
+			res = Type.GetType (tname, name => {
+					Console.WriteLine ("resolve-asm name {0}", name);
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (Foo<>).MakeArrayType (2).MakeArrayType (), res, "#7");
+
+			tname = string.Format("{0}[{1}][]*&", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName);
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (Foo<MyRealEnum>[]).MakePointerType ().MakeByRefType (), res, "#8");
+
+
+			tname = typeof (MyRealEnum).FullName + "[][]";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum[][]), res, "#9");
+
+
+			tname = typeof (MyRealEnum).FullName + "[*]";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum).MakeArrayType (1), res, "#10");
+
+
+			tname = typeof (MyRealEnum).FullName + "&";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum).MakeByRefType (), res, "#11");
+
+
+			tname = typeof (MyRealEnum).FullName + "*";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual (typeof (MyRealEnum).MakePointerType (), res, "#12");
+		}
+
+
+		public class CustomGetType : TypeDelegator {
+			string name;
+
+			public CustomGetType (string name) { this.name = name; }
+
+			public override Type MakeGenericType (Type[] args) {
+				return new CustomGetType ("GINST");
+			}
+
+		 	public override Type GetNestedType(String name, BindingFlags bidingAttr) {
+				return new CustomGetType ("NESTED");
+			}
+
+			public override string ToString () { return "UT_" + name; }
+
+			public override string Name {
+				get { return  "UT_" + name; }
+			}
+		}
+
+		[Test]
+		public void GetTypeWithDelegatesAndUserTypes ()
+		{
+			var tname = "Magic[System.Int32]";
+			var res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					if (name == "Magic") return new CustomGetType ("MAGIC");
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual ("UT_GINST", res.Name, "#1");
+
+
+			tname = "Magic+MyRealEnum";
+			res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					if (name == "Magic") return new CustomGetType ("MAGIC");
+					return asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, false, false);
+			Assert.AreEqual ("UT_NESTED", res.Name, "#2");
+		}
+
+		void MustTLE (string tname) {
+			try {
+				var res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return (object)asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, true, false);
+				Assert.Fail (tname);
+			} catch (TypeLoadException) {}
+		}
+
+		void MustANE (string tname) {
+			try {
+				var res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return (object)asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, true, false);
+				Assert.Fail (tname);
+			} catch (ArgumentNullException) {}
+		}
+
+		void MustAE (string tname) {
+			try {
+				var res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return (object)asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, true, false);
+				Assert.Fail (tname);
+			} catch (ArgumentException) {}
+		}
+
+		void MustFNFE (string tname) {
+			try {
+				var res = Type.GetType (tname, name => {
+					return Assembly.Load (name);
+				},(asm,name,ignore) => {
+					return (object)asm == null ? Type.GetType (name, false, ignore) : asm.GetType (name, false, ignore);
+				}, true, false);
+				Assert.Fail (tname);
+			} catch (FileNotFoundException) {}
+		}
+
+		[Test]
+		public void NewGetTypeErrors () {
+			MustANE (null);
+			MustAE (string.Format ("{0}[{1}&]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[{1}*]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}&&", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}&*", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}&[{1}]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+
+
+			MustAE (string.Format ("{0}[[{1},", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[[{1}]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[[{1}],", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[[{1}]_", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+
+			MustAE (string.Format ("{0}[{1}", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[{1},", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[{1},,", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[{1} (", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[", typeof (Foo<>).FullName));
+
+			MustAE (string.Format ("{0}[**]", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[*,*]", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[*,]", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[,*]", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[,-]", typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[,{0}]", typeof (MyRealEnum).FullName));
+
+			MustAE (string.Format ("{0}[{1}]]", typeof (Foo<>).FullName, typeof (MyRealEnum).FullName));
+			MustAE (string.Format ("{0}[,]]", typeof (MyRealEnum).FullName));
+
+
+			string aqn = typeof (MyRealEnum).Assembly.FullName;
+			MustFNFE (string.Format ("{0}, ZZZ{1}", typeof (MyRealEnum).FullName, aqn));
+			MustTLE (string.Format ("{0}ZZZZ", typeof (MyRealEnum).FullName));
+			MustTLE (string.Format ("{0}ZZZZ,{1}", typeof (MyRealEnum).FullName, aqn));
+		}
+
 #endif
 
 		public abstract class Stream : IDisposable

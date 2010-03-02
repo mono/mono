@@ -1,3 +1,7 @@
+2010-03-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Tests for new v4 overloads of GetType.
+
 2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* LazyTest.cs: Add tests for lazy modes.
