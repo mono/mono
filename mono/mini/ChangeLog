@@ -1,3 +1,9 @@
+2010-03-02  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c: Emit dummy_use for stored reference after write
+	barriers to make sure the object is pinned if the GC interrupts
+	before the write barrier is done.
+
 2010-03-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* cpu-<ARCH>.md: dummy_use was missing src1:i.
