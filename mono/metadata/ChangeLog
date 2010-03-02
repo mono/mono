@@ -1,3 +1,15 @@
+2010-03-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_get_memberref_token): Extract mono_image_add_memberef_row
+	from this function. The new function receive the parent token instead of a type.
+
+	* reflection.c (mono_image_get_methodref_token_for_methodbuilder):
+	* reflection.c (mono_image_get_ctorbuilder_token): Use new function to encode
+	typebuilders. This make it possible to properly encode generic type builders since
+	their unmanaged type don't have generics data while unfinished.
+
+	Fixes #583655.
+
 2010-03-02  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, sgen-protocol.c, sgen-protocol.h: New facility for
