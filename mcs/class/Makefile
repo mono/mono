@@ -43,7 +43,6 @@ common_dirs := \
 	System.EnterpriseServices	\
 	Mono.Data.Tds			\
 	System.Data			\
-	Mono.Data			\
 	Mono.GetOptions			\
 	Accessibility			\
 	Mono.WebBrowser			\
@@ -58,8 +57,6 @@ common_dirs := \
 	System.Runtime.Remoting		\
 	System.Configuration.Install 	\
 	System.Management		\
-	Mono.Data.SybaseClient		\
-	Mono.Data.TdsClient		\
 	System.Data.OracleClient	\
 	Microsoft.VisualC		\
 	Cscompmgd			\
@@ -69,7 +66,6 @@ common_dirs := \
 	Compat.ICSharpCode.SharpZipLib	\
 	ICSharpCode.SharpZipLib		\
 	Compat.ICSharpCode.SharpZipLib	\
-	ByteFX.Data			\
 	Commons.Xml.Relaxng		\
 	Novell.Directory.Ldap		\
 	Mono.Security.Win32		\
@@ -85,16 +81,12 @@ common_dirs := \
 	Microsoft.Vsa			\
 	Mono.Cairo                      \
 	IBM.Data.DB2			\
-	Microsoft.JScript		\
 	CustomMarshalers		\
 	OpenSystem.C			\
 	Mono.Cecil			\
 	Mono.Cecil.Mdb			\
 	Mono.Debugger.Soft		\
 	SystemWebTestShim
-
-net_1_1_dirs :=		\
-	FirebirdSql.Data.Firebird
 
 net_2_0_dirs := \
 	Microsoft.Build.Framework	\
@@ -190,7 +182,7 @@ net_4_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_4_0_dirs)
 
 include ../build/rules.make
 
-SUBDIRS = $(common_dirs) $(net_1_1_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_2_1_dirs) $(net_3_5_dirs) $(net_4_0_dirs)
+SUBDIRS = $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs) $(net_2_1_dirs) $(net_3_5_dirs) $(net_4_0_dirs)
 
 DIST_ONLY_SUBDIRS = dlr
 
