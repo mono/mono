@@ -116,6 +116,17 @@ namespace Mono.CSharp
 				entry.column = column;
 				return entry;
 			}
+
+			//
+			// Used for token not required by expression evaluator
+			//
+			public static LocatedToken CreateOptional (int row, int col)
+			{
+#if false
+				return Create (row, col);
+#endif
+				return null;
+			}
 			
 			public static void Initialize ()
 			{
@@ -2607,8 +2618,10 @@ namespace Mono.CSharp
 					// To block doccomment inside attribute declaration.
 					if (doc_state == XmlCommentState.Allowed)
 						doc_state = XmlCommentState.NotAllowed;
+					val = LocatedToken.CreateOptional (ref_line, col);
 					return Token.OPEN_BRACKET;
 				case ']':
+					val = LocatedToken.CreateOptional (ref_line, col);
 					return Token.CLOSE_BRACKET;
 				case '(':
 					val = LocatedToken.Create (ref_line, col);
@@ -2656,10 +2669,13 @@ namespace Mono.CSharp
 
 					return Token.OPEN_PARENS;
 				case ')':
+					val = LocatedToken.CreateOptional (ref_line, col);
 					return Token.CLOSE_PARENS;
 				case ',':
+					val = LocatedToken.CreateOptional (ref_line, col);
 					return Token.COMMA;
 				case ';':
+					val = LocatedToken.CreateOptional (ref_line, col);
 					return Token.SEMICOLON;
 				case '~':
 					val = LocatedToken.Create (ref_line, col);
@@ -2668,12 +2684,14 @@ namespace Mono.CSharp
 					val = LocatedToken.Create (ref_line, col);
 					return TokenizePossibleNullableType ();
 				case '<':
+					val = LocatedToken.Create (ref_line, col);
 					if (parsing_generic_less_than++ > 0)
 						return Token.OP_GENERICS_LT;
 
 					return TokenizeLessThan ();
 
 				case '>':
+					val = LocatedToken.Create (ref_line, col);
 					d = peek_char ();
 
 					if (d == '='){
