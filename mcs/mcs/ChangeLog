@@ -1,3 +1,8 @@
+2010-03-02  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs (IsDynamicType): Don't check external types when
+	the attribute is not external.
+
 2010-02-24  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #582579

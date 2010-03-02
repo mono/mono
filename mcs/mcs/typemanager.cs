@@ -1325,7 +1325,7 @@ namespace Mono.CSharp {
 			return false;
 
 		PredefinedAttribute pa = PredefinedAttributes.Get.Dynamic;
-		if (pa == null)
+		if (pa == null || IsBeingCompiled (pa.Type))
 			return false;
 
 		object[] res = t.GetCustomAttributes (pa.Type, false);
