@@ -3,7 +3,7 @@
 #include <assert.h>
 #include <glib.h>
 
-#include "../mono/metadata/sgen-protocol.h"
+#include <mono/metadata/sgen-protocol.h>
 
 #define SGEN_PROTOCOL_EOF	255
 
