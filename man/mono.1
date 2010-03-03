@@ -427,6 +427,15 @@ standard method notation:
 	mono --trace=M:System.Console:WriteLine app.exe
 
 .fi
+Exceptions can also be traced, it will cause a stack trace to be
+printed every time an exception of the specified type is thrown.
+The exception type can be specified with or without the namespace,
+and to trace all exceptions, specify 'all' as the type name.
+.nf
+
+	mono --trace=E:System.Exception app.exe
+
+.fi
 As previously noted, various rules can be specified at once:
 .nf
 
