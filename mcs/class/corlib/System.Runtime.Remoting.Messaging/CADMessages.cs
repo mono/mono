@@ -360,7 +360,7 @@ namespace System.Runtime.Remoting.Messaging {
 		internal MethodBase GetMethod ()
 		{
 			MethodBase methodBase = null;
-			Type tt = Type.GetType (FullTypeName);
+			Type tt = Type.GetType (FullTypeName, true);
 			if (tt.IsGenericType || tt.IsGenericTypeDefinition) {
 				methodBase = MethodBase.GetMethodFromHandleNoGenericCheck (MethodHandle);
 			} else {
