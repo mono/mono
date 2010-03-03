@@ -1,3 +1,10 @@
+2006-03-03  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* Methods.cs: In BuildResponseReflectionMembers, use the operation
+	name as base name for the response element. Don't use the request
+	name as base, since it may have been customized using the RequestElementName
+	property. Fixes bug #548988.
+
 2010-02-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SoapDocumentationHandler.cs: use IndexOf() instead of LastIndexOf()
