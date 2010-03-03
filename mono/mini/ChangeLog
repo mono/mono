@@ -1,3 +1,10 @@
+2010-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_to_ir): Don't create a runtime vtable
+	to check for errors, it's enough to create the metadata open.
+
+	Fixes #562150
+
 2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* trace.c|h:
