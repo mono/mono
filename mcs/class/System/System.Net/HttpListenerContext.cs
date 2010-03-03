@@ -79,7 +79,9 @@ namespace System.Net {
 			get { return user; }
 		}
 
-		internal void ParseAuthentication () {
+		internal void ParseAuthentication (AuthenticationSchemes expectedSchemes) {
+			if (expectedSchemes == AuthenticationSchemes.Anonymous)
+				return;
 			// TODO: Handle NTLM/Digest modes
 			string header = request.Headers ["Authorization"];
 
