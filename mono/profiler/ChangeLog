@@ -1,4 +1,8 @@
 
+Wed Mar 3 19:17:14 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mono-profiler-iomap.c: use the normal allocation callback.
+
 Wed Feb 24 15:55:31 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* Makefile.am, mono-cov.c, mono-profiler-logging.c,
