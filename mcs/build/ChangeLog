@@ -1,3 +1,8 @@
+2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* profiles/net_2_1_bootstrap.make: Make 'basic' the bootstrapping
+	profile for net_2_1_bootstrap.
+
 2010-02-27  Raja R Harinath  <harinath@hurrynot.org>
 
 	* rules.make (all-local $(STD_TARGETS:=-local)): Add empty targets.
@@ -1275,4 +1280,3 @@ Fri Nov 24 18:38:31 CET 2006 Paolo Molaro <lupus@ximian.com>
 
 	* Created. See ../ChangeLog for entries earlier than
 	this.
-

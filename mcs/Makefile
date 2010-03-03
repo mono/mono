@@ -110,7 +110,7 @@ $(_boot_:%=profile-do--net_2_1--%):           profile-do--net_2_1--%:           
 $(_boot_:%=profile-do--monotouch--%):         profile-do--monotouch--%:         profile-do--monotouch_bootstrap--%
 $(_boot_:%=profile-do--monotouch_bootstrap--%): profile-do--monotouch_bootstrap--%: profile-do--net_2_0--%
 $(_boot_:%=profile-do--net_2_1_raw--%):       profile-do--net_2_1_raw--%:       profile-do--net_2_1_bootstrap--%
-$(_boot_:%=profile-do--net_2_1_bootstrap--%): profile-do--net_2_1_bootstrap--%: profile-do--net_2_0--%
+$(_boot_:%=profile-do--net_2_1_bootstrap--%): profile-do--net_2_1_bootstrap--%: profile-do--basic--%
 $(_boot_:%=profile-do--net_2_0--%):           profile-do--net_2_0--%:           profile-do--net_2_0_bootstrap--%
 $(_boot_:%=profile-do--net_2_0_bootstrap--%): profile-do--net_2_0_bootstrap--%: profile-do--basic--%
 

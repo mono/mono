@@ -1,3 +1,7 @@
+2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Make basic the bootstrapping profile for net_2_1_bootstrap.
+
 2010-03-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* docs/Makefile : drop Mono.Data.SqliteClient.

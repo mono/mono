@@ -1,3 +1,8 @@
+2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: We need to use the internal bootstrapping gmcs for
+	net_2_1_bootstrap too now.
+
 2010-03-02  Raja R Harinath  <harinath@hurrynot.org>
 
 	* expression.cs (IndexerAccess.ResolveAccessor): Add CS1540 check.
