@@ -1,5 +1,12 @@
 2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* trace.c|h:
+	* mini-exceptions.c: Add support for printing stack traces when handling
+	exceptions, and when printing exceptions thrown while tracing also print
+	the exception message.
+
+2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* trace.c: We need to parse exclude tokens ('-') before string tokens,
 	since the exclude token is a valid string character.
 

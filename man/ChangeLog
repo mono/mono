@@ -1,3 +1,7 @@
+2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* mono.1: Document exception tracing.
+
 2010-02-10  Geoff Norton  <gnorton@novell.com>
 
 	* mono.1: Document the aot compiler options.
