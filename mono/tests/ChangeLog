@@ -1,3 +1,7 @@
+2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-562150.cs: Regression test.
+
 2010-03-02  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile.am: Renamed INSTALL_2_1 to MOONLIGHT.
