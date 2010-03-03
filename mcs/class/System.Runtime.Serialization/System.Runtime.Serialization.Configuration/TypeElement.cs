@@ -31,12 +31,59 @@ using System.Configuration;
 
 namespace System.Runtime.Serialization.Configuration
 {
-	[MonoTODO]
 	public sealed class TypeElement : ConfigurationElement
 	{
+		// Static Fields
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty index;
+		static ConfigurationProperty parameters;
+		static ConfigurationProperty type;
+
+		static TypeElement ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+			index = new ConfigurationProperty ("index",
+				typeof (int), "", null, null,
+				ConfigurationPropertyOptions.None);
+			parameters = new ConfigurationProperty ("",
+				typeof (ParameterElementCollection), null, null, null,
+				ConfigurationPropertyOptions.IsDefaultCollection);
+			type = new ConfigurationProperty ("type",
+				typeof (string), "", null, null,
+				ConfigurationPropertyOptions.None);
+
+			properties.Add (index);
+			properties.Add (parameters);
+			properties.Add (type);
+		}
+
 		public TypeElement ()
 		{
 		}
+		
+		public TypeElement (string typeName)
+		{
+		}
+
+		[ConfigurationProperty ("index", DefaultValue = 0)]
+		[IntegerValidator (MinValue = 0)]
+		public int Index {
+			get { return (int) base [index]; }
+			set { base [index] = value; }
+		}
+
+		[ConfigurationProperty ("", DefaultValue = null, Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		public ParameterElementCollection Parameters {
+			get { return (ParameterElementCollection) base [parameters]; }
+		}
+
+		[ConfigurationProperty ("type", DefaultValue = "")]
+		[StringValidator (MinLength = 0)]
+		public string Type {
+			get { return (string) base [type]; }
+			set { base [type] = value; }
+		}
+
 	}
 }
 #endif

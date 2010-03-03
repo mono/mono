@@ -1,3 +1,15 @@
+2010-03-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractSerializerSection.cs : new.
+	* XmlFormatterSection.cs : remove.
+	* DeclaredTypeElementCollection.cs
+	  TypeElement.cs
+	  DeclaredTypeElement.cs
+	  SerializationSectionGroup.cs
+	  ParameterElementCollection.cs
+	  TypeElementCollection.cs
+	  ParameterElement.cs : implement.
+
 2005-10-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DeclaredTypeElementCollection.cs, TypeElement.cs,

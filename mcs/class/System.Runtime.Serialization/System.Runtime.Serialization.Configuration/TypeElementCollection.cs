@@ -31,23 +31,52 @@ using System.Configuration;
 
 namespace System.Runtime.Serialization.Configuration
 {
-	[MonoTODO]
-	public sealed class TypeElementCollection
-		: ConfigurationElementCollection
+	[ConfigurationCollection (typeof (TypeElement), CollectionType = ConfigurationElementCollectionType.BasicMap)]
+	public sealed class TypeElementCollection : ConfigurationElementCollection
 	{
 		public TypeElementCollection ()
 		{
 		}
 
+		public void Add (TypeElement element)
+		{
+			BaseAdd (element);
+		}
+
+		public void Clear ()
+		{
+			BaseClear ();
+		}
+
+		public bool Contains (string typeName)
+		{
+			return BaseGet (typeName) != null;
+		}
+
+		public int IndexOf (TypeElement element)
+		{
+			return BaseIndexOf (element);
+		}
+
+		public void Remove (TypeElement element)
+		{
+			BaseRemove ((string) GetElementKey (element));
+		}
+
+		public void RemoveAt (int index)
+		{
+			BaseRemoveAt (index);
+		}
+
 		protected override ConfigurationElement CreateNewElement ()
 		{
-			throw new NotImplementedException ();
+			return new TypeElement ();
 		}
 
 		protected override Object GetElementKey (
 			ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((TypeElement) element).Type;
 		}
 	}
 }

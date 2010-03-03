@@ -34,8 +34,43 @@ namespace System.Runtime.Serialization.Configuration
 	[MonoTODO]
 	public sealed class DeclaredTypeElement : ConfigurationElement
 	{
+		// Static Fields
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty known_types;
+		static ConfigurationProperty type;
+
+		static DeclaredTypeElement ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+			known_types = new ConfigurationProperty ("",
+				typeof (TypeElementCollection), null, null, null,
+				ConfigurationPropertyOptions.IsDefaultCollection);
+			type = new ConfigurationProperty ("type",
+				typeof (string), "", null, null,
+				ConfigurationPropertyOptions.None);
+
+			properties.Add (known_types);
+			properties.Add (type);
+		}
+
 		public DeclaredTypeElement ()
 		{
+		}
+
+		public DeclaredTypeElement (string typeName)
+		{
+			Type = typeName;
+		}
+
+		[ConfigurationProperty ("", DefaultValue = null, Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		public TypeElementCollection KnownTypes {
+			get { return (TypeElementCollection) base [known_types]; }
+		}
+
+		[ConfigurationProperty ("type", DefaultValue = "", Options = ConfigurationPropertyOptions.IsKey)]
+		public string Type {
+			get { return (string) base [type]; }
+			set { base [type] = value; }
 		}
 	}
 }

@@ -31,11 +31,63 @@ using System.Configuration;
 
 namespace System.Runtime.Serialization.Configuration
 {
-	[MonoTODO]
 	public sealed class ParameterElement : ConfigurationElement
 	{
+		// Static Fields
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty index;
+		static ConfigurationProperty parameters;
+		static ConfigurationProperty type;
+
+		static ParameterElement ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+			index = new ConfigurationProperty ("index",
+				typeof (int), "", null, null,
+				ConfigurationPropertyOptions.None);
+			parameters = new ConfigurationProperty ("",
+				typeof (ParameterElementCollection), null, null, null,
+				ConfigurationPropertyOptions.IsDefaultCollection);
+			type = new ConfigurationProperty ("type",
+				typeof (string), "", null, null,
+				ConfigurationPropertyOptions.None);
+
+			properties.Add (index);
+			properties.Add (parameters);
+			properties.Add (type);
+		}
+
 		public ParameterElement ()
 		{
+		}
+
+		public ParameterElement (int index)
+		{
+			Index = index;
+		}
+
+		public ParameterElement (string typeName)
+		{
+			Type = typeName;
+		}
+
+		[IntegerValidator (MinValue = 0)]
+		[ConfigurationProperty ("index", DefaultValue = 0)]
+		public int Index {
+			get { return (int) base [index]; }
+			set { base [index] = value; }
+		}
+
+		[ConfigurationProperty ("", DefaultValue = null, Options = ConfigurationPropertyOptions.IsDefaultCollection)]
+		public ParameterElementCollection Parameters {
+			get { return (ParameterElementCollection) base [parameters]; }
+		}
+
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("type", DefaultValue = "")]
+		public string Type {
+			get { return (string) base [type]; }
+			set { base [type] = value; }
 		}
 	}
 }

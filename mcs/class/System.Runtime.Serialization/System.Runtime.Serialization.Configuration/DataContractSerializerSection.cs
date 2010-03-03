@@ -1,10 +1,10 @@
 //
-// XmlFormatterSection.cs
+// DataContractSerializerSection.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,11 +31,30 @@ using System.Configuration;
 
 namespace System.Runtime.Serialization.Configuration
 {
-	[MonoTODO]
-	public sealed class XmlFormatterSection : ConfigurationSection
+	public sealed class DataContractSerializerSection : ConfigurationSection
 	{
-		public XmlFormatterSection ()
+		// Static Fields
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty declared_types;
+
+		static DataContractSerializerSection ()
 		{
+			properties = new ConfigurationPropertyCollection ();
+			declared_types = new ConfigurationProperty ("declaredTypes",
+				typeof (DeclaredTypeElementCollection), null, null, null,
+				ConfigurationPropertyOptions.None);
+
+			properties.Add (declared_types);
+		}
+
+		public DataContractSerializerSection ()
+		{
+		}
+
+		[ConfigurationPropertyAttribute ("declaredTypes", DefaultValue = null)]
+		public DeclaredTypeElementCollection DeclaredTypes {
+			get { return (DeclaredTypeElementCollection) base [declared_types]; }
+			set { base [declared_types] = value; }
 		}
 	}
 }

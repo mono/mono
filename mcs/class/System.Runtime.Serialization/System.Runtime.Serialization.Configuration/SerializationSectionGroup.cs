@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,13 +29,26 @@
 using System;
 using System.Configuration;
 
+using ConfigurationType = System.Configuration.Configuration;
+
 namespace System.Runtime.Serialization.Configuration
 {
-	[MonoTODO]
 	public sealed class SerializationSectionGroup : ConfigurationSectionGroup
 	{
+		public static SerializationSectionGroup GetSectionGroup (ConfigurationType config)
+		{
+			var ret = (SerializationSectionGroup) config.GetSectionGroup ("system.runtime.serialization");
+			if (ret == null)
+				throw new SystemException ("Internal configuration error: section 'system.runtime.serialization' was not found.");
+			return ret;
+		}
+
 		public SerializationSectionGroup ()
 		{
+		}
+
+		public DataContractSerializerSection DataContractSerializer {
+			get { return (DataContractSerializerSection) Sections ["dataContractSerializer"]; }
 		}
 	}
 }

@@ -32,22 +32,64 @@ using System.Configuration;
 namespace System.Runtime.Serialization.Configuration
 {
 	[MonoTODO]
-	public sealed class ParameterElementCollection
-		: ConfigurationElementCollection
+	[ConfigurationCollection (typeof (ParameterElement), AddItemName = "parameter", CollectionType = ConfigurationElementCollectionType.BasicMap)]
+	public sealed class ParameterElementCollection : ConfigurationElementCollection
 	{
 		public ParameterElementCollection ()
 		{
 		}
 
-		protected override ConfigurationElement CreateNewElement ()
-		{
-			throw new NotImplementedException ();
+		public override ConfigurationElementCollectionType CollectionType {
+			get { return ConfigurationElementCollectionType.BasicMap; }
 		}
 
-		protected override Object GetElementKey (
+		public ParameterElement this [int index] {
+			get { return (ParameterElement) BaseGet (index); }
+			set {
+				BaseRemoveAt (index);
+				Add (value);
+			}
+		}
+
+		public void Add (ParameterElement element)
+		{
+			BaseAdd (element);
+		}
+
+		public void Clear ()
+		{
+			BaseClear ();
+		}
+
+		public bool Contains (string typeName)
+		{
+			return BaseGet (typeName) != null;
+		}
+
+		public int IndexOf (ParameterElement element)
+		{
+			return BaseIndexOf (element);
+		}
+
+		public void Remove (ParameterElement element)
+		{
+			BaseRemove ((string) GetElementKey (element));
+		}
+
+		public void RemoveAt (int index)
+		{
+			BaseRemoveAt (index);
+		}
+
+		protected override ConfigurationElement CreateNewElement ()
+		{
+			return new ParameterElement ();
+		}
+
+		protected override object GetElementKey (
 			ConfigurationElement element)
 		{
-			throw new NotImplementedException ();
+			return ((ParameterElement) element).Type;
 		}
 	}
 }

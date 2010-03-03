@@ -2,6 +2,7 @@
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
 Assembly/AssemblyInfo.cs
+System.Runtime.Serialization.Configuration/DataContractSerializerSection.cs
 System.Runtime.Serialization.Configuration/DeclaredTypeElement.cs
 System.Runtime.Serialization.Configuration/DeclaredTypeElementCollection.cs
 System.Runtime.Serialization.Configuration/ParameterElement.cs
@@ -9,7 +10,6 @@ System.Runtime.Serialization.Configuration/ParameterElementCollection.cs
 System.Runtime.Serialization.Configuration/SerializationSectionGroup.cs
 System.Runtime.Serialization.Configuration/TypeElement.cs
 System.Runtime.Serialization.Configuration/TypeElementCollection.cs
-System.Runtime.Serialization.Configuration/XmlFormatterSection.cs
 System.Runtime.Serialization/CollectionDataContractAttribute.cs
 System.Runtime.Serialization/ContractNamespaceAttribute.cs
 System.Runtime.Serialization/DataContractAttribute.cs
