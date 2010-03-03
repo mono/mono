@@ -1,5 +1,9 @@
 2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoType.cs: Add v4 security properties.
+
+2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Type.cs: Add v4 security properties.
 
 2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
