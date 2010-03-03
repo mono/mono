@@ -1,3 +1,9 @@
+2010-03-03  Miguel de Icaza  <miguel@novell.com>
+
+	* decimal.c (mono_double2decimal): Add support for reducing the
+	scale of a decimal.  It turns the 0.6000000000000 into 0.6 as
+	expected.
+
 2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall-def.h:
