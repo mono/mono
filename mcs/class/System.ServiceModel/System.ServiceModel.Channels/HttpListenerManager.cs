@@ -121,7 +121,9 @@ namespace System.ServiceModel.Channels
 			lock (opened_listeners) {
 				if (!opened_listeners.ContainsKey (channelListener.Uri)) {
 					HttpListener listener = new HttpListener ();
-					listener.AuthenticationSchemes = Source.AuthenticationScheme;
+					listener.AuthenticationSchemeSelectorDelegate = delegate (HttpListenerRequest req) {
+						return Source.AuthenticationScheme;
+					};
 					listener.Realm = Source.Realm;
 					listener.UnsafeConnectionNtlmAuthentication = Source.UnsafeConnectionNtlmAuthentication;
 

@@ -1,5 +1,10 @@
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs : this change (along with HttpListener
+	  implementation) somehow fixes basic auth. connection error...
+
+2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeaders.cs : add !NET_2_1.
 
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
