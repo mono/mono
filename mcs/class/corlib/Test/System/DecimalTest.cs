@@ -677,6 +677,29 @@ namespace MonoTests.System
 			d = new Decimal (1.2342278901234e-25);
 			Assert.AreEqual (d, 1.234e-25m, "A10");
 
+			//
+			// Make sure that 0.6 is turned into
+			// the 96 bit value 6 with the magnitude set to
+			//
+			double mydouble = 0.6;
+			d = new Decimal (mydouble);
+			int [] bits = Decimal.GetBits (d);
+			Assert.AreEqual (bits [0], 6, "f1");
+			Assert.AreEqual (bits [1], 0, "f2");
+			Assert.AreEqual (bits [2], 0, "f3");
+			Assert.AreEqual (bits [3], 65536, "f4");
+
+			//
+			// Make sure that we properly parse this value
+			// this in particular exposes a bug in the
+			// unmanaged version which rounds to 1234 instead
+			// of 1235, here to make sure we do not regress
+			// on the future.
+			//
+			mydouble = 1.2345679329684657e-25;
+			d = new Decimal (mydouble);
+			Assert.AreEqual (d.ToString (), "0.0000000000000000000000001235", "f5");
+			
 			// test exceptions
 			try {
 				d = new Decimal (8e28);

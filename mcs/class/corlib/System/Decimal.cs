@@ -152,14 +152,22 @@ namespace System
 
 		public Decimal (float value) 
 		{
+#if false
+			//
+			// We cant use the double2decimal method
+			// because it incorrectly turns the floating point
+			// value 1.23456789E-25F which should be:
+			//    0.0000000000000000000000001235
+			// into the incorrect:
+			//   0.0000000000000000000000001234
+			//
+			//    The code currently parses the double value 0.6 as
+			//    0.600000000000000
+			//
+			// And we have a patch for that called (trim
 			if (double2decimal (out this, value, 7) != 0)
 				throw new OverflowException ();
-#if false
-	// This code was introduced in June of 2004 to deal with a
-	// bug at the time with SqlMoney but we have no record
-	// of the bug.   Commented out while we find out why
-	// the unmanaged conversion was taken out and replaced
-	// with the double->string->decimal conversion below
+#else
 			if (value > (float)Decimal.MaxValue || value < (float)Decimal.MinValue ||
 				float.IsNaN (value) || float.IsNegativeInfinity (value) || float.IsPositiveInfinity (value)) {
 				throw new OverflowException (Locale.GetText (
@@ -178,14 +186,22 @@ namespace System
 
 		public Decimal (double value) 
 		{
+#if false
+			//
+			// We cant use the double2decimal method
+			// because it incorrectly turns the floating point
+			// value 1.23456789E-25F which should be:
+			//    0.0000000000000000000000001235
+			// into the incorrect:
+			//   0.0000000000000000000000001234
+			//
+			//    The code currently parses the double value 0.6 as
+			//    0.600000000000000
+			//
+			// And we have a patch for that called (trim
 			if (double2decimal (out this, value, 15) != 0)
 				throw new OverflowException ();
-#if false
-	// This code was introduced in June of 2004 to deal with a
-	// bug at the time with SqlMoney but we have no record
-	// of the bug.   Commented out while we find out why
-	// the unmanaged conversion was taken out and replaced
-	// with the double->string->decimal conversion below
+#else
 			if (value > (double)Decimal.MaxValue || value < (double)Decimal.MinValue ||
 				double.IsNaN (value) || double.IsNegativeInfinity (value) || double.IsPositiveInfinity (value)) {
 				throw new OverflowException (Locale.GetText (
