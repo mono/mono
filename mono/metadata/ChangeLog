@@ -1,3 +1,10 @@
+
+Wed Mar 3 11:46:06 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c, domain.c, icall.c, image.c, marshal.c, object.c,
+	reflection.c, socket-io.c, threadpool.c, threads.c: removed 1.1/1.0
+	support.
+
 2010-03-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_image_get_memberref_token): Extract mono_image_add_memberef_row
