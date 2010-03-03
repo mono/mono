@@ -1,5 +1,10 @@
 2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* gensources.sh: Reverted to plain bash, cygwin/make seems to end up confused
+	with path separators with the managed version.
+
+2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* gensources.sh: Fix windows path separator characters.
 
 2010-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
