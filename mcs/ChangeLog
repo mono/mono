@@ -1,3 +1,7 @@
+2010-03-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* docs/Makefile : drop Mono.Data.SqliteClient.
+
 2010-02-28  Miguel de Icaza  <miguel@novell.com>
 
 	* docs/Makefile: install during the 4.0 build now.
