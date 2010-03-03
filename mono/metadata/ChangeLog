@@ -1,3 +1,22 @@
+2010-03-03  Marek Habersack  <mhabersack@novell.com>
+
+	* mono-config.c (mono_config_parse_assembly_bindings): added -
+	parses assembly binding redirections from appdomain's config
+	file.
+
+	* metadata-internals.h: added definition of a new function -
+	mono_config_parse_assembly_bindings - to support parsing assembly
+	binding redirections defined in appdomain's config file.
+
+	* domain-internals.h: added two new fields to _MonoDomain - a list
+	of assembly bindings and a flag to parse the config file only
+	once.
+
+	* assembly.c (assembly_binding_maps_name): empty culture name and
+	NULL culture name are considered equal.
+	(mono_assembly_apply_binding): added support for domain specific
+	assembly binding redirections, read from the appdomain's
+	configuration file. Fixes bug #580185
 
 Wed Mar 3 11:46:06 CET 2010 Paolo Molaro <lupus@ximian.com>
 
