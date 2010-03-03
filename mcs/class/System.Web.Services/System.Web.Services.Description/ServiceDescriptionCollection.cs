@@ -93,11 +93,12 @@ namespace System.Web.Services.Description {
 
 		public Binding GetBinding (XmlQualifiedName name)
 		{
-			ServiceDescription desc = (ServiceDescription) Table[name.Namespace];
-			if (desc != null) {
-				foreach (Binding binding in desc.Bindings) 
-					if (binding.Name == name.Name)
-						return binding;
+			foreach (ServiceDescription desc in List) {
+				if (desc.TargetNamespace == name.Namespace) {
+					foreach (Binding binding in desc.Bindings) 
+						if (binding.Name == name.Name)
+							return binding;
+				}
 			}
 			throw new InvalidOperationException ("Binding '" + name + "' not found");
 		}
@@ -109,33 +110,36 @@ namespace System.Web.Services.Description {
 
 		public Message GetMessage (XmlQualifiedName name)
 		{
-			ServiceDescription desc = (ServiceDescription) Table[name.Namespace];
-			if (desc != null) {
-				foreach (Message message in desc.Messages) 
-					if (message.Name == name.Name)
-						return message;
+			foreach (ServiceDescription desc in List) {
+				if (desc.TargetNamespace == name.Namespace) {
+					foreach (Message message in desc.Messages) 
+						if (message.Name == name.Name)
+							return message;
+				}
 			}
 			throw new InvalidOperationException ("Message '" + name + "' not found");
 		}
 
 		public PortType GetPortType (XmlQualifiedName name)
 		{
-			ServiceDescription desc = (ServiceDescription) Table[name.Namespace];
-			if (desc != null) {
-				foreach (PortType portType in desc.PortTypes) 
-					if (portType.Name == name.Name)
-						return portType;
+			foreach (ServiceDescription desc in List) {
+				if (desc.TargetNamespace == name.Namespace) {
+					foreach (PortType portType in desc.PortTypes) 
+						if (portType.Name == name.Name)
+							return portType;
+				}
 			}
 			throw new InvalidOperationException ("Port type '" + name + "' not found");
 		}
 
 		public Service GetService (XmlQualifiedName name)
 		{
-			ServiceDescription desc = (ServiceDescription) Table[name.Namespace];
-			if (desc != null) {
-				foreach (Service service in desc.Services) 
-					if (service.Name == name.Name)
-						return service;
+			foreach (ServiceDescription desc in List) {
+				if (desc.TargetNamespace == name.Namespace) {
+					foreach (Service service in desc.Services) 
+						if (service.Name == name.Name)
+							return service;
+				}
 			}
 			throw new InvalidOperationException ("Service '" + name + "' not found");
 		}

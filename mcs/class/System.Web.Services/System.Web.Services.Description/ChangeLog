@@ -1,3 +1,14 @@
+2010-03-03  Lluis Sanchez Gual <lluis@novell.com> 
+
+	* ServiceDescriptionCollection.cs: When looking for bindings and other
+	items, look in the list instead of the namespace table, since the
+	collection may have several description documents with the same
+	namespace.
+	* ProtocolImporter.cs: Same as above. A schemas collection can have
+	more than one schema with the same name, so we can use the namespace
+	indexer to find schemas.
+	* BasicProfileChecker.cs: Added null check.
+
 2010-02-01  Jb Evain  <jbevain@novell.com>
 
 	* SoapProtocolImporter.cs: properly generate the SoapHeader

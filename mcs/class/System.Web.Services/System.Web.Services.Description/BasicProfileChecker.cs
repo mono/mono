@@ -424,7 +424,7 @@ namespace System.Web.Services.Description
 				if (msg == null)
 					continue; // it is doubtful, but R2305 is not to check such cases anyways.
 				foreach (MessagePart p in msg.Parts) {
-					if (Array.IndexOf (order, p.Name) >= 0)
+					if (order != null && Array.IndexOf (order, p.Name) >= 0)
 						continue;
 					if (omitted == null) {
 						omitted = msg;

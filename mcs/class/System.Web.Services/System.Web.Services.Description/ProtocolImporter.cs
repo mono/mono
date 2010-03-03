@@ -513,13 +513,14 @@ namespace System.Web.Services.Description {
 		
 		void AddIncludingSchema (XmlSchemas list, string ns)
 		{
-			XmlSchema sc = Schemas [ns];
-			if (sc == null || list.Contains (sc)) return;
-			list.Add (sc);
-			foreach (XmlSchemaObject ob in sc.Includes)
-			{
-				XmlSchemaImport import = ob as XmlSchemaImport;
-				if (import != null) AddIncludingSchema (list, import.Namespace);
+			foreach (XmlSchema sc in Schemas) {
+				if (sc.TargetNamespace == ns && !list.Contains (sc)) {
+					list.Add (sc);
+					foreach (XmlSchemaObject ob in sc.Includes) {
+						XmlSchemaImport import = ob as XmlSchemaImport;
+						if (import != null) AddIncludingSchema (list, import.Namespace);
+					}
+				}
 			}
 		}
 		
