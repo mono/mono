@@ -1,3 +1,8 @@
+2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* trace.c: We need to parse exclude tokens ('-') before string tokens,
+	since the exclude token is a valid string character.
+
 2010-07-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_method_to_ir): Handle method with invalid
