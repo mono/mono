@@ -69,6 +69,20 @@ namespace System.ServiceModel.Configuration
 			set { base ["externalMetadataLocation"] = value; }
 		}
 
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("httpGetBinding", DefaultValue = "")]
+		public string HttpGetBinding {
+			get { return (string) base ["httpGetBinding"]; }
+			set { base ["httpGetBinding"] = value; }
+		}
+
+		[ConfigurationProperty ("httpGetBindingConfiguration", DefaultValue = "")]
+		[StringValidator (MinLength = 0)]
+		public string HttpGetBindingConfiguration {
+			get { return (string) base ["httpGetBindingConfiguration"]; }
+			set { base ["httpGetBindingConfiguration"] = value; }
+		}
+
 		[ConfigurationProperty ("httpGetEnabled",
 			 Options = ConfigurationPropertyOptions.None,
 			DefaultValue = false)]
@@ -82,6 +96,20 @@ namespace System.ServiceModel.Configuration
 		public Uri HttpGetUrl {
 			get { return (Uri) base ["httpGetUrl"]; }
 			set { base ["httpGetUrl"] = value; }
+		}
+
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("httpsGetBinding", DefaultValue = "")]
+		public string HttpsGetBinding {
+			get { return (string) base ["httpsGetBinding"]; }
+			set { base ["httpsGetBinding"] = value; }
+		}
+
+		[ConfigurationProperty ("httpsGetBindingConfiguration", DefaultValue = "")]
+		[StringValidator (MinLength = 0)]
+		public string HttpsGetBindingConfiguration {
+			get { return (string) base ["httpsGetBindingConfiguration"]; }
+			set { base ["httpsGetBindingConfiguration"] = value; }
 		}
 
 		[ConfigurationProperty ("httpsGetEnabled",
@@ -109,6 +137,10 @@ namespace System.ServiceModel.Configuration
 			b.HttpsGetEnabled = HttpsGetEnabled;
 			b.HttpGetUrl = HttpGetUrl;
 			b.HttpsGetUrl = HttpsGetUrl;
+			if (HttpGetBinding != null)
+				b.HttpGetBinding = ConfigUtil.CreateBinding (HttpGetBinding, HttpGetBindingConfiguration);
+			if (HttpsGetBinding != null)
+				b.HttpsGetBinding = ConfigUtil.CreateBinding (HttpsGetBinding, HttpsGetBindingConfiguration);
 			return b;
 		}
 

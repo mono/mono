@@ -67,6 +67,20 @@ namespace System.ServiceModel.Configuration
 			get { return typeof (ServiceDebugBehavior); }
 		}
 
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("httpHelpPageBinding", DefaultValue = "")]
+		public string HttpHelpPageBinding {
+			get { return (string) base ["httpHelpPageBinding"]; }
+			set { base ["httpHelpPageBinding"] = value; }
+		}
+
+		[ConfigurationProperty ("httpHelpPageBindingConfiguration", DefaultValue = "")]
+		[StringValidator (MinLength = 0)]
+		public string HttpHelpPageBindingConfiguration {
+			get { return (string) base ["httpHelpPageBindingConfiguration"]; }
+			set { base ["httpHelpPageBindingConfiguration"] = value; }
+		}
+
 		[ConfigurationProperty ("httpHelpPageEnabled",
 			 Options = ConfigurationPropertyOptions.None,
 			DefaultValue = true)]
@@ -80,6 +94,20 @@ namespace System.ServiceModel.Configuration
 		public Uri HttpHelpPageUrl {
 			get { return (Uri) base ["httpHelpPageUrl"]; }
 			set { base ["httpHelpPageUrl"] = value; }
+		}
+
+		[StringValidator (MinLength = 0)]
+		[ConfigurationProperty ("httpsHelpPageBinding", DefaultValue = "")]
+		public string HttpsHelpPageBinding {
+			get { return (string) base ["httpsHelpPageBinding"]; }
+			set { base ["httpsHelpPageBinding"] = value; }
+		}
+
+		[ConfigurationProperty ("httpsHelpPageBindingConfiguration", DefaultValue = "")]
+		[StringValidator (MinLength = 0)]
+		public string HttpsHelpPageBindingConfiguration {
+			get { return (string) base ["httpsHelpPageBindingConfiguration"]; }
+			set { base ["httpsHelpPageBindingConfiguration"] = value; }
 		}
 
 		[ConfigurationProperty ("httpsHelpPageEnabled",
@@ -109,15 +137,20 @@ namespace System.ServiceModel.Configuration
 			get { return base.Properties; }
 		}
 
-		protected internal override object CreateBehavior () {
-			return new ServiceDebugBehavior ()
-			{
+		protected internal override object CreateBehavior ()
+		{
+			var ret = new ServiceDebugBehavior () {
 				HttpHelpPageEnabled = HttpHelpPageEnabled,
 				HttpsHelpPageEnabled = HttpsHelpPageEnabled,
 				HttpHelpPageUrl = HttpHelpPageUrl,
 				HttpsHelpPageUrl = HttpsHelpPageUrl,
 				IncludeExceptionDetailInFaults = IncludeExceptionDetailInFaults,
 			};
+			if (HttpHelpPageBinding != null)
+				ret.HttpHelpPageBinding = ConfigUtil.CreateBinding (HttpHelpPageBinding, HttpHelpPageBindingConfiguration);
+			if (HttpsHelpPageBinding != null)
+				ret.HttpsHelpPageBinding = ConfigUtil.CreateBinding (HttpsHelpPageBinding, HttpsHelpPageBindingConfiguration);
+			return ret;
 		}
 
 	}
