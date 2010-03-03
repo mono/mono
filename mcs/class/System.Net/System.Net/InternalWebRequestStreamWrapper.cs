@@ -89,10 +89,6 @@ namespace System.Net {
 
 		public override void Write (byte [] buffer, int offset, int count)
 		{
-			// make sure we start with a new line
-			if ((count > 0) && (Length == 0))
-				stream.WriteByte ((byte) '\n');
-
 			stream.Write (buffer, offset, count);
 		}
 

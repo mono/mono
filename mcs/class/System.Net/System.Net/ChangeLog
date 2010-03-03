@@ -1,3 +1,10 @@
+2010-03-03  Andreia Gaita  <avidigal@novell.com>
+
+	* InternalWebRequestStreamWrapper.cs: don't add a newline to the
+	request data, whatever uses the data should be the one adding
+	newlines if they need it (i.e., moon's ff bridge needs it, the
+	curl bridge doesn't)
+
 2010-02-25  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WebClient_2_1.cs: Emit DownloadProgressChanged events on the correct
