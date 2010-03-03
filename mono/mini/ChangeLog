@@ -1,3 +1,8 @@
+
+Wed Mar 3 19:19:21 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* method-to-ir.c: MONO_PROFILE_STRING_ALLOC is dead.
+
 2010-03-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_method_to_ir): Don't create a runtime vtable
