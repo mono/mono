@@ -1,5 +1,9 @@
 2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Activator.cs: : Implement new v4 overloads and [Obsolete].
+
+2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* AppDomain.cs: Add bunch of trivial overloads.
 
 2010-03-01 Rodrigo Kumpera  <rkumpera@novell.com>

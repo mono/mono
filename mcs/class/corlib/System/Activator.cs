@@ -101,6 +101,9 @@ namespace System
 				activationAttributes, null);
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
 		                                               BindingFlags bindingAttr, Binder binder, object [] args,
 		                                               CultureInfo culture, object [] activationAttributes,
@@ -135,6 +138,9 @@ namespace System
 				activationAttributes, null);
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
 		                                           BindingFlags bindingAttr, Binder binder, object [] args,
 							   CultureInfo culture, object [] activationAttributes, Evidence securityInfo)
@@ -170,6 +176,10 @@ namespace System
 			return domain.CreateInstanceFrom (assemblyFile, typeName);
 		}
 
+
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName,
 							       bool ignoreCase, BindingFlags bindingAttr, Binder binder,
 							       object [] args, CultureInfo culture,
@@ -189,6 +199,9 @@ namespace System
 			return domain.CreateInstance (assemblyName, typeName);
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName,
 							   bool ignoreCase, BindingFlags bindingAttr, Binder binder,
 							   object [] args, CultureInfo culture,
@@ -386,5 +399,58 @@ namespace System
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_4_0
+		public static ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase,
+		                                           BindingFlags bindingAttr, Binder binder, object [] args,
+							   CultureInfo culture, object [] activationAttributes)
+		{
+			Assembly assembly = null;
+			if(assemblyName == null)
+				assembly = Assembly.GetCallingAssembly ();
+			else
+				assembly = Assembly.Load (assemblyName);
+			Type type = assembly.GetType (typeName, true, ignoreCase);
+			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
+			return (obj != null) ? new ObjectHandle (obj) : null;
+		}
+
+		public static ObjectHandle CreateInstance (AppDomain domain, string assemblyName, string typeName,
+							   bool ignoreCase, BindingFlags bindingAttr, Binder binder,
+							   object [] args, CultureInfo culture,
+							   object [] activationAttributes)
+		{
+			if (domain == null)
+				throw new ArgumentNullException ("domain");
+			return domain.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes);
+		}
+
+		public static ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
+		                                               BindingFlags bindingAttr, Binder binder, object [] args,
+		                                               CultureInfo culture, object [] activationAttributes)
+		{
+			Assembly assembly = Assembly.LoadFrom (assemblyFile);
+			if (assembly == null)
+				return null;
+
+			Type type = assembly.GetType (typeName, true, ignoreCase);
+			if (type == null)
+				return null;
+
+			object obj = CreateInstance (type, bindingAttr, binder, args, culture, activationAttributes);
+			return (obj != null) ? new ObjectHandle (obj) : null;
+		}
+
+		public static ObjectHandle CreateInstanceFrom (AppDomain domain, string assemblyFile, string typeName,
+							       bool ignoreCase, BindingFlags bindingAttr, Binder binder,
+							       object [] args, CultureInfo culture,
+							       object [] activationAttributes)
+		{
+			if (domain == null)
+				throw new ArgumentNullException ("domain");
+
+			return domain.CreateInstanceFrom (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args, culture, activationAttributes);
+		}
+#endif
 	}
 }
