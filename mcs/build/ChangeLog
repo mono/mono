@@ -1,3 +1,8 @@
+2010-03-03  Jonathan Pryor <jpryor@novell.com>
+
+	* library.make: Add the generated per-profile .source file to
+	  library_CLEAN_FILES so that it's actually removed on clean.
+
 2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* profiles/net_2_1_bootstrap.make: Make 'basic' the bootstrapping

@@ -19,6 +19,7 @@ sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
 $(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(COMMON_sourcefile)
 	@echo Creating the per profile list $@ ...
 	$(topdir)/tools/gensources.sh $(PROFILE_sources) $(PROFILE_excludes) > $@
+library_CLEAN_FILES += $(sourcefile)
 endif
 
 PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
