@@ -1,3 +1,7 @@
+2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* gensources.sh: Fix windows path separator characters.
+
 2010-03-02  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Makefile: Fix mdoc build.

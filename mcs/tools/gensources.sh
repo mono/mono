@@ -55,7 +55,7 @@ class GenSource {
 		filelist.Add (onelist);
 
 		foreach (string l in File.ReadAllLines (onelist)) {
-			string line = l.Replace (" ", "").Replace ("\t", "");
+			string line = l.Replace (" ", "").Replace ("\t", "").Replace ('/', Path.DirectorySeparatorChar);
 			if (!line.StartsWith ("#")) {
 				if (excludelist != null && excludelist.Contains (line))
 					continue;
