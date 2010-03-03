@@ -594,6 +594,20 @@ namespace System {
 			return spec.Resolve (assemblyResolver, typeResolver, throwOnError, ignoreCase);
 		}
 
+		public virtual bool IsSecurityTransparent
+		{
+			get { throw CreateNIE (); }
+		}
+
+		public virtual bool IsSecurityCritical
+		{
+			get { throw CreateNIE (); }
+		}
+
+		public virtual bool IsSecuritySafeCritical
+		{
+			get { throw CreateNIE (); }
+		}
 #endif
 		
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
