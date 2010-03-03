@@ -1,3 +1,21 @@
+2010-03-03  Miguel de Icaza  <miguel@novell.com>
+
+	* Decimal.cs: Disable the fast double2decimal code, and go back to
+	string parsing as there is a rounding/precision bug.
+
+		//
+		// We cant use the double2decimal method
+		// because it incorrectly turns the floating point
+		// value 1.23456789E-25F which should be:
+		//    0.0000000000000000000000001235
+		// into the incorrect:
+		//   0.0000000000000000000000001234
+		//
+		//    The code currently parses the double value 0.6 as
+		//    0.600000000000000
+		//
+		// And we have a patch for that called (trim
+
 2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoType.cs: Add v4 security properties.
