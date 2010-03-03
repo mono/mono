@@ -1,3 +1,8 @@
+2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall-def.h:
+	* icall.c: Implement System.MonoType::get_core_clr_security_level icall.
+
 2010-03-03  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-config.c (mono_config_parse_assembly_bindings): added -
