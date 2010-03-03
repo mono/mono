@@ -1,3 +1,9 @@
+
+Wed Mar 3 19:20:39 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, profiler.c, profiler.h, string-icalls.c:
+	remove the reduntant MONO_PROFILE_STRING_ALLOC profiler event.
+
 2010-03-03  Miguel de Icaza  <miguel@novell.com>
 
 	* decimal.c (mono_double2decimal): Add support for reducing the
