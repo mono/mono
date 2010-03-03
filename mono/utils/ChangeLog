@@ -1,3 +1,8 @@
+2010-03-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-mmap.c: apparently kill() can return ENOMEM. Also use signal 0
+	which is the documented way of testing for the existence of a PID.
+	Thanks to Cal Page.
 
 Thu Feb 25 11:59:22 CET 2010 Paolo Molaro <lupus@ximian.com>
 
