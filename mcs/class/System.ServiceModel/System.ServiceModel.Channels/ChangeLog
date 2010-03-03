@@ -1,3 +1,9 @@
+2010-03-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs, AspNetReplyChannel.cs, HttpChannelListener.cs,
+	  HttpListenerManager.cs : ongoing authentication support. It returns
+	  401 as expected, but somehow fails to retrieve user info.
+
 2010-02-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpListenerManager.cs : this change (along with HttpListener

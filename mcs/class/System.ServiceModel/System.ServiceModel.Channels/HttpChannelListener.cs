@@ -66,7 +66,7 @@ namespace System.ServiceModel.Channels
 
 		protected override HttpListenerManager CreateListenerManager ()
 		{
-			return new HttpSimpleListenerManager (this, Source);
+			return new HttpSimpleListenerManager (this, Source, SecurityTokenManager);
 		}
 	}
 
@@ -93,14 +93,13 @@ namespace System.ServiceModel.Channels
 
 		protected override HttpListenerManager CreateListenerManager ()
 		{
-			return new AspNetListenerManager (this, Source);
+			return new AspNetListenerManager (this, Source, SecurityTokenManager);
 		}
 	}
 
 	internal abstract class HttpChannelListenerBase<TChannel> : InternalChannelListenerBase<TChannel>
 		where TChannel : class, IChannel
 	{
-		BindingContext context;
 		List<TChannel> channels = new List<TChannel> ();
 		MessageEncoder encoder;
 		HttpListenerManager httpChannelManager;
@@ -124,6 +123,9 @@ namespace System.ServiceModel.Channels
 			}
 			if (encoder == null)
 				encoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
+
+			if (context.BindingParameters.Contains (typeof (ServiceCredentials)))
+				SecurityTokenManager = new ServiceCredentialsSecurityTokenManager ((ServiceCredentials) context.BindingParameters [typeof (ServiceCredentials)]);
 		}
 
 		public HttpTransportBindingElement Source { get; private set; }
@@ -135,6 +137,8 @@ namespace System.ServiceModel.Channels
 		public MessageEncoder MessageEncoder {
 			get { return encoder; }
 		}
+
+		public ServiceCredentialsSecurityTokenManager SecurityTokenManager { get; private set; }
 
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{

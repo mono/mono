@@ -107,10 +107,14 @@ namespace System.ServiceModel.Channels
 					waiting.RemoveAt (0);
 				}
 			}
-			if (ctx == null) 
+			if (ctx == null)
 				// Though as long as this instance is used
 				// synchronously, it should not happen.
 				return false;
+			if (ctx.Response.StatusCode != 200) {
+				ctx.Response.Close ();
+				return false;
+			}
 
 			// FIXME: supply maxSizeOfHeaders.
 			int maxSizeOfHeaders = 0x10000;

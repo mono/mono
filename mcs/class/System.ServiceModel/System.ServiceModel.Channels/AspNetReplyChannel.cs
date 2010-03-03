@@ -110,6 +110,10 @@ namespace System.ServiceModel.Channels
 				// Though as long as this instance is used
 				// synchronously, it should not happen.
 				return false;
+			if (http_context.Response.StatusCode != 200) {
+				http_context.Response.Close ();
+				return false;
+			}
 
 			Message msg;
 			var req = http_context.Request;

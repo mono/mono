@@ -3,8 +3,10 @@
 //
 // Author:
 //	Vladimir Krasnov <vladimirk@mainsoft.com>
+//	Atsushi Enomoto  <atsushi@ximian.com>
 //
 // Copyright (C) 2005-2006 Mainsoft, Inc.  http://www.mainsoft.com
+// Copyright (C) 2009-2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,7 +30,10 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.Specialized;
+using System.IdentityModel.Selectors;
+using System.IdentityModel.Tokens;
 using System.ServiceModel.Description;
+using System.ServiceModel.Security;
 using System.Text;
 using System.Threading;
 using System.Net;
@@ -42,6 +47,10 @@ namespace System.ServiceModel.Channels
 		public abstract Uri RequestUrl { get; }
 		public abstract string HttpMethod { get; }
 		public abstract void Abort ();
+
+		public abstract string User { get; }
+		public abstract string Password { get; }
+		public abstract void ReturnUnauthorized ();
 	}
 
 	class HttpListenerContextInfo : HttpContextInfo
@@ -69,6 +78,19 @@ namespace System.ServiceModel.Channels
 		public override void Abort ()
 		{
 			ctx.Response.Abort ();
+		}
+
+		public override string User {
+			get { return ctx.User != null ? ((HttpListenerBasicIdentity) ctx.User.Identity).Name : null; }
+		}
+
+		public override string Password {
+			get { return ctx.User != null ? ((HttpListenerBasicIdentity) ctx.User.Identity).Password : null; }
+		}
+
+		public override void ReturnUnauthorized ()
+		{
+			ctx.Response.StatusCode = 401;
 		}
 	}
 
@@ -99,6 +121,20 @@ namespace System.ServiceModel.Channels
 		{
 			ctx.Response.Close ();
 		}
+
+		public override string User {
+			get { return ctx.User != null ? ((HttpListenerBasicIdentity) ctx.User.Identity).Name : null; }
+		}
+
+		// FIXME: how to acquire this?
+		public override string Password {
+			get { throw new NotImplementedException (); }
+		}
+
+		public override void ReturnUnauthorized ()
+		{
+			ctx.Response.StatusCode = 401;
+		}
 	}
 
 	internal class HttpSimpleListenerManager : HttpListenerManager
@@ -111,8 +147,8 @@ namespace System.ServiceModel.Channels
 			opened_listeners = new Dictionary<Uri, HttpListener> ();
 		}
 
-		public HttpSimpleListenerManager (IChannelListener channelListener, HttpTransportBindingElement source)
-			: base (channelListener, source)
+		public HttpSimpleListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager)
+			: base (channelListener, source, securityTokenManager)
 		{
 		}
 
@@ -172,8 +208,8 @@ namespace System.ServiceModel.Channels
 	{
 		SvcHttpHandler http_handler;
 
-		public AspNetListenerManager (IChannelListener channelListener, HttpTransportBindingElement source)
-			: base (channelListener, source)
+		public AspNetListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager)
+			: base (channelListener, source, securityTokenManager)
 		{
 			http_handler = SvcHttpHandlerFactory.GetHandlerForListener (channelListener);
 		}
@@ -217,18 +253,26 @@ namespace System.ServiceModel.Channels
 		public MetadataPublishingInfo MexInfo { get { return mex_info; } }
 		public HttpTransportBindingElement Source { get; private set; }
 
+		SecurityTokenAuthenticator security_token_authenticator;
+		SecurityTokenResolver security_token_resolver;
+
 		static HttpListenerManager ()
 		{
 			registered_channels = new Dictionary<Uri, List<IChannelListener>> ();
 		}
 
-		protected HttpListenerManager (IChannelListener channelListener, HttpTransportBindingElement source)
+		protected HttpListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager)
 		{
 			this.channel_listener = channelListener;
 			// FIXME: this cast should not be required, but current JIT somehow causes an internal error.
 			mex_info = ((IChannelListener) channelListener).GetProperty<MetadataPublishingInfo> ();
 			wsdl_instance = mex_info != null ? mex_info.Instance : null;
 			Source = source;
+
+			if (securityTokenManager != null) {
+				var str = new SecurityTokenRequirement () { TokenType = SecurityTokenTypes.UserName };
+				security_token_authenticator = securityTokenManager.CreateSecurityTokenAuthenticator (str, out security_token_resolver);
+			}
 		}
 
 		public void Open (TimeSpan timeout)
@@ -309,26 +353,39 @@ namespace System.ServiceModel.Channels
 		void DispatchHttpListenerContext (HttpContextInfo ctx)
 		{
 			if (wsdl_instance == null) {
-				AddListenerContext (this, ctx);
+				AddListenerContext (ctx);
 				return;
 			}
 			foreach (var l in registered_channels [channel_listener.Uri]) {
 				var lm = l.GetProperty<HttpListenerManager> ();
 				if (lm.FilterHttpContext (ctx)) {
-					AddListenerContext (lm, ctx);
+					lm.AddListenerContext (ctx);
 					return;
 				}
 			}
-			AddListenerContext (this, ctx);
+			AddListenerContext (ctx);
 		}
 
-		static void AddListenerContext (HttpListenerManager lm, HttpContextInfo ctx)
+		void AddListenerContext (HttpContextInfo ctx)
 		{
+			if (Source.AuthenticationScheme != AuthenticationSchemes.Anonymous) {
+				if (security_token_authenticator != null)
+					// FIXME: use return value?
+					try {
+						security_token_authenticator.ValidateToken (new UserNameSecurityToken (ctx.User, ctx.Password));
+					} catch (Exception) {
+						ctx.ReturnUnauthorized ();
+					}
+				else {
+					ctx.ReturnUnauthorized ();
+				}
+			}
+
 			lock (registered_channels) {
-				lm.pending.Add (ctx);
+				pending.Add (ctx);
 				// FIXME: this should not be required, but it somehow saves some failures wrt concurrent calls.
 				Thread.Sleep (100);
-				lm.wait_http_ctx.Set ();
+				wait_http_ctx.Set ();
 			}
 		}
 
