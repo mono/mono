@@ -1,4 +1,9 @@
 
+Wed Mar 3 20:19:45 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* profiler-private.h, profiler.c, profiler.h, sgen-gc.c: introduce
+	profiler event to track object moves.
+
 Wed Mar 3 19:20:39 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* object.c, profiler.c, profiler.h, string-icalls.c:
