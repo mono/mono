@@ -353,6 +353,47 @@ namespace System {
 			return (oh != null) ? oh.Unwrap () : null;
 		}
 
+#if NET_4_0
+		public ObjectHandle CreateInstance (string assemblyName, string typeName, bool ignoreCase, BindingFlags bindingAttr,
+		                                    Binder binder, object[] args, CultureInfo culture, object[] activationAttributes)
+		{
+			if (assemblyName == null)
+				throw new ArgumentNullException ("assemblyName");
+
+			return Activator.CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+				culture, activationAttributes, null);
+		}
+		public object CreateInstanceAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
+		                                       BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
+		                                       object[] activationAttributes)
+		{
+			ObjectHandle oh = CreateInstance (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+				culture, activationAttributes);
+			return (oh != null) ? oh.Unwrap () : null;
+		}
+
+		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName, bool ignoreCase,
+		                                        BindingFlags bindingAttr, Binder binder, object[] args, CultureInfo culture,
+		                                        object[] activationAttributes)
+		{
+			if (assemblyFile == null)
+				throw new ArgumentNullException ("assemblyFile");
+
+			return Activator.CreateInstanceFrom (assemblyFile, typeName, ignoreCase, bindingAttr, binder, args,
+			                                     culture, activationAttributes, null);
+		}
+
+		public object CreateInstanceFromAndUnwrap (string assemblyName, string typeName, bool ignoreCase,
+		                                           BindingFlags bindingAttr, Binder binder, object[] args,
+		                                           CultureInfo culture, object[] activationAttributes)
+		{
+			ObjectHandle oh = CreateInstanceFrom (assemblyName, typeName, ignoreCase, bindingAttr, binder, args,
+				culture, activationAttributes);
+
+			return (oh != null) ? oh.Unwrap () : null;
+		}
+#endif
+
 		public ObjectHandle CreateInstanceFrom (string assemblyFile, string typeName)
 		{
 			if (assemblyFile == null)
@@ -547,7 +588,7 @@ namespace System {
 
 		public int ExecuteAssembly (string assemblyFile)
 		{
-			return ExecuteAssembly (assemblyFile, null, null);
+			return ExecuteAssembly (assemblyFile, (Evidence)null, null);
 		}
 
 #if NET_4_0
@@ -575,6 +616,21 @@ namespace System {
 			Assembly a = Assembly.LoadFrom (assemblyFile, assemblySecurity, hashValue, hashAlgorithm);
 			return ExecuteAssemblyInternal (a, args);
 		}
+
+
+#if NET_4_0
+		public int ExecuteAssembly (string assemblyFile, string[] args)
+		{
+			Assembly a = Assembly.LoadFrom (assemblyFile, null);
+			return ExecuteAssemblyInternal (a, args);
+		}
+
+		public int ExecuteAssembly (string assemblyFile, string[] args, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
+		{
+			Assembly a = Assembly.LoadFrom (assemblyFile, null, hashValue, hashAlgorithm);
+			return ExecuteAssemblyInternal (a, args);
+		}
+#endif
 
 		int ExecuteAssemblyInternal (Assembly a, string[] args)
 		{
@@ -1365,7 +1421,7 @@ namespace System {
 
 		public int ExecuteAssemblyByName (string assemblyName)
 		{
-			return ExecuteAssemblyByName (assemblyName, null, null);
+			return ExecuteAssemblyByName (assemblyName, (Evidence)null, null);
 		}
 
 #if NET_4_0
@@ -1395,6 +1451,22 @@ namespace System {
 
 			return ExecuteAssemblyInternal (a, args);
 		}
+
+#if NET_4_0
+		public int ExecuteAssemblyByName (string assemblyName, params string[] args)
+		{
+			Assembly a = Assembly.Load (assemblyName, null);
+
+			return ExecuteAssemblyInternal (a, args);
+		}
+
+		public int ExecuteAssemblyByName (AssemblyName assemblyName, params string[] args)
+		{
+			Assembly a = Assembly.Load (assemblyName, null);
+
+			return ExecuteAssemblyInternal (a, args);
+		}
+#endif
 
 		public bool IsDefaultAppDomain ()
 		{

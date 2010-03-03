@@ -1,3 +1,7 @@
+2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AppDomain.cs: Add bunch of trivial overloads.
+
 2010-03-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeSpec.cs: New file. Managed code implementation of type name
