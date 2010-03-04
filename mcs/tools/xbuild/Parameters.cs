@@ -190,8 +190,10 @@ namespace Mono.XBuild.CommandLine {
                                                 sb.Length = 0;
                                         }
                                 }
-                        } catch (Exception x) {
-				ReportError (2, "Error during loading response file.", x);
+                        } catch (IOException x) {
+				ErrorUtilities.ReportWarning (2, String.Format (
+							"Error loading response file. (Exception: {0}). Ignoring.",
+							x.Message));
 			} finally {
                                 if (sr != null)
                                         sr.Close ();

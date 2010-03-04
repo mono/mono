@@ -1,3 +1,10 @@
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
+	* CommandLineException.cs (Message): Include the inner exception message
+	also.
+	* Parameters.cs (LoadResponseFile): Report any errors in this, as
+	warnings.
+
 2010-03-04  Jonathan Pryor <jpryor@novel.com>
 
 	* xbuild/Makefile: $(EXTRAS_DIR) should use $(FRAMEWORK_VERSION) so
