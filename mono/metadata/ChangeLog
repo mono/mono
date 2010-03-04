@@ -1,4 +1,9 @@
 
+Thu Mar 4 15:37:09 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* profiler.c: allow multiple profiler engines to be loaded
+	at the same time.
+
 Wed Mar 3 20:19:45 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* profiler-private.h, profiler.c, profiler.h, sgen-gc.c: introduce
