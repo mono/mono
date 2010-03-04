@@ -58,8 +58,6 @@ namespace System.Web.Compilation
 		readonly string virtualPathDirectory;
 		CompilationSection compilationSection;
 		Dictionary <string, BuildProvider> buildProviders;
-		IEqualityComparer <string> dictionaryComparer;
-		StringComparison stringComparer;
 		VirtualPathProvider vpp;
 		
 		CompilationSection CompilationSection {
@@ -78,13 +76,6 @@ namespace System.Web.Compilation
 			this.vpp = HostingEnvironment.VirtualPathProvider;
 			this.virtualPath = virtualPath;
 			this.virtualPathDirectory = VirtualPathUtility.GetDirectory (virtualPath.Absolute);
-			if (HttpRuntime.CaseInsensitive) {
-				this.stringComparer = StringComparison.OrdinalIgnoreCase;
-				this.dictionaryComparer = StringComparer.OrdinalIgnoreCase;
-			} else {
-				this.stringComparer = StringComparison.Ordinal;
-				this.dictionaryComparer = StringComparer.Ordinal;
-			}
 		}
 
 		public List <BuildProviderGroup> Build (bool single)
@@ -114,7 +105,7 @@ namespace System.Web.Compilation
 			if (single) {
 				AddVirtualFile (GetVirtualFile (virtualPath.Absolute), bpcoll);
 			} else {
-				var cache = new Dictionary <string, bool> (dictionaryComparer);
+				var cache = new Dictionary <string, bool> (RuntimeHelpers.StringEqualityComparer);
 				AddVirtualDir (GetVirtualDirectory (virtualPath.Absolute), bpcoll, cache);
 				cache = null;
 				if (buildProviders == null || buildProviders.Count == 0)
@@ -143,7 +134,7 @@ namespace System.Web.Compilation
 		bool AddBuildProvider (BuildProvider buildProvider)
 		{
 			if (buildProviders == null)
-				buildProviders = new Dictionary <string, BuildProvider> (dictionaryComparer);
+				buildProviders = new Dictionary <string, BuildProvider> (RuntimeHelpers.StringEqualityComparer);
 			
 			string bpPath = buildProvider.VirtualPath;
 			if (buildProviders.ContainsKey (bpPath))
@@ -260,6 +251,7 @@ namespace System.Web.Compilation
 			if (BuildManager.HasCachedItemNoLock (buildProvider.VirtualPath))
 				return;			
 
+			StringComparison stringComparison = RuntimeHelpers.StringComparison;
 			if (buildProvider is ApplicationFileBuildProvider || buildProvider is ThemeDirectoryBuildProvider) {
 				// global.asax and theme directory go into their own assemblies
 				myGroup = new BuildProviderGroup ();
@@ -284,7 +276,7 @@ namespace System.Web.Compilation
 						}
 					
 						// There should be one assembly per virtual dir
-						if (String.Compare (bpPath, VirtualPathUtility.GetDirectory (bp.VirtualPath), stringComparer) != 0) {
+						if (String.Compare (bpPath, VirtualPathUtility.GetDirectory (bp.VirtualPath), stringComparison) != 0) {
 							canAdd = false;
 							break;
 						}
@@ -315,7 +307,7 @@ namespace System.Web.Compilation
 			}
 			
 			myGroup.AddProvider (buildProvider);
-			if (String.Compare (bpPath, virtualPathDirectory, stringComparer) == 0)
+			if (String.Compare (bpPath, virtualPathDirectory, stringComparison) == 0)
 				myGroup.Master = true;
 		}
 

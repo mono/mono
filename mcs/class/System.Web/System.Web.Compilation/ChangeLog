@@ -1,3 +1,7 @@
+2010-03-04  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: do less work in the static constructor
+
 2010-02-27  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: count only builds of updated files before

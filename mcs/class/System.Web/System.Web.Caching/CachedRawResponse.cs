@@ -64,7 +64,6 @@ namespace System.Web.Caching
 		CachedVaryBy varyby;
 		int status_code;
 		string status_desc;
-		int content_length;
 		NameValueCollection headers;
 		List <DataItem> data;
 

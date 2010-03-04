@@ -45,7 +45,7 @@ namespace System.Web {
 		static VirtualPathUtility ()
 		{
 			try {
-				runningOnWindows = HttpRuntime.RunningOnWindows;
+				runningOnWindows = RuntimeHelpers.RunningOnWindows;
 				var monoSettings = WebConfigurationManager.GetWebApplicationSection ("system.web/monoSettings") as MonoSettingsSection;
 				if (monoSettings != null)
 					monoSettingsVerifyCompatibility = monoSettings.VerificationCompatibility != 1;

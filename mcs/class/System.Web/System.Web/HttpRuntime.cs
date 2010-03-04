@@ -59,10 +59,6 @@ namespace System.Web
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public sealed class HttpRuntime
 	{
-		static bool caseInsensitive;
-		static bool runningOnWindows;
-		static bool isunc;
-		static string monoVersion;
 		static bool domainUnloading;
 		
 #if TARGET_J2EE
@@ -131,41 +127,6 @@ namespace System.Web
 
 		static HttpRuntime ()
 		{
-			PlatformID pid = Environment.OSVersion.Platform;
-			runningOnWindows = ((int) pid != 128 && pid != PlatformID.Unix && pid != PlatformID.MacOSX);
-
-			if (runningOnWindows) {
-				caseInsensitive = true;
-				if (AppDomainAppPath != null)
-					isunc = new Uri (AppDomainAppPath).IsUnc;
-			} else {
-				string mono_iomap = Environment.GetEnvironmentVariable ("MONO_IOMAP");
-				if (mono_iomap != null) {
-					if (mono_iomap == "all")
-						caseInsensitive = true;
-					else {
-						string[] parts = mono_iomap.Split (':');
-						foreach (string p in parts) {
-							if (p == "all" || p == "case") {
-								caseInsensitive = true;
-								break;
-							}
-						}
-					}
-				}
-			}
-
-			Type monoRuntime = Type.GetType ("Mono.Runtime", false);
-			monoVersion = null;
-			if (monoRuntime != null) {
-				MethodInfo mi = monoRuntime.GetMethod ("GetDisplayName", BindingFlags.Static | BindingFlags.NonPublic);
-				if (mi != null)
-					monoVersion = mi.Invoke (null, new object [0]) as string;
-			}
-
-			if (monoVersion == null)
-				monoVersion = Environment.Version.ToString ();
-			
 #if !TARGET_J2EE
 			firstRun = true;
 			try {
@@ -317,7 +278,7 @@ namespace System.Web
 		public static bool IsOnUNCShare {
 			[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Low)]
 			get {
-				return isunc;
+				return RuntimeHelpers.IsUncShare;
 			}
 		}
 
@@ -736,28 +697,6 @@ namespace System.Web
 			}
 		}
 #endif // #if !TARGET_J2EE
-
-		internal static string MonoVersion {
-			get { return monoVersion; }
-		}
-		
-		internal static bool RunningOnWindows {
-			get { return runningOnWindows; }
-		}
-
-		internal static bool CaseInsensitive {
-			get { return caseInsensitive; }
-		}
-
-		internal static bool IsDebuggingEnabled {
-			get {
-				CompilationSection cs = WebConfigurationManager.GetSection ("system.web/compilation") as CompilationSection;
-				if (cs != null)
-					return cs.Debug;
-
-				return false;
-			}
-		}
 		
 		internal static TraceManager TraceManager {
 			get {

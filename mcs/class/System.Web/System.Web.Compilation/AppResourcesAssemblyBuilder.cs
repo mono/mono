@@ -41,6 +41,7 @@ using System.Text;
 using System.Threading;
 using System.Web;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web.Compilation
 {
@@ -229,7 +230,7 @@ namespace System.Web.Compilation
 
 		string SetAlPath (ProcessStartInfo info)
 		{			
-			if (HttpRuntime.RunningOnWindows) {
+			if (RuntimeHelpers.RunningOnWindows) {
 				string alPath;
 				string monoPath;
 				PropertyInfo gac = typeof (Environment).GetProperty ("GacPath", BindingFlags.Static|BindingFlags.NonPublic);
@@ -244,10 +245,18 @@ namespace System.Web.Compilation
 							throw new FileNotFoundException ("Windows mono path not found: " + monoPath);
 					}
 				}
-				
+
+#if NET_4_0
+                                alPath = Path.Combine (p, "4.0\\al.exe");
+#else
                                 alPath = Path.Combine (p, "2.0\\al.exe");
+#endif
                                 if (!File.Exists (alPath)) {
+#if NET_4_0
+                                        alPath = Path.Combine(Path.GetDirectoryName (p), "lib\\net_4_0\\al.exe");
+#else
                                         alPath = Path.Combine(Path.GetDirectoryName (p), "lib\\net_2_0\\al.exe");
+#endif
 					if (!File.Exists (alPath))
 						throw new FileNotFoundException ("Windows al path not found: " + alPath);
 				}
@@ -255,7 +264,11 @@ namespace System.Web.Compilation
 				info.FileName = monoPath;
 				return alPath;
 			} else {
+#if NET_4_0
+				info.FileName = "al";
+#else
 				info.FileName = "al2";
+#endif
 				return String.Empty;
 			}
 		}

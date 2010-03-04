@@ -1,3 +1,10 @@
+2010-03-04  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntime.cs: do less work in the static constructor. Most of
+	the code was moved to System.Web.Util.RuntimeHelpers. Properties
+	which have been moved: MonoVersion, RunningOnWindows,
+	CaseInsensitive, IsDebuggingEnabled
+
 2010-02-27  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: added internal property DomainUnloading.

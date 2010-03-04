@@ -160,8 +160,6 @@ namespace System.Web.SessionState
 		{
 			DbCommand cmd;
 			DbCommand deleteCmd = null;
-			DbParameter param;
-
 			string sessItems = Serialize((SessionStateItemCollection)item.Items);
 			DbProviderFactory factory = ProviderFactory;
 			string appName = ApplicationName;
@@ -242,7 +240,6 @@ namespace System.Web.SessionState
 			string appName = ApplicationName;
 			DbCommand cmd = null;
 			DbDataReader reader = null;
-			DbParameter param;
 			DbParameterCollection parameters;
 			DateTime expires;
 			string serializedItems = String.Empty;

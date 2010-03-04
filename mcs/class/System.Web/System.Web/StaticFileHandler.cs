@@ -41,7 +41,7 @@ namespace System.Web
 	{
 		static bool ValidFileName (string fileName)
 		{
-			if (!HttpRuntime.RunningOnWindows)
+			if (!RuntimeHelpers.RunningOnWindows)
 				return true;
 
 			if (fileName == null || fileName.Length == 0)

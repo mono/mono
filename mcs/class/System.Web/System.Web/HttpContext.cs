@@ -228,7 +228,7 @@ namespace System.Web
 		}
 #if !TARGET_JVM
 		public bool IsDebuggingEnabled {
-			get { return HttpRuntime.IsDebuggingEnabled; }
+			get { return RuntimeHelpers.DebuggingEnabled; }
 		}
 #endif
 		public IDictionary Items {
@@ -475,19 +475,15 @@ namespace System.Web
 			// we should expire the entries (or just store them in InternalCache?)
 			IResourceProvider rp = null;
 			if (!resource_providers.TryGetValue (virtualPath, out rp)) {
-				if (isLocal) {
-					HttpContext ctx = HttpContext.Current;
-					HttpRequest req = ctx != null ? ctx.Request : null;
+				if (isLocal)
 					rp = provider_factory.CreateLocalResourceProvider (virtualPath);
-				} else
+				else
 					rp = provider_factory.CreateGlobalResourceProvider (virtualPath);
 				
 				if (rp == null) {
-					if (isLocal) {
-						HttpContext ctx = HttpContext.Current;
-						HttpRequest req = ctx != null ? ctx.Request : null;
+					if (isLocal)
 						rp = DefaultProviderFactory.CreateLocalResourceProvider (virtualPath);
-					} else
+					else
 						rp = DefaultProviderFactory.CreateGlobalResourceProvider (virtualPath);
 
 					if (rp == null)
@@ -629,8 +625,6 @@ namespace System.Web
 			if (pathRelative || pathAbsolute) {
 				if (pathRelative)
 					filePath = VirtualPathUtility.ToAbsolute (filePath);
-				else
-					filePath = filePath;
 			} else
 				filePath = VirtualPathUtility.AppendTrailingSlash (req.BaseVirtualDir) + filePath;
 			

@@ -382,7 +382,7 @@ namespace System.Web.UI
 					throw new Exception ("Error while loading " + s, e);
 				}
 				
-				if (ex != null && HttpRuntime.IsDebuggingEnabled) {
+				if (ex != null && RuntimeHelpers.DebuggingEnabled) {
 					Console.WriteLine ("**** DEBUG MODE *****");
 					Console.WriteLine ("Bad assembly found in bin/. Exception (ignored):");
 					Console.WriteLine (ex);

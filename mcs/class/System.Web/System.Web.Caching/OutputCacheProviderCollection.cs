@@ -32,7 +32,7 @@ namespace System.Web.Caching
 {
 	public sealed class OutputCacheProviderCollection : ProviderCollection
 	{
-		public OutputCacheProvider this [string name] {
+		public new OutputCacheProvider this [string name] {
 			get { return base [name] as OutputCacheProvider; }
 		}
 		

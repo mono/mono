@@ -474,8 +474,6 @@ namespace System.Web.Configuration {
 				} else
 					relPath = path;
 
-				_Configuration cnew;
-
 				HttpRequest req = context != null ? context.Request : null;
 				if (req != null) {
 					string vdir = VirtualPathUtility.GetDirectory (req.Path);

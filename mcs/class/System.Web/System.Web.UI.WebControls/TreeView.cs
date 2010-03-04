@@ -1499,9 +1499,7 @@ namespace System.Web.UI.WebControls
 			bool nodeIsSelected = node == SelectedNode && selectedNodeStyle != null;
 			if (!nodeIsSelected && selectedNodeStyle != null) {
 				if (!String.IsNullOrEmpty (activeSiteMapPath))
-					nodeIsSelected = String.Compare (activeSiteMapPath,
-									 node.NavigateUrl,
-									 HttpRuntime.CaseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) == 0;
+					nodeIsSelected = String.Compare (activeSiteMapPath, node.NavigateUrl, RuntimeHelpers.StringComparison) == 0;
 			}
 			
 			AddNodeStyle (writer, node, level, nodeIsSelected);

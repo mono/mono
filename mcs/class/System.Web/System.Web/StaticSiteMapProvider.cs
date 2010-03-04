@@ -37,8 +37,6 @@ namespace System.Web
 {
 	public abstract class StaticSiteMapProvider : SiteMapProvider
 	{
-		static readonly StringComparison stringComparison = HttpRuntime.CaseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal;
-		
 		Dictionary<string, SiteMapNode> keyToNode;
 		Dictionary<SiteMapNode, SiteMapNode> nodeToParent;
 		Dictionary<SiteMapNode, SiteMapNodeCollection> nodeToChildren;
@@ -66,7 +64,7 @@ namespace System.Web
 				if (!String.IsNullOrEmpty (nodeUrl)) {
 					string url = MapUrl (nodeUrl);
 					SiteMapNode foundNode = FindSiteMapNode (url);
-					if (foundNode != null && String.Compare (foundNode.Url, url, stringComparison) == 0)
+					if (foundNode != null && String.Compare (foundNode.Url, url, RuntimeHelpers.StringComparison) == 0)
 						throw new InvalidOperationException (String.Format (
 							"Multiple nodes with the same URL '{0}' were found. " + 
 							"StaticSiteMapProvider requires that sitemap nodes have unique URLs.",

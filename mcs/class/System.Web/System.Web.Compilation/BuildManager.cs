@@ -57,15 +57,15 @@ namespace System.Web.Compilation
 		static int BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX_LENGTH = BUILD_MANAGER_VIRTUAL_PATH_CACHE_PREFIX.Length;
 
 		static readonly object bigCompilationLock = new object ();
+		static readonly object virtualPathsToIgnoreLock = new object ();
 		static readonly char[] virtualPathsToIgnoreSplitChars = {','};
 		
 		static EventHandlerList events = new EventHandlerList ();
 		static object buildManagerRemoveEntryEvent = new object ();
 		
 		static bool hosted;
-		static IEqualityComparer <string> comparer;
-		static StringComparison stringComparer;
 		static Dictionary <string, bool> virtualPathsToIgnore;
+		static bool virtualPathsToIgnoreChecked;
 		static bool haveVirtualPathsToIgnore;
 		static List <Assembly> AppCode_Assemblies = new List<Assembly>();
 		static List <Assembly> TopLevel_Assemblies = new List<Assembly>();
@@ -129,16 +129,8 @@ namespace System.Web.Compilation
 		
 		static BuildManager ()
 		{
-			if (HttpRuntime.CaseInsensitive) {
-				comparer = StringComparer.CurrentCultureIgnoreCase;
-				stringComparer = StringComparison.CurrentCultureIgnoreCase;
-			} else {
-				comparer = StringComparer.CurrentCulture;
-				stringComparer = StringComparison.CurrentCulture;
-			}
-			
 			hosted = (AppDomain.CurrentDomain.GetData (ApplicationHost.MonoHostedDataKey) as string) == "yes";
-			buildCache = new Dictionary <string, BuildManagerCacheItem> (comparer);
+			buildCache = new Dictionary <string, BuildManagerCacheItem> (RuntimeHelpers.StringEqualityComparerCulture);
 #if SYSTEMCORE_DEP
 			buildCacheLock = new ReaderWriterLockSlim ();
 #else
@@ -152,7 +144,6 @@ namespace System.Web.Compilation
 			is_precompiled = String.IsNullOrEmpty (appPath) ? false : File.Exists ((precomp_name = Path.Combine (appPath, "PrecompiledApp.config")));
 			if (is_precompiled)
 				is_precompiled = LoadPrecompilationInfo (precomp_name);
-			LoadVirtualPathsToIgnore ();
 		}
 
 		// Deal with precompiled sites deployed in a different virtual path
@@ -273,7 +264,7 @@ namespace System.Web.Compilation
 			}
 			if (store) {
 				if (precompiled == null)
-					precompiled = new Dictionary<string, PreCompilationData> (comparer);
+					precompiled = new Dictionary<string, PreCompilationData> (RuntimeHelpers.StringEqualityComparerCulture);
 				precompiled.Add (pc_data.VirtualPath, pc_data);
 			}
 			return pc_data;
@@ -290,7 +281,7 @@ namespace System.Web.Compilation
 		static void AddPathToIgnore (string vp)
 		{
 			if (virtualPathsToIgnore == null)
-				virtualPathsToIgnore = new Dictionary <string, bool> (comparer);
+				virtualPathsToIgnore = new Dictionary <string, bool> (RuntimeHelpers.StringEqualityComparerCulture);
 			
 			VirtualPath path = GetAbsoluteVirtualPath (vp);
 			string vpAbsolute = path.Absolute;
@@ -540,7 +531,7 @@ namespace System.Web.Compilation
 				return null;
 
 			foreach (BuildProvider bp in group) {
-				if (String.Compare (path, req.MapPath (bp.VirtualPath), stringComparer) == 0)
+				if (String.Compare (path, req.MapPath (bp.VirtualPath), RuntimeHelpers.StringComparison) == 0)
 					return bp;
 			}
 			
@@ -566,6 +557,7 @@ namespace System.Web.Compilation
 			}
 			
 			List <BuildProvider> failedBuildProviders = null;
+			StringComparison stringComparison = RuntimeHelpers.StringComparison;
 			foreach (BuildProvider bp in group) {
 				bvp = bp.VirtualPath;
 				if (HasCachedItemNoLock (bvp))
@@ -574,7 +566,7 @@ namespace System.Web.Compilation
 				try {
 					bp.GenerateCode (abuilder);
 				} catch (Exception ex) {
-					if (String.Compare (bvp, vpabsolute, stringComparer) == 0) {
+					if (String.Compare (bvp, vpabsolute, stringComparison) == 0) {
 						if (ex is CompilationException || ex is ParseException)
 							throw;
 						
@@ -974,6 +966,14 @@ namespace System.Web.Compilation
 		
 		internal static bool IgnoreVirtualPath (string virtualPath)
 		{
+			if (!virtualPathsToIgnoreChecked) {
+				lock (virtualPathsToIgnoreLock) {
+					if (!virtualPathsToIgnoreChecked)
+						LoadVirtualPathsToIgnore ();
+					virtualPathsToIgnoreChecked = true;
+				}
+			}
+			
 			if (!haveVirtualPathsToIgnore)
 				return false;
 			
