@@ -435,13 +435,27 @@ namespace System {
 #if NET_4_0
 		public virtual bool Equals (Type o)
 		{
+			if ((object)o == this)
+				return true;
+			if ((object)o == null)
+				return false;
+			Type me = UnderlyingSystemType;
+			if ((object)me == null)
+				return false;
+
+			o = o.UnderlyingSystemType;
+			if ((object)o == null)
+				return false;
+			if ((object)o == this)
+				return true;
+			return me.EqualsInternal (o);
+		}		
 #else
 		public bool Equals (Type o)
 		{
 
 			if (o == this)
 				return true;
-#endif
 			if (o == null)
 				return false;
 			Type me = UnderlyingSystemType;
@@ -449,7 +463,7 @@ namespace System {
 				return false;
 			return me.EqualsInternal (o.UnderlyingSystemType);
 		}
-
+#endif
 #if NET_4_0
 		[MonoTODO ("Implement it properly once 4.0 impl details are known.")]
 		public static bool operator == (Type left, Type right)
