@@ -48,6 +48,7 @@ net_2_0_dirs := \
 	compiler-tester
 
 net_2_1_dirs := \
+	$(per_profile_dirs) \
 	compiler-tester
 
 basic_SUBDIRS = gacutil security
