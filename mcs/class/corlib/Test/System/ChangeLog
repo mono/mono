@@ -1,3 +1,8 @@
+2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs : Added test for bug #574696	
+	Patch by Eberhard Beilharz <eb1@sil.org>
+
 2010-03-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Tests for new v4 overloads of GetType.

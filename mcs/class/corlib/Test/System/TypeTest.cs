@@ -3219,6 +3219,16 @@ PublicKeyToken=b77a5c561934e089"));
 			}
 		}
 
+		[Test] // Bug #574696
+		public void GetMember_DoesntReturnPrivatePropOfParent ()
+		{
+			BindingFlags flags = BindingFlags.NonPublic | BindingFlags.Public | BindingFlags.Instance;
+			Assert.AreEqual (1, typeof (Bar).GetMember ("PrivInst", flags).Length);
+			Assert.AreEqual (0, typeof (Bar).GetMember ("PrivInstBase", flags).Length);
+			Assert.AreEqual (1, typeof (Foo).GetMember ("PrivInstBase", flags).Length);
+		}
+ 
+
 #if NET_4_0
 		interface IGetInterfaceMap<in T>
 		{
