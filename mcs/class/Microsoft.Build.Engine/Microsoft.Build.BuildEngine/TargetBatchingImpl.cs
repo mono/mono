@@ -83,68 +83,57 @@ namespace Microsoft.Build.BuildEngine {
 		bool Run (Target target, out bool executeOnErrors)
 		{
 			executeOnErrors = false;
-			if (buckets.Count > 0)
-				return RunBatched (target, out executeOnErrors);
-			else
-				return RunUnbatched (target, out executeOnErrors);
-		}
+			if (buckets.Count > 0) {
+				foreach (Dictionary<string, BuildItemGroup> bucket in buckets)
+					if (!RunTargetWithBucket (bucket, target, out executeOnErrors))
+						return false;
 
-		bool RunBatched (Target target, out bool executeOnErrors)
-		{
-			bool result = true;
-			executeOnErrors = false;
-			foreach (Dictionary<string, BuildItemGroup> bucket in buckets) {
-				LogTargetStarted (target);
-				project.PushBatch (bucket, commonItemsByName);
-				try {
-					if (!BuildTargetNeeded ()) {
-						LogTargetSkipped (target);
-						continue;
-					}
-
-					for (int i = 0; i < target.BuildTasks.Count; i ++) {
-						//FIXME: parsing attributes repeatedly
-						BuildTask task = target.BuildTasks [i];
-						result = new TaskBatchingImpl (project).Build (task, out executeOnErrors);
-						if (!result && !task.ContinueOnError) {
-							executeOnErrors = true;
-							break;
-						}
-					}
-				} finally {
-					project.PopBatch ();
-					LogTargetFinished (target, result);
-				}
+				return true;
+			} else {
+				return RunTargetWithBucket (null, target, out executeOnErrors);
 			}
-			return result;
 		}
 
-		bool RunUnbatched (Target target, out bool executeOnErrors)
+		bool RunTargetWithBucket (Dictionary<string, BuildItemGroup> bucket, Target target, out bool executeOnErrors)
 		{
-			bool result = true;
+			bool target_result = true;
 			executeOnErrors = false;
+
 			LogTargetStarted (target);
+			if (bucket != null)
+				project.PushBatch (bucket, commonItemsByName);
 			try {
 				if (!BuildTargetNeeded ()) {
 					LogTargetSkipped (target);
-					LogTargetFinished (target, true);
 					return true;
 				}
 
-				foreach (BuildTask bt in target.BuildTasks) {
-					TaskBatchingImpl batchingImpl = new TaskBatchingImpl (project);
-					result = batchingImpl.Build (bt, out executeOnErrors);
+				for (int i = 0; i < target.BuildTasks.Count; i ++) {
+					//FIXME: parsing attributes repeatedly
+					BuildTask bt = target.BuildTasks [i];
 
-					if (!result && !bt.ContinueOnError) {
+					TaskBatchingImpl batchingImpl = new TaskBatchingImpl (project);
+					bool task_result = batchingImpl.Build (bt, out executeOnErrors);
+					if (task_result)
+						continue;
+
+					// task failed, if ContinueOnError,
+					// ignore failed state for target
+					target_result = bt.ContinueOnError;
+
+					if (!bt.ContinueOnError) {
 						executeOnErrors = true;
-						break;
+						return false;
 					}
+
 				}
 			} finally {
-				LogTargetFinished (target, result);
+				if (bucket != null)
+					project.PopBatch ();
+				LogTargetFinished (target, target_result);
 			}
 
-			return result;
+			return target_result;
 		}
 
 		// Parse target's Input and Output attributes to get list of referenced

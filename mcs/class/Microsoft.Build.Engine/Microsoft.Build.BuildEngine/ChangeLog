@@ -1,3 +1,11 @@
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
+	* BuildEngine.cs (LogErrorEvent): Log as warning, if
+	ContinueOnError==true, and log a corresponding message.
+	* TargetBatchingImpl.cs: Refactor to share code between the
+	batched and unbatched case. If a task fails and
+	ContinueOnError==true, then ignore the failed state.
+
 2010-02-19  Ankit Jain  <jankit@novell.com>
 
 	* BuildItem.cs: Track api changes.
