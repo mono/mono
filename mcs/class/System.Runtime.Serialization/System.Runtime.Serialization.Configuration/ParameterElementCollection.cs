@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,7 +31,6 @@ using System.Configuration;
 
 namespace System.Runtime.Serialization.Configuration
 {
-	[MonoTODO]
 	[ConfigurationCollection (typeof (ParameterElement), AddItemName = "parameter", CollectionType = ConfigurationElementCollectionType.BasicMap)]
 	public sealed class ParameterElementCollection : ConfigurationElementCollection
 	{
@@ -41,6 +40,11 @@ namespace System.Runtime.Serialization.Configuration
 
 		public override ConfigurationElementCollectionType CollectionType {
 			get { return ConfigurationElementCollectionType.BasicMap; }
+		}
+
+		// FIXME: not very sure, just had a look at http://msdn.microsoft.com/en-us/library/ms731806.aspx
+		protected override string ElementName {
+			get { return String.Empty; }
 		}
 
 		public ParameterElement this [int index] {

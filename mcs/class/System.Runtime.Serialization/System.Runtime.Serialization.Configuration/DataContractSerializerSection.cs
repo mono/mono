@@ -54,7 +54,10 @@ namespace System.Runtime.Serialization.Configuration
 		[ConfigurationPropertyAttribute ("declaredTypes", DefaultValue = null)]
 		public DeclaredTypeElementCollection DeclaredTypes {
 			get { return (DeclaredTypeElementCollection) base [declared_types]; }
-			set { base [declared_types] = value; }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 	}
 }

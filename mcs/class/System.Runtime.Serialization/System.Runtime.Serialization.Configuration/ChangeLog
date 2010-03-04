@@ -1,3 +1,11 @@
+2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeElement.cs, DeclaredTypeElement.cs,
+	  ParameterElementCollection.cs, DataContractSerializerSection.cs,
+	  ParameterElement.cs :
+	  Looks like MSDN pages are quite incorrect. updated to match what
+	  status page tells.
+
 2010-03-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractSerializerSection.cs : new.

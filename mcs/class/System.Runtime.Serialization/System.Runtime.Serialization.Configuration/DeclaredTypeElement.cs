@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -71,6 +71,16 @@ namespace System.Runtime.Serialization.Configuration
 		public string Type {
 			get { return (string) base [type]; }
 			set { base [type] = value; }
+		}
+
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
+		}
+
+		protected override void PostDeserialize ()
+		{
+			// what to do here?
+			base.PostDeserialize ();
 		}
 	}
 }
