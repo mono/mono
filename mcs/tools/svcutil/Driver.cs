@@ -35,7 +35,17 @@ namespace Mono.ServiceContractTool
 		void Run (string [] args)
 		{
 			co.ProcessArgs (args);
-			if (co.RemainingArguments.Length == 0) {
+			if (co.Usage) {
+				co.DoUsage ();
+				return;
+			}
+
+			if (co.Version) {
+				co.DoVersion ();
+				return;
+			}
+
+			if (co.Help || co.RemainingArguments.Count == 0) {
 				co.DoHelp ();
 				return;
 			}

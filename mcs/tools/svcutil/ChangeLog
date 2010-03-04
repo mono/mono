@@ -1,3 +1,10 @@
+2010-01-28  Jonathan Pryor  <jpryor@novell.com>
+
+	* Driver.cs, CommandLineOptions.cs: Remove Mono.GetOptions use and use
+	  Mono.Options instead (as Mono.GetOptions will be removed).
+	* Makefile: Remove Mono.GetOptions.dll reference.
+	* svcutil.exe.sources: Add Options.cs to the build.
+
 2010-01-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Driver.cs, MoonlightChannelBaseExtension.cs, CommandLineOptions.cs:
