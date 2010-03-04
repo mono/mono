@@ -1,5 +1,10 @@
 2010-03-04  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #582579
+	* ecore.cs (FieldExpr): Don't optimize cross reference loads.
+
+2010-03-04  Marek Safar  <marek.safar@gmail.com>
+
 	A patch by kornelpal@gmail.com
 	
 	* dynamic.cs, anonymous.cs, rootcontext.cs, class.cs: Don't make
