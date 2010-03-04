@@ -1,3 +1,8 @@
+2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : return array instance if the runtime type is
+	  an array (it used to return ArrayList without conveting to array).
+
 2010-03-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.XsdExporter.cs, XsdDataContractExporter-new.cs:

@@ -695,7 +695,11 @@ namespace System.Runtime.Serialization
 
 		public override object DeserializeEmptyContent (XmlReader reader, XmlFormatterDeserializer deserializer)
 		{
-			return CreateInstance ();
+			var instance = CreateInstance ();
+			if (RuntimeType.IsArray)
+				return ((ArrayList)instance).ToArray (element_type);
+			else
+				return instance;
 		}
 
 		public override object DeserializeContent (XmlReader reader, XmlFormatterDeserializer deserializer)

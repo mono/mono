@@ -1355,6 +1355,21 @@ namespace MonoTests.System.Runtime.Serialization
 			}
 			Assert.AreEqual (@"<MemberIgnored xmlns:i=""http://www.w3.org/2001/XMLSchema-instance"" xmlns=""http://schemas.datacontract.org/2004/07/MonoTests.System.Runtime.Serialization""><body><Bar>bar</Bar></body></MemberIgnored>", sw.ToString (), "#1");
 		}
+
+		[Test]
+		public void DeserializeEmptyArray ()
+		{
+			var ds = new DataContractSerializer (typeof (string []));
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw);
+			ds.WriteObject (xw, new string [] {});
+			xw.Close ();
+			Console.WriteLine (sw.ToString ());
+			var sr = new StringReader (sw.ToString ());
+			var xr = XmlReader.Create (sr);
+			var ret = ds.ReadObject (xr);
+			Assert.AreEqual (typeof (string []), ret.GetType (), "#1");
+		}
 	}
 
 	[DataContract]

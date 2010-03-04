@@ -1,3 +1,7 @@
+2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : test for empty array deserialization.
+
 2010-03-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XsdDataContractExporterTest.cs : remove [NotWorking].
