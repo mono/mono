@@ -23,9 +23,11 @@
 		<OutDir Condition="'$(OutDir)' == ''">$(OutputPath)</OutDir>
 		<OutDir Condition="'$(OutDir)' != '' and !HasTrailingSlash('$(OutDir)')">$(OutDir)\</OutDir>
 
+		<_OriginalConfiguration>$(Configuration)</_OriginalConfiguration>
 		<Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
 		<ConfigurationName Condition="'$(ConfigurationName)' == ''">$(Configuration)</ConfigurationName>
 
+		<_OriginalPlatform>$(Platform)</_OriginalPlatform>
 		<Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
 		<PlatformName Condition="'$(PlatformName)' == ''">$(Platform)</PlatformName>
 	</PropertyGroup>
@@ -56,6 +58,12 @@
 	</PropertyGroup>
 
 	<Target Name="_ValidateEssentialProperties">
+		<Error Condition=" '$(OutputPath)' == '' and '$(SkipInvalidConfigurations)' != 'true'"
+			Text="'OutputPath' property is not set for this project. Usually this is caused by invalid Configuration/Platform combination. Original values: Configuration: $(_OriginalConfiguration) Platform: $(_OriginalPlatform)."/>
+
+		<Warning Condition=" '$(OutputPath)' == '' and '$(SkipInvalidConfigurations)' == 'true'"
+			Text="'OutputPath' property is not set for this project. Usually this is caused by invalid Configuration/Platform combination. Original values: Configuration: $(_OriginalConfiguration) Platform: $(_OriginalPlatform)."/>
+
 		<!-- If OutDir is specified via the command line, then the earlier check
 		     to add a trailing slash won't have any affect, so error here. -->
 		<Error

@@ -1,3 +1,8 @@
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Check for empty invalid
+	$(OutputPath), and error or warn the user.
+
 2010-02-19  Ankit Jain  <jankit@novell.com>
 
 	* SolutionParser.cs (GetAllProjectFileNames): New.

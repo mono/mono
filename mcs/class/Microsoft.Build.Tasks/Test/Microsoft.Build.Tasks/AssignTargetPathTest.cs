@@ -150,7 +150,6 @@ namespace MonoTests.Microsoft.Build.Tasks
 					<Output TaskParameter=""AssignedFiles"" ItemName=""FooPath"" />
 				</AssignTargetPath>
 			</Target>
-			<Import Project=""$(MSBuildBinPath)\Microsoft.Common.targets"" />
 		</Project>", rootFolder);
 
 			return sb.ToString();

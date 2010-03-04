@@ -1,3 +1,8 @@
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
+	* AssignTargetPathTest.cs (CreateProjectString): Remove the
+	unnecessary import of ms.common.targets .
+
 2010-02-06  Ankit Jain  <jankit@novell.com>
 
 	* LCTest.cs: New.
