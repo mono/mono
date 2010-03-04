@@ -1,6 +1,6 @@
 2010-03-04  Zoltan Varga  <vargaz@gmail.com>
 
-	* aot-runtime.c (find_symbol): Fix a warning.
+	* aot-runtime.c (find_symbol): Fix a leak.
 	(decode_patch): Ditto.
 
 2010-03-04  Zoltan Varga  <vargaz@gmail.com>
