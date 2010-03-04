@@ -1,5 +1,10 @@
 2010-03-04  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (find_symbol): Fix a warning.
+	(decode_patch): Ditto.
+
+2010-03-04  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.h (MONO_INST_IS_TEMP): Kill this unused define.
 
 2010-03-04  Zoltan Varga  <vargaz@gmail.com>
