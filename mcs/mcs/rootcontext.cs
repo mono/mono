@@ -267,6 +267,9 @@ namespace Mono.CSharp {
 				foreach (Delegate d in root.Delegates)
 					d.CloseType ();
 
+			if (root.CompilerGeneratedClasses != null)
+				foreach (CompilerGeneratedClass c in root.CompilerGeneratedClasses)
+					c.CloseType ();
 
 			//
 			// If we have a <PrivateImplementationDetails> class, close it
@@ -372,6 +375,10 @@ namespace Mono.CSharp {
 				foreach (Delegate d in root.Delegates)
 					d.Emit ();
 			}			
+
+			if (root.CompilerGeneratedClasses != null)
+				foreach (CompilerGeneratedClass c in root.CompilerGeneratedClasses)
+					c.EmitType ();
 
 			CodeGen.Assembly.Emit (root);
 			root.Emit ();

@@ -583,7 +583,13 @@ namespace Mono.CSharp {
 				return delegates;
 			}
 		}
-		
+
+		public IList<CompilerGeneratedClass> CompilerGeneratedClasses {
+			get {
+				return compiler_generated;
+			}
+		}
+
 		protected override TypeAttributes TypeAttr {
 			get {
 				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) | base.TypeAttr;

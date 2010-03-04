@@ -25,7 +25,7 @@ namespace Mono.CSharp {
 		}
 		
 		protected CompilerGeneratedClass (DeclSpace parent, MemberName name, Modifiers mod)
-			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED | Modifiers.SEALED, null)
+			: base (parent.NamespaceEntry, parent, name, mod | Modifiers.COMPILER_GENERATED, null)
 		{
 		}
 
@@ -141,7 +141,7 @@ namespace Mono.CSharp {
 		public LocalTemporary Instance;
 
 		public AnonymousMethodStorey (Block block, TypeContainer parent, MemberBase host, GenericMethod generic, string name)
-			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE)
+			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE | Modifiers.SEALED)
 		{
 			Parent = parent;
 			OriginalSourceBlock = block;

@@ -1,3 +1,13 @@
+2010-03-04  Marek Safar  <marek.safar@gmail.com>
+
+	A patch by kornelpal@gmail.com
+	
+	* dynamic.cs, anonymous.cs, rootcontext.cs, class.cs: Don't make
+	compiler generated classes sealed by default. Emit and close top
+	level compiler generated classes as well. 
+	
+	* support.cs: Use RuntimeHelpers.GetHashCode.
+
 2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* Makefile: We need to use the internal bootstrapping gmcs for

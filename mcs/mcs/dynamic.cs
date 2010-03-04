@@ -202,7 +202,6 @@ namespace Mono.CSharp
 					new MemberName (CompilerGeneratedClass.MakeName (null, "c", "DynamicSites", 0)),
 					Modifiers.INTERNAL | Modifiers.STATIC)
 			{
-				ModFlags &= ~Modifiers.SEALED;
 			}
 		}
 
@@ -264,9 +263,6 @@ namespace Mono.CSharp
 				RootContext.ToplevelTypes.AddCompilerGeneratedClass (global_site_container);
 				global_site_container.DefineType ();
 				global_site_container.Define ();
-//				global_site_container.EmitType ();
-
-				RootContext.RegisterCompilerGeneratedType (global_site_container.TypeBuilder);
 			}
 
 			return global_site_container;

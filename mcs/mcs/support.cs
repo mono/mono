@@ -30,12 +30,12 @@ namespace Mono.CSharp {
 
 		public bool Equals (T x, T y)
 		{
-			return object.ReferenceEquals (x, y);
+			return ReferenceEquals (x, y);
 		}
 
 		public int GetHashCode (T obj)
 		{
-			return obj == null ? 0 : obj.GetHashCode ();
+			return System.Runtime.CompilerServices.RuntimeHelpers.GetHashCode (obj);
 		}
 	}
 
