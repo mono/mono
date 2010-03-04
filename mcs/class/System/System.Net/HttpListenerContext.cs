@@ -88,7 +88,7 @@ namespace System.Net {
 			if (header == null || header.Length < 2)
 				return;
 
-			string [] authenticationData = header.Substring (header.IndexOf (':') + 1).Split (new char [] {' '});
+			string [] authenticationData = header.Split (new char [] {' '});
 
 			if (string.Compare (authenticationData [0], "basic", true) == 0) {
 				user = ParseBasicAuthentication (authenticationData [1]);
