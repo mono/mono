@@ -82,10 +82,11 @@ namespace System.Net {
 				if (handle != null)
 					handle.Set ();
 
-				if ((context.Listener.SelectAuthenticationScheme (context) == AuthenticationSchemes.Basic || context.Listener.AuthenticationSchemes == AuthenticationSchemes.Negotiate) && context.Request.Headers ["Authorization"] == null) {
+				AuthenticationSchemes schemes = context.Listener.SelectAuthenticationScheme (context);
+				if ((schemes == AuthenticationSchemes.Basic || context.Listener.AuthenticationSchemes == AuthenticationSchemes.Negotiate) && context.Request.Headers ["Authorization"] == null) {
 					context.Listener.EndGetContext (this);
 					context.Response.StatusCode = 401;
-					context.Response.Headers ["WWW-Authenticate"] = AuthenticationSchemes.Basic + " realm=\"\"";
+					context.Response.Headers ["WWW-Authenticate"] = schemes + " realm=\"\"";
 					context.Response.OutputStream.Close ();
 					context.Listener.BeginGetContext (cb, state);
 				} else if (cb != null)

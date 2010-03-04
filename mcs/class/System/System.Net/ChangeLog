@@ -1,5 +1,10 @@
 2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerContext.cs : WWW-Authenticate header should not be
+	  limited to Basic.
+
+2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerContext.cs : The header line here is already trimmed
 	  "Authorization:" , so do not try to remove it.
 
