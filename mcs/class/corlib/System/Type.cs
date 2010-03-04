@@ -1238,23 +1238,18 @@ namespace System {
 				}
 			}
 			if ((memberType & MemberTypes.Property) != 0) {
-				PropertyInfo[] c;
-				int count = l.Count;
-				Type ptype;
+				PropertyInfo[] c = GetProperties (bindingAttr);
+
+
 				if (filter != null) {
-					ptype = this;
-					while ((l.Count == count) && (ptype != null)) {
-						c = ptype.GetProperties (bindingAttr);
-						foreach (MemberInfo m in c) {
-							if (filter (m, filterCriteria))
-								l.Add (m);
-						}
-						ptype = ptype.BaseType;
+					foreach (MemberInfo m in c) {
+						if (filter (m, filterCriteria))
+							l.Add (m);
 					}
 				} else {
-					c = GetProperties (bindingAttr);
 					l.AddRange (c);
 				}
+
 			}
 			if ((memberType & MemberTypes.Event) != 0) {
 				EventInfo[] c = GetEvents (bindingAttr);
