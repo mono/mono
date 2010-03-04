@@ -1,3 +1,8 @@
+2010-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (find_symbol): Fix a warning.
+	(decode_patch): Ditto.
+
 2010-03-02  Levi Bard  <levi@unity3d.com>
 
 	* debugger-agent.c: Invalidate thread stacks on domain unload.
