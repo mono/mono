@@ -11,7 +11,7 @@ include ../../build/executable.make
 install-local:	install-extras
 
 WEBAPP_DIR = Microsoft/VisualStudio/v9.0/WebApplications
-EXTRAS_DIR = $(mono_libdir)/mono/2.0
+EXTRAS_DIR = $(mono_libdir)/mono/$(FRAMEWORK_VERSION)
 install-extras: 
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(EXTRAS_DIR)

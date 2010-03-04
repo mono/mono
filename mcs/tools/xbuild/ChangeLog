@@ -1,3 +1,9 @@
+2010-03-04  Jonathan Pryor <jpryor@novel.com>
+
+	* xbuild/Makefile: $(EXTRAS_DIR) should use $(FRAMEWORK_VERSION) so
+	  that when building for the 4.0 profile we install the appropriate
+	  files into the $libdir/mono/4.0/ directory.
+
 2010-03-04  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Common.targets (DeployOutputFiles):
