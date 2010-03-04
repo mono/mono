@@ -1,3 +1,7 @@
+2010-03-04  Zoltan Varga  <vargaz@gmail.com>
+
+	* strtod.c: Get rid of locking so this works with eglib.
+
 2010-03-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-mmap.c: apparently kill() can return ENOMEM. Also use signal 0
