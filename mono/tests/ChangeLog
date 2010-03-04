@@ -1,8 +1,3 @@
-2010-03-01  Martin Baulig  <martin@ximian.com>
-
-	* abort-invoke.cs: Add a test for my latest patch regarding thread
-	aborts while running a class .cctor.
-
 2010-02-03  Sylvain Dupont <duposyl@gmail.com>
 
 	backport of r149817
