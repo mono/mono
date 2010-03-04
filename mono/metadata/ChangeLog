@@ -1,5 +1,11 @@
 2010-03-04  Geoff Norton  <gnorton@novell.com>
 
+	* loader.c: The marshal specs are freed at the end of the call
+	but it explicitly frees the strings as well as the container,
+	so we need to dup them too to avoid referencing free'd memory.
+
+2010-03-04  Geoff Norton  <gnorton@novell.com>
+
 	* icall-def.h:
 	* icall.c: Add a new private internal icall to construct
 	an object from its type without running the ctor.
