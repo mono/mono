@@ -1,3 +1,8 @@
+2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpListener.cs, ListenerAsyncResult.cs : fix authentication
+	  scheme selection mismatch.
+
 2010-03-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpListenerContext.cs, HttpListener.cs :
