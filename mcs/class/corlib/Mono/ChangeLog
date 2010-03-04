@@ -1,3 +1,8 @@
+2010-03-04  Geoff Norton  <gnorton@novell.com>
+
+	* Runtime.cs: Add a new private internal icall to construct
+	an object from its type without running the ctor.
+
 2008-11-17  Chris Howie  <cdhowie@gmail.com>
 
 	* DataConverter.cs: Fix alignment for strings when the
