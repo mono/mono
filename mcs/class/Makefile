@@ -43,7 +43,6 @@ common_dirs := \
 	System.EnterpriseServices	\
 	Mono.Data.Tds			\
 	System.Data			\
-	Mono.GetOptions			\
 	Accessibility			\
 	Mono.WebBrowser			\
 	Managed.Windows.Forms		\
