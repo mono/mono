@@ -1,5 +1,11 @@
 2010-03-04  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.Common.targets (DeployOutputFiles):
+	Check for empty $(OutDir), though it should be caught by
+	the check for $(OutputPath) earlier.
+
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.Common.targets: Check for empty invalid
 	$(OutputPath), and error or warn the user.
 

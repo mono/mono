@@ -447,13 +447,13 @@
 
 		<Copy 
 			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
-			Condition="Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')"
+			Condition="'$(OutDir)' != '' and Exists('$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb')"
 			DestinationFolder="$(OutDir)"
 			SkipUnchangedFiles="true" >
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
-		<Copy SourceFiles="@(IntermediateAssembly)" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true">
+		<Copy SourceFiles="@(IntermediateAssembly)" Condition="'$(OutDir)' != ''" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
