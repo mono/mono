@@ -573,25 +573,57 @@ namespace System.Numerics {
 			if (data.Length > 2)
 				return 1;
 
-			uint oh = (uint)(other >> 32);
+			uint high = (uint)(other >> 32);
+			uint low = (uint)other;
+
+			return LongCompare (low, high);
+		}
+
+		int LongCompare (uint low, uint high)
+		{
 			uint h = 0;
 			if (data.Length > 1)
 				h = data [1];
 
-			if (h > oh)
+			if (h > high)
 				return 1;
-			if (h < oh)
+			if (h < high)
 				return -1;
 
-			uint ol = (uint)other;
 			uint l = data [0];
 
-			if (l > ol)
+			if (l > low)
 				return 1;
-			if (l < ol)
+			if (l < low)
 				return -1;
 
 			return 0;
+		}
+
+		public int CompareTo (long other)
+		{
+			int ls = sign;
+			int rs = Math.Sign (other);
+
+			if (ls != rs)
+				return ls > rs ? 1 : -1;
+
+			if (ls == 0)
+				return 0;
+
+			if (data.Length > 2)
+				return -sign;
+
+			if (other < 0)
+				other = -other;
+			uint low = (uint)other;
+			uint high = (uint)((ulong)other >> 32);
+
+			int r = LongCompare (low, high);
+			if (ls == -1)
+				r = -r;
+
+			return r;
 		}
 
 		public static int Compare (BigInteger left, BigInteger right)
