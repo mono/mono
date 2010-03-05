@@ -352,5 +352,11 @@ namespace MonoTests.System.Numerics
 
 		}
 
+		[Test]
+		public void IComparable () {
+			var a = new BigInteger (99);
+			Assert.AreEqual (-1, a.CompareTo (100), "#1");
+			Assert.AreEqual (1, a.CompareTo (null), "#2");
+		}
 	}
 }

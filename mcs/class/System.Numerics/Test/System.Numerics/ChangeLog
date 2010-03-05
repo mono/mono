@@ -1,3 +1,7 @@
+2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* BigIntegerTest.cs: Tests for IComparable.
+
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* BigIntegerTest.cs: Tests for ulong relational ops with switched
