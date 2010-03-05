@@ -200,7 +200,9 @@ namespace Mono.Debugger.Soft
 		INVALID_FRAMEID = 30,
 		NOT_IMPLEMENTED = 100,
 		NOT_SUSPENDED = 101,
-		INVALID_ARGUMENT = 102
+		INVALID_ARGUMENT = 102,
+		ERR_UNLOADED = 103,
+		ERR_NO_INVOCATION = 104
 	}
 
 	public class ErrorHandlerEventArgs : EventArgs {
@@ -289,7 +291,8 @@ namespace Mono.Debugger.Soft
 			EXIT = 5,
 			DISPOSE = 6,
 			INVOKE_METHOD = 7,
-			SET_PROTOCOL_VERSION = 8
+			SET_PROTOCOL_VERSION = 8,
+			ABORT_INVOKE = 9
 		}
 
 		enum CmdEvent {
@@ -1047,7 +1050,7 @@ namespace Mono.Debugger.Soft
 		}
 
 		/* Send a request and call cb when a result is received */
-		void Send (CommandSet command_set, int command, PacketWriter packet, Action<PacketReader> cb) {
+		int Send (CommandSet command_set, int command, PacketWriter packet, Action<PacketReader> cb) {
 			int id = IdGenerator;
 
 			lock (reply_packets_monitor) {
@@ -1062,6 +1065,8 @@ namespace Mono.Debugger.Soft
 				WritePacket (EncodePacket (id, (int)command_set, command, null, 0));
 			else
 				WritePacket (EncodePacket (id, (int)command_set, command, packet.Data, packet.Offset));
+
+			return id;
 		}
 
 		PacketReader SendReceive (CommandSet command_set, int command, PacketWriter packet) {
@@ -1218,8 +1223,8 @@ namespace Mono.Debugger.Soft
 
 		public delegate void InvokeMethodCallback (ValueImpl v, ValueImpl exc, ErrorCode error, object state);
 
-		public void VM_BeginInvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
-			Send (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteInt ((int)flags).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments), delegate (PacketReader r) {
+		public int VM_BeginInvokeMethod (long thread, long method, ValueImpl this_arg, ValueImpl[] arguments, InvokeFlags flags, InvokeMethodCallback callback, object state) {
+			return Send (CommandSet.VM, (int)CmdVM.INVOKE_METHOD, new PacketWriter ().WriteId (thread).WriteInt ((int)flags).WriteId (method).WriteValue (this_arg).WriteInt (arguments.Length).WriteValues (arguments), delegate (PacketReader r) {
 					ValueImpl v, exc;
 
 					if (r.ErrorCode != 0) {
@@ -1236,6 +1241,11 @@ namespace Mono.Debugger.Soft
 						callback (v, exc, 0, state);
 					}
 				});
+		}
+
+		public void VM_AbortInvoke (long thread, int id)
+		{
+			SendReceive (CommandSet.VM, (int)CmdVM.ABORT_INVOKE, new PacketWriter ().WriteId (thread).WriteInt (id));
 		}
 
 		/*
