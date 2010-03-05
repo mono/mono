@@ -107,11 +107,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		[Obsolete ("Use the overload without the 'vm' argument")]
-		public IInvokeAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+		public IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			return BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
 		}
 
-		public IInvokeAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+		public IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			return BeginInvokeMethod (vm, thread, method, this, arguments, options, callback, state);
 		}
 
@@ -123,7 +123,7 @@ namespace Mono.Debugger.Soft
 		 * Common implementation for invokes
 		 */
 
-		class InvokeAsyncResult : IInvokeAsyncResult {
+		class InvokeAsyncResult : IAsyncResult {
 
 			public object AsyncState {
 				get; set;
@@ -155,10 +155,6 @@ namespace Mono.Debugger.Soft
 				get; set;
 			}
 
-			public ThreadMirror Thread {
-				get; set;
-			}
-
 			public ValueImpl Value {
 				get; set;
 			}
@@ -166,21 +162,9 @@ namespace Mono.Debugger.Soft
 			public ValueImpl Exception {
 				get; set;
 			}
-
-			public int ID {
-				get; set;
-			}
-
-			public void Abort ()
-			{
-				if (ID == 0) // Ooops
-					return;
-
-				ObjectMirror.AbortInvoke (VM, Thread, ID);
-			}
 		}
 
-		internal static IInvokeAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+		internal static IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			if (thread == null)
 				throw new ArgumentNullException ("thread");
 			if (method == null)
@@ -195,9 +179,9 @@ namespace Mono.Debugger.Soft
 			if ((options & InvokeOptions.SingleThreaded) != 0)
 				f |= InvokeFlags.SINGLE_THREADED;
 
-			InvokeAsyncResult r = new InvokeAsyncResult { AsyncState = state, AsyncWaitHandle = new ManualResetEvent (false), VM = vm, Thread = thread, Callback = callback };
+			InvokeAsyncResult r = new InvokeAsyncResult { AsyncState = state, AsyncWaitHandle = new ManualResetEvent (false), VM = vm, Callback = callback };
 
-			r.ID = vm.conn.VM_BeginInvokeMethod (thread.Id, method.Id, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), vm.EncodeValues (arguments), f, InvokeCB, r);
+			vm.conn.VM_BeginInvokeMethod (thread.Id, method.Id, this_obj != null ? vm.EncodeValue (this_obj) : vm.EncodeValue (vm.CreateValue (null)), vm.EncodeValues (arguments), f, InvokeCB, r);
 
 			return r;
 		}
@@ -249,11 +233,6 @@ namespace Mono.Debugger.Soft
 
 		internal static Value InvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, Value this_obj, IList<Value> arguments, InvokeOptions options) {
 			return EndInvokeMethodInternal (BeginInvokeMethod (vm, thread, method, this_obj, arguments, options, null, null));
-		}
-
-		internal static void AbortInvoke (VirtualMachine vm, ThreadMirror thread, int id)
-		{
-			vm.conn.VM_AbortInvoke (thread.Id, id);
 		}
 	}
 }
