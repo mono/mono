@@ -1,5 +1,10 @@
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigIntegerTest.cs: Tests for ulong relational ops with switched
+	arguments.
+
+2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigIntegerTest.cs: Tests for ulong Compare and relational ops.
 
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>

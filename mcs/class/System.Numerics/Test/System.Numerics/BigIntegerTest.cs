@@ -119,6 +119,13 @@ namespace MonoTests.System.Numerics
 					Assert.AreEqual (a == c, a == b, "#e_" + i + "_" + j);
 					Assert.AreEqual (a != c, a != b, "#f_" + i + "_" + j);
 					Assert.AreEqual (a >= c, a >= b, "#g_" + i + "_" + j);
+
+					Assert.AreEqual (c > a, b > a, "#ib_" + i + "_" + j);
+					Assert.AreEqual (c < a, b < a, "#ic_" + i + "_" + j);
+					Assert.AreEqual (c <= a, b <= a, "#id_" + i + "_" + j);
+					Assert.AreEqual (c == a, b == a, "#ie_" + i + "_" + j);
+					Assert.AreEqual (c != a, b != a, "#if_" + i + "_" + j);
+					Assert.AreEqual (c >= a, b >= a, "#ig_" + i + "_" + j);
 				}
 			}
 		}
