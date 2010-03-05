@@ -415,6 +415,12 @@ namespace System.Numerics {
 			return left.CompareTo (right) < 0;
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static bool operator< (ulong left, BigInteger right)
+		{
+			return right.CompareTo (left) > 0;
+		}
+
 		public static bool operator<= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) <= 0;
@@ -424,6 +430,12 @@ namespace System.Numerics {
 		public static bool operator<= (BigInteger left, ulong right)
 		{
 			return left.CompareTo (right) <= 0;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static bool operator<= (ulong left, BigInteger right)
+		{
+			return right.CompareTo (left) >= 0;
 		}
 
 		public static bool operator> (BigInteger left, BigInteger right)
@@ -437,6 +449,12 @@ namespace System.Numerics {
 			return left.CompareTo (right) > 0;
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static bool operator> (ulong left, BigInteger right)
+		{
+			return right.CompareTo (left) < 0;
+		}
+
 		public static bool operator>= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) >= 0;
@@ -446,6 +464,12 @@ namespace System.Numerics {
 		public static bool operator>= (BigInteger left, ulong right)
 		{
 			return left.CompareTo (right) >= 0;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static bool operator>= (ulong left, BigInteger right)
+		{
+			return right.CompareTo (left) <= 0;
 		}
 
 		public static bool operator== (BigInteger left, BigInteger right)
@@ -459,6 +483,12 @@ namespace System.Numerics {
 			return left.CompareTo (right) == 0;
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static bool operator== (ulong left, BigInteger right)
+		{
+			return right.CompareTo (left) == 0;
+		}
+
 		public static bool operator!= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) != 0;
@@ -468,6 +498,12 @@ namespace System.Numerics {
 		public static bool operator!= (BigInteger left, ulong right)
 		{
 			return left.CompareTo (right) != 0;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static bool operator!= (ulong left, BigInteger right)
+		{
+			return right.CompareTo (left) != 0;
 		}
 
 		public override bool Equals (object obj)
