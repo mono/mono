@@ -41,7 +41,7 @@ namespace MonoTests.System.Numerics
 			huge_add
 		};
 
-		/*[Test]
+		[Test]
 		public void TestAdd () {
 			for (int i = 0; i < add_a.Length; ++i) {
 				var a = new BigInteger (add_a [i]);
@@ -53,7 +53,21 @@ namespace MonoTests.System.Numerics
 				Assert.AreEqual (c, BigInteger.Add (a, b), "#" + i + "c");
 				Assert.AreEqual (add_c [i], (a + b).ToByteArray (), "#" + i + "d");
 			}
-		}*/
+		}
+
+		[Test]
+		public void TestAdd2 () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
+			for (int i = 0; i < values.Length; ++i) {
+				for (int j = 0; j < values.Length; ++j) {
+					var a = new BigInteger (values [i]);
+					var b = new BigInteger (values [j]);
+					var c = a + b;
+					Assert.AreEqual (values [i] + values [j], (long)c, "#_" + i + "_" + j);
+				}
+			}
+		}
+
 
 		[Test]
 		public void TestEquals () {
