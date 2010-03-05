@@ -1,3 +1,7 @@
+2010-03-05  Robert Jordan  <robertj@gmx.net>
+
+	* remoting4.cs: Add test for bug #504886.
+
 2010-03-03 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-562150.cs: Regression test.
