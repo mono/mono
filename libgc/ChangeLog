@@ -1,3 +1,8 @@
+2010-03-04  David S. Miller  <davem@davemloft.net>
+
+       * include/private/gc_locks.h: Add SPARC implementations of
+       GC_compare_and_exchange and GC_memory_barrier.
+
 2010-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* obj_map.c (GC_add_map_entry): Speed this up for the common case where

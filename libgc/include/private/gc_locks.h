@@ -500,6 +500,51 @@
         }
 #     endif /* POWERPC */
 
+#     if defined(SPARC)
+#      if !defined(GENERIC_COMPARE_AND_SWAP)
+#       if CPP_WORDSZ == 64
+        /* Returns TRUE if the comparison succeeded. */
+        inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
+            GC_word old, GC_word new_val)
+        {
+            unsigned long result;
+            __asm__ __volatile__(
+               "casx [%2], %3, %0"
+                :  "=r" (result)
+                :  "0" (new_val), "r" (addr), "r" (old)
+                : "memory");
+            return (GC_bool) (result == old);
+        }
+#       else
+        /* Returns TRUE if the comparison succeeded. */
+        inline static GC_bool GC_compare_and_exchange(volatile GC_word *_addr,
+            GC_word _old, GC_word _new_val)
+        {
+           register unsigned long result asm("o0");
+           register unsigned long old asm("o1");
+           register volatile GC_word *addr asm("o2");
+           result = _new_val;
+           old = _old;
+           addr = _addr;
+            __asm__ __volatile__(
+               /* We encode the instruction directly so that it
+                  doesn't taint the whole binary as v9-only.  */
+               ".word 0xd1e29009" /* cas [%o2], %o1, %o0 */
+                :  "=r" (result)
+                :  "0" (result), "r" (addr), "r"(old)
+                : "memory");
+            return (GC_bool) (result == old);
+        }
+#       endif
+#      endif /* !GENERIC_COMPARE_AND_SWAP */
+        inline static void GC_memory_barrier()
+        {
+           /* All sparc v9 chips provice procesor consistent ordering. */
+           /* Thus a compiler barrier should suffice.                  */
+            __asm__ __volatile__("" : : : "memory");
+        }
+#     endif /* SPARC */
+
 #     if defined(IA64)
 #      if !defined(GENERIC_COMPARE_AND_SWAP)
          inline static GC_bool GC_compare_and_exchange(volatile GC_word *addr,
