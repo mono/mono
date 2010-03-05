@@ -1,5 +1,9 @@
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: Relational ops for ulong. Fix CoreCompare.
+
+2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: Add constructor and coersion operators
 	for ulong.
 

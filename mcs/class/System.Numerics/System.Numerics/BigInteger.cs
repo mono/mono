@@ -376,6 +376,7 @@ namespace System.Numerics {
 			return new BigInteger (value);
 		}
 
+		[CLSCompliantAttribute (false)]
 		public static implicit operator BigInteger (ulong value)
 		{
 			return new BigInteger (value);
@@ -407,9 +408,21 @@ namespace System.Numerics {
 			return Compare (left, right) < 0;
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static bool operator< (BigInteger left, ulong right)
+		{
+			return left.CompareTo (right) < 0;
+		}
+
 		public static bool operator<= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) <= 0;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static bool operator<= (BigInteger left, ulong right)
+		{
+			return left.CompareTo (right) <= 0;
 		}
 
 		public static bool operator> (BigInteger left, BigInteger right)
@@ -417,9 +430,21 @@ namespace System.Numerics {
 			return Compare (left, right) > 0;
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static bool operator> (BigInteger left, ulong right)
+		{
+			return left.CompareTo (right) > 0;
+		}
+
 		public static bool operator>= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) >= 0;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static bool operator>= (BigInteger left, ulong right)
+		{
+			return left.CompareTo (right) >= 0;
 		}
 
 		public static bool operator== (BigInteger left, BigInteger right)
@@ -427,9 +452,21 @@ namespace System.Numerics {
 			return Compare (left, right) == 0;
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static bool operator== (BigInteger left, ulong right)
+		{
+			return left.CompareTo (right) == 0;
+		}
+
 		public static bool operator!= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) != 0;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static bool operator!= (BigInteger left, ulong right)
+		{
+			return left.CompareTo (right) != 0;
 		}
 
 		public override bool Equals (object obj)
@@ -471,6 +508,37 @@ namespace System.Numerics {
 			return Compare (this, other);
 		}
 
+		[CLSCompliantAttribute (false)]
+		public int CompareTo (ulong other)
+		{
+			if (sign < 0)
+				return -1;
+			if (sign == 0)
+				return other == 0 ? 0 : -1;
+
+			if (data.Length > 2)
+				return 1;
+
+			uint oh = (uint)(other >> 32);
+			uint h = 0;
+			if (data.Length > 1)
+				h = data [1];
+
+			if (h > oh)
+				return 1;
+			if (h < oh)
+				return -1;
+
+			uint ol = (uint)other;
+			uint l = data [0];
+
+			if (l > ol)
+				return 1;
+			if (l < ol)
+				return -1;
+
+			return 0;
+		}
 
 		public static int Compare (BigInteger left, BigInteger right)
 		{
@@ -692,7 +760,7 @@ namespace System.Numerics {
 			if (bl > al)
 				return -1;
 
-			for (int i = 0; i < al; ++i) {
+			for (int i = al - 1; i >= 0; --i) {
 				uint ai = a [i];
 				uint bi = b [i];
 				if (ai > bi)	
