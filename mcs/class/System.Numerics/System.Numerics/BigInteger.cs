@@ -64,11 +64,7 @@ namespace System.Numerics {
 				data = new uint[] { (uint) value };
 			} else {
 				sign = -1;
-				data = new uint[1];
-				if (value == int.MinValue)
-					data [0] = 0x80000000u;
-				else
-					 data [0] = (uint)-value;
+				data = new uint[1] { (uint)-value };
 			}
 		}
 
@@ -100,19 +96,14 @@ namespace System.Numerics {
 					data [1] = high;
 			} else {
 				sign = -1;
+				value = -value;
+				uint low = (uint)value;
+				uint high = (uint)((ulong)value >> 32);
 
-				if (value == long.MinValue) {
-					data = new uint [2] { 0, 0x80000000u };
-				} else {
-					value = -value;
-					uint low = (uint)value;
-					uint high = (uint)((ulong)value >> 32);
-
-					data = new uint [high != 0 ? 2 : 1];
-					data [0] = low;
-					if (high != 0)
-						data [1] = high;
-				}
+				data = new uint [high != 0 ? 2 : 1];
+				data [0] = low;
+				if (high != 0)
+					data [1] = high;
 			}			
 		}
 
@@ -293,8 +284,6 @@ namespace System.Numerics {
 			} else if (value.sign == -1) {
 				if (data > 0x80000000u)
 					throw new OverflowException ();
-				if (data == 0x80000000u)
-					return int.MinValue;
 				return -(int)data;
 			}
 
@@ -336,12 +325,6 @@ namespace System.Numerics {
 
 			if (high > 0x80000000u)
 				throw new OverflowException ();
-
-			if (high == 0x80000000u) {
-				if (low != 0)
-					throw new OverflowException ();
-				return long.MinValue;
-			}
 
 			return - ((((long)high) << 32) | (long)low);
 		}
