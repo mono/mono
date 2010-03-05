@@ -70,8 +70,8 @@ namespace MonoTests.System.Numerics
 		public void IntCtorRoundTrip ()
 		{
 			int[] values = new int [] {
-				int.MinValue, -0x2F33BB, /*-0x1F33, -0x33, 0, 0x33,
-				0x80, 0x8190, 0xFF0011, 0x1234, 0x11BB99, 0x44BB22CC,*/
+				int.MinValue, -0x2F33BB, -0x1F33, -0x33, 0, 0x33,
+				0x80, 0x8190, 0xFF0011, 0x1234, 0x11BB99, 0x44BB22CC,
 				int.MaxValue };
 			foreach (var val in values) {
 				var a = new BigInteger (val);
@@ -79,6 +79,21 @@ namespace MonoTests.System.Numerics
 
 				Assert.AreEqual (val, (int)a, "#a_" + val);
 				Assert.AreEqual (val, (int)b, "#b_" + val);
+			}
+		}
+
+		[Test]
+		public void LongCtorRoundTrip ()
+		{
+			long[] values = new long [] {
+				0, long.MinValue, long.MaxValue, -1, 1L + int.MaxValue, -1L + int.MinValue, 0x1234, 0xFFFFFFFFL, 0x1FFFFFFFFL, -0xFFFFFFFFL, -0x1FFFFFFFFL,
+				0x100000000L, -0x100000000L, 0x100000001L, -0x100000001L };
+			foreach (var val in values) {
+				var a = new BigInteger (val);
+				var b = new BigInteger (a.ToByteArray ());
+
+				Assert.AreEqual (val, (long)a, "#a_" + val);
+				Assert.AreEqual (val, (long)b, "#b_" + val);
 			}
 		}
 
@@ -165,8 +180,43 @@ namespace MonoTests.System.Numerics
 				Assert.Fail ("#1");
 			} catch (OverflowException) {}
 
-			Assert.AreEqual (int.MaxValue, (int)new BigInteger (int.MaxValue), "#2");
-			Assert.AreEqual (int.MinValue, (int)new BigInteger (int.MinValue), "#3");
+			try {
+				int v = (int)new BigInteger (1L + int.MaxValue);
+				Assert.Fail ("#2");
+			} catch (OverflowException) {}
+
+			try {
+				int v = (int)new BigInteger (-1L + int.MinValue);
+				Assert.Fail ("#3");
+			} catch (OverflowException) {}
+
+			Assert.AreEqual (int.MaxValue, (int)new BigInteger (int.MaxValue), "#4");
+			Assert.AreEqual (int.MinValue, (int)new BigInteger (int.MinValue), "#5");
+		}
+
+
+		[Test]
+		public void TestToLongOperator ()
+		{
+			try {
+				long v = (long)new BigInteger (huge_a);
+				Assert.Fail ("#1");
+			} catch (OverflowException) {}
+
+			//long.MaxValue + 1
+			try {
+				long v = (long)new BigInteger (new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80, 0x00 });
+				Assert.Fail ("#2");
+			} catch (OverflowException) {}
+
+			//TODO long.MinValue - 1
+			try {
+				long v = (long)new BigInteger (new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F, 0xFF });
+				Assert.Fail ("#3");
+			} catch (OverflowException) {}
+
+			Assert.AreEqual (long.MaxValue, (long)new BigInteger (long.MaxValue), "#4");
+			Assert.AreEqual (long.MinValue, (long)new BigInteger (long.MinValue), "#5");
 		}
 
 		[Test]
@@ -184,7 +234,37 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (new byte[] { 0x7F }, new BigInteger (0x7F).ToByteArray (), "#10");
 			Assert.AreEqual (new byte[] { 0x45, 0xCC, 0xD0 }, new BigInteger (-0x2F33BB).ToByteArray (), "#11");
 			Assert.AreEqual (new byte[] { 0 }, new BigInteger (0).ToByteArray (), "#12");
+		}
+
+		[Test]
+		public void TestLongCtorToByteArray ()
+		{
+			Assert.AreEqual (new byte[] { 0x01 }, new BigInteger (0x01L).ToByteArray (), "#1");
+			Assert.AreEqual (new byte[] { 0x02, 0x01 }, new BigInteger (0x0102L).ToByteArray (), "#2");
+			Assert.AreEqual (new byte[] { 0x03, 0x02, 0x01 }, new BigInteger (0x010203L).ToByteArray (), "#3");
+			Assert.AreEqual (new byte[] { 0x04, 0x03, 0x2, 0x01 }, new BigInteger (0x01020304L).ToByteArray (), "#4");
+			Assert.AreEqual (new byte[] { 0x05, 0x04, 0x03, 0x2, 0x01 }, new BigInteger (0x0102030405L).ToByteArray (), "#5");
+			Assert.AreEqual (new byte[] { 0x06, 0x05, 0x04, 0x03, 0x2, 0x01 }, new BigInteger (0x010203040506L).ToByteArray (), "#6");
+			Assert.AreEqual (new byte[] { 0x07, 0x06, 0x05, 0x04, 0x03, 0x2, 0x01 }, new BigInteger (0x01020304050607L).ToByteArray (), "#7");
+			Assert.AreEqual (new byte[] { 0x08, 0x07, 0x06, 0x05, 0x04, 0x03, 0x2, 0x01 }, new BigInteger (0x0102030405060708L).ToByteArray (), "#8");
+
+			Assert.AreEqual (new byte[] { 0xFF }, new BigInteger (-0x01L).ToByteArray (), "#1m");
+			Assert.AreEqual (new byte[] { 0xFE, 0xFE}, new BigInteger (-0x0102L).ToByteArray (), "#2m");
+			Assert.AreEqual (new byte[] { 0xFD, 0xFD, 0xFE }, new BigInteger (-0x010203L).ToByteArray (), "#3m");
+			Assert.AreEqual (new byte[] { 0xFC, 0xFC, 0xFD, 0xFE}, new BigInteger (-0x01020304L).ToByteArray (), "#4m");
+			Assert.AreEqual (new byte[] { 0xFB, 0xFB, 0xFC, 0xFD, 0xFE }, new BigInteger (-0x0102030405L).ToByteArray (), "#5m");
+			Assert.AreEqual (new byte[] { 0xFA, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE }, new BigInteger (-0x010203040506L).ToByteArray (), "#6m");
+			Assert.AreEqual (new byte[] { 0xF9, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE }, new BigInteger (-0x01020304050607L).ToByteArray (), "#7m");
+			Assert.AreEqual (new byte[] { 0xF8, 0xF8, 0xF9, 0xFA, 0xFB, 0xFC, 0xFD, 0xFE }, new BigInteger (-0x0102030405060708L).ToByteArray (), "#8m");
+
+
+			Assert.AreEqual (new byte[] { 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0xFF, 0x7F }, new BigInteger (long.MaxValue).ToByteArray (), "#9");
+			Assert.AreEqual (new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80 }, new BigInteger (long.MinValue).ToByteArray (), "#10");
+
+			Assert.AreEqual (new byte[] { 0xFF, 0xFF, 0xFF, 0x7F, 0xFF }, new BigInteger (-2147483649L).ToByteArray (), "11");
+
 
 		}
+
 	}
 }
