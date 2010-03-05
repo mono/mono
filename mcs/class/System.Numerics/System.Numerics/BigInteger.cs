@@ -134,6 +134,7 @@ namespace System.Numerics {
 			}
 		}
 
+		[CLSCompliantAttribute (false)]
 		public BigInteger (byte[] value)
 		{
 			if (value == null)
@@ -487,6 +488,12 @@ namespace System.Numerics {
 					return false;
 			}
 			return true;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public bool Equals (ulong other)
+		{
+			return CompareTo (other) == 0;
 		}
 
 		public override int GetHashCode ()
