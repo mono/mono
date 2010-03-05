@@ -409,6 +409,13 @@ namespace System.Numerics {
 			return new BigInteger (left.sign, CoreAdd (left.data, right.data));
 		}
 
+		public static BigInteger operator- (BigInteger value)
+		{
+			if (value.sign == 0)
+				return value;
+			return new BigInteger ((short)-value.sign, value.data);
+		}
+
 		public static bool operator< (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) < 0;
@@ -621,6 +628,11 @@ namespace System.Numerics {
 		public static BigInteger Subtract (BigInteger left, BigInteger right)
 		{
 			return left - right;
+		}
+
+		public static BigInteger Negate (BigInteger value)
+		{
+			return - value;
 		}
 
 		public int CompareTo (object obj)
