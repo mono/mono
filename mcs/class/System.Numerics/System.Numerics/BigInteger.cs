@@ -644,6 +644,11 @@ namespace System.Numerics {
 			return right;
 		}
 
+		public static BigInteger Abs (BigInteger value)
+		{
+			return new BigInteger ((short)Math.Abs (value.sign), value.data);
+		}
+
 		[CLSCompliantAttribute (false)]
 		public bool Equals (ulong other)
 		{

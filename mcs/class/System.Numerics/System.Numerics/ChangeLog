@@ -1,5 +1,9 @@
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: Abs.
+
+2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: Min, Max.
 
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
