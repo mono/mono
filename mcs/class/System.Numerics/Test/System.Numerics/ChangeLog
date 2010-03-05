@@ -1,5 +1,9 @@
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	*BigIntegerTest.cs: Tests for Equals.
+
+2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	*BigIntegerTest.cs: Tests for long constructor and coersion operator.
 
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>

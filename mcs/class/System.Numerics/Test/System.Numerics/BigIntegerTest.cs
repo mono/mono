@@ -56,6 +56,17 @@ namespace MonoTests.System.Numerics
 		}*/
 
 		[Test]
+		public void TestEquals () {
+				var a = new BigInteger (10);
+				var b = new BigInteger (10);
+				var c = new BigInteger (-10);
+
+				Assert.AreEqual (a, b, "#1");
+				Assert.AreNotEqual (a, c, "#2");
+				Assert.AreNotEqual (a, 10, "#3");
+		}
+
+		[Test]
 		public void ByteArrayCtor ()
 		{
 			try {
