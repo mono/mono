@@ -49,7 +49,7 @@ namespace Mono {
 		internal static extern string GetDisplayName ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object NewObject (RuntimeTypeHandle h);
+		internal static extern object NewObject (IntPtr h);
 	}
 	
 }
