@@ -65,20 +65,20 @@ namespace System
 
 		public TimeSpan (int hours, int minutes, int seconds)
 		{
-			_ticks = CalculateTicks (0, hours, minutes, seconds, 0);
+			CalculateTicks (0, hours, minutes, seconds, 0, true, out _ticks);
 		}
 
 		public TimeSpan (int days, int hours, int minutes, int seconds)
 		{
-			_ticks = CalculateTicks (days, hours, minutes, seconds, 0);
+			CalculateTicks (days, hours, minutes, seconds, 0, true, out _ticks);
 		}
 
 		public TimeSpan (int days, int hours, int minutes, int seconds, int milliseconds)
 		{
-			_ticks = CalculateTicks (days, hours, minutes, seconds, milliseconds);
+			CalculateTicks (days, hours, minutes, seconds, milliseconds, true, out _ticks);
 		}
 
-		internal static long CalculateTicks (int days, int hours, int minutes, int seconds, int milliseconds)
+		internal static bool CalculateTicks (int days, int hours, int minutes, int seconds, int milliseconds, bool throwExc, out long result)
 		{
 			// there's no overflow checks for hours, minutes, ...
 			// so big hours/minutes values can overflow at some point and change expected values
@@ -86,6 +86,8 @@ namespace System
 			int minsec = (minutes * 60);
 			long t = ((long)(hrssec + minsec + seconds) * 1000L + (long)milliseconds);
 			t *= 10000;
+
+			result = 0;
 
 			bool overflow = false;
 			// days is problematic because it can overflow but that overflow can be 
@@ -120,10 +122,14 @@ namespace System
 				}
 			}
 
-			if (overflow)
-				throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
+			if (overflow) {
+				if (throwExc)
+					throw new ArgumentOutOfRangeException (Locale.GetText ("The timespan is too big or too small."));
+				return false;
+			}
 
-			return t;
+			result = t;
+			return true;
 		}
 
 		public int Days {
@@ -331,8 +337,10 @@ namespace System
 				throw new ArgumentNullException ("s");
 			}
 
+			TimeSpan result;
 			Parser p = new Parser (s);
-			return p.Execute ();
+			p.Execute (false, out result);
+			return result;
 		}
 
 		public static bool TryParse (string s, out TimeSpan result)
@@ -341,13 +349,9 @@ namespace System
 				result = TimeSpan.Zero;
 				return false;
 			}
-			try {
-				result = Parse (s);
-				return true;
-			} catch {
-				result = TimeSpan.Zero;
-				return false;
-			}
+
+			Parser p = new Parser (s);
+			return p.Execute (true, out result);
 		}
 
 		public TimeSpan Subtract (TimeSpan ts)
@@ -450,6 +454,7 @@ namespace System
 			private int _cur = 0;
 			private int _length;
 			private bool formatError;
+			private bool overflowError;
 
 			public Parser (string src)
 			{
@@ -501,12 +506,14 @@ namespace System
 				if (optional && AtEnd)
 					return 0;
 
-				int res = 0;
+				long res = 0;
 				int count = 0;
 
 				while (!AtEnd && Char.IsDigit (_src, _cur)) {
-					checked {
-						res = res * 10 + _src[_cur] - '0';
+					res = res * 10 + _src[_cur] - '0';
+					if (res > Int32.MaxValue) {
+						overflowError = true;
+						break;
 					}
 					_cur++;
 					count++;
@@ -515,7 +522,7 @@ namespace System
 				if (!optional && (count == 0))
 					formatError = true;
 
-				return res;
+				return (int)res;
 			}
 
 			// Parse optional dot
@@ -562,7 +569,7 @@ namespace System
 				return res;
 			}
 
-			public TimeSpan Execute ()
+			public bool Execute (bool tryParse, out TimeSpan result)
 			{
 				bool sign;
 				int days;
@@ -570,6 +577,8 @@ namespace System
 				int minutes;
 				int seconds;
 				long ticks;
+
+				result = TimeSpan.Zero;
 
 				// documented as...
 				// Parse [ws][-][dd.]hh:mm:ss[.ff][ws]
@@ -601,18 +610,33 @@ namespace System
 					formatError = true;
 
 				// Overflow has presceance over FormatException
-				if (hours > 23 || minutes > 59 || seconds > 59) {
+				if (overflowError || hours > 23 || minutes > 59 || seconds > 59) {
+					if (tryParse)
+						return false;
 					throw new OverflowException (
 						Locale.GetText ("Invalid time data."));
 				}
 				else if (formatError) {
+					if (tryParse)
+						return false;
 					throw new FormatException (
 						Locale.GetText ("Invalid format for TimeSpan.Parse."));
 				}
 
-				long t = TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0);
-				t = checked ((sign) ? (-t - ticks) : (t + ticks));
-				return new TimeSpan (t);
+				long t;
+				if (!TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0, false, out t))
+					return false;
+
+				try {
+					t = checked ((sign) ? (-t - ticks) : (t + ticks));
+				} catch (OverflowException) {
+					if (tryParse)
+						return false;
+					throw;
+				}
+
+				result = new TimeSpan (t);
+				return true;
 			}
 		}
 	}
