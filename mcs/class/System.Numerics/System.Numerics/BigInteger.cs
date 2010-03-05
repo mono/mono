@@ -45,18 +45,20 @@ namespace System.Numerics {
 		readonly uint[] data;
 		readonly short sign;
 
+		static readonly uint[] ZERO = new uint [1];
+		static readonly uint[] ONE = new uint [1] { 1 };
+
 		BigInteger (short sign, uint[] data)
 		{
 			this.sign = sign;
 			this.data = data;
 		}
 
-
 		public BigInteger (int value)
 		{
 			if (value == 0) {
 				sign = 0;
-				data = new uint [1];
+				data = ZERO;
 			} else if (value > 0) {
 				sign = 1;
 				data = new uint[] { (uint) value };
@@ -74,7 +76,7 @@ namespace System.Numerics {
 		{
 			if (value == 0) {
 				sign = 0;
-				data = new uint [1];
+				data = ZERO;
 			} else if (value > 0) {
 				sign = 1;
 				uint low = (uint)value;
@@ -111,7 +113,7 @@ namespace System.Numerics {
 
 			if (len == 0 || (len == 1 && value [0] == 0)) {
 				sign = 0;
-				data = new uint [1];
+				data = ZERO;
 				return;
 			}
 
@@ -235,6 +237,18 @@ namespace System.Numerics {
 			get { return sign; }
 		}
 
+		public static BigInteger MinusOne {
+			get { return new BigInteger (-1, ONE); }
+		}
+
+		public static BigInteger One {
+			get { return new BigInteger (1, ONE); }
+		}
+
+		public static BigInteger Zero {
+			get { return new BigInteger (0, ZERO); }
+		}
+
 		public static explicit operator int (BigInteger value)
 		{
 			if (value.data.Length > 1)
@@ -316,7 +330,7 @@ namespace System.Numerics {
 			int r = CoreCompare (left.data, right.data);
 
 			if (r == 0)	
-				return new BigInteger (0);
+				return new BigInteger (0, ZERO);
 
 			if (r > 0) //left > right
 				return new BigInteger (left.sign, CoreSub (left.data, right.data));

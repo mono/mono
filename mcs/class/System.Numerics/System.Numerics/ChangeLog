@@ -1,5 +1,10 @@
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: Implement -1,0,1 props. Don't allocate
+	zero array.
+
+2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: Implement IComparable and IEquatable.
 
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
