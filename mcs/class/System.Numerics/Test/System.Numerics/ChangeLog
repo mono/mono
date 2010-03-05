@@ -1,5 +1,9 @@
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigIntegerTest.cs: Tests for | & ^ ~.
+
+2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigIntegerTest.cs: Tests for ++, --.
 
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>

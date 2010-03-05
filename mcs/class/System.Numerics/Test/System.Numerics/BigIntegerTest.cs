@@ -169,6 +169,23 @@ namespace MonoTests.System.Numerics
 		}
 
 		[Test]
+		public void TestBitwiseOps () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L, 0xFFFF00000000L };
+			for (int i = 0; i < values.Length; ++i) {
+				for (int j = 0; j < values.Length; ++j) {
+					var a = new BigInteger (values [i]);
+					var b = new BigInteger (values [j]);
+
+
+					Assert.AreEqual (values [i] | values [j], (long)(a | b) , "#b_" + i + "_" + j);
+					Assert.AreEqual (values [i] & values [j], (long)(a & b) , "#a_" + i + "_" + j);
+					Assert.AreEqual (values [i] ^ values [j], (long)(a ^ b) , "#c_" + i + "_" + j);
+					Assert.AreEqual (~values [i], (long)~a , "#d_" + i + "_" + j);
+				}
+			}
+		}
+
+		[Test]
 		public void CompareOps () {
 			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
 			for (int i = 0; i < values.Length; ++i) {
