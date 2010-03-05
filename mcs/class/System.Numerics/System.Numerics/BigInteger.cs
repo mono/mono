@@ -416,6 +416,49 @@ namespace System.Numerics {
 			return new BigInteger ((short)-value.sign, value.data);
 		}
 
+		public static BigInteger operator+ (BigInteger value)
+		{
+			return value;
+		}
+
+		public static BigInteger operator++ (BigInteger value)
+		{
+			short sign = value.sign;
+			uint[] data = value.data;
+			if (data.Length == 1) {
+				if (sign == -1 && data [0] == 1)
+					return new BigInteger (0, ZERO);
+				if (sign == 0)
+					return new BigInteger (1, ONE);
+			}
+
+			if (sign == -1)
+				data = CoreSub (data, 1);
+			else
+				data = CoreAdd (data, 1);
+		
+			return new BigInteger (sign, data);
+		}
+
+		public static BigInteger operator-- (BigInteger value)
+		{
+			short sign = value.sign;
+			uint[] data = value.data;
+			if (data.Length == 1) {
+				if (sign == 1 && data [0] == 1)
+					return new BigInteger (0, ZERO);
+				if (sign == 0)
+					return new BigInteger (-1, ONE);
+			}
+
+			if (sign == -1)
+				data = CoreAdd (data, 1);
+			else
+				data = CoreSub (data, 1);
+		
+			return new BigInteger (sign, data);
+		}
+
 		public static bool operator< (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) < 0;
@@ -893,7 +936,6 @@ namespace System.Numerics {
 
 		static uint[] Resize (uint[] v, int len)
 		{
-if (len == 0) throw new Exception ("ZERO LEN");
 			uint[] res = new uint [len];
 			Array.Copy (v, res, Math.Min (v.Length, len));
 			return res;
@@ -941,16 +983,12 @@ if (len == 0) throw new Exception ("ZERO LEN");
 			int bl = a.Length;
 			int sl = b.Length;
 
-			Console.WriteLine ("bl {0} sl {1}", bl, sl);
-
 			uint[] res = new uint [bl];
 
 			ulong borrow = 0;
 			int i;
 			for (i = 0; i < sl; ++i) {
 				borrow = (ulong)a [i] - b [i] - borrow;
-
-				Console.WriteLine ("a {0} b {1}", a[i], b [i]);
 
 				res [i] = (uint)borrow;
 				borrow = (borrow >> 32) & 0x1;
@@ -965,6 +1003,49 @@ if (len == 0) throw new Exception ("ZERO LEN");
 			//remove extra zeroes
 			for (i = bl - 1; i >= 0 && res [i] == 0; --i) ;
 			if (i < bl - 1)
+				res = Resize (res, i + 1);
+
+            return res;
+		}
+
+
+		static uint[] CoreAdd (uint[] a, uint b)
+		{
+			int len = a.Length;
+			uint[] res = new uint [len];
+
+			ulong sum = b;
+			int i;
+			for (i = 0; i < len; i++) {
+				sum = sum + a [i];
+				res [i] = (uint)sum;
+				sum >>= 32;
+			}
+
+			if (sum != 0) {
+				res = Resize (res, len + 1);
+				res [i] = (uint)sum;
+			}
+
+			return res;
+		}
+
+		static uint[] CoreSub (uint[] a, uint b)
+		{
+			int len = a.Length;
+			uint[] res = new uint [len];
+
+			ulong borrow = b;
+			int i;
+			for (i = 0; i < len; i++) {
+				borrow = (ulong)a [i] - borrow;
+				res [i] = (uint)borrow;
+				borrow = (borrow >> 32) & 0x1;
+			}
+
+			//remove extra zeroes
+			for (i = len - 1; i >= 0 && res [i] == 0; --i) ;
+			if (i < len - 1)
 				res = Resize (res, i + 1);
 
             return res;
