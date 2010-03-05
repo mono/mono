@@ -93,6 +93,21 @@ namespace MonoTests.System.Numerics
 				}
 			}
 		}
+
+
+		[Test]
+		public void TestNegate () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
+			for (int i = 0; i < values.Length; ++i) {
+				var a = new BigInteger (values [i]);
+				var c = -a;
+				var d = BigInteger.Negate (a);
+
+				Assert.AreEqual (-values [i], (long)c, "#_" + i);
+				Assert.AreEqual (-values [i], (long)d, "#_" + i);
+			}
+		}
+
 		[Test]
 		public void CompareOps () {
 			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
