@@ -1,5 +1,9 @@
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: Sub.
+
+2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: All relational ops for long.
 
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>

@@ -387,6 +387,28 @@ namespace System.Numerics {
 			return new BigInteger (right.sign, CoreSub (right.data, left.data));
 		}
 
+		public static BigInteger operator- (BigInteger left, BigInteger right)
+		{
+			if (right.sign == 0)
+				return left;
+			if (left.sign == 0)
+				return new BigInteger ((short)-right.sign, right.data);
+
+			if (left.sign == right.sign) {
+				int r = CoreCompare (left.data, right.data);
+
+				if (r == 0)	
+					return new BigInteger (0, ZERO);
+
+				if (r > 0) //left > right
+					return new BigInteger (left.sign, CoreSub (left.data, right.data));
+
+				return new BigInteger ((short)-right.sign, CoreSub (right.data, left.data));
+			}
+
+			return new BigInteger (left.sign, CoreAdd (left.data, right.data));
+		}
+
 		public static bool operator< (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) < 0;
@@ -594,6 +616,11 @@ namespace System.Numerics {
 		public static BigInteger Add (BigInteger left, BigInteger right)
 		{
 			return left + right;
+		}
+
+		public static BigInteger Subtract (BigInteger left, BigInteger right)
+		{
+			return left - right;
 		}
 
 		public int CompareTo (object obj)
@@ -810,6 +837,7 @@ namespace System.Numerics {
 
 		static uint[] Resize (uint[] v, int len)
 		{
+if (len == 0) throw new Exception ("ZERO LEN");
 			uint[] res = new uint [len];
 			Array.Copy (v, res, Math.Min (v.Length, len));
 			return res;
