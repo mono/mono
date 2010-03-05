@@ -605,6 +605,45 @@ namespace System.Numerics {
 			return CompareTo (other) == 0;
 		}
 
+		public static BigInteger Min (BigInteger left, BigInteger right)
+		{
+			int ls = left.sign;
+			int rs = right.sign;
+
+			if (ls < rs)
+				return left;
+			if (rs < ls)
+				return right;
+
+			int r = CoreCompare (left.data, right.data);
+			if (ls == -1)
+				r = -r;
+
+			if (r <= 0)
+				return left;
+			return right;
+		}
+
+
+		public static BigInteger Max (BigInteger left, BigInteger right)
+		{
+			int ls = left.sign;
+			int rs = right.sign;
+
+			if (ls > rs)
+				return left;
+			if (rs > ls)
+				return right;
+
+			int r = CoreCompare (left.data, right.data);
+			if (ls == -1)
+				r = -r;
+
+			if (r >= 0)
+				return left;
+			return right;
+		}
+
 		[CLSCompliantAttribute (false)]
 		public bool Equals (ulong other)
 		{
