@@ -1,5 +1,9 @@
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: IComparable.
+
+2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: Relational ops for ulong with switched args.
 
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>

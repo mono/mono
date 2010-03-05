@@ -39,7 +39,7 @@ Optimization
 	CoreAdd could avoid some resizes by checking for equal sized array that top overflow
 */
 namespace System.Numerics {
-	public struct BigInteger : IComparable<BigInteger>, IEquatable<BigInteger>
+	public struct BigInteger : IComparable, IComparable<BigInteger>, IEquatable<BigInteger>
 	{
 		//LSB on [0]
 		readonly uint[] data;
@@ -544,6 +544,17 @@ namespace System.Numerics {
 		public static BigInteger Add (BigInteger left, BigInteger right)
 		{
 			return left + right;
+		}
+
+		public int CompareTo (object obj)
+		{
+			if (obj == null)
+				return 1;
+			
+			if (!(obj is BigInteger))
+				return -1;
+
+			return Compare (this, (BigInteger)obj);
 		}
 
 		public int CompareTo (BigInteger other)
