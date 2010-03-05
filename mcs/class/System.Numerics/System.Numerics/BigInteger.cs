@@ -324,6 +324,36 @@ namespace System.Numerics {
 			return new BigInteger (right.sign, CoreSub (right.data, left.data));
 		}
 
+		public static bool operator< (BigInteger left, BigInteger right)
+		{
+			return Compare (left, right) < 0;
+		}
+
+		public static bool operator<= (BigInteger left, BigInteger right)
+		{
+			return Compare (left, right) <= 0;
+		}
+
+		public static bool operator> (BigInteger left, BigInteger right)
+		{
+			return Compare (left, right) > 0;
+		}
+
+		public static bool operator>= (BigInteger left, BigInteger right)
+		{
+			return Compare (left, right) >= 0;
+		}
+
+		public static bool operator== (BigInteger left, BigInteger right)
+		{
+			return Compare (left, right) == 0;
+		}
+
+		public static bool operator!= (BigInteger left, BigInteger right)
+		{
+			return Compare (left, right) != 0;
+		}
+
 		public override bool Equals (object obj)
 		{
 			if (!(obj is BigInteger))
@@ -354,6 +384,27 @@ namespace System.Numerics {
 		{
 			return left + right;
 		}
+
+		public int CompareTo (BigInteger other)
+		{
+			return Compare (this, other);
+		}
+
+
+		public static int Compare (BigInteger left, BigInteger right)
+		{
+			int ls = left.sign;
+			int rs = right.sign;
+
+			if (ls != rs)
+				return ls > rs ? 1 : -1;
+
+			int r = CoreCompare (left.data, right.data);
+			if (ls < 0)
+				r = -r;
+			return r;
+		}
+
 
 		static int TopByte (uint x)
 		{
