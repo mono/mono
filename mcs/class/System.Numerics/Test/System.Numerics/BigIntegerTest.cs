@@ -68,6 +68,27 @@ namespace MonoTests.System.Numerics
 			}
 		}
 
+		[Test]
+		public void CompareOps () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
+			for (int i = 0; i < values.Length; ++i) {
+				for (int j = 0; j < values.Length; ++j) {
+					var a = new BigInteger (values [i]);
+					var b = new BigInteger (values [j]);
+					
+					Assert.AreEqual (values [i].CompareTo (values [j]), a.CompareTo (b), "#a_" + i + "_" + j);
+					Assert.AreEqual (values [i].CompareTo (values [j]), BigInteger.Compare (a, b), "#b_" + i + "_" + j);
+
+					Assert.AreEqual (values [i] < values [j], a < b, "#c_" + i + "_" + j);
+					Assert.AreEqual (values [i] <= values [j], a <= b, "#d_" + i + "_" + j);
+					Assert.AreEqual (values [i] == values [j], a == b, "#e_" + i + "_" + j);
+					Assert.AreEqual (values [i] != values [j], a != b, "#f_" + i + "_" + j);
+					Assert.AreEqual (values [i] >= values [j], a >= b, "#g_" + i + "_" + j);
+					Assert.AreEqual (values [i] > values [j], a > b, "#h_" + i + "_" + j);
+				}
+			}
+		}
+
 
 		[Test]
 		public void TestEquals () {

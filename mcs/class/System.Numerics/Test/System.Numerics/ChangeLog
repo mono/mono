@@ -1,5 +1,9 @@
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigIntegerTest.cs: Tests for Compare and relational ops.
+
+2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	*BigIntegerTest.cs: Tests for Add.
 
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
