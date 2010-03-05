@@ -131,6 +131,35 @@ namespace MonoTests.System.Numerics
 		}
 
 		[Test]
+		public void CompareLong () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 9999999, 100000000000L, 0xAA00000000, long.MaxValue, long.MinValue };
+
+			for (int i = 0; i < values.Length; ++i) {
+				for (int j = 0; j < values.Length; ++j) {
+					var a = new BigInteger (values [i]);
+					var b = values [j];
+					var c = new BigInteger (b);
+					
+					Assert.AreEqual (a.CompareTo (c), a.CompareTo (b), "#a_" + i + "_" + j);
+
+					Assert.AreEqual (a > c, a > b, "#b_" + i + "_" + j);
+					Assert.AreEqual (a < c, a < b, "#c_" + i + "_" + j);
+					Assert.AreEqual (a <= c, a <= b, "#d_" + i + "_" + j);
+					Assert.AreEqual (a == c, a == b, "#e_" + i + "_" + j);
+					Assert.AreEqual (a != c, a != b, "#f_" + i + "_" + j);
+					Assert.AreEqual (a >= c, a >= b, "#g_" + i + "_" + j);
+
+					Assert.AreEqual (c > a, b > a, "#ib_" + i + "_" + j);
+					Assert.AreEqual (c < a, b < a, "#ic_" + i + "_" + j);
+					Assert.AreEqual (c <= a, b <= a, "#id_" + i + "_" + j);
+					Assert.AreEqual (c == a, b == a, "#ie_" + i + "_" + j);
+					Assert.AreEqual (c != a, b != a, "#if_" + i + "_" + j);
+					Assert.AreEqual (c >= a, b >= a, "#ig_" + i + "_" + j);
+				}
+			}
+		}
+
+		[Test]
 		public void TestEquals () {
 				var a = new BigInteger (10);
 				var b = new BigInteger (10);
