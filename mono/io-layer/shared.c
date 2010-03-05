@@ -364,6 +364,8 @@ static void shm_semaphores_init (void)
 	key_t oldkey;
 	int thr_ret;
 	struct _WapiHandleSharedLayout *tmp_shared;
+	gchar *ftmp;
+	gchar *filename;
 	
 	/* Yet more barmy API - this union is a well-defined parameter
 	 * in a syscall, yet I still have to define it here as it
@@ -400,7 +402,16 @@ static void shm_semaphores_init (void)
 	tmp_shared = _wapi_shm_attach (WAPI_SHM_DATA);
 	g_assert (tmp_shared != NULL);
 	
-	key = ftok (_wapi_shm_file (WAPI_SHM_DATA), 'M');
+#ifdef USE_SHM
+	ftmp=_wapi_shm_shm_name (WAPI_SHM_DATA);
+	filename = g_build_filename ("/dev/shm", ftmp, NULL);
+	g_assert (filename!=NULL);
+	key = ftok (filename, 'M');
+	g_free (ftmp);
+	g_free (filename);
+#else
+	key = ftok ( _wapi_shm_file (WAPI_SHM_DATA), 'M');
+#endif
 
 again:
 	retries++;

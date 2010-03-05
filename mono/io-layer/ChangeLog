@@ -1,3 +1,8 @@
+2010-03-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* shared.c (shm_semaphores_init): Applied patch from Cal Page
+	(age.cal@gmail.com). Fix support for USE_SHM.
+
 2009-05-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* shared.c (_wapi_shm_file): Avoid creating a .wapi directory here, create
