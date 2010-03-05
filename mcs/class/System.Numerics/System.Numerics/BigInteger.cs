@@ -64,6 +64,38 @@ namespace System.Numerics {
 			}
 		}
 
+		public BigInteger (long value)
+		{
+			if (value == 0) {
+				sign = 0;
+				data = new uint [1];
+			} else if (value > 0) {
+				sign = 1;
+				uint low = (uint)value;
+				uint high = (uint)(value >> 32);
+
+				data = new uint [high != 0 ? 2 : 1];
+				data [0] = low;
+				if (high != 0)
+					data [1] = high;
+			} else {
+				sign = -1;
+
+				if (value == long.MinValue) {
+					data = new uint [2] { 0, 0x80000000u };
+				} else {
+					value = -value;
+					uint low = (uint)value;
+					uint high = (uint)((ulong)value >> 32);
+
+					data = new uint [high != 0 ? 2 : 1];
+					data [0] = low;
+					if (high != 0)
+						data [1] = high;
+				}
+			}			
+		}
+
 		public BigInteger (byte[] value)
 		{
 			if (value == null)
@@ -123,7 +155,7 @@ namespace System.Numerics {
 							(uint)(value [j++] << 16) |
 							(uint)(value [j++] << 24);
 
-					sub = word - borrow;
+					sub = (ulong)word - borrow;
 					word = (uint)sub;
 					borrow = (uint)(sub >> 32) & 0x1u;
 					data [i] = ~word;
@@ -209,7 +241,7 @@ namespace System.Numerics {
 				return (int)data;
 			} else if (value.sign == -1) {
 				if (data > 0x80000000u)
-					throw new OverflowException (string.Format ("{0}/{1:X}", value.sign, data));
+					throw new OverflowException ();
 				if (data == 0x80000000u)
 					return int.MinValue;
 				return -(int)data;
@@ -218,6 +250,44 @@ namespace System.Numerics {
 			return 0;
 		}
 
+		public static explicit operator long (BigInteger value)
+		{
+			if (value.sign == 0)
+				return 0;
+
+			if (value.data.Length > 2)
+				throw new OverflowException ();
+
+			uint low = value.data [0];
+
+			if (value.data.Length == 1) {
+				if (value.sign == 1)
+					return (long)low;
+				long res = (long)low;
+				return -res;
+			}
+
+			uint high = value.data [1];
+
+			if (value.sign == 1) {
+				if (high >= 0x80000000u)
+					throw new OverflowException ();
+				return (((long)high) << 32) | low;
+			}
+
+			if (high > 0x80000000u)
+				throw new OverflowException ();
+
+			if (high == 0x80000000u) {
+				if (low != 0)
+					throw new OverflowException ();
+				return long.MinValue;
+			}
+
+			return - ((((long)high) << 32) | (long)low);
+		}
+
+	
 		public static implicit operator BigInteger (int value)
 		{
 			return new BigInteger (value);
@@ -305,34 +375,38 @@ namespace System.Numerics {
 
 				add = (ulong)~topWord + (carry);
 				word = (uint)add;
-				carry = (uint)(add >> 32);			
+				carry = (uint)(add >> 32);
 				if (carry == 0) {
 					int ex = FirstNonFFByte (word);
+					bool needExtra = (word & (1 << (ex * 8 - 1))) == 0;
+					int to = ex + (needExtra ? 1 : 0);
 
-					if (ex > extra)
-						res = Expand (res, bytes + ex);
+					if (to != extra)
+						res = Resize (res, bytes + to);
 
 					while (ex-- > 0) {
 						res [j++] = (byte)word;
 						word >>= 8;
 					}
+					if (needExtra)
+						res [j++] = 0xFF;
 				} else {
-					res = Expand (res, bytes + 5);
+					res = Resize (res, bytes + 5);
 					res [j++] = (byte)word;
 					res [j++] = (byte)(word >> 8);
 					res [j++] = (byte)(word >> 16);
 					res [j++] = (byte)(word >> 24);
-					res [j++] = (byte)(~carry + 1);
+					res [j++] = 0xFF;
 				}
 			}
 
 			return res;
 		}
 
-		static byte[] Expand (byte[] v, int len)
+		static byte[] Resize (byte[] v, int len)
 		{
 	        byte[] res = new byte [len];
-	       	v.CopyTo (res, 0);
+	       	Array.Copy (v, res, Math.Min (v.Length, len));
 	        return res;
 	    }
 	}
