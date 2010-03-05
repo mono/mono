@@ -1,3 +1,8 @@
+2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	*BigInteger.cs: The DLR version is close to useless. Replaced
+	by the initial bits of something that is API compliant.
+
 2009-10-31  Miguel de Icaza  <miguel@novell.com>
 
 	* Add BigInteger.cs from the DLR 0.92, the patch in the directory
