@@ -147,6 +147,28 @@ namespace MonoTests.System.Numerics
 		}
 
 		[Test]
+		public void TestInc () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
+			for (int i = 0; i < values.Length; ++i) {
+				var a = new BigInteger (values [i]);
+				var b = ++a;
+
+				Assert.AreEqual (++values [i], (long)b, "#_" + i);
+			}
+		}
+
+		[Test]
+		public void TestDec () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
+			for (int i = 0; i < values.Length; ++i) {
+				var a = new BigInteger (values [i]);
+				var b = --a;
+
+				Assert.AreEqual (--values [i], (long)b, "#_" + i);
+			}
+		}
+
+		[Test]
 		public void CompareOps () {
 			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
 			for (int i = 0; i < values.Length; ++i) {
