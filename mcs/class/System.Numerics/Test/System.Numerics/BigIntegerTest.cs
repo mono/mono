@@ -89,6 +89,39 @@ namespace MonoTests.System.Numerics
 			}
 		}
 
+		[Test]
+		public void CompareOps2 () {
+			BigInteger a = new BigInteger (100000000000L);
+			BigInteger b = new BigInteger (28282828282UL);
+
+			Assert.IsTrue (a >= b, "#1");
+			Assert.IsTrue (a >= b, "#2");
+			Assert.IsFalse (a < b, "#3");
+			Assert.IsFalse (a <= b, "#4");
+			Assert.AreEqual (1, a.CompareTo (b), "#5");
+		}
+
+		[Test]
+		public void CompareULong () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L, 0xAA00000000L };
+			ulong[] uvalues = new ulong [] {0, 1, 1000, 100000000000L, 999999, 28282828282, 0xAA00000000, ulong.MaxValue };
+			for (int i = 0; i < values.Length; ++i) {
+				for (int j = 0; j < uvalues.Length; ++j) {
+					var a = new BigInteger (values [i]);
+					var b = uvalues [j];
+					var c = new BigInteger (b);
+					
+					Assert.AreEqual (a.CompareTo (c), a.CompareTo (b), "#a_" + i + "_" + j);
+
+					Assert.AreEqual (a > c, a > b, "#b_" + i + "_" + j);
+					Assert.AreEqual (a < c, a < b, "#c_" + i + "_" + j);
+					Assert.AreEqual (a <= c, a <= b, "#d_" + i + "_" + j);
+					Assert.AreEqual (a == c, a == b, "#e_" + i + "_" + j);
+					Assert.AreEqual (a != c, a != b, "#f_" + i + "_" + j);
+					Assert.AreEqual (a >= c, a >= b, "#g_" + i + "_" + j);
+				}
+			}
+		}
 
 		[Test]
 		public void TestEquals () {
