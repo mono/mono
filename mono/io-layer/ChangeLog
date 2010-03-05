@@ -1,3 +1,8 @@
+2010-03-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* shared.c (shm_semaphores_init): Applied patch from Cal Page
+	(age.cal@gmail.com). Fix support for USE_SHM.
+
 2010-02-25  Geoff Norton  <gnorton@novell.com>
 
 	* wait.c: If any of our handles are shared, we need to do
