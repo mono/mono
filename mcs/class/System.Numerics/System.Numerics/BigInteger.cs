@@ -38,6 +38,8 @@ Optimization
 	Use unsafe ops to avoid bounds check
 	CoreAdd could avoid some resizes by checking for equal sized array that top overflow
 	For bitwise operators, hoist the conditionals out of their main loop
+	Optimize BitScanBackward
+	Use a carry variable to make shift opts do half the number of array ops.
 */
 namespace System.Numerics {
 	public struct BigInteger : IComparable, IComparable<BigInteger>, IEquatable<BigInteger>
@@ -682,6 +684,103 @@ namespace System.Numerics {
 				result = Resize (result, i + 1);
 
 			return new BigInteger (neg_res ? (short)-1 : (short)1, result);
+		}
+
+		//returns the 0-based index of the most significant set bit
+		//returns 0 if no bit is set, so extra care when using it
+		static int BitScanBackward (uint word)
+		{
+			for (int i = 31; i >= 0; --i) {
+				uint mask = 1u << i;
+				if ((word & mask) == mask)
+					return i;
+			}
+			return 0;
+		}
+
+		public static BigInteger operator<< (BigInteger value, int shift)
+		{
+			if (shift == 0 || value.sign == 0)
+				return value;
+			if (shift < 0)
+				return value >> -shift;
+
+			uint[] data = value.data;
+			int sign = value.sign;
+
+			int topMostIdx = BitScanBackward (data [data.Length - 1]);
+			int bits = shift - (31 - topMostIdx);
+			int extra_words = (bits >> 5) + ((bits & 0x1F) != 0 ? 1 : 0);
+
+			uint[] res = new uint [data.Length + extra_words];
+
+			int idx_shift = shift >> 5;
+			int bit_shift = shift & 0x1F;
+			int carry_shift = 32 - bit_shift;
+
+			for (int i = 0; i < data.Length; ++i) {
+				uint word = data [i];
+				res [i + idx_shift] |= word << bit_shift;
+				if (i + idx_shift + 1 < res.Length)
+					res [i + idx_shift + 1] = word >> carry_shift;
+			}
+
+			return new BigInteger ((short)sign, res);
+		}
+
+		public static BigInteger operator>> (BigInteger value, int shift)
+		{
+			if (shift == 0 || value.sign == 0)
+				return value;
+			if (shift < 0)
+				return value << -shift;
+
+			uint[] data = value.data;
+			int sign = value.sign;
+
+			int topMostIdx = BitScanBackward (data [data.Length - 1]);
+			int idx_shift = shift >> 5;
+			int bit_shift = shift & 0x1F;
+
+			int extra_words = idx_shift;
+			if (bit_shift > topMostIdx)
+				++extra_words;
+			int size = data.Length - extra_words;
+
+			if (size <= 0) {
+				if (sign == 1)
+					return new BigInteger (0, ZERO);
+				return new BigInteger (-1, ONE);
+			}
+
+			uint[] res = new uint [size];
+			int carry_shift = 32 - bit_shift;
+
+			for (int i = data.Length - 1; i >= idx_shift; --i) {
+				uint word = data [i];
+
+				if (i - idx_shift < res.Length)
+					res [i - idx_shift] |= word >> bit_shift;
+				if (i - idx_shift - 1 >= 0)
+					res [i - idx_shift - 1] = word << carry_shift;
+			}
+
+			//Round down instead of toward zero
+			if (sign == -1) {
+				for (int i = 0; i < idx_shift; i++) {
+					if (data [i] != 0u) {
+						var tmp = new BigInteger ((short)sign, res);
+						--tmp;
+						return tmp;
+					}
+				}
+				if (bit_shift > 0 && (data [idx_shift] << carry_shift) != 0u) {
+					var tmp = new BigInteger ((short)sign, res);
+					--tmp;
+					return tmp;
+				}
+			}
+			return new BigInteger ((short)sign, res);
 		}
 
 		public static bool operator< (BigInteger left, BigInteger right)
