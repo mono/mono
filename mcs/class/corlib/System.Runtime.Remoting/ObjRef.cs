@@ -219,7 +219,7 @@ namespace System.Runtime.Remoting {
 		public virtual object GetRealObject (StreamingContext context)
 		{
 			if ((flags & MarshalledObjectRef) > 0)
-				return RemotingServices.Unmarshal (this, IsReferenceToWellKnow);
+				return RemotingServices.Unmarshal (this);
 			else
 				return this;
 		}

@@ -1,3 +1,8 @@
+2010-03-05  Robert Jordan  <robertj@gmx.net>
+
+	* ObjRef.cs (GetRealObject): Revert previous patch as it doesn't
+	cope well with CAD remoting, which doesn't flag well-known types.
+
 2010-02-26  Robert Jordan  <robertj@gmx.net>
 
 	* ObjRef.cs (GetRealObject): Refine to server type only when
