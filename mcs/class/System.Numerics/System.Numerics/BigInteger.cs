@@ -287,8 +287,12 @@ namespace System.Numerics {
 			return - ((((long)high) << 32) | (long)low);
 		}
 
-	
 		public static implicit operator BigInteger (int value)
+		{
+			return new BigInteger (value);
+		}
+
+		public static implicit operator BigInteger (long value)
 		{
 			return new BigInteger (value);
 		}
