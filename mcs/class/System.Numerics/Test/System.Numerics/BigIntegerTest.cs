@@ -94,6 +94,33 @@ namespace MonoTests.System.Numerics
 			}
 		}
 
+		[Test]
+		public void TestMin () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
+			for (int i = 0; i < values.Length; ++i) {
+				for (int j = 0; j < values.Length; ++j) {
+					var a = new BigInteger (values [i]);
+					var b = new BigInteger (values [j]);
+					var c = BigInteger.Min (a, b);
+
+					Assert.AreEqual (Math.Min (values [i], values [j]), (long)c, "#_" + i + "_" + j);
+				}
+			}
+		}
+
+		[Test]
+		public void TestMax () {
+			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
+			for (int i = 0; i < values.Length; ++i) {
+				for (int j = 0; j < values.Length; ++j) {
+					var a = new BigInteger (values [i]);
+					var b = new BigInteger (values [j]);
+					var c = BigInteger.Max (a, b);
+
+					Assert.AreEqual (Math.Max (values [i], values [j]), (long)c, "#_" + i + "_" + j);
+				}
+			}
+		}
 
 		[Test]
 		public void TestNegate () {
