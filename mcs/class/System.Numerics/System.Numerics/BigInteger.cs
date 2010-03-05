@@ -314,6 +314,15 @@ namespace System.Numerics {
 			return true;
 		}
 
+		public override int GetHashCode ()
+		{
+			uint hash = (uint)(sign * 0x01010101u);
+
+			for (int i = 0; i < data.Length; ++i)
+				hash ^=	data [i];
+			return (int)hash;
+		}
+
 		static int TopByte (uint x)
 		{
 			if ((x & 0xFFFF0000u) != 0) {
