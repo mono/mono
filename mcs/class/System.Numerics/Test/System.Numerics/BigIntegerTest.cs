@@ -186,6 +186,57 @@ namespace MonoTests.System.Numerics
 		}
 
 		[Test]
+		public void TestLeftShift () {
+			Assert.AreEqual (new byte[] {0x00, 0x28},
+				(new BigInteger(0x0A) << 10).ToByteArray (), "#1");
+			Assert.AreEqual (new byte[] {0x00, 0xD8},
+				(new BigInteger(-10) << 10).ToByteArray (), "#2");
+			Assert.AreEqual (new byte[] {0x00, 0x00, 0xFF},
+				(new BigInteger(-1) << 16).ToByteArray (), "#3");
+			Assert.AreEqual (new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x0A},
+				(new BigInteger(0x0A) << 80).ToByteArray (), "#4");
+			Assert.AreEqual (new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xF6},
+				(new BigInteger(-10) << 80).ToByteArray (), "#5");
+			Assert.AreEqual (new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xFF},
+				(new BigInteger(-1) << 80).ToByteArray (), "#6");
+			Assert.AreEqual (new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x70, 0xD9},
+				(new BigInteger(-1234) << 75).ToByteArray (), "#7");
+			Assert.AreEqual (new byte[] {0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0xA0, 0x91, 0x00},
+				(new BigInteger(0x1234) << 75).ToByteArray (), "#8");
+
+			Assert.AreEqual (new byte[] {0xFF, 0x00}, (new BigInteger(0xFF00) << -8).ToByteArray (), "#9");
+		}
+
+		[Test]
+		public void TestRightShift () {
+			Assert.AreEqual (new byte[] {0x16, 0xB0, 0x4C, 0x02},
+				(new BigInteger(1234567899L) >> 5).ToByteArray (), "#1");
+
+			Assert.AreEqual (new byte[] {0x2C, 0x93, 0x00},
+				(new BigInteger(1234567899L) >> 15).ToByteArray (), "#2");
+
+			Assert.AreEqual (new byte[] {0xFF, 0xFF, 0x7F},
+				(new BigInteger(long.MaxValue - 100) >> 40).ToByteArray (), "#3");
+
+			Assert.AreEqual (new byte[] {0xE9, 0x4F, 0xB3, 0xFD},
+				(new BigInteger(-1234567899L) >> 5).ToByteArray (), "#4");
+
+			Assert.AreEqual (new byte[] {0xD3, 0x6C, 0xFF},
+				(new BigInteger(-1234567899L) >> 15).ToByteArray (), "#5");
+
+			Assert.AreEqual (new byte[] {0x00, 0x00, 0x80},
+				(new BigInteger(long.MinValue + 100) >> 40).ToByteArray (), "#6");
+
+			Assert.AreEqual (new byte[] { 0xFF },
+				(new BigInteger(-1234567899L) >> 90).ToByteArray (), "#7");
+
+			Assert.AreEqual (new byte[] {0x00},
+				(new BigInteger(999999) >> 90).ToByteArray (), "#8");
+
+			Assert.AreEqual (new byte[] {0x00, 0x00, 0xFF, 0x00}, (new BigInteger(0xFF00) >> -8).ToByteArray (), "#9");
+		}
+
+		[Test]
 		public void CompareOps () {
 			long[] values = new long [] { -100000000000L, -1000, -1, 0, 1, 1000, 100000000000L };
 			for (int i = 0; i < values.Length; ++i) {
