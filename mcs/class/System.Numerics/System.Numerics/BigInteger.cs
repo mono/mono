@@ -297,6 +297,23 @@ namespace System.Numerics {
 			return new BigInteger (value);
 		}
 
+		public override bool Equals (object obj)
+		{
+			if (!(obj is BigInteger))
+				return false;
+			BigInteger other = (BigInteger)obj;
+
+			if (sign != other.sign)
+				return false;
+			if (data.Length != other.data.Length)
+				return false;
+			for (int i = 0; i < data.Length; ++i) {
+				if (data [i] != other.data [i])
+					return false;
+			}
+			return true;
+		}
+
 		static int TopByte (uint x)
 		{
 			if ((x & 0xFFFF0000u) != 0) {
