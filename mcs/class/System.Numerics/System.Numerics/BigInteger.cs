@@ -37,6 +37,7 @@ Optimization
 	Have proper popcount function for IsPowerOfTwo
 	Use unsafe ops to avoid bounds check
 	CoreAdd could avoid some resizes by checking for equal sized array that top overflow
+	For bitwise operators, hoist the conditionals out of their main loop
 */
 namespace System.Numerics {
 	public struct BigInteger : IComparable, IComparable<BigInteger>, IEquatable<BigInteger>
@@ -457,6 +458,230 @@ namespace System.Numerics {
 				data = CoreSub (data, 1);
 		
 			return new BigInteger (sign, data);
+		}
+
+		public static BigInteger operator& (BigInteger left, BigInteger right)
+		{
+			if (left.sign == 0)
+				return left;
+
+			if (right.sign == 0)
+				return right;
+
+			uint[] a = left.data;
+			uint[] b = right.data;
+			int ls = left.sign;
+			int rs = right.sign;
+
+			bool neg_res = (ls == rs) && (ls == -1);
+
+			uint[] result = new uint [Math.Max (a.Length, b.Length)];
+
+			ulong ac = 1, bc = 1, borrow = 1;
+
+			int i;
+			for (i = 0; i < result.Length; ++i) {
+				uint va = 0;
+				if (i < a.Length)
+					va = a [i];
+				if (ls == -1) {
+					ac = ~va + ac;
+					va = (uint)ac;
+					ac = (uint)(ac >> 32);
+				}
+
+				uint vb = 0;
+				if (i < b.Length)
+					vb = b [i];
+				if (rs == -1) {
+					bc = ~vb + bc;
+					vb = (uint)bc;
+					bc = (uint)(bc >> 32);
+				}
+
+				uint word = va & vb;
+
+				if (neg_res) {
+					borrow = word - borrow;
+					word = ~(uint)borrow;
+					borrow = (uint)(borrow >> 32) & 0x1u;
+				}
+
+				result [i] = word;
+			}
+
+			for (i = result.Length - 1; i >= 0 && result [i] == 0; --i) ;
+			if (i == -1)
+				return new BigInteger (0, ZERO);
+	
+			if (i < result.Length - 1)
+				result = Resize (result, i + 1);
+
+			return new BigInteger (neg_res ? (short)-1 : (short)1, result);
+		}
+
+		public static BigInteger operator| (BigInteger left, BigInteger right)
+		{
+			if (left.sign == 0)
+				return right;
+
+			if (right.sign == 0)
+				return left;
+
+			uint[] a = left.data;
+			uint[] b = right.data;
+			int ls = left.sign;
+			int rs = right.sign;
+
+			bool neg_res = (ls == -1) || (rs == -1);
+
+			uint[] result = new uint [Math.Max (a.Length, b.Length)];
+
+			ulong ac = 1, bc = 1, borrow = 1;
+
+			int i;
+			for (i = 0; i < result.Length; ++i) {
+				uint va = 0;
+				if (i < a.Length)
+					va = a [i];
+				if (ls == -1) {
+					ac = ~va + ac;
+					va = (uint)ac;
+					ac = (uint)(ac >> 32);
+				}
+
+				uint vb = 0;
+				if (i < b.Length)
+					vb = b [i];
+				if (rs == -1) {
+					bc = ~vb + bc;
+					vb = (uint)bc;
+					bc = (uint)(bc >> 32);
+				}
+
+				uint word = va | vb;
+
+				if (neg_res) {
+					borrow = word - borrow;
+					word = ~(uint)borrow;
+					borrow = (uint)(borrow >> 32) & 0x1u;
+				}
+
+				result [i] = word;
+			}
+
+			for (i = result.Length - 1; i >= 0 && result [i] == 0; --i) ;
+			if (i == -1)
+				return new BigInteger (0, ZERO);
+	
+			if (i < result.Length - 1)
+				result = Resize (result, i + 1);
+
+			return new BigInteger (neg_res ? (short)-1 : (short)1, result);
+		}
+
+		public static BigInteger operator^ (BigInteger left, BigInteger right)
+		{
+			if (left.sign == 0)
+				return right;
+
+			if (right.sign == 0)
+				return left;
+
+			uint[] a = left.data;
+			uint[] b = right.data;
+			int ls = left.sign;
+			int rs = right.sign;
+
+			bool neg_res = (ls == -1) ^ (rs == -1);
+
+			uint[] result = new uint [Math.Max (a.Length, b.Length)];
+
+			ulong ac = 1, bc = 1, borrow = 1;
+
+			int i;
+			for (i = 0; i < result.Length; ++i) {
+				uint va = 0;
+				if (i < a.Length)
+					va = a [i];
+				if (ls == -1) {
+					ac = ~va + ac;
+					va = (uint)ac;
+					ac = (uint)(ac >> 32);
+				}
+
+				uint vb = 0;
+				if (i < b.Length)
+					vb = b [i];
+				if (rs == -1) {
+					bc = ~vb + bc;
+					vb = (uint)bc;
+					bc = (uint)(bc >> 32);
+				}
+
+				uint word = va ^ vb;
+
+				if (neg_res) {
+					borrow = word - borrow;
+					word = ~(uint)borrow;
+					borrow = (uint)(borrow >> 32) & 0x1u;
+				}
+
+				result [i] = word;
+			}
+
+			for (i = result.Length - 1; i >= 0 && result [i] == 0; --i) ;
+			if (i == -1)
+				return new BigInteger (0, ZERO);
+	
+			if (i < result.Length - 1)
+				result = Resize (result, i + 1);
+
+			return new BigInteger (neg_res ? (short)-1 : (short)1, result);
+		}
+
+		public static BigInteger operator~ (BigInteger value)
+		{
+			if (value.sign == 0)
+				return new BigInteger (-1, ONE);
+
+			uint[] data = value.data;
+			int sign = value.sign;
+
+			bool neg_res = sign == 1;
+
+			uint[] result = new uint [data.Length];
+
+			ulong carry = 1, borrow = 1;
+
+			int i;
+			for (i = 0; i < result.Length; ++i) {
+				uint word = data [i];
+				if (sign == -1) {
+					carry = ~word + carry;
+					word = (uint)carry;
+					carry = (uint)(carry >> 32);
+				}
+
+				word = ~word;
+
+				if (neg_res) {
+					borrow = word - borrow;
+					word = ~(uint)borrow;
+					borrow = (uint)(borrow >> 32) & 0x1u;
+				}
+
+				result [i] = word;
+			}
+
+			for (i = result.Length - 1; i >= 0 && result [i] == 0; --i) ;
+			if (i == -1)
+				return new BigInteger (0, ZERO);
+	
+			if (i < result.Length - 1)
+				result = Resize (result, i + 1);
+
+			return new BigInteger (neg_res ? (short)-1 : (short)1, result);
 		}
 
 		public static bool operator< (BigInteger left, BigInteger right)

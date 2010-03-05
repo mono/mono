@@ -1,5 +1,9 @@
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: | & ^ ~.
+
+2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: ++ --, unary +.
 
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
