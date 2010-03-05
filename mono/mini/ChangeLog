@@ -1,3 +1,11 @@
+2010-03-04  David S. Miller  <davem@davemloft.net>
+
+       * mini-sparc.h: Always use MONO_ARCH_USE_SIGACTION.  Linux kernels
+       that don't provide the siginfo in the second signal handler argument
+       are buggy, and this has been fixed for years.
+       * mini.h (GET_CONTEXT): Remove __sparc__ special case.
+       (SIG_HANDLER_SIGNATURE, SIG_HANDLER_PARMS): Likewise.
+
 2010-03-04  Zoltan Varga  <vargaz@gmail.com>
 
 2010-03-04  Zoltan Varga  <vargaz@gmail.com>
