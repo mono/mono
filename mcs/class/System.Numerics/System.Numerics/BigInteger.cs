@@ -116,6 +116,24 @@ namespace System.Numerics {
 			}			
 		}
 
+		[CLSCompliantAttribute (false)]
+		public BigInteger (ulong value)
+		{
+			if (value == 0) {
+				sign = 0;
+				data = ZERO;
+			} else {
+				sign = 1;
+				uint low = (uint)value;
+				uint high = (uint)(value >> 32);
+
+				data = new uint [high != 0 ? 2 : 1];
+				data [0] = low;
+				if (high != 0)
+					data [1] = high;
+			}
+		}
+
 		public BigInteger (byte[] value)
 		{
 			if (value == null)
@@ -327,6 +345,21 @@ namespace System.Numerics {
 			return - ((((long)high) << 32) | (long)low);
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static explicit operator ulong (BigInteger value)
+		{
+			if (value.data.Length > 2 || value.sign == -1)
+				throw new OverflowException ();
+
+			uint low = value.data [0];
+			if (value.data.Length == 1)
+				return low;
+
+			uint high = value.data [1];
+			return (((ulong)high) << 32) | low;
+		}
+
+
 		public static implicit operator BigInteger (int value)
 		{
 			return new BigInteger (value);
@@ -338,8 +371,12 @@ namespace System.Numerics {
 			return new BigInteger (value);
 		}
 
-
 		public static implicit operator BigInteger (long value)
+		{
+			return new BigInteger (value);
+		}
+
+		public static implicit operator BigInteger (ulong value)
 		{
 			return new BigInteger (value);
 		}
