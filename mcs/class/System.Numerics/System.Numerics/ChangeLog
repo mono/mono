@@ -1,5 +1,9 @@
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: All relational ops for long.
+
+2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: No need to special case  long.MinValue
 	or int.MinValue as 2 complement negate solves it.
 

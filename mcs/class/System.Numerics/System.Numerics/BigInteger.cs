@@ -392,6 +392,18 @@ namespace System.Numerics {
 			return Compare (left, right) < 0;
 		}
 
+		public static bool operator< (BigInteger left, long right)
+		{
+			return left.CompareTo (right) < 0;
+		}
+
+
+		public static bool operator< (long left, BigInteger right)
+		{
+			return right.CompareTo (left) > 0;
+		}
+
+
 		[CLSCompliantAttribute (false)]
 		public static bool operator< (BigInteger left, ulong right)
 		{
@@ -407,6 +419,16 @@ namespace System.Numerics {
 		public static bool operator<= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) <= 0;
+		}
+
+		public static bool operator<= (BigInteger left, long right)
+		{
+			return left.CompareTo (right) <= 0;
+		}
+
+		public static bool operator<= (long left, BigInteger right)
+		{
+			return right.CompareTo (left) >= 0;
 		}
 
 		[CLSCompliantAttribute (false)]
@@ -426,6 +448,16 @@ namespace System.Numerics {
 			return Compare (left, right) > 0;
 		}
 
+		public static bool operator> (BigInteger left, long right)
+		{
+			return left.CompareTo (right) > 0;
+		}
+
+		public static bool operator> (long left, BigInteger right)
+		{
+			return right.CompareTo (left) < 0;
+		}
+
 		[CLSCompliantAttribute (false)]
 		public static bool operator> (BigInteger left, ulong right)
 		{
@@ -441,6 +473,16 @@ namespace System.Numerics {
 		public static bool operator>= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) >= 0;
+		}
+
+		public static bool operator>= (BigInteger left, long right)
+		{
+			return left.CompareTo (right) >= 0;
+		}
+
+		public static bool operator>= (long left, BigInteger right)
+		{
+			return right.CompareTo (left) <= 0;
 		}
 
 		[CLSCompliantAttribute (false)]
@@ -460,6 +502,16 @@ namespace System.Numerics {
 			return Compare (left, right) == 0;
 		}
 
+		public static bool operator== (BigInteger left, long right)
+		{
+			return left.CompareTo (right) == 0;
+		}
+
+		public static bool operator== (long left, BigInteger right)
+		{
+			return right.CompareTo (left) == 0;
+		}
+
 		[CLSCompliantAttribute (false)]
 		public static bool operator== (BigInteger left, ulong right)
 		{
@@ -475,6 +527,16 @@ namespace System.Numerics {
 		public static bool operator!= (BigInteger left, BigInteger right)
 		{
 			return Compare (left, right) != 0;
+		}
+
+		public static bool operator!= (BigInteger left, long right)
+		{
+			return left.CompareTo (right) != 0;
+		}
+
+		public static bool operator!= (long left, BigInteger right)
+		{
+			return right.CompareTo (left) != 0;
 		}
 
 		[CLSCompliantAttribute (false)]
@@ -507,6 +569,11 @@ namespace System.Numerics {
 					return false;
 			}
 			return true;
+		}
+
+		public bool Equals (long other)
+		{
+			return CompareTo (other) == 0;
 		}
 
 		[CLSCompliantAttribute (false)]
