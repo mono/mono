@@ -72,6 +72,18 @@ namespace System.Numerics {
 			}
 		}
 
+		[CLSCompliantAttribute (false)]
+		public BigInteger (uint value)
+		{
+			if (value == 0) {
+				sign = 0;
+				data = ZERO;
+			} else {
+				sign = 1;
+				data = new uint [1] { value };
+			}
+		}
+
 		public BigInteger (long value)
 		{
 			if (value == 0) {
@@ -270,6 +282,14 @@ namespace System.Numerics {
 			return 0;
 		}
 
+		[CLSCompliantAttribute (false)]
+		public static explicit operator uint (BigInteger value)
+		{
+			if (value.data.Length > 1 || value.sign == -1)
+				throw new OverflowException ();
+			return value.data [0];
+		}
+
 		public static explicit operator long (BigInteger value)
 		{
 			if (value.sign == 0)
@@ -311,6 +331,13 @@ namespace System.Numerics {
 		{
 			return new BigInteger (value);
 		}
+
+		[CLSCompliantAttribute (false)]
+		public static implicit operator BigInteger (uint value)
+		{
+			return new BigInteger (value);
+		}
+
 
 		public static implicit operator BigInteger (long value)
 		{
