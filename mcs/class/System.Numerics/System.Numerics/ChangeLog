@@ -1,5 +1,9 @@
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: Add.
+
+2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: GetHashCode.
 
 2010-03-04 Rodrigo Kumpera  <rkumpera@novell.com>

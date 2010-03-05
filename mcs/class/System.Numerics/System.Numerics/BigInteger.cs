@@ -36,7 +36,7 @@ using System.Text;
 Optimization
 	Have proper popcount function for IsPowerOfTwo
 	Use unsafe ops to avoid bounds check
-
+	CoreAdd could avoid some resizes by checking for equal sized array that top overflow
 */
 namespace System.Numerics {
 	public struct BigInteger
@@ -44,6 +44,12 @@ namespace System.Numerics {
 		//LSB on [0]
 		readonly uint[] data;
 		readonly short sign;
+
+		BigInteger (short sign, uint[] data)
+		{
+			this.sign = sign;
+			this.data = data;
+		}
 
 
 		public BigInteger (int value)
@@ -297,6 +303,27 @@ namespace System.Numerics {
 			return new BigInteger (value);
 		}
 
+		public static BigInteger operator+ (BigInteger left, BigInteger right)
+		{
+			if (left.sign == 0)
+				return right;
+			if (right.sign == 0)
+				return left;
+
+			if (left.sign == right.sign)
+				return new BigInteger (left.sign, CoreAdd (left.data, right.data));
+
+			int r = CoreCompare (left.data, right.data);
+
+			if (r == 0)	
+				return new BigInteger (0);
+
+			if (r > 0) //left > right
+				return new BigInteger (left.sign, CoreSub (left.data, right.data));
+
+			return new BigInteger (right.sign, CoreSub (right.data, left.data));
+		}
+
 		public override bool Equals (object obj)
 		{
 			if (!(obj is BigInteger))
@@ -321,6 +348,11 @@ namespace System.Numerics {
 			for (int i = 0; i < data.Length; ++i)
 				hash ^=	data [i];
 			return (int)hash;
+		}
+
+		public static BigInteger Add (BigInteger left, BigInteger right)
+		{
+			return left + right;
 		}
 
 		static int TopByte (uint x)
@@ -435,9 +467,109 @@ namespace System.Numerics {
 
 		static byte[] Resize (byte[] v, int len)
 		{
-	        byte[] res = new byte [len];
-	       	Array.Copy (v, res, Math.Min (v.Length, len));
-	        return res;
-	    }
+			byte[] res = new byte [len];
+			Array.Copy (v, res, Math.Min (v.Length, len));
+			return res;
+		}
+
+		static uint[] Resize (uint[] v, int len)
+		{
+			uint[] res = new uint [len];
+			Array.Copy (v, res, Math.Min (v.Length, len));
+			return res;
+		}
+
+		static uint[] CoreAdd (uint[] a, uint[] b)
+		{
+			if (a.Length < b.Length) {
+				uint[] tmp = a;
+				a = b;
+				b = tmp;
+			}
+
+			int bl = a.Length;
+			int sl = b.Length;
+
+			uint[] res = new uint [bl];
+
+			ulong sum = 0;
+
+			int i = 0;
+			for (; i < sl; i++) {
+				sum = sum + a [i] + b [i];
+				res [i] = (uint)sum;
+				sum >>= 32;
+			}
+
+			for (; i < bl; i++) {
+				sum = sum + a [i];
+				res [i] = (uint)sum;
+				sum >>= 32;
+			}
+
+			if (sum != 0) {
+				res = Resize (res, bl + 1);
+				res [i] = (uint)sum;
+			}
+
+			return res;
+		}
+
+		/*invariant a > b*/
+		static uint[] CoreSub (uint[] a, uint[] b)
+		{
+			int bl = a.Length;
+			int sl = b.Length;
+
+			Console.WriteLine ("bl {0} sl {1}", bl, sl);
+
+			uint[] res = new uint [bl];
+
+			ulong borrow = 0;
+			int i;
+			for (i = 0; i < sl; ++i) {
+				borrow = (ulong)a [i] - b [i] - borrow;
+
+				Console.WriteLine ("a {0} b {1}", a[i], b [i]);
+
+				res [i] = (uint)borrow;
+				borrow = (borrow >> 32) & 0x1;
+			}
+
+			for (; i < bl; i++) {
+				borrow = (ulong)a [i] - borrow;
+				res [i] = (uint)borrow;
+				borrow = (borrow >> 32) & 0x1;
+			}
+
+			//remove extra zeroes
+			for (i = bl - 1; i >= 0 && res [i] == 0; --i) ;
+			if (i < bl - 1)
+				res = Resize (res, i + 1);
+
+            return res;
+		}
+
+		static int CoreCompare (uint[] a, uint[] b)
+		{
+			int	al = a.Length;
+			int bl = b.Length;
+
+			if (al > bl)
+				return 1;
+			if (bl > al)
+				return -1;
+
+			for (int i = 0; i < al; ++i) {
+				uint ai = a [i];
+				uint bi = b [i];
+				if (ai > bi)	
+					return 1;
+				if (ai < bi)	
+					return -1;
+			}
+			return 0;
+		}
+
 	}
 }
