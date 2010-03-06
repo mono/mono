@@ -1,5 +1,10 @@
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: coersion operators for short, ushort,
+	byte and sbyte.
+
+2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: <<, >>.
 
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>

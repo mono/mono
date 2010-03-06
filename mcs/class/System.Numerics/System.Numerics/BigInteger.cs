@@ -301,6 +301,41 @@ namespace System.Numerics {
 			return value.data [0];
 		}
 
+		public static explicit operator short (BigInteger value)
+		{
+			int val = (int)value;
+			if (val < short.MinValue || val > short.MaxValue)
+				throw new OverflowException ();
+			return (short)val;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static explicit operator ushort (BigInteger value)
+		{
+			uint val = (uint)value;
+			if (val > ushort.MaxValue)
+				throw new OverflowException ();
+			return (ushort)val;
+		}
+
+		public static explicit operator byte (BigInteger value)
+		{
+			uint val = (uint)value;
+			if (val > byte.MaxValue)
+				throw new OverflowException ();
+			return (byte)val;
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static explicit operator sbyte (BigInteger value)
+		{
+			int val = (int)value;
+			if (val < sbyte.MinValue || val > sbyte.MaxValue)
+				throw new OverflowException ();
+			return (sbyte)val;
+		}
+
+
 		public static explicit operator long (BigInteger value)
 		{
 			if (value.sign == 0)
@@ -354,6 +389,28 @@ namespace System.Numerics {
 
 		[CLSCompliantAttribute (false)]
 		public static implicit operator BigInteger (uint value)
+		{
+			return new BigInteger (value);
+		}
+
+		public static implicit operator BigInteger (short value)
+		{
+			return new BigInteger (value);
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static implicit operator BigInteger (ushort value)
+		{
+			return new BigInteger (value);
+		}
+
+		public static implicit operator BigInteger (byte value)
+		{
+			return new BigInteger (value);
+		}
+
+		[CLSCompliantAttribute (false)]
+		public static implicit operator BigInteger (sbyte value)
 		{
 			return new BigInteger (value);
 		}
