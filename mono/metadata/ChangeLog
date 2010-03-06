@@ -1,3 +1,11 @@
+2010-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* monitor.c (mono_monitor_exit): Raise an exception if the object is not locked,
+	MS does this from net 2.0 onwards.
+
+Fri Mar 5 19:05:47 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* threads.c: reduce resource usage when compiled for a small config.
 
 Sat Mar 6 19:12:12 CET 2010 Paolo Molaro <lupus@ximian.com>
 
