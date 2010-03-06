@@ -25,7 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// The Multiply and Div code comes the DLR (as hosted in http://ironpython.codeplex.com), 
+// A big chuck of code comes the DLR (as hosted in http://ironpython.codeplex.com), 
 // which has the following License:
 //
 /* ****************************************************************************
@@ -145,6 +145,62 @@ namespace System.Numerics {
 				if (high != 0)
 					data [1] = high;
 			}
+		}
+
+
+		static bool Negative (byte[] v)
+		{
+			return ((v[7] & 0x80) != 0);
+		}
+
+		static ushort Exponent (byte[] v)
+		{
+			return (ushort)((((ushort)(v[7] & 0x7F)) << (ushort)4) | (((ushort)(v[6] & 0xF0)) >> 4));
+		}
+
+		static ulong Mantissa(byte[] v)
+		{
+			uint i1 = ((uint)v[0] | ((uint)v[1] << 8) | ((uint)v[2] << 16) | ((uint)v[3] << 24));
+			uint i2 = ((uint)v[4] | ((uint)v[5] << 8) | ((uint)(v[6] & 0xF) << 16));
+
+			return (ulong)((ulong)i1 | ((ulong)i2 << 32));
+		}
+
+		const int bias = 1075;
+		public BigInteger (double value)
+		{
+			if (double.IsNaN (value) || Double.IsInfinity (value))
+				throw new OverflowException ();
+
+			byte[] bytes = BitConverter.GetBytes (value);
+			ulong mantissa = Mantissa (bytes);
+			if (mantissa == 0) {
+				// 1.0 * 2**exp, we have a power of 2
+				int exponent = Exponent (bytes);
+				if (exponent == 0) {
+					sign = 0;
+					data = ZERO;
+					return;
+				}
+
+				BigInteger res = Negative (bytes) ? MinusOne : One;
+				res = res << (exponent - 0x3ff);
+				this.sign = res.sign;
+				this.data = res.data;
+			} else {
+				// 1.mantissa * 2**exp
+				int exponent = Exponent(bytes);
+				mantissa |= 0x10000000000000ul;
+				BigInteger res = mantissa;
+				res = exponent > bias ? res << (exponent - bias) : res >> (bias - exponent);
+
+				this.sign = (short) (Negative (bytes) ? -1 : 1);
+				this.data = res.data;
+			}
+		}
+
+		public BigInteger (float value) : this ((double)value)
+		{
 		}
 
 		[CLSCompliantAttribute (false)]
