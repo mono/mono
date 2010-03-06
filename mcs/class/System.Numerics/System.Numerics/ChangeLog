@@ -1,3 +1,7 @@
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* BigInteger.cs: DivRem.
+
 2010-03-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* BigInteger.cs: Simplify Mul.
