@@ -847,7 +847,7 @@ namespace System.Web.Compilation
 				return;			
 
 			object[] attrs = mi.GetCustomAttributes (typeof (LocalizableAttribute), true);
-			if (attrs == null || attrs.Length == 0 || !((LocalizableAttribute)attrs [0]).IsLocalizable)
+			if (attrs == null && attrs.Length == 0 && !((LocalizableAttribute)attrs [0]).IsLocalizable)
 				return;
 			
 			string memberName = mi.Name;
