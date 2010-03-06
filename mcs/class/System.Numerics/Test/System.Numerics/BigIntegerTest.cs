@@ -717,5 +717,29 @@ namespace MonoTests.System.Numerics
 				Assert.Fail ("#4");
 			} catch (OverflowException) {}
 		}
+
+		[Test]
+		public void DoubleCtor () {
+			try {
+				new BigInteger (double.NaN);
+				Assert.Fail ("#1");
+			} catch (OverflowException) {}
+			try {
+				new BigInteger (double.NegativeInfinity);
+				Assert.Fail ("#2");
+			} catch (OverflowException) {}
+			try {
+				new BigInteger (double.PositiveInfinity);
+				Assert.Fail ("#3");
+			} catch (OverflowException) {}
+
+			Assert.AreEqual (10000, (int)new BigInteger (10000.2), "#4");
+			Assert.AreEqual (10000, (int)new BigInteger (10000.9), "#5");
+
+			Assert.AreEqual (10000, (int)new BigInteger (10000.2), "#6");
+			Assert.AreEqual (0, (int)new BigInteger (0.9), "#7");
+
+			Assert.AreEqual (12345678999L, (long)new BigInteger (12345678999.33), "#8");
+		}
 	}
 }
