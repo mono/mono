@@ -1,5 +1,10 @@
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigIntegerTest.cs: Tests for remaining ToString
+	overloads.
+
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigIntegerTest.cs: Tests for ToString and
 	ToString(string).
 

@@ -8,6 +8,7 @@
 
 using System;
 using System.Numerics;
+using System.Globalization;
 using NUnit.Framework;
 
 
@@ -621,6 +622,34 @@ namespace MonoTests.System.Numerics
 
 			Assert.AreEqual ("000000000A", new BigInteger (10).ToString ("X10"), "#10");
 			Assert.AreEqual ("0000000010", new BigInteger (10).ToString ("G10"), "#11");
+		}
+
+		[Test]
+		public void TestToStringFmtProvider ()
+		{
+			NumberFormatInfo info = new NumberFormatInfo ();
+			info.NegativeSign = ">";
+			info.PositiveSign = "%";
+
+			Assert.AreEqual ("10", new BigInteger (10).ToString (info), "#1");
+			Assert.AreEqual (">10", new BigInteger (-10).ToString (info), "#2");
+			Assert.AreEqual ("0A", new BigInteger (10).ToString ("X", info), "#3");
+			Assert.AreEqual ("F6", new BigInteger (-10).ToString ("X", info), "#4");
+			Assert.AreEqual ("10", new BigInteger (10).ToString ("G", info), "#5");
+			Assert.AreEqual (">10", new BigInteger (-10).ToString ("G", info), "#6");
+			Assert.AreEqual ("10", new BigInteger (10).ToString ("D", info), "#7");
+			Assert.AreEqual (">10", new BigInteger (-10).ToString ("D", info), "#8");
+			Assert.AreEqual ("10", new BigInteger (10).ToString ("R", info), "#9");
+			Assert.AreEqual (">10", new BigInteger (-10).ToString ("R", info), "#10");
+
+			info = new NumberFormatInfo ();
+			info.NegativeSign = "#$%";
+			Assert.AreEqual ("#$%10", new BigInteger (-10).ToString (info), "#2");
+			Assert.AreEqual ("#$%10", new BigInteger (-10).ToString (null, info), "#2");
+
+			info = new NumberFormatInfo ();
+			Assert.AreEqual ("-10", new BigInteger (-10).ToString (info), "#2");
+
 		}
 
 		[Test]
