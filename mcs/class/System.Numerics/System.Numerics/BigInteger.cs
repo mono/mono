@@ -1315,6 +1315,62 @@ namespace System.Numerics {
 			return yy << t;
 		}
 
+		/*LAMESPEC Log doesn't specify to how many ulp is has to be precise
+		We are equilavent to MS with about 2 ULP
+		*/
+		public static double Log (BigInteger value, Double baseValue)
+		{
+			if (value.sign == -1 || baseValue == 1.0d || baseValue == -1.0d ||
+					baseValue == Double.NegativeInfinity || double.IsNaN (baseValue))
+				return double.NaN;
+
+			if (baseValue == 0.0d || baseValue == Double.PositiveInfinity)
+				return value.IsOne ? 0 : double.NaN;
+	
+			if (value.sign == 0)
+				return double.NegativeInfinity;
+
+			int length = value.data.Length - 1;
+			int bitCount = -1;
+			for (int curBit = 31; curBit >= 0; curBit--) {
+				if ((value.data [length] & (1 << curBit)) != 0) {
+					bitCount = curBit + length * 32;
+					break;
+				}
+			}
+
+			long bitlen = bitCount;
+			Double c = 0, d = 1;
+
+			BigInteger testBit = One;
+			long tempBitlen = bitlen;
+			while (tempBitlen > Int32.MaxValue) {
+				testBit = testBit << Int32.MaxValue;
+				tempBitlen -= Int32.MaxValue;
+			}
+			testBit = testBit << (int)tempBitlen;
+
+			for (long curbit = bitlen; curbit >= 0; --curbit) {
+				if ((value & testBit).sign != 0)
+					c += d;
+				d *= 0.5;
+				testBit = testBit >> 1;
+			}
+			return (System.Math.Log (c) + System.Math.Log (2) * bitlen) / System.Math.Log (baseValue);
+		}
+
+
+        public static double Log (BigInteger value)
+		{
+            return Log (value, Math.E);
+        }
+
+
+        public static double Log10 (BigInteger value)
+		{
+            return Log (value, 10);
+        }
+
 		[CLSCompliantAttribute (false)]
 		public bool Equals (ulong other)
 		{
