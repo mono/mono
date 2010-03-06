@@ -1,5 +1,9 @@
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigIntegerTest.cs: Tests for ModPow.
+
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigIntegerTest.cs: Tests for Pow.
 
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>

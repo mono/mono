@@ -108,8 +108,26 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (99999, (int)BigInteger.Pow (99999, 1), "#5");
 			Assert.AreEqual (59049, (int)BigInteger.Pow (3, 10), "#4");
 			Assert.AreEqual (177147, (int)BigInteger.Pow (3, 11), "#5");
+			Assert.AreEqual (-177147, (int)BigInteger.Pow (-3, 11), "#6");
+
 		}
 
+		[Test]
+		public void ModPow () {
+			try {
+				BigInteger.ModPow (1, -1, 5);
+				Assert.Fail ("#1");
+			} catch (ArgumentOutOfRangeException) {}
+			try {
+				BigInteger.ModPow (1, 5, 0);
+				Assert.Fail ("#2");
+			} catch (DivideByZeroException) {}
+
+			Assert.AreEqual (4L, (long)BigInteger.ModPow (3, 2, 5), "#2");
+			Assert.AreEqual (20L, (long)BigInteger.ModPow (555, 10, 71), "#3");
+			Assert.AreEqual (20L, (long)BigInteger.ModPow (-555, 10, 71), "#3");
+			Assert.AreEqual (-24L, (long)BigInteger.ModPow (-555, 11, 71), "#3");
+		}
 
 		[Test]
 		public void DivRemByZero () {
