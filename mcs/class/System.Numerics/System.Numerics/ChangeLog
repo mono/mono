@@ -1,5 +1,10 @@
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: double and float coersion ops.
+	ToString() and ToString(string).
+
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: .ctor(double) and .ctor(float).
 
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>

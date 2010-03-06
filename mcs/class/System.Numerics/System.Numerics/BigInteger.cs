@@ -501,6 +501,16 @@ namespace System.Numerics {
 			return new BigInteger (value);
 		}
 
+		public static explicit operator BigInteger (double value)
+		{
+			return new BigInteger (value);
+		}
+
+		public static explicit operator BigInteger (float value)
+		{
+			return new BigInteger (value);
+		}
+
 		public static BigInteger operator+ (BigInteger left, BigInteger right)
 		{
 			if (left.sign == 0)
@@ -1196,6 +1206,118 @@ namespace System.Numerics {
 		public bool Equals (long other)
 		{
 			return CompareTo (other) == 0;
+		}
+
+		public override string ToString ()
+		{
+			return ToString (10);
+		}
+
+		string ToStringWithPadding (string format, uint radix)
+		{
+			if (format.Length > 1) {
+				int precision = Convert.ToInt32(format.Substring (1), CultureInfo.InvariantCulture.NumberFormat);
+				string baseStr = ToString (radix);
+				if (baseStr.Length < precision) {
+					string additional = new String ('0', precision - baseStr.Length);
+					if (baseStr[0] != '-') {
+						return additional + baseStr;
+					} else {
+							return "-" + additional + baseStr.Substring (1);
+					}
+				}
+				return baseStr;
+			}
+			return ToString (radix);
+		}
+
+		public string ToString (string format)
+		{
+			if (format == null || format == "")
+				return ToString (10);
+
+			switch (format[0]) {
+			case 'd':
+			case 'D':
+			case 'g':
+			case 'G':
+			case 'r':
+			case 'R':
+				return ToStringWithPadding (format, 10);
+			case 'x':
+			case 'X':
+				return ToStringWithPadding (format, 16);
+			default:
+				throw new NotImplementedException(string.Format ("format '{0}' not implemented", format));
+			}
+		}
+
+		static uint[] MakeTwoComplement (uint[] v)
+		{
+			uint[] res = new uint [v.Length];
+
+			ulong carry = 1;
+			for (int i = 0; i < v.Length; ++i) {
+				uint word = v [i];
+				carry = (ulong)~word + carry;
+				word = (uint)carry;
+				carry = (uint)(carry >> 32);
+				res [i] = word;
+			}
+
+			uint last = res [res.Length - 1];
+			int idx = FirstNonFFByte (last);
+			uint mask = 0xFF;
+			for (int i = 1; i < idx; ++i)
+				mask = (mask << 8) | 0xFF;
+
+			res [res.Length - 1] = last & mask;
+			return res;
+		}
+
+		string ToString (uint radix)
+		{
+			const string characterSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
+
+			if (characterSet.Length < radix)
+				throw new ArgumentException ("charSet length less than radix", "characterSet");
+			if (radix == 1)
+				throw new ArgumentException ("There is no such thing as radix one notation", "radix");
+
+			if (sign == 0)
+				return "0";
+			if (data.Length == 1 && data [0] == 1)
+				return sign == 1 ? "1" : "-1";
+
+			List<char> digits = new List<char> (1 + data.Length * 3 / 10);
+
+			BigInteger a;
+			if (sign == 1)
+				a = this;
+			else {
+				uint[] dt = data;
+				if (radix > 10)
+					dt = MakeTwoComplement (dt);
+				a = new BigInteger (1, dt);
+			}		
+
+			while (a != 0) {
+				BigInteger rem;
+				a = DivRem (a, radix, out rem);
+				digits.Add (characterSet [(int) rem]);
+			}
+
+
+			if (sign == -1 && radix == 10)
+				digits.Add ('-');
+
+			char last = digits [digits.Count - 1];
+			if (sign == 1 && radix > 10 && (last < '0' || last > '9'))
+				digits.Add ('0');
+		
+			digits.Reverse ();
+
+			return new String (digits.ToArray ());
 		}
 
 		public static BigInteger Min (BigInteger left, BigInteger right)
