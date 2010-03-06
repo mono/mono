@@ -1,3 +1,10 @@
+2010-03-06  Marek Habersack  <mhabersack@novell.com>
+
+	* XmlDataSource.cs: reload document when one of Data, DataFile,
+	Transform or TransformFile properties is set. Fixes bug
+	#585968. Fix based on patch from Jeffrey Alvarez
+	<kuritsu@gmail.com>, thanks.
+
 2010-02-19  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlDataSource.cs: call base.OnInit in OnInit. Fixes bug #572781

@@ -64,6 +64,8 @@ namespace System.Web.UI.WebControls {
 		string _cacheKeyDependency = string.Empty;
 		bool _enableCaching = true;
 		int _cacheDuration = 0;
+		bool _documentNeedsUpdate;
+		
 		DataSourceCacheExpiry _cacheExpirationPolicy = DataSourceCacheExpiry.Absolute;
 		static readonly string [] emptyNames = new string [] { "DefaultView" };
 		
@@ -88,6 +90,9 @@ namespace System.Web.UI.WebControls {
 		XmlDocument xmlDocument;
 		public XmlDocument GetXmlDocument ()
 		{
+			if (_documentNeedsUpdate)
+				UpdateXml ();
+			
 			if (xmlDocument == null && EnableCaching)
 				xmlDocument = GetXmlDocumentFromCache ();
 
@@ -128,8 +133,8 @@ namespace System.Web.UI.WebControls {
 				else
 					document.Load (MapPathSecure (filename));
 			} else
-				document.LoadXml (data);
-
+				if (!String.IsNullOrEmpty (data))
+					document.LoadXml (data);
 			return document;
 		}
 
@@ -190,18 +195,27 @@ namespace System.Web.UI.WebControls {
 			DataCache.Add (GetDataKey (), xmlDocument, dependency,
 				absoluteExpiration, slidindExpiraion, CacheItemPriority.Default, null);
 		}
+		
+		// If datafile changed, then DO NOT USE the cached data, but update it.
+		void UpdateXml()
+		{
+			xmlDocument = LoadXmlDocument (); 
+			UpdateCache ();
+			_documentNeedsUpdate = false;
+		}
 
 		public void Save ()
 		{
 			if (!CanBeSaved)
 				throw new InvalidOperationException ();
-			
-			xmlDocument.Save (MapPathSecure (DataFile));
+
+			if (xmlDocument != null)
+				xmlDocument.Save (MapPathSecure (DataFile));
 		}
 		
 		bool CanBeSaved {
 			get {
-				return Transform == "" && TransformFile == "" && DataFile != "";
+				return Transform == String.Empty && TransformFile == String.Empty && DataFile != String.Empty;
 			}
 		}
 		
@@ -210,11 +224,11 @@ namespace System.Web.UI.WebControls {
 			XmlNode doc = this.GetXmlDocument ();
 			XmlNodeList ret = null;
 			
-			if (viewPath != "") {
+			if (!String.IsNullOrEmpty (viewPath)) {
 				XmlNode n = doc.SelectSingleNode (viewPath);
 				if (n != null)
 					ret = n.ChildNodes;
-			} else if (XPath != "") {
+			} else if (!String.IsNullOrEmpty (XPath)) {
 				ret = doc.SelectNodes (XPath);
 			} else {
 				ret = doc.ChildNodes;
@@ -234,7 +248,7 @@ namespace System.Web.UI.WebControls {
 		
 		DataSourceView IDataSource.GetView (string viewName)
 		{
-			if (viewName == "")
+			if (String.IsNullOrEmpty (viewName))
 				viewName = "DefaultView";
 			
 			return new XmlDataSourceView (this, viewName);
@@ -297,7 +311,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (_data != value) {
 					_data = value;
-					xmlDocument = null;
+					_documentNeedsUpdate = true;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -311,7 +325,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (_dataFile != value) {
 					_dataFile = value;
-					xmlDocument = null;
+					_documentNeedsUpdate = true;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -333,8 +347,8 @@ namespace System.Web.UI.WebControls {
 			get { return _transform; }
 			set {
 				if (_transform != value) {
-					_transform = value;
-					xmlDocument = null;
+					_transform = value; 
+					_documentNeedsUpdate = true;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
@@ -348,7 +362,7 @@ namespace System.Web.UI.WebControls {
 			set {
 				if (_transformFile != value) {
 					_transformFile = value;
-					xmlDocument = null;
+					_documentNeedsUpdate = true;
 					OnDataSourceChanged(EventArgs.Empty);
 				}
 			}
