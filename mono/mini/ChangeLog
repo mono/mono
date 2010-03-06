@@ -1,3 +1,9 @@
+
+Sat Mar 6 18:14:15 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: change the way emulated opcode info is stored and save about
+	4 KB of runtime memory.
+
 2010-03-04  David S. Miller  <davem@davemloft.net>
 
        * mini-sparc.h: Always use MONO_ARCH_USE_SIGACTION.  Linux kernels
