@@ -596,12 +596,32 @@ namespace MonoTests.System.Numerics
 			Assert.IsTrue (new BigInteger (1).IsPowerOfTwo, "#14");
 		}
 
-		/*[Test]
+		[Test]
 		public void TestIntCtorToString ()
 		{
 			Assert.AreEqual ("5555", new BigInteger (5555).ToString (), "#1");
 			Assert.AreEqual ("-99999", new BigInteger (-99999).ToString (), "#2");
-		}*/
+		}
+
+		[Test]
+		public void TestToStringFmt ()
+		{
+			Assert.AreEqual ("123456789123456", new BigInteger (123456789123456).ToString ("D2"), "#1");
+			Assert.AreEqual ("0000000005", new BigInteger (5).ToString ("d10"), "#2");
+			Assert.AreEqual ("0A8", new BigInteger (168).ToString ("X"), "#3");
+			Assert.AreEqual ("0", new BigInteger (0).ToString ("X"), "#4");
+			Assert.AreEqual ("1", new BigInteger (1).ToString ("X"), "#5");
+			Assert.AreEqual ("0A", new BigInteger (10).ToString ("X"), "#6");
+			Assert.AreEqual ("F6", new BigInteger (-10).ToString ("X"), "#7");
+
+			Assert.AreEqual ("10000000000000000000000000000000000000000000000000000000", BigInteger.Pow (10, 55).ToString ("G"), "#8");
+
+			Assert.AreEqual ("10000000000000000000000000000000000000000000000000000000", BigInteger.Pow (10, 55).ToString ("R"), "#9");
+
+
+			Assert.AreEqual ("000000000A", new BigInteger (10).ToString ("X10"), "#10");
+			Assert.AreEqual ("0000000010", new BigInteger (10).ToString ("G10"), "#11");
+		}
 
 		[Test]
 		public void TestToIntOperator ()
