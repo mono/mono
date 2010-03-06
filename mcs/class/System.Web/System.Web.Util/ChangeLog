@@ -1,3 +1,9 @@
+2010-03-06  Marek Habersack  <mhabersack@novell.com>
+
+	* RequestValidator.cs: added
+
+	* RequestValidationSource.cs: added
+
 2010-03-04  Marek Habersack  <mhabersack@novell.com>
 
 	* RuntimeHelpers.cs: added. Contains methods moved here from

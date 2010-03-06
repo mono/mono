@@ -1,8 +1,8 @@
 //
 // Authors:
-//   Marek Habersack (mhabersack@novell.com)
+//   Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2010 Novell, Inc http://novell.com/
+// Copyright (C) 2010 Novell, Inc (http://novell.com/)
 //
 
 //
@@ -25,43 +25,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-using System;
-using System.Web;
-using System.Web.Hosting;
-
-namespace StandAloneRunnerSupport
+namespace System.Web.Util
 {
-	public sealed class TestRunItem
+	public enum RequestValidationSource
 	{
-		public TestCallback Callback {
-			get; set;
-		}
-
-		public object TestRunData {
-			get; set;
-		}
-		
-		public string Url {
-			get; set;
-		}
-
-		public string UrlDescription {
-			get; set;
-		}
-
-		public TestRunItem ()
-		: this (null, null, null)
-		{}
-		
-		public TestRunItem (string url, TestCallback callback)
-		: this (url, null, callback)
-		{}
-
-		public TestRunItem (string url, string urlDescription, TestCallback callback)
-		{
-			Url = url;
-			Callback = callback;
-			UrlDescription = urlDescription;
-		}
+		QueryString,
+		Form,
+		Cookies,
+		Files,
+		RawUrl,
+		Path,
+		PathInfo,
+		Headers
 	}
 }

@@ -51,6 +51,10 @@ namespace System.Web.Configuration {
 
 		internal static IntegerValidator IntFromZeroToMaxValidator = new IntegerValidator (0, Int32.MaxValue);
 		internal static IntegerValidator IntFromOneToMax_1Validator = new IntegerValidator (1, Int32.MaxValue - 1);
+
+#if NET_4_0
+		internal static VersionConverter VersionConverter = new VersionConverter ();
+#endif
 	}
 }
 

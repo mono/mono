@@ -64,7 +64,7 @@ namespace StandAloneTests.OutputCacheProvider
 			return true;
 		}
 
-		void Default_Aspx (string result)
+		void Default_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = @"<pre id=""output"">Default provider name: TestInMemoryProvider
 Null context: TestInMemoryProvider
@@ -98,7 +98,7 @@ Default context: TestInMemoryProvider
 			return true;
 		}
 
-		void Default_Aspx (string result)
+		void Default_Aspx (string result, TestRunItem runItem)
 		{
 			Assert.IsTrue (Helpers.HasException (result, typeof (ConfigurationErrorsException)), "#A1");
 		}
@@ -130,7 +130,7 @@ Default context: TestInMemoryProvider
 			return true;
 		}
 
-		void Default_Aspx (string result)
+		void Default_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = @"<pre id=""output"">Default provider name: AspNetInternalProvider
 Default context: AspNetInternalProvider
@@ -139,7 +139,7 @@ Default context: AspNetInternalProvider
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
 		}
 
-		void Default_InMemory_Aspx (string result)
+		void Default_InMemory_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = @"<pre id=""output"">Default provider name: AspNetInternalProvider
 Default context: TestInMemoryProvider
@@ -148,7 +148,7 @@ Default context: TestInMemoryProvider
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
 		}
 
-		void Default_AnotherInMemory_Aspx (string result)
+		void Default_AnotherInMemory_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = @"<pre id=""output"">Default provider name: AspNetInternalProvider
 Default context: TestAnotherInMemoryProvider
@@ -157,7 +157,7 @@ Default context: TestAnotherInMemoryProvider
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
 		}
 
-		void Default_Invalid_Aspx (string result)
+		void Default_Invalid_Aspx (string result, TestRunItem runItem)
 		{
 			Assert.IsTrue (Helpers.HasException (result, typeof (ProviderException)), "#A1");
 		}

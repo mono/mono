@@ -1,5 +1,16 @@
 2010-03-06  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpRequest.cs: cache RawUrl value.
+	Added new internal property, PathNoValidation, which returns
+	request path without validating it.
+	Implemented 4.0 extensible validation.
+
+	* HttpApplication.cs: Pipeline () validates the request path, if
+	new validation mode is enabled, before doing anything else.
+	Added a generic LoadType overload which checks whether the loaded
+	type, if any, derives from the type specified in the method's
+	specialization.
+
 	* HttpUtility.cs: decode entities which use hexadecimal
 	encoding. Fixes bug #585992. Patch from Sebastien Morin
 	<smsisko@gmail.com>, thanks!

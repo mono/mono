@@ -111,7 +111,8 @@ namespace StandAloneRunner
 			var reports = new List <string> ();
 			DateTime start = DateTime.Now;
 			DateTime end;
-			
+
+			Console.WriteLine ("Running tests:");
 			foreach (StandaloneTest test in tests) {
 				if (test.Info.Disabled)
 					continue;
@@ -123,6 +124,7 @@ namespace StandAloneRunner
 					reports.Add (FormatReport (test));
 				}
 			}
+			Console.WriteLine ();
 			end = DateTime.Now;
 
 			if (reports.Count > 0) {

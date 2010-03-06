@@ -1,3 +1,17 @@
+2010-03-06  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: do not use Request.Path - it may
+	fail because of invalid web.config file, use
+	Request.PathNoValidation instead.
+
+	* VersionConverter.cs: added
+
+	* PropertyHelper.cs: added a Version converter helper.
+
+	* HttpRuntimeSection.cs: added 4.0 properties -
+	RequestPathInvalidCharacters, RequestValidationType and
+	RequestValidationMode.
+
 2010-02-23  Marek Habersack  <mhabersack@novell.com>
 
 	* SessionStateSection.cs: implemented 4.0 properties -

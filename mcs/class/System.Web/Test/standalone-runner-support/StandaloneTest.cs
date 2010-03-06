@@ -120,38 +120,46 @@ namespace StandAloneRunnerSupport
 				FailureDetails = "No test run items returned by the test case.";
 				return;
 			}
-
-			var runner = appMan.CreateObject (Info.Name, typeof (TestRunner), test.VirtualPath, test.PhysicalPath, true) as TestRunner;
-			if (runner == null) {
-				Success = false;
-				throw new InvalidOperationException ("runner must not be null.");
-			}
-
+			
 			string result;
+			TestRunner runner;
 			try {
+				Console.Write ('[');
 				foreach (var tri in runItems) {
 					if (tri == null)
 						continue;
-				
+
+					runner = null;
 					try {
+						runner = appMan.CreateObject (Info.Name, typeof (TestRunner), test.VirtualPath, test.PhysicalPath, true) as TestRunner;
+						if (runner == null) {
+							Success = false;
+							throw new InvalidOperationException ("runner must not be null.");
+						}
 						result = runner.Run (tri.Url);
 						if (tri.Callback == null)
 							continue;
-					
-						tri.Callback (result);
+
+						tri.TestRunData = runner.TestRunData;
+						tri.Callback (result, tri);
+						Console.Write ('.');
 					} catch (Exception) {
 						FailedUrl = tri.Url;
 						FailedUrlDescription = tri.UrlDescription;
-						runner.Stop (true);
-						runner = null;
+						Console.Write ('F');
 						throw;
+					} finally {
+						if (runner != null) {
+							runner.Stop (true);
+							AppDomain.Unload (runner.Domain);
+						}
+						runner = null;
 					}
 				}
 			} catch (AssertionException ex) {
 				throw new TestCaseFailureException ("Assertion failed.", ex.Message, ex);
 			} finally {
-				if (runner != null)
-					runner.Stop (true);
+				Console.Write (']');
 			}
 		}
 	}

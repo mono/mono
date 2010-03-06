@@ -476,7 +476,7 @@ namespace System.Web.Configuration {
 
 				HttpRequest req = context != null ? context.Request : null;
 				if (req != null) {
-					string vdir = VirtualPathUtility.GetDirectory (req.Path);
+					string vdir = VirtualPathUtility.GetDirectory (req.PathNoValidation);
 					if (vdir != null) {
 						vdir = vdir.TrimEnd (pathTrimChars);
 						if (String.Compare (c.ConfigPath, vdir, StringComparison.Ordinal) != 0 && LookUpLocation (vdir.Trim (pathTrimChars), ref c))
@@ -602,7 +602,7 @@ namespace System.Web.Configuration {
 		static string GetCurrentPath (HttpContext ctx)
 		{
 			HttpRequest req = ctx != null ? ctx.Request : null;
-			return req != null ? req.Path : HttpRuntime.AppDomainAppVirtualPath;
+			return req != null ? req.PathNoValidation : HttpRuntime.AppDomainAppVirtualPath;
 		}
 		
 		internal static bool SuppressAppReload (bool newValue)

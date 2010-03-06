@@ -29,5 +29,5 @@ using System;
 
 namespace StandAloneRunnerSupport
 {
-	public delegate void TestCallback (string result);
+	public delegate void TestCallback (string result, TestRunItem runItem);
 }

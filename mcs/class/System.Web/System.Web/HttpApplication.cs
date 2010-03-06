@@ -1164,6 +1164,20 @@ namespace System.Web
 			if (stop_processing)
 				yield return true;
 
+#if NET_4_0
+			if (HttpRequest.ValidateRequestNewMode) {
+				char[] invalidChars = HttpRequest.RequestPathInvalidCharacters;
+				HttpRequest req = context.Request;
+				if (invalidChars != null && req != null) {
+					string path = req.PathNoValidation;
+					int idx = path != null ? path.IndexOfAny (invalidChars) : -1;
+					if (idx != -1)
+						throw new HttpException (
+							String.Format ("A potentially dangerous Request.Path value was detected from the client ({0}).", path [idx])
+						);
+				}
+			}
+#endif
 			context.MapRequestHandlerDone = false;
 			StartTimer ("BeginRequest");
 			eventHandler = Events [BeginRequestEvent];
@@ -1794,6 +1808,19 @@ namespace System.Web
 			return null;
 		}
 
+		internal static Type LoadType <TBaseType> (string typeName, bool throwOnMissing)
+		{
+			Type ret = LoadType (typeName, throwOnMissing);
+
+			if (typeof (TBaseType).IsAssignableFrom (ret))
+				return ret;
+
+			if (throwOnMissing)
+				throw new TypeLoadException (String.Format ("Type '{0}' found but it doesn't derive from base type '{1}'.", typeName, typeof (TBaseType)));
+
+			return null;
+		}
+		
 		internal static Type LoadTypeFromBin (string typeName)
 		{
 			Type type = null;

@@ -1,3 +1,9 @@
+2010-03-06  Marek Habersack  <mhabersack@novell.com>
+
+	* RequestValidatorTestGenerated.cs: added
+
+	* RequestValidator.cs: added
+
 2010-01-14  Marek Habersack  <mhabersack@novell.com>
 
 	* Consts.cs.in, Locations.cs: added

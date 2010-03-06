@@ -34,6 +34,8 @@ namespace StandAloneRunnerSupport
 {
 	sealed class TestWorkerRequest : SimpleWorkerRequest
 	{
+		static readonly char[] vpathTrimChars = { '/' };
+		
 		string page;
 		string query;
 		string appVirtualDir;
@@ -50,5 +52,23 @@ namespace StandAloneRunnerSupport
 		{
 			return page;
 		}
-	}
+
+		public override string GetRawUrl ()
+		{
+			return TrimLeadingSlash (base.GetRawUrl ());
+		}
+
+		public override string GetUriPath ()
+		{
+			return TrimLeadingSlash (base.GetUriPath ());
+		}
+
+		static string TrimLeadingSlash (string input)
+		{
+			if (String.IsNullOrEmpty (input))
+				return input;
+
+			return "/" + input.TrimStart (vpathTrimChars);
+		}
+ 	}
 }

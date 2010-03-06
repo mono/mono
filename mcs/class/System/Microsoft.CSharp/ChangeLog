@@ -1,3 +1,8 @@
+2010-03-06  Marek Habersack  <mhabersack@novell.com>
+
+	* CSharpCodeCompiler.cs: in the 4.0 profile, the latest C#
+	standard is the default one.
+
 2009-12-02  Marek Habersack  <mhabersack@novell.com>
 
 	* CSharpCodeCompiler.cs: added support for dmcs

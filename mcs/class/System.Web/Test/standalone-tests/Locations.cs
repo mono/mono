@@ -51,23 +51,23 @@ namespace StandAloneTests.Locations
 
 		public bool SetUp (List <TestRunItem> runItems)
 		{
-			runItems.Add (new TestRunItem ("/Default.aspx", Default_Aspx));
-			runItems.Add (new TestRunItem ("/Stuff.aspx", Stuff_Aspx));
-			runItems.Add (new TestRunItem ("/sub/Default.aspx", Sub_Default_Aspx));
-			runItems.Add (new TestRunItem ("/sub/Stuff.aspx", Sub_Stuff_Aspx));
-			runItems.Add (new TestRunItem ("/sub/sub/Default.aspx", Sub_Sub_Default_Aspx));
-			runItems.Add (new TestRunItem ("/sub/sub/Stuff.aspx", Sub_Sub_Stuff_Aspx));
+			runItems.Add (new TestRunItem ("Default.aspx", Default_Aspx));
+			runItems.Add (new TestRunItem ("Stuff.aspx", Stuff_Aspx));
+			runItems.Add (new TestRunItem ("sub/Default.aspx", Sub_Default_Aspx));
+			runItems.Add (new TestRunItem ("sub/Stuff.aspx", Sub_Stuff_Aspx));
+			runItems.Add (new TestRunItem ("sub/sub/Default.aspx", Sub_Sub_Default_Aspx));
+			runItems.Add (new TestRunItem ("sub/sub/Stuff.aspx", Sub_Sub_Stuff_Aspx));
 			
 			return true;
 		}
 
-		void Default_Aspx (string result)
+		void Default_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = "/Hello";
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
 		}
 
-		void Stuff_Aspx (string result)
+		void Stuff_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = @"<pre id=""settings"">        /Web.config [1]: '[toplevel]'
         /Web.config [2]: 'Stuff.aspx'
@@ -75,31 +75,31 @@ namespace StandAloneTests.Locations
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
 		}
 
-		void Sub_Default_Aspx (string result)
+		void Sub_Default_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = "/sub/Hello";
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
 		}
 
-		void Sub_Stuff_Aspx (string result)
+		void Sub_Stuff_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = @"<pre id=""settings"">        /Web.config [1]: '[toplevel]'
         /Web.config [3]: 'sub'
     /sub/Web.config [1]: '[toplevel]'
-        /Web.config [6]: 'sub/sub'
-    /sub/Web.config [4]: 'sub'
+        /Web.config [4]: 'sub/Stuff.aspx'
+    /sub/Web.config [2]: 'Stuff.aspx'
 </pre>";
-			
+
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
 		}
 
-		void Sub_Sub_Default_Aspx (string result)
+		void Sub_Sub_Default_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = "/sub/sub/Hello";
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
 		}
 
-		void Sub_Sub_Stuff_Aspx (string result)
+		void Sub_Sub_Stuff_Aspx (string result, TestRunItem runItem)
 		{
 			string originalHtml = @"<pre id=""settings"">        /Web.config [1]: '[toplevel]'
         /Web.config [3]: 'sub'
@@ -107,7 +107,9 @@ namespace StandAloneTests.Locations
         /Web.config [6]: 'sub/sub'
     /sub/Web.config [4]: 'sub'
 /sub/sub/Web.config [1]: '[toplevel]'
-/sub/sub/Web.config [6]: 'sub/sub'
+        /Web.config [5]: 'sub/sub/Stuff.aspx'
+    /sub/Web.config [3]: 'sub/Stuff.aspx'
+/sub/sub/Web.config [2]: 'Stuff.aspx'
 </pre>";
 
 			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");

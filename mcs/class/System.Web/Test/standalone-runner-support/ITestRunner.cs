@@ -34,5 +34,7 @@ namespace StandAloneRunnerSupport
 {
 	public interface ITestRunner
 	{
+		object TestRunData { get; }
+		AppDomain Domain { get; }
 	}
 }

@@ -39,6 +39,11 @@ namespace System.CodeDom.Compiler
 	[ConfigurationCollection (typeof (Compiler), AddItemName = "compiler", CollectionType = ConfigurationElementCollectionType.BasicMap)]
 	internal sealed class CompilerCollection : ConfigurationElementCollection
 	{
+#if NET_4_0
+		static readonly string defaultCompilerVersion = "3.5";
+#else
+		static readonly string defaultCompilerVersion = "2.0";
+#endif
 		static ConfigurationPropertyCollection properties;
 		static List <CompilerInfo> compiler_infos;
 		static Dictionary <string, CompilerInfo> compiler_languages;
@@ -56,7 +61,7 @@ namespace System.CodeDom.Compiler
                         compiler.Extensions = ".cs";
                         compiler.TypeName = "Microsoft.CSharp.CSharpCodeProvider, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 			compiler.ProviderOptions = new Dictionary <string, string> (1);
-			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
+			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 
 			compiler = new CompilerInfo ();
@@ -64,7 +69,7 @@ namespace System.CodeDom.Compiler
                         compiler.Extensions = ".vb";
                         compiler.TypeName = "Microsoft.VisualBasic.VBCodeProvider, System, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089";
 			compiler.ProviderOptions = new Dictionary <string, string> (1);
-			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
+			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 
 			compiler = new CompilerInfo ();
@@ -72,7 +77,7 @@ namespace System.CodeDom.Compiler
                         compiler.Extensions = ".js";
                         compiler.TypeName = "Microsoft.JScript.JScriptCodeProvider, Microsoft.JScript, Version=8.0.1100.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 			compiler.ProviderOptions = new Dictionary <string, string> (1);
-			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
+			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 
 			compiler = new CompilerInfo ();
@@ -80,7 +85,7 @@ namespace System.CodeDom.Compiler
                         compiler.Extensions = ".jsl;.java";
                         compiler.TypeName = "Microsoft.VJSharp.VJSharpCodeProvider, VJSharpCodeProvider, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 			compiler.ProviderOptions = new Dictionary <string, string> (1);
-			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
+			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 
 			compiler = new CompilerInfo ();
@@ -88,7 +93,7 @@ namespace System.CodeDom.Compiler
                         compiler.Extensions = ".h";
                         compiler.TypeName = "Microsoft.VisualC.CppCodeProvider, CppCodeProvider, Version=8.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 			compiler.ProviderOptions = new Dictionary <string, string> (1);
-			compiler.ProviderOptions ["CompilerVersion"] = "2.0";
+			compiler.ProviderOptions ["CompilerVersion"] = defaultCompilerVersion;
 			AddCompilerInfo (compiler);
 		}
 

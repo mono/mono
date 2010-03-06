@@ -56,6 +56,11 @@ namespace System.Web.Configuration
 		static ConfigurationProperty shutdownTimeoutProp;
 		static ConfigurationProperty useFullyQualifiedRedirectUrlProp;
 		static ConfigurationProperty waitChangeNotificationProp;
+#if NET_4_0
+		static ConfigurationProperty requestPathInvalidCharactersProp;
+		static ConfigurationProperty requestValidationTypeProp;
+		static ConfigurationProperty requestValidationModeProp;
+#endif
 		static ConfigurationPropertyCollection properties;
 
 		static HttpRuntimeSection ()
@@ -108,7 +113,18 @@ namespace System.Web.Configuration
 										TypeDescriptor.GetConverter (typeof (int)),
 										PropertyHelper.IntFromZeroToMaxValidator,
 										ConfigurationPropertyOptions.None);
-
+#if NET_4_0
+			requestPathInvalidCharactersProp = new ConfigurationProperty ("requestPathInvalidCharacters", typeof (string), ",*,%,&,:,\\,?");
+			requestValidationTypeProp = new ConfigurationProperty ("requestValidationType", typeof (string),"System.Web.Util.RequestValidator",
+									       TypeDescriptor.GetConverter (typeof (string)),
+									       PropertyHelper.NonEmptyStringValidator,
+									       ConfigurationPropertyOptions.None);
+			requestValidationModeProp = new ConfigurationProperty ("requestValidationMode", typeof (Version), new Version (4, 0),
+									       PropertyHelper.VersionConverter,
+									       PropertyHelper.DefaultValidator,
+									       ConfigurationPropertyOptions.None);
+#endif
+			
 			properties = new ConfigurationPropertyCollection();
 			properties.Add (apartmentThreadingProp);
 			properties.Add (appRequestQueueLimitProp);
@@ -128,6 +144,11 @@ namespace System.Web.Configuration
 			properties.Add (shutdownTimeoutProp);
 			properties.Add (useFullyQualifiedRedirectUrlProp);
 			properties.Add (waitChangeNotificationProp);
+#if NET_4_0
+			properties.Add (requestPathInvalidCharactersProp);
+			properties.Add (requestValidationTypeProp);
+			properties.Add (requestValidationModeProp);
+#endif
 		}
 
 		public HttpRuntimeSection()
@@ -253,6 +274,27 @@ namespace System.Web.Configuration
 			set { base[waitChangeNotificationProp] = value; }
 		}
 
+#if NET_4_0
+		[ConfigurationProperty ("requestPathInvalidCharacters", DefaultValue = ",*,%,&,:,\\,?")]
+		public string RequestPathInvalidCharacters {
+			get { return (string) base [requestPathInvalidCharactersProp]; }
+			set { base [requestPathInvalidCharactersProp] = value; }
+		}
+
+		[ConfigurationProperty ("requestValidationType", DefaultValue = "System.Web.Util.RequestValidator")]
+		[StringValidatorAttribute(MinLength = 1)]
+		public string RequestValidationType {
+			get { return (string) base [requestValidationTypeProp]; }
+			set { base [requestValidationTypeProp] = value; }
+		}
+
+		[ConfigurationProperty ("requestValidationMode", DefaultValue = "4.0")]
+		[TypeConverter ("System.Web.Configuration.VersionConverter")]
+		public Version RequestValidationMode {
+			get { return (Version) base [requestValidationModeProp]; }
+			set { base [requestValidationModeProp] = value; }
+		}
+#endif
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}

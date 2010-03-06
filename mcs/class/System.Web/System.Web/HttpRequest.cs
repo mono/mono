@@ -9,7 +9,7 @@
 //
 
 //
-// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -71,7 +71,9 @@ namespace System.Web
 		string current_exe_path;
 		string physical_path;
 		string unescaped_path;
+		string original_path;
 		string path_info;
+		string raw_url;
 		WebROCollection all_params;
 		WebROCollection headers;
 		Stream input_stream;
@@ -99,7 +101,17 @@ namespace System.Web
 		bool checked_cookies, checked_query_string, checked_form;
 		static readonly UrlMappingCollection urlMappings;
 		readonly static char [] queryTrimChars = {'?'};
-		
+#if NET_4_0
+		static bool validateRequestNewMode;
+		internal static bool ValidateRequestNewMode {
+			get { return validateRequestNewMode; }
+		}
+
+		internal static char[] RequestPathInvalidCharacters {
+			get; private set;
+		}
+#endif
+
 		static HttpRequest ()
 		{
 			try {
@@ -109,6 +121,18 @@ namespace System.Web
 					if (urlMappings.Count == 0)
 						urlMappings = null;
 				}
+
+#if NET_4_0
+				HttpRuntimeSection runtimeConfig = WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime") as HttpRuntimeSection;
+				Version validationMode = runtimeConfig.RequestValidationMode;
+
+				if (validationMode >= new Version (4, 0)) {
+					validateRequestNewMode = true;
+					string invalidChars = runtimeConfig.RequestPathInvalidCharacters;
+					if (!String.IsNullOrEmpty (invalidChars))
+						RequestPathInvalidCharacters = invalidChars.ToCharArray ();
+				}
+#endif
 			} catch {
 				// unlikely to happen
 			}
@@ -390,9 +414,15 @@ namespace System.Web
 				// For J2EE portal support we emulate cookies using the session.
 				GetSessionCookiesForPortal (cookies);
 #endif
-				if (validate_cookies && !checked_cookies){
-					ValidateCookieCollection (cookies);
+				bool needValidation = validate_cookies;
+#if NET_4_0
+				needValidation |= validateRequestNewMode;
+#endif
+				if (needValidation && !checked_cookies) {
+					// Setting this before calling the validator prevents
+					// possible endless recursion
 					checked_cookies = true;
+					ValidateCookieCollection (cookies);
 				}
 
 				return cookies;
@@ -426,7 +456,7 @@ namespace System.Web
 				return file_path;
 			}
 		}
-		
+
 		internal string ClientFilePath {
 			get {
 				if (client_file_path == null) {
@@ -638,10 +668,18 @@ namespace System.Web
 					form.Protect ();
 				}
 
-				if (validate_form && !checked_form){
+#if NET_4_0
+				if (validateRequestNewMode && !checked_form) {
+					// Setting this before calling the validator prevents
+					// possible endless recursion
 					checked_form = true;
-					ValidateNameValueCollection ("Form", form);
-				}
+					ValidateNameValueCollection ("Form", query_string_nvc, RequestValidationSource.Form);
+				} else
+#endif
+					if (validate_form && !checked_form){
+						checked_form = true;
+						ValidateNameValueCollection ("Form", form);
+					}
 				
 				return form;
 			}
@@ -649,8 +687,22 @@ namespace System.Web
 
 		public NameValueCollection Headers {
 			get {
-				if (headers == null)
+				if (headers == null) {
 					headers = new HeadersCollection (this);
+#if NET_4_0
+					if (validateRequestNewMode) {
+						RequestValidator validator = RequestValidator.Current;
+						int validationFailureIndex;
+
+						foreach (string hkey in headers.AllKeys) {
+							string value = headers [hkey];
+							
+							if (!validator.IsValidRequestString (HttpContext.Current, value, RequestValidationSource.Headers, hkey, out validationFailureIndex))
+								ThrowValidationException ("Headers", hkey, value);
+						}
+					}
+#endif
+				}
 				
 				return headers;
 			}
@@ -919,18 +971,34 @@ namespace System.Web
 			}
 		}
 
+		internal string PathNoValidation {
+			get {
+				if (original_path == null) {
+					if (url_components != null)
+						// use only if it's already been instantiated, so that we can't go into endless
+						// recursion in some scenarios
+						original_path = UrlComponents.Path;
+					else
+						original_path = ApplyUrlMapping (worker_request.GetUriPath ());
+				}
+
+				return original_path;
+			}
+		}
+		
 		public string Path {
 			get {
 				if (unescaped_path == null) {
-					string path;
-					if (url_components != null) {
-						// use only if it's already been instantiated, so that we can't go into endless
-						// recursion in some scenarios
-						path = UrlComponents.Path;
-					} else
-						path = ApplyUrlMapping (worker_request.GetUriPath ());
-					
-					unescaped_path = Uri.UnescapeDataString (path);
+					unescaped_path = Uri.UnescapeDataString (PathNoValidation);
+#if NET_4_0
+					if (validateRequestNewMode) {
+						RequestValidator validator = RequestValidator.Current;
+						int validationFailureIndex;
+						
+						if (!validator.IsValidRequestString (HttpContext.Current, unescaped_path, RequestValidationSource.Path, null, out validationFailureIndex))
+							ThrowValidationException ("Path", "Path", unescaped_path);
+					}
+#endif
 				}
 				
 				return unescaped_path;
@@ -943,6 +1011,15 @@ namespace System.Web
 					if (worker_request == null)
 						return String.Empty;
 					path_info = worker_request.GetPathInfo () ?? String.Empty;
+#if NET_4_0
+					if (validateRequestNewMode) {
+						RequestValidator validator = RequestValidator.Current;
+						int validationFailureIndex;
+						
+						if (!validator.IsValidRequestString (HttpContext.Current, path_info, RequestValidationSource.PathInfo, null, out validationFailureIndex))
+							ThrowValidationException ("PathInfo", "PathInfo", path_info);
+					}
+#endif
 				}
 
 				return path_info;
@@ -1008,11 +1085,18 @@ namespace System.Web
 					
 					query_string_nvc.Protect();
 				}
-				
-				if (validate_query_string && !checked_query_string) {
-					ValidateNameValueCollection ("QueryString", query_string_nvc);
+#if NET_4_0
+				if (validateRequestNewMode && !checked_query_string) {
+					// Setting this before calling the validator prevents
+					// possible endless recursion
 					checked_query_string = true;
-				}
+					ValidateNameValueCollection ("QueryString", query_string_nvc, RequestValidationSource.QueryString);
+				} else
+#endif
+					if (validate_query_string && !checked_query_string) {
+						ValidateNameValueCollection ("QueryString", query_string_nvc);
+						checked_query_string = true;
+					}
 				
 				return query_string_nvc;
 			}
@@ -1020,10 +1104,26 @@ namespace System.Web
 
 		public string RawUrl {
 			get {
-				if (worker_request != null)
-					return worker_request.GetRawUrl ();
-				else
-					return UrlComponents.Path + UrlComponents.Query;
+				if (raw_url == null) {
+					if (worker_request != null)
+						raw_url = worker_request.GetRawUrl ();
+					else
+						raw_url = UrlComponents.Path + UrlComponents.Query;
+					
+					if (raw_url == null)
+						raw_url = String.Empty;
+#if NET_4_0
+					if (validateRequestNewMode) {
+						RequestValidator validator = RequestValidator.Current;
+						int validationFailureIndex;
+
+						if (!validator.IsValidRequestString (HttpContext.Current, raw_url, RequestValidationSource.RawUrl, null, out validationFailureIndex))
+							ThrowValidationException ("RawUrl", "RawUrl", raw_url);
+					}
+#endif
+				}
+				
+				return raw_url;
 			}
 		}
 
@@ -1399,11 +1499,27 @@ namespace System.Web
 		
 			foreach (string key in coll.Keys) {
 				string val = coll [key];
-				if (val != null && val.Length > 0 && CheckString (val))
+				if (val != null && val.Length > 0 && IsInvalidString (val))
 					ThrowValidationException (name, key, val);
 			}
 		}
-		
+#if NET_4_0
+		static void ValidateNameValueCollection (string name, NameValueCollection coll, RequestValidationSource source)
+		{
+			if (coll == null)
+				return;
+
+			RequestValidator validator = RequestValidator.Current;
+			int validationFailureIndex;
+			HttpContext context = HttpContext.Current;
+
+			foreach (string key in coll.Keys) {
+				string val = coll [key];
+				if (val != null && val.Length > 0 && !validator.IsValidRequestString (context, val, source, key, out validationFailureIndex))
+					ThrowValidationException (name, key, val);
+			}
+		}
+#endif
 		static void ValidateCookieCollection (HttpCookieCollection cookies)
 		{
 			if (cookies == null)
@@ -1411,15 +1527,35 @@ namespace System.Web
 		
 			int size = cookies.Count;
 			HttpCookie cookie;
+#if NET_4_0
+			RequestValidator validator = RequestValidator.Current;
+			int validationFailureIndex;
+			HttpContext context = HttpContext.Current;
+#endif
+			bool invalid;
+			
 			for (int i = 0 ; i < size ; i++) {
 				cookie = cookies[i];
-				string value = cookie.Value;
+				if (cookie == null)
+					continue;
 				
-				if (value != null && value != "" && CheckString (value))
-					ThrowValidationException ("Cookies", cookie.Name, cookie.Value);
+				string value = cookie.Value;
+				string name = cookie.Name;
+
+				if (!String.IsNullOrEmpty (value)) {
+#if NET_4_0
+					if (validateRequestNewMode)
+						invalid = !validator.IsValidRequestString (context, value, RequestValidationSource.Cookies, name, out validationFailureIndex);
+					else
+#endif
+						invalid = IsInvalidString (value);
+
+					if (invalid)
+						ThrowValidationException ("Cookies", name, value);
+				}
 			}
 		}
-		
+
 		static void ThrowValidationException (string name, string key, string value)
 		{
 			string v = "\"" + value + "\"";
@@ -1431,9 +1567,19 @@ namespace System.Web
 		
 			throw new HttpRequestValidationException (msg);
 		}
-		
-		static bool CheckString (string val)
+
+
+		internal static bool IsInvalidString (string val)
 		{
+			int validationFailureIndex;
+
+			return IsInvalidString (val, out validationFailureIndex);
+		}
+
+		internal static bool IsInvalidString (string val, out int validationFailureIndex)
+		{
+			validationFailureIndex = 0;
+
 			int len = val.Length;
 			if (len < 2)
 				return false;
@@ -1445,9 +1591,12 @@ namespace System.Web
 				if (current == '<' || current == '\xff1c') {
 					if (next == '!' || next < ' '
 					    || (next >= 'a' && next <= 'z')
-					    || (next >= 'A' && next <= 'Z'))
+					    || (next >= 'A' && next <= 'Z')) {
+						validationFailureIndex = idx - 1;
 						return true;
+					}
 				} else if (current == '&' && next == '#') {
+					validationFailureIndex = idx - 1;
 					return true;
 				}
 
@@ -1456,7 +1605,7 @@ namespace System.Web
 
 			return false;
 		}
-
+		
 		static System.Net.IPAddress [] GetLocalHostAddresses ()
 		{
 			try {

@@ -35,16 +35,22 @@ namespace StandAloneRunnerSupport
 {
 	public sealed class TestRunner : MarshalByRefObject, IRegisteredObject, ITestRunner
 	{
+		public AppDomain Domain {
+			get { return AppDomain.CurrentDomain; }
+		}
+		
+		public object TestRunData {
+			get { return Domain.GetData ("TestRunData"); }
+		}
+		
 		public TestRunner ()
 		{
-			AppDomain ad = AppDomain.CurrentDomain;
-
-			ad.SetData ("BEGIN_CODE_MARKER", Helpers.BEGIN_CODE_MARKER);
-			ad.SetData ("END_CODE_MARKER", Helpers.END_CODE_MARKER);
 		}
 		
 		public string Run (string url)
 		{
+			ResetState ();
+			
 			if (String.IsNullOrEmpty (url))
 				throw new ArgumentNullException ("url");
 			
@@ -73,6 +79,15 @@ namespace StandAloneRunnerSupport
 		public void Stop (bool immediate)
 		{
 			HostingEnvironment.UnregisterObject (this);
+		}
+
+		void ResetState ()
+		{
+			AppDomain ad = Domain;
+
+			ad.SetData ("BEGIN_CODE_MARKER", Helpers.BEGIN_CODE_MARKER);
+			ad.SetData ("END_CODE_MARKER", Helpers.END_CODE_MARKER);
+			ad.SetData ("TestRunData", null);
 		}
 	}
 }

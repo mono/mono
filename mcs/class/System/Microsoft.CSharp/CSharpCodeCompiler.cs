@@ -410,7 +410,11 @@ namespace Mono.CSharp
 				string langver;
 
 				if (!providerOptions.TryGetValue ("CompilerVersion", out langver))
+#if NET_4_0
+					langver = "3.5";
+#else
 					langver = "2.0";
+#endif
 
 				if (langver.Length >= 1 && langver [0] == 'v')
 					langver = langver.Substring (1);

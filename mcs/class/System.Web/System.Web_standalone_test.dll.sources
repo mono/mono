@@ -1,4 +1,6 @@
 Test/standalone-tests/Consts.cs
 Test/standalone-tests/Locations.cs
 Test/standalone-tests/OutputCacheProvider.cs
+Test/standalone-tests/RequestValidator.cs
+Test/standalone-tests/RequestValidatorTestGenerated.cs
 Test/standalone-tests/SiteMapDuplicateEntries_Bug570194.cs
