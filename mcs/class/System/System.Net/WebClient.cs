@@ -8,7 +8,7 @@
 //	Miguel de Icaza (miguel@ximian.com)
 //
 // Copyright 2003 Ximian, Inc. (http://www.ximian.com)
-// Copyright 2006, 2007 Novell, Inc. (http://www.novell.com)
+// Copyright 2006, 2010 Novell, Inc. (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -1402,7 +1402,7 @@ namespace System.Net
 				throw new ArgumentNullException ("data");
 			
 			lock (this) {
-				SetBusy ();
+				CheckBusy ();
 				async = true;
 				
 				async_thread = new Thread (delegate (object state) {

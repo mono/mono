@@ -1,3 +1,8 @@
+2010-03-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClient.cs: fix for UploadStringAsync(). Closes bug #577818.
+	Patch by Atsushi.
+
 2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpListenerContext.cs : WWW-Authenticate header should not be
