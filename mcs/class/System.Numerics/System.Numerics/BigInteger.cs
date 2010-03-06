@@ -40,6 +40,7 @@ Optimization
 	For bitwise operators, hoist the conditionals out of their main loop
 	Optimize BitScanBackward
 	Use a carry variable to make shift opts do half the number of array ops.
+	Schoolbook multiply is O(n^2), use Karatsuba /Toom-3 for large numbers
 */
 namespace System.Numerics {
 	public struct BigInteger : IComparable, IComparable<BigInteger>, IEquatable<BigInteger>
@@ -468,6 +469,59 @@ namespace System.Numerics {
 
 			return new BigInteger (left.sign, CoreAdd (left.data, right.data));
 		}
+
+		public static BigInteger operator* (BigInteger left, BigInteger right)
+		{
+			if (left.sign == 0 || right.sign == 0)
+				return new BigInteger (0, ZERO);
+
+			if (left.data [0] == 1 && left.data.Length == 1) {
+				if (left.sign == 1)
+					return right;
+				return new BigInteger ((short)-right.sign, right.data);
+			}
+
+			if (right.data [0] == 1 && right.data.Length == 1) {
+				if (right.sign == 1)
+					return left;
+				return new BigInteger ((short)-left.sign, left.data);
+			}
+
+			uint[] a = left.data;
+			uint[] b = right.data;
+
+			uint[] res = new uint [a.Length + b.Length];
+
+            for (int i = 0; i < a.Length; ++i) {
+                uint ai = a [i];
+                int k = i;
+
+                ulong carry = 0;
+                for (int j = 0; j < b.Length; ++j) {
+                    carry = carry + ((ulong)ai) * b [j] + res [k];
+                    res[k++] = (uint)carry;
+                    carry >>= 32;
+                }
+
+                while (carry != 0) {
+                    carry += res [k];
+                    res[k++] = (uint)carry;
+                    carry >>= 32;
+                }
+            }
+
+			int m;
+			for (m = res.Length - 1; m >= 0 && res [m] == 0; --m) ;
+			if (m < res.Length - 1)
+				res = Resize (res, m + 1);
+
+			short sign = 1;
+			if (left.sign != right.sign)
+				sign = -1;
+
+			return new BigInteger (sign, res);
+		}
+
 
 		public static BigInteger operator- (BigInteger value)
 		{
@@ -1096,6 +1150,11 @@ namespace System.Numerics {
 		public static BigInteger Subtract (BigInteger left, BigInteger right)
 		{
 			return left - right;
+		}
+
+		public static BigInteger Multiply (BigInteger left, BigInteger right)
+		{
+			return left * right;
 		}
 
 		public static BigInteger Negate (BigInteger value)
