@@ -670,7 +670,7 @@ namespace System.Net.Mail {
 			if (message.Sender != null)
 				SendHeader ("Sender", EncodeAddress (message.Sender));
 			if (message.ReplyTo != null)
-				SendHeader ("ReplyTo", EncodeAddress (message.ReplyTo));
+				SendHeader ("Reply-To", EncodeAddress (message.ReplyTo));
 			
 			foreach (string s in message.Headers.AllKeys)
 				SendHeader (s, message.Headers [s]);
