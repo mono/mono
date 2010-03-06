@@ -109,7 +109,6 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (59049, (int)BigInteger.Pow (3, 10), "#4");
 			Assert.AreEqual (177147, (int)BigInteger.Pow (3, 11), "#5");
 			Assert.AreEqual (-177147, (int)BigInteger.Pow (-3, 11), "#6");
-
 		}
 
 		[Test]
@@ -127,6 +126,29 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (20L, (long)BigInteger.ModPow (555, 10, 71), "#3");
 			Assert.AreEqual (20L, (long)BigInteger.ModPow (-555, 10, 71), "#3");
 			Assert.AreEqual (-24L, (long)BigInteger.ModPow (-555, 11, 71), "#3");
+		}
+
+		[Test]
+		public void GCD () {	
+			Assert.AreEqual (999999, (int)BigInteger.GreatestCommonDivisor (999999, 0), "#1");
+			Assert.AreEqual (999999, (int)BigInteger.GreatestCommonDivisor (0, 999999), "#2");
+			Assert.AreEqual (1, (int)BigInteger.GreatestCommonDivisor (999999, 1), "#3");
+			Assert.AreEqual (1, (int)BigInteger.GreatestCommonDivisor (1, 999999), "#4");
+			Assert.AreEqual (1, (int)BigInteger.GreatestCommonDivisor (1, 0), "#5");
+			Assert.AreEqual (1, (int)BigInteger.GreatestCommonDivisor (0, 1), "#6");
+
+			Assert.AreEqual (1, (int)BigInteger.GreatestCommonDivisor (999999, -1), "#7");
+			Assert.AreEqual (1, (int)BigInteger.GreatestCommonDivisor (-1, 999999), "#8");
+			Assert.AreEqual (1, (int)BigInteger.GreatestCommonDivisor (-1, 0), "#9");
+			Assert.AreEqual (1, (int)BigInteger.GreatestCommonDivisor (0, -1), "#10");
+
+			Assert.AreEqual (2, (int)BigInteger.GreatestCommonDivisor (12345678, 8765432), "#11");
+			Assert.AreEqual (2, (int)BigInteger.GreatestCommonDivisor (-12345678, 8765432), "#12");
+			Assert.AreEqual (2, (int)BigInteger.GreatestCommonDivisor (12345678, -8765432), "#13");
+			Assert.AreEqual (2, (int)BigInteger.GreatestCommonDivisor (-12345678, -8765432), "#14");
+
+			Assert.AreEqual (40, (int)BigInteger.GreatestCommonDivisor (5581 * 40, 6671 * 40), "#15");
+
 		}
 
 		[Test]
