@@ -1,4 +1,12 @@
 
+Sat Mar 6 18:16:35 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mempool.c, class-internals.h, class.c, icall.c, metadata.c,
+	object-internals.h, object.c, reflection.c, threadpool.c:
+	reduce resource usage when the small config is selected.
+	In particular, up to 64K of methods/fields/properties/events
+	are allowed and "other" methods in events are ignored.
+
 Fri Mar 5 19:05:47 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* threads.c: reduce resource usage when compiled for a small config.
