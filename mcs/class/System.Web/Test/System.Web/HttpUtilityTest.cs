@@ -345,6 +345,15 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("\xE9", HttpUtility.HtmlDecode ("&#233;"));
 		}
 
+		[Test (Description="Bug #585992")]
+		public void Decode2 ()
+		{
+			string encodedSource = "&#169; == &#xA9; == &#XA9; and &#915; == &#x393; == &#X393;";
+			string utf8Result = "© == © == © and Γ == Γ == Γ";
+
+			Assert.AreEqual (utf8Result, HttpUtility.HtmlDecode (encodedSource), "#A1");
+		}
+		
 		[Test]
 		public void RoundTrip ()
 		{
