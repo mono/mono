@@ -515,11 +515,7 @@ namespace System.Numerics {
 			if (m < res.Length - 1)
 				res = Resize (res, m + 1);
 
-			short sign = 1;
-			if (left.sign != right.sign)
-				sign = -1;
-
-			return new BigInteger (sign, res);
+			return new BigInteger ((short)(left.sign * right.sign), res);
 		}
 
 
