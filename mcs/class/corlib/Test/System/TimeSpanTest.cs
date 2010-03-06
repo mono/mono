@@ -898,6 +898,50 @@ public class TimeSpanTest {
 		Assert.AreEqual (0.0125, ts.TotalMinutes, "TotalMinutes");
 		Assert.AreEqual (0.75, ts.TotalSeconds, "TotalSeconds");
 	}
+
+	// 'Ported' the Parse test to use TryParse
+	[Test]
+	public void TryParse ()
+	{
+		TimeSpan result;
+
+		Assert.AreEqual (true, TimeSpan.TryParse (" 13:45:15 ", out result), "#A1");
+		Assert.AreEqual ("13:45:15", result.ToString (), "#A2");
+
+		Assert.AreEqual (true, TimeSpan.TryParse (" -1:2:3 ", out result), "#B1");
+		Assert.AreEqual ("-01:02:03", result.ToString (), "#B2");
+
+		Assert.AreEqual (false, TimeSpan.TryParse (" 25:0:0 ", out result), "#C1");
+		Assert.AreEqual (false, TimeSpan.TryParse ("aaa", out result), "#C2");
+
+		Assert.AreEqual (true, TimeSpan.TryParse ("-21.23:59:59.9999999", out result), "#D1");
+		Assert.AreEqual ("-21.23:59:59.9999999", result.ToString (), "#D2");
+
+		Assert.AreEqual (false, TimeSpan.TryParse ("100000000000000.1:1:1", out result), "#E1");
+		Assert.AreEqual (false, TimeSpan.TryParse ("24:60:60", out result), "#E2");
+
+		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
+		Assert.AreEqual (true, TimeSpan.TryParse ("0001:0002:0003.12     ", out result), "#F1");
+		Assert.AreEqual ("01:02:03.1200000", result.ToString (), "#F2");
+
+		Assert.AreEqual (false, TimeSpan.TryParse (" 1:2:3:12345678 ", out result), "#G1");
+
+		// Min and Max values
+		Assert.AreEqual (true, TimeSpan.TryParse ("10675199.02:48:05.4775807", out result), "MaxValue#1");
+		Assert.AreEqual (TimeSpan.MaxValue, result, "MaxValue#2");
+		Assert.AreEqual (true, TimeSpan.TryParse ("-10675199.02:48:05.4775808", out result), "MinValue#1");
+		Assert.AreEqual (TimeSpan.MinValue, result, "MinValue#2");
+	}
+
+	[Test]
+	public void TryParseErrors ()
+	{
+		TimeSpan result;
+
+		Assert.AreEqual (false, TimeSpan.TryParse ("0.99.99.0", out result), "Format#1");
+		Assert.AreEqual (false, TimeSpan.TryParse ("10675199.02:48:05.4775808", out result), "OverMaxValue");
+		Assert.AreEqual (false, TimeSpan.TryParse ("-10675199.02:48:05.4775809", out result), "UnderMinValue");
+	}
 }
 
 }
