@@ -948,7 +948,7 @@ mono_arch_create_monitor_exit_trampoline_full (guint32 *code_size, MonoJumpInfo 
 {
 	guint8 *tramp;
 	guint8 *code, *buf;
-	guint8 *jump_obj_null, *jump_have_waiters;
+	guint8 *jump_obj_null, *jump_have_waiters, *jump_sync_null, *jump_not_owned;
 	guint8 *jump_next;
 	int tramp_size;
 	int owner_offset, nest_offset, entry_count_offset;
@@ -981,28 +981,22 @@ mono_arch_create_monitor_exit_trampoline_full (guint32 *code_size, MonoJumpInfo 
 		amd64_mov_reg_membase (code, AMD64_RCX, AMD64_RDI, G_STRUCT_OFFSET (MonoObject, synchronisation), 8);
 		/* is synchronization null? */
 		amd64_test_reg_reg (code, AMD64_RCX, AMD64_RCX);
-		/* if not, jump to next case */
-		jump_next = code;
-		amd64_branch8 (code, X86_CC_NZ, -1, 1);
-		/* if yes, just return */
-		amd64_ret (code);
+		/* if yes, jump to actual trampoline */
+		jump_sync_null = code;
+		amd64_branch8 (code, X86_CC_Z, -1, 1);
 
 		/* next case: synchronization is not null */
-		x86_patch (jump_next, code);
 		/* load MonoThread* into RDX */
 		code = mono_amd64_emit_tls_get (code, AMD64_RDX, mono_thread_get_tls_offset ());
 		/* load TID into RDX */
 		amd64_mov_reg_membase (code, AMD64_RDX, AMD64_RDX, G_STRUCT_OFFSET (MonoThread, tid), 8);
 		/* is synchronization->owner == TID */
 		amd64_alu_membase_reg_size (code, X86_CMP, AMD64_RCX, owner_offset, AMD64_RDX, 8);
-		/* if yes, jump to next case */
-		jump_next = code;
-		amd64_branch8 (code, X86_CC_Z, -1, 1);
-		/* if not, just return */
-		amd64_ret (code);
+		/* if no, jump to actual trampoline */
+		jump_not_owned = code;
+		amd64_branch8 (code, X86_CC_NZ, -1, 1);
 
 		/* next case: synchronization->owner == TID */
-		x86_patch (jump_next, code);
 		/* is synchronization->nest == 1 */
 		amd64_alu_membase_imm_size (code, X86_CMP, AMD64_RCX, nest_offset, 1, 4);
 		/* if not, jump to next case */
@@ -1025,6 +1019,8 @@ mono_arch_create_monitor_exit_trampoline_full (guint32 *code_size, MonoJumpInfo 
 
 		x86_patch (jump_obj_null, code);
 		x86_patch (jump_have_waiters, code);
+		x86_patch (jump_not_owned, code);
+		x86_patch (jump_sync_null, code);
 	}
 
 	/* jump to the actual trampoline */

@@ -1,3 +1,16 @@
+2010-03-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_create_monitor_exit_trampoline_full): Delegate
+	the handling of obj->synchronization == null and owner != current thread to
+	mono_monitor_exit ().
+
+	* tramp-x86.c (mono_arch_create_monitor_exit_trampoline_full): Ditto.
+
+Sat Mar 6 18:14:15 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c: change the way emulated opcode info is stored and save about
+	4 KB of runtime memory.
+
 2010-03-04  David S. Miller  <davem@davemloft.net>
 
        * mini-sparc.h: Always use MONO_ARCH_USE_SIGACTION.  Linux kernels
