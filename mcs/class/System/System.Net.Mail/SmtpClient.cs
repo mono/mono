@@ -680,10 +680,8 @@ namespace System.Net.Mail {
 			SendHeader ("Priority", v);
 			if (message.Sender != null)
 				SendHeader ("Sender", EncodeAddress (message.Sender));
-#if false
 			if (message.ReplyToList.Count > 0)
-				SendHeader ("ReplyTo", EncodeAddresses (message.ReplyToList));
-#endif
+				SendHeader ("Reply-To", EncodeAddresses (message.ReplyToList));
 #if NET_4_0
 			foreach (string s in message.Headers.AllKeys)
 				SendHeader (s, ContentType.EncodeSubjectRFC2047 (message.Headers [s], message.HeadersEncoding));
