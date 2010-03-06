@@ -680,7 +680,7 @@ namespace System.Net.Mail {
 			if (message.Sender != null)
 				SendHeader ("Sender", EncodeAddress (message.Sender));
 			if (message.ReplyToList.Count > 0)
-				SendHeader ("ReplyTo", EncodeAddresses (message.ReplyToList));
+				SendHeader ("Reply-To", EncodeAddresses (message.ReplyToList));
 
 #if NET_4_0
 			foreach (string s in message.Headers.AllKeys)

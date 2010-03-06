@@ -1,3 +1,8 @@
+2010-03-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SmtpClient.cs: typo in reply-to header. Thanks to Chris Tomlinson.
+	Fixes bug #578271.
+
 2010-02-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SmtpClient.cs: generate correct MIME when there are text and html
