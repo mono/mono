@@ -1264,6 +1264,57 @@ namespace System.Numerics {
 			return result;
 		}
 
+		public static BigInteger GreatestCommonDivisor (BigInteger left, BigInteger right)
+		{
+			if (left.data.Length == 1 && left.data [0] == 1)
+				return new BigInteger (1, ONE);
+			if (right.data.Length == 1 && right.data [0] == 1)
+				return new BigInteger (1, ONE);
+			if (left.IsZero)
+				return right;
+			if (right.IsZero)
+				return left;
+
+			BigInteger x = new BigInteger (1, left.data);
+			BigInteger y = new BigInteger (1, right.data);
+
+			BigInteger g = y;
+
+			while (x.data.Length > 1) {
+				g = x;
+				x = y % x;
+				y = g;
+
+			}
+			if (x.IsZero) return g;
+
+			// TODO: should we have something here if we can convert to long?
+
+			//
+			// Now we can just do it with single precision. I am using the binary gcd method,
+			// as it should be faster.
+			//
+
+			uint yy = x.data [0];
+			uint xx = (uint)(y % yy);
+
+			int t = 0;
+
+			while (((xx | yy) & 1) == 0) {
+				xx >>= 1; yy >>= 1; t++;
+			}
+			while (xx != 0) {
+				while ((xx & 1) == 0) xx >>= 1;
+				while ((yy & 1) == 0) yy >>= 1;
+				if (xx >= yy)
+					xx = (xx - yy) >> 1;
+				else
+					yy = (yy - xx) >> 1;
+			}
+
+			return yy << t;
+		}
+
 		[CLSCompliantAttribute (false)]
 		public bool Equals (ulong other)
 		{
