@@ -545,8 +545,6 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (new byte[] { 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x00, 0x80 }, new BigInteger (long.MinValue).ToByteArray (), "#10");
 
 			Assert.AreEqual (new byte[] { 0xFF, 0xFF, 0xFF, 0x7F, 0xFF }, new BigInteger (-2147483649L).ToByteArray (), "11");
-
-
 		}
 
 		[Test]
@@ -554,6 +552,22 @@ namespace MonoTests.System.Numerics
 			var a = new BigInteger (99);
 			Assert.AreEqual (-1, a.CompareTo (100), "#1");
 			Assert.AreEqual (1, a.CompareTo (null), "#2");
+		}
+
+		[Test]
+		public void ShortOperators () {
+			Assert.AreEqual (22, (int)new BigInteger ((short)22), "#1");
+			Assert.AreEqual (-22, (int)new BigInteger ((short)-22), "#2");
+
+			try {
+				short x = (short)new BigInteger (10000000);
+				Assert.Fail ("#3");
+			} catch (OverflowException) {}
+
+			try {
+				short x = (short)new BigInteger (-10000000);
+				Assert.Fail ("#4");
+			} catch (OverflowException) {}
 		}
 	}
 }
