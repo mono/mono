@@ -148,7 +148,38 @@ namespace MonoTests.System.Numerics
 			Assert.AreEqual (2, (int)BigInteger.GreatestCommonDivisor (-12345678, -8765432), "#14");
 
 			Assert.AreEqual (40, (int)BigInteger.GreatestCommonDivisor (5581 * 40, 6671 * 40), "#15");
+		}
 
+		[Test]
+		public void Log () {	
+			double delta = 0.000000000000001d;
+
+			Assert.AreEqual (double.NegativeInfinity, BigInteger.Log (0), "#1");
+			Assert.AreEqual (0d, BigInteger.Log (1), "#2");
+			Assert.AreEqual (double.NaN, BigInteger.Log (-1), "#3");
+			Assert.AreEqual (2.3025850929940459d, BigInteger.Log (10), delta, "#4");
+			Assert.AreEqual (6.9077552789821368d, BigInteger.Log (1000), delta, "#5");
+			Assert.AreEqual (double.NaN, BigInteger.Log (-234), "#6");
+		}
+
+		[Test]
+		public void LogN () {	
+			double delta = 0.000000000000001d;
+
+			Assert.AreEqual (double.NaN, BigInteger.Log (10, 1), "#1");
+			Assert.AreEqual (double.NaN, BigInteger.Log (10, 0), "#2");
+			Assert.AreEqual (double.NaN, BigInteger.Log (10, -1), "#3");
+
+			Assert.AreEqual (double.NaN, BigInteger.Log (10, double.NaN), "#4");
+			Assert.AreEqual (double.NaN, BigInteger.Log (10, double.NegativeInfinity), "#5");
+			Assert.AreEqual (double.NaN, BigInteger.Log (10, double.PositiveInfinity), "#6");
+
+			Assert.AreEqual (0d, BigInteger.Log (1, 0), "#7");
+			Assert.AreEqual (double.NaN, BigInteger.Log (1, double.NegativeInfinity), "#8");
+			Assert.AreEqual (0, BigInteger.Log (1, double.PositiveInfinity), "#9");
+			Assert.AreEqual (double.NaN, BigInteger.Log (1, double.NaN), "#10");
+
+			Assert.AreEqual (-2.5129415947320606d, BigInteger.Log (10, 0.4), delta, "#11");
 		}
 
 		[Test]
