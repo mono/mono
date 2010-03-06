@@ -536,6 +536,51 @@ namespace System.Numerics {
 			return new BigInteger ((short)(left.sign * right.sign), res);
 		}
 
+		public static BigInteger operator/ (BigInteger dividend, BigInteger divisor)
+		{
+			if (divisor.sign == 0)
+				throw new DivideByZeroException ();
+
+			if (dividend.sign == 0) 
+				return dividend;
+
+			uint[] quotient;
+			uint[] remainder_value;
+
+			DivModUnsigned (dividend.data, divisor.data, out quotient, out remainder_value);
+
+			int i;
+			for (i = quotient.Length - 1; i >= 0 && quotient [i] == 0; --i) ;
+			if (i == -1)
+				return new BigInteger (0, ZERO);
+			if (i < quotient.Length - 1)
+				quotient = Resize (quotient, i + 1);
+
+			return new BigInteger ((short)(dividend.sign * divisor.sign), quotient);
+		}
+
+		public static BigInteger operator% (BigInteger dividend, BigInteger divisor)
+		{
+			if (divisor.sign == 0)
+				throw new DivideByZeroException ();
+
+			if (dividend.sign == 0)
+				return dividend;
+
+			uint[] quotient;
+			uint[] remainder_value;
+
+			DivModUnsigned (dividend.data, divisor.data, out quotient, out remainder_value);
+
+			int i;
+			for (i = remainder_value.Length - 1; i >= 0 && remainder_value [i] == 0; --i) ;
+			if (i == -1)
+				return new BigInteger (0, ZERO);
+
+			if (i < remainder_value.Length - 1)
+				remainder_value = Resize (remainder_value, i + 1);
+			return new BigInteger (dividend.sign, remainder_value);
+		}
 
 		public static BigInteger operator- (BigInteger value)
 		{
@@ -1176,6 +1221,29 @@ namespace System.Numerics {
 			return new BigInteger ((short)(dividend.sign * divisor.sign), quotient);
 		}
 
+        public static BigInteger Pow (BigInteger value, int exponent)
+		{
+			if (exponent < 0)
+				throw new ArgumentOutOfRangeException("exp", "exp must be >= 0");
+			if (exponent == 0)
+				return One;
+			if (exponent == 1)
+				return value;
+
+			BigInteger result = One;
+			while (exponent != 0) {
+				if ((exponent & 1) != 0)
+					result = result * value;
+				if (exponent == 1)
+					break;
+
+				value = value * value;
+				exponent >>= 1;
+			}
+			return result;
+        }
+
+
 		[CLSCompliantAttribute (false)]
 		public bool Equals (ulong other)
 		{
@@ -1204,6 +1272,16 @@ namespace System.Numerics {
 		public static BigInteger Multiply (BigInteger left, BigInteger right)
 		{
 			return left * right;
+		}
+
+		public static BigInteger Divide (BigInteger dividend, BigInteger divisor)
+		{
+			return dividend / divisor;
+		}
+
+		public static BigInteger Remainder (BigInteger dividend, BigInteger divisor)
+		{
+			return dividend % divisor;
 		}
 
 		public static BigInteger Negate (BigInteger value)
