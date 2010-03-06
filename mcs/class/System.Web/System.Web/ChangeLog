@@ -1,3 +1,9 @@
+2010-03-06  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpUtility.cs: decode entities which use hexadecimal
+	encoding. Fixes bug #585992. Patch from Sebastien Morin
+	<smsisko@gmail.com>, thanks!
+
 2010-03-04  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRuntime.cs: do less work in the static constructor. Most of

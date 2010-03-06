@@ -843,6 +843,7 @@ namespace System.Web {
 			// 3 -> '#' found after '&' and getting numbers
 			int state = 0;
 			int number = 0;
+			bool is_hex_value = false;
 			bool have_trailing_digits = false;
 	
 			for (int i = 0; i < len; i++) {
@@ -878,6 +879,7 @@ namespace System.Web {
 						entity.Length = 0;
 					} else {
 						number = 0;
+						is_hex_value = false;
 						if (c != '#') {
 							state = 2;
 						} else {
@@ -908,9 +910,14 @@ namespace System.Web {
 						state = 0;
 						entity.Length = 0;
 						have_trailing_digits = false;
+					} else if (is_hex_value &&  Uri.IsHexDigit(c)) {
+						number = number * 16 + Uri.FromHex(c);
+						have_trailing_digits = true;
 					} else if (Char.IsDigit (c)) {
 						number = number * 10 + ((int) c - '0');
 						have_trailing_digits = true;
+					} else if (number == 0 && (c == 'x' || c == 'X')) {
+						is_hex_value = true;
 					} else {
 						state = 2;
 						if (have_trailing_digits) {
