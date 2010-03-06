@@ -1224,7 +1224,7 @@ namespace System.Numerics {
         public static BigInteger Pow (BigInteger value, int exponent)
 		{
 			if (exponent < 0)
-				throw new ArgumentOutOfRangeException("exp", "exp must be >= 0");
+				throw new ArgumentOutOfRangeException("exponent", "exp must be >= 0");
 			if (exponent == 0)
 				return One;
 			if (exponent == 1)
@@ -1243,6 +1243,26 @@ namespace System.Numerics {
 			return result;
         }
 
+		public static BigInteger ModPow (BigInteger value, BigInteger exponent, BigInteger modulus) {
+			if (exponent.sign == -1)
+				throw new ArgumentOutOfRangeException("exponent", "power must be >= 0");
+			if (modulus.sign == 0)
+				throw new DivideByZeroException ();
+
+			BigInteger result = One % modulus;
+			while (exponent.sign != 0) {
+				if (!exponent.IsEven) {
+					result = result * value;
+					result = result % modulus;
+				}
+				if (exponent.IsOne)
+					break;
+				value = value * value;
+				value = value % modulus;
+				exponent >>= 1;
+			}
+			return result;
+		}
 
 		[CLSCompliantAttribute (false)]
 		public bool Equals (ulong other)

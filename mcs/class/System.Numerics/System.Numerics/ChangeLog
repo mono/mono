@@ -1,5 +1,9 @@
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: ModPow.
+
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: / % Pow.
 
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
