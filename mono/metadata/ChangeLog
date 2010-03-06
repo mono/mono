@@ -1,4 +1,9 @@
 
+Sat Mar 6 19:12:12 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* appdomain.c, domain-internals.h, domain.c, object.c:
+	make class_vtable_hash into an array to reduce memory usage.
+
 Sat Mar 6 18:16:35 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* mempool.c, class-internals.h, class.c, icall.c, metadata.c,
