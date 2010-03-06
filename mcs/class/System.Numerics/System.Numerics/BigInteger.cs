@@ -61,7 +61,7 @@ Optimization
 	Schoolbook multiply is O(n^2), use Karatsuba /Toom-3 for large numbers
 */
 namespace System.Numerics {
-	public struct BigInteger : IComparable, IComparable<BigInteger>, IEquatable<BigInteger>
+	public struct BigInteger : IComparable, IFormattable, IComparable<BigInteger>, IEquatable<BigInteger>
 	{
 		//LSB on [0]
 		readonly uint[] data;
@@ -1210,14 +1210,14 @@ namespace System.Numerics {
 
 		public override string ToString ()
 		{
-			return ToString (10);
+			return ToString (10, null);
 		}
 
-		string ToStringWithPadding (string format, uint radix)
+		string ToStringWithPadding (string format, uint radix, IFormatProvider provider)
 		{
 			if (format.Length > 1) {
 				int precision = Convert.ToInt32(format.Substring (1), CultureInfo.InvariantCulture.NumberFormat);
-				string baseStr = ToString (radix);
+				string baseStr = ToString (radix, provider);
 				if (baseStr.Length < precision) {
 					string additional = new String ('0', precision - baseStr.Length);
 					if (baseStr[0] != '-') {
@@ -1228,13 +1228,24 @@ namespace System.Numerics {
 				}
 				return baseStr;
 			}
-			return ToString (radix);
+			return ToString (radix, provider);
 		}
 
 		public string ToString (string format)
 		{
+			return ToString (format, null);
+		}
+
+		public string ToString (IFormatProvider provider)
+		{
+			return ToString (null, provider);
+		}
+
+
+		public string ToString (string format, IFormatProvider provider)
+		{
 			if (format == null || format == "")
-				return ToString (10);
+				return ToString (10, provider);
 
 			switch (format[0]) {
 			case 'd':
@@ -1243,12 +1254,12 @@ namespace System.Numerics {
 			case 'G':
 			case 'r':
 			case 'R':
-				return ToStringWithPadding (format, 10);
+				return ToStringWithPadding (format, 10, provider);
 			case 'x':
 			case 'X':
-				return ToStringWithPadding (format, 16);
+				return ToStringWithPadding (format, 16, null);
 			default:
-				throw new NotImplementedException(string.Format ("format '{0}' not implemented", format));
+				throw new FormatException (string.Format ("format '{0}' not implemented", format));
 			}
 		}
 
@@ -1275,7 +1286,7 @@ namespace System.Numerics {
 			return res;
 		}
 
-		string ToString (uint radix)
+		string ToString (uint radix, IFormatProvider provider)
 		{
 			const string characterSet = "0123456789ABCDEFGHIJKLMNOPQRSTUVWXYZ";
 
@@ -1307,9 +1318,18 @@ namespace System.Numerics {
 				digits.Add (characterSet [(int) rem]);
 			}
 
-
-			if (sign == -1 && radix == 10)
-				digits.Add ('-');
+			if (sign == -1 && radix == 10) {
+				NumberFormatInfo info = null;
+				if (provider != null)
+					info = provider.GetFormat (typeof (NumberFormatInfo)) as NumberFormatInfo;
+				if (info != null) {
+					string str = info.NegativeSign;
+					for (int i = str.Length - 1; i >= 0; --i)
+						digits.Add (str [i]);
+				} else {
+					digits.Add ('-');
+				}
+			}
 
 			char last = digits [digits.Count - 1];
 			if (sign == 1 && radix > 10 && (last < '0' || last > '9'))

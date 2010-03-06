@@ -1,5 +1,9 @@
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: Remaining ToString overloads.
+
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: double and float coersion ops.
 	ToString() and ToString(string).
 
