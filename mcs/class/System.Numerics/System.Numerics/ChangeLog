@@ -1,5 +1,9 @@
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: Add decimal operators/ctor.
+
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: Float/double coersion operators.
 
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>

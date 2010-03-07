@@ -203,6 +203,33 @@ namespace System.Numerics {
 		{
 		}
 
+		const Int32 DecimalScaleFactorMask = 0x00FF0000;
+		const Int32 DecimalSignMask = unchecked((Int32)0x80000000);
+
+		public BigInteger (decimal value)
+		{
+			// First truncate to get scale to 0 and extract bits
+			int[] bits = Decimal.GetBits(Decimal.Truncate(value));
+
+			int size = 3;
+			while (size > 0 && bits[size - 1] == 0) size--;
+
+			if (size == 0) {
+				sign = 0;
+				data = ZERO;
+				return;
+			}
+
+			sign = (short) ((bits [3] & DecimalSignMask) != 0 ? -1 : 1);
+
+			data = new uint [size];
+			data [0] = (uint)bits [0];
+			if (size > 1)
+				data [1] = (uint)bits [1];
+			if (size > 2)
+				data [2] = (uint)bits [2];
+		}
+
 		[CLSCompliantAttribute (false)]
 		public BigInteger (byte[] value)
 		{
@@ -471,12 +498,32 @@ namespace System.Numerics {
 		{
 			//FIXME
 			try {
-		        return float.Parse (value.ToString (),
-		            System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+				return float.Parse (value.ToString (),
+				System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
 			} catch (OverflowException) {
 				return value.sign == -1 ? float.NegativeInfinity : float.PositiveInfinity;
 			}
-         }
+		}
+
+		public static explicit operator decimal (BigInteger value)
+		{
+			if (value.sign == 0)
+			return Decimal.Zero;
+
+			uint[] data = value.data;
+			if (data.Length > 3) 
+				throw new OverflowException ();
+
+			int lo = 0, mi = 0, hi = 0;
+			if (data.Length > 2)
+				hi = (Int32)data [2];
+			if (data.Length > 1)
+				mi = (Int32)data [1];
+			if (data.Length > 0)
+				lo = (Int32)data [0];
+
+			return new Decimal(lo, mi, hi, value.sign < 0, 0);
+		}
 
 		public static implicit operator BigInteger (int value)
 		{
@@ -528,6 +575,11 @@ namespace System.Numerics {
 		}
 
 		public static explicit operator BigInteger (float value)
+		{
+			return new BigInteger (value);
+		}
+
+		public static explicit operator BigInteger (decimal value)
 		{
 			return new BigInteger (value);
 		}
