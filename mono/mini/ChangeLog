@@ -1,3 +1,10 @@
+2010-03-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* branch-opts.c (mono_if_conversion): Disable one of the cases when deadce
+	is disabled. Fixes #582322.
+
+	* iltests.il.in: Add a test.
+
 2010-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-amd64.c (mono_arch_create_monitor_exit_trampoline_full): Delegate
