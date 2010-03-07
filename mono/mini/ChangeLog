@@ -1,3 +1,8 @@
+2010-03-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c: Generate better code for the NewObject
+	intrinsic.
+	
 2010-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* branch-opts.c (mono_if_conversion): Disable one of the cases when deadce
