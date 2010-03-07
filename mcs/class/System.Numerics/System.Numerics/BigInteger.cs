@@ -456,6 +456,27 @@ namespace System.Numerics {
 			return (((ulong)high) << 32) | low;
 		}
 
+		public static explicit operator double (BigInteger value)
+		{
+			//FIXME
+			try {
+	            return double.Parse (value.ToString (),
+    	            System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+			} catch (OverflowException) {
+				return value.sign == -1 ? double.NegativeInfinity : double.PositiveInfinity;
+			}
+        }
+
+		public static explicit operator float (BigInteger value)
+		{
+			//FIXME
+			try {
+		        return float.Parse (value.ToString (),
+		            System.Globalization.CultureInfo.InvariantCulture.NumberFormat);
+			} catch (OverflowException) {
+				return value.sign == -1 ? float.NegativeInfinity : float.PositiveInfinity;
+			}
+         }
 
 		public static implicit operator BigInteger (int value)
 		{
