@@ -1,5 +1,9 @@
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* BigInteger.cs: Simply Parse/TryParse.
+
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* BigInteger.cs: Add decimal operators/ctor.
 
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>

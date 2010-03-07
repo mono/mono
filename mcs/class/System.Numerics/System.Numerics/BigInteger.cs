@@ -49,6 +49,7 @@ using System.Diagnostics;
 using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Text;
+using System.Threading;
 
 /*
 Optimization
@@ -1411,6 +1412,121 @@ namespace System.Numerics {
 			digits.Reverse ();
 
 			return new String (digits.ToArray ());
+		}
+
+		public static BigInteger Parse (string value)
+		{
+			Exception ex;
+			BigInteger result;
+
+			if (!Parse (value, false, out result, out ex))
+				throw ex;
+			return result;
+		}
+
+
+		public static bool TryParse (string value, out BigInteger result)
+		{
+			Exception ex;
+			return Parse (value, true, out result, out ex);
+		}
+
+		static Exception GetFormatException ()
+		{
+			return new FormatException ("Input string was not in the correct format");
+		}
+
+		static bool ProcessTrailingWhitespace (bool tryParse, string s, int position, ref Exception exc)
+		{
+			int len = s.Length;
+			
+			for (int i = position; i < len; i++){
+				char c = s [i];
+				
+				if (c != 0 && !Char.IsWhiteSpace (c)){
+					if (!tryParse)
+						exc = GetFormatException ();
+					return false;
+				}
+			}
+			return true;
+		}
+
+		static bool Parse (string s, bool tryParse, out BigInteger result, out Exception exc)
+		{
+			int len;
+			int i, sign = 1;
+			bool digits_seen = false;
+
+			result = Zero;
+			exc = null;
+
+			if (s == null) {
+				if (!tryParse)
+					exc = new ArgumentNullException ("value");
+				return false;
+			}
+
+			len = s.Length;
+
+			char c;
+			for (i = 0; i < len; i++){
+				c = s [i];
+				if (!Char.IsWhiteSpace (c))
+					break;
+			}
+			
+			if (i == len) {
+				if (!tryParse)
+					exc = GetFormatException ();
+				return false;
+			}
+
+			var info = Thread.CurrentThread.CurrentCulture.NumberFormat;
+			
+			string negative = info.NegativeSign;
+			string positive = info.PositiveSign;
+
+			if (string.CompareOrdinal (s, i, positive, 0, positive.Length) == 0)
+				i += positive.Length;
+			else if (string.CompareOrdinal (s, i, negative, 0, negative.Length) == 0) {
+				sign = -1;
+				i += negative.Length;
+			}
+
+			BigInteger val = Zero;
+			for (; i < len; i++){
+				c = s [i];
+
+				if (c == '\0') {
+					i = len;
+					continue;
+				}
+
+				if (c >= '0' && c <= '9'){
+					byte d = (byte) (c - '0');
+
+					val = val * 10 + d;
+
+					digits_seen = true;
+				} else if (!ProcessTrailingWhitespace (tryParse, s, i, ref exc))
+					return false;
+			}
+
+			if (!digits_seen) {
+				if (!tryParse)
+					exc = GetFormatException ();
+				return false;
+			}
+
+			if (val.sign == 0)
+				result = val;
+			else if (sign == -1)
+				result = new BigInteger (-1, val.data);
+			else
+				result = new BigInteger (1, val.data);
+
+			return true;
 		}
 
 		public static BigInteger Min (BigInteger left, BigInteger right)
