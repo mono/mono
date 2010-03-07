@@ -790,5 +790,42 @@ namespace MonoTests.System.Numerics
 
 			Assert.AreEqual (12345678999L, (long)new BigInteger (12345678999.33), "#8");
 		}
+
+		[Test]
+		public void DoubleConversion () {
+			Assert.AreEqual (999d, (double)new BigInteger (999), "#1");
+			Assert.AreEqual (double.PositiveInfinity, (double)BigInteger.Pow (2, 1024), "#2");
+			Assert.AreEqual (double.NegativeInfinity, (double)BigInteger.Pow (-2, 1025), "#3");
+
+		}
+
+		[Test]
+		public void DecimalCtor () {
+			Assert.AreEqual (999, (int)new BigInteger (999.99m), "#1");
+			Assert.AreEqual (-10000, (int)new BigInteger (-10000m), "#2");
+			Assert.AreEqual (0, (int)new BigInteger (0m), "#3");
+		}
+
+		[Test]
+		public void DecimalConversion () {
+			Assert.AreEqual (999m, (decimal)new BigInteger (999), "#1");
+
+			try {
+				var x = (decimal)BigInteger.Pow (2, 1024);
+				Assert.Fail ("#2");
+			} catch (OverflowException) {}
+
+			try {
+				var x = (decimal)BigInteger.Pow (-2, 1025);
+				Assert.Fail ("#3");
+			} catch (OverflowException) {}
+
+			Assert.AreEqual (0m, (decimal)new BigInteger (0), "#4");
+			Assert.AreEqual (1m, (decimal)new BigInteger (1), "#5");
+			Assert.AreEqual (-1m, (decimal)new BigInteger (-1), "#6");
+			Assert.AreEqual (9999999999999999999999999999m,
+				(decimal)new BigInteger (9999999999999999999999999999m), "#7");
+		}
+
 	}
 }
