@@ -9,6 +9,7 @@
 using System;
 using System.Numerics;
 using System.Globalization;
+using System.Threading;
 using NUnit.Framework;
 
 
@@ -827,5 +828,88 @@ namespace MonoTests.System.Numerics
 				(decimal)new BigInteger (9999999999999999999999999999m), "#7");
 		}
 
+		[Test]
+		public void Parse () {
+			try {
+				BigInteger.Parse (null);
+				Assert.Fail ("#1");
+			} catch (ArgumentNullException) {}
+
+			try {
+				BigInteger.Parse ("");
+				Assert.Fail ("#2");
+			} catch (FormatException) {}
+
+
+			try {
+				BigInteger.Parse ("  ");
+				Assert.Fail ("#3");
+			} catch (FormatException) {}
+
+			try {
+				BigInteger.Parse ("hh");
+				Assert.Fail ("#4");
+			} catch (FormatException) {}
+
+			try {
+				BigInteger.Parse ("-");
+				Assert.Fail ("#5");
+			} catch (FormatException) {}
+
+			try {
+				BigInteger.Parse ("-+");
+				Assert.Fail ("#6");
+			} catch (FormatException) {}
+
+			Assert.AreEqual (10, (int)BigInteger.Parse("+10"), "#7");
+			Assert.AreEqual (10, (int)BigInteger.Parse("10 "), "#8");
+			Assert.AreEqual (-10, (int)BigInteger.Parse("-10 "), "#9");
+		}
+
+		[Test]
+		public void TryParse () {
+			BigInteger x = BigInteger.One;
+			Assert.IsFalse (BigInteger.TryParse (null, out x), "#1");
+			Assert.AreEqual (0, (int)x, "#1a");
+			Assert.IsFalse (BigInteger.TryParse ("", out x), "#2");
+			Assert.IsFalse (BigInteger.TryParse (" ", out x), "#3");
+			Assert.IsFalse (BigInteger.TryParse (" -", out x), "#4");
+			Assert.IsFalse (BigInteger.TryParse (" +", out x), "#5");
+			Assert.IsFalse (BigInteger.TryParse (" FF", out x), "#6");
+
+			Assert.IsTrue (BigInteger.TryParse (" 99", out x), "#7");
+			Assert.AreEqual (99, (int)x, "#8");
+
+			Assert.IsTrue (BigInteger.TryParse ("+133", out x), "#9");
+			Assert.AreEqual (133, (int)x, "#10");
+
+			Assert.IsTrue (BigInteger.TryParse ("-010", out x), "#11");
+			Assert.AreEqual (-10, (int)x, "#12");
+		}
+
+		[Test]
+		public void TryParseWeirdCulture () {
+			var old = Thread.CurrentThread.CurrentCulture;
+			var cur = (CultureInfo)old.Clone ();
+
+			NumberFormatInfo ninfo = new NumberFormatInfo ();
+			ninfo.NegativeSign = ">";
+			ninfo.PositiveSign = "%";
+			cur.NumberFormat = ninfo;
+
+			Thread.CurrentThread.CurrentCulture = cur;
+		
+			BigInteger x = BigInteger.Zero;
+
+			try {
+				Assert.IsTrue (BigInteger.TryParse ("%11", out x), "#1");
+				Assert.AreEqual (11, (int)x, "#2");
+
+				Assert.IsTrue (BigInteger.TryParse (">11", out x), "#3");
+				Assert.AreEqual (-11, (int)x, "#4");
+			} finally {
+				Thread.CurrentThread.CurrentCulture = old;
+			}
+		}
 	}
 }
