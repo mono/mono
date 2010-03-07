@@ -1,3 +1,7 @@
+2010-03-07  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Runtime.cs: Document how NewObject() is meant to be used.
+
 2010-03-04  Geoff Norton  <gnorton@novell.com>
 
 	* Runtime.cs: Add a new private internal icall to construct
