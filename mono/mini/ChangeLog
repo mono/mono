@@ -1,3 +1,10 @@
+2010-03-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* branch-opts.c (mono_if_conversion): Disable one of the cases when deadce
+	is disabled. Fixes #582322.
+
+	* iltests.il.in: Add a test.
+
 2010-02-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* decompose.c (mono_decompose_long_opts): Handle OP_LCONV_TO_OVF_I8 here too.
