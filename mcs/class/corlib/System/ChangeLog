@@ -1,3 +1,8 @@
+2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* UIntPtr.cs: Remove some v4 custom attributes that were
+	on Beta2 but aren't there on RC.
+
 2010-03-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpan.cs: Implement correctly the TryParse method, instead of
