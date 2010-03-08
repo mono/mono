@@ -79,18 +79,20 @@ namespace System.Net {
 			get { return user; }
 		}
 
-		internal void ParseAuthentication () {
+		internal void ParseAuthentication (AuthenticationSchemes expectedSchemes) {
+			if (expectedSchemes == AuthenticationSchemes.Anonymous)
+				return;
+
 			// TODO: Handle NTLM/Digest modes
 			string header = request.Headers ["Authorization"];
-
 			if (header == null || header.Length < 2)
 				return;
 
-			string [] authenticationData = header.Substring (header.IndexOf (':') + 1).Split (new char [] {' '});
-
+			string [] authenticationData = header.Split (new char [] {' '}, 2);
 			if (string.Compare (authenticationData [0], "basic", true) == 0) {
 				user = ParseBasicAuthentication (authenticationData [1]);
 			}
+			// TODO: throw if malformed -> 400 bad request
 		}
 	
 		internal IPrincipal ParseBasicAuthentication (string authData) {
