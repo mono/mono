@@ -5387,7 +5387,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 	MonoError error;
 	MonoInst *ins, **sp, **stack_start;
 	MonoBasicBlock *bblock, *tblock = NULL, *init_localsbb = NULL;
-	MonoSimpleBasicBlock *bb = NULL;
+	MonoSimpleBasicBlock *bb = NULL, *original_bb = NULL;
 	MonoMethod *cmethod, *method_definition;
 	MonoInst **arg_array;
 	MonoMethodHeader *header;
@@ -5795,7 +5795,7 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 	skip_dead_blocks = !dont_verify;
 	if (skip_dead_blocks) {
-		bb = mono_basic_block_split (method, &error);
+		original_bb = bb = mono_basic_block_split (method, &error);
 		if (!mono_error_ok (&error)) {
 			mono_error_cleanup (&error);
 			UNVERIFIED;
@@ -10026,37 +10026,39 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 		cfg->exception_type = MONO_EXCEPTION_INVALID_PROGRAM;
 		cfg->exception_message = g_strdup_printf ("Method %s is too complex.", mname);
 		g_free (mname);
+		mono_basic_block_free (original_bb);
 		return -1;
 	}
 
 	if ((cfg->verbose_level > 2) && (cfg->method == method)) 
 		mono_print_code (cfg, "AFTER METHOD-TO-IR");
 
+	mono_basic_block_free (original_bb);
 	return inline_costs;
  
  exception_exit:
 	g_assert (cfg->exception_type != MONO_EXCEPTION_NONE);
 	g_slist_free (class_inits);
-	mono_basic_block_free (bb);
+	mono_basic_block_free (original_bb);
 	dont_inline = g_list_remove (dont_inline, method);
 	return -1;
 
  inline_failure:
 	g_slist_free (class_inits);
-	mono_basic_block_free (bb);
+	mono_basic_block_free (original_bb);
 	dont_inline = g_list_remove (dont_inline, method);
 	return -1;
 
  load_error:
 	g_slist_free (class_inits);
-	mono_basic_block_free (bb);
+	mono_basic_block_free (original_bb);
 	dont_inline = g_list_remove (dont_inline, method);
 	cfg->exception_type = MONO_EXCEPTION_TYPE_LOAD;
 	return -1;
 
  unverified:
 	g_slist_free (class_inits);
-	mono_basic_block_free (bb);
+	mono_basic_block_free (original_bb);
 	dont_inline = g_list_remove (dont_inline, method);
 	set_exception_type_from_invalid_il (cfg, method, ip);
 	return -1;

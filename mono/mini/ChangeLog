@@ -1,3 +1,9 @@
+2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c: Store the initial basic block returned by mono_basic_block_split
+	so we can release the whole list and not just the first one. Free
+	it in more places as well.
+
 2010-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* branch-opts.c (mono_if_conversion): Disable one of the cases when deadce
