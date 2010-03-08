@@ -1,7 +1,3 @@
-2010-03-06  Zoltan Varga  <vargaz@gmail.com>
-
-	* synchronized.cs: Add tests for not locked monitors.
-
 2010-03-05  Robert Jordan  <robertj@gmx.net>
 
 	* remoting4.cs: Add test for bug #504886.
