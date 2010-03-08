@@ -1,3 +1,12 @@
+2010-03-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-gc.c (scan_needed_big_objects): Call drain_gray_stack () to avoid
+	uncontrolled growth of the gray stack.
+
+	* sgen-gray.c: Rewrite this so it behaves like a stack, not a queue, so recently
+	added items are removed first, improving cache locality. Avoid freeing queue
+	segments in the fast path, use the list of segments as the free list, truncate
+	it to its max size at the start of collection.
 
 Mon Mar 8 10:13:52 CET 2010 Paolo Molaro <lupus@ximian.com>
 
