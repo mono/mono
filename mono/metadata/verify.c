@@ -6103,12 +6103,7 @@ cleanup:
 		g_free (ctx.code);
 	g_free (ctx.locals);
 	g_free (ctx.params);
-<<<<<<< HEAD
-	mono_basic_block_free (bb);
-=======
 	mono_basic_block_free (original_bb);
-	mono_metadata_free_mh (ctx.header);
->>>>>>> 19d839d... 2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	return ctx.list;
 }
