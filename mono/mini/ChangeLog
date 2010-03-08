@@ -1,4 +1,8 @@
 
+Mon Mar 8 17:58:26 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, *.c: prepare for MonoMethodHeader to become a transient entity.
+
 Mon Mar 8 17:35:26 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* driver.c: report also other misc build options.
