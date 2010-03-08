@@ -1,3 +1,10 @@
+
+Mon Mar 8 17:30:44 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* verify.c, debug-helpers.c, profiler.c, loader.c,
+	mono-basic-block.c, mono-debug.c, reflection.c: prepare to make
+	MonoMethodHeader a transient entity.
+
 2010-03-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (scan_needed_big_objects): Call drain_gray_stack () to avoid
