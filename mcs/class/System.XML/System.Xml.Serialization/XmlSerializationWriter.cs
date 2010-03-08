@@ -813,9 +813,7 @@ namespace System.Xml.Serialization
 #if NET_2_0
 		protected void WriteStartElement (string name, string ns, Object o, bool writePrefixed, XmlSerializerNamespaces xmlns)
 		{
-			if (xmlns == null)
-				throw new ArgumentNullException ("xmlns");
-			WriteStartElement (name, ns, o, writePrefixed, xmlns.ToArray ());
+			WriteStartElement (name, ns, o, writePrefixed, xmlns != null ? xmlns.ToArray () : null);
 		}
 #endif
 
@@ -833,12 +831,13 @@ namespace System.Xml.Serialization
 			
 			if (topLevelElement && ns != null && ns.Length != 0)
 			{
-				foreach (XmlQualifiedName qn in namespaces)
-					if (qn.Namespace == ns) {
-						prefix = qn.Name;
-						writePrefixed = true;
-						break;
-					}
+				if (namespaces != null)
+					foreach (XmlQualifiedName qn in namespaces)
+						if (qn.Namespace == ns) {
+							prefix = qn.Name;
+							writePrefixed = true;
+							break;
+						}
 			}
 
 			if (writePrefixed && ns != string.Empty)
