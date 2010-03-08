@@ -51,13 +51,20 @@ namespace System.ServiceModel.Security
 
 		internal IssuedTokenServiceCredential ()
 		{
+			AllowedAudienceUris = new List<string> ();
 		}
+
+		[MonoTODO]
+		public IList<string> AllowedAudienceUris { get; private set; }
 
 		[MonoTODO]
 		public bool AllowUntrustedRsaIssuers {
 			get { return allow_untrusted_rsa_issuers; }
 			set { allow_untrusted_rsa_issuers = value; }
 		}
+
+		[MonoTODO]
+		public AudienceUriMode AudienceUriMode { get; set; }
 
 		[MonoTODO]
 		public X509CertificateValidationMode CertificateValidationMode {

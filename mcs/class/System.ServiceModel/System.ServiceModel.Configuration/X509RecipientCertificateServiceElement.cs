@@ -73,15 +73,15 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			store_location = new ConfigurationProperty ("storeLocation",
-				typeof (StoreLocation), "LocalMachine", null/* FIXME: get converter for StoreLocation*/, null,
+				typeof (StoreLocation), "LocalMachine", null, null,
 				ConfigurationPropertyOptions.None);
 
 			store_name = new ConfigurationProperty ("storeName",
-				typeof (StoreName), "My", null/* FIXME: get converter for StoreName*/, null,
+				typeof (StoreName), "My", null, null,
 				ConfigurationPropertyOptions.None);
 
 			x509_find_type = new ConfigurationProperty ("x509FindType",
-				typeof (X509FindType), "FindBySubjectDistinguishedName", null/* FIXME: get converter for X509FindType*/, null,
+				typeof (X509FindType), "FindBySubjectDistinguishedName", null, null,
 				ConfigurationPropertyOptions.None);
 
 			properties.Add (find_value);
