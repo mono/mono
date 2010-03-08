@@ -1,3 +1,7 @@
+2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Debugger.cs: Add Obsolete attribute to .ctor().
+
 2009-10-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* StackFrame.cs: Relax GetSecureFileName when the coreclr is not 

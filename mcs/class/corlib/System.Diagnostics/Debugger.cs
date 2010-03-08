@@ -111,6 +111,7 @@ namespace System.Diagnostics
 			// a NotImplementedException wouldn't be appropriate.
 		}
 
+		[Obsolete]
 		public Debugger()
 		{
 		}
