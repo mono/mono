@@ -38,6 +38,23 @@ namespace System.Runtime.Serialization.Configuration
 		{
 		}
 
+		public override ConfigurationElementCollectionType CollectionType {
+			get { return ConfigurationElementCollectionType.BasicMap; }
+		}
+
+		// It is undocumented.
+		protected override string ElementName {
+			get { return "knownType"; }
+		}
+
+		public TypeElement this [int index] {
+			get { return (TypeElement) BaseGet (index); }
+			set {
+				BaseRemoveAt (index);
+				Add (value);
+			}
+		}
+
 		public void Add (TypeElement element)
 		{
 			BaseAdd (element);
@@ -46,11 +63,6 @@ namespace System.Runtime.Serialization.Configuration
 		public void Clear ()
 		{
 			BaseClear ();
-		}
-
-		public bool Contains (string typeName)
-		{
-			return BaseGet (typeName) != null;
 		}
 
 		public int IndexOf (TypeElement element)
