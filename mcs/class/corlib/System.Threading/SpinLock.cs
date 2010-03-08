@@ -29,59 +29,22 @@ using System.Runtime.InteropServices;
 #if NET_4_0
 namespace System.Threading
 {
+	[StructLayout(LayoutKind.Explicit)]
+	internal struct TicketType {
+		[FieldOffset(0)]
+		public long TotalValue;
+		[FieldOffset(0)]
+		public int Value;
+		[FieldOffset(4)]
+		public int Users;
+	}
+
 	// Implement the ticket SpinLock algorithm described on http://locklessinc.com/articles/locks/
 	// This lock is usable on both endianness
 	// TODO: some 32 bits platform apparently doesn't support CAS with 64 bits value
-	internal static class SpinLockHelpers
-	{
-		[StructLayout(LayoutKind.Explicit)]
-		internal struct TicketType {
-			[FieldOffset(0)]
-			public long TotalValue;
-			[FieldOffset(0)]
-			public int Value;
-			[FieldOffset(4)]
-			public int Users;
-		}
-
-		internal static void EnterLock (ref TicketType ticket)
-		{
-			int slot = Interlocked.Increment (ref ticket.Users) - 1;
-
-			SpinWait wait;
-			while (slot != ticket.Value)
-				wait.SpinOnce ();
-		}
-
-		internal static void ReleaseLock (ref TicketType ticket, bool flush)
-		{
-			if (flush)
-				Interlocked.Increment (ref ticket.Value);
-			else
-				ticket.Value++;
-		}
-
-		internal static bool TryEnterLock (ref TicketType ticket)
-		{
-			long u = ticket.Users;
-			long totalValue = (u << 32) | u;
-			long newTotalValue
-				= BitConverter.IsLittleEndian ? (u << 32) | (u + 1) : ((u + 1) << 32) | u;
-
-			return Interlocked.CompareExchange (ref ticket.TotalValue, newTotalValue, totalValue) == totalValue;
-		}
-
-		internal static bool IsLockHeld (ref TicketType ticket)
-		{
-			// No need for barrier here
-			long totalValue = ticket.TotalValue;
-			return (totalValue >> 32) != (totalValue & 0xFFFFFFFF);
-		}
-	}
-
 	public struct SpinLock
 	{
-		SpinLockHelpers.TicketType tickets;
+		TicketType ticket;
 
 		int threadWhoTookLock;
 		readonly bool isThreadOwnerTrackingEnabled;
@@ -94,7 +57,9 @@ namespace System.Threading
 
 		public bool IsHeld {
 			get {
-				return SpinLockHelpers.IsLockHeld (ref tickets);
+				// No need for barrier here
+				long totalValue = ticket.TotalValue;
+				return (totalValue >> 32) != (totalValue & 0xFFFFFFFF);
 			}
 		}
 
@@ -111,7 +76,7 @@ namespace System.Threading
 		{
 			this.isThreadOwnerTrackingEnabled = trackId;
 			this.threadWhoTookLock = 0;
-			this.tickets = new SpinLockHelpers.TicketType ();
+			this.ticket = new TicketType ();
 		}
 
 		[MonoTODO("This method is not rigorously correct. Need CER treatment")]
@@ -122,7 +87,12 @@ namespace System.Threading
 			if (isThreadOwnerTrackingEnabled && IsHeldByCurrentThread)
 				throw new LockRecursionException ();
 
-			SpinLockHelpers.EnterLock (ref tickets);
+			int slot = Interlocked.Increment (ref ticket.Users) - 1;
+
+			SpinWait wait;
+			while (slot != ticket.Value)
+				wait.SpinOnce ();
+			
 			lockTaken = true;
 			
 			threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
@@ -153,7 +123,14 @@ namespace System.Threading
 			Watch sw = Watch.StartNew ();
 
 			do {
-				if (lockTaken = SpinLockHelpers.TryEnterLock (ref tickets)) {
+				long u = ticket.Users;
+				long totalValue = (u << 32) | u;
+				long newTotalValue
+					= BitConverter.IsLittleEndian ? (u << 32) | (u + 1) : ((u + 1) << 32) | u;
+				
+				lockTaken = Interlocked.CompareExchange (ref ticket.TotalValue, newTotalValue, totalValue) == totalValue;
+				
+				if (lockTaken) {
 					threadWhoTookLock = Thread.CurrentThread.ManagedThreadId;
 					break;
 				}
@@ -171,7 +148,10 @@ namespace System.Threading
 				throw new SynchronizationLockException ("Current thread is not the owner of this lock");
 
 			threadWhoTookLock = int.MinValue;
-			SpinLockHelpers.ReleaseLock (ref tickets, flushReleaseWrites);
+			if (flushReleaseWrites)
+				Interlocked.Increment (ref ticket.Value);
+			else
+				ticket.Value++;
 		}
 	}
 

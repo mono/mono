@@ -1,5 +1,9 @@
 2010-03-08  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* SpinLock.cs: Merge algorithm back in SpinLock struct
+
+2010-03-08  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* SpinLock.cs: Update to use ticket spinlock algorithm
 
 2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
