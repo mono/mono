@@ -107,6 +107,7 @@ namespace System.Reflection {
 			return Type.EmptyTypes;
 		}
 
+#if !NET_4_0
 		public override bool IsGenericMethod {
 			get {
 				return false;
@@ -124,11 +125,43 @@ namespace System.Reflection {
 				return false;
 			}
 		}
+#endif
 
 		public virtual ParameterInfo ReturnParameter {
 			get {
 				throw new NotSupportedException ();
 			}
 		}
+
+#if NET_4_0
+		public override bool Equals (object obj)
+		{
+			return obj == this;
+		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public static bool operator == (MethodInfo left, MethodInfo right)
+		{
+			if ((object)left == (object)right)
+				return true;
+			if ((object)left == null ^ (object)right == null)
+				return false;
+			return left.Equals (right);
+		}
+
+		public static bool operator != (MethodInfo left, MethodInfo right)
+		{
+			if ((object)left == (object)right)
+				return false;
+			if ((object)left == null ^ (object)right == null)
+				return true;
+			return !left.Equals (right);
+		}
+#endif
+
 	}
 }

@@ -1,6 +1,10 @@
 2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* ManifestResourceInfo.cs> Ne v4 .ctor.
+	* MethodInfo.cs: New v4 stuff.
+
+2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ManifestResourceInfo.cs: New v4 .ctor.
 
 2010-02-28 Rodrigo Kumpera  <rkumpera@novell.com>
 
