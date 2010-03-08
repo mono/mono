@@ -1,3 +1,8 @@
+
+Mon Mar 8 10:13:52 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* metadata.h: more space savings, both with small config and without.
+
 2010-03-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* monitor.c (mono_monitor_exit): Raise an exception if the object is not locked,
