@@ -37,4 +37,17 @@
    fun:*
    obj:*mono
 }
-
+{
+   mono - Invalid write of size 4 hazardous_pointer
+   Memcheck:Addr4
+   fun:get_hazardous_pointer
+   fun:*
+   obj:*mono
+}
+{
+   mono - Invalid write of size 4 jit_info_table_find
+   Memcheck:Addr4
+   fun:mono_jit_info_table_find
+   fun:*
+   obj:*mono
+}

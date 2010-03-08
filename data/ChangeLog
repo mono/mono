@@ -1,0 +1,3 @@
+2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono.supp: Add hazard pointers supressions.
