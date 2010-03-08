@@ -25,7 +25,6 @@
 #include <mono/metadata/tabledefs.h>
 #include <mono/metadata/marshal.h>
 #include <mono/metadata/profiler-private.h>
-#include <mono/metadata/domain-internals.h>
 #include <mono/utils/mono-time.h>
 
 /*
@@ -699,20 +698,11 @@ mono_monitor_exit (MonoObject *obj)
 	}
 #endif
 	if (G_UNLIKELY (mon == NULL)) {
-		/* No one ever used Enter */
-		/* MS throws starting from net 2.0 */
-		if (mono_framework_version () >= 2)
-			mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked"));
-		else
-			return;
+		/* No one ever used Enter. Just ignore the Exit request as MS does */
+		return;
 	}
-	if (G_UNLIKELY (mon->owner != GetCurrentThreadId () && mono_framework_version () >= 2)) {
-		/* This also catches the case where the object is not locked */
-		/* MS throws starting from net 2.0 */
-		if (mono_framework_version () >= 2)
-			mono_raise_exception (mono_get_exception_synchronization_lock ("Not locked"));
-		else
-			return;
+	if (G_UNLIKELY (mon->owner != GetCurrentThreadId ())) {
+		return;
 	}
 	
 	nest = mon->nest - 1;
