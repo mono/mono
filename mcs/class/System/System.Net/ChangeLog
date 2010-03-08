@@ -1,3 +1,13 @@
+2010-03-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpListenerContext.cs: split the auth header in 2 parts.
+	* HttpListener.cs: backported SelectAuthenticationScheme and
+	added new InternalEndGetContext used for connections that require
+	authentication.
+	* ListenerAsyncResult.cs: allow this object to be just a forwarder
+	when nesting connections for authentication purposes.
+	Fixes bug #585455.
+
 2010-03-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebClient.cs: fix for UploadStringAsync(). Closes bug #577818.

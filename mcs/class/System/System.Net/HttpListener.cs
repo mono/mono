@@ -220,6 +220,20 @@ namespace System.Net {
 			return context; // This will throw on error.
 		}
 
+		internal HttpListenerContext InternalEndGetContext (IAsyncResult asyncResult)
+		{
+			ListenerAsyncResult ares = asyncResult as ListenerAsyncResult;
+			if (ares == null)
+				throw new ArgumentException ("Wrong IAsyncResult.", "asyncResult");
+
+			lock (wait_queue) {
+				int idx = wait_queue.IndexOf (ares);
+				if (idx >= 0)
+					wait_queue.RemoveAt (idx);
+			}
+			return ares.GetContext ();
+		}
+
 		internal AuthenticationSchemes SelectAuthenticationScheme (HttpListenerContext context)
 		{
 			if (AuthenticationSchemeSelectorDelegate != null)
