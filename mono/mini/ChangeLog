@@ -1,3 +1,6 @@
+2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c: Revert r153222 as it doesn't belong here.
 
 Mon Mar 8 17:58:26 CET 2010 Paolo Molaro <lupus@ximian.com>
 
