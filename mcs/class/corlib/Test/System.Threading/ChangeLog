@@ -1,3 +1,7 @@
+2010-03-08  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* SpinLockTests.cs: Added unit tests for SpinLock
+
 2010-02-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* WaitHandleTest.cs: Add a test for #576039.
