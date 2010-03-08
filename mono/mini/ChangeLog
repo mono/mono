@@ -1,5 +1,11 @@
 2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* method-to-ir.c: Store the initial basic block returned by mono_basic_block_split
+	so we can release the whole list and not just the first one. Free
+	it in more places as well.
+
+2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c: Revert r153222 as it doesn't belong here.
 
 Mon Mar 8 17:58:26 CET 2010 Paolo Molaro <lupus@ximian.com>
