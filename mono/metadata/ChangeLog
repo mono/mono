@@ -1,3 +1,8 @@
+2010-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (_G_BOOLEAN_EXPR): Fix the definition of this to explicitly
+	convert to a boolean, recent gcc versions compile this differently.
+
 2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Store the initial basic block returned by mono_basic_block_split
