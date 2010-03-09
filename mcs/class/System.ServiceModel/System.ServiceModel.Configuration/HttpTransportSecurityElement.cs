@@ -93,7 +93,7 @@ namespace System.ServiceModel.Configuration
 
 		[ConfigurationProperty ("clientCredentialType",
 			 Options = ConfigurationPropertyOptions.None,
-			 DefaultValue = "None")]
+			 DefaultValue = HttpClientCredentialType.None)]
 		public HttpClientCredentialType ClientCredentialType {
 			get { return (HttpClientCredentialType) base [client_credential_type]; }
 			set { base [client_credential_type] = value; }
@@ -105,7 +105,7 @@ namespace System.ServiceModel.Configuration
 
 		[ConfigurationProperty ("proxyCredentialType",
 			 Options = ConfigurationPropertyOptions.None,
-			 DefaultValue = "None")]
+			 DefaultValue = HttpProxyCredentialType.None)]
 		public HttpProxyCredentialType ProxyCredentialType {
 			get { return (HttpProxyCredentialType) base [proxy_credential_type]; }
 			set { base [proxy_credential_type] = value; }
@@ -122,7 +122,12 @@ namespace System.ServiceModel.Configuration
 			set { base [realm] = value; }
 		}
 
-
+		internal void ApplyConfiguration (HttpTransportSecurity security)
+		{
+			security.ClientCredentialType = ClientCredentialType;
+			security.ProxyCredentialType = ProxyCredentialType;
+			security.Realm = Realm;
+		}
 	}
 
 }

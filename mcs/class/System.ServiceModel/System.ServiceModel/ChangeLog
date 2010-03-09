@@ -1,3 +1,7 @@
+2010-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportSecurity.cs : remove MonoTODOs.
+
 2010-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceRuntimeChannel.cs, ServiceProxyGenerator.cs:

@@ -30,7 +30,6 @@ using System.ServiceModel.Security;
 
 namespace System.ServiceModel
 {
-	[MonoTODO]
 	public sealed class HttpTransportSecurity
 	{
 		HttpClientCredentialType client;
@@ -41,19 +40,16 @@ namespace System.ServiceModel
 		{
 		}
 
-		[MonoTODO]
 		public HttpClientCredentialType ClientCredentialType {
 			get { return client; }
 			set { client = value; }
 		}
 
-		[MonoTODO]
 		public HttpProxyCredentialType ProxyCredentialType {
 			get { return proxy; }
 			set { proxy = value; }
 		}
 
-		[MonoTODO]
 		public string Realm {
 			get { return realm; }
 			set { realm = value; }

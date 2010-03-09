@@ -203,7 +203,8 @@ namespace System.ServiceModel.Configuration
 			set { this ["useDefaultWebProxy"] = value; }
 		}
 
-		protected override void OnApplyConfiguration (Binding binding) {
+		protected override void OnApplyConfiguration (Binding binding)
+		{
 			BasicHttpBinding basicHttpBinding = (BasicHttpBinding) binding;
 			
 			basicHttpBinding.AllowCookies = AllowCookies;
@@ -215,13 +216,10 @@ namespace System.ServiceModel.Configuration
 			basicHttpBinding.MessageEncoding = MessageEncoding;
 			basicHttpBinding.ProxyAddress = ProxyAddress;
 
-			basicHttpBinding.ReaderQuotas.MaxArrayLength = ReaderQuotas.MaxArrayLength;
-			basicHttpBinding.ReaderQuotas.MaxBytesPerRead = ReaderQuotas.MaxBytesPerRead;
-			basicHttpBinding.ReaderQuotas.MaxDepth = ReaderQuotas.MaxDepth;
-			basicHttpBinding.ReaderQuotas.MaxNameTableCharCount = ReaderQuotas.MaxNameTableCharCount;
-			basicHttpBinding.ReaderQuotas.MaxStringContentLength = ReaderQuotas.MaxStringContentLength;
+			ReaderQuotas.ApplyConfiguration (basicHttpBinding.ReaderQuotas);
 
 			basicHttpBinding.Security.Mode = Security.Mode;
+			Security.Transport.ApplyConfiguration (basicHttpBinding.Security.Transport);
 			basicHttpBinding.TextEncoding = TextEncoding;
 			basicHttpBinding.TransferMode = TransferMode;
 			basicHttpBinding.UseDefaultWebProxy = UseDefaultWebProxy;

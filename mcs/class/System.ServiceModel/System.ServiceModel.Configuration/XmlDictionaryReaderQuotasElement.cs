@@ -54,7 +54,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class XmlDictionaryReaderQuotasElement
 		 : ConfigurationElement
 	{
@@ -165,6 +164,12 @@ namespace System.ServiceModel.Configuration
 		internal XmlDictionaryReaderQuotas Create ()
 		{
 			var q =  new XmlDictionaryReaderQuotas ();
+			ApplyConfiguration (q);
+			return q;
+		}
+		
+		internal void ApplyConfiguration (XmlDictionaryReaderQuotas q)
+		{
 			if (MaxArrayLength > 0)
 				q.MaxArrayLength = MaxArrayLength;
 			if (MaxBytesPerRead > 0)
@@ -175,7 +180,6 @@ namespace System.ServiceModel.Configuration
 				q.MaxNameTableCharCount = MaxNameTableCharCount;
 			if (MaxStringContentLength > 0)
 				q.MaxStringContentLength = MaxStringContentLength;
-			return q;
 		}
 	}
 
