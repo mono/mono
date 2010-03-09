@@ -94,7 +94,7 @@ namespace System.Net {
 				AuthenticationSchemes schemes = context.Listener.SelectAuthenticationScheme (context);
 				if ((schemes == AuthenticationSchemes.Basic || context.Listener.AuthenticationSchemes == AuthenticationSchemes.Negotiate) && context.Request.Headers ["Authorization"] == null) {
 					context.Response.StatusCode = 401;
-					context.Response.Headers ["WWW-Authenticate"] = schemes + " realm=\"\"";
+					context.Response.Headers ["WWW-Authenticate"] = schemes + " realm=\"" + context.Listener.Realm + "\"";
 					context.Response.OutputStream.Close ();
 					IAsyncResult ares = context.Listener.BeginGetContext (cb, state);
 					this.forward = (ListenerAsyncResult) ares;
