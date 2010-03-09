@@ -1,3 +1,9 @@
+2010-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpListenerManager.cs : For ASP.NET, use correct GenericIdentity
+	  type, and use null password unless we find a chance to get password
+	  in ASP.NET HttpContext.
+
 2010-03-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpReplyChannel.cs, AspNetReplyChannel.cs, HttpChannelListener.cs,

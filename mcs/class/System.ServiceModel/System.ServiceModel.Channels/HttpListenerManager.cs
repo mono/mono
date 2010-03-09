@@ -123,12 +123,12 @@ namespace System.ServiceModel.Channels
 		}
 
 		public override string User {
-			get { return ctx.User != null ? ((HttpListenerBasicIdentity) ctx.User.Identity).Name : null; }
+			get { return ctx.User != null ? ((GenericIdentity) ctx.User.Identity).Name : null; }
 		}
 
 		// FIXME: how to acquire this?
 		public override string Password {
-			get { throw new NotImplementedException (); }
+			get { return null; }
 		}
 
 		public override void ReturnUnauthorized ()
