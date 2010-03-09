@@ -1,5 +1,9 @@
 2010-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TimeSpan.cs: Implement 4.0 overloads of TryParse/Parse.
+
+2010-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TimeSpan.cs: Implement 4.0 ToString overloads.
 
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>

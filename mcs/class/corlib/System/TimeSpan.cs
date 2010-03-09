@@ -356,6 +356,30 @@ namespace System
 			return p.Execute (true, out result);
 		}
 
+#if NET_4_0
+		public static TimeSpan Parse (string s, IFormatProvider formatProvider)
+		{
+			if (s == null)
+				throw new ArgumentNullException ("s");
+
+			TimeSpan result;
+			Parser p = new Parser (s, formatProvider);
+			p.Execute (false, out result);
+			return result;
+		}
+
+		public static bool TryParse (string s, IFormatProvider formatProvider, out TimeSpan result)
+		{
+			if (s == null || s.Length == 0) {
+				result = TimeSpan.Zero;
+				return false;
+			}
+
+			Parser p = new Parser (s, formatProvider);
+			return p.Execute (true, out result);
+		}
+#endif
+
 		public TimeSpan Subtract (TimeSpan ts)
 		{
 			try {
@@ -531,6 +555,27 @@ namespace System
 				_src = src;
 				_length = _src.Length;
 			}
+
+#if NET_4_0
+			NumberFormatInfo number_format;
+
+			public Parser (string src, IFormatProvider formatProvider) :
+				this (src)
+			{
+				number_format = GetNumberFormatInfo (formatProvider);
+			}
+
+			NumberFormatInfo GetNumberFormatInfo (IFormatProvider formatProvider)
+			{
+				NumberFormatInfo format = null;
+				if (formatProvider != null)
+					format = (NumberFormatInfo) formatProvider.GetFormat (typeof (NumberFormatInfo));
+				if (format == null)
+					format = Thread.CurrentThread.CurrentCulture.NumberFormat;
+
+				return format;
+			}
+#endif
 	
 			public bool AtEnd {
 				get {
@@ -608,6 +653,31 @@ namespace System
 				return false;
 			}	
 
+#if NET_4_0
+			// Just as ParseOptDot, but for decimal separator
+			private bool ParseOptDecimalSeparator ()
+			{
+				if (AtEnd)
+					return false;
+
+				// Use culture information if available.
+				if (number_format != null) {
+					string decimal_separator = number_format.NumberDecimalSeparator;
+					if (String.Compare (_src, _cur, decimal_separator, 0, decimal_separator.Length) == 0) {
+						_cur += decimal_separator.Length;
+						return true;
+					}
+
+					return false;
+				} else if (_src [_cur] == '.') {
+					_cur++;
+					return true;
+				}
+
+				return false;
+			}
+#endif
+
 			// Parse optional (LAMESPEC) colon
 			private void ParseOptColon ()
 			{
@@ -668,7 +738,11 @@ namespace System
 				minutes = ParseInt (true);
 				ParseOptColon ();
 				seconds = ParseInt (true);
+#if NET_4_0
+				if ( ParseOptDecimalSeparator () ) {
+#else
 				if ( ParseOptDot () ) {
+#endif
 					ticks = ParseTicks ();
 				}
 				else {
