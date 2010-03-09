@@ -1,3 +1,7 @@
+2010-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* include/private/gc_locks.h: Fix amd64 build with newer gcc's.
+
 2010-03-04  David S. Miller  <davem@davemloft.net>
 
        * include/private/gc_locks.h: Add SPARC implementations of
