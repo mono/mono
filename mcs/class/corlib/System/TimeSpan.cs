@@ -31,6 +31,8 @@
 //
 
 using System.Text;
+using System.Threading;
+using System.Globalization;
 
 namespace System
 {
@@ -396,6 +398,74 @@ namespace System
 
 			return sb.ToString ();
 		}
+
+#if NET_4_0
+		public string ToString (string format)
+		{
+			return ToString (format, null);
+		}
+
+		public string ToString (string format, IFormatProvider formatProvider)
+		{
+			if (format == null || format.Length == 0 || format == "c") // Default version
+				return ToString ();
+
+			if (format != "g" && format != "G")
+				throw new FormatException ("The format is not recognized.");
+
+			NumberFormatInfo number_info = null;
+			if (formatProvider != null)
+				number_info = (NumberFormatInfo)formatProvider.GetFormat (typeof (NumberFormatInfo));
+			if (number_info == null)
+				number_info = Thread.CurrentThread.CurrentCulture.NumberFormat;
+
+			string decimal_separator = number_info.NumberDecimalSeparator;
+			int days, hours, minutes, seconds, milliseconds, fractional;
+
+			days = Math.Abs (Days);
+			hours = Math.Abs (Hours);
+			minutes = Math.Abs (Minutes);
+			seconds = Math.Abs (Seconds);
+			milliseconds = Math.Abs (Milliseconds);
+			fractional = (int) Math.Abs (_ticks % TicksPerSecond);
+
+			// Set Capacity depending on whether it's long or shot format
+			StringBuilder sb = new StringBuilder (format == "g" ? 16 : 32);
+			if (_ticks < 0)
+				sb.Append ('-');
+
+			switch (format) {
+				case "g": // short version
+					if (days != 0) {
+						sb.Append (days.ToString ());
+						sb.Append (':');
+					}
+					sb.Append (hours.ToString ());
+					sb.Append (':');
+					sb.Append (minutes.ToString ("D2"));
+					sb.Append (':');
+					sb.Append (seconds.ToString ("D2"));
+					if (milliseconds != 0) {
+						sb.Append (decimal_separator);
+						sb.Append (milliseconds.ToString ("D3"));
+					}
+					break;
+				case "G": // long version
+					sb.Append (days.ToString ("D1"));
+					sb.Append (':');
+					sb.Append (hours.ToString ("D2"));
+					sb.Append (':');
+					sb.Append (minutes.ToString ("D2"));
+					sb.Append (':');
+					sb.Append (seconds.ToString ("D2"));
+					sb.Append (decimal_separator);
+					sb.Append (fractional.ToString ("D7"));
+					break;
+			}
+
+			return sb.ToString ();
+		}
+#endif
 
 		public static TimeSpan operator + (TimeSpan t1, TimeSpan t2)
 		{
