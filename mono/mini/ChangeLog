@@ -1,3 +1,10 @@
+2010-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_peephole_ins): Fix the OP_FMOVE optimization. Fixes
+	#586664.
+
+	* iltests.il.in: Add a test.
+
 2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c: Store the initial basic block returned by mono_basic_block_split
