@@ -1,3 +1,10 @@
+2010-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-codegen.c (mono_peephole_ins): Fix the OP_FMOVE optimization. Fixes
+	#586664.
+
+	* iltests.il.in: Add a test.
+
 2010-03-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* branch-opts.c (mono_if_conversion): Disable one of the cases when deadce
