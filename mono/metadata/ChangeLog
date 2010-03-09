@@ -1,3 +1,120 @@
+2010-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (_G_BOOLEAN_EXPR): Fix the definition of this to explicitly
+	convert to a boolean, recent gcc versions compile this differently.
+
+2010-03-08  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Store the initial basic block returned by mono_basic_block_split
+	so we can release the whole list and not just the first one.
+
+2010-02-26  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.h
+	(MONO_DEBUGGER_MINOR_VERSION): Bump to 5.
+
+	* threads.c (mono_thread_internal_reset_abort): New method; resets
+	the abort, but doesn't throw any exception if no abort was requested.
+
+2010-03-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* appdomain.c (unload_thread_main): Detach the thread at the end.
+
+2010-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (get_runtime_invoke_type): Avoid sharing byref with I, as the latter
+	needs an indirection.
+
+2010-02-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c (build_imt_slots): Compute the vtable slot correctly for interfaces
+	with static methods. Fixes #583817.
+
+2010-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (get_implicit_generic_array_interfaces): Fix the last change so
+	we don't call setup_interface_offsets () for unfinished types.
+
+2010-02-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_suspend_all_other_threads): Ignore threads which have
+	the DONT_MANAGE flag set.
+
+2010-02-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (get_implicit_generic_array_interfaces): Call
+	mono_class_setup_interface_offsets () before accessing
+	eclass->interface_offsets_count. This only shows up on platforms without IMT for
+	some reason.
+
+2010-02-23  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): Better error message.
+
+2010-02-22  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c: Add mono_method_get_header_summary which returns minimal
+	information about the header of a method. This is the information used
+	by the inline oracle to reject methods.
+
+	This method doesn't decode local variables and doesn't cache it's result,
+	so it should cause a minimal reduction in memory usage.
+
+	* metadata-internals.h: Add MonoMethodHeaderSummary structure and
+	mono_method_get_header_summary.
+
+2009-09-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (dis_one): Avoid unaligned accesses on platforms where that is
+	a problem.
+
+2010-02-19  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-basic-block.c (mono_opcode_value_and_size): Use pointer variant
+	of overflow checking function.
+
+2010-02-18  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_reflection_method_on_tb_inst_get_handle): Handle non
+	generic methods.
+
+	* reflection.c (mono_reflection_get_custom_attrs_info): Handle compiler context
+	cases for ParameterInfo.
+
+	Fixes #579493.
+
+	Backport of r152024.
+
+2010-02-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_get_cctor): Fix support for dynamic classes, which doesn't
+	have has_cctor set. Fixes #575946.
+
+2010-02-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* appdomain.c: display a warning if the parsing the config file
+	produces any error.
+	Skip the BOM in UTF-8 files.
+
+2010-02-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (mono_method_desc_search_in_image): Handle short names like
+	'int' for system classes.
+
+2010-01-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* generic-sharing.c (instantiate_other_info): Don't create ftnptr's from the
+	result of mono_compile_method (), it already includes an ftnptr.
+
+2010-02-10  Geoff Norton  <gnorton@novell.com>
+
+	* reflection.c: Support building with DISABLE_REFLECTION
+
+2010-02-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: Fixes for SetMinThreads and SetMaxThreads.
+	Closes bug #566057.
+
 2010-02-09  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (param_info_get_type_modifiers): Handle the case when the member object is a
