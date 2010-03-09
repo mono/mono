@@ -34,6 +34,7 @@ using System.IdentityModel.Selectors;
 using System.IdentityModel.Tokens;
 using System.ServiceModel.Description;
 using System.ServiceModel.Security;
+using System.Security.Principal;
 using System.Text;
 using System.Threading;
 using System.Net;
