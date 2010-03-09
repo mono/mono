@@ -1,5 +1,9 @@
 2010-03-09  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_decompose_opts): Fix OP_ICONV_TO_R_UN when cross-compiling.
+
+2010-03-09  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-codegen.c (mono_peephole_ins): Fix the OP_FMOVE optimization. Fixes
 	#586664.
 
