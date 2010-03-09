@@ -91,28 +91,31 @@ namespace System.Net {
 			this.synch = synch;
 			this.context = context;
 			lock (locker) {
-				completed = true;
-				if (handle != null)
-					handle.Set ();
-
 				AuthenticationSchemes schemes = context.Listener.SelectAuthenticationScheme (context);
 				if ((schemes == AuthenticationSchemes.Basic || context.Listener.AuthenticationSchemes == AuthenticationSchemes.Negotiate) && context.Request.Headers ["Authorization"] == null) {
-					context.Listener.InternalEndGetContext (this);
 					context.Response.StatusCode = 401;
 					context.Response.Headers ["WWW-Authenticate"] = schemes + " realm=\"\"";
 					context.Response.OutputStream.Close ();
 					IAsyncResult ares = context.Listener.BeginGetContext (cb, state);
 					this.forward = (ListenerAsyncResult) ares;
-					if (handle != null)
-						forward.handle = handle;
+					lock (forward.locker) {
+						if (handle != null)
+							forward.handle = handle;
+					}
 					ListenerAsyncResult next = forward;
 					for (int i = 0; next.forward != null; i++) {
 						if (i > 20)
 							Complete ("Too many authentication errors");
 						next = next.forward;
 					}
-				} else if (cb != null)
-					ThreadPool.QueueUserWorkItem (InvokeCallback, this);
+				} else {
+					completed = true;
+					if (handle != null)
+						handle.Set ();
+
+					if (cb != null)
+						ThreadPool.QueueUserWorkItem (InvokeCallback, this);
+				}
 			}
 		}
 

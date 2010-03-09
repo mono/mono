@@ -291,6 +291,28 @@ namespace System.Net {
 			}
 		}
 
+		// returns true is the stream could be reused.
+		internal bool FlushInput ()
+		{
+			if (!HasEntityBody)
+				return true;
+
+			int length = 2048;
+			if (content_length > 0)
+				length = (int) Math.Min (content_length, (long) length);
+
+			byte [] bytes = new byte [length];
+			while (true) {
+				// TODO: test if MS has a timeout when doing this
+				try {
+					if (InputStream.Read (bytes, 0, length) <= 0)
+						return true;
+				} catch {
+					return false;
+				}
+			}
+		}
+
 		public string [] AcceptTypes {
 			get { return accept_types; }
 		}

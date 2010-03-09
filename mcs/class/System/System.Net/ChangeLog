@@ -1,3 +1,11 @@
+2010-03-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpListener.cs:
+	* HttpListenerRequest.cs:
+	* ListenerAsyncResult.cs:
+	* HttpConnection.cs: make sure there is no pending input when reusing
+	the connection.
+
 2010-03-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpListenerContext.cs: split the auth header in 2 parts.
