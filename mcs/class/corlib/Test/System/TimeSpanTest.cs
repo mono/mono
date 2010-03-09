@@ -11,6 +11,7 @@
 
 using NUnit.Framework;
 using System;
+using System.Globalization;
 
 namespace MonoTests.System
 {
@@ -942,6 +943,60 @@ public class TimeSpanTest {
 		Assert.AreEqual (false, TimeSpan.TryParse ("10675199.02:48:05.4775808", out result), "OverMaxValue");
 		Assert.AreEqual (false, TimeSpan.TryParse ("-10675199.02:48:05.4775809", out result), "UnderMinValue");
 	}
+
+#if NET_4_0
+	[Test]
+	public void ToStringOverloads ()
+	{
+		TimeSpan ts = new TimeSpan (1, 2, 3, 4, 6);
+
+		// Simple version - culture invariant
+		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString (), "#A1");
+		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString ("c"), "#A2");
+		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString (null), "#A3");
+		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString (String.Empty), "#A4");
+
+		//
+		// IFormatProvider ones - use a culture changing numeric format.
+		// Also, we use fr-FR as culture, since it uses some elements different to invariant culture
+		//
+		CultureInfo culture = CultureInfo.GetCultureInfo ("fr-FR");
+
+		Assert.AreEqual ("1:2:03:04,006", ts.ToString ("g", culture), "#B1");
+		Assert.AreEqual ("1:02:03:04,0060000", ts.ToString ("G", culture), "#B2");
+		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString ("c", culture), "#B3"); // 'c' format ignores CultureInfo
+
+		ts = new TimeSpan (4, 5, 6);
+		Assert.AreEqual ("4:05:06", ts.ToString ("g", culture), "#C1");
+		Assert.AreEqual ("0:04:05:06,0000000", ts.ToString ("G", culture), "#C2");
+	}
+
+	[Test]
+	public void ToStringOverloadsErrors ()
+	{
+		TimeSpan ts = new TimeSpan (10, 10, 10);
+		string result;
+
+		try {
+			result = ts.ToString ("non-valid");
+			Assert.Fail ("#1");
+		} catch (FormatException) {
+		}
+
+		try {
+			result = ts.ToString ("C");
+			Assert.Fail ("#2");
+		} catch (FormatException) {
+		}
+
+		// This is suppoused to work, but the docs are wrong.
+		try {
+			result = ts.ToString ("t");
+			Assert.Fail ("#3");
+		} catch (FormatException) {
+		}
+	}
+#endif
 }
 
 }

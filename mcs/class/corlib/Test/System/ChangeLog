@@ -1,3 +1,7 @@
+2010-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpanTest.cs: New tests for the 4.0 ToString overloads.
+
 2010-03-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpanTest.cs: 'Port' our Parse assertions to also use TryParse.
