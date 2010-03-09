@@ -1,5 +1,9 @@
 2010-03-09  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c (STRING_SIZE): Off by one.
+
+2010-03-09  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-archdep.h: Fix the signal context register access for
 	AMD64.
 
