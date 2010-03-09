@@ -1,5 +1,10 @@
 2010-03-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* HttpConnection.cs: set the right position when a CR is found.
+	Fixes bug #577891.
+
+2010-03-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* HttpListener.cs:
 	* HttpListenerRequest.cs:
 	* ListenerAsyncResult.cs:

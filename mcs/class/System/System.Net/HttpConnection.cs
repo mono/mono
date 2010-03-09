@@ -81,7 +81,6 @@ namespace System.Net {
 			return key;
 		}
 
-
 		void Init ()
 		{
 			context_bound = false;
@@ -229,6 +228,7 @@ namespace System.Net {
 
 			try {
 				line = ReadLine (buffer, position, len - position, ref used);
+				position += used;
 			} catch (Exception e) {
 				context.ErrorMessage = "Bad request";
 				context.ErrorStatus = 400;
@@ -238,7 +238,6 @@ namespace System.Net {
 			do {
 				if (line == null)
 					break;
-				position += used;
 				if (line == "") {
 					if (input_state == InputState.RequestLine)
 						continue;
@@ -254,10 +253,8 @@ namespace System.Net {
 					try {
 						context.Request.AddHeader (line);
 					} catch (Exception e) {
-						Console.WriteLine (line);
 						context.ErrorMessage = e.Message;
 						context.ErrorStatus = 400;
-						Console.WriteLine (e);
 						return true;
 					}
 				}
@@ -269,6 +266,7 @@ namespace System.Net {
 					break;
 				try {
 					line = ReadLine (buffer, position, len - position, ref used);
+					position += used;
 				} catch (Exception e) {
 					context.ErrorMessage = "Bad request";
 					context.ErrorStatus = 400;
