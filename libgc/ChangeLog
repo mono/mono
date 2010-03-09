@@ -1,3 +1,7 @@
+2010-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* include/private/gc_locks.h: Fix amd64 build with newer gcc's.
+
 2009-10-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* misc.c (GC_get_suspend_signal): New API function to return the suspend signal
