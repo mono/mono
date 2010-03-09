@@ -1,3 +1,8 @@
+2010-03-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* object-internals.h (_G_BOOLEAN_EXPR): Fix the definition of this to explicitly
+	convert to a boolean, recent gcc versions compile this differently.
+
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
 
         * marshal.c (mono_delegate_to_ftnptr): Use mono_gc_alloc_fixed () for
