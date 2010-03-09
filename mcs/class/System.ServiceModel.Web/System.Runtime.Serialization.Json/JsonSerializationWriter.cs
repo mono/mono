@@ -100,6 +100,9 @@ namespace System.Runtime.Serialization.Json
 				else
 					writer.WriteString ("false");
 				break;
+			case TypeCode.DateTime:
+				writer.WriteString (String.Format (CultureInfo.InvariantCulture, "/Date({0})/", ((DateTime) graph).Subtract (new DateTime (1970, 1, 1)).TotalMilliseconds));
+				break;
 			default:
 				if (graph is Guid) {
 					goto case TypeCode.String;

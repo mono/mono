@@ -1,3 +1,8 @@
+2010-03-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : add test for bug #586169.
+	* JsonWriterTest.cs : add standalone write case for "\/".
+
 2010-01-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializerTest.cs :

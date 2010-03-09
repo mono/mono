@@ -94,9 +94,9 @@ namespace System.Runtime.Serialization.Json
 				case '\\':
 					AppendBuffer (ref sb, input, start, i, @"\\");
 					break;
-				//case '/':
-				//	AppendBuffer (ref sb, input, start, i, @"\/");
-				//	break;
+				case '/':
+					AppendBuffer (ref sb, input, start, i, @"\/");
+					break;
 				case '\x8':
 					AppendBuffer (ref sb, input, start, i, @"\b");
 					break;

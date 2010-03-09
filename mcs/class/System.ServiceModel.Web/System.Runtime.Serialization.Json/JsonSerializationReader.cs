@@ -112,6 +112,12 @@ namespace System.Runtime.Serialization.Json
 					return Convert.ChangeType (l, type, null);
 			case TypeCode.Boolean:
 				return reader.ReadElementContentAsBoolean ();
+			case TypeCode.DateTime:
+				// it does not use ReadElementContentAsDateTime(). Different string format.
+				var s = reader.ReadElementContentAsString ();
+				if (s.Length < 2 || !s.StartsWith ("/Date(", StringComparison.Ordinal) || !s.EndsWith (")/", StringComparison.Ordinal))
+					throw new XmlException ("Invalid JSON DateTime format. The value format should be '/Date(UnixTime)/'");
+				return new DateTime (1970, 1, 1).AddMilliseconds (long.Parse (s.Substring (6, s.Length - 8)));
 			default:
 				if (type == typeof (Guid)) {
 					return new Guid (reader.ReadElementContentAsString ());
@@ -123,7 +129,7 @@ namespace System.Runtime.Serialization.Json
 					else
 						return new Uri (reader.ReadElementContentAsString ());
 				} else if (type == typeof (XmlQualifiedName)) {
-					string s = reader.ReadElementContentAsString ();
+					s = reader.ReadElementContentAsString ();
 					int idx = s.IndexOf (':');
 					return idx < 0 ? new XmlQualifiedName (s) : new XmlQualifiedName (s.Substring (0, idx), s.Substring (idx + 1));
 				} else if (type != typeof (object)) {

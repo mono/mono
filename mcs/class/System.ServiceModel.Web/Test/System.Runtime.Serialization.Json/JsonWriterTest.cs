@@ -581,5 +581,15 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			// WriteEndAttribute().
 			w.Close ();
 		}
+
+		[Test]
+		public void WriteSlashEscaped ()
+		{
+			w.WriteStartElement ("root");
+			w.WriteString ("/my date/");
+			w.WriteEndElement ();
+			w.Close ();
+			Assert.AreEqual ("\"\\/my date\\/\"", ResultString);
+		}
 	}
 }

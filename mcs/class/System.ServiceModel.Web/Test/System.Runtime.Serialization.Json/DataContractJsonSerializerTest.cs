@@ -1342,6 +1342,25 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			Assert.IsTrue (Double.IsNegativeInfinity ((double) ReadWriteObject (typeof (double), Double.NegativeInfinity, "-INF")));
 			Assert.IsTrue (Double.IsPositiveInfinity ((double) ReadWriteObject (typeof (double), Double.PositiveInfinity, "INF")));
 		}
+
+		[Test]
+		public void ReadWriteDateTime ()
+		{
+			var ms = new MemoryStream ();
+			DataContractJsonSerializer serializer = new DataContractJsonSerializer (typeof (Query));
+			Query query = new Query () {
+				StartDate = DateTime.Today.ToUniversalTime().AddMonths(-1),
+				EndDate = DateTime.Today.ToUniversalTime()
+				};
+			serializer.WriteObject (ms, query);
+			Assert.AreEqual ("{\"StartDate\":\"\\/Date(1265641200000)\\/\",\"EndDate\":\"\\/Date(1268060400000)\\/\"}", Encoding.UTF8.GetString (ms.ToArray ()), "#1");
+			ms.Position = 0;
+			Console.WriteLine (new StreamReader (ms).ReadToEnd ());
+			ms.Position = 0;
+			var q = (Query) serializer.ReadObject(ms);
+			Assert.AreEqual (query.StartDate, q.StartDate, "#2");
+			Assert.AreEqual (query.EndDate, q.EndDate, "#3");
+		}
 	}
 
 	public class TestData
@@ -1506,6 +1525,14 @@ namespace MonoTests.System.Runtime.Serialization.Json
 		public List<KeyValuePair<string,string>> TestData = new List<KeyValuePair<string,string>>();
 	}
 
+	[DataContract] // bug #586169
+	public class Query
+	{
+		[DataMember (Order=1)]
+		public DateTime StartDate { get; set; }
+		[DataMember (Order=2)]
+		public DateTime EndDate { get; set; }
+	}
 }
 
 [DataContract]
