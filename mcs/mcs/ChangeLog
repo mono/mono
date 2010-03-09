@@ -1,3 +1,7 @@
+2010-03-09  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-parser.jay (GetLocation): Use an expression when available.
+
 2010-03-04  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #582579

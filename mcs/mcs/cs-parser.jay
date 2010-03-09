@@ -6283,6 +6283,8 @@ Location GetLocation (object obj)
 		return ((Tokenizer.LocatedToken) obj).Location;
 	if (obj is MemberName)
 		return ((MemberName) obj).Location;
+	if (obj is Expression)
+		return ((Expression) obj).Location;		
 
 	return lexer.Location;
 }
