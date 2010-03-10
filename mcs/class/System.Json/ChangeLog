@@ -1,5 +1,9 @@
 2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Json.dll.sources : remove JsonReader.cs.
+
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile : reference System.Xml and System.ServiceModel.Web (for
 	  moonlight compatibility).
 

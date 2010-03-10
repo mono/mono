@@ -2,6 +2,12 @@
 
 	* net_2_0_System.ServiceModel.Web.dll.sources,
 	  net_2_1_raw_System.ServiceModel.Web.dll.sources :
+	  move JsonReader.cs as Sys.R.S.Json/JavaScriptReader.cs
+
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* net_2_0_System.ServiceModel.Web.dll.sources,
+	  net_2_1_raw_System.ServiceModel.Web.dll.sources :
 	  add JavaScriptObjectDeserializer.cs and JsonReader in Sys.Json
 	  (which is to be moved later).
 

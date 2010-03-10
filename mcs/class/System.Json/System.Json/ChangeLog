@@ -1,5 +1,9 @@
 2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* JsonReader.cs : moved to Sys.SM.Web/Sys.R.S.Json.
+
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JsonValue.cs : use Sys.SM.Web.dll's JavaScriptObjectDeserializer
 	  for silverlight sdk / moonlight compatibility.
 	* JsonReader.cs : renamed to JavaScriptReader (for disambiguation in

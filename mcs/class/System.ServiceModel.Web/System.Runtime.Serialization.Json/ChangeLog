@@ -1,5 +1,9 @@
 2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* JavaScriptReader.cs : moved from Sys.Json/JsonReader.cs.
+
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* JavaScriptObjectDeserializer.cs : new internal file, which is
 	  used by System.Json (for moonlight compatibility).
 
