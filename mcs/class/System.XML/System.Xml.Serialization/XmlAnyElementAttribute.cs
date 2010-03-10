@@ -86,6 +86,9 @@ namespace System.Xml.Serialization
 
 #if NET_2_0
 		[MonoTODO]
+		internal bool IsNullableSpecified { get; set; }
+
+		[MonoTODO]
 		public int Order {
 			get { return order; }
 			set { order = value; }

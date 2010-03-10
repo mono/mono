@@ -61,8 +61,15 @@ namespace System.Xml.Serialization
 		}
 
 #if NET_2_1
+		MemberInfo member;
 		// It is used only in 2.1 S.X.Serialization.dll in MS SDK.
-		internal MemberInfo MemberInfo { get; set; }
+		internal MemberInfo MemberInfo {
+			get { return member; }
+			set {
+				MemberName = value != null ? value.Name : null;
+				member = value;
+			}
+		}
 #endif
 
 		internal void AddKeyHash (System.Text.StringBuilder sb)

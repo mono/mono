@@ -1,3 +1,9 @@
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlAnyElementAttribute.cs : add internal IsNullableSpecified
+	  (for moonlight compatibility).
+	* XmlChoiceIdentifierAttribute.cs : implement MemberInfo (ditto).
+
 2010-03-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializationWriter.cs : namespaces argument could be null.
