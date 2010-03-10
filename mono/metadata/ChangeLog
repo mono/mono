@@ -1,3 +1,8 @@
+2010-03-10  Mark Probst  <mark.probst@gmail.com>
+
+	* threads.c (thread_cleanup): Add a guard to dereferencing
+	"thread" to avoid an unlikely race condition.
+
 2010-03-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* assembly.c: Fix crash in moon-unit when aname->culture is NULL
