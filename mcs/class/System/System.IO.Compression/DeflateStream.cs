@@ -183,6 +183,9 @@ namespace System.IO.Compression {
 
 		unsafe int ReadInternal (byte[] array, int offset, int count)
 		{
+			if (count == 0)
+				return 0;
+
 			int result = 0;
 			fixed (byte *b = array) {
 				IntPtr ptr = new IntPtr (b + offset);
@@ -213,6 +216,9 @@ namespace System.IO.Compression {
 
 		unsafe void WriteInternal (byte[] array, int offset, int count)
 		{
+			if (count == 0)
+				return;
+
 			int result = 0;
 			fixed (byte *b = array) {
 				IntPtr ptr = new IntPtr (b + offset);
