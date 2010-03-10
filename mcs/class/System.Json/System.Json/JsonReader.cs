@@ -3,34 +3,35 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
+using System.Linq;
 using System.Text;
 
-using IJSONObject = System.Collections.Generic.IDictionary<string,object>;
-
-namespace System.Json
+namespace System.Runtime.Serialization.Json
 {
-	public class JsonReader
+	internal class JavaScriptReader
 	{
 		TextReader r;
 		int line = 1, column = 0;
+		bool raise_on_number_error; // FIXME: use it
 
-		public JsonReader (TextReader reader)
+		public JavaScriptReader (TextReader reader, bool raiseOnNumberError)
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
 			this.r = reader;
+			raise_on_number_error = raiseOnNumberError;
 		}
 
-		public JsonValue Read ()
+		public object Read ()
 		{
-			JsonValue v = ReadCore ();
+			object v = ReadCore ();
 			SkipSpaces ();
 			if (r.Read () >= 0)
 				throw JsonError (String.Format ("extra characters in JSON input"));
 			return v;
 		}
 
-		JsonValue ReadCore ()
+		object ReadCore ()
 		{
 			SkipSpaces ();
 			int c = PeekChar ();
@@ -39,7 +40,7 @@ namespace System.Json
 			switch (c) {
 			case '[':
 				ReadChar ();
-				var list = new JsonArray ();
+				var list = new List<object> ();
 				SkipSpaces ();
 				if (PeekChar () == ']') {
 					ReadChar ();
@@ -56,10 +57,10 @@ namespace System.Json
 				}
 				if (ReadChar () != ']')
 					throw JsonError ("JSON array must end with ']'");
-				return list;
+				return list.ToArray ();
 			case '{':
 				ReadChar ();
-				var obj = new JsonObject ();
+				var obj = new Dictionary<string,object> ();
 				SkipSpaces ();
 				if (PeekChar () == '}') {
 					ReadChar ();
@@ -71,7 +72,7 @@ namespace System.Json
 					SkipSpaces ();
 					Expect (':');
 					SkipSpaces ();
-					obj.Add (name, ReadCore ());
+					obj [name] = ReadCore (); // it does not reject duplicate names.
 					SkipSpaces ();
 					c = ReadChar ();
 					if (c == ',')
@@ -79,19 +80,19 @@ namespace System.Json
 					if (c == '}')
 						break;
 				}
-				return obj;
+				return obj.ToArray ();
 			case 't':
 				Expect ("true");
-				return new JsonPrimitive (true);
+				return true;
 			case 'f':
 				Expect ("false");
-				return new JsonPrimitive (true);
+				return true;
 			case 'n':
 				Expect ("null");
 				// FIXME: what should we return?
-				return new JsonPrimitive ((string) null);
+				return (string) null;
 			case '"':
-				return new JsonPrimitive (ReadStringLiteral ());
+				return ReadStringLiteral ();
 			default:
 				if ('0' <= c && c <= '9' || c == '-')
 					return ReadNumericLiteral ();
@@ -146,7 +147,7 @@ namespace System.Json
 		}
 
 		// It could return either int, long or decimal, depending on the parsed value.
-		JsonPrimitive ReadNumericLiteral ()
+		object ReadNumericLiteral ()
 		{
 			bool negative = false;
 			if (PeekChar () == '-') {
@@ -200,13 +201,13 @@ namespace System.Json
 				if (!hasFrac) {
 					if (negative && int.MinValue <= -val ||
 					    !negative && val <= int.MaxValue)
-						return new JsonPrimitive ((int) (negative ? -val : val));
+						return (int) (negative ? -val : val);
 					if (negative && long.MinValue <= -val ||
 					    !negative && val <= long.MaxValue)
-						return new JsonPrimitive ((long) (negative ? -val : val));
+						return (long) (negative ? -val : val);
 				}
 				var v = val + frac;
-				return new JsonPrimitive (negative ? -v : v);
+				return negative ? -v : v;
 			}
 
 			// exponent
@@ -236,7 +237,7 @@ namespace System.Json
 			}
 			// it is messy to handle exponent, so I just use Decimal.Parse() with assured JSON format.
 			int [] bits = Decimal.GetBits (val + frac);
-			return new JsonPrimitive (new Decimal (bits [0], bits [1], bits [2], negative, (byte) exp));
+			return new Decimal (bits [0], bits [1], bits [2], negative, (byte) exp);
 		}
 
 		StringBuilder vb = new StringBuilder ();

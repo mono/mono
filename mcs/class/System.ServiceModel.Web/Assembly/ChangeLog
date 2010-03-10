@@ -1,3 +1,8 @@
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AssemblyInfo.cs: added InternalVisibleTo(System.Json). Also added
+	  dummy 2.0 for easy testing.
+
 2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Fix attributes for Moonlight

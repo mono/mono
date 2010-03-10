@@ -58,7 +58,7 @@ using System.Runtime.InteropServices;
 #if NET_2_1
 	[assembly: AssemblyKeyFile ("../silverlight.pub")]
 #else
-	[assembly: AssemblyKeyFile ("../ecma.pub")]
+	[assembly: AssemblyKeyFile ("../silverlight.pub")] // easing InternalVisibleTo use.
 #endif
 
 [assembly: ComVisible (false)]

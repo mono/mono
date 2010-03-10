@@ -1,3 +1,8 @@
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AssemblyInfo.cs : use the same pub key in 2.0 (dummy), to ease
+	  testing locally.
+
 2008-05-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Remove AssemblyDelaySign(true) since it's

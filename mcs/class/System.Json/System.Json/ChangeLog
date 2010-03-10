@@ -1,3 +1,11 @@
+2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonValue.cs : use Sys.SM.Web.dll's JavaScriptObjectDeserializer
+	  for silverlight sdk / moonlight compatibility.
+	* JsonReader.cs : renamed to JavaScriptReader (for disambiguation in
+	  Sys.SM.Web.dll). Now it is native-type based and used by the above
+	  deserializer.
+
 2010-02-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonValue.cs : fix string escaping, it was giving wrong output
