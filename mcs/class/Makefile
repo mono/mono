@@ -124,8 +124,8 @@ net_2_1_dirs := \
 	Mono.CompilerServices.SymbolWriter \
 	System.Core		\
 	System			\
-	System.Net		\
 	System.XML		\
+	System.Net		\
 	System.Xml.Linq	\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
