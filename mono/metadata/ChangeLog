@@ -1,5 +1,10 @@
 2010-03-10  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c (STRING_SIZE): Semi-revert r153342.  I'm an idiot who
+	can't read parentheses.
+
+2010-03-10  Mark Probst  <mark.probst@gmail.com>
+
 	* threads.c (thread_cleanup): Add a guard to dereferencing
 	"thread" to avoid an unlikely race condition.
 
