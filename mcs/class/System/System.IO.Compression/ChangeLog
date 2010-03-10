@@ -1,3 +1,8 @@
+2010-03-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DeflateStream.cs: don't call unmanaged code when the byte count
+	is 0. Fixes bug #586870.
+
 2009-12-23  Geoff Norton  <gnorton@novell.com>
 
 	* DeflateStream.cs: Ensure our callbacks go into the correct
