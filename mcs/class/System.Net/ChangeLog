@@ -1,3 +1,9 @@
+2010-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_System.Net.dll.sources: Add types from (new internal)
+	System.Net.Policy (moved from System.Windows.Browser.dll)
+	* Makefile: Add reference to System.Xml.dll to parse policies
+
 2010-01-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* System.Net.dll.sources: Add UdpAnySourceMulticastClient and

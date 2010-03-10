@@ -32,27 +32,14 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security;
 using System.Threading;
+#if NET_2_1 && !MONOTOUCH
+using System.Net.Policy;
+#endif
 
 namespace System.Net.Sockets
 {
 	public class SocketAsyncEventArgs : EventArgs, IDisposable
 	{
-#if NET_2_1 && !MONOTOUCH
-		static MethodInfo check_socket_policy;
-
-		static SocketAsyncEventArgs ()
-		{
-			Type type = Type.GetType ("System.Windows.Browser.Net.CrossDomainPolicyManager, System.Windows.Browser, Version=2.0.5.0, Culture=Neutral, PublicKeyToken=7cec85d7bea7798e");
-			check_socket_policy = type.GetMethod ("CheckEndPoint");
-		}
-
-		static internal bool CheckEndPoint (EndPoint endpoint)
-		{
-			if (check_socket_policy == null)
-				throw new SecurityException ();
-			return ((bool) check_socket_policy.Invoke (null, new object [1] { endpoint }));
-		}
-#endif
 #if (NET_2_1 || NET_4_0) && !MONOTOUCH
 		public Exception ConnectByNameError { get; internal set; }
 #endif
@@ -262,7 +249,7 @@ namespace System.Net.Sockets
 			// if we're not downloading a socket policy then check the policy
 			if (!PolicyRestricted) {
 				error = SocketError.AccessDenied;
-				if (!CheckEndPoint (endpoint)) {
+				if (!CrossDomainPolicyManager.CheckEndPoint (endpoint)) {
 					return error;
 				}
 				error = SocketError.Success;

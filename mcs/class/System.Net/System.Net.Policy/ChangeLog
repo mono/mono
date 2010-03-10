@@ -1,0 +1,8 @@
+2010-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDomainPolicy.cs, ClientAccessPolicy[Parser].cs, 
+	CrossDomainPolicyManager.cs, FlashCrossDomainPolicy[Parser].cs,
+	ICrossDomainPolicy.cs, NoAccessPolicy.cs, PolicyDownloadPolicy.cs,
+	SiteOfOriginPolicy.cs: Moved from System.Net.dll with namespace 
+	and minor build adjustments.
+

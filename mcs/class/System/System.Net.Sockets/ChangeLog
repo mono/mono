@@ -1,3 +1,9 @@
+2010-03-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketAsyncEventArgs.cs: Remove the use of reflection to check
+	xdomain poilicy on sockets (since the policy code now resides in
+	System.Net.dll)
+
 2010-01-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* NetworkStream.cs: Our explicit impl of IDisposable.Dispose belongs

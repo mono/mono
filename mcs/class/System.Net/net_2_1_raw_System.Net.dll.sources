@@ -20,6 +20,16 @@ System.Net.Sockets/UdpAnySourceMulticastClient.cs
 System.Net.Sockets/UdpSingleSourceMulticastClient.cs
 System.Net.NetworkInformation/NetworkChange_2_1.cs
 System.Net.NetworkInformation/NetworkInterface_2_1.cs
+System.Net.Policy/BaseDomainPolicy.cs
+System.Net.Policy/ClientAccessPolicy.cs
+System.Net.Policy/ClientAccessPolicyParser.cs
+System.Net.Policy/CrossDomainPolicyManager.cs
+System.Net.Policy/FlashCrossDomainPolicy.cs
+System.Net.Policy/FlashCrossDomainPolicyParser.cs
+System.Net.Policy/ICrossDomainPolicy.cs
+System.Net.Policy/NoAccessPolicy.cs
+System.Net.Policy/PolicyDownloadPolicy.cs
+System.Net.Policy/SiteOfOriginPolicy.cs
 ../System/System.Net/Cookie.cs
 ../System/System.Net/CookieCollection.cs
 ../System/System.Net/CookieContainer.cs
