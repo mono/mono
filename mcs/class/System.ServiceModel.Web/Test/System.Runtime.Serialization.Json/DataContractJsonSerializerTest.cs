@@ -1349,11 +1349,11 @@ namespace MonoTests.System.Runtime.Serialization.Json
 			var ms = new MemoryStream ();
 			DataContractJsonSerializer serializer = new DataContractJsonSerializer (typeof (Query));
 			Query query = new Query () {
-				StartDate = DateTime.Today.ToUniversalTime().AddMonths(-1),
-				EndDate = DateTime.Today.ToUniversalTime()
+				StartDate = new DateTime (2010, 3, 4, 5, 6, 7).ToUniversalTime (),
+				EndDate = new DateTime (2010, 4, 5, 6, 7, 8).ToUniversalTime ()
 				};
 			serializer.WriteObject (ms, query);
-			Assert.AreEqual ("{\"StartDate\":\"\\/Date(1265641200000)\\/\",\"EndDate\":\"\\/Date(1268060400000)\\/\"}", Encoding.UTF8.GetString (ms.ToArray ()), "#1");
+			Assert.AreEqual ("{\"StartDate\":\"\\/Date(1267646767000)\\/\",\"EndDate\":\"\\/Date(1270415228000)\\/\"}", Encoding.UTF8.GetString (ms.ToArray ()), "#1");
 			ms.Position = 0;
 			Console.WriteLine (new StreamReader (ms).ReadToEnd ());
 			ms.Position = 0;
