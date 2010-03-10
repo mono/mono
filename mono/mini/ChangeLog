@@ -1,3 +1,8 @@
+2010-03-11  Martin Baulig  <martin@ximian.com>
+
+	* debugger-agent.c (type_commands): Add NULL check to
+	`CMD_TYPE_GET_SOURCE_FILES'.
+
 2010-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_peephole_ins): Fix the OP_FMOVE optimization. Fixes
