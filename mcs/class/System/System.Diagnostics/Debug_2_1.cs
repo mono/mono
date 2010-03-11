@@ -34,9 +34,7 @@ using System;
 
 namespace System.Diagnostics {
 
-	public sealed class Debug {
-
-		private Debug () {}
+	public static class Debug {
 
 		[Conditional ("DEBUG")]
 		public static void Assert (bool condition)

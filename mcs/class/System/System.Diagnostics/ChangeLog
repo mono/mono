@@ -1,3 +1,7 @@
+2010-03-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Debug_2_1.cs: Change type to static to match SL4
+
 2010-01-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Stopwatch.cs: add new Restart().
