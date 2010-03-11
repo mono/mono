@@ -1,4 +1,4 @@
-// CS0460: `C.I.Test<C>()': Cannot specify constraints for overrides or explicit interface implementation methods
+// CS0460: `C.I.Test<C>()': Cannot specify constraints for overrides and explicit interface implementation methods
 // Line: 11
 
 interface I
