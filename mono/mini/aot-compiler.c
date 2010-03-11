@@ -6018,6 +6018,9 @@ mono_compile_assembly (MonoAssembly *ass, guint32 opts, const char *aot_options)
 	acfg->aot_opts.write_symbols = TRUE;
 
 	mono_aot_parse_options (aot_options, &acfg->aot_opts);
+
+	if (acfg->aot_opts.static_link)
+		acfg->aot_opts.asm_writer = TRUE;
  
 #ifdef USE_BIN_WRITER
 	if (!acfg->aot_opts.asm_only && !acfg->aot_opts.asm_writer)

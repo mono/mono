@@ -1,3 +1,8 @@
+2010-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (mono_compile_assembly): Use the asm writer when static linking.
+	Fixes #587306.
+
 2010-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-codegen.c (mono_peephole_ins): Fix the OP_FMOVE optimization. Fixes
