@@ -1795,6 +1795,12 @@ namespace System.Reflection.Emit
 			if (type == null)
 				throw new ArgumentException ("Type is not generic", "type");
 
+			if (!type.IsGenericType)
+				throw new ArgumentException ("Type is not a generic type", "type");
+
+			if (type.IsGenericTypeDefinition)
+				throw new ArgumentException ("Type cannot be a generic type definition", "type");
+
 			if (constructor == null)
 				throw new NullReferenceException (); //MS raises this instead of an ArgumentNullException
 
@@ -1830,6 +1836,9 @@ namespace System.Reflection.Emit
 			if (!IsValidGetMethodType (type))
 				throw new ArgumentException ("type is not TypeBuilder but " + type.GetType (), "type");
 
+			if (type is TypeBuilder && type.ContainsGenericParameters)
+				type = type.MakeGenericType (type.GetGenericArguments ());
+
 			if (!type.IsGenericType)
 				throw new ArgumentException ("type is not a generic type", "type");
 
@@ -1849,6 +1858,12 @@ namespace System.Reflection.Emit
 
 		public static FieldInfo GetField (Type type, FieldInfo field)
 		{
+			if (!type.IsGenericType)
+				throw new ArgumentException ("Type is not a generic type", "type");
+
+			if (type.IsGenericTypeDefinition)
+				throw new ArgumentException ("Type cannot be a generic type definition", "type");
+
 			FieldInfo res = type.GetField (field);
 			if (res == null)
 				throw new System.Exception ("field not found");

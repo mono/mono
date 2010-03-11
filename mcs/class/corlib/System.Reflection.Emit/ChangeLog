@@ -1,3 +1,10 @@
+2010-03-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilder.cs (GetMethod): Allow type to be the typebuilder itself.
+	Add better error checking to GetConstructor and GetField.
+
+	Fixes #587106.
+
 2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ModuleBuilder.cs: Do not use reflection to create SymbolWriterImpl
