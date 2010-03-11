@@ -1,3 +1,9 @@
+2010-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-x86.c (mono_arch_create_monitor_enter_trampoline_full): Use 'code' for
+	the pc instead of 'buf'. Fix the call to mono_arch_flush_icache ().
+	(mono_arch_create_monitor_exit_trampoline_full): Ditto.
+
 2010-03-11  Martin Baulig  <martin@ximian.com>
 
 	* debugger-agent.c (type_commands): Add NULL check to
