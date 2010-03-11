@@ -1314,7 +1314,7 @@ method_header
 		Method method = new Method (current_class, generic, (FullNamedExpression) $3, (Modifiers) $2,
 				     name, current_local_parameters, (Attributes) $1);
 				     
-		if ($10 != null && ((method.ModFlags & Modifiers.OVERRIDE) != 0 || name.Left != null)) {
+		if ($10 != null && ((method.ModFlags & Modifiers.OVERRIDE) != 0 || method.IsExplicitImpl)) {
 			Report.Error (460, method.Location,
 				"`{0}': Cannot specify constraints for overrides and explicit interface implementation methods",
 				method.GetSignatureForError ());
