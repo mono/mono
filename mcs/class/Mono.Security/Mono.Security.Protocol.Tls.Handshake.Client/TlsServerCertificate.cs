@@ -195,9 +195,26 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 
 #if NET_2_0
 			if (context.SslStream.HaveRemoteValidation2Callback) {
-				if (context.SslStream.RaiseServerCertificateValidation2 (certificates))
+				ValidationResult res = context.SslStream.RaiseServerCertificateValidation2 (certificates);
+				if (res.Trusted)
 					return;
-				// Give a chance to the 1.x ICertificatePolicy callback
+
+				long error = res.ErrorCode;
+				switch (error) {
+				case 0x800B0101:
+					description = AlertDescription.CertificateExpired;
+					break;
+				case 0x800B010A:
+					description = AlertDescription.UnknownCA;
+					break;
+				case 0x800B0109:
+					description = AlertDescription.UnknownCA;
+					break;
+				default:
+					description = AlertDescription.CertificateUnknown;
+					break;
+				}
+				throw new TlsException (description, "Invalid certificate received from server.");
 			}
 #endif
 			// the leaf is the web server certificate
@@ -251,22 +268,6 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				result = false;
 			}
 
-			// Attempt to use OSX certificates
-			//
-			// Ideally we should return the SecTrustResult
-#if !MONOTOUCH
-			if (System.IO.File.Exists (OSX509Certificates.SecurityLibrary)){
-#endif
-				OSX509Certificates.SecTrustResult trustResult =  OSX509Certificates.TrustEvaluateSsl (certificates);
-
-				// We could use the other values of trustResult to pass this extra information to the .NET 2 callback
-				// for values like SecTrustResult.Confirm
-				result = (trustResult == OSX509Certificates.SecTrustResult.Proceed ||
-					  trustResult == OSX509Certificates.SecTrustResult.Unspecified);
-#if !MONOTOUCH
-			}
-#endif
-			
 			if (!result) 
 			{
 				switch (verify.Status) 

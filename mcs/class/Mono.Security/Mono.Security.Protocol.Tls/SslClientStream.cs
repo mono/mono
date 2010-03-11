@@ -41,7 +41,32 @@ namespace Mono.Security.Protocol.Tls
 		X509Certificate certificate, 
 		int[]			certificateErrors);
 #if NET_2_0
-	public delegate bool CertificateValidationCallback2 (Mono.Security.X509.X509CertificateCollection collection);
+	public class ValidationResult {
+		bool trusted;
+		bool user_denied;
+		int error_code;
+
+		public ValidationResult (bool trusted, bool user_denied, int error_code)
+		{
+			this.trusted = trusted;
+			this.user_denied = user_denied;
+			this.error_code = error_code;
+		}
+
+		public bool Trusted {
+			get { return trusted; }
+		}
+
+		public bool UserDenied {
+			get { return user_denied; }
+		}
+
+		public int ErrorCode {
+			get { return error_code; }
+		}
+	}
+
+	public delegate ValidationResult CertificateValidationCallback2 (Mono.Security.X509.X509CertificateCollection collection);
 #endif
 
 	public delegate X509Certificate CertificateSelectionCallback(
@@ -387,12 +412,12 @@ namespace Mono.Security.Protocol.Tls
 			get { return ServerCertValidation2 != null; }
 		}
 
-		internal override bool OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		internal override ValidationResult OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
 		{
 			CertificateValidationCallback2 cb = ServerCertValidation2;
 			if (cb != null)
 				return cb (collection);
-			return false;
+			return null;
 		}
 #endif
 
@@ -414,7 +439,7 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 #if NET_2_0
-		internal virtual bool RaiseServerCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		internal virtual ValidationResult RaiseServerCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
 		{
 			return base.RaiseRemoteCertificateValidation2 (collection);
 		}

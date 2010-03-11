@@ -1,3 +1,7 @@
+2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* OSX509Certificates.cs: moved here from Mono.Security.
+
 2009-07-10 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* X509Chain.cs: revert my last change here since it caused 2 tests to

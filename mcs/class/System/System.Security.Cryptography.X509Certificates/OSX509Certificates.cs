@@ -19,6 +19,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if SECURITY_DEP
 using System;
 using System.Runtime.InteropServices;
 using Mono.Security.X509;
@@ -139,4 +140,4 @@ namespace Mono.Security.X509 {
 		}
 	}
 }
-		
+#endif

@@ -186,7 +186,7 @@ namespace Mono.Security.Protocol.Tls
 
 		internal abstract bool OnRemoteCertificateValidation(X509Certificate certificate, int[] errors);
 #if NET_2_0
-		internal abstract bool OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection);
+		internal abstract ValidationResult OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection);
 		internal abstract bool HaveRemoteValidation2Callback { get; }
 #endif
 
@@ -210,7 +210,7 @@ namespace Mono.Security.Protocol.Tls
 		}
 
 #if NET_2_0
-		internal bool RaiseRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		internal ValidationResult RaiseRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
 		{
 			return OnRemoteCertificateValidation2 (collection);
 		}

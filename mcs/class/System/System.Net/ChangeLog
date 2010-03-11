@@ -1,3 +1,7 @@
+2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ServicePointManager.cs: perform the entire chain validation here.
+
 2010-03-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpConnection.cs: set the right position when a CR is found.
