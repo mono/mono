@@ -1,3 +1,8 @@
+2010-03-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* Path.cs (GetTempFileName): Fix infinite loop if the process doesn't have
+	write access to /tmp. Fixes #585017.
+
 2010-02-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MemoryStream.cs: When setting Capacity, don't create a new buffer if
