@@ -695,20 +695,3 @@ namespace System.Net
 	}
 }
 
-/*
-			// Attempt to use OSX certificates
-			//
-			// Ideally we should return the SecTrustResult
-#if !MONOTOUCH
-			if (System.IO.File.Exists (OSX509Certificates.SecurityLibrary)){
-#endif
-				OSX509Certificates.SecTrustResult trustResult =  OSX509Certificates.TrustEvaluateSsl (certificates);
-
-				// We could use the other values of trustResult to pass this extra information to the .NET 2 callback
-				// for values like SecTrustResult.Confirm
-				result = (trustResult == OSX509Certificates.SecTrustResult.Proceed ||
-					  trustResult == OSX509Certificates.SecTrustResult.Unspecified);
-#if !MONOTOUCH
-			}
-#endif
-*/			
