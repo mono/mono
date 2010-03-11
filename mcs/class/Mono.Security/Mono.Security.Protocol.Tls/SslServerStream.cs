@@ -309,12 +309,12 @@ namespace Mono.Security.Protocol.Tls
 			get { return ClientCertValidation2 != null; }
 		}
 
-		internal override bool OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
+		internal override ValidationResult OnRemoteCertificateValidation2 (Mono.Security.X509.X509CertificateCollection collection)
 		{
 			CertificateValidationCallback2 cb = ClientCertValidation2;
 			if (cb != null)
 				return cb (collection);
-			return false;
+			return null;
 		}
 
 		internal bool RaiseClientCertificateValidation(

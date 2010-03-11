@@ -1,3 +1,9 @@
+2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SslStreamBase.cs:
+	* SslClientStream.cs:
+	* SslServerStream.cs: modify the 2.0 callback to return more info.
+
 2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpsClientStream.cs: use Address instead

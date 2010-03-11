@@ -1,3 +1,7 @@
+2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* OSX509Certificates.cs: moved to System.dll.
+
 2010-02-27  Miguel de Icaza  <miguel@novell.com>
 
 	* OSX509Certificates.cs: Add support to validate X509 certificate

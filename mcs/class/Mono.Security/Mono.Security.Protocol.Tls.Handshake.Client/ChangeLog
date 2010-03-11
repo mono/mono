@@ -1,3 +1,8 @@
+2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TlsServerCertificate.cs: chain is built and validated in
+	System.dll now.
+
 2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TlsServerCertificate.cs:

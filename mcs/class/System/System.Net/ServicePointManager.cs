@@ -1,8 +1,11 @@
 //
 // System.Net.ServicePointManager
 //
-// Author:
+// Authors:
 //   Lawrence Pit (loz@cable.a2000.nl)
+//   Gonzalo Paniagua Javier (gonzalo@novell.com)
+//
+// Copyright (c) 2003-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -41,6 +44,8 @@ using System.Text.RegularExpressions;
 using Mono.Security;
 using Mono.Security.Cryptography;
 using Mono.Security.X509.Extensions;
+using Mono.Security.Protocol.Tls;
+using MSX = Mono.Security.X509;
 #endif
 #endif
 
@@ -160,8 +165,7 @@ namespace System.Net
 		// Properties
 		
 #if NET_2_0
-		[Obsolete ("Use ServerCertificateValidationCallback instead",
-			   false)]
+		[Obsolete ("Use ServerCertificateValidationCallback instead", false)]
 #endif
 		public static ICertificatePolicy CertificatePolicy {
 			get { return policy; }
@@ -398,14 +402,15 @@ namespace System.Net
 
 			// Used when the obsolete ICertificatePolicy is set to DefaultCertificatePolicy
 			// and the new ServerCertificateValidationCallback is not null
-			internal bool ValidateChain (Mono.Security.X509.X509CertificateCollection certs)
+			internal ValidationResult ValidateChain (Mono.Security.X509.X509CertificateCollection certs)
 			{
+				// user_denied is true if the user callback is called and returns false
+				bool user_denied = false;
 				if (certs == null || certs.Count == 0)
-					return false;
+					return null;
 
+				ICertificatePolicy policy = ServicePointManager.CertificatePolicy;
 				RemoteCertificateValidationCallback cb = ServicePointManager.ServerCertificateValidationCallback;
-				if (cb == null)
-					return false;
 
 				X509Chain chain = new X509Chain ();
 				chain.ChainPolicy = new X509ChainPolicy ();
@@ -415,14 +420,125 @@ namespace System.Net
 				}
 
 				X509Certificate2 leaf = new X509Certificate2 (certs [0].RawData);
+				int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
 				SslPolicyErrors errors = 0;
 				if (!chain.Build (leaf))
 					errors |= GetErrorsFromChain (chain);
-				if (!CheckCertificateUsage (leaf)) // -2146762490: CERT_E_PURPOSE
+				if (!CheckCertificateUsage (leaf)) {
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
-				if (!CheckServerIdentity (leaf, Host))
+					status11 = -2146762490; //CERT_E_PURPOSE 0x800B0106
+				}
+				if (!CheckServerIdentity (leaf, Host)) {
 					errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
-				return cb (sender, leaf, chain, errors);
+					status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
+				}
+
+				bool result = false;
+				// No certificate root found means no mozroots or monotouch
+				if (Environment.OSVersion.Platform == PlatformID.MacOSX) {
+#if !MONOTOUCH
+				if (System.IO.File.Exists (MSX.OSX509Certificates.SecurityLibrary)) {
+#endif
+					// Attempt to use OSX certificates
+					// Ideally we should return the SecTrustResult
+					MSX.OSX509Certificates.SecTrustResult trustResult;
+					try {
+						trustResult = MSX.OSX509Certificates.TrustEvaluateSsl (certs);
+						// We could use the other values of trustResult to pass this extra information
+						// to the .NET 2 callback for values like SecTrustResult.Confirm
+						result = (trustResult == MSX.OSX509Certificates.SecTrustResult.Proceed ||
+								  trustResult == MSX.OSX509Certificates.SecTrustResult.Unspecified);
+
+					} catch {
+						// Ignore
+					}
+					// Clear error status if the OS told us to trust the certificate
+					if (result) {
+						status11 = 0;
+						errors = 0;
+					}
+#if !MONOTOUCH
+				}
+#endif
+				}
+
+				if (policy != null && (!(policy is DefaultCertificatePolicy) || cb == null)) {
+					ServicePoint sp = null;
+					HttpWebRequest req = sender as HttpWebRequest;
+					if (req != null)
+						sp = req.ServicePoint;
+					if (status11 == 0 && errors != 0)
+						status11 = GetStatusFromChain (chain);
+
+					// pre 2.0 callback
+					result = policy.CheckValidationResult (sp, leaf, req, status11);
+					user_denied = !result && !(policy is DefaultCertificatePolicy);
+				}
+				// If there's a 2.0 callback, it takes precedence
+				if (cb != null) {
+					result = cb (sender, leaf, chain, errors);
+					user_denied = !result;
+				}
+				return new ValidationResult (result, user_denied, status11);
+			}
+
+			static int GetStatusFromChain (X509Chain chain)
+			{
+				long result = 0;
+				foreach (var status in chain.ChainStatus) {
+					X509ChainStatusFlags flags = status.Status;
+					if (flags == X509ChainStatusFlags.NoError)
+						continue;
+
+					// CERT_E_EXPIRED
+					if ((flags & X509ChainStatusFlags.NotTimeValid) != 0) result = 0x800B0101;
+					// CERT_E_VALIDITYPERIODNESTING
+					else if ((flags & X509ChainStatusFlags.NotTimeNested) != 0) result = 0x800B0102;
+					// CERT_E_REVOKED
+					else if ((flags & X509ChainStatusFlags.Revoked) != 0) result = 0x800B010C;
+					// TRUST_E_CERT_SIGNATURE
+					else if ((flags & X509ChainStatusFlags.NotSignatureValid) != 0) result = 0x80096004;
+					// CERT_E_WRONG_USAGE
+					else if ((flags & X509ChainStatusFlags.NotValidForUsage) != 0) result = 0x800B0110;
+					// CERT_E_UNTRUSTEDROOT
+					else if ((flags & X509ChainStatusFlags.UntrustedRoot) != 0) result = 0x800B0109;
+					// CRYPT_E_NO_REVOCATION_CHECK
+					else if ((flags & X509ChainStatusFlags.RevocationStatusUnknown) != 0) result = 0x80092012;
+					// CERT_E_CHAINING
+					else if ((flags & X509ChainStatusFlags.Cyclic) != 0) result = 0x800B010A;
+					// TRUST_E_FAIL - generic
+					else if ((flags & X509ChainStatusFlags.InvalidExtension) != 0) result = 0x800B010B;
+					// CERT_E_UNTRUSTEDROOT
+					else if ((flags & X509ChainStatusFlags.InvalidPolicyConstraints) != 0) result = 0x800B010D;
+					// TRUST_E_BASIC_CONSTRAINTS
+					else if ((flags & X509ChainStatusFlags.InvalidBasicConstraints) != 0) result = 0x80096019;
+					// CERT_E_INVALID_NAME
+					else if ((flags & X509ChainStatusFlags.InvalidNameConstraints) != 0) result = 0x800B0114;
+					// CERT_E_INVALID_NAME
+					else if ((flags & X509ChainStatusFlags.HasNotSupportedNameConstraint) != 0) result = 0x800B0114;
+					// CERT_E_INVALID_NAME
+					else if ((flags & X509ChainStatusFlags.HasNotDefinedNameConstraint) != 0) result = 0x800B0114;
+					// CERT_E_INVALID_NAME
+					else if ((flags & X509ChainStatusFlags.HasNotPermittedNameConstraint) != 0) result = 0x800B0114;
+					// CERT_E_INVALID_NAME
+					else if ((flags & X509ChainStatusFlags.HasExcludedNameConstraint) != 0) result = 0x800B0114;
+					// CERT_E_CHAINING
+					else if ((flags & X509ChainStatusFlags.PartialChain) != 0) result = 0x800B010A;
+					// CERT_E_EXPIRED
+					else if ((flags & X509ChainStatusFlags.CtlNotTimeValid) != 0) result = 0x800B0101;
+					// TRUST_E_CERT_SIGNATURE
+					else if ((flags & X509ChainStatusFlags.CtlNotSignatureValid) != 0) result = 0x80096004;
+					// CERT_E_WRONG_USAGE
+					else if ((flags & X509ChainStatusFlags.CtlNotValidForUsage) != 0) result = 0x800B0110;
+					// CRYPT_E_NO_REVOCATION_CHECK
+					else if ((flags & X509ChainStatusFlags.OfflineRevocation) != 0) result = 0x80092012;
+					// CERT_E_ISSUERCHAINING
+					else if ((flags & X509ChainStatusFlags.NoIssuanceChainPolicy) != 0) result = 0x800B0107;
+					else result = 0x800B010B; // TRUST_E_FAIL - generic
+
+					break; // Exit the loop on the first error
+				}
+				return (int) result;
 			}
 
 			static SslPolicyErrors GetErrorsFromChain (X509Chain chain)
@@ -579,3 +695,20 @@ namespace System.Net
 	}
 }
 
+/*
+			// Attempt to use OSX certificates
+			//
+			// Ideally we should return the SecTrustResult
+#if !MONOTOUCH
+			if (System.IO.File.Exists (OSX509Certificates.SecurityLibrary)){
+#endif
+				OSX509Certificates.SecTrustResult trustResult =  OSX509Certificates.TrustEvaluateSsl (certificates);
+
+				// We could use the other values of trustResult to pass this extra information to the .NET 2 callback
+				// for values like SecTrustResult.Confirm
+				result = (trustResult == OSX509Certificates.SecTrustResult.Proceed ||
+					  trustResult == OSX509Certificates.SecTrustResult.Unspecified);
+#if !MONOTOUCH
+			}
+#endif
+*/			
