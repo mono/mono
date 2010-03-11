@@ -1,3 +1,8 @@
+2010-03-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* net_2_1_raw_corlib.dll.sources: Add System.Diagnostics.Contracts
+	for Moonlight 4
+
 2010-03-08  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* corlib_test.dll.sources: Add System.Threading/SpinLockTests.cs

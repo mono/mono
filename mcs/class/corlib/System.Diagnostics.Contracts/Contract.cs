@@ -50,7 +50,7 @@ using System;
 using System.Collections.Generic;
 
 namespace System.Diagnostics.Contracts {
-#if NET_4_0
+#if NET_2_1 || NET_4_0
 	public
 #else
 	internal
