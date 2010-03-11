@@ -434,9 +434,6 @@ namespace MonoTests.System.Reflection
 			// get it for real
 			fi = t.GetField ("protectedField", BindingFlags.NonPublic | BindingFlags.Instance);
 			Assert.IsNotNull (fi);
-			// get via typebuilder
-			FieldInfo f = TypeBuilder.GetField (t, fi);
-			Assert.IsNotNull (f);
 		}
 #endif // TARGET_JVM
 

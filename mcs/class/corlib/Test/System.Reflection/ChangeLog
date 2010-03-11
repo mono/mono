@@ -1,3 +1,7 @@
+2010-03-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* FieldInfoTest.cs: Remove invalid assert.
+
 2010-02-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* AssemblyTest.cs: Fix test under v4.
