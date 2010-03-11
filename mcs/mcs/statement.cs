@@ -96,12 +96,13 @@ namespace Mono.CSharp {
 		public abstract void MutateHoistedGenericType (AnonymousMethodStorey storey);
 	}
 
-	public sealed class EmptyStatement : Statement {
+	public sealed class EmptyStatement : Statement
+	{
+		public EmptyStatement (Location loc)
+		{
+			this.loc = loc;
+		}
 		
-		private EmptyStatement () {}
-		
-		public static readonly EmptyStatement Value = new EmptyStatement ();
-
 		public override bool Resolve (BlockContext ec)
 		{
 			return true;
@@ -112,8 +113,13 @@ namespace Mono.CSharp {
 			return true;
 		}
 
+		public override void Emit (EmitContext ec)
+		{
+		}
+
 		protected override void DoEmit (EmitContext ec)
 		{
+			throw new NotSupportedException ();
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -559,7 +565,7 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			if (InitStatement != null && InitStatement != EmptyStatement.Value)
+			if (InitStatement != null)
 				InitStatement.Emit (ec);
 
 			if (empty) {
@@ -581,8 +587,7 @@ namespace Mono.CSharp {
 			Statement.Emit (ec);
 
 			ig.MarkLabel (ec.LoopBegin);
-			if (Increment != EmptyStatement.Value)
-				Increment.Emit (ec);
+			Increment.Emit (ec);
 
 			ig.MarkLabel (test);
 			//
@@ -2158,12 +2163,12 @@ namespace Mono.CSharp {
 					if (ec.IsInProbingMode)
 						break;
 
-					statements [ix] = EmptyStatement.Value;
+					statements [ix] = new EmptyStatement (s.loc);
 					continue;
 				}
 
 				if (unreachable && !(s is LabeledStatement) && !(s is Block))
-					statements [ix] = EmptyStatement.Value;
+					statements [ix] = new EmptyStatement (s.loc);
 
 				unreachable = ec.CurrentBranching.CurrentUsageVector.IsUnreachable;
 				if (unreachable && s is LabeledStatement)

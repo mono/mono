@@ -4543,7 +4543,7 @@ embedded_statement
 empty_statement
 	: SEMICOLON
 	  {
-		  $$ = EmptyStatement.Value;
+		$$ = new EmptyStatement (GetLocation ($1));
 	  }
 	;
 
@@ -4756,7 +4756,7 @@ interactive_statement_expression
 	| error
 	  {
 		Error_SyntaxError (yyToken);
-		$$ = EmptyStatement.Value;
+		$$ = new EmptyStatement (GetLocation ($1));
 	  }
 	;
 	
@@ -4769,27 +4769,20 @@ if_statement
 	: IF open_parens_any boolean_expression CLOSE_PARENS 
 	  embedded_statement
 	  { 
-		Location l = GetLocation ($1);
-
-		$$ = new If ((BooleanExpression) $3, (Statement) $5, l);
-
-		// FIXME: location for warning should be loc property of $5.
-		if ($5 == EmptyStatement.Value)
-			Report.Warning (642, 3, l, "Possible mistaken empty statement");
-
+		if ($5 is EmptyStatement)
+			Report.Warning (642, 3, GetLocation ($5), "Possible mistaken empty statement");
+		
+		$$ = new If ((BooleanExpression) $3, (Statement) $5, GetLocation ($1));
 	  }
 	| IF open_parens_any boolean_expression CLOSE_PARENS
 	  embedded_statement ELSE embedded_statement
 	  {
-		Location l = GetLocation ($1);
+		$$ = new If ((BooleanExpression) $3, (Statement) $5, (Statement) $7, GetLocation ($1));
 
-		$$ = new If ((BooleanExpression) $3, (Statement) $5, (Statement) $7, l);
-
-		// FIXME: location for warning should be loc property of $5 and $7.
-		if ($5 == EmptyStatement.Value)
-			Report.Warning (642, 3, l, "Possible mistaken empty statement");
-		if ($7 == EmptyStatement.Value)
-			Report.Warning (642, 3, l, "Possible mistaken empty statement");
+		if ($5 is EmptyStatement)
+			Report.Warning (642, 3, GetLocation ($5), "Possible mistaken empty statement");
+		if ($7 is EmptyStatement)
+			Report.Warning (642, 3, GetLocation ($7), "Possible mistaken empty statement");
 	  }
 	;
 
@@ -4961,7 +4954,7 @@ for_statement
 	;
 
 opt_for_initializer
-	: /* empty */		{ $$ = EmptyStatement.Value; }
+	: /* empty */		{ $$ = new EmptyStatement (lexer.Location); }
 	| for_initializer	
 	;
 
@@ -4976,7 +4969,7 @@ opt_for_condition
 	;
 
 opt_for_iterator
-	: /* empty */		{ $$ = EmptyStatement.Value; }
+	: /* empty */		{ $$ = new EmptyStatement (lexer.Location); }
 	| for_iterator
 	;
 

@@ -1,5 +1,10 @@
 2010-03-11  Marek Safar  <marek.safar@gmail.com>
 
+	* statement.cs, cs-parser.jay: Use correct location for empty
+	statements.
+
+2010-03-11  Marek Safar  <marek.safar@gmail.com>
+
 	* cs-parser.jay: Disable Location from expression.
 	
 	* generic.cs: Check constraints for overrides in the parser.
