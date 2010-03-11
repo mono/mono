@@ -1,3 +1,7 @@
+2010-03-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: New tests for GetMethod, GetConstructor and GetField.
+
 2010-02-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* DynamicMethodTest.cs: Add a test for #575955.

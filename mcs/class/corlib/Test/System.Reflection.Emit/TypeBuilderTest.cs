@@ -2060,7 +2060,49 @@ namespace MonoTests.System.Reflection.Emit
 			tb.DefineProperty ("A", 0, null, Type.EmptyTypes);
 		}
 
-#if NET_2_0
+		[Test]
+		public void GetMethod_WorksWithTypeBuilderParameter () {
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			var garg = tb.DefineGenericParameters ("T") [0];
+			MethodBuilder mb = tb.DefineMethod ("create", MethodAttributes.Public, typeof (void), Type.EmptyTypes);
+		
+			var mi = TypeBuilder.GetMethod (tb, mb);
+			var decl = mi.DeclaringType;
+
+			Assert.IsTrue (decl.IsGenericType, "#1");
+			Assert.IsFalse (decl.IsGenericTypeDefinition, "#2");
+			Assert.AreEqual (tb, decl.GetGenericTypeDefinition (), "#3");
+			Assert.AreEqual (garg, decl.GetGenericArguments () [0], "#4");
+		}
+
+		[Test]
+		public void GetConstructor_FailWithTypeBuilderParameter () {
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			var garg = tb.DefineGenericParameters ("T") [0];
+			var cb = tb.DefineConstructor (MethodAttributes.Public, CallingConventions.Standard, Type.EmptyTypes);
+
+			try {
+				TypeBuilder.GetConstructor (tb, cb);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual ("type", ex.ParamName, "#2");
+			}
+		}
+
+		[Test]
+		public void GetField_FailWithTypeBuilderParameter () {
+			TypeBuilder tb = module.DefineType (genTypeName ());
+			var garg = tb.DefineGenericParameters ("T") [0];
+			var fb = tb.DefineField ("TestField", typeof (int), FieldAttributes.Public);
+
+			try {
+				TypeBuilder.GetField (tb, fb);
+				Assert.Fail ("#1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual ("type", ex.ParamName, "#2");
+			}
+		}
+
 		[Test]
 		public void GetMethod_RejectMethodFromInflatedTypeBuilder () {
 			TypeBuilder tb = module.DefineType (genTypeName ());
@@ -2218,7 +2260,6 @@ namespace MonoTests.System.Reflection.Emit
 			catch (NullReferenceException) {
 			}
 		}
-#endif
 
 		[Test] //#536243
 		public void CreateTypeThrowsForMethodsWithBadLabels ()
