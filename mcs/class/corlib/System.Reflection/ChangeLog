@@ -1,5 +1,9 @@
 2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* EventInfo.cs: Some v4 adjustments.
+
+2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MethodInfo.cs: New v4 stuff.
 
 2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>

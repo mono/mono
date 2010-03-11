@@ -41,7 +41,11 @@ namespace System.Reflection {
 
 		public abstract EventAttributes Attributes {get;}
 
-		public Type EventHandlerType {
+		public
+#if NET_4_0
+		virtual
+#endif
+		Type EventHandlerType {
 			get {
 				ParameterInfo[] p;
 				MethodInfo add = GetAddMethod (true);
@@ -56,7 +60,12 @@ namespace System.Reflection {
 					return null;
 			}
 		}
-		public bool IsMulticast {get {return true;}}
+
+		public
+#if NET_4_0
+		virtual
+#endif
+		bool IsMulticast {get {return true;}}
 		public bool IsSpecialName {get {return (Attributes & EventAttributes.SpecialName ) != 0;}}
 		public override MemberTypes MemberType {
 			get {return MemberTypes.Event;}
@@ -68,7 +77,11 @@ namespace System.Reflection {
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
-		public void AddEventHandler (object target, Delegate handler)
+		public
+#if NET_4_0
+		virtual
+#endif
+		void AddEventHandler (object target, Delegate handler)
 		{
 			if (cached_add_event == null) {
 				MethodInfo add = GetAddMethod ();
@@ -111,7 +124,11 @@ namespace System.Reflection {
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]
-		public void RemoveEventHandler (object target, Delegate handler)
+		public
+#if NET_4_0
+		virtual
+#endif
+		void RemoveEventHandler (object target, Delegate handler)
 		{
 			MethodInfo remove = GetRemoveMethod ();
 			if (remove == null)
