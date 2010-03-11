@@ -1300,22 +1300,25 @@ method_header
 		MemberName name = (MemberName) $4;
 		current_local_parameters = (ParametersCompiled) $7;
 
-		if ($10 != null && name.TypeArguments == null)
-			Report.Error (80, lexer.Location,
-				      "Constraints are not allowed on non-generic declarations");
-
-		Method method;
-
 		GenericMethod generic = null;
 		if (name.TypeArguments != null) {
 			generic = new GenericMethod (current_namespace, current_class, name,
 						     (FullNamedExpression) $3, current_local_parameters);
 
 			generic.SetParameterInfo ((List<Constraints>) $10);
+		} else if ($10 != null) {
+			Report.Error (80, GetLocation ($10),
+				"Constraints are not allowed on non-generic declarations");
 		}
 
-		method = new Method (current_class, generic, (FullNamedExpression) $3, (Modifiers) $2,
+		Method method = new Method (current_class, generic, (FullNamedExpression) $3, (Modifiers) $2,
 				     name, current_local_parameters, (Attributes) $1);
+				     
+		if ($10 != null && ((method.ModFlags & Modifiers.OVERRIDE) != 0 || name.Left != null)) {
+			Report.Error (460, method.Location,
+				"`{0}': Cannot specify constraints for overrides and explicit interface implementation methods",
+				method.GetSignatureForError ());
+		}
 
 		current_generic_method = generic;
 
@@ -6283,8 +6286,9 @@ Location GetLocation (object obj)
 		return ((Tokenizer.LocatedToken) obj).Location;
 	if (obj is MemberName)
 		return ((MemberName) obj).Location;
-	if (obj is Expression)
-		return ((Expression) obj).Location;		
+
+//	if (obj is Expression)
+//		return ((Expression) obj).Location;		
 
 	return lexer.Location;
 }

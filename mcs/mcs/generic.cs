@@ -817,13 +817,6 @@ namespace Mono.CSharp {
 				return false;
 
 			if (implementing != null) {
-				if (is_override && (constraints != null)) {
-					Report.Error (460, Location,
-						"`{0}': Cannot specify constraints for overrides or explicit interface implementation methods",
-						TypeManager.CSharpSignature (builder));
-					return false;
-				}
-
 				MethodBase mb = TypeManager.DropGenericMethodArguments (implementing);
 
 				int pos = type.GenericParameterPosition;
