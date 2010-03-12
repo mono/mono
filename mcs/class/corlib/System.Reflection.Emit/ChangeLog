@@ -1,3 +1,8 @@
+2010-03-12  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyBuilder.cs (AddTypeForwarder): throw if the
+	type is a nested type.
+
 2010-03-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilder.cs (GetMethod): Allow type to be the typebuilder itself.

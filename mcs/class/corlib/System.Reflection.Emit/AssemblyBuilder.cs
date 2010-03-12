@@ -471,6 +471,8 @@ namespace System.Reflection.Emit
 		internal void AddTypeForwarder (Type t) {
 			if (t == null)
 				throw new ArgumentNullException ("t");
+			if (t.IsNested)
+				throw new ArgumentException ();
 
 			if (type_forwarders == null) {
 				type_forwarders = new Type [1] { t };
