@@ -603,6 +603,7 @@ System.ServiceModel.Description/WsdlContractConversionContext.cs
 System.ServiceModel.Description/WsdlEndpointConversionContext.cs
 System.ServiceModel.Description/WsdlExporter.cs
 System.ServiceModel.Description/WsdlImporter.cs
+System.ServiceModel.Description/XmlName.cs
 System.ServiceModel.Description/XmlSerializerMessageContractImporter.cs
 System.ServiceModel.Description/XmlSerializerOperationBehavior.cs
 System.ServiceModel.Diagnostics/PerformanceCounterScope.cs

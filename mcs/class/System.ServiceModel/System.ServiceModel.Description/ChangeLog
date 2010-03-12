@@ -1,3 +1,7 @@
+2010-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlName.cs : new internal type for moonlight/SL SDK compatibility.
+
 2010-02-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MetadataResolver.cs : fix BeginResolve() overloads and use
