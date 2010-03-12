@@ -1,3 +1,7 @@
+2010-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageDescription.cs : implement MessageName.
+
 2010-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BaseMessagesFormatter.cs : add internal OperationFormatter type
