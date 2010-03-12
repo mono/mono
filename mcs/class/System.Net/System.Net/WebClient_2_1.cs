@@ -538,12 +538,12 @@ namespace System.Net {
 
 			WebRequest request = WebRequest.Create (uri);
 
-			request.SetupProgressDelegate (delegate (long read, long length) {
+			request.progress = delegate (long read, long length) {
 				callback_data.sync_context.Post (delegate (object sender) {
 					OnDownloadProgressChanged (new DownloadProgressChangedEventArgs (read, length, callback_data.user_token));
 				}, null);
 
-			});
+			};
 			return request;
 		}
 

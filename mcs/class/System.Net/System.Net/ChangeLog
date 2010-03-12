@@ -1,3 +1,9 @@
+2010-03-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebClient_2_1.cs: Directly set 'progress' delegate field
+	* WebRequest_2_1.cs: Avoid using reflection (since it was not 
+	really needed anyway)
+
 2010-03-03  Andreia Gaita  <avidigal@novell.com>
 
 	* InternalWebRequestStreamWrapper.cs: don't add a newline to the

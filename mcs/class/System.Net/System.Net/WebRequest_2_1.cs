@@ -43,6 +43,8 @@ namespace System.Net {
 		static IWebRequestCreate default_creator;
 		static Dictionary<string, IWebRequestCreate> registred_prefixes;
 
+		internal Action<long,long> progress;
+
 		public abstract string ContentType { get; set; }
 		public abstract WebHeaderCollection Headers { get; set; }
 		public abstract string Method { get; set; }
@@ -148,13 +150,6 @@ namespace System.Net {
 
 			registred_prefixes.Add (prefix, creator);
 			return true;
-		}
-
-		internal void SetupProgressDelegate (Action<long,long> progress)
-		{
-			FieldInfo fi = GetType ().GetField ("progress", BindingFlags.Instance | BindingFlags.NonPublic);
-			if (fi != null)
-				fi.SetValue (this, progress);
 		}
 
 		static Exception NotImplemented ()
