@@ -163,7 +163,7 @@ namespace System.ServiceModel.Dispatcher
 			o.Invoker = new DefaultOperationInvoker (od);
 
 			// Setup Formater
-			o.Formatter = BaseMessagesFormatter.Create (od);
+			o.Formatter = new OperationFormatter (od, false, false); // FIXME: pass correct isRpc, isEncoded
 
 			if (o.Action == "*" && (o.IsOneWay || o.ReplyAction == "*")) {
 				//Signature : Message  (Message)

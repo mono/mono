@@ -1,5 +1,13 @@
 2010-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* BaseMessagesFormatter.cs : add internal OperationFormatter type
+	  for moonlight/silverlight-sdk compatibility. It mostly wraps
+	  the existing the return value by BaseMessagesFormatter.Create().
+	* DispatchOperation.cs, ClientOperation.cs, EndpointDispatcher.cs:
+	  use above new type.
+
+2010-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* OperationDescription.cs, MessagePartDescription.cs,
 	  MessageDescription.cs : add internal moonlight compat stuff.
 

@@ -210,7 +210,7 @@ namespace System.ServiceModel.Dispatcher
 				if (Formatter != null)
 					actual_formatter = Formatter;
 				else
-					actual_formatter = BaseMessagesFormatter.Create (Description);
+					actual_formatter = new OperationFormatter (Description, false, false); // FIXME: pass correct isRpc, isEncoded
 			}
 			return actual_formatter;
 		}
