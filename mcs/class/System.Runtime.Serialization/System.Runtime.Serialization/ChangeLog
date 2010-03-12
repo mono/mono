@@ -1,3 +1,8 @@
+2010-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs, SerializationMap.cs :
+	  some refactoring to implement MessageDescription.XmlName.
+
 2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : return array instance if the runtime type is

@@ -562,7 +562,7 @@ namespace System.Runtime.Serialization
 	internal partial class DefaultTypeMap : SerializationMap
 	{
 		public DefaultTypeMap (Type type, KnownTypeCollection knownTypes)
-			: base (type, KnownTypeCollection.GetContractQName (type, null, null), knownTypes)
+			: base (type, KnownTypeCollection.GetStaticQName (type), knownTypes)
 		{
 			Members.AddRange (GetDefaultMembers ());
 		}

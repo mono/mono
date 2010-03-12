@@ -446,13 +446,17 @@ namespace System.Runtime.Serialization
 
 		internal QName GetQName (Type type)
 		{
-			if (IsPrimitiveNotEnum (type))
-				return GetPrimitiveTypeName (type);
-
 			SerializationMap map = FindUserMap (type);
 			if (map != null)
 				// already mapped.
 				return map.XmlName; 
+			return GetStaticQName (type);
+		}
+
+		public static QName GetStaticQName (Type type)
+		{
+			if (IsPrimitiveNotEnum (type))
+				return GetPrimitiveTypeName (type);
 
 			if (type.IsEnum)
 				return GetEnumQName (type);
@@ -477,23 +481,23 @@ namespace System.Runtime.Serialization
 			if (GetAttribute<SerializableAttribute> (type) != null)
 				return GetSerializableQName (type);
 
-			// FIXME: it needs in-depth check.
-			return QName.Empty;
+			// default type map - still uses GetContractQName().
+			return GetContractQName (type, null, null);
 		}
 
-		QName GetContractQName (Type type)
+		static QName GetContractQName (Type type)
 		{
 			var a = GetAttribute<DataContractAttribute> (type);
 			return a == null ? null : GetContractQName (type, a.Name, a.Namespace);
 		}
 
-		QName GetCollectionContractQName (Type type)
+		static QName GetCollectionContractQName (Type type)
 		{
 			var a = GetAttribute<CollectionDataContractAttribute> (type);
 			return a == null ? null : GetContractQName (type, a.Name, a.Namespace);
 		}
 
-		internal static QName GetContractQName (Type type, string name, string ns)
+		static QName GetContractQName (Type type, string name, string ns)
 		{
 			if (name == null) {
 				// FIXME: there could be decent ways to get 
@@ -510,7 +514,7 @@ namespace System.Runtime.Serialization
 			return new QName (name, ns);
 		}
 
-		private QName GetEnumQName (Type type)
+		static QName GetEnumQName (Type type)
 		{
 			string name = null, ns = null;
 
@@ -533,9 +537,9 @@ namespace System.Runtime.Serialization
 			return new QName (name, ns);
 		}
 
-		private QName GetCollectionQName (Type element)
+		static QName GetCollectionQName (Type element)
 		{
-			QName eqname = GetQName (element);
+			QName eqname = GetStaticQName (element);
 			
 			string ns = eqname.Namespace;
 			if (eqname.Namespace == MSSimpleNamespace)
@@ -547,13 +551,13 @@ namespace System.Runtime.Serialization
 				ns);
 		}
 
-		private QName GetSerializableQName (Type type)
+		static QName GetSerializableQName (Type type)
 		{
 			string xmlName = type.Name;
 			if (type.IsGenericType) {
 				xmlName = xmlName.Substring (0, xmlName.IndexOf ('`')) + "Of";
 				foreach (var t in type.GetGenericArguments ())
-					xmlName += GetQName (t).Name; // FIXME: check namespaces too
+					xmlName += GetStaticQName (t).Name; // FIXME: check namespaces too
 			}
 			string xmlNamespace = DefaultClrNamespaceBase + type.Namespace;
 			var x = GetAttribute<XmlRootAttribute> (type);
@@ -564,7 +568,7 @@ namespace System.Runtime.Serialization
 			return new QName (XmlConvert.EncodeLocalName (xmlName), xmlNamespace);
 		}
 
-		internal bool IsPrimitiveNotEnum (Type type)
+		static bool IsPrimitiveNotEnum (Type type)
 		{
 			if (type.IsEnum)
 				return false;
@@ -614,7 +618,7 @@ namespace System.Runtime.Serialization
 			return true;
 		}
 
-		internal static Type GetCollectionElementType (Type type)
+		static Type GetCollectionElementType (Type type)
 		{
 			if (type.IsArray)
 				return type.GetElementType ();
@@ -629,7 +633,7 @@ namespace System.Runtime.Serialization
 			return null;
 		}
 
-		internal T GetAttribute<T> (MemberInfo mi) where T : Attribute
+		internal static T GetAttribute<T> (MemberInfo mi) where T : Attribute
 		{
 			object [] atts = mi.GetCustomAttributes (typeof (T), false);
 			return atts.Length == 0 ? null : (T) atts [0];
