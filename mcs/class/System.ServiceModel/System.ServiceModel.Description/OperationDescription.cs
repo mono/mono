@@ -130,5 +130,11 @@ namespace System.ServiceModel.Description
 			get { return sync_method; }
 			set { sync_method = value; }
 		}
+
+		#region internal members for moonlight compatibility
+
+		internal object FormatterBehavior { get; set; }
+
+		#endregion
 	}
 }

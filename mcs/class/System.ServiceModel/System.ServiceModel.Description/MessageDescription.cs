@@ -92,5 +92,36 @@ namespace System.ServiceModel.Description
 		public MessagePropertyDescriptionCollection Properties {
 			get { return properties; }
 		}
+
+		#region internals required for moonlight compatibility
+
+		[MonoTODO]
+		internal XmlName MessageName {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+
+		internal bool IsTypedMessage {
+			get { return MessageType == null; }
+		}
+
+		internal bool IsUntypedMessage {
+			get { return IsOfType (typeof (Message)); }
+		}
+
+		internal bool IsVoid {
+			get { return IsOfType (typeof (void)); }
+		}
+
+		bool IsOfType (Type t)
+		{
+			if (direction == MessageDirection.Output)
+				return Body != null && Body.ReturnValue != null && Body.ReturnValue.Type == t;
+			else
+				return Body.Parts.Count == 1 && Body.Parts [0].Type == t;
+		}
+
+		#endregion
 	}
 }

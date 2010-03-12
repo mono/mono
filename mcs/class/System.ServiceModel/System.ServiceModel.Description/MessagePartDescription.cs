@@ -110,5 +110,18 @@ namespace System.ServiceModel.Description
 		}
 #endif
 #endif
+
+		#region internals required for moonlight compatibility
+
+		ICustomAttributeProvider additional_att_provider;
+
+		internal ICustomAttributeProvider AdditionalAttributesProvider {
+			get { return additional_att_provider ?? MemberInfo; }
+			set { additional_att_provider = value; }
+		}
+
+		internal int SerializationPosition { get; set; }
+
+		#endregion
 	}
 }
