@@ -140,11 +140,11 @@ monotouch_dirs := \
 	Mono.Security	\
 	System	\
 	I18N		\
-	System.Json	\
 	System.Xml.Linq	\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
 	System.ServiceModel.Web	\
+	System.Json	\
 	System.Web.Services	\
 	Mono.Data.Tds	\
 	System.Transactions	\

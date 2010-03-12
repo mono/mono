@@ -1,3 +1,7 @@
+2010-03-11  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile : build Sys.Json after Sys.SM.Web.
+
 2010-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Makefile: For NET_2_1 build System.XML before System.Net
