@@ -1,3 +1,7 @@
+2010-03-12  Jb Evain  <jbevain@novell.com>
+
+	* dump.c (dump_table_exported): dump the type flags as well.
+
 
 Wed Feb 24 16:00:56 CET 2010 Paolo Molaro <lupus@ximian.com>
 
