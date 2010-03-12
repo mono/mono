@@ -1,3 +1,14 @@
+2010-03-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* simd-intrinsics.c (simd_intrinsic_emit_getter): Don't emit shuffle opcodes
+	when using LLVM, LLVM generates it itself when needed.
+
+	* mini-llvm-cpp.cpp (mono_llvm_build_aligned_load): New helper function.
+
+	* mini-llvm.c: Use an unaligned load for OP_LOADX_MEMBASE. Add zero extension
+	to some OP_EXTRACT_ opcodes. Fix the naming of some sse intrinsics. Fix
+	OP_ANDNPS/OP_ANDNPD.
+
 2010-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c (mono_arch_create_monitor_enter_trampoline_full): Use 'code' for
