@@ -1,3 +1,8 @@
+2010-03-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* IStructuralComparable.cs, IStructuralEquatable.cs: Add them to
+	NET_2_1 since they are parts of SL4
+
 2009-11-26  Marek Safar <marek.safar@gmail.com>
 	
 	* CollectionDebuggerView.cs: Removed limit restriction.

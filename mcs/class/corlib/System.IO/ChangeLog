@@ -1,3 +1,9 @@
+2010-03-12  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* File.cs: Enable some NET_4_0 features in NET_2_1 since they are
+	part of SL4. Throw a SecurityException in Moonlight in non-debug
+	builds until we're ready for elevated trust.
+
 2010-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Path.cs (GetTempFileName): Fix infinite loop if the process doesn't have

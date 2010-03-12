@@ -37,7 +37,9 @@ using System.Text;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 
-#if !NET_2_1
+#if NET_2_1
+using System.Security;
+#else
 using System.Security.AccessControl;
 #endif
 
@@ -46,8 +48,22 @@ namespace System.IO
 	[ComVisible (true)]
 	public static class File
 	{
+		static void ValidatePath (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Length == 0)
+				throw new ArgumentException ("path");
+#if NET_2_1 && !MONOTOUCH && !DEBUG
+			// On Moonlight (SL4+) this is possible, with limitations, in "Elevated Trust"
+			throw new SecurityException ("we're not ready to enable this SL4 feature yet");
+#endif
+		}
+
 		public static void AppendAllText (string path, string contents)
 		{
+			ValidatePath (path);
+
 			using (TextWriter w = new StreamWriter (path, true)) {
 				w.Write (contents);
 			}
@@ -55,6 +71,8 @@ namespace System.IO
 
 		public static void AppendAllText (string path, string contents, Encoding encoding)
 		{
+			ValidatePath (path);
+
 			using (TextWriter w = new StreamWriter (path, true, encoding)) {
 				w.Write (contents);
 			}
@@ -536,12 +554,18 @@ namespace System.IO
 		}
 
 		public static string ReadAllText (string path)
-			{
-			return ReadAllText (path, Encoding.UTF8Unmarked);
+		{
+			ValidatePath (path);
+
+			using (StreamReader sr = new StreamReader (path)) {
+				return sr.ReadToEnd ();
+			}
 		}
 
 		public static string ReadAllText (string path, Encoding encoding)
 		{
+			ValidatePath (path);
+
 			using (StreamReader sr = new StreamReader (path, encoding)) {
 				return sr.ReadToEnd ();
 			}
@@ -617,41 +641,37 @@ namespace System.IO
 			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
 
-#if NET_4_0
+#if (NET_2_1 && !MONOTOUCH) || NET_4_0
 		public static IEnumerable<string> ReadLines (string path)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.Length == 0)
-				throw new ArgumentException ("path");
+			ValidatePath (path);
 
 			using (StreamReader reader = File.OpenText (path)) {
-				string s;
-				while ((s = reader.ReadLine ()) != null)
-					yield return s;
+				return ReadLines (reader);
 			}
 		}
 
 		public static IEnumerable<string> ReadLines (string path, Encoding encoding)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.Length == 0)
-				throw new ArgumentException ("path");
+			ValidatePath (path);
 
 			using (StreamReader reader = new StreamReader (path, encoding)) {
-				string s;
-				while ((s = reader.ReadLine ()) != null)
-					yield return s;
+				return ReadLines (reader);
 			}
+		}
+
+		// refactored in order to avoid compiler-generated names for Moonlight tools
+		static IEnumerable<string> ReadLines (StreamReader reader)
+		{
+			string s;
+			while ((s = reader.ReadLine ()) != null)
+				yield return s;
 		}
 
 		public static void AppendAllLines (string path, IEnumerable<string> contents)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.Length == 0)
-				throw new ArgumentException ("path");
+			ValidatePath (path);
+
 			if (contents == null)
 				return;
 
@@ -663,10 +683,8 @@ namespace System.IO
 
 		public static void AppendAllLines (string path, IEnumerable<string> contents, Encoding encoding)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.Length == 0)
-				throw new ArgumentException ("path");
+			ValidatePath (path);
+
 			if (contents == null)
 				return;
 
@@ -678,10 +696,8 @@ namespace System.IO
 
 		public static void WriteAllLines (string path, IEnumerable<string> contents)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.Length == 0)
-				throw new ArgumentException ("path");
+			ValidatePath (path);
+
 			if (contents == null)
 				return;
 
@@ -693,10 +709,8 @@ namespace System.IO
 
 		public static void WriteAllLines (string path, IEnumerable<string> contents, Encoding encoding)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.Length == 0)
-				throw new ArgumentException ("path");
+			ValidatePath (path);
+
 			if (contents == null)
 				return;
 
