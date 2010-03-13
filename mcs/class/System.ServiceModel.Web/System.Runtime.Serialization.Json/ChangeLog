@@ -1,3 +1,8 @@
+2010-03-13  Kornél Pál  <kornelpal@gmail.com>
+
+	* JavaScriptReader.cs: Deserialize "false" correctly.
+	  Fixed bug #586712.
+
 2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JavaScriptReader.cs : moved from Sys.Json/JsonReader.cs.

@@ -86,7 +86,7 @@ namespace System.Runtime.Serialization.Json
 				return true;
 			case 'f':
 				Expect ("false");
-				return true;
+				return false;
 			case 'n':
 				Expect ("null");
 				// FIXME: what should we return?
