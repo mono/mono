@@ -1,3 +1,7 @@
+2010-03-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* ILParser.jay: Fix support for hex float literals on big-endian platforms.
+
 2009-04-20  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #494221.
