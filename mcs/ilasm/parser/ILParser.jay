@@ -3280,7 +3280,7 @@ float64			: FLOAT64
                           {
                                 long l = (long) $3;
                                 byte[] intb = BitConverter.GetBytes (l);
-                                $$ = (double) BitConverter.ToSingle (intb, 0);
+                                $$ = (double) BitConverter.ToSingle (intb, BitConverter.IsLittleEndian ? 0 : 4);
                           }
 			| K_FLOAT64 OPEN_PARENS INT64 CLOSE_PARENS
                           {
