@@ -1,5 +1,9 @@
 2010-03-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* ILParser.jay: Fix the float32(<long>) case in the previous change.
+
+2010-03-14  Zoltan Varga  <vargaz@gmail.com>
+
 	* ILParser.jay: Fix support for hex float literals on big-endian platforms.
 
 2009-04-20  Ankit Jain  <jankit@novell.com>
