@@ -1,3 +1,8 @@
+2010-03-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (LIBRARY_COMPAT): added - this lib is installed in the
+	compat dir.
+
 2010-02-17  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: RESX_RES is no more, it was replaced with

@@ -1,0 +1,5 @@
+2010-02-09  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile: added references to
+	System.ComponentModel.DataAnnotations and System.Data.Linq
+

@@ -1,3 +1,7 @@
+2010-03-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (net_2_0_dirs): added System.Web.Mvc2
+
 2010-03-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : build Sys.Json after Sys.SM.Web.
