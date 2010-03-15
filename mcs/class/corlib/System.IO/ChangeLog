@@ -1,3 +1,7 @@
+2010-03-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* SearchOption.cs: Make public for Moonlight, this type is in SL4.
+
 2010-03-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* File.cs: Enable some NET_4_0 features in NET_2_1 since they are
