@@ -1,3 +1,7 @@
+2010-03-15  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy_2_1.cs : added cosmetic silverlight sdk compatibility stuff.
+
 2010-03-11  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources,
