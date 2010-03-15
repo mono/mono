@@ -46,3 +46,8 @@ System.ServiceModel.Syndication/TextSyndicationContentKind.cs
 System.ServiceModel.Syndication/UrlSyndicationContent.cs
 System.ServiceModel.Syndication/Workspace.cs
 System.ServiceModel.Syndication/XmlSyndicationContent.cs
+System/UriTemplate.cs
+System/UriTemplateEquivalenceComparer.cs
+System/UriTemplateMatch.cs
+System/UriTemplateMatchException.cs
+System/UriTemplateTable.cs

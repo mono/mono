@@ -1,5 +1,11 @@
 2010-03-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* net_2_0_System.ServiceModel.Web.dll.sources,
+	  common_System.ServiceModel.Web.dll.sources : UriTemplates are
+	  moved to Sys.SM.dll in 4.0 profile.
+
+2010-03-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* monotouch_System.ServiceModel.Web.dll.sources :
 	  This also needs new files.
 

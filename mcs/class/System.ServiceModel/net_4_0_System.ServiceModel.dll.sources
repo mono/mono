@@ -38,3 +38,8 @@
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/UrlSyndicationContent.cs
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/Workspace.cs
 ../System.ServiceModel.Web/System.ServiceModel.Syndication/XmlSyndicationContent.cs
+../System.ServiceModel.Web/System/UriTemplate.cs
+../System.ServiceModel.Web/System/UriTemplateEquivalenceComparer.cs
+../System.ServiceModel.Web/System/UriTemplateMatch.cs
+../System.ServiceModel.Web/System/UriTemplateMatchException.cs
+../System.ServiceModel.Web/System/UriTemplateTable.cs

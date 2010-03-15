@@ -1,5 +1,10 @@
 2010-03-15  Astushi Enomoto  <atsushi@ximian.com>
 
+	* net_4_0_System.ServiceModel.dll.sources:
+	  more types from Sys.SM.Web.dll in 4.0 profile here.
+
+2010-03-15  Astushi Enomoto  <atsushi@ximian.com>
+
 	* Dummy_2_1.cs : added cosmetic silverlight sdk compatibility stuff.
 
 2010-03-11  Astushi Enomoto  <atsushi@ximian.com>

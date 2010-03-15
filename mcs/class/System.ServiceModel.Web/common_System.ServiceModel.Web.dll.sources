@@ -37,8 +37,3 @@ System.ServiceModel.Web/WebServiceHost.cs
 System.ServiceModel/WebHttpBinding.cs
 System.ServiceModel/WebHttpSecurity.cs
 System.ServiceModel/WebHttpSecurityMode.cs
-System/UriTemplate.cs
-System/UriTemplateEquivalenceComparer.cs
-System/UriTemplateMatch.cs
-System/UriTemplateMatchException.cs
-System/UriTemplateTable.cs
