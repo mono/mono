@@ -678,13 +678,12 @@ namespace System
 			}
 #endif
 
-			// Parse optional (LAMESPEC) colon
-			private void ParseOptColon ()
+			private void ParseColon (bool optional)
 			{
 				if (!AtEnd) {
 					if (_src[_cur] == ':')
 						_cur++;
-					else 
+					else if (!optional)
 						formatError = true;
 				}
 			}
@@ -734,9 +733,9 @@ namespace System
 					hours = days;
 					days = 0;
 				}
-				ParseOptColon();
+				ParseColon(false);
 				minutes = ParseInt (true);
-				ParseOptColon ();
+				ParseColon (true);
 				seconds = ParseInt (true);
 #if NET_4_0
 				if ( ParseOptDecimalSeparator () ) {

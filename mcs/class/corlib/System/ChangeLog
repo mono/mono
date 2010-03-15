@@ -1,3 +1,11 @@
+2010-03-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: Make the colon parsing optional -and adjust the name to
+	reflect it-, so we can properly parse the case where we only have the
+	hours and minutes. This subtle bug was hidden before, since a string
+	such "10:12" would be parsed correctly, but "10:12  " (trailing white
+	space) was getting a FormatException.
+
 2010-03-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Tuple.cs, Tuples.cs: Add them to NET_2_1 since they are parts
