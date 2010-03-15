@@ -1,3 +1,28 @@
+
+Mon Mar 15 18:28:00 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h: remove the method header from MonoMethod since
+	from now on it will be transient. We have a header pointer for method
+	wrappers, since in that case we need to keep track of it. For this
+	reason, all the Reflection.Emit generated methods use MonoMethodWrapper
+	structs now. The same happens with MonoMethodInflated.
+	* class.c: reset the sre_method flag for inflated method structures:
+	this makes the code that cares look at the header in the MonoMethodInflated
+	structure.
+	* loader.c: lookup the method header in the appropriate field now that
+	it is removed from MonoMethod.
+	* metadata-internals.h: add a flag to the method header to know if it
+	can be freed inside mono_metadata_free_mh ().
+	* method-builder.c: updates after moving the header field from
+	MonoMethod to MonoMethodWrapper.
+	* reflection.c: MonoMethods generated from Reflection.Emit use
+	MonoMethodWrapper structs if they need a method header now (later take
+	advantage of this and remove all the current unsafe uses of method_aux_hash).
+	* metadata.c: make method header parsing not leak when verification
+	fails. Alloc it with g_malloc() and free it in mono_metadata_free_mh().
+	These changes save a few hundred KB of runtime memory in a mcs
+	bootstrap or a monodevelop startup.
+
 2010-03-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c: Improve error message.
