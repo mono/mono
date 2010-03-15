@@ -454,6 +454,23 @@ namespace System.Xml.Linq
 			}
 		}
 
+#if NET_4_0 || (NET_2_1 && !MONOTOUCH)
+		public static XElement Load (Stream stream)
+		{
+			return Load (stream, LoadOptions.None);
+		}
+
+		public static XElement Load (Stream stream, LoadOptions options)
+		{
+			XmlReaderSettings s = new XmlReaderSettings ();
+			DefineDefaultSettings (s, options);
+
+			using (XmlReader r = XmlReader.Create (stream, s)) {
+				return LoadCore (r, options);
+			}
+		}
+#endif
+
 		internal static XElement LoadCore (XmlReader r, LoadOptions options)
 		{
 			r.MoveToContent ();

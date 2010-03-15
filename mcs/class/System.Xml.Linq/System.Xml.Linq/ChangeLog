@@ -1,3 +1,7 @@
+2010-03-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* XElement.cs: Added two new Load overloads for NET 4.0 and Moonlight.
+
 2010-02-12  Miguel de Icaza  <miguel@novell.com>
 
 	* XStreamingElement.cs: Avoid an extra indirect call, by calling
