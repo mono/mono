@@ -60,6 +60,7 @@ net_4_0_bootstrap_SUBDIRS = resgen culevel
 net_4_0_SUBDIRS := $(net_4_0_dirs) $(basic_SUBDIRS)
 
 SUBDIRS = $(basic_SUBDIRS) $(net_2_0_bootstrap_SUBDIRS) $(net_2_0_SUBDIRS) $(net_2_1_SUBDIRS)
+DIST_SUBDIRS = $(SUBDIRS) $(net_4_0_dirs)
 
 include ../build/rules.make
 
