@@ -279,7 +279,7 @@ namespace System.ServiceModel
 			ContractDescription cd, Binding binding, EndpointAddress address, Uri listenUri)
 		{
 			foreach (ServiceEndpoint e in Description.Endpoints)
-				if (e.Contract == cd)
+				if (e.Contract == cd && e.Binding == binding && e.Address == address && e.ListenUri.Equals (listenUri))
 					return e;
 			ServiceEndpoint se = new ServiceEndpoint (cd, binding, address);
 			se.ListenUri = listenUri.IsAbsoluteUri ? listenUri : new Uri (address.Uri, listenUri);
@@ -287,7 +287,6 @@ namespace System.ServiceModel
 			return se;
 		}
 
-		[MonoTODO]
 		protected virtual void ApplyConfiguration ()
 		{
 			if (Description == null)
@@ -316,7 +315,6 @@ namespace System.ServiceModel
 
 				// services
 				foreach (ServiceEndpointElement endpoint in service.Endpoints) {
-					// FIXME: consider BindingName as well
 					ServiceEndpoint se = AddServiceEndpoint (
 						endpoint.Contract,
 						ConfigUtil.CreateBinding (endpoint.Binding, endpoint.BindingConfiguration),

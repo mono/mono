@@ -1,3 +1,9 @@
+2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : do not reject endpoints with an identical
+	  contract to existing ones but with different binding, address or
+	  listen URI.
+
 2010-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpTransportSecurity.cs : remove MonoTODOs.
