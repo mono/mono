@@ -146,9 +146,9 @@ namespace System.ServiceModel.Configuration
 				HttpsHelpPageUrl = HttpsHelpPageUrl,
 				IncludeExceptionDetailInFaults = IncludeExceptionDetailInFaults,
 			};
-			if (HttpHelpPageBinding != null)
+			if (!String.IsNullOrEmpty (HttpHelpPageBinding))
 				ret.HttpHelpPageBinding = ConfigUtil.CreateBinding (HttpHelpPageBinding, HttpHelpPageBindingConfiguration);
-			if (HttpsHelpPageBinding != null)
+			if (!String.IsNullOrEmpty (HttpsHelpPageBinding))
 				ret.HttpsHelpPageBinding = ConfigUtil.CreateBinding (HttpsHelpPageBinding, HttpsHelpPageBindingConfiguration);
 			return ret;
 		}

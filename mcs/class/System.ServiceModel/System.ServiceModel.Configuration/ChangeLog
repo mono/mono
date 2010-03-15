@@ -1,3 +1,7 @@
+2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceDebugElement.cs : binding names could rather be empty.
+
 2010-03-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDictionaryReaderQuotasElement.cs : add ApplyConfiguration().
