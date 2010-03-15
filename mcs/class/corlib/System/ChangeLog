@@ -1,5 +1,11 @@
 2010-03-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TimeSpan.cs: In 4.0 if the part parsed as days exceeds the allowed
+	range -this is, 23-, then it is processed as days instead - opposed to
+	2.0, where we are throwing an OverflowException.
+
+2010-03-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TimeSpan.cs: Make the colon parsing optional -and adjust the name to
 	reflect it-, so we can properly parse the case where we only have the
 	hours and minutes. This subtle bug was hidden before, since a string

@@ -729,6 +729,14 @@ namespace System
 				if (ParseOptDot ()) {
 					hours = ParseInt (true);
 				}
+#if NET_4_0
+				// if the value that was going to be used as 'hours' exceeds the range,
+				// .net keeps it as days, even if there's a colon instead of a dot ahead
+				else if (days > 23) {
+					ParseColon (false);
+					hours = ParseInt (true);
+				}
+#endif
 				else if (!AtEnd) {
 					hours = days;
 					days = 0;
