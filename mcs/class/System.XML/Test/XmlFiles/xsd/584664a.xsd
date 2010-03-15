@@ -1,0 +1,19 @@
+<?xml version="1.0"?>
+<xs:schema xmlns:xs="http://www.w3.org/2001/XMLSchema" targetNamespace="http://a" xmlns="http://a" elementFormDefault="qualified" attributeFormDefault="unqualified">
+
+<xs:complexType name="base">
+  <xs:sequence>
+    <xs:element name="leaf" type="xs:string"/>
+    <xs:element name="nested" type="derived" minOccurs="0" maxOccurs="unbounded"/>
+  </xs:sequence>
+</xs:complexType>
+
+<xs:complexType name="derived">
+  <xs:complexContent>
+    <xs:extension base="base"/>
+  </xs:complexContent>
+</xs:complexType>
+
+<xs:element name="root" type="derived"/>
+
+</xs:schema>

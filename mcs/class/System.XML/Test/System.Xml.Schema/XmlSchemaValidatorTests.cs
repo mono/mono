@@ -290,6 +290,13 @@ namespace MonoTests.System.Xml
 			doc.Schemas.Add (XmlSchema.Read (XmlReader.Create (new StringReader (xsd)), null));
 			doc.Validate (null);
 		}
+
+		[Test]
+		public void Bug584664 ()
+		{
+			Validate (File.ReadAllText ("Test/XmlFiles/xsd/584664a.xml"), File.ReadAllText ("Test/XmlFiles/xsd/584664a.xsd"));
+			Validate (File.ReadAllText ("Test/XmlFiles/xsd/584664b.xml"), File.ReadAllText ("Test/XmlFiles/xsd/584664b.xsd"));
+		}
 	}
 }
 

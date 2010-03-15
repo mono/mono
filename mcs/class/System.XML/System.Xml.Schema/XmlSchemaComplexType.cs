@@ -414,6 +414,14 @@ namespace System.Xml.Schema
 
 		void FillContentTypeParticle (ValidationEventHandler h, XmlSchema schema)
 		{
+			if (CollectProcessId == schema.CompilationId)
+				return;
+			CollectProcessId = schema.CompilationId;
+
+			var ct = BaseXmlSchemaType as XmlSchemaComplexType;
+			if (ct != null)
+				ct.FillContentTypeParticle (h, schema);
+
 			// {content type} => ContentType and ContentTypeParticle (later)
 			if (ContentModel != null) {
 				CollectContentTypeFromContentModel (h, schema);
@@ -423,8 +431,6 @@ namespace System.Xml.Schema
 			contentTypeParticle = validatableParticle.GetOptimizedParticle (true);
 			if (contentTypeParticle == XmlSchemaParticle.Empty && resolvedContentType == XmlSchemaContentType.ElementOnly)
 				resolvedContentType = XmlSchemaContentType.Empty;
-
-			CollectProcessId = schema.CompilationId;
 		}
 
 		#region {content type}
@@ -480,7 +486,7 @@ namespace System.Xml.Schema
 			if (BaseSchemaTypeName == XmlSchemaComplexType.AnyTypeName)
 				baseComplexType = XmlSchemaComplexType.AnyType;
 
-			// On error case, it simple reject any contents
+			// On error case, it simply rejects any contents
 			if (baseComplexType == null) {
 				validatableParticle = XmlSchemaParticle.Empty;
 				resolvedContentType = XmlSchemaContentType.Empty;
@@ -488,6 +494,7 @@ namespace System.Xml.Schema
 			}
 
 			// 3.4.2 complex content {content type}
+			// FIXME: this part is looking different than the spec. sections.
 			if (cce.Particle == null || cce.Particle == XmlSchemaParticle.Empty) {
 				// - 2.1
 				if (baseComplexType == null) {

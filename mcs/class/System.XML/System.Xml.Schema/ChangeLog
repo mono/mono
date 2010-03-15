@@ -1,3 +1,8 @@
+2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaComplexType.cs : quick fix for bug #584664. Fill base
+	  content type particles in prior to filling its own.
+
 2010-02-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaComplexType.cs : in modern .NET, xs:anyType has the

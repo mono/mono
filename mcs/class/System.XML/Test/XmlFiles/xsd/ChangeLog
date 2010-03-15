@@ -1,3 +1,8 @@
+2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* 584664b.xsd, 584664a.xml, 584664b.xml, 584664a.xsd: new test files
+	  by Florian Haag.
+
 2009-05-21  Gert Driesen  <drieseng@users.sourceforge.net>
 
 	* extension-attr-redefine-*.xsd: new test files.
