@@ -1,3 +1,8 @@
+2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceEndpointCollection.cs : those overrides are rather to check
+	  null arguments, not to skip contract duplicates.
+
 2010-03-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageDescription.cs : implement MessageName.

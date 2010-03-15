@@ -107,20 +107,18 @@ namespace System.ServiceModel.Description
 			return list;
 		}
 
-		[MonoTODO]
 		protected override void InsertItem (int index, ServiceEndpoint item)
 		{
-			if (Find (new XmlQualifiedName (item.Contract.Name, item.Contract.Namespace)) == null)
-				base.InsertItem (index, item);
+			if (item == null)
+				throw new ArgumentNullException ("item");
+			base.InsertItem (index, item);
 		}
 
-		[MonoTODO]
 		protected override void SetItem (int index, ServiceEndpoint item)
 		{
-			if (Find (new XmlQualifiedName (item.Contract.Name, item.Contract.Namespace)) == null)
-				base.SetItem (index, item);
-			else
-				base.RemoveItem (index);
+			if (item == null)
+				throw new ArgumentNullException ("item");
+			base.SetItem (index, item);
 		}
 	}
 }
