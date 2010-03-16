@@ -25,8 +25,8 @@ $(symlinks):
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
 if MOONLIGHT
-build_profiles = net_2_1_raw
-test_profiles = net_2_1_raw
+build_profiles = moonlight_raw
+test_profiles = moonlight_raw
 else
 build_profiles = net_2_0 net_3_5
 test_profiles = $(build_profiles)
@@ -105,7 +105,7 @@ endif
 mcs-compileall: mono-wrapper etc/mono/config
 	save_MONO_PATH=$$MONO_PATH; mcs_topdir=`cd $(mcs_topdir) && $(cur_dir_cmd)`; ok=:; \
 	for profile in $(test_profiles); do \
-	  if [ "net_2_1" = "$$profile" ]; then \
+	  if [ "moonlight" = "$$profile" ]; then \
           break; \
       fi; \
 	  if [ "net_3_5" = "$$profile" ]; then \
