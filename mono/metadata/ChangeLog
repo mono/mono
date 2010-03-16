@@ -1,4 +1,14 @@
 
+Tue Mar 16 13:11:15 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* object.h, object-internals.h, object.c, icall.c, gc-internal.h,
+	debug-helpers.c, cominterop.c, process.c, sgen-gc.c, socket-io.c:
+	hide the contents of the MonoString and MonoArray structs from the
+	public API. Change the accessor macros to accessors functions where
+	needed. Adjusted the array API to allow for pointer-sized lengths and
+	starting positions, so 64 bit arrays can be optionally provided in an
+	API compatible way if needed on 64 bit systems.
+
 Tue Mar 16 10:18:07 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* class-internals.h, class.c, loader.c, marshal.c, metadata.c,
