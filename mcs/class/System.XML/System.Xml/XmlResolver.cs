@@ -38,7 +38,7 @@ namespace System.Xml
 {
 	public abstract class XmlResolver
 	{
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public abstract ICredentials Credentials { set; }
 #endif
 
@@ -53,7 +53,7 @@ namespace System.Xml
 			if (baseUri == null) {
 				if (relativeUri == null)
 					throw new ArgumentNullException ("Either baseUri or relativeUri are required.");
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 				return new Uri (relativeUri, UriKind.RelativeOrAbsolute);
 #else
 				// Don't ignore such case that relativeUri is in fact absolute uri (e.g. ResolveUri (null, "http://foo.com")).
@@ -82,7 +82,7 @@ namespace System.Xml
 				.Replace ("%", "%25")
 				.Replace ("\"", "%22");
 		}
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		public virtual bool SupportsType (Uri absoluteUri, Type type)
 		{
 			if (absoluteUri == null)

@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* SerializationSource.cs: use MOONLIGHT symbol to disambiguate
+	MonoTouch and Moonlight code.
+
 2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlAnyElementAttribute.cs : add internal IsNullableSpecified

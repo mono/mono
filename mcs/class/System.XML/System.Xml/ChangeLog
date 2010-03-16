@@ -1,3 +1,17 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* XmlNodeReader2.cs
+	* DTDValidatingReader2.cs
+	* XmlReader.cs
+	* XmlTextReader.cs
+	* XmlWriter.cs
+	* XmlResolver.cs
+	* XmlNodeReaderImpl.cs
+	* XmlInputStream.cs
+	* XmlReaderSettings.cs
+	* XmlWriterSettings.cs:
+		Use MOONLIGHT symbol to disambiguate MonoTouch and Moonlight code.
+
 2010-02-20  Geoff Norton  <gnorton@novell.com>
 
 	* XmlInputStream.cs: Disable this codepath on monotouch.  Fixes

@@ -35,17 +35,13 @@ using System;
 using System.Collections;
 using System.IO;
 using System.Text;
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if !MOONLIGHT
 using System.Xml.XPath;
 #endif
 
 namespace System.Xml
 {
-#if NET_2_0
 	public abstract class XmlWriter : IDisposable
-#else
-	public abstract class XmlWriter
-#endif
 	{
 #if NET_2_0
 		XmlWriterSettings settings;
@@ -179,7 +175,7 @@ namespace System.Xml
 				return;
 
 			WriteStartAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			// no ReadAttributeValue() in 2.1 profile.
 			WriteString (reader.Value);
 #else
@@ -392,7 +388,7 @@ namespace System.Xml
 				WriteString (localName);
 		}
 
-#if NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#if !MOONLIGHT
 		public virtual void WriteNode (XPathNavigator navigator, bool defattr)
 		{
 			if (navigator == null)

@@ -130,7 +130,7 @@ namespace System.Xml
 		internal XmlTextReader (bool dummy, XmlResolver resolver, string url, XmlNodeType fragType, XmlParserContext context)
 		{
 			if (resolver == null) {
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 				resolver = new XmlXapResolver ();
 #else
 				resolver = new XmlUrlResolver ();
@@ -958,7 +958,7 @@ namespace System.Xml
 		// These values are never re-initialized.
 		private bool namespaces = true;
 		private WhitespaceHandling whitespaceHandling = WhitespaceHandling.All;
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		private XmlResolver resolver = new XmlXapResolver ();
 #else
 		private XmlResolver resolver = new XmlUrlResolver ();

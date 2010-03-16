@@ -126,7 +126,7 @@ namespace System.Xml
 			get { return Current.HasAttributes; }
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public override bool HasValue {
 			get { return Current.HasValue; }
 		}
@@ -436,7 +436,7 @@ namespace System.Xml
 			return base.ReadString ();
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public override void ResolveEntity ()
 		{
 			if (entity != null)

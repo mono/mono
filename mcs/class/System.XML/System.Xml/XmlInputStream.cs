@@ -361,7 +361,7 @@ namespace System.Xml
 
 		static string GetStringFromBytes (byte [] bytes, int index, int count)
 		{
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			char [] chars = new char [count];
 			for (int i = index; i < count; i++)
 				chars [i] = (char) bytes [i];

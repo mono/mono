@@ -146,7 +146,7 @@ namespace System.Xml
 			//set { outputMethod = value; }
 		}
 
-#if (NET_2_1 || NET_4_0) && !MONOTOUCH
+#if MOONLIGHT || NET_4_0
 		public
 #else
 		internal

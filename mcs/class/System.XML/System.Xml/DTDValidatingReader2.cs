@@ -966,7 +966,7 @@ namespace Mono.Xml
 			}
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		internal
 #else
 		public
@@ -988,7 +988,7 @@ namespace Mono.Xml
 				return reader.ReadAttributeValue ();
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		internal
 #else
 		public
@@ -1031,7 +1031,7 @@ namespace Mono.Xml
 			get { return reader.EOF; }
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		internal
 #else
 		public

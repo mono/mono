@@ -35,7 +35,7 @@ using System.IO;
 using System.Net;
 using System.Xml.Schema;
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 using XsValidationFlags = System.Xml.Schema.XmlSchemaValidationFlags;
 #endif
 
@@ -53,14 +53,14 @@ namespace System.Xml
 		private int linePositionOffset;
 		private bool prohibitDtd;
 		private XmlNameTable nameTable;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		private XmlSchemaSet schemas;
 		private bool schemasNeedsInitialization;
 		private XsValidationFlags validationFlags;
 		private ValidationType validationType;
 #endif
 		private XmlResolver xmlResolver;
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		private DtdProcessing dtdProcessing;
 		private long maxCharactersFromEntities;
 		private long maxCharactersInDocument;
@@ -71,7 +71,7 @@ namespace System.Xml
 			Reset ();
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public event ValidationEventHandler ValidationEventHandler;
 #endif
 
@@ -91,7 +91,7 @@ namespace System.Xml
 			lineNumberOffset = 0;
 			linePositionOffset = 0;
 			prohibitDtd = true;
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			xmlResolver = new XmlXapResolver ();
 #else
 			schemas = null;
@@ -118,7 +118,7 @@ namespace System.Xml
 			get { return conformance; }
 			set { conformance = value; }
 		}
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		public DtdProcessing DtdProcessing {
 			get { return dtdProcessing; }
 			set {
@@ -177,7 +177,7 @@ namespace System.Xml
 			set { nameTable = value; }
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public XmlSchemaSet Schemas {
 			get {
 				if (schemasNeedsInitialization) {
