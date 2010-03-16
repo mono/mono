@@ -140,7 +140,7 @@ namespace System.ServiceModel.Description
 		}
 #endif
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		void IEndpointBehavior.AddBindingParameters (ServiceEndpoint endpoint,
 			BindingParameterCollection parameters)
 		{

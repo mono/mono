@@ -166,7 +166,7 @@ namespace System.ServiceModel.MonoInternal
 				}
 			}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			public override bool WaitOne (int millisecondsTimeout, bool exitContext)
 			{
 				return WaitHandle.WaitAll (ResultWaitHandles, millisecondsTimeout, exitContext);

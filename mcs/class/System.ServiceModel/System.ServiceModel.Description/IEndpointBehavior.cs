@@ -33,7 +33,7 @@ namespace System.ServiceModel.Description
 {
 	public interface IEndpointBehavior
 	{
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		void AddBindingParameters (ServiceEndpoint endpoint,
 			BindingParameterCollection parameters);
 #if !NET_2_1

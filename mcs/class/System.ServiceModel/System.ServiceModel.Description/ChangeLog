@@ -1,3 +1,9 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* ClientCredentials.cs, ContractDescription.cs,
+	IEndpointBehavior.cs: use MOONLIGHT symbol to disambiguate
+	MonoTouch and Moonlight code.
+
 2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceEndpointCollection.cs : those overrides are rather to check

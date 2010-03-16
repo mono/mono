@@ -93,7 +93,7 @@ namespace System.ServiceModel.Channels
 				((HttpWebRequest) web_request).CookieContainer = cmgr.CookieContainer;
 #endif
 
-#if !NET_2_1 || MONOTOUCH // until we support NetworkCredential like SL4 will do.
+#if !MOONLIGHT // until we support NetworkCredential like SL4 will do.
 			// client authentication (while SL3 has NetworkCredential class, it is not implemented yet. So, it is non-SL only.)
 			var httpbe = (HttpTransportBindingElement) source.Transport;
 			string authType = null;
@@ -377,7 +377,7 @@ w.Close ();
 					// FIXME: Do we need to use the timeout? If so, what happens when the timeout is reached.
 					// Is the current request cancelled and an exception thrown? If so we need to pass the
 					// exception to the Complete () method and allow the result to complete 'normally'.
-#if NET_2_1 || MONOTOUCH
+#if NET_2_1
 					// neither Moonlight nor MonoTouch supports contexts (WaitOne default to false)
 					bool result = wait.WaitOne (Timeout);
 #else

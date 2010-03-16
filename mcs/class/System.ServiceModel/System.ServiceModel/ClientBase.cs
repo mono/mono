@@ -39,13 +39,13 @@ namespace System.ServiceModel
 {
 	[MonoTODO ("It somehow rejects classes, but dunno how we can do that besides our code wise.")]
 	public abstract class ClientBase<TChannel> :
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		IDisposable,
 #endif
 		ICommunicationObject where TChannel : class
 	{
 		static InstanceContext initialContxt = new InstanceContext (null);
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		static readonly PropertyInfo dispatcher_main_property;
 		static readonly MethodInfo dispatcher_begin_invoke_method;
 
@@ -222,7 +222,7 @@ namespace System.ServiceModel
 
 		void RunCompletedCallback (SendOrPostCallback callback, InvokeAsyncCompletedEventArgs args)
 		{
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			callback (args);
 #else
 			object dispatcher = dispatcher_main_property.GetValue (null, null);
@@ -276,7 +276,7 @@ namespace System.ServiceModel
 		}
 		IAsyncResult begin_async_result;
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		void IDisposable.Dispose ()
 		{
 			Close ();
@@ -402,7 +402,7 @@ namespace System.ServiceModel
 				}
 			}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			protected object Invoke (string methodName, object [] args)
 			{
 				var cd = endpoint.Contract;

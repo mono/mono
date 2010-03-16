@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* ClientBase.cs, ClientRuntimeChannel.cs: use MOONLIGHT symbol to
+	disambiguate MonoTouch and Moonlight code.
+
 2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : do not reject endpoints with an identical
