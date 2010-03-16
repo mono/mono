@@ -615,7 +615,7 @@ namespace System
 			return true;
 		}
 
-#if BOOTSTRAP_NET_4_0 || NET_4_0
+#if BOOTSTRAP_NET_4_0 || NET_4_0 || MOONLIGHT
 		public static bool TryParse<TEnum> (string value, out TEnum result) where TEnum : struct
 		{
 			return TryParse (value, false, out result);
@@ -1005,7 +1005,7 @@ namespace System
 			}
 			return retVal;
 		}
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public bool HasFlag (Enum flag)
 		{
 			ulong mvalue = Convert.ToUInt64 (get_value (), null);

@@ -1,5 +1,9 @@
 2010-03-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
+	* Enum.cs: Added a few 4.0 api to Moonlight.
+
+2010-03-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
 	* AppDomain.cs: Added IsCompatibilitySwitchSet for .NET 4.0 and Moonlight.
 
 2010-03-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
