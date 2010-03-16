@@ -736,7 +736,7 @@ namespace System.IO {
 			return String.Compare (subset, slast, path, slast, subset.Length - slast) == 0;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public static string Combine (params string [] paths)
 		{
 			if (paths == null)

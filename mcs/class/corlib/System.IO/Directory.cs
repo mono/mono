@@ -522,7 +522,7 @@ namespace System.IO
 			return result;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
 			// Take the simple way home:

@@ -1,3 +1,9 @@
+2010-03-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Path.cs:
+	* Directory.cs:
+	* DirectoryInfo.cs: Add some of the 4.0 methods to Moonlight.
+
 2010-03-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* SearchOption.cs: Make public for Moonlight, this type is in SL4.

@@ -370,7 +370,7 @@ namespace System.IO {
 		}
 #endif
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 
 		public IEnumerable<DirectoryInfo> EnumerateDirectories ()
 		{
