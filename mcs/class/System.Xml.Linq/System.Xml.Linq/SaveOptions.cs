@@ -33,7 +33,7 @@ namespace System.Xml.Linq
 	{
 		None = 0,
 		DisableFormatting = 1,
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		OmitDuplicateNamespaces = 2
 #endif
 	}
