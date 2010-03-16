@@ -1,3 +1,19 @@
+2010-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini.h (MonoBasicBlock): Add native_length field.
+	* mini.h (MonoCompile): Add try_block_holes field.
+	* mini.h (MonoInst): Add exception_clause pointer to
+	the data union.
+
+	* mini.c (mono_codegen): Calculate MonoBasicBlock::native_length.
+	* mini.c (mono_cfg_add_try_hole): New function to register possible
+	holes in try blocks.
+	* mini.c (create_jit_info): Fill in the holes information.
+
+	* mini-exceptions.c: Verify for holes when checking if an IP is covered
+	by a try block.
+
+	* method-to-ir.c: Add the EH clause to the CALL_HANDLE instruction.
 
 Tue Mar 16 13:16:16 CET 2010 Paolo Molaro <lupus@ximian.com>
 
