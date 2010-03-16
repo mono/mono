@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -108,7 +108,41 @@ namespace System.ServiceModel.Configuration
 			}
 		}
 
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var b = (TransportBindingElement) bindingElement;
+			base.ApplyConfiguration (b);
+			b.ManualAddressing = ManualAddressing;
+			b.MaxBufferPoolSize = MaxBufferPoolSize;
+			b.MaxReceivedMessageSize = MaxReceivedMessageSize;
+		}
 
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (TransportElement) from;
+			base.CopyFrom (from);
+			ManualAddressing = e.ManualAddressing;
+			MaxBufferPoolSize = e.MaxBufferPoolSize;
+			MaxReceivedMessageSize = e.MaxReceivedMessageSize;
+		}
+
+		protected internal override BindingElement CreateBindingElement ()
+		{
+			var b = CreateDefaultBindingElement ();
+			ApplyConfiguration (b);
+			return b;
+		}
+
+		protected abstract TransportBindingElement CreateDefaultBindingElement ();
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var b = (TransportBindingElement) bindingElement;
+			base.InitializeFrom (b);
+			ManualAddressing = b.ManualAddressing;
+			MaxBufferPoolSize = b.MaxBufferPoolSize;
+			MaxReceivedMessageSize = b.MaxReceivedMessageSize;
+		}
 	}
 
 }

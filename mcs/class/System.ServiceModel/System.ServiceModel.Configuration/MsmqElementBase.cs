@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -186,7 +186,77 @@ namespace System.ServiceModel.Configuration
 			set { base ["useSourceJournal"] = value; }
 		}
 
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var b = (System.ServiceModel.Channels.MsmqBindingElementBase) bindingElement;
+			base.ApplyConfiguration (b);
+			b.CustomDeadLetterQueue = CustomDeadLetterQueue;
+			b.DeadLetterQueue = DeadLetterQueue;
+			b.Durable = Durable;
+			b.ExactlyOnce = ExactlyOnce;
+			b.MaxRetryCycles = MaxRetryCycles;
+			b.ReceiveErrorHandling = ReceiveErrorHandling;
+			b.ReceiveRetryCount = ReceiveRetryCount;
+			b.RetryCycleDelay = RetryCycleDelay;
+			b.TimeToLive = TimeToLive;
+			b.UseMsmqTracing = UseMsmqTracing;
+			b.UseSourceJournal = UseSourceJournal;
 
+			var bs = b.MsmqTransportSecurity;
+			var cs = MsmqTransportSecurity;
+			bs.MsmqAuthenticationMode = cs.MsmqAuthenticationMode;
+			bs.MsmqEncryptionAlgorithm = cs.MsmqEncryptionAlgorithm;
+			bs.MsmqProtectionLevel = cs.MsmqProtectionLevel;
+			bs.MsmqSecureHashAlgorithm = cs.MsmqSecureHashAlgorithm;
+		}
+
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (MsmqElementBase) from;
+			base.CopyFrom (from);
+			CustomDeadLetterQueue = e.CustomDeadLetterQueue;
+			DeadLetterQueue = e.DeadLetterQueue;
+			Durable = e.Durable;
+			ExactlyOnce = e.ExactlyOnce;
+			MaxRetryCycles = e.MaxRetryCycles;
+			ReceiveErrorHandling = e.ReceiveErrorHandling;
+			ReceiveRetryCount = e.ReceiveRetryCount;
+			RetryCycleDelay = e.RetryCycleDelay;
+			TimeToLive = e.TimeToLive;
+			UseMsmqTracing = e.UseMsmqTracing;
+			UseSourceJournal = e.UseSourceJournal;
+
+			var es = e.MsmqTransportSecurity;
+			var cs = MsmqTransportSecurity;
+			cs.MsmqAuthenticationMode = es.MsmqAuthenticationMode;
+			cs.MsmqEncryptionAlgorithm = es.MsmqEncryptionAlgorithm;
+			cs.MsmqProtectionLevel = es.MsmqProtectionLevel;
+			cs.MsmqSecureHashAlgorithm = es.MsmqSecureHashAlgorithm;
+		}
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var b = (System.ServiceModel.Channels.MsmqBindingElementBase) bindingElement;
+			base.InitializeFrom (b);
+			CustomDeadLetterQueue = b.CustomDeadLetterQueue;
+			DeadLetterQueue = b.DeadLetterQueue;
+			Durable = b.Durable;
+			ExactlyOnce = b.ExactlyOnce;
+			MaxRetryCycles = b.MaxRetryCycles;
+			ReceiveErrorHandling = b.ReceiveErrorHandling;
+			ReceiveRetryCount = b.ReceiveRetryCount;
+			RetryCycleDelay = b.RetryCycleDelay;
+			TimeToLive = b.TimeToLive;
+			UseMsmqTracing = b.UseMsmqTracing;
+			UseSourceJournal = b.UseSourceJournal;
+
+			var bs = b.MsmqTransportSecurity;
+			var cs = MsmqTransportSecurity;
+			cs.MsmqAuthenticationMode = bs.MsmqAuthenticationMode;
+			cs.MsmqEncryptionAlgorithm = bs.MsmqEncryptionAlgorithm;
+			cs.MsmqProtectionLevel = bs.MsmqProtectionLevel;
+			cs.MsmqSecureHashAlgorithm = bs.MsmqSecureHashAlgorithm;
+		}
 	}
 
 }

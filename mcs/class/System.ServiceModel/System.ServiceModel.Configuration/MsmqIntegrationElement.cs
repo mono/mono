@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -86,12 +86,31 @@ namespace System.ServiceModel.Configuration
 			set { base ["serializationFormat"] = value; }
 		}
 
-
-		[MonoTODO]
-		protected internal override BindingElement CreateBindingElement () {
-			throw new NotImplementedException ();
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var b = (System.ServiceModel.MsmqIntegration.MsmqIntegrationBindingElement) bindingElement;
+			base.ApplyConfiguration (b);
+			b.SerializationFormat = SerializationFormat;
 		}
 
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (MsmqIntegrationElement) from;
+			base.CopyFrom (from);
+			SerializationFormat = e.SerializationFormat;
+		}
+
+		protected override TransportBindingElement CreateDefaultBindingElement ()
+		{
+			return new System.ServiceModel.MsmqIntegration.MsmqIntegrationBindingElement ();
+		}
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var b = (System.ServiceModel.MsmqIntegration.MsmqIntegrationBindingElement) bindingElement;
+			base.InitializeFrom (b);
+			SerializationFormat = b.SerializationFormat;
+		}
 	}
 
 }

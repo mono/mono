@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -87,7 +87,31 @@ namespace System.ServiceModel.Configuration
 			set { base ["requireClientCertificate"] = value; }
 		}
 
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var b = (HttpsTransportBindingElement) bindingElement;
+			base.ApplyConfiguration (b);
+			b.RequireClientCertificate = RequireClientCertificate;
+		}
 
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (HttpsTransportElement) from;
+			base.CopyFrom (from);
+			RequireClientCertificate = e.RequireClientCertificate;
+		}
+
+		protected override TransportBindingElement CreateDefaultBindingElement ()
+		{
+			return new HttpsTransportBindingElement ();
+		}
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var b = (HttpsTransportBindingElement) bindingElement;
+			base.InitializeFrom (b);
+			RequireClientCertificate = b.RequireClientCertificate;
+		}
 	}
 
 }

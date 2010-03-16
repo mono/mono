@@ -1,5 +1,16 @@
 2010-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpTransportElement.cs
+	  MsmqIntegrationElement.cs
+	  MsmqElementBase.cs
+	  NamedPipeTransportElement.cs
+	  HttpsTransportElement.cs
+	  TransportElement.cs
+	  MsmqTransportElement.cs
+	  HttpTransportElement.cs : implement missing methods.
+
+2010-03-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* IssuedTokenClientElement.cs, MsmqBindingElementBase.cs,
 	  NamedPipeConnectionPoolSettingsElement.cs,
 	  TcpConnectionPoolSettingsElement.cs,

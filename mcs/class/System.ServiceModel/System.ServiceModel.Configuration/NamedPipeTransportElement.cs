@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,7 +54,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class NamedPipeTransportElement
 		 : ConnectionOrientedTransportElement
 	{
@@ -87,11 +86,46 @@ namespace System.ServiceModel.Configuration
 			}
 		}
 
-		[MonoTODO]
-		protected internal override BindingElement CreateBindingElement () {
-			throw new NotImplementedException ();
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var b = (NamedPipeTransportBindingElement) bindingElement;
+			base.ApplyConfiguration (b);
+
+			var bs = b.ConnectionPoolSettings;
+			var cs = ConnectionPoolSettings;
+			bs.GroupName = cs.GroupName;
+			bs.IdleTimeout = cs.IdleTimeout;
+			bs.MaxOutboundConnectionsPerEndpoint = cs.MaxOutboundConnectionsPerEndpoint;
 		}
 
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (NamedPipeTransportElement) from;
+			base.CopyFrom (from);
+
+			var es = e.ConnectionPoolSettings;
+			var cs = ConnectionPoolSettings;
+			cs.GroupName = es.GroupName;
+			cs.IdleTimeout = es.IdleTimeout;
+			cs.MaxOutboundConnectionsPerEndpoint = es.MaxOutboundConnectionsPerEndpoint;
+		}
+
+		protected override TransportBindingElement CreateDefaultBindingElement ()
+		{
+			return new NamedPipeTransportBindingElement ();
+		}
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var b = (NamedPipeTransportBindingElement) bindingElement;
+			base.InitializeFrom (b);
+
+			var bs = b.ConnectionPoolSettings;
+			var cs = ConnectionPoolSettings;
+			cs.GroupName = bs.GroupName;
+			cs.IdleTimeout = bs.IdleTimeout;
+			cs.MaxOutboundConnectionsPerEndpoint = bs.MaxOutboundConnectionsPerEndpoint;
+		}
 	}
 
 }

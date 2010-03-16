@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -108,11 +108,37 @@ namespace System.ServiceModel.Configuration
 			set { base ["useActiveDirectory"] = value; }
 		}
 
-		[MonoTODO]
-		protected internal override BindingElement CreateBindingElement () {
-			throw new NotImplementedException ();
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var b = (MsmqTransportBindingElement) bindingElement;
+			base.ApplyConfiguration (b);
+			b.MaxPoolSize = MaxPoolSize;
+			b.QueueTransferProtocol = QueueTransferProtocol;
+			b.UseActiveDirectory = UseActiveDirectory;
 		}
 
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (MsmqTransportElement) from;
+			base.CopyFrom (from);
+			MaxPoolSize = e.MaxPoolSize;
+			QueueTransferProtocol = e.QueueTransferProtocol;
+			UseActiveDirectory = e.UseActiveDirectory;
+		}
+
+		protected override TransportBindingElement CreateDefaultBindingElement ()
+		{
+			return new MsmqTransportBindingElement ();
+		}
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var b = (MsmqTransportBindingElement) bindingElement;
+			base.InitializeFrom (b);
+			MaxPoolSize = b.MaxPoolSize;
+			QueueTransferProtocol = b.QueueTransferProtocol;
+			UseActiveDirectory = b.UseActiveDirectory;
+		}
 	}
 
 }

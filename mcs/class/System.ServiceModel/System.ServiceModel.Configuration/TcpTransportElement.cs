@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -116,12 +116,37 @@ namespace System.ServiceModel.Configuration
 			set { base ["teredoEnabled"] = value; }
 		}
 
-
-		[MonoTODO]
-		protected internal override BindingElement CreateBindingElement () {
-			throw new NotImplementedException ();
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var b = (TcpTransportBindingElement) bindingElement;
+			base.ApplyConfiguration (b);
+			b.ListenBacklog = ListenBacklog;
+			b.PortSharingEnabled = PortSharingEnabled;
+			b.TeredoEnabled = TeredoEnabled;
 		}
 
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (TcpTransportElement) from;
+			base.CopyFrom (from);
+			ListenBacklog = e.ListenBacklog;
+			PortSharingEnabled = e.PortSharingEnabled;
+			TeredoEnabled = e.TeredoEnabled;
+		}
+
+		protected override TransportBindingElement CreateDefaultBindingElement ()
+		{
+			return new TcpTransportBindingElement ();
+		}
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var b = (TcpTransportBindingElement) bindingElement;
+			base.InitializeFrom (b);
+			ListenBacklog = b.ListenBacklog;
+			PortSharingEnabled = b.PortSharingEnabled;
+			TeredoEnabled = b.TeredoEnabled;
+		}
 	}
 
 }

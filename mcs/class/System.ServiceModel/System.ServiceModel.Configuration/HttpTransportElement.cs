@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -192,12 +192,64 @@ namespace System.ServiceModel.Configuration
 			set { base ["useDefaultWebProxy"] = value; }
 		}
 
-
-		[MonoTODO]
-		protected internal override BindingElement CreateBindingElement () {
-			throw new NotImplementedException ();
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var b = (HttpTransportBindingElement) bindingElement;
+			base.ApplyConfiguration (b);
+			b.AllowCookies = AllowCookies;
+			b.AuthenticationScheme = AuthenticationScheme;
+			b.BypassProxyOnLocal = BypassProxyOnLocal;
+			b.HostNameComparisonMode = HostNameComparisonMode;
+			b.KeepAliveEnabled = KeepAliveEnabled;
+			b.MaxBufferSize = MaxBufferSize;
+			b.ProxyAddress = ProxyAddress;
+			b.ProxyAuthenticationScheme = ProxyAuthenticationScheme;
+			b.Realm = Realm;
+			b.TransferMode = TransferMode;
+			b.UnsafeConnectionNtlmAuthentication = UnsafeConnectionNtlmAuthentication;
+			b.UseDefaultWebProxy = UseDefaultWebProxy;
 		}
 
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (HttpTransportElement) from;
+			base.CopyFrom (from);
+			AllowCookies = e.AllowCookies;
+			AuthenticationScheme = e.AuthenticationScheme;
+			BypassProxyOnLocal = e.BypassProxyOnLocal;
+			HostNameComparisonMode = e.HostNameComparisonMode;
+			KeepAliveEnabled = e.KeepAliveEnabled;
+			MaxBufferSize = e.MaxBufferSize;
+			ProxyAddress = e.ProxyAddress;
+			ProxyAuthenticationScheme = e.ProxyAuthenticationScheme;
+			Realm = e.Realm;
+			TransferMode = e.TransferMode;
+			UnsafeConnectionNtlmAuthentication = e.UnsafeConnectionNtlmAuthentication;
+			UseDefaultWebProxy = e.UseDefaultWebProxy;
+		}
+
+		protected override TransportBindingElement CreateDefaultBindingElement ()
+		{
+			return new HttpTransportBindingElement ();
+		}
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var b = (HttpTransportBindingElement) bindingElement;
+			base.InitializeFrom (b);
+			AllowCookies = b.AllowCookies;
+			AuthenticationScheme = b.AuthenticationScheme;
+			BypassProxyOnLocal = b.BypassProxyOnLocal;
+			HostNameComparisonMode = b.HostNameComparisonMode;
+			KeepAliveEnabled = b.KeepAliveEnabled;
+			MaxBufferSize = b.MaxBufferSize;
+			ProxyAddress = b.ProxyAddress;
+			ProxyAuthenticationScheme = b.ProxyAuthenticationScheme;
+			Realm = b.Realm;
+			TransferMode = b.TransferMode;
+			UnsafeConnectionNtlmAuthentication = b.UnsafeConnectionNtlmAuthentication;
+			UseDefaultWebProxy = b.UseDefaultWebProxy;
+		}
 	}
 
 }
