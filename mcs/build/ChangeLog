@@ -1,3 +1,9 @@
+2010-03-16  Jonathan Pryor  <jpryor@novell.com>
+
+	* library.make (MDOC_UP): Set MONO_PATH to find monodoc.dll.
+	* rules.make (MDOC): MONO_PATH needs to include 
+	  $(topdir)/class/lib/net_2_0 so that monodoc.dll can be found.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* profiles/net_2_1_*.make: rename to moonlight_*.make and
