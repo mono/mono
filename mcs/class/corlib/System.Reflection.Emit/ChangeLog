@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyBuilder.cs, ModuleBuilder.cs: use MOONLIGHT symbol to
+	disambiguate MonoTouch and Moonlight code.
+
 2010-03-12  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyBuilder.cs (AddTypeForwarder): throw if the

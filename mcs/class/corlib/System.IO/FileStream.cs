@@ -98,7 +98,7 @@ namespace System.IO
 			this.access = access;
 			this.owner = ownsHandle;
 			this.async = isAsync;
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			// default the browser to 'all' anonymous files and let other usage (like smcs) with 'normal'
 			// (i.e. non-anonymous except for isolated storage) files and paths
 			this.anonymous = SecurityManager.SecurityEnabled;

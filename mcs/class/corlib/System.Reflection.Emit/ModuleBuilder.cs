@@ -101,7 +101,7 @@ namespace System.Reflection.Emit {
 			}
 
 			if (emitSymbolInfo) {
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 				symbolWriter = new Mono.CompilerServices.SymbolWriter.SymbolWriterImpl (this);
 #else
 				Assembly asm = Assembly.LoadWithPartialName ("Mono.CompilerServices.SymbolWriter");

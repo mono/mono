@@ -54,7 +54,7 @@ namespace System.IO
 				throw new ArgumentNullException ("path");
 			if (path.Length == 0)
 				throw new ArgumentException ("path");
-#if NET_2_1 && !MONOTOUCH && !DEBUG
+#if MOONLIGHT && !DEBUG
 			// On Moonlight (SL4+) this is possible, with limitations, in "Elevated Trust"
 			throw new SecurityException ("we're not ready to enable this SL4 feature yet");
 #endif
@@ -641,7 +641,7 @@ namespace System.IO
 			throw new NotSupportedException (Locale.GetText ("File encryption isn't supported on any file system."));
 		}
 
-#if (NET_2_1 && !MONOTOUCH) || NET_4_0
+#if MOONLIGHT || NET_4_0
 		public static IEnumerable<string> ReadLines (string path)
 		{
 			ValidatePath (path);

@@ -146,7 +146,7 @@ namespace System.Reflection {
 			[MethodImplAttribute (MethodImplOptions.InternalCall)]
 			get;
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public virtual Evidence Evidence {
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
 			get { return UnprotectedGetEvidence (); }
@@ -292,7 +292,7 @@ namespace System.Reflection {
 
 				string location = Path.GetDirectoryName (Location);
 				string filename = Path.Combine (location, info.FileName);
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 				// we don't control the content of 'info.FileName' so we want to make sure we keep to ourselves
 				filename = Path.GetFullPath (filename);
 				if (!filename.StartsWith (location))
@@ -469,7 +469,7 @@ namespace System.Reflection {
 			// Try the assembly directory
 			string location = Path.GetDirectoryName (Location);
 			string fullName = Path.Combine (location, Path.Combine (culture.Name, aname.Name + ".dll"));
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			// it's unlikely that culture.Name or aname.Name could contain stuff like ".." but...
 			fullName = Path.GetFullPath (fullName);
 			if (!fullName.StartsWith (location)) {
@@ -809,7 +809,7 @@ namespace System.Reflection {
 		}
 #endif
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		// Code Access Security
 
 		internal void Resolve () 

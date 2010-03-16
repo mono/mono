@@ -38,11 +38,11 @@ using System.Reflection;
 using System.Threading;
 
 using System.Runtime.ConstrainedExecution;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 using System.Runtime.InteropServices.ComTypes;
 #endif
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 using Mono.Interop;
 #endif
 
@@ -189,7 +189,7 @@ namespace System.Runtime.InteropServices
 			throw new NotImplementedException ();
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public static object CreateWrapperOfType (object o, Type t)
 		{
 			__ComObject co = o as __ComObject;
@@ -272,7 +272,7 @@ namespace System.Runtime.InteropServices
 			FreeHGlobal (s);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public static Guid GenerateGuidForType (Type type)
 		{
 			return type.GUID;
@@ -374,7 +374,7 @@ namespace System.Runtime.InteropServices
 		{
 			throw new NotImplementedException ();
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static IntPtr GetIDispatchForObjectInternal (object o);
 
@@ -744,7 +744,7 @@ namespace System.Runtime.InteropServices
 			return ReleaseInternal (pUnk);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern static int ReleaseComObjectInternal (object co);
 
@@ -833,7 +833,7 @@ namespace System.Runtime.InteropServices
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		public extern static IntPtr StringToHGlobalUni (string s);
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public static IntPtr SecureStringToBSTR (SecureString s)
 		{
 			if (s == null)
@@ -1049,7 +1049,7 @@ namespace System.Runtime.InteropServices
 			return null;
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public static int FinalReleaseComObject (object o)
 		{
 			while (ReleaseComObject (o) != 0);

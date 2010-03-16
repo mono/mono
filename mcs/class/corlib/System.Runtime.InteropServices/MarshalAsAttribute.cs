@@ -46,7 +46,7 @@ namespace System.Runtime.InteropServices {
 		[ComVisible(true)]
 		public Type MarshalTypeRef;
 		
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public VarEnum SafeArraySubType;
 #endif
 

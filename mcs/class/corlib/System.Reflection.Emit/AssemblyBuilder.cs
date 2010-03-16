@@ -262,7 +262,7 @@ namespace System.Reflection.Emit
 			// remove Mono specific flag to allow enum check to pass
 			access &= ~COMPILER_ACCESS;
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			// only "Run" is supported by Silverlight
 			// however SMCS requires more than this but runs outside the CoreCLR sandbox
 			if (SecurityManager.SecurityEnabled && (access != AssemblyBuilderAccess.Run))
