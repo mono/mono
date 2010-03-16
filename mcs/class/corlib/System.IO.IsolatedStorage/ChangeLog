@@ -1,3 +1,15 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* IsolatedStorageFileEnumerator.cs
+	* MoonIsolatedStorageFileStream.cs
+	* MoonIsolatedStorageFile.cs
+	* MoonIsolatedStorage.cs
+	* IsolatedStorageScope.cs
+	* IsolatedStorageFileStream.cs
+	* IsolatedStorage.cs
+	* IsolatedStorageFile.cs:
+		use MOONLIGHT symbol to disambiguate MonoTouch and Moonlight code.
+
 2009-11-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MoonIsolatedStorageFile.cs: Add new CheckSearchPattern 

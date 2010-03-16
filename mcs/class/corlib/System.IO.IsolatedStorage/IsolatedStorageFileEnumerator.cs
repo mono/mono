@@ -28,7 +28,7 @@
 
 using System.Collections;
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 
 namespace System.IO.IsolatedStorage {
 

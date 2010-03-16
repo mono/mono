@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 using System.Globalization;
 using System.Reflection;
 using System.Runtime.InteropServices;
@@ -153,5 +153,5 @@ namespace System.IO.IsolatedStorage {
 		public abstract void Remove ();
 	}
 }
-/* NET_2_1 */
+/* MOONLIGHT */
 #endif 
