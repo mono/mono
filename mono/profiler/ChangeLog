@@ -1,4 +1,9 @@
 
+Tue Mar 16 11:20:14 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mono-profiler-iomap.c: fix some API usage and add a warning
+	about this code.
+
 Wed Mar 3 19:17:14 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* mono-profiler-iomap.c: use the normal allocation callback.
