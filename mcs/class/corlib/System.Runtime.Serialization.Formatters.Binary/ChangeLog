@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* BinaryCommon.cs: use MOONLIGHT symbol to disambiguate
+	MonoTouch and Moonlight code.
+
 2010-02-26  Robert Jordan  <robertj@gmx.net>
 
 	* ObjectReader.cs (ReadType, GetDeserializationType):

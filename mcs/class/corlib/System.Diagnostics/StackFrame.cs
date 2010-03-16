@@ -140,7 +140,7 @@ namespace System.Diagnostics {
 			string filename = "<filename unknown>";
 			if (fileName == null)
 				return filename;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			try {
 				filename = GetFileName ();
 			}

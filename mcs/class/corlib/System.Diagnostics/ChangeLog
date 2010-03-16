@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* StackFrame.cs: use MOONLIGHT symbol to disambiguate
+	MonoTouch and Moonlight code.
+
 2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Debugger.cs: Add Obsolete attribute to .ctor().

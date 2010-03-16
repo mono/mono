@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* ResourceManager.cs: use MOONLIGHT symbol to disambiguate
+	MonoTouch and Moonlight code.
+
 2010-03-01  Miguel de Icaza  <miguel@novell.com>
 
 	* Win32Resources.cs: Prevent infinite loops if the resource that
