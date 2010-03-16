@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* AssemblyInfo.cs: use MOONLIGHT symbol to disambiguate
+	MonoTouch and Moonlight code.
+
 2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Mono.CompilerServices.SymbolWriter does not
