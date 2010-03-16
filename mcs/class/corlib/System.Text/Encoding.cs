@@ -444,13 +444,13 @@ public abstract class Encoding : ICloneable
 			case UnicodeEncoding.BIG_UNICODE_CODE_PAGE:
 				return BigEndianUnicode;
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			case Latin1Encoding.ISOLATIN_CODE_PAGE:
 				return ISOLatin1;
 #endif
 			default: break;
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		// Try to obtain a code page handler from the I18N handler.
 		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", codepage));
 		if (enc != null) {
@@ -494,7 +494,7 @@ public abstract class Encoding : ICloneable
 		return e;
 	}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 
 	public static Encoding GetEncoding (int codepage,
 		EncoderFallback encoderFallback, DecoderFallback decoderFallback)
@@ -565,7 +565,7 @@ public abstract class Encoding : ICloneable
 		return encoding_infos;
 	}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 	[ComVisible (false)]
 	public bool IsAlwaysNormalized ()
 	{
@@ -610,7 +610,7 @@ public abstract class Encoding : ICloneable
 			UTF32Encoding.BIG_UTF32_CODE_PAGE,
 			"UTF_32BE",
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			Latin1Encoding.ISOLATIN_CODE_PAGE,
 			"iso_8859_1", "latin1"
 #endif // !NET_2_1
@@ -639,7 +639,7 @@ public abstract class Encoding : ICloneable
 			if (converted == ((string)encodings [i]))
 				return GetEncoding (code);
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		// Try to obtain a web encoding handler from the I18N handler.
 		Encoding enc = (Encoding)(InvokeI18N ("GetEncoding", name));
 		if (enc != null) {
@@ -875,14 +875,14 @@ public abstract class Encoding : ICloneable
 								case 3: code_page = UTF8Encoding.UTF8_CODE_PAGE; break;
 								case 4: code_page = UnicodeEncoding.UNICODE_CODE_PAGE; break;
 								case 5: code_page = UnicodeEncoding.BIG_UNICODE_CODE_PAGE; break;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 								case 6: code_page = Latin1Encoding.ISOLATIN_CODE_PAGE; break;
 #endif
 								}
 								defaultEncoding = GetEncoding (code_page);
 							}
 						} catch (NotSupportedException) {
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 							defaultEncoding = UTF8;
 #else
 							// code_page is not supported on underlying platform
@@ -891,7 +891,7 @@ public abstract class Encoding : ICloneable
 						} catch (ArgumentException) {
 							// code_page_name is not a valid code page, or is 
 							// not supported by underlying OS
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 							defaultEncoding = UTF8;
 #else
 							defaultEncoding = UTF8Unmarked;
@@ -906,7 +906,7 @@ public abstract class Encoding : ICloneable
 		}
 	}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 
 	// Get the ISO Latin1 encoding object.
 	private static Encoding ISOLatin1

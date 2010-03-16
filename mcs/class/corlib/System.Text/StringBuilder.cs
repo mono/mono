@@ -536,7 +536,7 @@ namespace System.Text {
 			return this;
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		internal
 #else
 		public
@@ -546,7 +546,7 @@ namespace System.Text {
 			return AppendFormat (null, format, new object [] { arg0 });
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		internal
 #else
 		public
@@ -556,7 +556,7 @@ namespace System.Text {
 			return AppendFormat (null, format, new object [] { arg0, arg1 });
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		internal
 #else
 		public

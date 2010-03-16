@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* StringBuilder.cs, Encoding.cs: use MOONLIGHT symbol to
+	disambiguate MonoTouch and Moonlight code.
+
 2010-02-02  Jb Evain  <jbevain@novell.com>
 
 	* ASCIIEncoding.cs, Latin1Encoding.cs: remove duplicated code.
