@@ -1,3 +1,7 @@
+2010-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* iltests.il.in: Disable the fconv_to_i test on sparc too.
+
 2010-03-11  Martin Baulig  <martin@ximian.com>
 
 	* debugger-agent.c (type_commands): Add NULL check to
