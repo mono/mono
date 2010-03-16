@@ -28,7 +28,7 @@
 
 namespace System.Security {
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 	[MonoTODO ("Only supported by the runtime when CoreCLR is enabled")]
 #endif
 	[AttributeUsage (AttributeTargets.All, AllowMultiple=false, Inherited=false)]

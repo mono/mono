@@ -1,3 +1,13 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* SecurityTransparentAttribute.cs
+	* SecurityFrame.cs
+	* IPermission.cs
+	* SecurityManager.cs
+	* SecurityManager_2_1.cs
+	* SecuritySafeCriticalAttribute.cs:
+		use MOONLIGHT symbol to disambiguate MonoTouch and Moonlight code.
+
 2009-10-30	Marek Safar  <marek.safar@gmail.com>
 
 	* SecurityRuleSet.cs, SecurityRulesAttribute.cs: Implemented.

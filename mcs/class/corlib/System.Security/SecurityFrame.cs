@@ -53,7 +53,7 @@ namespace System.Security {
 	}
 #pragma warning restore 649	
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 	internal struct SecurityFrame {
 
 		private AppDomain _domain;
