@@ -3,6 +3,8 @@
 	* mini-x86.c (mono_arch_get_llvm_call_info): Avoid crashes with arguments
 	passed on the stack.
 
+	* mini-amd64.c (mono_arch_get_llvm_call_info): Ditto.
+
 2010-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* iltests.il.in: Add a few tests for LEAVE going over multiple
