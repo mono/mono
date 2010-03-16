@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* DataContractJsonSerializer.cs: use MOONLIGHT symbol to
+	disambiguate MonoTouch and Moonlight code.
+
 2010-03-13  Kornél Pál  <kornelpal@gmail.com>
 
 	* JavaScriptReader.cs: Deserialize "false" correctly.

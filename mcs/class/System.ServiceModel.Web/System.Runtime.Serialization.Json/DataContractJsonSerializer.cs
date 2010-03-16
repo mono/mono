@@ -91,7 +91,7 @@ namespace System.Runtime.Serialization.Json
 			always_emit_type = alwaysEmitTypeInformation;
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public DataContractJsonSerializer (Type type, IEnumerable<Type> knownTypes, int maxItemsInObjectGraph, bool ignoreExtensionDataObject, IDataContractSurrogate dataContractSurrogate, bool alwaysEmitTypeInformation)
             : this (type, default_root_name, knownTypes, maxItemsInObjectGraph, ignoreExtensionDataObject, alwaysEmitTypeInformation)
 		{
@@ -117,7 +117,7 @@ namespace System.Runtime.Serialization.Json
 		int max_items;
 		bool ignore_extension;
 		bool always_emit_type;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		IDataContractSurrogate surrogate;
 
 		[MonoTODO]

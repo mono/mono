@@ -158,7 +158,7 @@ namespace System.ServiceModel.Description
 				break;
 			case WebContentFormat.Json:
 				// FIXME: after name argument they are hack
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 				if (IsResponseBodyWrapped)
 					return GetSerializer (ref json_serializer, p => new DataContractJsonSerializer (p.Type, BodyName ?? p.Name, null, 0x100000, false, null, true));
 				else

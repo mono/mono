@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* WebMessageFormatter.cs: use MOONLIGHT symbol to
+	disambiguate MonoTouch and Moonlight code.
+
 2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* JsonQueryStringConverter.cs

@@ -102,7 +102,7 @@ namespace System.ServiceModel.Description
 		public virtual void ApplyClientBehavior (ServiceEndpoint endpoint, ClientRuntime clientRuntime)
 		{
 			AddClientErrorInspector (endpoint, clientRuntime);
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			throw new NotSupportedException ("Due to the lack of ClientRuntime.Operations, Silverlight cannot support this binding.");
 #else
 			foreach (ClientOperation oper in clientRuntime.Operations) {
