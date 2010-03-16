@@ -468,7 +468,7 @@ namespace System.ComponentModel.Composition.Hosting
         private string[] GetFiles()
         {
             string[] files = Directory.GetFiles(this._fullPath, this._searchPattern);
-            return Array.ConvertAll<string, string>(files, (file) => file.ToUpperInvariant());
+            return Array.ConvertAll<string, string>(files, (file) => file);
         }
 
         private static string GetFullPath(string path)
@@ -478,7 +478,7 @@ namespace System.ComponentModel.Composition.Hosting
                 path = IOPath.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
             }
 
-            return IOPath.GetFullPath(path).ToUpperInvariant();
+            return IOPath.GetFullPath(path);
         }
 
         private void Initialize(string path, string searchPattern)
