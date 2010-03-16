@@ -1,5 +1,9 @@
 2010-03-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* iltests.il.in: Disable the fconv_to_i test on sparc too.
+
+2010-03-16  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c: Simplify the way breakpoints are processed by removing
 	the 'pending' flag. This fixes support for appdomains too.
 
