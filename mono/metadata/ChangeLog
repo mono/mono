@@ -1,4 +1,9 @@
 
+Tue Mar 16 10:18:07 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, class.c, loader.c, marshal.c, metadata.c,
+	reflection.c: the MonoMethodNormal struct is now unused, so remove it.
+
 Mon Mar 15 18:28:00 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* class-internals.h: remove the method header from MonoMethod since
