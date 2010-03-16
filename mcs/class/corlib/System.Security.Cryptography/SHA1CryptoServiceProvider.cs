@@ -316,7 +316,7 @@ namespace System.Security.Cryptography {
 		}
 	}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 
 	[ComVisible (true)]
 	public sealed class SHA1CryptoServiceProvider : SHA1 {

@@ -1,3 +1,33 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* Rijndael.cs
+	* HMACSHA512.cs
+	* RijndaelManagedTransform.cs
+	* HMACSHA384.cs
+	* RijndaelManaged.cs
+	* CryptoConfig.cs
+	* CryptoConfig_2_1.cs
+	* DESCryptoServiceProvider.cs
+	* SHA512Managed.cs
+	* RC2.cs
+	* TripleDES.cs
+	* HMACRIPEMD160.cs
+	* RIPEMD160.cs
+	* RC2CryptoServiceProvider.cs
+	* SymmetricAlgorithm.cs
+	* SHA384Managed.cs
+	* DSACryptoServiceProvider.cs
+	* DES.cs
+	* MACTripleDES.cs
+	* HMACMD5.cs
+	* RSACryptoServiceProvider.cs
+	* RIPEMD160Managed.cs
+	* TripleDESCryptoServiceProvider.cs
+	* SHA1CryptoServiceProvider.cs
+	* SHA512.cs
+	* SHA384.cs:
+		Use MOONLIGHT symbol to disambiguate MonoTouch and Moonlight code.
+
 2010-01-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ToBase64Transform.cs: Static-ify some methods to make it easier 

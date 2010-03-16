@@ -28,7 +28,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 
 using System.Collections;
 using System.Globalization;

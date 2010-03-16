@@ -1,3 +1,15 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* Zone.cs
+	* Hash.cs
+	* Evidence.cs
+	* PolicyLevel.cs
+	* PolicyLevel_2_1.cs
+	* ZoneMembershipCondition.cs
+	* HashMembershipCondition.cs:
+		Use MOONLIGHT symbol to disambiguate MonoTouch
+		and Moonlight code.
+
 2010-02-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Evidence.cs: Add some v4 bits.

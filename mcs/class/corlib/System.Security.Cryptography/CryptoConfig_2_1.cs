@@ -124,7 +124,7 @@ namespace System.Security.Cryptography {
 			}
 			return num;
 		}
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		// we need SHA1 support to verify the codecs binary integrity
 		public static string MapNameToOID (string name)
 		{
