@@ -1,3 +1,8 @@
+
+Tue Mar 16 13:16:16 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* jit-icalls.c: adjusted for the array API changes.
+
 2010-03-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* iltests.il.in: Disable the fconv_to_i test on sparc too.
