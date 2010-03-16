@@ -1509,5 +1509,12 @@ namespace System {
 			throw new NotImplementedException ();
 		}
 #endif
+
+#if NET_4_0 || (NET_2_1 && !MONOTOUCH)
+		public bool? IsCompatibilitySwitchSet (string value)
+		{
+			return null;
+		}
+#endif
 	}
 }
