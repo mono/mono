@@ -128,7 +128,7 @@ public abstract class Calendar : ICloneable
 	[NonSerialized]
 	bool m_isReadOnly;
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 	[System.Runtime.InteropServices.ComVisible(false)]
 	public virtual CalendarAlgorithmType AlgorithmType {
 		get {

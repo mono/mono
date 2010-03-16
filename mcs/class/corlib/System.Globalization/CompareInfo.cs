@@ -41,7 +41,7 @@ using Mono.Globalization.Unicode;
 namespace System.Globalization
 {
 	[Serializable]
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 	[ComVisible (true)]
 	public class CompareInfo : IDeserializationCallback {
 
@@ -149,7 +149,7 @@ namespace System.Globalization
 					}
 				}
 			} else {
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 				this.icu_name = ci.IcuName;
 				this.construct_compareinfo (icu_name);
 #endif
@@ -158,12 +158,12 @@ namespace System.Globalization
 
 		~CompareInfo ()
 		{
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			free_internal_collator ();
 #endif
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		private int internal_compare_managed (string str1, int offset1,
 						int length1, string str2,
 						int offset2, int length2,
@@ -409,7 +409,7 @@ namespace System.Globalization
 			case CompareOptions.OrdinalIgnoreCase:
 				throw new ArgumentException ("Now allowed CompareOptions.", "options");
 			}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			if (UseManagedCollation)
 				return collator.GetSortKey (source, options);
 			SortKey key=new SortKey (culture, source, options);
@@ -498,7 +498,7 @@ namespace System.Globalization
 					CompareOptions.None));
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		private int internal_index_managed (string s, int sindex,
 			int count, char c, CompareOptions opt,
 			bool first)
@@ -567,7 +567,7 @@ namespace System.Globalization
 			}
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		private int internal_index_managed (string s1, int sindex,
 			int count, string s2, CompareOptions opt,
 			bool first)

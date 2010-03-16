@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* IStructuralComparable.cs, IStructuralEquatable.cs: use
+	MOONLIGHT symbol to disambiguate MonoTouch and Moonlight code.
+
 2010-03-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IStructuralComparable.cs, IStructuralEquatable.cs: Add them to
