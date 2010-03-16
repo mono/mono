@@ -1,3 +1,11 @@
+2010-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* domain-internals.h: Add MonoTryBlockHoleJitInfo struct and
+	associated changes to support holes in the protected range of a
+	try block.
+
+	* domain.c: Add mono_jit_info_get_try_block_hole_table_info, which
+	retrieves the holes table from a given MonoJitInfo.
 
 Tue Mar 16 13:11:15 CET 2010 Paolo Molaro <lupus@ximian.com>
 
