@@ -36,7 +36,7 @@ namespace System.Threading {
 
 	[Serializable]
 	public sealed class ExecutionContext : ISerializable {
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		private SecurityContext _sc;
 #endif
 		private bool _suppressFlow;
@@ -48,7 +48,7 @@ namespace System.Threading {
 
 		internal ExecutionContext (ExecutionContext ec)
 		{
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			if (ec._sc != null)
 				_sc = new SecurityContext (ec._sc);
 #endif
@@ -69,7 +69,7 @@ namespace System.Threading {
 				return null;
 
 			ExecutionContext capture = new ExecutionContext (ec);
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			if (SecurityManager.SecurityEnabled)
 				capture.SecurityContext = SecurityContext.Capture ();
 #endif
@@ -94,7 +94,7 @@ namespace System.Threading {
 		}
 		
 		// internal stuff
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		internal SecurityContext SecurityContext {
 			get {
 				if (_sc == null)
@@ -127,7 +127,7 @@ namespace System.Threading {
 			ec.FlowSuppressed = false;
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("only the SecurityContext is considered")]
 		[SecurityPermission (SecurityAction.LinkDemand, Infrastructure = true)]
 		public static void Run (ExecutionContext executionContext, ContextCallback callback, object state)

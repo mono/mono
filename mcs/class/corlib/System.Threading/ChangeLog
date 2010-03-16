@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* ThreadPool.cs, Thread.cs, ExecutionContext.cs: use MOONLIGHT
+	symbol to disambiguate MonoTouch and Moonlight code.
+
 2010-03-08  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* SpinLock.cs: Merge algorithm back in SpinLock struct

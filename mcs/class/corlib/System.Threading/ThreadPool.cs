@@ -82,7 +82,7 @@ namespace System.Threading {
 			if (callBack == null)
 				throw new ArgumentNullException ("callBack");
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			callBack = MoonlightHandler (callBack);
 #endif
 			IAsyncResult ar = callBack.BeginInvoke (state, null, null);
@@ -208,7 +208,7 @@ namespace System.Threading {
 
 #endif
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		static WaitCallback MoonlightHandler (WaitCallback callback)
 		{
 			return delegate (object o) {

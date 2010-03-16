@@ -197,7 +197,7 @@ namespace System.Threading {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static byte[] ByteArrayToCurrentDomain (byte[] arr);
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public static IPrincipal CurrentPrincipal {
 			get {
 				Thread th = CurrentThread;
@@ -262,7 +262,7 @@ namespace System.Threading {
 			}
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		// Stores a hash keyed by strings of LocalDataStoreSlot objects
 		static Hashtable datastorehash;
 		private static object datastore_lock = new object ();
@@ -404,7 +404,7 @@ namespace System.Threading {
 			internal_thread = it;
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[Obsolete ("Deprecated in favor of GetApartmentState, SetApartmentState and TrySetApartmentState.")]
 		public ApartmentState ApartmentState {
 			get {
@@ -681,7 +681,7 @@ namespace System.Threading {
 			}
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public ThreadPriority Priority {
 			get {
 				return(ThreadPriority.Lowest);
@@ -708,7 +708,7 @@ namespace System.Threading {
 			Abort_internal (Internal, null);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[SecurityPermission (SecurityAction.Demand, ControlThread=true)]
 		public void Abort (object stateInfo) 
 		{
@@ -746,7 +746,7 @@ namespace System.Threading {
 			return Join_internal (Internal, millisecondsTimeout, Internal.system_thread_handle);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public bool Join(TimeSpan timeout)
 		{
 			long ms = (long) timeout.TotalMilliseconds;
@@ -762,7 +762,7 @@ namespace System.Threading {
 		public extern static void MemoryBarrier ();
 #endif
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void Resume_internal();
 
@@ -789,7 +789,7 @@ namespace System.Threading {
 			}
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		private void StartSafe ()
 		{
 			current_thread = this;
@@ -847,7 +847,7 @@ namespace System.Threading {
 			Internal._serialized_principal = CurrentThread.Internal._serialized_principal;
 
 			// Thread_internal creates and starts the new thread, 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			if (Thread_internal((ThreadStart) StartSafe) == (IntPtr) 0)
 #else
 			if (Thread_internal((ThreadStart) StartUnsafe) == (IntPtr) 0)
@@ -855,7 +855,7 @@ namespace System.Threading {
 				throw new SystemException ("Thread creation failed.");
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static void Suspend_internal(InternalThread thread);
 
@@ -1049,7 +1049,7 @@ namespace System.Threading {
 			// Managed and native threads are currently bound together.
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public ApartmentState GetApartmentState ()
 		{
 			return (ApartmentState)Internal.apartment_state;
@@ -1091,7 +1091,7 @@ namespace System.Threading {
 			Start ();
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		// NOTE: This method doesn't show in the class library status page because
 		// it cannot be "found" with the StrongNameIdentityPermission for ECMA key.
 		// But it's there!
