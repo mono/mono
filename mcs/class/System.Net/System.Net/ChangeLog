@@ -1,3 +1,7 @@
+2010-03-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* WebRequest_2_1.cs: Added UseDefaultCredentials property.
+
 2010-03-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* WebClient_2_1.cs: Directly set 'progress' delegate field

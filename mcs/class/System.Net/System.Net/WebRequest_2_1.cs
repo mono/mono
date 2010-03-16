@@ -60,6 +60,11 @@ namespace System.Net {
 			set { throw NotImplemented (); }
 		}
 
+		public virtual bool UseDefaultCredentials {
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
+		}
+
 		static WebRequest ()
 		{
 			registred_prefixes = new Dictionary<string, IWebRequestCreate> (StringComparer.OrdinalIgnoreCase);
