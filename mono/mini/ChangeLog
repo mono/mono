@@ -1,5 +1,9 @@
 2010-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	 * mini-x86.c (mono_arch_output_basic_block): Record try block holes.
+
+2010-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini.h (MonoBasicBlock): Add native_length field.
 	* mini.h (MonoCompile): Add try_block_holes field.
 	* mini.h (MonoInst): Add exception_clause pointer to
