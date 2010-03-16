@@ -1,3 +1,7 @@
+2009-12-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-helpers.c (dis_one): Avoid a glib assert on empty strings.
+
 2010-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* object-internals.h (_G_BOOLEAN_EXPR): Fix the definition of this to explicitly
