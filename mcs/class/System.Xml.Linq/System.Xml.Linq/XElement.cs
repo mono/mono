@@ -394,7 +394,7 @@ namespace System.Xml.Linq
 
 		static void DefineDefaultSettings (XmlReaderSettings settings, LoadOptions options)
 		{
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			// 2.1 has a DtdProcessing property which defaults to DtdProcessing.Prohibit
 			settings.DtdProcessing = DtdProcessing.Parse;
 #else
@@ -454,7 +454,7 @@ namespace System.Xml.Linq
 			}
 		}
 
-#if NET_4_0 || (NET_2_1 && !MONOTOUCH)
+#if MOONLIGHT || NET_4_0
 		public static XElement Load (Stream stream)
 		{
 			return Load (stream, LoadOptions.None);

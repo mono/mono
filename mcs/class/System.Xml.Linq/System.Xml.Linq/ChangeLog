@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* XElement.cs, XNodeNavigator.cs: use MOONLIGHT symbol to
+	disambiguate MonoTouch and Moonlight code.
+
 2010-03-15  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* XElement.cs: Added two new Load overloads for NET 4.0 and Moonlight.
