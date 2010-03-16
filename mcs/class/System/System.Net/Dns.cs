@@ -48,7 +48,7 @@ namespace System.Net {
 			System.Net.Sockets.Socket.CheckProtocolSupport();
 		}
 
-#if !NET_2_1 || MONOTOUCH // global remove of async methods
+#if !MOONLIGHT // global remove of async methods
 
 		private delegate IPHostEntry GetHostByNameCallback (string hostName);
 		private delegate IPHostEntry ResolveCallback (string hostName);
@@ -177,7 +177,7 @@ namespace System.Net {
 		}
 #endif
 		
-#endif // !NET_2_1: global remove of async methods
+#endif // !MOONLIGHT: global remove of async methods
 
 #if !TARGET_JVM
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]

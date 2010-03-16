@@ -38,7 +38,7 @@ using System.Reflection;
 
 namespace System.ComponentModel {
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 	public class ComponentCollection
 	{
 	}

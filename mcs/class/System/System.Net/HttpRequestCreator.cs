@@ -38,7 +38,7 @@ namespace System.Net
 
 		public WebRequest Create (Uri uri)
 		{
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			throw new NotImplementedException ();
 #else
 			return new HttpWebRequest (uri);

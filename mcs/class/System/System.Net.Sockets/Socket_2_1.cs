@@ -227,7 +227,7 @@ namespace System.Net.Sockets {
 							     bool block,
 							     out int error);
 #endif
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public bool Blocking {
 			get {
 				return(blocking);
@@ -489,7 +489,7 @@ namespace System.Net.Sockets {
 				if (ep.Address.Equals (IPAddress.Any) || ep.Address.Equals (IPAddress.IPv6Any))
 					throw new SocketException ((int) SocketError.AddressNotAvailable);
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			if (protocol_type != ProtocolType.Tcp)
 				throw new SocketException ((int) SocketError.AccessDenied);
 #elif NET_2_0
@@ -565,7 +565,7 @@ namespace System.Net.Sockets {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		/* This overload is needed as the async Connect method
 		 * also needs to check the socket error status, but
 		 * getsockopt(..., SO_ERROR) clears the error.
@@ -726,7 +726,7 @@ namespace System.Net.Sockets {
 #endif
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		static void CheckConnect (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)

@@ -113,7 +113,7 @@ namespace System {
 
 		// Constructors		
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		public Uri (string uriString) : this (uriString, UriKind.Absolute) 
 		{
 		}
@@ -479,7 +479,7 @@ namespace System {
 				return host; 
 			} 
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public UriHostNameType HostNameType { 
 			get {
 				EnsureAbsoluteUri ();
@@ -516,7 +516,7 @@ namespace System {
 			}
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public bool IsLoopback { 
 			get {
 				EnsureAbsoluteUri ();
@@ -1141,7 +1141,7 @@ namespace System {
 			path = EscapeString (path);
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		static string EscapeString (string str)
 #else
 	#if NET_2_0
@@ -1229,7 +1229,7 @@ namespace System {
 			}
 		}
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		string Unescape (string str)
 #else
 	#if NET_2_0
@@ -1386,7 +1386,7 @@ namespace System {
 			if (uriString [0] == '/' && Path.DirectorySeparatorChar == '/'){
 				//Unix Path
 				ParseAsUnixAbsoluteFilePath (uriString);
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 				isAbsoluteUri = false;
 #else
 				if (kind == UriKind.Relative)

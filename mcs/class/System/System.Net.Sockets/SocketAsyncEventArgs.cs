@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security;
 using System.Threading;
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 using System.Net.Policy;
 #endif
 
@@ -40,7 +40,7 @@ namespace System.Net.Sockets
 {
 	public class SocketAsyncEventArgs : EventArgs, IDisposable
 	{
-#if (NET_2_1 || NET_4_0) && !MONOTOUCH
+#if MOONLIGHT || NET_4_0
 		public Exception ConnectByNameError { get; internal set; }
 #endif
 
@@ -206,7 +206,7 @@ namespace System.Net.Sockets
 			LastOperation = SocketAsyncOperation.Connect;
 			SocketError error = SocketError.AccessDenied;
 			try {
-#if (NET_2_1 || NET_4_0) && !MONOTOUCH
+#if MOONLIGHT || NET_4_0
 				// Connect to the first address that match the host name, like:
 				// http://blogs.msdn.com/ncl/archive/2009/07/20/new-ncl-features-in-net-4-0-beta-2.aspx
 				// while skipping entries that do not match the address family
@@ -245,7 +245,7 @@ namespace System.Net.Sockets
 		{
 			curSocket.Connected = false;
 			SocketError error = SocketError.Success;
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			// if we're not downloading a socket policy then check the policy
 			if (!PolicyRestricted) {
 				error = SocketError.AccessDenied;

@@ -270,7 +270,8 @@ namespace System.Net
 		{
 			protocolVersion = version;
 		}
-#if MONOTOUCH || (!TARGET_JVM && !NET_2_1)
+
+#if !MOONLIGHT && !TARGET_JVM
 		WebConnectionGroup GetConnectionGroup (string name)
 		{
 			if (name == null)

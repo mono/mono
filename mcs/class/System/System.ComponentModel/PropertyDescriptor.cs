@@ -39,7 +39,7 @@ using System.Runtime.InteropServices;
 
 namespace System.ComponentModel
 {
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 	public abstract class PropertyDescriptor
 	{
 	}

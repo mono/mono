@@ -857,7 +857,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 	}
 }
-#elif NET_2_0 && (!NET_2_1 || MONOTOUCH)
+#elif NET_2_0 && !MOONLIGHT
 namespace System.Security.Cryptography.X509Certificates {
 	public class X509Chain {
 		public bool Build (X509Certificate2 cert)
