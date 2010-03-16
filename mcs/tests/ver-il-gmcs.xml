@@ -37031,7 +37031,7 @@
   <test name="test-733.cs">
     <type name="Test">
       <method name="Int32 Main()">
-        <size>65</size>
+        <size>86</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -37252,6 +37252,54 @@
       </method>
       <method name="Void Test()">
         <size>30</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-744.cs">
+    <type name="M">
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M+Nested">
+      <method name="Void Extra()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void AMethod()">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void BMethod()">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void AMethod()">
+        <size>1</size>
+      </method>
+      <method name="Void BMethod()">
+        <size>1</size>
+      </method>
+      <method name="Void Extra()">
+        <size>0</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
