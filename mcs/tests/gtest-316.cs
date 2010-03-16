@@ -3,8 +3,11 @@ using System;
 
 class X
 {
-	static void Main ()
-	{ }
+	static int Main ()
+	{
+		new Derived ().Method<Foo> ();
+		return 0;
+	}
 }
 
 class Foo

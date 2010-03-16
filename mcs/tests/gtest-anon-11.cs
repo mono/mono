@@ -16,6 +16,7 @@ public class Test<R>
 		Foo foo = delegate {
 			World (u, v);
 		};
+		foo ();
 	}
 }
 
