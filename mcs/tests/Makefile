@@ -19,7 +19,7 @@ USE_MCS_FLAGS :=
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_2_0 net_2_1 net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 moonlight net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 # casts
 bootstrap-cast.exe: gen-cast-test.cs
@@ -52,7 +52,7 @@ TEST_PATTERN = 'v4'
 LOCAL_RUNTIME_FLAGS = --verify-all
 #TOPTIONS += '-il:ver-il-dmcs.xml'
 endif
-ifeq (net_2_1, $(PROFILE))
+ifeq (moonlight, $(PROFILE))
 COMPILER_NAME = smcs
 TEST_PATTERN = 'v2'
 LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack

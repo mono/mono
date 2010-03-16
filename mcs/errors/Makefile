@@ -35,7 +35,7 @@ TEST_SUPPORT_FILES = \
 # mention all targets
 all-local $(STD_TARGETS:=-local):
 
-VALID_PROFILE := $(filter net_2_0 net_2_1 net_4_0, $(PROFILE))
+VALID_PROFILE := $(filter net_2_0 moonlight net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 
 check: run-mcs-tests 
@@ -53,7 +53,7 @@ ifeq (net_4_0, $(PROFILE))
 COMPILER_NAME = dmcs
 TEST_PATTERN = 'v4'
 endif
-ifeq (net_2_1, $(PROFILE))
+ifeq (moonlight, $(PROFILE))
 COMPILER_NAME = smcs
 TEST_PATTERN = 'v2'
 LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack

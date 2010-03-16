@@ -19,9 +19,9 @@ PROFILES = \
 	basic \
 	net_2_0_bootstrap \
 	net_2_0 \
-	net_2_1_bootstrap \
-	net_2_1_raw \
-	net_2_1 \
+	moonlight_bootstrap \
+	moonlight_raw \
+	moonlight \
 	net_3_5	\
 	net_4_0_bootstrap \
 	net_4_0	

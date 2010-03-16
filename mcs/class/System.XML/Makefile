@@ -94,7 +94,7 @@ Mono.Xml.Xsl/PatternTokenizer.cs: System.Xml.XPath/Tokenizer.cs
 	echo "#define XSLT_PATTERN" > $@
 	cat $< >>$@
 
-ifneq (net_2_1_raw, $(PROFILE))
+ifneq (moonlight_raw, $(PROFILE))
 BUILT_SOURCES = System.Xml.XPath/Parser.cs \
 	Mono.Xml.Xsl/PatternParser.cs \
 	Mono.Xml.Xsl/PatternTokenizer.cs

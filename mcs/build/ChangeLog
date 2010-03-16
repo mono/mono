@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* profiles/net_2_1_*.make: rename to moonlight_*.make and
+	define the MOONLIGHT symbol.
+
 2010-03-03  Jonathan Pryor <jpryor@novell.com>
 
 	* library.make: Add the generated per-profile .source file to

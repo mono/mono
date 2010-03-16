@@ -18,7 +18,7 @@ ifeq (net_2_0, $(PROFILE))
 INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gmcs.exe
 endif
 
-ifeq (net_2_1_bootstrap, $(PROFILE))
+ifeq (moonlight_bootstrap, $(PROFILE))
 INTERNAL_GMCS = $(RUNTIME) $(RUNTIME_FLAGS) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/gmcs.exe
 endif
 

@@ -5,14 +5,14 @@ include ../../build/rules.make
 PROGRAM = $(topdir)/class/lib/$(PROFILE)/compiler-tester.exe
 NO_INSTALL = yes
 
-ifeq (net_2_1, $(PROFILE))
+ifeq (moonlight, $(PROFILE))
 
 all-local: $(PROGRAM)
 clean-local:
 	rm -f $(PROGRAM)
 
 $(PROGRAM): $(dir $(PROGRAM))/.stamp
-$(PROGRAM): $(topdir)/class/lib/net_2_1_raw/compiler-tester.exe
+$(PROGRAM): $(topdir)/class/lib/moonlight_raw/compiler-tester.exe
 	cp $< $@
 
 dist-local: dist-default

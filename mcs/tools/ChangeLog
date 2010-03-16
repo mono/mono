@@ -1,3 +1,7 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: rename the net_2_1 profile to moonlight.
+
 2010-03-15  Andrew Jorgensen  <ajorgensen@novell.com>
 
 	* Makefile: Add DIST_SUBDIRS with SUBDIRS and net_4_0_dirs so that all

@@ -3,7 +3,7 @@
 my_runtime = $(RUNTIME) $(RUNTIME_FLAGS) --security=temporary-smcs-hack
 INTERNAL_SMCS = $(my_runtime) $(topdir)/class/lib/$(PROFILE)/smcs.exe
 
-BOOTSTRAP_PROFILE = net_2_1_bootstrap
+BOOTSTRAP_PROFILE = moonlight_bootstrap
 
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(my_runtime) $(topdir)/class/lib/$(BOOTSTRAP_PROFILE)/smcs.exe
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_SMCS)
@@ -11,7 +11,7 @@ MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_
 profile-check:
 	@:
 
-PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_2_1
+PROFILE_MCS_FLAGS = -d:NET_1_1 -d:NET_2_0 -d:NET_2_1 -d:MOONLIGHT
 FRAMEWORK_VERSION = 2.1
 NO_TEST = yes
 

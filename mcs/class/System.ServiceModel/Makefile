@@ -31,7 +31,7 @@ LIB_MCS_FLAGS += /d:NET_3_0 	\
 			/r:Mono.Security.dll
 endif
 
-ifeq (net_2_1_raw, $(PROFILE))
+ifeq (moonlight_raw, $(PROFILE))
 LIB_MCS_FLAGS += /r:System.Net
 endif
 

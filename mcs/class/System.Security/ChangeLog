@@ -1,3 +1,7 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: rename the net_2_1 profile to moonlight.
+
 2009-06-05  Marek Safar  <marek.safar@gmail.com>
 
 	* Makefile: Fixed NET_2_0 conditional to actually handle Mono.Security
