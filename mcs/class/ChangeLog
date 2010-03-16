@@ -1,3 +1,7 @@
+2010-03-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* Makefile: Add System.Xml.Serialization to the Moonlight build.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: rename the net_2_1 profile to moonlight.

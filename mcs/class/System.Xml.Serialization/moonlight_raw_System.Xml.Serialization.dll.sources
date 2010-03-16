@@ -1,0 +1,13 @@
+Assembly/AssemblyInfo.cs
+../System.XML/../../build/common/Consts.cs
+../System.XML/../../build/common/Locale.cs
+../System.XML/../../build/common/MonoTODOAttribute.cs
+System.Xml.Serialization/XmlAttributeOverrides.cs
+System.Xml.Serialization/XmlAttributes.cs
+System.Xml.Serialization/XmlMapping.cs
+System.Xml.Serialization/XmlSerializationGeneratedCode.cs
+System.Xml.Serialization/XmlSerializationReader.cs
+System.Xml.Serialization/XmlSerializationWriter.cs
+System.Xml.Serialization/XmlSerializer.cs
+System.Xml.Serialization/XmlSerializerNamespaces.cs
+System.Xml.Serialization/XmlTypeMapping.cs

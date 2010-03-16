@@ -128,6 +128,7 @@ moonlight_dirs := \
 	System.XML		\
 	System.Net		\
 	System.Xml.Linq	\
+	System.Xml.Serialization	\
 	System.Runtime.Serialization	\
 	System.ServiceModel	\
 	System.ServiceModel.Web
