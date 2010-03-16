@@ -37,7 +37,7 @@ namespace System.Security.Cryptography.X509Certificates {
 	enum X509ContentType {
 		Unknown,
 		Cert,
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		// not supported by Silverlight 2.0 (NET_2_1)
 		SerializedCert,
 		Pfx,

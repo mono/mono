@@ -1,3 +1,8 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* StrongName.cs: use MOONLIGHT symbol to disambiguate
+	MonoTouch and Moonlight code.
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* StrongName.cs: Moonlight NET_2_1 cannot depend on machine.config

@@ -48,7 +48,7 @@ namespace Mono.Security.Cryptography {
 
 		static RandomNumberGenerator Rng {
 			get {
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 				if (rng == null)
 					rng = new RNGCryptoServiceProvider ();
 #else

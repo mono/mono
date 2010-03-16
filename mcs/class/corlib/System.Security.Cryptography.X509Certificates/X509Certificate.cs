@@ -36,7 +36,7 @@ using Mono.Security;
 using Mono.Security.X509;
 
 using System.Runtime.Serialization;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 using Mono.Security.Authenticode;
 #endif
 
@@ -100,7 +100,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			return new X509Certificate (data);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("Incomplete - minimal validation in this version")]
 		public static X509Certificate CreateFromSignedFile (string filename)
 		{
@@ -152,7 +152,7 @@ namespace System.Security.Cryptography.X509Certificates {
 #endif
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		private void InitFromHandle (IntPtr handle)
 		{

@@ -1,3 +1,9 @@
+2010-03-16  Jb Evain  <jbevain@novell.com>
+
+	* X509KeyStorageFlags.cs, X509ContentType.cs, X509Certificate.cs
+	X509Certificate20.cs: use MOONLIGHT symbol to disambiguate
+	MonoTouch and Moonlight code.
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* X509Certificate20.cs: Don't depend on SecureString for NET_2_1

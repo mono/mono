@@ -41,7 +41,7 @@ namespace System.Security.Cryptography.X509Certificates {
 
 	[ComVisible (true)]
 	[MonoTODO ("X509ContentType.SerializedCert isn't supported (anywhere in the class)")]
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 	public partial class X509Certificate {
 #else
 	public partial class X509Certificate : IDeserializationCallback, ISerializable {
@@ -60,7 +60,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (byte[] rawData, SecureString password)
 		{
@@ -73,7 +73,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, keyStorageFlags);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -91,7 +91,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (fileName, password, X509KeyStorageFlags.DefaultKeySet);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (string fileName, SecureString password)
 		{
@@ -104,7 +104,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (fileName, password, keyStorageFlags);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("SecureString support is incomplete")]
 		public X509Certificate (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -171,7 +171,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			return Export (contentType, pwd);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("X509ContentType.Pfx/Pkcs12 and SerializedCert are not supported. SecureString support is incomplete.")]
 		public virtual byte[] Export (X509ContentType contentType, SecureString password)
 		{
@@ -189,7 +189,7 @@ namespace System.Security.Cryptography.X509Certificates {
 				switch (contentType) {
 				case X509ContentType.Cert:
 					return x509.RawData;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 				case X509ContentType.Pfx: // this includes Pkcs12
 					// TODO
 					throw new NotSupportedException ();
@@ -256,7 +256,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("SecureString support is incomplete")]
 		public virtual void Import (byte[] rawData, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -279,7 +279,7 @@ namespace System.Security.Cryptography.X509Certificates {
 			Import (rawData, password, keyStorageFlags);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("SecureString support is incomplete, missing KeyStorageFlags support")]
 		public virtual void Import (string fileName, SecureString password, X509KeyStorageFlags keyStorageFlags)
 		{
@@ -288,7 +288,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 #endif
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		void IDeserializationCallback.OnDeserialization (object sender)
 		{
 		}
