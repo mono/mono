@@ -37,7 +37,7 @@ using System.Security.Permissions;
 using System.Security.Policy;
 using System.Configuration.Assemblies;
 using System.Text;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 using System.Runtime.Remoting;
 using System.Runtime.Remoting.Activation;
 #endif
@@ -58,7 +58,7 @@ namespace System
 		{
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[MonoTODO ("No COM support")]
 		public static ObjectHandle CreateComInstanceFrom (string assemblyName, string typeName)
 		{
@@ -286,7 +286,7 @@ namespace System
 			}
 
 			CheckAbstractType (type);
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			if (activationAttributes != null && activationAttributes.Length > 0) {
 				if (!type.IsMarshalByRef) {
 					string msg = Locale.GetText ("Type '{0}' doesn't derive from MarshalByRefObject.", type.FullName);
@@ -357,7 +357,7 @@ namespace System
 			}
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		[SecurityPermission (SecurityAction.LinkDemand, RemotingConfiguration = true)]
 		public static object GetObject (Type type, string url)
 		{

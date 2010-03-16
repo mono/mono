@@ -262,7 +262,7 @@ namespace System
 			info.AddValue ("RemoteStackTraceString", _remoteStackTraceString);
 			info.AddValue ("RemoteStackIndex", remote_stack_index);
 			info.AddValue ("HResult", hresult);
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			info.AddValue ("Source", Source);
 #else
 			info.AddValue ("Source", null);

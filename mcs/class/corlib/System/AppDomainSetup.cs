@@ -37,7 +37,7 @@ using System.Runtime.InteropServices;
 using System.Security;
 using System.Runtime.Serialization.Formatters.Binary;
 
-#if(!NET_2_1 || MONOTOUCH)
+#if(!MOONLIGHT)
 using System.Runtime.Hosting;
 using System.Security.Policy;
 #endif
@@ -69,7 +69,7 @@ namespace System
 		bool disallow_binding_redirects;
 		bool disallow_code_downloads;
 
-#if (!NET_2_1 || MONOTOUCH)
+#if (!MOONLIGHT)
 		private ActivationArguments _activationArguments;
 		AppDomainInitializer domain_initializer;
 		[NonSerialized]
@@ -116,7 +116,7 @@ namespace System
 			configuration_bytes = setup.configuration_bytes;
 		}
 
-#if (!NET_2_1 || MONOTOUCH)
+#if (!MOONLIGHT)
 		public AppDomainSetup (ActivationArguments activationArguments)
 		{
 			_activationArguments = activationArguments;
@@ -162,7 +162,7 @@ namespace System
 				application_name = value;
 			}
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public string CachePath {
 			get {
 				return cache_path;
@@ -235,7 +235,7 @@ namespace System
 				loader_optimization = value;
 			}
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public string PrivateBinPath {
 			get {
 				return private_bin_path;

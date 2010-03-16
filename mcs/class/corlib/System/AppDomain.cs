@@ -81,7 +81,7 @@ namespace System {
 
 		[ThreadStatic]
 		static Hashtable assembly_resolve_in_progress_refonly;
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		// CAS
 		private Evidence _evidence;
 		private PermissionSet _granted;
@@ -121,7 +121,7 @@ namespace System {
 			get { throw new NotImplementedException (); }
 		}
 #endif
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public string BaseDirectory {
 			get {
 				string path = SetupInformationNoCopy.ApplicationBase;
@@ -174,7 +174,7 @@ namespace System {
 				return getFriendlyName ();
 			}
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public Evidence Evidence {
 			get {
 				// if the host (runtime) hasn't provided it's own evidence...
@@ -248,7 +248,7 @@ namespace System {
 			}
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 
 		[Obsolete ("AppDomain.AppendPrivatePath has been deprecated. Please investigate the use of AppDomainSetup.PrivateBinPath instead.")]
 		[SecurityPermission (SecurityAction.LinkDemand, ControlAppDomain = true)]
@@ -793,7 +793,7 @@ namespace System {
 			assembly.FromByteArray = true;
 			return assembly;
 		}
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 #if NET_4_0
 		[Obsolete ("AppDomain policy levels are obsolete")]
 #endif
@@ -945,7 +945,7 @@ namespace System {
 			return _process_guid;
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 
 		public static AppDomain CreateDomain (string friendlyName)
 		{
@@ -1155,7 +1155,7 @@ namespace System {
 
 		public override string ToString ()
 		{
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 			return getFriendlyName ();
 #else
 			StringBuilder sb = new StringBuilder ("Name:");
@@ -1369,7 +1369,7 @@ namespace System {
 			get { return _domain_manager; }
 		}
 
-#if (!NET_2_1 || MONOTOUCH)
+#if (!MOONLIGHT)
 
 		public event ResolveEventHandler ReflectionOnlyAssemblyResolve;
 
@@ -1479,7 +1479,7 @@ namespace System {
 		}
 #endif
 
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 		public int ExecuteAssemblyByName (string assemblyName)
 		{
 			// critical code in SL that we're not calling in ML

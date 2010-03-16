@@ -152,7 +152,7 @@ namespace System
 
 		private static Stream Open (IntPtr handle, FileAccess access, int bufferSize)
 		{
-#if NET_2_1 && !MONOTOUCH
+#if MOONLIGHT
 			if (SecurityManager.SecurityEnabled && !Debugger.IsAttached && Environment.GetEnvironmentVariable ("MOONLIGHT_ENABLE_CONSOLE") == null)
 				return new NullStream ();
 #endif

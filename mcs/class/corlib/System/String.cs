@@ -1393,7 +1393,7 @@ namespace System
 			return (value == null) || (value.Length == 0);
 		}
 
-#if !NET_2_1 || MONOTOUCH
+#if !MOONLIGHT
 		public string Normalize ()
 		{
 			return Normalization.Normalize (this, 0);
