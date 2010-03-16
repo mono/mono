@@ -83,11 +83,11 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			inactivity_timeout = new ConfigurationProperty ("inactivityTimeout",
-				typeof (TimeSpan), "00:02:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:02:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			issued_cookie_lifetime = new ConfigurationProperty ("issuedCookieLifetime",
-				typeof (TimeSpan), "10:00:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "10:00:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			max_cached_cookies = new ConfigurationProperty ("maxCachedCookies",
@@ -95,7 +95,7 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			max_clock_skew = new ConfigurationProperty ("maxClockSkew",
-				typeof (TimeSpan), "00:05:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			max_pending_sessions = new ConfigurationProperty ("maxPendingSessions",
@@ -107,7 +107,7 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			negotiation_timeout = new ConfigurationProperty ("negotiationTimeout",
-				typeof (TimeSpan), "00:01:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:01:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			reconnect_transport_on_failure = new ConfigurationProperty ("reconnectTransportOnFailure",
@@ -119,19 +119,19 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			replay_window = new ConfigurationProperty ("replayWindow",
-				typeof (TimeSpan), "00:05:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			session_key_renewal_interval = new ConfigurationProperty ("sessionKeyRenewalInterval",
-				typeof (TimeSpan), "15:00:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "15:00:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			session_key_rollover_interval = new ConfigurationProperty ("sessionKeyRolloverInterval",
-				typeof (TimeSpan), "00:05:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			timestamp_validity_duration = new ConfigurationProperty ("timestampValidityDuration",
-				typeof (TimeSpan), "00:05:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			properties.Add (detect_replays);
@@ -168,6 +168,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("inactivityTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:02:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan InactivityTimeout {
 			get { return (TimeSpan) base [inactivity_timeout]; }
 			set { base [inactivity_timeout] = value; }
@@ -176,6 +177,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("issuedCookieLifetime",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "10:00:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan IssuedCookieLifetime {
 			get { return (TimeSpan) base [issued_cookie_lifetime]; }
 			set { base [issued_cookie_lifetime] = value; }
@@ -195,6 +197,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("maxClockSkew",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan MaxClockSkew {
 			get { return (TimeSpan) base [max_clock_skew]; }
 			set { base [max_clock_skew] = value; }
@@ -225,6 +228,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("negotiationTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:01:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan NegotiationTimeout {
 			get { return (TimeSpan) base [negotiation_timeout]; }
 			set { base [negotiation_timeout] = value; }
@@ -256,6 +260,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("replayWindow",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan ReplayWindow {
 			get { return (TimeSpan) base [replay_window]; }
 			set { base [replay_window] = value; }
@@ -264,6 +269,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("sessionKeyRenewalInterval",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "15:00:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan SessionKeyRenewalInterval {
 			get { return (TimeSpan) base [session_key_renewal_interval]; }
 			set { base [session_key_renewal_interval] = value; }
@@ -272,6 +278,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("sessionKeyRolloverInterval",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan SessionKeyRolloverInterval {
 			get { return (TimeSpan) base [session_key_rollover_interval]; }
 			set { base [session_key_rollover_interval] = value; }
@@ -280,6 +287,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("timestampValidityDuration",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan TimestampValidityDuration {
 			get { return (TimeSpan) base [timestamp_validity_duration]; }
 			set { base [timestamp_validity_duration] = value; }

@@ -73,11 +73,11 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			idle_timeout = new ConfigurationProperty ("idleTimeout",
-				typeof (TimeSpan), "00:02:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:02:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			lease_timeout = new ConfigurationProperty ("leaseTimeout",
-				typeof (TimeSpan), "00:05:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:05:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			max_outbound_connections_per_endpoint = new ConfigurationProperty ("maxOutboundConnectionsPerEndpoint",
@@ -111,6 +111,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("idleTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:02:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan IdleTimeout {
 			get { return (TimeSpan) base [idle_timeout]; }
 			set { base [idle_timeout] = value; }
@@ -119,6 +120,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("leaseTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan LeaseTimeout {
 			get { return (TimeSpan) base [lease_timeout]; }
 			set { base [lease_timeout] = value; }

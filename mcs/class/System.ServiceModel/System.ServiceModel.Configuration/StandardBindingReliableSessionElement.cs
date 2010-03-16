@@ -74,7 +74,7 @@ namespace System.ServiceModel.Configuration
 		{
 			properties = new ConfigurationPropertyCollection ();
 			inactivity_timeout = new ConfigurationProperty ("inactivityTimeout",
-				typeof (TimeSpan), "00:10:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:10:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			ordered = new ConfigurationProperty ("ordered",
@@ -95,6 +95,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("inactivityTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:10:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan InactivityTimeout {
 			get { return (TimeSpan) base [inactivity_timeout]; }
 			set { base [inactivity_timeout] = value; }

@@ -109,11 +109,11 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			retry_cycle_delay = new ConfigurationProperty ("retryCycleDelay",
-				typeof (TimeSpan), "00:30:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "00:30:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			time_to_live = new ConfigurationProperty ("timeToLive",
-				typeof (TimeSpan), "1.00:00:00", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "1.00:00:00", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			use_msmq_tracing = new ConfigurationProperty ("useMsmqTracing",
@@ -225,6 +225,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("retryCycleDelay",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:30:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan RetryCycleDelay {
 			get { return (TimeSpan) base [retry_cycle_delay]; }
 			set { base [retry_cycle_delay] = value; }
@@ -233,6 +234,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("timeToLive",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "1.00:00:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan TimeToLive {
 			get { return (TimeSpan) base [time_to_live]; }
 			set { base [time_to_live] = value; }

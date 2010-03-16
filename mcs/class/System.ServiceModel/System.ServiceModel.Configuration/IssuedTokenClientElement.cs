@@ -96,7 +96,7 @@ namespace System.ServiceModel.Configuration
 				ConfigurationPropertyOptions.None);
 
 			max_issued_token_caching_time = new ConfigurationProperty ("maxIssuedTokenCachingTime",
-				typeof (TimeSpan), "10675199.02:48:05.4775807", null/* FIXME: get converter for TimeSpan*/, null,
+				typeof (TimeSpan), "10675199.02:48:05.4775807", new TimeSpanConverter (), null,
 				ConfigurationPropertyOptions.None);
 
 			properties.Add (cache_issued_tokens);
@@ -168,6 +168,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("maxIssuedTokenCachingTime",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "10675199.02:48:05.4775807")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan MaxIssuedTokenCachingTime {
 			get { return (TimeSpan) base [max_issued_token_caching_time]; }
 			set { base [max_issued_token_caching_time] = value; }
