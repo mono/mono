@@ -554,6 +554,9 @@ namespace System
 			{
 				_src = src;
 				_length = _src.Length;
+#if NET_4_0
+				number_format = GetNumberFormatInfo (null);
+#endif
 			}
 
 #if NET_4_0
@@ -660,17 +663,15 @@ namespace System
 				if (AtEnd)
 					return false;
 
-				// Use culture information if available.
-				if (number_format != null) {
-					string decimal_separator = number_format.NumberDecimalSeparator;
-					if (String.Compare (_src, _cur, decimal_separator, 0, decimal_separator.Length) == 0) {
-						_cur += decimal_separator.Length;
-						return true;
-					}
-
-					return false;
-				} else if (_src [_cur] == '.') {
+				// we need to provide compatibility with old versions using '.'
+				if (_src [_cur] == '.') {
 					_cur++;
+					return true;
+				}
+
+				string decimal_separator = number_format.NumberDecimalSeparator;
+				if (String.Compare (_src, _cur, decimal_separator, 0, decimal_separator.Length) == 0) {
+					_cur += decimal_separator.Length;
 					return true;
 				}
 

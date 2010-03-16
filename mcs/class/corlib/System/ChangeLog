@@ -1,3 +1,10 @@
+2010-03-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: In 4.0 the Parse/TryParse methods always try to use its
+	associated CultureInfo.NumberFormat.NumberDecimalSeparator value, as well as
+	providing backwards compatibility by also supporting '.' as the
+	separator.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* AppDomainSetup.cs
