@@ -1,3 +1,9 @@
+2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextWriter2.cs : fix cosmetic 2.0 compatibility issue in 
+	  WriteStartAttribute() which allows "" for prefixed xmlns and brings
+	  incompatibility with XmlTextWriter class.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* XmlNodeReader2.cs

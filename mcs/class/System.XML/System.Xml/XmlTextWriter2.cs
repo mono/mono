@@ -841,7 +841,7 @@ namespace Mono.Xml
 				if (prefix == "xml")
 					namespaceUri = XmlNamespace;
 				// infer namespace URI.
-				else if ((object) namespaceUri == null) {
+				else if ((object) namespaceUri == null || (v2 && namespaceUri.Length == 0)) {
 					if (isNSDecl)
 						namespaceUri = XmlnsNamespace;
 					else
