@@ -1,3 +1,7 @@
+2010-03-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (insert_breakpoint): Write a log message.
+
 2010-03-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* iltests.il.in: Disable the fconv_to_i test on sparc too.
