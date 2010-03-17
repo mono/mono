@@ -327,7 +327,17 @@ namespace System.ServiceModel.Description
 			IEnumerable<ServiceEndpoint> endpoints,
 			XmlQualifiedName name)
 		{
-			throw new NotImplementedException ();
+			if (endpoints == null)
+				throw new ArgumentNullException ("endpoints");
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			foreach (ServiceEndpoint ep in endpoints) {
+				if (ep.Contract.Name == ServiceMetadataBehavior.MexContractName)
+					continue;
+
+				ExportEndpoint (ep);
+			}
 		}
 
 		XsdDataContractExporter XsdExporter {

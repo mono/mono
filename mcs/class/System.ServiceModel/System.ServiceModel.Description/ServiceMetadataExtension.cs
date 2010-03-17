@@ -66,13 +66,8 @@ namespace System.ServiceModel.Description
 		public MetadataSet Metadata {
 			get {
 				if (metadata == null) {
-					MetadataExporter exporter = new WsdlExporter ();
-					foreach (ServiceEndpoint ep in owner.Description.Endpoints) {
-						if (ep.Contract.Name == ServiceMetadataBehavior.MexContractName)
-							continue;
-
-						exporter.ExportEndpoint (ep);
-					}
+					var exporter = new WsdlExporter ();
+					exporter.ExportEndpoints (owner.Description.Endpoints, new XmlQualifiedName (owner.Description.Name, owner.Description.Namespace));
 					metadata = exporter.GetGeneratedMetadata ();
 				}
 				return metadata;
