@@ -1,5 +1,10 @@
 2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceMetadataPublishingElement.cs : use IsNullOrEmpty(), names
+	  could be "" which is equivalent to null here.
+
+2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ConfigUtil.cs, StandardBindingCollectionElement.cs,
 	  MexHttpsBindingCollectionElement.cs,
 	  MexHttpBindingCollectionElement.cs : use GetDefault() in

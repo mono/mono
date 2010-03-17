@@ -137,9 +137,9 @@ namespace System.ServiceModel.Configuration
 			b.HttpsGetEnabled = HttpsGetEnabled;
 			b.HttpGetUrl = HttpGetUrl;
 			b.HttpsGetUrl = HttpsGetUrl;
-			if (HttpGetBinding != null)
+			if (!String.IsNullOrEmpty (HttpGetBinding))
 				b.HttpGetBinding = ConfigUtil.CreateBinding (HttpGetBinding, HttpGetBindingConfiguration);
-			if (HttpsGetBinding != null)
+			if (!String.IsNullOrEmpty (HttpsGetBinding))
 				b.HttpsGetBinding = ConfigUtil.CreateBinding (HttpsGetBinding, HttpsGetBindingConfiguration);
 			return b;
 		}
