@@ -261,7 +261,7 @@ namespace System.IO
 				throw result.Exception;
 		}
 
-#if NET_4_0
+#if MOONLIGHT || NET_4_0
 		public void CopyTo (Stream destination)
 		{
 			CopyTo (destination, 16*1024);
