@@ -99,8 +99,9 @@ namespace System.ServiceModel.Configuration
 			throw new NotImplementedException ();
 		}
 
-		protected internal override Binding GetDefault () {
-			throw new NotImplementedException ();
+		protected internal override Binding GetDefault ()
+		{
+			return (Binding) Activator.CreateInstance (BindingType, new object [0]);
 		}
 
 		protected internal override bool TryAdd (string name, Binding binding, System.Configuration.Configuration config) {

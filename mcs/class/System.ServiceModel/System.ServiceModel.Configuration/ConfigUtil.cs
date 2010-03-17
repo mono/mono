@@ -74,7 +74,7 @@ namespace System.ServiceModel.Configuration
 			if (section == null)
 				throw new ArgumentException (String.Format ("binding section for {0} was not found.", binding));
 
-			Binding b = (Binding) Activator.CreateInstance (section.BindingType, new object [0]);
+			Binding b = section.GetDefault ();
 
 			foreach (IBindingConfigurationElement el in section.ConfiguredBindings)
 				if (el.Name == bindingConfiguration)

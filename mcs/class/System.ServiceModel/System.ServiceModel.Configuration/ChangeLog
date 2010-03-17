@@ -1,3 +1,11 @@
+2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConfigUtil.cs, StandardBindingCollectionElement.cs,
+	  MexHttpsBindingCollectionElement.cs,
+	  MexHttpBindingCollectionElement.cs : use GetDefault() in
+	  BindingCollectionElement to create a Binding, instead of activator
+	  immediately. And for mex bindings, use MetadataExchangeBindings.
+
 2010-03-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpTransportElement.cs

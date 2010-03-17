@@ -54,7 +54,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public partial class MexHttpBindingCollectionElement
 		 : MexBindingBindingCollectionElement<WSHttpBinding, MexHttpBindingElement>
 	{
@@ -70,10 +69,10 @@ namespace System.ServiceModel.Configuration
 		{
 		}
 
-
-		// Properties
-
-
+		protected internal override Binding GetDefault ()
+		{
+			return MetadataExchangeBindings.CreateMexHttpBinding ();
+		}
 	}
 
 }
