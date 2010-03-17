@@ -67,6 +67,7 @@ System.ServiceModel.Configuration/StandardBindingElementTest.cs
 System.ServiceModel.Configuration/UserBinding.cs
 System.ServiceModel.Description/ClientCredentialsTest.cs
 System.ServiceModel.Description/ContractDescriptionTest.cs
+System.ServiceModel.Description/MetadataExchangeBindingsTest.cs
 System.ServiceModel.Description/MetadataResolverTest.cs
 System.ServiceModel.Description/OperationDescriptionTest.cs
 System.ServiceModel.Description/ServiceAuthorizationBehaviorTest.cs

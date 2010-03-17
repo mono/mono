@@ -1,5 +1,10 @@
 2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MetadataExchangeBindings.cs : use WSHttpBinding (it works if other
+	  parts gets fixed).
+
+2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceMetadataExtension.cs, WsdlExporter.cs :
 	  implement ExportEndpoints() and use it.
 

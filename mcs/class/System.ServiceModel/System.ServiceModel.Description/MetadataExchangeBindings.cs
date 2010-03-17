@@ -34,26 +34,18 @@ namespace System.ServiceModel.Description
 	{
 		public static Binding CreateMexHttpBinding ()
 		{
-			//FIXME: .net uses WSHttpBinding.. 
-			return new CustomBinding (
-				"MetadataExchangeHttpBinding",
-				"http://schemas.microsoft.com/ws/2005/02/mex/bindings",
-				new TextMessageEncodingBindingElement (
-					MessageVersion.Soap12WSAddressing10, 
-					Encoding.UTF8),
-				new HttpTransportBindingElement ());
+			var b = new WSHttpBinding (SecurityMode.None) {
+				Name = "MetadataExchangeHttpBinding",
+				Namespace = "http://schemas.microsoft.com/ws/2005/02/mex/bindings"};
+			return b;
 		}
 
 		public static Binding CreateMexHttpsBinding ()
 		{
-			//FIXME: .net uses WSHttpBinding.. 
-			return new CustomBinding (
-				"MetadataExchangeHttpsBinding",
-				"http://schemas.microsoft.com/ws/2005/02/mex/bindings",
-				new TextMessageEncodingBindingElement (
-					MessageVersion.Soap12WSAddressing10, 
-					Encoding.UTF8),
-				new HttpsTransportBindingElement ());
+			var b = (WSHttpBinding) CreateMexHttpBinding ();
+			b.Name = "MetadataExchangeHttpsBinding";
+			b.Security.Transport.ClientCredentialType = HttpClientCredentialType.Certificate;
+			return b;
 		}
 
 		public static Binding CreateMexNamedPipeBinding ()
