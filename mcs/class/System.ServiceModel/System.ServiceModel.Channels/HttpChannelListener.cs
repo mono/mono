@@ -79,10 +79,6 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		internal SvcHttpHandler HttpHandler {
-			get { return ((AspNetListenerManager) ListenerManager).Source; }
-		}
-
 		protected override TChannel CreateChannel (TimeSpan timeout)
 		{
 			if (typeof (TChannel) == typeof (IReplyChannel))

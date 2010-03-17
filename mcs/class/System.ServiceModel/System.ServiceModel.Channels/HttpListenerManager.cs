@@ -212,12 +212,10 @@ namespace System.ServiceModel.Channels
 		public AspNetListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager)
 			: base (channelListener, source, securityTokenManager)
 		{
-			http_handler = SvcHttpHandlerFactory.GetHandlerForListener (channelListener);
+			http_handler = SvcHttpHandler.Current;
 		}
 
-		public SvcHttpHandler Source {
-			get { return http_handler; }
-		}
+		internal SvcHttpHandler HttpHandler { get { return http_handler; } }
 
 		protected override void OnRegister (IChannelListener channelListener, TimeSpan timeout)
 		{

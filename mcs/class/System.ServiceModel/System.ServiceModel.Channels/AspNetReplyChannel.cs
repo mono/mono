@@ -54,7 +54,7 @@ namespace System.ServiceModel.Channels
 			if (http_context == null)
 				return;
 			try {
-				listener.HttpHandler.EndRequest (listener, http_context);
+				((AspNetListenerManager) listener.ListenerManager).HttpHandler.EndRequest (listener, http_context);
 			} finally {
 				http_context = null;
 			}
@@ -65,7 +65,7 @@ namespace System.ServiceModel.Channels
 			lock (waiting)
 				foreach (HttpContext ctx in waiting)
 					try {
-						listener.HttpHandler.EndRequest (listener, ctx);
+						((AspNetListenerManager) listener.ListenerManager).HttpHandler.EndRequest (listener, ctx);
 					} catch {
 					}
 		}

@@ -63,6 +63,8 @@ namespace System.ServiceModel.Channels {
 
 	internal class SvcHttpHandler : IHttpHandler
 	{
+		internal static SvcHttpHandler Current;
+
 		static object type_lock = new object ();
 
 		Type type;
@@ -135,7 +137,9 @@ namespace System.ServiceModel.Channels {
 				if (best == null)
 					best = l;
 			}
-			return best;
+			if (best != null)
+				return best;
+			throw new InvalidOperationException (String.Format ("The argument HTTP context did not match any of the registered listener manager (could be mismatch in URL, method etc.) {0}", ctx.Request.Url));
 /*
 			var actx = new AspNetHttpContextInfo (ctx);
 			foreach (var i in listeners)
@@ -194,7 +198,17 @@ namespace System.ServiceModel.Channels {
 		void EnsureServiceHost ()
 		{
 			lock (type_lock) {
+				Current = this;
+				try {
+					EnsureServiceHostCore ();
+				} finally {
+					Current = null;
+				}
+			}
+		}
 
+		void EnsureServiceHostCore ()
+		{
 			if (host != null)
 				return;
 
@@ -211,8 +225,6 @@ namespace System.ServiceModel.Channels {
 
 			// Not precise, but it needs some wait time to have all channels start requesting. And it is somehow required.
 			Thread.Sleep (500);
-
-			}
 		}
 	}
 }
