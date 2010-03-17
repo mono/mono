@@ -2519,7 +2519,7 @@ namespace System
 			}
 		}
 
-#if NET_4_0
+#if MOONLIGHT || NET_4_0
 		public static bool IsNullOrWhiteSpace (string value)
 		{
 			if (value == null)
