@@ -1,3 +1,7 @@
+2010-03-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: TimeSpan is actually implementing IFormattable.
+
 2010-03-17  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* AppDomain.cs: Added MonoTODO for IsCompatibilitySwitchSet.

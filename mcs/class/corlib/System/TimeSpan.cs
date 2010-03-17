@@ -39,6 +39,9 @@ namespace System
 	[Serializable]
 	[System.Runtime.InteropServices.ComVisible (true)]
 	public struct TimeSpan : IComparable, IComparable<TimeSpan>, IEquatable <TimeSpan>
+#if NET_4_0
+				 , IFormattable
+#endif
 	{
 #if MONOTOUCH
 		static TimeSpan () {
