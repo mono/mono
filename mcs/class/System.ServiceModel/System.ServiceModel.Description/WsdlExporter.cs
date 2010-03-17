@@ -29,6 +29,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.Web.Services.Description;
@@ -50,10 +51,24 @@ namespace System.ServiceModel.Description
 	[MonoTODO]
 	public class WsdlExporter : MetadataExporter
 	{
+		class ContractExportMap
+		{
+			public ContractExportMap (QName qname, ContractDescription contract, List<IWsdlExportExtension> results)
+			{
+				QName = qname;
+				Contract = contract;
+				Results = results;
+			}
+
+			public QName QName { get; private set; }
+			public ContractDescription Contract { get; private set; }
+			public List<IWsdlExportExtension> Results { get; private set; }
+		}
+
 		private MetadataSet metadata;
 		private ServiceDescriptionCollection wsdl_colln;
 		private XsdDataContractExporter xsd_exporter;
-		private Hashtable exported_contracts;
+		private List<ContractExportMap> exported_contracts;
 
 		public override MetadataSet GetGeneratedMetadata ()
 		{
@@ -74,16 +89,20 @@ namespace System.ServiceModel.Description
 
 		public override void ExportContract (ContractDescription contract)
 		{
-			ExportContractInternal (contract);	
+			ExportContractInternal (contract, true);
 		}
 
-		List<IWsdlExportExtension> ExportContractInternal (ContractDescription contract)
+		List<IWsdlExportExtension> ExportContractInternal (ContractDescription contract, bool rejectDuplicate)
 		{
 			QName qname = new QName (contract.Name, contract.Namespace);
-			if (ExportedContracts.ContainsKey (qname))
+			var map = ExportedContracts.FirstOrDefault (m => m.QName == qname);
+			if (map != null) {
+				if (map.Results != null && !rejectDuplicate)
+					return null; // already exported.
 				throw new ArgumentException (String.Format (
 					"A ContractDescription with Namespace : {0} and Name : {1} has already been exported.", 
 					contract.Namespace, contract.Name));
+			}
 
 			WSServiceDescription sd = GetServiceDescription (contract.Namespace);
 
@@ -150,7 +169,7 @@ namespace System.ServiceModel.Description
 			sd.Types.Schemas.Add (xs_import);
 
 			sd.PortTypes.Add (ws_port);
-			ExportedContracts [qname] = contract;
+			ExportedContracts.Add (new ContractExportMap (qname, contract, extensions));
 
 			WsdlContractConversionContext context = new WsdlContractConversionContext (contract, ws_port);
 			foreach (IWsdlExportExtension extn in extensions)
@@ -161,7 +180,12 @@ namespace System.ServiceModel.Description
 
 		public override void ExportEndpoint (ServiceEndpoint endpoint)
 		{
-			List<IWsdlExportExtension> extensions = ExportContractInternal (endpoint.Contract);
+			ExportEndpoint (endpoint, true);
+		}
+
+		void ExportEndpoint (ServiceEndpoint endpoint, bool rejectDuplicate)
+		{
+			List<IWsdlExportExtension> extensions = ExportContractInternal (endpoint.Contract, rejectDuplicate);
 			
 			//FIXME: Namespace
 			WSServiceDescription sd = GetServiceDescription ("http://tempuri.org/");
@@ -251,8 +275,9 @@ namespace System.ServiceModel.Description
 			WsdlEndpointConversionContext endpoint_context = new WsdlEndpointConversionContext (
 				contract_context, endpoint, ws_port, ws_binding);
 
-			foreach (IWsdlExportExtension extn in extensions)
-				extn.ExportEndpoint (this, endpoint_context);
+			if (extensions != null)
+				foreach (IWsdlExportExtension extn in extensions)
+					extn.ExportEndpoint (this, endpoint_context);
 
 				
 		}
@@ -336,7 +361,7 @@ namespace System.ServiceModel.Description
 				if (ep.Contract.Name == ServiceMetadataBehavior.MexContractName)
 					continue;
 
-				ExportEndpoint (ep);
+				ExportEndpoint (ep, false);
 			}
 		}
 
@@ -349,10 +374,10 @@ namespace System.ServiceModel.Description
 			}
 		}
 
-		Hashtable ExportedContracts {
+		List<ContractExportMap> ExportedContracts {
 			get {
 				if (exported_contracts == null)
-					exported_contracts = new Hashtable ();
+					exported_contracts = new List<ContractExportMap> ();
 				return exported_contracts;
 			}
 		}

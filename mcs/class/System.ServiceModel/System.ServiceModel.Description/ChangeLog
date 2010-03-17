@@ -1,5 +1,11 @@
 2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* WsdlExporter.cs : allow identical contract while exporting a set
+	  of endpoints, while reject identical ones when calling
+	  ExportEndpoint() individually.
+
+2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MetadataExchangeBindings.cs : use WSHttpBinding (it works if other
 	  parts gets fixed).
 
