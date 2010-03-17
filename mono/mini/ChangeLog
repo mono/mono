@@ -1,5 +1,10 @@
 2010-03-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_build_imt_thunk): Always save and restore r11 since it
+	is needed even when fail_tramp!=NULL.
+
+2010-03-17  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (insert_breakpoint): Write a log message.
 
 2010-03-16  Zoltan Varga  <vargaz@gmail.com>
