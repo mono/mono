@@ -1,3 +1,7 @@
+2010-03-17  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* AppDomain.cs: Added MonoTODO for IsCompatibilitySwitchSet.
+
 2010-03-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpan.cs: In 4.0 the Parse/TryParse methods always try to use its

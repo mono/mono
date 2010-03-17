@@ -1511,6 +1511,7 @@ namespace System {
 #endif
 
 #if NET_4_0 || (NET_2_1 && !MONOTOUCH)
+		[MonoTODO ("Currently always returns null")]
 		public bool? IsCompatibilitySwitchSet (string value)
 		{
 			return null;
