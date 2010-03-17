@@ -34,6 +34,18 @@ namespace System.Web.UI
 {
 	sealed class CodeRenderBuilder : CodeBuilder
 	{
+#if NET_4_0
+		public bool HtmlEncode {
+			get; private set;
+		}
+
+		public CodeRenderBuilder (string code, bool isAssign, ILocation location, bool doHtmlEncode)
+			: base (code, isAssign, location)
+		{
+			this.HtmlEncode = doHtmlEncode;
+		}
+#endif
+		
 		public CodeRenderBuilder (string code, bool isAssign, ILocation location)
 			: base (code, isAssign, location)
 		{

@@ -1262,8 +1262,20 @@ namespace System.Web.Compilation
 							new CodeArgumentReferenceExpression ("__output"),
 							"Write");
 
-			expr.Parameters.Add (new CodeSnippetExpression (cr.Code));
+			expr.Parameters.Add (GetWrappedCodeExpression (cr));
 			parent.RenderMethod.Statements.Add (AddLinePragma (expr, cr));
+		}
+
+		CodeExpression GetWrappedCodeExpression (CodeRenderBuilder cr)
+		{
+			var ret = new CodeSnippetExpression (cr.Code);
+#if NET_4_0
+			if (cr.HtmlEncode) {
+				var encodeRef = new CodeMethodReferenceExpression (new CodeTypeReferenceExpression (typeof (HttpUtility)), "HtmlEncode");
+				return new CodeMethodInvokeExpression (encodeRef, new CodeExpression[] { ret });
+			} else
+#endif
+				return ret;
 		}
 		
 		static Type GetContainerType (ControlBuilder builder)

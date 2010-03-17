@@ -40,7 +40,10 @@ namespace System.Web.Compilation
 		DataBinding,
 		CodeRender,
 		CodeRenderExpression,
-		Include
+		Include,
+#if NET_4_0
+		CodeRenderEncode
+#endif
 	}
 }
 

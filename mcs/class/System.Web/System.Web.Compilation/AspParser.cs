@@ -597,8 +597,14 @@ namespace System.Web.Compilation
 			tokenizer.ExpectAttrValue = old;
 			bool varname;
 			bool databinding;
+#if NET_4_0
+			bool codeRenderEncode;
+#endif
 			varname = Eat ('=');
 			databinding = !varname && Eat ('#');
+#if NET_4_0
+			codeRenderEncode = !databinding && !varname && Eat (':');
+#endif
 			string odds = tokenizer.Odds;
 			
 			tokenizer.Verbatim = true;
@@ -614,8 +620,16 @@ namespace System.Web.Compilation
 			tokenizer.Verbatim = false;
 			id = inside_tags;
 			attributes = null;
-			tagtype = (databinding ? TagType.DataBinding :
-				  (varname ? TagType.CodeRenderExpression : TagType.CodeRender));
+			if (databinding)
+				tagtype = TagType.DataBinding;
+			else if (varname)
+				tagtype = TagType.CodeRenderExpression;
+#if NET_4_0
+			else if (codeRenderEncode)
+				tagtype = TagType.CodeRenderEncode;
+#endif
+			else
+				tagtype = TagType.CodeRender;
 		}
 
 		public override string ToString ()
