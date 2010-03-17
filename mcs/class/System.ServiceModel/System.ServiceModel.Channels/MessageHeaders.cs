@@ -267,15 +267,6 @@ namespace System.ServiceModel.Channels
 		{
 			if (version.Envelope == EnvelopeVersion.None)
 				return;
-
-			// For AddressingVersion.None, don't output the item.
-			//
-			// FIXME: It should even ignore Action, but for now
-			// service dispatcher won't work without it.
-			if (version.Addressing == AddressingVersion.None &&
-			    l [index].Name != "Action")
-				return;
-
 			WriteStartHeader (index, writer);
 			WriteHeaderContents (index, writer);
 			writer.WriteEndElement ();

@@ -1,5 +1,10 @@
 2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeaders.cs :
+	  why does it filter out most of the headers? kill it.
+
+2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs, AspNetReplyChannel.cs, HttpChannelListener.cs,
 	  HttpListenerManager.cs : refactoring on acquiring SvcHttpHandler
 	  to not raise "not found" error (see bug #573795).
