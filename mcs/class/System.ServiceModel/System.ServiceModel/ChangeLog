@@ -1,3 +1,9 @@
+2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : use namespace for mex binding comparison, to
+	  cover other bindings than http (such as https).
+	* WSHttpBindingBase.cs : add some comment.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* ClientBase.cs, ClientRuntimeChannel.cs: use MOONLIGHT symbol to

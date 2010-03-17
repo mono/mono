@@ -172,12 +172,13 @@ namespace System.ServiceModel
 			}
 			BindingElement tr = GetTransport ();
 			List<BindingElement> list = new List<BindingElement> ();
-			list.Add (tx);
+			list.Add (tx); // it is always added.
 			if (sec != null)
 				list.Add (sec);
 			list.Add (msg);
 			if (tr != null)
 				list.Add (tr);
+			// FIXME: add ReliableSessionBindingElement
 			return new BindingElementCollection (list.ToArray ());
 		}
 

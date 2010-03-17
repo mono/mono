@@ -197,7 +197,7 @@ namespace System.ServiceModel
 			Uri address, Uri listenUri)
 		{
 			EndpointAddress ea = BuildEndpointAddress (address, binding);
-			ContractDescription cd = GetContract (implementedContract, binding.Name == "MetadataExchangeHttpBinding");
+			ContractDescription cd = GetContract (implementedContract, binding.Namespace == "http://schemas.microsoft.com/ws/2005/02/mex/bindings");
 			if (cd == null)
 				throw new InvalidOperationException (String.Format ("Contract '{0}' was not found in the implemented contracts in this service host.", implementedContract));
 			return AddServiceEndpointCore (cd, binding, ea, listenUri);
