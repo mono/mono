@@ -67,6 +67,11 @@ namespace System.Net {
 			set { throw NotImplemented (); }
 		}
 
+		// new in SL4 RC
+		public virtual bool AllowWriteStreamBuffering {
+			get; set;
+		}
+
 		public override string ContentType {
 			get { return Headers [HttpRequestHeader.ContentType]; }
 			// this header cannot be set directly inside the collection (hence the helper)
@@ -119,6 +124,10 @@ namespace System.Net {
 			get { throw NotImplemented (); }
 		}
 
+		// new in SL4 RC
+		public virtual bool SupportsCookieContainer {
+			get { return false; }
+		}
 
 		public override void Abort ()
 		{

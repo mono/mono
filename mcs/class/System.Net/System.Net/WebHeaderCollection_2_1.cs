@@ -220,13 +220,11 @@ namespace System.Net {
 			case "accept-charset":
 			case "accept-encoding":
 			case "accept-language":
-			case "authorization":
 			case "cookie":
 			case "expect":
 			case "host":
 			case "if-modified-since":
 			case "max-forwards":
-			case "proxy-authorization":
 			case "referer":
 			case "te":
 			case "user-agent":

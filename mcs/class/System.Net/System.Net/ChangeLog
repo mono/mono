@@ -1,3 +1,12 @@
+2010-03-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebRequest_2_1.cs: Add SL4 RC AllowWriteStreamBuffering and
+	SupportsCookieContainer properties.
+	* WebClient_2_1.cs: Add SL4 RC AllowWriteStreamBuffering and 
+	UseDefaultCredentials properties.
+	* WebHeaderCollection_2_1.cs: Authorization and Proxy-Authorization
+	are valid (i.e. usable) headers in SL4 (in both stacks)
+
 2010-03-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* WebRequest_2_1.cs: Added UseDefaultCredentials property.

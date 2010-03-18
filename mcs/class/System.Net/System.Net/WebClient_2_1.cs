@@ -47,6 +47,7 @@ namespace System.Net {
 		bool is_busy;
 		Encoding encoding = Encoding.UTF8;
 		bool allow_read_buffering = true;
+		bool allow_write_buffering = true;
 		WebRequest request;
 		object locker;
 		CallbackData callback_data;
@@ -113,6 +114,17 @@ namespace System.Net {
 		public bool AllowReadStreamBuffering {
 			get { return allow_read_buffering; }
 			set { allow_read_buffering = value; }
+		}
+
+		// new in SL4 RC
+		[MonoTODO ("value is unused, current implementation always works like it's true (default)")]
+		public bool AllowWriteStreamBuffering {
+			get { return allow_write_buffering; }
+			set { allow_write_buffering = value; }
+		}
+
+		public bool UseDefaultCredentials {
+			get; set;
 		}
 
 		// Methods
