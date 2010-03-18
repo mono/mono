@@ -544,14 +544,19 @@ namespace System
 			return t;
 		}
 
+		enum ParseError {
+			None,
+			Format,
+			Overflow
+		}
+
 		// Class Parser implements parser for TimeSpan.Parse
 		private class Parser
 		{
 			private string _src;
 			private int _cur = 0;
 			private int _length;
-			private bool formatError;
-			private bool overflowError;
+			ParseError parse_error;
 
 			public Parser (string src)
 			{
@@ -633,7 +638,7 @@ namespace System
 				while (!AtEnd && Char.IsDigit (_src, _cur)) {
 					res = res * 10 + _src[_cur] - '0';
 					if (res > Int32.MaxValue) {
-						overflowError = true;
+						SetParseError (ParseError.Overflow);
 						break;
 					}
 					_cur++;
@@ -641,7 +646,7 @@ namespace System
 				}
 
 				if (!optional && (count == 0))
-					formatError = true;
+					SetParseError (ParseError.Format);
 
 				return (int)res;
 			}
@@ -688,7 +693,7 @@ namespace System
 					if (_src[_cur] == ':')
 						_cur++;
 					else if (!optional)
-						formatError = true;
+						SetParseError (ParseError.Format);
 				}
 			}
 
@@ -707,9 +712,18 @@ namespace System
 				}
 
 				if (!digitseen)
-					formatError = true;
+					SetParseError (ParseError.Format);
 
 				return res;
+			}
+
+			void SetParseError (ParseError error)
+			{
+				// We preserve the very first error.
+				if (parse_error != ParseError.None)
+					return;
+
+				parse_error = error;
 			}
 
 			public bool Execute (bool tryParse, out TimeSpan result)
@@ -762,16 +776,16 @@ namespace System
 				ParseWhiteSpace ();
 	
 				if (!AtEnd)
-					formatError = true;
+					SetParseError (ParseError.Format);
 
 				// Overflow has presceance over FormatException
-				if (overflowError || hours > 23 || minutes > 59 || seconds > 59) {
+				if (parse_error == ParseError.Overflow || hours > 23 || minutes > 59 || seconds > 59) {
 					if (tryParse)
 						return false;
 					throw new OverflowException (
 						Locale.GetText ("Invalid time data."));
 				}
-				else if (formatError) {
+				if (parse_error == ParseError.Format) {
 					if (tryParse)
 						return false;
 					throw new FormatException (

@@ -1,3 +1,10 @@
+2010-03-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: Put the error info in a single field, to make it easier
+	to preserve the very first error we get while parsing, and discard the
+	next ones. This will help us in a pair of cases where we were
+	overriding the previous error and reporting the wrong exception.
+
 2010-03-17  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* String.cs: SL4 includes new IsNullOrWhiteSpace and Concat/Join 
