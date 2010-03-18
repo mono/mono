@@ -75,6 +75,6 @@ using System.Runtime.InteropServices;
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
 
 #if NET_4_0
-[assembly: TypeForwardTo (typeof (System.Security.Cryptography.Aes))]
+[assembly: TypeForwardedTo (typeof (System.Security.Cryptography.Aes))]
 #endif
 
