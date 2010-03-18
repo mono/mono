@@ -1,3 +1,7 @@
+2010-03-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-mlist.[ch]: add mono_mlist_set_next ().
+
 2010-03-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* domain-internals.h: Add MonoTryBlockHoleJitInfo struct and
