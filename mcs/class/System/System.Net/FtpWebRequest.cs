@@ -204,13 +204,14 @@ namespace System.Net
 			}
 		}
 
+		[MonoTODO ("We don't support KeepAlive = true")]
 		public bool KeepAlive {
 			get {
 				return keepAlive;
 			}
 			set {
 				CheckRequestStarted ();
-				keepAlive = value;
+				//keepAlive = value;
 			}
 		}
 
@@ -366,7 +367,7 @@ namespace System.Net
 
 				if (!InFinalState ()) {
 					State = RequestState.Aborted;
-					ftpResponse = new FtpWebResponse (requestUri, method, FtpStatusCode.FileActionAborted, "Aborted by request");
+					ftpResponse = new FtpWebResponse (this, requestUri, method, FtpStatusCode.FileActionAborted, "Aborted by request");
 				}
 			}
 		}
@@ -500,7 +501,7 @@ namespace System.Net
 		void ProcessRequest () {
 
 			if (State == RequestState.Scheduled) {
-				ftpResponse = new FtpWebResponse (requestUri, method, keepAlive);
+				ftpResponse = new FtpWebResponse (this, requestUri, method, keepAlive);
 
 				try {
 					ProcessMethod ();
@@ -642,7 +643,7 @@ namespace System.Net
 			
 			status = SendCommand (method, file_name);
 
-			ftpResponse.Stream = new EmptyStream ();
+			ftpResponse.Stream = Stream.Null;
 			
 			string desc = status.StatusDescription;
 
@@ -855,7 +856,7 @@ namespace System.Net
 
 		Exception CreateExceptionFromResponse (FtpStatus status)
 		{
-			FtpWebResponse ftpResponse = new FtpWebResponse (requestUri, method, status);
+			FtpWebResponse ftpResponse = new FtpWebResponse (this, requestUri, method, status);
 			
 			WebException exc = new WebException ("Server returned an error: " + status.StatusDescription, 
 				null, WebExceptionStatus.ProtocolError, ftpResponse);
@@ -871,6 +872,12 @@ namespace System.Net
 			State = RequestState.Finished;
 			FtpStatus status = GetResponseStatus ();
 			ftpResponse.UpdateStatus (status);
+			if(!keepAlive)
+				CloseConnection ();
+		}
+
+		internal void OperationCompleted ()
+		{
 			if(!keepAlive)
 				CloseConnection ();
 		}
@@ -1132,13 +1139,6 @@ namespace System.Net
 		void CheckFinalState () {
 			if (InFinalState ())
 				throw new InvalidOperationException ("Cannot change final state");
-		}
-
-		class EmptyStream : MemoryStream
-		{
-			internal EmptyStream ()
-				: base (new byte [0], false) {
-			}
 		}
 	}
 }
