@@ -11,7 +11,7 @@
 	//   "I think our table is weak, but does not do proper compacting"
 	//
 
-#if NET_4_0 || BOOTSTRAP_NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT
 using System;
 using System.Collections;
 using System.Collections.Generic;

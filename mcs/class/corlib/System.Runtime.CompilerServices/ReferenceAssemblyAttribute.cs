@@ -25,11 +25,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+#if NET_4_0 || MOONLIGHT
 
 using System;
 using System.Runtime.InteropServices;
-
-#if NET_4_0
 
 namespace System.Runtime.CompilerServices {
 
