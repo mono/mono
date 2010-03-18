@@ -1,3 +1,9 @@
+2010-03-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* StreamReader.cs: if the detected encoding is different from the
+	provided to the constructor, adjust the decoded buffer size if
+	needed. Fixes bug #589236.
+
 2010-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* Path.cs (GetTempFileName): Fix infinite loop if the process doesn't have
