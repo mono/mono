@@ -1,3 +1,9 @@
+2010-03-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* corlib.dll.sources: Add Aes (for NET_4_0)
+	* moonlight_raw_corlib.dll.sources: Add Aes and System.Runtime.
+	CompilerServices/ReferenceAssemblyAttribute.cs
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: rename the net_2_1 profile to moonlight.
