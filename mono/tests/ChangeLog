@@ -1,3 +1,7 @@
+2010-03-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (runtest): Save the output of the aot compiler into a file.
+
 2010-03-05  Robert Jordan  <robertj@gmx.net>
 
 	* remoting4.cs: Add test for bug #504886.
