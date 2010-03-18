@@ -29,24 +29,28 @@ namespace System.Net
 		string method;
 		//bool keepAlive;
 		bool disposed;
+		FtpWebRequest request;
 		internal long contentLength = -1;
 		
-		internal FtpWebResponse (Uri uri, string method, bool keepAlive)
+		internal FtpWebResponse (FtpWebRequest request, Uri uri, string method, bool keepAlive)
 		{
+			this.request = request;
 			this.uri = uri;
 			this.method = method;
 			//this.keepAlive = keepAlive;
 		}
 
-		internal FtpWebResponse (Uri uri, string method, FtpStatusCode statusCode, string statusDescription) {
+		internal FtpWebResponse (FtpWebRequest request, Uri uri, string method, FtpStatusCode statusCode, string statusDescription)
+		{
+			this.request = request;
 			this.uri = uri;
 			this.method = method;
 			this.statusCode = statusCode;
 			this.statusDescription = statusDescription;
 		}
 
-		internal FtpWebResponse (Uri uri, string method, FtpStatus status) :
-			this (uri, method, status.StatusCode, status.StatusDescription)
+		internal FtpWebResponse (FtpWebRequest request, Uri uri, string method, FtpStatus status) :
+			this (request, uri, method, status.StatusCode, status.StatusDescription)
 		{
 		}
 		
@@ -128,8 +132,11 @@ namespace System.Net
 				return;
 			
 			disposed = true;
-			if (stream != null)
+			if (stream != null) {
 				stream.Close ();
+				if (stream == Stream.Null)
+					request.OperationCompleted ();
+			}
 			stream = null;
 		}
 

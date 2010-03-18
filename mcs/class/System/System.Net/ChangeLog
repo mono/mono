@@ -1,3 +1,10 @@
+2010-03-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpWebResponse.cs:
+	* FtpWebRequest.cs: for non-data operations, make sure we send the
+	QUIT command upon completion when KeepAlive is false.
+	Fixes bug #589305.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Dns.cs, HttpRequestCreator.cs, ServicePoint.cs: use MOONLIGHT
