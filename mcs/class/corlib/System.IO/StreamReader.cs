@@ -383,6 +383,10 @@ namespace System.IO {
 					Encoding old = encoding;
 					parse_start = DoChecks (cbEncoded);
 					if (old != encoding){
+						int old_decoded_size = old.GetMaxCharCount (buffer_size) + 1;
+						int new_decoded_size = encoding.GetMaxCharCount (buffer_size) + 1;
+						if (old_decoded_size != new_decoded_size)
+							decoded_buffer = new char [new_decoded_size];
 						decoder = encoding.GetDecoder ();
 					}
 					do_checks = 0;
