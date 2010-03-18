@@ -147,12 +147,32 @@ namespace System.ServiceModel.Dispatcher
 			throw new NotImplementedException ();
 		}
 
+		public bool GetMatchingFilter (SeekableXPathNavigator navigator, out MessageFilter filter)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool GetMatchingFilter (XPathNavigator navigator, out MessageFilter filter)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public bool GetMatchingFilters (Message message, ICollection<MessageFilter> results)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public bool GetMatchingFilters (MessageBuffer buffer, ICollection<MessageFilter> results)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool GetMatchingFilters (SeekableXPathNavigator navigator, ICollection<MessageFilter> results)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool GetMatchingFilters (XPathNavigator navigator, ICollection<MessageFilter> results)
 		{
 			throw new NotImplementedException ();
 		}
@@ -167,12 +187,32 @@ namespace System.ServiceModel.Dispatcher
 			throw new NotImplementedException ();
 		}
 
+		public bool GetMatchingValue (SeekableXPathNavigator navigator, out TFilterData data)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool GetMatchingValue (XPathNavigator navigator, out TFilterData data)
+		{
+			throw new NotImplementedException ();
+		}
+
 		public bool GetMatchingValues (Message message, ICollection<TFilterData> results)
 		{
 			throw new NotImplementedException ();
 		}
 
 		public bool GetMatchingValues (MessageBuffer buffer, ICollection<TFilterData> results)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool GetMatchingValues (SeekableXPathNavigator navigator, ICollection<TFilterData> results)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public bool GetMatchingValues (XPathNavigator navigator, ICollection<TFilterData> results)
 		{
 			throw new NotImplementedException ();
 		}
@@ -188,29 +228,27 @@ namespace System.ServiceModel.Dispatcher
 
 		public bool Remove (XPathMessageFilter filter)
 		{
-			throw new NotImplementedException ();
+			return dict.Remove (filter);
 		}
 
 		public bool Remove (MessageFilter filter)
 		{
-			return dict.Remove (filter);
+			return Remove ((XPathMessageFilter) filter);
 		}
 
-		public bool TryGetValue (MessageFilter filter, out TFilterData filterData)
-		{
-			if (dict.ContainsKey (filter)) {
-				filterData = dict [filter];
-				return true;
-			} else {
-				filterData = default (TFilterData);
-				return false;
-			}
-		}
+		static Exception trim_to_size_error;
 
-		[MonoTODO]
 		public void TrimToSize ()
 		{
-			throw new NotImplementedException ();
+			// This is the documented behavior: throws NIE.
+			if (trim_to_size_error == null)
+				trim_to_size_error = new NotImplementedException ();
+			throw trim_to_size_error;
+		}
+
+		public bool TryGetValue (MessageFilter filter, out TFilterData data)
+		{
+			return dict.TryGetValue (filter, out data);
 		}
 	}
 }

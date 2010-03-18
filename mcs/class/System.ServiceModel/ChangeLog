@@ -1,5 +1,10 @@
 2010-03-18  Astushi Enomoto  <atsushi@ximian.com>
 
+	* System.ServiceModel_test.dll.sources :
+	  Add Constants.cs and XPathMessageContextTest.cs.
+
+2010-03-18  Astushi Enomoto  <atsushi@ximian.com>
+
 	* System.ServiceModel.dll.sources : added some missing types.
 
 2010-03-17  Astushi Enomoto  <atsushi@ximian.com>

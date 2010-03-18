@@ -1,10 +1,10 @@
 //
-// XPathMessageContext.cs
+// XPathMessageContextTest.cs
 //
 // Author:
 //	Atsushi Enomoto  <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,51 +27,32 @@
 //
 
 using System;
-using System.Xml;
-using System.Xml.XPath;
-using System.Xml.Xsl;
+using System.Collections.Generic;
+using System.Runtime.Serialization;
 using System.ServiceModel;
+using System.ServiceModel.Dispatcher;
+using System.Xml;
+using NUnit.Framework;
 
-namespace System.ServiceModel.Dispatcher
+namespace MonoTests.System.ServiceModel.Dispatcher
 {
-	public class XPathMessageContext : XsltContext
+	[TestFixture]
+	public class XPathMessageContextTest
 	{
-		public XPathMessageContext ()
-			: this (new NameTable ())
-		{
-		}
+		XPathMessageContext ctx = new XPathMessageContext ();
 
-		public XPathMessageContext (NameTable nameTable)
-			: base (nameTable)
+		[Test]
+		public void PredefinedNamespaces ()
 		{
-			AddNamespace ("s11", Constants.Soap11);
-			AddNamespace ("s12", Constants.Soap12);
-		}
+			Assert.AreEqual (Constants.Soap11, ctx.LookupNamespace ("s11"), "#1");
+			Assert.AreEqual (Constants.Soap12, ctx.LookupNamespace ("s12"), "#2");
+			// ... only them?
 
-		public override bool Whitespace {
-			get { return false; } // as documented.
-		}
+			foreach (char c in "abcdefghijklmnopqrstuvwxyzABCDEFGHIJKLMNOPQRSTUVWXYZ")
+				Assert.IsNull (ctx.LookupNamespace (c + ""), "char:" + c);
 
-		public override int CompareDocument (string uri1, string uri2)
-		{
-			return String.CompareOrdinal (uri1, uri2);
-		}
-
-		public override bool PreserveWhitespace (XPathNavigator node)
-		{
-			return false; // as documented.
-		}
-
-		public override IXsltContextFunction ResolveFunction (
-			string prefix, string name, XPathResultType [] argTypes)
-		{
-			return null;
-		}
-
-		public override IXsltContextVariable ResolveVariable (
-			string prefix, string name)
-		{
-			return null;
+			Assert.IsNull (ctx.LookupNamespace ("wsa"), "#3");
+			Assert.IsNull (ctx.LookupNamespace ("wsu"), "#4");
 		}
 	}
 }

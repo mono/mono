@@ -1,3 +1,8 @@
+2010-03-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XPathMessageContext.cs : implement.
+	* XPathMessageFilterTable.cs : add some missing overloads.
+
 2010-02-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* InputOrReplyRequestProcessor.cs : now ServiceRuntimeChannel is

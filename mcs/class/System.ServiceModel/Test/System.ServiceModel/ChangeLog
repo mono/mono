@@ -1,3 +1,7 @@
+2010-03-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Constants.cs : copied from the lib itself.
+
 2010-02-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBaseTest.cs : on unixy filesystems "/foobar"
