@@ -73,3 +73,8 @@ using System.Runtime.InteropServices;
 // Extension attribute should be added by compiler
 
 [assembly: SecurityPermission (SecurityAction.RequestMinimum, SkipVerification = true)]
+
+#if NET_4_0
+[assembly: TypeForwardTo (typeof (System.Security.Cryptography.Aes))]
+#endif
+

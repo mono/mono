@@ -1,3 +1,7 @@
+2010-03-18  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AssemblyInfo.cs: Add TypeForwardTo for Aes on NET_4_0
+
 2008-08-08  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Remove a few attributes for SL2
