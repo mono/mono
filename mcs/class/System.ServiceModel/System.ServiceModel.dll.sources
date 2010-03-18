@@ -257,7 +257,10 @@ System.ServiceModel.Channels/PeerInputChannel.cs
 System.ServiceModel.Channels/PeerOutputChannel.cs
 System.ServiceModel.Channels/PeerTransportBindingElement.cs
 System.ServiceModel.Channels/PnrpPeerResolverBindingElement.cs
+System.ServiceModel.Channels/PrivacyNoticeBindingElement.cs
+System.ServiceModel.Channels/ReliableSessionBindingElement.cs
 System.ServiceModel.Channels/ReliableSessionBindingElementImporter.cs
+System.ServiceModel.Channels/RemoteEndpointMessageProperty.cs
 System.ServiceModel.Channels/ReplyChannelBase.cs
 System.ServiceModel.Channels/RequestChannelBase.cs
 System.ServiceModel.Channels/RequestContext.cs

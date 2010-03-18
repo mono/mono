@@ -1,3 +1,7 @@
+2010-03-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Dummy.cs : removed some dummy types (not dummy anymore).
+
 2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : use namespace for mex binding comparison, to

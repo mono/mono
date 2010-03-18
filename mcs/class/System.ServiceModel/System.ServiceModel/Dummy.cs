@@ -17,9 +17,7 @@ namespace System.ServiceModel.Activation.Configuration
 
 namespace System.ServiceModel.Channels
 {
-	public class PrivacyNoticeBindingElement { }
 	public class PrivacyNoticeBindingElementImporter { }
-	public class ReliableSessionBindingElement { }
 	public class UseManagedPresentationBindingElementImporter { }
 	public class XmlSerializerImportOptions { }
 }
