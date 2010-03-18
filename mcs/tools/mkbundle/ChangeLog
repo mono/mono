@@ -1,3 +1,7 @@
+2010-03-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mkbundle.cs: Update after the mono.pc and libmono version bump.
+
 2009-05-29  Steven Munroe  <munroesj@us.ibm.com>
 
 	This patch is contributed under the terms of the MIT/X11 license
