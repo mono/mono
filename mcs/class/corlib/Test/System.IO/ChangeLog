@@ -1,3 +1,8 @@
+2010-03-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* StreamReaderTest.cs: test for bug 589236. The detected encoding is
+	different from the one provided in the ctor.
+
 2010-02-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MemoryStreamTest.cs: Add a new test for Capacity.

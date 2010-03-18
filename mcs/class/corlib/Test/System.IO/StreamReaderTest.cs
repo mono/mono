@@ -815,6 +815,28 @@ public class StreamReaderTest
 		string str = reader.ReadToEnd ();
 		Assert.AreEqual ("bc", str);
 	}
+
+	[Test]
+	public void EncodingChangedAuto ()
+	{
+		int testlines = 2048; // all data should larger than stream reader default buffer size
+		string testdata = "test";
+		MemoryStream ms = new MemoryStream();
+		// write utf8 encoding data.
+		using (StreamWriter sw = new StreamWriter (ms, Encoding.UTF8)) {
+			for (int i = 0; i < testlines; i++)
+				sw.WriteLine (testdata);
+		}
+
+		MemoryStream readms = new MemoryStream (ms.GetBuffer());
+		using (StreamReader sr = new StreamReader(readms, Encoding.Unicode, true)) {
+			for (int i = 0; i < testlines; i++) {
+				string line = sr.ReadLine ();
+				if (line != testdata)
+					Assert.Fail ("Wrong line content");
+			}
+		}
+	}
 }
 
 class MyStream : Stream {
