@@ -22,7 +22,7 @@ LIB_MCS_FLAGS = \
 	        /r:System.Web.Extensions.dll \
 		/r:System.ComponentModel.DataAnnotations.dll \
 		/r:System.Data.Linq.dll \
-		$(foreach r, $(RESX_RES), /resource:$(r),System.Web.Mvc.Resources.$(notdir $(r)))
+		$(foreach r, $(RESOURCES), /resource:$(r),System.Web.Mvc.Resources.$(notdir $(r)))
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
 # This is a .NET 3.5 only assembly, but built during the 2.0 build
@@ -44,7 +44,7 @@ endif
 
 include ../../build/library.make
 
-$(the_lib): $(RESOURCES)
+$(build_lib): $(RESOURCES)
 
 $(RESOURCES): %.resources: %.resx
 	$(RESGEN) `echo $< | $(PLATFORM_CHANGE_SEPARATOR_CMD)`

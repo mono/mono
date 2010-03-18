@@ -1,3 +1,7 @@
+2010-03-18  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile: include resources in compilation
+
 2010-02-09  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: added references to
