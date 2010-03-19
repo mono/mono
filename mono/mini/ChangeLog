@@ -1,3 +1,22 @@
+2010-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-generic-sharing.c: Add infrastructure for partial sharing, ie.
+	sharing generic methods whose type arguments are a mix of reference and
+	non-reference types. Not yet turned on.
+
+	* mini.c (mini_get_shared_method): New helper function to return
+	the method which will be compiled/registered in the JIT tables when doing
+	generic sharing.
+	(mono_domain_lookup_shared_generic): Moved to mini.c from mini-generic-sharing.c,
+	use mini_get_shared_method ().
+
+	* mini.c (mini_method_compile): Register the same method which is compiled when
+	doing generic sharing.
+
+	* mini.c aot-compiler.c aot-runtime.c: Add support for partial sharing.
+
+	* generics.cs: Add partial sharing tests.
+
 2010-03-17 Jerry Maine  <crashfourit@gmail.com>
 
 	* mini.h : Changed the SIMD_VERSION* enum values to match those in Mono.Simd.AccelMode.
