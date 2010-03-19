@@ -1,3 +1,9 @@
+2010-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (clear_event_requests_for_assembly): New helper function.
+	(assembly_unload): Clear all event requests referencing the to-be unloaded
+	assembly.
+
 2010-03-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c: Simplify the way breakpoints are processed by removing
