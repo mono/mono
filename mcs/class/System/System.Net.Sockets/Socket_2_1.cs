@@ -227,7 +227,7 @@ namespace System.Net.Sockets {
 							     bool block,
 							     out int error);
 #endif
-#if !MOONLIGHT
+
 		public bool Blocking {
 			get {
 				return(blocking);
@@ -246,7 +246,7 @@ namespace System.Net.Sockets {
 				blocking=value;
 			}
 		}
-#endif
+
 		public bool Connected {
 			get { return connected; }
 			internal set { connected = value; }
@@ -565,7 +565,6 @@ namespace System.Net.Sockets {
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern static bool Poll_internal (IntPtr socket, SelectMode mode, int timeout, out int error);
 
-#if !MOONLIGHT
 		/* This overload is needed as the async Connect method
 		 * also needs to check the socket error status, but
 		 * getsockopt(..., SO_ERROR) clears the error.
@@ -600,7 +599,7 @@ namespace System.Net.Sockets {
 			
 			return result;
 		}
-#endif
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern static int Receive_internal(IntPtr sock,
 							   byte[] buffer,

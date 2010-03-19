@@ -479,7 +479,7 @@ namespace System {
 				return host; 
 			} 
 		}
-#if !MOONLIGHT
+
 		public UriHostNameType HostNameType { 
 			get {
 				EnsureAbsoluteUri ();
@@ -500,8 +500,6 @@ namespace System {
 			} 
 		}
 
-#endif // NET_2_1
-
 		public bool IsDefaultPort { 
 			get {
 				EnsureAbsoluteUri ();
@@ -516,7 +514,6 @@ namespace System {
 			}
 		}
 
-#if !MOONLIGHT
 		public bool IsLoopback { 
 			get {
 				EnsureAbsoluteUri ();
@@ -546,8 +543,6 @@ namespace System {
 				return false;
 			} 
 		}
-
-#endif // NET_2_1
 
 		public bool IsUnc {
 			// rule: This should be true only if

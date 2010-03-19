@@ -28,7 +28,12 @@
 
 namespace System.Net
 {
-	public delegate void HttpContinueDelegate (
+#if MOONLIGHT
+	internal
+#else
+	public
+#endif
+	delegate void HttpContinueDelegate (
 		int StatusCode,
 		WebHeaderCollection httpHeaders);
 }

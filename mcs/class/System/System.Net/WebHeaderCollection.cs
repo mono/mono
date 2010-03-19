@@ -33,9 +33,7 @@
 
 using System;
 using System.Collections;
-#if NET_2_0
 using System.Collections.Generic;
-#endif
 using System.Collections.Specialized;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -45,15 +43,16 @@ using System.Text;
     
 namespace System.Net 
 {
+#if MOONLIGHT
+	internal class WebHeaderCollection : NameValueCollection, ISerializable {
+#else
 	[Serializable]
 	[ComVisible(true)]
-	public class WebHeaderCollection : NameValueCollection, ISerializable
-	{
+	public class WebHeaderCollection : NameValueCollection, ISerializable {
+#endif
 		private static readonly Hashtable restricted;
 		private static readonly Hashtable multiValue;
-#if NET_2_0
 		static readonly Dictionary<string, bool> restricted_response;
-#endif
 		private bool internallyCreated = false;
 		
 		// Static Initializer
@@ -80,12 +79,11 @@ namespace System.Net
 			restricted.Add ("proxy-connection", true);			
 
 			//
-#if NET_2_0
 			restricted_response = new Dictionary<string, bool> (StringComparer.InvariantCultureIgnoreCase);
 			restricted_response.Add ("Content-Length", true);
 			restricted_response.Add ("Transfer-Encoding", true);
 			restricted_response.Add ("WWW-Authenticate", true);
-#endif
+
 			// see par 14 of RFC 2068 to see which header names
 			// accept multiple values each separated by a comma
 			multiValue = new Hashtable (CaseInsensitiveHashCodeProvider.DefaultInvariant,
@@ -263,7 +261,6 @@ namespace System.Net
 			return restricted.ContainsKey (headerName);
 		}
 
-#if NET_2_0
 		public static bool IsRestricted (string headerName, bool response)
 		{
 			if (String.IsNullOrEmpty (headerName))
@@ -277,7 +274,6 @@ namespace System.Net
 				return restricted_response.ContainsKey (headerName);
 			return restricted.ContainsKey (headerName);
 		}
-#endif
 
 		public override void OnDeserialization (object sender)
 		{
@@ -380,7 +376,6 @@ namespace System.Net
 			return(base.GetKey (index));
 		}
 
-#if NET_2_0
 		public void Add (HttpRequestHeader header, string value)
 		{
 			Add (RequestHeaderToString (header), value);
@@ -603,7 +598,6 @@ namespace System.Net
 		{
 			return(base.GetEnumerator ());
 		}
-#endif
 
 		// Internal Methods
 		

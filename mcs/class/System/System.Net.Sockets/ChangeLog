@@ -1,3 +1,12 @@
+2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Socket.cs: Remove some NET_2_0 defines (using) and add a few
+	MOONLIGHT defines needed to reuse Socket in the client http stack
+	* Socket_2_1.cs: Remove some MOONLIGHT defines
+	* SocketAsyncEventArgs.cs: For Moonlight check policy if outside
+	System.dll (the client stack use sockets with it's own web 
+	xdomain policy)
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Socket_2_1.cs, SocketAsyncEventArgs.cs: use MOONLIGHT symbol to

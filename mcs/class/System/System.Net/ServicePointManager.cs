@@ -69,8 +69,11 @@ using MSX = Mono.Security.X509;
 
 namespace System.Net 
 {
-	public class ServicePointManager
-	{
+#if MOONLIGHT
+	internal class ServicePointManager {
+#else
+	public class ServicePointManager {
+#endif
 		class SPKey {
 			Uri uri; // schema/host/port
 			bool use_connect;
@@ -130,14 +133,14 @@ namespace System.Net
 		public const int DefaultNonPersistentConnectionLimit = 4;
 		public const int DefaultPersistentConnectionLimit = 2;
 
-#if !MONOTOUCH
+#if !NET_2_1
 		const string configKey = "system.net/connectionManagement";
 		static ConnectionManagementData manager;
 #endif
 		
 		static ServicePointManager ()
 		{
-#if !MONOTOUCH
+#if !NET_2_1
 #if NET_2_0 && CONFIGURATION_DEP
 			object cfg = ConfigurationManager.GetSection (configKey);
 			ConnectionManagementSection s = cfg as ConnectionManagementSection;
@@ -326,7 +329,7 @@ namespace System.Net
 					throw new InvalidOperationException ("maximum number of service points reached");
 
 				string addr = address.ToString ();
-#if MONOTOUCH
+#if NET_2_1
 				int limit = defaultConnectionLimit;
 #else
 				int limit = (int) manager.GetMaxConnections (addr);

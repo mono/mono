@@ -36,6 +36,7 @@
 using System;
 using System.Net;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Threading;
@@ -43,11 +44,9 @@ using System.Reflection;
 using System.IO;
 using System.Net.Configuration;
 using System.Text;
-
-#if NET_2_0
-using System.Collections.Generic;
-using System.Net.NetworkInformation;
 using System.Timers;
+#if !MOONLIGHT
+using System.Net.NetworkInformation;
 #endif
 
 namespace System.Net.Sockets 
@@ -1793,7 +1792,7 @@ namespace System.Net.Sockets
 			seed_endpoint = local_end;
 		}
 
-#if NET_2_0
+#if !MOONLIGHT
 		public bool ConnectAsync (SocketAsyncEventArgs e)
 		{
 			// NO check is made whether e != null in MS.NET (NRE is thrown in such case)

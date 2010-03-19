@@ -1,3 +1,8 @@
+2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Timer.cs: Removed old NET_2_0 defines and added some new
+	MOONLIGHT defines (needed for the client stack)
+
 2009-09-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Timer_2_1.cs: Removed. No longer needed by Moonlight

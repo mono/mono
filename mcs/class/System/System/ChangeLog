@@ -1,3 +1,7 @@
+2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Uri.cs: Remove some MOONLIGHT defines
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Uri.cs, UriTypeConverter.cs: use MOONLIGHT symbol to

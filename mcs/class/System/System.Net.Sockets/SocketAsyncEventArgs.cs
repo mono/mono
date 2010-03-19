@@ -32,7 +32,7 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Security;
 using System.Threading;
-#if MOONLIGHT
+#if MOONLIGHT && !INSIDE_SYSTEM
 using System.Net.Policy;
 #endif
 
@@ -245,7 +245,7 @@ namespace System.Net.Sockets
 		{
 			curSocket.Connected = false;
 			SocketError error = SocketError.Success;
-#if MOONLIGHT
+#if MOONLIGHT && !INSIDE_SYSTEM
 			// if we're not downloading a socket policy then check the policy
 			if (!PolicyRestricted) {
 				error = SocketError.AccessDenied;

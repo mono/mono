@@ -30,9 +30,11 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net {
 
-	// <remarks>
-	// </remarks>
+#if MOONLIGHT
+	internal interface ICertificatePolicy {
+#else
 	public interface ICertificatePolicy {
+#endif
 		bool CheckValidationResult (
 				ServicePoint srvPoint,
 				X509Certificate certificate,

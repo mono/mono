@@ -41,8 +41,12 @@ using System.Text.RegularExpressions;
 namespace System.Net 
 {
 	[Serializable]
-#if NET_2_1
+#if MOONLIGHT
+	#if INSIDE_SYSTEM
+	internal sealed class CookieContainer {
+	#else 
 	public sealed class CookieContainer {
+	#endif
 #else
 	public class CookieContainer {
 #endif
@@ -63,11 +67,7 @@ namespace System.Net
 		public CookieContainer (int capacity)
 		{
 			if (capacity <= 0)
-#if NET_2_0
 				throw new ArgumentException ("Must be greater than zero", "Capacity");
-#else
-				throw new ArgumentException ("Capacity");
-#endif
 
 			this.capacity = capacity;
 		}
@@ -76,21 +76,13 @@ namespace System.Net
 			: this (capacity)
 		{
 			if (perDomainCapacity != Int32.MaxValue && (perDomainCapacity <= 0 || perDomainCapacity > capacity))
-#if NET_2_0
 				throw new ArgumentOutOfRangeException ("perDomainCapacity",
 					string.Format ("PerDomainCapacity must be " +
 					"greater than {0} and less than {1}.", 0,
 					capacity));
-#else
-				throw new ArgumentException ("PerDomainCapacity");
-#endif
 
 			if (maxCookieSize <= 0)
-#if NET_2_0
 				throw new ArgumentException ("Must be greater than zero", "MaxCookieSize");
-#else
-				throw new ArgumentException ("MaxCookieSize");
-#endif
 
 			this.perDomainCapacity = perDomainCapacity;
 			this.maxCookieSize = maxCookieSize;
@@ -138,11 +130,7 @@ namespace System.Net
 				throw new ArgumentNullException ("cookie");
 
 			if (cookie.Domain.Length == 0)
-#if NET_2_0
 				throw new ArgumentException ("Cookie domain not set.", "cookie.Domain");
-#else
-				throw new ArgumentException ("cookie.Domain");
-#endif
 
 			if (cookie.Value.Length > maxCookieSize)
 				throw new CookieException ("value is larger than MaxCookieSize.");

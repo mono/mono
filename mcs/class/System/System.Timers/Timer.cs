@@ -35,10 +35,13 @@ using System.Threading;
 
 namespace System.Timers
 {
+#if MOONLIGHT
+	internal class Timer {
+#else
 	[DefaultEventAttribute("Elapsed")]
 	[DefaultProperty("Interval")]
-	public class Timer : Component, ISupportInitialize
-	{
+	public class Timer : Component, ISupportInitialize {
+#endif
 		double interval;
 		bool autoReset;
 		System.Threading.Timer timer;
@@ -55,11 +58,9 @@ namespace System.Timers
 
 		public Timer (double interval)
 		{
-#if NET_2_0
 			// MSBUG: https://connect.microsoft.com/VisualStudio/feedback/ViewFeedback.aspx?FeedbackID=296761
 			if (interval > 0x7FFFFFFF)
 				throw new ArgumentException ("Invalid value: " + interval, "interval");
-#endif
 
 			autoReset = true;
 			Interval = interval;
@@ -119,18 +120,17 @@ namespace System.Timers
 			}
 		}
 
+#if !MOONLIGHT
 		public override ISite Site
 		{
 			get { return base.Site; }
 			set { base.Site = value; }
 		}
-
+#endif
 		[DefaultValue(null)]
 		[TimersDescriptionAttribute("The object used to marshal the event handler calls issued " +
 					    "when an interval has elapsed.")]
-#if NET_2_0
 		[Browsable (false)]
-#endif
 		public ISynchronizeInvoke SynchronizingObject
 		{
 			get { return so; }
@@ -162,11 +162,18 @@ namespace System.Timers
 			Enabled = false;
 		}
 
+#if MOONLIGHT
+		protected void Dispose (bool disposing)
+		{
+			Close ();
+		}
+#else
 		protected override void Dispose (bool disposing)
 		{
 			Close ();
 			base.Dispose (disposing);
 		}
+#endif
 
 		static void Callback (object state)
 		{

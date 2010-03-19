@@ -32,9 +32,12 @@ using System.Runtime.Serialization;
 
 namespace System.Net 
 {
+#if MOONLIGHT
+	internal abstract class WebResponse : MarshalByRefObject, ISerializable, IDisposable {
+#else
 	[Serializable]
-	public abstract class WebResponse : MarshalByRefObject, ISerializable, IDisposable
-	{
+	public abstract class WebResponse : MarshalByRefObject, ISerializable, IDisposable {
+#endif
 		// Constructors
 		
 		protected WebResponse () { }
@@ -60,7 +63,6 @@ namespace System.Net
 			get { throw new NotSupportedException (); }
 		}
 
-#if NET_2_0
 		static Exception GetMustImplement ()
 		{
 			return new NotImplementedException ();
@@ -81,7 +83,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 		
 		public virtual Uri ResponseUri {		
 			get { throw new NotSupportedException (); }
@@ -114,12 +115,10 @@ namespace System.Net
 			throw new NotSupportedException ();
 		}
 
-#if NET_2_0
 		[MonoTODO]
 		protected virtual void GetObjectData (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
 			throw GetMustImplement ();
 		}
-#endif
 	}
 }

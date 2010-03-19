@@ -1,3 +1,40 @@
+2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AuthenticationManager.cs: Internal type for Moonlight.
+	Add BasicClient, DigestClient, NtlmClient for NET_2_1 since
+	this applies to both monotouch and moonlight (client stack).
+	Removed unneeded NET_2_0 defines
+	* CookieContainer.cs: For Moonlight it needs to be internal in 
+	System.dll and public in System.Net.dll. Removed unneeded NET_2_0
+	defines
+	* HttpContinueDelegate.cs: Internal type for Moonlight.
+	* HttpRequestCreator.cs: Remove a MOONLIGHT define
+	* HttpStatusCode.cs: For Moonlight it needs to be internal in 
+	System.dll and public in System.Net.dll
+	* HttpWebRequest.cs: Internal type for Moonlight. Change S.Config
+	to NET_2_1 defines (applies to both monotouch and moonlight).
+	Removed unneeded NET_2_0 and NET_1_1 defines
+	* HttpWebResponse.cs: Internal type for Moonlight. Removed 
+	unneeded NET_2_0 defines
+	* IAuthenticationModule.cs: Internal type for Moonlight.
+	* ICertificatePolicy.cs: Internal type for Moonlight.
+	* ICredentialPolicy.cs: Internal type for Moonlight. Removed 
+	unneeded NET_2_0 defines
+	* IWebRequestCreate.cs: For Moonlight it needs to be internal in 
+	System.dll and public in System.Net.dll
+	* ServicePoint.cs: Internal type for Moonlight. Change S.Config
+	to NET_2_1 defines (applies to both monotouch and moonlight)
+	* ServicePointManager.cs: Remove a MOONLIGHT define
+	* WebException.cs: For Moonlight it needs to be internal in 
+	System.dll and public in System.Net.dll. Removed unneeded NET_2_0
+	defines
+	* WebHeaderCollection.cs: Internal type for Moonlight. Removed 
+	unneeded NET_2_0 defines
+	* WebRequest.cs: Internal type for Moonlight. Change S.Config
+	to NET_2_1 defines (applies to both monotouch and moonlight)
+	* WebResponse.cs: Internal type for Moonlight. Removed unneeded
+	NET_2_0 defines
+
 2010-03-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpWebResponse.cs:

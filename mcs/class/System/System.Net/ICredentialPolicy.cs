@@ -26,12 +26,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 namespace System.Net {
 
+#if MOONLIGHT
+	internal interface ICredentialPolicy {
+#else
 	public interface ICredentialPolicy {
-
+#endif
 		bool ShouldSendCredential (Uri challengeUri,
 			WebRequest request,
 			NetworkCredential credential,
@@ -40,4 +41,3 @@ namespace System.Net {
 	}
 }
 
-#endif

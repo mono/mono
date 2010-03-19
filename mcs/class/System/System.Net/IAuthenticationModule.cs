@@ -33,8 +33,11 @@ namespace System.Net {
 	// <remarks>
 	//   Authentication interface for Web client authentication modules.
 	// </remarks>
-	public interface IAuthenticationModule
-	{
+#if MOONLIGHT
+	internal interface IAuthenticationModule {
+#else
+	public interface IAuthenticationModule {
+#endif
 		Authorization Authenticate (string challenge, WebRequest request, ICredentials credentials);
 		Authorization PreAuthenticate (WebRequest request, ICredentials credentials);
 		string AuthenticationType { get; }

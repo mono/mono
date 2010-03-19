@@ -30,16 +30,17 @@
 //
 
 using System.Collections;
-using System.Configuration;
-#if NET_2_0
-using System.Net.Configuration;
 using System.Collections.Specialized;
-#endif
+using System.Configuration;
+using System.Net.Configuration;
 
 namespace System.Net
 {
-	public class AuthenticationManager
-	{
+#if MOONLIGHT
+	internal class AuthenticationManager {
+#else
+	public class AuthenticationManager {
+#endif
 		static ArrayList modules;
 		static object locker = new object ();
 
@@ -54,12 +55,11 @@ namespace System.Net
 					return;
 				
 				modules = new ArrayList ();
-#if MONOTOUCH
+#if NET_2_1
 				modules.Add (new BasicClient ());
 				modules.Add (new DigestClient ());
 				modules.Add (new NtlmClient ());
-#else
-#if NET_2_0 && CONFIGURATION_DEP
+#elif NET_2_0 && CONFIGURATION_DEP
 				object cfg = ConfigurationManager.GetSection ("system.net/authenticationModules");
 				AuthenticationModulesSection s = cfg as AuthenticationModulesSection;
 				if (s != null) {
@@ -75,11 +75,9 @@ namespace System.Net
 #else
 				ConfigurationSettings.GetConfig ("system.net/authenticationModules");
 #endif
-#endif
 			}
 		}
 		
-#if NET_2_0
 		static ICredentialPolicy credential_policy = null;
 		
 		public static ICredentialPolicy CredentialPolicy
@@ -104,7 +102,6 @@ namespace System.Net
 				throw GetMustImplement ();
 			}
 		}
-#endif
 
 		public static IEnumerator RegisteredModules {
 			get {

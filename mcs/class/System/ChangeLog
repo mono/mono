@@ -1,3 +1,10 @@
+2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* moonlight_*_System.dll.sources: Bring extra types so we can
+	build a full, managed, internal HTTP stack to be reused for SL3+
+	* Makefile: Add a INSIDE_SYSTEM define when compiling System.dll
+	to makes it possible to rebuild the same types in System.Net.dll
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* net_2_1_*.dll.sources: rename to moonlight_*.dll.sources.

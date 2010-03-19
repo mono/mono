@@ -29,6 +29,9 @@ TEST_MCS_FLAGS += -r:System.Configuration
 PROFILE_2_OR_4 := $(filter net_2_0 net_4_0, $(PROFILE))
 NOT_SL := $(filter net_2_0 net_4_0 monotouch, $(PROFILE))
 endif
+ifeq (2.1, $(FRAMEWORK_VERSION))
+LIB_MCS_FLAGS += -d:INSIDE_SYSTEM
+endif
 
 EXTRA_DISTFILES = \
 	System.Text.RegularExpressions/notes.txt	\

@@ -271,7 +271,7 @@ namespace System.Net
 			protocolVersion = version;
 		}
 
-#if !MOONLIGHT && !TARGET_JVM
+#if !TARGET_JVM
 		WebConnectionGroup GetConnectionGroup (string name)
 		{
 			if (name == null)
