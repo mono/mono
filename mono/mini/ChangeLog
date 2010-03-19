@@ -1,3 +1,22 @@
+2010-03-17 Jerry Maine  <crashfourit@gmail.com>
+
+	* mini.h : Changed the SIMD_VERSION* enum values to match those in Mono.Simd.AccelMode.
+		   Add an enum value that or's all possable values together. Add an enum value
+		   that marks the end of the used bit indexes.
+
+	* mini-amd64.c : Make changes to match the changes in mini.h 
+
+	* mini-x86.c : Make changes to match the changes in mini.h
+
+	* simd-intrinsics.c : Reorder the SimdIntrinsc struct to add more bits to
+		   simd_version to support more simd versions. Changed the name of
+		   simd_version to simd_version_flags to make it more intuitive that
+		   it now contains bit flags. Reordered the *_intrinsics arrays to
+		   match the changes above. Changed emit_intrinsics() to use the new
+		   setup mentioned above.
+
+	Code is contributed under MIT/X11 license.
+
 2010-03-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-*.c (mono_arch_output_basic_block): Record try block holes on all
