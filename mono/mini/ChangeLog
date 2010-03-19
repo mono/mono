@@ -1,3 +1,9 @@
+2010-03-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c: Simplify the way breakpoints are processed by removing
+	the 'pending' flag. This fixes support for appdomains too.
+
+
 2010-03-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_arch_build_imt_thunk): Always save and restore r11 since it
