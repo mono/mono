@@ -1,3 +1,8 @@
+2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CollectionDebuggerView.cs: Change to internal so we can avoid
+	a duplicating the type in assemblies that have [InternalsVisibleTo]
+
 2010-01-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* EqualityComparer.cs: (Equals) the arguments are checked to be
