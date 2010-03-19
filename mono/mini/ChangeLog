@@ -1,3 +1,8 @@
+2010-03-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-arm.c: Backport lots of changes from HEAD to reduce the number of ARM
+	test failures.
+
 2010-03-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (mono_compile_assembly): Use the asm writer when static linking.

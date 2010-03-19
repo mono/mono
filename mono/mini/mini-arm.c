@@ -58,6 +58,27 @@ int mono_exc_esp_offset = 0;
 #define ADD_LR_PC_4 ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 25) | (1 << 23) | (ARMREG_PC << 16) | (ARMREG_LR << 12) | 4)
 #define MOV_LR_PC ((ARMCOND_AL << ARMCOND_SHIFT) | (1 << 24) | (0xa << 20) |  (ARMREG_LR << 12) | ARMREG_PC)
 #define DEBUG_IMT 0
+ 
+/* A variant of ARM_LDR_IMM which can handle large offsets */
+#define ARM_LDR_IMM_GENERAL(code, dreg, basereg, offset, scratch_reg) do { \
+	if (arm_is_imm12 ((offset))) { \
+		ARM_LDR_IMM (code, (dreg), (basereg), (offset));	\
+	} else {												\
+		g_assert ((scratch_reg) != (basereg));					   \
+		code = mono_arm_emit_load_imm (code, (scratch_reg), (offset));	\
+		ARM_LDR_REG_REG (code, (dreg), (basereg), (scratch_reg));		\
+	}																	\
+	} while (0)
+
+#define ARM_STR_IMM_GENERAL(code, dreg, basereg, offset, scratch_reg) do {	\
+	if (arm_is_imm12 ((offset))) { \
+		ARM_STR_IMM (code, (dreg), (basereg), (offset));	\
+	} else {												\
+		g_assert ((scratch_reg) != (basereg));					   \
+		code = mono_arm_emit_load_imm (code, (scratch_reg), (offset));	\
+		ARM_STR_REG_REG (code, (dreg), (basereg), (scratch_reg));		\
+	}																	\
+	} while (0)
 
 const char*
 mono_arch_regname (int reg)
@@ -597,7 +618,7 @@ mono_arch_flush_icache (guint8 *code, gint size)
 		"svc     0x00000000\n"
 		:
 		:	"r" (code), "r" (code + size), "r" (syscall)
-		:	"r0", "r1", "r7"
+		:	"r0", "r1", "r7", "r2"
 		);
 #else
 	__asm __volatile ("mov r0, %0\n"
@@ -610,20 +631,22 @@ mono_arch_flush_icache (guint8 *code, gint size)
 #endif
 }
 
-enum {
+typedef enum {
+	RegTypeNone,
 	RegTypeGeneral,
+	RegTypeIRegPair,
 	RegTypeBase,
 	RegTypeBaseGen,
 	RegTypeFP,
 	RegTypeStructByVal,
 	RegTypeStructByAddr
-};
+} ArgStorage;
 
 typedef struct {
 	gint32  offset;
 	guint16 vtsize; /* in param area */
 	guint8  reg;
-	guint8  regtype : 4; /* 0 general, 1 basereg, 2 floating point register, see RegType* */
+	ArgStorage  storage;
 	guint8  size    : 4; /* 1, 2, 4, 8, or regs used by RegTypeStructByVal */
 } ArgInfo;
 
@@ -631,6 +654,7 @@ typedef struct {
 	int nargs;
 	guint32 stack_usage;
 	guint32 struct_ret;
+	gboolean vtype_retaddr;
 	ArgInfo ret;
 	ArgInfo sig_cookie;
 	ArgInfo args [1];
@@ -645,36 +669,49 @@ add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 		if (*gr > ARMREG_R3) {
 			ainfo->offset = *stack_size;
 			ainfo->reg = ARMREG_SP; /* in the caller */
-			ainfo->regtype = RegTypeBase;
+			ainfo->storage = RegTypeBase;
 			*stack_size += 4;
 		} else {
+			ainfo->storage = RegTypeGeneral;
 			ainfo->reg = *gr;
 		}
 	} else {
-		if (*gr == ARMREG_R3
-#ifdef __ARM_EABI__
-				&& 0
+#if defined(__APPLE__) && defined(MONO_CROSS_COMPILE)
+		int i8_align = 4;
+#else
+		int i8_align = __alignof__ (gint64);
 #endif
-					) {
+
+#if __ARM_EABI__
+		gboolean split = i8_align == 4;
+#else
+		gboolean split = TRUE;
+#endif
+		
+		if (*gr == ARMREG_R3 && split) {
 			/* first word in r3 and the second on the stack */
 			ainfo->offset = *stack_size;
 			ainfo->reg = ARMREG_SP; /* in the caller */
-			ainfo->regtype = RegTypeBaseGen;
+			ainfo->storage = RegTypeBaseGen;
 			*stack_size += 4;
 		} else if (*gr >= ARMREG_R3) {
 #ifdef __ARM_EABI__
-			*stack_size += 7;
-			*stack_size &= ~7;
+			/* darwin aligns longs to 4 byte only */
+			if (i8_align == 8) {
+				*stack_size += 7;
+				*stack_size &= ~7;
+			}
 #endif
 			ainfo->offset = *stack_size;
 			ainfo->reg = ARMREG_SP; /* in the caller */
-			ainfo->regtype = RegTypeBase;
+			ainfo->storage = RegTypeBase;
 			*stack_size += 8;
 		} else {
 #ifdef __ARM_EABI__
-			if ((*gr) & 1)
+			if (i8_align == 8 && ((*gr) & 1))
 				(*gr) ++;
 #endif
+			ainfo->storage = RegTypeIRegPair;
 			ainfo->reg = *gr;
 		}
 		(*gr) ++;
@@ -683,20 +720,33 @@ add_general (guint *gr, guint *stack_size, ArgInfo *ainfo, gboolean simple)
 }
 
 static CallInfo*
-calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
+get_call_info (MonoMemPool *mp, MonoMethodSignature *sig, gboolean is_pinvoke)
 {
 	guint i, gr;
 	int n = sig->hasthis + sig->param_count;
 	MonoType *simpletype;
 	guint32 stack_size = 0;
-	CallInfo *cinfo = g_malloc0 (sizeof (CallInfo) + sizeof (ArgInfo) * n);
+	CallInfo *cinfo;
 
+	if (mp)
+		cinfo = mono_mempool_alloc0 (mp, sizeof (CallInfo) + (sizeof (ArgInfo) * n));
+	else
+		cinfo = g_malloc0 (sizeof (CallInfo) + (sizeof (ArgInfo) * n));
+
+	cinfo->nargs = n;
 	gr = ARMREG_R0;
 
 	/* FIXME: handle returning a struct */
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
-		add_general (&gr, &stack_size, &cinfo->ret, TRUE);
-		cinfo->struct_ret = ARMREG_R0;
+		guint32 align;
+
+		if (is_pinvoke && mono_class_native_size (mono_class_from_mono_type (sig->ret), &align) <= sizeof (gpointer)) {
+			cinfo->ret.storage = RegTypeStructByVal;
+		} else {
+			add_general (&gr, &stack_size, &cinfo->ret, TRUE);
+			cinfo->struct_ret = ARMREG_R0;
+			cinfo->vtype_retaddr = TRUE;
+		}
 	}
 
 	n = 0;
@@ -707,13 +757,13 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
         DEBUG(printf("params: %d\n", sig->param_count));
 	for (i = 0; i < sig->param_count; ++i) {
 		if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
-                        /* Prevent implicit arguments and sig_cookie from
+			/* Prevent implicit arguments and sig_cookie from
 			   being passed in registers */
-                        gr = ARMREG_R3 + 1;
-                        /* Emit the signature cookie just before the implicit arguments */
-                        add_general (&gr, &stack_size, &cinfo->sig_cookie, TRUE);
-                }
-                DEBUG(printf("param %d: ", i));
+			gr = ARMREG_R3 + 1;
+			/* Emit the signature cookie just before the implicit arguments */
+			add_general (&gr, &stack_size, &cinfo->sig_cookie, TRUE);
+		}
+		DEBUG(printf("param %d: ", i));
 		if (sig->params [i]->byref) {
                         DEBUG(printf("byref\n"));
 			add_general (&gr, &stack_size, cinfo->args + n, TRUE);
@@ -757,7 +807,7 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 			n++;
 			break;
 		case MONO_TYPE_GENERICINST:
-			if (!mono_type_generic_inst_is_valuetype (sig->params [i])) {
+			if (!mono_type_generic_inst_is_valuetype (simpletype)) {
 				cinfo->args [n].size = sizeof (gpointer);
 				add_general (&gr, &stack_size, cinfo->args + n, TRUE);
 				n++;
@@ -769,15 +819,17 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 			gint size;
 			int align_size;
 			int nwords;
+			guint32 align;
 
 			if (simpletype->type == MONO_TYPE_TYPEDBYREF) {
 				size = sizeof (MonoTypedRef);
+				align = sizeof (gpointer);
 			} else {
 				MonoClass *klass = mono_class_from_mono_type (sig->params [i]);
 				if (is_pinvoke)
-					size = mono_class_native_size (klass, NULL);
+					size = mono_class_native_size (klass, &align);
 				else
-					size = mono_class_value_size (klass, NULL);
+					size = mono_class_value_size (klass, &align);
 			}
 			DEBUG(printf ("load %d bytes struct\n",
 				      mono_class_native_size (sig->params [i]->data.klass, NULL)));
@@ -786,8 +838,12 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 			align_size += (sizeof (gpointer) - 1);
 			align_size &= ~(sizeof (gpointer) - 1);
 			nwords = (align_size + sizeof (gpointer) -1 ) / sizeof (gpointer);
-			cinfo->args [n].regtype = RegTypeStructByVal;
-			/* FIXME: align gr and stack_size if needed */
+			cinfo->args [n].storage = RegTypeStructByVal;
+			/* FIXME: align stack_size if needed */
+#ifdef __ARM_EABI__
+			if (align >= 8 && (gr & 1))
+				gr ++;
+#endif
 			if (gr > ARMREG_R3) {
 				cinfo->args [n].size = 0;
 				cinfo->args [n].vtsize = nwords;
@@ -798,6 +854,7 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 				cinfo->args [n].vtsize = nwords - n_in_regs;
 				cinfo->args [n].reg = gr;
 				gr += n_in_regs;
+				nwords -= n_in_regs;
 			}
 			cinfo->args [n].offset = stack_size;
 			/*g_print ("offset for arg %d at %d\n", n, stack_size);*/
@@ -815,6 +872,15 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 		default:
 			g_error ("Can't trampoline 0x%x", sig->params [i]->type);
 		}
+	}
+
+	/* Handle the case where there are no implicit arguments */
+	if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
+		/* Prevent implicit arguments and sig_cookie from
+		   being passed in registers */
+		gr = ARMREG_R3 + 1;
+		/* Emit the signature cookie just before the implicit arguments */
+		add_general (&gr, &stack_size, &cinfo->sig_cookie, TRUE);
 	}
 
 	{
@@ -837,27 +903,33 @@ calculate_sizes (MonoMethodSignature *sig, gboolean is_pinvoke)
 		case MONO_TYPE_SZARRAY:
 		case MONO_TYPE_ARRAY:
 		case MONO_TYPE_STRING:
+			cinfo->ret.storage = RegTypeGeneral;
 			cinfo->ret.reg = ARMREG_R0;
 			break;
 		case MONO_TYPE_U8:
 		case MONO_TYPE_I8:
+			cinfo->ret.storage = RegTypeIRegPair;
 			cinfo->ret.reg = ARMREG_R0;
 			break;
 		case MONO_TYPE_R4:
 		case MONO_TYPE_R8:
+			cinfo->ret.storage = RegTypeFP;
 			cinfo->ret.reg = ARMREG_R0;
 			/* FIXME: cinfo->ret.reg = ???;
 			cinfo->ret.regtype = RegTypeFP;*/
 			break;
 		case MONO_TYPE_GENERICINST:
-			if (!mono_type_generic_inst_is_valuetype (sig->ret)) {
+			if (!mono_type_generic_inst_is_valuetype (simpletype)) {
+				cinfo->ret.storage = RegTypeGeneral;
 				cinfo->ret.reg = ARMREG_R0;
 				break;
 			}
-			break;
+			/* Fall through */
 		case MONO_TYPE_VALUETYPE:
-			break;
 		case MONO_TYPE_TYPEDBYREF:
+			if (cinfo->ret.storage != RegTypeStructByVal)
+				cinfo->ret.storage = RegTypeStructByAddr;
+			break;
 		case MONO_TYPE_VOID:
 			break;
 		default:
@@ -883,9 +955,17 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 {
 	MonoMethodSignature *sig;
 	MonoMethodHeader *header;
-	MonoInst *inst;
+	MonoInst *ins;
 	int i, offset, size, align, curinst;
 	int frame_reg = ARMREG_FP;
+	CallInfo *cinfo;
+	guint32 ualign;
+
+	sig = mono_method_signature (cfg->method);
+
+	if (!cfg->arch.cinfo)
+		cfg->arch.cinfo = get_call_info (cfg->mempool, sig, sig->pinvoke);
+	cinfo = cfg->arch.cinfo;
 
 	/* FIXME: this will change when we use FP as gcc does */
 	cfg->flags |= MONO_CFG_HAS_SPILLUP;
@@ -912,16 +992,13 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		cfg->used_int_regs |= 1 << frame_reg;
 	}
 
-	if (!cfg->compile_aot || cfg->uses_rgctx_reg)
+	if (cfg->compile_aot || cfg->uses_rgctx_reg)
 		/* V5 is reserved for passing the vtable/rgctx/IMT method */
 		cfg->used_int_regs |= (1 << ARMREG_V5);
 
-	sig = mono_method_signature (cfg->method);
-	
 	offset = 0;
 	curinst = 0;
 	if (!MONO_TYPE_ISSTRUCT (sig->ret)) {
-		/* FIXME: handle long and FP values */
 		switch (mini_type_get_underlying_type (NULL, sig->ret)->type) {
 		case MONO_TYPE_VOID:
 			break;
@@ -953,42 +1030,42 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 		offset += 8;
 
 	/* the MonoLMF structure is stored just below the stack pointer */
-
-	if (sig->call_convention == MONO_CALL_VARARG) {
-                cfg->sig_cookie = 0;
-        }
-
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
-		inst = cfg->vret_addr;
-		offset += sizeof(gpointer) - 1;
-		offset &= ~(sizeof(gpointer) - 1);
-		inst->inst_offset = offset;
-		inst->opcode = OP_REGOFFSET;
-		inst->inst_basereg = frame_reg;
-		if (G_UNLIKELY (cfg->verbose_level > 1)) {
-			printf ("vret_addr =");
-			mono_print_ins (cfg->vret_addr);
+		if (cinfo->ret.storage == RegTypeStructByVal) {
+			cfg->ret->opcode = OP_REGOFFSET;
+			cfg->ret->inst_basereg = cfg->frame_reg;
+			offset += sizeof (gpointer) - 1;
+			offset &= ~(sizeof (gpointer) - 1);
+			cfg->ret->inst_offset = - offset;
+		} else {
+			ins = cfg->vret_addr;
+			offset += sizeof(gpointer) - 1;
+			offset &= ~(sizeof(gpointer) - 1);
+			ins->inst_offset = offset;
+			ins->opcode = OP_REGOFFSET;
+			ins->inst_basereg = frame_reg;
+			if (G_UNLIKELY (cfg->verbose_level > 1)) {
+				printf ("vret_addr =");
+				mono_print_ins (cfg->vret_addr);
+			}
 		}
 		offset += sizeof(gpointer);
-		if (sig->call_convention == MONO_CALL_VARARG)
-			cfg->sig_cookie += sizeof (gpointer);
 	}
 
 	curinst = cfg->locals_start;
 	for (i = curinst; i < cfg->num_varinfo; ++i) {
-		inst = cfg->varinfo [i];
-		if ((inst->flags & MONO_INST_IS_DEAD) || inst->opcode == OP_REGVAR)
+		ins = cfg->varinfo [i];
+		if ((ins->flags & MONO_INST_IS_DEAD) || ins->opcode == OP_REGVAR || ins->opcode == OP_REGOFFSET)
 			continue;
 
 		/* inst->backend.is_pinvoke indicates native sized value types, this is used by the
 		* pinvoke wrappers when they call functions returning structure */
-		if (inst->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (inst->inst_vtype) && inst->inst_vtype->type != MONO_TYPE_TYPEDBYREF) {
-			guint32 ualign;
-			size = mono_class_native_size (mono_class_from_mono_type (inst->inst_vtype), &ualign);
+		if (ins->backend.is_pinvoke && MONO_TYPE_ISSTRUCT (ins->inst_vtype) && ins->inst_vtype->type != MONO_TYPE_TYPEDBYREF) {
+			size = mono_class_native_size (mono_class_from_mono_type (ins->inst_vtype), &ualign);
 			align = ualign;
 		}
 		else
-			size = mono_type_size (inst->inst_vtype, &align);
+			size = mono_type_size (ins->inst_vtype, &align);
 
 		/* FIXME: if a structure is misaligned, our memcpy doesn't work,
 		 * since it loads/stores misaligned words, which don't do the right thing.
@@ -997,46 +1074,58 @@ mono_arch_allocate_vars (MonoCompile *cfg)
 			align = 4;
 		offset += align - 1;
 		offset &= ~(align - 1);
-		inst->inst_offset = offset;
-		inst->opcode = OP_REGOFFSET;
-		inst->inst_basereg = frame_reg;
+		ins->opcode = OP_REGOFFSET;
+		ins->inst_offset = offset;
+		ins->inst_basereg = frame_reg;
 		offset += size;
 		//g_print ("allocating local %d to %d\n", i, inst->inst_offset);
 	}
 
 	curinst = 0;
 	if (sig->hasthis) {
-		inst = cfg->args [curinst];
-		if (inst->opcode != OP_REGVAR) {
-			inst->opcode = OP_REGOFFSET;
-			inst->inst_basereg = frame_reg;
+		ins = cfg->args [curinst];
+		if (ins->opcode != OP_REGVAR) {
+			ins->opcode = OP_REGOFFSET;
+			ins->inst_basereg = frame_reg;
 			offset += sizeof (gpointer) - 1;
 			offset &= ~(sizeof (gpointer) - 1);
-			inst->inst_offset = offset;
+			ins->inst_offset = offset;
 			offset += sizeof (gpointer);
-			if (sig->call_convention == MONO_CALL_VARARG)
-				cfg->sig_cookie += sizeof (gpointer);
 		}
 		curinst++;
 	}
 
+	if (sig->call_convention == MONO_CALL_VARARG) {
+		size = 4;
+		align = 4;
+
+		/* Allocate a local slot to hold the sig cookie address */
+		offset += align - 1;
+		offset &= ~(align - 1);
+		cfg->sig_cookie = offset;
+		offset += size;
+	}			
+
 	for (i = 0; i < sig->param_count; ++i) {
-		inst = cfg->args [curinst];
-		if (inst->opcode != OP_REGVAR) {
-			inst->opcode = OP_REGOFFSET;
-			inst->inst_basereg = frame_reg;
-			size = mono_type_size (sig->params [i], &align);
+		ins = cfg->args [curinst];
+
+		if (ins->opcode != OP_REGVAR) {
+			ins->opcode = OP_REGOFFSET;
+			ins->inst_basereg = frame_reg;
+			size = mini_type_stack_size_full (NULL, sig->params [i], &ualign, sig->pinvoke);
+			align = ualign;
 			/* FIXME: if a structure is misaligned, our memcpy doesn't work,
 			 * since it loads/stores misaligned words, which don't do the right thing.
 			 */
 			if (align < 4 && size >= 4)
 				align = 4;
+			/* The code in the prolog () stores words when storing vtypes received in a register */
+			if (MONO_TYPE_ISSTRUCT (sig->params [i]))
+				align = 4;
 			offset += align - 1;
 			offset &= ~(align - 1);
-			inst->inst_offset = offset;
+			ins->inst_offset = offset;
 			offset += size;
-			if ((sig->call_convention == MONO_CALL_VARARG) && (i < sig->sentinelpos)) 
-				cfg->sig_cookie += size;
 		}
 		curinst++;
 	}
@@ -1053,16 +1142,57 @@ void
 mono_arch_create_vars (MonoCompile *cfg)
 {
 	MonoMethodSignature *sig;
+	CallInfo *cinfo;
 
 	sig = mono_method_signature (cfg->method);
 
-	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
+	if (!cfg->arch.cinfo)
+		cfg->arch.cinfo = get_call_info (cfg->mempool, sig, sig->pinvoke);
+	cinfo = cfg->arch.cinfo;
+
+	if (cinfo->ret.storage == RegTypeStructByVal)
+		cfg->ret_var_is_local = TRUE;
+
+	if (MONO_TYPE_ISSTRUCT (sig->ret) && cinfo->ret.storage != RegTypeStructByVal) {
 		cfg->vret_addr = mono_compile_create_var (cfg, &mono_defaults.int_class->byval_arg, OP_ARG);
 		if (G_UNLIKELY (cfg->verbose_level > 1)) {
 			printf ("vret_addr = ");
 			mono_print_ins (cfg->vret_addr);
 		}
 	}
+}
+
+static void
+emit_sig_cookie (MonoCompile *cfg, MonoCallInst *call, CallInfo *cinfo)
+{
+	MonoMethodSignature *tmp_sig;
+	MonoInst *sig_arg;
+
+	if (call->tail_call)
+		NOT_IMPLEMENTED;
+
+	/* FIXME: Add support for signature tokens to AOT */
+	cfg->disable_aot = TRUE;
+
+	g_assert (cinfo->sig_cookie.storage == RegTypeBase);
+			
+	/*
+	 * mono_ArgIterator_Setup assumes the signature cookie is 
+	 * passed first and all the arguments which were before it are
+	 * passed on the stack after the signature. So compensate by 
+	 * passing a different signature.
+	 */
+	tmp_sig = mono_metadata_signature_dup (call->signature);
+	tmp_sig->param_count -= call->signature->sentinelpos;
+	tmp_sig->sentinelpos = 0;
+	memcpy (tmp_sig->params, call->signature->params + call->signature->sentinelpos, tmp_sig->param_count * sizeof (MonoType*));
+
+	MONO_INST_NEW (cfg, sig_arg, OP_ICONST);
+	sig_arg->dreg = mono_alloc_ireg (cfg);
+	sig_arg->inst_p0 = tmp_sig;
+	MONO_ADD_INS (cfg->cbb, sig_arg);
+
+	MONO_EMIT_NEW_STORE_MEMBASE (cfg, OP_STORE_MEMBASE_REG, ARMREG_SP, cinfo->sig_cookie.offset, sig_arg->dreg);
 }
 
 void
@@ -1076,7 +1206,7 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 	sig = call->signature;
 	n = sig->param_count + sig->hasthis;
 	
-	cinfo = calculate_sizes (sig, sig->pinvoke);
+	cinfo = get_call_info (NULL, sig, sig->pinvoke);
 
 	for (i = 0; i < n; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
@@ -1089,14 +1219,15 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		t = mini_type_get_underlying_type (NULL, t);
 
 		if ((sig->call_convention == MONO_CALL_VARARG) && (i == sig->sentinelpos)) {
-			/* FIXME: */
-			NOT_IMPLEMENTED;
+			/* Emit the signature cookie just before the implicit arguments */
+			emit_sig_cookie (cfg, call, cinfo);
 		}
 
 		in = call->args [i];
 
-		switch (ainfo->regtype) {
+		switch (ainfo->storage) {
 		case RegTypeGeneral:
+		case RegTypeIRegPair:
 			if (!t->byref && ((t->type == MONO_TYPE_I8) || (t->type == MONO_TYPE_U8))) {
 				MONO_INST_NEW (cfg, ins, OP_MOVE);
 				ins->dreg = mono_alloc_ireg (cfg);
@@ -1247,15 +1378,24 @@ mono_arch_emit_call (MonoCompile *cfg, MonoCallInst *call)
 		}
 	}
 
+	/* Handle the case where there are no implicit arguments */
+	if (!sig->pinvoke && (sig->call_convention == MONO_CALL_VARARG) && (n == sig->sentinelpos))
+		emit_sig_cookie (cfg, call, cinfo);
+
 	if (sig->ret && MONO_TYPE_ISSTRUCT (sig->ret)) {
 		MonoInst *vtarg;
 
-		MONO_INST_NEW (cfg, vtarg, OP_MOVE);
-		vtarg->sreg1 = call->vret_var->dreg;
-		vtarg->dreg = mono_alloc_preg (cfg);
-		MONO_ADD_INS (cfg->cbb, vtarg);
+		if (cinfo->ret.storage == RegTypeStructByVal) {
+			/* The JIT will transform this into a normal call */
+			call->vret_in_reg = TRUE;
+		} else {
+			MONO_INST_NEW (cfg, vtarg, OP_MOVE);
+			vtarg->sreg1 = call->vret_var->dreg;
+			vtarg->dreg = mono_alloc_preg (cfg);
+			MONO_ADD_INS (cfg->cbb, vtarg);
 
-		mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->ret.reg, FALSE);
+			mono_call_inst_add_outarg_reg (cfg, call, vtarg->dreg, cinfo->ret.reg, FALSE);
+		}
 	}
 
 	call->stack_usage = cinfo->stack_usage;
@@ -1750,7 +1890,10 @@ loop_start:
 				ins->sreg2 = temp->dreg;
 				ins->opcode = mono_op_imm_to_op (ins->opcode);
 			}
-			break;
+			if (ins->opcode == OP_SBB || ins->opcode == OP_ISBB || ins->opcode == OP_SUBCC)
+				goto loop_start;
+			else
+				break;
 		case OP_MUL_IMM:
 		case OP_IMUL_IMM:
 			if (ins->inst_imm == 1) {
@@ -1773,6 +1916,14 @@ loop_start:
 			temp->dreg = mono_alloc_ireg (cfg);
 			ins->sreg2 = temp->dreg;
 			ins->opcode = OP_IMUL;
+			break;
+		case OP_SBB:
+		case OP_ISBB:
+		case OP_SUBCC:
+		case OP_ISUBCC:
+			if (ins->next  && (ins->next->opcode == OP_COND_EXC_C || ins->next->opcode == OP_COND_EXC_IC))
+				/* ARM sets the C flag to 1 if there was _no_ overflow */
+				ins->next->opcode = OP_COND_EXC_NC;
 			break;
 		case OP_LOCALLOC_IMM:
 			NEW_INS (cfg, temp, OP_ICONST);
@@ -1919,6 +2070,19 @@ loop_start:
 	}
 	bb->last_ins = last_ins;
 	bb->max_vreg = cfg->next_vreg;
+}
+
+void
+mono_arch_decompose_long_opts (MonoCompile *cfg, MonoInst *long_ins)
+{
+	MonoInst *ins;
+
+	if (long_ins->opcode == OP_LNEG) {
+		ins = long_ins;
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ARM_RSBS_IMM, ins->dreg + 1, ins->sreg1 + 1, 0);
+		MONO_EMIT_NEW_BIALU_IMM (cfg, OP_ARM_RSC_IMM, ins->dreg + 2, ins->sreg1 + 2, 0);
+		NULLIFY_INS (ins);
+	}
 }
 
 static guchar*
@@ -2302,7 +2466,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 
 	pos = 0;
 
-	cinfo = calculate_sizes (sig, sig->pinvoke);
+	cinfo = get_call_info (NULL, sig, sig->pinvoke);
 
 	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
 		ArgInfo *ainfo = &cinfo->ret;
@@ -2315,13 +2479,13 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 		inst = cfg->args [pos];
 		
 		if (cfg->verbose_level > 2)
-			g_print ("Loading argument %d (type: %d)\n", i, ainfo->regtype);
+			g_print ("Loading argument %d (type: %d)\n", i, ainfo->storage);
 		if (inst->opcode == OP_REGVAR) {
-			if (ainfo->regtype == RegTypeGeneral)
+			if (ainfo->storage == RegTypeGeneral)
 				ARM_MOV_REG_REG (code, inst->dreg, ainfo->reg);
-			else if (ainfo->regtype == RegTypeFP) {
+			else if (ainfo->storage == RegTypeFP) {
 				g_assert_not_reached ();
-			} else if (ainfo->regtype == RegTypeBase) {
+			} else if (ainfo->storage == RegTypeBase) {
 				// FIXME:
 				NOT_IMPLEMENTED;
 				/*
@@ -2335,7 +2499,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 			} else
 				g_assert_not_reached ();
 		} else {
-			if (ainfo->regtype == RegTypeGeneral) {
+			if (ainfo->storage == RegTypeGeneral || ainfo->storage == RegTypeIRegPair) {
 				switch (ainfo->size) {
 				case 1:
 				case 2:
@@ -2357,15 +2521,15 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 					}
 					break;
 				}
-			} else if (ainfo->regtype == RegTypeBaseGen) {
+			} else if (ainfo->storage == RegTypeBaseGen) {
 				// FIXME:
 				NOT_IMPLEMENTED;
-			} else if (ainfo->regtype == RegTypeBase) {
+			} else if (ainfo->storage == RegTypeBase) {
 				// FIXME:
 				NOT_IMPLEMENTED;
-			} else if (ainfo->regtype == RegTypeFP) {
+			} else if (ainfo->storage == RegTypeFP) {
 				g_assert_not_reached ();
-			} else if (ainfo->regtype == RegTypeStructByVal) {
+			} else if (ainfo->storage == RegTypeStructByVal) {
 				int doffset = inst->inst_offset;
 				int soffset = 0;
 				int cur_reg;
@@ -2385,7 +2549,7 @@ emit_load_volatile_arguments (MonoCompile *cfg, guint8 *code)
 				if (ainfo->vtsize)
 					// FIXME:
 					NOT_IMPLEMENTED;
-			} else if (ainfo->regtype == RegTypeStructByAddr) {
+			} else if (ainfo->storage == RegTypeStructByAddr) {
 			} else {
 				// FIXME:
 				NOT_IMPLEMENTED;
@@ -2782,12 +2946,16 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			break;
 		case OP_IMUL_OVF:
+			printf ("HIT!\n");
 			/* FIXME: handle ovf/ sreg2 != dreg */
 			ARM_MUL_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
+			/* FIXME: MUL doesn't set the C/O flags on ARM */
 			break;
 		case OP_IMUL_OVF_UN:
+			printf ("HIT!\n");
 			/* FIXME: handle ovf/ sreg2 != dreg */
 			ARM_MUL_REG_REG (code, ins->dreg, ins->sreg1, ins->sreg2);
+			/* FIXME: MUL doesn't set the C/O flags on ARM */
 			break;
 		case OP_ICONST:
 			code = mono_arm_emit_load_imm (code, ins->dreg, ins->inst_c0);
@@ -3102,14 +3270,20 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			EMIT_COND_SYSTEM_EXCEPTION (ins->opcode - OP_COND_EXC_IEQ, ins->inst_p1);
 			break;
 		case OP_COND_EXC_C:
-		case OP_COND_EXC_OV:
-		case OP_COND_EXC_NC:
-		case OP_COND_EXC_NO:
 		case OP_COND_EXC_IC:
+			EMIT_COND_SYSTEM_EXCEPTION_FLAGS (ARMCOND_CS, ins->inst_p1);
+			break;
+		case OP_COND_EXC_OV:
 		case OP_COND_EXC_IOV:
+			EMIT_COND_SYSTEM_EXCEPTION_FLAGS (ARMCOND_VS, ins->inst_p1);
+			break;
+		case OP_COND_EXC_NC:
 		case OP_COND_EXC_INC:
+			EMIT_COND_SYSTEM_EXCEPTION_FLAGS (ARMCOND_CC, ins->inst_p1);
+			break;
+		case OP_COND_EXC_NO:
 		case OP_COND_EXC_INO:
-			/* FIXME: */
+			EMIT_COND_SYSTEM_EXCEPTION_FLAGS (ARMCOND_VC, ins->inst_p1);
 			break;
 		case OP_IBEQ:
 		case OP_IBNE_UN:
@@ -3244,33 +3418,58 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			}
 			break;
 		case OP_STORER8_MEMBASE_REG:
-			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_FSTD (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			/* This is generated by the local regalloc pass which runs after the lowering pass */
+			if (!arm_is_fpimm8 (ins->inst_offset)) {
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
+				ARM_ADD_REG_REG (code, ARMREG_LR, ARMREG_LR, ins->inst_destbasereg);
+				ARM_FSTD (code, ins->sreg1, ARMREG_LR, 0);
+			} else {
+				ARM_FSTD (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			}
 			break;
 		case OP_LOADR8_MEMBASE:
-			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_FLDD (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			/* This is generated by the local regalloc pass which runs after the lowering pass */
+			if (!arm_is_fpimm8 (ins->inst_offset)) {
+				code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
+				ARM_ADD_REG_REG (code, ARMREG_LR, ARMREG_LR, ins->inst_basereg);
+				ARM_FLDD (code, ins->dreg, ARMREG_LR, 0);
+			} else {
+				ARM_FLDD (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			}
 			break;
 		case OP_STORER4_MEMBASE_REG:
 			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_FSTS (code, ins->sreg1, ins->inst_destbasereg, ins->inst_offset);
+			ARM_CVTD (code, ARM_VFP_F0, ins->sreg1);
+			ARM_FSTS (code, ARM_VFP_F0, ins->inst_destbasereg, ins->inst_offset);
 			break;
 		case OP_LOADR4_MEMBASE:
 			g_assert (arm_is_fpimm8 (ins->inst_offset));
-			ARM_FLDS (code, ins->dreg, ins->inst_basereg, ins->inst_offset);
+			ARM_FLDS (code, ARM_VFP_F0, ins->inst_basereg, ins->inst_offset);
+			ARM_CVTS (code, ins->dreg, ARM_VFP_F0);
 			break;
 		case OP_ICONV_TO_R_UN: {
 			g_assert_not_reached ();
 			break;
 		}
 		case OP_ICONV_TO_R4:
-			g_assert_not_reached ();
-			//ARM_FLTS (code, ins->dreg, ins->sreg1);
+			ARM_FMSR (code, ARM_VFP_F0, ins->sreg1);
+			ARM_FSITOS (code, ARM_VFP_F0, ARM_VFP_F0);
+			ARM_CVTS (code, ins->dreg, ARM_VFP_F0);
 			break;
 		case OP_ICONV_TO_R8:
-			g_assert_not_reached ();
-			//ARM_FLTD (code, ins->dreg, ins->sreg1);
+			ARM_FMSR (code, ARM_VFP_F0, ins->sreg1);
+			ARM_FSITOD (code, ins->dreg, ARM_VFP_F0);
 			break;
+
+		case OP_SETFRET:
+			if (mono_method_signature (cfg->method)->ret->type == MONO_TYPE_R4) {
+				ARM_CVTD (code, ARM_VFP_F0, ins->sreg1);
+				ARM_FMRS (code, ARMREG_R0, ARM_VFP_F0);
+			} else {
+				ARM_FMRRD (code, ARMREG_R0, ARMREG_R1, ins->sreg1);
+			}
+			break;
+
 #endif
 		case OP_FCONV_TO_I1:
 			code = emit_float_to_int (cfg, code, ins->dreg, ins->sreg1, 1, TRUE);
@@ -3301,9 +3500,8 @@ mono_arch_output_basic_block (MonoCompile *cfg, MonoBasicBlock *bb)
 			g_assert_not_reached ();
 			/* Implemented as helper calls */
 			break;
-		case OP_LCONV_TO_OVF_I:
 		case OP_LCONV_TO_OVF_I4_2: {
-			guint32 *high_bit_not_set, *valid_negative, *invalid_negative, *valid_positive;
+			guint8 *high_bit_not_set, *valid_negative, *invalid_negative, *valid_positive;
 			/* 
 			 * Valid ints: 0xffffffff:8000000 to 00000000:0x7f000000
 			 */
@@ -3697,26 +3895,39 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	/* load arguments allocated to register from the stack */
 	pos = 0;
 
-	cinfo = calculate_sizes (sig, sig->pinvoke);
+	cinfo = get_call_info (NULL, sig, sig->pinvoke);
 
-	if (MONO_TYPE_ISSTRUCT (sig->ret)) {
+	if (MONO_TYPE_ISSTRUCT (sig->ret) && cinfo->ret.storage != RegTypeStructByVal) {
 		ArgInfo *ainfo = &cinfo->ret;
 		inst = cfg->vret_addr;
 		g_assert (arm_is_imm12 (inst->inst_offset));
 		ARM_STR_IMM (code, ainfo->reg, inst->inst_basereg, inst->inst_offset);
 	}
+
+	if (sig->call_convention == MONO_CALL_VARARG) {
+		ArgInfo *cookie = &cinfo->sig_cookie;
+
+		/* Save the sig cookie address */
+		g_assert (cookie->storage == RegTypeBase);
+
+		g_assert (arm_is_imm12 (prev_sp_offset + cookie->offset));
+		g_assert (arm_is_imm12 (cfg->sig_cookie));
+		ARM_ADD_REG_IMM8 (code, ARMREG_IP, cfg->frame_reg, prev_sp_offset + cookie->offset);
+		ARM_STR_IMM (code, ARMREG_IP, cfg->frame_reg, cfg->sig_cookie);
+	}
+
 	for (i = 0; i < sig->param_count + sig->hasthis; ++i) {
 		ArgInfo *ainfo = cinfo->args + i;
 		inst = cfg->args [pos];
 		
 		if (cfg->verbose_level > 2)
-			g_print ("Saving argument %d (type: %d)\n", i, ainfo->regtype);
+			g_print ("Saving argument %d (type: %d)\n", i, ainfo->storage);
 		if (inst->opcode == OP_REGVAR) {
-			if (ainfo->regtype == RegTypeGeneral)
+			if (ainfo->storage == RegTypeGeneral)
 				ARM_MOV_REG_REG (code, inst->dreg, ainfo->reg);
-			else if (ainfo->regtype == RegTypeFP) {
+			else if (ainfo->storage == RegTypeFP) {
 				g_assert_not_reached ();
-			} else if (ainfo->regtype == RegTypeBase) {
+			} else if (ainfo->storage == RegTypeBase) {
 				if (arm_is_imm12 (prev_sp_offset + ainfo->offset)) {
 					ARM_LDR_IMM (code, inst->dreg, ARMREG_SP, (prev_sp_offset + ainfo->offset));
 				} else {
@@ -3730,7 +3941,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 				g_print ("Argument %d assigned to register %s\n", pos, mono_arch_regname (inst->dreg));
 		} else {
 			/* the argument should be put on the stack: FIXME handle size != word  */
-			if (ainfo->regtype == RegTypeGeneral) {
+			if (ainfo->storage == RegTypeGeneral || ainfo->storage == RegTypeIRegPair) {
 				switch (ainfo->size) {
 				case 1:
 					if (arm_is_imm12 (inst->inst_offset))
@@ -3763,13 +3974,13 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					}
 					break;
 				}
-			} else if (ainfo->regtype == RegTypeBaseGen) {
+			} else if (ainfo->storage == RegTypeBaseGen) {
 				g_assert (arm_is_imm12 (prev_sp_offset + ainfo->offset));
 				g_assert (arm_is_imm12 (inst->inst_offset));
 				ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, (prev_sp_offset + ainfo->offset));
 				ARM_STR_IMM (code, ARMREG_LR, inst->inst_basereg, inst->inst_offset + 4);
 				ARM_STR_IMM (code, ARMREG_R3, inst->inst_basereg, inst->inst_offset);
-			} else if (ainfo->regtype == RegTypeBase) {
+			} else if (ainfo->storage == RegTypeBase) {
 				if (arm_is_imm12 (prev_sp_offset + ainfo->offset)) {
 					ARM_LDR_IMM (code, ARMREG_LR, ARMREG_SP, (prev_sp_offset + ainfo->offset));
 				} else {
@@ -3823,9 +4034,9 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					}
 					break;
 				}
-			} else if (ainfo->regtype == RegTypeFP) {
+			} else if (ainfo->storage == RegTypeFP) {
 				g_assert_not_reached ();
-			} else if (ainfo->regtype == RegTypeStructByVal) {
+			} else if (ainfo->storage == RegTypeStructByVal) {
 				int doffset = inst->inst_offset;
 				int soffset = 0;
 				int cur_reg;
@@ -3846,7 +4057,7 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 					//g_print ("emit_memcpy (prev_sp_ofs: %d, ainfo->offset: %d, soffset: %d)\n", prev_sp_offset, ainfo->offset, soffset);
 					code = emit_memcpy (code, ainfo->vtsize * sizeof (gpointer), inst->inst_basereg, doffset, ARMREG_SP, prev_sp_offset + ainfo->offset);
 				}
-			} else if (ainfo->regtype == RegTypeStructByAddr) {
+			} else if (ainfo->storage == RegTypeStructByAddr) {
 				g_assert_not_reached ();
 				/* FIXME: handle overrun! with struct sizes not multiple of 4 */
 				code = emit_memcpy (code, ainfo->vtsize * sizeof (gpointer), inst->inst_basereg, inst->inst_offset, ainfo->reg, 0);
@@ -3857,7 +4068,11 @@ mono_arch_emit_prolog (MonoCompile *cfg)
 	}
 
 	if (method->wrapper_type == MONO_WRAPPER_NATIVE_TO_MANAGED) {
-		code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)cfg->domain);
+ 		if (cfg->compile_aot)
+ 			/* AOT code is only used in the root domain */
+ 			code = mono_arm_emit_load_imm (code, ARMREG_R0, 0);
+ 		else
+ 			code = mono_arm_emit_load_imm (code, ARMREG_R0, (guint32)cfg->domain);
 		mono_add_patch_info (cfg, code - cfg->native_code, MONO_PATCH_INFO_INTERNAL_METHOD, 
 			     (gpointer)"mono_jit_thread_attach");
 		code = emit_call_seq (cfg, code);
@@ -3908,6 +4123,7 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 	int pos, i, rot_amount;
 	int max_epilog_size = 16 + 20*4;
 	guint8 *code;
+	CallInfo *cinfo;
 
 	if (cfg->method->save_lmf)
 		max_epilog_size += 128;
@@ -3933,6 +4149,19 @@ mono_arch_emit_epilog (MonoCompile *cfg)
 		code = mono_arch_instrument_epilog (cfg, mono_trace_leave_method, code, TRUE);
 	}
 	pos = 0;
+
+	/* Load returned vtypes into registers if needed */
+	cinfo = cfg->arch.cinfo;
+	if (cinfo->ret.storage == RegTypeStructByVal) {
+		MonoInst *ins = cfg->ret;
+
+		if (arm_is_imm12 (ins->inst_offset)) {
+			ARM_LDR_IMM (code, ARMREG_R0, ins->inst_basereg, ins->inst_offset);
+		} else {
+			code = mono_arm_emit_load_imm (code, ARMREG_LR, ins->inst_offset);
+			ARM_LDR_REG_REG (code, ARMREG_R0, ins->inst_basereg, ARMREG_LR);
+		}
+	}
 
 	if (method->save_lmf) {
 		int lmf_offset;
