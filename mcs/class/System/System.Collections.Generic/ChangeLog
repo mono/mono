@@ -1,3 +1,8 @@
+2010-03-03  Miguel de Icaza  <miguel@novell.com>
+
+	* RBTree.cs: Make these serializable, should fix the serialization
+	across appdomains of SortedDictionaries
+
 2010-03-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ISet.cs: Add NET_2_1 since this is part of SL4

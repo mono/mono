@@ -36,6 +36,7 @@ using System.Collections;
 
 namespace System.Collections.Generic
 {
+	[Serializable]
 	internal class RBTree : IEnumerable, IEnumerable<RBTree.Node> {
 		public interface INodeHelper<T> {
 			int Compare (T key, Node node);
@@ -576,6 +577,7 @@ namespace System.Collections.Generic
 			}
 		}
 
+		[Serializable]
 		public struct NodeEnumerator : IEnumerator, IEnumerator<Node> {
 			RBTree tree;
 			uint version;
