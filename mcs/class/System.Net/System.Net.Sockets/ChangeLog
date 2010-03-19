@@ -1,3 +1,7 @@
+2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketException_2_1.cs: Add extra ctor (soon to be used)
+
 2009-04-28  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SocketException_2_1.cs: Remove extra ctor and property unused in 2.1

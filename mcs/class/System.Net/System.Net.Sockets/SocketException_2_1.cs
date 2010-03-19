@@ -48,6 +48,12 @@ namespace System.Net.Sockets {
 			error_code = error;
 		}
 
+		internal SocketException (int error, string message)
+			: base (message)
+		{
+			error_code = error;
+		}
+
 		public int ErrorCode {
 			get { return error_code; }
 		}
