@@ -1,3 +1,9 @@
+2010-03-19  Martin Baulig  <martin@ximian.com>
+
+	* mono-debug.c (MonoDebugWrapperData): Replace `cil_code' with a
+	dummy field, containing an empty string.
+	(mono_debug_add_method): Don't call mono_disasm_code() for wrappers.
+
 
 Fri Mar 19 17:26:43 CET 2010 Paolo Molaro <lupus@ximian.com>
 
