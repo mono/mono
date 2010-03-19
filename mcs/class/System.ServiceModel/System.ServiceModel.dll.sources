@@ -543,7 +543,6 @@ System.ServiceModel.Description/DataContractSerializerMessageContractImporter.cs
 System.ServiceModel.Description/DataContractSerializerOperationBehavior.cs
 System.ServiceModel.Description/FaultDescription.cs
 System.ServiceModel.Description/FaultDescriptionCollection.cs
-System.ServiceModel.Description/HostedBindingBehavior.cs
 System.ServiceModel.Description/IContractBehavior.cs
 System.ServiceModel.Description/IContractBehaviorAttribute.cs
 System.ServiceModel.Description/IEndpointBehavior.cs

@@ -1,3 +1,8 @@
+2010-03-19  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : remove unused class.
+	* HTTP_listener_notes.txt : add some more comments.
+
 2010-03-18  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel_test.dll.sources :

@@ -47,10 +47,16 @@ This mostly explains what our WCF does, and does not explain what I think it rea
 locking: TBD
 
 
+** Some notes
+
+- WebHttpBinding creates HTTP channel listeners that share an identical endpoint URI, which could also be mapped by ServiceMetadataExtension. It brings problem on dispatching HTTP request to correct listener. FilterPriority is used to resolve the issue (possibly to some extent) that requests to wsdl/mex are treated in lower priority.
+- While multiple channel dispatchers' endpoints could indicate an identical HTTP URI, it is not allowed to use the same HTTP URI across more than one ServiceHostBase and attempt to create such endpoints will result in InvalidOperationException for conflict with existing listeners.
+
+
 ** Bugs
 
 There is not a few bugs on service implementations and there often are reasons:
 
 -- TCP duplex channels used to fail to serve requests when the throttle is 1. It was due to failure in managing closed channels (while it is duplex and hence it has to maintain channels until it is explicitly closed, clients often, or mostly, disconnects without any notice. So it had to be changed to explicitly check if the connection is available at any beginning of the request processing).
--- When there is more than one endpoint definition in web.config, it somehow fails to build appropriate HttpHandler chain (bug #573795).
+-- If there are more than one endpoint with the identical listen URI, it will fail to dispatch requests to correct listener even if the endpoints have appropriately configured FilterPriority. part of bug #573795.
 - ASP.NET listener ends up to dump ThreadAbort during its shutdown. It's mostly harmless though.

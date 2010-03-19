@@ -1,3 +1,7 @@
+2010-03-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HostedBindingBehavior.cs : remove unused class.
+
 2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WsdlExporter.cs : allow identical contract while exporting a set
