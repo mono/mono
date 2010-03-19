@@ -279,7 +279,7 @@ namespace System.Net
 				if (request != null)
 					request.Abort ();
 				throw;
-			} catch (WebException wexc) {
+			} catch (WebException) {
 				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -317,7 +317,7 @@ namespace System.Net
 				async = false;
 #endif				
 				DownloadFileCore (address, fileName, null);
-			} catch (WebException wexc) {
+			} catch (WebException) {
 				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -395,7 +395,7 @@ namespace System.Net
 				request = SetupRequest (address);
 				WebResponse response = GetWebResponse (request);
 				return response.GetResponseStream ();
-			} catch (WebException wexc) {
+			} catch (WebException) {
 				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -452,7 +452,7 @@ namespace System.Net
 #endif				
 				WebRequest request = SetupRequest (address, method, true);
 				return request.GetRequestStream ();
-			} catch (WebException wexc) {
+			} catch (WebException) {
 				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -602,7 +602,7 @@ namespace System.Net
 				async = false;
 #endif				
 				return UploadFileCore (address, method, fileName, null);
-			} catch (WebException wexc) {
+			} catch (WebException) {
 				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +
@@ -725,7 +725,7 @@ namespace System.Net
 				async = false;
 #endif				
 				return UploadValuesCore (address, method, data, null);
-			} catch (WebException wexc) {
+			} catch (WebException) {
 				throw;
 			} catch (Exception ex) {
 				throw new WebException ("An error occurred " +

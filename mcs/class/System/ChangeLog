@@ -1,3 +1,7 @@
+2010-03-19  Miguel de Icaza  <miguel@novell.com>
+
+	* Eliminate warnings in a bunch of places.
+
 2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* moonlight_*_System.dll.sources: Bring extra types so we can

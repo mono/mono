@@ -288,7 +288,6 @@ namespace System.Net.NetworkInformation {
 			ping.StartInfo.RedirectStandardOutput = true;
 			ping.StartInfo.RedirectStandardError = true;
 
-			DateTime start = DateTime.UtcNow;
 			try {
 				ping.Start ();
 

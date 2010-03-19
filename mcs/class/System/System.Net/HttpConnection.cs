@@ -229,7 +229,7 @@ namespace System.Net {
 			try {
 				line = ReadLine (buffer, position, len - position, ref used);
 				position += used;
-			} catch (Exception e) {
+			} catch {
 				context.ErrorMessage = "Bad request";
 				context.ErrorStatus = 400;
 				return true;
@@ -267,7 +267,7 @@ namespace System.Net {
 				try {
 					line = ReadLine (buffer, position, len - position, ref used);
 					position += used;
-				} catch (Exception e) {
+				} catch {
 					context.ErrorMessage = "Bad request";
 					context.ErrorStatus = 400;
 					return true;

@@ -863,14 +863,14 @@ public sealed class TypeDescriptor
 		if (instance == null)
 			throw new ArgumentNullException ("instance");
 
-		bool removed = false;
+		//bool removed = false;
 		lock (componentDescriptionProvidersLock) {
 			LinkedList <TypeDescriptionProvider> plist;
 			WeakObjectWrapper instanceWrapper = new WeakObjectWrapper (instance);
 
 			if (componentDescriptionProviders.TryGetValue (instanceWrapper, out plist) && plist.Count > 0) {
 				RemoveProvider (provider, plist);
-				removed = true;
+				//removed = true;
 			}
 			
 			instanceWrapper = null;

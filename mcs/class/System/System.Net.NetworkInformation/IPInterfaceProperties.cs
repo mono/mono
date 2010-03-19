@@ -80,7 +80,6 @@ namespace System.Net.NetworkInformation {
 			try {
 				gateways = new IPAddressCollection ();
 				using (StreamReader reader = new StreamReader ("/proc/net/route")) {
-					string str;
 					string line;
 					reader.ReadLine (); // Ignore first line
 					while ((line = reader.ReadLine ()) != null) {
