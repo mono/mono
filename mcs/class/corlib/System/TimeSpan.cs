@@ -726,6 +726,37 @@ namespace System
 				parse_error = error;
 			}
 
+			bool CheckParseSuccess (int hours, int minutes, int seconds, bool tryParse)
+			{
+				// FormatException has precedence over OverflowException starting with 4.0
+				// so put the block before/after properly.
+#if NET_4_0
+				if (parse_error == ParseError.Format) {
+					if (tryParse)
+						return false;
+					throw new FormatException (
+						Locale.GetText ("Invalid format for TimeSpan.Parse."));
+				}
+#endif
+				if (parse_error == ParseError.Overflow || hours > 23 || minutes > 59 || seconds > 59) {
+					if (tryParse)
+						return false;
+					throw new OverflowException (
+						Locale.GetText ("Invalid time data."));
+				}
+#if !NET_4_0
+				// Respect the Overflow precedence for 2.0, putting the format check last.
+				if (parse_error == ParseError.Format) {
+					if (tryParse)
+						return false;
+					throw new FormatException (
+						Locale.GetText ("Invalid format for TimeSpan.Parse."));
+				}
+#endif
+
+				return true;
+			}
+
 			public bool Execute (bool tryParse, out TimeSpan result)
 			{
 				bool sign;
@@ -778,19 +809,8 @@ namespace System
 				if (!AtEnd)
 					SetParseError (ParseError.Format);
 
-				// Overflow has presceance over FormatException
-				if (parse_error == ParseError.Overflow || hours > 23 || minutes > 59 || seconds > 59) {
-					if (tryParse)
-						return false;
-					throw new OverflowException (
-						Locale.GetText ("Invalid time data."));
-				}
-				if (parse_error == ParseError.Format) {
-					if (tryParse)
-						return false;
-					throw new FormatException (
-						Locale.GetText ("Invalid format for TimeSpan.Parse."));
-				}
+				if (!CheckParseSuccess (hours, minutes, seconds, tryParse))
+					return false;
 
 				long t;
 				if (!TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0, false, out t))

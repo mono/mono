@@ -1,3 +1,10 @@
+2010-03-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: Move the error detection code to a separate method.
+	This way depending on the version we decide what error takes
+	precedence: OverlowException in 2.0, and FormatException in 4.0. This
+	also lets us keep the Execute() code cleaner and easier to understand.
+
 2010-03-18  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpan.cs: Put the error info in a single field, to make it easier
