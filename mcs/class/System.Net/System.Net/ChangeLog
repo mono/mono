@@ -1,3 +1,12 @@
+2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebRequest_2_1.cs: AllowWriteStreamBuffering getter/setter
+	throws NIE by default (must be overridden). Revert Accept and
+	ContentType behavior to SL2 (identical to SL4 but different from
+	SL3). 
+	* WebClient_2_1.cs: Initialize UseDefaultCredentials to true. Set
+	the properties when creating a new WebRequest
+
 2010-03-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWebRequest_2_1.cs: Add SL4 RC AllowWriteStreamBuffering and

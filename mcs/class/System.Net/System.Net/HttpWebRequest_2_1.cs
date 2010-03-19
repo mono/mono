@@ -53,13 +53,7 @@ namespace System.Net {
 		public string Accept {
 			get { return Headers [HttpRequestHeader.Accept]; }
 			// this header cannot be set directly inside the collection (hence the helper)
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("Accept");
-				if (value.Length == 0)
-					throw new ArgumentException ("Accept");
-				Headers.SetHeader ("accept", value);
-			}
+			set { Headers.SetHeader ("accept", value); }
 		}
 
 		public virtual bool AllowReadStreamBuffering {
@@ -69,19 +63,14 @@ namespace System.Net {
 
 		// new in SL4 RC
 		public virtual bool AllowWriteStreamBuffering {
-			get; set;
+			get { throw NotImplemented (); }
+			set { throw NotImplemented (); }
 		}
 
 		public override string ContentType {
 			get { return Headers [HttpRequestHeader.ContentType]; }
 			// this header cannot be set directly inside the collection (hence the helper)
-			set {
-				if (value == null)
-					throw new ArgumentNullException ("ContentType");
-				if (value.Length == 0)
-					throw new ArgumentException ("ContentType");
-				Headers.SetHeader ("content-type", value);
-			}
+			set { Headers.SetHeader ("content-type", value); }
 		}
 
 		public virtual bool HaveResponse {

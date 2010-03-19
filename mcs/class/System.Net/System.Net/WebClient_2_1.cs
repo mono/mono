@@ -60,6 +60,7 @@ namespace System.Net {
 			// but it happens that MS SL2 also has this default .ctor as SSC :-)
 			baseAddress = (AppDomain.CurrentDomain.GetData ("xap_uri") as string);
 			locker = new object ();
+			UseDefaultCredentials = true;
 		}
 		
 		// Properties
@@ -548,7 +549,10 @@ namespace System.Net {
 			// if the URI is relative then we use our base address URI to make an absolute one
 			Uri uri = address.IsAbsoluteUri ? address : new Uri (new Uri (baseAddress), address);
 
-			WebRequest request = WebRequest.Create (uri);
+			HttpWebRequest request = (HttpWebRequest) WebRequest.Create (uri);
+			request.AllowReadStreamBuffering = AllowReadStreamBuffering;
+			request.AllowWriteStreamBuffering = AllowWriteStreamBuffering;
+			request.UseDefaultCredentials = UseDefaultCredentials;
 
 			request.progress = delegate (long read, long length) {
 				callback_data.sync_context.Post (delegate (object sender) {
