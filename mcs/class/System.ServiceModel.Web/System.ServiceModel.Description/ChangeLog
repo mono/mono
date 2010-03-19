@@ -1,3 +1,8 @@
+2010-03-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebHttpBehavior.cs : set FilterPriority to make it in higher
+	  priority than conflicting endpoints (such as mex endpoint).
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* WebHttpBehavior.cs: use MOONLIGHT symbol to

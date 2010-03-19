@@ -118,6 +118,7 @@ namespace System.ServiceModel.Description
 		{
 			endpointDispatcher.DispatchRuntime.OperationSelector = GetOperationSelector (endpoint);
 			// FIXME: get HostNameComparisonMode from WebHttpBinding by some means.
+			endpointDispatcher.FilterPriority = 1; // It is to take higher priority than that of ServiceMetadataExtension (whose URL likely conflicts with this one).
 			endpointDispatcher.AddressFilter = new PrefixEndpointAddressMessageFilter (endpoint.Address);
 			endpointDispatcher.ContractFilter = new MatchAllMessageFilter ();
 			AddServerErrorHandlers (endpoint, endpointDispatcher);
