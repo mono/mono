@@ -1,5 +1,10 @@
 2010-03-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (common_call_trampoline): Remove the condition guarding the
+	call site patching code, it doesn't appear to be needed.
+
+2010-03-19  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-generic-sharing.c: Add infrastructure for partial sharing, ie.
 	sharing generic methods whose type arguments are a mix of reference and
 	non-reference types. Not yet turned on.
