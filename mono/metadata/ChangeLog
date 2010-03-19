@@ -1,3 +1,11 @@
+
+Fri Mar 19 17:26:43 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* class.c: setup_interface_offsets() refactor to not call
+	mono_class_get_implemented_interfaces () more times than needed and
+	to reduce the runtime memory requirements to be O(num_interfaces)
+	instead of O(max_interface_id).
+
 2010-03-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-mlist.[ch]: add mono_mlist_set_next ().
