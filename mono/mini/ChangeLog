@@ -1,3 +1,9 @@
+
+Fri Mar 19 16:45:20 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mini.h, mini-exceptions.c: restore the state of the stack
+	guard page permissions.
+
 2010-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (common_call_trampoline): Remove the condition guarding the
