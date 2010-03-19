@@ -1,3 +1,7 @@
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeOffset.cs : fix parse failure on missing colon.
+	  Fixed bug #547675, patch by Santa Marta (see bugzilla).
 
 Fri Feb 19 09:05:36 CET 2010 Paolo Molaro <lupus@ximian.com>
 

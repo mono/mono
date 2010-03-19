@@ -1,3 +1,8 @@
+2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeOffsetTest.cs : add test for bug #547675.
+	  patch by Santa Marta.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SingleTest.cs : test for parsing MaxValue and PositiveInfinity.
