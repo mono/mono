@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP
 
 using System.IO;
 using System.Net.Sockets;
@@ -65,13 +65,9 @@ namespace System.Net {
 			if (secure == false) {
 				stream = new NetworkStream (sock, false);
 			} else {
-#if EMBEDDED_IN_1_0
-				throw new NotImplementedException ();
-#else
 				SslServerStream ssl_stream = new SslServerStream (new NetworkStream (sock, false), cert, false, false);
 				ssl_stream.PrivateKeyCertSelectionDelegate += OnPVKSelection;
 				stream = ssl_stream;
-#endif
 			}
 			Init ();
 		}

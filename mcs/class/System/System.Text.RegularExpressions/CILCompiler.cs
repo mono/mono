@@ -47,7 +47,7 @@ namespace System.Text.RegularExpressions {
 		static FieldInfo fi_stack = typeof (RxInterpreter).GetField ("stack", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static FieldInfo fi_mark_start = typeof (Mark).GetField ("Start", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 		static FieldInfo fi_mark_end = typeof (Mark).GetField ("End", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
-		static FieldInfo fi_mark_index = typeof (Mark).GetField ("Index", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
+		//static FieldInfo fi_mark_index = typeof (Mark).GetField ("Index", BindingFlags.Instance|BindingFlags.Public|BindingFlags.NonPublic);
 
 		static MethodInfo mi_stack_get_count, mi_stack_set_count, mi_stack_push, mi_stack_pop;
 		static MethodInfo mi_set_start_of_match, mi_is_word_char, mi_reset_groups;

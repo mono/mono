@@ -135,7 +135,7 @@ namespace System.Net.NetworkInformation {
 		protected IPInterfaceProperties ipproperties;
 		
 		string               name;
-		int                  index;
+		//int                  index;
 		protected List <IPAddress> addresses;
 		byte[]               macAddress;
 		NetworkInterfaceType type;
@@ -158,7 +158,7 @@ namespace System.Net.NetworkInformation {
 
 		internal void SetLinkLayerInfo (int index, byte[] macAddress, NetworkInterfaceType type)
 		{
-			this.index = index;
+			//this.index = index;
 			this.macAddress = macAddress;
 			this.type = type;
 		}
@@ -233,7 +233,7 @@ namespace System.Net.NetworkInformation {
 		const int AF_INET6  = 10;
 		const int AF_PACKET = 17;
 		
-		NetworkInterfaceType type;
+		//NetworkInterfaceType type;
 		string               iface_path;
 		string               iface_operstate_path;
 		string               iface_flags_path;		

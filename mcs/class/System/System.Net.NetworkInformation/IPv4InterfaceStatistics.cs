@@ -206,11 +206,11 @@ namespace System.Net.NetworkInformation {
 	// dummy class
 	class MacOsIPv4InterfaceStatistics : IPv4InterfaceStatistics
 	{
-		MacOsNetworkInterface macos;
+		//MacOsNetworkInterface macos;
 		
 		public MacOsIPv4InterfaceStatistics (MacOsNetworkInterface parent)
 		{
-			macos = parent;
+			//macos = parent;
 		}
 
 		public override long BytesReceived {

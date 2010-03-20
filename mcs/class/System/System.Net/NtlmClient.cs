@@ -43,6 +43,8 @@ namespace System.Net
 		{
 #if SECURITY_DEP
 			authObject = new Mono.Http.NtlmClient ();
+#else
+			authObject = null;
 #endif
 		}
 	

@@ -140,6 +140,9 @@ namespace System.Net.Mail {
 				if (cfg.From != null)
 					defaultFrom = new MailAddress (cfg.From);
 			}
+#else
+			// Just to eliminate the warning, this codepath does not end up in production.
+			defaultFrom = null;
 #endif
 
 			if (!String.IsNullOrEmpty (host))

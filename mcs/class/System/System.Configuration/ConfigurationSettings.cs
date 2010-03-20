@@ -240,7 +240,9 @@ namespace System.Configuration
 		public readonly string TypeName;
 		public readonly bool AllowLocation;
 		public readonly AllowDefinition AllowDefinition;
+#if XML_DEP
 		public string FileName;
+#endif
 		public readonly bool RequirePermission;
 
 		public SectionData (string sectionName, string typeName,
