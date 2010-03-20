@@ -1,5 +1,8 @@
 2010-03-20  Miguel de Icaza  <miguel@novell.com>
 
+	* WebConnection.cs: Drop pre-2.0 and pre-1.1 support, and remove
+	warnings. 
+
 	* WebClient.cs: Drop the pre-2.0 support
 
 2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
