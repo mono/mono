@@ -1,3 +1,7 @@
+2010-03-20  Miguel de Icaza  <miguel@novell.com>
+
+	* Uri.cs: Drop pre-2.0 support
+
 2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Uri.cs: Remove some MOONLIGHT defines
