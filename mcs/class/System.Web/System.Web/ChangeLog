@@ -1,3 +1,8 @@
+2010-03-20  Marek Habersack  <mhabersack@novell.com>
+
+	* SiteMapNode.cs: avoid calling ChildNodes twice in HasChildNodes.
+	Cache child nodes in the ChildNodes property.
+
 2010-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: cache RawUrl value.

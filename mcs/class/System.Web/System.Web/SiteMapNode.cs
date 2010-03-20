@@ -91,7 +91,10 @@ namespace System.Web {
 		}
 
 		public virtual bool HasChildNodes {
-			get { return ChildNodes != null && ChildNodes.Count != 0; }
+			get {
+				SiteMapNodeCollection childNodes = ChildNodes;
+				return childNodes != null && childNodes.Count > 0;
+			}
 		}
 
 		public SiteMapNodeCollection GetAllNodes ()
@@ -172,18 +175,11 @@ namespace System.Web {
 			}
 		}
 
-		internal SiteMapNodeCollection ChildNodesInternal {
-			get {
-				if (childNodes == null)
-					childNodes = new SiteMapNodeCollection ();
-				return childNodes;
-			}
-		}
-
 		public virtual SiteMapNodeCollection ChildNodes {
 			get {
-				if (childNodes != null) return childNodes;
-				return provider.GetChildNodes (this);
+				if (childNodes == null)
+					childNodes = provider.GetChildNodes (this);
+				return childNodes;
 			} 
 			set {
 				CheckWritable ();

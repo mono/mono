@@ -249,8 +249,8 @@ namespace MonoTests.System.Web
 			Assert.AreEqual (provider.RootNode.Provider, provider, "#A2");
 			Assert.IsNotNull (provider.CallTrace, "#A3");
 			Assert.Greater (provider.CallTrace.Length, 1, "#A3-1");
-			Assert.AreEqual (provider.CallTrace[0].Name, "BuildSiteMap", "#A3-2");
-			Assert.AreEqual (provider.CallTrace[1].Name, "get_RootNode", "#A3-3");
+			Assert.AreEqual ("BuildSiteMap", provider.CallTrace[0].Name, "#A3-2");
+			Assert.AreEqual ("get_RootNode", provider.CallTrace[1].Name, "#A3-3");
 		}
 
 		[Test]
