@@ -45,11 +45,9 @@ namespace System.CodeDom
 		private CodeTypeReference returnType;
 		private CodeStatementCollection statements;
 		private CodeAttributeDeclarationCollection returnAttributes;
-		int populated;
+		//int populated;
 
-#if NET_2_0
 		CodeTypeParameterCollection typeParameters;
-#endif
 		//
 		// Constructors
 		//
@@ -122,7 +120,6 @@ namespace System.CodeDom
 			}
 		}
 
-#if NET_2_0
 		[ComVisible (false)]
 		public CodeTypeParameterCollection TypeParameters {
 			get {
@@ -131,7 +128,6 @@ namespace System.CodeDom
 				return typeParameters;
 			}
 		}
-#endif
 
 		//
 		// Events

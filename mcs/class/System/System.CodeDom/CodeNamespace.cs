@@ -40,10 +40,10 @@ namespace System.CodeDom
 	{
 		private CodeCommentStatementCollection comments;
 		private CodeNamespaceImportCollection imports;
-		private CodeNamespaceCollection namespaces;
+		//private CodeNamespaceCollection namespaces;
 		private CodeTypeDeclarationCollection classes;
 		private string name;
-		int populated;
+		//int populated;
 
 		//
 		// Constructors
