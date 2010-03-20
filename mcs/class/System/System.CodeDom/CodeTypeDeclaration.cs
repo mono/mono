@@ -46,7 +46,7 @@ namespace System.CodeDom
 		private TypeAttributes attributes = TypeAttributes.Public;
 		private bool isEnum;
 		private bool isStruct;
-		int populated;
+		//int populated;
 
 #if NET_2_0
 		bool isPartial;

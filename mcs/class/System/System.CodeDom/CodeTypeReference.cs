@@ -43,7 +43,7 @@ namespace System.CodeDom
 		private CodeTypeReference arrayElementType;
 		private int arrayRank;
 		private bool isInterface;
-		bool needsFixup;
+		//bool needsFixup;
 
 #if NET_2_0
 		CodeTypeReferenceCollection typeArguments;
