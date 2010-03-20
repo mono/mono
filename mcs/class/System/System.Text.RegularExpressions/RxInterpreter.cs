@@ -1,6 +1,9 @@
 
 // Based upon interpreter.cs, written by Dan Lewis (dlewis@gmx.co.uk)
-
+//
+// There are a couple of bits flagged with DEAD_CODE which are bits that do
+// not seem to have been completed
+//
 using System;
 using System.Collections;
 using System.Globalization;
@@ -899,7 +902,7 @@ namespace System.Text.RegularExpressions {
 				
 				case RxOp.CategoryAnySingleline:
 					if (strpos < string_end) {
-						char c = str [strpos];
+						// char c = str [strpos];
 						if ((true)) {
 							strpos ++;
 							if (char_group_end != 0)
@@ -1258,6 +1261,7 @@ namespace System.Text.RegularExpressions {
 					return false;
 				case RxOp.NoCategoryAnySingleline:
 					if (strpos < string_end) {
+#if DEAD_CODE
 						char c = str [strpos];
 						if (!(true)) {
 							pc += 1;
@@ -1268,6 +1272,7 @@ namespace System.Text.RegularExpressions {
 							}
 							continue;
 						}
+#endif
 					}
 					return false;
 				case RxOp.NoCategoryWord:
@@ -1575,7 +1580,7 @@ namespace System.Text.RegularExpressions {
 					continue;
 				case RxOp.CategoryAnySinglelineReverse:
 					if (strpos > 0) {
-						char c = str [strpos - 1];
+						//char c = str [strpos - 1];
 						if ((true)) {
 							strpos --;
 							if (char_group_end != 0)
@@ -1904,6 +1909,7 @@ namespace System.Text.RegularExpressions {
 					return false;
 				case RxOp.NoCategoryAnySinglelineReverse:
 					if (strpos > 0) {
+#if DEAD_CODe
 						char c = str [strpos - 1];
 						if (!(true)) {
 							pc += 1;
@@ -1914,6 +1920,7 @@ namespace System.Text.RegularExpressions {
 							}
 							continue;
 						}
+#endif
 					}
 					return false;
 				case RxOp.NoCategoryWordReverse:
