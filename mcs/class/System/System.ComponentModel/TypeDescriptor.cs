@@ -889,13 +889,11 @@ public sealed class TypeDescriptor
 		if (type == null)
 			throw new ArgumentNullException ("type");
 
-		bool removed = false;
 		lock (typeDescriptionProvidersLock) {
 			LinkedList <TypeDescriptionProvider> plist;
 
 			if (typeDescriptionProviders.TryGetValue (type, out plist) && plist.Count > 0) {
 				RemoveProvider (provider, plist);
-				removed = true;
 			}
 		}
 
