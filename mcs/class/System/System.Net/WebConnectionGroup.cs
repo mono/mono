@@ -59,7 +59,7 @@ namespace System.Net
 				WeakReference cncRef = null;
 
 				int end = connections.Count;
-				ArrayList removed = null;
+				// ArrayList removed = null;
 				for (int i = 0; i < end; i++) {
 					cncRef = (WeakReference) connections [i];
 					WebConnection cnc = cncRef.Target as WebConnection;
