@@ -663,7 +663,6 @@ namespace System.Net.Sockets
 			IList currentList = checkRead;
 			int currentIdx = 0;
 			for (int i = 0; i < count; i++) {
-				Socket cur_sock;
 				Socket sock = sockets [i];
 				if (sock == null) { // separator
 					if (currentList != null) {
@@ -685,7 +684,7 @@ namespace System.Net.Sockets
 
 				// Remove non-signaled sockets before the current one
 				//int max = currentList.Count;
-				while ((cur_sock = (Socket) currentList [currentIdx]) != sock) {
+				while (((Socket) currentList [currentIdx]) != sock) {
 					currentList.RemoveAt (currentIdx);
 				}
 				currentIdx++;
