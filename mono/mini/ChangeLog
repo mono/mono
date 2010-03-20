@@ -1,3 +1,8 @@
+
+Sat Mar 20 11:56:24 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* method-to-ir.c: remove code duplication for interface checks.
+
 2010-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (clear_event_requests_for_assembly): New helper function.
