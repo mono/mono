@@ -730,26 +730,36 @@ namespace System.Net
 
 		Uri CreateUri (string address)
 		{
-			return MakeUri (address);
+			Uri uri;
+			try {
+				if (baseAddress == null)
+					uri = new Uri (address);
+				else
+					uri = new Uri (baseAddress, address);
+				return CreateUri (uri);
+			} catch {
+			}
+			return new Uri (Path.GetFullPath (address));
 		}
 
 		Uri CreateUri (Uri address)
 		{
-			string query = address.Query;
+			Uri result = address;
+			if (baseAddress != null && !result.IsAbsoluteUri) {
+				try {
+					result = new Uri (baseAddress, result.OriginalString);
+				} catch {
+					return result; // Not much we can do here.
+				}
+			}
+
+			string query = result.Query;
 			if (String.IsNullOrEmpty (query))
 				query = GetQueryString (true);
-
-			if (baseAddress == null && query == null)
-				return address;
-
-			if (baseAddress == null)
-				return new Uri (address.ToString () + query, (query != null));
-
-			if (query == null)
-				return new Uri (baseAddress, address.ToString ());
-
-			return new Uri (baseAddress, address.ToString () + query, (query != null));
-
+			UriBuilder builder = new UriBuilder (address);
+			if (!String.IsNullOrEmpty (query))
+				builder.Query = query.Substring (1);
+			return builder.Uri;
 		}
 
 		string GetQueryString (bool add_qmark)
@@ -773,30 +783,6 @@ namespace System.Net
 			return sb.ToString ();
 		}
 
-		Uri MakeUri (string path)
-		{
-			string query = GetQueryString (true);
-			if (baseAddress == null && query == null) {
-				try {
-					return new Uri (path);
-				} catch (ArgumentNullException) {
-					path = Path.GetFullPath (path);
-					return new Uri ("file://" + path);
-				} catch (UriFormatException) {
-					path = Path.GetFullPath (path);
-					return new Uri ("file://" + path);
-				}
-			}
-
-			if (baseAddress == null)
-				return new Uri (path + query, (query != null));
-
-			if (query == null)
-				return new Uri (baseAddress, path);
-
-			return new Uri (baseAddress, path + query, (query != null));
-		}
-		
 		WebRequest SetupRequest (Uri uri)
 		{
 			WebRequest request = GetWebRequest (uri);

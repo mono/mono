@@ -1,3 +1,8 @@
+2010-03-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* WebClient.cs: fix handling of query string, whether it comes from
+	the address used or is part of the QueryString.
+
 2010-03-20  Miguel de Icaza  <miguel@novell.com>
 
 	* WebConnection.cs: Drop pre-2.0 and pre-1.1 support, and remove
