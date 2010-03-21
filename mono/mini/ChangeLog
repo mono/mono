@@ -1,5 +1,10 @@
 2010-03-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (SIG_HANDLER_SIGNATURE): Fix the build on platforms without sigaction
+	(openbsd+amd64 ?).
+
+2010-03-21  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-ppc.c (mono_arch_emit_exceptions): Avoid an assert in ppc_patch () for
 	some large methods with lots of exception handlers. Fixes #440924.
 
