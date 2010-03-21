@@ -1,3 +1,8 @@
+2010-03-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c (mono_arch_emit_exceptions): Avoid an assert in ppc_patch () for
+	some large methods with lots of exception handlers. Fixes #440924.
+
 2010-03-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (clear_event_requests_for_assembly): New helper function.
