@@ -1,3 +1,8 @@
+2010-03-22  Geoff Norton  <gnorton@novell.com>
+
+	* locales.c: Its possible for CFStringGetCStringPtr
+	to return null and not convert encodings.  Use
+	CFStringGetCString instead.
 
 Mon Mar 22 18:06:38 CET 2010 Paolo Molaro <lupus@ximian.com>
 
