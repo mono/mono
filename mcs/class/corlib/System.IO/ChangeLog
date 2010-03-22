@@ -1,3 +1,9 @@
+2010-03-22  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Directory.cs, DirectoryInfo.cs: Disble new NET_4_0 API used in
+	SL4 until we have elevated trust working correctly (since they 
+	are *not* decorated as [SecurityCritical])
+
 2010-03-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StreamReader.cs: if the detected encoding is different from the

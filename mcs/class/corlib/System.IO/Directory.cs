@@ -522,6 +522,14 @@ namespace System.IO
 			return result;
 		}
 
+		internal static void ValidatePath (string path)
+		{
+#if MOONLIGHT
+			// On Moonlight (SL4+) this is possible, with limitations, in "Elevated Trust"
+			throw new SecurityException ("we're not ready to enable this SL4 feature yet");
+#endif
+		}
+
 #if NET_4_0 || MOONLIGHT
 		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
@@ -539,6 +547,8 @@ namespace System.IO
 
 			if (searchOption != SearchOption.TopDirectoryOnly && searchOption != SearchOption.AllDirectories)
 				throw new ArgumentOutOfRangeException ("searchoption");
+
+			ValidatePath (path);
 
 			bool stop;
 			string path_with_pattern = ValidateDirectoryListing (path, searchPattern, out stop);

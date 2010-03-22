@@ -431,6 +431,8 @@ namespace System.IO {
 			MonoIOError error;
 			FileAttributes rattr;
 			bool subdirs = searchOption == SearchOption.AllDirectories;
+
+			Directory.ValidatePath (full); // required for Moonlight, nop-op otherwise
 			
 			string s = MonoIO.FindFirst (full, path_with_pattern, out rattr, out error, out handle);
 			if (s == null)
