@@ -1,4 +1,11 @@
 
+Mon Mar 22 18:06:38 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* class-internals.h, class.c, object.c: introduce compressed
+	interface bitmaps (for now only under small config): this saves
+	about 600 KB of runtime memory on gmcs bootstraps or monodevelop
+	startups.
+
 Mon Mar 22 16:03:34 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 	* mono-debug.c: don't try to get the method header, it causes a
