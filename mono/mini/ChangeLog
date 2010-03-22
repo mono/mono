@@ -1,3 +1,9 @@
+
+Mon Mar 22 18:09:09 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mini.c, method-to-ir.c: changes to support compressed interface
+	bitmaps.
+
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.h: Applied patch from Robert Nagy (Robert@openbsd.org).
