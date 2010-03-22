@@ -1739,7 +1739,8 @@ mono_method_get_marshal_info (MonoMethod *method, MonoMarshalSpec **mspecs)
 			for (i = 0; i < mono_method_signature (method)->param_count + 1; ++i)
 				if (dyn_specs [i]) {
 					mspecs [i] = g_new0 (MonoMarshalSpec, 1);
-					memcpy (mspecs [i], dyn_specs [i], sizeof (MonoMarshalSpec));
+					mspecs [i]->data.custom_data.custom_name = g_strdup (dyn_specs [i]->data.custom_data.custom_name);
+					mspecs [i]->data.custom_data.cookie = g_strdup (dyn_specs [i]->data.custom_data.cookie);
 				}
 		}
 		return;

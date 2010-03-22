@@ -1,3 +1,9 @@
+2010-03-04  Geoff Norton  <gnorton@novell.com>
+
+	* loader.c: The marshal specs are freed at the end of the call
+	but it explicitly frees the strings as well as the container,
+	so we need to dup them too to avoid referencing free'd memory.
+
 2010-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* object-internals.h (_G_BOOLEAN_EXPR): Fix the definition of this to explicitly
