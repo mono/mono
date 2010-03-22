@@ -1,3 +1,9 @@
+2010-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c: Add support for OpenBSD which has no UCONTEXT_GREGS.
+
+	* mini-amd64.h: Enable MONO_ARCH_USE_SIGACTION on OpenBSD as well.
+
 2010-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-exceptions.c (mono_handle_exception_internal): Don't
