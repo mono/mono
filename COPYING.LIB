@@ -1,6 +1,16 @@
 
 The Mono runtime is licensed under the terms of the GNU 
 Library General Public License, version 2.
+
+The eglib directory is licensed under the terms of the MIT
+X11 license and is a drop-in replacement for Mono's use of
+glib 2.0 (which was LGPL).
+
+The Boehm licensing information is in the libgc directory
+
+The SGen Garbage Collector is under the terms of the MIT X11
+license
+
 		  
 		GNU LIBRARY GENERAL PUBLIC LICENSE
 		       Version 2, June 1991
