@@ -1,3 +1,8 @@
+2010-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_method_get_marshal_info): Fix the handling of dynamic methods
+	broken by the last change.
+
 2010-03-21  Andreas Färber  <andreas.faerber@web.de>
 
 	* socket-io.c: Don't depend on AF_SNA, AF_DECnet,
