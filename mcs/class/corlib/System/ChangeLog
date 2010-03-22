@@ -1,3 +1,11 @@
+2010-03-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: Create a new Parser.Execute method for 4.0 -and use the
+	previous impl for 2.0-, to handle the new semantics gracefully -
+	specifically the new 'dd:hh:mm:ss' format and related bits, instead of
+	of a ton of #ifdef blocks. Remove any 4.0 bits from the previous
+	version as well, to keep it clean.
+
 2010-03-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpan.cs: Move the error detection code to a separate method.

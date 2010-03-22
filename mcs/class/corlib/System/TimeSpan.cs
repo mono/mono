@@ -647,6 +647,10 @@ namespace System
 
 				if (!optional && (count == 0))
 					SetParseError (ParseError.Format);
+#if NET_4_0
+				if (count > 0)
+					parsed_numbers_count++;
+#endif
 
 				return (int)res;
 			}
@@ -665,6 +669,21 @@ namespace System
 			}	
 
 #if NET_4_0
+			// This behaves pretty much like ParseOptDot, but we need to have it
+			// as a separated routine for both days and decimal separators.
+			private bool ParseOptDaysSeparator ()
+			{
+				if (AtEnd)
+					return false;
+
+				if (_src[_cur] == '.') {
+					_cur++;
+					parsed_days_separator = true;
+					return true;
+				}
+				return false;
+			}
+
 			// Just as ParseOptDot, but for decimal separator
 			private bool ParseOptDecimalSeparator ()
 			{
@@ -757,6 +776,109 @@ namespace System
 				return true;
 			}
 
+#if NET_4_0
+			int parsed_numbers_count;
+			bool parsed_days_separator;
+
+			// We are using a different parse approach in 4.0, due to some changes in the behaviour
+			// of the parse routines.
+			// The input string is documented as:
+			// 	Parse [ws][-][dd.]hh:mm:ss[.ff][ws]
+			//
+			// There are some special cases as part of 4.0, however:
+			// 1. ':' *can* be used as days separator, instead of '.', making valid the format 'dd:hh:mm:ss'
+			// 2. A input in the format 'hh:mm:ss' will end up assigned as 'dd.hh:mm' if the first int has a value
+			// exceeding the valid range for hours: 0-23.
+			// 3. The decimal separator can be retrieved from the current culture, as well as keeping support
+			// for the '.' value as part of keeping compatibility.
+			//
+			// So we take the approach to parse, if possible, 4 integers, and depending on both how many were
+			// actually parsed and what separators were read, assign the values to days/hours/minutes/seconds.
+			//
+			public bool Execute (bool tryParse, out TimeSpan result)
+			{
+				bool sign;
+				int value1, value2, value3, value4;
+				int days, hours, minutes, seconds;
+				long ticks = 0;
+
+				result = TimeSpan.Zero;
+				value1 = value2 = value3 = value4 = 0;
+				days = hours = minutes = seconds = 0;
+
+				ParseWhiteSpace ();
+				sign = ParseSign ();
+
+				// Parse 4 integers, making only the first one non-optional.
+				value1 = ParseInt (false);
+				if (!ParseOptDaysSeparator ()) // Parse either day separator or colon
+					ParseColon (false);
+				value2 = ParseInt (true);
+				ParseColon (true);
+				value3 = ParseInt (true);
+				ParseColon (true);
+				value4 = ParseInt (true);
+
+				// We know the precise separator for ticks, so there's no need to guess.
+				if (ParseOptDecimalSeparator ())
+					ticks = ParseTicks ();
+
+				ParseWhiteSpace ();
+
+				if (!AtEnd)
+					SetParseError (ParseError.Format);
+
+				switch (parsed_numbers_count) {
+					case 1:
+						days = value1;
+						break;
+					case 2: // Two elements are valid only if they are *exactly* in the format: 'hh:mm'
+						if (parsed_days_separator)
+							SetParseError (ParseError.Format);
+						else {
+							hours = value1;
+							minutes = value2;
+						}
+						break;
+					case 3: // Assign the first value to days if we parsed a day separator or the value
+						// is not in the valid range for hours.
+						if (parsed_days_separator || value1 > 23) {
+							days = value1;
+							hours = value2;
+							minutes = value3;
+						} else {
+							hours = value1;
+							minutes = value2;
+							seconds = value3;
+						}
+						break;
+					case 4: // We are either on 'dd.hh:mm:ss' or 'dd:hh:mm:ss'
+						days = value1;
+						hours = value2;
+						minutes = value3;
+						seconds = value4;
+						break;
+				}
+
+				if (!CheckParseSuccess (hours, minutes, seconds, tryParse))
+					return false;
+
+				long t;
+				if (!TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0, false, out t))
+					return false;
+
+				try {
+					t = checked ((sign) ? (-t - ticks) : (t + ticks));
+				} catch (OverflowException) {
+					if (tryParse)
+						return false;
+					throw;
+				}
+
+				result = new TimeSpan (t);
+				return true;
+			}
+#else
 			public bool Execute (bool tryParse, out TimeSpan result)
 			{
 				bool sign;
@@ -778,14 +900,6 @@ namespace System
 				if (ParseOptDot ()) {
 					hours = ParseInt (true);
 				}
-#if NET_4_0
-				// if the value that was going to be used as 'hours' exceeds the range,
-				// .net keeps it as days, even if there's a colon instead of a dot ahead
-				else if (days > 23) {
-					ParseColon (false);
-					hours = ParseInt (true);
-				}
-#endif
 				else if (!AtEnd) {
 					hours = days;
 					days = 0;
@@ -794,11 +908,8 @@ namespace System
 				minutes = ParseInt (true);
 				ParseColon (true);
 				seconds = ParseInt (true);
-#if NET_4_0
-				if ( ParseOptDecimalSeparator () ) {
-#else
+
 				if ( ParseOptDot () ) {
-#endif
 					ticks = ParseTicks ();
 				}
 				else {
@@ -827,6 +938,7 @@ namespace System
 				result = new TimeSpan (t);
 				return true;
 			}
+#endif
 		}
 	}
 }
