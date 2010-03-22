@@ -1,3 +1,9 @@
+
+Mon Mar 22 16:03:34 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mono-debug.c: don't try to get the emthod ehader, it causes a
+	deadlock and it is not used for anything anymore.
+
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_method_get_marshal_info): Fix the handling of dynamic methods
