@@ -1,7 +1,11 @@
+2010-03-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (event_req_matches_assembly): Handle request modifiers too.
+
 2010-03-21  Andreas Faerber  <andreas.faerber@web.de>
 
 	* debugger-agent.c: #include sys/select.h for fd_set.
-	
+
 	Code is contributed under MIT/X11 license.
 
 2010-03-21  Zoltan Varga  <vargaz@gmail.com>
