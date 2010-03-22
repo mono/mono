@@ -1,5 +1,9 @@
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mono-sigcontext.h: Define UCONTEXT accessors for openbsd/amd64.
+
+2010-03-22  Zoltan Varga  <vargaz@gmail.com>
+
 	* mono-sigcontext.h: Applied patch from Robert Nagy (Robert@openbsd.org).
 	Add OpenBSD definitions.
 
