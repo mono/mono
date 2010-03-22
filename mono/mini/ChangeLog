@@ -1,5 +1,13 @@
 2010-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini-exceptions.c (mono_handle_exception_internal): Don't
+	check try_end for archs different than s390. 
+
+	* mini.c (create_jit_info): Don't crash if the finallt block is the
+	last one.
+
+2010-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* driver.c (mono_main): Don't free global codeman under linux since
 	glic now peeks at code on stack for more archs than just amd64.
 
