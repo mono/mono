@@ -1,3 +1,7 @@
+2010-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* driver.c (mono_main): Don't free global codeman under linux since
+	glic now peeks at code on stack for more archs than just amd64.
 
 Mon Mar 22 18:09:09 CET 2010 Paolo Molaro <lupus@ximian.com>
 
