@@ -1,3 +1,8 @@
+2010-03-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: Add some new assertions for old/new stuff in
+	TimeSpan.
+
 2010-03-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpanTest.cs: It seems somebody forgot to actually mark the

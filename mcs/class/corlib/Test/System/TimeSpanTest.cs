@@ -804,6 +804,7 @@ public class TimeSpanTest {
 #endif
 
 		ParseHelper ("-21.23:59:59.9999999", false, false, "-21.23:59:59.9999999");
+		ParseHelper ("10:12  ", false, false, "10:12:00");
 		ParseHelper ("aaa", true, false, "dontcare");
 
 		ParseHelper ("100000000000000.1:1:1", false, true, "dontcare");
@@ -813,6 +814,7 @@ public class TimeSpanTest {
 		// In 4.0 we get an overflow exception here, as opposed to a successful operation in 2.0,
 		// due to more than one preceding zero.
 		ParseHelper ("0001:0002:0003.12     ", false, true, "dontcare");
+		ParseHelper ("01:02:03.12    ", false, false, "01:02:03.1200000");
 #else
 		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
 #endif
@@ -824,7 +826,10 @@ public class TimeSpanTest {
 		ParseHelper (" 1:2:3:12345678 ", true, false, "dontcare"); 
 #endif
 
-#if NET_4_0
+#if NET_4_0		
+		ParseHelper ("10:11:12:13", false, false, "10.11:12:13"); // Days using : instead of . as separator
+		ParseHelper ("10.11", true, false, "dontcare"); // days+hours is invalid
+
 		// Force the use of french culture -which is using a non common NumberDecimalSeparator-
 		// as current culture, to show that the Parse method is *actually* being culture sensitive
 		// *and* also keeping the compatibility with '.'
