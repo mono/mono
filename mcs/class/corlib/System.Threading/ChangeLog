@@ -1,3 +1,8 @@
+2010-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Monitor.cs: Implement new NET_4_0 (and SL4) Enter overload 
+	required to run some DRT tests (e.g. 7007)
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* ThreadPool.cs, Thread.cs, ExecutionContext.cs: use MOONLIGHT

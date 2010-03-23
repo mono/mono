@@ -176,5 +176,19 @@ namespace System.Threading
 				if (exitContext) SynchronizationAttribute.EnterContext ();
 			}
 		}
+
+#if NET_4_0 || MOONLIGHT
+		public static void Enter (object obj, ref bool lockTaken)
+		{
+			if (obj == null)
+				throw new ArgumentNullException ("obj");
+			if (lockTaken)
+				throw new ArgumentException ("lockTaken");
+
+			Enter (obj);
+			// if Enter throws then lockTaken will be false
+			lockTaken = true;
+		}
+#endif
 	}
 }
