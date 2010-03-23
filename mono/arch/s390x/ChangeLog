@@ -1,3 +1,7 @@
+2010-03-23	Neale Ferguson <neale@sinenomine.net>
+	
+	* s390x-codegen.h: Remove duplicate
+
 2009-06-24	Neale Ferguson <neale@sinenomine.net>
 	
 	* s390x-codegen.h: Add some new instructions.

@@ -24,7 +24,7 @@ A small note on the choice of magic_reg for different JIT backends: the IMT
 method identifier doesn't necessarily need to be stored in a register, though
 doing so is fast and the JIT code has already the infrastructure to handle this
 case in an arch-independent way. A JIT porter just needs to #define
-MONO_ARCH_IMT_REG to the choosen register. Note that this register should be
+MONO_ARCH_IMT_REG to the chosen register. Note that this register should be
 part of the MONO_ARCH_CALLEE_REGS set as it will be handled by the local register
 allocator (see mini/inssel.brg) and it must not be part of the registers used for
 argument passing as you'd overwrite an argument in that case.
@@ -72,7 +72,7 @@ the IMT slot was asked to execute an interface method that the type doesn't impl
 In the future we might want to handle this case not with a breakpoint or assert, but
 by either throwing an InvalidCast exception or by going into the runtime and
 adding support for the interface automagically to the type/vtable: this could be used
-both for tranparent proxies and for the implicit interfaces that vectors in 2.0
+both for transparent proxies and for the implicit interfaces that vectors in 2.0
 provide.
 
 For a bisect check the code is even simpler:
@@ -131,7 +131,7 @@ called the magic trampoline will fill-in the IMT slot with the proper thunk or
 trampoline, so later calls will use the fast path.
 This single-instance trampoline will use MONO_FAKE_IMT_METHOD as the method
 it's asking to be compiled and executed: the trampoline code does recognize
-this special value and retrives the interface method to call from the usual
+this special value and retrieves the interface method to call from the usual
 MONO_ARCH_IMT_REG saved by the trampoline code.
 Given that only the IMT slots that are actually used will be initialized, this saves
 quite a bit of memory, as it's unlikely that all the interface methods are called on

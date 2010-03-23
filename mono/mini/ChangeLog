@@ -1,3 +1,21 @@
+2010-03-23  Neale Ferguson <neale@sinenomine.net>
+
+	* exceptions-s390x.c: Add support for mono_arch_get_throw_corlib_exception and fix throw by
+	name.
+
+	* mini-s390x.c: Add IMT support; Fix stack parameter passing logic (especially for varargs);
+	Correct localloc sizing; Add mono_arch_get_this_arg_from_call and
+	mono_arch_get_this_arg_from_call.
+
+	* mini-s390x.h: Add support for facility list extraction; Correct/update MONO_ARCH_xxx settings.
+
+	* mini-s390.c: Minor corrections to instruction output for varargs. No IMT implementation - I 
+	think it's time to deprecate s390 and just leave s390x.
+
+	* tramp-s390x.c: Correct creation of trampoline instruction emission.
+
+	* cpu-s390x.md: Update some instruction lengths
+
 2010-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-generic-sharing.c (fill_in_rgctx_template_slot): Remove an assert which
