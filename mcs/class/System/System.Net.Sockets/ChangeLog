@@ -1,3 +1,8 @@
+2010-03-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: error handling was totally broken in the synchronous
+	Connect() call.  Fixes bug #590488.
+
 2009-11-03 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket_2_1.cs: stop any blocking thread before closing the socket.

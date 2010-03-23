@@ -2236,11 +2236,10 @@ namespace System.Net.Sockets
 				throw new InvalidOperationException ();
 
 			/* FIXME: do non-blocking sockets Poll here? */
+			int error = 0;
 			foreach (IPAddress address in addresses) {
-				IPEndPoint iep = new IPEndPoint (address,
-								 port);
+				IPEndPoint iep = new IPEndPoint (address, port);
 				SocketAddress serial = iep.Serialize ();
-				int error = 0;
 				
 				Connect_internal (socket, serial, out error);
 				if (error == 0) {
@@ -2254,14 +2253,16 @@ namespace System.Net.Sockets
 				
 				if (!blocking) {
 					Poll (-1, SelectMode.SelectWrite);
-					int success = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
-					if (success == 0) {
+					error = (int)GetSocketOption (SocketOptionLevel.Socket, SocketOptionName.Error);
+					if (error == 0) {
 						connected = true;
 						seed_endpoint = iep;
 						return;
 					}
 				}
 			}
+			if (error != 0)
+				throw new SocketException (error);
 		}
 
 		public void Connect (string host, int port)
