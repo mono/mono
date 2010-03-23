@@ -18,6 +18,11 @@
 							<pattern>dd-MM-yyyy</pattern>
 						</dateFormat>
 					</dateFormatLength >
+                                        <dateFormatLength type="month_day">
+                                                <dateFormat>
+                                                        <pattern>dd. MMMM</pattern>
+                                                </dateFormat>
+                                        </dateFormatLength>
 				</dateFormats>
 				<timeFormats>
 					<timeFormatLength type="long">
