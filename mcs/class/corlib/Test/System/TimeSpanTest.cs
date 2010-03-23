@@ -12,6 +12,7 @@
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.Threading;
 
 namespace MonoTests.System
 {
@@ -787,21 +788,57 @@ public class TimeSpanTest {
 		}
 	}
 
+	[Test]
 	public void TestParse ()
 	{
 		ParseHelper (" 13:45:15 ",false, false, "13:45:15");
 		ParseHelper (" -1:2:3 ", false, false, "-01:02:03");
 
+#if NET_4_0
+		// In 4.0 when the first part is out of range, it parses it as day.
+		ParseHelper (" 25:11:12 ", false, false, "25.11:12:00");
+		ParseHelper (" 24:11:12 ", false, false, "24.11:12:00");
+		ParseHelper (" 23:11:12 ", false, false, "23:11:12");
+#else
 		ParseHelper (" 25:0:0 ",false, true, "dontcare");
-		ParseHelper ("aaa", true, false, "dontcare");
+#endif
 
 		ParseHelper ("-21.23:59:59.9999999", false, false, "-21.23:59:59.9999999");
+		ParseHelper ("aaa", true, false, "dontcare");
 
 		ParseHelper ("100000000000000.1:1:1", false, true, "dontcare");
 		ParseHelper ("24:60:60", false, true, "dontcare");
-		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
 
+#if NET_4_0
+		// In 4.0 we get an overflow exception here, as opposed to a successful operation in 2.0,
+		// due to more than one preceding zero.
+		ParseHelper ("0001:0002:0003.12     ", false, true, "dontcare");
+#else
+		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
+#endif
+
+#if NET_4_0
+		// In 4.0 when a section has more than 7 digits an OverflowException is thrown.
+		ParseHelper (" 1:2:3:12345678 ", false, true, "dontcare");
+#else
 		ParseHelper (" 1:2:3:12345678 ", true, false, "dontcare"); 
+#endif
+
+#if NET_4_0
+		// Force the use of french culture -which is using a non common NumberDecimalSeparator-
+		// as current culture, to show that the Parse method is *actually* being culture sensitive
+		// *and* also keeping the compatibility with '.'
+		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+		CultureInfo prev_culture = CultureInfo.CurrentCulture;
+		try {
+			Thread.CurrentThread.CurrentCulture = french_culture;
+			ParseHelper ("10:10:10,006", false, false, "10:10:10.0060000");
+			ParseHelper ("10:10:10.006", false, false, "10:10:10.0060000");
+		} finally {
+			// restore culture
+			Thread.CurrentThread.CurrentCulture = prev_culture;
+		}
+#endif
 	}
 
 	// LAMESPEC: timespan in documentation is wrong - hh:mm:ss isn't mandatory
@@ -853,11 +890,23 @@ public class TimeSpanTest {
 	}
 
 	[Test]
-	[ExpectedException (typeof (OverflowException))]
 	public void Parse_InvalidValuesAndFormat_ExceptionOrder () 
 	{
 		// hours should be between 0 and 23 but format is also invalid (too many dots)
-		TimeSpan.Parse ("0.99.99.0");
+		// In 2.0 overflow as precedence over format, but not in 4.0
+#if NET_4_0
+		try {
+			TimeSpan.Parse ("0.99.99.0");
+			Assert.Fail ("#A1");
+		} catch (FormatException) {
+		}
+#else
+		try {
+			TimeSpan.Parse ("0.99.99.0");
+			Assert.Fail ("#A1");
+		} catch (OverflowException) {
+		}
+#endif
 	}
 
 	[Test]
@@ -912,7 +961,6 @@ public class TimeSpanTest {
 		Assert.AreEqual (true, TimeSpan.TryParse (" -1:2:3 ", out result), "#B1");
 		Assert.AreEqual ("-01:02:03", result.ToString (), "#B2");
 
-		Assert.AreEqual (false, TimeSpan.TryParse (" 25:0:0 ", out result), "#C1");
 		Assert.AreEqual (false, TimeSpan.TryParse ("aaa", out result), "#C2");
 
 		Assert.AreEqual (true, TimeSpan.TryParse ("-21.23:59:59.9999999", out result), "#D1");
@@ -921,9 +969,12 @@ public class TimeSpanTest {
 		Assert.AreEqual (false, TimeSpan.TryParse ("100000000000000.1:1:1", out result), "#E1");
 		Assert.AreEqual (false, TimeSpan.TryParse ("24:60:60", out result), "#E2");
 
-		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
+#if NET_4_0
+		Assert.AreEqual (false, TimeSpan.TryParse ("0001:0002:0003.12     ", out result), "#F1");
+#else
 		Assert.AreEqual (true, TimeSpan.TryParse ("0001:0002:0003.12     ", out result), "#F1");
 		Assert.AreEqual ("01:02:03.1200000", result.ToString (), "#F2");
+#endif
 
 		Assert.AreEqual (false, TimeSpan.TryParse (" 1:2:3:12345678 ", out result), "#G1");
 
@@ -932,6 +983,22 @@ public class TimeSpanTest {
 		Assert.AreEqual (TimeSpan.MaxValue, result, "MaxValue#2");
 		Assert.AreEqual (true, TimeSpan.TryParse ("-10675199.02:48:05.4775808", out result), "MinValue#1");
 		Assert.AreEqual (TimeSpan.MinValue, result, "MinValue#2");
+
+#if NET_4_0
+		// Force the use of french culture -which is using a non common NumberDecimalSeparator-
+		// as current culture, to show that the Parse method is *actually* being culture sensitive
+		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+		CultureInfo prev_culture = CultureInfo.CurrentCulture;
+		result = new TimeSpan (0, 10, 10, 10, 6);
+		try {
+			Thread.CurrentThread.CurrentCulture = french_culture;
+			Assert.AreEqual (true, TimeSpan.TryParse ("10:10:10,006", out result), "#CultureSensitive1");
+			Assert.AreEqual ("10:10:10.0060000", result.ToString (), "#CultureSensitive2");
+		} finally {
+			// restore culture
+			Thread.CurrentThread.CurrentCulture = prev_culture;
+		}
+#endif
 	}
 
 	[Test]
@@ -945,6 +1012,24 @@ public class TimeSpanTest {
 	}
 
 #if NET_4_0
+	[Test]
+	public void TryParseOverloads ()
+	{ 
+		TimeSpan result;
+
+		// We use fr-FR culture since its NumericDecimalSeparator is not the same used by
+		// most cultures - including the invariant one.
+		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+		Assert.AreEqual (true, TimeSpan.TryParse ("11:50:50,006", french_culture, out result), "#A1");
+
+		// LAMESPEC - msdn states that an instance of DateTimeFormatInfo is retrieved to
+		// obtain culture sensitive information, but at least in the betas that's false
+		DateTimeFormatInfo format_info = new DateTimeFormatInfo ();
+		format_info.TimeSeparator = ";";
+		Assert.AreEqual (false, TimeSpan.TryParse ("11;50;50", format_info, out result), "#B1");
+		Assert.AreEqual (true, TimeSpan.TryParse ("11:50:50", format_info, out result), "#B2");
+	}
+
 	[Test]
 	public void ToStringOverloads ()
 	{

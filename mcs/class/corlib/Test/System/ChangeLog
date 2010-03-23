@@ -1,3 +1,9 @@
+2010-03-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpanTest.cs: It seems somebody forgot to actually mark the
+	TestParse method with TestAttribute. Also, add a bunch of asserions
+	to reflect the new behaviour for 4.0 in the needed test cases.
+
 2010-03-08  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpanTest.cs: New tests for the 4.0 ToString overloads.
