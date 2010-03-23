@@ -1,3 +1,16 @@
+2009-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* threads.h: Add wapi_self_interrupt.
+
+	* wthreads.c: Add wapi_self_interrupt which puts the current
+	thread in interrupted state.
+
+	* wthreads.c (wapi_thread_clear_wait_handle): Previous handle
+	can possibly be NULL if an async interrupt cleared it.
+
+	This is safe because it is only async cleared if running inside a
+	handler block.
+
 2010-03-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* processes.c: made ShellExecuteEx actually work when the file name to
