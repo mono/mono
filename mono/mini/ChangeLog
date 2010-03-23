@@ -1,5 +1,10 @@
 2010-03-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.h: Put back MONO_ARCH_NOMAP32BIT for OpenBSD which was removed
+	by mistake.
+
+2010-03-23  Zoltan Varga  <vargaz@gmail.com>
+
 	* method-to-ir.c (mono_method_to_ir): Handle the failure of
 	mono_method_signature ().
 
