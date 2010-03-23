@@ -1,5 +1,8 @@
 2010-03-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-generic-sharing.c (fill_in_rgctx_template_slot): Remove an assert which
+	can be hit with partial sharing.
+
 	* mini-generic-sharing.c (get_shared_class): Handle partially shared methods
 	in non-shared classes correctly.
 	(generic_inst_is_sharable): Allow all primitive types in partial sharing.
