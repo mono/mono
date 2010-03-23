@@ -1,3 +1,8 @@
+2010-03-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Socket.cs: error handling was totally broken in the synchronous
+	Connect() call.  Fixes bug #590488.
+
 2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Socket.cs: Remove some NET_2_0 defines (using) and add a few
