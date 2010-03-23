@@ -637,7 +637,12 @@ namespace System
 
 				while (!AtEnd && Char.IsDigit (_src, _cur)) {
 					res = res * 10 + _src[_cur] - '0';
+#if NET_4_0
+					// more than one preceding zero will case an OverflowException
+					if (res > Int32.MaxValue || (count >= 2 && res == 0)) {
+#else
 					if (res > Int32.MaxValue) {
+#endif
 						SetParseError (ParseError.Overflow);
 						break;
 					}
@@ -717,6 +722,7 @@ namespace System
 			}
 
 			// Parse [1..7] digits, representing fractional seconds (ticks)
+			// In 4.0 more than 7 digits will cause an OverflowException
 			private long ParseTicks ()
 			{
 				long mag = 1000000;
@@ -732,6 +738,10 @@ namespace System
 
 				if (!digitseen)
 					SetParseError (ParseError.Format);
+#if NET_4_0
+				else if (!AtEnd && Char.IsDigit (_src, _cur))
+					SetParseError (ParseError.Overflow);
+#endif
 
 				return res;
 			}

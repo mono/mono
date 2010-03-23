@@ -1,5 +1,13 @@
 2010-03-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TimeSpan.cs: When parsing ticks, we used to only parse
+	the first 7 digits, and more than that would cause a FormatException -
+	starting in 4.0 we need to throw an OverflowException, however. Also,
+	for hours/minutes/seconds, two or more preceding zeroes will cause an
+	OverflowException as well.
+
+2010-03-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TimeSpan.cs: Create a new Parser.Execute method for 4.0 -and use the
 	previous impl for 2.0-, to handle the new semantics gracefully -
 	specifically the new 'dd:hh:mm:ss' format and related bits, instead of
