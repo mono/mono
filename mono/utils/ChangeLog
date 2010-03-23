@@ -1,3 +1,9 @@
+2010-03-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-semaphore.h: MONO_SEM_WAIT() return value inverted when using
+	the windows API.
+	* mono-semaphore.c: handle INFINITE timeout.
+
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-sigcontext.h: Define UCONTEXT accessors for openbsd/amd64.
