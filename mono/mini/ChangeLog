@@ -1,5 +1,12 @@
 2010-03-23  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-generic-sharing.c (get_shared_class): Handle partially shared methods
+	in non-shared classes correctly.
+	(generic_inst_is_sharable): Allow all primitive types in partial sharing.
+	Turn on partial sharing.
+
+2010-03-23  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-amd64.h: Put back MONO_ARCH_NOMAP32BIT for OpenBSD which was removed
 	by mistake.
 
