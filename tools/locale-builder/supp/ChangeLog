@@ -1,3 +1,8 @@
+2010-03-23  Geoff Norton  <gnorton@novell.com>
+
+	* da_DK.xml: The short format is day. month, not 
+	day month.  Fixes #588165
+
 2008-09-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* sv_SE.xml : fix bug #426942 (sv-SE time format was old).
