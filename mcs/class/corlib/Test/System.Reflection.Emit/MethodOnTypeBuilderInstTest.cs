@@ -29,6 +29,7 @@
 #if NET_2_0
 
 using System;
+using System.Collections.Generic;
 using System.Globalization;
 using System.IO;
 using System.Reflection;
@@ -684,6 +685,21 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual (typeof (int), minst.GetParameters ()[0].ParameterType, "#5");
 			Assert.AreEqual (typeof (int[]), minst.GetParameters ()[1].ParameterType, "#6");
 		}
+
+		[Test]
+		public void PropertiesOfANonGenericMethodOnGenericType ()
+		{
+			Type t = typeof (List<>);
+			Type a = t.GetGenericArguments () [0];
+			MethodInfo m = t.GetMethod ("IndexOf", new Type [] { a });
+	
+			var tb = module.DefineType ("foo.type");
+			Type ttt = t.MakeGenericType (tb);
+			MethodInfo mm = TypeBuilder.GetMethod (ttt, m);
+			Assert.IsTrue (mm.GetGenericMethodDefinition ().ContainsGenericParameters, "#1");
+			Assert.IsTrue (mm.ContainsGenericParameters, "#2");
+		}
+
 	}
 }
 

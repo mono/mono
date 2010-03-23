@@ -286,6 +286,8 @@ namespace System.Reflection.Emit
 
 		public override bool ContainsGenericParameters {
 			get {
+				if (base_method.ContainsGenericParameters)
+					return true;
 				if (!base_method.IsGenericMethodDefinition)
 					throw new NotSupportedException ();
 				if (method_arguments == null)

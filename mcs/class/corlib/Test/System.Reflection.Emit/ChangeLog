@@ -1,3 +1,7 @@
+2010-03-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInstTest.cs: Add Test for ContainsGenericParameters.
+
 2010-03-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: New tests for GetMethod, GetConstructor and GetField.

@@ -1,3 +1,8 @@
+2010-03-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodOnTypeBuilderInst.cs (ContainsGenericParameters): Check
+	the base_method first.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyBuilder.cs, ModuleBuilder.cs: use MOONLIGHT symbol to
