@@ -1,3 +1,13 @@
+2010-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (BASE_TEST_CS_SRC): Remove make-imt-test.cs, it is not a test.
+
+	* test-runner.cs: Add an option to run the tests with different optimization
+	sets.
+
+	* Makefile.am: Make it possible to run the normal+gshared tests using the managed
+	test runner by passing the M=1 option to make.
+
 2010-03-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (runtest): Save the output of the aot compiler into a file.
