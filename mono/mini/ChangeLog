@@ -1,3 +1,13 @@
+2010-03-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Handle the failure of
+	mono_method_signature ().
+
+	* mini-trampolines.c (mono_delegate_trampoline): Ditto.
+
+	* mini.c (mini_method_compile): Get the signature of cfg->method early with
+	error checking, so later calls do not need error checking.
+
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-amd64.c: Add support for OpenBSD which has no UCONTEXT_GREGS.
