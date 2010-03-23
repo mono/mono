@@ -59,7 +59,8 @@ namespace System.ServiceModel.Configuration
 	{
 		ConfigurationPropertyCollection _properties;
 
-		protected ConnectionOrientedTransportElement () {
+		internal ConnectionOrientedTransportElement ()
+		{
 		}
 
 		// Properties
@@ -67,6 +68,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("channelInitializationTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:00:05")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan ChannelInitializationTimeout {
 			get { return (TimeSpan) base ["channelInitializationTimeout"]; }
 			set { base ["channelInitializationTimeout"] = value; }
@@ -105,6 +107,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("maxOutputDelay",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:00:00.2")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan MaxOutputDelay {
 			get { return (TimeSpan) base ["maxOutputDelay"]; }
 			set { base ["maxOutputDelay"] = value; }
@@ -157,7 +160,44 @@ namespace System.ServiceModel.Configuration
 			set { base ["transferMode"] = value; }
 		}
 
+		public override void ApplyConfiguration (BindingElement bindingElement)
+		{
+			var e = (ConnectionOrientedTransportBindingElement) bindingElement;
+			e.ChannelInitializationTimeout = ChannelInitializationTimeout;
+			e.ConnectionBufferSize = ConnectionBufferSize;
+			e.HostNameComparisonMode = HostNameComparisonMode;
+			e.MaxBufferSize = MaxBufferSize;
+			e.MaxOutputDelay = MaxOutputDelay;
+			e.MaxPendingAccepts = MaxPendingAccepts;
+			e.MaxPendingConnections = MaxPendingConnections;
+			e.TransferMode = TransferMode;
+		}
 
+		public override void CopyFrom (ServiceModelExtensionElement from)
+		{
+			var e = (ConnectionOrientedTransportElement) from;
+			ChannelInitializationTimeout = e.ChannelInitializationTimeout;
+			ConnectionBufferSize = e.ConnectionBufferSize;
+			HostNameComparisonMode = e.HostNameComparisonMode;
+			MaxBufferSize = e.MaxBufferSize;
+			MaxOutputDelay = e.MaxOutputDelay;
+			MaxPendingAccepts = e.MaxPendingAccepts;
+			MaxPendingConnections = e.MaxPendingConnections;
+			TransferMode = e.TransferMode;
+		}
+
+		protected internal override void InitializeFrom (BindingElement bindingElement)
+		{
+			var e = (ConnectionOrientedTransportBindingElement) bindingElement;
+			ChannelInitializationTimeout = e.ChannelInitializationTimeout;
+			ConnectionBufferSize = e.ConnectionBufferSize;
+			HostNameComparisonMode = e.HostNameComparisonMode;
+			MaxBufferSize = e.MaxBufferSize;
+			MaxOutputDelay = e.MaxOutputDelay;
+			MaxPendingAccepts = e.MaxPendingAccepts;
+			MaxPendingConnections = e.MaxPendingConnections;
+			TransferMode = e.TransferMode;
+		}
 	}
 
 }

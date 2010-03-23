@@ -1,3 +1,9 @@
+2010-03-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ConnectionOrientedTransportElement.cs, StandardBindingElement.cs, 
+	  LocalClientSecuritySettingsElement.cs, CustomBindingElement.cs:
+	  add couple of missing methods and TypeConverterAttributes.
+
 2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataPublishingElement.cs : use IsNullOrEmpty(), names

@@ -74,6 +74,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("closeTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:01:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan CloseTimeout {
 			get { return (TimeSpan) this ["closeTimeout"]; }
 			set { this ["closeTimeout"] = value; }
@@ -94,6 +95,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("openTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:01:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan OpenTimeout {
 			get { return (TimeSpan) this ["openTimeout"]; }
 			set { this ["openTimeout"] = value; }
@@ -116,6 +118,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("receiveTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:10:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan ReceiveTimeout {
 			get { return (TimeSpan) this ["receiveTimeout"]; }
 			set { this ["receiveTimeout"] = value; }
@@ -124,6 +127,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("sendTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:01:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan SendTimeout {
 			get { return (TimeSpan) this ["sendTimeout"]; }
 			set { this ["sendTimeout"] = value; }

@@ -72,6 +72,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("closeTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:01:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan CloseTimeout {
 			get { return (TimeSpan) base ["closeTimeout"]; }
 			set { base ["closeTimeout"] = value; }
@@ -80,6 +81,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("openTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:01:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan OpenTimeout {
 			get { return (TimeSpan) base ["openTimeout"]; }
 			set { base ["openTimeout"] = value; }
@@ -101,6 +103,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("receiveTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:10:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan ReceiveTimeout {
 			get { return (TimeSpan) base ["receiveTimeout"]; }
 			set { base ["receiveTimeout"] = value; }
@@ -109,14 +112,27 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("sendTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:01:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan SendTimeout {
 			get { return (TimeSpan) base ["sendTimeout"]; }
 			set { base ["sendTimeout"] = value; }
 		}
 
-		[MonoTODO]
-		public void ApplyConfiguration (Binding binding) {
-			throw new NotImplementedException ();
+		[MonoTODO ("what to reject?")]
+		public override void Add (BindingElementExtensionElement element)
+		{
+			base.Add (element);
+		}
+
+		[MonoTODO ("what to reject?")]
+		public override bool CanAdd (BindingElementExtensionElement element)
+		{
+			return true;
+		}
+
+		public void ApplyConfiguration (Binding binding)
+		{
+			OnApplyConfiguration (binding);
 		}
 
 		[MonoTODO ("implement using EvaluationContext")]
@@ -133,6 +149,19 @@ namespace System.ServiceModel.Configuration
 			return element;
 		}
 
+		protected void OnApplyConfiguration (Binding binding)
+		{
+			if (binding == null)
+				throw new ArgumentNullException ("binding");
+			var b = (CustomBinding) binding;
+			b.CloseTimeout = CloseTimeout;
+			b.OpenTimeout = OpenTimeout;
+			b.ReceiveTimeout = ReceiveTimeout;
+			b.SendTimeout = SendTimeout;
+
+			foreach (var be in this)
+				b.Elements.Add (be.CreateBindingElement ());
+		}
 	}
 
 }

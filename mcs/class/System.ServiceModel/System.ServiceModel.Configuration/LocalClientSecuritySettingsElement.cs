@@ -94,6 +94,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("maxClockSkew",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan MaxClockSkew {
 			get { return (TimeSpan) base ["maxClockSkew"]; }
 			set { base ["maxClockSkew"] = value; }
@@ -102,6 +103,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("maxCookieCachingTime",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "10675199.02:48:05.4775807")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan MaxCookieCachingTime {
 			get { return (TimeSpan) base ["maxCookieCachingTime"]; }
 			set { base ["maxCookieCachingTime"] = value; }
@@ -133,6 +135,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("replayWindow",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan ReplayWindow {
 			get { return (TimeSpan) base ["replayWindow"]; }
 			set { base ["replayWindow"] = value; }
@@ -141,6 +144,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("sessionKeyRenewalInterval",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "10:00:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan SessionKeyRenewalInterval {
 			get { return (TimeSpan) base ["sessionKeyRenewalInterval"]; }
 			set { base ["sessionKeyRenewalInterval"] = value; }
@@ -157,6 +161,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("timestampValidityDuration",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:05:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan TimestampValidityDuration {
 			get { return (TimeSpan) base ["timestampValidityDuration"]; }
 			set { base ["timestampValidityDuration"] = value; }
