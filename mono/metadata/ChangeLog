@@ -1,3 +1,7 @@
+2010-03-23 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* threads.c: Fix windows build.
+
 2010-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* thread-types.h: Add mono_thread_resume_interruption.
