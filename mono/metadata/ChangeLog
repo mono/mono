@@ -1,5 +1,13 @@
 2010-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* thread-types.h: Add mono_thread_resume_interruption.
+
+	* threads.c: Add mono_thread_resume_interruption, this
+	function should be called after the last protected handler
+	found at interruption time has finished.
+
+2010-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* threads.c (ves_icall_System_Threading_Thread_ResetAbort):
 	Check MonoInternalThread's ::state instead of ::abort_exc
 	since the later can be lazily created.
