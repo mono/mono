@@ -1,3 +1,14 @@
+2010-03-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* threads.c (ves_icall_System_Threading_Thread_ResetAbort):
+	Check MonoInternalThread's ::state instead of ::abort_exc
+	since the later can be lazily created.
+
+	This is specially problematic when running a finally block
+	under AbortRequested state. ResetAbort must work, but the
+	abort_exc object has not been created because interruption
+	has not began.
+
 2010-03-22  Geoff Norton  <gnorton@novell.com>
 
 	* locales.c: Its possible for CFStringGetCStringPtr
