@@ -1477,9 +1477,9 @@ namespace System {
 		{
 			return GetAssemblies (true);
 		}
-#endif
 
-#if MOONLIGHT
+#else // MOONLIGHT
+
 		public int ExecuteAssemblyByName (string assemblyName)
 		{
 			// critical code in SL that we're not calling in ML
@@ -1510,11 +1510,14 @@ namespace System {
 		}
 #endif
 
-#if NET_4_0 || (NET_2_1 && !MONOTOUCH)
-		[MonoTODO ("Currently always returns null")]
+#if NET_4_0 || MOONLIGHT
+		[MonoTODO ("Currently always returns false")]
 		public bool? IsCompatibilitySwitchSet (string value)
 		{
-			return null;
+			if (value == null)
+				throw new ArgumentNullException ("value");
+			// default (at least for SL4) is to return false for unknown values (can't get a null out of it)
+			return false;
 		}
 #endif
 	}
