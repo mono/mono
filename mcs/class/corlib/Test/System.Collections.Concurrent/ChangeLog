@@ -1,5 +1,9 @@
 2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* ConcurrentDictionaryTests.cs: Renaming in Assert
+
+2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* ConcurrentDictionaryTests.cs: Update behavior of TryAddDuplicateTest
 	The method returns false and doesn't throw exception anymore
 

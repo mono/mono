@@ -60,7 +60,7 @@ namespace System.Collections.Concurrent
 
 		class Basket: List<Pair>
 		{
-			public SpinLock Lock = new SpinLock ();
+			public SpinLock Lock = new SpinLock (true);
 		}
 
 		// Assumption: a List<T> is never empty

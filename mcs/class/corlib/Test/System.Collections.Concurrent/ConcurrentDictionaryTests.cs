@@ -47,7 +47,7 @@ namespace MonoTests.System.Collections.Concurrent
 		
 		void AddStuff ()
 		{
-		  map.TryAdd ("foo", 1);
+			map.TryAdd ("foo", 1);
 			map.TryAdd ("bar", 2);
 			map.TryAdd ("foobar", 3);
 		}
@@ -82,16 +82,16 @@ namespace MonoTests.System.Collections.Concurrent
 				int value;
 				
 				Assert.IsTrue (map.TryGetValue ("monkey1", out value), "#1");
-				Assert.AreEqual (3, value, "#1");
+				Assert.AreEqual (3, value, "#1b");
 				
 				Assert.IsTrue (map.TryGetValue ("monkey2", out value), "#2");
-				Assert.AreEqual (3, value, "#2");
+				Assert.AreEqual (3, value, "#2b");
 				
 				Assert.IsTrue (map.TryGetValue ("monkey3", out value), "#3");
-				Assert.AreEqual (3, value, "#3");
+				Assert.AreEqual (3, value, "#3b");
 				
 				Assert.IsTrue (map.TryGetValue ("monkey4", out value), "#4");
-				Assert.AreEqual (3, value, "#4");
+				Assert.AreEqual (3, value, "#4b");
 			});
 		}
 		
@@ -141,7 +141,7 @@ namespace MonoTests.System.Collections.Concurrent
 		[Test]
 		public void GetValueTest()
 		{
-		  Assert.AreEqual(1, map["foo"], "#1");
+			Assert.AreEqual(1, map["foo"], "#1");
 			Assert.AreEqual(2, map["bar"], "#2");
 			Assert.AreEqual(3, map.Count, "#3");
 		}

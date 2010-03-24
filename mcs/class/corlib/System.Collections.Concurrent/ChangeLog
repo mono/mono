@@ -1,5 +1,11 @@
 2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* ConcurrentDictionary.cs: Enable tracking on SpinLock
+	* ConcurrentSkipList.cs: Use Spinlock instead of Monitor and
+	refactor to use a saner lock acquiring scheme.
+
+2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* ConcurrentDictionary.cs: Fix lock releasing
 
 2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
