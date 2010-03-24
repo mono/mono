@@ -206,7 +206,7 @@ namespace Mono.Security {
 					mask = "yyyyMMddHHmmsszzz";
 					break;
 			}
-			return DateTime.ParseExact (t, mask, null, DateTimeStyles.AdjustToUniversal);
+			return DateTime.ParseExact (t, mask, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
 		}
 	}
 }

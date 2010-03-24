@@ -1,3 +1,8 @@
+2010-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1Convert.cs: Specify CultureInfo.InvariantCulture (instead of 
+	null) to avoid crash on Windows. Patch by Yoni Shalom.
+
 2008-09-12  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1.cs: Use File.Create instead of OpenWrite to make sure nothing
