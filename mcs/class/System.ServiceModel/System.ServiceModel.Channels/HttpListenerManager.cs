@@ -332,6 +332,7 @@ namespace System.ServiceModel.Channels
 			lock (pending) {
 				foreach (var pctx in pending) {
 					if (FilterHttpContext (pctx)) {
+						pending.Remove (pctx);
 						callback (pctx);
 						return;
 					}
@@ -404,7 +405,7 @@ namespace System.ServiceModel.Channels
 			if (wsdl_instance.WsdlUrl != null && Uri.Compare (ctx.RequestUrl, wsdl_instance.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) {
 				if (mex_info == null)
 					return false; // Do not handle this at normal dispatcher.
-				if (ctx.QueryString [null] == "wsdl")
+				if (String.Compare (ctx.QueryString [null], "wsdl", StringComparison.OrdinalIgnoreCase) == 0)
 					return mex_info.SupportsMex; // wsdl dispatcher should handle this.
 				if (!wsdl_instance.HelpUrl.Equals (wsdl_instance.WsdlUrl))
 					return true; // in case help URL is not equivalent to WSDL URL, it anyways returns WSDL regardless of ?wsdl existence.
