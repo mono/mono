@@ -1,3 +1,7 @@
+2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* SpinLockTests.cs: Add a correctness check unit test
+
 2010-03-08  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* SpinLockTests.cs: Added unit tests for SpinLock
