@@ -1,3 +1,8 @@
+2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* MethodInfo.cs: Exclude IsGenericMethod* and ContainsGenericParameters
+	from moonlight too.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Assembly.cs: use MOONLIGHT symbol to

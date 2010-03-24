@@ -107,7 +107,7 @@ namespace System.Reflection {
 			return Type.EmptyTypes;
 		}
 
-#if !NET_4_0
+#if !NET_4_0 && !MOONLIGHT
 		public override bool IsGenericMethod {
 			get {
 				return false;
