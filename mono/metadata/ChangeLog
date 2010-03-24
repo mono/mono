@@ -1,3 +1,9 @@
+2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c: Add support for new v4 type
+	System.Reflection.MonoAssembly that is the concrete version
+	of Assembly which is abstract unver v4.
+
 2010-03-24  U-anarquia\miguel  <miguel@anarquia>
 
 	* reflection.c (mono_reflection_get_custom_attrs_info): Protect
