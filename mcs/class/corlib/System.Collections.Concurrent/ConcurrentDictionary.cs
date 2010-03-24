@@ -131,21 +131,17 @@ namespace System.Collections.Concurrent
 
 			// Add a value to an existing basket
 			if (TryGetBasket (key, out basket)) {
-				while (!taken) {
-					try {
-						basket.Lock.Enter (ref taken);
-						if (!taken)
-							continue;
+				try {
+					basket.Lock.Enter (ref taken);
 
-						foreach (var p in basket) {
-							if (comparer.Equals (p.Key, key))
-								return false;
-						}
-						basket.Add (new Pair (key, value));
-					} finally {
-						if (taken)
-							basket.Lock.Exit ();
+					foreach (var p in basket) {
+						if (comparer.Equals (p.Key, key))
+							return false;
 					}
+					basket.Add (new Pair (key, value));
+				} finally {
+					if (taken)
+						basket.Lock.Exit ();
 				}
 			} else {
 				// Add a new basket
@@ -179,20 +175,16 @@ namespace System.Collections.Concurrent
 			if (!TryGetBasket (key, out basket)) {
 				Add (key, (temp = addValueFactory (key)));
 			} else {
-				while (!taken) {
-					try {
-						basket.Lock.Enter (ref taken);
-						if (!taken)
-							continue;
+				try {
+					basket.Lock.Enter (ref taken);
 
-						Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
-						if (pair == null)
-							throw new InvalidOperationException ("pair is null, shouldn't be");
-						pair.Value = (temp = updateValueFactory (key, pair.Value));
-					} finally {
-						if (taken)
-							basket.Lock.Exit ();
-					}
+					Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
+					if (pair == null)
+						throw new InvalidOperationException ("pair is null, shouldn't be");
+					pair.Value = (temp = updateValueFactory (key, pair.Value));
+				} finally {
+					if (taken)
+						basket.Lock.Exit ();
 				}
 			}
 
@@ -222,20 +214,16 @@ namespace System.Collections.Concurrent
 			if (!TryGetBasket (key, out basket))
 				return false;
 
-			while (!taken) {
-				try {
-					basket.Lock.Enter (ref taken);
-					if (!taken)
-						continue;
+			try {
+				basket.Lock.Enter (ref taken);
 
-					Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
-					if (pair == null)
-						return false;
-					value = pair.Value;
-				} finally {
-					if (taken)
-						basket.Lock.Exit ();
-				}
+				Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
+				if (pair == null)
+					return false;
+				value = pair.Value;
+			} finally {
+				if (taken)
+					basket.Lock.Exit ();
 			}
 
 			return true;
@@ -249,22 +237,18 @@ namespace System.Collections.Concurrent
 			if (!TryGetBasket (key, out basket))
 				return false;
 
-			while (!taken) {
-				try {
-					basket.Lock.Enter (ref taken);
-					if (!taken)
-						continue;
+			try {
+				basket.Lock.Enter (ref taken);
 
-					Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
-					if (pair.Value.Equals (comparand)) {
-						pair.Value = newValue;
+				Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
+				if (pair.Value.Equals (comparand)) {
+					pair.Value = newValue;
 
-						return true;
-					}
-				} finally {
-					if (taken)
-						basket.Lock.Exit ();
+					return true;
 				}
+			} finally {
+				if (taken)
+					basket.Lock.Exit ();
 			}
 
 			return false;
@@ -283,20 +267,16 @@ namespace System.Collections.Concurrent
 					return;
 				}
 
-				while (!taken) {
-					try {
-						basket.Lock.Enter (ref taken);
-						if (!taken)
-							continue;
+				try {
+					basket.Lock.Enter (ref taken);
 
-						Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
-						if (pair == null)
-							throw new InvalidOperationException ("pair is null, shouldn't be");
-						pair.Value = value;
-					} finally {
-						if (taken)
-							basket.Lock.Exit ();
-					}
+					Pair pair = basket.Find ((p) => comparer.Equals (p.Key, key));
+					if (pair == null)
+						throw new InvalidOperationException ("pair is null, shouldn't be");
+					pair.Value = value;
+				} finally {
+					if (taken)
+						basket.Lock.Exit ();
 				}
 			}
 		}
@@ -310,18 +290,15 @@ namespace System.Collections.Concurrent
 				Pair pair = null;
 				bool taken = false;
 
-				while (!taken) {
-					try {
-						basket.Lock.Enter (ref taken);
-						if (!taken)
-							continue;
-						pair = basket.Find ((p) => comparer.Equals (p.Key, key));
-						if (pair != null)
-							temp = pair.Value;
-					} finally {
-						if (taken)
-							basket.Lock.Exit ();
-					}
+				try {
+					basket.Lock.Enter (ref taken);
+
+					pair = basket.Find ((p) => comparer.Equals (p.Key, key));
+					if (pair != null)
+						temp = pair.Value;
+				} finally {
+					if (taken)
+						basket.Lock.Exit ();
 				}
 
 				if (pair == null)
@@ -347,29 +324,25 @@ namespace System.Collections.Concurrent
 			if (!TryGetBasket (key, out b))
 				return false;
 
-			while (!taken) {
-				try {
-					b.Lock.Enter (ref taken);
-					if (!taken)
-						continue;
+			try {
+				b.Lock.Enter (ref taken);
 
-					TValue temp = default (TValue);
-					// Should always be == 1 but who know
-					bool result = b.RemoveAll ((p) => {
-						bool r = comparer.Equals (p.Key, key);
-						if (r) temp = p.Value;
-						return r;
-					}) >= 1;
-					value = temp;
+				TValue temp = default (TValue);
+				// Should always be == 1 but who know
+				bool result = b.RemoveAll ((p) => {
+					bool r = comparer.Equals (p.Key, key);
+					if (r) temp = p.Value;
+					return r;
+				}) >= 1;
+				value = temp;
 
-					if (result)
-						Interlocked.Decrement (ref count);
+				if (result)
+					Interlocked.Decrement (ref count);
 
-					return result;
-				} finally {
-					if (taken)
-						b.Lock.Exit ();
-				}
+				return result;
+			} finally {
+				if (taken)
+					b.Lock.Exit ();
 			}
 
 			return false;
@@ -545,21 +518,17 @@ namespace System.Collections.Concurrent
 			foreach (Basket b in container) {
 				bool taken = false;
 
-				while (!taken) {
-					try {
-						b.Lock.Enter (ref taken);
-						if (!taken)
-							continue;
+				try {
+					b.Lock.Enter (ref taken);
 
-						foreach (Pair p in b) {
-							if (i >= num)
-								break;
-							array[i++] = new KeyValuePair<TKey, TValue> (p.Key, p.Value);
-						}
-					} finally {
-						if (taken)
-							b.Lock.Exit ();
+					foreach (Pair p in b) {
+						if (i >= num)
+							break;
+						array[i++] = new KeyValuePair<TKey, TValue> (p.Key, p.Value);
 					}
+				} finally {
+					if (taken)
+						b.Lock.Exit ();
 				}
 			}
 		}
@@ -579,18 +548,14 @@ namespace System.Collections.Concurrent
 			foreach (Basket b in container) {
 				bool taken = false;
 
-				while (!taken) {
-					try {
-						b.Lock.Enter (ref taken);
-						if (!taken)
-							continue;
+				try {
+					b.Lock.Enter (ref taken);
 
-						foreach (Pair p in b)
-							yield return new KeyValuePair<TKey, TValue> (p.Key, p.Value);
-					} finally {
-						if (taken)
-							b.Lock.Exit ();
-					}
+					foreach (Pair p in b)
+						yield return new KeyValuePair<TKey, TValue> (p.Key, p.Value);
+				} finally {
+					if (taken)
+						b.Lock.Exit ();
 				}
 			}
 		}

@@ -1,5 +1,9 @@
 2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* ConcurrentDictionary.cs: Remove while looping
+
+2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* ConcurrentDictionary.cs: Enable tracking on SpinLock
 	* ConcurrentSkipList.cs: Use Spinlock instead of Monitor and
 	refactor to use a saner lock acquiring scheme.
