@@ -1,3 +1,13 @@
+2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Assembly.cs: Make it a partial class under !v4.
+
+	* MonoAssembly.cs: New type that exists only under
+	v4. Under v2 it is a part of Assembly.
+
+	This is the initial setup to make v4 Assembly an
+	abstract type where all methods raise exceptions.
+
 2010-03-24  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* MethodInfo.cs: Exclude IsGenericMethod* and ContainsGenericParameters

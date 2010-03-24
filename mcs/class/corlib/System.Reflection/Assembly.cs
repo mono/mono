@@ -52,11 +52,12 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
 #if NET_2_1
-	public class Assembly : ICustomAttributeProvider, _Assembly {
-#else
+	public partial class Assembly : ICustomAttributeProvider, _Assembly {
+#elseif NET_4_0
 	public class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
+#else
+	public partial class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #endif
-
 		internal class ResolveEventHolder {
 			public event ModuleResolveEventHandler ModuleResolve;
 		}
@@ -76,7 +77,12 @@ namespace System.Reflection {
 		private bool fromByteArray;
 		private string assemblyName;
 
-		internal Assembly () 
+#if NET_4_0
+		protected
+#else
+		internal
+#endif
+		Assembly () 
 		{
 			resolve_event_holder = new ResolveEventHolder ();
 		}
