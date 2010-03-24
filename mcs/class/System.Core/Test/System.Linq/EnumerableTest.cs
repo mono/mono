@@ -490,6 +490,38 @@ namespace MonoTests.System.Linq {
 			Assert.AreEqual ("Zyx", list [3].Name);
 		}
 
+		[Test]
+		public void TestOrderByDescendingStability ()
+		{
+			var data = new [] {
+				new { Key = true, Value = 1 },
+				new { Key = false, Value = 2},
+				new { Key = true, Value = 3},
+				new { Key = false, Value = 4},
+				new { Key = true, Value = 5},
+				new { Key = false, Value = 6},
+				new { Key = true, Value = 7},
+				new { Key = false, Value = 8},
+				new { Key = true, Value = 9},
+				new { Key = false, Value = 10},
+			};
+
+			var expected = new [] {
+				new { Key = true, Value = 1 },
+				new { Key = true, Value = 3},
+				new { Key = true, Value = 5},
+				new { Key = true, Value = 7},
+				new { Key = true, Value = 9},
+				new { Key = false, Value = 2},
+				new { Key = false, Value = 4},
+				new { Key = false, Value = 6},
+				new { Key = false, Value = 8},
+				new { Key = false, Value = 10},
+			};
+
+			AssertAreSame (expected, data.OrderByDescending (x => x.Key));
+		}
+
 		static void AssertIsOrdered (IEnumerable<int> e)
 		{
 				int f = int.MinValue;
