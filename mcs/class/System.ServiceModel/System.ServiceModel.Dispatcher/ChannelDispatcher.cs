@@ -567,7 +567,7 @@ namespace System.ServiceModel.Dispatcher
 
 					MessageVersion version = rc.RequestMessage.Version;
 					FaultCode fc = new FaultCode ("DestinationUnreachable", version.Addressing.Namespace);
-					Message res = Message.CreateMessage (version, fc, "error occured", rc.RequestMessage.Headers.Action);
+					Message res = Message.CreateMessage (version, fc, ex.Message, rc.RequestMessage.Headers.Action);
 					rc.Reply (res);
 				} catch (Exception e) {
 					// FIXME: log it
