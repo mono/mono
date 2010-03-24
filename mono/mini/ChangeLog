@@ -1,3 +1,22 @@
+2010-03-24  U-anarquia\miguel  <miguel@anarquia>
+
+	Make sure that trunk builds with DISABLE_JIT, an update to the
+	PlayStation 3 port.
+	
+	* mini.c (mini_get_shared_method): this code seems to be necessary
+	regardless of whether DISABLE_JIT has been defined.
+
+	(mono_jit_compile_method_inner): it seems that this method is
+	required even in full AOT mode, so ifdef out only the pieces that
+	try to genrate code (the body of code that applies patches to the
+	code).  
+
+	(mini_method_compile): do not compile when using DISABLE_JIT.
+
+	* mini-ppc.c (mono_arch_get_allocatable_int_vars)
+	(mono_arch_output_basic_block, mono-arch_emit_exceptions): Do not
+	compile when DISABLE_JIT is set.
+
 2010-03-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c (mono_create_tls_get): Only create a TLS operation if the
@@ -9,19 +28,23 @@
 
 2010-03-23  Neale Ferguson <neale@sinenomine.net>
 
-	* exceptions-s390x.c: Add support for mono_arch_get_throw_corlib_exception and fix throw by
-	name.
+	* exceptions-s390x.c: Add support for
+	mono_arch_get_throw_corlib_exception and fix throw by name.
 
-	* mini-s390x.c: Add IMT support; Fix stack parameter passing logic (especially for varargs);
-	Correct localloc sizing; Add mono_arch_get_this_arg_from_call and
+	* mini-s390x.c: Add IMT support; Fix stack parameter passing
+	logic (especially for varargs); Correct localloc sizing; Add
+	mono_arch_get_this_arg_from_call and
 	mono_arch_get_this_arg_from_call.
 
-	* mini-s390x.h: Add support for facility list extraction; Correct/update MONO_ARCH_xxx settings.
+	* mini-s390x.h: Add support for facility list extraction;
+	Correct/update MONO_ARCH_xxx settings.
 
-	* mini-s390.c: Minor corrections to instruction output for varargs. No IMT implementation - I 
-	think it's time to deprecate s390 and just leave s390x.
+	* mini-s390.c: Minor corrections to instruction output for
+	varargs. No IMT implementation - I think it's time to deprecate
+	s390 and just leave s390x.
 
-	* tramp-s390x.c: Correct creation of trampoline instruction emission.
+	* tramp-s390x.c: Correct creation of trampoline instruction
+
 
 	* cpu-s390x.md: Update some instruction lengths
 
