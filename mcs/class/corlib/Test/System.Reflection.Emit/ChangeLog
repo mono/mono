@@ -1,3 +1,7 @@
+2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* DerivedTypesTests.cs: Fix some tests under v4.
+
 2010-03-23 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodOnTypeBuilderInstTest.cs: Add Test for ContainsGenericParameters.
