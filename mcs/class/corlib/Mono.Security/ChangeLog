@@ -1,3 +1,8 @@
+2010-03-24  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1Convert.cs: Specify CultureInfo.InvariantCulture (instead of 
+	null) to avoid crash on Windows. Patch by Yoni Shalom.
+
 2009-09-22  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* StrongName.cs: Moonlight NET_2_1 cannot depend on machine.config
