@@ -221,7 +221,7 @@ namespace Mono.Security {
 					break;
 			}
 #if NET_2_0
-			return DateTime.ParseExact (t, mask, null, DateTimeStyles.AdjustToUniversal);
+			return DateTime.ParseExact (t, mask, CultureInfo.InvariantCulture, DateTimeStyles.AdjustToUniversal);
 #else
 			DateTime result = DateTime.ParseExact (t, mask, null);
 			if (utc)
