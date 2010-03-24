@@ -1,3 +1,7 @@
+2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TransportSecurityBindingElementTest.cs : new test.
+
 2009-12-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WSSecurityTokenSerializerTest.cs : disable non-working test that
