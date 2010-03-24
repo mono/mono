@@ -1,3 +1,8 @@
+2010-03-24  Andrés G. Aragoneses  <knocte@gmail.com>
+
+	* SortSequenceContext.cs: Fix build, broken in r154156 by a
+	typo in the last backport.
+
 2010-03-24  Jb Evain  <jbevain@novell.com>
 
 	* SortSequenceContext.cs: Fix OrderByDescending stability.
