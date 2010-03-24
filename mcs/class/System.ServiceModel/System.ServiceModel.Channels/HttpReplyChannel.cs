@@ -197,7 +197,8 @@ w.Close ();
 				throw new InvalidOperationException ("WaitForRequest operation has not started");
 			var sctx = (HttpListenerContextInfo) ctx;
 			if (State == CommunicationState.Opened && ctx != null)
-				waiting.Add (sctx.Source);
+				lock (waiting)
+					waiting.Add (sctx.Source);
 			SignalAsyncWait ();
 		}
 	}

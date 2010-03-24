@@ -1,5 +1,10 @@
 2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ReplyChannelBase.cs, HttpReplyChannel.cs : add some locking.
+	  Patch by Matt Dargavel.
+
+2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : use lock object which is subject to
 	  change. Fix by Matt Dargavel.
 
