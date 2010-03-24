@@ -264,7 +264,7 @@ namespace System.ServiceModel.Dispatcher
 			AsyncCallback callback, object state)
 		{
 			if (open_delegate == null)
-				open_delegate = new Action<TimeSpan> (OnClose);
+				open_delegate = new Action<TimeSpan> (OnOpen);
 			return open_delegate.BeginInvoke (timeout, callback, state);
 		}
 
