@@ -1,3 +1,10 @@
+2010-03-24  Jb Evain  <jbevain@novell.com>
+
+	* SortSequenceContext.cs: Fix OrderByDescending stability.
+	Based on a patch by Richard Kiene  <richard.kiene@logos.com>.
+
+	backport of r154154.
+
 2009-11-14  Jb Evain  <jbevain@novell.com>
 
 	* QueryableTransformer: adjust to latest ExpressionTransformer
