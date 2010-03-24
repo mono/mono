@@ -375,18 +375,18 @@ namespace System.ServiceModel
 			//Build all ChannelDispatchers, one dispatcher per user configured EndPoint.
 			//We must keep thet ServiceEndpoints as a seperate collection, since the user
 			//can change the collection in the description during the behaviors events.
-			Dictionary<ServiceEndpoint, ChannelDispatcher> endPointToDispatcher = new Dictionary<ServiceEndpoint,ChannelDispatcher>();
 			ServiceEndpoint[] endPoints = new ServiceEndpoint[Description.Endpoints.Count];
 			Description.Endpoints.CopyTo (endPoints, 0);
+			var builder = new DispatcherBuilder ();
 			foreach (ServiceEndpoint se in endPoints) {
 
 				var commonParams = new BindingParameterCollection ();
 				foreach (IServiceBehavior b in Description.Behaviors)
 					b.AddBindingParameters (Description, this, Description.Endpoints, commonParams);
 
-				var channel = new DispatcherBuilder ().BuildChannelDispatcher (Description.ServiceType, se, commonParams);
-				ChannelDispatchers.Add (channel);
-				endPointToDispatcher[se] = channel;
+				var channel = builder.BuildChannelDispatcher (Description.ServiceType, se, commonParams);
+				if (!ChannelDispatchers.Contains (channel))
+					ChannelDispatchers.Add (channel);
 			}
 
 			//After the ChannelDispatchers are created, and attached to the service host
@@ -394,9 +394,7 @@ namespace System.ServiceModel
 			foreach (IServiceBehavior b in Description.Behaviors)
 				b.ApplyDispatchBehavior (Description, this);
 
-			foreach(KeyValuePair<ServiceEndpoint, ChannelDispatcher> val in endPointToDispatcher)
-				foreach (var ed in val.Value.Endpoints)
-					ApplyDispatchBehavior (ed, val.Key);			
+			builder.ApplyDispatchBehaviors ();
 		}
 
 		private void ValidateDescription ()
@@ -408,19 +406,6 @@ namespace System.ServiceModel
 
 			if (Description.Endpoints.FirstOrDefault (e => e.Contract != mex_contract) == null)
 				throw new InvalidOperationException ("The ServiceHost must have at least one application endpoint (that does not include metadata exchange contract) defined by either configuration, behaviors or call to AddServiceEndpoint methods.");
-		}
-
-		private void ApplyDispatchBehavior (EndpointDispatcher ed, ServiceEndpoint endPoint)
-		{
-			foreach (IContractBehavior b in endPoint.Contract.Behaviors)
-				b.ApplyDispatchBehavior (endPoint.Contract, endPoint, ed.DispatchRuntime);
-			foreach (IEndpointBehavior b in endPoint.Behaviors)
-				b.ApplyDispatchBehavior (endPoint, ed);
-			foreach (OperationDescription operation in endPoint.Contract.Operations) {
-				foreach (IOperationBehavior b in operation.Behaviors)
-					b.ApplyDispatchBehavior (operation, ed.DispatchRuntime.Operations [operation.Name]);
-			}
-
 		}
 
 		[MonoTODO]
@@ -596,18 +581,59 @@ namespace System.ServiceModel
 		*/
 	}
 
+	/// <summary>
+	///  Builds ChannelDispatchers as appropriate to service the service endpoints. 
+	/// </summary>
+	/// <remarks>Will re-use ChannelDispatchers when two endpoint uris are the same</remarks>
 	partial class DispatcherBuilder
 	{
+		List<ChannelDispatcher> built_dispatchers = new List<ChannelDispatcher> ();
+		Dictionary<ServiceEndpoint, EndpointDispatcher> ep_to_dispatcher_ep = new Dictionary<ServiceEndpoint, EndpointDispatcher> ();
+		
 		internal ChannelDispatcher BuildChannelDispatcher (Type serviceType, ServiceEndpoint se, BindingParameterCollection commonParams)
 		{
 			//Let all behaviors add their binding parameters
 			AddBindingParameters (commonParams, se);
-			//User the binding parameters to build the channel listener and Dispatcher
-			IChannelListener lf = BuildListener (se, commonParams);
-			ChannelDispatcher cd = new ChannelDispatcher (
-				lf, se.Binding.Name);
-			cd.InitializeServiceEndpoint (serviceType, se);
+			
+			// See if there's an existing channel that matches this endpoint
+			ChannelDispatcher cd = FindExistingDispatcher (se);
+			EndpointDispatcher ep;
+			if (cd != null) {
+				ep = cd.InitializeServiceEndpoint (serviceType, se);
+			} else {
+				// Use the binding parameters to build the channel listener and Dispatcher.
+				IChannelListener lf = BuildListener (se, commonParams);
+				cd = new ChannelDispatcher (
+					lf, se.Binding.Name);
+				ep = cd.InitializeServiceEndpoint (serviceType, se);
+				built_dispatchers.Add (cd);
+			}
+			ep_to_dispatcher_ep[se] = ep;
 			return cd;
+		}
+		
+		ChannelDispatcher FindExistingDispatcher (ServiceEndpoint se)
+		{
+			return built_dispatchers.FirstOrDefault ((ChannelDispatcher cd) => (cd.Listener.Uri.Equals (se.ListenUri)) && cd.MessageVersion.Equals (se.Binding.MessageVersion));
+		}
+
+		internal void ApplyDispatchBehaviors ()
+		{
+			foreach (KeyValuePair<ServiceEndpoint, EndpointDispatcher> val in ep_to_dispatcher_ep)
+				ApplyDispatchBehavior (val.Value, val.Key);
+		}
+		
+		private void ApplyDispatchBehavior (EndpointDispatcher ed, ServiceEndpoint endPoint)
+		{
+			foreach (IContractBehavior b in endPoint.Contract.Behaviors)
+				b.ApplyDispatchBehavior (endPoint.Contract, endPoint, ed.DispatchRuntime);
+			foreach (IEndpointBehavior b in endPoint.Behaviors)
+				b.ApplyDispatchBehavior (endPoint, ed);
+			foreach (OperationDescription operation in endPoint.Contract.Operations) {
+				foreach (IOperationBehavior b in operation.Behaviors)
+					b.ApplyDispatchBehavior (operation, ed.DispatchRuntime.Operations [operation.Name]);
+			}
+
 		}
 
 		private void AddBindingParameters (BindingParameterCollection commonParams, ServiceEndpoint endPoint) {

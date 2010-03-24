@@ -1,3 +1,8 @@
+2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : if there is an existing ChannelDispatcher
+	  for the same endpoint URI, reuse it. Patch by Matt Dargavel.
+
 2010-03-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Constants.cs : add more.

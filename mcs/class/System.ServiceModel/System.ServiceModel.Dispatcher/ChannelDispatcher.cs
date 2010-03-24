@@ -130,7 +130,7 @@ namespace System.ServiceModel.Dispatcher
 			endpoints = new EndpointDispatcherCollection (this);
 		}
 
-		internal void InitializeServiceEndpoint (Type serviceType, ServiceEndpoint se)
+		internal EndpointDispatcher InitializeServiceEndpoint (Type serviceType, ServiceEndpoint se)
 		{
 			this.MessageVersion = se.Binding.MessageVersion;
 			if (this.MessageVersion == null)
@@ -140,6 +140,7 @@ namespace System.ServiceModel.Dispatcher
 			EndpointDispatcher ed = new EndpointDispatcher (se.Address, se.Contract.Name, se.Contract.Namespace);
 			this.Endpoints.Add (ed);
 			ed.InitializeServiceEndpoint (false, serviceType, se);
+			return ed;
 		}
 
 		public string BindingName {
@@ -450,7 +451,7 @@ namespace System.ServiceModel.Dispatcher
 					LoopCore ();
 				} catch (Exception ex) {
 					// FIXME: log it
-					Console.WriteLine ("ChannelDispatcher caught an exception inside dispatcher loop, which is likely thrown by the channel listener {0}", owner.Listener);
+					Console.WriteLine ("ListenerLoopManager caught an exception inside dispatcher loop, which is likely thrown by the channel listener {0}", owner.Listener);
 					Console.WriteLine (ex);
 				} finally {
 					if (stop_handle != null)
@@ -496,16 +497,19 @@ namespace System.ServiceModel.Dispatcher
 					return;
 				}
 
-				channels.Add (ch);
+				lock (channels)
+					channels.Add (ch);
 				ch.Opened += delegate {
 					ch.Faulted += delegate {
-						if (channels.Contains (ch))
-							channels.Remove (ch);
+						lock (channels)
+							if (channels.Contains (ch))
+								channels.Remove (ch);
 						throttle_wait_handle.Set (); // release loop wait lock.
 						};
 					ch.Closed += delegate {
-						if (channels.Contains (ch))
-							channels.Remove (ch);
+						lock (channels)
+							if (channels.Contains (ch))
+								channels.Remove (ch);
 						throttle_wait_handle.Set (); // release loop wait lock.
 						};
 					};

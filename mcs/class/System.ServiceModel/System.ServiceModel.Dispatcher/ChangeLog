@@ -1,5 +1,10 @@
 2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : return EndpointDispatcher at initializing
+	  for internal use. Add some locks. Patch by Matt Dargavel.
+
+2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : fix wrong method call in open_delegate.
 	  Patch by Matt Dargavel.
 
