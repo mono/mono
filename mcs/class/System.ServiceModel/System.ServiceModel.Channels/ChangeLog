@@ -1,5 +1,10 @@
 2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs : use lock object which is subject to
+	  change. Fix by Matt Dargavel.
+
+2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : remove consumed HttpListenerContext from
 	  the pending queue. Compare "wsdl" request in case insensitive
 	  manner. Patch by Matt Dargavel.

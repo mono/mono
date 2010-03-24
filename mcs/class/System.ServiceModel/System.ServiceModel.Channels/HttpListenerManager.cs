@@ -381,7 +381,7 @@ namespace System.ServiceModel.Channels
 				}
 			}
 
-			lock (registered_channels) {
+			lock (pending) {
 				pending.Add (ctx);
 				// FIXME: this should not be required, but it somehow saves some failures wrt concurrent calls.
 				Thread.Sleep (100);
