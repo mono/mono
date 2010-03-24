@@ -57,16 +57,16 @@ namespace System.ServiceModel.Channels
 				throw new ArgumentNullException ("msg");
 
 			// Handle DestinationUnreacheable as 400 (it is what .NET does).
+			int fault_status_code_override = 0;
 			if (msg.IsFault) {
 				// FIXME: isn't there any better way?
 				var mb = msg.CreateBufferedCopy (0x10000);
+				
 				var fault = MessageFault.CreateFault (mb.CreateMessage (), 0x10000);
-				if (fault.Code.Name == "DestinationUnreachable") {
-					ctx.Response.StatusCode = 400;
-					return;
-				}
-				else
-					msg = mb.CreateMessage ();
+				if (fault.Code.Name == "DestinationUnreachable")
+					fault_status_code_override = 400;
+
+				msg = mb.CreateMessage ();
 			}
 
 			// FIXME: should this be done here?
@@ -79,7 +79,9 @@ namespace System.ServiceModel.Channels
 
 			string pname = HttpResponseMessageProperty.Name;
 			bool suppressEntityBody = false;
-			if (msg.Properties.ContainsKey (pname)) {
+			if (fault_status_code_override > 0)
+				ctx.Response.StatusCode = fault_status_code_override;
+			else if (msg.Properties.ContainsKey (pname)) {
 				HttpResponseMessageProperty hp = (HttpResponseMessageProperty) msg.Properties [pname];
 				string contentType = hp.Headers ["Content-Type"];
 				if (contentType != null)

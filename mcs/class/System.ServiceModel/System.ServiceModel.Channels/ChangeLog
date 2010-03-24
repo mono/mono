@@ -1,5 +1,10 @@
 2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestContext.cs : apply the patch by Matt Dargavel, which is
+	  supposed to provide detailed 400 error message.
+
+2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TransactionFlowBindingElement.cs: revamp the previous change to
 	  not regress regarding service metadata.
 
