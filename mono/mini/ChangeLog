@@ -1,5 +1,10 @@
 2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* simd-intrincs.c (simd_intrinsic_emit_binary): Support binary
+	intrinsics with expanded scalar arguments.
+
+2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini-exceptions.c (get_exception_catch_class): Non catch clauses
 	don't have an exception class, so don't decode it. This would crash
 	with filter clauses.
