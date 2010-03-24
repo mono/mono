@@ -1,3 +1,8 @@
+2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : compare "wsdl" parameter in case-
+	  insensitive manner.
+
 2010-03-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HostedBindingBehavior.cs : remove unused class.

@@ -217,7 +217,7 @@ namespace System.ServiceModel.Description
 					return CreateWsdlMessage (w);
 			}
 
-			if (query_string [null] == "wsdl") {
+			if (String.Compare (query_string [null], "wsdl", StringComparison.OrdinalIgnoreCase) == 0) {
 				WSServiceDescription wsdl = GetWsdl ("wsdl");
 				if (wsdl != null)
 					return CreateWsdlMessage (wsdl);
