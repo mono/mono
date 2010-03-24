@@ -143,7 +143,8 @@ namespace System.Collections.Concurrent
 						}
 						basket.Add (new Pair (key, value));
 					} finally {
-						basket.Lock.Exit ();
+						if (taken)
+							basket.Lock.Exit ();
 					}
 				}
 			} else {
@@ -189,7 +190,8 @@ namespace System.Collections.Concurrent
 							throw new InvalidOperationException ("pair is null, shouldn't be");
 						pair.Value = (temp = updateValueFactory (key, pair.Value));
 					} finally {
-						basket.Lock.Exit ();
+						if (taken)
+							basket.Lock.Exit ();
 					}
 				}
 			}
@@ -231,7 +233,8 @@ namespace System.Collections.Concurrent
 						return false;
 					value = pair.Value;
 				} finally {
-					basket.Lock.Exit ();
+					if (taken)
+						basket.Lock.Exit ();
 				}
 			}
 
@@ -259,7 +262,8 @@ namespace System.Collections.Concurrent
 						return true;
 					}
 				} finally {
-					basket.Lock.Exit ();
+					if (taken)
+						basket.Lock.Exit ();
 				}
 			}
 
@@ -290,7 +294,8 @@ namespace System.Collections.Concurrent
 							throw new InvalidOperationException ("pair is null, shouldn't be");
 						pair.Value = value;
 					} finally {
-						basket.Lock.Exit ();
+						if (taken)
+							basket.Lock.Exit ();
 					}
 				}
 			}
@@ -314,7 +319,8 @@ namespace System.Collections.Concurrent
 						if (pair != null)
 							temp = pair.Value;
 					} finally {
-						basket.Lock.Exit ();
+						if (taken)
+							basket.Lock.Exit ();
 					}
 				}
 
@@ -361,7 +367,8 @@ namespace System.Collections.Concurrent
 
 					return result;
 				} finally {
-					b.Lock.Exit ();
+					if (taken)
+						b.Lock.Exit ();
 				}
 			}
 
@@ -550,7 +557,8 @@ namespace System.Collections.Concurrent
 							array[i++] = new KeyValuePair<TKey, TValue> (p.Key, p.Value);
 						}
 					} finally {
-						b.Lock.Exit ();
+						if (taken)
+							b.Lock.Exit ();
 					}
 				}
 			}
@@ -580,7 +588,8 @@ namespace System.Collections.Concurrent
 						foreach (Pair p in b)
 							yield return new KeyValuePair<TKey, TValue> (p.Key, p.Value);
 					} finally {
-						b.Lock.Exit ();
+						if (taken)
+							b.Lock.Exit ();
 					}
 				}
 			}
