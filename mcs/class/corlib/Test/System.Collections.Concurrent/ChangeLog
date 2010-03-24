@@ -1,3 +1,8 @@
+2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ConcurrentDictionaryTests.cs: Update behavior of TryAddDuplicateTest
+	The method returns false and doesn't throw exception anymore
+
 2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* CollectionStressTestHelper.cs:

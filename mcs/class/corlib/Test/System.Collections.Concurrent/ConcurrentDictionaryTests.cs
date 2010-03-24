@@ -132,10 +132,10 @@ namespace MonoTests.System.Collections.Concurrent
 			});
 		}
 		
-		[Test, ExpectedException(typeof(ArgumentException))]
+		[Test]
 		public void AddWithDuplicate()
 		{
-			map.TryAdd("foo", 6);
+			Assert.IsFalse (map.TryAdd("foo", 6));
 		}
 		
 		[Test]

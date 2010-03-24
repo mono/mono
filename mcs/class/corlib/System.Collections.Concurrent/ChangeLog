@@ -1,3 +1,8 @@
+2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ConcurrentDictionary.cs: Use SpinLock instead of Monitor
+	for basket locking
+
 2010-02-02  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ConcurrentDictionary.cs:
