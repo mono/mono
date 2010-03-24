@@ -1,3 +1,9 @@
+2010-03-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager_2_1.cs: Add an internal HasElevatedPermissions 
+	property to mscorlib since the "real" (i.e. visible) one in 
+	System.Windows.dll is not accessible by most code.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* SecurityTransparentAttribute.cs
