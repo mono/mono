@@ -38,7 +38,7 @@ namespace System
 {
 	[Serializable]
 	[ComVisible (true)]
-	public sealed class CharEnumerator : IEnumerator, ICloneable, IEnumerator <char>
+	public sealed class CharEnumerator : IEnumerator, ICloneable, IEnumerator<char>
 	{
 		private string str;
 		private int index;
