@@ -161,11 +161,9 @@ namespace System.ServiceModel.Channels
 			this.protocol = protocol;
 		}
 
-		internal override KeyedByTypeCollection<object> Properties {
-			get {
-				var b = inner_listener as ChannelListenerBase;
-				return b != null ? b.Properties : base.Properties;
-			}
+		public override T GetProperty<T> ()
+		{
+			return inner_listener.GetProperty<T> () ?? base.GetProperty<T> ();
 		}
 
 		public override Uri Uri {
