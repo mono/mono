@@ -1,3 +1,9 @@
+2010-03-24  Andrés G. Aragoneses  <knocte@gmail.com>
+
+	* mono-dl.c: (mono_dl_build_path) Take in account the suffix
+	variable assigned wrt the prefix comparison to concat the final
+	path for dlopen. Fixes BNC#588143. r:vargaz
+
 2010-03-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-semaphore.h: MONO_SEM_WAIT() return value inverted when using
@@ -41,6 +47,7 @@ Wed Feb 24 15:50:55 CET 2010 Paolo Molaro <lupus@ximian.com>
 	the removal of gli from the other public headers.
 	* Makefile.am: install only the public header mono-publib.h.
 
+>>>>>>> .r154146
 2010-02-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-semaphore.h: enable the #defines when io-layer is in use.
