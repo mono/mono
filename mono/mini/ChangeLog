@@ -1,3 +1,9 @@
+2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-exceptions.c (get_exception_catch_class): Non catch clauses
+	don't have an exception class, so don't decode it. This would crash
+	with filter clauses.
+
 2010-03-24  U-anarquia\miguel  <miguel@anarquia>
 
 	Make sure that trunk builds with DISABLE_JIT, an update to the
