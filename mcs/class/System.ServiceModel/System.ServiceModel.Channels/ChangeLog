@@ -1,3 +1,9 @@
+2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelListenerBase.cs, TransactionFlowBindingElement.cs: fix 
+	  GetProperty<T>() bug that fails to retrieve properties. (This may
+	  be rewritten later if an ongoing change proposal is to take place.)
+
 2010-03-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ReliableSessionBindingElement.cs,

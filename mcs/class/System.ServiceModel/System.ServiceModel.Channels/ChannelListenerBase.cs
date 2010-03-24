@@ -84,7 +84,7 @@ namespace System.ServiceModel.Channels
 			get { return timeouts.SendTimeout; }
 		}
 
-		internal KeyedByTypeCollection<object> Properties {
+		internal virtual KeyedByTypeCollection<object> Properties {
 			get {
 				if (properties == null)
 					properties = new KeyedByTypeCollection<object> ();
