@@ -98,16 +98,6 @@ namespace System.ServiceModel.Dispatcher
 			mrc.ReplyMessage = res;
 		}
 
-		Message CreateActionNotSupported (Message req)
-		{
-			FaultCode fc = new FaultCode (
-				req.Version.Addressing.ActionNotSupported,
-				req.Version.Addressing.Namespace);
-			// FIXME: set correct namespace URI
-			return Message.CreateMessage (req.Version, fc,
-				String.Format ("action '{0}' is not supported in this service contract.", req.Headers.Action), String.Empty);
-		}
-
 		void BuildInvokeParams (MessageProcessingContext mrc, out object [] parameters)
 		{
 			DispatchOperation operation = mrc.Operation;
