@@ -26,7 +26,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System.Collections.Generic;
 using System.Collections.Specialized;
 using System.Globalization;
@@ -585,12 +585,6 @@ namespace System.Net.NetworkInformation {
 			[FieldOffset (0)]
 			[MarshalAs ((short) UnmanagedType.U1, SizeConst = 16)]
 			public byte [] Bytes;
-			[FieldOffset (0)]
-			[MarshalAs ((short) UnmanagedType.U2, SizeConst = 8)]
-			public byte [] UInt16Array;
-			[FieldOffset (0)]
-			[MarshalAs ((short) UnmanagedType.U4, SizeConst = 4)]
-			public byte [] UInt32Array;
 		}
 
 		[StructLayout (LayoutKind.Sequential)]
@@ -663,5 +657,3 @@ namespace System.Net.NetworkInformation {
 		}
 	}
 }
-#endif
-
