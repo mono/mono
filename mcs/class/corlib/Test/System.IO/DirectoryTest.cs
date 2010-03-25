@@ -59,6 +59,7 @@ public class DirectoryTest
 		}
 	}
 	
+	/* Commented out: a directory named ":" is legal in unix
 	[Test]
 	public void CreateDirectoryNotSupportedException ()
 	{
@@ -75,6 +76,7 @@ public class DirectoryTest
 		}
 		DeleteDirectory (":");
 	}
+	*/
 
 	[Test]
 	public void CreateDirectory_Path_Null ()
