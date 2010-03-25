@@ -1,3 +1,8 @@
+2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-semaphore.[hc]: make sure the semaphore calls are restarted if
+	interrupted. Return 0 on success and -1 on failure on windows.
+
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-sigcontext.h: Applied patch from Robert Nagy (Robert@openbsd.org).
