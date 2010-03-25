@@ -73,7 +73,7 @@ namespace System.IO
 			
 			// LAMESPEC: with .net 1.0 version this throw NotSupportedException and msdn says so too
 			// but v1.1 throws ArgumentException.
-			if (path == ":")
+			if (Environment.IsRunningOnWindows && path == ":")
 				throw new ArgumentException ("Only ':' In path");
 			
 			return CreateDirectoriesInternal (path);
@@ -131,7 +131,7 @@ namespace System.IO
 			if (path.Trim().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
 
-			if (path == ":")
+			if (Environment.IsRunningOnWindows && path == ":")
 				throw new NotSupportedException ("Only ':' In path");
 
 			MonoIOError error;

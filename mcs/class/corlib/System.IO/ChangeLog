@@ -1,3 +1,9 @@
+2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Directory.cs: a directory named ":" is legal in unix.
+	This gets rid of the annoying ":" folder when running
+	corlib tests.
+
 2010-03-22  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Directory.cs, DirectoryInfo.cs: Disble new NET_4_0 API used in
