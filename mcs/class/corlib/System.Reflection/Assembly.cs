@@ -53,7 +53,7 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.None)]
 #if NET_2_1
 	public partial class Assembly : ICustomAttributeProvider, _Assembly {
-#elseif NET_4_0
+#elif NET_4_0
 	public class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #else
 	public partial class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
