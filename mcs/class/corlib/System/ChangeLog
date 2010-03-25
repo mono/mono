@@ -1,3 +1,10 @@
+2010-03-25  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomain.cs: Add new properties that are in both FX4 and SL4
+	since Moonlight needs them (for testing purpose).
+	* Environment.cs: FailFast overloads are present in SL4 (and also
+	needed for testing Moonlight)
+
 2010-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Change default value from null to false for new

@@ -701,20 +701,22 @@ namespace System {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern void InternalSetEnvironmentVariable (string variable, string value);
-
+#endif
 		[SecurityPermission (SecurityAction.LinkDemand, UnmanagedCode=true)]
 		public static void FailFast (string message)
 		{
 			throw new NotImplementedException ();
 		}
-#endif
-#if NET_4_0
+
+#if NET_4_0 || MOONLIGHT
 		[SecurityCritical]
 		public static void FailFast (string message, Exception exception)
 		{
 			throw new NotImplementedException ();
 		}
+#endif
 
+#if NET_4_0
 		public static bool Is64BitOperatingSystem {
 			get { return IntPtr.Size == 8; } // FIXME: is this good enough?
 		}

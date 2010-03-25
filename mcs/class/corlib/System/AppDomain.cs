@@ -1519,6 +1519,32 @@ namespace System {
 			// default (at least for SL4) is to return false for unknown values (can't get a null out of it)
 			return false;
 		}
+
+		[MonoTODO ("Currently always returns false")]
+		public static bool MonitoringIsEnabled { 
+			get { return false; }
+			set { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public long MonitoringSurvivedMemorySize {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public static long MonitoringSurvivedProcessMemorySize {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public long MonitoringTotalAllocatedMemorySize {
+			get { throw new NotImplementedException (); }
+		}
+
+		[MonoTODO]
+		public TimeSpan MonitoringTotalProcessorTime {
+			get { throw new NotImplementedException (); }
+		}
 #endif
 	}
 }
