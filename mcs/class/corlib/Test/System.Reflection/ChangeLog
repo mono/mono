@@ -1,3 +1,7 @@
+2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	*AssemblyTest.cs: Fix one more tests under v4.
+
 2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	*AssemblyTest.cs: Fix some tests under v4.
