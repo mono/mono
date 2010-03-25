@@ -1,3 +1,7 @@
+2010-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono.1: Document the MONO_ENABLE_SHM env variable.
+
 2010-03-03  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* mono.1: Document exception tracing.
