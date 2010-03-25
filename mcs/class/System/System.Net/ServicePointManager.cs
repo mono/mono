@@ -438,7 +438,6 @@ namespace System.Net
 
 				bool result = false;
 				// No certificate root found means no mozroots or monotouch
-				if (Environment.OSVersion.Platform == PlatformID.MacOSX) {
 #if !MONOTOUCH
 				if (System.IO.File.Exists (MSX.OSX509Certificates.SecurityLibrary)) {
 #endif
@@ -463,7 +462,6 @@ namespace System.Net
 #if !MONOTOUCH
 				}
 #endif
-				}
 
 				if (policy != null && (!(policy is DefaultCertificatePolicy) || cb == null)) {
 					ServicePoint sp = null;
