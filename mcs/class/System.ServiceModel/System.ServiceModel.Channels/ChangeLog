@@ -1,5 +1,10 @@
 2010-03-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestContext.cs : removed HTTP status rewriting for
+	  commented reason.
+
+2010-03-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpRequestChannel.cs : handle only 4xx errors as to not process
 	  content stream.
 
