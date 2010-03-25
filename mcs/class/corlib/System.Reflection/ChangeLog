@@ -1,3 +1,12 @@
+2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Assembly.cs:
+	* MonoAssembly.cs: Move a dozen methods from Assembly.cs
+	to MonoAssembly.cs, so they can either be the concrete impl
+	on v4 of the only impl on v2.
+	Add to Assembly.cs versions that throws NotImplementedException.
+	Mask Assembly.cs as abstract.
+
 2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Assembly.cs: Make it a partial class under !v4.

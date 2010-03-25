@@ -27,7 +27,10 @@
 //
 
 using System;
+using System.Collections;
+using System.Globalization;
 using System.Runtime.InteropServices;
+
 
 namespace System.Reflection {
 
@@ -38,7 +41,118 @@ namespace System.Reflection {
 	[ClassInterface(ClassInterfaceType.None)]
 	public class MonoAssembly : Assembly {
 #else
-	public partial class Assemby {
+	public partial class Assembly {
+#endif
+		public
+#if NET_4_0
+		override
+#endif
+		Type GetType (string name, bool throwOnError, bool ignoreCase)
+		{
+			if (name == null)
+				throw new ArgumentNullException (name);
+			if (name.Length == 0)
+			throw new ArgumentException ("name", "Name cannot be empty");
+
+			return InternalGetType (null, name, throwOnError, ignoreCase);
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		Module GetModule (String name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("Name can't be empty");
+
+			Module[] modules = GetModules (true);
+			foreach (Module module in modules) {
+				if (module.ScopeName == name)
+					return module;
+			}
+
+			return null;
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		AssemblyName[] GetReferencedAssemblies () {
+			return GetReferencedAssemblies (this);
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		Module[] GetModules (bool getResourceModules) {
+			Module[] modules = GetModulesInternal ();
+
+			if (!getResourceModules) {
+				ArrayList result = new ArrayList (modules.Length);
+				foreach (Module m in modules)
+					if (!m.IsResource ())
+						result.Add (m);
+				return (Module[])result.ToArray (typeof (Module));
+			}
+			else
+				return modules;
+		}
+
+		// FIXME: Currently, the two sets of modules are equal
+		public
+#if NET_4_0
+		override
+#endif
+		Module[] GetLoadedModules (bool getResourceModules)
+		{
+			return GetModules (getResourceModules);
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		Assembly GetSatelliteAssembly (CultureInfo culture)
+		{
+			return GetSatelliteAssembly (culture, null, true);
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
+		{
+			return GetSatelliteAssembly (culture, version, true);
+		}
+
+		//FIXME remove GetManifestModule under v4, it's a v2 artifact
+		[ComVisible (false)]
+		public
+#if NET_4_0
+		override
+#endif
+		Module ManifestModule {
+			get {
+				return GetManifestModule ();
+			}
+		}
+
+#if !MOONLIGHT
+		public
+#if NET_4_0
+		override
+#endif
+		bool GlobalAssemblyCache {
+			get {
+				return get_global_assembly_cache ();
+			}
+		}
 #endif
 
 	}

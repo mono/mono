@@ -54,7 +54,7 @@ namespace System.Reflection {
 #if NET_2_1
 	public partial class Assembly : ICustomAttributeProvider, _Assembly {
 #elif NET_4_0
-	public class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
+	public abstract class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #else
 	public partial class Assembly : ICustomAttributeProvider, _Assembly, IEvidenceFactory, ISerializable {
 #endif
@@ -172,13 +172,8 @@ namespace System.Reflection {
 		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern bool get_global_assembly_cache ();
+		internal extern bool get_global_assembly_cache ();
 
-		public bool GlobalAssemblyCache {
-			get {
-				return get_global_assembly_cache ();
-			}
-		}
 #endif
 		internal bool FromByteArray {
 			set { fromByteArray = value; }
@@ -369,16 +364,6 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern Type InternalGetType (Module module, String name, Boolean throwOnError, Boolean ignoreCase);
 
-		public Type GetType (string name, bool throwOnError, bool ignoreCase)
-		{
-			if (name == null)
-				throw new ArgumentNullException (name);
-			if (name.Length == 0)
-			throw new ArgumentException ("name", "Name cannot be empty");
-
-			return InternalGetType (null, name, throwOnError, ignoreCase);
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void InternalGetAssemblyName (string assemblyFile, AssemblyName aname);
 
@@ -435,22 +420,12 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		public static extern Assembly GetEntryAssembly();
 
-		public Assembly GetSatelliteAssembly (CultureInfo culture)
-		{
-			return GetSatelliteAssembly (culture, null, true);
-		}
-
-		public Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
-		{
-			return GetSatelliteAssembly (culture, version, true);
-		}
-
 		internal Assembly GetSatelliteAssemblyNoThrow (CultureInfo culture, Version version)
 		{
 			return GetSatelliteAssembly (culture, version, false);
 		}
 
-		private Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError)
+		internal Assembly GetSatelliteAssembly (CultureInfo culture, Version version, bool throwOnError)
 		{
 			if (culture == null)
 				throw new ArgumentException ("culture");
@@ -602,7 +577,11 @@ namespace System.Reflection {
 		}
 
 		[MonoTODO ("Not implemented")]
-		public Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
+		public
+#if NET_4_0
+		virtual
+#endif
+		Module LoadModule (string moduleName, byte [] rawModule, byte [] rawSymbolStore)
 		{
 			throw new NotImplementedException ();
 		}
@@ -652,7 +631,11 @@ namespace System.Reflection {
 			}
 		}
 
-		public Object CreateInstance (String typeName, Boolean ignoreCase,
+		public
+#if NET_4_0
+		virtual
+#endif
+		Object CreateInstance (String typeName, Boolean ignoreCase,
 					      BindingFlags bindingAttr, Binder binder,
 					      Object[] args, CultureInfo culture,
 					      Object[] activationAttributes)
@@ -673,49 +656,14 @@ namespace System.Reflection {
 			return GetLoadedModules (false);
 		}
 
-		// FIXME: Currently, the two sets of modules are equal
-		public Module[] GetLoadedModules (bool getResourceModules)
-		{
-			return GetModules (getResourceModules);
-		}
-
 		public Module[] GetModules ()
 		{
 			return GetModules (false);
 		}
 
-		public Module GetModule (String name)
-		{
-			if (name == null)
-				throw new ArgumentNullException ("name");
-			if (name.Length == 0)
-				throw new ArgumentException ("Name can't be empty");
-
-			Module[] modules = GetModules (true);
-			foreach (Module module in modules) {
-				if (module.ScopeName == name)
-					return module;
-			}
-
-			return null;
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal virtual extern Module[] GetModulesInternal ();
 
-		public Module[] GetModules (bool getResourceModules) {
-			Module[] modules = GetModulesInternal ();
-
-			if (!getResourceModules) {
-				ArrayList result = new ArrayList (modules.Length);
-				foreach (Module m in modules)
-					if (!m.IsResource ())
-						result.Add (m);
-				return (Module[])result.ToArray (typeof (Module));
-			}
-			else
-				return modules;
-		}
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern string[] GetNamespaces ();
@@ -730,7 +678,7 @@ namespace System.Reflection {
 		public extern static Assembly GetCallingAssembly ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		public extern AssemblyName[] GetReferencedAssemblies ();
+		internal static extern AssemblyName[] GetReferencedAssemblies (Assembly module);
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern bool GetManifestResourceInfoInternal (String name, ManifestResourceInfo info);
@@ -773,16 +721,14 @@ namespace System.Reflection {
 
 		[MonoTODO ("Currently it always returns zero")]
 		[ComVisible (false)]
-		public long HostContext {
+		public
+#if NET_4_0
+		virtual
+#endif
+		long HostContext {
 			get { return 0; }
 		}
 
-		[ComVisible (false)]
-		public Module ManifestModule {
-			get {
-				return GetManifestModule ();
-			}
-		}
 
 		internal virtual Module GetManifestModule () {
 			return GetManifestModuleInternal ();
@@ -895,6 +841,56 @@ namespace System.Reflection {
 					_refuse = SecurityManager.Decode (data);
 				}
 			}
+		}
+#endif
+
+#if NET_4_0
+		static Exception CreateNIE ()
+		{
+			return new NotSupportedException ("Derived classes must implement it");
+		}
+
+		public virtual Type GetType (string name, bool throwOnError, bool ignoreCase)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Module GetModule (String name)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual AssemblyName[] GetReferencedAssemblies ()
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Module[] GetModules (bool getResourceModules)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Module[] GetLoadedModules (bool getResourceModules)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Assembly GetSatelliteAssembly (CultureInfo culture)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Module ManifestModule {
+			get { throw CreateNIE (); }
+		}
+
+		public virtual bool GlobalAssemblyCache {
+			get { throw CreateNIE (); }
 		}
 #endif
 	}
