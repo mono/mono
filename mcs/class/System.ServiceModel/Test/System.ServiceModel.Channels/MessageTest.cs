@@ -321,6 +321,39 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		public void IsFault2 ()
+		{
+			string xml = @"
+<s:Envelope xmlns:a='http://www.w3.org/2005/08/addressing' xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
+  <s:Header>
+    <a:Action s:mustUnderstand='1'>http://www.w3.org/2005/08/addressing/fault</a:Action>
+  </s:Header>
+  <s:Body>
+    <s:Fault xmlns:s='http://www.w3.org/2003/05/soap-envelope'>
+      <s:Code>
+        <s:Value>s:Sender</s:Value>
+        <s:Subcode>
+          <s:Value>a:ActionNotSupported</s:Value>
+        </s:Subcode>
+      </s:Code>
+      <s:Reason>
+        <s:Text xml:lang='ja-JP'>message</s:Text>
+      </s:Reason>
+    </s:Fault>
+  </s:Body>
+</s:Envelope>";
+			var msg = Message.CreateMessage (MessageVersion.Soap11, "urn:foo", XmlReader.Create (new StringReader (xml)));
+			Assert.AreEqual ("urn:foo", msg.Headers.Action, "#1");
+			msg.ToString ();
+			Assert.IsFalse (msg.IsFault, "#2"); // version mismatch
+
+			msg = Message.CreateMessage (MessageVersion.Soap12, "urn:foo", XmlReader.Create (new StringReader (xml)));
+			Assert.AreEqual ("urn:foo", msg.Headers.Action, "#3");
+			msg.ToString ();
+			Assert.IsFalse (msg.IsFault, "#4"); // version match, but it doesn't set as true. It is set true only when it is constructed with fault objects.
+		}
+
+		[Test]
 		public void State ()
 		{
 			var msg = Message.CreateMessage (MessageVersion.Soap11, "urn:foo", (object) null);
