@@ -1718,6 +1718,32 @@ public class AssemblyBuilderTest
 		Assert.AreSame (res, ab.GetType ("Test", false, true), "#3");
 	}
 
+	[Test]
+	public void GetModule ()
+	{
+		var ab = genAssembly ();
+		Assert.IsNull (ab.GetModule ("Foo"), "#1");
+
+		var modA = ab.DefineDynamicModule ("Foo");
+		var modB = ab.DefineDynamicModule ("Bar");
+
+		Assert.AreSame (modA, ab.GetModule ("Foo"), "#2"); 
+		Assert.AreSame (modB, ab.GetModule ("Bar"), "#3"); 
+		Assert.IsNull (ab.GetModule ("FooBar"), "#4");
+	}
+	
+	[Test]
+	public void GetModules2 ()
+	{
+		//XXX this is not the v4 behavior since it returns
+		//the manifest module in the place of the first one
+		var ab = genAssembly ();
+		var modA = ab.DefineDynamicModule ("Foo");
+		var modB = ab.DefineDynamicModule ("Bar");
+		Assert.AreEqual (2, ab.GetModules ().Length, "#1");
+		Assert.AreSame (modA, ab.GetModules () [0], "#2");
+		Assert.AreSame (modB, ab.GetModules () [1], "#3");
+	}
 
 	[ExpectedException (typeof (TypeLoadException))]
 	public void GetCustomAttributes_NotCreated ()

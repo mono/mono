@@ -1,5 +1,9 @@
 2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* AssemblyBuilder.cs: Implement v4 GetModule(s).
+
+2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* AssemblyBuilder.cs: Implement v4 GetType.
 
 2010-03-23 Rodrigo Kumpera  <rkumpera@novell.com>

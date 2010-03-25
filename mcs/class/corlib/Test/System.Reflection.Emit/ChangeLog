@@ -1,7 +1,6 @@
 2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* AssemblyBuilderTest.cs: Add test for v4 GetType and
-	fix other test to not be broken.
+	* AssemblyBuilderTest.cs: Add test for v4 GetModule(s).
 
 2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 

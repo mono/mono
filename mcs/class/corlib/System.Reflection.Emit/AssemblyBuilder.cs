@@ -1214,6 +1214,38 @@ namespace System.Reflection.Emit
 			}
 			return res;
 		}
+
+		public override Module GetModule (String name)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (name.Length == 0)
+				throw new ArgumentException ("Name can't be empty");
+
+			if (modules == null)
+				return null;
+
+			foreach (Module module in modules) {
+				if (module.ScopeName == name)
+					return module;
+			}
+
+			return null;
+		}
+
+		public override Module[] GetModules (bool getResourceModules)
+		{
+			Module[] modules = GetModulesInternal ();
+
+			if (!getResourceModules) {
+				ArrayList result = new ArrayList (modules.Length);
+				foreach (Module m in modules)
+					if (!m.IsResource ())
+						result.Add (m);
+				return (Module[])result.ToArray (typeof (Module));
+			}
+			return modules;
+		}
 #endif
 	}
 }
