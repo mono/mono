@@ -323,6 +323,35 @@ namespace MonoTests.System.ServiceModel
 			Assert.Fail ("should not open");
 		}
 
+		[Test]
+		[Category ("NotWorking")]
+		public void RunDestinationUnreachableTest ()
+		{
+			string address = "http://localhost:37564/";
+			var host = OpenHost (address);
+			
+			var binding = new BasicHttpBinding ();
+			var client = new DestinationUnreachableClient (binding, address);
+			
+			try {
+				client.NotImplementedOperation ();
+				Assert.Fail ("ActionNotSupportedException is expected");
+			} catch (ActionNotSupportedException) {
+				// catching it instead of ExpectedException to distinguish errors at service side.
+			}
+		}
+		
+		ServiceHost OpenHost (string address)
+		{
+			var baseAddresses = new Uri[] { new Uri(address) };
+
+			var host = new ServiceHost (typeof (DummyService), baseAddresses);
+			var basicBinding = new BasicHttpBinding ();
+			host.AddServiceEndpoint (typeof (IDummyService), basicBinding, new Uri ("", UriKind.Relative));
+			host.Open ();
+			return host;
+		}
+
 		#region helpers
 
 		public enum Stage
@@ -606,7 +635,39 @@ namespace MonoTests.System.ServiceModel
 
 			#endregion
 		}
-		#endregion
 
+		[ServiceContract]
+		public interface IDummyService
+		{
+			[OperationContract]
+			void DummyOperation ();
+		}
+		public class DummyService : IDummyService
+		{
+			public void DummyOperation ()
+			{
+				// Do nothing
+			}
+		}
+		[ServiceContract]
+		public interface INotImplementedService
+		{
+			[OperationContract]
+			void NotImplementedOperation ();
+		}
+		public class DestinationUnreachableClient : ClientBase<INotImplementedService>, INotImplementedService
+		{
+			public void NotImplementedOperation ()
+			{
+				Channel.NotImplementedOperation ();
+			}
+		
+			public DestinationUnreachableClient (Binding binding, string address) 
+				: base (binding, new EndpointAddress (address))
+			{
+			}
+		}
+
+		#endregion
 	}
 }
