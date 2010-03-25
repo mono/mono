@@ -1684,11 +1684,10 @@ public class AssemblyBuilderTest
 	}
 
 	[Test]
-	[Category ("NotDotNet")]
 	public void GetType_IgnoreCase ()
 	{
 		TypeBuilder tb = mb.DefineType ("Foo.Test2", TypeAttributes.Public, typeof (object));
-		// the previous line throws a TypeLoadException under MS 1.1 SP1
+		tb.CreateType ();
 
 		Type t;
 
@@ -1701,6 +1700,24 @@ public class AssemblyBuilderTest
 		t = ab.GetType ("Foo.test2", true, true);
 		Assert.AreEqual ("Test2", t.Name, "#3");
 	}
+
+
+	[Test]
+	public void GetType ()
+	{
+		TypeBuilder tb = mb.DefineType ("Test", TypeAttributes.Public);
+
+		Assert.IsNull (ab.GetType ("Test", false, true), "#1");
+		try {
+			ab.GetType ("Test", true, true);
+			Assert.Fail ("#2");
+		} catch (TypeLoadException) { }
+
+		var res = tb.CreateType ();
+
+		Assert.AreSame (res, ab.GetType ("Test", false, true), "#3");
+	}
+
 
 	[ExpectedException (typeof (TypeLoadException))]
 	public void GetCustomAttributes_NotCreated ()

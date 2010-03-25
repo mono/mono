@@ -1,3 +1,8 @@
+2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AssemblyBuilderTest.cs: Add test for v4 GetType and
+	fix other test to not be broken.
+
 2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* DerivedTypesTests.cs: Fix some tests under v4.

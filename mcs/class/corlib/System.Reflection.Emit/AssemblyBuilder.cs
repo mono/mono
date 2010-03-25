@@ -1197,5 +1197,23 @@ namespace System.Reflection.Emit
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_4_0
+		public override Type GetType (string name, bool throwOnError, bool ignoreCase)
+		{
+			if (name == null)
+				throw new ArgumentNullException (name);
+			if (name.Length == 0)
+			throw new ArgumentException ("name", "Name cannot be empty");
+
+			var res = InternalGetType (null, name, throwOnError, ignoreCase);
+			if (res is TypeBuilder) {
+				if (throwOnError)
+					throw new TypeLoadException (string.Format ("Could not load type '{0}' from assembly '{1}'", name, this.name));
+				return null;
+			}
+			return res;
+		}
+#endif
 	}
 }
