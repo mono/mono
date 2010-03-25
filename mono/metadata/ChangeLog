@@ -1,3 +1,7 @@
+2010-03-25  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Update a few comments.
+
 2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c: Add support for new v4 type
@@ -12,7 +16,6 @@
 	Expose a few macros that are needed for SR but not SRE to the
 	world (previous inside the SRE ifdef)
 
-	
 2010-03-24  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c (gc_register_current_thread): We need
