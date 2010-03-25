@@ -205,7 +205,7 @@ namespace System.ServiceModel.Channels
 			}
 
 			var hrr = (HttpWebResponse) res;
-			if ((int) hrr.StatusCode >= 400) {
+			if ((int) hrr.StatusCode >= 400 && (int) hrr.StatusCode < 500) {
 				channelResult.Complete (new WebException (String.Format ("There was an error on processing web request: Status code {0}({1}): {2}", (int) hrr.StatusCode, hrr.StatusCode, hrr.StatusDescription)));
 			}
 
@@ -227,8 +227,8 @@ namespace System.ServiceModel.Channels
 						//responseStream, MaxSizeOfHeaders);
 						ms, MaxSizeOfHeaders, res.ContentType);
 /*
-MessageBuffer buf = ret.CreateBufferedCopy (0x10000);
-ret = buf.CreateMessage ();
+MessageBuffer buf = channelResult.Response.CreateBufferedCopy (0x10000);
+channelResult.Response = buf.CreateMessage ();
 System.Xml.XmlTextWriter w = new System.Xml.XmlTextWriter (Console.Out);
 w.Formatting = System.Xml.Formatting.Indented;
 buf.CreateMessage ().WriteMessage (w);

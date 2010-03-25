@@ -1,5 +1,10 @@
 2010-03-25  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestChannel.cs : handle only 4xx errors as to not process
+	  content stream.
+
+2010-03-25  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageFault.cs : do not use SOAP11 namespace for fault contents.
 
 2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
