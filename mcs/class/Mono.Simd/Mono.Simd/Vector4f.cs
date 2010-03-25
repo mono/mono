@@ -80,9 +80,7 @@ namespace Mono.Simd
         Abs (implemented as pand [7fffffff,...] )
         Comparison functions
         Mask extraction function
-        Setters
         vector x float ops
-        Single float constructor (expand it to the 4 positions)
 		Replace Shuffle with less bug prone methods
 */
 
@@ -221,6 +219,18 @@ namespace Mono.Simd
 		public static Vector4f operator * (Vector4f v1, Vector4f v2)
 		{
 			return new Vector4f (v1.x * v2.x, v1.y * v2.y, v1.z * v2.z, v1.w * v2.w);
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		public static Vector4f operator * (float scalar, Vector4f v)
+		{
+			return new Vector4f (scalar * v.x, scalar * v.y, scalar * v.z, scalar * v.w);
+		}
+
+		[Acceleration (AccelMode.SSE1)]
+		public static Vector4f operator * (Vector4f v, float scalar)
+		{
+			return new Vector4f (scalar * v.x, scalar * v.y, scalar * v.z, scalar * v.w);
 		}
 
 		[Acceleration (AccelMode.SSE1)]

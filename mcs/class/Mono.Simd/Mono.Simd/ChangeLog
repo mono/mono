@@ -1,3 +1,7 @@
+2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Vector4f.cs: Add vector x scalar multiply.
+
 2009-09-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* SimdRuntime.cs: Raise an exception if the method been queried
