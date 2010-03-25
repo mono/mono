@@ -1,5 +1,11 @@
 2010-03-25  Mark Probst  <mark.probst@gmail.com>
 
+	* gc-internal.h, sgen-gc.c, sgen-gc.h, boehm-gc.c, null-gc.c: New
+	function mono_gc_invoke_with_gc_lock() which invokes a function
+	with the guarantee that no collection will occur during its execution.
+
+2010-03-25  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Update a few comments.
 
 2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>

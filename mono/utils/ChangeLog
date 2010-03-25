@@ -1,3 +1,8 @@
+2010-03-25  Mark Probst  <mark.probst@gmail.com>
+
+	* mono-hash.c, mono-ehash.c: Fix rehashing with regard to moving
+	GC.  Register root for ehash.
+
 2010-03-24  Andrés G. Aragoneses  <knocte@gmail.com>
 
 	* mono-dl.c: (mono_dl_build_path) Take in account the suffix
