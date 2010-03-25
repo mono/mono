@@ -1,5 +1,9 @@
 2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Assembly.cs: Add v4 obsolete attribute.
+
+2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Assembly.cs:
 	* MonoAssembly.cs: Move a dozen methods from Assembly.cs
 	to MonoAssembly.cs, so they can either be the concrete impl

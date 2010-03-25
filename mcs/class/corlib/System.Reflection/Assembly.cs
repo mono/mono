@@ -473,6 +473,9 @@ namespace System.Reflection {
 			return LoadFrom (assemblyFile, false);
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence)
 		{
 			Assembly a = LoadFrom (assemblyFile, false);
@@ -485,6 +488,9 @@ namespace System.Reflection {
 			return a;
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		[MonoTODO("This overload is not currently implemented")]
 		// FIXME: What are we missing?
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
@@ -496,6 +502,9 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static Assembly LoadFile (String path, Evidence securityEvidence)
 		{
 			if (path == null)
@@ -515,7 +524,10 @@ namespace System.Reflection {
 		{
 			return AppDomain.CurrentDomain.Load (assemblyString);
 		}
-		
+
+#if NET_4_0
+		[Obsolete]
+#endif		
 		public static Assembly Load (String assemblyString, Evidence assemblySecurity)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyString, assemblySecurity);
@@ -526,6 +538,9 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (assemblyRef);
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static Assembly Load (AssemblyName assemblyRef, Evidence assemblySecurity)
 		{
 			return AppDomain.CurrentDomain.Load (assemblyRef, assemblySecurity);
@@ -541,6 +556,9 @@ namespace System.Reflection {
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore);
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static Assembly Load (Byte[] rawAssembly, Byte[] rawSymbolStore,
 					     Evidence securityEvidence)
 		{
@@ -565,6 +583,9 @@ namespace System.Reflection {
 			return LoadFrom (assemblyFile, true);
 		}
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static Assembly LoadWithPartialName (string partialName)
 		{
 			return LoadWithPartialName (partialName, null);
@@ -589,6 +610,9 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern Assembly load_with_partial_name (string name, Evidence e);
 
+#if NET_4_0
+		[Obsolete]
+#endif
 		public static Assembly LoadWithPartialName (string partialName, Evidence securityEvidence)
 		{
 			return LoadWithPartialName (partialName, securityEvidence, true);
