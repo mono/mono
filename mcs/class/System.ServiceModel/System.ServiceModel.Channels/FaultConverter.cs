@@ -117,8 +117,8 @@ namespace System.ServiceModel.Channels
 				message = Message.CreateMessage (version, fc,
 					error.Message, detail, version.Addressing.FaultNamespace);
 			}
-#endif
 			else
+#endif
 				message = Message.CreateMessage (version, fc, error.Message, version.Addressing.FaultNamespace);
 
 			return true;
