@@ -912,6 +912,11 @@ public class TimeSpanTest {
 		} catch (OverflowException) {
 		}
 #endif
+		try {
+			TimeSpan.Parse ("0.999999999999.99.0");
+			Assert.Fail ("#A2");
+		} catch (OverflowException) {
+		}
 	}
 
 	[Test]

@@ -1,3 +1,9 @@
+2010-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpanTest.cs: New assertion in our exception order test, to
+	assert that int32 overflow error has higher precedence in both 2.0 and
+	4.0 profiles.
+
 2010-03-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpan.cs: Add some new assertions for old/new stuff in
