@@ -1,5 +1,9 @@
 2010-03-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* sockets.c: Apply some openbsd changes from openbsd ports.
+
+2010-03-26  Zoltan Varga  <vargaz@gmail.com>
+
 	* shared.c: Disable shared supported by default, it can be enabled by setting
 	the MONO_ENABLE_SHM env variable.
 
