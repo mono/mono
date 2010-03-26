@@ -1,5 +1,10 @@
 2010-03-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-posix.c (SIG_HANDLER_SIGNATURE): Handle the case when ctx is NULL on
+	OpenBSD.
+
+2010-03-26  Zoltan Varga  <vargaz@gmail.com>
+
 	* image-writer.c (bin_writer_emit_writeout): Fix the size of the got.plt
 	section. Fixes #591000.
 
