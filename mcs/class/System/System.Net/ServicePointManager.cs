@@ -387,6 +387,7 @@ namespace System.Net
 		internal class ChainValidationHelper {
 			object sender;
 			string host;
+			static bool is_macosx = System.IO.File.Exists (MSX.OSX509Certificates.SecurityLibrary);
 
 			public ChainValidationHelper (object sender)
 			{
@@ -439,7 +440,7 @@ namespace System.Net
 				bool result = false;
 				// No certificate root found means no mozroots or monotouch
 #if !MONOTOUCH
-				if (System.IO.File.Exists (MSX.OSX509Certificates.SecurityLibrary)) {
+				if (is_macosx) {
 #endif
 					// Attempt to use OSX certificates
 					// Ideally we should return the SecTrustResult
