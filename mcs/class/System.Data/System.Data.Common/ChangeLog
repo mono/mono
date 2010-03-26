@@ -1,4 +1,4 @@
-2010-10-26  Veerapuram Varadhan  <vvaradhan@novell.com>
+2010-03-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
     ** Fixes #564833/580736
     * DbDataAdapter.cs (*Command): Fix for .NET compatibility which
