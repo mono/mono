@@ -1,3 +1,29 @@
+2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.[ch]: reworked the threadpool:
+		-Threadpool threads use a work-stealing queue. Adding a work
+		item from a threadpool thread will queue it in the thread
+		local queue without locking (in most cases).
+		-epoll events are coalesced before being added to the IO
+		queue.
+		-Dynamically change the number of active threads
+		-Changed the global queue to be more GC friendly
+
+	* class-internals.h: add 2 new performance counters for the number of
+	threads in the threadpool and the IO threadpool.
+
+	* object-internals.h: new field in MonoAsyncResult.
+	* icall-def.h: new internal call for queueing work items.
+
+	* Makefile.am: add 2 new files.
+
+	* appdomain.c: bump up corlib version.
+
+	* mono-wsq.[ch]: an implementation of a work-stealing queue.
+
+	* mono-perfcounters-def.h:
+	* mono-perfcounters.c: added 2 new performance counters.
+
 2010-03-26  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: More FIXME/TODO updates.
