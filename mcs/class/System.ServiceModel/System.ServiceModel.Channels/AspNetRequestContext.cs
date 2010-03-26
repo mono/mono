@@ -74,6 +74,8 @@ namespace System.ServiceModel.Channels {
 				if (hp.SuppressEntityBody)
 					suppressEntityBody = true;
 			}
+			if (msg.IsFault)
+				ctx.Response.StatusCode = 500;
 			if (!suppressEntityBody) {
 				ctx.Response.AddHeader ("Content-Length", ms.Length.ToString (CultureInfo.InvariantCulture));
 				ctx.Response.OutputStream.Write (ms.GetBuffer (), 0, (int) ms.Length);

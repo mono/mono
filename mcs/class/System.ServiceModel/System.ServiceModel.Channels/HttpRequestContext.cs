@@ -85,6 +85,8 @@ namespace System.ServiceModel.Channels
 				if (hp.SuppressEntityBody)
 					suppressEntityBody = true;
 			}
+			if (msg.IsFault)
+				ctx.Response.StatusCode = 500;
 			if (!suppressEntityBody) {
 				ctx.Response.ContentLength64 = ms.Length;
 				ctx.Response.OutputStream.Write (ms.GetBuffer (), 0, (int) ms.Length);
