@@ -1,3 +1,7 @@
+2010-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Disable testbundle for now as it depends on having a system mono.
+
 2010-03-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am (BASE_TEST_CS_SRC): Remove make-imt-test.cs, it is not a test.
