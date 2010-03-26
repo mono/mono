@@ -1,3 +1,7 @@
+2010-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c: Apply some openbsd changes from openbsd ports.
+
 2010-03-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* basic-simd.cs: Test for vector x scalar binary operators.
