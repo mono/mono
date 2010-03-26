@@ -161,7 +161,7 @@ namespace System.ServiceModel.Channels
 					value = (XmlQualifiedName) r.ReadElementContentAs (typeof (XmlQualifiedName), r as IXmlNamespaceResolver, "Value", ns);
 					break;
 				default:
-					throw new ArgumentException ();
+					throw new ArgumentException (String.Format ("Unexpected Fault Code subelement: '{0}'", r.LocalName));
 				}
 				r.MoveToContent ();
 			}
@@ -351,7 +351,7 @@ namespace System.ServiceModel.Channels
 			EnvelopeVersion version)
 		{
 			writer.WriteStartElement ("Fault", version.Namespace);
-			WriteFaultCode (writer, version, Code);
+			WriteFaultCode (writer, version, Code, false);
 			WriteReason (writer, version);
 			if (HasDetail)
 				OnWriteDetail (writer, version);
@@ -359,23 +359,23 @@ namespace System.ServiceModel.Channels
 		}
 
 		private void WriteFaultCode (XmlDictionaryWriter writer, 
-			EnvelopeVersion version, FaultCode code)
+			EnvelopeVersion version, FaultCode code, bool sub)
 		{
 			if (version == EnvelopeVersion.Soap11) {
 				writer.WriteStartElement ("", "faultcode", String.Empty);
-				if (code.Namespace.Length > 0)
+				if (code.Namespace.Length > 0 && String.IsNullOrEmpty (writer.LookupPrefix (code.Namespace)))
 					writer.WriteXmlnsAttribute ("a", code.Namespace);
 				writer.WriteQualifiedName (code.Name, code.Namespace);
 				writer.WriteEndElement ();
 			} else { // Soap12
-				writer.WriteStartElement ("Code", version.Namespace);
+				writer.WriteStartElement (sub ? "Subcode" : "Code", version.Namespace);
 				writer.WriteStartElement ("Value", version.Namespace);
-				if (code.Namespace.Length > 0)
+				if (code.Namespace.Length > 0 && String.IsNullOrEmpty (writer.LookupPrefix (code.Namespace)))
 					writer.WriteXmlnsAttribute ("a", code.Namespace);
 				writer.WriteQualifiedName (code.Name, code.Namespace);
-				if (code.SubCode != null)
-					WriteFaultCode (writer, version, code.SubCode);
 				writer.WriteEndElement ();
+				if (code.SubCode != null)
+					WriteFaultCode (writer, version, code.SubCode, true);
 				writer.WriteEndElement ();
 			}
 		}
