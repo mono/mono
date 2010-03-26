@@ -1,3 +1,8 @@
+2010-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* image-writer.c (bin_writer_emit_writeout): Fix the size of the got.plt
+	section. Fixes #591000.
+
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.h: Applied patch from Robert Nagy (Robert@openbsd.org).
