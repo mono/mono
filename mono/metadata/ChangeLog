@@ -1,3 +1,9 @@
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c: Allocate stack slows lazily to reduce stack usage
+	in case of methods with huge stacks. Reduces memory consumption
+	for mcs yyparse from 459Mb to 1.8Mb.
+
 2010-03-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: don't try executing items from domains being
