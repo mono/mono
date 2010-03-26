@@ -1,3 +1,6 @@
+2010-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-ehash.c (rehash): Avoid function calls as macro arguments.
 
 Fri Mar 26 19:44:40 CET 2010 Paolo Molaro <lupus@ximian.com>
 
