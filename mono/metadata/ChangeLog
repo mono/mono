@@ -1,5 +1,15 @@
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Remove old table verification code that has
+	been superseeded by the new metadata verifier.
+
+	* verify.h: Remove mono_image_verify_tables from the public
+	API.
+
+	* pedump.c: Fix for removed bits.
+
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Allocate stack slows lazily to reduce stack usage
 	in case of methods with huge stacks. Reduces memory consumption
 	for mcs yyparse from 459Mb to 1.8Mb.
