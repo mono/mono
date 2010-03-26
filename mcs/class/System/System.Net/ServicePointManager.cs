@@ -426,12 +426,20 @@ namespace System.Net
 				X509Certificate2 leaf = new X509Certificate2 (certs [0].RawData);
 				int status11 = 0; // Error code passed to the obsolete ICertificatePolicy callback
 				SslPolicyErrors errors = 0;
-				if (!chain.Build (leaf))
-					errors |= GetErrorsFromChain (chain);
+				try {
+					if (!chain.Build (leaf))
+						errors |= GetErrorsFromChain (chain);
+				} catch (Exception e) {
+					Console.Error.WriteLine ("ERROR building certificate chain: {0}", e);
+					Console.Error.WriteLine ("Please, report this problem to the Mono team");
+					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
+				}
+
 				if (!CheckCertificateUsage (leaf)) {
 					errors |= SslPolicyErrors.RemoteCertificateChainErrors;
 					status11 = -2146762490; //CERT_E_PURPOSE 0x800B0106
 				}
+
 				if (!CheckServerIdentity (leaf, Host)) {
 					errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
 					status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
@@ -564,37 +572,43 @@ namespace System.Net
 			// DH certificates requires some changes - does anyone use one ?
 			static bool CheckCertificateUsage (X509Certificate2 cert) 
 			{
-				// certificate extensions are required for this
-				// we "must" accept older certificates without proofs
-				if (cert.Version < 3)
+				try {
+					// certificate extensions are required for this
+					// we "must" accept older certificates without proofs
+					if (cert.Version < 3)
+						return true;
+
+					X509KeyUsageExtension kux = (X509KeyUsageExtension) cert.Extensions ["2.5.29.15"];
+					X509EnhancedKeyUsageExtension eku = (X509EnhancedKeyUsageExtension) cert.Extensions ["2.5.29.37"];
+					if (kux != null && eku != null) {
+						// RFC3280 states that when both KeyUsageExtension and 
+						// ExtendedKeyUsageExtension are present then BOTH should
+						// be valid
+						if ((kux.KeyUsages & s_flags) == 0)
+							return false;
+						return eku.EnhancedKeyUsages ["1.3.6.1.5.5.7.3.1"] != null ||
+							eku.EnhancedKeyUsages ["2.16.840.1.113730.4.1"] != null;
+					} else if (kux != null) {
+						return ((kux.KeyUsages & s_flags) != 0);
+					} else if (eku != null) {
+						// Server Authentication (1.3.6.1.5.5.7.3.1) or
+						// Netscape Server Gated Crypto (2.16.840.1.113730.4)
+						return eku.EnhancedKeyUsages ["1.3.6.1.5.5.7.3.1"] != null ||
+							eku.EnhancedKeyUsages ["2.16.840.1.113730.4.1"] != null;
+					}
+
+					// last chance - try with older (deprecated) Netscape extensions
+					X509Extension ext = cert.Extensions ["2.16.840.1.113730.1.1"];
+					if (ext != null) {
+						string text = ext.NetscapeCertType (false);
+						return text.IndexOf ("SSL Server Authentication") != -1;
+					}
 					return true;
-
-				X509KeyUsageExtension kux = (X509KeyUsageExtension) cert.Extensions ["2.5.29.15"];
-				X509EnhancedKeyUsageExtension eku = (X509EnhancedKeyUsageExtension) cert.Extensions ["2.5.29.37"];
-				if (kux != null && eku != null) {
-					// RFC3280 states that when both KeyUsageExtension and 
-					// ExtendedKeyUsageExtension are present then BOTH should
-					// be valid
-					if ((kux.KeyUsages & s_flags) == 0)
-						return false;
-					return eku.EnhancedKeyUsages ["1.3.6.1.5.5.7.3.1"] != null ||
-						eku.EnhancedKeyUsages ["2.16.840.1.113730.4.1"] != null;
-				} else if (kux != null) {
-					return ((kux.KeyUsages & s_flags) != 0);
-				} else if (eku != null) {
-					// Server Authentication (1.3.6.1.5.5.7.3.1) or
-					// Netscape Server Gated Crypto (2.16.840.1.113730.4)
-					return eku.EnhancedKeyUsages ["1.3.6.1.5.5.7.3.1"] != null ||
-						eku.EnhancedKeyUsages ["2.16.840.1.113730.4.1"] != null;
+				} catch (Exception e) {
+					Console.Error.WriteLine ("ERROR processing certificate: {0}", e);
+					Console.Error.WriteLine ("Please, report this problem to the Mono team");
+					return false;
 				}
-
-				// last chance - try with older (deprecated) Netscape extensions
-				X509Extension ext = cert.Extensions ["2.16.840.1.113730.1.1"];
-				if (ext != null) {
-					string text = ext.NetscapeCertType (false);
-					return text.IndexOf ("SSL Server Authentication") != -1;
-				}
-				return true;
 			}
 
 			// RFC2818 - HTTP Over TLS, Section 3.1
@@ -609,26 +623,32 @@ namespace System.Net
 			// 3.1		Existing practice but DEPRECATED
 			static bool CheckServerIdentity (X509Certificate2 cert, string targetHost) 
 			{
-				X509Extension ext = cert.Extensions ["2.5.29.17"];
-				// 1. subjectAltName
-				if (ext != null) {
-					ASN1 asn = new ASN1 (ext.RawData);
-					SubjectAltNameExtension subjectAltName = new SubjectAltNameExtension (asn);
-					// 1.1 - multiple dNSName
-					foreach (string dns in subjectAltName.DNSNames) {
-						// 1.2 TODO - wildcard support
-						if (Match (targetHost, dns))
-							return true;
+				try {
+					X509Extension ext = cert.Extensions ["2.5.29.17"];
+					// 1. subjectAltName
+					if (ext != null) {
+						ASN1 asn = new ASN1 (ext.RawData);
+						SubjectAltNameExtension subjectAltName = new SubjectAltNameExtension (asn);
+						// 1.1 - multiple dNSName
+						foreach (string dns in subjectAltName.DNSNames) {
+							// 1.2 TODO - wildcard support
+							if (Match (targetHost, dns))
+								return true;
+						}
+						// 2. ipAddress
+						foreach (string ip in subjectAltName.IPAddresses) {
+							// 2.1. Exact match required
+							if (ip == targetHost)
+								return true;
+						}
 					}
-					// 2. ipAddress
-					foreach (string ip in subjectAltName.IPAddresses) {
-						// 2.1. Exact match required
-						if (ip == targetHost)
-							return true;
-					}
+					// 3. Common Name (CN=)
+					return CheckDomainName (cert.SubjectName.Format (false), targetHost);
+				} catch (Exception e) {
+					Console.Error.WriteLine ("ERROR processing certificate: {0}", e);
+					Console.Error.WriteLine ("Please, report this problem to the Mono team");
+					return false;
 				}
-				// 3. Common Name (CN=)
-				return CheckDomainName (cert.SubjectName.Format (false), targetHost);
 			}
 
 			static bool CheckDomainName (string subjectName, string targetHost)

@@ -1,3 +1,9 @@
+2010-03-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ServicePointManager.cs: errors parsing the certificate don't prevent
+	calling the callback now. Exceptions thrown parsing the certificate
+	are printed to stderr in case they are library errors.
+
 2010-03-21 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* WebClient.cs: fix handling of query string, whether it comes from
