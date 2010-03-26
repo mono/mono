@@ -85,51 +85,83 @@ namespace System.Data.Common
 		}
 
 		IDbCommand IDbDataAdapter.SelectCommand {
-			get { return _selectCommand; }
-			set { _selectCommand = value; }
+		    get { return ((DbDataAdapter)this).SelectCommand; }
+		    set { ((DbDataAdapter)this).SelectCommand = (DbCommand)value; }
 		}
 
 		IDbCommand IDbDataAdapter.UpdateCommand{
-			get { return _updateCommand; }
-			set { _updateCommand = value; }
+		    get { return ((DbDataAdapter)this).UpdateCommand; }
+		    set { ((DbDataAdapter)this).UpdateCommand = (DbCommand)value; }
 		}
-
+		
 		IDbCommand IDbDataAdapter.DeleteCommand{
-			get { return _deleteCommand; }
-			set { _deleteCommand = value; }
+		    get { return ((DbDataAdapter)this).DeleteCommand; }
+		    set { ((DbDataAdapter)this).DeleteCommand = (DbCommand)value; }
 		}
 
 		IDbCommand IDbDataAdapter.InsertCommand{
-			get { return _insertCommand; }
-			set { _insertCommand = value; }
+		    get { return ((DbDataAdapter)this).InsertCommand; }
+		    set { ((DbDataAdapter)this).InsertCommand = (DbCommand)value; }
 		}
 		
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand SelectCommand {
-			get { return (DbCommand) _selectCommand; }
-			set { _selectCommand = value; }
+		    get {
+					return (DbCommand) _selectCommand;
+					//return (DbCommand) ((IDbDataAdapter)this).SelectCommand; 
+			}
+		    set {
+					if (_selectCommand != value) {
+						_selectCommand = value;
+						((IDbDataAdapter)this).SelectCommand = value; 
+					}
+			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand DeleteCommand {
-			get { return (DbCommand) _deleteCommand; }
-			set { _deleteCommand = value; }
+		    get {
+					return (DbCommand) _deleteCommand;
+					//return (DbCommand) ((IDbDataAdapter)this).DeleteCommand; 
+			}
+		    set {
+					if (_deleteCommand != value) {
+						_deleteCommand = value;
+						((IDbDataAdapter)this).DeleteCommand = value; 
+					}
+			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand InsertCommand {
-			get { return (DbCommand)_insertCommand; }
-			set { _insertCommand = value; }
+		    get {
+					return (DbCommand) _insertCommand;
+					//return (DbCommand) ((IDbDataAdapter)this).InsertCommand; 
+			}
+		    set {
+					if (_insertCommand != value) {
+						_insertCommand = value;
+						((IDbDataAdapter)this).InsertCommand = value; 
+					}
+			}
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public DbCommand UpdateCommand {
-			get { return (DbCommand)_updateCommand; }
-			set { _updateCommand = value; }
+		    get {
+					return (DbCommand) _updateCommand;
+					//return (DbCommand) ((IDbDataAdapter)this).DeleteCommand; 
+			}
+		    set {
+					if (_updateCommand != value) {
+						_updateCommand = value;
+						((IDbDataAdapter)this).UpdateCommand = value; 
+					}
+			}
 		}
 
 		[DefaultValue (1)]

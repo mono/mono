@@ -97,11 +97,7 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public
-#if ONLY_1_1
-		new 
-#endif 
-		SqlCommand DeleteCommand {
+		public new SqlCommand DeleteCommand {
 			get { 
 #if NET_2_0
 				return (SqlCommand)base.DeleteCommand; 
@@ -123,11 +119,7 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public
-#if ONLY_1_1
-		new 
-#endif 
-		SqlCommand InsertCommand {
+		public new SqlCommand InsertCommand {
 			get { 
 #if NET_2_0				
 				return (SqlCommand)base.InsertCommand; 
@@ -149,11 +141,7 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public
-#if ONLY_1_1
-		new 
-#endif 
-		SqlCommand SelectCommand {
+		public new SqlCommand SelectCommand {
 			get { 
 #if NET_2_0
 				return (SqlCommand)base.SelectCommand; 
@@ -175,11 +163,7 @@ namespace System.Data.SqlClient {
 #endif
 		[DefaultValue (null)]
 		[EditorAttribute ("Microsoft.VSDesigner.Data.Design.DBCommandEditor, "+ Consts.AssemblyMicrosoft_VSDesigner, "System.Drawing.Design.UITypeEditor, "+ Consts.AssemblySystem_Drawing )]
-		public
-#if ONLY_1_1
-		new 
-#endif 
-		SqlCommand UpdateCommand {
+		public new  SqlCommand UpdateCommand {
 			get { 
 #if NET_2_0
 				return (SqlCommand)base.UpdateCommand; 
