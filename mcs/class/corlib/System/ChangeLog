@@ -1,3 +1,12 @@
+2010-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: We always give higher precedence to the first found
+	error, but for versions before 4.0 we need to give a higher one to
+	per-element overflow *specifically* (as opposed to int32 overflow,
+	which remains the same). This is not needed for 4.0, so report
+	per-element overflow as a normal error. 
+	This should fix a compatibility case, as well as simplifying the code.
+
 2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* MonoAsyncCall.cs: remove unused field.
