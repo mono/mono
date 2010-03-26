@@ -223,17 +223,22 @@ namespace System.ServiceModel.Channels
 					}
 					ms.Seek (0, SeekOrigin.Begin);
 
-					channelResult.Response = Encoder.ReadMessage (
+					Message ret = Encoder.ReadMessage (
 						//responseStream, MaxSizeOfHeaders);
 						ms, MaxSizeOfHeaders, res.ContentType);
+					var rp = new HttpResponseMessageProperty () { StatusCode = hrr.StatusCode, StatusDescription = hrr.StatusDescription };
+					foreach (var key in hrr.Headers.AllKeys)
+						rp.Headers.Add (key, hrr.Headers [key]);
+					ret.Properties.Add (HttpResponseMessageProperty.Name, rp);
 /*
-MessageBuffer buf = channelResult.Response.CreateBufferedCopy (0x10000);
-channelResult.Response = buf.CreateMessage ();
+MessageBuffer buf = ret.CreateBufferedCopy (0x10000);
+ret = buf.CreateMessage ();
 System.Xml.XmlTextWriter w = new System.Xml.XmlTextWriter (Console.Out);
 w.Formatting = System.Xml.Formatting.Indented;
 buf.CreateMessage ().WriteMessage (w);
 w.Close ();
 */
+					channelResult.Response = ret;
 					channelResult.Complete ();
 				}
 			} catch (Exception ex) {

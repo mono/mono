@@ -1,3 +1,7 @@
+2010-03-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpRequestChannel.cs : create HttpResponseMessageProperty.
+
 2010-03-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestContext.cs : removed HTTP status rewriting for
