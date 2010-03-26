@@ -1,3 +1,10 @@
+
+Fri Mar 26 19:44:40 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mono-hash.c: removed mono-hash.c, since now
+	mono-ehash.c is GC-aware it doesn't make sense to keep two
+	implementations.
+
 2010-03-26  Mark Probst  <mark.probst@gmail.com>
 
 	* mono-semaphore.h (MONO_SEM_POST): Fix on Darwin.
