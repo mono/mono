@@ -42,6 +42,8 @@ libmonoutils_la_SOURCES = \
 	mono-networkinterfaces.h		\
 	mono-proclib.c		\
 	mono-proclib.h		\
+	mono-semaphore.h	\
+	mono-semaphore.c	\
 	mono-string.h		\
 	mono-time.c  		\
 	mono-time.h  		\

@@ -1,6 +1,10 @@
+2010-03-26  Mark Probst  <mark.probst@gmail.com>
+
+	* mono-semaphore.h (MONO_SEM_POST): Fix on Darwin.
+
 2010-03-26  Zoltan Varga  <vargaz@gmail.com>
 
-	* mono-proclib.c mono-semaphore.c: Apply some openbsd changes from openbsd
+	* mono-semaphore.c: Apply some openbsd changes from openbsd
 	ports.
 
 2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
