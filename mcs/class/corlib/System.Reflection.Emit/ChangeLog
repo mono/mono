@@ -1,6 +1,11 @@
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AssemblyBuilder.cs: Implement v4 GetReferencedAssemblies
+	and GetLoadedModules.
+
 2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
-	* AssemblyBuilder.cs: Implement v4 GetModule(s).
+	* AssemblyBuilder.cs: Implement v4 GetModules().
 
 2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
 

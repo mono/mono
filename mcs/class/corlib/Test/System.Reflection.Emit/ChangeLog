@@ -1,3 +1,8 @@
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AssemblyBuilderTest.cs: Test GetReferencedAssemblies
+	and GetLoadedModules.
+
 2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* AssemblyBuilderTest.cs: Add test for v4 GetModule(s).

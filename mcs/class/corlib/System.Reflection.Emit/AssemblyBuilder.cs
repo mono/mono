@@ -1246,6 +1246,18 @@ namespace System.Reflection.Emit
 			}
 			return modules;
 		}
+
+		[MonoTODO ("This always returns an empty array")]
+		public override AssemblyName[] GetReferencedAssemblies () {
+			return GetReferencedAssemblies (this);
+		}
+
+		public override Module[] GetLoadedModules (bool getResourceModules)
+		{
+			return GetModules (getResourceModules);
+		}
+
+
 #endif
 	}
 }

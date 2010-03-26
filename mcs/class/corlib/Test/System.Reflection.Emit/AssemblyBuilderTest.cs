@@ -1745,6 +1745,22 @@ public class AssemblyBuilderTest
 		Assert.AreSame (modB, ab.GetModules () [1], "#3");
 	}
 
+	[Test]
+	[Category ("NotDotNet")] // MS returns the real deal
+	public void GetReferencedAssemblies_Trivial ()
+	{
+		Assert.IsNotNull (ab.GetReferencedAssemblies (), "#1");
+	}
+	
+	[Test]
+	public void GetLoadedModules ()
+	{
+		var res = ab.GetLoadedModules (true);
+		Assert.IsNotNull (res, "#1");
+		Assert.AreEqual (1, res.Length, "#2");
+		Assert.AreEqual (mb, res [0], "#3");
+	}
+
 	[ExpectedException (typeof (TypeLoadException))]
 	public void GetCustomAttributes_NotCreated ()
 	{
