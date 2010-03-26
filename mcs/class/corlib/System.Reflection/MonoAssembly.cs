@@ -103,7 +103,7 @@ namespace System.Reflection {
 				return modules;
 		}
 
-		// FIXME: Currently, the two sets of modules are equal
+		[MonoTODO ("Always returns the same as GetModules")]
 		public
 #if NET_4_0
 		override

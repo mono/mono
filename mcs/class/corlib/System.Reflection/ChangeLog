@@ -1,5 +1,10 @@
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoAssembly.cs:
+	* Assembly.cs: Add missing MonoTODO.
+
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Assembly.cs: Add v4 ==, != and GetHashCode ()
 
 2010-03-25 Rodrigo Kumpera  <rkumpera@novell.com>

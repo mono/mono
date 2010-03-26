@@ -894,6 +894,7 @@ namespace System.Reflection {
 			throw CreateNIE ();
 		}
 
+		[MonoTODO ("Always returns the same as GetModules")]
 		public virtual Module[] GetLoadedModules (bool getResourceModules)
 		{
 			throw CreateNIE ();
