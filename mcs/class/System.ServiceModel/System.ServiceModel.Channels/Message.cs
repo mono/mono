@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005-2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005-2006,2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -300,26 +300,19 @@ namespace System.ServiceModel.Channels
 
 		#region factory methods
 
-		//  1) fault -> 4
-		//  2) action -> 5
-		//  3) fault, action -> 10
-		//  4) version, fault -> 10
-		//  5) version, action -> EmptyMessage
-		//  6) action, body -> 12
-		//  7) action, xmlReader -> 8
-		//  8) action, reader -> 16
-		// 10) version, fault, action -> 20
-		// 11) version, action, body -> 14
-		// 12) action, body, formatter -> 14
-		// 13) version, action, body -> 14
-		// 14) version, action, body, formatter -> 20
-		// 15) version, action, xmlReader -> 16
-		// 16) version, action, reader -> 20
-		// 17) xmlReader, maxSizeOfHeaders, version -> 18
-		// 18) reader, maxSizeOfHeaders, version -> ForwardingMessage
-		// 19) action, bodyWriter -> 20
-		// 20) version, action, bodyWriter -> SimpleMessage
+		// 1) version, code, reason, action -> 3
+		// 2) version, code, reason, detail, action -> 3
+		// 3) version, fault, action -> SimpleMessage
+		// 4) version, action, body -> 10 or 5
+		// 5) version, action, body, formatter -> 10 or 9
+		// 6) version, action, xmlReader -> 7
+		// 7) version, action, reader -> 9
+		// 8) xmlReader, maxSizeOfHeaders, version -> 11
+		// 9) version, action, body -> SimpleMessage
+		// 10) version, action -> EmptyMessage
+		// 11) reader, maxSizeOfHeaders, version -> XmlReaderMessage
 
+		// 1)
 		public static Message CreateMessage (MessageVersion version,
 			FaultCode code, string reason, string action)
 		{
@@ -327,6 +320,7 @@ namespace System.ServiceModel.Channels
 			return CreateMessage (version, fault, action);
 		}
 
+		// 2)
 		public static Message CreateMessage (MessageVersion version,
 			FaultCode code, string reason, object detail,
 			string action)
@@ -336,6 +330,7 @@ namespace System.ServiceModel.Channels
 			return CreateMessage (version, fault, action);
 		}
 
+		// 3)
 		public static Message CreateMessage (MessageVersion version,
 			MessageFault fault, string action)
 		{
@@ -343,6 +338,7 @@ namespace System.ServiceModel.Channels
 				new MessageFaultBodyWriter (fault, version), true);
 		}
 
+		// 4)
 		public static Message CreateMessage (MessageVersion version,
 			string action, object body)
 		{
@@ -351,6 +347,7 @@ namespace System.ServiceModel.Channels
 				CreateMessage (version, action, body, new DataContractSerializer (body.GetType ()));
 		}
 
+		// 5)
 		public static Message CreateMessage (MessageVersion version,
 			string action, object body, XmlObjectSerializer xmlFormatter)
 		{
@@ -361,6 +358,7 @@ namespace System.ServiceModel.Channels
 					new XmlObjectSerializerBodyWriter (body, xmlFormatter));
 		}
 
+		// 6)
 		public static Message CreateMessage (MessageVersion version,
 			string action, XmlReader body)
 		{
@@ -368,6 +366,7 @@ namespace System.ServiceModel.Channels
 				XmlDictionaryReader.CreateDictionaryReader (body));
 		}
 
+		// 7)
 		public static Message CreateMessage (MessageVersion version,
 			string action, XmlDictionaryReader body)
 		{
@@ -375,6 +374,7 @@ namespace System.ServiceModel.Channels
 				new XmlReaderBodyWriter (body));
 		}
 
+		// 8)
 		public static Message CreateMessage (XmlReader envelopeReader,
 			int maxSizeOfHeaders, MessageVersion version)
 		{
@@ -386,6 +386,7 @@ namespace System.ServiceModel.Channels
 
 		// Core implementations of CreateMessage.
 
+		// 9)
 		public static Message CreateMessage (MessageVersion version,
 			string action, BodyWriter body)
 		{
@@ -396,6 +397,7 @@ namespace System.ServiceModel.Channels
 			return new SimpleMessage (version, action, body, false);
 		}
 
+		// 10)
 		public static Message CreateMessage (MessageVersion version,
 			string action)
 		{
@@ -404,6 +406,7 @@ namespace System.ServiceModel.Channels
 			return new EmptyMessage (version, action);
 		}
 
+		// 11)
 		public static Message CreateMessage (
 			XmlDictionaryReader envelopeReader,
 			int maxSizeOfHeaders,
