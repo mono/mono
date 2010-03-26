@@ -62,57 +62,66 @@ namespace System.ServiceModel.Channels
 		{
 			return OnTryCreateFaultMessage (error, out message);
 		}
+	}
 
-		Message CreateSimpleFaultMessage (Exception error, MessageVersion version)
+	class SimpleFaultConverter : FaultConverter
+	{
+		static readonly Dictionary<Type,string> map;
+		
+		static SimpleFaultConverter ()
 		{
-			OperationContext ctx = OperationContext.Current;
-			// FIXME: support more fault code depending on the exception type.
-			FaultCode fc = null;
-			if (error is EndpointNotFoundException)
-				fc = new FaultCode (
-					"DestinationUnreachable",
-					version.Addressing.Namespace);
-			else
-				fc = new FaultCode (
-					"FIXME_InternalError",
-					version.Addressing.Namespace);
-
-#if !NET_2_1
-			// FIXME: set correct fault reason.
-			if (ctx.EndpointDispatcher.ChannelDispatcher.IncludeExceptionDetailInFaults) {
-				ExceptionDetail detail = new ExceptionDetail (error);
-				return Message.CreateMessage (version, fc,
-					"error occured", detail, ctx.IncomingMessageHeaders != null ? ctx.IncomingMessageHeaders.Action : null);
-			}
-#endif
-			return Message.CreateMessage (version, fc, "error occured", ctx.IncomingMessageHeaders.Action);
+			map = new Dictionary<Type,string> ();
+			map [typeof (EndpointNotFoundException)] = "DestinationUnreachable";
+			map [typeof (ActionNotSupportedException)] = "ActionNotSupported";
 		}
 
-		class SimpleFaultConverter : FaultConverter
-		{
-			MessageVersion version;
-			public SimpleFaultConverter (MessageVersion version)
-			{
-				this.version = version;
-			}
+		MessageVersion version;
 
-			protected override bool OnTryCreateException (
-				Message message, MessageFault fault, out Exception error)
-			{
-				error = null;
+		public SimpleFaultConverter (MessageVersion version)
+		{
+			this.version = version;
+		}
+
+		protected override bool OnTryCreateException (
+			Message message, MessageFault fault, out Exception error)
+		{
+			error = null;
+			return false;
+		}
+
+		protected override bool OnTryCreateFaultMessage (Exception error, out Message message)
+		{
+			if (version.Addressing.Equals (AddressingVersion.None)) {
+				message = null;
 				return false;
 			}
 
-			protected override bool OnTryCreateFaultMessage (
-				Exception error, out Message message)
-			{
+			string action;
+			if (!map.TryGetValue (error.GetType (), out action)) {
 				message = null;
-				if (OperationContext.Current == null)
-					return false;
-
-				message = CreateSimpleFaultMessage (error, version);
-				return true;
+				return false;
 			}
+
+			FaultCode fc;
+			if (version.Envelope.Equals (EnvelopeVersion.Soap12))
+				fc = new FaultCode ("Sender", version.Envelope.Namespace, new FaultCode (action, version.Addressing.Namespace));
+			else
+				fc = new FaultCode (action, version.Addressing.Namespace);
+
+			OperationContext ctx = OperationContext.Current;
+			// FIXME: support more fault code depending on the exception type.
+#if !NET_2_1
+			// FIXME: set correct fault reason.
+			if (ctx != null && ctx.EndpointDispatcher.ChannelDispatcher.IncludeExceptionDetailInFaults) {
+				ExceptionDetail detail = new ExceptionDetail (error);
+				message = Message.CreateMessage (version, fc,
+					error.Message, detail, version.Addressing.FaultNamespace);
+			}
+#endif
+			else
+				message = Message.CreateMessage (version, fc, error.Message, version.Addressing.FaultNamespace);
+
+			return true;
 		}
 	}
 }
