@@ -58,5 +58,28 @@ namespace MonoTests.System.ServiceModel.Channels
 			var msg = Message.CreateMessage (XmlReader.Create (new StreamReader ("Test/System.ServiceModel.Channels/soap-fault-incomplete4.xml")), 0x10000, MessageVersion.Default);
 			MessageFault.CreateFault (msg, 0x10000);
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void CreateFaultFromMessage ()
+		{
+			var xml = @"
+<s:Envelope xmlns:a='http://www.w3.org/2005/08/addressing' xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>
+  <s:Header>
+    <a:Action s:mustUnderstand='1'>http://www.w3.org/2005/08/addressing/fault</a:Action>
+  </s:Header>
+  <s:Body>
+    <s:Fault>
+      <faultcode>a:ActionNotSupported</faultcode>
+      <faultstring xml:lang='en-US'>some error</faultstring>
+    </s:Fault>
+  </s:Body>
+</s:Envelope>";
+			var msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml)), 0x1000, MessageVersion.Soap11WSAddressing10);
+			MessageFault.CreateFault (msg, 1000);
+			msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml)), 0x1000, MessageVersion.Soap11WSAddressing10);
+			var mb = msg.CreateBufferedCopy (1000);
+			MessageFault.CreateFault (mb.CreateMessage (), 1000);
+		}
 	}
 }
