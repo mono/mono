@@ -482,20 +482,24 @@ namespace System.ServiceModel.MonoInternal
 
 			Message res = Request (req, OperationTimeout);
 			if (res.IsFault) {
-				MessageFault fault = MessageFault.CreateFault (res, runtime.MaxFaultSize);
-				if (fault.HasDetail && fault is MessageFault.SimpleMessageFault) {
-					MessageFault.SimpleMessageFault simpleFault = fault as MessageFault.SimpleMessageFault;
-					object detail = simpleFault.Detail;
-					Type t = detail.GetType ();
-					Type faultType = typeof (FaultException<>).MakeGenericType (t);
-					object [] constructorParams = new object [] { detail, fault.Reason, fault.Code, fault.Actor };
-					FaultException fe = (FaultException) Activator.CreateInstance (faultType, constructorParams);
-					throw fe;
+				var resb = res.CreateBufferedCopy (0x10000); // FIXME: use correct MaxBufferSize
+				MessageFault fault = MessageFault.CreateFault (resb.CreateMessage (), runtime.MaxFaultSize);
+				var conv = OperationChannel.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (res.Version);
+				Exception ex;
+				if (!conv.TryCreateException (resb.CreateMessage (), fault, out ex)) {
+					if (fault.HasDetail && fault is MessageFault.SimpleMessageFault) {
+						MessageFault.SimpleMessageFault simpleFault = fault as MessageFault.SimpleMessageFault;
+						object detail = simpleFault.Detail;
+						Type t = detail.GetType ();
+						Type faultType = typeof (FaultException<>).MakeGenericType (t);
+						object [] constructorParams = new object [] { detail, fault.Reason, fault.Code, fault.Actor };
+						ex = (FaultException) Activator.CreateInstance (faultType, constructorParams);
+					} else {
+						// given a MessageFault, it is hard to figure out the type of the embedded detail
+						ex = new FaultException(fault);
+					}
 				}
-				else {
-					// given a MessageFault, it is hard to figure out the type of the embedded detail
-					throw new FaultException(fault);
-				}
+				throw ex;
 			}
 
 			for (int i = 0; i < inspections.Length; i++)
