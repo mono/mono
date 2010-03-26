@@ -1,3 +1,8 @@
+2010-03-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_create_internal): Set the GC type of the
+	threads_starting_up hash table.
+
 2010-03-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: reset 'state' to avoid returning non-null when the
