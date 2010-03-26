@@ -1,3 +1,9 @@
+
+Fri Mar 26 11:33:17 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* object.c, threads.c, threads-types.h, threads.h: make the
+	managed thread local storage references precisely tracked.
+
 2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.[ch]: reworked the threadpool:
