@@ -1,3 +1,7 @@
+2010-03-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageBufferTest.cs : add test for copy of IsFault value.
+
 2010-03-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageTest.cs : add another IsFault tests, which exposed some

@@ -261,7 +261,7 @@ namespace System.ServiceModel.Channels
 		{
 			var headers = new MessageHeaders (Headers);
 			var props = new MessageProperties (Properties);
-			return new DefaultMessageBuffer (maxBufferSize, headers, props, body.CreateBufferedCopy (maxBufferSize), false);
+			return new DefaultMessageBuffer (maxBufferSize, headers, props, body.CreateBufferedCopy (maxBufferSize), IsFault);
 		}
 	}
 }

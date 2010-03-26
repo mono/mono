@@ -175,6 +175,18 @@ namespace MonoTests.System.ServiceModel.Channels
 				msg.WriteMessage (w);
 			}
 		}
+
+		[Test]
+		public void IsFaultCopied ()
+		{
+			var ret = Message.CreateMessage (MessageVersion.Soap12,
+				MessageFault.CreateFault (new FaultCode ("mycode"), "private affair"),
+				"http://tempuri.org/IFoo/Test");
+			Assert.IsTrue (ret.IsFault, "#1");
+			var mb = ret.CreateBufferedCopy (0x1000);
+			ret = mb.CreateMessage ();
+			Assert.IsTrue (ret.IsFault, "#2");
+		}
 	}
 
 	internal class MyBodyWriter : BodyWriter
