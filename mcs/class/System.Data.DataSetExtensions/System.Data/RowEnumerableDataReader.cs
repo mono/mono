@@ -44,8 +44,8 @@ namespace System.Data
 		public RowEnumerableDataReader (IEnumerable source, int depth)
 		{
 			this.source = source as EnumerableRowCollection;
-			if (source == null)
-				source = new EnumerableRowCollection<DataRow> ((IEnumerable<DataRow>) source);
+			if (this.source == null)
+				this.source = new EnumerableRowCollection<DataRow> ((IEnumerable<DataRow>) source);
 			this.depth = depth;
 		}
 
@@ -158,10 +158,16 @@ namespace System.Data
 
 		public int GetValues (object [] values)
 		{
-			// FIXME: do we need it?
-			throw new NotSupportedException ();
-		}
+			int fieldCount = FieldCount;
+			int i;
 
+			//target object is byval so we can not just assign new object[] to values , calling side will not change
+			//hence copy each item into values
+			for (i = 0; i < values.Length && i < fieldCount; ++i)
+				values[i] = Current[i];
+			return i - 1;
+		}
+		
 		public bool IsDBNull (int i)
 		{
 			return Current.IsNull (i);
