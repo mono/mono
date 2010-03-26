@@ -1,3 +1,10 @@
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* invalid_branch_in_between_prefix_and_instruction.il:
+	* invalid_empty_filter_block.il:
+	* make_endfilter_test.sh
+	* make_endfinally_test.sh: Silence which when gsed is not found.
+
 2010-02-04 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* make_endfilter_test.sh: Fix this test to not have a throw that make some of the
