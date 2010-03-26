@@ -1280,6 +1280,10 @@ namespace System.Reflection.Emit
 				return false;
 			}
 		}
+
+		public override bool IsDynamic {
+			get { return true; }
+		}
 #endif
 	}
 }

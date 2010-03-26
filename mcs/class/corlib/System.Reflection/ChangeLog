@@ -1,5 +1,9 @@
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Assembly.cs: Add IsDynamic.
+
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoAssembly.cs:
 	* Assembly.cs: Add missing MonoTODO.
 

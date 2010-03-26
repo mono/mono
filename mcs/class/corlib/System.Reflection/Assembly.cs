@@ -918,6 +918,10 @@ namespace System.Reflection {
 			get { throw CreateNIE (); }
 		}
 
+		public virtual bool IsDynamic {
+			get { return false; }
+		}
+
 		public override int GetHashCode ()
 		{
 			return base.GetHashCode ();
