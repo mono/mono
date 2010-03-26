@@ -916,6 +916,29 @@ namespace System.Reflection {
 		public virtual bool GlobalAssemblyCache {
 			get { throw CreateNIE (); }
 		}
+
+		public override int GetHashCode ()
+		{
+			return base.GetHashCode ();
+		}
+
+		public static bool operator == (Assembly left, Assembly right)
+		{
+			if ((object)left == (object)right)
+				return true;
+			if ((object)left == null ^ (object)right == null)
+				return false;
+			return left.Equals (right);
+		}
+
+		public static bool operator != (Assembly left, Assembly right)
+		{
+			if ((object)left == (object)right)
+				return false;
+			if ((object)left == null ^ (object)right == null)
+				return true;
+			return !left.Equals (right);
+		}
 #endif
 	}
 }
