@@ -227,13 +227,8 @@ namespace System.ServiceModel.Channels
 						//responseStream, MaxSizeOfHeaders);
 						ms, MaxSizeOfHeaders, res.ContentType);
 					var rp = new HttpResponseMessageProperty () { StatusCode = hrr.StatusCode, StatusDescription = hrr.StatusDescription };
-					foreach (var key in hrr.Headers.AllKeys) {
-#if MOONLIGHT
+					foreach (var key in hrr.Headers.AllKeys)
 						rp.Headers [key] = hrr.Headers [key];
-#else
-						rp.Headers.Add (key, hrr.Headers [key]);
-#endif
-					}
 					ret.Properties.Add (HttpResponseMessageProperty.Name, rp);
 /*
 MessageBuffer buf = ret.CreateBufferedCopy (0x10000);
