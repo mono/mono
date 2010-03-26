@@ -2947,8 +2947,12 @@ type_list
 base_type_name
 	: type
 	  {
-		if ($1 is ComposedCast)
-			Report.Error (1521, GetLocation ($1), "Invalid base type `{0}'", ((ComposedCast)$1).GetSignatureForError ());
+		if ($1 is ComposedCast) {
+			if (lexer.ConstraintsParsing)
+				Report.Error (706, GetLocation ($1), "Invalid constraint type `{0}'", ((ComposedCast)$1).GetSignatureForError ());
+			else
+				Report.Error (1521, GetLocation ($1), "Invalid base type `{0}'", ((ComposedCast)$1).GetSignatureForError ());
+		}
 		$$ = $1;
 	  }
 	| error
@@ -4346,7 +4350,7 @@ type_parameter_constraints
 	;
 
 type_parameter_constraint
-	: type
+	: base_type_name
 	  {
 	  	$$ = $1;
 	  }
