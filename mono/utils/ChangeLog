@@ -1,3 +1,7 @@
+2010-03-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-ehash.c: Rename this to mono-hash.c.
+
 2010-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-ehash.c (rehash): Avoid function calls as macro arguments.
