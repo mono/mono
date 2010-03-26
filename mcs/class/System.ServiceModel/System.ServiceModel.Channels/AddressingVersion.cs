@@ -34,24 +34,29 @@ namespace System.ServiceModel.Channels
 	{
 		string name;
 		string address;
+		string fault_ns;
 
-		AddressingVersion (string name, string address)
+		AddressingVersion (string name, string address, string faultNS)
 		{
 			this.name = name;
 			this.address = address;
+			this.fault_ns = faultNS;
 		}
 
 		static AddressingVersion addressing200408 = new AddressingVersion (
 			"Addressing200408",
-			"http://schemas.xmlsoap.org/ws/2004/08/addressing");
+			"http://schemas.xmlsoap.org/ws/2004/08/addressing",
+			"http://schemas.xmlsoap.org/ws/2004/08/addressing/fault");
 
 		static AddressingVersion addressing1_0 = new AddressingVersion (
 			"Addressing10",
-			"http://www.w3.org/2005/08/addressing");
+			"http://www.w3.org/2005/08/addressing",
+			"http://www.w3.org/2005/08/addressing/fault");
 
 		static AddressingVersion none = new AddressingVersion (
 			"AddressingNone",
-			"http://schemas.microsoft.com/ws/2005/05/addressing/none");
+			"http://schemas.microsoft.com/ws/2005/05/addressing/none",
+			null);
 
 		public static AddressingVersion WSAddressing10 {
 			get { return addressing1_0; }
@@ -67,6 +72,10 @@ namespace System.ServiceModel.Channels
 
 		internal string Namespace {
 			get { return address; }
+		}
+
+		internal string FaultNamespace {
+			get { return fault_ns; }
 		}
 
 		internal string ActionNotSupported {
