@@ -85,11 +85,22 @@ namespace System.Threading {
 #if MOONLIGHT
 			callBack = MoonlightHandler (callBack);
 #endif
-			IAsyncResult ar = callBack.BeginInvoke (state, null, null);
-			if (ar == null)
-				return false;
+			if (callBack.IsTransparentProxy ()) {
+				IAsyncResult ar = callBack.BeginInvoke (state, null, null);
+				if (ar == null)
+					return false;
+			} else {
+				if (!callBack.HasSingleTarget)
+					throw new Exception ("The delegate must have only one target");
+
+				AsyncResult ares = new AsyncResult (callBack, state, true);
+				pool_queue (ares);
+			}
 			return true;
 		}
+
+		[MethodImplAttribute(MethodImplOptions.InternalCall)]
+		static extern void pool_queue (AsyncResult ares);
 
 		public static RegisteredWaitHandle RegisterWaitForSingleObject (WaitHandle waitObject,
 										WaitOrTimerCallback callBack,
@@ -155,18 +166,25 @@ namespace System.Threading {
 		public static bool UnsafeQueueUserWorkItem (WaitCallback callBack, object state)
 		{
 			// no stack propagation here (that's why it's unsafe and requires extra security permissions)
-			IAsyncResult ar = null;
+			if (!callBack.IsTransparentProxy ()) {
+				if (!callBack.HasSingleTarget)
+					throw new Exception ("The delegate must have only one target");
+
+				AsyncResult ares = new AsyncResult (callBack, state, false);
+				pool_queue (ares);
+				return true;
+			}
 			try {
 				if (!ExecutionContext.IsFlowSuppressed ())
 					ExecutionContext.SuppressFlow (); // on current thread only
-
-				ar = callBack.BeginInvoke (state, null, null);
-			}
-			finally {
+				IAsyncResult ar = callBack.BeginInvoke (state, null, null);
+				if (ar == null)
+					return false;
+			} finally {
 				if (ExecutionContext.IsFlowSuppressed ())
 					ExecutionContext.RestoreFlow ();
 			}
-			return (ar != null);
+			return true;
 		}
 		
 		[MonoTODO("Not implemented")]

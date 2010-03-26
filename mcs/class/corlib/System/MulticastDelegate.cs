@@ -69,6 +69,9 @@ namespace System
 			return base.DynamicInvokeImpl (args);
 		}
 
+		internal bool HasSingleTarget {
+			get { return prev == null; }
+		}
 		// <remarks>
 		//   Equals: two multicast delegates are equal if their base is equal
 		//   and their invocations list is equal.

@@ -1,3 +1,7 @@
+2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ThreadPool.cs: add fast path to queue work items in the runtime.
+
 2010-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Monitor.cs: Implement new NET_4_0 (and SL4) Enter overload 

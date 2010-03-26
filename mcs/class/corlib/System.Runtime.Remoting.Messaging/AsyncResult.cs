@@ -51,6 +51,7 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 	object async_callback;
 	ExecutionContext current;
 	ExecutionContext original;
+	long add_time;
 #pragma warning restore 169, 414, 649
 
 	// not part of MonoAsyncResult...
@@ -61,7 +62,15 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 	internal AsyncResult ()
 	{
 	}
-	
+
+	internal AsyncResult (WaitCallback cb, object state, bool capture_context)
+	{
+		async_state = state;
+		async_delegate = cb;
+		if (capture_context)
+			current = ExecutionContext.Capture ();
+	}
+
 	public virtual object AsyncState
 	{
 		get {

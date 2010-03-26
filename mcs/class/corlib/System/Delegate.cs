@@ -33,6 +33,7 @@
 //
 
 using System.Reflection;
+using System.Runtime.Remoting;
 using System.Runtime.Serialization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -520,6 +521,11 @@ namespace System
 		public static bool operator != (Delegate d1, Delegate d2)
 		{
 			return !(d1 == d2);
+		}
+
+		internal bool IsTransparentProxy ()
+		{
+			return RemotingServices.IsTransparentProxy (m_target);
 		}
 	}
 }

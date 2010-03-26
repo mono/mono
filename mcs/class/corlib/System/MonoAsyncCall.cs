@@ -45,7 +45,6 @@ namespace System {
 		object     state;
 		object     res;
 		object     out_args;
-		long       wait_event;
 		#endregion
 	}
 

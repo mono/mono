@@ -1,3 +1,10 @@
+2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* MonoAsyncCall.cs: remove unused field.
+	* Delegate.cs: add new IsTransparentProxy property.
+	* MulticastDelegate.cs: add new HasSingleTarget property.
+	* Environment.cs: bump up corlib version.
+
 2010-03-25  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomain.cs: Add new properties that are in both FX4 and SL4

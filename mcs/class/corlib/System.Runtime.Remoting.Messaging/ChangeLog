@@ -1,3 +1,8 @@
+2010-03-25 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* AsyncResult.cs: add new constructor used by the threadpool and new
+	field that stores the time that the work item was added to the pool.
+
 2010-03-03  Robert Jordan  <robertj@gmx.net>
 
 	* CADMessages.cs (GetMethod): don't continue if the type
