@@ -1,3 +1,11 @@
+
+Fri Mar 26 19:03:09 CET 2010 Paolo Molaro <lupus@ximian.com>
+
+	* sgen-gc.c: make copy_object () take the address of the
+	slot holding the reference. This allows saving memory stores
+	when not needed and it allows keeping track of oldspace->nursery
+	references for the card table code.
+
 2010-03-26  Andreas Färber  <andreas.faerber@web.de>
 
 	* null-gc.c (mono_gc_invoke_with_gc_lock): Fix function name.
