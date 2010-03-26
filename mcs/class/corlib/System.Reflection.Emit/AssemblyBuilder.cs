@@ -1257,7 +1257,29 @@ namespace System.Reflection.Emit
 			return GetModules (getResourceModules);
 		}
 
+		//FIXME MS has issues loading satelite assemblies from SRE
+		public override Assembly GetSatelliteAssembly (CultureInfo culture)
+		{
+			return GetSatelliteAssembly (culture, null, true);
+		}
 
+		//FIXME MS has issues loading satelite assemblies from SRE
+		public override Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
+		{
+			return GetSatelliteAssembly (culture, version, true);
+		}
+
+		public override Module ManifestModule {
+			get {
+				return GetManifestModule ();
+			}
+		}
+
+		public override bool GlobalAssemblyCache {
+			get {
+				return false;
+			}
+		}
 #endif
 	}
 }

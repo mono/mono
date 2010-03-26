@@ -1,5 +1,10 @@
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* AssemblyBuilder.cs: Implement v4 GetSatelliteAssembly,
+	ManifestModule, GlobalAssemblyCache.
+
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* AssemblyBuilder.cs: Implement v4 GetReferencedAssemblies
 	and GetLoadedModules.
 
