@@ -1,3 +1,7 @@
+2010-03-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: reset 'state' to avoid returning non-null when the
+	event type is not found.
 
 Fri Mar 26 19:03:09 CET 2010 Paolo Molaro <lupus@ximian.com>
 
