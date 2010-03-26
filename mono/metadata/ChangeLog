@@ -1,3 +1,9 @@
+2010-03-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: spin while the threadpool initializes.
+	* mono-wsq.c: if the WSQ has not been initialized or has been shut
+	down, don't do anything.
+
 2010-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* threads.c (mono_thread_create_internal): Set the GC type of the
