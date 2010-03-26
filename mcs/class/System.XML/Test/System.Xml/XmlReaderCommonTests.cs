@@ -2203,6 +2203,21 @@ namespace MonoTests.System.Xml
 			Assert.AreEqual (0, bytesRead, "#3");
 			Assert.AreEqual (XmlNodeType.EndElement, reader.NodeType, "#4");
 		}
+
+		[Test]
+		public void ReadElementContentAsQNameDefaultNS ()
+		{
+			var sw = new StringWriter ();
+			var xw = XmlWriter.Create (sw);
+			xw.WriteStartElement ("", "foo", "urn:foo");
+			xw.WriteValue (new XmlQualifiedName ("x", "urn:foo"));
+			xw.WriteEndElement ();
+			xw.Close ();
+			var xr = XmlReader.Create (new StringReader (sw.ToString ()));
+			xr.MoveToContent ();
+			var q = (XmlQualifiedName) xr.ReadElementContentAs (typeof (XmlQualifiedName), xr as IXmlNamespaceResolver);
+			Assert.AreEqual ("urn:foo", q.Namespace, "#1");
+		}
 #endif
 	}
 }

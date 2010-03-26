@@ -989,9 +989,9 @@ namespace System.Xml
 					return text;
 				if (type == typeof (XmlQualifiedName)) {
 					if (resolver != null)
-						return XmlQualifiedName.Parse (text, resolver);
+						return XmlQualifiedName.Parse (text, resolver, true);
 					else
-						return XmlQualifiedName.Parse (text, this);
+						return XmlQualifiedName.Parse (text, this, true);
 				}
 				if (type == typeof (DateTimeOffset))
 					return XmlConvert.ToDateTimeOffset (text);

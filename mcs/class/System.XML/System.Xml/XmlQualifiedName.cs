@@ -128,13 +128,18 @@ namespace System.Xml
 
 		internal static XmlQualifiedName Parse (string name, XmlReader reader)
 		{
+			return Parse (name, reader, false);
+		}
+
+		internal static XmlQualifiedName Parse (string name, XmlReader reader, bool considerDefaultNamespace)
+		{
 			int index = name.IndexOf (':');
-			if (index < 0)
+			if (index < 0 && !considerDefaultNamespace)
 				return new XmlQualifiedName (name);
-			string ns = reader.LookupNamespace (name.Substring (0, index));
+			string ns = reader.LookupNamespace (index < 0 ? String.Empty : name.Substring (0, index));
 			if (ns == null)
 				throw new ArgumentException ("Invalid qualified name.");
-			return new XmlQualifiedName (name.Substring (index + 1), ns);
+			return new XmlQualifiedName (index < 0 ? name : name.Substring (index + 1), ns);
 		}
 
 		// Operators
