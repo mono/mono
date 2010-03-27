@@ -1009,14 +1009,14 @@ namespace System.Net
 
 		void DoPreAuthenticate ()
 		{
-			webHeaders.RemoveInternal ("Proxy-Authorization");
-			webHeaders.RemoveInternal ("Authorization");
 			bool isProxy = (proxy != null && !proxy.IsBypassed (actualUri));
 			ICredentials creds = (!isProxy || credentials != null) ? credentials : proxy.Credentials;
 			Authorization auth = AuthenticationManager.PreAuthenticate (this, creds);
 			if (auth == null)
 				return;
 
+			webHeaders.RemoveInternal ("Proxy-Authorization");
+			webHeaders.RemoveInternal ("Authorization");
 			string authHeader = (isProxy && credentials == null) ? "Proxy-Authorization" : "Authorization";
 			webHeaders [authHeader] = auth.Message;
 			usedPreAuth = true;

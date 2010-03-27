@@ -1,3 +1,9 @@
+2010-03-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: when PreAuthenticate is true, don't remove the
+	existing authorization related headers until we know we have a
+	replacement. Fixes bug #591633.
+
 2010-03-26 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ServicePointManager.cs: errors parsing the certificate don't prevent
