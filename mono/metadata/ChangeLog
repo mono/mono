@@ -1,3 +1,9 @@
+2010-03-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_method_body_get_object): Release
+	the method header before the call to CACHE_OBJECT since
+	this is a macro that returns.
+
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (inflate_generic_type): mono_metadata_type_dup
