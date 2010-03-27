@@ -1,5 +1,11 @@
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c: Add stack_peek function. Fix CEE_DUP
+	to not read from invalid memory if push did expand
+	the stack.
+
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Remove old table verification code that has
 	been superseeded by the new metadata verifier.
 
