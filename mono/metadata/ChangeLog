@@ -1,5 +1,11 @@
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (inflate_generic_type): mono_metadata_type_dup
+	already dupes array information, the g_memdup was just
+	leaking memory.
+
+2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c: Add stack_peek function. Fix CEE_DUP
 	to not read from invalid memory if push did expand
 	the stack.
