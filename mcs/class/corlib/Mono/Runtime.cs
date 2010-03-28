@@ -47,19 +47,6 @@ namespace Mono {
 		// Format is undefined only for use as a string for reporting
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern string GetDisplayName ();
-
-		/*
-		Create a object without calling any of it's constructors.
-		@h is a pointer to the runtime type handle of that object.		
-		Recomended usage is to emit the following code sequence:
-		ldtoken [mscorlib]System.Object
-		call object [mscorlib]Mono.Runtime::NewObject(intptr)
-
-		This is the only well understood sequence known by the JIT
-		which produces faster code.
-		*/
-		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		internal static extern object NewObject (IntPtr h);
 	}
 	
 }
