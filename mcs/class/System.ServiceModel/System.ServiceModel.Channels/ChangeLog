@@ -1,5 +1,9 @@
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageFault.cs : cosmetic method name clarification.
+
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlReaderBodyWriter.cs, Message.cs, MessageImpl.cs, BodyWriter.cs:
 	  fix BodyWriter buffering that dropped in-scope namespaces and thus
 	  caused problem on resolving QNames.

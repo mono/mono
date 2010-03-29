@@ -43,7 +43,7 @@ namespace System.ServiceModel.Channels
 				if (message.Version.Envelope == EnvelopeVersion.Soap11)
 					return CreateFault11 (message, maxBufferSize);
 				else // common to None and SOAP12
-					return CreateFault (message, maxBufferSize, message.Version.Envelope.Namespace);
+					return CreateFault12 (message, maxBufferSize);
 			} catch (XmlException ex) {
 				throw new CommunicationException ("Received an invalid SOAP Fault message", ex);
 			}
@@ -90,21 +90,21 @@ namespace System.ServiceModel.Channels
 			return CreateFault (fc, fr, details);
 		}
 
-		static MessageFault CreateFault (Message message, int maxBufferSize, string ns)
+		static MessageFault CreateFault12 (Message message, int maxBufferSize)
 		{
 			FaultCode fc = null;
 			FaultReason fr = null;
 			XmlDictionaryReader r = message.GetReaderAtBodyContents ();
-			r.ReadStartElement ("Fault", ns);
+			r.ReadStartElement ("Fault", message.Version.Envelope.Namespace);
 			r.MoveToContent ();
 
 			while (r.NodeType != XmlNodeType.EndElement) {
 				switch (r.LocalName) {
 				case "Code":
-					fc = ReadFaultCode (r, ns);
+					fc = ReadFaultCode12 (r, message.Version.Envelope.Namespace);
 					break;
 				case "Reason":
-					fr = ReadFaultReason (r, ns);
+					fr = ReadFaultReason12 (r, message.Version.Envelope.Namespace);
 					break;
 				default:
 					throw new XmlException (String.Format ("Unexpected node {0} name {1}", r.NodeType, r.Name));
@@ -142,7 +142,7 @@ namespace System.ServiceModel.Channels
 			return new FaultCode (value.Name, value.Namespace, subcode);
 		}
 
-		static FaultCode ReadFaultCode (XmlDictionaryReader r, string ns)
+		static FaultCode ReadFaultCode12 (XmlDictionaryReader r, string ns)
 		{
 			FaultCode subcode = null;
 			XmlQualifiedName value = XmlQualifiedName.Empty;
@@ -155,7 +155,7 @@ namespace System.ServiceModel.Channels
 			while (r.NodeType != XmlNodeType.EndElement) {
 				switch (r.LocalName) {
 				case "Subcode":
-					subcode = ReadFaultCode (r, ns);
+					subcode = ReadFaultCode12 (r, ns);
 					break;
 				case "Value":
 					value = (XmlQualifiedName) r.ReadElementContentAs (typeof (XmlQualifiedName), r as IXmlNamespaceResolver, "Value", ns);
@@ -170,7 +170,7 @@ namespace System.ServiceModel.Channels
 			return new FaultCode (value.Name, value.Namespace, subcode);
 		}
 
-		static FaultReason ReadFaultReason (XmlDictionaryReader r, string ns)
+		static FaultReason ReadFaultReason12 (XmlDictionaryReader r, string ns)
 		{
 			List<FaultReasonText> l = new List<FaultReasonText> ();
 			if (r.IsEmptyElement)
