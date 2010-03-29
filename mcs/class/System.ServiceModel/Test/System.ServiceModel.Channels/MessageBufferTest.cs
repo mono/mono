@@ -66,7 +66,6 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestWriteMessage ()
 		{
 			Message m = Message.CreateMessage (MessageVersion.Default, "action", 1);

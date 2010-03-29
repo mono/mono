@@ -1,5 +1,9 @@
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageBufferTest.cs : enable not-working test.
+
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageFaultTest.cs : enable previous test.
 
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
