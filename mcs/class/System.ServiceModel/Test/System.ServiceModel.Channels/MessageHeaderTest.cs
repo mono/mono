@@ -91,13 +91,22 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestWriteHeaderContent ()
 		{
-			int value = 1;
+			TestWriteHeaderContent (1, "<dummy-root>1</dummy-root>");
+		}
 
+		[Test]
+		[Category ("NotWorking")] // too cosmetic, it just does not output xmlns:i. (insignificant)
+		public void TestWriteHeaderContent2 ()
+		{
+			TestWriteHeaderContent (new UniqueId (new byte [] {0, 1, 2, 3, 4, 5, 6, 7, 8, 9, 0, 1, 2, 3, 4, 5}), "<dummy-root xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\" />");
+		}
+
+		void TestWriteHeaderContent (object value, string expected)
+		{
 			MessageHeader h = MessageHeader.CreateHeader ("foo", "bar", value);
-			XmlObjectSerializer f = new DataContractSerializer (typeof (int));
+			XmlObjectSerializer f = new DataContractSerializer (value.GetType ());
 
 			StringBuilder sb = new StringBuilder ();
 			XmlWriterSettings settings = new XmlWriterSettings ();
@@ -109,13 +118,18 @@ namespace MonoTests.System.ServiceModel.Channels
 			h.WriteHeaderContents (w, MessageVersion.Soap12WSAddressing10);
 			w.WriteEndElement ();
 			w.Flush ();
-			string actual = sb.ToString ();
+			string actual2 = sb.ToString ();
 
-			f.WriteObject (w, value);
-			string expected = sb.ToString ();
+			sb.Length = 0;
+			w.WriteStartElement ("dummy-root");
+			f.WriteObjectContent (w, value);
+			w.WriteEndElement ();
+			w.Flush ();
+			string actual1 = sb.ToString ();
 
 			// the output of WriteHeaderContent is the same as XmlSerializer.Serialize
-			Assert.AreEqual (expected, actual);
+			Assert.AreEqual (expected, actual1, "#1");
+			Assert.AreEqual (expected, actual2, "#2");
 		}
 
 		[Test]

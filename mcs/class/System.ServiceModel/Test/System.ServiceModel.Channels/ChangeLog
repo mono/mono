@@ -1,5 +1,9 @@
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeaderTest.cs : enable one, add not-working cosmetic one.
+
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageBufferTest.cs : enable not-working test.
 
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
