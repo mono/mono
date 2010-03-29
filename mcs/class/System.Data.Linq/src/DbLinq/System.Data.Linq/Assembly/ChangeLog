@@ -1,3 +1,7 @@
+2010-03-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	* AssemblyInfo.cs: Make internals visible to the sqlmetal testsuite.
+
 2008-05-20  Marek Safar  <marek.safar@gmail.com>
 
 	* AssemblyInfo.cs: Clean up some attributes.
