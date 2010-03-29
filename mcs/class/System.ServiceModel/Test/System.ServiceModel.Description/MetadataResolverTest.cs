@@ -153,10 +153,8 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void ErrResolve2 ()
 		{
-		/* Not working as HttpGet is not implemented yet */
 			//Mex cannot be fetched with HttpGet from the given url
 			MetadataResolver.Resolve (
 				typeof (IEchoService),
@@ -196,10 +194,8 @@ namespace MonoTests.System.ServiceModel.Description
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void ErrResolve5 ()
 		{
-		/* Not working as HttpGet is not implemented yet */
 			ContractDescription contract = ContractDescription.GetContract (typeof (IEchoService));
 			List<ContractDescription> contracts = new List<ContractDescription> ();
 			contracts.Add (contract);

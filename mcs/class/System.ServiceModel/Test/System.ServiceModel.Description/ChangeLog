@@ -1,3 +1,7 @@
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MetadataResolverTest.cs : enable working tests.
+
 2010-03-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MetadataExchangeBindingsTest.cs : new test.
