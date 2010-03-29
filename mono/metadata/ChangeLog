@@ -1,3 +1,6 @@
+2010-03-29  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: More detailed time statistics.
 
 Mon Mar 29 11:52:34 CEST 2010 Paolo Molaro <lupus@ximian.com>
 
