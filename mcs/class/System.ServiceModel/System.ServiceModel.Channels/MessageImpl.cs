@@ -60,16 +60,14 @@ namespace System.ServiceModel.Channels
 
 		public override bool IsEmpty {
 			get {
-				if (!body_started)
-					ReadBodyStart ();
+				ReadBodyStart ();
 				return is_empty;
 			}
 		}
 
 		public override bool IsFault {
 			get {
-				if (!body_started)
-					ReadBodyStart ();
+				ReadBodyStart ();
 				return is_fault;
 			}
 		}
@@ -80,6 +78,15 @@ namespace System.ServiceModel.Channels
 
 		public override MessageVersion Version {
 			get { return version; }
+		}
+
+		protected override MessageBuffer OnCreateBufferedCopy (
+			int maxBufferSize)
+		{
+			ReadBodyStart ();
+			var headers = new MessageHeaders (Headers);
+			var props = new MessageProperties (Properties);
+			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (reader), IsFault);
 		}
 
 		protected override string OnGetBodyAttribute (
@@ -96,8 +103,7 @@ namespace System.ServiceModel.Channels
 				return reader; // silly, but that's what our test expects.
 			if (body_consumed)
 				throw new InvalidOperationException ("The message body XmlReader is already consumed.");
-			if (!body_started)
-				ReadBodyStart ();
+			ReadBodyStart ();
 			if (is_empty)
 				throw new InvalidOperationException ("The message body is empty.");
 			body_consumed = true;
@@ -156,6 +162,9 @@ namespace System.ServiceModel.Channels
 
 		void ReadBodyStart ()
 		{
+			if (body_started)
+				return;
+
 			// read headers in advance.
 			if (headers == null)
 				ReadHeaders ();

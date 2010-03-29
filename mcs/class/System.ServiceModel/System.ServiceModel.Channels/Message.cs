@@ -212,7 +212,6 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		[MonoTODO ("use maxBufferSize")]
 		protected virtual MessageBuffer OnCreateBufferedCopy (
 			int maxBufferSize)
 		{
@@ -224,7 +223,7 @@ namespace System.ServiceModel.Channels
 				WriteBodyContents (w);
 			var headers = new MessageHeaders (Headers);
 			var props = new MessageProperties (Properties);
-			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (sw.ToString ()), false);
+			return new DefaultMessageBuffer (maxBufferSize, headers, props, new XmlReaderBodyWriter (sw.ToString (), maxBufferSize, null), false);
 		}
 
 		protected virtual string OnGetBodyAttribute (

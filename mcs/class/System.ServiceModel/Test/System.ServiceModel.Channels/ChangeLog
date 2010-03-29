@@ -1,3 +1,7 @@
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageFaultTest.cs : enable previous test.
+
 2010-03-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FaultConverterTest.cs, MessageFaultTest.cs : add new and not-working

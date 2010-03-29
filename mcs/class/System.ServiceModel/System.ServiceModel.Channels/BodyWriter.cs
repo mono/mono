@@ -57,7 +57,6 @@ namespace System.ServiceModel.Channels
 			OnWriteBodyContents (writer);
 		}
 
-		[MonoTODO ("use maxBufferSize somewhere")]
 		protected virtual BodyWriter OnCreateBufferedCopy (
 			int maxBufferSize)
 		{
@@ -67,10 +66,33 @@ namespace System.ServiceModel.Channels
 			StringWriter sw = new StringWriter ();
 			using (XmlDictionaryWriter w = XmlDictionaryWriter.CreateDictionaryWriter (XmlWriter.Create (sw, s)))
 				WriteBodyContents (w);
-			return new XmlReaderBodyWriter (sw.ToString ());
+			var xml = sw.ToString ();
+			if (xml.Length > 0)
+				return new XmlReaderBodyWriter (xml, maxBufferSize, null);
+			else
+				return new EmptyBodyWriter ();
 		}
 
 		protected abstract void OnWriteBodyContents (
 			XmlDictionaryWriter writer);
+
+		class EmptyBodyWriter : BodyWriter
+		{
+			public EmptyBodyWriter ()
+				: base (true)
+			{
+			}
+
+			protected override BodyWriter OnCreateBufferedCopy (
+				int maxBufferSize)
+			{
+				return new EmptyBodyWriter ();
+			}
+
+			protected override void OnWriteBodyContents (XmlDictionaryWriter writer)
+			{
+				// nothing to do
+			}
+		}
 	}
 }

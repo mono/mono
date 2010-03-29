@@ -49,7 +49,6 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TryCreateFaultMessageDefault ()
 		{
 			Message msg;
