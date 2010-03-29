@@ -1,3 +1,8 @@
+2010-03-29  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Use the same heuristic for the LOS target that we use
+	for the minor section allowance.
+
 2010-03-29  Raja R Harinath  <harinath@hurrynot.org>
 
 	* metadata-verify.c (INVALID_METHOD_IMPLFLAG_BITS): Allow bit 6
