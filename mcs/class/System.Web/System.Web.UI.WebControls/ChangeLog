@@ -1,3 +1,8 @@
+2010-03-29  Marek Habersack  <mhabersack@novell.com>
+
+	* GridView.cs: main table must be created and added to the
+	controls collection before any OnRowCreated event is fired.
+
 2010-03-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TreeView.cs: use enums instead of strings for attributes.
