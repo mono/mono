@@ -1,3 +1,8 @@
+2010-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mph.h: Applied some changes from the openbsd ports tree to fix openbsd
+	support.
+
 2010-03-23  Andreas Faerber  <andreas.faerber@web.de>
 
 	* old-map.c (map_Mono_Posix_Signals): Fix build for platforms where
