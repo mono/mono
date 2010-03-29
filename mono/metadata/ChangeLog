@@ -1,3 +1,8 @@
+2010-03-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	* metadata-verify.c (INVALID_METHOD_IMPLFLAG_BITS): Allow bit 6
+	"NoOptimization".
+
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_method_get_marshal_info): Fix the handling of dynamic methods
