@@ -1,3 +1,10 @@
+
+Mon Mar 29 11:52:34 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* gc-internal.h, sgen-gc.c, threads.c, utils/mono-hash.c:
+	fix the user defined mark interface to pass a pointer
+	to the object location and not the object itself.
+
 2010-03-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_method_body_get_object): Release
