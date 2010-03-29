@@ -49,6 +49,11 @@ namespace System.IO {
 		private string current;
 		private string parent;
 	
+#if MOONLIGHT
+		internal DirectoryInfo ()
+		{
+		}
+#endif
 		public DirectoryInfo (string path) : this (path, false)
 		{
 		}
