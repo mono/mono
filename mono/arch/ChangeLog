@@ -1,3 +1,7 @@
+2010-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* arm/*.sh: Remove bash dependency.
+
 2009-08-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* arm/arm-codegen.h: Add armv6 MOVW/MOVT.
