@@ -527,6 +527,9 @@ static GHashTable *loaded_classes;
 /* Assemblies whose assembly load event has no been sent yet */
 static GPtrArray *pending_assembly_loads;
 
+/* Types whose type load event has no been sent yet */
+static GPtrArray *pending_type_loads;
+
 /* Whenever the debugger thread has exited */
 static gboolean debugger_thread_exited;
 
@@ -765,6 +768,7 @@ mono_debugger_agent_init (void)
 
 	loaded_classes = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	pending_assembly_loads = g_ptr_array_new ();
+	pending_type_loads = g_ptr_array_new ();
 
 	log_level = agent_config.log_level;
 
@@ -2914,6 +2918,21 @@ end_runtime_invoke (MonoProfiler *prof, MonoMethod *method)
 }
 
 static void
+send_type_load (MonoClass *klass)
+{
+	gboolean type_load = FALSE;
+
+	mono_loader_lock ();
+	if (!g_hash_table_lookup (loaded_classes, klass)) {
+		type_load = TRUE;
+		g_hash_table_insert (loaded_classes, klass, klass);
+	}
+	mono_loader_unlock ();
+	if (type_load)
+		process_profiler_event (EVENT_KIND_TYPE_LOAD, klass);
+}
+
+static void
 jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 {
 	/*
@@ -2922,8 +2941,6 @@ jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 	 * loader lock held. They could also occur in the debugger thread.
 	 * Same for assembly load events.
 	 */
-	gboolean type_load = FALSE;
-
 	while (TRUE) {
 		MonoAssembly *assembly = NULL;
 
@@ -2941,14 +2958,30 @@ jit_end (MonoProfiler *prof, MonoMethod *method, MonoJitInfo *jinfo, int result)
 			break;
 	}
 
-	mono_loader_lock ();
-	if (!g_hash_table_lookup (loaded_classes, method->klass)) {
-		type_load = TRUE;
-		g_hash_table_insert (loaded_classes, method->klass, method->klass);
+	if (!vm_start_event_sent) {
+		/* Save these so they can be sent after the vm start event */
+		mono_loader_lock ();
+		g_ptr_array_add (pending_type_loads, method->klass);
+		mono_loader_unlock ();
+	} else {
+		/* Send all pending type load events */
+		MonoClass *klass;
+		while (TRUE) {
+			klass = NULL;
+			mono_loader_lock ();
+			if (pending_type_loads->len > 0) {
+				klass = g_ptr_array_index (pending_type_loads, 0);
+				g_ptr_array_remove_index (pending_type_loads, 0);
+			}
+			mono_loader_unlock ();
+			if (klass)
+				send_type_load (klass);
+			else
+				break;
+		}
+
+		send_type_load (method->klass);
 	}
-	mono_loader_unlock ();
-	if (type_load)
-		process_profiler_event (EVENT_KIND_TYPE_LOAD, method->klass);
 
 	if (!result)
 		add_pending_breakpoints (method, jinfo);
@@ -3026,7 +3059,7 @@ static void
 insert_breakpoint (GPtrArray *seq_points, MonoJitInfo *ji, MonoBreakpoint *bp)
 {
 	int i, count;
-	gint32 il_offset, native_offset;
+	gint32 il_offset = -1, native_offset;
 	BreakpointInstance *inst;
 
 	native_offset = 0;
@@ -4738,6 +4771,7 @@ event_commands (int command, guint8 *p, guint8 *end, Buffer *buf)
 					return err;
 				req->modifiers [i].caught = decode_byte (p, &p, end);
 				req->modifiers [i].uncaught = decode_byte (p, &p, end);
+				DEBUG(1, fprintf (log_file, "[dbg] \tEXCEPTION_ONLY filter (%s%s%s).\n", exc_class ? exc_class->name : "all", req->modifiers [i].caught ? ", caught" : "", req->modifiers [i].uncaught ? ", uncaught" : ""));
 				if (exc_class) {
 					req->modifiers [i].data.exc_class = exc_class;
 
