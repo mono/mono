@@ -43,7 +43,6 @@ namespace MonoTests.System.ServiceModel
 		static readonly X509Certificate2 cert = new X509Certificate2 ("Test/Resources/test.cer");
 
 		[Test]
-		[Category ("NotWorking")] // DataContractSerializer+base64 issue
 		public void CreateX509CertificateIdentity ()
 		{
 			X509CertificateEndpointIdentity identity =

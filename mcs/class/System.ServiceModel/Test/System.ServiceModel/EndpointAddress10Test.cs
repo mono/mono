@@ -72,7 +72,6 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void SerializeDeserialize ()
 		{
 			StringWriter sw = new StringWriter ();
