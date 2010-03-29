@@ -1,3 +1,8 @@
+2010-03-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	* metadata-verify.c (INVALID_METHOD_IMPLFLAG_BITS): Allow bit 6
+	"NoOptimization".
+
 2010-03-29  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Count bytes allocated with heavy statistics.
