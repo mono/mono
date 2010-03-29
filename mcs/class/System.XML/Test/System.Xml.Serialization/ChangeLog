@@ -1,3 +1,8 @@
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSerializerTests.cs : test for XmlRoot and XmlSchemaProvider
+	  QName conflict case.
+
 2010-01-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSerializerTests.cs : added test for bug #553032.

@@ -1,3 +1,9 @@
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTypeMapping.cs, XmlReflectionImporter.cs: XmlRoot takes higher
+	  priority to XmlSchemaProvider QName.
+	  This fixes WCF EndpointAddress serialization.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* SerializationSource.cs: use MOONLIGHT symbol to disambiguate

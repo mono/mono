@@ -196,7 +196,7 @@ namespace System.Xml.Serialization
 		XmlQualifiedName _schemaTypeName;
 #endif
 
-		internal XmlSerializableMapping(string elementName, string ns, TypeData typeData, string xmlType, string xmlTypeNamespace)
+		internal XmlSerializableMapping(XmlRootAttribute root, string elementName, string ns, TypeData typeData, string xmlType, string xmlTypeNamespace)
 			: base(elementName, ns, typeData, xmlType, xmlTypeNamespace)
 		{
 #if NET_2_0
@@ -233,7 +233,7 @@ namespace System.Xml.Serialization
 						String.Format ("Method {0}.{1}() specified by XmlSchemaProviderAttribute has invalid signature: return type must be compatible with System.Xml.XmlQualifiedName.", typeData.Type.Name, method));
 
 				// defaultNamespace at XmlReflectionImporter takes precedence for Namespace, but not for XsdTypeNamespace.
-				UpdateRoot (new XmlQualifiedName (_schemaTypeName.Name, Namespace ?? _schemaTypeName.Namespace));
+				UpdateRoot (new XmlQualifiedName (root != null ? root.ElementName : _schemaTypeName.Name, root != null ? root.Namespace : Namespace ?? _schemaTypeName.Namespace));
 				XmlTypeNamespace = _schemaTypeName.Namespace;
 				XmlType = _schemaTypeName.Name;
 

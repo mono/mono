@@ -293,7 +293,7 @@ namespace System.Xml.Serialization {
 			XmlTypeMapping map;
 			switch (typeData.SchemaType) {
 				case SchemaTypes.XmlSerializable:
-					map = new XmlSerializableMapping (elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
+					map = new XmlSerializableMapping (root, elementName, rootNamespace, typeData, defaultXmlType, typeNamespace);
 					break;
 				case SchemaTypes.Primitive:
 					if (!typeData.IsXsdType)

@@ -2844,6 +2844,19 @@ namespace MonoTests.System.XmlSerialization
 		{
 			new XmlSerializer (typeof (XmlAnyElementForObjectsType)).Serialize (TextWriter.Null, new XmlAnyElementForObjectsType ());
 		}
+
+		[Test]
+		public void XmlRootOverridesSchemaProviderQName ()
+		{
+			var obj = new XmlRootOverridesSchemaProviderQNameType ();
+
+			XmlSerializer xs = new XmlSerializer (obj.GetType ());
+
+			var sw = new StringWriter ();
+			using (XmlWriter xw = XmlWriter.Create (sw))
+				xs.Serialize (xw, obj);
+			Assert.IsTrue (sw.ToString ().IndexOf ("foo") > 0, "#1");
+		}
 #endif
 
 		#endregion //GenericsSeralizationTests
@@ -3002,6 +3015,33 @@ namespace MonoTests.System.XmlSerialization
 			[XmlAnyElement]
 			public object [] arr = new object [] {3,4,5};
 		}
+
+		[XmlRoot ("foo")]
+		[XmlSchemaProvider ("GetSchema")]
+		public class XmlRootOverridesSchemaProviderQNameType : IXmlSerializable
+		{
+			public static XmlQualifiedName GetSchema (XmlSchemaSet xss)
+			{
+				var xs = new XmlSchema ();
+				var xse = new XmlSchemaComplexType () { Name = "bar" };
+				xs.Items.Add (xse);
+				xss.Add (xs);
+				return new XmlQualifiedName ("bar");
+			}
+
+			XmlSchema IXmlSerializable.GetSchema ()
+			{
+				return null;
+			}
+
+			void IXmlSerializable.ReadXml (XmlReader reader)
+			{
+			}
+			void IXmlSerializable.WriteXml (XmlWriter writer)
+			{
+			}
+		}
+
 #endif
 
 		void CDataTextNodes_BadNode (object s, XmlNodeEventArgs e)
