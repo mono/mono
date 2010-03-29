@@ -84,8 +84,10 @@ namespace System {
 			ProgramFiles = 0x26,
 			MyPictures = 0x27,
 			CommonProgramFiles = 0x2b,
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 			MyVideos = 0x0e,
+#endif
+#if NET_4_0
 			NetworkShortcuts = 0x13,
 			Fonts = 0x14,
 			CommonStartMenu = 0x16,

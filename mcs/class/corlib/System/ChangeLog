@@ -1,3 +1,9 @@
+2010-03-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AppDomainSetup.cs: Add new (FX4 and SL4) SetCompatibilitySwitches
+	method (empty is good enough for moonlight testing)
+	* Environment.cs: Expose MyVideos in Moonlight build
+
 2010-03-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpan.cs: We always give higher precedence to the first found

@@ -31,6 +31,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
+using System.Collections.Generic;
 using System.IO;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
@@ -385,5 +386,11 @@ namespace System
 			serialized_non_primitives = ms.ToArray ();
 		}
 #endif // !NET_2_1
+#if NET_4_0 || MOONLIGHT
+		[MonoTODO ("not implemented, does not throw because it's used in testing moonlight")]
+		public void SetCompatibilitySwitches (IEnumerable<string> switches)
+		{
+		}
+#endif
 	}
 }
