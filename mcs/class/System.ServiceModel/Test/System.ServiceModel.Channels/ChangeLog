@@ -1,5 +1,9 @@
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FaultConverterTest.cs : added more TryCreateException() tests.
+
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeaderTest.cs : enable one, add not-working cosmetic one.
 
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>

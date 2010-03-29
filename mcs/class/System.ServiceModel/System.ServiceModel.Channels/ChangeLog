@@ -1,5 +1,9 @@
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FaultConverter.cs : implemented TryCreateException().
+
+2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageFault.cs : cosmetic method name clarification.
 
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>

@@ -91,11 +91,7 @@ namespace MonoTests.System.ServiceModel.Channels
 			Assert.IsFalse (none.TryCreateFaultMessage (new EndpointNotFoundException (), out msg), "#3-5");
 		}
 
-		[Test]
-		[Category ("NotWorking")]
-		public void TryCreateExceptionDefault ()
-		{
-			var xml = @"
+			string xml1 = @"
 <s:Envelope xmlns:a='http://www.w3.org/2005/08/addressing' xmlns:s='http://schemas.xmlsoap.org/soap/envelope/'>
   <s:Header>
     <a:Action s:mustUnderstand='1'>http://www.w3.org/2005/08/addressing/fault</a:Action>
@@ -107,17 +103,63 @@ namespace MonoTests.System.ServiceModel.Channels
     </s:Fault>
   </s:Body>
 </s:Envelope>";
-			var msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml)), 0x1000, MessageVersion.Soap11WSAddressing10);
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TryCreateExceptionMessageNullDefault ()
+		{
+			var msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml1)), 0x1000, MessageVersion.Soap11WSAddressing10);
 			var mf = MessageFault.CreateFault (msg, 1000);
-			msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml)), 0x1000, MessageVersion.Soap11WSAddressing10);
+			Exception ex;
+			s11.TryCreateException (null, mf, out ex);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void TryCreateExceptionFaultNullDefault ()
+		{
+			var msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml1)), 0x1000, MessageVersion.Soap11WSAddressing10);
+			Exception ex;
+			s11.TryCreateException (msg, null, out ex);
+		}
+
+		[Test]
+		public void TryCreateExceptionDefault ()
+		{
+			var msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml1)), 0x1000, MessageVersion.Soap11WSAddressing10);
+			var mf = MessageFault.CreateFault (msg, 1000);
+			msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml1)), 0x1000, MessageVersion.Soap11WSAddressing10);
 			Exception ex;
 			Assert.IsTrue (s11.TryCreateException (msg, mf, out ex), "#1");
+			// foobar -> false
+			Assert.IsFalse (s11.TryCreateException (msg, MessageFault.CreateFault (new FaultCode ("foobar"), new FaultReason ("foobar reason")), out ex), "#2");
+			// SOAP 1.1 ActionNotSupported -> true
+			Assert.IsTrue (s11.TryCreateException (msg, MessageFault.CreateFault (new FaultCode ("ActionNotSupported", Constants.WsaNamespace), new FaultReason ("foobar reason")), out ex), "#3");
+			Assert.IsTrue (ex is ActionNotSupportedException, "#3-2");
+			Assert.IsTrue (ex.Message.IndexOf ("foobar") >= 0, "#3-3");
 
+			// SOAP 1.1 Sender/ActionNotSupported -> false
+			mf = MessageFault.CreateFault (new FaultCode ("Sender", new FaultCode ("ActionNotSupported", Constants.WsaNamespace)), new FaultReason ("foobar reason"));
+			Assert.IsFalse (s11.TryCreateException (msg, mf, out ex), "#4");
+			// SOAP 1.2 ActionNotSupported -> false
+			mf = MessageFault.CreateFault (new FaultCode ("ActionNotSupported", Constants.WsaNamespace), new FaultReason ("foobar reason"));
+			Assert.IsFalse (s12.TryCreateException (msg, mf, out ex), "#5");
+			// SOAP 1.2 Sender/ActionNotSupported -> true
+			mf = MessageFault.CreateFault (new FaultCode ("Sender", new FaultCode ("ActionNotSupported", Constants.WsaNamespace)), new FaultReason ("foobar reason"));
+			Assert.IsTrue (s12.TryCreateException (msg, mf, out ex), "#6");
+			Assert.IsTrue (ex is ActionNotSupportedException, "#6-2");
+			Assert.IsTrue (ex.Message.IndexOf ("foobar") >= 0, "#6-3");
+		}
+
+		[Test]
+		public void TryCreateException2Default ()
+		{
 			// test buffered copy (which used to fail)
-			msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml)), 0x1000, MessageVersion.Soap11WSAddressing10);
+			var msg = Message.CreateMessage (XmlReader.Create (new StringReader (xml1)), 0x1000, MessageVersion.Soap11WSAddressing10);
 			var mb = msg.CreateBufferedCopy (1000);
-			mf = MessageFault.CreateFault (mb.CreateMessage (), 1000);
-			Assert.IsTrue (s11.TryCreateException (mb.CreateMessage (), mf, out ex), "#2");
+			var mf = MessageFault.CreateFault (mb.CreateMessage (), 1000);
+			Exception ex;
+			Assert.IsTrue (s11.TryCreateException (mb.CreateMessage (), mf, out ex), "#7");
 		}
 	}
 }

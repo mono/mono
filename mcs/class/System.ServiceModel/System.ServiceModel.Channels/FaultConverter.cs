@@ -82,10 +82,40 @@ namespace System.ServiceModel.Channels
 			this.version = version;
 		}
 
+		// How is the argument message used?
 		protected override bool OnTryCreateException (
 			Message message, MessageFault fault, out Exception error)
 		{
+			if (message == null)
+				throw new ArgumentNullException ("message");
+			if (fault == null)
+				throw new ArgumentNullException ("fault");
+
 			error = null;
+
+			FaultCode fc;
+			if (version.Envelope.Equals (EnvelopeVersion.Soap11))
+				fc = fault.Code;
+			else
+				fc = fault.Code.SubCode;
+
+			if (fc == null)
+				return false;
+
+			string msg = fault.Reason.GetMatchingTranslation ().Text;
+			switch (fc.Namespace) {
+			case Constants.WsaNamespace:
+				switch (fc.Name) {
+				case "ActionNotSupported":
+					error = new ActionNotSupportedException (msg);
+					return true;
+				case "DestinationUnreachable":
+					error = new EndpointNotFoundException (msg);
+					return true;
+				}
+				break;
+			}
+
 			return false;
 		}
 
