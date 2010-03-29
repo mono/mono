@@ -1,3 +1,7 @@
+2010-03-29  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/AssemblyStripper.cs: optimize.
+
 2010-02-13  Jb Evain  <jbevain@novell.com>
 
 	* Mono.Cecil/ReflectionReader.cs: don't cache everything

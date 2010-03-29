@@ -85,10 +85,10 @@ namespace Mono.Cecil {
 				if (!method.HasBody)
 					continue;
 
-				method.Body.ExceptionHandlers.Clear();
-				method.Body.Variables.Clear ();
-				method.Body.Instructions.Clear ();
-				method.Body.CilWorker.Emit (OpCodes.Ret);
+				MethodBody body = new MethodBody (method);
+				body.CilWorker.Emit (OpCodes.Ret);
+
+				method.Body = body;
 			}
 		}
 
