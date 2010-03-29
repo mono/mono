@@ -121,8 +121,12 @@ namespace System.Xml
 			string prefix = index < 0 ? String.Empty : name.Substring (0, index);
 			string localName = index < 0 ? name : name.Substring (index + 1);
 			string ns = resolver.LookupNamespace (prefix);
-			if (ns == null)
-				throw new ArgumentException ("Invalid qualified name.");
+			if (ns == null) {
+				if (prefix.Length > 0)
+					throw new ArgumentException ("Invalid qualified name.");
+				else
+					ns = String.Empty;
+			}
 			return new XmlQualifiedName (localName, ns);
 		}
 
