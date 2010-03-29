@@ -36,7 +36,7 @@
 #include <stdint.h>             /* for SIZE_MAX */
 #endif
 
-#if __APPLE__ || __BSD__ || __FreeBSD__
+#if __APPLE__ || __BSD__ || __FreeBSD__ || __OpenBSD__
 #define MPH_ON_BSD
 #endif
 
@@ -46,9 +46,13 @@
 #define MPH_INTERNAL
 #endif
 
-#if defined (PLATFORM_WIN32) && !defined (EOVERFLOW)
-#define EOVERFLOW 75
-#endif /* def PLATFORM_WIN32 && ndef EOVERFLOW */
+#if !defined(EOVERFLOW)
+#  if defined(PLATFORM_WIN32)
+#    define EOVERFLOW 75
+#  elif defined(__OpenBSD__)
+#    define EOVERFLOW 87
+#  endif
+#endif /* !defined(EOVERFLOW) */
 
 #if !defined (PLATFORM_WIN32)
 

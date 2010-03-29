@@ -1,3 +1,8 @@
+2010-03-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* mph.h: Applied some changes from the openbsd ports tree to fix openbsd
+	support.
+
 2010-01-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* zlib-helper.c: no need for sync flush when compressing.
