@@ -545,7 +545,7 @@ mono_magic_trampoline (mgreg_t *regs, guint8 *code, gpointer arg, guint8* tramp)
 		guint8 *plt_entry = mono_aot_get_plt_entry (code);
 
 		if (plt_entry) {
-			mono_arch_patch_plt_entry (plt_entry, NULL, regs, addr);
+			mono_aot_patch_plt_entry (plt_entry, NULL, regs, addr);
 		} else if (!generic_shared || (m->iflags & METHOD_IMPL_ATTRIBUTE_INTERNAL_CALL) ||
 			mono_domain_lookup_shared_generic (mono_domain_get (), declaring)) {
 			if (generic_shared) {
@@ -692,9 +692,7 @@ mono_aot_trampoline (mgreg_t *regs, guint8 *code, guint8 *token_info,
 	MonoMethod *method = NULL;
 	gpointer addr;
 	gpointer *vtable_slot;
-	gboolean is_got_entry;
 	guint8 *plt_entry;
-	gboolean need_rgctx_tramp = FALSE;
 
 	image = *(gpointer*)(gpointer)token_info;
 	token_info += sizeof (gpointer);
@@ -718,24 +716,7 @@ mono_aot_trampoline (mgreg_t *regs, guint8 *code, guint8 *token_info,
 	plt_entry = mono_aot_get_plt_entry (code);
 	g_assert (plt_entry);
 
-	mono_arch_patch_plt_entry (plt_entry, NULL, regs, addr);
-
-	is_got_entry = FALSE;
-
-	/*
-	 * Since AOT code is only used in the root domain, 
-	 * mono_domain_get () != mono_get_root_domain () means the calling method
-	 * is AppDomain:InvokeInDomain, so this is the same check as in 
-	 * mono_method_same_domain () but without loading the metadata for the method.
-	 */
-	if ((is_got_entry && (mono_domain_get () == mono_get_root_domain ())) || mono_domain_owns_vtable_slot (mono_domain_get (), vtable_slot)) {
-#ifdef MONO_ARCH_HAVE_IMT
-		if (!method)
-			method = mono_get_method (image, token, NULL);
-		vtable_slot = mono_convert_imt_slot_to_vtable_slot (vtable_slot, regs, code, method, NULL, &need_rgctx_tramp);
-#endif
-		*vtable_slot = addr;
-	}
+	mono_aot_patch_plt_entry (plt_entry, NULL, regs, addr);
 
 	return addr;
 }

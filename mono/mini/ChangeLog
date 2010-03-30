@@ -1,3 +1,13 @@
+2010-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (mono_aot_trampoline): Remove some dead code.
+
+	* aot-runtime.c (mono_aot_patch_plt_entry): New helper function, which only
+	does the patching if the callee is in the same domain.
+
+	* aot-runtime.c mini-trampolines.c: Call mono_aot_patch_plt_entry instead
+	of mono_arch_patch_plt_entry ().
+
 2010-03-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (jit_end): Send type loads for types loaded before the VMStart

@@ -2535,6 +2535,19 @@ find_aot_module (guint8 *code)
 	return user_data.module;
 }
 
+void
+mono_aot_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+{
+	/*
+	 * Since AOT code is only used in the root domain, 
+	 * mono_domain_get () != mono_get_root_domain () means the calling method
+	 * is AppDomain:InvokeInDomain, so this is the same check as in 
+	 * mono_method_same_domain () but without loading the metadata for the method.
+	 */
+	if (mono_domain_get () == mono_get_root_domain ())
+		mono_arch_patch_plt_entry (code, got, regs, addr);
+}
+
 /*
  * mono_aot_plt_resolve:
  *
@@ -2580,7 +2593,7 @@ mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code
 	/* Patch the PLT entry with target which might be the actual method not a trampoline */
 	plt_entry = mono_aot_get_plt_entry (code);
 	g_assert (plt_entry);
-	mono_arch_patch_plt_entry (plt_entry, module->got, NULL, target);
+	mono_aot_patch_plt_entry (plt_entry, module->got, NULL, target);
 
 	return target;
 #else
@@ -3207,6 +3220,11 @@ gpointer
 mono_aot_plt_resolve (gpointer aot_module, guint32 plt_info_offset, guint8 *code)
 {
 	return NULL;
+}
+
+void
+mono_aot_patch_plt_entry (guint8 *code, gpointer *got, mgreg_t *regs, guint8 *addr)
+{
 }
 
 gpointer
