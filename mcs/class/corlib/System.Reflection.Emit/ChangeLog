@@ -1,3 +1,8 @@
+2010-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* CustomAttributeBuilder.cs (IsValidType): Call Enum.GetUnderlyingType () for
+	dynamic enums to avoid crashes in the unmanaged code. Fixes #591800.
+
 2010-02-09  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ModuleBuilder.cs: Do not use reflection to create SymbolWriterImpl
