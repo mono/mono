@@ -1,8 +1,3 @@
-2010-03-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* PagesConfiguration.cs: default for EnableViewStateMac is true. Allow
-	setting it from a @Page directive.
-
 2009-05-14  Marek Habersack  <mhabersack@novell.com>
 
 	* HandlerFactoryConfiguration.cs: if we're matching a default
