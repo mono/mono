@@ -1604,5 +1604,23 @@ namespace System.Linq {
 
 		#endregion
 
+#if NET_4_0
+		#region Zip
+
+		public static IQueryable<TResult> Zip<TFirst, TSecond, TResult> (this IQueryable<TFirst> source1, IEnumerable<TSecond> source2, Expression<Func<TFirst, TSecond, TResult>> resultSelector)
+		{
+			Check.Source1AndSource2 (source1, source2);
+			if (resultSelector == null)
+				throw new ArgumentNullException ("resultSelector");
+
+			return source1.Provider.CreateQuery<TResult> (
+				StaticCall (
+					MakeGeneric (MethodBase.GetCurrentMethod (), typeof (TFirst), typeof (TSecond), typeof (TResult)),
+					source1.Expression,
+					Expression.Quote (resultSelector)));
+		}
+
+		#endregion
+#endif
 	}
 }

@@ -1,3 +1,7 @@
+2010-03-30  Jb Evain  <jbevain@novell.com>
+
+	* Queryable.cs: implement Zip for net_4_0.
+
 2010-03-24  Jb Evain  <jbevain@novell.com>
 
 	* SortSequenceContext.cs: Fix OrderByDescending stability.
