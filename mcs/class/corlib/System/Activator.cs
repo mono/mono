@@ -253,34 +253,30 @@ namespace System
 			if ((bindingAttr & _accessFlags) == 0)
 				bindingAttr |= BindingFlags.Public | BindingFlags.Instance;
 
-			int length = 0;
-			if (args != null)
-				length = args.Length;
-
-			Type[] atypes = length == 0 ? Type.EmptyTypes : new Type [length];
-			for (int i = 0; i < length; ++i)
-				if (args [i] != null)
-					atypes [i] = args [i].GetType ();
-
 			if (binder == null)
 				binder = Binder.DefaultBinder;
 
-			ConstructorInfo ctor = (ConstructorInfo) binder.SelectMethod (bindingAttr, type.GetConstructors (bindingAttr), atypes, null);
+			object state;
+			ConstructorInfo ctor = (ConstructorInfo) binder.BindToMethod (bindingAttr, type.GetConstructors (bindingAttr), ref args, null, null, null, out state);
 
 			if (ctor == null) {
 				// Not sure about this
-				if (type.IsValueType && atypes.Length == 0) {
+				if (type.IsValueType && (args == null || args.Length == 0)) {
 					return CreateInstanceInternal (type);
 				}
 
-				StringBuilder sb = new StringBuilder ();
-				foreach (Type t in atypes){
-						sb.Append (t != null ? t.ToString () : "(unknown)");
-					sb.Append (", ");
+				var sb = new StringBuilder ();
+				if (args != null) {
+					for (int i = 0; i < args.Length; i++) {
+						if (i > 0)
+							sb.Append (", ");
+
+						var argument = args [i];
+						var arg_type = argument != null ? argument.GetType () : null;
+						sb.Append (arg_type != null ? arg_type.ToString () : "(unknown)");
+					}
 				}
-				if (sb.Length > 2)
-					sb.Length -= 2;
-				
+
 				throw new MissingMethodException (String.Format (Locale.GetText ("No constructor found for {0}::.ctor({1})"),
 										 type.FullName, sb));
 			}

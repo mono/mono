@@ -167,7 +167,34 @@ namespace System.Reflection
 				state = null;
 				if (names != null)
 					ReorderParameters (names, ref args, selected);
+
+				if (selected != null && args != null && args.Length > 0)
+					AdjustArguments (selected, ref args);
+
 				return selected;
+			}
+
+			static void AdjustArguments (MethodBase selected, ref object [] args)
+			{
+				var parameters = selected.GetParameters ();
+				if (parameters.Length == 0)
+					return;
+
+				var last_parameter = parameters [parameters.Length - 1];
+				if (!Attribute.IsDefined (last_parameter, typeof (ParamArrayAttribute)))
+					return;
+
+				var adjusted = new object [parameters.Length];
+				Array.Copy (args, adjusted, parameters.Length - 1);
+
+				var param_args_count = args.Length + 1 - parameters.Length;
+				var params_args = Array.CreateInstance (last_parameter.ParameterType.GetElementType (), param_args_count);
+
+				for (int i = 0; i < param_args_count; i++)
+					params_args.SetValue (args [args.Length - param_args_count + i], i);
+
+				adjusted [adjusted.Length - 1] = params_args;
+				args = adjusted;
 			}
 
 			void ReorderParameters (string [] names, ref object [] args, MethodBase selected)
@@ -402,7 +429,7 @@ namespace System.Reflection
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
 					ParameterInfo[] args = m.GetParameters ();
-					if (args.Length > types.Length)
+					if (args.Length > types.Length + 1)
 						continue;
 					else if (args.Length == 0)
 						continue;

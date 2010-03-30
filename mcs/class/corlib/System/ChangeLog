@@ -1,3 +1,12 @@
+2010-03-30  Jb Evain  <jbevain@novell.com>
+
+	* MonoType.cs: let the binder reorder arguments when invoking
+	params methods.
+	* Activator.cs (CreateInstance): use BindToMethod instead of
+	SelectMethod to make sure that params constructors are properly called.
+
+	Fixes #591877
+
 2010-03-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpan.cs: Implement all the overloads of both TryParseExact and

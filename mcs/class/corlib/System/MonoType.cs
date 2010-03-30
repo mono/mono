@@ -425,10 +425,6 @@ namespace System
 						if (System.Reflection.Missing.Value == args [i] && (parameters [i].Attributes & ParameterAttributes.HasDefault) != ParameterAttributes.HasDefault)
 							throw new ArgumentException ("Used Missing.Value for argument without default value", "parameters");
 					}
-					bool hasParamArray = parameters.Length > 0 ? Attribute.IsDefined (parameters [parameters.Length - 1], 
-						typeof (ParamArrayAttribute)) : false;
-					if (hasParamArray)
-						ReorderParamArrayArguments (ref args, m);
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
 					binder.ReorderArgumentArray (ref args, state);
 					return result;
@@ -475,11 +471,6 @@ namespace System
 				if (m == null) {
 					throwMissingFieldException = true;
 				} else {
-					ParameterInfo[] parameters = m.GetParameters();
-					bool hasParamArray = parameters.Length > 0 ? Attribute.IsDefined (parameters [parameters.Length - 1], 
-						typeof (ParamArrayAttribute)) : false;
-					if (hasParamArray)
-						ReorderParamArrayArguments (ref args, m);
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
 					binder.ReorderArgumentArray (ref args, state);
 					return result;
@@ -503,11 +494,6 @@ namespace System
 				if (m == null) {
 					throwMissingFieldException = true;
 				} else {
-					ParameterInfo[] parameters = m.GetParameters();
-					bool hasParamArray = parameters.Length > 0 ? Attribute.IsDefined (parameters [parameters.Length - 1], 
-						typeof (ParamArrayAttribute)) : false;
-					if (hasParamArray)
-						ReorderParamArrayArguments (ref args, m);
 					object result = m.Invoke (target, invokeAttr, binder, args, culture);
 					binder.ReorderArgumentArray (ref args, state);
 					return result;
@@ -715,25 +701,6 @@ namespace System
 			// this (unlike the Invoke step) is _and stays_ a LinkDemand (caller)
 			return SecurityManager.ReflectedLinkDemandQuery (mb) ? mb : null;
 #endif
-		}
-
-		void ReorderParamArrayArguments(ref object[] args, MethodBase method)
-		{
-			ParameterInfo[] parameters = method.GetParameters();
-			object[] newArgs = new object [parameters.Length];
-			Array paramArray = Array.CreateInstance(parameters[parameters.Length - 1].ParameterType.GetElementType(), 
-				args.Length - (parameters.Length - 1));
-			int paramArrayCount = 0;
-			for (int i = 0; i < args.Length; i++) {
-				if (i < (parameters.Length - 1))
-					newArgs [i] = args [i];
-				else {
-					paramArray.SetValue (args [i], paramArrayCount);
-					paramArrayCount ++;
-				}
-			}
-			newArgs [parameters.Length - 1] = paramArray;
-			args = newArgs;
 		}
 
 #if NET_4_0
