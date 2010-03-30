@@ -1,5 +1,10 @@
 2010-03-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* CustomAttributeType.cs (IsValidType): Implement proper checking for value types
+	as well.
+
+2010-03-30  Zoltan Varga  <vargaz@gmail.com>
+
 	* CustomAttributeBuilder.cs: Fix the calls to IsValidType, some were passing
 	in DeclaringType instead of PropertyType/FieldType.
 
