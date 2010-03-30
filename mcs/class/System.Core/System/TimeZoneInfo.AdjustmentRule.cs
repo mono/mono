@@ -26,6 +26,7 @@
 
 #if (INSIDE_CORLIB && NET_4_0) || (NET_2_1 && !INSIDE_CORLIB) || (NET_3_5 && !NET_4_0 && !BOOTSTRAP_NET_4_0)
 
+using System.Runtime.CompilerServices;
 using System.Runtime.Serialization;
 
 namespace System
