@@ -1041,6 +1041,152 @@ public class TimeSpanTest {
 	}
 
 	[Test]
+	public void ParseExact ()
+	{
+		CultureInfo french_culture = CultureInfo.GetCultureInfo ("fr-FR");
+		CultureInfo us_culture = CultureInfo.GetCultureInfo ("en-US");
+
+		// At this point we are only missing the style bites and then we are
+		// pretty much done with the standard formats.
+
+		//
+		// 'g' format - this is the short and culture sensitive format
+		//
+		string [] g_format = new string [] { "g" };
+		ParseExactHelper ("12", g_format, false, false, "12.00:00:00");
+		ParseExactHelper ("11:12", g_format, false, false, "11:12:00");
+		ParseExactHelper ("-11:12", g_format, false, false, "-11:12:00");
+		ParseExactHelper ("25:13", g_format, true, false, "dontcare");
+		ParseExactHelper ("11:66", g_format, true, false, "dontcare"); // I'd have expected OverflowExc here
+		ParseExactHelper ("11:12:13", g_format, false, false, "11:12:13");
+		ParseExactHelper ("-11:12:13", g_format, false, false, "-11:12:13");
+		ParseExactHelper ("10.11:12:13", g_format, true, false, "dontcare"); // this should work as well
+		ParseExactHelper ("10.11:12:13", g_format, true, false, "dontcare", us_culture);
+		ParseExactHelper ("10.11:12:13", g_format, true, false, "dontcare", CultureInfo.InvariantCulture);
+		ParseExactHelper ("10:11:12:66", g_format, true, false, "dontcare");
+		ParseExactHelper ("10:11:12:13", g_format, false, false, "10.11:12:13");
+		ParseExactHelper ("11:12:13.6", g_format, false, false, "11:12:13.6000000", CultureInfo.InvariantCulture);
+		ParseExactHelper ("11:12:13,6", g_format, false, false, "11:12:13.6000000", french_culture);
+		ParseExactHelper ("10:11:12:13.6", g_format, false, false, "10.11:12:13.6000000", us_culture);
+		ParseExactHelper (" 10:11:12:13.6 ", g_format, false, false, "10.11:12:13.6000000", us_culture);
+		ParseExactHelper ("10:11", g_format, false, false, "10:11:00", null, TimeSpanStyles.None);
+		ParseExactHelper ("10:11", g_format, false, false, "10:11:00", null, TimeSpanStyles.AssumeNegative); // no effect
+
+		// 
+		// G format
+		//
+		string [] G_format = new string [] { "G" };
+		ParseExactHelper ("9:10:12", G_format, true, false, "dontcare");
+		ParseExactHelper ("9:10:12.6", G_format, true, false, "dontcare");
+		ParseExactHelper ("3.9:10:12", G_format, true, false, "dontcare");
+		ParseExactHelper ("3.9:10:12.153", G_format, true, false, "dontcare"); // this should be valid...
+		ParseExactHelper ("3:9:10:12.153", G_format, false, false, "3.09:10:12.1530000", us_culture);
+		ParseExactHelper ("0:9:10:12.153", G_format, false, false, "09:10:12.1530000", us_culture);
+		ParseExactHelper ("03:09:10:12.153", G_format, false, false, "3.09:10:12.1530000", us_culture);
+		ParseExactHelper ("003:009:0010:0012.00153", G_format, true, false, "dontcare"); // more than 0 preceding zero
+		ParseExactHelper ("3:9:10:66.153", G_format, true, false, "dontcare"); // seconds out of range
+		ParseExactHelper ("3:9:10:12.153", G_format, true, false, "dontcare", french_culture); // fr-FR uses ',' as decimal separator
+		ParseExactHelper ("3:9:10:12,153", G_format, false, false, "3.09:10:12.1530000", french_culture);
+		ParseExactHelper ("  3:9:10:12.153  ", G_format, false, false, "3.09:10:12.1530000", us_culture);
+		ParseExactHelper ("3:9:10:13.153", G_format, false, false, "3.09:10:13.1530000", us_culture, TimeSpanStyles.AssumeNegative);
+
+		// c format
+		string [] c_format = new string [] { "c" };
+		ParseExactHelper ("12", c_format, false, false, "12.00:00:00");
+		ParseExactHelper ("12:11", c_format, false, false, "12:11:00");
+		ParseExactHelper ("12:66", c_format, true, false, "dontcare");
+		ParseExactHelper ("10.11:12", c_format, false, false, "10.11:12:00");
+		ParseExactHelper ("10.11:12:13", c_format, false, false, "10.11:12:13");
+		ParseExactHelper ("10:11:12:13", c_format, true, false, "dontcare"); // this is normally accepted in the Parse method
+		ParseExactHelper ("10.11:12:13.6", c_format, false, false, "10.11:12:13.6000000");
+		ParseExactHelper ("10:11:12,6", c_format, true, false, "dontcare");
+		ParseExactHelper ("10:11:12,6", c_format, true, false, "dontcare", french_culture);
+		ParseExactHelper ("  10:11:12.6  ", c_format, false, false, "10:11:12.6000000");
+		ParseExactHelper ("10:12", c_format, false, false, "10:12:00", null, TimeSpanStyles.AssumeNegative);
+		ParseExactHelper ("10:123456789999", c_format, true, false, "dontcare");
+
+		ParseExactHelper ("10:12", new string [0], true, false, "dontcare");
+		ParseExactHelper ("10:12", new string [] { String.Empty }, true, false, "dontcare");
+		ParseExactHelper ("10:12", new string [] { null }, true, false, "dontcare");
+	}
+
+	[Test]
+	public void ParseExactMultipleFormats ()
+	{
+		ParseExactHelper ("10:12", new string [] { "G", "g" }, false, false, "10:12:00");
+		ParseExactHelper ("10:12", new string [] { "g", "G" }, false, false, "10:12:00");
+		ParseExactHelper ("7.8:9:10", new string [] { "G", "g" }, true, false, "dontcare");
+		ParseExactHelper ("7.8:9:10", new string [] { "G", "g", "c" }, false, false, "7.08:09:10");
+		ParseExactHelper ("7:8:9:10", new string [] { "c", "g" }, false, false, "7.08:09:10");
+		ParseExactHelper ("7:8:9:10", new string [] { "c", "G" }, true, false, "dontcare");
+		ParseExactHelper ("7.123456789:1", new string [] { "c", "G", "g" }, true, false, "dontcare");
+		ParseExactHelper ("7.123456789:1", new string [] { "G", "g", "c" }, true, false, "dontcare");
+		ParseExactHelper ("1234567890123456", new string [] { "c", "g" }, true, false, "dontcare"); // I'd expect an OverflowException
+		ParseExactHelper ("10:12", new string [] { null, "c", "g" }, true, false, "10:12:00");
+		ParseExactHelper ("10:12", new string [] { String.Empty, "c", "g" }, true, false, "10:12:00");
+	}
+
+	[Test]
+	[Category ("NotWorking")]
+	public void ParseExactCustomFormats ()
+	{
+		ParseExactHelper ("12", new string [] { "%h" }, false, false, "12:00:00");
+		ParseExactHelper ("00", new string [] { "%h" }, false, false, "00:00:00");
+		ParseExactHelper ("24", new string [] { "%h" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "%m" }, false, false, "00:12:00");
+		ParseExactHelper ("60", new string [] { "%m" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "%s" }, false, false, "00:00:12");
+		ParseExactHelper ("33", new string [] { "%d" }, false, false, "33.00:00:00");
+		ParseExactHelper ("0", new string [] { "%d" }, false, false, "00:00:00");
+		ParseExactHelper (" 0 ", new string [] { "%d" }, true, false, "dontcare");
+		ParseExactHelper (" 0 ", new string [] { " %d " }, true, false, "dontcare");
+		ParseExactHelper ("0", new string [] { " %d " }, true, false, "dontcare");
+	}
+
+	void ParseExactHelper (string input, string [] formats, bool format_error, bool overflow_error, string expected, IFormatProvider formatProvider = null,
+			TimeSpanStyles timeSpanStyles = TimeSpanStyles.None)
+	{
+		bool overflow_exc = false;
+		bool format_exc = false;
+		TimeSpan result = TimeSpan.Zero;
+
+		try {
+			result = TimeSpan.ParseExact (input, formats, formatProvider, timeSpanStyles);
+		} catch (OverflowException) {
+			overflow_exc = true;
+		} catch (FormatException) {
+			format_exc = true;
+		}
+
+		Assert.AreEqual (format_error, format_exc, "A1");
+		Assert.AreEqual (overflow_error, overflow_exc, "A2");
+		if (!overflow_exc && !format_exc)
+			Assert.AreEqual (expected, result.ToString ());
+	}
+
+	[Test]
+	public void ParseExactExceptions ()
+	{
+		try {
+			TimeSpan.ParseExact (null, "g", null);
+			Assert.Fail ("#A1");
+		} catch (ArgumentNullException) {
+		}
+
+		try {
+			TimeSpan.ParseExact ("10:12", (string)null, null);
+			Assert.Fail ("#A2");
+		} catch (ArgumentNullException) {
+		}
+
+		try {
+			TimeSpan.ParseExact ("10:12", (string [])null, null);
+			Assert.Fail ("#A3");
+		} catch (ArgumentNullException) {
+		}
+	}
+
+	[Test]
 	public void ToStringOverloads ()
 	{
 		TimeSpan ts = new TimeSpan (1, 2, 3, 4, 6);
