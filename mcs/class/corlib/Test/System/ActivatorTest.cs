@@ -379,5 +379,54 @@ namespace MonoTests.System {
 						  BindingFlags.Public | BindingFlags.Instance, null, null, null,
 						  new object [] {ModuleHandle.EmptyHandle}, null);
 		}
+
+		public class ParamsConstructor {
+
+			public int A;
+			public string X;
+			public string Y;
+
+			public ParamsConstructor (int a, params string [] s)
+			{
+				A = a;
+
+				Assert.IsNotNull (s);
+
+				if (s.Length == 0)
+					return;
+
+				X = s [0];
+
+				if (s.Length == 1)
+					return;
+
+				Y = s [1];
+			}
+		}
+
+		[Test]
+		public void CreateInstanceParamsConstructor ()
+		{
+			var a = (ParamsConstructor) Activator.CreateInstance (
+				typeof (ParamsConstructor), new object [] { 42, "foo", "bar" });
+
+			Assert.AreEqual (42, a.A);
+			Assert.AreEqual ("foo", a.X);
+			Assert.AreEqual ("bar", a.Y);
+
+			a = (ParamsConstructor) Activator.CreateInstance (
+				typeof (ParamsConstructor), new object [] { 42, "foo" });
+
+			Assert.AreEqual (42, a.A);
+			Assert.AreEqual ("foo", a.X);
+			Assert.AreEqual (null, a.Y);
+
+			a = (ParamsConstructor) Activator.CreateInstance (
+				typeof (ParamsConstructor), new object [] { 42 });
+
+			Assert.AreEqual (42, a.A);
+			Assert.AreEqual (null, a.X);
+			Assert.AreEqual (null, a.Y);
+		}
 	}
 }
