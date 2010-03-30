@@ -1,5 +1,9 @@
 2010-03-30  Raja R Harinath  <harinath@hurrynot.org>
 
+	Clean up some whitespace in the output
+	* main.c (pinvoke_flags_map): Add a few trailing spaces.
+	* util.c (flags): Simplify.
+
 	Make util.c:flags() stricter
 	* get.c (field_flags_map): Add empty entries for
 	HAS_FIELD_MARSHAL, HAS_DEFAULT and HAS_FIELD_RVA.
