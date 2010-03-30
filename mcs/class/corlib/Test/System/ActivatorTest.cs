@@ -428,5 +428,42 @@ namespace MonoTests.System {
 			Assert.AreEqual (null, a.X);
 			Assert.AreEqual (null, a.Y);
 		}
+
+		class SimpleParamsConstructor {
+
+			public string X;
+			public string Y;
+
+			public SimpleParamsConstructor (params string [] s)
+			{
+				Assert.IsNotNull (s);
+
+				if (s.Length == 0)
+					return;
+
+				X = s [0];
+
+				if (s.Length == 1)
+					return;
+
+				Y = s [1];
+			}
+		}
+
+		[Test]
+		public void CreateInstanceSimpleParamsConstructor ()
+		{
+			var a = (SimpleParamsConstructor) Activator.CreateInstance (
+				typeof (SimpleParamsConstructor), new object [] { "foo", "bar" });
+
+			Assert.AreEqual ("foo", a.X);
+			Assert.AreEqual ("bar", a.Y);
+
+			a = (SimpleParamsConstructor) Activator.CreateInstance (
+				typeof (SimpleParamsConstructor), new object [0]);
+
+			Assert.AreEqual (null, a.X);
+			Assert.AreEqual (null, a.Y);
+		}
 	}
 }

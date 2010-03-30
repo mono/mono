@@ -1,5 +1,10 @@
 2010-03-30  Jb Evain  <jbevain@novell.com>
 
+	* ActivatorTest.cs: add more tests to CreateInstance constructors
+	with params arrays.
+
+2010-03-30  Jb Evain  <jbevain@novell.com>
+
 	* ActivatorTest.cs: add tests for #591877.
 
 2010-03-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
