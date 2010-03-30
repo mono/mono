@@ -31,7 +31,7 @@ using System.Runtime.CompilerServices;
 
 [assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
 
-#elif NET_3_5 || (NET_2_1 && !INSIDE_CORLIB)
+#elif NET_3_5 || (MONOTOUCH && !INSIDE_CORLIB) || (MOONLIGHT && INSIDE_CORLIB)
 
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
@@ -47,7 +47,9 @@ namespace System
 {
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
-#endif	
+#elif MOONLIGHT
+	[TypeForwardedFrom (Consts.AssemblySystem_Core)]
+#endif
 	[SerializableAttribute]
 	public sealed partial class TimeZoneInfo : IEquatable<TimeZoneInfo>, ISerializable, IDeserializationCallback
 	{

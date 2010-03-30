@@ -1,3 +1,10 @@
+2010-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* InvalidTimeZoneException.cs
+	* TimeZoneNotFoundException.cs:
+		Fix Moonlight since these types now reside in mscorlib
+		(instead of System.Core) for NET_4_0 and also for SL4
+
 2010-03-30  Jb Evain  <jbevain@novell.com>
 
 	* MonoType.cs: let the binder reorder arguments when invoking

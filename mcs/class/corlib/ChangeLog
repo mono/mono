@@ -1,3 +1,9 @@
+2010-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* moonlight_raw_corlib.dll.sources: Fix Moonlight since these 
+	types now reside in mscorlib (not System.Coe) for NET_4_0 and
+	also for SL4
+
 2010-03-26  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* moonlight_raw_corlib.dll.sources: Add MonoAssembly to ML build

@@ -218,6 +218,7 @@ System/TermInfoStrings.cs
 System/ThreadStaticAttribute.cs
 System/TimeSpan.cs
 System/TimeZone.cs
+System/TimeZoneNotFoundException.cs
 System/TimeoutException.cs
 ../../build/common/MonoTODOAttribute.cs
 System/Type.cs
@@ -1033,4 +1034,6 @@ System.Collections.Generic/Comparer.cs
 ../Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs
 ../Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../Mono.CompilerServices.SymbolWriter/SymbolWriterImpl.cs
-
+../System.Core/System/TimeZoneInfo.AdjustmentRule.cs
+../System.Core/System/TimeZoneInfo.cs
+../System.Core/System/TimeZoneInfo.TransitionTime.cs
