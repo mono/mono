@@ -242,6 +242,21 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void DuplicateTypeName () {
+			AssemblyBuilder ab = genAssembly ();
+			ModuleBuilder module = ab.DefineDynamicModule ("foo.dll", "foo.dll", true);
+
+			var itb = module.DefineType ("TBase", TypeAttributes.Public);
+
+			itb.SetParent (typeof(ValueType));        
+
+			var ptb = module.DefineType ("TBase", TypeAttributes.Public);
+
+			ptb.SetParent (typeof(Enum));
+		}
+
+		[Test]
 		public void DuplicateSymbolDocument ()
 		{
 			AssemblyBuilder ab = genAssembly ();

@@ -1,3 +1,7 @@
+2010-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* ModuleBuilderTest.cs: Add a test for #592215.
+
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* AssemblyBuilderTest.cs: Test GetReferencedAssemblies
