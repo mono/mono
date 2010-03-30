@@ -1,16 +1,6 @@
-2010-03-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
-
-	* PageCompiler.cs: default for EnableViewStateMac is true. Allow
-	setting it from a @Page directive.
-
 2010-03-17  Marek Habersack  <mhabersack@novell.com>
 
-	* AspGenerator.cs
-	* AspParser.cs:
-	* TemplateControlCompiler.cs:
-	* TagType.cs
-	* CodeRenderBuilder.cs: implemented the new <%: %> 4.0 html-encoded
-	code render expression.
+	* AspGenerator.cs, AspParser.cs, TemplateControlCompiler.cs, TagType.cs, CodeRenderBuilder.cs: implemented the new <%: %> 4.0 html-encoded code render expression.
 
 2010-03-06  Marek Habersack  <mhabersack@novell.com>
 

@@ -354,14 +354,6 @@ namespace System.Web.Compilation
 				expr.Method = new CodeMethodReferenceExpression (prop, "ValidateInput");
 				method.Statements.Add (expr);
 			}
-
-			if (!pageParser.EnableViewStateMac) {
-				CodeAssignStatement stmt = new CodeAssignStatement ();
-				stmt.Left = new CodePropertyReferenceExpression (thisRef, "EnableViewStateMac");
-				stmt.Right = new CodePrimitiveExpression (false);
-				method.Statements.Add (stmt);
-			}
-
 		}
 
 		CodeAssignStatement AssignOutputCacheParameter (CodeVariableReferenceExpression variable, string propName, object value)

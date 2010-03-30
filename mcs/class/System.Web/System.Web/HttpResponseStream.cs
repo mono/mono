@@ -189,7 +189,13 @@ namespace System.Web
 				
 				EnsureCapacity (position + count);
 				byte *src = (byte *) ptr.ToPointer ();
-				memcpy (data + position, src, count);
+				if (count < 32) {
+					byte *dest = (data + position);
+					for (int i = 0; i < count; i++)
+						*dest++ = *src++;
+				} else {
+					memcpy (data + position, src, count);
+				}
 				position += count;
 			}
 
