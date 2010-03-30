@@ -1,5 +1,13 @@
 2010-03-30  Raja R Harinath  <harinath@hurrynot.org>
 
+	Prepare for util.c:flags() to be stricter
+	* main.c (pinvoke_flags): Remove cset and cconv flags before
+	passing onto flags().
+	(method_flags): Likewise with access flags.
+	* get.c (field_flags): Likewise.
+	(get_method_impl_flags): Likewise, with code_type and managed_type
+	flags.
+
 	* get.c (managed_impl_flags): Add 'nooptimization' flag.
 
 2010-03-12  Jb Evain  <jbevain@novell.com>
