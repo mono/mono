@@ -1,3 +1,8 @@
+2010-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* test-106.cs: Move the wait for cb_state == 1 out of the try block so this
+	test becomes deterministic.
+
 2009-11-11  Scott Peterson  <lunchtimemama@gmail.com>
 
 	* gtest-469.cs: Added test for BGO 553655.
