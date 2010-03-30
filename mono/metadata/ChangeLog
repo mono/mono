@@ -1,5 +1,11 @@
 2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c: Add support for new v4 type
+	System.Reflection.MonoModule that is the concrete version
+	of Module which is abstract unver v4.
+
+2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_init): Don't set class failure after
 	inited = 1 is set. It must be done before.
 2010-03-30  Andreas Färber  <andreas.faerber@web.de>
