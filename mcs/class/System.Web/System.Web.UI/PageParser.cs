@@ -383,8 +383,9 @@ namespace System.Web.UI
 			enable_event_validation = GetBool (atts, "EnableEventValidation", enable_event_validation);
 			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", maintainScrollPositionOnPostBack);
 #endif
- 			enableViewStateMac = GetBool (atts, "EnableViewStateMac", enableViewStateMac);
-			smartNavigation = GetBool (atts, "SmartNavigation", smartNavigation);
+			// Ignored by now
+			GetString (atts, "EnableViewStateMac", null);
+			GetString (atts, "SmartNavigation", null);
 
 			base.ProcessMainAttributes (atts);
 		}
