@@ -8,6 +8,12 @@
 
 2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* domain-internals.h (MonoJitExceptionInfo): Add new field
+	handler_end to the data union. To be used to point the end
+	of a finally block.
+
+2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c: Add support for new v4 type
 	System.Reflection.MonoModule that is the concrete version
 	of Module which is abstract unver v4.
