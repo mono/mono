@@ -96,6 +96,8 @@ namespace System.Reflection.Emit {
 				// depends on this
 				Enum.GetUnderlyingType (t);
 			}
+			if (t.IsClass && !(t.IsArray || t == typeof (object) || t == typeof (Type) || t == typeof (string) || t.Assembly.GetName ().Name == "mscorlib"))
+				return false;
 			return true;
 		}
 
@@ -148,10 +150,10 @@ namespace System.Reflection.Emit {
 			i = 0;
 			foreach (FieldInfo fi in namedFields) {
 				Type t = fi.DeclaringType;
-				if (!IsValidType (t))
-					throw new ArgumentException ("Field '" + fi.Name + "' does not have a valid type.");
 				if ((atype != t) && (!t.IsSubclassOf (atype)) && (!atype.IsSubclassOf (t)))
 					throw new ArgumentException ("Field '" + fi.Name + "' does not belong to the same class as the constructor");
+				if (!IsValidType (fi.FieldType))
+					throw new ArgumentException ("Field '" + fi.Name + "' does not have a valid type.");
 				// FIXME: Check enums and TypeBuilders as well
 				if (fieldValues [i] != null)
 					// IsEnum does not seem to work on TypeBuilders
@@ -171,10 +173,10 @@ namespace System.Reflection.Emit {
 				if (!pi.CanWrite)
 					throw new ArgumentException ("Property '" + pi.Name + "' does not have a setter.");
 				Type t = pi.DeclaringType;
-				if (!IsValidType (t))
-					throw new ArgumentException ("Property '" + pi.Name + "' does not have a valid type.");
 				if ((atype != t) && (!t.IsSubclassOf (atype)) && (!atype.IsSubclassOf (t)))
 					throw new ArgumentException ("Property '" + pi.Name + "' does not belong to the same class as the constructor");
+				if (!IsValidType (pi.PropertyType))
+					throw new ArgumentException ("Property '" + pi.Name + "' does not have a valid type.");
 				if (propertyValues [i] != null) {
 					if (!(pi.PropertyType is TypeBuilder) && !pi.PropertyType.IsEnum && !pi.PropertyType.IsInstanceOfType (propertyValues [i]))
 						if (!pi.PropertyType.IsArray)
@@ -188,7 +190,7 @@ namespace System.Reflection.Emit {
 				if (pi != null) {
 					Type paramType = pi.ParameterType;
 					if (!IsValidType (paramType))
-						throw new ArgumentException ("Argument " + i + " does not have a valid type.");
+						throw new ArgumentException ("Parameter " + i + " does not have a valid type.");
 					if (constructorArgs [i] != null) {
 						if (!(paramType is TypeBuilder) && !paramType.IsEnum && !paramType.IsInstanceOfType (constructorArgs [i]))
 							if (!paramType.IsArray)

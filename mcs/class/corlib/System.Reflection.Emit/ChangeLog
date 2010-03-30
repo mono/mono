@@ -1,5 +1,13 @@
 2010-03-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* CustomAttributeBuilder.cs: Fix the calls to IsValidType, some were passing
+	in DeclaringType instead of PropertyType/FieldType.
+
+	* CustomAttributeType.cs (IsValidType): Implement proper checking for reference
+	types. Fixes #591788.
+
+2010-03-30  Zoltan Varga  <vargaz@gmail.com>
+
 	* CustomAttributeBuilder.cs (IsValidType): Call Enum.GetUnderlyingType () for
 	dynamic enums to avoid crashes in the unmanaged code. Fixes #591800.
 
