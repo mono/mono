@@ -1,5 +1,12 @@
 2010-03-30  Raja R Harinath  <harinath@hurrynot.org>
 
+	Make util.c:flags() stricter
+	* get.c (field_flags_map): Add empty entries for
+	HAS_FIELD_MARSHAL, HAS_DEFAULT and HAS_FIELD_RVA.
+	* main.c (method_flags_map): Add empty entry for HAS_SECURITY.
+	* util.c (flags): Remove known flags from 'code' in loop.  Any
+	leftover flags are printed as "unknown-flag-xx".
+
 	Prepare for util.c:flags() to be stricter
 	* main.c (pinvoke_flags): Remove cset and cconv flags before
 	passing onto flags().
