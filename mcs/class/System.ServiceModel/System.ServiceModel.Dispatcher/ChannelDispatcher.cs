@@ -565,31 +565,21 @@ namespace System.ServiceModel.Dispatcher
 					input.Close ();
 			}
 
-			void SendEndpointNotFound (RequestContext rc, EndpointNotFoundException ex) 
-			{
-				try {
-
-					MessageVersion version = rc.RequestMessage.Version;
-					FaultCode fc = new FaultCode ("DestinationUnreachable", version.Addressing.Namespace);
-					Message res = Message.CreateMessage (version, fc, ex.Message, rc.RequestMessage.Version.Addressing.FaultNamespace);
-					rc.Reply (res);
-				} catch (Exception e) {
-					// FIXME: log it
-					Console.WriteLine ("Error on sending DestinationUnreachable fault message: " + e);
-				}
-			}
-
 			void ProcessRequest (IReplyChannel reply, RequestContext rc)
 			{
+				var req = rc.RequestMessage;
 				try {
-					EndpointDispatcher candidate = FindEndpointDispatcher (rc.RequestMessage);
-					new InputOrReplyRequestProcessor (candidate.DispatchRuntime, reply).
-						ProcessReply (rc);
-				} catch (EndpointNotFoundException ex) {
-					SendEndpointNotFound (rc, ex);
+					var ed = FindEndpointDispatcher (req);
+					new InputOrReplyRequestProcessor (ed.DispatchRuntime, reply).ProcessReply (rc);
 				} catch (Exception ex) {
 					// FIXME: log it.
 					Console.WriteLine (ex);
+
+					var conv = reply.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (rc.RequestMessage.Version);
+					Message res;
+					if (!conv.TryCreateFaultMessage (ex, out res))
+						res = Message.CreateMessage (req.Version, new FaultCode ("Receiver"), ex.Message, req.Version.Addressing.FaultNamespace);
+					rc.Reply (res);
 				} finally {
 					if (rc != null)
 						rc.Close ();
@@ -619,33 +609,30 @@ namespace System.ServiceModel.Dispatcher
 
 			EndpointDispatcher FindEndpointDispatcher (Message message) {
 				EndpointDispatcher candidate = null;
-				for (int i = 0; i < owner.Endpoints.Count; i++) {
-					if (MessageMatchesEndpointDispatcher (message, owner.Endpoints [i])) {
-						var newdis = owner.Endpoints [i];
+				bool hasEndpointMatch = false;
+				foreach (var endpoint in owner.Endpoints) {
+					if (endpoint.AddressFilter.Match (message)) {
+						hasEndpointMatch = true;
+						if (!endpoint.ContractFilter.Match (message))
+							continue;
+						var newdis = endpoint;
 						if (candidate == null || candidate.FilterPriority < newdis.FilterPriority)
 							candidate = newdis;
 						else if (candidate.FilterPriority == newdis.FilterPriority)
 							throw new MultipleFilterMatchesException ();
 					}
 				}
-				if (candidate == null && owner.Host != null)
-					owner.Host.OnUnknownMessageReceived (message);
+				if (candidate == null && !hasEndpointMatch) {
+					if (owner.Host != null)
+						owner.Host.OnUnknownMessageReceived (message);
+					// we have to return a fault to the client anyways...
+					throw new EndpointNotFoundException ();
+				}
+				else if (candidate == null)
+					// FIXME: It is not a good place to check, but anyways detach this error from EndpointNotFoundException.
+					throw new ActionNotSupportedException (String.Format ("Action '{0}' did not match any operations in the target contract", message.Headers.Action));
+
 				return candidate;
-			}
-
-			// FIXME: this part needs refactoring.
-			// First, Endpoint must be identified, or return EndpointNotFound fault in case address filter didn't match anything.
-			// Then, contract filter must be applied to identify a dispatch operation, or return ActionNotSupported fault in case contract filter didn't match anything.
-			bool MessageMatchesEndpointDispatcher (Message req, EndpointDispatcher endpoint)
-			{
-				// FIXME: handle AddressFilterMode.Prefix too.
-
-				Uri to = req.Headers.To;
-				if (to == null)
-					return address_filter_mode == AddressFilterMode.Any;
-				if (to.AbsoluteUri == Constants.WsaAnonymousUri)
-					return false;
-				return endpoint.AddressFilter.Match (req) && endpoint.ContractFilter.Match (req);
 			}
 		}
 }

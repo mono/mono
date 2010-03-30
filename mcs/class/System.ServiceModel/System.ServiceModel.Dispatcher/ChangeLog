@@ -1,5 +1,16 @@
 2010-03-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : differentiate EndpointNotFound and
+	  ActionNotSupported so that FaultConverter can create appropriate
+	  fault messages. Removed extra filter condition on null To item.
+	  And create fault messages on *any* server side error, do not let
+	  request client infinitely wait for the response until timeout.
+
+	  (RunDestinationUnreachableTest() is still not working but it works
+	  when it is SOAP 1.2.)
+
+2010-03-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : for faults, use fault namespace, not that of
 	  ReplyAction. Added FIXME comment regarding dispatcher.
 
