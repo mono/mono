@@ -571,7 +571,7 @@ namespace System.ServiceModel.Dispatcher
 
 					MessageVersion version = rc.RequestMessage.Version;
 					FaultCode fc = new FaultCode ("DestinationUnreachable", version.Addressing.Namespace);
-					Message res = Message.CreateMessage (version, fc, ex.Message, rc.RequestMessage.Headers.Action);
+					Message res = Message.CreateMessage (version, fc, ex.Message, rc.RequestMessage.Version.Addressing.FaultNamespace);
 					rc.Reply (res);
 				} catch (Exception e) {
 					// FIXME: log it
@@ -633,6 +633,9 @@ namespace System.ServiceModel.Dispatcher
 				return candidate;
 			}
 
+			// FIXME: this part needs refactoring.
+			// First, Endpoint must be identified, or return EndpointNotFound fault in case address filter didn't match anything.
+			// Then, contract filter must be applied to identify a dispatch operation, or return ActionNotSupported fault in case contract filter didn't match anything.
 			bool MessageMatchesEndpointDispatcher (Message req, EndpointDispatcher endpoint)
 			{
 				// FIXME: handle AddressFilterMode.Prefix too.
