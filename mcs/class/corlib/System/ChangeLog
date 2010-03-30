@@ -1,3 +1,12 @@
+2010-03-29  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: Implement all the overloads of both TryParseExact and
+	ParseExact methods, by detecting the specific semantic changes in the
+	parse process, so we can properly re-utilize our new approach. This
+	included indicating our parser its culture sensitiveness, usage of colon as
+	day separator fallback or as a precise separator, and other minor bits.
+	We are only missing composite parsing right now.
+
 2010-03-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AppDomainSetup.cs: Add new (FX4 and SL4) SetCompatibilitySwitches

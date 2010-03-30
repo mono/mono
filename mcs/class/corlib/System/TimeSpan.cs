@@ -381,6 +381,100 @@ namespace System
 			Parser p = new Parser (s, formatProvider);
 			return p.Execute (true, out result);
 		}
+
+		public static TimeSpan ParseExact (string input, string format, IFormatProvider formatProvider)
+		{
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
+			return ParseExact (input, new string [] { format }, formatProvider, TimeSpanStyles.None);
+		}
+
+		public static TimeSpan ParseExact (string input, string format, IFormatProvider formatProvider, TimeSpanStyles styles)
+		{
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
+			return ParseExact (input, new string [] { format }, formatProvider, styles);
+		}
+
+		public static TimeSpan ParseExact (string input, string [] formats, IFormatProvider formatProvider)
+		{
+			return ParseExact (input, formats, formatProvider, TimeSpanStyles.None);
+		}
+
+		public static TimeSpan ParseExact (string input, string [] formats, IFormatProvider formatProvider, TimeSpanStyles styles)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (formats == null)
+				throw new ArgumentNullException ("formats");
+
+			// All the errors found during the parsing process are reported as FormatException.
+			TimeSpan result;
+			if (!TryParseExact (input, formats, formatProvider, styles, out result))
+				throw new FormatException ("Invalid format.");
+
+			return result;
+		}
+
+		public static bool TryParseExact (string input, string format, IFormatProvider formatProvider, out TimeSpan result)
+		{
+			return TryParseExact (input, new string [] { format }, formatProvider, TimeSpanStyles.None, out result);
+		}
+
+		public static bool TryParseExact (string input, string format, IFormatProvider formatProvider, TimeSpanStyles styles,
+				out TimeSpan result)
+		{
+			return TryParseExact (input, new string [] { format }, formatProvider, styles, out result);
+		}
+
+		public static bool TryParseExact (string input, string [] formats, IFormatProvider formatProvider, out TimeSpan result)
+		{
+			return TryParseExact (input, formats, formatProvider, TimeSpanStyles.None, out result);
+		}
+
+		public static bool TryParseExact (string input, string [] formats, IFormatProvider formatProvider, TimeSpanStyles styles,
+			out TimeSpan result)
+		{
+			result = TimeSpan.Zero;
+
+			if (formats == null || formats.Length == 0)
+				return false;
+
+			Parser p = new Parser (input, formatProvider);
+			p.Exact = true;
+
+			foreach (string format in formats) {
+				if (format == null || format.Length == 0)
+					return false; // wrong format, return immediately.
+
+				switch (format) {
+					case "g":
+						p.AllMembersRequired = false;
+						p.CultureSensitive = true;
+						p.UseColonAsDaySeparator = true;
+						break;
+					case "G":
+						p.AllMembersRequired = true;
+						p.CultureSensitive = true;
+						p.UseColonAsDaySeparator = true;
+						break;
+					case "c":
+						p.AllMembersRequired = false;
+						p.CultureSensitive = false;
+						p.UseColonAsDaySeparator = false;
+						break;
+					default: // custom format
+						throw new NotImplementedException ();
+				}
+
+				if (p.Execute (true, out result))
+					return true;
+			}
+
+			return false;
+		}
 #endif
 
 		public TimeSpan Subtract (TimeSpan ts)
@@ -557,6 +651,17 @@ namespace System
 			private int _cur = 0;
 			private int _length;
 			ParseError parse_error;
+#if NET_4_0
+			bool parsed_ticks;
+			NumberFormatInfo number_format;
+			int parsed_numbers_count;
+			bool parsed_days_separator;
+
+			public bool Exact; // no fallback, strict pattern.
+			public bool AllMembersRequired;
+			public bool CultureSensitive = true;
+			public bool UseColonAsDaySeparator = true;
+#endif
 
 			public Parser (string src)
 			{
@@ -568,7 +673,14 @@ namespace System
 			}
 
 #if NET_4_0
-			NumberFormatInfo number_format;
+			// Reset state data, so we can execute another parse over the input.
+			void Reset ()
+			{
+				_cur = 0;
+				parse_error = ParseError.None;
+				parsed_ticks = parsed_days_separator = false;
+				parsed_numbers_count = 0;
+			}
 
 			public Parser (string src, IFormatProvider formatProvider) :
 				this (src)
@@ -639,7 +751,7 @@ namespace System
 					res = res * 10 + _src[_cur] - '0';
 #if NET_4_0
 					// more than one preceding zero will case an OverflowException
-					if (res > Int32.MaxValue || (count >= 2 && res == 0)) {
+					if (res > Int32.MaxValue || (count >= 1 && res == 0)) {
 #else
 					if (res > Int32.MaxValue) {
 #endif
@@ -695,14 +807,16 @@ namespace System
 				if (AtEnd)
 					return false;
 
-				// we need to provide compatibility with old versions using '.'
-				if (_src [_cur] == '.') {
-					_cur++;
-					return true;
-				}
+				// we may need to provide compatibility with old versions using '.'
+				// for culture insensitve and non exact formats.
+				if (!Exact || !CultureSensitive)
+					if (_src [_cur] == '.') {
+						_cur++;
+						return true;
+					}
 
 				string decimal_separator = number_format.NumberDecimalSeparator;
-				if (String.Compare (_src, _cur, decimal_separator, 0, decimal_separator.Length) == 0) {
+				if (CultureSensitive && String.Compare (_src, _cur, decimal_separator, 0, decimal_separator.Length) == 0) {
 					_cur += decimal_separator.Length;
 					return true;
 				}
@@ -741,6 +855,8 @@ namespace System
 #if NET_4_0
 				else if (!AtEnd && Char.IsDigit (_src, _cur))
 					SetParseError (ParseError.Overflow);
+
+				parsed_ticks = true;
 #endif
 
 				return res;
@@ -785,9 +901,6 @@ namespace System
 			}
 
 #if NET_4_0
-			int parsed_numbers_count;
-			bool parsed_days_separator;
-
 			// We are using a different parse approach in 4.0, due to some changes in the behaviour
 			// of the parse routines.
 			// The input string is documented as:
@@ -814,6 +927,8 @@ namespace System
 				value1 = value2 = value3 = value4 = 0;
 				days = hours = minutes = seconds = 0;
 
+				Reset ();
+
 				ParseWhiteSpace ();
 				sign = ParseSign ();
 
@@ -835,6 +950,12 @@ namespace System
 
 				if (!AtEnd)
 					SetParseError (ParseError.Format);
+
+				if (Exact)
+					// In Exact mode we cannot allow both ':' and '.' as day separator.
+					if (UseColonAsDaySeparator && parsed_days_separator ||
+						AllMembersRequired && (parsed_numbers_count < 4 || !parsed_ticks))
+						SetParseError (ParseError.Format);
 
 				switch (parsed_numbers_count) {
 					case 1:
@@ -861,10 +982,14 @@ namespace System
 						}
 						break;
 					case 4: // We are either on 'dd.hh:mm:ss' or 'dd:hh:mm:ss'
-						days = value1;
-						hours = value2;
-						minutes = value3;
-						seconds = value4;
+						if (!UseColonAsDaySeparator && !parsed_days_separator)
+							SetParseError (ParseError.Format);
+						else {
+							days = value1;
+							hours = value2;
+							minutes = value3;
+							seconds = value4;
+						}
 						break;
 				}
 
