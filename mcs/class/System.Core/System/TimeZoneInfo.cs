@@ -45,7 +45,7 @@ using Mono;
 
 namespace System
 {
-#if NET_4_0 || BOOTSRAP_NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 	[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif	
 	[SerializableAttribute]

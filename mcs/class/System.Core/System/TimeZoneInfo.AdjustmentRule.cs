@@ -33,7 +33,7 @@ namespace System
 {
 	public sealed partial class TimeZoneInfo {
 		[SerializableAttribute]
-#if NET_4_0 || BOOTSRAP_NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 		[TypeForwardedFrom (Consts.AssemblySystemCore_3_5)]
 #endif
 		public sealed class AdjustmentRule : IEquatable<TimeZoneInfo.AdjustmentRule>, ISerializable, IDeserializationCallback
