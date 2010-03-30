@@ -1,3 +1,9 @@
+2010-03-30  Jb Evain  <jbevain@novell.com>
+
+	* TimeZoneInfo.AdjustmentRule.cs
+	* TimeZoneInfo.TransitionTime.cs:
+		Add TypeForwarderFrom attributes.
+
 2010-01-04  Jb Evain  <jbevain@novell.com>
 
 	* TimeZoneInfo.AdjustmentRule.cs, TimeZoneInfo.TransitionTime.cs:
