@@ -1,3 +1,11 @@
+2010-03-30  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* class.c (mono_class_init): Postpone coreclr inheritance check
+	until the end of the initialization (so we can check up the 
+	default ctor manually for the core-clr inheritance rules).
+	* security-core-clr.c: Add the missing (undocumented) checks on
+	default constructors when verifying inheritance rules.
+
 2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c: Add support for new v4 type
@@ -8,6 +16,7 @@
 
 	* class.c (mono_class_init): Don't set class failure after
 	inited = 1 is set. It must be done before.
+
 2010-03-30  Andreas Färber  <andreas.faerber@web.de>
 
 	* mono-config.c: Add support for OS "haiku"
