@@ -1,5 +1,9 @@
 2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* mini.c (create_jit_info): Fix try block hole length encoding.
+
+2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mini.c (create_jit_info): Emit saner debug spew. Now it doesn't
 	duplicate information and print offsets instead of absolute addresses.
 
