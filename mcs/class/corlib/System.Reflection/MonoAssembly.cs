@@ -39,7 +39,7 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
 	[ClassInterface(ClassInterfaceType.None)]
-	public class MonoAssembly : Assembly {
+	class MonoAssembly : Assembly {
 #else
 	public partial class Assembly {
 #endif

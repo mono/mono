@@ -1,5 +1,9 @@
 2010-03-30  Jb Evain  <jbevain@novell.com>
 
+	* MonoAssembly.cs: make MonoAssembly non public.
+
+2010-03-30  Jb Evain  <jbevain@novell.com>
+
 	* Binder.cs (BindToMethod): fix the case where we bind to a method
 	with only one params parameter and that no args are given.
 
