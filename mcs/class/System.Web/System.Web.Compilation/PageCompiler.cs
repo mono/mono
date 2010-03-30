@@ -425,6 +425,12 @@ namespace System.Web.Compilation
 				method.Statements.Add (expr);
 			}
 #endif
+			if (!pageParser.EnableViewStateMac) {
+				CodeAssignStatement stmt = new CodeAssignStatement ();
+				stmt.Left = new CodePropertyReferenceExpression (thisRef, "EnableViewStateMac");
+				stmt.Right = new CodePrimitiveExpression (false);
+				method.Statements.Add (stmt);
+			}
 		}
 
 #if NET_2_0
