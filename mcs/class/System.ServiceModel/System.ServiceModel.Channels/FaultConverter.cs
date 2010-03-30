@@ -121,7 +121,7 @@ namespace System.ServiceModel.Channels
 
 		protected override bool OnTryCreateFaultMessage (Exception error, out Message message)
 		{
-			if (version.Addressing.Equals (AddressingVersion.None)) {
+			if (version.Envelope.Equals (EnvelopeVersion.None)) {
 				message = null;
 				return false;
 			}
