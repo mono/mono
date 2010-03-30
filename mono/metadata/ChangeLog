@@ -1,3 +1,9 @@
+2010-03-30  Andreas Färber  <andreas.faerber@web.de>
+
+	* mono-config.c: Add support for OS "haiku"
+	* ChangeLog: Fix UTF-8 encoding
+
+	Code is contributed under MIT/X11 license.
 
 Tue Mar 30 15:53:06 CEST 2010 Paolo Molaro <lupus@ximian.com>
 
@@ -99,7 +105,7 @@ Fri Mar 26 19:03:09 CET 2010 Paolo Molaro <lupus@ximian.com>
 	when not needed and it allows keeping track of oldspace->nursery
 	references for the card table code.
 
-2010-03-26  Andreas F�rber  <andreas.faerber@web.de>
+2010-03-26  Andreas Färber  <andreas.faerber@web.de>
 
 	* null-gc.c (mono_gc_invoke_with_gc_lock): Fix function name.
 
