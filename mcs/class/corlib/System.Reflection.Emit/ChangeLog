@@ -1,3 +1,8 @@
+2010-03-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* CustomAttributeBuilder.cs (IsValidType): Call Enum.GetUnderlyingType () for
+	dynamic enums to avoid crashes in the unmanaged code. Fixes #591800.
+
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* AssemblyBuilder.cs: Add IsDynamic.

@@ -91,6 +91,11 @@ namespace System.Reflection.Emit {
 			/* FIXME: Add more checks */
 			if (t.IsArray && t.GetArrayRank () > 1)
 				return false;
+			if (t is TypeBuilder && t.IsEnum) {
+				// Check that the enum is properly constructed, the unmanaged code
+				// depends on this
+				Enum.GetUnderlyingType (t);
+			}
 			return true;
 		}
 
