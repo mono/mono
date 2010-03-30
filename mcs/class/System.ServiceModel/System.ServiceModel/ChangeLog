@@ -1,3 +1,7 @@
+2010-03-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : use correct buffer size.
+
 2010-03-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : use FaultConverter as documented at:

@@ -482,7 +482,7 @@ namespace System.ServiceModel.MonoInternal
 
 			Message res = Request (req, OperationTimeout);
 			if (res.IsFault) {
-				var resb = res.CreateBufferedCopy (0x10000); // FIXME: use correct MaxBufferSize
+				var resb = res.CreateBufferedCopy (runtime.MaxFaultSize);
 				MessageFault fault = MessageFault.CreateFault (resb.CreateMessage (), runtime.MaxFaultSize);
 				var conv = OperationChannel.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (res.Version);
 				Exception ex;
