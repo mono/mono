@@ -73,7 +73,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	string _focusedControlID;
 	bool _hasEnabledControlArray;
 	bool _viewState;
-	bool _viewStateMac;
+	bool _viewStateMac = true;
 	string _errorPage;
 	bool is_validated;
 	bool _smartNavigation;
