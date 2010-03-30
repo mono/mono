@@ -168,12 +168,17 @@ namespace System.Reflection
 				if (names != null)
 					ReorderParameters (names, ref args, selected);
 
-				if (selected != null && args != null && args.Length > 0)
+				if (selected != null) {
+					if (args == null)
+						args = new object [0];
+	
 					AdjustArguments (selected, ref args);
+				}
 
 				return selected;
 			}
 
+			// probably belongs in ReorderArgumentArray
 			static void AdjustArguments (MethodBase selected, ref object [] args)
 			{
 				var parameters = selected.GetParameters ();

@@ -1,5 +1,10 @@
 2010-03-30  Jb Evain  <jbevain@novell.com>
 
+	* Binder.cs (BindToMethod): fix the case where we bind to a method
+	with only one params parameter and that no args are given.
+
+2010-03-30  Jb Evain  <jbevain@novell.com>
+
 	* Binder.cs: when invoking a params method, pack the params
 	arguments before doing the actual invocation.
 
