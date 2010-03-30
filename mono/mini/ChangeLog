@@ -1,3 +1,31 @@
+2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-exceptions.c: Introduce mono_walk_stack_full, which
+	allows to select if it's new or old context that is passed to 
+	the callback.
+
+	* mini-exceptions.c (mono_handle_exception_internal): Handle the
+	case when executing a guarded handler from the EH machinery.
+
+	* mini-exceptions.c (mono_install_handler_block_guard): New function
+	responsible for checking for handler blocks, installing the guard and
+	clearing abort state.
+
+	* mini-posix.c (sigusr1_signal_handler): Call mono_install_handler_block_guard
+	to check for handler blocks and skip interruption logic if one was found.
+
+	* mini-trampolines.c (mono_handler_block_guard_trampoline): Function called
+	by the handler block guard trampoline. Resumes interruption by raising the
+	pending ThreadAbortException.
+
+	* mini.c (create_jit_info): Calculate the end address of a finally block.
+
+	* mini-x86.c (mono_arch_install_handler_block_guard): Patch the return address
+	of a finally block to a specified address and return the old one.
+
+	* tramp-x86.c (mono_arch_create_handler_block_trampoline): The handler block
+	trampoline patches the original return address and calls the trampoline function.
+
 2010-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_aot_trampoline): Remove some dead code.
