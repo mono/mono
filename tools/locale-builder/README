@@ -36,4 +36,13 @@
 	In each entry, strings are extracted to locale_strings table, and in each structure they are
 	represented as an index to the string.
 
+* updating the data
+
+	Currently, when we need to fix or update data, we need to modify or
+	add the proper file in the supp directory (if it's a new file it must be added
+	in Makefile.am as well to supp_data_files).
+	To create the files used by the runtime after an update, run:
+		make culture-table
+		make install-culture-table
+	At the start of Makefile.am there are additional instructions for specific builds.
 
