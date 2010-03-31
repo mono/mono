@@ -1,3 +1,8 @@
+2010-03-31  Miguel de Icaza  <miguel@novell.com>
+
+	* marshal.c (emit_marshal_boolean): Eliminate possible
+	uninitialized local warning. 
+
 2010-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* class.c (mono_class_init): Postpone coreclr inheritance check
