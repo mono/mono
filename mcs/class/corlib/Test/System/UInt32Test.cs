@@ -187,6 +187,10 @@ public class UInt32Test
 		catch (Exception e) {
 			Assert.IsTrue(typeof(FormatException) == e.GetType());
 		}
+		// Pass a DateTimeFormatInfo, it is unable to format
+		// numbers, but we should not crash
+		
+		UInt32.Parse ("123", new DateTimeFormatInfo ());
 	}
 	
 	public void TestToString()
