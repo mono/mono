@@ -1,3 +1,8 @@
+2010-01-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Check whenever g++ is installed, since libtool requires it
+	even if no c++ files will be compiled.
+
 2010-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* configure.in: Apply some openbsd changes from openbsd ports.
