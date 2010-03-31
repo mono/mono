@@ -1,5 +1,7 @@
 2010-03-31  Miguel de Icaza  <miguel@novell.com>
 
+	* object.c (mono_class_proxy_vtable): Eliminate warning. 
+
 	* marshal.c (emit_marshal_boolean): Eliminate possible
 	uninitialized local warning. 
 
