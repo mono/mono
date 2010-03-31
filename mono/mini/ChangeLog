@@ -1,3 +1,8 @@
+2010-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (handle_ccastclass): Call save_cast_details (). Fixes
+	#592711.
+
 2010-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-trampolines.c (mono_aot_trampoline): Remove some dead code.
