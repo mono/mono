@@ -1,5 +1,12 @@
 2010-03-31  Miguel de Icaza  <miguel@novell.com>
 
+	* UInt32.cs, Int64.cs, UInt64.cs: cope with the case that the
+	IFormatProvider is not a NumberFormatInfo, preventing a crash.
+	This was already handled by Int32.cs, but these other routines
+	were never properly updated. 
+
+	Fixes #588356
+
 	* DateTimeOffset.cs: Add support for format K in DateTimeOffset,
 	fixes bug 589227.
 

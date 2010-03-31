@@ -178,12 +178,12 @@ namespace System
 				return false;
 			}
 
-			NumberFormatInfo nfi;
+			NumberFormatInfo nfi = null;
 			if (provider != null) {
 				Type typeNFI = typeof (NumberFormatInfo);
 				nfi = (NumberFormatInfo) provider.GetFormat (typeNFI);
 			}
-			else
+			if (nfi == null)
 				nfi = Thread.CurrentThread.CurrentCulture.NumberFormat;
 
 			if (!Int32.CheckStyle (style, tryParse, ref exc))
