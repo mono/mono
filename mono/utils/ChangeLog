@@ -1,3 +1,7 @@
+2010-03-31  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-hash.c (test_prime): Remove warnings
+
 2010-03-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-ehash.c: Rename this to mono-hash.c.
