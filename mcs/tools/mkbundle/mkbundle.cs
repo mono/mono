@@ -523,18 +523,19 @@ class MakeBundle {
 	{
 		Console.WriteLine ("Usage is: mkbundle [options] assembly1 [assembly2...]\n\n" +
 				   "Options:\n" +
-				   "    -c              Produce stub only, do not compile\n" +
-				   "    -o out          Specifies output filename\n" +
-				   "    -oo obj         Specifies output filename for helper object file\n" +
-				   "    -L path         Adds `path' to the search path for assemblies\n" +
-				   "    --nodeps        Turns off automatic dependency embedding (default)\n" +
-				   "    --deps          Turns on automatic dependency embedding\n" +
-				   "    --keeptemp      Keeps the temporary files\n" +
-				   "    --config F      Bundle system config file `F'\n" +
-				   "    --config-dir D  Set MONO_CFG_DIR to `D'\n" +
-				   "    --static        Statically link to mono libs\n" +
-				   "    --nomain        Don't include a main() function, for libraries\n" +
-				   "    -z              Compress the assemblies before embedding.\n");
+				   "    -c                  Produce stub only, do not compile\n" +
+				   "    -o out              Specifies output filename\n" +
+				   "    -oo obj             Specifies output filename for helper object file\n" +
+				   "    -L path             Adds `path' to the search path for assemblies\n" +
+				   "    --nodeps            Turns off automatic dependency embedding (default)\n" +
+				   "    --deps              Turns on automatic dependency embedding\n" +
+				   "    --keeptemp          Keeps the temporary files\n" +
+				   "    --config F          Bundle system config file `F'\n" +
+				   "    --config-dir D      Set MONO_CFG_DIR to `D'\n" +
+				   "    --machine-config F  Use the given file as the machine.config for the application.\n" +
+				   "    --static            Statically link to mono libs\n" +
+				   "    --nomain            Don't include a main() function, for libraries\n" +
+				   "    -z                  Compress the assemblies before embedding.\n");
 	}
 
 	[DllImport ("libc")]
