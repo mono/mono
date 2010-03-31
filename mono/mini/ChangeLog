@@ -1,3 +1,9 @@
+2010-03-31 Rolf Bjarne Kvinge <RKvinge@novell.com>
+
+	* mini-trampolines.c: Surround mono_handler_block_guard_trampoline and
+	mono_create_handler_block_trampoline with the proper #ifdef so that it
+	compiles on amd64.
+
 2010-03-30 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-exceptions.c: Introduce mono_walk_stack_full, which
