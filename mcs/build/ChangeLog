@@ -1,3 +1,8 @@
+2010-03-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* library.make ($(the_lib)$(PLATFORM_AOT_SUFFIX)): Pass --debug to the aot
+	compiler. Fixes #592545.
+
 2010-03-16  Jonathan Pryor  <jpryor@novell.com>
 
 	* library.make (MDOC_UP): Set MONO_PATH to find monodoc.dll.

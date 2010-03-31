@@ -237,7 +237,7 @@ endif
 ifdef PLATFORM_AOT_SUFFIX
 Q_AOT=$(if $(V),,@echo "AOT [$(PROFILE)] $(notdir $(@))";)
 $(the_lib)$(PLATFORM_AOT_SUFFIX): $(the_lib)
-	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version $(the_lib)
+	$(Q_AOT) MONO_PATH='$(the_libdir)' > $(PROFILE)_aot.log 2>&1 $(RUNTIME) --aot=bind-to-runtime-version --debug $(the_lib)
 endif
 
 ifdef ENABLE_AOT
