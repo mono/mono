@@ -149,6 +149,11 @@ namespace System.Runtime.Serialization
 				return entry.Value;
 		}
 
+		internal bool HasKey (string name)
+		{
+			return serialized [name] != null;
+		}
+		
 		public void SetType (Type type)
 		{
 			if (type == null)

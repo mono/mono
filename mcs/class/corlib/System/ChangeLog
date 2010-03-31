@@ -1,3 +1,14 @@
+2010-03-31  Miguel de Icaza  <miguel@novell.com>
+
+	* DateTimeOffset.cs: Add support for format K in DateTimeOffset,
+	fixes bug 589227.
+
+	* DateTime.cs: Add serialization support, fixes #588198.
+
+	Perhaps we should change the format as well since this is the new
+	format serialized anyways (see bug 592221, it saves 4 bytes of
+	memory as well)
+
 2010-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* InvalidTimeZoneException.cs

@@ -7,7 +7,6 @@
 // Copyright (C) 2007 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 using System.Globalization;
 using NUnit.Framework;
 using System;
@@ -243,6 +242,17 @@ namespace MonoTests.System {
 					Assert.AreEqual (dto, DateTimeOffset.ParseExact (serialized, format, fp), format);
 				}
 		}
+
+		//
+		// Tests that we can parse the K format specifier which is a 4 digit offset
+		// see bug 589227
+		//
+		[Test]
+		public void ParseExactWithKFormat ()
+		{
+			DateTimeOffset o = DateTimeOffset.ParseExact ("Wed Mar 17 22:25:08 +0000 2010", "ddd MMM d H:m:ss K yyyy", null);
+		}
+		
 		[Test]
 		public void ParseExactYearFormat ()
 		{
@@ -638,5 +648,4 @@ namespace MonoTests.System {
 		}
 	}
 }
-#endif
 

@@ -34,6 +34,7 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Text;
+using System.Runtime.Serialization;
 
 namespace System
 {
@@ -44,7 +45,7 @@ namespace System
 	/// 
 	[Serializable]
 	[StructLayout (LayoutKind.Auto)]
-	public struct DateTime : IFormattable, IConvertible, IComparable, IComparable<DateTime>, IEquatable <DateTime>
+	public struct DateTime : IFormattable, IConvertible, IComparable, ISerializable, IComparable<DateTime>, IEquatable <DateTime>
 	{
 #if MONOTOUCH
 		static DateTime () {
@@ -353,8 +354,27 @@ namespace System
 		{
 			CheckDateTimeKind (kind);
 			this.kind = kind;
-		}			
+		}
 
+		//
+		// Not visible, but can be invoked during deserialization
+		//
+		DateTime (SerializationInfo info, StreamingContext context)
+		{
+			if (info.HasKey ("dateData")){
+				long dateData = info.GetInt64 ("dateData");
+				kind = (DateTimeKind) (dateData >> 62);
+				ticks = new TimeSpan (dateData & 0x3fffffffffffffff);
+			} else if (info.HasKey ("ticks")){
+				ticks = new TimeSpan (info.GetInt64 ("ticks"));
+				kind = DateTimeKind.Unspecified;
+			} else {
+				kind = DateTimeKind.Unspecified;
+				ticks = new TimeSpan (0);
+			}
+		}
+		
+			      
 		/* Properties  */
 
 		public DateTime Date 
@@ -2144,5 +2164,15 @@ namespace System
 		{
 			throw new InvalidCastException();
 		}
+
+		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
+		{
+			long t = ticks.Ticks;
+			info.AddValue ("ticks", t);
+
+			// This is the new .NET format, encodes the kind on the top bits
+			info.AddValue ("dateData", t | (((uint)kind) << 62));
+		}
+		
 	}
 }

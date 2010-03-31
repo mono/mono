@@ -518,12 +518,29 @@ namespace System
 					} else
 						ii += ParseNumber (input, ii, tokLen, true, allow_white_spaces, out year);
 					break;
+
+					// The documentation is incorrect, they claim that K is the same as 'zz', but
+					// it actually allows the format to contain 4 digits for the offset
+				case 'K':
+					tokLen = 1;
+					int off_h, off_m = 0, sign;
+					temp_int = 0;
+					ii += ParseEnum (input, ii, new string [] {"-", "+"}, allow_white_spaces, out sign);
+					ii += ParseNumber (input, ii, 4, false, false, out off_h);
+					if (off_h == -1 || off_m == -1 || sign == -1)
+						return false;
+
+					if (sign == 0)
+						sign = -1;
+					offset = new TimeSpan (sign * off_h, sign * off_m, 0);
+					break;
+					
 				case 'z':
 					tokLen = DateTimeUtils.CountRepeat (format, fi, ch);
 					if (offset != TimeSpan.MinValue || tokLen > 3)
 						return false;
 
-					int off_h, off_m = 0, sign;
+					off_m = 0;
 					temp_int = 0;
 					ii += ParseEnum (input, ii, new string [] {"-", "+"}, allow_white_spaces, out sign);
 					ii += ParseNumber (input, ii, 2, tokLen != 1, false, out off_h);
