@@ -1,3 +1,8 @@
+2010-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* TypeBuilder.cs (GetField): Avoid a crash if this is called on a
+	FieldOnTypeBuilderInst. Fixes #586944.
+
 2010-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* ModuleBuilder.cs (DefinedType): Lookup inside the name_cache before creating

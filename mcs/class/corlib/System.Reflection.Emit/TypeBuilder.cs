@@ -1864,6 +1864,9 @@ namespace System.Reflection.Emit
 			if (type.IsGenericTypeDefinition)
 				throw new ArgumentException ("Type cannot be a generic type definition", "type");
 
+			if (field is FieldOnTypeBuilderInst)
+				throw new ArgumentException ("The specified field must be declared on a generic type definition.", "field");
+
 			FieldInfo res = type.GetField (field);
 			if (res == null)
 				throw new System.Exception ("field not found");
