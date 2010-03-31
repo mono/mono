@@ -113,6 +113,9 @@ namespace System.Windows.Forms
 		private int virtual_list_size;
 		private bool right_to_left_layout;
 #endif
+		// selection is available after the first time the handle is created, *even* if later
+		// the handle is either recreated or destroyed - so keep this info around.
+		private bool is_selection_available;
 
 		// internal variables
 		internal ImageList large_image_list;
@@ -1207,7 +1210,7 @@ namespace System.Windows.Forms
 
 		internal void OnSelectedIndexChanged ()
 		{
-			if (IsHandleCreated)
+			if (is_selection_available)
 				OnSelectedIndexChanged (EventArgs.Empty);
 		}
 
@@ -3506,6 +3509,7 @@ namespace System.Windows.Forms
 		protected override void CreateHandle ()
 		{
 			base.CreateHandle ();
+			is_selection_available = true;
 			for (int i = 0; i < SelectedItems.Count; i++)
 				OnSelectedIndexChanged (EventArgs.Empty);
 		}
@@ -5901,7 +5905,7 @@ namespace System.Windows.Forms
 			[Browsable (false)]
 			public int Count {
 				get {
-					if (!owner.IsHandleCreated)
+					if (!owner.is_selection_available)
 						return 0;
 
 					return List.Count;
@@ -5920,7 +5924,7 @@ namespace System.Windows.Forms
 
 			public int this [int index] {
 				get {
-					if (!owner.IsHandleCreated || index < 0 || index >= List.Count)
+					if (!owner.is_selection_available || index < 0 || index >= List.Count)
 						throw new ArgumentOutOfRangeException ("index");
 
 					return (int) List [index];
@@ -5958,12 +5962,12 @@ namespace System.Windows.Forms
 				if (itemIndex < 0 || itemIndex >= owner.Items.Count)
 					throw new ArgumentOutOfRangeException ("index");
 
-				if (owner.virtual_mode && !owner.IsHandleCreated)
+				if (owner.virtual_mode && !owner.is_selection_available)
 					return -1;
 
 				owner.Items [itemIndex].Selected = true;
 
-				if (!owner.IsHandleCreated)
+				if (!owner.is_selection_available)
 					return 0;
 
 				return List.Count;
@@ -5977,7 +5981,7 @@ namespace System.Windows.Forms
 #endif	
 			void Clear ()
 			{
-				if (!owner.IsHandleCreated)
+				if (!owner.is_selection_available)
 					return;
 
 				int [] indexes = (int []) List.ToArray (typeof (int));
@@ -6041,7 +6045,7 @@ namespace System.Windows.Forms
 
 			public int IndexOf (int selectedIndex)
 			{
-				if (!owner.IsHandleCreated)
+				if (!owner.is_selection_available)
 					return -1;
 
 				return List.IndexOf (selectedIndex);
@@ -6145,7 +6149,7 @@ namespace System.Windows.Forms
 
 			public ListViewItem this [int index] {
 				get {
-					if (!owner.IsHandleCreated || index < 0 || index >= Count)
+					if (!owner.is_selection_available || index < 0 || index >= Count)
 						throw new ArgumentOutOfRangeException ("index");
 
 					int item_index = owner.SelectedIndices [index];
@@ -6203,7 +6207,7 @@ namespace System.Windows.Forms
 
 			public void CopyTo (Array dest, int index)
 			{
-				if (!owner.IsHandleCreated)
+				if (!owner.is_selection_available)
 					return;
 				if (index > Count) // Throws ArgumentException instead of IOOR exception
 					throw new ArgumentException ("index");
@@ -6214,7 +6218,7 @@ namespace System.Windows.Forms
 
 			public IEnumerator GetEnumerator ()
 			{
-				if (!owner.IsHandleCreated)
+				if (!owner.is_selection_available)
 					return (new ListViewItem [0]).GetEnumerator ();
 
 				ListViewItem [] items = new ListViewItem [Count];
@@ -6260,7 +6264,7 @@ namespace System.Windows.Forms
 
 			public int IndexOf (ListViewItem item)
 			{
-				if (!owner.IsHandleCreated)
+				if (!owner.is_selection_available)
 					return -1;
 
 				for (int i = 0; i < Count; i++)
@@ -6273,7 +6277,7 @@ namespace System.Windows.Forms
 #if NET_2_0
 			public virtual int IndexOfKey (string key)
 			{
-				if (!owner.IsHandleCreated || key == null || key.Length == 0)
+				if (!owner.is_selection_available || key == null || key.Length == 0)
 					return -1;
 
 				for (int i = 0; i < Count; i++) {

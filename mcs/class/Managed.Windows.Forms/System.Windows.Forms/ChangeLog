@@ -1,3 +1,10 @@
+2010-03-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ListView.cs: Selection should be available after the first time the
+	handle has been created, even if later the handle is destroyed or
+	temporary invalidated.
+	Fixes #584070.
+
 2010-03-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeView.cs: When receiving a double click on a node, toggle it only
