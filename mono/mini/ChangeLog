@@ -1,3 +1,8 @@
+2010-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (handle_ccastclass): Call save_cast_details (). Fixes
+	#592711.
+
 2010-03-31 Rolf Bjarne Kvinge <RKvinge@novell.com>
 
 	* mini-trampolines.c: Surround mono_handler_block_guard_trampoline and
