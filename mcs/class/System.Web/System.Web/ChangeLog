@@ -1,3 +1,7 @@
+2010-03-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpResponseStream.cs: speed up short writes.
+
 2010-03-20  Marek Habersack  <mhabersack@novell.com>
 
 	* SiteMapNode.cs: avoid calling ChildNodes twice in HasChildNodes.
