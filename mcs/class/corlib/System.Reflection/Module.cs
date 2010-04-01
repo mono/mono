@@ -129,17 +129,7 @@ namespace System.Reflection {
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int GetMDStreamVersion (IntPtr module_handle);
-	
-		public virtual object[] GetCustomAttributes(bool inherit) 
-		{
-			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
-		}
-	
-		public virtual object[] GetCustomAttributes(Type attributeType, bool inherit) 
-		{
-			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
-		}
-	
+
 		public FieldInfo GetField (string name) 
 		{
 			if (IsResource ())
@@ -505,6 +495,16 @@ namespace System.Reflection {
 		}
 
 		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual object[] GetCustomAttributes(bool inherit)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual object[] GetCustomAttributes(Type attributeType, bool inherit) 
 		{
 			throw CreateNIE ();
 		}

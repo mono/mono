@@ -67,5 +67,25 @@ namespace System.Reflection {
 					filtered.Add (t);
 			return (Type[])filtered.ToArray (typeof(Type));
 		}
+
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		object[] GetCustomAttributes(bool inherit) 
+		{
+			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
+		}
+
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		object[] GetCustomAttributes(Type attributeType, bool inherit) 
+		{
+			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
+		}
 	}
 }
