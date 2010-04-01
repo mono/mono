@@ -1,3 +1,9 @@
+2010-04-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* method-to-ir.c (ensure_method_is_allowed_to_[access_field|
+	call_method]): Delegate the actual work in security-core-clr.c
+	to ease code sharing.
+
 2010-04-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* decompose.c (mono_decompose_opcode): Set the cfg exception if the unsupported
