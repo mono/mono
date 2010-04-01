@@ -1,3 +1,8 @@
+2010-03-31  Miguel de Icaza  <miguel@novell.com>
+
+	* mono-semaphore.h: Use Windows semaphores on Windows, patch
+	contributed by Vincent Povirk from bugzilla #531767
+
 2010-03-26  Mark Probst  <mark.probst@gmail.com>
 
 	* mono-semaphore.h (MONO_SEM_POST): Fix on Darwin.
