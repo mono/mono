@@ -130,16 +130,6 @@ namespace System.Reflection {
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int GetMDStreamVersion (IntPtr module_handle);
 	
-		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 
-		{
-			System.Collections.ArrayList filtered = new System.Collections.ArrayList ();
-			Type[] types = GetTypes ();
-			foreach (Type t in types)
-				if (filter (t, filterCriteria))
-					filtered.Add (t);
-			return (Type[])filtered.ToArray (typeof(Type));
-		}
-	
 		public virtual object[] GetCustomAttributes(bool inherit) 
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
@@ -506,10 +496,15 @@ namespace System.Reflection {
 #if NET_4_0
 		static Exception CreateNIE ()
 		{
-			return new NotSupportedException ("Derived classes must implement it");
+			return new NotImplementedException ("Derived classes must implement it");
 		}
 
 		public virtual bool IsResource()
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Type[] FindTypes(TypeFilter filter, object filterCriteria) 
 		{
 			throw CreateNIE ();
 		}

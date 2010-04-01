@@ -1,5 +1,10 @@
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Module.cs:
+	* MonoModule.cs: Implement FindTypes.
+
+2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Assembly.cs: Raise the right exception.
 
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>

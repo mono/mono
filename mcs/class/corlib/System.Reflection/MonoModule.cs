@@ -52,5 +52,20 @@ namespace System.Reflection {
 		{
 			return is_resource;
 		}
+
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		Type[] FindTypes(TypeFilter filter, object filterCriteria) 
+		{
+			System.Collections.ArrayList filtered = new System.Collections.ArrayList ();
+			Type[] types = GetTypes ();
+			foreach (Type t in types)
+				if (filter (t, filterCriteria))
+					filtered.Add (t);
+			return (Type[])filtered.ToArray (typeof(Type));
+		}
 	}
 }
