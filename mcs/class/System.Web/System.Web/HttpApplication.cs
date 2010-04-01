@@ -864,6 +864,14 @@ namespace System.Web {
 			return null;
 		}
 
+		bool ShouldHandleException (Exception e)
+		{
+			if (e is ParseException)
+				return false;
+
+			return true;
+		}
+		
 		//
 		// If we catch an error, queue this error
 		//
@@ -871,11 +879,12 @@ namespace System.Web {
 		{
 			bool first = context.Error == null;
 			context.AddError (e);
-			if (first) {
+			if (first && ShouldHandleException (e)) {
 				EventHandler eh = nonApplicationEvents [errorEvent] as EventHandler;
 				if (eh != null){
 					try {
 						eh (this, EventArgs.Empty);
+						context.ClearError ();
 					} catch (ThreadAbortException taex){
 						context.ClearError ();
 						if (FlagEnd.Value == taex.ExceptionState || HttpRuntime.DomainUnloading)

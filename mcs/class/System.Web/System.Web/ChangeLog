@@ -1,3 +1,13 @@
+2010-04-02  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: handle situations when current exception is an
+	instance of a class derived from HttpException and there's no
+	InnerException.
+
+	* HttpApplication.cs: ProcessError must call ClearError on the
+	current context after the handler returns without error. Fixes bug
+	#572469
+
 2010-03-30 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpResponseStream.cs: speed up short writes.

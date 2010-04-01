@@ -139,13 +139,18 @@ namespace System.Web
 					if (http_code != 404 && http_code != 403)
 						return GetCustomErrorDefaultMessage ();
 					else
-						return GetDefaultErrorMessage (false);
+						return GetDefaultErrorMessage (false, null);
 				}
 				
-				if (!(this.InnerException is HtmlizedException))
-					return GetDefaultErrorMessage (true);
+				Exception ex = GetBaseException ();
+				if (ex == null)
+					ex = this;
 				
-				return GetHtmlizedErrorMessage ();
+				HtmlizedException htmlException = ex  as HtmlizedException;
+				if (htmlException == null)
+					return GetDefaultErrorMessage (true, ex);
+				
+				return GetHtmlizedErrorMessage (htmlException);
 			} catch (Exception ex) {
 				Console.WriteLine (ex);
 				
@@ -301,10 +306,10 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			return builder.ToString ();
 		}
 		
-		string GetDefaultErrorMessage (bool showTrace)
+		string GetDefaultErrorMessage (bool showTrace, Exception baseEx)
 		{
-			Exception ex, baseEx;
-			ex = baseEx = GetBaseException ();
+			Exception ex;
+			ex = baseEx;
 			if (ex == null)
 				ex = this;
 
@@ -356,10 +361,9 @@ table.sampleCode {{width: 100%; background-color: #ffffcc; }}
 			return filename;
 		}
 		
-		string GetHtmlizedErrorMessage ()
+		string GetHtmlizedErrorMessage (HtmlizedException exc)
 		{
 			StringBuilder builder = new StringBuilder ();
-			HtmlizedException exc = (HtmlizedException) this.InnerException;
 #if TARGET_J2EE
 			bool isParseException = false;
 			bool isCompileException = false;
