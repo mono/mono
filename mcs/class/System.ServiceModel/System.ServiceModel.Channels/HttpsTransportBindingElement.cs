@@ -89,6 +89,47 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
+
+		// overriden only in full profile
+		public override T GetProperty<T> (BindingContext context)
+		{
+			if (typeof (T) == typeof (ISecurityCapabilities))
+				return (T) (object) new HttpsBindingProperties (this);
+			return base.GetProperty<T> (context);
+		}
 #endif
 	}
+
+#if !NET_2_1
+	class HttpsBindingProperties : HttpBindingProperties
+	{
+		HttpsTransportBindingElement source;
+
+		public HttpsBindingProperties (HttpsTransportBindingElement source)
+			: base (source)
+		{
+			this.source = source;
+		}
+
+		public override ProtectionLevel SupportedRequestProtectionLevel {
+			get { return ProtectionLevel.EncryptAndSign; }
+		}
+
+		public override ProtectionLevel SupportedResponseProtectionLevel {
+			get { return ProtectionLevel.EncryptAndSign; }
+		}
+
+		public override bool SupportsClientAuthentication {
+			get { return source.RequireClientCertificate || base.SupportsClientAuthentication; }
+		}
+
+		public override bool SupportsServerAuthentication {
+			get { return true; }
+		}
+
+		public override bool SupportsClientWindowsIdentity {
+			get { return source.RequireClientCertificate || base.SupportsClientWindowsIdentity; }
+		}
+	}
+#endif
 }

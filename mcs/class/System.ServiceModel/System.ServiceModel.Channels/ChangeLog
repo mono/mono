@@ -1,5 +1,11 @@
 2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpTransportBindingElement.cs, HttpsTransportBindingElement.cs:
+	  implement HttpsTransportBindingElement.GetProperty<T>(). Extend the
+	  properties type from HTTP.
+
+2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* FaultConverter.cs : use addressing version from the message.
 
 2010-03-30  Atsushi Enomoto  <atsushi@ximian.com>

@@ -62,5 +62,23 @@ namespace MonoTests.System.ServiceModel.Channels
 			b.Security.Mode = BasicHttpSecurityMode.Transport;
 			b.BuildChannelListener<IReplyChannel> (new Uri ("http://localhost:8080"));
 		}
+
+		[Test]
+		public void GetProperty ()
+		{
+			var b = new HttpsTransportBindingElement ();
+			var s = b.GetProperty<ISecurityCapabilities> (new BindingContext (new CustomBinding (), new BindingParameterCollection ()));
+			Assert.IsNotNull (s, "#1");
+			Assert.AreEqual (ProtectionLevel.EncryptAndSign, s.SupportedRequestProtectionLevel, "#2");
+			Assert.AreEqual (ProtectionLevel.EncryptAndSign, s.SupportedResponseProtectionLevel, "#3");
+			Assert.IsFalse (s.SupportsClientAuthentication, "#4");
+			Assert.IsFalse (s.SupportsClientWindowsIdentity, "#5");
+			Assert.IsTrue (s.SupportsServerAuthentication, "#6");
+
+			b.RequireClientCertificate = true;
+			s = b.GetProperty<ISecurityCapabilities> (new BindingContext (new CustomBinding (), new BindingParameterCollection ()));
+			Assert.IsTrue (s.SupportsClientAuthentication, "#7");
+			Assert.IsTrue (s.SupportsClientWindowsIdentity, "#8");
+		}
 	}
 }

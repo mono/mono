@@ -1,3 +1,8 @@
+2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpsTransportBindingElementTest.cs :
+	  added test for GetProperty<T>().
+
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FaultConverterTest.cs : added more TryCreateException() tests.

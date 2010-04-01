@@ -223,61 +223,63 @@ namespace System.ServiceModel.Channels
 		{
 			throw new NotImplementedException ();
 		}
+#endif
+	}
 
-		class HttpBindingProperties : ISecurityCapabilities, IBindingDeliveryCapabilities
+#if !NET_2_1
+	class HttpBindingProperties : ISecurityCapabilities, IBindingDeliveryCapabilities
+	{
+		HttpTransportBindingElement source;
+
+		public HttpBindingProperties (HttpTransportBindingElement source)
 		{
-			HttpTransportBindingElement source;
+			this.source = source;
+		}
 
-			public HttpBindingProperties (HttpTransportBindingElement source)
-			{
-				this.source = source;
-			}
+		public bool AssuresOrderedDelivery {
+			get { return false; }
+		}
 
-			public bool AssuresOrderedDelivery {
-				get { return false; }
-			}
+		public bool QueuedDelivery {
+			get { return false; }
+		}
 
-			public bool QueuedDelivery {
-				get { return false; }
-			}
+		public virtual ProtectionLevel SupportedRequestProtectionLevel {
+			get { return ProtectionLevel.None; }
+		}
 
-			public ProtectionLevel SupportedRequestProtectionLevel {
-				get { return ProtectionLevel.None; }
-			}
+		public virtual ProtectionLevel SupportedResponseProtectionLevel {
+			get { return ProtectionLevel.None; }
+		}
 
-			public ProtectionLevel SupportedResponseProtectionLevel {
-				get { return ProtectionLevel.None; }
-			}
+		public virtual bool SupportsClientAuthentication {
+			get { return source.AuthenticationScheme != AuthenticationSchemes.Anonymous; }
+		}
 
-			public bool SupportsClientAuthentication {
-				get { return source.AuthenticationScheme != AuthenticationSchemes.Anonymous; }
-			}
-
-			public bool SupportsServerAuthentication {
-				get {
-					switch (source.AuthenticationScheme) {
-					case AuthenticationSchemes.Negotiate:
-						return true;
-					default:
-						return false;
-					}
-				}
-			}
-
-			public bool SupportsClientWindowsIdentity {
-				get {
-					switch (source.AuthenticationScheme) {
-					case AuthenticationSchemes.Basic:
-					case AuthenticationSchemes.Digest: // hmm... why? but they return true on .NET
-					case AuthenticationSchemes.Negotiate:
-					case AuthenticationSchemes.Ntlm:
-						return true;
-					default:
-						return false;
-					}
+		public virtual bool SupportsServerAuthentication {
+			get {
+				switch (source.AuthenticationScheme) {
+				case AuthenticationSchemes.Negotiate:
+					return true;
+				default:
+					return false;
 				}
 			}
 		}
-#endif
+
+		public virtual bool SupportsClientWindowsIdentity {
+			get {
+				switch (source.AuthenticationScheme) {
+				case AuthenticationSchemes.Basic:
+				case AuthenticationSchemes.Digest: // hmm... why? but they return true on .NET
+				case AuthenticationSchemes.Negotiate:
+				case AuthenticationSchemes.Ntlm:
+					return true;
+				default:
+					return false;
+				}
+			}
+		}
 	}
+#endif
 }
