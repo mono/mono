@@ -102,11 +102,19 @@ namespace System.CodeDom.Compiler {
 
 		public CodeDomProvider CreateProvider ()
 		{
+			return CreateProvider (ProviderOptions);
+		}
+
+#if NET_4_0
+		public		
+#endif
+		CodeDomProvider CreateProvider (IDictionary<string, string> providerOptions)
+		{
 			Type providerType = CodeDomProviderType;
-			if (ProviderOptions != null && ProviderOptions.Count > 0) {
-				ConstructorInfo ctor = providerType.GetConstructor (new Type[] {typeof (Dictionary <string, string>)});
+			if (providerOptions != null && providerOptions.Count > 0) {
+				ConstructorInfo ctor = providerType.GetConstructor (new [] { typeof (IDictionary <string, string>) });
 				if (ctor != null)
-					return (CodeDomProvider) ctor.Invoke (new object[] {ProviderOptions});
+					return (CodeDomProvider) ctor.Invoke (new object[] { providerOptions });
 			}
 			
 			return (CodeDomProvider) Activator.CreateInstance (providerType);

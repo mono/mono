@@ -1,3 +1,7 @@
+2010-04-01  Jb Evain  <jbevain@novell.com>
+
+	* CodeDomProvider.cs, CompilerInfo.cs: add .net 4.0 overloads.
+
 2010-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* CompilerCollection.cs: in the 4.0 profile, the latest C#
