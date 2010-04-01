@@ -1,3 +1,7 @@
+2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Fix test for v4 Equals behavior.
+
 2010-03-30  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpanTest.cs: New test for TryParseExact.
