@@ -1,3 +1,8 @@
+2010-04-01  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, driver.c: Call mono_gc_base_init() before
+	mono_debug_init().
+
 2010-04-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* method-to-ir.c (ensure_method_is_allowed_to_[access_field|
