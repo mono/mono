@@ -822,6 +822,10 @@ namespace System.Reflection.Emit {
 		public override string Name {
 			get { return name; }
 		}
+
+		public override string ScopeName {
+			get { return name; }
+		}
 #endif
 	}
 
