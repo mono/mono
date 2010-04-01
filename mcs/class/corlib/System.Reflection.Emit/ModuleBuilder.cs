@@ -850,6 +850,57 @@ namespace System.Reflection.Emit {
 			return global_type_created.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
+		public override FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveFieldToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "Field");
+			else
+				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
+		}
+
+		public override MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+
+			ResolveTokenError error;
+
+			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (m == null)
+				throw resolve_token_exception (metadataToken, error, "MemberInfo");
+			else
+				return m;
+		}
+
+		public override MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveMethodToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "MethodBase");
+			else
+				return MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (handle));
+		}
+
+		public override string ResolveString (int metadataToken) {
+			ResolveTokenError error;
+
+			string s = ResolveStringToken (_impl, metadataToken, out error);
+			if (s == null)
+				throw resolve_token_exception (metadataToken, error, "string");
+			else
+				return s;
+		}
+
+		public override byte[] ResolveSignature (int metadataToken) {
+			ResolveTokenError error;
+
+		    byte[] res = ResolveSignature (_impl, metadataToken, out error);
+			if (res == null)
+				throw resolve_token_exception (metadataToken, error, "signature");
+			else
+				return res;
+		}
+
 		public override Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
 			ResolveTokenError error;
 
@@ -859,6 +910,7 @@ namespace System.Reflection.Emit {
 			else
 				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
 		}
+
 #endif
 	}
 

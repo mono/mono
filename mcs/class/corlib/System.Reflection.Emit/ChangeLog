@@ -1,5 +1,9 @@
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ModuleBuilder.cs: Implement Resolve*.
+
+2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* ModuleBuilder.cs: Implement ModuleVersionId.
 
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
