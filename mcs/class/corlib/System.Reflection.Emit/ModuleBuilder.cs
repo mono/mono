@@ -818,6 +818,10 @@ namespace System.Reflection.Emit {
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
+
+		public override string Name {
+			get { return name; }
+		}
 #endif
 	}
 

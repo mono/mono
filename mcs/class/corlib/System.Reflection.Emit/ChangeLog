@@ -1,3 +1,7 @@
+2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ModuleBuilder.cs: Implement Name property.
+
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ModuleBuilder.cs: Implement Assembly property.
