@@ -1,3 +1,15 @@
+2010-04-01  Miguel de Icaza  <miguel@novell.com>
+
+	* JsonValue.cs: We need to use Convert.ToXXXX for numbers as we
+	always end up reporting the value JsonType.Number regardless of
+	the underlying storage (int, long or decimal).   The parser
+	picks the best storage suitable for the data, and can end up using
+	"ints" for values that sometimes use longs. 
+
+	This causes problems when derefercing the data for example, if you
+	have an int and try to get it out as a long you end up with an
+	invalid cast exception.
+
 2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Json.dll.sources : remove JsonReader.cs.
