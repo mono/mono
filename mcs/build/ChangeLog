@@ -1,3 +1,8 @@
+2010-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* config-default.make (LIBRARY_FLAGS): Applied patch from Laurent Etiemble
+	(laurent.etiemble@gmail.com). Use CFLAGS in the environment if defined.
+
 2010-03-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* library.make ($(the_lib)$(PLATFORM_AOT_SUFFIX)): Pass --debug to the aot
