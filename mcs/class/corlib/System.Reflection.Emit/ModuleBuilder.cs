@@ -826,6 +826,12 @@ namespace System.Reflection.Emit {
 		public override string ScopeName {
 			get { return name; }
 		}
+
+		//XXX resource modules can't be defined with ModuleBuilder
+		public override bool IsResource ()
+		{
+			return false;
+		}
 #endif
 	}
 

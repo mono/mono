@@ -1,5 +1,9 @@
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ModuleBuilder.cs: Implement IsResource.
+
+2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* ModuleBuilder.cs: Implement ScopedName property.
 
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
