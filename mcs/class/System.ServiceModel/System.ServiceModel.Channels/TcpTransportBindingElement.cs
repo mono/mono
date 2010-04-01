@@ -35,7 +35,6 @@ using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels
 {
-	[MonoTODO]
 	public class TcpTransportBindingElement
 		: ConnectionOrientedTransportBindingElement
 	{
@@ -83,7 +82,6 @@ namespace System.ServiceModel.Channels
 			set { teredo_enabled = value; }
 		}
 
-		[MonoTODO]
 		public override IChannelFactory<TChannel> BuildChannelFactory<TChannel> (
 			BindingContext context)
 		{
@@ -106,11 +104,29 @@ namespace System.ServiceModel.Channels
 			return new TcpTransportBindingElement (this);
 		}
 
-		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
-			// FIXME: ... or return ISecurityCapabilities?
-			return context.GetInnerProperty<T> ();
+			if (typeof (T) == typeof (IBindingDeliveryCapabilities))
+				return (T) (object) new TcpBindingProperties (this);
+			return base.GetProperty<T> (context);
+		}
+	}
+
+	class TcpBindingProperties : IBindingDeliveryCapabilities
+	{
+		TcpTransportBindingElement source;
+
+		public TcpBindingProperties (TcpTransportBindingElement source)
+		{
+			this.source = source;
+		}
+
+		public bool AssuresOrderedDelivery {
+			get { return true; }
+		}
+
+		public bool QueuedDelivery {
+			get { return false; }
 		}
 	}
 }

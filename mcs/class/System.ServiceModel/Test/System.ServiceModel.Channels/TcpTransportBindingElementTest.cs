@@ -146,5 +146,22 @@ namespace MonoTests.System.ServiceModel.Channels
 			Assert.IsFalse (be.CanBuildChannelListener<IDuplexChannel> (ctx), "#11");
 			Assert.IsFalse (be.CanBuildChannelListener<IDuplexSessionChannel> (ctx), "#12");
 		}
+
+		[Test]
+		public void GetPrpertyBindingDeliveryCapabilities ()
+		{
+			var be = new TcpTransportBindingElement ();
+			var dc = be.GetProperty<IBindingDeliveryCapabilities> (new BindingContext (new CustomBinding (), new BindingParameterCollection ()));
+			Assert.IsTrue (dc.AssuresOrderedDelivery, "#1");
+			Assert.IsFalse (dc.QueuedDelivery, "#2");
+		}
+
+		[Test]
+		public void GetPropertySecurityCapabilities ()
+		{
+			var b = new TcpTransportBindingElement ();
+			var s = b.GetProperty<ISecurityCapabilities> (new BindingContext (new CustomBinding (), new BindingParameterCollection ()));
+			Assert.IsNull (s, "#1");
+		}
 	}
 }

@@ -1,5 +1,9 @@
 2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpTransportBindingElementTest.cs : GetProperty<T>() here too.
+
+2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpsTransportBindingElementTest.cs :
 	  added test for GetProperty<T>().
 

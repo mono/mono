@@ -1,5 +1,10 @@
 2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ConnectionOrientedTransportBindingElement.cs,
+	  TcpTransportBindingElement.cs : implement GetProperty<T>().
+
+2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpTransportBindingElement.cs, HttpsTransportBindingElement.cs:
 	  implement HttpsTransportBindingElement.GetProperty<T>(). Extend the
 	  properties type from HTTP.

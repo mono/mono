@@ -128,5 +128,13 @@ namespace System.ServiceModel.Channels
 			}
 			return false;
 		}
+
+		public override T GetProperty<T> (BindingContext context)
+		{
+			// since this class cannot be derived (internal .ctor
+			// only), we cannot examine what this should do.
+			// So, handle all properties in the derived types.
+			return base.GetProperty<T> (context);
+		}
 	}
 }
