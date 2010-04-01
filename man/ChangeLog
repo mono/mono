@@ -1,3 +1,7 @@
+2010-04-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mono.1: Document the new "security" option for logging
+
 2010-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono.1: Document the MONO_ENABLE_SHM env variable.
