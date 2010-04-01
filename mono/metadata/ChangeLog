@@ -1,3 +1,16 @@
+2010-04-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* exception.c|metadata-internals.h: Add new mono_get_exception_
+	field_access_msg and mono_get_exception_method_access_msg 
+	functions that accept a const char* parameter to provide more 
+	details when the exception is thrown.
+	* security-core-clr.c|h: Rework code to allow logging exceptions
+	(export MONO_LOG_MASK="security") and to supply more details in
+	[TypeLoad|MethodAccess|FieldAccess]Exception thrown. Also added
+	mono_security_core_clr_is_field_access_allowed and 
+	mono_security_core_clr_is_call_allowed to return an exception,
+	with messages and logging, that can be emitted by method-to-ir.c
+
 2010-04-01  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, sgen-pinning-stats.c: In the heap-dump, dump each
