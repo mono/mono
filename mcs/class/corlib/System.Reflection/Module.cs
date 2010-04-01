@@ -170,18 +170,6 @@ namespace System.Reflection {
 			UnitySerializationHolder.GetModuleData (this, info, context);
 		}
 
-#if !NET_2_1
-		public X509Certificate GetSignerCertificate ()
-		{
-			try {
-				return X509Certificate.CreateFromSignedFile (assembly.Location);
-			}
-			catch {
-				return null;
-			}
-		}
-#endif
-
 		[ComVisible (true)]
 		public virtual Type GetType(string className) 
 		{
@@ -195,12 +183,7 @@ namespace System.Reflection {
 		}
 	
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern Type[] InternalGetTypes ();
-	
-		public virtual Type[] GetTypes() 
-		{
-			return InternalGetTypes ();
-		}
+		internal extern Type[] InternalGetTypes ();
 	
 		public override string ToString () 
 		{
@@ -438,6 +421,16 @@ namespace System.Reflection {
 		}
 
 		public virtual Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual X509Certificate GetSignerCertificate ()
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Type[] GetTypes() 
 		{
 			throw CreateNIE ();
 		}

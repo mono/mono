@@ -31,6 +31,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Security.Cryptography.X509Certificates;
 
 
 namespace System.Reflection {
@@ -260,6 +261,33 @@ namespace System.Reflection {
 				throw resolve_token_exception (metadataToken, error, "signature");
 			else
 				return res;
+		}
+
+#if !NET_2_1
+
+		public
+#if NET_4_0
+		override
+#endif
+		X509Certificate GetSignerCertificate ()
+		{
+			try {
+				return X509Certificate.CreateFromSignedFile (assembly.Location);
+			}
+			catch {
+				return null;
+			}
+		}
+#endif
+
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		Type[] GetTypes() 
+		{
+			return InternalGetTypes ();
 		}
 
 #if NET_4_0
