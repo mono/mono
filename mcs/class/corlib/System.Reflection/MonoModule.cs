@@ -32,6 +32,8 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 using System.Security.Cryptography.X509Certificates;
+using System.Security;
+using System.Security.Permissions;
 
 
 namespace System.Reflection {
@@ -45,6 +47,70 @@ namespace System.Reflection {
 #else
 	public partial class Module {
 #endif
+
+		public
+#if NET_4_0
+		override
+#endif
+		Assembly Assembly {
+			get { return assembly; }
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		// Note: we do not ask for PathDiscovery because no path is returned here.
+		// However MS Fx requires it (see FDBK23572 for details).
+		string Name {
+			get { return name; }
+		}
+	
+		public
+#if NET_4_0
+		override
+#endif
+		string ScopeName {
+			get { return scopename; }
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		int MDStreamVersion {
+			get {
+				if (_impl == IntPtr.Zero)
+					throw new NotSupportedException ();
+				return GetMDStreamVersion (_impl);
+			}
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		Guid ModuleVersionId {
+			get {
+				return GetModuleVersionId ();
+			}
+		}
+
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		string FullyQualifiedName {
+			get {
+#if !NET_2_1
+				if (SecurityManager.SecurityEnabled) {
+					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fqname).Demand ();
+				}
+#endif
+				return fqname;
+			}
+		}
 
 		public
 #if NET_4_0
@@ -118,6 +184,14 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
 		}
 
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		int MetadataToken {
+			get { return get_MetadataToken (this); }
+		}
 		protected
 #if NET_4_0
 		override

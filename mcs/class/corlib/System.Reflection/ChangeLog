@@ -1,6 +1,13 @@
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Module.cs:
+	* MonoModule.cs: Implement MetadataToken, FullyQualifiedName,
+	ModuleVersionId, MDStreamVersion, ScopeName,
+	Name, Assembly.
+
+2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Module.cs:
 	* MonoModule.cs: Implement GetSignerCertificate and
 	GetTypes.
 

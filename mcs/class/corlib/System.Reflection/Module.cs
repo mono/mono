@@ -83,50 +83,15 @@ namespace System.Reflection {
 		Module () {
 		}
 
-		public Assembly Assembly {
-			get { return assembly; }
-		}
-	
-		public virtual string FullyQualifiedName {
-			get {
-#if !NET_2_1
-				if (SecurityManager.SecurityEnabled) {
-					new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fqname).Demand ();
-				}
-#endif
-				return fqname;
-			}
-		}
-
-		// Note: we do not ask for PathDiscovery because no path is returned here.
-		// However MS Fx requires it (see FDBK23572 for details).
-		public string Name {
-			get { return name; }
-		}
-	
-		public string ScopeName {
-			get { return scopename; }
-		}
-
 		public ModuleHandle ModuleHandle {
 			get {
 				return new ModuleHandle (_impl);
 			}
 		}
 
-		public extern int MetadataToken {
-			[MethodImplAttribute (MethodImplOptions.InternalCall)]
-			get;
-		}
-
-		public int MDStreamVersion {
-			get {
-				if (_impl == IntPtr.Zero)
-					throw new NotSupportedException ();
-				return GetMDStreamVersion (_impl);
-			}
-		}
-
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal static extern int get_MetadataToken (Module module);
+		
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern int GetMDStreamVersion (IntPtr module_handle);
 
@@ -191,12 +156,6 @@ namespace System.Reflection {
 		}
 
 		internal Guid MvId {
-			get {
-				return GetModuleVersionId ();
-			}
-		}
-
-		public Guid ModuleVersionId {
 			get {
 				return GetModuleVersionId ();
 			}
@@ -329,6 +288,35 @@ namespace System.Reflection {
 		}
 
 #if NET_4_0
+
+		public virtual Assembly Assembly {
+			get { throw CreateNIE (); }
+		}
+
+		public virtual string Name {
+			get { throw CreateNIE (); }
+		}
+	
+		public virtual string ScopeName {
+			get { throw CreateNIE (); }
+		}
+
+		public virtual int MDStreamVersion {
+			get { throw CreateNIE (); }
+		}
+
+		public virtual Guid ModuleVersionId {
+			get { throw CreateNIE (); }
+		}
+
+		public virtual string FullyQualifiedName {
+			get { throw CreateNIE (); }
+		}
+
+		public virtual int MetadataToken {
+			get { throw CreateNIE (); }
+		}
+
 		static Exception CreateNIE ()
 		{
 			return new NotImplementedException ("Derived classes must implement it");
