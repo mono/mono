@@ -1,6 +1,11 @@
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Module.cs:
+	* MonoModule.cs: Implement GetCustomAttributesData.
+
+2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Module.cs:
 	* MonoModule.cs: Implement GetCustomAttributes.
 
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>

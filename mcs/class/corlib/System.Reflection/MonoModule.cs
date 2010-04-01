@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections;
+using System.Collections.Generic;
 using System.Globalization;
 using System.Runtime.InteropServices;
 
@@ -87,5 +88,11 @@ namespace System.Reflection {
 		{
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
+
+#if NET_4_0
+		public override IList<CustomAttributeData> GetCustomAttributesData () {
+			return CustomAttributeData.GetCustomAttributes (this);
+		}
+#endif
 	}
 }

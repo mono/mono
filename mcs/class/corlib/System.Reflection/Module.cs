@@ -388,12 +388,6 @@ namespace System.Reflection {
 				return res;
 		}
 
-#if NET_4_0
-		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
-			return CustomAttributeData.GetCustomAttributes (this);
-		}
-#endif
-
 		internal static Type MonoDebugger_ResolveType (Module module, int token)
 		{
 			ResolveTokenError error;
@@ -506,6 +500,10 @@ namespace System.Reflection {
 
 		public virtual object[] GetCustomAttributes(Type attributeType, bool inherit) 
 		{
+			throw CreateNIE ();
+		}
+
+		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
 			throw CreateNIE ();
 		}
 #endif
