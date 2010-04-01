@@ -898,7 +898,8 @@ namespace System.Web.UI.WebControls
 				}
 			}
 
-			bool showPager = AllowPaging && (dataSource.PageCount > 1);
+			PagerSettings pagerSettings = PagerSettings;
+			bool showPager = AllowPaging && pagerSettings.Visible && (dataSource.PageCount > 1);
 			
 			Controls.Clear ();
 			table = CreateTable ();
@@ -947,8 +948,8 @@ namespace System.Web.UI.WebControls
 				InitializeRow (headerRow);
 				table.Rows.Add (headerRow);
 			}
-			
-			if (showPager && PagerSettings.Position == PagerPosition.Top || PagerSettings.Position == PagerPosition.TopAndBottom) {
+
+			if (showPager && pagerSettings.Position == PagerPosition.Top || pagerSettings.Position == PagerPosition.TopAndBottom) {
 				topPagerRow = CreateRow (-1, DataControlRowType.Pager, DataControlRowState.Normal);
 				InitializePager (topPagerRow, dataSource);
 				table.Rows.Add (topPagerRow);
@@ -981,7 +982,7 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (footerRow);
 			}
 			
-			if (showPager && PagerSettings.Position == PagerPosition.Bottom || PagerSettings.Position == PagerPosition.TopAndBottom) {
+			if (showPager && pagerSettings.Position == PagerPosition.Bottom || pagerSettings.Position == PagerPosition.TopAndBottom) {
 				bottomPagerRow = CreateRow (0, DataControlRowType.Pager, DataControlRowState.Normal);
 				InitializePager (bottomPagerRow, dataSource);
 				table.Rows.Add (bottomPagerRow);
