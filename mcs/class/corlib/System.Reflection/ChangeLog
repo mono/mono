@@ -1,3 +1,7 @@
+2010-04-01  Jb Evain  <jbevain@novell.com>
+
+	* Module.cs: make Module abstract on net_4_0.
+
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Module.cs:

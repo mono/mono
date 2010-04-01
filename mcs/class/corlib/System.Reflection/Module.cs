@@ -49,7 +49,7 @@ namespace System.Reflection {
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 
 #if NET_4_0
-	public class Module : ISerializable, ICustomAttributeProvider, _Module {
+	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #else
 	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
 #endif
