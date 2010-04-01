@@ -100,8 +100,23 @@ namespace System.Collections.Generic {
 		SerializationInfo si;
 
 		public SortedSet ()
-			: this (null as IComparer<T>)
+			: this (Comparer<T>.Default)
 		{
+		}
+
+		public SortedSet (IEnumerable<T> collection)
+			: this (collection, Comparer<T>.Default)
+		{
+		}
+
+		public SortedSet (IEnumerable<T> collection, IComparer<T> comparer)
+			: this (comparer)
+		{
+			if (collection == null)
+				throw new ArgumentNullException ("collection");
+	
+			foreach (var item in collection)
+				Add (item);
 		}
 
 		public SortedSet (IComparer<T> comparer)
@@ -133,7 +148,7 @@ namespace System.Collections.Generic {
 			get { throw new NotImplementedException (); }
 		}
 
-		public virtual bool Add (T item)
+		public bool Add (T item)
 		{
 			var node = new Node (item);
 			return tree.Intern (item, node) == node;
@@ -154,7 +169,7 @@ namespace System.Collections.Generic {
 			CopyTo (array, 0, Count);
 		}
 
-		public virtual void CopyTo (T [] array, int index)
+		public void CopyTo (T [] array, int index)
 		{
 			CopyTo (array, index, Count);
 		}
@@ -178,7 +193,7 @@ namespace System.Collections.Generic {
 			}
 		}
 
-		public virtual bool Remove (T item)
+		public bool Remove (T item)
 		{
 			return tree.Remove (item) != null;
 		}
@@ -247,13 +262,13 @@ namespace System.Collections.Generic {
 		}
 
 		[MonoTODO]
-		public virtual void ExceptWith (IEnumerable<T> other)
+		public void ExceptWith (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void GetViewBetween (T lowerValue, T upperValue)
+		public virtual SortedSet<T> GetViewBetween (T lowerValue, T upperValue)
 		{
 			throw new NotImplementedException ();
 		}
@@ -265,55 +280,49 @@ namespace System.Collections.Generic {
 		}
 
 		[MonoTODO]
-		public virtual bool IsProperSubsetOf (IEnumerable<T> other)
+		public bool IsProperSubsetOf (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool IsProperSupersetOf (IEnumerable<T> other)
+		public bool IsProperSupersetOf (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool IsSubsetOf (IEnumerable<T> other)
+		public bool IsSubsetOf (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool IsSupersetOf (IEnumerable<T> other)
+		public bool IsSupersetOf (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool IsPropertSubsetOf (IEnumerable<T> other)
+		public bool Overlaps (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool Overlaps (IEnumerable<T> other)
+		public bool SetEquals (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual bool SetEquals (IEnumerable<T> other)
+		public void SymmetricExceptWith (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
 
 		[MonoTODO]
-		public virtual void SymmetricExceptWith (IEnumerable<T> other)
-		{
-			throw new NotImplementedException ();
-		}
-
-		[MonoTODO]
-		public virtual void UnionWith (IEnumerable<T> other)
+		public void UnionWith (IEnumerable<T> other)
 		{
 			throw new NotImplementedException ();
 		}
@@ -321,6 +330,11 @@ namespace System.Collections.Generic {
 		void ICollection<T>.Add (T item)
 		{
 			Add (item);
+		}
+
+		void ICollection<T>.CopyTo (T [] array, int index)
+		{
+			CopyTo (array, index, Count);
 		}
 
 		bool ICollection<T>.IsReadOnly {

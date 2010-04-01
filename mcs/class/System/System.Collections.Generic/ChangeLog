@@ -1,5 +1,9 @@
 2010-04-01  Jb Evain  <jbevain@novell.com>
 
+	* SortedSet.cs: fix API.
+
+2010-04-01  Jb Evain  <jbevain@novell.com>
+
 	* SortedSet.cs: add new SortedSet type in .net 4.0
 
 2010-03-03  Miguel de Icaza  <miguel@novell.com>
