@@ -1,3 +1,7 @@
+2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-exceptions.c: Fix win32 build.
+
 2010-04-01  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c, driver.c: Call mono_gc_base_init() before
