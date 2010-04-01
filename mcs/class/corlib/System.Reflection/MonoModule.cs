@@ -90,6 +90,97 @@ namespace System.Reflection {
 		}
 
 #if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		FieldInfo GetField (string name, BindingFlags bindingAttr) 
+		{
+			if (IsResource ())
+				return null;
+
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetField (name, bindingAttr) : null;
+		}
+
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		FieldInfo[] GetFields (BindingFlags bindingFlags)
+		{
+			if (IsResource ())
+				return new FieldInfo [0];
+
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
+		}
+
+		protected
+#if NET_4_0
+		override
+#else
+		virtual
+#endif	
+		MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
+		{
+			if (IsResource ())
+				return null;
+
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers) : null;
+		}
+
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine) {
+			ModuleHandle.GetPEKind (out peKind, out machine);
+		}
+
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		Type GetType(string className, bool throwOnError, bool ignoreCase) 
+		{
+			if (className == null)
+				throw new ArgumentNullException ("className");
+			if (className == String.Empty)
+				throw new ArgumentException ("Type name can't be empty");
+			return assembly.InternalGetType (this, className, throwOnError, ignoreCase);
+		}
+	
+#if NET_4_0
+		public override
+#else
+		public virtual
+#endif
+		bool IsDefined (Type attributeType, bool inherit) 
+		{
+			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
+		}
+
+
+		public
+#if NET_4_0
+		override
+#endif
+		FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveFieldToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "Field");
+			else
+				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
+		}
+
+#if NET_4_0
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}

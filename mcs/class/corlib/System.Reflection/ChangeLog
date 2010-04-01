@@ -1,6 +1,13 @@
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Module.cs:
+	* MonoModule.cs: Implement GetField, GetFields,
+	GetMethodImpl, GetPEKind, GetType, IsDefined and
+	ResolveField.
+
+2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Module.cs:
 	* MonoModule.cs: Implement GetCustomAttributesData.
 
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>

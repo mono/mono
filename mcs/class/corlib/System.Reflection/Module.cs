@@ -57,7 +57,7 @@ namespace System.Reflection {
 		public static readonly TypeFilter FilterTypeNameIgnoreCase;
 	
 #pragma warning disable 649	
-		private IntPtr _impl; /* a pointer to a MonoImage */
+		internal IntPtr _impl; /* a pointer to a MonoImage */
 		internal Assembly assembly;
 		internal string fqname;
 		internal string name;
@@ -132,39 +132,18 @@ namespace System.Reflection {
 
 		public FieldInfo GetField (string name) 
 		{
-			if (IsResource ())
-				return null;
-
-			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetField (name, BindingFlags.Public | BindingFlags.Static) : null;
+			return GetField (name, BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 		}
-	
-		public FieldInfo GetField (string name, BindingFlags bindingAttr) 
-		{
-			if (IsResource ())
-				return null;
 
-			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetField (name, bindingAttr) : null;
-		}
-	
 		public FieldInfo[] GetFields () 
 		{
-			if (IsResource ())
-				return new FieldInfo [0];
-
-			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetFields (BindingFlags.Public | BindingFlags.Static) : new FieldInfo [0];
+			return GetFields (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 		}
 	
 		public MethodInfo GetMethod (string name) 
 		{
-			// Can't call the other overloads since they call Type.GetMethod () which does a null check on the 'types' array
-			if (IsResource ())
-				return null;
-
-			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetMethod (name) : null;
+			//FIXME this sure breaks since Type.GetMethod throws due to a null 'type' array. But it's what MS does
+			return GetMethodImpl (name, defaultBindingFlags, null, CallingConventions.Any, null, null);
 		}
 	
 		public MethodInfo GetMethod (string name, Type[] types) 
@@ -175,15 +154,6 @@ namespace System.Reflection {
 		public MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
 		{
 			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
-		}
-	
-		protected virtual MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
-		{
-			if (IsResource ())
-				return null;
-
-			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers) : null;
 		}
 	
 		public MethodInfo[] GetMethods () 
@@ -201,15 +171,6 @@ namespace System.Reflection {
 
 			Type globalType = GetGlobalType ();
 			return (globalType != null) ? globalType.GetMethods (bindingFlags) : new MethodInfo [0];
-		}
-
-		public FieldInfo[] GetFields (BindingFlags bindingFlags)
-		{
-			if (IsResource ())
-				return new FieldInfo [0];
-
-			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
 		}
 	
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
@@ -245,27 +206,12 @@ namespace System.Reflection {
 			return GetType (className, false, ignoreCase);
 		}
 	
-		[ComVisible (true)]
-		public virtual Type GetType(string className, bool throwOnError, bool ignoreCase) 
-		{
-			if (className == null)
-				throw new ArgumentNullException ("className");
-			if (className == String.Empty)
-				throw new ArgumentException ("Type name can't be empty");
-			return assembly.InternalGetType (this, className, throwOnError, ignoreCase);
-		}
-
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private extern Type[] InternalGetTypes ();
 	
 		public virtual Type[] GetTypes() 
 		{
 			return InternalGetTypes ();
-		}
-	
-		public virtual bool IsDefined (Type attributeType, bool inherit) 
-		{
-			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 	
 		public override string ToString () 
@@ -285,19 +231,14 @@ namespace System.Reflection {
 			}
 		}
 
-		public void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine) {
-			ModuleHandle.GetPEKind (out peKind, out machine);
-		}
-  		
-
-		private Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
+		internal Exception resolve_token_exception (int metadataToken, ResolveTokenError error, string tokenType) {
 			if (error == ResolveTokenError.OutOfRange)
 				return new ArgumentOutOfRangeException ("metadataToken", String.Format ("Token 0x{0:x} is not valid in the scope of module {1}", metadataToken, name));
 			else
 				return new ArgumentException (String.Format ("Token 0x{0:x} is not a valid {1} token in the scope of module {2}", metadataToken, tokenType, name), "metadataToken");
 		}
 
-		private IntPtr[] ptrs_from_types (Type[] types) {
+		internal IntPtr[] ptrs_from_types (Type[] types) {
 			if (types == null)
 				return null;
 			else {
@@ -313,16 +254,6 @@ namespace System.Reflection {
 
 		public FieldInfo ResolveField (int metadataToken) {
 			return ResolveField (metadataToken, null, null);
-		}
-
-		public FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			ResolveTokenError error;
-
-			IntPtr handle = ResolveFieldToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
-			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "Field");
-			else
-				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
 		}
 
 		public MemberInfo ResolveMember (int metadataToken) {
@@ -433,7 +364,7 @@ namespace System.Reflection {
 		private extern string GetGuidInternal ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
-		private extern Type GetGlobalType ();
+		internal extern Type GetGlobalType ();
 
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal static extern IntPtr ResolveTypeToken (IntPtr module, int token, IntPtr[] type_args, IntPtr[] method_args, out ResolveTokenError error);
@@ -503,9 +434,47 @@ namespace System.Reflection {
 			throw CreateNIE ();
 		}
 
-		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
+		public virtual IList<CustomAttributeData> GetCustomAttributesData ()
+		{
 			throw CreateNIE ();
 		}
+
+		public virtual FieldInfo GetField (string name, BindingFlags bindingAttr) 
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual FieldInfo[] GetFields (BindingFlags bindingFlags)
+		{
+			throw CreateNIE ();
+		}
+
+		protected virtual MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine)
+		{
+			throw CreateNIE ();
+		}
+
+		[ComVisible (true)]
+		public virtual Type GetType(string className, bool throwOnError, bool ignoreCase) 
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual bool IsDefined (Type attributeType, bool inherit) 
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
+		{
+			throw CreateNIE ();
+		}
+
 #endif
 
 	}
