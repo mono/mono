@@ -44,5 +44,13 @@ namespace System.Reflection {
 	public partial class Module {
 #endif
 
+		public
+#if NET_4_0
+		override
+#endif
+		bool IsResource()
+		{
+			return is_resource;
+		}
 	}
 }

@@ -74,7 +74,13 @@ namespace System.Reflection {
 			FilterTypeNameIgnoreCase = new TypeFilter (filter_by_type_name_ignore_case);
 		}
 
-		internal Module () {
+
+#if NET_4_0
+		protected
+#else
+		internal
+#endif
+		Module () {
 		}
 
 		public Assembly Assembly {
@@ -280,11 +286,6 @@ namespace System.Reflection {
 		public virtual bool IsDefined (Type attributeType, bool inherit) 
 		{
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
-		}
-	
-		public bool IsResource()
-		{
-			return is_resource;
 		}
 	
 		public override string ToString () 
@@ -501,5 +502,18 @@ namespace System.Reflection {
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_4_0
+		static Exception CreateNIE ()
+		{
+			return new NotSupportedException ("Derived classes must implement it");
+		}
+
+		public virtual bool IsResource()
+		{
+			throw CreateNIE ();
+		}
+#endif
+
 	}
 }

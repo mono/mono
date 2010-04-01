@@ -1,5 +1,10 @@
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Module.cs: Make .ctor protected under v4.
+	* MonoModule.cs: Implement IsResource.
+
+2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Module.cs: Make it a partial class under !v4.
 
 	* MonoModule.cs: New type that exists only under
