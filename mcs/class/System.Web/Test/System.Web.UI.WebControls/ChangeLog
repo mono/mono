@@ -1,3 +1,7 @@
+2010-04-01  Marek Habersack  <mhabersack@novell.com>
+
+	* FormViewTest.cs: added test for bug #578863
+
 2010-02-19  Marek Habersack  <mhabersack@novell.com>
 
 	* SqlDataSourceTest.cs: added test for bug #572781

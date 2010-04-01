@@ -388,10 +388,13 @@ namespace MonoTests.System.Web.UI.WebControls
                                 "FormViewTest1.aspx");
                         WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewInsertEditDelete.aspx",
                                 "FormViewInsertEditDelete.aspx");
+                        WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.FormViewPagerVisibility.aspx", 
+                                "FormViewPagerVisibility.aspx");
 #else
                         WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
                         WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");
                         WebTest.CopyResource (GetType (), "FormViewInsertEditDelete.aspx", "FormViewInsertEditDelete.aspx");
+                        WebTest.CopyResource (GetType (), "FormViewPagerVisibility.aspx", "FormViewPagerVisibility.aspx");
 #endif
 
                }
@@ -1831,6 +1834,24 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			
 		}
 
+		[Test (Description="Bug #578863")]
+		public void FormView_PagerSettings_Visibility ()
+		{
+			string origHtml = @"<table id=""FormView1"" cellpadding=""3"" cellspacing=""2"" rules=""all"" border=""1"" style=""background-color:#DEBA84;border-color:#DEBA84;border-width:1px;border-style:None;""> 
+		<tr style=""background-color:#FFF7E7;color:#8C4510;""> 
+			<td colspan=""2""> 
+          <span id=""FormView1_Label1"">1</span> 
+	</td> 
+		</tr> 
+	</table>";
+			
+			WebTest t = new WebTest ("FormViewPagerVisibility.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (origHtml, renderedHtml, "#A1");
+		}
+		
 		[Test]
 		[Category ("NunitWeb")]
 		public void FormView_FireEvent_1 ()
