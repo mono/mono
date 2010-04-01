@@ -1,3 +1,8 @@
+2010-04-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_create_generic_class): Set the flags field of
+	the generic parameters from the builder. Fixes #473298.
+
 2010-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Enum_get_underlying_type): Don't crash on
