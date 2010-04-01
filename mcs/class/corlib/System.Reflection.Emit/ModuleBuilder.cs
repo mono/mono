@@ -829,6 +829,12 @@ namespace System.Reflection.Emit {
 			get { return name; }
 		}
 
+		public override Guid ModuleVersionId {
+			get {
+				return GetModuleVersionId ();
+			}
+		}
+
 		//XXX resource modules can't be defined with ModuleBuilder
 		public override bool IsResource ()
 		{
