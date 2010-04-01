@@ -14,7 +14,9 @@ TEST_HARNESS = $(topdir)/class/lib/$(PROFILE)/nunit-console.exe
 MCS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 MBAS_FLAGS = $(PLATFORM_DEBUG_FLAGS)
 LIBRARY_FLAGS = /noconfig
+ifndef CFLAGS
 CFLAGS = -g -O2
+endif
 prefix = /usr/local
 exec_prefix = $(prefix)
 mono_libdir = $(exec_prefix)/lib
