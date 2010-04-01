@@ -1,6 +1,13 @@
 2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Module.cs:
+	* MonoModule.cs: Implement ResolveMember, ResolveMethod,
+	ResolveString, ResolveType, ResolveSignature and
+	GetMethods.
+
+2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Module.cs:
 	* MonoModule.cs: Implement GetField, GetFields,
 	GetMethodImpl, GetPEKind, GetType, IsDefined and
 	ResolveField.

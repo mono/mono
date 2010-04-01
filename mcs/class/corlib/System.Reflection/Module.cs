@@ -158,19 +158,7 @@ namespace System.Reflection {
 	
 		public MethodInfo[] GetMethods () 
 		{
-			if (IsResource ())
-				return new MethodInfo [0];
-
-			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetMethods () : new MethodInfo [0];
-		}
-
-		public MethodInfo[] GetMethods (BindingFlags bindingFlags) {
-			if (IsResource ())
-				return new MethodInfo [0];
-
-			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetMethods (bindingFlags) : new MethodInfo [0];
+			return GetMethods (BindingFlags.Public | BindingFlags.Static | BindingFlags.Instance);
 		}
 	
 		[SecurityPermission (SecurityAction.LinkDemand, SerializationFormatter = true)]
@@ -260,63 +248,12 @@ namespace System.Reflection {
 			return ResolveMember (metadataToken, null, null);
 		}
 
-		public MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-
-			ResolveTokenError error;
-
-			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
-			if (m == null)
-				throw resolve_token_exception (metadataToken, error, "MemberInfo");
-			else
-				return m;
-		}
-
 		public MethodBase ResolveMethod (int metadataToken) {
 			return ResolveMethod (metadataToken, null, null);
 		}
 
-		public MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			ResolveTokenError error;
-
-			IntPtr handle = ResolveMethodToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
-			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "MethodBase");
-			else
-				return MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (handle));
-		}
-
-		public string ResolveString (int metadataToken) {
-			ResolveTokenError error;
-
-			string s = ResolveStringToken (_impl, metadataToken, out error);
-			if (s == null)
-				throw resolve_token_exception (metadataToken, error, "string");
-			else
-				return s;
-		}
-
 		public Type ResolveType (int metadataToken) {
 			return ResolveType (metadataToken, null, null);
-		}
-
-		public Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
-			ResolveTokenError error;
-
-			IntPtr handle = ResolveTypeToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
-			if (handle == IntPtr.Zero)
-				throw resolve_token_exception (metadataToken, error, "Type");
-			else
-				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
-		}
-
-		public byte[] ResolveSignature (int metadataToken) {
-			ResolveTokenError error;
-
-		    byte[] res = ResolveSignature (_impl, metadataToken, out error);
-			if (res == null)
-				throw resolve_token_exception (metadataToken, error, "signature");
-			else
-				return res;
 		}
 
 		internal static Type MonoDebugger_ResolveType (Module module, int token)
@@ -454,6 +391,11 @@ namespace System.Reflection {
 			throw CreateNIE ();
 		}
 
+		public virtual MethodInfo[] GetMethods (BindingFlags bindingFlags)
+		{
+			throw CreateNIE ();
+		}
+
 		public virtual void GetPEKind (out PortableExecutableKinds peKind, out ImageFileMachine machine)
 		{
 			throw CreateNIE ();
@@ -475,6 +417,30 @@ namespace System.Reflection {
 			throw CreateNIE ();
 		}
 
+		public virtual MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual byte[] ResolveSignature (int metadataToken)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual string ResolveString (int metadataToken)
+		{
+			throw CreateNIE ();
+		}
+
+		public virtual Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments)
+		{
+			throw CreateNIE ();
+		}
 #endif
 
 	}

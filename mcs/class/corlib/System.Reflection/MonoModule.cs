@@ -132,6 +132,18 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers) : null;
 		}
 
+		public
+#if NET_4_0
+		override
+#endif
+		MethodInfo[] GetMethods (BindingFlags bindingFlags) {
+			if (IsResource ())
+				return new MethodInfo [0];
+
+			Type globalType = GetGlobalType ();
+			return (globalType != null) ? globalType.GetMethods (bindingFlags) : new MethodInfo [0];
+		}
+
 #if NET_4_0
 		public override
 #else
@@ -165,7 +177,6 @@ namespace System.Reflection {
 			return MonoCustomAttrs.IsDefined (this, attributeType, inherit);
 		}
 
-
 		public
 #if NET_4_0
 		override
@@ -178,6 +189,77 @@ namespace System.Reflection {
 				throw resolve_token_exception (metadataToken, error, "Field");
 			else
 				return FieldInfo.GetFieldFromHandle (new RuntimeFieldHandle (handle));
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+
+			ResolveTokenError error;
+
+			MemberInfo m = ResolveMemberToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (m == null)
+				throw resolve_token_exception (metadataToken, error, "MemberInfo");
+			else
+				return m;
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveMethodToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "MethodBase");
+			else
+				return MethodBase.GetMethodFromHandleNoGenericCheck (new RuntimeMethodHandle (handle));
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		string ResolveString (int metadataToken) {
+			ResolveTokenError error;
+
+			string s = ResolveStringToken (_impl, metadataToken, out error);
+			if (s == null)
+				throw resolve_token_exception (metadataToken, error, "string");
+			else
+				return s;
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveTypeToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "Type");
+			else
+				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
+		}
+
+		public
+#if NET_4_0
+		override
+#endif
+		byte[] ResolveSignature (int metadataToken) {
+			ResolveTokenError error;
+
+		    byte[] res = ResolveSignature (_impl, metadataToken, out error);
+			if (res == null)
+				throw resolve_token_exception (metadataToken, error, "signature");
+			else
+				return res;
 		}
 
 #if NET_4_0
