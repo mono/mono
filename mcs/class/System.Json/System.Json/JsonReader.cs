@@ -85,7 +85,7 @@ namespace System.Json
 				return new JsonPrimitive (true);
 			case 'f':
 				Expect ("false");
-				return new JsonPrimitive (true);
+				return new JsonPrimitive (false);
 			case 'n':
 				Expect ("null");
 				// FIXME: what should we return?
