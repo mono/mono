@@ -1,3 +1,13 @@
+2010-03-31 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Module.cs: Make it a partial class under !v4.
+
+	* MonoModule.cs: New type that exists only under
+	v4. Under v2 it is a part of Module.
+
+	This is the initial setup to make v4 Module an
+	abstract type where all methods raise exceptions.
+
 2010-03-30  Jb Evain  <jbevain@novell.com>
 
 	* MonoAssembly.cs: make MonoAssembly non public.

@@ -47,8 +47,12 @@ namespace System.Reflection {
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
+
+#if NET_4_0
 	public class Module : ISerializable, ICustomAttributeProvider, _Module {
-	
+#else
+	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
+#endif
 		public static readonly TypeFilter FilterTypeName;
 		public static readonly TypeFilter FilterTypeNameIgnoreCase;
 	
