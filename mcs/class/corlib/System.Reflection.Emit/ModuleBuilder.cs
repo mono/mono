@@ -813,6 +813,12 @@ namespace System.Reflection.Emit {
 		{
 			throw new NotImplementedException ();
 		}
+
+#if NET_4_0
+		public override	Assembly Assembly {
+			get { return assemblyb; }
+		}
+#endif
 	}
 
 	internal class ModuleBuilderTokenGenerator : TokenGenerator {
