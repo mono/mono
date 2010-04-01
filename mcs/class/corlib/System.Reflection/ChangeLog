@@ -1,3 +1,12 @@
+2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Module.cs (GetMethod): Check for null 'types' argument.
+
+	* MonoModule.cs (GetMethodImpl): Special case when 'types'
+	is null and call Type::GetMethod(string) directly.
+	This is ok since proper checking of the 'types' overload
+	is done by callers.
+
 2010-04-01  Jb Evain  <jbevain@novell.com>
 
 	* Module.cs: make Module abstract on net_4_0.

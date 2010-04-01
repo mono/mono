@@ -204,7 +204,11 @@ namespace System.Reflection {
 				return null;
 
 			Type globalType = GetGlobalType ();
-			return (globalType != null) ? globalType.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers) : null;
+			if (globalType == null)
+				return null;
+			if (types == null)
+				return globalType.GetMethod (name);
+			return globalType.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 
 		public

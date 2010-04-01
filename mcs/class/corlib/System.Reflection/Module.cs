@@ -107,17 +107,20 @@ namespace System.Reflection {
 	
 		public MethodInfo GetMethod (string name) 
 		{
-			//FIXME this sure breaks since Type.GetMethod throws due to a null 'type' array. But it's what MS does
 			return GetMethodImpl (name, defaultBindingFlags, null, CallingConventions.Any, null, null);
 		}
 	
 		public MethodInfo GetMethod (string name, Type[] types) 
 		{
+			if (types == null)
+				throw new ArgumentNullException ("types");
 			return GetMethodImpl (name, defaultBindingFlags, null, CallingConventions.Any, types, null);
 		}
 	
 		public MethodInfo GetMethod (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
 		{
+			if (types == null)
+				throw new ArgumentNullException ("types");
 			return GetMethodImpl (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
 	
