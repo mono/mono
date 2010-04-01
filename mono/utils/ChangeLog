@@ -1,3 +1,7 @@
+2010-04-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-semaphore.[ch]: wait can be alertable now. Defaults to FALSE.
+
 2010-04-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* mono-logger.c, mono-logger-internal.h: Add a new "security"
