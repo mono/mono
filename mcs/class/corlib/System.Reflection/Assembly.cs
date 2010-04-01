@@ -871,7 +871,7 @@ namespace System.Reflection {
 #if NET_4_0
 		static Exception CreateNIE ()
 		{
-			return new NotSupportedException ("Derived classes must implement it");
+			return new NotImplementedException ("Derived classes must implement it");
 		}
 
 		public virtual Type GetType (string name, bool throwOnError, bool ignoreCase)
