@@ -152,7 +152,9 @@ class DocHandler (saxutils.DefaultHandler):
             print ('<h1>%s collection %d</h1>' % (self.collection_kind, self.collection_num), file = self.collection_file)
             self.usage = {}
             self.los_usage = {}
+            self.pinned_usage = {}
             self.in_los = False
+            self.in_pinned = False
             self.heap_used = 0
             self.heap_size = 0
             self.los_size = 0
@@ -184,6 +186,11 @@ class DocHandler (saxutils.DefaultHandler):
             if self.in_los:
                 usage_dict = self.los_usage
                 self.los_size += size
+            elif self.in_pinned:
+                location = attrs.get('location', None)
+                if location not in self.pinned_usage:
+                    self.pinned_usage[location] = {}
+                usage_dict = self.pinned_usage[location]
             else:
                 usage_dict = self.usage
                 offset = int(attrs.get('offset', None))
@@ -202,6 +209,8 @@ class DocHandler (saxutils.DefaultHandler):
             self.heap_used += size
         elif name == 'los':
             self.in_los = True
+        elif name == 'pinned-objects':
+            self.in_pinned = True
 
     def dump_usage (self, usage_dict, limit):
         klasses = sorted (usage_dict.keys (), lambda x, y: usage_dict [y][1] - usage_dict [x][1])
@@ -229,12 +238,18 @@ class DocHandler (saxutils.DefaultHandler):
             self.dump_usage (self.usage, 10)
             print ('<h3>LOS</h3>', file = self.collection_file)
             self.dump_usage (self.los_usage, None)
+            print ('<h3>Pinned</h3>', file = self.collection_file)
+            for location in sorted (self.pinned_usage.keys ()):
+                print ('<h4>%s</h4>' % location, file = self.collection_file)
+                self.dump_usage (self.pinned_usage[location], None)
             print ('</body></html>', file = self.collection_file)
             print (' - %d kB / %d kB (%d%%) - %d kB LOS</a><br>' % (self.heap_used / 1024, self.heap_size / 1024, int(100.0 * self.heap_used / self.heap_size), self.los_size / 1024), file = self.index_file)
             self.collection_file.close ()
             self.collection_index += 1
         elif name == 'los':
             self.in_los = False
+        elif name == 'pinned-objects':
+            self.in_pinned = False
 
 def main ():
     usage = "usage: %prog [options]"
