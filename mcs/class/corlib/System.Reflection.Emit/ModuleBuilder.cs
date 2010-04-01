@@ -834,6 +834,15 @@ namespace System.Reflection.Emit {
 		{
 			return false;
 		}
+
+		protected override MethodInfo GetMethodImpl (string name, BindingFlags bindingAttr, Binder binder, CallingConventions callConvention, Type[] types, ParameterModifier[] modifiers) 
+		{
+			if (global_type_created == null)
+				return null;
+			if (types == null)
+				return global_type_created.GetMethod (name);
+			return global_type_created.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers);
+		}
 #endif
 	}
 

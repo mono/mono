@@ -1,5 +1,9 @@
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* ModuleBuilder.cs: Implement GetMethodImpl.
+
+2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* ModuleBuilder.cs (DefineType): Raise the correct exception
 	when name is null.
 
