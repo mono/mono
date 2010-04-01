@@ -843,6 +843,16 @@ namespace System.Reflection.Emit {
 				return global_type_created.GetMethod (name);
 			return global_type_created.GetMethod (name, bindingAttr, binder, callConvention, types, modifiers);
 		}
+
+		public override Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
+			ResolveTokenError error;
+
+			IntPtr handle = ResolveTypeToken (_impl, metadataToken, ptrs_from_types (genericTypeArguments), ptrs_from_types (genericMethodArguments), out error);
+			if (handle == IntPtr.Zero)
+				throw resolve_token_exception (metadataToken, error, "Type");
+			else
+				return Type.GetTypeFromHandle (new RuntimeTypeHandle (handle));
+		}
 #endif
 	}
 
