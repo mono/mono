@@ -1,5 +1,10 @@
 2010-04-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* appdomain.c (mono_domain_assembly_postload_search): Avoid a crash/assert if
+	the assembly name is not well formed utf8. Fixes #567882.
+
+2010-04-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* reflection.c (mono_reflection_create_generic_class): Set the flags field of
 	the generic parameters from the builder. Fixes #473298.
 
