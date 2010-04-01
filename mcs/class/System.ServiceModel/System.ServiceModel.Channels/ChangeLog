@@ -1,3 +1,7 @@
+2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FaultConverter.cs : use addressing version from the message.
+
 2010-03-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FaultConverter.cs : check envelope version, not addressing version.

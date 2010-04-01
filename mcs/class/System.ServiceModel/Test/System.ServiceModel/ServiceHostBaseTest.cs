@@ -324,30 +324,39 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void RunDestinationUnreachableTest ()
 		{
+			RunDestinationUnreachableTest ("BasicHttp", new BasicHttpBinding ());
+		}
+
+		[Test]
+		public void RunDestinationUnreachableTest2 ()
+		{
+			RunDestinationUnreachableTest ("CustomSoap12", new CustomBinding (new HttpTransportBindingElement ()));
+		}
+
+		void RunDestinationUnreachableTest (string label, Binding binding)
+		{
 			string address = "http://localhost:37564/";
-			var host = OpenHost (address);
-			
-			var binding = new BasicHttpBinding ();
-			var client = new DestinationUnreachableClient (binding, address);
+			var host = OpenHost (address, binding);
 			
 			try {
+				var client = new DestinationUnreachableClient (binding, address);
 				client.NotImplementedOperation ();
-				Assert.Fail ("ActionNotSupportedException is expected");
+				Assert.Fail (label + " ActionNotSupportedException is expected");
 			} catch (ActionNotSupportedException) {
 				// catching it instead of ExpectedException to distinguish errors at service side.
+			} finally {
+				host.Close ();
 			}
 		}
 		
-		ServiceHost OpenHost (string address)
+		ServiceHost OpenHost (string address, Binding binding)
 		{
 			var baseAddresses = new Uri[] { new Uri(address) };
 
 			var host = new ServiceHost (typeof (DummyService), baseAddresses);
-			var basicBinding = new BasicHttpBinding ();
-			host.AddServiceEndpoint (typeof (IDummyService), basicBinding, new Uri ("", UriKind.Relative));
+			host.AddServiceEndpoint (typeof (IDummyService), binding, new Uri ("", UriKind.Relative));
 			host.Open ();
 			return host;
 		}

@@ -82,7 +82,6 @@ namespace System.ServiceModel.Channels
 			this.version = version;
 		}
 
-		// How is the argument message used?
 		protected override bool OnTryCreateException (
 			Message message, MessageFault fault, out Exception error)
 		{
@@ -103,8 +102,7 @@ namespace System.ServiceModel.Channels
 				return false;
 
 			string msg = fault.Reason.GetMatchingTranslation ().Text;
-			switch (fc.Namespace) {
-			case Constants.WsaNamespace:
+			if (fc.Namespace == message.Version.Addressing.Namespace) {
 				switch (fc.Name) {
 				case "ActionNotSupported":
 					error = new ActionNotSupportedException (msg);
@@ -113,7 +111,6 @@ namespace System.ServiceModel.Channels
 					error = new EndpointNotFoundException (msg);
 					return true;
 				}
-				break;
 			}
 
 			return false;
