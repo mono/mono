@@ -1,3 +1,8 @@
+2010-04-01  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* mono-logger.c, mono-logger-internal.h: Add a new "security"
+	category to logging infrastructure.
+
 2010-03-31  Miguel de Icaza  <miguel@novell.com>
 
 	* mono-semaphore.h: Use Windows semaphores on Windows, patch
