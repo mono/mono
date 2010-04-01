@@ -92,10 +92,10 @@ ZLIB_SOURCES = \
 
 if HAVE_ZLIB
 Z_SOURCE = zlib-helper.c
-Z_LIBS= -lz
+Z_LIBS= -lz $(GLIB_LIBS)
 else
 Z_SOURCE = zlib-helper.c $(ZLIB_SOURCES)
-Z_LIBS=
+Z_LIBS= $(GLIB_LIBS)
 endif
 
 libMonoPosixHelper_la_SOURCES =			\
