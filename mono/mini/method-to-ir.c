@@ -6592,6 +6592,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (!MONO_TYPE_IS_VOID (fsig->ret))
 					*sp++ = mono_emit_widen_call_res (cfg, ins, fsig);
 
+				CHECK_CFG_EXCEPTION;
+
 				ip += 5;
 				ins_flag = 0;
 				break;
@@ -6638,6 +6640,9 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				MONO_ADD_INS (bblock, ins);
 				link_bblock (cfg, bblock, end_bblock);			
 				start_new_bblock = 1;
+
+				CHECK_CFG_EXCEPTION;
+
 				/* skip CEE_RET as well */
 				ip += 6;
 				ins_flag = 0;
@@ -6651,6 +6656,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					*sp = ins;
 					sp++;
 				}
+
+				CHECK_CFG_EXCEPTION;
 
 				ip += 5;
 				ins_flag = 0;
@@ -6796,6 +6803,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 				if (!MONO_TYPE_IS_VOID (fsig->ret))
 					*sp++ = mono_emit_widen_call_res (cfg, ins, fsig);
 
+				CHECK_CFG_EXCEPTION;
+
 				ip += 5;
 				ins_flag = 0;
 				break;
@@ -6835,6 +6844,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 					g_assert_not_reached ();
 				}
 
+				CHECK_CFG_EXCEPTION;
+
 				ip += 5;
 				ins_flag = 0;
 				break;
@@ -6844,6 +6855,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 			if (ins) {
 				if (!MONO_TYPE_IS_VOID (fsig->ret))
 					*sp++ = mono_emit_widen_call_res (cfg, ins, fsig);
+
+				CHECK_CFG_EXCEPTION;
 
 				ip += 5;
 				ins_flag = 0;
@@ -6863,6 +6876,8 @@ mono_method_to_ir (MonoCompile *cfg, MonoMethod *method, MonoBasicBlock *start_b
 
 			if (!MONO_TYPE_IS_VOID (fsig->ret))
 				*sp++ = mono_emit_widen_call_res (cfg, ins, fsig);
+
+			CHECK_CFG_EXCEPTION;
 
 			ip += 5;
 			ins_flag = 0;

@@ -1,5 +1,12 @@
 2010-04-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_call): Fail compilation if an argument is too
+	large. Fixes #567040.
+
+	* method-to-ir.c: Call CHECK_CFG_EXCEPTION after emitting a call.
+
+2010-04-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* method-to-ir.c (handle_ccastclass): Call save_cast_details (). Fixes
 	#592711.
 
