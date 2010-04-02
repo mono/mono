@@ -1,7 +1,7 @@
 2010-04-03  Marek Habersack  <mhabersack@novell.com>
 
-	* process.c: when compiling with MinGW, force GetProcessId lookup
-	using GetProcessAddress.
+	* process.c: when cross-compiling with MinGW, force GetProcessId
+	lookup using GetProcAddress.
 
 2010-04-02  Mark Probst  <mark.probst@gmail.com>
 
