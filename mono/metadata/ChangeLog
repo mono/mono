@@ -1,5 +1,10 @@
 2010-04-02  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-gray.c: Macros for gray_object_enqueue() and
+	gray_object_dequeue(), to make sure they're inlined.
+
+2010-04-02  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c, sgen-gray.c: Fix a few debug levels, put a few
 	asserts in inner loops into DEBUG and lower MAX_DEBUG_LEVEL.
 
