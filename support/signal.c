@@ -24,6 +24,7 @@
 #include <string.h>
 #include <pthread.h>
 #include <mono/io-layer/atomic.h>
+#include <mono/metadata/appdomain.h>
 #endif
 
 G_BEGIN_DECLS
@@ -151,6 +152,12 @@ static void release_mutex (pthread_mutex_t *mutex)
 	}
 }
 
+static inline int
+keep_trying (int r)
+{
+	return r == -1 && errno == EINTR && !mono_runtime_is_shutting_down();
+}
+
 static void
 default_handler (int signum)
 {
@@ -168,7 +175,7 @@ default_handler (int signum)
 			pipecounter = mph_int_get (&h->pipecnt);
 			for (j = 0; j < pipecounter; ++j) {
 				int r;
-				do { r = write (fd, &c, 1); } while (r == -1 && errno == EINTR);
+				do { r = write (fd, &c, 1); } while (keep_trying (r));
 				fsync (fd); /* force */
 			}
 		}
@@ -338,7 +345,7 @@ wait_for_any (signal_info** signals, int count, int *currfd, struct pollfd* fd_s
 			ptv = &tv;
 		}
 		r = poll (fd_structs, count, timeout);
-	} while (r == -1 && errno == EINTR);
+	} while (keep_trying (r));
 
 	idx = -1;
 	if (r == 0)
@@ -352,7 +359,7 @@ wait_for_any (signal_info** signals, int count, int *currfd, struct pollfd* fd_s
 				char c;
 				do {
 					r = read (h->read_fd, &c, 1);
-				} while (r == -1 && errno == EINTR);
+				} while (keep_trying (r));
 				if (idx == -1)
 					idx = i;
 			}
