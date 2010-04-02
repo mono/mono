@@ -430,8 +430,10 @@ namespace System.ServiceModel.MonoInternal
 			try {
 				return DoProcess (method, operationName, parameters);
 			} catch (Exception ex) {
+#if MOONLIGHT // just for debugging
 				Console.Write ("Exception in async operation: ");
 				Console.WriteLine (ex);
+#endif
 				throw;
 			}
 		}

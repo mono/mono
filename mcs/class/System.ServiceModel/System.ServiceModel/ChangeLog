@@ -1,5 +1,9 @@
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : hush on non-ml profile.
+
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs :
 	  use DataContractSerializer.IsStartObject() to check if the fault
 	  detail reader is for the fault contract, in addition to Action.
