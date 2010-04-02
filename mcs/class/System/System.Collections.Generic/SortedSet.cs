@@ -135,17 +135,25 @@ namespace System.Collections.Generic {
 		}
 
 		public int Count {
-			get { return (int) tree.Count; }
+			get { return tree.Count; }
 		}
 
-		[MonoTODO]
 		public T Max {
-			get { throw new NotImplementedException (); }
+			get {
+				if (tree.Count == 0)
+					return default (T);
+
+				return ((Node) tree [tree.Count - 1]).item;
+			}
 		}
 
-		[MonoTODO]
 		public T Min {
-			get { throw new NotImplementedException (); }
+			get {
+				if (tree.Count == 0)
+					return default (T);
+
+				return ((Node) tree [0]).item;
+			}
 		}
 
 		public bool Add (T item)

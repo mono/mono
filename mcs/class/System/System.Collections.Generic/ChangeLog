@@ -1,5 +1,9 @@
 2010-04-02  Jb Evain  <jbevain@novell.com>
 
+	* SortedSet.cs: implement Min and Max.
+
+2010-04-02  Jb Evain  <jbevain@novell.com>
+
 	* SortedSet.cs: implement RemoveWhere.
 
 2010-04-02  Jb Evain  <jbevain@novell.com>
