@@ -256,6 +256,11 @@ namespace System.Reflection.Emit {
 			}
 			return retval;
 		}
+		
+		internal override int GetParameterCount ()
+		{
+			return parameters == null ? 0 : parameters.Length;
+		}		
 
 		/*
 		public override object Invoke (object obj, object[] parameters) {

@@ -168,6 +168,12 @@ namespace System.Reflection {
 			src.CopyTo (res, 0);
 			return res;
 		}
+		
+		internal override int GetParameterCount ()
+		{
+			var pi = MonoMethodInfo.GetParametersInfo (mhandle, this);
+			return pi == null ? 0 : pi.Length;
+		}
 
 		/*
 		 * InternalInvoke() receives the parameters correctly converted by the 
@@ -460,6 +466,12 @@ namespace System.Reflection {
 		public override ParameterInfo[] GetParameters ()
 		{
 			return MonoMethodInfo.GetParametersInfo (mhandle, this);
+		}
+
+		internal override int GetParameterCount ()
+		{
+			var pi = MonoMethodInfo.GetParametersInfo (mhandle, this);
+			return pi == null ? 0 : pi.Length;
 		}
 
 		/*

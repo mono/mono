@@ -1,3 +1,8 @@
+2010-04-02  Marek Safar  <marek.safar@gmail.com>
+
+	* MethodBase.cs: Made GetParameterCount abstract and implement
+	where missing to avoid redundant allocations.
+
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Module.cs (GetMethod): Check for null 'types' argument.

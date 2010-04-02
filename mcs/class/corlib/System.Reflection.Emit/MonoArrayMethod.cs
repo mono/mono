@@ -80,6 +80,12 @@ namespace System.Reflection {
 		public override ParameterInfo[] GetParameters() {
 			return new ParameterInfo [0];
 		}
+		
+		[MonoTODO("Not implemented.  Always returns 0")]
+		internal override int GetParameterCount ()
+		{
+			return 0;
+		}		
 
 		[MonoTODO("Not implemented")]
 		public override Object Invoke(Object obj, BindingFlags invokeAttr, Binder binder, Object[] parameters, CultureInfo culture) {
