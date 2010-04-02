@@ -61,7 +61,7 @@ namespace System.ServiceModel.Dispatcher
 		SynchronizedCollection<IParameterInspector> inspectors
 			= new SynchronizedCollection<IParameterInspector> ();
 #if !NET_2_1
-		SynchronizedCollection<FaultContractInfo> fault_contract_infos;
+		SynchronizedCollection<FaultContractInfo> fault_contract_infos = new SynchronizedCollection<FaultContractInfo> ();
 #endif
 
 		public ClientOperation (ClientRuntime parent,
@@ -106,15 +106,7 @@ namespace System.ServiceModel.Dispatcher
 
 #if !NET_2_1
 		public SynchronizedCollection<FaultContractInfo> FaultContractInfos {
-			get {
-				if (fault_contract_infos == null) {
-					var l = new SynchronizedCollection<FaultContractInfo> ();
-					foreach (var f in Description.Faults)
-						l.Add (new FaultContractInfo (f.Action, f.DetailType));
-					fault_contract_infos = l;
-				}
-				return fault_contract_infos;
-			}
+			get { return fault_contract_infos; }
 		}
 #endif
 
