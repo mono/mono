@@ -1,5 +1,9 @@
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FaultContractInfo.cs : add serializer property.
+
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientOperation.cs : do not automatically fill FaultContractInfos.
 
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>

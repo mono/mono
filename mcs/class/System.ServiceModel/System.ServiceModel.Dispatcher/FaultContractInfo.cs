@@ -25,6 +25,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Runtime.Serialization;
 using System.ServiceModel;
 
 namespace System.ServiceModel.Dispatcher
@@ -41,8 +42,18 @@ namespace System.ServiceModel.Dispatcher
 			Detail = detail;
 		}
 
+		DataContractSerializer serializer;
+
 		public string Action { get; private set; }
 
 		public Type Detail { get; private set; }
+
+		internal DataContractSerializer Serializer {
+			get {
+				if (serializer == null)
+					serializer = new DataContractSerializer (Detail);
+				return serializer;
+			}
+		}
 	}
 }
