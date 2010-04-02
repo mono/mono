@@ -85,7 +85,10 @@ namespace System.Reflection {
 		// This is a quick version for our own use. We should override
 		// it where possible so that it does not allocate an array.
 		//
-		internal abstract int GetParameterCount ();
+		internal virtual int GetParameterCount ()
+		{
+			throw new NotImplementedException ("must be implemented");
+		}
 
 		[DebuggerHidden]
 		[DebuggerStepThrough]		
