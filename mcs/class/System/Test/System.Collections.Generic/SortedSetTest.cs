@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -128,6 +128,20 @@ namespace MonoTests.System.Collections.Generic
 			Assert.AreEqual (3, set.Count);
 			Assert.IsTrue (set.SequenceEqual (new [] { 1, 3, 5 }));
 
+		}
+
+		[Test]
+		public void Max ()
+		{
+			var set = new SortedSet<int> { 1, 3, 12, 9 };
+			Assert.AreEqual (12, set.Max);
+		}
+
+		[Test]
+		public void Min ()
+		{
+			var set = new SortedSet<int> { 2, 3, 1, 9 };
+			Assert.AreEqual (1, set.Min);
 		}
 	}
 }
