@@ -32,7 +32,7 @@
 2010-04-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: threadpool threads wait is alertable.
-	Fixes bug #592264.
+	Fixes bug #592964.
 	Reduced the stack size of the *poll_wait thread.
 
 2010-04-01  Sebastien Pouliot  <sebastien@ximian.com>
