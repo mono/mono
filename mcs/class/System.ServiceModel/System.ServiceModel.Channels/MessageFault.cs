@@ -68,12 +68,7 @@ namespace System.ServiceModel.Channels
 					fr = new FaultReason (r.ReadElementContentAsString());
 					break;
 				case "detail":
-					//BUGBUG: Handle children of type other than ExceptionDetail, in order to comply with 
-					//        FaultContractAttribute.
-					r.ReadStartElement ();
-					r.MoveToContent();
-					details = new DataContractSerializer (typeof (ExceptionDetail)).ReadObject (r);
-					break;
+					return new XmlReaderDetailMessageFault (message, r, fc, fr, null, null);
 				case "faultactor":
 				default:
 					throw new NotImplementedException ();
@@ -94,11 +89,15 @@ namespace System.ServiceModel.Channels
 		{
 			FaultCode fc = null;
 			FaultReason fr = null;
+			string node = null;
 			XmlDictionaryReader r = message.GetReaderAtBodyContents ();
 			r.ReadStartElement ("Fault", message.Version.Envelope.Namespace);
-			r.MoveToContent ();
 
-			while (r.NodeType != XmlNodeType.EndElement) {
+			for (r.MoveToContent (); r.NodeType != XmlNodeType.EndElement; r.MoveToContent ()) {
+				if (r.NamespaceURI != message.Version.Envelope.Namespace) {
+					r.Skip ();
+					continue;
+				}
 				switch (r.LocalName) {
 				case "Code":
 					fc = ReadFaultCode12 (r, message.Version.Envelope.Namespace);
@@ -106,10 +105,20 @@ namespace System.ServiceModel.Channels
 				case "Reason":
 					fr = ReadFaultReason12 (r, message.Version.Envelope.Namespace);
 					break;
+				case "Node":
+					node = r.ReadElementContentAsString ();
+					break;
+				case "Role":
+					r.Skip (); // no corresponding member to store.
+					break;
+				case "Detail":
+					if (!r.IsEmptyElement)
+						return new XmlReaderDetailMessageFault (message, r, fc, fr, null, node);
+					r.Read ();
+					break;
 				default:
 					throw new XmlException (String.Format ("Unexpected node {0} name {1}", r.NodeType, r.Name));
 				}
-				r.MoveToContent ();
 			}
 
 			if (fr == null)
@@ -117,7 +126,7 @@ namespace System.ServiceModel.Channels
 
 			r.ReadEndElement ();
 
-			return CreateFault (fc, fr);
+			return CreateFault (fc, fr, null, null, null, node);
 		}
 
 		static FaultCode ReadFaultCode11 (XmlDictionaryReader r)
@@ -233,12 +242,40 @@ namespace System.ServiceModel.Channels
 		}
 
 		// pretty simple implementation class
-		internal class SimpleMessageFault : MessageFault
+		internal abstract class BaseMessageFault : MessageFault
 		{
-			bool has_detail;
 			string actor, node;
 			FaultCode code;
 			FaultReason reason;
+
+			protected BaseMessageFault (FaultCode code, FaultReason reason, string actor, string node)
+			{
+				this.code = code;
+				this.reason = reason;
+				this.actor = actor;
+				this.node = node;
+			}
+
+			public override string Actor {
+				get { return actor; }
+			}
+
+			public override FaultCode Code {
+				get { return code; }
+			}
+
+			public override string Node {
+				get { return node; }
+			}
+
+			public override FaultReason Reason {
+				get { return reason; }
+			}
+		}
+
+		internal class SimpleMessageFault : BaseMessageFault
+		{
+			bool has_detail;
 			object detail;
 			XmlObjectSerializer formatter;
 
@@ -255,40 +292,21 @@ namespace System.ServiceModel.Channels
 				FaultReason reason,
 				object detail, XmlObjectSerializer formatter,
 				string actor, string node)
+				: base (code, reason, actor, node)
 			{
 				if (code == null)
 					throw new ArgumentNullException ("code");
 				if (reason == null)
 					throw new ArgumentNullException ("reason");
 
-				this.code = code;
-				this.reason = reason;
 				this.detail = detail;
 				this.formatter = formatter;
-				this.actor = actor;
-				this.node = node;
-			}
-
-			public override string Actor {
-				get { return actor; }
-			}
-
-			public override FaultCode Code {
-				get { return code; }
 			}
 
 			public override bool HasDetail {
 				// it is not simply "detail != null" since
 				// null detail could become <ms:anyType xsi:nil="true" />
 				get { return has_detail; }
-			}
-
-			public override string Node {
-				get { return node; }
-			}
-
-			public override FaultReason Reason {
-				get { return reason; }
 			}
 
 			protected override XmlDictionaryReader OnGetReaderAtDetailContents ()
@@ -304,6 +322,44 @@ namespace System.ServiceModel.Channels
 
 			public object Detail {
 				get { return detail; }
+			}
+		}
+
+		class XmlReaderDetailMessageFault : BaseMessageFault
+		{
+			XmlDictionaryReader reader;
+			bool consumed;
+
+			public XmlReaderDetailMessageFault (Message message, XmlDictionaryReader reader, FaultCode code, FaultReason reason, string actor, string node)
+				: base (code, reason, actor, node)
+			{
+				this.reader = reader;
+			}
+
+			void Consume ()
+			{
+				if (consumed)
+					throw new InvalidOperationException ("The fault detail content is already consumed");
+				consumed = true;
+				reader.ReadStartElement (); // consume the wrapper
+				reader.MoveToContent ();
+			}
+
+			public override bool HasDetail {
+				get { return true; }
+			}
+
+			protected override XmlDictionaryReader OnGetReaderAtDetailContents ()
+			{
+				Consume ();
+				return reader;
+			}
+
+			protected override void OnWriteDetailContents (XmlDictionaryWriter writer)
+			{
+				Consume ();
+				while (reader.NodeType != XmlNodeType.EndElement)
+					writer.WriteNode (reader, false);
 			}
 		}
 
