@@ -114,7 +114,7 @@ namespace System.Collections.Generic {
 		{
 			if (collection == null)
 				throw new ArgumentNullException ("collection");
-	
+
 			foreach (var item in collection)
 				Add (item);
 		}
@@ -198,18 +198,34 @@ namespace System.Collections.Generic {
 			return tree.Remove (item) != null;
 		}
 
-		[MonoTODO]
 		public int RemoveWhere (Predicate<T> match)
 		{
-			throw new NotImplementedException ();
+			var array = ToArray ();
+
+			int count = 0;
+			foreach (var item in array) {
+				if (!match (item))
+					continue;
+
+				Remove (item);
+				count++;
+			}
+
+			return count;
 		}
 
 		public IEnumerable<T> Reverse ()
 		{
-			var reversed = new T [this.Count];
-			CopyTo (reversed);
+			var reversed = ToArray ();
 			Array.Reverse (reversed);
 			return reversed;
+		}
+
+		T [] ToArray ()
+		{
+			var array = new T [this.Count];
+			CopyTo (array);
+			return array;
 		}
 
 		public Enumerator GetEnumerator ()
