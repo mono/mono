@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -142,6 +142,109 @@ namespace MonoTests.System.Collections.Generic
 		{
 			var set = new SortedSet<int> { 2, 3, 1, 9 };
 			Assert.AreEqual (1, set.Min);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetViewBetweenLowerBiggerThanUpper ()
+		{
+			var set = new SortedSet<int> { 1, 2, 3, 4, 5, 6 };
+			set.GetViewBetween (4, 2);
+		}
+
+		[Test]
+		public void GetView ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (3, 7);
+
+			Assert.IsTrue (view.SequenceEqual (new [] { 3, 5, 7 }));
+		}
+
+		[Test]
+		public void ViewAdd ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7 };
+			var view = set.GetViewBetween (3, 5);
+
+			Assert.IsTrue (view.Add (4));
+			Assert.IsTrue (view.Contains (4));
+			Assert.IsTrue (set.Contains (4));
+
+			Assert.IsFalse (view.Add (5));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ViewAddOutOfRange ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7 };
+			var view = set.GetViewBetween (3, 5);
+
+			view.Add (7);
+		}
+
+		[Test]
+		public void ViewContains ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (3, 7);
+
+			Assert.IsFalse (view.Contains (4));
+			Assert.IsTrue (view.Contains (3));
+			Assert.IsTrue (view.Contains (5));
+		}
+
+		[Test]
+		public void ViewRemove ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (3, 7);
+
+			Assert.IsTrue (view.Remove (3));
+			Assert.IsFalse (view.Contains (3));
+			Assert.IsFalse (set.Contains (3));
+			Assert.IsFalse (view.Remove (9));
+			Assert.IsTrue (set.Contains (9));
+		}
+
+		[Test]
+		public void ViewClear ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (3, 7);
+
+			view.Clear ();
+
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 9 }));
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ViewGetViewLowerOutOfRange ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (3, 7);
+			view.GetViewBetween (2, 5);
+		}
+
+		[Test]
+		[ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ViewGetViewUpperOutOfRange ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (3, 7);
+			view.GetViewBetween (5, 9);
+		}
+
+		[Test]
+		public void ViewGetView ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (3, 7);
+			view = view.GetViewBetween (4, 6);
+
+			Assert.IsTrue (view.SequenceEqual (new [] { 5 }));
 		}
 	}
 }
