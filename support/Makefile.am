@@ -103,10 +103,18 @@ libMonoPosixHelper_la_SOURCES =			\
 	$(Z_SOURCE)				\
 	$(MINIZIP_SOURCE)
 
+if PLATFORM_WIN32
 libMonoPosixHelper_la_LIBADD =			\
 	$(MPH_LIBS)				\
 	$(Z_LIBS)				\
 	$(XATTR_LIB)
+else
+libMonoPosixHelper_la_LIBADD =			\
+	../mono/mini/libmono.la \
+	$(MPH_LIBS)				\
+	$(Z_LIBS)				\
+	$(XATTR_LIB)
+endif
 
 # libMonoPosixHelper_la_LDFLAGS = -no-undefined -version-info 1:0:1
 libMonoPosixHelper_la_LDFLAGS = -no-undefined -avoid-version
