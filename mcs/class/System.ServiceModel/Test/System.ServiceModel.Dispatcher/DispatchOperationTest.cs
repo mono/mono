@@ -67,8 +67,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			Assert.IsTrue (o.DeserializeRequest, "#1");
 			Assert.IsTrue (o.SerializeReply, "#2");
 			Assert.IsNull (o.Formatter, "#3");
-			// FIXME: FaultDetailTypes -> FaultContractInfos
-			//Assert.AreEqual (0, o.FaultDetailTypes.Count, "#4");
+			Assert.AreEqual (0, o.FaultContractInfos.Count, "#4");
 			Assert.IsNull (o.Invoker, "#5");
 			Assert.IsFalse (o.IsOneWay, "#6");
 			Assert.IsFalse (o.IsTerminating, "#7");
@@ -83,6 +82,61 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		{
 			return new EndpointDispatcher (
 				new EndpointAddress ("http://localhost:8080"), "IFoo", "urn:foo").DispatchRuntime;
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void FaultContractInfos ()
+		{
+			var host = new ServiceHost (typeof (TestFaultContract));
+			host.Description.Behaviors.Find<ServiceDebugBehavior> ().IncludeExceptionDetailInFaults = true;
+			host.AddServiceEndpoint (typeof (ITestFaultContract), new BasicHttpBinding (), new Uri ("http://localhost:37564"));
+			host.Open ();
+			try {
+				var cf = new ChannelFactory<ITestFaultContract> (new BasicHttpBinding (), new EndpointAddress ("http://localhost:37564"));
+				var cli = cf.CreateChannel ();
+				cli.Run ("test");
+			} catch (FaultException<PrivateAffairError> ex) {
+				var p  = ex.Detail;
+				Assert.AreEqual (5, p.ErrorCode, "#1");
+				Assert.AreEqual ("foobarerror", p.Text, "#2");
+			} finally {
+				host.Close ();
+			}
+		}
+
+		[ServiceContract]
+		public interface ITestFaultContract
+		{
+			[OperationContract]
+			[FaultContract (typeof (PrivateAffairError), Action = "urn:myfault")]
+			string Run (string input);
+		}
+
+		class TestFaultContract : ITestFaultContract
+		{
+			public string Run (string input)
+			{
+				Assert.AreEqual (1, ContractDescription.GetContract (typeof (TestFaultContract)).Operations [0].Faults.Count, "s#0");
+
+				var dr = OperationContext.Current.EndpointDispatcher.DispatchRuntime;
+				Assert.AreEqual (1, dr.Operations.Count);
+				var dop = dr.Operations [0];
+				Assert.AreEqual ("Run", dop.Name, "s#1");
+				Assert.AreEqual (1, dop.FaultContractInfos.Count, "s#2");
+				var fci = dop.FaultContractInfos [0];
+				Assert.AreEqual (typeof (PrivateAffairError), fci.Detail, "s#3");
+				throw new FaultException<PrivateAffairError> (new PrivateAffairError () { ErrorCode = 5, Text = "foobarerror" });
+			}
+		}
+
+		[DataContract]
+		class PrivateAffairError
+		{
+			[DataMember]
+			public int ErrorCode { get; set; }
+			[DataMember]
+			public string Text { get; set; }
 		}
 	}
 }
