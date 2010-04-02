@@ -1,5 +1,9 @@
 2010-04-02  Jb Evain  <jbevain@novell.com>
 
+	* SortedSetTest.cs: add tests for Min and Max on subsets.
+
+2010-04-02  Jb Evain  <jbevain@novell.com>
+
 	* SortedSetTest.cs: add tests for GetViewBetween.
 
 2010-04-02  Jb Evain  <jbevain@novell.com>
