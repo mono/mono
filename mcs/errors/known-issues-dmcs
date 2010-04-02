@@ -26,3 +26,6 @@ cs1540-9.cs
 # the error message has an assembly version in it
 cs1685.cs
 gcs1685.cs
+
+dcs0121.cs # Bug 593368
+dcs0165.cs # Bug 593369

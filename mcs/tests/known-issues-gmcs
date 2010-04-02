@@ -12,6 +12,6 @@ gtest-437.cs
 
 test-416.cs bug #504085
 test-418.cs bug #504085
-test-682.cs bug #530861
+test-454.cs bug #593342
 test-704.cs IGNORE #472845
 test-715.cs bug #504085
