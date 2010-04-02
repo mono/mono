@@ -194,6 +194,8 @@ namespace System.ServiceModel.Channels
 					throw new XmlException ("xml:lang is mandatory on fault reason Text");
 				l.Add (new FaultReasonText (r.ReadElementContentAsString ("Text", ns), lang));
 			}
+			r.ReadEndElement ();
+
 			return new FaultReason (l);
 		}
 
@@ -309,15 +311,14 @@ namespace System.ServiceModel.Channels
 				get { return has_detail; }
 			}
 
-			protected override XmlDictionaryReader OnGetReaderAtDetailContents ()
-			{
-				// FIXME: use XmlObjectSerializer
-				return base.OnGetReaderAtDetailContents ();
-			}
-
 			protected override void OnWriteDetailContents (XmlDictionaryWriter writer)
 			{
-				formatter.WriteObject (writer, detail);
+				if (formatter == null && detail != null)
+					formatter = new DataContractSerializer (detail.GetType ());
+				if (formatter != null)
+					formatter.WriteObject (writer, detail);
+				else
+					throw new InvalidOperationException ("There is no fault detail to write");
 			}
 
 			public object Detail {
@@ -357,6 +358,8 @@ namespace System.ServiceModel.Channels
 
 			protected override void OnWriteDetailContents (XmlDictionaryWriter writer)
 			{
+				if (!HasDetail)
+					throw new InvalidOperationException ("There is no fault detail to write");
 				Consume ();
 				while (reader.NodeType != XmlNodeType.EndElement)
 					writer.WriteNode (reader, false);
@@ -468,6 +471,8 @@ namespace System.ServiceModel.Channels
 
 		protected virtual XmlDictionaryReader OnGetReaderAtDetailContents ()
 		{
+			if (!HasDetail)
+				throw new InvalidOperationException ("There is no fault detail to read");
 			MemoryStream ms = new MemoryStream ();
 			using (XmlDictionaryWriter dw =
 				XmlDictionaryWriter.CreateDictionaryWriter (
