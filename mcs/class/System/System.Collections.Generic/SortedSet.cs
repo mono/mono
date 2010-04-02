@@ -139,21 +139,27 @@ namespace System.Collections.Generic {
 		}
 
 		public T Max {
-			get {
-				if (tree.Count == 0)
-					return default (T);
-
-				return GetItem (tree.Count - 1);
-			}
+			get { return GetMax (); }
 		}
 
 		public T Min {
-			get {
-				if (tree.Count == 0)
-					return default (T);
+			get {  return GetMin (); }
+		}
 
-				return GetItem (0);
-			}
+		internal virtual T GetMax ()
+		{
+			if (tree.Count == 0)
+				return default (T);
+
+			return GetItem (tree.Count - 1);
+		}
+
+		internal virtual T GetMin ()
+		{
+			if (tree.Count == 0)
+				return default (T);
+
+			return GetItem (0);
 		}
 
 		T GetItem (int index)
@@ -464,6 +470,28 @@ namespace System.Collections.Generic {
 				this.set = set;
 				this.lower = lower;
 				this.upper = upper;
+			}
+
+			internal override T GetMin ()
+			{
+				for (int i = 0; i < set.tree.Count; i++) {
+					var item = set.GetItem (i);
+					if (InRange (item))
+						return item;
+				}
+
+				return default (T);
+			}
+
+			internal override T GetMax ()
+			{
+				for (int i = set.tree.Count - 1; i >= 0; i--) {
+					var item = set.GetItem (i);
+					if (InRange (item))
+						return item;
+				}
+
+				return default (T);
 			}
 
 			internal override bool TryAdd (T item)

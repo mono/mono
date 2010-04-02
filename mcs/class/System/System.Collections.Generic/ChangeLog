@@ -1,5 +1,9 @@
 2010-04-02  Jb Evain  <jbevain@novell.com>
 
+	* SortedSet.cs: implement Mix and Max for subsets.
+
+2010-04-02  Jb Evain  <jbevain@novell.com>
+
 	* SortedSet.cs: implement GetViewBetween.
 
 2010-04-02  Jb Evain  <jbevain@novell.com>
