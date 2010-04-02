@@ -26,11 +26,14 @@ namespace System.ServiceModel.Dispatcher
 				if (handler.HandleError (ex))
 					break;
 
+			// FIXME: remove them. FaultConverter also covers errors like EndpointNotFoundException, which this handler never covers. And checking converter twice is extraneous, so this part is just extraneous.
+			// FIXME: instead, FaultContractInfos should be checked
 			FaultConverter fc = FaultConverter.GetDefaultFaultConverter (dispatchRuntime.ChannelDispatcher.MessageVersion);
 			Message res = null;			
 			if (!fc.TryCreateFaultMessage (ex, out res))
 				throw ex;
 			mrc.ReplyMessage = res;
+
 			if (duplex != null)
 				mrc.Reply (duplex, true);
 			else

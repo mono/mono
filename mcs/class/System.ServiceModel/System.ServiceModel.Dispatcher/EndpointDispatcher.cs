@@ -159,6 +159,9 @@ namespace System.ServiceModel.Dispatcher
 				}
 			}
 
+			foreach (var fd in od.Faults)
+				o.FaultContractInfos.Add (new FaultContractInfo (fd.Action, fd.DetailType));
+
 			// Setup Invoker
 			o.Invoker = new DefaultOperationInvoker (od);
 

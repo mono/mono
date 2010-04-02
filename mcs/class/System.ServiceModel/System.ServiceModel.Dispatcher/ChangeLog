@@ -1,3 +1,9 @@
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : fill FaultContractInfos.
+	* DispatchOperation.cs : do not fill them dynamically/automatically.
+	* ErrorProcessingHandler.cs : added some FIXME notes.
+
 2010-03-30  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : differentiate EndpointNotFound and
