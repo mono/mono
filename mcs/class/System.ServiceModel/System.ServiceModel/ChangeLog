@@ -1,5 +1,9 @@
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : fix moonlight build.
+
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : use FaultContractInfos to create custom
 	  FaultException<T>. (It's not picking the expected FCI yet.)
 

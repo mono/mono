@@ -490,12 +490,14 @@ namespace System.ServiceModel.MonoInternal
 				if (!conv.TryCreateException (resb.CreateMessage (), fault, out ex)) {
 					if (fault.HasDetail) {
 						Type detailType = typeof (ExceptionDetail);
+#if !NET_2_1
 						foreach (var fci in op.FaultContractInfos)
 							// FIXME: matching by action is not likely the expected solution here. Probably QName matters.
 							if (res.Headers.Action == fci.Action) {
 								detailType = fci.Detail;
 								break;
 							}
+#endif
 						var ds = new DataContractSerializer (detailType);
 						var detail = ds.ReadObject (fault.GetReaderAtDetailContents ());
 						ex = (Exception) Activator.CreateInstance (typeof (FaultException<>).MakeGenericType (detailType), new object [] {detail, fault.Reason, fault.Code, res.Headers.Action});
