@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -118,6 +118,16 @@ namespace MonoTests.System.Collections.Generic
 			var set = new SortedSet<int> { 5, 3, 1, 2, 6, 4  };
 			var reversed = set.Reverse ();
 			Assert.IsTrue (reversed.SequenceEqual (new [] { 6, 5, 4, 3, 2, 1 }));
+		}
+
+		[Test]
+		public void RemoveWhere ()
+		{
+			var set = new SortedSet<int> { 1, 2, 3, 4, 5, 6 };
+			Assert.AreEqual (3, set.RemoveWhere (i => i % 2 == 0));
+			Assert.AreEqual (3, set.Count);
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 3, 5 }));
+
 		}
 	}
 }
