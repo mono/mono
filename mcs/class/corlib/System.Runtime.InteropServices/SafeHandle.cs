@@ -90,6 +90,7 @@ namespace System.Runtime.InteropServices
 			if (newcount == 0 && owns_handle && !IsInvalid){
 				ReleaseHandle ();
 				handle = invalid_handle_value;
+				refcount = -1;
 			}
 		}
 
@@ -105,7 +106,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.MayFail)]
 		public void DangerousAddRef (ref bool success)
 		{
-			if (refcount == 0)
+			if (refcount <= 0)
 				throw new ObjectDisposedException (GetType ().FullName);
 
 			int newcount, current;
@@ -113,7 +114,7 @@ namespace System.Runtime.InteropServices
 				current = refcount;
 				newcount = current + 1;
 				
-				if (handle == invalid_handle_value || current == 0){
+				if (current <= 0){
 					//
 					// In MS, calling sf.Close () followed by a call
 					// to P/Invoke with SafeHandles throws this, but
@@ -129,7 +130,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public IntPtr DangerousGetHandle ()
 		{
-			if (refcount == 0){
+			if (refcount <= 0){
 				throw new ObjectDisposedException (GetType ().FullName);
 			}
 
@@ -139,7 +140,7 @@ namespace System.Runtime.InteropServices
 		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public void DangerousRelease ()
 		{
-			if (refcount == 0)
+			if (refcount <= 0)
 				throw new ObjectDisposedException (GetType ().FullName);
 
 			int newcount, current;
@@ -198,7 +199,7 @@ namespace System.Runtime.InteropServices
 		public bool IsClosed {
 			[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 			get {
-				return refcount == 0;
+				return refcount <= 0;
 			}
 		}
 

@@ -1,3 +1,16 @@
+2010-04-02  Miguel de Icaza  <miguel@novell.com>
+
+	* SafeHandle.cs: Use refcount == -1 to indicate that the handle
+	had been closed.
+
+	The problem here is that we have no records of why the code that
+	threw a ObjectDisposedException inside the do { } while block on
+	DangerousAddRef was added.   It seems it was added in response to
+	Close() methods being called and the need to throw that exception
+	on further calls to ObjectDisposedException.
+
+	Sadly, we have no test suites for that.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* MarshalAsAttribute.cs, Marshal.cs: use MOONLIGHT symbol to
