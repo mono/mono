@@ -27,6 +27,7 @@
 //
 using System;
 using System.Reflection;
+using System.Runtime.Serialization;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
@@ -487,17 +488,21 @@ namespace System.ServiceModel.MonoInternal
 				var conv = OperationChannel.GetProperty<FaultConverter> () ?? FaultConverter.GetDefaultFaultConverter (res.Version);
 				Exception ex;
 				if (!conv.TryCreateException (resb.CreateMessage (), fault, out ex)) {
-					if (fault.HasDetail && fault is MessageFault.SimpleMessageFault) {
-						MessageFault.SimpleMessageFault simpleFault = fault as MessageFault.SimpleMessageFault;
-						object detail = simpleFault.Detail;
-						Type t = detail.GetType ();
-						Type faultType = typeof (FaultException<>).MakeGenericType (t);
-						object [] constructorParams = new object [] { detail, fault.Reason, fault.Code, fault.Actor };
-						ex = (FaultException) Activator.CreateInstance (faultType, constructorParams);
-					} else {
-						// given a MessageFault, it is hard to figure out the type of the embedded detail
-						ex = new FaultException(fault);
+					if (fault.HasDetail) {
+						Type detailType = typeof (ExceptionDetail);
+						foreach (var fci in op.FaultContractInfos)
+							// FIXME: matching by action is not likely the expected solution here. Probably QName matters.
+							if (res.Headers.Action == fci.Action) {
+								detailType = fci.Detail;
+								break;
+							}
+						var ds = new DataContractSerializer (detailType);
+						var detail = ds.ReadObject (fault.GetReaderAtDetailContents ());
+						ex = (Exception) Activator.CreateInstance (typeof (FaultException<>).MakeGenericType (detailType), new object [] {detail, fault.Reason, fault.Code, res.Headers.Action});
 					}
+
+					if (ex == null)
+						ex = new FaultException (fault);
 				}
 				throw ex;
 			}
