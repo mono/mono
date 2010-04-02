@@ -111,6 +111,14 @@ namespace MonoTests.System.Collections.Generic
 			var set = new SortedSet<int> { 5, 3, 1, 2, 6, 4  };
 			Assert.IsTrue (set.SequenceEqual (new [] { 1, 2, 3, 4, 5, 6 }));
 		}
+
+		[Test]
+		public void Reverse ()
+		{
+			var set = new SortedSet<int> { 5, 3, 1, 2, 6, 4  };
+			var reversed = set.Reverse ();
+			Assert.IsTrue (reversed.SequenceEqual (new [] { 6, 5, 4, 3, 2, 1 }));
+		}
 	}
 }
 
