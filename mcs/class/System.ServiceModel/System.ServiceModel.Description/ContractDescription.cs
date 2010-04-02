@@ -185,6 +185,10 @@ namespace System.ServiceModel.Description
 				    md.Body.ReturnValue.Type == typeof (Message))
 					o.DeserializeReply = false;
 			}
+#if !NET_2_1
+			foreach (var fd in od.Faults)
+				o.FaultContractInfos.Add (new FaultContractInfo (fd.Action, fd.DetailType));
+#endif
 			proxy.Operations.Add (o);
 		}
 	}
