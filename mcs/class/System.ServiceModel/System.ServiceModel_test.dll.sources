@@ -101,6 +101,7 @@ System.ServiceModel.Configuration/StandardBindingElementTest.cs
 System.ServiceModel.Configuration/UserBinding.cs
 System.ServiceModel.Description/ClientCredentialsTest.cs
 System.ServiceModel.Description/ContractDescriptionTest.cs
+System.ServiceModel.Description/FaultDescriptionTest.cs
 System.ServiceModel.Description/MetadataExchangeBindingsTest.cs
 System.ServiceModel.Description/MetadataResolverTest.cs
 System.ServiceModel.Description/OperationDescriptionTest.cs
@@ -167,6 +168,7 @@ System.ServiceModel/EndpointBehaviorCollectionTest.cs
 System.ServiceModel/EndpointIdentityTest.cs
 System.ServiceModel/ExtensionCollectionTest.cs
 System.ServiceModel/FaultCodeTest.cs
+System.ServiceModel/FaultContractAttributeTest.cs
 System.ServiceModel/FaultReasonTest.cs
 System.ServiceModel/IntegratedConnectionTest.cs
 System.ServiceModel/MessageSecurityVersionTest.cs

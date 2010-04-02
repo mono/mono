@@ -1,3 +1,7 @@
+2010-04-02  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel_test.dll.sources : add some new fault tests.
+
 2010-03-24  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources : move back all the Features tests

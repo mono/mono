@@ -246,7 +246,9 @@ namespace System.ServiceModel.Description
 					foreach (Type t in a.GetTypes ())
 						od.KnownTypes.Add (t);
 				foreach (FaultContractAttribute a in mi.GetCustomAttributes (typeof (FaultContractAttribute), false)) {
-					var fd = new FaultDescription (a.Action) { DetailType = a.DetailType, Name = a.Name, Namespace = a.Namespace };
+					var fname = a.Name ?? a.DetailType.Name + "Fault";
+					var fns = a.Namespace ?? cd.Namespace;
+					var fd = new FaultDescription (a.Action ?? cd.Namespace + cd.Name + "/" + od.Name + fname) { DetailType = a.DetailType, Name = fname, Namespace = fns };
 #if !NET_2_1
 					if (a.HasProtectionLevel)
 						fd.ProtectionLevel = a.ProtectionLevel;

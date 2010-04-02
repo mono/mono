@@ -85,7 +85,6 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void FaultContractInfos ()
 		{
 			var host = new ServiceHost (typeof (TestFaultContract));

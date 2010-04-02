@@ -1,5 +1,10 @@
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ContractDescriptionGenerator.cs : fill FaultDescription action,
+	  name and namespace as expected.
+
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ContractDescription.cs : fill FaultContractInfos in ClientOperation.
 
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>

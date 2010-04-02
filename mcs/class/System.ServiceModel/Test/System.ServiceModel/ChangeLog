@@ -1,5 +1,9 @@
 2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* FaultContractAttributeTest.cs : new test.
+
+2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBaseTest.cs : enable RunDestinationUnreachableTest()
 	  and add another case for different addressing version.
 
