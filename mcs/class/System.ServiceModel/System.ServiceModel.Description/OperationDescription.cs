@@ -64,7 +64,6 @@ namespace System.ServiceModel.Description
 			set { begin_method = value; }
 		}
 
-		[MonoTODO]
 		public KeyedByTypeCollection<IOperationBehavior> Behaviors {
 			get { return behaviors; }
 		}
@@ -79,7 +78,6 @@ namespace System.ServiceModel.Description
 			set { end_method = value; }
 		}
 
-		[MonoTODO]
 		public FaultDescriptionCollection Faults {
 			get { return faults; }
 		}
@@ -105,7 +103,6 @@ namespace System.ServiceModel.Description
 			set { is_terminating = value; }
 		}
 
-		[MonoTODO]
 		public Collection<Type> KnownTypes {
 			get { return known_types; }
 		}

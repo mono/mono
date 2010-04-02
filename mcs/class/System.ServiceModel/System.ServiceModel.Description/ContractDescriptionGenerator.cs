@@ -245,8 +245,14 @@ namespace System.ServiceModel.Description
 				foreach (ServiceKnownTypeAttribute a in serviceMethod.GetCustomAttributes (typeof (ServiceKnownTypeAttribute), false))
 					foreach (Type t in a.GetTypes ())
 						od.KnownTypes.Add (t);
-				foreach (FaultContractAttribute a in serviceMethod.GetCustomAttributes (typeof (FaultContractAttribute), false))
-					od.Faults.Add (new FaultDescription (a.Action) { DetailType = a.DetailType, Name = a.Name, Namespace = a.Namespace });
+				foreach (FaultContractAttribute a in mi.GetCustomAttributes (typeof (FaultContractAttribute), false)) {
+					var fd = new FaultDescription (a.Action) { DetailType = a.DetailType, Name = a.Name, Namespace = a.Namespace };
+#if !NET_2_1
+					if (a.HasProtectionLevel)
+						fd.ProtectionLevel = a.ProtectionLevel;
+#endif
+					od.Faults.Add (fd);
+				}
 				cd.Operations.Add (od);
 			}
 			else if (oca.AsyncPattern && od.BeginMethod != null ||

@@ -1,3 +1,10 @@
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* FaultDescription.cs : fill Action.
+	* ContractDescriptionGenerator.cs : do not fill Faults from service
+	  impl. method. Do this from contract method instead.
+	* OperationDescription.cs : remove extra TODOs.
+
 2010-03-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : compare "wsdl" parameter in case-

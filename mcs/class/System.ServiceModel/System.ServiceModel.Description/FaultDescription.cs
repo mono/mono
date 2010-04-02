@@ -35,7 +35,6 @@ using System.ServiceModel;
 
 namespace System.ServiceModel.Description
 {
-	[MonoTODO]
 	public class FaultDescription
 	{
 		string action, name, ns;
@@ -43,8 +42,11 @@ namespace System.ServiceModel.Description
 		bool has_protection_level;
 		ProtectionLevel protection_level;
 
-		public FaultDescription (string name)
+		public FaultDescription (string action)
 		{
+			if (action == null)
+				throw new ArgumentNullException ("action");
+			this.action = action;
 		}
 
 		public string Action {
