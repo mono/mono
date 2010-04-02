@@ -1,5 +1,9 @@
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpRequestChannel.cs : use correct max buffer size.
+
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageFault.cs : check null serializer and detail.
 	  Make sure to consume s12:Reason EndElement.
 

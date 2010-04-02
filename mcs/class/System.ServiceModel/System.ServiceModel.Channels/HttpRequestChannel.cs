@@ -43,9 +43,6 @@ namespace System.ServiceModel.Channels
 
 		WebRequest web_request;
 
-		// FIXME: supply maxSizeOfHeaders.
-		int max_headers = 0x10000;
-
 		// Constructor
 
 		public HttpRequestChannel (HttpChannelFactory<IRequestChannel> factory,
@@ -53,10 +50,6 @@ namespace System.ServiceModel.Channels
 			: base (factory, address, via)
 		{
 			this.source = factory;
-		}
-
-		public int MaxSizeOfHeaders {
-			get { return max_headers; }
 		}
 
 		public MessageEncoder Encoder {
@@ -224,8 +217,7 @@ namespace System.ServiceModel.Channels
 					ms.Seek (0, SeekOrigin.Begin);
 
 					Message ret = Encoder.ReadMessage (
-						//responseStream, MaxSizeOfHeaders);
-						ms, MaxSizeOfHeaders, res.ContentType);
+						ms, (int) source.Transport.MaxReceivedMessageSize, res.ContentType);
 					var rp = new HttpResponseMessageProperty () { StatusCode = hrr.StatusCode, StatusDescription = hrr.StatusDescription };
 					foreach (var key in hrr.Headers.AllKeys)
 						rp.Headers [key] = hrr.Headers [key];
