@@ -307,10 +307,12 @@ namespace System.Collections.Generic {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public virtual SortedSet<T> GetViewBetween (T lowerValue, T upperValue)
 		{
-			throw new NotImplementedException ();
+			if (Comparer.Compare (lowerValue, upperValue) > 0)
+				throw new ArgumentException ("The lowerValue is bigger than upperValue");
+
+			return new SortedSubSet (this, lowerValue, upperValue);
 		}
 
 		[MonoTODO]
@@ -446,6 +448,94 @@ namespace System.Collections.Generic {
 			void IEnumerator.Reset ()
 			{
 				host.Reset ();
+			}
+		}
+
+		[Serializable]
+		sealed class SortedSubSet : SortedSet<T>, IEnumerable<T>, IEnumerable {
+
+			SortedSet<T> set;
+			T lower;
+			T upper;
+
+			public SortedSubSet (SortedSet<T> set, T lower, T upper)
+				: base (set.Comparer)
+			{
+				this.set = set;
+				this.lower = lower;
+				this.upper = upper;
+			}
+
+			internal override bool TryAdd (T item)
+			{
+				if (!InRange (item))
+					throw new ArgumentOutOfRangeException ("item");
+
+				return set.TryAdd (item);
+			}
+
+			internal override bool TryRemove (T item)
+			{
+				if (!InRange (item))
+					return false;
+
+				return set.TryRemove (item);
+			}
+
+			public override bool Contains (T item)
+			{
+				if (!InRange (item))
+					return false;
+
+				return set.Contains (item);
+			}
+
+			public override void Clear ()
+			{
+				set.RemoveWhere (InRange);
+			}
+
+			bool InRange (T item)
+			{
+				return Comparer.Compare (item, lower) >= 0
+					&& Comparer.Compare (item, upper) <= 0;
+			}
+
+			public override SortedSet<T> GetViewBetween (T lowerValue, T upperValue)
+			{
+				if (Comparer.Compare (lowerValue, upperValue) > 0)
+					throw new ArgumentException ("The lowerValue is bigger than upperValue");
+				if (!InRange (lowerValue))
+					throw new ArgumentOutOfRangeException ("lowerValue");
+				if (!InRange (upperValue))
+					throw new ArgumentOutOfRangeException ("upperValue");
+
+				return new SortedSubSet (set, lowerValue, upperValue);
+			}
+
+			public IEnumerator<T> GetEnumerator ()
+			{
+				var yielding = false;
+
+				foreach (Node node in set.tree) {
+					var item = node.item;
+
+					if (InRange (item)) {
+						yield return item;
+						yielding = true;
+					} else if (yielding)
+						yield break;
+				}
+			}
+
+			IEnumerator<T> IEnumerable<T>.GetEnumerator ()
+			{
+				return GetEnumerator ();
+			}
+
+			IEnumerator IEnumerable.GetEnumerator ()
+			{
+				return GetEnumerator ();
 			}
 		}
 	}
