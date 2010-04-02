@@ -87,6 +87,42 @@ namespace MonoTests.System.Runtime.InteropServices
 			((IDisposable) sf).Dispose ();
 			Assert.AreEqual (sf.released, false, "r3");
 		}
+
+		//
+		// This test does a DangerousAddRef on a new instance
+		// of a custom user Safe Handle, and it just happens
+		// that the default value for the handle is an invalid
+		// handle.
+		//
+		// .NET does not throw an exception in this case, so
+		// we should not either
+		//
+		[Test]
+		public void DangerousAddRefOnNewInstance ()
+		{
+			var h = new IntPtrSafe ();
+			var success = false;
+			h.DangerousAddRef (ref success);
+			Assert.AreEqual (success, true, "daroni");
+		}
+		
+		public class IntPtrSafe : SafeHandle {
+			public IntPtrSafe() : base(IntPtr.Zero, true)
+			{
+			}
+
+			protected override bool ReleaseHandle()
+			{
+				return true;
+			}
+
+			public IntPtr Handle { get; set; }
+
+			public override bool IsInvalid
+			{
+				get { return Handle == IntPtr.Zero; }
+			}
+		}
 	}
 }
 
