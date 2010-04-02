@@ -143,7 +143,7 @@ namespace System.Collections.Generic {
 				if (tree.Count == 0)
 					return default (T);
 
-				return ((Node) tree [tree.Count - 1]).item;
+				return GetItem (tree.Count - 1);
 			}
 		}
 
@@ -152,8 +152,13 @@ namespace System.Collections.Generic {
 				if (tree.Count == 0)
 					return default (T);
 
-				return ((Node) tree [0]).item;
+				return GetItem (0);
 			}
+		}
+
+		T GetItem (int index)
+		{
+			return ((Node) tree [index]).item;
 		}
 
 		public bool Add (T item)
@@ -235,7 +240,7 @@ namespace System.Collections.Generic {
 		public IEnumerable<T> Reverse ()
 		{
 			for (int i = tree.Count - 1; i >= 0; i--)
-				yield return ((Node) tree [i]).item;
+				yield return GetItem (i);
 		}
 
 		T [] ToArray ()
