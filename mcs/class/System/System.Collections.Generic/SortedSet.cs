@@ -204,10 +204,12 @@ namespace System.Collections.Generic {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public IEnumerable<T> Reverse ()
 		{
-			throw new NotImplementedException ();
+			var reversed = new T [this.Count];
+			CopyTo (reversed);
+			Array.Reverse (reversed);
+			return reversed;
 		}
 
 		public Enumerator GetEnumerator ()
