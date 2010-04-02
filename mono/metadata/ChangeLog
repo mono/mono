@@ -1,3 +1,7 @@
+2010-04-02  Jb Evain  <jbevain@novell.com>
+
+	* exception.c: remove dead code.
+
 2010-04-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* *-gc.c: Fix the signature of mono_gc_get_used/heap_size () to be consistent
