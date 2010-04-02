@@ -1,5 +1,10 @@
 2010-04-02  Jb Evain  <jbevain@novell.com>
 
+	* SortedSet.cs: optimize Reverse. Add a virtual TryAdd and TryRemove
+	to override in sub trees.
+
+2010-04-02  Jb Evain  <jbevain@novell.com>
+
 	* SortedSet.cs: implement Min and Max.
 
 2010-04-02  Jb Evain  <jbevain@novell.com>

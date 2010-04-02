@@ -158,6 +158,11 @@ namespace System.Collections.Generic {
 
 		public bool Add (T item)
 		{
+			return TryAdd (item);
+		}
+
+		internal virtual bool TryAdd (T item)
+		{
 			var node = new Node (item);
 			return tree.Intern (item, node) == node;
 		}
@@ -203,6 +208,11 @@ namespace System.Collections.Generic {
 
 		public bool Remove (T item)
 		{
+			return TryRemove (item);
+		}
+
+		internal virtual bool TryRemove (T item)
+		{
 			return tree.Remove (item) != null;
 		}
 
@@ -224,9 +234,8 @@ namespace System.Collections.Generic {
 
 		public IEnumerable<T> Reverse ()
 		{
-			var reversed = ToArray ();
-			Array.Reverse (reversed);
-			return reversed;
+			for (int i = tree.Count - 1; i >= 0; i--)
+				yield return ((Node) tree [i]).item;
 		}
 
 		T [] ToArray ()
