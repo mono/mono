@@ -31,6 +31,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Runtime.Serialization;
 
 using NUnit.Framework;
@@ -102,6 +103,13 @@ namespace MonoTests.System.Collections.Generic
 			var set = new SortedSet<int> { 2, 3, 4, 5 };
 			Assert.IsTrue (set.Contains (4));
 			Assert.IsFalse (set.Contains (7));
+		}
+
+		[Test]
+		public void GetEnumerator ()
+		{
+			var set = new SortedSet<int> { 5, 3, 1, 2, 6, 4  };
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 2, 3, 4, 5, 6 }));
 		}
 	}
 }
