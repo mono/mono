@@ -145,6 +145,14 @@ namespace System.ServiceModel.Dispatcher
 
 			var req = mrc.IncomingMessage;
 
+			var fe = ex as FaultException;
+			if (fe != null && fe.GetType ().IsGenericType) {
+				var t = fe.GetType ().GetGenericArguments () [0];
+				foreach (var fci in mrc.Operation.FaultContractInfos)
+					if (fci.Detail == t)
+						return Message.CreateMessage (req.Version, fe.CreateMessageFault (), fci.Action);
+			}
+
 			// FIXME: set correct name
 			FaultCode fc = new FaultCode (
 				"InternalServiceFault",

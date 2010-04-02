@@ -27,7 +27,7 @@ namespace System.ServiceModel.Dispatcher
 					break;
 
 			// FIXME: remove them. FaultConverter also covers errors like EndpointNotFoundException, which this handler never covers. And checking converter twice is extraneous, so this part is just extraneous.
-			// FIXME: instead, FaultContractInfos should be checked
+			// FIXME: actually everything is done in OperationInvokerHandler now...
 			FaultConverter fc = FaultConverter.GetDefaultFaultConverter (dispatchRuntime.ChannelDispatcher.MessageVersion);
 			Message res = null;			
 			if (!fc.TryCreateFaultMessage (ex, out res))
