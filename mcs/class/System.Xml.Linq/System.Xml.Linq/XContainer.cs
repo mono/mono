@@ -205,26 +205,19 @@ namespace System.Xml.Linq
 
 		public void ReplaceNodes (object content)
 		{
-			// First, it adds new nodes and then removes existing
-			// nodes, for bug #540198. When the "content" is
-			// existing children, it has to be added first, because
-			// once "content" is removed, then they are not linked
-			// anymore and it does not iterate linked nodes as
-			// it did when it was passed to this method as argument.
-			var first = FirstNode;
-			var last = LastNode;
+			// First, it creates a snapshot copy, then removes the contents, and then adds the copy. http://msdn.microsoft.com/en-us/library/system.xml.linq.xcontainer.replacenodes.aspx
 
-			Add (content);
-
-			if (first == null)
+			if (FirstNode == null) {
+				Add (content);
 				return;
-
-			XNode next;
-			for (var n = first; n != last; n = next) {
-				next = n.NextNode;
-				n.Remove ();
 			}
-			last.Remove ();
+
+			var l = new List<object> ();
+			foreach (var obj in XUtil.ExpandArray (content))
+				l.Add (obj);
+
+			RemoveNodes ();
+			Add (l);
 		}
 
 		public void ReplaceNodes (params object [] content)

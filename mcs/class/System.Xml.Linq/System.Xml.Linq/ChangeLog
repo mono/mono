@@ -1,3 +1,8 @@
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XContainer.cs : create snapshot copy first before removal of nodes.
+	  Fixed bug #592435.
+
 2010-03-16  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* XElement.cs:

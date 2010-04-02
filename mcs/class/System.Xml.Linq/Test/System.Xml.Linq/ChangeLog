@@ -1,3 +1,7 @@
+2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XElementTest.cs : added test for bug #592435.
+
 2010-01-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XElementTest.cs, XAttributeTest.cs : add corner case value conversion
