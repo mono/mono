@@ -1,5 +1,10 @@
 2010-04-02  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: parse_environment_string_extract_number() must be
+	static.
+
+2010-04-02  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c, sgen-gray.c: Macros for gray_object_enqueue() and
 	gray_object_dequeue(), to make sure they're inlined.
 
