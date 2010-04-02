@@ -237,10 +237,12 @@ namespace System.Runtime.Serialization
 			get { return preserve_refs; }
 		}
 
-		[MonoTODO]
 		public override bool IsStartObject (XmlDictionaryReader reader)
 		{
-			throw new NotImplementedException ();
+			if (reader == null)
+				throw new ArgumentNullException ("reader");
+			reader.MoveToContent ();
+			return reader.IsStartElement (root_name, root_ns);
 		}
 
 		// SP1
