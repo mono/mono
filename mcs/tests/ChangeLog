@@ -1,3 +1,10 @@
+2010-04-02  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (DEFINES) [moonlight, net_4_0]: New.
+	(check): Use it.
+	* gtest-284.cs [NET_4_0]: Don't complain about
+	IStructuralEquatable and IStructuralComparable array interfaces.
+
 2010-03-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* test-106.cs: Move the wait for cb_state == 1 out of the try block so this

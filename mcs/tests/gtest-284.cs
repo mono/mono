@@ -147,6 +147,10 @@ public static class InterfaceTester
 	static readonly Type generic_icollection_type;
 	static readonly Type generic_ienumerable_type;
 	static readonly Type icloneable_type;
+#if NET_4_0
+	static readonly Type istructuralequatable_type = typeof (IStructuralEquatable);
+	static readonly Type istructuralcomparable_type = typeof (IStructuralComparable);
+#endif
 
 	static InterfaceTester ()
 	{
@@ -172,6 +176,10 @@ public static class InterfaceTester
 		ifaces.Add (icollection_type, State.Missing);
 		ifaces.Add (ienumerable_type, State.Missing);
 		ifaces.Add (icloneable_type, State.Missing);
+#if NET_4_0
+		ifaces.Add (istructuralequatable_type, State.Missing);
+		ifaces.Add (istructuralcomparable_type, State.Missing);
+#endif
 
 		Type array_type = t.MakeArrayType ();
 

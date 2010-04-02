@@ -50,12 +50,14 @@ ifeq (net_4_0, $(PROFILE))
 COMPILER_NAME = dmcs
 TEST_PATTERN = 'v4'
 LOCAL_RUNTIME_FLAGS = --verify-all
+DEFINES = -compiler-options:"-d:NET_4_0"
 #TOPTIONS += '-il:ver-il-dmcs.xml'
 endif
 ifeq (moonlight, $(PROFILE))
 COMPILER_NAME = smcs
 TEST_PATTERN = 'v2'
 LOCAL_RUNTIME_FLAGS = --security=temporary-smcs-hack
+DEFINES = -compiler-options:"-d:MOONLIGHT"
 endif
 ifeq (net_2_0, $(PROFILE))
 COMPILER_NAME = gmcs
@@ -72,12 +74,12 @@ TEST_ILS := $(wildcard *-lib.il)
 eval-test: 
 	$(CSCOMPILE) eval-test.cs -r:Mono.CSharp.dll
 	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) eval-test.exe
-	
+
 build-compiler-lib:
 	cd ../class/Mono.CSharp && $(MAKE) NO_DIR_CHECK=yes
 
 check: build-compiler-lib eval-test
-	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS)
+	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS) $(DEFINES)
 
 test-local:
 	@:
@@ -111,7 +113,7 @@ csproj-local:
 
 %-lib.dll: %-lib.il
 	$(ILASM) /dll /out:$@ $<
-	
+
 setup:
 	$(ILASM) /dll property-il.il
 	$(CSCOMPILE) /r:property-il.dll property-main.cs /out:property-main.exe
