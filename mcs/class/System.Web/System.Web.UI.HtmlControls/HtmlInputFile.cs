@@ -140,9 +140,10 @@ namespace System.Web.UI.HtmlControls
 		{
 			base.OnPreRender (e);
 
-			if (Page != null && !Disabled) {
-				Page.RegisterRequiresPostBack (this);
-				Page.RegisterEnabledControl (this);
+			Page page = Page;
+			if (page != null && !Disabled) {
+				page.RegisterRequiresPostBack (this);
+				page.RegisterEnabledControl (this);
 			}
 			
 			HtmlForm form = (HtmlForm) SearchParentByType (typeof (HtmlForm));
@@ -165,7 +166,9 @@ namespace System.Web.UI.HtmlControls
 
 		bool LoadPostDataInternal (string postDataKey, NameValueCollection postCollection)
 		{
-			posted_file = Page.Request.Files [postDataKey];
+			Page page = Page;
+			if (page != null)
+				posted_file = page.Request.Files [postDataKey];
 			
 			return (false);
 		}

@@ -190,13 +190,14 @@ namespace System.Web.UI.HtmlControls {
 	
 		PostBackOptions GetPostBackOptions ()
 		{
+			Page page = Page;
 			PostBackOptions options = new PostBackOptions (this);
 			options.ValidationGroup = null;
 			options.ActionUrl = null;
 			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = true;
 			options.ClientSubmit = true;
-			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			options.PerformValidation = CausesValidation && page != null && page.AreValidatorsUplevel (ValidationGroup);
 			if (options.PerformValidation)
 				options.ValidationGroup = ValidationGroup;
 

@@ -95,9 +95,10 @@ namespace System.Web.UI.HtmlControls {
 		{
 			base.OnPreRender (e);
 
-			if (Page != null && !Disabled) {
-				Page.RegisterRequiresPostBack (this);
-				Page.RegisterEnabledControl (this);
+			Page page = Page;
+			if (page != null && !Disabled) {
+				page.RegisterRequiresPostBack (this);
+				page.RegisterEnabledControl (this);
 			}
 		}
 

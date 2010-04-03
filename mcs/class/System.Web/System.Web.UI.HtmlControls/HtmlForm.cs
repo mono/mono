@@ -189,8 +189,12 @@ namespace System.Web.UI.HtmlControls
 		protected internal override void OnInit (EventArgs e)
 		{
 			inited = true;
-			Page.RegisterViewStateHandler ();
-			Page.RegisterForm (this);
+			Page page = Page;
+			if (page != null) {
+				page.RegisterViewStateHandler ();
+				page.RegisterForm (this);
+			}
+			
 			base.OnInit (e);
 		}
 
@@ -239,8 +243,8 @@ namespace System.Web.UI.HtmlControls
 			
 			string action;
 			string customAction = Attributes ["action"];
-			Page p = Page;
-			HttpRequest req = p != null ? p.Request : null;
+			Page page = Page;
+			HttpRequest req = page != null ? page.Request : null;
 			if (req == null)
 				throw new HttpException ("No current request, cannot continue rendering.");
 #if !TARGET_J2EE
@@ -313,7 +317,7 @@ namespace System.Web.UI.HtmlControls
 #pragma warning restore 219
 			}
 			
-			string submit = Page.GetSubmitStatements ();
+			string submit = page != null ? page.GetSubmitStatements () : null;
 			if (!String.IsNullOrEmpty (submit)) {
 				Attributes.Remove ("onsubmit");
 				w.WriteAttribute ("onsubmit", submit);
@@ -323,14 +327,12 @@ namespace System.Web.UI.HtmlControls
 			 * they are empty
 			 */
 			string enctype = Enctype;
-			if (!String.IsNullOrEmpty (enctype)) {
+			if (!String.IsNullOrEmpty (enctype))
 				w.WriteAttribute ("enctype", enctype);
-			}
 
 			string target = Target;
-			if (!String.IsNullOrEmpty (target)) {
+			if (!String.IsNullOrEmpty (target))
 				w.WriteAttribute ("target", target);
-			}
 
 			string defaultbutton = DefaultButton;
 			if (!String.IsNullOrEmpty (defaultbutton)) {
@@ -340,10 +342,10 @@ namespace System.Web.UI.HtmlControls
 					throw new InvalidOperationException(String.Format ("The DefaultButton of '{0}' must be the ID of a control of type IButtonControl.",
 											   ID));
 
-				if (DetermineRenderUplevel ()) {
+				if (page != null && DetermineRenderUplevel ()) {
 					w.WriteAttribute (
 						"onkeypress",
-						"javascript:return " + Page.WebFormScriptReference + ".WebForm_FireDefaultButton(event, '" + c.ClientID + "')");
+						"javascript:return " + page.WebFormScriptReference + ".WebForm_FireDefaultButton(event, '" + c.ClientID + "')");
 				}
 			}
 

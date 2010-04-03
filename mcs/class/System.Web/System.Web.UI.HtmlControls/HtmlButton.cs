@@ -95,23 +95,26 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-			if (Page != null && Events [ServerClickEvent] != null) {
+			Page page = Page;
+			if (page != null && Events [ServerClickEvent] != null) {
 				PostBackOptions options = GetPostBackOptions ();
-				Attributes ["onclick"] += Page.ClientScript.GetPostBackEventReference (options, true);
+				Attributes ["onclick"] += page.ClientScript.GetPostBackEventReference (options, true);
 				writer.WriteAttribute ("language", "javascript");
 			}
 
 			base.RenderAttributes (writer);
 		}
 
-		PostBackOptions GetPostBackOptions () {
+		PostBackOptions GetPostBackOptions ()
+		{
+			Page page = Page;
 			PostBackOptions options = new PostBackOptions (this);
 			options.ValidationGroup = null;
 			options.ActionUrl = null;
 			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = false;
 			options.ClientSubmit = true;
-			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+			options.PerformValidation = CausesValidation && page != null && page.AreValidatorsUplevel (ValidationGroup);
 			if (options.PerformValidation)
 				options.ValidationGroup = ValidationGroup;
 
