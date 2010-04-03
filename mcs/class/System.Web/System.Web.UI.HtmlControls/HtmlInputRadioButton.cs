@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,16 +30,14 @@ using System.ComponentModel;
 using System.Collections.Specialized;
 using System.Security.Permissions;
 
-namespace System.Web.UI.HtmlControls {
-
+namespace System.Web.UI.HtmlControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent ("ServerChange")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
 	public class HtmlInputRadioButton : HtmlInputControl, IPostBackDataHandler 
 	{
 		static readonly object serverChangeEvent = new object ();
@@ -94,20 +92,14 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 
-			if (Page != null && !Disabled) {
-				Page.RegisterRequiresPostBack (this);
-#if NET_2_0
-				Page.RegisterEnabledControl (this);
-#endif
+			Page page = Page;
+			if (page != null && !Disabled) {
+				page.RegisterRequiresPostBack (this);
+				page.RegisterEnabledControl (this);
 			}
 		}
 
@@ -120,34 +112,26 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-#if NET_2_0
-			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (this.UniqueID, Value);
-#endif
+			Page page = Page;
+			if (page != null)
+				page.ClientScript.RegisterForEventValidation (this.UniqueID, Value);
 			writer.WriteAttribute ("value", Value, true);
 			Attributes.Remove ("value");
 			base.RenderAttributes (writer);
 		}
-#if NET_2_0
-		protected virtual 
-#endif
-		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			bool checkedOnClient = postCollection [Name] == Value;
 			if (Checked == checkedOnClient)
 				return false;
 
-#if NET_2_0
 			ValidateEvent (UniqueID, Value);
-#endif
 			Checked = checkedOnClient;
 			return checkedOnClient;
 		}
 
-#if NET_2_0
-		protected virtual 
-#endif
-		void RaisePostDataChangedEvent ()
+		protected virtual void RaisePostDataChangedEvent ()
 		{
 			OnServerChange (EventArgs.Empty);
 		}

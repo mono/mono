@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,15 +31,15 @@ using System.Globalization;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.HtmlControls {
-
+namespace System.Web.UI.HtmlControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ParseChildren (true, "Rows")]	
-	public class HtmlTable : HtmlContainerControl {
-
+	public class HtmlTable : HtmlContainerControl
+	{
 		HtmlTableRowCollection _rows;
 
 		public HtmlTable ()
@@ -209,12 +209,7 @@ namespace System.Web.UI.HtmlControls {
 			return new HtmlTableRowControlCollection (this);
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void RenderChildren (HtmlTextWriter writer)
+		protected internal override void RenderChildren (HtmlTextWriter writer)
 		{
 			if (HasControls ()) {
 				writer.Indent++;

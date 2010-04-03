@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,15 +31,15 @@ using System.Globalization;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.HtmlControls {
-
+namespace System.Web.UI.HtmlControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ConstructorNeedsTag (true)]
-	public class HtmlTableCell : HtmlContainerControl {
-
+	public class HtmlTableCell : HtmlContainerControl
+	{
 		public HtmlTableCell ()
 			: base ("td")
 		{
@@ -138,9 +138,7 @@ namespace System.Web.UI.HtmlControls {
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[TypeConverter (typeof (MinimizableAttributeTypeConverter))]
-#endif
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 		public bool NoWrap {

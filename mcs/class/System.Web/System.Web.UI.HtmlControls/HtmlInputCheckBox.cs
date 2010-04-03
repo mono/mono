@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,11 +37,11 @@ namespace System.Web.UI.HtmlControls
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent ("ServerChange")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
 	public class HtmlInputCheckBox : HtmlInputControl, IPostBackDataHandler
 	{
+		static readonly object EventServerChange = new object ();
+		
 		public HtmlInputCheckBox () : base ("checkbox")
 		{
 		}
@@ -50,11 +50,8 @@ namespace System.Web.UI.HtmlControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Misc")]
-#if NET_2_0
 		[TypeConverter (typeof(MinimizableAttributeTypeConverter))]
-#endif
-		public bool Checked
-		{
+		public bool Checked {
 			get {
 				string check = Attributes["checked"];
 
@@ -72,13 +69,10 @@ namespace System.Web.UI.HtmlControls
 				}
 			}
 		}
-		
-		static readonly object EventServerChange = new object ();
 
 		[WebSysDescription("")]
 		[WebCategory("Action")]
-		public event EventHandler ServerChange
-		{
+		public event EventHandler ServerChange {
 			add {
 				Events.AddHandler (EventServerChange, value);
 			}
@@ -87,29 +81,20 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			if (Page != null)
 				Page.ClientScript.RegisterForEventValidation (UniqueID);
 			base.RenderAttributes (writer);
 		}
-#endif
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 
 			if (Page != null && !Disabled) {
 				Page.RegisterRequiresPostBack (this);
-#if NET_2_0
 				Page.RegisterEnabledControl (this);
-#endif
 			}
 		}
 
@@ -117,9 +102,8 @@ namespace System.Web.UI.HtmlControls
 		{
 			EventHandler handler = (EventHandler)Events[EventServerChange];
 
-			if (handler != null) {
+			if (handler != null)
 				handler (this, e);
-			}
 		}
 
 		bool LoadPostDataInternal (string postDataKey, NameValueCollection postCollection)
@@ -141,7 +125,6 @@ namespace System.Web.UI.HtmlControls
 			OnServerChange (EventArgs.Empty);
 		}
 
-#if NET_2_0
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			return LoadPostDataInternal (postDataKey, postCollection);
@@ -152,24 +135,15 @@ namespace System.Web.UI.HtmlControls
 			ValidateEvent (UniqueID, String.Empty);
 			RaisePostDataChangedEventInternal ();
 		}
-#endif
 		
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-#if NET_2_0
 			return LoadPostData (postDataKey, postCollection);
-#else
-			return LoadPostDataInternal (postDataKey, postCollection);
-#endif
 		}
 
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			RaisePostDataChangedEvent();
-#else
-			RaisePostDataChangedEventInternal ();
-#endif
 		}
 	}
 }

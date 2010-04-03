@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -43,16 +43,17 @@ namespace System.Web.UI.HtmlControls
 	[DefaultEvent ("ServerChange")]
 	[ValidationProperty ("Value")]
 	[ControlBuilder (typeof (HtmlSelectBuilder))]
-#if NET_2_0
 	[SupportsEventValidation]
-	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler, IParserAccessor {
+	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler, IParserAccessor
+	{
+		static readonly object EventServerChange = new object ();
 
 		DataSourceView _boundDataSourceView;
 		bool requiresDataBinding;
 		bool _initialized;
-#else
-	public class HtmlSelect : HtmlContainerControl, IPostBackDataHandler {
-#endif
+		object datasource;
+		ListItemCollection items;
+
 		public HtmlSelect () : base ("select")
 		{
 		}
@@ -61,8 +62,7 @@ namespace System.Web.UI.HtmlControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Data")]
-		public virtual string DataMember 
-		{
+		public virtual string DataMember {
 			get {
 				string member = Attributes["datamember"];
 
@@ -80,15 +80,12 @@ namespace System.Web.UI.HtmlControls
 				}
 			}
 		}
-
-		object datasource;
 		
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Data")]
-		public virtual object DataSource 
-		{
+		public virtual object DataSource {
 			get {
 				return (datasource);
 			}
@@ -103,10 +100,8 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
-		public virtual string DataSourceID
-		{
+		public virtual string DataSourceID {
 			get {
 				return ViewState.GetString ("DataSourceID", "");
 			}
@@ -120,14 +115,11 @@ namespace System.Web.UI.HtmlControls
 				OnDataPropertyChanged ();
 			}
 		}
-#endif
-				
 
 		[DefaultValue ("")]
 		[WebSysDescription("")]
 		[WebCategory("Data")]
-		public virtual string DataTextField 
-		{
+		public virtual string DataTextField {
 			get {
 				string text = Attributes["datatextfield"];
 
@@ -149,8 +141,7 @@ namespace System.Web.UI.HtmlControls
 		[DefaultValue ("")]
 		[WebSysDescription("")]
 		[WebCategory("Data")]
-		public virtual string DataValueField 
-		{
+		public virtual string DataValueField {
 			get {
 				string value = Attributes["datavaluefield"];
 
@@ -169,8 +160,7 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-		public override string InnerHtml 
-		{
+		public override string InnerHtml {
 			get {
 				throw new NotSupportedException ();
 			}
@@ -179,8 +169,7 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-		public override string InnerText
-		{
+		public override string InnerText {
 			get {
 				throw new NotSupportedException ();
 			}
@@ -189,21 +178,15 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
-		protected bool IsBoundUsingDataSourceID 
-		{
+		protected bool IsBoundUsingDataSourceID {
 			get {
 				return (DataSourceID.Length != 0);
 			}
 		}
-#endif		
-
-		ListItemCollection items;
 		
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
-		public ListItemCollection Items 
-		{
+		public ListItemCollection Items {
 			get {
 				if (items == null) {
 					items = new ListItemCollection ();
@@ -219,8 +202,7 @@ namespace System.Web.UI.HtmlControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
-		public bool Multiple 
-		{
+		public bool Multiple {
 			get {
 				string multi = Attributes["multiple"];
 
@@ -243,8 +225,7 @@ namespace System.Web.UI.HtmlControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
-		public string Name 
-		{
+		public string Name {
 			get {
 				return (UniqueID);
 			}
@@ -253,18 +234,14 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
-		protected bool RequiresDataBinding 
-		{
+		protected bool RequiresDataBinding {
 			get { return requiresDataBinding; }
 			set { requiresDataBinding = value; }
 		}
-#endif
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
-		public virtual int SelectedIndex 
-		{
+		public virtual int SelectedIndex {
 			get {
 				/* Make sure Items has been initialised */
 				ListItemCollection listitems = Items;
@@ -313,8 +290,7 @@ namespace System.Web.UI.HtmlControls
 		/* "internal infrastructure" according to the docs,
 		 * but has some documentation in 2.0
 		 */
-		protected virtual int[] SelectedIndices
-		{
+		protected virtual int[] SelectedIndices {
 			get {
 				ArrayList selected = new ArrayList ();
 
@@ -332,8 +308,7 @@ namespace System.Web.UI.HtmlControls
 		
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public int Size 
-		{
+		public int Size {
 			get {
 				string size = Attributes["size"];
 
@@ -353,8 +328,7 @@ namespace System.Web.UI.HtmlControls
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string Value 
-		{
+		public string Value {
 			get {
 				int sel = SelectedIndex;
 
@@ -373,12 +347,9 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-		static readonly object EventServerChange = new object ();
-		
 		[WebSysDescription("")]
 		[WebCategory("Action")]
-		public event EventHandler ServerChange
-		{
+		public event EventHandler ServerChange {
 			add {
 				Events.AddHandler (EventServerChange, value);
 			}
@@ -418,7 +389,6 @@ namespace System.Web.UI.HtmlControls
 			return (base.CreateControlCollection ());
 		}
 
-#if NET_2_0
 		protected void EnsureDataBound ()
 		{
 			if (IsBoundUsingDataSourceID && RequiresDataBinding)
@@ -443,7 +413,6 @@ namespace System.Web.UI.HtmlControls
 
 			return result;
 		}
-#endif		
 
 		protected override void LoadViewState (object savedState)
 		{
@@ -473,17 +442,9 @@ namespace System.Web.UI.HtmlControls
 
 			listitems.Clear ();
 			
-			IEnumerable list;
-
-#if NET_2_0
-				list = GetData ();
-#else
-				list = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
-#endif
-
-			if (list == null) {
+			IEnumerable list = GetData ();
+			if (list == null)
 				return;
-			}
 			
 			foreach (object container in list) {
 				string text = null;
@@ -520,13 +481,10 @@ namespace System.Web.UI.HtmlControls
 				ListItem item = new ListItem (text, value);
 				listitems.Add (item);
 			}
-#if NET_2_0
 			RequiresDataBinding = false;
 			IsDataBound = true;
-#endif
 		}
 
-#if NET_2_0
 		protected virtual void OnDataPropertyChanged ()
 		{
 			if (_initialized)
@@ -546,7 +504,8 @@ namespace System.Web.UI.HtmlControls
 			Page.PreLoad += new EventHandler (OnPagePreLoad);
 		}
 
-		protected virtual void OnPagePreLoad (object sender, EventArgs e) {
+		protected virtual void OnPagePreLoad (object sender, EventArgs e)
+		{
 			Initialize ();
 		}
 
@@ -558,7 +517,8 @@ namespace System.Web.UI.HtmlControls
 			base.OnLoad (e);
 		}
 
-		void Initialize () {
+		void Initialize ()
+		{
 			_initialized = true;
 
 			if (!IsDataBound)
@@ -568,7 +528,7 @@ namespace System.Web.UI.HtmlControls
 				ConnectToDataSource ();
 		}
 
-		bool IsDataBound {
+		bool IsDataBound{
 			get {
 				return ViewState.GetBool ("_DataBound", false);
 			}
@@ -584,8 +544,9 @@ namespace System.Web.UI.HtmlControls
 
 			/* verify that the data source exists and is an IDataSource */
 			object ctrl = null;
-			if (Page != null)
-				ctrl = Page.FindControl (DataSourceID);
+			Page page = Page;
+			if (page != null)
+				ctrl = page.FindControl (DataSourceID);
 
 			if (ctrl == null || !(ctrl is IDataSource)) {
 				string format;
@@ -602,26 +563,16 @@ namespace System.Web.UI.HtmlControls
 			_boundDataSourceView.DataSourceViewChanged += OnDataSourceViewChanged;
 			return _boundDataSourceView;
 		}
-#endif
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
-#if NET_2_0
 			EnsureDataBound ();
-#endif
-
 			base.OnPreRender (e);
 
-			if (Page != null && !Disabled) {
-				Page.RegisterRequiresPostBack (this);
-#if NET_2_0
-				Page.RegisterEnabledControl (this);
-#endif
+			Page page = Page;
+			if (page != null && !Disabled) {
+				page.RegisterRequiresPostBack (this);
+				page.RegisterEnabledControl (this);
 			}
 		}
 
@@ -636,10 +587,10 @@ namespace System.Web.UI.HtmlControls
 		
 		protected override void RenderAttributes (HtmlTextWriter w)
 		{
-#if NET_2_0
-			if (Page != null)
-				Page.ClientScript.RegisterForEventValidation (UniqueID);
-#endif
+			Page page = Page;
+			if (page != null)
+				page.ClientScript.RegisterForEventValidation (UniqueID);
+
 			/* If there is no "name" attribute,
 			 * LoadPostData doesn't work...
 			 */
@@ -654,18 +605,12 @@ namespace System.Web.UI.HtmlControls
 			base.RenderAttributes (w);
 		}
 		
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif		
-		override void RenderChildren (HtmlTextWriter w)
+		protected internal override void RenderChildren (HtmlTextWriter w)
 		{
 			base.RenderChildren (w);
 
-			if (items == null) {
+			if (items == null)
 				return;
-			}
 			
 			w.WriteLine ();
 
@@ -751,18 +696,12 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		void RaisePostDataChangedEvent ()
+		protected virtual void RaisePostDataChangedEvent ()
 		{
 			OnServerChange (EventArgs.Empty);
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			/* postCollection contains the values that are
 			 * selected
@@ -806,10 +745,8 @@ namespace System.Web.UI.HtmlControls
 				}
 			}
 
-#if NET_2_0
 			if (changed)
 				ValidateEvent (postDataKey, String.Empty);
-#endif
 			return (changed);
 		}
 

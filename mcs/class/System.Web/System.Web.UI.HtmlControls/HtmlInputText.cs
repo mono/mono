@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,17 +32,15 @@ using System.Globalization;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.HtmlControls {
-
+namespace System.Web.UI.HtmlControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent ("ServerChange")]
 	[ValidationProperty ("Value")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
 	public class HtmlInputText : HtmlInputControl, IPostBackDataHandler 
 	{
 		static readonly object serverChangeEvent = new object ();
@@ -74,11 +72,7 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (-1)]
-#else
-		[DefaultValue ("")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Appearance")]
@@ -108,8 +102,6 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-
-#if NET_2_0
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			Page page = Page;
@@ -117,21 +109,15 @@ namespace System.Web.UI.HtmlControls {
 				page.ClientScript.RegisterForEventValidation (UniqueID);
 			base.Render (writer);
 		}
-#endif
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
-			if (Page != null && !Disabled) {
-				Page.RegisterRequiresPostBack (this);
-#if NET_2_0
-				Page.RegisterEnabledControl (this);
-#endif
+
+			Page page = Page;
+			if (page != null && !Disabled) {
+				page.RegisterRequiresPostBack (this);
+				page.RegisterEnabledControl (this);
 			}
 		}
 
@@ -167,7 +153,6 @@ namespace System.Web.UI.HtmlControls {
 			OnServerChange (EventArgs.Empty);
 		}
 
-#if NET_2_0
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			return LoadPostDataInternal (postDataKey, postCollection);
@@ -178,26 +163,16 @@ namespace System.Web.UI.HtmlControls {
 			ValidateEvent (UniqueID, String.Empty);
 			RaisePostDataChangedEventInternal ();
 		}
-#endif
 
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-#if NET_2_0
 			return LoadPostData (postDataKey, postCollection);
-#else
-			return LoadPostDataInternal (postDataKey, postCollection);
-#endif
 		}
 
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			RaisePostDataChangedEvent ();
-#else
-			RaisePostDataChangedEventInternal ();
-#endif
 		}
-
 
 		[WebSysDescription("")]
 		[WebCategory("Action")]

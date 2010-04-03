@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -39,6 +39,8 @@ namespace System.Web.UI.HtmlControls
 	[ValidationProperty ("Value")]
 	public class HtmlInputFile : HtmlInputControl , IPostBackDataHandler
 	{
+		HttpPostedFile posted_file;
+
 		public HtmlInputFile () : base ("file")
 		{
 		}
@@ -46,8 +48,7 @@ namespace System.Web.UI.HtmlControls
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
-		public string Accept 
-		{
+		public string Accept {
 			get {
 				string acc = Attributes["accept"];
 
@@ -69,8 +70,7 @@ namespace System.Web.UI.HtmlControls
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
-		public int MaxLength 
-		{
+		public int MaxLength {
 			get {
 				string maxlen = Attributes["maxlength"];
 				
@@ -88,30 +88,22 @@ namespace System.Web.UI.HtmlControls
 				}
 			}
 		}
-
-		HttpPostedFile posted_file;
 		
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Misc")]
-		public HttpPostedFile PostedFile 
-		{
+		public HttpPostedFile PostedFile {
 			get {
 				return (posted_file);
 			}
 		}
 		
-#if NET_2_0
 		[DefaultValue ("-1")]
-#else
-		[DefaultValue ("")]
-#endif
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Appearance")]
-		public int Size 
-		{
+		public int Size {
 			get {
 				string size = Attributes["size"];
 				
@@ -131,8 +123,7 @@ namespace System.Web.UI.HtmlControls
 		}
 		
 		[Browsable (false)]
-		public override string Value 
-		{
+		public override string Value {
 			get {
 				HttpPostedFile file = PostedFile;
 				if (file == null)
@@ -145,24 +136,17 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 
 			if (Page != null && !Disabled) {
 				Page.RegisterRequiresPostBack (this);
-#if NET_2_0
 				Page.RegisterEnabledControl (this);
-#endif
 			}
 			
 			HtmlForm form = (HtmlForm) SearchParentByType (typeof (HtmlForm));
-			if (form != null && form.Enctype == "")
+			if (form != null && form.Enctype == String.Empty)
 				form.Enctype = "multipart/form-data";
 		}
 
@@ -191,7 +175,6 @@ namespace System.Web.UI.HtmlControls
 			/* No events to raise */
 		}
 
-#if NET_2_0
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			return LoadPostDataInternal (postDataKey, postCollection);
@@ -201,24 +184,15 @@ namespace System.Web.UI.HtmlControls
 		{
 			RaisePostDataChangedEventInternal ();
 		}
-#endif		
 		
 		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-#if NET_2_0
 			return LoadPostData (postDataKey, postCollection);
-#else
-			return LoadPostDataInternal (postDataKey, postCollection);
-#endif
 		}
 
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			RaisePostDataChangedEvent ();
-#else
-			RaisePostDataChangedEventInternal ();
-#endif
 		}
 	}
 }

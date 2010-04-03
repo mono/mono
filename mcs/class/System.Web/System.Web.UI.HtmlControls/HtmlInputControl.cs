@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,19 +29,15 @@
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.HtmlControls {
-
+namespace System.Web.UI.HtmlControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-#if NET_2_0
 	[ControlBuilder (typeof (HtmlEmptyTagControlBuilder))]
-#else
-	[ControlBuilder (typeof (HtmlControlBuilder))]
-#endif
-	public abstract class HtmlInputControl : HtmlControl {
-
+	public abstract class HtmlInputControl : HtmlControl
+	{
 		protected HtmlInputControl (string type)
 			: base ("input")
 		{

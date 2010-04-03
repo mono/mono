@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -36,9 +36,7 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent ("ServerClick")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
 	public class HtmlAnchor : HtmlContainerControl, IPostBackEventHandler 
 	{
 		static readonly object serverClickEvent = new object ();
@@ -52,9 +50,7 @@ namespace System.Web.UI.HtmlControls {
 		[WebSysDescription("")]
 		[WebCategory("Action")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[UrlProperty]
-#endif
 		public string HRef {
 			get {
 				string s = Attributes ["href"];
@@ -107,9 +103,7 @@ namespace System.Web.UI.HtmlControls {
 		[WebSysDescription("")]
 		[WebCategory("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[Localizable (true)]
-#endif
 		public string Title {
 			get {
 				string s = Attributes ["title"];
@@ -123,7 +117,6 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (true)]
 		public virtual bool CausesValidation {
 			get {
@@ -143,14 +136,8 @@ namespace System.Web.UI.HtmlControls {
 				ViewState ["ValidationGroup"] = value;
 			}
 		}
-#endif
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 		}
@@ -168,17 +155,12 @@ namespace System.Web.UI.HtmlControls {
 			EventHandler serverClick = (EventHandler) Events [serverClickEvent];
 			if (serverClick != null) {
 				ClientScriptManager csm;
-#if NET_2_0
+
 				// a script
 				PostBackOptions options = GetPostBackOptions ();
 				csm = Page.ClientScript;
 				csm.RegisterForEventValidation (options);
 				Attributes ["href"] = csm.GetPostBackEventReference (options, true);
-#else
-				// a script
-				csm = new ClientScriptManager (Page);
-				Attributes ["href"] = csm.GetPostBackClientHyperlink (this, String.Empty);
-#endif
 			} else {
 				string hr = HRef;
 				if (hr != string.Empty)
@@ -197,7 +179,6 @@ namespace System.Web.UI.HtmlControls {
 			Attributes.Remove ("href");
 		}
 
-#if NET_2_0
 		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
 			ValidateEvent (UniqueID, eventArgument);
@@ -221,15 +202,10 @@ namespace System.Web.UI.HtmlControls {
 
 			return options;
 		}
-#endif
 
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
-#if NET_2_0
 			RaisePostBackEvent (eventArgument);
-#else
-			OnServerClick (EventArgs.Empty);
-#endif
 		}
 
 		[WebSysDescription("")]

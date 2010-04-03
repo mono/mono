@@ -7,7 +7,7 @@
 //
 // (C) Bob Smith
 // (c) 2002 Ximian, Inc. (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -55,16 +55,13 @@ namespace System.Web.UI.HtmlControls
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public abstract class HtmlContainerControl : HtmlControl {
-
-#if NET_2_0
-		protected
-#else
-		public
-#endif
-		HtmlContainerControl () : this ("span") {}
+	public abstract class HtmlContainerControl : HtmlControl
+	{
+		protected HtmlContainerControl () : this ("span")
+		{}
 		
-		public HtmlContainerControl (string tag) : base(tag) {}
+		public HtmlContainerControl (string tag) : base(tag)
+		{}
 
 		[HtmlControlPersistable (false)]
 		[BrowsableAttribute(false)]
@@ -113,12 +110,7 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 		
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif		
-		override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			RenderBeginTag (writer);
 			RenderChildren (writer);

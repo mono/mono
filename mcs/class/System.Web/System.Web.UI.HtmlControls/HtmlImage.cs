@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,11 +37,7 @@ namespace System.Web.UI.HtmlControls
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-#if NET_2_0
 	[ControlBuilder (typeof (HtmlEmptyTagControlBuilder))]
-#else
-	[ControlBuilder (typeof (HtmlControlBuilder))]
-#endif
 	public class HtmlImage : HtmlControl 
 	{
 		public HtmlImage () : base ("img")
@@ -52,8 +48,7 @@ namespace System.Web.UI.HtmlControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Layout")]
-		public string Align 
-		{
+		public string Align {
 			get {
 				string align = Attributes["align"];
 
@@ -76,11 +71,8 @@ namespace System.Web.UI.HtmlControls
 		[WebSysDescription("")]
 		[WebCategory("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[Localizable (true)]
-#endif
-		public string Alt 
-		{
+		public string Alt {
 			get {
 				string alt = Attributes["alt"];
 
@@ -103,8 +95,7 @@ namespace System.Web.UI.HtmlControls
 		[WebSysDescription("")]
 		[WebCategory("Appearance")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public int Border 
-		{
+		public int Border {
 			get {
 				string border = Attributes["border"];
 				
@@ -127,8 +118,7 @@ namespace System.Web.UI.HtmlControls
 		[WebSysDescription("")]
 		[WebCategory("Layout")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public int Height
-		{
+		public int Height {
 			get {
 				string height = Attributes["height"];
 				
@@ -151,11 +141,8 @@ namespace System.Web.UI.HtmlControls
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[UrlProperty]
-#endif
-		public string Src 
-		{
+		public string Src {
 			get {
 				string src = Attributes["src"];
 
@@ -178,8 +165,7 @@ namespace System.Web.UI.HtmlControls
 		[WebSysDescription("")]
 		[WebCategory("Layout")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public int Width 
-		{
+		public int Width {
 			get {
 				string width = Attributes["width"];
 
@@ -221,5 +207,3 @@ namespace System.Web.UI.HtmlControls
 		}
 	}
 }
-
-	

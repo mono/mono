@@ -24,7 +24,7 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 //
-// (C) 2005 Novell, Inc.
+// (C) 2005-2010 Novell, Inc.
 
 
 using System.ComponentModel;
@@ -37,9 +37,7 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent("ServerClick")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
 	public class HtmlButton : HtmlContainerControl, IPostBackEventHandler {
 
 		static readonly object ServerClickEvent = new object();
@@ -51,12 +49,7 @@ namespace System.Web.UI.HtmlControls {
 		[DefaultValue(true)]
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
-#if NET_2_0
-		public virtual
-#else		
-		public
-#endif		
-		bool CausesValidation {
+		public virtual bool CausesValidation {
 			get {
 				return ViewState.GetBool ("CausesValidation", true);
 			}
@@ -65,7 +58,6 @@ namespace System.Web.UI.HtmlControls {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
 		public virtual string ValidationGroup 
 		{
@@ -76,37 +68,20 @@ namespace System.Web.UI.HtmlControls {
 				ViewState ["ValidationGroup"] = value;
 			}
 		}
-#endif		
-
-#if NET_2_0
 		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
 		{
 			RaisePostBackEvent (eventArgument);
 		}
 
 		protected virtual void RaisePostBackEvent (string eventArgument)
-#else
-		void IPostBackEventHandler.RaisePostBackEvent (string eventArgument)
-#endif
 		{
-#if NET_2_0
 			ValidateEvent (UniqueID, eventArgument);
-#endif
 			if (CausesValidation)
-#if NET_2_0
 				Page.Validate (ValidationGroup);
-#else
-				Page.Validate ();
-#endif
 			OnServerClick (EventArgs.Empty);
 		}
 		
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 		}
@@ -120,42 +95,15 @@ namespace System.Web.UI.HtmlControls {
 
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
-#if NET_2_0
 			if (Page != null && Events [ServerClickEvent] != null) {
 				PostBackOptions options = GetPostBackOptions ();
 				Attributes ["onclick"] += Page.ClientScript.GetPostBackEventReference (options, true);
 				writer.WriteAttribute ("language", "javascript");
 			}
-#else		
-			ClientScriptManager csm = new ClientScriptManager (Page);
-			bool postback = false;
-
-			if (Page != null && Events [ServerClickEvent] != null)
-				postback = true;
-
-			if (CausesValidation && Page != null && Page.AreValidatorsUplevel ()) {
-				if (postback)
-					writer.WriteAttribute ("onclick",
-							       String.Concat ("javascript:{if (typeof(Page_ClientValidate) != 'function' ||  Page_ClientValidate()) ",
-									      csm.GetPostBackEventReference (this, String.Empty), "}"));
-				else
-					writer.WriteAttribute ("onclick",
-							       "if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate();");
-
-				writer.WriteAttribute ("language", "javascript");
-			}
-			else if (postback) {
-				writer.WriteAttribute ("onclick",
-						       Page.ClientScript.GetPostBackClientHyperlink (this, ""));
-
-				writer.WriteAttribute ("language", "javascript");
-			}
-#endif
 
 			base.RenderAttributes (writer);
 		}
 
-#if NET_2_0
 		PostBackOptions GetPostBackOptions () {
 			PostBackOptions options = new PostBackOptions (this);
 			options.ValidationGroup = null;
@@ -169,7 +117,6 @@ namespace System.Web.UI.HtmlControls {
 
 			return options;
 		}
-#endif
 
 		[WebSysDescription("")]
 		[WebCategory("Action")]
@@ -178,6 +125,5 @@ namespace System.Web.UI.HtmlControls {
 			remove { Events.RemoveHandler (ServerClickEvent, value); }
 		}
 	}
-
 }
 

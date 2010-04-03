@@ -4,7 +4,7 @@
 // Authors:
 // 	Chris Toshok (toshok@ximian.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
 
 using System.ComponentModel;
 using System.Collections;
@@ -49,7 +47,7 @@ namespace System.Web.UI.HtmlControls
 			get {
 				string s = Attributes["content"];
 				if (s == null)
-					return "";
+					return String.Empty;
 				return s;
 			}
 			set {
@@ -66,7 +64,7 @@ namespace System.Web.UI.HtmlControls
 			get {
 				string s = Attributes["http-equiv"];
 				if (s == null)
-					return "";
+					return String.Empty;
 				return s;
 			}
 			set {
@@ -83,7 +81,7 @@ namespace System.Web.UI.HtmlControls
 			get {
 				string s = Attributes["name"];
 				if (s == null)
-					return "";
+					return String.Empty;
 				return s;
 			}
 			set {
@@ -100,7 +98,7 @@ namespace System.Web.UI.HtmlControls
 			get {
 				string s = Attributes["scheme"];
 				if (s == null)
-					return "";
+					return String.Empty;
 				return s;
 			}
 			set {
@@ -126,4 +124,3 @@ namespace System.Web.UI.HtmlControls
 	}
 }
 
-#endif

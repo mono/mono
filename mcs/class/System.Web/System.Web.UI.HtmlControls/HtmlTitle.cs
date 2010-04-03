@@ -4,7 +4,7 @@
 // Authors:
 // 	Lluis Sanchez Gual (lluis@novell.com)
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.Security.Permissions;
 
@@ -43,8 +41,10 @@ namespace System.Web.UI.HtmlControls
 		protected override void AddParsedSubObject(object obj)
 		{
 			LiteralControl lit = obj as LiteralControl;
-			if (lit != null) text = lit.Text;
-			else base.AddParsedSubObject (obj);
+			if (lit != null)
+				text = lit.Text;
+			else
+				base.AddParsedSubObject (obj);
 		}
 
 		protected override ControlCollection CreateControlCollection ()
@@ -73,4 +73,3 @@ namespace System.Web.UI.HtmlControls
 	}
 }
 
-#endif

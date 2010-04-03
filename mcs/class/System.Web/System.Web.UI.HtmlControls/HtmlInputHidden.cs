@@ -24,7 +24,7 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 //
-// (C) 2005 Novell, Inc.
+// (C) 2005-2010 Novell, Inc.
 
 using System.ComponentModel;
 using System.Collections.Specialized;
@@ -37,9 +37,7 @@ namespace System.Web.UI.HtmlControls {
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent ("ServerChange")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
 	public class HtmlInputHidden : HtmlInputControl, IPostBackDataHandler {
 
 		static readonly object ServerChangeEvent = new object ();
@@ -52,9 +50,7 @@ namespace System.Web.UI.HtmlControls {
 		{
 			string data = postCollection [postDataKey];
 			if (data != null && data != Value) {
-#if NET_2_0
 				ValidateEvent (postDataKey, String.Empty);
-#endif
 				Value = data;
 				return true;
 			}
@@ -66,7 +62,6 @@ namespace System.Web.UI.HtmlControls {
 			OnServerChange (EventArgs.Empty);
 		}
 
-#if NET_2_0
 		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			return LoadPostDataInternal (postDataKey, postCollection);
@@ -76,28 +71,18 @@ namespace System.Web.UI.HtmlControls {
 		{
 			RaisePostDataChangedEventInternal ();
 		}
-#endif		
 		
 		bool IPostBackDataHandler.LoadPostData (string postDataKey,
 							NameValueCollection postCollection)
 		{
-#if NET_2_0
 			return LoadPostData (postDataKey, postCollection);
-#else
-			return LoadPostDataInternal (postDataKey, postCollection);
-#endif
 		}
 
 		void IPostBackDataHandler.RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
 			RaisePostDataChangedEvent ();
-#else
-			RaisePostDataChangedEventInternal ();
-#endif
 		}
 
-#if NET_2_0
 		protected override void RenderAttributes (HtmlTextWriter writer)
 		{
 			Page page = Page;
@@ -106,19 +91,13 @@ namespace System.Web.UI.HtmlControls {
 			base.RenderAttributes (writer);
 		}		
 
-		protected internal
-#else
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 
 			if (Page != null && !Disabled) {
 				Page.RegisterRequiresPostBack (this);
-#if NET_2_0
 				Page.RegisterEnabledControl (this);
-#endif
 			}
 		}
 

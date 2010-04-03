@@ -6,7 +6,7 @@
 //
 //
 // (C) Bob Smith
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -47,20 +47,9 @@ namespace System.Web.UI.HtmlControls{
 		internal string _tagName;
 		AttributeCollection _attributes;
 
+		protected HtmlControl() : this ("span") {}
 		
-#if NET_2_0
-		protected
-#else
-		public
-#endif
-		HtmlControl() : this ("span") {}
-		
-#if NET_2_0
-		protected
-#else
-		public
-#endif
-		HtmlControl(string tag)
+		protected HtmlControl(string tag)
 		{
 			_tagName = tag;
 		}
@@ -96,7 +85,6 @@ namespace System.Web.UI.HtmlControls{
 			}
 		}
 
-#if NET_2_0
 		/* keep these two methods in sync with the
 		 * IAttributeAccessor iface methods below */
 		protected virtual string GetAttribute (string name)
@@ -108,7 +96,6 @@ namespace System.Web.UI.HtmlControls{
 		{
 			Attributes[name] = value;
 		}
-#endif		
 		
 		string System.Web.UI.IAttributeAccessor.GetAttribute(string name){
 			return Attributes[name];
@@ -125,12 +112,7 @@ namespace System.Web.UI.HtmlControls{
 			writer.Write ('>');
 		}
 
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif
-		override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			RenderBeginTag (writer);
 		}
@@ -144,8 +126,7 @@ namespace System.Web.UI.HtmlControls{
 		
 		[Browsable(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public AttributeCollection Attributes
-		{
+		public AttributeCollection Attributes {
 			get { 
 				if (_attributes == null)
 					_attributes = new AttributeCollection (ViewState);
@@ -157,11 +138,8 @@ namespace System.Web.UI.HtmlControls{
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
-#if NET_2_0
 		[TypeConverter (typeof(MinimizableAttributeTypeConverter))]
-#endif
-		public bool Disabled
-		{
+		public bool Disabled {
 			get {
 				string disableAttr = Attributes["disabled"] as string;
 				return (disableAttr != null);
@@ -176,8 +154,7 @@ namespace System.Web.UI.HtmlControls{
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public CssStyleCollection Style
-		{
+		public CssStyleCollection Style {
 			get { return Attributes.CssStyle; }
 		}
 
@@ -185,13 +162,11 @@ namespace System.Web.UI.HtmlControls{
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription("")]
 		[WebCategory("Appearance")]
-		public virtual string TagName
-		{
+		public virtual string TagName {
 			get { return _tagName; }
 		}
 
-		protected override bool ViewStateIgnoresCase 
-		{
+		protected override bool ViewStateIgnoresCase {
 			get {
 				return true;
 			}

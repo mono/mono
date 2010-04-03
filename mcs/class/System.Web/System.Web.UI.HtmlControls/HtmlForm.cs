@@ -4,7 +4,7 @@
 // Author:
 //	Dick Porter  <dick@ximian.com>
 //
-// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -42,12 +42,15 @@ namespace System.Web.UI.HtmlControls
 	public class HtmlForm : HtmlContainerControl 
 	{
 		bool inited;
-
+		string _defaultfocus;
+		string _defaultbutton;
+		bool submitdisabledcontrols = false;
+		bool? isUplevel;
+		
 		public HtmlForm () : base ("form")
 		{
 		}
 
-#if NET_2_0
 		// LAMESPEC: This is undocumented on MSDN, but apparently it does exist on MS.NET.
 		// See https://bugzilla.novell.com/show_bug.cgi?id=442104
 		public string Action {
@@ -65,12 +68,10 @@ namespace System.Web.UI.HtmlControls
 				else
 					Attributes ["action"] = value;
 			}
-		}
-		
-		string _defaultbutton;
+		}		
+
 		[DefaultValue ("")]
-		public string DefaultButton
-		{
+		public string DefaultButton {
 			get {
 				return _defaultbutton ?? String.Empty;
 			}
@@ -79,10 +80,8 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-		string _defaultfocus;
 		[DefaultValue ("")]
-		public string DefaultFocus
-		{
+		public string DefaultFocus {
 			get {
 				return _defaultfocus ?? String.Empty;
 			}
@@ -90,12 +89,10 @@ namespace System.Web.UI.HtmlControls
 				_defaultfocus = value;
 			}
 		}
-#endif		
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string Enctype 
-		{
+		public string Enctype {
 			get {
 				string enc = Attributes["enctype"];
 
@@ -116,8 +113,7 @@ namespace System.Web.UI.HtmlControls
 		
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string Method 
-		{
+		public string Method {
 			get {
 				string method = Attributes["method"];
 
@@ -138,8 +134,7 @@ namespace System.Web.UI.HtmlControls
 
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public virtual string Name 
-		{
+		public virtual string Name {
 			get {
 				return UniqueID;
 			}
@@ -148,11 +143,8 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0
-		bool submitdisabledcontrols = false;
 		[DefaultValue (false)]
-		public virtual bool SubmitDisabledControls 
-		{
+		public virtual bool SubmitDisabledControls {
 			get {
 				return submitdisabledcontrols;
 			}
@@ -160,12 +152,10 @@ namespace System.Web.UI.HtmlControls
 				submitdisabledcontrols = value;
 			}
 		}
-#endif
 			
 		[DefaultValue ("")]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public string Target 
-		{
+		public string Target {
 			get {
 				string target = Attributes["target"];
 
@@ -190,33 +180,20 @@ namespace System.Web.UI.HtmlControls
 			}
 		}
 
-#if NET_2_0		
 		[MonoTODO ("why override?")]
 		protected override ControlCollection CreateControlCollection ()
 		{
 			return base.CreateControlCollection ();
 		}
-#endif		
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
 			inited = true;
 			Page.RegisterViewStateHandler ();
-
-#if NET_2_0
 			Page.RegisterForm (this);
-#endif
-
 			base.OnInit (e);
 		}
 
-#if NET_2_0
-		bool? isUplevel;
 		internal bool DetermineRenderUplevel ()
 		{
 #if TARGET_J2EE
@@ -250,7 +227,6 @@ namespace System.Web.UI.HtmlControls
 		{
 			base.OnPreRender(e);
 		}
-#endif		
 
 		protected override void RenderAttributes (HtmlTextWriter w)
 		{
@@ -262,17 +238,13 @@ namespace System.Web.UI.HtmlControls
 			*/
 			
 			string action;
-#if NET_2_0
 			string customAction = Attributes ["action"];
-#endif
 			Page p = Page;
 			HttpRequest req = p != null ? p.Request : null;
 			if (req == null)
 				throw new HttpException ("No current request, cannot continue rendering.");
 #if !TARGET_J2EE
-#if NET_2_0
 			if (String.IsNullOrEmpty (customAction)) {
-#endif
 				string file_path = req.ClientFilePath;
 				string current_path = req.CurrentExecutionFilePath;
 				if (file_path == current_path) {
@@ -282,14 +254,8 @@ namespace System.Web.UI.HtmlControls
 					// Fun. We need to make cookieless sessions work, so no
 					// absolute paths here.
 					bool cookieless;
-
-#if NET_2_0
 					SessionStateSection sec = WebConfigurationManager.GetSection ("system.web/sessionState") as SessionStateSection;
 					cookieless = sec != null ? sec.Cookieless == HttpCookieMode.UseUri: false;
-#else
-					SessionConfig sec = HttpContext.GetAppConfig ("system.web/sessionState") as SessionConfig;
-					cookieless = sec != null ? sec.CookieLess : false;
-#endif
 					string appVPath = HttpRuntime.AppDomainAppVirtualPath;
 					int appVPathLen = appVPath.Length;
 						
@@ -308,10 +274,8 @@ namespace System.Web.UI.HtmlControls
 					} else
 						action = current_path;
 				}
-#if NET_2_0
 			} else
 				action = customAction;
-#endif
 			action += req.QueryStringRaw;
 #else
 			// Allow the page to transform action to a portlet action url
@@ -325,18 +289,14 @@ namespace System.Web.UI.HtmlControls
 
 #endif
 
-#if NET_2_0
 			XhtmlConformanceSection xhtml = WebConfigurationManager.GetSection ("system.web/xhtmlConformance") as
 				XhtmlConformanceSection;
 			
 			if (xhtml != null && xhtml.Mode == XhtmlConformanceMode.Legacy)
-#endif
 				w.WriteAttribute ("name", Name);
 
 			w.WriteAttribute ("method", Method);
-#if NET_2_0
 			if (String.IsNullOrEmpty (customAction))
-#endif
 				w.WriteAttribute ("action", action, true);
 
 			/*
@@ -354,7 +314,7 @@ namespace System.Web.UI.HtmlControls
 			}
 			
 			string submit = Page.GetSubmitStatements ();
-			if (submit != null && submit != "") {
+			if (!String.IsNullOrEmpty (submit)) {
 				Attributes.Remove ("onsubmit");
 				w.WriteAttribute ("onsubmit", submit);
 			}
@@ -363,16 +323,15 @@ namespace System.Web.UI.HtmlControls
 			 * they are empty
 			 */
 			string enctype = Enctype;
-			if (enctype != null && enctype != "") {
+			if (!String.IsNullOrEmpty (enctype)) {
 				w.WriteAttribute ("enctype", enctype);
 			}
 
 			string target = Target;
-			if (target != null && target != "") {
+			if (!String.IsNullOrEmpty (target)) {
 				w.WriteAttribute ("target", target);
 			}
 
-#if NET_2_0
 			string defaultbutton = DefaultButton;
 			if (!String.IsNullOrEmpty (defaultbutton)) {
 				Control c = FindControl (defaultbutton);
@@ -387,7 +346,6 @@ namespace System.Web.UI.HtmlControls
 						"javascript:return " + Page.WebFormScriptReference + ".WebForm_FireDefaultButton(event, '" + c.ClientID + "')");
 				}
 			}
-#endif
 
 			/* Now remove them from the hash so the base
 			 * RenderAttributes can do all the rest
@@ -399,20 +357,13 @@ namespace System.Web.UI.HtmlControls
 			base.RenderAttributes (w);
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void RenderChildren (HtmlTextWriter w)
+		protected internal override void RenderChildren (HtmlTextWriter w)
 		{
 			Page page = Page;
 			
 			if (!inited && page != null) {
 				page.RegisterViewStateHandler ();
-#if NET_2_0
 				page.RegisterForm (this);
-#endif
 			}
 			if (page != null)
 				page.OnFormRender (w, ClientID);
@@ -421,25 +372,16 @@ namespace System.Web.UI.HtmlControls
 				page.OnFormPostRender (w, ClientID);
 		}
 
-#if NET_2_0
 		/* According to corcompare */
 		[MonoTODO ("why override?")]
 		public override void RenderControl (HtmlTextWriter w)
 		{
 			base.RenderControl (w);
 		}
-#endif		
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void Render (HtmlTextWriter w)
+		protected internal override void Render (HtmlTextWriter w)
 		{
 			base.Render (w);
 		}
 	}
 }
-
-	
