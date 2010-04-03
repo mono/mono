@@ -222,11 +222,11 @@ namespace MonoTests.System.Web.Compilation {
 		}
 
 		[Test (Description="Bug #524358")]
-		[ExpectedException ("System.Web.Compilation.ParseException")]
 		public void DuplicateControlsInClientComment ()
 		{
 			// Just test if it throws an exception
-			new WebTest ("DuplicateControlsInClientComment.aspx").Run ();
+			string pageHtml = new WebTest ("DuplicateControlsInClientComment.aspx").Run ();
+			Assert.IsTrue (pageHtml.IndexOf ("[System.Web.Compilation.ParseException]:") != -1, "#A1");
 		}
 
 		[Test (Description="Bug #367723")]
