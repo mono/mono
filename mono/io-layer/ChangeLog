@@ -1,3 +1,7 @@
+2010-04-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c: Applied some openbsd changes from Robert Nagy <robert@openbsd.org>.
+
 2010-03-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* sockets.c: Apply some openbsd changes from openbsd ports.
