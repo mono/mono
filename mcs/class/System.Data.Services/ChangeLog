@@ -1,3 +1,7 @@
+2010-04-03  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: System.Data.Services is a .net 3.5 assembly.
+
 2009-11-07  Zoltan Varga  <vargaz@gmail.com>
 
 	*: Move .cs files to the System.Data.Services subdir to match their namespace,
