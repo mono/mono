@@ -366,8 +366,11 @@ namespace System.Collections.Generic
 			for (int i = 0; i < path.Count - 2; i += 2)
 				-- path [i].Size;
 
-			if (curpos != 0 && current.IsBlack)
-				rebalance_delete (path);
+			if (current.IsBlack) {
+				current.IsBlack = false;
+				if (curpos != 0)
+					rebalance_delete (path);
+			}
 
 			if (root != null && !root.IsBlack)
 				throw new SystemException ("Internal Error: root is not black");
@@ -814,10 +817,13 @@ namespace Mono.ValidationTest {
 			Dictionary<int, int> d = new Dictionary<int, int> ();
 			TreeSet<int> t = new TreeSet<int> ();
 			int iters = args.Length == 0 ? 100000 : Int32.Parse (args [0]);
+			int watermark = 1;
 
 			for (int i = 0; i < iters; ++i) {
-				if ((i % 100) == 0)
+				if (i >= watermark) {
+					watermark += 1 + watermark/4;
 					t.VerifyInvariants ();
+				}
 
 				int n = r.Next ();
 				if (d.ContainsKey (n))
@@ -868,14 +874,18 @@ namespace Mono.ValidationTest {
 				}
 			}
 
-			int j = 0;
+			int count = t.Count;
 			foreach (int n in d.Keys) {
-				if ((j++ % 100) == 0)
+				if (count <= watermark) {
+					watermark -= watermark/4;
 					t.VerifyInvariants ();
+				}
 				try {
 					if (!t.Remove (n))
 						throw new Exception ("tree says it doesn't have a number it should");
-
+					--count;
+					if (t.Count != count)
+						throw new Exception ("Remove didn't remove exactly one element");
 				} catch {
 					Console.Error.WriteLine ("While trying to remove {0} from tree of size {1}", n, t.Count);
 					t.Dump ();

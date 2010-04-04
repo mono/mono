@@ -1,3 +1,8 @@
+2010-04-04  Raja R Harinath  <harinath@hurrynot.org>
+
+	* RBTree.cs (do_remove): Ensure the node returned is suitable for
+	re-insertion.
+
 2010-04-02  Jb Evain  <jbevain@novell.com>
 
 	* SortedSet.cs: implement Mix and Max for subsets.
