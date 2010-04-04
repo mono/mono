@@ -1,3 +1,13 @@
+2010-04-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolTip.cs: Make TipState internal.
+	* ToolStrip.cs: Use the same idea of ToolTip'state to have our
+	internal timer close the tooltip window after a delay, instead of
+	waiting for the mouse to move to a different item. Also, hide the
+	tooltip window when the handle is destroyed, and also when the control
+	is getting hidden.
+	Fixes #581273.
+
 2010-03-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Selection should be available after the first time the

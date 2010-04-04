@@ -803,7 +803,7 @@ namespace System.Windows.Forms {
 #endif
 		#endregion	// Protected Instance Methods
 
-		enum TipState {
+		internal enum TipState {
 			Initial,
 			Show,
 			Down

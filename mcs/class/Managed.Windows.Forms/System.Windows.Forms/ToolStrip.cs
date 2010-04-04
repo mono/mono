@@ -79,6 +79,10 @@ namespace System.Windows.Forms
 		private ToolStripItem mouse_currently_over;
 		internal bool menu_selected;
 		private ToolStripItem tooltip_currently_showing;
+		private ToolTip.TipState tooltip_state;
+
+		const int InitialToolTipDelay = 500;
+		const int ToolTipDelay = 5000;
 		#endregion
 
 		#region Public Constructors
@@ -723,6 +727,7 @@ namespace System.Windows.Forms
 		protected override void Dispose (bool disposing)
 		{
 			if (!IsDisposed) {
+				CloseToolTip (null);
 				// ToolStripItem.Dispose modifes the collection,
 				// so we iterate it in reverse order
 				for (int i = Items.Count - 1; i >= 0; i--)
@@ -1060,6 +1065,9 @@ namespace System.Windows.Forms
 
 		protected override void OnVisibleChanged (EventArgs e)
 		{
+			if (!Visible)
+				CloseToolTip (null);
+
 			base.OnVisibleChanged (e);
 		}
 
@@ -1597,24 +1605,32 @@ namespace System.Windows.Forms
 		private void MouseEnteredItem (ToolStripItem item)
 		{
 			if (this.show_item_tool_tips && !(item is ToolStripTextBox)) {
+				ToolTipTimer.Interval = InitialToolTipDelay;
+				tooltip_state = ToolTip.TipState.Initial;
 				tooltip_currently_showing = item;
 				ToolTipTimer.Start ();
 			}
 		}
-		
-		private void MouseLeftItem (ToolStripItem item)
+	
+		private void CloseToolTip (ToolStripItem item)
 		{
 			ToolTipTimer.Stop ();
 			ToolTipWindow.Hide (this);
 			tooltip_currently_showing = null;
+			tooltip_state = ToolTip.TipState.Down;
 		}
-		
+
+		private void MouseLeftItem (ToolStripItem item)
+		{
+			CloseToolTip (item);
+		}
+
 		private Timer ToolTipTimer {
 			get {
 				if (tooltip_timer == null) {
 					tooltip_timer = new Timer ();
 					tooltip_timer.Enabled = false;
-					tooltip_timer.Interval = 500;
+					tooltip_timer.Interval = InitialToolTipDelay;
 					tooltip_timer.Tick += new EventHandler (ToolTipTimer_Tick);
 				}
 				
@@ -1631,16 +1647,32 @@ namespace System.Windows.Forms
 			}
 		}
 		
-		private void ToolTipTimer_Tick (object o, EventArgs args)
+		private void ShowToolTip ()
 		{
 			string tooltip = tooltip_currently_showing.GetToolTip ();
 			
-			if (!string.IsNullOrEmpty (tooltip))
+			if (!string.IsNullOrEmpty (tooltip)) {
 				ToolTipWindow.Present (this, tooltip);
+				ToolTipTimer.Interval = ToolTipDelay;
+				ToolTipTimer.Start ();
+				tooltip_state = ToolTip.TipState.Show;
+			}
 
 			tooltip_currently_showing.FireEvent (EventArgs.Empty, ToolStripItemEventType.MouseHover);
+		}
 
+		private void ToolTipTimer_Tick (object o, EventArgs args)
+		{
 			ToolTipTimer.Stop ();
+
+			switch (tooltip_state) {
+				case ToolTip.TipState.Initial:
+					ShowToolTip ();
+					break;
+				case ToolTip.TipState.Show:
+					CloseToolTip (null);
+					break;
+			}
 		}
 		#endregion
 
