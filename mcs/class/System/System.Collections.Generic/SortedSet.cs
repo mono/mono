@@ -307,10 +307,12 @@ namespace System.Collections.Generic {
 			OnDeserialization (sender);
 		}
 
-		[MonoTODO]
+		[MonoLimitation ("Isn't O(n) when other is SortedSet<T>")]
 		public void ExceptWith (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+			foreach (T item in other)
+				Remove (item);
 		}
 
 		public virtual SortedSet<T> GetViewBetween (T lowerValue, T upperValue)
@@ -321,10 +323,18 @@ namespace System.Collections.Generic {
 			return new SortedSubSet (this, lowerValue, upperValue);
 		}
 
-		[MonoTODO]
+		[MonoLimitation ("Isn't O(n) when other is SortedSet<T>")]
 		public virtual void IntersectWith (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+
+			RBTree newtree = new RBTree (helper);
+			foreach (T item in other) {
+				var node = tree.Remove (item);
+				if (node != null)
+					newtree.Intern (item, node);
+			}
+			tree = newtree;
 		}
 
 		[MonoTODO]
@@ -363,16 +373,33 @@ namespace System.Collections.Generic {
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
+		[MonoLimitation ("Isn't O(n) when other is SortedSet<T>")]
 		public void SymmetricExceptWith (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			SortedSet<T> other_nodups = new SortedSet<T> (other, Comparer);
+			SortedSet<T> other_minus_this = new SortedSet<T> (Comparer);
+
+			// compute this - other and other - this in parallel
+			foreach (T item in other_nodups)
+				if (!Remove (item))
+					other_minus_this.Add (item);
+
+			UnionWith (other_minus_this);
 		}
 
-		[MonoTODO]
+		[MonoLimitation ("Isn't O(n) when other is SortedSet<T>")]
 		public void UnionWith (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+
+			foreach (T item in other)
+				Add (item);
+		}
+
+		static void CheckArgumentNotNull (object arg, string name)
+		{
+			if (arg == null)
+				throw new ArgumentNullException (name);
 		}
 
 		void ICollection<T>.Add (T item)
@@ -564,6 +591,17 @@ namespace System.Collections.Generic {
 			IEnumerator IEnumerable.GetEnumerator ()
 			{
 				return GetEnumerator ();
+			}
+
+			public override void IntersectWith (IEnumerable<T> other)
+			{
+				CheckArgumentNotNull (other, "other");
+
+				var slice = new SortedSet<T> (this);
+				slice.IntersectWith (other);
+
+				Clear ();
+				set.UnionWith (slice);
 			}
 		}
 	}

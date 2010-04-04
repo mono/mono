@@ -1,5 +1,10 @@
 2010-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
+	* SortedSet.cs (CheckArgumentNotNull): New helper.
+	(IntersectWith, UnionWith): Implement.
+	(ExceptWith, SymmetricExceptWith): Likewise.
+	(SortedSubSet.IntersectWith): Implement override.
+
 	* RBTree.cs (do_remove): Ensure the node returned is suitable for
 	re-insertion.
 

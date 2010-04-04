@@ -264,6 +264,128 @@ namespace MonoTests.System.Collections.Generic
 
 			Assert.AreEqual (7, view.Max);
 		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void IntersectWith_Null ()
+		{
+			var set = new SortedSet<int> ();
+			set.IntersectWith (null);
+		}
+
+		[Test]
+		public void IntersectWith ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			set.IntersectWith (new [] { 5, 7, 3, 7, 11, 7, 5, 2 });
+			Assert.IsTrue (set.SequenceEqual (new [] { 3, 5, 7 }));
+		}
+
+		[Test]
+		public void ViewIntersectWith ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (4, 8);
+			view.IntersectWith (new [] { 1, 5, 9 });
+			Assert.IsTrue (view.SequenceEqual (new [] { 5 }));
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 3, 5, 9 }));
+			view.IntersectWith (new [] { 1, 2 });
+			Assert.IsTrue (view.SequenceEqual (new int [] {}));
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 3, 9 }));
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void UnionWith_Null ()
+		{
+			var set = new SortedSet<int> ();
+			set.UnionWith (null);
+		}
+
+		[Test]
+		public void UnionWith ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			set.UnionWith (new [] { 5, 7, 3, 7, 11, 7, 5, 2 });
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 2, 3, 5, 7, 9, 11 }));
+		}
+
+		[Test]
+		public void ViewUnionWith ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (4, 8);
+			view.UnionWith (new [] { 4, 5, 6, 6, 4 });
+			Assert.IsTrue (view.SequenceEqual (new [] { 4, 5, 6, 7 }));
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 3, 4, 5, 6, 7, 9 }));
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ViewUnionWith_oor ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (4, 8);
+			view.UnionWith (new [] {1});
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void ExceptWith_Null ()
+		{
+			var set = new SortedSet<int> ();
+			set.ExceptWith (null);
+		}
+
+		[Test]
+		public void ExceptWith ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			set.ExceptWith (new [] { 5, 7, 3, 7, 11, 7, 5, 2 });
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 9 }));
+		}
+
+		[Test]
+		public void ViewExceptWith ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (4, 8);
+			view.ExceptWith (new [] { 4, 5, 6, 6, 4 });
+			Assert.IsTrue (view.SequenceEqual (new [] { 7 }));
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 3, 7, 9 }));
+			view.ExceptWith (new [] { 1, 2 });
+			Assert.IsTrue (view.SequenceEqual (new [] { 7 }));
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 3, 7, 9 }));
+		}
+
+		[Test, ExpectedException (typeof (ArgumentNullException))]
+		public void SymmetricExceptWith_Null ()
+		{
+			var set = new SortedSet<int> ();
+			set.SymmetricExceptWith (null);
+		}
+
+		[Test]
+		public void SymmetricExceptWith ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			set.SymmetricExceptWith (new [] { 5, 7, 3, 7, 11, 7, 5, 2 });
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 2, 9, 11 }));
+		}
+
+		[Test]
+		public void ViewSymmetricExceptWith ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (4, 8);
+			view.SymmetricExceptWith (new [] { 4, 5, 6, 6, 4 });
+			Assert.IsTrue (view.SequenceEqual (new [] { 4, 6, 7 }));
+			Assert.IsTrue (set.SequenceEqual (new [] { 1, 3, 4, 6, 7, 9 }));
+		}
+
+		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
+		public void ViewSymmetricExceptWith_oor ()
+		{
+			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
+			var view = set.GetViewBetween (4, 8);
+			view.SymmetricExceptWith (new [] {2});
+		}
 	}
 }
 
