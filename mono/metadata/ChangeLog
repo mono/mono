@@ -1,3 +1,9 @@
+2010-04-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: if there are no waiting threads, try to start a new
+	one. This fixes the not-so-random hangs in System.ServiceModel tests.
+	No need to use InterlockedCompareExchange to read volatile variables.
+
 2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (verify_type_compatibility_full): Fail mixed valuetype
