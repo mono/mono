@@ -968,7 +968,11 @@ namespace System.Runtime.Serialization
 			Type type, QName qname, KnownTypeCollection knownTypes)
 			: base (type, qname, knownTypes)
 		{
-			Members = GetMembers (type, XmlName, false);
+		}
+
+		public void Initialize ()
+		{
+			Members = GetMembers (RuntimeType, XmlName, false);
 		}
 
 		List<DataMemberInfo> GetMembers (Type type, QName qname, bool declared_only)

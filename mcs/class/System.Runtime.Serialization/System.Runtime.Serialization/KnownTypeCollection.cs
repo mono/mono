@@ -722,9 +722,9 @@ namespace System.Runtime.Serialization
 			if (FindUserMap (qname) != null)
 				throw new InvalidOperationException (String.Format ("There is already a registered type for XML name {0}", qname));
 
-			SharedTypeMap ret =
-				new SharedTypeMap (type, qname, this);
+			SharedTypeMap ret = new SharedTypeMap (type, qname, this);
 			contracts.Add (ret);
+			ret.Initialize ();
 			return ret;
 		}
 
