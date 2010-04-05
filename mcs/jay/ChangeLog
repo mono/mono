@@ -1,3 +1,7 @@
+2010-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* defs.h: Quiet warnings which might bother rpm.
+
 2008-10-17  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile: Add doc-update target support.
