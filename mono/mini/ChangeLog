@@ -1,3 +1,13 @@
+2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* aot-compiler.c (emit_exception_debug_info): Encode try holes
+	information.
+
+	* aot-runtime.c (decode_exception_debug_info): Decode try holes
+	information.
+
+	* mini.h: Increase AOT version.
+
 2010-04-04  Andreas Faerber  <andreas.faerber@web.de>
 
 	* mini-x86.h: Only enable soft debugger when using sigaction or on
