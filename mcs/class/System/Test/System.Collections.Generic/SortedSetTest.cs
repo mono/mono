@@ -387,16 +387,18 @@ namespace MonoTests.System.Collections.Generic
 			view.SymmetricExceptWith (new [] {2});
 		}
 
-		void do_test_e (SortedSet<int> s1, IEnumerable<int> s2, bool o, bool se, bool sb, bool su, bool psb, bool psu)
+		void do_test_e (SortedSet<int> s1, IEnumerable<int> s2, bool o, bool se = false, bool psb = false, bool psu = false)
 		{
-			// Some sanity checks in the tests
-#if DEBUG
-			Assert.IsTrue (!psb || sb);
-			Assert.IsTrue (!psu || su);
-			Assert.IsTrue (se == (sb && su));
+			bool sb = false, su = false;
+			if (se)
+				sb = su = true;
+			if (psb)
+				sb = true;
+			if (psu)
+				su = true;
+
 			Assert.IsTrue (!su || !psb);
 			Assert.IsTrue (!sb || !psu);
-#endif
 
 			// actual tests
 			Assert.AreEqual (o, s1.Overlaps (s2));
@@ -407,10 +409,12 @@ namespace MonoTests.System.Collections.Generic
 			Assert.AreEqual (psu, s1.IsProperSupersetOf (s2));
 		}
 
-		void do_test (SortedSet<int> s1, SortedSet<int> s2, bool o, bool se, bool sb, bool su, bool psb, bool psu)
+		void do_test (SortedSet<int> s1, SortedSet<int> s2, bool o = false, bool se = false, bool psb = false, bool psu = false)
 		{
-			do_test_e (s1, s2, o, se, sb, su, psb, psu);
-			do_test_e (s2, s1, o, se, su, sb, psu, psb);
+			if (s1.Count != 0 && s2.Count != 0 && (se || psb || psu))
+				o = true;
+			do_test_e (s1, s2, o, se, psb, psu);
+			do_test_e (s2, s1, o, se, psu, psb);
 		}
 
 		[Test]
@@ -427,24 +431,24 @@ namespace MonoTests.System.Collections.Generic
 			var digits = new SortedSet<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 			var squares = new SortedSet<int> { 0, 1, 4, 9 };
 
-			do_test (empty, empty, false, true, true, true, false, false);
-			do_test (empty, zero, false, false, true, false, true, false);
-			do_test (empty, digits, false, false, true, false, true, false);
-			do_test (zero, zero, true, true, true, true, false, false);
-			do_test (zero, one, false, false, false, false, false, false);
-			do_test (zero, bit, true, false, true, false, true, false);
-			do_test (zero, trit, true, false, true, false, true, false);
-			do_test (one, bit, true, false, true, false, true, false);
-			do_test (one, trit, true, false, true, false, true, false);
-			do_test (two, bit, false, false, false, false, false, false);
-			do_test (two, trit, true, false, true, false, true, false);
-			do_test (odds, squares, true, false, false, false, false, false);
-			do_test (evens, squares, true, false, false, false, false, false);
-			do_test (odds, digits, true, false, true, false, true, false);
-			do_test (evens, digits, true, false, true, false, true, false);
-			do_test (squares, digits, true, false, true, false, true, false);
-			do_test (digits, digits, true, true, true, true, false, false);
-			do_test_e (digits, squares.Concat (evens.Concat (odds)), true, true, true, true, false, false);
+			do_test (empty, empty, se: true);
+			do_test (empty, zero, psb: true);
+			do_test (empty, digits, psb: true);
+			do_test (zero, zero, se: true);
+			do_test (zero, one);
+			do_test (zero, bit, psb: true);
+			do_test (zero, trit, psb: true);
+			do_test (one, bit, psb: true);
+			do_test (one, trit, psb: true);
+			do_test (two, bit);
+			do_test (two, trit, psb: true);
+			do_test (odds, squares, o: true);
+			do_test (evens, squares, o: true);
+			do_test (odds, digits, psb: true);
+			do_test (evens, digits, psb: true);
+			do_test (squares, digits, psb: true);
+			do_test (digits, digits, se: true);
+			do_test_e (digits, squares.Concat (evens.Concat (odds)), o: true, se: true);
 		}
 	}
 }
