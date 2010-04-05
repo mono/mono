@@ -1,3 +1,10 @@
+2010-04-04  Andreas Faerber  <andreas.faerber@web.de>
+
+	* mini-x86.h: Only enable soft debugger when using sigaction or on
+	Windows. Fixes build on Haiku (lacks siginfo_t).
+
+	Code is contributed under MIT/X11 license.
+
 2010-04-02  Andreas Faerber  <andreas.faerber@web.de>
 
 	* mini.h, mini-x86.h: Suppress sigaction for Haiku, add support for
