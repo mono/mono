@@ -1,3 +1,7 @@
+2010-04-05  Raja R Harinath  <harinath@hurrynot.org>
+
+	* SortedSetTest.cs: Add test for various set comparison operators.
+
 2010-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
 	* SortedSetTest.cs: Add tests for IntersectWith, UnionWith,

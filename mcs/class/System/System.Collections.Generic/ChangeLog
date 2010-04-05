@@ -1,3 +1,14 @@
+2010-04-05  Raja R Harinath  <harinath@hurrynot.org>
+
+	* SortedSet.cs (IsProperSubsetOf, IsSubsetOf): Implement using ...
+	(is_subset_of): ... new helper.
+	(IsProperSupersetOf, IsSupersetOf): Implement using ...
+	(is_superset_of): ... new helper.
+	(covers, nodups, overlaps): New helpers.
+	(SetEquals): Implement.
+	(Overlaps): Implement using overlaps().
+	(SymmetricExceptWith): Use nodups() helper.
+
 2010-04-04  Raja R Harinath  <harinath@hurrynot.org>
 
 	* SortedSet.cs (CheckArgumentNotNull): New helper.

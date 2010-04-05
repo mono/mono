@@ -337,54 +337,181 @@ namespace System.Collections.Generic {
 			tree = newtree;
 		}
 
-		[MonoTODO]
 		public bool IsProperSubsetOf (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+
+			if (Count == 0) {
+				foreach (T item in other)
+					return true; // this idiom means: if 'other' is non-empty, return true
+				return false;
+			}
+
+			return is_subset_of (other, true);
 		}
 
-		[MonoTODO]
 		public bool IsProperSupersetOf (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+
+			if (Count == 0)
+				return false;
+
+			return is_superset_of (other, true);
 		}
 
-		[MonoTODO]
 		public bool IsSubsetOf (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+
+			if (Count == 0)
+				return true;
+
+			return is_subset_of (other, false);
 		}
 
-		[MonoTODO]
 		public bool IsSupersetOf (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+
+			if (Count == 0) {
+				foreach (T item in other)
+					return false; // this idiom means: if 'other' is non-empty, return false
+				return true;
+			}
+
+			return is_superset_of (other, false);
 		}
 
-		[MonoTODO]
+		// Precondition: Count != 0, other != null
+		bool is_subset_of (IEnumerable<T> other, bool proper)
+		{
+			SortedSet<T> that = nodups (other);
+
+			if (Count > that.Count)
+				return false;
+			// Count != 0 && Count <= that.Count => that.Count != 0
+			if (proper && Count == that.Count)
+				return false;
+			return that.covers (this);
+		}
+
+		// Precondition: Count != 0, other != null
+		bool is_superset_of (IEnumerable<T> other, bool proper)
+		{
+			SortedSet<T> that = nodups (other);
+
+			if (that.Count == 0)
+				return true;
+			if (Count < that.Count)
+				return false;
+			if (proper && Count == that.Count)
+				return false;
+			return this.covers (that);
+		}
+
 		public bool Overlaps (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+
+			if (Count == 0)
+				return false;
+
+			// Don't use 'nodups' here.  Only optimize the SortedSet<T> case
+			SortedSet<T> that = other as SortedSet<T>;
+			if (that != null && that.Comparer != Comparer)
+				that = null;
+
+			if (that != null)
+				return that.Count != 0 && overlaps (that);
+
+			foreach (T item in other)
+				if (Contains (item))
+					return true;
+			return false;
 		}
 
-		[MonoTODO]
 		public bool SetEquals (IEnumerable<T> other)
 		{
-			throw new NotImplementedException ();
+			CheckArgumentNotNull (other, "other");
+
+			if (Count == 0) {
+				foreach (T item in other)
+					return false;
+				return true;
+			}
+
+			SortedSet<T> that = nodups (other);
+
+			if (Count != that.Count)
+				return false;
+
+			using (var t = that.GetEnumerator ()) {
+				foreach (T item in this) {
+					if (!t.MoveNext ())
+						throw new SystemException ("count wrong somewhere: this longer than that");
+					if (Comparer.Compare (item, t.Current) != 0)
+						return false;
+				}
+				if (t.MoveNext ())
+					throw new SystemException ("count wrong somewhere: this shorter than that");
+				return true;
+			}
+		}
+
+		SortedSet<T> nodups (IEnumerable<T> other)
+		{
+			SortedSet<T> that = other as SortedSet<T>;
+			if (that != null && that.Comparer == Comparer)
+				return that;
+			return new SortedSet<T> (other, Comparer);
+		}
+
+		bool covers (SortedSet<T> that)
+		{
+			using (var t = that.GetEnumerator ()) {
+				if (!t.MoveNext ())
+					return true;
+				foreach (T item in this) {
+					int cmp = Comparer.Compare (item, t.Current);
+					if (cmp > 0)
+						return false;
+					if (cmp == 0 && !t.MoveNext ())
+						return true;
+				}
+				return false;
+			}
+		}
+
+		bool overlaps (SortedSet<T> that)
+		{
+			using (var t = that.GetEnumerator ()) {
+				if (!t.MoveNext ())
+					return false;
+				foreach (T item in this) {
+					int cmp;
+					while ((cmp = Comparer.Compare (item, t.Current)) > 0) {
+						if (!t.MoveNext ())
+							return false;
+					}
+					if (cmp == 0)
+						return true;
+				}
+				return false;
+			}
 		}
 
 		[MonoLimitation ("Isn't O(n) when other is SortedSet<T>")]
 		public void SymmetricExceptWith (IEnumerable<T> other)
 		{
-			SortedSet<T> other_nodups = new SortedSet<T> (other, Comparer);
-			SortedSet<T> other_minus_this = new SortedSet<T> (Comparer);
+			SortedSet<T> that_minus_this = new SortedSet<T> (Comparer);
 
-			// compute this - other and other - this in parallel
-			foreach (T item in other_nodups)
+			// compute this - that and that - this in parallel
+			foreach (T item in nodups (other))
 				if (!Remove (item))
-					other_minus_this.Add (item);
+					that_minus_this.Add (item);
 
-			UnionWith (other_minus_this);
+			UnionWith (that_minus_this);
 		}
 
 		[MonoLimitation ("Isn't O(n) when other is SortedSet<T>")]
