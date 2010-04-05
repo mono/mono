@@ -1,5 +1,12 @@
 2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verify_type_compatibility_full): Fail mixed valuetype
+	and reference types that point to the same class.
+
+	Fixes #565598.
+
+2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (verify_stack_type_compatibility_full): Ignore constraints
 	when verifying compatibility between a generic instance and a generic
 	parameter.
