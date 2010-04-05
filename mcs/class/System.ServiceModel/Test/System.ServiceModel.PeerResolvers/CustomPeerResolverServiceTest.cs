@@ -30,7 +30,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		public void CloseTest ()
 		{
 			cprs.Open ();
@@ -38,7 +37,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void CloseTest1 ()
 		{
@@ -46,7 +44,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetServiceSettingsTest ()
 		{
@@ -56,14 +53,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
-		public void OpenTest ()
-		{
-			cprs.Open ();
-		}
-
-		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (ArgumentException))]
 		public void OpenTest1 ()
 		{
@@ -72,7 +61,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (ArgumentException))]
 		public void OpenTest2 ()
 		{
@@ -81,7 +69,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (ArgumentException))]
 		public void OpenTest3 ()
 		{
@@ -91,16 +78,18 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void OpenTest4 ()
 		{
 			cprs.Open ();
-			cprs.Open ();
+			try {
+				cprs.Open ();
+			} finally {
+				cprs.Close ();
+			}
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (ArgumentException))]
 		public void RefreshTest ()
 		{
@@ -108,7 +97,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void RefreshTest1 ()
 		{
@@ -123,7 +111,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		//}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof( ArgumentException))]
 		public void RegisterTest ()
 		{
@@ -131,7 +118,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void RegisterTest1 ()
 		{
@@ -146,7 +132,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		//}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (ArgumentException))]
 		public void ResolveTest ()
 		{
@@ -154,7 +139,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void ResolveTest1 ()
 		{
@@ -169,7 +153,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		//}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (ArgumentException))]
 		public void UnregisterTest ()
 		{
@@ -177,7 +160,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void UnregisterTest1 ()
 		{
@@ -192,7 +174,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		//}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (ArgumentException))]
 		public void UpdateTest ()
 		{
@@ -200,7 +181,6 @@ namespace MonoTests.System.ServiceModel.PeerResolvers
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void UpdateTest1 ()
 		{
