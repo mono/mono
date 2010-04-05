@@ -1,3 +1,8 @@
+2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* unverifiable_ginst_dont_reduce_to_gparam_with_constraint.il: Regression test
+	for #587849.
+
 2010-03-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* invalid_branch_in_between_prefix_and_instruction.il:
