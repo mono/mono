@@ -237,8 +237,12 @@ namespace System.Runtime.Serialization
 			ExportCore (keyType, false);
 			ExportCore (valueType, false);
 
-			var keyName = attr.KeyName ?? "Key";
-			var valueName = attr.ValueName ?? "Value";
+			string keyName = "Key", valueName = "Value";
+			if (attr != null) {
+				keyName = attr.KeyName ?? keyName;
+				valueName = attr.ValueName ?? valueName;
+			}
+			string itemName = attr != null && attr.ItemName != null ? attr.ItemName : "KeyValueOf" + keyName + valueName;
 
 			var ct = CreateComplexType (qname, type);
 			var appInfo = new XmlSchemaAppInfo ();
@@ -250,7 +254,7 @@ namespace System.Runtime.Serialization
 
 			var seq = new XmlSchemaSequence ();
 			ct.Particle = seq;
-			var el = new XmlSchemaElement () { Name = attr.ItemName ?? "KeyValueOf" + keyName + valueName, MinOccurs = 0, MaxOccursString = "unbounded" };
+			var el = new XmlSchemaElement () { Name = itemName, MinOccurs = 0, MaxOccursString = "unbounded" };
 			seq.Items.Add (el);
 
 			var dictType = new XmlSchemaComplexType ();

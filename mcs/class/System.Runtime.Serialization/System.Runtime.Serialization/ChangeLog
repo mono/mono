@@ -1,5 +1,10 @@
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DataContractExporter-new.cs : do not expect contract attribute on
+	  dictionary map. Non-contract type also uses this.
+
+2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.XsdExporter.cs, DataContractExporter-new.cs :
 	  handle schema export for SharedTypeMap.
 
