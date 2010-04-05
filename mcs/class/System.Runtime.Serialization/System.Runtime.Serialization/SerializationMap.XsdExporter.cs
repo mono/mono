@@ -62,7 +62,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportStandardComplexType (RuntimeType.GetCustomAttribute<DataContractAttribute> (false), RuntimeType);
+			exporter.ExportStandardComplexType (RuntimeType.GetCustomAttribute<DataContractAttribute> (false), RuntimeType, Members);
 		}
 	}
 	
@@ -70,7 +70,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			exporter.ExportStandardComplexType (null, RuntimeType);
+			exporter.ExportStandardComplexType (null, RuntimeType, Members);
 		}
 	}
 	
@@ -102,7 +102,7 @@ namespace System.Runtime.Serialization
 	{
 		public override void ExportSchemaType (XsdDataContractExporter exporter)
 		{
-			throw new NotImplementedException ();
+			exporter.ExportStandardComplexType (null, RuntimeType, Members);
 		}
 	}
 	

@@ -219,67 +219,12 @@ namespace System.Runtime.Serialization
 			if (imported_types.FirstOrDefault (i => i.ClrType == type) != null)
 				return false;
 
-#if true
 			known_types.TryRegister (type);
 			var map = known_types.FindUserMap (type);
 			if (map == null)
 				return false;
 			map.ExportSchemaType (this);
 			return true;
-#else
-			var cdca = type.GetCustomAttribute<CollectionDataContractAttribute> (true);
-			var dicType = GetIDictionaryInterfaceType (type);
-			if (dicType != null) {
-				ExportDictionaryContractType (cdca, type, dicType);
-				return true;
-			}
-			// not sure if contract is required
-			if (type.IsArray && type != typeof (byte [])) {
-				ExportListContractType (cdca, type);
-				return true;
-			}
-			if (cdca != null) {
-				ExportListContractType (cdca, type);
-				return true;
-			}
-
-			var dca = type.GetCustomAttribute<DataContractAttribute> (true);
-			if (type.IsEnum) { // regardless of DCA existence.
-				ExportEnumContractType (dca, type);
-				return true;
-			}
-			if (dca != null) {
-				ExportStandardComplexType (dca, type);
-				return true;
-			}
-
-			// FIXME: support [Serializable]
-
-			if (rejectNonContract)
-				throw new InvalidDataContractException ("DataContractAttribute is missing");
-
-			return false;
-#endif
-		}
-
-		// copied from KnownTypeCollection, removing IDictionary
-		static Type GetIDictionaryInterfaceType (Type type)
-		{
-			foreach (var iface in type.GetInterfaces ())
-				if (iface == typeof (IDictionary) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (IDictionary<,>)))
-					return iface;
-
-			return null;
-		}
-		
-		// copied from KnownTypeCollection, removing IDictionary
-		static Type GetCollectionInterfaceType (Type type)
-		{
-			foreach (var iface in type.GetInterfaces ())
-				if (iface == typeof (IList) || (iface.IsGenericType && iface.GetGenericTypeDefinition () == typeof (ICollection<>)))
-					return iface;
-
-			return null;
 		}
 		
 		internal void ExportDictionaryContractType (CollectionDataContractAttribute attr, Type type, Type dicType)
@@ -378,7 +323,7 @@ namespace System.Runtime.Serialization
 			return r;
 		}
 
-		internal void ExportStandardComplexType (DataContractAttribute attr, Type type)
+		internal void ExportStandardComplexType (DataContractAttribute attr, Type type, List<DataMemberInfo> members)
 		{
 			var qname = attr != null && attr.Name != null ? new QName (attr.Name, attr.Namespace ?? GetXmlNamespace (type)) : GetSchemaTypeName (type);
 			var ct = CreateComplexType (qname, type);
@@ -390,10 +335,10 @@ namespace System.Runtime.Serialization
 				var xcce = new XmlSchemaComplexContentExtension ();
 				xcc.Content = xcce;
 				xcce.BaseTypeName = GetSchemaTypeName (type.BaseType);
-				xcce.Particle = CreateMembersSequence (type, attr != null);
+				xcce.Particle = CreateMembersSequence (type, members, attr != null);
 			}
 			else
-				ct.Particle = CreateMembersSequence (type, attr != null);
+				ct.Particle = CreateMembersSequence (type, members, attr != null);
 		}
 
 		XmlSchemaSimpleType CreateSimpleType (QName qname, Type type)
@@ -431,7 +376,8 @@ namespace System.Runtime.Serialization
 			return a1.Order == a2.Order ? String.CompareOrdinal (a1.Name ?? m1.Name, a2.Name ?? m2.Name) : a1.Order - a2.Order;
 		}
 
-		XmlSchemaSequence CreateMembersSequence (Type type, bool expectContract)
+		// FIXME: use members parameter to determine which members are to be exported.
+		XmlSchemaSequence CreateMembersSequence (Type type, List<DataMemberInfo> dataMembers, bool expectContract)
 		{
 			var seq = new XmlSchemaSequence ();
 			var members = new List<MemberInfo> ();
@@ -446,7 +392,8 @@ namespace System.Runtime.Serialization
 				if ((!expectContract || mi.GetCustomAttribute<DataMemberAttribute> (false) != null) && mi.GetIndexParameters ().Length == 0)
 					members.Add (mi);
 
-			members.Sort (CompareMembers);
+			if (expectContract)
+				members.Sort (CompareMembers);
 
 			foreach (var mi in members) {
 				var dma = mi.GetCustomAttribute<DataMemberAttribute> (false);

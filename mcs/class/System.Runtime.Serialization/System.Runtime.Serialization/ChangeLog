@@ -1,5 +1,10 @@
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.XsdExporter.cs, DataContractExporter-new.cs :
+	  handle schema export for SharedTypeMap.
+
+2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* KnownTypeCollection.cs, SerializationMap.cs : split SharedTypeMap
 	  .ctor() and initialization. Fixed infinite loop for some
 	  [Serializable] types (such as Assembly).
