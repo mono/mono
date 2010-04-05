@@ -1,3 +1,8 @@
+2010-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* InternalWebResponseStreamWrapper.cs: Move back to 
+	System.Windows.dll
+
 2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWebRequest_2_1.cs: AllowWriteStreamBuffering getter/setter

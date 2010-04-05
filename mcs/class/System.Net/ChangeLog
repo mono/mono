@@ -1,3 +1,8 @@
+2010-04-05  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* moonlight_raw_System.Net.dll.sources: Move InternalWebRequest
+	StreamWrapper.cs back to System.Windows.dll
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* net_2_1_*.dll.sources: rename to moonlight_*.dll.sources.
