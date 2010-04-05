@@ -44,6 +44,8 @@ namespace System.ServiceModel.Dispatcher
 		public EndpointAddressMessageFilter (EndpointAddress address,
 			bool includeHostNameInComparison)
 		{
+			if (address == null)
+				throw new ArgumentNullException ("address");
 			this.address = address;
 			cmp_host = includeHostNameInComparison;
 		}
@@ -63,10 +65,11 @@ namespace System.ServiceModel.Dispatcher
 			throw new NotImplementedException ();
 		}
 
-		[MonoTODO]
 		public override bool Match (Message message)
 		{
 			Uri to = message.Headers.To;
+			if (to == null)
+				return false;
 			bool path = ((String.CompareOrdinal (to.AbsolutePath, address.Uri.AbsolutePath) == 0) && 
 					(to.Port == address.Uri.Port));
 			bool host = IncludeHostNameInComparison

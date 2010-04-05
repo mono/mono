@@ -54,7 +54,13 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category ("NotWorking")]
+		[ExpectedException (typeof (ArgumentNullException))]
+		public void CtorNoAddress ()
+		{
+			new EndpointAddressMessageFilter (null, false);
+		}
+
+		[Test]
 		public void Match ()
 		{
 			EndpointAddressMessageFilter f =

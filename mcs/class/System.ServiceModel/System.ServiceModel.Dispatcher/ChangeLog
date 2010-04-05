@@ -1,5 +1,10 @@
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* EndpointAddressMessageFilter.cs : check null arg. Return false for
+	  no To header case and do not result in NRE.f
+
+2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BaseMessagesFormatter.cs : hasParameter check is incorrectly
 	  restrictive to reject some kinds of pairs.
 
