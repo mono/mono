@@ -1,3 +1,10 @@
+2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_to_ir): Handle call to virtual final methods
+	of marshalbyref classes.
+
+	Fixes #515884.
+
 2010-04-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* decompose.c (mono_decompose_opcode): Set the cfg exception if the unsupported
