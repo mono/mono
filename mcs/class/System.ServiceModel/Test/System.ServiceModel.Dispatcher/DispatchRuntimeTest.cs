@@ -92,8 +92,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
-		public void TestInstanceBehavior1()
+		public void TestInstanceBehavior1 ()
 		{
 			
 			Result res = new Result ();
@@ -108,7 +107,6 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		public void TestInstanceBehavior2 ()
 		{
 			Result res = new Result ();
@@ -123,7 +121,6 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category ("NotWorking")] // It somehow stopped working properly recently in Nov. 2009, not sure where the source of the problem lies.
 		public void TestInstanceBehavior3 ()
 		{
 			Result res = new Result ();
@@ -140,7 +137,6 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void TestInstanceBehavior4 ()
 		{
 			Result res = new Result ();
