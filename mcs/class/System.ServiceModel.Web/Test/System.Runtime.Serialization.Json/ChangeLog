@@ -1,3 +1,8 @@
+2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DataContractJsonSerializerTest.cs : don't use ToUniversalTime()
+	  which makes test results timezone dependent.
+
 2010-03-10  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractJsonSerializerTest.cs : oops, the test was careless.
