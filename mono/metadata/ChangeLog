@@ -1,3 +1,16 @@
+2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (verify_stack_type_compatibility_full): Ignore constraints
+	when verifying compatibility between a generic instance and a generic
+	parameter.
+
+	* verify.c (check_is_valid_type_for_field_ops): Improve error message.
+
+	* verify.c (stack_slot_stack_type_full_name): Improve verification type
+	name.
+
+	Fixes #587849.
+
 2010-04-04  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Remove superfluous scanning of alloc-pinned objects.
