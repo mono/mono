@@ -106,11 +106,40 @@ namespace System.ServiceModel.Configuration
 			get { return (XmlDictionaryReaderQuotasElement) base ["readerQuotas"]; }
 		}
 
-		[MonoTODO]
-		protected internal override BindingElement CreateBindingElement () {
-			throw new NotImplementedException ();
+		protected internal override BindingElement CreateBindingElement ()
+		{
+			return new BinaryMessageEncodingBindingElement ();
 		}
 
+		public override void ApplyConfiguration (BindingElement element)
+		{
+			var b = (BinaryMessageEncodingBindingElement) element;
+			b.MaxReadPoolSize = MaxReadPoolSize;
+			b.MaxSessionSize = MaxSessionSize;
+			b.MaxWritePoolSize = MaxWritePoolSize;
+
+			ReaderQuotas.ApplyConfiguration (b.ReaderQuotas);
+		}
+
+		public override void CopyFrom (ServiceModelExtensionElement element)
+		{
+			var b = (BinaryMessageEncodingElement) element;
+			MaxReadPoolSize = b.MaxReadPoolSize;
+			MaxSessionSize = b.MaxSessionSize;
+			MaxWritePoolSize = b.MaxWritePoolSize;
+
+			ReaderQuotas.CopyFrom (b.ReaderQuotas);
+		}
+
+		protected internal override void InitializeFrom (BindingElement element)
+		{
+			var b = (BinaryMessageEncodingBindingElement) element;
+			MaxReadPoolSize = b.MaxReadPoolSize;
+			MaxSessionSize = b.MaxSessionSize;
+			MaxWritePoolSize = b.MaxWritePoolSize;
+
+			ReaderQuotas.InitializeFrom (b.ReaderQuotas);
+		}
 	}
 
 }

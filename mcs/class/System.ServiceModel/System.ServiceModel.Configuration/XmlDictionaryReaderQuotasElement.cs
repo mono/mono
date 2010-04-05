@@ -181,6 +181,48 @@ namespace System.ServiceModel.Configuration
 			if (MaxStringContentLength > 0)
 				q.MaxStringContentLength = MaxStringContentLength;
 		}
+
+		internal void ApplyConfiguration (XmlDictionaryReaderQuotasElement q)
+		{
+			if (MaxArrayLength > 0)
+				q.MaxArrayLength = MaxArrayLength;
+			if (MaxBytesPerRead > 0)
+				q.MaxBytesPerRead = MaxBytesPerRead;
+			if (MaxDepth > 0)
+				q.MaxDepth = MaxDepth;
+			if (MaxNameTableCharCount > 0)
+				q.MaxNameTableCharCount = MaxNameTableCharCount;
+			if (MaxStringContentLength > 0)
+				q.MaxStringContentLength = MaxStringContentLength;
+		}
+
+		internal void InitializeFrom (XmlDictionaryReaderQuotas q)
+		{
+			if (q.MaxArrayLength > 0)
+				MaxArrayLength = q.MaxArrayLength;
+			if (q.MaxBytesPerRead > 0)
+				MaxBytesPerRead = q.MaxBytesPerRead;
+			if (q.MaxDepth > 0)
+				MaxDepth = q.MaxDepth;
+			if (q.MaxNameTableCharCount > 0)
+				MaxNameTableCharCount = q.MaxNameTableCharCount;
+			if (q.MaxStringContentLength > 0)
+				MaxStringContentLength = q.MaxStringContentLength;
+		}
+
+		internal void CopyFrom (XmlDictionaryReaderQuotasElement q)
+		{
+			if (q.MaxArrayLength > 0)
+				MaxArrayLength = q.MaxArrayLength;
+			if (q.MaxBytesPerRead > 0)
+				MaxBytesPerRead = q.MaxBytesPerRead;
+			if (q.MaxDepth > 0)
+				MaxDepth = q.MaxDepth;
+			if (q.MaxNameTableCharCount > 0)
+				MaxNameTableCharCount = q.MaxNameTableCharCount;
+			if (q.MaxStringContentLength > 0)
+				MaxStringContentLength = q.MaxStringContentLength;
+		}
 	}
 
 }

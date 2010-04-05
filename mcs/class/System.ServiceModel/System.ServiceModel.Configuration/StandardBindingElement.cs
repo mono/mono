@@ -142,6 +142,14 @@ namespace System.ServiceModel.Configuration
 			binding.SendTimeout = SendTimeout;
 			OnApplyConfiguration (binding);
 		}
+
+		protected internal virtual void InitializeFrom (Binding binding)
+		{
+			CloseTimeout = binding.CloseTimeout;
+			OpenTimeout = binding.OpenTimeout;
+			ReceiveTimeout = binding.ReceiveTimeout;
+			SendTimeout = binding.SendTimeout;
+		}
 	}
 
 }

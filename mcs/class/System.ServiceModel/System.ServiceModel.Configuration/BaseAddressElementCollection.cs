@@ -65,6 +65,15 @@ namespace System.ServiceModel.Configuration
 		protected override object GetElementKey (ConfigurationElement element) {
 			return ((BaseAddressElement) element).BaseAddress;
 		}
+
+		protected override ConfigurationElement CreateNewElement ()
+		{
+			return new BaseAddressElement ();
+		}
+
+		protected override bool ThrowOnDuplicate {
+			get { return false; }
+		}
 	}
 
 }

@@ -224,6 +224,29 @@ namespace System.ServiceModel.Configuration
 			basicHttpBinding.TransferMode = TransferMode;
 			basicHttpBinding.UseDefaultWebProxy = UseDefaultWebProxy;
 		}
+
+		protected internal override void InitializeFrom (Binding binding)
+		{
+			BasicHttpBinding b = (BasicHttpBinding) binding;
+			
+			base.InitializeFrom (binding);
+			AllowCookies = b.AllowCookies;
+			BypassProxyOnLocal = b.BypassProxyOnLocal;
+			HostNameComparisonMode = b.HostNameComparisonMode;
+			MaxBufferPoolSize = b.MaxBufferPoolSize;
+			MaxBufferSize = b.MaxBufferSize;
+			MaxReceivedMessageSize = b.MaxReceivedMessageSize;
+			MessageEncoding = b.MessageEncoding;
+			ProxyAddress = b.ProxyAddress;
+
+			ReaderQuotas.ApplyConfiguration (b.ReaderQuotas);
+
+			Security.Mode = b.Security.Mode;
+			Security.Transport.ApplyConfiguration (b.Security.Transport);
+			TextEncoding = b.TextEncoding;
+			TransferMode = b.TransferMode;
+			UseDefaultWebProxy = b.UseDefaultWebProxy;
+		}
 	}
 
 }

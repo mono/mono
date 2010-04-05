@@ -1,10 +1,10 @@
 //
-// BindingElementExtensionElement.cs
+// BaseAddressPrefixFilterElementCollection.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,25 +54,25 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	public abstract partial class BindingElementExtensionElement
-		 : ServiceModelExtensionElement
+	[ConfigurationCollection (typeof (BaseAddressPrefixFilterElement),
+		 AddItemName = "add",
+		 RemoveItemName = "remove",
+		 ClearItemsName = "clear",
+		 CollectionType = ConfigurationElementCollectionType.BasicMap)]
+	public sealed class BaseAddressPrefixFilterElementCollection
+		 : ServiceModelConfigurationElementCollection<BaseAddressPrefixFilterElement>,  ICollection,  IEnumerable
 	{
-		protected BindingElementExtensionElement () {
+		protected override object GetElementKey (ConfigurationElement element) {
+			return ((BaseAddressPrefixFilterElement) element).Prefix;
 		}
 
-		// Properties
-		public abstract Type BindingElementType { get; }
-
-		public virtual void ApplyConfiguration (BindingElement bindingElement) {
+		protected override ConfigurationElement CreateNewElement ()
+		{
+			return new BaseAddressPrefixFilterElement ();
 		}
 
-		protected internal abstract BindingElement CreateBindingElement ();
-
-		protected internal virtual void InitializeFrom (BindingElement bindingElement) {
-		}
-
-		internal override string GetConfigurationElementName () {
-			return ConfigUtil.ExtensionsSection.BindingElementExtensions.GetConfigurationElementName (GetType());
+		protected override bool ThrowOnDuplicate {
+			get { return false; }
 		}
 	}
 

@@ -322,6 +322,8 @@ System.ServiceModel.Configuration/AuthorizationPolicyTypeElement.cs
 System.ServiceModel.Configuration/AuthorizationPolicyTypeElementCollection.cs
 System.ServiceModel.Configuration/BaseAddressElement.cs
 System.ServiceModel.Configuration/BaseAddressElementCollection.cs
+System.ServiceModel.Configuration/BaseAddressPrefixFilterElementCollection.cs
+System.ServiceModel.Configuration/BaseAddressPrefixFilterElement.cs
 System.ServiceModel.Configuration/BasicHttpBindingCollectionElement.cs
 System.ServiceModel.Configuration/BasicHttpBindingElement.cs
 System.ServiceModel.Configuration/BasicHttpMessageSecurityElement.cs
@@ -803,6 +805,7 @@ System.ServiceModel/BasicHttpBinding.cs
 System.ServiceModel/BasicHttpMessageSecurity.cs
 System.ServiceModel/BasicHttpSecurity.cs
 System.ServiceModel/CallbackBehaviorAttribute.cs
+System.ServiceModel/ChannelTerminatedException.cs
 System.ServiceModel/ChannelFactory.cs
 System.ServiceModel/ChannelFactory_1.cs
 System.ServiceModel/ClientBase.cs

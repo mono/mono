@@ -65,6 +65,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("acknowledgementInterval",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:00:00.2")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan AcknowledgementInterval {
 			get { return (TimeSpan) base ["acknowledgementInterval"]; }
 			set { base ["acknowledgementInterval"] = value; }
@@ -85,6 +86,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("inactivityTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:10:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan InactivityTimeout {
 			get { return (TimeSpan) base ["inactivityTimeout"]; }
 			set { base ["inactivityTimeout"] = value; }
@@ -143,9 +145,48 @@ namespace System.ServiceModel.Configuration
 			get { return base.Properties; }
 		}
 
-		[MonoTODO]
-		protected internal override BindingElement CreateBindingElement () {
-			throw new NotImplementedException ();
+		protected internal override BindingElement CreateBindingElement ()
+		{
+			return new ReliableSessionBindingElement ();
+		}
+
+		public override void ApplyConfiguration (BindingElement element)
+		{
+			var b = (ReliableSessionBindingElement) element;
+			b.AcknowledgementInterval = AcknowledgementInterval;
+			b.FlowControlEnabled = FlowControlEnabled;
+			b.InactivityTimeout = InactivityTimeout;
+			b.MaxPendingChannels = MaxPendingChannels;
+			b.MaxRetryCount = MaxRetryCount;
+			b.MaxTransferWindowSize = MaxTransferWindowSize;
+			b.Ordered = Ordered;
+			b.ReliableMessagingVersion = ReliableMessagingVersion;
+		}
+
+		public override void CopyFrom (ServiceModelExtensionElement element)
+		{
+			var b = (ReliableSessionElement) element;
+			AcknowledgementInterval = b.AcknowledgementInterval;
+			FlowControlEnabled = b.FlowControlEnabled;
+			InactivityTimeout = b.InactivityTimeout;
+			MaxPendingChannels = b.MaxPendingChannels;
+			MaxRetryCount = b.MaxRetryCount;
+			MaxTransferWindowSize = b.MaxTransferWindowSize;
+			Ordered = b.Ordered;
+			ReliableMessagingVersion = b.ReliableMessagingVersion;
+		}
+
+		protected internal override void InitializeFrom (BindingElement element)
+		{
+			var b = (ReliableSessionBindingElement) element;
+			AcknowledgementInterval = b.AcknowledgementInterval;
+			FlowControlEnabled = b.FlowControlEnabled;
+			InactivityTimeout = b.InactivityTimeout;
+			MaxPendingChannels = b.MaxPendingChannels;
+			MaxRetryCount = b.MaxRetryCount;
+			MaxTransferWindowSize = b.MaxTransferWindowSize;
+			Ordered = b.Ordered;
+			ReliableMessagingVersion = b.ReliableMessagingVersion;
 		}
 
 	}

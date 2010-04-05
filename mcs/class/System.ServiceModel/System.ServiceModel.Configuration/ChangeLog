@@ -1,3 +1,17 @@
+2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BaseAddressPrefixFilterElementCollection.cs
+	  BaseAddressPrefixFilterElement.cs : new classes.
+	* ReliableSessionElement.cs
+	  XmlDictionaryReaderQuotasElement.cs
+	  TextMessageEncodingElement.cs
+	  HostTimeoutsElement.cs
+	  BaseAddressElementCollection.cs
+	  BasicHttpBindingElement.cs
+	  BindingElementExtensionElement.cs
+	  StandardBindingElement.cs
+	  BinaryMessageEncodingElement.cs : added couple of missing stuff.
+
 2010-03-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ConnectionOrientedTransportElement.cs, StandardBindingElement.cs, 

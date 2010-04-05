@@ -1,10 +1,10 @@
 //
-// BindingElementExtensionElement.cs
+// BaseAddressPrefixFilterElement.cs
 //
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -54,26 +54,47 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	public abstract partial class BindingElementExtensionElement
-		 : ServiceModelExtensionElement
+	public sealed class BaseAddressPrefixFilterElement
+		 : ConfigurationElement
 	{
-		protected BindingElementExtensionElement () {
+		// Static Fields
+		static ConfigurationPropertyCollection properties;
+		static ConfigurationProperty prefix;
+
+		static BaseAddressPrefixFilterElement ()
+		{
+			properties = new ConfigurationPropertyCollection ();
+			prefix = new ConfigurationProperty ("prefix",
+				typeof (Uri), null, new UriTypeConverter (), new StringValidator (1, int.MaxValue, null),
+				ConfigurationPropertyOptions.IsRequired| ConfigurationPropertyOptions.IsKey);
+
+			properties.Add (prefix);
 		}
+
+		public BaseAddressPrefixFilterElement ()
+		{
+		}
+
 
 		// Properties
-		public abstract Type BindingElementType { get; }
 
-		public virtual void ApplyConfiguration (BindingElement bindingElement) {
+		[ConfigurationProperty ("prefix",
+			 Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey,
+			IsRequired = true,
+			IsKey = true)]
+		[StringValidator ( MinLength = 1,
+			MaxLength = int.MaxValue,
+			 InvalidCharacters = null)]
+		public Uri Prefix {
+			get { return (Uri) base [prefix]; }
+			set { base [prefix] = value; }
 		}
 
-		protected internal abstract BindingElement CreateBindingElement ();
-
-		protected internal virtual void InitializeFrom (BindingElement bindingElement) {
+		protected override ConfigurationPropertyCollection Properties {
+			get { return properties; }
 		}
 
-		internal override string GetConfigurationElementName () {
-			return ConfigUtil.ExtensionsSection.BindingElementExtensions.GetConfigurationElementName (GetType());
-		}
+
 	}
 
 }

@@ -118,11 +118,44 @@ namespace System.ServiceModel.Configuration
 		}
 
 
-		[MonoTODO]
-		protected internal override BindingElement CreateBindingElement () {
-			throw new NotImplementedException ();
+		protected internal override BindingElement CreateBindingElement ()
+		{
+			return new TextMessageEncodingBindingElement ();
 		}
 
+
+		public override void ApplyConfiguration (BindingElement element)
+		{
+			var b = (TextMessageEncodingBindingElement) element;
+			b.MaxReadPoolSize = MaxReadPoolSize;
+			b.MaxWritePoolSize = MaxWritePoolSize;
+			b.MessageVersion = MessageVersion;
+			b.WriteEncoding = WriteEncoding;
+
+			ReaderQuotas.ApplyConfiguration (b.ReaderQuotas);
+		}
+
+		public override void CopyFrom (ServiceModelExtensionElement element)
+		{
+			var b = (TextMessageEncodingElement) element;
+			MaxReadPoolSize = b.MaxReadPoolSize;
+			MaxWritePoolSize = b.MaxWritePoolSize;
+			MessageVersion = b.MessageVersion;
+			WriteEncoding = b.WriteEncoding;
+
+			ReaderQuotas.CopyFrom (b.ReaderQuotas);
+		}
+
+		protected internal override void InitializeFrom (BindingElement element)
+		{
+			var b = (TextMessageEncodingBindingElement) element;
+			MaxReadPoolSize = b.MaxReadPoolSize;
+			MaxWritePoolSize = b.MaxWritePoolSize;
+			MessageVersion = b.MessageVersion;
+			WriteEncoding = b.WriteEncoding;
+
+			ReaderQuotas.InitializeFrom (b.ReaderQuotas);
+		}
 	}
 
 }

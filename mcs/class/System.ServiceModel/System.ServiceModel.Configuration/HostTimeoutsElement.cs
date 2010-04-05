@@ -62,6 +62,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("closeTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:00:10")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan CloseTimeout {
 			get { return (TimeSpan) base ["closeTimeout"]; }
 			set { base ["closeTimeout"] = value; }
@@ -70,6 +71,7 @@ namespace System.ServiceModel.Configuration
 		[ConfigurationProperty ("openTimeout",
 			 Options = ConfigurationPropertyOptions.None,
 			 DefaultValue = "00:01:00")]
+		[TypeConverter (typeof (TimeSpanConverter))]
 		public TimeSpan OpenTimeout {
 			get { return (TimeSpan) base ["openTimeout"]; }
 			set { base ["openTimeout"] = value; }
