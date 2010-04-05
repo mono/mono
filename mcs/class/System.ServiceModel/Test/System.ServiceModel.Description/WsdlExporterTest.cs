@@ -224,7 +224,6 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void ExportMessageContract ()
 		{
 			WsdlExporter we = new WsdlExporter ();
@@ -270,18 +269,11 @@ namespace MonoTests.System.ServiceModel.Description
 		}
 
 		[Test]
-		//Currently throws InvalidDataContractException on mono, but once the code is
-		//moved to a IWsdlExportExtension, InvalidOperationException will get throw
-		[Category ("NotWorking")]
-		[Ignore ("fails under .NET; I never bothered to fix the test")]
 		public void ExportBar1Contract ()
 		{
 			WsdlExporter we = new WsdlExporter ();
 			ContractDescription cd = ContractDescription.GetContract (typeof (Bar1));
-
-			//Cannot export as operation Foo has >1 param so Message param gets treated
-			//as any other param, but it is not serializable!
-			ExportContractExpectException (we, cd, typeof (InvalidOperationException), "ExportBar1Contract");
+			we.ExportContract (cd);
 		}
 
 		//Helper methods
