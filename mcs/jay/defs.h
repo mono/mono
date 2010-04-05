@@ -43,6 +43,11 @@
 #include <string.h>
 #include <errno.h>
 
+/* Quiet warnings which might bother rpm */
+#ifdef __GNUC__
+#pragma GCC diagnostic ignored "-Wimplicit-function-declaration"
+#pragma GCC diagnostic ignored "-Wreturn-type"
+#endif
 
 /*  machine-dependent definitions			*/
 /*  the following definitions are for the Tahoe		*/

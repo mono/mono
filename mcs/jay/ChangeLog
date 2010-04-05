@@ -1,3 +1,7 @@
+2010-04-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* defs.h: Quiet warnings which might bother rpm.
+
 2009-11-27  Marek Safar  <marek.safar@gmail.com>
 
 	* skeleton.cs: Add global state stacks.
