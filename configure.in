@@ -2392,7 +2392,7 @@ AC_ARG_WITH(mcs_docs,[  --with-mcs-docs=yes,no         If you want to build the 
 	if test x$with_mcs_docs != xyes; then
 		DISABLE_MCS_DOCS=yes
 	fi
-])
+], [with_moonlight=no])
 
 dnl
 dnl Consistency settings
