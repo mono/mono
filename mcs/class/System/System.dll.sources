@@ -567,6 +567,7 @@ System.Diagnostics/TraceSourceInfo.cs
 System.Diagnostics/TraceSwitch.cs
 System.Diagnostics/Win32EventLog.cs
 System.Diagnostics/XmlWriterTraceListener.cs
+System.Diagnostics.CodeAnalysis/ExcludeFromCodeCoverageAttribute.cs
 System/FileStyleUriParser.cs
 System/FtpStyleUriParser.cs
 System/GenericUriParser.cs
