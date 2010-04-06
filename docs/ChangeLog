@@ -1,3 +1,9 @@
+2010-04-06  Andreia Gaita  <avidigal@novell.com>
+
+	* Makefile.am: fix distcheck - several targets get built on the
+	srcdir, which has no write permissions on make distcheck, so make
+	sure permissions are set
+
 2009-12-22  Jo Shields  <directhex@apebox.org>
 	* HtmlAgilityPack/LICENSE: Include upstream license (Ms-PL) since the
 	  file headers don't specify it

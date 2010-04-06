@@ -79,21 +79,21 @@ clean-local:
 
 monoapi.zip: monoapi.tree
 	@test -f $@ || { rm -f $(srcdir)/monoapi.tree && $(MAKE) monoapi.tree; }
-monoapi.tree: docs.make Makefile.am toc.xml $(srcdir)/deploy/.stamp
-	cd $(srcdir) && cp api-style.css deploy
+monoapi.tree: docs.make Makefile.am toc.xml $(srcdir)/deploy/.stamp perms
+	cd $(srcdir) && cp -f api-style.css deploy
 	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
 
 mono-tools.zip: mono-tools.tree
 	@test -f $@ || { rm -f $(srcdir)/mono-tools.tree && $(MAKE) mono-tools.tree; }
-mono-tools.tree: docs.make Makefile.am $(srcdir)/deploy/.stamp
+mono-tools.tree: docs.make Makefile.am $(srcdir)/deploy/.stamp perms
 	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
 
-mono-file-formats.zip: mono-file-formats.tree
+mono-file-formats.zip: mono-file-formats.tree perms
 	@test -f $@ || { rm -f $(srcdir)/mono-file-formats.tree && $(MAKE) mono-file-formats.tree; }
 mono-file-formats.tree: docs.make Makefile.am $(srcdir)/deploy/.stamp
 	cd $(srcdir) && $(MAKE) -f docs.make topdir=$(mcs_topdir_from_srcdir) $@
 
-$(srcdir)/deploy/.stamp: convert.exe Makefile.am
+$(srcdir)/deploy/.stamp: convert.exe Makefile.am perms
 	$(mkdir_p) $(srcdir)/html
 	runtimedir=`cd ../runtime && pwd`; export runtimedir; \
 	cd $(srcdir) && MONO_PATH=$(mcs_topdir_from_srcdir)/class/lib/net_2_0 perl ./exdoc -h . ../mono/*/*.c
@@ -101,8 +101,13 @@ $(srcdir)/deploy/.stamp: convert.exe Makefile.am
 
 extract: $(srcdir)/deploy/.stamp
 
-convert.exe: convert.cs AgilityPack.dll
+convert.exe: convert.cs AgilityPack.dll perms
 	cd $(srcdir) && $(MAKE) PROFILE=net_2_0 -f docs.make topdir=$(mcs_topdir_from_srcdir) convert.exe
 
-AgilityPack.dll:
+AgilityPack.dll: perms
 	cd $(srcdir) && $(MAKE) PROFILE=net_2_0 -f docs.make topdir=$(mcs_topdir_from_srcdir) AgilityPack.dll
+
+.PHONY: perms
+perms:
+	-@test -w $(srcdir) || chmod a+w $(srcdir)
+
