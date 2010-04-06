@@ -1,3 +1,18 @@
+2010-03-05  Martin Baulig  <martin@ximian.com>
+
+	Add support for aborting invocations.
+
+	* IInvokeAsyncResult.cs: New file.
+	(IInvokeAsyncResult): New public interface; derives from
+	`IAsyncResult' and contains an Abort() method.
+
+	* Connection.cs
+	(Connection.VM_BeginInvokeMethod): Return the `id'.
+	(Connection.VM_AbortInvoke): New method.
+
+	* ObjectMirror.cs
+	(ObjectMirror.AbortInvoke): New internal static method.
+
 2010-03-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* VirtualMachine.cs: Allow working with runtimes implementing a different
