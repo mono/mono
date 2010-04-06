@@ -1130,21 +1130,112 @@ public class TimeSpanTest {
 	[Category ("NotWorking")]
 	public void ParseExactCustomFormats ()
 	{
+		// Days
+		ParseExactHelper ("33", new string [] { "%d" }, false, false, "33.00:00:00");
+		ParseExactHelper ("00", new string [] { "%d" }, false, false, "00:00:00");
+		ParseExactHelper ("33", new string [] { "%dd" }, false, false, "33.00:00:00");
+		ParseExactHelper ("3333", new string [] { "%d" }, false, false, "3333.00:00:00");
+		ParseExactHelper ("3333", new string [] { "%ddd" }, true, false, "3333.00:00:00"); // 'dd' mismatch the digit count
+		ParseExactHelper ("3333", new string [] { "%dddd" }, false, false, "3333.00:00:00");
+		ParseExactHelper ("00033", new string [] { "%ddddd" }, false, false, "33.00:00:00");
+		ParseExactHelper ("00033", new string [] { "%d" }, false, false, "33.00:00:00");
+		ParseExactHelper ("00000003", new string [] { "%dddddddd" }, false, false, "3.00:00:00"); // up to 8 'd'
+		ParseExactHelper ("000000003", new string [] { "%ddddddddd" }, true, false, "dontcare");
+		ParseExactHelper ("33", new string [] { "d" }, true, false, "33.00:00:00"); // This is sort of weird.
+		ParseExactHelper ("33", new string [] { "dd" }, false, false, "33.00:00:00");
+		ParseExactHelper ("-33", new string [] { "%d" }, true, false, "dontcare");
+		ParseExactHelper ("33", new string [] { "%d" }, false, false, "-33.00:00:00", null, TimeSpanStyles.AssumeNegative);
+
+		// Hours
 		ParseExactHelper ("12", new string [] { "%h" }, false, false, "12:00:00");
 		ParseExactHelper ("00", new string [] { "%h" }, false, false, "00:00:00");
+		ParseExactHelper ("000", new string [] { "%h" }, true, false, "dontcare"); // Too many zeroes
+		ParseExactHelper ("00012", new string [] { "%hhhhh" }, true, false, "dontcare");
+		ParseExactHelper ("15", new string [] { "%h" }, false, false, "15:00:00");
 		ParseExactHelper ("24", new string [] { "%h" }, true, false, "dontcare");
+		ParseExactHelper ("15", new string [] { "%hh" }, false, false, "15:00:00");
+		ParseExactHelper ("1", new string [] { "%hh" }, true, false, "dontcare"); // 'hh' but a single digit
+		ParseExactHelper ("01", new string [] { "%hh" }, false, false, "01:00:00");
+		ParseExactHelper ("015", new string [] { "%hhh" }, true, false, "dontcare"); // Too many 'h'
+		ParseExactHelper ("12", new string [] { "h" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "hh" }, false, false, "12:00:00");
+		ParseExactHelper ("-15", new string [] {"%h"}, true, false, "dontcare"); // Explicit - not accepted
+		ParseExactHelper ("15", new string [] { "%h" }, false, false, "-15:00:00", null, TimeSpanStyles.AssumeNegative);
+		ParseExactHelper ("15", new string [] { "%H" }, true, false, "dontcare"); // Uppercase is not accepted
+
+		// Minutes
 		ParseExactHelper ("12", new string [] { "%m" }, false, false, "00:12:00");
+		ParseExactHelper ("00", new string [] { "%m" }, false, false, "00:00:00");
 		ParseExactHelper ("60", new string [] { "%m" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "%mm" }, false, false, "00:12:00");
+		ParseExactHelper ("1", new string [] { "%mm" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "%mmm" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "m" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "mm" }, false, false, "00:12:00");
+		ParseExactHelper ("-12", new string [] { "%m" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "%m" }, false, false, "-00:12:00", null, TimeSpanStyles.AssumeNegative);
+		ParseExactHelper ("12", new string [] { "%M" }, true, false, "dontcare");
+
+		// Seconds
 		ParseExactHelper ("12", new string [] { "%s" }, false, false, "00:00:12");
-		ParseExactHelper ("33", new string [] { "%d" }, false, false, "33.00:00:00");
-		ParseExactHelper ("0", new string [] { "%d" }, false, false, "00:00:00");
+		ParseExactHelper ("00", new string [] { "%s" }, false, false, "00:00:00");
+		ParseExactHelper ("000", new string [] { "%s" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "%ss" }, false, false, "00:00:12");
+		ParseExactHelper ("12", new string [] { "%sss" }, true, false, "dontcare");
+		ParseExactHelper ("60", new string [] { "%s" }, true, false, "dontcare");
+		ParseExactHelper ("-12", new string [] { "%s" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "%s" }, false, false, "-00:00:12", null, TimeSpanStyles.AssumeNegative);
+
+		// Fractions of seconds - f
+		ParseExactHelper ("3", new string [] { "%f" }, false, false, "00:00:00.3000000");
+		ParseExactHelper ("0", new string [] { "%f" }, false, false, "00:00:00");
+		ParseExactHelper ("03", new string [] { "%f" }, true, false, "dontcare"); // This would work for other elements
+		ParseExactHelper ("10", new string [] { "%f" }, true, false, "dontcare"); // Only a digit is accepted with '%f'
+		ParseExactHelper ("3", new string [] { "%ff" }, true, false, "dontcare");
+		ParseExactHelper ("12", new string [] { "%ff" }, false, false, "00:00:00.1200000");
+		ParseExactHelper ("123", new string [] { "%ff" }, true, false, "dontcare");
+		ParseExactHelper ("123", new string [] { "%fff" }, false, false, "00:00:00.1230000");
+		ParseExactHelper ("1234", new string [] { "%ffff" }, false, false, "00:00:00.1234000");
+		ParseExactHelper ("1234567", new string [] { "%fffffff" }, false, false, "00:00:00.1234567");
+		ParseExactHelper ("1234567", new string [] { "%FfFFFFF" }, true, false, "dontcare"); // Mixed f and M
+		ParseExactHelper ("12345678", new string [] { "%ffffffff" }, true, false, "dontcare");
+		ParseExactHelper ("0000000", new string [] { "%fffffff" }, false, false, "00:00:00");
+
+		// Fractions of second - F
+		ParseExactHelper ("3", new string [] { "%F" }, false, false, "00:00:00.3000000");
+		ParseExactHelper ("333", new string [] { "%FFFF" }, false, false, "00:00:00.3330000");
+		ParseExactHelper ("", new string [] { "%F" }, true, false, "00:00:00"); // Optional only with other elements
+		ParseExactHelper ("1234567", new string [] { "%FFFFFFF" }, false, false, "00:00:00.1234567");
+
+		// Multiple symbols
+		ParseExactHelper ("9:10", new string [] { @"h\:m" }, false, false, "09:10:00");
+		ParseExactHelper ("9;10", new string [] { @"h\;m" }, false, false, "09:10:00");
+		ParseExactHelper ("10:9", new string [] { @"m\:h" }, false, false, "09:10:00");
+		ParseExactHelper ("10:9", new string [] { @"%m\:%h" }, false, false, "09:10:00");
+		ParseExactHelper ("9 10", new string [] { @"h\ m" }, false, false, "09:10:00");
+		ParseExactHelper ("9   10", new string [] { @"h\ \ \ m" }, false, false, "09:10:00");
+		ParseExactHelper (" 9:10 ", new string [] { @"h\:m" }, true, false, "dontcare");
+		ParseExactHelper ("9:10:11", new string [] { @"h\:m\:s" }, false, false, "09:10:11");
+		ParseExactHelper ("9:10:11:6", new string [] { @"h\:m\:s\:f" }, false, false, "09:10:11.6000000");
+		ParseExactHelper ("9:10:11:666", new string [] { @"h\:m\:s\:f" }, true, false, "dontcare"); // fff with 1 digit
+		ParseExactHelper ("9:10:11:", new string [] { @"h\:m\:s\:F" }, false, false, "09:10:11"); // optional frac of seconds
+		ParseExactHelper ("8:9:10:11:6666666", new string [] { @"d\:h\:m\:s\:fffffff" }, false, false, "8.09:10:11.6666666");
+		ParseExactHelper ("8:9:10:11:6666666", new string [] { @"d\:h\:m\:s\:fffffff" }, false, false, "-8.09:10:11.6666666", 
+				null, TimeSpanStyles.AssumeNegative);
+		ParseExactHelper ("9:10", new string [] { @"h\:h" }, true, false, "dontcare"); // Repeated element
+
+		// Misc
 		ParseExactHelper (" 0 ", new string [] { "%d" }, true, false, "dontcare");
 		ParseExactHelper (" 0 ", new string [] { " %d " }, true, false, "dontcare");
 		ParseExactHelper ("0", new string [] { " %d " }, true, false, "dontcare");
+		ParseExactHelper ("::", new string [] { @"\:\:" }, false, false, "00:00:00"); // funny
+		ParseExactHelper ("::", new string [] { @"\:\:" }, false, false, "00:00:00", null, TimeSpanStyles.AssumeNegative);
+		ParseExactHelper (" 0", new string [] { @"\ d" }, false, false, "00:00:00");
+		ParseExactHelper ("Interval = 12:13:14", new string [] { @"'Interval = 'h\:m\:s" }, false, false, "12:13:14");
 	}
 
-	void ParseExactHelper (string input, string [] formats, bool format_error, bool overflow_error, string expected, IFormatProvider formatProvider = null,
-			TimeSpanStyles timeSpanStyles = TimeSpanStyles.None)
+	void ParseExactHelper (string input, string [] formats, bool format_error, bool overflow_error, string expected, 
+        IFormatProvider formatProvider = null, TimeSpanStyles timeSpanStyles = TimeSpanStyles.None)
 	{
 		bool overflow_exc = false;
 		bool format_exc = false;

@@ -1,3 +1,9 @@
+2010-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpanTest.cs: Augment our ParseExactCustomFormats test - still
+	marked as NotWorking for now, but committing now in order to have the
+	tests ready.
+
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Fix test for v4 Equals behavior.
