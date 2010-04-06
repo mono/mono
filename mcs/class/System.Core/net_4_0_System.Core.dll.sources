@@ -112,6 +112,7 @@ System.IO/HandleInheritability.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/IDynamicMetaObjectProvider.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/InvokeBinder.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/InvokeMemberBinder.cs
+../dlr/Runtime/Microsoft.Scripting.Core/Actions/IInvokeOnGetBinder.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/RuleCache.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/SetIndexBinder.cs
 ../dlr/Runtime/Microsoft.Scripting.Core/Actions/SetMemberBinder.cs
