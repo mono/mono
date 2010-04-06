@@ -340,10 +340,14 @@ namespace System.ServiceModel.Channels
 
 		public EndpointAddress FaultTo {
 			get {
-				int idx = FindHeader ("FaultTo", Constants.WsaNamespace);
+				int idx = FindHeader ("FaultTo", version.Addressing.Namespace);
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
-			set { AddEndpointAddressHeader ("FaultTo", Constants.WsaNamespace, value); }
+			set {
+				RemoveAll ("FaultTo", version.Addressing.Namespace);
+				if (value != null)
+					AddEndpointAddressHeader ("FaultTo", version.Addressing.Namespace, value);
+			}
 		}
 
 		public EndpointAddress From {
@@ -351,7 +355,11 @@ namespace System.ServiceModel.Channels
 				int idx = FindHeader ("From", version.Addressing.Namespace);
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
-			set { AddEndpointAddressHeader ("From", Constants.WsaNamespace, value); }
+			set {
+				RemoveAll ("From", version.Addressing.Namespace);
+				if (value != null)
+					AddEndpointAddressHeader ("From", version.Addressing.Namespace, value);
+			}
 		}
 
 		public MessageHeaderInfo this [int index] {
@@ -360,16 +368,16 @@ namespace System.ServiceModel.Channels
 
 		public UniqueId MessageId {
 			get { 
-				int idx = FindHeader ("MessageID", Constants.WsaNamespace);
+				int idx = FindHeader ("MessageID", version.Addressing.Namespace);
 				return idx < 0 ? null : new UniqueId (GetHeader<string> (idx));
 			}
 			set {
 				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
-				RemoveAll ("MessageID", Constants.WsaNamespace);
+				RemoveAll ("MessageID", version.Addressing.Namespace);
 				if (value != null)
-					Add (MessageHeader.CreateHeader ("MessageID", Constants.WsaNamespace, value));
+					Add (MessageHeader.CreateHeader ("MessageID", version.Addressing.Namespace, value));
 			}
 		}
 
@@ -377,26 +385,30 @@ namespace System.ServiceModel.Channels
 
 		public UniqueId RelatesTo {
 			get { 
-				int idx = FindHeader ("RelatesTo", Constants.WsaNamespace);
+				int idx = FindHeader ("RelatesTo", version.Addressing.Namespace);
 				return idx < 0 ? null : new UniqueId (GetHeader<string> (idx));
 			}
 			set {
 				if (version.Addressing == AddressingVersion.None && value != null)
 					throw new InvalidOperationException ("WS-Addressing header is not allowed for AddressingVersion.None");
 
-				RemoveAll ("MessageID", Constants.WsaNamespace);
+				RemoveAll ("MessageID", version.Addressing.Namespace);
 				if (value != null)
-					Add (MessageHeader.CreateHeader ("RelatesTo", Constants.WsaNamespace, value));
+					Add (MessageHeader.CreateHeader ("RelatesTo", version.Addressing.Namespace, value));
 			}
 
 		}
 
 		public EndpointAddress ReplyTo {
 			get {
-				int idx = FindHeader ("ReplyTo", Constants.WsaNamespace);
+				int idx = FindHeader ("ReplyTo", version.Addressing.Namespace);
 				return idx < 0 ? null : GetHeader<EndpointAddress> (idx);
 			}
-			set { AddEndpointAddressHeader ("ReplyTo", Constants.WsaNamespace, value); }
+			set {
+				RemoveAll ("ReplyTo", version.Addressing.Namespace);
+				if (value != null)
+					AddEndpointAddressHeader ("ReplyTo", version.Addressing.Namespace, value);
+			}
 		}
 
 		public Uri To {

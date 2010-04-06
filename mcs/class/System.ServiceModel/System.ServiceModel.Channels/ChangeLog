@@ -1,3 +1,8 @@
+2010-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MessageHeaders.cs : use matching addressing version.
+	  Remove header item if the same ones already exist.
+
 2010-04-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpRequestChannel.cs: don't create the wait handle unless it is
