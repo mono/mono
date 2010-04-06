@@ -1,3 +1,7 @@
+2010-04-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c: Update after the memset/memcpy intrinsics changes in LLVM SVN.
+
 2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_method_to_ir): Handle call to virtual final methods
