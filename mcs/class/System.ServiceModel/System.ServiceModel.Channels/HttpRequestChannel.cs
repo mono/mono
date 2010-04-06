@@ -317,16 +317,15 @@ w.Close ();
 			AsyncCallback callback;
 			ManualResetEvent wait;
 			Exception error;
+			object locker = new object ();
+			bool is_completed;
 
 			public HttpChannelRequestAsyncResult (Message message, TimeSpan timeout, AsyncCallback callback, object state)
 			{
-				CompletedSynchronously = true;
 				Message = message;
 				Timeout = timeout;
 				this.callback = callback;
 				AsyncState = state;
-
-				wait = new ManualResetEvent (false);
 			}
 
 			public Message Response {
@@ -334,7 +333,13 @@ w.Close ();
 			}
 
 			public WaitHandle AsyncWaitHandle {
-				get { return wait; }
+				get {
+					lock (locker) {
+						if (wait == null)
+							wait = new ManualResetEvent (is_completed);
+					}
+					return wait;
+				}
 			}
 
 			public object AsyncState {
@@ -355,7 +360,6 @@ w.Close ();
 				error = error ?? ex;
 
 				IsCompleted = true;
-				wait.Set ();
 				if (callback != null)
 					callback (this);
 			}
@@ -365,7 +369,14 @@ w.Close ();
 			}
 
 			public bool IsCompleted {
-				get; private set;
+				get { return is_completed; }
+				set {
+					is_completed = value;
+					lock (locker) {
+						if (is_completed && wait != null)
+							wait.Set ();
+					}
+				}
 			}
 
 			public void WaitEnd ()
@@ -376,9 +387,9 @@ w.Close ();
 					// exception to the Complete () method and allow the result to complete 'normally'.
 #if NET_2_1
 					// neither Moonlight nor MonoTouch supports contexts (WaitOne default to false)
-					bool result = wait.WaitOne (Timeout);
+					bool result = AsyncWaitHandle.WaitOne (Timeout);
 #else
-					bool result = wait.WaitOne (Timeout, true);
+					bool result = AsyncWaitHandle.WaitOne (Timeout, true);
 #endif
 					if (!result)
 						throw new TimeoutException ();
