@@ -5,7 +5,7 @@
 //	Atsushi Enomoto <atsushi@ximian.com>
 //	Moonlight List (moonlight-list@lists.ximian.com)
 //
-// Copyright (C) 2009 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2009-2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -97,14 +97,22 @@ namespace System.Net.Policy {
 				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 					if (reader.NodeType != XmlNodeType.Element)
 						throw new XmlException (String.Format ("Unexpected access-policy content: {0}", reader.NodeType));
-					if (reader.IsEmptyElement) {
+
+					if ((reader.LocalName != "cross-domain-access") || reader.IsEmptyElement) {
 						reader.Skip ();
 						continue;
 					}
+
 					reader.ReadStartElement ("cross-domain-access", String.Empty);
 					for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 						if (reader.NodeType != XmlNodeType.Element)
 							throw new XmlException (String.Format ("Unexpected access-policy content: {0}", reader.NodeType));
+
+						if ((reader.Name != "policy") || reader.IsEmptyElement) {
+							reader.Skip ();
+							continue;
+						}
+
 						ReadPolicyElement (reader, cap);
 					}
 					reader.ReadEndElement ();
@@ -116,22 +124,19 @@ namespace System.Net.Policy {
 
 		static void ReadPolicyElement (XmlReader reader, ClientAccessPolicy cap)
 		{
-			if (reader.IsEmptyElement) {
+			if (reader.HasAttributes || reader.IsEmptyElement) {
 				reader.Skip ();
 				return;
 			}
 
 			var policy = new AccessPolicy ();
-			cap.AccessPolicyList.Add (policy);
+			bool valid = true;
 
 			reader.ReadStartElement ("policy", String.Empty);
 			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 				if (reader.NodeType != XmlNodeType.Element)
 					throw new XmlException (String.Format ("Unexpected policy content: {0}", reader.NodeType));
-				if (reader.IsEmptyElement || !String.IsNullOrEmpty (reader.NamespaceURI)) {
-					reader.Skip ();
-					continue;
-				}
+
 				switch (reader.LocalName) {
 				case "allow-from":
 					ReadAllowFromElement (reader, policy);
@@ -140,19 +145,23 @@ namespace System.Net.Policy {
 					ReadGrantToElement (reader, policy);
 					break;
 				default:
+					valid = false;
 					reader.Skip ();
-					continue;
+					break;
 				}
 			}
+
+			if (valid)
+				cap.AccessPolicyList.Add (policy);
 			reader.ReadEndElement ();
 		}
 
 		static void ReadAllowFromElement (XmlReader reader, AccessPolicy policy)
 		{
 			var v = new AllowFrom ();
-			policy.AllowedServices.Add (v);
+			bool valid = true;
 
-			if (reader.IsEmptyElement) {
+			if (reader.HasAttributes || reader.IsEmptyElement) {
 				reader.Skip ();
 				return;
 			}
@@ -189,19 +198,41 @@ namespace System.Net.Policy {
 					reader.Skip ();
 					break;
 				default:
+					valid = false;
 					reader.Skip ();
 					continue;
 				}
 			}
+			if (valid)
+				policy.AllowedServices.Add (v);
 			reader.ReadEndElement ();
+		}
+
+		// only "path" and "include-subpaths" attributes are allowed - anything else is not considered
+		static Resource CreateResource (XmlReader reader)
+		{
+			int n = reader.AttributeCount;
+			string path = reader.GetAttribute ("path");
+			if (path != null)
+				n--;
+			string subpaths = reader.GetAttribute ("include-subpaths");
+			if (subpaths != null)
+				n--;
+			if ((n != 0) || !reader.IsEmptyElement)
+				return null;
+
+			return new Resource () { 
+				Path = path,
+				IncludeSubpaths = subpaths == null ? false : XmlConvert.ToBoolean (subpaths)
+			};
 		}
 
 		static void ReadGrantToElement (XmlReader reader, AccessPolicy policy)
 		{
 			var v = new GrantTo ();
-			policy.GrantedResources.Add (v);
+			bool valid = true;
 
-			if (reader.IsEmptyElement) {
+			if (reader.HasAttributes || reader.IsEmptyElement) {
 				reader.Skip ();
 				return;
 			}
@@ -214,15 +245,14 @@ namespace System.Net.Policy {
 					reader.Skip ();
 					continue;
 				}
+
 				switch (reader.LocalName) {
 				case "resource":
-					var r = new Resource ();
-					v.Resources.Add (r);
-					r.Path = reader.GetAttribute ("path");
-					if (reader.MoveToAttribute ("include-subpaths")) {
-						r.IncludeSubpaths = XmlConvert.ToBoolean (reader.Value);
-						reader.MoveToElement ();
-					}
+					var r = CreateResource (reader);
+					if (r == null)
+						valid = false;
+					else
+						v.Resources.Add (r);
 					break;
 				case "socket-resource":
 					// ignore everything that is not TCP
@@ -231,9 +261,14 @@ namespace System.Net.Policy {
 					// we can merge them all together inside a policy
 					policy.PortMask |= ParsePorts (reader.GetAttribute ("port"));
 					break;
+				default:
+					valid = false;
+					break;
 				}
 				reader.Skip ();
 			}
+			if (valid)
+				policy.GrantedResources.Add (v);
 			reader.ReadEndElement ();
 		}
 

@@ -83,9 +83,9 @@ namespace System.Net.Policy {
 
 	partial class FlashCrossDomainPolicy {
 
-		static bool ReadBooleanAttribute (XmlReader reader, string attribute)
+		static bool ReadBooleanAttribute (string attribute)
 		{
-			switch (reader.GetAttribute (attribute)) {
+			switch (attribute) {
 			case null:
 			case "true":
 				return true;
@@ -94,6 +94,55 @@ namespace System.Net.Policy {
 			default:
 				throw new XmlException ();
 			}
+		}
+
+		// only "domain" and "secure" attributes are allowed - anything else is considered invalid
+		static AllowAccessFrom CreateAllowAccessFrom (XmlReader reader)
+		{
+			int n = reader.AttributeCount;
+			string domain = reader.GetAttribute ("domain");
+			if (domain != null)
+				n--;
+			string secure = reader.GetAttribute ("secure");
+			if (secure != null)
+				n--;
+			if (n != 0)
+				throw new XmlException ("unknown/unsupported attributes");
+
+			return new AllowAccessFrom () { Domain = domain, Secure = ReadBooleanAttribute (secure) };
+		}
+
+		// only "domain", "secure" and "headers" attributes are allowed - anything else is considered invalid
+		static AllowHttpRequestHeadersFrom CreateAllowHttpRequestHeadersFrom (XmlReader reader)
+		{
+			int n = reader.AttributeCount;
+			string domain = reader.GetAttribute ("domain");
+			if (domain != null)
+				n--;
+			string secure = reader.GetAttribute ("secure");
+			if (secure != null)
+				n--;
+			string headers = reader.GetAttribute ("headers");
+			if (headers != null)
+				n--;
+			if (n != 0)
+				throw new XmlException ("unknown/unsupported attributes");
+
+			var h = new AllowHttpRequestHeadersFrom () { Domain = domain, Secure = ReadBooleanAttribute (secure) };
+			h.Headers.SetHeaders (headers);
+			return h;
+		}
+
+		// only "permitted-cross-domain-policies" attribute is allowed - anything else is considered invalid
+		static string GetSiteControl (XmlReader reader)
+		{
+			int n = reader.AttributeCount;
+			string site = reader.GetAttribute ("permitted-cross-domain-policies");
+			if (site != null)
+				n--;
+			if (n != 0)
+				throw new XmlException ("unknown/unsupported attributes");
+			return site;
 		}
 
 		static public ICrossDomainPolicy FromStream (Stream stream)
@@ -110,48 +159,39 @@ namespace System.Net.Policy {
 			using (XmlReader reader = XmlReader.Create (sr, policy_settings)) {
 
 				reader.MoveToContent ();
-				if (reader.IsEmptyElement) {
+				if (reader.HasAttributes || reader.IsEmptyElement) {
 					reader.Skip ();
 					return null;
 				}
 
-				reader.ReadStartElement ("cross-domain-policy", String.Empty);
-				for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
-					if (reader.NodeType != XmlNodeType.Element)
-						throw new XmlException (String.Format ("Unexpected cross-domain-policy content: {0}", reader.NodeType));
-					switch (reader.LocalName) {
-					case "site-control":
-						cdp.SiteControl = reader.GetAttribute ("permitted-cross-domain-policies");
-						reader.Skip ();
-						break;
-					case "allow-access-from":
-						var a = new AllowAccessFrom () {
-							Domain = reader.GetAttribute ("domain"),
-							Secure = ReadBooleanAttribute (reader, "secure") };
-/* Silverlight policies are used for sockets
-						var p = reader.GetAttribute ("to-ports");
-						if (p == "*")
-							a.AllowAnyPort = true;
-						else if (p != null)
-							a.ToPorts = Array.ConvertAll<string, int> (p.Split (','), s => XmlConvert.ToInt32 (s));
-*/
-						cdp.AllowedAccesses.Add (a);
-						reader.Skip ();
-						break;
-					case "allow-http-request-headers-from":
-						var h = new AllowHttpRequestHeadersFrom () {
-							Domain = reader.GetAttribute ("domain"),
-							Secure = ReadBooleanAttribute (reader, "secure") };
-						h.Headers.SetHeaders (reader.GetAttribute ("headers"));
-						cdp.AllowedHttpRequestHeaders.Add (h);
-						reader.Skip ();
-						break;
-					default:
-						reader.Skip ();
-						continue;
+				while (!reader.EOF) {
+					reader.ReadStartElement ("cross-domain-policy", String.Empty);
+					for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
+						if (reader.NodeType != XmlNodeType.Element)
+							throw new XmlException (String.Format ("Unexpected cross-domain-policy content: {0}", reader.NodeType));
+						switch (reader.LocalName) {
+						case "site-control":
+							cdp.SiteControl = GetSiteControl (reader);
+							reader.Skip ();
+							break;
+						case "allow-access-from":
+							var a = CreateAllowAccessFrom (reader);
+							cdp.AllowedAccesses.Add (a);
+							reader.Skip ();
+							break;
+						case "allow-http-request-headers-from":
+							var h = CreateAllowHttpRequestHeadersFrom (reader);
+							cdp.AllowedHttpRequestHeaders.Add (h);
+							reader.Skip ();
+							break;
+						default:
+							reader.Skip ();
+							return null;
+						}
 					}
+					reader.ReadEndElement ();
+					reader.MoveToContent ();
 				}
-				reader.ReadEndElement ();
 			}
 
 			// if none supplied set a default for headers

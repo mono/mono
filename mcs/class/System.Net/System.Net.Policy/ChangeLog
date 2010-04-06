@@ -1,3 +1,13 @@
+2010-04-06  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ClientAccessPolicyParser.cs: Catch extra attributes that
+	leads to an invalid (no-access) policy. Fix parts of DRT#666
+	* CrossDomainPolicyManager.cs: Ignore policies sent with a 
+	Content-Type different than "text/*". Fix DRT#667
+	* FlashCrossDomainPolicyParser.cs: Catch extra attributes and
+	the case where a second policy is present (invalid xml). Fix 
+	parts of DRT#666
+
 2010-03-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BaseDomainPolicy.cs, ClientAccessPolicy[Parser].cs, 
