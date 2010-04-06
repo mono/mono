@@ -91,6 +91,7 @@ namespace Mono.XBuild.CommandLine {
 
 		static string guidExpression = "{[A-Fa-f0-9]{8}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{4}-[A-Fa-f0-9]{12}}";
 
+		static Regex slnVersionRegex = new Regex (@"Microsoft Visual Studio Solution File, Format Version (\d?\d.\d\d)");
 		static Regex projectRegex = new Regex ("Project\\(\"(" + guidExpression + ")\"\\) = \"(.*?)\", \"(.*?)\", \"(" + guidExpression + ")\"(\\s*?)((\\s*?)ProjectSection\\((.*?)\\) = (.*?)EndProjectSection(\\s*?))*(\\s*?)EndProject?", RegexOptions.Singleline);
 		static Regex projectDependenciesRegex = new Regex ("ProjectSection\\((.*?)\\) = \\w*(.*?)EndProjectSection", RegexOptions.Singleline);
 		static Regex projectDependencyRegex = new Regex ("\\s*(" + guidExpression + ") = (" + guidExpression + ")");
@@ -115,6 +116,14 @@ namespace Mono.XBuild.CommandLine {
 			AddGeneralSettings (file, p);
 
 			StreamReader reader = new StreamReader (file);
+			string slnVersion = GetSlnFileVersion (reader);
+			if (slnVersion == "11.00")
+				p.DefaultToolsVersion = "4.0";
+			else if (slnVersion == "10.00")
+				p.DefaultToolsVersion = "3.5";
+			else
+				p.DefaultToolsVersion = "2.0";
+
 			string line = reader.ReadToEnd ();
 			line = line.Replace ("\r\n", "\n");
 			string solutionDir = Path.GetDirectoryName (file);
@@ -259,6 +268,30 @@ namespace Mono.XBuild.CommandLine {
 			AddProjectTargets (p, solutionTargets, projectInfos);
 			AddSolutionTargets (p, num_levels, websiteProjectInfos.Values);
 		}
+
+                string GetSlnFileVersion (StreamReader reader)
+                {
+                        string strVersion = null;
+                        string strInput = null;
+                        Match match;
+
+                        strInput = reader.ReadLine();
+                        if (strInput == null)
+                                return null;
+
+                        match = slnVersionRegex.Match(strInput);
+                        if (!match.Success) {
+                                strInput = reader.ReadLine();
+                                if (strInput == null)
+                                        return null;
+                                match = slnVersionRegex.Match (strInput);
+                        }
+
+                        if (match.Success)
+                                return match.Groups[1].Value;
+
+                        return null;
+                }
 
 		void AddGeneralSettings (string solutionFile, Project p)
 		{
@@ -692,6 +725,7 @@ namespace Mono.XBuild.CommandLine {
 						if (projectTargetInfo.Build) {
 							task = target.AddNewTask ("MSBuild");
 							task.SetParameterValue ("Projects", project.FileName);
+							task.SetParameterValue ("ToolsVersion", "$(ProjectToolsVersion)");
 
 							if (buildTarget != "Build")
 								task.SetParameterValue ("Targets", buildTarget);
@@ -782,6 +816,7 @@ namespace Mono.XBuild.CommandLine {
 					task = t.AddNewTask ("MSBuild");
 					task.SetParameterValue ("Condition", String.Format ("'@({0})' != ''", level_str));
 					task.SetParameterValue ("Projects", String.Format ("@({0})", level_str));
+					task.SetParameterValue ("ToolsVersion", "$(ProjectToolsVersion)");
 					task.SetParameterValue ("Properties",
 						string.Format ("Configuration=%(Configuration); Platform=%(Platform); BuildingSolutionFile=true; CurrentSolutionConfigurationContents=$(CurrentSolutionConfigurationContents); SolutionDir=$(SolutionDir); SolutionExt=$(SolutionExt); SolutionFileName=$(SolutionFileName); SolutionName=$(SolutionName); SolutionPath=$(SolutionPath)"));
 					if (buildTarget != "Build")

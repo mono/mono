@@ -17,5 +17,9 @@ LIB_MCS_FLAGS = \
 
 include ../../build/library.make
 
+export TESTING_MONO=a
+XBUILD_DIR=../../tools/xbuild
+include $(XBUILD_DIR)/xbuild_targets.make
+
 EXTRA_DISTFILES = \
 	Mono.XBuild.Framework/AssemblyLoadInfo.cs

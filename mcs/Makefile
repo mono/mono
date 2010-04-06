@@ -10,7 +10,7 @@ moonlight_raw_SUBDIRS := build mcs class tools
 moonlight_SUBDIRS := tools tests errors
 monotouch_SUBDIRS := build mcs class
 monotouch_bootstrap_SUBDIRS := build mcs class
-net_3_5_SUBDIRS := build class
+net_3_5_SUBDIRS := build class tools/xbuild
 net_4_0_bootstrap_SUBDIRS := build mcs class tools 
 net_4_0_SUBDIRS := build mcs class nunit24 ilasm tools tests errors docs
 

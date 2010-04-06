@@ -40,16 +40,17 @@ namespace Microsoft.Build.BuildEngine {
 		
 		string			binPath;
 		bool			buildEnabled;
-		TaskDatabase		defaultTasks;
-		bool			defaultTasksRegistered;
+		Dictionary<string, TaskDatabase> defaultTasksTableByToolsVersion;
 		const string		defaultTasksProjectName = "Microsoft.Common.tasks";
 		EventSource		eventSource;
 		bool			buildStarted;
+		ToolsetDefinitionLocations toolsetLocations;
 		BuildPropertyGroup	global_properties;
 		//IDictionary		importedProjects;
 		List <ILogger>		loggers;
 		//bool			onlyLogCriticalEvents;
 		Dictionary <string, Project>	projects;
+		string defaultToolsVersion;
 
 		// the key here represents the project+target+global_properties set
 		Dictionary <string, ITaskItem[]> builtTargetsOutputByName;
@@ -68,6 +69,25 @@ namespace Microsoft.Build.BuildEngine {
 		{
 		}
 
+		public Engine (ToolsetDefinitionLocations locations)
+			: this (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20))
+		{
+			toolsetLocations = locations;
+		}
+		
+		public Engine (BuildPropertyGroup globalProperties)
+			: this (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20))
+		{
+			this.global_properties = globalProperties;
+		}
+
+		public Engine (BuildPropertyGroup globalProperties, ToolsetDefinitionLocations locations)
+			: this (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20))
+		{
+			this.global_properties = globalProperties;
+			toolsetLocations = locations;
+		}
+
 		// engine should be invoked with path where binary files are
 		// to find microsoft.build.tasks
 		public Engine (string binPath)
@@ -81,8 +101,25 @@ namespace Microsoft.Build.BuildEngine {
 			this.global_properties = new BuildPropertyGroup ();
 			this.builtTargetsOutputByName = new Dictionary<string, ITaskItem[]> ();
 			this.currentlyBuildingProjectsStack = new Stack<Project> ();
-			
-			RegisterDefaultTasks ();
+			this.Toolsets = new ToolsetCollection ();
+			LoadDefaultToolsets ();
+			defaultTasksTableByToolsVersion = new Dictionary<string, TaskDatabase> ();
+			GetDefaultTasks (DefaultToolsVersion);
+		}
+
+		//FIXME: should be loaded from config file
+		void LoadDefaultToolsets ()
+		{
+			Toolsets.Add (new Toolset ("2.0",
+						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20)));
+			Toolsets.Add (new Toolset ("3.0",
+						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version30)));
+			Toolsets.Add (new Toolset ("3.5",
+						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35)));
+#if NET_4_0
+			Toolsets.Add (new Toolset ("4.0",
+						ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40)));
+#endif
 		}
 		
 		[MonoTODO]
@@ -128,27 +165,31 @@ namespace Microsoft.Build.BuildEngine {
 			if (targetNames == null)
 				return false;
 
+			if (defaultToolsVersion != null)
+				// it has been explicitly set, xbuild does this..
+				project.ToolsVersion = defaultToolsVersion;
 			return project.Build (targetNames, targetOutputs, buildFlags);
 		}
 
 		[MonoTODO]
 		public bool BuildProjectFile (string projectFile)
 		{
-			throw new NotImplementedException ();
+			return BuildProjectFile (projectFile, new string [0]);
 		}
 		
 		[MonoTODO]
 		public bool BuildProjectFile (string projectFile,
 					      string targetName)
 		{
-			throw new NotImplementedException ();
+			return BuildProjectFile (projectFile,
+			                         targetName == null ? new string [0] : new string [] {targetName});
 		}
 		
 		[MonoTODO]
 		public bool BuildProjectFile (string projectFile,
 					      string[] targetNames)
 		{
-			throw new NotImplementedException ();
+			return BuildProjectFile (projectFile, targetNames, null);
 		}
 		
 		[MonoTODO]
@@ -174,6 +215,16 @@ namespace Microsoft.Build.BuildEngine {
 					      IDictionary targetOutputs,
 					      BuildSettings buildFlags)
 		{
+			return BuildProjectFile (projectFile, targetNames, globalProperties, targetOutputs, buildFlags, null);
+		}
+			
+		//FIXME: add a test for null @toolsVersion
+		public bool BuildProjectFile (string projectFile,
+					      string[] targetNames,
+					      BuildPropertyGroup globalProperties,
+					      IDictionary targetOutputs,
+					      BuildSettings buildFlags, string toolsVersion)
+		{
 			Project project;
 
 			if (projects.ContainsKey (projectFile)) {
@@ -197,6 +248,13 @@ namespace Microsoft.Build.BuildEngine {
 			}
 
 			try {
+				if (String.IsNullOrEmpty (toolsVersion) && defaultToolsVersion != null)
+					// it has been explicitly set, xbuild does this..
+					//FIXME: should this be cleared after building?
+					project.ToolsVersion = defaultToolsVersion;
+				else
+					project.ToolsVersion = toolsVersion;
+
 				return project.Build (targetNames, targetOutputs, buildFlags);
 			} finally {
 				if (globalProperties != null) {
@@ -217,8 +275,6 @@ namespace Microsoft.Build.BuildEngine {
 
 		public Project CreateNewProject ()
 		{
-			if (defaultTasksRegistered)
-				CheckBinPath ();
 			return new Project (this);
 		}
 
@@ -358,23 +414,44 @@ namespace Microsoft.Build.BuildEngine {
 			bfea = new BuildFinishedEventArgs ("Build finished.", null, succeeded);
 			eventSource.FireBuildFinished (this, bfea);
 		}
-		
-		void RegisterDefaultTasks ()
+
+		internal TaskDatabase GetDefaultTasks (string toolsVersion)
 		{
-			this.defaultTasksRegistered = false;
-			
+			TaskDatabase db;
+			if (defaultTasksTableByToolsVersion.TryGetValue (toolsVersion, out db))
+				return db;
+
+			var toolset = Toolsets [toolsVersion];
+			if (toolset == null)
+				throw new Exception ("Unknown toolsversion: " + toolsVersion);
+
+			string toolsPath = toolset.ToolsPath;
+			string tasksFile = Path.Combine (toolsPath, defaultTasksProjectName);
+			this.LogMessage (MessageImportance.Low, "Loading default tasks for ToolsVersion: {0} from {1}", toolsVersion, tasksFile);
+
+			// set a empty taskdb here, because the project loading the tasks
+			// file will try to get the default task db
+			defaultTasksTableByToolsVersion [toolsVersion] = new TaskDatabase ();
+
+			db = defaultTasksTableByToolsVersion [toolsVersion] = RegisterDefaultTasks (tasksFile);
+
+			return db;
+		}
+		
+		TaskDatabase RegisterDefaultTasks (string tasksFile)
+		{
 			Project defaultTasksProject = CreateNewProject ();
+			TaskDatabase db;
 			
-			if (binPath != null) {
-				if (File.Exists (Path.Combine (binPath, defaultTasksProjectName))) {
-					defaultTasksProject.Load (Path.Combine (binPath, defaultTasksProjectName));
-					defaultTasks = defaultTasksProject.TaskDatabase;
-				} else
-					defaultTasks = new TaskDatabase ();
-			} else
-				defaultTasks = new TaskDatabase ();
-			
-			this.defaultTasksRegistered = true;
+			if (File.Exists (tasksFile)) {
+				defaultTasksProject.Load (tasksFile);
+				db = defaultTasksProject.TaskDatabase;
+			} else {
+				this.LogWarning ("Default tasks file {0} not found, ignoring.", tasksFile);
+				db = new TaskDatabase ();
+			}
+
+			return db;
 		}
 
 		public string BinPath {
@@ -403,7 +480,31 @@ namespace Microsoft.Build.BuildEngine {
 			get { return global_properties; }
 			set { global_properties = value; }
 		}
+		
+		public ToolsetCollection Toolsets {
+			get; private set;
+		}
 
+		public string DefaultToolsVersion {
+			get {
+				if (String.IsNullOrEmpty (defaultToolsVersion))
+#if NET_4_0
+					return "4.0";
+#elif NET_3_5
+					return "3.5";
+#else
+					return "2.0";
+#endif
+				
+				return defaultToolsVersion;
+			}
+			set { defaultToolsVersion = value; }
+		}
+		
+		public bool IsBuilding {
+			get { return buildStarted; }
+		}
+		
 		public bool OnlyLogCriticalEvents {
 			get { return eventSource.OnlyLogCriticalEvents; }
 			set { eventSource.OnlyLogCriticalEvents = value; }
@@ -413,14 +514,6 @@ namespace Microsoft.Build.BuildEngine {
 			get { return eventSource; }
 		}
 		
-		internal bool DefaultTasksRegistered {
-			get { return defaultTasksRegistered; }
-		}
-		
-		internal TaskDatabase DefaultTasks {
-			get { return defaultTasks; }
-		}
-
 		internal Dictionary<string, ITaskItem[]> BuiltTargetsOutputByName {
 			get { return builtTargetsOutputByName; }
 		}

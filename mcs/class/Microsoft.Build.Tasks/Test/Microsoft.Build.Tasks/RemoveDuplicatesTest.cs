@@ -44,7 +44,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 		public void Test1 ()
 		{
 			string documentString = @"
-                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion='3.5'>
+                                <Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
 				
 				<ItemGroup>
 					<Items Include='A'>

@@ -1,3 +1,14 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Import tools/xbuild/xbuild_targets.make, which copies
+	the target and tasks file in the correct place, to allow running
+	tests with different toolsversion. Copy the config file for the
+	test assembly. Clean the generated test.dll .
+	Use the correct target assembly name for 4.0 profile
+	(ms.build.tasks.v4.0.dll), and for Utilities assembly.
+	* Microsoft.Build.Tasks_test.dll.sources: Use Consts.cs from Engine
+	instead of maintaining a copy here.
+
 2010-03-02  Ankit Jain  <jankit@novell.com>
 
 	Fix tests.

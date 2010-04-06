@@ -56,10 +56,11 @@ namespace Mono.XBuild.CommandLine {
 		string[]		targets;
 		bool			validate;
 		string			validationSchema;
+		string			toolsVersion;
 		
 		string			responseFile;
 	
-		public Parameters (string binPath)
+		public Parameters ()
 		{
 			consoleLoggerParameters = "";
 			displayHelp = false;
@@ -237,6 +238,8 @@ namespace Mono.XBuild.CommandLine {
 					ProcessConsoleLoggerParameters (s);
 				} else if (s.StartsWith ("/validate:") || s.StartsWith ("/val:")) {
 					ProcessValidate (s);
+				} else if (s.StartsWith ("/toolsversion:") || s.StartsWith ("/tv:")) {
+					ToolsVersion = s.Split (':') [1];
 				} else
 					return false;
 				break;
@@ -385,6 +388,11 @@ namespace Mono.XBuild.CommandLine {
 		
 		public string ValidationSchema {
 			get { return validationSchema; }
+		}
+
+		public string ToolsVersion {
+			get { return toolsVersion; }
+			private set { toolsVersion = value; }
 		}
 		
 	}

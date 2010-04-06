@@ -1,3 +1,17 @@
+2010-04-06  Ankit Jain  <jankit@novell.com>
+
+	* Consts.cs: Remove.
+	* AssignProjectConfigurationTest.cs:
+	* CreateCSharpManifestResourceNameTest.cs:
+	* CreateVisualBasicManifestResourceNameTest.cs:
+	* CreateItemTest.cs:
+	* FindAppConfigFileTest.cs:
+	* RemoveDuplicatesTest.cs:
+	* TaskBatchingTest.cs:
+	* WriteLinesToFileTest.cs:
+	Set the ToolsVersion to match the profile. Use the
+	full path to the tasks assembly for UsingTasks.
+
 2010-03-04  Ankit Jain  <jankit@novell.com>
 
 	* AssignTargetPathTest.cs (CreateProjectString): Remove the

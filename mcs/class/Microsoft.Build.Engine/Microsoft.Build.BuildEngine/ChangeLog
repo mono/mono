@@ -1,3 +1,25 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* BuildEngine.cs: Implement IBuildEngine2 instead of
+	IBuildEngine.
+	* BuildTasks.cs: Use the new extension methods for logging.
+	(InitializeTask): Emit a message informing about the assembly
+	from which the task is being loaded. Emit a useful debug message
+	incase of a InvalidCastException.
+	* Engine.cs: Add missing methods, constructors and properties related
+	to ToolsVersion support. Setup a default set of Toolsets.
+	Keep separate taskdbs' per ToolsVersion. The common tasks
+	would come from different *.tasks file, and use different
+	task assemblies.
+	(DefaultToolsVersion): Correctly set this based on the profile.
+	* LogExtensions.cs: New. Extension methods on Engine, for logging.
+	* Project.cs: Add missing methods/contructors/properties related
+	to ToolsVersion support. Add reserved properties -
+	MSBuildToolsPath and MSBuildToolsVersion .
+	* Toolset.cs: New.
+	* ToolsetCollection.cs: New.
+	* ToolsetDefinitionLocations.cs: New.
+
 2010-03-04  Ankit Jain  <jankit@novell.com>
 
 	* BuildEngine.cs (LogErrorEvent): Log as warning, if

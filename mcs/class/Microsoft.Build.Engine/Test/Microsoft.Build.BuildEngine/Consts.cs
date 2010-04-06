@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
 using System;
+using System.IO;
 using Microsoft.Build.Utilities;
 
 public static class Consts {
@@ -42,5 +43,28 @@ public static class Consts {
 			else
 				return ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20);
 		}
+	}
+
+	public static string ToolsVersionString {
+		get {
+#if NET_4_0
+			return " ToolsVersion='4.0'";
+#elif NET_3_5
+			return " ToolsVersion='3.5'";
+#else
+			return String.Empty;
+#endif
+		}
+	}
+
+	public static string GetTasksAsmPath ()
+	{
+#if NET_4_0
+		return Path.Combine (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version40), "Microsoft.Build.Tasks.v4.0.dll");
+#elif NET_3_5
+		return Path.Combine (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version35), "Microsoft.Build.Tasks.v3.5.dll");
+#else
+		return Path.Combine (ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20), "Microsoft.Build.Tasks.dll");
+#endif
 	}
 }

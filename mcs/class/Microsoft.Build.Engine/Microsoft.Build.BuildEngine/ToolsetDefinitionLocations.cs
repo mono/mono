@@ -1,10 +1,10 @@
 //
-// TargetDotNetFrameworkVersion.cs: Represents framework version.
+// ToolsetDefinitionLocations.cs
 //
 // Author:
-//   Marek Sieradzki (marek.sieradzki@gmail.com)
+//	Ankit Jain (jankit@novell.com)
 //
-// (C) 2005 Marek Sieradzki
+// Copyright 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,23 +27,13 @@
 
 #if NET_2_0
 
-namespace Microsoft.Build.Utilities
+namespace Microsoft.Build.BuildEngine
 {
-	// If changing something here then update
-	// ToolLocationHelper.GetPathToDotNetFramework also
-	public enum TargetDotNetFrameworkVersion
+	public enum ToolsetDefinitionLocations
 	{
-		Version11,
-		Version20,
-		Version30,
-		Version35,
-#if NET_4_0
-		Version40,
-		VersionLatest = Version40
-#else
-		VersionLatest = Version35
-#endif
+		None,
+		ConfigurationFile,
+		Registry
 	}
 }
-
 #endif

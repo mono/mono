@@ -1,3 +1,10 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Import tools/xbuild/xbuild_targets.make, which copies
+	the target and tasks file in the correct place, to allow running
+	tests with different toolsversion.
+	Use the correct target assembly name for 4.0 profile.
+
 2010-02-10  Ankit Jain  <jankit@novell.com>
 
 	* Microsoft.Build.Utilities.dll.sources: Add ProcessStringDictionary.cs

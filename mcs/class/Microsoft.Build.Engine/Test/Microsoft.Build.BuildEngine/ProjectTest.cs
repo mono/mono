@@ -1779,7 +1779,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 			Engine engine = new Engine (Consts.BinPath);
 			Project project = engine.CreateNewProject ();
 
-			string second = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string second = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
 	<PropertyGroup>
 	  <Prop1>InitialVal</Prop1>
 	</PropertyGroup>
@@ -1797,7 +1797,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				sw.Write (second);
 			}
 
-			string third = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string third = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
 	<PropertyGroup>
 	  <ThirdProp>Third Value</ThirdProp>
 	</PropertyGroup>
@@ -1972,7 +1972,7 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 		[Test]
 		public void TestCaseSensitivityOfProjectElements ()
 		{
-			string projectXml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectXml = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
         <ItemGroup>
                 <Abc Include=""foo"">
                         <MetaDaTA1>md1</MetaDaTA1>

@@ -1,3 +1,12 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* TargetDotNetFrameworkVersion.cs: Add Version40 .
+	* Task.cs (BuildEngine2): New.
+	* ToolLocationHelper.cs: Use class/lib/net_* as the path
+	for the assemblies and targets when running tests.
+	Environment variable TESTING_MONO is set for testing.
+	This allows a 4.0 xbuild to build 2.0/3.5 projects.
+
 2010-02-19  Ankit Jain  <jankit@novell.com>
 
 	* TaskItem.cs: Track api changes.

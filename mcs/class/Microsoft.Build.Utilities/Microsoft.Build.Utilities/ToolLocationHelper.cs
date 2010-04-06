@@ -50,13 +50,24 @@ namespace Microsoft.Build.Utilities
 			t2 = t1.Parent;
 
 			lib_mono_dir = t2.FullName;
+			if (Environment.GetEnvironmentVariable ("TESTING_MONO") != null) {
+				mono_dir = new string [] {
+					Path.Combine (lib_mono_dir, "net_1_0"),
+					Path.Combine (lib_mono_dir, "net_2_0"),
+					Path.Combine (lib_mono_dir, "net_2_0"),
+					Path.Combine (lib_mono_dir, "net_3_5"),
+					Path.Combine (lib_mono_dir, "net_4_0")
+				};	
+			} else {
+				mono_dir = new string [] {
+					Path.Combine (lib_mono_dir, "1.0"),
+					Path.Combine (lib_mono_dir, "2.0"),
+					Path.Combine (lib_mono_dir, "2.0"),
+					Path.Combine (lib_mono_dir, "3.5"),
+					Path.Combine (lib_mono_dir, "4.0")
+				};
+			}
 
-			mono_dir = new string [] {
-				Path.Combine (lib_mono_dir, "1.0"),
-				Path.Combine (lib_mono_dir, "2.0"),
-				Path.Combine (lib_mono_dir, "2.0"),
-				Path.Combine (lib_mono_dir, "3.5")
-			};
 		}
 
 		[MonoTODO]

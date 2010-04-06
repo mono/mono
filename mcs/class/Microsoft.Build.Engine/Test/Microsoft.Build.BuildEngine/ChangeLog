@@ -1,3 +1,11 @@
+2010-04-06  Ankit Jain  <jankit@novell.com>
+
+	* Consts.cs (ToolsVersionString): New.
+	(GetTasksAsmPath): New.
+	* EngineTest.cs: Use the direct path to the tasks assembly
+	in the UsingTasks.
+	* ProjectTest.cs: Set ToolsVersion to the current profile.
+
 2010-02-19  Ankit Jain  <jankit@novell.com>
 
 	* ImportTest.cs (TestMissingImport*): Add new tests for missing

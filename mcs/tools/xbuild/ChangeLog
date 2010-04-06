@@ -1,3 +1,27 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* Main.cs (Execute): If toolsversion is specified on the command line,
+	then use that.
+	* Parameters.cs: Read toolsversion from the command line ('/tv:..') .
+	* SolutionParser.cs: Infer ToolsVersion from the sln version.
+	Set ToolsVersion property of the MSBuild tasks, in the generated
+	.sln.proj file, for building the projects.
+
+	* xbuild/Microsoft.Common.tasks: Move to ..
+	* xbuild/2.0/Microsoft.Common.tasks: .. here.
+	* xbuild/3.5/Microsoft.Common.tasks: New.
+	* xbuild/4.0/Microsoft.Common.tasks: New.
+	Use the corresponding 3.5/4.0 tasks assembly.
+
+	* xbuild_targets.make: Copies the target and tasks file in the correct
+	place, to allow running tests with different toolsversion.
+	* Makefile: Import xbuild_targets.make . Use correct assembly names for
+	Utilities assembly, for 3.5/4.0 profiles.
+	Install the correct Microsoft.Common.tasks file for the profile.
+	Copy xbuild.exe to class/lib/$(PROFILE), so that it can find other
+	profile dirs as relative path.
+	(EXTRA_DISTFILES): Add the new Microsoft.Common.tasks files.
+
 2010-03-04  Ankit Jain  <jankit@novell.com>
 
 	* CommandLineException.cs (Message): Include the inner exception message

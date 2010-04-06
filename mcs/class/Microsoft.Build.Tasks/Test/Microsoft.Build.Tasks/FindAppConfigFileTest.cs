@@ -25,6 +25,8 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 
+#if NET_3_5
+
 using System;
 using System.Collections;
 using Microsoft.Build.BuildEngine;
@@ -85,7 +87,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		void CheckOutput (string[] primary_list, string[] secondary_list, string expected) {
 			StringBuilder sb = new StringBuilder ();
 
-			sb.Append (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">");
+			sb.Append (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + ">");
 			sb.Append ("\t<ItemGroup>");
 			if (primary_list != null)
 				foreach (string s in primary_list)
@@ -124,4 +126,4 @@ namespace MonoTests.Microsoft.Build.Tasks {
 		}
 	}
 }	
-
+#endif

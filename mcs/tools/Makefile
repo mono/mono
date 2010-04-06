@@ -13,13 +13,13 @@ per_profile_dirs = \
 	mono-service	\
 	mono-xsd	\
 	resgen		\
-	wsdl
+	wsdl		\
+	xbuild
 
 net_4_0_dirs := \
 	$(per_profile_dirs) \
 	corcompare	\
 	mono-xmltool	\
-	xbuild		\
 	mdoc		\
 	mono-shlib-cop	\
 	sgen		\

@@ -1,3 +1,10 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Import tools/xbuild/xbuild_targets.make, which copies
+	the target and tasks file in the correct place, to allow running
+	tests with different toolsversion.
+	* Microsoft.Build.Framework.dll.sources: Add IBuildEngine2.cs .
+
 2006-04-19  Marek Sieradzki  <marek.sieradzki@gmail.com>
 
 	* Microsoft.Build.Framework.targets: Removed.

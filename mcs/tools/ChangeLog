@@ -1,3 +1,7 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Move xbuild from net_4_0_dirs to per_profile_dirs.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: rename the net_2_1 profile to moonlight.

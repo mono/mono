@@ -1,3 +1,9 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* Csc.cs: Use dmcs as the compiler for 4.0 profile.
+	* MSBuild.cs (ToolsVersion): New.
+	Use toolsVersion for building.
+
 2010-02-10  Ankit Jain  <jankit@novell.com>
 
 	* GenerateResource.cs (CompileResourceFile): Check File.Exists

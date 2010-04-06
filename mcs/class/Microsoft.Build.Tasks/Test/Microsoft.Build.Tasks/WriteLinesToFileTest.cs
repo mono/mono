@@ -159,7 +159,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 			Project project;
 
 			StringBuilder sb = new StringBuilder ();
-			sb.Append (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion='3.5'>
+			sb.Append (@"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
 	<ItemGroup>
 ");
 

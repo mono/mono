@@ -70,6 +70,10 @@ namespace Microsoft.Build.Utilities
 			}
 		}
 
+		public IBuildEngine2 BuildEngine2 {
+			get { return buildEngine as IBuildEngine2; }
+		}
+
 		protected string HelpKeywordPrefix {
 			get {
 				return helpKeywordPrefix;

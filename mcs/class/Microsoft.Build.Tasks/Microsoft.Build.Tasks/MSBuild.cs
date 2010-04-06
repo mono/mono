@@ -82,7 +82,14 @@ namespace Microsoft.Build.Tasks {
 				outputs = new Hashtable ();
 
 				try {
-					result = BuildEngine.BuildProjectFile (filename, targets, global_properties, outputs);
+					// Order of precedence:
+					// %(Project.ToolsVersion) , ToolsVersion property
+					string tv = project.GetMetadata ("ToolsVersion");
+					if (String.IsNullOrEmpty (tv))
+						tv = ToolsVersion;
+					ThrowIfNotValidToolsVersion (tv);
+
+					result = BuildEngine2.BuildProjectFile (filename, targets, global_properties, outputs, tv);
 				} catch (InvalidProjectFileException e) {
 					Log.LogError ("Error building project {0}: {1}", filename, e.Message);
 					result = false;
@@ -127,6 +134,12 @@ namespace Microsoft.Build.Tasks {
 			return result;
 		}
 
+		void ThrowIfNotValidToolsVersion (string toolsVersion)
+		{
+			if (!String.IsNullOrEmpty (toolsVersion) && Engine.GlobalEngine.Toolsets [toolsVersion] == null)
+				throw new Exception (String.Format ("Unknown ToolsVersion : {0}", toolsVersion));
+		}
+
 		[Required]
 		public ITaskItem [] Projects {
 			get { return projects; }
@@ -168,6 +181,10 @@ namespace Microsoft.Build.Tasks {
 		public bool BuildInParallel {
 			get { return buildInParallel; }
 			set { buildInParallel = value; }
+		}
+
+		public string ToolsVersion {
+			get; set;
 		}
 
 		Dictionary<string, string> SplitPropertiesToDictionary ()
