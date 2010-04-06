@@ -1,3 +1,7 @@
+2010-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* bug-575941.cs: New regression test.
+
 2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-515884.il: New regression test.
