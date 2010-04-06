@@ -55,11 +55,8 @@ using System.Security;
 [assembly: System.Resources.NeutralResourcesLanguage("en-US")]
 
 #if !SILVERLIGHT
-[assembly: AssemblyVersion("0.9.6.20")]
-[assembly: AssemblyFileVersion("1.0.0.00")]
-[assembly: AssemblyInformationalVersion("1.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.1.00")]
+[assembly: AssemblyInformationalVersion("1.0.1")]
 [assembly: AllowPartiallyTrustedCallers]
-#if CODEPLEX_40
-[assembly: SecurityRules(SecurityRuleSet.Level1)]
-#endif
 #endif

@@ -6,18 +6,17 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.21022</ProductVersion>
+    <ProductVersion>10.0.20624</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{2AE75F5A-CD1F-4925-9647-AF4D1C282FB4}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <RootNamespace>System.Scripting</RootNamespace>
     <AssemblyName>System.Core</AssemblyName>
 <DocumentationFile>$(OutputPath)\System.Core.XML</DocumentationFile>
     <NoWarn>1591</NoWarn>
     <OldToolsVersion>2.0</OldToolsVersion>
-<AssemblyOriginatorKeyFile>$(SolutionDir)\Runtime\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
+<AssemblyOriginatorKeyFile>$(SolutionDir)Runtime\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly Condition="'$(SignAssembly)' == '' And Exists('$(AssemblyOriginatorKeyFile)')">true</SignAssembly>
     <SignedSym Condition="'$(SignAssembly)' == 'true'">SIGNED</SignedSym>
     <DelaySign>true</DelaySign>
@@ -27,7 +26,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'FxCop|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-<OutputPath>$(SolutionDir)\..\Bin\fxcop\</OutputPath>
+<OutputPath>$(SolutionDir)..\Bin\fxcop\</OutputPath>
     <DefineConstants>TRACE;$(SignedSym)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
@@ -42,7 +41,7 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-<OutputPath>$(SolutionDir)\..\Bin\Debug\</OutputPath>
+<OutputPath>$(SolutionDir)..\Bin\Debug\</OutputPath>
 <DocumentationFile>$(OutputPath)\System.Core.xml</DocumentationFile>
     <DefineConstants>DEBUG;TRACE;$(SignedSym)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -55,7 +54,7 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-<OutputPath>$(SolutionDir)\..\Bin\Release\</OutputPath>
+<OutputPath>$(SolutionDir)..\Bin\Release\</OutputPath>
 <DocumentationFile>$(OutputPath)\System.Scripting.Core.xml</DocumentationFile>
     <DefineConstants>TRACE;$(SignedSym)</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
@@ -67,7 +66,7 @@
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Silverlight Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
-<OutputPath>$(SolutionDir)\..\Bin\Silverlight Debug\</OutputPath>
+<OutputPath>$(SolutionDir)..\Bin\Silverlight Debug\</OutputPath>
     <DefineConstants>TRACE;DEBUG;SILVERLIGHT</DefineConstants>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
     <DebugType>full</DebugType>
@@ -81,7 +80,7 @@
     <SilverlightSdkPath>$(ProgramFiles)\Microsoft Silverlight\2.0.31005.0</SilverlightSdkPath>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Silverlight Release|AnyCPU' ">
-<OutputPath>$(SolutionDir)\..\Bin\Silverlight Release\</OutputPath>
+<OutputPath>$(SolutionDir)..\Bin\Silverlight Release\</OutputPath>
     <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
 <DocumentationFile>$(OutputPath)\System.Scripting.Core.xml</DocumentationFile>
     <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
@@ -117,7 +116,6 @@
     <Compile Include="Actions\BinaryOperationBinder.cs" />
     <Compile Include="Actions\CallSite.cs" />
     <Compile Include="Actions\CallSiteBinder.cs" />
-    <Compile Include="Actions\CallSiteRule.cs" />
     <Compile Include="Actions\CallSiteHelpers.cs" />
     <Compile Include="Actions\ConvertBinder.cs" />
     <Compile Include="Actions\DeleteIndexBinder.cs" />
@@ -136,11 +134,9 @@
     <Compile Include="Actions\RuleCache.cs" />
     <Compile Include="Actions\SetIndexBinder.cs" />
     <Compile Include="Actions\SetMemberBinder.cs" />
-    <Compile Include="Actions\SmallRuleSet.cs" />
     <Compile Include="Ast\Expression.DebuggerProxy.cs" />
     <Compile Include="Ast\IArgumentProvider.cs" />
     <Compile Include="Ast\ListArgumentProvider.cs" />
-    <Compile Include="Compiler\ArgumentPrepender.cs" />
     <Compile Include="Actions\UnaryOperationBinder.cs" />
     <Compile Include="Ast\ExpressionStringBuilder.cs" />
     <Compile Include="Compiler\BoundConstants.cs" />
@@ -155,7 +151,6 @@
     <Compile Include="Compiler\RuntimeVariableList.cs" />
     <Compile Include="Actions\UpdateDelegates.Generated.cs" />
     <Compile Include="Ast\DynamicExpression.cs" />
-    <Compile Include="Actions\AutoRuleTemplate.cs" />
     <Compile Include="Ast\BinaryExpression.cs" />
     <Compile Include="Ast\BlockExpression.cs" />
     <Compile Include="Ast\CatchBlock.cs" />
@@ -185,7 +180,6 @@
     <Compile Include="Ast\ParameterExpression.cs" />
     <Compile Include="Ast\SwitchCase.cs" />
     <Compile Include="Ast\SwitchExpression.cs" />
-    <Compile Include="Ast\TreeComparer.cs" />
     <Compile Include="Ast\TryExpression.cs" />
     <Compile Include="Ast\TypeBinaryExpression.cs" />
     <Compile Include="Ast\TypeUtils.cs" />
@@ -196,7 +190,7 @@
     <Compile Include="Compiler\ConstantCheck.cs" />
     <Compile Include="Compiler\ExpressionQuoter.cs" />
     <Compile Include="Ast\ExpressionVisitor.cs" />
-    <Compile Include="Ast\ExpressionWriter.cs" />
+    <Compile Include="Ast\DebugViewWriter.cs" />
     <Compile Include="Compiler\HoistedLocals.cs" />
     <Compile Include="Compiler\KeyedQueue.cs" />
     <Compile Include="Compiler\LambdaCompiler.Address.cs" />
@@ -236,7 +230,6 @@
     <Compile Include="Utils\TrueReadOnlyCollection.cs" />
     <Compile Include="Utils\TypeExtensions.cs" />
     <Compile Include="Stubs.cs" />
-    <Compile Include="Utils\WeakUniqueSet.cs" />
   </ItemGroup>
   <ItemGroup>
     <Content Include="..\..\System\Linq\Expressions\System.Linq.Expressions.txt">

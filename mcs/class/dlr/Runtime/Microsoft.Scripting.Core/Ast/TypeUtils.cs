@@ -248,11 +248,111 @@ namespace System.Dynamic.Utils {
             if (source.IsInterface || dest.IsInterface) {
                 return true;
             }
+            // Variant delegate conversion
+            if (IsLegalExplicitVariantDelegateConversion(source, dest))
+                return true;
+                
             // Object conversion
             if (source == typeof(object) || dest == typeof(object)) {
                 return true;
             }
             return false;
+        }
+
+        private static bool IsCovariant(Type t)
+        {
+            Debug.Assert(t != null);
+            return 0 != (t.GenericParameterAttributes & GenericParameterAttributes.Covariant);
+        }
+
+        private static bool IsContravariant(Type t)
+        {
+            Debug.Assert(t != null);
+            return 0 != (t.GenericParameterAttributes & GenericParameterAttributes.Contravariant);
+        }
+
+        private static bool IsInvariant(Type t)
+        {
+            Debug.Assert(t != null);
+            return 0 == (t.GenericParameterAttributes & GenericParameterAttributes.VarianceMask);
+        }
+
+        private static bool IsDelegate(Type t)
+        {
+            Debug.Assert(t != null);
+            return t.IsSubclassOf(typeof(System.Delegate));
+        }
+
+        internal static bool IsLegalExplicitVariantDelegateConversion(Type source, Type dest)
+        {
+            Debug.Assert(source != null && dest != null);
+
+            // There *might* be a legal conversion from a generic delegate type S to generic delegate type  T, 
+            // provided all of the follow are true:
+            //   o Both types are constructed generic types of the same generic delegate type, D<X1,... Xk>.
+            //     That is, S = D<S1...>, T = D<T1...>.
+            //   o If type parameter Xi is declared to be invariant then Si must be identical to Ti.
+            //   o If type parameter Xi is declared to be covariant ("out") then Si must be convertible
+            //     to Ti via an identify conversion,  implicit reference conversion, or explicit reference conversion.
+            //   o If type parameter Xi is declared to be contravariant ("in") then either Si must be identical to Ti, 
+            //     or Si and Ti must both be reference types.
+
+            if (!IsDelegate(source) || !IsDelegate(dest) || !source.IsGenericType || !dest.IsGenericType)
+                return false;
+
+            Type genericDelegate = source.GetGenericTypeDefinition();
+
+            if (dest.GetGenericTypeDefinition() != genericDelegate)
+                return false;
+
+            Type[] genericParameters = genericDelegate.GetGenericArguments();
+            Type[] sourceArguments = source.GetGenericArguments();
+            Type[] destArguments = dest.GetGenericArguments();
+
+            Debug.Assert(genericParameters != null);
+            Debug.Assert(sourceArguments != null);
+            Debug.Assert(destArguments != null);
+            Debug.Assert(genericParameters.Length == sourceArguments.Length);
+            Debug.Assert(genericParameters.Length == destArguments.Length);
+
+            for (int iParam = 0; iParam < genericParameters.Length; ++iParam)
+            {
+                Type sourceArgument = sourceArguments[iParam];
+                Type destArgument = destArguments[iParam];
+
+                Debug.Assert(sourceArgument != null && destArgument != null);
+               
+                // If the arguments are identical then this one is automatically good, so skip it.
+                if (AreEquivalent(sourceArgument, destArgument))
+                {
+                    continue;
+                }
+                
+                Type genericParameter = genericParameters[iParam];
+
+                Debug.Assert(genericParameter != null);
+
+                if (IsInvariant(genericParameter))
+                {
+                    return false;
+                }
+        
+                if (IsCovariant(genericParameter))
+                {
+                    if (!HasReferenceConversion(sourceArgument, destArgument))
+                    {
+                        return false;
+                    }
+                }
+                else if (IsContravariant(genericParameter))
+                {
+                    if (sourceArgument.IsValueType || destArgument.IsValueType)
+                    {
+                        return false;
+                    }
+                }
+            }
+            return true;
         }
 
         internal static bool IsConvertible(Type type) {

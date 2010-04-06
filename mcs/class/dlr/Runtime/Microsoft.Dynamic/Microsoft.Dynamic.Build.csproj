@@ -10,11 +10,11 @@
     <DebugType>pdbonly</DebugType>
     <BinPlaceSymbols>false</BinPlaceSymbols> 
     <WarningLevel>4</WarningLevel>
-    <TreatWarningsAsErrors>true</TreatWarningsAsErrors>
+    <TreatWarningsAsErrors>false</TreatWarningsAsErrors>
     <RunCodeAnalysis>false</RunCodeAnalysis>
     <GenerateAssemblyAttribute>false</GenerateAssemblyAttribute>
-<OutputPath>$(SolutionDir)\..\Bin\40\</OutputPath>
-<AssemblyOriginatorKeyFile>$(SolutionDir)\Runtime\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
+<OutputPath>$(SolutionDir)..\Bin\40\</OutputPath>
+<AssemblyOriginatorKeyFile>$(SolutionDir)Runtime\MSSharedLibKey.snk</AssemblyOriginatorKeyFile>
     <SignAssembly Condition="'$(SignAssembly)' == '' And Exists('$(AssemblyOriginatorKeyFile)')">true</SignAssembly>
     <SignedSym Condition="'$(SignAssembly)' == 'true'">SIGNED</SignedSym>
     <DelaySign>true</DelaySign>
@@ -30,16 +30,16 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(SolutionDir)\..\Bin\40\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;CODEPLEX_40;SYSTEM_CORE</DefineConstants>
+    <OutputPath>$(SolutionDir)..\Bin\40\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;CODEPLEX_40;CLR4;SYSTEM_CORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(SolutionDir)\..\Bin\40\</OutputPath>
-    <DefineConstants>TRACE;CODEPLEX_40;SYSTEM_CORE</DefineConstants>
+    <OutputPath>$(SolutionDir)..\Bin\40\</OutputPath>
+    <DefineConstants>TRACE;CODEPLEX_40;CLR4;SYSTEM_CORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
@@ -60,6 +60,7 @@
     <Reference Include="System.Runtime.Remoting" Condition=" $(SilverlightBuild) != 'true' " />
     <Reference Include="System.Xml" Condition=" $(SilverlightBuild) != 'true' " />
     <ProjectReference Include="..\Microsoft.Scripting\Microsoft.Scripting.Build.csproj">
+      <Project>{EB66B766-6354-4208-A3D4-AACBDCB5C3B3}</Project>
       <Name>Microsoft.Scripting</Name>
     </ProjectReference>
   </ItemGroup>
@@ -85,7 +86,6 @@
       <Compile Include="Actions\ActionBinder.cs" />
       <Compile Include="Actions\Argument.cs" />
       <Compile Include="Actions\ArgumentType.cs" />
-      <Compile Include="Actions\BinderHelpers.cs" />
       <Compile Include="Actions\BoundMemberTracker.cs" />
       <Compile Include="Actions\CallSignature.cs" />
       <Compile Include="Actions\ComboActionRewriter.cs" />
@@ -153,6 +153,7 @@
       <Compile Include="Actions\Calls\MethodCandidate.cs" />
       <Compile Include="Actions\Calls\NarrowingLevel.cs" />
       <Compile Include="Actions\Calls\OutArgBuilder.cs" />
+      <Compile Include="Actions\Calls\OverloadInfo.cs" />
       <Compile Include="Actions\Calls\OverloadResolver.cs" />
       <Compile Include="Actions\Calls\OverloadResolverFactory.cs" />
       <Compile Include="Actions\Calls\ParameterMapping.cs" />
@@ -172,9 +173,11 @@
       <!--                       -->
       <Compile Include="Ast\BinaryExpression.cs" />
       <Compile Include="Ast\Block.cs" />
+      <Compile Include="Ast\BlockBuilder.cs" />
       <Compile Include="Ast\ConstantExpression.cs" />
       <Compile Include="Ast\DebugStatement.cs" />
       <Compile Include="Ast\EmptyStatements.cs" />
+      <Compile Include="Ast\ExpressionCollectionBuilder.cs" />
       <Compile Include="Ast\FinallyFlowControlExpression.cs" />
       <Compile Include="Ast\FlowControlRewriter.cs" />
       <Compile Include="Ast\GeneratorExpression.cs" />
@@ -183,6 +186,7 @@
       <Compile Include="Ast\IfStatementTest.cs" />
       <Compile Include="Ast\LambdaBuilder.cs" />
       <Compile Include="Ast\LambdaParameterRewriter.cs" />
+      <Compile Include="Ast\LightDynamicExpression.cs" />
       <Compile Include="Ast\LoopStatement.cs" />
       <Compile Include="Ast\MethodCallExpression.cs" />
       <Compile Include="Ast\NewArrayExpression.cs" />
@@ -192,6 +196,7 @@
       <Compile Include="Ast\SymbolConstantExpression.cs" />
       <Compile Include="Ast\TryStatementBuilder.cs" />
       <Compile Include="Ast\UnaryExpression.cs" />
+      <Compile Include="Ast\Utils.cs" />
       <Compile Include="Ast\VariableDictionaryExpression.cs" />
       <Compile Include="Ast\YieldExpression.cs" />
     </ItemGroup>
@@ -273,7 +278,6 @@
       <Compile Include="Generation\ILGen.cs" />
       <Compile Include="Generation\KeyedQueue.cs" />
       <Compile Include="Generation\MethodSignatureInfo.cs" />
-      <Compile Include="Generation\ParameterInfoWrapper.cs" />
       <Compile Include="Generation\Snippets.cs" />
       <Compile Include="Generation\ToDiskRewriter.cs" />
       <Compile Include="Generation\TypeGen.cs" />
@@ -309,6 +313,7 @@
       <!--          Interpreter          -->
       <!--                               -->
       <Compile Include="Interpreter\BranchLabel.cs" />
+      <Compile Include="Interpreter\ILightCallSiteBinder.cs" />
       <Compile Include="Interpreter\InterpretedFrame.cs" />
       <Compile Include="Interpreter\Interpreter.cs" />
       <Compile Include="Interpreter\LastFaultingLineExpression.cs" />
@@ -317,6 +322,8 @@
       <Compile Include="Interpreter\LightLambda.cs" />
       <Compile Include="Interpreter\LightLambda.Generated.cs" />
       <Compile Include="Interpreter\LightLambdaClosureVisitor.cs" />
+      <Compile Include="Interpreter\LocalVariables.cs" />
+      <Compile Include="Interpreter\LoopCompiler.cs" />
       <Compile Include="Interpreter\RuntimeVariables.cs" />
     </ItemGroup>
     <ItemGroup>
@@ -328,8 +335,10 @@
       <Compile Include="Interpreter\Instructions\CallInstruction.cs" />
       <Compile Include="Interpreter\Instructions\CallInstruction.Generated.cs" />
       <Compile Include="Interpreter\Instructions\ControlFlowInstructions.cs" />
+      <Compile Include="Interpreter\Instructions\DivInstruction.cs" />
       <Compile Include="Interpreter\Instructions\DynamicInstructionN.cs" />
       <Compile Include="Interpreter\Instructions\DynamicInstructions.Generated.cs" />
+      <Compile Include="Interpreter\Instructions\DynamicSplatInstruction.cs" />
       <Compile Include="Interpreter\Instructions\EqualInstruction.cs" />
       <Compile Include="Interpreter\Instructions\FieldOperations.cs" />
       <Compile Include="Interpreter\Instructions\GreaterThanInstruction.cs" />
@@ -362,6 +371,7 @@
       <!--          Runtime          -->
       <!--                           -->
       <Compile Include="Runtime\AmbiguousFileNameException.cs" />
+      <Compile Include="Runtime\ArgumentArray.cs" />
       <Compile Include="Runtime\AssemblyTypeNames.cs" />
       <Compile Include="Runtime\BaseSymbolDictionary.cs" />
       <Compile Include="Runtime\BinderOps.cs" />
@@ -374,7 +384,6 @@
       <Compile Include="Runtime\CodeDomCodeGen.cs" />
       <Compile Include="Runtime\CompilerContext.cs" />
       <Compile Include="Runtime\CustomSymbolDictionary.cs" />
-      <Compile Include="Runtime\DefaultLanguageContext.cs" />
       <Compile Include="Runtime\DelegateInfo.cs" />
       <Compile Include="Runtime\DelegateSignatureInfo.cs" />
       <Compile Include="Runtime\DlrCachedCodeAttribute.cs" />
@@ -382,7 +391,6 @@
       <Compile Include="Runtime\DynamicDelegateCreator.cs" />
       <Compile Include="Runtime\DynamicLanguageProviderAttribute.cs" />
       <Compile Include="Runtime\DynamicNull.cs" />
-      <Compile Include="Runtime\DynamicRuntimeHostingProvider.cs" />
       <Compile Include="Runtime\DynamicStackFrame.cs" />
       <Compile Include="Runtime\ExceptionHelpers.cs" />
       <Compile Include="Runtime\ExplicitConversionMethodAttribute.cs" />
@@ -451,7 +459,6 @@
       <Compile Include="Utils\SynchronizedDictionary.cs" />
       <Compile Include="Utils\TextStream.cs" />
       <Compile Include="Utils\ThreadLocal.cs" />
-      <Compile Include="Utils\TypeExtensions.cs" />
       <Compile Include="Utils\TypeUtils.cs" />
       <Compile Include="Utils\ValueArray.cs" />
       <Compile Include="Utils\WeakCollection.cs" />
@@ -472,16 +479,16 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>$(SolutionDir)\..\Bin\40\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;CODEPLEX_40;SYSTEM_CORE</DefineConstants>
+    <OutputPath>$(SolutionDir)..\Bin\40\</OutputPath>
+    <DefineConstants>DEBUG;TRACE;CODEPLEX_40;CLR4;SYSTEM_CORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>$(SolutionDir)\..\Bin\40\</OutputPath>
-    <DefineConstants>TRACE;CODEPLEX_40;SYSTEM_CORE</DefineConstants>
+    <OutputPath>$(SolutionDir)..\Bin\40\</OutputPath>
+    <DefineConstants>TRACE;CODEPLEX_40;CLR4;SYSTEM_CORE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>

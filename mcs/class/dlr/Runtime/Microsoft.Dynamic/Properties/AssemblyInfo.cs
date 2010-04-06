@@ -63,11 +63,10 @@ using System.Security.Permissions;
 #endif
 
 #if !SILVERLIGHT
-[assembly: AssemblyVersion("0.9.6.20")]
-[assembly: AssemblyFileVersion("1.0.0.00")]
-[assembly: AssemblyInformationalVersion("1.0")]
+[assembly: AssemblyVersion("1.0.0.0")]
+[assembly: AssemblyFileVersion("1.0.1.00")]
+[assembly: AssemblyInformationalVersion("1.0.1")]
 [assembly: AllowPartiallyTrustedCallers]
-#if CODEPLEX_40
-[assembly: SecurityRules(SecurityRuleSet.Level1)]
+[assembly: TypeForwardedTo(typeof(Microsoft.Scripting.Runtime.DynamicStackFrame))]
 #endif
-#endif
+

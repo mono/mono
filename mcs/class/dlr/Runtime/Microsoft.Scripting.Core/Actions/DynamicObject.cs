@@ -265,28 +265,38 @@ namespace System.Dynamic {
             }
 
             public override DynamicMetaObject BindInvokeMember(InvokeMemberBinder binder, DynamicMetaObject[] args) {
-                if (IsOverridden("TryInvokeMember")) {
-                    return CallMethodWithResult("TryInvokeMember", binder, GetArgArray(args), (e) => binder.FallbackInvokeMember(this, args, e));
-                } else if (IsOverridden("TryGetMember")) {
-                    // Generate a tree like:
-                    //
-                    // {
-                    //   object result;
-                    //   TryGetMember(payload, out result) ? FallbackInvoke(result) : fallbackResult
-                    // }
-                    //
-                    // Then it calls FallbackInvokeMember with this tree as the
-                    // "error", giving the language the option of using this
-                    // tree or doing .NET binding.
-                    //
-                    return CallMethodWithResult(
-                        "TryGetMember", new GetBinderAdapter(binder), NoArgs,
-                        (e) => binder.FallbackInvokeMember(this, args, e),
-                        (e) => binder.FallbackInvoke(e, args, null)
-                    );
-                }
+                // Generate a tree like:
+                //
+                // {
+                //   object result;
+                //   TryInvokeMember(payload, out result)
+                //      ? result
+                //      : TryGetMember(payload, out result)
+                //          ? FallbackInvoke(result)
+                //          : fallbackResult
+                // }
+                //
+                // Then it calls FallbackInvokeMember with this tree as the
+                // "error", giving the language the option of using this
+                // tree or doing .NET binding.
+                //
+                Fallback fallback = e => binder.FallbackInvokeMember(this, args, e);
 
-                return base.BindInvokeMember(binder, args);
+                var call = BuildCallMethodWithResult(
+                    "TryInvokeMember",
+                    binder,
+                    GetArgArray(args),
+                    BuildCallMethodWithResult(
+                        "TryGetMember",
+                        new GetBinderAdapter(binder),
+                        NoArgs,
+                        fallback(null), 
+                        (e) => binder.FallbackInvoke(e, args, null)
+                    ),
+                    null
+                );
+
+                return fallback(call);
             }
 
 
@@ -398,6 +408,24 @@ namespace System.Dynamic {
                 //
                 DynamicMetaObject fallbackResult = fallback(null);
 
+                var callDynamic = BuildCallMethodWithResult(methodName, binder, args, fallbackResult, fallbackInvoke);
+                
+                //
+                // Now, call fallback again using our new MO as the error
+                // When we do this, one of two things can happen:
+                //   1. Binding will succeed, and it will ignore our call to
+                //      the dynamic method, OR
+                //   2. Binding will fail, and it will use the MO we created
+                //      above.
+                //
+                return fallback(callDynamic);
+            }
+
+            private DynamicMetaObject BuildCallMethodWithResult(string methodName, DynamicMetaObjectBinder binder, Expression[] args, DynamicMetaObject fallbackResult, Fallback fallbackInvoke) {
+                if (!IsOverridden(methodName)) {
+                    return fallbackResult;
+                }
+
                 //
                 // Build a new expression like:
                 // {
@@ -445,16 +473,7 @@ namespace System.Dynamic {
                     ),
                     GetRestrictions().Merge(resultMO.Restrictions).Merge(fallbackResult.Restrictions)
                 );
-                
-                //
-                // Now, call fallback again using our new MO as the error
-                // When we do this, one of two things can happen:
-                //   1. Binding will succeed, and it will ignore our call to
-                //      the dynamic method, OR
-                //   2. Binding will fail, and it will use the MO we created
-                //      above.
-                //
-                return fallback(callDynamic);
+                return callDynamic;
             }
 
 

@@ -611,7 +611,9 @@ namespace System.Linq.Expressions.Compiler {
             if (typeFrom.IsInterface || // interface cast
                typeTo.IsInterface ||
                typeFrom == typeof(object) || // boxing cast
-               typeTo == typeof(object)) {
+               typeTo == typeof(object) ||
+               TypeUtils.IsLegalExplicitVariantDelegateConversion(typeFrom, typeTo))
+            {
                 il.EmitCastToType(typeFrom, typeTo);
             } else if (isTypeFromNullable || isTypeToNullable) {
                 il.EmitNullableConversion(typeFrom, typeTo, isChecked);
@@ -661,6 +663,7 @@ namespace System.Linq.Expressions.Compiler {
             } else {
                 TypeCode tc = Type.GetTypeCode(typeTo);
                 if (isChecked) {
+                    // Overflow checking needs to know if the source value on the IL stack is unsigned or not.
                     if (isFromUnsigned) {
                         switch (tc) {
                             case TypeCode.SByte:
@@ -723,55 +726,46 @@ namespace System.Linq.Expressions.Compiler {
                         }
                     }
                 } else {
-                    if (isFromUnsigned) {
-                        switch (tc) {
-                            case TypeCode.SByte:
-                            case TypeCode.Byte:
-                                il.Emit(OpCodes.Conv_U1);
-                                break;
-                            case TypeCode.Int16:
-                            case TypeCode.UInt16:
-                            case TypeCode.Char:
-                                il.Emit(OpCodes.Conv_U2);
-                                break;
-                            case TypeCode.Int32:
-                            case TypeCode.UInt32:
-                                il.Emit(OpCodes.Conv_U4);
-                                break;
-                            case TypeCode.Int64:
-                            case TypeCode.UInt64:
+                    switch (tc) {
+                        case TypeCode.SByte:
+                            il.Emit(OpCodes.Conv_I1);
+                            break;
+                        case TypeCode.Byte:
+                            il.Emit(OpCodes.Conv_U1);
+                            break;
+                        case TypeCode.Int16:
+                            il.Emit(OpCodes.Conv_I2);
+                            break;
+                        case TypeCode.UInt16:
+                        case TypeCode.Char:
+                            il.Emit(OpCodes.Conv_U2);
+                            break;
+                        case TypeCode.Int32:
+                            il.Emit(OpCodes.Conv_I4);
+                            break;
+                        case TypeCode.UInt32:
+                            il.Emit(OpCodes.Conv_U4);
+                            break;
+                        case TypeCode.Int64:
+                            if (isFromUnsigned) {
                                 il.Emit(OpCodes.Conv_U8);
-                                break;
-                            default:
-                                throw Error.UnhandledConvert(typeTo);
-                        }
-                    } else {
-                        switch (tc) {
-                            case TypeCode.SByte:
-                            case TypeCode.Byte:
-                                il.Emit(OpCodes.Conv_I1);
-                                break;
-                            case TypeCode.Int16:
-                            case TypeCode.UInt16:
-                            case TypeCode.Char:
-                                il.Emit(OpCodes.Conv_I2);
-                                break;
-                            case TypeCode.Int32:
-                            case TypeCode.UInt32:
-                                il.Emit(OpCodes.Conv_I4);
-                                break;
-                            case TypeCode.Int64:
-                            case TypeCode.UInt64:
+                            } else {
                                 il.Emit(OpCodes.Conv_I8);
-                                break;
-                            default:
-                                throw Error.UnhandledConvert(typeTo);
-                        }
+                            }
+                            break;
+                        case TypeCode.UInt64:
+                            if (isFromUnsigned || isFromFloatingPoint) {
+                                il.Emit(OpCodes.Conv_U8);
+                            } else {
+                                il.Emit(OpCodes.Conv_I8);
+                            }
+                            break;
+                        default:
+                            throw Error.UnhandledConvert(typeTo);
                     }
                 }
             }
         }
-
 
         private static void EmitNullableToNullableConversion(this ILGenerator il, Type typeFrom, Type typeTo, bool isChecked) {
             Debug.Assert(TypeUtils.IsNullableType(typeFrom));
