@@ -1,3 +1,8 @@
+2009-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* wthreads.c (TlsSetValue): Don't take locks here. We trust pthread_setspecific
+	return value to tell if we tried to store to an invalid slot.
+
 2010-04-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* processes.c: Applied more openbsd changes from Robert Nagy <robert@openbsd.org>.
