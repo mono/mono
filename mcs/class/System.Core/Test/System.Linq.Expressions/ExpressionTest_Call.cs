@@ -87,7 +87,11 @@ namespace MonoTests.System.Linq.Expressions {
 		}
 
 		[Test]
+#if NET_4_0
+		[ExpectedException (typeof (ArgumentException))]
+#else
 		[ExpectedException (typeof (ArgumentNullException))]
+#endif
 		public void ArgInstanceNullForNonStaticMethod ()
 		{
 			Expression.Call (null, typeof (object).GetMethod ("ToString"));
