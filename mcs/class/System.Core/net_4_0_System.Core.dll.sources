@@ -42,6 +42,7 @@ System.Linq/ILookup_T.cs
 System.Linq/OrderedEnumerable.cs
 System.Linq/OrderedSequence.cs
 System.Linq/Queryable.cs
+System.Linq/QueryableTransformer.cs
 System.Linq/QuickSort.cs
 System.Linq/SortContext.cs
 System.Linq/SortDirection.cs
@@ -67,6 +68,7 @@ System.Threading/LockRecursionPolicy.cs
 System.Threading/ReaderWriterLockSlim.cs
 
 System.Linq.Expressions/Extensions.cs
+System.Linq.Expressions/ExpressionTransformer.cs
 
 Microsoft.Win32.SafeHandles/SafePipeHandle.cs
 Microsoft.Win32.SafeHandles/SafeMemoryMappedFileHandle.cs
