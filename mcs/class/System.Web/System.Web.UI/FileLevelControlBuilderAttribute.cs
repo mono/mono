@@ -77,7 +77,7 @@ namespace System.Web.UI
 		
 		public override bool IsDefaultAttribute ()
 		{
-			return Equals (Default);
+			return this == Default;
 		}
 	}
 }

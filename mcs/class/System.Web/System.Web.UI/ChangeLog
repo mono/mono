@@ -1,3 +1,7 @@
+2010-04-06  Marek Safar  <marek.safar@gmail.com>
+
+	* FileLevelControlBuilderAttribute.cs: Use reference comparison.
+
 2010-01-20  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectStateFormatter.cs: implemented support for IndexedString
