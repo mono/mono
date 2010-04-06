@@ -31,6 +31,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.Data;
 using System.Text;
 using System.ComponentModel;
 
@@ -54,6 +55,11 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		public CookieParameter (string name, TypeCode type, string cookieName) : base (name, type)
+		{
+			CookieName = cookieName;
+		}
+
+		public CookieParameter (string name, DbType dbType, string cookieName) : base (name, dbType)
 		{
 			CookieName = cookieName;
 		}

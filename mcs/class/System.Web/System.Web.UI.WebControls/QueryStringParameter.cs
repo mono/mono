@@ -31,6 +31,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.Data;
 using System.Text;
 using System.ComponentModel;
 
@@ -55,6 +56,11 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		public QueryStringParameter (string name, TypeCode type, string queryStringField) : base (name, type)
+		{
+			QueryStringField = queryStringField;
+		}
+
+		public QueryStringParameter (string name, DbType dbType, string queryStringField) : base (name, dbType)
 		{
 			QueryStringField = queryStringField;
 		}

@@ -31,6 +31,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.Data;
 using System.Text;
 using System.ComponentModel;
 
@@ -54,6 +55,11 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		public SessionParameter (string name, TypeCode type, string sessionField) : base (name, type)
+		{
+			SessionField = sessionField;
+		}
+
+		public SessionParameter (string name, DbType dbType, string sessionField) : base (name, dbType)
 		{
 			SessionField = sessionField;
 		}
