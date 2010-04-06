@@ -874,6 +874,7 @@ System.Net/WebRequestMethods.cs
 System.Net/WebResponse.cs
 System.Net/WebUtility.cs
 System/NewsStyleUriParser.cs
+System.Runtime.Versioning/FrameworkName.cs
 System.Security.AccessControl/SemaphoreAccessRule.cs
 System.Security.AccessControl/SemaphoreAuditRule.cs
 System.Security.AccessControl/SemaphoreRights.cs

@@ -1,0 +1,3 @@
+2010-04-06  Jb Evain  <jbevain@novell.com>
+
+	* FrameworkNameTest.cs: moved here from corlib where it was pre-RC.
