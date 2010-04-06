@@ -1,3 +1,7 @@
+2010-04-06  Jb Evain  <jbevain@novell.com>
+
+	* SortedSet.cs: implement Count for SortedSubSet.
+
 2010-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
 	* SortedSet.cs (IsProperSubsetOf, IsSubsetOf): Implement using ...

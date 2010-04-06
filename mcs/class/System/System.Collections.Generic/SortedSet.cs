@@ -135,7 +135,7 @@ namespace System.Collections.Generic {
 		}
 
 		public int Count {
-			get { return tree.Count; }
+			get { return GetCount (); }
 		}
 
 		public T Max {
@@ -160,6 +160,11 @@ namespace System.Collections.Generic {
 				return default (T);
 
 			return GetItem (0);
+		}
+
+		internal virtual int GetCount ()
+		{
+			return tree.Count;
 		}
 
 		T GetItem (int index)
@@ -646,6 +651,20 @@ namespace System.Collections.Generic {
 				}
 
 				return default (T);
+			}
+
+			internal override int GetCount ()
+			{
+				int count = 0;
+				for (int i = 0; i < set.tree.Count; i++) {
+					var item = set.GetItem (i);
+					if (InRange (item))
+						count++;
+					else if (count > 0)
+						break;
+				}
+
+				return count;
 			}
 
 			internal override bool TryAdd (T item)
