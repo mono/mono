@@ -47,18 +47,25 @@ namespace MonoTests.System.Linq.Expressions {
 			Expression.GetFuncType (null);
 		}
 
+		static Type [] GetTestTypeArray (int length)
+		{
+			return Enumerable.Range (0, length - 1)
+				.Select (i => typeof (int))
+				.ToArray ();
+		}
+
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetFuncTypeArgEmpty ()
 		{
-			Expression.GetFuncType (new Type [0]);
+			Expression.GetFuncType (Type.EmptyTypes);
 		}
 
 		[Test]
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetFuncTypeArgTooBig ()
 		{
-			Expression.GetFuncType (new Type [6]);
+			Expression.GetFuncType (GetTestTypeArray (64));
 		}
 
 		[Test]
@@ -91,7 +98,7 @@ namespace MonoTests.System.Linq.Expressions {
 		[ExpectedException (typeof (ArgumentException))]
 		public void GetActionTypeArgTooBig ()
 		{
-			Expression.GetActionType (new Type [5]);
+			Expression.GetActionType (GetTestTypeArray (45));
 		}
 
 		[Test]
@@ -126,7 +133,9 @@ namespace MonoTests.System.Linq.Expressions {
 			var p = Expression.Parameter (typeof (string), null);
 			Assert.AreEqual (null, p.Name);
 			Assert.AreEqual (typeof (string), p.Type);
+#if !NET_4_0
 			Assert.AreEqual ("<param>", p.ToString ());
+#endif
 		}
 
 		[Test]
@@ -135,7 +144,9 @@ namespace MonoTests.System.Linq.Expressions {
 			var p = Expression.Parameter (typeof (string), "");
 			Assert.AreEqual ("", p.Name);
 			Assert.AreEqual (typeof (string), p.Type);
+#if !NET_4_0
 			Assert.AreEqual ("", p.ToString ());
+#endif
 		}
 
 		[Test]
