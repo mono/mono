@@ -34,6 +34,7 @@
 using System;
 using System.Reflection;
 using System.Collections;
+using System.Collections.Generic;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Diagnostics.SymbolStore;
@@ -66,7 +67,7 @@ namespace System.Reflection.Emit {
 		private TypeBuilder global_type;
 		private Type global_type_created;
 		Hashtable name_cache;
-		Hashtable us_string_cache = new Hashtable ();
+		Dictionary<string, int> us_string_cache;
 		private int[] table_indexes;
 		bool transient;
 		ModuleBuilderTokenGenerator token_gen;
@@ -89,6 +90,7 @@ namespace System.Reflection.Emit {
 			// guid = Guid.NewGuid().ToByteArray ();
 			table_idx = get_next_table_index (this, 0x00, true);
 			name_cache = new Hashtable ();
+			us_string_cache = new Dictionary<string, int> (512);
 
 			basic_init (this);
 
@@ -660,11 +662,14 @@ namespace System.Reflection.Emit {
 		private static extern int getMethodToken (ModuleBuilder mb, MethodInfo method,
 							  Type[] opt_param_types);
 
-		internal int GetToken (string str) {
-			if (us_string_cache.Contains (str))
-				return (int)us_string_cache [str];
-			int result = getUSIndex (this, str);
-			us_string_cache [str] = result;
+		internal int GetToken (string str)
+		{
+			int result;
+			if (!us_string_cache.TryGetValue (str, out result)) {
+				result = getUSIndex (this, str);
+				us_string_cache [str] = result;
+			}
+			
 			return result;
 		}
 
