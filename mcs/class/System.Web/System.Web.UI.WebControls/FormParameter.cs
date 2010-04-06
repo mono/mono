@@ -31,6 +31,7 @@
 #if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
+using System.Data;
 using System.Text;
 using System.ComponentModel;
 
@@ -54,6 +55,11 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		public FormParameter (string name, TypeCode type, string formField) : base (name, type)
+		{
+			FormField = formField;
+		}
+
+		public FormParameter (string name, DbType dbType, string formField) : base (name, dbType)
 		{
 			FormField = formField;
 		}

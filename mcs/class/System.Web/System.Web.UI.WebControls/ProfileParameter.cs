@@ -28,6 +28,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Data;
 using System.Text;
 
 namespace System.Web.UI.WebControls
@@ -57,6 +58,12 @@ namespace System.Web.UI.WebControls
 			this.PropertyName = propertyName;
 		}
 
+		public ProfileParameter (string name, DbType dbType, string propertyName)
+			: base (name, dbType)
+		{
+			this.PropertyName = propertyName;
+		}
+		
 		protected override Parameter Clone ()
 		{
 			return new ProfileParameter (this);

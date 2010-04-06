@@ -1,3 +1,9 @@
+2010-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* FormParameter.cs, CookieParameter.cs, ProfileParameter.cs,
+	QueryStringParameter.cs, SessionParameter.cs: implemented
+	constructor overloads which take DbType as one of the arguments.
+
 2010-04-01  Marek Habersack  <mhabersack@novell.com>
 
 	* FormView.cs: do not show the pager if PagerSettings.Visible is
