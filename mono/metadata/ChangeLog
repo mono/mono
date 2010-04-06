@@ -1,3 +1,23 @@
+2010-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (print_implemented_interfaces): Print proper type name.
+
+	* class.c (mono_class_setup_vtable): Don't try that hard to produce
+	the override map for generic instances since it later ignored.
+
+	* class.c (mono_class_implement_interface_slow): Don't break for
+	dynamic generic instances.
+
+	* object.c (mono_runtime_invoke_array): Add an assert for allocation.
+
+	* reflection.c (mono_reflection_method_get_handle): New method that
+	resolves a method handle.
+
+	* reflection.c (mono_reflection_get_dynamic_overrides): Handle the
+	case when we override methods from a dynamic generic instance interface.
+
+	Fixes #575941.
+
 2010-04-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: don't attempt to close the pipe when it has not been
