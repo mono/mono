@@ -1471,6 +1471,7 @@ System.Threading/ParameterizedThreadStart.cs
 System.Threading/ReaderWriterLock.cs
 System.Threading/RegisteredWaitHandle.cs
 System.Threading/SendOrPostCallback.cs
+../System/System.Threading/SemaphoreFullException.cs
 System.Threading/SynchronizationContext.cs
 System.Threading/SynchronizationLockException.cs
 System.Threading/Thread.cs
