@@ -1,3 +1,7 @@
+2010-04-06  Miguel de Icaza  <miguel@novell.com>
+
+	* main.c: Prevent a crash with broken assemblies.
+
 2010-03-30  Raja R Harinath  <harinath@hurrynot.org>
 
 	Clean up some whitespace in the output
