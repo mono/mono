@@ -623,11 +623,11 @@ namespace Mono.Debugger.Soft
 		}
 
 		[Obsolete ("Use the overload without the 'vm' argument")]
-		public IInvokeAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+		public IAsyncResult BeginInvokeMethod (VirtualMachine vm, ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			return ObjectMirror.BeginInvokeMethod (vm, thread, method, null, arguments, options, callback, state);
 		}
 
-		public IInvokeAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
+		public IAsyncResult BeginInvokeMethod (ThreadMirror thread, MethodMirror method, IList<Value> arguments, InvokeOptions options, AsyncCallback callback, object state) {
 			return ObjectMirror.BeginInvokeMethod (vm, thread, method, null, arguments, options, callback, state);
 		}
 

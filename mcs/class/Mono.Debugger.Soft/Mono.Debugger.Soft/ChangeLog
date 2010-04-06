@@ -1,5 +1,7 @@
 2010-03-05  Martin Baulig  <martin@ximian.com>
 
+	**** Backport of r153125 and r153336 ****
+
 	Add support for aborting invocations.
 
 	* IInvokeAsyncResult.cs: New file.
