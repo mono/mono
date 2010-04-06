@@ -1,5 +1,9 @@
 2010-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpReplyChannel.cs : fill To header only if it does not exist.
+
+2010-04-06  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SecureMessageGenerator.cs : set ReplyTo and To, do not add.
 
 2010-04-06  Atsushi Enomoto  <atsushi@ximian.com>

@@ -151,16 +151,14 @@ namespace System.ServiceModel.Channels
 			} else if (ctx.Request.HttpMethod == "GET") {
 				msg = Message.CreateMessage (MessageVersion, null);
 			}
-			msg.Headers.To = ctx.Request.Url;
+			if (msg.Headers.To == null)
+				msg.Headers.To = ctx.Request.Url;
 			msg.Properties.Add ("Via", LocalAddress.Uri);
 			msg.Properties.Add (HttpRequestMessageProperty.Name, CreateRequestProperty (ctx.Request.HttpMethod, ctx.Request.Url.Query, ctx.Request.Headers));
 /*
 MessageBuffer buf = msg.CreateBufferedCopy (0x10000);
 msg = buf.CreateMessage ();
-System.Xml.XmlTextWriter w = new System.Xml.XmlTextWriter (Console.Out);
-w.Formatting = System.Xml.Formatting.Indented;
-buf.CreateMessage ().WriteMessage (w);
-w.Close ();
+Console.WriteLine (buf.CreateMessage ());
 */
 			context = new HttpRequestContext (this, msg, ctx);
 			reqctx = context;
