@@ -33,10 +33,7 @@ namespace System.Runtime.Versioning
 {
 	[Serializable]
 	public sealed class FrameworkName : IEquatable <FrameworkName>
-	{
-		static readonly char[] nameSplitChars = {','};
-		static readonly char[] partSplitChars = {'='};
-		
+	{		
 		string fullName;
 		int? hashCode;
 		
@@ -156,7 +153,7 @@ namespace System.Runtime.Versioning
 		
 		void ParseFrameworkName (string frameworkName)
 		{
-			string[] parts = frameworkName.Split (nameSplitChars);
+			string[] parts = frameworkName.Split (',');
 			int len = parts.Length;
 
 			if (len < 2 || len > 3)
@@ -167,23 +164,19 @@ namespace System.Runtime.Versioning
 			string[] splitPart;
 			int splen;
 			
-			Console.WriteLine ("frameworkName == '{0}'", frameworkName);
 			for (int i = 0; i < len; i++) {
 				part = parts [i].Trim ();
-				Console.WriteLine ("\ti == {0}; part == '{1}'", i, part);
 				if (part.Length == 0) {
-					Console.WriteLine ("invalid [1]");
 					invalid = true;
 					break;
 				}
 
-				splitPart = part.Split (partSplitChars);
+				splitPart = part.Split ('=');
 				splen = splitPart.Length;
 				
 				if (String.Compare ("version", splitPart [0], StringComparison.OrdinalIgnoreCase) == 0) {
 					if (i == 0 || splen != 2) {
 						invalid = true;
-						Console.WriteLine ("\t\tinvalid [2]");
 						break;
 					}					
 
@@ -202,7 +195,6 @@ namespace System.Runtime.Versioning
 				if (String.Compare ("profile", splitPart [0], StringComparison.OrdinalIgnoreCase) == 0) {
 					if (i == 0) {
 						invalid = true;
-						Console.WriteLine ("\t\tinvalid [3]");
 						break;
 					}
 
@@ -217,7 +209,6 @@ namespace System.Runtime.Versioning
 					continue;
 				}
 
-				Console.WriteLine ("\t\tinvalid [4]");
 				invalid = true;
 				break;
 			}
