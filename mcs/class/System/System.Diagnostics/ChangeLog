@@ -1,5 +1,9 @@
 2010-04-06  Jb Evain  <jbevain@novell.com>
 
+	* Debug.cs: make class static.
+
+2010-04-06  Jb Evain  <jbevain@novell.com>
+
 	* Debug.cs (Assert, WriteLine): add net_4_0 overloads.
 
 2010-03-11  Sebastien Pouliot  <sebastien@ximian.com>

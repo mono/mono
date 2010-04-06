@@ -36,9 +36,7 @@ using System.Diagnostics;
 
 namespace System.Diagnostics {
 
-	public sealed class Debug {
-
-		private Debug () {}
+	public static class Debug {
 
 		public static bool AutoFlush {
 			get {return TraceImpl.AutoFlush;}
