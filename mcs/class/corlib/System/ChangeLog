@@ -1,3 +1,7 @@
+2010-04-06  Marek Safar  <marek.safar@gmail.com>
+
+	* Array.cs: Don't make read-only collection read-only.
+
 2010-03-31  Miguel de Icaza  <miguel@novell.com>
 
 	* UInt32.cs, Int64.cs, UInt64.cs: cope with the case that the

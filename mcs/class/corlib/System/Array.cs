@@ -2211,7 +2211,8 @@ namespace System
 		{
 			if (array == null)
 				throw new ArgumentNullException ("array");
-			return new ReadOnlyCollection<T> (new ArrayReadOnlyList<T> (array));
+
+			return new ReadOnlyCollection<T> (array);
 		}
 
 		public static T Find<T> (T [] array, Predicate<T> match)
@@ -2252,89 +2253,6 @@ namespace System
 		public static void ConstrainedCopy (Array sourceArray, int sourceIndex, Array destinationArray, int destinationIndex, int length)
 		{
 			Copy (sourceArray, sourceIndex, destinationArray, destinationIndex, length);
-		}
-
-		class ArrayReadOnlyList<T> : IList<T>
-		{
-			T [] array;
-
-			public ArrayReadOnlyList (T [] array)
-			{
-				this.array = array;
-			}
-
-			public T this [int index] {
-				get {
-					if (unchecked ((uint) index) >= unchecked ((uint) array.Length))
-						throw new ArgumentOutOfRangeException ("index");
-					return array [index];
-				}
-				set { throw ReadOnlyError (); }
-			}
-
-			public int Count {
-				get { return array.Length; }
-			}
-
-			public bool IsReadOnly {
-				get { return true; }
-			}
-
-			public void Add (T item)
-			{
-				throw ReadOnlyError ();
-			}
-
-			public void Clear ()
-			{
-				throw ReadOnlyError ();
-			}
-
-			public bool Contains (T item)
-			{
-				return Array.IndexOf<T> (array, item) >= 0;
-			}
-
-			public void CopyTo (T [] array, int index)
-			{
-				this.array.CopyTo (array, index);
-			}
-
-			IEnumerator IEnumerable.GetEnumerator ()
-			{
-				return GetEnumerator ();
-			}
-
-			public IEnumerator<T> GetEnumerator ()
-			{
-				for (int i = 0; i < array.Length; i++)
-					yield return array [i];
-			}
-
-			public int IndexOf (T item)
-			{
-				return Array.IndexOf<T> (array, item);
-			}
-
-			public void Insert (int index, T item)
-			{
-				throw ReadOnlyError ();
-			}
-
-			public bool Remove (T item)
-			{
-				throw ReadOnlyError ();
-			}
-
-			public void RemoveAt (int index)
-			{
-				throw ReadOnlyError ();
-			}
-
-			static Exception ReadOnlyError ()
-			{
-				return new NotSupportedException ("This collection is read-only.");
-			}
 		}
 	}
 }
