@@ -1,5 +1,9 @@
 2010-04-06  Jb Evain  <jbevain@novell.com>
 
+	* QueryableEnumerable.cs: make TransformQueryable work on net_4_0.
+
+2010-04-06  Jb Evain  <jbevain@novell.com>
+
 	* QueryableTransformer.cs: use factory method that work for all
 	ET implementations.
 
