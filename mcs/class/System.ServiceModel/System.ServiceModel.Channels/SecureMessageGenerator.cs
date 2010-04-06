@@ -278,10 +278,10 @@ if (!ShouldOutputEncryptedKey)
 
 			// FIXME: get correct ReplyTo value
 			if (Direction == MessageDirection.Input)
-				msg.Headers.Add (MessageHeader.CreateHeader ("ReplyTo", msg.Version.Addressing.Namespace, EndpointAddress10.FromEndpointAddress (new EndpointAddress (Constants.WsaAnonymousUri))));
+				msg.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
 
 			if (MessageTo != null)
-				msg.Headers.Add (MessageHeader.CreateHeader ("To", msg.Version.Addressing.Namespace, MessageTo.Uri.AbsoluteUri, true));
+				msg.Headers.To = MessageTo.Uri;
 
 			// wss:Security
 			WSSecurityMessageHeader header =
