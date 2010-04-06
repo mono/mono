@@ -26,7 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 || (NET_4_0 && INSIDE_CORLIB)
+#if (!NET_4_0 && NET_2_0 && !INSIDE_CORLIB) || (NET_4_0 && INSIDE_CORLIB)
 
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
@@ -35,7 +35,7 @@ using System.Runtime.CompilerServices;
 namespace System.Threading {
 
 #if NET_4_0 && INSIDE_CORLIB
-//	[TypeForwardedFrom (Consts.AssemblySystem_2_0)]
+	[TypeForwardedFrom (Consts.AssemblySystem_2_0)]
 #endif
 	[ComVisible (false)]
 	[Serializable]
@@ -61,6 +61,11 @@ namespace System.Threading {
 		{
 		}
 	}
-}
 
+}
+#elif NET_4_0 && !INSIDE_CORLIB
+using System.Runtime.CompilerServices;
+using System.Threading;
+
+[assembly: TypeForwardedTo (typeof (SemaphoreFullException))]
 #endif
