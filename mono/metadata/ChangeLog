@@ -1,5 +1,10 @@
 2010-04-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* threadpool.c: don't attempt to close the pipe when it has not been
+	created.
+
+2010-04-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* threadpool.c: if there are no waiting threads, try to start a new
 	one. This fixes the not-so-random hangs in System.ServiceModel tests.
 	No need to use InterlockedCompareExchange to read volatile variables.
