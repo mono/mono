@@ -1,4 +1,23 @@
-2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
+2010-03-05  Martin Baulig  <martin@ximian.com>
+
+	**** Backport of r153335 ****
+
+	Add support for aborting invocations.
+
+	* debugger-agent.c
+	(InvokeData): Added `InvokeData *last_invoke'.
+	(DebuggerTlsData): Renamed `invoke' into `pending_invoke' and
+	added a new `invoke' field to keep the `InvokeData *' throughout
+	the invocation.
+	(ErrorCode): Added `ERR_NO_INVOCATION'.
+	(CmdVM): Added `CMD_VM_ABORT_INVOKE'.
+	(mono_debugger_agent_handle_exception): Don't report any exception
+	if an abort was requested.
+	(invoke_method): Store the `InvokeData *' in `tls->invoke'; reset
+	a thread abort if necessary.
+	(vm_commands): Implement `CMD_VM_ABORT_INVOKE'.
+
+2010-04-05  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_method_to_ir): Handle call to virtual final methods
 	of marshalbyref classes.
