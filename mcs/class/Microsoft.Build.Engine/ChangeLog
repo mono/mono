@@ -1,3 +1,7 @@
+2010-04-06  Ankit Jain  <jankit@novell.com>
+
+	* Makefile (EXTRA_DISTFILES): Remove TestTasks.dll.config .
+
 2010-04-03  Ankit Jain  <jankit@novell.com>
 
 	* Makefile: Use the correct assembly name for MS.Build.Utilities*

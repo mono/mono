@@ -34,7 +34,6 @@ TEST_MCS_FLAGS = \
 EXTRA_DISTFILES = \
 	Test/resources/TestTasks.cs		\
 	Test/resources/*.*proj	\
-	Test/resources/TestTasks.dll.config \
 	Test/test-config-file*
 
 Test/resources/TestTasks.dll: Test/resources/TestTasks.cs
