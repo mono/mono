@@ -89,7 +89,7 @@ namespace System.Linq {
 					parameters [i].ParameterType);
 			}
 
-			return new MethodCallExpression (target, method, arguments.ToReadOnlyCollection ());
+			return Expression.Call (target, method, arguments);
 		}
 
 		static Expression UnquoteIfNeeded (Expression expression, Type delegateType)

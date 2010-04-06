@@ -1,3 +1,8 @@
+2010-04-06  Jb Evain  <jbevain@novell.com>
+
+	* QueryableTransformer.cs: use factory method that work for all
+	ET implementations.
+
 2010-03-30  Jb Evain  <jbevain@novell.com>
 
 	* Queryable.cs: implement Zip for net_4_0.
