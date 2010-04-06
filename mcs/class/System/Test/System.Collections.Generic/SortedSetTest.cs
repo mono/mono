@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -263,6 +263,15 @@ namespace MonoTests.System.Collections.Generic
 			var view = set.GetViewBetween (4, 8);
 
 			Assert.AreEqual (7, view.Max);
+		}
+
+		[Test]
+		public void ViewCount ()
+		{
+			var set = new SortedSet<int> { 1, 3, 4, 5, 6, 7, 8, 9 };
+			var view = set.GetViewBetween (4, 8);
+
+			Assert.AreEqual (5, view.Count);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]

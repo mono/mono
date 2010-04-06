@@ -1,3 +1,7 @@
+2010-04-06  Jb Evain  <jbevain@novell.com>
+
+	* SortedSetTest.cs: add test for SortedSubSet.Count.
+
 2010-04-05  Raja R Harinath  <harinath@hurrynot.org>
 
 	* SortedSetTest.cs: Add test for various set comparison operators.
