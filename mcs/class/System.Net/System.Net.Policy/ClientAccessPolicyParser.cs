@@ -158,15 +158,24 @@ namespace System.Net.Policy {
 
 		static void ReadAllowFromElement (XmlReader reader, AccessPolicy policy)
 		{
-			var v = new AllowFrom ();
-			bool valid = true;
-
-			if (reader.HasAttributes || reader.IsEmptyElement) {
+			if (reader.IsEmptyElement) {
 				reader.Skip ();
 				return;
 			}
 
-			v.HttpRequestHeaders.SetHeaders (reader.GetAttribute ("http-request-headers"));
+			string headers = null;
+			if (reader.HasAttributes) {
+				int n = reader.AttributeCount;
+				headers = reader.GetAttribute ("http-request-headers");
+				if (headers != null)
+					n--;
+				if (n != 0)
+					return;
+			}
+
+			bool valid = true;
+			var v = new AllowFrom ();
+			v.HttpRequestHeaders.SetHeaders (headers);
 			reader.ReadStartElement ("allow-from", String.Empty);
 			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 				if (reader.NodeType != XmlNodeType.Element)
