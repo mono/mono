@@ -16,9 +16,12 @@ ifeq ($(wildcard $(PROFILE_sources)), $(PROFILE_sources))
 PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
 COMMON_sourcefile := $(sourcefile)
 sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(COMMON_sourcefile)
+
+# Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
+# We don't include it in the dependencies since it isn't always created
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(COMMON_sourcefile) $(topdir)/build/gensources.sh
 	@echo Creating the per profile list $@ ...
-	$(topdir)/tools/gensources.sh $(PROFILE_sources) $(PROFILE_excludes) > $@
+	$(SHELL) $(topdir)/build/gensources.sh $@ $(PROFILE_sources) $(PROFILE_excludes)
 library_CLEAN_FILES += $(sourcefile)
 endif
 
@@ -251,6 +254,10 @@ endif
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
+	@if test ! -f $(sourcefile).makefrag; then :; else \
+	   cat $(sourcefile).makefrag >> $@ ; \
+	   echo '$@: $(sourcefile).makefrag' >> $@; \
+	   echo '$(sourcefile).makefrag:' >> $@; fi
 
 ifneq ($(response),$(sourcefile))
 $(response): $(sourcefile) $(PLATFORM_excludes)

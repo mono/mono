@@ -40,6 +40,7 @@ DISTFILES = \
 	corcompare.make			\
 	corcompare-api.xsl		\
 	executable.make			\
+	gensources.sh			\
 	library.make			\
 	nunit-summary.xsl		\
 	rules.make			\

@@ -1,3 +1,8 @@
+2010-04-07  Raja R Harinath  <harinath@hurrynot.org>
+
+	* Makefile (DISTFILES): Remove gensources.sh.
+	* gensources.sh: Remove.
+
 2010-04-03  Ankit Jain  <jankit@novell.com>
 
 	* Makefile: Move xbuild from net_4_0_dirs to per_profile_dirs.
