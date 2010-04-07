@@ -1,3 +1,7 @@
+2010-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* exit-stress-threadpool.cs: New stress test.
+
 2010-04-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked-2.2.cs: Add an Interlocked.CompareExchange(long) test.
