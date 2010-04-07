@@ -1,3 +1,8 @@
+2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* zlib-helper.c: now that we don't use Z_SYNC_FLUSH, there might be
+	unflushed input in zstream, so always call Z_FINISH.
+
 2010-04-02  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile.am: On non-Windows platforms, MonoPosixHelper now links
