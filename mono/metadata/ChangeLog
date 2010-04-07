@@ -1,3 +1,7 @@
+2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* file-io.c: reset the MonoIOStat structure in case of error.
+	Fixes bug #582667.
 
 2010-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
