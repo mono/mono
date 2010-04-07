@@ -41,7 +41,7 @@ namespace System.Runtime.Caching
 				throw new ArgumentNullException ("source");
 
 			if (cacheItem == null)
-				throw new ArgumentNullException ("source");
+				throw new ArgumentNullException ("cacheItem");
 			
 			this.CacheItem = cacheItem;
 			this.RemovedReason = reason;
