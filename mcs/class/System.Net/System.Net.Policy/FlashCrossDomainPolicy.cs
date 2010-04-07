@@ -54,7 +54,12 @@ namespace System.Net.Policy {
 			set { site_control = value; }
 		}
 
-		public override bool IsAllowed (Uri uri, string [] headerKeys)
+		public override bool IsAllowed (WebRequest request)
+		{
+			return IsAllowed (request.RequestUri, request.Headers.AllKeys);
+		}
+
+		public bool IsAllowed (Uri uri, string [] headerKeys)
 		{
 			switch (SiteControl) {
 			case "all":

@@ -163,19 +163,23 @@ namespace System.Net.Policy {
 				return;
 			}
 
+			bool valid = true;
 			string headers = null;
+			string methods = null;		// new in SL3
 			if (reader.HasAttributes) {
 				int n = reader.AttributeCount;
 				headers = reader.GetAttribute ("http-request-headers");
 				if (headers != null)
 					n--;
-				if (n != 0)
-					return;
+				methods = reader.GetAttribute ("http-methods");
+				if (methods != null)
+					n--;
+				valid = (n == 0);
 			}
 
-			bool valid = true;
 			var v = new AllowFrom ();
 			v.HttpRequestHeaders.SetHeaders (headers);
+			v.AllowAnyMethod = (methods == "*"); // only legal value defined, otherwise restricted to GET and POST
 			reader.ReadStartElement ("allow-from", String.Empty);
 			for (reader.MoveToContent (); reader.NodeType != XmlNodeType.EndElement; reader.MoveToContent ()) {
 				if (reader.NodeType != XmlNodeType.Element)

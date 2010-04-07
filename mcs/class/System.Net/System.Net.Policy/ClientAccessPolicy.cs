@@ -74,7 +74,7 @@ namespace System.Net.Policy {
 			foreach (AccessPolicy policy in AccessPolicyList) {
 				// does something allow our URI in this policy ?
 				foreach (AllowFrom af in policy.AllowedServices) {
-					if (af.IsAllowed (ApplicationUri, null)) {
+					if (af.IsAllowed (ApplicationUri, null, null)) {
 						// if so, is our request port allowed ?
 						if (policy.PortAllowed (endpoint.Port))
 							return true;
@@ -114,7 +114,12 @@ namespace System.Net.Policy {
 			return true;
 		}
 
-		public override bool IsAllowed (Uri uri, params string [] headerKeys)
+		public override bool IsAllowed (WebRequest request)
+		{
+			return IsAllowed (request.RequestUri, request.Method, request.Headers.AllKeys);
+		}
+
+		public bool IsAllowed (Uri uri, string method, params string [] headerKeys)
 		{
 			// at this stage the URI has removed the "offending" characters so we need to look at the original
 			if (!CheckOriginalPath (uri)) 
@@ -124,7 +129,7 @@ namespace System.Net.Policy {
 				// does something allow our URI in this policy ?
 				foreach (AllowFrom af in policy.AllowedServices) {
 					// is the application (XAP) URI allowed by the policy ?
-					if (af.IsAllowed (ApplicationUri, headerKeys)) {
+					if (af.IsAllowed (ApplicationUri, method, headerKeys)) {
 						foreach (GrantTo gt in policy.GrantedResources) {
 							// is the requested access to the Uri granted under this policy ?
 							if (gt.IsGranted (uri))
@@ -152,9 +157,11 @@ namespace System.Net.Policy {
 
 			public Headers HttpRequestHeaders { get; private set; }
 
+			public bool AllowAnyMethod { get; set; }
+
 			public string Scheme { get; internal set; }
 
-			public bool IsAllowed (Uri uri, string [] headerKeys)
+			public bool IsAllowed (Uri uri, string method, string [] headerKeys)
 			{
 				// check headers
 				if (!HttpRequestHeaders.IsAllowed (headerKeys))
@@ -173,6 +180,16 @@ namespace System.Net.Policy {
 						return false;
 					}
 				}
+				// check methods
+				if (!AllowAnyMethod) {
+					// if not all methods are allowed (*) then only GET and POST request are possible
+					// further restriction exists in the Client http stack
+					if ((String.Compare (method, "GET", StringComparison.OrdinalIgnoreCase) != 0) &&
+						(String.Compare (method, "POST", StringComparison.OrdinalIgnoreCase) != 0)) {
+						return false;
+					}
+				}
+
 				// check domains
 				if (AllowAnyDomain)
 					return true;

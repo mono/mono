@@ -128,12 +128,7 @@ namespace System.Net.Policy {
 			}
 		}
 
-		public bool IsAllowed (WebRequest request)
-		{
-			return IsAllowed (request.RequestUri, request.Headers.AllKeys);
-		}
-
-		abstract public bool IsAllowed (Uri uri, params string [] headerKeys);
+		abstract public bool IsAllowed (WebRequest request);
 	}
 }
 

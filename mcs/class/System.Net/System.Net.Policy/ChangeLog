@@ -1,3 +1,16 @@
+2010-04-07  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* BaseDomainPolicy.cs: Abstract-fy IsAllowed(WebRequest) and 
+	remove abstract IsAllowed(Uri,string[]) since it cannot provide
+	enough information for the client access policy.
+	* ClientAccessPolicy.cs: Replace IsAllowed(Uri,string[]) with
+	IsAllowed(WebRequest) and add logic for AllowAnyMethod
+	* ClientAccessPolicyParser.cs: Read "http-methods" attribute (new
+	in SL3) and set the new AllowAnyMethod property if the value is
+	"*" (the only legal value if the attribute is present).
+	* FlashCrossDomainPolicy.cs: Add IsAllowed(WebRequest) since it's
+	not part of BaseDomainPolicy anymore.
+
 2010-04-06  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ClientAccessPolicyParser.cs: Don't forget "http-request-headers"
