@@ -1,3 +1,7 @@
+2010-04-07  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableQuery.cs: make ctor protected.
+
 2010-04-06  Jb Evain  <jbevain@novell.com>
 
 	* QueryableEnumerable.cs: make TransformQueryable work on net_4_0.
