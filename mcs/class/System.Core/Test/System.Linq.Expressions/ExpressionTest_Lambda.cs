@@ -239,7 +239,6 @@ namespace MonoTests.System.Linq.Expressions
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void NestedParentParameterUse ()
 		{
 			var a = Expression.Parameter (typeof (int), null);
