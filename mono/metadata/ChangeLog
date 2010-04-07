@@ -1,3 +1,11 @@
+2010-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	class.c (mono_bounded_array_class_get): Properly init
+	cast_class to take the fact that uint[] and int[] can be
+	casted between each other.
+
+	Fixes #555950.
+
 2010-04-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Enum_ToObject): Avoid a crash for unfinished type
