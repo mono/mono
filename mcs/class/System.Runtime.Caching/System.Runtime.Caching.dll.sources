@@ -26,3 +26,7 @@ System.Runtime.Caching.Configuration/CachingSectionGroup.cs
 System.Runtime.Caching.Configuration/MemoryCacheSection.cs
 System.Runtime.Caching.Configuration/MemoryCacheSettingsCollection.cs
 System.Runtime.Caching.Configuration/MemoryCacheElement.cs
+
+System.Runtime.Caching.Hosting/IApplicationIdentifier.cs
+System.Runtime.Caching.Hosting/IFileChangeNotificationSystem.cs
+System.Runtime.Caching.Hosting/IMemoryCacheManager.cs
