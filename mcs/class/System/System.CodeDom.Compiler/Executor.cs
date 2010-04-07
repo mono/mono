@@ -38,7 +38,7 @@ using System.Threading;
 namespace System.CodeDom.Compiler {
 
 	[PermissionSet (SecurityAction.LinkDemand, Unrestricted = true)]
-	public sealed class Executor {
+	public static class Executor {
 
 		class ProcessResultReader
 		{
@@ -66,10 +66,6 @@ namespace System.CodeDom.Compiler {
 					sw.Close ();
 				}
 			}
-		}
-
-		private Executor ()
-		{
 		}
 
 		public static void ExecWait (string cmd, TempFileCollection tempFiles)

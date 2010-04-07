@@ -1,3 +1,7 @@
+2010-04-07  Jb Evain  <jbevain@novell.com>
+
+	* Executor.cs: make class static.
+
 2010-04-01  Jb Evain  <jbevain@novell.com>
 
 	* CodeDomProvider.cs, CompilerInfo.cs: add .net 4.0 overloads.
