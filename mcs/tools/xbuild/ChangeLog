@@ -1,5 +1,10 @@
 2010-04-08  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.VisualBasic.targets: Fix OutputAssembly
+	property for the Vbc task.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #594531.
 	* xbuild/Microsoft.VisualBasic.targets: Set RootNamespace
 	property of Vbc task.

@@ -61,7 +61,7 @@
 			OptionExplicit="$(OptionExplicit)"
 			OptionStrict="$(OptionStrict)"
 			OptionStrictType="$(OptionStrictType)" 
-			OutputAssembly="$(IntermediateAssembly)"
+			OutputAssembly="@(IntermediateAssembly)"
 			Platform="$(PlatformTarget)"
 			References="@(ResolvedFiles)"
 			RemoveIntegerChecks="$(RemoveIntegerChecks)"
