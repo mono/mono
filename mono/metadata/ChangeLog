@@ -1,5 +1,10 @@
 2010-04-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Enum_ToObject): Avoid a crash for unfinished type
+	builders. Fixes #594464.
+
+2010-04-08  Zoltan Varga  <vargaz@gmail.com>
+
 	* icall.c (ves_icall_System_Environment_Exit): Shutdown the threadpool before
 	waiting for all threads to suspend, as those threads can't be suspended.
 
