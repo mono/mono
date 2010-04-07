@@ -32,6 +32,7 @@ rm -f $outfile.makefrag
 process_includes $incfile $outfile.inc
 
 sort -u $outfile.inc > $outfile.inc_s
+rm -f $outfile.inc
 
 if test -z "$excfile"; then
     mv $outfile.inc_s $outfile
@@ -39,9 +40,9 @@ else
     process_includes $excfile $outfile.exc
 
     sort -u $outfile.exc > $outfile.exc_s
+    rm -f $outfile.exc
 
     sort -m $outfile.inc_s $outfile.exc_s | uniq -u > $outfile
-
     rm -f $outfile.inc_s $outfile.exc_s
 fi
 
