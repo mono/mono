@@ -74,7 +74,8 @@ namespace System.Net.Policy {
 			foreach (AccessPolicy policy in AccessPolicyList) {
 				// does something allow our URI in this policy ?
 				foreach (AllowFrom af in policy.AllowedServices) {
-					if (af.IsAllowed (ApplicationUri, null, null)) {
+					// fake "GET" as method as this does not apply to sockets
+					if (af.IsAllowed (ApplicationUri, "GET", null)) {
 						// if so, is our request port allowed ?
 						if (policy.PortAllowed (endpoint.Port))
 							return true;

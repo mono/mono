@@ -1,3 +1,8 @@
+2010-04-07  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* ClientAccessPolicy.cs: Fake a "GET" method when applying a 
+	policy to sockets
+
 2010-04-07  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* BaseDomainPolicy.cs: Abstract-fy IsAllowed(WebRequest) and 
