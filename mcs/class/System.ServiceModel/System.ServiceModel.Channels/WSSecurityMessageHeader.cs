@@ -408,6 +408,8 @@ doc.PreserveWhitespace = true;
 
 		protected override void OnWriteHeaderContents (XmlDictionaryWriter writer, MessageVersion version)
 		{
+			// FIXME: it should use XmlDictionaryWriter that CanCanonicalize the output (which is not possible in any built-in writer types, so we'll have to hack it).
+
 			foreach (object obj in Contents) {
 				if (obj is WsuTimestamp) {
 					WsuTimestamp ts = (WsuTimestamp) obj;

@@ -1,3 +1,7 @@
+2010-04-07  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WSSecurityMessageHeader.cs : add FIXME comment.
+
 2010-04-06  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestChannel.cs : add commented note.
