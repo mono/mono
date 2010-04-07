@@ -1,5 +1,8 @@
+2010-04-07 Andreia Gaita  <avidigal@novell.com>
 
-Wed Apr 7 11:28:42 CEST 2010 Paolo Molaro <lupus@ximian.com>
+	* Makefile.am: create a convenience library for moon to link with
+
+2010-04-07 Paolo Molaro <lupus@ximian.com>
 
 	* method-to-ir.c: optimize array accesses from generic interfaces.
 
