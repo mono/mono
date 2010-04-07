@@ -1,6 +1,7 @@
 ../../build/common/Consts.cs
 ../../build/common/Locale.cs
 ../../build/common/MonoTODOAttribute.cs
+../System.Web/System.Web.Configuration_2.0/NullableStringValidator.cs
 
 Assembly/AssemblyInfo.cs
 System.Runtime.Caching/CacheEntryMonitor.cs
@@ -20,3 +21,8 @@ System.Runtime.Caching/MemoryCache.cs
 System.Runtime.Caching/ObjectCache.cs
 System.Runtime.Caching/OnChangedCallback.cs
 System.Runtime.Caching/SqlChangeMonitor.cs
+
+System.Runtime.Caching.Configuration/CachingSectionGroup.cs
+System.Runtime.Caching.Configuration/MemoryCacheSection.cs
+System.Runtime.Caching.Configuration/MemoryCacheSettingsCollection.cs
+System.Runtime.Caching.Configuration/MemoryCacheElement.cs
