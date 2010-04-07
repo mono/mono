@@ -74,6 +74,15 @@ RESOURCE_FILES_2 = \
 	System.Web.UI.WebControls/Menu.js
 
 OTHER_RES = $(RESOURCE_FILES_1)
+TEST_APP_CODE_FILES = \
+	Test/mainsoft/NunitWebResources/App_Code/EnumConverterControl.cs \
+	Test/mainsoft/NunitWebResources/App_Code/MyContainer.cs
+
+TEST_APP_GLOBALRESOURCES_FILES = \
+	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.resx \
+	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.fr-FR.resx \
+	Test/mainsoft/NunitWebResources/App_GlobalResources/Resource1.resx
+
 TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/Global.asax \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/My.ashx \
@@ -93,10 +102,6 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_07.sitemap \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_08.sitemap \
 	Test/mainsoft/NunitWeb/NunitWeb/Resources/test_map_09.sitemap \
-	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.resx \
-	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.fr-FR.resx \
-	Test/mainsoft/NunitWebResources/App_GlobalResources/Resource1.resx \
-	Test/mainsoft/NunitWebResources/App_Code/EnumConverterControl.cs \
 	Test/mainsoft/NunitWebResources/menuclass.aspx \
 	Test/mainsoft/NunitWebResources/FormView.aspx \
 	Test/mainsoft/NunitWebResources/PostBackMenuTest.aspx \
@@ -208,7 +213,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/EnumConverter_Bug578586.aspx \
 	Test/mainsoft/NunitWebResources/ButtonColor_Bug325489.aspx \
 	Test/mainsoft/NunitWebResources/SqlDataSource_OnInit_Bug572781.aspx \
-	Test/mainsoft/NunitWebResources/FormViewPagerVisibility.aspx
+	Test/mainsoft/NunitWebResources/FormViewPagerVisibility.aspx \
+	Test/mainsoft/NunitWebResources/OverridenControlsPropertyAndPostBack_Bug594238.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
@@ -216,6 +222,9 @@ RESX_RES = $(RESX_DIST:.resx=.resources)
 endif
 
 NUNIT_RESOURCE_FILES = $(TEST_RESOURCE_FILES)
+NUNIT_APP_CODE_FILES = $(TEST_APP_CODE_FILES)
+NUNIT_APP_GLOBALRESOURCES_FILES = $(TEST_APP_GLOBALRESOURCES_FILES)
+
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
 OTHER_RES += $(RESOURCE_FILES_2)
 OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.dll -r:Mono.Data.Sqlite.dll
@@ -253,7 +262,11 @@ echo-warning-systemcore:
 endif
 endif
 
-TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll
+TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 -r:SystemWebTestShim.dll \
+	$(NUNIT_RESOURCE_FILES:%=/resource:%) \
+	$(foreach file,$(NUNIT_APP_CODE_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_Code/\2 ;g')) \
+	$(foreach file,$(NUNIT_APP_GLOBALRESOURCES_FILES),$(shell echo $(file) | sed -e 's;\(.*\)/\(.*\);/resource:\1/\2,App_GlobalResources/\2 ;g'))
+
 ifeq (net_2_0, $(PROFILE))
 TEST_MCS_FLAGS += -r:System.Web.Extensions.dll
 endif
@@ -262,6 +275,8 @@ EXTRA_DISTFILES = \
 	$(RESOURCE_FILES_2) \
 	$(RESOURCE_FILES_1) \
 	$(TEST_RESOURCE_FILES) \
+	$(TEST_APP_CODE_FILES) \
+	$(TEST_APP_GLOBALRESOURCES_FILES) \
 	UplevelHelperDefinitions.xml \
 	$(RESX_DIST) \
 	SQLiteProviders_DatabaseSchema.sql \

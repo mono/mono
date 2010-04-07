@@ -302,6 +302,8 @@ namespace MonoTests.SystemWeb.Framework
 		/// <example><code>CopyResource (GetType (), "Default.skin", "App_Themes/Black/Default.skin");</code></example>
 		public static void CopyResource (Type type, string resourceName, string targetUrl)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
 #if !TARGET_JVM
 			using (Stream source = type.Assembly.GetManifestResourceStream (resourceName)) {
 				if (source == null)
@@ -313,6 +315,26 @@ namespace MonoTests.SystemWeb.Framework
 #endif
 		}
 
+		public static void CopyPrefixedResources (Type type, string namePrefix, string targetDir)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			
+			string[] manifestResources = type.Assembly.GetManifestResourceNames ();
+			if (manifestResources == null || manifestResources.Length == 0)
+				return;
+
+			foreach (string resource in manifestResources) {
+				if (resource == null || resource.Length == 0)
+					continue;
+				
+				if (!resource.StartsWith (namePrefix))
+					continue;
+				
+				CopyResource (type, resource, Path.Combine (targetDir, resource.Substring (namePrefix.Length)));
+			}
+		}
+		
 		/// <summary>
 		/// Copy a chunk of data as a file into the web application.
 		/// </summary>
@@ -570,23 +592,23 @@ namespace MonoTests.SystemWeb.Framework
 
 		public static void CopyResources ()
 		{
-			CopyResource (typeof (WebTest), "My.ashx", "My.ashx");
-			CopyResource (typeof (WebTest), "Global.asax", "Global.asax");
+			Type myself = typeof (WebTest);
+			
+			CopyResource (myself, "My.ashx", "My.ashx");
+			CopyResource (myself, "Global.asax", "Global.asax");
 #if NET_2_0
 #if INSIDE_SYSTEM_WEB
-			CopyResource (typeof (WebTest), "Common.resx", "App_GlobalResources/Common.resx");
-			CopyResource (typeof (WebTest), "Common.fr-FR.resx", "App_GlobalResources/Common.fr-FR.resx");
-			CopyResource (typeof (WebTest), "Resource1.resx", "App_GlobalResources/Resource1.resx");
-			CopyResource (typeof (WebTest), "EnumConverterControl.cs", "App_Code/EnumConverterControl.cs");
+			CopyPrefixedResources (myself, "App_GlobalResources/", "App_GlobalResources");
+			CopyPrefixedResources (myself, "App_Code/", "App_Code");
 #endif
-			CopyResource (typeof (WebTest), "Web.mono.config", "Web.config");
+			CopyResource (myself, "Web.mono.config", "Web.config");
 #else
-			CopyResource (typeof (WebTest), "Web.mono.config.1.1", "Web.config");
+			CopyResource (myself, "Web.mono.config.1.1", "Web.config");
 #endif
-			CopyResource (typeof (WebTest), "MyPage.aspx", "MyPage.aspx");
-			CopyResource (typeof (WebTest), "MyPage.aspx.cs", "MyPage.aspx.cs");
-			CopyResource (typeof (WebTest), "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
-			CopyResource (typeof (WebTest), "My.master", "My.master");
+			CopyResource (myself, "MyPage.aspx", "MyPage.aspx");
+			CopyResource (myself, "MyPage.aspx.cs", "MyPage.aspx.cs");
+			CopyResource (myself, "MyPageWithMaster.aspx", "MyPageWithMaster.aspx");
+			CopyResource (myself, "My.master", "My.master");
 		}
 #endif
 	}

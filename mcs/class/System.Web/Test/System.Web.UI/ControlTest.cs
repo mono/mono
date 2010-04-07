@@ -39,6 +39,7 @@ using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
 using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 #if NET_2_0
 using System.Web.UI.Adapters;
@@ -978,6 +979,26 @@ namespace MonoTests.System.Web.UI
 		}
 
 #if NET_2_0
+		[Test (Description="Bug #594238")]
+		public void OverridenControlsPropertyAndPostBack_Bug594238 ()
+		{
+			WebTest t = new WebTest ("OverridenControlsPropertyAndPostBack_Bug594238.aspx");
+			t.Run ();
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls.Add ("__EVENTARGUMENT");
+			fr.Controls ["__EVENTTARGET"].Value = "container$children$lb";
+			fr.Controls ["__EVENTARGUMENT"].Value = String.Empty;
+			t.Request = fr;
+
+			string originalHtml = @"<span id=""container""><a href=""javascript:__doPostBack('container$children$lb','')"" id=""container_children_lb"">Woot! I got clicked!</a></span><hr/>";
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+		
 		[TestFixtureTearDown]
 		public void Tear_down ()
 		{
@@ -989,6 +1010,7 @@ namespace MonoTests.System.Web.UI
 		{
 			WebTest.CopyResource (GetType (), "ResolveUrl.aspx", "ResolveUrl.aspx");
 			WebTest.CopyResource (GetType (), "ResolveUrl.ascx", "Folder/ResolveUrl.ascx");
+			WebTest.CopyResource (GetType (), "OverridenControlsPropertyAndPostBack_Bug594238.aspx", "OverridenControlsPropertyAndPostBack_Bug594238.aspx");
 		}
 
 #endif
