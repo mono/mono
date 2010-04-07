@@ -1,5 +1,11 @@
 2010-04-08  Ankit Jain  <jankit@novell.com>
 
+	Fix bug #594531.
+	* xbuild/Microsoft.VisualBasic.targets: Set RootNamespace
+	property of Vbc task.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #594526.
 	* xbuild/Microsoft.VisualBasic.targets(CoreCompile): Fix Outputs
 	to use @(IntermediateAssembly) instead of $(IntermediateAssembly).

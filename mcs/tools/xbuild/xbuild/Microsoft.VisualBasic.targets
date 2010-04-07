@@ -67,6 +67,7 @@
 			RemoveIntegerChecks="$(RemoveIntegerChecks)"
 			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
 			ResponseFiles="$(CompilerResponseFile)"
+			RootNamespace="$(RootNamespace)"
 			Sources="@(Compile)"
 			TargetType="$(OutputType)"
 			TreatWarningsAsErrors="$(TreatWarningsAsErrors)"
