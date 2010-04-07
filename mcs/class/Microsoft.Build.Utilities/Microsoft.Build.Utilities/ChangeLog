@@ -1,3 +1,7 @@
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs (ExecuteTool): Check that the tool exists.
+
 2010-04-03  Ankit Jain  <jankit@novell.com>
 
 	* TargetDotNetFrameworkVersion.cs: Add Version40 .
