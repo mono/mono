@@ -1,3 +1,8 @@
+2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* file-io.c: reset the MonoIOStat structure in case of error.
+	Fixes bug #582667.
+
 2010-03-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_method_get_marshal_info): Fix the handling of dynamic methods
@@ -16,9 +21,9 @@
 
 2009-04-14  Zoltan Varga  <vargaz@gmail.com>
 
-        * marshal.c (mono_delegate_to_ftnptr): Use mono_gc_alloc_fixed () for
-        allocating the location holding the this argument to prevent
-        'too many root sets' errors.
+	* marshal.c (mono_delegate_to_ftnptr): Use mono_gc_alloc_fixed () for
+	allocating the location holding the this argument to prevent
+	'too many root sets' errors.
 
 2009-04-13  Zoltan Varga  <vargaz@gmail.com>
 
