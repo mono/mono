@@ -1,3 +1,8 @@
+2010-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* valid_store_of_uint_to_int_array.il: Regression test
+	for #555950.
+
 2010-04-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* unverifiable_ginst_dont_reduce_to_gparam_with_constraint.il: Regression test
