@@ -1,3 +1,8 @@
+2010-04-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* threads.c (mono_thread_suspend_all_other_threads): Call ensure_synch_cs_set ()
+	to avoid crashes on newly created threads.
+
 2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: decrement the domain threadpool jobs count.
