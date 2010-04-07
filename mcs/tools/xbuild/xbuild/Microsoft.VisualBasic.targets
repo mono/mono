@@ -32,7 +32,7 @@
 	<Target
 		Name="CoreCompile"
 		Inputs="@(Compile)"
-		Outputs="$(IntermediateAssembly)"
+		Outputs="@(IntermediateAssembly)"
 	>
 		<Vbc
 			AdditionalLibPaths="$(AdditionalLibPaths)"

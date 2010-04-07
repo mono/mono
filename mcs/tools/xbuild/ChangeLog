@@ -1,3 +1,10 @@
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #594526.
+	* xbuild/Microsoft.VisualBasic.targets(CoreCompile): Fix Outputs
+	to use @(IntermediateAssembly) instead of $(IntermediateAssembly).
+	Patch suggested by Eli Bishop (eli@wavemarket.com).
+
 2010-04-06  Ankit Jain  <jankit@novell.com>
 
 	* SolutionParser.cs: Identify and emit warning for a
