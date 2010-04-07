@@ -2,11 +2,9 @@ thisdir = class/System.Runtime.Caching
 SUBDIRS = 
 include ../../build/rules.make
 
-RESOURCE_FILES =
 LIBRARY = System.Runtime.Caching.dll
 LIB_MCS_FLAGS = /r:System.dll \
-	        /r:System.Core.dll \
-	        $(RESOURCE_FILES:%=/resource:%)
+	        /r:System.Data.dll
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 
