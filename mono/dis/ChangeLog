@@ -1,3 +1,7 @@
+2010-04-07  Jb Evain  <jbevain@novell.com>
+
+	* main.c: don't overwrite method_name.
+
 2010-04-06  Miguel de Icaza  <miguel@novell.com>
 
 	* main.c: Prevent a crash with broken assemblies.
