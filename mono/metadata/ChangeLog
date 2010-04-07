@@ -1,5 +1,9 @@
 2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* threadpool.c: decrement the domain threadpool jobs count.
+
+2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* file-io.c: reset the MonoIOStat structure in case of error.
 	Fixes bug #582667.
 

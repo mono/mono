@@ -1290,6 +1290,7 @@ clear_queue (CRITICAL_SECTION *cs, TPQueue *list, MonoDomain *domain)
 	for (i = list->first_elem; i < list->next_elem; ++i) {
 		MonoObject *obj = mono_array_get (list->array, MonoObject*, i);
 		if (obj->vtable->domain == domain) {
+			threadpool_jobs_dec (obj);
 			unregister_job ((MonoAsyncResult*)obj);
 
 			mono_array_set (list->array, MonoObject*, i, NULL);
