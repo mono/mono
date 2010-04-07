@@ -267,7 +267,7 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (5, l (1));
 		}
-
+#if !NET_4_0 // dlr bug 5875
 		[Test]
 		public void LambdaReturningExpression ()
 		{
@@ -281,4 +281,5 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (ExpressionType.Constant, q.NodeType);
 		}
 	}
+#endif
 }
