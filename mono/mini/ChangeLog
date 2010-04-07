@@ -1,3 +1,7 @@
+2010-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* array.cs: Add tests for cast between primitive array types.
+
 2010-04-07 Andreia Gaita  <avidigal@novell.com>
 
 	* Makefile.am: create a convenience library for moon to link with
