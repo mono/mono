@@ -1,3 +1,7 @@
+2010-04-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked-2.2.cs: Add an Interlocked.CompareExchange(long) test.
+
 2010-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* bug-575941.cs: New regression test.
