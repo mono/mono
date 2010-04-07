@@ -1,3 +1,10 @@
+2010-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: control cache must be filled using the local
+	_controls collection instead of the virtual Controls
+	property. Fixes bug #594238
+	Check if _controls isn't null before using it.
+
 2010-01-20  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectStateFormatter.cs: implemented support for IndexedString

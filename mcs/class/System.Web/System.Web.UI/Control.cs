@@ -510,8 +510,9 @@ namespace System.Web.UI
 			get { return ((stateMask & CHILD_CONTROLS_CREATED) != 0); }
 			set {
 				if (value == false && (stateMask & CHILD_CONTROLS_CREATED) != 0) {
-					if (_controls != null)
-						_controls.Clear ();
+					ControlCollection cc = Controls;
+					if (cc != null)
+						cc.Clear ();
 				}
 
 				SetMask (CHILD_CONTROLS_CREATED, value);
@@ -816,12 +817,15 @@ namespace System.Web.UI
 				return;
 
 			InitControlsCache ();
-			FillControlCache (Controls);
 
+			FillControlCache (_controls);
 		}
 
 		void FillControlCache (ControlCollection controls)
 		{
+			if (controls == null || controls.Count == 0)
+				return;
+			
 			foreach (Control c in controls) {
 				try {
 					if (c._userId != null)
@@ -840,7 +844,7 @@ namespace System.Web.UI
 
 		protected bool IsLiteralContent ()
 		{
-			if (HasControls () && _controls.Count == 1 && (_controls [0] is LiteralControl))
+			if (_controls != null && _controls.Count == 1 && _controls [0] is LiteralControl)
 				return true;
 
 			return false;
@@ -1127,21 +1131,25 @@ namespace System.Web.UI
 		{
 			if (_renderMethodDelegate != null) {
 				_renderMethodDelegate (writer, this);
-			} else if (_controls != null) {
-				int len = _controls.Count;
-				Control c;
-				for (int i = 0; i < len; i++) {
-					c = _controls [i];
-					if (c == null)
-						continue;
+				return;
+			}
+			
+			if (_controls == null)
+				return;
+
+			int len = _controls.Count;
+			Control c;
+			for (int i = 0; i < len; i++) {
+				c = _controls [i];
+				if (c == null)
+					continue;
 #if NET_2_0
-					ControlAdapter tmp = c.Adapter;
-					if (tmp != null)
-						c.RenderControl (writer, tmp);
-					else
+				ControlAdapter tmp = c.Adapter;
+				if (tmp != null)
+					c.RenderControl (writer, tmp);
+				else
 #endif
-						c.RenderControl (writer);
-				}
+					c.RenderControl (writer);
 			}
 		}
 
@@ -1274,7 +1282,7 @@ namespace System.Web.UI
 			if (!HasControls ())
 				return;
 
-			int len = _controls.Count;
+			int len = _controls != null ? _controls.Count : 0;
 			for (int i = 0; i < len; i++) {
 				Control c = _controls [i];
 				c.DataBind ();
@@ -1458,12 +1466,10 @@ namespace System.Web.UI
 			else
 #endif
 				OnLoad (EventArgs.Empty);
-			if (HasControls ()) {
-				int len = _controls.Count;
-				for (int i = 0; i < len; i++) {
-					Control c = _controls [i];
-					c.LoadRecursive ();
-				}
+			int ccount = _controls != null ? _controls.Count : 0;
+			for (int i = 0; i < ccount; i++) {
+				Control c = _controls [i];
+				c.LoadRecursive ();
 			}
 
 #if MONO_TRACE
@@ -1483,12 +1489,10 @@ namespace System.Web.UI
 				trace.Write ("control", String.Concat ("UnloadRecursive ", _userId, " ", type_name));
 			}
 #endif
-			if (HasControls ()) {
-				int len = _controls.Count;
-				for (int i = 0; i < len; i++) {
-					Control c = _controls [i];
-					c.UnloadRecursive (dispose);
-				}
+			int ccount = _controls != null ? _controls.Count : 0;
+			for (int i = 0; i < ccount; i++) {
+				Control c = _controls [i];
+				c.UnloadRecursive (dispose);
 			}
 
 #if MONO_TRACE
@@ -1538,7 +1542,7 @@ namespace System.Web.UI
 				if (!HasControls ())
 					return;
 
-				int len = _controls.Count;
+				int len = _controls != null ? _controls.Count : 0;
 				for (int i = 0; i < len; i++) {
 					Control c = _controls [i];
 					c.PreRenderRecursiveInternal ();
@@ -1572,7 +1576,7 @@ namespace System.Web.UI
 				if ((stateMask & IS_NAMING_CONTAINER) != 0)
 					namingContainer = this;
 
-				int len = _controls.Count;
+				int len = _controls != null ? _controls.Count : 0;
 				for (int i = 0; i < len; i++) {
 					Control c = _controls [i];
 					c.InitRecursive (namingContainer);
@@ -1616,7 +1620,7 @@ namespace System.Web.UI
 			
 			int idx = -1;
 			if (HasControls ()) {
-				int len = _controls.Count;
+				int len = _controls != null ? _controls.Count : 0;
 				for (int i = 0; i < len; i++) {
 					Control ctrl = _controls [i];
 					object ctrlState = ctrl.SaveViewStateRecursive ();

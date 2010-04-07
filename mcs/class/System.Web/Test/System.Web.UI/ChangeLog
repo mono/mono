@@ -1,3 +1,7 @@
+2010-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* ControlTest.cs: added test for bug #594238
+
 2009-12-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectStateFormatterTest.cs: added.

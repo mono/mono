@@ -1,3 +1,11 @@
+2010-04-07  Marek Habersack  <mhabersack@novell.com>
+
+	* WebTest.cs: introduced concept of prefixed resources and added
+	an API which handles them - CopyPrefixedResources. All the
+	manifest resource names are checked for match with the given
+	prefix, and all the matching ones are copied to the specified
+	subdirectory of the test directory.
+
 2010-02-11  Marek Habersack  <mhabersack@novell.com>
 
 	* WebTest.cs: test environment setup enhancements. Contributed by
