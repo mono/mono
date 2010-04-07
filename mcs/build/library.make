@@ -11,18 +11,17 @@
 sourcefile = $(LIBRARY).sources
 
 # If the directory contains the per profile include file, generate list file.
-PROFILE_sources = $(PROFILE)_$(LIBRARY).sources
-ifeq ($(wildcard $(PROFILE_sources)), $(PROFILE_sources))
+PROFILE_sources := $(wildcard $(PROFILE)_$(LIBRARY).sources)
+ifdef PROFILE_sources
 PROFILE_excludes = $(wildcard $(PROFILE)_$(LIBRARY).exclude.sources)
-COMMON_sourcefile := $(sourcefile)
 sourcefile = $(depsdir)/$(PROFILE)_$(LIBRARY).sources
+library_CLEAN_FILES += $(sourcefile)
 
 # Note, gensources.sh can create a $(sourcefile).makefrag if it sees any '#include's
 # We don't include it in the dependencies since it isn't always created
-$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(COMMON_sourcefile) $(topdir)/build/gensources.sh
+$(sourcefile): $(PROFILE_sources) $(PROFILE_excludes) $(topdir)/build/gensources.sh
 	@echo Creating the per profile list $@ ...
 	$(SHELL) $(topdir)/build/gensources.sh $@ $(PROFILE_sources) $(PROFILE_excludes)
-library_CLEAN_FILES += $(sourcefile)
 endif
 
 PLATFORM_excludes := $(wildcard $(LIBRARY).$(PLATFORM)-excludes)
@@ -35,7 +34,7 @@ endif
 
 ifndef response
 response = $(depsdir)/$(PROFILE)_$(LIBRARY).response
-library_CLEAN_FILES += $(response) $(LIBRARY).mdb $(BUILT_SOURCES)
+library_CLEAN_FILES += $(response)
 endif
 
 ifndef LIBRARY_NAME
@@ -48,13 +47,7 @@ else
 lib_dir = lib
 endif
 
-makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
 the_libdir = $(topdir)/class/$(lib_dir)/$(PROFILE)/
-the_lib = $(the_libdir)$(LIBRARY_NAME)
-the_pdb = $(the_lib:.dll=.pdb)
-the_mdb = $(the_lib).mdb
-library_CLEAN_FILES += $(makefrag) $(the_lib) $(the_lib).so $(the_pdb) $(the_mdb)
-
 ifdef LIBRARY_NEEDS_POSTPROCESSING
 build_libdir = fixup/$(PROFILE)/
 else
@@ -65,8 +58,10 @@ build_libdir = $(the_libdir)
 endif
 endif
 
+the_lib   = $(the_libdir)$(LIBRARY_NAME)
 build_lib = $(build_libdir)$(LIBRARY_NAME)
-library_CLEAN_FILES += $(build_lib) $(build_lib:.dll=.pdb)
+library_CLEAN_FILES += $(the_lib)   $(the_lib).so   $(the_lib).mdb   $(the_lib:.dll=.pdb)
+library_CLEAN_FILES += $(build_lib) $(build_lib).so $(build_lib).mdb $(build_lib:.dll=.pdb)
 
 ifdef NO_SIGN_ASSEMBLY
 SN = :
@@ -214,6 +209,7 @@ LIBRARY_SNK = $(topdir)/class/mono.snk
 endif
 
 ifdef BUILT_SOURCES
+library_CLEAN_FILES += $(BUILT_SOURCES)
 ifeq (cat, $(PLATFORM_CHANGE_SEPARATOR_CMD))
 BUILT_SOURCES_cmdline = $(BUILT_SOURCES)
 else
@@ -251,6 +247,8 @@ all-local: $(the_lib)$(PLATFORM_AOT_SUFFIX)
 endif
 endif
 
+makefrag = $(depsdir)/$(PROFILE)_$(LIBRARY).makefrag
+library_CLEAN_FILES += $(makefrag)
 $(makefrag): $(sourcefile)
 	@echo Creating $@ ...
 	@sed 's,^,$(build_lib): ,' $< >$@
