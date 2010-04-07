@@ -214,7 +214,8 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 					description = AlertDescription.CertificateUnknown;
 					break;
 				}
-				throw new TlsException (description, "Invalid certificate received from server.");
+				string err = String.Format ("0x{0:x}", error);
+				throw new TlsException (description, "Invalid certificate received from server. Error code: " + err);
 			}
 #endif
 			// the leaf is the web server certificate

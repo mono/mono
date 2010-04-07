@@ -1,3 +1,7 @@
+2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* TlsServerCertificate.cs: display the error code.
+
 2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TlsServerCertificate.cs: chain is built and validated in
