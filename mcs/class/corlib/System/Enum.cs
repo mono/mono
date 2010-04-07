@@ -188,13 +188,14 @@ namespace System
 			get_enum_info (enumType, out info);
 
 			IComparer ic = null;
-			if (info.values is int [])
+			Type et = Enum.GetUnderlyingType (enumType);
+			if (et == typeof (int))
 				ic = int_comparer;
-			else if (info.values is short [])
+			else if (et == typeof (short))
 				ic = short_comparer;
-			else if (info.values is sbyte [])
+			else if (et == typeof (sbyte))
 				ic = sbyte_comparer;
-			else if (info.values is long [])
+			else if (et == typeof (long))
 				ic = long_comparer;
 			
 			Array.Sort (info.values, info.names, ic);
@@ -347,42 +348,45 @@ namespace System
 		//
 		// It also tries to use the non-boxing version of the various Array.BinarySearch methods
 		//
-		static int FindPosition (object value, Array values)
+		static int FindPosition (Type enumType, object value, Array values)
 		{
-			int[] int_array = values as int[];
-			if (int_array != null)
-				return Array.BinarySearch (int_array, (int)value, MonoEnumInfo.int_comparer);
+			switch (Type.GetTypeCode (GetUnderlyingType (enumType))) {
+			case TypeCode.SByte:
+				sbyte [] sbyte_array = values as sbyte [];
+				return Array.BinarySearch (sbyte_array, (sbyte) value,  MonoEnumInfo.sbyte_comparer);
 
-			uint[] uint_array = values as uint [];
-			if (uint_array != null)
-				return Array.BinarySearch (uint_array, (uint)value);
-			
-			short [] short_array = values as short [];
-			if (short_array != null)
+			case TypeCode.Byte:
+				byte [] byte_array = values as byte [];
+				return Array.BinarySearch (byte_array, (byte) value);
+
+			case TypeCode.Int16:
+				short [] short_array = values as short [];
 				return Array.BinarySearch (short_array, (short)value, MonoEnumInfo.short_comparer);
 
-			ushort [] ushort_array = values as ushort [];
-			if (ushort_array != null)
+			case TypeCode.UInt16:
+				ushort [] ushort_array = values as ushort [];
 				return Array.BinarySearch (ushort_array, (ushort)value);
-					
-			sbyte [] sbyte_array = values as sbyte [];
-			if (sbyte_array != null)
-				return Array.BinarySearch (sbyte_array, (sbyte) value,  MonoEnumInfo.sbyte_comparer);
+		
+			case TypeCode.Int32:
+				int[] int_array = values as int[];
+				return Array.BinarySearch (int_array, (int)value, MonoEnumInfo.int_comparer);
+
+			case TypeCode.UInt32:
+				uint[] uint_array = values as uint [];
+				return Array.BinarySearch (uint_array, (uint)value);			
 			
-			byte [] byte_array = values as byte [];
-			if (byte_array != null)
-				return Array.BinarySearch (byte_array, (byte) value);
-			
-			long [] long_array = values as long [];
-			if (long_array != null)
+			case TypeCode.Int64:
+				long [] long_array = values as long [];
 				return Array.BinarySearch (long_array, (long) value,  MonoEnumInfo.long_comparer);
 
-			ulong [] ulong_array = values as ulong [];
-			if (ulong_array != null)
+			case TypeCode.UInt64:
+				ulong [] ulong_array = values as ulong [];
 				return Array.BinarySearch (ulong_array, (ulong) value);
 
-			// This should never happen
-			return Array.BinarySearch (values, value);
+			default:
+				// This should never happen
+				return Array.BinarySearch (values, value);
+			}
 		}
 	
 		[ComVisible (true)]
@@ -400,7 +404,7 @@ namespace System
 			value = ToObject (enumType, value);
 			MonoEnumInfo.GetInfo (enumType, out info);
 
-			int i = FindPosition (value, info.values);
+			int i = FindPosition (enumType, value, info.values);
 			return (i >= 0) ? info.names [i] : null;
 		}
 
@@ -425,7 +429,7 @@ namespace System
 				value = ToObject (enumType, value);
 				MonoEnumInfo.GetInfo (enumType, out info);
 
-				return FindPosition (value, info.values) >= 0;
+				return FindPosition (enumType, value, info.values) >= 0;
 			} else {
 				throw new ArgumentException("The value parameter is not the correct type."
 					+ "It must be type String or the same type as the underlying type"

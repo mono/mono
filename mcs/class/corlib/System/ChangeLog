@@ -1,3 +1,11 @@
+2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Enum.cs (GetInfo): Don't use isinst tests as they can
+	return true for both signed and unsigned version of a
+	primitive type.
+
+	* Enum.cs (FindPosition): Ditto.
+
 2010-04-06  Marek Safar  <marek.safar@gmail.com>
 
 	* Array.cs: Don't make read-only collection read-only.
