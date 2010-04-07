@@ -1,3 +1,8 @@
+2010-04-07  Raja R Harinath  <harinath@hurrynot.org>
+
+	* SortedSetTest.cs: Update to test more view functionality,
+	including set comparison operators.
+
 2010-04-06  Jb Evain  <jbevain@novell.com>
 
 	* SortedSetTest.cs: add test for SortedSubSet.Count.

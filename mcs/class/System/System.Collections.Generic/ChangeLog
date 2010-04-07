@@ -1,3 +1,21 @@
+2010-04-07  Raja R Harinath  <harinath@hurrynot.org>
+
+	Enable set comparision operations on views, and improve performance
+	* RBTree.cs (Bound): New.  Returns the greatest lower bound and
+	least upper bound of the given key.
+	(GetSuffixEnumerator): New.  Returns an enumerator that starts at
+	the given key.
+	(NodeEnumerator): Provide suffix enumerator functionality.
+	* SortedSet.cs (GetEnumerator): Delegate to ...
+	(TryGetEnumerator): ... this.  New virtual function.
+	(Enumerator): Provide subset enumeration using RBTree's suffix enumerators.
+	(SortedSubSet.count): New.
+	(SortedSubSet.GetCount): Use it.
+	(SortedSubSet.TryAdd, SortedSubSet.TryRemove): Update count.
+	(SortedSubSet.GetMin, SortedSubSet.GetMax): Use RBTree.Bound().
+	(SortedSubSet.GetEnumerator): Remove.
+	(SortedSubSet.TryGetEnumerator): New.  Use ranged enumerators.
+
 2010-04-06  Jb Evain  <jbevain@novell.com>
 
 	* SortedSet.cs: implement Count for SortedSubSet.

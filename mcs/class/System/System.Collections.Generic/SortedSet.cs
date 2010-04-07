@@ -263,17 +263,22 @@ namespace System.Collections.Generic {
 
 		public Enumerator GetEnumerator ()
 		{
+			return TryGetEnumerator ();
+		}
+
+		protected virtual Enumerator TryGetEnumerator ()
+		{
 			return new Enumerator (this);
 		}
 
 		IEnumerator<T> IEnumerable<T>.GetEnumerator ()
 		{
-			return new Enumerator (this);
+			return GetEnumerator ();
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			return new Enumerator (this);
+			return GetEnumerator ();
 		}
 
 		public static IEqualityComparer<SortedSet<T>> CreateSetComparer ()
@@ -577,12 +582,23 @@ namespace System.Collections.Generic {
 
 			RBTree.NodeEnumerator host;
 
+			IComparer<T> comparer;
+
 			T current;
+			T upper;
 
 			internal Enumerator (SortedSet<T> set)
+				: this ()
 			{
 				host = set.tree.GetEnumerator ();
-				current = default (T);
+			}
+
+			internal Enumerator (SortedSet<T> set, T lower, T upper)
+				: this ()
+			{
+				host = set.tree.GetSuffixEnumerator (lower);
+				comparer = set.Comparer;
+				this.upper = upper;
 			}
 
 			public T Current {
@@ -602,7 +618,7 @@ namespace System.Collections.Generic {
 					return false;
 
 				current = ((Node) host.Current).item;
-				return true;
+				return comparer == null || comparer.Compare (upper, current) >= 0;
 			}
 
 			public void Dispose ()
@@ -623,47 +639,43 @@ namespace System.Collections.Generic {
 			T lower;
 			T upper;
 
+			int count;
+
 			public SortedSubSet (SortedSet<T> set, T lower, T upper)
 				: base (set.Comparer)
 			{
 				this.set = set;
 				this.lower = lower;
 				this.upper = upper;
+
+				using (var e = set.tree.GetSuffixEnumerator (lower)) {
+					while (e.MoveNext () && set.helper.Compare (upper, e.Current) >= 0)
+						++count;
+				}
 			}
 
 			internal override T GetMin ()
 			{
-				for (int i = 0; i < set.tree.Count; i++) {
-					var item = set.GetItem (i);
-					if (InRange (item))
-						return item;
-				}
+				if (count == 0)
+					return default (T);
 
-				return default (T);
+				RBTree.Node lb = null, ub = null;
+				set.tree.Bound (lower, ref lb, ref ub);
+				return ((Node) ub).item;
 			}
 
 			internal override T GetMax ()
 			{
-				for (int i = set.tree.Count - 1; i >= 0; i--) {
-					var item = set.GetItem (i);
-					if (InRange (item))
-						return item;
-				}
+				if (count == 0)
+					return default (T);
 
-				return default (T);
+				RBTree.Node lb = null, ub = null;
+				set.tree.Bound (upper, ref lb, ref ub);
+				return ((Node) lb).item;
 			}
 
 			internal override int GetCount ()
 			{
-				int count = 0;
-				for (int i = 0; i < set.tree.Count; i++) {
-					var item = set.GetItem (i);
-					if (InRange (item))
-						count++;
-					else if (count > 0)
-						break;
-				}
-
 				return count;
 			}
 
@@ -672,7 +684,11 @@ namespace System.Collections.Generic {
 				if (!InRange (item))
 					throw new ArgumentOutOfRangeException ("item");
 
-				return set.TryAdd (item);
+				if (!set.TryAdd (item))
+					return false;
+
+				++count;
+				return true;
 			}
 
 			internal override bool TryRemove (T item)
@@ -680,7 +696,11 @@ namespace System.Collections.Generic {
 				if (!InRange (item))
 					return false;
 
-				return set.TryRemove (item);
+				if (!set.TryRemove (item))
+					return false;
+
+				--count;
+				return true;
 			}
 
 			public override bool Contains (T item)
@@ -694,6 +714,8 @@ namespace System.Collections.Generic {
 			public override void Clear ()
 			{
 				set.RemoveWhere (InRange);
+				if (count != 0)
+					throw new SystemException ("count should be zero: " + count);
 			}
 
 			bool InRange (T item)
@@ -714,29 +736,9 @@ namespace System.Collections.Generic {
 				return new SortedSubSet (set, lowerValue, upperValue);
 			}
 
-			public IEnumerator<T> GetEnumerator ()
+			protected override Enumerator TryGetEnumerator ()
 			{
-				var yielding = false;
-
-				foreach (Node node in set.tree) {
-					var item = node.item;
-
-					if (InRange (item)) {
-						yield return item;
-						yielding = true;
-					} else if (yielding)
-						yield break;
-				}
-			}
-
-			IEnumerator<T> IEnumerable<T>.GetEnumerator ()
-			{
-				return GetEnumerator ();
-			}
-
-			IEnumerator IEnumerable.GetEnumerator ()
-			{
-				return GetEnumerator ();
+				return new Enumerator (set, lower, upper);
 			}
 
 			public override void IntersectWith (IEnumerable<T> other)

@@ -216,6 +216,7 @@ namespace MonoTests.System.Collections.Generic
 
 			view.Clear ();
 
+			Assert.AreEqual (0, view.Count);
 			Assert.IsTrue (set.SequenceEqual (new [] { 1, 9 }));
 		}
 
@@ -251,18 +252,30 @@ namespace MonoTests.System.Collections.Generic
 		public void ViewMin ()
 		{
 			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
-			var view = set.GetViewBetween (4, 8);
 
+			var view = set.GetViewBetween (4, 8);
 			Assert.AreEqual (5, view.Min);
+
+			view = set.GetViewBetween (-2, 4);
+			Assert.AreEqual (1, view.Min);
+
+			view = set.GetViewBetween (1, 9);
+			Assert.AreEqual (1, view.Min);
 		}
 
 		[Test]
 		public void ViewMax ()
 		{
 			var set = new SortedSet<int> { 1, 3, 5, 7, 9 };
-			var view = set.GetViewBetween (4, 8);
 
+			var view = set.GetViewBetween (4, 8);
 			Assert.AreEqual (7, view.Max);
+
+			view = set.GetViewBetween (4, 55);
+			Assert.AreEqual (9, view.Max);
+
+			view = set.GetViewBetween (1, 9);
+			Assert.AreEqual (9, view.Max);
 		}
 
 		[Test]
@@ -440,6 +453,9 @@ namespace MonoTests.System.Collections.Generic
 			var digits = new SortedSet<int> { 0, 1, 2, 3, 4, 5, 6, 7, 8, 9 };
 			var squares = new SortedSet<int> { 0, 1, 4, 9 };
 
+			var non_prime_odd_digit = odds.GetViewBetween (8, 42);
+			var non_trit = digits.GetViewBetween (3, 42);
+
 			do_test (empty, empty, se: true);
 			do_test (empty, zero, psb: true);
 			do_test (empty, digits, psb: true);
@@ -458,6 +474,13 @@ namespace MonoTests.System.Collections.Generic
 			do_test (squares, digits, psb: true);
 			do_test (digits, digits, se: true);
 			do_test_e (digits, squares.Concat (evens.Concat (odds)), o: true, se: true);
+			do_test (non_prime_odd_digit, digits, psb: true);
+			do_test_e (non_prime_odd_digit, new [] { 9 }, o: true, se: true);
+			do_test (non_trit, digits, psb: true);
+			do_test (trit, non_trit);
+			do_test_e (digits, trit.Concat (non_trit), o: true, se: true);
+			do_test_e (non_trit, new [] { 3, 4, 5, 6, 7, 8, 9 }, o: true, se: true);
+			do_test (digits.GetViewBetween (0, 2), trit, se: true);
 		}
 	}
 }

@@ -222,6 +222,22 @@ namespace System.Collections.Generic
 			return current;
 		}
 
+		public void Bound<T> (T key, ref Node lower, ref Node upper)
+		{
+			INodeHelper<T> hlp = (INodeHelper<T>) this.hlp;
+			Node current = root;
+			while (current != null) {
+				int c = hlp.Compare (key, current);
+				if (c <= 0)
+					upper = current;
+				if (c >= 0)
+					lower = current;
+				if (c == 0)
+					break;
+				current = c < 0 ? current.left : current.right;
+			}
+		}
+
 		public int Count {
 			get { return root == null ? 0 : (int) root.Size; }
 		}
@@ -250,6 +266,23 @@ namespace System.Collections.Generic
 		public NodeEnumerator GetEnumerator ()
 		{
 			return new NodeEnumerator (this);
+		}
+
+		// Get an enumerator that starts at 'key' or the next higher element in the tree
+		public NodeEnumerator GetSuffixEnumerator<T> (T key)
+		{
+			var pennants = new Stack<Node> ();
+			INodeHelper<T> hlp = (INodeHelper<T>) this.hlp;
+			Node current = root;
+			while (current != null) {
+				int c = hlp.Compare (key, current);
+				if (c <= 0)
+					pennants.Push (current);
+				if (c == 0)
+					break;
+				current = c < 0 ? current.left : current.right;
+			}
+			return new NodeEnumerator (this, pennants);
 		}
 
 		IEnumerator<Node> IEnumerable<Node>.GetEnumerator ()
@@ -585,13 +618,19 @@ namespace System.Collections.Generic
 			RBTree tree;
 			uint version;
 
-			Stack<Node> pennants;
+			Stack<Node> pennants, init_pennants;
 
 			internal NodeEnumerator (RBTree tree)
+				: this ()
 			{
 				this.tree = tree;
 				version = tree.version;
-				pennants = null;
+			}
+
+			internal NodeEnumerator (RBTree tree, Stack<Node> init_pennants)
+				: this (tree)
+			{
+				this.init_pennants = init_pennants;
 			}
 
 			public void Reset ()
@@ -619,6 +658,11 @@ namespace System.Collections.Generic
 				if (pennants == null) {
 					if (tree.root == null)
 						return false;
+					if (init_pennants != null) {
+						pennants = init_pennants;
+						init_pennants = null;
+						return pennants.Count != 0;
+					}
 					pennants = new Stack<Node> ();
 					next = tree.root;
 				} else {
