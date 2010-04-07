@@ -31,6 +31,7 @@
 using System;
 using System.IO;
 using System.Text;
+using System.Text.RegularExpressions;
 
 using Microsoft.Build.Framework;
 using Microsoft.Build.Utilities;
@@ -153,7 +154,49 @@ namespace Microsoft.Build.Tasks {
 		{
 			return true;
 		}
-		
+
+		protected override void LogEventsFromTextOutput (string singleLine, MessageImportance importance)
+		{
+			singleLine = singleLine.Trim ();
+			if (singleLine.Length == 0)
+				return;
+
+			// When IncludeDebugInformation is true, prevents the debug symbols stats from braeking this.
+			if (singleLine.StartsWith ("WROTE SYMFILE") ||
+				singleLine.StartsWith ("OffsetTable") ||
+				singleLine.StartsWith ("Compilation succeeded") ||
+				singleLine.StartsWith ("Compilation failed"))
+				return;
+
+			Match match = ErrorRegex.Match (singleLine);
+			if (!match.Success)
+				return;
+
+			string filename = match.Result ("${file}") ?? "";
+
+			string line = match.Result ("${line}");
+			int lineNumber = !string.IsNullOrEmpty (line) ? Int32.Parse (line) : 0;
+
+			string col = match.Result ("${column}");
+			int columnNumber = 0;
+			if (!string.IsNullOrEmpty (col))
+				columnNumber = col == "255+" ? -1 : Int32.Parse (col);
+
+			string category = match.Result ("${level}");
+			string code = match.Result ("${number}");
+			string text = match.Result ("${message}");
+
+			if (String.Compare (category, "warning", StringComparison.OrdinalIgnoreCase) == 0) {
+				Log.LogWarning (null, code, null, filename, lineNumber, columnNumber, -1,
+					-1, text, null);
+			} else if (String.Compare (category, "error", StringComparison.OrdinalIgnoreCase) == 0) {
+				Log.LogError (null, code, null, filename, lineNumber, columnNumber, -1,
+					-1, text, null);
+			} else {
+				Log.LogMessage (importance, singleLine);
+			}
+		}
+
 		[MonoTODO]
 		public string BaseAddress {
 			get { return (string) Bag ["BaseAddress"]; }
@@ -284,6 +327,20 @@ namespace Microsoft.Build.Tasks {
 			get { return (string) Bag ["WarningsNotAsErrors"]; }
 			set { Bag ["WarningsNotAsErrors"] = value; }
 		}
+
+		// from md's VBBindingCompilerServices.cs
+		//matches "/home/path/Default.aspx.vb (40,31) : Error VBNC30205: Expected end of statement."
+		//and "Error : VBNC99999: vbnc crashed nearby this location in the source code."
+		//and "Error : VBNC99999: Unexpected error: Object reference not set to an instance of an object"
+		static Regex errorRegex;
+		static Regex ErrorRegex {
+			get {
+				if (errorRegex == null)
+					errorRegex = new Regex (@"^\s*((?<file>.*)\s?\((?<line>\d*)(,(?<column>\d*))?\) : )?(?<level>\w+) :? ?(?<number>[^:]*): (?<message>.*)$", RegexOptions.Compiled | RegexOptions.ExplicitCapture);
+				return errorRegex;
+			}
+		}
+
 	}
 }
 
