@@ -35,9 +35,16 @@ namespace System.Runtime.Caching
 {
 	public sealed class HostFileChangeMonitor : FileChangeMonitor
 	{
+		static readonly object notificationSystemLock = new object ();
+		static IFileChangeNotificationSystem notificationSystem;
+		static bool notificationSystemSetFromHost;
+		
 		ReadOnlyCollection <string> filePaths;
 		DateTime lastModified;
 		string uniqueId;
+		bool disposeNotificationSystem;
+
+		Dictionary <string, object> notificationStates;
 		
 		public override ReadOnlyCollection<string> FilePaths {
 			get { return filePaths;}
@@ -69,6 +76,9 @@ namespace System.Runtime.Caching
 				if (String.IsNullOrEmpty (p))
 					throw new ArgumentException ("A path in the filePaths list is null or an empty string.");
 
+				if (!Path.IsRooted (p))
+					throw new ArgumentException ("Absolute path information is required.");
+				
 				list.Add (p);
 				
 				if (Directory.Exists (p)) {
@@ -91,11 +101,60 @@ namespace System.Runtime.Caching
 
 			this.filePaths = new ReadOnlyCollection <string> (list);
 			this.uniqueId = sb.ToString ();
+
+			InitMonitoring ();
 		}
 
+		void InitMonitoring ()
+		{
+			IServiceProvider host;
+			if (!notificationSystemSetFromHost && (host = ObjectCache.Host) != null) {
+				lock (notificationSystemLock) {
+					if (!notificationSystemSetFromHost) {
+						if (host != null)
+							notificationSystem = host.GetService (typeof (IFileChangeNotificationSystem)) as IFileChangeNotificationSystem;
+
+						if (notificationSystem != null)
+							notificationSystemSetFromHost = true;
+					}
+				}
+			}
+
+			if (!notificationSystemSetFromHost) {
+				notificationSystem = new FileChangeNotificationSystem ();
+				disposeNotificationSystem = true;
+			}
+
+			object state;
+
+			// TODO: what are these two used for?
+			DateTimeOffset lastWriteTime;
+			long fileSize;
+			
+			notificationStates = new Dictionary <string, object> (filePaths.Count, Helpers.StringEqualityComparer);
+			foreach (string path in filePaths) {
+				if (notificationStates.ContainsKey (path))
+					continue; // silently ignore dupes
+				
+				notificationSystem.StartMonitoring (path, OnChanged, out state, out lastWriteTime, out fileSize);
+				notificationSystem.Add (path, state);
+			}
+		}
+
+		void OnChanged (object state)
+		{
+			if (notificationSystem == null)
+		}
+		
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			if (disposing && disposeNotificationSystem && notificationSystem != null) {
+				try {
+					notificationSystem.Dispose ();
+				} finally {
+					notificationSystem = null;
+				}
+			}
 		}
 	}
 }

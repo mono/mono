@@ -35,12 +35,23 @@ namespace System.Runtime.Caching
 {
 	public abstract class ObjectCache : IEnumerable<KeyValuePair<string, object>>, IEnumerable
 	{
+		static IServiceProvider host;
+		
 		public static readonly DateTimeOffset InfiniteAbsoluteExpiration;
 		public static readonly TimeSpan NoSlidingExpiration;
-		
+
 		public static IServiceProvider Host {
 			[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
-			get; set;
+			get { return host; }
+			set {
+				if (value == null)
+					throw new ArgumentNullException ("value");
+
+				if (host != null)
+					throw new InvalidOperationException ("The property has already been set, and can only be set once.");
+
+				host = value;
+			}
 		}
 		
 		public abstract DefaultCacheCapabilities DefaultCacheCapabilities { get; }
