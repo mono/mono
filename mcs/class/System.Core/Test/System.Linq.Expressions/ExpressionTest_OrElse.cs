@@ -280,7 +280,7 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (new Slot (64), orelse (new Slot (64), new Slot (64)));
 			Assert.AreEqual (new Slot (32), orelse (new Slot (32), new Slot (64)));
 		}
-
+#if !NET_4_0 // dlr bug 5867
 		[Test]
 		public void UserDefinedOrElseLiftedToNull ()
 		{
@@ -302,7 +302,7 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.AreEqual (new Slot (32), orelse (new Slot (32), null));
 			Assert.AreEqual (null, orelse (null, null));
 		}
-
+#endif
 		[Test]
 		public void UserDefinedOrElseShortCircuit ()
 		{
