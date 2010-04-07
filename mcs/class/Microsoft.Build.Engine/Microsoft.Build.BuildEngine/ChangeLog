@@ -1,3 +1,13 @@
+2010-04-07  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs: Dump items and properties when a project starts
+	to build. Useful for debugging.
+	* Engine.cs (LogProjectStarted): Set the properties and items also,
+	for the project started event.
+	* Project.cs (EvaluatedPropertiesAsDictionaryEntries): New.
+	(EvaluatedItemsByNameAsDictionaryEntries): New. Required for
+	ProjectStartedEvent .
+
 2010-04-03  Ankit Jain  <jankit@novell.com>
 
 	* BuildEngine.cs: Implement IBuildEngine2 instead of

@@ -1099,7 +1099,19 @@ namespace Microsoft.Build.BuildEngine {
 				return evaluatedItemsByName;
 			}
 		}
-		
+
+		internal IEnumerable EvaluatedItemsByNameAsDictionaryEntries {
+			get {
+				if (EvaluatedItemsByName.Count == 0)
+					yield break;
+
+				foreach (KeyValuePair<string, BuildItemGroup> pair in EvaluatedItemsByName) {
+					foreach (BuildItem bi in pair.Value)
+						yield return new DictionaryEntry (pair.Key, bi.ConvertToITaskItem (null, ExpressionOptions.ExpandItemRefs));
+				}
+			}
+		}
+
 		internal IDictionary <string, BuildItemGroup> EvaluatedItemsByNameIgnoringCondition {
 			get {
 				// FIXME: do we need to do this here?
@@ -1257,6 +1269,13 @@ namespace Microsoft.Build.BuildEngine {
 					Reevaluate ();
 				}
 				return evaluatedProperties;
+			}
+		}
+
+		internal IEnumerable EvaluatedPropertiesAsDictionaryEntries {
+			get {
+				foreach (BuildProperty bp in EvaluatedProperties)
+					yield return new DictionaryEntry (bp.Name, bp.Value);
 			}
 		}
 

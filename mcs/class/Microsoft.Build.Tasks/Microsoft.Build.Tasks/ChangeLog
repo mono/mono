@@ -1,3 +1,8 @@
+2010-04-07  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs: Emit global properties, if any. Sort the property
+	list.
+
 2010-04-03  Ankit Jain  <jankit@novell.com>
 
 	* Csc.cs: Use dmcs as the compiler for 4.0 profile.

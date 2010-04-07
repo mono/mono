@@ -384,13 +384,15 @@ namespace Microsoft.Build.BuildEngine {
 
 		void LogProjectStarted (Project project, string [] target_names)
 		{
-			ProjectStartedEventArgs psea;
+			string targets;
 			if (target_names == null || target_names.Length == 0)
-				psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName,
-						String.Empty, null, null);
+				targets = String.Empty;
 			else
-				psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName,
-						String.Join (";", target_names), null, null);
+				targets = String.Join (";", target_names);
+
+			ProjectStartedEventArgs psea = new ProjectStartedEventArgs ("Project started.", null, project.FullFileName, targets,
+					project.EvaluatedPropertiesAsDictionaryEntries, project.EvaluatedItemsByNameAsDictionaryEntries);
+
 			eventSource.FireProjectStarted (this, psea);
 		}
 

@@ -65,8 +65,13 @@ namespace Microsoft.Build.Tasks {
 			string currentDirectory = Environment.CurrentDirectory;
 			Hashtable outputs;
 		
-			Dictionary<string, string> global_properties = SplitPropertiesToDictionary ();
+			var global_properties = SplitPropertiesToDictionary ();
 			Dictionary<string, ITaskItem> projectsByFileName = new Dictionary<string, ITaskItem> ();
+
+			Log.LogMessage (MessageImportance.Low, "Global Properties:");
+			if (global_properties != null)
+				foreach (KeyValuePair<string, string> pair in global_properties)
+					Log.LogMessage (MessageImportance.Low, "\t{0} = {1}", pair.Key, pair.Value);
 
 			foreach (ITaskItem project in projects) {
 				filename = project.GetMetadata ("FullPath");
@@ -187,12 +192,12 @@ namespace Microsoft.Build.Tasks {
 			get; set;
 		}
 
-		Dictionary<string, string> SplitPropertiesToDictionary ()
+		SortedDictionary<string, string> SplitPropertiesToDictionary ()
 		{
 			if (properties == null)
 				return null;
 
-			Dictionary<string, string> global_properties = new Dictionary<string, string> ();
+			var global_properties = new SortedDictionary<string, string> ();
 			foreach (string kvpair in properties) {
 				if (String.IsNullOrEmpty (kvpair))
 					continue;
