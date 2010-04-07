@@ -1,5 +1,10 @@
 2010-04-08  Zoltan Varga  <vargaz@gmail.com>
 
+	* icall.c (ves_icall_System_Environment_Exit): Shutdown the threadpool before
+	waiting for all threads to suspend, as those threads can't be suspended.
+
+2010-04-08  Zoltan Varga  <vargaz@gmail.com>
+
 	* threads.c (mono_thread_suspend_all_other_threads): Call ensure_synch_cs_set ()
 	to avoid crashes on newly created threads.
 
