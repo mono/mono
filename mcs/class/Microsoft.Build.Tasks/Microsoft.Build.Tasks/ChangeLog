@@ -1,3 +1,7 @@
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	* Vbc.cs (ValidateParameters): Always return true, dummy implementation.
+
 2010-04-07  Ankit Jain  <jankit@novell.com>
 
 	* MSBuild.cs: Emit global properties, if any. Sort the property

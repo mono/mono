@@ -151,7 +151,7 @@ namespace Microsoft.Build.Tasks {
 		[MonoTODO]
 		protected override bool ValidateParameters ()
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
 		
 		[MonoTODO]
