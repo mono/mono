@@ -1,5 +1,10 @@
 2010-04-06  Ankit Jain  <jankit@novell.com>
 
+	* SolutionParser.cs: Identify and emit warning for a
+	common problem on some installations of windows.
+
+2010-04-06  Ankit Jain  <jankit@novell.com>
+
 	* Makefile: Add xbuild_targets.make .
 
 2010-04-03  Ankit Jain  <jankit@novell.com>
