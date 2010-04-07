@@ -1,3 +1,8 @@
+
+Wed Apr 7 11:28:42 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* method-to-ir.c: optimize array accesses from generic interfaces.
+
 2010-04-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c: Update after the memset/memcpy intrinsics changes in LLVM SVN.
