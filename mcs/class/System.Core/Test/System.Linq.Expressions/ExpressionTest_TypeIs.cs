@@ -104,7 +104,7 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsTrue (baz_is_bar (new Baz ()));
 		}
 
-#if !NET_4_0 // dlr still has the bug
+#if !NET_4_0 // dlr bug 5868
 		[Test]
 		[Category ("NotDotNet")]
 		[ExpectedException (typeof (ArgumentException))]
