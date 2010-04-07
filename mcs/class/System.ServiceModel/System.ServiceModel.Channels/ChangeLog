@@ -1,3 +1,7 @@
+2010-04-07  Miguel de Icaza  <miguel@novell.com>
+
+	*  BufferManager.cs: Implement the BufferManager. 
+
 2010-04-07  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WSSecurityMessageHeader.cs : add FIXME comment.
