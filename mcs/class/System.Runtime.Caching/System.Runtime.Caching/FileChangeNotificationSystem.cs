@@ -28,6 +28,7 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Runtime.Caching.Hosting;
 using System.Text;
 
 namespace System.Runtime.Caching
@@ -38,6 +39,10 @@ namespace System.Runtime.Caching
 		
 		public void StartMonitoring (string filePath, OnChangedCallback onChangedCallback, out object state, out DateTimeOffset lastWriteTime, out long fileSize)
 		{
+			state = null;
+			lastWriteTime = DateTimeOffset.FromFileTime (DateTime.Now.Ticks);
+			fileSize = 0;
+			callback = onChangedCallback;
 		}
 
 		public void StopMonitoring (string filePath, object state)
@@ -48,7 +53,7 @@ namespace System.Runtime.Caching
 		{
 		}
 
-		IDisposable.Dispose ()
+		void IDisposable.Dispose ()
 		{
 			Dispose ();
 		}

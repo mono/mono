@@ -29,6 +29,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Runtime.Caching.Hosting;
 using System.Text;
 
 namespace System.Runtime.Caching
@@ -76,7 +77,7 @@ namespace System.Runtime.Caching
 				if (String.IsNullOrEmpty (p))
 					throw new ArgumentException ("A path in the filePaths list is null or an empty string.");
 
-				if (!Path.IsRooted (p))
+				if (!Path.IsPathRooted (p))
 					throw new ArgumentException ("Absolute path information is required.");
 				
 				list.Add (p);
@@ -137,22 +138,23 @@ namespace System.Runtime.Caching
 					continue; // silently ignore dupes
 				
 				notificationSystem.StartMonitoring (path, OnChanged, out state, out lastWriteTime, out fileSize);
-				notificationSystem.Add (path, state);
 			}
 		}
 
 		void OnChanged (object state)
 		{
-			if (notificationSystem == null)
 		}
 		
 		protected override void Dispose (bool disposing)
 		{
 			if (disposing && disposeNotificationSystem && notificationSystem != null) {
-				try {
-					notificationSystem.Dispose ();
-				} finally {
-					notificationSystem = null;
+				var fcns = notificationSystem as FileChangeNotificationSystem;
+				if (fcns != null) {
+					try {
+						fcns.Dispose ();
+					} finally {
+						notificationSystem = null;
+					}
 				}
 			}
 		}
