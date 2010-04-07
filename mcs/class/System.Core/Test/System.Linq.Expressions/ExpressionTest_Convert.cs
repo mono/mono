@@ -88,7 +88,9 @@ namespace MonoTests.System.Linq.Expressions {
 			conv = Expression.Convert (p, typeof (IFoo));
 
 			Assert.AreEqual (typeof (IFoo), conv.Type);
+#if !NET_4_0
 			Assert.AreEqual ("Convert(<param>)", conv.ToString ());
+#endif
 		}
 
 		[Test]
