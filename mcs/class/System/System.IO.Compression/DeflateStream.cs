@@ -421,19 +421,19 @@ namespace System.IO.Compression {
 		const string LIBNAME = "MonoPosixHelper";
 #endif
 
-		[DllImport (LIBNAME)]
+		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern IntPtr CreateZStream (CompressionMode compress, bool gzip, UnmanagedReadOrWrite feeder, IntPtr data);
 
-		[DllImport (LIBNAME)]
+		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern int CloseZStream (IntPtr stream);
 
-		[DllImport (LIBNAME)]
+		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern int Flush (IntPtr stream);
 
-		[DllImport (LIBNAME)]
+		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern int ReadZStream (IntPtr stream, IntPtr buffer, int length);
 
-		[DllImport (LIBNAME)]
+		[DllImport (LIBNAME, CallingConvention=CallingConvention.Cdecl)]
 		static extern int WriteZStream (IntPtr stream, IntPtr buffer, int length);
 	}
 }
