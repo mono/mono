@@ -1,5 +1,9 @@
 2010-04-07  Jb Evain  <jbevain@novell.com>
 
+	* EnumerableQuery_T.cs: implement.
+
+2010-04-07  Jb Evain  <jbevain@novell.com>
+
 	* EnumerableQuery.cs: make ctor protected.
 
 2010-04-06  Jb Evain  <jbevain@novell.com>
