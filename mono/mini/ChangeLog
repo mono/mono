@@ -1,3 +1,10 @@
+2010-04-08  Kornel Pal  <kornelpal@gmail.com>
+
+	* method-to-ir.c (mini_emit_inst_for_method): Fix a typo that caused
+	CompareExchange not to be inlined for I8.
+
+	Contributed under MIT/X11 license.
+
 2010-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* array.cs: Add tests for cast between primitive array types.
