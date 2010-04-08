@@ -1,3 +1,7 @@
+2010-04-07  Geoff Norton  <gnorton@novell.com>
+
+	* domain.c: Avoid a deadlock on osx.  Fixes #565765
+
 2010-04-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* icall.c (ves_icall_System_Enum_ToObject): Avoid a crash for unfinished type
