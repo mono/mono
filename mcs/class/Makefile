@@ -167,6 +167,7 @@ net_4_0_dirs := \
 	Microsoft.CSharp	\
 	System.Windows.Forms.DataVisualization	\
 	System.ComponentModel.Composition \
+	System.Xaml \
 	System.ServiceModel.Routing \
 	System.Runtime.Caching
 
