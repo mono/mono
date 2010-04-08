@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Xaml.Schema;
 
@@ -30,98 +31,141 @@ namespace System.Xaml
 {
 	public class XamlDirective : XamlMember
 	{
-		public XamlDirective (string xamlNamespace, string name)
-			: base (name, null, false)
+		class DirectiveMemberInvoker : XamlMemberInvoker
 		{
-			throw new NotImplementedException ();
+			XamlDirective directive;
+
+			public DirectiveMemberInvoker (XamlDirective directive)
+			{
+			}
+		}
+
+		public XamlDirective (string xamlNamespace, string name)
+			: this (new string [] {xamlNamespace}, name, new XamlType (typeof (object), new XamlSchemaContext (new XamlSchemaContextSettings ())), null, AllowedMemberLocations.Any)
+		{
+			if (xamlNamespace == null)
+				throw new ArgumentNullException ("xamlNamespace");
+			is_unknown = true;
 		}
 
 		public XamlDirective (IEnumerable<string> xamlNamespaces, string name, XamlType xamlType, XamlValueConverter<TypeConverter> typeConverter, AllowedMemberLocations allowedLocation)
-			: base (name, null, false)
+			: base (true, xamlNamespaces != null ? xamlNamespaces.FirstOrDefault () : null, name)
 		{
-			AllowedLocation = allowedLocation;
+			if (xamlNamespaces == null)
+				throw new ArgumentNullException ("xamlNamespaces");
+			if (xamlType == null)
+				throw new ArgumentNullException ("xamlType");
 
-			throw new NotImplementedException ();
+			type = xamlType;
+			xaml_namespaces = new List<string> (xamlNamespaces);
+			AllowedLocation = allowedLocation;
+			type_converter = typeConverter;
+			
+			invoker = new DirectiveMemberInvoker (this);
 		}
 
 		public AllowedMemberLocations AllowedLocation { get; private set; }
+		XamlValueConverter<TypeConverter> type_converter;
+		XamlType type;
+		XamlMemberInvoker invoker;
+		bool is_unknown;
+		IList<string> xaml_namespaces;
 
 		public override int GetHashCode ()
 		{
 			throw new NotImplementedException ();
 		}
+
 		public override IList<string> GetXamlNamespaces ()
 		{
-			throw new NotImplementedException ();
+			return xaml_namespaces;
 		}
+
 		protected override sealed ICustomAttributeProvider LookupCustomAttributeProvider ()
 		{
 			throw new NotImplementedException ();
 		}
+
 		protected override sealed XamlValueConverter<XamlDeferringLoader> LookupDeferringLoader ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
+
 		protected override sealed IList<XamlMember> LookupDependsOn ()
 		{
-			throw new NotImplementedException ();
+			return base.LookupDependsOn ();
 		}
+
 		protected override sealed XamlMemberInvoker LookupInvoker ()
 		{
-			throw new NotImplementedException ();
+			return invoker;
 		}
+
 		protected override sealed bool LookupIsAmbient ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
+
 		protected override sealed bool LookupIsEvent ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
+
 		protected override sealed bool LookupIsReadOnly ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
+
 		protected override sealed bool LookupIsReadPublic ()
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
+
 		protected override sealed bool LookupIsUnknown ()
 		{
-			throw new NotImplementedException ();
+			return is_unknown;
 		}
+
 		protected override sealed bool LookupIsWriteOnly ()
 		{
-			throw new NotImplementedException ();
+			return false;
 		}
+
 		protected override sealed bool LookupIsWritePublic ()
 		{
-			throw new NotImplementedException ();
+			return true;
 		}
+
 		protected override sealed XamlType LookupTargetType ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
+
 		protected override sealed XamlType LookupType ()
 		{
-			throw new NotImplementedException ();
+			return type;
 		}
+
 		protected override sealed XamlValueConverter<TypeConverter> LookupTypeConverter ()
 		{
-			throw new NotImplementedException ();
+			return type_converter;
 		}
+
 		protected override sealed MethodInfo LookupUnderlyingGetter ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
+
 		protected override sealed MemberInfo LookupUnderlyingMember ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
+
 		protected override sealed MethodInfo LookupUnderlyingSetter ()
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
+
 		public override string ToString ()
 		{
 			throw new NotImplementedException ();

@@ -1,5 +1,10 @@
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlMember.cs, XamlDirective.cs :
+	  Implemented lots of directive members.
+
+2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlDirective.cs
 	  XamlLanguage.cs
 	  XamlMember.cs

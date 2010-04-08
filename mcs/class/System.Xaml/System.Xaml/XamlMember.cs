@@ -133,12 +133,20 @@ namespace System.Xaml
 			this.invoker = invoker ?? new XamlMemberInvoker (this);
 		}
 
+		internal XamlMember (bool isDirective, string ns, string name)
+		{
+			directive_ns = ns;
+			Name = name;
+			is_directive = isDirective;
+		}
+
 		XamlType type, target_type;
 		MemberInfo underlying_member;
 		MethodInfo underlying_getter, underlying_setter;
 		XamlSchemaContext context;
 		XamlMemberInvoker invoker;
-		bool is_attachable, is_event;
+		bool is_attachable, is_event, is_directive;
+		string directive_ns;
 
 		internal MethodInfo UnderlyingGetter {
 			get { return LookupUnderlyingGetter (); }
@@ -153,19 +161,23 @@ namespace System.Xaml
 		public string Name { get; private set; }
 
 		public string PreferredXamlNamespace {
-			get { return DeclaringType.PreferredXamlNamespace; }
+			get { return directive_ns ?? (DeclaringType == null ? null : DeclaringType.PreferredXamlNamespace); }
 		}
+		
+		[MonoTODO]
 		public DesignerSerializationVisibility SerializationVisibility {
-			get { throw new NotImplementedException (); }
+			get {
+				// FIXME: probably use attribute.
+				return DesignerSerializationVisibility.Visible;
+			}
 		}
 
 		public bool IsAttachable {
 			get { return is_attachable; }
 		}
 
-		[MonoTODO]
 		public bool IsDirective {
-			get { return false; }
+			get { return is_directive; }
 		}
 
 		public bool IsNameValid {

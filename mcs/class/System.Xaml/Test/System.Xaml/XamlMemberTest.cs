@@ -391,6 +391,16 @@ namespace MonoTests.System.Xaml
 			{
 			}
 
+			public MyXamlMember (string name, MethodInfo adder, XamlSchemaContext sc)
+				: base (name, adder, sc)
+			{
+			}
+
+			public MyXamlMember (string name, XamlType type, bool isAmbient)
+				: base (name, type, isAmbient)
+			{
+			}
+
 			public MemberInfo UnderlyingMember {
 				get { return LookupUnderlyingMember (); }
 			}
@@ -402,6 +412,8 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (new MyXamlMember (ass_load, sctx).UnderlyingMember is EventInfo, "#1");
 			Assert.IsTrue (new MyXamlMember (str_len, sctx).UnderlyingMember is PropertyInfo, "#2");
 			Assert.AreEqual (dummy_get, new MyXamlMember ("DummyProp", dummy_get, dummy_set, sctx).UnderlyingMember, "#3");
+			Assert.AreEqual (dummy_add, new MyXamlMember ("DummyAddMethod", dummy_add, sctx).UnderlyingMember, "#4");
+			Assert.IsNull (new MyXamlMember ("Length", new XamlType (typeof (string), sctx), false).UnderlyingMember, "#5");
 		}
 	}
 }
