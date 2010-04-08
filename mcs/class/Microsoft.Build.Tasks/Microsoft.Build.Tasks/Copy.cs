@@ -68,6 +68,11 @@ namespace Microsoft.Build.Tasks {
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string destinationFile = destinationItem.GetMetadata ("FullPath");
 
+						if (!File.Exists (sourceFile)) {
+							Log.LogError ("Cannot copy {0} to {1}, as the source file doesn't exist.", sourceFile, destinationFile);
+							continue;
+						}
+
 						if (!skipUnchangedFiles || HasFileChanged (sourceFile, destinationFile))
 							CopyFile (sourceFile, destinationFile, true);
 
@@ -84,6 +89,11 @@ namespace Microsoft.Build.Tasks {
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string filename = sourceItem.GetMetadata ("Filename") + sourceItem.GetMetadata ("Extension");
 						string destinationFile = Path.Combine (destinationDirectory,filename);
+
+						if (!File.Exists (sourceFile)) {
+							Log.LogError ("Cannot copy {0} to {1}, as the source file doesn't exist.", sourceFile, destinationFile);
+							continue;
+						}
 
 						if (!skipUnchangedFiles || directoryCreated ||
 							HasFileChanged (sourceFile, destinationFile))

@@ -1,5 +1,9 @@
 2010-04-08  Ankit Jain  <jankit@novell.com>
 
+	* Copy.cs: Handle non-existant source files.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
 	Fix bug #594541
 	* Vbc.cs (LogEventsFromTextOutput): Override and correctly parse
 	output. Taken regex from monodevelop for this.
