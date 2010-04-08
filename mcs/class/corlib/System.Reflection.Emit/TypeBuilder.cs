@@ -173,7 +173,8 @@ namespace System.Reflection.Emit
 			get { return nesting_type; }
 		}
 
-/*		public override bool IsSubclassOf (Type c)
+		[ComVisible (true)]
+		public override bool IsSubclassOf (Type c)
 		{
 			Type t;
 			if (c == null)
@@ -187,14 +188,14 @@ namespace System.Reflection.Emit
 				t = t.BaseType;
 			}
 			return false;
-		}*/
+		}
 
 		public override Type UnderlyingSystemType {
 			get {
 				if (is_created)
 					return created.UnderlyingSystemType;
 
-				if (IsEnum && !IsCompilerContext) {
+				if (!IsCompilerContext && IsEnum) {
 					if (underlying_type != null)
 						return underlying_type;
 					throw new InvalidOperationException (
@@ -1674,13 +1675,6 @@ namespace System.Reflection.Emit
 		public override bool IsAssignableFrom (Type c)
 		{
 			return base.IsAssignableFrom (c);
-		}
-
-		[ComVisible (true)]
-		[MonoTODO]
-		public override bool IsSubclassOf (Type c)
-		{
-			return base.IsSubclassOf (c);
 		}
 
 		[MonoTODO ("arrays")]

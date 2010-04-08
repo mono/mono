@@ -93,11 +93,16 @@ namespace System.Reflection.Emit
 	internal class GenericInstanceKey {
 		Type gtd;
 		internal Type[] args;
+		int hash_code;
 
 		internal GenericInstanceKey (Type gtd, Type[] args)
 		{
 			this.gtd = gtd;
 			this.args = args;
+
+			hash_code = gtd.GetHashCode ();
+			for (int i = 0; i < args.Length; ++i)
+				hash_code ^= args [i].GetHashCode ();
 		}
 
 		static bool IsBoundedVector (Type type) {
@@ -193,10 +198,7 @@ namespace System.Reflection.Emit
 
 		public override int GetHashCode ()
 		{
-			int hash = gtd.GetHashCode ();
-			for (int i = 0; i < args.Length; ++i)
-				hash ^= args [i].GetHashCode ();
-			return hash;
+			return hash_code;
 		}
 	}
 

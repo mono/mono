@@ -1,3 +1,17 @@
+2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AssemblyBuilder.cs (GenericInstanceKey): Precalculate
+	GenericInstanceKey hash code since this can cause infinite
+	recursion when inflating "Foo<T> : Bar<Foo<T>>" parent.
+
+	* TypeBuilder.cs (IsSubclassOf): Don't delegate to base class
+	since the unmanaged information can be out of sync.
+
+	* TypeBuilder.cs (UnderlyingSystemType): Invert the test order
+	since IsEnum now is potentialy more expensive.
+
+	Fixes #594728.
+
 2010-04-06  Marek Safar  <marek.safar@gmail.com>
 
 	* ModuleBuilder.cs: Use Dictionary.
