@@ -440,7 +440,7 @@ namespace System.Net
 					status11 = -2146762490; //CERT_E_PURPOSE 0x800B0106
 				}
 
-				if (!CheckServerIdentity (leaf, Host)) {
+				if (!CheckServerIdentity (certs [0], Host)) {
 					errors |= SslPolicyErrors.RemoteCertificateNameMismatch;
 					status11 = -2146762481; // CERT_E_CN_NO_MATCH 0x800B010F
 				}
@@ -621,14 +621,13 @@ namespace System.Net
 			// 2.1.		exact match is required
 			// 3.	Use of the most specific Common Name (CN=) in the Subject
 			// 3.1		Existing practice but DEPRECATED
-			static bool CheckServerIdentity (X509Certificate2 cert, string targetHost) 
+			static bool CheckServerIdentity (Mono.Security.X509.X509Certificate cert, string targetHost) 
 			{
 				try {
-					X509Extension ext = cert.Extensions ["2.5.29.17"];
+					Mono.Security.X509.X509Extension ext = cert.Extensions ["2.5.29.17"];
 					// 1. subjectAltName
 					if (ext != null) {
-						ASN1 asn = new ASN1 (ext.RawData);
-						SubjectAltNameExtension subjectAltName = new SubjectAltNameExtension (asn);
+						SubjectAltNameExtension subjectAltName = new SubjectAltNameExtension (ext);
 						// 1.1 - multiple dNSName
 						foreach (string dns in subjectAltName.DNSNames) {
 							// 1.2 TODO - wildcard support
@@ -643,7 +642,7 @@ namespace System.Net
 						}
 					}
 					// 3. Common Name (CN=)
-					return CheckDomainName (cert.SubjectName.Format (false), targetHost);
+					return CheckDomainName (cert.SubjectName, targetHost);
 				} catch (Exception e) {
 					Console.Error.WriteLine ("ERROR processing certificate: {0}", e);
 					Console.Error.WriteLine ("Please, report this problem to the Mono team");

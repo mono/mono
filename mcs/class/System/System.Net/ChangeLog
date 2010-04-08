@@ -1,3 +1,8 @@
+2010-04-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ServicePointManager.cs: obtain the SubjectAltName extension the
+	right way. Fixes bug #594110.
+
 2010-03-27 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: when PreAuthenticate is true, don't remove the
