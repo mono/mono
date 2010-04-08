@@ -1,3 +1,7 @@
+2010-04-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* GlobalizationSection.cs: use WebName instead of EncodingName.
+
 2010-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationManager.cs: do not use Request.Path - it may

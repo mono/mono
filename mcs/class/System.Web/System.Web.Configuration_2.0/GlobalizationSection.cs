@@ -135,13 +135,13 @@ namespace System.Web.Configuration {
 		[ConfigurationProperty ("fileEncoding")]
 		public Encoding FileEncoding {
 			get { return GetEncoding (fileEncodingProp, ref cached_fileencoding); }
-			set { base[fileEncodingProp] = value.EncodingName; }
+			set { base[fileEncodingProp] = value.WebName; }
 		}
 
 		[ConfigurationProperty ("requestEncoding", DefaultValue = "utf-8")]
 		public Encoding RequestEncoding {
 			get { return GetEncoding (requestEncodingProp, ref cached_requestencoding); }
-			set { base[requestEncodingProp] = value.EncodingName; }
+			set { base[requestEncodingProp] = value.WebName; }
 		}
 
 		[ConfigurationProperty ("resourceProviderFactoryType", DefaultValue = "")]
@@ -153,13 +153,13 @@ namespace System.Web.Configuration {
 		[ConfigurationProperty ("responseEncoding", DefaultValue = "utf-8")]
 		public Encoding ResponseEncoding {
 			get { return GetEncoding (responseEncodingProp, ref cached_responseencoding); }
-			set { base[responseEncodingProp] = value.EncodingName; }
+			set { base[responseEncodingProp] = value.WebName; }
 		}
 
 		[ConfigurationProperty ("responseHeaderEncoding", DefaultValue = "utf-8")]
 		public Encoding ResponseHeaderEncoding {
 			get { return GetEncoding (responseHeaderEncodingProp, ref cached_responseheaderencoding); }
-			set { base[responseHeaderEncodingProp] = value.EncodingName; }
+			set { base[responseHeaderEncodingProp] = value.WebName; }
 		}
 
 		[ConfigurationProperty ("uiCulture", DefaultValue = "")]
@@ -257,7 +257,8 @@ namespace System.Web.Configuration {
 				cached_encoding_name = ((enc == null) ? "utf-8" : enc);
 
 			Encoding encoding = (Encoding)encodingHash [prop];
-			if (encoding == null || encoding.EncodingName != cached_encoding_name) {
+			if (encoding == null || encoding.WebName != cached_encoding_name) {
+				Console.WriteLine ("HERE");
 				try {
 					switch (cached_encoding_name.ToLower (Helpers.InvariantCulture)) {
 					case "utf-16le":
@@ -289,7 +290,7 @@ namespace System.Web.Configuration {
 			}
 
 			encodingHash[prop] = encoding;
-			cached_encoding_name = encoding.EncodingName;
+			cached_encoding_name = encoding.WebName;
 
 			return encoding;
 		}
