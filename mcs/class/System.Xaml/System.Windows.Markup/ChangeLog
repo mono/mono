@@ -1,5 +1,47 @@
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ValueSerializer.cs : add missing members.
+	* AmbientAttribute.cs
+	  ArrayExtension.cs
+	  ConstructorArgumentAttribute.cs
+	  ContentPropertyAttribute.cs
+	  ContentWrapperAttribute.cs
+	  DateTimeValueSerializer.cs
+	  DependsOnAttribute.cs
+	  DictionaryKeyPropertyAttribute.cs
+	  IComponentConnector.cs
+	  INameScopeDictionary.cs
+	  IProvideValueTarget.cs
+	  IQueryAmbient.cs
+	  IUriContext.cs
+	  IXamlTypeResolver.cs
+	  MarkupExtensionReturnTypeAttribute.cs
+	  MemberDefinition.cs
+	  NameReferenceConverter.cs
+	  NameScopePropertyAttribute.cs
+	  NullExtension.cs
+	  PropertyDefinition.cs
+	  Reference.cs
+	  RootNamespaceAttribute.cs
+	  RuntimeNamePropertyAttribute.cs
+	  StaticExtension.cs
+	  TrimSurroundingWhitespaceAttribute.cs
+	  TypeExtension.cs
+	  UidPropertyAttribute.cs
+	  UsableDuringInitializationAttribute.cs
+	  ValueSerializerAttribute.cs
+	  WhitespaceSignificantCollectionAttribute.cs
+	  XData.cs
+	  XamlDeferLoadAttribute.cs
+	  XamlSetMarkupExtensionAttribute.cs
+	  XamlSetTypeConverterAttribute.cs
+	  XmlLangPropertyAttribute.cs
+	  XmlnsCompatibleWithAttribute.cs
+	  XmlnsDefinitionAttribute.cs
+	  XmlnsPrefixAttribute.cs : new types.
+
+2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ValueSerializer.cs
 	  INameScope.cs
 	  XamlSetMarkupExtensionEventArgs.cs

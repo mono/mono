@@ -38,19 +38,38 @@ namespace System.Xaml.Schema
 
 		public XamlMemberInvoker (XamlMember member)
 		{
+			if (member == null)
+				throw new ArgumentNullException ("member");
+			this.member = member;
 		}
 
-		public MethodInfo UnderlyingGetter { get; private set; }
-		public MethodInfo UnderlyingSetter { get; private set; }
+		XamlMember member;
+
+		public MethodInfo UnderlyingGetter {
+			get { return member != null ? member.UnderlyingGetter : null; }
+		}
+
+		public MethodInfo UnderlyingSetter {
+			get { return member != null ? member.UnderlyingSetter : null; }
+		}
 
 		public virtual object GetValue (object instance)
 		{
-			throw new NotImplementedException ();
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+			if (UnderlyingGetter == null)
+				throw new NotSupportedException ("Attempt to get value from write-only property or event");
+			return UnderlyingGetter.Invoke (instance, new object [0]);
 		}
 		public virtual void SetValue (object instance, object value)
 		{
-			throw new NotImplementedException ();
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+			if (UnderlyingSetter == null)
+				throw new NotSupportedException ("Attempt to get value from read-only property");
+			UnderlyingSetter.Invoke (instance, new object [] {value});
 		}
+
 		public virtual ShouldSerializeResult ShouldSerializeValue (object instance)
 		{
 			throw new NotImplementedException ();

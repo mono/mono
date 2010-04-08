@@ -24,58 +24,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
-using System.Xaml;
+using System.Globalization;
 
 namespace System.Windows.Markup
 {
-	public abstract class ValueSerializer
+	public class NameReferenceConverter : TypeConverter
 	{
-		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor)
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
 			throw new NotImplementedException ();
 		}
-		public static ValueSerializer GetSerializerFor (Type type)
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
 			throw new NotImplementedException ();
 		}
-		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor, IValueSerializerContext context)
+		public override Object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, Object value)
 		{
 			throw new NotImplementedException ();
 		}
-		public static ValueSerializer GetSerializerFor (Type type, IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual bool CanConvertFromString (string value, IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		public virtual bool CanConvertToString (object value, IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		public virtual object ConvertFromString (string value, IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		public virtual string ConvertToString (object value,     IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected Exception GetConvertFromException (object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected Exception GetConvertToException (object value, Type destinationType)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual IEnumerable<Type> TypeReferences (object value, IValueSerializerContext context)
+		public override Object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, Object value, Type destinationType)
 		{
 			throw new NotImplementedException ();
 		}

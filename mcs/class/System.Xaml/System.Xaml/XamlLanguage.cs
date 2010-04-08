@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Globalization;
 using System.Reflection;
 using System.Xaml;
 using System.Windows.Markup;
@@ -180,6 +181,39 @@ namespace System.Xaml.Schema
 		}
 		public static IList<string> XmlNamespaces {
 			get { throw new NotImplementedException (); }
+		}
+
+		internal static bool IsValidXamlName (string name)
+		{
+			if (string.IsNullOrEmpty (name))
+				return false;
+			if (!IsValidXamlName (name [0], true))
+				return false;
+			foreach (char c in name)
+				if (!IsValidXamlName (c, false))
+					return false;
+			return true;
+		}
+
+		static bool IsValidXamlName (char c, bool first)
+		{
+			if (c == '_')
+				return true;
+			switch (char.GetUnicodeCategory (c)) {
+			case UnicodeCategory.LowercaseLetter:
+			case UnicodeCategory.UppercaseLetter:
+			case UnicodeCategory.TitlecaseLetter:
+			case UnicodeCategory.OtherLetter:
+			case UnicodeCategory.LetterNumber:
+				return true;
+			case UnicodeCategory.NonSpacingMark:
+			case UnicodeCategory.DecimalDigitNumber:
+			case UnicodeCategory.SpacingCombiningMark:
+			case UnicodeCategory.ModifierLetter:
+				return !first;
+			default:
+				return false;
+			}
 		}
 	}
 }

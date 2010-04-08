@@ -167,7 +167,7 @@ namespace System.Xaml
 			get { return LookupIsNameScope (); }
 		}
 		public bool IsNameValid {
-			get { throw new NotImplementedException (); }
+			get { return XamlLanguage.IsValidXamlName (Name); }
 		}
 
 		public bool IsNullable {

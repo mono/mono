@@ -1,5 +1,12 @@
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlDirective.cs
+	  XamlLanguage.cs
+	  XamlMember.cs
+	  XamlType.cs : add more members and implement some.
+
+2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AmbientPropertyValue.cs
 	  AttachableMemberIdentifier.cs
 	  AttachablePropertyServices.cs

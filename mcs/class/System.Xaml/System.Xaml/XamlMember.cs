@@ -39,7 +39,14 @@ namespace System.Xaml
 		public XamlMember (EventInfo eventInfo, XamlSchemaContext schemaContext, XamlMemberInvoker invoker)
 			: this (schemaContext, invoker)
 		{
-			throw new NotImplementedException ();
+			if (eventInfo == null)
+				throw new ArgumentNullException ("eventInfo");
+			Name = eventInfo.Name;
+			underlying_member = eventInfo;
+			DeclaringType = new XamlType (eventInfo.DeclaringType, schemaContext);
+			target_type = DeclaringType;
+			UnderlyingSetter = eventInfo.GetAddMethod ();
+			is_event = true;
 		}
 
 		public XamlMember (PropertyInfo propertyInfo, XamlSchemaContext schemaContext)
@@ -50,7 +57,14 @@ namespace System.Xaml
 		public XamlMember (PropertyInfo propertyInfo, XamlSchemaContext schemaContext, XamlMemberInvoker invoker)
 			: this (schemaContext, invoker)
 		{
-			throw new NotImplementedException ();
+			if (propertyInfo == null)
+				throw new ArgumentNullException ("propertyInfo");
+			Name = propertyInfo.Name;
+			underlying_member = propertyInfo;
+			DeclaringType = new XamlType (propertyInfo.DeclaringType, schemaContext);
+			target_type = DeclaringType;
+			UnderlyingGetter = propertyInfo.GetGetMethod ();
+			UnderlyingSetter = propertyInfo.GetSetMethod ();
 		}
 
 		public XamlMember (string attachableEventName, MethodInfo adder, XamlSchemaContext schemaContext)
@@ -58,11 +72,21 @@ namespace System.Xaml
 		{
 		}
 
-		public XamlMember (string name, XamlType declaringType, bool isAttachable)
+		public XamlMember (string attachableEventName, MethodInfo adder, XamlSchemaContext schemaContext, XamlMemberInvoker invoker)
+			: this (schemaContext, invoker)
 		{
-			Name = name;
-			DeclaringType = declaringType;
-			throw new NotImplementedException ();
+			if (attachableEventName == null)
+				throw new ArgumentNullException ("attachableEventName");
+			if (adder == null)
+				throw new ArgumentNullException ("adder");
+			Name = attachableEventName;
+			VerifyAdderSetter (adder);
+			underlying_member = adder;
+			DeclaringType = new XamlType (adder.DeclaringType, schemaContext);
+			target_type = new XamlType (typeof (object), schemaContext);
+			UnderlyingSetter = adder;
+			is_event = true;
+			is_attachable = true;
 		}
 
 		public XamlMember (string attachablePropertyName, MethodInfo getter, MethodInfo setter, XamlSchemaContext schemaContext)
@@ -70,18 +94,35 @@ namespace System.Xaml
 		{
 		}
 
-		public XamlMember (string attachableEventName, MethodInfo adder, XamlSchemaContext schemaContext, XamlMemberInvoker invoker)
-			: this (schemaContext, invoker)
-		{
-			throw new NotImplementedException ();
-		}
-
 		public XamlMember (string attachablePropertyName, MethodInfo getter, MethodInfo setter, XamlSchemaContext schemaContext, XamlMemberInvoker invoker)
 			: this (schemaContext, invoker)
 		{
+			if (attachablePropertyName == null)
+				throw new ArgumentNullException ("attachablePropertyName");
+			if (getter == null && setter == null)
+				throw new ArgumentNullException ("getter", "Either property getter or setter must be non-null.");
 			Name = attachablePropertyName;
-			underlying_getter = getter;
-			underlying_setter = setter;
+			VerifyGetter (getter);
+			VerifyAdderSetter (setter);
+			underlying_member = getter ?? setter;
+			DeclaringType = new XamlType (underlying_member.DeclaringType, schemaContext);
+			target_type = new XamlType (typeof (object), schemaContext);
+			UnderlyingGetter = getter;
+			UnderlyingSetter = setter;
+			is_attachable = true;
+		}
+
+		public XamlMember (string name, XamlType declaringType, bool isAttachable)
+		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
+			if (declaringType == null)
+				throw new ArgumentNullException ("declaringType");
+			Name = name;
+			this.invoker = invoker ?? new XamlMemberInvoker (this);
+			DeclaringType = declaringType;
+			target_type = DeclaringType;
+			is_attachable = isAttachable;
 		}
 
 		XamlMember (XamlSchemaContext schemaContext, XamlMemberInvoker invoker)
@@ -89,32 +130,46 @@ namespace System.Xaml
 			if (schemaContext == null)
 				throw new ArgumentNullException ("schemaContext");
 			context = schemaContext;
-			invoker = invoker;
+			this.invoker = invoker ?? new XamlMemberInvoker (this);
 		}
 
+		XamlType type, target_type;
 		MemberInfo underlying_member;
 		MethodInfo underlying_getter, underlying_setter;
 		XamlSchemaContext context;
 		XamlMemberInvoker invoker;
+		bool is_attachable, is_event;
+
+		internal MethodInfo UnderlyingGetter {
+			get { return LookupUnderlyingGetter (); }
+			private set { underlying_getter = value; }
+		}
+		internal MethodInfo UnderlyingSetter {
+			get { return LookupUnderlyingSetter (); }
+			private set { underlying_setter = value; }
+		}
 
 		public XamlType DeclaringType { get; private set; }
 		public string Name { get; private set; }
 
 		public string PreferredXamlNamespace {
-			get { throw new NotImplementedException (); }
+			get { return DeclaringType.PreferredXamlNamespace; }
 		}
 		public DesignerSerializationVisibility SerializationVisibility {
 			get { throw new NotImplementedException (); }
 		}
 
 		public bool IsAttachable {
-			get { throw new NotImplementedException (); }
+			get { return is_attachable; }
 		}
+
+		[MonoTODO]
 		public bool IsDirective {
-			get { throw new NotImplementedException (); }
+			get { return false; }
 		}
+
 		public bool IsNameValid {
-			get { throw new NotImplementedException (); }
+			get { return XamlLanguage.IsValidXamlName (Name); }
 		}
 
 		public XamlValueConverter<XamlDeferringLoader> DeferringLoader {
@@ -196,51 +251,96 @@ namespace System.Xaml
 		}
 		protected virtual XamlValueConverter<XamlDeferringLoader> LookupDeferringLoader ()
 		{
-			throw new NotImplementedException ();
+			// FIXME: probably fill from attribute.
+			return null;
 		}
+
+		static readonly XamlMember [] empty_list = new XamlMember [0];
+
 		protected virtual IList<XamlMember> LookupDependsOn ()
 		{
-			throw new NotImplementedException ();
+			return empty_list;
 		}
+
 		protected virtual XamlMemberInvoker LookupInvoker ()
 		{
-			throw new NotImplementedException ();
+			return invoker;
 		}
 		protected virtual bool LookupIsAmbient ()
 		{
-			throw new NotImplementedException ();
+			var t = Type != null ? Type.UnderlyingType : null;
+			return t != null && t.GetCustomAttributes (typeof (AmbientAttribute), false).Length > 0;
 		}
+
 		protected virtual bool LookupIsEvent ()
 		{
-			throw new NotImplementedException ();
+			return is_event;
 		}
+
 		protected virtual bool LookupIsReadOnly ()
 		{
-			throw new NotImplementedException ();
+			var pi = underlying_member as PropertyInfo;
+			if (pi != null)
+				return pi.CanRead && !pi.CanWrite;
+			return UnderlyingGetter != null && UnderlyingSetter == null;
 		}
 		protected virtual bool LookupIsReadPublic ()
 		{
-			throw new NotImplementedException ();
+			if (underlying_member == null)
+				return true;
+			if (UnderlyingGetter != null)
+				return UnderlyingGetter.IsPublic;
+			return false;
 		}
+
 		protected virtual bool LookupIsUnknown ()
 		{
-			throw new NotImplementedException ();
+			return underlying_member == null;
 		}
+
 		protected virtual bool LookupIsWriteOnly ()
 		{
-			throw new NotImplementedException ();
+			var pi = underlying_member as PropertyInfo;
+			if (pi != null)
+				return !pi.CanRead && pi.CanWrite;
+			return UnderlyingGetter == null && UnderlyingSetter != null;
 		}
+
 		protected virtual bool LookupIsWritePublic ()
 		{
-			throw new NotImplementedException ();
+			if (underlying_member == null)
+				return true;
+			if (UnderlyingSetter != null)
+				return UnderlyingSetter.IsPublic;
+			return false;
 		}
+
 		protected virtual XamlType LookupTargetType ()
 		{
-			throw new NotImplementedException ();
+			return target_type;
 		}
+
 		protected virtual XamlType LookupType ()
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				type = new XamlType (DoGetType (), DeclaringType.SchemaContext);
+			return type;
+		}
+		
+
+		Type DoGetType ()
+		{
+			var pi = underlying_member as PropertyInfo;
+			if (pi != null)
+				return pi.PropertyType;
+			var ei = underlying_member as EventInfo;
+			if (ei != null)
+				return ei.EventHandlerType;
+			if (underlying_setter != null)
+				return underlying_setter.GetParameters () [1].ParameterType;
+			if (underlying_getter != null)
+				return underlying_getter.GetParameters () [0].ParameterType;
+			return typeof (object);
 		}
 		protected virtual XamlValueConverter<TypeConverter> LookupTypeConverter ()
 		{
@@ -264,7 +364,24 @@ namespace System.Xaml
 
 		protected virtual XamlValueConverter<ValueSerializer> LookupValueSerializer ()
 		{
-			throw new NotImplementedException ();
+			// FIXME: probably fill from attribute
+			return null;
+		}
+
+		void VerifyGetter (MethodInfo method)
+		{
+			if (method == null)
+				return;
+			if (method.GetParameters ().Length != 1 || method.ReturnType == typeof (void))
+				throw new ArgumentException (String.Format ("Property getter for {0} must have exactly one argument and must have non-void return type.", Name));
+		}
+
+		void VerifyAdderSetter (MethodInfo method)
+		{
+			if (method == null)
+				return;
+			if (method.GetParameters ().Length != 2)
+				throw new ArgumentException (String.Format ("Property getter or event adder for {0} must have exactly one argument and must have non-void return type.", Name));
 		}
 	}
 }

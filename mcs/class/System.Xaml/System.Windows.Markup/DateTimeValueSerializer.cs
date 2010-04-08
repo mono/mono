@@ -24,58 +24,25 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
-using System.Reflection;
-using System.Xaml;
+using System.Globalization;
 
 namespace System.Windows.Markup
 {
-	public abstract class ValueSerializer
+	public class DateTimeValueSerializer : ValueSerializer
 	{
-		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor)
+		public override bool CanConvertFromString (string value, IValueSerializerContext context)
 		{
 			throw new NotImplementedException ();
 		}
-		public static ValueSerializer GetSerializerFor (Type type)
+		public override bool CanConvertToString (object value, IValueSerializerContext context)
 		{
 			throw new NotImplementedException ();
 		}
-		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor, IValueSerializerContext context)
+		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
 			throw new NotImplementedException ();
 		}
-		public static ValueSerializer GetSerializerFor (Type type, IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual bool CanConvertFromString (string value, IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		public virtual bool CanConvertToString (object value, IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		public virtual object ConvertFromString (string value, IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-		public virtual string ConvertToString (object value,     IValueSerializerContext context)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected Exception GetConvertFromException (object value)
-		{
-			throw new NotImplementedException ();
-		}
-
-		protected Exception GetConvertToException (object value, Type destinationType)
-		{
-			throw new NotImplementedException ();
-		}
-
-		public virtual IEnumerable<Type> TypeReferences (object value, IValueSerializerContext context)
+		public override string ConvertToString (object value,     IValueSerializerContext context)
 		{
 			throw new NotImplementedException ();
 		}

@@ -1,7 +1,10 @@
+System.Xaml.Schema/XamlMemberInvokerTest.cs
 System.Xaml/AmbientPropertyValueTest.cs
 System.Xaml/AttachableMemberIdentifierTest.cs
 System.Xaml/NamespaceDeclarationTest.cs
+System.Xaml/XamlDirectiveTest.cs
 System.Xaml/XamlDuplicateMemberExceptionTest.cs
+System.Xaml/XamlMemberTest.cs
 System.Xaml/XamlObjectEventArgsTest.cs
 System.Xaml/XamlObjectReaderSettingsTest.cs
 System.Xaml/XamlObjectWriterSettingsTest.cs

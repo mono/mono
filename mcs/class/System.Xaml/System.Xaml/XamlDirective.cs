@@ -39,12 +39,12 @@ namespace System.Xaml
 		public XamlDirective (IEnumerable<string> xamlNamespaces, string name, XamlType xamlType, XamlValueConverter<TypeConverter> typeConverter, AllowedMemberLocations allowedLocation)
 			: base (name, null, false)
 		{
+			AllowedLocation = allowedLocation;
+
 			throw new NotImplementedException ();
 		}
 
-		public AllowedMemberLocations AllowedLocation {
-			get { throw new NotImplementedException (); }
-		}
+		public AllowedMemberLocations AllowedLocation { get; private set; }
 
 		public override int GetHashCode ()
 		{

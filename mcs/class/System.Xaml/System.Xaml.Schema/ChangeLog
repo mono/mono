@@ -1,5 +1,9 @@
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlMemberInvoker.cs : implement most of it.
+
+2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* AllowedMemberLocations.cs
 	  ShouldSerializeResult.cs
 	  XamlCollectionKind.cs
