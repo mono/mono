@@ -10746,7 +10746,7 @@ namespace MonoTests.System.Reflection.Emit
 
 			Assert.AreNotSame (arg0, gps [0], "#1");
 		}
-#if NET_2_0
+
 		[Test]
 		public void DeclaringMethodReturnsNull ()
 		{
@@ -10901,7 +10901,29 @@ namespace MonoTests.System.Reflection.Emit
 			tb.CreateType ();
 			Assert.IsNotNull (tb.IsDefined (typeof (string), true), "#2");
 		}
-#endif
+
+		[Test] //Bug #594728
+		public void IsSubclassOfWorksIfSetParentIsCalledOnParent ()
+		{
+			var tb_a = module.DefineType ("A", TypeAttributes.Public);
+			var tb_b = module.DefineType ("B", TypeAttributes.Public);
+	
+			tb_b.SetParent (tb_a);
+			tb_a.SetParent (typeof (Attribute));
+	
+			Assert.IsTrue (tb_b.IsSubclassOf (tb_a), "#1");
+			Assert.IsTrue (tb_b.IsSubclassOf (typeof (Attribute)), "#2");
+			Assert.IsFalse (tb_a.IsSubclassOf (tb_b), "#3");
+	
+	
+			var a = tb_a.CreateType ();
+			var b = tb_b.CreateType ();
+	
+			Assert.IsTrue (b.IsSubclassOf (a), "#4");
+			Assert.IsTrue (b.IsSubclassOf (typeof (Attribute)), "#5");
+			Assert.IsFalse (a.IsSubclassOf (b), "#6");
+		}
+
 #if NET_2_0
 #if !WINDOWS
 		/* 

@@ -1,3 +1,7 @@
+2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Regression test for #594728.
+
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ModuleBuilderTest.cs (TestGlobalMethods): Improve test.
