@@ -5,6 +5,11 @@
 
 2010-04-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* mono-semaphore.c: patch from Robert Nagy that makes this work in
+	OpenBSD.
+
+2010-04-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* mono-semaphore.[ch]: wait can be alertable now. Defaults to FALSE.
 
 2010-03-31  Miguel de Icaza  <miguel@novell.com>
