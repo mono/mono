@@ -41,11 +41,20 @@ using System.Web.Configuration;
 using System.Web;
 using System.Web.Security;
 
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
+
 namespace MonoTests.System.Web.Configuration {
 
 	[TestFixture]
 	public class GlobalizationSectionTest  {
 
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "GlobalizationEncodingName.aspx", "GlobalizationEncodingName.aspx");
+		}
+		
 		[Test]
 		public void Defaults ()
 		{
@@ -161,6 +170,15 @@ namespace MonoTests.System.Web.Configuration {
 			mi.Invoke (s, parms);
 		}
 
+		[Test]
+		public void GlobalizationEncodingName ()
+		{
+			string pageHtml = new WebTest ("GlobalizationEncodingName.aspx").Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			string originalHtml = "GOOD";
+			Assert.AreEqual (originalHtml, renderedHtml, "#A1");
+		}
+		
 	}
 }
 
