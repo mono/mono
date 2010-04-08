@@ -1,7 +1,6 @@
-2010-04-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
+2010-04-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
-	* mono-semaphore.c: patch from Robert Nagy that makes this work in
-	OpenBSD.
+	* mono-semaphore.c: set EINTR on windows too.
 
 2010-04-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
