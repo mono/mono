@@ -1,3 +1,7 @@
+2010-04-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* GlobalizationSection.cs: use WebName instead of EncodingName.
+
 2010-02-12  Marek Habersack  <mhabersack@novell.com>
 
 	* WebConfigurationHost.cs: implemented {Encrypt,Decrypt}Section
