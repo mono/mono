@@ -24,12 +24,17 @@ $(symlinks):
 
 SUPPORT_FILES = $(symlinks) mono-wrapper etc/mono/config
 
-if MOONLIGHT
+if ONLY_MOONLIGHT
 build_profiles = moonlight_raw
 test_profiles = moonlight_raw
 else
+
 build_profiles = net_2_0 net_3_5
 test_profiles = $(build_profiles)
+
+if MOONLIGHT
+build_profiles += moonlight_raw
+test_profiles += moonlight_raw
 endif
 
 if INSTALL_4_0
@@ -39,6 +44,8 @@ endif
 
 if INSTALL_MONOTOUCH
 build_profiles += monotouch
+endif
+
 endif
 
 if BUILD_MCS
