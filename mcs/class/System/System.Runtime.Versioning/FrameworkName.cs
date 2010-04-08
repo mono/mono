@@ -107,9 +107,17 @@ namespace System.Runtime.Versioning
 
 		public bool Equals (FrameworkName other)
 		{
+			if (Object.ReferenceEquals (other, null))
+				return false;
+
 			return (other.Version == this.Version &&
 				String.Compare (other.Identifier, this.Identifier, StringComparison.Ordinal) == 0 &&
 				String.Compare (other.Profile, this.Profile, StringComparison.Ordinal) == 0);
+		}
+
+		public override bool Equals (object obj)
+		{
+			return Equals (obj as FrameworkName);
 		}
 
 		public override int GetHashCode ()
