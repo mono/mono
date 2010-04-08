@@ -214,7 +214,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/ButtonColor_Bug325489.aspx \
 	Test/mainsoft/NunitWebResources/SqlDataSource_OnInit_Bug572781.aspx \
 	Test/mainsoft/NunitWebResources/FormViewPagerVisibility.aspx \
-	Test/mainsoft/NunitWebResources/OverridenControlsPropertyAndPostBack_Bug594238.aspx
+	Test/mainsoft/NunitWebResources/OverridenControlsPropertyAndPostBack_Bug594238.aspx \
+	Test/mainsoft/NunitWebResources/GlobalizationEncodingName.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
