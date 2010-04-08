@@ -150,6 +150,11 @@ namespace System.Diagnostics {
 		[MonoLimitation ("Not possible to create StackTraces from other threads")]
 		public StackTrace (Thread targetThread, bool needFileInfo)
 		{
+			if (targetThread == Thread.CurrentThread){
+				init_frames (METHODS_TO_SKIP, needFileInfo);
+				return;
+			}
+			
 			throw new NotImplementedException ();
 		}
 
