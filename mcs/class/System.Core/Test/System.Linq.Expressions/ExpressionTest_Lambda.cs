@@ -280,6 +280,6 @@ namespace MonoTests.System.Linq.Expressions
 
 			Assert.AreEqual (ExpressionType.Constant, q.NodeType);
 		}
-	}
 #endif
+	}
 }
