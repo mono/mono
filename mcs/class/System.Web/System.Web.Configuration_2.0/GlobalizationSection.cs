@@ -258,7 +258,6 @@ namespace System.Web.Configuration {
 
 			Encoding encoding = (Encoding)encodingHash [prop];
 			if (encoding == null || encoding.WebName != cached_encoding_name) {
-				Console.WriteLine ("HERE");
 				try {
 					switch (cached_encoding_name.ToLower (Helpers.InvariantCulture)) {
 					case "utf-16le":
