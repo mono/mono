@@ -1,0 +1,15 @@
+2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AmbientPropertyValueTest.cs
+	  XamlObjectWriterSettingsTest.cs
+	  AttachableMemberIdentifierTest.cs
+	  XamlReaderSettingsTest.cs
+	  XamlSchemaContextSettingsTest.cs
+	  NamespaceDeclarationTest.cs
+	  XamlSchemaContextTest.cs
+	  XamlDuplicateMemberExceptionTest.cs
+	  XamlTypeTest.cs
+	  XamlObjectEventArgsTest.cs
+	  XamlXmlReaderSettingsTest.cs
+	  XamlObjectReaderSettingsTest.cs
+	  XamlXmlWriterSettingsTest.cs : initial checkin.

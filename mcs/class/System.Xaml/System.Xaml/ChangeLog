@@ -1,0 +1,53 @@
+2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AmbientPropertyValue.cs
+	  AttachableMemberIdentifier.cs
+	  AttachablePropertyServices.cs
+	  ChangeLog
+	  IAmbientProvider.cs
+	  IAttachedPropertyStore.cs
+	  IDestinationTypeProvider.cs
+	  INamespacePrefixLookup.cs
+	  IRootObjectProvider.cs
+	  IXamlIndexingReader.cs
+	  IXamlLineInfo.cs
+	  IXamlLineInfoConsumer.cs
+	  IXamlNameProvider.cs
+	  IXamlNameResolver.cs
+	  IXamlNamespaceResolver.cs
+	  IXamlObjectWriterFactory.cs
+	  IXamlSchemaContextProvider.cs
+	  NamespaceDeclaration.cs
+	  XamlBackgroundReader.cs
+	  XamlDeferringLoader.cs
+	  XamlDirective.cs
+	  XamlDuplicateMemberException.cs
+	  XamlException.cs
+	  XamlInternalException.cs
+	  XamlLanguage.cs
+	  XamlMember.cs
+	  XamlNodeList.cs
+	  XamlNodeQueue.cs
+	  XamlNodeType.cs
+	  XamlObjectEventArgs.cs
+	  XamlObjectReader.cs
+	  XamlObjectReaderException.cs
+	  XamlObjectReaderSettings.cs
+	  XamlObjectWriter.cs
+	  XamlObjectWriterException.cs
+	  XamlObjectWriterSettings.cs
+	  XamlParseException.cs
+	  XamlReader.cs
+	  XamlReaderSettings.cs
+	  XamlSchemaContext.cs
+	  XamlSchemaContextSettings.cs
+	  XamlSchemaException.cs
+	  XamlServices.cs
+	  XamlType.cs
+	  XamlWriter.cs
+	  XamlWriterSettings.cs
+	  XamlXmlReader.cs
+	  XamlXmlReaderSettings.cs
+	  XamlXmlWriter.cs
+	  XamlXmlWriterException.cs
+	  XamlXmlWriterSettings.cs : initial checkin.
