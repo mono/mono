@@ -721,6 +721,8 @@ namespace System.Data {
 				copy.DateTimeMode = _datetimeMode;
 #endif
 
+			copy._extendedProperties = _extendedProperties;
+			
 			return copy;
 		}
 

@@ -1,3 +1,8 @@
+2010-04-09  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #590232
+	* DataColumn.cs (Clone):  Clone extended properties as well.
+	
 2009-10-30  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* DataTable.cs: Reuse old utility methods for raising DataTable 
