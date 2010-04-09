@@ -1358,9 +1358,15 @@ namespace System.Reflection.Emit
 		// FIXME: I doubt just removing this still works.
 		protected override bool IsValueTypeImpl ()
 		{
-			return ((type_is_subtype_of (this, pmodule.assemblyb.corlib_value_type, false) || type_is_subtype_of (this, typeof(System.ValueType), false)) &&
-				this != pmodule.assemblyb.corlib_value_type &&
-				this != pmodule.assemblyb.corlib_enum_type);
+			if (this == pmodule.assemblyb.corlib_value_type || this == pmodule.assemblyb.corlib_enum_type)
+				return false;
+			Type parent_type = parent;
+			while (parent_type != null) {
+				if (parent_type == pmodule.assemblyb.corlib_value_type)
+					return true;
+				parent_type = parent_type.BaseType;
+			}
+			return false;
 		}
 		
 		public override Type MakeArrayType ()

@@ -1,3 +1,8 @@
+2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilder.cs (IsValueTypeImpl): Don't depend on
+	type_is_subtype_of icall. Fixes corlib compilation.
+
 2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* EnumBuilder.cs:
