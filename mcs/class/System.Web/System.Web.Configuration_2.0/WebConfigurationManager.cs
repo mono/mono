@@ -466,7 +466,7 @@ namespace System.Web.Configuration {
 				
 				if (VirtualPathUtility.IsRooted (path)) {
 					if (path [0] == '~')
-						relPath = path.Substring (2);
+						relPath = path.Length > 1 ? path.Substring (2) : String.Empty;
 					else if (path [0] == '/')
 						relPath = path.Substring (1);
 					else
