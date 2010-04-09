@@ -1,5 +1,13 @@
 2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c (is_valid_standalonesig_blob): Accept
+	fields as valid standalone sig too. F# does generate them.
+
+	* metadata-verify.c (verify_typedef_table_full): Ignore
+	what <module> extends.
+
+2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (do_invoke_method): It's ok to do use call with
 	virtual, non-final methods if their class is sealed.
 
