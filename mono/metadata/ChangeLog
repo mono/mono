@@ -1,5 +1,16 @@
 2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_MonoField_GetValueInternal): This function
+	is a near identical copy of mono_field_get_value_object. So simply
+	call it.
+
+	* object.c (mono_field_get_value_object): Handle literal fields
+	on open generic classes.
+
+	Fixes #594942.
+
+2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* reflection.c (mono_reflection_create_runtime_class): Setup
 	parent/supertype information again since it can be changed
 	without notice.
