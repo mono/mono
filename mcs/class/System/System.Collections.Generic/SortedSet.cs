@@ -266,7 +266,7 @@ namespace System.Collections.Generic {
 			return TryGetEnumerator ();
 		}
 
-		protected virtual Enumerator TryGetEnumerator ()
+		internal virtual Enumerator TryGetEnumerator ()
 		{
 			return new Enumerator (this);
 		}
@@ -639,8 +639,6 @@ namespace System.Collections.Generic {
 			T lower;
 			T upper;
 
-			int count;
-
 			public SortedSubSet (SortedSet<T> set, T lower, T upper)
 				: base (set.Comparer)
 			{
@@ -648,34 +646,37 @@ namespace System.Collections.Generic {
 				this.lower = lower;
 				this.upper = upper;
 
-				using (var e = set.tree.GetSuffixEnumerator (lower)) {
-					while (e.MoveNext () && set.helper.Compare (upper, e.Current) >= 0)
-						++count;
-				}
 			}
 
 			internal override T GetMin ()
 			{
-				if (count == 0)
-					return default (T);
-
 				RBTree.Node lb = null, ub = null;
 				set.tree.Bound (lower, ref lb, ref ub);
+
+				if (ub == null || set.helper.Compare (upper, ub) < 0)
+					return default (T);
+
 				return ((Node) ub).item;
 			}
 
 			internal override T GetMax ()
 			{
-				if (count == 0)
-					return default (T);
-
 				RBTree.Node lb = null, ub = null;
 				set.tree.Bound (upper, ref lb, ref ub);
+
+				if (lb == null || set.helper.Compare (lower, lb) > 0)
+					return default (T);
+
 				return ((Node) lb).item;
 			}
 
 			internal override int GetCount ()
 			{
+				int count = 0;
+				using (var e = set.tree.GetSuffixEnumerator (lower)) {
+					while (e.MoveNext () && set.helper.Compare (upper, e.Current) >= 0)
+						++count;
+				}
 				return count;
 			}
 
@@ -684,11 +685,7 @@ namespace System.Collections.Generic {
 				if (!InRange (item))
 					throw new ArgumentOutOfRangeException ("item");
 
-				if (!set.TryAdd (item))
-					return false;
-
-				++count;
-				return true;
+				return set.TryAdd (item);
 			}
 
 			internal override bool TryRemove (T item)
@@ -696,11 +693,7 @@ namespace System.Collections.Generic {
 				if (!InRange (item))
 					return false;
 
-				if (!set.TryRemove (item))
-					return false;
-
-				--count;
-				return true;
+				return set.TryRemove (item);
 			}
 
 			public override bool Contains (T item)
@@ -714,8 +707,6 @@ namespace System.Collections.Generic {
 			public override void Clear ()
 			{
 				set.RemoveWhere (InRange);
-				if (count != 0)
-					throw new SystemException ("count should be zero: " + count);
 			}
 
 			bool InRange (T item)
@@ -736,7 +727,7 @@ namespace System.Collections.Generic {
 				return new SortedSubSet (set, lowerValue, upperValue);
 			}
 
-			protected override Enumerator TryGetEnumerator ()
+			internal override Enumerator TryGetEnumerator ()
 			{
 				return new Enumerator (set, lower, upper);
 			}

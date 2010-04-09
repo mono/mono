@@ -285,6 +285,14 @@ namespace MonoTests.System.Collections.Generic
 			var view = set.GetViewBetween (4, 8);
 
 			Assert.AreEqual (5, view.Count);
+			set.Remove (5);
+			Assert.AreEqual (4, view.Count);
+			set.Add (10);
+			Assert.AreEqual (4, view.Count);
+			set.Add (6);
+			Assert.AreEqual (4, view.Count);
+			set.Add (5);
+			Assert.AreEqual (5, view.Count);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]

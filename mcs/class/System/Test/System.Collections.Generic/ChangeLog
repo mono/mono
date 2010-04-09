@@ -1,3 +1,8 @@
+2010-04-09  Raja R Harinath  <harinath@hurrynot.org>
+
+	* SortedSetTest.cs (ViewCount): Test that count reflects changes
+	in underlying set.
+
 2010-04-07  Raja R Harinath  <harinath@hurrynot.org>
 
 	* SortedSetTest.cs: Update to test more view functionality,

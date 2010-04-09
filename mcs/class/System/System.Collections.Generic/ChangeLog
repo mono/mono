@@ -1,3 +1,13 @@
+2010-04-09  Raja R Harinath  <harinath@hurrynot.org>
+
+	Don't maintain state in the view
+	* SortedSet.cs (SortedSubSet.count): Remove.
+	(SortedSubSet..ctor): Move counting loop ...
+	(SortedSubSet.Count): ... here.
+	(SortedSubSet.TryAdd, SortedSubSet.TryRemove): Update to changes.
+	(SortedSubSet.GetMin, SortedSubSet.GetMax): Likewise.  Use bounds
+	to determine if the view is empty, rather than the count.
+
 2010-04-07  Raja R Harinath  <harinath@hurrynot.org>
 
 	Enable set comparision operations on views, and improve performance
