@@ -720,6 +720,7 @@ namespace System.Data {
 			if (DataType == typeof (DateTime))
 				copy.DateTimeMode = _datetimeMode;
 #endif
+			copy._extendedProperties = _extendedProperties;
 
 			return copy;
 		}
