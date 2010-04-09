@@ -1,5 +1,9 @@
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* System.Xaml.dll.sources : renamed TypeExtension.cs.
+
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* System.Xaml_test.dll.sources : add XamlLanguageTest.cs.
 
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>

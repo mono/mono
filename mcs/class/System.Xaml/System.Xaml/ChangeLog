@@ -1,5 +1,10 @@
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeExtension.cs, TypeExtensionMethods.cs : renamed to avoid
+	  confusion between Sys.Win.Markup.TypeExtension.
+
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypeExtension.cs
 	  XamlMember.cs
 	  XamlDirective.cs
