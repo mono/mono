@@ -1,3 +1,7 @@
+2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* FieldInfoTest.cs: Add tests for #594942.
+
 2010-04-01 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* AssemblyTest.cs: Fix one more tests under v4.

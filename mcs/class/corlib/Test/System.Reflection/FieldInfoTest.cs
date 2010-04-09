@@ -457,7 +457,6 @@ namespace MonoTests.System.Reflection
 			typeof (FieldInfoTest).GetField ("non_const_field").GetRawConstantValue ();
 		}
 
-#if NET_2_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void GetValueOpenGeneric ()
@@ -476,14 +475,23 @@ namespace MonoTests.System.Reflection
 		public void GetValueOnConstantOfOpenGeneric ()
 		{
 			Assert.AreEqual (10, typeof(Foo<>).GetField ("constant").GetValue (null), "#1");
+			Assert.AreEqual ("waa", typeof(Foo<>).GetField ("sconstant").GetValue (null), "#2");
+			Assert.AreEqual (IntEnum.Third, typeof(Foo<>).GetField ("econstant").GetValue (null), "#3");
 		}
 
 		public class Foo<T>
 		{
+			 /*
+			The whole point of this field is to make sure we don't create the vtable layout
+			when loading the value of constants for Foo<>. See bug #594942.
+
+			*/
+			public T dummy;
 			public static int field;
 			public const int constant = 10;
+			public const string sconstant = "waa";
+			public const IntEnum econstant = IntEnum.Third;
 		}
-#endif
 
 		public enum IntEnum {
 			First = 1,
