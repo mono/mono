@@ -1,5 +1,10 @@
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* StaticExtensionConverter.cs, TypeExtensionConverter.cs :
+	  new internal converter types (almost dummy yet).
+
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ArrayExtension.cs
 	  TypeExtension.cs
 	  StaticExtension.cs

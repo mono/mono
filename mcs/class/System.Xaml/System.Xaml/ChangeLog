@@ -1,5 +1,11 @@
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlMember.cs
+	  XamlDirective.cs
+	  XamlType.cs : implement TypeConverter support.
+
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypeExtension.cs, TypeExtensionMethods.cs : renamed to avoid
 	  confusion between Sys.Win.Markup.TypeExtension.
 

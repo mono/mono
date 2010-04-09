@@ -30,8 +30,10 @@ System.Windows.Markup/Reference.cs
 System.Windows.Markup/RootNamespaceAttribute.cs
 System.Windows.Markup/RuntimeNamePropertyAttribute.cs
 System.Windows.Markup/StaticExtension.cs
+System.Windows.Markup/StaticExtensionConverter.cs
 System.Windows.Markup/TrimSurroundingWhitespaceAttribute.cs
 System.Windows.Markup/TypeExtension.cs
+System.Windows.Markup/TypeExtensionConverter.cs
 System.Windows.Markup/UidPropertyAttribute.cs
 System.Windows.Markup/UsableDuringInitializationAttribute.cs
 System.Windows.Markup/ValueSerializer.cs

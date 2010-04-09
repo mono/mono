@@ -1,5 +1,9 @@
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlTypeTest.cs, XamlLanguageTest.cs : enable TypeConverter tests.
+
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlLanguageTest.cs : new test.
 	* XamlDirectiveTest.cs : add another ns test.
 

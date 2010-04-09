@@ -153,6 +153,8 @@ namespace System.Xaml
 
 		protected override sealed XamlValueConverter<TypeConverter> LookupTypeConverter ()
 		{
+			if (type_converter == null)
+				type_converter = base.LookupTypeConverter ();
 			return type_converter;
 		}
 

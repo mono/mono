@@ -378,9 +378,15 @@ namespace System.Xaml
 				return underlying_getter.GetParameters () [0].ParameterType;
 			return typeof (object);
 		}
+
 		protected virtual XamlValueConverter<TypeConverter> LookupTypeConverter ()
 		{
-			throw new NotImplementedException ();
+			var t = Type.UnderlyingType;
+			if (t == null)
+				return null;
+			if (t == typeof (object)) // it is different from XamlType.LookupTypeConverter().
+				return null;
+			return Type.TypeConverter;
 		}
 
 		protected virtual MethodInfo LookupUnderlyingGetter ()

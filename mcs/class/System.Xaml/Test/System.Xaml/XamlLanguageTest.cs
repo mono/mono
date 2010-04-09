@@ -275,7 +275,6 @@ namespace MonoTests.System.Xaml
 			TestXamlDirectiveCommon (d, name, XamlLanguage.Xaml2006Namespace, allowedLocation, type);
 		}
 
-		// FIXME: enable TypeConverter test
 		void TestXamlDirectiveCommon (XamlDirective d, string name, string ns, AllowedMemberLocations allowedLocation, Type type)
 		{
 			TestXamlDirectiveCommon (d, name, ns, allowedLocation, type, false);
@@ -297,7 +296,14 @@ namespace MonoTests.System.Xaml
 			Assert.IsNull (d.TargetType, "#10");
 			Assert.IsNotNull (d.Type, "#11");
 			Assert.AreEqual (type, d.Type.UnderlyingType, "#11-2");
-			//Assert.IsNull (d.TypeConverter, "#12");
+
+			// .NET returns StringConverter, but it should not premise that key must be string (it is object)
+			if (name == "Key")
+				;//Assert.IsNull (d.TypeConverter, "#12")
+			else if (type.IsGenericType || name == "_Initialization" || name == "_UnknownContent")
+				Assert.IsNull (d.TypeConverter, "#12");
+			else
+				Assert.IsNotNull (d.TypeConverter, "#12");
 			Assert.IsNull (d.ValueSerializer, "#13");
 			Assert.IsNull (d.DeferringLoader, "#14");
 			Assert.IsNull (d.UnderlyingMember, "#15");
@@ -319,7 +325,7 @@ namespace MonoTests.System.Xaml
 		public void Array ()
 		{
 			var t = XamlLanguage.Array;
-			TestXamlTypeExtension (t, "ArrayExtension", typeof (ArrayExtension), typeof (Array));
+			TestXamlTypeExtension (t, "ArrayExtension", typeof (ArrayExtension), typeof (Array), true);
 			Assert.IsNotNull (t.ContentProperty, "#27");
 			Assert.AreEqual ("Items", t.ContentProperty.Name, "#27-2");
 		}
@@ -328,7 +334,7 @@ namespace MonoTests.System.Xaml
 		public void Null ()
 		{
 			var t = XamlLanguage.Null;
-			TestXamlTypeExtension (t, "NullExtension", typeof (NullExtension), typeof (object));
+			TestXamlTypeExtension (t, "NullExtension", typeof (NullExtension), typeof (object), true);
 			Assert.IsNull (t.ContentProperty, "#27");
 		}
 
@@ -336,7 +342,8 @@ namespace MonoTests.System.Xaml
 		public void Static ()
 		{
 			var t = XamlLanguage.Static;
-			TestXamlTypeExtension (t, "StaticExtension", typeof (StaticExtension), typeof (object));
+			TestXamlTypeExtension (t, "StaticExtension", typeof (StaticExtension), typeof (object), false);
+			Assert.IsNotNull (t.TypeConverter.ConverterInstance, "#25-2");
 			Assert.IsNull (t.ContentProperty, "#27");
 		}
 
@@ -344,7 +351,8 @@ namespace MonoTests.System.Xaml
 		public void Type ()
 		{
 			var t = XamlLanguage.Type;
-			TestXamlTypeExtension (t, "TypeExtension", typeof (TypeExtension), typeof (Type));
+			TestXamlTypeExtension (t, "TypeExtension", typeof (TypeExtension), typeof (Type), false);
+			Assert.IsNotNull (t.TypeConverter.ConverterInstance, "#25-2");
 			Assert.IsNull (t.ContentProperty, "#27");
 		}
 
@@ -441,6 +449,7 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Member;
 			TestXamlTypeCommon (t, "Member", typeof (MemberDefinition), true, true, false);
+			Assert.IsNull (t.TypeConverter, "#25");
 			// FIXME: test remaining members
 		}
 
@@ -449,6 +458,7 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Property;
 			TestXamlTypeCommon (t, "Property", typeof (PropertyDefinition), true);
+			Assert.IsNull (t.TypeConverter, "#25");
 			// FIXME: test remaining members
 		}
 
@@ -457,6 +467,7 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Reference;
 			TestXamlTypeCommon (t, "Reference", typeof (Reference), true);
+			Assert.IsNull (t.TypeConverter, "#25");
 			// FIXME: test remaining members
 		}
 
@@ -465,6 +476,7 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.XData;
 			TestXamlTypeCommon (t, "XData", typeof (XData), true);
+			Assert.IsNull (t.TypeConverter, "#25");
 			// FIXME: test remaining members
 		}
 
@@ -507,7 +519,6 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsAmbient, "#22");
 			//Assert.IsNull (t.AllowedContentTypes, "#23");
 			//Assert.IsNull (t.ContentWrappers, "#24");
-			//Assert.IsNotNull (t.TypeConverter, "#25");
 			//Assert.IsNull (t.ValueSerializer, "#26");
 			//Assert.IsNull (t.DeferringLoader, "#28");
 		}
@@ -516,14 +527,19 @@ namespace MonoTests.System.Xaml
 		{
 			TestXamlTypeCommon (t, name, underlyingType, nullable, constructorRequiresArguments);
 			Assert.IsFalse (t.IsMarkupExtension, "#14");
+			Assert.IsNotNull (t.TypeConverter, "#25");
 			Assert.IsNull (t.ContentProperty, "#27");
 			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
 		}
 
-		void TestXamlTypeExtension (XamlType t, string name, Type underlyingType, Type extReturnType)
+		void TestXamlTypeExtension (XamlType t, string name, Type underlyingType, Type extReturnType, bool noTypeConverter)
 		{
 			TestXamlTypeCommon (t, name, underlyingType, true, false);
 			Assert.IsTrue (t.IsMarkupExtension, "#14");
+			if (noTypeConverter)
+				Assert.IsNull (t.TypeConverter, "#25");
+			else
+				Assert.IsNotNull (t.TypeConverter, "#25");
 			Assert.IsNotNull (t.MarkupExtensionReturnType, "#29");
 			Assert.AreEqual (extReturnType, t.MarkupExtensionReturnType.UnderlyingType, "#29-2");
 		}

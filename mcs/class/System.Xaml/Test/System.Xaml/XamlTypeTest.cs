@@ -34,7 +34,7 @@ using Category = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Xaml
 {
-	// FIXME: enable AllowedContentTypes, ContentWrappers, DeferringLoader, TypeConverter and ValueSerializer tests.
+	// FIXME: enable AllowedContentTypes, ContentWrappers, DeferringLoader and ValueSerializer tests.
 	[TestFixture]
 	public class XamlTypeTest
 	{
@@ -286,7 +286,8 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsAmbient, "#22");
 			//Assert.IsNull (t.AllowedContentTypes, "#23");
 			//Assert.IsNull (t.ContentWrappers, "#24");
-			//Assert.IsNotNull (t.TypeConverter, "#25");
+			Assert.IsNotNull (t.TypeConverter, "#25");
+			Assert.IsTrue (t.TypeConverter.ConverterInstance is Int32Converter, "#25-2");
 			//Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNull (t.ContentProperty, "#27");
 			//Assert.IsNull (t.DeferringLoader, "#28");
@@ -323,7 +324,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsAmbient, "#22");
 			//Assert.IsNull (t.AllowedContentTypes, "#23");
 			//Assert.IsNull (t.ContentWrappers, "#24");
-			//Assert.IsNotNull (t.TypeConverter, "#25");
+			Assert.IsNull (t.TypeConverter, "#25");
 			//Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNull (t.ContentProperty, "#27");
 			//Assert.IsNull (t.DeferringLoader, "#28");
@@ -360,7 +361,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsAmbient, "#22");
 			//Assert.IsNull (t.AllowedContentTypes, "#23");
 			//Assert.IsNull (t.ContentWrappers, "#24");
-			//Assert.IsNotNull (t.TypeConverter, "#25");
+			Assert.IsNull (t.TypeConverter, "#25");
 			//Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNull (t.ContentProperty, "#27");
 			//Assert.IsNull (t.DeferringLoader, "#28");
@@ -410,13 +411,22 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (t.IsAmbient, "#22");
 			// Assert.IsNull (t.AllowedContentTypes, "#23");
 			// Assert.IsNull (t.ContentWrappers, "#24");
-			// Assert.IsNotNull (t.TypeConverter, "#25");
+			Assert.IsNull (t.TypeConverter, "#25");
 			// Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNotNull (t.ContentProperty, "#27");
 			Assert.AreEqual ("Name", t.ContentProperty.Name, "#27-2");
 			// Assert.IsNull (t.DeferringLoader, "#28");
 			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
 			Assert.AreEqual (sctx, t.SchemaContext, "#30");
+		}
+
+		[Test]
+		public void TypeConverter ()
+		{
+			Assert.IsNull (new XamlType (typeof (List<object>), sctx).TypeConverter, "#1");
+			Assert.IsNotNull (new XamlType (typeof (object), sctx).TypeConverter, "#2");
+			Assert.IsTrue (new XamlType (typeof (Uri), sctx).TypeConverter.ConverterInstance is UriTypeConverter, "#3");
+			Assert.IsTrue (new XamlType (typeof (TimeSpan), sctx).TypeConverter.ConverterInstance is TimeSpanConverter, "#4");
 		}
 	}
 
