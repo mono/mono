@@ -1,3 +1,7 @@
+2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	valid_call_to_virtual_method_on_sealed_class.il: New test.
+
 2010-04-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* valid_store_of_uint_to_int_array.il: Regression test
