@@ -1,3 +1,8 @@
+2010-04-09 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* mono-semaphore.c: account for the time already spent in wait if
+	interrupted.
+
 2010-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-time.c (get_boot_time): Applied more openbsd changes from Robert Nagy
