@@ -303,7 +303,9 @@ namespace Mono.Debugger.Soft
 			GET_FRAME_INFO = 1,
 			GET_NAME = 2,
 			GET_STATE = 3,
-			GET_INFO = 4
+			GET_INFO = 4,
+			/* FIXME: Merge into GET_INFO when the major protocol version is increased */
+			GET_ID = 5
 		}
 
 		enum CmdEventRequest {
@@ -1428,6 +1430,10 @@ namespace Mono.Debugger.Soft
 			ThreadInfo res = new ThreadInfo () { is_thread_pool = r.ReadByte () > 0 ? true : false };
 
 			return res;
+		}
+
+		public long Thread_GetId (long id) {
+			return SendReceive (CommandSet.THREAD, (int)CmdThread.GET_ID, new PacketWriter ().WriteId (id)).ReadLong ();
 		}
 
 		/*

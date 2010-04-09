@@ -51,5 +51,15 @@ namespace Mono.Debugger.Soft
 				return info.is_thread_pool;
 			}
 		}
+
+		/*
+		 * Return a unique identifier for this thread, multiple ThreadMirror objects
+		 * may have the same ThreadId because of appdomains.
+		 */
+		public long ThreadId {
+			get {
+				return vm.conn.Thread_GetId (id);
+			}
+		}
     }
 }
