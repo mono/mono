@@ -1,3 +1,8 @@
+2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoField.cs (Get|Set)Value: Check if obj is compatible
+	with field's class.
+
 2010-04-02  Marek Safar  <marek.safar@gmail.com>
 
 	* MethodBase.cs: Made GetParameterCount abstract and implement
