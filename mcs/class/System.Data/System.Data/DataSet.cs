@@ -1402,8 +1402,12 @@ namespace System.Data
 
 			//TODO check if I can get away with write element string
 			WriteStartElement (writer, mode, colnspc, col.Prefix, XmlHelper.Encode (col.ColumnName));	
-			if (typeof (IXmlSerializable).IsAssignableFrom (col.DataType)) {
-				((IXmlSerializable)rowObject).WriteXml (writer);
+			if (typeof (IXmlSerializable).IsAssignableFrom (col.DataType) 
+			    || col.DataType == typeof (object)) {
+				IXmlSerializable serializableObj = rowObject as IXmlSerializable;
+				if (serializableObj == null)
+					throw new InvalidOperationException ();
+				((IXmlSerializable)rowObject).WriteXml (writer);				
 			} else {
 				writer.WriteString (WriteObjectXml (rowObject));
 			}
