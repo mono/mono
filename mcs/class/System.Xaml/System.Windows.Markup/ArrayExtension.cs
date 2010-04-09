@@ -43,7 +43,10 @@ namespace System.Windows.Markup
 		{
 			if (elements == null)
 				throw new ArgumentNullException ("elements");
-			Items = elements;
+			Type = elements.GetType ().GetElementType ();
+			Items = new List<object> (elements.Length);
+			foreach (var o in elements)
+				Items.Add (o);
 		}
 
 		public ArrayExtension (Type arrayType)
@@ -51,7 +54,7 @@ namespace System.Windows.Markup
 			if (arrayType == null)
 				throw new ArgumentNullException ("arrayType");
 			Type = arrayType;
-			Items = (IList) Activator.CreateInstance (typeof (List<>).MakeGenericType (arrayType), new object [0]);
+			Items = new List<object> ();
 		}
 
 		public IList Items { get; private set; }
@@ -59,17 +62,36 @@ namespace System.Windows.Markup
 
 		public void AddChild (Object value)
 		{
-			throw new NotImplementedException ();
+			// null is allowed.
+			Items.Add (value);
 		}
 		
 		public void AddText (string text)
 		{
-			throw new NotImplementedException ();
+			// null is allowed.
+			Items.Add (text);
 		}
 		
+		[MonoTODO ("use serviceProvider argument")]
 		public override Object ProvideValue (IServiceProvider serviceProvider)
 		{
-			throw new NotImplementedException ();
+			if (Type == null)
+				throw new InvalidOperationException ("Type property must be set before calling ProvideValue method");
+
+			bool invalid = false;
+			foreach (var item in Items) {
+				if (item == null) {
+					if (Type.IsValueType)
+						invalid = true;
+				}
+				else if (!Type.IsAssignableFrom (item.GetType ()))
+					invalid = true;
+				if (invalid)
+					throw new InvalidOperationException (String.Format ("Item in the array must be an instance of '{0}'", Type));
+			}
+			Array a = Array.CreateInstance (Type, Items.Count);
+			Items.CopyTo (a, 0);
+			return a;
 		}
 	}
 }

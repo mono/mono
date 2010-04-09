@@ -37,11 +37,15 @@ namespace System.Windows.Markup
 
 		public TypeExtension (string typeName)
 		{
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
 			TypeName = typeName;
 		}
 
 		public TypeExtension (Type type)
 		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
 			Type = type;
 		}
 
@@ -53,16 +57,20 @@ namespace System.Windows.Markup
 			if (Type != null)
 				return Type;
 
-			if (serviceProvider == null) // it can be null when Type is supplied.
-				throw new ArgumentNullException ("serviceProvider");
 			if (TypeName == null)
 				throw new InvalidOperationException ("Either TypeName or Type must be filled before calling ProvideValue method");
 
-			var p = ((object) serviceProvider) as IXamlTypeResolver;
-			if (p == null)
-				throw new ArgumentException ("serviceProvider does not implement IXamlTypeResolver.");
+			if (serviceProvider == null) // it can be null when Type is supplied.
+				throw new ArgumentNullException ("serviceProvider");
 
-			return p.Resolve (TypeName);
+			var p = serviceProvider.GetService (typeof (IXamlTypeResolver)) as IXamlTypeResolver;
+			if (p == null)
+				throw new InvalidOperationException ("serviceProvider does not provide IXamlTypeResolver service.");
+
+			var ret = p.Resolve (TypeName);
+			if (ret == null)
+				throw new InvalidOperationException (String.Format ("Type '{0}' is not resolved as a valid type by the type resolver '{1}'.", TypeName, p.GetType ()));
+			return ret;
 		}
 	}
 }

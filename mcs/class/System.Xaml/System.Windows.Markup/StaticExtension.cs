@@ -28,7 +28,7 @@ using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
-	[MarkupExtensionReturnTypeAttribute(typeof(Object))]
+	[MarkupExtensionReturnType (typeof (object))]
 	public class StaticExtension : MarkupExtension
 	{
 		public StaticExtension ()
@@ -43,9 +43,22 @@ namespace System.Windows.Markup
 		public string Member { get; set; }
 		public Type MemberType { get; set; }
 
-		public override Object ProvideValue (IServiceProvider serviceProvider)
+		public override object ProvideValue (IServiceProvider serviceProvider)
 		{
-			throw new NotImplementedException ();
+			if (Member == null)
+				throw new InvalidOperationException ("Member property must be set to StaticExtension before calling ProvideValue method.");
+			if (MemberType != null) {
+				var pi = MemberType.GetProperty (Member, BindingFlags.Public | BindingFlags.Static);
+				if (pi != null)
+					return pi.GetValue (null, null);
+				var fi = MemberType.GetField (Member, BindingFlags.Public | BindingFlags.Static);
+				if (fi != null)
+					return fi.GetValue (null);
+			}
+			// there might be some cases that it could still
+			// resolve a static member without MemberType, 
+			// but we don't know any of such so far.
+			throw new ArgumentException (String.Format ("Member '{0}' could not be resolved to a static member", Member));
 		}
 	}
 }

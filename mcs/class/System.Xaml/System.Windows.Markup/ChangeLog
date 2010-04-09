@@ -1,5 +1,12 @@
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ArrayExtension.cs
+	  TypeExtension.cs
+	  StaticExtension.cs
+	  PropertyDefinition.cs : implemented.
+
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ArrayExtension.cs, TypeExtension.cs : add missing members.
 
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>

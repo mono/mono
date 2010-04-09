@@ -31,12 +31,21 @@ namespace System.Windows.Markup
 {
 	public class PropertyDefinition : MemberDefinition
 	{
-		public IList<Attribute> Attributes { get; private set; }
-		public string Modifier { get; set; }
-		public override string Name { 
-			get { throw new NotImplementedException (); }
-			set { throw new NotImplementedException (); }
+		public PropertyDefinition ()
+		{
+			Attributes = new List<Attribute> ();
 		}
+
+		public IList<Attribute> Attributes { get; private set; }
+
+		public string Modifier { get; set; }
+
+		string name;
+		public override string Name { 
+			get { return name; }
+			set { name = value; }
+		}
+
 		[TypeConverter (typeof (XamlTypeTypeConverter))]
 		public XamlType Type { get; set; }
 	}

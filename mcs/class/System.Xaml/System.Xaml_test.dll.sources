@@ -1,3 +1,6 @@
+System.Windows.Markup/ArrayExtensionTest.cs
+System.Windows.Markup/StaticExtensionTest.cs
+System.Windows.Markup/TypeExtensionTest.cs
 System.Xaml.Schema/XamlMemberInvokerTest.cs
 System.Xaml.Schema/XamlTypeInvokerTest.cs
 System.Xaml/AmbientPropertyValueTest.cs
