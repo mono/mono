@@ -1,3 +1,7 @@
+2010-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (thread_commands): Add a GET_ID command to get the
+	MonoInternalThread belonging to the thread.
 
 Fri Apr 9 15:28:01 CEST 2010 Paolo Molaro <lupus@ximian.com>
 
