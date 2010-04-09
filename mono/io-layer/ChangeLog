@@ -1,3 +1,7 @@
+2010-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* processes.c: Applied more openbsd changes from Robert Nagy <robert@openbsd.org>.
+
 2009-04-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* wthreads.c (TlsSetValue): Don't take locks here. We trust pthread_setspecific
