@@ -1,3 +1,8 @@
+2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (do_invoke_method): It's ok to do use call with
+	virtual, non-final methods if their class is sealed.
+
 2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.h: Fix header.
