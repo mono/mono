@@ -1,5 +1,11 @@
 2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (mono_method_verify): A switch op don't empty
+	the stack for the next one. Fixes a bug when running fsi
+	under --verify-all.
+
+2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (is_valid_standalonesig_blob): Accept
 	fields as valid standalone sig too. F# does generate them.
 

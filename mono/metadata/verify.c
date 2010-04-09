@@ -5588,7 +5588,6 @@ mono_method_verify (MonoMethod *method, int level)
 			code_bounds_check (sizeof (guint32) * entries);
 			
 			do_switch (&ctx, entries, ip);
-			start = 1;
 			ip += sizeof (guint32) * entries;
 			break;
 		}
