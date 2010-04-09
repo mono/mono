@@ -1,5 +1,10 @@
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlTypeTypeConverterTest.cs, XamlValueConverterTest.cs :
+	  new tests.
+
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlTypeInvokerTest.cs : new test.
 
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>

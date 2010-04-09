@@ -3,6 +3,8 @@ System.Windows.Markup/StaticExtensionTest.cs
 System.Windows.Markup/TypeExtensionTest.cs
 System.Xaml.Schema/XamlMemberInvokerTest.cs
 System.Xaml.Schema/XamlTypeInvokerTest.cs
+System.Xaml.Schema/XamlTypeTypeConverterTest.cs
+System.Xaml.Schema/XamlValueConverterTest.cs
 System.Xaml/AmbientPropertyValueTest.cs
 System.Xaml/AttachableMemberIdentifierTest.cs
 System.Xaml/NamespaceDeclarationTest.cs

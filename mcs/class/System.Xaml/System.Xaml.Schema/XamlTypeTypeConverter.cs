@@ -31,19 +31,29 @@ namespace System.Xaml.Schema
 	{
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			throw new NotImplementedException ();
+			return sourceType == typeof (string);
 		}
+
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			return destinationType == typeof (string);
 		}
+
 		public override Object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, Object value)
 		{
-			throw new NotImplementedException ();
+			throw new NotSupportedException (String.Format ("Conversion from type {0} is not supported", value != null ? value.GetType () : null));
 		}
-		public override Object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, Object value, Type destinationType)
+
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			var xt = value as XamlType;
+			if (xt != null) {
+				if (destinationType == typeof (string))
+					return xt.ToString ();
+				throw new NotSupportedException (String.Format ("Conversion to type {0} is not supported", destinationType));
+			}
+			else
+				return base.ConvertTo (context, culture, value, destinationType); // it seems it still handles not-supported types (such as int).
 		}
 	}
 }

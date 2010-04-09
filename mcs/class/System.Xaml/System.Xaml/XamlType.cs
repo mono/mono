@@ -283,7 +283,7 @@ namespace System.Xaml
 
 		public override string ToString ()
 		{
-			return UnderlyingType != null ? UnderlyingType.ToString () : Name;
+			return UnderlyingType != null ? UnderlyingType.ToString () : String.IsNullOrEmpty (PreferredXamlNamespace) ? Name : String.Concat ("{", PreferredXamlNamespace, "}", Name);
 		}
 
 		public virtual bool CanAssignTo (XamlType xamlType)
