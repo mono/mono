@@ -248,6 +248,28 @@ namespace MonoTests.System.Collections.Generic
 			Assert.IsTrue (view.SequenceEqual (new [] { 5 }));
 		}
 
+		void EmptySubView (SortedSet<int> set)
+		{
+			var view = set.GetViewBetween (-20, -15);
+			Assert.AreEqual (0, view.Count);
+			Assert.AreEqual (0, view.Min);
+			Assert.AreEqual (0, view.Max);
+
+			view = set.GetViewBetween (15, 20);
+			Assert.AreEqual (0, view.Count);
+			Assert.AreEqual (0, view.Min);
+			Assert.AreEqual (0, view.Max);
+		}
+
+		[Test]
+		public void EmptySubView ()
+		{
+			EmptySubView (new SortedSet<int> ());
+			EmptySubView (new SortedSet<int> { 1, 3, 5, 7, 9 });
+			EmptySubView (new SortedSet<int> { -40, 40 });
+			EmptySubView (new SortedSet<int> { -40, -10, 10, 40 });
+		}
+
 		[Test]
 		public void ViewMin ()
 		{
