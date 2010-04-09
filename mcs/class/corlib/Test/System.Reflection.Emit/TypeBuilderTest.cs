@@ -10924,6 +10924,26 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.IsFalse (a.IsSubclassOf (b), "#6");
 		}
 
+		[Test]
+		public void DefinedDefaultConstructorWorksWithGenericBaseType ()
+		{
+			AssemblyName assemblyName = new AssemblyName ("a");
+			AssemblyBuilder ass = AppDomain.CurrentDomain.DefineDynamicAssembly (assemblyName, AssemblyBuilderAccess.RunAndSave);
+			var mb = ass.DefineDynamicModule ("a.dll");
+
+			var tb = mb.DefineType ("Base");
+			tb.DefineGenericParameters ("F");
+
+			var inst = tb.MakeGenericType (typeof (int));
+			var tb2 = mb.DefineType ("Child", TypeAttributes.Public, inst);
+
+			tb.CreateType ();
+			var res = tb2.CreateType ();
+
+			Assert.IsNotNull (res, "#1");
+			Assert.AreEqual (1, res.GetConstructors ().Length, "#2");
+		}
+
 #if NET_2_0
 #if !WINDOWS
 		/* 
