@@ -4,7 +4,6 @@
 #include <mono/metadata/metadata.h>
 #include <mono/metadata/image.h>
 #include <mono/metadata/loader.h>
-#include "mono/utils/mono-compiler.h"
 
 G_BEGIN_DECLS
 
