@@ -1,3 +1,7 @@
+2010-04-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs: Add a minimal test for Thread.ThreadId.
+
 2010-04-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* exit-stress-threadpool.cs: New stress test.
