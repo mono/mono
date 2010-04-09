@@ -230,14 +230,38 @@ namespace System.Xaml
 			get { return LookupValueSerializer (); }
 		}
 
-		public override bool Equals (object obj)
+		public static bool operator == (XamlMember left, XamlMember right)
 		{
-			throw new NotImplementedException ();
+			return IsNull (left) ? IsNull (right) : left.Equals (right);
+		}
+
+		static bool IsNull (XamlMember a)
+		{
+			return Object.ReferenceEquals (a, null);
+		}
+
+		public static bool operator != (XamlMember left, XamlMember right)
+		{
+			return !(left == right);
+		}
+		
+		public override bool Equals (object other)
+		{
+			var x = other as XamlMember;
+			return Equals (x);
 		}
 		
 		public bool Equals (XamlMember other)
 		{
-			throw new NotImplementedException ();
+			return !IsNull (other) &&
+				context == other.context &&
+				underlying_member == other.underlying_member &&
+				underlying_getter == other.underlying_getter &&
+				underlying_setter == other.underlying_setter &&
+				Name == other.Name &&
+				PreferredXamlNamespace == other.PreferredXamlNamespace &&
+				directive_ns == other.directive_ns &&
+				is_attachable == other.is_attachable;
 		}
 
 		public override int GetHashCode ()

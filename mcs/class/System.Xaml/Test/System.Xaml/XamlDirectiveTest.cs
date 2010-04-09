@@ -54,6 +54,12 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void ConstructorNamespaceXamlNS ()
+		{
+			new XamlDirective (XamlLanguage.Xaml2006Namespace, "Foo");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void ConstructorComplexParamsTypeNull ()
 		{

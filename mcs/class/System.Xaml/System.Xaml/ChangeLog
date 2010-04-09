@@ -1,5 +1,13 @@
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeExtension.cs
+	  XamlMember.cs
+	  XamlDirective.cs
+	  XamlType.cs
+	  XamlLanguage.cs : ongoing implementation.
+
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlType.cs : implemented lots of members.
 	* TypeExtension.cs : split out from above.
 

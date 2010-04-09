@@ -38,6 +38,10 @@ namespace System.Xaml
 		{
 		}
 
+		static readonly Type [] predefined_types = {
+				typeof (XData), typeof (Uri), typeof (TimeSpan), typeof (PropertyDefinition), typeof (MemberDefinition), typeof (Reference)
+			};
+
 		public XamlType (Type underlyingType, XamlSchemaContext schemaContext, XamlTypeInvoker invoker)
 			: this (schemaContext, invoker)
 		{
@@ -48,8 +52,12 @@ namespace System.Xaml
 
 			Name = type.GetXamlName ();
 			// FIXME: remove this hack
-			if (Type.GetTypeCode (type) == TypeCode.Object && type != typeof (object))
-				PreferredXamlNamespace = String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
+			if (Type.GetTypeCode (type) == TypeCode.Object && type != typeof (object)) {
+				if (predefined_types.Contains (type) || typeof (MarkupExtension).IsAssignableFrom (type) && type.Assembly == typeof (XamlType).Assembly)
+					PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
+				else
+					PreferredXamlNamespace = String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
+			}
 			else
 				PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
 		}
@@ -364,9 +372,21 @@ namespace System.Xaml
 			if (UnderlyingType == null)
 				return false;
 
+			// not sure if it is required, but TypeDefinition and MemberDefinition return true while they are abstract and it makes no sense.
+			if (UnderlyingType.IsAbstract)
+				return true;
+
 			// FIXME: probably some primitive types are treated as special.
-			if (Type.GetTypeCode (UnderlyingType) != TypeCode.Object)
+			switch (Type.GetTypeCode (UnderlyingType)) {
+			case TypeCode.String:
+				return true;
+			case TypeCode.Object:
+				if (UnderlyingType == typeof (TimeSpan))
+					return false;
+				break;
+			default:
 				return false;
+			}
 
 			return UnderlyingType.GetConstructor (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null) == null;
 		}
@@ -410,8 +430,9 @@ namespace System.Xaml
 			if (IsMarkupExtension)
 				return false;
 			// FIXME: handle x:Code
-			if (IsXData)
-				return false;
+			// FIXME: commented out.
+			//if (IsXData)
+			//	return false;
 
 			// FIXME: this check is extraneous to spec. 5.2.
 			if (ConstructionRequiresArguments)
@@ -453,7 +474,9 @@ namespace System.Xaml
 
 		protected virtual bool LookupIsXData ()
 		{
-			return typeof (XData).IsAssignableFrom (UnderlyingType);
+			// huh? XamlLanguage.XData.IsXData returns false(!)
+			// return typeof (XData).IsAssignableFrom (UnderlyingType);
+			return false;
 		}
 
 		protected virtual XamlType LookupItemType ()

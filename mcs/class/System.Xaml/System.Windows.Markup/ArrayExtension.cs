@@ -34,6 +34,29 @@ namespace System.Windows.Markup
 	[ContentProperty ("Items")]
 	public class ArrayExtension : MarkupExtension
 	{
+		public ArrayExtension ()
+		{
+			Items = new List<object> ();
+		}
+
+		public ArrayExtension (Array elements)
+		{
+			if (elements == null)
+				throw new ArgumentNullException ("elements");
+			Items = elements;
+		}
+
+		public ArrayExtension (Type arrayType)
+		{
+			if (arrayType == null)
+				throw new ArgumentNullException ("arrayType");
+			Type = arrayType;
+			Items = (IList) Activator.CreateInstance (typeof (List<>).MakeGenericType (arrayType), new object [0]);
+		}
+
+		public IList Items { get; private set; }
+		public Type Type { get; set; }
+
 		public void AddChild (Object value)
 		{
 			throw new NotImplementedException ();

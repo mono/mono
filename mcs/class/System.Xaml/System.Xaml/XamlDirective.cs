@@ -71,6 +71,11 @@ namespace System.Xaml
 		bool is_unknown;
 		IList<string> xaml_namespaces;
 
+		// this is for XamlLanguage.UnknownContent
+		internal bool InternalIsUnknown {
+			set { is_unknown = value; }
+		}
+
 		public override int GetHashCode ()
 		{
 			throw new NotImplementedException ();

@@ -31,6 +31,10 @@ namespace System.Windows.Markup
 	[MarkupExtensionReturnType (typeof (Type))]
 	public class TypeExtension : MarkupExtension
 	{
+		public TypeExtension ()
+		{
+		}
+
 		public TypeExtension (string typeName)
 		{
 			TypeName = typeName;

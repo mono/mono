@@ -31,7 +31,7 @@ using System.Xaml.Schema;
 
 namespace System.Xaml
 {
-	static class TypeExtension
+	static class TypeExtensionMethods
 	{
 		public static string GetXamlName (this Type type)
 		{
