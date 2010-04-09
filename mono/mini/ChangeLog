@@ -1,3 +1,9 @@
+
+Fri Apr 9 15:28:01 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* driver.c, optflags-def.h, ir-emit.h: introduce an unsupported
+	unsafe optimization that will remove bound checks.
+
 2010-04-08  Kornel Pal  <kornelpal@gmail.com>
 
 	* method-to-ir.c (mini_emit_inst_for_method): Fix a typo that caused
