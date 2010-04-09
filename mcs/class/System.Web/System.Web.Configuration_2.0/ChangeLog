@@ -1,3 +1,9 @@
+2010-04-09  Marek Habersack  <mhabersack@novell.com>
+
+	* WebConfigurationManager.cs: GetSection properly processes paths
+	of form '~'. Fixes bug #595140. Patch from Adriaan van Kekem
+	<avkekem@hotmail.com>, thanks!
+
 2010-04-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* GlobalizationSection.cs: use WebName instead of EncodingName.
