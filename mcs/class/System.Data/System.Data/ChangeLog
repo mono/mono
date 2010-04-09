@@ -1,5 +1,10 @@
 2010-04-09  Veerapuram Varadhan  <vvaradhan@novell.com>
 
+	** Fixes #576520 - Based on a patch by Greg SIROU <gspam@secway.fr>
+	* DataSet.cs (WriteColumnAsElement): Handle system.object types sanely.
+
+2010-04-09  Veerapuram Varadhan  <vvaradhan@novell.com>
+
 	** Fixes #590232
 	* DataColumn.cs (Clone): Clone extended properties as well
 	
