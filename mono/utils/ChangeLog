@@ -1,3 +1,8 @@
+2010-04-09  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-proclib.c: Applied more openbsd changes from Robert Nagy
+	<robert@openbsd.org>.
+
 2010-04-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* mono-semaphore.c: set EINTR on windows too.
