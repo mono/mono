@@ -88,6 +88,11 @@ namespace System.Reflection.Emit
 			}
 		}
 
+		internal override Type InternalResolve ()
+		{
+			return tbuilder.InternalResolve ().GetGenericArguments () [index]; 
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void initialize ();
 

@@ -68,6 +68,12 @@ namespace System.Reflection.Emit {
 			}
 		}
 
+		internal override Type InternalResolve ()
+		{
+			return _tb.InternalResolve (); 
+		}
+
+
 		public override Assembly Assembly {
 			get {
 				return _tb.Assembly;

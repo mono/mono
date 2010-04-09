@@ -1346,6 +1346,11 @@ namespace System {
 			}
 		}
 
+		internal virtual Type InternalResolve ()
+		{
+			return UnderlyingSystemType;
+		}
+
 		internal bool IsSystemType {
 			get {
 				return _impl.Value != IntPtr.Zero;

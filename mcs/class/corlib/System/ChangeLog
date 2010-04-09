@@ -1,3 +1,8 @@
+2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs: Add ResolveInternal virtual call that
+	resolves a given type to it's concrete type.
+
 2010-03-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Enum.cs (GetInfo): Don't use isinst tests as they can

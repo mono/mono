@@ -1,5 +1,19 @@
 2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* EnumBuilder.cs:
+	* GenericTypeParameterBuilder.cs:
+	* DerivedTypes.cs:
+	* TypeBuilder.cs: Add ResolveInternal virtual call that
+	resolves a given type to it's concrete type.
+
+	* TypeBuilder.cs (DefineDefaultConstructor): Use
+	ResolveInternal on parent to do the lookup on a
+	finished type.
+
+	Fixes #591225.
+
+2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* AssemblyBuilder.cs (GenericInstanceKey): Precalculate
 	GenericInstanceKey hash code since this can cause infinite
 	recursion when inflating "Foo<T> : Bar<Foo<T>>" parent.

@@ -1,5 +1,9 @@
 2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoGenericClass.cs: Implement ResolveInternal.
+
+2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoField.cs (Get|Set)Value: Check if obj is compatible
 	with field's class.
 

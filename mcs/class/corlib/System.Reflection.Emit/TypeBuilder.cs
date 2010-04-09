@@ -480,6 +480,7 @@ namespace System.Reflection.Emit
 			else
 				parent_type = pmodule.assemblyb.corlib_object_type;
 
+			parent_type = parent_type.InternalResolve ();
 			ConstructorInfo parent_constructor =
 				parent_type.GetConstructor (
 					BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance,
@@ -1631,6 +1632,12 @@ namespace System.Reflection.Emit
 			get {
 				return pmodule.assemblyb.IsCompilerContext;
 			}
+		}
+
+		internal override Type InternalResolve ()
+		{
+			check_created ();
+			return created;
 		}
 
 		internal bool is_created {

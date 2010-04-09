@@ -337,6 +337,14 @@ namespace System.Reflection.Emit
 			return rank;
 		}
 
+		internal override Type InternalResolve ()
+		{
+			Type et = elementType.InternalResolve (); 
+			if (rank == 0)
+				return et.MakeArrayType ();			
+			return et.MakeArrayType (rank);
+		}
+
 		protected override bool IsArrayImpl ()
 		{
 			return true;
@@ -378,6 +386,11 @@ namespace System.Reflection.Emit
 	{
 		internal ByRefType (Type elementType) : base (elementType)
 		{
+		}
+
+		internal override Type InternalResolve ()
+		{
+			return elementType.InternalResolve ().MakeByRefType (); 
 		}
 
 		protected override bool IsByRefImpl ()
@@ -422,6 +435,11 @@ namespace System.Reflection.Emit
 	{
 		internal PointerType (Type elementType) : base (elementType)
 		{
+		}
+
+		internal override Type InternalResolve ()
+		{
+			return elementType.InternalResolve ().MakePointerType (); 
 		}
 
 		protected override bool IsPointerImpl ()

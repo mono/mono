@@ -87,6 +87,15 @@ namespace System.Reflection
 			}
 		}
 
+		internal override Type InternalResolve ()
+		{
+			Type gtd = generic_type.InternalResolve ();
+			Type[] args = new Type [type_arguments.Length];
+			for (int i = 0; i < type_arguments.Length; ++i)
+				args [i] = type_arguments [i].InternalResolve ();
+			return gtd.MakeGenericType (args);
+		}
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		extern void initialize (MethodInfo[] methods, ConstructorInfo[] ctors, FieldInfo[] fields, PropertyInfo[] properties, EventInfo[] events);
 
