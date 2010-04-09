@@ -1,3 +1,8 @@
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xaml.dll.sources
+	  System.Xaml_test.dll.sources : more new types.
+
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xaml.dll.sources

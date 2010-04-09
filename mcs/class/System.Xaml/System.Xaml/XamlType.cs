@@ -31,27 +31,6 @@ using System.Xaml.Schema;
 
 namespace System.Xaml
 {
-	static class TypeExtension
-	{
-		public static bool ImplementsAnyInterfacesOf (this Type type, params Type [] definitions)
-		{
-			return definitions.Any (t => ImplementsInterface (type, t));
-		}
-
-		public static bool ImplementsInterface (this Type type, Type definition)
-		{
-			if (type == null)
-				throw new ArgumentNullException ("type");
-			if (definition == null)
-				throw new ArgumentNullException ("definition");
-
-			foreach (var iface in type.GetInterfaces ())
-				if (iface == definition || (iface.IsGenericType && iface.GetGenericTypeDefinition () == definition))
-					return true;
-			return false;
-		}
-	}
-
 	public class XamlType : IEquatable<XamlType>
 	{
 		public XamlType (Type underlyingType, XamlSchemaContext schemaContext)
@@ -60,17 +39,14 @@ namespace System.Xaml
 		}
 
 		public XamlType (Type underlyingType, XamlSchemaContext schemaContext, XamlTypeInvoker invoker)
+			: this (schemaContext, invoker)
 		{
 			if (underlyingType == null)
 				throw new ArgumentNullException ("underlyingType");
-			if (schemaContext == null)
-				throw new ArgumentNullException ("schemaContext");
 			type = underlyingType;
 			underlying_type = type;
-			SchemaContext = schemaContext;
-			Invoker = invoker;
 
-			Name = type.Name;
+			Name = type.GetXamlName ();
 			// FIXME: remove this hack
 			if (Type.GetTypeCode (type) == TypeCode.Object && type != typeof (object))
 				PreferredXamlNamespace = String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
@@ -79,6 +55,7 @@ namespace System.Xaml
 		}
 
 		public XamlType (string unknownTypeNamespace, string unknownTypeName, IList<XamlType> typeArguments, XamlSchemaContext schemaContext)
+			: this (schemaContext, null)
 		{
 			if (unknownTypeNamespace == null)
 				throw new ArgumentNullException ("unknownTypeNamespace");
@@ -91,7 +68,6 @@ namespace System.Xaml
 			Name = unknownTypeName;
 			PreferredXamlNamespace = unknownTypeNamespace;
 			TypeArguments = typeArguments != null && typeArguments.Count == 0 ? null : typeArguments;
-			SchemaContext = schemaContext;
 		}
 
 		protected XamlType (string typeName, IList<XamlType> typeArguments, XamlSchemaContext schemaContext)
@@ -99,43 +75,55 @@ namespace System.Xaml
 		{
 		}
 
+		XamlType (XamlSchemaContext schemaContext, XamlTypeInvoker invoker)
+		{
+			if (schemaContext == null)
+				throw new ArgumentNullException ("schemaContext");
+			SchemaContext = schemaContext;
+			this.invoker = invoker ?? new XamlTypeInvoker (this);
+		}
+
 		Type type, underlying_type;
 
 		// populated properties
 		XamlType base_type;
+		XamlTypeInvoker invoker;
 
-		public IList<XamlType> AllowedContentTypes {
-			get { throw new NotImplementedException (); }
+		internal EventHandler<XamlSetMarkupExtensionEventArgs> SetMarkupExtensionHandler {
+			get { return LookupSetMarkupExtensionHandler (); }
 		}
 
-		[MonoTODO]
+		internal EventHandler<XamlSetTypeConverterEventArgs> SetTypeConverterHandler {
+			get { return LookupSetTypeConverterHandler (); }
+		}
+
+		public IList<XamlType> AllowedContentTypes {
+			get { return LookupAllowedContentTypes (); }
+		}
+
 		public XamlType BaseType {
-			get {
-				if (base_type == null) {
-					if (UnderlyingType == null)
-						// FIXME: probably something advanced is needed here.
-						base_type = new XamlType (typeof (object), SchemaContext, Invoker);
-					else
-						base_type = type.BaseType == null || type.BaseType == typeof (object) ? null : new XamlType (type.BaseType, SchemaContext, Invoker);
-				}
-				return base_type;
-			}
+			get { return LookupBaseType (); }
 		}
 
 		public bool ConstructionRequiresArguments {
-			get { throw new NotImplementedException (); }
-		}
-		public XamlMember ContentProperty {
-			get { throw new NotImplementedException (); }
-		}
-		public IList<XamlType> ContentWrappers {
-			get { throw new NotImplementedException (); }
-		}
-		public XamlValueConverter<XamlDeferringLoader> DeferringLoader {
-			get { throw new NotImplementedException (); }
+			get { return LookupConstructionRequiresArguments (); }
 		}
 
-		public XamlTypeInvoker Invoker { get; private set; }
+		public XamlMember ContentProperty {
+			get { return LookupContentProperty (); }
+		}
+
+		public IList<XamlType> ContentWrappers {
+			get { return LookupContentWrappers (); }
+		}
+
+		public XamlValueConverter<XamlDeferringLoader> DeferringLoader {
+			get { return LookupDeferringLoader (); }
+		}
+
+		public XamlTypeInvoker Invoker {
+			get { return LookupInvoker (); }
+		}
 
 		public bool IsAmbient {
 			get { return LookupIsAmbient (); }
@@ -294,30 +282,37 @@ namespace System.Xaml
 		{
 			throw new NotImplementedException ();
 		}
+
 		public XamlMember GetAliasedProperty (XamlDirective directive)
 		{
-			throw new NotImplementedException ();
+			return LookupAliasedProperty (directive);
 		}
+
 		public ICollection<XamlMember> GetAllAttachableMembers ()
 		{
-			throw new NotImplementedException ();
+			return new List<XamlMember> (LookupAllAttachableMembers ());
 		}
+
 		public ICollection<XamlMember> GetAllMembers ()
 		{
-			throw new NotImplementedException ();
+			return new List<XamlMember> (LookupAllMembers ());
 		}
+
 		public XamlMember GetAttachableMember (string name)
 		{
-			throw new NotImplementedException ();
+			return LookupAttachableMember (name);
 		}
+
 		public XamlMember GetMember (string name)
 		{
-			throw new NotImplementedException ();
+			return LookupMember (name, false);
 		}
+
 		public IList<XamlType> GetPositionalParameters (int parameterCount)
 		{
-			throw new NotImplementedException ();
+			return LookupPositionalParameters (parameterCount);
 		}
+
 		public virtual IList<string> GetXamlNamespaces ()
 		{
 			throw new NotImplementedException ();
@@ -345,21 +340,41 @@ namespace System.Xaml
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO]
 		protected virtual XamlType LookupBaseType ()
 		{
-			throw new NotImplementedException ();
+			if (base_type == null) {
+				if (UnderlyingType == null)
+					// FIXME: probably something advanced is needed here.
+					base_type = new XamlType (typeof (object), SchemaContext, Invoker);
+				else
+					base_type = type.BaseType == null || type.BaseType == typeof (object) ? null : new XamlType (type.BaseType, SchemaContext, Invoker);
+			}
+			return base_type;
 		}
+
 		protected virtual XamlCollectionKind LookupCollectionKind ()
 		{
 			throw new NotImplementedException ();
 		}
+
 		protected virtual bool LookupConstructionRequiresArguments ()
 		{
-			throw new NotImplementedException ();
+			if (UnderlyingType == null)
+				return false;
+
+			// FIXME: probably some primitive types are treated as special.
+			if (Type.GetTypeCode (UnderlyingType) != TypeCode.Object)
+				return false;
+
+			return UnderlyingType.GetConstructor (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance, null, Type.EmptyTypes, null) == null;
 		}
+
 		protected virtual XamlMember LookupContentProperty ()
 		{
-			throw new NotImplementedException ();
+			var a = this.GetCustomAttribute<ContentPropertyAttribute> ();
+			return a != null && a.Name != null ? GetMember (a.Name) : null;
 		}
 		protected virtual IList<XamlType> LookupContentWrappers ()
 		{
@@ -373,13 +388,15 @@ namespace System.Xaml
 		{
 			throw new NotImplementedException ();
 		}
+
 		protected virtual XamlTypeInvoker LookupInvoker ()
 		{
-			throw new NotImplementedException ();
+			return invoker;
 		}
+
 		protected virtual bool LookupIsAmbient ()
 		{
-			throw new NotImplementedException ();
+			return this.GetCustomAttribute<AmbientAttribute> () != null;
 		}
 
 		protected virtual bool LookupIsConstructible ()
@@ -395,26 +412,32 @@ namespace System.Xaml
 			// FIXME: handle x:Code
 			if (IsXData)
 				return false;
+
+			// FIXME: this check is extraneous to spec. 5.2.
+			if (ConstructionRequiresArguments)
+				return false;
+
 			return true;
 		}
 
 		protected virtual bool LookupIsMarkupExtension ()
 		{
-			throw new NotImplementedException ();
+			return typeof (MarkupExtension).IsAssignableFrom (UnderlyingType);
 		}
+
 		protected virtual bool LookupIsNameScope ()
 		{
-			throw new NotImplementedException ();
+			return typeof (INameScope).IsAssignableFrom (UnderlyingType);
 		}
 
 		protected virtual bool LookupIsNullable ()
 		{
-			return type.ImplementsInterface (typeof (Nullable<>));
+			return !type.IsValueType || type.ImplementsInterface (typeof (Nullable<>));
 		}
 
 		protected virtual bool LookupIsPublic ()
 		{
-			return type.IsPublic;
+			return underlying_type == null || underlying_type.IsPublic || underlying_type.IsNestedPublic;
 		}
 
 		protected virtual bool LookupIsUnknown ()
@@ -424,12 +447,13 @@ namespace System.Xaml
 
 		protected virtual bool LookupIsWhitespaceSignificantCollection ()
 		{
-			throw new NotImplementedException ();
+			// probably for unknown types, it should preserve whitespaces.
+			return IsUnknown || this.GetCustomAttribute<WhitespaceSignificantCollectionAttribute> () != null;
 		}
 
 		protected virtual bool LookupIsXData ()
 		{
-			throw new NotImplementedException ();
+			return typeof (XData).IsAssignableFrom (UnderlyingType);
 		}
 
 		protected virtual XamlType LookupItemType ()
@@ -454,28 +478,55 @@ namespace System.Xaml
 
 		protected virtual XamlType LookupMarkupExtensionReturnType ()
 		{
-			throw new NotImplementedException ();
+			var a = this.GetCustomAttribute<MarkupExtensionReturnTypeAttribute> ();
+			return a != null ? new XamlType (a.ReturnType, SchemaContext) : null;
 		}
+
 		protected virtual XamlMember LookupMember (string name, bool skipReadOnlyCheck)
 		{
-			throw new NotImplementedException ();
+			var pi = UnderlyingType.GetProperty (name);
+			if (pi != null && (skipReadOnlyCheck || pi.CanWrite))
+				return new XamlMember (pi, SchemaContext);
+			var ei = UnderlyingType.GetEvent (name);
+			if (ei != null)
+				return new XamlMember (ei, SchemaContext);
+			return null;
 		}
+
 		protected virtual IList<XamlType> LookupPositionalParameters (int parameterCount)
 		{
 			throw new NotImplementedException ();
 		}
+
+		BindingFlags flags_get_static = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;
+
 		protected virtual EventHandler<XamlSetMarkupExtensionEventArgs> LookupSetMarkupExtensionHandler ()
 		{
-			throw new NotImplementedException ();
+			var a = this.GetCustomAttribute<XamlSetMarkupExtensionAttribute> ();
+			if (a == null)
+				return null;
+			var mi = type.GetMethod (a.XamlSetMarkupExtensionHandler, flags_get_static);
+			if (mi == null)
+				throw new ArgumentException ("Binding to XamlSetMarkupExtensionHandler failed");
+			return (EventHandler<XamlSetMarkupExtensionEventArgs>) Delegate.CreateDelegate (typeof (EventHandler<XamlSetMarkupExtensionEventArgs>), mi);
 		}
+
 		protected virtual EventHandler<XamlSetTypeConverterEventArgs> LookupSetTypeConverterHandler ()
 		{
-			throw new NotImplementedException ();
+			var a = this.GetCustomAttribute<XamlSetTypeConverterAttribute> ();
+			if (a == null)
+				return null;
+			var mi = type.GetMethod (a.XamlSetTypeConverterHandler, flags_get_static);
+			if (mi == null)
+				throw new ArgumentException ("Binding to XamlSetTypeConverterHandler failed");
+			return (EventHandler<XamlSetTypeConverterEventArgs>) Delegate.CreateDelegate (typeof (EventHandler<XamlSetTypeConverterEventArgs>), mi);
 		}
+
 		protected virtual bool LookupTrimSurroundingWhitespace ()
 		{
-			throw new NotImplementedException ();
+			return this.GetCustomAttribute<TrimSurroundingWhitespaceAttribute> () != null;
 		}
+
 		protected virtual XamlValueConverter<TypeConverter> LookupTypeConverter ()
 		{
 			throw new NotImplementedException ();
@@ -488,8 +539,10 @@ namespace System.Xaml
 
 		protected virtual bool LookupUsableDuringInitialization ()
 		{
-			throw new NotImplementedException ();
+			var a = this.GetCustomAttribute<UsableDuringInitializationAttribute> ();
+			return a != null && a.Usable;
 		}
+
 		protected virtual XamlValueConverter<ValueSerializer> LookupValueSerializer ()
 		{
 			throw new NotImplementedException ();

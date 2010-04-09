@@ -36,24 +36,30 @@ namespace System.Xaml.Schema
 
 		protected XamlTypeInvoker ()
 		{
-			throw new NotImplementedException ();
 		}
 		
 		public XamlTypeInvoker (XamlType type)
 		{
-			throw new NotImplementedException ();
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			this.type = type;
 		}
 		
+		XamlType type;
+		
 		public EventHandler<XamlSetMarkupExtensionEventArgs> SetMarkupExtensionHandler {
-			get { throw new NotImplementedException (); }
+			get { return type.SetMarkupExtensionHandler; }
 		}
+
 		public EventHandler<XamlSetTypeConverterEventArgs> SetTypeConverterHandler {
-			get { throw new NotImplementedException (); }
+			get { return type.SetTypeConverterHandler; }
 		}
+
 		public virtual void AddToCollection (object instance, object item)
 		{
 			throw new NotImplementedException ();
 		}
+
 		public virtual void AddToDictionary (object instance, object key, object item)
 		{
 			throw new NotImplementedException ();

@@ -1,3 +1,7 @@
+2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlTypeInvokerTest.cs : new test.
+
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlMemberInvokerTest.cs : new test.

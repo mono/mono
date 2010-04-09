@@ -1,4 +1,5 @@
 System.Xaml.Schema/XamlMemberInvokerTest.cs
+System.Xaml.Schema/XamlTypeInvokerTest.cs
 System.Xaml/AmbientPropertyValueTest.cs
 System.Xaml/AttachableMemberIdentifierTest.cs
 System.Xaml/NamespaceDeclarationTest.cs
