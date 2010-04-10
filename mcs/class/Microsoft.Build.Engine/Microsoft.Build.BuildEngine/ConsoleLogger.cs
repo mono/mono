@@ -439,6 +439,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			StringBuilder sb = new StringBuilder ();
 
+			string last_imported_target_file = String.Empty;
 			for (int i = 0; i < events.Count; i ++) {
 				BuildStatusEventArgs args = events [i];
 				ProjectStartedEventArgs pargs = args as ProjectStartedEventArgs;
@@ -447,12 +448,20 @@ namespace Microsoft.Build.BuildEngine {
 							String.IsNullOrEmpty (pargs.TargetNames) ?
 								"default targets" :
 								pargs.TargetNames);
+					last_imported_target_file = String.Empty;
 					continue;
 				}
 
 				TargetStartedEventArgs targs = args as TargetStartedEventArgs;
-				if (targs != null)
+				if (targs != null) {
+					if (targs.TargetFile != targs.ProjectFile && targs.TargetFile != last_imported_target_file)
+						// target from an imported file,
+						// and it hasn't been mentioned as yet
+						sb.AppendFormat ("{0} ", targs.TargetFile);
+
+					last_imported_target_file = targs.TargetFile;
 					sb.AppendFormat ("({0} target) ->\n", targs.TargetName);
+				}
 			}
 
 			return sb.ToString ();

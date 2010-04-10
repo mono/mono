@@ -1,5 +1,10 @@
 2010-04-10  Ankit Jain  <jankit@novell.com>
 
+	* ConsoleLogger.cs (EventsToString): If the target being executed is
+	from an imported file, then show that.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
 	* Project.cs: Add property MSBuildExtensionsPath32, used by silverlight
 	projects.
 
