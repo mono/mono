@@ -1,5 +1,10 @@
 2010-04-10  Ankit Jain  <jankit@novell.com>
 
+	* Project.cs (InitializeProperties): Set MSBuildBinPath to the current
+	tools path.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
 	* TaskEngine.cs (Prepare): Throw InvalidProjectFileException instead of a generic
 	Exception.
 
