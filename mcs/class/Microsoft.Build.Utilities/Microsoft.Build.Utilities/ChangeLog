@@ -1,3 +1,7 @@
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* ReservedNameUtils.cs (GetReservedMetadata): Handle empty item.
+
 2010-04-08  Ankit Jain  <jankit@novell.com>
 
 	* ToolTask.cs: Use regex to parse output. Regex is from monodevelop.
