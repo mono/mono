@@ -141,6 +141,9 @@ namespace System.Xaml
 
 		protected override void Dispose (bool disposing)
 		{
+			if (!disposing)
+				return;
+
 			while (nodes.Count > 0) {
 				var obj = nodes.Peek ();
 				if (obj is XamlMember) {
@@ -154,7 +157,7 @@ namespace System.Xaml
 				else
 					nodes.Pop ();
 			}
-			if (disposing)
+			if (settings.CloseOutput)
 				w.Close ();
 		}
 

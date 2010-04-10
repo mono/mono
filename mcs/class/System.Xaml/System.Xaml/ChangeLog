@@ -1,5 +1,10 @@
 2010-04-10  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlWriter.cs : Process closing only once (disposing).
+	  Close output only when required.
+
+2010-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* TypeExtensionMethods.cs, XamlType.cs :
 	  implement LookupCustomAttributeProvider() and use it.
 	* XamlLanguage.cs : add internal const for xmlns ns.
