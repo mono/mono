@@ -224,8 +224,10 @@ namespace Microsoft.Build.Utilities
 				return;
 
 			Match match = CscErrorRegex.Match (singleLine);
-			if (!match.Success)
+			if (!match.Success) {
+				Log.LogMessage (importance, singleLine);
 				return;
+			}
 
 			string filename = match.Result ("${file}") ?? "";
 			string line = match.Result ("${line}");

@@ -169,8 +169,10 @@ namespace Microsoft.Build.Tasks {
 				return;
 
 			Match match = ErrorRegex.Match (singleLine);
-			if (!match.Success)
+			if (!match.Success) {
+				Log.LogMessage (importance, singleLine);
 				return;
+			}
 
 			string filename = match.Result ("${file}") ?? "";
 
