@@ -1,5 +1,10 @@
 2010-04-10  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.Common.targets (DeployOutputFiles): Copy only
+	if the source file exists.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/3.5/Microsoft.Common.tasks:
 	* xbuild/4.0/Microsoft.Common.tasks: Remove spurious
 	Moonlight task declarations.

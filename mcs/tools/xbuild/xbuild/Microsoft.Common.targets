@@ -464,7 +464,7 @@
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
-		<Copy SourceFiles="@(IntermediateAssembly)" Condition="'$(OutDir)' != ''" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true">
+		<Copy SourceFiles="@(IntermediateAssembly)" Condition="'$(OutDir)' != '' and Exists ('@(IntermediateAssembly)')" DestinationFolder="$(OutDir)" SkipUnchangedFiles="true">
 			<Output TaskParameter="DestinationFiles" ItemName="FileWrites"/>
 		</Copy>
 
