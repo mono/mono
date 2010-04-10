@@ -1,5 +1,9 @@
 2010-04-10  Ankit Jain  <jankit@novell.com>
 
+	* GetFrameworkPath.cs (FrameworkVersion40Path): New.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
 	* Copy.cs: Cleanly log errors, instead of throwing exceptions.
 
 2010-04-10  Ankit Jain  <jankit@novell.com>

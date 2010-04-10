@@ -1,5 +1,13 @@
 2010-04-10  Ankit Jain  <jankit@novell.com>
 
+	* xbuild/Microsoft.Common.targets: Move to 2.0, 3.5 and 4.0 .
+	The 4.0 copy gets the framework path for 4.0 .
+	* Makefile: Update for the above change.
+	* xbuild_targets.make: Likewise.
+
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
 	* xbuild/Microsoft.Common.targets (DeployOutputFiles): Copy only
 	if the source file exists.
 

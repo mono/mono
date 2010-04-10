@@ -32,7 +32,7 @@ install-extras:
 	$(INSTALL_DATA) xbuild/xbuild.rsp $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/Microsoft.Common.tasks $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.Build.xsd $(DESTDIR)$(EXTRAS_DIR)
-	$(INSTALL_DATA) xbuild/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
+	$(INSTALL_DATA) xbuild/$(FRAMEWORK_VERSION)/Microsoft.Common.targets $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.CSharp.targets $(DESTDIR)$(EXTRAS_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.VisualBasic.targets $(DESTDIR)$(EXTRAS_DIR)
 	$(MKINSTALLDIRS) $(DESTDIR)$(EXTRAS_DIR)/MSBuild

@@ -87,6 +87,15 @@ namespace Microsoft.Build.Tasks {
 			}
 		}
 
+#if NET_4_0
+		[Output]
+		public string FrameworkVersion40Path {
+			get {
+				return ToolLocationHelper.GetPathToDotNetFramework (
+						TargetDotNetFrameworkVersion.Version40);
+			}
+		}
+#endif
 	}
 }
 
