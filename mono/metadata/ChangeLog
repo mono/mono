@@ -1,3 +1,8 @@
+2010-04-10  Jb Evain  <jbevain@novell.com>
+
+	* domain.c (supported_runtimes): remove .net 4.0 beta 2 and
+	add .net 4.0 RTM version.
+
 2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (resolve_object): Properly inflate generic
