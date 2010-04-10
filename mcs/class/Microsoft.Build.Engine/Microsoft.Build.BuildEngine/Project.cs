@@ -940,6 +940,7 @@ namespace Microsoft.Build.BuildEngine {
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", toolsPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsVersion", toolsVersionToUse, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath32", ExtensionsPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
 

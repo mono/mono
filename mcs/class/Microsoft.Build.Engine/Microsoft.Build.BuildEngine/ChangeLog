@@ -1,3 +1,8 @@
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs: Add property MSBuildExtensionsPath32, used by silverlight
+	projects.
+
 2010-04-07  Ankit Jain  <jankit@novell.com>
 
 	* ConsoleLogger.cs: Dump items and properties when a project starts
