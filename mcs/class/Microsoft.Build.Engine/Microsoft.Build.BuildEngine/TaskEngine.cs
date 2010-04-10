@@ -95,7 +95,7 @@ namespace Microsoft.Build.BuildEngine {
 					if (TryGetObjectFromString (de.Value, currentProperty.PropertyType, out value))
 						values.Add (de.Key, value);
 				} catch (Exception e) {
-					throw new Exception (String.Format (
+					throw new InvalidProjectFileException (String.Format (
 							"Error converting Property named '{0}' with value '{1}' to type {2}: {3}",
 							de.Key, de.Value, currentProperty.PropertyType, e.Message), e);
 				}
@@ -171,10 +171,10 @@ namespace Microsoft.Build.BuildEngine {
 				propertyInfo = taskType.GetProperty (taskParameter, BindingFlags.Public | BindingFlags.Instance |
 							BindingFlags.IgnoreCase);
 				if (propertyInfo == null)
-					throw new Exception (String.Format (
+					throw new InvalidProjectFileException (String.Format (
 						"The parameter '{0}' was not found for the '{1}' task.", taskParameter, taskElement.Name));
 				if (!propertyInfo.IsDefined (outputAttribute, false))
-					throw new Exception ("This is not output property.");
+					throw new InvalidProjectFileException ("This is not output property.");
 				
 				o = propertyInfo.GetValue (task, null);
 				// FIXME: maybe we should throw an exception here?

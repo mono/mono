@@ -1,5 +1,10 @@
 2010-04-10  Ankit Jain  <jankit@novell.com>
 
+	* TaskEngine.cs (Prepare): Throw InvalidProjectFileException instead of a generic
+	Exception.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
 	* ConsoleLogger.cs (EventsToString): If the target being executed is
 	from an imported file, then show that.
 

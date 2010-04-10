@@ -57,10 +57,16 @@ namespace Microsoft.Build.Tasks {
 				List <ITaskItem> temporaryCopiedFiles = new List <ITaskItem> ();
 			
 				if (sourceFiles != null && destinationFiles != null &&
-					sourceFiles.Length != destinationFiles.Length)
-					throw new Exception ("Number of source files is different than number of destination files.");
-				if (destinationFiles != null && destinationFolder != null)
-					throw new Exception ("You must specify only one attribute from DestinationFiles and DestinationFolder");
+					sourceFiles.Length != destinationFiles.Length) {
+					Log.LogError ("Number of source files is different than number of destination files.");
+					return false;
+				}
+
+				if (destinationFiles != null && destinationFolder != null) {
+					Log.LogError ("You must specify only one attribute from DestinationFiles and DestinationFolder");
+					return false;
+				}
+
 				if (destinationFiles != null && destinationFiles.Length > 0) {
 					for (int i = 0; i < sourceFiles.Length; i ++) {
 						ITaskItem sourceItem = sourceFiles [i];
@@ -109,7 +115,8 @@ namespace Microsoft.Build.Tasks {
 					}
 					destinationFiles = temporaryDestinationFiles.ToArray ();
 				} else {
-					throw new Exception ("You must specify DestinationFolder or DestinationFiles attribute.");
+					Log.LogError ("You must specify DestinationFolder or DestinationFiles attribute.");
+					return false;
 				}
 				
 				copiedFiles = temporaryCopiedFiles.ToArray ();
