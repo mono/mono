@@ -33,17 +33,24 @@ namespace System.Xaml
 		{
 			return Load (new XamlXmlReader (stream));
 		}
+
 		public static Object Load (TextReader textReader)
 		{
 			return Load (new XamlXmlReader (textReader));
 		}
+
 		public static Object Load (XmlReader xmlReader)
 		{
 			return Load (new XamlXmlReader (xmlReader));
 		}
+
 		public static Object Load (XamlReader xamlReader)
 		{
-			throw new NotImplementedException ();
+			if (xamlReader == null)
+				throw new ArgumentNullException ("xamlReader");
+			var w = new XamlObjectWriter (xamlReader.SchemaContext);
+			Transform (xamlReader, w);
+			return w.Result;
 		}
 
 		public static Object Parse (string xaml)
@@ -55,9 +62,19 @@ namespace System.Xaml
 		{
 			Transform (xamlReader, xamlWriter, true);
 		}
+
 		public static void Transform (XamlReader xamlReader, XamlWriter xamlWriter, bool closeWriter)
 		{
-			throw new NotImplementedException ();
+			if (xamlReader == null)
+				throw new ArgumentNullException ("xamlReader");
+			if (xamlWriter == null)
+				throw new ArgumentNullException ("xamlWriter");
+
+			if (xamlReader.NodeType == XamlNodeType.None)
+				xamlReader.Read ();
+
+			xamlWriter.WriteNode (xamlReader);
+
 		}
 	}
 }

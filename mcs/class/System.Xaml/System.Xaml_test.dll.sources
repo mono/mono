@@ -21,3 +21,4 @@ System.Xaml/XamlSchemaContextTest.cs
 System.Xaml/XamlTypeTest.cs
 System.Xaml/XamlXmlReaderSettingsTest.cs
 System.Xaml/XamlXmlWriterSettingsTest.cs
+System.Xaml/XamlXmlWriterTest.cs

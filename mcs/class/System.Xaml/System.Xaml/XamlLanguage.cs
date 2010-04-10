@@ -34,6 +34,7 @@ namespace System.Xaml
 	{
 		public const string Xaml2006Namespace = "http://schemas.microsoft.com/winfx/2006/xaml";
 		public const string Xml1998Namespace = "http://www.w3.org/XML/1998/namespace";
+		internal const string Xmlns2000Namespace = "http://www.w3.org/2000/xmlns/";
 
 		static readonly XamlSchemaContext sctx = new XamlSchemaContext (null, null);
 

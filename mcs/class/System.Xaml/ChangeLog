@@ -1,3 +1,7 @@
+2010-04-10  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xaml_test.dll.sources : add XamlXmlWriterTest.cs.
+
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xaml.dll.sources : add new internal types.

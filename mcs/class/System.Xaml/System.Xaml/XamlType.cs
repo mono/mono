@@ -400,9 +400,14 @@ namespace System.Xaml
 		{
 			throw new NotImplementedException ();
 		}
+
+		internal ICustomAttributeProvider CustomAttributeProvider {
+			get { return LookupCustomAttributeProvider (); }
+		}
+
 		protected virtual ICustomAttributeProvider LookupCustomAttributeProvider ()
 		{
-			throw new NotImplementedException ();
+			return UnderlyingType;
 		}
 		protected virtual XamlValueConverter<XamlDeferringLoader> LookupDeferringLoader ()
 		{

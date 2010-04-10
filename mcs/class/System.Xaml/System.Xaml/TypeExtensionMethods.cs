@@ -40,7 +40,7 @@ namespace System.Xaml
 			return type.DeclaringType.GetXamlName () + "+" + type.Name;
 		}
 
-		public static T GetCustomAttribute<T> (this Type type, bool inherit) where T : Attribute
+		public static T GetCustomAttribute<T> (this ICustomAttributeProvider type, bool inherit) where T : Attribute
 		{
 			foreach (var a in type.GetCustomAttributes (typeof (T), inherit))
 				return (T) (object) a;
@@ -52,7 +52,7 @@ namespace System.Xaml
 			if (type.UnderlyingType == null)
 				return null;
 
-			T ret = type.UnderlyingType.GetCustomAttribute<T> (true);
+			T ret = type.CustomAttributeProvider.GetCustomAttribute<T> (true);
 			if (ret != null)
 				return ret;
 			if (type.BaseType != null)
