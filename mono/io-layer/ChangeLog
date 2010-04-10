@@ -1,3 +1,15 @@
+2010-04-10  Andreas Färber  <andreas.faerber@web.de>
+
+	* processes.c (EnumProcesses, load_modules): Add implementations
+	for Haiku. Fixes build on Haiku.
+	(OpenProcess, EnumProcessModules, get_process_name_from_proc):
+	Tweak implementations for Haiku.
+	* process-private.h: Fix _WAPI_PROCESS_UNHANDLED_PID_MASK for
+	32-bit pids (Haiku).
+	* ChangeLog: Fix UTF-8 encoding
+
+	Code is contributed under MIT/X11 license.
+
 2010-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* processes.c: Applied more openbsd changes from Robert Nagy <robert@openbsd.org>.
@@ -137,7 +149,7 @@ Wed Feb 24 16:01:37 CET 2010 Paolo Molaro <lupus@ximian.com>
 
 2009-09-01  Zoltan Varga  <vargaz@gmail.com>
 
-	* processes.c (EnumProcessModules): Applied patch from Romain Tarti�re
+	* processes.c (EnumProcessModules): Applied patch from Romain Tartière
 	(romain@blogreen.org). Fix this on freebsd/OSX. Fixes #533893.
 
 2009-08-18  Christian Hergert  <chris@dronelabs.com>
