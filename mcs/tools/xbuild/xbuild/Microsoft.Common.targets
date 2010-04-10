@@ -89,7 +89,9 @@
 		<MakeDir 
 			Directories="$(OutDir);$(IntermediateOutputPath)"
 		/>
+	</Target>
 
+	<Target Name="GetFrameworkPaths">
 		<GetFrameworkPath>
 			<Output Condition="'$(TargetFrameworkVersion)' == 'v3.5'"
 				TaskParameter="FrameworkVersion35Path"
@@ -256,11 +258,11 @@
 	<PropertyGroup>
 		<CoreBuildDependsOn>
 			PrepareForBuild;
+			GetFrameworkPaths;
 			PreBuildEvent;
 			ResolveReferences;
 			CopyFilesMarkedCopyLocal;
-			BuildResources;
-			CompileLicxFiles;
+			PrepareResources;
 			Compile;
 			PrepareForRun;
 			DeployOutputFiles;
@@ -303,9 +305,18 @@
 	</PropertyGroup>
 	<Target Name="PrepareForRun" DependsOnTargets="$(PrepareForRunDependsOn)"/>
 
-	<Target Name="BuildResources"
-		DependsOnTargets="AssignTargetPaths;SplitResourcesByCulture;CreateManifestResourceNames;CopyNonResxEmbeddedResources;GenerateResources;GenerateSatelliteAssemblies">
-	</Target>
+	<PropertyGroup>
+		<PrepareResourcesDependsOn>
+			AssignTargetPaths;
+			SplitResourcesByCulture;
+			CreateManifestResourceNames;
+			CopyNonResxEmbeddedResources;
+			GenerateResources;
+			GenerateSatelliteAssemblies;
+			CompileLicxFiles
+		</PrepareResourcesDependsOn>
+	</PropertyGroup>
+	<Target Name="PrepareResources" DependsOnTargets="$(PrepareResourcesDependsOn)" />
 
 	<Target Name="SplitResourcesByCulture" DependsOnTargets="AssignTargetPaths">
 		<!-- Extract .licx files into @(LicxFiles) -->
@@ -443,7 +454,7 @@
 	</Target>
 
 	<Target Name="DeployOutputFiles"
-		DependsOnTargets="BuildResources;CoreCompile;_CopyDeployFilesToOutputDirectory;_CopyAppConfigFile">
+		DependsOnTargets="PrepareResources;CoreCompile;_CopyDeployFilesToOutputDirectory;_CopyAppConfigFile">
 
 		<Copy 
 			SourceFiles="$(IntermediateOutputPath)$(AssemblyName)$(TargetExt).mdb"
