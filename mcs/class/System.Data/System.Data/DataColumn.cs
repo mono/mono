@@ -405,15 +405,9 @@ namespace System.Data {
 
 				//Check AutoIncrement status, make compatible datatype
 				if(AutoIncrement == true) {
-					// we want to check that the datatype is supported?
-					// TODO: Is this the same as CanAutoIncrement or was the omission of Decimal intended?
-					TypeCode typeCode = Type.GetTypeCode(value);
-
-					if (typeCode != TypeCode.Int16 &&
-					    typeCode != TypeCode.Int32 &&
-					    typeCode != TypeCode.Int64) {
+					// we want to check that the datatype is supported?					
+					if (!CanAutoIncrement (value))
 						AutoIncrement = false;
-					}
 				}
 
 				if (DefaultValue != GetDefaultValueForType (prevType))
