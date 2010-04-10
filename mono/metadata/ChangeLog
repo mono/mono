@@ -1,5 +1,12 @@
 2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (resolve_object): Properly inflate generic
+	methods when a context is supplied.
+
+	Fixes #591226.
+
+2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_method_verify): A switch op don't empty
 	the stack for the next one. Fixes a bug when running fsi
 	under --verify-all.
