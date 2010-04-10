@@ -761,7 +761,6 @@ namespace MonoTests.System.Reflection.Emit
 			Assert.AreEqual ("foo", pi [1].DefaultValue, "#B1");
 		}
 
-#if NET_2_0
 		[Test]
 		public void SetCustomAttribute_DllImport1 ()
 		{
@@ -964,6 +963,8 @@ namespace MonoTests.System.Reflection.Emit
 			}
 		}
 
+
+
 		[Test]
 		public void DefineGenericParameters_Names_Null ()
 		{
@@ -990,6 +991,34 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.AreEqual ("names", ex.ParamName, "#B5");
 			}
 		}
-#endif
+
+
+		public static int Foo<T> (T a, T b) {
+			return 99;
+		}
+
+		[Test]//bug #591226
+		public void GenericMethodIsProperlyInflated ()
+		{
+			var tb = module.DefineType ("foo");
+			var met = typeof (MethodBuilderTest).GetMethod ("Foo");
+
+			var mb = tb.DefineMethod ("myFunc", MethodAttributes.Public | MethodAttributes.Static, typeof (int), Type.EmptyTypes);
+			var garg = mb.DefineGenericParameters ("a") [0];
+			mb.SetParameters (garg, garg);
+
+			var ilgen = mb.GetILGenerator ();
+			ilgen.Emit (OpCodes.Ldarg_0);
+			ilgen.Emit (OpCodes.Ldarg_1);
+			ilgen.Emit (OpCodes.Call, met.MakeGenericMethod (garg));
+			ilgen.Emit (OpCodes.Ret);
+
+			var res = tb.CreateType ();
+			var mm = res.GetMethod ("myFunc").MakeGenericMethod (typeof (int));
+
+			var rt = mm.Invoke (null, new object[] { 10, 20 });
+			Assert.AreEqual (99, rt, "#1");
+		}
+
 	}
 }
