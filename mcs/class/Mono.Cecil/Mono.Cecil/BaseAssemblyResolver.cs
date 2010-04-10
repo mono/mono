@@ -155,7 +155,7 @@ namespace Mono.Cecil {
 					runtime_path = "v2.0.50727";
 					break;
 				case "4.0.0.0":
-					runtime_path = "v4.0.21006";
+					runtime_path = "v4.0.30319";
 					break;
 				}
 			}
@@ -180,7 +180,7 @@ namespace Mono.Cecil {
 			get {
 				if (m_monoGacPaths == null)
 					m_monoGacPaths = GetDefaultMonoGacPaths ();
-				return m_monoGacPaths;	
+				return m_monoGacPaths;
 			}
 		}
 
