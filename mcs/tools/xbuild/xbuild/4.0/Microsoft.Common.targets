@@ -106,6 +106,8 @@
 				TaskParameter="FrameworkVersion20Path"
 				ItemName="TargetFrameworkDirectories"/>
 		</GetFrameworkPath>
+		<Warning Text="TargetFrameworkVersion '$(TargetFrameworkVersion)' not supported by this toolset (ToolsVersion: $(MSBuildToolsVersion))."
+			Condition="'$(TargetFrameworkVersion)' != 'v4.0' and '$(TargetFrameworkVersion)' != 'v3.5' and '$(TargetFrameworkVersion)' != 'v3.0' and '$(TargetFrameworkVersion)' != 'v2.0'"/>
 	</Target>
 
 	<PropertyGroup>
