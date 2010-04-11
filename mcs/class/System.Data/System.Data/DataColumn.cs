@@ -701,7 +701,8 @@ namespace System.Data {
 			//Copy.Container
 			copy.DataType = DataType;
 			copy._defaultValue = _defaultValue;
-			copy._expression = _expression;
+			// Use property to clone Expression as it builds compiled expression also, if any. 
+			copy.Expression = _expression;
 			//Copy.ExtendedProperties
 			copy._maxLength = _maxLength;
 			copy._nameSpace = _nameSpace;
