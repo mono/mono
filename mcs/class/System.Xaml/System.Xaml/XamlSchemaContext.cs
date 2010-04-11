@@ -29,6 +29,10 @@ using System.Xaml.Schema;
 
 namespace System.Xaml
 {
+	// This type caches assembly attribute search results. To do this,
+	// it registers AssemblyLoaded event on CurrentDomain when it should
+	// reflect dynamic in-scope asemblies.
+	// It should be released at finalizer.
 	public class XamlSchemaContext
 	{
 		public XamlSchemaContext (IEnumerable<Assembly> referenceAssemblies)
@@ -43,10 +47,10 @@ namespace System.Xaml
 
 		public XamlSchemaContext (IEnumerable<Assembly> referenceAssemblies, XamlSchemaContextSettings settings)
 		{
-			var l = new List<Assembly> ();
 			if (referenceAssemblies != null)
-				l.AddRange (referenceAssemblies);
-			ReferenceAssemblies = l;
+				reference_assemblies = new List<Assembly> (referenceAssemblies);
+			else
+				AppDomain.CurrentDomain.AssemblyLoad += OnAssemblyLoaded;
 
 			if (settings == null)
 				return;
@@ -55,18 +59,39 @@ namespace System.Xaml
 			SupportMarkupExtensionsWithDuplicateArity = settings.SupportMarkupExtensionsWithDuplicateArity;
 		}
 
-		public ~XamlSchemaContext ()
+		~XamlSchemaContext ()
 		{
-			// what to do here?
+			if (reference_assemblies == null)
+				AppDomain.CurrentDomain.AssemblyLoad -= OnAssemblyLoaded;
 		}
 
+		IList<Assembly> reference_assemblies;
+
+		// assembly attribute caches
+		List<string> xaml_nss;
+		Dictionary<string,string> prefixes;
+		Dictionary<string,string> compat_nss;
+
 		public bool FullyQualifyAssemblyNamesInClrNamespaces { get; private set; }
-		public IList<Assembly> ReferenceAssemblies { get; private set; }
+
+		public IList<Assembly> ReferenceAssemblies {
+			get { return reference_assemblies; }
+		}
+
+		IEnumerable<Assembly> AssembliesInScope {
+			get { return reference_assemblies ?? AppDomain.CurrentDomain.GetAssemblies (); }
+		}
+
 		public bool SupportMarkupExtensionsWithDuplicateArity { get; private set; }
 
 		public virtual IEnumerable<string> GetAllXamlNamespaces ()
 		{
-			throw new NotImplementedException ();
+			if (xaml_nss == null) {
+				xaml_nss = new List<string> ();
+				foreach (var ass in AssembliesInScope)
+					FillXamlNamespaces (ass);
+			}
+			return xaml_nss;
 		}
 
 		public virtual ICollection<XamlType> GetAllXamlTypes (string xamlNamespace)
@@ -76,7 +101,15 @@ namespace System.Xaml
 
 		public virtual string GetPreferredPrefix (string xmlns)
 		{
-			throw new NotImplementedException ();
+			if (xmlns == null)
+				throw new ArgumentNullException ("xmlns");
+			if (prefixes == null) {
+				prefixes = new Dictionary<string,string> ();
+				foreach (var ass in AssembliesInScope)
+					FillPrefixes (ass);
+			}
+			string ret;
+			return prefixes.TryGetValue (xmlns, out ret) ? ret : "p"; // default
 		}
 
 		protected internal XamlValueConverter<TConverterBase> GetValueConverter<TConverterBase> (Type converterType, XamlType targetType)
@@ -107,12 +140,51 @@ namespace System.Xaml
 
 		protected internal virtual Assembly OnAssemblyResolve (string assemblyName)
 		{
-			throw new NotImplementedException ();
+			return null;
 		}
 
 		public virtual bool TryGetCompatibleXamlNamespace (string xamlNamespace, out string compatibleNamespace)
 		{
-			throw new NotImplementedException ();
+			if (xamlNamespace == null)
+				throw new ArgumentNullException ("xamlNamespace");
+			if (compat_nss == null) {
+				compat_nss = new Dictionary<string,string> ();
+				foreach (var ass in AssembliesInScope)
+					FillCompatibilities (ass);
+			}
+			return compat_nss.TryGetValue (xamlNamespace, out compatibleNamespace);
+		}
+
+		void OnAssemblyLoaded (object o, AssemblyLoadEventArgs e)
+		{
+			if (reference_assemblies != null)
+				return; // do nothing
+
+			if (xaml_nss != null)
+				FillXamlNamespaces (e.LoadedAssembly);
+			if (prefixes != null)
+				FillPrefixes (e.LoadedAssembly);
+			if (compat_nss != null)
+				FillCompatibilities (e.LoadedAssembly);
+		}
+		
+		// cache updater methods
+		void FillXamlNamespaces (Assembly ass)
+		{
+			foreach (XmlnsDefinitionAttribute xda in ass.GetCustomAttributes (typeof (XmlnsDefinitionAttribute), false))
+				xaml_nss.Add (xda.XmlNamespace);
+		}
+		
+		void FillPrefixes (Assembly ass)
+		{
+			foreach (XmlnsPrefixAttribute xpa in ass.GetCustomAttributes (typeof (XmlnsPrefixAttribute), false))
+				prefixes.Add (xpa.XmlNamespace, xpa.Prefix);
+		}
+		
+		void FillCompatibilities (Assembly ass)
+		{
+			foreach (XmlnsCompatibleWithAttribute xca in ass.GetCustomAttributes (typeof (XmlnsCompatibleWithAttribute), false))
+				compat_nss.Add (xca.OldNamespace, xca.NewNamespace);
 		}
 	}
 }

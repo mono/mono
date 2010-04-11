@@ -1,5 +1,10 @@
 2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlSchemaContext.cs : implement some methods.
+	* XamlLanguage.cs : add assembly attributes.
+
+2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlReader.cs : implemented cosmetic members.
 	* XamlSchemaContext.cs : looks like I missed all methods here.
 

@@ -28,6 +28,9 @@ using System.Reflection;
 using System.Xaml.Schema;
 using System.Windows.Markup;
 
+[assembly:XmlnsPrefix (System.Xaml.XamlLanguage.Xaml2006Namespace, "x")]
+[assembly:XmlnsDefinition (System.Xaml.XamlLanguage.Xaml2006Namespace, "System.Xaml")] // FIXME: verify.
+
 namespace System.Xaml
 {
 	public static class XamlLanguage

@@ -1,5 +1,9 @@
 2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlSchemaContextTest.cs : add some tests for methods.
+
+2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReaderTest.cs : new test.
 
 2010-04-10  Atsushi Enomoto  <atsushi@ximian.com>
