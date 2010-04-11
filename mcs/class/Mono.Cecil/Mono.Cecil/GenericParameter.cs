@@ -76,6 +76,17 @@ namespace Mono.Cecil {
 			}
 		}
 
+		public override ModuleDefinition Module {
+			get {
+				if (m_owner is TypeReference)
+					return ((TypeReference) m_owner).Module;
+				if (m_owner is MethodReference)
+					return ((MethodReference) m_owner).DeclaringType.Module;
+
+				throw new InvalidOperationException ();
+			}
+		}
+
 		public override string Name {
 			get {
 				if (m_name != null)
