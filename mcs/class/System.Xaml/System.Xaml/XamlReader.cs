@@ -60,10 +60,33 @@ namespace System.Xaml
 			throw new NotImplementedException ();
 		}
 		
-		[MonoTODO]
 		public virtual void Skip ()
 		{
-			throw new NotImplementedException ();
+			switch (NodeType) {
+			case XamlNodeType.StartMember:
+			case XamlNodeType.StartObject:
+				if (!Read ())
+					return;
+				while (true) {
+					switch (NodeType) {
+					case XamlNodeType.StartMember:
+					case XamlNodeType.StartObject:
+						Skip ();
+						continue;
+					case XamlNodeType.EndMember:
+					case XamlNodeType.EndObject:
+						Read ();
+						return;
+					default:
+						Read ();
+						continue;
+					}
+				}
+				return;
+			default:
+				Read ();
+				return;
+			}
 		}
 	}
 }

@@ -14,6 +14,7 @@ System.Xaml/XamlLanguageTest.cs
 System.Xaml/XamlMemberTest.cs
 System.Xaml/XamlObjectEventArgsTest.cs
 System.Xaml/XamlObjectReaderSettingsTest.cs
+System.Xaml/XamlObjectReaderTest.cs
 System.Xaml/XamlObjectWriterSettingsTest.cs
 System.Xaml/XamlReaderSettingsTest.cs
 System.Xaml/XamlSchemaContextSettingsTest.cs

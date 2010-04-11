@@ -77,5 +77,22 @@ namespace System.Xaml
 					return true;
 			return false;
 		}
+
+		public static object GetPropertyOrFieldValue (this XamlMember xm, object target)
+		{
+			// FIXME: consider ValueSerializer etc.
+			var mi = xm.UnderlyingMember;
+			var fi = mi as FieldInfo;
+			if (fi != null)
+				return fi.GetValue (target);
+			var pi = mi as PropertyInfo;
+			if (pi != null)
+				return ((PropertyInfo) mi).GetValue (target, null);
+			// FIXME: should this be done here??
+			if (xm == XamlLanguage.Initialization)
+				return target;
+
+			throw new NotImplementedException ();
+		}
 	}
 }

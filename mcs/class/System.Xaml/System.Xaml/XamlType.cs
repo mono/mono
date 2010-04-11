@@ -336,10 +336,21 @@ namespace System.Xaml
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO ("it is so hacky. Test it with lots of predefined types.")]
 		protected virtual IEnumerable<XamlMember> LookupAllMembers ()
 		{
-			throw new NotImplementedException ();
+			if (UnderlyingType == null)
+				yield break;
+			
+			if (this != XamlLanguage.Null) // FIXME: probably by different condition
+				yield return XamlLanguage.Initialization;
+			
+			foreach (var pi in UnderlyingType.GetProperties ())
+				if (pi.CanRead && pi.CanWrite)
+					yield return new XamlMember (pi, SchemaContext);
 		}
+
 		protected virtual IList<XamlType> LookupAllowedContentTypes ()
 		{
 			throw new NotImplementedException ();
