@@ -30,82 +30,116 @@ namespace System.Xaml
 	public class XamlXmlReader : XamlReader, IXamlLineInfo
 	{
 		public XamlXmlReader (Stream stream)
+			: this (stream, (XamlXmlReaderSettings) null)
 		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (string fileName)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (TextReader textReader)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (XmlReader xmlReader)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (Stream stream, XamlSchemaContext schemaContext)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (Stream stream, XamlXmlReaderSettings settings)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (string fileName, XamlSchemaContext schemaContext)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (string fileName, XamlXmlReaderSettings settings)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (TextReader textReader, XamlSchemaContext schemaContext)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (TextReader textReader, XamlXmlReaderSettings settings)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (XmlReader xmlReader, XamlSchemaContext schemaContext)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (XmlReader xmlReader, XamlXmlReaderSettings settings)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (Stream stream, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (string fileName, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (TextReader textReader, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
-		{
-			throw new NotImplementedException ();
-		}
-		public XamlXmlReader (XmlReader xmlReader, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
-		{
-			throw new NotImplementedException ();
 		}
 
-		public bool HasLineInfo {
-			get { throw new NotImplementedException (); }
+		public XamlXmlReader (string fileName)
+			: this (fileName, (XamlXmlReaderSettings) null)
+		{
 		}
+
+		public XamlXmlReader (TextReader textReader)
+			: this (textReader, (XamlXmlReaderSettings) null)
+		{
+		}
+
+		public XamlXmlReader (XmlReader xmlReader)
+			: this (xmlReader, (XamlXmlReaderSettings) null)
+		{
+		}
+
+		public XamlXmlReader (Stream stream, XamlSchemaContext schemaContext)
+			: this (stream, schemaContext, null)
+		{
+		}
+
+		public XamlXmlReader (Stream stream, XamlXmlReaderSettings settings)
+			: this (stream, new XamlSchemaContext (null, null), settings)
+		{
+		}
+
+		public XamlXmlReader (string fileName, XamlSchemaContext schemaContext)
+			: this (fileName, schemaContext, null)
+		{
+		}
+
+		public XamlXmlReader (string fileName, XamlXmlReaderSettings settings)
+			: this (fileName, new XamlSchemaContext (null, null), settings)
+		{
+		}
+
+		public XamlXmlReader (TextReader textReader, XamlSchemaContext schemaContext)
+			: this (textReader, schemaContext, null)
+		{
+		}
+
+		public XamlXmlReader (TextReader textReader, XamlXmlReaderSettings settings)
+			: this (textReader, new XamlSchemaContext (null, null), settings)
+		{
+		}
+
+		public XamlXmlReader (XmlReader xmlReader, XamlSchemaContext schemaContext)
+			: this (xmlReader, schemaContext, null)
+		{
+		}
+
+		public XamlXmlReader (XmlReader xmlReader, XamlXmlReaderSettings settings)
+			: this (xmlReader, new XamlSchemaContext (null, null), settings)
+		{
+		}
+
+		public XamlXmlReader (Stream stream, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
+			: this (XmlReader.Create (stream), schemaContext, settings)
+		{
+		}
+
+		public XamlXmlReader (string fileName, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
+			: this (XmlReader.Create (fileName), schemaContext, settings)
+		{
+			close_reader = true;
+		}
+
+		public XamlXmlReader (TextReader textReader, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
+			: this (XmlReader.Create (textReader), schemaContext, settings)
+		{
+		}
+
+		public XamlXmlReader (XmlReader xmlReader, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
+		{
+			if (xmlReader == null)
+				throw new ArgumentNullException ("xmlReader");
+			if (schemaContext == null)
+				throw new ArgumentNullException ("schemaContext");
+			r = xmlReader;
+			line_info = r as IXmlLineInfo;
+			sctx = schemaContext;
+			this.settings = settings ?? new XamlXmlReaderSettings ();
+			close_reader = this.settings.CloseInput;
+		}
+
+		XmlReader r;
+		IXmlLineInfo line_info;
+		XamlSchemaContext sctx;
+		XamlXmlReaderSettings settings;
+		bool close_reader;
+
+		public bool HasLineInfo {
+			get { return line_info != null && line_info.HasLineInfo (); }
+		}
+
 		public override bool IsEof {
 			get { throw new NotImplementedException (); }
 		}
+
 		public int LineNumber {
-			get { throw new NotImplementedException (); }
+			get { return line_info != null ? line_info.LineNumber : 0; }
 		}
+
 		public int LinePosition {
-			get { throw new NotImplementedException (); }
+			get { return line_info != null ? line_info.LinePosition : 0; }
 		}
+
 		public override XamlMember Member {
 			get { throw new NotImplementedException (); }
 		}
@@ -115,9 +149,11 @@ namespace System.Xaml
 		public override XamlNodeType NodeType {
 			get { throw new NotImplementedException (); }
 		}
+
 		public override XamlSchemaContext SchemaContext {
-			get { throw new NotImplementedException (); }
+			get { return sctx; }
 		}
+
 		public override XamlType Type {
 			get { throw new NotImplementedException (); }
 		}
@@ -127,7 +163,10 @@ namespace System.Xaml
 
 		protected override void Dispose (bool disposing)
 		{
-			throw new NotImplementedException ();
+			if (!disposing)
+				return;
+			if (close_reader)
+				r.Close ();
 		}
 		
 		public override bool Read ()

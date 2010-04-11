@@ -55,8 +55,64 @@ namespace System.Xaml
 			SupportMarkupExtensionsWithDuplicateArity = settings.SupportMarkupExtensionsWithDuplicateArity;
 		}
 
+		public ~XamlSchemaContext ()
+		{
+			// what to do here?
+		}
+
 		public bool FullyQualifyAssemblyNamesInClrNamespaces { get; private set; }
 		public IList<Assembly> ReferenceAssemblies { get; private set; }
 		public bool SupportMarkupExtensionsWithDuplicateArity { get; private set; }
+
+		public virtual IEnumerable<string> GetAllXamlNamespaces ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual ICollection<XamlType> GetAllXamlTypes (string xamlNamespace)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual string GetPreferredPrefix (string xmlns)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected internal XamlValueConverter<TConverterBase> GetValueConverter<TConverterBase> (Type converterType, XamlType targetType)
+			where TConverterBase : class
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public virtual XamlDirective GetXamlDirective (string xamlNamespace, string name)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public virtual XamlType GetXamlType (Type type)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		public XamlType GetXamlType (XamlTypeName xamlTypeName)
+		{
+			throw new NotImplementedException ();
+		}
+		
+		protected internal virtual XamlType GetXamlType (string xamlNamespace, string name, params XamlType[] typeArguments)
+		{
+			throw new NotImplementedException ();
+		}
+
+		protected internal virtual Assembly OnAssemblyResolve (string assemblyName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public virtual bool TryGetCompatibleXamlNamespace (string xamlNamespace, out string compatibleNamespace)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }

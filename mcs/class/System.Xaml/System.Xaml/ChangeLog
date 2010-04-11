@@ -1,5 +1,10 @@
 2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlReader.cs : implemented cosmetic members.
+	* XamlSchemaContext.cs : looks like I missed all methods here.
+
+2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReader.cs : basic implementation.
 	* XamlReader.cs : implemented Skip().
 	* XamlType.cs : hacked GetAllMembers() for XamlObjectReader work.
