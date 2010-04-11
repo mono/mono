@@ -1,3 +1,9 @@
+2010-04-11  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* security-core-clr.c: Call mono_class_setup_methods in 
+	get_default_ctor before checking klass->methods. Fix typo in
+	comment
+
 2010-04-10  Jb Evain  <jbevain@novell.com>
 
 	* domain.c (supported_runtimes): remove .net 4.0 beta 2 and
