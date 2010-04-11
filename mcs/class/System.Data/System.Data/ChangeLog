@@ -1,3 +1,9 @@
+2010-04-11  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #591443
+	* DataColumn.cs (Clone): Use propert to clone Expression as it builds 
+	compiled expression also, if any. 
+	
 2010-04-10  Veerapuram Varadhan  <vvaradhan@novell.com>
 	
 	** Fixes #589482
