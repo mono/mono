@@ -47,9 +47,11 @@ EXTRA_DISTFILES = \
 	xbuild/2.0/Microsoft.Common.tasks \
 	xbuild/3.5/Microsoft.Common.tasks \
 	xbuild/4.0/Microsoft.Common.tasks \
+	xbuild/2.0/Microsoft.Common.targets \
+	xbuild/3.5/Microsoft.Common.targets \
+	xbuild/4.0/Microsoft.Common.targets \
 	xbuild/Microsoft.Build.xsd \
 	xbuild/Microsoft.CSharp.targets \
-	xbuild/Microsoft.Common.targets \
 	xbuild/MSBuild/Microsoft.Build.CommonTypes.xsd \
 	xbuild/MSBuild/Microsoft.Build.Core.xsd		\
 	xbuild/Microsoft.VisualBasic.targets \
