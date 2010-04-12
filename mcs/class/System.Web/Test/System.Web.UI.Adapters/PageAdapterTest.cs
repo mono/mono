@@ -162,6 +162,7 @@ namespace MonoTests.System.Web.UI.Adapters
 
 		[Test]
 		[Category ("NunitWeb")]
+		[Ignore ("Temporarily disabled")]
 		public void RenderPostBackEvent ()
 		{
 			WebTest t = new WebTest ("PageWithAdapter.aspx");
