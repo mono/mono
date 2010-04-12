@@ -29,6 +29,7 @@ using System.Xaml.Schema;
 namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (Type))]
+	[TypeConverter (typeof (TypeExtensionConverter))]
 	public class TypeExtension : MarkupExtension
 	{
 		public TypeExtension ()

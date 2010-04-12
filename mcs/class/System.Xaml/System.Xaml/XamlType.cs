@@ -573,20 +573,13 @@ namespace System.Xaml
 			if (t == null)
 				return null;
 
-			if (System.Type.GetTypeCode (t) != TypeCode.Object)
-				return new XamlValueConverter<TypeConverter> (TypeDescriptor.GetConverter (t).GetType (), this);
-
-			if (t == typeof (TypeExtension))
-				return new XamlValueConverter<TypeConverter> (typeof (TypeExtensionConverter), this);
-			if (t == typeof (StaticExtension))
-				return new XamlValueConverter<TypeConverter> (typeof (StaticExtensionConverter), this);
-			if (t == typeof (TimeSpan))
-				return new XamlValueConverter<TypeConverter> (typeof (TimeSpanConverter), this);
-			if (t == typeof (Uri))
-				return new XamlValueConverter<TypeConverter> (typeof (UriTypeConverter), this);
 			if (t == typeof (object))
 				return new XamlValueConverter<TypeConverter> (typeof (TypeConverter), this);
 
+			// It's still not decent to check CollectionConverter.
+			var tct = TypeDescriptor.GetConverter (t).GetType ();
+			if (tct != typeof (TypeConverter) && tct != typeof (CollectionConverter))
+				return new XamlValueConverter<TypeConverter> (tct, this);
 			return null;
 		}
 

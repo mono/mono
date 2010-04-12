@@ -1,3 +1,7 @@
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TypeExtension.cs, StaticExtension.cs : add [TypeConverter].
+
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* StaticExtensionConverter.cs, TypeExtensionConverter.cs :

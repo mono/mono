@@ -1,5 +1,9 @@
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlTypeTest.cs : add a few more TypeConverter assertions.
+
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlLanguageTest.cs : add member lookup tests and properties tests
 	  on those members.
 	* XamlTypeTest.cs : add GetAllAttachableMembers() test.

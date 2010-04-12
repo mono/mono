@@ -1,5 +1,9 @@
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlType.cs : make implementation a bit cleaner.
+
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlLanguage.cs : implement namespaces properties.
 	* XamlType.cs : implement member lookup methods and IsConstructible.
 	* XamlMember.cs : do not use PropertyInfo's CanRead and CanWrite
