@@ -107,12 +107,16 @@ namespace System.Xaml
 			AllDirectives = new ReadOnlyCollection<XamlDirective> (new XamlDirective [] {Arguments, AsyncRecords, Base, Class, ClassAttributes, ClassModifier, Code, ConnectionId, FactoryMethod, FieldModifier, Initialization, Items, Key, Lang, Members, Name, PositionalParameters, Space, Subclass, SynchronousMode, Shared, TypeArguments, Uid, UnknownContent});
 		}
 
+		static readonly string [] xaml_nss = new string [] {Xaml2006Namespace};
+
 		public static IList<string> XamlNamespaces {
-			get { throw new NotImplementedException (); }
+			get { return xaml_nss; }
 		}
 
+		static readonly string [] xml_nss = new string [] {Xml1998Namespace};
+
 		public static IList<string> XmlNamespaces {
-			get { throw new NotImplementedException (); }
+			get { return xml_nss; }
 		}
 
 		public static ReadOnlyCollection<XamlDirective> AllDirectives { get; private set; }

@@ -184,7 +184,7 @@ namespace System.Xaml
 
 			case XamlNodeType.StartObject:
 				var xt = types.Peek ();
-				members = xt.GetAllMembers ().GetEnumerator ();
+				members = xt.GetAllReadWriteMembers ().GetEnumerator ();
 				if (members.MoveNext ()) {
 					members_stack.Push (members);
 					StartNextMemberOrNamespace ();

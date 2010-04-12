@@ -24,10 +24,12 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
+using System.Xml;
 using NUnit.Framework;
 
 using Category = NUnit.Framework.CategoryAttribute;
@@ -37,6 +39,22 @@ namespace MonoTests.System.Xaml
 	[TestFixture]
 	public class XamlLanguageTest
 	{
+		[Test]
+		public void XamlNamepaces ()
+		{
+			var l = XamlLanguage.XamlNamespaces;
+			Assert.AreEqual (1, l.Count, "#1");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [0], "#2");
+		}
+
+		[Test]
+		public void XmlNamepaces ()
+		{
+			var l = XamlLanguage.XmlNamespaces;
+			Assert.AreEqual (1, l.Count, "#1");
+			Assert.AreEqual (XamlLanguage.Xml1998Namespace, l [0], "#2");
+		}
+
 		[Test]
 		public void AllDirectives ()
 		{
@@ -328,6 +346,29 @@ namespace MonoTests.System.Xaml
 			TestXamlTypeExtension (t, "ArrayExtension", typeof (ArrayExtension), typeof (Array), true);
 			Assert.IsNotNull (t.ContentProperty, "#27");
 			Assert.AreEqual ("Items", t.ContentProperty.Name, "#27-2");
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (2, l.Length, "#31");
+			var items = l.First (m => m.Name == "Items");
+			Assert.IsFalse (items == XamlLanguage.Items, "#31-2");
+			l.First (m => m.Name == "Type");
+
+			l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#32");
+		}
+
+		[Test]
+		public void Array_Items ()
+		{
+			var m = XamlLanguage.Array.GetMember ("Items");
+			TestMemberCommon (m, "Items", typeof (IList), typeof (ArrayExtension), false);
+		}
+
+		[Test]
+		public void Array_Type ()
+		{
+			var m = XamlLanguage.Array.GetMember ("Type");
+			TestMemberCommon (m, "Type", typeof (Type), typeof (ArrayExtension), true);
 		}
 
 		[Test]
@@ -336,6 +377,12 @@ namespace MonoTests.System.Xaml
 			var t = XamlLanguage.Null;
 			TestXamlTypeExtension (t, "NullExtension", typeof (NullExtension), typeof (object), true);
 			Assert.IsNull (t.ContentProperty, "#27");
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#31");
+
+			l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#32");
 		}
 
 		[Test]
@@ -345,6 +392,28 @@ namespace MonoTests.System.Xaml
 			TestXamlTypeExtension (t, "StaticExtension", typeof (StaticExtension), typeof (object), false);
 			Assert.IsNotNull (t.TypeConverter.ConverterInstance, "#25-2");
 			Assert.IsNull (t.ContentProperty, "#27");
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (2, l.Length, "#31");
+			l.First (m => m.Name == "Member");
+			l.First (m => m.Name == "MemberType");
+
+			l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#32");
+		}
+
+		[Test]
+		public void Static_Member ()
+		{
+			var m = XamlLanguage.Static.GetMember ("Member");
+			TestMemberCommon (m, "Member", typeof (string), typeof (StaticExtension), true);
+		}
+
+		[Test]
+		public void Static_MemberType ()
+		{
+			var m = XamlLanguage.Static.GetMember ("MemberType");
+			TestMemberCommon (m, "MemberType", typeof (Type), typeof (StaticExtension), true);
 		}
 
 		[Test]
@@ -354,6 +423,28 @@ namespace MonoTests.System.Xaml
 			TestXamlTypeExtension (t, "TypeExtension", typeof (TypeExtension), typeof (Type), false);
 			Assert.IsNotNull (t.TypeConverter.ConverterInstance, "#25-2");
 			Assert.IsNull (t.ContentProperty, "#27");
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (2, l.Length, "#31");
+			l.First (m => m.Name == "TypeName");
+			l.First (m => m.Name == "Type");
+
+			l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#32");
+		}
+
+		[Test]
+		public void Type_TypeName ()
+		{
+			var m = XamlLanguage.Type.GetMember ("TypeName");
+			TestMemberCommon (m, "TypeName", typeof (string), typeof (TypeExtension), true);
+		}
+
+		[Test]
+		public void Type_Type ()
+		{
+			var m = XamlLanguage.Type.GetMember ("Type");
+			TestMemberCommon (m, "Type", typeof (Type), typeof (TypeExtension), true);
 		}
 
 		// primitive types
@@ -363,6 +454,11 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Byte;
 			TestXamlTypePrimitive (t, "Byte", typeof (byte), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#32");
+			*/
 		}
 
 		[Test]
@@ -370,6 +466,14 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Char;
 			TestXamlTypePrimitive (t, "Char", typeof (char), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (3, l.Length, "#32");
+			l.First (m => m.Name == "UnicodeCategory");
+			l.First (m => m.Name == "NumericValue");
+			l.First (m => m.Name == "HashCodeOfPtr");
+			*/
 		}
 
 		[Test]
@@ -377,6 +481,13 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Decimal;
 			TestXamlTypePrimitive (t, "Decimal", typeof (decimal), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (2, l.Length, "#32");
+			l.First (m => m.Name == "Bits");
+			l.First (m => m.Name == "HashCodeOfPtr");
+			*/
 		}
 
 		[Test]
@@ -384,6 +495,12 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Double;
 			TestXamlTypePrimitive (t, "Double", typeof (double), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#32");
+			l.First (m => m.Name == "HashCodeOfPtr");
+			*/
 		}
 
 		[Test]
@@ -391,6 +508,12 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Int16;
 			TestXamlTypePrimitive (t, "Int16", typeof (short), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#32");
+			l.First (m => m.Name == "HashCodeOfPtr");
+			*/
 		}
 
 		[Test]
@@ -398,6 +521,12 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Int32;
 			TestXamlTypePrimitive (t, "Int32", typeof (int), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#32");
+			l.First (m => m.Name == "HashCodeOfPtr");
+			*/
 		}
 
 		[Test]
@@ -405,6 +534,12 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Int64;
 			TestXamlTypePrimitive (t, "Int64", typeof (long), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#32");
+			l.First (m => m.Name == "HashCodeOfPtr");
+			*/
 		}
 
 		[Test]
@@ -412,6 +547,11 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Object;
 			TestXamlTypePrimitive (t, "Object", typeof (object), true, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#32");
+			*/
 		}
 
 		[Test]
@@ -419,6 +559,12 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Single;
 			TestXamlTypePrimitive (t, "Single", typeof (float), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#32");
+			l.First (m => m.Name == "HashCodeOfPtr");
+			*/
 		}
 
 		[Test]
@@ -426,6 +572,11 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.String;
 			TestXamlTypePrimitive (t, "String", typeof (string), true, true);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#32");
+			*/
 		}
 
 		[Test]
@@ -433,6 +584,12 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.TimeSpan;
 			TestXamlTypePrimitive (t, "TimeSpan", typeof (TimeSpan), false, false);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#32");
+			l.First (m => m.Name == "HashCodeOfPtr");
+			*/
 		}
 
 		[Test]
@@ -440,6 +597,11 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.Uri;
 			TestXamlTypePrimitive (t, "Uri", typeof (Uri), true, true);
+
+			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
+			var l = t.GetAllAttachableMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#32");
+			*/
 		}
 
 		// miscellaneous
@@ -451,6 +613,17 @@ namespace MonoTests.System.Xaml
 			TestXamlTypeCommon (t, "Member", typeof (MemberDefinition), true, true, false);
 			Assert.IsNull (t.TypeConverter, "#25");
 			// FIXME: test remaining members
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#31");
+			l.First (m => m.Name == "Name");
+		}
+
+		[Test]
+		public void Member_Name ()
+		{
+			var m = XamlLanguage.Member.GetMember ("Name");
+			TestMemberCommon (m, "Name", typeof (string), typeof (MemberDefinition), true);
 		}
 
 		[Test]
@@ -460,6 +633,41 @@ namespace MonoTests.System.Xaml
 			TestXamlTypeCommon (t, "Property", typeof (PropertyDefinition), true);
 			Assert.IsNull (t.TypeConverter, "#25");
 			// FIXME: test remaining members
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (4, l.Length, "#31");
+			l.First (m => m.Name == "Name");
+			l.First (m => m.Name == "Type");
+			l.First (m => m.Name == "Modifier");
+			l.First (m => m.Name == "Attributes");
+		}
+
+		[Test]
+		public void Property_Name ()
+		{
+			var m = XamlLanguage.Property.GetMember ("Name");
+			TestMemberCommon (m, "Name", typeof (string), typeof (PropertyDefinition), true);
+		}
+
+		[Test]
+		public void Property_Type ()
+		{
+			var m = XamlLanguage.Property.GetMember ("Type");
+			TestMemberCommon (m, "Type", typeof (XamlType), typeof (PropertyDefinition), true);
+		}
+
+		[Test]
+		public void Property_Modifier ()
+		{
+			var m = XamlLanguage.Property.GetMember ("Modifier");
+			TestMemberCommon (m, "Modifier", typeof (string), typeof (PropertyDefinition), true);
+		}
+
+		[Test]
+		public void Property_Attributes ()
+		{
+			var m = XamlLanguage.Property.GetMember ("Attributes");
+			TestMemberCommon (m, "Attributes", typeof (IList<Attribute>), typeof (PropertyDefinition), false);
 		}
 
 		[Test]
@@ -469,6 +677,17 @@ namespace MonoTests.System.Xaml
 			TestXamlTypeCommon (t, "Reference", typeof (Reference), true);
 			Assert.IsNull (t.TypeConverter, "#25");
 			// FIXME: test remaining members
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (1, l.Length, "#31");
+			l.First (m => m.Name == "Name");
+		}
+
+		[Test]
+		public void Reference_Name ()
+		{
+			var m = XamlLanguage.Reference.GetMember ("Name");
+			TestMemberCommon (m, "Name", typeof (string), typeof (Reference), true);
 		}
 
 		[Test]
@@ -478,6 +697,26 @@ namespace MonoTests.System.Xaml
 			TestXamlTypeCommon (t, "XData", typeof (XData), true);
 			Assert.IsNull (t.TypeConverter, "#25");
 			// FIXME: test remaining members
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (2, l.Length, "#31");
+			l.First (m => m.Name == "Text");
+			l.First (m => m.Name == "XmlReader");
+		}
+
+		[Test]
+		public void XData_Text ()
+		{
+			var m = XamlLanguage.XData.GetMember ("Text");
+			TestMemberCommon (m, "Text", typeof (string), typeof (XData), true);
+		}
+
+		[Test]
+		public void XData_XmlReader ()
+		{
+			var m = XamlLanguage.XData.GetMember ("XmlReader");
+			// it does not use XmlReader type ...
+			TestMemberCommon (m, "XmlReader", typeof (object), typeof (XData), true);
 		}
 
 		// common test methods
@@ -506,7 +745,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsArray, "#9");
 			Assert.IsFalse (t.IsCollection, "#10");
 			// FIXME: test here (very inconsistent with the spec)
-			//Assert.AreEqual (isConstructible, t.IsConstructible, "#11");
+			Assert.AreEqual (isConstructible, t.IsConstructible, "#11");
 			Assert.IsFalse (t.IsDictionary, "#12");
 			Assert.IsFalse (t.IsGeneric, "#13");
 			Assert.IsFalse (t.IsNameScope, "#15");
@@ -530,6 +769,9 @@ namespace MonoTests.System.Xaml
 			Assert.IsNotNull (t.TypeConverter, "#25");
 			Assert.IsNull (t.ContentProperty, "#27");
 			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
+
+			var l = t.GetAllMembers ().ToArray ();
+			Assert.AreEqual (0, l.Length, "#31");
 		}
 
 		void TestXamlTypeExtension (XamlType t, string name, Type underlyingType, Type extReturnType, bool noTypeConverter)
@@ -542,6 +784,47 @@ namespace MonoTests.System.Xaml
 				Assert.IsNotNull (t.TypeConverter, "#25");
 			Assert.IsNotNull (t.MarkupExtensionReturnType, "#29");
 			Assert.AreEqual (extReturnType, t.MarkupExtensionReturnType.UnderlyingType, "#29-2");
+		}
+
+		void TestMemberCommon (XamlMember m, string name, Type type, Type declType, bool hasSetter)
+		{
+			TestMemberCommon (m, name, type, declType, hasSetter, type == typeof (string));
+		}
+
+		void TestMemberCommon (XamlMember m, string name, Type type, Type declType, bool hasSetter, bool hasSerializer)
+		{
+			Assert.IsNotNull (m, "#1");
+			Assert.IsNotNull (m.DeclaringType, "#2");
+			Assert.AreEqual (declType, m.DeclaringType.UnderlyingType, "#2-2");
+			Assert.IsNotNull (m.Invoker, "#3");
+			Assert.IsNotNull (m.Invoker.UnderlyingGetter, "#3-2");
+			if (hasSetter)
+				Assert.IsNotNull (m.Invoker.UnderlyingSetter, "#3-3");
+			else
+				Assert.IsNull (m.Invoker.UnderlyingSetter, "#3-3");
+			Assert.IsFalse (m.IsUnknown, "#4");
+			Assert.IsTrue (m.IsReadPublic, "#5");
+			Assert.AreEqual (hasSetter, m.IsWritePublic, "#6");
+			Assert.AreEqual (name, m.Name, "#7");
+			Assert.IsTrue (m.IsNameValid, "#8");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, m.PreferredXamlNamespace, "#9");
+			// use declType here (mostly identical to targetType)
+			Assert.AreEqual (new XamlType (declType, m.TargetType.SchemaContext), m.TargetType, "#10");
+			Assert.IsNotNull (m.Type, "#11");
+			Assert.AreEqual (type, m.Type.UnderlyingType, "#11-2");
+			// FIXME: test TypeConverter and ValueSerializer
+//			Assert.IsNull (m.TypeConverter, "#12");
+//			Assert.AreEqual (hasSerializer, m.ValueSerializer != null, "#13");
+			Assert.IsNull (m.DeferringLoader, "#14");
+			Assert.IsNotNull (m.UnderlyingMember, "#15");
+			Assert.AreEqual (!hasSetter, m.IsReadOnly, "#16");
+			Assert.IsFalse (m.IsWriteOnly, "#17");
+			Assert.IsFalse (m.IsAttachable, "#18");
+			Assert.IsFalse (m.IsEvent, "#19");
+			Assert.IsFalse (m.IsDirective, "#20");
+			Assert.IsNotNull (m.DependsOn, "#21");
+			Assert.AreEqual (0, m.DependsOn.Count, "#21-2");
+			Assert.IsFalse (m.IsAmbient, "#22");
 		}
 	}
 }

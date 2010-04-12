@@ -94,5 +94,13 @@ namespace System.Xaml
 
 			throw new NotImplementedException ();
 		}
+
+		public static IEnumerable<XamlMember> GetAllReadWriteMembers (this XamlType type)
+		{
+			if (type != XamlLanguage.Null) // FIXME: probably by different condition
+				yield return XamlLanguage.Initialization;
+			foreach (var m in type.GetAllMembers ())
+				yield return m;
+		}
 	}
 }

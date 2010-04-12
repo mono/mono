@@ -334,18 +334,25 @@ namespace System.Xaml
 		}
 		protected virtual IEnumerable<XamlMember> LookupAllAttachableMembers ()
 		{
-			throw new NotImplementedException ();
+			if (UnderlyingType == null)
+				return BaseType != null ? BaseType.GetAllMembers () : null;
+			return DoLookupAllAttachableMembers ();
 		}
 
-		[MonoTODO ("it is so hacky. Test it with lots of predefined types.")]
+		IEnumerable<XamlMember> DoLookupAllAttachableMembers ()
+		{
+			yield break; // FIXME: what to return here?
+		}
+
 		protected virtual IEnumerable<XamlMember> LookupAllMembers ()
 		{
 			if (UnderlyingType == null)
-				yield break;
-			
-			if (this != XamlLanguage.Null) // FIXME: probably by different condition
-				yield return XamlLanguage.Initialization;
-			
+				return BaseType != null ? BaseType.GetAllMembers () : null;
+			return DoLookupAllMembers ();
+		}
+
+		IEnumerable<XamlMember> DoLookupAllMembers ()
+		{
 			foreach (var pi in UnderlyingType.GetProperties ())
 				if (pi.CanRead && pi.CanWrite)
 					yield return new XamlMember (pi, SchemaContext);
@@ -435,25 +442,19 @@ namespace System.Xaml
 			return this.GetCustomAttribute<AmbientAttribute> () != null;
 		}
 
+		// It is documented as if it were to reflect spec. section 5.2,
+		// but the actual behavior shows it is *totally* wrong.
+		// Here I have implemented this based on the nunit test results. sigh.
 		protected virtual bool LookupIsConstructible ()
 		{
-			// see spec. 5.2.
-			if (IsArray) // x:Array
-				return false;
-			if (type == typeof (XamlType)) // x:XamlType
-				return false;
-			// FIXME: handle x:XamlEvent
+			if (UnderlyingType == null)
+				return true;
 			if (IsMarkupExtension)
+				return true;
+			if (UnderlyingType.IsAbstract)
 				return false;
-			// FIXME: handle x:Code
-			// FIXME: commented out.
-			//if (IsXData)
-			//	return false;
-
-			// FIXME: this check is extraneous to spec. 5.2.
-			if (ConstructionRequiresArguments)
+			if (!IsNameValid)
 				return false;
-
 			return true;
 		}
 

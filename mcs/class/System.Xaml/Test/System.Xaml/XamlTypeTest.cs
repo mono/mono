@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml;
@@ -247,7 +248,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void IsConstructible ()
 		{
 			// ... is it?
@@ -256,6 +256,23 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (new XamlType (typeof (TestClass1), sctx).IsConstructible, "#2");
 			Assert.IsFalse (new XamlType (typeof (TestClass2), sctx).IsConstructible, "#3");
 			Assert.IsTrue (new XamlType (typeof (object), sctx).IsConstructible, "#4");
+		}
+
+		class AttachableClass
+		{
+			public event EventHandler<EventArgs> SimpleEvent;
+			public void AddSimpleHandler (object o, EventHandler h)
+			{
+			}
+		}
+
+		// hmm, what can we use to verify this method?
+		[Test]
+		public void GetAllAttachableMembers ()
+		{
+			var xt = new XamlType (typeof (AttachableClass), sctx);
+			var l = xt.GetAllAttachableMembers ();
+			Assert.AreEqual (0, l.Count, "#1");
 		}
 
 		[Test]

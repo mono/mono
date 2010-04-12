@@ -1,3 +1,10 @@
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlLanguageTest.cs : add member lookup tests and properties tests
+	  on those members.
+	* XamlTypeTest.cs : add GetAllAttachableMembers() test.
+	  Enable IsConstructible().
+
 2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlSchemaContextTest.cs : add some tests for methods.

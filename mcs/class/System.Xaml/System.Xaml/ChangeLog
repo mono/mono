@@ -1,3 +1,13 @@
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlLanguage.cs : implement namespaces properties.
+	* XamlType.cs : implement member lookup methods and IsConstructible.
+	* XamlMember.cs : do not use PropertyInfo's CanRead and CanWrite
+	  which both return True for private getter and setter.
+	* TypeExtensionMethods.cs : add member retriever method that convers
+	  Initialization (for XamlXmlWriter).
+	* XamlObjectReader.cs : use above.
+
 2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlSchemaContext.cs : implement some methods.

@@ -315,9 +315,6 @@ namespace System.Xaml
 
 		protected virtual bool LookupIsReadOnly ()
 		{
-			var pi = underlying_member as PropertyInfo;
-			if (pi != null)
-				return pi.CanRead && !pi.CanWrite;
 			return UnderlyingGetter != null && UnderlyingSetter == null;
 		}
 		protected virtual bool LookupIsReadPublic ()
