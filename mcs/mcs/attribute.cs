@@ -750,7 +750,7 @@ namespace Mono.CSharp {
 			if (resolve_error)
 				return null;
 
-			return ((Constant) PosArguments[0].Expr).GetValue () as Type;
+			return GetArgumentType ();
 		}
 
 		public bool CheckTarget ()
@@ -1085,11 +1085,11 @@ namespace Mono.CSharp {
 		public Constant GetParameterDefaultValue (out Type type)
 		{
 			var expr = PosArguments[0].Expr;
-			type = expr.Type;
 
 			if (expr is TypeCast)
 				expr = ((TypeCast) expr).Child;
 
+			type = expr.Type;
 			return expr as Constant;
 		}
 

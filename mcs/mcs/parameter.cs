@@ -310,13 +310,12 @@ namespace Mono.CSharp {
 					return;
 				}
 
-				var val = c.GetValue ();
-				if (parameter_type == TypeManager.object_type ||
-				    (val == null && !TypeManager.IsGenericParameter (parameter_type) && TypeManager.IsReferenceType (parameter_type)) ||
-				    (val != null && TypeManager.TypeToCoreType (val.GetType ()) == parameter_type))
-					builder.SetConstant (val);
+				if (arg_type == parameter_type || parameter_type == TypeManager.object_type || 
+					(c.IsNull && TypeManager.IsReferenceType (parameter_type) && !TypeManager.IsGenericParameter (parameter_type)))
+					builder.SetConstant (c.GetValue ());
 				else
 					a.Report.Error (1908, a.Location, "The type of the default value should match the type of the parameter");
+
 				return;
 			}
 
