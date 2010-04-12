@@ -1,3 +1,7 @@
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlTypeName.cs : methods were missing.
+
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlTypeTypeConverter.cs, XamlValueConverter.cs : implemented.

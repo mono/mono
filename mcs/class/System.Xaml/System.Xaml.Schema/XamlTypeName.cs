@@ -28,6 +28,23 @@ namespace System.Xaml.Schema
 {
 	public class XamlTypeName
 	{
+		public static bool TryParse (string typeName, IXamlNamespaceResolver namespaceResolver, out XamlTypeName result)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static IList<XamlTypeName> ParseList (string typeNameList, IXamlNamespaceResolver namespaceResolver)
+		{
+			throw new NotImplementedException ();
+		}
+
+		public static string ToString (IList<XamlTypeName> typeNameList, INamespacePrefixLookup prefixLookup)
+		{
+			throw new NotImplementedException ();
+		}
+
+		// instance members
+
 		public XamlTypeName ()
 		{
 		}
@@ -50,14 +67,25 @@ namespace System.Xaml.Schema
 		{
 			Namespace = xamlNamespace;
 			Name = name;
-			var l = new List<XamlTypeName> ();
-			if (typeArguments != null)
+			if (typeArguments != null) {
+				var l = new List<XamlTypeName> ();
 				l.AddRange (typeArguments);
-			TypeArguments = l;
+				TypeArguments = l.Count > 0 ? l : null;
+			}
 		}
 
 		public string Name { get; set; }
 		public string Namespace { get; set; }
 		public IList<XamlTypeName> TypeArguments { get; private set; }
+
+		public override string ToString ()
+		{
+			return ToString (null);
+		}
+
+		public string ToString (INamespacePrefixLookup prefixLookup)
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
