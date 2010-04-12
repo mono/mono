@@ -102,5 +102,62 @@ namespace System.Xaml
 			foreach (var m in type.GetAllMembers ())
 				yield return m;
 		}
+
+		public static bool ListEquals (this IList<XamlType> a1, IList<XamlType> a2)
+		{
+			if (a1 == null)
+				return a2 == null;
+			if (a2 == null)
+				return false;
+			if (a1.Count != a2.Count)
+				return false;
+			for (int i = 0; i < a1.Count; i++)
+				if (a1 [i] != a2 [i])
+					return false;
+			return true;
+		}
+
+		public static bool ListEquals (this IEnumerable<XamlTypeName> a1, IEnumerable<XamlTypeName> a2)
+		{
+			if (a1 == null)
+				return a2 == null || !a2.GetEnumerator ().MoveNext ();
+			if (a2 == null)
+				return false || !a1.GetEnumerator ().MoveNext ();
+
+			var e1 = a1.GetEnumerator ();
+			var e2 = a2.GetEnumerator ();
+			while (true) {
+				if (!e1.MoveNext ())
+					return !e2.MoveNext ();
+				if (!e2.MoveNext ())
+					return false;
+				if(!e1.Current.NameEquals (e2.Current))
+					return false;
+			}
+		}
+		
+		public static bool NameEquals (this XamlType t, XamlTypeName n)
+		{
+//Console.Error.WriteLine ("**** {0} {1} {2} {3}", t.Name, t.Name == n.Name, t.PreferredXamlNamespace == n.Namespace, ListEquals (t.TypeArguments.ToTypeNames (), n.TypeArguments));
+			return t.Name == n.Name && t.PreferredXamlNamespace == n.Namespace && ListEquals (t.TypeArguments.ToTypeNames (), n.TypeArguments);
+		}
+
+		public static IEnumerable<XamlTypeName> ToTypeNames (this IEnumerable<XamlType> types)
+		{
+			if (types != null)
+				foreach (var t in types)
+					yield return new XamlTypeName (t.PreferredXamlNamespace, t.Name, ToTypeNames (t.TypeArguments));
+		}
+
+		public static bool NameEquals (this XamlTypeName n1, XamlTypeName n2)
+		{
+			if (n1 == null)
+				return n2 == null;
+			if (n2 == null)
+				return false;
+			if (n1.Name != n2.Name || n1.Namespace != n2.Namespace || !n1.TypeArguments.ListEquals (n2.TypeArguments))
+				return false;
+			return true;
+		}
 	}
 }

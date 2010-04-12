@@ -23,6 +23,7 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml.Schema;
@@ -151,12 +152,44 @@ namespace System.Xaml
 		
 		public XamlType GetXamlType (XamlTypeName xamlTypeName)
 		{
-			throw new NotImplementedException ();
+			if (xamlTypeName == null)
+				throw new ArgumentNullException ("xamlTypeName");
+
+			var n = xamlTypeName;
+			string dummy;
+			if (TryGetCompatibleXamlNamespace (n.Namespace, out dummy))
+				n = new XamlTypeName (dummy, n.Name, n.TypeArguments);
+
+			XamlType ret;
+			if (n.Namespace == XamlLanguage.Xaml2006Namespace) {
+				// FIXME: I'm not really sure if these *special*
+				// names should be resolved here. There just
+				// does not seem to be any other appropriate
+				// places.
+				switch (n.Name) {
+				case "Array":
+					return XamlLanguage.Array;
+				case "Member":
+					return XamlLanguage.Member;
+				case "Null":
+					return XamlLanguage.Null;
+				case "Property":
+					return XamlLanguage.Property;
+				case "Static":
+					return XamlLanguage.Static;
+				case "Type":
+					return XamlLanguage.Type;
+				}
+				ret = XamlLanguage.AllTypes.FirstOrDefault (t => t.NameEquals (n));
+				if (ret != null)
+					return ret;
+			}
+			return GetAllXamlTypes (n.Namespace).FirstOrDefault (t => t.NameEquals (n));
 		}
 		
-		protected internal virtual XamlType GetXamlType (string xamlNamespace, string name, params XamlType[] typeArguments)
+		protected internal virtual XamlType GetXamlType (string xamlNamespace, string name, params XamlType [] typeArguments)
 		{
-			throw new NotImplementedException ();
+			return GetXamlType (new XamlTypeName (xamlNamespace, name, typeArguments.ToTypeNames ()));
 		}
 
 		protected internal virtual Assembly OnAssemblyResolve (string assemblyName)

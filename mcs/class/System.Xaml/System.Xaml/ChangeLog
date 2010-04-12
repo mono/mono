@@ -1,5 +1,11 @@
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlSchemaContext.cs
+	  TypeExtensionMethods.cs
+	  XamlType.cs : implement type lookup by name in schema context.
+
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReader.cs
 	  XamlSchemaContext.cs
 	  XamlMember.cs

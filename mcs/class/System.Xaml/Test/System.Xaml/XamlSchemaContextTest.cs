@@ -27,6 +27,7 @@ using System.Linq;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml;
+using System.Xaml.Schema;
 using NUnit.Framework;
 
 [assembly:XmlnsDefinition ("urn:mono-test", "MonoTests.System.Xaml.NamespaceTest")]
@@ -38,6 +39,16 @@ namespace MonoTests.System.Xaml
 	[TestFixture]
 	public class XamlSchemaContextTest
 	{
+		XamlSchemaContext NewStandardContext ()
+		{
+			return new XamlSchemaContext (new Assembly [] {typeof (XamlSchemaContext).Assembly });
+		}
+
+		XamlSchemaContext NewThisAssemblyContext ()
+		{
+			return new XamlSchemaContext (new Assembly [] {GetType ().Assembly });
+		}
+
 		[Test]
 		public void ConstructorNullAssemblies ()
 		{
@@ -78,12 +89,12 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (arr.Contains ("urn:mono-test"), "#1-3");
 			Assert.IsTrue (arr.Contains ("urn:mono-test2"), "#1-4");
 
-			ctx = new XamlSchemaContext (new Assembly [] {typeof (XamlSchemaContext).Assembly });
+			ctx = NewStandardContext ();
 			arr = ctx.GetAllXamlNamespaces ().ToArray ();
 			Assert.AreEqual (1, arr.Length, "#2");
 			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, arr [0], "#2-2");
 
-			ctx = new XamlSchemaContext (new Assembly [] {GetType ().Assembly });
+			ctx = NewThisAssemblyContext ();
 			arr = ctx.GetAllXamlNamespaces ().ToArray ();
 			Assert.AreEqual (2, arr.Length, "#3");
 			Assert.IsTrue (arr.Contains ("urn:mono-test"), "#3-2");
@@ -125,7 +136,7 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (ctx.TryGetCompatibleXamlNamespace (String.Empty, out dummy), "#1");
 			Assert.IsNull (dummy, "#1-2"); // this shows the fact that the out result value for false case is not trustworthy.
 
-			ctx = new XamlSchemaContext (new Assembly [] {GetType ().Assembly});
+			ctx = NewThisAssemblyContext ();
 			Assert.IsFalse (ctx.TryGetCompatibleXamlNamespace (String.Empty, out dummy), "#2");
 			Assert.IsFalse (ctx.TryGetCompatibleXamlNamespace ("urn:bar", out dummy), "#3");
 			// why does .NET return false here?
@@ -166,17 +177,59 @@ namespace MonoTests.System.Xaml
 		[Test]
 		public void GetAllXamlTypesInXaml2006Namespace ()
 		{
-			var ctx = new XamlSchemaContext (new Assembly [] {typeof (XamlType).Assembly});
+			var ctx = NewStandardContext ();
 
 			// There are some special types that have non-default name: MemberDefinition, PropertyDefinition
-			//Assert.AreEqual ("MemberDefinition", new XamlType (typeof (MemberDefinition), new XamlSchemaContext (null, null)).Name);
-			//Assert.AreEqual ("Member", l.GetAllXamlTypes (XamlLanguage.Xaml2006Namespace).First (t => t.UnderlyingType == typeof (MemberDefinition)));
 
 			var l = ctx.GetAllXamlTypes (XamlLanguage.Xaml2006Namespace);
 			Assert.IsTrue (l.Count () > 40, "#1");
 			Assert.IsTrue (l.Any (t => t.UnderlyingType == typeof (MemberDefinition)), "#2");
 			Assert.IsTrue (l.Any (t => t.Name == "AmbientAttribute"), "#3");
 			Assert.IsTrue (l.Any (t => t.Name == "XData"), "#4");
+			Assert.IsTrue (l.Any (t => t.Name == "ArrayExtension"), "#5");
+			Assert.IsTrue (l.Any (t => t.Name == "StaticExtension"), "#6");
+			// FIXME: enable these tests when I sort out how these special names are filled.
+			//Assert.IsTrue (l.Any (t => t.Name == "Member"), "#7");
+			//Assert.IsTrue (l.Any (t => t.Name == "Property"), "#8");
+			//Assert.IsFalse (l.Any (t => t.Name == "MemberDefinition"), "#9");
+			//Assert.IsFalse (l.Any (t => t.Name == "PropertyDefinition"), "#10");
+			Assert.IsFalse (l.Any (t => t.Name == "Array"), "#11");
+			Assert.IsFalse (l.Any (t => t.Name == "Null"), "#12");
+			Assert.IsFalse (l.Any (t => t.Name == "Static"), "#13");
+			Assert.IsFalse (l.Any (t => t.Name == "Type"), "#14");
+			//Assert.AreEqual ("MemberDefinition", new XamlType (typeof (MemberDefinition), new XamlSchemaContext (null, null)).Name);
+			//Assert.AreEqual ("Member", l.GetAllXamlTypes (XamlLanguage.Xaml2006Namespace).First (t => t.UnderlyingType == typeof (MemberDefinition)));
+		}
+
+		[Test]
+		public void GetXamlTypeByName ()
+		{
+			var ns = XamlLanguage.Xaml2006Namespace;
+			var ctx = NewThisAssemblyContext ();
+			//var ctx = NewStandardContext ();
+			XamlType xt;
+
+			Assert.IsNull (ctx.GetXamlType (new XamlTypeName ("urn:foobarbaz", "bar")));
+
+			xt = ctx.GetXamlType (new XamlTypeName (ns, "Int32"));
+			Assert.IsNotNull (xt, "#1");
+			xt = ctx.GetXamlType (new XamlTypeName (ns, "Int32", new XamlTypeName [] {new XamlTypeName (ns, "Int32")}));
+			Assert.IsNull (xt, "#1-2");
+			xt = ctx.GetXamlType (new XamlTypeName (ns, "Uri"));
+			Assert.IsNotNull (xt, "#2");
+
+			// Compare those results to GetAllXamlTypesInXaml2006Namespace() results,
+			// which asserts that types with those names are *not* included.
+			xt = ctx.GetXamlType (new XamlTypeName (ns, "Array"));
+			Assert.IsNotNull (xt, "#3");
+			xt = ctx.GetXamlType (new XamlTypeName (ns, "Property"));
+			Assert.IsNotNull (xt, "#4");
+			xt = ctx.GetXamlType (new XamlTypeName (ns, "Null"));
+			Assert.IsNotNull (xt, "#5");
+			xt = ctx.GetXamlType (new XamlTypeName (ns, "Static"));
+			Assert.IsNotNull (xt, "#6");
+			xt = ctx.GetXamlType (new XamlTypeName (ns, "Type"));
+			Assert.IsNotNull (xt, "#7");
 		}
 	}
 }

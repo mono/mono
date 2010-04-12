@@ -249,22 +249,7 @@ namespace System.Xaml
 			return !IsNull (other) &&
 				UnderlyingType == other.UnderlyingType &&
 				Name == other.Name &&
-				PreferredXamlNamespace == other.PreferredXamlNamespace &&
-				CompareTypes (TypeArguments, other.TypeArguments);
-		}
-
-		static bool CompareTypes (IList<XamlType> a1, IList<XamlType> a2)
-		{
-			if (a1 == null)
-				return a2 == null;
-			if (a2 == null)
-				return false;
-			if (a1.Count != a2.Count)
-				return false;
-			for (int i = 0; i < a1.Count; i++)
-				if (a1 [i] != a2 [i])
-					return false;
-			return true;
+				PreferredXamlNamespace == other.PreferredXamlNamespace && TypeArguments.ListEquals (other.TypeArguments);
 		}
 
 		public override bool Equals (object obj)
@@ -431,7 +416,7 @@ namespace System.Xaml
 			if (UnderlyingType == null)
 				return false;
 
-			// not sure if it is required, but TypeDefinition and MemberDefinition return true while they are abstract and it makes no sense.
+			// not sure if it is required, but MemberDefinition return true while they are abstract and it makes no sense.
 			if (UnderlyingType.IsAbstract)
 				return true;
 
