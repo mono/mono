@@ -167,6 +167,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			asyncTimeout = ps.AsyncTimeout;
 			viewStateEncryptionMode = ps.ViewStateEncryptionMode;
 			_viewState = ps.EnableViewState;
+			_viewStateMac = ps.EnableViewStateMac;
 		} else {
 			asyncTimeout = TimeSpan.FromSeconds (DefaultAsyncTimeout);
 			viewStateEncryptionMode = ViewStateEncryptionMode.Auto;

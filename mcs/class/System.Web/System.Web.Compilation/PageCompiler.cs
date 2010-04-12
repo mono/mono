@@ -292,6 +292,9 @@ namespace System.Web.Compilation
 			ILocation directiveLocation = pageParser.DirectiveLocation;
 
 			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
+			if (pageParser.EnableViewStateMacSet)
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "EnableViewStateMac", pageParser.EnableViewStateMacSet), directiveLocation));
+			
 			if (pageParser.Title != null)
 				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title), directiveLocation));
 

@@ -45,7 +45,8 @@ namespace System.Web.UI
 	public sealed class PageParser : TemplateControlParser
 	{
 		PagesEnableSessionState enableSessionState = PagesEnableSessionState.True;
-		bool enableViewStateMac = true;
+		bool enableViewStateMac;
+		bool enableViewStateMacSet;
 		bool smartNavigation;
 		bool haveTrace;
 		bool trace;
@@ -335,8 +336,12 @@ namespace System.Web.UI
 			enable_event_validation = GetBool (atts, "EnableEventValidation", enable_event_validation);
 			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", maintainScrollPositionOnPostBack);
 
+			if (atts.ContainsKey ("EnableViewState")) {
+				enableViewStateMac = GetBool (atts, "EnableViewStateMac", enableViewStateMac);
+				enableViewStateMacSet = true;
+			}
+			
 			// Ignored by now
-			GetString (atts, "EnableViewStateMac", null);
 			GetString (atts, "SmartNavigation", null);
 
 			base.ProcessMainAttributes (atts);
@@ -419,6 +424,10 @@ namespace System.Web.UI
 
 		internal bool EnableViewStateMac {
 			get { return enableViewStateMac; }
+		}
+
+		internal bool EnableViewStateMacSet {
+			get { return enableViewStateMacSet; }
 		}
 		
 		internal bool SmartNavigation {
