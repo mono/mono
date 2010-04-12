@@ -6465,8 +6465,8 @@ namespace Mono.CSharp {
 
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
 		{
-			// no multi dimensional arrays
-			if (arguments.Count != 1) {
+			// no multi dimensional or jagged arrays
+			if (arguments.Count != 1 || array_element_type.IsArray) {
 				base.EncodeAttributeValue (rc, enc, targetType);
 				return;
 			}

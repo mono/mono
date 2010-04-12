@@ -1131,6 +1131,12 @@ namespace Mono.CSharp {
 			if (PosArguments != null) {
 				var param_types = TypeManager.GetParameterData (ctor).Types;
 				for (int j = 0; j < PosArguments.Count; ++j) {
+					var pt = param_types[j];
+					if (!IsValidArgumentType (pt)) {
+						Error_AttributeArgumentNotValid (context, loc);
+						return;
+					}
+
 					var arg_expr = PosArguments[j].Expr;
 					if (j == 0) {
 						if (Type == predefined.IndexerName || Type == predefined.Conditional) {
@@ -1145,6 +1151,7 @@ namespace Mono.CSharp {
 								new Guid (v);
 							} catch (Exception e) {
 								Error_AttributeEmitError (e.Message);
+								return;
 							}
 						} else if (Type == predefined.AttributeUsage) {
 							int v = ((IntConstant)((EnumConstant) arg_expr).Child).Value;
@@ -1152,15 +1159,14 @@ namespace Mono.CSharp {
 								context.Compiler.Report.Error (591, Location, "Invalid value for argument to `{0}' attribute",
 									"System.AttributeUsage");
 							}
-						}
-					} else if (j == 1) {
-						if (Type == predefined.MethodImpl && param_types[j] == TypeManager.short_type &&
-							!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) PosArguments[0].Expr).GetTypedValue ())) {
+						} else if (Type == predefined.MethodImpl && pt == TypeManager.short_type &&
+							!System.Enum.IsDefined (typeof (MethodImplOptions), ((Constant) arg_expr).GetValue ().ToString ())) {
 							Error_AttributeEmitError ("Incorrect argument value.");
+							return;
 						}
 					}
 
-					arg_expr.EncodeAttributeValue (context, encoder, param_types[j]);
+					arg_expr.EncodeAttributeValue (context, encoder, pt);
 				}
 			}
 

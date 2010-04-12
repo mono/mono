@@ -1,5 +1,9 @@
 2010-04-12  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs, attribute.cs: More attribute type checks.
+
+2010-04-12  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #593342
 
 	* generic.cs, parameter.cs, argument.cs, field.cs, property.cs,
