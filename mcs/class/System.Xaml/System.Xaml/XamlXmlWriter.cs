@@ -28,64 +28,17 @@ using System.Xml;
 
 /*
 
-* State transition
-
-Unlike XmlWriter, XAML nodes are not immediately writable because object
-output has to be delayed to be determined whether it should write
-an attribute or an element.
-
 ** Value output node type
 
 When an object contains a member:
 - it becomes an attribute when it contains a value.
 - it becomes an element when it contains an object.
-
-** NamespaceDeclarations
-
-NamespaceDeclaration does not immediately participate in the state transition
-but some write methods reject stored namespaces (e.g. WriteEndObject cannot
-handle them). In such cases, they throw InvalidOperationException, while the
-writer throws XamlXmlWriterException for usual state transition.
-
-Though they still seems to affect some outputs. If a member with simple
-value is written after a namespace, then it becomes an element, not attribute.
-
-** state transition
-
-states are: Initial, ObjectStarted, MemberStarted, ValueWritten, MemberDone, End
-
-Initial + StartObject -> ObjectStarted : push(xt)
-ObjectStarted + StartMember -> MemberStarted : push(xm)
-ObjectStarted + EndObject -> ObjectWritten or End : pop()
-MemberStarted + StartObject -> ObjectStarted : push(xt)
-MemberStarted + Value -> ValueWritten
-MemberStarted + GetObject -> MemberDone : pop()
-ObjectWritten + StartObject -> ObjectStarted : push(x)
-ObjectWritten + Value -> ValueWritten : pop()
-ObjectWritten + EndMember -> MemberDone : pop()
-ValueWritten + StartObject -> ObjectStarted : push(x)
-ValueWritten + EndMember -> MemberDone : pop()
-MemberDone + EndObject -> ObjectWritten or End : pop() // xt
-MemberDone + StartMember -> MemberStarted : push(xm)
-
-
 */
 
 namespace System.Xaml
 {
 	public class XamlXmlWriter : XamlWriter
 	{
-		enum XamlWriteState
-		{
-			Initial,
-			ObjectStarted,
-			MemberStarted,
-			ObjectWritten,
-			ValueWritten,
-			MemberDone,
-			End
-		}
-
 		public XamlXmlWriter (Stream stream, XamlSchemaContext schemaContext)
 			: this (stream, schemaContext, null)
 		{
@@ -120,14 +73,16 @@ namespace System.Xaml
 			this.w = xmlWriter;
 			this.sctx = schemaContext;
 			this.settings = settings ?? new XamlXmlWriterSettings ();
+			this.manager = new XamlWriterStateManager ();
 		}
 
 		XmlWriter w;
 		XamlSchemaContext sctx;
 		XamlXmlWriterSettings settings;
 
+		XamlWriterStateManager manager;
+
 		Stack<object> nodes = new Stack<object> ();
-		XamlWriteState state = XamlWriteState.Initial;
 		bool is_first_member_content, has_namespace;
 		object first_member_value;
 
@@ -147,9 +102,7 @@ namespace System.Xaml
 			while (nodes.Count > 0) {
 				var obj = nodes.Peek ();
 				if (obj is XamlMember) {
-					// somewhat hacky state change to not reject StartMember->EndMember.
-					if (state == XamlWriteState.MemberStarted)
-						state = XamlWriteState.ValueWritten;
+					manager.OnClosingItem ();
 					WriteEndMember ();
 				}
 				else if (obj is XamlType)
@@ -168,34 +121,22 @@ namespace System.Xaml
 
 		public override void WriteEndMember ()
 		{
-			RejectNamespaces (XamlNodeType.EndMember);
-
-			CheckState (XamlNodeType.EndMember);
-			
+			manager.EndMember ();
 			WriteStackedStartMember (XamlNodeType.EndMember);
 			DoEndMember ();
 
-			state = XamlWriteState.MemberDone;
 		}
 
 		public override void WriteEndObject ()
 		{
-			RejectNamespaces (XamlNodeType.EndObject);
-
-			CheckState (XamlNodeType.EndObject);
-			
+			manager.EndObject (nodes.Count > 1);
 			w.WriteEndElement ();
 			nodes.Pop ();
-
-			state = nodes.Count > 0 ? XamlWriteState.ObjectWritten : XamlWriteState.End;
 		}
 
 		public override void WriteGetObject ()
 		{
-			CheckState (XamlNodeType.GetObject);
-			
-			RejectNamespaces (XamlNodeType.GetObject);
-
+			manager.GetObject ();
 			WriteStackedStartMember (XamlNodeType.GetObject);
 
 			var xm = (XamlMember) GetNonNamespaceNode ();
@@ -203,8 +144,6 @@ namespace System.Xaml
 				throw new InvalidOperationException (String.Format ("WriteGetObject method can be invoked only when current member '{0}' is of collection type", xm.Name));
 
 			DoEndMember ();
-
-			state = XamlWriteState.MemberDone;
 		}
 
 		public override void WriteNamespace (NamespaceDeclaration namespaceDeclaration)
@@ -212,36 +151,33 @@ namespace System.Xaml
 			if (namespaceDeclaration == null)
 				throw new ArgumentNullException ("namespaceDeclaration");
 
+			manager.Namespace ();
+
 			nodes.Push (namespaceDeclaration);
 			has_namespace = true;
 		}
 
 		public override void WriteStartMember (XamlMember property)
 		{
-			CheckState (XamlNodeType.StartMember);
-			
+			manager.StartMember ();
 			nodes.Push (property);
 
-			state = XamlWriteState.MemberStarted;
 			is_first_member_content = true;
 		}
 
 		public override void WriteStartObject (XamlType xamlType)
 		{
-			CheckState (XamlNodeType.StartObject);
+			manager.StartObject ();
 
 			WriteStackedStartMember (XamlNodeType.StartObject);
 
 			nodes.Push (xamlType);
 			DoWriteStartObject (xamlType);
-
-			state = XamlWriteState.ObjectStarted;
 		}
 		
 		public override void WriteValue (object value)
 		{
-			CheckState (XamlNodeType.Value);
-			RejectNamespaces (XamlNodeType.Value);
+			manager.Value ();
 
 			var xt = GetCurrentType ();
 			if (xt != null && xt.UnderlyingType != null && !xt.UnderlyingType.IsInstanceOfType (value))
@@ -253,8 +189,6 @@ namespace System.Xaml
 			}
 			else
 				first_member_value = value;
-
-			state = XamlWriteState.ValueWritten;
 		}
 
 		void DoEndMember ()
@@ -357,18 +291,6 @@ namespace System.Xaml
 				return decl.Prefix;
 			return w.LookupPrefix (ns);
 		}
-		
-		void RejectNamespaces (XamlNodeType next)
-		{
-			if (nodes != null && nodes.Count > 0 && nodes.Peek () is NamespaceDeclaration) {
-				// strange, but on WriteEndMember it throws XamlXmlWriterException, while for other nodes it throws IOE.
-				string msg = String.Format ("Namespace declarations cannot be written before {0}", next);
-				if (next == XamlNodeType.EndMember)
-					throw new XamlXmlWriterException (msg);
-				else
-					throw new InvalidOperationException (msg);
-			}
-		}
 
 		Stack<NamespaceDeclaration> tmp_nss = new Stack<NamespaceDeclaration> ();
 
@@ -392,6 +314,7 @@ namespace System.Xaml
 				DoWriteNamespace (nd);
 			}
 			has_namespace = false;
+			manager.NamespaceCleanedUp ();
 
 			nodes.Push (top); // push back
 		}
@@ -402,56 +325,6 @@ namespace System.Xaml
 				w.WriteAttributeString ("xmlns", nd.Namespace);
 			else
 				w.WriteAttributeString ("xmlns", nd.Prefix, XamlLanguage.Xmlns2000Namespace, nd.Namespace);
-		}
-
-		void CheckState (XamlNodeType next)
-		{
-			switch (state) {
-			case XamlWriteState.Initial:
-				switch (next) {
-				case XamlNodeType.StartObject:
-					return;
-				}
-				break;
-			case XamlWriteState.ObjectStarted:
-				switch (next) {
-				case XamlNodeType.StartMember:
-				case XamlNodeType.EndObject:
-					return;
-				}
-				break;
-			case XamlWriteState.MemberStarted:
-				switch (next) {
-				case XamlNodeType.StartObject:
-				case XamlNodeType.Value:
-				case XamlNodeType.GetObject:
-					return;
-				}
-				break;
-			case XamlWriteState.ObjectWritten:
-				switch (next) {
-				case XamlNodeType.StartObject:
-				case XamlNodeType.Value:
-				case XamlNodeType.EndMember:
-					return;
-				}
-				break;
-			case XamlWriteState.ValueWritten:
-				switch (next) {
-				case XamlNodeType.StartObject:
-				case XamlNodeType.EndMember:
-					return;
-				}
-				break;
-			case XamlWriteState.MemberDone:
-				switch (next) {
-				case XamlNodeType.StartMember:
-				case XamlNodeType.EndObject:
-					return;
-				}
-				break;
-			}
-			throw new XamlXmlWriterException (String.Format ("{0} is not allowed at current state {1}", next, state));
 		}
 	}
 }

@@ -1,5 +1,10 @@
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlWriterStateManager.cs, XamlXmlWriter.cs : extracted former
+	  from latter, to reuse it in XamlObjectWriter too.
+
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlSchemaContext.cs
 	  TypeExtensionMethods.cs
 	  XamlType.cs : implement type lookup by name in schema context.

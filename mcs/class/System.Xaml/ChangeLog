@@ -1,3 +1,7 @@
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xaml.dll.sources : add new internal type.
+
 2010-04-11  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xaml_test.dll.sources : add XamlObjectReaderTest.cs.

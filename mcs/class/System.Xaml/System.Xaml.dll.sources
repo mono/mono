@@ -106,6 +106,7 @@ System.Xaml/XamlServices.cs
 System.Xaml/XamlType.cs
 System.Xaml/XamlWriter.cs
 System.Xaml/XamlWriterSettings.cs
+System.Xaml/XamlWriterStateManager.cs
 System.Xaml/XamlXmlReader.cs
 System.Xaml/XamlXmlReaderSettings.cs
 System.Xaml/XamlXmlWriter.cs
