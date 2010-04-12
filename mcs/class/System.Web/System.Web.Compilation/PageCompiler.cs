@@ -339,11 +339,13 @@ namespace System.Web.Compilation
 		
 		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
 		{
+			ILocation directiveLocation = pageParser.DirectiveLocation;
+			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
+			
+			if (pageParser.EnableViewStateMacSet)
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "EnableViewStateMac", pageParser.EnableViewStateMac), directiveLocation));
 #if NET_2_0
 			AddStatementsFromDirective (method);
-			ILocation directiveLocation = pageParser.DirectiveLocation;
-
-			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
 			if (pageParser.Title != null)
 				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title), directiveLocation));
 
