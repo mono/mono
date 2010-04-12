@@ -500,7 +500,7 @@ namespace Mono.CSharp {
 			compiler_generated.Add (c);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.DefaultMember) {
 				if (Indexers != null) {
@@ -509,7 +509,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		} 
 
 		public override AttributeTargets AttributeTargets {
@@ -1476,7 +1476,7 @@ namespace Mono.CSharp {
 				indexer_name = class_indexer_name;
 		}
 
-		protected virtual void EmitIndexerName ()
+		void EmitIndexerName ()
 		{
 			if (!seen_normal_indexers)
 				return;
@@ -2597,7 +2597,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
@@ -2619,7 +2619,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
 		/// <summary>
@@ -2736,7 +2736,7 @@ namespace Mono.CSharp {
 			base.AddBasesForPart (part, bases);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.AttributeUsage) {
 				if (!TypeManager.IsAttributeType (BaseType) &&
@@ -2763,7 +2763,7 @@ namespace Mono.CSharp {
 			if (AttributeTester.IsAttributeExcluded (a.Type, Location))
 				return;
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -2974,9 +2974,9 @@ namespace Mono.CSharp {
 			this.ModFlags |= Modifiers.SEALED;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 
 			//
 			// When struct constains fixed fixed and struct layout has explicitly
@@ -3110,14 +3110,14 @@ namespace Mono.CSharp {
 			this.ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod, accmods, name.Location, Report);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.ComImport && !attributes.Contains (pa.Guid)) {
 				a.Error_MissingGuidAttribute ();
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
 

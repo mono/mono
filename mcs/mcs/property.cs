@@ -183,17 +183,17 @@ namespace Mono.CSharp
 				this.parameters = accessor.Parameters;
 			}
 
-			protected override void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+			protected override void ApplyToExtraTarget (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
 						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
-					param_attr.ApplyAttributeBuilder (a, cb, pa);
+					param_attr.ApplyAttributeBuilder (a, ctor, cdata, pa);
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, cb, pa);
+				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 			}
 
 			public override ParametersCompiled ParameterInfo {
@@ -260,13 +260,13 @@ namespace Mono.CSharp
 				}
 			}
 
-			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+			public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.IsInternalMethodImplAttribute) {
 					method.is_external_implementation = true;
 				}
 
-				base.ApplyAttributeBuilder (a, cb, pa);
+				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -399,7 +399,7 @@ namespace Mono.CSharp
 			 this.define_set_first = define_set_first;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.HasSecurityAttribute) {
 				a.Error_InvalidSecurityParent ();
@@ -411,7 +411,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			PropertyBuilder.SetCustomAttribute (cb);
+			PropertyBuilder.SetCustomAttribute (ctor, cdata);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -853,9 +853,9 @@ namespace Mono.CSharp
 			MyBuilder.SetAddOnMethod (addMethod);
 		}
 
-		public void SetCustomAttribute (CustomAttributeBuilder cb)
+		public void SetCustomAttribute (ConstructorInfo ctor, byte[] cdata)
 		{
-			MyBuilder.SetCustomAttribute (cb);
+			MyBuilder.SetCustomAttribute (ctor, cdata);
 		}
 		
 		public override object [] GetCustomAttributes (bool inherit)
@@ -1058,22 +1058,22 @@ namespace Mono.CSharp
 			Remove = new RemoveDelegateMethod (this);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.Field) {
-				BackingField.ApplyAttributeBuilder (a, cb, pa);
+				BackingField.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
 
 			if (a.Target == AttributeTargets.Method) {
 				int errors = Report.Errors;
-				Add.ApplyAttributeBuilder (a, cb, pa);
+				Add.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				if (errors == Report.Errors)
-					Remove.ApplyAttributeBuilder (a, cb, pa);
+					Remove.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
 		public override bool Define()
@@ -1155,26 +1155,26 @@ namespace Mono.CSharp
 				get { return method_data.implementing != null; }
 			}
 
-			public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+			public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.IsInternalMethodImplAttribute) {
 					method.is_external_implementation = true;
 				}
 
-				base.ApplyAttributeBuilder (a, cb, pa);
+				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 			}
 
-			protected override void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+			protected override void ApplyToExtraTarget (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
 						param_attr = new ImplicitParameter (method_data.MethodBuilder);
 
-					param_attr.ApplyAttributeBuilder (a, cb, pa);
+					param_attr.ApplyAttributeBuilder (a, ctor, cdata, pa);
 					return;
 				}
 
-				base.ApplyAttributeBuilder (a, cb, pa);
+				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 			}
 
 			public override AttributeTargets AttributeTargets {
@@ -1258,14 +1258,14 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if ((a.HasSecurityAttribute)) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}
 			
-			EventBuilder.SetCustomAttribute (cb);
+			EventBuilder.SetCustomAttribute (ctor, cdata);
 		}
 
 		public bool AreAccessorsDuplicateImplementation (MethodCore mc)
@@ -1505,6 +1505,22 @@ namespace Mono.CSharp
 				Set = new SetIndexerMethod (this, set_block);
 		}
 
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+		{
+			if (a.Type == pa.IndexerName) {
+				if (IsExplicitImpl) {
+					Report.Error (415, a.Location,
+						"The `{0}' attribute is valid only on an indexer that is not an explicit interface member declaration",
+						TypeManager.CSharpName (a.Type));
+				}
+
+				// Attribute was copied to container
+				return;
+			}
+
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
+		}
+
 		protected override bool CheckForDuplications ()
 		{
 			return Parent.MemberCache.CheckExistingMembersOverloads (this, GetFullName (MemberName), parameters, Report);
@@ -1521,27 +1537,14 @@ namespace Mono.CSharp
 			if (OptAttributes != null) {
 				Attribute indexer_attr = OptAttributes.Search (PredefinedAttributes.Get.IndexerName);
 				if (indexer_attr != null) {
-					// Remove the attribute from the list because it is not emitted
-					OptAttributes.Attrs.Remove (indexer_attr);
-
 					string name = indexer_attr.GetIndexerAttributeValue ();
-					if (name == null)
-						return false;
-
-					ShortName = name;
-
-					if (IsExplicitImpl) {
-						Report.Error (415, indexer_attr.Location,
-							      "The `IndexerName' attribute is valid only on an " +
-							      "indexer that is not an explicit interface member declaration");
-						return false;
-					}
-
 					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 						Report.Error (609, indexer_attr.Location,
-							      "Cannot set the `IndexerName' attribute on an indexer marked override");
-						return false;
+							"Cannot set the `IndexerName' attribute on an indexer marked override");
 					}
+
+					if (!string.IsNullOrEmpty (name))
+						ShortName = name;
 				}
 			}
 

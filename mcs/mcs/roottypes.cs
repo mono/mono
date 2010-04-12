@@ -111,7 +111,7 @@ namespace Mono.CSharp
 			return AddPartial (nextPart, nextPart.Name);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.CLSCompliant) {
 				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
@@ -123,7 +123,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			builder.SetCustomAttribute (cb);
+			builder.SetCustomAttribute (ctor, cdata);
 		}
 
 		public ModuleBuilder Builder {

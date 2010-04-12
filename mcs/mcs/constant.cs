@@ -39,23 +39,6 @@ namespace Mono.CSharp {
 			return this.GetType ().Name + " (" + AsString () + ")";
 		}
 
-		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-		{
-			if (value_type == TypeManager.object_type) {
-				value = GetTypedValue ();
-				return true;
-			}
-
-			Constant c = ImplicitConversionRequired (ec, value_type, loc);
-			if (c == null) {
-				value = null;
-				return false;
-			}
-
-			value = c.GetTypedValue ();
-			return true;
-		}
-
 		/// <summary>
 		///  This is used to obtain the actual value of the literal
 		///  cast into an object.
@@ -350,6 +333,11 @@ namespace Mono.CSharp {
 		{
 			return (object) Value;
 		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
+		}
 		
 		public override void Emit (EmitContext ec)
 		{
@@ -389,6 +377,11 @@ namespace Mono.CSharp {
 			base (loc)
 		{
 			Value = v;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -489,6 +482,11 @@ namespace Mono.CSharp {
 			type = TypeManager.char_type;
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write ((ushort) Value);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -610,6 +608,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			IntLiteral.EmitInt (ec.ig, Value);
@@ -709,6 +712,11 @@ namespace Mono.CSharp {
 			type = TypeManager.short_type;
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -822,6 +830,11 @@ namespace Mono.CSharp {
 			type = TypeManager.ushort_type;
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -981,6 +994,11 @@ namespace Mono.CSharp {
 					ig.Emit (OpCodes.Ldc_I4, i);
 				break;
 			}
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1159,6 +1177,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			IntLiteral.EmitInt (ec.ig, unchecked ((int) Value));
@@ -1275,6 +1298,11 @@ namespace Mono.CSharp {
 			type = TypeManager.int64_type;
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1428,6 +1456,11 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ILGenerator ig = ec.ig;
@@ -1540,6 +1573,11 @@ namespace Mono.CSharp {
 			type = TypeManager.float_type;
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1658,6 +1696,11 @@ namespace Mono.CSharp {
 			type = TypeManager.double_type;
 			eclass = ExprClass.Value;
 			return this;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -1940,6 +1983,15 @@ namespace Mono.CSharp {
 			ec.ig.Emit (OpCodes.Ldstr, Value);
 		}
 
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			// cast to object
+			if (type != targetType)
+				enc.Encode (type);
+
+			enc.Encode (Value);
+		}
+
 		public override bool IsDefaultValue {
 			get {
 				return Value == null;
@@ -1984,6 +2036,22 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return this;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			// Type it as string cast
+			if (targetType == TypeManager.object_type || targetType == TypeManager.null_type)
+				enc.Encode (TypeManager.string_type);
+
+			if (targetType.IsArray) {
+				if (targetType.GetArrayRank () != 1)
+					base.EncodeAttributeValue (rc, enc, targetType);
+				else
+					enc.Stream.Write (uint.MaxValue);
+			} else {
+				enc.Stream.Write (byte.MaxValue);
+			}
 		}
 
 		public override void Emit (EmitContext ec)

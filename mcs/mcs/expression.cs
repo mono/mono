@@ -1507,11 +1507,6 @@ namespace Mono.CSharp {
 			type = storey.MutateType (type);
 			base.MutateHoistedGenericType (storey);
 		}
-	
-		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-		{
-			return expr.GetAttributableValue (ec, value_type, out value);
-		}
 	}
 	
 	/// <summary>
@@ -5934,10 +5929,7 @@ namespace Mono.CSharp {
 					// Initializers with the default values can be ignored
 					Constant c = element as Constant;
 					if (c != null) {
-						if (c.IsDefaultInitializer (array_element_type)) {
-							element = null;
-						}
-						else {
+						if (!c.IsDefaultInitializer (array_element_type)) {
 							++const_initializers_count;
 						}
 					} else {
@@ -5974,9 +5966,6 @@ namespace Mono.CSharp {
 			if (array_data != null) {
 				for (int i = 0; i < array_data.Count; ++i) {
 					Expression e = array_data [i];
-					if (e == null)
-						e = Convert.ImplicitConversion (ec, initializers [i], array_element_type, loc);
-
 					args.Add (new Argument (e.CreateExpressionTree (ec)));
 				}
 			}
@@ -6386,9 +6375,10 @@ namespace Mono.CSharp {
 			for (int i = 0; i < array_data.Count; i++){
 
 				Expression e = array_data [i];
+				var c = e as Constant;
 
 				// Constant can be initialized via StaticInitializer
-				if (e != null && !(!emitConstants && e is Constant)) {
+				if (c == null || (c != null && emitConstants && !c.IsDefaultInitializer (array_element_type))) {
 					Type etype = e.Type;
 
 					ig.Emit (OpCodes.Dup);
@@ -6473,43 +6463,40 @@ namespace Mono.CSharp {
 				first_emit_temp.Release (ec);
 		}
 
-		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
 		{
+			// no multi dimensional arrays
 			if (arguments.Count != 1) {
-				// ec.Report.Error (-211, Location, "attribute can not encode multi-dimensional arrays");
-				return base.GetAttributableValue (ec, null, out value);
+				base.EncodeAttributeValue (rc, enc, targetType);
+				return;
 			}
 
+			// No array covariance, except for array -> object
+			if (type != targetType) {
+				if (targetType != TypeManager.object_type) {
+					base.EncodeAttributeValue (rc, enc, targetType);
+					return;
+				}
+
+				enc.Encode (type);
+			}
+
+			// Single dimensional array of 0 size
 			if (array_data == null) {
-				Expression arg = arguments [0];
-				object arg_value;
-				if (arg.GetAttributableValue (ec, arg.Type, out arg_value) && arg_value is int && (int)arg_value == 0) {
-					value = Array.CreateInstance (array_element_type, 0);
-					return true;
+				IntConstant ic = arguments[0] as IntConstant;
+				if (ic == null || !ic.IsDefaultValue) {
+					base.EncodeAttributeValue (rc, enc, targetType);
+				} else {
+					enc.Stream.Write (0);
 				}
 
-				// ec.Report.Error (-212, Location, "array should be initialized when passing it to an attribute");
-				return base.GetAttributableValue (ec, null, out value);
+				return;
 			}
-			
-			Array ret = Array.CreateInstance (array_element_type, array_data.Count);
-			object element_value;
-			for (int i = 0; i < ret.Length; ++i)
-			{
-				Expression e = array_data [i];
 
-				// Is null when an initializer is optimized (value == predefined value)
-				if (e == null) 
-					continue;
-
-				if (!e.GetAttributableValue (ec, array_element_type, out element_value)) {
-					value = null;
-					return false;
-				}
-				ret.SetValue (element_value, i);
+			enc.Stream.Write ((int) array_data.Count);
+			foreach (var element in array_data) {
+				element.EncodeAttributeValue (rc, enc, array_element_type);
 			}
-			value = ret;
-			return true;
 		}
 		
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -7014,29 +7001,24 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			// Target type is not System.Type therefore must be object
+			// and we need to use different encoding sequence
+			if (targetType != type)
+				enc.Encode (type);
+
+			if (!enc.EncodeTypeName (typearg)) {
+				rc.Compiler.Report.SymbolRelatedToPreviousError (typearg);
+				rc.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
+					TypeManager.CSharpName (typearg));
+			}
+		}
+
 		public override void Emit (EmitContext ec)
 		{
 			ec.ig.Emit (OpCodes.Ldtoken, TypeManager.TypeToReflectionType (typearg));
 			ec.ig.Emit (OpCodes.Call, (MethodInfo) TypeManager.system_type_get_type_from_handle.MetaInfo);
-		}
-
-		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-		{
-			if (TypeManager.ContainsGenericParameters (typearg) &&
-				!TypeManager.IsGenericTypeDefinition (typearg)) {
-				ec.Report.SymbolRelatedToPreviousError (typearg);
-				ec.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
-					     TypeManager.CSharpName (typearg));
-				value = null;
-				return false;
-			}
-
-			if (value_type == TypeManager.object_type) {
-				value = (object)typearg;
-				return true;
-			}
-			value = typearg;
-			return true;
 		}
 
 		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
@@ -9271,11 +9253,6 @@ namespace Mono.CSharp {
 				ec.ig.Emit (OpCodes.Conv_Ovf_I_Un);
 			else
 				throw new InternalErrorException ("Cannot emit cast to unknown array element type", type);
-		}
-
-		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-		{
-			return child.GetAttributableValue (ec, value_type, out value);
 		}
 	}
 

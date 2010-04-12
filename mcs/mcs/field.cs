@@ -51,7 +51,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.FieldOffset) {
 				status |= Status.HAS_OFFSET;
@@ -91,7 +91,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			FieldBuilder.SetCustomAttribute (cb);
+			FieldBuilder.SetCustomAttribute (ctor, cdata);
 		}
 
  		protected override bool CheckBase ()

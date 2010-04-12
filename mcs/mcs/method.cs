@@ -256,13 +256,13 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.ReturnValue) {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (this, MethodBuilder, Location);
 
-				return_attributes.ApplyAttributeBuilder (a, cb, pa);
+				return_attributes.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
 
@@ -286,7 +286,7 @@ namespace Mono.CSharp {
 			}
 
 			if (MethodBuilder != null)
-				MethodBuilder.SetCustomAttribute (cb);
+				MethodBuilder.SetCustomAttribute (ctor, cdata);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -688,7 +688,7 @@ namespace Mono.CSharp {
 			return base.LookupNamespaceOrType (name, loc, ignore_cs0104);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.Conditional) {
 				if (IsExplicitImpl) {
@@ -731,7 +731,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
   		protected override bool CheckForDuplications ()
@@ -1154,7 +1154,7 @@ namespace Mono.CSharp {
 					(Initializer.Arguments == null);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null) {
@@ -1168,7 +1168,7 @@ namespace Mono.CSharp {
 				is_external_implementation = true;
 			}
 
-			ConstructorBuilder.SetCustomAttribute (cb);
+			ConstructorBuilder.SetCustomAttribute (ctor, cdata);
 		}
 
 		protected override bool CheckBase ()
@@ -1745,14 +1745,14 @@ namespace Mono.CSharp {
 			ModFlags |= Modifiers.PROTECTED | Modifiers.OVERRIDE;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.Conditional) {
 				Error_ConditionalAttributeIsNotValid ();
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
 		protected override bool CheckBase ()
@@ -1902,7 +1902,7 @@ namespace Mono.CSharp {
 
 		#endregion
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.CLSCompliant || a.Type == pa.Obsolete || a.Type == pa.Conditional) {
 				Report.Error (1667, a.Location,
@@ -1919,7 +1919,7 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Target == AttributeTargets.Method) {
-				method_data.MethodBuilder.SetCustomAttribute (cb);
+				method_data.MethodBuilder.SetCustomAttribute (ctor, cdata);
 				return;
 			}
 
@@ -1927,14 +1927,14 @@ namespace Mono.CSharp {
 				if (return_attributes == null)
 					return_attributes = new ReturnParameter (this, method_data.MethodBuilder, Location);
 
-				return_attributes.ApplyAttributeBuilder (a, cb, pa);
+				return_attributes.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
 
-			ApplyToExtraTarget (a, cb, pa);
+			ApplyToExtraTarget (a, ctor, cdata, pa);
 		}
 
-		protected virtual void ApplyToExtraTarget (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		protected virtual void ApplyToExtraTarget (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			throw new NotSupportedException ("You forgot to define special attribute target handling");
 		}
@@ -2136,14 +2136,14 @@ namespace Mono.CSharp {
 			Block = block;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.Conditional) {
 				Error_ConditionalAttributeIsNotValid ();
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 		
 		public override bool Define ()

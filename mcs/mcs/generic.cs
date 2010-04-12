@@ -950,9 +950,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
-			type.SetCustomAttribute (cb);
+			type.SetCustomAttribute (ctor, cdata);
 		}
 
 		public override AttributeTargets AttributeTargets {

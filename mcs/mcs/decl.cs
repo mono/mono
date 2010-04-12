@@ -1332,13 +1332,14 @@ namespace Mono.CSharp {
 			get { return Parent.Module; }
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.Required) {
 				Report.Error (1608, a.Location, "The RequiredAttribute attribute is not permitted on C# types");
 				return;
 			}
-			TypeBuilder.SetCustomAttribute (cb);
+
+			TypeBuilder.SetCustomAttribute (ctor, cdata);
 		}
 
 		TypeParameter[] initialize_type_params ()

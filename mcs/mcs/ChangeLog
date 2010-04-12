@@ -1,3 +1,13 @@
+2010-04-12  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #593342
+
+	* generic.cs, parameter.cs, argument.cs, field.cs, property.cs,
+	decl.cs, roottypes.cs, constant.cs, nullable.cs, expression.cs,
+	method.cs, ecore.cs, class.cs, delegate.cs, attribute.cs,
+	codegen.cs: Add custom attribute encoder to deal with unfinished
+	types and easier corlib bootstrap from its own types.
+
 2010-03-26  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-parser.jay: Report invalid constraint types.

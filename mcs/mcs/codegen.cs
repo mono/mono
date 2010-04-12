@@ -618,9 +618,9 @@ namespace Mono.CSharp {
 
 			Attribute a = ResolveAttribute (PredefinedAttributes.Get.RuntimeCompatibility);
 			if (a != null) {
-				object val = a.GetPropertyValue ("WrapNonExceptionThrows");
+				var val = a.GetPropertyValue ("WrapNonExceptionThrows") as BoolConstant;
 				if (val != null)
-					wrap_non_exception_throws = (bool) val;
+					wrap_non_exception_throws = val.Value;
 			}
 		}
 
@@ -823,7 +823,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
@@ -911,7 +911,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			Builder.SetCustomAttribute (cb);
+			Builder.SetCustomAttribute (ctor, cdata);
 		}
 
 		public override void Emit (TypeContainer tc)

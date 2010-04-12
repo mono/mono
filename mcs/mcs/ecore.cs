@@ -137,13 +137,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public virtual bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-		{
-			Attribute.Error_AttributeArgumentNotValid (ec, loc);
-			value = null;
-			return false;
-		}
-
 		public virtual string GetSignatureForError ()
 		{
 			return TypeManager.CSharpName (type);
@@ -556,6 +549,11 @@ namespace Mono.CSharp {
 			return e;
 		}
 
+		public virtual void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			Attribute.Error_AttributeArgumentNotValid (rc, loc);
+		}
+
 		/// <summary>
 		///   Emits the code for the expression
 		/// </summary>
@@ -565,6 +563,7 @@ namespace Mono.CSharp {
 		///   for the expression.  
 		/// </remarks>
 		public abstract void Emit (EmitContext ec);
+
 
 		// Emit code to branch to @target if this expression is equivalent to @on_true.
 		// The default implementation is to emit the value, and then emit a brtrue or brfalse.
@@ -1333,6 +1332,12 @@ namespace Mono.CSharp {
 			this.child = child;
 		}
 
+		public Expression Child {
+			get {
+				return child;
+			}
+		}
+
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			Arguments args = new Arguments (2);
@@ -1356,11 +1361,6 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			child.Emit (ec);
-		}
-
-		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-		{
-			return child.GetAttributableValue (ec, value_type, out value);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -1668,6 +1668,11 @@ namespace Mono.CSharp {
 			Child.Emit (ec);
 		}
 
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			Child.EncodeAttributeValue (rc, enc, Child.Type);
+		}
+
 		public override void EmitBranchable (EmitContext ec, Label label, bool on_true)
 		{
 			Child.EmitBranchable (ec, label, on_true);
@@ -1676,12 +1681,6 @@ namespace Mono.CSharp {
 		public override void EmitSideEffect (EmitContext ec)
 		{
 			Child.EmitSideEffect (ec);
-		}
-
-		public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-		{
-			value = GetTypedValue ();
-			return true;
 		}
 
 		public override string GetSignatureForError()
@@ -1794,6 +1793,12 @@ namespace Mono.CSharp {
 			// initialized state.
 
 			return this;
+		}
+
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		{
+			enc.Encode (child.Type);
+			child.EncodeAttributeValue (rc, enc, child.Type);
 		}
 
 		public override void Emit (EmitContext ec)
@@ -2169,17 +2174,6 @@ namespace Mono.CSharp {
 			public override Expression CreateExpressionTree (ResolveContext ec)
 			{
 				return orig_expr.CreateExpressionTree (ec);
-			}
-
-			public override bool GetAttributableValue (ResolveContext ec, Type value_type, out object value)
-			{
-				//
-				// Even if resolved result is a constant original expression was not
-				// and attribute accepts constants only
-				//
-				Attribute.Error_AttributeArgumentNotValid (ec, orig_expr.Location);
-				value = null;
-				return false;
 			}
 
 			public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)

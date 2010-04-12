@@ -297,10 +297,6 @@ namespace Mono.CSharp.Nullable
 			eclass = ExprClass.Value;
 		}
 
-		public Expression Child {
-			get { return child; }
-		}
-
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
 			TypeCast child_cast = child as TypeCast;

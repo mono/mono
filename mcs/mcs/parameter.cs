@@ -24,7 +24,7 @@ namespace Mono.CSharp {
 	{
 		protected ParameterBuilder builder;
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 #if false
 			if (a.Type == pa.MarshalAs) {
@@ -45,7 +45,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			builder.SetCustomAttribute (cb);
+			builder.SetCustomAttribute (ctor, cdata);
 		}
 
 		public ParameterBuilder Builder {
@@ -79,7 +79,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.CLSCompliant) {
 				method.Compiler.Report.Warning (3023, 1, a.Location,
@@ -90,7 +90,7 @@ namespace Mono.CSharp {
 			if (builder == null)
 				return;
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -265,7 +265,7 @@ namespace Mono.CSharp {
 			base.attributes = attrs;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, CustomAttributeBuilder cb, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.In && ModFlags == Modifier.OUT) {
 				a.Report.Error (36, a.Location, "An out parameter cannot have the `In' attribute");
@@ -296,24 +296,21 @@ namespace Mono.CSharp {
 			}
 
 			if (a.Type == pa.DefaultParameterValue) {
-				object val = a.GetParameterDefaultValue ();
-				if (val != null) {
-					Type t = val.GetType ();
-					if (t.IsArray || TypeManager.IsSubclassOf (t, TypeManager.type_type)) {
-						if (parameter_type == TypeManager.object_type) {
-							if (!t.IsArray)
-								t = TypeManager.type_type;
-
-							a.Report.Error (1910, a.Location, "Argument of type `{0}' is not applicable for the DefaultParameterValue attribute",
-								TypeManager.CSharpName (t));
-						} else {
-							a.Report.Error (1909, a.Location, "The DefaultParameterValue attribute is not applicable on parameters of type `{0}'",
-								TypeManager.CSharpName (parameter_type)); ;
-						}
-						return;
+				Type arg_type;
+				var c = a.GetParameterDefaultValue (out arg_type);
+				if (c == null) {
+					if (parameter_type == TypeManager.object_type) {
+						a.Report.Error (1910, a.Location, "Argument of type `{0}' is not applicable for the DefaultParameterValue attribute",
+							TypeManager.CSharpName (arg_type));
+					} else {
+						a.Report.Error (1909, a.Location, "The DefaultParameterValue attribute is not applicable on parameters of type `{0}'",
+							TypeManager.CSharpName (parameter_type)); ;
 					}
+
+					return;
 				}
 
+				var val = c.GetValue ();
 				if (parameter_type == TypeManager.object_type ||
 				    (val == null && !TypeManager.IsGenericParameter (parameter_type) && TypeManager.IsReferenceType (parameter_type)) ||
 				    (val != null && TypeManager.TypeToCoreType (val.GetType ()) == parameter_type))
@@ -323,7 +320,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			base.ApplyAttributeBuilder (a, cb, pa);
+			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 		}
 		
 		public virtual bool CheckAccessibility (InterfaceMemberBase member)

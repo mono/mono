@@ -382,18 +382,6 @@ namespace Mono.CSharp
 			}
 		}
 
-		public bool GetAttributableValue (ResolveContext ec, out object[] values)
-		{
-			values = new object [args.Count];
-			for (int j = 0; j < values.Length; ++j) {
-				Argument a = this [j];
-				if (!a.Expr.GetAttributableValue (ec, a.Type, out values[j]))
-					return false;
-			}
-
-			return true;
-		}
-
 		public IEnumerator<Argument> GetEnumerator ()
 		{
 			return args.GetEnumerator ();
