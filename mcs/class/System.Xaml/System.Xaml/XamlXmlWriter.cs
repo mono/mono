@@ -159,6 +159,9 @@ namespace System.Xaml
 
 		public override void WriteStartMember (XamlMember property)
 		{
+			if (property == null)
+				throw new ArgumentNullException ("property");
+
 			manager.StartMember ();
 			nodes.Push (property);
 
@@ -167,6 +170,9 @@ namespace System.Xaml
 
 		public override void WriteStartObject (XamlType xamlType)
 		{
+			if (xamlType == null)
+				throw new ArgumentNullException ("xamlType");
+
 			manager.StartObject ();
 
 			WriteStackedStartMember (XamlNodeType.StartObject);

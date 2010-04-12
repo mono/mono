@@ -1,5 +1,9 @@
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlWriter.cs : check null args.
+
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlWriterStateManager.cs, XamlXmlWriter.cs : extracted former
 	  from latter, to reuse it in XamlObjectWriter too.
 
