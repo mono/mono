@@ -926,7 +926,6 @@ License:        LGPL v2.1 only
 Summary:        Mono development tools
 Group:          Development/Languages/Mono
 Requires:       mono-core == %version-%release
-Requires:       glib2-devel
 %if 0%{?monobuild}
 Requires:       libgdiplus0
 %else
