@@ -447,6 +447,44 @@ namespace MonoTests.System.Xaml
 			Assert.IsNull (new XamlType (typeof (XamlType), sctx).TypeConverter, "#5");
 			Assert.IsTrue (new XamlType (typeof (char), sctx).TypeConverter.ConverterInstance is CharConverter, "#6");
 		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void GetXamlNamespaces ()
+		{
+			var xt = new XamlType (typeof (string), new XamlSchemaContext (null, null));
+			var l = xt.GetXamlNamespaces ();
+			Assert.AreEqual (2, l.Count, "#1");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, l [0], "#2");
+			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", l [1], "#3");
+		}
+		
+		[Test]
+		public void GetAliasedProperty ()
+		{
+			XamlMember xm;
+			var xt = new XamlType (typeof (SeverlyAliasedClass), new XamlSchemaContext (null, null));
+			xm = xt.GetAliasedProperty (XamlLanguage.Key);
+			Assert.IsNotNull (xm, "#1");
+			xm = xt.GetAliasedProperty (XamlLanguage.Name);
+			Assert.IsNotNull (xm, "#2");
+			xm = xt.GetAliasedProperty (XamlLanguage.Uid);
+			Assert.IsNotNull (xm, "#3");
+			xm = xt.GetAliasedProperty (XamlLanguage.Lang);
+			Assert.IsNotNull (xm, "#4");
+		}
+
+		[DictionaryKeyProperty ("Key")]
+		[RuntimeNameProperty ("RuntimeTypeName")]
+		[UidProperty ("UUID")]
+		[XmlLangProperty ("XmlLang")]
+		public class SeverlyAliasedClass
+		{
+			public string Key { get; set; }
+			public string RuntimeTypeName { get; set; }
+			public string UUID { get; set; }
+			public string XmlLang { get; set; }
+		}
 	}
 
 	class MyXamlType : XamlType

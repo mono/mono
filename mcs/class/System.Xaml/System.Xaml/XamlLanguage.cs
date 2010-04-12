@@ -29,7 +29,7 @@ using System.Xaml.Schema;
 using System.Windows.Markup;
 
 [assembly:XmlnsPrefix (System.Xaml.XamlLanguage.Xaml2006Namespace, "x")]
-[assembly:XmlnsDefinition (System.Xaml.XamlLanguage.Xaml2006Namespace, "System.Xaml")] // FIXME: verify.
+[assembly:XmlnsDefinition (System.Xaml.XamlLanguage.Xaml2006Namespace, "System.Windows.Markup")] // FIXME: verify.
 
 namespace System.Xaml
 {
@@ -43,34 +43,34 @@ namespace System.Xaml
 
 		static XamlType XT<T> ()
 		{
-			return new XamlType (typeof (T), sctx);
+			return sctx.GetXamlType (typeof (T));
 		}
 
 		static XamlLanguage ()
 		{
 			// types
 
-			Array = new XamlType (typeof (ArrayExtension), sctx);
-			Boolean = new XamlType (typeof (bool), sctx);
-			Byte = new XamlType (typeof (byte), sctx);
-			Char = new XamlType (typeof (char), sctx);
-			Decimal = new XamlType (typeof (decimal), sctx);
-			Double = new XamlType (typeof (double), sctx);
-			Int16 = new XamlType (typeof (short), sctx);
-			Int32 = new XamlType (typeof (int), sctx);
-			Int64 = new XamlType (typeof (long), sctx);
-			Member = new XamlType (typeof (MemberDefinition), sctx);
-			Null = new XamlType (typeof (NullExtension), sctx);
-			Object = new XamlType (typeof (object), sctx);
-			Property = new XamlType (typeof (PropertyDefinition), sctx);
-			Reference = new XamlType (typeof (Reference), sctx);
-			Single = new XamlType (typeof (float), sctx);
-			Static = new XamlType (typeof (StaticExtension), sctx);
-			String = new XamlType (typeof (string), sctx);
-			TimeSpan = new XamlType (typeof (TimeSpan), sctx);
-			Type = new XamlType (typeof (TypeExtension), sctx);
-			Uri = new XamlType (typeof (Uri), sctx);
-			XData = new XamlType (typeof (XData), sctx);
+			Array = XT<ArrayExtension> ();
+			Boolean = XT<bool> ();
+			Byte = XT<byte> ();
+			Char = XT<char> ();
+			Decimal = XT<decimal> ();
+			Double = XT<double> ();
+			Int16 = XT<short> ();
+			Int32 = XT<int> ();
+			Int64 = XT<long> ();
+			Member = XT<MemberDefinition> ();
+			Null = XT<NullExtension> ();
+			Object = XT<object> ();
+			Property = XT<PropertyDefinition> ();
+			Reference = XT<Reference> ();
+			Single = XT<float> ();
+			Static = XT<StaticExtension> ();
+			String = XT<string> ();
+			TimeSpan = XT<TimeSpan> ();
+			Type = XT<TypeExtension> ();
+			Uri = XT<Uri> ();
+			XData = XT<XData> ();
 
 			AllTypes = new ReadOnlyCollection<XamlType> (new XamlType [] {Array, Boolean, Byte, Char, Decimal, Double, Int16, Int32, Int64, Member, Null, Object, Property, Reference, Single, Static, String, TimeSpan, Type, Uri, XData});
 

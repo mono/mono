@@ -1,5 +1,14 @@
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReader.cs
+	  XamlSchemaContext.cs
+	  XamlMember.cs
+	  XamlType.cs
+	  XamlLanguage.cs : more type system implementation. Now it creates
+	  XamlType indirectly all around.
+
+2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlType.cs : make implementation a bit cleaner.
 
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>

@@ -43,7 +43,7 @@ namespace System.Xaml
 				throw new ArgumentNullException ("eventInfo");
 			Name = eventInfo.Name;
 			underlying_member = eventInfo;
-			DeclaringType = new XamlType (eventInfo.DeclaringType, schemaContext);
+			DeclaringType = schemaContext.GetXamlType (eventInfo.DeclaringType);
 			target_type = DeclaringType;
 			UnderlyingSetter = eventInfo.GetAddMethod ();
 			is_event = true;
@@ -61,7 +61,7 @@ namespace System.Xaml
 				throw new ArgumentNullException ("propertyInfo");
 			Name = propertyInfo.Name;
 			underlying_member = propertyInfo;
-			DeclaringType = new XamlType (propertyInfo.DeclaringType, schemaContext);
+			DeclaringType = schemaContext.GetXamlType (propertyInfo.DeclaringType);
 			target_type = DeclaringType;
 			UnderlyingGetter = propertyInfo.GetGetMethod ();
 			UnderlyingSetter = propertyInfo.GetSetMethod ();
@@ -82,8 +82,8 @@ namespace System.Xaml
 			Name = attachableEventName;
 			VerifyAdderSetter (adder);
 			underlying_member = adder;
-			DeclaringType = new XamlType (adder.DeclaringType, schemaContext);
-			target_type = new XamlType (typeof (object), schemaContext);
+			DeclaringType = schemaContext.GetXamlType (adder.DeclaringType);
+			target_type = schemaContext.GetXamlType (typeof (object));
 			UnderlyingSetter = adder;
 			is_event = true;
 			is_attachable = true;
@@ -105,8 +105,8 @@ namespace System.Xaml
 			VerifyGetter (getter);
 			VerifyAdderSetter (setter);
 			underlying_member = getter ?? setter;
-			DeclaringType = new XamlType (underlying_member.DeclaringType, schemaContext);
-			target_type = new XamlType (typeof (object), schemaContext);
+			DeclaringType = schemaContext.GetXamlType (underlying_member.DeclaringType);
+			target_type = schemaContext.GetXamlType (typeof (object));
 			UnderlyingGetter = getter;
 			UnderlyingSetter = setter;
 			is_attachable = true;
@@ -120,6 +120,7 @@ namespace System.Xaml
 				throw new ArgumentNullException ("declaringType");
 			Name = name;
 			this.invoker = invoker ?? new XamlMemberInvoker (this);
+			context = declaringType.SchemaContext;
 			DeclaringType = declaringType;
 			target_type = DeclaringType;
 			is_attachable = isAttachable;
@@ -356,7 +357,7 @@ namespace System.Xaml
 		protected virtual XamlType LookupType ()
 		{
 			if (type == null)
-				type = new XamlType (DoGetType (), DeclaringType.SchemaContext);
+				type = context.GetXamlType (DoGetType ());
 			return type;
 		}
 		

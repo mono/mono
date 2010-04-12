@@ -71,6 +71,8 @@ namespace System.Xaml
 		List<string> xaml_nss;
 		Dictionary<string,string> prefixes;
 		Dictionary<string,string> compat_nss;
+		Dictionary<string,List<XamlType>> all_xaml_types;
+		XamlType [] empty_xaml_types = new XamlType [0];
 
 		public bool FullyQualifyAssemblyNamesInClrNamespaces { get; private set; }
 
@@ -96,7 +98,19 @@ namespace System.Xaml
 
 		public virtual ICollection<XamlType> GetAllXamlTypes (string xamlNamespace)
 		{
-			throw new NotImplementedException ();
+			if (xamlNamespace == null)
+				throw new ArgumentNullException ("xamlNamespace");
+			if (all_xaml_types == null) {
+				all_xaml_types = new Dictionary<string,List<XamlType>> ();
+				foreach (var ass in AssembliesInScope)
+					FillAllXamlTypes (ass);
+			}
+
+			List<XamlType> l;
+			if (all_xaml_types.TryGetValue (xamlNamespace, out l))
+				return l;
+			else
+				return empty_xaml_types;
 		}
 
 		public virtual string GetPreferredPrefix (string xmlns)
@@ -115,7 +129,7 @@ namespace System.Xaml
 		protected internal XamlValueConverter<TConverterBase> GetValueConverter<TConverterBase> (Type converterType, XamlType targetType)
 			where TConverterBase : class
 		{
-			throw new NotImplementedException ();
+			return new XamlValueConverter<TConverterBase> (converterType, targetType);
 		}
 		
 		public virtual XamlDirective GetXamlDirective (string xamlNamespace, string name)
@@ -123,9 +137,16 @@ namespace System.Xaml
 			throw new NotImplementedException ();
 		}
 		
+		Dictionary<Type,XamlType> xaml_types = new Dictionary<Type,XamlType> ();
+		
 		public virtual XamlType GetXamlType (Type type)
 		{
-			throw new NotImplementedException ();
+			XamlType t;
+			if (!xaml_types.TryGetValue (type, out t)) {
+				t = new XamlType (type, this);
+				xaml_types.Add (type, t);
+			}
+			return t;
 		}
 		
 		public XamlType GetXamlType (XamlTypeName xamlTypeName)
@@ -166,6 +187,8 @@ namespace System.Xaml
 				FillPrefixes (e.LoadedAssembly);
 			if (compat_nss != null)
 				FillCompatibilities (e.LoadedAssembly);
+			if (all_xaml_types != null)
+				FillAllXamlTypes (e.LoadedAssembly);
 		}
 		
 		// cache updater methods
@@ -185,6 +208,17 @@ namespace System.Xaml
 		{
 			foreach (XmlnsCompatibleWithAttribute xca in ass.GetCustomAttributes (typeof (XmlnsCompatibleWithAttribute), false))
 				compat_nss.Add (xca.OldNamespace, xca.NewNamespace);
+		}
+
+		void FillAllXamlTypes (Assembly ass)
+		{
+			foreach (XmlnsDefinitionAttribute xda in ass.GetCustomAttributes (typeof (XmlnsDefinitionAttribute), false)) {
+				var l = new List<XamlType> ();
+				all_xaml_types.Add (xda.XmlNamespace, l);
+				foreach (var t in ass.GetTypes ())
+					if (t.Namespace == xda.ClrNamespace)
+						l.Add (GetXamlType (t));
+			}
 		}
 	}
 }

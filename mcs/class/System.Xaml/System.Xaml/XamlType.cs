@@ -76,6 +76,7 @@ namespace System.Xaml
 			Name = unknownTypeName;
 			PreferredXamlNamespace = unknownTypeNamespace;
 			TypeArguments = typeArguments != null && typeArguments.Count == 0 ? null : typeArguments;
+			explicit_ns = unknownTypeNamespace;
 		}
 
 		protected XamlType (string typeName, IList<XamlType> typeArguments, XamlSchemaContext schemaContext)
@@ -92,6 +93,8 @@ namespace System.Xaml
 		}
 
 		Type type, underlying_type;
+
+		string explicit_ns;
 
 		// populated properties
 		XamlType base_type;
@@ -324,14 +327,39 @@ namespace System.Xaml
 		public virtual IList<string> GetXamlNamespaces ()
 		{
 			throw new NotImplementedException ();
+			/* this does not work like documented!
+			if (explicit_ns != null)
+				return new string [] {explicit_ns};
+			var l = SchemaContext.GetAllXamlNamespaces ();
+			if (l != null)
+				return new List<string> (l);
+			return new string [] {String.Empty};
+			*/
 		}
 
 		// lookups
 
 		protected virtual XamlMember LookupAliasedProperty (XamlDirective directive)
 		{
-			throw new NotImplementedException ();
+			if (directive == XamlLanguage.Key) {
+				var a = this.GetCustomAttribute<DictionaryKeyPropertyAttribute> ();
+				return a != null ? GetMember (a.Name) : null;
+			}
+			if (directive == XamlLanguage.Name) {
+				var a = this.GetCustomAttribute<RuntimeNamePropertyAttribute> ();
+				return a != null ? GetMember (a.Name) : null;
+			}
+			if (directive == XamlLanguage.Uid) {
+				var a = this.GetCustomAttribute<UidPropertyAttribute> ();
+				return a != null ? GetMember (a.Name) : null;
+			}
+			if (directive == XamlLanguage.Lang) {
+				var a = this.GetCustomAttribute<XmlLangPropertyAttribute> ();
+				return a != null ? GetMember (a.Name) : null;
+			}
+			return null;
 		}
+
 		protected virtual IEnumerable<XamlMember> LookupAllAttachableMembers ()
 		{
 			if (UnderlyingType == null)
@@ -380,9 +408,22 @@ namespace System.Xaml
 			return base_type;
 		}
 
+		// This implementation is not verified. (No place to use.)
 		protected virtual XamlCollectionKind LookupCollectionKind ()
 		{
-			throw new NotImplementedException ();
+			if (UnderlyingType == null)
+				return BaseType != null ? BaseType.LookupCollectionKind () : XamlCollectionKind.None;
+			if (IsArray)
+				return XamlCollectionKind.Array;
+			// the documented behavior sounds too sloppy though ...
+			var mi = UnderlyingType.GetMethod ("Add");
+			if (mi == null)
+				return XamlCollectionKind.None;
+			if (mi.GetParameters ().Length == 1)
+				return XamlCollectionKind.Collection;
+			if (mi.GetParameters ().Length == 2)
+				return XamlCollectionKind.Dictionary;
+			return XamlCollectionKind.None;
 		}
 
 		protected virtual bool LookupConstructionRequiresArguments ()
@@ -414,9 +455,13 @@ namespace System.Xaml
 			var a = this.GetCustomAttribute<ContentPropertyAttribute> ();
 			return a != null && a.Name != null ? GetMember (a.Name) : null;
 		}
+
 		protected virtual IList<XamlType> LookupContentWrappers ()
 		{
-			throw new NotImplementedException ();
+			var l = new List<XamlType> ();
+			foreach (ContentWrapperAttribute a in CustomAttributeProvider.GetCustomAttributes (typeof (ContentWrapperAttribute), false))
+				l.Add (SchemaContext.GetXamlType (a.ContentWrapper));
+			return l;
 		}
 
 		internal ICustomAttributeProvider CustomAttributeProvider {
@@ -574,12 +619,12 @@ namespace System.Xaml
 				return null;
 
 			if (t == typeof (object))
-				return new XamlValueConverter<TypeConverter> (typeof (TypeConverter), this);
+				return SchemaContext.GetValueConverter<TypeConverter> (typeof (TypeConverter), this);
 
 			// It's still not decent to check CollectionConverter.
 			var tct = TypeDescriptor.GetConverter (t).GetType ();
 			if (tct != typeof (TypeConverter) && tct != typeof (CollectionConverter))
-				return new XamlValueConverter<TypeConverter> (tct, this);
+				return SchemaContext.GetValueConverter<TypeConverter> (tct, this);
 			return null;
 		}
 

@@ -253,7 +253,7 @@ namespace System.Xaml
 		{
 			var xm = members_stack.Count > 0 ? members_stack.Peek ().Current : null;
 			var obj = xm != null ? xm.GetPropertyOrFieldValue (objects.Peek ()) : instance;
-			var xt = obj != null ? new XamlType (obj.GetType (), this.SchemaContext) : XamlLanguage.Null;
+			var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
 
 			// FIXME: enable these lines.
 			// FIXME: if there is an applicable instance descriptor, then it could be still valid.
