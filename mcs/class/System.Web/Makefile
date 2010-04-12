@@ -76,7 +76,8 @@ RESOURCE_FILES_2 = \
 OTHER_RES = $(RESOURCE_FILES_1)
 TEST_APP_CODE_FILES = \
 	Test/mainsoft/NunitWebResources/App_Code/EnumConverterControl.cs \
-	Test/mainsoft/NunitWebResources/App_Code/MyContainer.cs
+	Test/mainsoft/NunitWebResources/App_Code/MyContainer.cs \
+	Test/mainsoft/NunitWebResources/App_Code/CustomCheckBoxColumn.cs
 
 TEST_APP_GLOBALRESOURCES_FILES = \
 	Test/mainsoft/NunitWebResources/App_GlobalResources/Common.resx \
@@ -215,7 +216,13 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/SqlDataSource_OnInit_Bug572781.aspx \
 	Test/mainsoft/NunitWebResources/FormViewPagerVisibility.aspx \
 	Test/mainsoft/NunitWebResources/OverridenControlsPropertyAndPostBack_Bug594238.aspx \
-	Test/mainsoft/NunitWebResources/GlobalizationEncodingName.aspx
+	Test/mainsoft/NunitWebResources/GlobalizationEncodingName.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_0.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_1.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_2.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_5.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_6.aspx \
+	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_7.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))

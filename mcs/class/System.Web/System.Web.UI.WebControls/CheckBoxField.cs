@@ -121,9 +121,24 @@ namespace System.Web.UI.WebControls {
 		protected override void OnDataBindField (object sender, EventArgs e)
 		{
 			try {
-				DataControlFieldCell cell = (DataControlFieldCell) sender;
-				CheckBox box = (CheckBox) cell.Controls [0];
-				object val = GetValue (cell.BindingContainer);
+				Control container = (Control) sender;
+				object val = GetValue (container.NamingContainer);
+				CheckBox box = sender as CheckBox;
+				if (box == null) {
+					DataControlFieldCell cell = sender as DataControlFieldCell;
+					if (cell != null) {
+						ControlCollection controls = cell.Controls;
+						int ccount = controls != null ? controls.Count : 0;
+						if (ccount == 1)
+							box = controls [0] as CheckBox;
+						if (box == null)
+							return;
+					}
+				}
+				
+				if (box == null)
+					throw new HttpException ("CheckBox field '" + DataField + "' contains a control that isn't a CheckBox.  Override OnDataBindField to inherit from CheckBoxField and add different controls.");
+				
 				if (val != null && val != DBNull.Value)
 					box.Checked = (bool) val;
 				else
@@ -134,11 +149,9 @@ namespace System.Web.UI.WebControls {
 
 				if (!box.Visible)
 					box.Visible = true;
-			}
-			catch (HttpException) {
+			} catch (HttpException) {
 				throw;
-			}
-			catch (Exception ex) {
+			} catch (Exception ex) {
 				throw new HttpException (ex.Message, ex);
 			}
 		}
