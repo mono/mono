@@ -43,8 +43,8 @@ using System.Collections.Specialized;
 using NUnit.Framework;
 using System.Data;
 
-
-
+using MonoTests.SystemWeb.Framework;
+using MonoTests.stand_alone.WebHarness;
 
 namespace MonoTests.System.Web.UI.WebControls
 {
@@ -114,6 +114,183 @@ namespace MonoTests.System.Web.UI.WebControls
 		public const string WRONGFIELD = "str";
 		public static int databound;
 
+		[TestFixtureSetUp]
+		public void SetUp ()
+		{
+			WebTest.CopyResource (GetType (), "CheckBoxField_Bug595568_0.aspx", "CheckBoxField_Bug595568_0.aspx");
+			WebTest.CopyResource (GetType (), "CheckBoxField_Bug595568_1.aspx", "CheckBoxField_Bug595568_1.aspx");
+			WebTest.CopyResource (GetType (), "CheckBoxField_Bug595568_2.aspx", "CheckBoxField_Bug595568_2.aspx");
+			WebTest.CopyResource (GetType (), "CheckBoxField_Bug595568_5.aspx", "CheckBoxField_Bug595568_5.aspx");
+			WebTest.CopyResource (GetType (), "CheckBoxField_Bug595568_6.aspx", "CheckBoxField_Bug595568_6.aspx");
+			WebTest.CopyResource (GetType (), "CheckBoxField_Bug595568_7.aspx", "CheckBoxField_Bug595568_7.aspx");
+		}
+
+		[Test (Description="Bug 595568 #0")]
+		public void CheckBoxField_Bug595568_0 ()
+		{
+			string originalHtml = @"<div> 
+	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
+			<tr> 
+				<th scope=""col"">&nbsp;</th> 
+			</tr><tr> 
+				<td><span title=""Dummy""><input id=""gridView_ctl02_ctl00"" type=""checkbox"" name=""gridView$ctl02$ctl00"" checked=""checked"" /></span></td> 
+			</tr><tr> 
+				<td><span title=""Dummy""><input id=""gridView_ctl03_ctl00"" type=""checkbox"" name=""gridView$ctl03$ctl00"" /></span></td> 
+			</tr><tr> 
+				<td><span title=""Dummy""><input id=""gridView_ctl04_ctl00"" type=""checkbox"" name=""gridView$ctl04$ctl00"" /></span></td> 
+			</tr> 
+		</table>
+	</div>";
+			WebTest t = new WebTest ("CheckBoxField_Bug595568_0.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		[Test (Description="Bug 595568 #1")]
+		public void CheckBoxField_Bug595568_1 ()
+		{
+			string originalHtml = @"<div> 
+	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
+			<tr> 
+				<th scope=""col"">&nbsp;</th> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select><span title=""Dummy""><input id=""gridView_ctl02_ctl01"" type=""checkbox"" name=""gridView$ctl02$ctl01"" checked=""checked"" /></span></td> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select><span title=""Dummy""><input id=""gridView_ctl03_ctl01"" type=""checkbox"" name=""gridView$ctl03$ctl01"" /></span></td> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select><span title=""Dummy""><input id=""gridView_ctl04_ctl01"" type=""checkbox"" name=""gridView$ctl04$ctl01"" /></span></td> 
+			</tr> 
+		</table> 
+	</div>";
+			WebTest t = new WebTest ("CheckBoxField_Bug595568_1.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		[Test (Description="Bug 595568 #2")]
+		public void CheckBoxField_Bug595568_2 ()
+		{
+			string originalHtml = @"<div> 
+	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
+			<tr> 
+				<th scope=""col"">&nbsp;</th> 
+			</tr><tr> 
+				<td><input id=""gridView_ctl02_ctl00"" type=""checkbox"" name=""gridView$ctl02$ctl00"" /><span title=""Dummy""><input id=""gridView_ctl02_ctl01"" type=""checkbox"" name=""gridView$ctl02$ctl01"" checked=""checked"" /></span><input id=""gridView_ctl02_ctl02"" type=""checkbox"" name=""gridView$ctl02$ctl02"" /></td> 
+			</tr><tr> 
+				<td><input id=""gridView_ctl03_ctl00"" type=""checkbox"" name=""gridView$ctl03$ctl00"" /><span title=""Dummy""><input id=""gridView_ctl03_ctl01"" type=""checkbox"" name=""gridView$ctl03$ctl01"" /></span><input id=""gridView_ctl03_ctl02"" type=""checkbox"" name=""gridView$ctl03$ctl02"" /></td> 
+			</tr><tr> 
+				<td><input id=""gridView_ctl04_ctl00"" type=""checkbox"" name=""gridView$ctl04$ctl00"" /><span title=""Dummy""><input id=""gridView_ctl04_ctl01"" type=""checkbox"" name=""gridView$ctl04$ctl01"" /></span><input id=""gridView_ctl04_ctl02"" type=""checkbox"" name=""gridView$ctl04$ctl02"" /></td> 
+			</tr> 
+		</table> 
+	</div>";
+			
+			WebTest t = new WebTest ("CheckBoxField_Bug595568_2.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		[Test (Description="Bug 595568 #5")]
+		public void CheckBoxField_Bug595568_5 ()
+		{
+			string originalHtml = @"<div> 
+	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
+			<tr> 
+				<th scope=""col"">&nbsp;</th> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select></td> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select></td> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select></td> 
+			</tr> 
+		</table> 
+	</div>";
+
+			WebTest t = new WebTest ("CheckBoxField_Bug595568_5.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+		
+		[Test (Description="Bug 595568 #6")]
+		public void CheckBoxField_Bug595568_6 ()
+		{	
+			string originalHtml = @"<div> 
+	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
+			<tr> 
+				<th scope=""col"">&nbsp;</th> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select><input id=""gridView_ctl02_ctl01"" type=""checkbox"" name=""gridView$ctl02$ctl01"" /></td> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select><input id=""gridView_ctl03_ctl01"" type=""checkbox"" name=""gridView$ctl03$ctl01"" /></td> 
+			</tr><tr> 
+				<td><select size=""4""> 
+ 
+				</select><input id=""gridView_ctl04_ctl01"" type=""checkbox"" name=""gridView$ctl04$ctl01"" /></td> 
+			</tr> 
+		</table> 
+	</div>";
+
+			WebTest t = new WebTest ("CheckBoxField_Bug595568_6.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+
+		[Test (Description="Bug 595568 #7")]
+		public void CheckBoxField_Bug595568_7 ()
+		{
+			string originalHtml = @"<div> 
+	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
+			<tr> 
+				<th scope=""col"">&nbsp;</th> 
+			</tr><tr> 
+				<td><input id=""gridView_ctl02_ctl00"" type=""checkbox"" name=""gridView$ctl02$ctl00"" /><select size=""4""> 
+ 
+				</select></td> 
+			</tr><tr> 
+				<td><input id=""gridView_ctl03_ctl00"" type=""checkbox"" name=""gridView$ctl03$ctl00"" /><select size=""4""> 
+ 
+				</select></td> 
+			</tr><tr> 
+				<td><input id=""gridView_ctl04_ctl00"" type=""checkbox"" name=""gridView$ctl04$ctl00"" /><select size=""4""> 
+ 
+				</select></td> 
+			</tr> 
+		</table> 
+	</div>";
+
+			WebTest t = new WebTest ("CheckBoxField_Bug595568_7.aspx");		
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
+		}
+		
 		[Test]
 		public void CheckBoxField_DefaultProperty ()
 		{

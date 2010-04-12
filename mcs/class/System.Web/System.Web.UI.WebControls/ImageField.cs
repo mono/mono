@@ -285,10 +285,15 @@ namespace System.Web.UI.WebControls {
 		
 		PropertyDescriptor GetProperty (Control controlContainer, string fieldName)
 		{
+			if (fieldName == ThisExpression)
+				return null;
+			
 			IDataItemContainer dic = (IDataItemContainer) controlContainer;
-			PropertyDescriptor prop = TypeDescriptor.GetProperties (dic.DataItem) [fieldName];
+			PropertyDescriptorCollection properties = TypeDescriptor.GetProperties (dic.DataItem);
+			PropertyDescriptor prop = properties != null ? properties [fieldName] : null;
 			if (prop == null)
 				throw new InvalidOperationException ("Property '" + fieldName + "' not found in object of type " + dic.DataItem.GetType());
+			
 			return prop;
 		}
 		
@@ -299,34 +304,41 @@ namespace System.Web.UI.WebControls {
 		
 		protected virtual void OnDataBindField (object sender, EventArgs e)
 		{
-			DataControlFieldCell cell = (DataControlFieldCell) sender;
-
-			if (cell.Controls.Count == 0)
+			Control control = (Control) sender;
+			ControlCollection controls = control != null ? control.Controls : null;
+			Control namingContainer = control.NamingContainer;
+			Control c;
+			if (sender is DataControlFieldCell) {
+				if (controls.Count == 0)
+					return;
+				c = controls [0];
+			} else if (sender is Image || sender is TextBox)
+				c = control;
+			else
 				return;
-			
+
 			if (imageProperty == null)
-				imageProperty = GetProperty (cell.BindingContainer, DataImageUrlField);
+				imageProperty = GetProperty (namingContainer, DataImageUrlField);
 			
-			Control c = cell.Controls [0];
 			if (c is TextBox) {
-				object val = GetValue (cell.BindingContainer, DataImageUrlField, ref imageProperty);
-				((TextBox)c).Text = val != null ? val.ToString() : "";
+				object val = GetValue (namingContainer, DataImageUrlField, ref imageProperty);
+				((TextBox)c).Text = val != null ? val.ToString() : String.Empty;
 			}
 			else if (c is Image) {
 				Image img = (Image)c;
-				string value =  FormatImageUrlValue (GetValue (cell.BindingContainer, DataImageUrlField, ref imageProperty));
+				string value =  FormatImageUrlValue (GetValue (namingContainer, DataImageUrlField, ref imageProperty));
 				if (value == null || (ConvertEmptyStringToNull && value.Length == 0)) {
 					if (NullImageUrl == null || NullImageUrl.Length == 0) {
 						c.Visible = false;
 						Label label = new Label ();
 						label.Text = NullDisplayText;
-						cell.Controls.Add (label);
+						controls.Add (label);
 					}
 					else
 						value = NullImageUrl;
 				}
 				img.ImageUrl = value;
-				img.AlternateText = GetFormattedAlternateText (cell.BindingContainer);
+				img.AlternateText = GetFormattedAlternateText (namingContainer);
 			}
 		}
 		
