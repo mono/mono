@@ -1,5 +1,10 @@
 2010-04-13  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Disable llvm+methods with clauses again, llvm
+	2.6/SVN seems to have broken support for them.
+
+2010-04-13  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-llvm.c: Fix support for LLVM 2.6.
 
 2010-04-10  Zoltan Varga  <vargaz@gmail.com>
