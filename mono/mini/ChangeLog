@@ -1,3 +1,7 @@
+2010-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c: Fix support for LLVM 2.6.
+
 2010-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (thread_commands): Add a GET_ID command to get the
