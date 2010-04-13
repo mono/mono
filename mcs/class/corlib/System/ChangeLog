@@ -1,3 +1,7 @@
+2010-04-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* Convert.cs (ToInt32): Do a checked cast. Fixes #596339.
+
 2009-11-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DateTimeOffset.cs : fix parse failure on missing colon.
