@@ -1127,7 +1127,6 @@ public class TimeSpanTest {
 	}
 
 	[Test]
-	[Category ("NotWorking")]
 	public void ParseExactCustomFormats ()
 	{
 		// Days
@@ -1149,7 +1148,7 @@ public class TimeSpanTest {
 		// Hours
 		ParseExactHelper ("12", new string [] { "%h" }, false, false, "12:00:00");
 		ParseExactHelper ("00", new string [] { "%h" }, false, false, "00:00:00");
-		ParseExactHelper ("000", new string [] { "%h" }, true, false, "dontcare"); // Too many zeroes
+		ParseExactHelper ("012", new string [] { "%h" }, true, false, "dontcare"); // more than 2 digits
 		ParseExactHelper ("00012", new string [] { "%hhhhh" }, true, false, "dontcare");
 		ParseExactHelper ("15", new string [] { "%h" }, false, false, "15:00:00");
 		ParseExactHelper ("24", new string [] { "%h" }, true, false, "dontcare");
@@ -1203,8 +1202,7 @@ public class TimeSpanTest {
 
 		// Fractions of second - F
 		ParseExactHelper ("3", new string [] { "%F" }, false, false, "00:00:00.3000000");
-		ParseExactHelper ("333", new string [] { "%FFFF" }, false, false, "00:00:00.3330000");
-		ParseExactHelper ("", new string [] { "%F" }, true, false, "00:00:00"); // Optional only with other elements
+		ParseExactHelper ("333", new string [] { "%FFFFF" }, false, false, "00:00:00.3330000");
 		ParseExactHelper ("1234567", new string [] { "%FFFFFFF" }, false, false, "00:00:00.1234567");
 
 		// Multiple symbols
@@ -1219,6 +1217,8 @@ public class TimeSpanTest {
 		ParseExactHelper ("9:10:11:6", new string [] { @"h\:m\:s\:f" }, false, false, "09:10:11.6000000");
 		ParseExactHelper ("9:10:11:666", new string [] { @"h\:m\:s\:f" }, true, false, "dontcare"); // fff with 1 digit
 		ParseExactHelper ("9:10:11:", new string [] { @"h\:m\:s\:F" }, false, false, "09:10:11"); // optional frac of seconds
+		ParseExactHelper ("9:10:11:", new string [] { @"h\:m\:s\:FF" }, false, false, "09:10:11");
+		ParseExactHelper ("9:10:11::", new string [] { @"h\:m\:s\:F\:" }, false, false, "09:10:11");
 		ParseExactHelper ("8:9:10:11:6666666", new string [] { @"d\:h\:m\:s\:fffffff" }, false, false, "8.09:10:11.6666666");
 		ParseExactHelper ("8:9:10:11:6666666", new string [] { @"d\:h\:m\:s\:fffffff" }, false, false, "-8.09:10:11.6666666", 
 				null, TimeSpanStyles.AssumeNegative);

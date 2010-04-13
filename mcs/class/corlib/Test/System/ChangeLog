@@ -1,3 +1,9 @@
+2010-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpanTest.cs: Remove "NotWorking" from our custom formats parse
+	methods, as well as augmenting the test with some new assertions, and
+	changing a pair to properly reflect what they are testing.
+
 2010-04-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpanTest.cs: Augment our ParseExactCustomFormats test - still
