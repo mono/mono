@@ -184,7 +184,7 @@ namespace DbLinq.Data.Linq.Mapping
             }
             public bool GetBooleanAttribute(XmlReader r, string attributeName)
             {
-                return r.GetAttribute(attributeName) == "true";
+                return string.Compare(r.GetAttribute(attributeName), "true", StringComparison.OrdinalIgnoreCase) == 0;
             }
             public UpdateCheck GetUpdateCheckAttribute(XmlReader r, string attributeName)
             {

@@ -34,8 +34,8 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
 #endif
     class CSCodeGenerator : CodeGenerator
     {
-        public override string LanguageCode { get { return "C#"; } }
-        public override string Extension { get { return ".cs"; } }
+        public override string LanguageCode { get { return "obsolete-c#"; } }
+        public override string Extension { get { return ".obsolete-cs"; } }
 
         protected override CodeWriter CreateCodeWriter(TextWriter textWriter)
         {

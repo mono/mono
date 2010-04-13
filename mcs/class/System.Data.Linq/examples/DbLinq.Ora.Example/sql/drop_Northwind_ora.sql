@@ -34,6 +34,7 @@ DROP SEQUENCE Orders_seq;
 DROP SEQUENCE Employees_seq;
 DROP SEQUENCE Categories_Seq;
 DROP SEQUENCE Region_seq;
+DROP SEQUENCE Territories_seq;
 
 COMMIT;
 

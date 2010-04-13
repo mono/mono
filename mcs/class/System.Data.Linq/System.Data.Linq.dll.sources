@@ -222,6 +222,7 @@ src/DbLinq/Schema/Dbml/Adapter/EnumType.cs
 src/DbLinq/Schema/Dbml/Adapter/INamedType.cs
 src/DbLinq/Schema/Dbml/Adapter/ISimpleList.cs
 src/DbLinq/Schema/Dbml/Adapter/SpecifiedPropertyUpdater.cs
+src/DbLinq/Schema/Dbml/DatabaseSerializer.cs
 src/DbLinq/Schema/Dbml/DbmlSchema.Adapter.cs
 src/DbLinq/Schema/Dbml/DbmlSchema.cs
 src/DbLinq/Schema/Dbml/DbmlSerializer.cs

@@ -177,12 +177,8 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
                 implementation.WriteHeader(writer, context);
 
             // write namespaces for members attributes
-            foreach (var memberExposedAttribute in context.Parameters.MemberExposedAttributes)
-                WriteUsingNamespace(writer, GetNamespace(memberExposedAttribute));
-
-            // write namespaces for clases attributes
-            foreach (var entityExposedAttribute in context.Parameters.EntityExposedAttributes)
-                WriteUsingNamespace(writer, GetNamespace(entityExposedAttribute));
+            foreach (var memberAttribute in context.Parameters.MemberAttributes)
+                WriteUsingNamespace(writer, GetNamespace(memberAttribute));
 
             writer.WriteLine();
         }
@@ -224,12 +220,10 @@ namespace DbMetal.Generator.Implementation.CodeTextGenerator
 
 
             string contextBase = schema.BaseType;
-            var contextBaseType = TypeLoader.Load(contextBase);
-            // if we don't specify a base type, use the default
-            if (string.IsNullOrEmpty(contextBase))
-            {
-                contextBaseType = typeof(DataContext);
-            }
+            var contextBaseType = string.IsNullOrEmpty(contextBase)
+                ? typeof(DataContext)
+                : TypeLoader.Load(contextBase);
+
             // in all cases, get the literal type name from loaded type
             contextBase = writer.GetLiteralType(contextBaseType);
 

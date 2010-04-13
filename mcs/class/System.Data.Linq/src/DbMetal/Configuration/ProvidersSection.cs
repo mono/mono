@@ -24,9 +24,11 @@
 // 
 #endregion
 using System;
+using System.IO;
 using System.Linq;
 using System.Collections.Generic;
 using System.Configuration;
+using System.Text;
 
 namespace DbMetal.Configuration
 {
@@ -91,14 +93,30 @@ namespace DbMetal.Configuration
                     string[] allKeyStrings = allKeys.OfType<string>().ToArray();
                     
                     element = null;
-                    error = allKeys.Length == 0 
-                        ? "There are no <provider> entries in your app.config"
-                        : "Key " + name + " not found among " + allKeys.Length + " config entries {" + string.Join(",",allKeyStrings) + "}";
+                    string configFile = Path.GetFileName(typeof(Program).Assembly.Location)+ ".config";
+                    error = allKeys.Length == 0
+                        ? string.Format("There are no <provider/> entries in your {0} file.", configFile)
+                        : GetProvidersDescription(name, allKeyStrings.Length, configFile);
                     return false;
                 }
                 element = (ProviderElement)BaseGet(name.ToLower());
                 error = null;
                 return true;
+            }
+
+            private string GetProvidersDescription(string name, int numKeys, string configFile)
+            {
+                var message = new StringBuilder();
+                message.AppendFormat("Provider '{0}' not found among the {1} config entries in your {2} file.  ",
+                    name, numKeys, configFile);
+                message.AppendLine("Valid providers include:");
+                foreach (ProviderElement p in this.Cast<ProviderElement>().OrderBy(e => e.Name))
+                {
+                    message.AppendFormat("\t{0} [{1}]",
+                        p.Name, p.DatabaseConnection);
+                    message.AppendLine();
+                }
+                return message.ToString();
             }
         }
 

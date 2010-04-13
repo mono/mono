@@ -41,13 +41,4 @@ using DbLinq.Factory;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("7ae782c4-e495-44ff-821d-8580dbe184d4")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-[assembly: AssemblyFileVersion("0.19")]
-
 [assembly: DbLinq]

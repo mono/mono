@@ -139,15 +139,18 @@ namespace DbMetal.Generator
             using (WriteEnum(specificationDefinition, name))
             {
                 var orderedValues = from nv in values orderby nv.Value select nv;
-                int currentValue = 1;
+                int currentValue = 1, counter = 0;
                 foreach (var nameValue in orderedValues)
                 {
+
+                    var suffix = ++counter < orderedValues.Count() ? "," : "";
+
                     if (nameValue.Value == currentValue)
-                        WriteLine(string.Format("{0},", nameValue.Key));
+                        WriteLine(string.Format("{0}{1}", nameValue.Key, suffix));
                     else
                     {
                         currentValue = nameValue.Value;
-                        WriteLine(string.Format("{0} = {1},", nameValue.Key, nameValue.Value));
+                        WriteLine(string.Format("{0} = {1}{2}", nameValue.Key, nameValue.Value, suffix));
                     }
                     currentValue++;
                 }

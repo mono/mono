@@ -1,3 +1,7 @@
+2010-04-13  Jonathan Pryor <jonpryor@vt.edu>
+
+	* sqlmetal.exe.source: Add additional files.
+
 2010-03-29  Raja R Harinath  <harinath@hurrynot.org>
 
 	* AssemblyInfo.cs: Make internals visible to the test suite.

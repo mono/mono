@@ -42,15 +42,6 @@ using DbLinq.Factory;
 // The following GUID is for the ID of the typelib if this project is exposed to COM
 [assembly: Guid("e2381b27-cdb0-401d-9019-f72079b4928d")]
 
-// Version information for an assembly consists of the following four values:
-//
-//      Major Version
-//      Minor Version 
-//      Build Number
-//      Revision
-//
-[assembly: AssemblyFileVersion("0.19")]
-
 [assembly: DbLinq]
 
 // Regarding tests, it is mandatory, since we test internals
@@ -106,6 +97,13 @@ using DbLinq.Factory;
 
 
 [assembly: InternalsVisibleTo("DbLinq.Sqlite, PublicKey="
++ "0024000004800000940000000602000000240000525341310004000001000100c5753d8c47f400"
++ "83f549016a5711238ac8ec297605abccd3dc4b6d0f280b4764eb2cc58ec4e37831edad7e7a07b8"
++ "fe4a9cbb059374c0cc047aa28839fed7176761813caf6a2ffa0bff9afb50ead56dd3f56186a663"
++ "962a12b830c2a70eb70ec77823eb5750e5bdef9e01d097c30b5c5463c3d07d3472b58e4c02f279"
++ "2309259f")]
+
+[assembly: InternalsVisibleTo("DbLinq.SqlServer, PublicKey="
 + "0024000004800000940000000602000000240000525341310004000001000100c5753d8c47f400"
 + "83f549016a5711238ac8ec297605abccd3dc4b6d0f280b4764eb2cc58ec4e37831edad7e7a07b8"
 + "fe4a9cbb059374c0cc047aa28839fed7176761813caf6a2ffa0bff9afb50ead56dd3f56186a663"

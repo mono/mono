@@ -51,7 +51,7 @@ namespace DbLinq.Oracle
                 DbLinq.Schema.Dbml.Table table = schema.Tables.FirstOrDefault(t => constraintFullDbName == t.Name);
                 if (table == null)
                 {
-                    WriteErrorLine("ERROR L100: Table '" + constraint.TableName + "' not found for column " + constraint.ColumnName);
+                    WriteErrorLine("ERROR L100: Table '" + constraint.TableName + "' not found for column " + constraint.ColumnNameList);
                     continue;
                 }
 
@@ -61,7 +61,7 @@ namespace DbLinq.Oracle
                 if (constraint.ConstraintType == "P")
                 {
                     //A) add primary key
-                    DbLinq.Schema.Dbml.Column pkColumn = table.Type.Columns.Where(c => c.Name == constraint.ColumnName).First();
+                    DbLinq.Schema.Dbml.Column pkColumn = table.Type.Columns.Where(c => constraint.ColumnNames.Contains(c.Name)).First();
                     pkColumn.IsPrimaryKey = true;
                 }
                 else if (constraint.ConstraintType == "R")
@@ -75,16 +75,16 @@ namespace DbLinq.Oracle
                         continue;
                     }
 
-                    LoadForeignKey(schema, table, constraint.ColumnName, constraint.TableName, constraint.TableSchema,
-                                   referencedConstraint.ColumnName, referencedConstraint.TableName,
+                    LoadForeignKey(schema, table, constraint.ColumnNameList, constraint.TableName, constraint.TableSchema,
+                                   referencedConstraint.ColumnNameList, referencedConstraint.TableName,
                                    referencedConstraint.TableSchema,
                                    constraint.ConstraintName, nameFormat, names);
 
                 }
                 // custom type, this is a trigger
-                else if (constraint.ConstraintType == "T" && constraint.ColumnName != null)
+                else if (constraint.ConstraintType == "T" && constraint.ColumnNames.Count == 1)
                 {
-                    var column = table.Type.Columns.Where(c => c.Name == constraint.ColumnName).First();
+                    var column = table.Type.Columns.Where(c => c.Name == constraint.ColumnNames[0]).First();
                     column.Expression = constraint.Expression;
                     column.IsDbGenerated = true;
                 }

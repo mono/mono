@@ -60,25 +60,7 @@ namespace DbMetal.Generator.Implementation
             string databaseConnectionType;
             string sqlDialectType;
             GetLoaderAndConnection(parameters, out dbLinqSchemaLoaderType, out databaseConnectionType, out sqlDialectType);
-            if (dbLinqSchemaLoaderType == null)
-                throw new ApplicationException("Please provide -Provider=MySql (or Oracle, OracleODP, PostgreSql, Sqlite - see app.config for provider listing)");
             return Load(parameters, dbLinqSchemaLoaderType, databaseConnectionType, sqlDialectType);
-        }
-
-        /// <summary>
-        /// loads a ISchemaLoader from a provider id string (used by schema loader)
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <returns></returns>
-        public ISchemaLoader Load(string provider)
-        {
-            string dbLinqSchemaLoaderType;
-            string databaseConnectionType;
-            string sqlDialectType;
-            GetLoaderAndConnection(provider, out dbLinqSchemaLoaderType, out databaseConnectionType, out sqlDialectType);
-            if (dbLinqSchemaLoaderType == null)
-                return null;
-            return Load(null, dbLinqSchemaLoaderType, databaseConnectionType, sqlDialectType);
         }
 
         /// <summary>
@@ -140,106 +122,20 @@ namespace DbMetal.Generator.Implementation
 
         public ISchemaLoader Load(Parameters parameters, string dbLinqSchemaLoaderTypeName, string databaseConnectionTypeName, string sqlDialectTypeName)
         {
-            AppDomain.CurrentDomain.AssemblyResolve += CurrentDomain_AssemblyResolve;
             Type dbLinqSchemaLoaderType = Type.GetType(dbLinqSchemaLoaderTypeName);
             Type databaseConnectionType = Type.GetType(databaseConnectionTypeName);
             Type sqlDialectType         = string.IsNullOrEmpty(sqlDialectTypeName) ? null : Type.GetType(sqlDialectTypeName);
 
             if (dbLinqSchemaLoaderType == null)
-                throw new ArgumentException("Unable to resolve dbLinqSchemaLoaderType: " + dbLinqSchemaLoaderTypeName);
+                throw new ArgumentException("Could not load dbLinqSchemaLoaderType type '" + dbLinqSchemaLoaderTypeName + "'.  Try using the --with-schema-loader=TYPE option.");
             if (databaseConnectionType == null)
-                throw new ArgumentException("Unable to resolve databaseConnectionType: " + databaseConnectionTypeName);
+                throw new ArgumentException("Could not load databaseConnectionType type '" + databaseConnectionTypeName + "'.  Try using the --with-dbconnection=TYPE option.");
 
             ISchemaLoader loader = Load(parameters, dbLinqSchemaLoaderType, databaseConnectionType, sqlDialectType);
-            AppDomain.CurrentDomain.AssemblyResolve -= CurrentDomain_AssemblyResolve;
             return loader;
         }
 
-        private Assembly LoadAssembly(string path)
-        {
-            if (File.Exists(path))
-                return Assembly.LoadFile(path);
-            return null;
-        }
-
-        private Assembly LoadAssembly(string baseName, string path)
-        {
-            string basePath = Path.Combine(path, baseName);
-            Assembly assembly = LoadAssembly(basePath + ".dll");
-            if (assembly == null)
-                assembly = LoadAssembly(basePath + ".exe");
-            return assembly;
-        }
-
-        private Assembly LocalLoadAssembly(string baseName)
-        {
-            Assembly assembly = LoadAssembly(baseName, Directory.GetCurrentDirectory());
-            if (assembly == null) {
-                var path = Path.GetDirectoryName(Assembly.GetEntryAssembly().CodeBase);
-                assembly = LoadAssembly(baseName, path);
-            }
-            return assembly;
-        }
-
-        private Assembly CurrentDomain_AssemblyResolve(object sender, ResolveEventArgs args)
-        {
-            // try to load from within the current AppDomain
-            IList<Assembly> assemblies = AppDomain.CurrentDomain.GetAssemblies();
-            foreach (Assembly loadedAssembly in assemblies)
-            {
-                if (loadedAssembly.GetName().Name == args.Name)
-                    return loadedAssembly;
-            }
-            var assembly = LocalLoadAssembly(args.Name);
-            if (assembly == null)
-                assembly = GacLoadAssembly(args.Name);
-            return assembly;
-        }
-
-        /// <summary>
-        /// This is dirty, and must not be used in production environment
-        /// </summary>
-        /// <param name="shortName"></param>
-        /// <returns></returns>
-        private Assembly GacLoadAssembly(string shortName)
-        {
-            var systemRoot = Environment.GetEnvironmentVariable("SystemRoot");
-            string assemblyDirectory = Path.Combine(systemRoot, "Assembly");
-            var assembly = GacLoadAssembly(shortName, Path.Combine(assemblyDirectory, "GAC_MSIL"));
-            if (assembly == null)
-                assembly = GacLoadAssembly(shortName, Path.Combine(assemblyDirectory, "GAC_32"));
-            if (assembly == null)
-                assembly = GacLoadAssembly(shortName, Path.Combine(assemblyDirectory, "GAC"));
-            return assembly;
-        }
-
-        private Assembly GacLoadAssembly(string shortName, string directory)
-        {
-            string assemblyDirectory = Path.Combine(directory, shortName);
-            if (Directory.Exists(assemblyDirectory))
-            {
-                Version latestVersion = null;
-                string latestVersionDirectory = null;
-                foreach (string versionDirectory in Directory.GetDirectories(assemblyDirectory))
-                {
-                    var testVersion = new Version(Path.GetFileName(versionDirectory).Split('_')[0]);
-                    if (latestVersion == null || testVersion.CompareTo(latestVersion) > 0)
-                    {
-                        latestVersion = testVersion;
-                        latestVersionDirectory = versionDirectory;
-                    }
-                }
-                if (latestVersionDirectory != null)
-                {
-                    string assemblyPath = Path.Combine(latestVersionDirectory, shortName + ".dll");
-                    if (File.Exists(assemblyPath))
-                        return Assembly.LoadFile(assemblyPath);
-                }
-            }
-            return null;
-        }
-
-        protected void GetLoaderAndConnection(string provider, out string dbLinqSchemaLoaderType, out string databaseConnectionType, out string sqlDialectType)
+        private void GetLoaderAndConnection(string provider, out string dbLinqSchemaLoaderType, out string databaseConnectionType, out string sqlDialectType)
         {
             var configuration = (ProvidersSection)ConfigurationManager.GetSection("providers");
 
@@ -247,8 +143,7 @@ namespace DbMetal.Generator.Implementation
             string errorMsg = null;
             if (configuration == null || !configuration.Providers.TryGetProvider(provider, out element, out errorMsg))
             {
-                Output.WriteErrorLine(Log, "Failed to load provider {0} : {1}", provider, errorMsg);
-                throw new ApplicationException("Failed to load provider " + provider);
+                throw new ApplicationException(string.Format("Failed to load provider {0}: {1}", provider, errorMsg));
             }
 
             //var element = configuration.Providers.GetProvider(provider);
@@ -260,22 +155,33 @@ namespace DbMetal.Generator.Implementation
 
         protected void GetLoaderAndConnection(Parameters parameters, out string dbLinqSchemaLoaderType, out string databaseConnectionType, out string sqlDialectType)
         {
+            dbLinqSchemaLoaderType = databaseConnectionType = sqlDialectType = null;
+
             if (!string.IsNullOrEmpty(parameters.Provider))
             {
                 GetLoaderAndConnection(parameters.Provider, out dbLinqSchemaLoaderType, out databaseConnectionType, out sqlDialectType);
             }
-            else
+            else if (!string.IsNullOrEmpty(parameters.DbLinqSchemaLoaderProvider) &&
+                !string.IsNullOrEmpty(parameters.DatabaseConnectionProvider) &&
+                !string.IsNullOrEmpty(parameters.SqlDialectType))
             {
-                dbLinqSchemaLoaderType = parameters.DbLinqSchemaLoaderProvider;
-                databaseConnectionType = parameters.DatabaseConnectionProvider;
-                sqlDialectType         = parameters.SqlDialectType;
+                // User manually specified everything we need; don't bother with the
+                // default .exe.config provider lookup
             }
-            if (string.IsNullOrEmpty(dbLinqSchemaLoaderType))
+            else
             {
                 // No provider specified, not explicitly provided either
                 // Default to using SQL Server for sqlmetal.exe compatibility
                 GetLoaderAndConnection("SqlServer", out dbLinqSchemaLoaderType, out databaseConnectionType, out sqlDialectType);
             }
+
+            // Allow command-line options to override the .exe.config file.
+            if (!string.IsNullOrEmpty(parameters.DbLinqSchemaLoaderProvider))
+                dbLinqSchemaLoaderType = parameters.DbLinqSchemaLoaderProvider;
+            if (!string.IsNullOrEmpty(parameters.DatabaseConnectionProvider))
+                databaseConnectionType = parameters.DatabaseConnectionProvider;
+            if (!string.IsNullOrEmpty(parameters.SqlDialectType))
+                sqlDialectType = parameters.SqlDialectType;
         }
 
     }

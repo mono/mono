@@ -62,6 +62,13 @@ namespace DbLinq.SqlServer
         protected readonly SqlServerSqlProvider sqlProvider = new SqlServerSqlProvider();
         public override ISqlProvider SqlProvider { get { return sqlProvider; } }
 
+        protected override void AppendServer(StringBuilder connectionString, string host)
+        {
+            // As per http://www.connectionstrings.com/sql-server, 
+            // port numbers are separated from host names via comma
+            AppendConnectionString(connectionString, ConnectionStringServer, host.Replace(':', ','));
+        }
+
         //NOTE: for Oracle, we want to consider 'Array Binding'
         //http://download-west.oracle.com/docs/html/A96160_01/features.htm#1049674
 
@@ -91,6 +98,11 @@ namespace DbLinq.SqlServer
                 var dc = new DataColumn();
                 dc.ColumnName = column.MappedName;
                 dc.DataType = column.Member.GetMemberType();
+                if (dc.DataType.IsNullable())
+                {
+                    dc.AllowDBNull  = true;
+                    dc.DataType     = dc.DataType.GetNullableType();
+                }
                 dt.Columns.Add(dc);
             }
 
@@ -105,7 +117,7 @@ namespace DbLinq.SqlServer
                     //if (pair.Value.IsDbGenerated)
                     //    continue; //don't assign IDENTITY col
                     object value = pair.Member.GetMemberValue(row);
-                    dr[pair.MappedName] = value;
+                    dr[pair.MappedName] = value ?? DBNull.Value;
                 }
                 //dr[1
                 dt.Rows.Add(dr);

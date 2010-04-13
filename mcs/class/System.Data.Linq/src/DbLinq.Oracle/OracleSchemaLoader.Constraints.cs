@@ -26,6 +26,7 @@
 using System;
 using System.Collections.Generic;
 using System.Data;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using DbLinq.Util;
@@ -39,28 +40,16 @@ namespace DbLinq.Oracle
             public string TableSchema;
             public string ConstraintName;
             public string TableName;
-            public string ColumnName;
+            public List<string> ColumnNames = new List<string>();
+            public string ColumnNameList { get { return string.Join(",", ColumnNames.ToArray()); } }
             public string ConstraintType;
             public string ReverseConstraintName;
             public string Expression;
 
             public override string ToString()
             {
-                return "User_Constraint  " + TableName + "." + ColumnName;
+                return "User_Constraint  " + TableName + "." + ColumnNameList;
             }
-        }
-
-        protected virtual DataConstraint ReadConstraint(IDataReader rdr)
-        {
-            var constraint = new DataConstraint();
-            int field = 0;
-            constraint.TableSchema = rdr.GetAsString(field++);
-            constraint.ConstraintName = rdr.GetAsString(field++);
-            constraint.TableName = rdr.GetAsString(field++);
-            constraint.ColumnName = rdr.GetAsString(field++);
-            constraint.ConstraintType = rdr.GetAsString(field++);
-            constraint.ReverseConstraintName = rdr.GetAsString(field++);
-            return constraint;
         }
 
         private static Regex TriggerMatch1 = new Regex(@".*SELECT\s+(?<exp>\S+.*)\s+INTO\s+\:new.(?<col>\S+)\s+FROM\s+DUAL.*",
@@ -97,7 +86,7 @@ namespace DbLinq.Oracle
             string expression, column;
             if (MatchTrigger(TriggerMatch1, body, out expression, out column))
             {
-                constraint.ColumnName = column.Trim('"');
+                constraint.ColumnNames.Add(column.Trim('"'));
                 constraint.Expression = expression;
             }
             return constraint;
@@ -108,15 +97,41 @@ namespace DbLinq.Oracle
             var constraints = new List<DataConstraint>();
 
             string sql = @"
-SELECT UCC.owner, UCC.constraint_name, UCC.table_name, UCC.column_name, UC.constraint_type, UC.R_constraint_name
+SELECT UCC.owner, UCC.constraint_name, UCC.table_name, UC.constraint_type, UC.R_constraint_name, UCC.column_name, UCC.position
 FROM all_cons_columns UCC, all_constraints UC
 WHERE UCC.constraint_name=UC.constraint_name
 AND UCC.table_name=UC.table_name
+AND UCC.owner=UC.owner
 AND UCC.TABLE_NAME NOT LIKE '%$%' AND UCC.TABLE_NAME NOT LIKE 'LOGMNR%' AND UCC.TABLE_NAME NOT IN ('HELP','SQLPLUS_PRODUCT_PROFILE')
 AND UC.CONSTRAINT_TYPE!='C'
 and lower(UCC.owner) = :owner";
 
-            constraints.AddRange(DataCommand.Find<DataConstraint>(conn, sql, ":owner", db.ToLower(), ReadConstraint));
+            constraints.AddRange(DataCommand.Find(conn, sql, ":owner", db.ToLower(),
+                    r => new
+                    {
+                        Key = new
+                        {
+                            Owner = r.GetString(0),
+                            ConName = r.GetString(1),
+                            TableName = r.GetString(2),
+                            ConType = r.GetString(3),
+                            RevCconName = r.GetAsString(4)
+                        },
+                        Value = new
+                        {
+                            ColName = r.GetString(5),
+                            ColPos = r.GetInt32(6)
+                        }
+                    })
+                .GroupBy(r => r.Key, r => r.Value, (r, rs) => new DataConstraint
+                {
+                    TableSchema = r.Owner,
+                    ConstraintName = r.ConName,
+                    TableName = r.TableName,
+                    ConstraintType = r.ConType,
+                    ReverseConstraintName = r.RevCconName,
+                    ColumnNames = rs.OrderBy(t => t.ColPos).Select(t => t.ColName).ToList()
+                }));
 
             string sql2 =
                 @"

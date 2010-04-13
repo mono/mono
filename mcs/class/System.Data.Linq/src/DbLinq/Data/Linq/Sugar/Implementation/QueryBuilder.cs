@@ -402,7 +402,25 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
                     SetInSelectCache(expressions, query);
                 }
             }
+            else if (query.InputParameters.Count > 0)
+            {
+                Profiler.At("START: GetSelectQuery(), building Expression parameters of cached query");
+                var parameters = BuildExpressionParameters(expressions, queryContext);
+                query = new SelectQuery(queryContext.DataContext, query.Sql, parameters, query.RowObjectCreator, query.ExecuteMethodName);
+                Profiler.At("END: GetSelectQuery(), building Expression parameters of cached query");
+            }
             return query;
+        }
+
+        IList<InputParameterExpression> BuildExpressionParameters(ExpressionChain expressions, QueryContext queryContext)
+        {
+            var builderContext = new BuilderContext(queryContext);
+            var previousExpression = ExpressionDispatcher.CreateTableExpression(expressions.Expressions[0], builderContext);
+            previousExpression = BuildExpressionQuery(expressions, previousExpression, builderContext);
+            BuildOffsetsAndLimits(builderContext);
+            // then prepare Parts for SQL translation
+            PrepareSqlOperands(builderContext);
+            return builderContext.ExpressionQuery.Parameters;
         }
 
         /// <summary>

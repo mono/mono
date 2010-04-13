@@ -3,7 +3,7 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProductVersion>9.0.21022</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
     <ProjectGuid>{AB60629C-6B19-4465-89AA-DBD7A0428F4B}</ProjectGuid>
     <OutputType>Library</OutputType>
@@ -77,6 +77,7 @@
     <Compile Include="NullProvider.cs">
     </Compile>
     <Compile Include="PeopleTable.cs" />
+    <Compile Include="System.Data.Linq.Mapping\ColumnAttributeTest.cs" />
     <Compile Include="TableTest.cs" />
   </ItemGroup>
   <ItemGroup>

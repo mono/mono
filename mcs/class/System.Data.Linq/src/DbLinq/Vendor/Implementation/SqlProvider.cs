@@ -1587,11 +1587,7 @@ namespace DbLinq.Vendor.Implementation
         /// <returns></returns>
         protected virtual string GetSafeNamePart(string namePart)
         {
-            if (IsMadeSafe(namePart))
-                return namePart;
-            if (IsNameSafe(namePart) && IsNameCaseSafe(namePart))
-                return namePart;
-            return MakeNameSafe(namePart);
+            return IsMadeSafe(namePart) ? namePart : MakeNameSafe(namePart);
         }
 
         /// <summary>
@@ -1607,23 +1603,6 @@ namespace DbLinq.Vendor.Implementation
             if (l < 2)
                 return false;
             return namePart[0] == SafeNameStartQuote && namePart[l - 1] == SafeNameEndQuote;
-        }
-
-        /// <summary>
-        /// Determines whether [is name case safe] [the specified name part].
-        /// </summary>
-        /// <param name="namePart">The name part.</param>
-        /// <returns>
-        ///     <c>true</c> if [is name case safe] [the specified name part]; otherwise, <c>false</c>.
-        /// </returns>
-        protected virtual bool IsNameCaseSafe(string namePart)
-        {
-            foreach (char c in namePart)
-            {
-                if (char.IsLower(c))
-                    return false;
-            }
-            return true;
         }
 
         /// <summary>
@@ -1645,53 +1624,6 @@ namespace DbLinq.Vendor.Implementation
         protected virtual string MakeNameSafe(string namePart)
         {
             return namePart.Enquote(SafeNameStartQuote, SafeNameEndQuote);
-        }
-
-        /// <summary>
-        /// Determines if a given field is dangerous (related to a SQL keyword or containing problematic characters)
-        /// </summary>
-        protected virtual bool IsNameSafe(string name)
-        {
-            var nameL = name.ToLower();
-            switch (nameL)
-            {
-            case "user":
-            case "default":
-            case "bit":
-            case "int":
-            case "smallint":
-            case "tinyint":
-            case "mediumint":
-
-            case "float":
-            case "double":
-            case "real":
-            case "decimal":
-            case "numeric":
-
-            case "blob":
-            case "text":
-            case "char":
-            case "varchar":
-
-            case "date":
-            case "time":
-            case "datetime":
-            case "timestamp":
-            case "year":
-
-            case "select":
-            case "from":
-            case "where":
-            case "order":
-            case "by":
-            case "key":
-			case "index":
-
-                return false;
-            default:
-                return !name.Contains(' ');
-            }
         }
 
         private static readonly Regex _fieldIdentifierEx = new Regex(@"\[(?<var>[\w.]+)\]",

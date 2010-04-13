@@ -63,7 +63,10 @@ namespace DbLinq.Data.Linq.Database
         /// Creates a transaction.
         /// </summary>
         /// <returns></returns>
-        IDatabaseTransaction Transaction();
+        IDbTransaction CreateTransaction();
+
+        IDbTransaction CurrentTransaction { get; set; }
+
         /// <summary>
         /// Opens a connection.
         /// </summary>

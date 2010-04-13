@@ -2,7 +2,7 @@
 // 
 // MIT license
 //
-// Copyright (c) 2007-2008 Jiri Moudry, Pascal Craponne
+// Copyright (c) 2010 Novell, Inc.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,22 +23,33 @@
 // THE SOFTWARE.
 // 
 #endregion
-using System.Reflection;
-using System.Runtime.InteropServices;
-using DbLinq.Factory;
 
-// General Information about an assembly is controlled through the following 
-// set of attributes. Change these attribute values to modify the information
-// associated with an assembly.
-[assembly: AssemblyTitle("DbLinq.Sqlite")]
-[assembly: AssemblyDescription("DbLinq SQLite vendor implementation")]
+using System;
+using System.IO;
+using DbMetal;
+using NUnit.Framework;
 
-// Setting ComVisible to false makes the types in this assembly not visible 
-// to COM components.  If you need to access a type in this assembly from 
-// COM, set the ComVisible attribute to true on that type.
-[assembly: ComVisible(false)]
+namespace DbMetal_Test_Sqlite
+{
+    [TestFixture]
+    public class CreateDbmlFromSqliteDbTest
+    {
+        [Test]
+        public void CreateViaProvider()
+        {
+            var created = "Northwind.dbml";
+            AppRunner.WithinAppDomain("Northwind.Sqlite-{0}.dbml", created, new[]{
+                "/dbml:" + created,
+            });
+        }
 
-// The following GUID is for the ID of the typelib if this project is exposed to COM
-[assembly: Guid("9a57ce12-ad10-479f-b181-eb267c8e6c19")]
-
-[assembly: DbLinq]
+        [Test]
+        public void CreateViaDbSchemaLoader()
+        {
+            var created = "Northwind.dbml";
+            AppRunner.WithDbSchemaLoader("Northwind.Sqlite+DbSchemaLoader-{0}.dbml", created, new[]{
+                "/dbml:" + created,
+            });
+        }
+    }
+}

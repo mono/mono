@@ -117,10 +117,8 @@
     <Compile Include="Data\Linq\ChangeAction.cs" />
     <Compile Include="Data\Linq\ChangeSet.cs" />
     <Compile Include="Data\Linq\Database\IDatabaseContext.cs" />
-    <Compile Include="Data\Linq\Database\IDatabaseTransaction.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseConnection.cs" />
     <Compile Include="Data\Linq\Database\Implementation\DatabaseContext.cs" />
-    <Compile Include="Data\Linq\Database\Implementation\DatabaseTransaction.cs" />
     <Compile Include="Data\Linq\Database\Implementation\TransactionalCommand.cs" />
     <Compile Include="Data\Linq\Database\ITransactionalCommand.cs" />
     <Compile Include="Data\Linq\DataContext.cs" />
@@ -269,6 +267,7 @@
     <Compile Include="Schema\Dbml\Adapter\INamedType.cs" />
     <Compile Include="Schema\Dbml\Adapter\ISimpleList.cs" />
     <Compile Include="Schema\Dbml\Adapter\SpecifiedPropertyUpdater.cs" />
+    <Compile Include="Schema\Dbml\DatabaseSerializer.cs" />
     <Compile Include="Schema\WordsExtraction.cs" />
     <Compile Include="Schema\NameFormat.cs" />
     <Compile Include="Schema\AssociationName.cs" />

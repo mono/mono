@@ -40,13 +40,6 @@ namespace DbMetal.Generator
         ISchemaLoader Load(Parameters parameters);
 
         /// <summary>
-        /// loads a ISchemaLoader from a provider id string (used by schema loader)
-        /// </summary>
-        /// <param name="provider"></param>
-        /// <returns></returns>
-        ISchemaLoader Load(string provider);
-
-        /// <summary>
         /// given a schemaLoaderType and dbConnType 
         /// (e.g. DbLinq.Oracle.OracleSchemaLoader and System.Data.OracleClient.OracleConnection),
         /// return an instance of the OracleSchemaLoader.
