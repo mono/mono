@@ -139,6 +139,9 @@ namespace System
 			// shortcut
 			if (!inherit && res.Length == 1)
 			{
+				if (res [0] == null)
+					throw new CustomAttributeFormatException ("Invalid custom attribute format");
+
 				if (attributeType != null)
 				{
 					if (attributeType.IsAssignableFrom (res[0].GetType ()))
@@ -184,6 +187,8 @@ namespace System
 				foreach (object attr in res)
 				{
 					AttributeUsageAttribute usage;
+					if (attr == null)
+						throw new CustomAttributeFormatException ("Invalid custom attribute format");
 
 					Type attrType = attr.GetType ();
 					if (attributeType != null)

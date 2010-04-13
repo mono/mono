@@ -1,3 +1,8 @@
+2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoCustomAttrs.cs: Raise an exception if the runtime
+	returned a null cattr.
+
 2010-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* Convert.cs (ToInt32): Do a checked cast. Fixes #596339.
