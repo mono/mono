@@ -1,3 +1,9 @@
+
+Tue Apr 13 12:36:29 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* reflection.c: maintain the invariants required by
+	mono_class_layout_fields() also in typebuilder_setup_fields ().
+
 2010-04-11  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* security-core-clr.c: Call mono_class_setup_methods in 
