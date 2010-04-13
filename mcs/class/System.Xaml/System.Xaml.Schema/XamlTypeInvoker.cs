@@ -63,12 +63,30 @@ namespace System.Xaml.Schema
 
 		public virtual void AddToCollection (object instance, object item)
 		{
-			throw new NotImplementedException ();
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+
+			var t = instance.GetType ();
+			MethodInfo mi;
+			if (t.IsGenericType)
+				mi = instance.GetType ().GetMethod ("Add", t.GetGenericArguments ());
+			else
+				mi = instance.GetType ().GetMethod ("Add", new Type [] {typeof (object)});
+			if (mi == null)
+				throw new InvalidOperationException (String.Format ("The collection type '{0}' does not have 'Add' method", t));
+			mi.Invoke (instance, new object [] {item});
 		}
 
 		public virtual void AddToDictionary (object instance, object key, object item)
 		{
-			throw new NotImplementedException ();
+			if (instance == null)
+				throw new ArgumentNullException ("instance");
+
+			var t = instance.GetType ();
+			if (t.IsGenericType)
+				instance.GetType ().GetMethod ("Add", t.GetGenericArguments ()).Invoke (instance, new object [] {key, item});
+			else
+				instance.GetType ().GetMethod ("Add", new Type [] {typeof (object), typeof (object)}).Invoke (instance, new object [] {key, item});
 		}
 
 		public virtual object CreateInstance (object [] arguments)
