@@ -1,3 +1,7 @@
+2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata-verify.c (decode_signature_header): Do proper
+	overflow checking.
 
 Tue Apr 13 12:36:29 CEST 2010 Paolo Molaro <lupus@ximian.com>
 
