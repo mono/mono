@@ -465,8 +465,14 @@ namespace System
 						p.CultureSensitive = false;
 						p.UseColonAsDaySeparator = false;
 						break;
-					default: // custom format
-						throw new NotImplementedException ();
+					default:
+						// Single letter formats other than the defined ones are not accepted.
+						if (format.Length == 1)
+							return false;
+						// custom format
+						if (p.ExecuteWithFormat (format, styles, true, out result))
+							return true;
+						continue;
 				}
 
 				if (p.Execute (true, out result))
@@ -738,6 +744,34 @@ namespace System
 				return res;
 			}
 
+#if NET_4_0
+			// Used for custom formats parsing, where we may need to declare how
+			// many digits we expect, as well as the maximum allowed.
+			private int ParseIntExact (int digit_count, int max_digit_count)
+			{
+				long res = 0;
+				int count = 0;
+
+				// We can have more than one preceding zero here.
+				while (!AtEnd && Char.IsDigit (_src, _cur)) {
+					res = res * 10 + _src [_cur] - '0';
+					if (res > Int32.MaxValue) {
+						SetParseError (ParseError.Format);
+						break;
+					}
+					_cur++;
+					count++;
+				}
+
+				// digit_count = 1 means we can use up to maximum count,
+				if (count == 0 || (digit_count > 1 && digit_count != count) ||
+						count > max_digit_count)
+					SetParseError (ParseError.Format);
+
+				return (int)res;
+			}
+#endif
+
 			// Parse simple int value
 			private int ParseInt (bool optional)
 			{
@@ -823,6 +857,26 @@ namespace System
 
 				return false;
 			}
+
+			private bool ParseLiteral (string value)
+			{
+				if (!AtEnd && String.Compare (_src, _cur, value, 0, value.Length) == 0) {
+					_cur += value.Length;
+					return true;
+				}
+
+				return false;
+			}
+
+			private bool ParseChar (char c)
+			{
+				if (!AtEnd && _src [_cur] == c) {
+					_cur++;
+					return true;
+				}
+
+				return false;
+			}
 #endif
 
 			private void ParseColon (bool optional)
@@ -861,6 +915,31 @@ namespace System
 
 				return res;
 			}
+
+#if NET_4_0
+			// Used by custom formats parsing
+			// digits_count = 0 for digits up to max_digits_count (optional), and other value to
+			// force a precise number of digits.
+			private long ParseTicksExact (int digits_count, int max_digits_count)
+			{
+				long mag = 1000000;
+				long res = 0;
+				int count = 0;
+
+				while (mag > 0 && !AtEnd && Char.IsDigit (_src, _cur)) {
+					res = res + (_src [_cur] - '0') * mag;
+					_cur++;
+					count++;
+					mag = mag / 10;
+				}
+
+				if ((digits_count > 0 && count != digits_count) ||
+						count > max_digits_count)
+					SetParseError (ParseError.Format);
+
+				return res;
+			}
+#endif
 
 			void SetParseError (ParseError error)
 			{
@@ -1075,6 +1154,298 @@ namespace System
 				return true;
 			}
 #endif
+
+#if NET_4_0
+			public bool ExecuteWithFormat (string format, TimeSpanStyles style, bool tryParse, out TimeSpan result)
+			{
+				int days, hours, minutes, seconds;
+				long ticks;
+				FormatElement format_element;
+
+				days = hours = minutes = seconds = -1;
+				ticks = -1;
+				result = TimeSpan.Zero;
+				Reset ();
+
+				FormatParser format_parser = new FormatParser (format);
+
+				for (;;) {
+					// We need to continue even if AtEnd == true, since we could have
+					// a optional second element.
+					if (parse_error != ParseError.None)
+						break;
+					if (format_parser.AtEnd)
+						break;
+
+					format_element = format_parser.GetNextElement ();
+					switch (format_element.Type) {
+						case FormatElementType.Days:
+							if (days != -1)
+								goto case FormatElementType.Error;
+							days = ParseIntExact (format_element.IntValue, 8);
+							break;
+						case FormatElementType.Hours:
+							if (hours != -1)
+								goto case FormatElementType.Error;
+							hours = ParseIntExact (format_element.IntValue, 2);
+							break;
+						case FormatElementType.Minutes:
+							if (minutes != -1)
+								goto case FormatElementType.Error;
+							minutes = ParseIntExact (format_element.IntValue, 2);
+							break;
+						case FormatElementType.Seconds:
+							if (seconds != -1)
+								goto case FormatElementType.Error;
+							seconds = ParseIntExact (format_element.IntValue, 2);
+							break;
+						case FormatElementType.Ticks:
+							if (ticks != -1)
+								goto case FormatElementType.Error;
+							ticks = ParseTicksExact (format_element.IntValue,
+									format_element.IntValue);
+							break;
+						case FormatElementType.TicksUppercase:
+							// Similar to Milliseconds, but optional and the
+							// number of F defines the max length, not the required one.
+							if (ticks != -1)
+								goto case FormatElementType.Error;
+							ticks = ParseTicksExact (0, format_element.IntValue);
+							break;
+						case FormatElementType.Literal:
+							if (!ParseLiteral (format_element.StringValue))
+								SetParseError (ParseError.Format);
+							break;
+						case FormatElementType.EscapedChar:
+							if (!ParseChar (format_element.CharValue))
+								SetParseError (ParseError.Format);
+							break;
+						case FormatElementType.Error:
+							SetParseError (ParseError.Format);
+							break;
+					}
+				}
+
+				if (days == -1)
+					days = 0;
+				if (hours == -1)
+					hours = 0;
+				if (minutes == -1)
+					minutes = 0;
+				if (seconds == -1)
+					seconds = 0;
+				if (ticks == -1)
+					ticks = 0;
+
+				if (!AtEnd || !format_parser.AtEnd)
+					SetParseError (ParseError.Format);
+				if (hours > 23 || minutes > 59 || seconds > 59)
+					SetParseError (ParseError.Format);
+
+				if (!CheckParseSuccess (tryParse))
+					return false;
+
+				long t;
+				if (!TimeSpan.CalculateTicks (days, hours, minutes, seconds, 0, false, out t))
+					return false;
+
+				try {
+					t = checked ((style == TimeSpanStyles.AssumeNegative) ? (-t - ticks) : (t + ticks));
+				} catch (OverflowException) {
+					if (tryParse)
+						return false;
+					throw;
+				}
+
+				result = new TimeSpan (t);
+				return true;
+			}
+#endif
 		}
+#if NET_4_0
+		enum FormatElementType 
+		{
+			Days,
+			Hours,
+			Minutes,
+			Seconds,
+			Ticks, // 'f'
+			TicksUppercase, // 'F'
+			Literal,
+			EscapedChar,
+			Error,
+			End
+		}
+
+		struct FormatElement
+		{
+			public FormatElement (FormatElementType type)
+			{
+				Type = type;
+				CharValue = (char)0;
+				IntValue = 0;
+				StringValue = null;
+			}
+
+			public FormatElementType Type;
+			public char CharValue; // Used by EscapedChar
+			public string StringValue; // Used by Literal
+			public int IntValue; // Used by numerical elements.
+		}
+
+		class FormatParser 
+		{
+			int cur;
+			string format;
+
+			public FormatParser (string format)
+			{
+				this.format = format;
+			}
+
+			public bool AtEnd {
+				get {
+					return cur >= format.Length;
+				}
+			}
+
+			public FormatElement GetNextElement ()
+			{
+				FormatElement element = new FormatElement ();
+
+				if (AtEnd)
+					return new FormatElement (FormatElementType.End);
+
+				int count = 0;
+				switch (format [cur]) {
+					case 'd':
+						count = ParseChar ('d');
+						if (count > 8)
+							return new FormatElement (FormatElementType.Error);
+						element.Type = FormatElementType.Days;
+						element.IntValue = count;
+						break;
+					case 'h':
+						count = ParseChar ('h');
+						if (count > 2)
+							return new FormatElement (FormatElementType.Error);
+						element.Type = FormatElementType.Hours;
+						element.IntValue = count;
+						break;
+					case 'm':
+						count = ParseChar ('m');
+						if (count > 2)
+							return new FormatElement (FormatElementType.Error);
+						element.Type = FormatElementType.Minutes;
+						element.IntValue = count;
+						break;
+					case 's':
+						count = ParseChar ('s');
+						if (count > 2)
+							return new FormatElement (FormatElementType.Error);
+						element.Type = FormatElementType.Seconds;
+						element.IntValue = count;
+						break;
+					case 'f':
+						count = ParseChar ('f');
+						if (count > 7)
+							return new FormatElement (FormatElementType.Error);
+						element.Type = FormatElementType.Ticks;
+						element.IntValue = count;
+						break;
+					case 'F':
+						count = ParseChar ('F');
+						if (count > 7)
+							return new FormatElement (FormatElementType.Error);
+						element.Type = FormatElementType.TicksUppercase;
+						element.IntValue = count;
+						break;
+					case '%':
+						cur++;
+						if (AtEnd)
+							return new FormatElement (FormatElementType.Error);
+						if (format [cur] == 'd')
+							goto case 'd';
+						else if (format [cur] == 'h')
+							goto case 'h';
+						else if (format [cur] == 'm')
+							goto case 'm';
+						else if (format [cur] == 's')
+							goto case 's';
+						else if (format [cur] == 'f')
+							goto case 'f';
+						else if (format [cur] == 'F')
+							goto case 'F';
+
+						return new FormatElement (FormatElementType.Error);
+					case '\'':
+						string literal = ParseLiteral ();
+						if (literal == null)
+							return new FormatElement (FormatElementType.Error);
+						element.Type = FormatElementType.Literal;
+						element.StringValue = literal;
+						break;
+					case '\\':
+						char escaped_char = ParseEscapedChar ();
+						if ((int)escaped_char == 0)
+							return new FormatElement (FormatElementType.Error);
+						element.Type = FormatElementType.EscapedChar;
+						element.CharValue = escaped_char;
+						break;
+					default:
+						return new FormatElement (FormatElementType.Error);
+				}
+
+				return element;
+			}
+
+			int ParseChar (char c)
+			{
+				int count = 0;
+
+				while (!AtEnd && format [cur] == c) {
+					cur++;
+					count++;
+				}
+
+				return count;
+			}
+
+			char ParseEscapedChar ()
+			{
+				if (AtEnd || format [cur] != '\\')
+					return (char)0;
+
+				cur++;
+				if (AtEnd)
+					return (char)0;
+
+				return format [cur++];
+			}
+
+			string ParseLiteral ()
+			{
+				int start;
+				int count = 0;
+
+				if (AtEnd || format [cur] != '\'')
+					return null;
+
+				start = ++cur;
+				while (!AtEnd && format [cur] != '\'') {
+					cur++;
+					count++;
+				}
+
+				if (!AtEnd && format [cur] == '\'') {
+					cur++;
+					return format.Substring (start, count);
+				}
+
+				return null;
+			}
+		}
+#endif
+
 	}
 }

@@ -1,3 +1,10 @@
+2010-04-12  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: Implement support for custom formats parsing. This
+	should as well include the bits required to easily implement the same
+	for ToString methods, when the final release fixes the mess we found
+	in the latest beta.
+
 2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Type.cs: Add ResolveInternal virtual call that
