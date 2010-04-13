@@ -335,6 +335,21 @@ namespace MonoTests.System.Linq {
 		}
 
 		[Test]
+		public void TestAverageInt32 ()
+		{
+			// This does not overflow, computation is done with longs
+			var x = new int [] { Int32.MaxValue, Int32.MaxValue };
+			Assert.AreEqual ((double) Int32.MaxValue, x.Average ());
+		}
+		
+		[Test]
+		public void TestAverageOverflowOnInt64 ()
+		{
+			var x = new long [] { Int64.MaxValue, Int64.MaxValue };
+			x.Average ();
+		}
+
+		[Test]
 		public void TestAverageOnLongNullable ()
 		{
 			List<long?> list = new List<long?> ();

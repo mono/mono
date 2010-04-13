@@ -1,3 +1,13 @@
+2010-04-12  Miguel de Icaza  <miguel@novell.com>
+
+	* Enumerable.cs: Jumbo patch that inlines code, mainly for the AOT
+	scenario where we our compiler cant infer the extra layer of
+	indirection of a lambda function.
+
+	But additionally, since we lack support for our JIT to inline
+	intermediate delegate calls, it should save memory and run
+	faster. 
+
 2010-04-07  Jb Evain  <jbevain@novell.com>
 
 	* EnumerableExecutor.cs: make ctor protected.
