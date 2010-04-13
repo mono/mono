@@ -2486,7 +2486,7 @@ namespace System.Windows.Forms {
 				XFree(prop);
 
 				XGetWindowProperty(DisplayHandle, RootWindow, _NET_WORKAREA, IntPtr.Zero, new IntPtr (256), false, (IntPtr)Atom.XA_CARDINAL, out actual_atom, out actual_format, out nitems, out bytes_after, ref prop);
-				if ((long)nitems < 4 * current_desktop) {
+				if ((long)nitems < 4 * (current_desktop + 1)) {
 					goto failsafe;
 				}
 

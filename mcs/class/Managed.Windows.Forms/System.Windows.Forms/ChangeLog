@@ -1,3 +1,12 @@
+2010-04-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* XplatUIX11.cs: When checking for the values returned by
+	_NET_WORKAREA, use current_desktop+1 instead of current_desktop, since
+	we need the actual value, instead of the index (which is 0 based, and
+	is not working in this case). Patch by Andy Stühr
+	(andysmuell@hammerhartes.de).
+	Fixes #494234.
+
 2010-04-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolTip.cs: Make TipState internal.
