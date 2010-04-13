@@ -1,3 +1,7 @@
+2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlTypeInvoker.cs : implement CreateInstance() for object writer.
+
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlTypeName.cs : methods were missing.

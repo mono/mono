@@ -1,3 +1,7 @@
+2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlTypeTest.cs : assert that dictionary types are *not* collection.
+
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlSchemaContextTest.cs, XamlTypeTest.cs : more type system tests.

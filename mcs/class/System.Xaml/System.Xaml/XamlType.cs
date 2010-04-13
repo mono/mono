@@ -139,12 +139,14 @@ namespace System.Xaml
 		public bool IsAmbient {
 			get { return LookupIsAmbient (); }
 		}
+
 		public bool IsArray {
-			get { return type.IsArray; }
+			get { return LookupCollectionKind () == XamlCollectionKind.Array; }
 		}
+
+		// it somehow treats array as not a collection...
 		public bool IsCollection {
-			// it somehow treats array as not a collection...
-			get { return !type.IsArray && type.ImplementsAnyInterfacesOf (typeof (ICollection), typeof (ICollection<>)); }
+			get { return LookupCollectionKind () == XamlCollectionKind.Collection; }
 		}
 
 		public bool IsConstructible {
@@ -152,7 +154,7 @@ namespace System.Xaml
 		}
 
 		public bool IsDictionary {
-			get { return type.ImplementsAnyInterfacesOf (typeof (IDictionary), typeof (IDictionary<,>)); }
+			get { return LookupCollectionKind () == XamlCollectionKind.Dictionary; }
 		}
 
 		public bool IsGeneric {
@@ -398,16 +400,15 @@ namespace System.Xaml
 		{
 			if (UnderlyingType == null)
 				return BaseType != null ? BaseType.LookupCollectionKind () : XamlCollectionKind.None;
-			if (IsArray)
+			if (type.IsArray)
 				return XamlCollectionKind.Array;
-			// the documented behavior sounds too sloppy though ...
-			var mi = UnderlyingType.GetMethod ("Add");
-			if (mi == null)
-				return XamlCollectionKind.None;
-			if (mi.GetParameters ().Length == 1)
-				return XamlCollectionKind.Collection;
-			if (mi.GetParameters ().Length == 2)
+
+			if (type.ImplementsAnyInterfacesOf (typeof (IDictionary), typeof (IDictionary<,>)))
 				return XamlCollectionKind.Dictionary;
+
+			if (type.ImplementsAnyInterfacesOf (typeof (ICollection), typeof (ICollection<>)))
+				return XamlCollectionKind.Collection;
+
 			return XamlCollectionKind.None;
 		}
 

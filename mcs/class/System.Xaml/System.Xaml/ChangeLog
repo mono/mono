@@ -1,3 +1,9 @@
+2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlType.cs : IsArray, IsCollection and IsGeneric are based on
+	  LookupCollectionKind(). Removed buggy documented behavior from the
+	  lookup method too.
+
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlXmlWriter.cs : check null args.

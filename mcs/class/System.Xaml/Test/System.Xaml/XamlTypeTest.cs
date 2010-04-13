@@ -227,13 +227,16 @@ namespace MonoTests.System.Xaml
 		{
 			var t = new XamlType (typeof (int), sctx);
 			Assert.IsFalse (t.IsDictionary, "#1.1");
+			Assert.IsFalse (t.IsCollection, "#1.1-2");
 			Assert.IsNull (t.KeyType, "#1.2");
 			t = new XamlType (typeof (Hashtable), sctx);
 			Assert.IsTrue (t.IsDictionary, "#2.1");
+			Assert.IsFalse (t.IsCollection, "#2.1-2");
 			Assert.IsNotNull (t.KeyType, "#2.2");
 			Assert.AreEqual ("Object", t.KeyType.Name, "#2.3");
 			t = new XamlType (typeof (Dictionary<int,string>), sctx);
 			Assert.IsTrue (t.IsDictionary, "#3.1");
+			Assert.IsFalse (t.IsCollection, "#3.1-2");
 			Assert.IsNotNull (t.KeyType, "#3.2");
 			Assert.AreEqual ("Int32", t.KeyType.Name, "#3.3");
 		}

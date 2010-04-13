@@ -46,7 +46,13 @@ namespace System.Xaml.Schema
 		}
 		
 		XamlType type;
-		
+
+		void ThrowIfUnknown ()
+		{
+			if (type.UnderlyingType == null)
+				throw new InvalidOperationException (String.Format ("Current operation is valid only when the underlying type on a XamlType is known, but it is unknown for '{0}'", type));
+		}
+
 		public EventHandler<XamlSetMarkupExtensionEventArgs> SetMarkupExtensionHandler {
 			get { return type.SetMarkupExtensionHandler; }
 		}
@@ -64,10 +70,13 @@ namespace System.Xaml.Schema
 		{
 			throw new NotImplementedException ();
 		}
+
 		public virtual object CreateInstance (object [] arguments)
 		{
-			throw new NotImplementedException ();
+			ThrowIfUnknown ();
+			return Activator.CreateInstance (type.UnderlyingType, arguments);
 		}
+
 		public virtual MethodInfo GetAddMethod (XamlType contentType)
 		{
 			throw new NotImplementedException ();
