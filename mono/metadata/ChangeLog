@@ -1,5 +1,17 @@
 2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: Implement structural verification
+	of custom attributes. This check requires access to the
+	loader since to resolve the size of an enum we have to
+	look it up.
+	We don't check if named argumenments are encoded in a
+	compatible fashion to their underlying field/prop.
+	Maybe we should?
+
+	* verify-internals.h: Add two new cattr verification API.
+
+2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (decode_signature_header): Fix signature.
 
 2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
