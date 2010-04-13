@@ -4688,6 +4688,13 @@ namespace MonoTests.System {
 		{
 			Convert.ChangeType ("this-is-a-string", typeof (Foo));
 		}
+
+		[Test]
+		[ExpectedException (typeof (OverflowException))]
+		public void ToInt32_NaN ()
+		{
+			Convert.ToInt32 (Double.NaN);
+		}
 	}
 
 	public class Image
