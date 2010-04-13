@@ -1556,6 +1556,14 @@ namespace System.Web.UI.WebControls
 			base.DataBind ();
 
 			keys = new DataKeyArray (DataKeyArrayList);
+			
+			GridViewRow row = HeaderRow;
+			if (row != null)
+				row.Visible = ShowHeader;
+
+			row = FooterRow;
+			if (row != null)
+				row.Visible = ShowFooter;
 		}
 		
 		protected internal override void PerformDataBinding (IEnumerable data)
@@ -1567,7 +1575,7 @@ namespace System.Web.UI.WebControls
 		{
 			if (table == null)
 				return;
-			
+
 			table.Caption = Caption;
 			table.CaptionAlign = CaptionAlign;
 			table.CopyBaseAttributes (this);
@@ -2189,7 +2197,6 @@ namespace System.Web.UI.WebControls
 		protected internal override void Render (HtmlTextWriter writer)
 		{
 			PrepareControlHierarchy ();
-
 			if (EnableSortingAndPagingCallbacks)
 				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID + "_div");
 			writer.RenderBeginTag (HtmlTextWriterTag.Div);

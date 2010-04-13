@@ -440,12 +440,37 @@ namespace MonoTests.System.Web.UI.WebControls
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.NoEventValidation.aspx", "NoEventValidation.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.TableSections_Bug551666.aspx", "TableSections_Bug551666.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.TableSections_Bug551666.aspx.cs", "TableSections_Bug551666.aspx.cs");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.UI.WebControls.Resources.GridView_Bug595567.aspx", "GridView_Bug595567.aspx");
 #else
 			WebTest.CopyResource (GetType (), "GridViewUpdate.aspx", "GridViewUpdate.aspx");
 			WebTest.CopyResource (GetType (), "NoEventValidation.aspx", "NoEventValidation.aspx");
 			WebTest.CopyResource (GetType (), "TableSections_Bug551666.aspx", "TableSections_Bug551666.aspx");
 			WebTest.CopyResource (GetType (), "TableSections_Bug551666.aspx.cs", "TableSections_Bug551666.aspx.cs");
+			WebTest.CopyResource (GetType (), "GridView_Bug595567.aspx", "GridView_Bug595567.aspx");
 #endif
+		}
+
+		[Test (Description="Bug 595567")]
+		public void HeaderFooterVisibility_Bug595567 ()
+		{
+			WebTest t = new WebTest ("GridView_Bug595567.aspx");
+			string originalHtml = @"<div> 
+	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
+			<tr> 
+				<th scope=""col"">Item</th> 
+			</tr><tr> 
+				<td>0</td> 
+			</tr><tr> 
+				<td>0</td> 
+			</tr><tr> 
+				<td>0</td> 
+			</tr> 
+		</table> 
+	</div>";
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+  
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
 
 		[Test]
