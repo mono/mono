@@ -1,3 +1,9 @@
+2010-04-13  Andreia Gaita  <avidigal@novell.com>
+
+	* CrossDomainPolicyManager.cs: make the contentType detection
+	look for /xml at the end, it's more reliable
+	(fixes olympics for moonlight)
+
 2010-04-07  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* ClientAccessPolicy.cs: Fake a "GET" method when applying a 

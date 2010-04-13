@@ -106,7 +106,7 @@ namespace System.Net.Policy {
 		public static ICrossDomainPolicy BuildSilverlightPolicy (HttpWebResponse response)
 		{
 			// return null if no Silverlight policy was found, since we offer a second chance with a flash policy
-			if ((response.StatusCode != HttpStatusCode.OK) || !response.ContentType.StartsWith ("text/"))
+			if ((response.StatusCode != HttpStatusCode.OK) || !response.ContentType.EndsWith ("/xml"))
 				return null;
 
 			ICrossDomainPolicy policy = null;
@@ -125,7 +125,7 @@ namespace System.Net.Policy {
 		public static ICrossDomainPolicy BuildFlashPolicy (HttpWebResponse response)
 		{
 			ICrossDomainPolicy policy = null;
-			if ((response.StatusCode == HttpStatusCode.OK) && response.ContentType.StartsWith ("text/")) {
+			if ((response.StatusCode == HttpStatusCode.OK) && response.ContentType.EndsWith ("/xml")) {
 				try {
 					policy = FlashCrossDomainPolicy.FromStream (response.GetResponseStream ());
 				} catch (Exception ex) {
