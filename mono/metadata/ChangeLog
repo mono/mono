@@ -1,5 +1,13 @@
 2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_signature_checked): Properly
+	init MonoError.
+
+	* loader.c (mono_method_signature): It's the calee
+	resposibility to init the error object.
+
+2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c (decode_signature_header): Do proper
 	overflow checking.
 
