@@ -1,5 +1,12 @@
 2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c: Use the new verifier support for checking
+	custom attributes.
+
+	Fixes #595306.
+
+2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* metadata-verify.c: Implement structural verification
 	of custom attributes. This check requires access to the
 	loader since to resolve the size of an enum we have to
