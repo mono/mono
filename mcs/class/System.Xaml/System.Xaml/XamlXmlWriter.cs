@@ -73,7 +73,7 @@ namespace System.Xaml
 			this.w = xmlWriter;
 			this.sctx = schemaContext;
 			this.settings = settings ?? new XamlXmlWriterSettings ();
-			this.manager = new XamlWriterStateManager ();
+			this.manager = new XamlWriterStateManager<XamlXmlWriterException, InvalidOperationException> (true);
 		}
 
 		XmlWriter w;
@@ -144,6 +144,8 @@ namespace System.Xaml
 				throw new InvalidOperationException (String.Format ("WriteGetObject method can be invoked only when current member '{0}' is of collection type", xm.Name));
 
 			DoEndMember ();
+			
+			// FIXME: it likely has to write the "retrieved" object here.
 		}
 
 		public override void WriteNamespace (NamespaceDeclaration namespaceDeclaration)

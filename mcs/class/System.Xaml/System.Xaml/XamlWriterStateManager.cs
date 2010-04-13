@@ -57,18 +57,48 @@ MemberStarted + GetObject -> MemberDone : pop()
 ObjectWritten + StartObject -> ObjectStarted : push(x)
 ObjectWritten + Value -> ValueWritten : pop()
 ObjectWritten + EndMember -> MemberDone : pop()
-ValueWritten + StartObject -> ObjectStarted : push(x)
+ValueWritten + StartObject -> invalid - or - ObjectStarted : push(x)
+ValueWritten + Value -> invalid - or - ValueWritten
 ValueWritten + EndMember -> MemberDone : pop()
 MemberDone + EndObject -> ObjectWritten or End : pop() // xt
 MemberDone + StartMember -> MemberStarted : push(xm)
 
+(in XamlObjectWriter, Value must be followed by EndMember.)
 
 */
 
 namespace System.Xaml
 {
-	internal class XamlWriterStateManager
+	internal class XamlWriterStateManager<TError,TNSError> : XamlWriterStateManager
+		where TError : Exception
+		where TNSError : Exception
 	{
+		public XamlWriterStateManager (bool isXmlWriter)
+			: base (isXmlWriter)
+		{
+		}
+
+		public override Exception CreateError (string msg)
+		{
+			return (Exception) Activator.CreateInstance (typeof (TError), new object [] {msg});
+		}
+
+		public override Exception CreateNamespaceError (string msg)
+		{
+			return (Exception) Activator.CreateInstance (typeof (TNSError), new object [] {msg});
+		}
+	}
+
+	internal abstract class XamlWriterStateManager
+	{
+		public XamlWriterStateManager (bool isXmlWriter)
+		{
+			allow_ns_at_value = isXmlWriter;
+			allow_object_after_value = isXmlWriter;
+			allow_parallel_values = !isXmlWriter;
+			allow_empty_member = !isXmlWriter;
+		}
+
 		enum XamlWriteState
 		{
 			Initial,
@@ -80,6 +110,10 @@ namespace System.Xaml
 			End
 		}
 
+		// configuration
+		bool allow_ns_at_value, allow_object_after_value, allow_parallel_values, allow_empty_member;
+
+		// state
 		XamlWriteState state = XamlWriteState.Initial;
 		bool ns_pushed;
 
@@ -134,6 +168,8 @@ namespace System.Xaml
 
 		public void Namespace ()
 		{
+			if (!allow_ns_at_value && state == XamlWriteState.ValueWritten)
+				throw CreateError (String.Format ("Namespace declarations cannot be written at {0} state", state));
 			ns_pushed = true;
 		}
 
@@ -164,6 +200,10 @@ namespace System.Xaml
 				case XamlNodeType.Value:
 				case XamlNodeType.GetObject:
 					return;
+				case XamlNodeType.EndMember:
+					if (allow_empty_member)
+						return;
+					break;
 				}
 				break;
 			case XamlWriteState.ObjectWritten:
@@ -176,7 +216,14 @@ namespace System.Xaml
 				break;
 			case XamlWriteState.ValueWritten:
 				switch (next) {
+				case XamlNodeType.Value:
+					if (allow_parallel_values)
+						return;
+					break;
 				case XamlNodeType.StartObject:
+					if (allow_object_after_value)
+						return;
+					break;
 				case XamlNodeType.EndMember:
 					return;
 				}
@@ -189,7 +236,7 @@ namespace System.Xaml
 				}
 				break;
 			}
-			throw new XamlXmlWriterException (String.Format ("{0} is not allowed at current state {1}", next, state));
+			throw CreateError (String.Format ("{0} is not allowed at current state {1}", next, state));
 		}
 		
 		void RejectNamespaces (XamlNodeType next)
@@ -198,10 +245,13 @@ namespace System.Xaml
 				// strange, but on WriteEndMember it throws XamlXmlWriterException, while for other nodes it throws IOE.
 				string msg = String.Format ("Namespace declarations cannot be written before {0}", next);
 				if (next == XamlNodeType.EndMember)
-					throw new XamlXmlWriterException (msg);
+					throw CreateError (msg);
 				else
-					throw new InvalidOperationException (msg);
+					throw CreateNamespaceError (msg);
 			}
 		}
+
+		public abstract Exception CreateError (string msg);
+		public abstract Exception CreateNamespaceError (string msg);
 	}
 }

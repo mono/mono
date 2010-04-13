@@ -1,5 +1,13 @@
 2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlWriter.cs
+	  XamlObjectWriter.cs
+	  XamlWriterStateManager.cs : basic object writer implementation.
+	  Needed non-trivial changes to state manager, as it turned out that
+	  the state transition does not seem to be well designed to be common.
+
+2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlType.cs : IsArray, IsCollection and IsGeneric are based on
 	  LookupCollectionKind(). Removed buggy documented behavior from the
 	  lookup method too.

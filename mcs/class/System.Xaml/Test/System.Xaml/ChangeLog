@@ -1,5 +1,10 @@
 2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectWriterTest.cs : new test.
+	* XamlXmlWriterTest.cs : added some not-working tests.
+
+2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlTypeTest.cs : assert that dictionary types are *not* collection.
 
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>

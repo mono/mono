@@ -138,7 +138,6 @@ namespace MonoTests.System.Xaml
 		[ExpectedException (typeof (XamlXmlWriterException))]
 		public void GetObjectAfterStartObject ()
 		{
-			string xml = @"<?xml version='1.0' encoding='utf-16'?><Int32 xmlns='http://schemas.microsoft.com/winfx/2006/xaml' />";
 			var sw = new StringWriter ();
 			var xw = new XamlXmlWriter (sw, sctx, null);
 			xw.WriteStartObject (xt);
@@ -316,6 +315,19 @@ namespace MonoTests.System.Xaml
 			xw.WriteValue ("bar");
 		}
 
+		[Test]
+		[ExpectedException (typeof (XamlXmlWriterException))]
+		[Category ("NotWorking")] // it raises ArgumentException earlier, which should not matter.
+		public void WriteValueList ()
+		{
+			var sw = new StringWriter ();
+			var xw = new XamlXmlWriter (sw, sctx, null);
+			xw.WriteStartObject (new XamlType (typeof (List<string>), sctx));
+			xw.WriteStartMember (XamlLanguage.Items);
+			xw.WriteValue ("foo");
+			xw.WriteValue ("bar");
+		}
+
 		[ExpectedException (typeof (XamlXmlWriterException))]
 		public void StartMemberWriteEndObject ()
 		{
@@ -399,7 +411,7 @@ namespace MonoTests.System.Xaml
 			var sw = new StringWriter ();
 			var xw = new XamlXmlWriter (sw, sctx, null);
 			xw.WriteStartObject (xt);
-			xw.WriteStartMember (xm);
+			xw.WriteStartMember (XamlLanguage.Initialization);
 			xw.WriteNamespace (new NamespaceDeclaration ("urn:foo", "y"));
 			xw.WriteValue ("foo");
 		}
@@ -569,6 +581,32 @@ namespace MonoTests.System.Xaml
 			xw.WriteStartMember (new XamlMember (typeof (Foo).GetProperty ("Bar"), sctx));
 			xw.WriteGetObject ();
 			xw.WriteEndObject ();
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void WriteNode ()
+		{
+			string xml = @"<?xml version='1.0' encoding='utf-16'?><x:String xmlns:x='http://schemas.microsoft.com/winfx/2006/xaml'>foo</x:String>";
+			var r = new XamlObjectReader ("foo", sctx);
+			var sw = new StringWriter ();
+			var w = new XamlXmlWriter (sw, sctx, null);
+			while (r.Read ())
+				w.WriteNode (r);
+			w.Close ();
+			Assert.AreEqual (xml, sw.ToString ().Replace ('"', '\''), "#1");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void WriteNode2 ()
+		{
+			var r = new XamlObjectReader ("foo", sctx);
+			var w = new XamlObjectWriter (sctx, null);
+			while (r.Read ())
+				w.WriteNode (r);
+			w.Close ();
+			Assert.AreEqual ("foo", w.Result, "#1");
 		}
 	}
 }
