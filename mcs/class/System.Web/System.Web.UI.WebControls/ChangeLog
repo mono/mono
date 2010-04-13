@@ -1,5 +1,8 @@
 2010-04-13  Marek Habersack  <mhabersack@novell.com>
 
+	* GridView.cs: make sure Header and Footer visibility are set when
+	binding the data. Fixes bug #595567
+
 	* ImageField.cs, CheckBoxField.cs: OnDataBindField must expect
 	sender to be something else than DataControlFieldCell. Fixes bug
 	#595568

@@ -222,7 +222,8 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_2.aspx \
 	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_5.aspx \
 	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_6.aspx \
-	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_7.aspx
+	Test/mainsoft/NunitWebResources/CheckBoxField_Bug595568_7.aspx \
+	Test/mainsoft/NunitWebResources/GridView_Bug595567.aspx
 
 RESX_DIST =  resources/TranslationResources.resx
 ifneq (1, $(FRAMEWORK_VERSION_MAJOR))
