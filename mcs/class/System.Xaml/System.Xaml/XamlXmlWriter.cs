@@ -201,12 +201,14 @@ namespace System.Xaml
 
 		void DoEndMember ()
 		{
-			if (w.WriteState == WriteState.Content)
+			var xm = nodes.Pop (); // XamlMember
+			if (xm == XamlLanguage.Initialization)
+				; // do nothing
+			else if (w.WriteState == WriteState.Content)
 				w.WriteEndElement ();
 			else
 				w.WriteEndAttribute ();
 
-			nodes.Pop (); // XamlMember
 			is_first_member_content = false;
 			first_member_value = null;
 		}
@@ -220,7 +222,9 @@ namespace System.Xaml
 			if (xm == null)
 				return;
 
-			if (next == XamlNodeType.StartObject || w.WriteState == WriteState.Content || has_namespace)
+			if (xm == XamlLanguage.Initialization)
+				; // do nothing
+			else if (next == XamlNodeType.StartObject || w.WriteState == WriteState.Content || has_namespace)
 				DoWriteStartMemberElement (xm);
 			else
 				DoWriteStartMemberAttribute (xm);

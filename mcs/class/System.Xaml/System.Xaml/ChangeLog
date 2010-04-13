@@ -1,5 +1,10 @@
 2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlWriter.cs :
+	  Do not write element or attribute for Initialization.
+
+2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlWriter.cs
 	  XamlObjectWriter.cs
 	  XamlWriterStateManager.cs : basic object writer implementation.
