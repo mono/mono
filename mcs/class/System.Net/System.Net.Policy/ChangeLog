@@ -1,3 +1,11 @@
+2010-04-13  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CrossDomainPolicyManager.cs: Fix previous change since it 
+	breaks several valid cases (e.g. text/*, text/xml; charset=utf-8)
+	and does not completely covers the application/xml case.
+	Avoid possible ArgumentException while adding policies since it 
+	confuse	the logs.
+
 2010-04-13  Andreia Gaita  <avidigal@novell.com>
 
 	* CrossDomainPolicyManager.cs: make the contentType detection

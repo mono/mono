@@ -95,18 +95,34 @@ namespace System.Net.Policy {
 		private static void AddPolicy (Uri responseUri, ICrossDomainPolicy policy)
 		{
 			string root = GetRoot (responseUri);
-			try {
-				policies.Add (root, policy);
+			policies [root] = policy;
+		}
+
+		// see moon/test/2.0/WebPolicies/Pages.xaml.cs for all test cases
+		private static bool CheckContentType (string contentType)
+		{
+			const string application_xml = "application/xml";
+
+			// most common case: all text/* are accepted
+			if (contentType.StartsWith ("text/"))
+				return true;
+
+			// special case (e.g. used in nbcolympics)
+			if (contentType.StartsWith (application_xml)) {
+				if (application_xml.Length == contentType.Length)
+					return true; // exact match
+
+				// e.g. "application/xml; charset=x" - we do not care what comes after ';'
+				if (contentType.Length > application_xml.Length)
+					return contentType [application_xml.Length] == ';';
 			}
-			catch (ArgumentException) {
-				// it's possible another request already added this root
-			}
+			return false;
 		}
 
 		public static ICrossDomainPolicy BuildSilverlightPolicy (HttpWebResponse response)
 		{
 			// return null if no Silverlight policy was found, since we offer a second chance with a flash policy
-			if ((response.StatusCode != HttpStatusCode.OK) || !response.ContentType.EndsWith ("/xml"))
+			if ((response.StatusCode != HttpStatusCode.OK) || !CheckContentType (response.ContentType))
 				return null;
 
 			ICrossDomainPolicy policy = null;
@@ -125,7 +141,7 @@ namespace System.Net.Policy {
 		public static ICrossDomainPolicy BuildFlashPolicy (HttpWebResponse response)
 		{
 			ICrossDomainPolicy policy = null;
-			if ((response.StatusCode == HttpStatusCode.OK) && response.ContentType.EndsWith ("/xml")) {
+			if ((response.StatusCode == HttpStatusCode.OK) && CheckContentType (response.ContentType)) {
 				try {
 					policy = FlashCrossDomainPolicy.FromStream (response.GetResponseStream ());
 				} catch (Exception ex) {
