@@ -91,6 +91,57 @@ namespace CodeGeneratorTest
 				CodeGenerator.IsValidLanguageIndependentIdentifier("a spacein2ndplace"), "#G8");
 		}
 
+		[Test]
+		public void CurrentMemberShouldBeClearedBetweenTypes ()
+		{
+			ICodeGenerator codeGenerator = new MockCodeGenerator ();
+			var o = new StringWriter () {
+				NewLine = "\n",
+			};
+
+			var t = new CodeTypeDeclaration() {
+				Name = "Foo",
+				Members = {
+					new CodeMemberField() {
+						Name = "f",
+					},
+					new CodeMemberMethod() {
+						Name = "M",
+						StartDirectives = {
+							new CodeRegionDirective(CodeRegionMode.Start, "foo..."),
+						},
+						EndDirectives = {
+							new CodeRegionDirective(CodeRegionMode.End, null),
+						},
+					}
+				}
+			};
+
+			var opts = new CodeGeneratorOptions () {
+				IndentString = "\t",
+			};
+
+			codeGenerator.GenerateCodeFromType (t, o, opts);
+			t.Name = "Bar";
+			codeGenerator.GenerateCodeFromType (t, o, opts);
+
+			var expected = 
+				"(type Foo\n" + 
+				"\t\n" +
+				"\t(field f (TypeRef System.Void))\n" +
+				"\t\n" +
+				"\t(region foo...\n" +
+				"\t\t(method M)))\n" +
+				"(type Bar\n" + 
+				"\t\n" +
+				"\t(field f (TypeRef System.Void))\n" +
+				"\t\n" +
+				"\t(region foo...\n" +
+				"\t\t(method M)))\n";
+
+			Assert.AreEqual (expected, o.ToString ());
+		}
+
 		private CodeTypeDeclaration GetClassType ()
 		{
 			return new CodeTypeDeclaration ();
@@ -132,6 +183,9 @@ namespace CodeGeneratorTest
 
 		protected override void OutputType (CodeTypeReference typeRef)
 		{
+			Output.Write ("(TypeRef ");
+			Output.Write (typeRef.BaseType);
+			Output.Write (")");
 		}
 
 		protected override void GenerateArrayCreateExpression (CodeArrayCreateExpression e)
@@ -272,6 +326,12 @@ namespace CodeGeneratorTest
 
 		protected override void GenerateField (CodeMemberField e)
 		{
+			Output.WriteLine ();
+			Output.Write ("(field ");
+			Output.Write (e.Name);
+			Output.Write (" ");
+			OutputType (e.Type);
+			Output.Write (")");
 		}
 
 		protected override void GenerateSnippetMember (CodeSnippetTypeMember e)
@@ -284,6 +344,10 @@ namespace CodeGeneratorTest
 
 		protected override void GenerateMethod (CodeMemberMethod e, CodeTypeDeclaration c)
 		{
+			Output.WriteLine ();
+			Output.Write ("(method ");
+			Output.Write (e.Name);
+			Output.Write (")");
 		}
 
 		protected override void GenerateProperty (CodeMemberProperty e, CodeTypeDeclaration c)
@@ -300,10 +364,15 @@ namespace CodeGeneratorTest
 
 		protected override void GenerateTypeStart (CodeTypeDeclaration e)
 		{
+			Output.Write ("(type ");
+			Output.Write (e.Name);
+			++Indent;
 		}
 
 		protected override void GenerateTypeEnd (CodeTypeDeclaration e)
 		{
+			Output.WriteLine (")");
+			--Indent;
 		}
 
 		protected override void GenerateNamespaceStart (CodeNamespace e)
@@ -355,6 +424,27 @@ namespace CodeGeneratorTest
 		{
 			return value;
 		}
+
+#if NET_2_0
+		protected override void GenerateDirectives (CodeDirectiveCollection directives)
+		{
+			foreach (CodeDirective d in directives) {
+				var r = d as CodeRegionDirective;
+				if (r != null) {
+					if (r.RegionMode == CodeRegionMode.Start) {
+						Output.WriteLine ();
+						Output.Write ("(region ");
+						Output.Write (r.RegionText);
+						++Indent;
+					}
+					else if (r.RegionMode == CodeRegionMode.End) {
+						Output.Write (")");
+						--Indent;
+					}
+				}
+			}
+		}
+#endif
 
 		#endregion Override implementation of CodeGenerator
 	}
