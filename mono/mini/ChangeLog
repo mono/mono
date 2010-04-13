@@ -1,3 +1,8 @@
+2010-04-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mini-posix.c (sigusr1_signal_handler): Fix build on
+	non x86/amd64 systems.
+
 2010-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Disable generic sharing for constrained
