@@ -1,0 +1,9 @@
+2010-04-13  Ankit Jain  <jankit@novell.com>
+
+	* CreateTestPage.cs:
+	* GenerateMoonlightManifest.cs:
+	* GetMoonlightFrameworkPath.cs:
+	* GenerateXap.cs:
+	* Respack.cs:
+	* XamlG.cs:
+	MSBuild tasks for building silverlight projects.

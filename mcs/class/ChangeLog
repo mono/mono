@@ -1,3 +1,9 @@
+2010-04-14  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Add Moonlight.Build.Tasks to net_2_0_dirs and
+	net_3_5_dirs.
+	* Moonlight.Build.Tasks: New.
+
 2010-04-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : add 4.0 System.Xaml.

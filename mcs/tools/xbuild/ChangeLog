@@ -1,3 +1,10 @@
+2010-04-14  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Silverlight*.targets: New.
+	* Makefile: Update to install silverlight target files.
+	* xbuild_targets.make: Update to handle silverlight
+	target files.
+
 2010-04-12  Ankit Jain  <jankit@novell.com>
 
 	* Makefile: Update EXTRA_DIST with the new targets files.

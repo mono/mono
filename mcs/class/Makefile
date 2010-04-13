@@ -113,6 +113,7 @@ net_2_0_dirs := \
 	Mono.Simd			\
 	Mono.Tasklets       		\
 	Mono.CSharp			\
+	Moonlight.Build.Tasks		\
 	WindowsBase			\
 	System.Data.Services
 
@@ -159,6 +160,7 @@ net_3_5_dirs := \
 	Microsoft.Build.Utilities	\
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks		\
+	Moonlight.Build.Tasks		\
 	System.Web.Extensions.Design	
 
 net_4_0_dirs := \
