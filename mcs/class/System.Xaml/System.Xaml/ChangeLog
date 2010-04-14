@@ -1,3 +1,10 @@
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlMember.cs
+	  XamlDirective.cs
+	  XamlType.cs
+	  XamlLanguage.cs : implement (Lookup)ValueSerializer.
+
 2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlXmlWriter.cs :

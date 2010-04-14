@@ -39,12 +39,14 @@ namespace System.Xaml
 		public const string Xml1998Namespace = "http://www.w3.org/XML/1998/namespace";
 		internal const string Xmlns2000Namespace = "http://www.w3.org/2000/xmlns/";
 
-		static readonly XamlSchemaContext sctx = new XamlSchemaContext (null, null);
+		static readonly XamlSchemaContext sctx = new XamlSchemaContext (new Assembly [] {typeof (XamlType).Assembly});
 
 		static XamlType XT<T> ()
 		{
 			return sctx.GetXamlType (typeof (T));
 		}
+
+		internal static readonly bool InitializingDirectives;
 
 		static XamlLanguage ()
 		{
@@ -76,6 +78,10 @@ namespace System.Xaml
 
 			// directives
 
+			// Looks like predefined XamlDirectives have no ValueSerializer. 
+			// To handle this situation, differentiate them from non-primitive XamlMembers.
+			InitializingDirectives = true;
+
 			var nss = new string [] {XamlLanguage.Xaml2006Namespace};
 			var nssXml = new string [] {XamlLanguage.Xml1998Namespace};
 
@@ -105,6 +111,8 @@ namespace System.Xaml
 			UnknownContent = new XamlDirective (nss, "_UnknownContent", XT<object> (), null, AllowedMemberLocations.MemberElement) { InternalIsUnknown = true };
 
 			AllDirectives = new ReadOnlyCollection<XamlDirective> (new XamlDirective [] {Arguments, AsyncRecords, Base, Class, ClassAttributes, ClassModifier, Code, ConnectionId, FactoryMethod, FieldModifier, Initialization, Items, Key, Lang, Members, Name, PositionalParameters, Space, Subclass, SynchronousMode, Shared, TypeArguments, Uid, UnknownContent});
+
+			InitializingDirectives = false;
 		}
 
 		static readonly string [] xaml_nss = new string [] {Xaml2006Namespace};

@@ -35,7 +35,7 @@ using Category = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Xaml
 {
-	// FIXME: enable AllowedContentTypes, ContentWrappers, DeferringLoader and ValueSerializer tests.
+	// FIXME: enable AllowedContentTypes, ContentWrappers and DeferringLoader tests.
 	[TestFixture]
 	public class XamlTypeTest
 	{
@@ -173,7 +173,7 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Ignore ("It results in NRE on .NET 4.0 RC")]
+		[Ignore ("It results in NRE on .NET 4.0 RTM")]
 		public void EmptyTypeArguments ()
 		{
 			var t1 = new MyXamlType ("System.Int32", null, sctx);
@@ -308,7 +308,7 @@ namespace MonoTests.System.Xaml
 			//Assert.IsNull (t.ContentWrappers, "#24");
 			Assert.IsNotNull (t.TypeConverter, "#25");
 			Assert.IsTrue (t.TypeConverter.ConverterInstance is Int32Converter, "#25-2");
-			//Assert.IsNull (t.ValueSerializer, "#26");
+			Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNull (t.ContentProperty, "#27");
 			//Assert.IsNull (t.DeferringLoader, "#28");
 			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
@@ -345,7 +345,7 @@ namespace MonoTests.System.Xaml
 			//Assert.IsNull (t.AllowedContentTypes, "#23");
 			//Assert.IsNull (t.ContentWrappers, "#24");
 			Assert.IsNull (t.TypeConverter, "#25");
-			//Assert.IsNull (t.ValueSerializer, "#26");
+			Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNull (t.ContentProperty, "#27");
 			//Assert.IsNull (t.DeferringLoader, "#28");
 			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
@@ -382,7 +382,7 @@ namespace MonoTests.System.Xaml
 			//Assert.IsNull (t.AllowedContentTypes, "#23");
 			//Assert.IsNull (t.ContentWrappers, "#24");
 			Assert.IsNull (t.TypeConverter, "#25");
-			//Assert.IsNull (t.ValueSerializer, "#26");
+			Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNull (t.ContentProperty, "#27");
 			//Assert.IsNull (t.DeferringLoader, "#28");
 			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
@@ -432,7 +432,7 @@ namespace MonoTests.System.Xaml
 			// Assert.IsNull (t.AllowedContentTypes, "#23");
 			// Assert.IsNull (t.ContentWrappers, "#24");
 			Assert.IsNull (t.TypeConverter, "#25");
-			// Assert.IsNull (t.ValueSerializer, "#26");
+			Assert.IsNull (t.ValueSerializer, "#26");
 			Assert.IsNotNull (t.ContentProperty, "#27");
 			Assert.AreEqual ("Name", t.ContentProperty.Name, "#27-2");
 			// Assert.IsNull (t.DeferringLoader, "#28");

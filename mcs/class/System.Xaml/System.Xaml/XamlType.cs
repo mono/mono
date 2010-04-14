@@ -625,9 +625,35 @@ namespace System.Xaml
 			return a != null && a.Usable;
 		}
 
+		static XamlValueConverter<ValueSerializer> string_value_serializer;
+
 		protected virtual XamlValueConverter<ValueSerializer> LookupValueSerializer ()
 		{
-			throw new NotImplementedException ();
+			return LookupValueSerializer (this, CustomAttributeProvider);
+		}
+
+		internal static XamlValueConverter<ValueSerializer> LookupValueSerializer (XamlType targetType, ICustomAttributeProvider provider)
+		{
+			if (provider == null)
+				return null;
+
+			var a = provider.GetCustomAttribute<ValueSerializerAttribute> (true);
+			if (a != null)
+				return new XamlValueConverter<ValueSerializer> (a.ValueSerializerType ?? Type.GetType (a.ValueSerializerTypeName), targetType);
+
+			if (targetType.BaseType != null) {
+				var ret = targetType.BaseType.LookupValueSerializer ();
+				if (ret != null)
+					return ret;
+			}
+
+			if (targetType.UnderlyingType == typeof (string)) {
+				if (string_value_serializer == null)
+					string_value_serializer = new XamlValueConverter<ValueSerializer> (typeof (StringValueSerializer), targetType);
+				return string_value_serializer;
+			}
+
+			return null;
 		}
 	}
 }

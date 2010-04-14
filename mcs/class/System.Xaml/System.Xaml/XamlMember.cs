@@ -147,6 +147,7 @@ namespace System.Xaml
 		XamlSchemaContext context;
 		XamlMemberInvoker invoker;
 		bool is_attachable, is_event, is_directive;
+		bool is_predefined_directive = XamlLanguage.InitializingDirectives;
 		string directive_ns;
 
 		internal MethodInfo UnderlyingGetter {
@@ -188,9 +189,13 @@ namespace System.Xaml
 		public XamlValueConverter<XamlDeferringLoader> DeferringLoader {
 			get { return LookupDeferringLoader (); }
 		}
+		
+		static readonly XamlMember [] empty_members = new XamlMember [0];
+		
 		public IList<XamlMember> DependsOn {
-			get { return LookupDependsOn (); }
+			get { return LookupDependsOn () ?? empty_members; }
 		}
+
 		public XamlMemberInvoker Invoker {
 			get { return LookupInvoker (); }
 		}
@@ -284,8 +289,9 @@ namespace System.Xaml
 
 		protected virtual ICustomAttributeProvider LookupCustomAttributeProvider ()
 		{
-			throw new NotImplementedException ();
+			return UnderlyingMember;
 		}
+
 		protected virtual XamlValueConverter<XamlDeferringLoader> LookupDeferringLoader ()
 		{
 			// FIXME: probably fill from attribute.
@@ -404,8 +410,12 @@ namespace System.Xaml
 
 		protected virtual XamlValueConverter<ValueSerializer> LookupValueSerializer ()
 		{
-			// FIXME: probably fill from attribute
-			return null;
+			if (is_predefined_directive) // FIXME: this is likely a hack.
+				return null;
+			if (Type == null)
+				return null;
+
+			return XamlType.LookupValueSerializer (Type, LookupCustomAttributeProvider ()) ?? Type.ValueSerializer;
 		}
 
 		void VerifyGetter (MethodInfo method)

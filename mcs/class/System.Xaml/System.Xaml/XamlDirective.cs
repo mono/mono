@@ -88,17 +88,17 @@ namespace System.Xaml
 
 		protected override sealed ICustomAttributeProvider LookupCustomAttributeProvider ()
 		{
-			throw new NotImplementedException ();
+			return null; // as documented.
 		}
 
 		protected override sealed XamlValueConverter<XamlDeferringLoader> LookupDeferringLoader ()
 		{
-			return null;
+			return null; // as documented.
 		}
 
 		protected override sealed IList<XamlMember> LookupDependsOn ()
 		{
-			return base.LookupDependsOn ();
+			return null; // as documented.
 		}
 
 		protected override sealed XamlMemberInvoker LookupInvoker ()
@@ -175,7 +175,7 @@ namespace System.Xaml
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			return String.IsNullOrEmpty (PreferredXamlNamespace) ? Name : String.Concat ("{", PreferredXamlNamespace, "}", Name);
 		}
 	}
 }

@@ -572,6 +572,8 @@ namespace MonoTests.System.Xaml
 		{
 			var t = XamlLanguage.String;
 			TestXamlTypePrimitive (t, "String", typeof (string), true, true);
+			Assert.IsNotNull (XamlLanguage.AllTypes.First (tt => tt.Name == "String").ValueSerializer, "#x");
+			Assert.IsNotNull (XamlLanguage.String.ValueSerializer, "#y");
 
 			/* Those properties are pointless regarding practical use. Those "members" does not participate in serialization.
 			var l = t.GetAllAttachableMembers ().ToArray ();
@@ -758,7 +760,11 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsAmbient, "#22");
 			//Assert.IsNull (t.AllowedContentTypes, "#23");
 			//Assert.IsNull (t.ContentWrappers, "#24");
-			//Assert.IsNull (t.ValueSerializer, "#26");
+			// string is a special case.
+			if (t == XamlLanguage.String)
+				Assert.IsNotNull (t.ValueSerializer, "#26");
+			else
+				Assert.IsNull (t.ValueSerializer, "#26");
 			//Assert.IsNull (t.DeferringLoader, "#28");
 		}
 
@@ -788,11 +794,6 @@ namespace MonoTests.System.Xaml
 
 		void TestMemberCommon (XamlMember m, string name, Type type, Type declType, bool hasSetter)
 		{
-			TestMemberCommon (m, name, type, declType, hasSetter, type == typeof (string));
-		}
-
-		void TestMemberCommon (XamlMember m, string name, Type type, Type declType, bool hasSetter, bool hasSerializer)
-		{
 			Assert.IsNotNull (m, "#1");
 			Assert.IsNotNull (m.DeclaringType, "#2");
 			Assert.AreEqual (declType, m.DeclaringType.UnderlyingType, "#2-2");
@@ -812,9 +813,14 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (new XamlType (declType, m.TargetType.SchemaContext), m.TargetType, "#10");
 			Assert.IsNotNull (m.Type, "#11");
 			Assert.AreEqual (type, m.Type.UnderlyingType, "#11-2");
-			// FIXME: test TypeConverter and ValueSerializer
-//			Assert.IsNull (m.TypeConverter, "#12");
-//			Assert.AreEqual (hasSerializer, m.ValueSerializer != null, "#13");
+			// Property.Type is a special case here.
+			if (name == "Type" && m.DeclaringType != XamlLanguage.Property)
+				Assert.AreEqual (m.Type.TypeConverter, m.TypeConverter, "#12");
+			// String type is a special case here.
+			if (type == typeof (string))
+				Assert.AreEqual (m.Type.ValueSerializer, m.ValueSerializer, "#13a");
+			else
+				Assert.IsNull (m.ValueSerializer, "#13b");
 			Assert.IsNull (m.DeferringLoader, "#14");
 			Assert.IsNotNull (m.UnderlyingMember, "#15");
 			Assert.AreEqual (!hasSetter, m.IsReadOnly, "#16");

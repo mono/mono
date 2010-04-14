@@ -1,3 +1,7 @@
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ValueSerializerTest.cs : new test.
+
 2010-04-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ArrayExtensionTest.cs
