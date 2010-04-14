@@ -1,3 +1,8 @@
+2010-04-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (type_commands): Call mono_class_setup_methods () before
+	calling mono_class_num_methods (). Fixes #592244.
+
 2010-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_get_llvm_call_info): Handle empty structures correctly.
