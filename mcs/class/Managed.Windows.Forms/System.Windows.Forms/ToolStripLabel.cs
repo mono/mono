@@ -193,8 +193,6 @@ namespace System.Windows.Forms
 		
 		protected override void OnPaint (System.Windows.Forms.PaintEventArgs e)
 		{
-			base.OnPaint (e);
-
 			if (this.Owner != null) {
 				Color font_color = this.Enabled ? this.ForeColor : SystemColors.GrayText;
 				Image draw_image = this.Enabled ? this.Image : ToolStripRenderer.CreateDisabledImage (this.Image);
@@ -278,6 +276,9 @@ namespace System.Windows.Forms
 					} else
 						this.Owner.Renderer.DrawItemText (new System.Windows.Forms.ToolStripItemTextRenderEventArgs (e.Graphics, this, this.Text, text_layout_rect, font_color, this.Font, this.TextAlign));
 			}
+
+			// call Paint handlers last.
+			base.OnPaint (e);
 		}
 
 		protected internal override bool ProcessMnemonic (char charCode)

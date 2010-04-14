@@ -1,3 +1,13 @@
+2010-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripItem.cs: Separate the background rendering from the Paint
+	routine, so we can both make sure the background stuff is done first,
+	and we also let our items fire the OnPaint event handlers before or
+	after their own routines.
+	* ToolStripLabel.cs: Move the base call to OnPaint to the end, so any
+	user's Paint handler can draw on top of us, like .Net does.
+	Fixes #587563.
+
 2010-04-13  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: When checking for the values returned by

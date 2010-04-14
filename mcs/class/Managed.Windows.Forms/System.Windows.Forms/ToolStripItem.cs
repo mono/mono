@@ -1178,12 +1178,18 @@ namespace System.Windows.Forms
 			this.CalculateAutoSize ();
 			OnFontChanged (EventArgs.Empty);
 		}
-		
-		protected virtual void OnPaint (PaintEventArgs e)
+
+		void OnPaintInternal (PaintEventArgs e)
 		{
+			// Have the background rendered independently from OnPaint
 			if (this.parent != null)
 				this.parent.Renderer.DrawItemBackground (new ToolStripItemRenderEventArgs (e.Graphics, this));
-				
+
+			OnPaint (e);
+		}
+
+		protected virtual void OnPaint (PaintEventArgs e)
+		{
 			PaintEventHandler eh = (PaintEventHandler)(Events [PaintEvent]);
 			if (eh != null)
 				eh (this, e);
@@ -1792,7 +1798,7 @@ namespace System.Windows.Forms
 					this.OnMouseMove ((MouseEventArgs)e);
 					break;
 				case ToolStripItemEventType.Paint:
-					this.OnPaint ((PaintEventArgs)e);
+					this.OnPaintInternal ((PaintEventArgs)e);
 					break;
 				case ToolStripItemEventType.Click:
 					this.HandleClick (e);
