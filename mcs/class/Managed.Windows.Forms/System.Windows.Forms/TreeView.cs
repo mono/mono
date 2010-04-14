@@ -751,7 +751,7 @@ namespace System.Windows.Forms {
 #if NET_2_0
 		public	void Sort ()
 		{
-			Sort (Nodes.Count >= 2 ? tree_view_node_sorter : null);
+			Sort (tree_view_node_sorter);
 		}
 #endif
 

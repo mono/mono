@@ -1,5 +1,12 @@
 2010-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeView.cs: We must use the comparer supplied by TreeViewNodeSorter
+	*always*, since it is used recursively, so checking for a number of
+	top level nodes is useless. This should fix a case where we were not
+	sorting any node with a single root node.
+
+2010-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* DataGridView.cs: Call the base Paint impl last, instead of do that
 	at the beginning, to let handlers draw on top of us. 
 	Fixes the remaining bits of #587563.
