@@ -24,9 +24,11 @@ using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Xml;
+using System.Xaml.Schema;
 
 namespace System.Xaml
 {
+	// FIXME: is GetObject supported by this reader?
 	public class XamlXmlReader : XamlReader, IXamlLineInfo
 	{
 		public XamlXmlReader (Stream stream)
@@ -122,14 +124,21 @@ namespace System.Xaml
 		IXmlLineInfo line_info;
 		XamlSchemaContext sctx;
 		XamlXmlReaderSettings settings;
-		bool close_reader;
+		bool close_reader, is_eof;
+		XamlNodeType node_type;
+		
+		object current;
+		bool inside_object_not_member, is_empty_object, is_empty_member;
+		List<XamlTypeName> type_args = new List<XamlTypeName> ();
+		Stack<XamlType> types = new Stack<XamlType> ();
+		XamlMember current_member;
 
 		public bool HasLineInfo {
 			get { return line_info != null && line_info.HasLineInfo (); }
 		}
 
 		public override bool IsEof {
-			get { throw new NotImplementedException (); }
+			get { return is_eof; }
 		}
 
 		public int LineNumber {
@@ -144,10 +153,11 @@ namespace System.Xaml
 			get { throw new NotImplementedException (); }
 		}
 		public override NamespaceDeclaration Namespace {
-			get { throw new NotImplementedException (); }
+			get { return current as NamespaceDeclaration; }
 		}
+
 		public override XamlNodeType NodeType {
-			get { throw new NotImplementedException (); }
+			get { return node_type; }
 		}
 
 		public override XamlSchemaContext SchemaContext {
@@ -155,10 +165,11 @@ namespace System.Xaml
 		}
 
 		public override XamlType Type {
-			get { throw new NotImplementedException (); }
+			get { return current as XamlType; }
 		}
+
 		public override object Value {
-			get { throw new NotImplementedException (); }
+			get { return NodeType == XamlNodeType.Value ? current : null; }
 		}
 
 		protected override void Dispose (bool disposing)
@@ -168,10 +179,167 @@ namespace System.Xaml
 			if (close_reader)
 				r.Close ();
 		}
-		
+
 		public override bool Read ()
 		{
+			if (is_eof)
+				throw new ObjectDisposedException ("reader");
+
+			if (is_empty_object) {
+				is_empty_object = false;
+				ReadEndType ();
+				return true;
+			}
+			if (is_empty_member) {
+				is_empty_member = false;
+				ReadEndMember ();
+				return true;
+			}
+
+			bool attrIterated = false;
+			if (r.NodeType == XmlNodeType.Attribute) {
+				attrIterated = true;
+				if (r.MoveToNextAttribute ())
+					if (CheckNextNamespace ())
+						return true;
+			}
+
+			if (!r.EOF)
+				r.MoveToContent ();
+			if (r.EOF) {
+				is_eof = true;
+				return false;
+			}
+
+			switch (r.NodeType) {
+			case XmlNodeType.Element:
+
+				// could be: StartObject, StartMember, optionally preceding NamespaceDeclarations
+				if (!attrIterated && r.MoveToFirstAttribute ())
+					if (CheckNextNamespace ())
+						return true;
+				r.MoveToElement ();
+				if (inside_object_not_member)
+					ReadStartMember ();
+				else
+					ReadStartType ();
+				return true;
+
+			case XmlNodeType.EndElement:
+
+				// could be: EndObject, EndMember
+				if (inside_object_not_member)
+					ReadEndMember ();
+				else
+					ReadEndType ();
+				return true;
+
+			case XmlNodeType.ProcessingInstruction:
+			case XmlNodeType.EntityReference:
+				r.Read (); // skip
+				return Read ();
+
+			default:
+
+				// could be: Value
+				ReadValue ();
+				return true;
+			}
 			throw new NotImplementedException ();
+		}
+
+		bool CheckNextNamespace ()
+		{
+			do {
+				if (r.NamespaceURI == XamlLanguage.Xml1998Namespace) {
+					current = new NamespaceDeclaration (r.Value, r.Prefix == "xmlns" ? r.LocalName : String.Empty);
+					node_type = XamlNodeType.NamespaceDeclaration;
+					return true;
+				}
+			} while (r.MoveToNextAttribute ());
+			return false;
+		}
+
+		void ReadStartType ()
+		{
+			string name = r.LocalName;
+			string ns = r.NamespaceURI;
+			type_args.Clear ();
+
+			if (!r.IsEmptyElement) {
+				r.Read ();
+				do {
+					r.MoveToContent ();
+					switch (r.NodeType) {
+					case XmlNodeType.Element:
+					// FIXME: parse type arguments etc.
+					case XmlNodeType.EndElement:
+						break;
+					case XmlNodeType.ProcessingInstruction:
+						r.Read ();
+						continue;
+					}
+					break;
+				} while (true);
+			}
+			else
+				is_empty_object = true;
+			
+			var xt = sctx.GetXamlType (new XamlTypeName (ns, name, type_args.ToArray ()));
+			if (xt == null)
+				// FIXME: .NET just treats the node as empty!
+				// we have to sort out what to do here.
+				throw new XamlParseException (String.Format ("Failed to create a XAML type for '{0}' in namespace '{1}'", name, ns));
+			types.Push (xt);
+			current = xt;
+
+			node_type = XamlNodeType.StartObject;
+			inside_object_not_member = true;
+		}
+		
+		void ReadStartMember ()
+		{
+			var name = r.LocalName;
+
+			current_member = types.Peek ().GetMember (name);
+			current = current_member;
+
+			node_type = XamlNodeType.StartMember;
+			inside_object_not_member = false;
+		}
+		
+		void ReadEndType ()
+		{
+			r.Read ();
+
+			types.Pop ();
+			current = null;
+			node_type = XamlNodeType.EndObject;
+			inside_object_not_member = false;
+		}
+		
+		void ReadEndMember ()
+		{
+			r.Read ();
+
+			current = current_member = null;
+			node_type = XamlNodeType.EndMember;
+			inside_object_not_member = true;
+		}
+
+		void ReadValue ()
+		{
+			// FIXME: (probably) use ValueSerializer to deserialize the value to the expected type.
+			current = r.Value;
+
+			r.Read ();
+
+			node_type = XamlNodeType.Value;
+		}
+
+		string GetLineString ()
+		{
+			return HasLineInfo ? String.Format (" Line {0}, at {1}", LineNumber, LinePosition) : String.Empty;
 		}
 	}
 }

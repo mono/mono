@@ -1,0 +1,7 @@
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Type.xml
+	  String.xml
+	  List_Int32.xml
+	  Array_Int32.xml
+	  Int32.xml : New, example reader test xml files.
