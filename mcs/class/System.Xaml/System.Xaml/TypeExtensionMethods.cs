@@ -105,9 +105,9 @@ namespace System.Xaml
 
 		public static bool ListEquals (this IList<XamlType> a1, IList<XamlType> a2)
 		{
-			if (a1 == null)
-				return a2 == null;
-			if (a2 == null)
+			if (a1 == null || a1.Count == 0)
+				return a2 == null || a2.Count == 0;
+			if (a2 == null || a2.Count == 0)
 				return false;
 			if (a1.Count != a2.Count)
 				return false;

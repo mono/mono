@@ -1,5 +1,11 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlSchemaContext.cs, TypeExtensionMethods.cs : reimplement some
+	  GetXamlType() overloads. Protected one should be the actual
+	  implementation.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlType.cs : fixed ToString() to ignore UnderlyingType.
 
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>

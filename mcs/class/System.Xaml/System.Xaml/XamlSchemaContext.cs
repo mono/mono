@@ -161,17 +161,29 @@ namespace System.Xaml
 				throw new ArgumentNullException ("xamlTypeName");
 
 			var n = xamlTypeName;
+			if (n.TypeArguments.Count == 0) // non-generic
+				return GetXamlType (n.Namespace, n.Name);
+
+			// generic
+			XamlType [] typeArgs = new XamlType [n.TypeArguments.Count];
+			for (int i = 0; i < typeArgs.Length; i++)
+				typeArgs [i] = GetXamlType (n.TypeArguments [i]);
+			return GetXamlType (n.Namespace, n.Name, typeArgs);
+		}
+		
+		protected internal virtual XamlType GetXamlType (string xamlNamespace, string name, params XamlType [] typeArguments)
+		{
 			string dummy;
-			if (TryGetCompatibleXamlNamespace (n.Namespace, out dummy))
-				n = new XamlTypeName (dummy, n.Name, n.TypeArguments);
+			if (TryGetCompatibleXamlNamespace (xamlNamespace, out dummy))
+				xamlNamespace = dummy;
 
 			XamlType ret;
-			if (n.Namespace == XamlLanguage.Xaml2006Namespace) {
+			if (xamlNamespace == XamlLanguage.Xaml2006Namespace) {
 				// FIXME: I'm not really sure if these *special*
 				// names should be resolved here. There just
 				// does not seem to be any other appropriate
 				// places.
-				switch (n.Name) {
+				switch (name) {
 				case "Array":
 					return XamlLanguage.Array;
 				case "Member":
@@ -185,16 +197,16 @@ namespace System.Xaml
 				case "Type":
 					return XamlLanguage.Type;
 				}
-				ret = XamlLanguage.AllTypes.FirstOrDefault (t => t.NameEquals (n));
+				ret = XamlLanguage.AllTypes.FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
 				if (ret != null)
 					return ret;
 			}
-			return GetAllXamlTypes (n.Namespace).FirstOrDefault (t => t.NameEquals (n));
+			return GetAllXamlTypes (xamlNamespace).FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
 		}
-		
-		protected internal virtual XamlType GetXamlType (string xamlNamespace, string name, params XamlType [] typeArguments)
+
+		bool TypeMatches (XamlType t, string ns, string name, XamlType [] typeArgs)
 		{
-			return GetXamlType (new XamlTypeName (xamlNamespace, name, typeArguments.ToTypeNames ()));
+			return t.PreferredXamlNamespace == ns && t.Name == name && t.TypeArguments.ListEquals (typeArgs);
 		}
 
 		protected internal virtual Assembly OnAssemblyResolve (string assemblyName)
