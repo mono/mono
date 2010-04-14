@@ -1,3 +1,11 @@
+2010-04-14  Jb Evain  <jbevain@novell.com>
+
+	* MemoryMappedViewAccessor.cs
+	* MemoryMappedFile.cs
+	* MemoryMappedViewStream.cs:
+		Properly retrieve the size of the mmapped file. Fixes the
+		unit tests.
+
 2009-12-14  Miguel de Icaza  <miguel@novell.com>
 
 	* MemoryMappedFile.cs: Make this by default use the native

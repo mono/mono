@@ -53,8 +53,7 @@ namespace System.IO.MemoryMappedFiles
 		{
 			int offset_diff;
 			mmap_size = (ulong) size;
-			MemoryMappedFile.MapPosix (fd, offset, size, access, out mmap_addr, out offset_diff);
-			
+			MemoryMappedFile.MapPosix (fd, offset, ref size, access, out mmap_addr, out offset_diff);
 			FileAccess faccess;
 
 			switch (access) {

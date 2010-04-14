@@ -333,7 +333,7 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 
-		internal static unsafe void MapPosix (int file_handle, long offset, long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff)
+		internal static unsafe void MapPosix (int file_handle, long offset, ref long size, MemoryMappedFileAccess access, out IntPtr map_addr, out int offset_diff)
 		{
 			if (pagesize == 0)
 				pagesize = Syscall.getpagesize ();
