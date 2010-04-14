@@ -1,5 +1,9 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlServices.cs : added a couple of missing methods.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReader.cs
 	  XamlSchemaContext.cs
 	  XamlObjectReaderException.cs

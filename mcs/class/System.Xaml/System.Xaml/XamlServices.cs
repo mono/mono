@@ -29,6 +29,12 @@ namespace System.Xaml
 {
 	public static class XamlServices
 	{
+		public static Object Load (string fileName)
+		{
+			using (var xr = XmlReader.Create (fileName))
+				return Load (xr);
+		}
+
 		public static Object Load (Stream stream)
 		{
 			return Load (new XamlXmlReader (stream));
@@ -56,6 +62,42 @@ namespace System.Xaml
 		public static Object Parse (string xaml)
 		{
 			return Load (new StringReader (xaml));
+		}
+
+		public static string Save (object instance)
+		{
+			var sw = new StringWriter ();
+			Save (sw, instance);
+			return sw.ToString ();
+		}
+
+		public static void Save (string fileName, object instance)
+		{
+			using (var xw = XmlWriter.Create (fileName))
+				Save (xw, instance);
+		}
+
+		public static void Save (Stream stream, object instance)
+		{
+			Save (new XamlXmlWriter (stream, new XamlSchemaContext ()), instance);
+		}
+
+		public static void Save (TextWriter textWriter, object instance)
+		{
+			Save (new XamlXmlWriter (textWriter, new XamlSchemaContext ()), instance);
+		}
+
+		public static void Save (XmlWriter xmlWriter, object instance)
+		{
+			Save (new XamlXmlWriter (xmlWriter, new XamlSchemaContext ()), instance);
+		}
+
+		public static void Save (XamlWriter xamlWriter, object instance)
+		{
+			if (xamlWriter == null)
+				throw new ArgumentNullException ("xamlWriter");
+			var r = new XamlObjectReader (instance, xamlWriter.SchemaContext);
+			Transform (r, xamlWriter);
 		}
 
 		public static void Transform (XamlReader xamlReader, XamlWriter xamlWriter)
