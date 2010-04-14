@@ -28,6 +28,14 @@ namespace System.Xaml.Schema
 {
 	public class XamlTypeName
 	{
+		public static XamlTypeName Parse (string typeName, IXamlNamespaceResolver namespaceResolver)
+		{
+			XamlTypeName n;
+			if (!TryParse (typeName, namespaceResolver, out n))
+				throw new FormatException (String.Format ("Invalid typeName: '{0}'", typeName));
+			return n;
+		}
+
 		public static bool TryParse (string typeName, IXamlNamespaceResolver namespaceResolver, out XamlTypeName result)
 		{
 			if (typeName == null)
@@ -42,11 +50,8 @@ namespace System.Xaml.Schema
 			if (idx >= 0) {
 				if (typeName [typeName.Length - 1] != ')')
 					return false;
-				try {
-					args = ParseList (typeName.Substring (idx + 1, typeName.Length - idx - 2), namespaceResolver);
-				} catch (FormatException) {
+				if (!TryParseList (typeName.Substring (idx + 1, typeName.Length - idx - 2), namespaceResolver, out args))
 					return false;
-				}
 				typeName = typeName.Substring (0, idx);
 			}
 
@@ -75,14 +80,23 @@ namespace System.Xaml.Schema
 
 		public static IList<XamlTypeName> ParseList (string typeNameList, IXamlNamespaceResolver namespaceResolver)
 		{
+			IList<XamlTypeName> list;
+			if (!TryParseList (typeNameList, namespaceResolver, out list))
+				throw new FormatException (String.Format ("Invalid type name list: '{0}'", typeNameList));
+			return list;
+		}
+
+		public static bool TryParseList (string typeNameList, IXamlNamespaceResolver namespaceResolver, out IList<XamlTypeName> list)
+		{
 			if (typeNameList == null)
 				throw new ArgumentNullException ("typeNameList");
 			if (namespaceResolver == null)
 				throw new ArgumentNullException ("namespaceResolver");
 
+			list = null;
 			var split = typeNameList.Split (commas);
 			if (split.Length == 0)
-				throw new FormatException (String.Format ("Invalid type name list: '{0}'", typeNameList));
+				return false;
 
 			var arr = new XamlTypeName [split.Length];
 
@@ -90,11 +104,12 @@ namespace System.Xaml.Schema
 				var s = split [i].Trim ();
 				XamlTypeName tn;
 				if (!TryParse (s, namespaceResolver, out tn))
-					throw new FormatException (String.Format ("Invalid type name list: '{0}'", typeNameList));
+					return false;
 				arr [i] = tn;
 			}
 
-			return arr;
+			list = arr;
+			return true;
 		}
 
 		public static string ToString (IList<XamlTypeName> typeNameList, INamespacePrefixLookup prefixLookup)

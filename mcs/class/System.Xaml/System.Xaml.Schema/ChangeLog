@@ -1,5 +1,9 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlTypeName.cs : corcompare shows I was missing useful two.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlTypeName.cs : implemented.
 
 2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>
