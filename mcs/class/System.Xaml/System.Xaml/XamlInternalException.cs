@@ -30,6 +30,11 @@ namespace System.Xaml
 	[Serializable]
 	public class XamlInternalException : XamlException
 	{
+		public XamlInternalException ()
+			: this ("XAML internal error")
+		{
+		}
+
 		public XamlInternalException (string message)
 			: this (message, null)
 		{

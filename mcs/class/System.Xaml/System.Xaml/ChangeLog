@@ -1,5 +1,20 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReader.cs
+	  XamlSchemaContext.cs
+	  XamlObjectReaderException.cs
+	  XamlXmlWriterException.cs
+	  XamlXmlWriterSettings.cs
+	  XamlObjectWriterException.cs
+	  XamlParseException.cs
+	  XamlInternalException.cs
+	  XamlException.cs
+	  XamlSchemaException.cs
+	  XamlDuplicateMemberException.cs : a handful of corcompare fixes.
+
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlMember.cs
 	  XamlDirective.cs
 	  XamlType.cs

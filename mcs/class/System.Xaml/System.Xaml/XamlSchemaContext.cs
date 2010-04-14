@@ -36,6 +36,11 @@ namespace System.Xaml
 	// It should be released at finalizer.
 	public class XamlSchemaContext
 	{
+		public XamlSchemaContext ()
+			: this (null, null)
+		{
+		}
+
 		public XamlSchemaContext (IEnumerable<Assembly> referenceAssemblies)
 			: this (referenceAssemblies, null)
 		{

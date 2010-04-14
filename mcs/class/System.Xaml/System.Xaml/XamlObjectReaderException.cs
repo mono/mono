@@ -30,6 +30,11 @@ namespace System.Xaml
 	[Serializable]
 	public class XamlObjectReaderException : XamlException
 	{
+		public XamlObjectReaderException ()
+			: this ("XAML object reader error")
+		{
+		}
+
 		public XamlObjectReaderException (string message)
 			: this (message, null)
 		{

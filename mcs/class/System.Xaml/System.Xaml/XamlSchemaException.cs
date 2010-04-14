@@ -30,6 +30,11 @@ namespace System.Xaml
 	[Serializable]
 	public class XamlSchemaException : XamlException
 	{
+		public XamlSchemaException ()
+			: this ("XAML schema error")
+		{
+		}
+
 		public XamlSchemaException (string message)
 			: this (message, null)
 		{

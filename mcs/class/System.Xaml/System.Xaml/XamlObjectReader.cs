@@ -121,7 +121,11 @@ namespace System.Xaml
 		Stack<IEnumerator<XamlMember>> members_stack = new Stack<IEnumerator<XamlMember>> ();
 		IEnumerator<NamespaceDeclaration> namespaces;
 		XamlNodeType node_type = XamlNodeType.None;
-		bool is_eof, is_disposed;
+		bool is_eof;
+
+		public object Instance {
+			get { return instance; }
+		}
 
 		public override bool IsEof {
 			get { return is_eof; }
@@ -150,15 +154,10 @@ namespace System.Xaml
 		public override object Value {
 			get { return NodeType == XamlNodeType.Value ? objects.Peek () : null; }
 		}
-
-		protected override void Dispose (bool disposing)
-		{
-			is_disposed = true;
-		}
 		
 		public override bool Read ()
 		{
-			if (is_disposed)
+			if (IsDisposed)
 				throw new ObjectDisposedException ("reader");
 			if (IsEof)
 				return false;

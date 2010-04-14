@@ -30,6 +30,11 @@ namespace System.Xaml
 	[Serializable]
 	public class XamlDuplicateMemberException : XamlException
 	{
+		public XamlDuplicateMemberException ()
+			: this ("Duplicate members are found in the type")
+		{
+		}
+
 		public XamlDuplicateMemberException (XamlMember member, XamlType type)
 			: this (String.Format ("duplicate member '{0}' in type '{1}'", member, type))
 		{

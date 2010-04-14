@@ -30,6 +30,11 @@ namespace System.Xaml
 	[Serializable]
 	public class XamlObjectWriterException : XamlException
 	{
+		public XamlObjectWriterException ()
+			: this ("XAML object writer error")
+		{
+		}
+
 		public XamlObjectWriterException (string message)
 			: this (message, null)
 		{
