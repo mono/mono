@@ -1,3 +1,7 @@
+2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Regression test for #422113.
+
 2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MethodBuilderTest.cs: Regression test for #591226.

@@ -11162,5 +11162,16 @@ namespace MonoTests.System.Reflection.Emit
 			var fooType = typeBuilder.CreateType();
 			Assert.AreSame(fooType.MakeArrayType(), fooType.GetField("Foos").FieldType);
         }
+
+
+		[Test] //Test for #422113
+		[ExpectedException (typeof (TypeLoadException))]
+		public void CreateInstanceOfIncompleteType ()
+		{
+			TypeBuilder tb = module.DefineType (genTypeName (), TypeAttributes.Class, null, new Type[] { typeof (IComparable) });
+			Type proxyType = tb.CreateType();
+			Activator.CreateInstance(proxyType);
+		}
+
 	}
 }
