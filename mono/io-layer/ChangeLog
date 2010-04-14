@@ -1,3 +1,8 @@
+2010-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* collection.c (_wapi_collection_init): Set stack size on openbsd similarly to
+	the other BSDs.
+
 2010-04-10  Andreas Färber  <andreas.faerber@web.de>
 
 	* processes.c (EnumProcesses, load_modules): Add implementations
