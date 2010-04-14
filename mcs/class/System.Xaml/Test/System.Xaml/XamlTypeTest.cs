@@ -316,6 +316,44 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void DefaultValuesType2 ()
+		{
+			var t = new XamlType (typeof (Type), sctx);
+			Assert.IsNotNull (t.Invoker, "#1");
+			Assert.IsTrue (t.IsNameValid, "#2");
+			Assert.IsFalse (t.IsUnknown, "#3");
+			Assert.AreEqual ("Type", t.Name, "#4");
+			// Note that Type is not a standard type. An instance of System.Type is usually represented as TypeExtension.
+			Assert.AreEqual ("clr-namespace:System;assembly=mscorlib", t.PreferredXamlNamespace, "#5");
+			Assert.IsNull (t.TypeArguments, "#6");
+			Assert.AreEqual (typeof (Type), t.UnderlyingType, "#7");
+			Assert.IsTrue (t.ConstructionRequiresArguments, "#8"); // yes, true.
+			Assert.IsFalse (t.IsArray, "#9");
+			Assert.IsFalse (t.IsCollection, "#10");
+			Assert.IsFalse (t.IsConstructible, "#11"); // yes, false.
+			Assert.IsFalse (t.IsDictionary, "#12");
+			Assert.IsFalse (t.IsGeneric, "#13");
+			Assert.IsFalse (t.IsMarkupExtension, "#14");
+			Assert.IsFalse (t.IsNameScope, "#15");
+			Assert.IsTrue (t.IsNullable, "#16");
+			Assert.IsTrue (t.IsPublic, "#17");
+			Assert.IsFalse (t.IsUsableDuringInitialization, "#18");
+			Assert.IsFalse (t.IsWhitespaceSignificantCollection, "#19");
+			Assert.IsFalse (t.IsXData, "#20");
+			Assert.IsFalse (t.TrimSurroundingWhitespace, "#21");
+			Assert.IsFalse (t.IsAmbient, "#22");
+			//Assert.IsNull (t.AllowedContentTypes, "#23");
+			//Assert.IsNull (t.ContentWrappers, "#24");
+			// FIXME: enable this when we fixed TypeConverter for Type.
+			//Assert.IsNotNull (t.TypeConverter, "#25"); // TypeTypeConverter
+			Assert.IsNull (t.ValueSerializer, "#26");
+			Assert.IsNull (t.ContentProperty, "#27");
+			//Assert.IsNull (t.DeferringLoader, "#28");
+			Assert.IsNull (t.MarkupExtensionReturnType, "#29");
+			Assert.AreEqual (sctx, t.SchemaContext, "#30");
+		}
+
+		[Test]
 		public void DefaultValuesName ()
 		{
 			var t = new XamlType ("urn:foo", ".", null, sctx);

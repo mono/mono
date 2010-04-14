@@ -1,5 +1,11 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReaderTest.cs
+	  XamlSchemaContextTest.cs
+	  XamlTypeTest.cs : a couple of Type/TypeExtension-related tests.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlTypeTest.cs, XamlLanguageTest.cs : enable ValueSerializer tests.
 
 2010-04-13  Atsushi Enomoto  <atsushi@ximian.com>

@@ -225,6 +225,81 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#4");
 			Assert.IsFalse (r.Read (), "#5");
 		}
+
+		[Test]
+		[Category ("NotWorking")] // namespace node differences
+		public void Read_Type ()
+		{
+			var r = new XamlObjectReader (typeof (TestClass1));
+			Read_TypeOrTypeExtension (r);
+		}
+		
+		[Test]
+		[Category ("NotWorking")] // namespace node differences
+		public void Read_TypeExtension ()
+		{
+			var r = new XamlObjectReader (new TypeExtension (typeof (TestClass1)));
+			Read_TypeOrTypeExtension (r);
+		}
+
+		void Read_TypeOrTypeExtension (XamlObjectReader r)
+		{
+			Assert.AreEqual (XamlNodeType.None, r.NodeType, "#1");
+			Assert.IsNull (r.Member, "#2");
+			Assert.IsNull (r.Namespace, "#3");
+			Assert.IsNull (r.Member, "#4");
+			Assert.IsNull (r.Type, "#5");
+			Assert.IsNull (r.Value, "#6");
+			Assert.IsNull (r.Instance, "#7");
+
+			Assert.IsTrue (r.Read (), "#11");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
+			Assert.IsNotNull (r.Namespace, "#13");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "#13-2");
+			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "#13-3");
+			Assert.IsNull (r.Instance, "#14");
+
+			Assert.IsTrue (r.Read (), "#16");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#17");
+			Assert.IsNotNull (r.Namespace, "#18");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#18-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#18-3");
+			Assert.IsNull (r.Instance, "#19");
+
+			Assert.IsTrue (r.Read (), "#21");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
+			Assert.IsNotNull (r.Type, "#23");
+			Assert.AreEqual (new XamlType (typeof (TypeExtension), r.SchemaContext), r.Type, "#23-2");
+			Assert.IsNull (r.Namespace, "#25");
+			Assert.IsTrue (r.Instance is TypeExtension, "#26");
+
+			Assert.IsTrue (r.Read (), "#31");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "#32");
+			Assert.IsNotNull (r.Member, "#33");
+			Assert.AreEqual (XamlLanguage.PositionalParameters, r.Member, "#33-2");
+			Assert.IsNull (r.Type, "#34");
+			Assert.IsNull (r.Instance, "#35");
+
+			Assert.IsTrue (r.Read (), "#41");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#42");
+			Assert.IsNotNull (r.Value, "#43");
+			Assert.AreEqual ("TestClass1", r.Value, "#43-2");
+			Assert.IsNull (r.Member, "#44");
+			Assert.IsNull (r.Instance, "#45");
+
+			Assert.IsTrue (r.Read (), "#51");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "#52");
+			Assert.IsNull (r.Type, "#53");
+			Assert.IsNull (r.Member, "#54");
+			Assert.IsNull (r.Instance, "#55");
+
+			Assert.IsTrue (r.Read (), "#61");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "#62");
+			Assert.IsNull (r.Type, "#63");
+
+			Assert.IsFalse (r.Read (), "#71");
+			Assert.IsTrue (r.IsEof, "#72");
+		}
 	}
 
 	class TestClass1

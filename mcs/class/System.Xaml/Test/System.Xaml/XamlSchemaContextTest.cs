@@ -231,5 +231,21 @@ namespace MonoTests.System.Xaml
 			xt = ctx.GetXamlType (new XamlTypeName (ns, "Type"));
 			Assert.IsNotNull (xt, "#7");
 		}
+
+		[Test]
+		public void GetTypeForRuntimeType ()
+		{
+			var ctx = NewStandardContext ();
+
+			// There are some special types that have non-default name: MemberDefinition, PropertyDefinition
+
+			var xt = ctx.GetXamlType (typeof (Type));
+			Assert.AreEqual ("Type", xt.Name, "#1-1");
+			Assert.AreEqual (typeof (Type), xt.UnderlyingType, "#1-2");
+
+			xt = ctx.GetXamlType (new XamlTypeName (XamlLanguage.Xaml2006Namespace, "Type")); // becomes TypeExtension, not Type
+			Assert.AreEqual ("TypeExtension", xt.Name, "#2-1");
+			Assert.AreEqual (typeof (TypeExtension), xt.UnderlyingType, "#2-2");
+		}
 	}
 }

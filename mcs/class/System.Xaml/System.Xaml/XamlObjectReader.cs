@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Windows.Markup;
 
 namespace System.Xaml
 {
@@ -101,6 +102,10 @@ namespace System.Xaml
 		{
 			if (schemaContext == null)
 				throw new ArgumentNullException ("schemaContext");
+			// FIXME: special case? or can it be generalized?
+			if (instance is Type)
+				instance = new TypeExtension ((Type) instance);
+
 			if (instance != null) {
 				// check type validity. Note that some checks are done at Read() phase.
 				var type = instance.GetType ();
@@ -123,8 +128,8 @@ namespace System.Xaml
 		XamlNodeType node_type = XamlNodeType.None;
 		bool is_eof;
 
-		public object Instance {
-			get { return instance; }
+		public virtual object Instance {
+			get { return NodeType == XamlNodeType.StartObject && objects.Count > 0 ? objects.Peek () : null; }
 		}
 
 		public override bool IsEof {

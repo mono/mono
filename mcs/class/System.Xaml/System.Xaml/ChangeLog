@@ -1,5 +1,9 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReader.cs : Type is consumed as TypeExtension.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlServices.cs : fix Transform implementation.
 
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
