@@ -686,6 +686,49 @@ namespace MonoTests.System.Windows.Forms
 				return ((TreeNode)x).Text == "2" ? -1 : 1;
 			}
 		}
+
+		[Test]
+		public void SortedRecursive ()
+		{
+			TreeView tv = new TreeView ();
+			tv.TreeViewNodeSorter = new InverseNodeSorter ();
+			tv.BeginUpdate ();
+			TreeNode root_node = tv.Nodes.Add ("Root");
+			for (char c = 'a'; c <= 'f'; c++) {
+				TreeNode node = new TreeNode (c.ToString ());
+				for (int i = 0; i < 3; i++)
+					node.Nodes.Add (i.ToString ());
+
+				root_node.Nodes.Add (node);
+			}
+			tv.EndUpdate ();
+
+			// Make sure we are sorted
+			tv.Sort ();
+
+			Assert.AreEqual ("f", root_node.Nodes [0].Text, "#A1");
+			Assert.AreEqual ("e", root_node.Nodes [1].Text, "#A2");
+			Assert.AreEqual ("d", root_node.Nodes [2].Text, "#A3");
+			Assert.AreEqual ("c", root_node.Nodes [3].Text, "#A4");
+			Assert.AreEqual ("b", root_node.Nodes [4].Text, "#A5");
+			Assert.AreEqual ("a", root_node.Nodes [5].Text, "#A5");
+
+			foreach (TreeNode n in root_node.Nodes) {
+				Assert.AreEqual ("2", n.Nodes [0].Text, "#B1");
+				Assert.AreEqual ("1", n.Nodes [1].Text, "#B2");
+				Assert.AreEqual ("0", n.Nodes [2].Text, "#B3");
+			}
+		}
+
+		class InverseNodeSorter : IComparer
+		{
+			public int Compare (object a, object b)
+			{
+				TreeNode node_a = (TreeNode)a;
+				TreeNode node_b = (TreeNode)b;
+				return String.Compare (node_b.Text, node_a.Text);
+			}
+		}
 	}
 #endif
 }
