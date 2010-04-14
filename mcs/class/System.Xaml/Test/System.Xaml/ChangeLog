@@ -1,5 +1,10 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlMemberTest.cs : remove extra type that I wrote when I thought
+	  there were no public UnderlyingMember.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlMemberTest.cs : added ToStringTest().
 
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
