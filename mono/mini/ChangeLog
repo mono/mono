@@ -1,3 +1,11 @@
+2010-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (handle_box_inst): Merge into handle_box, simplify the merged
+	version.
+	* (handle_alloc): Ditto.
+	(mono_method_to_ir): Remove the constrained call restriction added by a previous
+	change, its not needed anymore.
+
 2010-04-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* mini-posix.c (sigusr1_signal_handler): Fix build on
