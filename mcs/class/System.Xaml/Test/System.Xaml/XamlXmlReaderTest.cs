@@ -65,6 +65,12 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void Read_TimeSpan ()
+		{
+			ReadTest ("TimeSpan.xml");
+		}
+
+		[Test]
 		public void Read_ArrayInt32 ()
 		{
 			ReadTest ("Array_Int32.xml");

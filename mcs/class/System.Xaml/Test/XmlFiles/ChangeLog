@@ -1,5 +1,9 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TimeSpan.xml : new test file.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Type.xml
 	  String.xml
 	  List_Int32.xml

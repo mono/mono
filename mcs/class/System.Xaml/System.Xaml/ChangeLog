@@ -1,5 +1,11 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlWriter.cs : use TypeConverter to get string value to write.
+	  (TimeSpan shows the difference; the type's ValueSerializer is null,
+	  while TypeConverter is not, and gives the expected non-xsd output.)
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlSchemaContext.cs, TypeExtensionMethods.cs : reimplement some
 	  GetXamlType() overloads. Protected one should be the actual
 	  implementation.

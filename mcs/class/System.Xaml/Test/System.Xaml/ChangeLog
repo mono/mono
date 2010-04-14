@@ -1,5 +1,9 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlReaderTest.cs : add primitive TimeSpan reader test.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlTypeTest.cs : add more TypeConverter and ToString() tests.
 
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>

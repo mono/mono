@@ -22,8 +22,10 @@
 //
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
+using System.Windows.Markup;
 using System.Xml;
 
 /*
@@ -79,6 +81,7 @@ namespace System.Xaml
 		XmlWriter w;
 		XamlSchemaContext sctx;
 		XamlXmlWriterSettings settings;
+		IValueSerializerContext serializer_context;
 
 		XamlWriterStateManager manager;
 
@@ -263,7 +266,13 @@ namespace System.Xaml
 
 		void DoWriteValue (object value)
 		{
-			w.WriteValue (value);
+			var xt = value == null ? XamlLanguage.Null : SchemaContext.GetXamlType (value.GetType ());
+			var vs = xt.TypeConverter;
+			var c = vs != null ? vs.ConverterInstance : null;
+			if (c != null && c.CanConvertTo (typeof (string)))
+				w.WriteString (c.ConvertToInvariantString (value));
+			else
+				w.WriteValue (value);
 		}
 
 		object GetNonNamespaceNode ()
