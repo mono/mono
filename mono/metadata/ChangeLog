@@ -1,3 +1,10 @@
+2010-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_InternalInvoke): Check if the vtable is sane
+	for instance methods/ctors.
+
+	Fixes #422113.
+
 2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (mono_method_verify): A switch op don't empty
