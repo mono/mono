@@ -73,7 +73,7 @@ namespace System.Xaml
 
 		public static void Save (string fileName, object instance)
 		{
-			using (var xw = XmlWriter.Create (fileName))
+			using (var xw = XmlWriter.Create (fileName, new XmlWriterSettings () { OmitXmlDeclaration = true }))
 				Save (xw, instance);
 		}
 
@@ -115,8 +115,12 @@ namespace System.Xaml
 			if (xamlReader.NodeType == XamlNodeType.None)
 				xamlReader.Read ();
 
-			xamlWriter.WriteNode (xamlReader);
-
+			while (!xamlReader.IsEof) {
+				xamlWriter.WriteNode (xamlReader);
+				xamlReader.Read ();
+			}
+			if (closeWriter)
+				xamlWriter.Close ();
 		}
 	}
 }
