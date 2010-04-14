@@ -1,3 +1,8 @@
+2010-04-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* DeflateStream.cs: the delegate uses Cdecl calling convention on
+	windows too. Fixes bug #574713.
+
 2009-09-14 Jonathan Pryor <jpryor@novell.com>
 
 	* DeflateStream.cs: MonoTouch reverse callbacks need to be static
