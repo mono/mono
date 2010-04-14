@@ -4675,8 +4675,6 @@ namespace System.Windows.Forms {
 
 		protected override void OnPaint (PaintEventArgs e)
 		{
-			base.OnPaint(e);
-
 			Graphics g = e.Graphics;
 			Rectangle bounds = ClientRectangle;
 			
@@ -4783,6 +4781,9 @@ namespace System.Windows.Forms {
 					ControlPaint.DrawBorder3D (g, bounds, Border3DStyle.Sunken);
 					break;
 			}
+
+			// Call the base impl at the end.
+			base.OnPaint(e);
 		}
 
 		private void RefreshScrollBars ()

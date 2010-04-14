@@ -1,5 +1,11 @@
 2010-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* DataGridView.cs: Call the base Paint impl last, instead of do that
+	at the beginning, to let handlers draw on top of us. 
+	Fixes the remaining bits of #587563.
+
+2010-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* ToolStripItem.cs: Separate the background rendering from the Paint
 	routine, so we can both make sure the background stuff is done first,
 	and we also let our items fire the OnPaint event handlers before or
