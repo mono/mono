@@ -23,12 +23,40 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Globalization;
 using System.Reflection;
+using System.Xaml;
 using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
 	internal class TypeExtensionConverter : TypeConverter
 	{
+		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
+		{
+			return false;
+		}
+
+		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
+		{
+			return destinationType == typeof (string);
+		}
+
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
+		{
+			throw new NotSupportedException (String.Format ("Conversion from type {0} is not supported", value != null ? value.GetType () : null));
+		}
+
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
+		{
+			var xt = value as XamlType;
+			if (xt != null) {
+				if (destinationType == typeof (string))
+					return xt.ToString ();
+				throw new NotSupportedException (String.Format ("Conversion to type {0} is not supported", destinationType));
+			}
+			else
+				return base.ConvertTo (context, culture, value, destinationType); // it seems it still handles not-supported types (such as int).
+		}
 	}
 }

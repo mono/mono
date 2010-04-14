@@ -1,5 +1,9 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeExtensionConverter.cs : implement.
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ValueSerializer.cs : implement most of them.
 
 2010-04-12  Atsushi Enomoto  <atsushi@ximian.com>

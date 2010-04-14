@@ -1,5 +1,10 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlTypeTypeConverter.cs : this prefers UnderlyingType.ToString()
+	  unlike XamlType.ToString().
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlTypeName.cs : corcompare shows I was missing useful two.
 
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>

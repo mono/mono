@@ -49,7 +49,7 @@ namespace System.Xaml.Schema
 			var xt = value as XamlType;
 			if (xt != null) {
 				if (destinationType == typeof (string))
-					return xt.ToString ();
+					return xt.UnderlyingType != null ? xt.UnderlyingType.ToString () : xt.ToString ();
 				throw new NotSupportedException (String.Format ("Conversion to type {0} is not supported", destinationType));
 			}
 			else

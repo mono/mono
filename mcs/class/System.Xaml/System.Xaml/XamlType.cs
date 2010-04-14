@@ -273,7 +273,7 @@ namespace System.Xaml
 
 		public override string ToString ()
 		{
-			return UnderlyingType != null ? UnderlyingType.ToString () : String.IsNullOrEmpty (PreferredXamlNamespace) ? Name : String.Concat ("{", PreferredXamlNamespace, "}", Name);
+			return String.IsNullOrEmpty (PreferredXamlNamespace) ? Name : String.Concat ("{", PreferredXamlNamespace, "}", Name);
 		}
 
 		public virtual bool CanAssignTo (XamlType xamlType)
@@ -604,8 +604,16 @@ namespace System.Xaml
 			if (t == null)
 				return null;
 
+			var a = CustomAttributeProvider.GetCustomAttribute<TypeConverterAttribute> (false);
+			if (a != null)
+				return SchemaContext.GetValueConverter<TypeConverter> (Type.GetType (a.ConverterTypeName), this);
+
 			if (t == typeof (object))
 				return SchemaContext.GetValueConverter<TypeConverter> (typeof (TypeConverter), this);
+			// equivalent to TypeExtension.
+			// FIXME: not sure if it should be specially handled here.
+			if (t == typeof (Type))
+				return SchemaContext.GetValueConverter<TypeConverter> (typeof (TypeExtensionConverter), this);
 
 			// It's still not decent to check CollectionConverter.
 			var tct = TypeDescriptor.GetConverter (t).GetType ();

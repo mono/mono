@@ -488,6 +488,39 @@ namespace MonoTests.System.Xaml
 			Assert.IsNull (new XamlType (typeof (XamlType), sctx).TypeConverter, "#5");
 			Assert.IsTrue (new XamlType (typeof (char), sctx).TypeConverter.ConverterInstance is CharConverter, "#6");
 		}
+		
+		[Test]
+		public void TypeConverter_Type ()
+		{
+			TypeConveter_TypeOrTypeExtension (typeof (Type));
+		}
+		
+		[Test]
+		public void TypeConverter_TypeExtension ()
+		{
+			TypeConveter_TypeOrTypeExtension (typeof (TypeExtension));
+		}
+		
+		void TypeConveter_TypeOrTypeExtension (Type type)
+		{
+			var xtc = new XamlType (type, sctx).TypeConverter;
+			Assert.IsNotNull (xtc, "#7");
+			var tc = xtc.ConverterInstance;
+			Assert.IsNotNull (tc, "#7-2");
+			Assert.IsFalse (tc.CanConvertTo (typeof (Type)), "#7-3");
+			Assert.IsFalse (tc.CanConvertTo (typeof (XamlType)), "#7-4");
+			Assert.IsTrue (tc.CanConvertTo (typeof (string)), "#7-5");
+			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}TypeExtension", tc.ConvertToString (XamlLanguage.Type), "#7-6");
+			Assert.IsFalse (tc.CanConvertFrom (typeof (Type)), "#7-7");
+			Assert.IsFalse (tc.CanConvertFrom (typeof (XamlType)), "#7-8");
+			// .NET returns true for type == typeof(Type) case here, which does not make sense. Disabling it now.
+			//Assert.IsFalse (tc.CanConvertFrom (typeof (string)), "#7-9");
+			try {
+				tc.ConvertFromString ("{http://schemas.microsoft.com/winfx/2006/xaml}TypeExtension");
+				Assert.Fail ("failure");
+			} catch (NotSupportedException) {
+			}
+		}
 
 		[Test]
 		[Category ("NotWorking")]
@@ -525,6 +558,14 @@ namespace MonoTests.System.Xaml
 			public string RuntimeTypeName { get; set; }
 			public string UUID { get; set; }
 			public string XmlLang { get; set; }
+		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}String", XamlLanguage.String.ToString (), "#1");
+			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}TypeExtension", XamlLanguage.Type.ToString (), "#2");
+			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}ArrayExtension", XamlLanguage.Array.ToString (), "#3");
 		}
 	}
 
