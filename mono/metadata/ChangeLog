@@ -1,5 +1,16 @@
 2010-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (_mono_reflection_parse_type): MS supports
+	non-assembly-qualified types in a generic type parameter list
+	when enclosed in '[]' (which signals that they should be a fqn).
+
+	This breaks ECMA specs for how type names are encoded in cattr
+	blobs but F# does it.
+
+	Fixes #576342.
+
+2010-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_InternalInvoke): Check if the vtable is sane
 	for instance methods/ctors.
 
