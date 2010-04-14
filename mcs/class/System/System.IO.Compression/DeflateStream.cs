@@ -42,6 +42,7 @@ namespace System.IO.Compression {
 	public class DeflateStream : Stream
 	{
 		const int BufferSize = 4096;
+		[UnmanagedFunctionPointer (CallingConvention.Cdecl)]
 		delegate int UnmanagedReadOrWrite (IntPtr buffer, int length, IntPtr data);
 		delegate int ReadMethod (byte[] array, int offset, int count);
 		delegate void WriteMethod (byte[] array, int offset, int count);
