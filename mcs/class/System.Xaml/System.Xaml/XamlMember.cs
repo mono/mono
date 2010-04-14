@@ -277,7 +277,14 @@ namespace System.Xaml
 
 		public override string ToString ()
 		{
-			throw new NotImplementedException ();
+			if (is_attachable || String.IsNullOrEmpty (PreferredXamlNamespace)) {
+				if (DeclaringType == null)
+					return Name;
+				else
+					return String.Concat (DeclaringType.UnderlyingType.FullName, ".", Name);
+			}
+			else
+				return String.Concat ("{", PreferredXamlNamespace, "}", DeclaringType.Name, ".", Name);
 		}
 
 		public virtual IList<string> GetXamlNamespaces ()

@@ -1,5 +1,9 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlMember.cs : implemented ToString().
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlReader.cs :
 	  Skip irrelevant nodes. Remove extra member (Dispose).
 

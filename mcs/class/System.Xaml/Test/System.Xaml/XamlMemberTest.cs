@@ -415,5 +415,20 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (dummy_add, new MyXamlMember ("DummyAddMethod", dummy_add, sctx).UnderlyingMember, "#4");
 			Assert.IsNull (new MyXamlMember ("Length", new XamlType (typeof (string), sctx), false).UnderlyingMember, "#5");
 		}
+
+		[Test]
+		public void ToStringTest ()
+		{
+			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}_Initialization", XamlLanguage.Initialization.ToString (), "#1");
+
+			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}XData.Text", XamlLanguage.XData.GetMember ("Text").ToString (), "#2");
+
+			var pi = typeof (string).GetProperty ("Length");
+			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}String.Length", new XamlMember (pi, sctx).ToString (), "#3");
+
+			Assert.AreEqual ("System.Xaml.XamlSchemaContext.FooBar", new XamlMember ("FooBar", typeof (XamlSchemaContext).GetMethod ("GetPreferredPrefix"), null, sctx).ToString (), "#4");
+
+			Assert.AreEqual ("{urn:foo}bar", new XamlDirective ("urn:foo", "bar").ToString (), "#5");
+		}
 	}
 }
