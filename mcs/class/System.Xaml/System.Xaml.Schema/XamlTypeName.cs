@@ -30,17 +30,95 @@ namespace System.Xaml.Schema
 	{
 		public static bool TryParse (string typeName, IXamlNamespaceResolver namespaceResolver, out XamlTypeName result)
 		{
-			throw new NotImplementedException ();
+			if (typeName == null)
+				throw new ArgumentNullException ("typeName");
+			if (namespaceResolver == null)
+				throw new ArgumentNullException ("namespaceResolver");
+
+			result = null;
+			IList<XamlTypeName> args = null;
+
+			int idx = typeName.IndexOf ('(');
+			if (idx >= 0) {
+				if (typeName [typeName.Length - 1] != ')')
+					return false;
+				try {
+					args = ParseList (typeName.Substring (idx + 1, typeName.Length - idx - 2), namespaceResolver);
+				} catch (FormatException) {
+					return false;
+				}
+				typeName = typeName.Substring (0, idx);
+			}
+
+			idx = typeName.IndexOf (':');
+			string prefix, local;
+			if (idx < 0) {
+				prefix = String.Empty;
+				local = typeName;
+			} else {
+				prefix = typeName.Substring (0, idx);
+				local = typeName.Substring (idx + 1);
+				if (!XamlLanguage.IsValidXamlName (prefix))
+					return false;
+			}
+			if (!XamlLanguage.IsValidXamlName (local))
+				return false;
+			string ns = namespaceResolver.GetNamespace (prefix);
+			if (ns == null)
+				return false;
+
+			result = new XamlTypeName (ns, local, args);
+			return true;
 		}
+
+		static readonly char [] commas = {','};
 
 		public static IList<XamlTypeName> ParseList (string typeNameList, IXamlNamespaceResolver namespaceResolver)
 		{
-			throw new NotImplementedException ();
+			if (typeNameList == null)
+				throw new ArgumentNullException ("typeNameList");
+			if (namespaceResolver == null)
+				throw new ArgumentNullException ("namespaceResolver");
+
+			var split = typeNameList.Split (commas);
+			if (split.Length == 0)
+				throw new FormatException (String.Format ("Invalid type name list: '{0}'", typeNameList));
+
+			var arr = new XamlTypeName [split.Length];
+
+			for (int i = 0; i < split.Length; i++) {
+				var s = split [i].Trim ();
+				XamlTypeName tn;
+				if (!TryParse (s, namespaceResolver, out tn))
+					throw new FormatException (String.Format ("Invalid type name list: '{0}'", typeNameList));
+				arr [i] = tn;
+			}
+
+			return arr;
 		}
 
 		public static string ToString (IList<XamlTypeName> typeNameList, INamespacePrefixLookup prefixLookup)
 		{
-			throw new NotImplementedException ();
+			if (typeNameList == null)
+				throw new ArgumentNullException ("typeNameList");
+			if (prefixLookup == null)
+				throw new ArgumentNullException ("prefixLookup");
+
+			return DoToString (typeNameList, prefixLookup);
+		}
+
+		static string DoToString (IList<XamlTypeName> typeNameList, INamespacePrefixLookup prefixLookup)
+		{
+			bool comma = false;
+			string ret = "";
+			foreach (var ta in typeNameList) {
+				if (comma)
+					ret += ", ";
+				else
+					comma = true;
+				ret += ta.ToString (prefixLookup);
+			}
+			return ret;
 		}
 
 		// instance members
@@ -48,14 +126,22 @@ namespace System.Xaml.Schema
 		public XamlTypeName ()
 		{
 		}
-		
+
+		static readonly XamlTypeName [] empty_type_args = new XamlTypeName [0];
+
 		public XamlTypeName (XamlType xamlType)
 		{
+			if (xamlType == null)
+				throw new ArgumentNullException ("xamlType");
 			Namespace = xamlType.PreferredXamlNamespace;
 			Name = xamlType.Name;
-			var l = new List<XamlTypeName> ();
-			l.AddRange (from x in xamlType.TypeArguments.AsQueryable () select new XamlTypeName (x));
-			TypeArguments = l;
+			if (xamlType.TypeArguments != null && xamlType.TypeArguments.Count > 0) {
+				var l = new List<XamlTypeName> ();
+				l.AddRange (from x in xamlType.TypeArguments.AsQueryable () select new XamlTypeName (x));
+				TypeArguments = l;
+			}
+			else
+				TypeArguments = empty_type_args;
 		}
 		
 		public XamlTypeName (string xamlNamespace, string name)
@@ -68,10 +154,14 @@ namespace System.Xaml.Schema
 			Namespace = xamlNamespace;
 			Name = name;
 			if (typeArguments != null) {
+				if (typeArguments.Any (t => t == null))
+					throw new ArgumentNullException ("typeArguments", "typeArguments array contains one or more null XamlTypeName");
 				var l = new List<XamlTypeName> ();
 				l.AddRange (typeArguments);
-				TypeArguments = l.Count > 0 ? l : null;
+				TypeArguments = l;
 			}
+			else
+				TypeArguments = empty_type_args;
 		}
 
 		public string Name { get; set; }
@@ -85,7 +175,25 @@ namespace System.Xaml.Schema
 
 		public string ToString (INamespacePrefixLookup prefixLookup)
 		{
-			throw new NotImplementedException ();
+			if (Namespace == null)
+				throw new InvalidOperationException ("Namespace must be set before calling ToString method.");
+			if (Name == null)
+				throw new InvalidOperationException ("Name must be set before calling ToString method.");
+
+			string ret;
+			if (prefixLookup == null)
+				ret = String.Concat ("{", Namespace, "}", Name);
+			else {
+				string p = prefixLookup.LookupPrefix (Namespace);
+				if (p == null)
+					throw new InvalidOperationException (String.Format ("Could not lookup prefix for namespace '{0}'", Namespace));
+				ret = p.Length == 0 ? Name : p + ":" + Name;
+			}
+
+			if (TypeArguments.Count > 0)
+				ret += String.Concat ("(", DoToString (TypeArguments, prefixLookup), ")");
+
+			return ret;
 		}
 	}
 }

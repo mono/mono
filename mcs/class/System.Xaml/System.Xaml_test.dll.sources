@@ -4,6 +4,7 @@ System.Windows.Markup/TypeExtensionTest.cs
 System.Windows.Markup/ValueSerializerTest.cs
 System.Xaml.Schema/XamlMemberInvokerTest.cs
 System.Xaml.Schema/XamlTypeInvokerTest.cs
+System.Xaml.Schema/XamlTypeNameTest.cs
 System.Xaml.Schema/XamlTypeTypeConverterTest.cs
 System.Xaml.Schema/XamlValueConverterTest.cs
 System.Xaml/AmbientPropertyValueTest.cs
