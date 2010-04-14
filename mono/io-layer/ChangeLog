@@ -1,3 +1,8 @@
+2010-04-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* collection.c (_wapi_collection_init): Set stack size on openbsd similarly to
+	the other BSDs.
+
 2010-04-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* processes.c: Applied more openbsd changes from Robert Nagy <robert@openbsd.org>.
