@@ -1,5 +1,10 @@
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlReader.cs :
+	  Skip irrelevant nodes. Remove extra member (Dispose).
+
+2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlReader.cs : basic implementation.
 
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>

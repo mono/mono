@@ -96,10 +96,11 @@ namespace System.Xaml
 		{
 		}
 
+		static readonly XmlReaderSettings file_reader_settings = new XmlReaderSettings () { CloseInput =true };
+
 		public XamlXmlReader (string fileName, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
-			: this (XmlReader.Create (fileName), schemaContext, settings)
+			: this (XmlReader.Create (fileName, file_reader_settings), schemaContext, settings)
 		{
-			close_reader = true;
 		}
 
 		public XamlXmlReader (TextReader textReader, XamlSchemaContext schemaContext, XamlXmlReaderSettings settings)
@@ -113,18 +114,26 @@ namespace System.Xaml
 				throw new ArgumentNullException ("xmlReader");
 			if (schemaContext == null)
 				throw new ArgumentNullException ("schemaContext");
-			r = xmlReader;
-			line_info = r as IXmlLineInfo;
+
 			sctx = schemaContext;
 			this.settings = settings ?? new XamlXmlReaderSettings ();
-			close_reader = this.settings.CloseInput;
+
+			// filter out some nodes.
+			var xrs = new XmlReaderSettings () {
+				CloseInput = this.settings.CloseInput,
+				IgnoreComments = true,
+				IgnoreProcessingInstructions = true,
+				IgnoreWhitespace = true };
+
+			r = XmlReader.Create (xmlReader, xrs);
+			line_info = r as IXmlLineInfo;
 		}
 
 		XmlReader r;
 		IXmlLineInfo line_info;
 		XamlSchemaContext sctx;
 		XamlXmlReaderSettings settings;
-		bool close_reader, is_eof;
+		bool is_eof;
 		XamlNodeType node_type;
 		
 		object current;
@@ -172,18 +181,12 @@ namespace System.Xaml
 			get { return NodeType == XamlNodeType.Value ? current : null; }
 		}
 
-		protected override void Dispose (bool disposing)
-		{
-			if (!disposing)
-				return;
-			if (close_reader)
-				r.Close ();
-		}
-
 		public override bool Read ()
 		{
-			if (is_eof)
+			if (IsDisposed)
 				throw new ObjectDisposedException ("reader");
+			if (is_eof)
+				return false;
 
 			if (is_empty_object) {
 				is_empty_object = false;
@@ -234,11 +237,6 @@ namespace System.Xaml
 					ReadEndType ();
 				return true;
 
-			case XmlNodeType.ProcessingInstruction:
-			case XmlNodeType.EntityReference:
-				r.Read (); // skip
-				return Read ();
-
 			default:
 
 				// could be: Value
@@ -275,9 +273,6 @@ namespace System.Xaml
 					// FIXME: parse type arguments etc.
 					case XmlNodeType.EndElement:
 						break;
-					case XmlNodeType.ProcessingInstruction:
-						r.Read ();
-						continue;
 					}
 					break;
 				} while (true);
