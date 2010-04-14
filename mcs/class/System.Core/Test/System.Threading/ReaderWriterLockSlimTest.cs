@@ -327,7 +327,7 @@ namespace MonoTests.System.Threading
 			}
 
 			foreach (var t in threads) {
-				Console.WriteLine (t.ThreadState);
+				// Console.WriteLine (t.ThreadState);
 				t.Join ();
 			}
 		}
@@ -387,7 +387,7 @@ namespace MonoTests.System.Threading
 			v.ExitWriteLock ();
 
 			foreach (var t in threads) {
-				Console.WriteLine (t.ThreadState);
+				// Console.WriteLine (t.ThreadState);
 				t.Join ();
 			}
 		}
