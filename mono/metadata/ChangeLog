@@ -1,3 +1,10 @@
+2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* class.c (mono_class_inflate_generic_type_no_copy): Do proper
+	error handling passing MonoError around.
+
+	Fixes #560336.
+
 2010-04-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* socket-io.c: make GetHostByName ("") work on windows.
