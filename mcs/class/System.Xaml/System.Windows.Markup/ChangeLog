@@ -1,3 +1,8 @@
+2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTimeValueSerializer.cs, NameReferenceConverter.cs :
+	  implement.
+
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlnsCompatibleWithAttribute.cs

@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
 using System.Globalization;
+using System.Xaml;
 
 namespace System.Windows.Markup
 {
@@ -32,19 +33,34 @@ namespace System.Windows.Markup
 	{
 		public override bool CanConvertFrom (ITypeDescriptorContext context, Type sourceType)
 		{
-			throw new NotImplementedException ();
+			return sourceType == typeof (string);
 		}
+
 		public override bool CanConvertTo (ITypeDescriptorContext context, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			if (context == null)
+				return false;
+			var p = context.GetService (typeof (IXamlNameProvider)) as IXamlNameProvider;
+			return p != null && destinationType == typeof (string);
 		}
-		public override Object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, Object value)
+
+		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			throw new NotImplementedException ();
+			if (context == null)
+				throw new ArgumentNullException ("context");
+			var s = value as string;
+			if (String.IsNullOrEmpty (s))
+				throw new InvalidOperationException ("Value must be non-null string.");
+			
+			return s;
 		}
-		public override Object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, Object value, Type destinationType)
+
+		public override object ConvertTo (ITypeDescriptorContext context, CultureInfo culture, object value, Type destinationType)
 		{
-			throw new NotImplementedException ();
+			if (context == null)
+				return null;
+			var p = context.GetService (typeof (IXamlNameProvider)) as IXamlNameProvider;
+			return p != null ? p.GetName (value) : null;
 		}
 	}
 }

@@ -31,21 +31,40 @@ namespace System.Windows.Markup
 	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
 	public class DateTimeValueSerializer : ValueSerializer
 	{
+		const DateTimeStyles styles = DateTimeStyles.RoundtripKind | DateTimeStyles.NoCurrentDateDefault | DateTimeStyles.AllowLeadingWhite | DateTimeStyles.AllowTrailingWhite;
+
 		public override bool CanConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return true; // documented
 		}
+
 		public override bool CanConvertToString (object value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			return value is DateTime;
 		}
+
 		public override object ConvertFromString (string value, IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				throw new NotSupportedException ();
+			if (value.Length == 0)
+				return DateTime.MinValue;
+			return DateTime.Parse (value, CultureInfo.InvariantCulture, styles);
 		}
+
 		public override string ConvertToString (object value,     IValueSerializerContext context)
 		{
-			throw new NotImplementedException ();
+			if (!(value is DateTime))
+				throw new NotSupportedException ();
+			DateTime dt = (DateTime) value;
+			if (dt.Millisecond != 0)
+				return dt.ToString ("yyyy-MM-dd'T'HH:mm:ss.F");
+			if (dt.Second != 0)
+				return dt.ToString ("yyyy-MM-dd'T'HH:mm:ss");
+			if (dt.Minute != 0)
+				return dt.ToString ("yyyy-MM-dd'T'HH:mm");
+			else
+				return dt.ToString ("yyyy-MM-dd");
 		}
 	}
 }
