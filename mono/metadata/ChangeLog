@@ -1,3 +1,8 @@
+2010-04-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* socket-io.c: make GetHostByName ("") work on windows.
+	Fixes bug #456723.
+
 2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* file-io.c: reset the MonoIOStat structure in case of error.
