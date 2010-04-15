@@ -62,8 +62,16 @@ namespace System {
 		private byte _j; //_node4;
 		private byte _k; //_node5;
 
-		internal class GuidParser
-		{
+		enum Format {
+			N, // 00000000000000000000000000000000
+			D, // 00000000-0000-0000-0000-000000000000
+			B, // {00000000-0000-0000-0000-000000000000}
+			P, // (00000000-0000-0000-0000-000000000000)
+			X, // {0x00000000,0x0000,0x0000,{0x00,0x00,0x00,0x00,0x00,0x00,0x00,0x00}}
+		}
+
+		class GuidParser {
+
 			private string _src;
 			private int _length;
 			private int _cur;
@@ -74,175 +82,192 @@ namespace System {
 				Reset ();
 			}
 
-			private void Reset ()
+			void Reset ()
 			{
 				_cur = 0;
 				_length = _src.Length;
 			}
 
-			private bool AtEnd ()
-			{
-				return _cur >= _length;
+			bool Eof {
+				get { return _cur >= _length; }
 			}
 
-			private void ThrowFormatException ()
+			static bool HasHyphen (Format format)
 			{
-				throw new FormatException (Locale.GetText ("Invalid format for Guid.Guid(string)."));
-			}
-
-			private ulong ParseHex(int length, bool strictLength)
-			{
-				ulong res = 0;
-				int i;
-				bool end = false;
-
-				for (i=0; (!end) && i<length; ++i) {
-					if (AtEnd ()) {
-						if (strictLength || i==0) {
-							ThrowFormatException ();
-						}
-						else {
-							end = true;
-						}
-					}
-					else {
-						char c = Char.ToLowerInvariant (_src[_cur]);
-						if (Char.IsDigit (c)) {
-							res = res * 16 + c - '0';
-							_cur++;
-						}
-						else if (c >= 'a' && c <= 'f') {
-							res = res * 16 + c - 'a' + 10;
-							_cur++;
-						}
-						else {
-							if (strictLength || i==0) {
-								ThrowFormatException ();
-							}
-							else {
-								end = true;
-							}
-						}
-					}
-				}
-				return res;
-			}
-
-			private bool ParseOptChar (char c)
-			{
-				if (!AtEnd() && _src[_cur] == c) {
-					_cur++;
+				switch (format) {
+				case Format.D:
+				case Format.B:
+				case Format.P:
 					return true;
-				}
-				else {
+				default:
 					return false;
 				}
 			}
 
-			private void ParseChar (char c)
+			bool TryParseNDBP (Format format, out Guid guid)
 			{
-				bool b = ParseOptChar (c);
-				if (!b) {
-					ThrowFormatException ();
+				ulong a, b, c;
+				guid = new Guid ();
+
+				if (format == Format.B && !ParseChar ('{'))
+					return false;
+
+				if (format == Format.P && !ParseChar ('('))
+					return false;
+
+				if (!ParseHex (8, true, out a))
+					return false;
+
+				var has_hyphen = HasHyphen (format);
+
+				if (has_hyphen && !ParseChar ('-'))
+					return false;
+
+				if (!ParseHex (4, true, out b))
+					return false;
+
+				if (has_hyphen && !ParseChar ('-'))
+					return false;
+
+				if (!ParseHex (4, true, out c))
+					return false;
+
+				if (has_hyphen && !ParseChar ('-'))
+					return false;
+
+				var d = new byte [8];
+				for (int i = 0; i < d.Length; i++) {
+					ulong dd;
+					if (!ParseHex (2, true, out dd))
+						return false;
+
+					if (i == 1 && has_hyphen && !ParseChar ('-'))
+						return false;
+
+					d [i] = (byte) dd;
 				}
+
+				if (format == Format.B && !ParseChar ('}'))
+					return false;
+
+				if (format == Format.P && !ParseChar (')'))
+					return false;
+
+				guid = new Guid ((int) a, (short) b, (short) c, d);
+				return true;
 			}
 
-			private Guid ParseGuid1 ()
+			bool TryParseX (out Guid guid)
 			{
-				bool openBrace; 
-				bool groups = true;
-				char endChar = '}';
-				int a;
-				short b;
-				short c;
-				byte[] d = new byte[8];
-				int i;
+				ulong a, b, c;
+				guid = new Guid ();
 
-				openBrace = ParseOptChar ('{');
-				if (!openBrace) {
-					openBrace = ParseOptChar ('(');
-					if (openBrace) endChar = ')';
+				if (!(ParseChar ('{')
+					&& ParseHexPrefix ()
+					&& ParseHex (8, false, out a)
+					&& ParseChar (',')
+					&& ParseHexPrefix ()
+					&& ParseHex (4, false, out b)
+					&& ParseChar (',')
+					&& ParseHexPrefix ()
+					&& ParseHex (4, false, out c)
+					&& ParseChar (',')
+					&& ParseChar ('{'))) {
+
+					return false;
 				}
-				
-				a = (int) ParseHex(8, true);
-				
-				if (openBrace) ParseChar('-');
-				else groups = ParseOptChar('-');
-				
-				b = (short) ParseHex(4, true);
-				if (groups) ParseChar('-');
-				
-				c = (short) ParseHex(4, true);
-				if (groups) ParseChar('-');
-				
-				for (i=0; i<8; ++i) {
-					d[i] = (byte) ParseHex(2, true);
-					if (i == 1 && groups) {
-						ParseChar('-');
-					}	
+
+				var d = new byte [8];
+				for (int i = 0; i < d.Length; ++i) {
+					ulong dd;
+
+					if (!(ParseHexPrefix () && ParseHex (2, false, out dd)))
+						return false;
+
+					d [i] = (byte) dd;
+
+					if (i != 7 && !ParseChar (','))
+						return false;
 				}
-	
-				if (openBrace && !ParseOptChar(endChar)) {
-					ThrowFormatException ();
-				}
-		
-				return new Guid(a, b, c, d);
+
+				if (!(ParseChar ('}') && ParseChar ('}')))
+					return false;
+
+				guid = new Guid ((int) a, (short) b, (short) c, d);
+				return true;
 			}
 
-			private void ParseHexPrefix ()
+			bool ParseHexPrefix ()
 			{
-				ParseChar ('0');
-				ParseChar ('x');
+				if (!ParseChar ('0'))
+					return false;
+
+				return ParseChar ('x');
 			}
 
-			private Guid ParseGuid2 ()
+			bool ParseChar (char c)
 			{
-				int a;
-				short b;
-				short c;
-				byte[] d = new byte [8];
-				int i;
+				if (!Eof && _src [_cur] == c) {
+					_cur++;
+					return true;
+				}
 
-				ParseChar ('{');
-				ParseHexPrefix ();
-				a = (int) ParseHex (8, false);
-				ParseChar (',');
-				ParseHexPrefix ();
-				b = (short) ParseHex (4, false);
-				ParseChar (',');
-				ParseHexPrefix ();
-				c = (short) ParseHex (4, false);
-				ParseChar (',');
-				ParseChar ('{');
-				for (i=0; i<8; ++i) {
-					ParseHexPrefix ();
-					d[i] = (byte) ParseHex (2, false);
-					if (i != 7) {
-						ParseChar (',');
+				return false;
+			}
+
+			bool ParseHex (int length, bool strict, out ulong res)
+			{
+				res = 0;
+
+				for (int i = 0; i < length; i++) {
+					if (Eof)
+						return !(strict && (i + 1 != length));
+
+					char c = Char.ToLowerInvariant (_src[_cur]);
+					if (Char.IsDigit (c)) {
+						res = res * 16 + c - '0';
+						_cur++;
+					} else if (c >= 'a' && c <= 'f') {
+						res = res * 16 + c - 'a' + 10;
+						_cur++;
+					} else {
+						if (!strict)
+							return true;
+
+						return !(strict && (i + 1 != length));
 					}
 				}
-				ParseChar ('}');
-				ParseChar ('}');
 
-				return new Guid (a,b,c,d);
-				
+				return true;
 			}
 
-			public Guid Parse ()
+			public bool Parse (Format format, out Guid guid)
 			{
-				Guid g;
+				if (format == Format.X)
+					return TryParseX (out guid);
 
-				try {
-					g  = ParseGuid1 ();
-				}
-				catch (FormatException) {
-					Reset ();
-					g = ParseGuid2 ();
-				}
-				if (!AtEnd () ) {
-					ThrowFormatException ();
-				}
-				return g;
+				return TryParseNDBP (format, out guid);
+			}
+
+			public bool Parse (out Guid guid)
+			{
+				if (TryParseNDBP (Format.N, out guid))
+					return true;
+
+				Reset ();
+				if (TryParseNDBP (Format.D, out guid))
+					return true;
+
+				Reset ();
+				if (TryParseNDBP (Format.B, out guid))
+					return true;
+
+				Reset ();
+				if (TryParseNDBP (Format.P, out guid))
+					return true;
+
+				Reset ();
+				return TryParseX (out guid);
 			}
 		}
 
@@ -286,10 +311,17 @@ namespace System {
 		{
 			CheckNull (g);
 			g = g.Trim();
-			GuidParser p = new GuidParser (g);
-			Guid guid = p.Parse();
-	
+			var parser = new GuidParser (g);
+			Guid guid;
+			if (!parser.Parse (out guid))
+				throw CreateFormatException (g);
+
 			this = guid;
+		}
+
+		static Exception CreateFormatException (string s)
+		{
+			return new FormatException (string.Format ("Invalid Guid format: {0}", s));
 		}
 
 		public Guid (int a, short b, short c, byte[] d)
@@ -627,5 +659,66 @@ namespace System {
 		{
 			return !( a.Equals (b) );
 		}
+
+#if NET_4_0
+		public static Guid Parse (string input)
+		{
+			Guid guid;
+			if (!TryParse (input, out guid))
+				throw CreateFormatException (input);
+
+			return guid;
+		}
+
+		public static Guid ParseExact (string input, string format)
+		{
+			Guid guid;
+			if (!TryParseExact (input, format, out guid))
+				throw CreateFormatException (input);
+
+			return guid;
+		}
+
+		public static bool TryParse (string input, out Guid result)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+
+			var parser = new GuidParser (input);
+			return parser.Parse (out result);
+		}
+
+		public static bool TryParseExact (string input, string format, out Guid result)
+		{
+			if (input == null)
+				throw new ArgumentNullException ("input");
+			if (format == null)
+				throw new ArgumentNullException ("format");
+
+			var parser = new GuidParser (input);
+			return parser.Parse (ParseFormat (format), out result);
+		}
+
+		static Format ParseFormat (string format)
+		{
+			if (format.Length != 1)
+				throw new ArgumentException ("Wrong format");
+
+			switch (format [0]) {
+			case 'N':
+				return Format.N;
+			case 'D':
+				return Format.D;
+			case 'B':
+				return Format.B;
+			case 'P':
+				return Format.P;
+			case 'X':
+				return Format.X;
+			}
+
+			throw new ArgumentException ("Wrong format");
+		}
+#endif
 	}
 }
