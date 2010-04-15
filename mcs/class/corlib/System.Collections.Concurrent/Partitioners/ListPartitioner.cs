@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // ListPartitioner.cs
 //  
@@ -28,11 +27,15 @@
 using System;
 using System.Collections.Generic;
 
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+
 namespace System.Collections.Concurrent
 {
+	// Represent a Range partitioner
 	internal class ListPartitioner<T> : OrderablePartitioner<T>
 	{
 		IList<T> source;
+		readonly bool chunking = Environment.GetEnvironmentVariable ("PLINQ_PARTITIONING_HINT") == "chunking";
 		
 		public ListPartitioner (IList<T> source) : base (true, true, true)
 		{
@@ -47,9 +50,15 @@ namespace System.Collections.Concurrent
 			IEnumerator<KeyValuePair<long, T>>[] enumerators
 				= new IEnumerator<KeyValuePair<long, T>>[partitionCount];
 			
-			int count = (source.Count >= partitionCount) ? source.Count / partitionCount : 1;
+			int count = GetBestCacheLineSize (source.Count, partitionCount);
 			
 			for (int i = 0; i < enumerators.Length; i++) {
+				if (chunking) {
+					const int step = 64;
+					enumerators[i] = GetEnumeratorForRange (i * step, enumerators.Length, source.Count, step);
+					continue;
+				}
+				
 				if (i != enumerators.Length - 1)
 					enumerators[i] = GetEnumeratorForRange (i * count, i * count + count);
 				else
@@ -59,6 +68,20 @@ namespace System.Collections.Concurrent
 			return enumerators;
 		}
 		
+		int GetBestCacheLineSize (int initialSize, int partitionCount)	
+		{
+			const int numPartition = 20;
+			uint size = (uint)(initialSize / partitionCount / numPartition);
+			int count = 0;
+			
+			if (size <= 1)
+				return 1;
+			
+			while ((size <<= 1) < 0x80000040)
+				++count;
+			return (int)(0x80000040 >> (count + 1));
+		}
+		
 		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int lastIndex)
 		{
 			if (startIndex >= source.Count)
@@ -66,16 +89,33 @@ namespace System.Collections.Concurrent
 			
 			return GetEnumeratorForRangeInternal (startIndex, lastIndex);
 		}
+		
+		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int stride, int count, int step)
+		{
+			if (startIndex >= source.Count)
+			  return GetEmpty ();
+			
+			return GetEnumeratorForRangeInternal (startIndex, stride, count, step);
+		}
 
 		IEnumerator<KeyValuePair<long, T>> GetEmpty ()
-		  {
+		{
 			yield break;
-		  }
+		}
 		
 		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int lastIndex)
 		{	
 			for (int i = startIndex; i < lastIndex; i++) {
 				yield return new KeyValuePair<long, T> (i, source[i]);
+			}
+		}
+		
+		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRangeInternal (int startIndex, int stride, int count, int step)
+		{
+			for (int i = startIndex; i < count; i += stride * step) {
+				for (int j = i; j < i + step && j < count; j++) {
+					yield return new KeyValuePair<long, T> (j, source[j]);
+				}
 			}
 		}
 	}

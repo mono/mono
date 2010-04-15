@@ -1,4 +1,4 @@
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 // ConcurrentSkipList.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval

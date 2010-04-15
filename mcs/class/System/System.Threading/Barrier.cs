@@ -1,4 +1,4 @@
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 // 
 // Barrier.cs
 //  
@@ -31,7 +31,7 @@ namespace System.Threading
 {
 	public class Barrier : IDisposable
 	{
-		const int MAX_PARTICIPANTS = 32767;
+		const int MaxParticipants = 32767;
 		Action<Barrier> postPhaseAction;
 		
 		int participants;
@@ -45,7 +45,7 @@ namespace System.Threading
 		
 		public Barrier (int participants, Action<Barrier> postPhaseAction)
 		{
-			if (participants < 0 || participants > MAX_PARTICIPANTS)
+			if (participants < 0 || participants > MaxParticipants)
 				throw new ArgumentOutOfRangeException ("participants");
 			
 			this.participants = participants;
@@ -120,6 +120,7 @@ namespace System.Threading
 			
 			if (cntd.Signal (participantCount))
 				PostPhaseAction (cleaned);
+
 			Interlocked.Add (ref participants, -participantCount);
 		}
 		

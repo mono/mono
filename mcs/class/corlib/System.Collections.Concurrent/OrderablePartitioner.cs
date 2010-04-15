@@ -1,4 +1,3 @@
-#if NET_4_0
 // 
 // OrderablePartitioner.cs
 //  
@@ -27,6 +26,8 @@
 
 using System;
 using System.Collections.Generic;
+
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 
 namespace System.Collections.Concurrent
 {

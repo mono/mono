@@ -1,5 +1,3 @@
-#if NET_4_0
-#define USE_MONITOR
 // 
 // EnumerablePartitioner.cs
 //  
@@ -26,25 +24,41 @@
 // OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN
 // THE SOFTWARE.
 
+#if NET_4_0 || BOOTSTRAP_NET_4_0
+
 using System;
+using System.Threading.Tasks;
 using System.Collections.Generic;
 
 namespace System.Collections.Concurrent
 {
+	// Represent a chunk partitioner
 	internal class EnumerablePartitioner<T> : OrderablePartitioner<T>
 	{
 		IEnumerable<T> source;
-#if USE_MONITOR
-		object syncLock = new object ();
-#endif
+		
 		const int InitialPartitionSize = 1;
 		const int PartitionMultiplier = 2;
 		
-		int index = 0;
+		int initialPartitionSize;
+		int partitionMultiplier;
 		
-		public EnumerablePartitioner (IEnumerable<T> source) : base (true, false, true)
+		int index = 0;
+		readonly object syncLock = new object ();
+		
+		public EnumerablePartitioner (IEnumerable<T> source)
+			: this (source, InitialPartitionSize, PartitionMultiplier)
+		{
+
+		}
+		
+		// This is used to get striped partitionning (for Take and Skip for instance
+		public EnumerablePartitioner (IEnumerable<T> source, int initialPartitionSize, int partitionMultiplier)
+			 : base (true, false, true)
 		{
 			this.source = source;
+			this.initialPartitionSize = initialPartitionSize;
+			this.partitionMultiplier = partitionMultiplier;
 		}
 		
 		public override IList<IEnumerator<KeyValuePair<long, T>>> GetOrderablePartitions (int partitionCount)
@@ -66,7 +80,7 @@ namespace System.Collections.Concurrent
 		
 		IEnumerator<KeyValuePair<long, T>> GetPartitionEnumerator (IEnumerator<T> src)
 		{
-			int count = InitialPartitionSize;
+			int count = initialPartitionSize;
 			List<T> list = new List<T> ();
 			
 			while (true) {
@@ -89,10 +103,12 @@ namespace System.Collections.Concurrent
 					}					
 				}
 				
+				
+				
 				for (int i = 0; i < list.Count; i++)
 					yield return new KeyValuePair<long, T> (ind + i, list[i]);
 				
-				count *= PartitionMultiplier;
+				count *= partitionMultiplier;
 			}
 		}                                  
 	}

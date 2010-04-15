@@ -41,8 +41,8 @@ namespace System.Collections.Concurrent
 	[DebuggerTypeProxy (typeof (CollectionDebuggerView<>))]
 	public class ConcurrentBag<T> : IProducerConsumerCollection<T>, IEnumerable<T>, IEnumerable
 	{
+		const int multiplier = 2;
 		int size = Environment.ProcessorCount + 1;
-		int multiplier = 2;
 		int count;
 		
 		CyclicDeque<T>[] container;

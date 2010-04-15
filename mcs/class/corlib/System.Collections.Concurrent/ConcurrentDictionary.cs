@@ -1,4 +1,3 @@
-#if NET_4_0
 // ConcurrentSkipList.cs
 //
 // Copyright (c) 2009 Jérémie "Garuma" Laval
@@ -28,6 +27,8 @@ using System.Threading;
 using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.Serialization;
+
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 
 namespace System.Collections.Concurrent
 {
@@ -126,6 +127,8 @@ namespace System.Collections.Concurrent
 
 		public bool TryAdd (TKey key, TValue value)
 		{
+			if (key == null)
+				throw new ArgumentNullException ("key");
 			Basket basket;
 			bool taken = false;
 

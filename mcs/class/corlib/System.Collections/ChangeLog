@@ -1,3 +1,8 @@
+2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* IStructuralComparable.cs:
+	* IStructuralEquatable.cs: Add BOOTSTRAP_NET_4_0 define
+
 2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CollectionDebuggerView.cs: Change to internal so we can avoid

@@ -1,4 +1,4 @@
-#if NET_4_0
+#if NET_4_0 || BOOTSTRAP_NET_4_0
 // ThreadWorker.cs
 //
 // Copyright (c) 2008 Jérémie "Garuma" Laval
@@ -100,6 +100,7 @@ namespace System.Threading.Tasks
 	
 				this.workerThread.IsBackground = true;
 				this.workerThread.Priority = priority;
+				this.workerThread.Name = "ParallelFxThreadWorker";
 			};
 			threadInitializer ();
 		}

@@ -1,3 +1,10 @@
+2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ConcurrentDictionary.cs:
+	* ConcurrentSkipList.cs:
+	* OrderablePartitioner.cs:
+	* Partitioner.cs: Add BOOTSTRAP_NET_4_0 define
+
 2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ConcurrentDictionary.cs: Remove while looping
