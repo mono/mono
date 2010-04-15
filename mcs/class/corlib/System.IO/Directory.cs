@@ -39,6 +39,7 @@
 //
 
 using System.Collections;
+using System.Collections.Generic;
 using System.Security;
 using System.Security.Permissions;
 using System.Text;
@@ -534,10 +535,10 @@ namespace System.IO
 		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
 			// Take the simple way home:
-			return new System.Collections.Generic.List<string> (EnumerateFileSystemEntries (path, searchPattern, searchOption)).ToArray ();
+			return new List<string> (EnumerateFileSystemEntries (path, searchPattern, searchOption)).ToArray ();
 		}
 						       
-		internal static System.Collections.Generic.IEnumerable<string> EnumerateKind (string path, string searchPattern, SearchOption searchOption, FileAttributes kind)
+		internal static IEnumerable<string> EnumerateKind (string path, string searchPattern, SearchOption searchOption, FileAttributes kind)
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
@@ -587,47 +588,47 @@ namespace System.IO
 			}
 		}
 
-		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories (string path, string searchPattern, SearchOption searchOption)
+		public static IEnumerable<string> EnumerateDirectories (string path, string searchPattern, SearchOption searchOption)
 		{
 			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Directory);
 		}
 		
-		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories (string path, string searchPattern)
+		public static IEnumerable<string> EnumerateDirectories (string path, string searchPattern)
 		{
 			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Directory);
 		}
 
-		public static System.Collections.Generic.IEnumerable<string> EnumerateDirectories (string path)
+		public static IEnumerable<string> EnumerateDirectories (string path)
 		{
 			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Directory);
 		}
 
-		public static System.Collections.Generic.IEnumerable<string> EnumerateFiles (string path, string searchPattern, SearchOption searchOption)
+		public static IEnumerable<string> EnumerateFiles (string path, string searchPattern, SearchOption searchOption)
 		{
 			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Normal);
 		}
 
-		public static System.Collections.Generic.IEnumerable<string> EnumerateFiles (string path, string searchPattern)
+		public static IEnumerable<string> EnumerateFiles (string path, string searchPattern)
 		{
 			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Normal);
 		}
 
-		public static System.Collections.Generic.IEnumerable<string> EnumerateFiles (string path)
+		public static IEnumerable<string> EnumerateFiles (string path)
 		{
 			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Normal);
 		}
 
-		public static System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
+		public static IEnumerable<string> EnumerateFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
 			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Normal | FileAttributes.Directory);
 		}
 
-		public static System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries (string path, string searchPattern)
+		public static IEnumerable<string> EnumerateFileSystemEntries (string path, string searchPattern)
 		{
 			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Normal | FileAttributes.Directory);
 		}
 
-		public static System.Collections.Generic.IEnumerable<string> EnumerateFileSystemEntries (string path)
+		public static IEnumerable<string> EnumerateFileSystemEntries (string path)
 		{
 			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Normal | FileAttributes.Directory);
 		}

@@ -1,3 +1,7 @@
+2010-04-15  Jb Evain  <jbevain@novell.com>
+
+	* Directory.cs: don't fully qualify name when not it's necessary.
+
 2010-03-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DirectoryInfo.cs, FileInfo.cs: Moonlight needs the default ctor
