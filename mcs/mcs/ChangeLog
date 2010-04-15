@@ -1,3 +1,7 @@
+2010-04-15  Jb Evain  <jbevain@novell.com>
+
+	* dmcs.exe.config: update the runtime version to .net 4.0 RTM.
+
 2010-04-12  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs, attribute.cs, parameter.cs: More attribute type
