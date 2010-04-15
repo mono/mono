@@ -1401,6 +1401,7 @@ struct utimbuf;
  * Delegate Declarations
  */
 
+typedef int (*Mono_Posix_RuntimeIsShuttingDown) (void);
 
 /*
  * Structures
@@ -1743,7 +1744,7 @@ int Mono_Posix_Syscall_WTERMSIG (int status);
 int Mono_Posix_ToStatvfs (void* source, struct Mono_Posix_Statvfs* destination);
 void* Mono_Unix_UnixSignal_install (int signum);
 int Mono_Unix_UnixSignal_uninstall (void* info);
-int Mono_Unix_UnixSignal_WaitAny (void** infos, int count, int timeout);
+int Mono_Unix_UnixSignal_WaitAny (void** infos, int count, int timeout, Mono_Posix_RuntimeIsShuttingDown shutting_down);
 int wexitstatus (int status);
 int wifexited (int status);
 int wifsignaled (int status);
