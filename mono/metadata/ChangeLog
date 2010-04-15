@@ -1,5 +1,11 @@
 2010-04-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* object-internals.h:
+	* threads.c: use a spin lock when accesing the per-thread appdomain
+	list.
+
+2010-04-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* threads.c: no need to take the threads lock in push/pop appdomain.
 
 2010-04-14 Rodrigo Kumpera  <rkumpera@novell.com>
