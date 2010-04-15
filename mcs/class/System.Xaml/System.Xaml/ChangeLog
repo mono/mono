@@ -1,5 +1,9 @@
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlReader.cs : ongoing bugfixes to pass start object.
+
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReader.cs, TypeExtensionMethods.cs :
 	  Value serialization improvements. Improved namespace handling.
 	  Remove unused code.

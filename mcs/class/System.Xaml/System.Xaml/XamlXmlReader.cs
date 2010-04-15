@@ -26,6 +26,8 @@ using System.IO;
 using System.Xml;
 using System.Xaml.Schema;
 
+using Pair = System.Collections.Generic.KeyValuePair<System.Xaml.XamlDirective,object>;
+
 namespace System.Xaml
 {
 	// FIXME: is GetObject supported by this reader?
@@ -142,6 +144,9 @@ namespace System.Xaml
 		Stack<XamlType> types = new Stack<XamlType> ();
 		XamlMember current_member;
 
+		List<Pair> current_element_directives = new List<Pair> ();
+		IEnumerator<Pair> current_directive_enumerator;
+
 		public bool HasLineInfo {
 			get { return line_info != null && line_info.HasLineInfo (); }
 		}
@@ -207,6 +212,9 @@ namespace System.Xaml
 						return true;
 			}
 
+			if (CheckCurrentDirective ())
+				return true;
+
 			if (!r.EOF)
 				r.MoveToContent ();
 			if (r.EOF) {
@@ -222,6 +230,7 @@ namespace System.Xaml
 					if (CheckNextNamespace ())
 						return true;
 				r.MoveToElement ();
+				
 				if (inside_object_not_member)
 					ReadStartMember ();
 				else
@@ -232,9 +241,9 @@ namespace System.Xaml
 
 				// could be: EndObject, EndMember
 				if (inside_object_not_member)
-					ReadEndMember ();
-				else
 					ReadEndType ();
+				else
+					ReadEndMember ();
 				return true;
 
 			default:
@@ -248,7 +257,7 @@ namespace System.Xaml
 		bool CheckNextNamespace ()
 		{
 			do {
-				if (r.NamespaceURI == XamlLanguage.Xml1998Namespace) {
+				if (r.NamespaceURI == XamlLanguage.Xmlns2000Namespace) {
 					current = new NamespaceDeclaration (r.Value, r.Prefix == "xmlns" ? r.LocalName : String.Empty);
 					node_type = XamlNodeType.NamespaceDeclaration;
 					return true;
@@ -262,6 +271,7 @@ namespace System.Xaml
 			string name = r.LocalName;
 			string ns = r.NamespaceURI;
 			type_args.Clear ();
+			CollectDirectiveAttributes ();
 
 			if (!r.IsEmptyElement) {
 				r.Read ();
@@ -272,6 +282,11 @@ namespace System.Xaml
 					// FIXME: parse type arguments etc.
 					case XmlNodeType.EndElement:
 						break;
+					default:
+						// this value is for Initialization
+						current_element_directives.Add (new Pair (XamlLanguage.Initialization, r.Value));
+						r.Read ();
+						continue;
 					}
 					break;
 				} while (true);
@@ -289,6 +304,9 @@ namespace System.Xaml
 
 			node_type = XamlNodeType.StartObject;
 			inside_object_not_member = true;
+
+			// The next Read() results are likely directives.
+			current_directive_enumerator = current_element_directives.GetEnumerator ();
 		}
 		
 		void ReadStartMember ()
@@ -331,6 +349,45 @@ namespace System.Xaml
 			node_type = XamlNodeType.Value;
 		}
 
+		void CollectDirectiveAttributes ()
+		{
+			var l = current_element_directives;
+			if (types.Count == 0 && r.BaseURI != null) // top
+				l.Add (new Pair (XamlLanguage.Base, r.BaseURI));
+		}
+
+		bool CheckCurrentDirective ()
+		{
+			if (current_directive_enumerator != null) {
+				// FIXME: value might have to be deserialized.
+				switch (node_type) {
+				case XamlNodeType.StartObject:
+				case XamlNodeType.EndMember:
+					// -> StartMember
+					if (current_directive_enumerator.MoveNext ()) {
+						current = current_member = current_directive_enumerator.Current.Key;
+						node_type = XamlNodeType.StartMember;
+						return true;
+					}
+					break;
+				case XamlNodeType.StartMember:
+					// -> Value
+					current = current_directive_enumerator.Current.Value;
+					node_type = XamlNodeType.Value;
+					return true;
+				case XamlNodeType.Value:
+					// -> EndMember
+					current = null;
+					node_type = XamlNodeType.EndMember;
+					return true;
+				}
+			}
+
+			current_element_directives.Clear ();
+			current_directive_enumerator = null;
+			return false;
+		}
+		
 		string GetLineString ()
 		{
 			return HasLineInfo ? String.Format (" Line {0}, at {1}", LineNumber, LinePosition) : String.Empty;
