@@ -1,3 +1,8 @@
+2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ParallelExecutionMode.cs:
+	* ParallelMergeOptions.cs: Initial check-in of PLinq (enum)
+
 2010-04-12  Miguel de Icaza  <miguel@novell.com>
 
 	* Enumerable.cs: Jumbo patch that inlines code, mainly for the AOT
