@@ -1,5 +1,10 @@
 2010-04-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
+	* socket-io.c: make GetHostByName ("") work on windows.
+	Fixes bug #456723.
+
+2010-04-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
 	* object-internals.h:
 	* threads.c: use a spin lock when accesing the per-thread appdomain
 	list.
