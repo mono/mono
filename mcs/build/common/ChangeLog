@@ -1,3 +1,8 @@
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Consts.cs.in : Add AssemblyWindowsBase, AssemblyPresentationCore_3_5
+	  and AssemblyPresentationFramework_3_5.
+
 2010-04-06  Jb Evain  <jbevain@novell.com>
 
 	* Consts.cs.in: define Assembly_System_2_0 for TypeForwardedFrom
