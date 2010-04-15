@@ -45,9 +45,28 @@ namespace System.Xaml.Permissions
 			return new XamlAccessLevel (assemblyName);
 		}
 
+		public static XamlAccessLevel PrivateAccessTo (string assemblyQualifiedTypeName)
+		{
+			if (assemblyQualifiedTypeName == null)
+				throw new ArgumentNullException ("assemblyQualifiedTypeName");
+			return new XamlAccessLevel (assemblyQualifiedTypeName);
+		}
+
+		public static XamlAccessLevel PrivateAccessTo (Type type)
+		{
+			if (type == null)
+				throw new ArgumentNullException ("type");
+			return new XamlAccessLevel (type.AssemblyQualifiedName);
+		}
+
 		internal XamlAccessLevel (AssemblyName assemblyAccessToAssemblyName)
 		{
 			AssemblyAccessToAssemblyName = assemblyAccessToAssemblyName;
+		}
+
+		internal XamlAccessLevel (string privateAccessToTypeName)
+		{
+			PrivateAccessToTypeName = privateAccessToTypeName;
 		}
 
 		public AssemblyName AssemblyAccessToAssemblyName { get; private set; }
