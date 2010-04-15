@@ -1,5 +1,9 @@
 2010-04-15  Jonathan Pryor  <jpryor@novell.com>
 
+	* UnixSignal.cs: Fix build break under .NET 1.1 profile.
+
+2010-04-15  Jonathan Pryor  <jpryor@novell.com>
+
 	* UnixSignal.cs: Change the native WaitAny() method to accept a
 	  Mono_Posix_RuntimeIsShuttingDown delegate, so that we can prevent an
 	  infinite loop while shutting the process down.  Fixes #592981.
