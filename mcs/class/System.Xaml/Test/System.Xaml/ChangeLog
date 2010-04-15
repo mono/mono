@@ -1,5 +1,10 @@
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlReaderTest.cs : enable DateTime tests.
+	* XamlSchemaContextTest.cs : add a type name resolver test.
+
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlReaderTest.cs : added a couple more of read and load tests.
 
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>

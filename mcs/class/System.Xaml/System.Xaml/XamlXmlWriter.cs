@@ -191,8 +191,13 @@ namespace System.Xaml
 			manager.Value ();
 
 			var xt = GetCurrentType ();
-			if (xt != null && xt.UnderlyingType != null && !xt.UnderlyingType.IsInstanceOfType (value))
-				throw new ArgumentException (String.Format ("Value is not of type {0}", xt));
+			
+			var xm = GetNonNamespaceNode () as XamlMember;
+			if (xm == XamlLanguage.Initialization) {
+				// do not reject type mismatch, as the value will be a string.
+			}
+			else if (xt != null && xt.UnderlyingType != null && !xt.UnderlyingType.IsInstanceOfType (value))
+				throw new ArgumentException (String.Format ("Value is not of type {0} but {1}", xt, value != null ? value.GetType ().FullName : "(null)"));
 
 			if (!is_first_member_content) {
 				WriteStackedStartMember (XamlNodeType.Value);

@@ -247,5 +247,15 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual ("TypeExtension", xt.Name, "#2-1");
 			Assert.AreEqual (typeof (TypeExtension), xt.UnderlyingType, "#2-2");
 		}
+
+		[Test]
+		public void GetTypeFromXamlTypeNameWithClrName ()
+		{
+			// ensure that this does *not* resolve clr type name.
+			var xn = new XamlTypeName ("clr-namespace:System;assembly=mscorlib", "DateTime");
+			var ctx = NewStandardContext ();
+			var xt = ctx.GetXamlType (xn);
+			Assert.IsNull (xt, "#1");
+		}
 	}
 }

@@ -1,5 +1,13 @@
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlReader.cs : handle types in clr-namespace.
+	* XamlType.cs : replaced Type-to-typename hack with better-working one.
+	* XamlLanguage,cs : add internal clr type name resolver method.
+	* XamlXmlWriter.cs : for Initialization, value is passed as a string,
+	  so don't try to verify it with the object type.
+
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlReader.cs : ongoing bugfixes to pass start object.
 
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>

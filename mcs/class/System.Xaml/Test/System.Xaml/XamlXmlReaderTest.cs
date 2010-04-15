@@ -77,7 +77,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_DateTime ()
 		{
 			ReadTest ("DateTime.xml");
@@ -127,7 +126,8 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
 			Assert.IsTrue (r.Value is string, "vbase#3");
 
-			Assert.IsTrue (r.Read (), "ebase#21");
+			Assert.IsTrue (r.Read (), "ebase#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
 
 			Assert.IsTrue (r.Read (), "sinit#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
@@ -147,7 +147,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read2 ()
 		{
 			var r = GetReader ("DateTime.xml");

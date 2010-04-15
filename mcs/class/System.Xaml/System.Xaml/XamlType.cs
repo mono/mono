@@ -50,16 +50,17 @@ namespace System.Xaml
 			type = underlyingType;
 			underlying_type = type;
 
-			Name = type.GetXamlName ();
-			// FIXME: remove this hack
-			if (Type.GetTypeCode (type) == TypeCode.Object && type != typeof (object)) {
-				if (predefined_types.Contains (type) || typeof (MarkupExtension).IsAssignableFrom (type) && type.Assembly == typeof (XamlType).Assembly)
-					PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
-				else
-					PreferredXamlNamespace = String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
-			}
-			else
+			XamlType xt;
+			if (XamlLanguage.InitializingTypes) {
+				Name = type.GetXamlName ();
 				PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
+			} else if ((xt = XamlLanguage.AllTypes.FirstOrDefault (t => t.UnderlyingType == type)) != null) {
+				Name = xt.Name;
+				PreferredXamlNamespace = XamlLanguage.Xaml2006Namespace;
+			} else {
+				Name = type.GetXamlName ();
+				PreferredXamlNamespace = String.Format ("clr-namespace:{0};assembly={1}", type.Namespace, type.Assembly.GetName ().Name);
+			}
 		}
 
 		public XamlType (string unknownTypeNamespace, string unknownTypeName, IList<XamlType> typeArguments, XamlSchemaContext schemaContext)

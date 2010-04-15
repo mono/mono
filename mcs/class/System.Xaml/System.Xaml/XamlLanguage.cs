@@ -47,9 +47,11 @@ namespace System.Xaml
 		}
 
 		internal static readonly bool InitializingDirectives;
+		internal static readonly bool InitializingTypes;
 
 		static XamlLanguage ()
 		{
+			InitializingTypes = true;
 			// types
 
 			Array = XT<ArrayExtension> ();
@@ -73,6 +75,8 @@ namespace System.Xaml
 			Type = XT<TypeExtension> ();
 			Uri = XT<Uri> ();
 			XData = XT<XData> ();
+
+			InitializingTypes = false;
 
 			AllTypes = new ReadOnlyCollection<XamlType> (new XamlType [] {Array, Boolean, Byte, Char, Decimal, Double, Int16, Int32, Int64, Member, Null, Object, Property, Reference, Single, Static, String, TimeSpan, Type, Uri, XData});
 
@@ -209,6 +213,26 @@ namespace System.Xaml
 			default:
 				return false;
 			}
+		}
+
+		static readonly int clr_ns_len = "clr-namespace:".Length;
+		static readonly int clr_ass_len = "assembly=".Length;
+
+		internal static Type ParseClrTypeName (string xmlNamespace, string xmlLocalName)
+		{
+			string ns = xmlNamespace;
+			string name = xmlLocalName;
+
+			if (!ns.StartsWith ("clr-namespace:", StringComparison.Ordinal))
+				return null;
+
+			string [] split = ns.Split (';');
+			if (split.Length != 2 || split [0].Length <= clr_ns_len || split [1].Length <= clr_ass_len)
+				throw new XamlParseException (string.Format ("Cannot resolve runtime namespace from XML namespace '{0}'", ns));
+			var tns = split [0].Substring (clr_ns_len);
+			var tan = split [1].Substring (clr_ass_len);
+			string aqn = (tns.Length > 0 ? tns + '.' + name : name) + (tan.Length > 0 ? ", " + tan : string.Empty);
+			return System.Type.GetType (aqn);
 		}
 	}
 }

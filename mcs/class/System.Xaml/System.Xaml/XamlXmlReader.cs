@@ -293,8 +293,16 @@ namespace System.Xaml
 			}
 			else
 				is_empty_object = true;
-			
-			var xt = sctx.GetXamlType (new XamlTypeName (ns, name, type_args.ToArray ()));
+
+			XamlType xt;
+			if (ns.StartsWith ("clr-namespace:", StringComparison.Ordinal)) {
+				Type rtype = XamlLanguage.ParseClrTypeName (ns, name);
+				if (rtype == null)
+					throw new XamlParseException (String.Format ("Cannot resolve runtime namespace from XML namespace '{0}' and local name '{1}'", ns, name));
+				xt = sctx.GetXamlType (rtype);
+			}
+			else
+				xt = sctx.GetXamlType (new XamlTypeName (ns, name, type_args.ToArray ()));
 			if (xt == null)
 				// FIXME: .NET just treats the node as empty!
 				// we have to sort out what to do here.
