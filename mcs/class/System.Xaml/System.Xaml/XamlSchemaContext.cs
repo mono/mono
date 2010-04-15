@@ -28,6 +28,8 @@ using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml.Schema;
 
+using Pair = System.Collections.Generic.KeyValuePair<string,string>;
+
 namespace System.Xaml
 {
 	// This type caches assembly attribute search results. To do this,
@@ -138,9 +140,17 @@ namespace System.Xaml
 			return new XamlValueConverter<TConverterBase> (converterType, targetType);
 		}
 		
+		Dictionary<Pair,XamlDirective> xaml_directives = new Dictionary<Pair,XamlDirective> ();
+		
 		public virtual XamlDirective GetXamlDirective (string xamlNamespace, string name)
 		{
-			throw new NotImplementedException ();
+			XamlDirective t;
+			var p = new Pair (xamlNamespace, name);
+			if (!xaml_directives.TryGetValue (p, out t)) {
+				t = new XamlDirective (xamlNamespace, name);
+				xaml_directives.Add (p, t);
+			}
+			return t;
 		}
 		
 		Dictionary<Type,XamlType> xaml_types = new Dictionary<Type,XamlType> ();
