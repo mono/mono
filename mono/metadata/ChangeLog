@@ -1,5 +1,10 @@
 2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_get_method_by_index): Return NULL
+	on type load failures.
+
+2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_from_typeref): Check if the supplied
 	image has an assembly bound to it.
 
