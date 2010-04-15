@@ -289,5 +289,53 @@ namespace MonoTests.System {
 		{
 			new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f).ToString ("This is invalid");
 		}
+
+#if NET_4_0
+
+		/*
+			N = new Guid ("000102030405060708090a0b0c0d0e0f"); 
+			D = new Guid ("00010203-0405-0607-0809-0a0b0c0d0e0f"); 
+			B = new Guid ("{00010203-0405-0607-0809-0A0B0C0D0E0F}"); 
+			P = new Guid ("(00010203-0405-0607-0809-0A0B0C0D0E0F)");
+			X = new Guid ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}");
+
+			string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
+		*/
+
+		[Test]
+		public void ParseExact ()
+		{
+			const string expected = "00010203-0405-0607-0809-0a0b0c0d0e0f";
+
+			var guid = Guid.ParseExact ("000102030405060708090a0b0c0d0e0f", "N");
+			Assert.AreEqual (expected, guid.ToString ());
+
+			guid = Guid.ParseExact ("00010203-0405-0607-0809-0a0b0c0d0e0f", "D");
+			Assert.AreEqual (expected, guid.ToString ());
+
+			guid = Guid.ParseExact ("{00010203-0405-0607-0809-0A0B0C0D0E0F}", "B");
+			Assert.AreEqual (expected, guid.ToString ());
+
+			guid = Guid.ParseExact ("(00010203-0405-0607-0809-0A0B0C0D0E0F)", "P");
+			Assert.AreEqual (expected, guid.ToString ());
+
+			guid = Guid.ParseExact ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", "X");
+			Assert.AreEqual (expected, guid.ToString ());
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExactN ()
+		{
+			Guid.ParseExact ("00010203-0405-0607-0809-0a0b0c0d0e0f", "N");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExactD ()
+		{
+			Guid.ParseExact ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}", "D");
+		}
+#endif
 	}
 }

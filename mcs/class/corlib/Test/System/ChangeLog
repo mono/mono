@@ -1,3 +1,7 @@
+2010-04-15  Jb Evain  <jbevain@novell.com>
+
+	* GuidTest.cs: add tests for net_4_0 ParseExact methods.
+
 2010-04-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* ConvertTest.cs: Add a test for #596339.
