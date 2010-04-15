@@ -1,5 +1,12 @@
 2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_setup_vtable_general): Use error checking
+	version of mono_class_inflate_generic_method_full.
+
+	Fixes #596975.
+
+2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_inflate_generic_type_no_copy): Do proper
 	error handling passing MonoError around.
 
