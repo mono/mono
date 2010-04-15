@@ -1,3 +1,15 @@
+2010-04-15  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile.am: Revert previous linkage against libmono.so, as lupus
+	  mentioned that it's unacceptable for MonoPosixHelper to link against
+	  libmono (e.g. when embedding mono, there might not be a libmono).
+	* map.h: Flush updated Mono_Unix_UnixSignal_SignalInfo prototype.
+	* signal.c: Don't use mono_runtime_is_shutting_down(). Instead, change
+	  Mono_Unix_UnixSignal_WaitAny() to accept a function pointer argument,
+	  which will return Environment.HasShutdownStarted in managed code (the 
+	  moral equivalent of mono_runtime_is_shutting_down()).  This allows
+	  us to avoid a libmono dependency w/o lots of rewriting. Fixes #592981.
+
 2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* zlib-helper.c: now that we don't use Z_SYNC_FLUSH, there might be
