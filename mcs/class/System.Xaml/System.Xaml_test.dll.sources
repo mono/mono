@@ -2,6 +2,7 @@ System.Windows.Markup/ArrayExtensionTest.cs
 System.Windows.Markup/StaticExtensionTest.cs
 System.Windows.Markup/TypeExtensionTest.cs
 System.Windows.Markup/ValueSerializerTest.cs
+System.Windows.Markup/XDataTest.cs
 System.Xaml.Schema/XamlMemberInvokerTest.cs
 System.Xaml.Schema/XamlTypeInvokerTest.cs
 System.Xaml.Schema/XamlTypeNameTest.cs

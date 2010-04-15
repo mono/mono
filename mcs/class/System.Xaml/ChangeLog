@@ -1,3 +1,7 @@
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Xaml_test.dll.sources : add XDataTest.cs.
+
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* System.Xaml_test.dll.sources : add XamlTypeNameTest.cs.
