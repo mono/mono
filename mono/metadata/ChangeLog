@@ -1,5 +1,12 @@
 2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_from_typeref): Check if the supplied
+	image has an assembly bound to it.
+
+	Fixes #567884.
+
+2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (mono_method_get_signature_full): Use new function
 	inflate_generic_signature_checked to check for errors.
 
