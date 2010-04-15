@@ -1,3 +1,9 @@
+2010-04-15  Jonathan Pryor  <jpryor@novell.com>
+
+	* UnixSignal.cs: Change the native WaitAny() method to accept a
+	  Mono_Posix_RuntimeIsShuttingDown delegate, so that we can prevent an
+	  infinite loop while shutting the process down.  Fixes #592981.
+
 2009-03-23  Jonathan Pryor  <jpryor@novell.com>
 
 	* UnixDriveInfo.cs: UnixDriveInfo.AvailableFreeSpace needs to return 
