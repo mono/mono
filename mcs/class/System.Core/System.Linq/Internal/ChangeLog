@@ -1,0 +1,12 @@
+2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* AggregationList.cs:
+	* ConcurrentGrouping.cs:
+	* ConcurrentLookup.cs:
+	* OrderingEnumerator.cs:
+	* ParallelQuickSort.cs:
+	* RangeList.cs:
+	* RepeatList.cs:
+	* ReverseList.cs:
+	* StripPartitioner.cs: Initial check-in of PLinq
+

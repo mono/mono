@@ -1,5 +1,14 @@
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* OrderedParallelQuery.cs:
+	* ParallelEnumerable.cs:
+	* ParallelExecuter.cs:
+	* ParallelPartitioner.cs:
+	* ParallelQuery.cs:
+	* ParallelQueryEnumerator.cs: First check-in of PLinq
+
+2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* ParallelExecutionMode.cs:
 	* ParallelMergeOptions.cs: Initial check-in of PLinq (enum)
 
