@@ -1,3 +1,7 @@
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlXmlReader.cs : Return Member. Remove NIE.
+
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlXmlWriter.cs : use TypeConverter to get string value to write.

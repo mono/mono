@@ -159,7 +159,7 @@ namespace System.Xaml
 		}
 
 		public override XamlMember Member {
-			get { throw new NotImplementedException (); }
+			get { return current as XamlMember; }
 		}
 		public override NamespaceDeclaration Namespace {
 			get { return current as NamespaceDeclaration; }
@@ -243,7 +243,6 @@ namespace System.Xaml
 				ReadValue ();
 				return true;
 			}
-			throw new NotImplementedException ();
 		}
 
 		bool CheckNextNamespace ()
