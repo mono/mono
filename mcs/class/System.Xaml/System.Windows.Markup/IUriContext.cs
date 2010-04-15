@@ -28,6 +28,7 @@ using System.Xaml.Schema;
 
 namespace System.Windows.Markup
 {
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationCore_3_5)]
 	public interface IUriContext
 	{
 		Uri BaseUri { get; set; }

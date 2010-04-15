@@ -25,6 +25,7 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Method | AttributeTargets.Property, AllowMultiple = true)]
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
 	public sealed class DependsOnAttribute : Attribute
 	{
 		public DependsOnAttribute (string name)

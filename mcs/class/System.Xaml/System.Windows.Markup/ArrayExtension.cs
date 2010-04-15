@@ -32,6 +32,7 @@ namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (Array))]
 	[ContentProperty ("Items")]
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
 	public class ArrayExtension : MarkupExtension
 	{
 		public ArrayExtension ()
@@ -58,6 +59,8 @@ namespace System.Windows.Markup
 		}
 
 		public IList Items { get; private set; }
+
+		[ConstructorArgument ("arrayType")]
 		public Type Type { get; set; }
 
 		public void AddChild (Object value)

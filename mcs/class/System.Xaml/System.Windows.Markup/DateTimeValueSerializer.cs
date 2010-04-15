@@ -28,6 +28,7 @@ using System.Globalization;
 
 namespace System.Windows.Markup
 {
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
 	public class DateTimeValueSerializer : ValueSerializer
 	{
 		public override bool CanConvertFromString (string value, IValueSerializerContext context)

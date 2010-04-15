@@ -30,6 +30,7 @@ namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (object))]
 	[TypeConverter (typeof (StaticExtensionConverter))]
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
 	public class StaticExtension : MarkupExtension
 	{
 		public StaticExtension ()
@@ -41,7 +42,10 @@ namespace System.Windows.Markup
 			Member = member;
 		}
 
+		[ConstructorArgument ("member")]
 		public string Member { get; set; }
+
+		[DefaultValue (null)]
 		public Type MemberType { get; set; }
 
 		public override object ProvideValue (IServiceProvider serviceProvider)

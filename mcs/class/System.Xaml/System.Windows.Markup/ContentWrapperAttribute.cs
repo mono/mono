@@ -25,6 +25,7 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Class, AllowMultiple = true, Inherited = true)]
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
 	public sealed class ContentWrapperAttribute : Attribute
 	{
 		public ContentWrapperAttribute (Type contentWrapper)
@@ -37,5 +38,17 @@ namespace System.Windows.Markup
 			get { return ContentWrapper; }
 		}
 
+		public override bool Equals (object other)
+		{
+			var cwa = other as ContentWrapperAttribute;
+			if (cwa == null)
+				return false;
+			return ContentWrapper != null ? ContentWrapper == cwa.ContentWrapper : cwa.ContentWrapper == null;
+		}
+
+		public override int GetHashCode ()
+		{
+			return ContentWrapper != null ? ContentWrapper.GetHashCode () : 0;
+		}
 	}
 }

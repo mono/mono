@@ -29,6 +29,7 @@ using System.Xaml.Schema;
 namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (Object))]
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
 	public class NullExtension : MarkupExtension
 	{
 		public override Object ProvideValue (IServiceProvider serviceProvider)

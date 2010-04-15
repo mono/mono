@@ -25,6 +25,7 @@ using System.Collections.Generic;
 
 namespace System.Windows.Markup
 {
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
 	public interface INameScope
 	{
 		object FindName (string name);

@@ -29,6 +29,7 @@ using System.Xaml;
 
 namespace System.Windows.Markup
 {
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
 	public abstract class ValueSerializer
 	{
 		public static ValueSerializer GetSerializerFor (PropertyDescriptor descriptor)

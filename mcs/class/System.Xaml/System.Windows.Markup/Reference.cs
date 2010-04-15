@@ -42,6 +42,7 @@ namespace System.Windows.Markup
 			Name = name;
 		}
 
+		[ConstructorArgument ("name")]
 		public string Name { get; set; }
 
 		public override object ProvideValue (IServiceProvider serviceProvider)

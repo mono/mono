@@ -25,6 +25,7 @@ using System;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Class)]
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
 	public sealed class RuntimeNamePropertyAttribute : Attribute
 	{
 		public RuntimeNamePropertyAttribute (string name)

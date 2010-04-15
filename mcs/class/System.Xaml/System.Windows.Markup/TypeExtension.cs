@@ -30,6 +30,7 @@ namespace System.Windows.Markup
 {
 	[MarkupExtensionReturnType (typeof (Type))]
 	[TypeConverter (typeof (TypeExtensionConverter))]
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyPresentationFramework_3_5)]
 	public class TypeExtension : MarkupExtension
 	{
 		public TypeExtension ()
@@ -50,6 +51,8 @@ namespace System.Windows.Markup
 			Type = type;
 		}
 
+		[ConstructorArgument ("type")]
+		[DefaultValue (null)]
 		public Type Type { get; set; }
 		public string TypeName { get; set; }
 

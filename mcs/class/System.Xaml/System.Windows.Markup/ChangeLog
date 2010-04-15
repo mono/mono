@@ -1,3 +1,33 @@
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ArrayExtension.cs
+	  TrimSurroundingWhitespaceAttribute.cs
+	  RuntimeNamePropertyAttribute.cs
+	  TypeExtension.cs
+	  MarkupExtensionReturnTypeAttribute.cs
+	  DateTimeValueSerializer.cs
+	  IValueSerializerContext.cs
+	  RootNamespaceAttribute.cs
+	  MarkupExtension.cs
+	  Reference.cs
+	  AmbientAttribute.cs
+	  NameScopePropertyAttribute.cs
+	  ValueSerializer.cs
+	  DictionaryKeyPropertyAttribute.cs
+	  WhitespaceSignificantCollectionAttribute.cs
+	  ConstructorArgumentAttribute.cs
+	  IUriContext.cs
+	  INameScope.cs
+	  StaticExtension.cs
+	  IProvideValueTarget.cs
+	  ValueSerializerAttribute.cs
+	  IXamlTypeResolver.cs
+	  ContentWrapperAttribute.cs
+	  ContentPropertyAttribute.cs
+	  DependsOnAttribute.cs
+	  NullExtension.cs
+	  UidPropertyAttribute.cs : several corcompare fixes.
+
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeExtensionConverter.cs : implement.

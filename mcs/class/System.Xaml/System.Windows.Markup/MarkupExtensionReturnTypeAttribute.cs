@@ -36,6 +36,16 @@ namespace System.Windows.Markup
 			ReturnType = returnType;
 		}
 
+		[Obsolete ("Unused. Use MarkupExtensionReturnTypeAttribute(Type) or XamlSetMarkupExtensionAttribute.")]
+		public MarkupExtensionReturnTypeAttribute (Type returnType, Type expressionType)
+			: this (returnType)
+		{
+			ExpressionType = expressionType;
+		}
+
 		public Type ReturnType { get; private set; }
+
+		[ObsoleteAttribute ("Unused. Use XamlSetMarkupExtensionAttribute functionality instead.")]
+		public Type ExpressionType { get; private set; }
 	}
 }
