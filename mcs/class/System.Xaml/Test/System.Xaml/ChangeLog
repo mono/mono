@@ -1,5 +1,10 @@
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlTypeTest.cs, XamlLanguageTest.cs : enable AllowedContentTypes
+	  and ContentWrappers tests.
+
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlReaderTest.cs : enable DateTime tests.
 	* XamlSchemaContextTest.cs : add a type name resolver test.
 

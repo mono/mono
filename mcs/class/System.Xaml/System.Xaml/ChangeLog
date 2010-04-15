@@ -1,5 +1,9 @@
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlType.cs : implement AllowedContentTypes and ContentWrappers.
+
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlReader.cs : handle types in clr-namespace.
 	* XamlType.cs : replaced Type-to-typename hack with better-working one.
 	* XamlLanguage,cs : add internal clr type name resolver method.

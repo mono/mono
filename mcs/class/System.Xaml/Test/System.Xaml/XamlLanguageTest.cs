@@ -758,8 +758,8 @@ namespace MonoTests.System.Xaml
 			Assert.IsFalse (t.IsXData, "#20");
 			Assert.IsFalse (t.TrimSurroundingWhitespace, "#21");
 			Assert.IsFalse (t.IsAmbient, "#22");
-			//Assert.IsNull (t.AllowedContentTypes, "#23");
-			//Assert.IsNull (t.ContentWrappers, "#24");
+			Assert.IsNull (t.AllowedContentTypes, "#23");
+			Assert.IsNull (t.ContentWrappers, "#24");
 			// string is a special case.
 			if (t == XamlLanguage.String)
 				Assert.IsNotNull (t.ValueSerializer, "#26");

@@ -376,8 +376,16 @@ namespace System.Xaml
 
 		protected virtual IList<XamlType> LookupAllowedContentTypes ()
 		{
-			throw new NotImplementedException ();
+			var l = new List<XamlType> ();
+			if (ContentWrappers != null)
+				l.AddRange (ContentWrappers);
+			if (ContentProperty != null)
+				l.Add (ContentProperty.Type);
+			if (ItemType != null)
+				l.Add (ItemType);
+			return l.Count > 0 ? l : null;
 		}
+
 		protected virtual XamlMember LookupAttachableMember (string name)
 		{
 			throw new NotImplementedException ();
@@ -445,9 +453,15 @@ namespace System.Xaml
 
 		protected virtual IList<XamlType> LookupContentWrappers ()
 		{
-			var l = new List<XamlType> ();
-			foreach (ContentWrapperAttribute a in CustomAttributeProvider.GetCustomAttributes (typeof (ContentWrapperAttribute), false))
-				l.Add (SchemaContext.GetXamlType (a.ContentWrapper));
+			if (CustomAttributeProvider == null)
+				return null;
+
+			var arr = CustomAttributeProvider.GetCustomAttributes (typeof (ContentWrapperAttribute), false);
+			if (arr == null || arr.Length == 0)
+				return null;
+			var l = new XamlType [arr.Length];
+			for (int i = 0; i < l.Length; i++) 
+				l [i] = SchemaContext.GetXamlType (((ContentWrapperAttribute) arr [i]).ContentWrapper);
 			return l;
 		}
 
