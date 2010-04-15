@@ -1,5 +1,10 @@
 2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (inflate_generic_signature): Add _checked variant
+	and move this function to use it.
+
+2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_setup_vtable_general): Use error checking
 	version of mono_class_inflate_generic_method_full.
 
