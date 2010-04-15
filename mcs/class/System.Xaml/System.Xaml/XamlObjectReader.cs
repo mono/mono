@@ -23,6 +23,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.Windows.Markup;
 
 namespace System.Xaml
@@ -106,18 +107,23 @@ namespace System.Xaml
 			if (instance is Type)
 				instance = new TypeExtension ((Type) instance);
 
+			this.instance = instance;
+			sctx = schemaContext;
+			this.settings = settings;
+
 			if (instance != null) {
 				// check type validity. Note that some checks are done at Read() phase.
 				var type = instance.GetType ();
 				if (!type.IsPublic)
 					throw new XamlObjectReaderException (String.Format ("instance type '{0}' must be public and non-nested.", type));
+				root_type = SchemaContext.GetXamlType (instance.GetType ());
 			}
-			this.instance = instance;
-			sctx = schemaContext;
-			this.settings = settings;
+			else
+				root_type = XamlLanguage.Null;
 		}
 
 		object instance;
+		XamlType root_type;
 		XamlSchemaContext sctx;
 		XamlObjectReaderSettings settings;
 
@@ -159,6 +165,8 @@ namespace System.Xaml
 		public override object Value {
 			get { return NodeType == XamlNodeType.Value ? objects.Peek () : null; }
 		}
+
+		List<NamespaceDeclaration> tmp_ns_decls = new List<NamespaceDeclaration> ();
 		
 		public override bool Read ()
 		{
@@ -171,7 +179,13 @@ namespace System.Xaml
 			case XamlNodeType.None:
 			default:
 				// -> namespaces
-				namespaces = new NSList (XamlNodeType.StartObject, new NamespaceDeclaration (XamlLanguage.Xaml2006Namespace, "x")).GetEnumerator ();
+				var rootNS = root_type.PreferredXamlNamespace;
+				if (rootNS != XamlLanguage.Xaml2006Namespace)
+					tmp_ns_decls.Add (new NamespaceDeclaration (rootNS, String.Empty));
+				tmp_ns_decls.Add (new NamespaceDeclaration (XamlLanguage.Xaml2006Namespace, "x"));
+				namespaces = new NSList (XamlNodeType.StartObject, tmp_ns_decls.ToArray ()).GetEnumerator ();
+				tmp_ns_decls.Clear ();
+
 				namespaces.MoveNext ();
 				node_type = XamlNodeType.NamespaceDeclaration;
 				return true;
@@ -199,8 +213,7 @@ namespace System.Xaml
 				return true;
 
 			case XamlNodeType.StartMember:
-				members = members_stack.Peek ();
-				var obj = members.Current.GetPropertyOrFieldValue (objects.Peek ());
+				var obj = GetMemberValueOrRootInstance ();
 				objects.Push (obj);
 				node_type = XamlNodeType.Value;
 				return true;
@@ -255,9 +268,8 @@ namespace System.Xaml
 
 		void StartNextObject ()
 		{
-			var xm = members_stack.Count > 0 ? members_stack.Peek ().Current : null;
-			var obj = xm != null ? xm.GetPropertyOrFieldValue (objects.Peek ()) : instance;
-			var xt = obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
+			var obj = GetMemberValueOrRootInstance ();
+			var xt = Object.ReferenceEquals (obj, instance) ? root_type : obj != null ? SchemaContext.GetXamlType (obj.GetType ()) : XamlLanguage.Null;
 
 			// FIXME: enable these lines.
 			// FIXME: if there is an applicable instance descriptor, then it could be still valid.
@@ -268,6 +280,18 @@ namespace System.Xaml
 			objects.Push (obj);
 			types.Push (xt);
 			node_type = XamlNodeType.StartObject;
+		}
+		
+		object GetMemberValueOrRootInstance ()
+		{
+			if (objects.Count == 0)
+				return instance;
+
+			var xm = members_stack.Peek ().Current;
+			var obj = objects.Peek ();
+			if (xm == XamlLanguage.Initialization)
+				return types.Peek ().GetStringValue (obj);
+			return xm != null ? xm.GetMemberValue (obj) : instance;
 		}
 	}
 }

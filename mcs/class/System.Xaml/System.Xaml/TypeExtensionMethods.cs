@@ -33,12 +33,15 @@ namespace System.Xaml
 {
 	static class TypeExtensionMethods
 	{
+		// FIXME: this likely needs to be replaced with XamlTypeName
 		public static string GetXamlName (this Type type)
 		{
 			if (!type.IsNested)
 				return type.Name;
 			return type.DeclaringType.GetXamlName () + "+" + type.Name;
 		}
+
+		#region inheritance search and custom attribute provision
 
 		public static T GetCustomAttribute<T> (this ICustomAttributeProvider type, bool inherit) where T : Attribute
 		{
@@ -77,10 +80,49 @@ namespace System.Xaml
 					return true;
 			return false;
 		}
-
-		public static object GetPropertyOrFieldValue (this XamlMember xm, object target)
+		
+		#endregion
+		
+		#region type conversion and member value retrieval
+		
+		public static object GetStringValue (this XamlType xt, object obj)
 		{
-			// FIXME: consider ValueSerializer etc.
+			if (obj == null)
+				return String.Empty;
+			if (obj is DateTime)
+				// FIXME: DateTimeValueSerializer should apply
+				return TypeDescriptor.GetConverter (typeof (DateTime)).ConvertToInvariantString (obj);
+			else
+				return xt.ConvertObject (obj, typeof (string));
+		}
+
+		public static object ConvertObject (this XamlType xt, object target, Type explicitTargetType)
+		{
+			return DoConvert (xt.TypeConverter, target, explicitTargetType ?? xt.UnderlyingType);
+		}
+		
+		public static object GetMemberValue (this XamlMember xm, object target)
+		{
+			object native = GetPropertyOrFieldValue (xm, target);
+			var targetRType = xm.TargetType == null ? null : xm.TargetType.UnderlyingType;
+			return DoConvert (xm.TypeConverter, native, targetRType);
+		}
+		
+		static object DoConvert (XamlValueConverter<TypeConverter> converter, object value, Type targetType)
+		{
+			// First get member value, then convert it to appropriate target type.
+			var tc = converter != null ? converter.ConverterInstance : null;
+			if (tc != null && targetType != null && tc.CanConvertTo (targetType))
+				return tc.ConvertTo (value, targetType);
+			return value;
+		}
+
+		static object GetPropertyOrFieldValue (this XamlMember xm, object target)
+		{
+			// FIXME: should this be done here??
+			if (xm == XamlLanguage.Initialization)
+				return target;
+
 			var mi = xm.UnderlyingMember;
 			var fi = mi as FieldInfo;
 			if (fi != null)
@@ -88,12 +130,11 @@ namespace System.Xaml
 			var pi = mi as PropertyInfo;
 			if (pi != null)
 				return ((PropertyInfo) mi).GetValue (target, null);
-			// FIXME: should this be done here??
-			if (xm == XamlLanguage.Initialization)
-				return target;
 
 			throw new NotImplementedException ();
 		}
+		
+		#endregion
 
 		public static IEnumerable<XamlMember> GetAllReadWriteMembers (this XamlType type)
 		{
@@ -114,49 +155,6 @@ namespace System.Xaml
 			for (int i = 0; i < a1.Count; i++)
 				if (a1 [i] != a2 [i])
 					return false;
-			return true;
-		}
-
-		public static bool ListEquals (this IEnumerable<XamlTypeName> a1, IEnumerable<XamlTypeName> a2)
-		{
-			if (a1 == null)
-				return a2 == null || !a2.GetEnumerator ().MoveNext ();
-			if (a2 == null)
-				return false || !a1.GetEnumerator ().MoveNext ();
-
-			var e1 = a1.GetEnumerator ();
-			var e2 = a2.GetEnumerator ();
-			while (true) {
-				if (!e1.MoveNext ())
-					return !e2.MoveNext ();
-				if (!e2.MoveNext ())
-					return false;
-				if(!e1.Current.NameEquals (e2.Current))
-					return false;
-			}
-		}
-		
-		public static bool NameEquals (this XamlType t, XamlTypeName n)
-		{
-//Console.Error.WriteLine ("**** {0} {1} {2} {3}", t.Name, t.Name == n.Name, t.PreferredXamlNamespace == n.Namespace, ListEquals (t.TypeArguments.ToTypeNames (), n.TypeArguments));
-			return t.Name == n.Name && t.PreferredXamlNamespace == n.Namespace && ListEquals (t.TypeArguments.ToTypeNames (), n.TypeArguments);
-		}
-
-		public static IEnumerable<XamlTypeName> ToTypeNames (this IEnumerable<XamlType> types)
-		{
-			if (types != null)
-				foreach (var t in types)
-					yield return new XamlTypeName (t.PreferredXamlNamespace, t.Name, ToTypeNames (t.TypeArguments));
-		}
-
-		public static bool NameEquals (this XamlTypeName n1, XamlTypeName n2)
-		{
-			if (n1 == null)
-				return n2 == null;
-			if (n2 == null)
-				return false;
-			if (n1.Name != n2.Name || n1.Namespace != n2.Namespace || !n1.TypeArguments.ListEquals (n2.TypeArguments))
-				return false;
 			return true;
 		}
 	}

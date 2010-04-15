@@ -1,3 +1,8 @@
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlObjectReaderTest.cs : add more read tests (lots of them are
+	  not fully working yet).
+
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlXmlReaderTest.cs : add primitive TimeSpan reader test.

@@ -1,3 +1,7 @@
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DateTime.xml : new test file. (not working though)
+
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TimeSpan.xml : new test file.
