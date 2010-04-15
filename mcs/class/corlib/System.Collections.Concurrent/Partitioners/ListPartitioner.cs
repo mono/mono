@@ -50,7 +50,9 @@ namespace System.Collections.Concurrent
 			IEnumerator<KeyValuePair<long, T>>[] enumerators
 				= new IEnumerator<KeyValuePair<long, T>>[partitionCount];
 			
-			int count = GetBestCacheLineSize (source.Count, partitionCount);
+			int count = source.Count / partitionCount;
+			if (count <= 1)
+				count = 1;
 			
 			for (int i = 0; i < enumerators.Length; i++) {
 				if (chunking) {
@@ -66,20 +68,6 @@ namespace System.Collections.Concurrent
 			}
 			
 			return enumerators;
-		}
-		
-		int GetBestCacheLineSize (int initialSize, int partitionCount)	
-		{
-			const int numPartition = 20;
-			uint size = (uint)(initialSize / partitionCount / numPartition);
-			int count = 0;
-			
-			if (size <= 1)
-				return 1;
-			
-			while ((size <<= 1) < 0x80000040)
-				++count;
-			return (int)(0x80000040 >> (count + 1));
 		}
 		
 		IEnumerator<KeyValuePair<long, T>> GetEnumeratorForRange (int startIndex, int lastIndex)
