@@ -1,5 +1,10 @@
 2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlType.cs : sort of reverted AllowedContentTypes.
+	  msdn explanation is so wrong.
+
+2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlSchemaContext.cs : implement GetXamlDirective().
 
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>

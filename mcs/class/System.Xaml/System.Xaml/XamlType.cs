@@ -376,6 +376,10 @@ namespace System.Xaml
 
 		protected virtual IList<XamlType> LookupAllowedContentTypes ()
 		{
+			// the actual implementation is very different from what is documented :(
+			return null;
+
+			/*
 			var l = new List<XamlType> ();
 			if (ContentWrappers != null)
 				l.AddRange (ContentWrappers);
@@ -384,6 +388,7 @@ namespace System.Xaml
 			if (ItemType != null)
 				l.Add (ItemType);
 			return l.Count > 0 ? l : null;
+			*/
 		}
 
 		protected virtual XamlMember LookupAttachableMember (string name)
