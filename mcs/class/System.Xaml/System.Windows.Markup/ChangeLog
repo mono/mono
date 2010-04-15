@@ -1,5 +1,15 @@
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlnsCompatibleWithAttribute.cs
+	  IComponentConnector.cs
+	  XmlLangPropertyAttribute.cs
+	  XamlSetMarkupExtensionEventArgs.cs
+	  PropertyDefinition.cs
+	  XmlnsDefinitionAttribute.cs
+	  XmlnsPrefixAttribute.cs : another corcompare fix.
+
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XData.cs : actual implementation.
 
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>

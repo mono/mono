@@ -31,6 +31,7 @@ using System.Xaml.Schema;
 namespace System.Windows.Markup
 {
 	[AttributeUsage (AttributeTargets.Assembly, AllowMultiple = true)]
+	[System.Runtime.CompilerServices.TypeForwardedFrom (Consts.AssemblyWindowsBase)]
 	public sealed class XmlnsCompatibleWithAttribute : Attribute
 	{
 		public XmlnsCompatibleWithAttribute (string oldNamespace, string newNamespace)

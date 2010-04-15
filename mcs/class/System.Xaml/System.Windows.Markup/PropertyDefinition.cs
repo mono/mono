@@ -38,6 +38,7 @@ namespace System.Windows.Markup
 
 		public IList<Attribute> Attributes { get; private set; }
 
+		[DefaultValue ("public")]
 		public string Modifier { get; set; }
 
 		string name;

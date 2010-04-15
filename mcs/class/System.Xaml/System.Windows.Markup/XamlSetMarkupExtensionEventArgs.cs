@@ -41,5 +41,9 @@ namespace System.Windows.Markup
 		public MarkupExtension MarkupExtension { get; private set; }
 		public IServiceProvider ServiceProvider { get; private set; }
 
+		public override void CallBase ()
+		{
+			throw new NotImplementedException ();
+		}
 	}
 }
