@@ -1,5 +1,9 @@
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* ParallelEnumerableTests.cs: Tweak Skip unit test to avoid deadlocking for now
+
+2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* ParallelEnumerableTests.cs:
 	* ParallelTestHelper.cs: Add PLinq unit tests
 

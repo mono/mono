@@ -290,7 +290,7 @@ namespace MonoTests.System.Linq.Parallel
 			int [] data = {0, 1, 2, 3, 4, 5};
 			int [] result = {3, 4, 5};
 
-			AssertAreSame (result, data.AsParallel ().AsOrdered ().Skip (3));
+			AssertAreSame (result, data.AsParallel ().AsOrdered ().Skip (3).ToArray ());
 		}
 
 		/*[Test]
