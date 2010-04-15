@@ -1,3 +1,7 @@
+2010-04-15  Jb Evain  <jbevain@novell.com>
+
+	* MemoryMappedFile.cs: implement CreateOrOpen.
+
 2010-04-14  Jb Evain  <jbevain@novell.com>
 
 	* MemoryMappedViewAccessor.cs

@@ -69,7 +69,6 @@ namespace System.IO.MemoryMappedFiles
 			return CreateFromFile (path, FileMode.Open, null, 0, MemoryMappedFileAccess.ReadWrite);
 		}
 
-
 		public static MemoryMappedFile CreateFromFile (string path, FileMode mode)
 		{
 			return CreateFromFile (path, mode, null, 0, MemoryMappedFileAccess.ReadWrite);
@@ -224,14 +223,16 @@ namespace System.IO.MemoryMappedFiles
 			return CreateFromFile (mapName, FileMode.CreateNew, mapName, capacity, access);
 		}
 
-		[MonoTODO]
-			public static MemoryMappedFile CreateOrOpen (string mapName, long capacity) {
-			throw new NotImplementedException ();
+		[MonoLimitation ("CreateOrOpen requires that mapName be a file name on Unix")]
+		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity)
+		{
+			return CreateOrOpen (mapName, capacity, MemoryMappedFileAccess.ReadWrite);
 		}
 
-		[MonoTODO]
-			public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access) {
-			throw new NotImplementedException ();
+		[MonoLimitation ("CreateOrOpen requires that mapName be a file name on Unix")]
+		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access)
+		{
+			return CreateFromFile (mapName, FileMode.OpenOrCreate, mapName, capacity, access); 
 		}
 
 		/*
