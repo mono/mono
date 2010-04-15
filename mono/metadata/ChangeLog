@@ -1,5 +1,12 @@
 2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_method_get_signature_full): Use new function
+	inflate_generic_signature_checked to check for errors.
+
+	Fixes #560839.
+
+2010-04-15 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* loader.c (inflate_generic_signature): Add _checked variant
 	and move this function to use it.
 
