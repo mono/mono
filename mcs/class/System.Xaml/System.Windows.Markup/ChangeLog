@@ -1,5 +1,9 @@
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XData.cs : actual implementation.
+
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ArrayExtension.cs
 	  TrimSurroundingWhitespaceAttribute.cs
 	  RuntimeNamePropertyAttribute.cs

@@ -24,16 +24,43 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.IO;
 using System.Reflection;
 using System.Windows.Markup;
 using System.Xaml.Schema;
+using System.Xml;
 
 namespace System.Windows.Markup
 {
 	[ContentProperty ("Text")]
 	public sealed class XData
 	{
-		public string Text { get; set; }
-		public object XmlReader { get; set; }
+		string text;
+		XmlReader reader;
+
+		public string Text {
+			get { return text; }
+			set {
+				if (value == null) {
+					text = null;
+					reader = null;
+				}
+				else
+					text = value;
+			}
+		}
+
+		public object XmlReader {
+			get {
+				if (reader == null)
+					reader = System.Xml.XmlReader.Create (new StringReader (text));
+				return reader;
+			}
+			set {
+				// silly? yes, it's also a hack in .NET - who cares?
+				reader = value as XmlReader;
+				text = null;
+			}
+		}
 	}
 }

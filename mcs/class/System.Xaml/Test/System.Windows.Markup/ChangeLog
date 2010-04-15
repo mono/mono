@@ -1,3 +1,7 @@
+2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XDataTest.cs : new test.
+
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ValueSerializerTest.cs : new test.
