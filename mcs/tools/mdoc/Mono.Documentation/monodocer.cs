@@ -2287,7 +2287,7 @@ class MDocUpdater : MDocCommand
 			return v.ToString ();
 		string typename = GetDocTypeFullName (valueType);
 		var values = GetEnumerationValues (valueDef);
-		ulong c = Convert.ToUInt64 (v);
+		long c = ToInt64 (v);
 		if (values.ContainsKey (c))
 			return typename + "." + values [c];
 		if (valueDef.CustomAttributes.Cast<CustomAttribute> ()
@@ -2301,16 +2301,23 @@ class MDocUpdater : MDocCommand
 		return "(" + GetDocTypeFullName (valueType) + ") " + v.ToString ();
 	}
 
-	private static Dictionary<ulong, string> GetEnumerationValues (TypeDefinition type)
+	private static Dictionary<long, string> GetEnumerationValues (TypeDefinition type)
 	{
-		var values = new Dictionary<ulong, string> ();
+		var values = new Dictionary<long, string> ();
 		foreach (var f in 
 				(from f in type.Fields.Cast<FieldDefinition> ()
 				 where !(f.IsRuntimeSpecialName || f.IsSpecialName)
 				 select f)) {
-			values [Convert.ToUInt64 (f.Constant)] = f.Name;
+			values [ToInt64 (f.Constant)] = f.Name;
 		}
 		return values;
+	}
+
+	static long ToInt64 (object value)
+	{
+		if (value is ulong)
+			return (long) (ulong) value;
+		return Convert.ToInt64 (value);
 	}
 	
 	private void MakeParameters (XmlElement root, ParameterDefinitionCollection parameters)
