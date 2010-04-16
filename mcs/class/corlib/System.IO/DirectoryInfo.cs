@@ -35,6 +35,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security;
 using System.Text;
 #if !MOONLIGHT
 using System.Security.AccessControl;
@@ -61,6 +62,8 @@ namespace System.IO {
 		internal DirectoryInfo (string path, bool simpleOriginalPath)
 		{
 			CheckPath (path);
+
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			FullPath = Path.GetFullPath (path);
 			if (simpleOriginalPath)
@@ -437,7 +440,7 @@ namespace System.IO {
 			FileAttributes rattr;
 			bool subdirs = searchOption == SearchOption.AllDirectories;
 
-			Directory.ValidatePath (full); // required for Moonlight, nop-op otherwise
+			Path.Validate (full);
 			
 			string s = MonoIO.FindFirst (full, path_with_pattern, out rattr, out error, out handle);
 			if (s == null)

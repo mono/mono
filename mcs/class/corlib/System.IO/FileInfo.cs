@@ -35,6 +35,7 @@
 
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security;
 
 #if !NET_2_1
 using System.Security.AccessControl;
@@ -59,6 +60,7 @@ namespace System.IO {
 				throw new ArgumentNullException ("fileName");
 
 			CheckPath (fileName);
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			OriginalPath = fileName;
 			FullPath = Path.GetFullPath (fileName);

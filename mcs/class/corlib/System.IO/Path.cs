@@ -275,6 +275,9 @@ namespace System.IO {
 		public static string GetFullPath (string path)
 		{
 			string fullpath = InsecureGetFullPath (path);
+
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 #if !NET_2_1
 			if (SecurityManager.SecurityEnabled) {
 				new FileIOPermission (FileIOPermissionAccess.PathDiscovery, fullpath).Demand ();
@@ -437,6 +440,8 @@ namespace System.IO {
 			Random rnd;
 			int num = 0;
 
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 			rnd = new Random ();
 			do {
 				num = rnd.Next ();
@@ -466,6 +471,8 @@ namespace System.IO {
 		[EnvironmentPermission (SecurityAction.Demand, Unrestricted = true)]
 		public static string GetTempPath ()
 		{
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 			string p = get_temp_path ();
 			if (p.Length > 0 && p [p.Length - 1] != DirectorySeparatorChar)
 				return p + DirectorySeparatorChar;
@@ -781,5 +788,25 @@ namespace System.IO {
 			return Combine (new string [] { path1, path2, path3, path4 });
 		}
 #endif
+
+		internal static void Validate (string path)
+		{
+			Validate (path, "path");
+		}
+
+		internal static void Validate (string path, string parameterName)
+		{
+			if (path == null)
+				throw new ArgumentNullException (parameterName);
+			if (String.IsNullOrWhiteSpace (path))
+				throw new ArgumentException (Locale.GetText ("Path is empty"));
+			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
+				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
+#if MOONLIGHT
+			// On Moonlight (SL4+) there are some limitations in "Elevated Trust"
+			if (SecurityManager.HasElevatedPermissions) {
+			}
+#endif
+		}
 	}
 }

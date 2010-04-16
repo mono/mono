@@ -8,7 +8,7 @@
 //  Marek Safar (marek.safar@gmail.com)
 //
 // (C) 2001-2003 Ximian, Inc.  http://www.ximian.com
-// Copyright (C) 2004-2005, 2008 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2005, 2008, 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,13 +35,13 @@ using System.Globalization;
 using System.Runtime.CompilerServices;
 using System.Runtime.InteropServices;
 using System.Runtime.Remoting.Messaging;
+using System.Security;
 using System.Security.Permissions;
 using System.Threading;
 
 using Microsoft.Win32.SafeHandles;
 #if NET_2_1
 using System.IO.IsolatedStorage;
-using System.Security;
 #else
 using System.Security.AccessControl;
 #endif
@@ -264,6 +264,8 @@ namespace System.IO
 				throw new ArgumentException (string.Format (msg, access, mode));
 			}
 
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 			string dname = Path.GetDirectoryName (path);
 			if (dname.Length > 0) {
 				string fp = Path.GetFullPath (dname);
@@ -369,7 +371,11 @@ namespace System.IO
 
 		public string Name {
 			get {
-				return name; 
+#if MOONLIGHT
+				return SecurityManager.CheckElevatedPermissions () ? name : "[Unknown]";
+#else
+				return name;
+#endif
 			}
 		}
 

@@ -1,3 +1,20 @@
+2010-04-16  Sebastien Pouliot  <sebastien@ximian.com> 
+
+	* Directory.cs: Ensure elevated trust when calling on 
+	Moonlight.
+	* DirectoryInfo.cs: Ensure elevated trust when calling a .ctor 
+	on Moonlight.
+	* File.cs: Ensure elevated trust when calling a .ctor on 
+	Moonlight.
+	* FileInfo.cs: Ensure elevated trust when calling a .ctor on 
+	Moonlight.
+	* FileStream.cs: Ensure elevated trust when calling a .ctor on 
+	Moonlight. Name property returns "[Unknown]" unless a Moonlight
+	application is executed with elevated trust.
+	* Path.cs: Ensure elevated trust when calling a GetTempPath,
+	GetTempFileName or GetFullPath on Moonlight. Add a shared 
+	internal method to validate paths to reduce code duplication.
+
 2010-04-15  Jb Evain  <jbevain@novell.com>
 
 	* Directory.cs: don't fully qualify name when not it's necessary.

@@ -10,7 +10,7 @@
 //
 // Copyright 2002 Ximian, Inc. http://www.ximian.com
 // Copyright (C) 2001 Moonlight Enterprises, All Rights Reserved
-// Copyright (C) 2004, 2006 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004, 2006, 2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,13 +33,13 @@
 //
 
 using System;
-using System.Text;
 using System.Collections.Generic;
+using System.Diagnostics;
+using System.Security;
+using System.Text;
 using System.Runtime.InteropServices;
 
-#if NET_2_1
-using System.Security;
-#else
+#if !NET_2_1
 using System.Security.AccessControl;
 #endif
 
@@ -48,22 +48,8 @@ namespace System.IO
 	[ComVisible (true)]
 	public static class File
 	{
-		static void ValidatePath (string path)
-		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.Length == 0)
-				throw new ArgumentException ("path");
-#if MOONLIGHT && !DEBUG
-			// On Moonlight (SL4+) this is possible, with limitations, in "Elevated Trust"
-			throw new SecurityException ("we're not ready to enable this SL4 feature yet");
-#endif
-		}
-
 		public static void AppendAllText (string path, string contents)
 		{
-			ValidatePath (path);
-
 			using (TextWriter w = new StreamWriter (path, true)) {
 				w.Write (contents);
 			}
@@ -71,8 +57,6 @@ namespace System.IO
 
 		public static void AppendAllText (string path, string contents, Encoding encoding)
 		{
-			ValidatePath (path);
-
 			using (TextWriter w = new StreamWriter (path, true, encoding)) {
 				w.Write (contents);
 			}
@@ -104,6 +88,8 @@ namespace System.IO
 				throw new ArgumentException ("An empty file name is not valid.", "destFileName");
 			if (destFileName.Trim ().Length == 0 || destFileName.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("The file name is not valid.");
+
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			if (!MonoIO.Exists (sourceFileName, out error))
 				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", sourceFileName), sourceFileName);
@@ -163,16 +149,15 @@ namespace System.IO
 
 		public static void Delete (string path)
 		{
-			if (path == null)
-				throw new ArgumentNullException("path");
-			if (path.Trim().Length == 0 || path.IndexOfAny(Path.InvalidPathChars) >= 0)
-				throw new ArgumentException("path");
+			Path.Validate (path);
 			if (Directory.Exists (path))
 				throw new UnauthorizedAccessException(Locale.GetText ("{0} is a directory", path));
 
 			string DirName = Path.GetDirectoryName(path);
 			if (DirName != String.Empty && !Directory.Exists (DirName))
 				throw new DirectoryNotFoundException (Locale.GetText ("Could not find a part of the path \"{0}\".", path));
+
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			MonoIOError error;
 			
@@ -189,10 +174,12 @@ namespace System.IO
 			// any problem with the path or permissions.
 			// Minimizes what information can be
 			// discovered by using this method.
-			if (path == null || path.Trim().Length == 0
-			    || path.IndexOfAny(Path.InvalidPathChars) >= 0) {
+			if (String.IsNullOrWhiteSpace (path) || path.IndexOfAny(Path.InvalidPathChars) >= 0)
 				return false;
-			}
+
+			// on Moonlight this does not throw but returns false
+			if (!SecurityManager.CheckElevatedPermissions ())
+				return false;
 
 			MonoIOError error;
 			return MonoIO.ExistsFile (path, out error);
@@ -212,12 +199,8 @@ namespace System.IO
 
 		public static FileAttributes GetAttributes (string path)
 		{
-			if (path == null)
-				throw new ArgumentNullException("path");
-			if (path.Trim ().Length == 0)
-				throw new ArgumentException (Locale.GetText ("Path is empty"));
-			if (path.IndexOfAny (Path.InvalidPathChars) >= 0)
-				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
+			Path.Validate (path);
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			MonoIOError error;
 			FileAttributes attrs;
@@ -232,7 +215,8 @@ namespace System.IO
 		{
 			MonoIOStat stat;
 			MonoIOError error;
-			CheckPathExceptions (path);
+			Path.Validate (path);
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			if (!MonoIO.GetFileStat (path, out stat, out error)) {
 				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
@@ -252,7 +236,8 @@ namespace System.IO
 		{
 			MonoIOStat stat;
 			MonoIOError error;
-			CheckPathExceptions (path);
+			Path.Validate (path);
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			if (!MonoIO.GetFileStat (path, out stat, out error)) {
 				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
@@ -272,7 +257,8 @@ namespace System.IO
 		{
 			MonoIOStat stat;
 			MonoIOError error;
-			CheckPathExceptions (path);
+			Path.Validate (path);
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			if (!MonoIO.GetFileStat (path, out stat, out error)) {
 				if (error == MonoIOError.ERROR_PATH_NOT_FOUND || error == MonoIOError.ERROR_FILE_NOT_FOUND)
@@ -290,8 +276,6 @@ namespace System.IO
 
 		public static void Move (string sourceFileName, string destFileName)
 		{
-			MonoIOError error;
-
 			if (sourceFileName == null)
 				throw new ArgumentNullException ("sourceFileName");
 			if (destFileName == null)
@@ -304,6 +288,10 @@ namespace System.IO
 				throw new ArgumentException ("An empty file name is not valid.", "destFileName");
 			if (destFileName.Trim ().Length == 0 || destFileName.IndexOfAny (Path.InvalidPathChars) != -1)
 				throw new ArgumentException ("The file name is not valid.");
+
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
+			MonoIOError error;
 			if (!MonoIO.Exists (sourceFileName, out error))
 				throw new FileNotFoundException (Locale.GetText ("{0} does not exist", sourceFileName), sourceFileName);
 
@@ -432,7 +420,7 @@ namespace System.IO
 						  FileAttributes fileAttributes)
 		{
 			MonoIOError error;
-			CheckPathExceptions (path);
+			Path.Validate (path);
 
 			if (!MonoIO.SetFileAttributes (path, fileAttributes, out error))
 				throw MonoIO.GetException (path, error);
@@ -441,7 +429,7 @@ namespace System.IO
 		public static void SetCreationTime (string path, DateTime creationTime)
 		{
 			MonoIOError error;
-			CheckPathExceptions (path);
+			Path.Validate (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
 			if (!MonoIO.SetCreationTime (path, creationTime, out error))
@@ -456,7 +444,7 @@ namespace System.IO
 		public static void SetLastAccessTime (string path, DateTime lastAccessTime)
 		{
 			MonoIOError error;
-			CheckPathExceptions (path);
+			Path.Validate (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
 			if (!MonoIO.SetLastAccessTime (path, lastAccessTime, out error))
@@ -472,7 +460,7 @@ namespace System.IO
 						     DateTime lastWriteTime)
 		{
 			MonoIOError error;
-			CheckPathExceptions (path);
+			Path.Validate (path);
 			if (!MonoIO.Exists (path, out error))
 				throw MonoIO.GetException (path, error);
 			if (!MonoIO.SetLastWriteTime (path, lastWriteTime, out error))
@@ -484,22 +472,6 @@ namespace System.IO
 		{
 			SetLastWriteTime (path, lastWriteTimeUtc.ToLocalTime ());
 		}
-
-		#region Private
-
-		private static void CheckPathExceptions (string path)
-		{
-			if (path == null)
-				throw new System.ArgumentNullException("path");
-			if (path.Length == 0)
-				throw new System.ArgumentException(Locale.GetText ("Path is empty"));
-			if (path.Trim().Length == 0)
-				throw new ArgumentException (Locale.GetText ("Path is empty"));
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException (Locale.GetText ("Path contains invalid chars"));
-		}
-
-		#endregion
 
 		//
 		// The documentation for this method is most likely wrong, it
@@ -555,8 +527,6 @@ namespace System.IO
 
 		public static string ReadAllText (string path)
 		{
-			ValidatePath (path);
-
 			using (StreamReader sr = new StreamReader (path)) {
 				return sr.ReadToEnd ();
 			}
@@ -564,8 +534,6 @@ namespace System.IO
 
 		public static string ReadAllText (string path, Encoding encoding)
 		{
-			ValidatePath (path);
-
 			using (StreamReader sr = new StreamReader (path, encoding)) {
 				return sr.ReadToEnd ();
 			}
@@ -644,8 +612,6 @@ namespace System.IO
 #if MOONLIGHT || NET_4_0
 		public static IEnumerable<string> ReadLines (string path)
 		{
-			ValidatePath (path);
-
 			using (StreamReader reader = File.OpenText (path)) {
 				return ReadLines (reader);
 			}
@@ -653,8 +619,6 @@ namespace System.IO
 
 		public static IEnumerable<string> ReadLines (string path, Encoding encoding)
 		{
-			ValidatePath (path);
-
 			using (StreamReader reader = new StreamReader (path, encoding)) {
 				return ReadLines (reader);
 			}
@@ -670,7 +634,7 @@ namespace System.IO
 
 		public static void AppendAllLines (string path, IEnumerable<string> contents)
 		{
-			ValidatePath (path);
+			Path.Validate (path);
 
 			if (contents == null)
 				return;
@@ -683,7 +647,7 @@ namespace System.IO
 
 		public static void AppendAllLines (string path, IEnumerable<string> contents, Encoding encoding)
 		{
-			ValidatePath (path);
+			Path.Validate (path);
 
 			if (contents == null)
 				return;
@@ -696,7 +660,7 @@ namespace System.IO
 
 		public static void WriteAllLines (string path, IEnumerable<string> contents)
 		{
-			ValidatePath (path);
+			Path.Validate (path);
 
 			if (contents == null)
 				return;
@@ -709,7 +673,7 @@ namespace System.IO
 
 		public static void WriteAllLines (string path, IEnumerable<string> contents, Encoding encoding)
 		{
-			ValidatePath (path);
+			Path.Validate (path);
 
 			if (contents == null)
 				return;

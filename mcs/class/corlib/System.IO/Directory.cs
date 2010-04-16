@@ -69,6 +69,9 @@ namespace System.IO
 			if (path.Trim ().Length == 0)
 				throw new ArgumentException ("Only blank characters in path");
 
+			// after validations but before File.Exists to avoid an oracle
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 			if (File.Exists(path))
 				throw new IOException ("Cannot create " + path + " because a file with the same name already exists.");
 			
@@ -120,20 +123,12 @@ namespace System.IO
 		
 		public static void Delete (string path)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			
-			if (path.Length == 0)
-				throw new ArgumentException ("Path is empty");
-			
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid chars");
-
-			if (path.Trim().Length == 0)
-				throw new ArgumentException ("Only blank characters in path");
+			Path.Validate (path);
 
 			if (Environment.IsRunningOnWindows && path == ":")
 				throw new NotSupportedException ("Only ':' In path");
+
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			MonoIOError error;
 			bool success;
@@ -183,8 +178,9 @@ namespace System.IO
 		
 		public static void Delete (string path, bool recursive)
 		{
-			CheckPathExceptions (path);
-			
+			Path.Validate (path);			
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 			if (recursive)
 				RecursiveDelete (path);
 			else
@@ -194,6 +190,10 @@ namespace System.IO
 		public static bool Exists (string path)
 		{
 			if (path == null)
+				return false;
+
+			// on Moonlight this does not throw but returns false
+			if (!SecurityManager.CheckElevatedPermissions ())
 				return false;
 				
 			MonoIOError error;
@@ -237,6 +237,8 @@ namespace System.IO
 		public static string GetCurrentDirectory ()
 		{
 			MonoIOError error;
+
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 				
 			string result = MonoIO.GetCurrentDirectory (out error);
 			if (error != MonoIOError.ERROR_SUCCESS)
@@ -279,6 +281,10 @@ namespace System.IO
 
 		public static string GetDirectoryRoot (string path)
 		{
+			Path.Validate (path);			
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
+			// FIXME nice hack but that does not work under windows
 			return new String(Path.DirectorySeparatorChar,1);
 		}
 		
@@ -341,12 +347,7 @@ namespace System.IO
 
 		public static DirectoryInfo GetParent (string path)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid characters");
-			if (path.Length == 0)
-				throw new ArgumentException ("The Path do not have a valid format");
+			Path.Validate (path);			
 
 			// return null if the path is the root directory
 			if (IsRootDirectory (path))
@@ -375,6 +376,8 @@ namespace System.IO
 
 			if (sourceDirName == destDirName)
 				throw new IOException ("Source and destination path must be different.");
+
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
 			if (Exists (destDirName))
 				throw new IOException (destDirName + " already exists.");
@@ -445,38 +448,15 @@ namespace System.IO
 
 		// private
 		
-		private static void CheckPathExceptions (string path)
-		{
-			if (path == null)
-				throw new System.ArgumentNullException("path");
-			if (path.Length == 0)
-				throw new System.ArgumentException("Path is Empty");
-			if (path.Trim().Length == 0)
-				throw new ArgumentException ("Only blank characters in path");
-			if (path.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid chars");
-		}
-
 		// Does the common validation, searchPattern has already been checked for not-null
 		static string ValidateDirectoryListing (string path, string searchPattern, out bool stop)
 		{
-			if (path == null)
-				throw new ArgumentNullException ("path");
-
-			if (path.Trim ().Length == 0)
-				throw new ArgumentException ("The Path does not have a valid format");
+			Path.Validate (path);
 
 			string wild = Path.Combine (path, searchPattern);
 			string wildpath = Path.GetDirectoryName (wild);
 			if (wildpath.IndexOfAny (Path.InvalidPathChars) != -1)
-				throw new ArgumentException ("Path contains invalid characters");
-
-			if (wildpath.IndexOfAny (Path.InvalidPathChars) != -1) {
-				if (path.IndexOfAny (SearchPattern.InvalidChars) == -1)
-					throw new ArgumentException ("Path contains invalid characters", "path");
-
 				throw new ArgumentException ("Pattern contains invalid characters", "pattern");
-			}
 
 			MonoIOError error;
 			if (!MonoIO.ExistsDirectory (wildpath, out error)) {
@@ -523,33 +503,32 @@ namespace System.IO
 			return result;
 		}
 
-		internal static void ValidatePath (string path)
-		{
-#if MOONLIGHT
-			// On Moonlight (SL4+) this is possible, with limitations, in "Elevated Trust"
-			throw new SecurityException ("we're not ready to enable this SL4 feature yet");
-#endif
-		}
-
 #if NET_4_0 || MOONLIGHT
 		public static string[] GetFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
 			// Take the simple way home:
 			return new List<string> (EnumerateFileSystemEntries (path, searchPattern, searchOption)).ToArray ();
 		}
-						       
-		internal static IEnumerable<string> EnumerateKind (string path, string searchPattern, SearchOption searchOption, FileAttributes kind)
+
+		static void EnumerateCheck (string path, string searchPattern, SearchOption searchOption)
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
 
 			if (searchPattern.Length == 0)
-				yield break;
+				return;
 
 			if (searchOption != SearchOption.TopDirectoryOnly && searchOption != SearchOption.AllDirectories)
 				throw new ArgumentOutOfRangeException ("searchoption");
 
-			ValidatePath (path);
+			Path.Validate (path);
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+		}
+
+		internal static IEnumerable<string> EnumerateKind (string path, string searchPattern, SearchOption searchOption, FileAttributes kind)
+		{
+			if (searchPattern.Length == 0)
+				yield break;
 
 			bool stop;
 			string path_with_pattern = ValidateDirectoryListing (path, searchPattern, out stop);
@@ -590,46 +569,58 @@ namespace System.IO
 
 		public static IEnumerable<string> EnumerateDirectories (string path, string searchPattern, SearchOption searchOption)
 		{
+			EnumerateCheck (path, searchPattern, searchOption);
 			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Directory);
 		}
 		
 		public static IEnumerable<string> EnumerateDirectories (string path, string searchPattern)
 		{
+			EnumerateCheck (path, searchPattern, SearchOption.TopDirectoryOnly);
 			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Directory);
 		}
 
 		public static IEnumerable<string> EnumerateDirectories (string path)
 		{
+			Path.Validate (path); // no need for EnumerateCheck since we supply valid arguments
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Directory);
 		}
 
 		public static IEnumerable<string> EnumerateFiles (string path, string searchPattern, SearchOption searchOption)
 		{
+			EnumerateCheck (path, searchPattern, searchOption);
 			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Normal);
 		}
 
 		public static IEnumerable<string> EnumerateFiles (string path, string searchPattern)
 		{
+			EnumerateCheck (path, searchPattern, SearchOption.TopDirectoryOnly);
 			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Normal);
 		}
 
 		public static IEnumerable<string> EnumerateFiles (string path)
 		{
+			Path.Validate (path); // no need for EnumerateCheck since we supply valid arguments
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Normal);
 		}
 
 		public static IEnumerable<string> EnumerateFileSystemEntries (string path, string searchPattern, SearchOption searchOption)
 		{
+			EnumerateCheck (path, searchPattern, searchOption);
 			return EnumerateKind (path, searchPattern, searchOption, FileAttributes.Normal | FileAttributes.Directory);
 		}
 
 		public static IEnumerable<string> EnumerateFileSystemEntries (string path, string searchPattern)
 		{
+			EnumerateCheck (path, searchPattern, SearchOption.TopDirectoryOnly);
 			return EnumerateKind (path, searchPattern, SearchOption.TopDirectoryOnly, FileAttributes.Normal | FileAttributes.Directory);
 		}
 
 		public static IEnumerable<string> EnumerateFileSystemEntries (string path)
 		{
+			Path.Validate (path); // no need for EnumerateCheck since we supply valid arguments
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 			return EnumerateKind (path, "*", SearchOption.TopDirectoryOnly, FileAttributes.Normal | FileAttributes.Directory);
 		}
 		
