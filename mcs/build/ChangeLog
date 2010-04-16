@@ -1,3 +1,10 @@
+2010-04-16  Raja R Harinath  <harinath@hurrynot.org>
+
+	* profiles/net_4_0_bootstrap.make (PROFILE_MCS_HAS_BOOTSTRAP_FALLBACK):
+	New.  Can be set if we have BOOTSTRAP_PROFILE listed in the
+	MONO_PATH of MCS, and the profile's System.dll depends features
+	the profile's mscorlib.dll.
+
 2010-04-07  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Makefile (DISTFILES): Add gensources.sh.

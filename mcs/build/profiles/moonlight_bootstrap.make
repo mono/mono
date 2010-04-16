@@ -6,6 +6,9 @@ BOOTSTRAP_PROFILE = basic
 BOOTSTRAP_MCS = MONO_PATH="$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_GMCS)
 MCS = MONO_PATH="$(topdir)/class/lib/$(PROFILE)$(PLATFORM_PATH_SEPARATOR)$(topdir)/class/lib/$(BOOTSTRAP_PROFILE)$(PLATFORM_PATH_SEPARATOR)$$MONO_PATH" $(INTERNAL_SMCS)
 
+# We can enable this if System.dll depends new features of the mscorlib.dll from this profile
+#PROFILE_MCS_HAS_BOOTSTRAP_FALLBACK = yes
+
 profile-check:
 	@:
 

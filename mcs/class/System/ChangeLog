@@ -1,3 +1,10 @@
+2010-04-16  Raja R Harinath  <harinath@hurrynot.org>
+	and Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (LIBRARY_COMPILE) [USE_BOOT_COMPILE]:
+	Don't override if the profile says it isn't necessary by setting
+	PROFILE_MCS_HAS_BOOTSTRAP_FALLBACK.
+
 2010-04-01  Jb Evain  <jbevain@novell.com>
 
 	* System.dll.sources: add SortedSet to the build.

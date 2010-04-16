@@ -55,12 +55,8 @@ USE_BOOT_COMPILE = yes
 endif
 
 ifdef USE_BOOT_COMPILE
+ifndef PROFILE_MCS_HAS_BOOTSTRAP_FALLBACK
 LIBRARY_COMPILE = $(BOOT_COMPILE)
-endif
-
-ifeq (4.0, $(FRAMEWORK_VERSION))
-ifeq (net_4_0_bootstrap, $(PROFILE))
-LIBRARY_COMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
 endif
 endif
 
