@@ -1,3 +1,10 @@
+2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Action.cs: SL4 moved some Action in mscorlib
+	* Funcs.cs: SL4 moved some Func<> in mscorlib
+	* String.cs: Make IsNullOrWhiteSpace available, internally, 
+	before NET_4_0 (or SL4) since it's proving useful.
+
 2010-04-15  Jb Evain  <jbevain@novell.com>
 
 	* Guid.cs: rework the Guid parser to implement the net_4_0

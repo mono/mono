@@ -2520,16 +2520,6 @@ namespace System
 		}
 
 #if MOONLIGHT || NET_4_0
-		public static bool IsNullOrWhiteSpace (string value)
-		{
-			if (value == null)
-				return true;
-			foreach (char c in value)
-				if (!Char.IsWhiteSpace (c))
-					return false;
-			return true;
-		}
-
 		[ComVisible(false)]
 		public static string Concat (IEnumerable<string> values)
 		{
@@ -2611,7 +2601,20 @@ namespace System
 
 			return JoinUnchecked (separator, stringList.ToArray (), 0, stringList.Count);
 		}
+
+		public static bool IsNullOrWhiteSpace (string value)
+#else
+		internal static bool IsNullOrWhiteSpace (string value)
 #endif
+		{
+			if ((value == null) || (value.Length == 0))
+				return true;
+			foreach (char c in value)
+				if (!Char.IsWhiteSpace (c))
+					return false;
+			return true;
+		}
+
 		internal unsafe int GetCaseInsensitiveHashCode ()
 		{
 			fixed (char * c = this) {
