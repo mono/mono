@@ -27,7 +27,7 @@
 using System;
 using System.Runtime.CompilerServices;
 
-#if !INSIDE_CORLIB && (NET_4_0 || BOOTSTRAP_NET_4_0)
+#if !INSIDE_CORLIB && (NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT)
 
 [assembly:TypeForwardedTo (typeof(TimeZoneInfo))]
 

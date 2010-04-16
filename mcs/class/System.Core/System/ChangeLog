@@ -1,3 +1,10 @@
+2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Actions.cs: Forward Action() to mscorlib.dll and add the new
+	Action<...T16> delegates
+	* Funcs.cs: Add the new Func<...T16> delegates
+	* TimeZoneInfo.cs: Forward to mscorlib.dll
+
 2010-03-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* InvalidTimeZoneException.cs
