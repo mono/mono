@@ -1,3 +1,10 @@
+2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SecurityManager.cs: Add stub for new methods (so code compiles
+	correctly under other profiles)
+	* SecurityManager_2_1.cs: Implement [Check|Ensure]ElevatedPermissions
+	for Moonlight Elevated Trust
+
 2010-03-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager_2_1.cs: Add an internal HasElevatedPermissions 
