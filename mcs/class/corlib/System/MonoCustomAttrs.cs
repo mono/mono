@@ -332,7 +332,7 @@ namespace System
 			if (method == null || !method.IsVirtual)
 				return null;
 
-			MethodInfo baseMethod = method.GetBaseDefinition ();
+			MethodInfo baseMethod = method.GetBaseMethod ();
 			if (baseMethod != null && baseMethod != method) {
 				ParameterInfo[] parameters = property.GetIndexParameters ();
 				if (parameters != null && parameters.Length > 0) {

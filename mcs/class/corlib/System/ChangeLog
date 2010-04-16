@@ -1,3 +1,11 @@
+2010-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoCustomAttrs.cs (GetBasePropertyDefinition): Use
+	GetBaseMethod instead of GetMethodDefinition otherwise
+	we skip intermediate overloads.
+
+	Fixes #499569.
+
 2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Environment.cs: Ensure elevated trust when calling
