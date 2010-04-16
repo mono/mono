@@ -1,5 +1,9 @@
 2010-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c driver.c: Disable a few more things when DISABLE_JIT is set.
+
+2010-04-16  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-llvm.c (emit_entry_bb): Fix support for simd arguments passed on the
 	stack.
 
