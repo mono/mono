@@ -1,5 +1,10 @@
 2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlMemberTest.cs, XamlXmlReaderTest.cs :
+	  a few correction and additions on member equality.
+
+2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlMemberTest.cs, XamlXmlReaderTest.cs : some member equivalence
 	  tests. Commented out some assertions that won't work for a while.
 

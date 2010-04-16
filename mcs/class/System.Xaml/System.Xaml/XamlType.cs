@@ -364,8 +364,12 @@ namespace System.Xaml
 		{
 			if (UnderlyingType == null)
 				return BaseType != null ? BaseType.GetAllMembers () : null;
-			return DoLookupAllMembers ();
+			if (all_members_cache == null)
+				all_members_cache = new List<XamlMember> (DoLookupAllMembers ());
+			return all_members_cache;
 		}
+
+		List<XamlMember> all_members_cache;
 
 		IEnumerable<XamlMember> DoLookupAllMembers ()
 		{

@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Reflection;
 using System.Text;
 using System.Xaml;
@@ -388,11 +389,16 @@ namespace MonoTests.System.Xaml
 		public void EqualsTest ()
 		{
 			XamlMember m;
-			m = new XamlMember ("Type", XamlLanguage.Type, false);
-			var type_type = XamlLanguage.Type.GetMember ("Type");
-			Assert.AreNotEqual (m, XamlLanguage.Type.GetMember ("Type"), "#1"); // whoa!
+			var xt = XamlLanguage.Type;
+			m = new XamlMember ("Type", xt, false);
+			var type_type = xt.GetMember ("Type");
+			Assert.AreNotEqual (m, xt.GetMember ("Type"), "#1"); // whoa!
 			Assert.AreNotEqual (type_type, m, "#2"); // whoa!
+			Assert.AreEqual (type_type, xt.GetMember ("Type"), "#3");
 			Assert.AreEqual (type_type.ToString (), m.ToString (), "#4");
+
+			Assert.AreEqual (xt.GetAllMembers ().FirstOrDefault (mm => mm.Name == "Type"), xt.GetAllMembers ().FirstOrDefault (mm => mm.Name == "Type"), "#5");
+			Assert.AreEqual (xt.GetAllMembers ().FirstOrDefault (mm => mm.Name == "Type"), xt.GetMember ("Type"), "#6");
 		}
 
 		[Test]

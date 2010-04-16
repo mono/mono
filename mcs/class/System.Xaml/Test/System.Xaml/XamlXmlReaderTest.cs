@@ -227,13 +227,13 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.Read (), "sinit#1");
 			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
 			// FIXME: They are identical on .NET.
-			// We aren't, every GetMember() returns different object
+			// They aren't on mono, every GetMember() returns different object
 			// (it is the same as .NET; see XamlMemberTest.EqualsTest.) 
 			// and XamlMember is almost non-comparable unless they
 			// are identical, so we fail here.
-			//Assert.AreEqual (XamlLanguage.Type.GetMember ("Type"), r.Member, "sinit#3");
-			//Assert.IsTrue (Object.ReferenceEquals (XamlLanguage.Type.GetMember ("Type"), r.Member), "XXX");
 			Assert.AreEqual (XamlLanguage.Type.GetMember ("Type").ToString (), r.Member.ToString (), "sinit#3");
+			//Assert.AreEqual (XamlLanguage.Type.GetMember ("Type"), r.Member, "sinit#3-2");
+			//Assert.IsTrue (Object.ReferenceEquals (XamlLanguage.Type.GetMember ("Type"), r.Member), "sinit#3-3");
 
 			Assert.IsTrue (r.Read (), "vinit#1");
 			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vinit#2");
