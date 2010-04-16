@@ -952,7 +952,7 @@ namespace System.Net
 					return false;
 				*/
 
-				contentLength = 0;
+				contentLength = -1;
 				bodyBufferLength = 0;
 				bodyBuffer = null;
 				method = "GET";
@@ -1307,6 +1307,7 @@ namespace System.Net
 							}
 							webResponse.Close ();
 						}
+						finished_reading = false;
 						haveResponse = false;
 						webResponse = null;
 						r.Reset ();
