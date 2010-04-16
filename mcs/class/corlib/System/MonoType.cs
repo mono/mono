@@ -182,9 +182,12 @@ namespace System
 			Type[] interfaces = GetInterfaces();
 
 			foreach (Type type in interfaces) {
-				if (String.Compare (type.Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
+				/*We must compare against the generic type definition*/
+				Type t = type.IsGenericType ? type.GetGenericTypeDefinition () : type;
+
+				if (String.Compare (t.Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
 					return type;
-				if (String.Compare (type.FullName, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
+				if (String.Compare (t.FullName, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
 					return type;
 			}
 

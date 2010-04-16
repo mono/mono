@@ -1,5 +1,12 @@
 2010-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* MonoType.cs (GetInterface): Compare against the name
+	of the generic type definition.
+
+	Fixes #484246.
+
+2010-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* MonoCustomAttrs.cs (GetBasePropertyDefinition): Use
 	GetBaseMethod instead of GetMethodDefinition otherwise
 	we skip intermediate overloads.
