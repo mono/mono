@@ -1,3 +1,8 @@
+2010-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c (mono_gc_base_init): Applied patch from Robert Nagy
+	(robert@openbsd.org). Fix GC_stackbottom calculation on OpenBSD.
+
 2010-04-16  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-perfcounters.c: added code for the "Mono
