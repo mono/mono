@@ -3227,7 +3227,19 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.AreEqual (0, typeof (Bar).GetMember ("PrivInstBase", flags).Length);
 			Assert.AreEqual (1, typeof (Foo).GetMember ("PrivInstBase", flags).Length);
 		}
- 
+
+		[Test] // Bug #484246
+		public void GetInterfaceCompareAgainstGTDNames ()
+		{
+			var t = typeof (Dictionary<string,string>);
+			var iface = typeof (IDictionary<string,string>);
+
+			Assert.AreSame (iface, t.GetInterface ("System.Collections.Generic.IDictionary`2"), "#1");
+
+			string name = "System.Collections.Generic.IDictionary`2[[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089],[System.String, mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089]]";
+
+			Assert.IsNull (t.GetInterface (name), "#2");
+		} 
 
 #if NET_4_0
 		interface IGetInterfaceMap<in T>
