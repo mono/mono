@@ -1,5 +1,10 @@
 2010-04-16  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_jit_compile_method_inner): Implement the check for native func
+	wrappers correctly now that their wrapper info is NULL.
+
+2010-04-16  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.c (mono_jit_compile_method_inner): Avoid calling
 	mono_marshal_method_from_wrapper () for native func wrappers. Fixes #597189.
 
