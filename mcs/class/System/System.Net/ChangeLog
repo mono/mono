@@ -1,3 +1,8 @@
+2010-04-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: set content length to -1 on redirect. Reset
+	'FinishedReading' on redirects. Fixes bug #593596.
+
 2010-04-08 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ServicePointManager.cs: obtain the SubjectAltName extension the
