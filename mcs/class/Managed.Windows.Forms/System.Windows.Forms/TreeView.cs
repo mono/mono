@@ -44,7 +44,7 @@ namespace System.Windows.Forms {
 		#region Fields
 		private string path_separator = "\\";
 		private int item_height = -1;
-		private bool sorted;
+		internal bool sorted;
 		internal TreeNode root_node;
 		internal bool nodes_added;
 		private TreeNodeCollection nodes;

@@ -1,3 +1,11 @@
+2010-04-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNodeCollection.cs: When adding/inserting/setting a new node call
+	TreeView.Sort if needed, and update/recalculate this entire
+	collection in that case.
+	* TreeView.cs: Make 'sorted' internal, instead of directly using
+	Sorted, as this one could trigger a complete Sort() operation.
+
 2010-04-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeView.cs: We must use the comparer supplied by TreeViewNodeSorter

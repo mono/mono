@@ -434,7 +434,14 @@ namespace System.Windows.Forms {
 				tree_view = owner.TreeView;
 
 			if (tree_view != null) {
-				TreeNode prev = GetPrevNode (node);
+				bool sorted = false;
+				if (tree_view.Sorted || tree_view.TreeViewNodeSorter != null) {
+					owner.Nodes.Sort (tree_view.TreeViewNodeSorter);
+					tree_view.sorted = sorted = true;
+				}
+
+				// We may need to invalidate this entire node collection if sorted.
+				TreeNode prev = sorted ? owner : GetPrevNode (node);
 
 				if (tree_view.IsHandleCreated && node.ArePreviousNodesExpanded)
 					tree_view.RecalculateVisibleOrder (prev);
