@@ -4,10 +4,13 @@
 //
 // Authors:
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
-//	Marek Safar				(marek.safar@gmail.com)
+//	Marek Safar		(marek.safar@gmail.com)
+//
+// Maintainer:
+//	C.J. Adams-Collier	(cjac@colliertech.org)
 //
 // (C) 2003 Novell, Inc (http://www.novell.com)
-//
+// (C) 2009,2010 Collier Technologies (http://www.colliertech.org)
 
 using System;
 using System.Collections;

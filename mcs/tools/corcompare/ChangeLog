@@ -1,3 +1,8 @@
+2010-04-16  C.J. Adams-Collier	<cjac@colliertech.org>
+
+	* mono-api-diff.cs: revived from the mono-2-2 branch and applied
+	patch from debian package, noted that I'll handle maintenance
+	
 2010-02-10  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-api-info.cs: added support for extracting and generating
