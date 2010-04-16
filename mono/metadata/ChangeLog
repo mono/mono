@@ -1,3 +1,8 @@
+2010-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_native_func_wrapper): Set the marshal info to NULL,
+	since it is not a MonoMethod.
+
 2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* icall-def.h: Add get_RequiresElevatedPermissions icall to
