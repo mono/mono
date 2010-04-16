@@ -1,14 +1,14 @@
 2010-04-16  Jonathan Pryor <jpryor@novell.com>
 
-	* Mono.Documentation/monodocer.cs: Use Int64 instead of UInt64 for
-	  enum values, so that we can properly capture negative values.
-
-2010-02-28  Jonathan Pryor <jpryor@novell.com>
-
 	* Makefile: Add System.Xml.Linq.dll to the referenced assemblies.
 	* Mono.Documentation/webdoc.cs: Allow .source files to be provided to
 	  'mdoc export-html-webdoc', which will cause the .source files to be
 	  read and all referenced .tree/.zip files to be processed.
+
+2010-04-16  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Use Int64 instead of UInt64 for
+	  enum values, so that we can properly capture negative values.
 
 2010-02-28  Jonathan Pryor <jpryor@novell.com>
 

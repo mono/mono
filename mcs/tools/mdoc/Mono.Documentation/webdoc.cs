@@ -33,6 +33,7 @@ using System.IO;
 using System.Linq;
 using System.Text;
 using System.Web;
+using System.Xml.Linq;
 
 using Monodoc;
 using Mono.Documentation;
@@ -85,14 +86,47 @@ namespace Mono.Documentation
 			Parse (options, args, "export-html-webdoc", 
 					"[OPTIONS]+ FILES",
 					"Export mdoc documentation within FILES to HTML for use by ASP.NET webdoc.\n\n" +
-					"FILES are .tree or .zip files as produced by 'mdoc assemble'.");
+					"FILES are .tree or .zip files as produced by 'mdoc assemble', or .source files\n" +
+					"which reference .tree and .zip files produced by 'mdoc assemble'.\n\n" + 
+					"See mdoc(5) or mdoc-assemble(1) for information about the .source file format.");
 			if (opts.Formats.Values.All (files => files.Count == 0))
 				Error ("No files specified.");
+			ProcessSources (opts);
 			HelpSource.use_css = true;
 			HelpSource.FullHtml = false;
 			SettingsHandler.Settings.EnableEditing = false;
 			foreach (var p in opts.Formats)
 				ProcessFiles (opts, p.Key, p.Value);
+		}
+
+		void ProcessSources (Options opts)
+		{
+			foreach (var p in opts.Formats) {
+				var files = p.Value;
+				foreach (var f in files.Where (f => f.EndsWith (".source")).ToList ()) {
+					files.Remove (f);
+					foreach (var tfi in GetTreeFilesFromSource (f)) {
+						List<string> treeFiles;
+						if (!opts.Formats.TryGetValue (tfi.Key, out treeFiles))
+							opts.Formats.Add (tfi.Key, treeFiles = new List<string> ());
+						treeFiles.Add (tfi.Value);
+					}
+				}
+			}
+		}
+
+		IEnumerable<KeyValuePair<string, string>> GetTreeFilesFromSource (string sourceFile)
+		{
+			try {
+				var source = XElement.Load (sourceFile);
+				return source.Descendants ("source")
+					.Select (e => new KeyValuePair<string, string>(e.Attribute ("provider").Value, 
+								Path.Combine (Path.GetDirectoryName (sourceFile), e.Attribute ("basefile").Value + ".tree")));
+			}
+			catch (Exception e) {
+				Message (TraceLevel.Error, "mdoc: error parsing file {0}: {1}", sourceFile, e.Message);
+				return new KeyValuePair<string, string>[0];
+			}
 		}
 
 		void ProcessFiles (Options opts, string format, List<string> files)
