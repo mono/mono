@@ -189,25 +189,9 @@ namespace System.Xaml
 
 			XamlType ret;
 			if (xamlNamespace == XamlLanguage.Xaml2006Namespace) {
-				// FIXME: I'm not really sure if these *special*
-				// names should be resolved here. There just
-				// does not seem to be any other appropriate
-				// places.
-				switch (name) {
-				case "Array":
-					return XamlLanguage.Array;
-				case "Member":
-					return XamlLanguage.Member;
-				case "Null":
-					return XamlLanguage.Null;
-				case "Property":
-					return XamlLanguage.Property;
-				case "Static":
-					return XamlLanguage.Static;
-				case "Type":
-					return XamlLanguage.Type;
-				}
-				ret = XamlLanguage.AllTypes.FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
+				ret = XamlLanguage.GetSpecialXaml2006Type (name);
+				if (ret == null)
+					ret = XamlLanguage.AllTypes.FirstOrDefault (t => TypeMatches (t, xamlNamespace, name, typeArguments));
 				if (ret != null)
 					return ret;
 			}

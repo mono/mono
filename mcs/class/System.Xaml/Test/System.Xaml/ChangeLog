@@ -1,3 +1,8 @@
+2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlXmlReaderTest.cs : add more detailed read tests, and more
+	  file-based tests (not working yet).
+
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlTypeTest.cs, XamlLanguageTest.cs : enable AllowedContentTypes

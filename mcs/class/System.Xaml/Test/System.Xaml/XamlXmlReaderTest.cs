@@ -106,6 +106,22 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		[Category ("NotWorking")]
+		public void Read_DictionaryInt32String ()
+		{
+			ReadTest ("Dictionary_Int32_String.xml");
+			LoadTest ("Dictionary_Int32_String.xml", typeof (Dictionary<int,string>));
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read_DictionaryStringType ()
+		{
+			ReadTest ("Dictionary_String_Type.xml");
+			LoadTest ("Dictionary_String_Type.xml", typeof (Dictionary<string,Type>));
+		}
+
+		[Test]
 		public void Read1 ()
 		{
 			var r = GetReader ("Int32.xml");
@@ -182,6 +198,128 @@ namespace MonoTests.System.Xaml
 
 			Assert.IsTrue (r.Read (), "eo#1");
 			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		[Test]
+		public void Read3 ()
+		{
+			var r = GetReader ("Type.xml");
+
+			Assert.IsTrue (r.Read (), "ns#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns#3");
+
+			Assert.IsTrue (r.Read (), "so#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
+			Assert.AreEqual (XamlLanguage.Type, r.Type, "so#3");
+
+			Assert.IsTrue (r.Read (), "sbase#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
+			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
+
+			Assert.IsTrue (r.Read (), "vbase#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
+			Assert.IsTrue (r.Value is string, "vbase#3");
+
+			Assert.IsTrue (r.Read (), "ebase#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+
+			Assert.IsTrue (r.Read (), "sinit#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sinit#2");
+			// FIXME: fix XamlMember.Equals()
+			//Assert.AreEqual (XamlLanguage.Type.GetMember ("Type"), r.Member, "sinit#3");
+			Assert.AreEqual (XamlLanguage.Type.GetMember ("Type").ToString (), r.Member.ToString (), "sinit#3");
+
+			Assert.IsTrue (r.Read (), "vinit#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vinit#2");
+			Assert.AreEqual ("x:Int32", r.Value, "vinit#3"); // string
+
+			Assert.IsTrue (r.Read (), "einit#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "einit#2");
+
+			Assert.IsTrue (r.Read (), "eo#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");
+
+			Assert.IsFalse (r.Read (), "end");
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		public void Read4 ()
+		{
+			var r = GetReader ("List_Int32.xml");
+
+			Assert.IsTrue (r.Read (), "ns#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns#2");
+			Assert.AreEqual ("clr-namespace:System.Collections.Generic;assembly=mscorlib", r.Namespace.Namespace, "ns#3");
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "ns#4");
+
+			Assert.IsTrue (r.Read (), "ns2#1");
+			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "ns2#2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "ns2#3");
+			Assert.AreEqual ("x", r.Namespace.Prefix, "ns2#4");
+
+			Assert.IsTrue (r.Read (), "so#1");
+			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "so#2");
+			var xt = new XamlType (typeof (List<int>), r.SchemaContext);
+			Assert.AreEqual (xt, r.Type, "so#3");
+
+			Assert.IsTrue (r.Read (), "sbase#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sbase#2");
+			Assert.AreEqual (XamlLanguage.Base, r.Member, "sbase#3");
+
+			Assert.IsTrue (r.Read (), "vbase#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vbase#2");
+			Assert.IsTrue (r.Value is string, "vbase#3");
+
+			Assert.IsTrue (r.Read (), "ebase#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ebase#2");
+
+			Assert.IsTrue (r.Read (), "scap#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "scap#2");
+			Assert.AreEqual (xt.GetMember ("Capacity"), r.Member, "scap#3");
+
+			Assert.IsTrue (r.Read (), "vcap#1");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vcap#2");
+			Assert.AreEqual ("5", r.Value, "vcap#3"); // string
+
+			Assert.IsTrue (r.Read (), "ecap#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "ecap#2");
+
+			Assert.IsTrue (r.Read (), "sItems#1");
+			Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sItems#2");
+			Assert.AreEqual (XamlLanguage.Items, r.Member, "sItems#3");
+
+			int [] values = {4, -5, 0, 255, int.MaxValue};
+			var ci = new CultureInfo ("en-US");
+
+			for (int i = 0; i < 5; i++) {
+				Assert.IsTrue (r.Read (), "soItem#1." + i);
+				Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "soItem#2." + i);
+				Assert.AreEqual (XamlLanguage.Int32, r.Type, "soItem#3." + i);
+
+				Assert.IsTrue (r.Read (), "sItem#1." + i);
+				Assert.AreEqual (XamlNodeType.StartMember, r.NodeType, "sItem#2." + i);
+				Assert.AreEqual (XamlLanguage.Initialization, r.Member, "sItem#3." + i);
+
+				Assert.IsTrue (r.Read (), "vItem#1." + i);
+				Assert.AreEqual (XamlNodeType.Value, r.NodeType, "vItem#2." + i);
+				Assert.AreEqual (values [i].ToString (ci), r.Value, "vItem#3." + i);
+
+				Assert.IsTrue (r.Read (), "eItem#1." + i);
+				Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eItem#2." + i);
+
+				Assert.IsTrue (r.Read (), "eoItem#1");
+				Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eoItem#2");
+			}
+
+			Assert.IsTrue (r.Read (), "eItems#1");
+			Assert.AreEqual (XamlNodeType.EndMember, r.NodeType, "eItems#2");
+
+			Assert.IsTrue (r.Read (), "eo#1");
+			Assert.AreEqual (XamlNodeType.EndObject, r.NodeType, "eo#2");
+
 			Assert.IsFalse (r.Read (), "end");
 		}
 	}

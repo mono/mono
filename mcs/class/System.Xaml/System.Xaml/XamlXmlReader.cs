@@ -23,16 +23,19 @@
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Xml;
 using System.Xaml.Schema;
 
-using Pair = System.Collections.Generic.KeyValuePair<System.Xaml.XamlDirective,object>;
+using Pair = System.Collections.Generic.KeyValuePair<System.Xaml.XamlMember,string>;
 
 namespace System.Xaml
 {
 	// FIXME: is GetObject supported by this reader?
 	public class XamlXmlReader : XamlReader, IXamlLineInfo
 	{
+		#region constructors
+
 		public XamlXmlReader (Stream stream)
 			: this (stream, (XamlXmlReaderSettings) null)
 		{
@@ -129,7 +132,10 @@ namespace System.Xaml
 
 			r = XmlReader.Create (xmlReader, xrs);
 			line_info = r as IXmlLineInfo;
+			xaml_namespace_resolver = new NamespaceResolver (r as IXmlNamespaceResolver);
 		}
+		
+		#endregion
 
 		XmlReader r;
 		IXmlLineInfo line_info;
@@ -140,12 +146,12 @@ namespace System.Xaml
 		
 		object current;
 		bool inside_object_not_member, is_empty_object, is_empty_member;
-		List<XamlTypeName> type_args = new List<XamlTypeName> ();
 		Stack<XamlType> types = new Stack<XamlType> ();
 		XamlMember current_member;
 
-		List<Pair> current_element_directives = new List<Pair> ();
-		IEnumerator<Pair> current_directive_enumerator;
+		List<Pair> stored_members = new List<Pair> ();
+		IEnumerator<Pair> stored_member_enumerator;
+		IXamlNamespaceResolver xaml_namespace_resolver;
 
 		public bool HasLineInfo {
 			get { return line_info != null && line_info.HasLineInfo (); }
@@ -193,6 +199,10 @@ namespace System.Xaml
 			if (is_eof)
 				return false;
 
+			// check this before is_empty_* so that they aren't ignored.
+			if (MoveToNextAttributeMember ())
+				return true;
+
 			if (is_empty_object) {
 				is_empty_object = false;
 				ReadEndType ();
@@ -211,9 +221,6 @@ namespace System.Xaml
 					if (CheckNextNamespace ())
 						return true;
 			}
-
-			if (CheckCurrentDirective ())
-				return true;
 
 			if (!r.EOF)
 				r.MoveToContent ();
@@ -270,8 +277,8 @@ namespace System.Xaml
 		{
 			string name = r.LocalName;
 			string ns = r.NamespaceURI;
-			type_args.Clear ();
-			CollectDirectiveAttributes ();
+			string typeArgNames = null;
+			var atts = ProcessAttributes ();
 
 			if (!r.IsEmptyElement) {
 				r.Read ();
@@ -284,7 +291,8 @@ namespace System.Xaml
 						break;
 					default:
 						// this value is for Initialization
-						current_element_directives.Add (new Pair (XamlLanguage.Initialization, r.Value));
+						// FIXME: this could also be a WrappedContents
+						stored_members.Add (new Pair (XamlLanguage.Initialization, r.Value));
 						r.Read ();
 						continue;
 					}
@@ -294,15 +302,21 @@ namespace System.Xaml
 			else
 				is_empty_object = true;
 
-			XamlType xt;
-			if (ns.StartsWith ("clr-namespace:", StringComparison.Ordinal)) {
-				Type rtype = XamlLanguage.ParseClrTypeName (ns, name);
-				if (rtype == null)
-					throw new XamlParseException (String.Format ("Cannot resolve runtime namespace from XML namespace '{0}' and local name '{1}'", ns, name));
-				xt = sctx.GetXamlType (rtype);
+			// check TypeArguments to resolve Type, and remove them from the list. They don't appear as a node.
+			foreach (var p in stored_members) {
+				if (p.Key == XamlLanguage.TypeArguments) {
+					typeArgNames = p.Value;
+					stored_members.Remove (p);
+					break;
+				}
 			}
-			else
-				xt = sctx.GetXamlType (new XamlTypeName (ns, name, type_args.ToArray ()));
+
+			XamlType xt;
+			IList<XamlTypeName> typeArgs = typeArgNames == null ? null : XamlTypeName.ParseList (typeArgNames, xaml_namespace_resolver);
+			Type rtype = XamlLanguage.ResolveXamlTypeName (ns, name, typeArgs, xaml_namespace_resolver);
+			if (rtype == null)
+				throw new XamlParseException (String.Format ("Cannot resolve runtime namespace from XML namespace '{0}', local name '{1}' and type argument '{2}'", ns, name, typeArgNames));
+			xt = sctx.GetXamlType (rtype);
 			if (xt == null)
 				// FIXME: .NET just treats the node as empty!
 				// we have to sort out what to do here.
@@ -310,11 +324,18 @@ namespace System.Xaml
 			types.Push (xt);
 			current = xt;
 
+			foreach (var p in atts) {
+				var xm = xt.GetMember (p.Key);
+				if (xm != null)
+					stored_members.Add (new Pair (xm, p.Value));
+				// ignore unknown attribute
+			}
+
 			node_type = XamlNodeType.StartObject;
 			inside_object_not_member = true;
 
 			// The next Read() results are likely directives.
-			current_directive_enumerator = current_element_directives.GetEnumerator ();
+			stored_member_enumerator = stored_members.GetEnumerator ();
 		}
 		
 		void ReadStartMember ()
@@ -357,30 +378,56 @@ namespace System.Xaml
 			node_type = XamlNodeType.Value;
 		}
 
-		void CollectDirectiveAttributes ()
+		// returns remaining attributes to be processed
+		Dictionary<string,string> ProcessAttributes ()
 		{
-			var l = current_element_directives;
-			if (types.Count == 0 && r.BaseURI != null) // top
-				l.Add (new Pair (XamlLanguage.Base, r.BaseURI));
+			var l = stored_members;
+
+			// base
+			string xmlbase = r.GetAttribute ("base", XamlLanguage.Xml1998Namespace) ?? r.BaseURI;
+			if (types.Count == 0 && xmlbase != null) // top
+				l.Add (new Pair (XamlLanguage.Base, xmlbase));
+
+			var atts = new Dictionary<string,string> ();
+
+			if (r.MoveToFirstAttribute ()) {
+				do {
+					if (r.NamespaceURI == XamlLanguage.Xmlns2000Namespace)
+						continue;
+					XamlDirective d = XamlLanguage.AllDirectives.FirstOrDefault (dd => (dd.AllowedLocation & AllowedMemberLocations.Attribute) != 0 && dd.Name == r.LocalName);
+					if (d != null) {
+						l.Add (new Pair (d, r.Value));
+						continue;
+					}
+					if (r.NamespaceURI == String.Empty) {
+						atts.Add (r.LocalName, r.Value);
+						continue;
+					}
+					// Should we just ignore unknown attribute in XAML namespace or any other namespaces ?
+					// Probably yes for compatibility with future version.
+				} while (r.MoveToNextAttribute ());
+				r.MoveToElement ();
+			}
+			return atts;
 		}
 
-		bool CheckCurrentDirective ()
+		bool MoveToNextAttributeMember ()
 		{
-			if (current_directive_enumerator != null) {
+			if (stored_member_enumerator != null) {
 				// FIXME: value might have to be deserialized.
 				switch (node_type) {
 				case XamlNodeType.StartObject:
 				case XamlNodeType.EndMember:
 					// -> StartMember
-					if (current_directive_enumerator.MoveNext ()) {
-						current = current_member = current_directive_enumerator.Current.Key;
+					if (stored_member_enumerator.MoveNext ()) {
+						current = current_member = stored_member_enumerator.Current.Key;
 						node_type = XamlNodeType.StartMember;
 						return true;
 					}
 					break;
 				case XamlNodeType.StartMember:
 					// -> Value
-					current = current_directive_enumerator.Current.Value;
+					current = stored_member_enumerator.Current.Value;
 					node_type = XamlNodeType.Value;
 					return true;
 				case XamlNodeType.Value:
@@ -391,14 +438,35 @@ namespace System.Xaml
 				}
 			}
 
-			current_element_directives.Clear ();
-			current_directive_enumerator = null;
+			stored_members.Clear ();
+			stored_member_enumerator = null;
 			return false;
 		}
 		
 		string GetLineString ()
 		{
 			return HasLineInfo ? String.Format (" Line {0}, at {1}", LineNumber, LinePosition) : String.Empty;
+		}
+
+		class NamespaceResolver : IXamlNamespaceResolver
+		{
+			IXmlNamespaceResolver source;
+
+			public NamespaceResolver (IXmlNamespaceResolver source)
+			{
+				this.source = source;
+			}
+
+			public string GetNamespace (string prefix)
+			{
+				return source.LookupNamespace (prefix);
+			}
+
+			public IEnumerable<NamespaceDeclaration> GetNamespacePrefixes ()
+			{
+				foreach (var p in source.GetNamespacesInScope (XmlNamespaceScope.All))
+					yield return new NamespaceDeclaration (p.Value, p.Key);
+			}
 		}
 	}
 }

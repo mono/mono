@@ -1,0 +1,5 @@
+﻿<Dictionary x:TypeArguments="x:Int32, x:String" xmlns="clr-namespace:System.Collections.Generic;assembly=mscorlib" xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml">
+  <x:String x:Key="0">foo</x:String>
+  <x:String x:Key="5">bar</x:String>
+  <x:String x:Key="-2">baz</x:String>
+</Dictionary>

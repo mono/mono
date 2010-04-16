@@ -1,5 +1,12 @@
 2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlXmlReader.cs : Resolve generic type names. Process attribute
+	  members.
+	* XamlLanguage.cs : add XamlTypeName-to-ClrType method.
+	* XmlSchemaContext.cs : extracted special type name handling to above.
+
+2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlType.cs : sort of reverted AllowedContentTypes.
 	  msdn explanation is so wrong.
 
