@@ -1,3 +1,10 @@
+2010-04-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* genmdesc.c (inst_name): Define this as a copy of mono_inst_name in helpers.c,
+	so the latter can be #ifndef DISABLE_JIT-ed.
+
+	* helpers.c: Comment out the opstr array if DISABLE_JIT is set.
+
 2010-04-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (type_commands): Call mono_class_setup_methods () before
