@@ -1,3 +1,7 @@
+2010-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* AttributeTest.cs: Add regression test for #499569.
+
 2010-04-15  Jb Evain  <jbevain@novell.com>
 
 	* GuidTest.cs: add tests for net_4_0 ParseExact methods.

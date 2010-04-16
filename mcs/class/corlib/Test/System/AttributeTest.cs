@@ -726,7 +726,6 @@ namespace MonoTests.System
 			Assert.IsFalse (a.Equals (null), "#8");
 		}
 
-#if NET_2_0
 		class UserType : TypeDelegator {
 			public int GetCattr1;
 			public int GetCattr2;
@@ -863,8 +862,44 @@ namespace MonoTests.System
 				Assert.Fail ("#1");
 			} catch (NotSupportedException) {}
 		}
-#endif
 
+		[Test] //Regression test for #499569
+		public void GetCattrOnPropertyAndInheritance ()
+		{
+			var m = typeof(Sub).GetProperty ("Name");
+			var res = Attribute.GetCustomAttributes (m, typeof(MyAttribute), true);
+			Assert.AreEqual (1, res.Length, "#1");
+		}
+
+		abstract class Abs
+		{
+			public abstract string Name { get; set; }
+		}
+		
+		class Base: Abs
+		{
+			[MyAttribute]
+			public override string Name {
+				get { return ""; }
+				set {}
+			}
+		}
+		
+		class Sub: Base
+		{
+			public override string Name {
+				get { return ""; }
+				set {}
+			}
+		}
+		
+		class MySubAttribute: MyAttribute
+		{
+		}
+		
+		class MyAttribute: Attribute
+		{
+		}
 
 		private int GetAttributeCount (object[] attributes, Type attributeType)
 		{
