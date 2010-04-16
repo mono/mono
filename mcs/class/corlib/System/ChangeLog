@@ -1,5 +1,10 @@
 2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
+	* Environment.cs: Ensure elevated trust when calling
+	GetFolderPath on Moonlight
+
+2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
 	* Action.cs: SL4 moved some Action in mscorlib
 	* Funcs.cs: SL4 moved some Func<> in mscorlib
 	* String.cs: Make IsNullOrWhiteSpace available, internally, 

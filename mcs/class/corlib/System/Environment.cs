@@ -452,6 +452,8 @@ namespace System {
 #endif
 		static string GetFolderPath(SpecialFolder folder, SpecialFolderOption option)
 		{
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 			string dir = null;
 
 			if (Environment.IsRunningOnWindows) {
