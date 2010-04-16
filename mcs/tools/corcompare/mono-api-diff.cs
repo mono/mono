@@ -740,6 +740,12 @@ namespace Mono.AssemblyCompare
 				child = child.NextSibling;
 			}
 
+			if (child != null && child.Name == "generic-parameters") {
+				// HACK: ignore this tag as it doesn't seem to
+				// add any value when checking for differences
+				return;
+			}
+
 			if (child == null)
 				return;
 
@@ -1558,9 +1564,11 @@ namespace Mono.AssemblyCompare
 		public override string GetNodeKey (string name, XmlNode node)
 		{
 			XmlAttributeCollection atts = node.Attributes;
-			return String.Format ("{0}:{1}:{2}", atts ["name"].Value,
-								atts ["ptype"].Value,
-								atts ["params"].Value);
+			return String.Format ("{0}:{1}:{2}",
+					      (atts["name"]   != null ? atts["name"].Value   : ""),
+					      (atts["ptype"]  != null ? atts["ptype"].Value  : ""),
+					      (atts["params"] != null ? atts["params"].Value : "")
+					      );
 		}
 
 		public override string GroupName {
