@@ -1,3 +1,7 @@
+2010-04-16  Atsushi Enomoto <atsushi@ximian.com>
+
+	* XmlFilterReader.cs : implement IXmlNamespaceResolver.
+
 2009-03-02  Chris Toshok  <toshok@ximian.com>
 
 	* SubtreeXmlReader.cs, XmlFilterReader.cs: 2.1 has HasValue.

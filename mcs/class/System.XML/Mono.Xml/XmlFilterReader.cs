@@ -32,12 +32,13 @@
 
 #if NET_2_0
 using System;
+using System.Collections.Generic;
 using System.Xml;
 using System.Xml.Schema;
 
 namespace Mono.Xml
 {
-	internal class XmlFilterReader : XmlReader, IXmlLineInfo
+	internal class XmlFilterReader : XmlReader, IXmlLineInfo, IXmlNamespaceResolver
 	{
 		XmlReader reader;
 		XmlReaderSettings settings;
@@ -281,6 +282,17 @@ namespace Mono.Xml
 		public override bool ReadAttributeValue () {
 			return reader.ReadAttributeValue ();
 		}
+
+		string IXmlNamespaceResolver.LookupPrefix (string ns)
+		{
+			return ((IXmlNamespaceResolver) reader).LookupPrefix (ns);
+		}
+
+		IDictionary<string, string> IXmlNamespaceResolver.GetNamespacesInScope (XmlNamespaceScope scope)
+		{
+			return ((IXmlNamespaceResolver) reader).GetNamespacesInScope (scope);
+		}
+
 		#endregion
 	}
 }
