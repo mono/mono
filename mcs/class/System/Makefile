@@ -58,6 +58,12 @@ ifdef USE_BOOT_COMPILE
 LIBRARY_COMPILE = $(BOOT_COMPILE)
 endif
 
+ifeq (4.0, $(FRAMEWORK_VERSION))
+ifeq (net_4_0_bootstrap, $(PROFILE))
+LIBRARY_COMPILE = $(Q_MCS) $(MCS) $(USE_MCS_FLAGS)
+endif
+endif
+
 # Because System.dll, Mono.Security.dll System.Xml.dll have a cyclic dependency, we need a two-pass build.
 # 1st pass - build System.dll without System.Xml.dll or Mono.Security.dll or System.Configuration.dll references
 # 2nd pass - build System.dll with System.Xml.dll and Mono.Security.dll or System.Configuration.dll references
