@@ -1,3 +1,7 @@
+2010-04-16  Raja R Harinath  <harinath@hurrynot.org>
+
+	* basic-profile-check.cs: Add use of 'var' keyword.
+
 2010-04-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Consts.cs.in : Add AssemblyWindowsBase, AssemblyPresentationCore_3_5

@@ -1,6 +1,10 @@
 class X {
 	// Check installed compiler
-	static void Generic<T> () { }
+	static void Generic<T> ()
+	{
+		// we use 'var' all around in the compiler sources
+		var x = new X ();
+	}
 
 	static int Main ()
 	{
