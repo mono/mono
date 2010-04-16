@@ -385,9 +385,24 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
+		public void EqualsTest ()
+		{
+			XamlMember m;
+			m = new XamlMember ("Type", XamlLanguage.Type, false);
+			var type_type = XamlLanguage.Type.GetMember ("Type");
+			Assert.AreNotEqual (m, XamlLanguage.Type.GetMember ("Type"), "#1"); // whoa!
+			Assert.AreNotEqual (type_type, m, "#2"); // whoa!
+			Assert.AreEqual (type_type.ToString (), m.ToString (), "#4");
+		}
+
+		[Test]
 		public void ToStringTest ()
 		{
 			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}_Initialization", XamlLanguage.Initialization.ToString (), "#1");
+
+			// Wow. Uncomment this, and it will show .NET returns the XamlMember.ToString() results *inconsistently*.
+			//Assert.AreEqual ("System.Windows.Markup.XData", XamlLanguage.XData.ToString (), "#2pre");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, XamlLanguage.XData.PreferredXamlNamespace, "#2pre2");
 
 			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}XData.Text", XamlLanguage.XData.GetMember ("Text").ToString (), "#2");
 

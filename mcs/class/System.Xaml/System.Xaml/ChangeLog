@@ -1,5 +1,9 @@
 2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlMember.cs : cosmetic equivalence change.
+
+2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlXmlReader.cs : Resolve generic type names. Process attribute
 	  members.
 	* XamlLanguage.cs : add XamlTypeName-to-ClrType method.

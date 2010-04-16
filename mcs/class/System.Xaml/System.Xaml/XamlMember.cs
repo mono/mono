@@ -119,7 +119,7 @@ namespace System.Xaml
 			if (declaringType == null)
 				throw new ArgumentNullException ("declaringType");
 			Name = name;
-			this.invoker = invoker ?? new XamlMemberInvoker (this);
+			this.invoker = new XamlMemberInvoker (this);
 			context = declaringType.SchemaContext;
 			DeclaringType = declaringType;
 			target_type = DeclaringType;
@@ -259,6 +259,9 @@ namespace System.Xaml
 		
 		public bool Equals (XamlMember other)
 		{
+			// this should be in general correct; XamlMembers are almost not comparable.
+			if (Object.ReferenceEquals (this, other))
+				return true;
 			return !IsNull (other) &&
 				context == other.context &&
 				underlying_member == other.underlying_member &&
