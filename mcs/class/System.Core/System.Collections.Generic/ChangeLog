@@ -1,3 +1,7 @@
+2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HashSet.cs: Implement ISet<T> in MOONLIGHT too
+
 2010-02-13 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HashSet.cs: fix and test for bug #579791.  Patch from Tiaan
