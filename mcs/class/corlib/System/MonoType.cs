@@ -173,7 +173,11 @@ namespace System
 
 			foreach (Type type in interfaces) {
 				/*We must compare against the generic type definition*/
+#if NET_2_0
 				Type t = type.IsGenericType ? type.GetGenericTypeDefinition () : type;
+#else
+				Type t = type;
+#endif
 
 				if (String.Compare (t.Name, name, ignoreCase, CultureInfo.InvariantCulture) == 0)
 					return type;
