@@ -863,7 +863,7 @@ namespace System {
 						sb.Append (path);
 						break;
 					default:
-						sb.Append (Reduce (path));
+						sb.Append (Reduce (path, CompactEscaped (Scheme)));
 						break;
 					}
 				}
@@ -1442,7 +1442,7 @@ namespace System {
 			host = uriString;
 
 			if (unixAbsPath) {
-				path = Reduce ('/' + uriString);
+				path = Reduce ('/' + uriString, true);
 				host = String.Empty;
 			} else if (host.Length == 2 && host [1] == ':') {
 				// windows filepath
@@ -1486,47 +1486,67 @@ namespace System {
 			if ((scheme != Uri.UriSchemeMailto) &&
 					(scheme != Uri.UriSchemeNews) &&
 					(scheme != Uri.UriSchemeFile)) {
-				path = Reduce (path);
+				path = Reduce (path, CompactEscaped (scheme));
 			}
 
 			return null;
 		}
 
-		private static string Reduce (string path)
+		private static bool CompactEscaped (string scheme)
+		{
+			switch (scheme) {
+			case "file":
+			case "http":
+			case "https":
+			case "net.pipe":
+			case "net.tcp":
+				return true;
+			}
+			return false;
+		}
+
+		// This is called "compacting" in the MSDN documentation
+		private static string Reduce (string path, bool compact_escaped)
 		{
 			// quick out, allocation-free, for a common case
 			if (path == "/")
 				return path;
 
-			// replace '\', %5C ('\') and %2f ('/') into '/'
-			// other escaped values seems to survive this step
 			StringBuilder res = new StringBuilder();
-			for (int i=0; i < path.Length; i++) {
-				char c = path [i];
-				switch (c) {
-				case '\\':
-					res.Append ('/');
-					break;
-				case '%':
-					if (i < path.Length - 2) {
-						char c1 = path [i + 1];
-						char c2 = Char.ToUpper (path [i + 2]);
-						if (((c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
-							res.Append ('/');
-							i += 2;
+
+			if (compact_escaped) {
+				// replace '\', %5C ('\') and %2f ('/') into '/'
+				// other escaped values seems to survive this step
+				for (int i=0; i < path.Length; i++) {
+					char c = path [i];
+					switch (c) {
+					case '\\':
+						res.Append ('/');
+						break;
+					case '%':
+						if (i < path.Length - 2) {
+							char c1 = path [i + 1];
+							char c2 = Char.ToUpper (path [i + 2]);
+							if (((c1 == '2') && (c2 == 'F')) || ((c1 == '5') && (c2 == 'C'))) {
+								res.Append ('/');
+								i += 2;
+							} else {
+								res.Append (c);
+							}
 						} else {
 							res.Append (c);
 						}
-					} else {
+						break;
+					default:
 						res.Append (c);
+						break;
 					}
-					break;
-				default:
-					res.Append (c);
-					break;
 				}
+				path = res.ToString ();
+			} else {
+				path = path.Replace ('\\', '/');
 			}
-			path = res.ToString ();
+
 			ArrayList result = new ArrayList ();
 
 			for (int startpos = 0; startpos < path.Length; ) {

@@ -1714,6 +1714,18 @@ namespace MonoTests.System
 			Console.WriteLine ("");
 		}
 
+		[Test]
+		public void FtpRootPath ()
+		{
+			Uri u = new Uri ("ftp://a.b/%2fabc/def");
+			string p = u.PathAndQuery;
+			Assert.AreEqual ("/%2fabc/def", p);
+			p = Uri.UnescapeDataString (p).Substring (1);
+			Assert.AreEqual ("/abc/def", p);
+			u = new Uri (new Uri ("ftp://a.b/c/d/e/f"), p);
+			Assert.AreEqual ("/abc/def", u.PathAndQuery);
+		}
+
 //BNC#533572
 #if NET_2_0
 		[Test]
