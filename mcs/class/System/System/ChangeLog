@@ -1,3 +1,11 @@
+2010-04-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	Keep "ftp://a.b/%2fcd" urls unmolested
+	* Uri.cs (CompactEscaped): New.  Check if scheme allows escaped
+	path characters are compacted (list of schemes obtained from MSDN).
+	(Reduce): Add argument that is set if escaped characters need to
+	be compacted.
+
 2009-11-30  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Uri.cs: Hide protected EscapeString and Unescape for SL2/3

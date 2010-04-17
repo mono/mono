@@ -1,3 +1,8 @@
+2010-04-17  Raja R Harinath  <harinath@hurrynot.org>
+
+	* UriTest.cs (FtpRootPath): New.  Check that ftp root paths are
+	unmolested.
+
 2009-09-01  Andres Aragoneses  <aaragoneses@novell.com>
 
 	* UriTest.cs: New tests from #533572.

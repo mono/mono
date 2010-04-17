@@ -1714,6 +1714,31 @@ namespace MonoTests.System
 			Console.WriteLine ("");
 		}
 
+		static string UnescapeDataString (string p)
+		{
+#if NET_2_0
+			return Uri.UnescapeDataString (p);
+#else
+			StringBuilder res = new StringBuilder ();
+			int i = 0;
+			while (i < p.Length)
+				res.Append (Uri.HexUnescape (p, ref i));
+			return res.ToString ();
+#endif
+		}
+
+		[Test]
+		public void FtpRootPath ()
+		{
+			Uri u = new Uri ("ftp://a.b/%2fabc/def");
+			string p = u.PathAndQuery;
+			Assert.AreEqual ("/%2fabc/def", p);
+			p = UnescapeDataString (p).Substring (1);
+			Assert.AreEqual ("/abc/def", p);
+			u = new Uri (new Uri ("ftp://a.b/c/d/e/f"), p);
+			Assert.AreEqual ("/abc/def", u.PathAndQuery);
+		}
+
 //BNC#533572
 #if NET_2_0
 		[Test]
