@@ -24,6 +24,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel;
+using System.Linq;
 using System.Windows.Markup;
 
 namespace System.Xaml
@@ -32,7 +33,7 @@ namespace System.Xaml
 	{
 		class NSList : List<NamespaceDeclaration>
 		{
-			public NSList (XamlNodeType ownerType, params NamespaceDeclaration [] nsdecls)
+			public NSList (XamlNodeType ownerType, IEnumerable<NamespaceDeclaration> nsdecls)
 				: base (nsdecls)
 			{
 				OwnerType = ownerType;
@@ -168,8 +169,6 @@ namespace System.Xaml
 			get { return NodeType == XamlNodeType.Value ? objects.Peek () : null; }
 		}
 
-		List<NamespaceDeclaration> tmp_ns_decls = new List<NamespaceDeclaration> ();
-		
 		public override bool Read ()
 		{
 			if (IsDisposed)
@@ -181,13 +180,10 @@ namespace System.Xaml
 			case XamlNodeType.None:
 			default:
 				// -> namespaces
-				var rootNS = root_type.PreferredXamlNamespace;
-				if (rootNS != XamlLanguage.Xaml2006Namespace)
-					tmp_ns_decls.Add (new NamespaceDeclaration (rootNS, String.Empty));
-				else
-					tmp_ns_decls.Add (new NamespaceDeclaration (XamlLanguage.Xaml2006Namespace, "x"));
-				namespaces = new NSList (XamlNodeType.StartObject, tmp_ns_decls.ToArray ()).GetEnumerator ();
-				tmp_ns_decls.Clear ();
+				var l = new List<string> ();
+				CollectNamespaces (l, instance, root_type);
+				var nss = from s in l select new NamespaceDeclaration (s, s == XamlLanguage.Xaml2006Namespace ? "x" : s == root_type.PreferredXamlNamespace ? String.Empty : SchemaContext.GetPreferredPrefix (s));
+				namespaces = new NSList (XamlNodeType.StartObject, nss).GetEnumerator ();
 
 				namespaces.MoveNext ();
 				node_type = XamlNodeType.NamespaceDeclaration;
@@ -259,6 +255,27 @@ namespace System.Xaml
 				members_stack.Pop ();
 				node_type = XamlNodeType.EndObject;
 				return true;
+			}
+		}
+
+		void CollectNamespaces (List<string> l, object o, XamlType xt)
+		{
+			if (xt == null)
+				return;
+			if (o == null) {
+				// it becomes NullExtension, so check standard ns.
+				if (!l.Contains (XamlLanguage.Xaml2006Namespace))
+					l.Add (XamlLanguage.Xaml2006Namespace);
+				return;
+			}
+			var ns = xt.PreferredXamlNamespace;
+			if (!l.Contains (ns))
+				l.Add (ns);
+			foreach (var xm in xt.GetAllMembers ()) {
+				ns = xm.PreferredXamlNamespace;
+				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
+					continue; // FIXME: process them too.
+				CollectNamespaces (l, xm.Invoker.GetValue (o), xm.TargetType);
 			}
 		}
 

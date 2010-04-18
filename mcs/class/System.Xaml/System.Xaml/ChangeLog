@@ -1,5 +1,11 @@
 2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReader.cs, XamlSchemaContext.cs, XamlLanguage.cs:
+	  collect namespace declarations first. Remove extra [XmlnsPrefix]
+	  on the assembly, and handle it specially in GetPreferredPrefix(),
+
+2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReader.cs : check constructible type. Remove extra ns node.
 
 2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>

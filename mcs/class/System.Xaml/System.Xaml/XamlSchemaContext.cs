@@ -125,6 +125,8 @@ namespace System.Xaml
 		{
 			if (xmlns == null)
 				throw new ArgumentNullException ("xmlns");
+			if (xmlns == XamlLanguage.Xaml2006Namespace)
+				return "x";
 			if (prefixes == null) {
 				prefixes = new Dictionary<string,string> ();
 				foreach (var ass in AssembliesInScope)
