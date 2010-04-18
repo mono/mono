@@ -1,5 +1,13 @@
 2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlType.cs : do not return index property.
+	* TypeExtensionMethods.cs : return Initialization only for value nodes.
+	* XamlObjectReader.cs : member content can be either a value or a new
+	  object. Fix certain EndObject transition to become EndMember, not
+	  EndObject twice.
+
+2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReader.cs, XamlSchemaContext.cs, XamlLanguage.cs:
 	  collect namespace declarations first. Remove extra [XmlnsPrefix]
 	  on the assembly, and handle it specially in GetPreferredPrefix(),

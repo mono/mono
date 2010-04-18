@@ -212,9 +212,13 @@ namespace System.Xaml
 				return true;
 
 			case XamlNodeType.StartMember:
-				var obj = GetMemberValueOrRootInstance ();
-				objects.Push (obj);
-				node_type = XamlNodeType.Value;
+				if (!types.Peek ().IsContentValue ())
+					StartNextObject ();
+				else {
+					var obj = GetMemberValueOrRootInstance ();
+					objects.Push (obj);
+					node_type = XamlNodeType.Value;
+				}
 				return true;
 
 			case XamlNodeType.Value:
@@ -251,9 +255,8 @@ namespace System.Xaml
 					StartNextMemberOrNamespace ();
 					return true;
 				}
-				// then, move to the end of current object.
-				members_stack.Pop ();
-				node_type = XamlNodeType.EndObject;
+				// then, move to the end of current object member.
+				node_type = XamlNodeType.EndMember;
 				return true;
 			}
 		}

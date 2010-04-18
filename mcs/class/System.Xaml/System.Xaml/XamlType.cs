@@ -374,7 +374,7 @@ namespace System.Xaml
 		IEnumerable<XamlMember> DoLookupAllMembers ()
 		{
 			foreach (var pi in UnderlyingType.GetProperties ())
-				if (pi.CanRead && pi.CanWrite)
+				if (pi.CanRead && pi.CanWrite && pi.GetIndexParameters ().Length == 0)
 					yield return new XamlMember (pi, SchemaContext);
 		}
 

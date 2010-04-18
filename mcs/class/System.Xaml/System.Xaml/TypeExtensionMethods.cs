@@ -136,9 +136,18 @@ namespace System.Xaml
 		
 		#endregion
 
+		public static bool IsContentValue (this XamlType type)
+		{
+			if (Type.GetTypeCode (type.UnderlyingType) != TypeCode.Object)
+				return true;
+			else if (type.UnderlyingType == typeof (TimeSpan) || type.UnderlyingType == typeof (Uri)) // special predefined types
+				return true;
+			return false;
+		}
+
 		public static IEnumerable<XamlMember> GetAllReadWriteMembers (this XamlType type)
 		{
-			if (type != XamlLanguage.Null) // FIXME: probably by different condition
+			if (type.IsContentValue ())
 				yield return XamlLanguage.Initialization;
 			foreach (var m in type.GetAllMembers ())
 				yield return m;

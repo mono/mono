@@ -225,7 +225,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_NonPrimitive ()
 		{
 			var r = new XamlObjectReader (new TestClass3 ());
