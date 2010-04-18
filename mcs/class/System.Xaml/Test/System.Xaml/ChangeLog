@@ -1,5 +1,10 @@
 2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReaderTest.cs : enable working tests and remove invalid
+	  comment.
+
+2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReaderTest.cs : add simple read tests for some types.
 
 2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>

@@ -1,5 +1,9 @@
 2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReader.cs : check constructible type. Remove extra ns node.
+
+2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlType.cs : ignore ReferenceConverter which is used for IList<T>.
 
 2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>

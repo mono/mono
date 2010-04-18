@@ -117,6 +117,8 @@ namespace System.Xaml
 				if (!type.IsPublic)
 					throw new XamlObjectReaderException (String.Format ("instance type '{0}' must be public and non-nested.", type));
 				root_type = SchemaContext.GetXamlType (instance.GetType ());
+				if (root_type.ConstructionRequiresArguments && root_type.TypeConverter == null)
+					throw new XamlObjectReaderException (String.Format ("instance type '{0}' has no default constructor.", type));
 			}
 			else
 				root_type = XamlLanguage.Null;
@@ -182,7 +184,8 @@ namespace System.Xaml
 				var rootNS = root_type.PreferredXamlNamespace;
 				if (rootNS != XamlLanguage.Xaml2006Namespace)
 					tmp_ns_decls.Add (new NamespaceDeclaration (rootNS, String.Empty));
-				tmp_ns_decls.Add (new NamespaceDeclaration (XamlLanguage.Xaml2006Namespace, "x"));
+				else
+					tmp_ns_decls.Add (new NamespaceDeclaration (XamlLanguage.Xaml2006Namespace, "x"));
 				namespaces = new NSList (XamlNodeType.StartObject, tmp_ns_decls.ToArray ()).GetEnumerator ();
 				tmp_ns_decls.Clear ();
 

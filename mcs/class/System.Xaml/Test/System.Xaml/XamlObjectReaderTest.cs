@@ -137,12 +137,10 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		[ExpectedException (typeof (XamlObjectReaderException))]
-		[Category ("NotWorking")]
 		public void ReadNonConstructible ()
 		{
-			var r = new XamlObjectReader (XamlLanguage.String);
 			// XamlType has no default constructor.
-			r.Read ();
+			var r = new XamlObjectReader (XamlLanguage.String);
 		}
 
 		[Test]
@@ -383,9 +381,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		// WTF, It does not give XAML namespace, but XamlSerives.Save()
-		// serializes DateTime instance in the XAML namespace.
-		[Category ("NotWorking")]
 		public void Read_DateTime ()
 		{
 			var obj = new DateTime (2010, 4, 15);
