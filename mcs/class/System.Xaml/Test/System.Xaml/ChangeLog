@@ -1,3 +1,7 @@
+2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlObjectReaderTest.cs : add simple read tests for some types.
+
 2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlMemberTest.cs, XamlXmlReaderTest.cs :

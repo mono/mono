@@ -1,3 +1,7 @@
+2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlType.cs : ignore ReferenceConverter which is used for IList<T>.
+
 2010-04-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlType.cs : cache member lookup.

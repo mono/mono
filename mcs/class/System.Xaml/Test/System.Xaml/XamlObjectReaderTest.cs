@@ -415,7 +415,25 @@ namespace MonoTests.System.Xaml
 			while (!r.IsEof)
 				r.Read ();
 		}
-		
+
+		[Test]
+		public void ReadStandardTypes ()
+		{
+			SimpleReadStandardType (new ArrayExtension ());
+			SimpleReadStandardType (new NullExtension ());
+			SimpleReadStandardType (new PropertyDefinition ());
+			SimpleReadStandardType (new Reference ());
+			SimpleReadStandardType (new StaticExtension ());
+			SimpleReadStandardType (new TypeExtension ());
+		}
+
+		void SimpleReadStandardType (object instance)
+		{
+			var r = new XamlObjectReader (instance);
+			while (!r.IsEof)
+				r.Read ();
+		}
+
 		void Read_CommonXamlPrimitive (object obj)
 		{
 			var r = new XamlObjectReader (obj);

@@ -628,20 +628,21 @@ namespace System.Xaml
 			if (t == null)
 				return null;
 
+			// equivalent to TypeExtension.
+			// FIXME: not sure if it should be specially handled here.
+			if (t == typeof (Type))
+				t = typeof (TypeExtension);
+
 			var a = CustomAttributeProvider.GetCustomAttribute<TypeConverterAttribute> (false);
 			if (a != null)
 				return SchemaContext.GetValueConverter<TypeConverter> (Type.GetType (a.ConverterTypeName), this);
 
 			if (t == typeof (object))
 				return SchemaContext.GetValueConverter<TypeConverter> (typeof (TypeConverter), this);
-			// equivalent to TypeExtension.
-			// FIXME: not sure if it should be specially handled here.
-			if (t == typeof (Type))
-				return SchemaContext.GetValueConverter<TypeConverter> (typeof (TypeExtensionConverter), this);
 
 			// It's still not decent to check CollectionConverter.
 			var tct = TypeDescriptor.GetConverter (t).GetType ();
-			if (tct != typeof (TypeConverter) && tct != typeof (CollectionConverter))
+			if (tct != typeof (TypeConverter) && tct != typeof (CollectionConverter) && tct != typeof (ReferenceConverter))
 				return SchemaContext.GetValueConverter<TypeConverter> (tct, this);
 			return null;
 		}
