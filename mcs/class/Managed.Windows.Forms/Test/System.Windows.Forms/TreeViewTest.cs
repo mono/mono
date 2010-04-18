@@ -330,6 +330,22 @@ namespace MonoTests.System.Windows.Forms
 			
 			Assert.AreEqual ("aaa", tv.Nodes[0].Text, "A1");
 		}
+
+		[Test]
+		public void SortBeginUpdate ()
+		{
+			TreeView tv = new TreeView ();
+			tv.Sorted = true;
+			tv.BeginUpdate ();
+			tv.Nodes.Add ("x");
+			tv.Nodes.Add ("f");
+			tv.Nodes.Add ("a");
+
+			// Even if BeginUpdate was called, Sort is called.
+			Assert.AreEqual ("a", tv.Nodes [0].Text, "#A1");
+			Assert.AreEqual ("f", tv.Nodes [1].Text, "#A2");
+			Assert.AreEqual ("x", tv.Nodes [2].Text, "#A3");
+		}
 #endif
 
 		[Test]
