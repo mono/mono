@@ -1,3 +1,8 @@
+2010-04-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AsyncPatternTester.cs, MessageContractTest.cs, AsyncCallTest.cs:
+	  enable working tests.
+
 2009-02-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MessageContractTest.cs:

@@ -7,8 +7,7 @@ using NUnit.Framework;
 namespace MonoTests.Features.Serialization
 {
 	[TestFixture]
-	[Category ("NotWorking")] // Serialization failure
-    public class MessageContractTest : TestFixtureBase<MessageContractTesterContractClient, MonoTests.Features.Contracts.MessageContractTester, MonoTests.Features.Contracts.IMessageContractTesterContract>
+	public class MessageContractTest : TestFixtureBase<MessageContractTesterContractClient, MonoTests.Features.Contracts.MessageContractTester, MonoTests.Features.Contracts.IMessageContractTesterContract>
 	{
 		[Test]
 		[Ignore ("fails under .NET; I never bothered to fix the test")]
