@@ -1,3 +1,20 @@
+2010-04-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* domain-internals.h: made threadpool_jobs volatile.
+	* mono-wsq.c: add an assert to verify that the threadpool cleaned up
+	all local jobs.
+	* threadpool.c:
+		-When two threads try to initialize the socket IO pool,
+		the second one waits until the intialization is finished
+		instead of continuing right away.
+		-Add checks for domain unload: no items added in this case.
+		-Only measure the time every 10 elements added to the queue.
+		This is an experiment since linux x86 gettimeofday() sucks.
+		-Create new thread if there are none waiting for work items.
+		-There was a missing decrement of the busy threads.
+		-Make sure the local queue is cleaned up before exiting the
+		thread when the program ends.
+
 2010-04-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* reflection.c (mono_type_get_object): Normalize generics types
