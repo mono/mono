@@ -14,8 +14,14 @@
 #include "mph.h"
 #include "map.h"
 
+#ifdef HAVE_PATHCONF_H
+#include <pathconf.h>
+#endif
+
 #ifdef HAVE_SYS_STATVFS_H
 #include <sys/statvfs.h>
+#elif defined (HAVE_STATFS) || defined (HAVE_FSTATFS)
+#include <sys/vfs.h>
 #endif /* def HAVE_SYS_STATVFS_H */
 
 #ifdef HAVE_GETFSSTAT
@@ -142,8 +148,10 @@ Mono_Posix_ToStatvfs (void *_from, struct Mono_Posix_Statvfs *to)
 	// so this shouldn't lose anything.
 	memcpy (&to->f_fsid, &from->f_fsid, sizeof(to->f_fsid));
 
+#if HAVE_STRUCT_STATFS_F_FLAGS
 	if (Mono_Posix_ToMountFlags (from->f_flags, &to->f_flag) != 0)
 		return -1;
+#endif  /* def HAVE_STRUCT_STATFS_F_FLAGS */
 
 	return 0;
 }
@@ -165,9 +173,11 @@ Mono_Posix_FromStatvfs (struct Mono_Posix_Statvfs *from, void *_to)
 	// so this shouldn't lose anything.
 	memcpy (&to->f_fsid, &from->f_fsid, sizeof(to->f_fsid));
 
+#if HAVE_STRUCT_STATFS_F_FLAGS
 	if (Mono_Posix_FromMountFlags (from->f_flag, &flag) != 0)
 		return -1;
 	to->f_flags = flag;
+#endif  /* def HAVE_STRUCT_STATFS_F_FLAGS */
 
 	return 0;
 }

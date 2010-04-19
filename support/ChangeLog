@@ -1,3 +1,9 @@
+2010-04-19  Jonathan Pryor  <jpryor@novell.com>
+
+	* dirent.c, grp.c, macros.c, pwd.c, signal.c, sys-statvfs.c, sys-time.c,
+	  unistd.c: Add #if HAVE_XXX checks for functions which aren't
+	  provided on Android.
+
 2010-04-15  Jonathan Pryor  <jpryor@novell.com>
 
 	* Makefile.am: Revert previous linkage against libmono.so, as lupus

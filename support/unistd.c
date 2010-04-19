@@ -116,6 +116,7 @@ Mono_Posix_Syscall_sysconf (int name, int defaultError)
 	return sysconf (name);
 }
 
+#if HAVE_CONFSTR
 mph_size_t
 Mono_Posix_Syscall_confstr (int name, char *buf, mph_size_t len)
 {
@@ -124,6 +125,7 @@ Mono_Posix_Syscall_confstr (int name, char *buf, mph_size_t len)
 		return -1;
 	return confstr (name, buf, (size_t) len);
 }
+#endif  /* def HAVE_CONFSTR */
 
 #ifdef HAVE_TTYNAME_R
 gint32
@@ -145,12 +147,14 @@ Mono_Posix_Syscall_readlink (const char *path, char *buf, mph_size_t len)
 	return r;
 }
 
+#if HAVE_GETLOGIN_R
 gint32
 Mono_Posix_Syscall_getlogin_r (char *buf, mph_size_t len)
 {
 	mph_return_if_size_t_overflow (len);
 	return getlogin_r (buf, (size_t) len);
 }
+#endif  /* def HAVE_GETLOGIN_R */
 
 gint32
 Mono_Posix_Syscall_gethostname (char *buf, mph_size_t len)
@@ -159,18 +163,22 @@ Mono_Posix_Syscall_gethostname (char *buf, mph_size_t len)
 	return gethostname (buf, (size_t) len);
 }
 
+#if HAVE_SETHOSTNAME
 gint32
 Mono_Posix_Syscall_sethostname (const char *name, mph_size_t len)
 {
 	mph_return_if_size_t_overflow (len);
 	return sethostname (name, (size_t) len);
 }
+#endif  /* def HAVE_SETHOSTNAME */
 
+#if HAVE_GETHOSTID
 gint64
 Mono_Posix_Syscall_gethostid (void)
 {
 	return gethostid ();
 }
+#endif  /* def HAVE_GETHOSTID */
 
 #ifdef HAVE_SETHOSTID
 gint32
@@ -204,12 +212,17 @@ Mono_Posix_Syscall_setdomainname (const char *name, mph_size_t len)
 }
 #endif /* def HAVE_SETDOMAINNAME */
 
+/* Android implements truncate, but doesn't declare it.
+ * Result is a warning during compilation, so skip it.
+ */
+#ifndef PLATFORM_ANDROID
 gint32
 Mono_Posix_Syscall_truncate (const char *path, mph_off_t length)
 {
 	mph_return_if_off_t_overflow (length);
 	return truncate (path, (off_t) length);
 }
+#endif
 
 gint32
 Mono_Posix_Syscall_ftruncate (int fd, mph_off_t length)
@@ -218,6 +231,7 @@ Mono_Posix_Syscall_ftruncate (int fd, mph_off_t length)
 	return ftruncate (fd, (off_t) length);
 }
 
+#if HAVE_LOCKF
 gint32
 Mono_Posix_Syscall_lockf (int fd, int cmd, mph_off_t len)
 {
@@ -226,7 +240,9 @@ Mono_Posix_Syscall_lockf (int fd, int cmd, mph_off_t len)
 		return -1;
 	return lockf (fd, cmd, (off_t) len);
 }
+#endif  /* def HAVE_LOCKF */
 
+#if HAVE_SWAB
 int
 Mono_Posix_Syscall_swab (void *from, void *to, mph_ssize_t n)
 {
@@ -235,20 +251,25 @@ Mono_Posix_Syscall_swab (void *from, void *to, mph_ssize_t n)
 	swab (from, to, (ssize_t) n);
 	return 0;
 }
+#endif  /* def HAVE_SWAB */
 
+#if HAVE_SETUSERSHELL
 int
 Mono_Posix_Syscall_setusershell (void)
 {
 	setusershell ();
 	return 0;
 }
+#endif  /* def HAVE_SETUSERSHELL */
 
+#if HAVE_ENDUSERSHELL
 int
 Mono_Posix_Syscall_endusershell (void)
 {
 	endusershell ();
 	return 0;
 }
+#endif  /* def HAVE_ENDUSERSHELL */
 
 int
 Mono_Posix_Syscall_sync (void)
