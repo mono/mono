@@ -1,3 +1,7 @@
+2010-04-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* CharTest.cs: Add missing [TestFixture] attribute.
+
 2010-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Add regression test for #484246.

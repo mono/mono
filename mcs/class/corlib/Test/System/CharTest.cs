@@ -12,7 +12,7 @@ using System.Globalization;
 
 namespace MonoTests.System
 {
-
+[TestFixture]
 public class CharTest
 {
 	[Test]
