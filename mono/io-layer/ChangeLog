@@ -1,3 +1,7 @@
+2010-04-19  Jonathan Pryor  <jpryor@novell.com>
+
+	* collection.c, mono-mutex.c: Add Android support.
+
 2010-04-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* collection.c (_wapi_collection_init): Set stack size on openbsd similarly to
