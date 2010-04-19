@@ -5529,6 +5529,16 @@ namespace System.Windows.Forms
 			balloon_window.Show ();
 		}
 
+		public override void HideBalloonWindow (IntPtr handle)
+		{
+			if (balloon_window == null || balloon_window.OwnerHandle != handle)
+				return;
+
+			balloon_window.Close ();
+			balloon_window.Dispose ();
+			balloon_window = null;
+		}
+
 		private const int balloon_iconsize = 16;
 		private const int balloon_bordersize = 8; 
 		

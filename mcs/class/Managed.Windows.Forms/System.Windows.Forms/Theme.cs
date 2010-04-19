@@ -984,6 +984,7 @@ namespace System.Windows.Forms
 		#region BalloonWindow
 #if NET_2_0
 		public abstract void ShowBalloonWindow (IntPtr handle, int timeout, string title, string text, ToolTipIcon icon);
+		public abstract void HideBalloonWindow (IntPtr handle);
 		public abstract void DrawBalloonWindow (Graphics dc, Rectangle clip, NotifyIcon.BalloonWindow control);
 		public abstract Rectangle BalloonWindowRect (NotifyIcon.BalloonWindow control);
 #endif

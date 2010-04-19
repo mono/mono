@@ -263,6 +263,12 @@ namespace System.Windows.Forms {
 				timer.Enabled = false;
 				timer.Tick += new EventHandler (HandleTimer);
 			}
+
+			public IntPtr OwnerHandle {
+				get {
+					return owner;
+				}
+			}
 			
 			protected override void Dispose (bool disposing)
 			{

@@ -6086,6 +6086,10 @@ namespace System.Windows.Forms {
 				tt.Dispose();
 				tt = null;
 			}
+#if NET_2_0
+			// Close any balloon window *we* fired.
+			ThemeEngine.Current.HideBalloonWindow (handle);
+#endif
 		}
 
 #if NET_2_0
