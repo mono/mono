@@ -1,3 +1,11 @@
+2010-04-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_type_get_object): Normalize generics types
+	as to how managed code expect them to be. A generic instance over
+	the GTD arguments must have the same mirror as the GTD itself.
+
+	Fixes #473289.
+
 2010-04-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* locales.c: Implement support for DISABLE_NORMALIZATION.
