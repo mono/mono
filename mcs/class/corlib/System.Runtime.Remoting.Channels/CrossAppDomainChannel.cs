@@ -50,7 +50,9 @@ namespace System.Runtime.Remoting.Channels
 	{
 		// TODO: Add context support
 		// Required for .NET compatibility
+#pragma warning disable 0414
 		private object _ContextID;
+#pragma warning restore
 		private int _DomainID;
 		private string _processGuid;
 
