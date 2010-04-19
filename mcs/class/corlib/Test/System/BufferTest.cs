@@ -19,7 +19,6 @@ namespace MonoTests.System {
 
 		const int SIZE = 10;
 		byte [] byteArray  = new byte [SIZE];   // 8-bits unsigned integer array
-		float [] floatArray = new float [SIZE];
 		
 		[Test]
 		public void BlockCopy ()

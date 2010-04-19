@@ -277,7 +277,7 @@ public class HashtableTest {
 
 #if NET_2_0
 	public class MyEqualityComparer : IEqualityComparer {
-		public bool Equals (object x, object y) { return x == y; }
+		bool IEqualityComparer.Equals (object x, object y) { return x == y; }
 		public int GetHashCode (object obj) { return 1; }
 	}
 

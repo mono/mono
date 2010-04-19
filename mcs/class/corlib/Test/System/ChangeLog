@@ -1,5 +1,9 @@
 2010-04-19  Zoltan Varga  <vargaz@gmail.com>
 
+	* *.cs: Fix warnings.
+
+2010-04-19  Zoltan Varga  <vargaz@gmail.com>
+
 	* StringTest.cs: Add a test for #597604.
 
 2010-04-18  Zoltan Varga  <vargaz@gmail.com>

@@ -1013,15 +1013,15 @@ namespace MonoTests.System.Resources
 			{
 			}
 
-			public new string BaseNameField {
+			public string BaseNameField {
 				get { return base.BaseNameField; }
 			}
 
-			public new Assembly MainAssembly {
+			public Assembly MainAssembly {
 				get { return base.MainAssembly; }
 			}
 
-			public new Hashtable ResourceSets {
+			public Hashtable ResourceSets {
 				get { return base.ResourceSets; }
 			}
 

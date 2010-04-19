@@ -1703,7 +1703,7 @@ public class AssemblyBuilderTest
 
 
 	[Test]
-	public void GetType ()
+	public void TestGetType ()
 	{
 		TypeBuilder tb = mb.DefineType ("Test", TypeAttributes.Public);
 

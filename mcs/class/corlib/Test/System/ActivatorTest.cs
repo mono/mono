@@ -64,7 +64,6 @@ namespace MonoTests.System {
 	[TestFixture]
 	public class ActivatorTest {
 
-		private string corlibLocation = typeof (string).Assembly.Location;
 		private string testLocation = typeof (ActivatorTest).Assembly.Location;
 
 		[Test]

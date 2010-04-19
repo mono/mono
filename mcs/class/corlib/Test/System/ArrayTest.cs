@@ -49,6 +49,11 @@ namespace MonoTests.System
 		{
 			return true;
 		}
+
+		public override int GetHashCode ()
+		{
+			return 0;
+		}
 	}
 		
 	//End Auxiliary Things

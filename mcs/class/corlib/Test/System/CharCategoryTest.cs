@@ -21,8 +21,6 @@ namespace MonoTests.System
 	[TestFixture]
 	public class CharCategoryTest 
 	{
-		static char DSC = Path.DirectorySeparatorChar;
-
 		delegate bool ComparisonMethod (char c);
 
 		private void CompareWithDump (ComparisonMethod cm, string dump, bool testTrue)

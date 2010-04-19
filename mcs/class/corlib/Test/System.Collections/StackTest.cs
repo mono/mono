@@ -19,7 +19,6 @@ namespace MonoTests.System.Collections
 	public class StackTest
 	{
                 private Stack stack1;
-                private Stack stack2;
                 private Stack stackInt;
 
 		[Test]
@@ -411,7 +410,6 @@ namespace MonoTests.System.Collections
                 protected  void SetUp()
                 {
                         stack1 = new Stack();
-                        stack2 = new Stack();
 
                         stackInt = new Stack();
     
