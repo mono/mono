@@ -1,4 +1,4 @@
-﻿// StringTest.cs - NUnit Test Cases for the System.String class
+// StringTest.cs - NUnit Test Cases for the System.String class
 //
 // Authors:
 //   Jeffrey Stedfast <fejj@ximian.com>
@@ -1593,6 +1593,12 @@ public class StringTest
 	public void IndexOfStringComparisonOrdinalIgnoreCaseRangeException2 ()
 	{
 		"Mono".IndexOf ("no", 1, 5, StringComparison.OrdinalIgnoreCase);
+	}
+
+	[Test]
+	public void IndexOfStringComparisonCurrentCulture_Empty ()
+	{
+		Assert.AreEqual (1, "Mono".IndexOf ("", 1, StringComparison.CurrentCultureIgnoreCase));
 	}
 
 	[Test]

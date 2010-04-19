@@ -1,3 +1,8 @@
+2010-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* CompareInfo.cs (IndexOf): Return startIndex instead of 0 for empty strings.
+	Fixes #597604.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* CultureInfo.cs, CompareInfo.cs, Calendar.cs: use MOONLIGHT symbol

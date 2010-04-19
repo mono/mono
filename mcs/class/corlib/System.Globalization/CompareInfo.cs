@@ -619,7 +619,7 @@ namespace System.Globalization
 			if ((options & ValidCompareOptions_NoStringSort) != options)
 				throw new ArgumentException ("options");
 			if(value.Length==0) {
-				return(0);
+				return(startIndex);
 			}
 			if(count==0) {
 				return(-1);
