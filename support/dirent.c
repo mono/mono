@@ -29,6 +29,7 @@
 
 G_BEGIN_DECLS
 
+#if HAVE_SEEKDIR
 gint32
 Mono_Posix_Syscall_seekdir (void *dir, mph_off_t offset)
 {
@@ -38,12 +39,15 @@ Mono_Posix_Syscall_seekdir (void *dir, mph_off_t offset)
 
 	return 0;
 }
+#endif  /* def HAVE_SEEKDIR */
 
+#if HAVE_TELLDIR
 mph_off_t
 Mono_Posix_Syscall_telldir (void *dir)
 {
 	return telldir ((DIR*) dir);
 }
+#endif  /* def HAVE_TELLDIR */
 
 static void
 copy_dirent (struct Mono_Posix_Syscall__Dirent *to, struct dirent *from)

@@ -120,6 +120,7 @@ int Mono_Posix_FromRealTimeSignum (int offset, int *r)
 	#define mph_int_set(p,o,n) do { *(p) = n; } while (0)
 #endif
 
+#if HAVE_PSIGNAL
 int
 Mono_Posix_Syscall_psignal (int sig, const char* s)
 {
@@ -127,6 +128,7 @@ Mono_Posix_Syscall_psignal (int sig, const char* s)
 	psignal (sig, s);
 	return errno == 0 ? 0 : -1;
 }
+#endif  /* def HAVE_PSIGNAL */
 
 #define NUM_SIGNALS 64
 static signal_info signals[NUM_SIGNALS];

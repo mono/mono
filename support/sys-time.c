@@ -124,6 +124,7 @@ Mono_Posix_Syscall_lutimes(const char *filename, struct Mono_Posix_Timeval *tv)
 }
 #endif /* def HAVE_LUTIMES */
 
+#if HAVE_FUTIMES
 gint32
 Mono_Posix_Syscall_futimes(int fd, struct Mono_Posix_Timeval *tv)
 {
@@ -134,6 +135,7 @@ Mono_Posix_Syscall_futimes(int fd, struct Mono_Posix_Timeval *tv)
 
 	return futimes (fd, ptv);
 }
+#endif  /* def HAVE_FUTIMES */
 
 G_END_DECLS
 

@@ -22,7 +22,9 @@ static const mph_string_offset_t
 passwd_offsets[] = {
 	MPH_STRING_OFFSET (struct passwd, pw_name,    MPH_STRING_OFFSET_PTR),
 	MPH_STRING_OFFSET (struct passwd, pw_passwd,  MPH_STRING_OFFSET_PTR),
+#if HAVE_STRUCT_PASSWD_PW_GECOS
 	MPH_STRING_OFFSET (struct passwd, pw_gecos,   MPH_STRING_OFFSET_PTR),
+#endif  /* def HAVE_STRUCT_PASSWD_PW_GECOS */
 	MPH_STRING_OFFSET (struct passwd, pw_dir,     MPH_STRING_OFFSET_PTR),
 	MPH_STRING_OFFSET (struct passwd, pw_shell,   MPH_STRING_OFFSET_PTR)
 };
@@ -31,7 +33,9 @@ static const mph_string_offset_t
 mph_passwd_offsets[] = {
 	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_name,    MPH_STRING_OFFSET_PTR),
 	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_passwd,  MPH_STRING_OFFSET_PTR),
+#if HAVE_STRUCT_PASSWD_PW_GECOS
 	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_gecos,   MPH_STRING_OFFSET_PTR),
+#endif  /* def HAVE_STRUCT_PASSWD_PW_GECOS */
 	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_dir,     MPH_STRING_OFFSET_PTR),
 	MPH_STRING_OFFSET (struct Mono_Posix_Syscall__Passwd, pw_shell,   MPH_STRING_OFFSET_PTR)
 };
@@ -187,6 +191,7 @@ Mono_Posix_Syscall_getpwuid_r (mph_uid_t uid,
 }
 #endif /* ndef HAVE_GETPWUID_R */
 
+#if HAVE_GETPWENT
 gint32
 Mono_Posix_Syscall_getpwent (struct Mono_Posix_Syscall__Passwd *pwbuf)
 {
@@ -208,6 +213,7 @@ Mono_Posix_Syscall_getpwent (struct Mono_Posix_Syscall__Passwd *pwbuf)
 	}
 	return 0;
 }
+#endif  /* def HAVE_GETPWENT */
 
 #ifdef HAVE_FGETPWENT
 gint32
@@ -233,6 +239,7 @@ Mono_Posix_Syscall_fgetpwent (void *stream, struct Mono_Posix_Syscall__Passwd *p
 }
 #endif /* ndef HAVE_FGETPWENT */
 
+#if HAVE_SETPWENT
 int
 Mono_Posix_Syscall_setpwent (void)
 {
@@ -243,7 +250,9 @@ Mono_Posix_Syscall_setpwent (void)
 	mph_return_if_val_in_list5(errno, EIO, EMFILE, ENFILE, ENOMEM, ERANGE);
 	return 0;
 }
+#endif  /* def HAVE_SETPWENT */
 
+#if HAVE_ENDPWENT
 int
 Mono_Posix_Syscall_endpwent (void)
 {
@@ -253,6 +262,7 @@ Mono_Posix_Syscall_endpwent (void)
 		return -1;
 	return 0;
 }
+#endif  /* def HAVE_ENDPWENT */
 
 G_END_DECLS
 

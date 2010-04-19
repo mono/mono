@@ -226,6 +226,7 @@ Mono_Posix_Syscall_getgrgid_r (mph_gid_t gid,
 }
 #endif /* ndef HAVE_GETGRGID_R */
 
+#if HAVE_GETGRENT
 gint32
 Mono_Posix_Syscall_getgrent (struct Mono_Posix_Syscall__Group *grbuf)
 {
@@ -247,6 +248,7 @@ Mono_Posix_Syscall_getgrent (struct Mono_Posix_Syscall__Group *grbuf)
 	}
 	return 0;
 }
+#endif  /* def HAVE_GETGRENT */
 
 #ifdef HAVE_FGETGRENT
 gint32
@@ -272,13 +274,16 @@ Mono_Posix_Syscall_fgetgrent (void *stream, struct Mono_Posix_Syscall__Group *gr
 }
 #endif /* ndef HAVE_FGETGRENT */
 
+#if HAVE_SETGROUPS
 gint32
 Mono_Posix_Syscall_setgroups (mph_size_t size, mph_gid_t *list)
 {
 	mph_return_if_size_t_overflow (size);
 	return setgroups ((size_t) size, list);
 }
+#endif  /* def HAVE_SETGROUPS */
 
+#if HAVE_SETGRENT
 int
 Mono_Posix_Syscall_setgrent (void)
 {
@@ -289,13 +294,16 @@ Mono_Posix_Syscall_setgrent (void)
 	mph_return_if_val_in_list5(errno, EIO, EMFILE, ENFILE, ENOMEM, ERANGE);
 	return 0;
 }
+#endif  /* def HAVE_SETGRENT */
 
+#if HAVE_ENDGRENT
 int
 Mono_Posix_Syscall_endgrent (void)
 {
 	endgrent();
 	return 0;
 }
+#endif  /* def HAVE_ENDGRENT */
 
 
 G_END_DECLS
