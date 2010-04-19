@@ -1,3 +1,13 @@
+2010-04-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+		* verify.c: Handle the case where mono_type_get_underlying_type_any
+		returns NULL. Remove duplicated code between MONO_TYPE_GENERICINST
+	 	and MONO_TYPE_VALUETYPE in those case.
+
+		Based on a slightly modified patch by Sebastien Pouliot  <sebastien@ximian.com>
+
+		Hopefully Fixes #564253.
+
 2010-04-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* domain-internals.h: made threadpool_jobs volatile.
