@@ -1,0 +1,4 @@
+2010-04-19  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ThreadWorker.cs: Cleanup and refactoring
+

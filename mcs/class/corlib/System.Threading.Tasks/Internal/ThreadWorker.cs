@@ -48,10 +48,7 @@ namespace System.Threading.Tasks
 		readonly int  stealingStart;
 		const    int  maxRetry = 5;
 		
-		#region Sleep related fields
-		readonly SpinWait wait = new SpinWait ();
 		const int sleepThreshold = 100000;
-		#endregion
 		
 		Action threadInitializer;
 		
@@ -137,15 +134,13 @@ namespace System.Threading.Tasks
 		void WorkerMethodWrapper ()
 		{
 			int sleepTime = 0;
+			SpinWait wait = new SpinWait ();
 			
 			// Main loop
 			while (started == 1) {
 				bool result = false;
-				try {
-					result = WorkerMethod ();
-				} catch (Exception e) {
-					Console.WriteLine (e.ToString ());
-				}
+
+				result = WorkerMethod ();
 				
 				// Wait a little and if the Thread has been more sleeping than working shut it down
 				wait.SpinOnce ();
