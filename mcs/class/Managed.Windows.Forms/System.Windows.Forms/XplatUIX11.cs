@@ -6017,6 +6017,10 @@ namespace System.Windows.Forms {
 						hwnd.Queue.Paint.Remove (hwnd);
 				}
 
+				// We are going to be directly mapped by the system tray, so mark as mapped
+				// so we can later properly unmap it.
+				hwnd.mapped = true;
+
 				size_hints = new XSizeHints();
 
 				size_hints.flags = (IntPtr)(XSizeHintsFlags.PMinSize | XSizeHintsFlags.PMaxSize | XSizeHintsFlags.PBaseSize);
