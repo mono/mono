@@ -1,3 +1,7 @@
+2010-04-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* locales.c: Implement support for DISABLE_NORMALIZATION.
+
 2010-04-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_native_func_wrapper): Set the marshal info to NULL,
