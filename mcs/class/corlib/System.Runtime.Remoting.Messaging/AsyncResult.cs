@@ -56,7 +56,9 @@ public class AsyncResult : IAsyncResult, IMessageSink {
 
 	// not part of MonoAsyncResult...
 	MonoMethodMessage call_message;
+#pragma warning disable 0414
 	IMessageCtrl message_ctrl;
+#pragma warning restore
 	IMessage reply_message;
 	
 	internal AsyncResult ()
