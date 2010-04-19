@@ -1,3 +1,11 @@
+2010-04-19  Jonathan Pryor  <jpryor@novell.com>
+
+	* include/private/gcconfig.h: Android platforms are built atop Linux,
+	  don't use glibc, and uses `environ` instead of `__environ`.
+	* configure.in: Use AC_CHECK_LIB() to check for pthread instead of
+	  just blindly linking to -lpthread, as Android includes pthread
+	  support within libc and doesn't provide a separate libpthread.
+
 2010-03-09  Zoltan Varga  <vargaz@gmail.com>
 
 	* include/private/gc_locks.h: Fix amd64 build with newer gcc's.
