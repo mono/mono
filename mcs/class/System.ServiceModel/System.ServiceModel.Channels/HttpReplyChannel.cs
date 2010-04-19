@@ -172,11 +172,10 @@ Console.WriteLine (buf.CreateMessage ());
 			if (wait != null)
 				throw new InvalidOperationException ("Another wait operation is in progress");
 			try {
-				wait = new AutoResetEvent (false);
+				var wait_ = new AutoResetEvent (false);
+				wait = wait_;	// wait can be set to null if HttpContextAcquired runs to completion before we do WaitOne
 				source.ListenerManager.GetHttpContextAsync (timeout, HttpContextAcquired);
-				if (wait != null) // in case callback is done before WaitOne() here.
-					return wait.WaitOne (timeout, false);
-				return waiting.Count > 0;
+				return wait_.WaitOne (timeout, false) && waiting.Count > 0;
 			} catch (HttpListenerException e) {
 				// FIXME: does this make sense? I doubt.
 				if ((uint) e.ErrorCode == 0x80004005) // invalid handle. Happens during shutdown.

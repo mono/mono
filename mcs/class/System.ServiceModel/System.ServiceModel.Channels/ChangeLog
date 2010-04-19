@@ -1,3 +1,8 @@
+2010-04-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpReplyChannel.cs : use local var to hold wait handle to avoid
+	  possible NRE on field. Based on the patch by Matt Dargavel.
+
 2010-04-07  Miguel de Icaza  <miguel@novell.com>
 
 	*  BufferManager.cs: Implement the BufferManager. 
