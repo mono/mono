@@ -1,3 +1,7 @@
+2010-04-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* zlib-helper.c: don't call Z_FINISH if nothing has been written.
+
 2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* zlib-helper.c: now that we don't use Z_SYNC_FLUSH, there might be
