@@ -1,3 +1,7 @@
+2010-04-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* zlib-helper.c: don't call Z_FINISH if nothing has been written.
+
 2010-04-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* dirent.c, grp.c, macros.c, pwd.c, signal.c, sys-statvfs.c, sys-time.c,
