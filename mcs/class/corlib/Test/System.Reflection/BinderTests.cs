@@ -1309,5 +1309,28 @@ namespace MonoTests.System.Reflection
 			MethodInfo method = typeof (Foo).GetMethod ("Add");
 			method.Invoke((new Foo ()), 0, new Int32Binder (), new object [] {1, "2"}, null);
 		}
+
+		public void Bug325306<T> (int a) {}
+		public void Bug325306_ (int a) {}
+
+		[Test] //bug 325306
+		[ExpectedException (typeof (AmbiguousMatchException))]
+		public void SelectMethodWithExactAndAmbiguousMethods ()
+		{
+			var m = typeof (BinderTest).GetMethod ("Bug325306_");
+	        BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
+			AssertingBinder.Instance.SelectMethod (flags, new MethodBase [] {m, m}, new Type[] { typeof (int) }, null);
+	 	}
+
+		[Test] //bug 325306
+		[ExpectedException (typeof (AmbiguousMatchException))]
+		public void SelectMethodWithGmdAmbiguity ()
+		{
+			var m0 = typeof (BinderTest).GetMethod ("Bug325306");
+			var m1 = typeof (BinderTest).GetMethod ("Bug325306_");
+	        BindingFlags flags = BindingFlags.Instance | BindingFlags.Public;
+	
+			AssertingBinder.Instance.SelectMethod (flags, new MethodBase [] {m0, m1}, new Type[] { typeof (int) }, null);
+	 	}
 	}
 }
