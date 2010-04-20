@@ -153,7 +153,6 @@ case "$host" in
 		fi
 		libmono_cflags="-D_THREAD_SAFE -D_REENTRANT"
 		LDFLAGS="$LDFLAGS -pthread"
-		libmono_ldflags="-pthread"
 		need_link_unlink=yes
 		AC_DEFINE(PTHREAD_POINTER_ID)
 		libdl=

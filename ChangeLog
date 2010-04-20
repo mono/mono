@@ -1,5 +1,10 @@
 2010-04-20  Jonathan Pryor  <jpryor@novell.com>
 
+	* configure.in: On OpenBSD, remove duplicate -pthread options in 
+	  libmono_ldflags.  Change from Robert Nagy <robert@openbsd.org>.
+
+2010-04-20  Jonathan Pryor  <jpryor@novell.com>
+
 	* configure.in: For Linux hosts, remove AC_CHECK_LIB(pthread...) in the
 	  primary `case "$host"` block.  Using AC_CHECK_LIB() here breaks *BSD,
 	  and it's unnecessary (for !target_win32, pthreads are checked again 
