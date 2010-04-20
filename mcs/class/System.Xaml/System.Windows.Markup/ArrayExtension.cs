@@ -75,8 +75,7 @@ namespace System.Windows.Markup
 			Items.Add (text);
 		}
 		
-		[MonoTODO ("use serviceProvider argument")]
-		public override Object ProvideValue (IServiceProvider serviceProvider)
+		public override object ProvideValue (IServiceProvider serviceProvider)
 		{
 			if (Type == null)
 				throw new InvalidOperationException ("Type property must be set before calling ProvideValue method");
