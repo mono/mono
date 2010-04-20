@@ -40,7 +40,7 @@ using NUnit.Framework;
 
 namespace StandAloneTests.Unhandled_Exception_Global_Asax
 {
-	[TestCase ("Unhandled_Exception_Global_Asax 01", "Unhandled exception handled in Global.asax, test 01")]
+	[TestCase ("Unhandled_Exception_Global_Asax 01", "Unhandled exception not handled in Global.asax, test 01")]
 	public sealed class Unhandled_Exception_Global_Asax_01 : ITestCase
 	{
 		public string PhysicalPath {
@@ -65,9 +65,11 @@ namespace StandAloneTests.Unhandled_Exception_Global_Asax
 
 		void Default_Aspx (string result, TestRunItem runItem)
 		{
-			string originalHtml = @"<strong>Application error handled</strong>";
+			string originalHtml1 = @"[System.Web.HttpUnhandledException]: Exception of type 'System.Web.HttpUnhandledException' was thrown.";
+			string originalHtml2 = @"[System.InvalidOperationException]: test";
 			
-			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
+			Assert.IsTrue (result.IndexOf (originalHtml1) != -1, "#A1");
+			Assert.IsTrue (result.IndexOf (originalHtml2) != -1, "#A2");
 		}
 	}
 
@@ -98,6 +100,68 @@ namespace StandAloneTests.Unhandled_Exception_Global_Asax
 		{
 			string originalHtml = @"<p><strong>Parser Error Message: </strong><code>Cannot find type DoesNotExist</code></p><p><strong>Source Error: </strong></p>";
 
+			Assert.IsTrue (result.IndexOf (originalHtml) != -1, "#A1");
+		}
+	}
+
+	[TestCase ("Unhandled_Exception_Global_Asax 03", "Unhandled exception handled in Global.asax, test 03")]
+	public sealed class Unhandled_Exception_Global_Asax_03 : ITestCase
+	{
+		public string PhysicalPath {
+			get {
+				return Path.Combine (
+					Consts.BasePhysicalDir,
+					Path.Combine ("Unhandled_Exception_Global_Asax", "test_03")
+				);
+			}
+		}
+		
+		public string VirtualPath  {
+			get { return "/"; }
+		}
+
+		public bool SetUp (List <TestRunItem> runItems)
+		{
+			runItems.Add (new TestRunItem ("/default.aspx", Default_Aspx));
+			
+			return true;
+		}
+
+		void Default_Aspx (string result, TestRunItem runItem)
+		{
+			string originalHtml = @"<strong>Application error handled</strong>";
+			
+			Helpers.ExtractAndCompareCodeFromHtml (result, originalHtml, "#A1");
+		}
+	}
+
+	[TestCase ("Unhandled_Exception_Global_Asax 04", "Unhandled exception handled in Global.asax, test 04")]
+	public sealed class Unhandled_Exception_Global_Asax_04 : ITestCase
+	{
+		public string PhysicalPath {
+			get {
+				return Path.Combine (
+					Consts.BasePhysicalDir,
+					Path.Combine ("Unhandled_Exception_Global_Asax", "test_04")
+				);
+			}
+		}
+		
+		public string VirtualPath  {
+			get { return "/"; }
+		}
+
+		public bool SetUp (List <TestRunItem> runItems)
+		{
+			runItems.Add (new TestRunItem ("/default.aspx", Default_Aspx));
+			
+			return true;
+		}
+
+		void Default_Aspx (string result, TestRunItem runItem)
+		{
+			string originalHtml = @"<h2>Object moved to <a href=""http://google.com/"">here</a></h2>";
+			
 			Assert.IsTrue (result.IndexOf (originalHtml) != -1, "#A1");
 		}
 	}

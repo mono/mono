@@ -1,3 +1,9 @@
+2010-04-21  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplication.cs: update to fix for bug #572469 - ProcessError
+	clears the error after handler return only if stop_processing is
+	true. Also, stop_processing is never set before calling ProcessError
+
 2010-04-02  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpException.cs: handle situations when current exception is an
