@@ -1,5 +1,10 @@
 2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeBuilderTest.cs: Enable a bunch of asserts.
+	They regression test #331126.
+
+2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeBuilderTest.cs: Slay all 1.0 code.
 
 2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>

@@ -293,7 +293,7 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (TypeLoadException) {
 			}
 
-			//Assert.IsTrue (tb.IsCreated (), "#2");
+			Assert.IsTrue (tb.IsCreated (), "#2");
 		}
 
 		[Test] // bug #324692
@@ -312,9 +312,9 @@ namespace MonoTests.System.Reflection.Emit
 				Assert.IsNotNull (ex.Message, "#A4");
 			}
 
-			//Assert.IsTrue (tb.IsCreated (), "#B1");
+			Assert.IsTrue (tb.IsCreated (), "#B1");
 			Assert.IsNull (tb.CreateType (), "#B2");
-			//Assert.IsTrue (tb.IsCreated (), "#B3");
+			Assert.IsTrue (tb.IsCreated (), "#B3");
 		}
 
 		[Test]
@@ -392,7 +392,7 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (TypeLoadException) {
 			}
 
-			//Assert.IsTrue (tb.IsCreated (), "#2");
+			Assert.IsTrue (tb.IsCreated (), "#2");
 		}
 
 		[Test]
@@ -410,7 +410,7 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (TypeLoadException) {
 			}
 
-			//Assert.IsTrue (tb.IsCreated (), "#2");
+			Assert.IsTrue (tb.IsCreated (), "#2");
 		}
 
 		[Test]
@@ -434,7 +434,7 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (TypeLoadException) {
 			}
 
-			//Assert.IsTrue (tb.IsCreated (), "#2");
+			Assert.IsTrue (tb.IsCreated (), "#2");
 		}
 
 		[Test]
@@ -459,7 +459,7 @@ namespace MonoTests.System.Reflection.Emit
 				} catch (TypeLoadException) {
 				}
 
-				//Assert.IsTrue (tb.IsCreated (), "#2");
+				Assert.IsTrue (tb.IsCreated (), "#2");
 			}
 		}
 
@@ -506,7 +506,7 @@ namespace MonoTests.System.Reflection.Emit
 			} catch (TypeLoadException) {
 			}
 
-			//Assert.IsTrue (tb.IsCreated (), "#2");
+			Assert.IsTrue (tb.IsCreated (), "#2");
 		}
 
 		[Test]
