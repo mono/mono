@@ -1,3 +1,7 @@
+2010-04-21  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Turn off semi-precise stack mark.
+
 2010-04-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* reflection.c (mono_custom_attrs_from_index): Use right function
