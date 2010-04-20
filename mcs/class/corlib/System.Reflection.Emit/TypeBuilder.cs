@@ -766,6 +766,15 @@ namespace System.Reflection.Emit
 				}
 			}
 
+			//
+			// On classes, define a default constructor if not provided
+			//
+			if (!(IsInterface || IsValueType) && (ctors == null) && (tname != "<Module>") && 
+				(GetAttributeFlagsImpl () & TypeAttributes.Abstract | TypeAttributes.Sealed) != (TypeAttributes.Abstract | TypeAttributes.Sealed) && !has_ctor_method ())
+				DefineDefaultConstructor (MethodAttributes.Public);
+
+			createTypeCalled = true;
+
 			if ((parent != null) && parent.IsSealed)
 				throw new TypeLoadException ("Could not load type '" + FullName + "' from assembly '" + Assembly + "' because the parent type is sealed.");
 
@@ -783,19 +792,11 @@ namespace System.Reflection.Emit
 				}
 			}
 
-			//
-			// On classes, define a default constructor if not provided
-			//
-			if (!(IsInterface || IsValueType) && (ctors == null) && (tname != "<Module>") && 
-				(GetAttributeFlagsImpl () & TypeAttributes.Abstract | TypeAttributes.Sealed) != (TypeAttributes.Abstract | TypeAttributes.Sealed) && !has_ctor_method ())
-				DefineDefaultConstructor (MethodAttributes.Public);
-
 			if (ctors != null){
 				foreach (ConstructorBuilder ctor in ctors) 
 					ctor.fixup ();
 			}
 
-			createTypeCalled = true;
 			created = create_runtime_class (this);
 			if (created != null)
 				return created;
@@ -1648,7 +1649,7 @@ namespace System.Reflection.Emit
 
 		internal bool is_created {
 			get {
-				return created != null;
+				return createTypeCalled;
 			}
 		}
 

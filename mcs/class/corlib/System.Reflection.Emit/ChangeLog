@@ -1,3 +1,13 @@
+2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilder.cs (CreateType): Move default constructor
+	and createTypeCalled assignment to before the parent checks.
+
+	* TypeBuilder.cs (is_created): Return true even if creation
+	fails.
+
+	Fixes #331126
+
 2010-04-09 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilder.cs (IsValueTypeImpl): Don't depend on
