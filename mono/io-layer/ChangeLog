@@ -1,3 +1,11 @@
+2010-04-20  Jonathan Pryor  <jpryor@novell.com>
+
+	* collection.c: Cleanup platform checks around
+	  pthread_attr_setstacksize(), and instead always use
+	  MAX(65536, PTHREAD_STACK_MIN) as the stack size.
+	* mono-mutex.c: Remove near duplicate pthread_mutex_timedlock()
+	  declarations, and merge via a CONST_NEEDED intermediate #define.
+
 2010-04-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* collection.c, mono-mutex.c: Add Android support.
