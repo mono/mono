@@ -1,3 +1,8 @@
+2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationInvokerHandler.cs : workaround NRE issue in AsyncCallTest.
+	  The original code was worse than this workaround.
+
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EndpointAddressMessageFilter.cs : check null arg. Return false for

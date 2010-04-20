@@ -49,7 +49,13 @@ namespace System.ServiceModel.Dispatcher
 				object result = operation.Invoker.Invoke (instance, parameters, out outParams);
 				HandleInvokeResult (mrc, outParams, result);
 			} else {
-				var ar = operation.Invoker.InvokeBegin (instance, parameters, null, null);
+				AsyncCallback callback = delegate {};
+				// FIXME: the original code passed null callback
+				// and null state, which is very wrong :(
+				// It is still wrong to pass dummy callback, but
+				// wrong code without obvious issues is better
+				// than code with an obvious issue.
+				var ar = operation.Invoker.InvokeBegin (instance, parameters, callback, null);
 				object result = operation.Invoker.InvokeEnd (instance, out outParams, ar);
 				HandleInvokeResult (mrc, outParams, result);
 			}
