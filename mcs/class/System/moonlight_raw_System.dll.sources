@@ -48,6 +48,7 @@ System.ComponentModel/InvalidEnumArgumentException.cs
 System.ComponentModel/IRevertibleChangeTracking.cs
 System.ComponentModel/ISite.cs
 System.ComponentModel/ISynchronizeInvoke.cs
+System.ComponentModel/ISupportInitialize.cs
 System.ComponentModel/ITypeDescriptorContext.cs
 System.ComponentModel/ListSortDirection.cs
 System.ComponentModel/ProgressChangedEventHandler.cs
