@@ -1,3 +1,7 @@
+2010-04-20  Jonathan Pryor  <jpryor@novell.com>
+
+	* exceptions-arm.c: Remove platform checks in favor of configure checks.
+
 2010-04-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* exceptions-arm.c: Add Android support for sigcontext structure.
