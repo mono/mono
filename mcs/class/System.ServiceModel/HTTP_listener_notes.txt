@@ -11,8 +11,8 @@ This mostly explains what our WCF does, and does not explain what I think it rea
 -- IChannelListener only has methods for receiving requests that must be explicitly invoked for each request (i.e. to repeatedly process requests it must invoke receiver methods every time, unlike ServiceHost.Open() method).
 - Inside the service loop, IChannelListener invokes [Begin]AcceptChannel() to get a channel such as HttpSimpleReplyChannel`1 or AspNetReplyChannel`1. Channels can be created as much as the service throttle limitation (ServiceThrottle) allows.
 - Then the loop manager invokes the channel's [Begin]TryReceiveRequest().
-- When WSDLs are enabled, ServiceMetadataExtension populates another ChannelDispatcher that serves HTTP requests to WSDLs.
--- It is important to understand that during this process it populates HTTP channel listener onto the same port and even possibly onto the same target URL, differentiating only by the request parameter (e.g. "?wsdl"). This causes a lot of confusion on both IHttpHandler (for ASP.NET) and HttpListener (for non-ASP.NET).
+- When WSDLs are enabled, ServiceMetadataExtension populates another ChannelDispatcher (yes, not just an EndpointDispatcher) that serves HTTP requests to WSDLs.
+-- It is important to understand that during this process it populates HTTP channel listener onto the *same* port and even possibly onto the same target URL, differentiating only by the request parameter (e.g. "?wsdl"). This causes a lot of confusion on both IHttpHandler (for ASP.NET) and HttpListener (for non-ASP.NET).
 - Inside (abstract) HttpChannelListener`1, it internally has (abstract) HttpListenerManager which manages the actual HTTP listeners.
 -- This intermediate stuff is required to manage HTTP listeners across the actual HttpChannelListeners because more than one channel listeners might use the identical HTTP listener; only one HttpListener can listen to a specific URI prefix, while (as explained above) WSDL support dispatcher may listen to the same URI only differentiating the query parameter.
 
@@ -51,6 +51,7 @@ locking: TBD
 
 - WebHttpBinding creates HTTP channel listeners that share an identical endpoint URI, which could also be mapped by ServiceMetadataExtension. It brings problem on dispatching HTTP request to correct listener. FilterPriority is used to resolve the issue (possibly to some extent) that requests to wsdl/mex are treated in lower priority.
 - While multiple channel dispatchers' endpoints could indicate an identical HTTP URI, it is not allowed to use the same HTTP URI across more than one ServiceHostBase and attempt to create such endpoints will result in InvalidOperationException for conflict with existing listeners.
+- Actually, .NET seems to reject duplicate listen URI at HttpChannelListener level (precisely to say, equivalent to that of mono, ones from HttpTransportBindingElement.BuildChannelListener()). We don't reject that (bug).
 
 
 ** Bugs
@@ -60,3 +61,9 @@ There is not a few bugs on service implementations and there often are reasons:
 -- TCP duplex channels used to fail to serve requests when the throttle is 1. It was due to failure in managing closed channels (while it is duplex and hence it has to maintain channels until it is explicitly closed, clients often, or mostly, disconnects without any notice. So it had to be changed to explicitly check if the connection is available at any beginning of the request processing).
 -- If there are more than one endpoint with the identical listen URI, it will fail to dispatch requests to correct listener even if the endpoints have appropriately configured FilterPriority. part of bug #573795.
 - ASP.NET listener ends up to dump ThreadAbort during its shutdown. It's mostly harmless though.
+
+** Required changes
+
+- HttpChannelListeners (Simple-, AspNet-) need an owner ServiceHostBase (could be a ChannelDispatcher which is bound to a ServiceHostBase). It has to be set probably at ICommunicationObject.Opening event.
+- After having ServiceHostBase to manage a HttpChannelListener for each endpoint URI (create new or reuse), the listener has to differentiate HTTP requests to an appropriate channel, by EndpointDispatcher.FilterPriority.
+- A big problem is that there is *no* strict way to access to bind a ServiceHostBase or ChannelDispatcher to IChannelListener implementation and hence HttpChannelListener. We can add a special internal field for them to ChannelListenerBase and set them internally at ServiceHostBase, but what IF the IChannelListener is *no* ChannelListenerBase? WSHttpBinding used to have a problem that GetProperty<T>() didn't run through its internal listeners. It is no surprise that a user creates an IChannelListener wrapper for base internal channels. In such case, internal property setters won't work AT ALL.
