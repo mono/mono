@@ -212,7 +212,7 @@ namespace System.Xaml
 				return true;
 
 			case XamlNodeType.StartMember:
-				if (!types.Peek ().IsContentValue ())
+				if (!members_stack.Peek ().Current.IsContentValue ())
 					StartNextObject ();
 				else {
 					var obj = GetMemberValueOrRootInstance ();

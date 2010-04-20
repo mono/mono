@@ -136,11 +136,19 @@ namespace System.Xaml
 		
 		#endregion
 
+		public static bool IsContentValue (this XamlMember member)
+		{
+			if (member == XamlLanguage.Initialization)
+				return true;
+			return IsContentValue (member.Type);
+		}
+
 		public static bool IsContentValue (this XamlType type)
 		{
-			if (Type.GetTypeCode (type.UnderlyingType) != TypeCode.Object)
+			var t = type.UnderlyingType;
+			if (Type.GetTypeCode (t) != TypeCode.Object)
 				return true;
-			else if (type.UnderlyingType == typeof (TimeSpan) || type.UnderlyingType == typeof (Uri)) // special predefined types
+			else if (t == typeof (TimeSpan) || t == typeof (Uri)) // special predefined types
 				return true;
 			return false;
 		}

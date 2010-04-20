@@ -1,5 +1,11 @@
 2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TypeExtensionMethods.cs : add IsContentValue() for member and
+	  return true for "_Initialization".
+	* XamlObjectReader.cs : use above.
+
+2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlType.cs : implement LookupPositionalParameters().
 
 2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
