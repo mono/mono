@@ -3244,7 +3244,7 @@ PublicKeyToken=b77a5c561934e089"));
 		[Test]
 		public void RuntimeCorrectlyNormalizeGenericTypes ()
 		{
-			Type lst = typeof (List<>);
+			Type lst = typeof (MList<>);
 			Type arg = lst.GetGenericArguments ()[0];
 
 			Type sup = lst.BaseType;
@@ -3254,42 +3254,18 @@ PublicKeyToken=b77a5c561934e089"));
 			Assert.IsTrue (sa1 == lst, "#1");
 			Assert.IsTrue (sa0 == arg, "#2");
 
-			Type inst = typeof (Cons<,>).MakeGenericType (arg, lst.MakeGenericType
-		(arg));
-
+			Type inst = typeof (Cons<,>).MakeGenericType (arg, lst.MakeGenericType (arg));
 			Assert.IsTrue (inst == sup, "#3");
 		}
 
 		class Cons<T,U>
 		{
-			public T car;
-			public U cdr;
 
-			public Cons (T x, U y)
-			{
-				car = x; cdr = y;
-			}
-
-			public override String ToString ()
-			{
-				return "(" + car + '.' + cdr + ')';
-			}
 		}
 
-		class List<A> : Cons<A, List<A>>
+		class MList<A> : Cons<A, MList<A>>
 		{
-			public List (A value)
-				: base(value, null)
-			{ }
 
-			public List (A value, List<A> next)
-				: base(value, next)
-			{ }
-
-			public void zip<B> (List<B> other)
-			{
-				cdr.zip (other.cdr);
-			}
 		}
 
 #if NET_4_0

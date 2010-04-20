@@ -1,3 +1,7 @@
+2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Fix the test suite.
+
 2010-04-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Add regression test for #473289.
