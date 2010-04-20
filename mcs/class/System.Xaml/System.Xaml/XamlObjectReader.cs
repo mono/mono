@@ -278,7 +278,7 @@ namespace System.Xaml
 				ns = xm.PreferredXamlNamespace;
 				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
 					continue; // FIXME: process them too.
-				CollectNamespaces (l, xm.Invoker.GetValue (o), xm.TargetType);
+				CollectNamespaces (l, xm.Invoker.GetValue (o), xm.Type);
 			}
 		}
 
