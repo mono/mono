@@ -1,3 +1,8 @@
+2010-04-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* reflection.c (mono_custom_attrs_from_index): Use right function
+	to free 'list' (i.e. g_list_free) if the verifier fails.
+
 2010-04-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 		* verify.c: Handle the case where mono_type_get_underlying_type_any
