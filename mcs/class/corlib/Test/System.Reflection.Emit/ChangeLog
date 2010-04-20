@@ -1,3 +1,7 @@
+2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Slay all 1.0 code.
+
 2010-04-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Regression test for #422113.
