@@ -230,8 +230,9 @@ namespace System.Net
 					ThrowProtocolViolation ("Missing \\n");
 
 				try {
-					if (saved.Length > 0)
-						chunkSize = Int32.Parse (saved.ToString (), NumberStyles.HexNumber);
+					if (saved.Length > 0) {
+						chunkSize = Int32.Parse (RemoveChunkExtension (saved.ToString ()), NumberStyles.HexNumber);
+					}
 				} catch (Exception) {
 					ThrowProtocolViolation ("Cannot parse chunk size.");
 				}
@@ -241,7 +242,7 @@ namespace System.Net
 
 			chunkRead = 0;
 			try {
-				chunkSize = Int32.Parse (saved.ToString (), NumberStyles.HexNumber);
+				chunkSize = Int32.Parse (RemoveChunkExtension (saved.ToString ()), NumberStyles.HexNumber);
 			} catch (Exception) {
 				ThrowProtocolViolation ("Cannot parse chunk size.");
 			}
@@ -252,6 +253,14 @@ namespace System.Net
 			}
 
 			return State.Body;
+		}
+
+		static string RemoveChunkExtension (string input)
+		{
+			int idx = input.IndexOf (';');
+			if (idx == -1)
+				return input;
+			return input.Substring (0, idx);
 		}
 
 		State ReadCRLF (byte [] buffer, ref int offset, int size)
@@ -302,12 +311,14 @@ namespace System.Net
 				if (st > 0) {
 					saved.Append (stString.Substring (0, saved.Length == 0? st-2: st));
 					st = 0;
+					if (saved.Length > 4196)
+						ThrowProtocolViolation ("Error reading trailer (too long).");
 				}
 			}
 
 			if (st < 4) {
 				trailerState = st;
-				if (offset <  size)
+				if (offset < size)
 					ThrowProtocolViolation ("Error reading trailer.");
 
 				return State.Trailer;

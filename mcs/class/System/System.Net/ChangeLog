@@ -1,3 +1,8 @@
+2010-04-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* ChunkStream.cs: ignore chunk extensions when reading the chunk
+	size. Fixes bug #597556.
+
 2010-04-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: set content length to -1 on redirect. Reset
