@@ -590,7 +590,27 @@ namespace System.Xaml
 
 		protected virtual IList<XamlType> LookupPositionalParameters (int parameterCount)
 		{
-			throw new NotImplementedException ();
+			if (UnderlyingType == null/* || !IsMarkupExtension*/) // see nunit tests...
+				return null;
+
+			// check if there is applicable ConstructorArgumentAttribute.
+			// If there is, then return its type.
+			if (parameterCount == 1) {
+				foreach (var xm in GetAllMembers ()) {
+					// not sure if we can ignore xm's CustomAttributeProvider, but it's a default lookup implementation anyways...
+					var ca = xm.UnderlyingMember.GetCustomAttribute<ConstructorArgumentAttribute> (false);
+					if (ca != null)
+						return new XamlType [] {xm.Type};
+				}
+			}
+
+			var methods = (from m in UnderlyingType.GetConstructors (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance) where m.GetParameters ().Length == parameterCount select m).ToArray ();
+			if (methods.Length == 1)
+				return (from p in methods [0].GetParameters () select SchemaContext.GetXamlType (p.ParameterType)).ToArray ();
+
+			if (SchemaContext.SupportMarkupExtensionsWithDuplicateArity)
+				throw new NotSupportedException ("The default LookupPositionalParameters implementation does not allow duplicate arity of markup extensions");
+			return null;
 		}
 
 		BindingFlags flags_get_static = BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Static;

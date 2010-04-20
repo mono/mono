@@ -1,3 +1,7 @@
+2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlTypeTest.cs : added tests for GetPositionalParameters().
+
 2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlObjectReaderTest.cs : enable working test.

@@ -1,5 +1,9 @@
 2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlType.cs : implement LookupPositionalParameters().
+
+2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReader.cs : use Type, not TargetType.
 
 2010-04-18  Atsushi Enomoto  <atsushi@ximian.com>

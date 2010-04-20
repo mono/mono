@@ -567,6 +567,30 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}TypeExtension", XamlLanguage.Type.ToString (), "#2");
 			Assert.AreEqual ("{http://schemas.microsoft.com/winfx/2006/xaml}ArrayExtension", XamlLanguage.Array.ToString (), "#3");
 		}
+
+		[Test]
+		public void GetPositionalParameters ()
+		{
+			IList<XamlType> l;
+			l = XamlLanguage.Type.GetPositionalParameters (1);
+			Assert.IsNotNull (l, "#1");
+			Assert.AreEqual (1, l.Count, "#2");
+			Assert.AreEqual (typeof (Type), l [0].UnderlyingType, "#3"); // not TypeExtension but Type.
+			Assert.AreEqual ("Type", l [0].Name, "#4");
+		}
+
+		[Test]
+		public void GetPositionalParametersWrongCount ()
+		{
+			Assert.IsNull (XamlLanguage.Type.GetPositionalParameters (2), "#1");
+		}
+
+		[Test]
+		public void GetPositionalParametersNoMemberExtension ()
+		{
+			// wow, so it returns some meaningless method parameters.
+			Assert.IsNotNull (new XamlType (typeof (MyXamlType), sctx).GetPositionalParameters (3), "#1");
+		}
 	}
 
 	class MyXamlType : XamlType
