@@ -415,6 +415,7 @@ namespace System.Reflection
 					throw new ArgumentNullException ("match");
 
 				/* first look for an exact match... */
+				MethodBase exact_match = null;
 				for (i = 0; i < match.Length; ++i) {
 					m = match [i];
 					ParameterInfo[] args = m.GetParameters ();
@@ -424,9 +425,17 @@ namespace System.Reflection
 						if (types [j] != args [j].ParameterType)
 							break;
 					}
-					if (j == types.Length)
-						return m;
+					if (j == types.Length) {
+						if (exact_match != null) {
+							exact_match = null;
+							break;
+						} else {
+							exact_match = m;
+						}
+					}
 				}
+				if (exact_match != null)
+					return exact_match;
 
 				/* Try methods with ParamArray attribute */
 				bool isdefParamArray = false;
@@ -475,13 +484,6 @@ namespace System.Reflection
 
 			MethodBase GetBetterMethod (MethodBase m1, MethodBase m2, Type [] types)
 			{
-				if (m1.IsGenericMethodDefinition && 
-				    !m2.IsGenericMethodDefinition)
-					return m2;
-				if (m2.IsGenericMethodDefinition && 
-				    !m1.IsGenericMethodDefinition)
-					return m1;
-
 				ParameterInfo [] pl1 = m1.GetParameters ();
 				ParameterInfo [] pl2 = m2.GetParameters ();
 				int prev = 0;

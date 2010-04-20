@@ -1,3 +1,14 @@
+2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Binder.cs (SelectMethod): Exact matching must check
+	all entries because if two of them match, we must use
+	the slow path.
+
+	* Binder.cs (GetBetterMethod): Don't give generic method
+	definition special treatment.
+
+	Fixes #325306.
+
 2010-04-08 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoGenericClass.cs: Implement ResolveInternal.
