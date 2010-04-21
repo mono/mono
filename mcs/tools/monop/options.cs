@@ -32,6 +32,7 @@ public class Options
 	public bool FilterObsolete = false;
 	public bool PrintRefs = false;
 	public bool Search = false;
+	public bool ShowAll = false;
 	public bool ShowPrivate = false;
 	public string AssemblyReference = null;
 	public string Type = null;
@@ -88,6 +89,9 @@ public class Options
 					if (i < args.Length)
 						AssemblyReference = args[i];
 					break;
+				case "-a":
+					ShowAll = true;
+					break;
 				default:
 					if (args[i].StartsWith ("-r:") || args[i].StartsWith ("/r:")) {
 						AssemblyReference = args [i].Substring (3);
@@ -131,6 +135,7 @@ public class Options
 		Console.WriteLine ("\t--refs\t\t\tPrint a list of the referenced assemblies for an assembly");
 		Console.WriteLine ("\t--runtime-version\tPrint runtime version");
 		Console.WriteLine ("\t--search,-s,-k\t\tSearch through all known namespaces");
+		Console.WriteLine ("\t--a\t\tShows all the types declare in the specified assembly");
 	}
 }
 

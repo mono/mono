@@ -231,7 +231,7 @@ class MonoP {
 		foreach (Type t in types) {
 			if (filter_obsolete && t.IsDefined (typeof (ObsoleteAttribute), false))
 				obsolete_count ++;
-			else
+			else 
 				Console.WriteLine (t.FullName);
 		}
 
@@ -277,6 +277,34 @@ class MonoP {
 		
 	}
 
+	static void ShowAll (string assembly, bool show_private, bool filter_obsolete)
+	{
+		Assembly a = GetAssembly (assembly, true);
+
+		object[] cls = a.GetCustomAttributes (typeof (CLSCompliantAttribute), false);
+		if (cls.Length > 0) {
+			CLSCompliantAttribute cca = cls[0] as CLSCompliantAttribute;
+			if (cca.IsCompliant)
+				Console.WriteLine ("[CLSCompliant]");
+		}
+
+		foreach (string ai in a.ToString ().Split (','))
+			Console.WriteLine (ai.Trim ());
+			
+		Console.WriteLine ();
+		Type [] types = show_private ? a.GetTypes () : a.GetExportedTypes ();
+		Array.Sort (types, new TypeSorter ());
+		
+		var sw = new StreamWriter (Console.OpenStandardOutput (), Console.Out.Encoding);				
+		foreach (Type t in types) {
+			if (filter_obsolete && t.IsDefined (typeof (ObsoleteAttribute), false))
+				continue;
+
+			new Outline (t, sw, true, show_private, filter_obsolete).OutlineType ();
+		}
+		sw.Flush ();
+	}
+	
 	static void Main (string [] args)
 	{
 		Options options = new Options ();
@@ -285,13 +313,17 @@ class MonoP {
 		
 		if (options.AssemblyReference != null) {
 			assembly = options.AssemblyReference;
-			
-			if (options.Type == null) {
-				if (options.PrintRefs)
-					PrintRefs (assembly);
-				else
-					PrintTypes (assembly, options.ShowPrivate, options.FilterObsolete);
-				return;
+
+			if (options.ShowAll){
+				ShowAll (assembly, options.FilterObsolete, options.ShowPrivate);
+			} else {
+				if (options.Type == null) {
+					if (options.PrintRefs)
+						PrintRefs (assembly);
+					else
+						PrintTypes (assembly, options.ShowPrivate, options.FilterObsolete);
+					return;
+				}
 			}
 		}
 
