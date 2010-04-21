@@ -20,6 +20,7 @@ namespace MonoTests.Features.Serialization
         {
         }
 		[Test]
+		[Category ("NotWorking")]
 		public void TestAsyncCall ()
 		{
             ev = new AutoResetEvent(false);
