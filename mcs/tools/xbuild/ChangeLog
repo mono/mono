@@ -1,3 +1,8 @@
+2010-04-21  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Remove unnecessary "/" in the paths.
+	Fixes windows build (thanks to Atsushi Eno).
+
 2010-04-14  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/Microsoft.Silverlight*.targets: New.

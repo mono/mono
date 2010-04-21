@@ -42,14 +42,14 @@ install-extras:
 	$(MKINSTALLDIRS) $(DESTDIR)$(mono_libdir)/mono/xbuild
 	$(MKINSTALLDIRS) $(DESTDIR)$(mono_libdir)/mono/xbuild/$(WEBAPP_DIR)
 	$(INSTALL_DATA) xbuild/Microsoft.WebApplication.targets $(DESTDIR)$(mono_libdir)/mono/xbuild/$(WEBAPP_DIR)
-	$(MKINSTALLDIRS) $(DESTDIR)/$(SILVERLIGHT_DIR)/v2.0
-	$(MKINSTALLDIRS) $(DESTDIR)/$(SILVERLIGHT_DIR)/v3.0
-	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.CSharp.targets $(DESTDIR)/$(SILVERLIGHT_DIR)/v2.0
-	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.CSharp.targets $(DESTDIR)/$(SILVERLIGHT_DIR)/v3.0
-	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.VisualBasic.targets $(DESTDIR)/$(SILVERLIGHT_DIR)/v2.0
-	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.VisualBasic.targets $(DESTDIR)/$(SILVERLIGHT_DIR)/v3.0
-	sed -e 's/@SILVERLIGHT_VERSION@/2.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)/$(SILVERLIGHT_DIR)/v2.0/Microsoft.Silverlight.Common.targets
-	sed -e 's/@SILVERLIGHT_VERSION@/3.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)/$(SILVERLIGHT_DIR)/v3.0/Microsoft.Silverlight.Common.targets
+	$(MKINSTALLDIRS) $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0
+	$(MKINSTALLDIRS) $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0
+	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.CSharp.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0
+	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.CSharp.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0
+	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.VisualBasic.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0
+	$(INSTALL_DATA) xbuild/Microsoft.Silverlight.VisualBasic.targets $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0
+	sed -e 's/@SILVERLIGHT_VERSION@/2.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v2.0/Microsoft.Silverlight.Common.targets
+	sed -e 's/@SILVERLIGHT_VERSION@/3.0/g' xbuild/Microsoft.Silverlight.Common.targets > $(DESTDIR)$(SILVERLIGHT_DIR)/v3.0/Microsoft.Silverlight.Common.targets
 
 EXTRA_DISTFILES = \
 	xbuild/xbuild.rsp \
