@@ -1,3 +1,13 @@
+2010-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* HttpWebResponse_2_1.cs: Method, StatusCode and StatusDescription
+	property getters are now virtual (instead of abstract) and throw
+	NIE in SL4 (final) API.
+	* WebRequest_2_1.cs: Added ContentLength (SL4) property to throw
+	NIE. Implement (SL4) CreateHttp methods. Rework stack registration
+	logic.
+	* WebResponse_2_1.cs: default Headers getter throws NIE
+
 2010-04-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* InternalWebResponseStreamWrapper.cs: Move back to 

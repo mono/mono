@@ -35,9 +35,17 @@ namespace System.Net {
 
 	public abstract class HttpWebResponse : WebResponse {
 
-		public abstract string Method { get; }
-		public abstract HttpStatusCode StatusCode { get; }
-		public abstract string StatusDescription { get; }
+		public virtual string Method {
+			get { throw NotImplemented (); }
+		}
+
+		public virtual HttpStatusCode StatusCode {
+			get { throw NotImplemented (); }
+		}
+
+		public virtual string StatusDescription {
+			get { throw NotImplemented (); }
+		}
 
 		public virtual CookieCollection Cookies { 
 			get { throw NotImplemented (); }

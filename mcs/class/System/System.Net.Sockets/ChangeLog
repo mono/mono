@@ -1,3 +1,10 @@
+2010-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketAsyncEventArgs.cs: Add check for elevated permissions on
+	sockets (unrestricted). Add handling of new (SL4) 
+	SocketClientAccessPolicyProtocol and pass this option to the
+	CrossDomainPolicyManager
+
 2010-03-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Socket.cs: error handling was totally broken in the synchronous

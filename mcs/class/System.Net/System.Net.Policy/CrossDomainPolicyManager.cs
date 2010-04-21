@@ -241,9 +241,30 @@ namespace System.Net.Policy {
 			return ms;
 		}
 
-		public static ClientAccessPolicy CreateForEndPoint (IPEndPoint endpoint)
+		static Stream GetPolicyStream (Uri uri)
 		{
-			Stream s = GetPolicyStream (endpoint);
+			// FIXME
+			throw new NotSupportedException ("Fetching socket policy from " + uri.ToString () + " is not yet available in moonlight");
+		}
+
+		public static ClientAccessPolicy CreateForEndPoint (IPEndPoint endpoint, SocketClientAccessPolicyProtocol protocol)
+		{
+			Stream s = null;
+
+			switch (protocol) {
+			case SocketClientAccessPolicyProtocol.Tcp:
+				s = GetPolicyStream (endpoint);
+				break;
+			case SocketClientAccessPolicyProtocol.Http:
+				// <quote>It will NOT attempt to download the policy via the custom TCP protocol if the 
+				// policy check fails.</quote>
+				// http://blogs.msdn.com/ncl/archive/2010/04/15/silverlight-4-socket-policy-changes.aspx
+				string url = String.Format ("http://{0}:80{1}", endpoint.Address.ToString (), 
+					CrossDomainPolicyManager.ClientAccessPolicyFile);
+				s = GetPolicyStream (new Uri (url));
+				break;
+			}
+
 			if (s == null)
 				return null;
 
@@ -259,7 +280,7 @@ namespace System.Net.Policy {
 			return policy;
 		}
 
-		static public bool CheckEndPoint (EndPoint endpoint)
+		static public bool CheckEndPoint (EndPoint endpoint, SocketClientAccessPolicyProtocol protocol)
 		{
 			// if needed transform the DnsEndPoint into a usable IPEndPoint
 			IPEndPoint ip = (endpoint as IPEndPoint);
@@ -270,7 +291,7 @@ namespace System.Net.Policy {
 			string address = ip.Address.ToString ();
 			ClientAccessPolicy policy = null;
 			if (!socket_policies.TryGetValue (address, out policy)) {
-				policy = CreateForEndPoint (ip);
+				policy = CreateForEndPoint (ip, protocol);
 				socket_policies.Add (address, policy);
 			}
 

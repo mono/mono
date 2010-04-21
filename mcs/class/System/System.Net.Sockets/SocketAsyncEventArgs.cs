@@ -78,6 +78,20 @@ namespace System.Net.Sockets
 		public SocketFlags SocketFlags { get; set; }
 		public object UserToken { get; set; }
 
+#if MOONLIGHT && !INSIDE_SYSTEM
+		private SocketClientAccessPolicyProtocol policy_protocol;
+
+		[MonoTODO ("Only TCP is currently supported by Moonlight")]
+		public SocketClientAccessPolicyProtocol SocketClientAccessPolicyProtocol {
+			get { return policy_protocol; }
+			set {
+				if ((value != SocketClientAccessPolicyProtocol.Tcp) && (value != SocketClientAccessPolicyProtocol.Http))
+					throw new ArgumentException ("Invalid value");
+				policy_protocol = value;
+			}
+		}
+#endif
+
 		Socket curSocket;
 #if NET_2_1
 		public Socket ConnectSocket {
@@ -119,6 +133,10 @@ namespace System.Net.Sockets
 			SocketError = SocketError.Success;
 			SocketFlags = SocketFlags.None;
 			UserToken = null;
+
+#if MOONLIGHT && !INSIDE_SYSTEM
+			policy_protocol = SocketClientAccessPolicyProtocol.Tcp;
+#endif
 		}
 
 		~SocketAsyncEventArgs ()
@@ -247,9 +265,10 @@ namespace System.Net.Sockets
 			SocketError error = SocketError.Success;
 #if MOONLIGHT && !INSIDE_SYSTEM
 			// if we're not downloading a socket policy then check the policy
-			if (!PolicyRestricted) {
+			// and if we're not running with elevated permissions (SL4 OoB option)
+			if (!PolicyRestricted && !SecurityManager.HasElevatedPermissions) {
 				error = SocketError.AccessDenied;
-				if (!CrossDomainPolicyManager.CheckEndPoint (endpoint)) {
+				if (!CrossDomainPolicyManager.CheckEndPoint (endpoint, policy_protocol)) {
 					return error;
 				}
 				error = SocketError.Success;

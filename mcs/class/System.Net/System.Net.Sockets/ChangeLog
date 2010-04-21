@@ -1,3 +1,8 @@
+2010-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SocketClientAccessPolicyProtocol.cs: New SL4 enum to select TCP
+	(default) or HTTP (new) to retrieve the socket xdomain policy
+
 2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SocketException_2_1.cs: Add extra ctor (soon to be used)
