@@ -35,6 +35,7 @@
 
 using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
+using System.Security;
 using System.Security.Permissions;
 
 namespace System.IO {
@@ -101,6 +102,8 @@ namespace System.IO {
 			}
 
 			set {
+				SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 				long filetime = value.ToFileTime ();
 			
 				MonoIOError error;
@@ -131,6 +134,8 @@ namespace System.IO {
 			}
 
 			set {
+				SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 				long filetime = value.ToFileTime ();
 
 				MonoIOError error;
@@ -163,6 +168,8 @@ namespace System.IO {
 			}
 
 			set {
+				SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 				long filetime = value.ToFileTime ();
 
 				MonoIOError error;

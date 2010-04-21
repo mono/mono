@@ -1,7 +1,9 @@
-2010-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+2010-04-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* FileInfo.cs: Ensure elevated trust when calling Delete on 
 	Moonlight.
+	* FileSystemInfo.cs: Ensure elevated trust when calling [Creation
+	|LastAccess|LastWrite]Time setters
 
 2010-04-16  Sebastien Pouliot  <sebastien@ximian.com> 
 
