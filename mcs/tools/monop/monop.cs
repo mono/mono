@@ -316,6 +316,7 @@ class MonoP {
 
 			if (options.ShowAll){
 				ShowAll (assembly, options.FilterObsolete, options.ShowPrivate);
+				return;
 			} else {
 				if (options.Type == null) {
 					if (options.PrintRefs)

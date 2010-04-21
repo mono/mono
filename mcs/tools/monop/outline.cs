@@ -866,6 +866,9 @@ public class Outline {
 
 	static Type [] TypeGetInterfaces (Type t, bool declonly)
 	{
+		if (t.IsGenericParameter)
+			return new Type [0];
+
 		Type [] ifaces = t.GetInterfaces ();
 		if (! declonly)
 			return ifaces;
