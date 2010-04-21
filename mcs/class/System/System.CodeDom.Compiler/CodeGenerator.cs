@@ -896,6 +896,7 @@ namespace System.CodeDom.Compiler {
 		private void GenerateType (CodeTypeDeclaration type)
 		{
 			this.currentType = type;
+			this.currentMember = null;
 
 #if NET_2_0
 			if (type.StartDirectives.Count > 0)

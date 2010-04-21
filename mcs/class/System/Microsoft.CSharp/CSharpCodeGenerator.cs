@@ -190,6 +190,15 @@ namespace Mono.CSharp
 			GenerateCompileUnitEnd (compileUnit);
 		}
 
+#if NET_2_0
+		protected override void GenerateDefaultValueExpression (CodeDefaultValueExpression e)
+		{
+			Output.Write ("default(");
+			OutputType (e.Type);
+			Output.Write (')');
+		}
+#endif
+
 		protected override void GenerateDelegateCreateExpression (CodeDelegateCreateExpression expression)
 		{
 			TextWriter output = Output;

@@ -506,6 +506,20 @@ namespace MonoTests.Microsoft.CSharp
 			}
 		}
 
+#if NET_2_0
+		[Test]
+		public void DefaultValueExpressionTest ()
+		{
+			StringBuilder sb = new StringBuilder ();
+
+			using (StringWriter sw = new StringWriter (sb)) {
+				Assert.AreEqual ("default(string)", Generate (new CodeDefaultValueExpression (new CodeTypeReference (typeof(string))), sw), "#0");
+				sb.Length = 0;
+				sw.Close ();
+			}
+		}
+#endif
+
 		[Test]
 		public void DelegateInvokeTest ()
 		{

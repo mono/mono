@@ -1,3 +1,7 @@
+2010-04-12  Jonathan Pryor  <jpryor@novell.com>
+
+	* CSharpCodeGenerator.cs: Support generating default(T) expressions.
+
 2009-04-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* CSharpCodeCompiler.cs: better error when there's a problem running

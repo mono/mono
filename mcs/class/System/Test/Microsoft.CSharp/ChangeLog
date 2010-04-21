@@ -1,3 +1,8 @@
+2010-04-12  Jonathan Pryor  <jpryor@novell.com>
+
+	* CodeGeneratorFromExpressionTest.cs: Test CodeDefaultValueExpression
+	  generation.
+
 2009-06-26  Robert Jordan  <robertj@gmx.net>
 
 	* CodeGeneratorIdentifierTest.cs: Upgrade to new NUnit style.
