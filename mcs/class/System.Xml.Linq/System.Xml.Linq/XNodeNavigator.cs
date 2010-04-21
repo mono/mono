@@ -280,7 +280,7 @@ namespace System.Xml.Linq
 		public override bool MoveToFirstChild ()
 		{
 			XContainer c = node as XContainer;
-			if (c == null)
+			if (c == null || c.FirstNode == null)
 				return false;
 			node = c.FirstNode;
 			attr = null;

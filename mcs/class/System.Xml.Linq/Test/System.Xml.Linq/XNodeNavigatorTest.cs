@@ -37,7 +37,6 @@ namespace MonoTests.System.Xml.Linq
 	[TestFixture]
 	public class XNodeNavigatorTest
 	{
-/* It does not compile probably due to bug #359733.
 		[Test]
 		public void MoveToNext ()
 		{
@@ -50,7 +49,8 @@ namespace MonoTests.System.Xml.Linq
 		}
 
 		[Test]
-		public void MoveToId () // Not supported
+		[ExpectedException (typeof (NotSupportedException))]
+		public void MoveToId () // ID is not supported here.
 		{
 			string xml = @"
 <!DOCTYPE root [
@@ -59,11 +59,20 @@ namespace MonoTests.System.Xml.Linq
 <!ATTLIST foo id ID #IMPLIED>
 <!ATTLIST bar id ID #IMPLIED>
 ]>
-<root><foo id='foo' /><bar id='bar' /></root>",
+<root><foo id='foo' /><bar id='bar' /></root>";
 			XDocument doc = XDocument.Parse (xml, LoadOptions.SetLineInfo);
 			XPathNavigator nav = doc.CreateNavigator ();
 			nav.MoveToId ("foo");
 		}
-*/
+
+		[Test]
+		public void Bug594877 ()
+		{
+			string data = "<rt> <objsur t=\"o\" guid=\"06974d9a-ff86-4e1c-a3e5-7ce8c961dcb9\" /> </rt>";
+			XElement xeOldOwner = XElement.Parse(data);
+			string xpathOld = String.Format(".//objsur[@t='o']");
+			XElement xeOldRef = xeOldOwner.XPathSelectElement(xpathOld);
+			Assert.AreEqual ("<objsur t='o' guid='06974d9a-ff86-4e1c-a3e5-7ce8c961dcb9' />".Replace ('\'', '"'), xeOldRef.ToString (), "#1");
+		}
 	}
 }

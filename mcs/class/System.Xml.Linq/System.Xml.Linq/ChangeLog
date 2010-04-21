@@ -1,3 +1,9 @@
+2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XDocument.cs : don't prohibit DTD.
+	* XNodeNavigator.cs : do not return true in MoveToFirstChild()
+	  when there is no child node. Fixed bug #594877.
+
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XContainer.cs : create snapshot copy first before removal of nodes.

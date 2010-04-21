@@ -119,6 +119,7 @@ namespace System.Xml.Linq
 		public static XDocument Load (TextReader reader, LoadOptions options)
 		{
 			XmlReaderSettings s = new XmlReaderSettings ();
+			s.ProhibitDtd = false; // see XNodeNavigatorTest.MoveToId().
 			s.IgnoreWhitespace = (options & LoadOptions.PreserveWhitespace) == 0;
 			using (XmlReader r = XmlReader.Create (reader, s)) {
 				return LoadCore (r, options);
