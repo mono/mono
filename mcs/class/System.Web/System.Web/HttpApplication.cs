@@ -884,7 +884,8 @@ namespace System.Web {
 				if (eh != null){
 					try {
 						eh (this, EventArgs.Empty);
-						context.ClearError ();
+						if (stop_processing)
+							context.ClearError ();
 					} catch (ThreadAbortException taex){
 						context.ClearError ();
 						if (FlagEnd.Value == taex.ExceptionState || HttpRuntime.DomainUnloading)
@@ -946,7 +947,6 @@ namespace System.Web {
 			} catch (ThreadAbortException taex) {
 				object obj = taex.ExceptionState;
 				Thread.ResetAbort ();
-				stop_processing = true;
 				if (obj is StepTimeout)
 					ProcessError (new HttpException ("The request timed out."));
 				else {
@@ -954,11 +954,12 @@ namespace System.Web {
 					if (FlagEnd.Value != obj && !HttpRuntime.DomainUnloading)
 						context.AddError (taex);
 				}
-
+				
+				stop_processing = true;
 				PipelineDone ();
 			} catch (Exception e) {
-				stop_processing = true;
 				ProcessError (e);
+				stop_processing = true;
 				PipelineDone ();
 			}
 		}
