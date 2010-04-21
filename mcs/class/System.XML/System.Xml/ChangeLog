@@ -1,3 +1,9 @@
+2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs, DTDReader.cs : 0xFFFF was treated as if it were
+	  0x10000. (It is invalid and should be rejected by decent
+	  XmlReaders usage though.) Fixed bug #594628.
+
 2010-03-29  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlQualifiedName.cs : do not reject names in no namespace.

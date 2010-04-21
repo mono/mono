@@ -1580,7 +1580,7 @@ namespace System.Xml
 
 		private void AppendValueChar (int ch)
 		{
-			if (ch < Char.MaxValue)
+			if (ch <= Char.MaxValue)
 				valueBuffer.Append ((char) ch);
 			else
 				AppendSurrogatePairValueChar (ch);
@@ -1662,7 +1662,7 @@ namespace System.Xml
 				// FIXME: it might be optimized by the JIT later,
 //				AppendValueChar (ch);
 				{
-					if (ch < Char.MaxValue)
+					if (ch <= Char.MaxValue)
 						valueBuffer.Append ((char) ch);
 					else
 						AppendSurrogatePairValueChar (ch);
@@ -1983,7 +1983,7 @@ namespace System.Xml
 					// FIXME: it might be optimized by the JIT later,
 //					AppendValueChar (ch);
 					{
-						if (ch < Char.MaxValue)
+						if (ch <= Char.MaxValue)
 							valueBuffer.Append ((char) ch);
 						else
 							AppendSurrogatePairValueChar (ch);
@@ -2376,7 +2376,7 @@ namespace System.Xml
 				// FIXME: it might be optimized by the JIT later,
 //				AppendValueChar (ch);
 				{
-					if (ch < Char.MaxValue)
+					if (ch <= Char.MaxValue)
 						valueBuffer.Append ((char) ch);
 					else
 						AppendSurrogatePairValueChar (ch);
@@ -2774,7 +2774,7 @@ namespace System.Xml
 			// AppendNameChar (ch);
 			{
 				// nameBuffer.Length is always non-0 so no need to ExpandNameCapacity () here
-				if (ch < Char.MaxValue)
+				if (ch <= Char.MaxValue)
 					nameBuffer [nameLength++] = (char) ch;
 				else
 					AppendSurrogatePairNameChar (ch);
@@ -2791,7 +2791,7 @@ namespace System.Xml
 				{
 					if (nameLength == nameCapacity)
 						ExpandNameCapacity ();
-					if (ch < Char.MaxValue)
+					if (ch <= Char.MaxValue)
 						nameBuffer [nameLength++] = (char) ch;
 					else
 						AppendSurrogatePairNameChar (ch);
@@ -2947,7 +2947,7 @@ namespace System.Xml
 					return i;
 				default:
 					Advance (c);
-					if (c < Char.MaxValue)
+					if (c <= Char.MaxValue)
 						buffer [bufIndex++] = (char) c;
 					else {
 						buffer [bufIndex++] = (char) ((c - 0x10000) / 0x400 + 0xD800);

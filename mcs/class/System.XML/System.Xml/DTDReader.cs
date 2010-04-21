@@ -1508,7 +1508,7 @@ namespace System.Xml
 		private void AppendNameChar (int ch)
 		{
 			CheckNameCapacity ();
-			if (ch < Char.MaxValue)
+			if (ch <= Char.MaxValue)
 				nameBuffer [nameLength++] = (char) ch;
 			else {
 				nameBuffer [nameLength++] = (char) (ch / 0x10000 + 0xD800 - 1);
