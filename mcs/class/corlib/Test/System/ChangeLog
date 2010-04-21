@@ -1,5 +1,9 @@
 2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* TypeTest.cs: Add tests for #331126.
+
+2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* TypeTest.cs: Fix the test suite.
 
 2010-04-19 Rodrigo Kumpera  <rkumpera@novell.com>

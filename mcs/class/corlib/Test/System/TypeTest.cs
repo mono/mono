@@ -3268,6 +3268,59 @@ PublicKeyToken=b77a5c561934e089"));
 
 		}
 
+		[Test] // Bug #331126
+		public void IsAssignableFromWorksCorrectlyWithByRefs ()
+		{
+			Type int_byref = typeof (int).MakeByRefType ();
+			Type obj_byref = typeof (object).MakeByRefType ();
+			Type long_byref = typeof (long).MakeByRefType ();
+			Type enum1_byref = typeof (AttributeTargets).MakeByRefType ();
+			Type enum2_byref = typeof (PlatformID).MakeByRefType ();
+			Type uint_byref = typeof (uint).MakeByRefType ();
+			Type string_byref = typeof (object).MakeByRefType ();
+			Type struct0_byref = typeof (Size4).MakeByRefType ();
+			Type struct1_byref = typeof (Size4b).MakeByRefType ();
+			Type mvar0_byref = typeof (TypeTest).GetMethod ("Bug331126").GetGenericArguments ()[0].MakeByRefType ();
+			Type mvar1_byref = typeof (TypeTest).GetMethod ("Bug331126").GetGenericArguments ()[1].MakeByRefType ();
+
+			Assert.IsFalse (typeof (int).IsAssignableFrom (int_byref), "#1");
+			Assert.IsFalse (int_byref.IsAssignableFrom (typeof (int)), "#2");
+			Assert.IsFalse (obj_byref.IsAssignableFrom (long_byref), "#3");
+			Assert.IsFalse (long_byref.IsAssignableFrom (obj_byref), "#4");
+			Assert.IsTrue (enum1_byref.IsAssignableFrom (enum2_byref), "#5");
+			Assert.IsTrue (enum2_byref.IsAssignableFrom (enum1_byref), "#6");
+			Assert.IsTrue (int_byref.IsAssignableFrom (enum2_byref), "#7");
+			Assert.IsTrue (enum2_byref.IsAssignableFrom (int_byref), "#8");
+			Assert.IsTrue (enum2_byref.IsAssignableFrom (uint_byref), "#9");
+			Assert.IsTrue (uint_byref.IsAssignableFrom (enum2_byref), "#10");
+			Assert.IsTrue (int_byref.IsAssignableFrom (uint_byref), "#11");
+			Assert.IsTrue (uint_byref.IsAssignableFrom (int_byref), "#12");
+
+			Assert.IsTrue (typeof (object).IsAssignableFrom (typeof (long)), "#13");
+
+			Assert.IsTrue (obj_byref.IsAssignableFrom (string_byref), "#14");
+			Assert.IsTrue (string_byref.IsAssignableFrom (obj_byref), "#15");
+
+			Assert.IsFalse (uint_byref.IsAssignableFrom (struct0_byref), "#16");
+			Assert.IsFalse (struct0_byref.IsAssignableFrom (int_byref), "#17");
+			Assert.IsFalse (struct0_byref.IsAssignableFrom (struct1_byref), "#18");
+
+			Assert.IsFalse (obj_byref.IsAssignableFrom (mvar0_byref), "#19");
+			Assert.IsFalse (mvar0_byref.IsAssignableFrom (mvar1_byref), "#20");
+			Assert.IsTrue (mvar0_byref.IsAssignableFrom (mvar0_byref), "#21");
+			Assert.IsFalse (mvar0_byref.IsAssignableFrom (obj_byref), "#22");
+		}
+
+		public void Bug331126<T,K> () {}
+
+		public struct Size4 {
+			public int field;
+		}
+
+		public struct Size4b {
+			public int field;
+		}
+
 #if NET_4_0
 		interface IGetInterfaceMap<in T>
 		{
