@@ -58,6 +58,16 @@ namespace DbLinq.Sqlite
             return name;
         }
 
+        // note: the ReadDataNameAndSchema relies on information order;
+        // tbl_name MUST be first
+        const string SelectTablesFormat = 
+@"   SELECT tbl_name{0}
+       FROM sqlite_master
+      WHERE type='table' AND
+            tbl_name NOT LIKE 'sqlite_%'
+   ORDER BY tbl_name";
+
+
         /// <summary>
         /// Gets a usable name for the database.
         /// </summary>

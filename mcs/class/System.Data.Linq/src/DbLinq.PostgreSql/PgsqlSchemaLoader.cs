@@ -106,7 +106,7 @@ namespace DbLinq.PostgreSql
                 //In Sasha's DB, they don't end with "_pkey", you need to rely on ReadForeignConstraints().
                 //In Northwind, they do end with "_pkey".
                 bool isPrimaryKey = keyColRow.ConstraintName.EndsWith("_pkey")
-                    || primaryKeys.Count(k => k.ConstraintName == keyColRow.ConstraintName) == 1;
+                    || primaryKeys.Count(k => k.ConstraintName == keyColRow.ConstraintName) > 0;
 
                 if (isPrimaryKey)
                 {

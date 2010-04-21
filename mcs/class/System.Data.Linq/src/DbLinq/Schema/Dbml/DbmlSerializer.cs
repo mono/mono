@@ -99,7 +99,7 @@ namespace DbLinq.Schema.Dbml
             using (Stream xsdStream = OpenXsd())
             using (XmlReader xmlReader = OpenXml(xmlStream, xsdStream, validationErrors))
             {
-                var xmlSerializer = new XmlSerializer(typeof(Database));
+                var xmlSerializer = new DatabaseSerializer();
                 var dbml = (Database)xmlSerializer.Deserialize(xmlReader);
                 return dbml;
             }
@@ -125,7 +125,7 @@ namespace DbLinq.Schema.Dbml
         /// <param name="dbml">The DBML.</param>
         public static void Write(Stream xmlStream, Database dbml)
         {
-            var xmlSerializer = new XmlSerializer(dbml.GetType());
+            var xmlSerializer = new DatabaseSerializer();
             xmlSerializer.Serialize(xmlStream, dbml);
         }
     }

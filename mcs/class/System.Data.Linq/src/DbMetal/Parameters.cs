@@ -41,70 +41,62 @@ namespace DbMetal
     {
         /// <summary>
         /// user name for database access
-        /// SQLMetal compatible
         /// </summary>
         public string User { get; set; }
 
         /// <summary>
         /// user password for database access
-        /// SQLMetal compatible
         /// </summary>
         public string Password { get; set; }
 
         /// <summary>
         /// server host name
-        /// SQLMetal compatible
         /// </summary>
         public string Server { get; set; }
 
         /// <summary>
         /// database name
-        /// SQLMetal compatible
         /// </summary>
         public string Database { get; set; }
 
         /// <summary>
         /// This connection string if present overrides User, Password, Server.
         /// Database is always used to generate the specific DataContext name
-        /// SQLMetal compatible
         /// </summary>
         public string Conn { get; set; }
 
         /// <summary>
         /// the namespace to put our classes into
-        /// SQLMetal compatible
         /// </summary>
         public string Namespace { get; set; }
 
         /// <summary>
         /// the language to generate classes for
-        /// SQLMetal compatible
         /// </summary>
         public string Language { get; set; }
 
         /// <summary>
         /// If present, write out C# code
-        /// SQLMetal compatible
         /// </summary>
         public string Code { get; set; }
 
         /// <summary>
-        /// If present, write out DBML XML representing the DB
-        /// SQLMetal compatible
+        /// if present, write out DBML XML representing the DB
         /// </summary>
         public string Dbml { get; set; }
 
         /// <summary>
         /// when true, we will call Singularize()/Pluralize() functions.
-        /// SQLMetal compatible
         /// </summary>
         public bool Pluralize { get; set; }
 
+        /// <summary>
+        /// the culture used for word recognition and pluralization
+        /// </summary>
         public string Culture { get; set; }
 
         /// <summary>
-        /// Load object renamings from an xml file
-        /// DbLinq specific
+        /// load object renamings from an xml file
         /// </summary>
         public string Aliases { get; set; }
 
@@ -123,93 +115,84 @@ namespace DbMetal
 
         /// <summary>
         /// base class from which all generated entities will inherit
-        /// SQLMetal compatible
         /// </summary>
         public string EntityBase { get; set; }
 
         /// <summary>
-        /// Interfaces to be implemented
+        /// interfaces to be implemented
         /// </summary>
         public string[] EntityInterfaces { get; set; }
 
         /// <summary>
-        /// Extra attributes to be implemented by class
+        /// extra attributes to be implemented by class members
         /// </summary>
-        public string EntityAttributes { get; set; }
-        public string[] EntityExposedAttributes { get { return GetArray(EntityAttributes); } }
+        public IList<string> MemberAttributes { get; set; }
 
         /// <summary>
-        /// Extra attributes to be implemented by class
+        /// generate Equals() and GetHashCode()
         /// </summary>
-        public string MemberAttributes { get; set; }
-        public string[] MemberExposedAttributes { get { return GetArray(MemberAttributes); } }
-
-        /// <summary>
-        /// base class from which all generated entities will inherit
-        /// SQLMetal compatible
-        /// </summary>
-        public bool GenerateEqualsAndHash { get; set; }
+        public bool GenerateEqualsHash { get; set; }
 
         /// <summary>
         /// export stored procedures
-        /// SQLMetal compatible
         /// </summary>
         public bool Sprocs { get; set; }
 
         /// <summary>
         /// preserve case of database names
-        /// DbLinq specific
         /// </summary>
         public string Case { get; set; }
-
-        bool useDomainTypes = true;
-
-        /// <summary>
-        /// if true, and PostgreSql database contains DOMAINS (typedefs), 
-        /// we will generate code DbType='DerivedType'.
-        /// if false, generate code DbType='BaseType'.
-        /// DbLinq specific
-        /// </summary>
-        public bool UseDomainTypes
-        {
-            get { return useDomainTypes; }
-            set { useDomainTypes = value; }
-        }
 
         /// <summary>
         /// force a Console.ReadKey at end of program.
         /// Useful when running from Studio, so the output window does not disappear
         /// picrap comment: you may use the tool to write output to Visual Studio output window instead of a console window
-        /// DbLinq specific
         /// </summary>
-        public bool ReadLineAtExit { get; set; }
+        public bool Readline { get; set; }
 
         /// <summary>
         /// specifies a provider (which here is a pair or ISchemaLoader and IDbConnection implementors)
-        /// SQLMetal compatible
         /// </summary>
         public string Provider { get; set; }
 
         /// <summary>
-        /// For fine tuning, we allow to specifiy an ISchemaLoader
-        /// DbLinq specific
+        /// for fine tuning, we allow to specifiy an ISchemaLoader
         /// </summary>
         public string DbLinqSchemaLoaderProvider { get; set; }
 
         /// <summary>
-        /// For fine tuning, we allow to specifiy an IDbConnection
-        /// DbLinq specific
+        /// for fine tuning, we allow to specifiy an IDbConnection
         /// </summary>
         public string DatabaseConnectionProvider { get; set; }
 
+        /// <summary>
+        /// the SQL dialect used by the database
+        /// </summary>
         public string SqlDialectType { get; set; }
 
+        /// <summary>
+        /// the types to be generated
+        /// </summary>
         public IList<string> GenerateTypes { get; set; }
 
+        /// <summary>
+        /// if true, put a timestamp comment before the generated code
+        /// </summary>
         public bool GenerateTimestamps { get; set; }
 
+        /// <summary>
+        /// show help
+        /// </summary>
         public bool Help { get; set; }
 
+        /// <summary>
+        /// Show stack traces in error messages, etc., instead of just the message.
+        /// </summary>
+        public bool Debug { get; set; }
+
+        /// <summary>
+        /// non-option parameters
+        /// </summary>
         public IList<string> Extra = new List<string>();
 
         TextWriter log;
@@ -227,111 +210,113 @@ namespace DbMetal
             Schema = true;
             Culture = "en";
             GenerateTypes = new List<string>();
+            MemberAttributes = new List<string>();
             GenerateTimestamps = true;
             EntityInterfaces = new []{ "INotifyPropertyChanging", "INotifyPropertyChanged" };
-        }
-
-        /// <summary>
-        /// Converts a list separated by a comma to a string array
-        /// </summary>
-        /// <param name="list"></param>
-        /// <returns></returns>
-        public string[] GetArray(string list)
-        {
-            if (string.IsNullOrEmpty(list))
-                return new string[0];
-            return (from entityInterface in list.Split(new[] { ',' }, StringSplitOptions.RemoveEmptyEntries)
-                    select entityInterface.Trim()).ToArray();
         }
 
         public void Parse(IList<string> args)
         {
             Options = new OptionSet() {
+                 // SQLMetal compatible
                 { "c|conn=",
                   "Database {CONNECTION STRING}. Cannot be used with /server, "
                   +"/user or /password options.",
                   conn => Conn = conn },
+                 // SQLMetal compatible
                 { "u|user=",
                   "Login user {NAME}.",
                   name => User = name },
+                 // SQLMetal compatible
                 { "p|password=",
                   "Login {PASSWORD}.",
                   password => Password = password },
+                 // SQLMetal compatible
                 { "s|server=",
                   "Database server {NAME}.",
                   name => Server = name },
+                 // SQLMetal compatible
                 { "d|database=",
                   "Database catalog {NAME} on server.",
                   name => Database = name },
                 { "provider=",
                   "Specify {PROVIDER}. May be Ingres, MySql, Oracle, OracleODP, PostgreSql or Sqlite.",
                   provider => Provider = provider },
-                { "dbLinqSchemaLoaderProvider=",
-                  "Specify a custom ISchemaLoader implementation {TYPE}.",
+                { "with-schema-loader=",
+                  "ISchemaLoader implementation {TYPE}.",
                   type => DbLinqSchemaLoaderProvider = type },
-                { "databaseConnectionProvider=",
-                  "Specify a custom IDbConnection implementation {TYPE}.",
+                { "with-dbconnection=",
+                  "IDbConnection implementation {TYPE}.",
                   type => DatabaseConnectionProvider = type },
-                { "sqlDialectType=",
-                  "The IVendor implementation {TYPE}.",
+                { "with-sql-dialect=",
+                  "IVendor implementation {TYPE}.",
                   type => SqlDialectType = type },
+                 // SQLMetal compatible
                 { "code=",
                   "Output as source code to {FILE}. Cannot be used with /dbml option.",
                   file => Code = file },
+                 // SQLMetal compatible
                 { "dbml=",
                   "Output as dbml to {FILE}. Cannot be used with /map option.",
                   file => Dbml = file },
+                 // SQLMetal compatible
                 { "language=",
                   "Language {NAME} for source code: C#, C#2 or VB "
                   +"(default: derived from extension on code file name).",
                   name => Language = name },
-                { "aliases|renamesFile=",
+                { "aliases=",
                   "Use mapping {FILE}.",
                   file => Aliases = file },
                 { "schema",
-                  "Generate schema in code files (default='true').",
-                  v => Schema = v != null},
+                  "Generate schema in code files (default: enabled).",
+                  v => Schema = v != null },
+                 // SQLMetal compatible
                 { "namespace=",
                   "Namespace {NAME} of generated code (default: no namespace).",
                   name => Namespace = name },
-                { "entityBase=",
+                 // SQLMetal compatible
+                { "entitybase=",
                   "Base {TYPE} of entity classes in the generated code "
                   +"(default: entities have no base class).",
                   type => EntityBase = type },
-                { "entityAttributes=",
-                  "Comma separated {ATTRIBUTE(S)} of entity classes in the generated code.",
-                  attributes => EntityAttributes = attributes },
-                { "memberAttributes=",
-                  "Comma separated {ATTRIBUTE(S)} of entity members in the generated code.",
-                  attributes => MemberAttributes = attributes },
+                { "member-attribute=",
+                  "{ATTRIBUTE} for entity members in the generated code, "
+                  +"can be specified multiple times.",
+                  attribute => MemberAttributes.Add(attribute) },
                 { "generate-type=",
                   "Generate only the {TYPE} selected, can be specified multiple times "
                   +"and does not prevent references from being generated (default: "
                   +"generate a DataContex subclass and all the entities in the schema).",
                   type => GenerateTypes.Add(type) },
-                { "generateEqualsAndHash",
+                { "generate-equals-hash",
                   "Generates overrides for Equals() and GetHashCode() methods.",
-                  v => GenerateEqualsAndHash = v != null},
+                  v => GenerateEqualsHash = v != null },
+                 // SQLMetal compatible
                 { "sprocs",
                   "Extract stored procedures.",
                   v => Sprocs = v != null},
+                 // SQLMetal compatible
                 { "pluralize",
                   "Automatically pluralize or singularize class and member names "
                   +"using specified culture rules.",
                   v => Pluralize = v != null},
                 { "culture=",
-                  "Specify {CULTURE} for word recognition and pluralization (default=\"en\").",
+                  "Specify {CULTURE} for word recognition and pluralization (default: \"en\").",
                   culture => Culture = culture },
                 { "case=",
                   "Transform names with the indicated {STYLE} "
                   +"(default: net; may be: leave, pascal, camel, net).",
                   style => Case = style },
                 { "generate-timestamps",
-                  "Generate timestampes in the generated code. True by default.",
+                  "Generate timestampes in the generated code (default: enabled).",
                   v => GenerateTimestamps = v != null },
-                { "readlineAtExit",
+                { "readline",
                   "Wait for a key to be pressed after processing.",
-                  v => ReadLineAtExit = v != null },
+                  v => Readline = v != null },
+                { "debug",
+                  "Enables additional information to help with debugging, " + 
+                  "such as full stack traces in error messages.",
+                  v => Debug = v != null },
                 { "h|?|help",
                   "Show this help",
                   v => Help = v != null }

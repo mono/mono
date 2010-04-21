@@ -49,7 +49,7 @@ namespace DbLinq.Sqlite
 
         protected override IList<IDataTableColumn> ReadColumns(IDbConnection connectionString, string databaseName)
         {
-            const string sql = @" SELECT tbl_name FROM sqlite_master WHERE type='table' order by tbl_name";
+            var sql = string.Format(SelectTablesFormat, "");
             const string pragma = @"PRAGMA table_info('{0}');";
 
             return Schema.DataCommand.Find<IDataTableColumn>(connectionString, sql, pragma, ReadColumn);

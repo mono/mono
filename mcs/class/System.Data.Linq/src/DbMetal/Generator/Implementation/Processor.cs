@@ -72,37 +72,31 @@ namespace DbMetal.Generator.Implementation
         {
             var parameters = new Parameters { Log = Log };
 
-            if (args.Length == 0)
-                PrintUsage(parameters);
+            parameters.WriteHeader();
 
-            else
+            try
             {
-                parameters.WriteHeader();
+                parameters.Parse(args);
+            }
+            catch (Exception e)
+            {
+                Output.WriteErrorLine(Log, e.Message);
+                PrintUsage(parameters);
+                return;
+            }
 
-                try
-                {
-                    parameters.Parse(args);
-                }
-                catch (Exception e)
-                {
-                    Output.WriteErrorLine(Log, e.Message);
-                    PrintUsage(parameters);
-                    return;
-                }
+            if (args.Length == 0 || parameters.Help)
+            {
+                PrintUsage(parameters);
+                return;
+            }
 
-                if (parameters.Help)
-                {
-                    PrintUsage(parameters);
-                    return;
-                }
+            ProcessSchema(parameters);
 
-                ProcessSchema(parameters);
-
-                if (parameters.ReadLineAtExit)
-                {
-                    // '-readLineAtExit' flag: useful when running from Visual Studio
-                    Console.ReadKey();
-                }
+            if (parameters.Readline)
+            {
+                // '-readLineAtExit' flag: useful when running from Visual Studio
+                Console.ReadKey();
             }
         }
 
@@ -114,14 +108,47 @@ namespace DbMetal.Generator.Implementation
                 ISchemaLoader schemaLoader;
                 // then we load the schema
                 var dbSchema = ReadSchema(parameters, out schemaLoader);
+
+                if (!SchemaIsValid(dbSchema))
+                    return;
+
                 // the we write it (to DBML or code)
                 WriteSchema(dbSchema, schemaLoader, parameters);
             }
             catch (Exception ex)
             {
                 string assemblyName = System.Reflection.Assembly.GetExecutingAssembly().GetName().Name;
-                Output.WriteErrorLine(Log, assemblyName + " failed:" + ex);
+                Log.WriteErrorLine(assemblyName + ": {0}", parameters.Debug ? ex.ToString() : ex.Message);
             }
+        }
+
+        bool SchemaIsValid(Database database)
+        {
+            bool error = false;
+            foreach (var table in database.Tables)
+            {
+                error = ValidateAssociations(database, table) || error;
+            }
+            return !error;
+        }
+
+        bool ValidateAssociations(Database database, Table table)
+        {
+            bool error = false;
+            foreach (var association in table.Type.Associations)
+            {
+                var otherType           = database.Tables.Single(t => t.Type.Name == association.Type).Type;
+                var otherAssociation    = otherType.Associations.Single(a => a.Type == table.Type.Name && a.ThisKey == association.OtherKey);
+                var otherColumn         = otherType.Columns.Single(c => c.Member == association.OtherKey);
+
+                if (association.CardinalitySpecified && association.Cardinality == Cardinality.Many && association.IsForeignKey)
+                {
+                    error = true;
+                    Log.WriteErrorLine("Error DBML1059: The IsForeignKey attribute of the Association element '{0}' of the Type element '{1}' cannnot be '{2}' when the Cardinality attribute is '{3}'.",
+                            association.Name, table.Type.Name, association.IsForeignKey, association.Cardinality);
+                }
+            }
+            return error;
         }
 
         protected void WriteSchema(Database dbSchema, ISchemaLoader schemaLoader, Parameters parameters)
@@ -146,9 +173,6 @@ namespace DbMetal.Generator.Implementation
                     filename = parameters.Database.Replace("\"", "");
                 if (string.IsNullOrEmpty(filename))
                     filename = dbSchema.Name;
-
-                // TODO: move such check to runtime.
-                schemaLoader.CheckNamesSafety(dbSchema);
 
                 parameters.Write("<<< writing C# classes in file '{0}'", filename);
                 GenerateCode(parameters, dbSchema, schemaLoader, filename);
@@ -182,7 +206,7 @@ namespace DbMetal.Generator.Implementation
 
         protected virtual ICodeGenerator FindCodeGeneratorByExtension(string extension)
         {
-            return EnumerateCodeGenerators().SingleOrDefault(gen => gen.Extension == extension);
+            return EnumerateCodeGenerators().SingleOrDefault(gen => gen.Extension == extension.ToLowerInvariant());
         }
 
         public virtual ICodeGenerator FindCodeGenerator(Parameters parameters, string filename)
@@ -194,9 +218,10 @@ namespace DbMetal.Generator.Implementation
 
         public void GenerateCode(Parameters parameters, Database dbSchema, ISchemaLoader schemaLoader, string filename)
         {
-            ICodeGenerator codeGenerator = FindCodeGenerator(parameters, filename);
-            if (codeGenerator == null)
-                throw new ArgumentException("Please specify either a /language or a /code file");
+            ICodeGenerator codeGenerator = FindCodeGenerator(parameters, filename) ??
+                (string.IsNullOrEmpty(parameters.Language)
+                    ? CodeDomGenerator.CreateFromFileExtension(Path.GetExtension(filename))
+                    : CodeDomGenerator.CreateFromLanguage(parameters.Language));
 
             if (string.IsNullOrEmpty(filename))
                 filename = dbSchema.Class;
@@ -232,7 +257,8 @@ namespace DbMetal.Generator.Implementation
             else // load DBML
             {
                 dbSchema = ReadSchema(parameters, parameters.SchemaXmlFile);
-                schemaLoader = SchemaLoaderFactory.Load(dbSchema.Provider);
+                parameters.Provider = parameters.Provider ?? dbSchema.Provider;
+                schemaLoader = SchemaLoaderFactory.Load(parameters);
             }
 
             if (schemaLoader == null)

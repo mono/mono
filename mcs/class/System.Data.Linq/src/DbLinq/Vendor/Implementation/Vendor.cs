@@ -39,6 +39,7 @@ using DbLinq.Data.Linq;
 using Data = DbLinq.Data;
 
 using IExecuteResult = System.Data.Linq.IExecuteResult;
+using System.Text;
 
 namespace DbLinq.Vendor.Implementation
 {
@@ -134,10 +135,43 @@ namespace DbLinq.Vendor.Implementation
         /// <param name="parts">The parts.</param>
         /// <param name="name">The name.</param>
         /// <param name="value">The value.</param>
-        protected virtual void AddConnectionStringPart(IList<string> parts, string name, string value)
+        protected void AppendConnectionString(StringBuilder connectionString, string name, string value)
         {
             if (!string.IsNullOrEmpty(value) && !string.IsNullOrEmpty(name))
-                parts.Add(string.Format("{0}={1}", name, value));
+                connectionString.AppendFormat("{0}={1};", name, value);
+        }
+
+        protected virtual void AppendDatabase(StringBuilder connectionString, string databaseName)
+        {
+            AppendConnectionString(connectionString, ConnectionStringDatabase, databaseName);
+        }
+
+        protected virtual void AppendPassword(StringBuilder connectionString, string password)
+        {
+            AppendConnectionString(connectionString, ConnectionStringPassword, password);
+        }
+
+        protected virtual void AppendServer(StringBuilder connectionString, string host)
+        {
+            // A majority of databases want a server/host port number as a separate key:
+            //      http://www.connectionstrings.com/postgre-sql
+            //      http://www.connectionstrings.com/firebird
+            //      http://www.connectionstrings.com/mysql
+            // So make this the default.
+            if (host == null)
+                return;
+            var colonIdx = host.IndexOf(':');
+            string port = colonIdx < 0 || host.Length == (colonIdx + 1) ? null : host.Substring(colonIdx + 1);
+            if (colonIdx >= 0)
+                host = host.Substring(0, colonIdx);
+            AppendConnectionString(connectionString, ConnectionStringServer, host);
+            if (port != null)
+                AppendConnectionString(connectionString, "Port", port);
+        }
+
+        protected virtual void AppendUser(StringBuilder connectionString, string userName)
+        {
+            AppendConnectionString(connectionString, ConnectionStringUser, userName);
         }
 
         /// <summary>
@@ -150,12 +184,12 @@ namespace DbLinq.Vendor.Implementation
         /// <returns></returns>
         public virtual string BuildConnectionString(string host, string databaseName, string userName, string password)
         {
-            var connectionStringParts = new List<string>();
-            AddConnectionStringPart(connectionStringParts, ConnectionStringServer, host);
-            AddConnectionStringPart(connectionStringParts, ConnectionStringDatabase, databaseName);
-            AddConnectionStringPart(connectionStringParts, ConnectionStringUser, userName);
-            AddConnectionStringPart(connectionStringParts, ConnectionStringPassword, password);
-            return string.Join(";", connectionStringParts.ToArray());
+            var connectionString = new StringBuilder();
+            AppendServer(connectionString, host);
+            AppendDatabase(connectionString, databaseName);
+            AppendUser(connectionString, userName);
+            AppendPassword(connectionString, password);
+            return connectionString.ToString();
         }
 
         /// <summary>

@@ -248,8 +248,8 @@ values ('UKMOD', 'MOD','(secret)','U.K.','E14','London');
 insert INTO "Customers" ("CustomerID", "CompanyName","ContactName", "ContactTitle", "Country","PostalCode","City", "Phone")
 values ('ALFKI', 'Alfreds Futterkiste','Maria Anders','Sales Representative','Germany','12209','Berlin','030-0074321');
 
-insert INTO "Customers" ("CustomerID", "CompanyName","ContactName", "ContactTitle", "Country","PostalCode","City", "Phone")
-values ('BONAP', 'Bon something','Bon Boss','Sales Representative','France','11109','Paris','033-0074321');
+insert INTO "Customers" ("CustomerID", "CompanyName","ContactName", "ContactTitle", "Country", "PostalCode", "Address", "City", "Phone", "Fax")
+values ('BONAP', 'Bon app''','Laurence Lebihan','Owner','France','13008','12, rue des Bouchers','Marseille','91.24.45.40', '91.24.45.41');
 
 insert INTO "Customers" ("CustomerID", "CompanyName","ContactName", "ContactTitle", "Country","PostalCode","City", "Phone")
 values ('WARTH', 'Wartian Herkku','Pirkko Koskitalo','Accounting Manager','Finland','90110','Oulu','981-443655');

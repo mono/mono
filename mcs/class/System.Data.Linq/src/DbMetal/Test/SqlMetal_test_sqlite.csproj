@@ -42,6 +42,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="AppRunner.cs" />
+    <Compile Include="CreateDbmlFromSqliteDbTest.cs" />
     <Compile Include="CreateEntitiesFromSqliteDbTest.cs" />
   </ItemGroup>
   <ItemGroup>

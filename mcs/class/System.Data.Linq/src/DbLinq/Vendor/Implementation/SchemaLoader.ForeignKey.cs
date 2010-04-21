@@ -92,7 +92,8 @@ namespace DbLinq.Vendor.Implementation
             assoc.ThisKey = foreignKey;
             assoc.OtherKey = reverseForeignKey;
             assoc.Member = associationName.ManyToOneMemberName;
-            assoc.Cardinality = Cardinality.Many; // TODO: check this is the right direction (even if it appears to be useless)
+            assoc.CardinalitySpecified = false;
+            // TODO: generate assoc.Cardinality?
             table.Type.Associations.Add(assoc);
 
             //and insert the reverse association:
@@ -100,7 +101,8 @@ namespace DbLinq.Vendor.Implementation
             reverseAssociation.Name = constraintName;
             reverseAssociation.Type = table.Type.Name;
             reverseAssociation.Member = associationName.OneToManyMemberName;
-            reverseAssociation.Cardinality = Cardinality.One;
+            reverseAssociation.CardinalitySpecified = false;
+            // TODO: generate reverseAssociation.Cardinality?
             reverseAssociation.ThisKey = reverseForeignKey;
             reverseAssociation.OtherKey = foreignKey;
             reverseAssociation.DeleteRule = "NO ACTION";

@@ -38,6 +38,7 @@ using DbLinq.Data.Linq;
 using DbLinq.Factory;
 using DbLinq.Schema;
 using DbLinq.Schema.Dbml;
+using System.Text.RegularExpressions;
 
 namespace DbLinq.Vendor.Implementation
 {
@@ -237,6 +238,8 @@ namespace DbLinq.Vendor.Implementation
             return CreateTableName(dbTableName, dbSchema, nameAliases, nameFormat, GetExtraction(dbTableName));
         }
 
+        Regex startsWithNumber = new Regex(@"^\d", RegexOptions.Compiled);
+
         /// <summary>
         /// Creates the name of the column.
         /// </summary>
@@ -265,6 +268,10 @@ namespace DbLinq.Vendor.Implementation
             var tableName = CreateTableName(dbTableName, dbSchema, nameAliases, nameFormat);
             if (columnName.PropertyName == tableName.ClassName)
                 columnName.PropertyName = columnName.PropertyName + "1";
+
+            if (startsWithNumber.IsMatch(columnName.PropertyName))
+                columnName.PropertyName = "_" + columnName.PropertyName;
+
             columnName.DbName = dbColumnName;
             return columnName;
         }

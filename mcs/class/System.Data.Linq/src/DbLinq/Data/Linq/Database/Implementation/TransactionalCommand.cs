@@ -47,7 +47,7 @@ namespace DbLinq.Data.Linq.Database.Implementation
         /// <summary>
         /// Ambient transaction
         /// </summary>
-        private readonly IDatabaseTransaction _transaction;
+        private readonly IDbTransaction _transaction;
 
         private readonly IDbCommand _command;
 
@@ -100,8 +100,8 @@ namespace DbLinq.Data.Linq.Database.Implementation
             // the transaction is optional
             if (createTransaction && !haveHigherTransaction)
             {
-                _transaction = dataContext.DatabaseContext.Transaction();
-                _command.Transaction = _transaction.Transaction;
+                _transaction = dataContext.DatabaseContext.CreateTransaction();
+                _command.Transaction = _transaction;
             }
             else
                 _command.Transaction = dataContext.Transaction;

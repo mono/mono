@@ -2,7 +2,7 @@
 // 
 // MIT license
 //
-// Copyright (c) 2007-2008 Jiri Moudry, Pascal Craponne
+// Copyright (c) 2010 Novell, Inc.
 // 
 // Permission is hereby granted, free of charge, to any person obtaining a copy
 // of this software and associated documentation files (the "Software"), to deal
@@ -23,18 +23,42 @@
 // THE SOFTWARE.
 // 
 #endregion
-using System.Collections.Generic;
-using System.Data;
-using DbLinq.Vendor;
 
-namespace DbLinq.Sqlite
+using System;
+using System.Collections;
+using System.Collections.Generic;
+using System.Collections.ObjectModel;
+using System.Data.SqlClient;
+using System.IO;
+using System.Linq;
+using System.Reflection;
+
+using System.Data.Linq.Mapping;
+
+using DbLinq.Null;
+using NUnit.Framework;
+
+namespace System.Data.Linq.Mapping.Test
 {
-    partial class SqliteSchemaLoader
+    [TestFixture]
+    public class ColumnAttributeTest
     {
-        public override IList<IDataName> ReadTables(IDbConnection connectionString, string databaseName)
+        [Test]
+        public void Ctor()
         {
-            string sql = string.Format(SelectTablesFormat, ", 'main'");
-            return Util.DataCommand.Find<IDataName>(connectionString, sql, ReadDataNameAndSchema);
+            var c = new ColumnAttribute();
+            Assert.AreEqual(AutoSync.Default,   c.AutoSync);
+            Assert.AreEqual(true,               c.CanBeNull);
+            Assert.AreEqual(null,               c.DbType);
+            Assert.AreEqual(null,               c.Expression);
+            Assert.AreEqual(false,              c.IsDbGenerated);
+            Assert.AreEqual(false,              c.IsDiscriminator);
+            Assert.AreEqual(false,              c.IsVersion);
+            Assert.AreEqual(UpdateCheck.Always, c.UpdateCheck);
+            Assert.AreEqual(false,              c.IsPrimaryKey);
+            Assert.AreEqual(null,               c.Name);
+            Assert.AreEqual(null,               c.Storage);
+            Assert.AreEqual(c.GetType(),        c.TypeId);
         }
     }
 }

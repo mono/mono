@@ -271,13 +271,13 @@ namespace DbLinq.Data.Linq.Sugar.Implementation
 
             // our table is created, with the expressions
             // now check if we didn't register exactly the same
-            if ((from t in builderContext.EnumerateScopeTables() where t.IsEqualTo(otherTableExpression) select t).SingleOrDefault() == null)
-            {
-                builderContext.CurrentSelect.Tables.Add(otherTableExpression);
-                foreach (var createdColumn in createdColumns)
-                    builderContext.CurrentSelect.Columns.Add(createdColumn);
-            }
-
+            var existingTable = (from t in builderContext.EnumerateScopeTables() where t.IsEqualTo(otherTableExpression) select t).SingleOrDefault();
+            if (existingTable != null)
+                return existingTable;
+ 
+            builderContext.CurrentSelect.Tables.Add(otherTableExpression);
+            foreach (var createdColumn in createdColumns)
+                builderContext.CurrentSelect.Columns.Add(createdColumn);
             return otherTableExpression;
         }
 

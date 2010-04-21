@@ -3,6 +3,7 @@ AssemblyInfo.cs
 ../../class/System.Data.Linq/src/DbMetal/AbstractParameters.cs
 ../../class/System.Data.Linq/src/DbMetal/Configuration/ProvidersSection.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/AttributeDefinition.cs
+../../class/System.Data.Linq/src/DbMetal/Generator/CodeDomGenerator.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/CodeWriter.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/EntityInterface/IImplementation.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/EntityInterface/Implementation/IModifiedImplementation.cs
@@ -11,9 +12,6 @@ AssemblyInfo.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/EntityInterface/Implementation/InterfaceImplementation.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/GenerationContext.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/ICodeGenerator.cs
-../../class/System.Data.Linq/src/DbMetal/Generator/Implementation/CodeDomGenerator/AbstractCodeDomGenerator.cs
-../../class/System.Data.Linq/src/DbMetal/Generator/Implementation/CodeDomGenerator/CSharpCodeDomGenerator.cs
-../../class/System.Data.Linq/src/DbMetal/Generator/Implementation/CodeDomGenerator/VisualBasicCodeDomGenerator.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/Implementation/CodeTextGenerator/CodeGenerator.Class.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/Implementation/CodeTextGenerator/CodeGenerator.Context.Ctor.cs
 ../../class/System.Data.Linq/src/DbMetal/Generator/Implementation/CodeTextGenerator/CodeGenerator.cs

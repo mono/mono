@@ -100,11 +100,6 @@ namespace DbLinq.Ingres
             return (":" + nameBase).ToLower();
         }
 
-        protected override bool IsNameCaseSafe(string dbName)
-        {
-            return dbName == dbName.ToLower();
-        }
-
         protected override SqlStatement GetLiteralStringConcat(SqlStatement a, SqlStatement b)
         {
             // This needs to be bracketed in case subsequent functions are called upon it

@@ -147,12 +147,16 @@ namespace DbLinq.Vendor.Implementation
             case "float4":
             case "real":
             case "binary_float":   // oracle type
+            case "unsigned float": // mysql type
+            case "float unsigned": // mysql type
                 return typeof(Single);
 
             // double
             case "double":
             case "double precision":
             case "binary_double":  // oracle type
+            case "unsigned double":// mysql type
+            case "double unsigned":// mysql type
                 return typeof(Double);
 
             // decimal
@@ -180,6 +184,7 @@ namespace DbLinq.Vendor.Implementation
 
             //enum
             case "enum":
+            case "set":
                 return MapEnumDbType(dataType);
 
             // date
@@ -188,6 +193,7 @@ namespace DbLinq.Vendor.Implementation
             case "ingresdate":
             case "timestamp":
             case "timestamp without time zone":
+            case "timestamp with time zone":
             case "time":
             case "time without time zone": //reported by twain_bu...@msn.com,
             case "time with time zone":
@@ -430,7 +436,7 @@ namespace DbLinq.Vendor.Implementation
             #endregion
         }
 
-        protected static Regex DefaultEnumDefinitionEx = new Regex(@"\s*enum\s*\((?<values>.*)\s*\)\s*", RegexOptions.Compiled);
+        protected static Regex DefaultEnumDefinitionEx = new Regex(@"\s*(enum|set)\s*\((?<values>.*)\s*\)\s*", RegexOptions.Compiled);
         protected static Regex EnumValuesEx = new Regex(@"\'(?<value>\w*)\'\s*,?\s*", RegexOptions.Compiled);
 
         /// <summary>

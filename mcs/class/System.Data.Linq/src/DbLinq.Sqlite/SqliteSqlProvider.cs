@@ -60,11 +60,6 @@ namespace DbLinq.Sqlite
             return "COUNT(*)";
         }
 
-        protected override bool IsNameCaseSafe(string namePart)
-        {
-            return true;
-        }
-
         public override SqlStatement GetLiteral(bool literal)
         {
             if (literal)

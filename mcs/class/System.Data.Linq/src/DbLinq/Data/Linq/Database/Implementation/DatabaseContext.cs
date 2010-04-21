@@ -44,6 +44,8 @@ namespace DbLinq.Data.Linq.Database.Implementation
             set { ChangeConnection(value, false); }
         }
 
+        public IDbTransaction CurrentTransaction { get; set; }
+
         private readonly DbProviderFactory _providerFactory;
         /// <summary>
         /// Gets the provider factory.
@@ -101,9 +103,11 @@ namespace DbLinq.Data.Linq.Database.Implementation
         /// Creates a transaction.
         /// </summary>
         /// <returns></returns>
-        public IDatabaseTransaction Transaction()
+        public IDbTransaction CreateTransaction()
         {
-            return new DatabaseTransaction(Connection);
+            if (CurrentTransaction != null)
+                throw new InvalidOperationException("Attempting to create a transaction while within a transaction.");
+            return CurrentTransaction = Connection.BeginTransaction();
         }
 
         /// <summary>
@@ -114,7 +118,7 @@ namespace DbLinq.Data.Linq.Database.Implementation
         {
             IDbCommand command = Connection.CreateCommand();
             if (command.Transaction == null)
-                command.Transaction = DatabaseTransaction.currentTransaction;
+                command.Transaction = CurrentTransaction;
             return command;
         }
 

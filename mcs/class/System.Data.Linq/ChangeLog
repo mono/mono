@@ -1,3 +1,8 @@
+2010-04-13  Jonathan Pryor  <jpryor@novell.com>
+
+	* src/**/*: Sync with DbLinq r1403.  This is DbLinq 0.20 + fixes.
+	  Primarily fixes sqlmetal, codegen, etc.
+
 2009-12-18  Jonathan Pryor  <jpryor@novell.com>
 
 	* src/**/*: Sync with DbLinq r1294.  This is DbLinq 0.19.  Fixes

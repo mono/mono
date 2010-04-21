@@ -193,11 +193,12 @@ namespace nwind
             Assert.IsTrue(p1.ProductID == 1);
         }
 
+        [Test]
         public void A8_SelectSingleOrDefault_QueryCacheDisabled()
         {
             Northwind db = CreateDB();
 #if !MONO_STRICT
-            db.QueryCacheEnabled = false;
+            db.QueryCacheEnabled = true;
 #endif
 
             // Query for a specific customer

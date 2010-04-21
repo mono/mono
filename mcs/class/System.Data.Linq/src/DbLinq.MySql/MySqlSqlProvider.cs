@@ -72,16 +72,5 @@ namespace DbLinq.MySql
 
         protected override char SafeNameStartQuote { get { return '`'; } }
         protected override char SafeNameEndQuote { get { return '`'; } }
-
-        /// <summary>
-        /// MySQL is case insensitive, and names always specify a case (there is no default casing)
-        /// However, tables appear to be full lowercase
-        /// </summary>
-        /// <param name="dbName"></param>
-        /// <returns></returns>
-        protected override bool IsNameCaseSafe(string dbName)
-        {
-            return true;
-        }
     }
 }

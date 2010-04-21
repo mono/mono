@@ -34,6 +34,11 @@ namespace System.Data.Linq.Mapping
 	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
 	public sealed class ColumnAttribute : DataAttribute
 	{
+        public ColumnAttribute()
+        {
+            CanBeNull = true;
+        }
+
 		public AutoSync AutoSync { get; set; }
 		public bool CanBeNull { get; set; }
 		public string DbType { get; set; }

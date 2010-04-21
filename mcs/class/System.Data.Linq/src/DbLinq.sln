@@ -103,6 +103,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "DbMetal_test_sqlite", "DbMe
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SqlMetal_test_sqlite", "DbMetal\Test\SqlMetal_test_sqlite.csproj", "{874A37C6-E59B-4C0D-AAD2-0286E0DA8FD9}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "TestReporter", "Tools\TestReporter\TestReporter.csproj", "{EEE5CAA1-0312-45F2-94ED-BC311A19CAEF}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug - Mono Strict|Any CPU = Debug - Mono Strict|Any CPU
@@ -326,6 +328,12 @@ Global
 		{874A37C6-E59B-4C0D-AAD2-0286E0DA8FD9}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{874A37C6-E59B-4C0D-AAD2-0286E0DA8FD9}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{874A37C6-E59B-4C0D-AAD2-0286E0DA8FD9}.Release|Any CPU.Build.0 = Release|Any CPU
+		{EEE5CAA1-0312-45F2-94ED-BC311A19CAEF}.Debug - Mono Strict|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEE5CAA1-0312-45F2-94ED-BC311A19CAEF}.Debug - Mono Strict|Any CPU.Build.0 = Debug|Any CPU
+		{EEE5CAA1-0312-45F2-94ED-BC311A19CAEF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{EEE5CAA1-0312-45F2-94ED-BC311A19CAEF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{EEE5CAA1-0312-45F2-94ED-BC311A19CAEF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{EEE5CAA1-0312-45F2-94ED-BC311A19CAEF}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

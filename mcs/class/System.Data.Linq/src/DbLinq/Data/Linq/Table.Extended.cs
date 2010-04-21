@@ -76,9 +76,9 @@ namespace DbLinq.Data.Linq
         public void BulkInsert(IEnumerable<TEntity> entities, int pageSize)
         {
             using (Context.DatabaseContext.OpenConnection())
-            using (var transaction = Context.DatabaseContext.Transaction())
+            using (var transaction = Context.DatabaseContext.CreateTransaction())
             {
-                Context.Vendor.BulkInsert(this, entities.ToList(), pageSize, transaction.Transaction);
+                Context.Vendor.BulkInsert(this, entities.ToList(), pageSize, Context.Transaction);
                 transaction.Commit();
             }
         }
