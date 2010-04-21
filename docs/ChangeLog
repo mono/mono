@@ -1,4 +1,9 @@
+2010-04-21  Andrés G. Aragoneses  <andres@lindenlab.com>
+
+	* Makefile.am: Make ASSEMBLED_DOCS empty in case of DISABLED_MCS_DOCS.
+
 2009-12-22  Jo Shields  <directhex@apebox.org>
+
 	* HtmlAgilityPack/LICENSE: Include upstream license (Ms-PL) since the
 	  file headers don't specify it
 

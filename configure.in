@@ -2758,6 +2758,8 @@ fi
   fi
 )
 
+AM_CONDITIONAL(DISABLE_MCS_DOCS, test x$DISABLE_MCS_DOCS = xyes)
+
 libgdiplus_msg=${libgdiplus_loc:-assumed to be installed}
 
 echo "

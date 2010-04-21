@@ -6,10 +6,14 @@ sources_DATA = \
 	monoapi.source \
 	$(ASSEMBLED_DOCS)
 
+if DISABLE_MCS_DOCS
+ASSEMBLED_DOCS = 
+else
 ASSEMBLED_DOCS = \
 	mono-file-formats.tree mono-file-formats.zip  \
 	mono-tools.tree mono-tools.zip                \
 	monoapi.tree monoapi.zip
+endif
 
 EXTRA_DIST = \
 	abc-removal.txt		\
