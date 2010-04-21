@@ -563,6 +563,14 @@ namespace Mono.Data.Tds.Protocol
 			if ( param.TypeName == "decimal" || param.TypeName == "numeric") {
 				Comm.Append ((param.Precision !=0 ) ? param.Precision : (byte) 29);
 				Comm.Append (param.Scale);
+				// Convert the decimal value according to Scale
+				if (param.Value != null && param.Value != DBNull.Value &&
+				    ((decimal)param.Value) != Decimal.MaxValue && 
+				    ((decimal)param.Value) != Decimal.MinValue) {
+					decimal expo = new Decimal (System.Math.Pow (10, (double)param.Scale));
+					int pVal = (int)(((decimal)param.Value) * expo);
+					param.Value = (decimal)pVal;				
+				}
 			}
 
 			
