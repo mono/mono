@@ -1,3 +1,8 @@
+2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BindingContext.cs : require a TransportBindingElement when
+	  building a channel listener.
+
 2010-04-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpReplyChannel.cs : use local var to hold wait handle to avoid

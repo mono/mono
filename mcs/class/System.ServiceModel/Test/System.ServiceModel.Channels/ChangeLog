@@ -1,3 +1,8 @@
+2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomBindingTest.cs : enable BuildChannelListener test for no-
+	  transport case. Test CanBuildChannelListener too.
+
 2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpTransportBindingElementTest.cs : GetProperty<T>() here too.

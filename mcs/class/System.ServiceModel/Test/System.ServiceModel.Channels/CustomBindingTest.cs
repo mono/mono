@@ -242,13 +242,20 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
-		[ExpectedException (typeof (ArgumentException))]
-		[Category ("NotWorking")]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void CanBuildChannelListenerNoTransport ()
+		{
+			CustomBinding cb = new CustomBinding ();
+			BindingContext ctx = new BindingContext (
+				cb, new BindingParameterCollection ());
+			Assert.IsFalse (new TextMessageEncodingBindingElement ().CanBuildChannelListener<IReplyChannel> (ctx), "#1");
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
 		public void BuildChannelListenerNoTransport ()
 		{
-			CustomBinding cb = new CustomBinding (
-				new TextMessageEncodingBindingElement (),
-				new CompositeDuplexBindingElement ());
+			CustomBinding cb = new CustomBinding ();
 			BindingContext ctx = new BindingContext (
 				cb, new BindingParameterCollection ());
 			new TextMessageEncodingBindingElement ().BuildChannelListener<IReplyChannel> (ctx);

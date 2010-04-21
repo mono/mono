@@ -155,7 +155,10 @@ namespace System.ServiceModel.Channels
 		{
 			bool restore = PrepareElements ();
 			try {
-				return DequeueBindingElement ().BuildChannelListener<TChannel> (this);
+				var be = DequeueBindingElement (false);
+				if (be == null)
+					throw new InvalidOperationException ("There is likely no TransportBindingElement that can build a channel listener in this binding context");
+				return be.BuildChannelListener<TChannel> (this);
 			} finally {
 				if (restore)
 					elements = empty_collection;
@@ -181,8 +184,10 @@ namespace System.ServiceModel.Channels
 		{
 			bool restore = PrepareElements ();
 			try {
-				return elements.Count > 0 &&
-					DequeueBindingElement ().CanBuildChannelListener<TChannel> (this);
+				var be = DequeueBindingElement (false);
+				if (be == null)
+					throw new InvalidOperationException ("There is likely no TransportBindingElement that can build a channel listener in this binding context");
+				return be.CanBuildChannelListener<TChannel> (this);
 			} finally {
 				if (restore)
 					elements = empty_collection;
