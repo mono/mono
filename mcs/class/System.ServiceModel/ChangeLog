@@ -1,3 +1,7 @@
+2010-04-21  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Http_listener_notes.txt: more comment.
+
 2010-04-20  Astushi Enomoto  <atsushi@ximian.com>
 
 	* Http_listener_notes.txt: added explanation on *why* it is SO hard
