@@ -1,3 +1,8 @@
+2010-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XDocument.cs: Don't use XmlReaderSettings.ProhibitDtd when 
+	building Moonlight SDK assemblies
+
 2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XDocument.cs : don't prohibit DTD.
