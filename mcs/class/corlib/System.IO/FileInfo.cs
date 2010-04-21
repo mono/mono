@@ -221,6 +221,8 @@ namespace System.IO {
 		{
 			MonoIOError error;
 
+			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
+
 			if (!MonoIO.Exists (FullPath, out error))
 				// a weird MS.NET behaviour
 				return;

@@ -1,3 +1,8 @@
+2010-04-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FileInfo.cs: Ensure elevated trust when calling Delete on 
+	Moonlight.
+
 2010-04-16  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* Directory.cs: Ensure elevated trust when calling on 
