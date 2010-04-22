@@ -1,3 +1,41 @@
+2010-04-20  Damien Diederen  <dd@crosstwine.com>
+
+	* Normalization.cs: Follow the spec when checking composition pairs.
+
+	Figure 7 in section 1.3 of http://unicode.org/reports/tr15/ shows
+	how when doing composition, one has to examine the successive
+	(starter, candidate) pairs, and combine if a matching canonical
+	decomposition exists.
+
+	The original algorithm was, instead, iterating on canonical
+	decompositions, and, for each one, trying to match a sequence
+	of (starter, non-starter, ...).	 This, however, does not produce
+	the same results as it is violating some implicit ordering
+	constraints in the Unicode tables.
+
+	E.g., when composing the following sequence of codepoints, the
+	original algorithm was picking:
+
+	  03B7 0313 0300 0345
+	  ^^^^	    ^^^^
+	  1F74 0313	 0345
+	  ^^^^	         ^^^^
+	  1FC2 0313
+
+	and would stop at 1FC2 0313 as there is no decomposition matching
+	it.  The new algorithm, which follows the guidance of the pretty
+	figure 7, ends up doing:
+
+	  03B7 0313 0300 0345
+	  ^^^^ ^^^^
+	  1F20	    0300 0345
+	  ^^^^	    ^^^^
+	  1F22	         0345
+	  ^^^^	         ^^^^
+	  1F92
+
+	resulting in the correct 1F92.
+
 2010-04-19  Damien Diederen  <dd@crosstwine.com>
 
 	* Normalization.cs: Recursively apply the Unicode decomposition mapping.

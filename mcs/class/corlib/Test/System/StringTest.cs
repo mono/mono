@@ -4280,6 +4280,23 @@ public class StringTest
 	public void NormalizeFormC ()
 	{
 		Assert.AreEqual ("\u0041\u030a\u0061\u030a".Normalize (NormalizationForm.FormC), "\u00c5\u00e5", "#1");
+		Assert.AreEqual ("\u006E\u0303".Normalize (NormalizationForm.FormC), "\u00F1", "#2");
+		Assert.AreEqual ("\u03B7\u0313\u0300\u0345".Normalize (NormalizationForm.FormC), "\u1F92", "#3");
+	}
+
+        [Test] // bug #480152, test cases by Tom Philpot
+        public void NormalizeFormCCrashers ()
+        {
+		string[][] entries = new string[][] {
+			new string[] { "\u05d0\u0307\u05dc", "#1" },
+			new string[] { "\u05d0\u0307\u05dc\u05d9\u05d9\u05df", "#2" },
+			new string[] { "\u05d4\u05d0\u0307\u05dc\u0307\u05d9\u0307\u05df\u0307", "#3" },
+			new string[] { "\u05d9\u05e9\u05de\u05e2\u0307\u05d0\u0307\u05dc\u0307", "#4" },
+			new string[] { "\u05d9\u05e9\u05e8\u05d0\u0307\u05dc\u0307", "#5" },
+		};
+
+		foreach (string[] entry in entries)
+			entry [0].Normalize (NormalizationForm.FormC);
 	}
 #endif
 	[Test]

@@ -38,15 +38,6 @@ namespace Mono.Globalization.Unicode
 			return charMapIndex [NUtil.MapIdx (cp)];
 		}
 
-		static int GetNormalizedStringLength (int ch)
-		{
-			int start = charMapIndex [NUtil.MapIdx (ch)];
-			int i = start;
-			while (mappedChars [i] != 0)
-				i++;
-			return i - start;
-		}
-
 		static byte GetCombiningClass (int c)
 		{
 			return combiningClass [NUtil.Combining.ToIndex (c)];
@@ -60,66 +51,6 @@ namespace Mono.Globalization.Unicode
 		static int GetPrimaryCompositeHelperIndex (int cp)
 		{
 			return helperIndex [NUtil.Helper.ToIndex (cp)];
-		}
-
-		static int GetPrimaryCompositeCharIndex (object chars, int start)
-		{
-			string s = chars as string;
-			StringBuilder sb = chars as StringBuilder;
-			char startCh = s != null ? s [start] : sb [start];
-			int charsLength = sb != null ? sb.Length : s.Length;
-
-			int idx = GetPrimaryCompositeHelperIndex ((int) startCh);
-			if (idx == 0)
-				return 0;
-			while (mappedChars [idx] == startCh) {
-				int prevCB = 0;
-				int combiningClass = 0;
-				for (int i = 1, j = 1; ; i++, j++) {
-					prevCB = combiningClass;
-
-					if (mappedChars [idx + i] == 0)
-						// matched
-						return idx;
-					if (start + i >= charsLength)
-						return 0; // didn't match
-
-					// handle blocked characters here.
-					char curCh;
-					bool match = false;
-					do {
-						curCh = s != null ?
-							s [start + j] :
-							sb [start + j];
-						combiningClass = GetCombiningClass (curCh);
-						if (mappedChars [idx + i] == curCh) {
-							match = true;
-							break;
-						}
-						if (combiningClass < prevCB) // blocked. Give up this map entry.
-							break;
-						if (++j + start >= charsLength || combiningClass == 0)
-							break;
-					} while (true);
-
-					if (match)
-						continue; // check next character in the current map entry string.
-					if (prevCB < combiningClass) {
-						j--;
-						if (mappedChars [idx + i] == curCh)
-							continue;
-						//if (mappedChars [idx + i] > curCh)
-						//	return 0; // no match
-					}
-					// otherwise move idx to next item
-					while (mappedChars [i] != 0)
-						i++;
-					idx += i + 1;
-					break;
-				}
-			}
-			// reached to end of entries
-			return 0;
 		}
 
 		private static string Compose (string source, int checkType)
@@ -155,57 +86,98 @@ namespace Mono.Globalization.Unicode
 			return (PropValue (i) & IsUnsafe) != 0;
 		}
 */
-		private static void Combine (StringBuilder sb, int start, int checkType)
+		private static void Combine (StringBuilder sb, int i, int checkType)
 		{
-			for (int i = start; i < sb.Length; i++) {
-				if (QuickCheck (sb [i], checkType) == NormalizationCheck.Yes)
-					continue;
-
-				int cur = i;
-				// FIXME: It should check "blocked" too
-				for (;i > 0; i--) // this loop does not check sb[0], but regardless of the condition below it should not go under 0.
-					if (GetCombiningClass ((int) sb [i]) == 0)
-						break;
-
-				int idx = 0; // index to mappedChars
-				for (; i < cur; i++) {
-					idx = GetPrimaryCompositeMapIndex (sb, (int) sb [i], i);
-					if (idx > 0)
-						break;
-				}
-				if (idx == 0) {
-					i = cur;
+			while (i < sb.Length) {
+				if (QuickCheck (sb [i], checkType) == NormalizationCheck.Yes) {
+					i++;
 					continue;
 				}
 
-				int prim = GetPrimaryCompositeFromMapIndex (idx);
-				int len = GetNormalizedStringLength (prim);
-				if (prim == 0 || len == 0)
-					throw new SystemException ("Internal error: should not happen. Input: " + sb);
-				int removed = 0;
-				sb.Insert (i++, (char) prim); // always single character
-
-				// handle blocked characters here.
-				while (removed < len) {
-					if (sb [i] == mappedChars [idx + removed]) {
-						sb.Remove (i, 1);
-						removed++;
-						// otherwise, skip it.
-					}
-					else
-						i++;
-				}
-				i = cur - 1;
+				i = TryComposeWithPreviousStarter (sb, null, i);
 			}
 		}
 
-		static int GetPrimaryCompositeMapIndex (object o, int cur, int bufferPos)
+		static int Fetch (StringBuilder sb, string s, int i)
 		{
-			if ((PropValue (cur) & FullCompositionExclusion) != 0)
-				return 0;
-			if (GetCombiningClass (cur) != 0)
-				return 0; // not a starter
-			return GetPrimaryCompositeCharIndex (o, bufferPos);
+			return (int) (sb != null ? sb [i] : s [i]);
+		}
+
+		// Cf. figure 7, section 1.3 of http://unicode.org/reports/tr15/.
+		static int TryComposeWithPreviousStarter (StringBuilder sb, string s, int current)
+		{
+			// Backtrack to previous starter.
+			int i = current - 1;
+			if (GetCombiningClass (Fetch (sb, s, current)) == 0) {
+				if (i < 0 || GetCombiningClass (Fetch (sb, s, i)) != 0)
+					return current + 1;
+			} else {
+				while (i >= 0 && GetCombiningClass (Fetch (sb, s, i)) != 0)
+					i--;
+				if (i < 0)
+					return current + 1;
+			}
+
+			int starter = Fetch (sb, s, i);
+
+			// The various decompositions involving starter follow this index.
+			int comp_idx = GetPrimaryCompositeHelperIndex (starter);
+			if (comp_idx == 0)
+				return current + 1;
+
+			int length = (sb != null ? sb.Length : s.Length);
+			int prevCombiningClass = -1;
+			for (int j = i + 1; j < length; j++) {
+				int candidate = Fetch (sb, s, j);
+
+				int combiningClass = GetCombiningClass (candidate);
+				if (combiningClass == prevCombiningClass)
+					// We skipped over a guy with the same class, without
+					// combining.  Skip this one, too.
+					continue;
+
+				int composed = TryCompose (comp_idx, starter, candidate);
+				if (composed != 0) {
+					if (sb == null)
+						// Not normalized, and we are only checking.
+						return -1;
+
+					// Full Unicode warning: This will break when the underlying
+					// tables are extended.
+					sb [i] = (char) composed;
+					sb.Remove (j, 1);
+
+					return current;
+				}
+
+				// Gray box.  We're done.
+				if (combiningClass == 0)
+					return j + 1;
+
+				prevCombiningClass = combiningClass;
+			}
+
+			return length;
+		}
+
+		static int TryCompose (int i, int starter, int candidate)
+		{
+			while (mappedChars [i] == starter) {
+				if (mappedChars [i + 1] == candidate &&
+				    mappedChars [i + 2] == 0) {
+					int composed = GetPrimaryCompositeFromMapIndex (i);
+
+					if ((PropValue (composed) & FullCompositionExclusion) == 0)
+						return composed;
+				}
+
+				// Skip this entry.
+				while (mappedChars [i] != 0)
+					i++;
+				i++;
+			}
+
+			return 0;
 		}
 
 		static string Decompose (string source, int checkType)
@@ -394,13 +366,15 @@ namespace Mono.Globalization.Unicode
 		public static bool IsNormalized (string source, int type)
 		{
 			int prevCC = -1;
-			for (int i = 0; i < source.Length; i++) {
+			for (int i = 0; i < source.Length; ) {
 				int cc = GetCombiningClass (source [i]);
 				if (cc != 0 && cc < prevCC)
 					return false;
 				prevCC = cc;
+
 				switch (QuickCheck (source [i], type)) {
 				case NormalizationCheck.Yes:
+					i++;
 					break;
 				case NormalizationCheck.No:
 					return false;
@@ -412,18 +386,10 @@ namespace Mono.Globalization.Unicode
 						return source == Normalize (source, type);
 					}
 					// go on...
-					
-					// partly copied from Combine()
-					int cur = i;
-					for (;i > 0; i--) // this loop does not check sb[0], but regardless of the condition below it should not go under 0.
-						if (GetCombiningClass ((int) source [i]) == 0)
-							break;
-					//i++;
-					// Now i is the "starter"
-					for (; i < cur; i++) {
-						if (GetPrimaryCompositeCharIndex (source, i) != 0)
-							return false;
-					}
+
+					i = TryComposeWithPreviousStarter (null, source, i);
+					if (i < 0)
+						return false;
 					break;
 				}
 			}
