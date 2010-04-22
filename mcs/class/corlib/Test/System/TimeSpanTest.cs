@@ -780,11 +780,11 @@ public class TimeSpanTest {
 		catch (FormatException) {
 			formatException = true;
 		}
-		Assert.AreEqual (expectFormat, formatException, "A1");
-		Assert.AreEqual (expectOverflow, overflowException, "A2");
+		Assert.AreEqual (expectFormat, formatException, "A1 [" + s + "]");
+		Assert.AreEqual (expectOverflow, overflowException, "A2 " + s + "]");
 
 		if (!expectOverflow && !expectFormat) {
-			Assert.AreEqual (expect, result, "A3");
+			Assert.AreEqual (expect, result, "A3 [" + s + "]");
 		}
 	}
 
@@ -809,15 +809,7 @@ public class TimeSpanTest {
 
 		ParseHelper ("100000000000000.1:1:1", false, true, "dontcare");
 		ParseHelper ("24:60:60", false, true, "dontcare");
-
-#if NET_4_0
-		// In 4.0 we get an overflow exception here, as opposed to a successful operation in 2.0,
-		// due to more than one preceding zero.
-		ParseHelper ("0001:0002:0003.12     ", false, true, "dontcare");
-		ParseHelper ("01:02:03.12    ", false, false, "01:02:03.1200000");
-#else
 		ParseHelper ("0001:0002:0003.12     ", false, false, "01:02:03.1200000");
-#endif
 
 #if NET_4_0
 		// In 4.0 when a section has more than 7 digits an OverflowException is thrown.
@@ -844,6 +836,9 @@ public class TimeSpanTest {
 			Thread.CurrentThread.CurrentCulture = prev_culture;
 		}
 #endif
+
+		ParseHelper ("00:00:00", false, false, "00:00:00");
+		ParseHelper ("00:10:00", false, false, "00:10:00");
 	}
 
 	// LAMESPEC: timespan in documentation is wrong - hh:mm:ss isn't mandatory
@@ -980,7 +975,7 @@ public class TimeSpanTest {
 		Assert.AreEqual (false, TimeSpan.TryParse ("24:60:60", out result), "#E2");
 
 #if NET_4_0
-		Assert.AreEqual (false, TimeSpan.TryParse ("0001:0002:0003.12     ", out result), "#F1");
+		Assert.AreEqual (true, TimeSpan.TryParse ("0001:0002:0003.12     ", out result), "#F1");
 #else
 		Assert.AreEqual (true, TimeSpan.TryParse ("0001:0002:0003.12     ", out result), "#F1");
 		Assert.AreEqual ("01:02:03.1200000", result.ToString (), "#F2");
@@ -1083,7 +1078,7 @@ public class TimeSpanTest {
 		ParseExactHelper ("3:9:10:12.153", G_format, false, false, "3.09:10:12.1530000", us_culture);
 		ParseExactHelper ("0:9:10:12.153", G_format, false, false, "09:10:12.1530000", us_culture);
 		ParseExactHelper ("03:09:10:12.153", G_format, false, false, "3.09:10:12.1530000", us_culture);
-		ParseExactHelper ("003:009:0010:0012.00153", G_format, true, false, "dontcare"); // more than 0 preceding zero
+		ParseExactHelper ("003:009:0010:0012.00153", G_format, false, false, "3.09:10:12.0015300", us_culture);
 		ParseExactHelper ("3:9:10:66.153", G_format, true, false, "dontcare"); // seconds out of range
 		ParseExactHelper ("3:9:10:12.153", G_format, true, false, "dontcare", french_culture); // fr-FR uses ',' as decimal separator
 		ParseExactHelper ("3:9:10:12,153", G_format, false, false, "3.09:10:12.1530000", french_culture);
@@ -1296,7 +1291,7 @@ public class TimeSpanTest {
 		TryParseExactHelper ("3:9:10:12.153", G_format, false, "3.09:10:12.1530000", us_culture);
 		TryParseExactHelper ("0:9:10:12.153", G_format, false, "09:10:12.1530000", us_culture);
 		TryParseExactHelper ("03:09:10:12.153", G_format, false, "3.09:10:12.1530000", us_culture);
-		TryParseExactHelper ("003:009:0010:0012.00153", G_format, true, "dontcare"); // more than 0 preceding zero
+		TryParseExactHelper ("003:009:0010:0012.00153", G_format, false, "3.09:10:12.0015300", us_culture);
 		TryParseExactHelper ("3:9:10:66.153", G_format, true, "dontcare"); // seconds out of range
 		TryParseExactHelper ("3:9:10:12.153", G_format, true, "dontcare", french_culture); // fr-FR uses ',' as decimal separator
 		TryParseExactHelper ("3:9:10:12,153", G_format, false, "3.09:10:12.1530000", french_culture);
@@ -1377,6 +1372,8 @@ public class TimeSpanTest {
 		Assert.AreEqual ("1:2:03:04,006", ts.ToString ("g", culture), "#B1");
 		Assert.AreEqual ("1:02:03:04,0060000", ts.ToString ("G", culture), "#B2");
 		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString ("c", culture), "#B3"); // 'c' format ignores CultureInfo
+		Assert.AreEqual ("1.02:03:04.0060000", ts.ToString ("t", culture), "#B4"); // 't' and 'T' are the same as 'c'
+		Assert.AreEqual("1.02:03:04.0060000", ts.ToString("T", culture), "#B5");
 
 		ts = new TimeSpan (4, 5, 6);
 		Assert.AreEqual ("4:05:06", ts.ToString ("g", culture), "#C1");
@@ -1398,13 +1395,6 @@ public class TimeSpanTest {
 		try {
 			result = ts.ToString ("C");
 			Assert.Fail ("#2");
-		} catch (FormatException) {
-		}
-
-		// This is suppoused to work, but the docs are wrong.
-		try {
-			result = ts.ToString ("t");
-			Assert.Fail ("#3");
 		} catch (FormatException) {
 		}
 	}

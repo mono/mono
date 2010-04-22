@@ -1,3 +1,7 @@
+2010-04-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpanTest.cs: Update our test after the 4.0 release.
+
 2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeTest.cs: Add tests for #331126.
