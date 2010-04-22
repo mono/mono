@@ -88,6 +88,9 @@ namespace Mono.Globalization.Unicode
 */
 		private static void Combine (StringBuilder sb, int i, int checkType)
 		{
+			// Back off one character as we may be looking at a V or T jamo.
+			CombineHangul (sb, null, i > 0 ? i - 1 : i);
+
 			while (i < sb.Length) {
 				if (QuickCheck (sb [i], checkType) == NormalizationCheck.Yes) {
 					i++;
@@ -96,6 +99,61 @@ namespace Mono.Globalization.Unicode
 
 				i = TryComposeWithPreviousStarter (sb, null, i);
 			}
+		}
+
+		private static int CombineHangul (StringBuilder sb, string s, int current)
+		{
+			int length = sb != null ? sb.Length : s.Length;
+			int last = Fetch (sb, s, current);
+
+			for (int i = current + 1; i < length; ++i) {
+				int ch = Fetch (sb, s, i);
+
+				// 1. check to see if two current characters are L and V
+
+				int LIndex = last - HangulLBase;
+				if (0 <= LIndex && LIndex < HangulLCount) {
+					int VIndex = ch - HangulVBase;
+					if (0 <= VIndex && VIndex < HangulVCount) {
+						if (sb == null)
+							return -1;
+
+						// make syllable of form LV
+
+						last = HangulSBase + (LIndex * HangulVCount + VIndex) * HangulTCount;
+
+						sb [i - 1] = (char) last; // reset last
+						sb.Remove (i, 1);
+						i--; length--;
+						continue; // discard ch
+					}
+				}
+
+
+				// 2. check to see if two current characters are LV and T
+
+				int SIndex = last - HangulSBase;
+				if (0 <= SIndex && SIndex < HangulSCount && (SIndex % HangulTCount) == 0) {
+					int TIndex = ch - HangulTBase;
+					if (0 < TIndex && TIndex < HangulTCount) {
+						if (sb == null)
+							return -1;
+
+						// make syllable of form LVT
+
+						last += TIndex;
+
+						sb [i - 1] = (char) last; // reset last
+						sb.Remove (i, 1);
+						i--; length--;
+						continue; // discard ch
+					}
+				}
+				// if neither case was true, just add the character
+				last = ch;
+			}
+
+			return length;
 		}
 
 		static int Fetch (StringBuilder sb, string s, int i)
@@ -386,6 +444,10 @@ namespace Mono.Globalization.Unicode
 						return source == Normalize (source, type);
 					}
 					// go on...
+
+					i = CombineHangul (null, source, i > 0 ? i - 1 : i);
+					if (i < 0)
+						return false;
 
 					i = TryComposeWithPreviousStarter (null, source, i);
 					if (i < 0)

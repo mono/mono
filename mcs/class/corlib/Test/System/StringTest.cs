@@ -4298,6 +4298,17 @@ public class StringTest
 		foreach (string[] entry in entries)
 			entry [0].Normalize (NormalizationForm.FormC);
 	}
+
+	[Test]
+	public void NormalizeFormCHangul ()
+	{
+		Assert.AreEqual ("\u1100\u116C".Normalize (NormalizationForm.FormC), "\uAD34", "#1");
+		Assert.AreEqual ("\u1100\u116B\u11C2".Normalize (NormalizationForm.FormC), "\uAD33", "#2");
+		Assert.AreEqual ("\u1100!".Normalize (NormalizationForm.FormC), "\u1100!", "#3");
+		Assert.AreEqual ("\u1100\u116B!".Normalize (NormalizationForm.FormC), "\uAD18\u0021", "#4");
+		Assert.AreEqual ("!\u116C".Normalize (NormalizationForm.FormC), "!\u116C", "#5");
+		Assert.AreEqual ("!\u116B\u11C2".Normalize (NormalizationForm.FormC), "!\u116B\u11C2", "#6");
+	}
 #endif
 	[Test]
 	public void Emptiness ()

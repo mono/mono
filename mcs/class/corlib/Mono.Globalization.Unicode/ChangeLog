@@ -1,5 +1,13 @@
 2010-04-20  Damien Diederen  <dd@crosstwine.com>
 
+	* Normalization.cs: Implement algorithmic Hangul composition.
+	Calling Normalize(NormalizationForm.FormC) on Korean characters
+	now works properly (bnc#480152).
+
+	* StringTest.cs: Add test cases for Hangul composition.
+
+2010-04-20  Damien Diederen  <dd@crosstwine.com>
+
 	* Normalization.cs: Follow the spec when checking composition pairs.
 
 	Figure 7 in section 1.3 of http://unicode.org/reports/tr15/ shows
