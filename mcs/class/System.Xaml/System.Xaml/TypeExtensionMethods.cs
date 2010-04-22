@@ -85,10 +85,13 @@ namespace System.Xaml
 		
 		#region type conversion and member value retrieval
 		
-		public static string GetStringValue (this XamlType xt, object obj)
+		public static string GetStringValue (this XamlType xt, object obj, INamespacePrefixLookup prefixLookup)
 		{
 			if (obj == null)
 				return String.Empty;
+			if (obj is Type)
+				return new XamlTypeName (xt.SchemaContext.GetXamlType ((Type) obj)).ToString (prefixLookup);
+
 			if (obj is DateTime)
 				// FIXME: DateTimeValueSerializer should apply
 				return (string) TypeDescriptor.GetConverter (typeof (DateTime)).ConvertToInvariantString (obj);
@@ -101,14 +104,10 @@ namespace System.Xaml
 			return DoConvert (xt.TypeConverter, target, explicitTargetType ?? xt.UnderlyingType);
 		}
 		
-		public static object GetMemberValueForObjectReader (this XamlMember xm, XamlType xt, object target)
+		public static object GetMemberValueForObjectReader (this XamlMember xm, XamlType xt, object target, INamespacePrefixLookup prefixLookup)
 		{
-			object native = GetPropertyOrFieldValueForObjectReader (xm, xt, target);
+			object native = GetPropertyOrFieldValueForObjectReader (xm, xt, target, prefixLookup);
 			var convertedType = xm.Type == null ? null : xm.Type.UnderlyingType;
-			// FIXME: not sure if it REALLY applies to everywhere.
-			if (convertedType == typeof (Type))
-				convertedType = typeof (string);
-
 			return DoConvert (xm.TypeConverter, native, convertedType);
 		}
 		
@@ -121,7 +120,7 @@ namespace System.Xaml
 			return value;
 		}
 
-		static object GetPropertyOrFieldValueForObjectReader (this XamlMember xm, XamlType xt, object target)
+		static object GetPropertyOrFieldValueForObjectReader (this XamlMember xm, XamlType xt, object target, INamespacePrefixLookup prefixLookup)
 		{
 			// FIXME: should this be done here??
 			if (xm == XamlLanguage.Initialization)
@@ -131,7 +130,7 @@ namespace System.Xaml
 				string [] args = new string [argdefs.Length];
 				for (int i = 0; i < args.Length; i++) {
 					var am = argdefs [i];
-					args [i] = GetStringValue (am.Type, GetMemberValueForObjectReader (am, xt, target));
+					args [i] = GetStringValue (am.Type, GetMemberValueForObjectReader (am, xt, target, prefixLookup), prefixLookup);
 				}
 				return String.Join (", ", args);
 			}

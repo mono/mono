@@ -26,11 +26,14 @@ using System.Collections.Generic;
 using System.ComponentModel;
 using System.Linq;
 using System.Windows.Markup;
+using System.Xaml.Schema;
 
 namespace System.Xaml
 {
 	public class XamlObjectReader : XamlReader
 	{
+		#region nested types
+
 		class NSList : List<NamespaceDeclaration>
 		{
 			public NSList (XamlNodeType ownerType, IEnumerable<NamespaceDeclaration> nsdecls)
@@ -85,6 +88,26 @@ namespace System.Xaml
 			}
 		}
 	
+		class PrefixLookup : INamespacePrefixLookup
+		{
+			XamlObjectReader source;
+
+			public PrefixLookup (XamlObjectReader source)
+			{
+				this.source = source;
+			}
+
+			public string LookupPrefix (string ns)
+			{
+				foreach (var nsd in source.namespaces)
+					if (nsd.Namespace == ns)
+						return nsd.Prefix;
+				return null;
+			}
+		}
+
+		#endregion nested types
+
 		public XamlObjectReader (object instance)
 			: this (instance, new XamlSchemaContext (null, null), null)
 		{
@@ -112,6 +135,8 @@ namespace System.Xaml
 			sctx = schemaContext;
 			this.settings = settings;
 
+			prefix_lookup = new PrefixLookup (this);
+
 			if (instance != null) {
 				// check type validity. Note that some checks are done at Read() phase.
 				var type = instance.GetType ();
@@ -130,10 +155,13 @@ namespace System.Xaml
 		XamlSchemaContext sctx;
 		XamlObjectReaderSettings settings;
 
+		INamespacePrefixLookup prefix_lookup;
+
 		Stack<XamlType> types = new Stack<XamlType> ();
 		Stack<object> objects = new Stack<object> ();
 		Stack<IEnumerator<XamlMember>> members_stack = new Stack<IEnumerator<XamlMember>> ();
-		IEnumerator<NamespaceDeclaration> namespaces;
+		NSList namespaces;
+		IEnumerator<NamespaceDeclaration> ns_iterator;
 		XamlNodeType node_type = XamlNodeType.None;
 		bool is_eof;
 
@@ -150,7 +178,7 @@ namespace System.Xaml
 		}
 
 		public override NamespaceDeclaration Namespace {
-			get { return NodeType == XamlNodeType.NamespaceDeclaration ? namespaces.Current : null; }
+			get { return NodeType == XamlNodeType.NamespaceDeclaration ? ns_iterator.Current : null; }
 		}
 
 		public override XamlNodeType NodeType {
@@ -183,16 +211,17 @@ namespace System.Xaml
 				var l = new List<string> ();
 				CollectNamespaces (l, instance, root_type);
 				var nss = from s in l select new NamespaceDeclaration (s, s == XamlLanguage.Xaml2006Namespace ? "x" : s == root_type.PreferredXamlNamespace ? String.Empty : SchemaContext.GetPreferredPrefix (s));
-				namespaces = new NSList (XamlNodeType.StartObject, nss).GetEnumerator ();
+				namespaces = new NSList (XamlNodeType.StartObject, nss);
+				ns_iterator = namespaces.GetEnumerator ();
 
-				namespaces.MoveNext ();
+				ns_iterator.MoveNext ();
 				node_type = XamlNodeType.NamespaceDeclaration;
 				return true;
 
 			case XamlNodeType.NamespaceDeclaration:
-				if (namespaces.MoveNext ())
+				if (ns_iterator.MoveNext ())
 					return true;
-				node_type = ((NSEnumerator) namespaces).OwnerType; // StartObject or StartMember
+				node_type = ((NSEnumerator) ns_iterator).OwnerType; // StartObject or StartMember
 				if (node_type == XamlNodeType.StartObject)
 					StartNextObject ();
 				else
@@ -315,9 +344,24 @@ namespace System.Xaml
 			var xm = members_stack.Peek ().Current;
 			var obj = objects.Peek ();
 			var xt = types.Peek ();
-			if (xt.IsContentValue ())
-				return xt.GetStringValue (obj);
-			return xm != null ? xm.GetMemberValueForObjectReader (xt, obj) : instance;
+
+			object retobj;
+			XamlType retxt;
+			if (xt.IsContentValue ()) {
+				retxt = xt;
+				retobj = obj;
+			} else {
+				retxt = xm.Type;
+				retobj = xm.GetMemberValueForObjectReader (xt, obj, prefix_lookup);
+			}
+
+			// FIXME: I'm not sure if this should be really done 
+			// here, but every primitive values seem to be exposed
+			// as a string, not a typed object in XamlObjectReader.
+			if (retxt.IsContentValue ())
+				return retxt.GetStringValue (retobj, prefix_lookup);
+			else
+				return retobj;
 		}
 	}
 }

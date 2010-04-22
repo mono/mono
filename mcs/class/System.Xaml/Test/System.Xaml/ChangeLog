@@ -1,5 +1,10 @@
 2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReaderTest.cs : enabled working tests. Add decent
+	  namespace declaration node assertions in the next tests.
+
+2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReaderTest.cs : add another MarkupExtension test.
 
 2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>

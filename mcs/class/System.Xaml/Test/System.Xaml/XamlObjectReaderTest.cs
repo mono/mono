@@ -276,7 +276,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_Type ()
 		{
 			var r = new XamlObjectReader (typeof (int));
@@ -284,7 +283,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")]
 		public void Read_TypeExtension ()
 		{
 			var r = new XamlObjectReader (new TypeExtension (typeof (int)));
@@ -355,14 +353,21 @@ namespace MonoTests.System.Xaml
 		{
 			Assert.IsTrue (r.Read (), "#11");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
-			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "#13-2");
-			Assert.AreEqual ("clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name, r.Namespace.Namespace, "#13-3");
+
+			var nsmap = new Dictionary<string,string> ();
+			nsmap ["x"] = XamlLanguage.Xaml2006Namespace;
+			nsmap [String.Empty] = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+
+			Assert.IsTrue (nsmap.ContainsKey (r.Namespace.Prefix), "#13-2");
+			Assert.AreEqual (nsmap [r.Namespace.Prefix], r.Namespace.Namespace, "#13-3:" + r.Namespace.Prefix);
+			nsmap.Remove (r.Namespace.Prefix);
 
 			Assert.IsTrue (r.Read (), "#16");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#17");
 			Assert.IsNotNull (r.Namespace, "#18");
-			Assert.AreEqual ("x", r.Namespace.Prefix, "#18-2");
-			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#18-3");
+			Assert.IsTrue (nsmap.ContainsKey (r.Namespace.Prefix), "#18-2");
+			Assert.AreEqual (nsmap [r.Namespace.Prefix], r.Namespace.Namespace, "#18-3:" + r.Namespace.Prefix);
+			nsmap.Remove (r.Namespace.Prefix);
 
 			Assert.IsTrue (r.Read (), "#21");
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");
@@ -644,8 +649,7 @@ namespace MonoTests.System.Xaml
 			Assert.AreEqual (xt.GetMember ("Foo"), r.Member, "#3");
 			Assert.IsTrue (r.Read (), "#4");
 			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#5");
-			// FIXME: enable this.
-			//Assert.AreEqual ("x:Int32", r.Value, "#6");
+			Assert.AreEqual ("x:Int32", r.Value, "#6");
 		}
 
 		void SimpleReadStandardType (object instance)

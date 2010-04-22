@@ -1,3 +1,8 @@
+2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlObjectReader.cs, TypeExtensionMethods.cs : now it can return
+	  Type name correctly, with INamespacePrefixLookup implementation.
+
 2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ArrayExtension.cs : remove MonoTODO.
