@@ -3,6 +3,8 @@
 	* SerialPort.cs: Try to detect serial devices in other Unix
 	systems. 
 
+	More tune ups for BSDs.
+
 2010-02-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* SerialPort.cs: DiscardNull should *not* report any error if the port

@@ -542,7 +542,7 @@ namespace System.IO.Ports
 						if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB"))
 							serial_ports.Add (dev);
 					} else {
-						if (dev.StartsWith ("/dev/tty"))
+						if (dev != "/dev/tty" && dev.StartsWith ("/dev/tty") && !dev.StartsWith ("/dev/ttyC"))
 							serial_ports.Add (dev);
 					}
 				}
