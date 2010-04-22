@@ -101,11 +101,15 @@ namespace System.Xaml
 			return DoConvert (xt.TypeConverter, target, explicitTargetType ?? xt.UnderlyingType);
 		}
 		
-		public static object GetMemberValue (this XamlMember xm, XamlType xt, object target)
+		public static object GetMemberValueForObjectReader (this XamlMember xm, XamlType xt, object target)
 		{
-			object native = GetPropertyOrFieldValue (xm, xt, target);
-			var memberRType = xm.Type == null ? null : xm.Type.UnderlyingType;
-			return DoConvert (xm.TypeConverter, native, memberRType);
+			object native = GetPropertyOrFieldValueForObjectReader (xm, xt, target);
+			var convertedType = xm.Type == null ? null : xm.Type.UnderlyingType;
+			// FIXME: not sure if it REALLY applies to everywhere.
+			if (convertedType == typeof (Type))
+				convertedType = typeof (string);
+
+			return DoConvert (xm.TypeConverter, native, convertedType);
 		}
 		
 		static object DoConvert (XamlValueConverter<TypeConverter> converter, object value, Type targetType)
@@ -117,7 +121,7 @@ namespace System.Xaml
 			return value;
 		}
 
-		static object GetPropertyOrFieldValue (this XamlMember xm, XamlType xt, object target)
+		static object GetPropertyOrFieldValueForObjectReader (this XamlMember xm, XamlType xt, object target)
 		{
 			// FIXME: should this be done here??
 			if (xm == XamlLanguage.Initialization)
@@ -127,7 +131,7 @@ namespace System.Xaml
 				string [] args = new string [argdefs.Length];
 				for (int i = 0; i < args.Length; i++) {
 					var am = argdefs [i];
-					args [i] = GetStringValue (am.Type, GetMemberValue (am, xt, target));
+					args [i] = GetStringValue (am.Type, GetMemberValueForObjectReader (am, xt, target));
 				}
 				return String.Join (", ", args);
 			}
@@ -159,7 +163,7 @@ namespace System.Xaml
 			var t = type.UnderlyingType;
 			if (Type.GetTypeCode (t) != TypeCode.Object)
 				return true;
-			else if (t == typeof (TimeSpan) || t == typeof (Uri)) // special predefined types
+			else if (t == typeof (Type) || t == typeof (TimeSpan) || t == typeof (Uri)) // special predefined types
 				return true;
 			return false;
 		}

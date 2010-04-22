@@ -315,9 +315,9 @@ namespace System.Xaml
 			var xm = members_stack.Peek ().Current;
 			var obj = objects.Peek ();
 			var xt = types.Peek ();
-			if (xm == XamlLanguage.Initialization)
+			if (xt.IsContentValue ())
 				return xt.GetStringValue (obj);
-			return xm != null ? xm.GetMemberValue (xt, obj) : instance;
+			return xm != null ? xm.GetMemberValueForObjectReader (xt, obj) : instance;
 		}
 	}
 }

@@ -1,5 +1,12 @@
 2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReader.cs, TypeExtensionMethods.cs : handle System.Type
+	  as predefined type that returns Value instead of StartObject.
+	  Rename some member getter methods to explicitly limit the scope to
+	  object readers so far.
+
+2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReader.cs
 	  XamlMember.cs
 	  TypeExtensionMethods.cs
