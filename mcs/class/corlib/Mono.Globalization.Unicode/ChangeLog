@@ -1,3 +1,18 @@
+2010-04-19  Damien Diederen  <dd@crosstwine.com>
+
+	* Normalization.cs: Recursively apply the Unicode decomposition mapping.
+
+	According to http://www.unicode.org/reports/tr15/tr15-31.html,
+	section 1.3:
+
+	"To transform a Unicode string into a given Unicode Normalization
+	Form, the first step is to fully decompose the string. [...] Full
+	decomposition involves recursive application of the
+	Decomposition_Mapping values, because in some cases a complex
+	composite character may have a Decomposition_Mapping into a
+	sequence of characters, one of which may also have its own
+	non-trivial Decomposition_Mapping value."
+
 2010-02-18  Gabriel Burt  <gabriel.burt@gmail.com>
 
 	* Normalization.cs: Implement algorithmic Hangul decomposition; Calling

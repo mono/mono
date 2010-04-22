@@ -223,7 +223,7 @@ namespace Mono.Globalization.Unicode
 			for (int i = 0; i < source.Length; i++)
 				if (QuickCheck (source [i], checkType) == NormalizationCheck.No)
 					DecomposeChar (ref sb, ref buf, source,
-						i, ref start);
+						i, checkType, ref start);
 			if (sb != null)
 				sb.Append (source, start, source.Length - start);
 			ReorderCanonical (source, ref sb, 1);
@@ -261,17 +261,15 @@ namespace Mono.Globalization.Unicode
 		}
 
 		static void DecomposeChar (ref StringBuilder sb,
-			ref int [] buf, string s, int i, ref int start)
+			ref int [] buf, string s, int i, int checkType, ref int start)
 		{
 			if (sb == null)
 				sb = new StringBuilder (s.Length + 100);
 			sb.Append (s, start, i - start);
 			if (buf == null)
 				buf = new int [19];
-			GetCanonical (s [i], buf, 0);
-			for (int x = 0; ; x++) {
-				if (buf [x] == 0)
-					break;
+			int n = GetCanonical (s [i], buf, 0, checkType);
+			for (int x = 0; x < n; x++) {
 				if (buf [x] < char.MaxValue)
 					sb.Append ((char) buf [x]);
 				else { // surrogate
@@ -345,11 +343,11 @@ namespace Mono.Globalization.Unicode
 				  HangulNCount = HangulVCount * HangulTCount,   // 588
 				  HangulSCount = HangulLCount * HangulNCount;   // 11172
 
-		private static bool GetCanonicalHangul (int s, int [] buf, int bufIdx)
+		private static int GetCanonicalHangul (int s, int [] buf, int bufIdx)
 		{
 			int idx = s - HangulSBase;
 			if (idx < 0 || idx >= HangulSCount) {
-				return false;
+				return bufIdx;
 			}
 
 			int L = HangulLBase + idx / HangulNCount;
@@ -362,16 +360,35 @@ namespace Mono.Globalization.Unicode
 				buf [bufIdx++] = T;
 			}
 			buf [bufIdx] = (char) 0;
-			return true;
+			return bufIdx;
 		}
 
-		public static void GetCanonical (int c, int [] buf, int bufIdx)
+		static int GetCanonical (int c, int [] buf, int bufIdx, int checkType)
 		{
-			if (!GetCanonicalHangul (c, buf, bufIdx)) {
-				for (int i = CharMapIdx (c); mappedChars [i] != 0; i++)
-					buf [bufIdx++] = mappedChars [i];
-				buf [bufIdx] = (char) 0;
+			int newBufIdx = GetCanonicalHangul (c, buf, bufIdx);
+			if (newBufIdx > bufIdx)
+				return newBufIdx;
+ 
+			int i = CharMapIdx (c);
+			if (i == 0 || mappedChars [i] == c)
+				buf [bufIdx++] = c;
+			else {
+				// Character c maps to one or more decomposed chars.
+				for (; mappedChars [i] != 0; i++) {
+					int nth = mappedChars [i];
+
+					// http://www.unicode.org/reports/tr15/tr15-31.html, 1.3:
+					// Full decomposition involves recursive application of the
+					// Decomposition_Mapping values.  Note that QuickCheck does
+					// not currently support astral plane codepoints.
+					if (nth <= 0xffff && QuickCheck ((char)nth, checkType) == NormalizationCheck.Yes)
+						buf [bufIdx++] = nth;
+					else
+						bufIdx = GetCanonical (nth, buf, bufIdx, checkType);
+				}
 			}
+
+			return bufIdx;
 		}
 
 		public static bool IsNormalized (string source, int type)

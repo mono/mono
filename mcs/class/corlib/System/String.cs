@@ -2393,68 +2393,66 @@ namespace System
 		private static void ParseFormatSpecifier (string str, ref int ptr, out int n, out int width,
 		                                          out bool left_align, out string format)
 		{
+			int max = str.Length;
+			
 			// parses format specifier of form:
 			//   N,[\ +[-]M][:F]}
 			//
 			// where:
-
-			try {
-				// N = argument number (non-negative integer)
-
-				n = ParseDecimal (str, ref ptr);
-				if (n < 0)
-					throw new FormatException ("Input string was not in a correct format.");
-
-				// M = width (non-negative integer)
-
-				if (str[ptr] == ',') {
-					// White space between ',' and number or sign.
-					++ptr;
-					while (Char.IsWhiteSpace (str [ptr]))
-						++ptr;
-					int start = ptr;
-
-					format = str.Substring (start, ptr - start);
-
-					left_align = (str [ptr] == '-');
-					if (left_align)
-						++ ptr;
-
-					width = ParseDecimal (str, ref ptr);
-					if (width < 0)
-						throw new FormatException ("Input string was not in a correct format.");
-				}
-				else {
-					width = 0;
-					left_align = false;
-					format = String.Empty;
-				}
-
-				// F = argument format (string)
-
-				if (str[ptr] == ':') {
-					int start = ++ ptr;
-					while (str[ptr] != '}')
-						++ ptr;
-
-					format += str.Substring (start, ptr - start);
-				}
-				else
-					format = null;
-
-				if (str[ptr ++] != '}')
-					throw new FormatException ("Input string was not in a correct format.");
-			}
-			catch (IndexOutOfRangeException) {
+			// N = argument number (non-negative integer)
+			
+			n = ParseDecimal (str, ref ptr);
+			if (n < 0)
 				throw new FormatException ("Input string was not in a correct format.");
+			
+			// M = width (non-negative integer)
+			
+			if (ptr < max && str[ptr] == ',') {
+				// White space between ',' and number or sign.
+				++ptr;
+				while (ptr < max && Char.IsWhiteSpace (str [ptr]))
+					++ptr;
+				int start = ptr;
+				
+				format = str.Substring (start, ptr - start);
+				
+				left_align = (ptr < max && str [ptr] == '-');
+				if (left_align)
+					++ ptr;
+				
+				width = ParseDecimal (str, ref ptr);
+				if (width < 0)
+					throw new FormatException ("Input string was not in a correct format.");
 			}
+			else {
+				width = 0;
+				left_align = false;
+				format = String.Empty;
+			}
+			
+			// F = argument format (string)
+			
+			if (ptr < max && str[ptr] == ':') {
+				int start = ++ ptr;
+				while (ptr < max && str[ptr] != '}')
+					++ ptr;
+				
+				format += str.Substring (start, ptr - start);
+			}
+			else
+				format = null;
+			
+			if ((ptr >= max) || str[ptr ++] != '}')
+				throw new FormatException ("Input string was not in a correct format.");
 		}
 
 		private static int ParseDecimal (string str, ref int ptr)
 		{
 			int p = ptr;
 			int n = 0;
-			while (true) {
+			int max = str.Length;
+			
+			while (p < max) {
 				char c = str[p];
 				if (c < '0' || '9' < c)
 					break;
@@ -2463,7 +2461,7 @@ namespace System
 				++ p;
 			}
 
-			if (p == ptr)
+			if (p == ptr || p == max)
 				return -1;
 
 			ptr = p;

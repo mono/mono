@@ -4266,6 +4266,21 @@ public class StringTest
 		Assert.AreEqual (formKD, s.Normalize (NormalizationForm.FormKD), "#3");
 		Assert.AreEqual (formKC, s.Normalize (NormalizationForm.FormKC), "#4");
 	}
+
+	[Test] // bug #480152, test cases by David Mitchell
+	public void NormalizeFormD ()
+	{
+		Assert.AreEqual ("\u212B".Normalize (NormalizationForm.FormD), "\u0041\u030A", "#1");
+		Assert.AreEqual ("\u1E69".Normalize (NormalizationForm.FormD), "\u0073\u0323\u0307", "#2");
+		Assert.AreEqual ("\u1e4e".Normalize (NormalizationForm.FormD), "\u004f\u0303\u0308", "#3");
+		Assert.AreEqual ("\u1e2f".Normalize (NormalizationForm.FormD), "\u0069\u0308\u0301", "#4");
+	}
+
+	[Test] // bug #480152, test cases by David Mitchell
+	public void NormalizeFormC ()
+	{
+		Assert.AreEqual ("\u0041\u030a\u0061\u030a".Normalize (NormalizationForm.FormC), "\u00c5\u00e5", "#1");
+	}
 #endif
 	[Test]
 	public void Emptiness ()
