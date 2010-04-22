@@ -402,6 +402,96 @@ namespace MonoTests.System.Data.SqlClient
 			}
 		}
 
+		[Test] // bug #595918
+		public void DecimalDefaultScaleTest ()
+		{
+			string create_tbl = "CREATE TABLE #decimalScaleCheck (decsclcheck DECIMAL (19, 5) null)";
+			string create_sp = "CREATE PROCEDURE #sp_bug595918(@decsclcheck decimal(19,5) OUT)"
+			        + "AS " + Environment.NewLine
+			        + "BEGIN" + Environment.NewLine
+			        + "INSERT INTO #decimalScaleCheck values (@decsclcheck)" + Environment.NewLine
+			        + "SELECT @decsclcheck=decsclcheck from #decimalScaleCheck" + Environment.NewLine
+			        + "END";
+			
+			cmd = new SqlCommand (create_tbl, conn);
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = create_sp;
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = "[#sp_bug595918]";
+			cmd.CommandType = CommandType.StoredProcedure;
+			SqlParameter pValue = new SqlParameter("@decsclcheck", SqlDbType.Decimal);
+			pValue.Value = 128.425;
+			pValue.Precision = 19;
+			pValue.Scale = 3;
+			pValue.Direction = ParameterDirection.InputOutput;
+			cmd.Parameters.Add(pValue);
+			cmd.ExecuteNonQuery();
+
+			Assert.AreEqual (128.425, pValue.Value, "Stored decimal value is incorrect - DS - Bug#595918");
+		}
+		
+		[Test] // bug #595918
+		public void DecimalGreaterScaleTest ()
+		{
+			string create_tbl = "CREATE TABLE #decimalScaleCheck (decsclcheck DECIMAL (19, 5) null)";
+			string create_sp = "CREATE PROCEDURE #sp_bug595918(@decsclcheck decimal(19,5) OUT)"
+			        + "AS " + Environment.NewLine
+			        + "BEGIN" + Environment.NewLine
+			        + "INSERT INTO #decimalScaleCheck values (@decsclcheck)" + Environment.NewLine
+			        + "SELECT @decsclcheck=decsclcheck from #decimalScaleCheck" + Environment.NewLine
+			        + "END";
+			
+			cmd = new SqlCommand (create_tbl, conn);
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = create_sp;
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = "[#sp_bug595918]";
+			cmd.CommandType = CommandType.StoredProcedure;
+			SqlParameter pValue = new SqlParameter("@decsclcheck", SqlDbType.Decimal);
+			pValue.Value = 128.425;
+			pValue.Precision = 19;
+			pValue.Scale = 5;
+			pValue.Direction = ParameterDirection.InputOutput;
+			cmd.Parameters.Add(pValue);
+			cmd.ExecuteNonQuery();
+
+			Assert.AreEqual (128.42500, pValue.Value, "Stored decimal value is incorrect - GS - Bug#595918");
+		}
+
+		[Test] // bug #595918
+		public void DecimalLesserScaleTest ()
+		{
+			string create_tbl = "CREATE TABLE #decimalScaleCheck (decsclcheck DECIMAL (19, 5) null)";
+			string create_sp = "CREATE PROCEDURE #sp_bug595918(@decsclcheck decimal(19,5) OUT)"
+			        + "AS " + Environment.NewLine
+			        + "BEGIN" + Environment.NewLine
+			        + "INSERT INTO #decimalScaleCheck values (@decsclcheck)" + Environment.NewLine
+			        + "SELECT @decsclcheck=decsclcheck from #decimalScaleCheck" + Environment.NewLine
+			        + "END";
+			
+			cmd = new SqlCommand (create_tbl, conn);
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = create_sp;
+			cmd.ExecuteNonQuery ();
+			
+			cmd.CommandText = "[#sp_bug595918]";
+			cmd.CommandType = CommandType.StoredProcedure;
+			SqlParameter pValue = new SqlParameter("@decsclcheck", SqlDbType.Decimal);
+			pValue.Value = 128.425;
+			pValue.Precision = 19;
+			pValue.Scale = 2;
+			pValue.Direction = ParameterDirection.InputOutput;
+			cmd.Parameters.Add(pValue);
+			cmd.ExecuteNonQuery();
+
+			Assert.AreEqual (128.42, pValue.Value, "Stored decimal value is incorrect - LS - Bug#595918");
+		}
+
 		int ClientVersion {
 			get {
 				return (engine.ClientVersion);

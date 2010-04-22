@@ -1,3 +1,9 @@
+2010-04-21  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #595918
+	* Tds70.cs (WriteParameterInfo): Write updated decimal value according 
+	to specified scale value.
+	
 2009-08-17  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #381151 NRE 
