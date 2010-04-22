@@ -525,9 +525,26 @@ namespace System.IO.Ports
 			// Are we on Unix?
 			if (p == 4 || p == 128 || p == 6) {
 				string[] ttys = Directory.GetFiles("/dev/", "tty*");
+				bool linux_style = false;
+
+				//
+				// Probe for Linux-styled devices: /dev/ttyS* or /dev/ttyUSB*
+				// 
 				foreach (string dev in ttys) {
-					if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB"))
-						serial_ports.Add(dev);
+					if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB")){
+						linux_style = true;
+						break;
+					}
+				}
+
+				foreach (string dev in ttys) {
+					if (linux_style){
+						if (dev.StartsWith("/dev/ttyS") || dev.StartsWith("/dev/ttyUSB"))
+							serial_ports.Add (dev);
+					} else {
+						if (dev.StartsWith ("/dev/tty"))
+							serial_ports.Add (dev);
+					}
 				}
 			} else {
 				using (RegistryKey subkey = Registry.LocalMachine.OpenSubKey("HARDWARE\\DEVICEMAP\\SERIALCOMM"))
