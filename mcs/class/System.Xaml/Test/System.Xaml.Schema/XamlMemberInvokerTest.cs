@@ -126,6 +126,24 @@ namespace MonoTests.System.Xaml.Schema
 		}
 
 		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void GetValueInitialization ()
+		{
+			var xm = XamlLanguage.Initialization;
+			var i = xm.Invoker;
+			i.GetValue ("foo");
+		}
+
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void GetValuePositionalParameter ()
+		{
+			var xm = XamlLanguage.PositionalParameters;
+			var i = xm.Invoker;
+			i.GetValue (new TypeExtension (typeof (int)));
+		}
+
+		[Test]
 		[ExpectedException (typeof (TargetException))]
 		public void SetValueOnIrrelevantObject ()
 		{

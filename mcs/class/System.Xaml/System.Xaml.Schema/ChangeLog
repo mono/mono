@@ -1,3 +1,8 @@
+2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlMemberInvoker.cs : make sure GetValue() is not supported
+	  on directives.
+
 2010-04-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlTypeTypeConverter.cs : this prefers UnderlyingType.ToString()

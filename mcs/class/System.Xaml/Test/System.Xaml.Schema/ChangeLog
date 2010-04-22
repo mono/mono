@@ -1,5 +1,10 @@
 2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlMemberInvokerTest.cs : make sure GetValue() is not supported
+	  on directives.
+
+2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlMemberInvokerTest.cs : make sure that the invoker returns Type
 	  for Type member here. (XamlObjectReader returns string for some
 	  cases, so I wanted to make sure it is *not* here.)
