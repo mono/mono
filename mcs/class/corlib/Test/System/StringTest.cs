@@ -4309,6 +4309,13 @@ public class StringTest
 		Assert.AreEqual ("!\u116C".Normalize (NormalizationForm.FormC), "!\u116C", "#5");
 		Assert.AreEqual ("!\u116B\u11C2".Normalize (NormalizationForm.FormC), "!\u116B\u11C2", "#6");
 	}
+
+	[Test]
+	public void MoreNormalizeFormC ()
+	{
+		Assert.AreEqual ("\u1E0A\u0323".Normalize (NormalizationForm.FormC), "\u1E0C\u0307", "#1");
+		Assert.AreEqual ("\u0044\u0323\u0307".Normalize (NormalizationForm.FormC), "\u1E0C\u0307", "#2");
+	}
 #endif
 	[Test]
 	public void Emptiness ()

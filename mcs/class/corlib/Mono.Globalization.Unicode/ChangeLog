@@ -1,5 +1,12 @@
 2010-04-20  Damien Diederen  <dd@crosstwine.com>
 
+    	* Normalization.cs: The correct "checkType" argument to
+	Decompose() is NKD or NKFD when normalizing to NKC resp. NKFC.
+
+	* StringTest.cs: More NFC test cases.
+
+2010-04-20  Damien Diederen  <dd@crosstwine.com>
+
 	* Normalization.cs: Implement algorithmic Hangul composition.
 	Calling Normalize(NormalizationForm.FormC) on Korean characters
 	now works properly (bnc#480152).

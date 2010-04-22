@@ -56,7 +56,8 @@ namespace Mono.Globalization.Unicode
 		private static string Compose (string source, int checkType)
 		{
 			StringBuilder sb = null;
-			Decompose (source, ref sb, checkType);
+			// Decompose to NFD or NKFD depending on our target
+			Decompose (source, ref sb, checkType == 2 ? 3 : 1);
 			if (sb == null)
 				sb = Combine (source, 0, checkType);
 			else
