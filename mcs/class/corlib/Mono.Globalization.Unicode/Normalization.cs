@@ -278,16 +278,19 @@ namespace Mono.Globalization.Unicode
 				return;
 			}
 			// check only with sb
-			for (int i = start; i < sb.Length; i++) {
+			for (int i = start; i < sb.Length; ) {
 				int level = GetCombiningClass (sb [i]);
-				if (level == 0)
+				if (level == 0 || GetCombiningClass (sb [i - 1]) <= level) {
+					i++;
 					continue;
-				if (GetCombiningClass (sb [i - 1]) > level) {
-					char c = sb [i - 1];
-					sb [i - 1] = sb [i];
-					sb [i] = c;
-					i--; // apply recursively
 				}
+
+				char c = sb [i - 1];
+				sb [i - 1] = sb [i];
+				sb [i] = c;
+				// Apply recursively.
+				if (i > 1)
+					i--;
 			}
 		}
 

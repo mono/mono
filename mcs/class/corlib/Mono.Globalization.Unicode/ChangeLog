@@ -1,5 +1,14 @@
 2010-04-20  Damien Diederen  <dd@crosstwine.com>
 
+	* Normalization.cs: Really apply canonical reordering "recursively."
+
+	Before this, a sequence of code points with the combining
+	classes (22, 33, 11) would be reordered to (22, 11, 33) instead of
+	the correct (11, 22, 33).  This is because the 'i--' would be
+	directly cancelled by the 'i++' in the for loop.
+
+2010-04-20  Damien Diederen  <dd@crosstwine.com>
+
     	* Normalization.cs: The correct "checkType" argument to
 	Decompose() is NKD or NKFD when normalizing to NKC resp. NKFC.
 
