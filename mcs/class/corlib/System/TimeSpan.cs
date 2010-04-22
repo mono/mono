@@ -534,7 +534,8 @@ namespace System
 
 		public string ToString (string format, IFormatProvider formatProvider)
 		{
-			if (format == null || format.Length == 0 || format == "c") // Default version
+			if (format == null || format.Length == 0 || format == "c" ||
+					format == "t" || format == "T") // Default version
 				return ToString ();
 
 			if (format != "g" && format != "G")
@@ -783,12 +784,7 @@ namespace System
 
 				while (!AtEnd && Char.IsDigit (_src, _cur)) {
 					res = res * 10 + _src[_cur] - '0';
-#if NET_4_0
-					// more than one preceding zero will case an OverflowException
-					if (res > Int32.MaxValue || (count >= 1 && res == 0)) {
-#else
 					if (res > Int32.MaxValue) {
-#endif
 						SetParseError (ParseError.Overflow);
 						break;
 					}

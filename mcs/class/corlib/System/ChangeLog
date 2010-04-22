@@ -1,3 +1,9 @@
+2010-04-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpan.cs: The final 4.0 release removed the restriction of
+	preceding zeroes when parsing, and it also added 't' and 'T' as valid
+	formats equivalent to 'c' (default).
+
 2010-04-16 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* MonoType.cs (GetInterface): Compare against the name
