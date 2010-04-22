@@ -27,7 +27,7 @@ using System;
 using System.Threading;
 using System.Collections.Concurrent;
 
-namespace MonoTests.System.Linq.Parallel
+namespace MonoTests.System.Linq
 {
 	public static class ParallelTestHelper
 	{

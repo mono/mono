@@ -1,3 +1,8 @@
+2010-04-23  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ParallelEnumerableTests.cs: Fix namespace, add NET_4_0 #ifdef
+	* ParallelTestHelper.cs: Fix namespace
+
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ParallelEnumerableTests.cs: Tweak Skip unit test to avoid deadlocking for now

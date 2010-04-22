@@ -24,6 +24,8 @@
 //
 //
 
+#if NET_4_0
+
 using System;
 using System.Threading;
 using System.Linq;
@@ -33,7 +35,7 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-namespace MonoTests.System.Linq.Parallel
+namespace MonoTests.System.Linq
 {
 	[TestFixtureAttribute]
 	public class ParallelEnumerableTests
@@ -741,3 +743,5 @@ namespace MonoTests.System.Linq.Parallel
 		}
 	}
 }
+
+#endif

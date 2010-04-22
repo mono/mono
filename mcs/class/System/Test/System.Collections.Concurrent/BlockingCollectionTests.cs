@@ -30,7 +30,7 @@ using System.Collections.Generic;
 
 using NUnit.Framework;
 
-namespace ParallelFxTests
+namespace MonoTests.System.Collections.Concurrent
 {
 	[TestFixture()]
 	public class BlockingCollectionTests
@@ -139,6 +139,13 @@ namespace ParallelFxTests
 			Assert.IsTrue(defaultCollection.IsCompleted, "#4");
 		}
 		
+		[TestAttribute]
+		public void IsCompletedEmptyTestCase ()
+		{
+			defaultCollection.CompleteAdding ();
+			Assert.IsTrue (defaultCollection.IsCompleted);
+		}
+
 		[TestAttribute]
 		public void ConsumingEnumerableTestCase()
 		{
