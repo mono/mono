@@ -85,15 +85,15 @@ namespace System.Xaml
 		
 		#region type conversion and member value retrieval
 		
-		public static object GetStringValue (this XamlType xt, object obj)
+		public static string GetStringValue (this XamlType xt, object obj)
 		{
 			if (obj == null)
 				return String.Empty;
 			if (obj is DateTime)
 				// FIXME: DateTimeValueSerializer should apply
-				return TypeDescriptor.GetConverter (typeof (DateTime)).ConvertToInvariantString (obj);
+				return (string) TypeDescriptor.GetConverter (typeof (DateTime)).ConvertToInvariantString (obj);
 			else
-				return xt.ConvertObject (obj, typeof (string));
+				return (string) xt.ConvertObject (obj, typeof (string));
 		}
 
 		public static object ConvertObject (this XamlType xt, object target, Type explicitTargetType)
@@ -101,11 +101,11 @@ namespace System.Xaml
 			return DoConvert (xt.TypeConverter, target, explicitTargetType ?? xt.UnderlyingType);
 		}
 		
-		public static object GetMemberValue (this XamlMember xm, object target)
+		public static object GetMemberValue (this XamlMember xm, XamlType xt, object target)
 		{
-			object native = GetPropertyOrFieldValue (xm, target);
-			var targetRType = xm.TargetType == null ? null : xm.TargetType.UnderlyingType;
-			return DoConvert (xm.TypeConverter, native, targetRType);
+			object native = GetPropertyOrFieldValue (xm, xt, target);
+			var memberRType = xm.Type == null ? null : xm.Type.UnderlyingType;
+			return DoConvert (xm.TypeConverter, native, memberRType);
 		}
 		
 		static object DoConvert (XamlValueConverter<TypeConverter> converter, object value, Type targetType)
@@ -117,11 +117,20 @@ namespace System.Xaml
 			return value;
 		}
 
-		static object GetPropertyOrFieldValue (this XamlMember xm, object target)
+		static object GetPropertyOrFieldValue (this XamlMember xm, XamlType xt, object target)
 		{
 			// FIXME: should this be done here??
 			if (xm == XamlLanguage.Initialization)
 				return target;
+			if (xm == XamlLanguage.PositionalParameters) {
+				var argdefs = xt.GetConstructorArguments ().ToArray ();
+				string [] args = new string [argdefs.Length];
+				for (int i = 0; i < args.Length; i++) {
+					var am = argdefs [i];
+					args [i] = GetStringValue (am.Type, GetMemberValue (am, xt, target));
+				}
+				return String.Join (", ", args);
+			}
 
 			var mi = xm.UnderlyingMember;
 			var fi = mi as FieldInfo;
@@ -129,9 +138,9 @@ namespace System.Xaml
 				return fi.GetValue (target);
 			var pi = mi as PropertyInfo;
 			if (pi != null)
-				return ((PropertyInfo) mi).GetValue (target, null);
+				return pi.GetValue (target, null);
 
-			throw new NotImplementedException ();
+			throw new NotImplementedException (String.Format ("Cannot get value for {0}", xm));
 		}
 		
 		#endregion
@@ -139,6 +148,8 @@ namespace System.Xaml
 		public static bool IsContentValue (this XamlMember member)
 		{
 			if (member == XamlLanguage.Initialization)
+				return true;
+			if (member == XamlLanguage.PositionalParameters)
 				return true;
 			return IsContentValue (member.Type);
 		}
@@ -155,8 +166,15 @@ namespace System.Xaml
 
 		public static IEnumerable<XamlMember> GetAllReadWriteMembers (this XamlType type)
 		{
+			// FIXME: find out why only TypeExtension yields this directive. Seealso XamlObjectReaderTest
+			if (type == XamlLanguage.Type) {
+				yield return XamlLanguage.PositionalParameters;
+				yield break;
+			}
+
 			if (type.IsContentValue ())
 				yield return XamlLanguage.Initialization;
+
 			foreach (var m in type.GetAllMembers ())
 				yield return m;
 		}

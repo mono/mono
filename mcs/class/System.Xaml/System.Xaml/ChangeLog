@@ -1,3 +1,10 @@
+2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlObjectReader.cs
+	  XamlMember.cs
+	  TypeExtensionMethods.cs
+	  XamlType.cs : handle PositionalParameters, for Type type support.
+
 2010-04-20  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TypeExtensionMethods.cs : add IsContentValue() for member and

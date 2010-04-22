@@ -41,6 +41,7 @@ using Category = NUnit.Framework.CategoryAttribute;
 // - Reference: [ConstructorArgument], [ContentProperty] -> only ordinal member.
 // - ArrayExtension: [ConstrutorArgument], [ContentProperty] -> no PositionalParameters, Items.
 // - NullExtension: no member.
+// - MyExtension: [ConstructorArgument] -> only ordinal members...hmm?
 
 namespace MonoTests.System.Xaml
 {
@@ -623,6 +624,30 @@ namespace MonoTests.System.Xaml
 			SimpleReadStandardType (new TypeExtension ());
 		}
 
+		[Test]
+		public void Read_CustomMarkupExtension ()
+		{
+			var r = new XamlObjectReader (new MyExtension () { Foo = typeof (int), Bar = "v2"});
+			while (!r.IsEof) {
+				r.Read ();
+				if (r.Type != null && r.Type.UnderlyingType == typeof (MyExtension))
+					break;
+			}
+			Assert.IsFalse (r.IsEof, "#1");
+			var xt = r.Type;
+			while (!r.IsEof) {
+				r.Read ();
+				if (r.Member != null && r.Member.Name == "Foo")
+					break;
+			}
+			Assert.IsFalse (r.IsEof, "#2");
+			Assert.AreEqual (xt.GetMember ("Foo"), r.Member, "#3");
+			Assert.IsTrue (r.Read (), "#4");
+			Assert.AreEqual (XamlNodeType.Value, r.NodeType, "#5");
+			// FIXME: enable this.
+			//Assert.AreEqual ("x:Int32", r.Value, "#6");
+		}
+
 		void SimpleReadStandardType (object instance)
 		{
 			var r = new XamlObjectReader (instance);
@@ -698,5 +723,30 @@ namespace MonoTests.System.Xaml
 	public class TestClass3
 	{
 		public TestClass3 Nested { get; set; }
+	}
+
+	[MarkupExtensionReturnType (typeof (Type))]
+	public class MyExtension : MarkupExtension
+	{
+		public MyExtension ()
+		{
+		}
+
+		public MyExtension (Type arg1, string arg2)
+		{
+			Foo = arg1;
+			Bar = arg2;
+		}
+
+		[ConstructorArgument ("arg1")]
+		public Type Foo { get; set; }
+		
+		[ConstructorArgument ("arg2")]
+		public string Bar { get; set; }
+
+		public override object ProvideValue (IServiceProvider provider)
+		{
+			return "provided_value";
+		}
 	}
 }

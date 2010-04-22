@@ -274,8 +274,10 @@ namespace System.Xaml
 			var ns = xt.PreferredXamlNamespace;
 			if (!l.Contains (ns))
 				l.Add (ns);
-			foreach (var xm in xt.GetAllMembers ()) {
+			foreach (var xm in xt.GetAllReadWriteMembers ()) {
 				ns = xm.PreferredXamlNamespace;
+				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace)
+					continue;
 				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
 					continue; // FIXME: process them too.
 				CollectNamespaces (l, xm.Invoker.GetValue (o), xm.Type);
@@ -312,9 +314,10 @@ namespace System.Xaml
 
 			var xm = members_stack.Peek ().Current;
 			var obj = objects.Peek ();
+			var xt = types.Peek ();
 			if (xm == XamlLanguage.Initialization)
-				return types.Peek ().GetStringValue (obj);
-			return xm != null ? xm.GetMemberValue (obj) : instance;
+				return xt.GetStringValue (obj);
+			return xm != null ? xm.GetMemberValue (xt, obj) : instance;
 		}
 	}
 }

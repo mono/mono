@@ -597,8 +597,7 @@ namespace System.Xaml
 			// If there is, then return its type.
 			if (parameterCount == 1) {
 				foreach (var xm in GetAllMembers ()) {
-					// not sure if we can ignore xm's CustomAttributeProvider, but it's a default lookup implementation anyways...
-					var ca = xm.UnderlyingMember.GetCustomAttribute<ConstructorArgumentAttribute> (false);
+					var ca = xm.CustomAttributeProvider.GetCustomAttribute<ConstructorArgumentAttribute> (false);
 					if (ca != null)
 						return new XamlType [] {xm.Type};
 				}
@@ -707,6 +706,11 @@ namespace System.Xaml
 			}
 
 			return null;
+		}
+
+		internal IEnumerable<XamlMember> GetConstructorArguments ()
+		{
+			return GetAllMembers ().Where (m => m.UnderlyingMember != null && m.CustomAttributeProvider.GetCustomAttribute<ConstructorArgumentAttribute> (false) != null);
 		}
 	}
 }
