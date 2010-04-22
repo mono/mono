@@ -25,6 +25,7 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
+using System.Windows.Markup;
 using System.Xaml;
 using System.Xaml.Schema;
 using System.Xml;
@@ -113,6 +114,15 @@ namespace MonoTests.System.Xaml.Schema
 			var pi = str_len;
 			var i = new XamlMemberInvoker (new XamlMember (pi, sctx));
 			i.GetValue (new StringBuilder ());
+		}
+
+		[Test]
+		public void GetValueOnTypeValue ()
+		{
+			var xm = XamlLanguage.Type.GetMember ("Type");
+			var i = new XamlMemberInvoker (xm);
+			var o = i.GetValue (new TypeExtension (typeof (int)));
+			Assert.AreEqual (typeof (int), o, "#1");
 		}
 
 		[Test]
