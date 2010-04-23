@@ -1,5 +1,9 @@
 2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpReplyChannel.cs : remove old Http Keep-Alive workaround.
+
+2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpTransportBindingElement.cs,
 	  HttpChannelListener.cs,
 	  HttpListenerManager.cs : add host-to-http-listener mapping so that

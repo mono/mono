@@ -121,11 +121,6 @@ namespace System.ServiceModel.Channels
 
 			Message msg = null;
 
-			// FIXME: our HttpConnection (under HttpListener) 
-			// somehow breaks when the underlying connection is
-			// reused. Remove it when it gets fixed.
-			ctx.Response.KeepAlive = false;
-
 			if (ctx.Request.HttpMethod == "POST") {
 				if (!Encoder.IsContentTypeSupported (ctx.Request.ContentType)) {
 					ctx.Response.StatusCode = (int) HttpStatusCode.UnsupportedMediaType;
