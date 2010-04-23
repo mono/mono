@@ -21,29 +21,19 @@ namespace System.Net
 	class FtpDataStream : Stream, IDisposable
 	{
 		FtpWebRequest request;
-		NetworkStream networkStream;
-		Socket socket;
+		Stream networkStream;
 		bool disposed;
 		bool isRead;
 		int totalRead;
 
-		internal FtpDataStream (FtpWebRequest request, Socket socket, bool isRead)
+		internal FtpDataStream (FtpWebRequest request, Stream stream, bool isRead)
 		{
 			if (request == null)
 				throw new ArgumentNullException ("request");
-			if (socket == null)
-				throw new ArgumentNullException ("socket");
-			if (!socket.Connected)
-				throw new ArgumentException ("socket");
 
 			this.request = request;
-			this.socket = socket;
-			this.networkStream = new NetworkStream (socket, true);
+			this.networkStream = stream;
 			this.isRead = isRead;
-
-			if (request.EnableSsl) {
-				FtpWebRequest.ChangeToSSLSocket (ref networkStream);
-			}
 		}
 
 		public override bool CanRead {
@@ -79,7 +69,7 @@ namespace System.Net
 			}
 		}
 
-		internal NetworkStream NetworkStream {
+		internal Stream NetworkStream {
 			get {
 				CheckDisposed ();
 				return networkStream;
@@ -108,8 +98,7 @@ namespace System.Net
 
 		int ReadInternal (byte [] buffer, int offset, int size)
 		{
-			int nbytes;
-
+			int nbytes = 0;
 			request.CheckIfAborted ();
 
 			try {
@@ -167,7 +156,6 @@ namespace System.Net
 			IAsyncResult ar = BeginRead (buffer, offset, size, null, null);
 			if (!ar.IsCompleted && !ar.AsyncWaitHandle.WaitOne (request.ReadWriteTimeout, false))
 				throw new WebException ("Read timed out.", WebExceptionStatus.Timeout);
-
 			return EndRead (ar);
 		}
 
@@ -244,27 +232,15 @@ namespace System.Net
 				return;
 
 			disposed = true;
-			if (socket != null) {
+			if (networkStream != null)  {
 				try {
-					if (socket.Poll (0, SelectMode.SelectRead)) {
-						byte [] bytes = new byte [2048];
-						int nbytes;
-						do {
-							nbytes = socket.Receive (bytes);
-						} while (nbytes > 0 && socket.Poll (0, SelectMode.SelectRead));
-					}
+ 					networkStream.Close ();
 				} catch {
-					// Ignore
 				}
 
-				try {
-					networkStream.Close ();
-				} catch {
-				}
-				networkStream = null;
-				socket = null;
 				request.SetTransferCompleted ();
 				request = null;
+				networkStream = null;
 			}
 		}
 
