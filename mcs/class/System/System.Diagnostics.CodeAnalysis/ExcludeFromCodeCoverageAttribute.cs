@@ -27,7 +27,6 @@
 //
 
 using System;
-using System.Runtime.InteropServices;
 
 #if NET_4_0
 
@@ -41,7 +40,7 @@ namespace System.Diagnostics.CodeAnalysis {
 		| AttributeTargets.Event,
 		AllowMultiple = false,
 		Inherited = false)]
-	public class ExcludeFromCodeCoverageAttribute : Attribute, _Attribute
+	public sealed class ExcludeFromCodeCoverageAttribute : Attribute
 	{
 		public ExcludeFromCodeCoverageAttribute ()
 		{
