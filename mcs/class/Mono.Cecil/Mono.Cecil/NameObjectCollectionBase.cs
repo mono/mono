@@ -214,8 +214,8 @@ namespace System.Collections.Specialized
 		}
 
 		protected NameObjectCollectionBase (IEqualityComparer equalityComparer) : this( (equalityComparer == null ? StringComparer.InvariantCultureIgnoreCase : equalityComparer), null, null)
-		{			
-		}		
+		{
+		}
 
 		[Obsolete ("Use NameObjectCollectionBase(IEqualityComparer)")]
 #endif
@@ -281,15 +281,15 @@ namespace System.Collections.Specialized
 		}
 
 		//--------------- Public Instance Methods ----------------------
-		// 
+		//
 		/// <summary>
 		/// SDK: Returns an enumerator that can iterate through the NameObjectCollectionBase.
-		/// 
+		///
 		/// <remark>This enumerator returns the keys of the collection as strings.</remark>
 		/// </summary>
 		/// <returns></returns>
 		public
-#if NET_2_0		
+#if NET_2_0
 		virtual
 #endif
  IEnumerator GetEnumerator()
@@ -524,7 +524,7 @@ namespace System.Collections.Specialized
 		}
 
 		/// <summary>
-		/// Gets a value indicating whether the NameObjectCollectionBase instance contains entries whose keys are not a null reference 
+		/// Gets a value indicating whether the NameObjectCollectionBase instance contains entries whose keys are not a null reference
 		/// </summary>
 		/// <returns>true if the NameObjectCollectionBase instance contains entries whose keys are not a null reference otherwise, false.</returns>
 		protected bool BaseHasKeys()
@@ -562,18 +562,18 @@ namespace System.Collections.Specialized
 		}
 
 		/// <summary>
-		/// 
+		///
 		/// </summary>
 		/// <param name="index"></param>
-		/// <LAME>This function implemented the way Microsoft implemented it - 
+		/// <LAME>This function implemented the way Microsoft implemented it -
 		/// item is removed from hashtable and array without considering the case when there are two items with the same key but different values in array.
 		/// E.g. if
 		/// hashtable is [("Key1","value1")] and array contains [("Key1","value1")("Key1","value2")] then
 		/// after RemoveAt(1) the collection will be in following state:
-		/// hashtable:[] 
-		/// array: [("Key1","value1")] 
+		/// hashtable:[]
+		/// array: [("Key1","value1")]
 		/// It's ok only then the key is uniquely assosiated with the value
-		/// To fix it a comparsion of objects stored under the same key in the hashtable and in the arraylist should be added 
+		/// To fix it a comparsion of objects stored under the same key in the hashtable and in the arraylist should be added
 		/// </LAME>>
 		protected void BaseRemoveAt(int index)
 		{
