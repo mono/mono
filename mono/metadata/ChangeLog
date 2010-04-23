@@ -1,3 +1,15 @@
+2010-04-23  Jb Evain  <jbevain@novell.com>
+
+	* domain.c (get_runtime_by_version): renamed to
+	mono_get_runtime_by_version.
+
+	* domain-internals.h: expose mono_get_runtime_by_version as
+	an internal function.
+
+	* assembly.c (mono_assembly_load_from_full): check if the image
+	references a newer runtime than the current executing one, and
+	mark it as invalid if it's the case.
+
 2010-04-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* threadpool.c: patch from Robert Nagy that fixes a nullref and
