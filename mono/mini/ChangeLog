@@ -5,6 +5,10 @@
 
 	Contributed under MIT/X11 license.
 
+2010-04-23  Geoff Norton  <gnorton@novell.com>
+
+	* mini-amd64.h: Darwin x86_64 support.
+
 2010-04-20  Jonathan Pryor  <jpryor@novell.com>
 
 	* exceptions-arm.c: Remove platform checks in favor of configure checks.
