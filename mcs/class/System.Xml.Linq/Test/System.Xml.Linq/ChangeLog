@@ -1,3 +1,8 @@
+2010-04-23  Jonathan Pobst  <monkey@jpobst.com>
+
+	* XAttributeTest.cs, XElementTest.cs: Try to standardize DST usage
+	to fix failing tests in buildbot.
+
 2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XNodeNavigatorTest.cs : added test for bug #594877. Enable and fix

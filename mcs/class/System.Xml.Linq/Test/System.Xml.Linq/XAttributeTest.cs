@@ -858,7 +858,7 @@ namespace MonoTests.System.Xml.Linq
 			DateTime rz = DateTime.UtcNow;
 
 			XAttribute a = new XAttribute ("a", "1987-01-23T21:45:36.089");
-			XAttribute b = new XAttribute ("b", " \n 2001-02-03T04:05:06.789" + DateTime.Now.ToString ("zzz") + "  \r   ");
+			XAttribute b = new XAttribute ("b", " \n 2001-02-03T04:05:06.789" + rb.ToString ("zzz") + "  \r   ");
 			XAttribute c = new XAttribute ("c", "2010-01-02T00:00:00." + weirdTicks.ToString ("d7").TrimEnd ('0') + "Z");
 			XAttribute d = new XAttribute ("d", "  Nov 2, 1956  12:34 AM \r\n   \t");
 			XAttribute e = new XAttribute ("e", " \t 17:13:11.7654321 ");
