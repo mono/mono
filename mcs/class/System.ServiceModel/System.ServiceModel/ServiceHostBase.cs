@@ -599,7 +599,9 @@ namespace System.ServiceModel
 
 		List<ChannelDispatcher> built_dispatchers = new List<ChannelDispatcher> ();
 		Dictionary<ServiceEndpoint, EndpointDispatcher> ep_to_dispatcher_ep = new Dictionary<ServiceEndpoint, EndpointDispatcher> ();
-		
+
+		internal static Action<ChannelDispatcher> ChannelDispatcherSetter;
+
 		internal ChannelDispatcher BuildChannelDispatcher (Type serviceType, ServiceEndpoint se, BindingParameterCollection commonParams)
 		{
 			//Let all behaviors add their binding parameters
@@ -615,8 +617,12 @@ namespace System.ServiceModel
 				lock (HttpTransportBindingElement.ListenerBuildLock) {
 					ServiceHostBase.CurrentServiceHostHack = host;
 					IChannelListener lf = BuildListener (se, commonParams);
-					ServiceHostBase.CurrentServiceHostHack = null;
 					cd = new ChannelDispatcher (lf, se.Binding.Name);
+					if (ChannelDispatcherSetter != null) {
+						ChannelDispatcherSetter (cd);
+						ChannelDispatcherSetter = null;
+					}
+					ServiceHostBase.CurrentServiceHostHack = null;
 				}
 				ep = cd.InitializeServiceEndpoint (serviceType, se);
 				built_dispatchers.Add (cd);

@@ -33,6 +33,7 @@ using System.Net;
 using System.Net.Security;
 using System.ServiceModel;
 using System.ServiceModel.Description;
+using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Security;
 using System.Text;
 
@@ -66,7 +67,7 @@ namespace System.ServiceModel.Channels
 
 		protected override HttpListenerManager CreateListenerManager ()
 		{
-			return new HttpSimpleListenerManager (this, Source, SecurityTokenManager, Host);
+			return new HttpSimpleListenerManager (this, Source, SecurityTokenManager, ChannelDispatcher);
 		}
 	}
 
@@ -89,7 +90,7 @@ namespace System.ServiceModel.Channels
 
 		protected override HttpListenerManager CreateListenerManager ()
 		{
-			return new AspNetListenerManager (this, Source, SecurityTokenManager, Host);
+			return new AspNetListenerManager (this, Source, SecurityTokenManager, ChannelDispatcher);
 		}
 	}
 
@@ -100,11 +101,14 @@ namespace System.ServiceModel.Channels
 		MessageEncoder encoder;
 		HttpListenerManager httpChannelManager;
 
+		internal static HttpChannelListenerBase<TChannel>CurrentHttpChannelListener;
+
 		public HttpChannelListenerBase (HttpTransportBindingElement source,
 			BindingContext context)
 			: base (context)
 		{
-			Host = ServiceHostBase.CurrentServiceHostHack;
+			if (ServiceHostBase.CurrentServiceHostHack != null)
+				DispatcherBuilder.ChannelDispatcherSetter = delegate (ChannelDispatcher cd) { this.ChannelDispatcher = cd; };
 
 			this.Source = source;
 			// The null Uri check looks weird, but it seems the listener can be built without it.
@@ -126,7 +130,7 @@ namespace System.ServiceModel.Channels
 				SecurityTokenManager = new ServiceCredentialsSecurityTokenManager ((ServiceCredentials) context.BindingParameters [typeof (ServiceCredentials)]);
 		}
 
-		public ServiceHostBase Host { get; private set; }
+		internal ChannelDispatcher ChannelDispatcher { get; set; }
 
 		public HttpTransportBindingElement Source { get; private set; }
 
