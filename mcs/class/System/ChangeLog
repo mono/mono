@@ -1,3 +1,8 @@
+2010-04-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* moonlight_raw_System.dll.sources: Add new (for SL4) types
+	to moonlight build
+
 2010-04-16  Raja R Harinath  <harinath@hurrynot.org>
 	and Marek Habersack  <mhabersack@novell.com>
 

@@ -26,13 +26,19 @@ System.ComponentModel/AsyncOperation.cs
 System.ComponentModel/AsyncOperationManager.cs
 System.ComponentModel/BackgroundWorker.cs
 System.ComponentModel/BrowsableAttribute.cs
+System.ComponentModel/BindableAttribute.cs
+System.ComponentModel/BindableSupport.cs
+System.ComponentModel/BindingDirection.cs
 System.ComponentModel/CancelEventArgs.cs
 System.ComponentModel/CategoryAttribute.cs
+System.ComponentModel/ComplexBindingPropertiesAttribute.cs
 System.ComponentModel/ComponentCollection.cs
+System.ComponentModel/DefaultBindingPropertyAttribute.cs
 System.ComponentModel/DefaultEventAttribute.cs
 System.ComponentModel/DefaultPropertyAttribute.cs
 System.ComponentModel/DefaultValueAttribute.cs
 System.ComponentModel/DescriptionAttribute.cs
+System.ComponentModel/DesignTimeVisibleAttribute.cs
 System.ComponentModel/DoWorkEventHandler.cs
 System.ComponentModel/DoWorkEventArgs.cs
 System.ComponentModel/EditorAttribute.cs
@@ -51,6 +57,7 @@ System.ComponentModel/ISynchronizeInvoke.cs
 System.ComponentModel/ISupportInitialize.cs
 System.ComponentModel/ITypeDescriptorContext.cs
 System.ComponentModel/ListSortDirection.cs
+System.ComponentModel/LookupBindingPropertiesAttribute.cs
 System.ComponentModel/ProgressChangedEventHandler.cs
 System.ComponentModel/ProgressChangedEventArgs.cs
 System.ComponentModel/PropertyChangedEventArgs.cs
