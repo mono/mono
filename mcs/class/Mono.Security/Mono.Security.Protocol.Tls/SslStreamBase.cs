@@ -612,7 +612,7 @@ namespace Mono.Security.Protocol.Tls
 				{
 					asyncResult.SetComplete(preReadSize);
 				}
-				else if (!this.context.ConnectionEnd)
+				else if (!this.context.ReceivedConnectionEnd)
 				{
 					// this will read data from the network until we have (at least) one
 					// record to send back to the caller
@@ -731,11 +731,15 @@ namespace Mono.Security.Protocol.Tls
 
 				if (!dataToReturn && (n > 0))
 				{
-					// there is no record to return to caller and (possibly) more data waiting
-					// so continue reading from network (and appending to stream)
-					recordStream.Position = recordStream.Length;
-					this.innerStream.BeginRead(recbuf, 0, recbuf.Length,
-						new AsyncCallback(InternalReadCallback), state);
+					if (context.ReceivedConnectionEnd) {
+						internalResult.SetComplete (0);
+					} else {
+						// there is no record to return to caller and (possibly) more data waiting
+						// so continue reading from network (and appending to stream)
+						recordStream.Position = recordStream.Length;
+						this.innerStream.BeginRead(recbuf, 0, recbuf.Length,
+							new AsyncCallback(InternalReadCallback), state);
+					}
 				}
 				else
 				{
@@ -1176,10 +1180,13 @@ namespace Mono.Security.Protocol.Tls
 					if (this.innerStream != null)
 					{
 						if (this.context.HandshakeState == HandshakeState.Finished &&
-							!this.context.ConnectionEnd)
+							!this.context.SentConnectionEnd)
 						{
-							// Write close notify							
-							this.protocol.SendAlert(AlertDescription.CloseNotify);
+							// Write close notify
+							try {
+								this.protocol.SendAlert(AlertDescription.CloseNotify);
+							} catch {
+							}
 						}
 
 						if (this.ownsStream)

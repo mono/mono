@@ -76,7 +76,8 @@ namespace Mono.Security.Protocol.Tls
 
 		// Misc
 		private bool	abbreviatedHandshake;
-		private bool	connectionEnd;
+		private bool	receivedConnectionEnd;
+		private bool	sentConnectionEnd;
 		private bool	protocolNegotiated;
 		
 		// Sequence numbers
@@ -203,10 +204,16 @@ namespace Mono.Security.Protocol.Tls
 			set { this.handshakeState = value; }
 		}
 
-		public bool ConnectionEnd
+		public bool ReceivedConnectionEnd
 		{
-			get { return this.connectionEnd; }
-			set { this.connectionEnd = value; }
+			get { return this.receivedConnectionEnd; }
+			set { this.receivedConnectionEnd = value; }
+		}
+
+		public bool SentConnectionEnd
+		{
+			get { return this.sentConnectionEnd; }
+			set { this.sentConnectionEnd = value; }
 		}
 
 		public CipherSuiteCollection SupportedCiphers
