@@ -1,3 +1,8 @@
+2010-04-23  Geoff Norton  <gnorton@novell.com>
+
+	* include/private/gcconfig.h: Darwin x86-64 bit support.
+	* darwin_stop_world.c: Ditto
+
 2010-04-19  Jonathan Pryor  <jpryor@novell.com>
 
 	* include/private/gcconfig.h: Android platforms are built atop Linux,
