@@ -1,3 +1,8 @@
+2010-04-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* threadpool.c: patch from Robert Nagy that fixes a nullref and
+	uses mono_sem_wait instead of mono_sem_timedwait for openbsd.
+
 2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c (ves_icall_type_is_assignable_from): Properly handle byref
