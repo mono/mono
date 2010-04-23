@@ -1,3 +1,7 @@
+2010-04-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* LazyThreadSafetyMode.cs: Include in Moonlight build.
+
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* AtomicBoolean.cs:

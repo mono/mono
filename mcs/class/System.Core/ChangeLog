@@ -1,3 +1,8 @@
+2010-04-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* moonlight_raw_System.Core.dll.sources: Include Lazy.cs and
+	LazyThreadSafetyMode.cs from corlib in here.
+
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* System.Core_test.dll.sources: Add PLinq unit tests

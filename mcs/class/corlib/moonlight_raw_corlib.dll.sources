@@ -155,7 +155,6 @@ System/InvalidProgramException.cs
 System/InvalidTimeZoneException.cs
 System/IServiceProvider.cs
 System/KnownTerminals.cs
-System/Lazy.cs
 System/LoaderOptimization.cs
 System/LoaderOptimizationAttribute.cs
 System/MarshalByRefObject.cs

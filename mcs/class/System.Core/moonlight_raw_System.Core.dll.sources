@@ -3,6 +3,8 @@
 ../../build/common/MonoTODOAttribute.cs
 ../corlib/Mono.Security.Cryptography/CryptoTools.cs
 ../corlib/Mono.Security.Cryptography/SymmetricTransform.cs
+../corlib/System/Lazy.cs
+../corlib/System.Threading/LazyThreadSafetyMode.cs
 Assembly/AssemblyInfo.cs
 System/Actions.cs
 System/Funcs.cs
