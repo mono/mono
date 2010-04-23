@@ -1,3 +1,7 @@
+2010-04-23  Marek Safar <marek.safar@gmail.com>
+
+	* Complex.cs: Add explicit BigInteger operator.
+
 2010-03-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* BigInteger.cs: Simply Parse/TryParse.

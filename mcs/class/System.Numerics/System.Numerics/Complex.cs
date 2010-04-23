@@ -5,7 +5,7 @@
 //   Miguel de Icaza (miguel@gnome.org)
 //   Marek Safar (marek.safar@gmail.com)
 //
-// Copyright 2009 Novell, Inc.
+// Copyright 2009, 2010 Novell, Inc.
 //
 //
 //
@@ -179,10 +179,10 @@ namespace System.Numerics {
 			return new Complex ((double) value, 0);
 		}
 
-		//public static explicit operator Complex (BigInteger value)
-		//{
-		//	return new Complex ((double) value, 0);
-		//}
+		public static explicit operator Complex (BigInteger value)
+		{
+			return new Complex ((double) value, 0);
+		}
 
 		public override string ToString ()
 		{
