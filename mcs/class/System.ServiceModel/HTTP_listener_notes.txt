@@ -15,6 +15,7 @@ This mostly explains what our WCF does, and does not explain what I think it rea
 -- It is important to understand that during this process it populates HTTP channel listener onto the *same* port and even possibly onto the same target URL, differentiating only by the request parameter (e.g. "?wsdl"). This causes a lot of confusion on both IHttpHandler (for ASP.NET) and HttpListener (for non-ASP.NET).
 - Inside (abstract) HttpChannelListener`1, it internally has (abstract) HttpListenerManager which manages the actual HTTP listeners.
 -- This intermediate stuff is required to manage HTTP listeners across the actual HttpChannelListeners because more than one channel listeners might use the identical HTTP listener; only one HttpListener can listen to a specific URI prefix, while (as explained above) WSDL support dispatcher may listen to the same URI only differentiating the query parameter.
+- While building ChannelDispatcher inside ServiceHostBase, we have a tricky code that sets ChannelDispatcher to HttpChannelListener. It is to make sure to apply ServiceMetadataExtension to the listener internals. Without that info, it is not possible to handle wsdl requests precisely (or if you have any simpler idea to achieve this safely, we would glad to hear it).
 
 
 ** non-ASP.NET-specific process flow
@@ -64,7 +65,5 @@ There is not a few bugs on service implementations and there often are reasons:
 
 ** Required changes
 
-- HttpChannelListeners (Simple-, AspNet-) need an owner ServiceHostBase (could be a ChannelDispatcher which is bound to a ServiceHostBase). It has to be set probably at ICommunicationObject.Opening event.
-- After having ServiceHostBase to manage a HttpChannelListener for each endpoint URI (create new or reuse), the listener has to differentiate HTTP requests to an appropriate channel, by EndpointDispatcher.FilterPriority.
-- A big problem is that there is *no* strict way to access to bind a ServiceHostBase or ChannelDispatcher to IChannelListener implementation and hence HttpChannelListener. We can add a special internal field for them to ChannelListenerBase and set them internally at ServiceHostBase, but what IF the IChannelListener is *no* ChannelListenerBase? WSHttpBinding used to have a problem that GetProperty<T>() didn't run through its internal listeners. It is no surprise that a user creates an IChannelListener wrapper for base internal channels. In such case, internal property setters won't work AT ALL.
-  -> There is likely a hope. BindingContext.BuildInnerChannelFactory() explicitly rejects such cases that the BidningElementCollection does not contain a TransportBindingElement. So, it could be sort of assumed that HttpTransportBinidngElement is a top-level binding element that can be accessed when building a listener.
+- HttpChannelListeners (Simple-, AspNet-) need an owner ChannelDispatcher. It has to be set probably at ICommunicationObject.Opening event.
+- After having ChannelDispatcher to manage a HttpChannelListener for each endpoint URI (create new or reuse), the listener has to differentiate HTTP requests to an appropriate channel, by EndpointDispatcher.FilterPriority.

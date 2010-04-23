@@ -1,3 +1,8 @@
+2010-04-23  Astushi Enomoto  <atsushi@ximian.com>
+
+	* Http_listener_notes.txt: update comment, as I have fixed one issue
+	  with lengthy explanation.
+
 2010-04-21  Astushi Enomoto  <atsushi@ximian.com>
 
 	* Http_listener_notes.txt: more comment.
