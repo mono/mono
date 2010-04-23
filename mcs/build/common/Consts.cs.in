@@ -41,7 +41,7 @@ static class Consts
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 	public const string FxVersion = "4.0.0.0";
-	public const string FxFileVersion = "4.0.21006.1";
+	public const string FxFileVersion = "4.0.30319.1";
 	
 	public const string VsVersion = "0.0.0.0"; // Useless ?
 	public const string VsFileVersion = "10.0.0.0"; // TODO:
@@ -108,8 +108,8 @@ static class Consts
 	public const string AssemblySystem_Core = "System.Core, Version=" + FxVersion + ", Culture=neutral, PublicKeyToken=b77a5c561934e089";
 	public const string WindowsBase_3_0 = "WindowsBase, Version=3.0.0.0, PublicKeyToken=31bf3856ad364e35";
 	public const string AssemblyWindowsBase = "WindowsBase, Version=4.0.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-	public const string AssemblyPresentationCore_3_5 = "PreserntationCore, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
-	public const string AssemblyPresentationFramework_3_5 = "PreserntationFramework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+	public const string AssemblyPresentationCore_3_5 = "PresentationCore, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
+	public const string AssemblyPresentationFramework_3_5 = "PresentationFramework, Version=3.5.0.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35";
 #elif NET_2_1
 	public const string AssemblySystem_Core = "System.Core, Version=" + FxVersion + ", Culture=neutral, PublicKeyToken=b77a5c561934e089";
 #elif NET_2_0
