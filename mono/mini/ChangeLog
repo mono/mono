@@ -1,3 +1,10 @@
+2010-04-23  Kornel Pal  <kornelpal@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Enable inlining of pointer-sized unmanaged
+	initonly static fields when using moving GC.
+
+	Contributed under MIT/X11 license.
+
 2010-04-20  Jonathan Pryor  <jpryor@novell.com>
 
 	* exceptions-arm.c: Remove platform checks in favor of configure checks.
