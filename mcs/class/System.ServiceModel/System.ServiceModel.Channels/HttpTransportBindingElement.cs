@@ -170,6 +170,8 @@ namespace System.ServiceModel.Channels
 		}
 
 #if !NET_2_1
+		internal static object ListenerBuildLock = new object ();
+
 		public override IChannelListener<TChannel> BuildChannelListener<TChannel> (
 			BindingContext context)
 		{

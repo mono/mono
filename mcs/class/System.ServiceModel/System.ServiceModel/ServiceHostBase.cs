@@ -41,6 +41,9 @@ namespace System.ServiceModel
 	public abstract partial class ServiceHostBase
 		: CommunicationObject, IExtensibleObject<ServiceHostBase>, IDisposable
 	{
+		// It is used for mapping a ServiceHostBase to HttpChannelListener precisely.
+		internal static ServiceHostBase CurrentServiceHostHack;
+
 		ServiceCredentials credentials;
 		ServiceDescription description;
 		UriSchemeKeyedCollection base_addresses;
@@ -377,7 +380,7 @@ namespace System.ServiceModel
 			//can change the collection in the description during the behaviors events.
 			ServiceEndpoint[] endPoints = new ServiceEndpoint[Description.Endpoints.Count];
 			Description.Endpoints.CopyTo (endPoints, 0);
-			var builder = new DispatcherBuilder ();
+			var builder = new DispatcherBuilder (this);
 			foreach (ServiceEndpoint se in endPoints) {
 
 				var commonParams = new BindingParameterCollection ();
@@ -587,6 +590,13 @@ namespace System.ServiceModel
 	/// <remarks>Will re-use ChannelDispatchers when two endpoint uris are the same</remarks>
 	partial class DispatcherBuilder
 	{
+		ServiceHostBase host;
+
+		public DispatcherBuilder (ServiceHostBase host)
+		{
+			this.host = host;
+		}
+
 		List<ChannelDispatcher> built_dispatchers = new List<ChannelDispatcher> ();
 		Dictionary<ServiceEndpoint, EndpointDispatcher> ep_to_dispatcher_ep = new Dictionary<ServiceEndpoint, EndpointDispatcher> ();
 		
@@ -602,9 +612,12 @@ namespace System.ServiceModel
 				ep = cd.InitializeServiceEndpoint (serviceType, se);
 			} else {
 				// Use the binding parameters to build the channel listener and Dispatcher.
-				IChannelListener lf = BuildListener (se, commonParams);
-				cd = new ChannelDispatcher (
-					lf, se.Binding.Name);
+				lock (HttpTransportBindingElement.ListenerBuildLock) {
+					ServiceHostBase.CurrentServiceHostHack = host;
+					IChannelListener lf = BuildListener (se, commonParams);
+					ServiceHostBase.CurrentServiceHostHack = null;
+					cd = new ChannelDispatcher (lf, se.Binding.Name);
+				}
 				ep = cd.InitializeServiceEndpoint (serviceType, se);
 				built_dispatchers.Add (cd);
 			}

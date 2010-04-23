@@ -140,17 +140,19 @@ namespace System.ServiceModel.Channels
 
 	internal class HttpSimpleListenerManager : HttpListenerManager
 	{
-		static Dictionary<Uri, HttpListener> opened_listeners;
+		static Dictionary<object,Dictionary<Uri,HttpListener>> http_listeners_table = new Dictionary<object,Dictionary<Uri,HttpListener>> ();
+
+		Dictionary<Uri, HttpListener> opened_listeners;
 		HttpListener http_listener;
 
-		static HttpSimpleListenerManager ()
+		public HttpSimpleListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager, ServiceHostBase host)
+			: base (channelListener, source, securityTokenManager, host)
 		{
-			opened_listeners = new Dictionary<Uri, HttpListener> ();
-		}
-
-		public HttpSimpleListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager)
-			: base (channelListener, source, securityTokenManager)
-		{
+			object key = host ?? new object (); // so that HttpChannelListener without ServiceHost is always assigned a new table.
+			if (!http_listeners_table.TryGetValue (key, out opened_listeners)) {
+				opened_listeners = new Dictionary<Uri, HttpListener> ();
+				http_listeners_table [key] = opened_listeners;
+			}
 		}
 
 		protected override void OnRegister (IChannelListener channelListener, TimeSpan timeout)
@@ -209,8 +211,8 @@ namespace System.ServiceModel.Channels
 	{
 		SvcHttpHandler http_handler;
 
-		public AspNetListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager)
-			: base (channelListener, source, securityTokenManager)
+		public AspNetListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager, ServiceHostBase host)
+			: base (channelListener, source, securityTokenManager, host)
 		{
 			http_handler = SvcHttpHandler.Current;
 		}
@@ -251,6 +253,7 @@ namespace System.ServiceModel.Channels
 
 		public MetadataPublishingInfo MexInfo { get { return mex_info; } }
 		public HttpTransportBindingElement Source { get; private set; }
+		public ServiceHostBase Host { get; private set; }
 
 		SecurityTokenAuthenticator security_token_authenticator;
 		SecurityTokenResolver security_token_resolver;
@@ -260,8 +263,9 @@ namespace System.ServiceModel.Channels
 			registered_channels = new Dictionary<Uri, List<IChannelListener>> ();
 		}
 
-		protected HttpListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager)
+		protected HttpListenerManager (IChannelListener channelListener, HttpTransportBindingElement source, ServiceCredentialsSecurityTokenManager securityTokenManager, ServiceHostBase host)
 		{
+			this.Host = host;
 			this.channel_listener = channelListener;
 			// FIXME: this cast should not be required, but current JIT somehow causes an internal error.
 			mex_info = ((IChannelListener) channelListener).GetProperty<MetadataPublishingInfo> ();

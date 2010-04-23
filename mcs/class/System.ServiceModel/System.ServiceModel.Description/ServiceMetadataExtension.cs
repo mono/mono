@@ -134,7 +134,7 @@ namespace System.ServiceModel.Description
 				ListenUri = uri,
 			};
 
-			var channelDispatcher = new DispatcherBuilder ().BuildChannelDispatcher (owner.Description.ServiceType, se, new BindingParameterCollection ());
+			var channelDispatcher = new DispatcherBuilder (Owner).BuildChannelDispatcher (owner.Description.ServiceType, se, new BindingParameterCollection ());
 			// add HttpGetWsdl to indicate that the ChannelDispatcher is for mex or help.
 			var listener = channelDispatcher.Listener as ChannelListenerBase;
 			if (listener != null)

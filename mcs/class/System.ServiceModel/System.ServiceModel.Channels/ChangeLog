@@ -1,3 +1,10 @@
+2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElement.cs,
+	  HttpChannelListener.cs,
+	  HttpListenerManager.cs : add host-to-http-listener mapping so that
+	  they can be managed per host.
+
 2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BindingContext.cs : require a TransportBindingElement when

@@ -66,7 +66,7 @@ namespace System.ServiceModel.Channels
 
 		protected override HttpListenerManager CreateListenerManager ()
 		{
-			return new HttpSimpleListenerManager (this, Source, SecurityTokenManager);
+			return new HttpSimpleListenerManager (this, Source, SecurityTokenManager, Host);
 		}
 	}
 
@@ -89,7 +89,7 @@ namespace System.ServiceModel.Channels
 
 		protected override HttpListenerManager CreateListenerManager ()
 		{
-			return new AspNetListenerManager (this, Source, SecurityTokenManager);
+			return new AspNetListenerManager (this, Source, SecurityTokenManager, Host);
 		}
 	}
 
@@ -104,6 +104,8 @@ namespace System.ServiceModel.Channels
 			BindingContext context)
 			: base (context)
 		{
+			Host = ServiceHostBase.CurrentServiceHostHack;
+
 			this.Source = source;
 			// The null Uri check looks weird, but it seems the listener can be built without it.
 			// See HttpTransportBindingElementTest.BuildChannelListenerWithoutListenUri().
@@ -123,6 +125,8 @@ namespace System.ServiceModel.Channels
 			if (context.BindingParameters.Contains (typeof (ServiceCredentials)))
 				SecurityTokenManager = new ServiceCredentialsSecurityTokenManager ((ServiceCredentials) context.BindingParameters [typeof (ServiceCredentials)]);
 		}
+
+		public ServiceHostBase Host { get; private set; }
 
 		public HttpTransportBindingElement Source { get; private set; }
 

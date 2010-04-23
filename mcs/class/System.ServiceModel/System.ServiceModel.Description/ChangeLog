@@ -1,3 +1,7 @@
+2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : reflect DispatcherBuilder change.
+
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescriptionGenerator.cs : fill FaultDescription action,

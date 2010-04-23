@@ -1,3 +1,8 @@
+2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : add host-to-http-listener mapping so that
+	  they can be managed per host.
+
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelTerminatedException.cs : new class.
