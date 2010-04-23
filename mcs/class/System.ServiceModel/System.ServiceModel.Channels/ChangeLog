@@ -1,5 +1,11 @@
 2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs : fixed the issue that mex_info is never
+	  retrieved from the latest channel listener (which could be other
+	  listener than the one which was set mex info).
+
+2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpChannelListener.cs, HttpListenerManager.cs :
 	  actually it should be ChannelDispatcher-to-HttpChannelListener,
 	  to identify which dispatcher to send reqs.

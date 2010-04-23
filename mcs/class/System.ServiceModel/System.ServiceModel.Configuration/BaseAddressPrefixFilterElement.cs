@@ -75,6 +75,11 @@ namespace System.ServiceModel.Configuration
 		{
 		}
 
+		public BaseAddressPrefixFilterElement (Uri prefix)
+		{
+			Prefix = prefix;
+		}
+
 
 		// Properties
 
@@ -82,9 +87,6 @@ namespace System.ServiceModel.Configuration
 			 Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey,
 			IsRequired = true,
 			IsKey = true)]
-		[StringValidator ( MinLength = 1,
-			MaxLength = int.MaxValue,
-			 InvalidCharacters = null)]
 		public Uri Prefix {
 			get { return (Uri) base [prefix]; }
 			set { base [prefix] = value; }

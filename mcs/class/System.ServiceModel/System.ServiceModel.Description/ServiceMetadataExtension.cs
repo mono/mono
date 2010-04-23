@@ -139,6 +139,8 @@ namespace System.ServiceModel.Description
 			var listener = channelDispatcher.Listener as ChannelListenerBase;
 			if (listener != null)
 				listener.Properties.Add (new MetadataPublishingInfo () { SupportsMex = isMex, SupportsHelp = !isMex, Instance = instance });
+			else
+				throw new InvalidOperationException ("FIXME: attempt to use ServiceMetadataExtension to not-supported channel listener: " + listener.GetType ());
 			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (owner, instance));
 
 			dispatchers.Add (uri, channelDispatcher);

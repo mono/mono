@@ -1,5 +1,10 @@
 2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceMetadataExtension.cs : raise an error if it failed to set
+	  mex info. (Make it safer.)
+
+2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceMetadataExtension.cs : reflect DispatcherBuilder change.
 
 2010-04-02  Atsushi Enomoto  <atsushi@ximian.com>

@@ -268,8 +268,7 @@ namespace System.ServiceModel.Channels
 		{
 			this.Dispatcher = dispatcher;
 			this.channel_listener = channelListener;
-			// FIXME: this cast should not be required, but current JIT somehow causes an internal error.
-			mex_info = ((IChannelListener) channelListener).GetProperty<MetadataPublishingInfo> ();
+			mex_info = Dispatcher.Listener.GetProperty<MetadataPublishingInfo> ();
 			wsdl_instance = mex_info != null ? mex_info.Instance : null;
 			Source = source;
 
