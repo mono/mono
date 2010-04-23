@@ -1,0 +1,6 @@
+2010-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* MemoryCacheTest.cs, ObjectCacheTest.cs: added
+
+	* HostFileChangeMonitorTest.cs: added more tests.
+

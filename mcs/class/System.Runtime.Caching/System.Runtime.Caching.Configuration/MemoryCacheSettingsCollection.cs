@@ -72,6 +72,16 @@ namespace System.Runtime.Caching.Configuration
 		{
 		}
 
+		public void Add (MemoryCacheElement cache)
+		{
+			BaseAdd (cache);
+		}
+
+		public void Clear ()
+		{
+			BaseClear ();
+		}
+		
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new MemoryCacheElement ();
@@ -88,6 +98,27 @@ namespace System.Runtime.Caching.Configuration
 				return null;
 
 			return ((MemoryCacheElement)element).Name;
+		}
+
+		public int IndexOf (MemoryCacheElement cache)
+		{
+			if (cache == null)
+				return -1;
+
+			return BaseIndexOf (cache);
+		}
+
+		public void Remove (MemoryCacheElement cache)
+		{
+			if (cache == null)
+				return;
+
+			BaseRemove (GetElementKey (cache));
+		}
+
+		public void RemoveAt (int index)
+		{
+			BaseRemoveAt (index);
 		}
 	}
 }

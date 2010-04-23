@@ -1,5 +1,5 @@
 //
-// CacheEntryMonitor.cs
+// CacheEntryChangeMonitor.cs
 //
 // Authors:
 //      Marek Habersack <mhabersack@novell.com>

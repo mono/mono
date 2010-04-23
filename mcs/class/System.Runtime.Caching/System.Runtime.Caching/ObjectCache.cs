@@ -28,6 +28,7 @@
 using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
 using System.Reflection;
 using System.Runtime;
 
@@ -37,8 +38,8 @@ namespace System.Runtime.Caching
 	{
 		static IServiceProvider host;
 		
-		public static readonly DateTimeOffset InfiniteAbsoluteExpiration;
-		public static readonly TimeSpan NoSlidingExpiration;
+		public static readonly DateTimeOffset InfiniteAbsoluteExpiration = DateTimeOffset.MaxValue;
+		public static readonly TimeSpan NoSlidingExpiration = TimeSpan.Zero;
 
 		public static IServiceProvider Host {
 			[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
@@ -65,50 +66,50 @@ namespace System.Runtime.Caching
 		
 		public virtual bool Add (CacheItem item, CacheItemPolicy policy)
 		{
-			throw new NotImplementedException ();
+			return AddOrGetExisting (item, policy) == null;
 		}
 		
-		public virtual bool Add (string key, object value, CacheItemPolicy policy, string regionName)
+		public virtual bool Add (string key, object value, CacheItemPolicy policy, string regionName = null)
 		{
-			throw new NotImplementedException ();
+			return AddOrGetExisting (key, value, policy, regionName) == null;
 		}
 		
-		public virtual bool Add (string key, object value, DateTimeOffset absoluteExpiration, string regionName)
+		public virtual bool Add (string key, object value, DateTimeOffset absoluteExpiration, string regionName = null)
 		{
-			throw new NotImplementedException ();
+			return AddOrGetExisting (key, value, absoluteExpiration, regionName) == null;
 		}
 		
 		public abstract CacheItem AddOrGetExisting (CacheItem value, CacheItemPolicy policy);
-		public abstract object AddOrGetExisting (string key, object value, CacheItemPolicy policy, string regionName);
-		public abstract object AddOrGetExisting (string key, object value, DateTimeOffset absoluteExpiration, string regionName);
-		public abstract bool Contains (string key, string regionName);
-		public abstract CacheEntryChangeMonitor CreateCacheEntryChangeMonitor (IEnumerable <string> keys, string regionName);
-		public abstract object Get (string key, string regionName);
-		public abstract CacheItem GetCacheItem (string key, string regionName);
-		public abstract long GetCount (string regionName);
+		public abstract object AddOrGetExisting (string key, object value, CacheItemPolicy policy, string regionName = null);
+		public abstract object AddOrGetExisting (string key, object value, DateTimeOffset absoluteExpiration, string regionName = null);
+		public abstract bool Contains (string key, string regionName = null);
+		public abstract CacheEntryChangeMonitor CreateCacheEntryChangeMonitor (IEnumerable <string> keys, string regionName = null);
+		public abstract object Get (string key, string regionName = null);
+		public abstract CacheItem GetCacheItem (string key, string regionName = null);
+		public abstract long GetCount (string regionName = null);
 		protected abstract IEnumerator <KeyValuePair <string, object>> GetEnumerator ();
-		public abstract IDictionary <string, object> GetValues (IEnumerable <string> keys, string regionName);
+		public abstract IDictionary <string, object> GetValues (IEnumerable <string> keys, string regionName = null);
 		
 		[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
-		public virtual IDictionary <string, object> GetValues (string regionName, params string[] keys)
+		public virtual IDictionary <string, object> GetValues (string regionName = null, params string[] keys)
 		{
-			throw new NotImplementedException ();
+			return GetValues (keys.AsEnumerable <string> (), regionName);
 		}
 		
-		public abstract object Remove (string key, string regionName);
+		public abstract object Remove (string key, string regionName = null);
 		public abstract void Set (CacheItem item, CacheItemPolicy policy);
-		public abstract void Set (string key, object value, CacheItemPolicy policy, string regionName);
-		public abstract void Set (string key, object value, DateTimeOffset absoluteExpiration, string regionName);
+		public abstract void Set (string key, object value, CacheItemPolicy policy, string regionName = null);
+		public abstract void Set (string key, object value, DateTimeOffset absoluteExpiration, string regionName = null);
 		
 		[TargetedPatchingOptOut ("Performance critical to inline this type of method across NGen image boundaries")]
 		IEnumerator <KeyValuePair <string,object>> IEnumerable<KeyValuePair<string, object>>.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return GetEnumerator ();
 		}
 		
 		IEnumerator IEnumerable.GetEnumerator ()
 		{
-			throw new NotImplementedException ();
+			return GetEnumerator ();
 		}
 	}
 }

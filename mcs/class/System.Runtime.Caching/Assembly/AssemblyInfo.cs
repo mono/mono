@@ -66,6 +66,5 @@ using System.Runtime.Versioning;
 
 [assembly: AssemblyTargetedPatchBand ("1.0.21-0")]
 [assembly: Debuggable (DebuggableAttribute.DebuggingModes.IgnoreSymbolStoreSequencePoints)]
-[assembly: TargetFramework (".NETFramework.Version=v4.0")]
 [assembly: AllowPartiallyTrustedCallers]
 [assembly: SecurityRules (SecurityRuleSet.Level2, SkipVerificationInFullTrust=true)]

@@ -37,10 +37,19 @@ namespace System.Runtime.Caching
 			private set;
 		}
 
+		public static bool Is64Bit {
+			get;
+			private set;
+		}
+		
 		public static IEqualityComparer <string> StringEqualityComparer {
                         get; private set;
                 }
 
+		public static IComparer <string> StringComparer {
+			get; private set;
+		}
+		
 		public static StringComparison StringComparison {
                         get; private set;
                 }
@@ -50,6 +59,7 @@ namespace System.Runtime.Caching
 			PlatformID pid = Environment.OSVersion.Platform;
                         bool runningOnWindows = ((int) pid != 128 && pid != PlatformID.Unix && pid != PlatformID.MacOSX);
 
+			Is64Bit = IntPtr.Size == 8;
                         if (runningOnWindows)
                                 CaseInsensitive = true;
                         else {
@@ -70,11 +80,13 @@ namespace System.Runtime.Caching
                         }
 
                         if (CaseInsensitive) {
-                                StringEqualityComparer = StringComparer.OrdinalIgnoreCase;
-                                StringComparison = StringComparison.OrdinalIgnoreCase;
+                                StringEqualityComparer = global::System.StringComparer.OrdinalIgnoreCase;
+				StringComparer = global::System.StringComparer.OrdinalIgnoreCase;
+                                StringComparison = global::System.StringComparison.OrdinalIgnoreCase;
                         } else {
-                                StringEqualityComparer = StringComparer.Ordinal;
-                                StringComparison = StringComparison.Ordinal;
+                                StringEqualityComparer = global::System.StringComparer.Ordinal;
+				StringComparer = global::System.StringComparer.Ordinal;
+                                StringComparison = global::System.StringComparison.Ordinal;
 
                         }	
 		}

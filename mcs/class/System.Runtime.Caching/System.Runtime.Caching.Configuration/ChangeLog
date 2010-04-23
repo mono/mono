@@ -1,0 +1,5 @@
+2010-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* MemoryCacheSettingsCollection.cs: added and implemented methods
+	which appeared in .NET 4.0 final.
+

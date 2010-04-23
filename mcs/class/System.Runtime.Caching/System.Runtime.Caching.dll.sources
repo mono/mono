@@ -4,10 +4,10 @@
 ../System.Web/System.Web.Configuration_2.0/NullableStringValidator.cs
 
 Assembly/AssemblyInfo.cs
-System.Runtime.Caching/CacheEntryMonitor.cs
+System.Runtime.Caching/CacheEntryChangeMonitor.cs
 System.Runtime.Caching/CacheEntryRemovedArguments.cs
 System.Runtime.Caching/CacheEntryRemovedCallback.cs
-System.Runtime.Caching/CacheEntryRemoveReason.cs
+System.Runtime.Caching/CacheEntryRemovedReason.cs
 System.Runtime.Caching/CacheEntryUpdateArguments.cs
 System.Runtime.Caching/CacheEntryUpdateCallback.cs
 System.Runtime.Caching/CacheItem.cs
@@ -17,9 +17,15 @@ System.Runtime.Caching/ChangeMonitor.cs
 System.Runtime.Caching/DefaultCacheCapabilities.cs
 System.Runtime.Caching/FileChangeMonitor.cs
 System.Runtime.Caching/FileChangeNotificationSystem.cs
+System.Runtime.Caching/FileChangeNotificationSystemEntry.cs
 System.Runtime.Caching/Helpers.cs
 System.Runtime.Caching/HostFileChangeMonitor.cs
 System.Runtime.Caching/MemoryCache.cs
+System.Runtime.Caching/MemoryCacheContainer.cs
+System.Runtime.Caching/MemoryCacheEntry.cs
+System.Runtime.Caching/MemoryCacheEntryChangeMonitor.cs
+System.Runtime.Caching/MemoryCachePerformanceCounters.cs
+System.Runtime.Caching/MemoryCacheEntryPriorityQueue.cs
 System.Runtime.Caching/ObjectCache.cs
 System.Runtime.Caching/OnChangedCallback.cs
 System.Runtime.Caching/SqlChangeMonitor.cs

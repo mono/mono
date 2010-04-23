@@ -32,7 +32,7 @@ namespace System.Runtime.Caching
 	public abstract class ChangeMonitor : IDisposable
 	{
 		bool initializationComplete;
-		bool onChangedCalled;
+		bool notifyOnChangedCalled;
 		OnChangedCallback onChangedCallback;
 		object onChangedState;
 
@@ -79,13 +79,12 @@ namespace System.Runtime.Caching
 
 		void InvokeOnChangedCallback (object state)
 		{
-			if (onChangedCallback == null || onChangedCalled)
+			if (onChangedCallback == null)
 				return;
 
 			try {
 				onChangedCallback (state);
 			} finally {
-				onChangedCalled = true;
 				onChangedCallback = null;
 				onChangedState = null;
 			}
@@ -96,9 +95,10 @@ namespace System.Runtime.Caching
 			if (onChangedCallback == null)
 				throw new ArgumentNullException ("onChangedCallback");
 
-			if (onChangedCalled)
+			if (notifyOnChangedCalled)
 				throw new InvalidOperationException ("The callback method has already been invoked.");
 
+			notifyOnChangedCalled = true;
 			this.onChangedCallback = onChangedCallback;
 			if (HasChanged) {
 				InvokeOnChangedCallback (onChangedState);
@@ -119,10 +119,10 @@ namespace System.Runtime.Caching
 				// ignore
 				// TODO: check what happens if callback throws an exception - is
 				// Dispose below called?
+			} finally {
+				if (initializationComplete)
+					Dispose ();
 			}
-			
-			if (initializationComplete)
-				Dispose ();
 		}
 	}
 }

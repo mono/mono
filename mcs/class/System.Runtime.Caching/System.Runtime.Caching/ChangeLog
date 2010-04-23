@@ -1,0 +1,34 @@
+2010-04-24  Marek Habersack  <mhabersack@novell.com>
+
+	* ObjectCache.cs: implemented all the non-abstract methods.
+
+	* MemoryCacheContainer.cs, MemoryCacheEntry.cs,
+	MemoryCacheEntryChangeMonitor.cs,
+	MemoryCacheEntryPriorityQueue.cs,
+	MemoryCachePerformanceCounters.cs: added
+
+	* MemoryCache.cs: implemented physical memory size detection, item
+	expiration timer, indexer, reading of configuration values from
+	config files, cache memory limit calculation, the
+	AddOrGetExisting, Set, Get, Contains,
+	CreateCacheEntryChangeMonitor, Dispose, GetCacheItem, GetCount,
+	GetEnumerator, GetValues, Remove and Trim methods.
+	Implemented support for per-cpu item containers.
+	Modified parameters of several methods to match .NET 4.0 release.
+
+	* HostFileChangeMonitor.cs: implemented according to tests.
+
+	* Helpers.cs: added new properties, StringComparer and Is64bit
+
+	* FileChangeNotificationSystemEntry.cs: added
+
+	* FileChangeNotificationSystem.cs: implemented
+
+	* ChangeMonitor.cs: NotifyOnChanged now properly throws an
+	exception if it was called more than once.
+
+	* CacheEntryRemovedReason.cs: renamed from
+	CacheEntryRemoveReason.cs
+
+	* CacheEntryChangeMonitor.cs: renamed from CacheEntryMonitor.cs
+

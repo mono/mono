@@ -36,7 +36,9 @@ namespace System.Runtime.Caching
 {
 	public sealed class HostFileChangeMonitor : FileChangeMonitor
 	{
+		const long INVALID_FILE_SIZE = -1L;
 		static readonly object notificationSystemLock = new object ();
+		static readonly DateTime missingFileTimeStamp = new DateTime (0x701CE1722770000);
 		static IFileChangeNotificationSystem notificationSystem;
 		static bool notificationSystemSetFromHost;
 		
@@ -72,6 +74,7 @@ namespace System.Runtime.Caching
 			lastModified = DateTime.MinValue;
 			DateTime lastWrite;
 			long size;
+			bool ignoreForUniqueId;
 			
 			foreach (string p in filePaths) {
 				if (String.IsNullOrEmpty (p))
@@ -79,31 +82,48 @@ namespace System.Runtime.Caching
 
 				if (!Path.IsPathRooted (p))
 					throw new ArgumentException ("Absolute path information is required.");
+
+				if (list.Contains (p))
+					ignoreForUniqueId = true;
+				else
+					ignoreForUniqueId = false;
 				
 				list.Add (p);
+
+				if (ignoreForUniqueId)
+					continue;
 				
 				if (Directory.Exists (p)) {
 					var di = new DirectoryInfo (p);
 					lastWrite = di.LastWriteTimeUtc;
-					size = 0;
+					size = INVALID_FILE_SIZE;
 				} else if (File.Exists (p)) {
 					var fi = new FileInfo (p);
 					lastWrite = fi.LastWriteTimeUtc;
 					size = fi.Length;
-				} else
-					// TODO: what happens if the entry doesn't exist?
-					continue;
-
+				} else {
+					lastWrite = missingFileTimeStamp;
+					size = INVALID_FILE_SIZE;
+				}
+				
 				if (lastWrite > lastModified)
 					lastModified = lastWrite;
 
-				sb.AppendFormat ("{0}{1:x}{2:x}", p, lastWrite.Ticks, size);
+				sb.AppendFormat ("{0}{1:X}{2:X}", p, lastWrite.Ticks, (ulong)size);
 			}
 
 			this.filePaths = new ReadOnlyCollection <string> (list);
 			this.uniqueId = sb.ToString ();
 
-			InitMonitoring ();
+			bool initComplete = false;
+			try {
+				InitMonitoring ();
+				initComplete = true;
+			} finally {
+				InitializationComplete ();
+				if (!initComplete)
+					Dispose ();
+			}
 		}
 
 		void InitMonitoring ()
@@ -138,22 +158,35 @@ namespace System.Runtime.Caching
 					continue; // silently ignore dupes
 				
 				notificationSystem.StartMonitoring (path, OnChanged, out state, out lastWriteTime, out fileSize);
+				notificationStates.Add (path, state);
 			}
 		}
 
-		void OnChanged (object state)
-		{
-		}
-		
 		protected override void Dispose (bool disposing)
 		{
-			if (disposing && disposeNotificationSystem && notificationSystem != null) {
-				var fcns = notificationSystem as FileChangeNotificationSystem;
-				if (fcns != null) {
+			if (disposing && notificationSystem != null) {
+				object state;
+				
+				foreach (var de in notificationStates) {
+					state = de.Value;
+					if (state == null)
+						continue;
+					
 					try {
-						fcns.Dispose ();
-					} finally {
-						notificationSystem = null;
+						notificationSystem.StopMonitoring (de.Key, state);
+					} catch {
+						// ignore
+					}
+				}
+				
+				if (disposeNotificationSystem) {
+					var fcns = notificationSystem as FileChangeNotificationSystem;
+					if (fcns != null) {
+						try {
+							fcns.Dispose ();
+						} finally {
+							notificationSystem = null;
+						}
 					}
 				}
 			}

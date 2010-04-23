@@ -1,1 +1,9 @@
+Common/AppDomainTools.cs
+Common/AssertExtensions.cs
+Common/PokerChangeMonitor.cs
+Common/PokerMemoryCache.cs
+Common/PokerObjectCache.cs
+Common/TestNotificationSystem.cs
 System.Runtime.Caching/HostFileChangeMonitorTest.cs
+System.Runtime.Caching/MemoryCacheTest.cs
+System.Runtime.Caching/ObjectCacheTest.cs
