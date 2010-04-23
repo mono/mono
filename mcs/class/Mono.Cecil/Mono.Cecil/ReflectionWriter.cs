@@ -433,23 +433,32 @@ namespace Mono.Cecil {
 				TypeDefinition td = ext.Resolve ();
 				if (td == null)
 					continue;
-				// FIXME: nested types are not treated correctly
-				if ((td.Attributes & TypeAttributes.Forwarder) == 0)
-					continue;
+
+				MetadataToken scope = GetExportedTypeScope (td);
+
 				ExportedTypeRow etRow = m_rowWriter.CreateExportedTypeRow (
 					td.Attributes,
-					td.MetadataToken.RID,
+					0,
 					m_mdWriter.AddString (td.Name),
 					m_mdWriter.AddString (td.Namespace),
-					new MetadataToken (TokenType.AssemblyRef,
-						GetRidFor ((AssemblyNameReference) td.Scope)));
+					scope);
+
 				etTable.Rows.Add (etRow);
+				ext.MetadataToken = new MetadataToken (TokenType.ExportedType, (uint) etTable.Rows.Count);
 			}
-//			VisitCollection (externs);
 		}
 
-		public override void VisitExternType (TypeReference externType)
+		MetadataToken GetExportedTypeScope (TypeDefinition t)
 		{
+			if (t.DeclaringType != null)
+				return t.DeclaringType.MetadataToken;
+
+			if (t.Scope is AssemblyNameReference)
+				return new MetadataToken (TokenType.AssemblyRef, GetRidFor ((AssemblyNameReference) t.Scope));
+
+			if (t.Scope is ModuleDefinition)
+				return new MetadataToken (TokenType.Module, GetRidFor ((ModuleDefinition) t.Scope));
+
 			throw new NotImplementedException ();
 		}
 

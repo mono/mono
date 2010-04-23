@@ -1,3 +1,7 @@
+2010-04-23  Jb Evain  <jbevain@novell.com>
+
+	* Mono.Cecil/ReflectionWriter.cs: fix writing of exported types.
+
 2010-04-19  Sebastien Pouliot  <sebastien at ximian.com>
 
 	* Mono.Cecil/ReflectionWriter.cs: Partial (forwarders) fix for
