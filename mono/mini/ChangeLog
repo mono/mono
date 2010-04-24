@@ -1,3 +1,8 @@
+2010-04-23  Miguel de Icaza  <miguel@novell.com>
+
+	* mini.c: Use MONO_USE_LLVM as an environment flag to turn the use
+	of LLVM on by default.   Used for buildbots and other setups.
+
 2010-04-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c: Set mono_use_llvm to FALSE even if mono is compiled with LLVM.
