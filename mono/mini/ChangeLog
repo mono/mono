@@ -1,3 +1,7 @@
+2010-04-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c: Set mono_use_llvm to FALSE even if mono is compiled with LLVM.
+
 2010-04-23  Kornel Pal  <kornelpal@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Enable inlining of pointer-sized unmanaged
