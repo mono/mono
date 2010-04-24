@@ -1,5 +1,9 @@
 2010-04-24  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Remove more unneeded code.
+
+2010-04-24  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Disable managed allocator and wbarrier when the
 	binary protocol is enabled.
 
