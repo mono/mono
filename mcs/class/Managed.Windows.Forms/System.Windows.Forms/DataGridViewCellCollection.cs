@@ -123,6 +123,16 @@ namespace System.Windows.Forms
 			return result;
 		}
 
+		internal void ReplaceOrAdd (int columnIndex, DataGridViewCell dataGridViewCell)
+		{
+			if (columnIndex >= 0 && columnIndex < base.List.Count) {
+				RemoveAt (columnIndex);
+				Insert (columnIndex, dataGridViewCell);
+			} else {
+				Add (dataGridViewCell);
+			}
+		}
+
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public virtual void AddRange (params DataGridViewCell[] dataGridViewCells)
 		{

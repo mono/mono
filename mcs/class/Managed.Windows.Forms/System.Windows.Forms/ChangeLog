@@ -1,3 +1,9 @@
+2010-04-25  Ivan Zlatev  <ivan@ivanz.com>
+
+	* DataGridViewCellCollection.cs, DataGridView.cs: 
+	Ensure column cell templates are properly applied.
+	[Fixes bug #583404]
+
 2010-04-24  Ivan Zlatev  <ivan@ivanz.com>
 
 	* DataGridViewColumnCollection.cs: When adding a column also 

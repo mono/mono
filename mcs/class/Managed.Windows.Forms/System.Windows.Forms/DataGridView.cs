@@ -3794,8 +3794,9 @@ namespace System.Windows.Forms {
 				//
 				if (!is_autogenerating_columns && columns.Count == 1)
 					ReBind ();
+
 				foreach (DataGridViewRow row in Rows)
-					row.Cells.Add ((DataGridViewCell)e.Column.CellTemplate.Clone ());
+					row.Cells.ReplaceOrAdd (e.Column.Index, (DataGridViewCell)e.Column.CellTemplate.Clone ());
 			}
 			
 			e.Column.DataColumnIndex = FindDataColumnIndex (e.Column);
