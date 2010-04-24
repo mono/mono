@@ -237,6 +237,14 @@ collection a bit.
 \fB--help\fR, \fB-h\fR
 Displays usage instructions.
 .TP
+\fB--llvm\fR
+If the Mono runtime has been compiled with LLVM support (not available
+in all configurations), Mono will use the LLVM optimization and code
+generation engine to JIT or AOT compile.     You can also use the
+\fBMONO_USE_LLVM\fR environment variable to turn this on
+.Sp
+For more information, consult: http://www.mono-project.com/Mono_LLVM
+.TP
 \fB--optimize=MODE\fR, \fB-O=MODE\fR
 MODE is a comma separated list of optimizations.  They also allow
 optimizations to be turned off by prefixing the optimization name with
@@ -1506,6 +1514,13 @@ The default is 180 seconds.
 The maximum number of threads in the general threadpool will be
 20 + (MONO_THREADS_PER_CPU * number of CPUs). The default value for this
 variable is 10.
+.TP
+\fBMONO_USE_LLVM\fR
+If the Mono runtime has been compiled with LLVM support (not available
+in all configurations), Mono will use the LLVM optimization and code
+generation engine to JIT or AOT compile.     This is equivalent to
+using the \-\-llvm command line option, but is useful for global
+configurations. 
 .TP
 \fBMONO_XMLSERIALIZER_THS\fR
 Controls the threshold for the XmlSerializer to produce a custom
