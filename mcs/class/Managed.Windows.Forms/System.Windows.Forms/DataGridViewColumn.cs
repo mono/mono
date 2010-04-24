@@ -184,6 +184,11 @@ namespace System.Windows.Forms {
 			}
 		}
 
+		internal int DisplayIndexInternal {
+			get { return DisplayIndex; }
+			set { displayIndex = value; }
+		}
+
 		internal int DataColumnIndex {
 			get { return dataColumnIndex; }
 			set { dataColumnIndex = value; }

@@ -78,6 +78,8 @@ namespace System.Windows.Forms
 		public virtual int Add (DataGridViewColumn dataGridViewColumn)
 		{
 			int result = base.List.Add(dataGridViewColumn);
+			if (dataGridViewColumn.DisplayIndex == -1)
+				dataGridViewColumn.DisplayIndexInternal = result;
 			dataGridViewColumn.SetIndex(result);
 			dataGridViewColumn.SetDataGridView(dataGridView);
 			OnCollectionChanged(new CollectionChangeEventArgs(CollectionChangeAction.Add, dataGridViewColumn));
@@ -188,6 +190,8 @@ namespace System.Windows.Forms
 		public virtual void Insert (int columnIndex, DataGridViewColumn dataGridViewColumn)
 		{
 			base.List.Insert (columnIndex, dataGridViewColumn);
+			if (dataGridViewColumn.DisplayIndex == -1)
+				dataGridViewColumn.DisplayIndexInternal = columnIndex;
 			dataGridViewColumn.SetIndex (columnIndex);
 			dataGridViewColumn.SetDataGridView (dataGridView);
 			OnCollectionChanged (new CollectionChangeEventArgs (CollectionChangeAction.Add, dataGridViewColumn));
@@ -253,9 +257,8 @@ namespace System.Windows.Forms
 			List<DataGridViewColumn> result = new List<DataGridViewColumn> (array);
 
 			result.Sort (new ColumnDisplayIndexComparator ());
-			
 			for (int i = 0; i < result.Count; i++)
-				result[i].DisplayIndex = i;
+				result[i].DisplayIndexInternal = i;
 			
 			display_index_sorted = result;
 		}
@@ -271,7 +274,12 @@ namespace System.Windows.Forms
 		{
 			public int Compare (DataGridViewColumn o1, DataGridViewColumn o2)
 			{
-				return o1.DisplayIndex - o2.DisplayIndex;
+				if (o1.DisplayIndex == o2.DisplayIndex)
+					// Here we avoid the equal value swapping that both Array.Sort and ArrayList.Sort 
+					// do occasionally and preserve the user column insertation order.
+					return 1;
+				else
+					return o1.DisplayIndex - o2.DisplayIndex;
 			}
 		}
 	}

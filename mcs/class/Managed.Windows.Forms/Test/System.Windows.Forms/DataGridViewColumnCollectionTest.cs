@@ -107,22 +107,31 @@ namespace MonoTests.System.Windows.Forms
 
 			dgv.Columns.Add ("A1", "A1");
 			Assert.AreEqual (0, dgv.Columns[0].Index, "A1");
+			Assert.AreEqual (0, dgv.Columns[0].DisplayIndex, "B1");
 
 			dgv.Columns.Add ("A2", "A2");
 			Assert.AreEqual (0, dgv.Columns[0].Index, "A2");
+			Assert.AreEqual (0, dgv.Columns[0].DisplayIndex, "B2");
 			Assert.AreEqual (1, dgv.Columns[1].Index, "A3");
+			Assert.AreEqual (1, dgv.Columns[1].DisplayIndex, "B3");
 
 			dgv.Columns.Insert (0, new DataGridViewTextBoxColumn ());
 			Assert.AreEqual (0, dgv.Columns[0].Index, "A4");
+			Assert.AreEqual (0, dgv.Columns[0].DisplayIndex, "B4");
 			Assert.AreEqual (1, dgv.Columns[1].Index, "A5");
+			Assert.AreEqual (1, dgv.Columns[1].DisplayIndex, "B5");
 			Assert.AreEqual (2, dgv.Columns[2].Index, "A6");
+			Assert.AreEqual (2, dgv.Columns[2].DisplayIndex, "B6");
 
 			dgv.Columns.RemoveAt (1);
 			Assert.AreEqual (0, dgv.Columns[0].Index, "A7");
+			Assert.AreEqual (0, dgv.Columns[0].DisplayIndex, "B7");
 			Assert.AreEqual (1, dgv.Columns[1].Index, "A8");
+			Assert.AreEqual (1, dgv.Columns[1].DisplayIndex, "B8");
 
 			dgv.Columns.RemoveAt (0);
 			Assert.AreEqual (0, dgv.Columns[0].Index, "A9");
+			Assert.AreEqual (0, dgv.Columns[0].DisplayIndex, "B9");
 
 			f.Close ();
 			f.Dispose ();

@@ -1,3 +1,9 @@
+2010-04-24  Ivan Zlatev  <ivan@ivanz.com>
+
+	* DataGridViewColumnCollection.cs: When adding a column also 
+	set the DisplayIndex if its now set by the user already.
+	[Fixes bug #583387]
+
 2010-04-19  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* NotifyIcon.cs: Make BalloonWindow expose the owner's Handle.
