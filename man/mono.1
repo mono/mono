@@ -1195,6 +1195,16 @@ If set, this variable will instruct Mono to ahead-of-time compile new
 assemblies on demand and store the result into a cache in
 ~/.mono/aot-cache. 
 .TP
+\fBMONO_ASPNET_INHIBIT_SETTINGSMAP\fR
+Mono contains a feature which allows modifying settings in the .config files shipped
+with Mono by using config section mappers. The mappers and the mapping rules are
+defined in the $prefix/etc/mono/2.0/settings.map file and, optionally, in the
+settings.map file found in the top-level directory of your ASP.NET application.
+Both files are read by System.Web on application startup, if they are found at the
+above locations. If you don't want the mapping to be performed you can set this
+variable in your environment before starting the application and no action will
+be taken.
+.TP
 \fBMONO_CFG_DIR\fR
 If set, this variable overrides the default system configuration directory
 ($PREFIX/etc). It's used to locate machine.config file.
@@ -1210,61 +1220,21 @@ If set, this variable overrides the default runtime configuration file
 ($PREFIX/etc/mono/config). The --config command line options overrides the
 environment variable.
 .TP
-\fBMONO_DEBUG\fR
-If set, enables some features of the runtime useful for debugging.
-This variable should contain a comma separated list of debugging options.
-Currently, the following options are supported:
-.RS
-.ne 8
-.TP
-\fBbreak-on-unverified\fR
-If this variable is set, when the Mono VM runs into a verification
-problem, instead of throwing an exception it will break into the
-debugger.  This is useful when debugging verifier problems
-.TP
-\fBcollect-pagefault-stats\fR
-Collects information about pagefaults.   This is used internally to
-track the number of page faults produced to load metadata.  To display
-this information you must use this option with "--stats" command line
-option.
-.TP
-\fBdont-free-domains\fR
-This is an Optimization for multi-AppDomain applications (most
-commonly ASP.NET applications).  Due to internal limitations Mono,
-Mono by default does not use typed allocations on multi-appDomain
-applications as they could leak memory when a domain is unloaded. 
-.Sp
-Although this is a fine default, for applications that use more than
-on AppDomain heavily (for example, ASP.NET applications) it is worth
-trading off the small leaks for the increased performance
-(additionally, since ASP.NET applications are not likely going to
-unload the application domains on production systems, it is worth
-using this feature). 
-.TP
-\fBhandle-sigint\fR
-Captures the interrupt signal (Control-C) and displays a stack trace
-when pressed.  Useful to find out where the program is executing at a
-given point.  This only displays the stack trace of a single thread. 
-.TP
-\fBkeep-delegates\fR
-This option will leak delegate trampolines that are no longer
-referenced as to present the user with more information about a
-delegate misuse.  Basically a delegate instance might be created,
-passed to unmanaged code, and no references kept in managed code,
-which will garbage collect the code.  With this option it is possible
-to track down the source of the problems. 
-.TP
-\fBno-gdb-backtrace\fR
-This option will disable the GDB backtrace emitted by the runtime
-after a SIGSEGV or SIGABRT in unmanaged code.
-.TP
-\fBsuspend-on-sigsegv\fR
+\fBMONO_CPU_ARCH\fR
+Override the automatic cpu detection mechanism. Currently used only on arm.
+The format of the value is as follows:
+.nf
 
-This option will suspend the program when a native SIGSEGV is received.
-This is useful for debugging crashes which do not happen under gdb,
-since a live process contains more information than a core file.
-.ne
-.RE
+	"armvV [thumb]"
+
+.fi
+where V is the architecture number 4, 5, 6, 7 and the options can be currently be
+"thunb". Example:
+.nf
+
+	MONO_CPU_ARCH="armv4 thumb" mono ...
+
+.fi
 .TP
 \fBMONO_DISABLE_AIO\fR
 If set, tells mono NOT to attempt using native asynchronous I/O services. In
@@ -1278,10 +1248,27 @@ internally disables managed collation functionality invoked via the
 members of System.Globalization.CompareInfo class. Collation is
 enabled by default.
 .TP
+\fBMONO_DISABLE_SHM\fR
+Unix only: If set, disables the shared memory files used for
+cross-process handles: process have only private handles.  This means
+that process and thread handles are not available to other processes,
+and named mutexes, named events and named semaphores are not visible
+between processes.
+.Sp
+This is can also be enabled by default by passing the
+"--disable-shared-handles" option to configure.
+.Sp
+This is the default from mono 2.8 onwards.
+.TP
 \fBMONO_EGD_SOCKET\fR
 For platforms that do not otherwise have a way of obtaining random bytes
 this can be set to the name of a file system socket on which an egd or
 prngd daemon is listening.
+.TP
+\fBMONO_ENABLE_SHM\fR
+Unix only: Enable support for cross-process handles.  Cross-process
+handles are used to expose process handles, thread handles, named
+mutexes, named events and named semaphores across Unix processes.
 .TP
 \fBMONO_EVENTLOG_TYPE\fR
 Sets the type of event log provider to use (for System.Diagnostics.EventLog).
@@ -1402,9 +1389,23 @@ managed implementation (slow). If unset, mono will try to use inotify, FAM,
 Gamin, kevent under Unix systems and native API calls on Windows, falling 
 back to the managed implementation on error.
 .TP
+\fBMONO_MESSAGING_PROVIDER\fR
+Mono supports a plugin model for its implementation of System.Messaging making
+it possible to support a variety of messaging implementations (e.g. AMQP, ActiveMQ).
+To specify which messaging implementation is to be used the evironement variable
+needs to be set to the full class name for the provider.  E.g. to use the RabbitMQ based
+AMQP implementation the variable should be set to:
+
+.nf
+Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider,Mono.Messaging.RabbitMQ
+.TP
 \fBMONO_NO_SMP\fR
 If set causes the mono process to be bound to a single processor. This may be
 useful when debugging or working around race conditions.
+.TP
+\fBMONO_NO_TLS\fR
+Disable inlining of thread local accesses. Try setting this if you get a segfault
+early on in the execution of mono.
 .TP
 \fBMONO_PATH\fR
 Provides a search path to the runtime where to look for library
@@ -1440,26 +1441,6 @@ For example:
 	MONO_RTC=4096 mono --profiler=default:stat program.exe
 
 .fi
-.TP
-\fBMONO_NO_TLS\fR
-Disable inlining of thread local accesses. Try setting this if you get a segfault
-early on in the execution of mono.
-.TP
-\fBMONO_CPU_ARCH\fR
-Override the automatic cpu detection mechanism. Currently used only on arm.
-The format of the value is as follows:
-.nf
-
-	"armvV [thumb]"
-
-.fi
-where V is the architecture number 4, 5, 6, 7 and the options can be currently be
-"thunb". Example:
-.nf
-
-	MONO_CPU_ARCH="armv4 thumb" mono ...
-
-.fi
 .TP 
 \fBMONO_SHARED_DIR\fR
 If set its the directory where the ".wapi" handle state is stored.
@@ -1480,21 +1461,6 @@ home directories that might be shared over the network.
 \fBMONO_STRICT_IO_EMULATION\fR
 If set, extra checks are made during IO operations.  Currently, this
 includes only advisory locks around file writes.
-.TP
-\fBMONO_DISABLE_SHM\fR
-If set, disables the shared memory files used for cross-process
-handles: process have only private handles.  This means that process
-and thread handles are not available to other processes, and named
-mutexes, named events and named semaphores are not visible between
-processes.
-.Sp
-This is can also be enabled by default by passing the
-"--disable-shared-handles" option to configure.
-.Sp
-This is the default from mono 2.8 onwards.
-.TP
-\fBMONO_ENABLE_SHM\fR
-Enable support for cross-process handles.
 .TP
 \fBMONO_THEME\fR
 The name of the theme to be used by Windows.Forms.   Available themes today
@@ -1529,37 +1495,68 @@ interpreter.  The possible values are `no' to disable the use of a
 custom serializer or a number to indicate when the XmlSerializer
 should start serializing.   The default value is 50, which means that
 the a custom serializer will be produced on the 50th use.
-.TP
-\fBMONO_XMLSERIALIZER_DEBUG\fR
-Set this value to 1 to prevent the serializer from removing the
-temporary files that are created for fast serialization;  This might
-be useful when debugging.
-.TP
-\fBMONO_ASPNET_INHIBIT_SETTINGSMAP\fR
-Mono contains a feature which allows modifying settings in the .config files shipped
-with Mono by using config section mappers. The mappers and the mapping rules are
-defined in the $prefix/etc/mono/2.0/settings.map file and, optionally, in the
-settings.map file found in the top-level directory of your ASP.NET application.
-Both files are read by System.Web on application startup, if they are found at the
-above locations. If you don't want the mapping to be performed you can set this
-variable in your environment before starting the application and no action will
-be taken.
-.TP
-\fBMONO_MESSAGING_PROVIDER\fR
-Mono supports a plugin model for its implementation of System.Messaging making
-it possible to support a variety of messaging implementations (e.g. AMQP, ActiveMQ).
-To specify which messaging implementation is to be used the evironement variable
-needs to be set to the full class name for the provider.  E.g. to use the RabbitMQ based
-AMQP implementation the variable should be set to:
-
-.nf
-Mono.Messaging.RabbitMQ.RabbitMQMessagingProvider,Mono.Messaging.RabbitMQ
 .SH ENVIRONMENT VARIABLES FOR DEBUGGING
 .TP
 \fBMONO_ASPNET_NODELETE\fR
 If set to any value, temporary source files generated by ASP.NET support
 classes will not be removed. They will be kept in the user's temporary
 directory.
+.TP
+\fBMONO_DEBUG\fR
+If set, enables some features of the runtime useful for debugging.
+This variable should contain a comma separated list of debugging options.
+Currently, the following options are supported:
+.RS
+.ne 8
+.TP
+\fBbreak-on-unverified\fR
+If this variable is set, when the Mono VM runs into a verification
+problem, instead of throwing an exception it will break into the
+debugger.  This is useful when debugging verifier problems
+.TP
+\fBcollect-pagefault-stats\fR
+Collects information about pagefaults.   This is used internally to
+track the number of page faults produced to load metadata.  To display
+this information you must use this option with "--stats" command line
+option.
+.TP
+\fBdont-free-domains\fR
+This is an Optimization for multi-AppDomain applications (most
+commonly ASP.NET applications).  Due to internal limitations Mono,
+Mono by default does not use typed allocations on multi-appDomain
+applications as they could leak memory when a domain is unloaded. 
+.Sp
+Although this is a fine default, for applications that use more than
+on AppDomain heavily (for example, ASP.NET applications) it is worth
+trading off the small leaks for the increased performance
+(additionally, since ASP.NET applications are not likely going to
+unload the application domains on production systems, it is worth
+using this feature). 
+.TP
+\fBhandle-sigint\fR
+Captures the interrupt signal (Control-C) and displays a stack trace
+when pressed.  Useful to find out where the program is executing at a
+given point.  This only displays the stack trace of a single thread. 
+.TP
+\fBkeep-delegates\fR
+This option will leak delegate trampolines that are no longer
+referenced as to present the user with more information about a
+delegate misuse.  Basically a delegate instance might be created,
+passed to unmanaged code, and no references kept in managed code,
+which will garbage collect the code.  With this option it is possible
+to track down the source of the problems. 
+.TP
+\fBno-gdb-backtrace\fR
+This option will disable the GDB backtrace emitted by the runtime
+after a SIGSEGV or SIGABRT in unmanaged code.
+.TP
+\fBsuspend-on-sigsegv\fR
+
+This option will suspend the program when a native SIGSEGV is received.
+This is useful for debugging crashes which do not happen under gdb,
+since a live process contains more information than a core file.
+.ne
+.RE
 .TP
 \fBMONO_LOG_LEVEL\fR
 The logging level, possible values are `error', `critical', `warning',
@@ -1605,6 +1602,11 @@ information.
 \fBMONO_XEXCEPTIONS\fR
 This throws an exception when a X11 error is encountered; by default a
 message is displayed but execution continues
+.TP
+\fBMONO_XMLSERIALIZER_DEBUG\fR
+Set this value to 1 to prevent the serializer from removing the
+temporary files that are created for fast serialization;  This might
+be useful when debugging.
 .TP
 \fBMONO_XSYNC\fR
 This is used in the System.Windows.Forms implementation when running
