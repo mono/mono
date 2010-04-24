@@ -1,5 +1,10 @@
 2010-04-24  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-pinning.c, sgen-major-copying.c: Major collector
+	abstraction.
+
+2010-04-24  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Remove more unneeded code.
 
 2010-04-24  Mark Probst  <mark.probst@gmail.com>
