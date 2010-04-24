@@ -1,3 +1,9 @@
+2010-04-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_create_from_typedef): Initialize class->nested_in after
+	calling setup_mono_type () since the nested parent could recursively reference
+	the nested class using generic constraints. Fixes #599469.
+
 2010-04-24  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, sgen-pinning.c, sgen-major-copying.c: Major collector
