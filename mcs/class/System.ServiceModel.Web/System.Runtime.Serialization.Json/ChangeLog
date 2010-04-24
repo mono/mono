@@ -1,3 +1,8 @@
+2010-04-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonSerializationReader.cs : use List<T> if the contract member
+	  type is interface.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* DataContractJsonSerializer.cs: use MOONLIGHT symbol to

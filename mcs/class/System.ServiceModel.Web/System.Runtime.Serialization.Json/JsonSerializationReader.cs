@@ -259,6 +259,8 @@ namespace System.Runtime.Serialization.Json
 		{
 			reader.ReadStartElement ();
 			object ret;
+			if (collectionType.IsInterface)
+				collectionType = typeof (List<>).MakeGenericType (elementType);
 			if (typeof (IList).IsAssignableFrom (collectionType)) {
 #if NET_2_1
 				Type listType = collectionType.IsArray ? typeof (List<>).MakeGenericType (elementType) : null;
