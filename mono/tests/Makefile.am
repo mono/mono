@@ -361,7 +361,8 @@ BASE_TEST_CS_SRC=		\
 	appdomain-thread-abort.cs \
 	w32message.cs	\
 	bug-544446.cs	\
-	gc-altstack.cs
+	gc-altstack.cs	\
+	bug-599469.cs
 
 if AMD64
 TEST_CS_SRC = $(BASE_TEST_CS_SRC) async-exc-compilation.cs
