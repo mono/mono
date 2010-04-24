@@ -1,3 +1,8 @@
+2010-04-24  Mark Probst  <mark.probst@gmail.com>
+
+	* mini.c, driver.c: Initialize mono_use_llvm in mono_main(), not
+	in the initializer, because it's non-constant.
+
 2010-04-23  Miguel de Icaza  <miguel@novell.com>
 
 	* mini.c: Use MONO_USE_LLVM as an environment flag to turn the use
