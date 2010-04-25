@@ -539,7 +539,7 @@ namespace System
 				return ToString ();
 
 			if (format != "g" && format != "G")
-				throw new FormatException ("The format is not recognized.");
+				return ToStringCustom (format); // custom formats ignore culture/formatProvider
 
 			NumberFormatInfo number_info = null;
 			if (formatProvider != null)
@@ -589,6 +589,67 @@ namespace System
 					sb.Append (decimal_separator);
 					sb.Append (fractional.ToString ("D7"));
 					break;
+			}
+
+			return sb.ToString ();
+		}
+
+		string ToStringCustom (string format)
+		{
+			// Single char formats are not accepted.
+			if (format.Length < 2)
+				throw new FormatException ("The format is not recognized.");
+
+			FormatParser parser = new FormatParser (format);
+			FormatElement element;
+			int value;
+
+			StringBuilder sb = new StringBuilder (format.Length + 1);
+
+			for (;;) {
+				if (parser.AtEnd)
+					break;
+
+				element = parser.GetNextElement ();
+				switch (element.Type) {
+					case FormatElementType.Days:
+						value = Math.Abs (Days);
+						sb.Append (value.ToString ("D" + element.IntValue));
+						break;
+					case FormatElementType.Hours:
+						value = Math.Abs (Hours);
+						sb.Append (value.ToString ("D" + element.IntValue));
+						break;
+					case FormatElementType.Minutes:
+						value = Math.Abs (Minutes);
+						sb.Append (value.ToString ("D" + element.IntValue));
+						break;
+					case FormatElementType.Seconds:
+						value = Math.Abs (Seconds);
+						sb.Append (value.ToString ("D" + element.IntValue));
+						break;
+					case FormatElementType.Ticks:
+						value = Math.Abs (Milliseconds);
+						sb.Append (value.ToString ("D" + element.IntValue));
+						break;
+					case FormatElementType.TicksUppercase:
+						value = Math.Abs (Milliseconds);
+						if (value > 0) {
+							int threshold = (int)Math.Pow (10, element.IntValue);
+							while (value >= threshold)
+								value /= 10;
+							sb.Append (value.ToString ());
+						}
+						break;
+					case FormatElementType.EscapedChar:
+						sb.Append (element.CharValue);
+						break;
+					case FormatElementType.Literal:
+						sb.Append (element.StringValue);
+						break;
+					default:
+						throw new FormatException ("The format is not recognized.");
+				}
 			}
 
 			return sb.ToString ();
