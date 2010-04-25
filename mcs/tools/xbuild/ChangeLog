@@ -1,3 +1,10 @@
+2010-04-25  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #599486.
+	* xbuild/Microsoft.CSharp.targets:
+	* xbuild/Microsoft.VisualBasic.targets: Add $(CoreCompileDependsOn)
+	for the CoreCompile target.
+
 2010-04-21  Ankit Jain  <jankit@novell.com>
 
 	* Makefile: Remove unnecessary "/" in the paths.

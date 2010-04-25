@@ -23,6 +23,8 @@
 
 		<DebugSymbols Condition=" '$(DebugType)' == 'none' ">false</DebugSymbols>
 		<DebugType    Condition=" '$(DebugType)' == 'none' "></DebugType>
+
+		<CoreCompileDependsOn></CoreCompileDependsOn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -33,6 +35,7 @@
 		Name="CoreCompile"
 		Inputs="@(Compile)"
 		Outputs="@(IntermediateAssembly)"
+		DependsOnTargets="$(CoreCompileDependsOn)"
 	>
 		<Vbc
 			AdditionalLibPaths="$(AdditionalLibPaths)"

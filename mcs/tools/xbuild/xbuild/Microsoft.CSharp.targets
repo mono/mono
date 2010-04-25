@@ -12,6 +12,7 @@
 
 	<PropertyGroup>
 		<CreateManifestResourceNamesDependsOn></CreateManifestResourceNamesDependsOn>
+		<CoreCompileDependsOn></CoreCompileDependsOn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -22,6 +23,7 @@
 		Name="CoreCompile"
 		Inputs="@(Compile)"
 		Outputs="@(IntermediateAssembly)"
+		DependsOnTargets="$(CoreCompileDependsOn)"
 	>
 		<Csc
 			AdditionalLibPaths="$(AdditionalLibPaths)"
