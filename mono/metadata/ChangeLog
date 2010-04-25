@@ -1,5 +1,12 @@
 2010-04-25  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-marksweep.c, sgen-major-copying.c: Properly
+	separate copy_object functions for major vs nursery.  Allows us to
+	get rid of a few checks and the start and end parameters for many
+	functions.
+
+2010-04-25  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-marksweep.c, sgen-gc.c, sgen-major-copying.c,
 	sgen-protocol.c, sgen-protocol.h, Makefile.am: Major Mark&Sweep
 	collector.
