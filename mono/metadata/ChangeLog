@@ -1,3 +1,9 @@
+2010-04-25  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-marksweep.c, sgen-gc.c, sgen-major-copying.c,
+	sgen-protocol.c, sgen-protocol.h, Makefile.am: Major Mark&Sweep
+	collector.
+
 2010-04-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_create_from_typedef): Initialize class->nested_in after
