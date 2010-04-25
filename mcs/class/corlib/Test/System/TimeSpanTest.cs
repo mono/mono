@@ -1381,6 +1381,46 @@ public class TimeSpanTest {
 	}
 
 	[Test]
+	public void ToStringCustomFormats ()
+	{
+		TimeSpan ts = new TimeSpan (1, 3, 5, 7);
+
+		Assert.AreEqual ("1", ts.ToString ("%d"), "#A0");
+		Assert.AreEqual ("3", ts.ToString ("%h"), "#A1");
+		Assert.AreEqual ("5", ts.ToString ("%m"), "#A2");
+		Assert.AreEqual ("7", ts.ToString ("%s"), "#A3");
+		Assert.AreEqual ("0", ts.ToString ("%f"), "#A4");
+		Assert.AreEqual (String.Empty, ts.ToString ("%F"), "#A5"); // Nothing to display
+
+		Assert.AreEqual ("01", ts.ToString ("dd"), "#B0");
+		Assert.AreEqual ("00000001", ts.ToString ("dddddddd"), "#B1");
+		Assert.AreEqual ("03", ts.ToString ("hh"), "#B2");
+		Assert.AreEqual ("05", ts.ToString ("mm"), "#B3");
+		Assert.AreEqual ("07", ts.ToString ("ss"), "#B4");
+		Assert.AreEqual ("00", ts.ToString ("ff"), "#B5");
+		Assert.AreEqual ("0000000", ts.ToString ("fffffff"), "#B6");
+		Assert.AreEqual (String.Empty, ts.ToString ("FF"), "#B7");
+
+		Assert.AreEqual ("01;03;05", ts.ToString (@"dd\;hh\;mm"), "#C0");
+		Assert.AreEqual ("05 07", ts.ToString (@"mm\ ss"), "#C1");
+		Assert.AreEqual ("05 07 ", ts.ToString (@"mm\ ss\ FF"), "#C2");
+		Assert.AreEqual ("Result = 3 hours with 5 minutes and 7 seconds",
+				ts.ToString (@"'Result = 'h' hours with 'm' minutes and 's' seconds'"), "#C3");
+		Assert.AreEqual ("  ", ts.ToString (@"\ \ "), "#C4");
+
+		ts = new TimeSpan (1, 3, 5, 7, 153);
+		Assert.AreEqual ("1", ts.ToString ("%F"), "#D0");
+		Assert.AreEqual ("15", ts.ToString ("FF"), "#D1"); // Don't use %, as the parser gets confused here
+		Assert.AreEqual ("153", ts.ToString ("FFFFFFF"), "#D2");
+
+		// Negative values are shown without sign
+		ts = new TimeSpan (-1, -3, -5);
+		Assert.AreEqual ("1", ts.ToString ("%h"), "#E0");
+		Assert.AreEqual ("3", ts.ToString ("%m"), "#E1");
+		Assert.AreEqual ("5", ts.ToString ("%s"), "#E2");
+	}
+
+	[Test]
 	public void ToStringOverloadsErrors ()
 	{
 		TimeSpan ts = new TimeSpan (10, 10, 10);
@@ -1396,6 +1436,45 @@ public class TimeSpanTest {
 			result = ts.ToString ("C");
 			Assert.Fail ("#2");
 		} catch (FormatException) {
+		}
+
+		try
+		{
+			ts.ToString ("m");
+			Assert.Fail ("#3");
+		} catch (FormatException) {
+		}
+
+		try
+		{
+			ts.ToString ("d"); // Missing % for single char
+			Assert.Fail ("#4");
+		} catch (FormatException)
+		{
+		}
+
+		try
+		{
+			ts.ToString ("ddddddddd");
+			Assert.Fail ("#5");
+		} catch (FormatException)
+		{
+		}
+
+		try
+		{
+			ts.ToString ("hhh");
+			Assert.Fail ("#5");
+		} catch (FormatException)
+		{
+		}
+
+		try
+		{
+			ts.ToString ("ffffffff");
+			Assert.Fail ("6");
+		} catch (FormatException)
+		{
 		}
 	}
 #endif

@@ -1,3 +1,7 @@
+2010-04-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TimeSpanTest.cs: New test for ToString using custom formats.
+
 2010-04-22  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpanTest.cs: Update our test after the 4.0 release.
