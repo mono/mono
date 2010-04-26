@@ -26,12 +26,11 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_1 || NET_4_0 || BOOTSTRAP_NET_4_0
-using System.Collections.Generic;
 
 namespace System.Collections.Generic {
-	public interface ISet<T> : ICollection<T>, IEnumerable<T>, IEnumerable
+	public interface ISet<T> : ICollection<T>
 	{
-		bool Add (T item);
+		new bool Add (T item);
 		void ExceptWith (IEnumerable<T> other);
 		void IntersectWith (IEnumerable<T> other);
 		bool IsProperSubsetOf (IEnumerable<T> other);
