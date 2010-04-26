@@ -1,5 +1,9 @@
 2010-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XamlObjectReaderTest.cs : more test use cases.
+
+2010-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XamlObjectReaderTest.cs : enable working tests.
 	* XamlTypeTest.cs : added a test for GetAliasedProperty().
 
