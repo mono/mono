@@ -1252,13 +1252,15 @@ namespace System.Windows.Forms {
 
 			if ((long)nitems > 0) {
 				if (property == (IntPtr)Atom.XA_STRING) {
-					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
+					// Some X managers/apps pass unicode chars as escaped strings, so
+					// we may need to unescape them.
+					Clipboard.Item = UnescapeUnicodeFromAnsi (Marshal.PtrToStringAnsi(prop));
 				} else if (property == (IntPtr)Atom.XA_BITMAP) {
 					// FIXME - convert bitmap to image
 				} else if (property == (IntPtr)Atom.XA_PIXMAP) {
 					// FIXME - convert pixmap to image
 				} else if (property == OEMTEXT) {
-					Clipboard.Item = Marshal.PtrToStringAnsi(prop);
+					Clipboard.Item = UnescapeUnicodeFromAnsi (Marshal.PtrToStringAnsi(prop));
 				} else if (property == UTF8_STRING) {
 					byte [] buffer = new byte [(int)nitems];
 					for (int i = 0; i < (int)nitems; i++)
@@ -1283,6 +1285,48 @@ namespace System.Windows.Forms {
 
 				XFree(prop);
 			}
+		}
+
+		private string UnescapeUnicodeFromAnsi (string value)
+		{
+			if (value == null || value.IndexOf ("\\u") == -1)
+				return value;
+
+			StringBuilder sb = new StringBuilder (value.Length);
+			int start, pos;
+
+			start = pos = 0;
+			while (start < value.Length) {
+				pos = value.IndexOf ("\\u", start);
+				if (pos == -1)
+					break;
+
+				sb.Append (value, start, pos - start);
+				pos += 2;
+				start = pos;
+
+				int length = 0;
+				while (pos < value.Length) {
+					if (!Char.IsLetterOrDigit (value [pos]))
+						break;
+					length++;
+					pos++;
+				}
+
+				int res;
+				if (!Int32.TryParse (value.Substring (start, length), System.Globalization.NumberStyles.HexNumber, 
+							null, out res))
+					return value; // Error, return the unescaped original value.
+				
+				sb.Append ((char)res);
+				start = pos;
+			}
+
+			// Append any remaining data.
+			if (start < value.Length)
+				sb.Append (value, start, value.Length - start);
+
+			return sb.ToString ();
 		}
 
 		private void AddExpose (Hwnd hwnd, bool client, int x, int y, int width, int height) {
