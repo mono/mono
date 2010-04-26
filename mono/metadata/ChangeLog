@@ -1,3 +1,12 @@
+2010-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* boehm-gc.c: Applied patch from Robert Nagy (robert@openbsd.org). Include
+	string.h for memmove.
+
+	socket-io.c: Applied patch from Robert Nagy (robert@openbsd.org).
+	ipaddress_to_struct_in6_addr() is only needed when
+	defined(HAVE_STRUCT_IP_MREQN) || defined(HAVE_STRUCT_IP_MREQ).
+
 2010-04-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_create_from_typedef): Initialize class->nested_in after
