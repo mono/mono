@@ -1,3 +1,10 @@
+2010-04-25  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/ecma-provider.cs: Support the full set of possible operator
+	  names within EcmaHelpSource.MakeOperatorSignature() (where "full" is
+	  "whatever is included in ECMA-335 §10.3.1 through §10.3.3").
+	  Fixes InvalidOperationException reported to mono-docs-list.
+
 2010-02-28  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/provider.cs: Add

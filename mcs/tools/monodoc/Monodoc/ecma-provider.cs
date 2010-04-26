@@ -829,19 +829,57 @@ public class EcmaHelpSource : HelpSource {
 		nicename = name.Substring(3);
 		
 		switch (name) {
-			// unary operators: no overloading possible
-			case "op_UnaryPlus": case "op_UnaryNegation": case "op_LogicalNot": case "op_OnesComplement":
-			case "op_Increment": case "op_Decrement": 
-			case "op_True": case "op_False":
+			// unary operators: no overloading possible	[ECMA-335 §10.3.1]
+			case "op_UnaryPlus":                    // static     R operator+       (T)
+			case "op_UnaryNegation":                // static     R operator-       (T)
+			case "op_LogicalNot":                   // static     R operator!       (T)
+			case "op_OnesComplement":               // static     R operator~       (T)
+			case "op_Increment":                    // static     R operator++      (T)
+			case "op_Decrement":                    // static     R operator--      (T)
+			case "op_True":                         // static  bool operator true   (T)
+			case "op_False":                        // static  bool operator false  (T)
+			case "op_AddressOf":                    // static     R operator&       (T)
+			case "op_PointerDereference":           // static     R operator*       (T)
 				sig = nicename;
 				break;
 			
-			// binary operators: overloading is possible based on parameter types
-			case "op_Addition": case "op_Subtraction": case "op_Multiply": case "op_Division": case "op_Modulus":
-			case "op_BitwiseAnd": case "op_BitwiseOr": case "op_ExclusiveOr":
-			case "op_LeftShift": case "op_RightShift":
-			case "op_Equality": case "op_Inequality":
-			case "op_GreaterThan": case "op_LessThan": case "op_GreaterThanOrEqual": case "op_LessThanOrEqual":
+			// binary operators: overloading is possible [ECMA-335 §10.3.2]
+			case "op_Addition":                     // static    R operator+    (T1, T2)
+			case "op_Subtraction":                  // static    R operator-    (T1, T2)
+			case "op_Multiply":                     // static    R operator*    (T1, T2)
+			case "op_Division":                     // static    R operator/    (T1, T2)
+			case "op_Modulus":                      // static    R operator%    (T1, T2)
+			case "op_ExclusiveOr":                  // static    R operator^    (T1, T2)
+			case "op_BitwiseAnd":                   // static    R operator&    (T1, T2)
+			case "op_BitwiseOr":                    // static    R operator|    (T1, T2)
+			case "op_LogicalAnd":                   // static    R operator&&   (T1, T2)
+			case "op_LogicalOr":                    // static    R operator||   (T1, T2)
+			case "op_Assign":                       // static    R operator=    (T1, T2)
+			case "op_LeftShift":                    // static    R operator<<   (T1, T2)
+			case "op_RightShift":                   // static    R operator>>   (T1, T2)
+			case "op_SignedRightShift":             // static    R operator>>   (T1, T2)
+			case "op_UnsignedRightShift":           // static    R operator>>>  (T1, T2)
+			case "op_Equality":                     // static bool operator==   (T1, T2)
+			case "op_GreaterThan":                  // static bool operator>    (T1, T2)
+			case "op_LessThan":                     // static bool operator<    (T1, T2)
+			case "op_Inequality":                   // static bool operator!=   (T1, T2)
+			case "op_GreaterThanOrEqual":           // static bool operator>=   (T1, T2)
+			case "op_LessThanOrEqual":              // static bool operator<=   (T1, T2)
+			case "op_UnsignedRightShiftAssignment": // static    R operator>>>= (T1, T2)
+			case "op_MemberSelection":              // static    R operator->   (T1, T2)
+			case "op_RightShiftAssignment":         // static    R operator>>=  (T1, T2)
+			case "op_MultiplicationAssignment":     // static    R operator*=   (T1, T2)
+			case "op_PointerToMemberSelection":     // static    R operator->*  (T1, T2)
+			case "op_SubtractionAssignment":        // static    R operator-=   (T1, T2)
+			case "op_ExclusiveOrAssignment":        // static    R operator^=   (T1, T2)
+			case "op_LeftShiftAssignment":          // static    R operator<<=  (T1, T2)
+			case "op_ModulusAssignment":            // static    R operator%=   (T1, T2)
+			case "op_AdditionAssignment":           // static    R operator+=   (T1, T2)
+			case "op_BitwiseAndAssignment":         // static    R operator&=   (T1, T2)
+			case "op_BitwiseOrAssignment":          // static    R operator|=   (T1, T2)
+			case "op_Comma":                        // static    R operator,    (T1, T2)
+			case "op_DivisionAssignment":           // static    R operator/=   (T1, T2)
+			default:                                // If all else fails, assume it can be overridden...whatever it is.
 				XmlNodeList paramnodes = n.SelectNodes("Parameters/Parameter");
 				sig = nicename + "(";
 				bool first = true;
@@ -855,16 +893,14 @@ public class EcmaHelpSource : HelpSource {
 				sig += ")";
 				break;
 			
-			// overloading based on parameter and return type
-			case "op_Implicit": case "op_Explicit":
+			// conversion operators: overloading based on parameter and return type [ECMA-335 §10.3.3]
+			case "op_Implicit":                    // static implicit operator R (T)
+			case "op_Explicit":                    // static explicit operator R (T)
 				nicename = "Conversion";
 				string arg = n.SelectSingleNode("Parameters/Parameter/@Type").InnerText;
 				string ret = n.SelectSingleNode("ReturnValue/ReturnType").InnerText;
 				sig = EcmaDoc.ConvertCTSName(arg) + " to " + EcmaDoc.ConvertCTSName(ret);
 				break;
-				
-			default:
-				throw new InvalidOperationException();
 		}	
 	}
 
