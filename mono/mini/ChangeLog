@@ -1,3 +1,7 @@
+2010-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_op_to_op_imm_noemul): Fix a warning.
+
 2010-04-20  Jonathan Pryor  <jpryor@novell.com>
 
 	* exceptions-arm.c: Remove platform checks in favor of configure checks.
