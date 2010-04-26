@@ -279,7 +279,7 @@ namespace System.Xaml
 
 		public override int GetHashCode ()
 		{
-			throw new NotImplementedException ();
+			return ToString ().GetHashCode (); // should in general work.
 		}
 
 		public override string ToString ()
