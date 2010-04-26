@@ -1,3 +1,8 @@
+2010-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* configure.in: Applied patch from Robert Nagy (robert@openbsd.org). Add
+	sys/param.h dependencies to a few checks.
+
 2010-04-21  Andrés G. Aragoneses  <andres@lindenlab.com>
 
 	* configure.in: Propagate DISABLE_MCS_DOCS to makefiles so mono/docs
