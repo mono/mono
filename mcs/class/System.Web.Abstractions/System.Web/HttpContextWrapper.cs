@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2010 Novell Inc. http://novell.com
 //
 
 //
@@ -36,6 +36,7 @@ using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.Caching;
 using System.Web.Profile;
+using System.Web.SessionState;
 
 namespace System.Web
 {
@@ -187,7 +188,12 @@ namespace System.Web
 		{
 			throw new NotImplementedException ();
 		}
-
+#if NET_4_0
+		public override void RemapHandler (IHttpHandler handler)
+		{
+			w.RemapHandler (handler);
+		}
+#endif
 		public override void RewritePath (string path)
 		{
 			w.RewritePath (path);
@@ -207,5 +213,11 @@ namespace System.Web
 		{
 			w.RewritePath (filePath, pathInfo, queryString, setClientFilePath);
 		}
+#if NET_4_0
+		public override void SetSessionStateBehavior (SessionStateBehavior sessionStateBehavior)
+		{
+			w.SetSessionStateBehavior (sessionStateBehavior);
+		}
+#endif
 	}
 }

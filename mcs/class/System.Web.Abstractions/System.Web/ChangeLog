@@ -1,3 +1,8 @@
+2010-04-26  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpContextWrapper.cs: implemented two 4.0 methods: RemapHandler
+	and SetSessionStateBehavior
+
 2010-02-18  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpFileCollectionWrapper.cs: Get (string) and this [string]
