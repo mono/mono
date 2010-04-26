@@ -36,6 +36,7 @@ using System.Security.Permissions;
 using System.Text;
 using System.Web.Util;
 using System.Web.Compilation;
+using System.Web.Management;
 using System.Collections.Specialized;
 
 namespace System.Web
@@ -48,12 +49,23 @@ namespace System.Web
 	{
 		const string DEFAULT_DESCRIPTION_TEXT = "Error processing request.";
 		const string ERROR_404_DESCRIPTION = "The resource you are looking for (or one of its dependencies) could have been removed, had its name changed, or is temporarily unavailable.  Please review the following URL and make sure that it is spelled correctly.";
-		
+
+		int webEventCode = WebEventCodes.UndefinedEventCode;
 		int http_code = 500;
 		string resource_name;
 		string description;
 		
 		const string errorStyleFonts = "\"Verdana\",\"DejaVu Sans\",sans-serif";
+
+#if NET_4_0
+		public
+#else
+		internal
+#endif
+		int WebEventCode 
+		{
+			get { return webEventCode; }
+		}
 		
 		public HttpException ()
 		{
@@ -88,6 +100,7 @@ namespace System.Web
 			: base (info, context)
 		{
 			http_code = info.GetInt32 ("_httpCode");
+			webEventCode = info.GetInt32 ("_webEventCode");
 		}
 
 		[SecurityPermission (SecurityAction.Demand, SerializationFormatter = true)]
@@ -95,6 +108,7 @@ namespace System.Web
 		{
 			base.GetObjectData (info, context);
 			info.AddValue ("_httpCode", http_code);
+			info.AddValue ("_webEventCode", webEventCode);
 		}
 
 		public HttpException (int httpCode, string message, int hr) 
@@ -166,6 +180,59 @@ namespace System.Web
 			}
 		}
 
+		internal static HttpException NewWithCode (string message, int webEventCode)
+		{
+			var ret = new HttpException (message);
+			ret.SetWebEventCode (webEventCode);
+
+			return ret;
+		}
+
+		internal static HttpException NewWithCode (string message, Exception innerException, int webEventCode)
+		{
+			var ret = new HttpException (message, innerException);
+			ret.SetWebEventCode (webEventCode);
+
+			return ret;
+		}
+
+		internal static HttpException NewWithCode (int httpCode, string message, int webEventCode)
+		{
+			var ret = new HttpException (httpCode, message);
+			ret.SetWebEventCode (webEventCode);
+
+			return ret;
+		}
+		
+		internal static HttpException NewWithCode (int httpCode, string message, Exception innerException, string resourceName, int webEventCode)
+		{
+			var ret = new HttpException (httpCode, message, innerException, resourceName);
+			ret.SetWebEventCode (webEventCode);
+
+			return ret;
+		}
+
+		internal static HttpException NewWithCode (int httpCode, string message, string resourceName, int webEventCode)
+		{
+			var ret = new HttpException (httpCode, message, resourceName);
+			ret.SetWebEventCode (webEventCode);
+
+			return ret;
+		}
+
+		internal static HttpException NewWithCode (int httpCode, string message, Exception innerException, int webEventCode)
+		{
+			var ret = new HttpException (httpCode, message, innerException);
+			ret.SetWebEventCode (webEventCode);
+
+			return ret;
+		}
+		
+		internal void SetWebEventCode (int webEventCode)
+		{
+			this.webEventCode = webEventCode;
+		}
+		
 		void WriteFileTop (StringBuilder builder, string title)
 		{
 #if TARGET_J2EE

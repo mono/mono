@@ -1,3 +1,13 @@
+2010-04-27  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpException.cs: implemented 4.0 property WebEventCode, also
+	made it available in the 2.0 profile as internal.
+	Added a method with several overloads, NewWithCode, which creates
+	an instance of HttpException and sets the web error code.
+
+	* HttpApplication.cs, HttpRequest.cs, HttpRuntime.cs: use HttpException.NewWithCode for some
+	exceptions.
+
 2010-04-21  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplication.cs: update to fix for bug #572469 - ProcessError

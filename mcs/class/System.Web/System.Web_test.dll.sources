@@ -319,6 +319,7 @@ System.Web/HttpContextCas.cs
 System.Web/HttpCookieCas.cs
 System.Web/HttpCookieCollectionCas.cs
 System.Web/HttpExceptionCas.cs
+System.Web/HttpExceptionTest.cs
 System.Web/HttpFileCollectionCas.cs
 System.Web/HttpModuleCollectionCas.cs
 System.Web/HttpParseExceptionCas.cs

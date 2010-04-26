@@ -40,6 +40,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Web.Caching;
 using System.Web.Configuration;
+using System.Web.Management;
 using System.Web.UI;
 using System.Web.Util;
 #if MONOWEB_DEP
@@ -453,7 +454,7 @@ namespace System.Web
 				SetupOfflineWatch ();
 				firstRun = false;
 				if (initialException != null) {
-					FinishWithException (req, new HttpException ("Initial exception", initialException));
+					FinishWithException (req, HttpException.NewWithCode ("Initial exception", initialException, WebEventCodes.RuntimeErrorRequestAbort));
 					error = true;
 				}
 			}
@@ -470,7 +471,7 @@ namespace System.Web
 				try {
 					app = HttpApplicationFactory.GetApplication (context);
 				} catch (Exception e) {
-					FinishWithException (req, new HttpException ("", e));
+					FinishWithException (req, HttpException.NewWithCode (String.Empty, e, WebEventCodes.RuntimeErrorRequestAbort));
 					error = true;
 				}
 			}

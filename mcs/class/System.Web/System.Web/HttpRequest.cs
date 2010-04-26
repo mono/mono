@@ -39,6 +39,7 @@ using System.Security;
 using System.Security.Permissions;
 using System.Security.Principal;
 using System.Web.Configuration;
+using System.Web.Management;
 using System.Web.UI;
 using System.Web.Util;
 using System.Globalization;
@@ -335,7 +336,7 @@ namespace System.Web
 			get {
 				if (encoding == null){
 					if (worker_request == null)
-						throw new HttpException ("No HttpWorkerRequest");
+						throw HttpException.NewWithCode ("No HttpWorkerRequest", WebEventCodes.RuntimeErrorRequestAbort);
 					
 					string content_type = ContentType;
 					string parameter = GetParameter (content_type, "; charset=");
@@ -786,7 +787,7 @@ namespace System.Web
 			int content_length_kb = content_length / 1024;
 			HttpRuntimeSection config = (HttpRuntimeSection) WebConfigurationManager.GetWebApplicationSection ("system.web/httpRuntime");
 			if (content_length_kb > config.MaxRequestLength)
-				throw new HttpException (400, "Upload size exceeds httpRuntime limit.");
+				throw HttpException.NewWithCode (400, "Upload size exceeds httpRuntime limit.", WebEventCodes.RuntimeErrorPostTooLarge);
 
 			int total = 0;
 			byte [] buffer;
@@ -833,8 +834,9 @@ namespace System.Web
 				total = Math.Min (content_length, total);
 				IntPtr content = Marshal.AllocHGlobal (content_length);
 				if (content == (IntPtr) 0)
-					throw new HttpException (String.Format ("Not enough memory to allocate {0} bytes.",
-									content_length));
+					throw HttpException.NewWithCode (
+						String.Format ("Not enough memory to allocate {0} bytes.", content_length),
+						WebEventCodes.WebErrorOtherError);
 
 				if (total > 0)
 					Marshal.Copy (buffer, 0, content, total);
@@ -870,7 +872,7 @@ namespace System.Web
 						break;
 					total += n;
 					if (total < 0 || total > maxlength)
-						throw new HttpException (400, "Upload size exceeds httpRuntime limit.");
+						throw HttpException.NewWithCode (400, "Upload size exceeds httpRuntime limit.", WebEventCodes.RuntimeErrorPostTooLarge);
 
 					if (ms != null && total > disk_th) {
 						// Swith to on-disk file.
@@ -892,7 +894,7 @@ namespace System.Web
 			DoFilter (buffer);
 
 			if (total < content_length)
-				throw new HttpException (411, "The request body is incomplete.");
+				throw HttpException.NewWithCode (411, "The request body is incomplete.", WebEventCodes.WebErrorOtherError);
 		}
 #endif
 
@@ -1290,7 +1292,7 @@ namespace System.Web
 		public string MapPath (string virtualPath, string baseVirtualDir, bool allowCrossAppMapping)
 		{
 			if (worker_request == null)
-				throw new HttpException ("No HttpWorkerRequest");
+				throw HttpException.NewWithCode ("No HttpWorkerRequest", WebEventCodes.RuntimeErrorRequestAbort);
 
 			if (virtualPath == null)
 				virtualPath = "~";
@@ -1301,7 +1303,7 @@ namespace System.Web
 			}
 
 			if (!VirtualPathUtility.IsValidVirtualPath (virtualPath))
-				throw new HttpException (String.Format ("'{0}' is not a valid virtual path.", virtualPath));
+				throw HttpException.NewWithCode (String.Format ("'{0}' is not a valid virtual path.", virtualPath), WebEventCodes.RuntimeErrorRequestAbort);
 
 			string appVirtualPath = HttpRuntime.AppDomainAppVirtualPath;
 
@@ -1314,9 +1316,9 @@ namespace System.Web
 			
 			if (!allowCrossAppMapping){
 				if (!StrUtils.StartsWith (virtualPath, appVirtualPath, true))
-					throw new HttpException ("MapPath: Mapping across applications not allowed");
+					throw HttpException.NewWithCode ("MapPath: Mapping across applications not allowed", WebEventCodes.RuntimeErrorRequestAbort);
 				if (appVirtualPath.Length > 1 && virtualPath.Length > 1 && virtualPath [0] != '/')
-					throw new HttpException ("MapPath: Mapping across applications not allowed");
+					throw HttpException.NewWithCode ("MapPath: Mapping across applications not allowed", WebEventCodes.RuntimeErrorRequestAbort);
 			}
 #if TARGET_JVM
 			return worker_request.MapPath (virtualPath);

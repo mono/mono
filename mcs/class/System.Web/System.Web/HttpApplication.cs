@@ -75,6 +75,7 @@ using System.Threading;
 using System.Web.Caching;
 using System.Web.Compilation;
 using System.Web.Configuration;
+using System.Web.Management;
 using System.Web.SessionState;
 using System.Web.UI;
 using System.Web.Util;
@@ -277,10 +278,10 @@ namespace System.Web
 		public HttpRequest Request {
 			get {
 				if (context == null)
-					throw new HttpException (Locale.GetText ("No context is available."));
+					throw HttpException.NewWithCode (Locale.GetText ("No context is available."), WebEventCodes.RuntimeErrorRequestAbort);
 
 				if (false == HttpApplicationFactory.ContextAvailable)
-					throw new HttpException (Locale.GetText ("Request is not available in this context."));
+					throw HttpException.NewWithCode (Locale.GetText ("Request is not available in this context."), WebEventCodes.RuntimeErrorRequestAbort);
 
 				return context.Request;
 			}
@@ -291,10 +292,10 @@ namespace System.Web
 		public HttpResponse Response {
 			get {
 				if (context == null)
-					throw new HttpException (Locale.GetText ("No context is available."));
+					throw HttpException.NewWithCode (Locale.GetText ("No context is available."), WebEventCodes.RuntimeErrorRequestAbort);
 
 				if (false == HttpApplicationFactory.ContextAvailable)
-					throw new HttpException (Locale.GetText ("Response is not available in this context."));
+					throw HttpException.NewWithCode (Locale.GetText ("Response is not available in this context."), WebEventCodes.RuntimeErrorRequestAbort);
 
 				return context.Response;
 			}
@@ -324,11 +325,11 @@ namespace System.Web
 					return session;
 
 				if (context == null)
-					throw new HttpException (Locale.GetText ("No context is available."));
+					throw HttpException.NewWithCode (Locale.GetText ("No context is available."), WebEventCodes.RuntimeErrorRequestAbort);
 
 				HttpSessionState ret = context.Session;
 				if (ret == null)
-					throw new HttpException (Locale.GetText ("Session state is not available in the context."));
+					throw HttpException.NewWithCode (Locale.GetText ("Session state is not available in the context."), WebEventCodes.RuntimeErrorRequestAbort);
 				
 				return ret;
 			}
@@ -933,7 +934,7 @@ namespace System.Web
 				object obj = taex.ExceptionState;
 				Thread.ResetAbort ();
 				if (obj is StepTimeout)
-					ProcessError (new HttpException ("The request timed out."));
+					ProcessError (HttpException.NewWithCode ("The request timed out.", WebEventCodes.RequestTransactionAbort));
 				else {
 					context.ClearError ();
 					if (FlagEnd.Value != obj && !HttpRuntime.DomainUnloading)
@@ -1063,7 +1064,7 @@ namespace System.Web
 					if (error is HttpException){
 						response.StatusCode = ((HttpException)error).GetHttpCode ();
 					} else {
-						error = new HttpException ("", error);
+						error = HttpException.NewWithCode (String.Empty, error, WebEventCodes.WebErrorOtherError);
 						response.StatusCode = 500;
 					}
 					HttpException httpEx = (HttpException) error;
@@ -1073,7 +1074,7 @@ namespace System.Web
 						response.Flush (true);
 				} else {
 					if (!(error is HttpException))
-						error = new HttpException ("", error);
+						error = HttpException.NewWithCode (String.Empty, error, WebEventCodes.WebErrorOtherError);
 					FinalErrorWrite (response, ((HttpException) error).GetHtmlErrorMessage ());
 				}
 			}
@@ -1182,8 +1183,9 @@ namespace System.Web
 					string path = req.PathNoValidation;
 					int idx = path != null ? path.IndexOfAny (invalidChars) : -1;
 					if (idx != -1)
-						throw new HttpException (
-							String.Format ("A potentially dangerous Request.Path value was detected from the client ({0}).", path [idx])
+						throw HttpException.NewWithCode (
+							String.Format ("A potentially dangerous Request.Path value was detected from the client ({0}).", path [idx]),
+							WebEventCodes.RuntimeErrorValidationFailure
 						);
 				}
 			}
@@ -1267,13 +1269,20 @@ namespace System.Web
 				Console.WriteLine (fnf.ToString ());
 #endif
 				if (context.Request.IsLocal)
-					ProcessError (new HttpException (404, String.Format ("File not found {0}", fnf.FileName), fnf, context.Request.FilePath));
+					ProcessError (HttpException.NewWithCode (404,
+										 String.Format ("File not found {0}", fnf.FileName),
+										 fnf,
+										 context.Request.FilePath,
+										 WebEventCodes.RuntimeErrorRequestAbort));
 				else
-					ProcessError (new HttpException (404, "File not found: " + Path.GetFileName (fnf.FileName), context.Request.FilePath));
+					ProcessError (HttpException.NewWithCode (404,
+										 "File not found: " + Path.GetFileName (fnf.FileName),
+										 context.Request.FilePath,
+										 WebEventCodes.RuntimeErrorRequestAbort));
 			} catch (DirectoryNotFoundException dnf){
 				if (!context.Request.IsLocal)
 					dnf = null; // Do not "leak" real path information
-				ProcessError (new HttpException (404, "Directory not found", dnf));
+				ProcessError (HttpException.NewWithCode (404, "Directory not found", dnf, WebEventCodes.RuntimeErrorRequestAbort));
 			} catch (Exception e) {
 				ProcessError (e);
 			}
@@ -1534,7 +1543,7 @@ namespace System.Web
 				InitOnce (true);
 			} catch (Exception e) {
 				initialization_exception = e;
-				FinalErrorWrite (context.Response, new HttpException ("", e).GetHtmlErrorMessage ());
+				FinalErrorWrite (context.Response, HttpException.NewWithCode (String.Empty, e, WebEventCodes.RuntimeErrorRequestAbort).GetHtmlErrorMessage ());
 				PipelineDone ();
 				return;
 			}
@@ -1725,7 +1734,7 @@ namespace System.Web
 			return RedirectErrorPage (redirect);
 			}
 			catch (Exception ex) {
-				httpEx = new HttpException (500, "", ex);
+				httpEx = HttpException.NewWithCode (500, String.Empty, ex, WebEventCodes.WebErrorOtherError);
 				return false;
 			}
 		}
