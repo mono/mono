@@ -16,11 +16,11 @@ namespace Mono.Debugger.Soft
 		object startup_monitor;
 		AppDomainMirror root_domain;
 		Dictionary<int, EventRequest> requests;
-		Process process;
+		IProcess process;
 
 		internal Connection conn;
 
-		internal VirtualMachine (Process process, Connection conn) : base () {
+		internal VirtualMachine (IProcess process, Connection conn) : base () {
 			SetVirtualMachine (this);
 			queue = new Queue ();
 			queue_monitor = new Object ();
@@ -35,7 +35,7 @@ namespace Mono.Debugger.Soft
 		public StreamReader StandardOutput { get; set; }
 		public StreamReader StandardError { get; set; }
 
-		public Process Process {
+		public IProcess Process {
 			get {
 				return process;
 			}

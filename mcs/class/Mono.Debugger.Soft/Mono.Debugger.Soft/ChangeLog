@@ -1,3 +1,13 @@
+2010-04-26  Lluis Sanchez  <lluis@novell.com>
+
+	* IProcess.cs:
+	* VirtualMachine.cs:
+	* VirtualMachineManager.cs:
+	Added new IProcess interface which wraps the debugged process.
+	This abstraction makes it easier to support debugging processes
+	for which we don't have a direct Process reference (for example,
+	if the process is remote).
+
 2010-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* ThreadMirror.cs: Add a ThreadId property.
