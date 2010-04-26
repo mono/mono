@@ -1,3 +1,7 @@
+2010-04-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_op_to_op_imm_noemul): Fix a warning.
+
 2010-04-24  Mark Probst  <mark.probst@gmail.com>
 
 	* mini.c, driver.c: Initialize mono_use_llvm in mono_main(), not
