@@ -1,3 +1,7 @@
+2010-04-26  Marek Habersack  <mhabersack@novell.com>
+
+	* MemoryCacheTest.cs: added tests for LRU removal of entries.
+
 2010-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* MemoryCacheTest.cs, ObjectCacheTest.cs: added

@@ -1,3 +1,12 @@
+2010-04-26  Marek Habersack  <mhabersack@novell.com>
+
+	* MemoryCacheLRU.cs: added
+
+	* MemoryCacheContainer.cs: added LRU entry cache.
+
+	* MemoryCache.cs: added option to emulate one CPU on SMP machines
+	(for testing purposes) - "__MonoEmulateOneCPU"
+
 2010-04-24  Marek Habersack  <mhabersack@novell.com>
 
 	* ObjectCache.cs: implemented all the non-abstract methods.

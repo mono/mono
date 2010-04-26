@@ -39,12 +39,15 @@ namespace System.Runtime.Caching
 {
 	sealed class MemoryCacheContainer : IDisposable
 	{
+		const int DEFAULT_LRU_LOWER_BOUND = 10;
+		
 		ReaderWriterLockSlim cache_lock = new ReaderWriterLockSlim ();
 		
 		SortedDictionary <string, MemoryCacheEntry> cache;
 		MemoryCache owner;
 		MemoryCachePerformanceCounters perfCounters;
 		MemoryCacheEntryPriorityQueue timedItems;
+		MemoryCacheLRU lru;
 		Timer expirationTimer;
 		
 		public int ID {
@@ -64,6 +67,7 @@ namespace System.Runtime.Caching
 			this.ID = id;
 			this.perfCounters = perfCounters;
 			cache = new SortedDictionary <string, MemoryCacheEntry> ();
+			lru = new MemoryCacheLRU (this, DEFAULT_LRU_LOWER_BOUND);
 		}
 
 		bool ExpireIfNeeded (string key, MemoryCacheEntry entry, bool needsLock = true, CacheEntryRemovedReason reason = CacheEntryRemovedReason.Expired)
@@ -150,10 +154,11 @@ namespace System.Runtime.Caching
 				cache [key] = entry;
 			else
 				cache.Add (key, entry);
+			lru.Update (entry);
 			entry.Added ();
 			if (!update)
 				perfCounters.Increment (MemoryCachePerformanceCounters.CACHE_ENTRIES);
-
+			
 			if (entry.IsExpirable)
 				UpdateExpirable (entry);
 		}
@@ -203,7 +208,7 @@ namespace System.Runtime.Caching
 
 					timedItems.Dequeue ();
 					count++;
-					DoRemoveEntry (entry, entry.Key, CacheEntryRemovedReason.Expired);
+					DoRemoveEntry (entry, true, entry.Key, CacheEntryRemovedReason.Expired);
 					entry = timedItems.Peek ();
 				}
 
@@ -304,21 +309,26 @@ namespace System.Runtime.Caching
 			}
 		}
 
-		public object Remove (string key)
+		public object Remove (string key, bool needLock = true, bool updateLRU = true)
 		{
 			bool writeLocked = false, readLocked = false;
 			try {
-				cache_lock.EnterUpgradeableReadLock ();
-				readLocked = true;
+				if (needLock) {
+					cache_lock.EnterUpgradeableReadLock ();
+					readLocked = true;
+				}
 
 				MemoryCacheEntry entry;
 				if (!cache.TryGetValue (key, out entry))
 					return null;
+
+				if (needLock) {
+					cache_lock.EnterWriteLock ();
+					writeLocked = true;
+				}
 				
-				cache_lock.EnterWriteLock ();
-				writeLocked = true;
 				object ret = entry.Value;
-				DoRemoveEntry (entry, key);
+				DoRemoveEntry (entry, updateLRU, key);
 				return ret;
 			} finally {
 				if (writeLocked)
@@ -327,14 +337,16 @@ namespace System.Runtime.Caching
 					cache_lock.ExitUpgradeableReadLock ();
 			}
 		}
-
+		
 		// NOTE: this must be called with the write lock held
-		void DoRemoveEntry (MemoryCacheEntry entry, string key = null, CacheEntryRemovedReason reason = CacheEntryRemovedReason.Removed)
+		void DoRemoveEntry (MemoryCacheEntry entry, bool updateLRU = true, string key = null, CacheEntryRemovedReason reason = CacheEntryRemovedReason.Removed)
 		{
 			if (key == null)
 				key = entry.Key;
 
 			cache.Remove (key);
+			if (updateLRU)
+				lru.Remove (entry);
 			perfCounters.Decrement (MemoryCachePerformanceCounters.CACHE_ENTRIES);
 			entry.Removed (owner, reason);
 		}
@@ -355,6 +367,7 @@ namespace System.Runtime.Caching
 						mce.SetPolicy (policy);
 						if (mce.IsExpirable)
 							UpdateExpirable (mce);
+						lru.Update (mce);
 						return;
 					}
 
@@ -394,9 +407,8 @@ namespace System.Runtime.Caching
 				ret = DoRemoveExpiredItems (false);
 
 				goal -= ret;
-				if (goal > 0) {
-					// TODO: perform LRU removal
-			}
+				if (goal > 0)
+					ret += lru.Trim (goal);
 			} finally {
 				if (locked)
 					cache_lock.ExitWriteLock ();

@@ -142,6 +142,11 @@ namespace System.Runtime.Caching
 				monitor.NotifyOnChanged (OnMonitorChanged);
 		}
 
+		public override int GetHashCode ()
+		{
+			return Key.GetHashCode ();
+		}
+		
 		void OnMonitorChanged (object state)
 		{
 			owner.Remove (this);
@@ -149,16 +154,18 @@ namespace System.Runtime.Caching
 		
 		public void Removed (MemoryCache owner, CacheEntryRemovedReason reason)
 		{
-			Disabled = true;
-			
-			if (removedCallback == null)
+			if (removedCallback == null) {
+				Disabled = true;
 				return;
+			}
 			
 			try {
 				removedCallback (new CacheEntryRemovedArguments (owner, reason, new CacheItem (Key, Value)));
 			} catch {
 				// ignore - we don't care about the exceptions thrown inside the
 				// handler
+			} finally {
+				Disabled = true;
 			}
 		}
 

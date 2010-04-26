@@ -24,6 +24,7 @@ System.Runtime.Caching/MemoryCache.cs
 System.Runtime.Caching/MemoryCacheContainer.cs
 System.Runtime.Caching/MemoryCacheEntry.cs
 System.Runtime.Caching/MemoryCacheEntryChangeMonitor.cs
+System.Runtime.Caching/MemoryCacheLRU.cs
 System.Runtime.Caching/MemoryCachePerformanceCounters.cs
 System.Runtime.Caching/MemoryCacheEntryPriorityQueue.cs
 System.Runtime.Caching/ObjectCache.cs

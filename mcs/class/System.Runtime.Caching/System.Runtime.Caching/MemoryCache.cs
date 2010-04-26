@@ -49,7 +49,8 @@ namespace System.Runtime.Caching
 		DefaultCacheCapabilities defaultCaps;
 		MemoryCachePerformanceCounters perfCounters;
 		bool noPerformanceCounters;
-				
+		bool emulateOneCPU;
+		
 		static ulong TotalPhysicalMemory {
 			get {
 				if (totalPhysicalMemory == 0)
@@ -139,6 +140,19 @@ namespace System.Runtime.Caching
 
 			Interlocked.CompareExchange (ref totalPhysicalMemory, memBytes, 0);
 		}
+
+		bool ParseBoolConfigValue (string paramName, string name, NameValueCollection config, bool doTrow)
+		{
+			string value = config [name];
+			if (String.IsNullOrEmpty (value))
+				return false;
+
+			try {
+				return Boolean.Parse (value);
+			} catch {
+				return false;
+			}
+		}
 		
 		bool ParseInt32ConfigValue (string paramName, string name, NameValueCollection config, int maxValue, bool doThrow,  out int parsed)
 		{
@@ -168,7 +182,7 @@ namespace System.Runtime.Caching
 			
 			return true;
 		}
-
+		
 		bool ParseTimeSpanConfigValue (string paramName, string name, NameValueCollection config, out TimeSpan parsed)
 		{
 			string value = config [name];
@@ -227,6 +241,9 @@ namespace System.Runtime.Caching
 					TimerPeriod = (long)(parsed * 1000);
 				else
 					TimerPeriod = DEFAULT_TIMER_PERIOD;
+
+				if (ParseBoolConfigValue ("config", "__MonoEmulateOneCPU", config, false))
+					emulateOneCPU = true;
 			} else
 				TimerPeriod = DEFAULT_TIMER_PERIOD;
 
@@ -349,8 +366,8 @@ namespace System.Runtime.Caching
 		{
 			if (key == null)
 				throw new ArgumentNullException ("key");
-			
-			if (numCPUs == 1) {
+
+			if (emulateOneCPU || numCPUs == 1) {
 				if (containers [0] == null)
 					containers [0] = new MemoryCacheContainer (this, 0, perfCounters);
 

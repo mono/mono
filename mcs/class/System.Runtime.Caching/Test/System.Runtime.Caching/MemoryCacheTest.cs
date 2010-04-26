@@ -1172,20 +1172,69 @@ namespace MonoTests.System.Runtime.Caching
 			}, "#A3");
 		}
 
+		// NOTE: on Windows with 2 or more CPUs this test will most probably fail.
 		[Test]
 		public void Trim ()
 		{
-			var mc = new MemoryCache ("MyCache");
+			var config = new NameValueCollection ();
+			config ["__MonoEmulateOneCPU"] = "true";
+			var mc = new MemoryCache ("MyCache", config);
 
 			for (int i = 0; i < 10; i++)
 				mc.Set ("key" + i.ToString (), "value" + i.ToString (), null);
 
-			Assert.AreEqual (10, mc.GetCount (), "#A1");
+			// .NET doesn't touch the freshest 10 entries
+			Assert.AreEqual (10, mc.GetCount (), "#A1-1");
 			long trimmed = mc.Trim (50);
-			Assert.AreEqual (0, trimmed, "#A2-1");
-			Assert.AreEqual (10, mc.GetCount (), "#A2-2");
+			Assert.AreEqual (0, trimmed, "#A1-2");
+			Assert.AreEqual (10, mc.GetCount (), "#A1-3");
 
-			
+			mc = new MemoryCache ("MyCache", config);
+			// Only entries 11- are considered for removal
+			for (int i = 0; i < 11; i++)
+				mc.Set ("key" + i.ToString (), "value" + i.ToString (), null);
+
+			Assert.AreEqual (11, mc.GetCount (), "#A2-1");
+			trimmed = mc.Trim (50);
+			Assert.AreEqual (1, trimmed, "#A2-2");
+			Assert.AreEqual (10, mc.GetCount (), "#A2-3");
+
+			mc = new MemoryCache ("MyCache", config);
+			// Only entries 11- are considered for removal
+			for (int i = 0; i < 125; i++)
+				mc.Set ("key" + i.ToString (), "value" + i.ToString (), null);
+
+			Assert.AreEqual (125, mc.GetCount (), "#A3-1");
+			trimmed = mc.Trim (50);
+			Assert.AreEqual (62, trimmed, "#A3-2");
+			Assert.AreEqual (63, mc.GetCount (), "#A3-3");
+
+			// Testing the removal order
+			mc = new MemoryCache ("MyCache", config);
+			var removed = new List <string> ();
+			var cip = new CacheItemPolicy ();
+			cip.RemovedCallback = (CacheEntryRemovedArguments args) => {
+				removed.Add (args.CacheItem.Key);
+			};
+
+			for (int i = 0; i < 50; i++)
+				mc.Set ("key" + i.ToString (), "value" + i.ToString (), cip);
+
+			object value;
+			for (int i = 0; i < 50; i++)
+				value = mc.Get ("key" + i.ToString ());
+
+			trimmed = mc.Trim (50);
+			Assert.AreEqual (25, mc.GetCount (), "#A4-1");
+			Assert.AreEqual (25, trimmed, "#A4-2");
+			Assert.AreEqual (25, removed.Count, "#A4-3");
+
+			// OK, this is odd... The list is correct in terms of entries removed but the entries
+			// are removed in the _MOST_ frequently used order, within the group selected for removal.
+			for (int i = 24; i >= 0; i--) {
+				int idx = 24 - i;
+				Assert.AreEqual ("key" + i.ToString (), removed [idx], "#A5-" + idx.ToString ());
+			}
 		}
 	}
 }
