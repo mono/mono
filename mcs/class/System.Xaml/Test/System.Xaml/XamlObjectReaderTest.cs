@@ -334,7 +334,6 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		[Category ("NotWorking")] // namespace node differences
 		public void Read_Type2 ()
 		{
 			var r = new XamlObjectReader (typeof (TestClass1));
@@ -342,7 +341,6 @@ namespace MonoTests.System.Xaml
 		}
 		
 		[Test]
-		[Category ("NotWorking")] // namespace node differences
 		public void Read_TypeExtension2 ()
 		{
 			var r = new XamlObjectReader (new TypeExtension (typeof (TestClass1)));
@@ -354,20 +352,16 @@ namespace MonoTests.System.Xaml
 			Assert.IsTrue (r.Read (), "#11");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#12");
 
-			var nsmap = new Dictionary<string,string> ();
-			nsmap ["x"] = XamlLanguage.Xaml2006Namespace;
-			nsmap [String.Empty] = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
+			var defns = "clr-namespace:MonoTests.System.Xaml;assembly=" + GetType ().Assembly.GetName ().Name;
 
-			Assert.IsTrue (nsmap.ContainsKey (r.Namespace.Prefix), "#13-2");
-			Assert.AreEqual (nsmap [r.Namespace.Prefix], r.Namespace.Namespace, "#13-3:" + r.Namespace.Prefix);
-			nsmap.Remove (r.Namespace.Prefix);
+			Assert.AreEqual (String.Empty, r.Namespace.Prefix, "#13-2");
+			Assert.AreEqual (defns, r.Namespace.Namespace, "#13-3:" + r.Namespace.Prefix);
 
 			Assert.IsTrue (r.Read (), "#16");
 			Assert.AreEqual (XamlNodeType.NamespaceDeclaration, r.NodeType, "#17");
 			Assert.IsNotNull (r.Namespace, "#18");
-			Assert.IsTrue (nsmap.ContainsKey (r.Namespace.Prefix), "#18-2");
-			Assert.AreEqual (nsmap [r.Namespace.Prefix], r.Namespace.Namespace, "#18-3:" + r.Namespace.Prefix);
-			nsmap.Remove (r.Namespace.Prefix);
+			Assert.AreEqual ("x", r.Namespace.Prefix, "#18-2");
+			Assert.AreEqual (XamlLanguage.Xaml2006Namespace, r.Namespace.Namespace, "#18-3:" + r.Namespace.Prefix);
 
 			Assert.IsTrue (r.Read (), "#21");
 			Assert.AreEqual (XamlNodeType.StartObject, r.NodeType, "#22");

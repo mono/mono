@@ -548,6 +548,14 @@ namespace MonoTests.System.Xaml
 			Assert.IsNotNull (xm, "#4");
 		}
 
+		[Test]
+		public void GetAliasedPropertyOnAllTypes ()
+		{
+			foreach (var xt in XamlLanguage.AllTypes)
+				foreach (var xd in XamlLanguage.AllDirectives)
+					Assert.IsNull (xt.GetAliasedProperty (xd), xt.Name + " and " + xd.Name);
+		}
+
 		[DictionaryKeyProperty ("Key")]
 		[RuntimeNameProperty ("RuntimeTypeName")]
 		[UidProperty ("UUID")]

@@ -99,10 +99,7 @@ namespace System.Xaml
 
 			public string LookupPrefix (string ns)
 			{
-				foreach (var nsd in source.namespaces)
-					if (nsd.Namespace == ns)
-						return nsd.Prefix;
-				return null;
+				return source.LookupPrefix (ns);
 			}
 		}
 
@@ -197,6 +194,14 @@ namespace System.Xaml
 			get { return NodeType == XamlNodeType.Value ? objects.Peek () : null; }
 		}
 
+		internal string LookupPrefix (string ns)
+		{
+			foreach (var nsd in namespaces)
+				if (nsd.Namespace == ns)
+					return nsd.Prefix;
+			return null;
+		}
+
 		public override bool Read ()
 		{
 			if (IsDisposed)
@@ -208,10 +213,12 @@ namespace System.Xaml
 			case XamlNodeType.None:
 			default:
 				// -> namespaces
-				var l = new List<string> ();
-				CollectNamespaces (l, instance, root_type);
-				var nss = from s in l select new NamespaceDeclaration (s, s == XamlLanguage.Xaml2006Namespace ? "x" : s == root_type.PreferredXamlNamespace ? String.Empty : SchemaContext.GetPreferredPrefix (s));
+				var d = new Dictionary<string,string> ();
+				//l.Sort ((p1, p2) => String.CompareOrdinal (p1.Key, p2.Key));
+				CollectNamespaces (d, instance, root_type);
+				var nss = from k in d.Keys select new NamespaceDeclaration (k, d [k]);
 				namespaces = new NSList (XamlNodeType.StartObject, nss);
+				namespaces.Sort ((n1, n2) => String.CompareOrdinal (n1.Prefix, n2.Prefix));
 				ns_iterator = namespaces.GetEnumerator ();
 
 				ns_iterator.MoveNext ();
@@ -290,26 +297,26 @@ namespace System.Xaml
 			}
 		}
 
-		void CollectNamespaces (List<string> l, object o, XamlType xt)
+		void CollectNamespaces (Dictionary<string,string> d, object o, XamlType xt)
 		{
 			if (xt == null)
 				return;
 			if (o == null) {
 				// it becomes NullExtension, so check standard ns.
-				if (!l.Contains (XamlLanguage.Xaml2006Namespace))
-					l.Add (XamlLanguage.Xaml2006Namespace);
+				CheckAddNamespace (d, XamlLanguage.Xaml2006Namespace);
 				return;
 			}
 			var ns = xt.PreferredXamlNamespace;
-			if (!l.Contains (ns))
-				l.Add (ns);
-			foreach (var xm in xt.GetAllReadWriteMembers ()) {
+			CheckAddNamespace (d, ns);
+
+			foreach (var xm in xt.GetAllMembers ()) {
 				ns = xm.PreferredXamlNamespace;
 				if (xm is XamlDirective && ns == XamlLanguage.Xaml2006Namespace)
 					continue;
 				if (xm.Type.IsCollection || xm.Type.IsDictionary || xm.Type.IsArray)
 					continue; // FIXME: process them too.
-				CollectNamespaces (l, xm.Invoker.GetValue (o), xm.Type);
+				var mv = GetMemberValueOf (xm, o, xt, d);
+				CollectNamespaces (d, mv, xm.Type);
 			}
 		}
 
@@ -344,7 +351,11 @@ namespace System.Xaml
 			var xm = members_stack.Peek ().Current;
 			var obj = objects.Peek ();
 			var xt = types.Peek ();
+			return GetMemberValueOf (xm, obj, xt, null);
+		}
 
+		object GetMemberValueOf (XamlMember xm, object obj, XamlType xt, Dictionary<string,string> collectingNamespaces)
+		{
 			object retobj;
 			XamlType retxt;
 			if (xt.IsContentValue ()) {
@@ -355,13 +366,39 @@ namespace System.Xaml
 				retobj = xm.GetMemberValueForObjectReader (xt, obj, prefix_lookup);
 			}
 
-			// FIXME: I'm not sure if this should be really done 
-			// here, but every primitive values seem to be exposed
-			// as a string, not a typed object in XamlObjectReader.
-			if (retxt.IsContentValue ())
+			if (collectingNamespaces != null) {
+				if (retobj is Type || retobj is TypeExtension) {
+					var type = (retobj as Type) ?? ((TypeExtension) retobj).Type;
+					if (type == null) // only TypeExtension.TypeName
+						return null;
+					var xtt = SchemaContext.GetXamlType (type);
+					var ns = xtt.PreferredXamlNamespace;
+					var nss = collectingNamespaces;
+					CheckAddNamespace (collectingNamespaces, ns);
+					return null;
+				}
+				else if (retxt.IsContentValue ())
+					return null;
+				else
+					return retobj;
+			} else if (retxt.IsContentValue ()) {
+				// FIXME: I'm not sure if this should be really done 
+				// here, but every primitive values seem to be exposed
+				// as a string, not a typed object in XamlObjectReader.
 				return retxt.GetStringValue (retobj, prefix_lookup);
+			}
 			else
 				return retobj;
+		}
+
+		void CheckAddNamespace (Dictionary<string,string> d, string ns)
+		{
+			if (ns == XamlLanguage.Xaml2006Namespace)
+				d [XamlLanguage.Xaml2006Namespace] = "x";
+			else if (!d.ContainsValue (String.Empty))
+				d [ns] = String.Empty;
+			else if (!d.ContainsKey (ns))
+				d.Add (ns, SchemaContext.GetPreferredPrefix (ns));
 		}
 	}
 }

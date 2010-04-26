@@ -1,3 +1,8 @@
+2010-04-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlObjectReader.cs : now it can look into values and pick up
+	  more required namespace prefixes.
+
 2010-04-22  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlObjectReader.cs, TypeExtensionMethods.cs : handle System.Type
