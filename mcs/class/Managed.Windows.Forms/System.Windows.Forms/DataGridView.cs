@@ -3795,8 +3795,15 @@ namespace System.Windows.Forms {
 				if (!is_autogenerating_columns && columns.Count == 1)
 					ReBind ();
 
-				foreach (DataGridViewRow row in Rows)
-					row.Cells.ReplaceOrAdd (e.Column.Index, (DataGridViewCell)e.Column.CellTemplate.Clone ());
+				foreach (DataGridViewRow row in Rows) {
+					DataGridViewCell newCell = (DataGridViewCell)e.Column.CellTemplate.Clone ();
+					if (row.Cells.Count == columns.Count)
+						row.Cells.Replace (e.Column.Index, newCell);
+					else if (e.Column.Index >= row.Cells.Count)
+						row.Cells.Add (newCell);
+					else
+						row.Cells.Insert (e.Column.Index, newCell);
+				}
 			}
 			
 			e.Column.DataColumnIndex = FindDataColumnIndex (e.Column);

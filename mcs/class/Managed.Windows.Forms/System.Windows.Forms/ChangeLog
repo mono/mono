@@ -1,3 +1,10 @@
+2010-04-26  Ivan Zlatev  <ivan@ivanz.com>
+
+	* DataGridView.cs: Handle all possible cases for when a new column is 
+	added and there are existing rows with existing cells both in the 
+	non-databound and the databound scenario.
+	[Fixes bug #583387]
+
 2010-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* XplatUIX11.cs: When retrieving data from the x11 clipboard and we

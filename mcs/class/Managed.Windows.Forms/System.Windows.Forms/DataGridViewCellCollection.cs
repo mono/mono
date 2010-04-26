@@ -123,14 +123,10 @@ namespace System.Windows.Forms
 			return result;
 		}
 
-		internal void ReplaceOrAdd (int columnIndex, DataGridViewCell dataGridViewCell)
+		internal void Replace (int columnIndex, DataGridViewCell dataGridViewCell)
 		{
-			if (columnIndex >= 0 && columnIndex < base.List.Count) {
-				RemoveAt (columnIndex);
-				Insert (columnIndex, dataGridViewCell);
-			} else {
-				Add (dataGridViewCell);
-			}
+			RemoveAt (columnIndex);
+			Insert (columnIndex, dataGridViewCell);
 		}
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
