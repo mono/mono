@@ -322,7 +322,7 @@ namespace System.Windows.Forms
 			base.Dismiss (reason);
 		}
 
-		internal override void HandleClick (EventArgs e)
+		internal override void HandleClick (int mouse_clicks, EventArgs e)
 		{
 			OnClick (e);
 		}

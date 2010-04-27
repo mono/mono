@@ -1,3 +1,14 @@
+2010-04-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripSplitButton.cs:
+	* ToolStripDropDownItem.cs:
+	* ToolStripMenuItem.cs: Update overrides.
+	* ToolStripItem.cs: Pass the number of clicks to HandleClick when
+	firing OnMouseUp, so we can later fire either OnClick or
+	OnDoubleClick.
+
+	Fixes #558632.
+
 2010-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* RichTextBox.cs: When emitting the complete RTF value escape chars

@@ -534,7 +534,7 @@ namespace System.Windows.Forms
 			}
 		}
 
-		internal override void HandleClick (EventArgs e)
+		internal override void HandleClick (int mouse_clicks, EventArgs e)
 		{
 			this.OnClick (e);
 			

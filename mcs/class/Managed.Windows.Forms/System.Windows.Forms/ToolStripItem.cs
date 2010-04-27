@@ -1015,9 +1015,6 @@ namespace System.Windows.Forms
 			EventHandler eh = (EventHandler)(Events [DoubleClickEvent]);
 			if (eh != null)
 				eh (this, e);
-
-			if (!double_click_enabled)
-				OnClick (e);
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -1779,7 +1776,7 @@ namespace System.Windows.Forms
 				
 			switch (met) {
 				case ToolStripItemEventType.MouseUp:
-					this.HandleClick (e);
+					this.HandleClick (((MouseEventArgs)e).Clicks, e);
 					this.OnMouseUp ((MouseEventArgs)e);
 					break;
 				case ToolStripItemEventType.MouseDown:
@@ -1801,15 +1798,18 @@ namespace System.Windows.Forms
 					this.OnPaintInternal ((PaintEventArgs)e);
 					break;
 				case ToolStripItemEventType.Click:
-					this.HandleClick (e);
+					this.HandleClick (1, e);
 					break;
 			}
 		}
 		
-		internal virtual void HandleClick (EventArgs e)
+		internal virtual void HandleClick (int mouse_clicks, EventArgs e)
 		{
 			this.Parent.HandleItemClick (this);
-			this.OnClick (e);
+			if (mouse_clicks == 2 && double_click_enabled)
+				this.OnDoubleClick (e);
+			else
+				this.OnClick (e);
 		}
 		
 		internal virtual void SetPlacement (ToolStripItemPlacement placement)

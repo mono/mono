@@ -321,9 +321,9 @@ namespace System.Windows.Forms
 		#endregion
 
 		#region Internal Methods
-		internal override void HandleClick (EventArgs e)
+		internal override void HandleClick (int mouse_clicks, EventArgs e)
 		{
-			base.HandleClick (e);
+			base.HandleClick (mouse_clicks, e);
 
 			MouseEventArgs mea = e as MouseEventArgs;
 			
