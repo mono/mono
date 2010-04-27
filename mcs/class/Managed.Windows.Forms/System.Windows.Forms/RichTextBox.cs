@@ -1950,12 +1950,12 @@ namespace System.Windows.Forms {
 
 		static readonly char [] ReservedRTFChars = new char [] { '\\', '{', '}' };
 
-		[MonoInternalNote ("Emit unicode and other special characters properly")]
 		private void EmitRTFText(StringBuilder rtf, string text) {
 			int start = rtf.Length;
 			int count = text.Length;
 
-			rtf.Append(text);
+			// First emit simple unicode chars as escaped
+			EmitEscapedUnicode (rtf, text);
 
 			// This method emits user text *only*, so it's safe to escape any reserved rtf chars
 			// Escape '\' first, since it is used later to escape the other chars
@@ -1964,6 +1964,39 @@ namespace System.Windows.Forms {
 				rtf.Replace ("{", "\\{", start, count);
 				rtf.Replace ("}", "\\}", start, count);
 			}
+		}
+
+		// The chars to be escaped use "\'" + its hexadecimal value.
+		private void EmitEscapedUnicode (StringBuilder sb, string text)
+		{
+			int pos;
+			int start = 0;
+
+			while ((pos = IndexOfNonAscii (text, start)) > -1) {
+				sb.Append (text, start, pos - start);
+
+				int n = (int)text [pos];
+				sb.Append ("\\'");
+				sb.Append (n.ToString ("X"));
+
+				start = pos + 1;
+			}
+
+			// Append remaining (maybe all) the text value.
+			if (start < text.Length)
+				sb.Append (text, start, text.Length - start);
+		}
+
+		// MS seems to be escaping values larger than 0x80
+		private int IndexOfNonAscii (string text, int startIndex)
+		{
+			for (int i = startIndex; i < text.Length; i++) {
+				int n = (int)text [i];
+				if (n < 0 || n >= 0x80)
+					return i;
+			}
+
+			return -1;
 		}
 
 		// start_pos and end_pos are 0-based

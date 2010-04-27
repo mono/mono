@@ -1,3 +1,11 @@
+2010-04-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* RichTextBox.cs: When emitting the complete RTF value escape chars
+	above 0x80, at .Net seems to do. This way we are able to make
+	round-trip assignations between the setter and getter of the
+	RichTextBox.Rtf property.
+	Fixes part of #586901.
+
 2010-04-26  Ivan Zlatev  <ivan@ivanz.com>
 
 	* DataGridView.cs: Handle all possible cases for when a new column is 
