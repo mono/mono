@@ -1,3 +1,7 @@
+2010-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_got_info): Double the buffer size to avoid an assert.
+
 2010-04-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c (emit_line_number_info): Get rid of the usage of GArray, so
