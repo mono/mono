@@ -92,8 +92,11 @@ class SmallSectionHandler (SectionHandler):
         assert kind == 'old'
         if self.width <= 0:
             self.width = (size + chunk_size - 1) / chunk_size
-        else:
-            assert self.width == (size + chunk_size - 1) / chunk_size
+            if self.width < 128:
+                self.width = 512
+                self.current_section_size = size
+            else:
+                self.current_section_size = self.width * chunk_size
         self.size += size
 
     def add_object (self, klass, offset, size):
@@ -103,14 +106,14 @@ class SmallSectionHandler (SectionHandler):
         SectionHandler.add_occupied (self, self.offset + offset, size)
 
     def end_section (self):
-        self.offset += self.width * chunk_size
+        self.offset += self.current_section_size
 
     def header (self):
         return 'old sections'
 
 class LargeSectionHandler (SectionHandler):
     def __init__ (self):
-        SectionHandler.__init__ (self, 500)
+        SectionHandler.__init__ (self, 512)
 
     def start_section (self, kind, size):
         self.kind = kind
