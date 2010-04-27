@@ -47,7 +47,7 @@ namespace Mono {
 				try {
 					startup_files = Evaluator.InitAndGetStartupFiles (args);
 					Evaluator.DescribeTypeExpressions = true;
-					Evaluator.InteractiveBaseClass = typeof (InteractiveBaseShell);
+					Evaluator.InteractiveBaseClass = Import.ImportType (typeof (InteractiveBaseShell));
 				} catch {
 					return 1;
 				}

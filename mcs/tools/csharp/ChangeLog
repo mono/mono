@@ -1,3 +1,7 @@
+2010-05-27  Marek Safar  <marek.safar@gmail.com>
+
+	* repl.cs: Sync with the latest gmcs
+
 2010-02-08  Miguel de Icaza  <miguel@novell.com>
 
 	* getline.cs: Add support for ESC-letter to become Alt-letter.
