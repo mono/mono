@@ -16,11 +16,11 @@ namespace Mono.Debugger.Soft
 		object startup_monitor;
 		AppDomainMirror root_domain;
 		Dictionary<int, EventRequest> requests;
-		IProcess process;
+		ITargetProcess process;
 
 		internal Connection conn;
 
-		internal VirtualMachine (IProcess process, Connection conn) : base () {
+		internal VirtualMachine (ITargetProcess process, Connection conn) : base () {
 			SetVirtualMachine (this);
 			queue = new Queue ();
 			queue_monitor = new Object ();
@@ -35,7 +35,17 @@ namespace Mono.Debugger.Soft
 		public StreamReader StandardOutput { get; set; }
 		public StreamReader StandardError { get; set; }
 
-		public IProcess Process {
+		
+		public Process Process {
+			get {
+				ProcessWrapper pw = process as ProcessWrapper;
+				if (pw == null)
+				    throw new InvalidOperationException ("Process instance not available");
+				return pw.Process;
+			}
+		}
+
+		public ITargetProcess TargetProcess {
 			get {
 				return process;
 			}

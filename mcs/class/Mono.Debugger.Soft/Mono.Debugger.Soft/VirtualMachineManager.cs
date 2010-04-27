@@ -21,18 +21,28 @@ namespace Mono.Debugger.Soft
 			get; set;
 		}
 
-		public delegate IProcess ProcessLauncher (ProcessStartInfo info);
+		public TargetProcessLauncher CustomTargetProcessLauncher {
+			get; set;
+		}
+
+		public delegate Process ProcessLauncher (ProcessStartInfo info);
+		public delegate ITargetProcess TargetProcessLauncher (ProcessStartInfo info);
 	}
 
 	public class VirtualMachineManager
 	{
-		private delegate VirtualMachine LaunchCallback (IProcess p, ProcessStartInfo info, Socket socket);
+		private delegate VirtualMachine LaunchCallback (ITargetProcess p, ProcessStartInfo info, Socket socket);
 		private delegate VirtualMachine ListenCallback (Socket dbg_sock, Socket con_sock); 
 
 		internal VirtualMachineManager () {
 		}
 
-		public static VirtualMachine LaunchInternal (IProcess p, ProcessStartInfo info, Socket socket) {
+		public static VirtualMachine LaunchInternal (Process p, ProcessStartInfo info, Socket socket)
+		{
+			return LaunchInternal (new ProcessWrapper (p), info, socket);
+		}
+			
+		public static VirtualMachine LaunchInternal (ITargetProcess p, ProcessStartInfo info, Socket socket) {
 			Socket accepted = null;
 			try {
 				accepted = socket.Accept ();
@@ -77,9 +87,11 @@ namespace Mono.Debugger.Soft
 			if (options != null && options.Valgrind)
 				info.FileName = "valgrind";
 				
-			IProcess p;
+			ITargetProcess p;
 			if (options != null && options.CustomProcessLauncher != null)
-				p = options.CustomProcessLauncher (info);
+				p = new ProcessWrapper (options.CustomProcessLauncher (info));
+			else if (options != null && options.CustomTargetProcessLauncher != null)
+				p = options.CustomTargetProcessLauncher (info);
 			else
 				p = new ProcessWrapper (Process.Start (info));
 			

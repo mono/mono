@@ -4,7 +4,7 @@ using System.IO;
 
 namespace Mono.Debugger.Soft
 {
-	public interface IProcess
+	public interface ITargetProcess
 	{
 		event System.EventHandler Exited;
 		StreamReader StandardOutput { get; }
@@ -15,13 +15,17 @@ namespace Mono.Debugger.Soft
 		string ProcessName { get; }
 	}
 	
-	internal class ProcessWrapper: IProcess
+	internal class ProcessWrapper: ITargetProcess
 	{
 		Process process;
 
 		public ProcessWrapper (Process process)
 		{
 			this.process = process;
+		}
+		
+		public Process Process {
+			get { return process; }
 		}
 		
 		public event System.EventHandler Exited {

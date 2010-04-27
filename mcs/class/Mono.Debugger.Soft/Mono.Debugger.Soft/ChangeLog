@@ -1,3 +1,11 @@
+2010-04-27  Lluis Sanchez  <lluis@novell.com>
+
+	* ITargetProcess.cs:
+	* VirtualMachine.cs:
+	* VirtualMachineManager.cs:
+	Restored old API. Renamed IProcess to ITargetProcess everywhere
+	to avoid naming conflicts.
+
 2010-04-26  Lluis Sanchez  <lluis@novell.com>
 
 	* IProcess.cs:
