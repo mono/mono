@@ -1,3 +1,8 @@
+2010-04-27  Marek Safar  <marek.safar@gmail.com>
+
+	* TypeBuilder.cs: StructLayoutAttribute ctor can be builder when
+	compiling corlib.
+
 2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilder.cs (CreateType): Move default constructor
