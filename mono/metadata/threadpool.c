@@ -527,7 +527,8 @@ socket_io_poll_main (gpointer p)
 
 			for (i = 1; i < allocated; i++) {
 				pfd = &pfds [i];
-				if (pfd->fd == -1 || pfd->fd == data->newpfd->fd)
+				if (pfd->fd == -1 || data->newpfd == NULL ||
+				    pfd->fd == data->newpfd->fd)
 					break;
 			}
 

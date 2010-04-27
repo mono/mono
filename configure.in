@@ -1802,7 +1802,7 @@ AC_MSG_RESULT($try_dev_random)
 
 case "{$target}" in
     *-openbsd*)
-    NAME_DEV_RANDOM="/dev/srandom"
+    NAME_DEV_RANDOM="/dev/arandom"
     ;;
 
 dnl Win32 does not have /dev/random, they have their own method...
