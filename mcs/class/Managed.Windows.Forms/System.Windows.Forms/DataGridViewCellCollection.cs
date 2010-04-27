@@ -177,6 +177,7 @@ namespace System.Windows.Forms
 			dataGridViewCell.SetOwningRow (dataGridViewRow);
 			dataGridViewCell.SetColumnIndex (index);
 			dataGridViewCell.SetDataGridView (dataGridViewRow.DataGridView);
+			ReIndex ();
 			OnCollectionChanged (new CollectionChangeEventArgs (
 				CollectionChangeAction.Add, dataGridViewCell));
 		}

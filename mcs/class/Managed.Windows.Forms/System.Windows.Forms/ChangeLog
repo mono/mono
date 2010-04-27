@@ -1,3 +1,8 @@
+2010-04-27  Ivan Zlatev  <ivan@ivanz.com>
+
+	* DataGridView.cs: Fix multiple issues when inserting and adding new 
+	columns.
+
 2010-04-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripSplitButton.cs:
