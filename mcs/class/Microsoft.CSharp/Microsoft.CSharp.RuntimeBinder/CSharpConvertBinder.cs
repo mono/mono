@@ -51,9 +51,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var expr = CSharpBinder.CreateCompilerExpression (null, target);
 
 			if (Explicit)
-				expr = new Compiler.Cast (new Compiler.TypeExpression (Type, Compiler.Location.Null), expr);
+				expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (Type), Compiler.Location.Null), expr);
 			else
-				expr = new Compiler.ImplicitCast (expr, Type, (flags & CSharpBinderFlags.ConvertArrayIndex) != 0);
+				expr = new Compiler.ImplicitCast (expr, TypeImporter.Import (Type), (flags & CSharpBinderFlags.ConvertArrayIndex) != 0);
 
 			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);

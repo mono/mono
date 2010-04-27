@@ -34,9 +34,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 	class RuntimeBinderContext : Compiler.IMemberContext
 	{
 		readonly Compiler.CompilerContext ctx;
-		readonly Type currentType;
+		readonly Compiler.TypeSpec currentType;
 
-		public RuntimeBinderContext (Compiler.CompilerContext ctx, Type currentType)
+		public RuntimeBinderContext (Compiler.CompilerContext ctx, Compiler.TypeSpec currentType)
 		{
 			this.ctx = ctx;
 			this.currentType = currentType;
@@ -44,7 +44,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		#region IMemberContext Members
 
-		public Type CurrentType {
+		public Compiler.TypeSpec CurrentType {
 			get { return currentType; }
 		}
 
@@ -52,10 +52,16 @@ namespace Microsoft.CSharp.RuntimeBinder
 			get { throw new NotImplementedException (); }
 		}
 
-		public Compiler.TypeContainer CurrentTypeDefinition {
+		public Compiler.MemberCore CurrentMemberDefinition {
 			get {
 				// For operators and methods
 				return new Compiler.ModuleContainer (currentType.Assembly);
+			}
+		}
+
+		public bool HasUnresolvedConstraints {
+			get {
+				return false;
 			}
 		}
 
@@ -82,13 +88,13 @@ namespace Microsoft.CSharp.RuntimeBinder
 			throw new NotImplementedException ();
 		}
 
-		public Compiler.ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Mono.CSharp.Location loc)
+		public Compiler.ExtensionMethodGroupExpr LookupExtensionMethod (Compiler.TypeSpec extensionType, string name, int arity, Mono.CSharp.Location loc)
 		{
 			// No extension method lookup in this context
 			return null;
 		}
 
-		public Compiler.FullNamedExpression LookupNamespaceOrType (string name, Mono.CSharp.Location loc, bool ignore_cs0104)
+		public Compiler.FullNamedExpression LookupNamespaceOrType (string name, int arity, Mono.CSharp.Location loc, bool ignore_cs0104)
 		{
 			throw new NotImplementedException ();
 		}

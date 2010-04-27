@@ -63,7 +63,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			var c_args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), args);
 			var t_args = typeArguments == null ?
 				null :
-				new Compiler.TypeArguments (typeArguments.Select (l => new Compiler.TypeExpression (l, Compiler.Location.Null)).ToArray ());
+				new Compiler.TypeArguments (typeArguments.Select (l => new Compiler.TypeExpression (TypeImporter.Import (l), Compiler.Location.Null)).ToArray ());
 
 			Compiler.Expression expr;
 			if ((flags & CSharpBinderFlags.InvokeSimpleName) != 0) {
@@ -76,9 +76,9 @@ namespace Microsoft.CSharp.RuntimeBinder
 			expr = new Compiler.Invocation (expr, c_args);
 
 			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)
-				expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
+				expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr);
 			else
-				expr = new Compiler.DynamicResultCast (ReturnType, expr);
+				expr = new Compiler.DynamicResultCast (TypeImporter.Import (ReturnType), expr);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);

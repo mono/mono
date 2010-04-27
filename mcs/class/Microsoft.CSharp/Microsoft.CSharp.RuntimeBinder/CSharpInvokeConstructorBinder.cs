@@ -49,7 +49,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 		public override DynamicMetaObject Bind (DynamicMetaObject target, DynamicMetaObject[] args)
 		{
 			var type = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
-			target_return_type = type.Type;
+			target_return_type = type.Type.GetMetaInfo ();
 
 			var c_args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), args);
 

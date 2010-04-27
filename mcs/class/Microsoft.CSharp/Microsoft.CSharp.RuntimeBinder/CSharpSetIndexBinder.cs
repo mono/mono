@@ -61,7 +61,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			var source = CSharpBinder.CreateCompilerExpression (argumentInfo [indexes.Length + 1], value);
 			expr = new Compiler.SimpleAssign (expr, source);
-			expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
+			expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
 			binder.AddRestrictions (target);

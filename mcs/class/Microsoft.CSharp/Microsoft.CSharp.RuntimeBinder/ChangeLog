@@ -1,3 +1,7 @@
+2010-05-27  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Sync with the latest gmcs.
+
 2010-02-10  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Track RC API changes.

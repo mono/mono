@@ -87,7 +87,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			Expression res;
 			try {
-				var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, callingType), ResolveOptions);
+				var rc = new Compiler.ResolveContext (new RuntimeBinderContext (ctx, TypeImporter.Import (callingType)), ResolveOptions);
 
 				// Static typemanager and internal caches are not thread-safe
 				lock (resolver) {
@@ -134,7 +134,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 					return new Compiler.NullLiteral (Compiler.Location.Null);
 
 				InitializeCompiler (null);
-				return Compiler.Constant.CreateConstantFromValue (value.LimitType, null, Compiler.Location.Null);
+				return Compiler.Constant.CreateConstantFromValue (TypeImporter.Import (value.LimitType), null, Compiler.Location.Null);
 			}
 
 			bool is_compile_time;
@@ -142,18 +142,18 @@ namespace Microsoft.CSharp.RuntimeBinder
 			if (info != null) {
 				if ((info.Flags & CSharpArgumentInfoFlags.Constant) != 0) {
 					InitializeCompiler (null);
-					return Compiler.Constant.CreateConstantFromValue (value.LimitType, value.Value, Compiler.Location.Null);
+					return Compiler.Constant.CreateConstantFromValue (TypeImporter.Import (value.LimitType), value.Value, Compiler.Location.Null);
 				}
 
 				if ((info.Flags & CSharpArgumentInfoFlags.IsStaticType) != 0)
-					return new Compiler.TypeExpression ((Type) value.Value, Compiler.Location.Null);
+					return new Compiler.TypeExpression (TypeImporter.Import ((Type) value.Value), Compiler.Location.Null);
 
 				is_compile_time = (info.Flags & CSharpArgumentInfoFlags.UseCompileTimeType) != 0;
 			} else {
 				is_compile_time = false;
 			}
 
-			return new Compiler.RuntimeValueExpression (value, is_compile_time);
+			return new Compiler.RuntimeValueExpression (value, TypeImporter.Import (is_compile_time ? value.LimitType : value.RuntimeType));
 		}
 
 		public static Compiler.Arguments CreateCompilerArguments (IEnumerable<CSharpArgumentInfo> info, DynamicMetaObject[] args)
@@ -208,26 +208,51 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 		public static void InitializeCompiler (Compiler.CompilerContext ctx)
 		{
-			if (Compiler.TypeManager.object_type != null)
+			if (TypeImporter.Predefined == null)
 				return;
 
 			lock (compiler_initializer) {
-				if (Compiler.TypeManager.object_type != null)
+				if (TypeImporter.Predefined == null)
 					return;
 
 				// I don't think dynamically loaded assemblies can be used as dynamic
-				// expression without static type be loaded first
+				// expression without static type to be loaded first
 				// AppDomain.CurrentDomain.AssemblyLoad += (sender, e) => { throw new NotImplementedException (); };
 
 				// Import all currently loaded assemblies
-				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ())
-					Compiler.GlobalRootNamespace.Instance.AddAssemblyReference (a);
+				var ns = Compiler.GlobalRootNamespace.Instance;
+				foreach (System.Reflection.Assembly a in AppDomain.CurrentDomain.GetAssemblies ()) {
+					ns.AddAssemblyReference (a);
+					ns.ImportAssembly (a);
+				}
 
 				if (ctx == null)
 					ctx = CreateDefaultCompilerContext ();
 
-				Compiler.TypeManager.InitCoreTypes (ctx);
+				Compiler.TypeManager.InitCoreTypes (ctx, TypeImporter.Predefined);
+				TypeImporter.Predefined = null;
+
 				Compiler.TypeManager.InitOptionalCoreTypes (ctx);
+			}
+		}
+	}
+
+	static class TypeImporter
+	{
+		static object lock_object;
+		public static IList<Compiler.PredefinedTypeSpec> Predefined;
+
+		static TypeImporter ()
+		{
+			lock_object = new object ();
+			Predefined = Compiler.TypeManager.InitCoreTypes ();
+			Compiler.Import.Initialize ();
+		}
+
+		public static Compiler.TypeSpec Import (Type type)
+		{
+			lock (lock_object) {
+				return Compiler.Import.ImportType (type);
 			}
 		}
 	}

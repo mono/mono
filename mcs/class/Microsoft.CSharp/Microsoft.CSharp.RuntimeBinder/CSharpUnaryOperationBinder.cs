@@ -83,7 +83,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				else
 					expr = new Compiler.Unary (GetOperator (), expr, Compiler.Location.Null);
 
-				expr = new Compiler.Cast (new Compiler.TypeExpression (ReturnType, Compiler.Location.Null), expr);
+				expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr);
 
 				if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 					expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
