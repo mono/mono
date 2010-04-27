@@ -1,3 +1,11 @@
+2010-04-27  Miguel de Icaza  <miguel@novell.com>
+
+	* driver.c, mini.c: Since linking with LLVM makes the default Mono
+	dirty an extra 70kb pages on startup we are now going to choose a
+	different strategy: ship mono and mono-llvm binaries, with the
+	second being the one that links with LLVM and defaults to LLVM
+	being enabled.
+
 2010-04-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c exceptions-x86.c mini-x86.c aot-compiler.c aot-runtime.c: 
