@@ -88,7 +88,7 @@ namespace Mono {
 	}
 	
 	public class CSharpShell {
-		static bool isatty = true;
+		static bool isatty = true, is_unix = false;
 		string [] startup_files;
 		
 		Mono.Terminal.LineEditor editor;
@@ -104,8 +104,11 @@ namespace Mono {
 		
 		void SetupConsole ()
 		{
-			string term = Environment.GetEnvironmentVariable ("TERM");
-			dumb = term == "dumb" || term == null || isatty == false;
+			if (is_unix){
+				string term = Environment.GetEnvironmentVariable ("TERM");
+				dumb = term == "dumb" || term == null || isatty == false;
+			} else
+				dumb = false;
 			
 			editor = new Mono.Terminal.LineEditor ("csharp", 300);
 			InteractiveBaseShell.Editor = editor;
@@ -165,7 +168,13 @@ namespace Mono {
 
 		void InitTerminal ()
 		{
-			isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
+			int p = (int) Environment.OSVersion.Platform;
+			is_unix = (p == 4) || (p == 128);
+
+			if (is_unix)
+				isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
+			else
+				isatty = true;
 
 			// Work around, since Console is not accounting for
 			// cursor position when writing to Stderr.  It also

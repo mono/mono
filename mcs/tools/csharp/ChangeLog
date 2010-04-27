@@ -1,3 +1,7 @@
+2010-04-27  Miguel de Icaza  <miguel@novell.com>
+
+	* repl.cs: Improvements to run better on Windows. 
+
 2010-05-27  Marek Safar  <marek.safar@gmail.com>
 
 	* repl.cs: Sync with the latest gmcs
