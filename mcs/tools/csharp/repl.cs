@@ -28,12 +28,20 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 
 using Mono.CSharp;
+#if !ON_DOTNET
 using Mono.Attach;
+#endif
 
 namespace Mono {
 
 	public class Driver {
 		
+#if ON_DOTNET
+		static int Main (string [] args)
+		{
+			return Startup (args);
+		}
+#else
 		static int Main (string [] args)
 		{
 			if (args.Length > 0 && args [0] == "--attach") {
@@ -43,6 +51,13 @@ namespace Mono {
 				new CSharpAgent (args [0]);
 				return 0;
 			} else {
+				return Startup(args);
+			}
+		}
+#endif
+		
+		static int Startup (string [] args)
+		{
 				string [] startup_files;
 				try {
 					startup_files = Evaluator.InitAndGetStartupFiles (args);
@@ -168,6 +183,10 @@ namespace Mono {
 
 		void InitTerminal ()
 		{
+#if ON_DOTNET
+			is_unix = false;
+			isatty = true;
+#else
 			int p = (int) Environment.OSVersion.Platform;
 			is_unix = (p == 4) || (p == 128);
 
@@ -175,6 +194,7 @@ namespace Mono {
 				isatty = UnixUtils.isatty (0) && UnixUtils.isatty (1);
 			else
 				isatty = true;
+#endif
 
 			// Work around, since Console is not accounting for
 			// cursor position when writing to Stderr.  It also
@@ -416,6 +436,7 @@ namespace Mono {
 		
 	}
 
+#if !ON_DOTNET
 	//
 	// A shell connected to a CSharpAgent running in a remote process.
 	//  - maybe add 'class_name' and 'method_name' arguments to LoadAgent.
@@ -700,4 +721,4 @@ namespace Mono.Management
 	}
 }
 
-
+#endif
