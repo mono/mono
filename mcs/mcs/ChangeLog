@@ -1,3 +1,15 @@
+2010-05-27  Marek Safar  <marek.safar@gmail.com>
+
+	* *.cs: Major rewrite of compiler internals to better work with
+	unmodified System.Reflection.Emit. Some of the key changes are
+	- TypeSpec replaces reflection specific System.Type.
+	- All Type(TypeSpec) operations are now done in compiler therefore
+	no dependency on SRE to inflate generic members and types or to
+	query unclosed types.
+	- MemberCache is now the only and full hierarchical topology.
+	- Generic constraints are implemented properly.
+	- And as a bonus compilation is on average 30% faster.
+
 2010-04-15  Jb Evain  <jbevain@novell.com>
 
 	* dmcs.exe.config: update the runtime version to .net 4.0 RTM.
