@@ -1,3 +1,11 @@
+2010-04-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpDataStream.cs:
+	* FtpWebRequest.cs: use streams instead of sockets as soon as
+	possible. Correctly initialize the control connection when SSL
+	is used and protect the data connection by default.
+	Fixes bug #598908.
+
 2010-04-20 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* ChunkStream.cs: ignore chunk extensions when reading the chunk
