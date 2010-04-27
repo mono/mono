@@ -19,7 +19,7 @@
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
     <OutputPath>.\</OutputPath>
-    <DefineConstants>TRACE;DEBUG;NET_2_0;NET_4_0;MS_COMPATIBLE;GMCS_SOURCE</DefineConstants>
+    <DefineConstants>TRACE;DEBUG;NET_4_0;MS_COMPATIBLE</DefineConstants>
     <ErrorReport>prompt</ErrorReport>
     <WarningLevel>4</WarningLevel>
     <UseVSHostingProcess>true</UseVSHostingProcess>
