@@ -651,10 +651,16 @@ namespace Mono.CSharp {
 		/// </summary>
 		public ObsoleteAttribute GetObsoleteAttribute ()
 		{
-			if (!arg_resolved)
+			if (!arg_resolved) {
+				// corlib only case when obsolete is used before is resolved
+				var c = type.MemberDefinition as Class;
+				if (c != null && !c.HasMembersDefined)
+					c.Define ();
+				
 				// TODO: It is not neccessary to call whole Resolve (ApplyAttribute does it now) we need only ctor args.
 				// But because a lot of attribute class code must be rewritten will be better to wait...
 				Resolve ();
+			}
 
 			if (resolve_error)
 				return null;

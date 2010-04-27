@@ -1,5 +1,10 @@
 2010-05-27  Marek Safar  <marek.safar@gmail.com>
 
+	* attribute.cs: Ensure Obsolete members are defined before doing
+	ctor look-up.
+
+2010-05-27  Marek Safar  <marek.safar@gmail.com>
+
 	* visit.cs: Add DOM visitor skeleton.
 	
 	* *.cs: Updated.
