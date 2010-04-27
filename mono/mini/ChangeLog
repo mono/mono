@@ -1,3 +1,16 @@
+2010-04-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-x86.c exceptions-x86.c mini-x86.c aot-compiler.c aot-runtime.c: 
+	Implement full-aot support on x86.
+
+	* method-to-ir.c: Always use a got var on x86 too, just like on ppc, because the
+	trampolines depend on it. Use MONO_ARCH_GOT_REG as the got register, instead of
+	the first register returned by get_global_int_regs ().
+
+	* cpu-x86.md: Fix the length of insertx_u1_slow.
+
+	* iltests.il.in: Disable tail call tests when running with full-aot.
+
 2010-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_op_to_op_imm_noemul): Fix a warning.
