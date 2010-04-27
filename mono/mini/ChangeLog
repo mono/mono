@@ -1,3 +1,7 @@
+2010-04-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_got_info): Double the buffer size to avoid an assert.
+
 2010-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_op_to_op_imm_noemul): Fix a warning.
