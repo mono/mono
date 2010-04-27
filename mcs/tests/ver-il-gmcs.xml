@@ -35022,7 +35022,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>40</size>
+        <size>120</size>
       </method>
     </type>
   </test>
