@@ -1,3 +1,12 @@
+2010-04-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Context.cs:
+	* SslStreamBase.cs:
+	* RecordProtocol.cs: differentiate a received 'CloseNotify' alert from
+	one that we sent. Disposing the stream will try to send the
+	'CloseNotify' alert, if it hasn't already, and ignore any errors. This
+	is needed for FTPS to work.
+
 2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SslStreamBase.cs:

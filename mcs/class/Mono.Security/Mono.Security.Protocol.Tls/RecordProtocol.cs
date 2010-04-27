@@ -311,7 +311,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public IAsyncResult BeginReceiveRecord(Stream record, AsyncCallback callback, object state)
 		{
-			if (this.context.ConnectionEnd)
+			if (this.context.ReceivedConnectionEnd)
 			{
 				throw new TlsException(
 					AlertDescription.InternalError,
@@ -580,7 +580,7 @@ namespace Mono.Security.Protocol.Tls
 				switch (alertDesc)
 				{
 					case AlertDescription.CloseNotify:
-						this.context.ConnectionEnd = true;
+						this.context.ReceivedConnectionEnd = true;
 						break;
 				}
 				break;
@@ -624,9 +624,8 @@ namespace Mono.Security.Protocol.Tls
 			// Write record
 			this.SendRecord (ContentType.Alert, new byte[2] { (byte) level, (byte) description });
 
-			if (close)
-			{
-				this.context.ConnectionEnd = true;
+			if (close) {
+				this.context.SentConnectionEnd = true;
 			}
 		}
 
@@ -695,7 +694,7 @@ namespace Mono.Security.Protocol.Tls
 
 		public IAsyncResult BeginSendRecord(ContentType contentType, byte[] recordData, AsyncCallback callback, object state)
 		{
-			if (this.context.ConnectionEnd)
+			if (this.context.SentConnectionEnd)
 			{
 				throw new TlsException(
 					AlertDescription.InternalError,
@@ -745,7 +744,7 @@ namespace Mono.Security.Protocol.Tls
 			int			offset,
 			int			count)
 		{
-			if (this.context.ConnectionEnd)
+			if (this.context.SentConnectionEnd)
 			{
 				throw new TlsException(
 					AlertDescription.InternalError,
