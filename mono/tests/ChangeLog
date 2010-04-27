@@ -1,3 +1,9 @@
+2010-04-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (DISABLED_TESTS): Add gc-altstack.exe since it randomly fails
+	under Boehm, which can't handle threads which are executing on an altstack during
+	stack marking.
+
 2010-04-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs: Add a minimal test for Thread.ThreadId.
