@@ -29,22 +29,9 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected CompilerGeneratedClass (DeclSpace parent, GenericMethod generic, MemberName name, Modifiers mod)
-			: this (parent, name, mod)
-		{
-			if (generic != null) {
-				var list = new List<Constraints> ();
-				foreach (TypeParameter tparam in generic.TypeParameters) {
-					if (tparam.Constraints != null)
-						list.Add (tparam.Constraints.Clone ());
-				}
-				SetParameterInfo (list);
-			}
-		}
-
 		protected void CheckMembersDefined ()
 		{
-			if (members_defined)
+			if (HasMembersDefined)
 				throw new InternalErrorException ("Helper class already defined!");
 		}
 	}
@@ -82,8 +69,8 @@ namespace Mono.CSharp {
 					return false;
 
 				AnonymousMethodStorey parent = ((AnonymousMethodStorey) Parent).GetGenericStorey ();
-				if (parent != null)
-					member_type = parent.MutateType (MemberType);
+				if (parent != null && parent.Mutator != null)
+					member_type = parent.Mutator.Mutate (MemberType);
 
 				return true;
 			}
@@ -113,11 +100,6 @@ namespace Mono.CSharp {
 			{
 				// Nothing to clone
 			}
-
-			public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-			{
-				// Nothing to mutate
-			}
 		}
 
 		// Unique storey ID
@@ -140,12 +122,22 @@ namespace Mono.CSharp {
 		// Local variable which holds this storey instance
 		public LocalTemporary Instance;
 
+		TypeParameterMutator mutator;
+
 		public AnonymousMethodStorey (Block block, TypeContainer parent, MemberBase host, GenericMethod generic, string name)
-			: base (parent, generic, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE | Modifiers.SEALED)
+			: base (parent, MakeMemberName (host, name, generic, block.StartLocation), Modifiers.PRIVATE | Modifiers.SEALED)
 		{
 			Parent = parent;
 			OriginalSourceBlock = block;
 			ID = unique_id++;
+
+			if (generic != null) {
+				var hoisted_tparams = generic.CurrentTypeParameters;
+				type_params = new TypeParameter [hoisted_tparams.Length];
+				for (int i = 0; i < type_params.Length; ++i) {
+					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (spec);
+				}
+			}
 		}
 
 		static MemberName MakeMemberName (MemberBase host, string name, GenericMethod generic, Location loc)
@@ -168,9 +160,18 @@ namespace Mono.CSharp {
 			Field f = AddCompilerGeneratedField ("<>f__this", type_expr);
 			f.Define ();
 			hoisted_this = new HoistedThis (this, f);
+
+			// Inflated type instance has to be updated manually
+			if (Instance.Type != f.Parent.CurrentType) {
+				var inflator = new TypeParameterInflator (Instance.Type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				Instance.Type.MemberCache.AddMember (f.Spec.InflateMember (inflator));
+
+				inflator = new TypeParameterInflator (f.Parent.CurrentType, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
+				f.Parent.CurrentType.MemberCache.AddMember (f.Spec.InflateMember (inflator));
+			}
 		}
 
-		public Field AddCapturedVariable (string name, Type type)
+		public Field AddCapturedVariable (string name, TypeSpec type)
 		{
 			CheckMembersDefined ();
 
@@ -208,7 +209,7 @@ namespace Mono.CSharp {
 				children_references.Add (block);
 		}
 
-		public void AddParentStoreyReference (AnonymousMethodStorey storey)
+		public void AddParentStoreyReference (EmitContext ec, AnonymousMethodStorey storey)
 		{
 			CheckMembersDefined ();
 
@@ -217,7 +218,7 @@ namespace Mono.CSharp {
 			else if (used_parent_storeys.Exists (i => i.Storey == storey))
 				return;
 
-			TypeExpr type_expr = new TypeExpression (storey.TypeBuilder, Location);
+			TypeExpr type_expr = storey.CreateStoreyTypeExpression (ec);
 			Field f = AddCompilerGeneratedField ("<>f__ref$" + storey.ID, type_expr);
 			used_parent_storeys.Add (new StoreyFieldPair (storey, f));
 		}
@@ -256,10 +257,71 @@ namespace Mono.CSharp {
 			hoisted_params.Add (expr);
 		}
 
-		public void ChangeParentStorey (AnonymousMethodStorey parentStorey)
+		TypeExpr CreateStoreyTypeExpression (EmitContext ec)
+		{
+			//
+			// Create an instance of storey type
+			//
+			TypeExpr storey_type_expr;
+			if (CurrentTypeParameters != null) {
+				//
+				// Use current method type parameter (MVAR) for top level storey only. All
+				// nested storeys use class type parameter (VAR)
+				//
+				TypeParameter[] tparams = ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null ?
+					ec.CurrentAnonymousMethod.Storey.TypeParameters :
+					ec.CurrentTypeParameters;
+
+				TypeArguments targs = new TypeArguments ();
+
+				//
+				// Use type parameter name instead of resolved type parameter
+				// specification to resolve to correctly nested type parameters
+				//
+				for (int i = 0; i < tparams.Length; ++i)
+					targs.Add (new SimpleName (tparams [i].Name, Location)); //  new TypeParameterExpr (tparams[i], Location));
+
+				storey_type_expr = new GenericTypeExpr (Definition, targs, Location);
+			} else {
+				storey_type_expr = new TypeExpression (CurrentType, Location);
+			}
+
+			return storey_type_expr;
+		}
+
+		public void SetNestedStoryParent (AnonymousMethodStorey parentStorey)
 		{
 			Parent = parentStorey;
 			type_params = null;
+			spec.IsGeneric = false;
+			spec.DeclaringType = parentStorey.CurrentType;
+//			MemberName.TypeArguments = null;
+		}
+
+		protected override bool DoResolveTypeParameters ()
+		{
+			// Although any storey can have type parameters they are all clones of method type
+			// parameters therefore have to mutate MVAR references in any of cloned constraints
+			if (type_params != null) {
+				for (int i = 0; i < type_params.Length; ++i) {
+					var spec = type_params[i].Type;
+					spec.BaseType = mutator.Mutate (spec.BaseType);
+					if (spec.Interfaces != null) {
+						var mutated = new TypeSpec[spec.Interfaces.Count];
+						for (int ii = 0; ii < mutated.Length; ++ii) {
+							mutated [ii] = mutator.Mutate (spec.Interfaces[ii]);
+						}
+
+						spec.Interfaces = mutated;
+					}
+
+					if (spec.TypeArguments != null) {
+						spec.TypeArguments = mutator.Mutate (spec.TypeArguments);
+					}
+				}
+			}
+
+			return true;
 		}
 
 		//
@@ -271,38 +333,14 @@ namespace Mono.CSharp {
 			if (Instance != null)
 				throw new InternalErrorException ();
 
-			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
+			SymbolWriter.OpenCompilerGeneratedBlock (ec);
 
 			//
-			// Create an instance of storey type
+			// Create an instance of a storey
 			//
-			Expression storey_type_expr;
-			if (is_generic) {
-				//
-				// Use current method type parameter (MVAR) for top level storey only. All
-				// nested storeys use class type parameter (VAR)
-				//
-				TypeParameter[] tparams = ec.CurrentAnonymousMethod != null && ec.CurrentAnonymousMethod.Storey != null ?
-					ec.CurrentAnonymousMethod.Storey.TypeParameters :
-					ec.CurrentTypeParameters;
+			Expression storey_type_expr = CreateStoreyTypeExpression (ec);
 
-				TypeArguments targs = new TypeArguments ();
-
-				if (tparams.Length < CountTypeParameters) {
-					TypeParameter[] parent_tparams = ec.MemberContext.CurrentTypeDefinition.TypeParameters;
-					for (int i = 0; i < parent_tparams.Length; ++i)
-						targs.Add (new TypeParameterExpr (parent_tparams[i], Location));
-				}
-				
-				for (int i = 0; i < tparams.Length; ++i)
-					targs.Add (new TypeParameterExpr (tparams[i], Location));
-
-				storey_type_expr = new GenericTypeExpr (TypeBuilder, targs, Location);
-			} else {
-				storey_type_expr = new TypeExpression (TypeBuilder, Location);
-			}
-
-			ResolveContext rc = new ResolveContext (this);
+			ResolveContext rc = new ResolveContext (ec.MemberContext);
 			Expression e = new New (storey_type_expr, null, Location).Resolve (rc);
 			e.Emit (ec);
 
@@ -312,7 +350,7 @@ namespace Mono.CSharp {
 			EmitHoistedFieldsInitialization (ec);
 
 			SymbolWriter.DefineScopeVariable (ID, Instance.Builder);
-			SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
+			SymbolWriter.CloseCompilerGeneratedBlock (ec);
 		}
 
 		void EmitHoistedFieldsInitialization (EmitContext ec)
@@ -321,18 +359,22 @@ namespace Mono.CSharp {
 			// Initialize all storey reference fields by using local or hoisted variables
 			//
 			if (used_parent_storeys != null) {
+				var rc = new ResolveContext (ec.MemberContext);
+
 				foreach (StoreyFieldPair sf in used_parent_storeys) {
 					//
-					// Setting local field
+					// Get instance expression of storey field
 					//
 					Expression instace_expr = GetStoreyInstanceExpression (ec);
-					FieldExpr f_set_expr = TypeManager.IsGenericType (instace_expr.Type) ?
-						new FieldExpr (sf.Field, instace_expr.Type, Location) :
-						new FieldExpr (sf.Field, Location);
+					var fs = sf.Field.Spec;
+					if (TypeManager.IsGenericType (instace_expr.Type))
+						fs = MemberCache.GetMember (instace_expr.Type, fs);
+
+					FieldExpr f_set_expr = new FieldExpr (fs, Location);
 					f_set_expr.InstanceExpression = instace_expr;
 
 					SimpleAssign a = new SimpleAssign (f_set_expr, sf.Storey.GetStoreyInstanceExpression (ec));
-					if (a.Resolve (new ResolveContext (ec.MemberContext)) != null)
+					if (a.Resolve (rc) != null)
 						a.EmitStatement (ec);
 				}
 			}
@@ -441,7 +483,7 @@ namespace Mono.CSharp {
 					//
 					// Access inside of same storey (S -> S)
 					//
-					return new CompilerGeneratedThis (TypeBuilder, Location);
+					return new CompilerGeneratedThis (CurrentType, Location);
 				}
 				//
 				// External field access
@@ -453,7 +495,7 @@ namespace Mono.CSharp {
 			// Storey was cached to local field
 			//
 			FieldExpr f_ind = new FieldExpr (f, Location);
-			f_ind.InstanceExpression = new CompilerGeneratedThis (TypeBuilder, Location);
+			f_ind.InstanceExpression = new CompilerGeneratedThis (CurrentType, Location);
 			return f_ind;
 		}
 
@@ -470,128 +512,13 @@ namespace Mono.CSharp {
 			get { return hoisted_this; }
 		}
 
-		//
-		// Mutate type dispatcher
-		//
-		public Type MutateType (Type type)
-		{
-			if (TypeManager.IsGenericType (type))
-				return MutateGenericType (type);
-
-			if (TypeManager.IsGenericParameter (type))
-				return MutateGenericArgument (type);
-
-			if (type.IsArray)
-				return MutateArrayType (type);
-			return type;
-		}
-
-		//
-		// Changes method type arguments (MVAR) to storey (VAR) type arguments
-		//
-		public void MutateGenericMethod (MethodSpec ms)
-		{
-			var method = (MethodInfo) ms.MetaInfo;
-			Type [] t_args = TypeManager.GetGenericArguments (method);
-			if (TypeManager.IsGenericType (method.DeclaringType)) {
-				Type t = MutateGenericType (method.DeclaringType);
-				if (t != method.DeclaringType) {
-					method = (MethodInfo) TypeManager.DropGenericMethodArguments (method);
-					if (TypeManager.IsBeingCompiled (method))
-						ms.MetaInfo = TypeBuilder.GetMethod (t, method);
-					else
-						ms.MetaInfo = MethodInfo.GetMethodFromHandle (method.MethodHandle, t.TypeHandle);
-				}				
+		public TypeParameterMutator Mutator {
+			get {
+				return mutator;
 			}
-
-			if (t_args == null || t_args.Length == 0)
-				return;
-
-			for (int i = 0; i < t_args.Length; ++i)
-				t_args [i] = MutateType (t_args [i]);
-
-			method = (MethodInfo) ms.MetaInfo;
-			ms.MetaInfo = method.GetGenericMethodDefinition ().MakeGenericMethod (t_args);
-		}
-
-		public void MutateConstructor (MethodSpec ms)
-		{
-			var ctor = (ConstructorInfo) ms.MetaInfo;
-			if (TypeManager.IsGenericType (ctor.DeclaringType)) {
-				Type t = MutateGenericType (ctor.DeclaringType);
-				if (t != ctor.DeclaringType) {
-					ctor = (ConstructorInfo) TypeManager.DropGenericMethodArguments (ctor);
-					if (TypeManager.IsBeingCompiled (ctor))
-						ms.MetaInfo = TypeBuilder.GetConstructor (t, ctor);
-					else
-						ms.MetaInfo = ConstructorInfo.GetMethodFromHandle (ctor.MethodHandle, t.TypeHandle);
-				}
+			set {
+				mutator = value;
 			}
-		}
-		
-		public void MutateField (FieldSpec fs)
-		{
-			var field = fs.MetaInfo;
-			if (TypeManager.IsGenericType (field.DeclaringType)) {
-				Type t = MutateGenericType (field.DeclaringType);
-				if (t != field.DeclaringType) {
-					field = TypeManager.DropGenericTypeArguments (field.DeclaringType).GetField (field.Name, TypeManager.AllMembers);
-					
-					// HACK: TypeBuilder has to be used when a type is of TypeBuilder* but there is no
-					// way how to find out (use type comparison when this becomes an issue)
-					if (t.GetType ().FullName == "System.Reflection.MonoGenericClass") {
-						fs.MetaInfo = TypeBuilder.GetField (t, field);
-					} else {
-						fs.MetaInfo = FieldInfo.GetFieldFromHandle (field.FieldHandle, t.TypeHandle);
-					}
-				}
-			}
-		}		
-
-		protected Type MutateArrayType (Type array)
-		{
-			Type element = TypeManager.GetElementType (array);
-			if (element.IsArray) {
-				element = MutateArrayType (element);
-			} else if (TypeManager.IsGenericParameter (element)) {
-				element = MutateGenericArgument (element);
-			} else if (TypeManager.IsGenericType (element)) {
-				element = MutateGenericType (element);
-			} else {
-				return array;
-			}
-
-			int rank = array.GetArrayRank ();
-			if (rank == 1)
-				return element.MakeArrayType ();
-
-			return element.MakeArrayType (rank);
-		}
-
-		protected Type MutateGenericType (Type type)
-		{
-			Type [] t_args = TypeManager.GetTypeArguments (type);
-			if (t_args == null || t_args.Length == 0)
-				return type;
-
-			for (int i = 0; i < t_args.Length; ++i)
-				t_args [i] = MutateType (t_args [i]);
-
-			return TypeManager.DropGenericTypeArguments (type).MakeGenericType (t_args);
-		}
-
-		//
-		// Changes method generic argument (MVAR) to type generic argument (VAR)
-		//
-		public Type MutateGenericArgument (Type type)
-		{
-			if (CurrentTypeParameters != null) {
-				TypeParameter tp = TypeParameter.FindTypeParameter (CurrentTypeParameters, type.Name);
-				if (tp != null)
-					return tp.Type;
-			}
-
-			return type;
 		}
 
 		public IList<ExplicitBlock> ReferencesFromChildrenBlock {
@@ -648,7 +575,7 @@ namespace Mono.CSharp {
 		Dictionary<AnonymousExpression, FieldExpr> cached_inner_access; // TODO: Hashtable is too heavyweight
 		FieldExpr cached_outer_access;
 
-		protected HoistedVariable (AnonymousMethodStorey storey, string name, Type type)
+		protected HoistedVariable (AnonymousMethodStorey storey, string name, TypeSpec type)
 			: this (storey, storey.AddCapturedVariable (name, type))
 		{
 		}
@@ -687,9 +614,12 @@ namespace Mono.CSharp {
 				// When setting top-level hoisted variable in generic storey
 				// change storey generic types to method generic types (VAR -> MVAR)
 				//
-				cached_outer_access = storey.MemberName.IsGeneric ?
-					new FieldExpr (field, storey.Instance.Type, field.Location) :
-					new FieldExpr (field, field.Location);
+				if (storey.MemberName.IsGeneric) {
+					var fs = MemberCache.GetMember (storey.Instance.Type, field.Spec);
+					cached_outer_access = new FieldExpr (fs, field.Location);
+				} else {
+					cached_outer_access = new FieldExpr (field, field.Location);
+				}
 
 				cached_outer_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
 				return cached_outer_access;
@@ -705,10 +635,13 @@ namespace Mono.CSharp {
 			}
 
 			if (inner_access == null) {
-				inner_access = field.Parent.MemberName.IsGeneric ?
-					new FieldExpr (field, field.Parent.CurrentType, field.Location) :
-					new FieldExpr (field, field.Location);
-							
+				if (field.Parent.MemberName.IsGeneric) {
+					var fs = MemberCache.GetMember (field.Parent.CurrentType, field.Spec);
+					inner_access = new FieldExpr (fs, field.Location);
+				} else {
+					inner_access = new FieldExpr (field, field.Location);
+				}
+
 				inner_access.InstanceExpression = storey.GetStoreyInstanceExpression (ec);
 				cached_inner_access.Add (ec.CurrentAnonymousMethod, inner_access);
 			}
@@ -861,13 +794,13 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Dictionary<Type, Expression> compatibles;
+		Dictionary<TypeSpec, Expression> compatibles;
 		public ToplevelBlock Block;
 
 		public AnonymousMethodExpression (Location loc)
 		{
 			this.loc = loc;
-			this.compatibles = new Dictionary<Type, Expression> ();
+			this.compatibles = new Dictionary<TypeSpec, Expression> ();
 		}
 
 		public override string ExprClassName {
@@ -890,7 +823,7 @@ namespace Mono.CSharp {
 		// Returns true if the body of lambda expression can be implicitly
 		// converted to the delegate of type `delegate_type'
 		//
-		public bool ImplicitStandardConversionExists (ResolveContext ec, Type delegate_type)
+		public bool ImplicitStandardConversionExists (ResolveContext ec, TypeSpec delegate_type)
 		{
 			using (ec.With (ResolveContext.Options.InferReturnType, false)) {
 				using (ec.Set (ResolveContext.Options.ProbingMode)) {
@@ -899,14 +832,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected Type CompatibleChecks (ResolveContext ec, Type delegate_type)
+		protected TypeSpec CompatibleChecks (ResolveContext ec, TypeSpec delegate_type)
 		{
-			if (TypeManager.IsDelegateType (delegate_type))
+			if (delegate_type.IsDelegate)
 				return delegate_type;
 
-			if (TypeManager.DropGenericTypeArguments (delegate_type) == TypeManager.expression_type) {
-				delegate_type = TypeManager.GetTypeArguments (delegate_type) [0];
-				if (TypeManager.IsDelegateType (delegate_type))
+			if (delegate_type.IsGeneric && delegate_type.GetDefinition () == TypeManager.expression_type) {
+				delegate_type = delegate_type.TypeArguments [0];
+				if (delegate_type.IsDelegate)
 					return delegate_type;
 
 				ec.Report.Error (835, loc, "Cannot convert `{0}' to an expression tree of non-delegate type `{1}'",
@@ -919,7 +852,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected bool VerifyExplicitParameters (ResolveContext ec, Type delegate_type, AParametersCollection parameters)
+		protected bool VerifyExplicitParameters (ResolveContext ec, TypeSpec delegate_type, AParametersCollection parameters)
 		{
 			if (VerifyParameterCompatibility (ec, delegate_type, parameters, ec.IsInProbingMode))
 				return true;
@@ -932,7 +865,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected bool VerifyParameterCompatibility (ResolveContext ec, Type delegate_type, AParametersCollection invoke_pd, bool ignore_errors)
+		protected bool VerifyParameterCompatibility (ResolveContext ec, TypeSpec delegate_type, AParametersCollection invoke_pd, bool ignore_errors)
 		{
 			if (Parameters.Count != invoke_pd.Count) {
 				if (ignore_errors)
@@ -964,7 +897,7 @@ namespace Mono.CSharp {
 				if (has_implicit_parameters)
 					continue;
 
-				Type type = invoke_pd.Types [i];
+				TypeSpec type = invoke_pd.Types [i];
 				
 				// We assume that generic parameters are always inflated
 				if (TypeManager.IsGenericParameter (type))
@@ -991,26 +924,26 @@ namespace Mono.CSharp {
 		//
 		// Infers type arguments based on explicit arguments
 		//
-		public bool ExplicitTypeInference (ResolveContext ec, TypeInferenceContext type_inference, Type delegate_type)
+		public bool ExplicitTypeInference (ResolveContext ec, TypeInferenceContext type_inference, TypeSpec delegate_type)
 		{
 			if (!HasExplicitParameters)
 				return false;
 
-			if (!TypeManager.IsDelegateType (delegate_type)) {
-				if (TypeManager.DropGenericTypeArguments (delegate_type) != TypeManager.expression_type)
+			if (!delegate_type.IsDelegate) {
+				if (delegate_type.GetDefinition () != TypeManager.expression_type)
 					return false;
 
 				delegate_type = TypeManager.GetTypeArguments (delegate_type) [0];
-				if (!TypeManager.IsDelegateType (delegate_type))
+				if (!delegate_type.IsDelegate)
 					return false;
 			}
 			
-			AParametersCollection d_params = TypeManager.GetDelegateParameters (ec, delegate_type);
+			AParametersCollection d_params = Delegate.GetParameters (ec.Compiler, delegate_type);
 			if (d_params.Count != Parameters.Count)
 				return false;
 
 			for (int i = 0; i < Parameters.Count; ++i) {
-				Type itype = d_params.Types [i];
+				TypeSpec itype = d_params.Types [i];
 				if (!TypeManager.IsGenericParameter (itype)) {
 					if (!TypeManager.HasElementType (itype))
 						continue;
@@ -1023,7 +956,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Type InferReturnType (ResolveContext ec, TypeInferenceContext tic, Type delegate_type)
+		public TypeSpec InferReturnType (ResolveContext ec, TypeInferenceContext tic, TypeSpec delegate_type)
 		{
 			AnonymousExpression am;
 			using (ec.Set (ResolveContext.Options.ProbingMode | ResolveContext.Options.InferReturnType)) {
@@ -1042,13 +975,13 @@ namespace Mono.CSharp {
 		// Returns AnonymousMethod container if this anonymous method
 		// expression can be implicitly converted to the delegate type `delegate_type'
 		//
-		public Expression Compatible (ResolveContext ec, Type type)
+		public Expression Compatible (ResolveContext ec, TypeSpec type)
 		{
 			Expression am;
 			if (compatibles.TryGetValue (type, out am))
 				return am;
 
-			Type delegate_type = CompatibleChecks (ec, type);
+			TypeSpec delegate_type = CompatibleChecks (ec, type);
 			if (delegate_type == null)
 				return null;
 
@@ -1057,15 +990,8 @@ namespace Mono.CSharp {
 			// needed for the anonymous method.  We create the method here.
 			//
 
-			var invoke_mb = Delegate.GetInvokeMethod (ec.Compiler,
-				ec.CurrentType, delegate_type);
-			Type return_type = TypeManager.TypeToCoreType (invoke_mb.ReturnType);
-
-#if MS_COMPATIBLE
-			Type[] g_args = delegate_type.GetGenericArguments ();
-			if (return_type.IsGenericParameter)
-				return_type = g_args [return_type.GenericParameterPosition];
-#endif
+			var invoke_mb = Delegate.GetInvokeMethod (ec.Compiler, delegate_type);
+			TypeSpec return_type = invoke_mb.ReturnType;
 
 			//
 			// Second: the return type of the delegate must be compatible with 
@@ -1123,7 +1049,7 @@ namespace Mono.CSharp {
 			return am;
 		}
 
-		protected virtual Expression CreateExpressionTree (ResolveContext ec, Type delegate_type)
+		protected virtual Expression CreateExpressionTree (ResolveContext ec, TypeSpec delegate_type)
 		{
 			return CreateExpressionTree (ec);
 		}
@@ -1134,9 +1060,9 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		protected virtual ParametersCompiled ResolveParameters (ResolveContext ec, TypeInferenceContext tic, Type delegate_type)
+		protected virtual ParametersCompiled ResolveParameters (ResolveContext ec, TypeInferenceContext tic, TypeSpec delegate_type)
 		{
-			AParametersCollection delegate_parameters = TypeManager.GetDelegateParameters (ec, delegate_type);
+			var delegate_parameters = Delegate.GetParameters (ec.Compiler, delegate_type);
 
 			if (Parameters == ParametersCompiled.Undefined) {
 				//
@@ -1218,7 +1144,7 @@ namespace Mono.CSharp {
 			return ExprClassName;
 		}
 
-		AnonymousMethodBody CompatibleMethodBody (ResolveContext ec, TypeInferenceContext tic, Type return_type, Type delegate_type)
+		AnonymousMethodBody CompatibleMethodBody (ResolveContext ec, TypeInferenceContext tic, TypeSpec return_type, TypeSpec delegate_type)
 		{
 			ParametersCompiled p = ResolveParameters (ec, tic, delegate_type);
 			if (p == null)
@@ -1230,7 +1156,7 @@ namespace Mono.CSharp {
 
 		}
 
-		protected virtual AnonymousMethodBody CompatibleMethodFactory (Type return_type, Type delegate_type, ParametersCompiled p, ToplevelBlock b)
+		protected virtual AnonymousMethodBody CompatibleMethodFactory (TypeSpec return_type, TypeSpec delegate_type, ParametersCompiled p, ToplevelBlock b)
 		{
 			return new AnonymousMethodBody (p, b, return_type, delegate_type, loc);
 		}
@@ -1281,22 +1207,24 @@ namespace Mono.CSharp {
 				return ec;
 			}
 
+			protected override void DefineTypeParameters ()
+			{
+				// Type parameters were cloned
+			}
+
 			protected override bool ResolveMemberType ()
 			{
 				if (!base.ResolveMemberType ())
 					return false;
 
-				if (Storey != null && Storey.IsGeneric) {
-					AnonymousMethodStorey gstorey = Storey.GetGenericStorey ();
-					if (gstorey != null) {
-						if (!Parameters.IsEmpty) {
-							Type [] ptypes = Parameters.Types;
-							for (int i = 0; i < ptypes.Length; ++i)
-								ptypes [i] = gstorey.MutateType (ptypes [i]);
-						}
-
-						member_type = gstorey.MutateType (member_type);
+				if (Storey != null && Storey.Mutator != null) {
+					if (!parameters.IsEmpty) {
+						var mutated = Storey.Mutator.Mutate (parameters.Types);
+						if (mutated != parameters.Types)
+							parameters = ParametersCompiled.CreateFullyResolved ((Parameter[]) parameters.FixedParameters, mutated);
 					}
+
+					member_type = Storey.Mutator.Mutate (member_type);
 				}
 
 				return true;
@@ -1304,17 +1232,6 @@ namespace Mono.CSharp {
 
 			public override void Emit ()
 			{
-				//
-				// Before emitting any code we have to change all MVAR references to VAR
-				// when the method is of generic type and has hoisted variables
-				//
-				if (Storey == Parent && Storey.IsGeneric) {
-					AnonymousMethodStorey gstorey = Storey.GetGenericStorey ();
-					if (gstorey != null) {
-						block.MutateHoistedGenericType (gstorey);
-					}
-				}
-
 				if (MethodBuilder == null) {
 					Define ();
 				}
@@ -1330,11 +1247,11 @@ namespace Mono.CSharp {
 
 		readonly ToplevelBlock block;
 
-		public Type ReturnType;
+		public TypeSpec ReturnType;
 
 		object return_label;
 
-		protected AnonymousExpression (ToplevelBlock block, Type return_type, Location loc)
+		protected AnonymousExpression (ToplevelBlock block, TypeSpec return_type, Location loc)
 		{
 			this.ReturnType = return_type;
 			this.block = block;
@@ -1436,7 +1353,7 @@ namespace Mono.CSharp {
 		static int unique_id;
 
 		public AnonymousMethodBody (ParametersCompiled parameters,
-					ToplevelBlock block, Type return_type, Type delegate_type,
+					ToplevelBlock block, TypeSpec return_type, TypeSpec delegate_type,
 					Location loc)
 			: base (block, return_type, loc)
 		{
@@ -1499,7 +1416,7 @@ namespace Mono.CSharp {
 				modifiers = Modifiers.STATIC | Modifiers.PRIVATE;
 			}
 
-			TypeContainer parent = storey != null ? storey : ec.CurrentTypeDefinition;
+			TypeContainer parent = storey != null ? storey : ec.CurrentTypeDefinition.Parent.PartialContainer;
 
 			MemberCore mc = ec.MemberContext as MemberCore;
 			string name = CompilerGeneratedClass.MakeName (parent != storey ? block_name : null,
@@ -1510,15 +1427,14 @@ namespace Mono.CSharp {
 			if (storey == null && mc.MemberName.TypeArguments != null) {
 				member_name = new MemberName (name, mc.MemberName.TypeArguments.Clone (), Location);
 
-				generic_method = new GenericMethod (parent.NamespaceEntry, parent, member_name,
-					new TypeExpression (ReturnType, Location), parameters);
-
-				var list = new List<Constraints> ();
-				foreach (TypeParameter tparam in ec.CurrentTypeParameters) {
-					if (tparam.Constraints != null)
-						list.Add (tparam.Constraints.Clone ());
+				var hoisted_tparams = ec.CurrentTypeParameters;
+				var type_params = new TypeParameter[hoisted_tparams.Length];
+				for (int i = 0; i < type_params.Length; ++i) {
+					type_params[i] = hoisted_tparams[i].CreateHoistedCopy (null);
 				}
-				generic_method.SetParameterInfo (list);
+
+				generic_method = new GenericMethod (parent.NamespaceEntry, parent, member_name, type_params,
+					new TypeExpression (ReturnType, Location), parameters);
 			} else {
 				member_name = new MemberName (name, Location);
 				generic_method = null;
@@ -1592,12 +1508,11 @@ namespace Mono.CSharp {
 				}
 			}
 
-			ILGenerator ig = ec.ig;
-			Label l_initialized = ig.DefineLabel ();
+			Label l_initialized = ec.DefineLabel ();
 
 			if (am_cache != null) {
-				ig.Emit (OpCodes.Ldsfld, am_cache.Spec.MetaInfo);
-				ig.Emit (OpCodes.Brtrue_S, l_initialized);
+				ec.Emit (OpCodes.Ldsfld, am_cache.Spec);
+				ec.Emit (OpCodes.Brtrue_S, l_initialized);
 			}
 
 			//
@@ -1605,45 +1520,41 @@ namespace Mono.CSharp {
 			//
 
 			if (is_static) {
-				ig.Emit (OpCodes.Ldnull);
+				ec.Emit (OpCodes.Ldnull);
 			} else if (storey != null) {
 				Expression e = storey.GetStoreyInstanceExpression (ec).Resolve (new ResolveContext (ec.MemberContext));
 				if (e != null)
 					e.Emit (ec);
 			} else {
-				ig.Emit (OpCodes.Ldarg_0);
+				ec.Emit (OpCodes.Ldarg_0);
 			}
 
-			MethodInfo delegate_method = method.MethodBuilder;
+			var delegate_method = method.Spec;
 			if (storey != null && storey.MemberName.IsGeneric) {
-				Type t = storey.Instance.Type;
-				
+				TypeSpec t = storey.Instance.Type;
+
 				//
 				// Mutate anonymous method instance type if we are in nested
 				// hoisted generic anonymous method storey
 				//
 				if (ec.CurrentAnonymousMethod != null &&
 					ec.CurrentAnonymousMethod.Storey != null &&
-					ec.CurrentAnonymousMethod.Storey.IsGeneric) {
-					t = storey.GetGenericStorey ().MutateType (t);
+					ec.CurrentAnonymousMethod.Storey.Mutator != null) {
+					t = storey.Mutator.Mutate (t);
 				}
 
-				delegate_method = TypeBuilder.GetMethod (t, delegate_method);
+				ec.Emit (OpCodes.Ldftn, TypeBuilder.GetMethod (t.GetMetaInfo (), (MethodInfo) delegate_method.GetMetaInfo ()));
+			} else {
+				ec.Emit (OpCodes.Ldftn, delegate_method);
 			}
 
-			ig.Emit (OpCodes.Ldftn, delegate_method);
-
 			var constructor_method = Delegate.GetConstructor (ec.MemberContext.Compiler, ec.CurrentType, type);
-#if MS_COMPATIBLE
-//            if (type.IsGenericType && type is TypeBuilder)
-//                constructor_method = TypeBuilder.GetConstructor (type, constructor_method);
-#endif
-			ig.Emit (OpCodes.Newobj, (ConstructorInfo) constructor_method.MetaInfo);
+			ec.Emit (OpCodes.Newobj, constructor_method);
 
 			if (am_cache != null) {
-				ig.Emit (OpCodes.Stsfld, am_cache.Spec.MetaInfo);
-				ig.MarkLabel (l_initialized);
-				ig.Emit (OpCodes.Ldsfld, am_cache.Spec.MetaInfo);
+				ec.Emit (OpCodes.Stsfld, am_cache.Spec);
+				ec.MarkLabel (l_initialized);
+				ec.Emit (OpCodes.Ldsfld, am_cache.Spec);
 			}
 		}
 
@@ -1667,11 +1578,6 @@ namespace Mono.CSharp {
 		public override string GetSignatureForError ()
 		{
 			return TypeManager.CSharpName (type);
-		}
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			type = storey.MutateType (type);
 		}
 
 		public static void Reset ()
@@ -1738,7 +1644,7 @@ namespace Mono.CSharp {
 
 			Constructor c = new Constructor (a_type, name, Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				null, new AnonymousParameters (ctx, ctor_params), null, loc);
-			c.Block = new ToplevelBlock (ctx, c.Parameters, loc);
+			c.Block = new ToplevelBlock (ctx, c.ParameterInfo, loc);
 
 			// 
 			// Create fields and contructor body with field initialization
@@ -1808,12 +1714,17 @@ namespace Mono.CSharp {
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("ToString", loc),
 				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
 
-			ToplevelBlock equals_block = new ToplevelBlock (Compiler, equals.Parameters, loc);
+			ToplevelBlock equals_block = new ToplevelBlock (Compiler, equals.ParameterInfo, loc);
 			TypeExpr current_type;
-			if (IsGeneric)
-				current_type = new GenericTypeExpr (this, loc);
-			else
-				current_type = new TypeExpression (TypeBuilder, loc);
+			if (type_params != null) {
+				var targs = new TypeArguments ();
+				foreach (var type_param in type_params)
+					targs.Add (new TypeParameterExpr (type_param, type_param.Location));
+
+				current_type = new GenericTypeExpr (Definition, targs, loc);
+			} else {
+				current_type = new TypeExpression (Definition, loc);
+			}
 
 			equals_block.AddVariable (current_type, "other", loc);
 			LocalVariableReference other_variable = new LocalVariableReference (equals_block, "other", loc);
@@ -1825,12 +1736,12 @@ namespace Mono.CSharp {
 			Expression string_concat = new StringConstant ("{", loc);
 			Expression rs_hashcode = new IntConstant (-2128831035, loc);
 			for (int i = 0; i < parameters.Count; ++i) {
-				AnonymousTypeParameter p = (AnonymousTypeParameter) parameters [i];
-				Field f = (Field) Fields [i];
+				var p = parameters [i];
+				var f = Fields [i];
 
 				MemberAccess equality_comparer = new MemberAccess (new MemberAccess (
 					system_collections_generic, "EqualityComparer",
-						new TypeArguments (new SimpleName (TypeParameters [i].Name, loc)), loc),
+						new TypeArguments (new SimpleName (CurrentTypeParameters [i].Name, loc)), loc),
 						"Default", loc);
 
 				Arguments arguments_equal = new Arguments (2);

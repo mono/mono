@@ -34,7 +34,7 @@ namespace Mono.CSharp
 			this.assembly = assembly;
 		}
 
-		public Assembly Assembly {
+		public override Assembly Assembly {
 			get { return assembly; }
 		}
 
@@ -111,7 +111,7 @@ namespace Mono.CSharp
 			return AddPartial (nextPart, nextPart.Name);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.CLSCompliant) {
 				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
@@ -123,7 +123,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			builder.SetCustomAttribute (ctor, cdata);
+			builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
 		public ModuleBuilder Builder {
@@ -147,11 +147,11 @@ namespace Mono.CSharp
 				OptAttributes.Emit ();
 
 			if (is_unsafe) {
-				Type t = TypeManager.CoreLookupType (context, "System.Security", "UnverifiableCodeAttribute", MemberKind.Class, true);
+				TypeSpec t = TypeManager.CoreLookupType (context, "System.Security", "UnverifiableCodeAttribute", MemberKind.Class, true);
 				if (t != null) {
-					ConstructorInfo unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, Type.EmptyTypes);
+					var unverifiable_code_ctor = TypeManager.GetPredefinedConstructor (t, Location.Null, TypeSpec.EmptyTypes);
 					if (unverifiable_code_ctor != null)
-						builder.SetCustomAttribute (new CustomAttributeBuilder (unverifiable_code_ctor, new object [0]));
+						builder.SetCustomAttribute (new CustomAttributeBuilder ((ConstructorInfo) unverifiable_code_ctor.GetMetaInfo (), new object[0]));
 				}
 			}
 		}
@@ -176,11 +176,6 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public override bool GetClsCompliantAttributeValue ()
-		{
-			return CodeGen.Assembly.IsClsCompliant;
-		}
-
 		public bool HasDefaultCharSet {
 			get {
 				return has_default_charset;
@@ -194,14 +189,14 @@ namespace Mono.CSharp
 
 		public override bool IsClsComplianceRequired ()
 		{
-			return true;
+			return CodeGen.Assembly.IsClsCompliant;
 		}
 
-		protected override bool AddMemberType (DeclSpace ds)
+		protected override bool AddMemberType (TypeContainer ds)
 		{
 			if (!AddToContainer (ds, ds.Name))
 				return false;
-			ds.NamespaceEntry.NS.AddDeclSpace (ds.Basename, ds);
+			ds.NamespaceEntry.NS.AddType (ds.Definition);
 			return true;
 		}
 
@@ -259,9 +254,9 @@ namespace Mono.CSharp
 		}
 	}
 
-	class RootDeclSpace : DeclSpace {
+	class RootDeclSpace : TypeContainer {
 		public RootDeclSpace (NamespaceEntry ns)
-			: base (ns, null, MemberName.Null, null)
+			: base (ns, null, MemberName.Null, null, 0)
 		{
 			PartialContainer = RootContext.ToplevelTypes;
 		}
@@ -280,29 +275,20 @@ namespace Mono.CSharp
 			get { throw new InternalErrorException ("should not be called"); }
 		}
 
-		public override bool Define ()
-		{
-			throw new InternalErrorException ("should not be called");
-		}
+		//public override bool Define ()
+		//{
+		//    throw new InternalErrorException ("should not be called");
+		//}
 
 		public override TypeBuilder DefineType ()
 		{
 			throw new InternalErrorException ("should not be called");
 		}
 
-		public override MemberCache MemberCache {
-			get { return PartialContainer.MemberCache; }
-		}
-
 		public override ModuleContainer Module {
 			get {
 				return PartialContainer.Module;
 			}
-		}
-
-		public override bool GetClsCompliantAttributeValue ()
-		{
-			return PartialContainer.GetClsCompliantAttributeValue ();
 		}
 
 		public override bool IsClsComplianceRequired ()

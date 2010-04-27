@@ -70,8 +70,8 @@ namespace Mono.CSharp.Linq
 			{
 			}
 
-			protected override Expression Error_MemberLookupFailed (ResolveContext ec, Type container_type, Type qualifier_type,
-				Type queried_type, string name, string class_name, MemberTypes mt, BindingFlags bf)
+			protected override Expression Error_MemberLookupFailed (ResolveContext ec, TypeSpec container_type, TypeSpec qualifier_type,
+				TypeSpec queried_type, string name, int arity, string class_name, MemberKind mt, BindingRestriction bf)
 			{
 				ec.Report.Error (1935, loc, "An implementation of `{0}' query expression pattern could not be found. " +
 					"Are you missing `System.Linq' using directive or `System.Core.dll' assembly reference?",
@@ -96,8 +96,8 @@ namespace Mono.CSharp.Linq
 
 			public bool AmbiguousCall (ResolveContext ec, MethodSpec ambiguous)
 			{
-				ec.Report.SymbolRelatedToPreviousError (mg.BestCandidate.MetaInfo);
-				ec.Report.SymbolRelatedToPreviousError (ambiguous.MetaInfo);
+				ec.Report.SymbolRelatedToPreviousError (mg.BestCandidate);
+				ec.Report.SymbolRelatedToPreviousError (ambiguous);
 				ec.Report.Error (1940, loc, "Ambiguous implementation of the query pattern `{0}' for source type `{1}'",
 					mg.Name, mg.InstanceExpression.GetSignatureForError ());
 				return true;
@@ -106,15 +106,15 @@ namespace Mono.CSharp.Linq
 			public bool NoExactMatch (ResolveContext ec, MethodSpec method)
 			{
 				var pd = method.Parameters;
-				Type source_type = pd.ExtensionMethodType;
+				TypeSpec source_type = pd.ExtensionMethodType;
 				if (source_type != null) {
 					Argument a = arguments [0];
 
 					if (TypeManager.IsGenericType (source_type) && TypeManager.ContainsGenericParameters (source_type)) {
-						TypeInferenceContext tic = new TypeInferenceContext (TypeManager.GetTypeArguments (source_type));
+						TypeInferenceContext tic = new TypeInferenceContext (source_type.TypeArguments);
 						tic.OutputTypeInference (ec, a.Expr, source_type);
 						if (tic.FixAllTypes (ec)) {
-							source_type = TypeManager.DropGenericTypeArguments (source_type).MakeGenericType (tic.InferredTypeArguments);
+							source_type = source_type.GetDefinition ().MakeGenericType (tic.InferredTypeArguments);
 						}
 					}
 
@@ -125,7 +125,7 @@ namespace Mono.CSharp.Linq
 					}
 				}
 
-				if (!method.IsGenericMethod)
+				if (!method.IsGeneric)
 					return false;
 
 				if (mg.Name == "SelectMany") {
@@ -251,12 +251,12 @@ namespace Mono.CSharp.Linq
 		{
 		}
 
-		protected static Expression CreateRangeVariableType (ToplevelBlock block, IMemberContext context, SimpleMemberName name, Expression init)
+		protected static Expression CreateRangeVariableType (ToplevelBlock block, TypeContainer container, SimpleMemberName name, Expression init)
 		{
 			var args = new List<AnonymousTypeParameter> (2);
 			args.Add (new AnonymousTypeParameter (block.Parameters [0]));
 			args.Add (new RangeAnonymousTypeParameter (init, name));
-			return new NewAnonymousType (args, context.CurrentTypeDefinition, name.Location);
+			return new NewAnonymousType (args, container, name.Location);
 		}
 	}
 
@@ -273,7 +273,7 @@ namespace Mono.CSharp.Linq
 			if (expr == null)
 				return null;
 
-			if (TypeManager.IsDynamicType (expr.Type) || expr.Type == TypeManager.void_type) {
+			if (expr.Type == InternalType.Dynamic || expr.Type == TypeManager.void_type) {
 				ec.Report.Error (1979, expr.Location,
 					"Query expression with a source or join sequence of type `{0}' is not allowed",
 					TypeManager.CSharpName (expr.Type));
@@ -400,7 +400,7 @@ namespace Mono.CSharp.Linq
 				result_selector_expr = next.Expr;
 				next = next.next;
 			} else {
-				result_selector_expr = CreateRangeVariableType (block, ec.MemberContext, into_variable,
+				result_selector_expr = CreateRangeVariableType (block, ec.MemberContext.CurrentMemberDefinition.Parent, into_variable,
 					new SimpleName (into_variable.Value, into_variable.Location));
 			}
 
@@ -510,7 +510,7 @@ namespace Mono.CSharp.Linq
 				result_selector_expr = next.Expr;
 				next = next.next;
 			} else {
-				result_selector_expr = CreateRangeVariableType (block, ec.MemberContext, lt, new SimpleName (lt.Value, lt.Location));
+				result_selector_expr = CreateRangeVariableType (block, ec.MemberContext.CurrentMemberDefinition.Parent, lt, new SimpleName (lt.Value, lt.Location));
 			}
 
 			LambdaExpression result_selector = new LambdaExpression (lt.Location);
@@ -609,7 +609,7 @@ namespace Mono.CSharp.Linq
 				Identifier = identifier.Value;
 			}
 
-			public static void Reset ()
+			public new static void Reset ()
 			{
 				Counter = 0;
 			}

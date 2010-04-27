@@ -118,23 +118,14 @@ namespace Mono.CSharp {
 		static List<string> AllDefines;
 		
 		//
-		// This keeps track of the order in which classes were defined
-		// so that we can poulate them in that order.
-		//
-		// Order is important, because we need to be able to tell, by
-		// examining the list of methods of the base class, which ones are virtual
-		// or abstract as well as the parent names (to implement new, 
-		// override).
-		//
-		static List<TypeContainer> type_container_resolve_order;
-
-		//
 		// Holds a reference to the Private Implementation Details
 		// class.
 		//
 		static List<TypeBuilder> helper_classes;
 		
 		static TypeBuilder impl_details_class;
+
+		public static List<Enum> hack_corlib_enums = new List<Enum> ();
 
 		//
 		// Constructor
@@ -151,10 +142,12 @@ namespace Mono.CSharp {
 		
 		public static void Reset (bool full)
 		{
-			if (full)
-				root = null;
+			impl_details_class = null;
+			helper_classes = null;
+
+			if (!full)
+				return;
 			
-			type_container_resolve_order = new List<TypeContainer> ();
 			EntryPoint = null;
 			Checked = false;
 			Unsafe = false;
@@ -201,11 +194,6 @@ namespace Mono.CSharp {
 			set { root = value; }
 		}
 
-		public static void RegisterOrder (TypeContainer tc)
-		{
-			type_container_resolve_order.Add (tc);
-		}
-		
 		// <remarks>
 		//   This function is used to resolve the hierarchy tree.
 		//   It processes interfaces, structs and classes in that order.
@@ -228,10 +216,44 @@ namespace Mono.CSharp {
 
 			foreach (TypeContainer tc in root.Types)
 				tc.DefineType ();
+		}
 
-			if (root.Delegates != null)
-				foreach (Delegate d in root.Delegates) 
-					d.DefineType ();
+		static void HackCorlib ()
+		{
+			if (StdLib)
+				return;
+
+			//
+			// HACK: When building corlib mcs uses loaded mscorlib which
+			// has different predefined types and this method sets mscorlib types
+			// to be same to avoid type check errors in CreateType.
+			//
+			var type = typeof (Type);
+			var system_4_type_arg = new[] { type, type, type, type };
+
+			MethodInfo set_corlib_type_builders =
+				typeof (System.Reflection.Emit.AssemblyBuilder).GetMethod (
+				"SetCorlibTypeBuilders", BindingFlags.NonPublic | BindingFlags.Instance, null,
+				system_4_type_arg, null);
+
+			if (set_corlib_type_builders == null) {
+				root.Compiler.Report.Warning (-26, 3, "The compilation may fail due to missing `{0}.SetCorlibTypeBuilders(...)' method",
+					typeof (System.Reflection.Emit.AssemblyBuilder).FullName);
+				return;
+			}
+
+			object[] args = new object[4];
+			args[0] = TypeManager.object_type.GetMetaInfo ();
+			args[1] = TypeManager.value_type.GetMetaInfo ();
+			args[2] = TypeManager.enum_type.GetMetaInfo ();
+			args[3] = TypeManager.void_type.GetMetaInfo ();
+			set_corlib_type_builders.Invoke (CodeGen.Assembly.Builder, args);
+
+			// Another Mono corlib HACK
+			// mono_class_layout_fields requires to have enums created
+			// before creating a class which used the enum for any of its fields
+			foreach (var e in hack_corlib_enums)
+				e.CloseType ();
 		}
 
 		// <summary>
@@ -246,26 +268,11 @@ namespace Mono.CSharp {
 		// </remarks>
 		static public void CloseTypes ()
 		{
-			//
-			// We do this in two passes, first we close the structs,
-			// then the classes, because it seems the code needs it this
-			// way.  If this is really what is going on, we should probably
-			// make sure that we define the structs in order as well.
-			//
-			foreach (TypeContainer tc in type_container_resolve_order){
-				if (tc.Kind == MemberKind.Struct && tc.Parent == root){
-					tc.CloseType ();
-				}
-			}
+			HackCorlib ();
 
-			foreach (TypeContainer tc in type_container_resolve_order){
-				if (!(tc.Kind == MemberKind.Struct && tc.Parent == root))
-					tc.CloseType ();					
+			foreach (TypeContainer tc in root.Types){
+				tc.CloseType ();
 			}
-			
-			if (root.Delegates != null)
-				foreach (Delegate d in root.Delegates)
-					d.CloseType ();
 
 			if (root.CompilerGeneratedClasses != null)
 				foreach (CompilerGeneratedClass c in root.CompilerGeneratedClasses)
@@ -281,10 +288,7 @@ namespace Mono.CSharp {
 				}
 			}
 			
-			type_container_resolve_order = null;
 			helper_classes = null;
-			//root = null;
-			TypeManager.CleanUp ();
 		}
 
 		/// <summary>
@@ -299,28 +303,6 @@ namespace Mono.CSharp {
 			helper_classes.Add (helper_class);
 		}
 		
-		static public DeclSpace PopulateCoreType (TypeContainer root, string name)
-		{
-			DeclSpace ds = (DeclSpace) root.GetDefinition (name);
-			// Core type was imported
-			if (ds == null)
-				return null;
-
-			ds.Define ();
-			return ds;
-		}
-		
-		static public void BootCorlib_PopulateCoreTypes ()
-		{
-			// Clear -nostdlib flag when object type is imported
-			if (PopulateCoreType (root, "System.Object") == null)
-				RootContext.StdLib = true;
-
-			PopulateCoreType (root, "System.ValueType");
-			PopulateCoreType (root, "System.Attribute");
-			PopulateCoreType (root, "System.Runtime.CompilerServices.IndexerNameAttribute");
-		}
-		
 		// <summary>
 		//   Populates the structs and classes with fields and methods
 		// </summary>
@@ -329,52 +311,31 @@ namespace Mono.CSharp {
 		// have been defined through `ResolveTree' 
 		static public void PopulateTypes ()
 		{
+			foreach (TypeContainer tc in ToplevelTypes.Types)
+				tc.ResolveTypeParameters ();
 
-			if (type_container_resolve_order != null){
-				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.ResolveType ();
-				foreach (TypeContainer tc in type_container_resolve_order) {
-					try {
-						tc.Define ();
-					} catch (Exception e) {
-						throw new InternalErrorException (tc, e);
-					}
+			foreach (TypeContainer tc in ToplevelTypes.Types) {
+				try {
+					tc.Define ();
+				} catch (Exception e) {
+					throw new InternalErrorException (tc, e);
 				}
-			}
-
-			var delegates = root.Delegates;
-			if (delegates != null){
-				foreach (Delegate d in delegates)
-					d.Define ();
-			}
-
-			//
-			// Check for cycles in the struct layout
-			//
-			if (type_container_resolve_order != null){
-				var seen = new Dictionary<TypeContainer, object> ();
-				foreach (TypeContainer tc in type_container_resolve_order)
-					TypeManager.CheckStructCycles (tc, seen);
 			}
 		}
 
 		static public void EmitCode ()
 		{
-			if (type_container_resolve_order != null) {
-				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.EmitType ();
+			foreach (var tc in ToplevelTypes.Types)
+				tc.DefineConstants ();
 
-				if (ToplevelTypes.Compiler.Report.Errors > 0)
-					return;
+			foreach (TypeContainer tc in ToplevelTypes.Types)
+				tc.EmitType ();
 
-				foreach (TypeContainer tc in type_container_resolve_order)
-					tc.VerifyMembers ();
-			}
-			
-			if (root.Delegates != null) {
-				foreach (Delegate d in root.Delegates)
-					d.Emit ();
-			}			
+			if (ToplevelTypes.Compiler.Report.Errors > 0)
+				return;
+
+			foreach (TypeContainer tc in ToplevelTypes.Types)
+				tc.VerifyMembers ();
 
 			if (root.CompilerGeneratedClasses != null)
 				foreach (CompilerGeneratedClass c in root.CompilerGeneratedClasses)
@@ -417,7 +378,7 @@ namespace Mono.CSharp {
 				impl_details_class = ToplevelTypes.Builder.DefineType (
 					"<PrivateImplementationDetails>",
                                         TypeAttributes.NotPublic,
-                                        TypeManager.object_type);
+                                        TypeManager.object_type.GetMetaInfo ());
                                 
 				RegisterCompilerGeneratedType (impl_details_class);
 			}

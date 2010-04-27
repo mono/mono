@@ -11,13 +11,6 @@
 // Copyright 2003-2008 Novell, Inc.
 //
 
-//
-// We will eventually remove the SIMPLE_SPEEDUP, and should never change 
-// the behavior of the compilation.  This can be removed if we rework
-// the code to get a list of namespaces available.
-//
-#define SIMPLE_SPEEDUP
-
 using System;
 using System.IO;
 using System.Globalization;
@@ -27,6 +20,7 @@ using System.Reflection.Emit;
 using System.Text;
 using System.Runtime.CompilerServices;
 using System.Diagnostics;
+using System.Linq;
 
 namespace Mono.CSharp {
 
@@ -34,74 +28,75 @@ namespace Mono.CSharp {
 	//
 	// A list of core types that the compiler requires or uses
 	//
-	static public Type object_type;
-	static public Type value_type;
-	static public Type string_type;
-	static public Type int32_type;
-	static public Type uint32_type;
-	static public Type int64_type;
-	static public Type uint64_type;
-	static public Type float_type;
-	static public Type double_type;
-	static public Type char_type;
-	static public Type short_type;
-	static public Type decimal_type;
-	static public Type bool_type;
-	static public Type sbyte_type;
-	static public Type byte_type;
-	static public Type ushort_type;
-	static public Type enum_type;
-	static public Type delegate_type;
-	static public Type multicast_delegate_type;
-	static public Type void_type;
-	static public Type null_type;
-	static public Type array_type;
-	static public Type runtime_handle_type;
-	static public Type type_type;
-	static public Type ienumerator_type;
-	static public Type ienumerable_type;
-	static public Type idisposable_type;
-	static public Type iasyncresult_type;
-	static public Type asynccallback_type;
-	static public Type intptr_type;
-	static public Type uintptr_type;
-	static public Type runtime_field_handle_type;
-	static public Type runtime_argument_handle_type;
-	static public Type attribute_type;
-	static public Type void_ptr_type;
-	static public Type exception_type;
+	static public PredefinedTypeSpec object_type;
+	static public PredefinedTypeSpec value_type;
+	static public PredefinedTypeSpec string_type;
+	static public PredefinedTypeSpec int32_type;
+	static public PredefinedTypeSpec uint32_type;
+	static public PredefinedTypeSpec int64_type;
+	static public PredefinedTypeSpec uint64_type;
+	static public PredefinedTypeSpec float_type;
+	static public PredefinedTypeSpec double_type;
+	static public PredefinedTypeSpec char_type;
+	static public PredefinedTypeSpec short_type;
+	static public PredefinedTypeSpec decimal_type;
+	static public PredefinedTypeSpec bool_type;
+	static public PredefinedTypeSpec sbyte_type;
+	static public PredefinedTypeSpec byte_type;
+	static public PredefinedTypeSpec ushort_type;
+	static public PredefinedTypeSpec enum_type;
+	static public PredefinedTypeSpec delegate_type;
+	static public PredefinedTypeSpec multicast_delegate_type;
+	static public PredefinedTypeSpec void_type;
+	static public PredefinedTypeSpec array_type;
+	static public PredefinedTypeSpec runtime_handle_type;
+	static public PredefinedTypeSpec type_type;
+	static public PredefinedTypeSpec ienumerator_type;
+	static public PredefinedTypeSpec ienumerable_type;
+	static public PredefinedTypeSpec idisposable_type;
+	static public PredefinedTypeSpec intptr_type;
+	static public PredefinedTypeSpec uintptr_type;
+	static public PredefinedTypeSpec runtime_field_handle_type;
+	static public PredefinedTypeSpec attribute_type;
+	static public PredefinedTypeSpec exception_type;
 
-	static public Type typed_reference_type;
-	static public Type arg_iterator_type;
-	static public Type mbr_type;
-	public static Type runtime_helpers_type;
+
+	static public TypeSpec null_type;
+	static public TypeSpec typed_reference_type;
+	static public TypeSpec arg_iterator_type;
+	static public TypeSpec mbr_type;
+	public static TypeSpec runtime_helpers_type;
+	static public TypeSpec iasyncresult_type;
+	static public TypeSpec asynccallback_type;
+	static public TypeSpec runtime_argument_handle_type;
+	static public TypeSpec void_ptr_type;
 
 	// 
 	// C# 2.0
 	//
-	static internal Type isvolatile_type;
-	static public Type generic_ilist_type;
-	static public Type generic_icollection_type;
-	static public Type generic_ienumerator_type;
-	static public Type generic_ienumerable_type;
-	static public Type generic_nullable_type;
+	static internal TypeSpec isvolatile_type;
+	static public TypeSpec generic_ilist_type;
+	static public TypeSpec generic_icollection_type;
+	static public TypeSpec generic_ienumerator_type;
+	static public TypeSpec generic_ienumerable_type;
+	static public TypeSpec generic_nullable_type;
 
 	//
 	// C# 3.0
 	//
-	static internal Type expression_type;
-	public static Type parameter_expression_type;
-	public static Type fieldinfo_type;
-	public static Type methodinfo_type;
-	public static Type ctorinfo_type;
+	static internal TypeSpec expression_type;
+	public static TypeSpec parameter_expression_type;
+	public static TypeSpec fieldinfo_type;
+	public static TypeSpec methodinfo_type;
+	public static TypeSpec ctorinfo_type;
 
 	//
 	// C# 4.0
 	//
-	public static Type call_site_type;
-	public static Type generic_call_site_type;
+	public static TypeSpec call_site_type;
+	public static TypeSpec generic_call_site_type;
 	public static TypeExpr binder_type;
-	public static Type binder_flags;
+	public static TypeSpec binder_flags;
 
 	// 
 	// Expressions representing the internal types.  Used during declaration
@@ -116,14 +111,13 @@ namespace Mono.CSharp {
 	static public TypeExpr system_int64_expr, system_uint64_expr;
 	static public TypeExpr system_char_expr, system_void_expr;
 	static public TypeExpr system_valuetype_expr;
-	static public TypeExpr system_intptr_expr;
 	public static TypeExpr expression_type_expr;
 
 
 	//
 	// These methods are called by code generated by the compiler
 	//
-	static public FieldInfo string_empty;
+	static public FieldSpec string_empty;
 	static public MethodSpec system_type_get_type_from_handle;
 	static public MethodSpec bool_movenext_void;
 	static public MethodSpec void_dispose_void;
@@ -144,93 +138,35 @@ namespace Mono.CSharp {
 	//
 	// The constructors.
 	//
-	static public ConstructorInfo void_decimal_ctor_five_args;
-	static public ConstructorInfo void_decimal_ctor_int_arg;
-	public static ConstructorInfo void_decimal_ctor_long_arg;
+	static public MethodSpec void_decimal_ctor_five_args;
+	static public MethodSpec void_decimal_ctor_int_arg;
+	public static MethodSpec void_decimal_ctor_long_arg;
 
-	static Dictionary<TypeBuilder, DeclSpace> builder_to_declspace;
-
-	static Dictionary<Type, MemberCache> builder_to_member_cache;
-
-	// <remarks>
-	//   Tracks the interfaces implemented by typebuilders.  We only
-	//   enter those who do implement or or more interfaces
-	// </remarks>
-	static Dictionary<Type, Type[]> builder_to_ifaces;
-
-	// <remarks>
-	//   Maps a MethodBase to its ParameterData (either InternalParameters or ReflectionParameters)
-	// <remarks>
-	static Dictionary<MemberInfo, AParametersCollection> method_params;
-
-	// <remarks>
-	//  A hash table from override methods to their base virtual method.
-	// <remarks>
-	static Dictionary<MethodBase, MethodBase> method_overrides;
-
-	// <remarks>
-	//  Keeps track of methods
-	// </remarks>
-
-	static Dictionary<MethodBase, IMethodData> builder_to_method;
-
-	// <remarks>
-	//  Contains all public types from referenced assemblies.
-	//  This member is used only if CLS Compliance verification is required.
-	// </remarks>
-	public static Dictionary<string, object> AllClsTopLevelTypes;
-
-	static Dictionary<FieldInfo, FieldBase> fieldbuilders_to_fields;
-	static Dictionary<PropertyInfo, PropertyBase> propertybuilder_to_property;
-	static Dictionary<FieldInfo, ConstSpec> fields;
-	static Dictionary<EventInfo, EventSpec> events;
 	static Dictionary<Assembly, bool> assembly_internals_vis_attrs;
-	static Dictionary<GenericTypeParameterBuilder, TypeParameter> builder_to_type_param;
-	static Dictionary<Type, Type[]> iface_cache;
-
-	public static void CleanUp ()
-	{
-		// Lets get everything clean so that we can collect before generating code
-		builder_to_declspace = null;
-		builder_to_member_cache = null;
-		builder_to_ifaces = null;
-		builder_to_type_param = null;
-		method_params = null;
-		builder_to_method = null;
-		iface_cache = null;
-		
-		fields = null;
-		events = null;
-		type_hash = null;
-		propertybuilder_to_property = null;
-
-		TypeHandle.CleanUp ();
-	}
 
 	//
 	// These are expressions that represent some of the internal data types, used
 	// elsewhere
 	//
-	static void InitExpressionTypes ()
+	public static void InitExpressionTypes ()
 	{
-		system_object_expr  = new TypeLookupExpression ("System", "Object");
-		system_string_expr  = new TypeLookupExpression ("System", "String");
-		system_boolean_expr = new TypeLookupExpression ("System", "Boolean");
-		system_decimal_expr = new TypeLookupExpression ("System", "Decimal");
-		system_single_expr  = new TypeLookupExpression ("System", "Single");
-		system_double_expr  = new TypeLookupExpression ("System", "Double");
-		system_sbyte_expr   = new TypeLookupExpression ("System", "SByte");
-		system_byte_expr    = new TypeLookupExpression ("System", "Byte");
-		system_int16_expr   = new TypeLookupExpression ("System", "Int16");
-		system_uint16_expr  = new TypeLookupExpression ("System", "UInt16");
-		system_int32_expr   = new TypeLookupExpression ("System", "Int32");
-		system_uint32_expr  = new TypeLookupExpression ("System", "UInt32");
-		system_int64_expr   = new TypeLookupExpression ("System", "Int64");
-		system_uint64_expr  = new TypeLookupExpression ("System", "UInt64");
-		system_char_expr    = new TypeLookupExpression ("System", "Char");
-		system_void_expr    = new TypeLookupExpression ("System", "Void");
-		system_valuetype_expr  = new TypeLookupExpression ("System", "ValueType");
-		system_intptr_expr  = new TypeLookupExpression ("System", "IntPtr");
+		system_object_expr  = new TypeLookupExpression (object_type);
+		system_string_expr  = new TypeLookupExpression (string_type);
+		system_boolean_expr = new TypeLookupExpression (bool_type);
+		system_decimal_expr = new TypeLookupExpression (decimal_type);
+		system_single_expr  = new TypeLookupExpression (float_type);
+		system_double_expr  = new TypeLookupExpression (double_type);
+		system_sbyte_expr   = new TypeLookupExpression (sbyte_type);
+		system_byte_expr    = new TypeLookupExpression (byte_type);
+		system_int16_expr   = new TypeLookupExpression (short_type);
+		system_uint16_expr  = new TypeLookupExpression (ushort_type);
+		system_int32_expr   = new TypeLookupExpression (int32_type);
+		system_uint32_expr  = new TypeLookupExpression (uint32_type);
+		system_int64_expr   = new TypeLookupExpression (int64_type);
+		system_uint64_expr  = new TypeLookupExpression (uint64_type);
+		system_char_expr    = new TypeLookupExpression (char_type);
+		system_void_expr    = new TypeLookupExpression (void_type);
+		system_valuetype_expr  = new TypeLookupExpression (value_type);
 	}
 
 	static TypeManager ()
@@ -240,28 +176,11 @@ namespace Mono.CSharp {
 
 	static public void Reset ()
 	{
-		object_type = null;
-
-		InitExpressionTypes ();
-		
-		builder_to_declspace = new Dictionary<TypeBuilder, DeclSpace> (ReferenceEquality<TypeBuilder>.Default);
-		builder_to_member_cache = new Dictionary<Type, MemberCache> (ReferenceEquality<Type>.Default);
-		builder_to_method = new Dictionary<MethodBase, IMethodData> (ReferenceEquality<MethodBase>.Default);
-		builder_to_type_param = new Dictionary<GenericTypeParameterBuilder, TypeParameter> (ReferenceEquality<GenericTypeParameterBuilder>.Default);
-		method_params = new Dictionary<MemberInfo, AParametersCollection> (ReferenceEquality<MemberInfo>.Default);
-		method_overrides = new Dictionary<MethodBase, MethodBase> (ReferenceEquality<MethodBase>.Default);
-		builder_to_ifaces = new Dictionary<Type, Type[]> (ReferenceEquality<Type>.Default);
-
-		fieldbuilders_to_fields = new Dictionary<FieldInfo, FieldBase> (ReferenceEquality<FieldInfo>.Default);
-		propertybuilder_to_property = new Dictionary<PropertyInfo, PropertyBase> (ReferenceEquality<PropertyInfo>.Default);
-		fields = new Dictionary<FieldInfo, ConstSpec> (ReferenceEquality<FieldInfo>.Default);
+//		object_type = null;
+	
 		type_hash = new DoubleHash ();
 		assembly_internals_vis_attrs = new Dictionary<Assembly, bool> ();
-		iface_cache = new Dictionary<Type, Type[]> (ReferenceEquality<Type>.Default);
 		
-		closure = new Closure ();
-		FilterWithClosure_delegate = new MemberFilter (closure.Filter);
-
 		// TODO: I am really bored by all this static stuff
 		system_type_get_type_from_handle =
 		bool_movenext_void =
@@ -285,7 +204,7 @@ namespace Mono.CSharp {
 		void_decimal_ctor_int_arg =
 		void_decimal_ctor_long_arg = null;
 
-		isvolatile_type = null;
+		string_empty = null;
 
 		call_site_type =
 		generic_call_site_type =
@@ -293,112 +212,14 @@ namespace Mono.CSharp {
 
 		binder_type = null;
 
-		// to uncover regressions
-		AllClsTopLevelTypes = null;
-	}
+		typed_reference_type = arg_iterator_type = mbr_type =
+		runtime_helpers_type = iasyncresult_type = asynccallback_type =
+		runtime_argument_handle_type = void_ptr_type = isvolatile_type =
+		generic_ilist_type = generic_icollection_type = generic_ienumerator_type =
+		generic_ienumerable_type = generic_nullable_type = expression_type =
+		parameter_expression_type = fieldinfo_type = methodinfo_type = ctorinfo_type = null;
 
-	public static void AddUserType (DeclSpace ds)
-	{
-		builder_to_declspace.Add (ds.TypeBuilder, ds);
-	}
-
-	//
-	// This entry point is used by types that we define under the covers
-	// 
-	public static void RegisterBuilder (Type tb, Type [] ifaces)
-	{
-		if (ifaces != null)
-			builder_to_ifaces [tb] = ifaces;
-	}	
-
-	public static void AddMethod (MethodBase builder, IMethodData method)
-	{
-		builder_to_method.Add (builder, method);
-		method_params.Add (builder, method.ParameterInfo);
-	}
-
-	public static IMethodData GetMethod (MethodBase builder)
-	{
-		IMethodData md;
-		if (builder_to_method.TryGetValue (builder, out md))
-			return md;
-		return null;
-	}
-
-	/// <summary>
-	///   Returns the DeclSpace whose Type is `t' or null if there is no
-	///   DeclSpace for `t' (ie, the Type comes from a library)
-	/// </summary>
-	public static DeclSpace LookupDeclSpace (Type t)
-	{
-		DeclSpace ds;
-		var tb = t as TypeBuilder;
-		if (tb != null && builder_to_declspace.TryGetValue (tb, out ds))
-			return ds;
-
-		return null;
-	}
-
-	/// <summary>
-	///   Returns the TypeContainer whose Type is `t' or null if there is no
-	///   TypeContainer for `t' (ie, the Type comes from a library)
-	/// </summary>
-	public static TypeContainer LookupTypeContainer (Type t)
-	{
-		return LookupDeclSpace (t) as TypeContainer;
-	}
-
-	public static MemberCache LookupMemberCache (Type t)
-	{
-		if (IsBeingCompiled (t)) {
-			DeclSpace container = LookupDeclSpace (t);
-			if (container != null)
-				return container.MemberCache;
-		}
-
-		if (t is GenericTypeParameterBuilder) {
-			TypeParameter container;
-			if (builder_to_type_param.TryGetValue ((GenericTypeParameterBuilder) t, out container))
-				return container.MemberCache;
-		}
-
-		return TypeHandle.GetMemberCache (t);
-	}
-
-	public static MemberCache LookupBaseInterfacesCache (Type t)
-	{
-		Type [] ifaces = GetInterfaces (t);
-
-		if (ifaces != null && ifaces.Length == 1)
-			return LookupMemberCache (ifaces [0]);
-
-		// TODO: the builder_to_member_cache should be indexed by 'ifaces', not 't'
-		MemberCache cache;
-		if (builder_to_member_cache.TryGetValue (t, out cache))
-			return cache;
-
-		cache = new MemberCache (ifaces);
-		builder_to_member_cache.Add (t, cache);
-		return cache;
-	}
-
-	public static TypeContainer LookupInterface (Type t)
-	{
-		TypeContainer tc = LookupTypeContainer (t);
-		if ((tc == null) || (tc.Kind != MemberKind.Interface))
-			return null;
-
-		return tc;
-	}
-
-	public static Delegate LookupDelegate (Type t)
-	{
-		return LookupDeclSpace (t) as Delegate;
-	}
-
-	public static Class LookupClass (Type t)
-	{
-		return LookupDeclSpace (t) as Class;
+		expression_type_expr = null;
 	}
 
 	//
@@ -416,466 +237,120 @@ namespace Mono.CSharp {
 	//
 	// Gets the reference to T version of the Type (T&)
 	//
-	public static Type GetReferenceType (Type t)
+	public static Type GetReferenceType (TypeSpec t)
 	{
-		return t.MakeByRefType ();
+		return t.GetMetaInfo ().MakeByRefType ();
 	}
 
-	//
-	// Gets the pointer to T version of the Type  (T*)
-	//
-	public static Type GetPointerType (Type t)
-	{
-		return GetConstructedType (t, "*");
-	}
-
-	public static Type GetConstructedType (Type t, string dim)
+	public static TypeSpec GetConstructedType (TypeSpec t, string dim)
 	{
 		object ret = null;
 		if (type_hash.Lookup (t, dim, out ret))
-			return (Type) ret;
+			return (TypeSpec) ret;
 
-		if (IsDynamicType (t)) {
-			ret = new DynamicArrayType (dim.Length - 1);
-			type_hash.Insert (t, dim, ret);
-			return (Type) ret;
-		}
-
-		ret = t.Module.GetType (t.ToString () + dim);
-		if (ret != null) {
-			type_hash.Insert (t, dim, ret);
-			return (Type) ret;
-		}
-
-		if (dim == "&") {
-			ret = GetReferenceType (t);
-			type_hash.Insert (t, dim, ret);
-			return (Type) ret;
-		}
-
-		if (t.IsGenericParameter || t.IsGenericType) {
-			int pos = 0;
-			Type result = t;
-			while ((pos < dim.Length) && (dim [pos] == '[')) {
-				pos++;
-
-				if (dim [pos] == ']') {
-					result = result.MakeArrayType ();
-					pos++;
-
-					if (pos < dim.Length)
-						continue;
-
-					type_hash.Insert (t, dim, result);
-					return result;
-				}
-
-				int rank = 0;
-				while (dim [pos] == ',') {
-					pos++; rank++;
-				}
-
-				if ((dim [pos] != ']') || (pos != dim.Length-1))
-					break;
-
-				result = result.MakeArrayType (rank + 1);
-				type_hash.Insert (t, dim, result);
-				return result;
+		TypeSpec ds;
+		if (dim.Length == 1) {
+			if (dim[0] == '*') {
+				ds = PointerContainer.MakeType (t);
+			} else if (dim[0] == '&') {
+				ds = ReferenceContainer.MakeType (t);
+			} else {
+				throw new NotImplementedException ("net");
 			}
+		} else if (dim.Length == 2) { 	// optimizes common "[]"
+			ds = ArrayContainer.MakeType (t);
+		} else {
+			int rank = dim.IndexOf (']');
+			if (rank + 1 != dim.Length)
+				t = GetConstructedType (t, dim.Substring (rank + 1));
+
+			ds = ArrayContainer.MakeType (t, rank);
 		}
 
-		type_hash.Insert (t, dim, null);
-		return null;
-	}
-
-	public static Type GetNestedType (Type t, string name)
-	{
-		object ret = null;
-		if (!type_hash.Lookup (t, name, out ret)) {
-			ret = t.GetNestedType (name,
-			       BindingFlags.Static | BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.DeclaredOnly);
-			type_hash.Insert (t, name, ret);
-		}
-		return (Type) ret;
-	}
-
-	/// <summary>
-	/// Fills static table with exported types from all referenced assemblies.
-	/// This information is required for CLS Compliance tests.
-	/// </summary>
-	public static void LoadAllImportedTypes ()
-	{
-		AllClsTopLevelTypes = new Dictionary<string, object> (1500);
-		foreach (Assembly a in GlobalRootNamespace.Instance.Assemblies) {
-			foreach (Type t in a.GetExportedTypes ()) {
-				AllClsTopLevelTypes [t.FullName.ToLower (System.Globalization.CultureInfo.InvariantCulture)] = null;
-			}
-		}
+		type_hash.Insert (t, dim, ds);
+		return ds;
 	}
 
 	/// <summary>
 	///   Returns the C# name of a type if possible, or the full type name otherwise
 	/// </summary>
-	static public string CSharpName (Type t)
+	static public string CSharpName (TypeSpec t)
 	{
-		if (t == null_type)
-			return "null";
-
-		if (t == typeof (ArglistAccess))
-			return "__arglist";
-			
-		if (t == typeof (AnonymousMethodBody))
-			return "anonymous method";
-
-		if (t == typeof (MethodGroupExpr))
-			return "method group";
-
-		if (IsDynamicType (t))
-			return "dynamic";
-
-		if (t == null)
-			return "internal error";
-
-		return CSharpName (GetFullName (t), t);
+		return t.GetSignatureForError ();
 	}
 
-	static readonly char [] elements = new char [] { '*', '[' };
-
-	public static string CSharpName (string name, Type type)
+	static public string CSharpName (IList<TypeSpec> types)
 	{
-		if (name.Length > 10) {
-			string s;
-			switch (name) {
-			case "System.Int32": s = "int"; break;
-			case "System.Int64": s = "long"; break;
-			case "System.String": s = "string"; break;
-			case "System.Boolean": s = "bool"; break;
-			case "System.Void": s = "void"; break;
-			case "System.Object": s = "object"; break;
-			case "System.UInt32": s = "uint"; break;
-			case "System.Int16": s = "short"; break;
-			case "System.UInt16": s = "ushort"; break;
-			case "System.UInt64": s = "ulong"; break;
-			case "System.Single": s = "float"; break;
-			case "System.Double": s = "double"; break;
-			case "System.Decimal": s = "decimal"; break;
-			case "System.Char": s = "char"; break;
-			case "System.Byte": s = "byte"; break;
-			case "System.SByte": s = "sbyte"; break;
-			default: s = null; break;
-			}
-
-			if (s != null) {
-				//
-				// Predefined names can come from mscorlib only
-				//
-				if (type == null || type.Module.Name == "mscorlib.dll" || !RootContext.StdLib)
-					return s;
-					
-				return name;
-			}
-
-			if (name [0] == AnonymousTypeClass.ClassNamePrefix [0] && name.StartsWith (AnonymousTypeClass.ClassNamePrefix))
-				return AnonymousTypeClass.SignatureForError;
-
-			int idx = name.IndexOfAny (elements, 10);
-			if (idx > 0)
-				return CSharpName (name.Substring (0, idx), type) + name.Substring (idx);
-		}
-
-		return name.Replace ('+', '.');
-	}
-
-	static public string CSharpName (Type[] types)
-	{
-		if (types.Length == 0)
+		if (types.Count == 0)
 			return string.Empty;
 
 		StringBuilder sb = new StringBuilder ();
-		for (int i = 0; i < types.Length; ++i) {
+		for (int i = 0; i < types.Count; ++i) {
 			if (i > 0)
-				sb.Append (", ");
+				sb.Append (",");
 
 			sb.Append (CSharpName (types [i]));
 		}
 		return sb.ToString ();
 	}
 
-	/// <summary>
-	///  Returns the signature of the method with full namespace classification
-	/// </summary>
-	static public string GetFullNameSignature (MemberInfo mi)
+	static public string GetFullNameSignature (MemberSpec mi)
 	{
-		PropertyInfo pi = mi as PropertyInfo;
-		if (pi != null) {
-			MethodBase pmi = pi.GetGetMethod (true);
-			if (pmi == null)
-				pmi = pi.GetSetMethod (true);
-			if (GetParameterData (pmi).Count > 0)
-				mi = pmi;
-		}
-		return (mi is MethodBase)
-			? CSharpSignature (mi as MethodBase) 
-			: CSharpName (mi.DeclaringType) + '.' + mi.Name;
+		return mi.GetSignatureForError ();
 	}
 
-	private static int GetFullName (Type t, StringBuilder sb)
+	static public string CSharpSignature (MemberSpec mb)
 	{
-		int pos = 0;
-
-		if (!t.IsGenericType) {
-			sb.Append (t.FullName);
-			return 0;
-		}
-
-		if (t.DeclaringType != null) {
-			pos = GetFullName (t.DeclaringType, sb);
-			sb.Append ('.');
-		} else if (t.Namespace != null && t.Namespace.Length != 0) {
-			sb.Append (t.Namespace);
-			sb.Append ('.');
-		}
-		sb.Append (RemoveGenericArity (t.Name));
-
-		Type[] this_args = GetTypeArguments (t);
-
-		if (this_args.Length < pos)
-			throw new InternalErrorException (
-				"Enclosing class " + t.DeclaringType + " has more type arguments than " + t);
-		if (this_args.Length == pos)
-			return pos;
-
-		sb.Append ('<');
-		for (;;) {
-			sb.Append (CSharpName (this_args [pos++]));
-			if (pos == this_args.Length)
-				break;
-			sb.Append (',');
-		}
-		sb.Append ('>');
-		return pos;
-	}
-
-	static string GetFullName (Type t)
-	{
-		if (t.IsArray) {
-			string dimension = t.Name.Substring (t.Name.LastIndexOf ('['));
-			return GetFullName (GetElementType (t)) + dimension;
-		}
-
-		if (IsNullableType (t) && !t.IsGenericTypeDefinition) {
-			t = TypeToCoreType (GetTypeArguments (t)[0]);
-			return CSharpName (t) + "?";
-		}
-
-		if (t.IsGenericParameter)
-			return t.Name;
-		if (!t.IsGenericType)
-			return t.FullName;
-
-		StringBuilder sb = new StringBuilder ();
-		int pos = GetFullName (t, sb);
-		if (pos <= 0)
-			throw new InternalErrorException ("Generic Type " + t + " doesn't have type arguments");
-		return sb.ToString ();
-	}
-
-	public static string RemoveGenericArity (string from)
-	{
-		int i = from.IndexOf ('`');
-		if (i > 0)
-			return from.Substring (0, i);
-		return from;
-	}
-
-	/// <summary>
-	/// When we need to report accessors as well
-	/// </summary>
-	static public string CSharpSignature (MethodBase mb)
-	{
-		return CSharpSignature (mb, false);
-	}
-
-	static public string CSharpSignature (MethodSpec ms)
-	{
-		return CSharpSignature (ms.MetaInfo);
-	}
-
-	/// <summary>
-	///   Returns the signature of the method
-	/// </summary>
-	static public string CSharpSignature (MethodBase mb, bool show_accessor)
-	{
-		StringBuilder sig = new StringBuilder (CSharpName (mb.DeclaringType));
-		sig.Append ('.');
-
-		AParametersCollection iparams = GetParameterData (mb);
-		string parameters = iparams.GetSignatureForError ();
-		int accessor_end = 0;
-
-		if (!mb.IsConstructor && TypeManager.IsSpecialMethod (mb)) {
-			string op_name = Operator.GetName (mb.Name);
-			if (op_name != null) {
-				if (op_name == "explicit" || op_name == "implicit") {
-					sig.Append (op_name);
-					sig.Append (" operator ");
-					sig.Append (CSharpName (((MethodInfo)mb).ReturnType));
-				} else {
-					sig.Append ("operator ");
-					sig.Append (op_name);
-				}
-				sig.Append (parameters);
-				return sig.ToString ();
-			}
-
-			bool is_getter = mb.Name.StartsWith ("get_");
-			bool is_setter = mb.Name.StartsWith ("set_");
-			if (is_getter || is_setter || mb.Name.StartsWith ("add_")) {
-				accessor_end = 3;
-			} else if (mb.Name.StartsWith ("remove_")) {
-				accessor_end = 6;
-			}
-
-			// Is indexer
-			if (iparams.Count > (is_getter ? 0 : 1)) {
-				sig.Append ("this[");
-				if (is_getter)
-					sig.Append (parameters.Substring (1, parameters.Length - 2));
-				else
-					sig.Append (parameters.Substring (1, parameters.LastIndexOf (',') - 1));
-				sig.Append (']');
-			} else {
-				sig.Append (mb.Name.Substring (accessor_end + 1));
-			}
-		} else {
-			if (mb.Name == ".ctor")
-				sig.Append (RemoveGenericArity (mb.DeclaringType.Name));
-			else {
-				sig.Append (mb.Name);
-
-				if (IsGenericMethod (mb)) {
-					Type[] args = GetGenericArguments (mb);
-					sig.Append ('<');
-					for (int i = 0; i < args.Length; i++) {
-						if (i > 0)
-							sig.Append (',');
-						sig.Append (CSharpName (args [i]));
-					}
-					sig.Append ('>');
-				}
-			}
-
-			sig.Append (parameters);
-		}
-
-		if (show_accessor && accessor_end > 0) {
-			sig.Append ('.');
-			sig.Append (mb.Name.Substring (0, accessor_end));
-		}
-
-		return sig.ToString ();
-	}
-
-	public static string GetMethodName (MethodInfo m)
-	{
-		if (!IsGenericMethodDefinition (m) && !IsGenericMethod (m))
-			return m.Name;
-
-		return MemberName.MakeName (m.Name, TypeManager.GetGenericArguments (m).Length);
-	}
-
-	static public string CSharpSignature (EventInfo ei)
-	{
-		return CSharpName (ei.DeclaringType) + "." + ei.Name;
+		return mb.GetSignatureForError ();
 	}
 
 	//
 	// Looks up a type, and aborts if it is not found.  This is used
 	// by predefined types required by the compiler
 	//
-	public static Type CoreLookupType (CompilerContext ctx, string ns_name, string name, MemberKind type_kind, bool required)
+	public static TypeSpec CoreLookupType (CompilerContext ctx, string ns_name, string name, MemberKind kind, bool required)
+	{
+		return CoreLookupType (ctx, ns_name, name, 0, kind, required);
+	}
+
+	public static TypeSpec CoreLookupType (CompilerContext ctx, string ns_name, string name, int arity, MemberKind kind, bool required)
 	{
 		Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, true);
-		Expression expr = ns.Lookup (ctx, name, Location.Null);
+		var te = ns.Lookup (ctx, name, arity, Location.Null);
+		var ts = te == null ? null : te.Type;
 
-		if (expr == null) {
-			if (required) {
-				ctx.Report.Error (518, "The predefined type `{0}.{1}' is not defined or imported",
-					ns_name, name);
-			}
+		if (!required)
+			return ts;
+
+		if (ts == null) {
+			ctx.Report.Error (518, "The predefined type `{0}.{1}' is not defined or imported",
+				ns_name, name);
 			return null;
 		}
 
-		Type t = expr.Type;
-		if (RootContext.StdLib || t == null || !required)
-			return t;
-
-		// TODO: All predefined imported types have to have correct signature
-		if (!IsBeingCompiled (t))
-			return t;
-
-		DeclSpace ds = (DeclSpace)RootContext.ToplevelTypes.GetDefinition (t.FullName);
-		if (ds is Delegate) {
-			if (type_kind == MemberKind.Delegate)
-				return t;
-		} else {
-			TypeContainer tc = (TypeContainer)ds;
-			if (tc.Kind == type_kind)
-				return t;
+		if (ts.Kind != kind) {
+			ctx.Report.Error (520, "The predefined type `{0}.{1}' is not declared correctly",
+				ns_name, name);
+			return null;
 		}
 
-		ctx.Report.Error (520, ds.Location, "The predefined type `{0}.{1}' is not declared correctly",
-			ns_name, name);
-		return null;
+		return ts;
 	}
 
-	static MemberInfo GetPredefinedMember (Type t, string name, MemberTypes mt, Location loc, params Type [] args)
+	static MemberSpec GetPredefinedMember (TypeSpec t, MemberFilter filter, Location loc)
 	{
-		const BindingFlags flags = instance_and_static | BindingFlags.Public | BindingFlags.DeclaredOnly;
+		const BindingRestriction restrictions = BindingRestriction.AccessibleOnly | BindingRestriction.DeclaredOnly;
+		var member = MemberCache.FindMember (t, filter, restrictions);
 
-		MemberInfo [] members = MemberLookup (null, null, t, mt, flags, name, null);
-		if (members != null) {
-			for (int i = 0; i < members.Length; ++i) {
-				MemberInfo member = members [i];
-				if (mt == MemberTypes.Method || mt == MemberTypes.Constructor) {
-					MethodBase mb = member as MethodBase;
-					if (mb == null)
-						continue;
-
-					AParametersCollection pd = TypeManager.GetParameterData (mb);
-					if (IsEqual (pd.Types, args))
-						return member;
-				}
-				if (mt == MemberTypes.Field) {
-					FieldInfo fi = member as FieldInfo;
-					if (fi == null)
-						continue;
-
-					if (args.Length >= 1 && !IsEqual (TypeToCoreType (fi.FieldType), args [0]))
-						continue;
-
-					return member;
-				}
-
-				if (mt == MemberTypes.Property) {
-					PropertyInfo pi = member as PropertyInfo;
-					if (pi == null)
-						continue;
-
-					if (args.Length >= 1 && !IsEqual (TypeToCoreType (pi.PropertyType), args [0]))
-						continue;
-
-					return member;
-				}
-			}
-		}
+		if (member != null)
+			return member;
 
 		string method_args = null;
-		if (mt == MemberTypes.Method || mt == MemberTypes.Constructor)
-			method_args = "(" + TypeManager.CSharpName (args) + ")";
+		if (filter.Parameters != null)
+			method_args = filter.Parameters.GetSignatureForError ();
 
 		RootContext.ToplevelTypes.Compiler.Report.Error (656, loc, "The compiler required member `{0}.{1}{2}' could not be found or is inaccessible",
-			TypeManager.CSharpName (t), name, method_args);
+			TypeManager.CSharpName (t), filter.Name, method_args);
 
 		return null;
 	}
@@ -883,35 +358,78 @@ namespace Mono.CSharp {
 	//
 	// Returns the ConstructorInfo for "args"
 	//
-	public static ConstructorInfo GetPredefinedConstructor (Type t, Location loc, params Type [] args)
+	public static MethodSpec GetPredefinedConstructor (TypeSpec t, Location loc, params TypeSpec [] args)
 	{
-		return (ConstructorInfo) GetPredefinedMember (t, ConstructorInfo.ConstructorName, MemberTypes.Constructor, loc, args);
+		var pc = ParametersCompiled.CreateFullyResolved (args);
+		return GetPredefinedMember (t, MemberFilter.Constructor (pc), loc) as MethodSpec;
 	}
 
 	//
-	// Returns the MethodInfo for a method named `name' defined
+	// Returns the method specification for a method named `name' defined
 	// in type `t' which takes arguments of types `args'
 	//
-	public static MethodSpec GetPredefinedMethod (Type t, string name, Location loc, params Type [] args)
+	public static MethodSpec GetPredefinedMethod (TypeSpec t, string name, Location loc, params TypeSpec [] args)
 	{
-		var m = GetPredefinedMember (t, name, MemberTypes.Method, loc, args) as MethodBase;
-		if (m == null)
-			return null;
-
-		return Import.CreateMethod (m);
+		var pc = ParametersCompiled.CreateFullyResolved (args);
+		return GetPredefinedMethod (t, MemberFilter.Method (name, 0, pc, null), loc);
 	}
 
-	public static FieldInfo GetPredefinedField (Type t, string name, Location loc, params Type [] args)
+	public static MethodSpec GetPredefinedMethod (TypeSpec t, MemberFilter filter, Location loc)
 	{
-		return (FieldInfo) GetPredefinedMember (t, name, MemberTypes.Field, loc, args);
+		return GetPredefinedMember (t, filter, loc) as MethodSpec;
 	}
 
-	public static PropertySpec GetPredefinedProperty (Type t, string name, Location loc, params Type [] args)
+	public static FieldSpec GetPredefinedField (TypeSpec t, string name, Location loc, TypeSpec type)
 	{
-		var p = GetPredefinedMember (t, name, MemberTypes.Property, loc, args) as PropertyInfo;
-		if (p == null)
-			return null;
-		return Import.CreateProperty (p);
+		return GetPredefinedMember (t, MemberFilter.Field (name, type), loc) as FieldSpec;
+	}
+
+	public static PropertySpec GetPredefinedProperty (TypeSpec t, string name, Location loc, TypeSpec type)
+	{
+		return GetPredefinedMember (t, MemberFilter.Property (name, type), loc) as PropertySpec;
+	}
+
+	public static IList<PredefinedTypeSpec> InitCoreTypes ()
+	{
+		var core_types = new PredefinedTypeSpec[] {
+			object_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Object"),
+			value_type = new PredefinedTypeSpec (MemberKind.Class, "System", "ValueType"),
+			attribute_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Attribute"),
+
+			int32_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Int32"),
+			int64_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Int64"),
+			uint32_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "UInt32"),
+			uint64_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "UInt64"),
+			byte_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Byte"),
+			sbyte_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "SByte"),
+			short_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Int16"),
+			ushort_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "UInt16"),
+
+			ienumerator_type = new PredefinedTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerator"),
+			ienumerable_type = new PredefinedTypeSpec (MemberKind.Interface, "System.Collections", "IEnumerable"),
+			idisposable_type = new PredefinedTypeSpec (MemberKind.Interface, "System", "IDisposable"),
+
+			char_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Char"),
+			string_type = new PredefinedTypeSpec (MemberKind.Class, "System", "String"),
+			float_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Single"),
+			double_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Double"),
+			decimal_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Decimal"),
+			bool_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Boolean"),
+			intptr_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "IntPtr"),
+			uintptr_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "UIntPtr"),
+
+			multicast_delegate_type = new PredefinedTypeSpec (MemberKind.Class, "System", "MulticastDelegate"),
+			delegate_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Delegate"),
+			enum_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Enum"),
+			array_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Array"),
+			void_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "Void"),
+			type_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Type"),
+			exception_type = new PredefinedTypeSpec (MemberKind.Class, "System", "Exception"),
+			runtime_field_handle_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "RuntimeFieldHandle"),
+			runtime_handle_type = new PredefinedTypeSpec (MemberKind.Struct, "System", "RuntimeTypeHandle"),
+		};
+
+		return core_types;
 	}
 
 	/// <remarks>
@@ -919,66 +437,22 @@ namespace Mono.CSharp {
 	///   population of the type has happened (for example, to
 	///   bootstrap the corlib.dll
 	/// </remarks>
-	public static bool InitCoreTypes (CompilerContext ctx)
+	public static bool InitCoreTypes (CompilerContext ctx, IList<PredefinedTypeSpec> predefined)
 	{
-		object_type   = CoreLookupType (ctx, "System", "Object", MemberKind.Class, true);
-		system_object_expr.Type = object_type;
-		value_type    = CoreLookupType (ctx, "System", "ValueType", MemberKind.Class, true);
-		system_valuetype_expr.Type = value_type;
-		attribute_type = CoreLookupType (ctx, "System", "Attribute", MemberKind.Class, true);
+		foreach (var p in predefined) {
+			var found = CoreLookupType (ctx, p.Namespace, p.Name, p.Kind, true);
+			if (found == null || found == p)
+				continue;
 
-		int32_type    = CoreLookupType (ctx, "System", "Int32", MemberKind.Struct, true);
-		system_int32_expr.Type = int32_type;
-		int64_type    = CoreLookupType (ctx, "System", "Int64", MemberKind.Struct, true);
-		system_int64_expr.Type = int64_type;
-		uint32_type   = CoreLookupType (ctx, "System", "UInt32", MemberKind.Struct, true);
-		system_uint32_expr.Type = uint32_type;
-		uint64_type   = CoreLookupType (ctx, "System", "UInt64", MemberKind.Struct, true);
-		system_uint64_expr.Type = uint64_type;
-		byte_type     = CoreLookupType (ctx, "System", "Byte", MemberKind.Struct, true);
-		system_byte_expr.Type = byte_type;
-		sbyte_type    = CoreLookupType (ctx, "System", "SByte", MemberKind.Struct, true);
-		system_sbyte_expr.Type = sbyte_type;
-		short_type    = CoreLookupType (ctx, "System", "Int16", MemberKind.Struct, true);
-		system_int16_expr.Type = short_type;
-		ushort_type   = CoreLookupType (ctx, "System", "UInt16", MemberKind.Struct, true);
-		system_uint16_expr.Type = ushort_type;
+			if (!RootContext.StdLib) {
+				var ns = GlobalRootNamespace.Instance.GetNamespace (p.Namespace, false);
+				ns.ReplaceTypeWithPredefined (found, p);
 
-		ienumerator_type     = CoreLookupType (ctx, "System.Collections", "IEnumerator", MemberKind.Interface, true);
-		ienumerable_type     = CoreLookupType (ctx, "System.Collections", "IEnumerable", MemberKind.Interface, true);
-		idisposable_type     = CoreLookupType (ctx, "System", "IDisposable", MemberKind.Interface, true);
-
-		// HACK: DefineType immediately resolves iterators (very wrong)
-		generic_ienumerator_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerator`1", MemberKind.Interface, false);
-
-		char_type     = CoreLookupType (ctx, "System", "Char", MemberKind.Struct, true);
-		system_char_expr.Type = char_type;
-		string_type   = CoreLookupType (ctx, "System", "String", MemberKind.Class, true);
-		system_string_expr.Type = string_type;
-		float_type    = CoreLookupType (ctx, "System", "Single", MemberKind.Struct, true);
-		system_single_expr.Type = float_type;
-		double_type   = CoreLookupType (ctx, "System", "Double", MemberKind.Struct, true);
-		system_double_expr.Type = double_type;
-		decimal_type  = CoreLookupType (ctx, "System", "Decimal", MemberKind.Struct, true);
-		system_decimal_expr.Type = decimal_type;
-		bool_type     = CoreLookupType (ctx, "System", "Boolean", MemberKind.Struct, true);
-		system_boolean_expr.Type = bool_type;
-		intptr_type = CoreLookupType (ctx, "System", "IntPtr", MemberKind.Struct, true);
-		system_intptr_expr.Type = intptr_type;
-		uintptr_type = CoreLookupType (ctx, "System", "UIntPtr", MemberKind.Struct, true);
-
-		multicast_delegate_type = CoreLookupType (ctx, "System", "MulticastDelegate", MemberKind.Class, true);
-		delegate_type           = CoreLookupType (ctx, "System", "Delegate", MemberKind.Class, true);
-
-		enum_type	= CoreLookupType (ctx, "System", "Enum", MemberKind.Class, true);
-		array_type	= CoreLookupType (ctx, "System", "Array", MemberKind.Class, true);
-		void_type	= CoreLookupType (ctx, "System", "Void", MemberKind.Struct, true);
-		system_void_expr.Type = void_type;
-		type_type	= CoreLookupType (ctx, "System", "Type", MemberKind.Class, true);
-		exception_type = CoreLookupType (ctx, "System", "Exception", MemberKind.Class, true);
-
-		runtime_field_handle_type = CoreLookupType (ctx, "System", "RuntimeFieldHandle", MemberKind.Struct, true);
-		runtime_handle_type = CoreLookupType (ctx, "System", "RuntimeTypeHandle", MemberKind.Struct, true);
+				var tc = found.MemberDefinition as TypeContainer;
+				tc.SetPredefinedSpec (p);
+				p.SetDefinition (found);
+			}
+		}
 
 		PredefinedAttributes.Get.ParamArray.Initialize (ctx, false);
 		PredefinedAttributes.Get.Out.Initialize (ctx, false);
@@ -994,9 +468,9 @@ namespace Mono.CSharp {
 		//
 		// These are only used for compare purposes
 		//
-		null_type = typeof (NullLiteral);
-		
-		void_ptr_type = GetPointerType (void_type);
+		null_type = InternalType.Null;
+
+		void_ptr_type = PointerContainer.MakeType (void_type);
 
 		//
 		// Initialize InternalsVisibleTo as the very first optional type. Otherwise we would populate
@@ -1011,19 +485,11 @@ namespace Mono.CSharp {
 		arg_iterator_type = CoreLookupType (ctx, "System", "ArgIterator", MemberKind.Struct, false);
 		mbr_type = CoreLookupType (ctx, "System", "MarshalByRefObject", MemberKind.Class, false);
 
-		//
-		// Optional attributes, used for error reporting only
-		//
-		//if (PredefinedAttributes.Get.Obsolete.IsDefined) {
-		//    Class c = TypeManager.LookupClass (PredefinedAttributes.Get.Obsolete.Type);
-		//    if (c != null)
-		//        c.Define ();
-		//}
-
-		generic_ilist_type = CoreLookupType (ctx, "System.Collections.Generic", "IList`1", MemberKind.Interface, false);
-		generic_icollection_type = CoreLookupType (ctx, "System.Collections.Generic", "ICollection`1", MemberKind.Interface, false);
-		generic_ienumerable_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerable`1", MemberKind.Interface, false);
-		generic_nullable_type = CoreLookupType (ctx, "System", "Nullable`1", MemberKind.Struct, false);
+		generic_ienumerator_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerator", 1, MemberKind.Interface, false);
+		generic_ilist_type = CoreLookupType (ctx, "System.Collections.Generic", "IList", 1, MemberKind.Interface, false);
+		generic_icollection_type = CoreLookupType (ctx, "System.Collections.Generic", "ICollection", 1, MemberKind.Interface, false);
+		generic_ienumerable_type = CoreLookupType (ctx, "System.Collections.Generic", "IEnumerable", 1, MemberKind.Interface, false);
+		generic_nullable_type = CoreLookupType (ctx, "System", "Nullable", 1, MemberKind.Struct, false);
 
 		//
 		// Optional types which are used as types and for member lookup
@@ -1032,251 +498,11 @@ namespace Mono.CSharp {
 
 		// New in .NET 3.5
 		// Note: extension_attribute_type is already loaded
-		expression_type = CoreLookupType (ctx, "System.Linq.Expressions", "Expression`1", MemberKind.Class, false);
-
-		if (!RootContext.StdLib) {
-			//
-			// HACK: When building Mono corlib mcs uses loaded mscorlib which
-			// has different predefined types and this method sets mscorlib types
-			// to be same to avoid any type check errors.
-			//
-
-			Type type = typeof (Type);
-			Type [] system_4_type_arg = { type, type, type, type };
-				
-			MethodInfo set_corlib_type_builders = 
-				typeof (System.Reflection.Emit.AssemblyBuilder).GetMethod (
-				"SetCorlibTypeBuilders", BindingFlags.NonPublic | BindingFlags.Instance, null,
-				system_4_type_arg, null);
-
-			if (set_corlib_type_builders != null) {
-				object[] args = new object [4];
-				args [0] = object_type;
-				args [1] = value_type;
-				args [2] = enum_type;
-				args [3] = void_type;
-				
-				set_corlib_type_builders.Invoke (CodeGen.Assembly.Builder, args);
-			} else {
-				ctx.Report.Warning (-26, 3, "The compilation may fail due to missing `{0}.SetCorlibTypeBuilders({1})' method",
-					TypeManager.CSharpName (typeof (System.Reflection.Emit.AssemblyBuilder)),
-					TypeManager.CSharpName (system_4_type_arg));
-			}
-		}
+		expression_type = CoreLookupType (ctx, "System.Linq.Expressions", "Expression", 1, MemberKind.Class, false);
 	}
 
-	const BindingFlags instance_and_static = BindingFlags.Static | BindingFlags.Instance;
-
-	/// <remarks>
-	///   This is the "old", non-cache based FindMembers() function.  We cannot use
-	///   the cache here because there is no member name argument.
-	/// </remarks>
-	public static MemberList FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-					      MemberFilter filter, object criteria)
+	public static bool IsBuiltinType (TypeSpec t)
 	{
-#if MS_COMPATIBLE
-		if (t.IsGenericType)
-			t = t.GetGenericTypeDefinition ();
-#endif
-
-		DeclSpace decl = LookupDeclSpace (t);
-
-		//
-		// `builder_to_declspace' contains all dynamic types.
-		//
-		if (decl != null) {
-			MemberList list;
-			Timer.StartTimer (TimerType.FindMembers);
-			list = decl.FindMembers (mt, bf, filter, criteria);
-			Timer.StopTimer (TimerType.FindMembers);
-			return list;
-		}
-
-		//
-		// We have to take care of arrays specially, because GetType on
-		// a TypeBuilder array will return a Type, not a TypeBuilder,
-		// and we can not call FindMembers on this type.
-		//
-		if (
-#if MS_COMPATIBLE
-			!t.IsGenericType &&
-#endif
-			t.IsSubclassOf (TypeManager.array_type))
-			return new MemberList (TypeManager.array_type.FindMembers (mt, bf, filter, criteria));
-
-		if (t is GenericTypeParameterBuilder) {
-			TypeParameter tparam = builder_to_type_param [(GenericTypeParameterBuilder) t];
-
-			Timer.StartTimer (TimerType.FindMembers);
-			MemberList list = tparam.FindMembers (
-				mt, bf | BindingFlags.DeclaredOnly, filter, criteria);
-			Timer.StopTimer (TimerType.FindMembers);
-			return list;
-		}
-
-		//
-		// Since FindMembers will not lookup both static and instance
-		// members, we emulate this behaviour here.
-		//
-		if ((bf & instance_and_static) == instance_and_static){
-			MemberInfo [] i_members = t.FindMembers (
-				mt, bf & ~BindingFlags.Static, filter, criteria);
-
-			int i_len = i_members.Length;
-			if (i_len == 1){
-				MemberInfo one = i_members [0];
-
-				//
-				// If any of these are present, we are done!
-				//
-				if ((one is Type) || (one is EventInfo) || (one is FieldInfo))
-					return new MemberList (i_members);
-			}
-				
-			MemberInfo [] s_members = t.FindMembers (
-				mt, bf & ~BindingFlags.Instance, filter, criteria);
-
-			int s_len = s_members.Length;
-			if (i_len > 0 || s_len > 0)
-				return new MemberList (i_members, s_members);
-			else {
-				if (i_len > 0)
-					return new MemberList (i_members);
-				else
-					return new MemberList (s_members);
-			}
-		}
-
-		return new MemberList (t.FindMembers (mt, bf, filter, criteria));
-	}
-
-
-	/// <summary>
-	///   This method is only called from within MemberLookup.  It tries to use the member
-	///   cache if possible and falls back to the normal FindMembers if not.  The `used_cache'
-	///   flag tells the caller whether we used the cache or not.  If we used the cache, then
-	///   our return value will already contain all inherited members and the caller don't need
-	///   to check base classes and interfaces anymore.
-	/// </summary>
-	private static MemberInfo [] MemberLookup_FindMembers (Type t, MemberTypes mt, BindingFlags bf,
-							       string name, out bool used_cache)
-	{
-		MemberCache cache;
-
-		//
-		// If this is a dynamic type, it's always in the `builder_to_declspace' hash table
-		// and we can ask the DeclSpace for the MemberCache.
-		//
-#if MS_COMPATIBLE
-		if (t.Assembly == CodeGen.Assembly.Builder) {
-			if (t.IsGenericParameter) {
-				TypeParameter tparam = builder_to_type_param [(GenericTypeParameterBuilder) t];
-
-				used_cache = true;
-				if (tparam.MemberCache == null)
-					return new MemberInfo[0];
-
-				return tparam.MemberCache.FindMembers (
-					mt, bf, name, FilterWithClosure_delegate, null);
-			}
-
-			//
-			// We have to take care of arrays specially, because GetType on
-			// a TypeBuilder array will return a Type, not a TypeBuilder,
-			// and we can not call FindMembers on this type.
-			//
-			if (t.IsArray) {
-				used_cache = true;
-				return TypeHandle.ArrayType.MemberCache.FindMembers (
-					mt, bf, name, FilterWithClosure_delegate, null);
-			}
-
-			if (t.IsGenericType && !t.IsGenericTypeDefinition)
-				t = t.GetGenericTypeDefinition ();
-#else
-		if (t is TypeBuilder) {
-#endif
-			DeclSpace decl = LookupDeclSpace (t);
-			cache = decl.MemberCache;
-
-			//
-			// If this DeclSpace has a MemberCache, use it.
-			//
-
-			if (cache != null) {
-				used_cache = true;
-				return cache.FindMembers (
-					mt, bf, name, FilterWithClosure_delegate, null);
-			}
-
-			// If there is no MemberCache, we need to use the "normal" FindMembers.
-			// Note, this is a VERY uncommon route!
-
-			MemberList list;
-			Timer.StartTimer (TimerType.FindMembers);
-			list = decl.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
-						 FilterWithClosure_delegate, name);
-			Timer.StopTimer (TimerType.FindMembers);
-			used_cache = false;
-			return (MemberInfo []) list;
-		}
-
-		//
-		// We have to take care of arrays specially, because GetType on
-		// a TypeBuilder array will return a Type, not a TypeBuilder,
-		// and we can not call FindMembers on this type.
-		//
-		if (t.IsArray) {
-			used_cache = true;
-			return TypeHandle.ArrayType.MemberCache.FindMembers (
-				mt, bf, name, FilterWithClosure_delegate, null);
-		}
-
-		if (t is GenericTypeParameterBuilder) {
-			TypeParameter tparam = builder_to_type_param [(GenericTypeParameterBuilder) t];
-
-			used_cache = true;
-			if (tparam.MemberCache == null)
-				return new MemberInfo [0];
-
-			return tparam.MemberCache.FindMembers (
-				mt, bf, name, FilterWithClosure_delegate, null);
-		}
-
-		if (IsGenericType (t) && (mt == MemberTypes.NestedType)) {
-			//
-			// This happens if we're resolving a class'es base class and interfaces
-			// in TypeContainer.DefineType().  At this time, the types aren't
-			// populated yet, so we can't use the cache.
-			//
-			MemberInfo[] info = t.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
-							   FilterWithClosure_delegate, name);
-			used_cache = false;
-			return info;
-		}
-
-		//
-		// This call will always succeed.  There is exactly one TypeHandle instance per
-		// type, TypeHandle.GetMemberCache() will, if necessary, create a new one, and return
-		// the corresponding MemberCache.
-		//
-		cache = TypeHandle.GetMemberCache (t);
-
-		used_cache = true;
-		return cache.FindMembers (mt, bf, name, FilterWithClosure_delegate, null);
-	}
-
-	//
-	// Return true for SRE dynamic/unclosed members
-	//
-	public static bool IsBeingCompiled (MemberInfo mi)
-	{
-		return mi.Module.Assembly == CodeGen.Assembly.Builder;
-	}
-
-	public static bool IsBuiltinType (Type t)
-	{
-		t = TypeToCoreType (t);
 		if (t == object_type || t == string_type || t == int32_type || t == uint32_type ||
 		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
 		    t == char_type || t == short_type || t == decimal_type || t == bool_type ||
@@ -1290,7 +516,7 @@ namespace Mono.CSharp {
 	// This is like IsBuiltinType, but lacks decimal_type, we should also clean up
 	// the pieces in the code where we use IsBuiltinType and special case decimal_type.
 	// 
-	public static bool IsPrimitiveType (Type t)
+	public static bool IsPrimitiveType (TypeSpec t)
 	{
 		return (t == int32_type || t == uint32_type ||
 		    t == int64_type || t == uint64_type || t == float_type || t == double_type ||
@@ -1298,45 +524,17 @@ namespace Mono.CSharp {
 		    t == sbyte_type || t == byte_type || t == ushort_type);
 	}
 
-	public static bool IsDelegateType (Type t)
+	// Obsolete
+	public static bool IsDelegateType (TypeSpec t)
 	{
-		if (TypeManager.IsGenericParameter (t))
-			return false;
-
-		if (t == TypeManager.delegate_type || t == TypeManager.multicast_delegate_type)
-			return false;
-
-		t = DropGenericTypeArguments (t);
-		return IsSubclassOf (t, TypeManager.delegate_type);
-	}
-
-	//
-	// Is a type of dynamic type
-	//
-	public static bool IsDynamicType (Type t)
-	{
-		if (object.ReferenceEquals (InternalType.Dynamic, t))
-			return true;
-
-		if (t != object_type)
-			return false;
-
-		if (IsBeingCompiled (t))
-			return false;
-
-		PredefinedAttribute pa = PredefinedAttributes.Get.Dynamic;
-		if (pa == null || IsBeingCompiled (pa.Type))
-			return false;
-
-		object[] res = t.GetCustomAttributes (pa.Type, false);
-		return res != null && res.Length != 0;
+		return t.IsDelegate;
 	}
 
 	//
 	// When any element of the type is a dynamic type
 	//
 	// This method builds a transformation array for dynamic types
-	// used in places where DynamicAttribute cannnot be applied to.
+	// used in places where DynamicAttribute cannot be applied to.
 	// It uses bool flag when type is of dynamic type and each
 	// section always starts with "false" for some reason.
 	//
@@ -1345,10 +543,15 @@ namespace Mono.CSharp {
 	// Example: Func<dynamic, int, dynamic[]>
 	// Transformation: { false, true, false, false, true }
 	//
-	public static bool[] HasDynamicTypeUsed (Type t)
+	public static bool[] HasDynamicTypeUsed (TypeSpec t)
 	{
-		if (t is DynamicArrayType)
-			return new bool[] { false, true };
+		var ac = t as ArrayContainer;
+		if (ac != null) {
+			if (HasDynamicTypeUsed (ac.Element) != null)
+				return new bool[] { false, true };
+
+			return null;
+		}
 
 		if (t == null)
 			return null;
@@ -1381,13 +584,13 @@ namespace Mono.CSharp {
 		return null;
 	}
 	
-	public static bool IsEnumType (Type t)
+	// Obsolete
+	public static bool IsEnumType (TypeSpec t)
 	{
-		t = DropGenericTypeArguments (t);
-		return t.BaseType == TypeManager.enum_type;
+		return t.IsEnum;
 	}
 
-	public static bool IsBuiltinOrEnum (Type t)
+	public static bool IsBuiltinOrEnum (TypeSpec t)
 	{
 		if (IsBuiltinType (t))
 			return true;
@@ -1398,26 +601,17 @@ namespace Mono.CSharp {
 		return false;
 	}
 
-	public static bool IsAttributeType (Type t)
-	{
-		return t == attribute_type && t.BaseType != null || IsSubclassOf (t, attribute_type);
-	}
-	
 	//
 	// Whether a type is unmanaged.  This is used by the unsafe code (25.2)
 	//
-	// mcs4: delete, DeclSpace.IsUnmanagedType is replacement
-	public static bool IsUnmanagedType (Type t)
+	public static bool IsUnmanagedType (TypeSpec t)
 	{
-		DeclSpace ds = TypeManager.LookupDeclSpace (t);
+		var ds = t.MemberDefinition as DeclSpace;
 		if (ds != null)
 			return ds.IsUnmanagedType ();
 
-		// builtins that are not unmanaged types
+		// some builtins that are not unmanaged types
 		if (t == TypeManager.object_type || t == TypeManager.string_type)
-			return false;
-
-		if (IsGenericType (t) || IsGenericParameter (t))
 			return false;
 
 		if (IsBuiltinOrEnum (t))
@@ -1427,100 +621,43 @@ namespace Mono.CSharp {
 		if (t.IsPointer)
 			return IsUnmanagedType (GetElementType (t));
 
-		// Arrays are disallowed, even if we mark them with [MarshalAs(UnmanagedType.ByValArray, ...)]
-		if (t.IsArray)
-			return false;
-
 		if (!IsValueType (t))
 			return false;
 
-		for (Type p = t.DeclaringType; p != null; p = p.DeclaringType) {
-			if (IsGenericTypeDefinition (p))
-				return false;
-		}
+		if (t.IsNested && t.DeclaringType.IsGenericOrParentIsGeneric)
+			return false;
 
-		bool retval = true;
-		{
-			FieldInfo [] fields = t.GetFields (BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance);
-			
-			foreach (FieldInfo f in fields){
-				if (!IsUnmanagedType (f.FieldType)){
-					retval = false;
-				}
-			}
-		}
-
-		return retval;
+		return true;
 	}
 
 	//
 	// Null is considered to be a reference type
 	//			
-	public static bool IsReferenceType (Type t)
+	public static bool IsReferenceType (TypeSpec t)
 	{
-		if (TypeManager.IsGenericParameter (t)) {
-			GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
-			if (constraints == null)
-				return false;
+		if (t.IsGenericParameter)
+			return ((TypeParameterSpec) t).IsReferenceType;
 
-			return constraints.IsReferenceType;
-		}
-
-		return !IsStruct (t) && !IsEnumType (t);
+		return !t.IsStruct && !IsEnumType (t);
 	}			
 		
-	public static bool IsValueType (Type t)
+	public static bool IsValueType (TypeSpec t)
 	{
-		if (TypeManager.IsGenericParameter (t)) {
-			GenericConstraints constraints = TypeManager.GetTypeParameterConstraints (t);
-			if (constraints == null)
-				return false;
+		if (t.IsGenericParameter)
+			return ((TypeParameterSpec) t).IsValueType;
 
-			return constraints.IsValueType;
-		}
-
-		return IsStruct (t) || IsEnumType (t);
+		return t.IsStruct || IsEnumType (t);
 	}
 
-	public static bool IsStruct (Type t)
+	public static bool IsStruct (TypeSpec t)
 	{
-		return t.BaseType == value_type && t != enum_type && t.IsSealed;
-	}
-	
-	public static bool IsInterfaceType (Type t)
-	{
-		TypeContainer tc = LookupTypeContainer (t);
-		if (tc == null)
-			return false;
-
-		return tc.Kind == MemberKind.Interface;
+		return t.IsStruct;
 	}
 
-	public static bool IsSubclassOf (Type type, Type base_type)
+	public static bool IsSubclassOf (TypeSpec type, TypeSpec base_type)
 	{
-		TypeParameter tparam = LookupTypeParameter (type);
-		TypeParameter pparam = LookupTypeParameter (base_type);
-
-		if ((tparam != null) && (pparam != null)) {
-			if (tparam == pparam)
-				return true;
-
-			return tparam.IsSubclassOf (base_type);
-		}
-
-#if MS_COMPATIBLE
-		if (tparam != pparam)
-			return false;
-
-		if (type.IsGenericType)
-			type = type.GetGenericTypeDefinition ();
-#endif
-
-		if (type.IsSubclassOf (base_type))
-			return true;
-
 		do {
-			if (IsEqual (type, base_type))
+			if (type == base_type)
 				return true;
 
 			type = type.BaseType;
@@ -1529,27 +666,17 @@ namespace Mono.CSharp {
 		return false;
 	}
 
-	public static bool IsPrivateAccessible (Type type, Type parent)
+	public static bool IsFamilyAccessible (TypeSpec type, TypeSpec parent)
 	{
-		if (type == null)
-			return false;
+//		TypeParameter tparam = LookupTypeParameter (type);
+//		TypeParameter pparam = LookupTypeParameter (parent);
 
-		if (type.Equals (parent))
-			return true;
-
-		return DropGenericTypeArguments (type) == DropGenericTypeArguments (parent);
-	}
-
-	public static bool IsFamilyAccessible (Type type, Type parent)
-	{
-		TypeParameter tparam = LookupTypeParameter (type);
-		TypeParameter pparam = LookupTypeParameter (parent);
-
-		if ((tparam != null) && (pparam != null)) {
-			if (tparam == pparam)
+		if (type.Kind == MemberKind.TypeParameter && parent.Kind == MemberKind.TypeParameter) { // (tparam != null) && (pparam != null)) {
+			if (type == parent)
 				return true;
 
-			return tparam.IsSubclassOf (parent);
+			throw new NotImplementedException ("net");
+//			return tparam.IsSubclassOf (parent);
 		}
 
 		do {
@@ -1565,7 +692,7 @@ namespace Mono.CSharp {
 	//
 	// Checks whether `type' is a subclass or nested child of `base_type'.
 	//
-	public static bool IsNestedFamilyAccessible (Type type, Type base_type)
+	public static bool IsNestedFamilyAccessible (TypeSpec type, TypeSpec base_type)
 	{
 		do {
 			if (IsFamilyAccessible (type, base_type))
@@ -1581,20 +708,20 @@ namespace Mono.CSharp {
 	//
 	// Checks whether `type' is a nested child of `parent'.
 	//
-	public static bool IsNestedChildOf (Type type, Type parent)
+	public static bool IsNestedChildOf (TypeSpec type, TypeSpec parent)
 	{
 		if (type == null)
 			return false;
 
-		type = DropGenericTypeArguments (type);
-		parent = DropGenericTypeArguments (parent);
+		type = type.GetDefinition (); // DropGenericTypeArguments (type);
+		parent = parent.GetDefinition (); // DropGenericTypeArguments (parent);
 
 		if (IsEqual (type, parent))
 			return false;
 
 		type = type.DeclaringType;
 		while (type != null) {
-			if (IsEqual (type, parent))
+			if (IsEqual (type.GetDefinition (), parent))
 				return true;
 
 			type = type.DeclaringType;
@@ -1603,7 +730,7 @@ namespace Mono.CSharp {
 		return false;
 	}
 
-	public static bool IsSpecialType (Type t)
+	public static bool IsSpecialType (TypeSpec t)
 	{
 		return t == arg_iterator_type || t == typed_reference_type;
 	}
@@ -1630,15 +757,7 @@ namespace Mono.CSharp {
 		if (assembly_internals_vis_attrs.TryGetValue (assembly, out value))
 			return value;
 
-		PredefinedAttribute pa = PredefinedAttributes.Get.InternalsVisibleTo;
-		// HACK: Do very early resolve of SRE type checking
-		if (pa.Type == null)
-			pa.Resolve (true);
-
-		if (!pa.IsDefined)
-			return false;
-		
-		object [] attrs = assembly.GetCustomAttributes (pa.Type, false);
+		object[] attrs = assembly.GetCustomAttributes (typeof (InternalsVisibleToAttribute), false);
 		if (attrs.Length == 0) {
 			assembly_internals_vis_attrs.Add (assembly, false);
 			return false;
@@ -1647,6 +766,9 @@ namespace Mono.CSharp {
 		bool is_friend = false;
 
 		AssemblyName this_name = CodeGen.Assembly.Name;
+		if (this_name == null)
+			return false;
+
 		byte [] this_token = this_name.GetPublicKeyToken ();
 		foreach (InternalsVisibleToAttribute attr in attrs) {
 			if (attr.AssemblyName == null || attr.AssemblyName.Length == 0)
@@ -1698,468 +820,24 @@ namespace Mono.CSharp {
 			other_name, CodeGen.Assembly.Name.FullName);
 	}
 
-        //
-        // Do the right thing when returning the element type of an
-        // array type based on whether we are compiling corlib or not
-        //
-        public static Type GetElementType (Type t)
-        {
-                if (RootContext.StdLib)
-                        return t.GetElementType ();
-                else
-                        return TypeToCoreType (t.GetElementType ());
-        }
+	public static TypeSpec GetElementType (TypeSpec t)
+	{
+		return ((ElementTypeSpec)t).Element;
+	}
 
 	/// <summary>
 	/// This method is not implemented by MS runtime for dynamic types
 	/// </summary>
-	public static bool HasElementType (Type t)
+	public static bool HasElementType (TypeSpec t)
 	{
-		return t.IsArray || t.IsPointer || t.IsByRef;
-	}
-
-	public static Type GetEnumUnderlyingType (Type t)
-	{
-		t = DropGenericTypeArguments (t);
-		Enum e = LookupTypeContainer (t) as Enum;
-		if (e != null)
-			return e.UnderlyingType;
-
-		// TODO: cache it ?
-		FieldInfo fi = GetPredefinedField (t, Enum.UnderlyingValueField, Location.Null, Type.EmptyTypes);
-		if (fi == null)
-			return TypeManager.int32_type;
-
-		return TypeToCoreType (fi.FieldType);
-	}
-	
-	/// <summary>
-	///   Gigantic work around for missing features in System.Reflection.Emit follows.
-	/// </summary>
-	///
-	/// <remarks>
-	///   Since System.Reflection.Emit can not return MethodBase.GetParameters
-	///   for anything which is dynamic, and we need this in a number of places,
-	///   we register this information here, and use it afterwards.
-	/// </remarks>
-	static public void RegisterMethod (MethodBase mb, AParametersCollection ip)
-	{
-		method_params.Add (mb, ip);
-	}
-
-	static public void RegisterIndexer (PropertyBuilder pb, AParametersCollection p)
-	{
-		method_params.Add (pb, p);
-	}
-	
-	static public AParametersCollection GetParameterData (MethodBase mb)
-	{
-		AParametersCollection pd;
-		if (!method_params.TryGetValue (mb, out pd)) {
-#if MS_COMPATIBLE
-			if (mb.IsGenericMethod && !mb.IsGenericMethodDefinition) {
-				MethodInfo mi = ((MethodInfo) mb).GetGenericMethodDefinition ();
-				pd = GetParameterData (mi);
-				/*
-				if (mi.IsGenericMethod)
-					pd = pd.InflateTypes (mi.GetGenericArguments (), mb.GetGenericArguments ());
-				else
-					pd = pd.InflateTypes (mi.DeclaringType.GetGenericArguments (), mb.GetGenericArguments ());
-				*/
-				method_params.Add (mb, pd);
-				return pd;
-			}
-
-			if (mb.DeclaringType.Assembly == CodeGen.Assembly.Builder) {
-				throw new InternalErrorException ("Parameters are not registered for method `{0}'",
-					TypeManager.CSharpName (mb.DeclaringType) + "." + mb.Name);
-			}
-
-			pd = ParametersImported.Create (mb);
-#else
-			MethodBase generic = TypeManager.DropGenericMethodArguments (mb);
-			if (generic != mb) {
-				pd = TypeManager.GetParameterData (generic);
-				pd = ParametersImported.Create (pd, mb);
-			} else {
-				pd = ParametersImported.Create (mb);
-			}
-#endif
-			method_params.Add (mb, pd);
-		}
-		return pd;
-	}
-
-	public static AParametersCollection GetParameterData (PropertyInfo pi)
-	{
-		AParametersCollection pd;
-		if (!method_params.TryGetValue (pi, out pd)) {
-			if (pi is PropertyBuilder)
-				return ParametersCompiled.EmptyReadOnlyParameters;
-
-			ParameterInfo [] p = pi.GetIndexParameters ();
-			if (p == null)
-				return ParametersCompiled.EmptyReadOnlyParameters;
-
-			pd = ParametersImported.Create (p, null);
-			method_params.Add (pi, pd);
-		}
-
-		return pd;
-	}
-
-	public static AParametersCollection GetDelegateParameters (ResolveContext ec, Type t)
-	{
-		Delegate d = LookupDelegate (t);
-		if (d != null)
-			return d.Parameters;
-
-		var invoke_mb = Delegate.GetInvokeMethod (ec.Compiler, t, t);
-		return invoke_mb.Parameters;
-	}
-
-	static public void RegisterOverride (MethodBase override_method, MethodBase base_method)
-	{
-		if (!method_overrides.ContainsKey (override_method))
-			method_overrides [override_method] = base_method;
-		if (method_overrides [override_method] != base_method)
-			throw new InternalErrorException ("Override mismatch: " + override_method);
-	}
-
-	static public bool IsOverride (MethodSpec ms)
-	{
-		MethodBase m = ms.MetaInfo;
-		m = DropGenericMethodArguments (m);
-
-		return m.IsVirtual &&
-			(m.Attributes & MethodAttributes.NewSlot) == 0 &&
-			(m is MethodBuilder || method_overrides.ContainsKey (m));
-	}
-
-	static public MethodBase TryGetBaseDefinition (MethodBase m)
-	{
-		m = DropGenericMethodArguments (m);
-		MethodBase mb;
-		if (method_overrides.TryGetValue (m, out mb))
-			return mb;
-
-		return null;
-	}
-
-	public static void RegisterConstant (FieldInfo fb, ConstSpec ic)
-	{
-		fields.Add (fb, ic);
-	}
-
-	public static ConstSpec GetConstant (FieldInfo fb)
-	{
-		if (fb == null)
-			return null;
-
-		ConstSpec ic;
-		if (fields.TryGetValue (fb, out ic))
-			return ic;
-
-		return null;
-	}
-
-	public static void RegisterProperty (PropertyInfo pi, PropertyBase pb)
-	{
-		propertybuilder_to_property.Add (pi, pb);
-	}
-
-	public static PropertyBase GetProperty (PropertyInfo pi)
-	{
-		PropertyBase pb;
-		if (propertybuilder_to_property.TryGetValue (pi, out pb))
-			return pb;
-
-		return null;
-	}
-
-	static public void RegisterFieldBase (FieldBuilder fb, FieldBase f)
-	{
-		fieldbuilders_to_fields.Add (fb, f);
-	}
-
-	//
-	// The return value can be null;  This will be the case for
-	// auxiliary FieldBuilders created by the compiler that have no
-	// real field being declared on the source code
-	//
-	static public FieldBase GetField (FieldInfo fb)
-	{
-		return GetFieldCore (GetGenericFieldDefinition (fb));
-	}
-
-	static public FieldBase GetFieldCore (FieldInfo fb)
-	{
-		FieldBase f;
-		if (fieldbuilders_to_fields.TryGetValue (fb, out f))
-			return f;
-
-		return null;
-	}
-
-	static public MethodInfo GetAddMethod (EventInfo ei)
-	{
-		if (ei is MyEventBuilder) {
-			return ((MyEventBuilder)ei).GetAddMethod (true);
-		}
-		return ei.GetAddMethod (true);
-	}
-
-	static public MethodInfo GetRemoveMethod (EventInfo ei)
-	{
-		if (ei is MyEventBuilder) {
-			return ((MyEventBuilder)ei).GetRemoveMethod (true);
-		}
-		return ei.GetRemoveMethod (true);
-	}
-
-	static public void RegisterEventField (EventInfo einfo, EventSpec e)
-	{
-		if (events == null)
-			events = new Dictionary<EventInfo, EventSpec> (ReferenceEquality<EventInfo>.Default);
-
-		events.Add (einfo, e);
-	}
-
-	static public EventSpec GetEventField (EventInfo ei)
-	{
-		if (events == null)
-			return null;
-
-		EventSpec value;
-		if (events.TryGetValue (ei, out value))
-			return value;
-
-		return null;
-	}
-
-	public static bool CheckStructCycles (TypeContainer tc, Dictionary<TypeContainer, object> seen)
-	{
-		var hash = new Dictionary<TypeContainer, object> ();
-		return CheckStructCycles (tc, seen, hash);
-	}
-
-	public static bool CheckStructCycles (TypeContainer tc, Dictionary<TypeContainer, object> seen,
-						  Dictionary<TypeContainer, object> hash)
-	{
-		if ((tc.Kind != MemberKind.Struct) || IsBuiltinType (tc.TypeBuilder))
-			return true;
-
-		//
-		// `seen' contains all types we've already visited.
-		//
-		if (seen.ContainsKey (tc))
-			return true;
-		seen.Add (tc, null);
-
-		if (tc.Fields == null)
-			return true;
-
-		foreach (FieldBase field in tc.Fields) {
-			if (field.Spec == null || field.Spec.IsStatic)
-				continue;
-
-			Type ftype = field.Spec.FieldType;
-			TypeContainer ftc = LookupTypeContainer (ftype);
-			if (ftc == null)
-				continue;
-
-			if (hash.ContainsKey (ftc)) {
-				tc.Compiler.Report.Error (523, tc.Location,
-					      "Struct member `{0}.{1}' of type `{2}' " +
-					      "causes a cycle in the struct layout",
-					      tc.Name, field.Name, ftc.Name);
-				return false;
-			}
-
-			//
-			// `hash' contains all types in the current path.
-			//
-			hash.Add (tc, null);
-
-			bool ok = CheckStructCycles (ftc, seen, hash);
-
-			hash.Remove (tc);
-
-			if (!ok)
-				return false;
-
-			if (!seen.ContainsKey (ftc))
-				seen.Add (ftc, null);
-		}
-
-		return true;
-	}
-
-	/// <summary>
-	///   Given an array of interface types, expand and eliminate repeated ocurrences
-	///   of an interface.  
-	/// </summary>
-	///
-	/// <remarks>
-	///   This expands in context like: IA; IB : IA; IC : IA, IB; the interface "IC" to
-	///   be IA, IB, IC.
-	/// </remarks>
-	public static Type[] ExpandInterfaces (TypeExpr [] base_interfaces)
-	{
-		var new_ifaces = new List<Type> ();
-
-		foreach (TypeExpr iface in base_interfaces){
-			Type itype = iface.Type;
-
-			if (new_ifaces.Contains (itype))
-				continue;
-
-			new_ifaces.Add (itype);
-			
-			Type [] implementing = GetInterfaces (itype);
-
-			foreach (Type imp in implementing){
-				if (!new_ifaces.Contains (imp))
-					new_ifaces.Add (imp);
-			}
-		}
-
-		return new_ifaces.ToArray ();
-	}
-
-	public static Type[] ExpandInterfaces (Type [] base_interfaces)
-	{
-		var new_ifaces = new List<Type> ();
-
-		foreach (Type itype in base_interfaces){
-			if (new_ifaces.Contains (itype))
-				continue;
-
-			new_ifaces.Add (itype);
-			
-			Type [] implementing = GetInterfaces (itype);
-
-			foreach (Type imp in implementing){
-				if (!new_ifaces.Contains (imp))
-					new_ifaces.Add (imp);
-			}
-		}
-
-		return new_ifaces.ToArray ();
-	}
-		
-	/// <summary>
-	///   This function returns the interfaces in the type `t'.  Works with
-	///   both types and TypeBuilders.
-	/// </summary>
-	public static Type [] GetInterfaces (Type t)
-	{
-		Type [] cached;
-		if (iface_cache.TryGetValue (t, out cached))
-		if (cached != null)
-			return cached;
-		
-		//
-		// The reason for catching the Array case is that Reflection.Emit
-		// will not return a TypeBuilder for Array types of TypeBuilder types,
-		// but will still throw an exception if we try to call GetInterfaces
-		// on the type.
-		//
-		// Since the array interfaces are always constant, we return those for
-		// the System.Array
-		//
-		
-		if (t.IsArray)
-			t = TypeManager.array_type;
-		
-		if ((t is TypeBuilder) || IsGenericType (t)) {
-			Type [] base_ifaces;
-			
-			if (t.BaseType == null)
-				base_ifaces = Type.EmptyTypes;
-			else
-				base_ifaces = GetInterfaces (t.BaseType);
-			Type[] type_ifaces;
-			if (IsGenericType (t))
-#if MS_COMPATIBLE
-				type_ifaces = t.GetGenericTypeDefinition().GetInterfaces ();
-#else
-				type_ifaces = t.GetInterfaces ();
-#endif
-			else
-				type_ifaces = GetExplicitInterfaces (t);
-			if (type_ifaces == null || type_ifaces.Length == 0)
-				type_ifaces = Type.EmptyTypes;
-
-			int base_count = base_ifaces.Length;
-			Type [] result = new Type [base_count + type_ifaces.Length];
-			base_ifaces.CopyTo (result, 0);
-			type_ifaces.CopyTo (result, base_count);
-
-			iface_cache [t] = result;
-			return result;
-		} else if (t is GenericTypeParameterBuilder){
-			Type[] type_ifaces = GetExplicitInterfaces (t);
-			if (type_ifaces == null || type_ifaces.Length == 0)
-				type_ifaces = Type.EmptyTypes;
-
-			iface_cache [t] = type_ifaces;
-			return type_ifaces;
-		} else {
-			Type[] ifaces = t.GetInterfaces ();
-			iface_cache [t] = ifaces;
-			return ifaces;
-		}
-	}
-	
-	//
-	// gets the interfaces that are declared explicitly on t
-	//
-	public static Type[] GetExplicitInterfaces (Type t)
-	{
-		Type[] ifaces;
-		if (builder_to_ifaces.TryGetValue (t, out ifaces))
-			return ifaces;
-
-		return null;
-	}
-	
-	/// <remarks>
-	///  The following is used to check if a given type implements an interface.
-	///  The cache helps us reduce the expense of hitting Type.GetInterfaces everytime.
-	/// </remarks>
-	public static bool ImplementsInterface (Type t, Type iface)
-	{
-		Type [] interfaces;
-
-		//
-		// FIXME OPTIMIZATION:
-		// as soon as we hit a non-TypeBuiler in the interface
-		// chain, we could return, as the `Type.GetInterfaces'
-		// will return all the interfaces implement by the type
-		// or its bases.
-		//
-		do {
-			interfaces = GetInterfaces (t);
-
-			if (interfaces != null){
-				foreach (Type i in interfaces){
-					if (i == iface || IsVariantOf (i, iface))
-						return true;
-				}
-			}
-			
-			t = t.BaseType;
-		} while (t != null);
-		
-		return false;
+		return t is ElementTypeSpec;
 	}
 
 	static NumberFormatInfo nf_provider = CultureInfo.CurrentCulture.NumberFormat;
 
 	// This is a custom version of Convert.ChangeType() which works
 	// with the TypeBuilder defined types when compiling corlib.
-	public static object ChangeType (object value, Type conversionType, out bool error)
+	public static object ChangeType (object value, TypeSpec targetType, out bool error)
 	{
 		IConvertible convert_value = value as IConvertible;
 		
@@ -2169,171 +847,74 @@ namespace Mono.CSharp {
 		}
 		
 		//
-		// NOTE 1:
-		// We must use Type.Equals() here since `conversionType' is
-		// the TypeBuilder created version of a system type and not
-		// the system type itself.  You cannot use Type.GetTypeCode()
-		// on such a type - it'd always return TypeCode.Object.
-		//
-		// NOTE 2:
 		// We cannot rely on build-in type conversions as they are
 		// more limited than what C# supports.
 		// See char -> float/decimal/double conversion
 		//
-
 		error = false;
 		try {
-			if (conversionType.Equals (typeof (Boolean)))
-				return (object)(convert_value.ToBoolean (nf_provider));
-			if (conversionType.Equals (typeof (Byte)))
-				return (object)(convert_value.ToByte (nf_provider));
-			if (conversionType.Equals (typeof (Char)))
-				return (object)(convert_value.ToChar (nf_provider));
-			if (conversionType.Equals (typeof (DateTime)))
-				return (object)(convert_value.ToDateTime (nf_provider));
+			if (targetType == TypeManager.bool_type)
+				return convert_value.ToBoolean (nf_provider);
+			if (targetType == TypeManager.byte_type)
+				return convert_value.ToByte (nf_provider);
+			if (targetType == TypeManager.char_type)
+				return convert_value.ToChar (nf_provider);
+			if (targetType == TypeManager.short_type)
+				return convert_value.ToInt16 (nf_provider);
+			if (targetType == TypeManager.int32_type)
+				return convert_value.ToInt32 (nf_provider);
+			if (targetType == TypeManager.int64_type)
+				return convert_value.ToInt64 (nf_provider);
+			if (targetType == TypeManager.sbyte_type)
+				return convert_value.ToSByte (nf_provider);
 
-			if (conversionType.Equals (decimal_type)) {
-				if (convert_value.GetType () == TypeManager.char_type)
-					return (decimal)convert_value.ToInt32 (nf_provider);
+			if (targetType == TypeManager.decimal_type) {
+				if (convert_value.GetType () == typeof (char))
+					return (decimal) convert_value.ToInt32 (nf_provider);
 				return convert_value.ToDecimal (nf_provider);
 			}
 
-			if (conversionType.Equals (typeof (Double))) {
-				if (convert_value.GetType () == TypeManager.char_type)
-					return (double)convert_value.ToInt32 (nf_provider);
+			if (targetType == TypeManager.double_type) {
+				if (convert_value.GetType () == typeof (char))
+					return (double) convert_value.ToInt32 (nf_provider);
 				return convert_value.ToDouble (nf_provider);
 			}
 
-			if (conversionType.Equals (typeof (Int16)))
-				return (object)(convert_value.ToInt16 (nf_provider));
-			if (conversionType.Equals (int32_type))
-				return (object)(convert_value.ToInt32 (nf_provider));
-			if (conversionType.Equals (int64_type))
-				return (object)(convert_value.ToInt64 (nf_provider));
-			if (conversionType.Equals (typeof (SByte)))
-				return (object)(convert_value.ToSByte (nf_provider));
-
-			if (conversionType.Equals (typeof (Single))) {
-				if (convert_value.GetType () == TypeManager.char_type)
+			if (targetType == TypeManager.float_type) {
+				if (convert_value.GetType () == typeof (char))
 					return (float)convert_value.ToInt32 (nf_provider);
 				return convert_value.ToSingle (nf_provider);
 			}
 
-			if (conversionType.Equals (typeof (String)))
-				return (object)(convert_value.ToString (nf_provider));
-			if (conversionType.Equals (typeof (UInt16)))
-				return (object)(convert_value.ToUInt16 (nf_provider));
-			if (conversionType.Equals (typeof (UInt32)))
-				return (object)(convert_value.ToUInt32 (nf_provider));
-			if (conversionType.Equals (typeof (UInt64)))
-				return (object)(convert_value.ToUInt64 (nf_provider));
-			if (conversionType.Equals (typeof (Object)))
-				return (object)(value);
-			else 
-				error = true;
+			if (targetType == TypeManager.string_type)
+				return convert_value.ToString (nf_provider);
+			if (targetType == TypeManager.ushort_type)
+				return convert_value.ToUInt16 (nf_provider);
+			if (targetType == TypeManager.uint32_type)
+				return convert_value.ToUInt32 (nf_provider);
+			if (targetType == TypeManager.uint64_type)
+				return convert_value.ToUInt64 (nf_provider);
+			if (targetType == TypeManager.object_type)
+				return value;
+
+			error = true;
 		} catch {
 			error = true;
 		}
 		return null;
 	}
 
-	//
-	// When compiling with -nostdlib and the type is imported from an external assembly
-	// SRE uses "wrong" type and we have to convert it to the right compiler instance.
-	//
-	public static Type TypeToCoreType (Type t)
-	{
-		if (RootContext.StdLib || t.Module != typeof (object).Module)
-			return t;
-			
-		// TODO: GetTypeCode returns underlying type for enums !!
-		TypeCode tc = Type.GetTypeCode (t);
-
-		switch (tc){
-		case TypeCode.Boolean:
-			return TypeManager.bool_type;
-		case TypeCode.Byte:
-			return TypeManager.byte_type;
-		case TypeCode.SByte:
-			return TypeManager.sbyte_type;
-		case TypeCode.Char:
-			return TypeManager.char_type;
-		case TypeCode.Int16:
-			return TypeManager.short_type;
-		case TypeCode.UInt16:
-			return TypeManager.ushort_type;
-		case TypeCode.Int32:
-			return TypeManager.int32_type;
-		case TypeCode.UInt32:
-			return TypeManager.uint32_type;
-		case TypeCode.Int64:
-			return TypeManager.int64_type;
-		case TypeCode.UInt64:
-			return TypeManager.uint64_type;
-		case TypeCode.Single:
-			return TypeManager.float_type;
-		case TypeCode.Double:
-			return TypeManager.double_type;
-		case TypeCode.String:
-			return TypeManager.string_type;
-		case TypeCode.Decimal:
-			return TypeManager.decimal_type;
-		}
-
-		if (t == typeof (void))
-			return TypeManager.void_type;
-		if (t == typeof (object))
-			return TypeManager.object_type;
-		if (t == typeof (System.Type))
-			return TypeManager.type_type;
-		if (t == typeof (System.IntPtr))
-			return TypeManager.intptr_type;
-		if (t == typeof (System.UIntPtr))
-			return TypeManager.uintptr_type;
-
-		if (t.IsArray) {
-			int dim = t.GetArrayRank ();
-			t = GetElementType (t);
-			return t.MakeArrayType (dim);
-		}
-		if (t.IsByRef) {
-			t = GetElementType (t);
-			return t.MakeByRefType ();
-		}
-		if (t.IsPointer) {
-			t = GetElementType (t);
-			return t.MakePointerType ();
-		}
-
-		return t;
-	}
-
-	//
-	// Converts any type to reflection supported type
-	//
-	public static Type TypeToReflectionType (Type type)
-	{
-		// TODO: Very lame and painful, GetReference () is enough for mcs-cecil
-		if (IsDynamicType (type))
-			return object_type;
-
-		if (type is DynamicArrayType)
-			return type.UnderlyingSystemType;
-
-		return type;
-	}
-
 	/// <summary>
 	///   Utility function that can be used to probe whether a type
 	///   is managed or not.  
 	/// </summary>
-	public static bool VerifyUnmanaged (CompilerContext ctx, Type t, Location loc)
+	public static bool VerifyUnmanaged (CompilerContext ctx, TypeSpec t, Location loc)
 	{
-		if (IsUnmanagedType (t))
-			return true;
-
 		while (t.IsPointer)
 			t = GetElementType (t);
+
+		if (IsUnmanagedType (t))
+			return true;
 
 		ctx.Report.SymbolRelatedToPreviousError (t);
 		ctx.Report.Error (208, loc,
@@ -2343,125 +924,32 @@ namespace Mono.CSharp {
 		return false;	
 	}
 	
-	/// <summary>
-	///   Returns the name of the indexer in a given type.
-	/// </summary>
-	/// <remarks>
-	///   The default is not always `Item'.  The user can change this behaviour by
-	///   using the IndexerNameAttribute in the container.
-	///   For example, the String class indexer is named `Chars' not `Item' 
-	/// </remarks>
-	public static string IndexerPropertyName (Type t)
-	{
-		t = DropGenericTypeArguments (t);
-		if (t is TypeBuilder) {
-			TypeContainer tc = t.IsInterface ? LookupInterface (t) : LookupTypeContainer (t);
-			return tc == null ? TypeContainer.DefaultIndexerName : tc.IndexerName;
-		}
-
-		PredefinedAttribute pa = PredefinedAttributes.Get.DefaultMember;
-		if (pa.IsDefined) {
-			System.Attribute attr = System.Attribute.GetCustomAttribute (
-				t, pa.Type);
-			if (attr != null) {
-				DefaultMemberAttribute dma = (DefaultMemberAttribute) attr;
-				return dma.MemberName;
-			}
-		}
-
-		return TypeContainer.DefaultIndexerName;
-	}
-
-	private static bool IsSignatureEqual (Type a, Type b)
-	{
-		///
-		/// Consider the following example (bug #77674):
-		///
-		///     public abstract class A
-		///     {
-		///        public abstract T Foo<T> ();
-		///     }
-		///
-		///     public abstract class B : A
-		///     {
-		///        public override U Foo<T> ()
-		///        { return default (U); }
-		///     }
-		///
-		/// Here, `T' and `U' are method type parameters from different methods
-		/// (A.Foo and B.Foo), so both `==' and Equals() will fail.
-		///
-		/// However, since we're determining whether B.Foo() overrides A.Foo(),
-		/// we need to do a signature based comparision and consider them equal.
-
-		if (a == b)
-			return true;
-
-		if (a.IsGenericParameter && b.IsGenericParameter &&
-		    (a.DeclaringMethod != null) && (b.DeclaringMethod != null)) {
-			return a.GenericParameterPosition == b.GenericParameterPosition;
-		}
-
-		if (a.IsArray && b.IsArray) {
-			if (a.GetArrayRank () != b.GetArrayRank ())
-				return false;
-
-			return IsSignatureEqual (GetElementType (a), GetElementType (b));
-		}
-
-		if (a.IsByRef && b.IsByRef)
-			return IsSignatureEqual (GetElementType (a), GetElementType (b));
-
-		if (IsGenericType (a) && IsGenericType (b)) {
-			if (DropGenericTypeArguments (a) != DropGenericTypeArguments (b))
-				return false;
-
-			Type[] aargs = GetTypeArguments (a);
-			Type[] bargs = GetTypeArguments (b);
-
-			if (aargs.Length != bargs.Length)
-				return false;
-
-			for (int i = 0; i < aargs.Length; i++) {
-				if (!IsSignatureEqual (aargs [i], bargs [i]))
-					return false;
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
 	//
 	// Returns whether the array of memberinfos contains the given method
 	//
-	public static bool ArrayContainsMethod (MethodBase [] array, MethodBase new_method, bool ignoreDeclType)
+	public static bool ArrayContainsMethod (List<MemberSpec> array, MethodSpec new_method, bool ignoreDeclType)
 	{
-		Type [] new_args = TypeManager.GetParameterData (new_method).Types;
-		
-		foreach (MethodBase method in array) {
+		AParametersCollection new_args = new_method.Parameters;
+
+		foreach (MethodSpec method in array) {
 			if (!ignoreDeclType && method.DeclaringType != new_method.DeclaringType)
 				continue;
-		
+
 			if (method.Name != new_method.Name)
 				continue;
 
-			if (method is MethodInfo && new_method is MethodInfo &&
-				!IsSignatureEqual (
-					TypeToCoreType (((MethodInfo) method).ReturnType),
-					TypeToCoreType (((MethodInfo) new_method).ReturnType)))
+			if (!TypeSpecComparer.Override.IsEqual (method.ReturnType, new_method.ReturnType))
 				continue;
-                        
-			Type [] old_args = TypeManager.GetParameterData (method).Types;
-			int old_count = old_args.Length;
+
+			AParametersCollection old_args = method.Parameters;
+			int old_count = old_args.Count;
 			int i;
-			
-			if (new_args.Length != old_count)
+
+			if (new_args.Count != old_count)
 				continue;
-			
-			for (i = 0; i < old_count; i++){
-				if (!IsSignatureEqual (old_args [i], new_args [i]))
+
+			for (i = 0; i < old_count; i++) {
+				if (!TypeSpecComparer.Override.IsEqual (old_args.Types[i], new_args.Types[i]))
 					break;
 			}
 			if (i != old_count)
@@ -2469,475 +957,53 @@ namespace Mono.CSharp {
 
 			return true;
 		}
-                
+
 		return false;
 	}
-	
-	//
-	// We copy methods from `new_members' into `target_list' if the signature
-	// for the method from in the new list does not exist in the target_list
-	//
-	// The name is assumed to be the same.
-	//
-	public static List<MethodBase> CopyNewMethods (List<MethodBase> target_list, IList<MemberInfo> new_members)
-	{
-		if (target_list == null){
-			target_list = new List<MethodBase> ();
-
-			foreach (MemberInfo mi in new_members){
-				if (mi is MethodBase)
-					target_list.Add ((MethodBase) mi);
-			}
-			return target_list;
-		}
-
-		MethodBase[] target_array = new MethodBase[target_list.Count];
-		target_list.CopyTo (target_array, 0);
-		
-		foreach (MemberInfo mi in new_members){
-			MethodBase new_method = (MethodBase) mi;
-			
-			if (!ArrayContainsMethod (target_array, new_method, true))
-				target_list.Add (new_method);
-		}
-		return target_list;
-	}
-
 #region Generics
-	// <remarks>
-	//   Tracks the generic parameters.
-	// </remarks>
-
-	public static void AddTypeParameter (GenericTypeParameterBuilder t, TypeParameter tparam)
-	{
-		builder_to_type_param [t] = tparam;
-	}
-
-	public static TypeParameter LookupTypeParameter (Type t)
-	{
-		TypeParameter tp;
-		var gtp = t as GenericTypeParameterBuilder;
-		if (gtp != null && builder_to_type_param.TryGetValue (gtp, out tp))
-			return tp;
-
-		return null;
-	}
-
 	// This method always return false for non-generic compiler,
 	// while Type.IsGenericParameter is returned if it is supported.
-	public static bool IsGenericParameter (Type type)
+	public static bool IsGenericParameter (TypeSpec type)
 	{
 		return type.IsGenericParameter;
 	}
 
-	public static int GenericParameterPosition (Type type)
+	public static bool IsGenericType (TypeSpec type)
 	{
-		return type.GenericParameterPosition;
+		return type.IsGeneric;
 	}
 
-	public static bool IsGenericType (Type type)
+	// TODO: Implement correctly
+	public static bool ContainsGenericParameters (TypeSpec type)
 	{
-		return type.IsGenericType;
+		return type.GetMetaInfo ().ContainsGenericParameters;
 	}
 
-	public static bool IsGenericTypeDefinition (Type type)
+	public static bool IsEqual (TypeSpec a, TypeSpec b)
 	{
-		return type.IsGenericTypeDefinition;
+		return a == b && !(a is InternalType);
 	}
 
-	public static bool ContainsGenericParameters (Type type)
+	public static TypeSpec[] GetTypeArguments (TypeSpec t)
 	{
-		return type.ContainsGenericParameters;
-	}
-
-	public static FieldInfo GetGenericFieldDefinition (FieldInfo fi)
-	{
-		if (fi.DeclaringType.IsGenericTypeDefinition ||
-		    !fi.DeclaringType.IsGenericType)
-			return fi;
-
-		Type t = fi.DeclaringType.GetGenericTypeDefinition ();
-		BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
-			BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-		// TODO: use CodeGen.Module.Builder.ResolveField (fi.MetadataToken);
-		foreach (FieldInfo f in t.GetFields (bf))
-			if (f.MetadataToken == fi.MetadataToken)
-				return f;
-
-		return fi;
-	}
-
-	public static bool IsEqual (Type a, Type b)
-	{
-		if (a.Equals (b)) {
-			// MS BCL returns true even if enum types are different
-			if (a.BaseType == TypeManager.enum_type || b.BaseType == TypeManager.enum_type)
-				return a.FullName == b.FullName;
-
-			// Some types are never equal
-			if (a == TypeManager.null_type || a == InternalType.AnonymousMethod)
-				return false;
-
-			return true;
-		}
-
-		if (IsGenericParameter (a) && IsGenericParameter (b)) {
-			// TODO: needs more testing before cleaning up
-			//if (a.DeclaringMethod != b.DeclaringMethod &&
-			//    (a.DeclaringMethod == null || b.DeclaringMethod == null))
-			//	return false;
-			return a.GenericParameterPosition == b.GenericParameterPosition;
-		}
-
-		if (a.IsArray && b.IsArray) {
-			if (a.GetArrayRank () != b.GetArrayRank ())
-				return false;
-			return IsEqual (GetElementType (a), GetElementType (b));
-		}
-
-		if (a.IsByRef && b.IsByRef)
-			return IsEqual (a.GetElementType (), b.GetElementType ());
-
-		if (IsGenericType (a) && IsGenericType (b)) {
-			Type adef = DropGenericTypeArguments (a);
-			Type bdef = DropGenericTypeArguments (b);
-
-			if (adef != bdef)
-				return false;
-
-			if (adef.IsEnum && bdef.IsEnum)
-				return true;
-
-			Type[] aargs = GetTypeArguments (a);
-			Type[] bargs = GetTypeArguments (b);
-
-			if (aargs.Length != bargs.Length)
-				return false;
-
-			for (int i = 0; i < aargs.Length; i++) {
-				if (!IsEqual (aargs [i], bargs [i]))
-					return false;
-			}
-
-			return true;
-		}
-
-		return false;
-	}
-
-	public static bool IsEqual (Type[] a, Type[] b)
-	{
-		if (a == null || b == null || a.Length != b.Length)
-			return false;
-
-		for (int i = 0; i < a.Length; ++i) {
-			if (a [i] == null || b [i] == null) {
-				if (a [i] == b [i])
-					continue;
-
-				return false;
-			}
-		
-			if (!IsEqual (a [i], b [i]))
-				return false;
-		}
-
-		return true;
-	}
-
-	public static Type DropGenericTypeArguments (Type t)
-	{
-		if (!t.IsGenericType)
-			return t;
-		// Micro-optimization: a generic typebuilder is always a generic type definition
-		if (t is TypeBuilder)
-			return t;
-		return t.GetGenericTypeDefinition ();
-	}
-
-	public static MethodBase DropGenericMethodArguments (MethodSpec m)
-	{
-		return DropGenericMethodArguments (m.MetaInfo);
-	}
-
-	public static MethodBase DropGenericMethodArguments (MethodBase m)
-	{
-		if (m.IsGenericMethod)
-		  m = ((MethodInfo) m).GetGenericMethodDefinition ();
-
-		Type t = m.DeclaringType;
-		if (!t.IsGenericType || t.IsGenericTypeDefinition)
-			return m;
-
-		t = t.GetGenericTypeDefinition ();
-		BindingFlags bf = BindingFlags.Public | BindingFlags.NonPublic |
-			BindingFlags.Static | BindingFlags.Instance | BindingFlags.DeclaredOnly;
-
-#if MS_COMPATIBLE
-		// TODO: use CodeGen.Module.Builder.ResolveMethod ()
-		return m;
-#endif
-
-		if (m is ConstructorInfo) {
-			foreach (ConstructorInfo c in t.GetConstructors (bf))
-				if (c.MetadataToken == m.MetadataToken)
-					return c;
-		} else {
-			foreach (MethodBase mb in t.GetMethods (bf))
-				if (mb.MetadataToken == m.MetadataToken)
-					return mb;
-		}
-
-		return m;
-	}
-
-	public static Type[] GetGenericArguments (MethodBase mi)
-	{
-		return mi.GetGenericArguments () ?? Type.EmptyTypes;
-	}
-
-	public static Type[] GetTypeArguments (Type t)
-	{
-		DeclSpace tc = LookupDeclSpace (t);
-		if (tc != null) {
-			if (!tc.IsGeneric)
-				return Type.EmptyTypes;
-
-			TypeParameter[] tparam = tc.TypeParameters;
-			Type[] ret = new Type [tparam.Length];
-			for (int i = 0; i < tparam.Length; i++) {
-				ret [i] = tparam [i].Type;
-				if (ret [i] == null)
-					throw new InternalErrorException ();
-			}
-
-			return ret;
-		} else
-			return t.GetGenericArguments ();
-	}
-			
-	public static GenericConstraints GetTypeParameterConstraints (Type t)
-	{
-		if (!t.IsGenericParameter)
-			throw new InvalidOperationException ();
-
-		TypeParameter tparam = LookupTypeParameter (t);
-		if (tparam != null)
-			return tparam.GenericConstraints;
-
-		return ReflectionConstraints.GetConstraints (t);
-	}
-
-	public static bool HasGenericArguments (Type t)
-	{
-		return GetNumberOfTypeArguments (t) > 0;
-	}
-
-	public static int GetNumberOfTypeArguments (Type t)
-	{
-		if (t.IsGenericParameter)
-			return 0;
-		DeclSpace tc = LookupDeclSpace (t);
-		if (tc != null)
-			return tc.IsGeneric ? tc.CountTypeParameters : 0;
-		else
-			return t.IsGenericType ? t.GetGenericArguments ().Length : 0;
+		// TODO: return empty array !!
+		return t.TypeArguments;
 	}
 
 	/// <summary>
 	///   Check whether `type' and `parent' are both instantiations of the same
 	///   generic type.  Note that we do not check the type parameters here.
 	/// </summary>
-	public static bool IsInstantiationOfSameGenericType (Type type, Type parent)
+	public static bool IsInstantiationOfSameGenericType (TypeSpec type, TypeSpec parent)
 	{
-		int tcount = GetNumberOfTypeArguments (type);
-		int pcount = GetNumberOfTypeArguments (parent);
-
-		if (tcount != pcount)
-			return false;
-
-		type = DropGenericTypeArguments (type);
-		parent = DropGenericTypeArguments (parent);
-
-		return type.Equals (parent);
+		return type == parent || type.MemberDefinition == parent.MemberDefinition;
 	}
 
-	/// <summary>
-	///   Whether `mb' is a generic method definition.
-	/// </summary>
-	public static bool IsGenericMethodDefinition (MethodBase mb)
+	public static bool IsNullableType (TypeSpec t)
 	{
-		if (mb.DeclaringType is TypeBuilder) {
-			IMethodData method = GetMethod (mb);
-			if (method == null)
-				return false;
-
-			return method.GenericMethod != null;
-		}
-
-		return mb.IsGenericMethodDefinition;
-	}
-
-	/// <summary>
-	///   Whether `mb' is a generic method.
-	/// </summary>
-	public static bool IsGenericMethod (MethodBase mb)
-	{
-		return mb.IsGenericMethod;
-	}
-
-	public static bool IsNullableType (Type t)
-	{
-		return generic_nullable_type == DropGenericTypeArguments (t);
-	}
-
-	public static MethodInfo MakeGenericMethod (MethodInfo gmd, Type[] methodArguments) 
-	{
-		if (!gmd.IsGenericMethodDefinition)
-			gmd = gmd.GetGenericMethodDefinition ();
-		return gmd.MakeGenericMethod (methodArguments);		
+		return generic_nullable_type == t.GetDefinition ();
 	}
 #endregion
-
-#region MemberLookup implementation
-	
-	//
-	// Whether we allow private members in the result (since FindMembers
-	// uses NonPublic for both protected and private), we need to distinguish.
-	//
-
-	internal class Closure {
-		internal bool     private_ok;
-
-		// Who is invoking us and which type is being queried currently.
-		internal Type     invocation_type;
-		internal Type     qualifier_type;
-
-		// The assembly that defines the type is that is calling us
-		internal Assembly invocation_assembly;
-		internal IList<MemberInfo> almost_match;
-
-		private bool CheckValidFamilyAccess (bool is_static, MemberInfo m)
-		{
-			if (invocation_type == null)
-				return false;
-
-			if (is_static && qualifier_type == null)
-				// It resolved from a simple name, so it should be visible.
-				return true;
-
-			if (IsNestedChildOf (invocation_type, m.DeclaringType))
-				return true;
-
-			for (Type t = invocation_type; t != null; t = t.DeclaringType) {
-				if (!IsFamilyAccessible (t, m.DeclaringType))
-					continue;
-
-				// Although a derived class can access protected members of its base class
-				// it cannot do so through an instance of the base class (CS1540).
-				// => Ancestry should be: declaring_type ->* invocation_type ->*  qualified_type
-				if (is_static || qualifier_type == null ||
-				    IsInstantiationOfSameGenericType (t, qualifier_type) ||
-				    IsFamilyAccessible (qualifier_type, t))
-					return true;
-			}
-
-			if (almost_match != null)
-				almost_match.Add (m);
-
-			return false;
-		}
-		
-		//
-		// This filter filters by name + whether it is ok to include private
-		// members in the search
-		//
-		internal bool Filter (MemberInfo m, object filter_criteria)
-		{
-			//
-			// Hack: we know that the filter criteria will always be in the
-			// `closure' // fields. 
-			//
-
-			if ((filter_criteria != null) && (m.Name != (string) filter_criteria))
-				return false;
-
-			if (((qualifier_type == null) || (qualifier_type == invocation_type)) &&
-			    (invocation_type != null) &&
-			    IsPrivateAccessible (m.DeclaringType, invocation_type))
-				return true;
-
-			//
-			// Ugly: we need to find out the type of `m', and depending
-			// on this, tell whether we accept or not
-			//
-			if (m is MethodBase){
-				MethodBase mb = (MethodBase) m;
-				MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
-
-				if (ma == MethodAttributes.Public)
-					return true;
-
-				if (ma == MethodAttributes.PrivateScope)
-					return false;
-
-				if (ma == MethodAttributes.Private)
-					return private_ok ||
-						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
-						IsNestedChildOf (invocation_type, m.DeclaringType);
-
-				if (TypeManager.IsThisOrFriendAssembly (invocation_assembly, mb.DeclaringType.Assembly)) {
-					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamORAssem)
-						return true;
-				} else {
-					if (ma == MethodAttributes.Assembly || ma == MethodAttributes.FamANDAssem)
-						return false;
-				}
-
-				// Family, FamORAssem or FamANDAssem
-				return CheckValidFamilyAccess (mb.IsStatic, m);
-			}
-			
-			if (m is FieldInfo){
-				FieldInfo fi = (FieldInfo) m;
-				FieldAttributes fa = fi.Attributes & FieldAttributes.FieldAccessMask;
-
-				if (fa == FieldAttributes.Public)
-					return true;
-
-				if (fa == FieldAttributes.PrivateScope)
-					return false;
-
-				if (fa == FieldAttributes.Private)
-					return private_ok ||
-						IsPrivateAccessible (invocation_type, m.DeclaringType) ||
-						IsNestedChildOf (invocation_type, m.DeclaringType);
-
-				if (TypeManager.IsThisOrFriendAssembly (invocation_assembly, fi.DeclaringType.Assembly)) {
-					if ((fa == FieldAttributes.Assembly) ||
-					    (fa == FieldAttributes.FamORAssem))
-						return true;
-				} else {
-					if ((fa == FieldAttributes.Assembly) ||
-					    (fa == FieldAttributes.FamANDAssem))
-						return false;
-				}
-
-				// Family, FamORAssem or FamANDAssem
-				return CheckValidFamilyAccess (fi.IsStatic, m);
-			}
-
-			//
-			// EventInfos and PropertyInfos, return true because they lack
-			// permission information, so we need to check later on the methods.
-			//
-			return true;
-		}
-	}
-
-	static Closure closure;
-	static MemberFilter FilterWithClosure_delegate;
 
 	//
 	// Looks up a member called `name' in the `queried_type'.  This lookup
@@ -2969,485 +1035,31 @@ namespace Mono.CSharp {
 	// Returns an array of a single element for everything but Methods/Constructors
 	// that might return multiple matches.
 	//
-	public static MemberInfo [] MemberLookup (Type invocation_type, Type qualifier_type,
-						  Type queried_type, MemberTypes mt,
-						  BindingFlags original_bf, string name, IList<MemberInfo> almost_match)
+	public static IList<MemberSpec> MemberLookup (TypeSpec invocation_type, TypeSpec qualifier_type,
+						  TypeSpec queried_type, MemberKind mt,
+						  BindingRestriction opt, string name, int arity, IList<MemberSpec> almost_match)
 	{
 		Timer.StartTimer (TimerType.MemberLookup);
 
-		MemberInfo[] retval = RealMemberLookup (invocation_type, qualifier_type,
-							queried_type, mt, original_bf, name, almost_match);
+		var retval = RealMemberLookup (invocation_type, qualifier_type,
+							queried_type, mt, opt, name, arity, almost_match);
 
 		Timer.StopTimer (TimerType.MemberLookup);
 
 		return retval;
 	}
 
-	static MemberInfo [] RealMemberLookup (Type invocation_type, Type qualifier_type,
-					       Type queried_type, MemberTypes mt,
-					       BindingFlags original_bf, string name, IList<MemberInfo> almost_match)
+	static IList<MemberSpec> RealMemberLookup (TypeSpec invocation_type, TypeSpec qualifier_type,
+						   TypeSpec queried_type, MemberKind mt,
+						   BindingRestriction bf, string name, int arity, IList<MemberSpec> almost_match)
 	{
-		BindingFlags bf = original_bf;
-		
-		List<MethodBase> method_list = null;
-		Type current_type = queried_type;
-		bool searching = (original_bf & BindingFlags.DeclaredOnly) == 0;
-		bool skip_iface_check = true, used_cache = false;
-		bool always_ok_flag = invocation_type != null && IsNestedChildOf (invocation_type, queried_type);
-
-		closure.invocation_type = invocation_type;
-		closure.invocation_assembly = invocation_type != null ? invocation_type.Assembly : null;
-		closure.qualifier_type = qualifier_type;
-		closure.almost_match = almost_match;
-
-		// This is from the first time we find a method
-		// in most cases, we do not actually find a method in the base class
-		// so we can just ignore it, and save the arraylist allocation
-		MemberInfo [] first_members_list = null;
-		bool use_first_members_list = false;
-		
-		do {
-			MemberInfo [] list;
-
-			//
-			// `NonPublic' is lame, because it includes both protected and
-			// private methods, so we need to control this behavior by
-			// explicitly tracking if a private method is ok or not.
-			//
-			// The possible cases are:
-			//    public, private and protected (internal does not come into the
-			//    equation)
-			//
-			if ((invocation_type != null) &&
-			    ((invocation_type == current_type) ||
-			     IsNestedChildOf (invocation_type, current_type)) ||
-			    always_ok_flag)
-				bf = original_bf | BindingFlags.NonPublic;
-			else
-				bf = original_bf;
-
-			closure.private_ok = (original_bf & BindingFlags.NonPublic) != 0;
-
-			Timer.StopTimer (TimerType.MemberLookup);
-
-			list = MemberLookup_FindMembers (current_type, mt, bf, name, out used_cache);
-
-			Timer.StartTimer (TimerType.MemberLookup);
-
-			//
-			// When queried for an interface type, the cache will automatically check all
-			// inherited members, so we don't need to do this here.  However, this only
-			// works if we already used the cache in the first iteration of this loop.
-			//
-			// If we used the cache in any further iteration, we can still terminate the
-			// loop since the cache always looks in all base classes.
-			//
-
-			if (used_cache)
-				searching = false;
-			else
-				skip_iface_check = false;
-
-			if (current_type == TypeManager.object_type)
-				searching = false;
-			else {
-				current_type = current_type.BaseType;
-				
-				//
-				// This happens with interfaces, they have a null
-				// basetype.  Look members up in the Object class.
-				//
-				if (current_type == null) {
-					current_type = TypeManager.object_type;
-					searching = true;
-				}
-			}
-			
-			if (list.Length == 0)
-				continue;
-
-			//
-			// Events and types are returned by both `static' and `instance'
-			// searches, which means that our above FindMembers will
-			// return two copies of the same.
-			//
-			if (list.Length == 1 && !(list [0] is MethodBase)){
-				return list;
-			}
-
-			//
-			// Multiple properties: we query those just to find out the indexer
-			// name
-			//
-			if (list [0] is PropertyInfo)
-				return list;
-
-			//
-			// We found an event: the cache lookup returns both the event and
-			// its private field.
-			//
-			if (list [0] is EventInfo) {
-				if ((list.Length == 2) && (list [1] is FieldInfo))
-					return new MemberInfo [] { list [0] };
-
-				return list;
-			}
-
-			//
-			// We found methods, turn the search into "method scan"
-			// mode.
-			//
-
-			if (first_members_list != null) {
-				if (use_first_members_list) {
-					method_list = CopyNewMethods (method_list, first_members_list);
-					use_first_members_list = false;
-				}
-				
-				method_list = CopyNewMethods (method_list, list);
-			} else {
-				first_members_list = list;
-				use_first_members_list = true;
-				mt &= (MemberTypes.Method | MemberTypes.Constructor);
-			}
-		} while (searching);
-
-		if (use_first_members_list)
-			return first_members_list;
-
-		if (method_list != null && method_list.Count > 0) {
-			return method_list.ToArray ();
-		}
-		//
-		// This happens if we already used the cache in the first iteration, in this case
-		// the cache already looked in all interfaces.
-		//
-		if (skip_iface_check)
-			return null;
-
-		//
-		// Interfaces do not list members they inherit, so we have to
-		// scan those.
-		// 
-		if (!queried_type.IsInterface)
-			return null;
-
-		if (queried_type.IsArray)
-			queried_type = TypeManager.array_type;
-		
-		Type [] ifaces = GetInterfaces (queried_type);
-		if (ifaces == null)
-			return null;
-		
-		foreach (Type itype in ifaces){
-			MemberInfo [] x;
-
-			x = MemberLookup (null, null, itype, mt, bf, name, null);
-			if (x != null)
-				return x;
-		}
-					
-		return null;
-	}
-
-	public const BindingFlags AllMembers = BindingFlags.Public | BindingFlags.NonPublic |
-									BindingFlags.Static | BindingFlags.Instance | 
-									BindingFlags.DeclaredOnly;
-
-	// Currently is designed to work with external types only
-	public static PropertyInfo GetPropertyFromAccessor (MethodBase mb)
-	{
-		if (!mb.IsSpecialName)
-			return null;
-
-		string name = mb.Name;
-		if (name.Length < 5)
-			return null;
-
-		if (name [3] != '_')
-			return null;
-
-		if (name.StartsWith ("get") || name.StartsWith ("set")) {
-			MemberInfo[] pi = mb.DeclaringType.FindMembers (MemberTypes.Property, AllMembers,
-				Type.FilterName, name.Substring (4));
-
-			if (pi == null)
-				return null;
-
-			// This can happen when property is indexer (it can have same name but different parameters)
-			foreach (PropertyInfo p in pi) {
-				foreach (MethodInfo p_mi in p.GetAccessors (true)) {
-					if (p_mi == mb || TypeManager.GetParameterData (p_mi).Equals (TypeManager.GetParameterData (mb)))
-						return p;
-				}
-			}
+		MemberFilter filter = new MemberFilter (name, arity, mt, null, null);
+		if ((bf & BindingRestriction.AccessibleOnly) != 0) {
+			filter.InvocationType = invocation_type ?? InternalType.FakeInternalType;
 		}
 
-		return null;
-	}
-
-	// Currently is designed to work with external types only
-	public static MemberInfo GetEventFromAccessor (MethodBase mb)
-	{
-		if (!mb.IsSpecialName)
-			return null;
-
-		string name = mb.Name;
-		if (name.Length < 5)
-			return null;
-
-		if (name.StartsWith ("add_"))
-			return mb.DeclaringType.GetEvent (name.Substring (4), AllMembers);
-
-		if (name.StartsWith ("remove_"))
-			return mb.DeclaringType.GetEvent (name.Substring (7), AllMembers);
-
-		return null;
-	}
-
-	// Tests whether external method is really special
-	public static bool IsSpecialMethod (MethodBase mb)
-	{
-		if (!mb.IsSpecialName)
-			return false;
-
-		IMethodData md = TypeManager.GetMethod (mb);
-		if (md != null) 
-			return (md is AbstractPropertyEventMethod || md is Operator);
-
-		PropertyInfo pi = GetPropertyFromAccessor (mb);
-		if (pi != null)
-			return IsValidProperty (pi);
-				
-		if (GetEventFromAccessor (mb) != null)
-			return true;
-
-		string name = mb.Name;
-		if (name.StartsWith ("op_"))
-			return Operator.GetName (name) != null;
-
-		return false;
-	}
-
-	// Tests whether imported property is valid C# property.
-	// TODO: It seems to me that we should do a lot of sanity tests before
-	// we accept property as C# property
-	static bool IsValidProperty (PropertyInfo pi)
-	{
-		MethodInfo get_method = pi.GetGetMethod (true);
-		MethodInfo set_method = pi.GetSetMethod (true);
-		int g_count = 0;
-		int s_count = 0;
-		if (get_method != null && set_method != null) {
-			g_count = get_method.GetParameters ().Length;
-			s_count = set_method.GetParameters ().Length;
-			if (g_count + 1 != s_count)
-				return false;
-		} else if (get_method != null) {
-			g_count = get_method.GetParameters ().Length;
-		} else if (set_method != null) {
-			s_count = set_method.GetParameters ().Length;
-		}
-
-		//
-		// DefaultMemberName and indexer name has to match to identify valid C# indexer
-		//
-		PredefinedAttribute pa = PredefinedAttributes.Get.DefaultMember;
-		if ((s_count > 1 || g_count > 0) && pa.IsDefined) {
-			object[] o = pi.DeclaringType.GetCustomAttributes (pa.Type, false);
-			if (o.Length == 0)
-				return false;
-			
-			DefaultMemberAttribute dma = (DefaultMemberAttribute) o [0];
-			if (dma.MemberName != pi.Name)
-				return false;
-			if (get_method != null && "get_" + dma.MemberName != get_method.Name)
-				return false;
-			if (set_method != null && "set_" + dma.MemberName != set_method.Name)
-				return false;
-		}
-
-		return true;
-	}
-
-#endregion
-	
+		return MemberCache.FindMembers (queried_type, filter, bf);
+	}	
 }
 
-	class InternalType
-	{
-		public static readonly Type AnonymousMethod = typeof (AnonymousMethodBody);
-		public static readonly Type Arglist = typeof (ArglistAccess);
-		public static readonly Type Dynamic = new DynamicType ();
-		public static readonly Type MethodGroup = typeof (MethodGroupExpr);
-	}
-
-/// <summary>
-///   There is exactly one instance of this class per type.
-/// </summary>
-sealed class TypeHandle : IMemberContainer {
-	public readonly IMemberContainer BaseType;
-
-	readonly int id = ++next_id;
-	static int next_id = 0;
-
-	static TypeHandle ()
-	{
-		Reset ();
-	}
-
-	/// <summary>
-	///   Lookup a TypeHandle instance for the given type.  If the type doesn't have
-	///   a TypeHandle yet, a new instance of it is created.  This static method
-	///   ensures that we'll only have one TypeHandle instance per type.
-	/// </summary>
-	private static TypeHandle GetTypeHandle (Type t)
-	{
-		TypeHandle handle;
-		if (type_hash.TryGetValue (t, out handle))
-			return handle;
-
-		handle = new TypeHandle (t);
-		type_hash.Add (t, handle);
-		return handle;
-	}
-
-	public static MemberCache GetMemberCache (Type t)
-	{
-		return GetTypeHandle (t).MemberCache;
-	}
-	
-	public static void CleanUp ()
-	{
-		type_hash = null;
-	}
-
-	public static void Reset ()
-	{
-		type_hash = new Dictionary<Type, TypeHandle> (ReferenceEquality<Type>.Default);
-	}
-
-	/// <summary>
-	///   Returns the TypeHandle for TypeManager.object_type.
-	/// </summary>
-	public static IMemberContainer ObjectType {
-		get {
-			if (object_type != null)
-				return object_type;
-
-			object_type = GetTypeHandle (TypeManager.object_type);
-
-			return object_type;
-		}
-	}
-
-	/// <summary>
-	///   Returns the TypeHandle for TypeManager.array_type.
-	/// </summary>
-	public static TypeHandle ArrayType {
-		get {
-			if (array_type != null)
-				return array_type;
-
-			array_type = GetTypeHandle (TypeManager.array_type);
-
-			return array_type;
-		}
-	}
-
-	static Dictionary<Type, TypeHandle> type_hash;
-
-	private static TypeHandle object_type;
-	private static TypeHandle array_type;
-
-	private Type type;
-	private string full_name;
-	private bool is_interface;
-	private MemberCache member_cache;
-	private MemberCache base_cache;
-
-	private TypeHandle (Type type)
-	{
-		this.type = type;
-		full_name = type.FullName != null ? type.FullName : type.Name;
-		if (type.BaseType != null) {
-			base_cache = TypeManager.LookupMemberCache (type.BaseType);
-			BaseType = base_cache.Container;
-		} else if (type.IsInterface)
-			base_cache = TypeManager.LookupBaseInterfacesCache (type);
-		this.is_interface = type.IsInterface || TypeManager.IsGenericParameter (type);
-		this.member_cache = new MemberCache (this);
-	}
-
-	// IMemberContainer methods
-
-	public string Name {
-		get {
-			return full_name;
-		}
-	}
-
-	public Type Type {
-		get {
-			return type;
-		}
-	}
-
-	public MemberCache BaseCache {
-		get {
-			return base_cache;
-		}
-	}
-
-	public bool IsInterface {
-		get {
-			return is_interface;
-		}
-	}
-
-	public MemberList GetMembers (MemberTypes mt, BindingFlags bf)
-	{
-		MemberInfo [] members;
-
-		if (type is GenericTypeParameterBuilder)
-			return MemberList.Empty;
-
-#if MS_COMPATIBLE
-		type = TypeManager.DropGenericTypeArguments (type);
-#endif
-		if (mt == MemberTypes.Event)
-			members = type.GetEvents (bf | BindingFlags.DeclaredOnly);
-		else
-			members = type.FindMembers (mt, bf | BindingFlags.DeclaredOnly,
-										null, null);
-
-		if (members.Length == 0)
-			return MemberList.Empty;
-
-		Array.Reverse (members);
-		return new MemberList (members);
-	}
-
-	// IMemberFinder methods
-
-	public MemberList FindMembers (MemberTypes mt, BindingFlags bf, string name,
-				       MemberFilter filter, object criteria)
-	{
-		return new MemberList (member_cache.FindMembers (mt, bf, name, filter, criteria));
-	}
-
-	public MemberCache MemberCache {
-		get {
-			return member_cache;
-		}
-	}
-
-	public override string ToString ()
-	{
-		if (BaseType != null)
-			return "TypeHandle (" + id + "," + Name + " : " + BaseType + ")";
-		else
-			return "TypeHandle (" + id + "," + Name + ")";
-	}
-}
 }

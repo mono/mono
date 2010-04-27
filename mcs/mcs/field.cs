@@ -51,7 +51,7 @@ namespace Mono.CSharp
 			}
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.FieldOffset) {
 				status |= Status.HAS_OFFSET;
@@ -91,26 +91,36 @@ namespace Mono.CSharp
 				return;
 			}
 
-			FieldBuilder.SetCustomAttribute (ctor, cdata);
+			FieldBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
  		protected override bool CheckBase ()
 		{
  			if (!base.CheckBase ())
  				return false;
- 
- 			MemberInfo conflict_symbol = Parent.PartialContainer.FindBaseMemberWithSameName (Name, false);
+
+			MemberSpec candidate;
+			var conflict_symbol = MemberCache.FindBaseMember (this, out candidate);
+			if (conflict_symbol == null)
+				conflict_symbol = candidate;
+
  			if (conflict_symbol == null) {
  				if ((ModFlags & Modifiers.NEW) != 0) {
- 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required", GetSignatureForError ());
+ 					Report.Warning (109, 4, Location, "The member `{0}' does not hide an inherited member. The new keyword is not required",
+						GetSignatureForError ());
  				}
- 				return true;
- 			}
- 
- 			if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.BACKING_FIELD)) == 0) {
-				Report.SymbolRelatedToPreviousError (conflict_symbol);
-				Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
-					GetSignatureForError (), TypeManager.GetFullNameSignature (conflict_symbol));
+ 			} else {
+				if ((ModFlags & (Modifiers.NEW | Modifiers.OVERRIDE | Modifiers.BACKING_FIELD)) == 0) {
+					Report.SymbolRelatedToPreviousError (conflict_symbol);
+					Report.Warning (108, 2, Location, "`{0}' hides inherited member `{1}'. Use the new keyword if hiding was intended",
+						GetSignatureForError (), conflict_symbol.GetSignatureForError ());
+				}
+
+				if (conflict_symbol.IsAbstract) {
+					Report.SymbolRelatedToPreviousError (conflict_symbol);
+					Report.Error (533, Location, "`{0}' hides inherited abstract member `{1}'",
+						GetSignatureForError (), conflict_symbol.GetSignatureForError ());
+				}
 			}
  
  			return true;
@@ -125,12 +135,11 @@ namespace Mono.CSharp
 		{
 			base.DoMemberTypeDependentChecks ();
 
-			if (TypeManager.IsGenericParameter (MemberType))
+			if (MemberType.IsGenericParameter)
 				return;
 
-			if (MemberType.IsSealed && MemberType.IsAbstract) {
+			if (MemberType.IsStatic)
 				Error_VariableOfStaticClass (Location, GetSignatureForError (), MemberType, Report);
-			}
 
 			CheckBase ();
 			IsTypePermitted ();
@@ -145,13 +154,13 @@ namespace Mono.CSharp
 
 		public override void Emit ()
 		{
-			if (TypeManager.IsDynamicType (member_type)) {
+			if (member_type == InternalType.Dynamic) {
 				PredefinedAttributes.Get.Dynamic.EmitAttribute (FieldBuilder);
 			} else {
 				var trans_flags = TypeManager.HasDynamicTypeUsed (member_type);
 				if (trans_flags != null) {
 					var pa = PredefinedAttributes.Get.DynamicTransform;
-					if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.bool_type.MakeArrayType ())) {
+					if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type, 1))) {
 						FieldBuilder.SetCustomAttribute (new CustomAttributeBuilder (pa.Constructor, new object[] { trans_flags }));
 					}
 				}
@@ -171,7 +180,7 @@ namespace Mono.CSharp
 			base.Emit ();
 		}
 
-		public static void Error_VariableOfStaticClass (Location loc, string variable_name, Type static_class, Report Report)
+		public static void Error_VariableOfStaticClass (Location loc, string variable_name, TypeSpec static_class, Report Report)
 		{
 			Report.SymbolRelatedToPreviousError (static_class);
 			Report.Error (723, loc, "`{0}': cannot declare variables of static types",
@@ -186,15 +195,6 @@ namespace Mono.CSharp
 				if (value != null) {
 					this.initializer = value;
 				}
-			}
-		}
-
-		protected virtual bool IsFieldClsCompliant {
-			get {
-				if (FieldBuilder == null)
-					return true;
-
-				return AttributeTester.IsClsCompliant (FieldBuilder.FieldType);
 			}
 		}
 
@@ -214,56 +214,90 @@ namespace Mono.CSharp
 			if (!base.VerifyClsCompliance ())
 				return false;
 
-			if (!IsFieldClsCompliant) {
+			if (!MemberType.IsCLSCompliant () || this is FixedField) {
 				Report.Warning (3003, 1, Location, "Type of `{0}' is not CLS-compliant",
 					GetSignatureForError ());
 			}
 			return true;
-		}
-
-		public void SetAssigned ()
-		{
-			caching_flags |= Flags.IsAssigned;
 		}
 	}
 
 	//
 	// Field specification
 	//
-	public class FieldSpec : MemberSpec
+	public class FieldSpec : MemberSpec, IInterfaceMemberSpec
 	{
-		FieldInfo info;
+		FieldInfo metaInfo;
+		TypeSpec memberType;
 
-		public FieldSpec (IMemberDefinition definition, FieldInfo info, Modifiers modifiers)
-			: base (MemberKind.Field, definition, info.Name, modifiers)
+		public FieldSpec (TypeSpec declaringType, IMemberDefinition definition, TypeSpec memberType, FieldInfo info, Modifiers modifiers)
+			: base (MemberKind.Field, declaringType, definition, modifiers)
 		{
-			this.info = info;
+			this.metaInfo = info;
+			this.memberType = memberType;
 		}
+
+#region Properties
 
 		public bool IsReadOnly {
-			get { return (Modifiers & Modifiers.READONLY) != 0; }
-		}
-
-		public FieldInfo MetaInfo {
 			get {
-				return info;
-			}
-			set {
-				info = value;
+				return (Modifiers & Modifiers.READONLY) != 0;
 			}
 		}
 
-		public override Type DeclaringType {
+		public TypeSpec MemberType {
 			get {
-				return MetaInfo.DeclaringType;
+				return memberType;
 			}
 		}
 
-		// Obsolete
-		public Type FieldType {
-			get {
-				 return MetaInfo.FieldType;
+#endregion
+
+		public FieldInfo GetMetaInfo ()
+		{
+			if ((state & StateFlags.PendingMetaInflate) != 0) {
+				var decl_meta = DeclaringType.GetMetaInfo ();
+				if (DeclaringType.IsTypeBuilder) {
+					metaInfo = TypeBuilder.GetField (decl_meta, metaInfo);
+				} else {
+					var orig_token = metaInfo.MetadataToken;
+					metaInfo = decl_meta.GetField (Name);
+					if (metaInfo.MetadataToken != orig_token)
+						throw new NotImplementedException ("Resolved to wrong meta token");
+
+					// What a stupid API, does not work because field handle is imported
+					// metaInfo = FieldInfo.GetFieldFromHandle (metaInfo.FieldHandle, DeclaringType.MetaInfo.TypeHandle);
+				}
+
+				state &= ~StateFlags.PendingMetaInflate;
 			}
+
+			return metaInfo;
+		}
+
+		public override MemberSpec InflateMember (TypeParameterInflator inflator)
+		{
+			var fs = (FieldSpec) base.InflateMember (inflator);
+			fs.memberType = inflator.Inflate (memberType);
+			return fs;
+		}
+
+		public FieldSpec Mutate (TypeParameterMutator mutator)
+		{
+			var decl = DeclaringType;
+			if (DeclaringType.IsGenericOrParentIsGeneric)
+				decl = mutator.Mutate (decl);
+
+			if (decl == DeclaringType)
+				return this;
+
+			var fs = (FieldSpec) MemberwiseClone ();
+			fs.declaringType = decl;
+			fs.state |= StateFlags.PendingMetaInflate;
+
+			// Gets back FieldInfo in case of metaInfo was inflated
+			fs.metaInfo = MemberCache.GetMember (DeclaringType.GetDefinition (), this).metaInfo;
+			return fs;
 		}
 	}
 
@@ -313,17 +347,16 @@ namespace Mono.CSharp
 			// Create nested fixed buffer container
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
 			fixed_buffer_type = Parent.TypeBuilder.DefineNestedType (name, Parent.Module.DefaultCharSetType |
-				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type);
-			
-			var element = fixed_buffer_type.DefineField (FixedElementName, MemberType, FieldAttributes.Public);
+				TypeAttributes.NestedPublic | TypeAttributes.Sealed | TypeAttributes.BeforeFieldInit, TypeManager.value_type.GetMetaInfo ());
+
+			fixed_buffer_type.DefineField (FixedElementName, MemberType.GetMetaInfo (), FieldAttributes.Public);
 			RootContext.RegisterCompilerGeneratedType (fixed_buffer_type);
 			
 			FieldBuilder = Parent.TypeBuilder.DefineField (Name, fixed_buffer_type, ModifiersExtensions.FieldAttr (ModFlags));
-			spec = new FixedFieldSpec (this, FieldBuilder, element, ModFlags);
+			var element_spec = new FieldSpec (null, this, MemberType, FieldBuilder, ModFlags);
+			spec = new FixedFieldSpec (Parent.Definition, this, FieldBuilder, element_spec, ModFlags);
 
-			Parent.MemberCache.AddMember (FieldBuilder, spec);
-			TypeManager.RegisterFieldBase (FieldBuilder, this);
-
+			Parent.MemberCache.AddMember (spec);
 			return true;
 		}
 
@@ -381,8 +414,10 @@ namespace Mono.CSharp
 					return;
 
 			// TODO: It's not cleared
-			if (fi == null)
-				fi = new FieldInfo[] { pa.Type.GetField ("Size") };
+			if (fi == null) {
+				var field = (FieldSpec) MemberCache.FindMember (pa.Type, MemberFilter.Field ("Size", null), BindingRestriction.DeclaredOnly);
+				fi = new FieldInfo[] { field.GetMetaInfo () };
+			}
 
 			object[] fi_val = new object[] { buffer_size };
 			cab = new CustomAttributeBuilder (pa.Constructor,
@@ -400,14 +435,8 @@ namespace Mono.CSharp
 				!pa.ResolveConstructor (Location, TypeManager.type_type, TypeManager.int32_type))
 				return;
 
-			cab = new CustomAttributeBuilder (pa.Constructor, new object[] { MemberType, buffer_size });
+			cab = new CustomAttributeBuilder (pa.Constructor, new object[] { MemberType.GetMetaInfo (), buffer_size });
 			FieldBuilder.SetCustomAttribute (cab);
-		}
-
-		protected override bool IsFieldClsCompliant {
-			get {
-				return false;
-			}
 		}
 
 		public void SetCharSet (TypeAttributes ta)
@@ -434,23 +463,26 @@ namespace Mono.CSharp
 
 	class FixedFieldSpec : FieldSpec
 	{
-		readonly FieldInfo element;
+		readonly FieldSpec element;
 
-		public FixedFieldSpec (IMemberDefinition definition, FieldInfo info, FieldInfo element, Modifiers modifiers)
-			 : base (definition, info, modifiers)
+		public FixedFieldSpec (TypeSpec declaringType, IMemberDefinition definition, FieldInfo info, FieldSpec element, Modifiers modifiers)
+			: base (declaringType, definition, element.MemberType, info, modifiers)
 		{
 			this.element = element;
+
+			// It's never CLS-Compliant
+			state &= ~StateFlags.CLSCompliant_Undetected;
 		}
 
-		public FieldInfo Element {
+		public FieldSpec Element {
 			get {
 				return element;
 			}
 		}
 
-		public Type ElementType {
+		public TypeSpec ElementType {
 			get {
-				return element.FieldType;
+				return MemberType;
 			}
 		}
 	}
@@ -492,36 +524,9 @@ namespace Mono.CSharp
 				MemberType == TypeManager.intptr_type || MemberType == TypeManager.uintptr_type)
 				return true;
 
-			if (TypeManager.IsEnumType (MemberType))
+			if (MemberType.IsEnum)
 				return true;
 
-			return false;
-		}
-
-		bool CheckStructLayout (Type type, bool isStatic)
-		{
-			if (TypeManager.IsBuiltinType (type))
-				return true;
-
-			if (isStatic) {
-				if (!TypeManager.IsValueType (type) || TypeManager.IsEqual (type, Parent.TypeBuilder))
-					return true;
-			}
-
-			if (!TypeManager.IsEqual (TypeManager.DropGenericTypeArguments (type), Parent.TypeBuilder)) {
-				if (!TypeManager.IsGenericType (type))
-					return true;
-
-				foreach (Type t in TypeManager.GetTypeArguments (type)) {
-					if (!CheckStructLayout (t, false))
-						return false;
-				}
-				return true;
-			}
-			
-			Report.Error (523, Location,
-				"Struct member `{0}' of type `{1}' causes a cycle in the struct layout",
-				GetSignatureForError (), TypeManager.CSharpName (MemberType));
 			return false;
 		}
 
@@ -538,20 +543,18 @@ namespace Mono.CSharp
 							"System.Runtime.CompilerServices", "IsVolatile", MemberKind.Class, true);
 
 					if (TypeManager.isvolatile_type != null)
-						required_modifier = new Type [] { TypeManager.isvolatile_type };
+						required_modifier = new Type[] { TypeManager.isvolatile_type.GetMetaInfo () };
 				}
 
 				FieldBuilder = Parent.TypeBuilder.DefineField (
-					Name, MemberType, required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
+					Name, member_type.GetMetaInfo (), required_modifier, null, ModifiersExtensions.FieldAttr (ModFlags));
 
-				spec = new FieldSpec (this, FieldBuilder, ModFlags);
+				spec = new FieldSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags);
 
 				// Don't cache inaccessible fields
 				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
-					Parent.MemberCache.AddMember (FieldBuilder, spec);
+					Parent.MemberCache.AddMember (spec);
 				}
-
-				TypeManager.RegisterFieldBase (FieldBuilder, this);
 			}
 			catch (ArgumentException) {
 				Report.RuntimeMissingSupport (Location, "`void' or `void*' field type");
@@ -561,9 +564,6 @@ namespace Mono.CSharp
 			if (initializer != null) {
 				((TypeContainer) Parent).RegisterFieldForInitialization (this,
 					new FieldInitializer (this, initializer, this));
-			} else {
-				if (Parent.PartialContainer.Kind == MemberKind.Struct)
-					CheckStructLayout (member_type, (ModFlags & Modifiers.STATIC) != 0);
 			}
 
 			return true;
@@ -571,6 +571,9 @@ namespace Mono.CSharp
 
 		protected override void DoMemberTypeDependentChecks ()
 		{
+			if ((ModFlags & Modifiers.BACKING_FIELD) != 0)
+				return;
+
 			base.DoMemberTypeDependentChecks ();
 
 			if ((ModFlags & Modifiers.VOLATILE) != 0) {

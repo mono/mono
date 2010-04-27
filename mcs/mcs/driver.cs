@@ -1650,6 +1650,8 @@ namespace Mono.CSharp
 		{
 			// TODO: Should be passed to parser as an argument
 			RootContext.ToplevelTypes = new ModuleCompiled (ctx, RootContext.Unsafe);
+			var ctypes = TypeManager.InitCoreTypes ();
+			TypeManager.InitExpressionTypes ();
 
 			Parse ();
 			if (Report.Errors > 0)
@@ -1702,6 +1704,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("Loading references");
 
+			Import.Initialize ();
 			LoadReferences ();
 			
 			if (modules.Count > 0) {
@@ -1712,7 +1715,7 @@ namespace Mono.CSharp
 			if (timestamps)
 				ShowTime ("References loaded");
 			
-			if (!TypeManager.InitCoreTypes (ctx) || Report.Errors > 0)
+			if (!TypeManager.InitCoreTypes (ctx, ctypes))
 				return false;
 
 			TypeManager.InitOptionalCoreTypes (ctx);
@@ -1731,8 +1734,7 @@ namespace Mono.CSharp
 				return false;
 			if (timestamps)
 				ShowTime ("Populate tree");
-			if (!RootContext.StdLib)
-				RootContext.BootCorlib_PopulateCoreTypes ();
+
 			RootContext.PopulateTypes ();
 
 			if (Report.Errors == 0 &&
@@ -1755,7 +1757,6 @@ namespace Mono.CSharp
 			if (RootContext.VerifyClsCompliance) {
 				if (CodeGen.Assembly.IsClsCompliant) {
 					AttributeTester.VerifyModulesClsCompliance (ctx);
-					TypeManager.LoadAllImportedTypes ();
 				}
 			}
 			if (Report.Errors > 0)
@@ -2024,19 +2025,28 @@ namespace Mono.CSharp
 		{
 			Driver.Reset ();
 			CSharpParser.yacc_verbose_flag = 0;
-			RootContext.Reset (full_flag);
 			Location.Reset ();
+
+			if (!full_flag)
+				return;
+
+			RootContext.Reset (full_flag);
 			TypeManager.Reset ();
 			PredefinedAttributes.Reset ();
-			TypeHandle.Reset ();
+			ArrayContainer.Reset ();
+			ReferenceContainer.Reset ();
+			PointerContainer.Reset ();
+			Parameter.Reset ();
 
-			if (full_flag)
-				GlobalRootNamespace.Reset ();
+			GlobalRootNamespace.Reset ();
+			Unary.Reset ();
+			Binary.Reset ();
+			ConstantFold.Reset ();
+			CastFromDecimal.Reset ();
 			
 			NamespaceEntry.Reset ();
 			CodeGen.Reset ();
 			Attribute.Reset ();
-			AttributeTester.Reset ();
 			AnonymousTypeClass.Reset ();
 			AnonymousMethodBody.Reset ();
 			AnonymousMethodStorey.Reset ();

@@ -179,13 +179,13 @@ namespace Mono.CSharp {
 	public class LocalTemporary : Expression, IMemoryLocation, IAssignMethod {
 		LocalBuilder builder;
 
-		public LocalTemporary (Type t)
+		public LocalTemporary (TypeSpec t)
 		{
 			type = t;
 			eclass = ExprClass.Value;
 		}
 
-		public LocalTemporary (LocalBuilder b, Type t)
+		public LocalTemporary (LocalBuilder b, TypeSpec t)
 			: this (t)
 		{
 			builder = b;
@@ -216,12 +216,10 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
 			if (builder == null)
 				throw new InternalErrorException ("Emit without Store, or after Release");
 
-			ig.Emit (OpCodes.Ldloc, builder);
+			ec.Emit (OpCodes.Ldloc, builder);
 		}
 
 		#region IAssignMethod Members
@@ -255,11 +253,10 @@ namespace Mono.CSharp {
 
 		public void Store (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
 			if (builder == null)
 				builder = ec.GetTemporaryLocal (type);
 
-			ig.Emit (OpCodes.Stloc, builder);
+			ec.Emit (OpCodes.Stloc, builder);
 		}
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
@@ -267,22 +264,15 @@ namespace Mono.CSharp {
 			if (builder == null)
 				builder = ec.GetTemporaryLocal (type);
 
-			ILGenerator ig = ec.ig;
-
 			if (builder.LocalType.IsByRef) {
 				//
 				// if is_address, than this is just the address anyways,
 				// so we just return this.
 				//
-				ig.Emit (OpCodes.Ldloc, builder);
+				ec.Emit (OpCodes.Ldloc, builder);
 			} else {
-				ig.Emit (OpCodes.Ldloca, builder);
+				ec.Emit (OpCodes.Ldloca, builder);
 			}
-		}
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			type = storey.MutateType (type);
 		}
 	}
 
@@ -329,8 +319,8 @@ namespace Mono.CSharp {
 			if (target == null || !ok)
 				return null;
 
-			Type target_type = target.Type;
-			Type source_type = source.Type;
+			TypeSpec target_type = target.Type;
+			TypeSpec source_type = source.Type;
 
 			eclass = ExprClass.Value;
 			type = target_type;
@@ -378,14 +368,6 @@ namespace Mono.CSharp {
 			return System.Linq.Expressions.Expression.Assign (target_object, source_object);
 		}
 #endif
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			source.MutateHoistedGenericType (storey);
-			target.MutateHoistedGenericType (storey);
-			type = storey.MutateType (type);			
-		}
-
 		protected virtual Expression ResolveConversions (ResolveContext ec)
 		{
 			source = Convert.ImplicitConversionRequired (ec, source, target.Type, loc);
@@ -693,7 +675,7 @@ namespace Mono.CSharp {
 
 		protected override Expression ResolveConversions (ResolveContext ec)
 		{
-			Type target_type = target.Type;
+			TypeSpec target_type = target.Type;
 
 			//
 			// 1. the return type is implicitly convertible to the type of target
@@ -721,7 +703,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (TypeManager.IsDynamicType (source.Type)) {
+			if (source.Type == InternalType.Dynamic) {
 				Arguments arg = new Arguments (1);
 				arg.Add (new Argument (source));
 				return new SimpleAssign (target, new DynamicConversion (target_type, CSharpBinderFlags.ConvertExplicit, arg, loc), loc).Resolve (ec);

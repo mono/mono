@@ -17,7 +17,7 @@ namespace Mono.CSharp {
 
 	public class Const : FieldBase
 	{
-		bool define_called;
+		Constant value;
 
 		public const Modifiers AllowedModifiers =
 			Modifiers.NEW |
@@ -37,34 +37,16 @@ namespace Mono.CSharp {
 			ModFlags |= Modifiers.STATIC;
 		}
 
-		protected override bool CheckBase ()
-		{
-			// Constant.Define can be called when the parent type hasn't yet been populated
-			// and it's base types need not have been populated.  So, we defer this check
-			// to the second time Define () is called on this member.
-			if (Parent.PartialContainer.BaseCache == null)
-				return true;
-			return base.CheckBase ();
-		}
-
 		/// <summary>
 		///   Defines the constant in the @parent
 		/// </summary>
 		public override bool Define ()
 		{
-			// Because constant define can be called from other class
-			if (define_called) {
-				CheckBase ();
-				return FieldBuilder != null;
-			}
-
-			define_called = true;
-
 			if (!base.Define ())
 				return false;
 
-			Type ttype = MemberType;
-			if (!IsConstantTypeValid (ttype)) {
+			TypeSpec ttype = MemberType;
+			if (!ttype.IsConstantCompatible) {
 				Error_InvalidConstantType (ttype, Location, Report);
 			}
 
@@ -76,11 +58,10 @@ namespace Mono.CSharp {
 				field_attr |= FieldAttributes.Literal;
 			}
 
-			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, field_attr);
-			spec = new ConstSpec (this, FieldBuilder, ModFlags, initializer);
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType.GetMetaInfo (), field_attr);
+			spec = new ConstSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags, initializer);
 
-			TypeManager.RegisterConstant (FieldBuilder, (ConstSpec) spec);
-			Parent.MemberCache.AddMember (FieldBuilder, spec);
+			Parent.MemberCache.AddMember (spec);
 
 			if ((field_attr & FieldAttributes.InitOnly) != 0)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
@@ -89,15 +70,12 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public static bool IsConstantTypeValid (Type t)
+		public Constant DefineValue ()
 		{
-			if (TypeManager.IsBuiltinOrEnum (t))
-				return true;
+			if (value == null)
+				value = initializer.Resolve (new ResolveContext (this)) as Constant;
 
-			if (TypeManager.IsGenericParameter (t) || t.IsPointer)
-				return false;
-
-			return TypeManager.IsReferenceType (t);
+			return value;
 		}
 
 		/// <summary>
@@ -105,10 +83,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override void Emit ()
 		{
-			var value = initializer.Resolve (new ResolveContext (this)) as Constant;
-			if (value == null || FieldBuilder == null)
-				return;
-
 			if (value.Type == TypeManager.decimal_type) {
 				FieldBuilder.SetCustomAttribute (CreateDecimalConstantAttribute (value));
 			} else{
@@ -137,9 +111,9 @@ namespace Mono.CSharp {
 			return new CustomAttributeBuilder (pa.Constructor, args);
 		}
 
-		public static void Error_InvalidConstantType (Type t, Location loc, Report Report)
+		public static void Error_InvalidConstantType (TypeSpec t, Location loc, Report Report)
 		{
-			if (TypeManager.IsGenericParameter (t)) {
+			if (t.IsGenericParameter) {
 				Report.Error (1959, loc,
 					"Type parameter `{0}' cannot be declared const", TypeManager.CSharpName (t));
 			} else {
@@ -153,8 +127,8 @@ namespace Mono.CSharp {
 	{
 		Expression value;
 
-		public ConstSpec (IMemberDefinition definition, FieldInfo fi, Modifiers mod, Expression value)
-			: base (definition, fi, mod)
+		public ConstSpec (TypeSpec declaringType, IMemberDefinition definition, TypeSpec memberType, FieldInfo fi, Modifiers mod, Expression value)
+			: base (declaringType, definition, memberType, fi, mod)
 		{
 			this.value = value;
 		}
@@ -163,7 +137,7 @@ namespace Mono.CSharp {
 			get {
 				return value;
 			}
-			set {
+			private set {
 				this.value = value;
 			}
 		}
@@ -241,7 +215,6 @@ namespace Mono.CSharp {
 					expr = Constant.CreateConstantFromValue (field.MemberType, null, Location);
 				expr = expr.Resolve (rc);
 			}
-
 
 			return expr;
 		}

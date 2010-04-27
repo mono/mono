@@ -23,16 +23,9 @@ namespace Mono.CSharp {
 	{
 		class EnumTypeExpr : TypeExpr
 		{
-			public readonly Enum Enum;
-
-			public EnumTypeExpr (Enum e)
-			{
-				this.Enum = e;
-			}
-
 			protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
 			{
-				type = Enum.CurrentType != null ? Enum.CurrentType : Enum.TypeBuilder;
+				type = ec.CurrentType;
 				return this;
 			}
 
@@ -44,13 +37,13 @@ namespace Mono.CSharp {
 
 		public EnumMember (Enum parent, EnumMember prev_member, string name, Expression expr,
 				   Attributes attrs, Location loc)
-			: base (parent, new EnumTypeExpr (parent), name, null, Modifiers.PUBLIC,
+			: base (parent, new EnumTypeExpr (), name, null, Modifiers.PUBLIC,
 				attrs, loc)
 		{
 			initializer = new EnumInitializer (this, expr, prev_member);
 		}
 
-		static bool IsValidEnumType (Type t)
+		static bool IsValidEnumType (TypeSpec t)
 		{
 			return (t == TypeManager.int32_type || t == TypeManager.uint32_type || t == TypeManager.int64_type ||
 				t == TypeManager.byte_type || t == TypeManager.sbyte_type || t == TypeManager.short_type ||
@@ -84,12 +77,10 @@ namespace Mono.CSharp {
 				return false;
 
 			const FieldAttributes attr = FieldAttributes.Public | FieldAttributes.Static | FieldAttributes.Literal;
-			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType, attr);
-			spec = new ConstSpec (this, FieldBuilder, ModFlags, initializer);
+			FieldBuilder = Parent.TypeBuilder.DefineField (Name, MemberType.GetMetaInfo (), attr);
+			spec = new ConstSpec (Parent.Definition, this, MemberType, FieldBuilder, ModFlags, initializer);
 
-			Parent.MemberCache.AddMember (FieldBuilder, spec);
-			TypeManager.RegisterConstant (FieldBuilder, (ConstSpec) spec);
-
+			Parent.MemberCache.AddMember (spec);
 			return true;
 		}
 	}
@@ -113,7 +104,7 @@ namespace Mono.CSharp {
 				return field.ConvertInitializer (rc, null);
 
 			try {
-				var ec = prev.Initializer.Resolve (rc) as EnumConstant;
+				var ec = prev.DefineValue () as EnumConstant;
 				expr = ec.Increment ().Resolve (rc);
 			} catch (OverflowException) {
 				rc.Report.Error (543, field.Location,
@@ -151,6 +142,7 @@ namespace Mono.CSharp {
 			this.base_type = type;
 			var accmods = IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod_flags, accmods, Location, Report);
+			spec = new EnumSpec (null, this, null, null, ModFlags);
 		}
 
 		public void AddEnumMember (EnumMember em)
@@ -175,19 +167,19 @@ namespace Mono.CSharp {
 			if (!base.DefineNestedTypes ())
 				return false;
 
-			//
-			// Call MapToInternalType for corlib
-			//
-			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType,
-						 FieldAttributes.Public | FieldAttributes.SpecialName
-						 | FieldAttributes.RTSpecialName);
+			((EnumSpec) spec).UnderlyingType = UnderlyingType;
+
+			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType.GetMetaInfo (),
+				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
+
+			if (!RootContext.StdLib)
+				RootContext.hack_corlib_enums.Add (this);
 
 			return true;
 		}
 
 		protected override bool DoDefineMembers ()
 		{
-			member_cache = new MemberCache (TypeManager.enum_type, this);
 			DefineContainerMembers (constants);
 			return true;
 		}
@@ -197,7 +189,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public Type UnderlyingType {
+		public TypeSpec UnderlyingType {
 			get {
 				return base_type.Type;
 			}
@@ -231,14 +223,31 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class EnumSpec : TypeSpec
+	class EnumSpec : TypeSpec
 	{
-		public EnumSpec (MemberKind kind, ITypeDefinition definition, TypeSpec underlyingType, Type info, string name, Modifiers modifiers)
-			: base (kind, definition, info, name, modifiers)
+		TypeSpec underlying;
+
+		public EnumSpec (TypeSpec declaringType, ITypeDefinition definition, TypeSpec underlyingType, Type info, Modifiers modifiers)
+			: base (MemberKind.Enum, declaringType, definition, info, modifiers | Modifiers.SEALED)
 		{
-			this.UnderlyingType = underlyingType;
+			this.underlying = underlyingType;
 		}
 
-		public TypeSpec UnderlyingType { get; private set; }
+		public TypeSpec UnderlyingType {
+			get {
+				return underlying;
+			}
+			set {
+				if (underlying != null)
+					throw new InternalErrorException ("UnderlyingType reset");
+
+				underlying = value;
+			}
+		}
+
+		public static TypeSpec GetUnderlyingType (TypeSpec t)
+		{
+			return ((EnumSpec) t.GetDefinition ()).UnderlyingType;
+		}
 	}
 }

@@ -59,7 +59,7 @@ namespace Mono.CSharp {
 		internal static List<NamespaceEntry.UsingEntry> using_list = new List<NamespaceEntry.UsingEntry> ();
 		static Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo> ();
 
-		static Type   interactive_base_class = typeof (InteractiveBase);
+		static TypeSpec interactive_base_class;
 		static Driver driver;
 		static bool inited;
 
@@ -127,7 +127,10 @@ namespace Mono.CSharp {
 				
 				CompilerCallableEntryPoint.Reset ();
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
+				/*var ctypes = */TypeManager.InitCoreTypes ();
+				TypeManager.InitExpressionTypes ();
 
+				Import.Initialize ();
 				driver.LoadReferences ();
 				RootContext.EvalMode = true;
 				inited = true;
@@ -144,6 +147,7 @@ namespace Mono.CSharp {
 		static void Reset ()
 		{
 			CompilerCallableEntryPoint.PartialReset ();
+			RootContext.PartialReset ();
 			
 			// Workaround for API limitation where full message printer cannot be passed
 			ReportPrinter printer;
@@ -160,8 +164,8 @@ namespace Mono.CSharp {
 			//
 			// PartialReset should not reset the core types, this is very redundant.
 			//
-			if (!TypeManager.InitCoreTypes (ctx))
-				throw new Exception ("Failed to InitCoreTypes");
+//			if (!TypeManager.InitCoreTypes (ctx, null))
+//				throw new Exception ("Failed to InitCoreTypes");
 			TypeManager.InitOptionalCoreTypes (ctx);
 			
 			Location.AddFile (null, "{interactive}");
@@ -188,9 +192,12 @@ namespace Mono.CSharp {
 		///   base class and the static members that are
 		///   available to your evaluated code.
 		/// </remarks>
-		static public Type InteractiveBaseClass {
+		static public TypeSpec InteractiveBaseClass {
 			get {
-				return interactive_base_class;
+				if (interactive_base_class != null)
+					return interactive_base_class;
+
+				return interactive_base_class = Import.ImportType (typeof (InteractiveBase));
 			}
 
 			set {
@@ -743,7 +750,7 @@ namespace Mono.CSharp {
 			// Unlike Mono, .NET requires that the MethodInfo is fetched, it cant
 			// work from MethodBuilders.   Retarded, I know.
 			//
-			Type tt = CodeGen.Assembly.Builder.GetType (tb.Name);
+			var tt = CodeGen.Assembly.Builder.GetType (tb.Name);
 			MethodInfo mi = tt.GetMethod (mb.Name);
 			
 			// Pull the FieldInfos from the type, and keep track of them
@@ -755,7 +762,7 @@ namespace Mono.CSharp {
 				// If a previous value was set, nullify it, so that we do
 				// not leak memory
 				if (fields.TryGetValue (field.Name, out old)){
-					if (TypeManager.IsStruct (old.FieldType)){
+					if (old.FieldType.IsValueType){
 						//
 						// TODO: Clear fields for structs
 						//
@@ -861,7 +868,7 @@ namespace Mono.CSharp {
 				foreach (var de in fields){
 					FieldInfo fi = LookupField (de.Key);
 					object value = null;
-					bool error = false;
+					//bool error = false;
 					
 					try {
 						if (value == null)
@@ -870,13 +877,14 @@ namespace Mono.CSharp {
 						if (value is string)
 							value = Quote ((string)value);
 					} catch {
-						error = true;
+						//error = true;
 					}
-					
-					if (error)
-						sb.Append (String.Format ("{0} {1} <error reading value>", TypeManager.CSharpName(fi.FieldType), de.Key));
-					else
-						sb.Append (String.Format ("{0} {1} = {2}", TypeManager.CSharpName(fi.FieldType), de.Key, value));
+
+					throw new NotImplementedException ("net");
+					//if (error)
+					//    sb.Append (String.Format ("{0} {1} <error reading value>", TypeManager.CSharpName(fi.FieldType), de.Key));
+					//else
+					//    sb.Append (String.Format ("{0} {1} = {2}", TypeManager.CSharpName(fi.FieldType), de.Key, value));
 				}
 				
 				return sb.ToString ();
@@ -900,8 +908,9 @@ namespace Mono.CSharp {
 		static public void ReferenceAssembly (Assembly a)
 		{
 			lock (evaluator_lock){
-				GlobalRootNamespace.Instance.AddAssemblyReference (a);
-				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
+//				GlobalRootNamespace.Instance.AddAssemblyReference (a);
+//				GlobalRootNamespace.Instance.ComputeNamespaces (ctx);
+				GlobalRootNamespace.Instance.ImportAssembly (a);
 			}
 		}
 
@@ -1086,12 +1095,12 @@ namespace Mono.CSharp {
 			if (x == null)
 				return "";
 			
-			Type t = x as Type;
-			if (t == null)
-				t = x.GetType ();
+			TypeSpec t = x as TypeSpec;
+//			if (t == null)
+//				t = x.GetType ();
 
 			StringWriter sw = new StringWriter ();
-			new Outline (t, sw, true, false, false).OutlineType ();
+			new Outline (t.GetMetaInfo (), sw, true, false, false).OutlineType ();
 			return sw.ToString ();
 		}
 #endif

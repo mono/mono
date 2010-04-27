@@ -47,7 +47,7 @@ namespace Mono.CSharp
 			this.Expr = expr;
 		}
 
-		public Type Type {
+		public TypeSpec Type {
 			get { return Expr.Type; }
 		}
 
@@ -187,7 +187,7 @@ namespace Mono.CSharp
 			if (IsByRef) {
 				var ml = (IMemoryLocation) Expr;
 				ml.AddressOf (ec, AddressOp.Load);
-				type = TypeManager.GetReferenceType (type);
+				type = ReferenceContainer.MakeType (type);
 			} else {
 				Expr.Emit (ec);
 			}
@@ -254,7 +254,7 @@ namespace Mono.CSharp
 
 				var arg_type = a.Expr.Type;
 
-				if (!TypeManager.IsDynamicType (arg_type)) {
+				if (arg_type != InternalType.Dynamic) {
 					MethodGroupExpr mg = a.Expr as MethodGroupExpr;
 					if (mg != null) {
 						rc.Report.Error (1976, a.Expr.Location,
@@ -366,7 +366,7 @@ namespace Mono.CSharp
 			foreach (Argument a in args) {
 				a.Emit (ec);
 				if (dup_args) {
-					ec.ig.Emit (OpCodes.Dup);
+					ec.Emit (OpCodes.Dup);
 					(temps [i++] = new LocalTemporary (a.Type)).Store (ec);
 				}
 			}
@@ -393,7 +393,7 @@ namespace Mono.CSharp
 		public bool HasDynamic {
 			get {
 				foreach (Argument a in args) {
-					if (TypeManager.IsDynamicType (a.Type))
+					if (a.Type == InternalType.Dynamic)
 						return true;
 				}
 				
@@ -442,14 +442,8 @@ namespace Mono.CSharp
 			dynamic = false;
 			foreach (Argument a in args) {
 				a.Resolve (ec);
-				dynamic |= TypeManager.IsDynamicType (a.Type);
+				dynamic |= a.Type == InternalType.Dynamic;
 			}
-		}
-
-		public void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			foreach (Argument a in args)
-				a.Expr.MutateHoistedGenericType (storey);
 		}
 
 		public void RemoveAt (int index)

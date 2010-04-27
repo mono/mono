@@ -47,7 +47,7 @@ namespace Mono.CSharp
 			if (!base.VerifyClsCompliance ())
 				return false;
 
-			if (!AttributeTester.IsClsCompliant (MemberType)) {
+			if (!MemberType.IsCLSCompliant ()) {
 				Report.Warning (3003, 1, Location, "Type of `{0}' is not CLS-compliant",
 					GetSignatureForError ());
 			}
@@ -85,26 +85,91 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class PropertySpec : MemberSpec
+	public class PropertySpec : MemberSpec, IInterfaceMemberSpec
 	{
 		PropertyInfo info;
+		TypeSpec memberType;
+		MethodSpec set, get;
 
-		public PropertySpec (MemberKind kind, IMemberDefinition definition, PropertyInfo info, Modifiers modifiers)
-			: base (kind, definition, info.Name, modifiers)
+		public PropertySpec (MemberKind kind, TypeSpec declaringType, IMemberDefinition definition, TypeSpec memberType, PropertyInfo info, Modifiers modifiers)
+			: base (kind, declaringType, definition, modifiers)
 		{
 			this.info = info;
+			this.memberType = memberType;
 		}
 
-		public override Type DeclaringType {
-			get { return info.DeclaringType; }
+		#region Properties
+
+		public MethodSpec Get {
+			get {
+				return get;
+			}
+			set {
+				get = value;
+				get.IsAccessor = true;
+			}
+		}
+
+		public MethodSpec Set { 
+			get {
+				return set;
+			}
+			set {
+				set = value;
+				set.IsAccessor = true;
+			}
+		}
+
+		public bool IsNotRealProperty {
+			get {
+				return (state & StateFlags.IsNotRealProperty) != 0;
+			}
+			set {
+				state |= StateFlags.IsNotRealProperty;
+			}
+		}
+
+		public bool HasDifferentAccessibility {
+			get {
+				return HasGet && HasSet && 
+					(Get.Modifiers & Modifiers.AccessibilityMask) != (Set.Modifiers & Modifiers.AccessibilityMask);
+			}
+		}
+
+		public bool HasGet {
+			get {
+				return Get != null && Get.Kind != MemberKind.FakeMethod;
+			}
+		}
+
+		public bool HasSet {
+			get {
+				return Set != null && Set.Kind != MemberKind.FakeMethod;
+			}
 		}
 
 		public PropertyInfo MetaInfo {
-			get { return info; }
+			get {
+				if ((state & StateFlags.PendingMetaInflate) != 0)
+					throw new NotSupportedException ();
+
+				return info;
+			}
 		}
 
-		public Type PropertyType {
-			get { return info.PropertyType; }
+		public TypeSpec MemberType {
+			get {
+				return memberType;
+			}
+		}
+
+		#endregion
+
+		public override MemberSpec InflateMember (TypeParameterInflator inflator)
+		{
+			var ps = (PropertySpec) base.InflateMember (inflator);
+			ps.memberType = inflator.Inflate (memberType);
+			return ps;
 		}
 	}
 
@@ -132,6 +197,8 @@ namespace Mono.CSharp
 			{
 				base.Define (parent);
 
+				Spec = new MethodSpec (IsDummy ? MemberKind.FakeMethod : MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, null, ParameterInfo, ModFlags);
+
 				if (IsDummy)
 					return null;
 				
@@ -140,12 +207,12 @@ namespace Mono.CSharp
 				if (!method_data.Define (parent, method.GetFullName (MemberName), Report))
 					return null;
 
-				Spec = new MethodSpec (MemberKind.Method, this, method_data.MethodBuilder, ParameterInfo, ModFlags);
+				Spec.SetMetaInfo (method_data.MethodBuilder);
 
 				return method_data.MethodBuilder;
 			}
 
-			public override Type ReturnType {
+			public override TypeSpec ReturnType {
 				get {
 					return method.MemberType;
 				}
@@ -174,7 +241,7 @@ namespace Mono.CSharp
 				base (method, "set_")
 			{
 				parameters = new ParametersCompiled (Compiler,
-					new Parameter (method.type_name, "value", Parameter.Modifier.NONE, null, Location));
+					new Parameter (method.type_expr, "value", Parameter.Modifier.NONE, null, Location));
 			}
 
 			public SetMethod (PropertyBase method, Accessor accessor):
@@ -183,7 +250,7 @@ namespace Mono.CSharp
 				this.parameters = accessor.Parameters;
 			}
 
-			protected override void ApplyToExtraTarget (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+			protected override void ApplyToExtraTarget (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
@@ -208,6 +275,8 @@ namespace Mono.CSharp
 				
 				base.Define (parent);
 
+				Spec = new MethodSpec (IsDummy ? MemberKind.FakeMethod : MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, null, ParameterInfo, ModFlags);
+
 				if (IsDummy)
 					return null;
 
@@ -216,12 +285,12 @@ namespace Mono.CSharp
 				if (!method_data.Define (parent, method.GetFullName (MemberName), Report))
 					return null;
 
-				Spec = new MethodSpec (MemberKind.Method, this, method_data.MethodBuilder, ParameterInfo, ModFlags);
+				Spec.SetMetaInfo (method_data.MethodBuilder);
 
 				return method_data.MethodBuilder;
 			}
 
-			public override Type ReturnType {
+			public override TypeSpec ReturnType {
 				get {
 					return TypeManager.void_type;
 				}
@@ -260,7 +329,7 @@ namespace Mono.CSharp
 				}
 			}
 
-			public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+			public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.IsInternalMethodImplAttribute) {
 					method.is_external_implementation = true;
@@ -286,12 +355,12 @@ namespace Mono.CSharp
 
 				if (IsDummy) {
 					if (method.InterfaceType != null && parent.PartialContainer.PendingImplementations != null) {
-						MethodInfo mi = parent.PartialContainer.PendingImplementations.IsInterfaceMethod (
-							MethodName.Name, method.InterfaceType, new MethodData (method, ModFlags, flags, this));
+						var mi = parent.PartialContainer.PendingImplementations.IsInterfaceMethod (
+							MethodName, method.InterfaceType, new MethodData (method, ModFlags, flags, this));
 						if (mi != null) {
 							Report.SymbolRelatedToPreviousError (mi);
 							Report.Error (551, Location, "Explicit interface implementation `{0}' is missing accessor `{1}'",
-								method.GetSignatureForError (), TypeManager.CSharpSignature (mi, true));
+								method.GetSignatureForError (), mi.GetSignatureForError ());
 						}
 					}
 					return null;
@@ -342,34 +411,19 @@ namespace Mono.CSharp
 				}
 			}
 
-			public override ObsoleteAttribute GetObsoleteAttribute ()
+			public override ObsoleteAttribute GetAttributeObsolete ()
 			{
-				return method.GetObsoleteAttribute ();
+				return method.GetAttributeObsolete ();
 			}
 
 			public override string GetSignatureForError()
 			{
-				return method.GetSignatureForError () + '.' + prefix.Substring (0, 3);
+				return method.GetSignatureForError () + "." + prefix.Substring (0, 3);
 			}
 
 			void CheckModifiers (Modifiers modflags)
 			{
-				modflags &= Modifiers.AccessibilityMask;
-				Modifiers flags = 0;
-				Modifiers mflags = method.ModFlags & Modifiers.AccessibilityMask;
-
-				if ((mflags & Modifiers.PUBLIC) != 0) {
-					flags |= Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE;
-				}
-				else if ((mflags & Modifiers.PROTECTED) != 0) {
-					if ((mflags & Modifiers.INTERNAL) != 0)
-						flags |= Modifiers.PROTECTED | Modifiers.INTERNAL;
-
-					flags |= Modifiers.PRIVATE;
-				} else if ((mflags & Modifiers.INTERNAL) != 0)
-					flags |= Modifiers.PRIVATE;
-
-				if ((mflags == modflags) || (modflags & (~flags)) != 0) {
+				if (!ModifiersExtensions.IsRestrictedModifier (modflags & Modifiers.AccessibilityMask, method.ModFlags & Modifiers.AccessibilityMask)) {
 					Report.Error (273, Location,
 						"The accessibility modifier of the `{0}' accessor must be more restrictive than the modifier of the property or indexer `{1}'",
 						GetSignatureForError (), method.GetSignatureForError ());
@@ -381,7 +435,7 @@ namespace Mono.CSharp
 				if ((caching_flags & Flags.MethodOverloadsExist) == 0)
 					return true;
 
-				return Parent.MemberCache.CheckExistingMembersOverloads (this, Name, ParameterInfo, Report);
+				return Parent.MemberCache.CheckExistingMembersOverloads (this, ParameterInfo);
 			}
 		}
 
@@ -399,7 +453,7 @@ namespace Mono.CSharp
 			 this.define_set_first = define_set_first;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.HasSecurityAttribute) {
 				a.Error_InvalidSecurityParent ();
@@ -411,7 +465,7 @@ namespace Mono.CSharp
 				return;
 			}
 
-			PropertyBuilder.SetCustomAttribute (ctor, cdata);
+			PropertyBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
 		public override AttributeTargets AttributeTargets {
@@ -420,19 +474,62 @@ namespace Mono.CSharp
 			}
 		}
 
+		protected override bool CheckOverrideAgainstBase (MemberSpec base_member)
+		{
+			var ok = base.CheckOverrideAgainstBase (base_member);
+
+			//
+			// Check base property accessors conflict
+			//
+			var base_prop = (PropertySpec) base_member;
+			if (!Get.IsDummy) {
+				if (!base_prop.HasGet) {
+					Report.SymbolRelatedToPreviousError (base_prop);
+					Report.Error (545, Get.Location,
+						"`{0}': cannot override because `{1}' does not have an overridable get accessor",
+						Get.GetSignatureForError (), base_prop.GetSignatureForError ());
+					ok = false;
+				} else if (Get.HasCustomAccessModifier || base_prop.HasDifferentAccessibility) {
+					if (!CheckAccessModifiers (Get, base_prop.Get)) {
+						Error_CannotChangeAccessModifiers (Get, base_prop.Get);
+						ok = false;
+					}
+				}
+			}
+
+			if (!Set.IsDummy) {
+				if (!base_prop.HasSet) {
+					Report.SymbolRelatedToPreviousError (base_prop);
+					Report.Error (546, Set.Location,
+						"`{0}': cannot override because `{1}' does not have an overridable set accessor",
+						Set.GetSignatureForError (), base_prop.GetSignatureForError ());
+					ok = false;
+				} else if (Set.HasCustomAccessModifier || base_prop.HasDifferentAccessibility) {
+					if (!CheckAccessModifiers (Set, base_prop.Set)) {
+						Error_CannotChangeAccessModifiers (Set, base_prop.Set);
+						ok = false;
+					}
+				}
+			}
+
+			if (!Set.HasCustomAccessModifier && !Get.HasCustomAccessModifier) {
+				if (!CheckAccessModifiers (this, base_prop)) {
+					Error_CannotChangeAccessModifiers (this, base_prop);
+					ok = false;
+				}
+			}
+
+			return ok;
+		}
+
 		protected override void DoMemberTypeDependentChecks ()
 		{
 			base.DoMemberTypeDependentChecks ();
 
 			IsTypePermitted ();
-#if MS_COMPATIBLE
-			if (MemberType.IsGenericParameter)
-				return;
-#endif
 
-			if ((MemberType.Attributes & Class.StaticClassAttribute) == Class.StaticClassAttribute) {
-				Report.Error (722, Location, Error722, TypeManager.CSharpName (MemberType));
-			}
+			if (MemberType.IsStatic)
+				Error_StaticReturnType ();
 		}
 
 		protected override void DoMemberTypeIndependentChecks ()
@@ -479,85 +576,33 @@ namespace Mono.CSharp
 				DefineSet (!define_set_first);
 		}
 
-		protected void DefineBuilders (MemberKind kind, Type[] parameterTypes)
+		protected void DefineBuilders (MemberKind kind, ParametersCompiled parameters)
 		{
 			// FIXME - PropertyAttributes.HasDefault ?
 
 			PropertyBuilder = Parent.TypeBuilder.DefineProperty (
-				GetFullName (MemberName), PropertyAttributes.None, MemberType, parameterTypes);
+				GetFullName (MemberName), PropertyAttributes.None, MemberType.GetMetaInfo (), parameters.GetMetaInfo ());
+
+			PropertySpec spec;
+			if (kind == MemberKind.Indexer)
+				spec = new IndexerSpec (Parent.Definition, this, MemberType, parameters, PropertyBuilder, ModFlags);
+			else
+				spec = new PropertySpec (kind, Parent.Definition, this, MemberType, PropertyBuilder, ModFlags);
+
+			spec.Get = Get.Spec;
+			spec.Set = Set.Spec;
 
 			if (!Get.IsDummy) {
 				PropertyBuilder.SetGetMethod (GetBuilder);
-				Parent.MemberCache.AddMember (GetBuilder, Get.Spec);
 			}
 
 			if (!Set.IsDummy) {
 				PropertyBuilder.SetSetMethod (SetBuilder);
-				Parent.MemberCache.AddMember (SetBuilder, Set.Spec);
 			}
 
-			var spec = new PropertySpec (kind, this, PropertyBuilder, ModFlags);
-			Parent.MemberCache.AddMember (PropertyBuilder, spec);
-		}
-
-		protected abstract PropertyInfo ResolveBaseProperty ();
-
-		// TODO: rename to Resolve......
- 		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
- 		{
- 			PropertyInfo base_property = ResolveBaseProperty ();
- 			if (base_property == null)
- 				return null;
-
- 			base_ret_type = base_property.PropertyType;
-			MethodInfo get_accessor = base_property.GetGetMethod (true);
-			MethodInfo set_accessor = base_property.GetSetMethod (true);
-			MethodAttributes get_accessor_access = 0, set_accessor_access = 0;
-
-			//
-			// Check base property accessors conflict
-			//
-			if ((ModFlags & (Modifiers.OVERRIDE | Modifiers.NEW)) == Modifiers.OVERRIDE) {
-				if (get_accessor == null) {
-					if (Get != null && !Get.IsDummy) {
-						Report.SymbolRelatedToPreviousError (base_property);
-						Report.Error (545, Location,
-							"`{0}.get': cannot override because `{1}' does not have an overridable get accessor",
-							GetSignatureForError (), TypeManager.GetFullNameSignature (base_property));
-					}
-				} else {
-					get_accessor_access = get_accessor.Attributes & MethodAttributes.MemberAccessMask;
-
-					if (!Get.IsDummy && !CheckAccessModifiers (
-						ModifiersExtensions.MethodAttr (Get.ModFlags) & MethodAttributes.MemberAccessMask, get_accessor_access, get_accessor))
-						Error_CannotChangeAccessModifiers (Get.Location, get_accessor, get_accessor_access, ".get");
-				}
-
-				if (set_accessor == null) {
-					if (Set != null && !Set.IsDummy) {
-						Report.SymbolRelatedToPreviousError (base_property);
-						Report.Error (546, Location,
-							"`{0}.set': cannot override because `{1}' does not have an overridable set accessor",
-							GetSignatureForError (), TypeManager.GetFullNameSignature (base_property));
-					}
-				} else {
-					set_accessor_access = set_accessor.Attributes & MethodAttributes.MemberAccessMask;
-
-					if (!Set.IsDummy && !CheckAccessModifiers (
-						ModifiersExtensions.MethodAttr (Set.ModFlags) & MethodAttributes.MemberAccessMask, set_accessor_access, set_accessor))
-						Error_CannotChangeAccessModifiers (Set.Location, set_accessor, set_accessor_access, ".set");
-				}
-			}
-
-			// When one accessor does not exist and property hides base one
-			// we need to propagate this upwards
-			if (set_accessor == null)
-				set_accessor = get_accessor;
-
-			//
-			// Get the less restrictive access
-			//
-			return get_accessor_access > set_accessor_access ? get_accessor : set_accessor;
+			Parent.MemberCache.AddMember (this, Get.IsDummy ? Get.Name : GetBuilder.Name, Get.Spec);
+			Parent.MemberCache.AddMember (this, Set.IsDummy ? Set.Name : SetBuilder.Name, Set.Spec);
+			Parent.MemberCache.AddMember (this, PropertyBuilder.Name, spec);
 		}
 
 		public override void Emit ()
@@ -571,13 +616,13 @@ namespace Mono.CSharp
 				if (OptAttributes != null)
 					OptAttributes.Emit ();
 
-				if (TypeManager.IsDynamicType (member_type)) {
+				if (member_type == InternalType.Dynamic) {
 					PredefinedAttributes.Get.Dynamic.EmitAttribute (PropertyBuilder);
 				} else {
 					var trans_flags = TypeManager.HasDynamicTypeUsed (member_type);
 					if (trans_flags != null) {
 						var pa = PredefinedAttributes.Get.DynamicTransform;
-						if (pa.Constructor != null || pa.ResolveConstructor (Location, TypeManager.bool_type.MakeArrayType ())) {
+						if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
 							PropertyBuilder.SetCustomAttribute (
 								new CustomAttributeBuilder (pa.Constructor, new object [] { trans_flags }));
 						}
@@ -602,8 +647,7 @@ namespace Mono.CSharp
 			return Get.IsDuplicateImplementation (mc) || Set.IsDuplicateImplementation (mc);
 		}
 
-		public override bool IsUsed
-		{
+		public override bool IsUsed {
 			get {
 				if (IsExplicitImpl)
 					return true;
@@ -641,11 +685,17 @@ namespace Mono.CSharp
 			readonly Property property;
 
 			public BackingField (Property p)
-				: base (p.Parent, p.type_name,
+				: base (p.Parent, p.type_expr,
 				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (p.ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				new MemberName ("<" + p.GetFullName (p.MemberName) + ">k__BackingField", p.Location), null)
 			{
 				this.property = p;
+			}
+
+			public string OriginalName {
+				get {
+					return property.Name;
+				}
 			}
 
 			public override string GetSignatureForError ()
@@ -747,8 +797,7 @@ namespace Mono.CSharp
 			if (!CheckBase ())
 				return false;
 
-			DefineBuilders (MemberKind.Property, null);
-			TypeManager.RegisterProperty (PropertyBuilder, this);
+			DefineBuilders (MemberKind.Property, ParametersCompiled.EmptyReadOnlyParameters);
 			return true;
 		}
 
@@ -762,160 +811,8 @@ namespace Mono.CSharp
 
 			base.Emit ();
 		}
-
-		protected override PropertyInfo ResolveBaseProperty ()
-		{
-			return Parent.PartialContainer.BaseCache.FindMemberToOverride (
-				Parent.TypeBuilder, Name, ParametersCompiled.EmptyReadOnlyParameters, null, true) as PropertyInfo;
-		}
 	}
 
-	/// </summary>
-	///  Gigantic workaround  for lameness in SRE follows :
-	///  This class derives from EventInfo and attempts to basically
-	///  wrap around the EventBuilder so that FindMembers can quickly
-	///  return this in it search for members
-	/// </summary>
-	public class MyEventBuilder : EventInfo {
-		
-		//
-		// We use this to "point" to our Builder which is
-		// not really a MemberInfo
-		//
-		EventBuilder MyBuilder;
-		
-		//
-		// We "catch" and wrap these methods
-		//
-		MethodInfo raise, remove, add;
-
-		EventAttributes attributes;
-		Type declaring_type, reflected_type, event_type;
-		string name;
-
-		Event my_event;
-
-		public MyEventBuilder (Event ev, TypeBuilder type_builder, string name, EventAttributes event_attr, Type event_type)
-		{
-			MyBuilder = type_builder.DefineEvent (name, event_attr, event_type);
-
-			// And now store the values in our own fields.
-			
-			declaring_type = type_builder;
-
-			reflected_type = type_builder;
-			
-			attributes = event_attr;
-			this.name = name;
-			my_event = ev;
-			this.event_type = event_type;
-		}
-		
-		//
-		// Methods that you have to override.  Note that you only need 
-		// to "implement" the variants that take the argument (those are
-		// the "abstract" methods, the others (GetAddMethod()) are 
-		// regular.
-		//
-		public override MethodInfo GetAddMethod (bool nonPublic)
-		{
-			return add;
-		}
-		
-		public override MethodInfo GetRemoveMethod (bool nonPublic)
-		{
-			return remove;
-		}
-		
-		public override MethodInfo GetRaiseMethod (bool nonPublic)
-		{
-			return raise;
-		}
-		
-		//
-		// These methods make "MyEventInfo" look like a Builder
-		//
-		public void SetRaiseMethod (MethodBuilder raiseMethod)
-		{
-			raise = raiseMethod;
-			MyBuilder.SetRaiseMethod (raiseMethod);
-		}
-
-		public void SetRemoveOnMethod (MethodBuilder removeMethod)
-		{
-			remove = removeMethod;
-			MyBuilder.SetRemoveOnMethod (removeMethod);
-		}
-
-		public void SetAddOnMethod (MethodBuilder addMethod)
-		{
-			add = addMethod;
-			MyBuilder.SetAddOnMethod (addMethod);
-		}
-
-		public void SetCustomAttribute (ConstructorInfo ctor, byte[] cdata)
-		{
-			MyBuilder.SetCustomAttribute (ctor, cdata);
-		}
-		
-		public override object [] GetCustomAttributes (bool inherit)
-		{
-			// FIXME : There's nothing which can be seemingly done here because
-			// we have no way of getting at the custom attribute objects of the
-			// EventBuilder !
-			return null;
-		}
-
-		public override object [] GetCustomAttributes (Type t, bool inherit)
-		{
-			// FIXME : Same here !
-			return null;
-		}
-
-		public override bool IsDefined (Type t, bool b)
-		{
-			return true;
-		}
-
-		public override EventAttributes Attributes {
-			get {
-				return attributes;
-			}
-		}
-
-		public override string Name {
-			get {
-				return name;
-			}
-		}
-
-		public override Type DeclaringType {
-			get {
-				return declaring_type;
-			}
-		}
-
-		public override Type ReflectedType {
-			get {
-				return reflected_type;
-			}
-		}
-
-		public Type EventType {
-			get {
-				return event_type;
-			}
-		}
-		
-		public void SetUsed ()
-		{
-			if (my_event != null) {
-//				my_event.SetAssigned ();
-				my_event.SetIsUsed ();
-			}
-		}
-	}
-	
 	/// <summary>
 	/// For case when event is declared like property (with add and remove accessors).
 	/// </summary>
@@ -956,7 +853,7 @@ namespace Mono.CSharp
 		}
 
 
-		static readonly string[] attribute_targets = new string [] { "event" }; // "property" target was disabled for 2.0 version
+		static readonly string[] attribute_targets = new string [] { "event" };
 
 		public EventProperty (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags,
 				      MemberName name,
@@ -1005,7 +902,7 @@ namespace Mono.CSharp
 					var field_info = ((EventField) method).BackingField;
 					FieldExpr f_expr = new FieldExpr (field_info, Location);
 					if ((method.ModFlags & Modifiers.STATIC) == 0)
-						f_expr.InstanceExpression = new CompilerGeneratedThis (field_info.Spec.FieldType, Location);
+						f_expr.InstanceExpression = new CompilerGeneratedThis (field_info.Spec.MemberType, Location);
 
 					block = new ToplevelBlock (Compiler, ParameterInfo, Location);
 					block.AddStatement (new StatementExpression (
@@ -1058,7 +955,7 @@ namespace Mono.CSharp
 			Remove = new RemoveDelegateMethod (this);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.Field) {
 				BackingField.ApplyAttributeBuilder (a, ctor, cdata, pa);
@@ -1155,7 +1052,7 @@ namespace Mono.CSharp
 				get { return method_data.implementing != null; }
 			}
 
-			public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+			public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.IsInternalMethodImplAttribute) {
 					method.is_external_implementation = true;
@@ -1164,7 +1061,7 @@ namespace Mono.CSharp
 				base.ApplyAttributeBuilder (a, ctor, cdata, pa);
 			}
 
-			protected override void ApplyToExtraTarget (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+			protected override void ApplyToExtraTarget (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 			{
 				if (a.Target == AttributeTargets.Parameter) {
 					if (param_attr == null)
@@ -1198,20 +1095,21 @@ namespace Mono.CSharp
 
 				MethodBuilder mb = method_data.MethodBuilder;
 				ParameterInfo.ApplyAttributes (mb);
-				Spec = new MethodSpec (MemberKind.Method, this, mb, ParameterInfo, method.ModFlags);
+				Spec = new MethodSpec (MemberKind.Method, parent.PartialContainer.Definition, this, ReturnType, mb, ParameterInfo, method.ModFlags);
+				Spec.IsAccessor = true;
 
 				return mb;
 			}
 
-			public override Type ReturnType {
+			public override TypeSpec ReturnType {
 				get {
 					return TypeManager.void_type;
 				}
 			}
 
-			public override ObsoleteAttribute GetObsoleteAttribute ()
+			public override ObsoleteAttribute GetAttributeObsolete ()
 			{
-				return method.GetObsoleteAttribute ();
+				return method.GetAttributeObsolete ();
 			}
 
 			public override string[] ValidAttributeTargets {
@@ -1246,7 +1144,7 @@ namespace Mono.CSharp
 			Modifiers.NEW;
 
 		public AEventAccessor Add, Remove;
-		public MyEventBuilder     EventBuilder;
+		public EventBuilder     EventBuilder;
 		public MethodBuilder AddBuilder, RemoveBuilder;
 
 		ParametersCompiled parameters;
@@ -1258,14 +1156,14 @@ namespace Mono.CSharp
 		{
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if ((a.HasSecurityAttribute)) {
 				a.Error_InvalidSecurityParent ();
 				return;
 			}
-			
-			EventBuilder.SetCustomAttribute (ctor, cdata);
+
+			EventBuilder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
 		public bool AreAccessorsDuplicateImplementation (MethodCore mc)
@@ -1277,6 +1175,18 @@ namespace Mono.CSharp
 			get {
 				return AttributeTargets.Event;
 			}
+		}
+
+		protected override bool CheckOverrideAgainstBase (MemberSpec base_member)
+		{
+			var ok = base.CheckOverrideAgainstBase (base_member);
+
+			if (!CheckAccessModifiers (this, base_member)) {
+				Error_CannotChangeAccessModifiers (this, base_member);
+				ok = false;
+			}
+
+			return ok;
 		}
 
 		public override bool Define ()
@@ -1294,21 +1204,9 @@ namespace Mono.CSharp
 			if (!CheckBase ())
 				return false;
 
-			if (TypeManager.delegate_combine_delegate_delegate == null) {
-				TypeManager.delegate_combine_delegate_delegate = TypeManager.GetPredefinedMethod (
-					TypeManager.delegate_type, "Combine", Location,
-					TypeManager.delegate_type, TypeManager.delegate_type);
-			}
-			if (TypeManager.delegate_remove_delegate_delegate == null) {
-				TypeManager.delegate_remove_delegate_delegate = TypeManager.GetPredefinedMethod (
-					TypeManager.delegate_type, "Remove", Location,
-					TypeManager.delegate_type, TypeManager.delegate_type);
-			}
-
 			//
 			// Now define the accessors
 			//
-
 			AddBuilder = Add.Define (Parent);
 			if (AddBuilder == null)
 				return false;
@@ -1317,20 +1215,16 @@ namespace Mono.CSharp
 			if (RemoveBuilder == null)
 				return false;
 
-			EventBuilder = new MyEventBuilder (this, Parent.TypeBuilder, Name, EventAttributes.None, MemberType);						
+			EventBuilder = Parent.TypeBuilder.DefineEvent (Name, EventAttributes.None, MemberType.GetMetaInfo ());
 			EventBuilder.SetAddOnMethod (AddBuilder);
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
-			var spec = new EventSpec (this, EventBuilder, ModFlags, Add.Spec, Remove.Spec) {
-				EventType = MemberType
-			};
+			var spec = new EventSpec (Parent.Definition, this, MemberType, ModFlags, Add.Spec, Remove.Spec);
 
-			TypeManager.RegisterEventField (EventBuilder, spec);
+			Parent.MemberCache.AddMember (this, Name, spec);
+			Parent.MemberCache.AddMember (this, AddBuilder.Name, Add.Spec);
+			Parent.MemberCache.AddMember (this, RemoveBuilder.Name, Remove.Spec);
 
-			Parent.MemberCache.AddMember (EventBuilder, spec);
-			Parent.MemberCache.AddMember (AddBuilder, Add.Spec);
-			Parent.MemberCache.AddMember (RemoveBuilder, Remove.Spec);
-			
 			return true;
 		}
 
@@ -1346,19 +1240,6 @@ namespace Mono.CSharp
 			base.Emit ();
 		}
 
-		protected override MethodInfo FindOutBaseMethod (ref Type base_ret_type)
-		{
-			MethodInfo mi = (MethodInfo) Parent.PartialContainer.BaseCache.FindBaseEvent (
-				Parent.TypeBuilder, Name);
-
-			if (mi == null)
-				return null;
-
-			AParametersCollection pd = TypeManager.GetParameterData (mi);
-			base_ret_type = pd.Types [0];
-			return mi;
-		}
-
 		//
 		//   Represents header string for documentation comment.
 		//
@@ -1367,41 +1248,51 @@ namespace Mono.CSharp
 		}
 	}
 
-	public class EventSpec : MemberSpec
+	public class EventSpec : MemberSpec, IInterfaceMemberSpec
 	{
-		EventInfo info;
+		MethodSpec add, remove;
 
-		public EventSpec (IMemberDefinition definition, EventInfo info, Modifiers modifiers, MethodSpec add, MethodSpec remove)
-			: base (MemberKind.Event, definition, info.Name, modifiers)
+		public EventSpec (TypeSpec declaringType, IMemberDefinition definition, TypeSpec eventType, Modifiers modifiers, MethodSpec add, MethodSpec remove)
+			: base (MemberKind.Event, declaringType, definition, modifiers)
 		{
-			this.info = info;
 			this.AccessorAdd = add;
 			this.AccessorRemove = remove;
-
-			// TODO MemberCache: Remove
-			if (TypeManager.IsBeingCompiled (info))
-				state &= ~MemberSpec.StateFlags.Obsolete_Undetected;
+			this.MemberType = eventType;
 		}
 
-		public MethodSpec AccessorAdd { get; private set; }
-		public MethodSpec AccessorRemove { get; private set; }
+		#region Properties
 
-		public override Type DeclaringType {
-			get { return info.DeclaringType; }
+		public MethodSpec AccessorAdd { 
+			get {
+				return add;
+			}
+			set {
+				add = value;
+			}
 		}
 
-		public Type EventType { get; set; }
-
-		public bool IsAbstract {
-			get { return (Modifiers & Modifiers.ABSTRACT) != 0; }
+		public MethodSpec AccessorRemove {
+			get {
+				return remove;
+			}
+			set {
+				remove = value;
+			}
 		}
 
-		public EventInfo MetaInfo {
-			get { return info; }
+		public TypeSpec MemberType { get; private set; }
+
+		#endregion
+
+		public override MemberSpec InflateMember (TypeParameterInflator inflator)
+		{
+			var es = (EventSpec) base.InflateMember (inflator);
+			es.MemberType = inflator.Inflate (MemberType);
+			return es;
 		}
 	}
  
-	public class Indexer : PropertyBase
+	public class Indexer : PropertyBase, IParametersMember
 	{
 		public class GetIndexerMethod : GetMethod
 		{
@@ -1483,7 +1374,7 @@ namespace Mono.CSharp
 		const Modifiers AllowedInterfaceModifiers =
 			Modifiers.NEW;
 
-		public readonly ParametersCompiled parameters;
+		readonly ParametersCompiled parameters;
 
 		public Indexer (DeclSpace parent, FullNamedExpression type, MemberName name, Modifiers mod,
 				ParametersCompiled parameters, Attributes attrs,
@@ -1505,7 +1396,7 @@ namespace Mono.CSharp
 				Set = new SetIndexerMethod (this, set_block);
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Type == pa.IndexerName) {
 				if (IsExplicitImpl) {
@@ -1523,7 +1414,7 @@ namespace Mono.CSharp
 
 		protected override bool CheckForDuplications ()
 		{
-			return Parent.MemberCache.CheckExistingMembersOverloads (this, GetFullName (MemberName), parameters, Report);
+			return Parent.MemberCache.CheckExistingMembersOverloads (this, parameters);
 		}
 		
 		public override bool Define ()
@@ -1537,6 +1428,10 @@ namespace Mono.CSharp
 			if (OptAttributes != null) {
 				Attribute indexer_attr = OptAttributes.Search (PredefinedAttributes.Get.IndexerName);
 				if (indexer_attr != null) {
+					var compiling = indexer_attr.Type.MemberDefinition as TypeContainer;
+					if (compiling != null)
+						compiling.Define ();
+
 					string name = indexer_attr.GetIndexerAttributeValue ();
 					if ((ModFlags & Modifiers.OVERRIDE) != 0) {
 						Report.Error (609, indexer_attr.Location,
@@ -1549,7 +1444,7 @@ namespace Mono.CSharp
 			}
 
 			if (InterfaceType != null) {
-				string base_IndexerName = TypeManager.IndexerPropertyName (InterfaceType);
+				string base_IndexerName = InterfaceType.MemberDefinition.GetAttributeDefaultMember ();
 				if (base_IndexerName != Name)
 					ShortName = base_IndexerName;
 			}
@@ -1566,8 +1461,7 @@ namespace Mono.CSharp
 			if (!CheckBase ())
 				return false;
 
-			DefineBuilders (MemberKind.Indexer, parameters.GetEmitTypes ());
-			TypeManager.RegisterIndexer (PropertyBuilder, parameters);
+			DefineBuilders (MemberKind.Indexer, parameters);
 			return true;
 		}
 
@@ -1599,10 +1493,16 @@ namespace Mono.CSharp
 			return sb.ToString ();
 		}
 
-		protected override PropertyInfo ResolveBaseProperty ()
-		{
-			return Parent.PartialContainer.BaseCache.FindMemberToOverride (
-				Parent.TypeBuilder, Name, parameters, null, true) as PropertyInfo;
+		public AParametersCollection Parameters {
+			get {
+				return parameters;
+			}
+		}
+
+		public ParametersCompiled ParameterInfo {
+			get {
+				return parameters;
+			}
 		}
 
 		protected override bool VerifyClsCompliance ()
@@ -1612,6 +1512,28 @@ namespace Mono.CSharp
 
 			parameters.VerifyClsCompliance (this);
 			return true;
+		}
+	}
+
+	public class IndexerSpec : PropertySpec, IParametersMember
+	{
+		AParametersCollection parameters;
+
+		public IndexerSpec (TypeSpec declaringType, IMemberDefinition definition, TypeSpec memberType, AParametersCollection parameters, PropertyInfo info, Modifiers modifiers)
+			: base (MemberKind.Indexer, declaringType, definition, memberType, info, modifiers)
+		{
+			this.parameters = parameters;
+		}
+
+		public override string GetSignatureForError ()
+		{
+			return DeclaringType.GetSignatureForError () + ".this" + parameters.GetSignatureForError ("[", "]", parameters.Count);
+		}
+
+		public AParametersCollection Parameters {
+			get {
+				return parameters;
+			}
 		}
 	}
 }

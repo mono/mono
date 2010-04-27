@@ -1014,7 +1014,7 @@ namespace Mono.CSharp
 	// </summary>
 	public class TypeInfo
 	{
-		public readonly Type Type;
+		public readonly TypeSpec Type;
 
 		// <summary>
 		//   Total number of bits a variable of this type consumes in the flow vector.
@@ -1043,7 +1043,7 @@ namespace Mono.CSharp
 		public TypeInfo[] SubStructInfo;
 
 		readonly StructInfo struct_info;
-		private static Dictionary<Type, TypeInfo> type_hash;
+		private static Dictionary<TypeSpec, TypeInfo> type_hash;
 		
 		static TypeInfo ()
 		{
@@ -1052,11 +1052,11 @@ namespace Mono.CSharp
 		
 		public static void Reset ()
 		{
-			type_hash = new Dictionary<Type, TypeInfo> ();
-			StructInfo.field_type_hash = new Dictionary<Type, StructInfo> ();
+			type_hash = new Dictionary<TypeSpec, TypeInfo> ();
+			StructInfo.field_type_hash = new Dictionary<TypeSpec, StructInfo> ();
 		}
 
-		public static TypeInfo GetTypeInfo (Type type)
+		public static TypeInfo GetTypeInfo (TypeSpec type)
 		{
 			TypeInfo info;
 			if (type_hash.TryGetValue (type, out info))
@@ -1070,15 +1070,15 @@ namespace Mono.CSharp
 		public static TypeInfo GetTypeInfo (TypeContainer tc)
 		{
 			TypeInfo info;
-			if (type_hash.TryGetValue (tc.TypeBuilder, out info))
+			if (type_hash.TryGetValue (tc.Definition, out info))
 				return info;
 
 			info = new TypeInfo (tc);
-			type_hash.Add (tc.TypeBuilder, info);
+			type_hash.Add (tc.Definition, info);
 			return info;
 		}
 
-		private TypeInfo (Type type)
+		private TypeInfo (TypeSpec type)
 		{
 			this.Type = type;
 
@@ -1097,7 +1097,7 @@ namespace Mono.CSharp
 
 		private TypeInfo (TypeContainer tc)
 		{
-			this.Type = tc.TypeBuilder;
+			this.Type = tc.Definition;
 
 			struct_info = StructInfo.GetStructInfo (tc);
 			if (struct_info != null) {
@@ -1154,15 +1154,14 @@ namespace Mono.CSharp
 				var field = struct_info.Fields [i];
 
 				if (!branching.IsFieldAssigned (vi, field.Name)) {
-					FieldBase fb = TypeManager.GetField (field.MetaInfo);
-					if (fb is Property.BackingField) {
+					if (field.MemberDefinition is Property.BackingField) {
 						ec.Report.Error (843, loc,
 							"An automatically implemented property `{0}' must be fully assigned before control leaves the constructor. Consider calling default contructor",
-							fb.GetSignatureForError ());
+							field.GetSignatureForError ());
 					} else {
 						ec.Report.Error (171, loc,
 							"Field `{0}' must be fully assigned before control leaves the constructor",
-							TypeManager.GetFullNameSignature (field.MetaInfo));
+							field.GetSignatureForError ());
 					}
 					ok = false;
 				}
@@ -1178,7 +1177,7 @@ namespace Mono.CSharp
 		}
 
 		class StructInfo {
-			public readonly Type Type;
+			public readonly TypeSpec Type;
 			public readonly FieldSpec[] Fields;
 			public readonly TypeInfo[] StructFields;
 			public readonly int Count;
@@ -1188,7 +1187,7 @@ namespace Mono.CSharp
 			public readonly int TotalLength;
 			public readonly bool HasStructFields;
 
-			public static Dictionary<Type, StructInfo> field_type_hash;
+			public static Dictionary<TypeSpec, StructInfo> field_type_hash;
 			private Dictionary<string, TypeInfo> struct_field_hash;
 			private Dictionary<string, int> field_hash;
 
@@ -1196,64 +1195,39 @@ namespace Mono.CSharp
 
 			// Private constructor.  To save memory usage, we only need to create one instance
 			// of this class per struct type.
-			private StructInfo (Type type)
+			private StructInfo (TypeSpec type)
 			{
 				this.Type = type;
 
 				field_type_hash.Add (type, this);
 
-				if (TypeManager.IsBeingCompiled (type)) {
-					TypeContainer tc = TypeManager.LookupTypeContainer (TypeManager.DropGenericTypeArguments (type));
+				TypeContainer tc = type.MemberDefinition as TypeContainer;
 
-					var public_fields = new List<FieldSpec> ();
-					var non_public_fields = new List<FieldSpec> ();
+				var public_fields = new List<FieldSpec> ();
+				var non_public_fields = new List<FieldSpec> ();
 
-					//
-					// TODO: tc != null is needed because FixedBuffers are not cached
-					//
-					if (tc != null) {
-						var fields = tc.Fields;
+				if (tc != null) {
+					var fields = tc.Fields;
 
-						if (fields != null) {
-							foreach (FieldBase field in fields) {
-								if ((field.ModFlags & Modifiers.STATIC) != 0)
-									continue;
-								if ((field.ModFlags & Modifiers.PUBLIC) != 0)
-									public_fields.Add (field.Spec);
-								else
-									non_public_fields.Add (field.Spec);
-							}
+					if (fields != null) {
+						foreach (FieldBase field in fields) {
+							if ((field.ModFlags & Modifiers.STATIC) != 0)
+								continue;
+							if ((field.ModFlags & Modifiers.PUBLIC) != 0)
+								public_fields.Add (field.Spec);
+							else
+								non_public_fields.Add (field.Spec);
 						}
 					}
-
-					CountPublic = public_fields.Count;
-					CountNonPublic = non_public_fields.Count;
-					Count = CountPublic + CountNonPublic;
-
-					Fields = new FieldSpec [Count];
-					public_fields.CopyTo (Fields, 0);
-					non_public_fields.CopyTo (Fields, CountPublic);
-				} else if (type is GenericTypeParameterBuilder) {
-					CountPublic = CountNonPublic = Count = 0;
-
-					Fields = new FieldSpec [0];
-				} else {
-					FieldInfo[] public_fields = type.GetFields (
-						BindingFlags.Instance|BindingFlags.Public);
-					FieldInfo[] non_public_fields = type.GetFields (
-						BindingFlags.Instance|BindingFlags.NonPublic);
-
-					CountPublic = public_fields.Length;
-					CountNonPublic = non_public_fields.Length;
-					Count = CountPublic + CountNonPublic;
-
-					Fields = new FieldSpec [Count];
-					for (int i = 0; i < CountPublic; ++i)
-						Fields [i] = Import.CreateField (public_fields[i]);
-
-					for (int i = 0; i < CountNonPublic; ++i)
-						Fields [i + CountPublic] = Import.CreateField (non_public_fields[i]);
 				}
+
+				CountPublic = public_fields.Count;
+				CountNonPublic = non_public_fields.Count;
+				Count = CountPublic + CountNonPublic;
+
+				Fields = new FieldSpec[Count];
+				public_fields.CopyTo (Fields, 0);
+				non_public_fields.CopyTo (Fields, CountPublic);
 
 				struct_field_hash = new Dictionary<string, TypeInfo> ();
 				field_hash = new Dictionary<string, int> ();
@@ -1267,14 +1241,10 @@ namespace Mono.CSharp
 				for (int i = 0; i < Count; i++) {
 					var field = Fields [i];
 
-					sinfo [i] = GetStructInfo (field.FieldType);
+					sinfo [i] = GetStructInfo (field.MemberType);
 					if (sinfo [i] == null)
 						field_hash.Add (field.Name, ++Length);
 					else if (sinfo [i].InTransit) {
-						RootContext.ToplevelTypes.Compiler.Report.Error (523, String.Format (
-								      "Struct member `{0}.{1}' of type `{2}' causes " +
-								      "a cycle in the structure layout",
-								      type, field.Name, sinfo [i].Type));
 						sinfo [i] = null;
 						return;
 					}
@@ -1317,7 +1287,7 @@ namespace Mono.CSharp
 				return null;
 			}
 
-			public static StructInfo GetStructInfo (Type type)
+			public static StructInfo GetStructInfo (TypeSpec type)
 			{
 				if (!TypeManager.IsValueType (type) || TypeManager.IsEnumType (type) ||
 				    TypeManager.IsBuiltinType (type))
@@ -1336,10 +1306,10 @@ namespace Mono.CSharp
 			public static StructInfo GetStructInfo (TypeContainer tc)
 			{
 				StructInfo info;
-				if (field_type_hash.TryGetValue (tc.TypeBuilder, out info))
+				if (field_type_hash.TryGetValue (tc.Definition, out info))
 					return info;
 
-				return new StructInfo (tc.TypeBuilder);
+				return new StructInfo (tc.Definition);
 			}
 		}
 	}
@@ -1381,7 +1351,7 @@ namespace Mono.CSharp
 			get { return is_ever_assigned; }
 		}
 
-		protected VariableInfo (string name, Type type, int offset)
+		protected VariableInfo (string name, TypeSpec type, int offset)
 		{
 			this.Name = name;
 			this.Offset = offset;

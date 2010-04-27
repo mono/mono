@@ -24,7 +24,7 @@ namespace Mono.CSharp
 		//
 		// A scope type context, it can be inflated for generic types
 		//
-		Type CurrentType { get; }
+		TypeSpec CurrentType { get; }
 
 		//
 		// A scope type parameters either VAR or MVAR
@@ -32,21 +32,20 @@ namespace Mono.CSharp
 		TypeParameter[] CurrentTypeParameters { get; }
 
 		//
-		// A type definition of the type context. For partial types definition use
+		// A member definition of the context. For partial types definition use
 		// CurrentTypeDefinition.PartialContainer otherwise the context is local
 		//
-		// TODO: CurrentType.Definition
-		//
-		TypeContainer CurrentTypeDefinition { get; }
+		MemberCore CurrentMemberDefinition { get; }
 
 		bool IsObsolete { get; }
 		bool IsUnsafe { get; }
 		bool IsStatic { get; }
+		bool HasUnresolvedConstraints { get; }
 
 		string GetSignatureForError ();
 
-		ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc);
-		FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104);
+		ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc);
+		FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104);
 		FullNamedExpression LookupNamespaceAlias (string name);
 
 		CompilerContext Compiler { get; }
@@ -61,7 +60,7 @@ namespace Mono.CSharp
 
 		public TypeInferenceContext ReturnTypeInference;
 
-		Type return_type;
+		TypeSpec return_type;
 
 		/// <summary>
 		///   The location where return has to jump to return the
@@ -74,7 +73,7 @@ namespace Mono.CSharp
 		/// </summary>
 		public bool HasReturnLabel;
 
-		public BlockContext (IMemberContext mc, ExplicitBlock block, Type returnType)
+		public BlockContext (IMemberContext mc, ExplicitBlock block, TypeSpec returnType)
 			: base (mc)
 		{
 			if (returnType == null)
@@ -180,7 +179,7 @@ namespace Mono.CSharp
 				HasReturnLabel = true;
 		}
 
-		public Type ReturnType {
+		public TypeSpec ReturnType {
 			get { return return_type; }
 		}
 	}
@@ -362,7 +361,7 @@ namespace Mono.CSharp
 			get { return CurrentAnonymousMethod as Iterator; }
 		}
 
-		public Type CurrentType {
+		public TypeSpec CurrentType {
 			get { return MemberContext.CurrentType; }
 		}
 
@@ -370,8 +369,8 @@ namespace Mono.CSharp
 			get { return MemberContext.CurrentTypeParameters; }
 		}
 
-		public TypeContainer CurrentTypeDefinition {
-			get { return MemberContext.CurrentTypeDefinition; }
+		public MemberCore CurrentMemberDefinition {
+			get { return MemberContext.CurrentMemberDefinition; }
 		}
 
 		public bool ConstantCheckState {
@@ -380,6 +379,10 @@ namespace Mono.CSharp
 
 		public bool DoFlowAnalysis {
 			get { return (flags & Options.DoFlowAnalysis) != 0; }
+		}
+
+		public bool HasUnresolvedConstraints {
+			get { return false; }
 		}
 
 		public bool IsInProbingMode {
@@ -473,14 +476,14 @@ namespace Mono.CSharp
 			get { return HasSet (Options.UnsafeScope) || MemberContext.IsUnsafe; }
 		}
 
-		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
+		public ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
 		{
-			return MemberContext.LookupExtensionMethod (extensionType, name, loc);
+			return MemberContext.LookupExtensionMethod (extensionType, name, arity, loc);
 		}
 
-		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
 		{
-			return MemberContext.LookupNamespaceOrType (name, loc, ignore_cs0104);
+			return MemberContext.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
 		}
 
 		public FullNamedExpression LookupNamespaceAlias (string name)

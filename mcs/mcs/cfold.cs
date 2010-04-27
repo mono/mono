@@ -14,9 +14,24 @@ namespace Mono.CSharp {
 
 	public class ConstantFold {
 
-		public static readonly Type[] binary_promotions = new Type[] { 
-			TypeManager.decimal_type, TypeManager.double_type, TypeManager.float_type,
-			TypeManager.uint64_type, TypeManager.int64_type, TypeManager.uint32_type };
+		static TypeSpec[] binary_promotions;
+
+		public static TypeSpec[] BinaryPromotionsTypes {
+			get {
+				if (binary_promotions == null) {
+					 binary_promotions = new TypeSpec[] { 
+						TypeManager.decimal_type, TypeManager.double_type, TypeManager.float_type,
+						TypeManager.uint64_type, TypeManager.int64_type, TypeManager.uint32_type };
+				}
+
+				return binary_promotions;
+			}
+		}
+
+		public static void Reset ()
+		{
+			binary_promotions = null;
+		}
 
 		//
 		// Performs the numeric promotions on the left and right expresions
@@ -30,10 +45,10 @@ namespace Mono.CSharp {
 		//		
 		static bool DoBinaryNumericPromotions (ResolveContext rc, ref Constant left, ref Constant right)
 		{
-			Type ltype = left.Type;
-			Type rtype = right.Type;
+			TypeSpec ltype = left.Type;
+			TypeSpec rtype = right.Type;
 
-			foreach (Type t in binary_promotions) {
+			foreach (TypeSpec t in BinaryPromotionsTypes) {
 				if (t == ltype)
 					return t == rtype || ConvertPromotion (rc, ref right, ref left, t);
 
@@ -46,7 +61,7 @@ namespace Mono.CSharp {
 			return left != null && right != null;
 		}
 
-		static bool ConvertPromotion (ResolveContext rc, ref Constant prim, ref Constant second, Type type)
+		static bool ConvertPromotion (ResolveContext rc, ref Constant prim, ref Constant second, TypeSpec type)
 		{
 			Constant c = prim.ConvertImplicitly (rc, type);
 			if (c != null) {
@@ -99,8 +114,8 @@ namespace Mono.CSharp {
 				return new SideEffectConstant (result, right, loc);
 			}
 
-			Type lt = left.Type;
-			Type rt = right.Type;
+			TypeSpec lt = left.Type;
+			TypeSpec rt = right.Type;
 			bool bool_res;
 
 			if (lt == TypeManager.bool_type && lt == rt) {

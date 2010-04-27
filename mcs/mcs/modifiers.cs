@@ -33,6 +33,7 @@ namespace Mono.CSharp
 		// Compiler specific flags
 		//
 		PROPERTY_CUSTOM 		= 0x4000,
+		OVERRIDE_UNCHECKED		= 0x8000,
 		PARTIAL					= 0x20000,
 		DEFAULT_ACCESS_MODIFER	= 0x40000,
 		METHOD_EXTENSION		= 0x80000,
@@ -46,6 +47,24 @@ namespace Mono.CSharp
 
 	static class ModifiersExtensions
 	{
+		public static string AccessibilityName (Modifiers mod)
+		{
+			switch (mod & Modifiers.AccessibilityMask) {
+			case Modifiers.PUBLIC:
+				return "public";
+			case Modifiers.PROTECTED:
+				return "protected";
+			case Modifiers.PROTECTED | Modifiers.INTERNAL:
+				return "protected internal";
+			case Modifiers.INTERNAL:
+				return "internal";
+			case Modifiers.PRIVATE:
+				return "private";
+			default:
+				throw new NotImplementedException (mod.ToString ());
+			}
+		}
+
 		static public string Name (Modifiers i)
 		{
 			string s = "";
@@ -84,26 +103,24 @@ namespace Mono.CSharp
 			return s;
 		}
 
-		public static string GetDescription (MethodAttributes ma)
+		//
+		// Used by custom property accessors to check whether @modA is more restrictive than @modB
+		//
+		public static bool IsRestrictedModifier (Modifiers modA, Modifiers modB)
 		{
-			ma &= MethodAttributes.MemberAccessMask;
+			Modifiers flags = 0;
 
-			if (ma == MethodAttributes.Assembly)
-				return "internal";
+			if ((modB & Modifiers.PUBLIC) != 0) {
+				flags = Modifiers.PROTECTED | Modifiers.INTERNAL | Modifiers.PRIVATE;
+			} else if ((modB & Modifiers.PROTECTED) != 0) {
+				if ((modB & Modifiers.INTERNAL) != 0)
+					flags = Modifiers.PROTECTED | Modifiers.INTERNAL;
 
-			if (ma == MethodAttributes.Family)
-				return "protected";
+				flags |= Modifiers.PRIVATE;
+			} else if ((modB & Modifiers.INTERNAL) != 0)
+				flags = Modifiers.PRIVATE;
 
-			if (ma == MethodAttributes.Public)
-				return "public";
-
-			if (ma == MethodAttributes.FamORAssem)
-				return "protected internal";
-
-			if (ma == MethodAttributes.Private)
-				return "private";
-
-			throw new NotImplementedException (ma.ToString ());
+			return modB != modA && (modA & (~flags)) == 0;
 		}
 
 		public static TypeAttributes TypeAttr (Modifiers mod_flags, bool is_toplevel)
@@ -166,18 +183,24 @@ namespace Mono.CSharp
 		{
 			MethodAttributes ma = MethodAttributes.HideBySig;
 
-			if ((mod_flags & Modifiers.PUBLIC) != 0)
+			switch (mod_flags & Modifiers.AccessibilityMask) {
+			case Modifiers.PUBLIC:
 				ma |= MethodAttributes.Public;
-			else if ((mod_flags & Modifiers.PRIVATE) != 0)
+				break;
+			case Modifiers.PRIVATE:
 				ma |= MethodAttributes.Private;
-			else if ((mod_flags & Modifiers.PROTECTED) != 0) {
-				if ((mod_flags & Modifiers.INTERNAL) != 0)
-					ma |= MethodAttributes.FamORAssem;
-				else 
-					ma |= MethodAttributes.Family;
-			} else {
-				if ((mod_flags & Modifiers.INTERNAL) != 0)
-					ma |= MethodAttributes.Assembly;
+				break;
+			case Modifiers.PROTECTED | Modifiers.INTERNAL:
+				ma |= MethodAttributes.FamORAssem;
+				break;
+			case Modifiers.PROTECTED:
+				ma |= MethodAttributes.Family;
+				break;
+			case Modifiers.INTERNAL:
+				ma |= MethodAttributes.Assembly;
+				break;
+			default:
+				throw new NotImplementedException (mod_flags.ToString ());
 			}
 
 			if ((mod_flags & Modifiers.STATIC) != 0)
@@ -191,9 +214,9 @@ namespace Mono.CSharp
 			if ((mod_flags & Modifiers.VIRTUAL) != 0)
 				ma |= MethodAttributes.Virtual;
 
-			if ((mod_flags & Modifiers.OVERRIDE) != 0)
+			if ((mod_flags & Modifiers.OVERRIDE) != 0) {
 				ma |= MethodAttributes.Virtual;
-			else {
+			} else {
 				if ((ma & MethodAttributes.Virtual) != 0)
 					ma |= MethodAttributes.NewSlot;
 			}
@@ -240,7 +263,7 @@ namespace Mono.CSharp
 				a = ((a & 2) >> 1) + (a & 5);
 				a = ((a & 4) >> 2) + (a & 3);
 				if (a > 1)
-					Report.Error (107, l, "More than one protection modifier specified", Report);
+					Report.Error (107, l, "More than one protection modifier specified");
 				
 				return mod;
 			}
@@ -257,7 +280,7 @@ namespace Mono.CSharp
 
 		public static void Error_InvalidModifier (Location l, string name, Report Report)
 		{
-			Report.Error (106, l, "The modifier `" + name + "' is not valid for this item", Report);
+			Report.Error (106, l, "The modifier `{0}' is not valid for this item", name);
 		}
 	}
 }

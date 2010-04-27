@@ -1,8 +1,9 @@
 //
 // pending.cs: Pending method implementation
 //
-// Author:
+// Authors:
 //   Miguel de Icaza (miguel@gnu.org)
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Dual licensed under the terms of the MIT X11 or GNU GPL
 //
@@ -14,12 +15,13 @@ using System;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Linq;
 
 namespace Mono.CSharp {
 
 	struct TypeAndMethods {
-		public Type          type;
-		public MethodInfo [] methods;
+		public TypeSpec          type;
+		public IList<MethodSpec> methods;
 
 		// 
 		// Whether it is optional, this is used to allow the explicit/implicit
@@ -30,14 +32,7 @@ namespace Mono.CSharp {
 		// class X : IA { }  class Y : X, IA { IA.Explicit (); }
 		//
 		public bool          optional;
-		
-		// Far from ideal, but we want to avoid creating a copy
-		// of methods above.
-		public Type [][]     args;
-
-		//This is used to store the modifiers of arguments
-		public Parameter.Modifier [][] mods;
-		
+				
 		//
 		// This flag on the method says `We found a match, but
 		// because it was private, we could not use the match
@@ -47,95 +42,25 @@ namespace Mono.CSharp {
 		// If a method is defined here, then we always need to
 		// create a proxy for it.  This is used when implementing
 		// an interface's indexer with a different IndexerName.
-		public MethodInfo [] need_proxy;
+		public MethodSpec [] need_proxy;
 	}
 
-	public class PendingImplementation {
+	public class PendingImplementation
+	{
 		/// <summary>
 		///   The container for this PendingImplementation
 		/// </summary>
 		TypeContainer container;
 		
 		/// <summary>
-		///   This filter is used by FindMembers, and it is used to
-		///   extract only virtual/abstract fields
-		/// </summary>
-		static MemberFilter virtual_method_filter;
-
-		/// <summary>
 		///   This is the array of TypeAndMethods that describes the pending implementations
 		///   (both interfaces and abstract methods in base class)
 		/// </summary>
 		TypeAndMethods [] pending_implementations;
 
-		static bool IsVirtualFilter (MemberInfo m, object filterCriteria)
+		PendingImplementation (TypeContainer container, MissingInterfacesInfo[] missing_ifaces, IList<MethodSpec> abstract_methods, int total)
 		{
-			MethodInfo mi = m as MethodInfo;
-			return (mi == null) ? false : mi.IsVirtual;
-		}
-
-		/// <summary>
-		///   Inits the virtual_method_filter
-		/// </summary>
-		static PendingImplementation ()
-		{
-			virtual_method_filter = new MemberFilter (IsVirtualFilter);
-		}
-
-		// <remarks>
-		//   Returns a list of the abstract methods that are exposed by all of our
-		//   bases that we must implement.  Notice that this `flattens' the
-		//   method search space, and takes into account overrides.  
-		// </remarks>
-		static IList<MethodBase> GetAbstractMethods (Type t)
-		{
-			List<MethodBase> list = null;
-			bool searching = true;
-			Type current_type = t;
-			
-			do {
-				MemberList mi;
-				
-				mi = TypeContainer.FindMembers (
-					current_type, MemberTypes.Method,
-					BindingFlags.Public | BindingFlags.NonPublic |
-					BindingFlags.Instance | BindingFlags.DeclaredOnly,
-					virtual_method_filter, null);
-
-				if (current_type == TypeManager.object_type)
-					searching = false;
-				else {
-					current_type = current_type.BaseType;
-					if (!current_type.IsAbstract)
-						searching = false;
-				}
-
-				if (mi.Count == 0)
-					continue;
-
-				if (mi.Count == 1 && !(mi [0] is MethodBase))
-					searching = false;
-				else 
-					list = TypeManager.CopyNewMethods (list, mi);
-			} while (searching);
-
-			if (list == null)
-				return null;
-			
-			for (int i = 0; i < list.Count; i++){
-				while (list.Count > i && !((MethodInfo) list [i]).IsAbstract)
-					list.RemoveAt (i);
-			}
-
-			if (list.Count == 0)
-				return null;
-
-			return list;
-		}
-
-		PendingImplementation (TypeContainer container, MissingInterfacesInfo[] missing_ifaces, IList<MethodBase> abstract_methods, int total)
-		{
-			TypeBuilder type_builder = container.TypeBuilder;
+			var type_builder = container.Definition;
 			
 			this.container = container;
 			pending_implementations = new TypeAndMethods [total];
@@ -143,91 +68,34 @@ namespace Mono.CSharp {
 			int i = 0;
 			if (abstract_methods != null) {
 				int count = abstract_methods.Count;
-				pending_implementations [i].methods = new MethodInfo [count];
-				pending_implementations [i].need_proxy = new MethodInfo [count];
-				
-				abstract_methods.CopyTo (pending_implementations [i].methods, 0);
-				pending_implementations [i].found = new MethodData [count];
-				pending_implementations [i].args = new Type [count][];
-				pending_implementations [i].mods = new Parameter.Modifier [count][];
-				pending_implementations [i].type = type_builder;
+				pending_implementations [i].methods = new MethodSpec [count];
+				pending_implementations [i].need_proxy = new MethodSpec [count];
 
-				int j = 0;
-				foreach (MemberInfo m in abstract_methods) {
-					MethodInfo mi = (MethodInfo) m;
-					
-					AParametersCollection pd = TypeManager.GetParameterData (mi);
-					Type [] types = pd.Types;
-					
-					pending_implementations [i].args [j] = types;
-					pending_implementations [i].mods [j] = null;
-					if (pd.Count > 0) {
-						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
-						for (int k = 0; k < pd.Count; k++)
-							pm [k] = pd.FixedParameters[k].ModFlags;
-						pending_implementations [i].mods [j] = pm;
-					}
-						
-					j++;
-				}
+				pending_implementations [i].methods = abstract_methods;
+				pending_implementations [i].found = new MethodData [count];
+				pending_implementations [i].type = type_builder;
 				++i;
 			}
 
 			foreach (MissingInterfacesInfo missing in missing_ifaces) {
-				MethodInfo [] mi;
-				Type t = missing.Type;
-				
-				if (!t.IsInterface)
-					continue;
+				var iface = missing.Type;
+				var mi = MemberCache.GetInterfaceMembers (iface);
 
-				if (t is TypeBuilder){
-					TypeContainer iface;
-
-					iface = TypeManager.LookupInterface (t);
-					
-					mi = iface.GetMethods ();
-				} else 
-					mi = t.GetMethods ();
-				
-				int count = mi.Length;
-				pending_implementations [i].type = t;
+				int count = mi.Count;
+				pending_implementations [i].type = iface;
 				pending_implementations [i].optional = missing.Optional;
 				pending_implementations [i].methods = mi;
-				pending_implementations [i].args = new Type [count][];
-				pending_implementations [i].mods = new Parameter.Modifier [count][];
 				pending_implementations [i].found = new MethodData [count];
-				pending_implementations [i].need_proxy = new MethodInfo [count];
-				
-				int j = 0;
-				foreach (MethodInfo m in mi){
-  					pending_implementations [i].args [j] = Type.EmptyTypes;
-					pending_implementations [i].mods [j] = null;
-
-					// If there is a previous error, just ignore
-					if (m == null)
-						continue;
-
- 					AParametersCollection pd = TypeManager.GetParameterData (m);
-					pending_implementations [i].args [j] = pd.Types;
- 					
- 					if (pd.Count > 0){
- 						Parameter.Modifier [] pm = new Parameter.Modifier [pd.Count];
- 						for (int k = 0; k < pd.Count; k++)
- 							pm [k] = pd.FixedParameters [k].ModFlags;
- 						pending_implementations [i].mods [j] = pm;
- 					}
-			
-					j++;
-				}
+				pending_implementations [i].need_proxy = new MethodSpec [count];
 				i++;
 			}
 		}
 
 		struct MissingInterfacesInfo {
-			public Type Type;
+			public TypeSpec Type;
 			public bool Optional;
 
-			public MissingInterfacesInfo (Type t)
+			public MissingInterfacesInfo (TypeSpec t)
 			{
 				Type = t;
 				Optional = false;
@@ -236,42 +104,40 @@ namespace Mono.CSharp {
 
 		static MissingInterfacesInfo [] EmptyMissingInterfacesInfo = new MissingInterfacesInfo [0];
 		
-		static MissingInterfacesInfo [] GetMissingInterfaces (TypeBuilder type_builder)
+		static MissingInterfacesInfo [] GetMissingInterfaces (TypeContainer container)
 		{
 			//
-			// Notice that TypeBuilders will only return the interfaces that the Type
+			// Notice that Interfaces will only return the interfaces that the Type
 			// is supposed to implement, not all the interfaces that the type implements.
 			//
-			// Even better -- on MS it returns an empty array, no matter what.
-			//
-			// Completely broken.  So we do it ourselves!
-			//
-			Type [] impl = TypeManager.GetExplicitInterfaces (type_builder);
+			var impl = container.Definition.Interfaces;
 
-			if (impl == null || impl.Length == 0)
+			if (impl == null || impl.Count == 0)
 				return EmptyMissingInterfacesInfo;
 
-			MissingInterfacesInfo [] ret = new MissingInterfacesInfo [impl.Length];
+			MissingInterfacesInfo[] ret = new MissingInterfacesInfo[impl.Count];
 
-			for (int i = 0; i < impl.Length; i++)
+			for (int i = 0; i < impl.Count; i++)
 				ret [i] = new MissingInterfacesInfo (impl [i]);
 
 			// we really should not get here because Object doesnt implement any
 			// interfaces. But it could implement something internal, so we have
 			// to handle that case.
-			if (type_builder.BaseType == null)
+			if (container.BaseType == null)
 				return ret;
 			
-			Type [] base_impls = TypeManager.GetInterfaces (type_builder.BaseType);
-			
-			foreach (Type t in base_impls) {
-				for (int i = 0; i < ret.Length; i ++) {
-					if (t == ret [i].Type) {
-						ret [i].Optional = true;
-						break;
+			var base_impls = container.BaseType.Interfaces;
+			if (base_impls != null) {
+				foreach (TypeSpec t in base_impls) {
+					for (int i = 0; i < ret.Length; i++) {
+						if (t == ret[i].Type) {
+							ret[i].Optional = true;
+							break;
+						}
 					}
 				}
 			}
+
 			return ret;
 		}
 		
@@ -284,11 +150,9 @@ namespace Mono.CSharp {
 		//
 		static public PendingImplementation GetPendingImplementations (TypeContainer container)
 		{
-			TypeBuilder type_builder = container.TypeBuilder;
-			MissingInterfacesInfo [] missing_interfaces;
-			Type b = type_builder.BaseType;
+			TypeSpec b = container.BaseType;
 
-			missing_interfaces = GetMissingInterfaces (type_builder);
+			var missing_interfaces = GetMissingInterfaces (container);
 
 			//
 			// If we are implementing an abstract class, and we are not
@@ -298,11 +162,11 @@ namespace Mono.CSharp {
 			//
 			// We also pre-compute the methods.
 			//
-			bool implementing_abstract = ((b != null) && b.IsAbstract && !type_builder.IsAbstract);
-			IList<MethodBase> abstract_methods = null;
+			bool implementing_abstract = ((b != null) && b.IsAbstract && (container.ModFlags & Modifiers.ABSTRACT) == 0);
+			IList<MethodSpec> abstract_methods = null;
 
 			if (implementing_abstract){
-				abstract_methods = GetAbstractMethods (b);
+				abstract_methods = MemberCache.GetNotImplementedAbstractMethods (b);
 				
 				if (abstract_methods == null)
 					implementing_abstract = false;
@@ -326,12 +190,12 @@ namespace Mono.CSharp {
 		/// <summary>
 		///   Whether the specified method is an interface method implementation
 		/// </summary>
-		public MethodInfo IsInterfaceMethod (string name, Type ifaceType, MethodData method)
+		public MethodSpec IsInterfaceMethod (MemberName name, TypeSpec ifaceType, MethodData method)
 		{
 			return InterfaceMethod (name, ifaceType, method, Operation.Lookup);
 		}
 
-		public void ImplementMethod (string name, Type ifaceType, MethodData method, bool clear_one) 
+		public void ImplementMethod (MemberName name, TypeSpec ifaceType, MethodData method, bool clear_one) 
 		{
 			InterfaceMethod (name, ifaceType, method, clear_one ? Operation.ClearOne : Operation.ClearAll);
 		}
@@ -353,38 +217,45 @@ namespace Mono.CSharp {
 		///   that was used in the interface, then we always need to create a proxy for it.
 		///
 		/// </remarks>
-		public MethodInfo InterfaceMethod (string name, Type iType, MethodData method, Operation op)
+		public MethodSpec InterfaceMethod (MemberName name, TypeSpec iType, MethodData method, Operation op)
 		{
 			if (pending_implementations == null)
 				return null;
 
-			Type ret_type = method.method.ReturnType;
+			TypeSpec ret_type = method.method.ReturnType;
 			ParametersCompiled args = method.method.ParameterInfo;
-			int arg_len = args.Count;
 			bool is_indexer = method.method is Indexer.SetIndexerMethod || method.method is Indexer.GetIndexerMethod;
 
 			foreach (TypeAndMethods tm in pending_implementations){
 				if (!(iType == null || tm.type == iType))
 					continue;
 
-				int method_count = tm.methods.Length;
-				MethodInfo m;
+				int method_count = tm.methods.Count;
+				MethodSpec m;
 				for (int i = 0; i < method_count; i++){
 					m = tm.methods [i];
 
 					if (m == null)
 						continue;
 
-					//
-					// Check if we have the same parameters
-					//
+					if (is_indexer) {
+						if (!m.IsAccessor || m.Parameters.IsEmpty)
+							continue;
+					} else {
+						if (name.Name != m.Name)
+							continue;
 
-					if (tm.args [i] == null && arg_len != 0)
-						continue;
-					if (tm.args [i] != null && tm.args [i].Length != arg_len)
+						if (m.Arity != name.Arity)
+							continue;
+					}
+
+					if (!TypeSpecComparer.Override.IsEqual (m.Parameters, args))
 						continue;
 
-					string mname = TypeManager.GetMethodName (m);
+					if (!TypeSpecComparer.Override.IsEqual (m.ReturnType, ret_type)) {
+						tm.found[i] = method;
+						continue;
+					}
 
 					//
 					// `need_proxy' is not null when we're implementing an
@@ -394,45 +265,6 @@ namespace Mono.CSharp {
 					// signature and not on the name (this is done in the Lookup
 					// for an interface indexer).
 					//
-
-					if (is_indexer) {
-						IMethodData md = TypeManager.GetMethod (m);
-						if (md != null) {
-							if (!(md is Indexer.SetIndexerMethod || md is Indexer.GetIndexerMethod))
-								continue;
-						} else {
-							if (TypeManager.GetPropertyFromAccessor (m) == null)
-								continue;
-						}
-					} else if (name != mname) {
-						continue;
-					}
-
-					int j;
-
-					for (j = 0; j < arg_len; j++) {
-						if (!TypeManager.IsEqual (tm.args [i][j], args.Types [j]))
-							break;
-						if (tm.mods [i][j] == args.FixedParameters [j].ModFlags)
-							continue;
-						// The modifiers are different, but if one of them
-						// is a PARAMS modifier, and the other isn't, ignore
-						// the difference.
-						if (tm.mods [i][j] != Parameter.Modifier.PARAMS &&
-						    args.FixedParameters [j].ModFlags != Parameter.Modifier.PARAMS)
-							break;
-					}
-					if (j != arg_len)
-						continue;
-
-					Type rt = TypeManager.TypeToCoreType (m.ReturnType);
-					if (!TypeManager.IsEqual (ret_type, rt) &&
-						!(ret_type == null && rt == TypeManager.void_type) &&
-						!(rt == null && ret_type == TypeManager.void_type)) {
-						tm.found [i] = method;
-						continue;
-					}
-
 					if (op != Operation.Lookup) {
 						// If `t != null', then this is an explicitly interface
 						// implementation and we can always clear the method.
@@ -440,10 +272,10 @@ namespace Mono.CSharp {
 						// interface indexer.  In this case, we need to create
 						// a proxy if the implementation's IndexerName doesn't
 						// match the IndexerName in the interface.
-						if (iType == null && name != mname)
-							tm.need_proxy [i] = method.MethodBuilder;
-						else
-							tm.methods [i] = null;
+						if (iType == null && name.Name != m.Name) {	// TODO: This is very expensive comparison
+							tm.need_proxy[i] = method.method.Spec;
+						} else
+							tm.methods[i] = null;
 					} else {
 						tm.found [i] = method;
 					}
@@ -471,11 +303,17 @@ namespace Mono.CSharp {
 		///   For that case, we create an explicit implementation function
 		///   I.M in Y.
 		/// </summary>
-		void DefineProxy (Type iface, MethodInfo base_method, MethodInfo iface_method,
-				  AParametersCollection param)
+		void DefineProxy (TypeSpec iface, MethodSpec base_method, MethodSpec iface_method)
 		{
 			// TODO: Handle nested iface names
-			string proxy_name = SimpleName.RemoveGenericArity (iface.FullName) + "." + iface_method.Name;
+			string proxy_name;
+			var ns = iface.MemberDefinition.Namespace;
+			if (string.IsNullOrEmpty (ns))
+				proxy_name = iface.MemberDefinition.Name + "." + iface_method.Name;
+			else
+				proxy_name = ns + "." + iface.MemberDefinition.Name + "." + iface_method.Name;
+
+			var param = iface_method.Parameters;
 
 			MethodBuilder proxy = container.TypeBuilder.DefineMethod (
 				proxy_name,
@@ -484,14 +322,10 @@ namespace Mono.CSharp {
 				MethodAttributes.CheckAccessOnOverride |
 				MethodAttributes.Virtual,
 				CallingConventions.Standard | CallingConventions.HasThis,
-				base_method.ReturnType, param.GetEmitTypes ());
+				base_method.ReturnType.GetMetaInfo (), param.GetMetaInfo ());
 
-			Type[] gargs = TypeManager.GetGenericArguments (iface_method);
-			if (gargs.Length > 0) {
-				string[] gnames = new string[gargs.Length];
-				for (int i = 0; i < gargs.Length; ++i)
-					gnames[i] = gargs[i].Name;
-
+			if (iface_method.IsGeneric) {
+				var gnames = iface_method.GenericDefinition.TypeParameters.Select (l => l.Name).ToArray ();
 				proxy.DefineGenericParameters (gnames);
 			}
 
@@ -502,15 +336,15 @@ namespace Mono.CSharp {
 			}
 
 			int top = param.Count;
-			ILGenerator ig = proxy.GetILGenerator ();
+			var ec = new EmitContext (null, proxy.GetILGenerator (), null);
 
 			for (int i = 0; i <= top; i++)
-				ParameterReference.EmitLdArg (ig, i);
+				ParameterReference.EmitLdArg (ec, i);
 
-			ig.Emit (OpCodes.Call, base_method);
-			ig.Emit (OpCodes.Ret);
+			ec.Emit (OpCodes.Call, base_method);
+			ec.Emit (OpCodes.Ret);
 
-			container.TypeBuilder.DefineMethodOverride (proxy, iface_method);
+			container.TypeBuilder.DefineMethodOverride (proxy, (MethodInfo) iface_method.GetMetaInfo ());
 		}
 		
 		/// <summary>
@@ -518,39 +352,26 @@ namespace Mono.CSharp {
 		///   the given method (which turns out, it is valid to have an interface
 		///   implementation in a base
 		/// </summary>
-		bool BaseImplements (Type iface_type, MethodInfo mi, out MethodInfo base_method)
+		bool BaseImplements (TypeSpec iface_type, MethodSpec mi, out MethodSpec base_method)
 		{
-			MethodSignature ms;
-			
-			AParametersCollection param = TypeManager.GetParameterData (mi);
-			ms = new MethodSignature (mi.Name, TypeManager.TypeToCoreType (mi.ReturnType), param.Types);
-			MemberList list = TypeContainer.FindMembers (
-				container.TypeBuilder.BaseType, MemberTypes.Method | MemberTypes.Property,
-				BindingFlags.Public | BindingFlags.Instance,
-				MethodSignature.method_signature_filter, ms);
+			var base_type = container.BaseType;
+			base_method = (MethodSpec) MemberCache.FindMember (base_type, new MemberFilter (mi), BindingRestriction.None);
 
-			if (list.Count == 0) {
-				base_method = null;
+			if (base_method == null || (base_method.Modifiers & Modifiers.PUBLIC) == 0)
 				return false;
-			}
-
-			if (TypeManager.ImplementsInterface (container.TypeBuilder.BaseType, iface_type)) {
-				base_method = null;
-				return true;
-			}
-
-			base_method = (MethodInfo) list [0];
 
 			if (base_method.DeclaringType.IsInterface)
 				return false;
 
-			if (!base_method.IsPublic)
-				return false;
+			// Why was it here ????
+			//if (TypeManager.ImplementsInterface (base_type, iface_type)) {
+			//	return true;
+			//}
 
 			if (!base_method.IsAbstract && !base_method.IsVirtual)
 				// FIXME: We can avoid creating a proxy if base_method can be marked 'final virtual' instead.
 				//        However, it's too late now, the MethodBuilder has already been created (see bug 377519)
-				DefineProxy (iface_type, base_method, mi, param);
+				DefineProxy (iface_type, base_method, mi);
 
 			return true;
 		}
@@ -566,63 +387,64 @@ namespace Mono.CSharp {
 			int i;
 			
 			for (i = 0; i < top; i++){
-				Type type = pending_implementations [i].type;
+				TypeSpec type = pending_implementations [i].type;
 				int j = 0;
 
 				bool base_implements_type = type.IsInterface &&
-					container.TypeBuilder.BaseType != null &&
-					TypeManager.ImplementsInterface (container.TypeBuilder.BaseType, type);
+					container.BaseType != null &&
+					container.BaseType.ImplementsInterface (type);
 
-				foreach (MethodInfo mi in pending_implementations [i].methods){
+				foreach (var mi in pending_implementations [i].methods){
 					if (mi == null)
 						continue;
 
 					if (type.IsInterface){
-						MethodInfo need_proxy =
+						var need_proxy =
 							pending_implementations [i].need_proxy [j];
 
 						if (need_proxy != null) {
-							DefineProxy (type, need_proxy, mi, TypeManager.GetParameterData (mi));
+							DefineProxy (type, need_proxy, mi);
 							continue;
 						}
 
 						if (pending_implementations [i].optional)
 							continue;
 
-						MethodInfo candidate = null;
+						MethodSpec candidate = null;
 						if (base_implements_type || BaseImplements (type, mi, out candidate))
 							continue;
 
 						if (candidate == null) {
 							MethodData md = pending_implementations [i].found [j];
 							if (md != null)
-								candidate = md.MethodBuilder;
+								candidate = md.method.Spec;
 						}
-						
+
 						Report.SymbolRelatedToPreviousError (mi);
 						if (candidate != null) {
 							Report.SymbolRelatedToPreviousError (candidate);
 							if (candidate.IsStatic) {
 								Report.Error (736, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' is static",
-									container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate));
-							} else if (!candidate.IsPublic) {
+									container.GetSignatureForError (), mi.GetSignatureForError (), TypeManager.CSharpSignature (candidate));
+							} else if ((candidate.Modifiers & Modifiers.PUBLIC) == 0) {
 								Report.Error (737, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' in not public",
-									container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate, true));
+									container.GetSignatureForError (), mi.GetSignatureForError (), candidate.GetSignatureForError ());
 							} else {
 								Report.Error (738, container.Location,
 									"`{0}' does not implement interface member `{1}' and the best implementing candidate `{2}' return type `{3}' does not match interface member return type `{4}'",
-									container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true), TypeManager.CSharpSignature (candidate),
+									container.GetSignatureForError (), mi.GetSignatureForError (), TypeManager.CSharpSignature (candidate),
 									TypeManager.CSharpName (candidate.ReturnType), TypeManager.CSharpName (mi.ReturnType));
 							}
 						} else {
 							Report.Error (535, container.Location, "`{0}' does not implement interface member `{1}'",
-								container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true));
+								container.GetSignatureForError (), mi.GetSignatureForError ());
 						}
 					} else {
+						Report.SymbolRelatedToPreviousError (mi);
 						Report.Error (534, container.Location, "`{0}' does not implement inherited abstract member `{1}'",
-							container.GetSignatureForError (), TypeManager.CSharpSignature (mi, true));
+							container.GetSignatureForError (), mi.GetSignatureForError ());
 					}
 					errors = true;
 					j++;
@@ -630,5 +452,5 @@ namespace Mono.CSharp {
 			}
 			return errors;
 		}
-	} /* end of class */
+	}
 }

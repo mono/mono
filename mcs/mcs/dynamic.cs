@@ -71,19 +71,18 @@ namespace Mono.CSharp
 #if !NET_4_0
 		public class DynamicMetaObject
 		{
-			public Type RuntimeType;
-			public Type LimitType;
+			public TypeSpec RuntimeType;
+			public TypeSpec LimitType;
 			public SLE.Expression Expression;
 		}
 #endif
 
 		readonly DynamicMetaObject obj;
 
-		public RuntimeValueExpression (DynamicMetaObject obj, bool isCompileTimeType)
+		public RuntimeValueExpression (DynamicMetaObject obj, TypeSpec type)
 		{
 			this.obj = obj;
-			this.type = isCompileTimeType ? obj.LimitType : obj.RuntimeType;
-			this.type = obj.LimitType;
+			this.type = type;
 			this.eclass = ExprClass.Variable;
 		}
 
@@ -133,7 +132,7 @@ namespace Mono.CSharp
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.Convert (obj.Expression, type);
+			return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
 		}
 
 		public DynamicMetaObject MetaObject {
@@ -148,7 +147,7 @@ namespace Mono.CSharp
 	//
 	public class DynamicResultCast : ShimExpression
 	{
-		public DynamicResultCast (Type type, Expression expr)
+		public DynamicResultCast (TypeSpec type, Expression expr)
 			: base (expr)
 		{
 			this.type = type;
@@ -164,7 +163,7 @@ namespace Mono.CSharp
 #if NET_4_0
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return SLE.Expression.Block (expr.MakeExpression (ctx),	SLE.Expression.Default (type));
+			return SLE.Expression.Block (expr.MakeExpression (ctx), SLE.Expression.Default (type.GetMetaInfo ()));
 		}
 #endif
 	}
@@ -261,6 +260,7 @@ namespace Mono.CSharp
 			if (global_site_container == null) {
 				global_site_container = new StaticDataClass ();
 				RootContext.ToplevelTypes.AddCompilerGeneratedClass (global_site_container);
+				global_site_container.CreateType ();
 				global_site_container.DefineType ();
 				global_site_container.Define ();
 			}
@@ -310,7 +310,7 @@ namespace Mono.CSharp
 
 			if (TypeManager.generic_call_site_type == null)
 				TypeManager.generic_call_site_type = TypeManager.CoreLookupType (rc.Compiler,
-					"System.Runtime.CompilerServices", "CallSite`1", MemberKind.Class, true);
+					"System.Runtime.CompilerServices", "CallSite", 1, MemberKind.Class, true);
 
 			if (TypeManager.binder_flags == null) {
 				TypeManager.binder_flags = TypeManager.CoreLookupType (rc.Compiler,
@@ -346,7 +346,7 @@ namespace Mono.CSharp
 			TypeExpr site_type = CreateSiteType (RootContext.ToplevelTypes.Compiler, arguments, dyn_args_count, isStatement);
 			FieldExpr site_field_expr = new FieldExpr (CreateSiteField (site_type), loc);
 
-			SymbolWriter.OpenCompilerGeneratedBlock (ec.ig);
+			SymbolWriter.OpenCompilerGeneratedBlock (ec);
 
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (binder));
@@ -376,7 +376,7 @@ namespace Mono.CSharp
 			if (target != null)
 				target.Emit (ec);
 
-			SymbolWriter.CloseCompilerGeneratedBlock (ec.ig);
+			SymbolWriter.CloseCompilerGeneratedBlock (ec);
 		}
 
 		public static MemberAccess GetBinderNamespace (Location loc)
@@ -398,7 +398,7 @@ namespace Mono.CSharp
 			FullNamedExpression[] targs = new FullNamedExpression[dyn_args_count + default_args];
 			targs [0] = new TypeExpression (TypeManager.call_site_type, loc);
 			for (int i = 0; i < dyn_args_count; ++i) {
-				Type arg_type;
+				TypeSpec arg_type;
 				Argument a = arguments [i];
 				if (a.Type == TypeManager.null_type)
 					arg_type = TypeManager.object_type;
@@ -413,9 +413,9 @@ namespace Mono.CSharp
 
 			TypeExpr del_type = null;
 			if (!has_ref_out_argument) {
-				string d_name = is_statement ? "Action`" : "Func`";
+				string d_name = is_statement ? "Action" : "Func";
 
-				Type t = TypeManager.CoreLookupType (ctx, "System", d_name + (dyn_args_count + default_args), MemberKind.Delegate, false);
+				TypeSpec t = TypeManager.CoreLookupType (ctx, "System", d_name, dyn_args_count + default_args, MemberKind.Delegate, false);
 				if (t != null) {
 					if (!is_statement)
 						targs [targs.Length - 1] = new TypeExpression (type, loc);
@@ -428,7 +428,7 @@ namespace Mono.CSharp
 			// Create custom delegate when no appropriate predefined one is found
 			//
 			if (del_type == null) {
-				Type rt = is_statement ? TypeManager.void_type : type;
+				TypeSpec rt = is_statement ? TypeManager.void_type : type;
 				Parameter[] p = new Parameter [dyn_args_count + 1];
 				p[0] = new Parameter (targs [0], "p0", Parameter.Modifier.NONE, null, loc);
 
@@ -441,12 +441,13 @@ namespace Mono.CSharp
 					new MemberName ("Container" + container_counter++.ToString ("X")),
 					new ParametersCompiled (ctx, p), null);
 
+				d.CreateType ();
 				d.DefineType ();
 				d.Define ();
 				d.Emit ();
 
 				parent.AddDelegate (d);
-				del_type = new TypeExpression (d.TypeBuilder, loc);
+				del_type = new TypeExpression (d.Definition, loc);
 			}
 
 			TypeExpr site_type = new GenericTypeExpr (TypeManager.generic_call_site_type, new TypeArguments (del_type), loc);
@@ -502,7 +503,7 @@ namespace Mono.CSharp
 
 	class DynamicConversion : DynamicExpressionStatement, IDynamicBinder
 	{
-		public DynamicConversion (Type targetType, CSharpBinderFlags flags, Arguments args, Location loc)
+		public DynamicConversion (TypeSpec targetType, CSharpBinderFlags flags, Arguments args, Location loc)
 			: base (null, args, loc)
 		{
 			type = targetType;
@@ -525,7 +526,7 @@ namespace Mono.CSharp
 
 	class DynamicConstructorBinder : DynamicExpressionStatement, IDynamicBinder
 	{
-		public DynamicConstructorBinder (Type type, Arguments args, Location loc)
+		public DynamicConstructorBinder (TypeSpec type, Arguments args, Location loc)
 			: base (null, args, loc)
 		{
 			this.type = type;
@@ -574,7 +575,7 @@ namespace Mono.CSharp
 			this.member = member;
 		}
 
-		public DynamicInvocation (ATypeNameExpression member, Arguments args, Type type, Location loc)
+		public DynamicInvocation (ATypeNameExpression member, Arguments args, TypeSpec type, Location loc)
 			: this (member, args, loc)
 		{
 			// When a return type is known not to be dynamic
@@ -610,7 +611,7 @@ namespace Mono.CSharp
 				TypeArguments ta = member.TypeArguments;
 				if (ta.Resolve (ec)) {
 					var targs = new ArrayInitializer (ta.Count, loc);
-					foreach (Type t in ta.Arguments)
+					foreach (TypeSpec t in ta.Arguments)
 						targs.Add (new TypeOf (new TypeExpression (t, loc), loc));
 
 					binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", targs, loc)));

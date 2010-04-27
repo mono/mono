@@ -3008,7 +3008,7 @@ primary_expression_no_array_creation
 	| IDENTIFIER opt_type_argument_list
 	  {
 		var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new SimpleName (MemberName.MakeName (lt.Value, (TypeArguments)$2), (TypeArguments)$2, lt.Location);	  
+		$$ = new SimpleName (lt.Value, (TypeArguments)$2, lt.Location);	  
 	  }
 	| IDENTIFIER GENERATE_COMPLETION {
 		var lt = (Tokenizer.LocatedToken) $1;
@@ -3554,7 +3554,7 @@ rank_specifiers
 	: rank_specifier
 	| rank_specifier rank_specifiers
 	  {
-		$$ = (string) $2 + (string) $1;
+		$$ = (string) $1 + (string) $2;
 	  }
 	;
 
@@ -3658,14 +3658,14 @@ unbound_type_name
 	  {  
 		var lt = (Tokenizer.LocatedToken) $1;
 
-		$$ = new SimpleName (MemberName.MakeName (lt.Value, (int)$2), lt.Location);
+		$$ = new SimpleName (lt.Value, (int) $2, lt.Location);
 	  }
 	| qualified_alias_member IDENTIFIER generic_dimension
 	  {
 		var lt1 = (Tokenizer.LocatedToken) $1;
 		var lt2 = (Tokenizer.LocatedToken) $2;
 
-		$$ = new QualifiedAliasMember (lt1.Value, MemberName.MakeName (lt2.Value, (int) $3), lt1.Location);
+		$$ = new QualifiedAliasMember (lt1.Value, lt2.Value, (int) $3, lt1.Location);
 	  }
 	| unbound_type_name DOT IDENTIFIER
 	  {
@@ -3677,14 +3677,14 @@ unbound_type_name
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
 		
-		$$ = new MemberAccess ((Expression) $1, MemberName.MakeName (lt.Value, (int) $4), lt.Location);		
+		$$ = new MemberAccess ((Expression) $1, lt.Value, (int) $4, lt.Location);		
 	  }
 	| namespace_or_type_name DOT IDENTIFIER generic_dimension
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
 		MemberName name = (MemberName) $1;
 
-		$$ = new MemberAccess (name.GetTypeExpression (), MemberName.MakeName (lt.Value, (int) $4), lt.Location);		
+		$$ = new MemberAccess (name.GetTypeExpression (), lt.Value, (int) $4, lt.Location);		
 	  }
 	;
 

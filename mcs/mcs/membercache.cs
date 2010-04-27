@@ -17,6 +17,7 @@ using System.Collections.Generic;
 using System.Globalization;
 using System.Reflection.Emit;
 using System.Reflection;
+using System.Linq;
 
 namespace Mono.CSharp {
 
@@ -31,17 +32,21 @@ namespace Mono.CSharp {
 		Indexer = 1 << 5,
 		Operator = 1 << 6,
 		Destructor	= 1 << 7,
-		//Constant = 1 << 8,
-
-		NestedType	= 1 << 10,
 
 		Class		= 1 << 11,
 		Struct		= 1 << 12,
 		Delegate	= 1 << 13,
 		Enum		= 1 << 14,
 		Interface	= 1 << 15,
+		TypeParameter = 1 << 16,
 
-		MaskType = Constructor | Event | Field | Method | Property | NestedType | Indexer | Operator | Destructor,
+		PointerType = 1 << 20,
+		InternalCompilerType = 1 << 21,
+		FakeMethod = 1 << 22,
+
+		NestedMask = Class | Struct | Delegate | Enum | Interface,
+		GenericMask = Method | Class | Struct | Delegate | Interface,
+		MaskType = Constructor | Event | Field | Method | Property | Indexer | Operator | Destructor | NestedMask,
 		All = MaskType
 	}
 
@@ -56,285 +61,128 @@ namespace Mono.CSharp {
 		// Inspect only queried type members
 		DeclaredOnly = 1 << 1,
 
-		// Excluded static
+		// Exclude static
 		InstanceOnly = 1 << 2,
 
-		// 
-		NoOverloadableOverrides	= 1 << 3
+		// Ignore member overrides
+		NoOverrides	= 1 << 3
 	}
-/*
-	public struct MemberFilter : IEquatable<MemberCore>
+
+	public struct MemberFilter : IEquatable<MemberSpec>
 	{
 		public readonly string Name;
 		public readonly MemberKind Kind;
-		public readonly TypeSpec[] Parameters;
+		public readonly AParametersCollection Parameters;
 		public readonly TypeSpec MemberType;
 
-		public MemberFilter (IMethod m)
-		{
-			Name = m.MethodBuilder.Name;
-			Kind = MemberKind.Method;
-			Parameters = m.Parameters.Types;
-			MemberType = m.ReturnType;
-		}
+		int arity; // -1 to ignore the check
+		TypeSpec invocation_type;
 
-		public MemberFilter (string name, MemberKind kind)
+		private MemberFilter (string name, MemberKind kind)
 		{
 			Name = name;
 			Kind = kind;
 			Parameters = null;
 			MemberType = null;
+			arity = -1;
+			invocation_type = null;
 		}
 
-		public MemberFilter (string name, MemberKind kind, TypeSpec[] param, TypeSpec type)
-			: this (name, kind)
+		public MemberFilter (MethodSpec m)
+		{
+			Name = m.Name;
+			Kind = MemberKind.Method;
+			Parameters = m.Parameters;
+			MemberType = m.ReturnType;
+			arity = m.Arity;
+			invocation_type = null;
+		}
+
+		public MemberFilter (string name, int arity, MemberKind kind, AParametersCollection param, TypeSpec type)
 		{
 			Name = name;
 			Kind = kind;
 			Parameters = param;
 			MemberType = type;
+			this.arity = arity;
+			invocation_type = null;
 		}
 
-		public static MemberFilter Constuctor (TypeSpec[] param)
+		public TypeSpec InvocationType {
+			get {
+				return invocation_type;
+			}
+			set {
+				invocation_type = value;
+			}
+		}
+
+		public static MemberFilter Constructor (AParametersCollection param)
 		{
-			return new MemberFilter (System.Reflection.ConstructorInfo.ConstructorName, MemberKind.Constructor, param, null);
+			return new MemberFilter (System.Reflection.ConstructorInfo.ConstructorName, 0, MemberKind.Constructor, param, null);
 		}
 
 		public static MemberFilter Property (string name, TypeSpec type)
 		{
-			return new MemberFilter (name, MemberKind.Property, null, type);
+			return new MemberFilter (name, 0, MemberKind.Property, null, type);
 		}
 
 		public static MemberFilter Field (string name, TypeSpec type)
 		{
-			return new MemberFilter (name, MemberKind.Field, null, type);
+			return new MemberFilter (name, 0, MemberKind.Field, null, type);
 		}
 
-		public static MemberFilter Method (string name, TypeSpec[] param, TypeSpec type)
+		public static MemberFilter Method (string name, int arity, AParametersCollection param, TypeSpec type)
 		{
-			return new MemberFilter (name, MemberKind.Method, param, type);
+			return new MemberFilter (name, arity, MemberKind.Method, param, type);
 		}
 
-		#region IEquatable<MemberCore> Members
+		#region IEquatable<MemberSpec> Members
 
-		public bool Equals (MemberCore other)
+		public bool Equals (MemberSpec other)
 		{
 			// Is the member of the correct type ?
-			if ((other.MemberKind & Kind & MemberKind.MaskType) == 0)
+			// TODO: Isn't this redundant ?
+			if ((other.Kind & Kind & MemberKind.MaskType) == 0)
+				return false;
+
+			// Check arity when not disabled
+			if (arity >= 0 && arity != other.Arity)
 				return false;
 
 			if (Parameters != null) {
 				if (other is IParametersMember) {
-					AParametersCollection other_param = ((IParametersMember) other).Parameters;
-					if (TypeSpecArrayComparer.Default.Equals (Parameters, other_param.Types))
-						return true;
+					var other_param = ((IParametersMember) other).Parameters;
+					if (!TypeSpecComparer.Override.IsEqual (Parameters, other_param))
+						return false;
+				} else {
+					return false;
 				}
-
-				return false;
 			}
 
 			if (MemberType != null) {
-				//throw new NotImplementedException ();
+				if (other is IInterfaceMemberSpec) {
+					var other_type = ((IInterfaceMemberSpec) other).MemberType;
+					if (!TypeSpecComparer.Override.IsEqual (other_type, MemberType))
+						return false;
+				} else {
+					return false;
+				}
 			}
+
+			if (invocation_type != null && !IsAccessible (other))
+				return false;
 
 			return true;
 		}
 
+		bool IsAccessible (MemberSpec other)
+		{
+			bool extra;
+			return Expression.IsMemberAccessible (invocation_type, other, out extra);
+		}
+
 		#endregion
-	}
-*/ 
-	/// <summary>
-	///   This is a readonly list of MemberInfo's.      
-	/// </summary>
-	public class MemberList : IList<MemberInfo> {
-		public readonly IList<MemberInfo> List;
-		int count;
-
-		/// <summary>
-		///   Create a new MemberList from the given IList.
-		/// </summary>
-		public MemberList (IList<MemberInfo> list)
-		{
-			if (list != null)
-				this.List = list;
-			else
-				this.List = new List<MemberInfo> ();
-			count = List.Count;
-		}
-
-		/// <summary>
-		///   Concatenate the ILists `first' and `second' to a new MemberList.
-		/// </summary>
-		public MemberList (IList<MemberInfo> first, IList<MemberInfo> second)
-		{
-			var list = new List<MemberInfo> ();
-			list.AddRange (first);
-			list.AddRange (second);
-			count = list.Count;
-			List = list;
-		}
-
-		public static readonly MemberList Empty = new MemberList (Array.AsReadOnly (new MemberInfo[0]));
-
-		/// <summary>
-		///   Cast the MemberList into a MemberInfo[] array.
-		/// </summary>
-		/// <remarks>
-		///   This is an expensive operation, only use it if it's really necessary.
-		/// </remarks>
-		public static explicit operator MemberInfo [] (MemberList list)
-		{
-			Timer.StartTimer (TimerType.MiscTimer);
-			MemberInfo [] result = new MemberInfo [list.Count];
-			list.CopyTo (result, 0);
-			Timer.StopTimer (TimerType.MiscTimer);
-			return result;
-		}
-
-		// ICollection
-
-		public int Count {
-			get {
-				return count;
-			}
-		}
-
-		public void CopyTo (MemberInfo[] array, int index)
-		{
-			List.CopyTo (array, index);
-		}
-
-		// IEnumerable
-
-		public IEnumerator<MemberInfo> GetEnumerator ()
-		{
-			return List.GetEnumerator ();
-		}
-
-		System.Collections.IEnumerator System.Collections.IEnumerable.GetEnumerator ()
-		{
-			return List.GetEnumerator ();
-		}
-
-		// IList
-
-		public bool IsFixedSize {
-			get {
-				return true;
-			}
-		}
-
-		public bool IsReadOnly {
-			get {
-				return true;
-			}
-		}
-
-		MemberInfo IList<MemberInfo>.this [int index] {
-			get {
-				return List [index];
-			}
-
-			set {
-				throw new NotSupportedException ();
-			}
-		}
-
-		// FIXME: try to find out whether we can avoid the cast in this indexer.
-		public MemberInfo this [int index] {
-			get {
-				return (MemberInfo) List [index];
-			}
-		}
-
-		public void Add (MemberInfo value)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void Clear ()
-		{
-			throw new NotSupportedException ();
-		}
-
-		public bool Contains (MemberInfo value)
-		{
-			return List.Contains (value);
-		}
-
-		public int IndexOf (MemberInfo value)
-		{
-			return List.IndexOf (value);
-		}
-
-		public void Insert (int index, MemberInfo value)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public bool Remove (MemberInfo value)
-		{
-			throw new NotSupportedException ();
-		}
-
-		public void RemoveAt (int index)
-		{
-			throw new NotSupportedException ();
-		}
-	}
-
-	/// <summary>
-	///   This interface is used to get all members of a class when creating the
-	///   member cache.  It must be implemented by all DeclSpace derivatives which
-	///   want to support the member cache and by TypeHandle to get caching of
-	///   non-dynamic types.
-	/// </summary>
-	public interface IMemberContainer {
-		/// <summary>
-		///   The name of the IMemberContainer.  This is only used for
-		///   debugging purposes.
-		/// </summary>
-		string Name {
-			get;
-		}
-
-		/// <summary>
-		///   The type of this IMemberContainer.
-		/// </summary>
-		Type Type {
-			get;
-		}
-
-		/// <summary>
-		///   Returns the IMemberContainer of the base class or null if this
-		///   is an interface or TypeManger.object_type.
-		///   This is used when creating the member cache for a class to get all
-		///   members from the base class.
-		/// </summary>
-		MemberCache BaseCache {
-			get;
-		}
-
-		/// <summary>
-		///   Whether this is an interface.
-		/// </summary>
-		bool IsInterface {
-			get;
-		}
-
-		/// <summary>
-		///   Returns all members of this class with the corresponding MemberTypes
-		///   and BindingFlags.
-		/// </summary>
-		/// <remarks>
-		///   When implementing this method, make sure not to return any inherited
-		///   members and check the MemberTypes and BindingFlags properly.
-		///   Unfortunately, System.Reflection is lame and doesn't provide a way to
-		///   get the BindingFlags (static/non-static,public/non-public) in the
-		///   MemberInfo class, but the cache needs this information.  That's why
-		///   this method is called multiple times with different BindingFlags.
-		/// </remarks>
-		MemberList GetMembers (MemberTypes mt, BindingFlags bf);
 	}
 
 	/// <summary>
@@ -351,1037 +199,984 @@ namespace Mono.CSharp {
 	///   * if this not a dynamic type, call TypeHandle.GetTypeHandle() to get a
 	///     TypeHandle instance for the type and then use TypeHandle.MemberCache.
 	/// </summary>
-	public class MemberCache {
-		public readonly IMemberContainer Container;
-		protected Dictionary<string, List<CacheEntry>> member_hash;
-		protected Dictionary<string, List<CacheEntry>> method_hash;
+	public class MemberCache
+	{
+		readonly Dictionary<string, IList<MemberSpec>> member_hash;
+		Dictionary<string, MemberSpec[]> locase_members;
+		IList<MethodSpec> missing_abstract;
 
-		Dictionary<string, object> locase_table;
+		public static readonly string IndexerNameAlias = "<this>";
 
-		static List<MethodInfo> overrides = new List<MethodInfo> ();
+		public static readonly MemberCache Empty = new MemberCache (0);
 
-		/// <summary>
-		///   Create a new MemberCache for the given IMemberContainer `container'.
-		/// </summary>
-		public MemberCache (IMemberContainer container)
+		public MemberCache ()
+			: this (16)
 		{
-			this.Container = container;
-
-			Timer.IncrementCounter (CounterType.MemberCache);
-			Timer.StartTimer (TimerType.CacheInit);
-
-			// If we have a base class (we have a base class unless we're
-			// TypeManager.object_type), we deep-copy its MemberCache here.
-			if (Container.BaseCache != null)
-				member_hash = SetupCache (Container.BaseCache);
-			else
-				member_hash = new Dictionary<string, List<CacheEntry>> ();
-
-			// If this is neither a dynamic type nor an interface, create a special
-			// method cache with all declared and inherited methods.
-			Type type = container.Type;
-			if (!(type is TypeBuilder) && !type.IsInterface &&
-			    // !(type.IsGenericType && (type.GetGenericTypeDefinition () is TypeBuilder)) &&
-			    !TypeManager.IsGenericType (type) && !TypeManager.IsGenericParameter (type) &&
-			    (Container.BaseCache == null || Container.BaseCache.method_hash != null)) {
-					method_hash = new Dictionary<string, List<CacheEntry>> ();
-					AddMethods (type);
-			}
-
-			// Add all members from the current class.
-			AddMembers (Container);
-
-			Timer.StopTimer (TimerType.CacheInit);
 		}
 
-		public MemberCache (Type baseType, IMemberContainer container)
+		public MemberCache (int capacity)
 		{
-			this.Container = container;
-			if (baseType == null)
-				this.member_hash = new Dictionary<string, List<CacheEntry>> ();
-			else
-				this.member_hash = SetupCache (TypeManager.LookupMemberCache (baseType));
+			member_hash = new Dictionary<string, IList<MemberSpec>> (capacity);
 		}
 
-		public MemberCache (Type[] ifaces)
+		public MemberCache (MemberCache cache)
+			: this (cache.member_hash.Count)
 		{
-			//
-			// The members of this cache all belong to other caches.  
-			// So, 'Container' will not be used.
-			//
-			this.Container = null;
-
-			member_hash = new Dictionary<string, List<CacheEntry>> ();
-			if (ifaces == null)
-				return;
-
-			foreach (Type itype in ifaces)
-				AddCacheContents (TypeManager.LookupMemberCache (itype));
 		}
 
-		public MemberCache (IMemberContainer container, Type base_class, Type[] ifaces)
+		//
+		// Creates a new MemberCache for the given `container'.
+		//
+		public MemberCache (TypeContainer container)
+			: this ()				// TODO: Optimize the size
 		{
-			this.Container = container;
+		}
 
-			// If we have a base class (we have a base class unless we're
-			// TypeManager.object_type), we deep-copy its MemberCache here.
-			if (Container.BaseCache != null)
-				member_hash = SetupCache (Container.BaseCache);
-			else
-				member_hash = new Dictionary<string, List<CacheEntry>> ();
+		//
+		// Member-cache does not contain base members but it does
+		// contain all base interface members, so the Lookup code
+		// can use simple inheritance rules.
+		//
+		public void AddInterface (TypeSpec iface)
+		{
+			var cache = iface.MemberCache;
 
-			if (base_class != null)
-				AddCacheContents (TypeManager.LookupMemberCache (base_class));
-			if (ifaces != null) {
-				foreach (Type itype in ifaces) {
-					MemberCache cache = TypeManager.LookupMemberCache (itype);
-					if (cache != null)
-						AddCacheContents (cache);
+			IList<MemberSpec> list;
+			foreach (var entry in cache.member_hash) {
+				if (!member_hash.TryGetValue (entry.Key, out list)) {
+					if (entry.Value.Count == 1) {
+						list = entry.Value;
+					} else {
+						list = new List<MemberSpec> (entry.Value);
+					}
+
+					member_hash.Add (entry.Key, list);
+					continue;
 				}
-			}
-		}
 
-		/// <summary>
-		///   Bootstrap this member cache by doing a deep-copy of our base.
-		/// </summary>
-		static Dictionary<string, List<CacheEntry>> SetupCache (MemberCache base_class)
-		{
-			if (base_class == null)
-				return new Dictionary<string, List<CacheEntry>> ();
-
-			var hash = new Dictionary<string, List<CacheEntry>> (base_class.member_hash.Count);
-			var it = base_class.member_hash.GetEnumerator ();
-			while (it.MoveNext ()) {
-				hash.Add (it.Current.Key, new List<CacheEntry> (it.Current.Value));
-			}
-                                
-			return hash;
-		}
-		
-		//
-		// Converts ModFlags to BindingFlags
-		//
-		static BindingFlags GetBindingFlags (Modifiers modifiers)
-		{
-			BindingFlags bf;
-			if ((modifiers & Modifiers.STATIC) != 0)
-				bf = BindingFlags.Static;
-			else
-				bf = BindingFlags.Instance;
-
-			if ((modifiers & Modifiers.PRIVATE) != 0)
-				bf |= BindingFlags.NonPublic;
-			else
-				bf |= BindingFlags.Public;
-
-			return bf;
-		}		
-
-		/// <summary>
-		///   Add the contents of `cache' to the member_hash.
-		/// </summary>
-		void AddCacheContents (MemberCache cache)
-		{
-			var it = cache.member_hash.GetEnumerator ();
-			while (it.MoveNext ()) {
-				List<CacheEntry> list;
-				if (!member_hash.TryGetValue (it.Current.Key, out list))
-					member_hash [it.Current.Key] = list = new List<CacheEntry> ();
-
-				var entries = it.Current.Value;
-				for (int i = entries.Count-1; i >= 0; i--) {
-					var entry = entries [i];
-
-					if (entry.Container != cache.Container)
+				foreach (var ce in entry.Value) {
+					if (ce.DeclaringType != iface)
 						break;
-					list.Add (entry);
+
+					if (list.Contains (ce))
+						continue;
+
+					if (AddInterfaceMember (ce, ref list))
+						member_hash[entry.Key] = list;
 				}
 			}
 		}
 
-		/// <summary>
-		///   Add all members from class `container' to the cache.
-		/// </summary>
-		void AddMembers (IMemberContainer container)
+		public void AddMember (InterfaceMemberBase imb, string exlicitName, MemberSpec ms)
 		{
-			// We need to call AddMembers() with a single member type at a time
-			// to get the member type part of CacheEntry.EntryType right.
-			if (!container.IsInterface) {
-				AddMembers (MemberTypes.Constructor, container);
-				AddMembers (MemberTypes.Field, container);
-			}
-			AddMembers (MemberTypes.Method, container);
-			AddMembers (MemberTypes.Property, container);
-			AddMembers (MemberTypes.Event, container);
-			// Nested types are returned by both Static and Instance searches.
-			AddMembers (MemberTypes.NestedType,
-				    BindingFlags.Static | BindingFlags.Public, container);
-			AddMembers (MemberTypes.NestedType,
-				    BindingFlags.Static | BindingFlags.NonPublic, container);
+			// Explicit names cannot be looked-up but can be used for
+			// collision checking (no name mangling needed)
+			if (imb.IsExplicitImpl)
+				AddMember (exlicitName, ms);
+			else
+				AddMember (ms);
 		}
 
-		void AddMembers (MemberTypes mt, IMemberContainer container)
+		//
+		// Add non-explicit member to member cache
+		//
+		public void AddMember (MemberSpec ms)
 		{
-			AddMembers (mt, BindingFlags.Static | BindingFlags.Public, container);
-			AddMembers (mt, BindingFlags.Static | BindingFlags.NonPublic, container);
-			AddMembers (mt, BindingFlags.Instance | BindingFlags.Public, container);
-			AddMembers (mt, BindingFlags.Instance | BindingFlags.NonPublic, container);
+			AddMember (GetLookupName (ms), ms);
 		}
 
-		public void AddMember (MemberInfo mi, MemberSpec mc)
+		void AddMember (string name, MemberSpec member)
 		{
-			AddMember (mi.MemberType, GetBindingFlags (mc.Modifiers), Container, mi.Name, mi);
-		}
-
-		public void AddGenericMember (MemberInfo mi, InterfaceMemberBase mc)
-		{
-			AddMember (mi.MemberType, GetBindingFlags (mc.ModFlags), Container,
-				MemberName.MakeName (mc.GetFullName (mc.MemberName), mc.MemberName.TypeArguments), mi);
-		}
-
-		public void AddNestedType (DeclSpace type)
-		{
-			AddMember (MemberTypes.NestedType, GetBindingFlags (type.ModFlags), (IMemberContainer) type.Parent,
-				type.TypeBuilder.Name, type.TypeBuilder);
-		}
-
-		public void AddInterface (MemberCache baseCache)
-		{
-			if (baseCache.member_hash.Count > 0)
-				AddCacheContents (baseCache);
-		}
-
-		void AddMember (MemberTypes mt, BindingFlags bf, IMemberContainer container,
-				string name, MemberInfo member)
-		{
-			// We use a name-based hash table of ArrayList's.
-			List<CacheEntry> list;
+			IList<MemberSpec> list;
 			if (!member_hash.TryGetValue (name, out list)) {
-				list = new List<CacheEntry> (1);
-				member_hash.Add (name, list);
+				member_hash.Add (name, new MemberSpec[] { member });
+				return;
 			}
 
-			// When this method is called for the current class, the list will
-			// already contain all inherited members from our base classes.
-			// We cannot add new members in front of the list since this'd be an
-			// expensive operation, that's why the list is sorted in reverse order
-			// (ie. members from the current class are coming last).
-			list.Add (new CacheEntry (container, member, mt, bf));
-		}
-
-		/// <summary>
-		///   Add all members from class `container' with the requested MemberTypes and
-		///   BindingFlags to the cache.  This method is called multiple times with different
-		///   MemberTypes and BindingFlags.
-		/// </summary>
-		void AddMembers (MemberTypes mt, BindingFlags bf, IMemberContainer container)
-		{
-			MemberList members = container.GetMembers (mt, bf);
-
-			foreach (MemberInfo member in members) {
-				string name = member.Name;
-
-				AddMember (mt, bf, container, name, member);
-
-				if (member is MethodInfo) {
-					string gname = TypeManager.GetMethodName ((MethodInfo) member);
-					if (gname != name)
-						AddMember (mt, bf, container, gname, member);
+			if (member.DeclaringType.IsInterface) {
+				if (AddInterfaceMember (member, ref list))
+					member_hash[name] = list;
+			} else {
+				if (list is MemberSpec[]) {
+					list = new List<MemberSpec> () { list[0] };
+					member_hash[name] = list;
 				}
+
+				list.Add (member);
 			}
 		}
 
-		/// <summary>
-		///   Add all declared and inherited methods from class `type' to the method cache.
-		/// </summary>
-		void AddMethods (Type type)
+		//
+		// Ignores any base interface member which can be hidden
+		// by this interface
+		//
+		static bool AddInterfaceMember (MemberSpec member, ref IList<MemberSpec> existing)
 		{
-			AddMethods (BindingFlags.Static | BindingFlags.Public |
-				    BindingFlags.FlattenHierarchy, type);
-			AddMethods (BindingFlags.Static | BindingFlags.NonPublic |
-				    BindingFlags.FlattenHierarchy, type);
-			AddMethods (BindingFlags.Instance | BindingFlags.Public, type);
-			AddMethods (BindingFlags.Instance | BindingFlags.NonPublic, type);
-		}
+			var member_param = member is IParametersMember ? ((IParametersMember) member).Parameters : ParametersCompiled.EmptyReadOnlyParameters;
 
-		void AddMethods (BindingFlags bf, Type type)
-		{
-			MethodBase [] members = type.GetMethods (bf);
+			//
+			// interface IA : IB { int Prop { set; } }
+			// interface IB { bool Prop { get; } }
+			//
+			// IB.Prop is never accessible from IA interface
+			//
+			for (int i = 0; i < existing.Count; ++i) {
+				var entry = existing[i];
 
-                        Array.Reverse (members);
+				if (entry.Arity != member.Arity)
+					continue;
 
-			foreach (MethodBase member in members) {
-				string name = member.Name;
-
-				// We use a name-based hash table of ArrayList's.
-				List<CacheEntry> list;
-				if (!method_hash.TryGetValue (name, out list)) {
-					list = new List<CacheEntry> (1);
-					method_hash.Add (name, list);
+				if (entry is IParametersMember) {
+					var entry_param = ((IParametersMember) entry).Parameters;
+					if (!TypeSpecComparer.Override.IsEqual (entry_param, member_param))
+						continue;
 				}
 
-				MethodInfo curr = (MethodInfo) member;
-				while (curr.IsVirtual && (curr.Attributes & MethodAttributes.NewSlot) == 0) {
-					MethodInfo base_method = curr.GetBaseDefinition ();
+				if (member.DeclaringType.ImplementsInterface (entry.DeclaringType)) {
+					if (existing is MemberSpec[]) {
+						existing = new MemberSpec[] { member };
+						return true;
+					}
 
-					if (base_method == curr)
-						// Not every virtual function needs to have a NewSlot flag.
-						break;
-
-					overrides.Add (curr);
-					list.Add (new CacheEntry (null, base_method, MemberTypes.Method, bf));
-					curr = base_method;
+					existing.RemoveAt (i--);
+					continue;
 				}
 
-				if (overrides.Count > 0) {
-					for (int i = 0; i < overrides.Count; ++i)
-						TypeManager.RegisterOverride ((MethodBase) overrides [i], curr);
-					overrides.Clear ();
-				}
-
-				// Unfortunately, the elements returned by Type.GetMethods() aren't
-				// sorted so we need to do this check for every member.
-				BindingFlags new_bf = bf;
-				if (member.DeclaringType == type)
-					new_bf |= BindingFlags.DeclaredOnly;
-
-				list.Add (new CacheEntry (Container, member, MemberTypes.Method, new_bf));
+				if (entry.DeclaringType == member.DeclaringType || entry.DeclaringType.ImplementsInterface (member.DeclaringType))
+					return false;
 			}
-		}
 
-		/// <summary>
-		///   Compute and return a appropriate `EntryType' magic number for the given
-		///   MemberTypes and BindingFlags.
-		/// </summary>
-		protected static EntryType GetEntryType (MemberTypes mt, BindingFlags bf)
-		{
-			EntryType type = EntryType.None;
-
-			if ((mt & MemberTypes.Constructor) != 0)
-				type |= EntryType.Constructor;
-			if ((mt & MemberTypes.Event) != 0)
-				type |= EntryType.Event;
-			if ((mt & MemberTypes.Field) != 0)
-				type |= EntryType.Field;
-			if ((mt & MemberTypes.Method) != 0)
-				type |= EntryType.Method;
-			if ((mt & MemberTypes.Property) != 0)
-				type |= EntryType.Property;
-			// Nested types are returned by static and instance searches.
-			if ((mt & MemberTypes.NestedType) != 0)
-				type |= EntryType.NestedType | EntryType.Static | EntryType.Instance;
-
-			if ((bf & BindingFlags.Instance) != 0)
-				type |= EntryType.Instance;
-			if ((bf & BindingFlags.Static) != 0)
-				type |= EntryType.Static;
-			if ((bf & BindingFlags.Public) != 0)
-				type |= EntryType.Public;
-			if ((bf & BindingFlags.NonPublic) != 0)
-				type |= EntryType.NonPublic;
-			if ((bf & BindingFlags.DeclaredOnly) != 0)
-				type |= EntryType.Declared;
-
-			return type;
-		}
-
-		/// <summary>
-		///   The `MemberTypes' enumeration type is a [Flags] type which means that it may
-		///   denote multiple member types.  Returns true if the given flags value denotes a
-		///   single member types.
-		/// </summary>
-		public static bool IsSingleMemberType (MemberTypes mt)
-		{
-			switch (mt) {
-			case MemberTypes.Constructor:
-			case MemberTypes.Event:
-			case MemberTypes.Field:
-			case MemberTypes.Method:
-			case MemberTypes.Property:
-			case MemberTypes.NestedType:
+			if (existing is MemberSpec[]) {
+				existing = new List<MemberSpec> () { existing[0], member };
 				return true;
-
-			default:
-				return false;
-			}
-		}
-
-		/// <summary>
-		///   We encode the MemberTypes and BindingFlags of each members in a "magic"
-		///   number to speed up the searching process.
-		/// </summary>
-		[Flags]
-		public enum EntryType {
-			None		= 0x000,
-
-			Instance	= 0x001,
-			Static		= 0x002,
-			MaskStatic	= Instance|Static,
-
-			Public		= 0x004,
-			NonPublic	= 0x008,
-			MaskProtection	= Public|NonPublic,
-
-			Declared	= 0x010,
-
-			Constructor	= 0x020,
-			Event		= 0x040,
-			Field		= 0x080,
-			Method		= 0x100,
-			Property	= 0x200,
-			NestedType	= 0x400,
-
-			NotExtensionMethod	= 0x800,
-
-			MaskType	= Constructor|Event|Field|Method|Property|NestedType
-		}
-
-		public class CacheEntry {
-			public readonly IMemberContainer Container;
-			public EntryType EntryType;
-			public readonly MemberInfo Member;
-
-			public CacheEntry (IMemberContainer container, MemberInfo member,
-					   MemberTypes mt, BindingFlags bf)
-			{
-				this.Container = container;
-				this.Member = member;
-				this.EntryType = GetEntryType (mt, bf);
 			}
 
-			public override string ToString ()
-			{
-				return String.Format ("CacheEntry ({0}:{1}:{2})", Container.Name,
-						      EntryType, Member);
-			}
-		}
-
-		/// <summary>
-		///   This is called each time we're walking up one level in the class hierarchy
-		///   and checks whether we can abort the search since we've already found what
-		///   we were looking for.
-		/// </summary>
-		protected bool DoneSearching (IList<MemberInfo> list)
-		{
-			//
-			// We've found exactly one member in the current class and it's not
-			// a method or constructor.
-			//
-			if (list.Count == 1 && !(list [0] is MethodBase))
-				return true;
-
-			//
-			// Multiple properties: we query those just to find out the indexer
-			// name
-			//
-			if ((list.Count > 0) && (list [0] is PropertyInfo))
-				return true;
-
+			existing.Add (member);
 			return false;
 		}
 
-		/// <summary>
-		///   Looks up members with name `name'.  If you provide an optional
-		///   filter function, it'll only be called with members matching the
-		///   requested member name.
-		///
-		///   This method will try to use the cache to do the lookup if possible.
-		///
-		///   Unlike other FindMembers implementations, this method will always
-		///   check all inherited members - even when called on an interface type.
-		///
-		///   If you know that you're only looking for methods, you should use
-		///   MemberTypes.Method alone since this speeds up the lookup a bit.
-		///   When doing a method-only search, it'll try to use a special method
-		///   cache (unless it's a dynamic type or an interface) and the returned
-		///   MemberInfo's will have the correct ReflectedType for inherited methods.
-		///   The lookup process will automatically restart itself in method-only
-		///   search mode if it discovers that it's about to return methods.
-		/// </summary>
-		List<MemberInfo> global = new List<MemberInfo> ();
-		bool using_global;
-		
-		static MemberInfo [] emptyMemberInfo = new MemberInfo [0];
-		
-		public MemberInfo [] FindMembers (MemberTypes mt, BindingFlags bf, string name,
-						  MemberFilter filter, object criteria)
+		public static IEnumerable<IndexerSpec> FindIndexers (TypeSpec container, BindingRestriction restrictions)
 		{
-			if (using_global)
-				throw new Exception ();
+			var filter = new MemberFilter (IndexerNameAlias, 0, MemberKind.Indexer, null, null);
+			var found = FindMembers (container, filter, restrictions);
+			return found == null ? null : found.Cast<IndexerSpec> ();
+		}
 
-			bool declared_only = (bf & BindingFlags.DeclaredOnly) != 0;
-			bool method_search = mt == MemberTypes.Method;
-			// If we have a method cache and we aren't already doing a method-only search,
-			// then we restart a method search if the first match is a method.
-			bool do_method_search = !method_search && (method_hash != null);
+		public static MemberSpec FindMember (TypeSpec container, MemberFilter filter, BindingRestriction restrictions)
+		{
+			do {
+				IList<MemberSpec> applicable;
+				if (container.MemberCache.member_hash.TryGetValue (filter.Name, out applicable)) {
+					// Start from the end because interface members are in reverse order
+					for (int i = applicable.Count - 1; i >= 0; i--) {
+						var entry = applicable [i];
 
-			List<CacheEntry> applicable;
+						if ((restrictions & BindingRestriction.InstanceOnly) != 0 && entry.IsStatic)
+							continue;
 
-			// If this is a method-only search, we try to use the method cache if
-			// possible; a lookup in the method cache will return a MemberInfo with
-			// the correct ReflectedType for inherited methods.
-			
-			if (method_search && (method_hash != null))
-				method_hash.TryGetValue (name, out applicable);
-			else
-				member_hash.TryGetValue (name, out applicable);
+						if (filter.Equals (entry))
+							return entry;
 
-			if (applicable == null)
-				return emptyMemberInfo;
-
-			//
-			// 32  slots gives 53 rss/54 size
-			// 2/4 slots gives 55 rss
-			//
-			// Strange: from 25,000 calls, only 1,800
-			// are above 2.  Why does this impact it?
-			//
-			global.Clear ();
-			using_global = true;
-
-			Timer.StartTimer (TimerType.CachedLookup);
-
-			EntryType type = GetEntryType (mt, bf);
-
-			IMemberContainer current = Container;
-
-			bool do_interface_search = current.IsInterface;
-
-			// `applicable' is a list of all members with the given member name `name'
-			// in the current class and all its base classes.  The list is sorted in
-			// reverse order due to the way how the cache is initialy created (to speed
-			// things up, we're doing a deep-copy of our base).
-
-			for (int i = applicable.Count-1; i >= 0; i--) {
-				CacheEntry entry = (CacheEntry) applicable [i];
-
-				// This happens each time we're walking one level up in the class
-				// hierarchy.  If we're doing a DeclaredOnly search, we must abort
-				// the first time this happens (this may already happen in the first
-				// iteration of this loop if there are no members with the name we're
-				// looking for in the current class).
-				if (entry.Container != current) {
-					if (declared_only)
-						break;
-
-					if (!do_interface_search && DoneSearching (global))
-						break;
-
-					current = entry.Container;
+						// TODO MemberCache:
+						//if ((restrictions & BindingRestriction.AccessibleOnly) != 0)
+						//	throw new NotImplementedException ("net");
+					}
 				}
 
-				// Is the member of the correct type ?
-				if ((entry.EntryType & type & EntryType.MaskType) == 0)
-					continue;
+				container = container.BaseType;
+			} while (container != null && (restrictions & BindingRestriction.DeclaredOnly) == 0);
 
-				// Is the member static/non-static ?
-				if ((entry.EntryType & type & EntryType.MaskStatic) == 0)
-					continue;
+			return null;
+		}
 
-				// Apply the filter to it.
-				if (filter (entry.Member, criteria)) {
-					if ((entry.EntryType & EntryType.MaskType) != EntryType.Method) {
-						do_method_search = false;
-					}
-					
-					// Because interfaces support multiple inheritance we have to be sure that
-					// base member is from same interface, so only top level member will be returned
-					if (do_interface_search && global.Count > 0) {
-						bool member_already_exists = false;
+		//
+		// Returns the first set of members starting from container
+		//
+		public static IList<MemberSpec> FindMembers (TypeSpec container, MemberFilter filter, BindingRestriction restrictions)
+		{
+			IList<MemberSpec> applicable;
+			IList<MemberSpec> found = null;
 
-						foreach (MemberInfo mi in global) {
-							if (mi is MethodBase)
+			do {
+				if (container.MemberCache.member_hash.TryGetValue (filter.Name, out applicable)) {
+					for (int i = 0; i < applicable.Count; ++i) {
+						var entry = applicable [i];
+
+						// Is the member of the correct type
+						if ((entry.Kind & filter.Kind & MemberKind.MaskType) == 0)
+							continue;
+
+						//
+						// When using overloadable overrides filter ignore members which
+						// are not base members. Including properties because overrides can
+						// implement get or set only and we are looking for complete base member
+						//
+						const MemberKind overloadable = MemberKind.Indexer | MemberKind.Method | MemberKind.Property;
+						if ((restrictions & BindingRestriction.NoOverrides) != 0 && (entry.Kind & overloadable) != 0) {
+							if ((entry.Modifiers & Modifiers.OVERRIDE) != 0)
 								continue;
 
-							if (IsInterfaceBaseInterface (TypeManager.GetInterfaces (mi.DeclaringType), entry.Member.DeclaringType)) {
-								member_already_exists = true;
-								break;
+							if ((entry.Modifiers & Modifiers.OVERRIDE_UNCHECKED) != 0) {
+								// TODO: Implement this correctly for accessors
+								var ms = entry as MethodSpec;
+								if (ms == null || IsRealMethodOverride (ms)) {
+									entry.Modifiers = (entry.Modifiers & ~Modifiers.OVERRIDE_UNCHECKED) | Modifiers.OVERRIDE;
+									continue;
+								}
 							}
 						}
-						if (member_already_exists)
+
+						if ((restrictions & BindingRestriction.InstanceOnly) != 0 && entry.IsStatic)
 							continue;
+
+						// Apply the filter to it.
+						if (!filter.Equals (entry))
+							continue;
+
+						if (found == null) {
+							if (i == 0) {
+								found = applicable;
+							} else {
+								found = new List<MemberSpec> ();
+								found.Add (entry);
+							}
+						} else if (found == applicable) {
+							found = new List<MemberSpec> ();
+							found.Add (applicable[0]);
+							found.Add (entry);
+						} else {
+							found.Add (entry);
+						}
 					}
 
-					global.Add (entry.Member);
+					if (found != null) {
+						if (found == applicable && applicable.Count != 1)
+							return new MemberSpec[] { found[0] };
+
+						return found;
+					}
 				}
-			}
 
-			Timer.StopTimer (TimerType.CachedLookup);
+				container = container.BaseType;
+			} while (container != null && (restrictions & BindingRestriction.DeclaredOnly) == 0);
 
-			// If we have a method cache and we aren't already doing a method-only
-			// search, we restart in method-only search mode if the first match is
-			// a method.  This ensures that we return a MemberInfo with the correct
-			// ReflectedType for inherited methods.
-			if (do_method_search && (global.Count > 0)){
-				using_global = false;
-
-				return FindMembers (MemberTypes.Method, bf, name, filter, criteria);
-			}
-
-			using_global = false;
-			MemberInfo [] copy = new MemberInfo [global.Count];
-			global.CopyTo (copy);
-			return copy;
+			return found;
 		}
 
-		/// <summary>
-		/// Returns true if iterface exists in any base interfaces (ifaces)
-		/// </summary>
-		static bool IsInterfaceBaseInterface (Type[] ifaces, Type ifaceToFind)
+		//
+		// Finds the nested type in container
+		//
+		public static TypeSpec FindNestedType (TypeSpec container, string name, int arity)
 		{
-			foreach (Type iface in ifaces) {
-				if (iface == ifaceToFind)
-					return true;
+			IList<MemberSpec> applicable;
+			TypeSpec best_match = null;
+			do {
+				// TODO: Don't know how to handle this yet
+				// When resolving base type of nested type, parent type must have
+				// base type resolved to scan full hierarchy correctly
+				// Similarly MemberCacheTypes will inflate BaseType and Interfaces
+				// based on type definition
+				var tc = container.MemberDefinition as TypeContainer;
+				if (tc != null)
+					tc.DefineType ();
 
-				Type[] base_ifaces = TypeManager.GetInterfaces (iface);
-				if (base_ifaces.Length > 0 && IsInterfaceBaseInterface (base_ifaces, ifaceToFind))
-					return true;
-			}
-			return false;
-		}
-		
-		// find the nested type @name in @this.
-		public Type FindNestedType (string name)
-		{
-			List<CacheEntry> applicable;
-			if (!member_hash.TryGetValue (name, out applicable))
-				return null;
-			
-			for (int i = applicable.Count-1; i >= 0; i--) {
-				CacheEntry entry = applicable [i];
-				if ((entry.EntryType & EntryType.NestedType & EntryType.MaskType) != 0)
-					return (Type) entry.Member;
-			}
-			
-			return null;
-		}
+				if (container.MemberCacheTypes.member_hash.TryGetValue (name, out applicable)) {
+					for (int i = applicable.Count - 1; i >= 0; i--) {
+						var entry = applicable[i];
+						if ((entry.Kind & MemberKind.NestedMask) == 0)
+							continue;
 
-		public MemberInfo FindBaseEvent (Type invocation_type, string name)
-		{
-			List<CacheEntry> applicable;
-			if (!member_hash.TryGetValue (name, out applicable))
-				return null;
+						var ts = (TypeSpec) entry;
+						if (arity == ts.Arity)
+							return ts;
 
-			//
-			// Walk the chain of events, starting from the top.
-			//
-			for (int i = applicable.Count - 1; i >= 0; i--) 
-			{
-				CacheEntry entry = applicable [i];
-				if ((entry.EntryType & EntryType.Event) == 0)
-					continue;
-				
-				EventInfo ei = (EventInfo)entry.Member;
-				return ei.GetAddMethod (true);
-			}
+						if (arity < 0) {
+							if (best_match == null) {
+								best_match = ts;
+							} else if (System.Math.Abs (ts.Arity + arity) < System.Math.Abs (ts.Arity + arity)) {
+								best_match = ts;
+							}
+						}
+					}
+				}
 
-			return null;
+				container = container.BaseType;
+			} while (container != null);
+
+			return best_match;
 		}
 
 		//
 		// Looks for extension methods with defined name and extension type
 		//
-		public List<MethodSpec> FindExtensionMethods (Assembly thisAssembly, Type extensionType, string name, bool publicOnly)
+		public List<MethodSpec> FindExtensionMethods (TypeSpec invocationType, TypeSpec extensionType, string name, int arity)
 		{
-			List<CacheEntry> entries;
-			if (method_hash != null)
-				method_hash.TryGetValue (name, out entries);
-			else {
-				member_hash.TryGetValue (name, out entries);
-			}
-
-			if (entries == null)
+			IList<MemberSpec> entries;
+			if (!member_hash.TryGetValue (name, out entries))
 				return null;
 
-			EntryType entry_type = EntryType.Static | EntryType.Method | EntryType.NotExtensionMethod;
-			EntryType found_entry_type = entry_type & ~EntryType.NotExtensionMethod;
-
 			List<MethodSpec> candidates = null;
-			foreach (CacheEntry entry in entries) {
-				if ((entry.EntryType & entry_type) == found_entry_type) {
-					MethodBase mb = (MethodBase)entry.Member;
+			foreach (var entry in entries) {
+				if (entry.Kind != MemberKind.Method || (arity >= 0 && entry.Arity != arity))
+					continue;
 
-					// Simple accessibility check
-					if ((entry.EntryType & EntryType.Public) == 0 && publicOnly) {
-						MethodAttributes ma = mb.Attributes & MethodAttributes.MemberAccessMask;
-						if (ma != MethodAttributes.Assembly && ma != MethodAttributes.FamORAssem)
-							continue;
-						
-						if (!TypeManager.IsThisOrFriendAssembly (thisAssembly, mb.DeclaringType.Assembly))
-							continue;
-					}
+				var ms = (MethodSpec) entry;
+				if (!ms.IsExtensionMethod)
+					continue;
 
-					IMethodData md = TypeManager.GetMethod (mb);
-					AParametersCollection pd = md == null ?
-						TypeManager.GetParameterData (mb) : md.ParameterInfo;
+				bool extra;
+				if (!Expression.IsMemberAccessible (invocationType, ms, out extra))
+					continue;
 
-					Type ex_type = pd.ExtensionMethodType;
-					if (ex_type == null) {
-						entry.EntryType |= EntryType.NotExtensionMethod;
-						continue;
-					}
+				// TODO: CodeGen.Assembly.Builder
+				if ((ms.DeclaringType.Modifiers & Modifiers.INTERNAL) != 0 &&
+					!TypeManager.IsThisOrFriendAssembly (CodeGen.Assembly.Builder, ms.Assembly))
+					continue;
 
-					if (candidates == null)
-						candidates = new List<MethodSpec> (2);
-					candidates.Add (Import.CreateMethod (mb));
-				}
+				if (candidates == null)
+					candidates = new List<MethodSpec> ();
+				candidates.Add (ms);
 			}
 
 			return candidates;
 		}
-		
+
 		//
-		// This finds the method or property for us to override. invocation_type is the type where
-		// the override is going to be declared, name is the name of the method/property, and
-		// param_types is the parameters, if any to the method or property
+		// Returns base members of @member member if no exact match is found @bestCandidate returns
+		// the best match
 		//
-		// Because the MemberCache holds members from this class and all the base classes,
-		// we can avoid tons of reflection stuff.
-		//
-		public MemberInfo FindMemberToOverride (Type invocation_type, string name, AParametersCollection parameters, GenericMethod generic_method, bool is_property)
+		public static MemberSpec FindBaseMember (MemberCore member, out MemberSpec bestCandidate)
 		{
-			List<CacheEntry> applicable;
-			if (method_hash != null && !is_property)
-				method_hash.TryGetValue (name, out applicable);
-			else
-				member_hash.TryGetValue (name, out applicable);
-			
-			if (applicable == null)
-				return null;
-			//
-			// Walk the chain of methods, starting from the top.
-			//
-			for (int i = applicable.Count - 1; i >= 0; i--) {
-				CacheEntry entry = applicable [i];
-				
-				if ((entry.EntryType & (is_property ? (EntryType.Property | EntryType.Field) : EntryType.Method)) == 0)
-					continue;
+			bestCandidate = null;
+			var container = member.Parent.PartialContainer.Definition;
+			if (!container.IsInterface)
+				container = container.BaseType;
 
-				PropertyInfo pi = null;
-				MethodInfo mi = null;
-				FieldInfo fi = null;
-				AParametersCollection cmp_attrs;
-				
-				if (is_property) {
-					if ((entry.EntryType & EntryType.Field) != 0) {
-						fi = (FieldInfo)entry.Member;
-						cmp_attrs = ParametersCompiled.EmptyReadOnlyParameters;
-					} else {
-						pi = (PropertyInfo) entry.Member;
-						cmp_attrs = TypeManager.GetParameterData (pi);
-					}
-				} else {
-					mi = (MethodInfo) entry.Member;
-					cmp_attrs = TypeManager.GetParameterData (mi);
-				}
+			string name = GetLookupName (member);
+			IList<MemberSpec> applicable;
+			var member_param = member is IParametersMember ? ((IParametersMember) member).Parameters : null;
 
-				if (fi != null) {
-					// TODO: Almost duplicate !
-					// Check visibility
-					switch (fi.Attributes & FieldAttributes.FieldAccessMask) {
-					case FieldAttributes.PrivateScope:
-						continue;
-					case FieldAttributes.Private:
-						//
-						// A private method is Ok if we are a nested subtype.
-						// The spec actually is not very clear about this, see bug 52458.
-						//
-						if (!invocation_type.Equals (entry.Container.Type) &&
-						    !TypeManager.IsNestedChildOf (invocation_type, entry.Container.Type))
+			var mkind = GetMemberCoreKind (member);
+
+			do {
+				if (container.MemberCache.member_hash.TryGetValue (name, out applicable)) {
+					for (int i = 0; i < applicable.Count; ++i) {
+						var entry = applicable [i];
+
+						if ((entry.Modifiers & Modifiers.PRIVATE) != 0)
 							continue;
-						break;
-					case FieldAttributes.FamANDAssem:
-					case FieldAttributes.Assembly:
-						//
-						// Check for assembly methods
-						//
-						if (fi.DeclaringType.Assembly != CodeGen.Assembly.Builder)
+
+						if ((entry.Modifiers & Modifiers.AccessibilityMask) == Modifiers.INTERNAL) {
+							if (!TypeManager.IsThisOrFriendAssembly (member.Assembly, entry.Assembly))
+								continue;
+						}
+
+						// Is the member of the correct type ?
+						if ((entry.Kind & mkind & MemberKind.MaskType) == 0) {
+							if (member_param == null || !(entry is IParametersMember)) {
+								bestCandidate = entry;
+								return null;
+							}
+
 							continue;
-						break;
+						}
+
+						if (member_param == null)
+							return entry;
+
+						// Check arity match
+						int arity = member.MemberName.Arity;
+						if (arity != entry.Arity)
+							continue;
+
+						if (entry is IParametersMember) {
+							if (entry.IsAccessor != member is AbstractPropertyEventMethod)
+								continue;
+
+							var entry_param = ((IParametersMember) entry).Parameters;
+							if (TypeSpecComparer.Override.IsEqual (entry_param, member_param))
+								return entry;
+
+							continue;
+						}
+
+						if (bestCandidate == null)
+							bestCandidate = entry;
 					}
-					return entry.Member;
+
+					if (member_param == null)
+						return null;
 				}
 
-				//
-				// Check the arguments
-				//
-				if (cmp_attrs.Count != parameters.Count)
-					continue;
-	
-				int j;
-				for (j = 0; j < cmp_attrs.Count; ++j) {
-					//
-					// LAMESPEC: No idea why `params' modifier is ignored
-					//
-					if ((parameters.FixedParameters [j].ModFlags & ~Parameter.Modifier.PARAMS) != 
-						(cmp_attrs.FixedParameters [j].ModFlags & ~Parameter.Modifier.PARAMS))
-						break;
-
-					if (!TypeManager.IsEqual (parameters.Types [j], cmp_attrs.Types [j]))
-						break;
-				}
-
-				if (j < cmp_attrs.Count)
-					continue;
-
-				//
-				// check generic arguments for methods
-				//
-				if (mi != null) {
-					Type [] cmpGenArgs = TypeManager.GetGenericArguments (mi);
-					if (generic_method == null && cmpGenArgs != null && cmpGenArgs.Length != 0)
-						continue;
-					if (generic_method != null && cmpGenArgs != null && cmpGenArgs.Length != generic_method.TypeParameters.Length)
-						continue;
-				}
-
-				//
-				// get one of the methods because this has the visibility info.
-				//
-				if (is_property) {
-					mi = pi.GetGetMethod (true);
-					if (mi == null)
-						mi = pi.GetSetMethod (true);
-				}
-				
-				//
-				// Check visibility
-				//
-				switch (mi.Attributes & MethodAttributes.MemberAccessMask) {
-				case MethodAttributes.PrivateScope:
-					continue;
-				case MethodAttributes.Private:
-					//
-					// A private method is Ok if we are a nested subtype.
-					// The spec actually is not very clear about this, see bug 52458.
-					//
-					if (!invocation_type.Equals (entry.Container.Type) &&
-					    !TypeManager.IsNestedChildOf (invocation_type, entry.Container.Type))
-						continue;
+				if (container.IsInterface)
 					break;
-				case MethodAttributes.FamANDAssem:
-				case MethodAttributes.Assembly:
-					//
-					// Check for assembly methods
-					//
-					if (!TypeManager.IsThisOrFriendAssembly (invocation_type.Assembly, mi.DeclaringType.Assembly))
-						continue;
-					break;
-				}
-				return entry.Member;
-			}
-			
+
+				container = container.BaseType;
+			} while (container != null);
+
 			return null;
 		}
 
- 		/// <summary>
- 		/// The method is looking for conflict with inherited symbols (errors CS0108, CS0109).
- 		/// We handle two cases. The first is for types without parameters (events, field, properties).
- 		/// The second are methods, indexers and this is why ignore_complex_types is here.
- 		/// The latest param is temporary hack. See DoDefineMembers method for more info.
- 		/// </summary>
- 		public MemberInfo FindMemberWithSameName (string name, bool ignore_complex_types, MemberInfo ignore_member)
- 		{
-			List<CacheEntry> applicable = null;
- 
- 			if (method_hash != null)
-				method_hash.TryGetValue (name, out applicable);
- 
- 			if (applicable != null) {
- 				for (int i = applicable.Count - 1; i >= 0; i--) {
- 					CacheEntry entry = (CacheEntry) applicable [i];
- 					if ((entry.EntryType & EntryType.Public) != 0)
- 						return entry.Member;
- 				}
- 			}
- 
- 			if (member_hash == null)
- 				return null;
+		//
+		// Returns inflated version of MemberSpec, it works similarly to
+		// SRE TypeBuilder.GetMethod
+		//
+		public static T GetMember<T> (TypeSpec container, T spec) where T : MemberSpec
+		{
+			IList<MemberSpec> applicable;
+			if (container.MemberCache.member_hash.TryGetValue (GetLookupName (spec), out applicable)) {
+				for (int i = applicable.Count - 1; i >= 0; i--) {
+					var entry = applicable[i];
+					if (entry.MemberDefinition == spec.MemberDefinition)
+						return (T) entry;
+				}
+			}
 
-			if (member_hash.TryGetValue (name, out applicable)) {
- 				for (int i = applicable.Count - 1; i >= 0; i--) {
- 					CacheEntry entry = (CacheEntry) applicable [i];
- 					if ((entry.EntryType & EntryType.Public) != 0 & entry.Member != ignore_member) {
- 						if (ignore_complex_types) {
- 							if ((entry.EntryType & EntryType.Method) != 0)
- 								continue;
- 
- 							// Does exist easier way how to detect indexer ?
- 							if ((entry.EntryType & EntryType.Property) != 0) {
- 								AParametersCollection arg_types = TypeManager.GetParameterData ((PropertyInfo)entry.Member);
- 								if (arg_types.Count > 0)
- 									continue;
- 							}
- 						}
- 						return entry.Member;
- 					}
- 				}
- 			}
-  			return null;
-  		}
+			throw new InternalErrorException ("Missing member `{0}' on inflated type `{1}'",
+				spec.GetSignatureForError (), container.GetSignatureForError ());
+		}
 
+		static MemberKind GetMemberCoreKind (MemberCore member)
+		{
+			if (member is FieldBase)
+				return MemberKind.Field;
+			if (member is Indexer)
+				return MemberKind.Indexer;
+			if (member is Class)
+				return MemberKind.Class;
+			if (member is Struct)
+				return MemberKind.Struct;
+			if (member is Destructor)
+				return MemberKind.Destructor;
+			if (member is Method)
+				return MemberKind.Method;
+			if (member is Property)
+				return MemberKind.Property;
+			if (member is EventField)
+				return MemberKind.Event;
+			if (member is Interface)
+				return MemberKind.Interface;
+			if (member is EventProperty)
+				return MemberKind.Event;
 
- 		/// <summary>
- 		/// Builds low-case table for CLS Compliance test
- 		/// </summary>
-		public Dictionary<string, object> GetPublicMembers ()
- 		{
- 			if (locase_table != null)
- 				return locase_table;
+			throw new NotImplementedException (member.GetType ().ToString ());
+		}
 
-			locase_table = new Dictionary<string, object> ();
- 			foreach (var entry in member_hash) {
- 				var members = entry.Value;
- 				for (int ii = 0; ii < members.Count; ++ii) {
- 					CacheEntry member_entry = members [ii];
- 
- 					if ((member_entry.EntryType & EntryType.Public) == 0)
- 						continue;
- 
- 					// TODO: Does anyone know easier way how to detect that member is internal ?
- 					switch (member_entry.EntryType & EntryType.MaskType) {
-					case EntryType.Constructor:
+		public static IList<MemberSpec> GetCompletitionMembers (TypeSpec container, string name)
+		{
+			var matches = new List<MemberSpec> ();
+			foreach (var entry in container.MemberCache.member_hash) {
+				foreach (var name_entry in entry.Value) {
+					if (name_entry.IsAccessor)
 						continue;
-						
-					case EntryType.Field:
-						if ((((FieldInfo)member_entry.Member).Attributes & (FieldAttributes.Assembly | FieldAttributes.Public)) == FieldAttributes.Assembly)
-							continue;
-						break;
-						
-					case EntryType.Method:
-						if ((((MethodInfo)member_entry.Member).Attributes & (MethodAttributes.Assembly | MethodAttributes.Public)) == MethodAttributes.Assembly)
-							continue;
-						break;
-						
-					case EntryType.Property:
-						PropertyInfo pi = (PropertyInfo)member_entry.Member;
-						if (pi.GetSetMethod () == null && pi.GetGetMethod () == null)
-							continue;
-						break;
-						
-					case EntryType.Event:
-						EventInfo ei = (EventInfo)member_entry.Member;
-						MethodInfo mi = ei.GetAddMethod ();
-						if ((mi.Attributes & (MethodAttributes.Assembly | MethodAttributes.Public)) == MethodAttributes.Assembly)
-							continue;
-						break;
- 					}
- 					string lcase = ((string)entry.Key).ToLower (System.Globalization.CultureInfo.InvariantCulture);
- 					locase_table [lcase] = member_entry.Member;
- 					break;
- 				}
- 			}
- 			return locase_table;
- 		}
- 
- 		public IDictionary<string, List<CacheEntry>> Members {
- 			get {
- 				return member_hash;
- 			}
- 		}
- 
- 		/// <summary>
- 		/// Cls compliance check whether methods or constructors parameters differing only in ref or out, or in array rank
- 		/// </summary>
- 		/// 
-		// TODO: refactor as method is always 'this'
- 		public static void VerifyClsParameterConflict (IList<CacheEntry> al, MethodCore method, MemberInfo this_builder, Report Report)
- 		{
- 			EntryType tested_type = (method is Constructor ? EntryType.Constructor : EntryType.Method) | EntryType.Public;
- 
- 			for (int i = 0; i < al.Count; ++i) {
- 				var entry = al [i];
- 		
- 				// skip itself
- 				if (entry.Member == this_builder)
- 					continue;
- 		
- 				if ((entry.EntryType & tested_type) != tested_type)
- 					continue;
- 		
-				MethodBase method_to_compare = (MethodBase)entry.Member;
-				AttributeTester.Result result = AttributeTester.AreOverloadedMethodParamsClsCompliant (
-					method.Parameters, TypeManager.GetParameterData (method_to_compare));
 
- 				if (result == AttributeTester.Result.Ok)
- 					continue;
+					if ((name_entry.Kind & (MemberKind.Constructor | MemberKind.FakeMethod | MemberKind.Destructor)) != 0)
+						continue;
 
-				IMethodData md = TypeManager.GetMethod (method_to_compare);
+					bool extra;
+					if (!Expression.IsMemberAccessible (InternalType.FakeInternalType, name_entry, out extra))
+						continue;
 
-				// TODO: now we are ignoring CLSCompliance(false) on method from other assembly which is buggy.
-				// However it is exactly what csc does.
-				if (md != null && !md.IsClsComplianceRequired ())
-					continue;
- 		
- 				Report.SymbolRelatedToPreviousError (entry.Member);
-				switch (result) {
-				case AttributeTester.Result.RefOutArrayError:
-					Report.Warning (3006, 1, method.Location,
-							"Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant",
-							method.GetSignatureForError ());
-					continue;
-				case AttributeTester.Result.ArrayArrayError:
-					Report.Warning (3007, 1, method.Location,
-							"Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant",
-							method.GetSignatureForError ());
-					continue;
+					if (name == null || name_entry.Name.StartsWith (name)) {
+						matches.Add (name_entry);
+					}
+				}
+			}
+
+			return matches;
+		}
+
+		//
+		// Returns members of @iface only, base members are ignored
+		//
+		public static IList<MethodSpec> GetInterfaceMembers (TypeSpec iface)
+		{
+			//
+			// MemberCache flatten interfaces, therefore in cases like this one
+			// 
+			// interface IA : IB {}
+			// interface IB { void Foo () }
+			//
+			// we would return Foo inside IA which is not expected in this case
+			//
+			var methods = new List<MethodSpec> ();
+			foreach (var entry in iface.MemberCache.member_hash.Values) {
+				foreach (var name_entry in entry) {
+					if (iface == name_entry.DeclaringType) {
+						if (name_entry.Kind == MemberKind.Method) {
+							methods.Add ((MethodSpec) name_entry);
+						}
+					}
+				}
+			}
+
+			return methods;
+		}
+
+		public static IList<MethodSpec> GetNotImplementedAbstractMethods (TypeSpec type)
+		{
+			if (type.MemberCache.missing_abstract != null)
+				return type.MemberCache.missing_abstract;
+				
+			var abstract_methods = new List<MethodSpec> ();
+			List<TypeSpec> hierarchy = null;
+
+			//
+			// Stage 1: top-to-bottom scan for abstract members
+			//
+			var abstract_type = type;
+			while (true) {
+				foreach (var entry in abstract_type.MemberCache.member_hash) {
+					foreach (var name_entry in entry.Value) {
+						if ((name_entry.Modifiers & Modifiers.ABSTRACT) == 0)
+							continue;
+
+						if (name_entry.Kind != MemberKind.Method)
+							continue;
+
+						abstract_methods.Add ((MethodSpec) name_entry);
+					}
 				}
 
-				throw new NotImplementedException (result.ToString ());
- 			}
-  		}
+				var base_type = abstract_type.BaseType;
+				if (!base_type.IsAbstract)
+					break;
 
-		public bool CheckExistingMembersOverloads (MemberCore member, string name, ParametersCompiled parameters, Report Report)
+				if (hierarchy == null)
+					hierarchy = new List<TypeSpec> ();
+
+				hierarchy.Add (abstract_type);
+				abstract_type = base_type;
+			}
+
+			int not_implemented_count = abstract_methods.Count;
+			if (not_implemented_count == 0 || hierarchy == null) {
+				type.MemberCache.missing_abstract = abstract_methods;
+				return type.MemberCache.missing_abstract;
+			}
+
+			//
+			// Stage 2: Remove already implemented methods
+			//
+			foreach (var type_up in hierarchy) {
+				var members = type_up.MemberCache.member_hash;
+				if (members.Count == 0)
+					continue;
+
+				for (int i = 0; i < abstract_methods.Count; ++i) {
+					var candidate = abstract_methods [i];
+					if (candidate == null)
+						continue;
+
+					IList<MemberSpec> applicable;
+					if (!members.TryGetValue (candidate.Name, out applicable))
+						continue;
+
+					var filter = new MemberFilter (candidate);
+					foreach (var item in applicable) {
+						// TODO: Need to test what should happen for OVERRIDE_UNCHECKED
+						if ((item.Modifiers & (Modifiers.OVERRIDE | Modifiers.OVERRIDE_UNCHECKED | Modifiers.VIRTUAL)) == 0)
+							continue;
+
+						if (filter.Equals (item)) {
+							--not_implemented_count;
+							abstract_methods [i] = null;
+							break;
+						}
+					}
+				}
+			}
+
+			if (not_implemented_count == abstract_methods.Count) {
+				type.MemberCache.missing_abstract = abstract_methods;
+				return type.MemberCache.missing_abstract;
+			}
+
+			var not_implemented = new MethodSpec[not_implemented_count];
+			int counter = 0;
+			foreach (var m in abstract_methods) {
+				if (m == null)
+					continue;
+
+				not_implemented[counter++] = m;
+			}
+
+			type.MemberCache.missing_abstract = not_implemented;
+			return type.MemberCache.missing_abstract;
+		}
+
+		static string GetLookupName (MemberSpec ms)
 		{
-			List<CacheEntry> entries;
+			if (ms.Kind == MemberKind.Indexer)
+				return IndexerNameAlias;
+
+			if (ms.Kind == MemberKind.Constructor) {
+				if (ms.IsStatic)
+					return ConstructorInfo.TypeConstructorName;
+
+				return ConstructorInfo.ConstructorName;
+			}
+
+			return ms.Name;
+		}
+
+		static string GetLookupName (MemberCore mc)
+		{
+			if (mc is Indexer)
+				return IndexerNameAlias;
+
+			if (mc is Constructor)
+				return ConstructorInfo.ConstructorName;
+
+			return mc.MemberName.Name;
+		}
+
+		//
+		// Inflates all member cache nested types
+		//
+		public void InflateTypes (MemberCache inflated_cache, TypeParameterInflator inflator)
+		{
+			foreach (var item in member_hash) {
+				IList<MemberSpec> inflated_members = null;
+				for (int i = 0; i < item.Value.Count; ++i ) {
+					var member = item.Value[i];
+
+					// FIXME: When inflating members refering nested types before they are inflated
+					if (member == null)
+						continue;
+
+					if ((member.Kind & MemberKind.NestedMask) != 0 &&
+						(member.Modifiers & Modifiers.COMPILER_GENERATED) == 0) {
+						if (inflated_members == null) {
+							inflated_members = new MemberSpec[item.Value.Count];
+							inflated_cache.member_hash.Add (item.Key, inflated_members);
+						}
+
+						inflated_members [i] = member.InflateMember (inflator);
+					}
+				}
+			}
+		}
+
+		//
+		// Inflates all open type members, requires InflateTypes to be called before
+		//
+		public void InflateMembers (MemberCache cacheToInflate, TypeSpec inflatedType, TypeParameterInflator inflator)
+		{
+			var inflated_member_hash = cacheToInflate.member_hash;
+			Dictionary<MethodSpec, MethodSpec> accessor_relation = null;
+			List<MemberSpec> accessor_members = null;
+
+			foreach (var item in member_hash) {
+				var members = item.Value;
+				IList<MemberSpec> inflated_members = null;
+				for (int i = 0; i < members.Count; ++i ) {
+					var member = members[i];
+
+					//
+					// All nested types have been inflated earlier except for
+					// compiler types which are created later and could miss InflateTypes
+					//
+					if ((member.Kind & MemberKind.NestedMask) != 0 &&
+						(member.Modifiers & Modifiers.COMPILER_GENERATED) == 0) {
+						if (inflated_members == null)
+							inflated_members = inflated_member_hash[item.Key];
+
+						continue;
+					}
+
+					//
+					// Clone the container first
+					//
+					if (inflated_members == null) {
+						inflated_members = new MemberSpec [item.Value.Count];
+						inflated_member_hash.Add (item.Key, inflated_members);
+					}
+
+					var local_inflator = inflator;
+
+					if (member.DeclaringType != inflatedType) {
+						//
+						// Don't inflate non generic interface members
+						// merged into generic interface
+						//
+						if (!member.DeclaringType.IsGeneric) {
+							inflated_members [i] = member;
+							continue;
+						}
+
+						//
+						// Needed when inflating flatten interfaces. It inflates
+						// container type only, type parameters are already done
+						//
+						// Handles cases like:
+						//
+						// interface I<T> {}
+						// interface I<U, V> : I<U> {}
+						// 
+						// class C: I<int, bool> {}
+						//
+						var inflated_parent = inflator.Inflate (member.DeclaringType);
+						if (inflated_parent != inflator.TypeInstance)
+							local_inflator = new TypeParameterInflator (inflator, inflated_parent);
+					}
+
+					//
+					// Inflate every member, its parent is now different
+					//
+					var inflated = member.InflateMember (local_inflator);
+					inflated_members [i] = inflated;
+
+					if (member is PropertySpec || member is EventSpec) {
+						if (accessor_members == null)
+							accessor_members = new List<MemberSpec> ();
+
+						accessor_members.Add (inflated);
+						continue;
+					}
+
+					if (member.IsAccessor) {
+						if (accessor_relation == null)
+							accessor_relation = new Dictionary<MethodSpec, MethodSpec> ();
+						accessor_relation.Add ((MethodSpec) member, (MethodSpec) inflated);
+					}
+				}
+			}
+
+			if (accessor_members != null) {
+				foreach (var member in accessor_members) {
+					var prop = member as PropertySpec;
+					if (prop != null) {
+						if (prop.Get != null)
+							prop.Get = accessor_relation[prop.Get];
+						if (prop.Set != null)
+							prop.Set = accessor_relation[prop.Set];
+
+						continue;
+					}
+
+					var ev = (EventSpec) member;
+					ev.AccessorAdd = accessor_relation[ev.AccessorAdd];
+					ev.AccessorRemove = accessor_relation[ev.AccessorRemove];
+				}
+			}
+		}
+
+		//
+		// For imported class method do additional validation to be sure that metadata
+		// override flag was correct
+		//
+		static bool IsRealMethodOverride (MethodSpec ms)
+		{
+			IList<MemberSpec> candidates;
+			var dt = ms.DeclaringType;
+			while (dt.BaseType != null) {
+				var base_cache = dt.BaseType.MemberCache;
+				if (base_cache.member_hash.TryGetValue (ms.Name, out candidates)) {
+					foreach (var candidate in candidates) {
+						if (candidate.Kind != ms.Kind)
+							continue;
+
+						if (candidate.Arity != ms.Arity)
+							continue;
+
+						if (!TypeSpecComparer.Override.IsEqual (((MethodSpec) candidate).Parameters, ms.Parameters))
+							continue;
+
+						// Everything matches except modifiers, it's not correct soverride
+						if ((candidate.Modifiers & Modifiers.AccessibilityMask) != (ms.Modifiers & Modifiers.AccessibilityMask))
+							return false;
+
+						return true;
+					}
+				}
+
+				dt = dt.BaseType;
+			}
+
+			return false;
+		}
+
+		//
+		// Checks all appropriate container members for CLS compliance
+		//
+		public void VerifyClsCompliance (TypeSpec container, Report report)
+		{
+			if (locase_members != null)
+				return;
+
+			if (container.BaseType == null) {
+				locase_members = new Dictionary<string, MemberSpec[]> (member_hash.Count); // StringComparer.OrdinalIgnoreCase);
+			} else {
+				container.BaseType.MemberCache.VerifyClsCompliance (container.BaseType, report);
+				locase_members = new Dictionary<string, MemberSpec[]> (container.BaseType.MemberCache.locase_members); //, StringComparer.OrdinalIgnoreCase);
+			}
+
+			var is_imported_type = container.MemberDefinition.IsImported;
+			foreach (var entry in container.MemberCache.member_hash) {
+				for (int i = 0; i < entry.Value.Count; ++i ) {
+					var name_entry = entry.Value[i];
+					if ((name_entry.Modifiers & (Modifiers.PUBLIC | Modifiers.PROTECTED)) == 0)
+						continue;
+
+					if ((name_entry.Modifiers & (Modifiers.OVERRIDE | Modifiers.COMPILER_GENERATED)) != 0)
+						continue;
+
+					if ((name_entry.Kind & MemberKind.MaskType) == 0)
+						continue;
+
+					if (name_entry.MemberDefinition.IsNotCLSCompliant ())
+					    continue;
+
+					IParametersMember p_a = name_entry as IParametersMember;
+					if (p_a != null && !name_entry.IsAccessor) {
+						if (!is_imported_type) {
+							var p_a_pd = p_a.Parameters;
+							for (int ii = i + 1; ii < entry.Value.Count; ++ii) {
+								var checked_entry = entry.Value[ii];
+								IParametersMember p_b = checked_entry as IParametersMember;
+								if (p_b == null)
+									continue;
+
+								if (p_a_pd.Count != p_b.Parameters.Count)
+									continue;
+
+								if (checked_entry.IsAccessor)
+									continue;
+
+								var res = ParametersCompiled.IsSameClsSignature (p_a.Parameters, p_b.Parameters);
+								if (res != 0) {
+									var last = GetLaterDefinedMember (checked_entry, name_entry);
+									if (last == checked_entry.MemberDefinition) {
+										report.SymbolRelatedToPreviousError (name_entry);
+									} else {
+										report.SymbolRelatedToPreviousError (checked_entry);
+									}
+
+									if ((res & 1) != 0) {
+										report.Warning (3006, 1, last.Location,
+												"Overloaded method `{0}' differing only in ref or out, or in array rank, is not CLS-compliant",
+												name_entry.GetSignatureForError ());
+									}
+
+									if ((res & 2) != 0) {
+										report.Warning (3007, 1, last.Location,
+											"Overloaded method `{0}' differing only by unnamed array types is not CLS-compliant",
+											name_entry.GetSignatureForError ());
+									}
+								}
+							}
+						}
+					}
+
+					if (i > 0 || name_entry.Kind == MemberKind.Constructor || name_entry.Kind == MemberKind.Indexer)
+						continue;
+
+					var name_entry_locase = name_entry.Name.ToLowerInvariant ();
+
+					MemberSpec[] found;
+					if (!locase_members.TryGetValue (name_entry_locase, out found)) {
+						found = new MemberSpec[] { name_entry };
+						locase_members.Add (name_entry_locase, found);
+					} else {
+						bool same_names_only = true;
+						foreach (var f in found) {
+							if (f.Name == name_entry.Name)
+								continue;
+
+//							if (f.IsAccessor && name_entry.IsAccessor)
+//								continue;
+
+							same_names_only = false;
+							if (!is_imported_type) {
+								var last = GetLaterDefinedMember (f, name_entry);
+								if (last == f.MemberDefinition) {
+									report.SymbolRelatedToPreviousError (name_entry);
+								} else {
+									report.SymbolRelatedToPreviousError (f);
+								}
+
+								report.Warning (3005, 1, last.Location,
+									"Identifier `{0}' differing only in case is not CLS-compliant", last.GetSignatureForError ());
+							}
+						}
+
+						if (!same_names_only) {
+							Array.Resize (ref found, found.Length + 1);
+							found[found.Length - 1] = name_entry;
+							locase_members[name_entry_locase] = found;
+						}
+					}
+				}
+			}
+		}
+
+		//
+		// Local report helper to issue correctly ordered members stored in hashtable
+		//
+		static MemberCore GetLaterDefinedMember (MemberSpec a, MemberSpec b)
+		{
+			var mc_a = a.MemberDefinition as MemberCore;
+			var mc_b = b.MemberDefinition as MemberCore;
+			if (mc_a == null)
+				return mc_b;
+
+			if (mc_b == null)
+				return mc_a;
+
+			if (mc_a.Location.File != mc_a.Location.File)
+				return mc_b;
+
+			return mc_b.Location.Row > mc_a.Location.Row ? mc_b : mc_a;
+		}
+
+		public bool CheckExistingMembersOverloads (MemberCore member, AParametersCollection parameters)
+		{
+			var name = GetLookupName (member);
+			var imb = member as InterfaceMemberBase;
+			if (imb != null && imb.IsExplicitImpl) {
+				name = imb.GetFullName (name);
+			}
+
+			return CheckExistingMembersOverloads (member, name, parameters);
+		}
+
+		public bool CheckExistingMembersOverloads (MemberCore member, string name, AParametersCollection parameters)
+		{
+			IList<MemberSpec> entries;
 			if (!member_hash.TryGetValue (name, out entries))
-				return true;
+				return false;
+
+			var Report = member.Compiler.Report;
 
 			int method_param_count = parameters.Count;
 			for (int i = entries.Count - 1; i >= 0; --i) {
-				CacheEntry ce = (CacheEntry) entries [i];
-
-				if (ce.Container != member.Parent.PartialContainer)
-					return true;
-
-				Type [] p_types;
-				AParametersCollection pd;
-				if ((ce.EntryType & EntryType.Property) != 0) {
-					pd = TypeManager.GetParameterData ((PropertyInfo) ce.Member);
-					p_types = pd.Types;
-				} else {
-					MethodBase mb = (MethodBase) ce.Member;
-		
-					// TODO: This is more like a hack, because we are adding generic methods
-					// twice with and without arity name
-					if (TypeManager.IsGenericMethod (mb) && !member.MemberName.IsGeneric)
-						continue;
-
-					pd = TypeManager.GetParameterData (mb);
-					p_types = pd.Types;
-				}
-
-				if (p_types.Length != method_param_count)
+				var ce = entries[i];
+				var pm = ce as IParametersMember;
+				var pd = pm == null ? ParametersCompiled.EmptyReadOnlyParameters : pm.Parameters;
+				if (pd.Count != method_param_count)
 					continue;
 
+				if (ce.Arity != member.MemberName.Arity)
+					continue;
+
+				// Ignore merged interface members
+				if (member.Parent.PartialContainer != ce.DeclaringType.MemberDefinition)
+					continue;
+
+				var p_types = pd.Types;
 				if (method_param_count > 0) {
 					int ii = method_param_count - 1;
-					Type type_a, type_b;
+					TypeSpec type_a, type_b;
 					do {
 						type_a = parameters.Types [ii];
 						type_b = p_types [ii];
-
-						if (TypeManager.IsGenericParameter (type_a) && type_a.DeclaringMethod != null)
-							type_a = typeof (TypeParameter);
-
-						if (TypeManager.IsGenericParameter (type_b) && type_b.DeclaringMethod != null)
-							type_b = typeof (TypeParameter);
 
 						if ((pd.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF) !=
 							(parameters.FixedParameters [ii].ModFlags & Parameter.Modifier.ISBYREF))
 							break;
 
-					} while (TypeManager.IsEqual (type_a, type_b) && ii-- != 0);
+					} while (TypeSpecComparer.Override.IsEqual (type_a, type_b) && ii-- != 0);
 
 					if (ii >= 0)
 						continue;
@@ -1389,24 +1184,21 @@ namespace Mono.CSharp {
 					//
 					// Operators can differ in return type only
 					//
-					if (member is Operator) {
-						Operator op = TypeManager.GetMethod ((MethodBase) ce.Member) as Operator;
-						if (op != null && op.ReturnType != ((Operator) member).ReturnType)
-							continue;
-					}
+					if (member is Operator && ce.Kind == MemberKind.Operator && ((MethodSpec) ce).ReturnType != ((Operator) member).ReturnType)
+						continue;
 
 					//
 					// Report difference in parameter modifiers only
 					//
 					if (pd != null && member is MethodCore) {
 						ii = method_param_count;
-						while (ii-- != 0 && parameters.FixedParameters [ii].ModFlags == pd.FixedParameters [ii].ModFlags &&
-							parameters.ExtensionMethodType == pd.ExtensionMethodType);
+						while (ii-- != 0 && parameters.FixedParameters[ii].ModFlags == pd.FixedParameters[ii].ModFlags &&
+							parameters.ExtensionMethodType == pd.ExtensionMethodType) ;
 
 						if (ii >= 0) {
-							MethodCore mc = TypeManager.GetMethod ((MethodBase) ce.Member) as MethodCore;
-							Report.SymbolRelatedToPreviousError (ce.Member);
-							if ((member.ModFlags & Modifiers.PARTIAL) != 0 && (mc.ModFlags & Modifiers.PARTIAL) != 0) {
+							var mc = ce as MethodSpec;
+							member.Compiler.Report.SymbolRelatedToPreviousError (ce);
+							if ((member.ModFlags & Modifiers.PARTIAL) != 0 && (mc.Modifiers & Modifiers.PARTIAL) != 0) {
 								if (parameters.HasParams || pd.HasParams) {
 									Report.Error (758, member.Location,
 										"A partial method declaration and partial method implementation cannot differ on use of `params' modifier");
@@ -1414,25 +1206,23 @@ namespace Mono.CSharp {
 									Report.Error (755, member.Location,
 										"A partial method declaration and partial method implementation must be both an extension method or neither");
 								}
+							} else if (member is Constructor) {
+								Report.Error (851, member.Location,
+									"Overloaded contructor `{0}' cannot differ on use of parameter modifiers only",
+									member.GetSignatureForError ());
 							} else {
-								if (member is Constructor) {
-									Report.Error (851, member.Location,
-										"Overloaded contructor `{0}' cannot differ on use of parameter modifiers only",
-										member.GetSignatureForError ());
-								} else {
-									Report.Error (663, member.Location,
-										"Overloaded method `{0}' cannot differ on use of parameter modifiers only",
-										member.GetSignatureForError ());
-								}
+								Report.Error (663, member.Location,
+									"Overloaded method `{0}' cannot differ on use of parameter modifiers only",
+									member.GetSignatureForError ());
 							}
 							return false;
 						}
 					}
 				}
 
-				if ((ce.EntryType & EntryType.Method) != 0) {
+				if ((ce.Kind & (MemberKind.Method | MemberKind.FakeMethod)) != 0) {
 					Method method_a = member as Method;
-					Method method_b = TypeManager.GetMethod ((MethodBase) ce.Member) as Method;
+					Method method_b = ce.MemberDefinition as Method;
 					if (method_a != null && method_b != null && (method_a.ModFlags & method_b.ModFlags & Modifiers.PARTIAL) != 0) {
 						const Modifiers partial_modifiers = Modifiers.STATIC | Modifiers.UNSAFE;
 						if (method_a.IsPartialDefinition == method_b.IsPartialImplementation) {
@@ -1440,7 +1230,10 @@ namespace Mono.CSharp {
 								method_a.Parent.IsUnsafe && method_b.Parent.IsUnsafe) {
 								if (method_a.IsPartialImplementation) {
 									method_a.SetPartialDefinition (method_b);
-									entries.RemoveAt (i);
+									if (entries.Count == 1)
+										member_hash.Remove (name);
+									else
+										entries.RemoveAt (i);
 								} else {
 									method_b.SetPartialDefinition (method_a);
 									method_a.caching_flags |= MemberCore.Flags.PartialDefinitionExists;
@@ -1448,52 +1241,51 @@ namespace Mono.CSharp {
 								continue;
 							}
 
-							if ((method_a.ModFlags & Modifiers.STATIC) != (method_b.ModFlags & Modifiers.STATIC)) {
-								Report.SymbolRelatedToPreviousError (ce.Member);
+							if (method_a.IsStatic != method_b.IsStatic) {
+								Report.SymbolRelatedToPreviousError (ce);
 								Report.Error (763, member.Location,
 									"A partial method declaration and partial method implementation must be both `static' or neither");
 							}
 
-							Report.SymbolRelatedToPreviousError (ce.Member);
+							Report.SymbolRelatedToPreviousError (ce);
 							Report.Error (764, member.Location,
 								"A partial method declaration and partial method implementation must be both `unsafe' or neither");
 							return false;
 						}
 
-						Report.SymbolRelatedToPreviousError (ce.Member);
+						Report.SymbolRelatedToPreviousError (ce);
 						if (method_a.IsPartialDefinition) {
 							Report.Error (756, member.Location, "A partial method `{0}' declaration is already defined",
 								member.GetSignatureForError ());
-						} else {
-							Report.Error (757, member.Location, "A partial method `{0}' implementation is already defined",
-								member.GetSignatureForError ());
 						}
 
+						Report.Error (757, member.Location, "A partial method `{0}' implementation is already defined",
+							member.GetSignatureForError ());
 						return false;
 					}
 
-					Report.SymbolRelatedToPreviousError (ce.Member);
-					IMethodData duplicate_member = TypeManager.GetMethod ((MethodBase) ce.Member);
-					if (member is Operator && duplicate_member is Operator) {
-						Report.Error (557, member.Location, "Duplicate user-defined conversion in type `{0}'",
-							member.Parent.GetSignatureForError ());
-						return false;
-					}
+					Report.SymbolRelatedToPreviousError (ce);
 
 					bool is_reserved_a = member is AbstractPropertyEventMethod || member is Operator;
-					bool is_reserved_b = duplicate_member is AbstractPropertyEventMethod || duplicate_member is Operator;
+					bool is_reserved_b = ((MethodSpec) ce).IsReservedMethod;
 
 					if (is_reserved_a || is_reserved_b) {
 						Report.Error (82, member.Location, "A member `{0}' is already reserved",
 							is_reserved_a ?
-							TypeManager.GetFullNameSignature (ce.Member) :
+							ce.GetSignatureForError () :
 							member.GetSignatureForError ());
 						return false;
 					}
 				} else {
-					Report.SymbolRelatedToPreviousError (ce.Member);
+					Report.SymbolRelatedToPreviousError (ce);
 				}
-				
+
+				if (member is Operator && ce.Kind == MemberKind.Operator) {
+					Report.Error (557, member.Location, "Duplicate user-defined conversion in type `{0}'",
+						member.Parent.GetSignatureForError ());
+					return false;
+				}
+
 				Report.Error (111, member.Location,
 					"A member `{0}' is already defined. Rename this member or use different parameter types",
 					member.GetSignatureForError ());

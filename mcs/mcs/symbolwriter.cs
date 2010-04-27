@@ -181,50 +181,50 @@ namespace Mono.CSharp {
 				symwriter.DefineCapturedScope (scope_id, id, captured_name);
 		}
 
-		public static void OpenCompilerGeneratedBlock (ILGenerator ig)
+		public static void OpenCompilerGeneratedBlock (EmitContext ec)
 		{
 			if (symwriter != null) {
-				int offset = symwriter.GetILOffset (ig);
+				int offset = symwriter.GetILOffset (ec.ig);
 				symwriter.OpenCompilerGeneratedBlock (offset);
 			}
 		}
 
-		public static void CloseCompilerGeneratedBlock (ILGenerator ig)
+		public static void CloseCompilerGeneratedBlock (EmitContext ec)
 		{
 			if (symwriter != null) {
-				int offset = symwriter.GetILOffset (ig);
+				int offset = symwriter.GetILOffset (ec.ig);
 				symwriter.CloseCompilerGeneratedBlock (offset);
 			}
 		}
 
-		public static void StartIteratorBody (ILGenerator ig)
+		public static void StartIteratorBody (EmitContext ec)
 		{
 			if (symwriter != null) {
-				int offset = symwriter.GetILOffset (ig);
+				int offset = symwriter.GetILOffset (ec.ig);
 				symwriter.StartIteratorBody (offset);
 			}
 		}
 
-		public static void EndIteratorBody (ILGenerator ig)
+		public static void EndIteratorBody (EmitContext ec)
 		{
 			if (symwriter != null) {
-				int offset = symwriter.GetILOffset (ig);
+				int offset = symwriter.GetILOffset (ec.ig);
 				symwriter.EndIteratorBody (offset);
 			}
 		}
 
-		public static void StartIteratorDispatcher (ILGenerator ig)
+		public static void StartIteratorDispatcher (EmitContext ec)
 		{
 			if (symwriter != null) {
-				int offset = symwriter.GetILOffset (ig);
+				int offset = symwriter.GetILOffset (ec.ig);
 				symwriter.StartIteratorDispatcher (offset);
 			}
 		}
 
-		public static void EndIteratorDispatcher (ILGenerator ig)
+		public static void EndIteratorDispatcher (EmitContext ec)
 		{
 			if (symwriter != null) {
-				int offset = symwriter.GetILOffset (ig);
+				int offset = symwriter.GetILOffset (ec.ig);
 				symwriter.EndIteratorDispatcher (offset);
 			}
 		}

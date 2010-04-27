@@ -19,6 +19,7 @@ using System.Reflection;
 using System.Reflection.Emit;
 using System.Text;
 using Mono.CSharp.Linq;
+using System.Linq;
 
 namespace Mono.CSharp {
 
@@ -26,7 +27,27 @@ namespace Mono.CSharp {
 	// A common base class for Completing expressions, it
 	// is just a very simple ExpressionStatement
 	//
-	public abstract class CompletingExpression : ExpressionStatement {
+	public abstract class CompletingExpression : ExpressionStatement
+	{
+		public static void AppendResults (List<string> results, string prefix, IEnumerable<string> names)
+		{
+			foreach (string name in names) {
+				if (name == null || prefix == null)
+					continue;
+
+				if (!name.StartsWith (prefix))
+					continue;
+
+				if (results.Contains (name))
+					continue;
+
+				if (prefix != null)
+					results.Add (name.Substring (prefix.Length));
+				else
+					results.Add (name);
+			}
+		}
+
 		public override void EmitStatement (EmitContext ec)
 		{
 			// Do nothing
@@ -51,33 +72,13 @@ namespace Mono.CSharp {
 			this.loc = l;
 			this.Prefix = prefix;
 		}
-
-		public static void AppendResults (List<string> results, string prefix, IEnumerable<string> names)
-		{
-			foreach (string name in names){
-				if (name == null || prefix == null)
-					continue;
-
-				if (!name.StartsWith (prefix))
-					continue;
-
-				if (results.Contains (name))
-					continue;
-
-				if (prefix != null)
-					results.Add (name.Substring (prefix.Length));
-				else
-					results.Add (name);
-			}
-
-		}
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			var results = new List<string> ();
 
 			AppendResults (results, Prefix, Evaluator.GetVarNames ());
-			AppendResults (results, Prefix, ec.CurrentTypeDefinition.NamespaceEntry.CompletionGetTypesStartingWith (Prefix));
+			AppendResults (results, Prefix, ec.CurrentMemberDefinition.Parent.NamespaceEntry.CompletionGetTypesStartingWith (Prefix));
 			AppendResults (results, Prefix, Evaluator.GetUsingList ());
 			
 			throw new CompletionResult (Prefix, results.ToArray ());
@@ -93,30 +94,6 @@ namespace Mono.CSharp {
 		Expression expr;
 		string partial_name;
 		TypeArguments targs;
-
-		internal static MemberFilter CollectingFilter = new MemberFilter (Match);
-
-		static bool Match (MemberInfo m, object filter_criteria)
-		{
-			if (m is FieldInfo){
-				if (((FieldInfo) m).IsSpecialName)
-					return false;
-				
-			}
-			if (m is MethodInfo){
-				if (((MethodInfo) m).IsSpecialName)
-					return false;
-			}
-
-			if (filter_criteria == null)
-				return true;
-			
-			string n = (string) filter_criteria;
-			if (m.Name.StartsWith (n))
-				return true;
-			
-			return false;
-		}
 		
 		public CompletionMemberAccess (Expression e, string partial_name, Location l)
 		{
@@ -142,7 +119,7 @@ namespace Mono.CSharp {
 			if (expr_resolved == null)
 				return null;
 
-			Type expr_type = expr_resolved.Type;
+			TypeSpec expr_type = expr_resolved.Type;
 			if (expr_type.IsPointer || expr_type == TypeManager.void_type || expr_type == TypeManager.null_type || expr_type == InternalType.AnonymousMethod) {
 				Unary.Error_OperatorCannotBeApplied (ec, loc, ".", expr_type);
 				return null;
@@ -173,28 +150,10 @@ namespace Mono.CSharp {
 				CompletionSimpleName.AppendResults (
 					results,
 					partial_name, 
-					ec.CurrentTypeDefinition.NamespaceEntry.CompletionGetTypesStartingWith (namespaced_partial));
+					ec.CurrentMemberDefinition.Parent.NamespaceEntry.CompletionGetTypesStartingWith (namespaced_partial));
 			} else {
-				MemberInfo [] result = expr_type.FindMembers (
-					MemberTypes.All, BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public,
-					CollectingFilter, partial_name);
-
-				foreach (MemberInfo r in result){
-					string name;
-					
-					MethodBase rasb = r as MethodBase;
-					if (rasb != null && rasb.IsSpecialName)
-						continue;
-					
-					if (partial_name == null)
-						name = r.Name;
-					else 
-						name = r.Name.Substring (partial_name.Length);
-					
-					if (results.Contains (name))
-						continue;
-					results.Add (name);
-				}
+				var r = MemberCache.GetCompletitionMembers (expr_type, partial_name).Select (l => l.Name);
+				AppendResults (results, partial_name, r);
 			}
 
 			throw new CompletionResult (partial_name == null ? "" : partial_name, results.ToArray ());
@@ -222,29 +181,20 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			MemberList members = TypeManager.FindMembers (
-				ec.CurrentInitializerVariable.Type,
-				MemberTypes.Field | MemberTypes.Property,
-				BindingFlags.Instance | BindingFlags.Static | BindingFlags.Public,
-				CompletionMemberAccess.CollectingFilter, partial_name);
+			var members = MemberCache.GetCompletitionMembers (ec.CurrentInitializerVariable.Type, partial_name);
 
-			string [] result = new string [members.Count];
-			int i = 0;
-			foreach (MemberInfo mi in members){
-				string name;
-				
-				if (partial_name == null)
-					name = mi.Name;
-				else
-					name = mi.Name.Substring (partial_name.Length);
-				
-				result [i++] = name;
+// TODO: Does this mean exact match only ?
+//			if (partial_name != null && results.Count > 0 && result [0] == "")
+//				throw new CompletionResult ("", new string [] { "=" });
+
+			var results = members.Where (l => (l.Kind & (MemberKind.Field | MemberKind.Property)) != 0).Select (l => l.Name).ToList ();
+			if (partial_name != null) {
+				var temp = new List<string> ();
+				AppendResults (temp, partial_name, results);
+				results = temp;
 			}
 
-			if (partial_name != null && i > 0 && result [0] == "")
-				throw new CompletionResult ("", new string [] { "=" });
-			
-			throw new CompletionResult (partial_name == null ? "" : partial_name, result);
+			throw new CompletionResult (partial_name == null ? "" : partial_name, results.ToArray ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

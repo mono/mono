@@ -179,66 +179,23 @@ namespace Mono.CSharp {
 			SymbolRelatedToPreviousError (loc.ToString (), symbol);
 		}
 
-		public void SymbolRelatedToPreviousError (MemberInfo mi)
+		public void SymbolRelatedToPreviousError (MemberSpec ms)
 		{
 			if (reporting_disabled > 0 || !printer.HasRelatedSymbolSupport)
 				return;
 
-			Type dt = TypeManager.DropGenericTypeArguments (mi.DeclaringType);
-			if (TypeManager.IsDelegateType (dt)) {
-				SymbolRelatedToPreviousError (dt);
-				return;
-			}			
-			
-			DeclSpace temp_ds = TypeManager.LookupDeclSpace (dt);
-			if (temp_ds == null) {
-				SymbolRelatedToPreviousError (dt.Assembly.Location, TypeManager.GetFullNameSignature (mi));
+			var mc = ms.MemberDefinition as MemberCore;
+			if (mc != null) {
+				SymbolRelatedToPreviousError (mc);
 			} else {
-				MethodBase mb = mi as MethodBase;
-				if (mb != null) {
-					mb = TypeManager.DropGenericMethodArguments (mb);
-					IMethodData md = TypeManager.GetMethod (mb);
-					if (md != null)
-						SymbolRelatedToPreviousError (md.Location, md.GetSignatureForError ());
-
-					return;
-				}
-
-				// FIXME: Completely wrong, it has to use FindMembers
-				MemberCore mc = temp_ds.GetDefinition (mi.Name);
-				if (mc != null)
-					SymbolRelatedToPreviousError (mc);
+				var im = ms.MemberDefinition as ImportedMemberDefinition;
+				SymbolRelatedToPreviousError (im.Assembly.Location, "");
 			}
 		}
 
 		public void SymbolRelatedToPreviousError (MemberCore mc)
 		{
 			SymbolRelatedToPreviousError (mc.Location, mc.GetSignatureForError ());
-		}
-
-		public void SymbolRelatedToPreviousError (Type type)
-		{
-			if (reporting_disabled > 0 || !printer.HasRelatedSymbolSupport)
-				return;
-
-			type = TypeManager.DropGenericTypeArguments (type);
-
-			if (TypeManager.IsGenericParameter (type)) {
-				TypeParameter tp = TypeManager.LookupTypeParameter (type);
-				if (tp != null) {
-					SymbolRelatedToPreviousError (tp.Location, "");
-					return;
-				}
-			}
-
-			if (type is TypeBuilder) {
-				DeclSpace temp_ds = TypeManager.LookupDeclSpace (type);
-				SymbolRelatedToPreviousError (temp_ds.Location, TypeManager.CSharpName (type));
-			} else if (TypeManager.HasElementType (type)) {
-				SymbolRelatedToPreviousError (TypeManager.GetElementType (type));
-			} else {
-				SymbolRelatedToPreviousError (type.Assembly.Location, TypeManager.CSharpName (type));
-			}
 		}
 
 		void SymbolRelatedToPreviousError (string loc, string symbol)
@@ -404,7 +361,7 @@ namespace Mono.CSharp {
 			Error (code, loc, String.Format (format, arg1, arg2));
 		}
 
-		public void Error (int code, Location loc, string format, params object[] args)
+		public void Error (int code, Location loc, string format, params string[] args)
 		{
 			Error (code, loc, String.Format (format, args));
 		}
@@ -956,8 +913,8 @@ namespace Mono.CSharp {
 					if (!first)
 						sb.Append (", ");
 					first = false;
-					
-					sb.Append (TypeManager.CSharpName (pi.ParameterType));
+
+					sb.Append (pi.ParameterType.FullName);
 				}
 				sb.Append (")\n");
 			}

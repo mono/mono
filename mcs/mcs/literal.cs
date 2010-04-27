@@ -36,7 +36,7 @@ namespace Mono.CSharp {
 		// Default type of null is an object
 		//
 		public NullLiteral (Location loc)
-			: base (typeof (NullLiteral), loc)
+			: base (InternalType.Null, loc)
 		{
 		}
 
@@ -48,9 +48,9 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Constant", args);
 		}		
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type t, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec t, bool expl)
 		{
-			if (TypeManager.IsGenericParameter (t)) {
+			if (t.IsGenericParameter) {
 				ec.Report.Error(403, loc,
 					"Cannot convert null to the type parameter `{0}' because it could be a value " +
 					"type. Consider using `default ({0})' instead", t.Name);
@@ -66,7 +66,7 @@ namespace Mono.CSharp {
 			base.Error_ValueCannotBeConverted (ec, loc, t, expl);
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, Type targetType)
+		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec targetType)
 		{
 			//
 			// Null literal is of object type
@@ -99,13 +99,11 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-				
 			//
 			// Emits null pointer
 			//
-			ig.Emit (OpCodes.Ldc_I4_0);
-			ig.Emit (OpCodes.Conv_U);
+			ec.Emit (OpCodes.Ldc_I4_0);
+			ec.Emit (OpCodes.Conv_U);
 		}
 	}
 
@@ -134,13 +132,13 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, Type type)
+		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec type)
 		{
 			//
 			// The 0 literal can be converted to an enum value
 			//
 			if (Value == 0 && TypeManager.IsEnumType (type)) {
-				Constant c = ConvertImplicitly (rc, TypeManager.GetEnumUnderlyingType (type));
+				Constant c = ConvertImplicitly (rc, EnumSpec.GetUnderlyingType (type));
 				if (c == null)
 					return null;
 
@@ -202,7 +200,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
 			if (target == TypeManager.float_type) {
 				Error_664 (ec, loc, "float", "f");

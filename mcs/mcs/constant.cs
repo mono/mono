@@ -50,7 +50,7 @@ namespace Mono.CSharp {
 			return GetValue ();
 		}
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
 			if (!expl && IsLiteral && 
 				(TypeManager.IsPrimitiveType (target) || type == TypeManager.decimal_type) &&
@@ -62,7 +62,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public Constant ImplicitConversionRequired (ResolveContext ec, Type type, Location loc)
+		public Constant ImplicitConversionRequired (ResolveContext ec, TypeSpec type, Location loc)
 		{
 			Constant c = ConvertImplicitly (ec, type);
 			if (c == null)
@@ -71,7 +71,7 @@ namespace Mono.CSharp {
 			return c;
 		}
 
-		public virtual Constant ConvertImplicitly (ResolveContext rc, Type type)
+		public virtual Constant ConvertImplicitly (ResolveContext rc, TypeSpec type)
 		{
 			if (this.type == type)
 				return this;
@@ -96,12 +96,12 @@ namespace Mono.CSharp {
 		//
 		//  Returns a constant instance based on Type
 		//
-		public static Constant CreateConstant (ResolveContext rc, Type t, object v, Location loc)
+		public static Constant CreateConstant (ResolveContext rc, TypeSpec t, object v, Location loc)
 		{
 			return CreateConstantFromValue (t, v, loc).Resolve (rc);
 		}
 
-		public static Constant CreateConstantFromValue (Type t, object v, Location loc)
+		public static Constant CreateConstantFromValue (TypeSpec t, object v, Location loc)
 		{
 			if (t == TypeManager.int32_type)
 				return new IntConstant ((int) v, loc);
@@ -132,7 +132,7 @@ namespace Mono.CSharp {
 			if (t == TypeManager.decimal_type)
 				return new DecimalConstant ((decimal) v, loc);
 			if (TypeManager.IsEnumType (t)) {
-				Type real_type = TypeManager.GetEnumUnderlyingType (t);
+				var real_type = EnumSpec.GetUnderlyingType (t);
 				return new EnumConstant (CreateConstantFromValue (real_type, v, loc).Resolve (null), t);
 			}
 			if (v == null) {
@@ -162,12 +162,12 @@ namespace Mono.CSharp {
 		/// It throws OverflowException 
 		/// </summary>
 		// DON'T CALL THIS METHOD DIRECTLY AS IT DOES NOT HANDLE ENUMS
-		public abstract Constant ConvertExplicitly (bool in_checked_context, Type target_type);
+		public abstract Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type);
 
 		/// <summary>
 		///   Attempts to do a compile-time folding of a constant cast.
 		/// </summary>
-		public Constant TryReduce (ResolveContext ec, Type target_type, Location loc)
+		public Constant TryReduce (ResolveContext ec, TypeSpec target_type, Location loc)
 		{
 			try {
 				return TryReduce (ec, target_type);
@@ -184,14 +184,14 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Constant TryReduce (ResolveContext ec, Type target_type)
+		Constant TryReduce (ResolveContext ec, TypeSpec target_type)
 		{
 			if (Type == target_type)
 				return this;
 
 			Constant c;
 			if (TypeManager.IsEnumType (target_type)) {
-				c = TryReduce (ec, TypeManager.GetEnumUnderlyingType (target_type));
+				c = TryReduce (ec, EnumSpec.GetUnderlyingType (target_type));
 				if (c == null)
 					return null;
 
@@ -209,7 +209,7 @@ namespace Mono.CSharp {
 		/// Need to pass type as the constant can require a boxing
 		/// and in such case no optimization is possible
 		/// </summary>
-		public bool IsDefaultInitializer (Type type)
+		public bool IsDefaultInitializer (TypeSpec type)
 		{
 			if (type == Type)
 				return IsDefaultValue;
@@ -256,12 +256,7 @@ namespace Mono.CSharp {
 
 		public override System.Linq.Expressions.Expression MakeExpression (BuilderContext ctx)
 		{
-			return System.Linq.Expressions.Expression.Constant (GetTypedValue (), type);
-		}
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			// A constant cannot be of generic type
+			return System.Linq.Expressions.Expression.Constant (GetTypedValue (), type.GetMetaInfo ());
 		}
 
 		public new Constant Resolve (ResolveContext rc)
@@ -292,7 +287,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, Type target, bool expl)
+		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec target, bool expl)
 		{
 			try {
 				ConvertExplicitly (true, target);
@@ -334,7 +329,7 @@ namespace Mono.CSharp {
 			return (object) Value;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
@@ -342,9 +337,9 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (Value)
-				ec.ig.Emit (OpCodes.Ldc_I4_1);
+				ec.Emit (OpCodes.Ldc_I4_1);
 			else
-				ec.ig.Emit (OpCodes.Ldc_I4_0);
+				ec.Emit (OpCodes.Ldc_I4_0);
 		}
 
 		public override bool IsDefaultValue {
@@ -363,7 +358,7 @@ namespace Mono.CSharp {
 			get { return Value == false; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			return null;
 		}
@@ -379,14 +374,14 @@ namespace Mono.CSharp {
 			Value = v;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			IntLiteral.EmitInt (ec.ig, Value);
+			ec.EmitInt (Value);
 		}
 
 		public override string AsString ()
@@ -433,7 +428,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.sbyte_type) {
 				if (in_checked_context){
@@ -484,14 +479,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write ((ushort) Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			IntLiteral.EmitInt (ec.ig, Value);
+			ec.EmitInt (Value);
 		}
 
 		static string descape (char c)
@@ -549,7 +544,7 @@ namespace Mono.CSharp {
 			get { return Value == '\0'; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context){
@@ -608,14 +603,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			IntLiteral.EmitInt (ec.ig, Value);
+			ec.EmitInt (Value);
 		}
 
 		public override string AsString ()
@@ -655,7 +650,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context && Value < 0)
@@ -714,14 +709,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			IntLiteral.EmitInt (ec.ig, Value);
+			ec.EmitInt (Value);
 		}
 
 		public override string AsString ()
@@ -761,7 +756,7 @@ namespace Mono.CSharp {
 			}
 		}		
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context){
@@ -832,14 +827,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			IntLiteral.EmitInt (ec.ig, Value);
+			ec.EmitInt (Value);
 		}
 
 		public override string AsString ()
@@ -879,7 +874,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context){
@@ -944,66 +939,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		static public void EmitInt (ILGenerator ig, int i)
-		{
-			switch (i){
-			case -1:
-				ig.Emit (OpCodes.Ldc_I4_M1);
-				break;
-				
-			case 0:
-				ig.Emit (OpCodes.Ldc_I4_0);
-				break;
-				
-			case 1:
-				ig.Emit (OpCodes.Ldc_I4_1);
-				break;
-				
-			case 2:
-				ig.Emit (OpCodes.Ldc_I4_2);
-				break;
-				
-			case 3:
-				ig.Emit (OpCodes.Ldc_I4_3);
-				break;
-				
-			case 4:
-				ig.Emit (OpCodes.Ldc_I4_4);
-				break;
-				
-			case 5:
-				ig.Emit (OpCodes.Ldc_I4_5);
-				break;
-				
-			case 6:
-				ig.Emit (OpCodes.Ldc_I4_6);
-				break;
-				
-			case 7:
-				ig.Emit (OpCodes.Ldc_I4_7);
-				break;
-				
-			case 8:
-				ig.Emit (OpCodes.Ldc_I4_8);
-				break;
-
-			default:
-				if (i >= -128 && i <= 127){
-					ig.Emit (OpCodes.Ldc_I4_S, (sbyte) i);
-				} else
-					ig.Emit (OpCodes.Ldc_I4, i);
-				break;
-			}
-		}
-
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			EmitInt (ec.ig, Value);
+			ec.EmitInt (Value);
 		}
 
 		public override string AsString ()
@@ -1043,7 +986,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context){
@@ -1104,7 +1047,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, Type type)
+		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec type)
 		{
 			if (this.type == type)
 				return this;
@@ -1121,7 +1064,7 @@ namespace Mono.CSharp {
 		///   into a different data type using casts (See Implicit Constant
 		///   Expression Conversions)
 		/// </summary>
-		Constant TryImplicitIntConversion (Type target_type)
+		Constant TryImplicitIntConversion (TypeSpec target_type)
 		{
 			if (target_type == TypeManager.sbyte_type) {
 				if (Value >= SByte.MinValue && Value <= SByte.MaxValue)
@@ -1177,14 +1120,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			IntLiteral.EmitInt (ec.ig, unchecked ((int) Value));
+			ec.EmitInt (unchecked ((int) Value));
 		}
 
 		public override string AsString ()
@@ -1224,7 +1167,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context){
@@ -1300,31 +1243,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			EmitLong (ec.ig, Value);
-		}
-
-		static public void EmitLong (ILGenerator ig, long l)
-		{
-			if (l >= int.MinValue && l <= int.MaxValue) {
-				IntLiteral.EmitInt (ig, unchecked ((int) l));
-				ig.Emit (OpCodes.Conv_I8);
-				return;
-			}
-
-			if (l >= 0 && l <= uint.MaxValue) {
-				IntLiteral.EmitInt (ig, unchecked ((int) l));
-				ig.Emit (OpCodes.Conv_U8);
-				return;
-			}
-			
-			ig.Emit (OpCodes.Ldc_I8, l);
+			ec.EmitLong (Value);
 		}
 
 		public override string AsString ()
@@ -1364,7 +1290,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context){
@@ -1430,7 +1356,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, Type type)
+		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec type)
 		{
 			if (Value >= 0 && type == TypeManager.uint64_type) {
 				return new ULongConstant ((ulong) Value, loc).Resolve (rc);
@@ -1456,16 +1382,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			LongLiteral.EmitLong (ig, unchecked ((long) Value));
+			ec.EmitLong (unchecked ((long) Value));
 		}
 
 		public override string AsString ()
@@ -1505,7 +1429,7 @@ namespace Mono.CSharp {
 			get { return Value == 0; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context && Value > Byte.MaxValue)
@@ -1575,14 +1499,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldc_R4, Value);
+			ec.Emit (OpCodes.Ldc_R4, Value);
 		}
 
 		public override string AsString ()
@@ -1607,7 +1531,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context){
@@ -1698,14 +1622,14 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			enc.Stream.Write (Value);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldc_R8, Value);
+			ec.Emit (OpCodes.Ldc_R8, Value);
 		}
 
 		public override string AsString ()
@@ -1730,7 +1654,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.byte_type) {
 				if (in_checked_context){
@@ -1833,8 +1757,6 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
 			int [] words = decimal.GetBits (Value);
 			int power = (words [3] >> 16) & 0xff;
 
@@ -1848,8 +1770,8 @@ namespace Mono.CSharp {
 							return;
 					}
 
-					IntConstant.EmitInt (ig, (int) Value);
-					ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
+					ec.EmitInt ((int) Value);
+					ec.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_int_arg);
 					return;
 				}
 
@@ -1862,21 +1784,21 @@ namespace Mono.CSharp {
 							return;
 					}
 
-					LongConstant.EmitLong (ig, (long) Value);
-					ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_long_arg);
+					ec.EmitLong ((long) Value);
+					ec.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_long_arg);
 					return;
 				}
 			}
 
-			IntConstant.EmitInt (ig, words [0]);
-			IntConstant.EmitInt (ig, words [1]);
-			IntConstant.EmitInt (ig, words [2]);
+			ec.EmitInt (words [0]);
+			ec.EmitInt (words [1]);
+			ec.EmitInt (words [2]);
 
 			// sign
-			IntConstant.EmitInt (ig, words [3] >> 31);
+			ec.EmitInt (words [3] >> 31);
 
 			// power
-			IntConstant.EmitInt (ig, power);
+			ec.EmitInt (power);
 
 			if (TypeManager.void_decimal_ctor_five_args == null) {
 				TypeManager.void_decimal_ctor_five_args = TypeManager.GetPredefinedConstructor (
@@ -1887,7 +1809,7 @@ namespace Mono.CSharp {
 					return;
 			}
 
-			ig.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
+			ec.Emit (OpCodes.Newobj, TypeManager.void_decimal_ctor_five_args);
 		}
 
 		public override bool IsDefaultValue {
@@ -1902,7 +1824,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			if (target_type == TypeManager.sbyte_type)
 				return new SByteConstant ((sbyte)Value, loc);
@@ -1962,7 +1884,7 @@ namespace Mono.CSharp {
 		public override void Emit (EmitContext ec)
 		{
 			if (Value == null) {
-				ec.ig.Emit (OpCodes.Ldnull);
+				ec.Emit (OpCodes.Ldnull);
 				return;
 			}
 
@@ -1972,18 +1894,18 @@ namespace Mono.CSharp {
 			//
 			if (Value.Length == 0 && RootContext.Optimize && !TypeManager.IsEqual (ec.CurrentType, TypeManager.string_type)) {
 				if (TypeManager.string_empty == null)
-					TypeManager.string_empty = TypeManager.GetPredefinedField (TypeManager.string_type, "Empty", loc);
+					TypeManager.string_empty = TypeManager.GetPredefinedField (TypeManager.string_type, "Empty", loc, TypeManager.string_type);
 
 				if (TypeManager.string_empty != null) {
-					ec.ig.Emit (OpCodes.Ldsfld, TypeManager.string_empty);
+					ec.Emit (OpCodes.Ldsfld, TypeManager.string_empty);
 					return;
 				}
 			}
 
-			ec.ig.Emit (OpCodes.Ldstr, Value);
+			ec.Emit (OpCodes.Ldstr, Value);
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// cast to object
 			if (type != targetType)
@@ -2010,7 +1932,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			return null;
 		}
@@ -2021,7 +1943,7 @@ namespace Mono.CSharp {
 	//
 	public class NullConstant : Constant
 	{
-		public NullConstant (Type type, Location loc)
+		public NullConstant (TypeSpec type, Location loc)
 			: base (loc)
 		{
 			eclass = ExprClass.Value;
@@ -2038,14 +1960,15 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, Type targetType)
+		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Type it as string cast
 			if (targetType == TypeManager.object_type || targetType == TypeManager.null_type)
 				enc.Encode (TypeManager.string_type);
 
-			if (targetType.IsArray) {
-				if (targetType.GetArrayRank () != 1)
+			var ac = targetType as ArrayContainer;
+			if (ac != null) {
+				if (ac.Rank != 1)
 					base.EncodeAttributeValue (rc, enc, targetType);
 				else
 					enc.Stream.Write (uint.MaxValue);
@@ -2056,11 +1979,11 @@ namespace Mono.CSharp {
 
 		public override void Emit (EmitContext ec)
 		{
-			ec.ig.Emit (OpCodes.Ldnull);
+			ec.Emit (OpCodes.Ldnull);
 
 			// Only to make verifier happy
 			if (TypeManager.IsGenericParameter (type))
-				ec.ig.Emit (OpCodes.Unbox_Any, type);
+				ec.Emit (OpCodes.Unbox_Any, type);
 		}
 
 		public override string ExprClassName {
@@ -2074,7 +1997,7 @@ namespace Mono.CSharp {
 			return "null";
 		}
 
-		public override Constant ConvertExplicitly (bool inCheckedContext, Type targetType)
+		public override Constant ConvertExplicitly (bool inCheckedContext, TypeSpec targetType)
 		{
 			if (targetType.IsPointer) {
 				if (IsLiteral || this is NullPointer)
@@ -2099,7 +2022,7 @@ namespace Mono.CSharp {
 			return null;
 		}
 
-		public override Constant ConvertImplicitly (ResolveContext rc, Type targetType)
+		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec targetType)
 		{
 			return ConvertExplicitly (false, targetType);
 		}
@@ -2123,11 +2046,6 @@ namespace Mono.CSharp {
 
 		public override bool IsZeroInteger {
 			get { return true; }
-		}
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			type = storey.MutateType (type);
 		}
 	}
 
@@ -2191,7 +2109,7 @@ namespace Mono.CSharp {
 			get { return value.IsZeroInteger; }
 		}
 
-		public override Constant ConvertExplicitly (bool in_checked_context, Type target_type)
+		public override Constant ConvertExplicitly (bool in_checked_context, TypeSpec target_type)
 		{
 			Constant new_value = value.ConvertExplicitly (in_checked_context, target_type);
 			return new_value == null ? null : new SideEffectConstant (new_value, side_effect, new_value.Location);

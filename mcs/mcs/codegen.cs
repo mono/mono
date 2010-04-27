@@ -246,20 +246,21 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class EmitContext : BuilderContext
 	{
+		// TODO: Has to be private
 		public ILGenerator ig;
 
 		/// <summary>
 		///   The value that is allowed to be returned or NULL if there is no
 		///   return type.
 		/// </summary>
-		Type return_type;
+		TypeSpec return_type;
 
 		/// <summary>
 		///   Keeps track of the Type to LocalBuilder temporary storage created
 		///   to store structures (used to compute the address of the structure
 		///   value on structure method invocations)
 		/// </summary>
-		Dictionary<Type, object> temporary_storage;
+		Dictionary<TypeSpec, object> temporary_storage;
 
 		/// <summary>
 		///   The location where we store the return value.
@@ -278,13 +279,29 @@ namespace Mono.CSharp {
 		public bool HasReturnLabel;
 
 		/// <summary>
+		///   Current loop begin and end labels.
+		/// </summary>
+		public Label LoopBegin, LoopEnd;
+
+		/// <summary>
+		///   Default target in a switch statement.   Only valid if
+		///   InSwitch is true
+		/// </summary>
+		public Label DefaultTarget;
+
+		/// <summary>
+		///   If this is non-null, points to the current switch statement
+		/// </summary>
+		public Switch Switch;
+
+		/// <summary>
 		///  Whether we are inside an anonymous method.
 		/// </summary>
 		public AnonymousExpression CurrentAnonymousMethod;
 		
 		public readonly IMemberContext MemberContext;
 
-		public EmitContext (IMemberContext rc, ILGenerator ig, Type return_type)
+		public EmitContext (IMemberContext rc, ILGenerator ig, TypeSpec return_type)
 		{
 			this.MemberContext = rc;
 			this.ig = ig;
@@ -292,7 +309,9 @@ namespace Mono.CSharp {
 			this.return_type = return_type;
 		}
 
-		public Type CurrentType {
+#region Properties
+
+		public TypeSpec CurrentType {
 			get { return MemberContext.CurrentType; }
 		}
 
@@ -300,12 +319,20 @@ namespace Mono.CSharp {
 			get { return MemberContext.CurrentTypeParameters; }
 		}
 
-		public TypeContainer CurrentTypeDefinition {
-			get { return MemberContext.CurrentTypeDefinition; }
+		public MemberCore CurrentTypeDefinition {
+			get { return MemberContext.CurrentMemberDefinition; }
 		}
 
 		public bool IsStatic {
 			get { return MemberContext.IsStatic; }
+		}
+
+		bool IsAnonymousStoreyMutateRequired {
+			get {
+				return CurrentAnonymousMethod != null &&
+					CurrentAnonymousMethod.Storey != null &&
+					CurrentAnonymousMethod.Storey.Mutator != null;
+			}
 		}
 
 		// Has to be used for emitter errors only
@@ -313,11 +340,12 @@ namespace Mono.CSharp {
 			get { return MemberContext.Compiler.Report; }
 		}
 
-		public Type ReturnType {
+		public TypeSpec ReturnType {
 			get {
 				return return_type;
 			}
 		}
+#endregion
 
 		/// <summary>
 		///   This is called immediately before emitting an IL opcode to tell the symbol
@@ -336,10 +364,30 @@ namespace Mono.CSharp {
 			SymbolWriter.DefineLocalVariable (name, builder);
 		}
 
+		public void BeginCatchBlock (TypeSpec type)
+		{
+			ig.BeginCatchBlock (type.GetMetaInfo ());
+		}
+
+		public void BeginExceptionBlock ()
+		{
+			ig.BeginExceptionBlock ();
+		}
+
+		public void BeginFinallyBlock ()
+		{
+			ig.BeginFinallyBlock ();
+		}
+
 		public void BeginScope ()
 		{
 			ig.BeginScope();
 			SymbolWriter.OpenScope(ig);
+		}
+
+		public void EndExceptionBlock ()
+		{
+			ig.EndExceptionBlock ();
 		}
 
 		public void EndScope ()
@@ -348,11 +396,366 @@ namespace Mono.CSharp {
 			SymbolWriter.CloseScope(ig);
 		}
 
+		public LocalBuilder DeclareLocal (TypeSpec type, bool pinned)
+		{
+			if (IsAnonymousStoreyMutateRequired)
+				type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
+			return ig.DeclareLocal (type.GetMetaInfo (), pinned);
+		}
+
+		public Label DefineLabel ()
+		{
+			return ig.DefineLabel ();
+		}
+
+		public void MarkLabel (Label label)
+		{
+			ig.MarkLabel (label);
+		}
+
+		public void Emit (OpCode opcode)
+		{
+			ig.Emit (opcode);
+		}
+
+		public void Emit (OpCode opcode, LocalBuilder local)
+		{
+			ig.Emit (opcode, local);
+		}
+
+		public void Emit (OpCode opcode, string arg)
+		{
+			ig.Emit (opcode, arg);
+		}
+
+		public void Emit (OpCode opcode, double arg)
+		{
+			ig.Emit (opcode, arg);
+		}
+
+		public void Emit (OpCode opcode, float arg)
+		{
+			ig.Emit (opcode, arg);
+		}
+
+		public void Emit (OpCode opcode, int arg)
+		{
+			ig.Emit (opcode, arg);
+		}
+
+		public void Emit (OpCode opcode, byte arg)
+		{
+			ig.Emit (opcode, arg);
+		}
+
+		public void Emit (OpCode opcode, Label label)
+		{
+			ig.Emit (opcode, label);
+		}
+
+		public void Emit (OpCode opcode, Label[] labels)
+		{
+			ig.Emit (opcode, labels);
+		}
+
+		public void Emit (OpCode opcode, TypeSpec type)
+		{
+			if (IsAnonymousStoreyMutateRequired)
+				type = CurrentAnonymousMethod.Storey.Mutator.Mutate (type);
+
+			ig.Emit (opcode, type.GetMetaInfo ());
+		}
+
+		public void Emit (OpCode opcode, FieldSpec field)
+		{
+			if (IsAnonymousStoreyMutateRequired)
+				field = field.Mutate (CurrentAnonymousMethod.Storey.Mutator);
+
+			ig.Emit (opcode, field.GetMetaInfo ());
+		}
+
+		public void Emit (OpCode opcode, MethodSpec method)
+		{
+			if (IsAnonymousStoreyMutateRequired)
+				method = method.Mutate (CurrentAnonymousMethod.Storey.Mutator);
+
+			if (method.IsConstructor)
+				ig.Emit (opcode, (ConstructorInfo) method.GetMetaInfo ());
+			else
+				ig.Emit (opcode, (MethodInfo) method.GetMetaInfo ());
+		}
+
+		// TODO: REMOVE breaks mutator
+		public void Emit (OpCode opcode, MethodInfo method)
+		{
+			ig.Emit (opcode, method);
+		}
+
+		// TODO: REMOVE breaks mutator
+		public void Emit (OpCode opcode, FieldBuilder field)
+		{
+			ig.Emit (opcode, field);
+		}
+
+		public void Emit (OpCode opcode, MethodSpec method, Type[] vargs)
+		{
+			// TODO MemberCache: This should mutate too
+			ig.EmitCall (opcode, (MethodInfo) method.GetMetaInfo (), vargs);
+		}
+
+		public void EmitArrayNew (ArrayContainer ac)
+		{
+			if (ac.Rank == 1) {
+				Emit (OpCodes.Newarr, ac.Element);
+			} else {
+				if (IsAnonymousStoreyMutateRequired)
+					ac = (ArrayContainer) ac.Mutate (CurrentAnonymousMethod.Storey.Mutator);
+
+				ig.Emit (OpCodes.Newobj, ac.GetConstructor ());
+			}
+		}
+
+		//
+		// Emits the right opcode to load from an array
+		//
+		public void EmitArrayLoad (ArrayContainer ac)
+		{
+			if (ac.Rank > 1) {
+				if (IsAnonymousStoreyMutateRequired)
+					ac = (ArrayContainer) ac.Mutate (CurrentAnonymousMethod.Storey.Mutator);
+
+				ig.Emit (OpCodes.Call, ac.GetGetMethod ());
+				return;
+			}
+
+			var type = ac.Element;
+			if (TypeManager.IsEnumType (type))
+				type = EnumSpec.GetUnderlyingType (type);
+
+			if (type == TypeManager.byte_type || type == TypeManager.bool_type)
+				Emit (OpCodes.Ldelem_U1);
+			else if (type == TypeManager.sbyte_type)
+				Emit (OpCodes.Ldelem_I1);
+			else if (type == TypeManager.short_type)
+				Emit (OpCodes.Ldelem_I2);
+			else if (type == TypeManager.ushort_type || type == TypeManager.char_type)
+				Emit (OpCodes.Ldelem_U2);
+			else if (type == TypeManager.int32_type)
+				Emit (OpCodes.Ldelem_I4);
+			else if (type == TypeManager.uint32_type)
+				Emit (OpCodes.Ldelem_U4);
+			else if (type == TypeManager.uint64_type)
+				Emit (OpCodes.Ldelem_I8);
+			else if (type == TypeManager.int64_type)
+				Emit (OpCodes.Ldelem_I8);
+			else if (type == TypeManager.float_type)
+				Emit (OpCodes.Ldelem_R4);
+			else if (type == TypeManager.double_type)
+				Emit (OpCodes.Ldelem_R8);
+			else if (type == TypeManager.intptr_type)
+				Emit (OpCodes.Ldelem_I);
+			else if (TypeManager.IsStruct (type)) {
+				Emit (OpCodes.Ldelema, type);
+				Emit (OpCodes.Ldobj, type);
+			} else if (type.IsGenericParameter) {
+				Emit (OpCodes.Ldelem, type);
+			} else if (type.IsPointer)
+				Emit (OpCodes.Ldelem_I);
+			else
+				Emit (OpCodes.Ldelem_Ref);
+		}
+
+		//
+		// Emits the right opcode to store to an array
+		//
+		public void EmitArrayStore (ArrayContainer ac)
+		{
+			if (ac.Rank > 1) {
+				if (IsAnonymousStoreyMutateRequired)
+					ac = (ArrayContainer) ac.Mutate (CurrentAnonymousMethod.Storey.Mutator);
+
+				ig.Emit (OpCodes.Call, ac.GetSetMethod ());
+				return;
+			}
+
+			var type = ac.Element;
+
+			if (type.IsEnum)
+				type = EnumSpec.GetUnderlyingType (type);
+
+			if (type == TypeManager.byte_type || type == TypeManager.sbyte_type || type == TypeManager.bool_type)
+				Emit (OpCodes.Stelem_I1);
+			else if (type == TypeManager.short_type || type == TypeManager.ushort_type || type == TypeManager.char_type)
+				Emit (OpCodes.Stelem_I2);
+			else if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+				Emit (OpCodes.Stelem_I4);
+			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+				Emit (OpCodes.Stelem_I8);
+			else if (type == TypeManager.float_type)
+				Emit (OpCodes.Stelem_R4);
+			else if (type == TypeManager.double_type)
+				Emit (OpCodes.Stelem_R8);
+			else if (type == TypeManager.intptr_type)
+				Emit (OpCodes.Stobj, type);
+			else if (TypeManager.IsStruct (type))
+				Emit (OpCodes.Stobj, type);
+			else if (type.IsGenericParameter)
+				Emit (OpCodes.Stelem, type);
+			else if (type.IsPointer)
+				Emit (OpCodes.Stelem_I);
+			else
+				Emit (OpCodes.Stelem_Ref);
+		}
+
+		public void EmitInt (int i)
+		{
+			switch (i) {
+			case -1:
+				ig.Emit (OpCodes.Ldc_I4_M1);
+				break;
+
+			case 0:
+				ig.Emit (OpCodes.Ldc_I4_0);
+				break;
+
+			case 1:
+				ig.Emit (OpCodes.Ldc_I4_1);
+				break;
+
+			case 2:
+				ig.Emit (OpCodes.Ldc_I4_2);
+				break;
+
+			case 3:
+				ig.Emit (OpCodes.Ldc_I4_3);
+				break;
+
+			case 4:
+				ig.Emit (OpCodes.Ldc_I4_4);
+				break;
+
+			case 5:
+				ig.Emit (OpCodes.Ldc_I4_5);
+				break;
+
+			case 6:
+				ig.Emit (OpCodes.Ldc_I4_6);
+				break;
+
+			case 7:
+				ig.Emit (OpCodes.Ldc_I4_7);
+				break;
+
+			case 8:
+				ig.Emit (OpCodes.Ldc_I4_8);
+				break;
+
+			default:
+				if (i >= -128 && i <= 127) {
+					ig.Emit (OpCodes.Ldc_I4_S, (sbyte) i);
+				} else
+					ig.Emit (OpCodes.Ldc_I4, i);
+				break;
+			}
+		}
+
+		public void EmitLong (long l)
+		{
+			if (l >= int.MinValue && l <= int.MaxValue) {
+				EmitInt (unchecked ((int) l));
+				ig.Emit (OpCodes.Conv_I8);
+				return;
+			}
+
+			if (l >= 0 && l <= uint.MaxValue) {
+				EmitInt (unchecked ((int) l));
+				ig.Emit (OpCodes.Conv_U8);
+				return;
+			}
+
+			ig.Emit (OpCodes.Ldc_I8, l);
+		}
+
+		//
+		// Load the object from the pointer.  
+		//
+		public void EmitLoadFromPtr (TypeSpec t)
+		{
+			if (t == TypeManager.int32_type)
+				ig.Emit (OpCodes.Ldind_I4);
+			else if (t == TypeManager.uint32_type)
+				ig.Emit (OpCodes.Ldind_U4);
+			else if (t == TypeManager.short_type)
+				ig.Emit (OpCodes.Ldind_I2);
+			else if (t == TypeManager.ushort_type)
+				ig.Emit (OpCodes.Ldind_U2);
+			else if (t == TypeManager.char_type)
+				ig.Emit (OpCodes.Ldind_U2);
+			else if (t == TypeManager.byte_type)
+				ig.Emit (OpCodes.Ldind_U1);
+			else if (t == TypeManager.sbyte_type)
+				ig.Emit (OpCodes.Ldind_I1);
+			else if (t == TypeManager.uint64_type)
+				ig.Emit (OpCodes.Ldind_I8);
+			else if (t == TypeManager.int64_type)
+				ig.Emit (OpCodes.Ldind_I8);
+			else if (t == TypeManager.float_type)
+				ig.Emit (OpCodes.Ldind_R4);
+			else if (t == TypeManager.double_type)
+				ig.Emit (OpCodes.Ldind_R8);
+			else if (t == TypeManager.bool_type)
+				ig.Emit (OpCodes.Ldind_I1);
+			else if (t == TypeManager.intptr_type)
+				ig.Emit (OpCodes.Ldind_I);
+			else if (t.IsEnum) {
+				if (t == TypeManager.enum_type)
+					ig.Emit (OpCodes.Ldind_Ref);
+				else
+					EmitLoadFromPtr (EnumSpec.GetUnderlyingType (t));
+			} else if (TypeManager.IsStruct (t) || TypeManager.IsGenericParameter (t))
+				Emit (OpCodes.Ldobj, t);
+			else if (t.IsPointer)
+				ig.Emit (OpCodes.Ldind_I);
+			else
+				ig.Emit (OpCodes.Ldind_Ref);
+		}
+
+		//
+		// The stack contains the pointer and the value of type `type'
+		//
+		public void EmitStoreFromPtr (TypeSpec type)
+		{
+			if (type.IsEnum)
+				type = EnumSpec.GetUnderlyingType (type);
+
+			if (type == TypeManager.int32_type || type == TypeManager.uint32_type)
+				ig.Emit (OpCodes.Stind_I4);
+			else if (type == TypeManager.int64_type || type == TypeManager.uint64_type)
+				ig.Emit (OpCodes.Stind_I8);
+			else if (type == TypeManager.char_type || type == TypeManager.short_type ||
+				 type == TypeManager.ushort_type)
+				ig.Emit (OpCodes.Stind_I2);
+			else if (type == TypeManager.float_type)
+				ig.Emit (OpCodes.Stind_R4);
+			else if (type == TypeManager.double_type)
+				ig.Emit (OpCodes.Stind_R8);
+			else if (type == TypeManager.byte_type || type == TypeManager.sbyte_type ||
+				 type == TypeManager.bool_type)
+				ig.Emit (OpCodes.Stind_I1);
+			else if (type == TypeManager.intptr_type)
+				ig.Emit (OpCodes.Stind_I);
+			else if (TypeManager.IsStruct (type) || TypeManager.IsGenericParameter (type))
+				ig.Emit (OpCodes.Stobj, type.GetMetaInfo ());
+			else
+				ig.Emit (OpCodes.Stind_Ref);
+		}
+
 		/// <summary>
 		///   Returns a temporary storage for a variable of type t as 
 		///   a local variable in the current body.
 		/// </summary>
-		public LocalBuilder GetTemporaryLocal (Type t)
+		public LocalBuilder GetTemporaryLocal (TypeSpec t)
 		{
 			if (temporary_storage != null) {
 				object o;
@@ -367,13 +770,13 @@ namespace Mono.CSharp {
 				if (o != null)
 					return (LocalBuilder) o;
 			}
-			return ig.DeclareLocal (TypeManager.TypeToReflectionType (t));
+			return DeclareLocal (t, false);
 		}
 
-		public void FreeTemporaryLocal (LocalBuilder b, Type t)
+		public void FreeTemporaryLocal (LocalBuilder b, TypeSpec t)
 		{
 			if (temporary_storage == null) {
-				temporary_storage = new Dictionary<Type, object> (ReferenceEquality<Type>.Default);
+				temporary_storage = new Dictionary<TypeSpec, object> (ReferenceEquality<TypeSpec>.Default);
 				temporary_storage.Add (t, b);
 				return;
 			}
@@ -393,22 +796,6 @@ namespace Mono.CSharp {
 		}
 
 		/// <summary>
-		///   Current loop begin and end labels.
-		/// </summary>
-		public Label LoopBegin, LoopEnd;
-
-		/// <summary>
-		///   Default target in a switch statement.   Only valid if
-		///   InSwitch is true
-		/// </summary>
-		public Label DefaultTarget;
-
-		/// <summary>
-		///   If this is non-null, points to the current switch statement
-		/// </summary>
-		public Switch Switch;
-
-		/// <summary>
 		///   ReturnValue creates on demand the LocalBuilder for the
 		///   return value from the function.  By default this is not
 		///   used.  This is only required when returns are found inside
@@ -423,9 +810,9 @@ namespace Mono.CSharp {
 		public LocalBuilder TemporaryReturn ()
 		{
 			if (return_value == null){
-				return_value = ig.DeclareLocal (return_type);
+				return_value = DeclareLocal (return_type, false);
 				if (!HasReturnLabel){
-					ReturnLabel = ig.DefineLabel ();
+					ReturnLabel = DefineLabel ();
 					HasReturnLabel = true;
 				}
 			}
@@ -471,7 +858,7 @@ namespace Mono.CSharp {
 			get { return RootContext.ToplevelTypes.Compiler; }
 		}
 
-		public Type CurrentType {
+		public TypeSpec CurrentType {
 			get { return null; }
 		}
 
@@ -479,13 +866,17 @@ namespace Mono.CSharp {
 			get { return null; }
 		}
 
-		public TypeContainer CurrentTypeDefinition {
+		public MemberCore CurrentMemberDefinition {
 			get { return RootContext.ToplevelTypes; }
 		}
 
 		public string GetSignatureForError ()
 		{
 			return "<module>";
+		}
+
+		public bool HasUnresolvedConstraints {
+			get { return false; }
 		}
 
 		public bool IsObsolete {
@@ -500,14 +891,14 @@ namespace Mono.CSharp {
 			get { return false; }
 		}
 
-		public ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
+		public ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
 		{
 			throw new NotImplementedException ();
 		}
 
-		public FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		public FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
 		{
-			return RootContext.ToplevelTypes.LookupNamespaceOrType (name, loc, ignore_cs0104);
+			return RootContext.ToplevelTypes.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
 		}
 
 		public FullNamedExpression LookupNamespaceAlias (string name)
@@ -530,7 +921,7 @@ namespace Mono.CSharp {
 		bool has_extension_method;		
 		public AssemblyName Name;
 		MethodInfo add_type_forwarder;
-		Dictionary<Type, Attribute> emitted_forwarders;
+		Dictionary<ITypeDefinition, Attribute> emitted_forwarders;
 
 		// Module is here just because of error messages
 		static string[] attribute_targets = new string [] { "assembly", "module" };
@@ -823,7 +1214,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
+		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.IsValidSecurityAttribute ()) {
 				if (declarative_security == null)
@@ -861,32 +1252,31 @@ namespace Mono.CSharp {
 				return;
 
 			if (a.Type == pa.TypeForwarder) {
-				Type t = a.GetArgumentType ();
+				TypeSpec t = a.GetArgumentType ();
 				if (t == null || TypeManager.HasElementType (t)) {
 					Report.Error (735, a.Location, "Invalid type specified as an argument for TypeForwardedTo attribute");
 					return;
 				}
 
-				t = TypeManager.DropGenericTypeArguments (t);
 				if (emitted_forwarders == null) {
-					emitted_forwarders = new Dictionary<Type, Attribute>  ();
-				} else if (emitted_forwarders.ContainsKey (t)) {
-					Report.SymbolRelatedToPreviousError(emitted_forwarders[t].Location, null);
+					emitted_forwarders = new Dictionary<ITypeDefinition, Attribute>  ();
+				} else if (emitted_forwarders.ContainsKey (t.MemberDefinition)) {
+					Report.SymbolRelatedToPreviousError(emitted_forwarders[t.MemberDefinition].Location, null);
 					Report.Error(739, a.Location, "A duplicate type forward of type `{0}'",
 						TypeManager.CSharpName(t));
 					return;
 				}
 
-				emitted_forwarders.Add(t, a);
+				emitted_forwarders.Add(t.MemberDefinition, a);
 
-				if (TypeManager.LookupDeclSpace (t) != null) {
+				if (t.Assembly == Builder) {
 					Report.SymbolRelatedToPreviousError (t);
 					Report.Error (729, a.Location, "Cannot forward type `{0}' because it is defined in this assembly",
 						TypeManager.CSharpName (t));
 					return;
 				}
 
-				if (t.DeclaringType != null) {
+				if (t.IsNested) {
 					Report.Error (730, a.Location, "Cannot forward type `{0}' because it is a nested type",
 						TypeManager.CSharpName (t));
 					return;
@@ -902,7 +1292,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				add_type_forwarder.Invoke (Builder, new object[] { t });
+				add_type_forwarder.Invoke (Builder, new object[] { t.GetMetaInfo () });
 				return;
 			}
 			
@@ -911,7 +1301,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			Builder.SetCustomAttribute (ctor, cdata);
+			Builder.SetCustomAttribute ((ConstructorInfo) ctor.GetMetaInfo (), cdata);
 		}
 
 		public override void Emit (TypeContainer tc)
@@ -924,14 +1314,13 @@ namespace Mono.CSharp {
 			// FIXME: Does this belong inside SRE.AssemblyBuilder instead?
 			PredefinedAttribute pa = PredefinedAttributes.Get.RuntimeCompatibility;
 			if (pa.IsDefined && (OptAttributes == null || !OptAttributes.Contains (pa))) {
-				ConstructorInfo ci = TypeManager.GetPredefinedConstructor (
-					pa.Type, Location.Null, Type.EmptyTypes);
+				var ci = TypeManager.GetPredefinedConstructor (pa.Type, Location.Null, TypeSpec.EmptyTypes);
 				PropertyInfo [] pis = new PropertyInfo [1];
 				pis [0] = TypeManager.GetPredefinedProperty (pa.Type,
 					"WrapNonExceptionThrows", Location.Null, TypeManager.bool_type).MetaInfo;
 				object [] pargs = new object [1];
 				pargs [0] = true;
-				Builder.SetCustomAttribute (new CustomAttributeBuilder (ci, new object [0], pis, pargs));
+				Builder.SetCustomAttribute (new CustomAttributeBuilder ((ConstructorInfo) ci.GetMetaInfo (), new object[0], pis, pargs));
 			}
 
 			if (declarative_security != null) {
@@ -942,7 +1331,7 @@ namespace Mono.CSharp {
 				try {
 					// Microsoft runtime hacking
 					if (add_permission == null) {
-						Type assembly_builder = typeof (AssemblyBuilder).Assembly.GetType ("System.Reflection.Emit.AssemblyBuilderData");
+						var assembly_builder = typeof (AssemblyBuilder).Assembly.GetType ("System.Reflection.Emit.AssemblyBuilderData");
 						add_permission = assembly_builder.GetMethod ("AddPermissionRequests", BindingFlags.Instance | BindingFlags.NonPublic);
 
 						FieldInfo fi = typeof (AssemblyBuilder).GetField ("m_assemblyData", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.GetField);

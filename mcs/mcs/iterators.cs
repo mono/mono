@@ -49,11 +49,6 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			expr.MutateHoistedGenericType (storey);
-		}
-		
 		public override bool Resolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
@@ -120,12 +115,7 @@ namespace Mono.CSharp {
 
 		protected override void DoEmit (EmitContext ec)
 		{
-			iterator.EmitYieldBreak (ec.ig, unwind_protect);
-		}
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			// nothing to do
+			iterator.EmitYieldBreak (ec, unwind_protect);
 		}
 	}
 
@@ -162,12 +152,6 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			iterator.EmitMoveNext (ec, original_block);
-		}
-
-		public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-		{
-			original_block.MutateHoistedGenericType (storey);
-			iterator.MutateHoistedGenericType (storey);
 		}
 	}
 
@@ -218,7 +202,7 @@ namespace Mono.CSharp {
 
 				public override bool Resolve (BlockContext ec)
 				{
-					TypeExpression storey_type_expr = new TypeExpression (host.TypeBuilder, loc);
+					TypeExpression storey_type_expr = new TypeExpression (host.Definition, loc);
 					List<Expression> init = null;
 					if (host.hoisted_this != null) {
 						init = new List<Expression> (host.hoisted_params == null ? 1 : host.HoistedParameters.Count + 1);
@@ -255,11 +239,20 @@ namespace Mono.CSharp {
 						new_storey = Convert.ImplicitConversionRequired (ec, new_storey, host_method.MemberType, loc);
 
 					if (TypeManager.int_interlocked_compare_exchange == null) {
-						Type t = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Interlocked", MemberKind.Class, true);
+						TypeSpec t = TypeManager.CoreLookupType (ec.Compiler, "System.Threading", "Interlocked", MemberKind.Class, true);
 						if (t != null) {
-							TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (
-								t, "CompareExchange", loc, TypeManager.int32_type,
-								TypeManager.int32_type, TypeManager.int32_type);
+							var p = ParametersCompiled.CreateFullyResolved (
+								new[] {
+									new ParameterData (null, Parameter.Modifier.REF),
+									new ParameterData (null, Parameter.Modifier.NONE),
+									new ParameterData (null, Parameter.Modifier.NONE)
+								},
+								new[] {
+									TypeManager.int32_type, TypeManager.int32_type, TypeManager.int32_type
+								}
+								);
+							var f = new MemberFilter ("CompareExchange", 0, MemberKind.Method, p, TypeManager.int32_type);
+							TypeManager.int_interlocked_compare_exchange = TypeManager.GetPredefinedMethod (t, f, loc);
 						}
 					}
 
@@ -269,30 +262,24 @@ namespace Mono.CSharp {
 
 				protected override void DoEmit (EmitContext ec)
 				{
-					ILGenerator ig = ec.ig;
-					Label label_init = ig.DefineLabel ();
+					Label label_init = ec.DefineLabel ();
 
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ldflda, host.PC.Spec.MetaInfo);
-					IntConstant.EmitInt (ig, (int) Iterator.State.Start);
-					IntConstant.EmitInt (ig, (int) Iterator.State.Uninitialized);
-					ig.Emit (OpCodes.Call, (MethodInfo) TypeManager.int_interlocked_compare_exchange.MetaInfo);
+					ec.Emit (OpCodes.Ldarg_0);
+					ec.Emit (OpCodes.Ldflda, host.PC.Spec);
+					ec.EmitInt ((int) Iterator.State.Start);
+					ec.EmitInt ((int) Iterator.State.Uninitialized);
+					ec.Emit (OpCodes.Call, TypeManager.int_interlocked_compare_exchange);
 
-					IntConstant.EmitInt (ig, (int) Iterator.State.Uninitialized);
-					ig.Emit (OpCodes.Bne_Un_S, label_init);
+					ec.EmitInt ((int) Iterator.State.Uninitialized);
+					ec.Emit (OpCodes.Bne_Un_S, label_init);
 
-					ig.Emit (OpCodes.Ldarg_0);
-					ig.Emit (OpCodes.Ret);
+					ec.Emit (OpCodes.Ldarg_0);
+					ec.Emit (OpCodes.Ret);
 
-					ig.MarkLabel (label_init);
+					ec.MarkLabel (label_init);
 
 					new_storey.Emit (ec);
-					ig.Emit (OpCodes.Ret);
-				}
-
-				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-				{
-					throw new NotSupportedException ();
+					ec.Emit (OpCodes.Ret);
 				}
 			}
 
@@ -329,11 +316,6 @@ namespace Mono.CSharp {
 				{
 					iterator.EmitDispose (ec);
 				}
-
-				public override void MutateHoistedGenericType (AnonymousMethodStorey storey)
-				{
-					throw new NotSupportedException ();
-				}
 			}
 
 			public DisposeMethod (IteratorStorey host)
@@ -362,8 +344,8 @@ namespace Mono.CSharp {
 
 			protected override Expression DoResolve (ResolveContext ec)
 			{
-				Methods = new [] { method.Spec };
-				type = method.Parent.TypeBuilder;
+				Methods = new List<MemberSpec> (1) { method.Spec };
+				type = method.Parent.Definition;
 				InstanceExpression = new CompilerGeneratedThis (type, Location);
 				return base.DoResolve (ec);
 			}
@@ -382,7 +364,7 @@ namespace Mono.CSharp {
 			protected override Expression DoResolve (ResolveContext ec)
 			{
 				spec = field.Spec;
-				type = TypeManager.TypeToCoreType (spec.FieldType);
+				type = spec.MemberType;
 				InstanceExpression = new CompilerGeneratedThis (type, Location);
 				return base.DoResolve (ec);
 			}
@@ -424,7 +406,11 @@ namespace Mono.CSharp {
 
 		protected override TypeExpr [] ResolveBaseTypes (out TypeExpr base_class)
 		{
-			iterator_type_expr = new TypeExpression (MutateType (Iterator.OriginalIteratorType), Location);
+			var mtype = Iterator.OriginalIteratorType;
+			if (Mutator != null)
+				mtype = Mutator.Mutate (mtype);
+
+			iterator_type_expr = new TypeExpression (mtype, Location);
 			generic_args = new TypeArguments (iterator_type_expr);
 
 			var list = new List<FullNamedExpression> ();
@@ -464,7 +450,13 @@ namespace Mono.CSharp {
 			return "<" + local_info.Name + ">__" + local_name_idx++.ToString ();
 		}
 
-		public void DefineIteratorMembers ()
+		protected override bool DoDefineMembers ()
+		{
+			DefineIteratorMembers ();
+			return base.DoDefineMembers ();
+		}
+
+		void DefineIteratorMembers ()
 		{
 			pc_field = AddCompilerGeneratedField ("$PC", TypeManager.system_int32_expr);
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
@@ -563,7 +555,7 @@ namespace Mono.CSharp {
 
 			reset.Block = new ToplevelBlock (Compiler, Location);
 
-			Type ex_type = TypeManager.CoreLookupType (Compiler, "System", "NotSupportedException", MemberKind.Class, true);
+			TypeSpec ex_type = TypeManager.CoreLookupType (Compiler, "System", "NotSupportedException", MemberKind.Class, true);
 			if (ex_type == null)
 				return;
 
@@ -603,7 +595,7 @@ namespace Mono.CSharp {
 			get { return OriginalMethod.GenericMethod; }
 		}
 
-		public readonly Type OriginalIteratorType;
+		public readonly TypeSpec OriginalIteratorType;
 
 		readonly IteratorStorey IteratorHost;
 
@@ -614,40 +606,36 @@ namespace Mono.CSharp {
 			Start = 0
 		}
 
-		public void EmitYieldBreak (ILGenerator ig, bool unwind_protect)
+		public void EmitYieldBreak (EmitContext ec, bool unwind_protect)
 		{
-			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_error);
+			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_error);
 		}
 
 		void EmitMoveNext_NoResumePoints (EmitContext ec, Block original_block)
 		{
-			ILGenerator ig = ec.ig;
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
 
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec.MetaInfo);
-
-			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt ((int) State.After);
+			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
 
 			// We only care if the PC is zero (start executing) or non-zero (don't do anything)
-			ig.Emit (OpCodes.Brtrue, move_next_error);
+			ec.Emit (OpCodes.Brtrue, move_next_error);
 
-			SymbolWriter.StartIteratorBody (ec.ig);
+			SymbolWriter.StartIteratorBody (ec);
 			original_block.Emit (ec);
-			SymbolWriter.EndIteratorBody (ec.ig);
+			SymbolWriter.EndIteratorBody (ec);
 
-			ig.MarkLabel (move_next_error);
-			ig.Emit (OpCodes.Ldc_I4_0);
-			ig.Emit (OpCodes.Ret);
+			ec.MarkLabel (move_next_error);
+			ec.Emit (OpCodes.Ldc_I4_0);
+			ec.Emit (OpCodes.Ret);
 		}
 
 		internal void EmitMoveNext (EmitContext ec, Block original_block)
 		{
-			ILGenerator ig = ec.ig;
-
-			move_next_ok = ig.DefineLabel ();
-			move_next_error = ig.DefineLabel ();
+			move_next_ok = ec.DefineLabel ();
+			move_next_error = ec.DefineLabel ();
 
 			if (resume_points == null) {
 				EmitMoveNext_NoResumePoints (ec, original_block);
@@ -655,17 +643,17 @@ namespace Mono.CSharp {
 			}
 
 			current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
-			ig.Emit (OpCodes.Ldarg_0);
-			ig.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec.MetaInfo);
-			ig.Emit (OpCodes.Stloc, current_pc);
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
+			ec.Emit (OpCodes.Stloc, current_pc);
 
 			// We're actually in state 'running', but this is as good a PC value as any if there's an abnormal exit
-			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt ((int) State.After);
+			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
 
 			Label [] labels = new Label [1 + resume_points.Count];
-			labels [0] = ig.DefineLabel ();
+			labels [0] = ec.DefineLabel ();
 
 			bool need_skip_finally = false;
 			for (int i = 0; i < resume_points.Count; ++i) {
@@ -676,45 +664,43 @@ namespace Mono.CSharp {
 
 			if (need_skip_finally) {
 				skip_finally = ec.GetTemporaryLocal (TypeManager.bool_type);
-				ig.Emit (OpCodes.Ldc_I4_0);
-				ig.Emit (OpCodes.Stloc, skip_finally);
+				ec.Emit (OpCodes.Ldc_I4_0);
+				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
 
-			SymbolWriter.StartIteratorDispatcher (ec.ig);
-			ig.Emit (OpCodes.Ldloc, current_pc);
-			ig.Emit (OpCodes.Switch, labels);
+			SymbolWriter.StartIteratorDispatcher (ec);
+			ec.Emit (OpCodes.Ldloc, current_pc);
+			ec.Emit (OpCodes.Switch, labels);
 
-			ig.Emit (OpCodes.Br, move_next_error);
-			SymbolWriter.EndIteratorDispatcher (ec.ig);
+			ec.Emit (OpCodes.Br, move_next_error);
+			SymbolWriter.EndIteratorDispatcher (ec);
 
-			ig.MarkLabel (labels [0]);
+			ec.MarkLabel (labels [0]);
 
-			SymbolWriter.StartIteratorBody (ec.ig);
+			SymbolWriter.StartIteratorBody (ec);
 			original_block.Emit (ec);
-			SymbolWriter.EndIteratorBody (ec.ig);
+			SymbolWriter.EndIteratorBody (ec);
 
-			SymbolWriter.StartIteratorDispatcher (ec.ig);
+			SymbolWriter.StartIteratorDispatcher (ec);
 
-			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt ((int) State.After);
+			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
 
-			ig.MarkLabel (move_next_error);
-			ig.Emit (OpCodes.Ldc_I4_0);
-			ig.Emit (OpCodes.Ret);
+			ec.MarkLabel (move_next_error);
+			ec.EmitInt (0);
+			ec.Emit (OpCodes.Ret);
 
-			ig.MarkLabel (move_next_ok);
-			ig.Emit (OpCodes.Ldc_I4_1);
-			ig.Emit (OpCodes.Ret);
+			ec.MarkLabel (move_next_ok);
+			ec.Emit (OpCodes.Ldc_I4_1);
+			ec.Emit (OpCodes.Ret);
 
-			SymbolWriter.EndIteratorDispatcher (ec.ig);
+			SymbolWriter.EndIteratorDispatcher (ec);
 		}
 
 		public void EmitDispose (EmitContext ec)
 		{
-			ILGenerator ig = ec.ig;
-
-			Label end = ig.DefineLabel ();
+			Label end = ec.DefineLabel ();
 
 			Label [] labels = null;
 			int n_resume_points = resume_points == null ? 0 : resume_points.Count;
@@ -733,26 +719,26 @@ namespace Mono.CSharp {
 
 			if (labels != null) {
 				current_pc = ec.GetTemporaryLocal (TypeManager.uint32_type);
-				ig.Emit (OpCodes.Ldarg_0);
-				ig.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec.MetaInfo);
-				ig.Emit (OpCodes.Stloc, current_pc);
+				ec.Emit (OpCodes.Ldarg_0);
+				ec.Emit (OpCodes.Ldfld, IteratorHost.PC.Spec);
+				ec.Emit (OpCodes.Stloc, current_pc);
 			}
 
-			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, (int) State.After);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt ((int) State.After);
+			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
 
 			if (labels != null) {
 				//SymbolWriter.StartIteratorDispatcher (ec.ig);
-				ig.Emit (OpCodes.Ldloc, current_pc);
-				ig.Emit (OpCodes.Switch, labels);
+				ec.Emit (OpCodes.Ldloc, current_pc);
+				ec.Emit (OpCodes.Switch, labels);
 				//SymbolWriter.EndIteratorDispatcher (ec.ig);
 
 				foreach (ResumableStatement s in resume_points)
 					s.EmitForDispose (ec, this, end, true);
 			}
 
-			ig.MarkLabel (end);
+			ec.MarkLabel (end);
 		}
 
 		public int AddResumePoint (ResumableStatement stmt)
@@ -769,28 +755,26 @@ namespace Mono.CSharp {
 		//
 		public void MarkYield (EmitContext ec, Expression expr, int resume_pc, bool unwind_protect, Label resume_point)
 		{
-			ILGenerator ig = ec.ig;
-
 			// Store the new current
-			ig.Emit (OpCodes.Ldarg_0);
+			ec.Emit (OpCodes.Ldarg_0);
 			expr.Emit (ec);
-			ig.Emit (OpCodes.Stfld, IteratorHost.CurrentField.Spec.MetaInfo);
+			ec.Emit (OpCodes.Stfld, IteratorHost.CurrentField.Spec);
 
 			// store resume program-counter
-			ig.Emit (OpCodes.Ldarg_0);
-			IntConstant.EmitInt (ig, resume_pc);
-			ig.Emit (OpCodes.Stfld, IteratorHost.PC.Spec.MetaInfo);
+			ec.Emit (OpCodes.Ldarg_0);
+			ec.EmitInt (resume_pc);
+			ec.Emit (OpCodes.Stfld, IteratorHost.PC.Spec);
 
 			// mark finally blocks as disabled
 			if (unwind_protect && skip_finally != null) {
-				ig.Emit (OpCodes.Ldc_I4_1);
-				ig.Emit (OpCodes.Stloc, skip_finally);
+				ec.EmitInt (1);
+				ec.Emit (OpCodes.Stloc, skip_finally);
 			}
 
 			// Return ok
-			ig.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
+			ec.Emit (unwind_protect ? OpCodes.Leave : OpCodes.Br, move_next_ok);
 
-			ig.MarkLabel (resume_point);
+			ec.MarkLabel (resume_point);
 		}
 
 		public override string ContainerType {
@@ -808,7 +792,7 @@ namespace Mono.CSharp {
 		//
 		// Our constructor
 		//
-		private Iterator (CompilerContext ctx, IMethodData method, TypeContainer host, Type iterator_type, bool is_enumerable)
+		private Iterator (CompilerContext ctx, IMethodData method, TypeContainer host, TypeSpec iterator_type, bool is_enumerable)
 			: base (
 				new ToplevelBlock (ctx, method.Block, ParametersCompiled.EmptyReadOnlyParameters, method.Block.StartLocation),
 				TypeManager.bool_type,
@@ -839,8 +823,6 @@ namespace Mono.CSharp {
 			if (Compatible (ec) == null)
 				return null;
 
-			IteratorHost.DefineIteratorMembers ();
-
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -856,15 +838,15 @@ namespace Mono.CSharp {
 			// Initialize iterator PC when it's unitialized
 			//
 			if (IsEnumerable) {
-				ILGenerator ig = ec.ig;
-				ig.Emit (OpCodes.Dup);
-				IntConstant.EmitInt (ig, (int)State.Uninitialized);
+				ec.Emit (OpCodes.Dup);
+				ec.EmitInt ((int)State.Uninitialized);
 
-				FieldInfo field = IteratorHost.PC.Spec.MetaInfo;
-				if (Storey.MemberName.IsGeneric)
-					field = TypeBuilder.GetField (Storey.Instance.Type, field);
+				var field = IteratorHost.PC.Spec;
+				if (Storey.MemberName.IsGeneric) {
+					field = MemberCache.GetMember (Storey.Instance.Type, field);
+				}
 
-				ig.Emit (OpCodes.Stfld, field);
+				ec.Emit (OpCodes.Stfld, field);
 			}
 		}
 
@@ -876,9 +858,9 @@ namespace Mono.CSharp {
 		public static void CreateIterator (IMethodData method, TypeContainer parent, Modifiers modifiers, CompilerContext ctx)
 		{
 			bool is_enumerable;
-			Type iterator_type;
+			TypeSpec iterator_type;
 
-			Type ret = method.ReturnType;
+			TypeSpec ret = method.ReturnType;
 			if (ret == null)
 				return;
 
@@ -920,11 +902,11 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			Iterator iter = new Iterator (ctx, method, parent, iterator_type, is_enumerable);
-			iter.Storey.DefineType ();
+			// TODO: Ugly leftover
+			new Iterator (ctx, method, parent, iterator_type, is_enumerable);
 		}
 
-		static bool CheckType (Type ret, out Type original_iterator_type, out bool is_enumerable)
+		static bool CheckType (TypeSpec ret, out TypeSpec original_iterator_type, out bool is_enumerable)
 		{
 			original_iterator_type = null;
 			is_enumerable = false;
@@ -940,22 +922,19 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			if (!TypeManager.IsGenericType (ret))
+			InflatedTypeSpec inflated = ret as InflatedTypeSpec;
+			if (inflated == null)
 				return false;
 
-			Type[] args = TypeManager.GetTypeArguments (ret);
-			if (args.Length != 1)
-				return false;
-
-			Type gt = TypeManager.DropGenericTypeArguments (ret);
-			if (gt == TypeManager.generic_ienumerable_type) {
-				original_iterator_type = TypeManager.TypeToCoreType (args [0]);
+			ret = inflated.GetDefinition ();
+			if (ret == TypeManager.generic_ienumerable_type) {
+				original_iterator_type = inflated.TypeArguments[0];
 				is_enumerable = true;
 				return true;
 			}
 			
-			if (gt == TypeManager.generic_ienumerator_type) {
-				original_iterator_type = TypeManager.TypeToCoreType (args [0]);
+			if (ret == TypeManager.generic_ienumerator_type) {
+				original_iterator_type = inflated.TypeArguments[0];
 				is_enumerable = false;
 				return true;
 			}

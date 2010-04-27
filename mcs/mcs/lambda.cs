@@ -26,7 +26,7 @@ namespace Mono.CSharp {
 		{
 		}
 
-		protected override Expression CreateExpressionTree (ResolveContext ec, Type delegate_type)
+		protected override Expression CreateExpressionTree (ResolveContext ec, TypeSpec delegate_type)
 		{
 			if (ec.IsInProbingMode)
 				return this;
@@ -54,12 +54,12 @@ namespace Mono.CSharp {
 			}
 		}
 
-		protected override ParametersCompiled ResolveParameters (ResolveContext ec, TypeInferenceContext tic, Type delegateType)
+		protected override ParametersCompiled ResolveParameters (ResolveContext ec, TypeInferenceContext tic, TypeSpec delegateType)
 		{
-			if (!TypeManager.IsDelegateType (delegateType))
+			if (!delegateType.IsDelegate)
 				return null;
 
-			AParametersCollection d_params = TypeManager.GetDelegateParameters (ec, delegateType);
+			AParametersCollection d_params = Delegate.GetParameters (ec.Compiler, delegateType);
 
 			if (HasExplicitParameters) {
 				if (!VerifyExplicitParameters (ec, delegateType, d_params))
@@ -75,19 +75,14 @@ namespace Mono.CSharp {
 			if (!VerifyParameterCompatibility (ec, delegateType, d_params, ec.IsInProbingMode))
 				return null;
 
-			Type [] ptypes = new Type [Parameters.Count];
+			TypeSpec [] ptypes = new TypeSpec [Parameters.Count];
 			for (int i = 0; i < d_params.Count; i++) {
 				// D has no ref or out parameters
 				if ((d_params.FixedParameters [i].ModFlags & Parameter.Modifier.ISBYREF) != 0)
 					return null;
 
-				Type d_param = d_params.Types [i];
+				TypeSpec d_param = d_params.Types [i];
 
-#if MS_COMPATIBLE
-				// Blablabla, because reflection does not work with dynamic types
-				if (d_param.IsGenericParameter)
-					d_param = delegateType.GetGenericArguments () [d_param.GenericParameterPosition];
-#endif
 				//
 				// When type inference context exists try to apply inferred type arguments
 				//
@@ -96,7 +91,9 @@ namespace Mono.CSharp {
 				}
 
 				ptypes [i] = d_param;
-				((ImplicitLambdaParameter) Parameters.FixedParameters [i]).Type = d_param;
+				ImplicitLambdaParameter ilp = (ImplicitLambdaParameter) Parameters.FixedParameters [i];
+				ilp.Type = d_param;
+				ilp.Resolve (null, i);
 			}
 
 			Parameters.Types = ptypes;
@@ -118,7 +115,7 @@ namespace Mono.CSharp {
 			return this;
 		}
 
-		protected override AnonymousMethodBody CompatibleMethodFactory (Type returnType, Type delegateType, ParametersCompiled p, ToplevelBlock b)
+		protected override AnonymousMethodBody CompatibleMethodFactory (TypeSpec returnType, TypeSpec delegateType, ParametersCompiled p, ToplevelBlock b)
 		{
 			return new LambdaMethod (p, b, returnType, delegateType, loc);
 		}
@@ -132,7 +129,7 @@ namespace Mono.CSharp {
 	public class LambdaMethod : AnonymousMethodBody
 	{
 		public LambdaMethod (ParametersCompiled parameters,
-					ToplevelBlock block, Type return_type, Type delegate_type,
+					ToplevelBlock block, TypeSpec return_type, TypeSpec delegate_type,
 					Location loc)
 			: base (parameters, block, return_type, delegate_type, loc)
 		{
@@ -189,7 +186,7 @@ namespace Mono.CSharp {
 		{
 			if (statement != null) {
 				statement.EmitStatement (ec);
-				ec.ig.Emit (OpCodes.Ret);
+				ec.Emit (OpCodes.Ret);
 				return;
 			}
 

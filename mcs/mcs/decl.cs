@@ -103,6 +103,12 @@ namespace Mono.CSharp {
 			return GetName (false);
 		}
 
+		public int Arity {
+			get {
+				return TypeArguments == null ? 0 : TypeArguments.Count;
+			}
+		}
+
 		public bool IsGeneric {
 			get {
 				if (TypeArguments != null)
@@ -127,7 +133,7 @@ namespace Mono.CSharp {
 		{
 			if (Left == null) {
 				if (TypeArguments != null)
-					return new SimpleName (Basename, TypeArguments, Location);
+					return new SimpleName (Name, TypeArguments, Location);
 				
 				return new SimpleName (Name, Location);
 			}
@@ -247,6 +253,7 @@ namespace Mono.CSharp {
 	///   Base representation for members.  This is used to keep track
 	///   of Name, Location and Modifier flags, and handling Attributes.
 	/// </summary>
+	[System.Diagnostics.DebuggerDisplay ("{GetSignatureForError()}")]
 	public abstract class MemberCore : Attributable, IMemberContext, IMemberDefinition
 	{
 		/// <summary>
@@ -260,6 +267,12 @@ namespace Mono.CSharp {
 				if (cached_name == null)
 					cached_name = MemberName.GetName (!(this is GenericMethod) && !(this is Method));
 				return cached_name;
+			}
+		}
+
+		string IMemberDefinition.Name {
+			get {
+				return member_name.Name;
 			}
 		}
 
@@ -284,7 +297,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public /*readonly*/ DeclSpace Parent;
+		public /*readonly*/ TypeContainer Parent;
 
 		/// <summary>
 		///   Location where this declaration happens
@@ -313,7 +326,7 @@ namespace Mono.CSharp {
 			CloseTypeCreated = 1 << 4,		// Tracks whether we have Closed the type
 			HasCompliantAttribute_Undetected = 1 << 5,	// Presence of CLSCompliantAttribute has not been detected
 			HasClsCompliantAttribute = 1 << 6,			// Type has CLSCompliantAttribute
-			ClsCompliantAttributeTrue = 1 << 7,			// Type has CLSCompliant (true)
+			ClsCompliantAttributeFalse = 1 << 7,			// Member has CLSCompliant(false)
 			Excluded_Undetected = 1 << 8,		// Conditional attribute has not been detected yet
 			Excluded = 1 << 9,					// Method is conditional
 			MethodOverloadsExist = 1 << 10,		// Test for duplication must be performed
@@ -331,10 +344,14 @@ namespace Mono.CSharp {
 
 		public MemberCore (DeclSpace parent, MemberName name, Attributes attrs)
 		{
-			this.Parent = parent;
+			this.Parent = parent as TypeContainer;
 			member_name = name;
 			caching_flags = Flags.Obsolete_Undetected | Flags.ClsCompliance_Undetected | Flags.HasCompliantAttribute_Undetected | Flags.Excluded_Undetected;
 			AddAttributes (attrs, this);
+		}
+
+		public virtual Assembly Assembly {
+			get { return Parent.Module.Assembly; }
 		}
 
 		protected virtual void SetMemberName (MemberName new_name)
@@ -439,8 +456,7 @@ namespace Mono.CSharp {
 			if (!RootContext.VerifyClsCompliance)
 				return;
 
-			if (Report.WarningLevel > 0)
-				VerifyClsCompliance ();
+			VerifyClsCompliance ();
 		}
 
 		public bool IsCompilerGenerated {
@@ -449,6 +465,12 @@ namespace Mono.CSharp {
 					return true;
 
 				return Parent == null ? false : Parent.IsCompilerGenerated;
+			}
+		}
+
+		public bool IsImported {
+			get {
+				return false;
 			}
 		}
 
@@ -467,10 +489,15 @@ namespace Mono.CSharp {
 			caching_flags |= Flags.IsUsed;
 		}
 
+		public void SetIsAssigned ()
+		{
+			caching_flags |= Flags.IsAssigned;
+		}
+
 		/// <summary>
 		/// Returns instance of ObsoleteAttribute for this MemberCore
 		/// </summary>
-		public virtual ObsoleteAttribute GetObsoleteAttribute ()
+		public virtual ObsoleteAttribute GetAttributeObsolete ()
 		{
 			if ((caching_flags & (Flags.Obsolete_Undetected | Flags.Obsolete)) == 0)
 				return null;
@@ -498,44 +525,15 @@ namespace Mono.CSharp {
 		/// </summary>
 		public virtual void CheckObsoleteness (Location loc)
 		{
-			ObsoleteAttribute oa = GetObsoleteAttribute ();
+			ObsoleteAttribute oa = GetAttributeObsolete ();
 			if (oa != null)
 				AttributeTester.Report_ObsoleteMessage (oa, GetSignatureForError (), loc, Report);
 		}
 
 		//
-		// Returns the access level for type `t'
-		//
-		static Modifiers GetAccessLevelFromType (Type type)
-		{
-			var ma = type.Attributes;
-			Modifiers mod;
-			switch (ma & TypeAttributes.VisibilityMask) {
-			case TypeAttributes.Public:
-			case TypeAttributes.NestedPublic:
-				mod = Modifiers.PUBLIC;
-				break;
-			case TypeAttributes.NestedPrivate:
-				mod = Modifiers.PRIVATE;
-				break;
-			case TypeAttributes.NestedFamily:
-				mod = Modifiers.PROTECTED;
-				break;
-			case TypeAttributes.NestedFamORAssem:
-				mod = Modifiers.PROTECTED | Modifiers.INTERNAL;
-				break;
-			default:
-				mod = Modifiers.INTERNAL;
-				break;
-			}
-
-			return mod;
-		}
-
-		//
 		// Checks whether the type P is as accessible as this member
 		//
-		public bool IsAccessibleAs (Type p)
+		public bool IsAccessibleAs (TypeSpec p)
 		{
 			//
 			// if M is private, its accessibility is the same as this declspace.
@@ -548,19 +546,20 @@ namespace Mono.CSharp {
 			while (TypeManager.HasElementType (p))
 				p = TypeManager.GetElementType (p);
 
-			if (TypeManager.IsGenericParameter (p))
+			if (p.IsGenericParameter)
 				return true;
 
-			if (TypeManager.IsGenericType (p)) {
-				foreach (Type t in TypeManager.GetTypeArguments (p)) {
-					if (!IsAccessibleAs (t))
-						return false;
-				}
-			}
-
-			for (Type p_parent = null; p != null; p = p_parent) {
+			for (TypeSpec p_parent; p != null; p = p_parent) {
 				p_parent = p.DeclaringType;
-				var pAccess = GetAccessLevelFromType (p);
+
+				if (p.IsGeneric) {
+					foreach (TypeSpec t in p.TypeArguments) {
+						if (!IsAccessibleAs (t))
+							return false;
+					}
+				}
+
+				var pAccess = p.Modifiers & Modifiers.AccessibilityMask;
 				if (pAccess == Modifiers.PUBLIC)
 					continue;
 
@@ -576,7 +575,7 @@ namespace Mono.CSharp {
 
 					case Modifiers.PROTECTED:
 						if (al == Modifiers.PROTECTED) {
-							same_access_restrictions = mc.Parent.IsBaseType (p_parent);
+							same_access_restrictions = mc.Parent.IsBaseTypeDefinition (p_parent);
 							break;
 						}
 
@@ -586,7 +585,7 @@ namespace Mono.CSharp {
 							// protected type then the type is accessible
 							//
 							while (mc.Parent != null) {
-								if (mc.Parent.IsBaseType (p_parent))
+								if (mc.Parent.IsBaseTypeDefinition (p_parent))
 									same_access_restrictions = true;
 								mc = mc.Parent; 
 							}
@@ -598,9 +597,9 @@ namespace Mono.CSharp {
 						if (al == Modifiers.INTERNAL)
 							same_access_restrictions = TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
 						else if (al == Modifiers.PROTECTED)
-							same_access_restrictions = mc.Parent.IsBaseType (p_parent);
+							same_access_restrictions = mc.Parent.IsBaseTypeDefinition (p_parent);
 						else if (al == (Modifiers.PROTECTED | Modifiers.INTERNAL))
-							same_access_restrictions = mc.Parent.IsBaseType (p_parent) &&
+							same_access_restrictions = mc.Parent.IsBaseTypeDefinition (p_parent) &&
 								TypeManager.IsThisOrFriendAssembly (Parent.Module.Assembly, p.Assembly);
 						break;
 
@@ -611,7 +610,7 @@ namespace Mono.CSharp {
 						if (al == Modifiers.PRIVATE) {
 							var decl = mc.Parent;
 							do {
-								same_access_restrictions = TypeManager.IsEqual (decl.TypeBuilder, p_parent);
+								same_access_restrictions = decl.CurrentType == p_parent;
 							} while (!same_access_restrictions && !decl.IsTopLevel && (decl = decl.Parent) != null);
 						}
 						
@@ -637,14 +636,27 @@ namespace Mono.CSharp {
 			if ((caching_flags & Flags.ClsCompliance_Undetected) == 0)
 				return (caching_flags & Flags.ClsCompliant) != 0;
 
-			if (GetClsCompliantAttributeValue () && IsExposedFromAssembly ()) {
-				caching_flags &= ~Flags.ClsCompliance_Undetected;
+			caching_flags &= ~Flags.ClsCompliance_Undetected;
+
+			if (HasClsCompliantAttribute) {
+				if ((caching_flags & Flags.ClsCompliantAttributeFalse) != 0)
+					return false;
+
 				caching_flags |= Flags.ClsCompliant;
 				return true;
 			}
 
-			caching_flags &= ~Flags.ClsCompliance_Undetected;
+			if (Parent.PartialContainer.IsClsComplianceRequired ()) {
+				caching_flags |= Flags.ClsCompliant;
+				return true;
+			}
+
 			return false;
+		}
+
+		public virtual string[] ConditionalConditions ()
+		{
+			return null;
 		}
 
 		/// <summary>
@@ -664,9 +676,9 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (Type extensionType, string name, Location loc)
+		public virtual ExtensionMethodGroupExpr LookupExtensionMethod (TypeSpec extensionType, string name, int arity, Location loc)
 		{
-			return Parent.LookupExtensionMethod (extensionType, name, loc);
+			return Parent.LookupExtensionMethod (extensionType, name, arity, loc);
 		}
 
 		public virtual FullNamedExpression LookupNamespaceAlias (string name)
@@ -674,42 +686,34 @@ namespace Mono.CSharp {
 			return Parent.NamespaceEntry.LookupNamespaceAlias (name);
 		}
 
-		public virtual FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		public virtual FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
 		{
-			return Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
+			return Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
 		}
 
 		/// <summary>
 		/// Goes through class hierarchy and gets value of first found CLSCompliantAttribute.
 		/// If no is attribute exists then assembly CLSCompliantAttribute is returned.
 		/// </summary>
-		public virtual bool GetClsCompliantAttributeValue ()
+		public bool IsNotCLSCompliant ()
 		{
 			if ((caching_flags & Flags.HasCompliantAttribute_Undetected) == 0)
-				return (caching_flags & Flags.ClsCompliantAttributeTrue) != 0;
+				return (caching_flags & Flags.ClsCompliantAttributeFalse) != 0;
 
 			caching_flags &= ~Flags.HasCompliantAttribute_Undetected;
 
 			if (OptAttributes != null) {
-				Attribute cls_attribute = OptAttributes.Search (
-					PredefinedAttributes.Get.CLSCompliant);
+				Attribute cls_attribute = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
 				if (cls_attribute != null) {
 					caching_flags |= Flags.HasClsCompliantAttribute;
-					bool value = cls_attribute.GetClsCompliantAttributeValue ();
-					if (value)
-						caching_flags |= Flags.ClsCompliantAttributeTrue;
-					return value;
+					if (cls_attribute.GetClsCompliantAttributeValue ())
+						return false;
+
+					caching_flags |= Flags.ClsCompliantAttributeFalse;
+					return true;
 				}
 			}
-			
-			// It's null for TypeParameter
-			if (Parent == null)
-				return false;			
 
-			if (Parent.GetClsCompliantAttributeValue ()) {
-				caching_flags |= Flags.ClsCompliantAttributeTrue;
-				return true;
-			}
 			return false;
 		}
 
@@ -719,7 +723,7 @@ namespace Mono.CSharp {
 		protected bool HasClsCompliantAttribute {
 			get {
 				if ((caching_flags & Flags.HasCompliantAttribute_Undetected) != 0)
-					GetClsCompliantAttributeValue ();
+					IsNotCLSCompliant ();
 				
 				return (caching_flags & Flags.HasClsCompliantAttribute) != 0;
 			}
@@ -741,41 +745,55 @@ namespace Mono.CSharp {
 		/// </summary>
 		protected virtual bool VerifyClsCompliance ()
 		{
-			if (!IsClsComplianceRequired ()) {
-				if (HasClsCompliantAttribute && Report.WarningLevel >= 2) {
-					if (!IsExposedFromAssembly ()) {
-						Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
-						Report.Warning (3019, 2, a.Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
-					}
-
-					if (!CodeGen.Assembly.IsClsCompliant) {
-						Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
-						Report.Warning (3021, 2, a.Location, "`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant", GetSignatureForError ());
-					}
-				}
-				return false;
-			}
-
 			if (HasClsCompliantAttribute) {
-				if (CodeGen.Assembly.ClsCompliantAttribute == null && !CodeGen.Assembly.IsClsCompliant) {
+				if (CodeGen.Assembly.ClsCompliantAttribute == null) {
 					Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
-					Report.Warning (3014, 1, a.Location,
-						"`{0}' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant",
-						GetSignatureForError ());
+					if ((caching_flags & Flags.ClsCompliantAttributeFalse) != 0) {
+						Report.Warning (3021, 2, a.Location,
+							"`{0}' does not need a CLSCompliant attribute because the assembly is not marked as CLS-compliant",
+							GetSignatureForError ());
+					} else {
+						Report.Warning (3014, 1, a.Location,
+							"`{0}' cannot be marked as CLS-compliant because the assembly is not marked as CLS-compliant",
+							GetSignatureForError ());
+					}
 					return false;
 				}
 
-				if (!Parent.IsClsComplianceRequired ()) {
+				if (!IsExposedFromAssembly ()) {
 					Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
-					Report.Warning (3018, 1, a.Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'", 
+					Report.Warning (3019, 2, a.Location, "CLS compliance checking will not be performed on `{0}' because it is not visible from outside this assembly", GetSignatureForError ());
+					return false;
+				}
+
+				if ((caching_flags & Flags.ClsCompliantAttributeFalse) != 0) {
+					if (Parent.Kind == MemberKind.Interface && Parent.IsClsComplianceRequired ()) {
+						Report.Warning (3010, 1, Location, "`{0}': CLS-compliant interfaces must have only CLS-compliant members", GetSignatureForError ());
+					} else if (Parent.Kind == MemberKind.Class && (ModFlags & Modifiers.ABSTRACT) != 0 && Parent.IsClsComplianceRequired ()) {
+						Report.Warning (3011, 1, Location, "`{0}': only CLS-compliant members can be abstract", GetSignatureForError ());
+					}
+
+					return false;
+				}
+
+				if (Parent.Parent != null && !Parent.IsClsComplianceRequired ()) {
+					Attribute a = OptAttributes.Search (PredefinedAttributes.Get.CLSCompliant);
+					Report.Warning (3018, 1, a.Location, "`{0}' cannot be marked as CLS-compliant because it is a member of non CLS-compliant type `{1}'",
 						GetSignatureForError (), Parent.GetSignatureForError ());
 					return false;
 				}
+			} else {
+				if (!IsExposedFromAssembly ())
+					return false;
+
+				if (!Parent.PartialContainer.IsClsComplianceRequired ())
+					return false;
 			}
 
 			if (member_name.Name [0] == '_') {
 				Report.Warning (3008, 1, Location, "Identifier `{0}' is not CLS-compliant", GetSignatureForError () );
 			}
+
 			return true;
 		}
 
@@ -815,24 +833,28 @@ namespace Mono.CSharp {
 		#region IMemberContext Members
 
 		public virtual CompilerContext Compiler {
-			get { return Parent.Module.Compiler; }
+			get { return Parent.Compiler; }
 		}
 
-		public virtual Type CurrentType {
+		public virtual TypeSpec CurrentType {
 			get { return Parent.CurrentType; }
 		}
 
-		public virtual TypeContainer CurrentTypeDefinition {
-			get { return Parent.CurrentTypeDefinition; }
+		public MemberCore CurrentMemberDefinition {
+			get { return this; }
 		}
 
 		public virtual TypeParameter[] CurrentTypeParameters {
 			get { return null; }
 		}
 
+		public virtual bool HasUnresolvedConstraints {
+			get { return false; }
+		}
+
 		public bool IsObsolete {
 			get {
-				if (GetObsoleteAttribute () != null)
+				if (GetAttributeObsolete () != null)
 					return true;
 
 				return Parent == null ? false : Parent.IsObsolete;
@@ -849,7 +871,9 @@ namespace Mono.CSharp {
 		}
 
 		public bool IsStatic {
-			get { return (ModFlags & Modifiers.STATIC) != 0; }
+			get {
+				return (ModFlags & Modifiers.STATIC) != 0;
+			}
 		}
 
 		#endregion
@@ -865,54 +889,210 @@ namespace Mono.CSharp {
 		protected enum StateFlags
 		{
 			Obsolete_Undetected = 1,	// Obsolete attribute has not been detected yet
-			Obsolete = 1 << 1			// Member has obsolete attribute
+			Obsolete = 1 << 1,			// Member has obsolete attribute
+			CLSCompliant_Undetected = 1 << 3,	// CLSCompliant attribute has not been detected yet
+			CLSCompliant = 1 << 4,		// Member is CLS Compliant
+
+			IsAccessor = 1 << 9,		// Method is an accessor
+			IsGeneric = 1 << 10,		// Member contains type arguments
+
+			PendingMetaInflate = 1 << 12,
+			PendingMakeMethod = 1 << 13,
+			PendingMemberCacheMembers = 1 << 14,
+			PendingBaseTypeInflate = 1 << 15,
+			InterfacesExpanded = 1 << 16,
+			IsNotRealProperty = 1 << 17,
 		}
 
-		readonly Modifiers modifiers;
-		readonly string name;
+		protected Modifiers modifiers;
 		protected StateFlags state;
 		protected IMemberDefinition definition;
 		public readonly MemberKind Kind;
+		protected TypeSpec declaringType;
 
-		protected MemberSpec (MemberKind kind, IMemberDefinition definition, string name, Modifiers modifiers)
+#if DEBUG
+		static int counter;
+		public int ID = counter++;
+#endif
+
+		protected MemberSpec (MemberKind kind, TypeSpec declaringType, IMemberDefinition definition, Modifiers modifiers)
 		{
+			this.Kind = kind;
+			this.declaringType = declaringType;
 			this.definition = definition;
-			this.name = name;
 			this.modifiers = modifiers;
 
-			state = StateFlags.Obsolete_Undetected;
+			state = StateFlags.Obsolete_Undetected | StateFlags.CLSCompliant_Undetected;
 		}
 
-		public abstract Type DeclaringType { get; }
+		#region Properties
 
-		public ObsoleteAttribute GetObsoleteAttribute ()
+		public Assembly Assembly {
+			get {
+				return definition.Assembly;
+			}
+		}
+
+		public virtual int Arity {
+			get {
+				return 0;
+			}
+		}
+
+		public TypeSpec DeclaringType {
+			get {
+				return declaringType;
+			}
+			set {
+				declaringType = value;
+			}
+		}
+
+		public IMemberDefinition MemberDefinition {
+			get {
+				return definition;
+			}
+		}
+
+		public Modifiers Modifiers {
+			get {
+				return modifiers;
+			}
+			set {
+				modifiers = value;
+			}
+		}
+		
+		public virtual string Name {
+			get {
+				return definition.Name;
+			}
+		}
+
+		public bool IsAbstract {
+			get { return (modifiers & Modifiers.ABSTRACT) != 0; }
+		}
+
+		public bool IsAccessor {
+			get {
+				return (state & StateFlags.IsAccessor) != 0;
+			}
+			set {
+				state = value ? state | StateFlags.IsAccessor : state & ~StateFlags.IsAccessor;
+			}
+		}
+
+		//
+		// Return true when this member is a generic in C# terms
+		// therefore nested non-generic type of generic type will
+		// return false
+		//
+		public bool IsGeneric {
+			get {
+				return (state & StateFlags.IsGeneric) != 0;
+			}
+			set {
+				state = value ? state | StateFlags.IsGeneric : state & ~StateFlags.IsGeneric;
+			}
+		}
+
+		public bool IsPrivate {
+			get { return (modifiers & Modifiers.PRIVATE) != 0; }
+		}
+
+		public bool IsStatic {
+			get { 
+				return (modifiers & Modifiers.STATIC) != 0;
+			}
+		}
+
+		#endregion
+
+		public virtual ObsoleteAttribute GetAttributeObsolete ()
 		{
 			if ((state & (StateFlags.Obsolete | StateFlags.Obsolete_Undetected)) == 0)
 				return null;
 
 			state &= ~StateFlags.Obsolete_Undetected;
 
-			var oa = definition.GetObsoleteAttribute ();
+			var oa = definition.GetAttributeObsolete ();
 			if (oa != null)
 				state |= StateFlags.Obsolete;
 
 			return oa;
 		}
 
-		public IMemberDefinition MemberDefinition {
-			get { return definition; }
+		protected virtual bool IsNotCLSCompliant ()
+		{
+			return MemberDefinition.IsNotCLSCompliant ();
 		}
 
-		public Modifiers Modifiers {
-			get { return modifiers; }
-		}
-		
-		public string Name {
-			get { return name; }
+		public virtual string GetSignatureForError ()
+		{
+			var bf = MemberDefinition as Property.BackingField;
+			var name = bf == null ? Name : bf.OriginalName;
+			return DeclaringType.GetSignatureForError () + "." + name;
 		}
 
-		public bool IsStatic {
-			get { return (modifiers & Modifiers.STATIC) != 0; }
+		public virtual MemberSpec InflateMember (TypeParameterInflator inflator)
+		{
+			var inflated = (MemberSpec) MemberwiseClone ();
+			inflated.declaringType = inflator.TypeInstance;
+			inflated.state |= StateFlags.PendingMetaInflate;
+			return inflated;
+		}
+
+		//
+		// Returns member CLS compliance based on full member hierarchy
+		//
+		public bool IsCLSCompliant ()
+		{
+			if ((state & StateFlags.CLSCompliant_Undetected) != 0) {
+				state &= ~StateFlags.CLSCompliant_Undetected;
+
+				if (IsNotCLSCompliant ())
+					return false;
+
+				bool compliant;
+				if (DeclaringType != null) {
+					compliant = DeclaringType.IsCLSCompliant ();
+				} else {
+					// TODO: NEED AssemblySpec
+					if (MemberDefinition.IsImported) {
+						var attr = MemberDefinition.Assembly.GetCustomAttributes (typeof (CLSCompliantAttribute), false);
+						compliant = attr.Length > 0 && ((CLSCompliantAttribute) attr[0]).IsCompliant;
+					} else {
+						compliant = CodeGen.Assembly.IsClsCompliant;
+					}
+				}
+
+				if (compliant)
+					state |= StateFlags.CLSCompliant;
+			}
+
+			return (state & StateFlags.CLSCompliant) != 0;
+		}
+
+		public bool IsConditionallyExcluded (Location loc)
+		{
+			if ((Kind & (MemberKind.Class | MemberKind.Method)) == 0)
+				return false;
+
+			var conditions = MemberDefinition.ConditionalConditions ();
+			if (conditions == null)
+				return false;
+
+			foreach (var condition in conditions) {
+				if (loc.CompilationUnit.IsConditionalDefined (condition))
+					return false;
+			}
+
+			return true;
+		}
+
+		public override string ToString ()
+		{
+			return GetSignatureForError ();
 		}
 	}
 
@@ -922,31 +1102,38 @@ namespace Mono.CSharp {
 	//
 	public interface IMemberDefinition
 	{
-		ObsoleteAttribute GetObsoleteAttribute ();
+		Assembly Assembly { get; }
+		string Name { get; }
+		bool IsImported { get; }
+
+		string[] ConditionalConditions ();
+		ObsoleteAttribute GetAttributeObsolete ();
+		bool IsNotCLSCompliant ();
+		void SetIsAssigned ();
 		void SetIsUsed ();
 	}
 
-	/// <summary>
-	///   Base class for structs, classes, enumerations and interfaces.  
-	/// </summary>
-	/// <remarks>
-	///   They all create new declaration spaces.  This
-	///   provides the common foundation for managing those name
-	///   spaces.
-	/// </remarks>
+	public interface IParametersMember : IInterfaceMemberSpec
+	{
+		AParametersCollection Parameters { get; }
+	}
+
+	public interface IInterfaceMemberSpec
+	{
+		TypeSpec MemberType { get; }
+	}
+
+	//
+	// Base type container declaration. It exists to handle partial types
+	// which share same definition (PartialContainer) but have different
+	// resolve scopes
+	//
 	public abstract class DeclSpace : MemberCore {
 		/// <summary>
 		///   This points to the actual definition that is being
 		///   created with System.Reflection.Emit
 		/// </summary>
 		public TypeBuilder TypeBuilder;
-
-		/// <summary>
-		///   If we are a generic type, this is the type we are
-		///   currently defining.  We need to lookup members on this
-		///   instead of the TypeBuilder.
-		/// </summary>
-		protected Type currentType;
 
 		//
 		// This is the namespace in which this typecontainer
@@ -1058,11 +1245,7 @@ namespace Mono.CSharp {
 			defined_names.TryGetValue (name, out mc);
 			return mc;
 		}
-
-		public bool IsStaticClass {
-			get { return (ModFlags & Modifiers.STATIC) != 0; }
-		}
-		
+	
 		// 
 		// root_types contains all the types.  All TopLevel types
 		// hence have a parent that points to `root_types', that is
@@ -1075,27 +1258,6 @@ namespace Mono.CSharp {
 		public virtual bool IsUnmanagedType ()
 		{
 			return false;
-		}
-
-		public virtual void CloseType ()
-		{
-			if ((caching_flags & Flags.CloseTypeCreated) == 0){
-				try {
-					TypeBuilder.CreateType ();
-				} catch {
-					//
-					// The try/catch is needed because
-					// nested enumerations fail to load when they
-					// are defined.
-					//
-					// Even if this is the right order (enumerations
-					// declared after types).
-					//
-					// Note that this still creates the type and
-					// it is possible to save it
-				}
-				caching_flags |= Flags.CloseTypeCreated;
-			}
 		}
 
 		protected virtual TypeAttributes TypeAttr {
@@ -1114,157 +1276,71 @@ namespace Mono.CSharp {
 				type.GetSignatureForError ());
 		}
 
-		public override void Emit ()
-		{
-			if (type_params != null) {
-				int offset = count_type_params - type_params.Length;
-				for (int i = offset; i < type_params.Length; i++)
-					CurrentTypeParameters [i - offset].Emit ();
-			}
-
-			if ((ModFlags & Modifiers.COMPILER_GENERATED) != 0 && !Parent.IsCompilerGenerated)
-				PredefinedAttributes.Get.CompilerGenerated.EmitAttribute (TypeBuilder);
-
-			base.Emit ();
-		}
-
 		public override string GetSignatureForError ()
-		{	
+		{
 			return MemberName.GetSignatureForError ();
 		}
 		
-		public bool CheckAccessLevel (Type check_type)
+		public bool CheckAccessLevel (TypeSpec check_type)
 		{
-			Type tb = TypeBuilder;
+			TypeSpec tb = PartialContainer.Definition;
+			check_type = check_type.GetDefinition ();
 
-			if (this is GenericMethod) {
-				tb = Parent.TypeBuilder;
-
-				// FIXME: Generic container does not work with nested generic
-				// anonymous method stories
-				if (TypeBuilder == null)
-					return true;
-			}
-
-			check_type = TypeManager.DropGenericTypeArguments (check_type);
-			if (check_type == tb)
-				return true;
-
-			// TODO: When called from LocalUsingAliasEntry tb is null
-			// because we are in RootDeclSpace
-			if (tb == null)
-				tb = typeof (RootDeclSpace);
-
-			//
-			// Broken Microsoft runtime, return public for arrays, no matter what 
-			// the accessibility is for their underlying class, and they return 
-			// NonPublic visibility for pointers
-			//
-			if (TypeManager.HasElementType (check_type))
-				return CheckAccessLevel (TypeManager.GetElementType (check_type));
-
-			if (TypeManager.IsGenericParameter (check_type))
-				return true;
-
-			TypeAttributes check_attr = check_type.Attributes & TypeAttributes.VisibilityMask;
+			var check_attr = check_type.Modifiers & Modifiers.AccessibilityMask;
 
 			switch (check_attr){
-			case TypeAttributes.Public:
+			case Modifiers.PUBLIC:
 				return true;
 
-			case TypeAttributes.NotPublic:
-				return TypeManager.IsThisOrFriendAssembly (Module.Assembly, check_type.Assembly);
+			case Modifiers.INTERNAL:
+				return TypeManager.IsThisOrFriendAssembly (Assembly, check_type.Assembly);
 				
-			case TypeAttributes.NestedPublic:
-				return CheckAccessLevel (check_type.DeclaringType);
+			case Modifiers.PRIVATE:
+				TypeSpec declaring = check_type.DeclaringType;
+				return tb == declaring.GetDefinition () || TypeManager.IsNestedChildOf (tb, declaring);	
 
-			case TypeAttributes.NestedPrivate:
-				Type declaring = check_type.DeclaringType;
-				return tb == declaring || TypeManager.IsNestedChildOf (tb, declaring);	
-
-			case TypeAttributes.NestedFamily:
+			case Modifiers.PROTECTED:
 				//
 				// Only accessible to methods in current type or any subtypes
 				//
-				return FamilyAccessible (tb, check_type);
+				return TypeManager.IsNestedFamilyAccessible (tb, check_type.DeclaringType);
 
-			case TypeAttributes.NestedFamANDAssem:
-				return TypeManager.IsThisOrFriendAssembly (Module.Assembly, check_type.Assembly) && 
-					FamilyAccessible (tb, check_type);
+			case Modifiers.PROTECTED | Modifiers.INTERNAL:
+				if (TypeManager.IsThisOrFriendAssembly (Assembly, check_type.Assembly))
+					return true;
 
-			case TypeAttributes.NestedFamORAssem:
-				return FamilyAccessible (tb, check_type) ||
-					TypeManager.IsThisOrFriendAssembly (Module.Assembly, check_type.Assembly);
-
-			case TypeAttributes.NestedAssembly:
-				return TypeManager.IsThisOrFriendAssembly (Module.Assembly, check_type.Assembly);
+				goto case Modifiers.PROTECTED;
 			}
 
 			throw new NotImplementedException (check_attr.ToString ());
 		}
 
-		static bool FamilyAccessible (Type tb, Type check_type)
+		private TypeSpec LookupNestedTypeInHierarchy (string name, int arity)
 		{
-			Type declaring = check_type.DeclaringType;
-			return TypeManager.IsNestedFamilyAccessible (tb, declaring);
-		}
+			// TODO: GenericMethod only
+			if (PartialContainer == null)
+				return null;
 
-		public bool IsBaseType (Type baseType)
-		{
-			// We are called from RootDeclspace
-			if (TypeBuilder == null)
-				return false;
+			// Has any nested type
+			// Does not work, because base type can have
+			//if (PartialContainer.Types == null)
+			//	return null;
 
-			return TypeManager.IsSubclassOf (TypeBuilder, baseType);
-		}
+			var container = PartialContainer.CurrentType;
 
-		private Type LookupNestedTypeInHierarchy (string name)
-		{
-			Type t = null;
-			// if the member cache has been created, lets use it.
-			// the member cache is MUCH faster.
-			if (MemberCache != null) {
-				t = MemberCache.FindNestedType (name);
-				if (t == null)
-					return null;
-			}
+			// Is not Root container
+			if (container == null)
+				return null;
 
-			//
-			// FIXME: This hack is needed because member cache does not work
-			// with nested base generic types, it does only type name copy and
-			// not type construction
-			//
+			var	t = MemberCache.FindNestedType (container, name, arity);
+			if (t == null)
+				return null;
 
-			// no member cache. Do it the hard way -- reflection
-			for (Type current_type = TypeBuilder;
-			     current_type != null && current_type != TypeManager.object_type;
-			     current_type = current_type.BaseType) {
+			// FIXME: Breaks error reporting
+			if (!CheckAccessLevel (t))
+				return null;
 
-				Type ct = TypeManager.DropGenericTypeArguments (current_type);
-				if (ct is TypeBuilder) {
-					TypeContainer tc = ct == TypeBuilder
-						? PartialContainer : TypeManager.LookupTypeContainer (ct);
-					if (tc != null)
-						t = tc.FindNestedType (name);
-				} else {
-					t = TypeManager.GetNestedType (ct, name);
-				}
-
-				if ((t == null) || !CheckAccessLevel (t))
-					continue;
-
-				if (!TypeManager.IsGenericType (current_type))
-					return t;
-
-				Type[] args = TypeManager.GetTypeArguments (current_type);
-				Type[] targs = TypeManager.GetTypeArguments (t);
-				for (int i = 0; i < args.Length; i++)
-					targs [i] = TypeManager.TypeToCoreType (args [i]);
-
-				return t.MakeGenericType (targs);
-			}
-
-			return null;
+			return t;
 		}
 
 		//
@@ -1274,72 +1350,48 @@ namespace Mono.CSharp {
 		//
 		// Returns: Type or null if they type can not be found.
 		//
-		public override FullNamedExpression LookupNamespaceOrType (string name, Location loc, bool ignore_cs0104)
+		public override FullNamedExpression LookupNamespaceOrType (string name, int arity, Location loc, bool ignore_cs0104)
 		{
 			FullNamedExpression e;
-			if (Cache.TryGetValue (name, out e))
+			if (arity == 0 && Cache.TryGetValue (name, out e))
 				return e;
 
 			e = null;
 			int errors = Report.Errors;
 
-			TypeParameter[] tp = CurrentTypeParameters;
-			if (tp != null) {
-				TypeParameter tparam = TypeParameter.FindTypeParameter (tp, name);
-				if (tparam != null)
-					e = new TypeParameterExpr (tparam, Location.Null);
+			if (arity == 0) {
+				TypeParameter[] tp = CurrentTypeParameters;
+				if (tp != null) {
+					TypeParameter tparam = TypeParameter.FindTypeParameter (tp, name);
+					if (tparam != null)
+						e = new TypeParameterExpr (tparam, Location.Null);
+				}
 			}
 
 			if (e == null) {
-				Type t = LookupNestedTypeInHierarchy (name);
+				TypeSpec t = LookupNestedTypeInHierarchy (name, arity);
 
 				if (t != null)
 					e = new TypeExpression (t, Location.Null);
 				else if (Parent != null)
-					e = Parent.LookupNamespaceOrType (name, loc, ignore_cs0104);
+					e = Parent.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
 				else
-					e = NamespaceEntry.LookupNamespaceOrType (name, loc, ignore_cs0104);
+					e = NamespaceEntry.LookupNamespaceOrType (name, arity, loc, ignore_cs0104);
 			}
 
-			if (errors == Report.Errors)
+			// TODO MemberCache: How to cache arity stuff ?
+			if (errors == Report.Errors && arity == 0)
 				Cache [name] = e;
 			
 			return e;
 		}
 
-		/// <remarks>
-		///   This function is broken and not what you're looking for.  It should only
-		///   be used while the type is still being created since it doesn't use the cache
-		///   and relies on the filter doing the member name check.
-		/// </remarks>
-		///
-		// [Obsolete ("Only MemberCache approach should be used")]
-		public virtual MemberList FindMembers (MemberTypes mt, BindingFlags bf,
-							MemberFilter filter, object criteria)
-		{
-			throw new NotSupportedException ();
-		}
-
-		/// <remarks>
-		///   If we have a MemberCache, return it.  This property may return null if the
-		///   class doesn't have a member cache or while it's still being created.
-		/// </remarks>
-		public abstract MemberCache MemberCache {
-			get;
+		public override Assembly Assembly {
+			get { return Module.Assembly; }
 		}
 
 		public virtual ModuleContainer Module {
 			get { return Parent.Module; }
-		}
-
-		public override void ApplyAttributeBuilder (Attribute a, ConstructorInfo ctor, byte[] cdata, PredefinedAttributes pa)
-		{
-			if (a.Type == pa.Required) {
-				Report.Error (1608, a.Location, "The RequiredAttribute attribute is not permitted on C# types");
-				return;
-			}
-
-			TypeBuilder.SetCustomAttribute (ctor, cdata);
 		}
 
 		TypeParameter[] initialize_type_params ()
@@ -1427,7 +1479,7 @@ namespace Mono.CSharp {
 				}
 
 				type_params [i] = new TypeParameter (
-					Parent, this, name.Name, constraints, name.OptAttributes, variance, Location);
+					Parent, i, new MemberName (name.Name, Location), constraints, name.OptAttributes, variance);
 
 				AddToContainer (type_params [i], name.Name);
 			}
@@ -1440,7 +1492,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public TypeParameter[] TypeParameters {
+		protected TypeParameter[] TypeParameters {
 			get {
 				if (!IsGeneric)
 					throw new InvalidOperationException ();
@@ -1453,24 +1505,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override Type CurrentType {
-			get { return currentType != null ? currentType : TypeBuilder; }
-		}
-
-		public override TypeContainer CurrentTypeDefinition {
-			get { return PartialContainer; }
-		}
-
 		public int CountTypeParameters {
 			get {
 				return count_type_params;
 			}
-		}
-
-		// Used for error reporting only
-		public virtual Type LookupAnyGeneric (string typeName)
-		{
-			return NamespaceEntry.NS.LookForAnyGenericType (typeName);
 		}
 
 		public override string[] ValidAttributeTargets {
@@ -1485,35 +1523,10 @@ namespace Mono.CSharp {
 
 			if (type_params != null) {
 				foreach (TypeParameter tp in type_params) {
-					if (tp.Constraints == null)
-						continue;
-
-					tp.Constraints.VerifyClsCompliance (Report);
+					tp.VerifyClsCompliance ();
 				}
 			}
 
-			var cache = TypeManager.AllClsTopLevelTypes;
-			if (cache == null)
-				return true;
-
-			string lcase = Name.ToLower (System.Globalization.CultureInfo.InvariantCulture);
-			if (!cache.ContainsKey (lcase)) {
-				cache.Add (lcase, this);
-				return true;
-			}
-
-			object val = cache [lcase];
-			if (val == null) {
-				Type t = AttributeTester.GetImportedIgnoreCaseClsType (lcase);
-				if (t == null)
-					return true;
-				Report.SymbolRelatedToPreviousError (t);
-			}
-			else {
-				Report.SymbolRelatedToPreviousError ((DeclSpace)val);
-			}
-
-			Report.Warning (3005, 1, Location, "Identifier `{0}' differing only in case is not CLS-compliant", GetSignatureForError ());
 			return true;
 		}
 	}
