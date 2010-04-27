@@ -1,0 +1,229 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{817CE046-07E8-409D-84BF-A6EA4F2879DE}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>Mono.CSharp</RootNamespace>
+    <AssemblyName>Mono.CSharp</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;NET_1_1;NET_2_0</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data.DataSetExtensions">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs">
+      <Link>CryptoConvert.cs</Link>
+    </Compile>
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolFile.cs">
+      <Link>MonoSymbolFile.cs</Link>
+    </Compile>
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolTable.cs">
+      <Link>MonoSymbolTable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\class\Mono.CompilerServices.SymbolWriter\MonoSymbolWriter.cs">
+      <Link>MonoSymbolWriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\anonymous.cs">
+      <Link>anonymous.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\argument.cs">
+      <Link>argument.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\assign.cs">
+      <Link>assign.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\attribute.cs">
+      <Link>attribute.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\cfold.cs">
+      <Link>cfold.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\class.cs">
+      <Link>class.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\codegen.cs">
+      <Link>codegen.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\complete.cs">
+      <Link>complete.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\const.cs">
+      <Link>const.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\constant.cs">
+      <Link>constant.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\context.cs">
+      <Link>context.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\convert.cs">
+      <Link>convert.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\cs-tokenizer.cs">
+      <Link>cs-tokenizer.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\decl.cs">
+      <Link>decl.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\delegate.cs">
+      <Link>delegate.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\doc-bootstrap.cs">
+      <Link>doc-bootstrap.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\doc.cs">
+      <Link>doc.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\driver.cs">
+      <Link>driver.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\dynamic.cs">
+      <Link>dynamic.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\ecore.cs">
+      <Link>ecore.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\enum.cs">
+      <Link>enum.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\eval.cs">
+      <Link>eval.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\expression.cs">
+      <Link>expression.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\field.cs">
+      <Link>field.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\flowanalysis.cs">
+      <Link>flowanalysis.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\generic.cs">
+      <Link>generic.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\hosting.cs">
+      <Link>hosting.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\import.cs">
+      <Link>import.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\iterators.cs">
+      <Link>iterators.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\lambda.cs">
+      <Link>lambda.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\linq.cs">
+      <Link>linq.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\literal.cs">
+      <Link>literal.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\location.cs">
+      <Link>location.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\membercache.cs">
+      <Link>membercache.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\method.cs">
+      <Link>method.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\modifiers.cs">
+      <Link>modifiers.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\namespace.cs">
+      <Link>namespace.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\nullable.cs">
+      <Link>nullable.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\parameter.cs">
+      <Link>parameter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\pending.cs">
+      <Link>pending.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\property.cs">
+      <Link>property.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\report.cs">
+      <Link>report.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\rootcontext.cs">
+      <Link>rootcontext.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\roottypes.cs">
+      <Link>roottypes.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\statement.cs">
+      <Link>statement.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\support.cs">
+      <Link>support.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\symbolwriter.cs">
+      <Link>symbolwriter.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\typemanager.cs">
+      <Link>typemanager.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\typespec.cs">
+      <Link>typespec.cs</Link>
+    </Compile>
+    <Compile Include="..\..\mcs\visit.cs">
+      <Link>visit.cs</Link>
+    </Compile>
+    <Compile Include="..\..\tools\monop\outline.cs">
+      <Link>outline.cs</Link>
+    </Compile>
+    <Compile Include="cs-parser.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <PropertyGroup>
+    <PreBuildEvent>$(SolutionDir)..\..\jay\jay -cvt &lt; $(SolutionDir)..\..\jay\skeleton.cs $(SolutionDir)..\..\mcs\cs-parser.jay &gt; $(ProjectDir)\cs-parser.cs</PreBuildEvent>
+  </PropertyGroup>
+</Project>
