@@ -18,7 +18,7 @@ class X
 	static void Main ()
 	{
 		Console.WriteLine (typeof (Foo<>));
-//		Console.WriteLine (typeof (Foo<>.Bar<>));
+		Console.WriteLine (typeof (Foo<>.Bar<>));
 		Console.WriteLine (typeof (Test.FooEx<,>));		
 		Console.WriteLine (typeof (A::FooEx<,>));
 	}
