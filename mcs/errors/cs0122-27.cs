@@ -1,4 +1,4 @@
-// CS0122: `G.GG.F' is inaccessible due to its protection level
+// CS0122: `G.GG' is inaccessible due to its protection level
 // Line: 14
 
 class G

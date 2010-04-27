@@ -1,4 +1,4 @@
-// CS1640: foreach statement cannot operate on variables of type `T' because it contains multiple implementation of `System.Collections.Generic.IEnumerable<T>.GetEnumerator()'. Try casting to a specific implementation
+// CS1640: foreach statement cannot operate on variables of type `T' because it contains multiple implementation of `System.Collections.Generic.IEnumerable<T>'. Try casting to a specific implementation
 // Line: 11
 
 using System.Collections.Generic;

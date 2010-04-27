@@ -1,6 +1,5 @@
-// cs0467-2.cs: Ambiguity between method `ICounter.Count()' and non-method `ICollection.Count'. Using method `ICounter.Count()'
-// Line: 30
-// Compiler options: -warnaserror -warn:2
+// CS0121: The call is ambiguous between the following methods or properties: `IList.Count()' and `ICounter.Count()'
+// Line: 29
 
 using System;
 

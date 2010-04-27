@@ -1,4 +1,4 @@
-// cs0419-2.cs: Ambiguous reference in cref attribute `A.this'. Assuming `Test.A.this[string]' but other overloads including `Test.A.this[int]' have also matched
+// CS0419: Ambiguous reference in cref attribute `A.this'. Assuming `Test.A.this[int]' but other overloads including `Test.A.this[string]' have also matched
 // Line: 7
 // Compiler options: -doc:dummy.xml -warnaserror
 using System.Collections;

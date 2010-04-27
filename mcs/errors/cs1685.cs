@@ -1,4 +1,4 @@
-// CS1685: The predefined type `System.Int32' is ambiguous. Using definition from `mscorlib, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b77a5c561934e089'
+// CS1685: The predefined type `System.Int32' is redefined in the source code. Ignoring the local type definition
 // Line: 6
 // Compiler options: -warn:1 -warnaserror
 

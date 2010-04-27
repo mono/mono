@@ -1,4 +1,4 @@
-// CS0309: The type `T' must be convertible to `System.IDisposable' in order to use it as parameter `T' in the generic type or method `IB<K,T>'
+// CS0314: The type `T' cannot be used as type parameter `T' in the generic type or method `IB<K,T>'. There is no boxing or type parameter conversion from `T' to `System.IDisposable'
 // Line: 20
 
 public interface IA<K> 

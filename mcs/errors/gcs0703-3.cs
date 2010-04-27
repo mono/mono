@@ -1,4 +1,4 @@
-// CS0703: Inconsistent accessibility: constraint type `C.I' is less accessible than `Foo<T>()'
+// CS0703: Inconsistent accessibility: constraint type `C.I' is less accessible than `C.Foo<T>()'
 // Line: 10
 
 public class C

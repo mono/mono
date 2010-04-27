@@ -1,4 +1,4 @@
-// cs0146-3.cs: Circular base class dependency involving `Foo.Bar' and `Foo'
+// CS0146: Circular base class dependency involving `Foo' and `Foo.Bar'
 // Line: 5
 
 class Foo : Foo.Bar {

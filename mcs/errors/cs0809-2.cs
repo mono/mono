@@ -1,5 +1,6 @@
-// cs0619-41.cs: `A.Filename' is obsolete: `Obsolete'
+// CS0809: Obsolete member `A.Filename' overrides non-obsolete member `Error.Filename'
 // Line: 8
+// Compiler options: -warnaserror
 
 class A: Error {
 	[System.ObsoleteAttribute ("Obsolete", true)]	

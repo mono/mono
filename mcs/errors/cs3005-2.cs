@@ -1,4 +1,4 @@
-// cs3005-2.cs: Identifier `CLSClass.Index' differing only in case is not CLS-compliant
+// CS3005: Identifier `CLSClass.Index.get' differing only in case is not CLS-compliant
 // Line: 14
 // Compiler options: -warnaserror
 

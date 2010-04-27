@@ -1,5 +1,6 @@
-// cs0117-3.cs: `A' does not contain a definition for `Foo'
-// Line: 16
+// CS1061: Type `A' does not contain a definition for `Foo' and no extension method `Foo' of type `A' could be found (are you missing a using directive or an assembly reference?)
+// Line: 17
+
 using System;
 using System.Runtime.CompilerServices;
 

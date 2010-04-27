@@ -38,7 +38,7 @@ all-local $(STD_TARGETS:=-local):
 VALID_PROFILE := $(filter net_2_0 moonlight net_4_0, $(PROFILE))
 ifdef VALID_PROFILE
 
-check: run-mcs-tests 
+qcheck: run-mcs-tests 
 
 # again, run-test is when the tests actually happen, so
 # don't compile on make test.
@@ -71,9 +71,6 @@ TESTER_OPTIONS +=-compiler-options:-v
 
 run-mcs-tests: $(TEST_SUPPORT_FILES)
 	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS)
-
-cecil:
-	$(TESTER) -mode:neg -files:$(TEST_PATTERN) -compiler:../tests/gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TESTER_OPTIONS) -verbose
 
 endif
 

@@ -1,4 +1,4 @@
-// CS0313: The type `S?' cannot be used as type parameter `T' in the generic type or method `S.Foo<T>(T)'. The nullable type `S?' never satisfies interface constraint of type `I'
+// CS0313: The type `S?' cannot be used as type parameter `T' in the generic type or method `S.Foo<T>(T)'. The nullable type `S?' never satisfies interface constraint
 // Line: 16
 
 interface I

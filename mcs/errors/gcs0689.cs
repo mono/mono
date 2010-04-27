@@ -1,4 +1,4 @@
-// gcs0689.cs: Cannot derive from `T' because it is a type parameter
+// CS0689: `Stack<T>': Cannot derive from type parameter `T'
 // Line: 4
 
 class Stack<T> : T { }

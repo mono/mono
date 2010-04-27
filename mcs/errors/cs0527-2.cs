@@ -1,5 +1,5 @@
-// cs0527-2.cs: Type `A' in interface list is not an interface
-// Line: 7
+// CS0527: Type `B' in interface list is not an interface
+// Line: 4
 
 struct A : B {
 }

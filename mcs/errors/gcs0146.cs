@@ -1,4 +1,4 @@
-// gcs0146.cs: Circular base class dependency involving `B<T>' and `A<T>'
+// CS0146: Circular base class dependency involving `B<T>' and `A<float>'
 // Line: 8
 
 class A<T> : B<int>

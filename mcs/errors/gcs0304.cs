@@ -1,5 +1,5 @@
-// CS0304: Cannot create an instance of the variable type 'T' because it doesn't have the new() constraint
-// Line: 9
+// CS0304: Cannot create an instance of the variable type `T' because it does not have the new() constraint
+// Line: 8
 
 public class Foo<T>
 {

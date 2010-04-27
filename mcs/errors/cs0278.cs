@@ -1,4 +1,4 @@
-// CS0278: `Testing.IMixedEnumerable' contains ambiguous implementation of `enumerable' pattern. Method `Testing.ICustomEnumerable.GetEnumerator()' is ambiguous with method `System.Collections.IEnumerable.GetEnumerator()'
+// CS0278: `Testing.IMixedEnumerable' contains ambiguous implementation of `enumerable' pattern. Method `System.Collections.IEnumerable.GetEnumerator()' is ambiguous with method `Testing.ICustomEnumerable.GetEnumerator()'
 // Line: 28
 // Compiler options: -warnaserror -warn:2
 

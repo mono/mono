@@ -1,4 +1,4 @@
-// CS1502: The best overloaded method match for `A.A(System.Collections.Generic.IList<System.Collections.Generic.IList<int>>)' has some invalid arguments
+// CS1502: The best overloaded method match for `A.A(System.Collections.Generic.IList<int>[])' has some invalid arguments
 // Line: 40
 using System;
 using System.Collections;

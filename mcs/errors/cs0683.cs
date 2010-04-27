@@ -1,4 +1,4 @@
-// cs0683.cs: `C.I.set_Foo(int)' explicit method implementation cannot implement `I.Foo' because it is an accessor
+// CS0683: `C.I.set_Foo(int)' explicit method implementation cannot implement `I.Foo.set' because it is an accessor
 // Line: 11
 
 interface I

@@ -1,4 +1,4 @@
-// CS0121: The call is ambiguous between the following methods or properties: `V3.operator -(V3, V3)' and `V2.operator -(V2, V2)'
+// CS0121: The call is ambiguous between the following methods or properties: `V2.operator -(V2, V2)' and `V3.operator -(V3, V3)'
 // Line: 45
 
 public struct V3

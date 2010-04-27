@@ -1,4 +1,4 @@
-// CS0121: The call is ambiguous between the following methods or properties: `B.operator +(A, B)' and `A.operator +(A, B)'
+// CS0121: The call is ambiguous between the following methods or properties: `A.operator +(A, B)' and `B.operator +(A, B)'
 // Line: 21
 
 class A

@@ -1,4 +1,4 @@
-// cs1546.cs: Property `Title' is not supported by the C# language. Try to call the accessor method `Test.ITopic.get_Title(int, int)' directly
+// CS1546: Property or event `Test.ITopic.Title' is not supported by the C# language
 // Line: 9
 // Compiler options: -r:CS1546-lib.dll
 

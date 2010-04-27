@@ -1,4 +1,4 @@
-// CS0309: The type `B' must be convertible to `A' in order to use it as parameter `T' in the generic type or method `Foo<T>'
+// CS0311: The type `B' cannot be used as type parameter `T' in the generic type or method `Foo<T>'. There is no implicit reference conversion from `B' to `A'
 // Line: 35
 using System;
 
