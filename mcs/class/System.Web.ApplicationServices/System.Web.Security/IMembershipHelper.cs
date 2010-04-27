@@ -1,12 +1,10 @@
 //
-// System.Web.Security.MembershipOnlineStatus
+// IMembershipHelper.cs
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//      Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2010 Novell, Inc. (http://novell.com/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,14 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
-namespace System.Web.Security {
-	public enum MembershipOnlineStatus {
-		All = 0,
-		Online = 1,
-		Offline = 2	
+namespace System.Web.Security
+{
+	interface IMembershipHelper
+	{
+		int UserIsOnlineTimeWindow { get; }
+		MembershipProviderCollection Providers { get; }
+		byte [] DecryptPassword (byte [] encodedPassword);
+		byte[] EncryptPassword (byte[] password);
 	}
 }
-#endif
-

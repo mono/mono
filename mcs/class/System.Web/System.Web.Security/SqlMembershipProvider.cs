@@ -270,7 +270,7 @@ namespace System.Web.Security {
 			string passwordSalt = "";
 
 			RandomNumberGenerator rng = RandomNumberGenerator.Create ();
-			byte [] salt = new byte [SALT_BYTES];
+			byte [] salt = new byte [MembershipHelper.SALT_BYTES];
 			rng.GetBytes (salt);
 			passwordSalt = Convert.ToBase64String (salt);
 

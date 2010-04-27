@@ -47,6 +47,7 @@ common_dirs := \
 	Mono.WebBrowser			\
 	Managed.Windows.Forms		\
 	Mono.Data.Sqlite		\
+	System.Web.ApplicationServices	\
 	System.Web			\
 	Mono.Web			\
 	System.Web.Services		\

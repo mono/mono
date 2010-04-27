@@ -27,14 +27,19 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System.Runtime.CompilerServices;
 
-#if NET_2_0
-namespace System.Web.Security {
-	public enum MembershipPasswordFormat {
+namespace System.Web.Security
+{
+#if NET_4_0
+	[TypeForwardedFrom ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
+	public enum MembershipPasswordFormat
+	{
 		Clear = 0, 
 		Hashed = 1,
 		Encrypted = 2
 	}
 }
-#endif
+
 

@@ -31,8 +31,10 @@ using System.Collections.Specialized;
 
 namespace System.Web.UI
 {
-
-	internal class KeyedList : IOrderedDictionary, IStateManager
+	class KeyedList : IOrderedDictionary
+#if !NET_4_0
+	, IStateManager // why do we implement it at all?
+#endif
 	{
 
 		Hashtable objectTable = new Hashtable ();
@@ -100,7 +102,7 @@ namespace System.Web.UI
 		{
 			return new KeyedListEnumerator (objectList);
 		}
-
+#if !NET_4_0
 		void IStateManager.LoadViewState (object state)
 		{
 			if (state != null)
@@ -130,7 +132,7 @@ namespace System.Web.UI
 		{
 			trackViewState = true;
 		}
-
+#endif
 		public int Count {
 			get { return objectList.Count; }
 		}
@@ -198,12 +200,13 @@ namespace System.Web.UI
 			get { return this; }
 		}
 
+#if !NET_4_0
 		bool trackViewState;
 
 		bool IStateManager.IsTrackingViewState {
 			get { return trackViewState; }
 		}
-
+#endif
 		int IndexOf (object key)
 		{
 			for (int i = 0; i < objectList.Count; i++)

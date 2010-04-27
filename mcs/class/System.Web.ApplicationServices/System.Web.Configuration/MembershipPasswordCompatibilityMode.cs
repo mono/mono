@@ -1,12 +1,10 @@
 //
-// System.Web.Security.MembershipSortOptions
+// System.Web.Security.MembershipPasswordCompatibilityMode
 //
 // Authors:
-//	Ben Maurer (bmaurer@users.sourceforge.net)
+//    Marek Habersack <mhabersack@novell.com>
 //
-// (C) 2003 Ben Maurer
-//
-
+// Copyright (C) 2010 Novell, Inc (http://novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,17 +25,13 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
 
-#if NET_2_0
-namespace System.Web.Security {
-	public enum MembershipSortOptions {
-		UserName = 0,
-		CreationDate = 1,
-		LastActivityDate = 2,
-		LastLoginDate = 3,
-		LastPasswordChangeDate = 4,
-		Email = 5		
+namespace System.Web.Configuration
+{
+	public enum MembershipPasswordCompatibilityMode
+	{
+		Framework20,
+		Framework40
 	}
 }
-#endif
-

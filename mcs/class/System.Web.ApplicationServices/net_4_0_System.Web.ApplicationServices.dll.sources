@@ -1,0 +1,23 @@
+#include System.Web.ApplicationServices.dll.sources
+
+Assembly/AssemblyInfo.cs
+../../build/common/Consts.cs
+../../build/common/Locale.cs
+../../build/common/MonoTODOAttribute.cs
+
+System.Web.Configuration/MembershipPasswordCompatibilityMode.cs
+System.Web.Security/IMembershipHelper.cs
+
+../System.Web/System.Web.UI/KeyedList.cs
+../System.Web/System.Web.UI/KeyedListEnumerator.cs
+../System.Web/System.Web.Security/MembershipCreateStatus.cs
+../System.Web/System.Web.Security/MembershipCreateUserException.cs
+../System.Web/System.Web.Security/MembershipPasswordException.cs
+../System.Web/System.Web.Security/MembershipPasswordFormat.cs
+../System.Web/System.Web.Security/MembershipProviderCollection.cs
+../System.Web/System.Web.Security/MembershipProvider.cs
+../System.Web/System.Web.Security/MembershipUserCollection.cs
+../System.Web/System.Web.Security/MembershipUser.cs
+../System.Web/System.Web.Security/MembershipValidatePasswordEventHandler.cs
+../System.Web/System.Web.Security/RoleProvider.cs
+../System.Web/System.Web.Security/ValidatePasswordEventArgs.cs

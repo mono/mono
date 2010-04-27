@@ -27,10 +27,15 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+using System;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 
-#if NET_2_0
 namespace System.Web.Security
 {
+#if NET_4_0
+	[TypeForwardedFrom ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 	[Serializable]
 	public class MembershipUser
 	{
@@ -47,7 +52,7 @@ namespace System.Web.Security
 		DateTime lastActivityDate;
 		DateTime lastPasswordChangedDate;
 		DateTime lastLockoutDate;
-		
+
 		protected MembershipUser ()
 		{
 		}
@@ -157,10 +162,24 @@ namespace System.Web.Security
 		public virtual bool IsLockedOut {
 			get { return isLockedOut; }
 		}
-		
-		public bool IsOnline {
+
+#if NET_4_0
+		public virtual
+#else
+		public
+#endif
+		bool IsOnline {
 			get {
-				return LastActivityDate > DateTime.Now - TimeSpan.FromMinutes (Membership.UserIsOnlineTimeWindow);  
+				int minutes;
+#if NET_4_0
+				IMembershipHelper helper = MembershipProvider.Helper;
+				if (helper == null)
+					throw new PlatformNotSupportedException ("The method is not available.");
+				minutes = helper.UserIsOnlineTimeWindow;
+#else
+				minutes = Membership.UserIsOnlineTimeWindow;
+#endif
+				return LastActivityDate > DateTime.Now - TimeSpan.FromMinutes (minutes);
 			}
 		}
 		
@@ -214,12 +233,21 @@ namespace System.Web.Security
 		
 		MembershipProvider Provider {
 			get {
-				MembershipProvider p = Membership.Providers [ProviderName];
-				if (p == null) throw new InvalidOperationException ("Membership provider '" + ProviderName + "' not found.");
+				MembershipProvider p;				
+#if NET_4_0
+				IMembershipHelper helper = MembershipProvider.Helper;
+				if (helper == null)
+					throw new PlatformNotSupportedException ("The method is not available.");
+				p = helper.Providers [ProviderName];
+#else
+				p = Membership.Providers [ProviderName];
+#endif
+				if (p == null)
+					throw new InvalidOperationException ("Membership provider '" + ProviderName + "' not found.");
 				return p;
 			}
 		}
 	}
 }
-#endif
+
 

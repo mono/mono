@@ -6,7 +6,7 @@
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
 // (C) 2003 Ben Maurer
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,25 +28,57 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.ComponentModel;
 using System.Configuration.Provider;
-using System.Web.Configuration;
+using System.Reflection;
+using System.Runtime.CompilerServices;
 using System.Security.Cryptography;
 using System.Text;
+using System.Web.Configuration;
 
 namespace System.Web.Security
 {
+#if NET_4_0
+	[TypeForwardedFrom ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 	public abstract class MembershipProvider : ProviderBase
 	{
-		static readonly object validatingPasswordEvent = new object ();
+#if NET_4_0
+		const string HELPER_TYPE_NAME = "System.Web.Security.MembershipHelper, System.Web, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a";
 
+		internal static IMembershipHelper Helper {
+			get { return helper; }
+		}
+		static IMembershipHelper helper;
+#else
+		static MembershipHelper helper;
+#endif
+		
+		static readonly object validatingPasswordEvent = new object ();
+		
 		EventHandlerList events = new EventHandlerList ();
 		public event MembershipValidatePasswordEventHandler ValidatingPassword {
 			add { events.AddHandler (validatingPasswordEvent, value); }
 			remove { events.RemoveHandler (validatingPasswordEvent, value); }
 		}
-		
+
+		static MembershipProvider ()
+		{
+#if NET_4_0
+			Type type = Type.GetType (HELPER_TYPE_NAME, false);
+			if (type == null)
+				return;
+
+			try {
+				helper = Activator.CreateInstance (type) as IMembershipHelper;
+			} catch {
+				// ignore
+			}
+#else
+			helper = new MembershipHelper ();
+#endif
+		}
+
 		protected MembershipProvider ()
 		{
 		}
@@ -87,61 +119,38 @@ namespace System.Web.Security
 				eh (this, args);
 		}
 
-		SymmetricAlgorithm GetAlg ()
-		{
-			MachineKeySection section = (MachineKeySection) WebConfigurationManager.GetSection ("system.web/machineKey");
-
-			if (section.DecryptionKey.StartsWith ("AutoGenerate"))
-				throw new ProviderException ("You must explicitly specify a decryption key in the <machineKey> section when using encrypted passwords.");
-
-			string alg_type = section.Decryption;
-			if (alg_type == "Auto")
-				alg_type = "AES";
-
-			SymmetricAlgorithm alg = null;
-			if (alg_type == "AES")
-				alg = Rijndael.Create ();
-			else if (alg_type == "3DES")
-				alg = TripleDES.Create ();
-			else
-				throw new ProviderException (String.Format ("Unsupported decryption attribute '{0}' in <machineKey> configuration section", alg_type));
-
-			alg.Key = MachineKeySectionUtils.DecryptionKey192Bits (section);
-			return alg;
-		}
-
-		internal const int SALT_BYTES = 16;
 		protected virtual byte [] DecryptPassword (byte [] encodedPassword)
 		{
-			using (SymmetricAlgorithm alg = GetAlg ()) {
-				// alg.Key is set in GetAlg based on web.config
-				// iv is the first part of the encodedPassword
-				byte [] iv = new byte [alg.IV.Length];
-				Array.Copy (encodedPassword, 0, iv, 0, iv.Length);
-				using (ICryptoTransform decryptor = alg.CreateDecryptor (alg.Key, iv)) {
-					return decryptor.TransformFinalBlock (encodedPassword, iv.Length, encodedPassword.Length - iv.Length);
-				}
-			}
+#if NET_4_0
+			if (helper == null)
+				throw new PlatformNotSupportedException ("This method is not available.");
+#endif
+			return helper.DecryptPassword (encodedPassword);
 		}
 
 		protected virtual byte[] EncryptPassword (byte[] password)
 		{
-			using (SymmetricAlgorithm alg = GetAlg ()) {
-				// alg.Key is set in GetAlg based on web.config
-				// alg.IV is randomly set (default behavior) and perfect for our needs
-				byte [] iv = alg.IV;
-				using (ICryptoTransform encryptor = alg.CreateEncryptor (alg.Key, iv)) {
-					byte [] encrypted = encryptor.TransformFinalBlock (password, 0, password.Length);
-					byte [] output = new byte [iv.Length + encrypted.Length];
-					// note: the IV can be public, however it should not be based on the password
-					Array.Copy (iv, 0, output, 0, iv.Length);
-					Array.Copy (encrypted, 0, output, iv.Length, encrypted.Length);
-					return output;
-				}
-			}
+#if NET_4_0
+			return EncryptPassword (password, MembershipPasswordCompatibilityMode.Framework20);
+#else
+			return helper.EncryptPassword (password);
+#endif
 		}
+#if NET_4_0
+		[MonoTODO ("Discover what actually is 4.0 password compatibility mode.")]
+		protected virtual byte[] EncryptPassword (byte[] password, MembershipPasswordCompatibilityMode legacyPasswordCompatibilityMode)
+		{
+			if (helper == null)
+				throw new PlatformNotSupportedException ("This method is not available.");
+
+			if (legacyPasswordCompatibilityMode == MembershipPasswordCompatibilityMode.Framework40)
+				throw new PlatformNotSupportedException ("Framework 4.0 password encryption mode is not supported at this time.");
+			
+			return helper.EncryptPassword (password);
+		}
+#endif
 	}
 }
-#endif
+
 
 

@@ -1,0 +1,15 @@
+#include System.Web.dll.sources
+
+System.Web.UI/KeyedList.cs
+System.Web.UI/KeyedListEnumerator.cs
+System.Web.Security/MembershipCreateStatus.cs
+System.Web.Security/MembershipCreateUserException.cs
+System.Web.Security/MembershipPasswordException.cs
+System.Web.Security/MembershipPasswordFormat.cs
+System.Web.Security/MembershipProviderCollection.cs
+System.Web.Security/MembershipProvider.cs
+System.Web.Security/MembershipUserCollection.cs
+System.Web.Security/MembershipUser.cs
+System.Web.Security/MembershipValidatePasswordEventHandler.cs
+System.Web.Security/RoleProvider.cs
+System.Web.Security/ValidatePasswordEventArgs.cs

@@ -1,3 +1,8 @@
+2010-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* Makefile (OTHER_LIB_MCS_FLAGS): added a reference to
+	System.Web.ApplicationServices in the 4.0 profile.
+
 2008-03-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : added missing EXTRA_DISTFILES.

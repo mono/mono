@@ -5,7 +5,7 @@
 //	Ben Maurer (bmaurer@users.sourceforge.net)
 //
 // (C) 2003 Ben Maurer
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,15 +27,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
+using System.Runtime.CompilerServices;
 using System.Web.UI;
 
-namespace System.Web.Security {
-
+namespace System.Web.Security
+{
+#if NET_4_0
+	[TypeForwardedFrom ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 	[Serializable]
-	public sealed class MembershipUserCollection : ICollection {
-
+	public sealed class MembershipUserCollection : ICollection
+	{
 		public MembershipUserCollection ()
 		{
 		}
@@ -107,5 +110,5 @@ namespace System.Web.Security {
 		bool readOnly = false;
 	}
 }
-#endif
+
 

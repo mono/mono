@@ -239,6 +239,10 @@ OTHER_RES += $(RESOURCE_FILES_2)
 OTHER_LIB_MCS_FLAGS = -d:INSIDE_SYSTEM_WEB -nowarn:618 -r:System.Configuration.dll -r:Mono.Data.Sqlite.dll
 endif
 
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
+endif
+
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-nowarn:612,618	\

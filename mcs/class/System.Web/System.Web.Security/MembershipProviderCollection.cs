@@ -27,12 +27,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
 using System.Configuration.Provider;
+using System.Runtime.CompilerServices;
 
-namespace System.Web.Security {
-
+namespace System.Web.Security
+{
+#if NET_4_0
+	[TypeForwardedFrom ("System.Web, Version=2.0.0.0, Culture=Neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+#endif
 	public sealed class MembershipProviderCollection : ProviderCollection
 	{
 		public override void Add (ProviderBase provider)
@@ -58,5 +60,5 @@ namespace System.Web.Security {
 		}
 	}
 }
-#endif
+
 

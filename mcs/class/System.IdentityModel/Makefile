@@ -2,6 +2,10 @@ thisdir = class/System.IdentityModel
 SUBDIRS = 
 include ../../build/rules.make
 
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+OTHER_LIB_MCS_FLAGS = -r:System.Web.ApplicationServices.dll
+endif
+
 LIBRARY = System.IdentityModel.dll
 LIB_MCS_FLAGS = \
 			/d:NET_3_0	\
@@ -10,7 +14,8 @@ LIB_MCS_FLAGS = \
 	        /r:System.Security.dll \
 		/r:System.Web.dll \
 		/r:Mono.Security.dll \
-	        /r:System.Runtime.Serialization.dll
+	        /r:System.Runtime.Serialization.dll \
+	        $(OTHER_LIB_MCS_FLAGS)
 
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS)
 

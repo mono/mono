@@ -35,6 +35,10 @@ NUNIT_RESOURCE_FILES= \
 	$(wildcard ../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/*.as?x) \
 	$(wildcard ../System.Web/Test/mainsoft/NunitWeb/NunitWeb/Resources/*.master)
 
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+OTHER_LIB_MCS_FLAGS += -r:System.Web.ApplicationServices.dll
+endif
+
 LIB_MCS_FLAGS = \
 	-unsafe \
 	-define:NET_3_5			\
