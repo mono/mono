@@ -57,8 +57,8 @@ public class MyTest {
 		}
 
 		res = Evaluator.GetCompletions ("Converte", out prefix);
-		if (res [0] != "r<"){
-			throw new Exception ("Expected one completion for Conveter<");
+		if (res [0] != "r"){
+			throw new Exception ("Expected one completion for Converter");
 		}
 
 		res = Evaluator.GetCompletions ("Sys", out prefix);
@@ -77,7 +77,7 @@ public class MyTest {
 		}
 
 		res = Evaluator.GetCompletions ("new System.Text.StringBuilder () { ", out prefix);
-		if (res.Length != 4){
+		if (res.Length != 3){
 			throw new Exception ("Epxected 4 completions (Capacity Chars Length MaxCapacity)");
 		}
 

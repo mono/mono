@@ -3,11 +3,18 @@ using System.Reflection;
 using System.Runtime.InteropServices;
 
 public class Test {
+	public enum ParamEnum {
+		None = 0,
+		Foo = 1,
+		Bar = 2
+	};
+	
 	public void f1 ([System.Runtime.InteropServices.DefaultParameterValue (null)] object x) {}
 	public void f2 ([System.Runtime.InteropServices.DefaultParameterValue (null)] string x) {}
 	public void f3 ([System.Runtime.InteropServices.DefaultParameterValue (null)] Test x) {}
 	public void f4 ([System.Runtime.InteropServices.DefaultParameterValue (1)] int x) {}
 	public void f5 ([System.Runtime.InteropServices.DefaultParameterValue ((short) 1)] short x) {}
+	public void f6 ([DefaultParameterValue (ParamEnum.Foo)] ParamEnum n) {}
 
 	static void Main ()
 	{

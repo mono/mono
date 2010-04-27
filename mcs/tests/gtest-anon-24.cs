@@ -14,6 +14,15 @@ interface IFoo<TOne,TTwo>
 {
 }
 
+class CA<T>
+{
+	public struct Nested
+	{
+		public static readonly T Value;
+		public readonly T Value2;
+	}
+}
+
 class Test
 {
 	static Func<T[]> For<T> (List<T> list)
@@ -153,6 +162,14 @@ class Test
 		};
 	}
 	
+	static Func<T[]> NestedTypeMutate<T> ()
+	{
+		var local = new CA<T>.Nested ();
+		return () => {
+			return new [] { CA<T>.Nested.Value, local.Value2 };
+		};
+	}
+	
 	public static int Main ()
 	{
 		if (For (new List<int> { 5, 10 })() [1] != 10)
@@ -201,6 +218,10 @@ class Test
 		var t11 = TypeOf ("b");
 		if (t11 () != typeof (string))
 			return 11;
+		
+		var t12 = NestedTypeMutate<ulong> ()();
+		if (t12 [0] != 0 || t12 [1] != 0)
+			return 12;
 
 		Console.WriteLine ("OK");
 		return 0;

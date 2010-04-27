@@ -78,23 +78,13 @@ eval-test:
 build-compiler-lib:
 	cd ../class/Mono.CSharp && $(MAKE) NO_DIR_CHECK=yes
 
-check: build-compiler-lib eval-test
+qcheck: build-compiler-lib eval-test
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS) $(DEFINES)
 
 test-local:
 	@:
 
 run-test-local: $(TEST_ILS:.il=.dll) setup check
-
-# Temporary testing targets
-cecil:
-	rm -f *.mdb
-	$(TESTER) -mode:pos -files:'test-*.cs' -compiler:gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log -verbose
-
-cecil2:
-	rm -f *.mdb
-	$(TESTER) -mode:pos -files:'*test-*.cs' -compiler:gmcs.exe -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log -verbose
-# End	
 
 endif
 
