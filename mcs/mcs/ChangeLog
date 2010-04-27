@@ -1,5 +1,11 @@
 2010-05-27  Marek Safar  <marek.safar@gmail.com>
 
+	* visit.cs: Add DOM visitor skeleton.
+	
+	* *.cs: Updated.
+
+2010-05-27  Marek Safar  <marek.safar@gmail.com>
+
 	* attribute.cs, codegen.cs: Drop COMPILER_ACCESS hack.
 	
 2010-05-27  Marek Safar  <marek.safar@gmail.com>

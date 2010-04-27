@@ -21,7 +21,7 @@ using System.Reflection.Emit;
 
 namespace Mono.CSharp {
 
-	class Yield : ResumableStatement {
+	public class Yield : ResumableStatement {
 		Expression expr;
 		bool unwind_protect;
 		Iterator iterator;

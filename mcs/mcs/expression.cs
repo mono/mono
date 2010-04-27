@@ -5706,7 +5706,7 @@ namespace Mono.CSharp {
 	///   initialization data and the other which does not need dimensions
 	///   specified but where initialization data is mandatory.
 	/// </remarks>
-	class ArrayCreation : Expression
+	public class ArrayCreation : Expression
 	{
 		FullNamedExpression requested_base_type;
 		ArrayInitializer initializers;
@@ -6692,7 +6692,7 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Represents the `__arglist (....)' construct
 	/// </summary>
-	class Arglist : Expression
+	public class Arglist : Expression
 	{
 		Arguments Arguments;
 

@@ -46,6 +46,7 @@ statement.cs
 support.cs
 typemanager.cs
 typespec.cs
+visit.cs
 symbolwriter.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolFile.cs
 ../class/Mono.CompilerServices.SymbolWriter/MonoSymbolTable.cs

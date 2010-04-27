@@ -1055,6 +1055,7 @@ namespace Mono.CSharp
 			int d = peek_char ();
 			if (d == '?') {
 				get_char ();
+				val = LocatedToken.Create (ref_line, col);
 				return Token.OP_COALESCING;
 			}
 

@@ -4124,7 +4124,7 @@ namespace Mono.CSharp {
 	// 
 	// Fixed statement
 	//
-	class Fixed : Statement {
+	public class Fixed : Statement {
 		Expression type;
 		List<KeyValuePair<LocalInfo, Expression>> declarators;
 		Statement statement;

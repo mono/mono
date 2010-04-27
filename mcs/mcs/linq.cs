@@ -20,7 +20,7 @@ namespace Mono.CSharp.Linq
 	//
 	//
 
-	class QueryExpression : AQueryClause
+	public class QueryExpression : AQueryClause
 	{
 		public QueryExpression (Block block, AQueryClause query)
 			: base (null, null, query.Location)
@@ -56,7 +56,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	abstract class AQueryClause : ShimExpression
+	public abstract class AQueryClause : ShimExpression
 	{
 		class QueryExpressionAccess : MemberAccess
 		{
@@ -230,7 +230,7 @@ namespace Mono.CSharp.Linq
 	//
 	// A query clause with an identifier (range variable)
 	//
-	abstract class ARangeVariableQueryClause : AQueryClause
+	public abstract class ARangeVariableQueryClause : AQueryClause
 	{
 		sealed class RangeAnonymousTypeParameter : AnonymousTypeParameter
 		{
@@ -319,7 +319,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class GroupBy : AQueryClause
+	public class GroupBy : AQueryClause
 	{
 		Expression element_selector;
 		ToplevelBlock element_block;
@@ -364,7 +364,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class Join : ARangeVariableQueryClause
+	public class Join : ARangeVariableQueryClause
 	{
 		readonly SimpleMemberName lt;
 		ToplevelBlock inner_selector, outer_selector;
@@ -429,7 +429,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class GroupJoin : Join
+	public class GroupJoin : Join
 	{
 		readonly SimpleMemberName into;
 
@@ -450,7 +450,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class Let : ARangeVariableQueryClause
+	public class Let : ARangeVariableQueryClause
 	{
 		public Let (ToplevelBlock block, TypeContainer container, SimpleMemberName identifier, Expression expr)
 			: base (block, CreateRangeVariableType (block, container, identifier, expr))
@@ -462,7 +462,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class Select : AQueryClause
+	public class Select : AQueryClause
 	{
 		public Select (ToplevelBlock block, Expression expr, Location loc)
 			: base (block, expr, loc)
@@ -488,7 +488,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class SelectMany : ARangeVariableQueryClause
+	public class SelectMany : ARangeVariableQueryClause
 	{
 		SimpleMemberName lt;
 
@@ -525,7 +525,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class Where : AQueryClause
+	public class Where : AQueryClause
 	{
 		public Where (ToplevelBlock block, BooleanExpression expr, Location loc)
 			: base (block, expr, loc)
@@ -537,7 +537,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class OrderByAscending : AQueryClause
+	public class OrderByAscending : AQueryClause
 	{
 		public OrderByAscending (ToplevelBlock block,Expression expr)
 			: base (block, expr, expr.Location)
@@ -549,7 +549,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class OrderByDescending : AQueryClause
+	public class OrderByDescending : AQueryClause
 	{
 		public OrderByDescending (ToplevelBlock block, Expression expr)
 			: base (block, expr, expr.Location)
@@ -561,7 +561,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class ThenByAscending : OrderByAscending
+	public class ThenByAscending : OrderByAscending
 	{
 		public ThenByAscending (ToplevelBlock block, Expression expr)
 			: base (block, expr)
@@ -573,7 +573,7 @@ namespace Mono.CSharp.Linq
 		}
 	}
 
-	class ThenByDescending : OrderByDescending
+	public class ThenByDescending : OrderByDescending
 	{
 		public ThenByDescending (ToplevelBlock block, Expression expr)
 			: base (block, expr)

@@ -1137,7 +1137,6 @@ namespace Mono.CSharp {
 				foreach (Attributable target in targets)
 					target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
 			} catch (Exception e) {
-				var w = e;
 				Error_AttributeEmitError (e.Message);
 				return;
 			}
