@@ -79,13 +79,6 @@ namespace Mono.CSharp {
 		}
 
 		static public string FileName;
-
-#if MS_COMPATIBLE
-		const AssemblyBuilderAccess COMPILER_ACCESS = 0;
-#else
-		/* Keep this in sync with System.Reflection.Emit.AssemblyBuilder */
-		const AssemblyBuilderAccess COMPILER_ACCESS = (AssemblyBuilderAccess) 0x800;
-#endif
 				
 		//
 		// Initializes the code generator variables for interactive use (repl)
@@ -95,12 +88,12 @@ namespace Mono.CSharp {
 			current_domain = AppDomain.CurrentDomain;
 			AssemblyName an = Assembly.GetAssemblyName (name, name);
 			
-			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run | COMPILER_ACCESS);
+			Assembly.Builder = current_domain.DefineDynamicAssembly (an, AssemblyBuilderAccess.Run);
 			RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 			RootContext.ToplevelTypes.Builder = Assembly.Builder.DefineDynamicModule (Basename (name), false);
 			Assembly.Name = Assembly.Builder.GetName ();
 		}
-		
+
 		//
 		// Initializes the code generator variables
 		//
@@ -131,7 +124,7 @@ namespace Mono.CSharp {
 
 			try {
 				Assembly.Builder = current_domain.DefineDynamicAssembly (an,
-					AssemblyBuilderAccess.RunAndSave | COMPILER_ACCESS, Dirname (name));
+					AssemblyBuilderAccess.RunAndSave, Dirname (name));
 			}
 			catch (ArgumentException) {
 				// specified key may not be exportable outside it's container
@@ -1192,7 +1185,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		static bool IsValidAssemblyVersion (string version)
+		static string IsValidAssemblyVersion (string version)
 		{
 			Version v;
 			try {
@@ -1202,16 +1195,16 @@ namespace Mono.CSharp {
 					int major = int.Parse (version, CultureInfo.InvariantCulture);
 					v = new Version (major, 0);
 				} catch {
-					return false;
+					return null;
 				}
 			}
 
 			foreach (int candidate in new int [] { v.Major, v.Minor, v.Build, v.Revision }) {
 				if (candidate > ushort.MaxValue)
-					return false;
+					return null;
 			}
 
-			return true;
+			return new Version (v.Major, System.Math.Max (0, v.Minor), System.Math.Max (0, v.Build), System.Math.Max (0, v.Revision)).ToString (4);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -1233,6 +1226,15 @@ namespace Mono.CSharp {
 					a.Error_AttributeEmitError ("The executables cannot be satelite assemblies, remove the attribute or keep it empty");
 					return;
 				}
+
+				try {
+					var fi = typeof (AssemblyBuilder).GetField ("culture", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+					fi.SetValue (CodeGen.Assembly.Builder, value == "neutral" ? "" : value);
+				} catch {
+					Report.RuntimeMissingSupport (a.Location, "AssemblyCultureAttribute setting");
+				}
+
+				return;
 			}
 
 			if (a.Type == pa.AssemblyVersion) {
@@ -1240,12 +1242,58 @@ namespace Mono.CSharp {
 				if (value == null || value.Length == 0)
 					return;
 
-				value = value.Replace ('*', '0');
-
-				if (!IsValidAssemblyVersion (value)) {
+				var vinfo = IsValidAssemblyVersion (value.Replace ('*', '0'));
+				if (vinfo == null) {
 					a.Error_AttributeEmitError (string.Format ("Specified version `{0}' is not valid", value));
 					return;
 				}
+
+				try {
+					var fi = typeof (AssemblyBuilder).GetField ("version", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+					fi.SetValue (CodeGen.Assembly.Builder, vinfo);
+				} catch {
+					Report.RuntimeMissingSupport (a.Location, "AssemblyVersionAttribute setting");
+				}
+
+				return;
+			}
+
+			if (a.Type == pa.AssemblyAlgorithmId) {
+				const int pos = 2; // skip CA header
+				uint alg = (uint) cdata [pos];
+				alg |= ((uint) cdata [pos + 1]) << 8;
+				alg |= ((uint) cdata [pos + 2]) << 16;
+				alg |= ((uint) cdata [pos + 3]) << 24;
+
+				try {
+					var fi = typeof (AssemblyBuilder).GetField ("algid", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+					fi.SetValue (CodeGen.Assembly.Builder, alg);
+				} catch {
+					Report.RuntimeMissingSupport (a.Location, "AssemblyAlgorithmIdAttribute setting");
+				}
+
+				return;
+			}
+
+			if (a.Type == pa.AssemblyFlags) {
+				const int pos = 2; // skip CA header
+				uint flags = (uint) cdata[pos];
+				flags |= ((uint) cdata[pos + 1]) << 8;
+				flags |= ((uint) cdata[pos + 2]) << 16;
+				flags |= ((uint) cdata[pos + 3]) << 24;
+
+				// Ignore set PublicKey flag if assembly is not strongnamed
+				if ((flags & (uint) AssemblyNameFlags.PublicKey) != 0 && (CodeGen.Assembly.Builder.GetName ().KeyPair == null))
+					flags &= ~(uint)AssemblyNameFlags.PublicKey;
+
+				try {
+					var fi = typeof (AssemblyBuilder).GetField ("flags", BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.SetField);
+					fi.SetValue (CodeGen.Assembly.Builder, flags);
+				} catch {
+					Report.RuntimeMissingSupport (a.Location, "AssemblyFlagsAttribute setting");
+				}
+
+				return;
 			}
 
 			if (a.Type == pa.InternalsVisibleTo && !CheckInternalsVisibleAttribute (a))

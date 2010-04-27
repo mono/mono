@@ -1137,6 +1137,7 @@ namespace Mono.CSharp {
 				foreach (Attributable target in targets)
 					target.ApplyAttributeBuilder (this, ctor, cdata, predefined);
 			} catch (Exception e) {
+				var w = e;
 				Error_AttributeEmitError (e.Message);
 				return;
 			}
@@ -1637,6 +1638,8 @@ namespace Mono.CSharp {
 		public readonly PredefinedAttribute Guid;
 		public readonly PredefinedAttribute AssemblyCulture;
 		public readonly PredefinedAttribute AssemblyVersion;
+		public readonly PredefinedAttribute AssemblyAlgorithmId;
+		public readonly PredefinedAttribute AssemblyFlags;
 		public readonly PredefinedAttribute ComImport;
 		public readonly PredefinedAttribute CoClass;
 		public readonly PredefinedAttribute AttributeUsage;
@@ -1688,6 +1691,8 @@ namespace Mono.CSharp {
 			Guid = new PredefinedAttribute ("System.Runtime.InteropServices", "GuidAttribute");
 			AssemblyCulture = new PredefinedAttribute ("System.Reflection", "AssemblyCultureAttribute");
 			AssemblyVersion = new PredefinedAttribute ("System.Reflection", "AssemblyVersionAttribute");
+			AssemblyAlgorithmId = new PredefinedAttribute ("System.Reflection", "AssemblyAlgorithmIdAttribute");
+			AssemblyFlags = new PredefinedAttribute ("System.Reflection", "AssemblyFlagsAttribute");
 			ComImport = new PredefinedAttribute ("System.Runtime.InteropServices", "ComImportAttribute");
 			CoClass = new PredefinedAttribute ("System.Runtime.InteropServices", "CoClassAttribute");
 			AttributeUsage = new PredefinedAttribute ("System", "AttributeUsageAttribute");
