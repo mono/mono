@@ -197,16 +197,17 @@ namespace Mono.CSharp {
 				if (interactive_base_class != null)
 					return interactive_base_class;
 
-				return interactive_base_class = Import.ImportType (typeof (InteractiveBase));
+				return Import.ImportType (typeof (InteractiveBase));
 			}
+		}
 
-			set {
-				if (value == null)
-					throw new ArgumentNullException ();
+		public static void SetInteractiveBaseClass (Type type)
+		{
+			if (type == null)
+				throw new ArgumentNullException ();
 
-				lock (evaluator_lock)
-					interactive_base_class = value;
-			}
+			lock (evaluator_lock)
+				interactive_base_class = Import.ImportType (type);
 		}
 
 		/// <summary>
