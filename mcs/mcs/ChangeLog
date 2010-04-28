@@ -1,5 +1,9 @@
 2010-04-28  Marek Safar  <marek.safar@gmail.com>
 
+	* import.cs: Intern arrays used in generic arguments.
+
+2010-04-28  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #600398
 	* convert.cs: Actually use effective base type for the comparison.
 

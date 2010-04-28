@@ -177,7 +177,20 @@ namespace Mono.CSharp
 		{
 			var tspec = new T [tparams.Length - first];
 			for (int pos = first; pos < tparams.Length; ++pos) {
-				tspec [pos - first] = (T) CreateType (tparams [pos]);
+				var type = tparams[pos];
+				if (type.HasElementType) {
+					var element = type.GetElementType ();
+					var spec = CreateType (element);
+
+					if (type.IsArray) {
+						tspec[pos - first] = (T) (TypeSpec) ArrayContainer.MakeType (spec, type.GetArrayRank ());
+						continue;
+					}
+
+					throw new NotImplementedException ("Unknown element type " + type.ToString ());
+				}
+
+				tspec [pos - first] = (T) CreateType (type);
 			}
 
 			return tspec;
