@@ -129,6 +129,7 @@ namespace Mono.CSharp {
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 				/*var ctypes = */TypeManager.InitCoreTypes ();
 				TypeManager.InitExpressionTypes ();
+				TypeManager.InitOptionalCoreTypes (ctx);
 
 				Import.Initialize ();
 				driver.LoadReferences ();
@@ -166,7 +167,7 @@ namespace Mono.CSharp {
 			//
 //			if (!TypeManager.InitCoreTypes (ctx, null))
 //				throw new Exception ("Failed to InitCoreTypes");
-			TypeManager.InitOptionalCoreTypes (ctx);
+//			TypeManager.InitOptionalCoreTypes (ctx);
 			
 			Location.AddFile (null, "{interactive}");
 			Location.Initialize ();
