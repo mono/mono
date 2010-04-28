@@ -17377,6 +17377,26 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-22.cs">
+    <type name="FieldInfoBug.MonoRuntime">
+      <method name="Int32 Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="FieldInfoBug.GenericClass`1[T]">
+      <method name="Void .ctor(String)">
+        <size>58</size>
+      </method>
+    </type>
+    <type name="FieldInfoBug.GenericClass`1+&lt;GenericClass&gt;c__AnonStorey0[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">
