@@ -28,47 +28,39 @@ using System.Net.Sockets;
 using System.Collections.Generic;
 
 using Mono.CSharp;
-#if !ON_DOTNET
-using Mono.Attach;
-#endif
 
 namespace Mono {
 
 	public class Driver {
 		
-#if ON_DOTNET
 		static int Main (string [] args)
 		{
-			return Startup (args);
-		}
-#else
-		static int Main (string [] args)
-		{
+#if !ON_DOTNET
 			if (args.Length > 0 && args [0] == "--attach") {
 				new ClientCSharpShell (Int32.Parse (args [1])).Run (null);
 				return 0;
-			} else if (args.Length > 0 && args [0].StartsWith ("--agent:")) {
+			}
+
+			if (args.Length > 0 && args [0].StartsWith ("--agent:")) {
 				new CSharpAgent (args [0]);
 				return 0;
-			} else {
-				return Startup(args);
 			}
-		}
 #endif
-		
-		static int Startup (string [] args)
-		{
-				string [] startup_files;
-				try {
-					startup_files = Evaluator.InitAndGetStartupFiles (args);
-					Evaluator.DescribeTypeExpressions = true;
-					Evaluator.InteractiveBaseClass = Import.ImportType (typeof (InteractiveBaseShell));
-				} catch {
-					return 1;
-				}
+			return Startup(args);
+		}
 
-				return new CSharpShell ().Run (startup_files);
+		static int Startup (string[] args)
+		{
+			string[] startup_files;
+			try {
+				startup_files = Evaluator.InitAndGetStartupFiles (args);
+				Evaluator.DescribeTypeExpressions = true;
+				Evaluator.InteractiveBaseClass = Import.ImportType (typeof (InteractiveBaseShell));
+			} catch {
+				return 1;
 			}
+
+			return new CSharpShell ().Run (startup_files);
 		}
 	}
 
@@ -459,7 +451,7 @@ namespace Mono {
 							  ((IPEndPoint)listener.Server.LocalEndPoint).Port,
 							  ((IPEndPoint)interrupt_listener.Server.LocalEndPoint).Port);
 	
-			VirtualMachine vm = new VirtualMachine (pid);
+			var vm = new Attach.VirtualMachine (pid);
 			vm.Attach (agent_assembly, agent_arg);
 	
 			/* Wait for the client to connect */
@@ -712,6 +704,7 @@ namespace Mono {
 			}
 		}
 	}
+#endif
 }
 	
 namespace Mono.Management
@@ -721,4 +714,3 @@ namespace Mono.Management
 	}
 }
 
-#endif
