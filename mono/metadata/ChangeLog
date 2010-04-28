@@ -1,3 +1,9 @@
+2010-04-29  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c, sgen-marksweep.c, sgen-major-copying.c: Have separate
+	blocks for objects without references in mark&sweep, to improve
+	performance.
+
 2010-04-28  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, sgen-marksweep.c, sgen-major-copying.c: Bring heavy
