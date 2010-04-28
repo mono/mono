@@ -84,7 +84,7 @@ qcheck: build-compiler-lib eval-test
 test-local:
 	@:
 
-run-test-local: $(TEST_ILS:.il=.dll) setup check
+run-test-local: $(TEST_ILS:.il=.dll) setup qcheck
 
 endif
 
