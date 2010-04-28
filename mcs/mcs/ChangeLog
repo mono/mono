@@ -1,5 +1,10 @@
 2010-04-28  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #600326
+	* ecore.cs: Pass arity to base member lookup.
+
+2010-04-28  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #573385
 	* expression.cs: MemberAccess is of generic type based on right
 	arity length only.

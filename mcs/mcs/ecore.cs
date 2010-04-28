@@ -3452,9 +3452,10 @@ namespace Mono.CSharp {
 
 		protected virtual IList<MemberSpec> GetBaseTypeMethods (ResolveContext rc, TypeSpec type)
 		{
+			var arity = type_arguments == null ? -1 : type_arguments.Count;
 			return TypeManager.MemberLookup (rc.CurrentType, null, type,
 				MemberKind.Method, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides,
-				Name, 0, null);	// TODO MemberCache: Arity !
+				Name, arity, null);
 		}
 
 		bool GetBaseTypeMethods (ResolveContext rc)
