@@ -162,7 +162,8 @@ net_3_5_dirs := \
 	Microsoft.Build.Engine		\
 	Microsoft.Build.Tasks		\
 	Moonlight.Build.Tasks		\
-	System.Web.Extensions.Design	
+	System.Web.Extensions.Design	\
+	System.Data.Services.Client
 
 net_4_0_dirs := \
 	System.Dynamic		\
