@@ -4277,7 +4277,6 @@ namespace Mono.CSharp {
 		public FieldExpr (FieldBase fi, Location l)
 			: this (fi.Spec, l)
 		{
-			loc = l;
 		}
 
 		public override string Name {
