@@ -66,6 +66,8 @@ namespace System.Web.Configuration
 		{
 			if (context == null)
 				context = HttpContext.Current;
+			if (context == null)
+				return null;
 			return context.GetConfig ("system.web/pages") as PagesConfiguration;
 		}
 	}

@@ -1,3 +1,10 @@
+2010-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* CheckBoxList.cs: do not modify list item status in LoadPostData
+	when the list control is disabled.
+	If an item is selected and it was unchecked by the user, deselect
+	it. Fixes bug #600415
+
 2010-04-13  Marek Habersack  <mhabersack@novell.com>
 
 	* GridView.cs: make sure Header and Footer visibility are set when

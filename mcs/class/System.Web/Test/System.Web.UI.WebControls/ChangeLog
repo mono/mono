@@ -1,3 +1,7 @@
+2010-04-28  Marek Habersack  <mhabersack@novell.com>
+
+	* CheckBoxListTest.cs: added test for bug #600415
+
 2010-04-13  Marek Habersack  <mhabersack@novell.com>
 
 	* CheckBoxFieldTest.cs: added test for bug #595568
