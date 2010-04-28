@@ -96,6 +96,7 @@
     <Compile Include="linq.cs" />
     <Compile Include="field.cs" />
     <Compile Include="typespec.cs" />
+    <Compile Include="visit.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Properties\" />
