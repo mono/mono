@@ -261,7 +261,7 @@ namespace Mono.CSharp
 					metaInfo = TypeBuilder.GetField (decl_meta, metaInfo);
 				} else {
 					var orig_token = metaInfo.MetadataToken;
-					metaInfo = decl_meta.GetField (Name);
+					metaInfo = decl_meta.GetField (Name, BindingFlags.Public | BindingFlags.NonPublic | BindingFlags.Instance | BindingFlags.Static);
 					if (metaInfo.MetadataToken != orig_token)
 						throw new NotImplementedException ("Resolved to wrong meta token");
 
