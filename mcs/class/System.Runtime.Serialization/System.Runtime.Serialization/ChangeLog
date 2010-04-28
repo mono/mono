@@ -1,3 +1,8 @@
+2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* KnownTypeCollection.cs : support DataContractNamespaceAttribute.
+	  Fixed bug #599889.
+
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DataContractExporter-new.cs : do not expect contract attribute on

@@ -1,3 +1,7 @@
+2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : add test for bug #599899.
+
 2010-03-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : test for empty array deserialization.

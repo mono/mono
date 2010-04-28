@@ -510,7 +510,7 @@ namespace System.Runtime.Serialization
 				}
 			}
 			if (ns == null)
-				ns = DefaultClrNamespaceBase + type.Namespace;
+				ns = GetDefaultNamespace (type);
 			return new QName (name, ns);
 		}
 
@@ -529,12 +529,20 @@ namespace System.Runtime.Serialization
 			}
 
 			if (ns == null)
-				ns = DefaultClrNamespaceBase + type.Namespace;
+				ns = GetDefaultNamespace (type);
 
 			if (name == null)
 				name = type.Namespace == null ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
 
 			return new QName (name, ns);
+		}
+
+		static string GetDefaultNamespace (Type type)
+		{
+			foreach (ContractNamespaceAttribute a in type.Assembly.GetCustomAttributes (typeof (ContractNamespaceAttribute), true))
+				if (a.ClrNamespace == type.Namespace)
+					return a.ContractNamespace;
+			return DefaultClrNamespaceBase + type.Namespace;
 		}
 
 		static QName GetCollectionQName (Type element)
@@ -559,7 +567,7 @@ namespace System.Runtime.Serialization
 				foreach (var t in type.GetGenericArguments ())
 					xmlName += GetStaticQName (t).Name; // FIXME: check namespaces too
 			}
-			string xmlNamespace = DefaultClrNamespaceBase + type.Namespace;
+			string xmlNamespace = GetDefaultNamespace (type);
 			var x = GetAttribute<XmlRootAttribute> (type);
 			if (x != null) {
 				xmlName = x.ElementName;
@@ -633,9 +641,9 @@ namespace System.Runtime.Serialization
 			return null;
 		}
 
-		internal static T GetAttribute<T> (MemberInfo mi) where T : Attribute
+		internal static T GetAttribute<T> (ICustomAttributeProvider ap) where T : Attribute
 		{
-			object [] atts = mi.GetCustomAttributes (typeof (T), false);
+			object [] atts = ap.GetCustomAttributes (typeof (T), false);
 			return atts.Length == 0 ? null : (T) atts [0];
 		}
 

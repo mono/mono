@@ -46,6 +46,8 @@ using NUnit.Framework;
 using System.Xml.Serialization;
 using System.Xml.Schema;
 
+[assembly: ContractNamespace ("http://www.u2u.be/samples/wcf/2009", ClrNamespace = "U2U.DataContracts")] // bug #599889
+
 namespace MonoTests.System.Runtime.Serialization
 {
 	[TestFixture]
@@ -1370,6 +1372,21 @@ namespace MonoTests.System.Runtime.Serialization
 			var ret = ds.ReadObject (xr);
 			Assert.AreEqual (typeof (string []), ret.GetType (), "#1");
 		}
+		
+		[Test]
+		public void ContractNamespaceAttribute ()
+		{
+			var ds = new DataContractSerializer (typeof (U2U.DataContracts.Person));
+			string xml = "<?xml version='1.0' encoding='utf-16'?><Person xmlns:i='http://www.w3.org/2001/XMLSchema-instance' xmlns='http://www.u2u.be/samples/wcf/2009'><Name>Rupert</Name><Occupation><Description>Monkey</Description></Occupation></Person>";
+			var person = new U2U.DataContracts.Person () {
+				Name = "Rupert",
+				Occupation = new U2U.DataContracts.Job () { Description = "Monkey" }
+				};
+			var sw = new StringWriter ();
+			using (var xw = XmlWriter.Create (sw))
+				ds.WriteObject (xw, person);
+			Assert.AreEqual (xml, sw.ToString ().Replace ('"', '\''), "#1");
+		}
 	}
 
 	[DataContract]
@@ -1749,5 +1766,26 @@ public class Person
 	public override string ToString()
 	{
 		return string.Format ("name={0},id={1}", name, Id);
+	}
+}
+
+// bug #599889
+namespace U2U.DataContracts
+{
+	[DataContract]
+	public class Person
+	{
+		[DataMember]
+		public string Name { get; set; }
+
+		[DataMember]
+		public Job Occupation { get; set; }
+	}
+
+	[DataContract]
+	public class Job
+	{
+		[DataMember]
+		public string Description { get; set; }
 	}
 }
