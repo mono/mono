@@ -1,3 +1,8 @@
+2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpChannelListener.cs, HttpListenerManager.cs :
+	  Fix NRE issue in olive/samples/wcf/web-http-binding/samplesvc3.exe.
+
 2010-04-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpListenerManager.cs : fixed the issue that mex_info is never

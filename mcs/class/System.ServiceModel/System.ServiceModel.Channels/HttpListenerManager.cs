@@ -268,7 +268,7 @@ namespace System.ServiceModel.Channels
 		{
 			this.Dispatcher = dispatcher;
 			this.channel_listener = channelListener;
-			mex_info = Dispatcher.Listener.GetProperty<MetadataPublishingInfo> ();
+			mex_info = Dispatcher != null ? Dispatcher.Listener.GetProperty<MetadataPublishingInfo> () : null;
 			wsdl_instance = mex_info != null ? mex_info.Instance : null;
 			Source = source;
 

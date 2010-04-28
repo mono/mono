@@ -94,7 +94,12 @@ namespace System.ServiceModel.Channels
 		}
 	}
 
-	internal abstract class HttpChannelListenerBase<TChannel> : InternalChannelListenerBase<TChannel>
+	internal interface IChannelDispatcherBoundListener
+	{
+		ChannelDispatcher ChannelDispatcher { get; set; }
+	}
+
+	internal abstract class HttpChannelListenerBase<TChannel> : InternalChannelListenerBase<TChannel>, IChannelDispatcherBoundListener
 		where TChannel : class, IChannel
 	{
 		List<TChannel> channels = new List<TChannel> ();
@@ -130,7 +135,7 @@ namespace System.ServiceModel.Channels
 				SecurityTokenManager = new ServiceCredentialsSecurityTokenManager ((ServiceCredentials) context.BindingParameters [typeof (ServiceCredentials)]);
 		}
 
-		internal ChannelDispatcher ChannelDispatcher { get; set; }
+		public ChannelDispatcher ChannelDispatcher { get; set; }
 
 		public HttpTransportBindingElement Source { get; private set; }
 

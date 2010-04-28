@@ -231,6 +231,9 @@ namespace System.ServiceModel.Dispatcher
 		protected internal override void Attach (ServiceHostBase host)
 		{
 			this.host = host;
+			var bl = listener as IChannelDispatcherBoundListener;
+			if (bl != null)
+				bl.ChannelDispatcher = this;
 		}
 
 		public override void CloseInput ()
