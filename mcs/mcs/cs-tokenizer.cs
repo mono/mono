@@ -154,6 +154,7 @@ namespace Mono.CSharp
 		int col = 0;
 		int previous_col;
 		int current_token;
+		int tab_size;
 		bool handle_get_set = false;
 		bool handle_remove_add = false;
 		bool handle_where = false;
@@ -252,6 +253,11 @@ namespace Mono.CSharp
 		public bool TypeOfParsing {
 			get { return handle_typeof; }
 			set { handle_typeof = value; }
+		}
+
+		public int TabSize {
+			get { return tab_size; }
+			set { tab_size = value; }
 		}
 		
 		public XmlCommentState doc_state {
@@ -745,6 +751,11 @@ namespace Mono.CSharp
 
 			xml_comment_buffer = new StringBuilder ();
 
+			if (Environment.OSVersion.Platform == PlatformID.Win32NT)
+				tab_size = 4;
+			else
+				tab_size = 8;
+
 			//
 			// FIXME: This could be `Location.Push' but we have to
 			// find out why the MS compiler allows this
@@ -1055,7 +1066,6 @@ namespace Mono.CSharp
 			int d = peek_char ();
 			if (d == '?') {
 				get_char ();
-				val = LocatedToken.Create (ref_line, col);
 				return Token.OP_COALESCING;
 			}
 
@@ -2572,7 +2582,7 @@ namespace Mono.CSharp
 			while ((c = get_char ()) != -1) {
 				switch (c) {
 				case '\t':
-					col = ((col + 8) / 8) * 8;
+					col = ((col + tab_size) / tab_size) * tab_size;
 					continue;
 
 				case ' ':

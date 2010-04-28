@@ -1,3 +1,7 @@
+2010-05-28  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs: Made tab size configurable.
+
 2010-05-27  Marek Safar  <marek.safar@gmail.com>
 
 	* attribute.cs: Ensure Obsolete members are defined before doing
