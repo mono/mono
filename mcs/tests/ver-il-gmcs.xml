@@ -12488,6 +12488,85 @@
       </method>
     </type>
   </test>
+  <test name="gtest-495.cs">
+    <type name="Repro">
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Repro+Outer">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Repro+Outer+Inner`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-496.cs">
+    <type name="Base">
+      <method name="T EndExecute[T](System.Object, System.String)">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Derived">
+      <method name="Derived EndExecute[TElement](System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="a">
+      <method name="Int32 Main()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-497.cs">
+    <type name="Item">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="ItemCollection`1[T]">
+      <method name="Void Bind[U](ItemCollection`1[U])">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="a">
+      <method name="Void Main()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-498.cs">
+    <type name="A">
+      <method name="Int32 Main()">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>15</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
