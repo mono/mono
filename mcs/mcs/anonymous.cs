@@ -162,7 +162,7 @@ namespace Mono.CSharp {
 			hoisted_this = new HoistedThis (this, f);
 
 			// Inflated type instance has to be updated manually
-			if (Instance.Type != f.Parent.CurrentType) {
+			if (Instance.Type is InflatedTypeSpec) {
 				var inflator = new TypeParameterInflator (Instance.Type, TypeParameterSpec.EmptyTypes, TypeSpec.EmptyTypes);
 				Instance.Type.MemberCache.AddMember (f.Spec.InflateMember (inflator));
 
@@ -614,7 +614,7 @@ namespace Mono.CSharp {
 				// When setting top-level hoisted variable in generic storey
 				// change storey generic types to method generic types (VAR -> MVAR)
 				//
-				if (storey.MemberName.IsGeneric) {
+				if (storey.Instance.Type.IsGenericOrParentIsGeneric) {
 					var fs = MemberCache.GetMember (storey.Instance.Type, field.Spec);
 					cached_outer_access = new FieldExpr (fs, field.Location);
 				} else {
