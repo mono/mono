@@ -1198,5 +1198,24 @@ namespace MonoTests.System.Xml
 			Assert.IsNotNull (doc.DocumentElement.GetAttributeNode ("hijacked"));
 			Assert.IsNull (doc.DocumentElement.GetAttributeNode ("a"));
 		}
+
+		[Test]
+		public void LoadFromMiddleOfDocument ()
+		{
+			// bug #598953
+			string xml = @"<?xml version='1.0' encoding='utf-8' ?>
+<Racal>
+  <Ports>
+    <ConsolePort value='9998' />
+  </Ports>
+</Racal>";
+			var r = new XmlTextReader (new StringReader (xml));
+			r.WhitespaceHandling = WhitespaceHandling.All;
+			r.MoveToContent ();
+			r.Read ();
+			var doc = new XmlDocument ();
+			doc.Load (r);
+			Assert.AreEqual (XmlNodeType.EndElement, r.NodeType, "#1");
+		}
 	}
 }

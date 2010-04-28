@@ -734,7 +734,7 @@ namespace System.Xml
 						break;
 					if (preserveWhitespace || n.NodeType != XmlNodeType.Whitespace)
 						AppendChild (n, false);
-				} while (true);
+				} while (xmlReader.NodeType != XmlNodeType.EndElement);
 #if NET_2_0
 				if (xmlReader.Settings != null)
 					schemas = xmlReader.Settings.Schemas;

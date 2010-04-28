@@ -1,3 +1,7 @@
+2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDocumentTests.cs : add test for bug #598953.
+
 2010-03-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlReaderCommonTests.cs : added test for ReadElementContentAs() for

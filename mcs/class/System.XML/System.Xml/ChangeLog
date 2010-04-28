@@ -1,3 +1,8 @@
+2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlDocument.cs : it seems .net does allow Load() with such an xml
+	  reader positioned in the middle of the document. Fixed bug #598953.
+
 2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReader.cs, DTDReader.cs : 0xFFFF was treated as if it were
