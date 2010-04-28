@@ -1,0 +1,26 @@
+﻿
+Microsoft Visual Studio Solution File, Format Version 10.00
+# Visual Studio 2008
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Services.Client", "Client\System.Data.Services.Client.csproj", "{D1567C63-4A0D-4E18-A14E-79699B9BFFFF}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "System.Data.Services.Client_SL", "Client_SL\System.Data.Services.Client_SL.csproj", "{289FE6B7-82AC-4D0F-92C7-386B7D6DC231}"
+EndProject
+Global
+	GlobalSection(SolutionConfigurationPlatforms) = preSolution
+		Debug|Any CPU = Debug|Any CPU
+		Release|Any CPU = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(ProjectConfigurationPlatforms) = postSolution
+		{D1567C63-4A0D-4E18-A14E-79699B9BFFFF}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{D1567C63-4A0D-4E18-A14E-79699B9BFFFF}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{D1567C63-4A0D-4E18-A14E-79699B9BFFFF}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{D1567C63-4A0D-4E18-A14E-79699B9BFFFF}.Release|Any CPU.Build.0 = Release|Any CPU
+		{289FE6B7-82AC-4D0F-92C7-386B7D6DC231}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{289FE6B7-82AC-4D0F-92C7-386B7D6DC231}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{289FE6B7-82AC-4D0F-92C7-386B7D6DC231}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{289FE6B7-82AC-4D0F-92C7-386B7D6DC231}.Release|Any CPU.Build.0 = Release|Any CPU
+	EndGlobalSection
+	GlobalSection(SolutionProperties) = preSolution
+		HideSolutionNode = FALSE
+	EndGlobalSection
+EndGlobal

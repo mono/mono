@@ -1,0 +1,205 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <ProductVersion>9.0.30729</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{D1567C63-4A0D-4E18-A14E-79699B9BFFFF}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>System.Data.Services.Client</RootNamespace>
+    <AssemblyName>System.Data.Services.Client</AssemblyName>
+    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
+    <FileAlignment>512</FileAlignment>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>TRACE;DEBUG;TEXTRES_ONLYGETSTRING;ASTORIA_CLIENT;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE;TEXTRES_ONLYGETSTRING;ASTORIA_CLIENT;</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <TextStringResource Include="System.Data.Services.Client.txt">
+      <ResFile>System.Data.Services.Client</ResFile>
+      <Sealed>true</Sealed>
+      <Parameterize>true</Parameterize>
+      <Visibility>internal</Visibility>
+      <GenerateResource>true</GenerateResource>
+      <FullClassName>System.Data.Services.Client.TextRes</FullClassName>
+    </TextStringResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="System" />
+    <Reference Include="System.Core">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Xml.Linq">
+      <RequiredTargetFramework>3.5</RequiredTargetFramework>
+    </Reference>
+    <Reference Include="System.Data" />
+    <Reference Include="System.Xml" />
+    <Reference Include="WindowsBase">
+      <RequiredTargetFramework>3.0</RequiredTargetFramework>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="..\Server\System\Data\Services\Epm\EpmContentSerializerBase.cs">
+      <Link>System\Data\Services\EpmContentSerializerBase.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\Epm\EpmCustomContentSerializer.cs">
+      <Link>System\Data\Services\EpmCustomContentSerializer.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\Epm\EpmCustomContentWriterNodeData.cs">
+      <Link>System\Data\Services\EpmCustomContentWriterNodeData.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\Epm\EpmSourcePathSegment.cs">
+      <Link>System\Data\Services\EpmSourcePathSegment.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\Epm\EpmSourceTree.cs">
+      <Link>System\Data\Services\EpmSourceTree.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\Epm\EpmTargetPathSegment.cs">
+      <Link>System\Data\Services\EpmTargetPathSegment.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\Epm\EpmTargetTree.cs">
+      <Link>System\Data\Services\EpmTargetTree.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\HttpProcessUtility.cs">
+      <Link>System\Data\Services\HttpProcessUtility.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\Parsing\WebConvert.cs">
+      <Link>System\Data\Services\WebConvert.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\Providers\EntityPropertyMappingInfo.cs">
+      <Link>System\Data\Services\EntityPropertyMappingInfo.cs</Link>
+    </Compile>
+    <Compile Include="..\Server\System\Data\Services\XmlConstants.cs">
+      <Link>System\Data\Services\XmlConstants.cs</Link>
+    </Compile>
+    <Compile Include="AssemblyAttributes.cs" />
+    <Compile Include="Parameterized.System.Data.Services.Client.cs" />
+    <Compile Include="System.Data.Services.Client.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\DataServiceExpressionVisitor.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\DataServiceQueryProvider.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\Evaluator.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ExpressionNormalizer.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ExpressionVisitor.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ExpressionWriter.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\FilterQueryOptionExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\InputBinder.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\InputReferenceExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\NavigationPropertySingletonExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\OrderByQueryOptionExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ParameterReplacerVisitor.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\PathBox.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ProjectionAnalyzer.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ProjectionQueryOptionExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ProjectionRewriter.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\QueryComponents.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\QueryOptionExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ReflectionUtil.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ResourceBinder.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ResourceExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ResourceExpressionType.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\ResourceSetExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\SkipQueryOptionExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\TakeQueryOptionExpression.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\TypeSystem.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\UriHelper.cs" />
+    <Compile Include="System\Data\Services\Client\ALinq\UriWriter.cs" />
+    <Compile Include="System\Data\Services\Client\ArraySet.cs" />
+    <Compile Include="System\Data\Services\Client\AtomContentProperty.cs" />
+    <Compile Include="System\Data\Services\Client\AtomDataKind.cs" />
+    <Compile Include="System\Data\Services\Client\AtomEntry.cs" />
+    <Compile Include="System\Data\Services\Client\AtomFeed.cs" />
+    <Compile Include="System\Data\Services\Client\AtomMaterializer.cs" />
+    <Compile Include="System\Data\Services\Client\AtomMaterializerLog.cs" />
+    <Compile Include="System\Data\Services\Client\AtomParser.cs" />
+    <Compile Include="System\Data\Services\Client\BaseAsyncResult.cs" />
+    <Compile Include="System\Data\Services\Client\BatchStream.cs" />
+    <Compile Include="System\Data\Services\Client\BatchStreamState.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\BindingEntityInfo.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\BindingGraph.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\BindingObserver.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\BindingUtils.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\DataServiceCollectionOfT.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\DataServiceEntityAttribute.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\DataServiceSaveChangesEventArgs.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\EntityChangedParams.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\EntityCollectionChangedParams.cs" />
+    <Compile Include="System\Data\Services\Client\Binding\LoadCompletedEventArgs.cs" />
+    <Compile Include="System\Data\Services\Client\ChangesetResponse.cs" />
+    <Compile Include="System\Data\Services\Client\ClientConvert.cs" />
+    <Compile Include="System\Data\Services\Client\ClientType.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceClientException.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceContext.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceEntityAttribute.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceKeyAttribute.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceProtocolVersion.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceQuery.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceQueryContinuation.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceQueryException.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceQueryOfT.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceRequest.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceRequestArgs.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceRequestException.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceRequestOfT.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceResponse.cs" />
+    <Compile Include="System\Data\Services\Client\DataServiceStreamResponse.cs" />
+    <Compile Include="System\Data\Services\Client\Descriptor.cs" />
+    <Compile Include="System\Data\Services\Client\EntityDescriptor.cs" />
+    <Compile Include="System\Data\Services\Client\EntityPropertyMappingAttribute.cs" />
+    <Compile Include="System\Data\Services\Client\EntityStates.cs" />
+    <Compile Include="System\Data\Services\Client\Epm\EpmSyndicationContentSerializer.cs" />
+    <Compile Include="System\Data\Services\Client\Error.cs" />
+    <Compile Include="System\Data\Services\Client\GetReadStreamResult.cs" />
+    <Compile Include="System\Data\Services\Client\HasStreamAttribute.cs" />
+    <Compile Include="System\Data\Services\Client\LinkDescriptor.cs" />
+    <Compile Include="System\Data\Services\Client\MaterializeFromAtom.cs" />
+    <Compile Include="System\Data\Services\Client\MediaEntryAttribute.cs" />
+    <Compile Include="System\Data\Services\Client\MemberAssignmentAnalysis.cs" />
+    <Compile Include="System\Data\Services\Client\MergeOption.cs" />
+    <Compile Include="System\Data\Services\Client\MimeTypePropertyAttribute.cs" />
+    <Compile Include="System\Data\Services\Client\OpenObject.cs" />
+    <Compile Include="System\Data\Services\Client\OpenObjectAttribute.cs" />
+    <Compile Include="System\Data\Services\Client\OperationResponse.cs" />
+    <Compile Include="System\Data\Services\Client\ProjectionPath.cs" />
+    <Compile Include="System\Data\Services\Client\ProjectionPathBuilder.cs" />
+    <Compile Include="System\Data\Services\Client\ProjectionPathSegment.cs" />
+    <Compile Include="System\Data\Services\Client\ProjectionPlan.cs" />
+    <Compile Include="System\Data\Services\Client\ProjectionPlanCompiler.cs" />
+    <Compile Include="System\Data\Services\Client\QueryOperationResponseOfT.cs" />
+    <Compile Include="System\Data\Services\Client\QueryResponse.cs" />
+    <Compile Include="System\Data\Services\Client\QueryResult.cs" />
+    <Compile Include="System\Data\Services\Client\ReadingWritingEntityEventArgs.cs" />
+    <Compile Include="System\Data\Services\Client\ReferenceEqualityComparer.cs" />
+    <Compile Include="System\Data\Services\Client\SaveChangesOptions.cs" />
+    <Compile Include="System\Data\Services\Client\SendingRequestEventArgs.cs" />
+    <Compile Include="System\Data\Services\Client\Util.cs" />
+    <Compile Include="System\Data\Services\Client\WebUtil.cs" />
+    <Compile Include="System\Data\Services\Client\XmlUtil.cs" />
+    <Compile Include="System\Data\Services\Client\Xml\XmlAtomErrorReader.cs" />
+    <Compile Include="System\Data\Services\Client\Xml\XmlWrappingReader.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Properties\" />
+  </ItemGroup>
+  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+</Project>

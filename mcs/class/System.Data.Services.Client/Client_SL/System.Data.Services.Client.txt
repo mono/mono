@@ -1,0 +1,248 @@
+; Copyright 2010 Microsoft Corporation
+; 
+; Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License. 
+; You may obtain a copy of the License at 
+; 
+; http://www.apache.org/licenses/LICENSE-2.0 
+;
+; Unless required by applicable law or agreed to in writing, software distributed under the License is distributed on an 
+; "AS IS" BASIS, WITHOUT WARRANTIES OR CONDITIONS OF ANY KIND, either express or implied. 
+; See the License for the specific language governing permissions and limitations under the License.
+
+
+; NOTE: see AS/URT bug 15116
+; NOTE: don't use \", use ' instead
+; NOTE: don't use #, use ; instead for comments
+; NOTE: leave the [strings] alone
+
+; See ResourceManager documentation and the ResGen tool.
+
+;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;;
+; Error Messages
+
+BatchStream_MissingBoundary=Missing or repeated the required content-type boundary parameter.
+BatchStream_ContentExpected=Content was expected for the {0} operation.
+BatchStream_ContentUnexpected=Content is unexpected for the {0} operation.
+BatchStream_GetMethodNotSupportedInChangeset=GET operation cannot be specified in a change set. Only PUT, POST and DELETE operations can be specified in a change set.
+BatchStream_InvalidBatchFormat=Error processing batch response. The response is not a valid batch response.
+BatchStream_InvalidDelimiter=The boundary delimiter '{0}' is not valid. Please specify a valid boundary delimiter or make sure that the content length specified is correct.
+BatchStream_MissingEndChangesetDelimiter=Missing change set boundary delimiter. Please make sure that change set boundary delimiter is specified to mark the end of a change set.
+BatchStream_InvalidHeaderValueSpecified=The header value '{0}' is not valid. The header value must be of the format '<header name>: <header value>'.
+BatchStream_InvalidContentLengthSpecified=The content length '{0}' is not valid. The content length must be a valid Int32 literal and must be greater than 0.
+BatchStream_OnlyGETOperationsCanBeSpecifiedInBatch=Only GET operations can be specified in a batch. POST, PUT and DELETE operations must be specified within a change set.
+BatchStream_InvalidOperationHeaderSpecified=Header containing the HTTP method name, request url and version can only be specified for GET operations in a batch or POST, PUT, DELETE operations in a change set.
+BatchStream_InvalidHttpMethodName='{0}' is not a supported HTTP method name. Please specify a supported HTTP method name.
+BatchStream_MoreDataAfterEndOfBatch=No data should be specified after the batch delimiter.
+BatchStream_InternalBufferRequestTooSmall=Error processing batch response. An internal read request was too small.
+BatchStream_InvalidMethodHeaderSpecified=Error processing batch response. The following header is not valid '{0}'. The first header at the start of the each operation must be of the following format: 'HttpMethod RequestUrl HttpVersion'.
+BatchStream_InvalidHttpVersionSpecified=Error processing batch response. The HTTP version '{0}' is not valid. The value must be '{1}'.
+BatchStream_InvalidNumberOfHeadersAtOperationStart=Error processing batch response. At the start of every operation, exactly two headers need to be specified: '{0}' and '{1}'. Make sure these headers are present and have the correct values.
+BatchStream_MissingOrInvalidContentEncodingHeader=Error processing batch response. At the start of every operation, '{0}' header must be specified and its value must be '{1}'.
+BatchStream_InvalidNumberOfHeadersAtChangeSetStart=Error processing batch response. At the start of each change set, only two headers can be specified - '{0}' and '{1}'. Custom headers are allowed only within each operation, along with the standard HTTP headers.
+BatchStream_MissingContentTypeHeader=Error processing batch response. Missing '{0}' header. This header must be specified at the start of each operation and change set.
+BatchStream_InvalidContentTypeSpecified=Error processing batch response. The '{0}' header value '{1}' is not valid. If this is the start of the change set, then the value must be '{2}', otherwise it must be '{3}'.
+
+Batch_ExpectedContentType=The expected content type for a batch requests is "multipart/mixed;boundary=batch" not "{0}".
+Batch_ExpectedResponse=The POST request expected a response with content. ID={0}
+Batch_IncompleteResponseCount=Not all requests in the batch had a response.
+Batch_UnexpectedContent=The web response contained unexpected sections. ID={0}
+
+Context_BaseUri=Expected an absolute, well formed http URL without a query or fragment.
+Context_CannotConvertKey=Unable to convert value '{0}' into a key string for a URI.
+Context_TrackingExpectsAbsoluteUri=The ATOM payload is required to specify an absolute URI as the Id.
+Context_LinkResourceInsertFailure=One of the link's resources failed to insert.
+Context_InternalError=System.Data.Services.Client internal error {0}.
+Context_BatchExecuteError=An error occurred for this query during batch execution.  See the inner exception for details.
+Context_EntitySetName=Expected a relative URL path without query or fragment.
+Context_MissingEditLinkInResponseBody=Error processing response stream. Missing href attribute in the edit link element in the response.
+Context_MissingSelfLinkInResponseBody=Error processing response stream. Missing href attribute in the self link element in the response.
+Context_MissingEditMediaLinkInResponseBody=Error processing response stream. Missing href attribute in the edit-Media link element in the response.
+
+Content_EntityWithoutKey=This operation requires the entity be of an Entity Type, and has at least one key property.
+Content_EntityIsNotEntityType=This operation requires the entity to be of an Entity Type, either mark its key properties, or attribute the class with DataServiceEntityAttribute
+Context_EntityNotContained=The context is not currently tracking the entity.
+Context_EntityAlreadyContained=The context is already tracking the entity.
+Context_DifferentEntityAlreadyContained=The context is already tracking a different entity with the same resource Uri.
+Context_DidNotOriginateAsync=The current object did not originate the async result.
+Context_AsyncAlreadyDone=The asynchronous result has already been completed.
+Context_OperationCanceled=The operation has been canceled.
+
+Context_NoLoadWithInsertEnd=The context can not load the related collection or reference for objects in the added state.
+Context_NoRelationWithInsertEnd=One or both of the ends of the relationship is in the added state.
+Context_NoRelationWithDeleteEnd=One or both of the ends of the relationship is in the deleted state.
+Context_RelationAlreadyContained=The context is already tracking the relationship.
+Context_RelationNotRefOrCollection=The sourceProperty is not a reference or collection of the target's object type.
+Context_AddLinkCollectionOnly=AddLink and DeleteLink methods only work when the sourceProperty is a collection.
+Context_AddRelatedObjectCollectionOnly=AddRelatedObject method only works when the sourceProperty is a collection.
+Context_AddRelatedObjectSourceDeleted=AddRelatedObject method only works if the source entity is in a non-deleted state.
+Context_SetLinkReferenceOnly=SetLink method only works when the sourceProperty is not a collection.
+
+Context_NoContentTypeForMediaLink=Media link object of type '{0}' is configured to use the MIME type specified in the property '{1}'. However, that property's value is null or empty.
+Context_BatchNotSupportedForMediaLink=Saving entities with the [MediaEntry] attribute is not currently supported in batch mode. Use non-batched mode instead.
+Context_UnexpectedZeroRawRead=Unexpected result (<= 0) from stream.Read() while reading raw data for this property.
+Context_VersionNotSupported=Response version '{0}' is not supported. The highest version supported is '{1}'.
+
+Context_ChildResourceExists=Attempt to delete a link between two objects failed because the identity of the target object of the link depends on the source object of the link.
+
+Context_EntityNotMediaLinkEntry=This operation requires the specified entity to represent a Media Link Entry.
+Context_MLEWithoutSaveStream=The entity type {0} is marked with MediaEntry attribute but no save stream was set for the entity.
+Context_SetSaveStreamOnMediaEntryProperty=Can't use SetSaveStream on entity with type {0} which has a media entry property defined.
+Context_SetSaveStreamWithoutEditMediaLink=The binary property on the entity cannot be modified as a stream because the corresponding entry in the response does not have an edit-media link. Ensure that the entity has a binary property that is accessible as a stream in the data model.
+
+Collection_NullCollectionReference={0}.{1} must return a non-null open property collection.
+
+ClientType_MissingOpenProperty=The open object property '{0}:{1}' is not defined.
+Clienttype_MultipleOpenProperty={0} has multiple definitions for OpenObjectAttribute.
+ClientType_MissingProperty=The closed type {0} does not have a corresponding {1} settable property.
+ClientType_KeysMustBeSimpleTypes={0} has key properties declared on a non-simple type.
+ClientType_KeysOnDifferentDeclaredType={0} has key properties declared at different levels within its type hierarchy.
+ClientType_MissingMimeTypeProperty=Property '{0}' has a MimeTypeAttribute indicating that '{1}' contains its mime type. However, this type does not have a property '{1}'.
+ClientType_MissingMediaEntryProperty=The MediaLink attribute in this type points to a property called '{0}', but the type has not property with that name.
+ClientType_NoSettableFields=The type '{0}' has no settable properties.
+ClientType_MultipleImplementationNotSupported=Multiple implementations of ICollection<T> is not supported.
+ClientType_NullOpenProperties=The open type property '{0}' returned a null instance.
+ClientType_CollectionOfNonEntities=Only collections of entities are supported.
+ClientType_Ambiguous=Resolving type from '{0}' that inherits from '{1}' is ambiguous.
+
+DataServiceException_GeneralError=An error occurred while processing this request.
+
+Deserialize_GetEnumerator=Only a single enumeration is supported by this IEnumerable.
+Deserialize_Current=The current value '{1}' type is not compatible with the expected '{0}' type.
+Deserialize_MixedTextWithComment=Error processing response stream. Element value interspersed with a comment is not supported.
+Deserialize_ExpectingSimpleValue=Error processing response stream. The XML element contains mixed content.
+Deserialize_NotApplicationXml=Error processing response stream.  The expected content of "application/xml" not found.
+Deserialize_MismatchAtomLinkLocalSimple=Error processing response stream. Atom payload has a link, local object has a simple value.
+Deserialize_MismatchAtomLinkFeedPropertyNotCollection=Error processing response stream. Atom payload has a feed and the property '{0}' is not a collection.
+Deserialize_MismatchAtomLinkEntryPropertyIsCollection=Error processing response stream. Atom payload has an entry and the property '{0}' is a collection.
+Deserialize_UnknownMimeTypeSpecified=Error processing response's mime-type type '{0}'.  The only supported mime-type is 'application/atom+xml'.
+Deserialize_ExpectedEmptyMediaLinkEntryContent=Error processing response stream. The ATOM content element is expected to be empty if it has a source attribute.
+Deserialize_ContentPlusPropertiesNotAllowed=Error processing response stream. An ATOM entry should either be a regular entry (with data in the 'content' element) or a media link entry (with an empty 'content' element and data in the 'properties' element), it cannot have data in both 'content' and 'properties' elements.
+Deserialize_NoLocationHeader=The response to this POST request did not contain a 'location' header. That is not supported by this client.
+Deserialize_ServerException=Error processing response stream. Server failed with following message:\r\n{0}
+Deserialize_MissingIdElement=Error processing response stream. Missing id element in the response.
+
+EpmClientType_PropertyIsComplex=The property '{0}' specified in source path for EntityPropertyMappingAttribute is of non-primitive type while it is provided as the last segment in the path.
+EpmClientType_PropertyIsPrimitive=The property '{0}' specified in source path for EntityPropertyMappingAttribute is of primitive type while it is not provided as the last segment in the path.
+EpmSourceTree_InvalidSourcePath=The PropertyName property value '{1}' of EntityPropertyMappingAttribute on type '{0}' is not valid.
+EpmSourceTree_DuplicateEpmAttrsWithSameSourceName=The PropertyName property value '{0}' on more than one EntityPropertyMappingAttribute on resource type '{1}' is provided more than once.
+EpmSourceTree_InaccessiblePropertyOnType=The property '{0}' on type '{1}' is not present or is inaccessible.
+EpmTargetTree_InvalidTargetPath=The TargetName property path '{0}' of EntityPropertyMappingAttribute is not valid.
+EpmTargetTree_AttributeInMiddle=The attribute identifier '{0}' is provided in the middle of the TargetName property of EntityPropertyMappingAttribute.
+EpmTargetTree_DuplicateEpmAttrsWithSameTargetName=The TargetName property '{0}' on more than one EntityPropertyMappingAttribute on resource type '{1}' have the same value. Conflicting properties are '{2}' and '{3}'.
+EntityPropertyMapping_EpmAttribute=The '{0}' value provided for the EntityPropertyMappingAttribute is not valid.
+EntityPropertyMapping_TargetNamespaceUriNotValid=The targetNamespaceUri value '{0}' provided for the EntityPropertyMappingAttribute does not have a valid URI format.
+
+HttpProcessUtility_ContentTypeMissing=Content-Type header value missing.
+HttpProcessUtility_MediaTypeMissingValue=Media type is missing a parameter value.
+HttpProcessUtility_MediaTypeRequiresSemicolonBeforeParameter=Media type requires a ';' character before a parameter definition.
+HttpProcessUtility_MediaTypeRequiresSlash=Media type requires a '/' character.
+HttpProcessUtility_MediaTypeRequiresSubType=Media type requires a subtype definition.
+HttpProcessUtility_MediaTypeUnspecified=Media type is unspecified.
+HttpProcessUtility_EncodingNotSupported=Character set '{0}' is not supported.
+HttpProcessUtility_EscapeCharWithoutQuotes=Value for MIME type parameter '{0}' is incorrect because it contained escape characters even though it was not quoted.
+HttpProcessUtility_EscapeCharAtEnd=Value for MIME type parameter '{0}' is incorrect because it terminated with escape character. Escape characters must always be followed by a character in a parameter value.
+HttpProcessUtility_ClosingQuoteNotFound=Value for MIME type parameter '{0}' is incorrect because the closing quote character could not be found while the parameter value started with a quote character.
+
+MaterializeFromAtom_CountNotPresent=Count value is not part of the response stream.
+MaterializeFromAtom_CountFormatError=application/atom+xml payload not correct formatted for <count>.  Expecting positive integer value.
+MaterializeFromAtom_TopLevelLinkNotAvailable=The top level link is only available after the response has been enumerated.
+MaterializeFromAtom_CollectionKeyNotPresentInLinkTable=The collection is not part of the current entry
+MaterializeFromAtom_GetNestLinkForFlatCollection=This response does not contain any nested collections. Use null as Key instead.
+
+Serializer_NullKeysAreNotSupported=The serialized resource has a null value in key member '{0}'. Null values are not supported in key members.
+
+Util_EmptyString=Empty string.
+Util_EmptyArray=Empty array.
+Util_NullArrayElement=Array contains a null element.
+
+ALinq_UnsupportedExpression=The expression type {0} is not supported.
+ALinq_CouldNotConvert=Could not convert constant {0} expression to string.
+ALinq_MethodNotSupported=The method '{0}' is not supported.
+ALinq_UnaryNotSupported=The unary operator '{0}' is not supported.
+ALinq_BinaryNotSupported=The binary operator '{0}' is not supported.
+ALinq_ConstantNotSupported=The constant for '{0}' is not supported.
+ALinq_TypeBinaryNotSupported=An operation between an expression and a type is not supported.
+ALinq_ConditionalNotSupported=The conditional expression is not supported.
+ALinq_ParameterNotSupported=The parameter expression is not supported.
+ALinq_MemberAccessNotSupported=The member access of '{0}' is not supported.
+ALinq_LambdaNotSupported=Lambda Expressions not supported.
+ALinq_NewNotSupported=New Expressions not supported.
+ALinq_MemberInitNotSupported=Member Init Expressions not supported.
+ALinq_ListInitNotSupported=List Init Expressions not supported.
+ALinq_NewArrayNotSupported=New Array Expressions not supported.
+ALinq_InvocationNotSupported=Invocation Expressions not supported.
+ALinq_QueryOptionsOnlyAllowedOnLeafNodes=Can only specify query options (orderby, where, take, skip) after last navigation.
+ALinq_CantExpand=Expand query option not allowed.
+ALinq_CantCastToUnsupportedPrimitive=Can't cast to unsupported type '{0}'
+ALinq_CantNavigateWithoutKeyPredicate=Navigation properties can only be selected from a single resource. Specify a key predicate to restrict the entity set to a single instance.
+ALinq_CanOnlyApplyOneKeyPredicate=Multiple key predicates cannot be specified for the same entity set.
+ALinq_CantTranslateExpression=The expression {0} is not supported.
+ALinq_TranslationError=Error translating Linq expression to URI: {0}
+ALinq_CantAddQueryOption=Custom query option not allowed.
+ALinq_CantAddDuplicateQueryOption=Can't add duplicate query option '{0}'.
+ALinq_CantAddAstoriaQueryOption=Can't add query option '{0}' because it would conflict with the query options from the translated Linq expression.
+ALinq_CantAddQueryOptionStartingWithDollarSign=Can't add query option '{0}' because it begins with reserved character '$'.
+ALinq_CantReferToPublicField=Referencing public field '{0}' not supported in query option expression.  Use public property instead.
+ALinq_QueryOptionsOnlyAllowedOnSingletons=Cannot specify query options (orderby, where, take, skip) on single resource.
+ALinq_QueryOptionOutOfOrder=The {0} query option cannot be specified after the {1} query option.
+ALinq_CannotAddCountOption=Cannot add count option to the resource set.
+ALinq_CannotAddCountOptionConflict=Cannot add count option to the resource set because it would conflict with existing count options.
+ALinq_ProjectionOnlyAllowedOnLeafNodes=Can only specify 'select' query option after last navigation.
+ALinq_ProjectionCanOnlyHaveOneProjection=Cannot translate multiple Linq Select operations in a single 'select' query option.
+ALinq_ProjectionMemberAssignmentMismatch=Cannot initialize an instance of entity type '{0}' because '{1}' and '{2}' do not refer to the same source entity.
+ALinq_ExpressionNotSupportedInProjectionToEntity=Initializing instances of the entity type {0} with the expression {1} is not supported.
+ALinq_ExpressionNotSupportedInProjection=Constructing or initializing instances of the type {0} with the expression {1} is not supported.
+ALinq_CannotConstructKnownEntityTypes=Construction of entity type instances must use object initializer with default constructor.
+ALinq_CannotCreateConstantEntity=Referencing of local entity type instances not supported when projecting results.
+ALinq_PropertyNamesMustMatchInProjections=Cannot assign the value from the {0} property to the {1} property.  When projecting results into a entity type, the property names of the source type and the target type must match for the properties being projected.
+ALinq_CanOnlyProjectTheLeaf=Can only project the last entity type in the query being translated.
+ALinq_CannotProjectWithExplicitExpansion=Cannot create projection while there is an explicit expansion specified on the same query.
+
+DSKAttribute_MustSpecifyAtleastOnePropertyName=DataServiceKey attribute must specify at least one property name.
+
+; Silverlight HTTP errors
+HttpWeb_Internal=Internal error at '{0}'.
+HttpWeb_InternalArgument=Internal error at '{0}' for argument '{1}'.
+HttpWebRequest_Aborted=This web request was aborted.
+
+DataServiceCollection_LoadRequiresTargetCollectionObserved=Target collection for the Load operation must have an associated DataServiceContext.
+DataServiceCollection_CannotStopTrackingChildCollection=The tracking of DataServiceCollection can not be stopped for child collections.
+DataServiceCollection_DataServiceQueryCanNotBeEnumerated=Parameters of type DataServiceQuery<T> can not be used as the input enumerators for DataServiceCollection. Try using result of DataServiceQuery<T>.EndExecute instead.
+DataServiceCollection_OperationForTrackedOnly=This operation is only supported on collections that are being tracked.
+DataServiceCollection_CannotDetermineContextFromItems=The DataServiceContext to which the DataServiceCollection instance belongs could not be determined. The DataServiceContext must either be supplied in the DataServiceCollection constructor or be used to create the DataServiceQuery or QueryOperationResponse object that is the source of the items in the DataServiceCollection.
+DataServiceCollection_InsertIntoTrackedButNotLoadedCollection=An item could not be added to the collection. When items in a DataServiceCollection are tracked by the DataServiceContext, new items cannot be added before items have been loaded into the collection.
+DataServiceCollection_MultipleLoadAsyncOperationsAtTheSameTime=A previous LoadAsync operation has not yet completed. You cannot call the LoadAsync method on the DataServiceCollection again until the previous operation has completed.
+DataServiceCollection_LoadAsyncNoParamsWithoutParentEntity=The LoadAsync method cannot be called when the DataServiceCollection is not a child collection of a related entity.
+DataServiceCollection_LoadAsyncRequiresDataServiceQuery=Only a typed DataServiceQuery object can be supplied when calling the LoadAsync method on DataServiceCollection.
+
+DataBinding_DataServiceCollectionArgumentMustHaveEntityType=The DataServiceCollection to be tracked must contain entity typed elements with at least one key property. The element type '{0}' does not have any key property.
+DataBinding_CollectionPropertySetterValueHasObserver=Setting an instance of DataServiceCollection to an entity property is disallowed if the instance is already being tracked. Error occurred on property '{0}' for entity type '{1}'.
+DataBinding_CollectionChangedUnknownAction=Unexpected action '{0}' on the OnCollectionChanged event raised by DataServiceCollection.
+DataBinding_BindingOperation_DetachedSource=Add/Update/Delete operation cannot be performed on a child entity, if the parent entity is already detached.
+DataBinding_BindingOperation_ArrayItemNull=Null values are disallowed during '{0}' operations on DataServiceCollection.
+DataBinding_BindingOperation_ArrayItemNotEntity=A value provided during '{0}' operation on DataServiceCollection is not of an entity type with key.
+DataBinding_Util_UnknownEntitySetName=Entity set name has not been provided for an entity of type '{0}'.
+DataBinding_EntityAlreadyInCollection=An attempt was made to add entity of type '{0}' to a collection in which the same entity already exists.
+DataBinding_NotifyPropertyChangedNotImpl=An attempt to track an entity or complex type failed because the entity or complex type '{0}' does not implement the INotifyPropertyChanged interface.
+DataBinding_ComplexObjectAssociatedWithMultipleEntities=An attempt to track a complex property of an entity with type '{0}' failed because the complex object was already being tracked as part of another entity.
+
+AtomParser_FeedUnexpected=Atom feed unexpected after other content has been found.
+AtomParser_PagingLinkOutsideOfFeed=The link element used for paging must be a child of the atom:feed element.
+AtomParser_ManyFeedCounts=Only one feed count element is supported, but more than one was found.
+AtomParser_FeedCountNotUnderFeed=A feed count element cannot be used outside of a feed.
+AtomParser_UnexpectedContentUnderExpandedLink=Unexpected content was found under the expanded link.
+AtomMaterializer_CannotAssignNull=The null value from property '{0}' cannot be assigned to a type '{1}'.
+AtomMaterializer_DuplicatedNextLink=There cannot be more than one next link entry for the same collection in the feed.
+
+AtomMaterializer_EntryIntoCollectionMismatch=An entry of type '{0}' cannot be added to a collection that contains instances of type '{1}'. This may occur when an existing entry of a different type has the same identity value or when the same entity is projected into two different types in a single query.
+AtomMaterializer_EntryToAccessIsNull=An entry returned by the navigation property '{0}' is null and cannot be initialized. You should check for a null value before accessing this property.
+AtomMaterializer_EntryToInitializeIsNull=An entry that contains the data required to create an instance of type '{0}' is null and cannot be initialized. You should check for a null value before accessing this entry.
+AtomMaterializer_ProjectEntityTypeMismatch=An entity of type '{0}' cannot be projected because there is already an instance of type '{1}' for '{2}'.
+AtomMaterializer_LinksMissingHref=The link element must define an href attribute.
+AtomMaterializer_PropertyMissing=The expected property '{0}' could not be found while processing Atom results.
+AtomMaterializer_PropertyMissingFromEntry=The expected property '{0}' could not be found while processing entry '{1}'.
+AtomMaterializer_PropertyNotExpectedEntry=Property '{0}' of entity '{1}' is not an entity.
+
+DataServiceQuery_EnumerationNotSupportedInSL=Silverlight does not enable you to directly enumerate over a data service query. This is because enumeration automatically sends a synchronous request to the data service. Because Silverlight only supports asynchronous operations, you must instead call the BeginExecute and EndExecute methods to obtain a query result that supports enumeration.
+
+;END
