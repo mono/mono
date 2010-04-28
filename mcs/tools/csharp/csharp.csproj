@@ -36,25 +36,13 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\class\corlib\Mono\DataConverter.cs">
       <Link>DataConverter.cs</Link>
     </Compile>
-    <Compile Include="..\..\tools\csharp\getline.cs">
-      <Link>getline.cs</Link>
-    </Compile>
-    <Compile Include="..\..\tools\csharp\repl.cs">
-      <Link>repl.cs</Link>
-    </Compile>
+    <Compile Include="getline.cs" />
+    <Compile Include="repl.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\class\Mono.CSharp\Mono.CSharp.csproj">
