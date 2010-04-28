@@ -1217,11 +1217,6 @@ namespace Mono.CSharp {
 			if (targs == null)
 				throw new ArgumentNullException ("targs");
 
-#if DEBUG
-			if (ID == 4937)
-				Console.WriteLine ("HIT");
-#endif
-
 //			this.state = openType.state;
 			this.open_type = openType;
 			this.targs = targs;
