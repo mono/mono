@@ -1,3 +1,9 @@
+2010-04-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #573385
+	* expression.cs: MemberAccess is of generic type based on right
+	arity length only.
+
 2010-05-28  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs: Made tab size configurable.

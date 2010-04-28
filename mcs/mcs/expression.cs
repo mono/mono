@@ -7339,9 +7339,8 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				GenericTypeExpr ct = expr_resolved as GenericTypeExpr;
-				if (ct != null && Arity > 0) {
-					ct = new GenericTypeExpr (member_lookup.Type, targs, loc);
+				if (HasTypeArguments) {
+					var ct = new GenericTypeExpr (member_lookup.Type, targs, loc);
 					return ct.ResolveAsTypeStep (ec, false);
 				}
 
