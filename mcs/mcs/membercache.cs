@@ -417,9 +417,19 @@ namespace Mono.CSharp {
 								continue;
 
 							if ((entry.Modifiers & Modifiers.OVERRIDE_UNCHECKED) != 0) {
-								// TODO: Implement this correctly for accessors
+								bool is_override = true;
 								var ms = entry as MethodSpec;
-								if (ms == null || IsRealMethodOverride (ms)) {
+								if (ms != null) {
+									is_override = IsRealMethodOverride (ms);
+								} else {
+									var ps = (PropertySpec) entry;
+									if (ps.HasGet)
+										is_override = IsRealMethodOverride (ps.Get);
+									if (is_override && ps.HasSet)
+										is_override = IsRealMethodOverride (ps.Set);
+								}
+
+								if (is_override) {
 									entry.Modifiers = (entry.Modifiers & ~Modifiers.OVERRIDE_UNCHECKED) | Modifiers.OVERRIDE;
 									continue;
 								}

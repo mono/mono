@@ -974,18 +974,12 @@ namespace Mono.CSharp
 						continue;
 
 					imported = Import.CreateMethod (mb, declaringType);
-					var name = imported.Name;
-					if (imported.Kind == MemberKind.Method && name.Length > 4) {
-						if ((name[3] == '_' && (name.StartsWith ("get", StringComparison.Ordinal) ||
-							 name.StartsWith ("set", StringComparison.Ordinal) || 
-							 name.StartsWith ("add", StringComparison.Ordinal))) ||
-							name.Length > 7 && name[6] == '_' && name.StartsWith ("remove", StringComparison.Ordinal)) {
+					if (imported.Kind == MemberKind.Method) {
+						if (possible_accessors == null)
+							possible_accessors = new Dictionary<MethodBase, MethodSpec> (ReferenceEquality<MethodBase>.Default);
 
-							if (possible_accessors == null)
-								possible_accessors = new Dictionary<MethodBase, MethodSpec> ();
-
-							possible_accessors.Add (mb, (MethodSpec) imported);
-						}
+						// There are no metadata rules for accessors, we have to any method as possible candidate
+						possible_accessors.Add (mb, (MethodSpec) imported);
 					}
 
 					break;
