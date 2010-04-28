@@ -35,14 +35,7 @@
     <Reference Include="System.Core">
       <RequiredTargetFramework>3.5</RequiredTargetFramework>
     </Reference>
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data.DataSetExtensions">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml" />
+    <Reference Include="System.XML" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="..\..\class\corlib\Mono.Security.Cryptography\CryptoConvert.cs">
@@ -224,6 +217,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>$(SolutionDir)..\..\jay\jay -cvt &lt; $(SolutionDir)..\..\jay\skeleton.cs $(SolutionDir)..\..\mcs\cs-parser.jay &gt; $(ProjectDir)\cs-parser.cs</PreBuildEvent>
+    <PreBuildEvent>$(ProjectDir)..\..\jay\jay -cvt &lt; $(ProjectDir)..\..\jay\skeleton.cs $(ProjectDir)..\..\mcs\cs-parser.jay &gt; $(ProjectDir)cs-parser.cs</PreBuildEvent>
   </PropertyGroup>
 </Project>
