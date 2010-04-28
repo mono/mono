@@ -1,5 +1,10 @@
 2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlInputStream.cs : minimize initial buffer size so that it does
+	  not mostly block some readers. Fixed bug #591291.
+
+2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDocument.cs : it seems .net does allow Load() with such an xml
 	  reader positioned in the middle of the document. Fixed bug #598953.
 
