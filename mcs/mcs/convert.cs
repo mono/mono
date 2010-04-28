@@ -112,15 +112,13 @@ namespace Mono.CSharp {
 			// From T to any base class of C
 			// From T to any interface implemented by C
 			//
-			var base_type = expr_type.BaseType;
+			var base_type = expr_type.GetEffectiveBase ();
 			if (base_type == target_type || TypeManager.IsSubclassOf (base_type, target_type) || base_type.ImplementsInterface (target_type)) {
 				if (expr_type.IsReferenceType)
 					return new ClassCast (expr, target_type);
 
 				return new BoxedCast (expr, target_type);
 			}
-
-			base_type = expr_type.GetEffectiveBase ();
 
 			var effective_ifaces = expr_type.Interfaces;
 			if (effective_ifaces != null) {
