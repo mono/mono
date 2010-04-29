@@ -10,6 +10,10 @@
 	* Page.cs: initialize EnableViewStateMac with the default read
 	from the config.
 
+	The above fix cross-site scripting vulnerability (CVE: CVE-2010-1459)
+	Credits: Web Security Research Group (WSRG) of Hewlett Packard
+	(HP)
+
 2010-04-07  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: control cache must be filled using the local
