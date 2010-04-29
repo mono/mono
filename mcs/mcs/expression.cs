@@ -6759,7 +6759,7 @@ namespace Mono.CSharp {
 	public class TypeOf : Expression {
 		Expression QueriedType;
 		protected TypeSpec typearg;
-		
+
 		public TypeOf (Expression queried_type, Location l)
 		{
 			QueriedType = queried_type;
@@ -6781,6 +6781,13 @@ namespace Mono.CSharp {
 				return null;
 
 			typearg = texpr.Type;
+
+			//
+			// Get generic type definition for unbounded type arguments
+			//
+			var tne = QueriedType as ATypeNameExpression;
+			if (tne != null && typearg.IsGeneric && !tne.HasTypeArguments)
+				typearg = typearg.GetDefinition ();
 
 			if (typearg == TypeManager.void_type) {
 				ec.Report.Error (673, loc, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
