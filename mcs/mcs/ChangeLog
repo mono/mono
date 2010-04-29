@@ -1,5 +1,10 @@
 2010-04-29  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #575611
+	* class.cs: Fix recursive unmanaged recursice sruct check.
+	
+2010-04-29  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #479776
 	* expression.cs: Implement typeof unbounded nested generic types.
 

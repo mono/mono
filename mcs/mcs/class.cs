@@ -2538,13 +2538,13 @@ namespace Mono.CSharp {
 			if (fields == null)
 				return true;
 
-			if (requires_delayed_unmanagedtype_check)
-				return true;
-
 			if (has_unmanaged_check_done)
 				return is_unmanaged;
 
-			has_unmanaged_check_done = true;
+			if (requires_delayed_unmanagedtype_check)
+				return true;
+
+			requires_delayed_unmanagedtype_check = true;
 
 			foreach (FieldBase f in fields) {
 				if (f.IsStatic)
@@ -2554,19 +2554,18 @@ namespace Mono.CSharp {
 				// struct S { S* s; }
 				TypeSpec mt = f.MemberType;
 				if (mt == null) {
-					has_unmanaged_check_done = false;
-					requires_delayed_unmanagedtype_check = true;
 					return true;
 				}
 
-				// TODO: Remove when pointer types are under mcs control
 				while (mt.IsPointer)
 					mt = TypeManager.GetElementType (mt);
 
 				if (mt.MemberDefinition == this) {
 					for (var p = Parent; p != null; p = p.Parent) {
-						if (p.Kind == MemberKind.Class)
+						if (p.Kind == MemberKind.Class) {
+							has_unmanaged_check_done = true;
 							return false;
+						}
 					}
 					continue;
 				}
@@ -2574,9 +2573,11 @@ namespace Mono.CSharp {
 				if (TypeManager.IsUnmanagedType (mt))
 					continue;
 
+				has_unmanaged_check_done = true;
 				return false;
 			}
 
+			has_unmanaged_check_done = true;
 			is_unmanaged = true;
 			return true;
 		}
