@@ -1,5 +1,10 @@
 2010-04-29  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #474953
+	* class.cs: Fix valid recursive base type definition.
+
+2010-04-29  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #421737
 	* convert.cs, expression.cs: A boxing conversion exists from a
 	nullable-type to a reference type, if a boxing conversion exists

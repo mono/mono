@@ -1430,8 +1430,15 @@ namespace Mono.CSharp {
 					ct.CheckConstraints (this);
 
 				var baseContainer = base_type.Type.MemberDefinition as ClassOrStruct;
-				if (baseContainer != null)
+				if (baseContainer != null) {
 					baseContainer.Define ();
+
+					//
+					// It can trigger define of this type (for generic types only)
+					//
+					if (HasMembersDefined)
+						return true;
+				}
 			}
 
 			if (type_params != null) {
