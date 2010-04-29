@@ -1,5 +1,12 @@
 2010-04-29  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #421737
+	* convert.cs, expression.cs: A boxing conversion exists from a
+	nullable-type to a reference type, if a boxing conversion exists
+	from the underlying non-nullable-value-type to the reference type.
+
+2010-04-29  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #376875
 	* import.cs: Import volatile modifier.
 

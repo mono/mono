@@ -193,7 +193,7 @@ namespace Mono.CSharp {
 			}
 
 			bool use_class_cast;
-			if (ImplicitBoxingConversionExists (expr, target_type, out use_class_cast)) {
+			if (ImplicitBoxingConversionExists (expr_type, target_type, out use_class_cast)) {
 				if (use_class_cast)
 					return new ClassCast (expr, target_type);
 				else
@@ -336,10 +336,8 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		public static bool ImplicitBoxingConversionExists (Expression expr, TypeSpec target_type,
-								   out bool use_class_cast)
+		public static bool ImplicitBoxingConversionExists (TypeSpec expr_type, TypeSpec target_type, out bool use_class_cast)
 		{
-			TypeSpec expr_type = expr.Type;
 			use_class_cast = false;
 			
 			//
@@ -367,11 +365,17 @@ namespace Mono.CSharp {
 				//
 				if (TypeManager.IsEnumType (expr_type))
 					return true;
-				//
-				// From any nullable-type with an underlying enum-type to the type System.Enum
-				//
-				if (TypeManager.IsNullableType (expr_type))
-					return TypeManager.IsEnumType (Nullable.NullableInfo.GetUnderlyingType (expr_type));
+			}
+
+			//
+			// From a nullable-type to a reference type, if a boxing conversion exists from
+			// the underlying type to the reference type
+			//
+			if (TypeManager.IsNullableType (expr_type)) {
+				if (!TypeManager.IsReferenceType (target_type))
+					return false;
+
+				return ImplicitBoxingConversionExists (Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type, out use_class_cast);
 			}
 
 			if (TypeManager.IsSubclassOf (expr_type, target_type)) {
@@ -394,12 +398,6 @@ namespace Mono.CSharp {
 				if (expr_type.ImplementsInterface (target_type))
 					return TypeManager.IsGenericParameter (expr_type) ||
 						TypeManager.IsValueType (expr_type);
-			}
-
-			if (TypeManager.IsGenericParameter (expr_type)) {
-				return ImplicitTypeParameterConversion (expr, target_type) != null;
-//				return ImplicitTypeParameterBoxingConversion (
-//					expr_type, target_type, out use_class_cast);
 			}
 
 			return false;
@@ -674,7 +672,7 @@ namespace Mono.CSharp {
 				return true;
 
 			bool use_class_cast;
-			if (ImplicitBoxingConversionExists (expr, target_type, out use_class_cast))
+			if (ImplicitBoxingConversionExists (expr_type, target_type, out use_class_cast))
 				return true;
 
 			//
@@ -1904,7 +1902,7 @@ namespace Mono.CSharp {
 			TypeSpec expr_type = expr.Type;
 			if (TypeManager.IsNullableType (target_type)) {
 				if (TypeManager.IsNullableType (expr_type)) {
-					TypeSpec target = TypeManager.GetTypeArguments (target_type)[0];
+					TypeSpec target = Nullable.NullableInfo.GetUnderlyingType (target_type);
 					Expression unwrap = Nullable.Unwrap.Create (expr);
 					e = ExplicitConversion (ec, unwrap, target, expr.Location);
 					if (e == null)
@@ -1921,12 +1919,11 @@ namespace Mono.CSharp {
 						return Nullable.Wrap.Create (e, target_type);
 				}
 			} else if (TypeManager.IsNullableType (expr_type)) {
-				e = Nullable.Unwrap.Create (expr, false);
-
 				bool use_class_cast;
-				if (ImplicitBoxingConversionExists (e, target_type, out use_class_cast))
+				if (ImplicitBoxingConversionExists (Nullable.NullableInfo.GetUnderlyingType (expr_type), target_type, out use_class_cast))
 					return new BoxedCast (expr, target_type);
-				
+
+				e = Nullable.Unwrap.Create (expr, false);			
 				e = ExplicitConversionCore (ec, e, target_type, loc);
 				if (e != null)
 					return EmptyCast.Create (e, target_type);
