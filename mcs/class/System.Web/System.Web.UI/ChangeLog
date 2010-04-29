@@ -1,3 +1,11 @@
+2010-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* PageParser.cs, Page.cs: do not ignore the EnableViewStateMac
+	directive attribute. Fixes bug #592428
+	Fixes cross-site scripting vulnerability (CVE: CVE-2010-1459)
+	Credits: Web Security Research Group (WSRG) of Hewlett Packard
+	(HP)
+
 2009-09-15  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateParser.cs: FindNamespaceInAssembly must catch
