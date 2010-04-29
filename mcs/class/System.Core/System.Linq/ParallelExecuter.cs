@@ -79,16 +79,24 @@ namespace System.Linq
 		{
 			return Process<TSource, TElement> (node, call, acquisitionFunc, null, options);
 		}
-
+		
 		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node, Action<TElement> call,
 		                                                   Func<QueryBaseNode<TSource>, QueryOptions, IList<IEnumerable<TElement>>> acquisitionFunc,
 		                                                   Action endAction,
 		                                                   QueryOptions options)
 		{
+			return Process<TSource, TElement> (node, (e, i) => call (e), acquisitionFunc, (i) => endAction (), options);
+		}
+
+		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node, Action<TElement, int> call,
+		                                                   Func<QueryBaseNode<TSource>, QueryOptions, IList<IEnumerable<TElement>>> acquisitionFunc,
+		                                                   Action<int> endAction,
+		                                                   QueryOptions options)
+		{
 			IList<IEnumerable<TElement>> enumerables = acquisitionFunc (node, options);
 
 			Task[] tasks = new Task[enumerables.Count];
-
+			
 			for (int i = 0; i < tasks.Length; i++) {
 				int index = i;
 				tasks[i] = Task.Factory.StartNew (() => {
@@ -99,10 +107,10 @@ namespace System.Linq
 						if (options.Token.IsCancellationRequested)
 							throw new OperationCanceledException (options.Token);
 
-						call (item);
+						call (item, index);
 					}
 					if (endAction != null)
-						endAction ();
+						endAction (index);
 				  }, options.Token);
 			}
 
@@ -121,23 +129,25 @@ namespace System.Linq
 		                                              Action callback, QueryOptions options)
 		{
 			Task[] tasks = Process (node, call, (n, o) => n.GetEnumerables (o), options);
-			Task.Factory.ContinueWhenAll (tasks,  (_) => callback ());
+			if (callback != null)
+				Task.Factory.ContinueWhenAll (tasks,  (_) => callback ());
 
 			return () => Task.WaitAll (tasks, options.Token);
 		}
 
-		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<KeyValuePair<long, T>> call,
+		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<KeyValuePair<long, T>, int> call,
 		                                              Action callback, QueryOptions options)
 		{
 			return ProcessAndCallback<T> (node, call, null, callback, options);
 		}
 
-		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<KeyValuePair<long, T>> call,
-		                                              Action endAction,
+		internal static Action ProcessAndCallback<T> (QueryBaseNode<T> node, Action<KeyValuePair<long, T>, int> call,
+		                                              Action<int> endAction,
 		                                              Action callback, QueryOptions options)
 		{
 			Task[] tasks = Process (node, call, (n, o) => n.GetOrderedEnumerables (o), endAction, options);
-			Task.Factory.ContinueWhenAll (tasks,  (_) => callback ());
+			if (callback != null)
+				Task.Factory.ContinueWhenAll (tasks,  (_) => callback ());
 
 			return () => Task.WaitAll (tasks, options.Token);
 		}

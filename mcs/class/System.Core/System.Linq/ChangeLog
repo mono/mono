@@ -1,3 +1,8 @@
+2010-04-29  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ParallelExecuter.cs: Bring indexed worker methods support.
+	Check for null callback.
+
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* OrderedParallelQuery.cs:
