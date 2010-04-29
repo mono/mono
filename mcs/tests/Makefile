@@ -44,8 +44,6 @@ test-casts: boot-casts.out mcs-casts.out
 	cmp $^
 	-rm -f bootstrap-cast.exe casts.cs casts-boot.exe casts-mcs.exe boot-casts.out mcs-casts.out
 
-eval.exe: eval-tests.cs
-
 ifeq (net_4_0, $(PROFILE))
 COMPILER_NAME = dmcs
 TEST_PATTERN = 'v4'
@@ -71,14 +69,10 @@ TESTER = MONO_RUNTIME='$(RUNTIME)' $(TEST_RUNTIME) $(RUNTIME_FLAGS) $(LOCAL_RUNT
 
 TEST_ILS := $(wildcard *-lib.il)
 
-eval-test: 
-	$(CSCOMPILE) eval-test.cs -r:Mono.CSharp.dll
-	$(with_mono_path) $(RUNTIME) $(RUNTIME_FLAGS) eval-test.exe
-
 build-compiler-lib:
 	cd ../class/Mono.CSharp && $(MAKE) NO_DIR_CHECK=yes
 
-qcheck: build-compiler-lib eval-test
+qcheck: build-compiler-lib
 	$(TESTER) -mode:pos -files:$(TEST_PATTERN) -compiler:$(COMPILER) -issues:known-issues-$(COMPILER_NAME) -log:$(COMPILER_NAME).log $(TOPTIONS) $(DEFINES)
 
 test-local:

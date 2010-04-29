@@ -1,3 +1,5 @@
+// Compiler options: -r:Mono.CSharp.dll
+
 using System;
 using Mono.CSharp;
 
@@ -90,6 +92,5 @@ public class MyTest {
 		if (sres != "1+")
 			throw new Exception ("The result should have been the input string, since we have a partial input");
 		
-	}
-	
+	}	
 }

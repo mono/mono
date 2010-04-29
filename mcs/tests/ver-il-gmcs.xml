@@ -17397,6 +17397,21 @@
       </method>
     </type>
   </test>
+  <test name="gtest-etree-23.cs">
+    <type name="Test.OrderBySpecification">
+      <method name="Void .ctor(Expression`1)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.RateOrderById">
+      <method name="Int32 Main()">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>44</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-exmethod-01.cs">
     <type name="SimpleTest">
       <method name="System.String Prefix(System.String, System.String)">
@@ -21653,6 +21668,22 @@
     <type name="Test">
       <method name="Void Main()">
         <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-repl-01.cs">
+    <type name="MyTest">
+      <method name="Void Run(System.String, System.String)">
+        <size>23</size>
+      </method>
+      <method name="Void Evaluate(System.String, System.String, System.Object)">
+        <size>80</size>
+      </method>
+      <method name="Void Main()">
+        <size>540</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
