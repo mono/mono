@@ -104,6 +104,16 @@ namespace Mono.CSharp
 				}
 
 				mod |= Modifiers.READONLY;
+			} else {
+				var reqs = fi.GetRequiredCustomModifiers ();
+				if (reqs.Length > 0) {
+					foreach (Type t in reqs) {
+						if (t == typeof (System.Runtime.CompilerServices.IsVolatile)) {
+							mod |= Modifiers.VOLATILE;
+							break;
+						}
+					}
+				}
 			}
 
 			if ((fa & FieldAttributes.Static) != 0)
@@ -115,8 +125,6 @@ namespace Mono.CSharp
 					return new FixedFieldSpec (declaringType, definition, fi, element_field, mod);
 				}
 			}
-
-			// TODO: import volatile
 
 			return new FieldSpec (declaringType, definition, ImportType (fi.FieldType), fi, mod);
 		}

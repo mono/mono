@@ -1,5 +1,10 @@
 2010-04-29  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #376875
+	* import.cs: Import volatile modifier.
+
+2010-04-29  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #372412
 	* typespec.cs, expression.cs, codegen.cs: Emit readonly prefix for
 	generic arrays.
