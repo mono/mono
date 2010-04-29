@@ -294,8 +294,17 @@ namespace MonoTests.System.Linq
 
 			AssertAreSame (result, data.AsParallel ().AsOrdered ().Skip (3).ToArray ());
 		}
+		
+		[Test]
+		public void TestSkipIterating ()
+		{
+			int [] data = {0, 1, 2, 3, 4, 5};
+			int [] result = {3, 4, 5};
 
-		/*[Test]
+			AssertAreSame (result, data.AsParallel ().AsOrdered ().Skip (3));
+		}
+
+		[Test, Ignore]
 		public void TestSkipWhile ()
 		{
 			int [] data = {0, 1, 2, 3, 4, 5};
@@ -304,7 +313,7 @@ namespace MonoTests.System.Linq
 			AssertAreSame (result, data.AsParallel ().AsOrdered ().SkipWhile (i => i < 3));
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void TestTake ()
 		{
 			int [] data = {0, 1, 2, 3, 4, 5};
@@ -313,46 +322,46 @@ namespace MonoTests.System.Linq
 			AssertAreSame (result, data.AsParallel ().AsOrdered ().Take (3));
 		}
 
-		[Test]
+		[Test, Ignore]
 		public void TestTakeWhile ()
 		{
 			int [] data = {0, 1, 2, 3, 4, 5};
 			int [] result = {0, 1, 2};
 
 			AssertAreSame (result, data.AsParallel ().AsOrdered ().TakeWhile (i => i < 3));
-		}*/
+		}
 		
-//		[Test]
-//		public void TestLast ()
-//		{
-//			int [] data = {1, 2, 3};
-//
-//			Assert.AreEqual (3, data.AsParallel ().Last ());
-//		}
-//
-//		[Test]
-//		public void TestLastOrDefault ()
-//		{
-//			int [] data = {};
-//
-//			Assert.AreEqual (default (int), data.AsParallel ().LastOrDefault ());
-//		}
-//
-//		[Test]
-//		public void TestFirst ()
-//		{
-//			int [] data = {1, 2, 3};
-//
-//			Assert.AreEqual (1, data.AsParallel ().First ());
-//		}
-//
-//		[Test]
-//		public void TestFirstOrDefault ()
-//		{
-//			int [] data = {};
-//
-//			Assert.AreEqual (default (int), data.AsParallel ().FirstOrDefault ());
-//		}
+		[Test, Ignore]
+		public void TestLast ()
+		{
+			int [] data = {1, 2, 3};
+
+			Assert.AreEqual (3, data.AsParallel ().Last ());
+		}
+
+		[Test, Ignore]
+		public void TestLastOrDefault ()
+		{
+			int [] data = {};
+
+			Assert.AreEqual (default (int), data.AsParallel ().LastOrDefault ());
+		}
+
+		[Test, Ignore]
+		public void TestFirst ()
+		{
+			int [] data = {1, 2, 3};
+
+			Assert.AreEqual (1, data.AsParallel ().First ());
+		}
+
+		[Test, Ignore]
+		public void TestFirstOrDefault ()
+		{
+			int [] data = {};
+
+			Assert.AreEqual (default (int), data.AsParallel ().FirstOrDefault ());
+		}
 		
 		[Test]
 		public void TestReverse ()
@@ -507,7 +516,7 @@ namespace MonoTests.System.Linq
 			Assert.AreEqual (count, c);
 		}
 		
-		/*
+		
 		[TestAttribute, Ignore]
 		public void ElementAtTestCase()
 		{
@@ -531,10 +540,10 @@ namespace MonoTests.System.Linq
 				sync = baseEnumerable.Take(100);
 			
 				AreEquivalent(sync, async, 2);
-			});
+			}, 20);
 		}
 		
-		[TestAttribute, Ignore]
+		[Test]
 		public void SkipTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
@@ -547,10 +556,10 @@ namespace MonoTests.System.Linq
 				sync = baseEnumerable.Skip(100);
 				
 				Assert.AreEqual(sync.Count(), async.Count(), "#2");
-			});
+			}, 20);
 		}
 
-		[TestAttribute, Ignore]
+		[Test]
 		public void ZipTestCase()
 		{
 			ParallelTestHelper.Repeat (() => {
@@ -561,7 +570,7 @@ namespace MonoTests.System.Linq
 				CollectionAssert.AreEquivalent(expected, Enumerable.ToArray (async2), "#1");
 			});
 		}
-		*/
+		
 		[Test]
 		public void RangeTestCase ()
 		{
@@ -689,7 +698,7 @@ namespace MonoTests.System.Linq
 			Assert.AreEqual (23.25, (new long [] { 24, 7, 28, 34 }).Average ());
 		}
 		
-		/*
+		
 		[Test]
 		public void AnyArgumentNullTest ()
 		{
@@ -702,7 +711,7 @@ namespace MonoTests.System.Linq
 			// Any<TSource> (Func<TSource, bool>)
 			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).AsParallel ().Any (x => true); });
 			AssertException<ArgumentNullException> (delegate () { data.AsParallel ().Any ((Func<string, bool>) null); });
-		}*/
+		}
 
 		[Test]
 		public void AnyTest ()
@@ -721,7 +730,7 @@ namespace MonoTests.System.Linq
 			Assert.IsFalse (empty.AsParallel ().Any (x => true));
 		}
 
-		/*
+		
 		[Test]
 		public void AllArgumentNullTest ()
 		{
@@ -729,7 +738,7 @@ namespace MonoTests.System.Linq
 
 			AssertException<ArgumentNullException> (delegate () { ((IEnumerable<string>) null).AsParallel ().All (x => true); });
 			AssertException<ArgumentNullException> (delegate () { data.AsParallel ().All ((Func<string, bool>) null); });
-		}*/
+		}
 
 		[Test]
 		public void AllTest ()
