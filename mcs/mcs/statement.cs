@@ -1392,6 +1392,8 @@ namespace Mono.CSharp {
 
 		List<ToplevelBlock> anonymous_children;
 
+		int? resolving_init_idx;
+
 		protected static int id;
 
 		int this_id;
@@ -1802,7 +1804,18 @@ namespace Mono.CSharp {
 			if (scope_initializers == null)
 				scope_initializers = new List<Statement> ();
 
-			scope_initializers.Add (s);
+			//
+			// Simple recursive helper, when resolve scope initializer another
+			// new scope initializer can be added, this ensures it's initialized
+			// before existing one. For now this can happen with expression trees
+			// in base ctor initializer only
+			//
+			if (resolving_init_idx.HasValue) {
+				scope_initializers.Insert (resolving_init_idx.Value, s);
+				++resolving_init_idx;
+			} else {
+				scope_initializers.Add (s);
+			}
 		}
 		
 		public void AddStatement (Statement s)
@@ -2024,8 +2037,11 @@ namespace Mono.CSharp {
 			// Compiler generated scope statements
 			//
 			if (scope_initializers != null) {
-				foreach (Statement s in scope_initializers)
-					s.Resolve (ec);
+				for (resolving_init_idx = 0; resolving_init_idx < scope_initializers.Count; ++resolving_init_idx) {
+					scope_initializers[resolving_init_idx.Value].Resolve (ec);
+				}
+
+				resolving_init_idx = null;
 			}
 
 			//

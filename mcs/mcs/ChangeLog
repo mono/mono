@@ -1,3 +1,8 @@
+2010-04-29  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #568955
+	* statements.cs: Handle recursive scope initializers.
+
 2010-04-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #566511
