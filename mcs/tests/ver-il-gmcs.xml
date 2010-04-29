@@ -3303,7 +3303,7 @@
         <size>14</size>
       </method>
       <method name="Polynomial`1[E] Add(Polynomial`1[E])">
-        <size>297</size>
+        <size>301</size>
       </method>
       <method name="Polynomial`1[E] Add(E)">
         <size>26</size>
@@ -3312,7 +3312,7 @@
         <size>78</size>
       </method>
       <method name="Polynomial`1[E] Mul(Polynomial`1[E])">
-        <size>219</size>
+        <size>221</size>
       </method>
       <method name="E Eval(E)">
         <size>106</size>
@@ -12567,6 +12567,22 @@
       </method>
     </type>
   </test>
+  <test name="gtest-499.cs">
+    <type name="C">
+      <method name="Int32 Test[T](T[])">
+        <size>21</size>
+      </method>
+      <method name="Int32 TestExtra[T](T[,])">
+        <size>22</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>118</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -13258,7 +13274,7 @@
         <size>26</size>
       </method>
       <method name="Int32 Main()">
-        <size>501</size>
+        <size>568</size>
       </method>
     </type>
     <type name="Test+&lt;For&gt;c__AnonStorey0`1[T]">
@@ -13377,9 +13393,20 @@
       <method name="System.Func`1[T[]] NestedTypeMutate[T]()">
         <size>34</size>
       </method>
+      <method name="System.Func`1[System.Int32] ArrayMultiMutate[T](T[,])">
+        <size>26</size>
+      </method>
     </type>
-    <type name="Test+&lt;NestedTypeMutate&gt;c__AnonStoreyC`1[T]">
-      <method name="T[] &lt;&gt;m__C()">
+    <type name="Test+&lt;ArrayMultiMutate&gt;c__AnonStoreyC`1[T]">
+      <method name="Int32 &lt;&gt;m__C()">
+        <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test+&lt;NestedTypeMutate&gt;c__AnonStoreyD`1[T]">
+      <method name="T[] &lt;&gt;m__D()">
         <size>37</size>
       </method>
       <method name="Void .ctor()">
@@ -15783,7 +15810,7 @@
         <size>7</size>
       </method>
       <method name="Boolean Equals(System.Object)">
-        <size>89</size>
+        <size>91</size>
       </method>
     </type>
     <type name="Indexer">
