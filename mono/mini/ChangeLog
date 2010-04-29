@@ -1,5 +1,13 @@
 2010-04-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c (mono_arch_create_generic_class_init_trampoline_full): Set the
+	code_size output variable.
+
+	* mini-x86.c (mono_arch_emit_prolog): Compute the GOT addr before calling
+	mono_get_lmf_addr.
+	
+2010-04-29  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-x86.c (mono_arch_emit_prolog): Remove a disable_aot which is not needed.
 	(mono_arch_cpu_optimizazions): Make this a no-op when running with full aot.
 	(mono_arch_cpu_enumerate_simd_versions): Ditto.
