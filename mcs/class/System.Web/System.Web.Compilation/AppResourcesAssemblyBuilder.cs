@@ -262,7 +262,7 @@ namespace System.Web.Compilation
 				}
 
 				info.FileName = monoPath;
-				return alPath;
+				return alPath + " ";
 			} else {
 #if NET_4_0
 				info.FileName = "al";
