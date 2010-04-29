@@ -38,7 +38,7 @@ namespace System.Web.Configuration
 		internal bool Buffer = true;
 		internal PagesEnableSessionState EnableSessionState = PagesEnableSessionState.True;
 		internal bool EnableViewState = true;
-		internal bool EnableViewStateMac = false;
+		internal bool EnableViewStateMac = true;
 		internal bool SmartNavigation = false;
 		internal bool AutoEventWireup = true;
 		internal bool ValidateRequest = true;
@@ -66,6 +66,8 @@ namespace System.Web.Configuration
 		{
 			if (context == null)
 				context = HttpContext.Current;
+			if (context == null)
+				return null;
 			return context.GetConfig ("system.web/pages") as PagesConfiguration;
 		}
 	}
