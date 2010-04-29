@@ -1,3 +1,7 @@
+2010-04-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_function): Use TARGET_X86 instead of __i386__.
+
 2010-04-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_got_info): Double the buffer size to avoid an assert.
