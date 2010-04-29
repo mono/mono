@@ -1,3 +1,9 @@
+2010-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* AppResourcesAssemblyBuilder.cs: when running on windows,
+	SetAlPath must return al.exe path with a trailing space, or
+	otherwise the process won't start. Fixes bug #600691
+
 2010-04-12  Marek Habersack  <mhabersack@novell.com>
 
 	* PageCompiler.cs: if EnableViewStateMac is set in the page
