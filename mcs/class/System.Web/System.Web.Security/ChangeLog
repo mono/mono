@@ -1,3 +1,9 @@
+2010-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* FormsAuthentication.cs: set authentication/expiry cookie
+	domain. Fixes bug #600740. Patch from Stuart Siegrist
+	<stuart@cbtnuggets.com>, thanks!
+
 2010-02-11  Marek Habersack  <mhabersack@novell.com>
 
 	* Roles.cs: IsUserInRole checks if username is null or empty
