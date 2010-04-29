@@ -434,6 +434,10 @@ namespace System.Web.Security
 			HttpCookie cookie = new HttpCookie (cookieName, Encrypt (ticket), strCookiePath, then);
 			if (requireSSL)
 				cookie.Secure = true;
+#if NET_2_0
+			if (!String.IsNullOrEmpty (cookie_domain))
+				cookie.Domain = cookie_domain;
+#endif
 			return cookie;
 		}
 
@@ -642,9 +646,13 @@ namespace System.Web.Security
 
 			HttpCookieCollection cc = response.Cookies;
 			cc.Remove (cookieName);
-			HttpCookie expiration_cookie = new HttpCookie (cookieName, "");
+			HttpCookie expiration_cookie = new HttpCookie (cookieName, String.Empty);
 			expiration_cookie.Expires = new DateTime (1999, 10, 12);
 			expiration_cookie.Path = cookiePath;
+#if NET_2_0
+			if (!String.IsNullOrEmpty (cookie_domain))
+				expiration_cookie.Domain = cookie_domain;
+#endif
 			cc.Add (expiration_cookie);
 
 #if NET_2_0
