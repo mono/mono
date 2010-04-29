@@ -1,5 +1,11 @@
 2010-04-29  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #372412
+	* typespec.cs, expression.cs, codegen.cs: Emit readonly prefix for
+	generic arrays.
+
+2010-04-29  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #568955
 	* statements.cs: Handle recursive scope initializers.
 

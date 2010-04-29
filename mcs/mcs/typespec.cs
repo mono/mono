@@ -869,6 +869,22 @@ namespace Mono.CSharp
 			return ctor;
 		}
 
+		public System.Reflection.MethodInfo GetAddressMethod ()
+		{
+			var mb = RootContext.ToplevelTypes.Builder;
+
+			var arg_types = new Type[rank];
+			for (int i = 0; i < rank; i++)
+				arg_types[i] = TypeManager.int32_type.GetMetaInfo ();
+
+			var address = mb.GetArrayMethod (
+				GetMetaInfo (), "Address",
+				System.Reflection.CallingConventions.HasThis | System.Reflection.CallingConventions.Standard,
+				ReferenceContainer.MakeType (Element).GetMetaInfo (), arg_types);
+
+			return address;
+		}
+
 		public System.Reflection.MethodInfo GetGetMethod ()
 		{
 			var mb = RootContext.ToplevelTypes.Builder;

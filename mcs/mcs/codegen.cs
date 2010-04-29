@@ -509,6 +509,21 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public void EmitArrayAddress (ArrayContainer ac)
+		{
+			if (ac.Element.IsGenericParameter)
+				ig.Emit (OpCodes.Readonly);
+
+			if (ac.Rank > 1) {
+				if (IsAnonymousStoreyMutateRequired)
+					ac = (ArrayContainer) ac.Mutate (CurrentAnonymousMethod.Storey.Mutator);
+
+				ig.Emit (OpCodes.Call, ac.GetAddressMethod ());
+			} else {
+				Emit (OpCodes.Ldelema, ac.Element);
+			}
+		}
+
 		//
 		// Emits the right opcode to load from an array
 		//

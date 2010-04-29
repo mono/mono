@@ -7801,29 +7801,6 @@ namespace Mono.CSharp {
 			ec.Report.Warning (251, 2, loc, "Indexing an array with a negative index (array indices always start at zero)");
 		}
 
-		MethodInfo FetchAddressMethod ()
-		{
-			ModuleBuilder mb = RootContext.ToplevelTypes.Builder;
-			int arg_count = ea.Arguments.Count;
-			var args = new Type [arg_count];
-			MethodInfo address;
-			
-			var ret_type = TypeManager.GetReferenceType (type);
-			
-			for (int i = 0; i < arg_count; i++){
-				//args [i++] = a.Type;
-				args[i] = TypeManager.int32_type.GetMetaInfo ();
-			}
-			
-			address = mb.GetArrayMethod (
-				ea.Expr.Type.GetMetaInfo (), "Address",
-				CallingConventions.HasThis |
-				CallingConventions.Standard,
-				ret_type, args);
-
-			return address;
-		}
-
 		//
 		// Load the array arguments into the stack.
 		//
@@ -7920,16 +7897,10 @@ namespace Mono.CSharp {
 
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
-			int rank = ea.Expr.Type.GetMetaInfo ().GetArrayRank ();
+			var ac = (ArrayContainer) ea.Expr.Type;
 
 			LoadArrayAndArguments (ec);
-
-			if (rank == 1){
-				ec.Emit (OpCodes.Ldelema, type);
-			} else {
-				MethodInfo address = FetchAddressMethod ();
-				ec.Emit (OpCodes.Call, address);
-			}
+			ec.EmitArrayAddress (ac);
 		}
 
 #if NET_4_0
