@@ -33,27 +33,112 @@ using System.Collections.Concurrent;
 
 namespace System.Linq
 {
-	// Remove use of KeyedBuffer
-	/* Instead, we use a fixed array of nullables. The Add method put the object in its right slot based on the index.
-	 * We use a barrier for synchronisation, each add check that the current range of index accepted in the array is correct
-	 * and if not wait on the Barrier. The Barrier's generation index is used to calculate the next range.
-	 * The IEnumerator interface simply skim the array in order and return the objects.
-	 */
 	internal class OrderingEnumerator<T> : IEnumerator<T>
 	{
+		internal class SlotBucket
+		{
+			ConcurrentDictionary<long, T> temporaryArea = new ConcurrentDictionary<long, T> ();
+			KeyValuePair<long, T>?[] stagingArea;
+			
+			long currentIndex;
+			readonly int count;
+			CountdownEvent stagingCount;
+			CountdownEvent participantCount;
+
+			public SlotBucket (int count)
+			{
+				this.count = count;
+				stagingCount = new CountdownEvent (count);
+				participantCount = new CountdownEvent (count);
+				stagingArea = new KeyValuePair<long, T>?[count];
+				currentIndex = -count;
+			}
+
+			public void Add (KeyValuePair<long, T> value)
+			{
+				long index = value.Key;
+				
+				if (index >= currentIndex && index < currentIndex + count) {
+					stagingArea [index % count] = value;
+					stagingCount.Signal ();
+				} else {
+					temporaryArea.TryAdd (value.Key, value.Value);
+				}
+			}
+			
+			// Called by each worker's endAction
+			public void EndParticipation ()
+			{
+				participantCount.Signal ();
+			}
+
+			// Called at the end with ContinueAll
+			public void Stop ()
+			{
+				
+			}
+
+			void Skim ()
+			{
+				for (int i = 0; i < count; i++) {
+					T temp;
+					int index = i + (int)currentIndex;
+					
+					if (stagingArea[index % count].HasValue)
+						continue;
+
+					if (!temporaryArea.TryRemove (index, out temp))
+						continue;
+					
+					stagingArea [index % count] = new KeyValuePair<long, T> (index, temp);
+					//Console.WriteLine ("staged from Skim ({0}, {1})", index, temp);
+					stagingCount.Signal ();
+				}
+			}
+			
+			void Clean ()
+			{
+				for (int i = 0; i < stagingArea.Length; i++)
+					stagingArea[i] = new Nullable<KeyValuePair<long, T>> ();
+			}
+
+			public IEnumerator<KeyValuePair<long, T>?> Wait ()
+			{
+				Clean ();
+				stagingCount.Reset ();
+				
+				Interlocked.Add (ref currentIndex, count);
+				
+				SpinWait sw = new SpinWait ();
+
+				while (!stagingCount.IsSet) {
+					if (participantCount.IsSet && temporaryArea.IsEmpty) {
+						// Totally finished
+						if (stagingCount.CurrentCount == count)
+							return null;
+						else 
+							break;
+					}
+					Skim ();
+					
+					if (!stagingCount.IsSet)
+						sw.SpinOnce ();
+				}
+				
+				return ((IEnumerable<KeyValuePair<long, T>?>)stagingArea).GetEnumerator ();
+			}
+		}
+
 		readonly int num;
-
-		public BlockingCollection<KeyValuePair<long, T>> KeyedBuffer;
-		KeyValuePair<long, T>?[] store;
-
+		SlotBucket slotBucket;
+		
 		IEnumerator<KeyValuePair<long, T>?> currEnum;
 		KeyValuePair<long, T> curr;
 
 		internal OrderingEnumerator (int num)
 		{
 			this.num = num;
-			KeyedBuffer = new BlockingCollection<KeyValuePair<long, T>> ();
-			store = new KeyValuePair<long, T>?[num];
+			slotBucket = new SlotBucket (num);
 		}
 
 		public void Dispose ()
@@ -68,13 +153,14 @@ namespace System.Linq
 
 		public bool MoveNext ()
 		{
-			if (currEnum == null || !currEnum.MoveNext () || !currEnum.Current.HasValue) {
-				if (!UpdateCurrent ())
+			while (currEnum == null || !currEnum.MoveNext ())
+				if ((currEnum = slotBucket.Wait ()) == null)
 					return false;
-			}
-
-			if (!currEnum.Current.HasValue)
-				return false;
+			
+			while (!currEnum.Current.HasValue)
+				if (!currEnum.MoveNext ())
+					if ((currEnum = slotBucket.Wait ()) == null)
+						return false;
 
 			curr = currEnum.Current.Value;
 
@@ -92,52 +178,22 @@ namespace System.Linq
 				return curr.Value;
 			}
 		}
-
-		bool UpdateCurrent ()
+		
+		public void Add (KeyValuePair<long, T> value)
 		{
-			if (KeyedBuffer.IsCompleted)
-				return false;
-
-			if (KeyedBuffer.Count != num) {
-				SpinWait sw = new SpinWait ();
-				while (KeyedBuffer.Count < num && !KeyedBuffer.IsAddingCompleted) {
-					sw.SpinOnce ();
-				}
-			}
-
-			// We gather the lot without removing it
-			int i = 0;
-			foreach (KeyValuePair<long, T> item in KeyedBuffer.GetConsumingEnumerable ()) {
-				store[i] = item;
-
-				if (++i == num || KeyedBuffer.IsCompleted)
-					break;
-			}
-
-			for (int k = i; k < num; k++) {
-				store[k] = null;
-			}
-
-			Array.Sort (store, ArraySort);
-
-			currEnum = ((IEnumerable<KeyValuePair<long, T>?>)store).GetEnumerator ();
-
-			return currEnum.MoveNext ();
+			slotBucket.Add (value);
 		}
-
-		int ArraySort (KeyValuePair<long, T>? e1, KeyValuePair<long, T>? e2)
+			
+		// Called by each worker's endAction
+		public void EndParticipation ()
 		{
-			if (!e1.HasValue) {
-				if (!e2.HasValue)
-					return 0;
-
-				if (e2.HasValue)
-					return 1;
-			}
-			if (!e2.HasValue && e1.HasValue)
-				return -1;
-
-			return e1.Value.Key.CompareTo (e2.Value.Key);
+			slotBucket.EndParticipation ();
+		}
+		
+		// Called at the end with ContinueAll
+		public void Stop ()
+		{
+			slotBucket.Stop ();
 		}
 	}
 }

@@ -1,3 +1,8 @@
+2010-04-29  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* OrderingEnumerator.cs: Use new non-blocking collection
+	for storing indexed elements.
+
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* AggregationList.cs:

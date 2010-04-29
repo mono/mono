@@ -54,12 +54,10 @@ namespace System.Linq
 
 			// Launch adding to the buffer asynchronously via Tasks
 			if (options.BehindOrderGuard.Value) {
-				// Keep fairness between tasks (i.e. the same task don't ruin order by adding to much of its own)
-				Barrier barrier = new Barrier (options.PartitionCount);
 				waitAction = ParallelExecuter.ProcessAndCallback (node,
-				                                                  (e) => { ordEnumerator.KeyedBuffer.Add (e); barrier.SignalAndWait (); },
-				                                                  barrier.RemoveParticipant,
-				                                                  ordEnumerator.KeyedBuffer.CompleteAdding,
+				                                                  (e, i) => ordEnumerator.Add (e),
+				                                                  (i) => ordEnumerator.EndParticipation (),
+				                                                  ordEnumerator.Stop,
 				                                                  options);
 			} else {
 				waitAction = ParallelExecuter.ProcessAndCallback (node,

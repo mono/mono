@@ -1,5 +1,10 @@
 2010-04-29  Jérémie Laval  <jeremie.laval@gmail.com>
 
+	* ParallelQueryEnumerator.cs: Use new non-blocking collection
+	for storing indexed elements.
+
+2010-04-29  Jérémie Laval  <jeremie.laval@gmail.com>
+
 	* ParallelExecuter.cs: Bring indexed worker methods support.
 	Check for null callback.
 
