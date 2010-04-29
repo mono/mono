@@ -189,10 +189,15 @@ public partial class Page : TemplateControl, IHttpHandler
 		if (ps != null) {
 			asyncTimeout = ps.AsyncTimeout;
 			viewStateEncryptionMode = ps.ViewStateEncryptionMode;
+			_viewStateMac = ps.EnableViewStateMac;
 		} else {
 			asyncTimeout = TimeSpan.FromSeconds (DefaultAsyncTimeout);
 			viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
 		}
+#else
+		PagesConfiguration ps = PagesConfiguration.GetInstance (HttpContext.Current);
+		if (ps != null)
+			_viewStateMac = ps.EnableViewStateMac;
 #endif
 	}
 

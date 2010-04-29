@@ -1,3 +1,11 @@
+2010-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* PagesConfiguration.cs: make EnableViewStateMac default to
+	true. Fixes bug #592428 
+	Fixes cross-site scripting vulnerability (CVE: CVE-2010-1459)
+	Credits: Web Security Research Group (WSRG) of Hewlett Packard
+	(HP)
+
 2008-10-13  Marek Habersack  <mhabersack@novell.com>
 
 	* HandlerFactoryConfiguration.cs: do not store call-specific data
@@ -925,4 +933,3 @@
 2002-06-03  Gonzalo Paniagua Javier <gonzalo@ximian.com>
 
 	* System.Web.Configuration/HttpCapabilitiesBase.cs: New file.
-
