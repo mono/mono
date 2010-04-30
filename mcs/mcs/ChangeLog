@@ -1,6 +1,12 @@
 2010-04-30  Marek Safar  <marek.safar@gmail.com>
 
-	* generics.cs, delegate.cs: Implement output type inference of
+	Partially based on patch by <sami.lamti@gmail.com>
+
+	* eval.cs, ecore.cs: Fixed eval show methods.
+
+2010-04-30  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, delegate.cs: Implement output type inference of
 	methodgroup now when the specification was cleared at least little
 	bit.
 

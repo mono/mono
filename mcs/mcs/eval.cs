@@ -57,7 +57,7 @@ namespace Mono.CSharp {
 
 		static List<NamespaceEntry.UsingAliasEntry> using_alias_list = new List<NamespaceEntry.UsingAliasEntry> ();
 		internal static List<NamespaceEntry.UsingEntry> using_list = new List<NamespaceEntry.UsingEntry> ();
-		static Dictionary<string, FieldInfo> fields = new Dictionary<string, FieldInfo> ();
+		static Dictionary<string, Tuple<FieldSpec, FieldInfo>> fields = new Dictionary<string, Tuple<FieldSpec, FieldInfo>> ();
 
 		static TypeSpec interactive_base_class;
 		static Driver driver;
@@ -759,25 +759,27 @@ namespace Mono.CSharp {
 			// Pull the FieldInfos from the type, and keep track of them
 			foreach (Field field in queued_fields){
 				FieldInfo fi = tt.GetField (field.Name);
-				
-				FieldInfo old;
+
+				Tuple<FieldSpec, FieldInfo> old;
 				
 				// If a previous value was set, nullify it, so that we do
 				// not leak memory
-				if (fields.TryGetValue (field.Name, out old)){
-					if (old.FieldType.IsValueType){
+				if (fields.TryGetValue (field.Name, out old)) {
+					if (old.Item1.MemberType.IsStruct) {
 						//
 						// TODO: Clear fields for structs
 						//
 					} else {
 						try {
-							old.SetValue (null, null);
+							old.Item2.SetValue (null, null);
 						} catch {
 						}
 					}
+
+					fields [field.Name] = Tuple.Create (old.Item1, fi);
+				} else {
+					fields.Add (field.Name, Tuple.Create (field.Spec, fi));
 				}
-				
-				fields [field.Name] = fi;
 			}
 			//types.Add (tb);
 
@@ -800,12 +802,10 @@ namespace Mono.CSharp {
 		public class NoValueSet {
 		}
 
-		static internal FieldInfo LookupField (string name)
+		static internal Tuple<FieldSpec, FieldInfo> LookupField (string name)
 		{
-			FieldInfo fi;
-			if (!fields.TryGetValue (name, out fi))
-				return null;
-
+			Tuple<FieldSpec, FieldInfo> fi;
+			fields.TryGetValue (name, out fi);
 			return fi;
 		}
 
@@ -869,25 +869,18 @@ namespace Mono.CSharp {
 				StringBuilder sb = new StringBuilder ();
 				
 				foreach (var de in fields){
-					FieldInfo fi = LookupField (de.Key);
-					object value = null;
-					//bool error = false;
-					
+					var fi = LookupField (de.Key);
+					object value;
 					try {
-						if (value == null)
-							value = "null";
-						value = fi.GetValue (null);
+						value = fi.Item2.GetValue (null);
 						if (value is string)
 							value = Quote ((string)value);
 					} catch {
-						//error = true;
+						value = "<error reading value>";
 					}
 
-					throw new NotImplementedException ("net");
-					//if (error)
-					//    sb.Append (String.Format ("{0} {1} <error reading value>", TypeManager.CSharpName(fi.FieldType), de.Key));
-					//else
-					//    sb.Append (String.Format ("{0} {1} = {2}", TypeManager.CSharpName(fi.FieldType), de.Key, value));
+					sb.AppendFormat ("{0} {1} = {2}", fi.Item1.MemberType.GetSignatureForError (), de.Key, value);
+					sb.AppendLine ();
 				}
 				
 				return sb.ToString ();
@@ -1058,17 +1051,17 @@ namespace Mono.CSharp {
 		/// </summary>
 		static public string help {
 			get {
-				return  "Static methods:\n"+
-					"  Describe(obj)      - Describes the object's type\n" + 
-					"  LoadPackage (pkg); - Loads the given Package (like -pkg:FILE)\n" +
-					"  LoadAssembly (ass) - Loads the given assembly (like -r:ASS)\n" + 
-					"  ShowVars ();       - Shows defined local variables.\n" +
-					"  ShowUsing ();      - Show active using decltions.\n" +
-					"  Prompt             - The prompt used by the C# shell\n" +
-					"  ContinuationPrompt - The prompt for partial input\n" +
-					"  Time(() -> { })    - Times the specified code\n" +
-					"  quit;\n" +
-					"  help;\n";
+				return "Static methods:\n" +
+					"  Describe (object)       - Describes the object's type\n" +
+					"  LoadPackage (package);  - Loads the given Package (like -pkg:FILE)\n" +
+					"  LoadAssembly (assembly) - Loads the given assembly (like -r:ASSEMBLY)\n" +
+					"  ShowVars ();            - Shows defined local variables.\n" +
+					"  ShowUsing ();           - Show active using declarations.\n" +
+					"  Prompt                  - The prompt used by the C# shell\n" +
+					"  ContinuationPrompt      - The prompt for partial input\n" +
+					"  Time(() -> { })         - Times the specified code\n" +
+					"  quit;                   - You'll never believe it - this quits the repl!\n" +
+					"  help;                   - This help text\n";
 			}
 		}
 
@@ -1096,14 +1089,12 @@ namespace Mono.CSharp {
 		static public string Describe (object x)
 		{
 			if (x == null)
-				return "";
-			
-			TypeSpec t = x as TypeSpec;
-//			if (t == null)
-//				t = x.GetType ();
+				return "<null>";
+
+			var type = x as Type ?? x.GetType ();
 
 			StringWriter sw = new StringWriter ();
-			new Outline (t.GetMetaInfo (), sw, true, false, false).OutlineType ();
+			new Outline (type, sw, true, false, false).OutlineType ();
 			return sw.ToString ();
 		}
 #endif

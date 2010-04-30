@@ -2552,9 +2552,9 @@ namespace Mono.CSharp {
 				}
 
 				if (RootContext.EvalMode){
-					FieldInfo fi = Evaluator.LookupField (Name);
+					var fi = Evaluator.LookupField (Name);
 					if (fi != null)
-						return new FieldExpr (Import.CreateField (fi, null), loc).Resolve (ec);
+						return new FieldExpr (fi.Item1, loc).Resolve (ec);
 				}
 /*
 				if (almost_matched != null)
