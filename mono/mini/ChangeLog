@@ -1,3 +1,13 @@
+2010-05-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MonoAotTrampInfo): Rename this to MonoTrampInfo, add patches/unwind
+	info fields.
+
+	* aot-compiler.c (mono_aot_tramp_info_create): Rename to mono_tramp_info_create,
+	add patches/unwind info arguments, move to mini.c.
+
+	* mini-<ARCH>.c aot-compiler.c: Update after the above changes.
+
 2010-04-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* tramp-x86.c (mono_arch_create_generic_class_init_trampoline_full): Set the
