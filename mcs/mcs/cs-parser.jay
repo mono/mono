@@ -3233,12 +3233,12 @@ argument_list
 	| argument_list COMMA
 	  {
 	  	Report.Error (839, GetLocation ($2), "An argument is missing");
-	  	$$ = null;
+	  	$$ = $1;
 	  }
 	| COMMA argument_or_named_argument
 	  {
 	  	Report.Error (839, GetLocation ($1), "An argument is missing");
-	  	$$ = null;
+	  	$$ = $1;
 	  }
 	;
 
