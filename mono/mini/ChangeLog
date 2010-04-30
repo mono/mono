@@ -1,5 +1,9 @@
 2010-04-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_emit_prolog): Avoid an assert in full-aot mode.
+
+2010-04-29  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-runtime.c (load_function): Use TARGET_X86 instead of __i386__.
 
 2010-04-27  Zoltan Varga  <vargaz@gmail.com>
