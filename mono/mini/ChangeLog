@@ -1,3 +1,8 @@
+2010-04-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (type_commands): Add a new CMD_TYPE_GET_SOURCE_FILES_2
+	command which returns full path names.
+
 2010-04-29  Zoltan Varga  <vargaz@gmail.com>
 
 	* image-writer.c (asm_writer_emit_alignment): Use ilog2 for alignments for the
