@@ -249,7 +249,7 @@ namespace System.ServiceModel.Channels
 		IChannelListener channel_listener;
 		MetadataPublishingInfo mex_info;
 		HttpGetWsdl wsdl_instance;
-		AutoResetEvent wait_http_ctx = new AutoResetEvent (false);
+		ManualResetEvent wait_http_ctx = new ManualResetEvent (false);
 		List<HttpContextInfo> pending = new List<HttpContextInfo> ();
 
 		public MetadataPublishingInfo MexInfo { get { return mex_info; } }
@@ -344,6 +344,7 @@ namespace System.ServiceModel.Channels
 			}
 			KickContextReceiver (channel_listener, DispatchHttpListenerContext);
 			wait_http_ctx.WaitOne (timeout);
+			wait_http_ctx.Reset ();
 			lock (pending) {
 				HttpContextInfo ctx = pending.Count > 0 ? pending [0] : null;
 				if (ctx != null)

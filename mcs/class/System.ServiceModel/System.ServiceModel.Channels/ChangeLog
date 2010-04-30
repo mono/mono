@@ -1,3 +1,8 @@
+2010-04-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpListenerManager.cs : use manual reset here to not cause
+	  possible inconsistent locking.
+
 2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpChannelListener.cs, HttpListenerManager.cs :
