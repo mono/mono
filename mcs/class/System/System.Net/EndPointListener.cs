@@ -83,12 +83,14 @@ namespace System.Net {
 			EndPointListener epl = (EndPointListener) ares.AsyncState;
 			Socket accepted = null;
 			try {
-				accepted = epl.sock.EndAccept (ares);
+				if (epl.sock != null)
+					accepted = epl.sock.EndAccept (ares);
 			} catch {
 				// Anything to do here?
 			} finally {
 				try {
-					epl.sock.BeginAccept (OnAccept, epl);
+					if (epl.sock != null)
+						epl.sock.BeginAccept (OnAccept, epl);
 				} catch {
 					if (accepted != null) {
 						try {
