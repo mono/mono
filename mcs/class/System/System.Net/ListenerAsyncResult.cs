@@ -71,10 +71,13 @@ namespace System.Net {
 		{
 			ListenerAsyncResult ares = (ListenerAsyncResult) o;
 			if (ares.forward != null) {
-				ares.forward.cb (ares);
+				InvokeCallback (ares.forward);
 				return;
 			}
-			ares.cb (ares);
+			try {
+				ares.cb (ares);
+			} catch {
+			}
 		}
 
 		internal void Complete (HttpListenerContext context)
