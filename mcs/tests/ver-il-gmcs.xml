@@ -12680,6 +12680,41 @@
       </method>
     </type>
   </test>
+  <test name="gtest-504.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-505.cs">
+    <type name="C">
+      <method name="Int32 Test(System.Collections.Generic.List`1[System.Int32])">
+        <size>3</size>
+      </method>
+      <method name="Int32 Test(System.String)">
+        <size>3</size>
+      </method>
+      <method name="Int32 Test(Int32)">
+        <size>2</size>
+      </method>
+      <method name="R Method[T,R](IEnumerable`1, System.Func`2[T,R])">
+        <size>16</size>
+      </method>
+      <method name="R Method2[T,R](IEnumerable`1, System.Func`2[System.Collections.Generic.List`1[T],R])">
+        <size>8</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>73</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -38518,6 +38553,16 @@
     <type name="Program">
       <method name="Void Main()">
         <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-756.cs">
+    <type name="UnsafeTest">
+      <method name="Void Main()">
+        <size>12</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
