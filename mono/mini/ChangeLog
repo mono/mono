@@ -1,3 +1,7 @@
+2010-04-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c (load_function): Use TARGET_X86 instead of __i386__.
+
 2010-04-27  Zoltan Varga  <vargaz@gmail.com>
 
         * tramp-x86.c exceptions-x86.c mini-x86.c aot-compiler.c aot-runtime.c:
