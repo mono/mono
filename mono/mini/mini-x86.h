@@ -253,6 +253,8 @@ typedef struct {
 #define MONO_ARCH_MONITOR_OBJECT_REG X86_EAX
 #endif
 #define MONO_ARCH_HAVE_STATIC_RGCTX_TRAMPOLINE 1
+#define MONO_ARCH_HAVE_FULL_AOT_TRAMPOLINES 1
+#define MONO_ARCH_GOT_REG X86_EBX
 
 #define MONO_ARCH_HAVE_CMOV_OPS 1
 
@@ -297,6 +299,17 @@ extern MonoBreakpointInfo mono_breakpoint_info [MONO_BREAKPOINT_ARRAY_SIZE];
 
 guint8*
 mono_x86_emit_tls_get (guint8* code, int dreg, int tls_offset) MONO_INTERNAL;
+
+void
+mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
+						  mgreg_t eip, gboolean rethrow) MONO_INTERNAL;
+
+void
+mono_x86_throw_corlib_exception (mgreg_t *regs, guint32 ex_token_index, 
+								 mgreg_t eip, gint32 pc_offset) MONO_INTERNAL;
+
+void 
+mono_x86_patch (unsigned char* code, gpointer target) MONO_INTERNAL;
 
 #endif /* __MONO_MINI_X86_H__ */  
 

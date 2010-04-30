@@ -261,15 +261,14 @@ void win32_seh_set_handler(int type, MonoW32ExceptionHandler handler)
  * Returns a pointer to a method which restores a previously saved sigcontext.
  */
 gpointer
-mono_arch_get_restore_context (void)
+mono_arch_get_restore_context_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {
-	static guint8 *start = NULL;
+	guint8 *start = NULL;
 	guint8 *code;
 
-	if (start)
-		return start;
-
 	/* restore_contect (MonoContext *ctx) */
+
+	*ji = NULL;
 
 	start = code = mono_global_codeman_reserve (128);
 	
@@ -300,6 +299,8 @@ mono_arch_get_restore_context (void)
 	/* jump to the saved IP */
 	x86_ret (code);
 
+	*code_size = code - start;
+
 	return start;
 }
 
@@ -311,16 +312,13 @@ mono_arch_get_restore_context (void)
  * @exc object in this case).
  */
 gpointer
-mono_arch_get_call_filter (void)
+mono_arch_get_call_filter_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
 {
-	static guint8* start;
-	static int inited = 0;
+	guint8* start;
 	guint8 *code;
 
-	if (inited)
-		return start;
+	*ji = NULL;
 
-	inited = 1;
 	/* call_filter (MonoContext *ctx, unsigned long eip) */
 	start = code = mono_global_codeman_reserve (64);
 
@@ -367,9 +365,249 @@ mono_arch_get_call_filter (void)
 	x86_leave (code);
 	x86_ret (code);
 
+	*code_size = code - start;
+
 	g_assert ((code - start) < 64);
 	return start;
 }
+
+/*
+ * mono_x86_throw_exception:
+ *
+ *   C function called from the throw trampolines.
+ */
+void
+mono_x86_throw_exception (mgreg_t *regs, MonoObject *exc, 
+						  mgreg_t eip, gboolean rethrow)
+{
+	static void (*restore_context) (MonoContext *);
+	MonoContext ctx;
+
+	if (!restore_context)
+		restore_context = mono_get_restore_context ();
+
+	ctx.esp = regs [X86_ESP];
+	ctx.eip = eip;
+	ctx.ebp = regs [X86_EBP];
+	ctx.edi = regs [X86_EDI];
+	ctx.esi = regs [X86_ESI];
+	ctx.ebx = regs [X86_EBX];
+	ctx.edx = regs [X86_EDX];
+	ctx.ecx = regs [X86_ECX];
+	ctx.eax = regs [X86_EAX];
+
+#ifdef __APPLE__
+	/* The OSX ABI specifies 16 byte alignment at call sites */
+	g_assert ((ctx.esp % MONO_ARCH_FRAME_ALIGNMENT) == 0);
+#endif
+
+	if (mono_object_isinst (exc, mono_defaults.exception_class)) {
+		MonoException *mono_ex = (MonoException*)exc;
+		if (!rethrow)
+			mono_ex->stack_trace = NULL;
+	}
+
+	if (mono_debug_using_mono_debugger ()) {
+		guint8 buf [16], *code;
+
+		mono_breakpoint_clean_code (NULL, (gpointer)eip, 8, buf, sizeof (buf));
+		code = buf + 8;
+
+		if (buf [3] == 0xe8) {
+			MonoContext ctx_cp = ctx;
+			ctx_cp.eip = eip - 5;
+
+			if (mono_debugger_handle_exception (&ctx_cp, exc)) {
+				restore_context (&ctx_cp);
+				g_assert_not_reached ();
+			}
+		}
+	}
+
+	/* adjust eip so that it point into the call instruction */
+	ctx.eip -= 1;
+
+	mono_handle_exception (&ctx, exc, (gpointer)eip, FALSE);
+
+	restore_context (&ctx);
+
+	g_assert_not_reached ();
+}
+
+void
+mono_x86_throw_corlib_exception (mgreg_t *regs, guint32 ex_token_index, 
+								 mgreg_t eip, gint32 pc_offset)
+{
+	guint32 ex_token = MONO_TOKEN_TYPE_DEF | ex_token_index;
+	MonoException *ex;
+
+	ex = mono_exception_from_token (mono_defaults.exception_class->image, ex_token);
+
+	eip -= pc_offset;
+
+	mono_x86_throw_exception (regs, (MonoObject*)ex, eip, FALSE);
+}
+
+/*
+ * get_throw_exception:
+ *
+ *  Generate a call to mono_x86_throw_exception/
+ * mono_x86_throw_corlib_exception.
+ * If LLVM is true, generate code which assumes the caller is LLVM generated code, 
+ * which doesn't push the arguments.
+ */
+static guint8*
+get_throw_exception (const char *name, gboolean rethrow, gboolean llvm, gboolean corlib, guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
+{
+	guint8 *start, *code;
+	GSList *unwind_ops = NULL;
+	int i, stack_size, stack_offset, arg_offsets [5], regs_offset;
+
+	if (ji)
+		*ji = NULL;
+
+	start = code = mono_global_codeman_reserve (128);
+
+	stack_size = 128;
+
+	/* 
+	 * On apple, the stack is misaligned by the pushing of the return address.
+	 */
+	if (!llvm && corlib)
+		/* On OSX, we don't generate alignment code to save space */
+		stack_size += 4;
+	else
+		stack_size += MONO_ARCH_FRAME_ALIGNMENT - 4;
+
+	/*
+	 * The stack looks like this:
+	 * <pc offset> (only if corlib is TRUE)
+	 * <exception object>/<type token>
+	 * <return addr> <- esp (unaligned on apple)
+	 */
+
+	mono_add_unwind_op_def_cfa (unwind_ops, (guint8*)NULL, (guint8*)NULL, X86_ESP, 4);
+	mono_add_unwind_op_offset (unwind_ops, (guint8*)NULL, (guint8*)NULL, X86_NREG, -4);
+
+	/* Alloc frame */
+	x86_alu_reg_imm (code, X86_SUB, X86_ESP, stack_size);
+	mono_add_unwind_op_def_cfa_offset (unwind_ops, code, start, stack_size + 4);
+
+	arg_offsets [0] = 0;
+	arg_offsets [1] = 4;
+	arg_offsets [2] = 8;
+	arg_offsets [3] = 12;
+	regs_offset = 16;
+
+	/* Save registers */
+	for (i = 0; i < X86_NREG; ++i)
+		if (i != X86_ESP)
+			x86_mov_membase_reg (code, X86_ESP, regs_offset + (i * 4), i, 4);
+	/* Calculate the offset between the current sp and the sp of the caller */
+	if (llvm) {
+		/* LLVM doesn't push the arguments */
+		stack_offset = stack_size + 4;
+	} else {
+		if (corlib) {
+			/* Two arguments */
+			stack_offset = stack_size + 4 + 8;
+#ifdef __APPLE__
+			/* We don't generate stack alignment code on osx to save space */
+#endif
+		} else {
+			/* One argument */
+			stack_offset = stack_size + 4 + 4;
+#ifdef __APPLE__
+			/* Pop the alignment added by OP_THROW too */
+			stack_offset += MONO_ARCH_FRAME_ALIGNMENT - 4;
+#endif
+		}
+	}
+	/* Save ESP */
+	x86_lea_membase (code, X86_EAX, X86_ESP, stack_offset);
+	x86_mov_membase_reg (code, X86_ESP, regs_offset + (X86_ESP * 4), X86_EAX, 4);
+
+	/* Set arg1 == regs */
+	x86_lea_membase (code, X86_EAX, X86_ESP, regs_offset);
+	x86_mov_membase_reg (code, X86_ESP, arg_offsets [0], X86_EAX, 4);
+	/* Set arg2 == exc */
+	x86_mov_reg_membase (code, X86_EAX, X86_ESP, stack_size + 4, 4);
+	x86_mov_membase_reg (code, X86_ESP, arg_offsets [1], X86_EAX, 4);
+	/* Set arg3 == eip */
+	x86_mov_reg_membase (code, X86_EAX, X86_ESP, stack_size, 4);
+	x86_mov_membase_reg (code, X86_ESP, arg_offsets [2], X86_EAX, 4);
+	if (corlib) {
+		/* Set arg4 == offset */
+		x86_mov_reg_membase (code, X86_EAX, X86_ESP, stack_size + 8, 4);
+		x86_mov_membase_reg (code, X86_ESP, arg_offsets [3], X86_EAX, 4);
+	} else {
+		/* Set arg4 == rethrow */
+		x86_mov_membase_imm (code, X86_ESP, arg_offsets [3], rethrow, 4);
+	}
+	/* Make the call */
+	if (aot) {
+		// This can be called from runtime code, which can't guarantee that
+		// ebx contains the got address.
+		// So emit the got address loading code too
+		code = mono_arch_emit_load_got_addr (start, code, NULL, ji);
+		code = mono_arch_emit_load_aotconst (start, code, ji, MONO_PATCH_INFO_JIT_ICALL_ADDR, corlib ? "mono_x86_throw_corlib_exception" : "mono_x86_throw_exception");
+		x86_call_reg (code, X86_EAX);
+	} else {
+		x86_call_code (code, corlib ? (gpointer)mono_x86_throw_corlib_exception : (gpointer)mono_x86_throw_exception);
+	}
+	x86_breakpoint (code);
+
+	g_assert ((code - start) < 128);
+
+	if (code_size)
+		*code_size = code - start;
+
+	mono_save_trampoline_xdebug_info (corlib ? "llvm_throw_corlib_exception_trampoline" : "llvm_throw_exception_trampoline", start, code - start, unwind_ops);
+
+	return start;
+}
+
+/**
+ * mono_arch_get_throw_exception:
+ *
+ * Returns a function pointer which can be used to raise 
+ * exceptions. The returned function has the following 
+ * signature: void (*func) (MonoException *exc); 
+ * For example to raise an arithmetic exception you can use:
+ *
+ * x86_push_imm (code, mono_get_exception_arithmetic ()); 
+ * x86_call_code (code, arch_get_throw_exception ()); 
+ *
+ */
+gpointer 
+mono_arch_get_throw_exception_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
+{
+	return get_throw_exception ("throw_exception_trampoline", FALSE, FALSE, FALSE, code_size, ji, aot);
+}
+
+gpointer 
+mono_arch_get_rethrow_exception_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
+{
+	return get_throw_exception ("rethow_exception_trampoline", TRUE, FALSE, FALSE, code_size, ji, aot);
+}
+
+/**
+ * mono_arch_get_throw_corlib_exception:
+ *
+ * Returns a function pointer which can be used to raise 
+ * corlib exceptions. The returned function has the following 
+ * signature: void (*func) (guint32 ex_token, guint32 offset); 
+ * Here, offset is the offset which needs to be substracted from the caller IP 
+ * to get the IP of the throw. Passing the offset has the advantage that it 
+ * needs no relocations in the caller.
+ */
+gpointer 
+mono_arch_get_throw_corlib_exception_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
+{
+	return get_throw_exception ("throw_corlib_exception_trampoline", FALSE, FALSE, TRUE, code_size, ji, aot);
+}
+
+#if 0
 
 static void
 throw_exception (unsigned long eax, unsigned long ecx, unsigned long edx, unsigned long ebx,
@@ -505,34 +743,29 @@ mono_arch_get_rethrow_exception (void)
 	return start;
 }
 
-/**
- * mono_arch_get_throw_exception_by_name:
- *
- * Returns a function pointer which can be used to raise 
- * corlib exceptions. The returned function has the following 
- * signature: void (*func) (gpointer ip, char *exc_name); 
- * For example to raise an arithmetic exception you can use:
- *
- * x86_push_imm (code, "ArithmeticException"); 
- * x86_push_imm (code, <IP>)
- * x86_jump_code (code, arch_get_throw_exception_by_name ()); 
- *
- */
+#endif
+
 gpointer 
-mono_arch_get_throw_exception_by_name (void)
-{
+mono_arch_get_throw_exception_by_name_full (guint32 *code_size, MonoJumpInfo **ji, gboolean aot)
+{	
 	guint8* start;
 	guint8 *code;
 
-	start = code = mono_global_codeman_reserve (32);
+	start = code = mono_global_codeman_reserve (64);
+
+	*ji = NULL;
 
 	/* Not used */
 	x86_breakpoint (code);
 
 	mono_arch_flush_icache (start, code - start);
 
+	*code_size = code - start;
+
 	return start;
 }
+
+#if 0
 
 /**
  * mono_arch_get_throw_corlib_exception:
@@ -589,6 +822,8 @@ mono_arch_get_throw_corlib_exception (void)
 
 	return start;
 }
+
+#endif
 
 /*
  * mono_arch_find_jit_info_ext:
@@ -869,7 +1104,7 @@ altstack_handle_and_restore (void *sigctx, gpointer obj, gboolean stack_ovf)
 	void (*restore_context) (MonoContext *);
 	MonoContext mctx;
 
-	restore_context = mono_arch_get_restore_context ();
+	restore_context = mono_get_restore_context ();
 	mono_arch_sigctx_to_monoctx (sigctx, &mctx);
 
 	if (mono_debugger_handle_exception (&mctx, (MonoObject *)obj)) {
