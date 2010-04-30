@@ -508,7 +508,11 @@ namespace Mono.Debugger.Soft
 		 * have to be checked when placing breakpoints.
 		 */
 		public string[] GetSourceFiles () {
-			return vm.conn.Type_GetSourceFiles (id);
+			return GetSourceFiles (false);
+		}
+
+		public string[] GetSourceFiles (bool return_full_paths) {
+			return vm.conn.Type_GetSourceFiles (id, return_full_paths);
 		}
 
 		public C.TypeDefinition Metadata {

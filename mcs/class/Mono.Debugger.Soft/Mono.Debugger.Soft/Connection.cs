@@ -360,7 +360,9 @@ namespace Mono.Debugger.Soft
 			GET_PROPERTIES = 9,
 			GET_CATTRS = 10,
 			GET_FIELD_CATTRS = 11,
-			GET_PROPERTY_CATTRS = 12
+			GET_PROPERTY_CATTRS = 12,
+			/* FIXME: Merge into GET_SOURCE_FILES when the major protocol version is increased */
+			GET_SOURCE_FILES_2 = 13
 		}
 
 		enum CmdStackFrame {
@@ -1569,8 +1571,8 @@ namespace Mono.Debugger.Soft
 			SendReceive (CommandSet.TYPE, (int)CmdType.SET_VALUES, new PacketWriter ().WriteId (id).WriteInt (fields.Length).WriteIds (fields).WriteValues (values));
 		}
 
-		public string[] Type_GetSourceFiles (long id) {
-			var r = SendReceive (CommandSet.TYPE, (int)CmdType.GET_SOURCE_FILES, new PacketWriter ().WriteId (id));
+		public string[] Type_GetSourceFiles (long id, bool return_full_paths) {
+			var r = SendReceive (CommandSet.TYPE, return_full_paths ? (int)CmdType.GET_SOURCE_FILES_2 : (int)CmdType.GET_SOURCE_FILES, new PacketWriter ().WriteId (id));
 			int len = r.ReadInt ();
 			string[] res = new string [len];
 			for (int i = 0; i < len; ++i)
