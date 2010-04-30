@@ -1,3 +1,9 @@
+2010-04-30  Marek Safar  <marek.safar@gmail.com>
+
+	* generics.cs, delegate.cs: Implement output type inference of
+	methodgroup now when the specification was cleared at least little
+	bit.
+
 2010-04-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #575611

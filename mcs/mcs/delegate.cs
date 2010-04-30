@@ -393,28 +393,26 @@ namespace Mono.CSharp {
 		protected MethodGroupExpr method_group;
 		protected Expression delegate_instance_expression;
 
-		// TODO: Should either cache it or use interface to abstract it
-		public static Arguments CreateDelegateMethodArguments (AParametersCollection pd, Location loc)
+		public static Arguments CreateDelegateMethodArguments (AParametersCollection pd, TypeSpec[] types, Location loc)
 		{
 			Arguments delegate_arguments = new Arguments (pd.Count);
 			for (int i = 0; i < pd.Count; ++i) {
 				Argument.AType atype_modifier;
-				TypeSpec atype = pd.Types [i];
 				switch (pd.FixedParameters [i].ModFlags) {
 				case Parameter.Modifier.REF:
 					atype_modifier = Argument.AType.Ref;
-					//atype = atype.GetElementType ();
 					break;
 				case Parameter.Modifier.OUT:
 					atype_modifier = Argument.AType.Out;
-					//atype = atype.GetElementType ();
 					break;
 				default:
 					atype_modifier = 0;
 					break;
 				}
-				delegate_arguments.Add (new Argument (new TypeExpression (atype, loc), atype_modifier));
+
+				delegate_arguments.Add (new Argument (new TypeExpression (types [i], loc), atype_modifier));
 			}
+
 			return delegate_arguments;
 		}
 
@@ -445,7 +443,7 @@ namespace Mono.CSharp {
 			method_group.DelegateType = type;
 			method_group.CustomErrorHandler = this;
 
-			Arguments arguments = CreateDelegateMethodArguments (invoke_method.Parameters, loc);
+			Arguments arguments = CreateDelegateMethodArguments (invoke_method.Parameters, invoke_method.Parameters.Types, loc);
 			method_group = method_group.OverloadResolve (ec, ref arguments, false, loc);
 			if (method_group == null)
 				return null;
@@ -571,7 +569,7 @@ namespace Mono.CSharp {
 			mg.DelegateType = target_type;
 			var invoke = Delegate.GetInvokeMethod (ec.Compiler, target_type);
 
-			Arguments arguments = CreateDelegateMethodArguments (invoke.Parameters, mg.Location);
+			Arguments arguments = CreateDelegateMethodArguments (invoke.Parameters, invoke.Parameters.Types, mg.Location);
 			return mg.OverloadResolve (ec, ref arguments, true, mg.Location) != null;
 		}
 

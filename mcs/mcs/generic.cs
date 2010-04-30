@@ -2598,14 +2598,15 @@ namespace Mono.CSharp {
 		}
 		
 		//
-		// Uses inferred types to inflate delegate type argument
+		// Uses inferred or partially infered types to inflate delegate type argument. Returns
+		// null when type parameter was not yet inferres
 		//
 		public TypeSpec InflateGenericArgument (TypeSpec parameter)
 		{
 			var tp = parameter as TypeParameterSpec;
 			if (tp != null) {
 				//
-				// Inflate method generic argument (MVAR) only
+				// Type inference work on generic arguments (MVAR) only
 				//
 				if (!tp.IsMethodOwned)
 					return parameter;
@@ -2617,7 +2618,11 @@ namespace Mono.CSharp {
 			if (gt != null) {
 				var inflated_targs = new TypeSpec [gt.TypeArguments.Length];
 				for (int ii = 0; ii < inflated_targs.Length; ++ii) {
-					inflated_targs[ii] = InflateGenericArgument (gt.TypeArguments [ii]);
+					var inflated = InflateGenericArgument (gt.TypeArguments [ii]);
+					if (inflated == null)
+						return null;
+
+					inflated_targs[ii] = inflated;
 				}
 
 				return gt.GetDefinition ().MakeGenericType (inflated_targs);
@@ -2822,25 +2827,39 @@ namespace Mono.CSharp {
 			// then a lower-bound inference is made from U for Tb.
 			//
 			if (e is MethodGroupExpr) {
-				// TODO: Or expression tree
-				if (!TypeManager.IsDelegateType (t))
-					return 0;
+				if (!TypeManager.IsDelegateType (t)) {
+					if (TypeManager.expression_type == null || t.MemberDefinition != TypeManager.expression_type.MemberDefinition)
+						return 0;
+
+					t = TypeManager.GetTypeArguments (t)[0];
+				}
 
 				var invoke = Delegate.GetInvokeMethod (ec.Compiler, t);
 				TypeSpec rtype = invoke.ReturnType;
 
-				if (!TypeManager.IsGenericType (rtype))
+				if (!rtype.IsGenericParameter && !TypeManager.IsGenericType (rtype))
 					return 0;
 
+				// LAMESPEC: Standard does not specify that all methodgroup arguments
+				// has to be fixed but it does not specify how to do recursive type inference
+				// either. We choose the simple option and infer return type only
+				// if all delegate generic arguments are fixed.
+				TypeSpec[] param_types = new TypeSpec [invoke.Parameters.Count];
+				for (int i = 0; i < param_types.Length; ++i) {
+					var inflated = InflateGenericArgument (invoke.Parameters.Types[i]);
+					if (inflated == null)
+						return 0;
+
+					param_types[i] = inflated;
+				}
+
 				MethodGroupExpr mg = (MethodGroupExpr) e;
-				Arguments args = DelegateCreation.CreateDelegateMethodArguments (invoke.Parameters, e.Location);
+				Arguments args = DelegateCreation.CreateDelegateMethodArguments (invoke.Parameters, param_types, e.Location);
 				mg = mg.OverloadResolve (ec, ref args, true, e.Location);
 				if (mg == null)
 					return 0;
 
-				// TODO: What should happen when return type is of generic type ?
-				throw new NotImplementedException ();
-//				return LowerBoundInference (null, rtype) + 1;
+				return LowerBoundInference (mg.BestCandidate.ReturnType, rtype) + 1;
 			}
 
 			//
