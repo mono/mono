@@ -1,5 +1,9 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_decompose_long_opts): Fix LNEG.
+
+2010-05-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-ppc.c (mono_arch_emit_exceptions): Initialize exc_throw_pos/found
 	explicitly, this seems to be required by some gcc versions at -O2.
 
