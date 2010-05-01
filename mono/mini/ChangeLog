@@ -1,5 +1,12 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_get_throw_corlib_exception_full): Get rid of
+	the specialized throw corlib exception trampoline, use a variant of the normal
+	trampoline along with a new C function which does the call to
+	mono_exception_from_token (), just like on x86.
+
+2010-05-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-trampolines.c aot-compiler.c tramp-<ARCH>.c exceptions-<ARCH>.c:
 	Reorganize the full aot trampoline creation functions, instead of taking a bunch
 	of out arguments, they will now take a MonoTrampInfo** out argument. Simplify
