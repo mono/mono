@@ -1,5 +1,10 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_register_jit_icall): New helper function called from
+	mono_arch_init () to register jit icalls called from full-aot trampolines.
+	(load_function): Get rid of the arch specific #ifdefs, move the relevant code
+	to mini-<ARCH>.c.
+
 	* exceptions-amd64.c (mono_arch_get_throw_corlib_exception_full): Get rid of
 	the specialized throw corlib exception trampoline, use a variant of the normal
 	trampoline along with a new C function which does the call to
