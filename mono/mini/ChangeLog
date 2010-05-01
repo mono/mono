@@ -1,5 +1,9 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (mono_aot_get_plt_entry): Move the arch specific parts to an
+	arch-specific function.
+	(mono_aot_get_plt_info_offset): Ditto.
+
 	* aot-runtime.c (mono_aot_register_jit_icall): New helper function called from
 	mono_arch_init () to register jit icalls called from full-aot trampolines.
 	(load_function): Get rid of the arch specific #ifdefs, move the relevant code
