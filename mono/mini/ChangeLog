@@ -1,5 +1,8 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (init_plt): Make the default entries point to the AOT trampoline,
+	there is no need to jump through the first plt entry.
+
 	* aot-runtime.c (mono_aot_get_named_code): Rename to mono_aot_get_trampoline.
 
 	* aot-runtime.c (mono_aot_get_plt_entry): Move the arch specific parts to an
