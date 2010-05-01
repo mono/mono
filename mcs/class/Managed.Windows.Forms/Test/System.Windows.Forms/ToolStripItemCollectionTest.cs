@@ -115,6 +115,31 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Clear ()
+		{
+			ToolStrip ts = new ToolStrip ();
+			ToolStripItemCollection coll = ts.Items;
+			ToolStripItem item1 = new ToolStripLabel ("a");
+			ToolStripItem item2 = new ToolStripLabel ("b");
+			ToolStripItem item3 = new ToolStripLabel ("c");
+
+			coll.Add (item1);
+			coll.Add (item2);
+			coll.Add (item3);
+
+			Assert.AreEqual (3, coll.Count, "#A0");
+			Assert.AreEqual (ts, item1.Owner, "#A1");
+			Assert.AreEqual (ts, item2.Owner, "#A2");
+			Assert.AreEqual (ts, item3.Owner, "#A3");
+
+			coll.Clear ();
+			Assert.AreEqual (0, coll.Count, "#B0");
+			Assert.AreEqual (null, item1.Owner, "#B1");
+			Assert.AreEqual (null, item2.Owner, "#B2");
+			Assert.AreEqual (null, item3.Owner, "#B3");
+		}
+
+		[Test]
 		public void Find ()
 		{
 			ToolStripItemCollection coll = new ToolStrip ().Items;
