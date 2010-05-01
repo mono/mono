@@ -1,5 +1,10 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Fix full-aot support for
+	has_target delegate invokes.
+
+2010-05-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.h (MonoAotTrampInfo): Rename this to MonoTrampInfo, add patches/unwind
 	info fields.
 
