@@ -124,7 +124,7 @@ namespace System.Windows.Forms
 
 		protected override void SetDisplayedItems ()
 		{
-			this.displayed_items.Clear ();
+			this.displayed_items.ClearInternal ();
 
 			if (this.OwnerItem != null && this.OwnerItem.Parent != null)
 				foreach (ToolStripItem tsi in this.OwnerItem.Parent.Items)

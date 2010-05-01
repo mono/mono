@@ -169,6 +169,19 @@ namespace System.Windows.Forms
 			if (this.IsReadOnly)
 				throw new NotSupportedException ("This collection is read-only");
 
+			if (internal_created)
+				foreach (ToolStripItem item in this) {
+					item.InternalOwner = null;
+					item.Parent = null;
+				}
+
+			base.Clear ();
+			owner.PerformLayout ();
+		}
+
+		// Don't modify Owner or Parent - used by internal collection instances.
+		internal void ClearInternal ()
+		{
 			base.Clear ();
 			owner.PerformLayout ();
 		}

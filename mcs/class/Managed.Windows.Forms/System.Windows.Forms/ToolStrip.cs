@@ -1173,7 +1173,7 @@ namespace System.Windows.Forms
 
 		protected virtual void SetDisplayedItems ()
 		{
-			this.displayed_items.Clear ();
+			this.displayed_items.ClearInternal ();
 			
 			foreach (ToolStripItem tsi in this.items)
 				if (tsi.Placement == ToolStripItemPlacement.Main && tsi.Available) {

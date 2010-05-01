@@ -1,3 +1,16 @@
+2010-05-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ToolStripItemCollection.cs: When calling Clear set Owner and Parent
+	properties to null for each of the items in the collection, just as
+	Remove/RemoveAt do. Implement a ClearInternal method that clears the
+	collection without modifying the mentioned properties.
+	* ToolStrip.cs:
+	* ToolStripOverflow.cs: Call ToolStripItemCollection.ClearInternal
+	for our internal collections.
+	This should fix #590100, which producing a race when the garbage
+	collector was calling ToolStripItem.Dispose, which in turn was firing
+	a Layout in the ToolStrip.
+
 2010-04-27  Ivan Zlatev  <ivan@ivanz.com>
 
 	* DataGridView.cs: Fix multiple issues when inserting and adding new 
