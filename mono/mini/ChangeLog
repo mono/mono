@@ -1,5 +1,9 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_emit_load_aotconst): New arch-specific function.
+
+	* tramp-amd64.c: Use emit_load_aotconst to remove some code duplication.
+
 	* aot-runtime.c (init_plt): Make the default entries point to the AOT trampoline,
 	there is no need to jump through the first plt entry.
 
