@@ -1,5 +1,13 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c aot-compiler.c tramp-<ARCH>.c exceptions-<ARCH>.c:
+	Reorganize the full aot trampoline creation functions, instead of taking a bunch
+	of out arguments, they will now take a MonoTrampInfo** out argument. Simplify
+	some code in aot-compiler.c because of this. Remove the non-full aot trampoline
+	creation functions on architectures which have the full-aot ones.
+
+2010-05-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-ppc.c (mono_arch_decompose_long_opts): Fix LNEG.
 
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
