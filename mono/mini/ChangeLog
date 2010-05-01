@@ -1,5 +1,12 @@
 2010-05-01  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_emit_exceptions): Initialize exc_throw_pos/found
+	explicitly, this seems to be required by some gcc versions at -O2.
+
+	* mini-arm.c: Ditto.
+
+2010-05-01  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini-x86.c (mono_arch_get_delegate_invoke_impl): Fix full-aot support for
 	has_target delegate invokes.
 
