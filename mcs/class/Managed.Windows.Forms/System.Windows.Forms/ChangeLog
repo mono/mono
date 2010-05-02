@@ -1,3 +1,11 @@
+2010-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* StatusStrip.cs: In SetDisplayedItems call ClearInternal on
+	displayed_items instead of Clear, since this is only an internal
+	collection and we don't want to have our items have their Parent/Owner
+	modified.
+	Fixes the remaining bits of #590100.
+
 2010-05-02  Ivan Zlatev  <ivan@ivanz.com>
 
 	* DataGridViewCell.cs: Avoid a NRE in GetValue if the cell doesn't 

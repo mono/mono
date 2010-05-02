@@ -246,7 +246,8 @@ namespace System.Windows.Forms
 
 		protected override void SetDisplayedItems ()
 		{
-			this.displayed_items.Clear ();
+			// Only clean the internal collection, without modifying Owner/Parent on items.
+			this.displayed_items.ClearInternal ();
 
 			foreach (ToolStripItem tsi in this.Items)
 				if (tsi.Placement == ToolStripItemPlacement.Main && tsi.Available) {
