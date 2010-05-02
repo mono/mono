@@ -1,5 +1,10 @@
 2010-05-02  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-marksweep.c, sgen-major-copying.c: Unify
+	major_do_collection() across the two major collectors.
+
+2010-05-02  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Add heavy statistics counter for re-added global
 	remsets.
 
