@@ -927,7 +927,7 @@ namespace System.Windows.Forms {
 			if (DataGridView != null && (RowIndex < 0 || RowIndex >= DataGridView.Rows.Count))
 				throw new ArgumentOutOfRangeException ("rowIndex", "Specified argument was out of the range of valid values.");
 		
-			if (OwningRow != null && OwningRow.Index == DataGridView.NewRowIndex)
+			if (OwningRow != null && DataGridView != null && OwningRow.Index == DataGridView.NewRowIndex)
 				return DefaultNewRowValue;
 
 			if (DataProperty != null && OwningRow.DataBoundItem != null)

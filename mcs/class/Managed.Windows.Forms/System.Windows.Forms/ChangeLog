@@ -1,3 +1,9 @@
+2010-05-02  Ivan Zlatev  <ivan@ivanz.com>
+
+	* DataGridViewCell.cs: Avoid a NRE in GetValue if the cell doesn't 
+	have a DataGridView associated yet.
+	[Fixes bug #600786]
+
 2010-05-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripItemCollection.cs: When calling Clear set Owner and Parent
