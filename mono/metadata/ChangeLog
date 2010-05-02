@@ -1,5 +1,10 @@
 2010-05-02  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Add heavy statistics counter for re-added global
+	remsets.
+
+2010-05-02  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-marksweep.c, sgen-gc.c: Use one mark bit per ALLOC_ALIGN to
 	get rid of a division in critical code.
 
