@@ -113,6 +113,13 @@ namespace System.Windows.Forms {
 		}
 #endif
 
+		bool UsingSorting {
+			get {
+				TreeView tv = owner == null ? null : owner.TreeView;
+				return tv != null && (tv.Sorted || tv.TreeViewNodeSorter != null);
+			}
+		}
+
 		public virtual TreeNode Add (string text)
 		{
 			TreeNode res = new TreeNode (text);
@@ -131,7 +138,7 @@ namespace System.Windows.Forms {
 			if (owner != null)
 				tree_view = owner.TreeView;
 				
-			if (tree_view != null && tree_view.Sorted) {
+			if (tree_view != null && UsingSorting) {
 				res = AddSorted (node);
 			} else {
 				if (count >= nodes.Length)
@@ -279,6 +286,10 @@ namespace System.Windows.Forms {
 			Array.Copy (nodes, index, nodes, index + 1, count - index);
 			nodes [index] = node;
 			count++;
+
+			// If we can use sorting, it means we have an owner *and* a TreeView
+			if (UsingSorting)
+				Sort (owner.TreeView.TreeViewNodeSorter);
 
 			SetupNode (node);
 		}
@@ -435,14 +446,8 @@ namespace System.Windows.Forms {
 				tree_view = owner.TreeView;
 
 			if (tree_view != null) {
-				bool sorted = false;
-				if (tree_view.Sorted || tree_view.TreeViewNodeSorter != null) {
-					owner.Nodes.Sort (tree_view.TreeViewNodeSorter);
-					tree_view.sorted = sorted = true;
-				}
-
 				// We may need to invalidate this entire node collection if sorted.
-				TreeNode prev = sorted ? owner : GetPrevNode (node);
+				TreeNode prev = UsingSorting ? owner : GetPrevNode (node);
 
 				if (tree_view.IsHandleCreated && node.ArePreviousNodesExpanded)
 					tree_view.RecalculateVisibleOrder (prev);
@@ -487,6 +492,13 @@ namespace System.Windows.Forms {
 			if (count >= nodes.Length)
 				Grow ();
 
+			TreeView tree_view = owner.TreeView;
+			if (tree_view.TreeViewNodeSorter != null) { // Custom sorting
+				nodes [count++] = node;
+				Sort (tree_view.TreeViewNodeSorter);
+				return count - 1;
+			}
+
 			CompareInfo compare = Application.CurrentCulture.CompareInfo;
 			int pos = 0;
 			bool found = false;
@@ -520,6 +532,11 @@ namespace System.Windows.Forms {
 			for (int i = 0; i < count; i++) {
 				nodes [i].Nodes.Sort (sorter);
 			}
+
+			// Sorted may have been set to false even if TreeViewNodeSorter is being used.
+			TreeView tv = owner == null ? null : owner.TreeView;
+			if (tv != null)
+				tv.sorted = true;
 		}
 
 		private void Grow ()

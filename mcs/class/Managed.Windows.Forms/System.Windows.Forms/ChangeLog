@@ -1,3 +1,11 @@
+2010-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNodeCollection.cs: Instead of Sorting from SetupNode, do it
+	directly from Add (which uses AddSorted for this purpose) and Insert.
+	This way we first avoid a double sort, take advantage of our fast
+	version of Add for the default sorting, and also supress the call to Sort
+	when using our indexer setter (.Net ignores the sorting in this case).
+
 2010-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeNodeCollection.cs: When Adding a new node don't remove it from
