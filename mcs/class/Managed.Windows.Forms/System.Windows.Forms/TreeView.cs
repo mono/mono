@@ -2126,6 +2126,9 @@ namespace System.Windows.Forms {
 				Invalidate (highlighted_node.Bounds);
 				if (old_highlighted != null)
 					Invalidate (Bloat (old_highlighted.Bounds));
+
+				drag_begin_x = e.X;
+				drag_begin_y = e.Y;
 			} 
 		}
 
@@ -2210,10 +2213,7 @@ namespace System.Windows.Forms {
 #endif
 			
 			if (e.Button == MouseButtons.Left || e.Button == MouseButtons.Right) {
-				if (drag_begin_x == -1 && drag_begin_y == -1) {
-					drag_begin_x = e.X;
-					drag_begin_y = e.Y;
-				} else {
+				if (drag_begin_x != -1 && drag_begin_y != -1) {
 					double rise = Math.Pow (drag_begin_x - e.X, 2);
 					double run = Math.Pow (drag_begin_y - e.Y, 2);
 					double move = Math.Sqrt (rise + run);

@@ -1,5 +1,13 @@
 2010-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeView.cs: Set our internal fields related to the starting drag
+	position from MouseDown to MouseMove - we need to make sure
+	that the OnItemDragged event is fired only *one* time per element
+	clicked.
+	Fixes #551734.
+
+2010-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeNodeCollection.cs: Instead of Sorting from SetupNode, do it
 	directly from Add (which uses AddSorted for this purpose) and Insert.
 	This way we first avoid a double sort, take advantage of our fast
