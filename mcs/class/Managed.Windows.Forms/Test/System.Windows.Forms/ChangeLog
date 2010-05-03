@@ -1,3 +1,8 @@
+2010-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	*  TreeNodeCollectionTest.cs: Add a new test for Add interacting with
+	nodes that are part of other collections.
+
 2010-05-01  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ToolStripItemCollectionTest.cs: New test for Clear.

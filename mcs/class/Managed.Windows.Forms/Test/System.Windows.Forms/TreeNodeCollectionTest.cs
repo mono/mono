@@ -126,6 +126,37 @@ namespace MonoTests.System.Windows.Forms
 			}
 		}
 
+		// This is related to bug #601766, where basically we are reproducing a buggy behaviour:
+		// When adding a node don't remove it from any previous collection.
+		[Test]
+		public void Add_Other_Collection ()
+		{
+			TreeView tv = new TreeView ();
+			TreeNode root = tv.Nodes.Add ("Root 1");
+			TreeNode nodeA = root.Nodes.Add ("A");
+			TreeNode nodeB = root.Nodes.Add ("B");
+			TreeNode nodeC = root.Nodes.Add ("C");
+
+			Assert.AreEqual (1, tv.Nodes.Count, "#A0");
+			Assert.AreEqual (3, root.Nodes.Count, "#A1");
+
+			TreeView tv2 = new TreeView ();
+			TreeNode root2 = tv2.Nodes.Add ("Root 2");
+			root2.Nodes.Add (nodeA);
+
+			Assert.AreEqual (1, tv.Nodes.Count, "#B0");
+			Assert.AreEqual (3, root.Nodes.Count, "#B1");
+			Assert.AreEqual (1, tv2.Nodes.Count, "#B2");
+			Assert.AreEqual (1, root2.Nodes.Count, "#B3");
+
+			// The next ones *could* be a little tricky, since even if we are not
+			// removing the element from the previous collection,
+			// parent should be set correctly.
+			Assert.AreEqual (root2, nodeA.Parent, "#B4");
+			Assert.AreEqual (root, nodeB.Parent, "#B5");
+			Assert.AreEqual (root, nodeC.Parent, "#B6");
+		}
+
 		[Test]
 		public void AddRange ()
 		{
