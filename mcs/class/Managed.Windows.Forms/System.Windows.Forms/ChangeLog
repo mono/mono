@@ -1,5 +1,12 @@
 2010-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeNodeCollection.cs: When Adding a new node don't remove it from
+	any previous collection. Even if this seems a little buggy, this is
+	what .Net does.
+	Fixes #601766.
+
+2010-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* StatusStrip.cs: In SetDisplayedItems call ClearInternal on
 	displayed_items instead of Clear, since this is only an internal
 	collection and we don't want to have our items have their Parent/Owner

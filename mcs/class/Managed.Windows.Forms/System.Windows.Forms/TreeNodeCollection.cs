@@ -424,8 +424,9 @@ namespace System.Windows.Forms {
 
 		private void SetupNode (TreeNode node)
 		{
-			// Remove it from any old parents
-			node.Remove ();
+			// We used to remove this from the previous parent, but .Net
+			// skips this step (even if setting the owner field).
+			//node.Remove ();
 
 			node.parent = owner;
 
