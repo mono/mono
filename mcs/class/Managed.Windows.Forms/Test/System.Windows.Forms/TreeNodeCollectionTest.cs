@@ -314,6 +314,58 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void Insert_Sorted ()
+		{
+			TreeView tv = new TreeView ();
+			TreeNode nodeB = tv.Nodes.Add ("B");
+			TreeNode nodeA = tv.Nodes.Add ("A");
+			TreeNode nodeF = tv.Nodes.Add ("F");
+			tv.Sorted = true;
+
+			Assert.AreEqual (3, tv.Nodes.Count, "#A0");
+			Assert.AreEqual (true, tv.Sorted, "#A1");
+			Assert.AreEqual (nodeA, tv.Nodes [0], "#A2");
+			Assert.AreEqual (nodeB, tv.Nodes [1], "#A3");
+			Assert.AreEqual (nodeF, tv.Nodes [2], "#A4");
+
+			TreeNode nodeZ = new TreeNode ("Z");
+			tv.Nodes.Insert (1, nodeZ);
+
+			Assert.AreEqual (4, tv.Nodes.Count, "#B0");
+			Assert.AreEqual (true, tv.Sorted, "#B1");
+			Assert.AreEqual (nodeA, tv.Nodes [0], "#B2");
+			Assert.AreEqual (nodeB, tv.Nodes [1], "#B3");
+			Assert.AreEqual (nodeF, tv.Nodes [2], "#B4");
+			Assert.AreEqual (nodeZ, tv.Nodes [3], "#B5");
+		}
+
+		// It seems we are not getting sorted when using our indexer.
+		[Test]
+		public void Indexer_Sorted ()
+		{
+			TreeView tv = new TreeView ();
+			TreeNode nodeB = tv.Nodes.Add ("B");
+			TreeNode nodeA = tv.Nodes.Add ("A");
+			TreeNode nodeF = tv.Nodes.Add ("F");
+			tv.Sorted = true;
+
+			Assert.AreEqual (3, tv.Nodes.Count, "#A0");
+			Assert.AreEqual (true, tv.Sorted, "#A1");
+			Assert.AreEqual (nodeA, tv.Nodes [0], "#A2");
+			Assert.AreEqual (nodeB, tv.Nodes [1], "#A3");
+			Assert.AreEqual (nodeF, tv.Nodes [2], "#A4");
+
+			TreeNode nodeZ = new TreeNode ("Z");
+			tv.Nodes [1] = nodeZ;
+
+			Assert.AreEqual (3, tv.Nodes.Count, "#B0");
+			Assert.AreEqual (true, tv.Sorted, "#B1");
+			Assert.AreEqual (nodeA, tv.Nodes [0], "#B2");
+			Assert.AreEqual (nodeZ, tv.Nodes [1], "#B3");
+			Assert.AreEqual (nodeF, tv.Nodes [2], "#B4");
+		}
+
+		[Test]
 		public void IList_Indexer_Get ()
 		{
 			TreeView tv = new TreeView ();

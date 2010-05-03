@@ -1,3 +1,8 @@
+2010-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNodeCollectionTest.cs: New tests for Insert and Indexer
+	interacting with Sort.
+
 2010-05-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	*  TreeNodeCollectionTest.cs: Add a new test for Add interacting with
