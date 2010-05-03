@@ -1,5 +1,13 @@
 2010-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* ComboBox.cs: our internal textbox should show selection only if it
+	is enabled. Don't set HideSelection since it's preventing us
+	from correctly hide the selection when needed. Finally connect a
+	handler in case our parent ComboBox gets its Enabled state changed.
+	Fixes #600433.
+
+2010-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeView.cs: Set our internal fields related to the starting drag
 	position from MouseDown to MouseMove - we need to make sure
 	that the OnItemDragged event is fired only *one* time per element

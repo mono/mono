@@ -1117,7 +1117,7 @@ namespace System.Windows.Forms
 			
 			if (textbox_ctrl != null) {
 				textbox_ctrl.SetSelectable (false);
-				textbox_ctrl.ShowSelection = true;
+				textbox_ctrl.ShowSelection = Enabled;
 				textbox_ctrl.ActivateCaret (true);
 				textbox_ctrl.SelectAll ();
 			}
@@ -2317,10 +2317,15 @@ namespace System.Windows.Forms
 			{
 				this.owner = owner;
 				ShowSelection = false;
-				HideSelection = false;
+				owner.EnabledChanged += OwnerEnabledChangedHandler;
 #if NET_2_0
 				owner.LostFocus += OwnerLostFocusHandler;
 #endif
+			}
+
+			void OwnerEnabledChangedHandler (object o, EventArgs args)
+			{
+				ShowSelection = owner.Focused && owner.Enabled;
 			}
 
 #if NET_2_0
