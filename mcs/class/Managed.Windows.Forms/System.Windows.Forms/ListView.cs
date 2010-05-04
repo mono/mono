@@ -2829,6 +2829,9 @@ namespace System.Windows.Forms
 						if (owner.LabelEdit && !changed)
 							BeginEdit (clicked_item); // this is probably not the correct place to execute BeginEdit
 					}
+
+					drag_begin = me.Location;
+					dragged_item_index = clicked_item.Index;
 				} else {
 					if (owner.MultiSelect)
 						box_selecting = true;
@@ -2895,13 +2898,7 @@ namespace System.Windows.Forms
 				}
 
 				if (me.Button == MouseButtons.Left || me.Button == MouseButtons.Right) {
-					if (drag_begin.X == -1 && drag_begin.Y == -1) {
-						if (item != null) {
-							drag_begin = new Point (me.X, me.Y);
-							dragged_item_index = item.Index;
-						}
-
-					} else {
+					if (drag_begin != new Point (-1, -1)) {
 						Rectangle r = new Rectangle (drag_begin, SystemInformation.DragSize);
 						if (!r.Contains (me.X, me.Y)) {
 							ListViewItem dragged_item  = owner.items [dragged_item_index];
