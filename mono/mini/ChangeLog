@@ -1,5 +1,12 @@
 2010-05-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (mono_arch_get_trampolines): New arch specific function returning
+	a list of arch specific trampolines.
+
+	* aot-compiler.c (emit_trampolines): Use it.
+
+2010-05-05  Zoltan Varga  <vargaz@gmail.com>
+
 	* tramp-<ARCH>.c exceptions-<ARCH>.c mini-trampolines.c mini-exceptions.c
 	aot-compiler.c: Use the _full trampoline creation functions on all platforms,
 	get rid of the _full from their name.
