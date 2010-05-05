@@ -1,3 +1,8 @@
+2010-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: added 4.0 InsertEntityBody overloads (not
+	supported when running under Mono)
+
 2010-04-27  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpException.cs: implemented 4.0 property WebEventCode, also

@@ -1521,6 +1521,18 @@ namespace System.Web
 					ThrowValidationException (name, key, val);
 			}
 		}
+
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
+		public void InsertEntityBody ()
+		{
+			throw new PlatformNotSupportedException ("This method is not supported.");
+		}
+
+		[AspNetHostingPermission (SecurityAction.Demand, Level = AspNetHostingPermissionLevel.High)]
+		public void InsertEntityBody (byte[] buffer, int offset, int count)
+		{
+			throw new PlatformNotSupportedException ("This method is not supported.");
+		}
 #endif
 		static void ValidateCookieCollection (HttpCookieCollection cookies)
 		{
