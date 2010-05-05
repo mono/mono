@@ -1,3 +1,8 @@
+2010-05-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-x86.c (mono_arch_create_generic_trampoline): Call
+	get_nullified_class_init_trampoline to remove some code duplication.
+
 2010-05-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-x86.c (mono_arch_emit_prolog): Fix full-aot support for thread
