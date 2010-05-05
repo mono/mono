@@ -533,10 +533,10 @@ namespace System.Net.Mail {
 					from = defaultFrom;
 				
 				SendHeader (HeaderName.Date, DateTime.Now.ToString ("ddd, dd MMM yyyy HH':'mm':'ss zzz", DateTimeFormatInfo.InvariantInfo));
-				SendHeader (HeaderName.From, from.ToString ());
-				SendHeader (HeaderName.To, message.To.ToString ());
+				SendHeader (HeaderName.From, EncodeAddress(from));
+				SendHeader (HeaderName.To, EncodeAddresses(message.To));
 				if (message.CC.Count > 0)
-					SendHeader (HeaderName.Cc, message.CC.ToString ());
+					SendHeader (HeaderName.Cc, EncodeAddresses(message.CC));
 				SendHeader (HeaderName.Subject, EncodeSubjectRFC2047 (message));
 
 				foreach (string s in message.Headers.AllKeys)

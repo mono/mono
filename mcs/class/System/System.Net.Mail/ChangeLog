@@ -1,3 +1,7 @@
+2010-05-04  Miguel de Icaza  <miguel@novell.com>
+
+	* Apply patch from Ted Unangst to fix bug 574049
+
 2010-03-06 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SmtpClient.cs: typo in reply-to header. Thanks to Chris Tomlinson.
