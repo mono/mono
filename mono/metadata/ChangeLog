@@ -1,3 +1,8 @@
+2010-05-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Verify the constraint
+	of generic type definitions.
+
 2010-05-04  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-marksweep.c: Simplify free list maintenance in sweep.
