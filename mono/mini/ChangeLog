@@ -1,5 +1,11 @@
 2010-05-05  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-<ARCH>.c exceptions-<ARCH>.c mini-trampolines.c mini-exceptions.c
+	aot-compiler.c: Use the _full trampoline creation functions on all platforms,
+	get rid of the _full from their name.
+
+2010-05-05  Zoltan Varga  <vargaz@gmail.com>
+
 	* tramp-x86.c (mono_arch_create_generic_trampoline): Call
 	get_nullified_class_init_trampoline to remove some code duplication.
 
