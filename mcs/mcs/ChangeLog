@@ -1,5 +1,10 @@
 2010-05-05  Miguel de Icaza  <miguel@novell.com>
 
+	* class.cs (TypeContainer.DefineBaseTypes)
+	(TypeContainer.CheckRecursiveDefinition): check for the iface not
+	being null, as we could have failed resolution and crashed;
+	Fixes #442144
+
 	* cs-parser.jay: Productions to catch common mistakes when other
 	punctuation operators are used instead of comma.   Fixes 571702	
 

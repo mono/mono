@@ -1063,6 +1063,10 @@ namespace Mono.CSharp {
 
 			if (iface_exprs != null) {
 				foreach (TypeExpr iface in iface_exprs) {
+					// Prevents a crash, the interface might not have been resolved: 442144
+					if (iface == null)
+						continue;
+					
 					var iface_type = iface.Type;
 
 					if (!spec.AddInterface (iface_type))
@@ -1353,6 +1357,9 @@ namespace Mono.CSharp {
 
 			if (iface_exprs != null) {
 				foreach (TypeExpr iface in iface_exprs) {
+					// the interface might not have been resolved, prevents a crash, see #442144
+					if (iface == null)
+						continue;
 					var ptc = iface.Type.MemberDefinition as Interface;
 					if (ptc != null && ptc.CheckRecursiveDefinition (this) != null)
 						return iface.Type;
