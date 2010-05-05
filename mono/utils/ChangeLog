@@ -1,3 +1,9 @@
+2010-05-05 Jonathan Chambers <joncham@gmail.com>
+
+	* mono-semaphore.c: Implement alertable wait on Windows similar to
+	other platforms. Always be alertable, but only return from wait if
+	user requested alertable state. Fixes soft debugger on Windows.
+
 2010-04-23  Geoff Norton  <gnorton@novell.com>
 
 	* mono-sigcontext.h: Darwin x86_64 support.
