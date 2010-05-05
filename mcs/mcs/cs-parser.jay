@@ -3160,6 +3160,10 @@ member_initializer_list
 	  	a.Add ((Expression) $3);
 	  	$$ = a;
 	  }
+	| member_initializer_list error {
+	  	Report.Error (1003, GetLocation ($1), "Syntax error, expecting ','");
+		$$ = null;
+	  }
 	;
 
 member_initializer
@@ -3181,7 +3185,10 @@ member_initializer
 	  }
 	| OPEN_BRACE expression_list CLOSE_BRACE
 	  {
-	  	$$ = new CollectionElementInitializer ((List<Expression>)$2, GetLocation ($1));
+		if ($2 == null)
+			$$ = null;
+		else
+	  		$$ = new CollectionElementInitializer ((List<Expression>)$2, GetLocation ($1));
 	  }
 	| OPEN_BRACE CLOSE_BRACE
 	  {
@@ -3329,6 +3336,10 @@ expression_list
 		var list = (List<Expression>) $1;
 		list.Add ((Expression) $3);
 		$$ = list;
+	  }
+	| expression_list error {
+	  	Report.Error (1003, GetLocation ($1), "Syntax error, expecting ','");
+		$$ = null;
 	  }
 	;
 	

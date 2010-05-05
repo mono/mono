@@ -1,3 +1,8 @@
+2010-05-05  Miguel de Icaza  <miguel@novell.com>
+
+	* cs-parser.jay: Productions to catch common mistakes when other
+	punctuation operators are used instead of comma.   Fixes 571702	
+
 2010-05-05  Marek Safar  <marek.safar@gmail.com>
 
 	* anonymous.cs: Mutate correct set of constraints.
