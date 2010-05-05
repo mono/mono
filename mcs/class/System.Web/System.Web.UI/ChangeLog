@@ -1,3 +1,10 @@
+2010-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* CollectionBuilder.cs: if a type has more than on indexer, check
+	all of them for type compliance in GetChildControlType. Fixes bug
+	#601290. Patch from Kalyanov Dmitry <Kalyanov.Dmitry@gmail.com>,
+	thanks!
+
 2010-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* KeyedList.cs: do not implement IStateManager in 4.0
