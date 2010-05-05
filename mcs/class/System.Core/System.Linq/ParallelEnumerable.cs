@@ -121,7 +121,7 @@ namespace System.Linq
 			return new ParallelQuery<TSource> (new QueryAsUnorderedNode<TSource> (source.Node));
 		}
 
-		public static ParallelQuery AsOrdered (ParallelQuery source)
+		public static ParallelQuery AsOrdered (this ParallelQuery source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -450,7 +450,7 @@ namespace System.Linq
 		#endregion
 
 		#region All
-		public static bool All<TSource> (ParallelQuery<TSource> source, Func<TSource, bool> predicate)
+		public static bool All<TSource> (this ParallelQuery<TSource> source, Func<TSource, bool> predicate)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1275,7 +1275,7 @@ namespace System.Linq
 		#endregion
 
 		#region Sum
-		public static int Sum (ParallelQuery<int> source)
+		public static int Sum (this ParallelQuery<int> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1283,7 +1283,7 @@ namespace System.Linq
 			return source.Aggregate (0, (e1, e2) => e1 + e2, (sum1, sum2) => sum1 + sum2, (sum) => sum);
 		}
 
-		public static long Sum (ParallelQuery<long> source)
+		public static long Sum (this ParallelQuery<long> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1291,7 +1291,7 @@ namespace System.Linq
 			return source.Aggregate ((long)0, (e1, e2) => e1 + e2, (sum1, sum2) => sum1 + sum2, (sum) => sum);
 		}
 
-		public static float Sum (ParallelQuery<float> source)
+		public static float Sum (this ParallelQuery<float> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1299,7 +1299,7 @@ namespace System.Linq
 			return source.Aggregate (0.0f, (e1, e2) => e1 + e2, (sum1, sum2) => sum1 + sum2, (sum) => sum);
 		}
 
-		public static double Sum (ParallelQuery<double> source)
+		public static double Sum (this ParallelQuery<double> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1307,7 +1307,7 @@ namespace System.Linq
 			return source.Aggregate (0.0, (e1, e2) => e1 + e2, (sum1, sum2) => sum1 + sum2, (sum) => sum);
 		}
 
-		public static decimal Sum (ParallelQuery<decimal> source)
+		public static decimal Sum (this ParallelQuery<decimal> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1315,20 +1315,12 @@ namespace System.Linq
 			return source.Aggregate ((decimal)0, (e1, e2) => e1 + e2, (sum1, sum2) => sum1 + sum2, (sum) => sum);
 		}
 
-		public static int? Sum (ParallelQuery<int?> source)
+		public static int? Sum (this ParallelQuery<int?> source)
 		{
 			return source.Select ((e) => e.HasValue ? e.Value : 0).Sum ();
 		}
 
-		public static long? Sum (ParallelQuery<long?> source)
-		{
-			if (source == null)
-				throw new ArgumentNullException ("source");
-
-			return source.Select ((e) => e.HasValue ? e.Value : 0).Sum ();
-		}
-
-		public static float? Sum (ParallelQuery<float?> source)
+		public static long? Sum (this ParallelQuery<long?> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1336,7 +1328,7 @@ namespace System.Linq
 			return source.Select ((e) => e.HasValue ? e.Value : 0).Sum ();
 		}
 
-		public static double? Sum (ParallelQuery<double?> source)
+		public static float? Sum (this ParallelQuery<float?> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1344,7 +1336,7 @@ namespace System.Linq
 			return source.Select ((e) => e.HasValue ? e.Value : 0).Sum ();
 		}
 
-		public static decimal? Sum (ParallelQuery<decimal?> source)
+		public static double? Sum (this ParallelQuery<double?> source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1352,7 +1344,15 @@ namespace System.Linq
 			return source.Select ((e) => e.HasValue ? e.Value : 0).Sum ();
 		}
 
-		public static int Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, int> func)
+		public static decimal? Sum (this ParallelQuery<decimal?> source)
+		{
+			if (source == null)
+				throw new ArgumentNullException ("source");
+
+			return source.Select ((e) => e.HasValue ? e.Value : 0).Sum ();
+		}
+
+		public static int Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, int> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1362,7 +1362,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static long Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, long> func)
+		public static long Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, long> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1372,7 +1372,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static decimal Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, decimal> func)
+		public static decimal Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1382,7 +1382,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static float Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, float> func)
+		public static float Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, float> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1392,7 +1392,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static double Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, double> func)
+		public static double Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, double> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1402,7 +1402,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static int? Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, int?> func)
+		public static int? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, int?> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1412,7 +1412,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static long? Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, long?> func)
+		public static long? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, long?> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1422,7 +1422,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static decimal? Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, decimal?> func)
+		public static decimal? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, decimal?> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1432,7 +1432,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static float? Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, float?> func)
+		public static float? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, float?> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1442,7 +1442,7 @@ namespace System.Linq
 			return source.Select (func).Sum ();
 		}
 
-		public static double? Sum<TSource> (ParallelQuery<TSource> source, Func<TSource, double?> func)
+		public static double? Sum<TSource> (this ParallelQuery<TSource> source, Func<TSource, double?> func)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");
@@ -1842,7 +1842,7 @@ namespace System.Linq
 			return source.TypedQuery.Select ((e) => (TResult)e);
 		}
 
-		public static ParallelQuery<TResult> OfType<TResult> (ParallelQuery source)
+		public static ParallelQuery<TResult> OfType<TResult> (this ParallelQuery source)
 		{
 			if (source == null)
 				throw new ArgumentNullException ("source");

@@ -1,3 +1,8 @@
+2010-05-05  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ParallelEnumerable.cs: Some operators weren't declared
+	as extension methods. Fixed.
+
 2010-04-29  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ParallelQueryEnumerator.cs: Use new non-blocking collection
