@@ -1,3 +1,10 @@
+2010-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* CollectionBuilder.cs: if a type has more than on indexer, check
+	all of them for type compliance in GetChildControlType. Fixes bug
+	#601290. Patch from Kalyanov Dmitry <Kalyanov.Dmitry@gmail.com>,
+	thanks!
+
 2010-04-12  Marek Habersack  <mhabersack@novell.com>
 
 	* PageParser.cs: if EnableViewStateMac option is present in the

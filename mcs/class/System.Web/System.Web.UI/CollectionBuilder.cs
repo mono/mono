@@ -31,12 +31,13 @@
 using System;
 using System.Collections;
 using System.Reflection;
+using System.Text;
 
 namespace System.Web.UI
 {
 	sealed class CollectionBuilder : ControlBuilder
 	{
-		Type elementType;
+		Type[] possibleElementTypes;
 
 		internal CollectionBuilder ()
 		{
@@ -51,8 +52,21 @@ namespace System.Web.UI
 		public override Type GetChildControlType (string tagName, IDictionary attribs)
 		{
 			Type t = Root.GetChildControlType (tagName, attribs);
-			if (elementType != null && !elementType.IsAssignableFrom (t)) 
-				throw new HttpException ("Cannot add a " + t + " to " + elementType);
+			if (possibleElementTypes != null) {
+                               bool foundMatchingType = false;
+                               for (int i = 0; i < possibleElementTypes.Length && !foundMatchingType; ++i)
+                                       foundMatchingType = possibleElementTypes[i].IsAssignableFrom (t);
+                               
+                               if (!foundMatchingType) {
+                                       StringBuilder possibleTypesString = new StringBuilder ();
+                                       for (int i = 0; i < possibleElementTypes.Length; i++) {
+                                               if (i != 0)
+                                                       possibleTypesString.Append (", ");
+                                               possibleTypesString.Append (possibleElementTypes[i]);
+                                       }
+                                       throw new HttpException ("Cannot add a " + t + " to " + possibleTypesString);
+                               }
+			}
 
 			return t;
 		}
@@ -70,12 +84,12 @@ namespace System.Web.UI
 			SetControlType (prop.PropertyType);
 
 			MemberInfo[] mems = ControlType.GetMember ("Item", MemberTypes.Property, FlagsNoCase & ~BindingFlags.IgnoreCase);
-			if (mems.Length > 0)
-				prop = (PropertyInfo) mems [0];
-			else
+			if (mems.Length > 0) {
+                               possibleElementTypes = new Type [mems.Length];
+                               for (int i = 0; i < mems.Length; ++i)
+                                       possibleElementTypes [i] = ((PropertyInfo)mems [i]).PropertyType;
+			} else
 				throw new HttpException ("Collection of type '" + ControlType + "' does not have an indexer.");
-			
-			elementType = prop.PropertyType;
 		}
 	}
 }
