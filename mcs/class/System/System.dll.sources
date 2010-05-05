@@ -886,6 +886,7 @@ System.Security.Authentication/ExchangeAlgorithmType.cs
 System.Security.Authentication/HashAlgorithmType.cs
 System.Security.Authentication/SslProtocols.cs
 System.Security.Authentication/InvalidCredentialException.cs
+System.Security.Authentication.ExtendedProtection/ChannelBinding.cs
 System.Security.Cryptography/AsnEncodedDataCollection.cs
 System.Security.Cryptography/AsnEncodedData.cs
 System.Security.Cryptography/AsnEncodedDataEnumerator.cs

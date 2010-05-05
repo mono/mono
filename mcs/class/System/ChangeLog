@@ -1,3 +1,8 @@
+2010-04-29  Marek Habersack  <mhabersack@novell.com>
+
+	* System.Security.Authentication.ExtendedProtection/ChannelBinding.cs:
+	added
+
 2010-04-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* moonlight_raw_System.dll.sources: Add new (for SL4) types

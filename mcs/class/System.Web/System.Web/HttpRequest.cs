@@ -44,6 +44,10 @@ using System.Web.UI;
 using System.Web.Util;
 using System.Globalization;
 
+#if NET_4_0
+using System.Security.Authentication.ExtendedProtection;
+#endif
+
 namespace System.Web
 {	
 	// CAS - no InheritanceDemand here as the class is sealed
@@ -917,7 +921,13 @@ namespace System.Web
 				} catch {}
 			}
 		}
-		
+#if NET_4_0
+		public ChannelBinding HttpChannelBinding {
+			get {
+				throw new PlatformNotSupportedException ("This property is not supported.");
+			}
+		}
+#endif
 		public Stream InputStream {
 			get {
 				if (input_stream == null)
