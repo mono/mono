@@ -1359,8 +1359,9 @@ namespace System.Windows.Forms {
 				ReleaseEvent (evtRef);
 			}
 			
+			object queueobj;
+			loop:
 			lock (queuelock) {
-				loop:
 
 				if (MessageQueue.Count <= 0) {
 					if (Idle != null) 
@@ -1382,13 +1383,13 @@ namespace System.Windows.Forms {
 					msg.message = Msg.WM_ENTERIDLE;
 					return GetMessageResult;
 				}
-				object queueobj = MessageQueue.Dequeue ();
-				if (queueobj is GCHandle) {
-					XplatUIDriverSupport.ExecuteClientMessage((GCHandle)queueobj);
-					goto loop;
-				} else {
-					msg = (MSG)queueobj;
-				}
+				queueobj = MessageQueue.Dequeue ();
+			}
+			if (queueobj is GCHandle) {
+				XplatUIDriverSupport.ExecuteClientMessage((GCHandle)queueobj);
+				goto loop;
+			} else {
+				msg = (MSG)queueobj;
 			}
 			return GetMessageResult;
 		}
