@@ -1,5 +1,7 @@
 2010-05-05  Marek Habersack  <mhabersack@novell.com>
 
+	* UrlRoutingModule.cs: PostMapRequestHandler is obsolete in 4.0
+
 	* RouteValueDictionary.cs: do not process type fields in
 	RouteValueDictionary (object)
 

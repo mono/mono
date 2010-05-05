@@ -86,7 +86,9 @@ namespace System.Web.Routing
 			var app = (HttpApplication) o;
 			PostResolveRequestCache (new HttpContextWrapper (app.Context));
 		}
-
+#if NET_4_0
+		[Obsolete]
+#endif
 		public virtual void PostMapRequestHandler (HttpContextBase context)
 		{
 			if (context == null)
