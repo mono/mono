@@ -5718,7 +5718,6 @@ namespace Mono.CSharp {
 		protected List<Expression> arguments;
 		
 		protected TypeSpec array_element_type;
-		bool expect_initializers = false;
 		int num_arguments = 0;
 		protected int dimensions;
 		protected readonly string rank;
@@ -5750,13 +5749,6 @@ namespace Mono.CSharp {
 			this.initializers = initializers;
 			this.rank = rank;
 			loc = l;
-
-			//this.rank = rank.Substring (0, rank.LastIndexOf ('['));
-			//
-			//string tmp = rank.Substring (rank.LastIndexOf ('['));
-			//
-			//dimensions = tmp.Length - 1;
-			expect_initializers = true;
 		}
 
 		protected override void Error_NegativeArrayIndex (ResolveContext ec, Location loc)
@@ -5766,31 +5758,57 @@ namespace Mono.CSharp {
 
 		bool CheckIndices (ResolveContext ec, ArrayInitializer probe, int idx, bool specified_dims, int child_bounds)
 		{
+			if (initializers != null && bounds == null) {
+				//
+				// We use this to store all the date values in the order in which we
+				// will need to store them in the byte blob later
+				//
+				array_data = new List<Expression> ();
+				bounds = new Dictionary<int, int> ();
+			}
+
 			if (specified_dims) { 
 				Expression a = arguments [idx];
 				a = a.Resolve (ec);
 				if (a == null)
 					return false;
 
-				Constant c = a as Constant;
-				if (c != null) {
-					c = c.ImplicitConversionRequired (ec, TypeManager.int32_type, a.Location);
-				}
-
-				if (c == null) {
-					ec.Report.Error (150, a.Location, "A constant value is expected");
+				a = ConvertExpressionToArrayIndex (ec, a);
+				if (a == null)
 					return false;
-				}
 
-				int value = (int) c.GetValue ();
-				
-				if (value != probe.Count) {
-					ec.Report.Error (847, loc, "An array initializer of length `{0}' was expected", value.ToString ());
-					return false;
+				arguments[idx] = a;
+
+				if (initializers != null) {
+					Constant c = a as Constant;
+					if (c == null && a is ArrayIndexCast)
+						c = ((ArrayIndexCast) a).Child as Constant;
+
+					if (c == null) {
+						ec.Report.Error (150, a.Location, "A constant value is expected");
+						return false;
+					}
+
+					int value;
+					try {
+						value = System.Convert.ToInt32 (c.GetValue ());
+					} catch {
+						ec.Report.Error (150, a.Location, "A constant value is expected");
+						return false;
+					}
+
+					// TODO: probe.Count does not fit ulong in
+					if (value != probe.Count) {
+						ec.Report.Error (847, loc, "An array initializer of length `{0}' was expected", value.ToString ());
+						return false;
+					}
+
+					bounds[idx] = value;
 				}
-				
-				bounds [idx] = value;
 			}
+
+			if (initializers == null)
+				return true;
 
 			only_constant_initializers = true;
 			for (int i = 0; i < probe.Count; ++i) {
@@ -5900,19 +5918,16 @@ namespace Mono.CSharp {
 
 		protected bool ResolveInitializers (ResolveContext ec)
 		{
-			if (initializers == null) {
-				return !expect_initializers;
+			if (arguments != null) {
+				bool res = true;
+				for (int i = 0; i < arguments.Count; ++i) {
+					res &= CheckIndices (ec, initializers, i, true, dimensions);
+					if (initializers != null)
+						break;
+				}
+
+				return res;
 			}
-						
-			//
-			// We use this to store all the date values in the order in which we
-			// will need to store them in the byte blob later
-			//
-			array_data = new List<Expression> ();
-			bounds = new Dictionary<int, int> ();
-			
-			if (arguments != null)
-				return CheckIndices (ec, initializers, 0, true, dimensions);
 
 			arguments = new List<Expression> ();
 
@@ -5980,20 +5995,11 @@ namespace Mono.CSharp {
 				return null;
 
 			//
-			// First step is to validate the initializers and fill
-			// in any missing bits
+			// validate the initializers and fill in any missing bits
 			//
 			if (!ResolveInitializers (ec))
 				return null;
 
-			for (int i = 0; i < arguments.Count; ++i) {
-				Expression e = arguments[i].Resolve (ec);
-				if (e == null)
-					continue;
-
-				arguments [i] = ConvertExpressionToArrayIndex (ec, e);
-			}
-							
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -6201,7 +6207,7 @@ namespace Mono.CSharp {
 		void EmitDynamicInitializers (EmitContext ec, bool emitConstants)
 		{
 			int dims = bounds.Count;
-			int [] current_pos = new int [dims];
+			var current_pos = new int [dims];
 
 			for (int i = 0; i < array_data.Count; i++){
 
