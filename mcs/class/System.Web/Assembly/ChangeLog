@@ -1,3 +1,7 @@
+2010-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: 4.0 metadata updates
+
 2010-02-03  Marek Habersack  <mhabersack@novell.com>
 
 	* AssemblyInfo.cs: added back InternalsVisibleTo for the test
