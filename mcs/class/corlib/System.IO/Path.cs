@@ -460,6 +460,10 @@ namespace System.IO {
 					// This can happen if we don't have write permission to /tmp
 					throw;
 				}
+				catch (DirectoryNotFoundException) {
+					// This happens when TMPDIR does not exist
+					throw;
+				}
 				catch {
 				}
 			} while (f == null);

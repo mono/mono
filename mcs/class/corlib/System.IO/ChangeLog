@@ -1,3 +1,8 @@
+2010-05-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Path.cs: prevent infinite loop when TMPDIR (or equivalent)
+	points to a non-existent directory.
+
 2010-04-21  Sebastien Pouliot  <sebastien@ximian.com> 
 
 	* FileInfo.cs: Ensure elevated trust when calling Delete on 
