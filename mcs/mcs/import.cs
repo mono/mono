@@ -89,6 +89,10 @@ namespace Mono.CSharp
 					break;
 			}
 
+			// Ignore private fields (even for error reporting) to not require extra dependencies
+			if (mod == Modifiers.PRIVATE)
+				return null;
+
 			var definition = new ImportedMemberDefinition (fi);
 
 			if ((fa & FieldAttributes.Literal) != 0) {
@@ -1056,6 +1060,9 @@ namespace Mono.CSharp
 						continue;
 
 					imported = Import.CreateField (fi, declaringType);
+					if (imported == null)
+						continue;
+
 					break;
 				case MemberTypes.NestedType:
 					Type t = (Type) member;

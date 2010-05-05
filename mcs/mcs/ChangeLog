@@ -1,3 +1,7 @@
+2010-05-05  Marek Safar  <marek.safar@gmail.com>
+
+	* import.cs: Don't import private fields.
+
 2010-04-30  Marek Safar  <marek.safar@gmail.com>
 
 	Partially based on patch by <sami.lamti@gmail.com>
