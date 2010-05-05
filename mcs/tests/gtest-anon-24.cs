@@ -167,7 +167,7 @@ class Test
 		};
 	}
 
-	static Func<T[]> NestedTypeMutate<T> ()
+	static Func<T[]> NestedTypeMutate<T> () where T : IEquatable<T>
 	{
 		var local = new CA<T>.Nested ();
 		return () => {
