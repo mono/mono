@@ -306,13 +306,13 @@ namespace Mono.CSharp {
 				for (int i = 0; i < type_params.Length; ++i) {
 					var spec = type_params[i].Type;
 					spec.BaseType = mutator.Mutate (spec.BaseType);
-					if (spec.Interfaces != null) {
-						var mutated = new TypeSpec[spec.Interfaces.Count];
+					if (spec.InterfacesDefined != null) {
+						var mutated = new TypeSpec[spec.InterfacesDefined.Length];
 						for (int ii = 0; ii < mutated.Length; ++ii) {
-							mutated [ii] = mutator.Mutate (spec.Interfaces[ii]);
+							mutated[ii] = mutator.Mutate (spec.InterfacesDefined[ii]);
 						}
 
-						spec.Interfaces = mutated;
+						spec.InterfacesDefined = mutated;
 					}
 
 					if (spec.TypeArguments != null) {

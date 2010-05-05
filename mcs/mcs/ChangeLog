@@ -1,5 +1,9 @@
 2010-05-05  Marek Safar  <marek.safar@gmail.com>
 
+	* anonymous.cs: Mutate correct set of constraints.
+
+2010-05-05  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #602842
 	* expression.cs: Resolve all array bound arguments.
 
