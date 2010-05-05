@@ -26,16 +26,43 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 #if NET_2_1
+using System.Runtime.InteropServices;
+
 namespace System.Net.NetworkInformation {
 	public abstract class NetworkChange {
+		internal delegate void NetworkStateChangedCallback (IntPtr sender, IntPtr data);
+		static NetworkChange ()
+		{
+			state_changed_callback = new NetworkStateChangedCallback (StateChangedCallback);
+			moon_network_service_set_network_state_changed_callback (runtime_get_network_service(),
+										 state_changed_callback,
+										 IntPtr.Zero);
+		}
+
+		static NetworkStateChangedCallback state_changed_callback;
+
+		static void StateChangedCallback (IntPtr sender, IntPtr data)
+		{
+			NetworkAddressChangedEventHandler h = NetworkAddressChanged;
+			if (h != null)
+				h (null, EventArgs.Empty);
+		}
+
 		protected NetworkChange ()
 		{
 		}
 
-		// Disable the warnings about the events not being used.
-#pragma warning disable 67
 		public static event NetworkAddressChangedEventHandler NetworkAddressChanged;
-#pragma warning restore
+
+		[DllImport ("moon")]
+		internal extern static IntPtr runtime_get_network_service ();
+
+		[DllImport ("moon")]
+		internal extern static void moon_network_service_set_network_state_changed_callback (IntPtr service,
+												     NetworkStateChangedCallback handler, IntPtr data);
+
+		[DllImport ("moon")]
+		internal extern static bool moon_network_service_get_is_network_available (IntPtr service);
 	}
 }
 #endif

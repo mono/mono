@@ -40,10 +40,9 @@ namespace System.Net.NetworkInformation {
 		{
 		}
 
-		[MonoTODO("Always returns true")]
 		public static bool GetIsNetworkAvailable ()
 		{
-			return true;
+			return NetworkChange.moon_network_service_get_is_network_available (NetworkChange.runtime_get_network_service ());
 		}
 	}
 }
