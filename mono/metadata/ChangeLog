@@ -1,3 +1,8 @@
+2010-05-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (mono_verifier_verify_class): Verify the constraint
+	of generic type definitions.
+
 2010-04-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* boehm-gc.c: Applied patch from Robert Nagy (robert@openbsd.org). Include
