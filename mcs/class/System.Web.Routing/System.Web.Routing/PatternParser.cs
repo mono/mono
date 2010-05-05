@@ -5,7 +5,7 @@
 //      Atsushi Enomoto <atsushi@ximian.com>
 //      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008-2009 Novell Inc. http://novell.com
+// Copyright (C) 2008-2010 Novell Inc. http://novell.com
 //
 
 //
@@ -206,7 +206,85 @@ namespace System.Web.Routing
 
 			return dict;
 		}
-		
+
+		bool MatchSegment (int segIndex, int argsCount, string[] argSegs, List <PatternToken> tokens, RouteValueDictionary ret)
+		{
+			string pathSegment = argSegs [segIndex];
+			int pathSegmentLength = pathSegment != null ? pathSegment.Length : -1;
+			int startIndex = pathSegmentLength - 1;
+			PatternTokenType tokenType;
+			int tokensCount = tokens.Count;
+			PatternToken token;
+			string tokenName;
+
+			for (int tokenIndex = tokensCount - 1; tokenIndex > -1; tokenIndex--) {
+				token = tokens [tokenIndex];
+				if (startIndex < 0)
+					return false;
+
+				tokenType = token.Type;
+				tokenName = token.Name;
+
+				if (segIndex > segmentCount - 1 || tokenType == PatternTokenType.CatchAll) {
+					var sb = new StringBuilder ();
+
+					for (int j = segIndex; j < argsCount; j++) {
+						if (j > segIndex)
+							sb.Append ('/');
+						sb.Append (argSegs [j]);
+					}
+						
+					ret.Add (tokenName, sb.ToString ());
+					break;
+				}
+
+				int scanIndex;
+				if (token.Type == PatternTokenType.Literal) {
+					int nameLen = tokenName.Length;
+					if (startIndex + 1 < nameLen)
+						return false;
+					scanIndex = startIndex - nameLen + 1;
+					if (String.Compare (pathSegment, scanIndex, tokenName, 0, nameLen, StringComparison.OrdinalIgnoreCase) != 0)
+						return false;
+					startIndex = scanIndex - 1;
+					continue;
+				}
+
+				// Standard token
+				int nextTokenIndex = tokenIndex - 1;
+				if (nextTokenIndex < 0) {
+					// First token
+					ret.Add (tokenName, pathSegment.Substring (0, startIndex + 1));
+					continue;
+				}
+
+				if (startIndex == 0)
+					return false;
+				
+				var nextToken = tokens [nextTokenIndex];
+				string nextTokenName = nextToken.Name;
+
+				// Skip one char, since there can be no empty segments and if the
+				// current token's value happens to be the same as preceeding
+				// literal text, we'll save some time and complexity.
+				scanIndex = startIndex - 1;
+				int lastIndex = pathSegment.LastIndexOf (nextTokenName, scanIndex, StringComparison.OrdinalIgnoreCase);
+				if (lastIndex == -1)
+					return false;
+
+				lastIndex += nextTokenName.Length - 1;
+						
+				string sectionValue = pathSegment.Substring (lastIndex + 1, startIndex - lastIndex);
+				if (String.IsNullOrEmpty (sectionValue))
+					return false;
+
+				ret.Add (tokenName, sectionValue);
+				startIndex = lastIndex;
+			}
+			
+			return true;
+		}
+
 		public RouteValueDictionary Match (string path, RouteValueDictionary defaults)
 		{
 			var ret = new RouteValueDictionary ();
@@ -247,73 +325,8 @@ namespace System.Web.Routing
 					continue;
 				}
 
-				string pathSegment = argSegs [i];
-				int pathSegmentLength = pathSegment != null ? pathSegment.Length : -1;
-				int pathIndex = 0;
-				PatternTokenType tokenType;
-				List <PatternToken> tokens = segment.Tokens;
-				int tokensCount = tokens.Count;
-				
-				// Process the path segments ignoring the defaults
-				for (int tokenIndex = 0; tokenIndex < tokensCount; tokenIndex++) {
-					var token = tokens [tokenIndex];
-					if (pathIndex > pathSegmentLength - 1)
-						return null;
-
-					tokenType = token.Type;
-					var tokenName = token.Name;
-
-					// Catch-all
-					if (i > segmentCount - 1 || tokenType == PatternTokenType.CatchAll) {
-						if (tokenType != PatternTokenType.CatchAll)
-							return null;
-
-						StringBuilder sb = new StringBuilder ();
-						for (int j = i; j < argsCount; j++) {
-							if (j > i)
-								sb.Append ('/');
-							sb.Append (argSegs [j]);
-						}
-						
-						ret.Add (tokenName, sb.ToString ());
-						break;
-					}
-
-					// Literal sections
-					if (token.Type == PatternTokenType.Literal) {
-						int nameLen = tokenName.Length;
-						if (pathSegmentLength < nameLen || String.Compare (pathSegment, pathIndex, tokenName, 0, nameLen, StringComparison.OrdinalIgnoreCase) != 0)
-							return null;
-						pathIndex += nameLen;
-						continue;
-					}
-
-					int nextTokenIndex = tokenIndex + 1;
-					if (nextTokenIndex >= tokensCount) {
-						// Last token
-						ret.Add (tokenName, pathSegment.Substring (pathIndex));
-						continue;
-					}
-
-					// Next token is a literal - greedy matching. It seems .NET
-					// uses a simple and naive algorithm here which finds the
-					// last ocurrence of the next section literal and assigns
-					// everything before that to this token. See the
-					// GetRouteData28 test in RouteTest.cs
-					var nextToken = tokens [nextTokenIndex];
-					string nextTokenName = nextToken.Name;
-					int lastIndex = pathSegment.LastIndexOf (nextTokenName, pathSegmentLength - 1, pathSegmentLength - pathIndex, StringComparison.OrdinalIgnoreCase);
-					if (lastIndex == -1)
-						return null;
-					
-					int copyLength = lastIndex - pathIndex;
-					string sectionValue = pathSegment.Substring (pathIndex, copyLength);
-					if (String.IsNullOrEmpty (sectionValue))
-						return null;
-					
-					ret.Add (tokenName, sectionValue);
-					pathIndex += copyLength;
-				}
+				if (!MatchSegment (i, argsCount, argSegs, segment.Tokens, ret))
+					return null;
 				i++;
 			}
 

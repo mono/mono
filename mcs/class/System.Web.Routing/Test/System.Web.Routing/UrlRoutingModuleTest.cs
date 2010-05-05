@@ -85,15 +85,17 @@ namespace MonoTests.System.Web.Routing
 			m.PostResolveRequestCache (new HttpContextStub2 ("~/foo/bar", null));
 		}
 
+#if !NET_4_0
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
 		public void PostResolveRequestCacheNullHttpHandler ()
 		{
 			var m = new UrlRoutingModule ();
 			RouteTable.Routes.Add (new MyRoute ("foo/bar", new NullRouteHandler ()));
+
 			m.PostResolveRequestCache (new HttpContextStub2 ("~/foo/bar", null));
 		}
-
+#endif
 		[Test]
 		[ExpectedException (typeof (NotImplementedException))]
 		public void PostResolveRequestCacheNoPath ()
@@ -104,6 +106,7 @@ namespace MonoTests.System.Web.Routing
 			m.PostResolveRequestCache (new HttpContextStub2 ("~/foo/bar", null));
 		}
 
+#if !NET_4_0
 		[Test]
 		public void PostResolveRequestCacheCallRewritePath ()
 		{
@@ -132,16 +135,24 @@ namespace MonoTests.System.Web.Routing
 				Assert.AreEqual ("~/UrlRouting.axd", ex.Message, "#2");
 			}
 		}
-
+#endif
 		[Test]
 		public void PostResolveRequestCache ()
 		{
 			var m = new UrlRoutingModule ();
 			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+#if NET_4_0
+			var hc = new HttpContextStub4 ("~/x/y", "z", "apppath", false);
+#else
 			var hc = new HttpContextStub3 ("~/x/y", "z", "apppath", false);
+#endif
 			hc.SetResponse (new HttpResponseStub (2));
 			m.PostResolveRequestCache (hc);
+#if NET_4_0
+			Assert.AreEqual (null, hc.RewrittenPath, "#1");
+#else
 			Assert.AreEqual ("~/UrlRouting.axd", hc.RewrittenPath, "#1");
+#endif
 			// it internally stores the handler 
 		}
 
@@ -181,23 +192,40 @@ namespace MonoTests.System.Web.Routing
 		{
 			var m = new UrlRoutingModule ();
 			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+#if NET_4_0
+			var hc = new HttpContextStub4 ("~/x/y", "z", "apppath", true);
+#else
 			var hc = new HttpContextStub3 ("~/x/y", "z", "apppath", true);
+#endif
 			hc.HttpHandler = new MyHttpHandler ();
 			hc.SetResponse (new HttpResponseStub (2));
 			m.PostResolveRequestCache (hc);
+#if NET_4_0
+			Assert.AreEqual (null, hc.RewrittenPath, "#1");
+#else
 			Assert.AreEqual ("~/UrlRouting.axd", hc.RewrittenPath, "#1");
+#endif
 			// It tries to set Handler and causes NIE
 			m.PostMapRequestHandler (hc);
 		}
 
 		[Test]
+#if !NET_4_0
 		[ExpectedException (typeof (ApplicationException))]
+#endif
 		public void Pipeline3 ()
 		{
 			var m = new UrlRoutingModule ();
 			RouteTable.Routes.Add (new MyRoute ("{foo}/{bar}", new MyRouteHandler ()));
+#if NET_4_0
+			var hc = new HttpContextStub5 ("~/x/y", String.Empty, "apppath");
+#else
 			var hc = new HttpContextStub2 ("~/x/y", String.Empty, "apppath");
+#endif
 			hc.SetResponse (new HttpResponseStub (2));
+#if NET_4_0
+			Assert.IsNull (m.RouteCollection.GetRouteData (hc), "#0");
+#else
 			Assert.IsNotNull (m.RouteCollection.GetRouteData (hc), "#0");
 			m.PostResolveRequestCache (hc);
 			try {
@@ -206,6 +234,7 @@ namespace MonoTests.System.Web.Routing
 			} catch (ApplicationException ex) {
 				Assert.AreEqual ("~/UrlRouting.axd", ex.Message, "#2");
 			}
+#endif
 		}
 	}
 }

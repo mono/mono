@@ -52,6 +52,9 @@ namespace System.Web.Routing
 
 		public PageRouteHandler (string virtualPath, bool checkPhysicalUrlAccess)
 		{
+			if (String.IsNullOrEmpty (virtualPath) || !virtualPath.StartsWith ("~/"))
+				throw new ArgumentException ("VirtualPath must be a non empty string starting with ~/", "virtualPath");
+			
 			VirtualPath = virtualPath;
 			CheckPhysicalUrlAccess = checkPhysicalUrlAccess;
 		}

@@ -38,10 +38,17 @@ namespace MonoTests.System.Web.Routing
 	class HttpContextStub : HttpContextBase
 	{
 		HttpRequestStub req;
+		bool returnNullRequest;
 
 		public HttpContextStub ()
 			: this (null)
 		{
+		}
+
+		public HttpContextStub (bool returnNullRequest)
+			: this (null)
+		{
+			this.returnNullRequest = returnNullRequest;
 		}
 
 		public HttpContextStub (string dummyRequestPath)
@@ -63,7 +70,12 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		public override HttpRequestBase Request {
-			get { return req != null ? req : base.Request; }
+			get {
+				if (returnNullRequest)
+					return null;
+
+				return req != null ? req : base.Request; 
+			}
 		}
 	}
 
@@ -152,6 +164,11 @@ namespace MonoTests.System.Web.Routing
 		{
 			this.response = response;
 		}
+
+		public void SetRequest (HttpRequestStub request)
+		{
+			this.request = request;
+		}
 	}
 
 	class HttpRequestStub2 : HttpRequestStub
@@ -231,7 +248,79 @@ namespace MonoTests.System.Web.Routing
 
 		public string RewrittenPath { get; set; }
 	}
+#if NET_4_0
+	class FakeHttpRequestWrapper : HttpRequestWrapper
+	{
+		string requestUrl;
+		string path;
+		string appPath;
 
+		public FakeHttpRequestWrapper (string requestUrl, string path, string appPath)
+			: base (new HttpRequest (path, "http://localhost/", String.Empty))
+		{
+			this.requestUrl = requestUrl;
+			this.path = path;
+			this.appPath = appPath;
+		}
+
+		public override string AppRelativeCurrentExecutionFilePath
+		{
+			get
+			{
+				return appPath;
+			}
+		}
+	}
+
+	class HttpContextStub4 : HttpContextStub3
+	{
+		HttpRequestWrapper wrapper;
+
+		public override HttpRequestBase Request
+		{
+			get
+			{
+				return wrapper;
+			}
+		}
+
+		public HttpContextStub4 (string requestUrl, string path, string appPath, bool supportHandler)
+			: base (requestUrl, path, appPath, supportHandler)
+		{
+			wrapper = new FakeHttpRequestWrapper (requestUrl, path, appPath);
+		}
+	}
+
+	class HttpContextStub5 : HttpContextStub2
+	{
+		HttpRequestWrapper wrapper;
+
+		public override HttpRequestBase Request
+		{
+			get
+			{
+				return wrapper;
+			}
+		}
+
+		public HttpContextStub5 ()
+			: this (null, null)
+		{
+		}
+
+		public HttpContextStub5 (string requestUrl, string path)
+			: this (requestUrl, path, null)
+		{
+			
+		}
+
+		public HttpContextStub5 (string requestUrl, string path, string appPath)
+			: base (requestUrl, path, appPath)
+		{
+			wrapper = new FakeHttpRequestWrapper (requestUrl, path, appPath);
+		}
+	}
+#endif
 	public class MyStopRoutingHandler : StopRoutingHandler
 	{
 		public IHttpHandler CallGetHttpHandler (RequestContext rc)

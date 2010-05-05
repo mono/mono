@@ -121,16 +121,22 @@ namespace System.Web.Routing
 			if (httpContext == null)
 				throw new ArgumentNullException ("httpContext");
 
+			if (httpContext.Request == null)
+				throw new ArgumentException ("The context does not contain any request data.", "httpContext");
+#if NET_4_0
+			if (Count == 0)
+				return null;
+#endif			
 			if (!RouteExistingFiles) {
 				var path = httpContext.Request.AppRelativeCurrentExecutionFilePath;
 				VirtualPathProvider vpp = HostingEnvironment.VirtualPathProvider;
 				if (path != "~/" && vpp != null && (vpp.FileExists (path) || vpp.DirectoryExists (path)))
 					return null;
 			}
-			
+#if !NET_4_0
 			if (Count == 0)
 				return null;
-
+#endif
 			foreach (RouteBase rb in this) {
 				var rd = rb.GetRouteData (httpContext);
 				if (rd != null)
@@ -183,7 +189,54 @@ namespace System.Web.Routing
 		{
 			return write_lock;
 		}
+#if NET_4_0
+		public void Ignore (string url)
+		{
+			Ignore (url, null);
+		}
 
+		public void Ignore (string url, object constraints)
+		{
+			if (url == null)
+				throw new ArgumentNullException ("url");
+
+			Add (new Route (url, null, new RouteValueDictionary (constraints), new StopRoutingHandler ()));
+		}
+		
+		public Route MapPageRoute (string routeName, string routeUrl, string physicalFile)
+		{
+			return MapPageRoute (routeName, routeUrl, physicalFile, true, null, null, null);
+		}
+
+		public Route MapPageRoute (string routeName, string routeUrl, string physicalFile, bool checkPhysicalUrlAccess)
+		{
+			return MapPageRoute (routeName, routeUrl, physicalFile, checkPhysicalUrlAccess, null, null, null);
+		}
+
+		public Route MapPageRoute (string routeName, string routeUrl, string physicalFile, bool checkPhysicalUrlAccess,
+					   RouteValueDictionary defaults)
+		{
+			return MapPageRoute (routeName, routeUrl, physicalFile, checkPhysicalUrlAccess, defaults, null, null);
+		}
+
+		public Route MapPageRoute (string routeName, string routeUrl, string physicalFile, bool checkPhysicalUrlAccess,
+					   RouteValueDictionary defaults, RouteValueDictionary constraints)
+		{
+			return MapPageRoute (routeName, routeUrl, physicalFile, checkPhysicalUrlAccess, defaults, constraints, null);
+		}
+
+		public Route MapPageRoute (string routeName, string routeUrl, string physicalFile, bool checkPhysicalUrlAccess,
+					   RouteValueDictionary defaults, RouteValueDictionary constraints, RouteValueDictionary dataTokens)
+		{
+			if (routeUrl == null)
+				throw new ArgumentNullException ("routeUrl");
+			
+			var route = new Route (routeUrl, defaults, constraints, dataTokens, new PageRouteHandler (physicalFile, checkPhysicalUrlAccess));
+			Add (routeName, route);
+
+			return route;
+		}
+#endif
 		protected override void InsertItem (int index, RouteBase item)
 		{
 			// FIXME: what happens wrt its name?

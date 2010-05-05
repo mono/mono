@@ -80,10 +80,13 @@ namespace System.Web.Routing
 			if (values == null)
 				return;
 
-			foreach (var fi in values.GetType ().GetFields ())
-				Add (fi.Name, fi.GetValue (values));
-			foreach (var pi in values.GetType ().GetProperties ())
-				Add (pi.Name, pi.GetValue (values, null));
+			foreach (var pi in values.GetType ().GetProperties ()) {
+				try {
+					Add (pi.Name, pi.GetValue (values, null));
+				} catch {
+					// ignore
+				}
+			}
 		}
 
 		public int Count {

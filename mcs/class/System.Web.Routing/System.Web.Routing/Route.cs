@@ -99,11 +99,12 @@ namespace System.Web.Routing
 			if (values == null)
 				return null;
 
-			if (Constraints != null)
-				foreach (var p in Constraints)
+			RouteValueDictionary constraints = Constraints;
+			if (constraints != null)
+				foreach (var p in constraints)
 					if (!ProcessConstraint (httpContext, p.Value, p.Key, values, RouteDirection.IncomingRequest))
 						return null;
-
+			
 			var rd = new RouteData (this, RouteHandler);
 			RouteValueDictionary rdValues = rd.Values;
 			
@@ -171,7 +172,12 @@ namespace System.Web.Routing
 			bool ret = ProcessConstraintInternal (httpContext, this, constraint, parameterName, values, routeDirection, out invalidConstraint);
 			
 			if (invalidConstraint)
-				throw new InvalidOperationException (String.Format ("Constraint parameter '{0}' must be either a string or an IRouteConstraint instance", parameterName));
+				throw new InvalidOperationException (
+					String.Format (
+						"Constraint parameter '{0}' on the route with URL '{1}' must have a string value type or be a type which implements IRouteConstraint",
+						parameterName, Url
+					)
+				);
 
 			return ret;
 		}

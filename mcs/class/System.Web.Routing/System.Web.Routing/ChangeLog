@@ -1,3 +1,17 @@
+2010-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteValueDictionary.cs: do not process type fields in
+	RouteValueDictionary (object)
+
+	* RouteCollection.cs: GetRouteData throws an exception if Request
+	is null in the passed context.
+	Added Ignore* and MapPageRoute* 4.0 APIs
+
+	* RequestContext.cs: 4.0 API update
+
+	* PatternParser.cs: match parser rewrite to encompass 4.0 bug
+	fixes. We don't emulate some of the pre-4.0 routing bugs anymore.
+
 2009-11-23  Marek Habersack  <mhabersack@novell.com>
 
 	* Route.cs: GetRouteData throws NotImplementedException only when

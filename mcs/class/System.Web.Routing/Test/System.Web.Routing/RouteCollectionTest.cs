@@ -106,6 +106,13 @@ namespace MonoTests.System.Web.Routing
 		}
 
 		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetRouteDataNoRequest ()
+		{
+			new RouteCollection ().GetRouteData (new HttpContextStub (true));
+		}
+
+		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void GetRouteDataNullArg ()
 		{
@@ -123,13 +130,18 @@ namespace MonoTests.System.Web.Routing
 		public void GetRouteDataForNonExistent2 ()
 		{
 			var rd = new RouteCollection () { RouteExistingFiles = true }.GetRouteData (new HttpContextStub2 (null, null, null));
-			Assert.IsNull (rd);
+			Assert.IsNull (rd, "#A1");
+#if NET_4_0
+			rd = new RouteCollection ().GetRouteData (new HttpContextStub2 (null, null, null));
+			Assert.IsNull (rd, "#A2");
+#else
 			try {
 				new RouteCollection ().GetRouteData (new HttpContextStub2 (null, null, null));
-				Assert.Fail ("#1");
+				Assert.Fail ("#A3");
 			} catch (NotImplementedException) {
 				// it should fail due to the NIE on AppRelativeCurrentExecutionFilePath.
 			}
+#endif
 		}
 
 		[Test]
@@ -579,5 +591,284 @@ namespace MonoTests.System.Web.Routing
 			
 			Assert.IsNotNull (rd, "#A1");
 		}
+#if NET_4_0
+		[Test]
+		public void Ignore_String ()
+		{
+			var c = new RouteCollection ();
+
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				c.Ignore (null);
+			}, "#A1");
+
+			c.Ignore ("{resource}.axd/{*pathInfo}");
+			var hc = new HttpContextStub2 ("~/something.axd/pathinfo", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A1-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A1-2");
+			Assert.AreEqual (typeof (StopRoutingHandler), rd.RouteHandler.GetType (), "#A1-3");
+			Assert.IsTrue (rd.Route is Route, "#A1-4");
+			Assert.IsNotNull (((Route) rd.Route).Constraints, "#A1-5");
+			Assert.AreEqual (0, ((Route) rd.Route).Constraints.Count, "#A1-6");
+		}
+
+		[Test]
+		public void Ignore_String_Object ()
+		{
+			var c = new RouteCollection ();
+
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				c.Ignore (null, new { allaspx = @".*\.aspx(/.*)?" });
+			}, "#A1");
+
+			c.Ignore ("{*allaspx}", new { allaspx = @".*\.aspx(/.*)?" });
+			var hc = new HttpContextStub2 ("~/page.aspx", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A1-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A1-2");
+			Assert.AreEqual (typeof (StopRoutingHandler), rd.RouteHandler.GetType (), "#A1-3");
+			Assert.IsTrue (rd.Route is Route, "#A1-4");
+			Assert.IsNotNull (((Route) rd.Route).Constraints, "#A1-5");
+			Assert.AreEqual (1, ((Route) rd.Route).Constraints.Count, "#A1-6");
+			Assert.AreEqual (@".*\.aspx(/.*)?", ((Route) rd.Route).Constraints ["allaspx"], "#A1-7");
+
+			c = new RouteCollection ();
+			c.Ignore ("{*allaspx}", "something invalid");
+
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				rd = c.GetRouteData (hc);
+			}, "#A2");
+		}
+
+		[Test]
+		public void MapPageRoute_String_String_String ()
+		{
+			var c = new RouteCollection ();
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url");
+			var hc = new HttpContextStub2 ("~/some-url", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A1-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A1-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A1-3");
+
+			c = new RouteCollection ();
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				c.MapPageRoute ("RouteName", null, "~/some-url");
+			}, "#A2");
+
+			c = new RouteCollection ();
+			c.MapPageRoute ("RouteName", String.Empty, "~/some-url");
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#A2");
+
+			c = new RouteCollection ();
+			// thrown by PageRouteHandler's constructor
+			AssertExtensions.Throws<ArgumentException> (() => {
+				c.MapPageRoute ("RouteName", "~/some-url", null);
+			}, "#A3");
+		}
+
+		[Test]
+		public void MapPageRoute_String_String_String_Bool ()
+		{
+			var c = new RouteCollection ();
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", true);
+			var hc = new HttpContextStub2 ("~/some-url", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A1-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A1-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A1-3");
+			Assert.IsTrue (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A1-4");
+
+			c = new RouteCollection ();
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				c.MapPageRoute ("RouteName", null, "~/some-url", true);
+			}, "#A2");
+
+			c = new RouteCollection ();
+			c.MapPageRoute ("RouteName", String.Empty, "~/some-url", true);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#A2");
+
+			c = new RouteCollection ();
+			// thrown by PageRouteHandler's constructor
+			AssertExtensions.Throws<ArgumentException> (() => {
+				c.MapPageRoute ("RouteName", "~/some-url", null, true);
+			}, "#A3");
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", false);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A4-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A4-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
+			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4");
+		}
+
+		[Test]
+		public void MapPageRoute_String_String_String_Bool_RVD ()
+		{
+			var c = new RouteCollection ();
+			var defaults = new RouteValueDictionary ();
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", true, defaults);
+			var hc = new HttpContextStub2 ("~/some-url", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A1-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A1-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A1-3");
+			Assert.IsTrue (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A1-4");
+
+			c = new RouteCollection ();
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				c.MapPageRoute ("RouteName", null, "~/some-url", true, defaults);
+			}, "#A2");
+
+			c = new RouteCollection ();
+			c.MapPageRoute ("RouteName", String.Empty, "~/some-url", true, defaults);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#A2");
+
+			c = new RouteCollection ();
+			// thrown by PageRouteHandler's constructor
+			AssertExtensions.Throws<ArgumentException> (() => {
+				c.MapPageRoute ("RouteName", "~/some-url", null, true, defaults);
+			}, "#A3");
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", false, defaults);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A4-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A4-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
+			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4");
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", false, null);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A4-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A4-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
+			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4"); 
+		}
+
+		[Test]
+		public void MapPageRoute_String_String_String_Bool_RVD_RVD ()
+		{
+			var c = new RouteCollection ();
+			var defaults = new RouteValueDictionary ();
+			var constraints = new RouteValueDictionary ();
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", true, defaults, constraints);
+			var hc = new HttpContextStub2 ("~/some-url", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A1-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A1-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A1-3");
+			Assert.IsTrue (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A1-4");
+
+			c = new RouteCollection ();
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				c.MapPageRoute ("RouteName", null, "~/some-url", true, defaults, constraints);
+			}, "#A2");
+
+			c = new RouteCollection ();
+			c.MapPageRoute ("RouteName", String.Empty, "~/some-url", true, defaults, constraints);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#A2");
+
+			c = new RouteCollection ();
+			// thrown by PageRouteHandler's constructor
+			AssertExtensions.Throws<ArgumentException> (() => {
+				c.MapPageRoute ("RouteName", "~/some-url", null, true, defaults, constraints);
+			}, "#A3");
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", false, defaults, constraints);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A4-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A4-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
+			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4");
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", false, null, constraints);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A4-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A4-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
+			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4");
+		}
+
+		[Test]
+		public void MapPageRoute_String_String_String_Bool_RVD_RVD_RVD ()
+		{
+			var c = new RouteCollection ();
+			var defaults = new RouteValueDictionary ();
+			var constraints = new RouteValueDictionary ();
+			var dataTokens = new RouteValueDictionary ();
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", true, defaults, constraints, dataTokens);
+			var hc = new HttpContextStub2 ("~/some-url", String.Empty, String.Empty);
+			hc.SetResponse (new HttpResponseStub (3));
+			var rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A1-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A1-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A1-3");
+			Assert.IsTrue (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A1-4");
+
+			c = new RouteCollection ();
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				c.MapPageRoute ("RouteName", null, "~/some-url", true, defaults, constraints, dataTokens);
+			}, "#A2");
+
+			c = new RouteCollection ();
+			c.MapPageRoute ("RouteName", String.Empty, "~/some-url", true, defaults, constraints, dataTokens);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNull (rd, "#A2");
+
+			c = new RouteCollection ();
+			// thrown by PageRouteHandler's constructor
+			AssertExtensions.Throws<ArgumentException> (() => {
+				c.MapPageRoute ("RouteName", "~/some-url", null, true, defaults, constraints, dataTokens);
+			}, "#A3");
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", false, defaults, constraints, dataTokens);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A4-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A4-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
+			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4");
+
+			c.MapPageRoute (null, "{foo}-{bar}", "~/some-url", false, null, constraints, dataTokens);
+			rd = c.GetRouteData (hc);
+
+			Assert.IsNotNull (rd, "#A4-1");
+			Assert.IsNotNull (rd.RouteHandler, "#A4-2");
+			Assert.AreEqual (typeof (PageRouteHandler), rd.RouteHandler.GetType (), "#A4-3");
+			Assert.IsFalse (((PageRouteHandler) rd.RouteHandler).CheckPhysicalUrlAccess, "#A4-4");
+		}
+#endif
 	}
 }
