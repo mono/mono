@@ -3,6 +3,7 @@
 	* HttpRequest.cs: added 4.0 InsertEntityBody overloads (not
 	supported when running under Mono)
 	Added the HttpChannelBinding 4.0 property.
+	Added the CurrentExecutionFilePathExtension 4.0 property.
 
 2010-04-27  Marek Habersack  <mhabersack@novell.com>
 

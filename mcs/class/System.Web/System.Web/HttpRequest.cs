@@ -443,7 +443,11 @@ namespace System.Web
 				return FilePath;
 			}
 		}
-
+#if NET_4_0
+		public string CurrentExecutionFilePathExtension {
+			get { return global::System.IO.Path.GetExtension (CurrentExecutionFilePath); }
+		}
+#endif
 		public string AppRelativeCurrentExecutionFilePath {
 			get {
 				return VirtualPathUtility.ToAppRelative (CurrentExecutionFilePath);
