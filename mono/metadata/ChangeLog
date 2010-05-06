@@ -1,3 +1,33 @@
+2010-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* gc-internal.h: Add new functions required for ephemeron support.
+
+	* gc.c: Implement ves_icall_System_GC_register_ephemeron_array.
+
+	* icall-def.h: Add GC::register_ephemeron_array.
+
+	* object.c (compute_class_bitmap): sys.rt.cs.Ephemeronis an opaque type
+	under sgen. Its fields must not be marked.
+
+	* sgen-gc.c (mono_gc_clear_domain): Call cleanup function for ephemerons.
+
+	* sgen-gc.c (finish_gray_stack): Mark all reachable ephemerons before
+	handling finalizable objects. Clean dead ones after all finalizable
+	handling.
+
+	* sgen-gc.c (dump_heap): Add new kind of internal memory.
+
+	* sgen-gc.c (null_ephemerons_for_domain): Remove from the list ephemeron
+	arrays from the dead domain.
+
+	* sgen-gc.c (clear_unreachable_ephemerons): Clear dead ephemerons entries.
+
+	* sgen-gc.c (mark_ephemerons_in_range): Mark/Copy all ephemeron values
+	whose keys are reachable.
+
+	* sgen-gc.c (mono_gc_ephemeron_array_add): Register the array into the
+	list of live ephemeron arrays.
+
 2010-05-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_layout_fields): Don't perform alignment
