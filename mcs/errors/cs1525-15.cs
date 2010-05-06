@@ -1,5 +1,6 @@
-// CS1003: Syntax error, `.' expected
-// Line: 9
+// CS1525: error CS1525: Unexpected symbol `;', expecting `,' or `}'
+// Line: 10
+
 class X {
     public int Field;
 
