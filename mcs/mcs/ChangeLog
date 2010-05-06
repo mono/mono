@@ -1,3 +1,8 @@
+2010-05-06  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #602443
+	* convert.cs: Explicit enum conversion cannot involve user operators
+
 2010-05-05  Miguel de Icaza  <miguel@novell.com>
 
 	* class.cs (TypeContainer.DefineBaseTypes)

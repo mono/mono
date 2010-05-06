@@ -1609,8 +1609,6 @@ namespace Mono.CSharp {
 		/// </summary>
 		static Expression ExplicitReferenceConversion (Expression source, TypeSpec source_type, TypeSpec target_type)
 		{
-			bool target_is_value_type = TypeManager.IsStruct (target_type);
-
 			//
 			// From object to a generic parameter
 			//
@@ -1623,18 +1621,20 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (source_type))
 				return ExplicitTypeParameterConversion (source, source_type, target_type);
 
+			bool target_is_value_type = (TypeManager.IsStruct (target_type) || TypeManager.IsEnumType (target_type)) && !TypeManager.IsNullableType (target_type);
+
+			//
+			// Unboxing conversion from System.ValueType to any non-nullable-value-type
+			//
+			if (source_type == TypeManager.value_type && target_is_value_type)
+				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
+
 			//
 			// From object to any reference type or value type (unboxing)
 			//
 			if (source_type == TypeManager.object_type)
 				return source == null ? EmptyExpression.Null :
 					target_is_value_type ? (Expression) new UnboxCast (source, target_type) : new ClassCast (source, target_type);
-
-			//
-			// Unboxing conversion from the types object and System.ValueType to any non-nullable-value-type
-			//
-			if (source_type == TypeManager.value_type && target_is_value_type)
-				return source == null ? EmptyExpression.Null : new UnboxCast (source, target_type);
 
 			//
 			// From any class S to any class-type T, provided S is a base class of T
@@ -1746,40 +1746,59 @@ namespace Mono.CSharp {
 				return ne;
 
 			if (TypeManager.IsEnumType (expr_type)) {
+				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
 				Expression underlying = EmptyCast.Create (expr, EnumSpec.GetUnderlyingType (expr_type));
-				expr = ExplicitConversionCore (ec, underlying, target_type, loc);
-				if (expr != null)
-					return expr;
+				if (underlying.Type == real_target)
+					ne = underlying;
 
-				return ExplicitUserConversion (ec, underlying, target_type, loc);				
+				if (ne == null)
+					ne = ImplicitNumericConversion (underlying, real_target);
+
+				if (ne == null)
+					ne = ExplicitNumericConversion (underlying, real_target);
+
+				//
+				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
+				//
+				if (ne == null && (real_target == TypeManager.intptr_type || real_target == TypeManager.uintptr_type))
+					ne = ExplicitUserConversion (ec, underlying, real_target, loc);
+
+				return ne != null ? EmptyCast.Create (ne, target_type) : null;
 			}
 
-			if (TypeManager.IsEnumType (target_type)){
+			if (TypeManager.IsEnumType (target_type)) {
 				//
-				// Type System.Enum can be unboxed to any enum-type
+				// System.Enum can be unboxed to any enum-type
 				//
 				if (expr_type == TypeManager.enum_type)
 					return new UnboxCast (expr, target_type);
 
-				Expression ce = ExplicitConversionCore (ec, expr, EnumSpec.GetUnderlyingType (target_type), loc);
-				if (ce != null)
-					return EmptyCast.Create (ce, target_type);
-				
+				TypeSpec real_target = TypeManager.IsEnumType (target_type) ? EnumSpec.GetUnderlyingType (target_type) : target_type;
+
+				if (expr_type == real_target)
+					return EmptyCast.Create (expr, target_type);
+
+				ne = ImplicitNumericConversion (expr, real_target);
+				if (ne != null)
+					return EmptyCast.Create (ne, target_type);
+
+				ne = ExplicitNumericConversion (expr, real_target);
+				if (ne != null)
+					return EmptyCast.Create (ne, target_type);
+
 				//
 				// LAMESPEC: IntPtr and UIntPtr conversion to any Enum is allowed
 				//
 				if (expr_type == TypeManager.intptr_type || expr_type == TypeManager.uintptr_type) {
-					ne = ExplicitUserConversion (ec, expr, EnumSpec.GetUnderlyingType (target_type), loc);
+					ne = ExplicitUserConversion (ec, expr, real_target, loc);
 					if (ne != null)
 						return ExplicitConversionCore (ec, ne, target_type, loc);
 				}
-				
-				return null;
+			} else {
+				ne = ExplicitNumericConversion (expr, target_type);
+				if (ne != null)
+					return ne;
 			}
-
-			ne = ExplicitNumericConversion (expr, target_type);
-			if (ne != null)
-				return ne;
 
 			//
 			// Skip the ExplicitReferenceConversion because we can not convert
