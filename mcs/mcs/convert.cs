@@ -1621,7 +1621,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsGenericParameter (source_type))
 				return ExplicitTypeParameterConversion (source, source_type, target_type);
 
-			bool target_is_value_type = (TypeManager.IsStruct (target_type) || TypeManager.IsEnumType (target_type)) && !TypeManager.IsNullableType (target_type);
+			bool target_is_value_type = TypeManager.IsStruct (target_type) || TypeManager.IsEnumType (target_type);
 
 			//
 			// Unboxing conversion from System.ValueType to any non-nullable-value-type
