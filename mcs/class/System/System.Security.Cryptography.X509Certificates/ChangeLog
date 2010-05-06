@@ -1,3 +1,8 @@
+2010-04-06  Geoff Norton  <gnorton@novell.com>
+
+	* OSX509Certificates.cs: Fix a crash when doing multiple certificate calls
+	Fix a rare but possible leak.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* X509Chain.cs: use MOONLIGHT symbol to disambiguate MonoTouch
