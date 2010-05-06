@@ -3161,8 +3161,8 @@ member_initializer_list
 	  	$$ = a;
 	  }
 	| member_initializer_list error {
-	  	Report.Error (1003, GetLocation ($1), "Syntax error, expecting ','");
-		$$ = null;
+	  	Error_SyntaxError (yyToken);
+		$$ = $1;
 	  }
 	;
 
@@ -3338,8 +3338,8 @@ expression_list
 		$$ = list;
 	  }
 	| expression_list error {
-	  	Report.Error (1003, GetLocation ($1), "Syntax error, expecting ','");
-		$$ = null;
+	  	Error_SyntaxError (yyToken);
+		$$ = $1;
 	  }
 	;
 	
