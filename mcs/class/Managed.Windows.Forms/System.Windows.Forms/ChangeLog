@@ -1,3 +1,10 @@
+2010-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* ListView.cs: When calculating the scrollbars, take into account the
+	height of the horizontal scrollbar (if visible) to assign the maximum
+	value for our vertical one.
+	Fixes #543785.
+
 2010-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeNodeCollection.cs: Do some clean up by renaming some of our

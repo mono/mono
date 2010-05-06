@@ -1465,14 +1465,16 @@ namespace System.Windows.Forms
 			if (v_scroll.is_visible) {
 				v_scroll.Location = new Point (client_area.Right - v_scroll.Width, client_area.Y);
 				v_scroll.Minimum = 0;
-				v_scroll.Maximum = layout_ht;
 
 				// if h_scroll is visible, adjust the height of
 				// v_scroll to account for the height of h_scroll
-				if (h_scroll.Visible)
+				if (h_scroll.Visible) {
+					v_scroll.Maximum = layout_ht + h_scroll.Height;
 					v_scroll.Height = client_area.Height - h_scroll.Height;
-				else
+				} else {
+					v_scroll.Maximum = layout_ht;
 					v_scroll.Height = client_area.Height;
+				}
 
 				v_scroll.LargeChange = client_area.Height;
 				v_scroll.SmallChange = Font.Height;
