@@ -1,5 +1,13 @@
 2010-05-05 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_layout_fields): Don't perform alignment
+	if align is zero.
+
+	* class.c (mono_class_layout_fields): Init field related information
+	to sane defaults.
+
+2010-05-05 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (mono_verifier_verify_class): Verify the constraint
 	of generic type definitions.
 
