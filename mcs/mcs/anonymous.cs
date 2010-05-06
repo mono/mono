@@ -1481,7 +1481,9 @@ namespace Mono.CSharp {
 				if (!method.MemberName.IsGeneric) {
 					TypeContainer parent = method.Parent.PartialContainer;
 					int id = parent.Fields == null ? 0 : parent.Fields.Count;
-					am_cache = new Field (parent, new TypeExpression (type, loc),
+					var cache_type = storey != null && storey.Mutator != null ? storey.Mutator.Mutate (type) : type;
+
+					am_cache = new Field (parent, new TypeExpression (cache_type, loc),
 						Modifiers.STATIC | Modifiers.PRIVATE | Modifiers.COMPILER_GENERATED,
 						new MemberName (CompilerGeneratedClass.MakeName (null, "f", "am$cache", id), loc), null);
 					am_cache.Define ();
