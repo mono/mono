@@ -1,3 +1,8 @@
+2010-04-06  Geoff Norton  <gnorton@novell.com>
+
+	* OSX509Certificates.cs: Fix a crash when doing multiple certificate calls
+	Fix a rare but possible leak.
+
 2010-03-11 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* OSX509Certificates.cs: moved here from Mono.Security.
