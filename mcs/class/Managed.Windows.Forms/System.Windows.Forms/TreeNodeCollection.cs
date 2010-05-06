@@ -453,11 +453,7 @@ namespace System.Windows.Forms {
 					tree_view.RecalculateVisibleOrder (prev);
 				if (owner == tree_view.root_node || node.Parent.IsVisible && node.Parent.IsExpanded)
 					tree_view.UpdateScrollBars (false);
-			}
 
-			if (owner != null && tree_view != null && (owner.IsExpanded || owner.IsRoot)) {
-				 tree_view.UpdateBelow (owner);
-			} else if (owner != null && tree_view != null) {
 				tree_view.UpdateBelow (owner);
 			}
 		}
