@@ -2509,7 +2509,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if ((field.IsStatic && !ftype.IsGeneric))
+				if ((field.IsStatic && (!ftype.IsGeneric || ftype == CurrentType)))
 					continue;
 
 				if (!CheckFieldTypeCycle (ftype)) {
