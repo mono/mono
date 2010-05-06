@@ -1,4 +1,4 @@
-// CS1525: error CS1525: Unexpected symbol `;', expecting `,' or `}'
+// CS1525: Unexpected symbol `;', expecting `,' or `}'
 // Line: 10
 
 class X {
