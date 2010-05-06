@@ -1,3 +1,10 @@
+2010-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ConditionalWeakTable.cs: Discard old broken version. New
+	version user proper runtime support. Currently it performs
+	linear search over the keys, which is dog slow but it's a
+	good start.
+
 2010-03-18  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ConditionalWeakTable.cs:
