@@ -1,5 +1,11 @@
 2010-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeNodeCollection.cs: Do some clean up by renaming some of our
+	local vars in Add and AddSorted, so we have better readibility.
+	Patch from Thomas Goldstein (stifu@free.fr).
+
+2010-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeNodeCollection.cs: When adding a sorted node return the correct
 	position of that node instead of returning the count.
 	Patch from Thomas Goldstein (stifu@free.fr).

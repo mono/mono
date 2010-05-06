@@ -132,20 +132,20 @@ namespace System.Windows.Forms {
 			if (node == null)
 				throw new ArgumentNullException("node");
 
-			int res;
+			int index;
 			TreeView tree_view = null;
 
 			if (owner != null)
 				tree_view = owner.TreeView;
 				
 			if (tree_view != null && UsingSorting) {
-				res = AddSorted (node);
+				index = AddSorted (node);
 			} else {
 				if (count >= nodes.Length)
 					Grow ();
-				nodes[count] = node;
-				res = count;
+				index = count;
 				count++;
+				nodes[index] = node;
 			}
 
 			SetupNode (node);
@@ -154,7 +154,7 @@ namespace System.Windows.Forms {
 			if (tree_view != null)
 				tree_view.OnUIACollectionChanged (owner, new CollectionChangeEventArgs (CollectionChangeAction.Add, node));
 #endif
-			return res;
+			return index;
 		}
 
 #if NET_2_0
@@ -496,10 +496,10 @@ namespace System.Windows.Forms {
 			}
 
 			CompareInfo compare = Application.CurrentCulture.CompareInfo;
-			int pos = 0;
+			int index = 0;
 			bool found = false;
 			for (int i = 0; i < count; i++) {
-				pos = i;
+				index = i;
 				int comp = compare.Compare (node.Text, nodes [i].Text);
 				if (comp < 0) {
 					found = true;
@@ -509,16 +509,16 @@ namespace System.Windows.Forms {
 
 			// Stick it at the end
 			if (!found)
-				pos = count;
+				index = count;
 
 			// Move the nodes up and adjust their indices
-			for (int i = count - 1; i >= pos; i--) {
+			for (int i = count - 1; i >= index; i--) {
 				nodes [i + 1] = nodes [i];
 			}
 			count++;
-			nodes [pos] = node;
+			nodes [index] = node;
 
-			return pos;
+			return index;
 		}
 
 		// Would be nice to do this without running through the collection twice
