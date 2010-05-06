@@ -144,5 +144,10 @@ namespace System
 			throw new NotImplementedException ();
 		}
 #endif
+
+#if NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		internal extern static void register_ephemeron_array (Ephemeron[] array);
+#endif
 	}
 }
