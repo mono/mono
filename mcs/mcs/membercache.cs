@@ -581,9 +581,11 @@ namespace Mono.CSharp {
 								continue;
 						}
 
+						//
 						// Is the member of the correct type ?
-						if ((entry.Kind & mkind & MemberKind.MaskType) == 0) {
-							if (member_param == null || !(entry is IParametersMember)) {
+						// Destructors are ignored as they cannot be overridden by user
+						if ((entry.Kind & ~MemberKind.Destructor & mkind & MemberKind.MaskType) == 0) {
+							if ((entry.Kind & MemberKind.Destructor) == 0 && (member_param == null || !(entry is IParametersMember))) {
 								bestCandidate = entry;
 								return null;
 							}

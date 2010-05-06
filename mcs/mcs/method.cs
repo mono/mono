@@ -1943,8 +1943,7 @@ namespace Mono.CSharp {
 
 		protected override bool CheckBase ()
 		{
-			if (!base.CheckBase ())
-				return false;
+			// Don't check base, the destructor has special syntax
 
 			var base_type = Parent.PartialContainer.BaseType;
 			if (base_type == null)
