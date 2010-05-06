@@ -506,5 +506,21 @@ namespace MonoTests.System.Windows.Forms
 
 			tv.Nodes.RemoveAt (0);
 		}
+
+		[Test]
+		public void AddedSortedNodeIndex ()
+		{
+			TreeView tv = new TreeView ();
+			tv.Sorted = true;
+
+			string[] nodeNames = new string[] { "Hello", "this", "is", "a", "test" };
+			int[] nodeIndexes = new int[] { 0, 1, 1, 0, 3 };
+
+			for (int i = 0; i < nodeNames.Length; i++) {
+				TreeNode node = new TreeNode (nodeNames [i]);
+				int nodeIndex = tv.Nodes.Add (node);
+				Assert.AreEqual (nodeIndexes [i], nodeIndex);
+			}
+		}
 	}
 }

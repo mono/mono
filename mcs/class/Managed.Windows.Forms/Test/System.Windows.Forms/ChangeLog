@@ -1,3 +1,9 @@
+2010-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TreeNodeCollectionTest.cs: New test for the return value of Add with
+	sorting applied.
+	Patch from Thomas Goldstein (stifu@free.fr).
+
 2010-05-03  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeNodeCollectionTest.cs: New tests for Insert and Indexer
