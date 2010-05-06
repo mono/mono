@@ -518,7 +518,7 @@ namespace System.Windows.Forms {
 			count++;
 			nodes [pos] = node;
 
-			return count;
+			return pos;
 		}
 
 		// Would be nice to do this without running through the collection twice

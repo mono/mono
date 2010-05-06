@@ -1,5 +1,11 @@
 2010-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeNodeCollection.cs: When adding a sorted node return the correct
+	position of that node instead of returning the count.
+	Patch from Thomas Goldstein (stifu@free.fr).
+
+2010-05-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TreeNodeCollection.cs: In SetupNode remove the redundant check,
 	since we only need to have a valid tree view to call UpdateBelow.
 	Patch from Thomas Goldstein (stifu@free.fr).
