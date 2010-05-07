@@ -1,3 +1,8 @@
+2010-05-07  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #601141
+	* class.cs: Update all partial modifiers.
+
 2010-05-06  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #601708

@@ -363,6 +363,8 @@ namespace Mono.CSharp {
 				tc.ModFlags |= next_part.ModFlags;
 			}
 
+			tc.spec.Modifiers = tc.ModFlags;
+
 			if (next_part.attributes != null) {
 				if (tc.attributes == null)
 					tc.attributes = next_part.attributes;
