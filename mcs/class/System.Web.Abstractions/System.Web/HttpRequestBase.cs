@@ -128,7 +128,7 @@ namespace System.Web
 		public virtual string RequestType { get { NotImplemented (); return null; } set { NotImplemented (); } }
 #if NET_4_0
 		public virtual RequestContext RequestContext {
-			get { NotImplemented (); return null; } set { NotImplemented (); } 
+			get { NotImplemented (); return null; } 
 			internal set { NotImplemented (); }
 		}
 #endif

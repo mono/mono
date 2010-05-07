@@ -1,7 +1,7 @@
 2010-05-05  Marek Habersack  <mhabersack@novell.com>
 
-	* HttpRequestBase.cs: added 4.0 properties HttpChannelBinding and
-	RequestContext
+	* HttpRequestBase.cs, HttpRequestWrapper.cs: added 4.0 properties
+	HttpChannelBinding and RequestContext
 
 2010-04-26  Marek Habersack  <mhabersack@novell.com>
 

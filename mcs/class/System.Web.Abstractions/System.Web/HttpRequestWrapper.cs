@@ -40,6 +40,11 @@ using System.Security.Principal;
 using System.Text;
 using System.Web.Caching;
 
+#if NET_4_0
+using System.Security.Authentication.ExtendedProtection;
+using System.Web.Routing;
+#endif
+
 namespace System.Web
 {
 #if NET_4_0
@@ -128,7 +133,11 @@ namespace System.Web
 		public override string HttpMethod {
 			get { return w.HttpMethod; }
 		}
-
+#if NET_4_0
+		public override ChannelBinding HttpChannelBinding {
+			get { return w.HttpChannelBinding; }
+		}
+#endif
 		public override Stream InputStream {
 			get { return w.InputStream; }
 		}
@@ -185,7 +194,12 @@ namespace System.Web
 			get { return w.RequestType; }
 			set { w.RequestType = value; }
 		}
-
+#if NET_4_0
+		public override RequestContext RequestContext {
+			get { return w.RequestContext; }
+			internal set { w.RequestContext = value; }	
+		}
+#endif
 		public override NameValueCollection ServerVariables {
 			get { return w.ServerVariables; }
 		}
