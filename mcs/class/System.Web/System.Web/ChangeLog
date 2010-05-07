@@ -1,5 +1,8 @@
 2010-05-06  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpUtility.cs: HtmlEncode, UrlEncode changes for 4.0
+	Implemented JavaScriptStringEncode for 4.0
+
 	* HttpServerUtility.cs: added TransferRequest methods.
 
 	* HttpRuntime.cs: added AspClientScriptPhysicalPath,

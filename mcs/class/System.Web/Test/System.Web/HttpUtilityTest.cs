@@ -44,7 +44,11 @@ namespace MonoTests.System.Web {
 		{
 			Assert.AreEqual ("&lt;script>", HttpUtility.HtmlAttributeEncode ("<script>"));
 			Assert.AreEqual ("&quot;a&amp;b&quot;", HttpUtility.HtmlAttributeEncode ("\"a&b\""));
+#if NET_4_0
+			Assert.AreEqual ("&#39;string&#39;", HttpUtility.HtmlAttributeEncode ("'string'"));
+#else
 			Assert.AreEqual ("'string'", HttpUtility.HtmlAttributeEncode ("'string'"));
+#endif
 		}
 
 		[Test]
@@ -82,7 +86,94 @@ namespace MonoTests.System.Web {
 			windata = Encoding.Convert (Encoding.UTF8, win1251, utf8data);
 			Assert.AreEqual ("&#65308;script&#65310;", Encoding.ASCII.GetString (windata), "ok");
 		}
+#if NET_4_0
+		[Test]
+		public void JavaScriptStringEncode ()
+		{
+			Assert.AreEqual (String.Empty, HttpUtility.JavaScriptStringEncode (null), "#A1");
+			Assert.AreEqual ("\"\"", HttpUtility.JavaScriptStringEncode (null, true), "#A2");
+			Assert.AreEqual (String.Empty, HttpUtility.JavaScriptStringEncode (String.Empty), "#A3");
+			Assert.AreEqual ("\"\"", HttpUtility.JavaScriptStringEncode (String.Empty, true), "#A4");
 
+			for (char c = char.MinValue; c < char.MaxValue; c++) {
+				string exp = JavaScriptStringEncode (c.ToString (), false);
+				string expQuoted = JavaScriptStringEncode (c.ToString (), true);
+				string act = HttpUtility.JavaScriptStringEncode (c.ToString ());
+				string actQuoted = HttpUtility.JavaScriptStringEncode (c.ToString (), true);
+				Assert.AreEqual (exp, act, "JavaScriptStringEncode " + c.ToString () + " [" + (int) c + "]");
+				Assert.AreEqual (expQuoted, actQuoted, "JavaScriptStringEncode (quoted) " + c.ToString () + " [" + (int) c + "]");
+			}
+		}
+
+		string JavaScriptStringEncode (string s, bool addDoubleQuotes)
+		{
+			if (String.IsNullOrEmpty (s))
+				return addDoubleQuotes ? "\"\"" : String.Empty;
+
+			int len = s.Length;
+			bool needEncode = false;
+			char c;
+			for (int i = 0; i < len; i++) {
+				c = s [i];
+
+				if (c >= 0 && c <= 31 || c == 34 || c == 39 || c == 60 || c == 62 || c == 92) {
+					needEncode = true;
+					break;
+				}
+			}
+
+			if (!needEncode)
+				return addDoubleQuotes ? "\"" + s + "\"" : s;
+
+			var sb = new StringBuilder ();
+			if (addDoubleQuotes)
+				sb.Append ('"');
+
+			for (int i = 0; i < len; i++) {
+				c = s [i];
+				if (c >= 0 && c <= 7 || c == 11 || c >= 14 && c <= 31 || c == 39 || c == 60 || c == 62)
+					sb.AppendFormat ("\\u{0:x4}", (int)c);
+				else switch ((int)c) {
+					case 8:
+						sb.Append ("\\b");
+						break;
+
+					case 9:
+						sb.Append ("\\t");
+						break;
+
+					case 10:
+						sb.Append ("\\n");
+						break;
+
+					case 12:
+						sb.Append ("\\f");
+						break;
+
+					case 13:
+						sb.Append ("\\r");
+						break;
+
+					case 34:
+						sb.Append ("\\\"");
+						break;
+
+					case 92:
+						sb.Append ("\\\\");
+						break;
+
+					default:
+						sb.Append (c);
+						break;
+				}
+			}
+
+			if (addDoubleQuotes)
+				sb.Append ('"');
+
+			return sb.ToString ();
+		}
+#endif
 		[Test]
 #if !TARGET_JVM
 		[Category ("NotWorking")]
@@ -102,7 +193,11 @@ namespace MonoTests.System.Web {
 			bool needEncode = false;
 			for (int i = 0; i < s.Length; i++) {
 				char c = s [i];
-				if (c == '&' || c == '"' || c == '<' || c == '>' || c > 159) {
+				if (c == '&' || c == '"' || c == '<' || c == '>' || c > 159
+#if NET_4_0
+					|| c == '\''
+#endif
+					) {
 					needEncode = true;
 					break;
 				}
@@ -128,6 +223,11 @@ namespace MonoTests.System.Web {
 				case '"':
 					output.Append ("&quot;");
 					break;
+#if NET_4_0
+				case '\'':
+					output.Append ("&#39;");
+					break;
+#endif
 				default:
 					// MS starts encoding with &# from 160 and stops at 255.
 					// We don't do that. One reason is the 65308/65310 unicode
@@ -311,7 +411,11 @@ namespace MonoTests.System.Web {
 			for (int i = 0; i < 256; i++) {
 				string str = new string ((char) i, 1);
 				string encoded = HttpUtility.HtmlEncode (str);
-				if ((i > 159 && i < 256 ) || i == '&' || i == '<' || i == '>' || i == '"') {
+				if ((i > 159 && i < 256 ) || i == '&' || i == '<' || i == '>' || i == '"'
+#if NET_4_0
+					 || i == '\''
+#endif
+					) {
 					if (encoded [0] != '&' || encoded [encoded.Length - 1] != ';')
 						Assert.Fail ("Failed for i = " + i);
 				} else if (encoded.Length != 1) {
@@ -395,7 +499,11 @@ namespace MonoTests.System.Web {
 
 		static char [] hexChars = "0123456789abcdef".ToCharArray ();
 
+#if NET_4_0
+		const string notEncoded = "!()*-._";
+#else
 		const string notEncoded = "!'()*-._";
+#endif
 
 		static void UrlPathEncodeChar (char c, Stream result) {
 #if NET_2_0
