@@ -2,6 +2,7 @@
 
 	* BuildManager.cs: implemented 4.0 methods {Create,Read}CacheFile.
 	Fixed signature of the GetVirtualPathDependencies method.
+	Implemented 4.0 method GetGlobalAsaxType.
 
 2010-04-29  Marek Habersack  <mhabersack@novell.com>
 

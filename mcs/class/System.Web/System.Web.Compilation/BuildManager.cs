@@ -476,6 +476,15 @@ namespace System.Web.Compilation
 			return ret;
 		}
 #if NET_4_0
+		public static Type GetGlobalAsaxType ()
+		{
+			Type ret = HttpApplicationFactory.AppType;
+			if (ret == null)
+				throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
+			
+			return ret;
+		}
+		
 		public static Stream CreateCachedFile (string fileName)
 		{
 			if (fileName != null && (fileName == String.Empty || fileName.IndexOf (Path.DirectorySeparatorChar) != -1))
