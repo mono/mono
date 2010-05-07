@@ -1,5 +1,26 @@
 2010-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	Move mono_class_init from mono_type_get_object to icalls.
+	This causes massive memory savings for Assembly::GetTypes () and
+	make it fail a lot less due to missing dependencies.
+
+	This is a conservative, naive change as it doesn't remove some
+	mono_class_init from places that might not need them. Carefull
+	review of those should follow.
+
+	* reflection.c (mono_type_get_object): Don't mono_class_init the
+	returning type.
+
+	* reflection.c:
+	* cominterop.c:
+	* icall.c:
+	* marshal.c: Call mono_class_init in functions receiving a MonoType
+	object.
+
+	First step into fixing #601431.
+
+2010-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* gc-internal.h: Add new functions required for ephemeron support.
 
 	* gc.c: Implement ves_icall_System_GC_register_ephemeron_array.
