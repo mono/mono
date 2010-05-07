@@ -1,5 +1,12 @@
 2010-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: MS doesn't mind duplicates in the
+	typeref table. Move it to full verification.
+
+	Fixes #600508.
+
+2010-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* image.c (do_mono_image_load): Report verification
 	errors when loading an image fails.
 
