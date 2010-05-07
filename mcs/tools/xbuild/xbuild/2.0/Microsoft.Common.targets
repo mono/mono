@@ -87,7 +87,7 @@
 		</FindAppConfigFile>
 
 		<MakeDir 
-			Directories="$(OutDir);$(IntermediateOutputPath)"
+			Directories="$(OutDir);$(IntermediateOutputPath);@(DocFileItem->'%(RelativeDir)')"
 		/>
 	</Target>
 

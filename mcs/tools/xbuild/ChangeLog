@@ -1,3 +1,9 @@
+2010-05-05  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #599454.
+	* xbuild/*/Microsoft.Common.targets (PrepareForBuild): Create the
+	dir for the documentation file.
+
 2010-04-25  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #599486.
