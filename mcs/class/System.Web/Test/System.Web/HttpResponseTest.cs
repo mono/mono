@@ -29,11 +29,13 @@
 using System;
 using System.Collections;
 using System.Collections.Specialized;
+using System.Configuration.Provider;
 using System.IO;
 using System.Text;
 using System.Web;
 #if NET_4_0
 using System.Web.Routing;
+using System.Web.Caching;
 #endif
 
 using NUnit.Framework;
@@ -593,6 +595,13 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (0, f.UnknownResponseHeaders.Count, "#C1");
 #endif
 		}
+
+		[Test]
+		public void Constructor ()
+		{
+			var resp = new HttpResponse (null);
+			Assert.IsNull (resp.Output, "#A1");
+		}
 #if NET_4_0
 		[Test]
 		public void RedirectPermanent ()
@@ -636,6 +645,61 @@ namespace MonoTests.System.Web {
 			AssertExtensions.Throws<InvalidOperationException> (() => {
 				context.Response.RedirectToRoute (new { productId = "1", category = "widgets" });
 			}, "#A3");
+		}
+
+		[Test]
+		public void RemoveOutputCacheItem ()
+		{
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				HttpResponse.RemoveOutputCacheItem (null, "MyProvider");
+			}, "#A1");
+
+			AssertExtensions.Throws<ArgumentException> (() => {
+				HttpResponse.RemoveOutputCacheItem ("badPath", null);
+			}, "#A2");
+
+			Assert.IsNull (OutputCache.Providers, "#A3");
+			HttpResponse.RemoveOutputCacheItem ("/Path", null);
+
+			AssertExtensions.Throws<ProviderException> (() => {
+				HttpResponse.RemoveOutputCacheItem ("/Path", String.Empty);
+			}, "#A3");
+
+			AssertExtensions.Throws<ProviderException> (() => {
+				HttpResponse.RemoveOutputCacheItem ("/Path", "MyProvider");
+			}, "#A4");
+		}
+
+		[Test]
+		public void OutputSetter ()
+		{
+			FakeHttpWorkerRequest2 request;
+			HttpContext context = Cook (1, out request);
+
+			Assert.IsNotNull (context.Response.Output, "#A1");
+			context.Response.Output = null;
+			Assert.IsNull (context.Response.Output, "#A2");
+
+			// Classy...
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				context.Response.Write ('t');
+			}, "#A3-1");
+
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				context.Response.Write ((object) 5);
+			}, "#A3-2");
+
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				context.Response.Write ("string");
+			}, "#A3-3");
+
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				context.Response.Write (new char [] { '1' }, 0, 1);
+			}, "#A3-4");
+
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				context.Response.Write ((object) null);
+			}, "#A3-5");
 		}
 #endif
 	}

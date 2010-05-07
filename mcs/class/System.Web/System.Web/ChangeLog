@@ -3,6 +3,10 @@
 	* HttpResponse.cs: implemented the following 4.0 methods:
 	RedirectPermanent, RedirectToRoute, RedirectToRoutePermanent and
 	RemoveOutputCacheItem.
+	Output property no longer lazily creates a writer object - it's
+	created in the internal constructors. If a user sets it to null,
+	it remains null for good or bad.
+	Added Output setter for 4.0+
 
 2010-05-05  Marek Habersack  <mhabersack@novell.com>
 

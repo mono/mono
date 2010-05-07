@@ -111,10 +111,12 @@ namespace System.Web
 		internal HttpResponse ()
 		{
 			output_stream = new HttpResponseStream (this);
+			writer = new HttpWriter (this);
 		}
 
 		public HttpResponse (TextWriter writer) : this ()
 		{
+
 			this.writer = writer;
 		}
 
@@ -127,8 +129,9 @@ namespace System.Web
 			if (worker_request != null)
 				use_chunked = (worker_request.GetHttpVersion () == "HTTP/1.1");
 #endif
+			writer = new HttpWriter (this);
 		}
-		
+
 		internal TextWriter SetTextWriter (TextWriter writer)
 		{
 			TextWriter prev = this.writer;
@@ -338,11 +341,11 @@ namespace System.Web
 
 		public TextWriter Output {
 			get {
-				if (writer == null)
-					writer = new HttpWriter (this);
-
 				return writer;
 			}
+#if NET_4_0
+			set { writer = value; }
+#endif
 		}
 
 		public Stream OutputStream {
@@ -1019,25 +1022,49 @@ namespace System.Web
 
 		public void Write (char ch)
 		{
-			Output.Write (ch);
+			TextWriter writer = Output;
+#if NET_4_0
+			// Emulating .NET
+			if (writer == null)
+				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
+#endif
+			writer.Write (ch);
 		}
 
 		public void Write (object obj)
 		{
+			TextWriter writer = Output;
+#if NET_4_0
+			// Emulating .NET
+			if (writer == null)
+				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
+#endif
 			if (obj == null)
 				return;
 			
-			Output.Write (obj.ToString ());
+			writer.Write (obj.ToString ());
 		}
 		
 		public void Write (string s)
 		{
-			Output.Write (s);
+			TextWriter writer = Output;
+#if NET_4_0
+			// Emulating .NET
+			if (writer == null)
+				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
+#endif
+			writer.Write (s);
 		}
 		
 		public void Write (char [] buffer, int index, int count)
 		{
-			Output.Write (buffer, index, count);
+			TextWriter writer = Output;
+#if NET_4_0
+			// Emulating .NET
+			if (writer == null)
+				throw new NullReferenceException (".NET 4.0 emulation. A null value was found where an object was required.");
+#endif
+			writer.Write (buffer, index, count);
 		}
 
 		internal void WriteFile (FileStream fs, long offset, long size)
