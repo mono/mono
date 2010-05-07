@@ -130,6 +130,9 @@ namespace System.Web
 
 		public override TextWriter Output {
 			get { return w.Output; }
+#if NET_4_0
+			set { w.Output = value; }
+#endif
 		}
 
 		public override Stream OutputStream {
@@ -285,11 +288,25 @@ namespace System.Web
 		{
 			w.Redirect (url, endResponse);
 		}
+#if NET_4_0
+		public override void RedirectPermanent (string url)
+		{
+			w.RedirectPermanent (url);
+		}
 
+		public override void RedirectPermanent (string url, bool endResponse)
+		{
+			w.RedirectPermanent (url, endResponse);
+		}
+
+		public override void RemoveOutputCacheItem (string path, string providerName)
+		{
+			HttpResponse.RemoveOutputCacheItem (path, providerName);
+		}
+#endif
 		public override void RemoveOutputCacheItem (string path)
 		{
-			 //w.RemoveOutputCacheItem (path);
-			 throw new NotImplementedException ();
+			 HttpResponse.RemoveOutputCacheItem (path);
 		}
 
 		public override void SetCookie (HttpCookie cookie)
@@ -302,11 +319,9 @@ namespace System.Web
 			w.TransmitFile (filename);
 		}
 
-		[MonoTODO]
 		public override void TransmitFile (string filename, long offset, long length)
 		{
-			// w.TransmitFile (filename, offset, length);
-			throw new NotImplementedException ();
+			w.TransmitFile (filename, offset, length);
 		}
 
 		public override void Write (char ch)

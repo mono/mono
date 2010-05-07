@@ -40,6 +40,10 @@ using System.Security.Principal;
 using System.Text;
 using System.Web.Caching;
 
+#if NET_4_0
+using System.Web.Routing;
+#endif
+
 namespace System.Web
 {
 #if NET_4_0
@@ -85,7 +89,7 @@ namespace System.Web
 
 		public virtual bool IsRequestBeingRedirected { get { NotImplemented (); return false; } }
 
-		public virtual TextWriter Output { get { NotImplemented (); return null; } }
+		public virtual TextWriter Output { get { NotImplemented (); return null; }  set { NotImplemented (); } }
 
 		public virtual Stream OutputStream { get { NotImplemented (); return null; } }
 
@@ -241,8 +245,72 @@ namespace System.Web
 		{
 			NotImplemented ();
 		}
+#if NET_4_0
+		public virtual void RedirectPermanent (string url)
+		{
+			NotImplemented ();
+		}
 
+		public virtual void RedirectPermanent (string url, bool endResponse)
+		{
+			NotImplemented ();
+		}
 
+		public virtual void RedirectToRoute (object routeValues)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoute (RouteValueDictionary routeValues)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoute (string routeName)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoute (string routeName, object routeValues)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoute (string routeName, RouteValueDictionary routeValues)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoutePermanent (object routeValues)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoutePermanent (RouteValueDictionary routeValues)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoutePermanent (string routeName)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoutePermanent (string routeName, object routeValues)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RedirectToRoutePermanent (string routeName, RouteValueDictionary routeValues)
+		{
+			NotImplemented ();
+		}
+
+		public virtual void RemoveOutputCacheItem (string path, string providerName)
+		{
+			NotImplemented ();
+		}
+#endif
 		public virtual void RemoveOutputCacheItem (string path)
 		{
 			NotImplemented ();

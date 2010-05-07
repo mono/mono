@@ -1,3 +1,13 @@
+2010-05-06  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponseWrapper.cs: implemented RedirectPermantent,
+	RemoveOutputCacheItem methods.
+	Implemented the 3 argument TransmitFile method.
+
+	* HttpResponseBase.cs: implemented RedirectPermanet,
+	RedirectToRoute, RedirectToRoutePermanent and
+	RemoveOutputCacheItem 4.0 methods.
+
 2010-05-05  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequestBase.cs, HttpRequestWrapper.cs: added 4.0 properties
