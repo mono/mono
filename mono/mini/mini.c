@@ -5114,6 +5114,8 @@ mini_free_jit_domain_info (MonoDomain *domain)
 		g_hash_table_destroy (info->static_rgctx_trampoline_hash);
 	g_hash_table_destroy (info->llvm_vcall_trampoline_hash);
 	g_hash_table_destroy (info->runtime_invoke_hash);
+	g_hash_table_destroy (info->seq_points);
+	g_hash_table_destroy (info->arch_seq_points);
 
 	if (info->agent_info)
 		mono_debugger_agent_free_domain_info (domain);

@@ -1,5 +1,10 @@
 2010-05-07  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_free_jit_domain_info): Fix the seq_points/arch_seq_points hash
+	tables.
+
+2010-05-07  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (frame_commands): Return an error instead of asserting if
 	no JIT info is found for the method.
 
