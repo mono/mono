@@ -65,7 +65,11 @@ namespace StandAloneTests.Unhandled_Exception_Global_Asax
 
 		void Default_Aspx (string result, TestRunItem runItem)
 		{
+#if NET_4_0
+			string originalHtml1 = @"[System.Web.HttpUnhandledException]: Exception of type &#39;System.Web.HttpUnhandledException&#39; was thrown.";
+#else
 			string originalHtml1 = @"[System.Web.HttpUnhandledException]: Exception of type 'System.Web.HttpUnhandledException' was thrown.";
+#endif
 			string originalHtml2 = @"[System.InvalidOperationException]: test";
 			
 			Assert.IsTrue (result.IndexOf (originalHtml1) != -1, "#A1");

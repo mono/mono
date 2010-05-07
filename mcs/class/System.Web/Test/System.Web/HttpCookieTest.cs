@@ -357,22 +357,40 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual ("`~!@#$%^", cookie.Values.Get (0), "#G5");
 			Assert.AreEqual ("*()_+-", cookie.Values.GetKey (1), "#G6");
 			Assert.AreEqual ("\\][{}|'\";:,<.>/?", cookie.Values.Get (1), "#G7");
+#if NET_4_0
+			Assert.AreEqual ("%60%7e!%40%23%24%25%5e&*()_%2b-=%5c%5d%5b%7b%7d"
+				+ "%7c%27%22%3b%3a%2c%3c.%3e%2f%3f", cookie.Values.ToString (), "#G8");
+#else
 			Assert.AreEqual ("%60%7e!%40%23%24%25%5e&*()_%2b-=%5c%5d%5b%7b%7d"
 				+ "%7c'%22%3b%3a%2c%3c.%3e%2f%3f", cookie.Values.ToString (), "#G8");
+#endif
 
 			cookie = new HttpCookie ("funkycookie11", cookie.Values.ToString ());
 			Assert.AreEqual ("System.Web.HttpCookie", cookie.ToString (), "#H1");
+#if NET_4_0
+			Assert.AreEqual ("%60%7e!%40%23%24%25%5e&*()_%2b-=%5c%5d%5b%7b%7d"
+				+ "%7c%27%22%3b%3a%2c%3c.%3e%2f%3f", cookie.Value, "#H2");
+#else
 			Assert.AreEqual ("%60%7e!%40%23%24%25%5e&*()_%2b-=%5c%5d%5b%7b%7d"
 				+ "%7c'%22%3b%3a%2c%3c.%3e%2f%3f", cookie.Value, "#H2");
+#endif
 			Assert.AreEqual (2, cookie.Values.Count, "#H3");
 			Assert.IsNull (cookie.Values.GetKey (0), "#H4");
 			Assert.AreEqual ("%60%7e!%40%23%24%25%5e", cookie.Values.Get (0), "#H5");
 			Assert.AreEqual ("*()_%2b-", cookie.Values.GetKey (1), "#H6");
+#if NET_4_0
+			Assert.AreEqual ("%5c%5d%5b%7b%7d%7c%27%22%3b%3a%2c%3c.%3e%2f%3f",
+				cookie.Values.Get (1), "#H7");
+			Assert.AreEqual ("%2560%257e!%2540%2523%2524%2525%255e&*()_%252b-="
+				+ "%255c%255d%255b%257b%257d%257c%2527%2522%253b%253a%252c%253c.%2"
+				+ "53e%252f%253f", cookie.Values.ToString (), "#H8");
+#else
 			Assert.AreEqual ("%5c%5d%5b%7b%7d%7c'%22%3b%3a%2c%3c.%3e%2f%3f",
 				cookie.Values.Get (1), "#H7");
 			Assert.AreEqual ("%2560%257e!%2540%2523%2524%2525%255e&*()_%252b-="
 				+ "%255c%255d%255b%257b%257d%257c'%2522%253b%253a%252c%253c.%2"
 				+ "53e%252f%253f", cookie.Values.ToString (), "#H8");
+#endif
 
 			cookie = new HttpCookie ("basic");
 			cookie.Values ["one"] = "hello world";
