@@ -1,5 +1,7 @@
 2010-05-06  Marek Habersack  <mhabersack@novell.com>
 
+	* HttpServerUtility.cs: added TransferRequest methods.
+
 	* HttpRuntime.cs: added AspClientScriptPhysicalPath,
 	AspClientScriptVirtualPath, UsingIntegratedPipeline properties and
 	the GetNamedPermissionSet method.

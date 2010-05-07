@@ -8,7 +8,7 @@
 //
 
 //
-// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -223,6 +223,23 @@ namespace System.Web
 			return context.Request.MapPath (path);
 		}
 
+		
+		public void TransferRequest (string path)
+		{
+			TransferRequest (path, false, null, null);
+		}
+		
+		public void TransferRequest (string path, bool preserveForm)
+		{
+			TransferRequest (path, preserveForm, null, null);
+		}
+
+		[MonoTODO ("Always throws PlatformNotSupportedException.")]
+		public void TransferRequest (string path, bool preserveForm, string method, NameValueCollection headers)
+		{
+			throw new PlatformNotSupportedException ();
+		}
+		
 		public void Transfer (string path)
 		{
 			Transfer (path, true);
