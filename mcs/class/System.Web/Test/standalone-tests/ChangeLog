@@ -1,3 +1,8 @@
+2010-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManagerCacheFiles.cs: added - tests for
+	BuildManager.{Create,Read}CacheFile
+
 2010-04-02  Marek Habersack  <mhabersack@novell.com>
 
 	* Unhandled_Exception_Global_Asax.cs: added - tests for bug

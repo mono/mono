@@ -5,3 +5,5 @@ Test/standalone-tests/RequestValidator.cs
 Test/standalone-tests/RequestValidatorTestGenerated.cs
 Test/standalone-tests/SiteMapDuplicateEntries_Bug570194.cs
 Test/standalone-tests/Unhandled_Exception_Global_Asax.cs
+Test/standalone-tests/BuildManagerCacheFiles.cs
+

@@ -1,3 +1,8 @@
+2010-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildManager.cs: implemented 4.0 methods {Create,Read}CacheFile.
+	Fixed signature of the GetVirtualPathDependencies method.
+
 2010-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* AppResourcesAssemblyBuilder.cs: when running on windows,

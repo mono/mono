@@ -475,7 +475,28 @@ namespace System.Web.Compilation
 			codeDomProviders.Add (type, ret);
 			return ret;
 		}
-		
+#if NET_4_0
+		public static Stream CreateCachedFile (string fileName)
+		{
+			if (fileName != null && (fileName == String.Empty || fileName.IndexOf (Path.DirectorySeparatorChar) != -1))
+				throw new ArgumentException ("Value does not fall within the expected range.");
+
+			string path = Path.Combine (HttpRuntime.CodegenDir, fileName);
+			return new FileStream (path, FileMode.Create, FileAccess.ReadWrite, FileShare.None);
+		}
+
+		public static Stream ReadCachedFile (string fileName)
+		{
+			if (fileName != null && (fileName == String.Empty || fileName.IndexOf (Path.DirectorySeparatorChar) != -1))
+				throw new ArgumentException ("Value does not fall within the expected range.");
+
+			string path = Path.Combine (HttpRuntime.CodegenDir, fileName);
+			if (!File.Exists (path))
+				return null;
+			
+			return new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.None);
+		}
+#endif
 		public static object CreateInstanceFromVirtualPath (string virtualPath, Type requiredBaseType)
 		{
 			return CreateInstanceFromVirtualPath (GetAbsoluteVirtualPath (virtualPath), requiredBaseType);
@@ -924,12 +945,12 @@ namespace System.Web.Compilation
 			return ret;
 		}
 
-		public static IDictionary <string, bool> GetVirtualPathDependencies (string virtualPath)
+		public static ICollection GetVirtualPathDependencies (string virtualPath)
 		{
 			return GetVirtualPathDependencies (virtualPath, null);
 		}
 
-		internal static IDictionary <string, bool> GetVirtualPathDependencies (string virtualPath, BuildProvider bprovider)
+		internal static ICollection GetVirtualPathDependencies (string virtualPath, BuildProvider bprovider)
 		{
 			BuildProvider provider = bprovider;
 			if (provider == null) {
@@ -942,7 +963,11 @@ namespace System.Web.Compilation
 			if (provider == null)
 				return null;
 			
-			return provider.ExtractDependencies ();
+			IDictionary <string, bool> deps =  provider.ExtractDependencies ();
+			if (deps == null)
+				return null;
+
+			return (ICollection)deps.Keys;
 		}
 
 		internal static bool HasCachedItemNoLock (string vp, out bool entryExists)
