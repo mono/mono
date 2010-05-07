@@ -1,3 +1,10 @@
+2010-05-08  Marek Habersack  <mhabersack@novell.com>
+
+	* Path.cs: vararg overload of Combine now correctly concatenates
+	segments.
+	The 3 and 4 argument overloads of Combine check whether the passed
+	segments are null or not.
+
 2010-05-05 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Path.cs: prevent infinite loop when TMPDIR (or equivalent)

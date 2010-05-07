@@ -1,3 +1,7 @@
+2010-05-08  Marek Habersack  <mhabersack@novell.com>
+
+	* PathTest.cs: added tests for the 4.0 Combine overloads.
+
 2010-03-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StreamReaderTest.cs: test for bug 589236. The detected encoding is

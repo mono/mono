@@ -753,30 +753,31 @@ namespace System.IO {
 			if (paths == null)
 				throw new ArgumentNullException ("paths");
 
-			int l = 0;
-			bool need_sep = false;
-			foreach (var s in paths){
+			bool need_sep;
+			var ret = new StringBuilder ();
+			int pathsLen = paths.Length;
+			int slen;
+			foreach (var s in paths) {
+				need_sep = false;
 				if (s == null)
 					throw new ArgumentNullException ("One of the paths contains a null value", "paths");
 				if (s.IndexOfAny (InvalidPathChars) != -1)
 					throw new ArgumentException ("Illegal characters in path.");
-				if (l == 0 && s.Length > 0){
-					char p1end = s [s.Length - 1];
-					if (p1end != DirectorySeparatorChar && p1end != AltDirectorySeparatorChar && p1end != VolumeSeparatorChar){
-						need_sep = true;
-						l += DirectorySeparatorStr.Length;
-					}
-				}
-			}
-			var ret = new StringBuilder (l);
-			l = 0;
-			foreach (var s in paths){
+				
+				pathsLen--;
 				if (IsPathRooted (s))
-					ret.Length = l = 0;
+					ret.Length = 0;
+				
 				ret.Append (s);
-				if (l == 0 && need_sep)
+				slen = s.Length;
+				if (slen > 0 && pathsLen > 0) {
+					char p1end = s [slen - 1];
+					if (p1end != DirectorySeparatorChar && p1end != AltDirectorySeparatorChar && p1end != VolumeSeparatorChar)
+						need_sep = true;
+				}
+				
+				if (need_sep)
 					ret.Append (DirectorySeparatorStr);
-				l = 1;
 			}
 
 			return ret.ToString ();
@@ -784,11 +785,32 @@ namespace System.IO {
 
 		public static string Combine (string path1, string path2, string path3)
 		{
+			if (path1 == null)
+				throw new ArgumentNullException ("path1");
+
+			if (path2 == null)
+				throw new ArgumentNullException ("path2");
+
+			if (path3 == null)
+				throw new ArgumentNullException ("path3");
+			
 			return Combine (new string [] { path1, path2, path3 });
 		}
 
 		public static string Combine (string path1, string path2, string path3, string path4)
 		{
+			if (path1 == null)
+				throw new ArgumentNullException ("path1");
+
+			if (path2 == null)
+				throw new ArgumentNullException ("path2");
+
+			if (path3 == null)
+				throw new ArgumentNullException ("path3");
+
+			if (path4 == null)
+				throw new ArgumentNullException ("path4");
+			
 			return Combine (new string [] { path1, path2, path3, path4 });
 		}
 #endif

@@ -1187,6 +1187,147 @@ namespace MonoTests.System.IO
 			}
 		}
 #endif
+#if NET_4_0
+		string Concat (string sep, params string [] parms)
+		{
+			return String.Join (sep, parms);
+		}
+
+		[Test]
+		public void Combine_3Params ()
+		{
+			string sep = Path.DirectorySeparatorChar.ToString ();
+
+			try {
+				Path.Combine (null, "two", "three");
+				Assert.Fail ("#A1-1");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", null, "three");
+				Assert.Fail ("#A1-2");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", "two", null);
+				Assert.Fail ("#A1-3");
+			} catch {
+				// success
+			}
+			
+			Assert.AreEqual (Concat (sep, "one", "two", "three"), Path.Combine ("one", "two", "three"), "#A2-1");
+			Assert.AreEqual (Concat (sep, sep + "one", "two", "three"), Path.Combine (sep + "one", "two", "three"), "#A2-2");
+			Assert.AreEqual (Concat (sep, sep + "one", "two", "three"), Path.Combine (sep + "one" + sep, "two", "three"), "#A2-3");
+			Assert.AreEqual (Concat (sep, sep + "two", "three"), Path.Combine (sep + "one" + sep, sep + "two", "three"), "#A2-4");
+			Assert.AreEqual (Concat (sep, sep + "three"), Path.Combine (sep + "one" + sep, sep + "two", sep + "three"), "#A2-5");
+
+			Assert.AreEqual (Concat (sep, sep + "one" + sep, "two", "three"), Path.Combine (sep + "one" + sep + sep, "two", "three"), "#A3");
+
+			Assert.AreEqual ("", Path.Combine ("", "", ""), "#A4");
+		}
+
+		[Test]
+		public void Combine_4Params ()
+		{
+			string sep = Path.DirectorySeparatorChar.ToString ();
+
+			try {
+				Path.Combine (null, "two", "three", "four");
+				Assert.Fail ("#A1-1");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", null, "three", "four");
+				Assert.Fail ("#A1-2");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", "two", null, "four");
+				Assert.Fail ("#A1-3");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", "two", "three", null);
+				Assert.Fail ("#A1-4");
+			} catch {
+				// success
+			}
+
+			Assert.AreEqual (Concat (sep, "one", "two", "three", "four"), Path.Combine ("one", "two", "three", "four"), "#A2-1");
+			Assert.AreEqual (Concat (sep, sep + "one", "two", "three", "four"), Path.Combine (sep + "one", "two", "three", "four"), "#A2-2");
+			Assert.AreEqual (Concat (sep, sep + "one", "two", "three", "four"), Path.Combine (sep + "one" + sep, "two", "three", "four"), "#A2-3");
+			Assert.AreEqual (Concat (sep, sep + "two", "three", "four"), Path.Combine (sep + "one" + sep, sep + "two", "three", "four"), "#A2-4");
+			Assert.AreEqual (Concat (sep, sep + "three", "four"), Path.Combine (sep + "one" + sep, sep + "two", sep + "three", "four"), "#A2-5");
+			Assert.AreEqual (Concat (sep, sep + "four"), Path.Combine (sep + "one" + sep, sep + "two", sep + "three", sep + "four"), "#A2-6");
+
+			Assert.AreEqual (Concat (sep, sep + "one" + sep, "two", "three", "four"), Path.Combine (sep + "one" + sep + sep, "two", "three", "four"), "#A3");
+
+			Assert.AreEqual ("", Path.Combine ("", "", "", ""), "#A4");
+		}
+
+		[Test]
+		public void Combine_ManyParams ()
+		{
+			string sep = Path.DirectorySeparatorChar.ToString ();
+
+			try {
+				Path.Combine (null, "two", "three", "four", "five");
+				Assert.Fail ("#A1-1");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", null, "three", "four", "five");
+				Assert.Fail ("#A1-2");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", "two", null, "four", "five");
+				Assert.Fail ("#A1-3");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", "two", "three", null, "five");
+				Assert.Fail ("#A1-4");
+			} catch {
+				// success
+			}
+
+			try {
+				Path.Combine ("one", "two", "three", "four", null);
+				Assert.Fail ("#A1-5");
+			} catch {
+				// success
+			}
+
+			Assert.AreEqual (Concat (sep, "one", "two", "three", "four", "five"), Path.Combine ("one", "two", "three", "four", "five"), "#A2-1");
+			Assert.AreEqual (Concat (sep, sep + "one", "two", "three", "four", "five"), Path.Combine (sep + "one", "two", "three", "four", "five"), "#A2-2");
+			Assert.AreEqual (Concat (sep, sep + "one", "two", "three", "four", "five"), Path.Combine (sep + "one" + sep, "two", "three", "four", "five"), "#A2-3");
+			Assert.AreEqual (Concat (sep, sep + "two", "three", "four", "five"), Path.Combine (sep + "one" + sep, sep + "two", "three", "four", "five"), "#A2-4");
+			Assert.AreEqual (Concat (sep, sep + "three", "four", "five"), Path.Combine (sep + "one" + sep, sep + "two", sep + "three", "four", "five"), "#A2-5");
+			Assert.AreEqual (Concat (sep, sep + "four", "five"), Path.Combine (sep + "one" + sep, sep + "two", sep + "three", sep + "four", "five"), "#A2-6");
+			Assert.AreEqual (Concat (sep, sep + "five"), Path.Combine (sep + "one" + sep, sep + "two", sep + "three", sep + "four", sep + "five"), "#A2-6");
+
+			Assert.AreEqual (Concat (sep, sep + "one" + sep, "two", "three", "four", "five"), Path.Combine (sep + "one" + sep + sep, "two", "three", "four", "five"), "#A3");
+
+			Assert.AreEqual ("", Path.Combine ("", "", "", "", ""), "#A4");
+		}
+#endif
 	}
 }
 
