@@ -61,3 +61,5 @@ Mono.Debugger.Soft/VMDisconnectEvent.cs
 Mono.Debugger.Soft/InvokeOptions.cs
 Mono.Debugger.Soft/IInvokeAsyncResult.cs
 Mono.Debugger.Soft/ITargetProcess.cs
+Mono.Debugger.Soft/AbsentInformationException.cs
+

@@ -202,7 +202,8 @@ namespace Mono.Debugger.Soft
 		NOT_SUSPENDED = 101,
 		INVALID_ARGUMENT = 102,
 		ERR_UNLOADED = 103,
-		ERR_NO_INVOCATION = 104
+		ERR_NO_INVOCATION = 104,
+		ABSENT_INFORMATION = 105
 	}
 
 	public class ErrorHandlerEventArgs : EventArgs {

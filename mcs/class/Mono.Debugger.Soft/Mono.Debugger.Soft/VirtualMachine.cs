@@ -195,6 +195,8 @@ namespace Mono.Debugger.Soft
 				throw new InvalidOperationException ("The vm is not suspended.");
 			case ErrorCode.NOT_IMPLEMENTED:
 				throw new NotSupportedException ("This request is not supported by the protocol version implemented by the debuggee.");
+			case ErrorCode.ABSENT_INFORMATION:
+				throw new AbsentInformationException ();
 			default:
 				throw new CommandException (args.ErrorCode);
 			}

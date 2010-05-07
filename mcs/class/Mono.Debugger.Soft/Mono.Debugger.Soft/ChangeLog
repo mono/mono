@@ -1,3 +1,10 @@
+2010-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachine.cs (ErrorHandler): Convert ABSENT_INFORMATION to
+	AbsentInformationException.
+
+	* AbsentInformationException.cs: New file.
+
 2010-04-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* TypeMirror.cs: Add new overload for GetSourceFiles () which returns full paths.
