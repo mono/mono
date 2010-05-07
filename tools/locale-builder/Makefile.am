@@ -152,13 +152,13 @@ minimal: locale-builder.exe lang-data locale-data
 
 lang-data:
 	if ! test -f langs/en.xml ; then \
-		wget http://primates.ximian.com/~jackson/icu_langs.tar.gz ; \
+		wget http://go-mono.com/icu/icu_langs.tar.gz ; \
 		tar xzvf icu_langs.tar.gz ; \
 	fi
 
 locale-data:
 	if ! test -f locales/en_US.xml ; then \
-		wget http://primates.ximian.com/~jackson/icu_locales.tar.gz ; \
+		wget http://go-mono.com/icu/icu_locales.tar.gz ; \
 		tar xzvf icu_locales.tar.gz ; \
 	fi
 

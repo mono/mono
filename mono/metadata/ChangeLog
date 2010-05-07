@@ -1,3 +1,8 @@
+2010-05-07  Marek Habersack  <mhabersack@novell.com>
+
+	* culture-info-tables.h: updated to include en-TT culture. Fixes
+	bug #594035
+
 2010-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	Move mono_class_init from mono_type_get_object to icalls.
