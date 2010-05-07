@@ -1,5 +1,10 @@
 2010-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* reflection.c (mono_type_get_object): Remove chunk of code
+	no longer in use.
+
+2010-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall-def.h
 	* icall.c: Delete some unused icalls.
 
