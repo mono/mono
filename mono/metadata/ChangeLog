@@ -1,5 +1,9 @@
 2010-05-07  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Remove REMSET_ROOT_LOCATION.
+
+2010-05-07  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Remove unnecessary checks in domain clearing code.
 
 2010-05-07  Marek Habersack  <mhabersack@novell.com>
