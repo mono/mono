@@ -1,3 +1,9 @@
+2010-05-07  Alan McGovern  <amcgovern@novell.com>
+
+	* Mono.Math/BigInteger.cs: If the BigInteger is instantiated with a
+	zero length array, replace it with an array of length 1 so we don't
+	hit inexplicable IndexOutOfRange exceptions later on. Fixes #556533. 
+
 2010-04-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* moonlight_raw_corlib.dll.sources: Don't include Lazy.cs here. It's in
