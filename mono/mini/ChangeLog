@@ -1,3 +1,8 @@
+2010-05-07  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (frame_commands): Return an error instead of asserting if
+	no JIT info is found for the method.
+
 2010-05-05 Jonathan Chambers  <joncham@gmail.com>
 
 	* debugger-agent.c (mono_debugger_agent_thread_interrupt): Protect against a NULL sigctx
