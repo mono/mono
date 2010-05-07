@@ -1,3 +1,7 @@
+2010-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequestBase.cs: added 4.0 property HttpChannelBinding
+
 2010-04-26  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpContextWrapper.cs: implemented two 4.0 methods: RemapHandler

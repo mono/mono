@@ -40,6 +40,10 @@ using System.Security.Principal;
 using System.Text;
 using System.Web.Caching;
 
+#if NET_4_0
+using System.Security.Authentication.ExtendedProtection;
+#endif
+
 namespace System.Web
 {
 #if NET_4_0
@@ -89,7 +93,9 @@ namespace System.Web
 		public virtual string HttpMethod { get { NotImplemented (); return null; } }
 
 		public virtual Stream InputStream { get { NotImplemented (); return null; } }
-
+#if NET_4_0
+		public virtual ChannelBinding HttpChannelBinding { get { NotImplemented (); return null; } }
+#endif
 		public virtual bool IsAuthenticated { get { NotImplemented (); return false; } }
 
 		public virtual bool IsLocal { get { NotImplemented (); return false; } }
