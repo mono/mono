@@ -72,7 +72,9 @@ namespace System.Web.Compilation
 		static Dictionary <Type, CodeDomProvider> codeDomProviders;
 		static Dictionary <string, BuildManagerCacheItem> buildCache;
 		static List <Assembly> referencedAssemblies;
-
+		static List <Assembly> configReferencedAssemblies;
+		static bool getReferencedAssembliesInvoked;
+		
 		static int buildCount;
 		static bool is_precompiled;
 		//static bool updatable; unused
@@ -505,6 +507,23 @@ namespace System.Web.Compilation
 			
 			return new FileStream (path, FileMode.Open, FileAccess.Read, FileShare.None);
 		}
+
+		[MonoDocumentationNote ("Fully implemented but no info on application pre-init stage is available yet.")]
+		public static void AddReferencedAssembly (Assembly assembly)
+		{
+			if (assembly == null)
+				throw new ArgumentNullException ("assembly");
+
+			Type ret = HttpApplicationFactory.AppType;
+			if (ret != null)
+				throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
+
+			if (configReferencedAssemblies == null)
+				configReferencedAssemblies = new List <Assembly> ();
+
+			if (!configReferencedAssemblies.Contains (assembly))
+				configReferencedAssemblies.Add (assembly);
+		}
 #endif
 		public static object CreateInstanceFromVirtualPath (string virtualPath, Type requiredBaseType)
 		{
@@ -897,40 +916,44 @@ namespace System.Web.Compilation
 
 		public static ICollection GetReferencedAssemblies ()
 		{
-			List <Assembly> al = new List <Assembly> ();
+			if (getReferencedAssembliesInvoked)
+				return configReferencedAssemblies;
+
+			getReferencedAssembliesInvoked = true;
+			if (configReferencedAssemblies == null)
+				configReferencedAssemblies = new List <Assembly> ();
 			
 			CompilationSection compConfig = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
                         if (compConfig == null)
-				return al;
+				return configReferencedAssemblies;
 			
                         bool addAssembliesInBin = false;
                         foreach (AssemblyInfo info in compConfig.Assemblies) {
                                 if (info.Assembly == "*")
                                         addAssembliesInBin = is_precompiled ? false : true;
                                 else
-                                        LoadAssembly (info, al);
+                                        LoadAssembly (info, configReferencedAssemblies);
                         }
 
 			foreach (Assembly topLevelAssembly in TopLevelAssemblies)
-				al.Add (topLevelAssembly);
+				configReferencedAssemblies.Add (topLevelAssembly);
 
 			foreach (string assLocation in WebConfigurationManager.ExtraAssemblies)
-				LoadAssembly (assLocation, al);
-
+				LoadAssembly (assLocation, configReferencedAssemblies);
 
 			// Precompiled sites unconditionally load all assemblies from bin/ (fix for
 			// bug #502016)
 			if (is_precompiled || addAssembliesInBin) {
 				foreach (string s in HttpApplication.BinDirectoryAssemblies) {
 					try {
-						LoadAssembly (s, al);
+						LoadAssembly (s, configReferencedAssemblies);
 					} catch (BadImageFormatException) {
 						// ignore silently
 					}
 				}
 			}
 				
-			return al;
+			return configReferencedAssemblies;
 		}
 		
 		// The 2 GetType() overloads work on the global.asax, App_GlobalResources, App_WebReferences or App_Browsers
