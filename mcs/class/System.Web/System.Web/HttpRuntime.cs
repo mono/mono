@@ -161,6 +161,12 @@ namespace System.Web
 		internal static bool DomainUnloading {
 			get { return domainUnloading; }
 		}
+
+		[MonoDocumentationNote ("Currently returns path to the application root")]
+		public static string AspClientScriptPhysicalPath { get { return AppDomainAppPath; } }
+
+		[MonoDocumentationNote ("Currently returns path to the application root")]
+		public static string AspClientScriptVirtualPath { get { return AppDomainAppVirtualPath; } }
 		
 		//
 		// http://radio.weblogs.com/0105476/stories/2002/07/12/executingAspxPagesWithoutAWebServer.html
@@ -293,6 +299,7 @@ namespace System.Web
 			}
 		}
 
+		public static bool UsingIntegratedPipeline { get { return false; } }
 		
 		[SecurityPermission (SecurityAction.Demand, UnmanagedCode = true)]
 		public static void Close ()
@@ -631,6 +638,13 @@ namespace System.Web
 			HttpApplication.requests_total_counter.Increment ();
 		}
 
+		[AspNetHostingPermissionAttribute(SecurityAction.Demand, Level = AspNetHostingPermissionLevel.Unrestricted)]
+		[MonoDocumentationNote ("Always returns null on Mono")]
+		public static NamedPermissionSet GetNamedPermissionSet ()
+		{
+			return null;
+		}
+		
 #if !TARGET_J2EE
 		static internal void WritePreservationFile (Assembly asm, string genericNameBase)
 		{
