@@ -47,6 +47,9 @@ using System.Web.Caching;
 using System.Web.Configuration;
 using System.Web.Hosting;
 using System.Web.Util;
+#if NET_4_0
+using System.Runtime.Versioning;
+#endif
 
 namespace System.Web.Compilation
 {
@@ -77,6 +80,10 @@ namespace System.Web.Compilation
 		
 		static int buildCount;
 		static bool is_precompiled;
+#if NET_4_0
+		static bool? batchCompilationEnabled;
+		static FrameworkName targetFramework;
+#endif
 		//static bool updatable; unused
 		static Dictionary<string, PreCompilationData> precompiled;
 		
@@ -98,9 +105,44 @@ namespace System.Web.Compilation
 			add { events.AddHandler (buildManagerRemoveEntryEvent, value); }
 			remove { events.RemoveHandler (buildManagerRemoveEntryEvent, value); }
 		}
-		
+
+#if NET_4_0
+		public static bool? BatchCompilationEnabled {
+			get { return batchCompilationEnabled; }
+			set {
+				Type app_type = HttpApplicationFactory.AppType;
+				if (app_type != null)
+					throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
+				batchCompilationEnabled = true;
+			}
+		}
+
+		public static FrameworkName TargetFramework {
+			get {
+				if (targetFramework == null) {
+					CompilationSection cs = CompilationConfig;
+					string framework;
+					if (cs == null)
+						framework = null;
+					else
+						framework = cs.TargetFramework;
+					
+					if (String.IsNullOrEmpty (framework))
+						targetFramework = new FrameworkName (".NETFramework,Version=v4.0");
+					else
+						targetFramework = new FrameworkName (framework);
+				}
+
+				return targetFramework;
+			}
+		}
+#endif
 		internal static bool BatchMode {
 			get {
+#if NET_4_0
+				if (batchCompilationEnabled != null)
+					return (bool)batchCompilationEnabled;
+#endif
 				if (!hosted)
 					return false; // Fix for bug #380985
 
@@ -524,6 +566,12 @@ namespace System.Web.Compilation
 			if (!configReferencedAssemblies.Contains (assembly))
 				configReferencedAssemblies.Add (assembly);
 		}
+
+		[MonoTODO ("A no-op until we use IWebObjectFactory internally. Always returns null.")]
+		public static IWebObjectFactory GetObjectFactory (string virtualPath, bool throwIfNotFound)
+		{
+			return null;
+		}
 #endif
 		public static object CreateInstanceFromVirtualPath (string virtualPath, Type requiredBaseType)
 		{
@@ -725,7 +773,13 @@ namespace System.Web.Compilation
 		{
 			return null; // null is ok here until we store the dependency set in the Cache.
 		}
-		
+#if NET_4_0
+		[MonoTODO ("Not implemented, always returns null")]
+		public static BuildDependencySet GetCachedBuildDependencySet (HttpContext context, string virtualPath, bool ensureIsUpToDate)
+		{
+			return null; // null is ok here until we store the dependency set in the Cache.
+		}
+#endif
 		static BuildManagerCacheItem GetCachedItem (string vp)
 		{
 			bool locked = false;

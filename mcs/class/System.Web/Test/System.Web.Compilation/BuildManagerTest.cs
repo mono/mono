@@ -49,6 +49,15 @@ namespace MonoTests.System.Web.Compilation
 				BuildManager.GetGlobalAsaxType ();
 			}, "#A1");
 		}
+
+		[Test]
+		public void TargetFramework ()
+		{
+			Assert.AreEqual (".NETFramework,Version=v4.0", BuildManager.TargetFramework.FullName, "#A1-1");
+			Assert.AreEqual (".NETFramework", BuildManager.TargetFramework.Identifier, "#A1-2");
+			Assert.AreEqual ("", BuildManager.TargetFramework.Profile, "#A1-3");
+			Assert.AreEqual (new Version (4, 0), BuildManager.TargetFramework.Version, "#A1-4");
+		}
 #endif
 	}
 }
