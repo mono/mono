@@ -46,6 +46,7 @@ using System.Globalization;
 
 #if NET_4_0
 using System.Security.Authentication.ExtendedProtection;
+using System.Web.Routing;
 #endif
 
 namespace System.Web
@@ -107,6 +108,8 @@ namespace System.Web
 		static readonly UrlMappingCollection urlMappings;
 		readonly static char [] queryTrimChars = {'?'};
 #if NET_4_0
+		RequestContext requestContext;
+		
 		static bool validateRequestNewMode;
 		internal static bool ValidateRequestNewMode {
 			get { return validateRequestNewMode; }
@@ -926,6 +929,17 @@ namespace System.Web
 			}
 		}
 #if NET_4_0
+		public RequestContext RequestContext {
+			get {
+				if (requestContext == null)
+					requestContext = new RequestContext (new HttpContextWrapper (this.context ?? HttpContext.Current), new RouteData ());
+
+				return requestContext;
+			}
+			
+			internal set { requestContext = value; }	
+		}
+
 		public ChannelBinding HttpChannelBinding {
 			get {
 				throw new PlatformNotSupportedException ("This property is not supported.");

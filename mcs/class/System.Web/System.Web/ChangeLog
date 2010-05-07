@@ -1,3 +1,7 @@
+2010-05-05  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRequest.cs: implemented new 4.0 property - RequestContext
+
 2010-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: added 4.0 InsertEntityBody overloads (not
