@@ -1,5 +1,7 @@
 2010-05-06  Marek Habersack  <mhabersack@novell.com>
 
+	* PreApplicationStartMethodAttribute.cs: added. New 4.0 type.
+
 	* HttpUtility.cs: HtmlEncode, UrlEncode changes for 4.0
 	Implemented JavaScriptStringEncode for 4.0
 

@@ -2,6 +2,7 @@
 
 System.Web/IHtmlString.cs
 System.Web/HtmlString.cs
+System.Web/PreApplicationStartMethodAttribute.cs
 
 System.Web.Caching/FileResponseElement.cs
 System.Web.Caching/HeaderElement.cs
