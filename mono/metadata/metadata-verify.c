@@ -3343,11 +3343,15 @@ verify_typeref_table_global_constraints (VerifyContext *ctx)
 static void
 verify_tables_data_global_constraints (VerifyContext *ctx)
 {
-	verify_typeref_table_global_constraints (ctx);
-	CHECK_ERROR ();
 	verify_typedef_table_global_constraints (ctx);
 }
-	
+
+static void
+verify_tables_data_global_constraints_full (VerifyContext *ctx)
+{
+	verify_typeref_table_global_constraints (ctx);
+}
+
 static void
 verify_tables_data (VerifyContext *ctx)
 {
@@ -3580,6 +3584,8 @@ mono_verifier_verify_full_table_data (MonoImage *image, GSList **error_list)
 	verify_typespec_table_full (&ctx);
 	CHECK_STATE ();
 	verify_method_spec_table_full (&ctx);
+	CHECK_STATE ();
+	verify_tables_data_global_constraints_full (&ctx);
 
 cleanup:
 	return cleanup_context (&ctx, error_list);

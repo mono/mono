@@ -1,5 +1,12 @@
 2010-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* metadata-verify.c: MS doesn't mind duplicates in the
+	typeref table. Move it to full verification.
+
+	Fixes #600508.
+
+2010-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* appdomain.c (mono_domain_has_type_resolve): Check for
 	NULL domain objects to make pedump happy.
 
