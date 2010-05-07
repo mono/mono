@@ -1,3 +1,15 @@
+2010-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* appdomain.c (mono_domain_has_type_resolve): Check for
+	NULL domain objects to make pedump happy.
+
+	* object.c (mono_field_get_value): Assert on NULL object.
+	It's the caller resposibility to check for this.
+
+	* object.c (mono_field_get_value_object): Ditto.
+
+	Fixes #601384.
+
 2010-05-07  Marek Habersack  <mhabersack@novell.com>
 
 	* culture-info-tables.h: updated to include en-TT culture. Fixes
