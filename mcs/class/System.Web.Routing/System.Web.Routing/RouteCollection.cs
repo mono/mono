@@ -155,15 +155,19 @@ namespace System.Web.Routing
 		{
 			if (requestContext == null)
 				throw new ArgumentNullException ("httpContext");
-
+#if !NET_4_0
 			if (Count == 0)
 				return null;
-
+#endif
 			VirtualPathData vp = null;
 			if (!String.IsNullOrEmpty (name)) {
 				RouteBase rb = this [name];
 				if (rb != null)
 					vp = rb.GetVirtualPath (requestContext, values);
+#if NET_4_0
+				else
+					throw new ArgumentException ("A route named '" + name + "' could not be found in the route collection.", "name");
+#endif
 			} else {
 				foreach (RouteBase rb in this) {
 					vp = rb.GetVirtualPath (requestContext, values);

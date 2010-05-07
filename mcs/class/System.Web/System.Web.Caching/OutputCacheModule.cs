@@ -50,7 +50,11 @@ namespace System.Web.Caching
 		static object keysCacheLock = new object ();
 		Dictionary <string, string> keysCache;
 		Dictionary <string, string> entriesToInvalidate;
-
+#if !NET_4_0
+		internal OutputCacheProvider InternalProvider {
+			get { return provider; }
+		}
+#endif
 		public OutputCacheModule ()
 		{
 		}

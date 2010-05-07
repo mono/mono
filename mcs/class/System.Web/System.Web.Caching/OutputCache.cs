@@ -27,6 +27,7 @@
 //
 
 using System.Configuration;
+using System.Configuration.Provider;
 using System.IO;
 using System.Runtime.Serialization.Formatters.Binary;
 using System.Security.Permissions;
@@ -93,7 +94,7 @@ namespace System.Web.Caching
 				!(data is FileResponseElement) &&
 				!(data is SubstitutionResponseElement);
 		}
-
+		
 		static void Init ()
 		{
 			if (initialized)
@@ -131,6 +132,25 @@ namespace System.Web.Caching
 			ret.Initialize (ps.Name, ps.Parameters);
 
 			return ret;
+		}
+
+		internal static void RemoveFromProvider (string key, string providerName)
+		{
+			if (providerName == null)
+				return;
+
+			OutputCacheProviderCollection providers = Providers;
+			OutputCacheProvider provider;
+			
+			if (providers == null || providers.Count == 0)
+				provider = null;
+			else
+				provider = providers [providerName];
+
+			if (provider == null)
+				throw new ProviderException ("Provider '" + providerName + "' was not found.");
+
+			provider.Remove (key);
 		}
 	}
 }

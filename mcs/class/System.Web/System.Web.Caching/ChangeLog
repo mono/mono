@@ -1,3 +1,11 @@
+2010-05-06  Marek Habersack  <mhabersack@novell.com>
+
+	* OutputCacheModule.cs: added a 2.0 internal property to return
+	the internal provider used in this profile.
+
+	* OutputCache.cs: added internal RemoveFromProvider method to
+	remove items from the indicated provider.
+
 2010-02-23  Marek Habersack  <mhabersack@novell.com>
 
 	* CachedVaryBy.cs: made serializable for 4.0+ (necessary for

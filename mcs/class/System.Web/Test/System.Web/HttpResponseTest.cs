@@ -32,8 +32,13 @@ using System.Collections.Specialized;
 using System.IO;
 using System.Text;
 using System.Web;
+#if NET_4_0
+using System.Web.Routing;
+#endif
 
 using NUnit.Framework;
+
+using MonoTests.Common;
 
 namespace MonoTests.System.Web {
 
@@ -61,7 +66,7 @@ namespace MonoTests.System.Web {
 		
 		public override string GetRawUrl()
 		{
-			return "GetRawUrl";
+			return "/GetRawUrl";
 		}
 		
 		public override string GetHttpVerbName()
@@ -588,6 +593,51 @@ namespace MonoTests.System.Web {
 			Assert.AreEqual (0, f.UnknownResponseHeaders.Count, "#C1");
 #endif
 		}
+#if NET_4_0
+		[Test]
+		public void RedirectPermanent ()
+		{
+			FakeHttpWorkerRequest2 request;
+			HttpContext context = Cook (1, out request);
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				context.Response.RedirectPermanent (null);
+			}, "#A1");
+
+			AssertExtensions.Throws<ArgumentException> (() => {
+				context.Response.RedirectPermanent ("http://invalid\nurl.com");
+			}, "#A2");
+
+			AssertExtensions.Throws<ArgumentNullException> (() => {
+				context.Response.RedirectPermanent (null, true);
+			}, "#A3");
+
+			AssertExtensions.Throws<ArgumentException> (() => {
+				context.Response.RedirectPermanent ("http://invalid\nurl.com", true);
+			}, "#A4");
+		}
+
+		[Test]
+		public void RedirectToRoute ()
+		{
+			var resp = new HttpResponse (new StringWriter ());
+			// Ho, ho, ho!
+			AssertExtensions.Throws<NullReferenceException> (() => {
+				resp.RedirectToRoute ("SomeRoute");
+			}, "#A1");
+
+			FakeHttpWorkerRequest2 request;
+			HttpContext context = Cook (1, out request);
+
+			// From RouteCollection.GetVirtualPath
+			AssertExtensions.Throws<ArgumentException> (() => {
+				context.Response.RedirectToRoute ("SomeRoute");
+			}, "#A2");
+
+			AssertExtensions.Throws<InvalidOperationException> (() => {
+				context.Response.RedirectToRoute (new { productId = "1", category = "widgets" });
+			}, "#A3");
+		}
+#endif
 	}
 
 	[TestFixture]

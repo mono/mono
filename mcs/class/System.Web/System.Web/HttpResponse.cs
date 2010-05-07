@@ -43,6 +43,10 @@ using System.Security.Permissions;
 using System.Web.Hosting;
 using System.Web.SessionState;
 
+#if NET_4_0
+using System.Web.Routing;
+#endif
+
 namespace System.Web
 {	
 	// CAS - no InheritanceDemand here as the class is sealed
@@ -832,12 +836,7 @@ namespace System.Web
 			AppendHeader ("PICS-Label", value);
 		}
 
-		public void Redirect (string url)
-		{
-			Redirect (url, true);
-		}
-
-		public void Redirect (string url, bool endResponse)
+		void Redirect (string url, bool endResponse, int code)
 		{
 			if (url == null)
 				throw new ArgumentNullException ("url");
@@ -852,7 +851,7 @@ namespace System.Web
 			ClearHeaders ();
 			ClearContent ();
 			
-			StatusCode = 302;
+			StatusCode = code;
 			url = ApplyAppPathModifier (url);
 
 			bool isFullyQualified;
@@ -888,7 +887,105 @@ namespace System.Web
 				End ();
 			is_request_being_redirected = false;
 		}
+		
+		public void Redirect (string url)
+		{
+			Redirect (url, true);
+		}
 
+		public void Redirect (string url, bool endResponse)
+		{
+			Redirect (url, endResponse, 302);
+		}
+#if NET_4_0
+		public void RedirectPermanent (string url)
+		{
+			RedirectPermanent (url, true);
+		}
+
+		public void RedirectPermanent (string url, bool endResponse)
+		{
+			Redirect (url, endResponse, 301);
+		}
+
+		public void RedirectToRoute (object routeValues)
+		{
+			RedirectToRoute ("RedirectToRoute", null, new RouteValueDictionary (routeValues), 302, true);
+		}
+
+		public void RedirectToRoute (RouteValueDictionary routeValues)
+		{
+			RedirectToRoute ("RedirectToRoute", null, routeValues, 302, true);
+		}
+
+		public void RedirectToRoute (string routeName)
+		{
+			RedirectToRoute ("RedirectToRoute", routeName, null, 302, true);
+		}
+
+		public void RedirectToRoute (string routeName, object routeValues)
+		{
+			RedirectToRoute ("RedirectToRoute", routeName, new RouteValueDictionary (routeValues), 302, true);
+		}
+
+		public void RedirectToRoute (string routeName, RouteValueDictionary routeValues)
+		{
+			RedirectToRoute ("RedirectToRoute", routeName, routeValues, 302, true);
+		}
+
+		public void RedirectToRoutePermanent (object routeValues)
+		{
+			RedirectToRoute ("RedirectToRoutePermanent", null, new RouteValueDictionary (routeValues), 301, false);
+		}
+
+		public void RedirectToRoutePermanent (RouteValueDictionary routeValues)
+		{
+			RedirectToRoute ("RedirectToRoutePermanent", null, routeValues, 301, false);
+		}
+
+		public void RedirectToRoutePermanent (string routeName)
+		{
+			RedirectToRoute ("RedirectToRoutePermanent", routeName, null, 301, false);
+		}
+
+		public void RedirectToRoutePermanent (string routeName, object routeValues)
+		{
+			RedirectToRoute ("RedirectToRoutePermanent", routeName, new RouteValueDictionary (routeValues), 301, false);
+		}		
+
+		public void RedirectToRoutePermanent (string routeName, RouteValueDictionary routeValues)
+		{
+			RedirectToRoute ("RedirectToRoutePermanent", routeName, routeValues, 301, false);
+		}
+		
+		void RedirectToRoute (string callerName, string routeName, RouteValueDictionary routeValues, int redirectCode, bool endResponse)
+		{
+			HttpContext ctx = context ?? HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+			
+			if (req == null)
+				// Let's emulate .NET
+				throw new NullReferenceException ();
+			
+			VirtualPathData vpd = RouteTable.Routes.GetVirtualPath (req.RequestContext, routeName, routeValues);
+			string redirectUrl = vpd != null ? vpd.VirtualPath : null;
+			if (String.IsNullOrEmpty (redirectUrl))
+				throw new InvalidOperationException ("No matching route found for RedirectToRoute");
+
+			Redirect (redirectUrl, true, redirectCode);
+		}
+
+		public static void RemoveOutputCacheItem (string path, string providerName)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+
+			if (path.Length > 0 && path [0] != '/')
+				throw new ArgumentException ("Invalid path for HttpResponse.RemoveOutputCacheItem: '" + path + "'. An absolute virtual path is expected");
+
+			OutputCache.RemoveFromProvider (path, providerName);
+		}
+#endif
 		public static void RemoveOutputCacheItem (string path)
 		{
 			if (path == null)
@@ -900,7 +997,19 @@ namespace System.Web
 			if (path [0] != '/')
 				throw new ArgumentException ("'" + path + "' is not an absolute virtual path.");
 
-			HttpRuntime.InternalCache.Remove (path);
+#if NET_4_0
+			RemoveOutputCacheItem (path, OutputCache.DefaultProviderName);
+#else
+			HttpContext context = HttpContext.Current;
+			HttpApplication app_instance = context != null ? context.ApplicationInstance : null;
+			HttpModuleCollection modules = app_instance != null ? app_instance.Modules : null;
+			OutputCacheModule ocm = modules != null ? modules.Get ("OutputCache") as OutputCacheModule : null;
+			OutputCacheProvider internalProvider = ocm != null ? ocm.InternalProvider : null;
+			if (internalProvider == null)
+				return;
+
+			internalProvider.Remove (path);
+#endif
 		}
 
 		public void SetCookie (HttpCookie cookie)

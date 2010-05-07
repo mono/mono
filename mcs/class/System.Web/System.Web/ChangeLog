@@ -1,3 +1,9 @@
+2010-05-06  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: implemented the following 4.0 methods:
+	RedirectPermanent, RedirectToRoute, RedirectToRoutePermanent and
+	RemoveOutputCacheItem.
+
 2010-05-05  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpRequest.cs: implemented new 4.0 property - RequestContext
