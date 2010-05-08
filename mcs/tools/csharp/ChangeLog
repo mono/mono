@@ -1,3 +1,7 @@
+2010-05-08  Daniel Nauck <dna@mono-project.de>
+
+	* csharp.sln: add jay project as build dependency to Mono.CSharp project.
+
 2010-04-27  Miguel de Icaza  <miguel@novell.com>
 
 	* repl.cs: Improvements to run better on Windows. 
