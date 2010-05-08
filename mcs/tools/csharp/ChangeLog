@@ -1,5 +1,9 @@
 2010-05-08  Daniel Nauck <dna@mono-project.de>
 
+	* csharp.sln: enable build for jay project in Debug|Win32 configuration.
+
+2010-05-08  Daniel Nauck <dna@mono-project.de>
+
 	* csharp.sln: add jay project as build dependency to Mono.CSharp project.
 
 2010-04-27  Miguel de Icaza  <miguel@novell.com>
