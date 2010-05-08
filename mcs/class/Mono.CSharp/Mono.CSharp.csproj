@@ -217,6 +217,6 @@
   </Target>
   -->
   <PropertyGroup>
-    <PreBuildEvent>$(ProjectDir)..\..\jay\jay -cvt &lt; $(ProjectDir)..\..\jay\skeleton.cs $(ProjectDir)..\..\mcs\cs-parser.jay &gt; $(ProjectDir)cs-parser.cs</PreBuildEvent>
+    <PreBuildEvent>"$(ProjectDir)..\..\jay\jay" -cvt &lt; "$(ProjectDir)..\..\jay\skeleton.cs" "$(ProjectDir)..\..\mcs\cs-parser.jay" &gt; "$(ProjectDir)cs-parser.cs"</PreBuildEvent>
   </PropertyGroup>
 </Project>
