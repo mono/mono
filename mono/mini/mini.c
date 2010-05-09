@@ -4821,7 +4821,7 @@ SIG_HANDLER_SIGNATURE (mono_sigill_signal_handler)
 	mono_arch_handle_exception (ctx, exc, FALSE);
 }
 
-#if defined(MONO_ARCH_USE_SIGACTION) || defined(HOST_WIN32)
+#if defined(MONO_ARCH_USE_SIGACTION) || defined(PLATFORM_WIN32)
 #define HAVE_SIG_INFO
 #endif
 

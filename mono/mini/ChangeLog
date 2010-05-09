@@ -1,3 +1,10 @@
+2010-05-09 Jonathan Chambers  <joncham@gmail.com>
+
+	* mini.c (mono_sigsegv_signal_handler): Use PLATFORM_WIN32 define instead of 
+	HOST_WIN32. HOST_WIN32 was added after 2.6.
+
+	Code is contributed under MIT/X11 license.
+
 2010-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_free_jit_domain_info): Fix the seq_points/arch_seq_points hash
