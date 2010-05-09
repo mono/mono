@@ -1021,15 +1021,15 @@
 				>
 			</File>
 			<File
+				RelativePath="..\mono\utils\mono-error-internals.h"
+				>
+			</File>
+			<File
 				RelativePath="..\mono\utils\mono-error.c"
 				>
 			</File>
 			<File
 				RelativePath="..\mono\utils\mono-error.h"
-				>
-			</File>
-			<File
-				RelativePath="..\mono\utils\mono-error-internals.h"
 				>
 			</File>
 			<File
@@ -1634,6 +1634,14 @@
 			</File>
 			<File
 				RelativePath="..\mono\utils\mono-property-hash.h"
+				>
+			</File>
+			<File
+				RelativePath="..\mono\utils\mono-semaphore.c"
+				>
+			</File>
+			<File
+				RelativePath="..\mono\utils\mono-semaphore.h"
 				>
 			</File>
 			<File
@@ -4106,6 +4114,14 @@
 			</File>
 			<File
 				RelativePath="..\mono\metadata\monitor.h"
+				>
+			</File>
+			<File
+				RelativePath="..\mono\metadata\mono-basic-block.c"
+				>
+			</File>
+			<File
+				RelativePath="..\mono\metadata\mono-basic-block.h"
 				>
 			</File>
 			<File

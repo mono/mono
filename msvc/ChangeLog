@@ -1,3 +1,9 @@
+2009-05-09  Jonathan Chambers  <joncham@gmail.com>
+
+	* libmono.vcproj: Add missing files.
+
+	Code is contributed under MIT/X11 license.
+
 2009-11-04  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	- Add kumpera's mono-error stuff to hopefully fix the build.
