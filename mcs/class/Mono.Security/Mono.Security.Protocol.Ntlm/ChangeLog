@@ -1,3 +1,8 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ChallengeResponse.cs: Let it compile for Moonlight (where the 
+	file is compiled inside System.dll)
+
 2004-11-05  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MessageBase.cs: Fixed endian issue. Added globalization support.

@@ -88,7 +88,11 @@ namespace Mono.Security.Protocol.Ntlm {
 					throw new ObjectDisposedException ("too late");
 
 				// create Lan Manager password
+#if MOONLIGHT
+				DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
+#else
 				DES des = DES.Create ();
+#endif
 				des.Mode = CipherMode.ECB;
 				ICryptoTransform ct = null;
 				
@@ -114,7 +118,11 @@ namespace Mono.Security.Protocol.Ntlm {
 				}
 
 				// create NT password
+#if MOONLIGHT
+				MD4Managed md4 = new MD4Managed ();
+#else
 				MD4 md4 = MD4.Create ();
+#endif
 				byte[] data = ((value == null) ? (new byte [0]) : (Encoding.Unicode.GetBytes (value)));
 				byte[] hash = md4.ComputeHash (data);
 				Buffer.BlockCopy (hash, 0, _ntpwd, 0, 16);
@@ -181,7 +189,11 @@ namespace Mono.Security.Protocol.Ntlm {
 		private byte[] GetResponse (byte[] pwd) 
 		{
 			byte[] response = new byte [24];
+#if MOONLIGHT
+			DESCryptoServiceProvider des = new DESCryptoServiceProvider ();
+#else
 			DES des = DES.Create ();
+#endif
 			des.Mode = CipherMode.ECB;
 			des.Key = PrepareDESKey (pwd, 0);
 			ICryptoTransform ct = des.CreateEncryptor ();
