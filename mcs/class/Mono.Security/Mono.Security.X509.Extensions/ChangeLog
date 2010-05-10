@@ -1,3 +1,12 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ExtendedKeyUsageExtension.cs:
+	* NetscapeCertTypeExtension.cs:
+	* SubjectAltNameExtension.cs:
+		Keep them public for Moonlight. Other types in other
+		assemblies needs it and the linker will eventually 
+		internalize everything.
+
 2008-06-26  David Wolinsky  <davidiw@ufl.edu>
 
 	* SubjectAltNameExtension.cs: IP Addresses are handled and now 
