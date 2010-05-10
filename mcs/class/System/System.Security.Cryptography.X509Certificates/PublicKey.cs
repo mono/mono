@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP || MOONLIGHT
 
 using Mono.Security;
 using Mono.Security.Cryptography;
@@ -67,12 +67,15 @@ namespace System.Security.Cryptography.X509Certificates {
 			bool export_required = true;
 
 			if (certificate.KeyAlgorithm == rsaOid) {
+#if !MOONLIGHT
 				// shortcut export/import in the case the private key isn't available
 				RSACryptoServiceProvider rcsp = (certificate.RSA as RSACryptoServiceProvider);
 				if ((rcsp != null) && rcsp.PublicOnly) {
 					_key = certificate.RSA;
 					export_required = false;
-				} else {
+				} else 
+#endif
+				{
 					RSAManaged rsam = (certificate.RSA as RSAManaged);
 					if ((rsam != null) && rsam.PublicOnly) {
 						_key = certificate.RSA;
@@ -86,19 +89,21 @@ namespace System.Security.Cryptography.X509Certificates {
 					(_key as RSA).ImportParameters (rsap);
 				}
 			} else {
+#if !MOONLIGHT
 				// shortcut export/import in the case the private key isn't available
 				DSACryptoServiceProvider dcsp = (certificate.DSA as DSACryptoServiceProvider);
 				if ((dcsp != null) && dcsp.PublicOnly) {
 					_key = certificate.DSA;
 					export_required = false;
 				}
-				// note: DSAManaged isn't availablt in Mono.Security due to a bug in Fx 1.x
+				// note: DSAManaged isn't available in Mono.Security due to a bug in Fx 1.x
 
 				if (export_required) {
 					DSAParameters rsap = certificate.DSA.ExportParameters (false);
 					_key = DSA.Create ();
 					(_key as DSA).ImportParameters (rsap);
 				}
+#endif
 			}
 
 			_oid = new Oid (certificate.KeyAlgorithm);
@@ -179,7 +184,11 @@ namespace System.Security.Cryptography.X509Certificates {
 				throw new CryptographicException (msg, e);
 			}
 
+#if MOONLIGHT
+			DSA dsa = (DSA) new DSAManaged (dsaParams.Y.Length << 3);
+#else
 			DSA dsa = (DSA) new DSACryptoServiceProvider (dsaParams.Y.Length << 3);
+#endif
 			dsa.ImportParameters (dsaParams);
 			return dsa;
 		}
@@ -209,7 +218,11 @@ namespace System.Security.Cryptography.X509Certificates {
 			}
 
 			int keySize = (rsaParams.Modulus.Length << 3);
+#if MOONLIGHT
+			RSA rsa = (RSA) new RSAManaged (keySize);
+#else
 			RSA rsa = (RSA) new RSACryptoServiceProvider (keySize);
+#endif
 			rsa.ImportParameters (rsaParams);
 			return rsa;
 		}

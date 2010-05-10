@@ -27,7 +27,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP || MOONLIGHT
 
 using System.Collections;
 using System.Text;
@@ -857,7 +857,7 @@ namespace System.Security.Cryptography.X509Certificates {
 		}
 	}
 }
-#elif NET_2_0 && !MOONLIGHT
+#else
 namespace System.Security.Cryptography.X509Certificates {
 	public class X509Chain {
 		public bool Build (X509Certificate2 cert)

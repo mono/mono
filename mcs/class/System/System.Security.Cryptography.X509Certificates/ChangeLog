@@ -1,3 +1,30 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* PublicKey.cs
+	* X500DistinguishedName.cs:
+	* X509BasicConstraintsExtension.cs:
+	* X509Certificate2Collection.cs:
+	* X509Certificate2.cs:
+	* X509Certificate2Enumerator.cs:
+	* X509Chain.cs:
+	* X509ChainElementCollection.cs:
+	* X509ChainElement.cs:
+	* X509ChainElementEnumerator.cs:
+	* X509ChainPolicy.cs:
+	* X509ChainStatus.cs:
+	* X509EnhancedKeyUsageExtension.cs:
+	* X509ExtensionCollection.cs:
+	* X509Extension.cs:
+	* X509ExtensionEnumerator.cs:
+	* X509KeyUsageExtension.cs:
+	* X509KeyUsageFlags.cs:
+	* X509NameType.cs:
+	* X509Store.cs:
+	* X509SubjectKeyIdentifierExtension.cs:
+		Allow parts required to enable SSL to be built with
+		the moonlight profile.
+	* X509_2_1_bootstrap.cs: New. Ease bootstrapping 2.1
+
 2010-04-06  Geoff Norton  <gnorton@novell.com>
 
 	* OSX509Certificates.cs: Fix a crash when doing multiple certificate calls

@@ -29,7 +29,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0 && SECURITY_DEP
+#if SECURITY_DEP || MOONLIGHT
 
 using System.Collections;
 using Mono.Security;
@@ -54,7 +54,9 @@ namespace System.Security.Cryptography.X509Certificates {
 			if (cert.Extensions.Count == 0)
 				return;
 
+#if !MOONLIGHT
 			object[] parameters = new object [2];
+#endif
 			foreach (MX.X509Extension ext in cert.Extensions) {
 				bool critical = ext.Critical;
 				string oid = ext.Oid;
@@ -64,9 +66,28 @@ namespace System.Security.Cryptography.X509Certificates {
 				if ((value.Tag == 0x04) && (value.Count > 0))
 					raw_data = value [0].GetBytes ();
 
+				X509Extension newt = null;
+#if MOONLIGHT
+				// non-extensible
+				switch (oid) {
+				case "2.5.29.14":
+					newt = new X509SubjectKeyIdentifierExtension (new AsnEncodedData (oid, raw_data), critical);
+					break;
+				case "2.5.29.15":
+					newt = new X509KeyUsageExtension (new AsnEncodedData (oid, raw_data), critical);
+					break;
+				case "2.5.29.19":
+					newt = new X509BasicConstraintsExtension (new AsnEncodedData (oid, raw_data), critical);
+					break;
+				case "2.5.29.37":
+					newt = new X509EnhancedKeyUsageExtension (new AsnEncodedData (oid, raw_data), critical);
+					break;
+				}
+#else
 				parameters [0] = new AsnEncodedData (oid, raw_data);
 				parameters [1] = critical;
-				X509Extension newt = (X509Extension) CryptoConfig.CreateFromName (oid, parameters);
+				newt = (X509Extension) CryptoConfig.CreateFromName (oid, parameters);
+#endif
 				if (newt == null) {
 					// not registred in CryptoConfig, using default
 					newt = new X509Extension (oid, raw_data, critical);
