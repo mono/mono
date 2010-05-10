@@ -1,5 +1,10 @@
 2010-05-10  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #557210
+	* import.cs: Relax underlying enum field rules.
+
+2010-05-10  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #603476
 	* property.cs: Implement IParametersMember for indexer accessors.
 

@@ -470,14 +470,19 @@ namespace Mono.CSharp
 			PredefinedTypeSpec pt;
 
 			if (kind == MemberKind.Enum) {
-				const BindingFlags any_member = BindingFlags.DeclaredOnly |
-					BindingFlags.Static | BindingFlags.Instance |
+				const BindingFlags underlying_member = BindingFlags.DeclaredOnly |
+					BindingFlags.Instance |
 					BindingFlags.Public | BindingFlags.NonPublic;
 
-				var u_type = type.GetField (Enum.UnderlyingValueField, any_member);
-				if (u_type != null) {
-					spec = new EnumSpec (declaringType, definition, Import.CreateType (u_type.FieldType), type, mod);
+				var type_members = type.GetFields (underlying_member);
+				foreach (var type_member in type_members) {
+					spec = new EnumSpec (declaringType, definition, Import.CreateType (type_member.FieldType), type, mod);
+					break;
 				}
+
+				if (spec == null)
+					kind = MemberKind.Class;
+
 			} else if (kind == MemberKind.TypeParameter) {
 				// Return as type_cache was updated
 				return CreateTypeParameter (type, declaringType);
