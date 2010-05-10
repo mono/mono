@@ -1,3 +1,8 @@
+2010-05-10  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #603476
+	* property.cs: Implement IParametersMember for indexer accessors.
+
 2010-05-07  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #601141

@@ -1294,7 +1294,7 @@ namespace Mono.CSharp
  
 	public class Indexer : PropertyBase, IParametersMember
 	{
-		public class GetIndexerMethod : GetMethod
+		public class GetIndexerMethod : GetMethod, IParametersMember
 		{
 			ParametersCompiled parameters;
 
@@ -1331,9 +1331,25 @@ namespace Mono.CSharp
 					return parameters;
 				}
 			}
+
+			#region IParametersMember Members
+
+			AParametersCollection IParametersMember.Parameters {
+				get {
+					return parameters;
+				}
+			}
+
+			TypeSpec IInterfaceMemberSpec.MemberType {
+				get {
+					return ReturnType;
+				}
+			}
+
+			#endregion
 		}
 
-		public class SetIndexerMethod: SetMethod
+		public class SetIndexerMethod : SetMethod, IParametersMember
 		{
 			public SetIndexerMethod (Indexer method):
 				base (method)
@@ -1356,6 +1372,22 @@ namespace Mono.CSharp
 
 				return false;
 			}
+
+			#region IParametersMember Members
+
+			AParametersCollection IParametersMember.Parameters {
+				get {
+					return parameters;
+				}
+			}
+
+			TypeSpec IInterfaceMemberSpec.MemberType {
+				get {
+					return ReturnType;
+				}
+			}
+
+			#endregion
 		}
 
 		const Modifiers AllowedModifiers =
