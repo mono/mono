@@ -1,3 +1,8 @@
+2010-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (insert_breakpoint): Print a more descriptive error message
+	if a breakpoint cannot be inserted.
+
 2010-05-09 Jonathan Chambers  <joncham@gmail.com>
 
 	* mini.c (mono_sigsegv_signal_handler): Use PLATFORM_WIN32 define instead of 
