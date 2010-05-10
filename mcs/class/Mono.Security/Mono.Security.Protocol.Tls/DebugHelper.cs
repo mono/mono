@@ -36,7 +36,7 @@ namespace Mono.Security.Protocol.Tls
 		{
 			if (!isInitialized)
 			{
-#if !MONOTOUCH
+#if !NET_2_1
 				Debug.Listeners.Add(new TextWriterTraceListener(Console.Out));
 				// Debug.Listeners.Add(new TextWriterTraceListener(@"c:\ssl.log"));
 				Debug.AutoFlush = true;

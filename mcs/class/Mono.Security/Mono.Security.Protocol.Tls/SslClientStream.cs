@@ -66,7 +66,12 @@ namespace Mono.Security.Protocol.Tls
 		}
 	}
 
-	public delegate ValidationResult CertificateValidationCallback2 (Mono.Security.X509.X509CertificateCollection collection);
+#if MOONLIGHT
+	internal
+#else
+	public
+#endif
+	delegate ValidationResult CertificateValidationCallback2 (Mono.Security.X509.X509CertificateCollection collection);
 
 	public delegate X509Certificate CertificateSelectionCallback(
 		X509CertificateCollection	clientCertificates, 
@@ -132,7 +137,12 @@ namespace Mono.Security.Protocol.Tls
 		
 		#endregion
 
+#if MOONLIGHT
+		internal event CertificateValidationCallback2 ServerCertValidation2;
+#else
 		public event CertificateValidationCallback2 ServerCertValidation2;
+#endif
+
 		#region Constructors
 		
 		public SslClientStream(

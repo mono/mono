@@ -838,11 +838,12 @@ namespace Mono.Security.Protocol.Tls
 			}
 			catch
 			{
+#if !MOONLIGHT
 				if (this.context is ServerContext)
 				{
 					this.Context.RecordProtocol.SendAlert(AlertDescription.DecryptionFailed);
 				}
-
+#endif
 				throw;
 			}
 			

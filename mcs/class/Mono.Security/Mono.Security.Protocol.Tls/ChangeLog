@@ -1,3 +1,12 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* CipherSuite.cs:
+	* DebugHelper.cs:
+	* RecordProtocol.cs:
+	* SslClientStream.cs:
+		Let them compile for Moonlight (where the files are 
+		compiled inside System.dll)
+
 2010-04-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Context.cs:
