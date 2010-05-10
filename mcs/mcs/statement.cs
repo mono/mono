@@ -2741,11 +2741,11 @@ namespace Mono.CSharp {
 
 					unreachable = top_level.End ();
 				}
-			} catch (Exception) {
+			} catch (Exception e) {
 				if (rc.CurrentBlock != null) {
-					rc.Report.Error (584, rc.CurrentBlock.StartLocation, "Internal compiler error: Phase Resolve");
+					rc.Report.Error (584, rc.CurrentBlock.StartLocation, "Internal compiler error: {0}", e.Message);
 				} else {
-					rc.Report.Error (587, "Internal compiler error: Phase Resolve");
+					rc.Report.Error (587, "Internal compiler error: {0}", e.Message);
 				}
 			}
 
