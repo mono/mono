@@ -1,3 +1,8 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* TlsClientCertificateVerify.cs: Let it compile for Moonlight -
+	where the file is compiled inside System.dll
+
 2010-04-07 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* TlsServerCertificate.cs: display the error code.

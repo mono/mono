@@ -78,7 +78,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				// in RSACryptoServiceProvider. Other implementations likely implement DecryptValue
 				// so we will try the CreateSignature method.
 				byte[] signature = null;
+#if !MOONLIGHT
 				if (!(privKey is RSACryptoServiceProvider))
+#endif
 				{
 					try
 					{
@@ -129,7 +131,9 @@ namespace Mono.Security.Protocol.Tls.Handshake.Client
 				// in RSACryptoServiceProvider. Other implementations likely implement DecryptValue
 				// so we will try the CreateSignature method.
 				byte[] signature = null;
+#if !MOONLIGHT
 				if (!(privKey is RSACryptoServiceProvider))
+#endif
 				{
 					try
 					{
