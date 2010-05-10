@@ -1,3 +1,13 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DES.cs:
+	* DESCryptoServiceProvider.cs:
+	* RC2.cs:
+	* RC2CryptoServiceProvider.cs:
+	* TripleDES.cs:
+	* TripleDESCryptoServiceProvider.cs:
+		Remove !MOONLIGHT check since we need those for SSL
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* Rijndael.cs
