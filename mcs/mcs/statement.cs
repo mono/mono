@@ -2742,14 +2742,11 @@ namespace Mono.CSharp {
 					unreachable = top_level.End ();
 				}
 			} catch (Exception) {
-#if PRODUCTION
 				if (rc.CurrentBlock != null) {
-					ec.Report.Error (584, rc.CurrentBlock.StartLocation, "Internal compiler error: Phase Resolve");
+					rc.Report.Error (584, rc.CurrentBlock.StartLocation, "Internal compiler error: Phase Resolve");
 				} else {
-					ec.Report.Error (587, "Internal compiler error: Phase Resolve");
+					rc.Report.Error (587, "Internal compiler error: Phase Resolve");
 				}
-#endif
-				throw;
 			}
 
 			if (rc.ReturnType != TypeManager.void_type && !unreachable) {
