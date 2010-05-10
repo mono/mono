@@ -42,7 +42,7 @@ namespace Mono.Security.X509 {
 	 * 
 	 * Note: 1..MAX -> There shouldn't be 0 Extensions in the ASN1 structure
 	 */
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB && !MOONLIGHT
 	internal
 #else
 	public 

@@ -1,3 +1,13 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* X509CertificateCollection.cs:
+	* X509Certificate.cs:
+	* X509Extension.cs:
+	* X509Extensions.cs:
+		Keep them public for Moonlight. Other types in other
+		assemblies needs it and the linker will eventually 
+		internalize everything.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* X509Certificate.cs: use MOONLIGHT symbol to disambiguate

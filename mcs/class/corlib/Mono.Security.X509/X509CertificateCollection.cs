@@ -36,7 +36,7 @@ using System.Collections;
 namespace Mono.Security.X509 {
 
 	[Serializable]
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB && !MOONLIGHT
 	internal
 #else
 	public 
