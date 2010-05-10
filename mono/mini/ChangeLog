@@ -1,3 +1,8 @@
+2010-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (insert_breakpoint): Print a more descriptive error message
+	if a breakpoint cannot be inserted.
+
 2010-05-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_and_reloc_code): Fix a warning.
