@@ -1,3 +1,13 @@
+2010-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* class.c (mono_class_alloc): New helper function to centralize memory allocation
+	for classes, allocates either from the image mempool or from the heap.
+
+	* class.c: Use mono_class_alloc to allocate memory owned by classes.
+
+	* metadata.c (free_generic_class_dependents): Free more items belonging to
+	generic classes.
+
 2010-05-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* reflection.c (mono_reflection_method_get_handle): Handle MonoGenericMethod
