@@ -4,7 +4,7 @@
 	* OidCollection.cs:
 	* Oid.cs:
 	* OidEnumerator.cs:
-		Allow parts required to enable SSL to be builtt with
+		Allow parts required to enable SSL to be built with
 		the moonlight profile.
 
 2005-11-22  Sebastien Pouliot  <sebastien@ximian.com>

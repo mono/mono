@@ -3,4 +3,8 @@
 ../../build/common/MonoTODOAttribute.cs
 ../corlib/System.Collections/CollectionDebuggerView.cs
 ../corlib/System.Collections.Generic/CollectionDebuggerView.cs
-#include moonlight_raw_System.dll.sources
+
+#include moonlight_shared_System.dll.sources
+
+System.Security.Cryptography.X509Certificates/X509_2_1_bootstrap.cs
+

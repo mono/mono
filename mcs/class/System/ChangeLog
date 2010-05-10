@@ -1,3 +1,12 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* moonlight_bootstrap_System.dll.sources: Minimal build for 
+	bootstrap. Does not depend on corlib's internals
+	* moonlight_raw_System.dll.sources: Full raw (pre-tuned) build 
+	for Moonlight - includes SSL code
+	* moonlight_shared_System.dll.sources: New. Parts that are both
+	needed for bootstrap and raw builds
+
 2010-04-29  Marek Habersack  <mhabersack@novell.com>
 
 	* System.Security.Authentication.ExtendedProtection/ChannelBinding.cs:
