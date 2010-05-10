@@ -33,12 +33,9 @@ using System.Security.Cryptography.X509Certificates;
 
 namespace System.Net.Security 
 {
-#if !MOONLIGHT
-	public
-#endif
-	delegate bool RemoteCertificateValidationCallback (
+	public delegate bool RemoteCertificateValidationCallback (
 		object sender,
-#if !MOONLIGHT
+#if SECURITY_DEP
 		X509Certificate certificate,
 		X509Chain chain,
 #else

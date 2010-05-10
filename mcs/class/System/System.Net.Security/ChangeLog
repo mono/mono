@@ -1,3 +1,10 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SslStream.cs: Allow Moonlight to build the non-server part
+	of SslStream
+	* RemoteCertificateValidationCallback.cs: Adjust visibility for
+	Moonlight build
+
 2010-03-01 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* SslStream.cs: don't do anything if a chain element has
