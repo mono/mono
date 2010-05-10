@@ -1384,9 +1384,9 @@ namespace System.Windows.Forms
 		{
 			int max;
 			if (scrollbar == h_scroll)
-				max = h_scroll.Maximum - item_control.Width;
+				max = h_scroll.Maximum - h_scroll.LargeChange + 1;
 			else
-				max = v_scroll.Maximum - item_control.Height;
+				max = v_scroll.Maximum - v_scroll.LargeChange + 1;
 
 			if (val > max)
 				val = max;
@@ -1409,6 +1409,7 @@ namespace System.Windows.Forms
 			Rectangle client_area = ClientRectangle;
 			int height = client_area.Height;
 			int width = client_area.Width;
+			Size item_size;
 			
 			if (!scrollable) {
 				h_scroll.Visible = false;
@@ -1442,6 +1443,8 @@ namespace System.Windows.Forms
 			}
 
 
+			item_size = ItemSize;
+
 			if (h_scroll.is_visible) {
 				h_scroll.Location = new Point (client_area.X, client_area.Bottom - h_scroll.Height);
 				h_scroll.Minimum = 0;
@@ -1457,8 +1460,12 @@ namespace System.Windows.Forms
 					h_scroll.Width = client_area.Width;
 				}
 
+				if (view == View.List)
+					h_scroll.SmallChange = item_size.Width + ThemeEngine.Current.ListViewHorizontalSpacing;
+				else
+					h_scroll.SmallChange = Font.Height;
+
 				h_scroll.LargeChange = client_area.Width;
-				h_scroll.SmallChange = item_size.Width + ThemeEngine.Current.ListViewHorizontalSpacing;
 				height -= h_scroll.Height;
 			}
 
@@ -1476,8 +1483,14 @@ namespace System.Windows.Forms
 					v_scroll.Height = client_area.Height;
 				}
 
-				v_scroll.LargeChange = client_area.Height;
-				v_scroll.SmallChange = Font.Height;
+				if (view == View.Details) {
+					// Need to update Maximum if using LargeChange with value other than the visible area
+					v_scroll.LargeChange = v_scroll.Height - (header_control.Height + item_size.Height);
+					v_scroll.Maximum -= header_control.Height + item_size.Height;
+				} else
+					v_scroll.LargeChange = v_scroll.Height;
+
+				v_scroll.SmallChange = item_size.Height;
 				width -= v_scroll.Width;
 			}
 			
