@@ -1,3 +1,9 @@
+2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ASN1.cs: Keep it public for Moonlight. Other types in other 
+	assemblies needs it and the linker will eventually internalize
+	everything.
+
 2010-03-24  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* ASN1Convert.cs: Specify CultureInfo.InvariantCulture (instead of 
