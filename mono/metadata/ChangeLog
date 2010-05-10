@@ -1,3 +1,8 @@
+2010-05-10  Zoltan Varga  <vargaz@gmail.com>
+
+	* reflection.c (mono_reflection_method_get_handle): Handle MonoGenericMethod
+	as well. Fixes #604054.
+
 2010-05-07 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* metadata-verify.c: MS doesn't mind duplicates in the
