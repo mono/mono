@@ -11,6 +11,14 @@
 
 2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* sgen-gc.c (clear_unreachable_ephemerons): Clear
+	unreachable keys with a tombstone.
+
+	* sgen-gc.c (mark_ephemerons_in_range): Ignore
+	tombstone keys.
+
+2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall-def.h:
 	* gc-internals.h:
 	* gc.c: New GC:get_ephemeron_tombstone.
