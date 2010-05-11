@@ -11,6 +11,12 @@
 
 2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall-def.h:
+	* gc-internals.h:
+	* gc.c: New GC:get_ephemeron_tombstone.
+
+2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* appdomain.c (create_exceptions): Rename to
 	create_domain_objects. Create the ephemeron tombstone object.
 
