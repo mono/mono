@@ -64,7 +64,6 @@ MoveFile
 OpenEvent
 OpenMutex
 OpenProcess
-open_process_map
 OpenSemaphore
 OpenThread
 PulseEvent
@@ -112,6 +111,7 @@ WaitForSingleObjectEx
 wapi_clear_interruption
 wapi_current_thread_desc
 wapi_interrupt_thread
+wapi_self_interrupt
 wapi_thread_clear_wait_handle
 wapi_thread_set_wait_handle
 WriteFile
