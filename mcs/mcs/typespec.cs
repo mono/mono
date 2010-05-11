@@ -238,8 +238,17 @@ namespace Mono.CSharp
 			if (!pa.IsDefined)
 				return Attribute.DefaultUsageAttribute;
 
-			var aua = MemberDefinition.GetAttributeUsage (pa);
-			return aua ?? Attribute.DefaultUsageAttribute;
+			AttributeUsageAttribute aua = null;
+			var type = this;
+			while (type != null) {
+				aua = type.MemberDefinition.GetAttributeUsage (pa);
+				if (aua != null)
+					break;
+
+				type = type.BaseType;
+			}
+
+			return aua;
 		}
 
 		public virtual Type GetMetaInfo ()

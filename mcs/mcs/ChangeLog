@@ -1,5 +1,11 @@
 2010-05-11  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #604748
+	* class.cs, typespec.cs: Search full imported attribute hierarchy
+	for AttributeUsage.
+
+2010-05-11  Marek Safar  <marek.safar@gmail.com>
+
 	* namespace.cs: Ignore missing dependencies failure at
 	initialization.
 

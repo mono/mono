@@ -796,12 +796,8 @@ namespace Mono.CSharp {
 				a = OptAttributes.Search (pa);
 			}
 
-			if (a == null) {
-				if (BaseType != TypeManager.attribute_type)
-					return BaseType.GetAttributeUsage (pa);
-
+			if (a == null)
 				return null;
-			}
 
 			return a.GetAttributeUsageAttribute ();
 		}
