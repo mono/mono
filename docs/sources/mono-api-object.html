@@ -2,8 +2,7 @@
 
 	<p>The object API deals with all the operations shared by
 	<a href="#objects">objects</a>, <a href="#valuetypes">value
-	types</a>, <a href="#arrays">arrays</a> and <a
-	href="#nullable">nullable types</a>.
+	types</a>, <a href="#arrays">arrays</a>.
 
 	<p>The object API has methods for accessing <a
 	href="#fields">fields</a>, <a
@@ -11,8 +10,7 @@
 	href="#events">events</a>, <a href="#delegates">delegates</a>.
 
 	<p>There are some advanced uses that are useful to document
-	here dealing with <a href="#async">AsyncResults</a> and <a
-	href="#remote">remote fields</a>.
+	here dealing with <a href="#remote">remote fields</a>.
 	
 <h2>Synopsis</h2>
 
@@ -93,7 +91,6 @@ result = mono_object_new (mono_domain_get (), version_class);
 <h4><a name="api:mono_object_get_virtual_method">mono_object_get_virtual_method</a></h4>
 <h4><a name="api:mono_object_isinst_mbyref">mono_object_isinst_mbyref</a></h4>
 <h4><a name="api:mono_object_isinst">mono_object_isinst</a></h4>
-<h4><a name="api:mono_object_register_finalizer">mono_object_register_finalizer</a></h4>
 <h4><a name="api:mono_object_unbox">mono_object_unbox</a></h4>
 <h4><a name="api:mono_object_castclass_mbyref">mono_object_castclass_mbyref</a></h4>
 <h4><a name="api:mono_object_is_alive">mono_object_is_alive</a></h4> 
@@ -137,12 +134,7 @@ result = mono_object_new (mono_domain_get (), version_class);
 <h4><a name="api:mono_array_new_full">mono_array_new_full</a></h4>
 <h4><a name="api:mono_array_new_specific">mono_array_new_specific</a></h4>
 <h4><a name="api:mono_array_class_get">mono_array_class_get</a></h4>
-<h4><a name="api:mono_array_clone_in_domain">mono_array_clone_in_domain</a></h4>
 <h4><a name="api:mono_array_clone">mono_array_clone</a></h4>
-<h4><a name="api:mono_array_full_copy">mono_array_full_copy</a></h4>
-<h4><a name="api:mono_array_to_lparray">mono_array_to_lparray</a></h4>
-<h4><a name="api:mono_array_to_savearray">mono_array_to_savearray</a></h4>
-<h4><a name="api:mono_dup_array_type">mono_dup_array_type</a></h4>
 
 <h3>Using Arrays</h3>
 
@@ -167,10 +159,12 @@ result = mono_object_new (mono_domain_get (), version_class);
 <h4><a name="api:mono_field_set_value">mono_field_set_value</a></h4>
 <h4><a name="api:mono_field_static_get_value">mono_field_static_get_value</a></h4>
 <h4><a name="api:mono_field_static_set_value">mono_field_static_set_value</a></h4>
+<h4><a name="api:mono_field_get_object">mono_field_get_object</a></h4>
 
 <a name="properties"></a>
 <h2>Properties</h2>
 
+<h4><a name="api:mono_property_get_object">mono_property_get_object</a></h4>
 <h4><a name="api:mono_property_get_flags">mono_property_get_flags</a></h4>
 <h4><a name="api:mono_property_get_get_method">mono_property_get_get_method</a></h4>
 <h4><a name="api:mono_property_get_name">mono_property_get_name</a></h4>
@@ -182,20 +176,13 @@ result = mono_object_new (mono_domain_get (), version_class);
 <a name="events"></a>
 <h2>Events</h2>
 
+<h4><a name="api:mono_event_get_object">mono_event_get_object</a></h4>
 <h4><a name="api:mono_event_get_add_method">mono_event_get_add_method</a></h4>
 <h4><a name="api:mono_event_get_flags">mono_event_get_flags</a></h4>
 <h4><a name="api:mono_event_get_name">mono_event_get_name</a></h4>
 <h4><a name="api:mono_event_get_parent">mono_event_get_parent</a></h4>
 <h4><a name="api:mono_event_get_raise_method">mono_event_get_raise_method</a></h4>
 <h4><a name="api:mono_event_get_remove_method">mono_event_get_remove_method</a></h4>
-
-<a name="delegates"></a>
-<h2>Delegates</h2>
-<h4><a name="api:mono_delegate_ctor">mono_delegate_ctor</a></h4>
-
-<a name="async"></a>
-<h2>AsyncResults</h2>
-<h4><a name="api:mono_async_result_new">mono_async_result_new</a></h4>
 
 <a name="remote"></a>
 <h2>Remote Fields</h2>
@@ -204,11 +191,3 @@ result = mono_object_new (mono_domain_get (), version_class);
 <h4><a name="api:mono_store_remote_field">mono_store_remote_field</a></h4>
 <h4><a name="api:mono_store_remote_field_new">mono_store_remote_field_new</a></h4>
 
-<a name="nullable"></a>
-<h2>Nullable Objects</h2>
-
-	<p>These methods are used to manipulate objects of type
-	System.Nullable&lt;T&gt;
-	
-<h4><a name="api:mono_nullable_box">mono_nullable_box</a></h4>
-<h4><a name="api:mono_nullable_init">mono_nullable_init</a></h4>

@@ -56,18 +56,6 @@
 <h4><a name="api:mono_g_hash_table_size">mono_g_hash_table_size</a></h4>
 <h4><a name="api:mono_g_hash_table_steal">mono_g_hash_table_steal</a></h4>
 
-<h3>Raw buffer</h3>
-
-	<p>Raw buffers provide an abstraction to load segments of
-	files into memory.  If the operating system supports it, the
-	files are not loaded, but are mapped into the address space of
-	the process (On Unix, this is done using the <tt>mmap(2)</tt>
-	system call).
-	
-<h4><a name="api:mono_raw_buffer_load">mono_raw_buffer_load</a></h4>
-<h4><a name="api:mono_raw_buffer_update">mono_raw_buffer_update</a></h4>
-<h4><a name="api:mono_raw_buffer_free">mono_raw_buffer_free</a></h4>
-
 <h3>SHA1 Signatures</h3>
 
 <h4><a name="api:mono_sha1_init">mono_sha1_init</a></h4>
@@ -116,7 +104,6 @@
  
 <h3>JIT utilities</h3>
 
-<h4><a name="api:mono_is_power_of_two">mono_is_power_of_two</a></h4>
 <h4><a name="api:mono_signbit_double">mono_signbit_double</a></h4>
 <h4><a name="api:mono_signbit_float">mono_signbit_float</a></h4>
 
@@ -126,7 +113,6 @@
 	
 <h4><a name="api:mono_disasm_code">mono_disasm_code</a></h4>
 <h4><a name="api:mono_disasm_code_one">mono_disasm_code_one</a></h4>
-<h4><a name="api:mono_disassemble_code">mono_disassemble_code</a></h4>
 
 <h3>Walking the Stack</h3>
 

@@ -110,9 +110,11 @@ MonoMethod *adder ()
         MONO_WRAPPER_UNKNOWN
 </pre>
 
-<h4><a name="api:mono_mb_add_data">mono_mb_add_data</a></h4>
-<h4><a name="api:mono_mb_add_local">mono_mb_add_local</a></h4>
-<h4><a name="api:mono_mb_create_method">mono_mb_create_method</a></h4>
+<h3>Emitting IL</h3>
+
+	<p>Functions that can be used to generate IL on the flight,
+	similar in spirit to System.Reflection.Emit.ILGenerator.
+	
 <h4><a name="api:mono_mb_emit_add_to_local">mono_mb_emit_add_to_local</a></h4>
 <h4><a name="api:mono_mb_emit_branch">mono_mb_emit_branch</a></h4>
 <h4><a name="api:mono_mb_emit_byte">mono_mb_emit_byte</a></h4>
@@ -129,11 +131,18 @@ MonoMethod *adder ()
 <h4><a name="api:mono_mb_emit_managed_call">mono_mb_emit_managed_call</a></h4>
 <h4><a name="api:mono_mb_emit_native_call">mono_mb_emit_native_call</a></h4>
 <h4><a name="api:mono_mb_emit_stloc">mono_mb_emit_stloc</a></h4>
+
+<h3>Local variables and Methods</h3>
+<h4><a name="api:mono_mb_create_method">mono_mb_create_method</a></h4>
+<h4><a name="api:mono_mb_add_data">mono_mb_add_data</a></h4>
+<h4><a name="api:mono_mb_add_local">mono_mb_add_local</a></h4>
 <h4><a name="api:mono_mb_free">mono_mb_free</a></h4>
 
+<h3>Patching Addresses</h3>
 <h4><a name="api:mono_mb_patch_addr">mono_mb_patch_addr</a></h4>
 <h4><a name="api:mono_mb_patch_addr_s">mono_mb_patch_addr_s</a></h4>
-		
+
+<h3>Method Signatures</h3>
 <h4><a name="api:mono_metadata_signature_alloc">mono_metadata_signature_alloc</a></h4>
 <h4><a name="api:mono_metadata_signature_dup">mono_metadata_signature_dup</a></h4>
 <h4><a name="api:mono_metadata_signature_equal">mono_metadata_signature_equal</a></h4>
