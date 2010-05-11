@@ -11,6 +11,17 @@
 
 2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* appdomain.c (create_exceptions): Rename to
+	create_domain_objects. Create the ephemeron tombstone object.
+
+	* domains-internals.h (MonoDomain): Add new field for the
+	ephemeron tombstone.
+
+	* domain.c (mono_domain_free): Set ephemeron_tombstone to
+	NULL.
+
+2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* sgen-gc.c (mono_gc_clear_domain): Both ephemerons
 	and dislinks must be processed before LOS since they
 	could end up with pointers to memory returned to the
