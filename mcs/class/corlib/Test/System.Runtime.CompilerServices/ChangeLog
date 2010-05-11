@@ -1,3 +1,7 @@
+2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ConditionalWeakTableTest.cs: New test suite.
+
 2009-10-15  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* RuntimeHelpersTest.cs: Add more test cases for validations
