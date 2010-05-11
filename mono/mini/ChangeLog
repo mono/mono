@@ -1,3 +1,8 @@
+2010-05-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (emit_plt): Don't align the plt to a pagesize on x86, it is
+	no longer needed.
+
 2010-05-10  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (insert_breakpoint): Print a more descriptive error message
