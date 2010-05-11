@@ -1,3 +1,10 @@
+2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* sgen-gc.c (mono_gc_clear_domain): Both ephemerons
+	and dislinks must be processed before LOS since they
+	could end up with pointers to memory returned to the
+	OS.
+
 2010-05-11  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_alloc): New helper function to centralize memory allocation
