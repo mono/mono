@@ -401,7 +401,12 @@ namespace Mono.CSharp {
 			if (constraints != null)
 				return spec.HasSameConstraintsDefinition (tp.Type);
 
-			constraints = new_constraints;
+			// Copy constraint from resolved part to partial container
+			spec.SpecialConstraint = tp.spec.SpecialConstraint;
+			spec.InterfacesDefined = tp.spec.InterfacesDefined;
+			spec.TypeArguments = tp.spec.TypeArguments;
+			spec.BaseType = tp.spec.BaseType;
+			
 			return true;
 		}
 
