@@ -1,3 +1,7 @@
+2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* GC.cs: Add EPHEMERON_TOMBSTONE reandonly variable.
+
 2010-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* GC.cs: Add new register_ephemeron_array icall.

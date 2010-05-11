@@ -148,6 +148,11 @@ namespace System
 #if NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		internal extern static void register_ephemeron_array (Ephemeron[] array);
+
+		[MethodImplAttribute (MethodImplOptions.InternalCall)]
+		extern static object get_ephemeron_tombstone ();
+
+		internal static readonly object EPHEMERON_TOMBSTONE = get_ephemeron_tombstone ();
 #endif
 	}
 }
