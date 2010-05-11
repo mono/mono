@@ -1,3 +1,12 @@
+2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ConditionalWeakTable.cs: Implement simple open addressing
+	hash table with linear probing. We use a prime sized table
+	for an easy hashing and a target load capacity of 70%.
+
+	On a synthetic benchmark, a load factor of 70% did not cause
+	significant performance degradation over 60% as would be expected.
+
 2010-05-06 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ConditionalWeakTable.cs: Discard old broken version. New

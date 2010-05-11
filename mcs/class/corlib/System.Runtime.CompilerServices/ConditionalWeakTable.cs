@@ -28,6 +28,7 @@
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0 || MOONLIGHT
 using System;
+using System.Collections;
 
 namespace System.Runtime.CompilerServices
 {
@@ -37,10 +38,22 @@ namespace System.Runtime.CompilerServices
 		internal object value;
 	}
 
+	/*
+	TODO:
+		The runtime need to inform the table about how many entries were expired.   
+		Compact the table when there are too many tombstones.
+		Rehash to a smaller size when there are too few entries.
+		Change rehash condition check to use non-fp code.
+		Look into using quatratic probing/double hashing to reduce clustering problems.
+		Make reads and non-expanding writes (add/remove) lock free.
+	*/
 	public sealed class ConditionalWeakTable<TKey, TValue> 
 		where TKey : class
 		where TValue : class
 	{
+		const int INITIAL_SIZE = 13;
+		const float LOAD_FACTOR = 0.7f;
+
 		Ephemeron[] data;
 		object _lock = new object ();
 		int size;
@@ -49,9 +62,51 @@ namespace System.Runtime.CompilerServices
 
 		public ConditionalWeakTable ()
 		{
-			data = new Ephemeron[16];
+			data = new Ephemeron [INITIAL_SIZE];
 			GC.register_ephemeron_array (data);
 		}
+
+		/*LOCKING: _lock must be held*/
+		void Rehash () {
+			uint newSize = (uint)Hashtable.ToPrime ((data.Length << 1) | 1);
+			//Console.WriteLine ("--- resizing from {0} to {1}", data.Length, newSize);
+
+			Ephemeron[] tmp = new Ephemeron [newSize];
+			GC.register_ephemeron_array (tmp);
+			size = 0;
+
+			for (int i = 0; i < data.Length; ++i) {
+				object key = data[i].key;
+				object value = data[i].value;
+				if (key == null || key == GC.EPHEMERON_TOMBSTONE)
+					continue;
+
+				int len = tmp.Length;
+				int idx, initial_idx;
+				int free_slot = -1;
+	
+				idx = initial_idx = RuntimeHelpers.GetHashCode (key) % len;
+	
+				do {
+					object k = tmp [idx].key;
+	
+					//keys might be GC'd during Rehash
+					if (k == null || k == GC.EPHEMERON_TOMBSTONE) {
+						free_slot = idx;
+						break;
+					}
+	
+					if (++idx == len) //Wrap around
+						idx = 0;
+				} while (idx != initial_idx);
+	
+				tmp [free_slot].key = key;
+				tmp [free_slot].value = value;
+				++size;
+			}
+			data = tmp;
+		}
+
 
 		public void Add (TKey key, TValue value)
 		{
@@ -60,17 +115,33 @@ namespace System.Runtime.CompilerServices
 				throw new ArgumentNullException ("Null key", "key");
 
 			lock (_lock) {
-				if (TryGetValue (key, out tmp))
-					throw new ArgumentException ("Key already in the list", "key");
-			
-				if (size >= data.Length) {
-					Array.Resize (ref data, size * 2);
-					//Console.WriteLine ("--registering");
-					GC.register_ephemeron_array (data);
-				}
-	
-				data [size].key = key;
-				data [size].value = value;
+				if (size >= data.Length * LOAD_FACTOR)
+					Rehash ();
+
+				int len = data.Length;
+				int idx,initial_idx;
+				int free_slot = -1;
+
+				idx = initial_idx = RuntimeHelpers.GetHashCode (key) % len;
+				do {
+					object k = data [idx].key;
+
+					if (k == null) {
+						if (free_slot == -1)
+							free_slot = idx;
+						break;
+					} else if (k == GC.EPHEMERON_TOMBSTONE && free_slot == -1) { //Add requires us to check for dupes :(
+						free_slot = idx;
+					} else if (k == key) { 
+						throw new ArgumentException ("Key already in the list", "key");
+					}
+
+					if (++idx == len) //Wrap around
+						idx = 0;
+				} while (idx != initial_idx);
+
+				data [free_slot].key = key;
+				data [free_slot].value = value;
 				++size;
 			}
 		}
@@ -81,16 +152,22 @@ namespace System.Runtime.CompilerServices
 				throw new ArgumentNullException ("Null key", "key");
 
 			lock (_lock) {
-				for (int i = 0; i < size; ++i) {
-					if (data [i].key == key) {
-						size--;
-						data [i].key = data [size].key;
-						data [i].value = data [size].value;
-	
-						data [size].key = data [size].value = null;
-						return true; 
+				int len = data.Length;
+				int idx, initial_idx;
+				idx = initial_idx = RuntimeHelpers.GetHashCode (key) % len;
+				do {
+					object k = data[idx].key;
+					if (k == key) {
+						data [idx].key = GC.EPHEMERON_TOMBSTONE;
+						data [idx].value = null;
+						--size;
+						return true;
 					}
-				}
+					if (k == null)
+						break;
+					if (++idx == len) //Wrap around
+						idx = 0;
+				} while (idx != initial_idx);
 			}
 			return false;
 		}
@@ -102,15 +179,20 @@ namespace System.Runtime.CompilerServices
 
 			value = default (TValue);
 			lock (_lock) {
-				for (int i = 0; i < size; ++i) {
-					var k = data [i].key;
-					var v = data [i].value;
-					
-					if (key == k) {
-						value = (TValue)v;
+				int len = data.Length;
+				int idx, initial_idx;
+				idx = initial_idx = RuntimeHelpers.GetHashCode (key) % len;
+				do {
+					object k = data [idx].key;
+					if (k == key) {
+						value = (TValue)data [idx].value;
 						return true;
 					}
-				}
+					if (k == null)
+						break;
+					if (++idx == len) //Wrap around
+						idx = 0;
+				} while (idx != initial_idx);
 			}
 			return false;
 		}
