@@ -89,10 +89,23 @@ namespace Mono.CSharp {
 				}
 			}
 
+			//
+			// This part tries to simulate loading of top-level
+			// types only, any missing dependencies are ignores here.
+			// Full error report is reported later when the type is
+			// actually used
+			//
+			Type[] all_types;
+			try {
+				all_types = assembly.GetTypes ();
+			} catch (ReflectionTypeLoadException e) {
+				all_types = e.Types;
+			}
+
 			Namespace ns = this;
 			string prev_namespace = null;
-			foreach (var t in assembly.GetTypes ()) {
-				if (t.IsNested)
+			foreach (var t in all_types) {
+				if (t == null || t.IsNested)
 					continue;
 
 				if (t.Name[0] == '<')
