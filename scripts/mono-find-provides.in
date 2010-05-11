@@ -24,13 +24,13 @@ libdir=$prefix/@reloc_libdir@
 bindir=$prefix/bin
 
 # Bail out if monodis or libmono is missing
-if [ ! -x $bindir/monodis ] || [ ! -f $libdir/libmono.so ] ; then
+if [ ! -x $bindir/monodis ] || [ ! -f $libdir/libmono-2.0.so.1 ] ; then
 	echo "monodis missing or unusable, exiting..." 1>&2
 	exit 1
 fi
 
 
-# set LD_LIBRARY_PATH to ensure that libmono.so is found
+# set LD_LIBRARY_PATH to ensure that libmono is found
 export LD_LIBRARY_PATH=$libdir${LD_LIBRARY_PATH:+:$LD_LIBRARY_PATH}
 
 for i in "${monolist[@]}"; do
