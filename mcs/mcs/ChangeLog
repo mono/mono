@@ -1,5 +1,10 @@
 2010-05-11  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #604735
+	* namespace.cs: Don't report namespace collision.
+
+2010-05-11  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #604748
 	* class.cs, typespec.cs: Search full imported attribute hierarchy
 	for AttributeUsage.

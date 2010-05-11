@@ -1168,7 +1168,7 @@ namespace Mono.CSharp {
 				if (texpr_fne != null && texpr_match == null) {
 					match = fne;
 					continue;
-				} else if (texpr_fne == null && texpr_match != null) {
+				} else if (texpr_fne == null) {
 					continue;
 				}
 
