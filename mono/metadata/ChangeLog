@@ -1,3 +1,14 @@
+2010-05-11  Miguel de Icaza  <miguel@novell.com>
+
+	* console-unix.c: Signal handlers now save and restore errno.   We
+	have never had a bug report about this, ioctl does change errno. 
+
+	Hide the unused method.   
+
+	Remove internal declarations from public headers.
+
+	Document what the signal handler is doing
+
 2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* sgen-gc.c (mono_gc_clear_domain): Both ephemerons
