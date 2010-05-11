@@ -1,5 +1,10 @@
 2010-05-11  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #604640
+	* namespace.cs: Don't resolve using constraints too early.
+
+2010-05-11  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #604239
 	* generic.cs: Copy partial type constraints to partial container.
 

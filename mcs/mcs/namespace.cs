@@ -1321,8 +1321,9 @@ namespace Mono.CSharp {
 			get { return SlaveDeclSpace.CurrentTypeParameters; }
 		}
 
+		// FIXME: It's false for expression types
 		public bool HasUnresolvedConstraints {
-			get { return false; }
+			get { return true; }
 		}
 
 		public bool IsObsolete {
