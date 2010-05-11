@@ -12715,6 +12715,37 @@
       </method>
     </type>
   </test>
+  <test name="gtest-506.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>9</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-507.cs">
+    <type name="A">
+      <method name="Int32 Main()">
+        <size>26</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B`1[T]">
+      <method name="Int32 get_Item(T)">
+        <size>2</size>
+      </method>
+      <method name="Int32 get_Item(System.Object)">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -15016,6 +15047,35 @@
     <type name="TestGenericsSubtypeMatching.Sender`1+&lt;DoSend&gt;c__AnonStorey1`1[T,TMessage]">
       <method name="Void &lt;&gt;m__0(T)">
         <size>35</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-anon-61.cs">
+    <type name="TestCase">
+      <method name="Void Main()">
+        <size>32</size>
+      </method>
+      <method name="Void Test[T](IList`1)">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestCase+&lt;Test&gt;c__AnonStorey0`1[T]">
+      <method name="Void &lt;&gt;m__0()">
+        <size>46</size>
+      </method>
+      <method name="Int32 &lt;&gt;m__1(IList`1)">
+        <size>2</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -21833,16 +21893,24 @@
       </method>
     </type>
   </test>
-  <test name="gtest-repl-01.cs">
-    <type name="MyTest">
-      <method name="Void Run(System.String, System.String)">
-        <size>23</size>
+  <test name="gtest-partial-02.cs">
+    <type name="A`1[T]">
+      <method name="Void Test()">
+        <size>13</size>
       </method>
-      <method name="Void Evaluate(System.String, System.String, System.Object)">
-        <size>80</size>
+      <method name="T get_CurrentItem()">
+        <size>7</size>
       </method>
+      <method name="Void set_CurrentItem(T)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
       <method name="Void Main()">
-        <size>540</size>
+        <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -38569,6 +38637,42 @@
       </method>
     </type>
   </test>
+  <test name="test-757.cs">
+    <type name="TestClass1">
+      <method name="Void Test()">
+        <size>34</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>20</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;PrivateImplementationDetails&gt;">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-758.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void Finalize()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-76.cs">
     <type name="foo">
       <method name="Void .ctor()">
@@ -45284,6 +45388,21 @@
     <type name="C">
       <method name="Int32 Main()">
         <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-partial-28.cs">
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="TestCase">
+      <method name="Void Main()">
+        <size>1</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
