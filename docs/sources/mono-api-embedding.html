@@ -1,9 +1,57 @@
 <h2>Embedding Mono</h2>
 
+	<p>The simplest way of embedding Mono is illustrated here:
+<pre>
+int main (int argc, char *argv)
+{
+	/*
+	 * Load the default Mono configuration file, this is needed
+	 * if you are planning on using the dllmaps defined on the
+	 * system configuration
+	 */
+	mono_config_parse (NULL);
+
+	/*
+	 * mono_jit_init() creates a domain: each assembly is
+	 * loaded and run in a MonoDomain.
+	 */
+	MonoDomain *domain = mono_jit_init ("startup.exe");
+
+	/*
+	 * Optionally, add an internal call that your startup.exe
+	 * code can call, this will bridge startup.exe to Mono
+	 */
+	mono_add_internal_call ("Sample::GetMessage", getMessage);
+
+	/*
+	 * Open the executable, and run the Main method declared
+	 * in the executable
+	 */
+	MonoAssembly *assembly = mono_domain_assembly_open (domain, "startup.exe");
+
+	if (!assembly)
+		exit (2);
+	/*
+	 * mono_jit_exec() will run the Main() method in the assembly.
+	 * The return value needs to be looked up from
+	 * System.Environment.ExitCode.
+	 */
+	mono_jit_exec (domain, assembly, argc, argv);
+}
+
+/* The C# signature for this method is: string GetMessage () in class Sample */
+MonoString*
+getMessage ()
+{
+	return mono_string_new (mono_domain_get (), "Hello, world");
+}
+</pre>
+
 <h4><a name="api:mono_jit_init">mono_jit_init</a></h4>
+<h4><a name="api:mono_jit_exec">mono_jit_exec</a></h4>
 <h4><a name="api:mono_set_dirs">mono_set_dirs</a></h4>
-<h4><a name="api:mono_runtime_exec_main">mono_runtime_exec_main</a></h4>
-<h4><a name="api:mono_runtime_exec_managed_code">mono_runtime_exec_managed_code</a></h4>
+<h4><a name="api:mono_main">mono_main</a></h4>
+<h4><a name="api:mono_parse_default_optimizations">mono_parse_default_optimizations</a></h4>
 
 <h4><a name="api:mono_jit_cleanup">mono_jit_cleanup</a></h4>
 <h4><a name="api:mono_set_defaults">mono_set_defaults</a></h4>
@@ -18,12 +66,44 @@
 
 	<p>The other option is to use the Platform Invoke (P/Invoke)
 	to call C code from the CIL universe, using the standard
-	P/Invoke mechanisms.
+	<a href="http://www.mono-project.com/Interop_with_Native_Libraries">P/Invoke</a>
+	mechanisms.
 
 	<p>To register an internal call, use this call you use the
-	<tt>mono_add_internal_call</tt> routine.
+	<a href="#api:mono_add_internal_call"><tt>mono_add_internal_call</tt>
+	routine.
 
-<h4>Data Marshalling</h4>
+<h4><a name="api:mono_add_internal_call">mono_add_internal_call</a></h4>
+
+<h3>P/Invoke with embedded applications</h3>
+
+	<p>Unlike internal calls, Platform/Invoke is easier to use and
+	more portable.  It allows you to share code with Windows and
+	.NET that have a different setup for internal calls to their
+	own runtime.
+
+	<p>Usually P/Invoke declarations reference external libraries
+	like:
+
+	<pre>
+	[DllImport ("opengl")]
+	void glBegin (GLEnum mode)
+	</pre>
+
+	<p>Mono extends P/Invoke to support looking up symbols not in
+	an external library, but looking up those symbols into the
+	same address space as your program, to do this, use the
+	special library name "__Internal".   This will direct Mono to
+	lookup the method in your own process.
+
+	<p>There are situations where the host operating system does
+	not support looking up symbols on the process address space.
+	For situations like this you can use
+	the <a href="#api:mono_dl_register_library">mono_dl_register_library</a>. 
+
+<h4><a name="api:mono_dl_register_library">mono_dl_register_library</h4>
+	
+<h3>Data Marshalling</h3>
 
 	<p>Managed objects are represented as <tt>MonoObject*</tt>
 	types.  Those objects that the runtime consumes directly have
@@ -48,8 +128,6 @@
 	int64, etc) must be passed as a pointer, in C# this means
 	passing the value as a "ref" or "out" parameter.
 
-<h4><a name="api:mono_add_internal_call">mono_add_internal_call</a></h4>
-
 <h3>Mono Runtime Configuration</h3>
 
 	<p>Certain features of the Mono runtime, like DLL mapping, are
@@ -65,6 +143,7 @@
 	
 <h4><a name="api:mono_config_parse">mono_config_parse</a></h4>
 <h4><a name="api:mono_config_parse_memory">mono_config_parse_memory</a></h4>
+<h4><a name="api:mono_get_config_dir">mono_get_config_dir</a></h4>
 
 <h3>Function Pointers</h3>
 
@@ -76,3 +155,14 @@
 	
 <h4><a name="api:mono_create_ftnptr">mono_create_ftnptr</a></h4>
 
+<h3>Advanced Execution Setups</h3>
+
+	<p>These are not recommended ways of initializing Mono, they
+	are done internally by mono_jit_init, but are here to explain
+	what happens internally.
+	
+<h4><a name="api:mono_runtime_exec_managed_code">mono_runtime_exec_managed_code</a></h4>
+<h4><a name="api:mono_runtime_exec_main">mono_runtime_exec_main</a></h4>
+<h4><a name="api:mono_init_from_assembly">mono_init_from_assembly</a></h4>
+<h4><a name="api:mono_init">mono_init</a></h4>
+<h4><a name="api:mono_init_version">mono_init_version</a></h4>
