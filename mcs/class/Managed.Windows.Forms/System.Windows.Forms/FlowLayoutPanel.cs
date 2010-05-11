@@ -46,6 +46,7 @@ namespace System.Windows.Forms
 
 		public FlowLayoutPanel () : base ()
 		{
+			CreateDockPadding ();
 		}
 
 		#region Properties

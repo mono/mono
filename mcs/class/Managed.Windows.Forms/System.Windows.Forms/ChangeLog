@@ -1,3 +1,15 @@
+2010-05-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* ScrollableControl.cs: It seems .Net is creating DockPadding lazyly,
+	which means that *any* padding for children controls is not applied
+	*until* DockPadding is accesed using its getter.
+	* FlowLayoutPanel.cs:
+	* TableLayoutPanel.cs:
+	* Form.cs: These children classes need to have the DockPadding
+	property available *always*, so create it for them in their respective
+	constructors.
+	Fixes #599506.
+
 2010-05-09  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ListView.cs: Properly adjust SmallChange and LargeChange values for

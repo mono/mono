@@ -429,6 +429,7 @@ namespace System.Windows.Forms {
 			default_maximized_bounds = Rectangle.Empty;
 			owned_forms = new Form.ControlCollection(this);
 			transparency_key = Color.Empty;
+			CreateDockPadding ();
 			InternalClientSize = new Size (this.Width - (SystemInformation.FrameBorderSize.Width * 2), this.Height - (SystemInformation.FrameBorderSize.Height * 2) - SystemInformation.CaptionHeight);
 			
 #if NET_2_0

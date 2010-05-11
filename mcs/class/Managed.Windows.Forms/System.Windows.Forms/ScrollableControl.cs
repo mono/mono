@@ -309,7 +309,6 @@ namespace System.Windows.Forms {
 			auto_scroll_margin = new Size(0, 0);
 			auto_scroll_min_size = new Size(0, 0);
 			scroll_position = new Point(0, 0);
-			dock_padding = new DockPaddingEdges(this);
 			SizeChanged +=new EventHandler(Recalculate);
 			VisibleChanged += new EventHandler (VisibleChangedHandler);
 			LocationChanged += new EventHandler (LocationChangedHandler);
@@ -516,10 +515,12 @@ namespace System.Windows.Forms {
 					display_rectangle = base.DisplayRectangle;
 				}
 
-				display_rectangle.X += dock_padding.Left;
-				display_rectangle.Y += dock_padding.Top;
-				display_rectangle.Width -= dock_padding.Left + dock_padding.Right;
-				display_rectangle.Height -= dock_padding.Top + dock_padding.Bottom;
+				if (dock_padding != null) {
+					display_rectangle.X += dock_padding.Left;
+					display_rectangle.Y += dock_padding.Top;
+					display_rectangle.Width -= dock_padding.Left + dock_padding.Right;
+					display_rectangle.Height -= dock_padding.Top + dock_padding.Bottom;
+				}
 
 				return display_rectangle;
 			}
@@ -536,6 +537,9 @@ namespace System.Windows.Forms {
 #endif
 		public DockPaddingEdges DockPadding {
 			get {
+				if (dock_padding == null)
+					CreateDockPadding ();
+
 				return dock_padding;
 			}
 		}
@@ -736,7 +740,9 @@ namespace System.Windows.Forms {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 #endif
 		protected override void ScaleCore(float dx, float dy) {
-			dock_padding.Scale(dx, dy);
+			if (dock_padding != null)
+				dock_padding.Scale(dx, dy);
+
 			base.ScaleCore(dx, dy);
 		}
 
@@ -836,8 +842,12 @@ namespace System.Windows.Forms {
 			num_of_children = Controls.Count;
 			width = 0;
 			height = 0;
-			extra_width = dock_padding.Right + hscrollbar.Value;
-			extra_height = dock_padding.Bottom + vscrollbar.Value;
+			extra_width = hscrollbar.Value;
+			extra_height = vscrollbar.Value;
+			if (dock_padding != null) {
+				extra_width += dock_padding.Right;
+				extra_height += dock_padding.Bottom;
+			}
 
 			for (int i = 0; i < num_of_children; i++) {
 				child = Controls[i];
@@ -900,6 +910,14 @@ namespace System.Windows.Forms {
 
 			canvas_size.Width = width;
 			canvas_size.Height = height;
+		}
+
+		// Normally DockPadding is created lazyly, as observed in the test cases, but some children
+		// may need to have it always.
+		internal void CreateDockPadding ()
+		{
+			if (dock_padding == null)
+				dock_padding = new DockPaddingEdges (this);
 		}
 
 		private void Recalculate (object sender, EventArgs e) {

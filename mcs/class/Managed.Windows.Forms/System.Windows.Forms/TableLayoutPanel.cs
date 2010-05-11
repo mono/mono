@@ -67,6 +67,7 @@ namespace System.Windows.Forms
 			cell_border_style = TableLayoutPanelCellBorderStyle.None;
 			column_widths = new int[0];
 			row_heights = new int[0];
+			CreateDockPadding ();
 		}
 		#endregion
 
