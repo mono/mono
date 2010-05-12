@@ -1,3 +1,8 @@
+2010-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-sigcontext.h: Define UCONTEXT_REG_ constants for amd64 even if the gregs
+	array is available.
+
 2010-05-05 Jonathan Chambers <joncham@gmail.com>
 
 	* mono-semaphore.c: Implement alertable wait on Windows similar to
