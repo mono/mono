@@ -1,5 +1,12 @@
 2010-05-12  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_sigctx_to_monoctx): Simplify this now that
+	UCONTEXT_REG_ constants are available on linux as well.
+	(mono_arch_monoctx_to_sigctx): Ditto.
+	(mono_arch_ip_from_context): Ditto.
+
+2010-05-12  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (set_breakpoint): Fix setting of pending breakpoints in
 	other domains.
 
