@@ -1,3 +1,9 @@
+2010-05-12  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpServerUtility.cs: Execute checks whether
+	IAsyncResult.AsyncWaitHandle is not null before attempting to use
+	it. Fixes bug #604502
+
 2010-05-06  Marek Habersack  <mhabersack@novell.com>
 
 	* PreApplicationStartMethodAttribute.cs: added. New 4.0 type.

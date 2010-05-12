@@ -36,6 +36,7 @@ using System.Web.Util;
 using System.Collections.Specialized;
 using System.Security.Permissions;
 using System.Text;
+using System.Threading;
 using System.Web.Configuration;
 using System.Web.SessionState;
 
@@ -169,7 +170,9 @@ namespace System.Web
 				} else {
 					IHttpAsyncHandler asyncHandler = (IHttpAsyncHandler) handler;
 					IAsyncResult ar = asyncHandler.BeginProcessRequest (context, null, null);
-					ar.AsyncWaitHandle.WaitOne ();
+					WaitHandle asyncWaitHandle = ar != null ? ar.AsyncWaitHandle : null;
+					if (asyncWaitHandle != null)
+						asyncWaitHandle.WaitOne ();
 					asyncHandler.EndProcessRequest (ar);
 				}
 			} finally {
