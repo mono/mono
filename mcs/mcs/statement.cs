@@ -2747,6 +2747,9 @@ namespace Mono.CSharp {
 				} else {
 					rc.Report.Error (587, "Internal compiler error: {0}", e.Message);
 				}
+
+				if (Report.DebugFlags > 0)
+					throw;
 			}
 
 			if (rc.ReturnType != TypeManager.void_type && !unreachable) {
