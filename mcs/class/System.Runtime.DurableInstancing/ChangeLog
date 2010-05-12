@@ -1,0 +1,5 @@
+2010-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Makefile, System.Runtime.DurableInstancing.dll.sources:
+	  initial checkin.
+

@@ -1,0 +1,10 @@
+2010-05-12  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AllEnums.cs InstanceLockQueryResult.cs InstanceStore.cs
+	  AllExceptions.cs InstanceOwner.cs InstanceStoreQueryResult.cs
+	  InstanceOwnerQueryResult.cs InstanceValue.cs
+	  InstanceHandle.cs InstancePersistenceCommand.cs InstanceView.cs
+	  InstanceKey.cs InstancePersistenceContext.cs
+	  InstanceKeyView.cs InstancePersistenceEvent.cs :
+	  initial checkin (stubs).
+
