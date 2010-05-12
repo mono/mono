@@ -1071,7 +1071,7 @@ namespace Mono.CSharp {
 			}
 
 			// Inflate generic type
-			if (ts.IsGeneric)
+			if (ts.Arity > 0)
 				return InflateTypeParameters (ts);
 
 			return ts;

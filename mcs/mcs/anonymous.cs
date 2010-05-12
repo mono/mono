@@ -295,7 +295,7 @@ namespace Mono.CSharp {
 			type_params = null;
 			spec.IsGeneric = false;
 			spec.DeclaringType = parentStorey.CurrentType;
-//			MemberName.TypeArguments = null;
+			MemberName.TypeArguments = null;
 		}
 
 		protected override bool DoResolveTypeParameters ()
@@ -635,7 +635,7 @@ namespace Mono.CSharp {
 			}
 
 			if (inner_access == null) {
-				if (field.Parent.MemberName.IsGeneric) {
+				if (field.Parent.IsGeneric) {
 					var fs = MemberCache.GetMember (field.Parent.CurrentType, field.Spec);
 					inner_access = new FieldExpr (fs, field.Location);
 				} else {

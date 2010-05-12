@@ -1,3 +1,9 @@
+2010-05-12  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #604981
+	* generic.cs, decl.cs, anonymous.cs: Reset more type arguments
+	details for nested anonymous methods stories.
+
 2010-05-11  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #604735

@@ -31,7 +31,7 @@ namespace Mono.CSharp {
 	//
 	public class MemberName {
 		public readonly string Name;
-		public readonly TypeArguments TypeArguments;
+		public TypeArguments TypeArguments;
 
 		public readonly MemberName Left;
 		public readonly Location Location;
@@ -984,8 +984,7 @@ namespace Mono.CSharp {
 
 		//
 		// Return true when this member is a generic in C# terms
-		// therefore nested non-generic type of generic type will
-		// return false
+		// A nested non-generic type of generic type will return false
 		//
 		public bool IsGeneric {
 			get {
@@ -1039,6 +1038,10 @@ namespace Mono.CSharp {
 			var inflated = (MemberSpec) MemberwiseClone ();
 			inflated.declaringType = inflator.TypeInstance;
 			inflated.state |= StateFlags.PendingMetaInflate;
+#if DEBUG
+			if (inflated.ID > 0)
+				inflated.ID = -inflated.ID;
+#endif
 			return inflated;
 		}
 
