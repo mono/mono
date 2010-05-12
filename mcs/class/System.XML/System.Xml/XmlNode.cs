@@ -864,7 +864,7 @@ namespace System.Xml
 			XPathNodeIterator iter = nav.Select (expr);
 			if (!iter.MoveNext ())
 				return null;
-			return ((IHasXmlNode) iter.Current).GetNode ();
+			return (iter.Current as IHasXmlNode).GetNode ();
 		}
 
 		public virtual bool Supports (string feature, string version)
