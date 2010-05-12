@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2008 Novell Inc. http://novell.com
+// Copyright (C) 2008-2010 Novell Inc. http://novell.com
 //
 
 //
@@ -35,10 +35,24 @@ namespace System.ComponentModel.DataAnnotations
 	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
 	public class RequiredAttribute : ValidationAttribute
 	{
-		[MonoTODO]
+#if NET_4_0
+		public bool AllowEmptyStrings { get; set; }
+#endif
+
 		public override bool IsValid (object value)
 		{
-			throw new NotImplementedException ();
+			if (value == null)
+				return false;
+
+			string s = value as string;
+			if (s != null
+#if NET_4_0
+			    && !AllowEmptyStrings
+#endif
+			)
+				return s.Length > 0;
+
+			return true;
 		}
 	}
 }
