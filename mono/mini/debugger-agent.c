@@ -572,6 +572,9 @@ static int major_version, minor_version;
 /* Whenever the variables above are set by the client */
 static gboolean protocol_version_set;
 
+/* A hash table containing all active domains */
+static GHashTable *domains;
+
 static void transport_connect (const char *host, int port);
 
 static guint32 WINAPI debugger_thread (void *arg);
@@ -785,6 +788,7 @@ mono_debugger_agent_init (void)
 	loaded_classes = g_hash_table_new (mono_aligned_addr_hash, NULL);
 	pending_assembly_loads = g_ptr_array_new ();
 	pending_type_loads = g_ptr_array_new ();
+	domains = g_hash_table_new (mono_aligned_addr_hash, NULL);
 
 	log_level = agent_config.log_level;
 
@@ -1582,6 +1586,10 @@ mono_debugger_agent_free_domain_info (MonoDomain *domain)
 			}
 		}
 	}
+
+	mono_loader_lock ();
+	g_hash_table_remove (domains, domain);
+	mono_loader_unlock ();
 }
 
 static int
@@ -2840,6 +2848,10 @@ thread_end (MonoProfiler *prof, gsize tid)
 static void
 appdomain_load (MonoProfiler *prof, MonoDomain *domain, int result)
 {
+	mono_loader_lock ();
+	g_hash_table_insert (domains, domain, domain);
+	mono_loader_unlock ();
+
 	process_profiler_event (EVENT_KIND_APPDOMAIN_CREATE, domain);
 }
 
@@ -3214,16 +3226,38 @@ set_bp_in_method (MonoDomain *domain, MonoMethod *method, GPtrArray *seq_points,
 	insert_breakpoint (seq_points, ji, bp);
 }
 
+typedef struct
+{
+	MonoBreakpoint *bp;
+	MonoDomain *domain;
+} SetBpUserData;
+
 static void
 set_bp_in_method_cb (gpointer key, gpointer value, gpointer user_data)
 {
 	MonoMethod *method = key;
 	GPtrArray *seq_points = value;
-	MonoBreakpoint *bp = user_data;
-	MonoDomain *domain = mono_domain_get ();
+	SetBpUserData *ud = user_data;
+	MonoBreakpoint *bp = ud->bp;
+	MonoDomain *domain = ud->domain;
 
 	if (bp_matches_method (bp, method))
 		set_bp_in_method (domain, method, seq_points, bp);
+}
+
+static void
+set_bp_in_domain (gpointer key, gpointer value, gpointer user_data)
+{
+	MonoDomain *domain = key;
+	MonoBreakpoint *bp = user_data;
+	SetBpUserData ud;
+
+	ud.bp = bp;
+	ud.domain = domain;
+
+	mono_domain_lock (domain);
+	g_hash_table_foreach (domain_jit_info (domain)->seq_points, set_bp_in_method_cb, &ud);
+	mono_domain_unlock (domain);
 }
 
 /*
@@ -3237,10 +3271,9 @@ set_bp_in_method_cb (gpointer key, gpointer value, gpointer user_data)
 static MonoBreakpoint*
 set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req)
 {
-	MonoDomain *domain;
 	MonoBreakpoint *bp;
 
-	// FIXME: 
+	// FIXME:
 	// - suspend/resume the vm to prevent code patching problems
 	// - multiple breakpoints on the same location
 	// - dynamic methods
@@ -3254,10 +3287,11 @@ set_breakpoint (MonoMethod *method, long il_offset, EventRequest *req)
 
 	DEBUG(1, fprintf (log_file, "[dbg] Setting breakpoint at %s:0x%x.\n", method ? mono_method_full_name (method, TRUE) : "<all>", (int)il_offset));
 
-	domain = mono_domain_get ();
-	mono_domain_lock (domain);
-	g_hash_table_foreach (domain_jit_info (domain)->seq_points, set_bp_in_method_cb, bp);
-	mono_domain_unlock (domain);
+	mono_loader_lock ();
+
+	g_hash_table_foreach (domains, set_bp_in_domain, bp);
+
+	mono_loader_unlock ();
 
 	mono_loader_lock ();
 	g_ptr_array_add (breakpoints, bp);

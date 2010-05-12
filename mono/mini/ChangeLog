@@ -1,3 +1,8 @@
+2010-05-12  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (set_breakpoint): Fix setting of pending breakpoints in
+	other domains.
+
 2009-12-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (find_extra_method): Call mono_aot_wrapper_name only once,
