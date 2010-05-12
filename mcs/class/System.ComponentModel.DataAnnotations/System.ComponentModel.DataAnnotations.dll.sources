@@ -5,10 +5,16 @@ Assembly/AssemblyInfo.cs
 System.ComponentModel.DataAnnotations/AssociatedMetadataTypePropertyDescriptor.cs
 System.ComponentModel.DataAnnotations/AssociatedMetadataTypeTypeDescriptor.cs
 System.ComponentModel.DataAnnotations/AssociatedMetadataTypeTypeDescriptionProvider.cs
+System.ComponentModel.DataAnnotations/AssociationAttribute.cs
+System.ComponentModel.DataAnnotations/ConcurrencyCheckAttribute.cs
+System.ComponentModel.DataAnnotations/CustomValidationAttribute.cs
 System.ComponentModel.DataAnnotations/DataType.cs
 System.ComponentModel.DataAnnotations/DataTypeAttribute.cs
 System.ComponentModel.DataAnnotations/DisplayColumnAttribute.cs
 System.ComponentModel.DataAnnotations/DisplayFormatAttribute.cs
+System.ComponentModel.DataAnnotations/EditableAttribute.cs
+System.ComponentModel.DataAnnotations/EnumDataTypeAttribute.cs
+System.ComponentModel.DataAnnotations/IValidatableObject.cs
 System.ComponentModel.DataAnnotations/MetadataTypeAttribute.cs
 System.ComponentModel.DataAnnotations/RangeAttribute.cs
 System.ComponentModel.DataAnnotations/RegularExpressionAttribute.cs

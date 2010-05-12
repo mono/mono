@@ -1,12 +1,10 @@
+﻿//
+// RequiredAttributeTest.cs
 //
-// RequiredAttribute.cs
+// Authors:
+//      Marek Habersack <mhabersack@novell.com>
 //
-// Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
-//
-// Copyright (C) 2008-2010 Novell Inc. http://novell.com
-//
-
+// Copyright (C) 2010 Novell, Inc. (http://novell.com/)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -28,31 +26,40 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
+using System.ComponentModel.DataAnnotations;
+using System.Text;
 
-namespace System.ComponentModel.DataAnnotations
+using NUnit.Framework;
+
+namespace MonoTests.System.ComponentModel.DataAnnotations
 {
-	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
-	public class RequiredAttribute : ValidationAttribute
+	[TestFixture]
+	public class RequiredAttributeTest
 	{
-#if NET_4_0
-		public bool AllowEmptyStrings { get; set; }
-#endif
-
-		public override bool IsValid (object value)
+		[Test]
+		public void IsRequired ()
 		{
-			if (value == null)
-				return false;
-
-			string s = value as string;
-			if (s != null
+			var attr = new RequiredAttribute ();
+			Assert.IsFalse (attr.IsValid (null), "#A1");
+			Assert.IsFalse (attr.IsValid (String.Empty), "#A2");
+			Assert.IsTrue (attr.IsValid ("string"), "#A3");
+			Assert.IsTrue (attr.IsValid (1), "#A4");
 #if NET_4_0
-			    && !AllowEmptyStrings
+			attr.AllowEmptyStrings = true;
+			Assert.IsTrue (attr.IsValid (String.Empty), "#A5");
 #endif
-			)
-				return s.Length > 0;
-
-			return true;
 		}
+#if NET_4_0
+		[Test]
+		public void AllowEmptyStrings ()
+		{
+			var attr = new RequiredAttribute ();
+
+			Assert.IsFalse (attr.AllowEmptyStrings, "#A1");
+			attr.AllowEmptyStrings = true;
+			Assert.IsTrue (attr.AllowEmptyStrings, "#A2");
+		}
+#endif
 	}
 }

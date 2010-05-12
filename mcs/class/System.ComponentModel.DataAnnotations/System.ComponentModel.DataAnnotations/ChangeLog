@@ -1,3 +1,16 @@
+2010-05-12  Marek Habersack  <mhabersack@novell.com>
+
+	* ValidationException.cs: partially implemented
+
+	* ValidationAttribute.cs: implemented
+
+	* RequiredAttribute.cs: implemented. Fixes bug #604100
+
+	* AssociationAttribute.cs, ConcurrencyCheckAttribute.cs,
+	CustomValidationAttribute.cs, EditableAttribute.cs,
+	EnumDataTypeAttribute.cs, IValidatableObject.cs,
+	ValidationContext.cs, ValidationResult.cs: added
+
 2009-09-15  Marek Habersack  <mhabersack@novell.com>
 
 	* DataTypeAttribute.cs: implemented GetDataTypeName

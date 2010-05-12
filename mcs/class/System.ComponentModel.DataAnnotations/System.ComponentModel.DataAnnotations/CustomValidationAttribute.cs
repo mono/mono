@@ -1,10 +1,10 @@
 //
-// RequiredAttribute.cs
+// CustomValidationAttribute.cs
 //
-// Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+// Authors:
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008-2010 Novell Inc. http://novell.com
+// Copyright (C) 2010 Novell Inc. (http://novell.com)
 //
 
 //
@@ -27,32 +27,39 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_4_0
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace System.ComponentModel.DataAnnotations
 {
-	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
-	public class RequiredAttribute : ValidationAttribute
+	[AttributeUsage (AttributeTargets.Class | AttributeTargets.Method | AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter, AllowMultiple = true)]
+	public sealed class CustomValidationAttribute : ValidationAttribute
 	{
-#if NET_4_0
-		public bool AllowEmptyStrings { get; set; }
-#endif
-
-		public override bool IsValid (object value)
+		public string Method { get; private set; }
+		public override object TypeId {
+			get {
+				throw new NotImplementedException ();
+			}
+		}
+		public Type ValidatorType { get; private set; }
+		
+		public CustomValidationAttribute (Type validatorType, string method)
 		{
-			if (value == null)
-				return false;
+			this.ValidatorType = validatorType;
+			this.Method = method;
+		}
 
-			string s = value as string;
-			if (s != null
-#if NET_4_0
-			    && !AllowEmptyStrings
-#endif
-			)
-				return s.Length > 0;
+		public override string FormatErrorMessage (string name)
+		{
+			throw new NotImplementedException ();
+		}
 
-			return true;
+		// LAMESPEC: MSDN doesn't document it at all, but corcompare shows it in the type
+		protected override ValidationResult IsValid (object value, ValidationContext validationContext)
+		{
+			throw new NotImplementedException ();
 		}
 	}
 }
+#endif

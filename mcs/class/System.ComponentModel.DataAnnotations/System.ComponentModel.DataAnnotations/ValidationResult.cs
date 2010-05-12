@@ -1,10 +1,10 @@
 //
-// RequiredAttribute.cs
+// ValidationResult.cs
 //
-// Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+// Authors:
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008-2010 Novell Inc. http://novell.com
+// Copyright (C) 2010 Novell Inc. (http://novell.com)
 //
 
 //
@@ -28,31 +28,34 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace System.ComponentModel.DataAnnotations
 {
-	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
-	public class RequiredAttribute : ValidationAttribute
+	public class ValidationResult
 	{
-#if NET_4_0
-		public bool AllowEmptyStrings { get; set; }
-#endif
+		public static readonly ValidationResult Success = null; // it is supposed to be null
 
-		public override bool IsValid (object value)
+		public string ErrorMessage { get; set; }
+		public IEnumerable<string> MemberNames { get; private set; }
+		
+		public ValidationResult (string errorMessage)
+		: this (errorMessage, new string[] {})
+			
 		{
-			if (value == null)
-				return false;
+		}
 
-			string s = value as string;
-			if (s != null
-#if NET_4_0
-			    && !AllowEmptyStrings
-#endif
-			)
-				return s.Length > 0;
+		protected ValidationResult (ValidationResult validationResult)
+		{
+		}
 
-			return true;
+		public ValidationResult (string errorMessage, IEnumerable<string> memberNames)
+		{
+			ErrorMessage = errorMessage;
+			if (memberNames != null)
+				MemberNames = memberNames;
+			else
+				MemberNames = new string[] {};
 		}
 	}
 }

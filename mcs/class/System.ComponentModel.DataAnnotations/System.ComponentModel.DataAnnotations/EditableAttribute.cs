@@ -1,10 +1,10 @@
 //
-// RequiredAttribute.cs
+// EditableAttribute.cs
 //
-// Author:
-//	Atsushi Enomoto <atsushi@ximian.com>
+// Authors:
+//	Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2008-2010 Novell Inc. http://novell.com
+// Copyright (C) 2010 Novell Inc. (http://novell.com)
 //
 
 //
@@ -27,32 +27,22 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
+#if NET_4_0
 using System;
-using System.ComponentModel;
+using System.Collections.Generic;
 
 namespace System.ComponentModel.DataAnnotations
 {
-	[AttributeUsage (AttributeTargets.Property|AttributeTargets.Field, AllowMultiple = false)]
-	public class RequiredAttribute : ValidationAttribute
+	[AttributeUsage (AttributeTargets.Property | AttributeTargets.Field, AllowMultiple = false, Inherited = true)]
+	public sealed class EditableAttribute : Attribute
 	{
-#if NET_4_0
-		public bool AllowEmptyStrings { get; set; }
-#endif
-
-		public override bool IsValid (object value)
+		public bool AllowEdit { get; private set; }
+		public bool AllowInitialValue { get; set; }
+		
+		public EditableAttribute (bool allowEdit)
 		{
-			if (value == null)
-				return false;
-
-			string s = value as string;
-			if (s != null
-#if NET_4_0
-			    && !AllowEmptyStrings
-#endif
-			)
-				return s.Length > 0;
-
-			return true;
+			this.AllowEdit = allowEdit;
 		}
 	}
 }
+#endif

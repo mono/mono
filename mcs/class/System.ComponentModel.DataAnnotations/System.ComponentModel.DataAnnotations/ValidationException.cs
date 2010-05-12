@@ -50,8 +50,10 @@ namespace System.ComponentModel.DataAnnotations
 		}
 
 		public ValidationException (string errorMessage, ValidationAttribute validatingAttribute, object value)
+			: base (errorMessage)
 		{
-			throw new NotImplementedException ();
+			ValidationAttribute = validatingAttribute;
+			Value = value;
 		}
 
 		protected ValidationException (SerializationInfo info, StreamingContext context)
@@ -59,7 +61,11 @@ namespace System.ComponentModel.DataAnnotations
 		{
 			throw new NotImplementedException ();
 		}
-
+#if NET_4_0
+		public ValidationException (ValidationResult validationResult, ValidationAttribute validatingAttribute, object value)
+		{
+		}
+#endif
 		public ValidationAttribute ValidationAttribute { get; private set; }
 		public object Value { get; private set; }
 
