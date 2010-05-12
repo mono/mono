@@ -80,9 +80,11 @@ namespace System.Web.Compilation
 		
 		static int buildCount;
 		static bool is_precompiled;
+		static bool toplevelsCompiled;
 #if NET_4_0
 		static bool? batchCompilationEnabled;
 		static FrameworkName targetFramework;
+		static bool preStartMethodsDone;
 #endif
 		//static bool updatable; unused
 		static Dictionary<string, PreCompilationData> precompiled;
@@ -110,9 +112,8 @@ namespace System.Web.Compilation
 		public static bool? BatchCompilationEnabled {
 			get { return batchCompilationEnabled; }
 			set {
-				Type app_type = HttpApplicationFactory.AppType;
-				if (app_type != null)
-					throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
+				if (preStartMethodsDone)
+					throw new InvalidOperationException ("This method cannot be called after the application's pre-start initialization stage.");
 				batchCompilationEnabled = true;
 			}
 		}
@@ -518,12 +519,92 @@ namespace System.Web.Compilation
 
 			codeDomProviders.Add (type, ret);
 			return ret;
-		}
+		}		
 #if NET_4_0
+		internal static void CallPreStartMethods ()
+		{
+			if (preStartMethodsDone)
+				return;
+
+			MethodInfo mi = null;
+			try {
+				List <MethodInfo> methods = LoadPreStartMethodsFromAssemblies (GetReferencedAssemblies () as List <Assembly>);
+				if (methods == null || methods.Count == 0)
+					return;
+			
+				foreach (MethodInfo m in methods) {
+					mi = m;
+					m.Invoke (null, null);
+				}
+			} catch (Exception ex) {
+				throw new HttpException (
+					String.Format ("The pre-application start initialization method {0} on type {1} threw an exception with the following error message: {2}",
+						       mi != null ? mi.Name : "UNKNOWN",
+						       mi != null ? mi.DeclaringType.FullName : "UNKNOWN",
+						       ex.Message),
+					ex
+				);
+			} finally {
+				preStartMethodsDone = true;
+			}
+		}
+
+		static List <MethodInfo> LoadPreStartMethodsFromAssemblies (List <Assembly> assemblies)
+		{
+			if (assemblies == null || assemblies.Count == 0)
+				return null;
+
+			var ret = new List <MethodInfo> ();
+			object[] attributes;
+			Type type;
+			PreApplicationStartMethodAttribute attr;
+			
+			foreach (Assembly asm in assemblies) {
+				try {
+					attributes = asm.GetCustomAttributes (typeof (PreApplicationStartMethodAttribute), false);
+					if (attributes == null || attributes.Length == 0)
+						continue;
+
+					attr = attributes [0] as PreApplicationStartMethodAttribute;
+					type = attr.Type;
+					if (type == null)
+						continue;
+				} catch {
+					continue;
+				}
+
+				MethodInfo mi;
+				Exception error = null;
+				try {
+					if (type.IsPublic)
+						mi = type.GetMethod (attr.MethodName, BindingFlags.Static | BindingFlags.Public, null, new Type[] {}, null);
+					else
+						mi = null;
+				} catch (Exception ex) {
+					error = ex;
+					mi = null;
+				}
+
+				if (mi == null)
+					throw new HttpException (
+						String.Format (
+							"The method specified by the PreApplicationStartMethodAttribute on assembly '{0}' cannot be resolved. Type: '{1}', MethodName: '{2}'. Verify that the type is public and the method is public and static (Shared in Visual Basic).",
+							asm.FullName,
+							type.FullName,
+							attr.MethodName),
+						error
+					);
+				
+				ret.Add (mi);
+			}
+
+			return ret;
+		}
+		
 		public static Type GetGlobalAsaxType ()
 		{
 			Type ret = HttpApplicationFactory.AppType;
-			if (ret == null)
+			if (!preStartMethodsDone)
 				throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
 			
 			return ret;
@@ -557,8 +638,8 @@ namespace System.Web.Compilation
 				throw new ArgumentNullException ("assembly");
 
 			Type ret = HttpApplicationFactory.AppType;
-			if (ret != null)
-				throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
+			if (preStartMethodsDone)
+				throw new InvalidOperationException ("This method cannot be called after the application's pre-start initialization stage.");
 
 			if (configReferencedAssemblies == null)
 				configReferencedAssemblies = new List <Assembly> ();

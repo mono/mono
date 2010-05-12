@@ -351,6 +351,18 @@ STANDALONE_TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) $(PROFILE_MCS_FLAGS) -debug:full -r
 STANDALONE_TEST_ASSEMBLY = System.Web_standalone_test_$(PROFILE).dll
 STANDALONE_TEST_MAKEFRAG = $(depsdir)/$(STANDALONE_TEST_ASSEMBLY).makefrag
 
+ifeq (4, $(FRAMEWORK_VERSION_MAJOR))
+STANDALONE_TEST_COMPILABLE_TESTS = \
+	ApplicationPreStartMethods/test_01 \
+	ApplicationPreStartMethods/test_02 \
+	ApplicationPreStartMethods/test_03 \
+	ApplicationPreStartMethods/test_04 \
+	ApplicationPreStartMethods/test_05 \
+	ApplicationPreStartMethods/test_06 \
+	ApplicationPreStartMethods/test_07 \
+	ApplicationPreStartMethods/test_08
+endif
+
 STANDALONE_TEST_RUNNER = Test/tools/standalone-runner.exe
 RUN_STANDALONE = $(TEST_RUNTIME) $(STANDALONE_TEST_RUNNER)
 
@@ -397,12 +409,25 @@ $(STANDALONE_RUNNER_SUPPORT_MAKEFRAG): standalone-runner-support.dll.sources
 include $(STANDALONE_TEST_MAKEFRAG)
 include $(STANDALONE_RUNNER_SUPPORT_MAKEFRAG)
 
-$(STANDALONE_TEST_ASSEMBLY): $(the_assembly) $(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) Test/standalone-tests/Consts.cs
-	$(MCS) $(STANDALONE_TEST_MCS_FLAGS) -out:$@ -target:library @System.Web_standalone_test.dll.sources
+$(STANDALONE_TEST_ASSEMBLY): $(the_assembly) $(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) Test/standalone-tests/Consts.cs standalone-compilable-tests
+	$(CSCOMPILE) $(STANDALONE_TEST_MCS_FLAGS) -out:$@ -target:library @System.Web_standalone_test.dll.sources
+
+standalone-compilable-tests:
+ifdef STANDALONE_TEST_COMPILABLE_TESTS
+	for d in $(STANDALONE_TEST_COMPILABLE_TESTS); do \
+		$(MAKE) -C Test/standalone/$$d ; \
+	done
+endif
 
 $(STANDALONE_RUNNER_SUPPORT_ASSEMBLY): 
-	$(MCS) $(STANDALONE_RUNNER_SUPPORT_MCS_FLAGS) -out:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -target:library @standalone-runner-support.dll.sources
+	$(CSCOMPILE) $(STANDALONE_RUNNER_SUPPORT_MCS_FLAGS) -out:$(STANDALONE_RUNNER_SUPPORT_ASSEMBLY) -target:library @standalone-runner-support.dll.sources
 
 Test/standalone-tests/Consts.cs: Test/standalone-tests/Consts.cs.in
 	@sed 's,@SystemWebClassDir@,$(shell pwd),' $< > $@
 
+clean-local:
+ifdef STANDALONE_TEST_COMPILABLE_TESTS
+	for d in $(STANDALONE_TEST_COMPILABLE_TESTS); do \
+		$(MAKE) -C Test/standalone/$$d clean ; \
+	done
+endif

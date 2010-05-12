@@ -404,7 +404,6 @@ namespace System.Web
 						if (!File.Exists (app_file))
 							app_file = null;
 					}
-			
 #if !TARGET_J2EE
 					AppResourcesCompiler ac = new AppResourcesCompiler (context);
 					ac.Compile ();
@@ -413,12 +412,13 @@ namespace System.Web
 					AppWebReferencesCompiler awrc = new AppWebReferencesCompiler ();
 					awrc.Compile ();
 #endif
-					
 					// Todo: Generate profile properties assembly from Web.config here
 				
 					AppCodeCompiler acc = new AppCodeCompiler ();
 					acc.Compile ();
-
+#if NET_4_0
+					BuildManager.CallPreStartMethods ();
+#endif
 					// Get the default machine *.browser files.
 					string default_machine_browsers_path = Path.Combine (HttpRuntime.MachineConfigurationDirectory, "Browsers");
 					default_machine_browsers_files = new string[0];
