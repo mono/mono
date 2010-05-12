@@ -287,12 +287,15 @@ w.Close ();
 
 		protected override IAsyncResult OnBeginClose (TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (web_request != null)
+				web_request.Abort ();
+			web_request = null;
+			return base.OnBeginClose (timeout, callback, state);
 		}
 
 		protected override void OnEndClose (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			base.OnEndClose (result);
 		}
 
 		// Open
@@ -301,14 +304,16 @@ w.Close ();
 		{
 		}
 
+		[MonoTODO ("find out what to do here")]
 		protected override IAsyncResult OnBeginOpen (TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			return base.OnBeginOpen (timeout, callback, state);
 		}
 
+		[MonoTODO ("find out what to do here")]
 		protected override void OnEndOpen (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			base.OnEndOpen (result);
 		}
 
 		class HttpChannelRequestAsyncResult : IAsyncResult
