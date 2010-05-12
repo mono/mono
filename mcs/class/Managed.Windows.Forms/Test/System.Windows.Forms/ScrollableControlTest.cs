@@ -312,6 +312,37 @@ namespace MonoTests.System.Windows.Forms
 			f.Close ();
 			f.Dispose ();
 		}
+
+		// Even if padding is not directly affecting the layout, it can
+		// cause the ScrollableControl instance to show the scrollbars
+		// *after* the first access to DockPadding
+		[Test]
+		public void DockPaddingScroll ()
+		{
+			ScrollableControl scrollable = new ScrollableControl ();
+			scrollable.Padding = new Padding (10);
+			scrollable.Size = new Size (50, 50);
+			scrollable.AutoScroll = true;
+
+			Control c = new Control ();
+			c.Size = scrollable.Size; // Same size as parent, shouldn' need scrollbars
+			c.Parent = scrollable;
+
+			Form f = new Form ();
+			f.Controls.Add (scrollable);
+
+			f.Show ();
+
+			Assert.AreEqual (false, scrollable.VerticalScroll.Visible, "#A0");
+
+			ScrollableControl.DockPaddingEdges dock_padding = scrollable.DockPadding;
+			Assert.IsTrue (dock_padding != null, "#B0");
+
+			// Refresh the layout, now that is affected by the creation of DockPadding
+			scrollable.PerformLayout ();
+
+			Assert.AreEqual (true, scrollable.VerticalScroll.Visible, "#C0");
+		}
 #endif
 	}
 }
