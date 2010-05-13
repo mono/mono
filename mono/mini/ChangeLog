@@ -1,6 +1,10 @@
 2010-05-13  Zoltan Varga  <vargaz@gmail.com>
 
-	(mono_arch_handle_exception): Fix the cross-compile case.
+	* aot-compiler.c: Put non-code data into the .rodata section on linux.
+
+2010-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-arm.c (mono_arch_handle_exception): Fix the cross-compile case.
 
 2010-05-13  Zoltan Varga  <vargaz@gmail.com>
 
