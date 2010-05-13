@@ -1,3 +1,8 @@
+2010-05-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* icall.c (ves_icall_System_MonoType_getFullName): It
+	doesn't require to init the class.
+
 2010-05-11  Miguel de Icaza  <miguel@novell.com>
 
 	* console-unix.c: Signal handlers now save and restore errno.   We
