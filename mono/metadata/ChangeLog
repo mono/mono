@@ -1,3 +1,8 @@
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* reflection.c (mono_image_build_metadata): Don't put managed
+	references on non-tracked memory.
+
 2010-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-archdep.h (ARCH_COPY_SIGCTX_REGS): Fix this for amd64.
