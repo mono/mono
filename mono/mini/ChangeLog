@@ -1,3 +1,7 @@
+2010-05-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* xdebug.c: Fix ARM support.
+
 2010-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c (mono_arch_handle_exception): Resume from the signal handler
