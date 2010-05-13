@@ -1,5 +1,20 @@
 2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_create_from_typedef): Only return
+	the class if no exceptions were detected.
+
+	* class.c (mono_class_create_from_typedef): Don't remove
+	broken classes from class_cache. Just set failure and
+	bail out.
+
+	This fixes a memory a memory leak where resolving the same
+	broken class multiple times resulted in a memory leak.
+
+	The right behavior would be to actually return the class
+	a let the caller figure it out.
+
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* mono-ptr-array.h: Add mono_ptr_array_sort.
 
 	* reflection.c (mono_image_build_metadata): Replace that ugly
