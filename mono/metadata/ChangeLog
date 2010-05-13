@@ -1,5 +1,10 @@
 2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* loader.c (mono_loader_set_error_type_load): Convert
+	a g_warninig to mono_trace_warning.
+
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_get_full): Release strings on failure
 	to avoid leaking them.
 
