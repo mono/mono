@@ -1,5 +1,12 @@
 2010-05-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* icall.c (ves_icall_Type_GetInterfaces): Rewrite this
+	method to avoid initializing the class.
+
+	Fixes #605115.
+
+2010-05-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_System_MonoType_getFullName): It
 	doesn't require to init the class.
 
