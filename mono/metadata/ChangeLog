@@ -1,5 +1,12 @@
 2010-05-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Makefile.am: Add mono-ptr-array.h.
+
+	* mono-ptr-array.h: New header that implements
+	a GC tracked equivalent of g_ptr_array.	
+
+2010-05-12 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_Type_GetInterfaces): Rewrite this
 	method to avoid initializing the class.
 
