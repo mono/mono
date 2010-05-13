@@ -1,3 +1,7 @@
+2010-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* sgen-archdep.h (ARCH_COPY_SIGCTX_REGS): Fix this for amd64.
+
 2010-05-12 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* icall.c: Switch to mono-ptr-array.h.
