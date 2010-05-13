@@ -1,3 +1,8 @@
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* typeload-unaligned.cs: Move the reference to the broken type
+	to an inner function since mono now detects the brokenness earlier.
+
 2010-05-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs: Add a test for nullref exceptions + single threaded invokes.
