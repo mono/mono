@@ -114,7 +114,7 @@ namespace System.Web.Compilation
 			set {
 				if (preStartMethodsDone)
 					throw new InvalidOperationException ("This method cannot be called after the application's pre-start initialization stage.");
-				batchCompilationEnabled = true;
+				batchCompilationEnabled = value;
 			}
 		}
 
