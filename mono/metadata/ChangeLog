@@ -1,3 +1,10 @@
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* mono-ptr-array.h: Add mono_ptr_array_sort.
+
+	* reflection.c (mono_image_build_metadata): Replace that ugly
+	qsort call with mono_ptr_array_sort.
+
 2010-05-13  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Switch to the copying major collector, because
