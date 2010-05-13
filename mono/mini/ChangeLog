@@ -1,3 +1,8 @@
+2010-05-13  Zoltan Varga  <vargaz@gmail.com>
+
+	* exceptions-amd64.c (mono_arch_handle_exception): Resume from the signal handler
+	and do most of the work on the normal stack even if sigaltstack is disabled.
+
 2010-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-amd64.c (mono_arch_sigctx_to_monoctx): Simplify this now that
