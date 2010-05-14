@@ -1,3 +1,9 @@
+2010-05-14  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: ItemSize should include the padding value.
+	Update the retrieval of this info in SizeTab as well.
+	Fixes part of #604034.
+
 2010-05-11  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* ScrollableControl.cs: It seems .Net is creating DockPadding lazyly,

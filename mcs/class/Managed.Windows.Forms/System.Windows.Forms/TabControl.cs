@@ -231,7 +231,13 @@ namespace System.Windows.Forms {
 		[Localizable(true)]
 		public Size ItemSize {
 			get {
-				return item_size;
+				Size size = item_size;
+				if (SizeMode != TabSizeMode.Fixed) {
+					size.Width += padding.X;
+					size.Height += padding.Y;
+				}
+
+				return size;
 			}
 			set {
 				if (value.Height < 0 || value.Width < 0)
@@ -1276,7 +1282,8 @@ namespace System.Windows.Forms {
 				}
 			}
 
-			height = item_size.Height - ThemeEngine.Current.TabControlSelectedDelta.Height; // full height only for selected tab
+			// Use ItemSize property to recover the padding info as well.
+			height = ItemSize.Height - ThemeEngine.Current.TabControlSelectedDelta.Height; // full height only for selected tab
 
 			if (width < MinimumTabWidth)
 				width = MinimumTabWidth;
