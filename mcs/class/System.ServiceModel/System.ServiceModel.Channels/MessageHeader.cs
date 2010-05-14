@@ -123,7 +123,7 @@ namespace System.ServiceModel.Channels
 		{
 			var dic = Constants.SoapDictionary;
 			XmlDictionaryString name, ns;
-			var prefix = writer.LookupPrefix (Namespace);
+			var prefix = Namespace.Length > 0 ? writer.LookupPrefix (Namespace) : String.Empty;
 			if (dic.TryLookup (Name, out name) && dic.TryLookup (Namespace, out ns))
 				writer.WriteStartElement (prefix, name, ns);
 			else
