@@ -1,3 +1,9 @@
+2010-05-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* WebHeaderCollection_2_1.cs: Hide the internal Dictionary and 
+	provide methods to use it properly.
+	* HttpWebRequest_2_1.cs: Use internal Clear method
+
 2010-04-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* HttpWebResponse_2_1.cs: Method, StatusCode and StatusDescription

@@ -39,7 +39,7 @@ namespace System.Net {
 
 	public sealed class WebHeaderCollection : IEnumerable {
 
-		internal Dictionary<string, string> headers;
+		Dictionary<string, string> headers;
 		bool validate;
 
 		public WebHeaderCollection ()
@@ -105,6 +105,16 @@ namespace System.Net {
 				headers.Remove (header);
 			else
 				headers [header] = value;
+		}
+
+		internal void Clear ()
+		{
+			headers.Clear ();
+		}
+
+		internal bool ContainsKey (string key)
+		{
+			return headers.ContainsKey (key);
 		}
 
 		IEnumerator IEnumerable.GetEnumerator ()

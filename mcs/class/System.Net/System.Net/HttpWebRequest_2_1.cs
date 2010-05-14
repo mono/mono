@@ -92,7 +92,7 @@ namespace System.Net {
 					WebHeaderCollection.ValidateHeader (header);
 				}
 				// ... before making those values our own
-				Headers.headers.Clear ();
+				Headers.Clear ();
 				foreach (string header in keys) {
 					headers [header] = value [header];
 				}
