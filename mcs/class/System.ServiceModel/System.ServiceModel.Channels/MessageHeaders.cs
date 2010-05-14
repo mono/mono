@@ -37,8 +37,6 @@ namespace System.ServiceModel.Channels
 {
 	public sealed class MessageHeaders : IEnumerable<MessageHeaderInfo>, IEnumerable
 	{
-		static string [] empty_strings = new string [0];
-
 		static readonly XmlReaderSettings reader_settings;
 
 		static MessageHeaders ()
@@ -180,7 +178,7 @@ namespace System.ServiceModel.Channels
 
 		public T GetHeader<T> (string name, string ns)
 		{
-			return GetHeader<T> (name, ns, empty_strings);
+			return GetHeader<T> (name, ns, (string []) null);
 		}
 
 		public T GetHeader<T> (string name, string ns, params string [] actors)
@@ -188,7 +186,7 @@ namespace System.ServiceModel.Channels
 			int idx = FindHeader (name, ns, actors);
 
 			if (idx == -1)
-				throw new MessageHeaderException (String.Format ("Header '{0}:{1}' was not found for the argument actors: {2}", ns, name, String.Join (",", actors)));
+				throw new MessageHeaderException (String.Format ("Header '{0}:{1}' was not found for the argument actors: {2}", ns, name, actors == null ? "(null)" : String.Join (",", actors)));
 
 			return GetHeader<T> (idx);
 		}

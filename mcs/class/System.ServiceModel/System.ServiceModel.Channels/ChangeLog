@@ -1,5 +1,10 @@
 2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageHeaders.cs : do not pass empty string array; it almost
+	  always results in header-not-found error.
+
+2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* MessageHeader.cs : do not try to lookup prefix for empty ns.
 
 2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
