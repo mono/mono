@@ -1,5 +1,12 @@
 2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_create_from_typedef): Fail a class
+	if there is a loop with its parent.
+
+	Fixes #598239.
+
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_get_full): Release strings on failure
 	to avoid leaking them.
 
