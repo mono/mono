@@ -1,5 +1,10 @@
 2010-05-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c aot-compiler.c: Implement support for generalized imt thunks on
+	arm.
+
+2010-05-14  Zoltan Varga  <vargaz@gmail.com>
+
 	* xdebug.c: Fix ARM support.
 
 2010-05-13  Zoltan Varga  <vargaz@gmail.com>
