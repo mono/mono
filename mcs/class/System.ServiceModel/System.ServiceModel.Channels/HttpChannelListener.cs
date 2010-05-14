@@ -103,7 +103,6 @@ namespace System.ServiceModel.Channels
 		where TChannel : class, IChannel
 	{
 		List<TChannel> channels = new List<TChannel> ();
-		MessageEncoder encoder;
 		HttpListenerManager httpChannelManager;
 
 		internal static HttpChannelListenerBase<TChannel>CurrentHttpChannelListener;
@@ -124,12 +123,12 @@ namespace System.ServiceModel.Channels
 			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
-					encoder = CreateEncoder<TChannel> (mbe);
+					MessageEncoder = CreateEncoder<TChannel> (mbe);
 					break;
 				}
 			}
-			if (encoder == null)
-				encoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
+			if (MessageEncoder == null)
+				MessageEncoder = new TextMessageEncoder (MessageVersion.Default, Encoding.UTF8);
 
 			if (context.BindingParameters.Contains (typeof (ServiceCredentials)))
 				SecurityTokenManager = new ServiceCredentialsSecurityTokenManager ((ServiceCredentials) context.BindingParameters [typeof (ServiceCredentials)]);
@@ -141,10 +140,6 @@ namespace System.ServiceModel.Channels
 
 		public HttpListenerManager ListenerManager {
 			get {  return httpChannelManager; }
-		}
-
-		public MessageEncoder MessageEncoder {
-			get { return encoder; }
 		}
 
 		public ServiceCredentialsSecurityTokenManager SecurityTokenManager { get; private set; }

@@ -70,6 +70,8 @@ namespace System.ServiceModel.Channels
 
 		public override T GetProperty<T> ()
 		{
+			if (typeof (T) == typeof (MessageVersion) && listener is IHasMessageEncoder)
+				return (T) (object) ((IHasMessageEncoder) listener).MessageEncoder.MessageVersion;
 			if (typeof (T) == typeof (IChannelListener))
 				return (T) (object) listener;
 			return base.GetProperty<T> ();

@@ -44,7 +44,6 @@ namespace System.ServiceModel.Channels
 		PeerTransportBindingElement source;
 		BindingContext context;
 		TChannel channel;
-		MessageEncoder encoder;
 		AutoResetEvent accept_handle = new AutoResetEvent (false);
 
 		public PeerChannelListener (PeerTransportBindingElement source,
@@ -55,22 +54,18 @@ namespace System.ServiceModel.Channels
 			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
-					encoder = CreateEncoder<TChannel> (mbe);
+					MessageEncoder = CreateEncoder<TChannel> (mbe);
 					break;
 				}
 			}
-			if (encoder == null)
-				encoder = new BinaryMessageEncoder ();
+			if (MessageEncoder == null)
+				MessageEncoder = new BinaryMessageEncoder ();
 		}
 
 		public PeerResolver Resolver { get; set; }
 
 		public PeerTransportBindingElement Source {
 			get { return source; }
-		}
-
-		public MessageEncoder MessageEncoder {
-			get { return encoder; }
 		}
 
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)

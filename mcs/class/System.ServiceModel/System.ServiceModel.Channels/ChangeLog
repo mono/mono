@@ -1,5 +1,17 @@
 2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DuplexChannelBase.cs
+	  ReplyChannelBase.cs
+	  TcpChannelListener.cs
+	  ChannelListenerBase_1.cs
+	  PeerChannelListener.cs
+	  HttpChannelListener.cs
+	  NamedPipeChannelListener.cs:
+	  do the same for channel listener,reply channels and
+	  duplex channels.
+
+2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelFactoryBase.cs, RequestChannelBase.cs : support
 	  MessageVersion in GetProperty<T>() for many transport channels.
 

@@ -52,6 +52,8 @@ namespace System.ServiceModel.Channels
 		Func<TimeSpan,bool> wait_delegate;
 		Action<TimeSpan> open_delegate, close_delegate;
 
+		public MessageEncoder MessageEncoder { get; internal set; }
+
 		public override Uri Uri {
 			get { return listen_uri; }
 		}

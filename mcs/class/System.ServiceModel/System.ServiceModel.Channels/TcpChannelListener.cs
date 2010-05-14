@@ -29,22 +29,21 @@ namespace System.ServiceModel.Channels
 		public TcpChannelListener (TcpTransportBindingElement source, BindingContext context)
 			: base (context)
 		{
-			MessageEncoder encoder = null;
 			XmlDictionaryReaderQuotas quotas = null;
 
 			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
-					encoder = CreateEncoder<TChannel> (mbe);
+					MessageEncoder = CreateEncoder<TChannel> (mbe);
 					quotas = mbe.GetProperty<XmlDictionaryReaderQuotas> (context);
 					break;
 				}
 			}
 			
-			if (encoder == null)
-				encoder = new BinaryMessageEncoder ();
+			if (MessageEncoder == null)
+				MessageEncoder = new BinaryMessageEncoder ();
 
-			info = new TcpChannelInfo (source, encoder, quotas);
+			info = new TcpChannelInfo (source, MessageEncoder, quotas);
 		}
 		
 		List<ManualResetEvent> accept_handles = new List<ManualResetEvent> ();

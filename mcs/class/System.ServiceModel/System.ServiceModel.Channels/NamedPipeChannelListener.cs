@@ -43,7 +43,6 @@ namespace System.ServiceModel.Channels
 		where TChannel : class, IChannel
 	{
 		NamedPipeTransportBindingElement source;
-		MessageEncoder encoder = null;
 		XmlDictionaryReaderQuotas quotas = null;
 		BindingContext context;
 		
@@ -53,14 +52,14 @@ namespace System.ServiceModel.Channels
 			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
-					encoder = CreateEncoder<TChannel> (mbe);
+					MessageEncoder = CreateEncoder<TChannel> (mbe);
 					quotas = mbe.GetProperty<XmlDictionaryReaderQuotas> (context);
 					break;
 				}
 			}
 			
-			if (encoder == null)
-				encoder = new BinaryMessageEncoder ();
+			if (MessageEncoder == null)
+				MessageEncoder = new BinaryMessageEncoder ();
 		}
 
 		NamedPipeServerStream active_server;
@@ -100,7 +99,7 @@ Console.WriteLine ("NamedPipeChannelListener.OnAcceptChannel.3");
 			if (typeof (TChannel) == typeof (IDuplexSessionChannel))
 				throw new NotImplementedException ();
 			else if (typeof (TChannel) == typeof (IReplyChannel))
-				ch = (TChannel) (object) new NamedPipeReplyChannel (this, encoder, server);
+				ch = (TChannel) (object) new NamedPipeReplyChannel (this, MessageEncoder, server);
 			else
 				throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
 
