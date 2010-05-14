@@ -43,6 +43,8 @@ namespace System.ServiceModel.Channels
 
 		public TransportBindingElement Transport { get; private set; }
 
+		public MessageEncoder MessageEncoder { get; internal set; }
+
 		Action<TimeSpan> open_delegate;
 
 		protected override IAsyncResult OnBeginOpen (TimeSpan timeout,
@@ -63,6 +65,15 @@ namespace System.ServiceModel.Channels
 		protected override void OnOpen (TimeSpan timeout)
 		{
 		}
+
+		/* commented out as it is in doubt.
+		public override T GetProperty<T> ()
+		{
+			if (typeof (T) == typeof (MessageVersion))
+				return (T) (object) MessageEncoder.MessageVersion;
+			return base.GetProperty<T> ();
+		}
+		*/
 	}
 
 	public abstract class ChannelFactoryBase<TChannel>

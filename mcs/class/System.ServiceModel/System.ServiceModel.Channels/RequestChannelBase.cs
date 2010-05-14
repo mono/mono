@@ -68,6 +68,7 @@ namespace System.ServiceModel.Channels
 
 		public override T GetProperty<T> ()
 		{
+			Console.Error.WriteLine (typeof (T));
 			if (typeof (T) == typeof (IChannelFactory))
 				return (T) (object) channel_factory;
 			return base.GetProperty<T> ();

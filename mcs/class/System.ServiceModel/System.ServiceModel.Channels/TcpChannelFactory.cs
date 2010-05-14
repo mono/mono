@@ -42,19 +42,18 @@ namespace System.ServiceModel.Channels
 		public TcpChannelFactory (TcpTransportBindingElement source, BindingContext ctx)
 			: base (source, ctx)
 		{
-			MessageEncoder encoder = null;
 			XmlDictionaryReaderQuotas quotas = null;
 			foreach (BindingElement be in ctx.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
-					encoder = CreateEncoder<TChannel> (mbe);
+					MessageEncoder = CreateEncoder<TChannel> (mbe);
 					quotas = mbe.GetProperty<XmlDictionaryReaderQuotas> (ctx);
 					break;
 				}
 			}
-			if (encoder == null)
-				encoder = new BinaryMessageEncoder ();
-			info = new TcpChannelInfo (source, encoder, quotas);
+			if (MessageEncoder == null)
+				MessageEncoder = new BinaryMessageEncoder ();
+			info = new TcpChannelInfo (source, MessageEncoder, quotas);
 		}
 
 		protected override TChannel OnCreateChannel (

@@ -40,7 +40,6 @@ namespace System.ServiceModel.Channels
 	internal class NamedPipeChannelFactory<TChannel> : TransportChannelFactoryBase<TChannel>
 	{
 		NamedPipeTransportBindingElement source;
-		MessageEncoder encoder;
 		XmlDictionaryReaderQuotas quotas;
 
 		public NamedPipeChannelFactory (NamedPipeTransportBindingElement source, BindingContext ctx)
@@ -49,13 +48,13 @@ namespace System.ServiceModel.Channels
 			foreach (BindingElement be in ctx.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
-					encoder = CreateEncoder<TChannel> (mbe);
+					MessageEncoder = CreateEncoder<TChannel> (mbe);
 					quotas = mbe.GetProperty<XmlDictionaryReaderQuotas> (ctx);
 					break;
 				}
 			}
-			if (encoder == null)
-				encoder = new BinaryMessageEncoder ();
+			if (MessageEncoder == null)
+				MessageEncoder = new BinaryMessageEncoder ();
 
 			this.source = source;
 		}
@@ -76,7 +75,7 @@ namespace System.ServiceModel.Channels
 //				return (TChannel) (object) new NamedPipeDuplexSessionChannel (this, address, via);
 
 			if (typeof (TChannel) == typeof (IRequestChannel))
-				return (TChannel) (object) new NamedPipeRequestChannel (this, encoder, address, targetUri);
+				return (TChannel) (object) new NamedPipeRequestChannel (this, MessageEncoder, address, targetUri);
 
 			throw new InvalidOperationException (String.Format ("Channel type {0} is not supported.", typeof (TChannel).Name));
 		}

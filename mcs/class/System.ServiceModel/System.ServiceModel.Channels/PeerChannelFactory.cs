@@ -46,8 +46,7 @@ namespace System.ServiceModel.Channels
 	internal class PeerChannelFactory<TChannel> : TransportChannelFactoryBase<TChannel>, IPeerChannelManager
 	{
 		PeerTransportBindingElement source;
-		MessageEncoder encoder;
-
+		
 		public PeerChannelFactory (PeerTransportBindingElement source, BindingContext ctx)
 			: base (source, ctx)
 		{
@@ -55,22 +54,18 @@ namespace System.ServiceModel.Channels
 			foreach (BindingElement be in ctx.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
-					encoder = CreateEncoder<TChannel> (mbe);
+					MessageEncoder = CreateEncoder<TChannel> (mbe);
 					break;
 				}
 			}
-			if (encoder == null)
-				encoder = new BinaryMessageEncoder ();
+			if (MessageEncoder == null)
+				MessageEncoder = new BinaryMessageEncoder ();
 		}
 
 		public PeerResolver Resolver { get; set; }
 
 		public PeerTransportBindingElement Source {
 			get { return source; }
-		}
-
-		public MessageEncoder MessageEncoder {
-			get { return encoder; }
 		}
 
 		protected override TChannel OnCreateChannel (
