@@ -1,5 +1,10 @@
 2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelFactoryBase.cs, RequestChannelBase.cs : support
+	  MessageVersion in GetProperty<T>() for many transport channels.
+
+2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpChannelFactory.cs
 	  TcpChannelFactory.cs
 	  ChannelFactoryBase.cs

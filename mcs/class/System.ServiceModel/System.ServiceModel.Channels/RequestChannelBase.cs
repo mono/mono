@@ -68,7 +68,8 @@ namespace System.ServiceModel.Channels
 
 		public override T GetProperty<T> ()
 		{
-			Console.Error.WriteLine (typeof (T));
+			if (typeof (T) == typeof (MessageVersion) && channel_factory is IHasMessageEncoder)
+				return (T) (object) ((IHasMessageEncoder) channel_factory).MessageEncoder.MessageVersion;
 			if (typeof (T) == typeof (IChannelFactory))
 				return (T) (object) channel_factory;
 			return base.GetProperty<T> ();

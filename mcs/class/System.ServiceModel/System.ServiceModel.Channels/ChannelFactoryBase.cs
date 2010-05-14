@@ -34,7 +34,12 @@ using System.ServiceModel.Dispatcher;
 
 namespace System.ServiceModel.Channels
 {
-	internal abstract class TransportChannelFactoryBase<TChannel> : ChannelFactoryBase<TChannel>
+	internal interface IHasMessageEncoder
+	{
+		MessageEncoder MessageEncoder { get; }
+	}
+
+	internal abstract class TransportChannelFactoryBase<TChannel> : ChannelFactoryBase<TChannel>, IHasMessageEncoder
 	{
 		protected TransportChannelFactoryBase (TransportBindingElement source, BindingContext ctx)
 		{
