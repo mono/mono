@@ -1,3 +1,8 @@
+2010-05-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* FlashCrossDomainPolicy.cs: Reverse conditions order on secure=true
+	since we're currently too severe. Fix DRT668
+
 2010-04-13  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CrossDomainPolicyManager.cs: Fix previous change since it 

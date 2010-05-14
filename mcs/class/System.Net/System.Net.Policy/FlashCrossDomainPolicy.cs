@@ -105,9 +105,9 @@ namespace System.Net.Policy {
 				// if Secure is false then it allows applications from HTTP to download data from HTTPS servers
 				if (!Secure)
 					return true;
-				// if Secure is true then only application on HTTPS servers can access data on HTTPS servers
-				if (ApplicationUri.Scheme == Uri.UriSchemeHttps)
-					return (uri.Scheme == Uri.UriSchemeHttps);
+				// if Secure is true then data on HTTPS servers can only be accessed by application on HTTPS servers
+				if (uri.Scheme == Uri.UriSchemeHttps)
+					return (ApplicationUri.Scheme == Uri.UriSchemeHttps);
 				// otherwise FILE/HTTP applications can access HTTP uris
 				return true;
 			}
