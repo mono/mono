@@ -1,5 +1,10 @@
 2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MessageImpl.cs : do not use maxBufferSize for initialSize argument
+	  for MessageHeaders. Fix OutOfMemoryException for certain usage.
+
+2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* BindingContext.cs : actually clone is needed everywhere else too.
 	* CustomBinding.cs : remove extra field.
 

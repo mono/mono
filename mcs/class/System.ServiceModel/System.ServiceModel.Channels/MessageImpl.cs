@@ -138,7 +138,7 @@ namespace System.ServiceModel.Channels
 
 			string envNS = Version.Envelope.Namespace;
 
-			headers = new MessageHeaders (version, max_headers);
+			headers = new MessageHeaders (version);
 			if (reader.LocalName != "Header" || reader.NamespaceURI != envNS)
 				return;
 
@@ -148,9 +148,13 @@ namespace System.ServiceModel.Channels
 			if (isEmptyHeader)
 				return;
 
+			int nHeaders = 0;
 			while (!reader.EOF && reader.NodeType != XmlNodeType.EndElement) {
-				if (reader.NodeType == XmlNodeType.Element)
+				if (reader.NodeType == XmlNodeType.Element) {
+					if (nHeaders++ == max_headers)
+						throw new InvalidOperationException (String.Format ("Message header size has exceeded the maximum header size {0}", max_headers));
 					headers.Add (new MessageHeader.RawMessageHeader (reader, envNS));
+				}
 				else
 					reader.Skip ();
 				// FIXME: handle UnderstoodHeaders as well.
