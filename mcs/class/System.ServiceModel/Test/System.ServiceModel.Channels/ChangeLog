@@ -1,3 +1,8 @@
+2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BindingContextTest.cs : add a couple of tests with related to
+	  RemainingBindingElements use. Some tests by Andreia Gaita.
+
 2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomBindingTest.cs : enable BuildChannelListener test for no-

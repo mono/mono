@@ -80,7 +80,7 @@ namespace System.ServiceModel.Channels
 			string listenUriRelativeAddress,
 			ListenUriMode listenUriMode)
 		{
-			this.binding = binding;
+			this.binding = new CustomBinding (binding);
 			parameters = new BindingParameterCollection ();
 			foreach (var item in parms)
 				parameters.Add (item);
@@ -145,7 +145,8 @@ namespace System.ServiceModel.Channels
 		public IChannelFactory<TChannel>
 			BuildInnerChannelFactory<TChannel> ()
 		{
-			return DequeueBindingElement ().BuildChannelFactory<TChannel> (this);
+			BindingContext ctx = this.Clone ();
+			return ctx.DequeueBindingElement ().BuildChannelFactory<TChannel> (ctx);
 		}
 
 #if !NET_2_1
@@ -153,10 +154,11 @@ namespace System.ServiceModel.Channels
 			BuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
 		{
-			var be = DequeueBindingElement (false);
+			BindingContext ctx = this.Clone ();
+			var be = ctx.DequeueBindingElement (false);
 			if (be == null)
 				throw new InvalidOperationException ("There is likely no TransportBindingElement that can build a channel listener in this binding context");
-			return be.BuildChannelListener<TChannel> (this);
+			return be.BuildChannelListener<TChannel> (ctx);
 		}
 #endif
 
@@ -170,17 +172,19 @@ namespace System.ServiceModel.Channels
 		public bool CanBuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
 		{
-			var be = DequeueBindingElement (false);
+			BindingContext ctx = this.Clone ();
+			var be = ctx.DequeueBindingElement (false);
 			if (be == null)
 				throw new InvalidOperationException ("There is likely no TransportBindingElement that can build a channel listener in this binding context");
-			return be.CanBuildChannelListener<TChannel> (this);
+			return be.CanBuildChannelListener<TChannel> (ctx);
 		}
 #endif
 
 		public T GetInnerProperty<T> () where T : class
 		{
-			BindingElement e = DequeueBindingElement (false);
-			return e == null ? default (T) : e.GetProperty<T> (this);
+			BindingContext ctx = this.Clone ();
+			BindingElement e = ctx.DequeueBindingElement (false);
+			return e == null ? default (T) : e.GetProperty<T> (ctx);
 		}
 
 		public BindingContext Clone ()

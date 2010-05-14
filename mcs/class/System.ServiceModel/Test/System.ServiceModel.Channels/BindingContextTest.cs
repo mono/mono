@@ -120,5 +120,101 @@ namespace MonoTests.System.ServiceModel.Channels
 			ctx = new BindingContext (binding, pl);
 			Assert.IsNull (ctx.GetInnerProperty<ClientCredentials> ());
 		}
+
+		[Test]
+		public void RemainingBindingElements ()
+		{
+			var b = new CustomBinding (
+				new BinaryMessageEncodingBindingElement (),
+				new InterceptorBindingElement2 (),
+				new HttpTransportBindingElement ());
+			Assert.AreEqual (3, new BindingContext (b, new BindingParameterCollection ()).RemainingBindingElements.Count, "#1");
+			Assert.IsTrue (b.CanBuildChannelFactory<IRequestChannel> (), "#2");
+			
+		}
+		
+		[Test]
+		public void RemainingBindingElements2 ()
+		{
+			var b = new CustomBinding (
+				new BindingElement2 (),
+				new InterceptorBindingElement3 (),
+				new BindingElement3 ());
+
+			Assert.AreEqual (3, new BindingContext (b, new BindingParameterCollection ()).RemainingBindingElements.Count, "New BindingContext element count");
+			Assert.IsTrue (b.CanBuildChannelFactory<IRequestChannel> (), "supports IRequestChannel?");
+		}
+
+		public class InterceptorBindingElement2 : BindingElement
+		{
+			public override bool CanBuildChannelFactory<TChannel> (BindingContext bc)
+			{
+				Assert.AreEqual (1, bc.Clone ().RemainingBindingElements.Count, "#i1");
+				Assert.IsNull (bc.GetInnerProperty<MessageEncodingBindingElement> (), "#i2");
+				Assert.IsNull (bc.GetInnerProperty<MessageEncoder> (), "#i3");
+				Assert.IsNull (bc.GetInnerProperty<MessageEncoderFactory> (), "#i4");
+				Assert.AreEqual (1, bc.RemainingBindingElements.Count, "#i5");
+				Assert.IsTrue (bc.RemainingBindingElements [0] is HttpTransportBindingElement, "#i6");
+				Assert.AreEqual (3, bc.Binding.CreateBindingElements ().Count, "#i7");
+				return base.CanBuildChannelFactory<TChannel> (bc);
+			}
+
+			public override BindingElement Clone ()
+			{
+				return new InterceptorBindingElement2 ();
+			}
+
+			public override T GetProperty<T> (BindingContext bc)
+			{
+				return null;
+			}
+		}
+
+		public class InterceptorBindingElement3 : BindingElement {
+			public override bool CanBuildChannelFactory<TChannel> (BindingContext bc) {
+				if (this is BindingElement2) {
+					Assert.AreEqual (2, bc.Clone ().RemainingBindingElements.Count, "1- Cloned context element count");
+					Assert.AreEqual (3, bc.Binding.CreateBindingElements ().Count, "1- Original binding element count");
+					Assert.IsTrue (bc.RemainingBindingElements [0] is InterceptorBindingElement3, "1- binding element 1 type");
+					Assert.IsTrue (bc.RemainingBindingElements [1] is BindingElement3, "1- binding element 2 type");
+				} else {
+					Assert.AreEqual (1, bc.Clone ().RemainingBindingElements.Count, "2- Cloned context element count");
+					Assert.AreEqual (3, bc.Binding.CreateBindingElements ().Count, "2- Original binding element count");
+					Assert.IsTrue (bc.RemainingBindingElements [0] is BindingElement3, "2- binding element 1 type");
+				}
+				return base.CanBuildChannelFactory<TChannel> (bc);
+			}
+			public override BindingElement Clone () {
+				return new InterceptorBindingElement3 ();
+			}
+
+			public override T GetProperty<T> (BindingContext bc) {
+				return null;
+			}
+		}
+
+		public class BindingElement2 : InterceptorBindingElement3 {
+
+			public override BindingElement Clone () {
+				return new BindingElement2 ();
+			}
+			public override bool CanBuildChannelFactory<TChannel> (BindingContext bc) {
+				return base.CanBuildChannelFactory<TChannel> (bc);
+			}
+
+		}
+
+		public class BindingElement3 : HttpTransportBindingElement {
+
+			public override BindingElement Clone () {
+				return new BindingElement3 ();
+			}
+			public override bool CanBuildChannelFactory<TChannel> (BindingContext bc) {
+				return base.CanBuildChannelFactory<TChannel> (bc);
+			}
+
+		}
+
 	}
 }
+

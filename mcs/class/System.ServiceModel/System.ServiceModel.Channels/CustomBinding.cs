@@ -40,7 +40,6 @@ namespace System.ServiceModel.Channels
 		const string default_ns = "http://tempuri.org";
 
 		BindingElementCollection elements;
-		Binding binding;
 		ISecurityCapabilities security;
 		string scheme = "";
 
@@ -61,7 +60,6 @@ namespace System.ServiceModel.Channels
 			: this (binding.CreateBindingElements (),
 				binding.Name, binding.Namespace)
 		{
-			this.binding = binding;
 			OpenTimeout = binding.OpenTimeout;
 			CloseTimeout = binding.CloseTimeout;
 			SendTimeout = binding.SendTimeout;
