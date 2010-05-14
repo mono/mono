@@ -1,3 +1,7 @@
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MonoAssembly.cs: Fix a 2.0 corlib test failure.
+
 2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Binder.cs (SelectMethod): Exact matching must check

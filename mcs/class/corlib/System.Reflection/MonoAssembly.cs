@@ -30,6 +30,7 @@ using System;
 using System.Collections;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Reflection.Emit;
 
 
 namespace System.Reflection {
@@ -49,12 +50,21 @@ namespace System.Reflection {
 #endif
 		Type GetType (string name, bool throwOnError, bool ignoreCase)
 		{
+			Type res;
 			if (name == null)
 				throw new ArgumentNullException (name);
 			if (name.Length == 0)
 			throw new ArgumentException ("name", "Name cannot be empty");
 
-			return InternalGetType (null, name, throwOnError, ignoreCase);
+			res = InternalGetType (null, name, throwOnError, ignoreCase);
+#if !NET_4_0
+			if (res is TypeBuilder) {
+				if (throwOnError)
+					throw new TypeLoadException (string.Format ("Could not load type '{0}' from assembly '{1}'", name, this));
+				return null;
+			}
+#endif
+			return res;
 		}
 
 		public
