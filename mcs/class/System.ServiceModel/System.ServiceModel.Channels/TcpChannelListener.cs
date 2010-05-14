@@ -32,7 +32,7 @@ namespace System.ServiceModel.Channels
 			MessageEncoder encoder = null;
 			XmlDictionaryReaderQuotas quotas = null;
 
-			foreach (BindingElement be in context.RemainingBindingElements) {
+			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);

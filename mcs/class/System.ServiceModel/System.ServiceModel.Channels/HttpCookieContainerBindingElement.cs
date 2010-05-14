@@ -25,7 +25,7 @@ namespace System.ServiceModel.Channels
 		{
 			if (context == null)
 				throw new ArgumentNullException ("context");
-			context.RemainingBindingElements.Add (this);
+			//context.RemainingBindingElements.Add (this);
 			return base.BuildChannelFactory<TChannel> (context);
 		}
 

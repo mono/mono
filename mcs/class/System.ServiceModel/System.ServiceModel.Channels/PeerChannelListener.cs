@@ -52,7 +52,7 @@ namespace System.ServiceModel.Channels
 			: base (context)
 		{
 			this.source = source;
-			foreach (BindingElement be in context.RemainingBindingElements) {
+			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);

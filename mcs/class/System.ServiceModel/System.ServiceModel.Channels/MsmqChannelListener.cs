@@ -56,7 +56,7 @@ namespace System.ServiceModel.Channels
 				// FIXME: consider ListenUriMode.Unique
 				throw new NotImplementedException ();
 
-			foreach (BindingElement be in context.RemainingBindingElements) {
+			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);

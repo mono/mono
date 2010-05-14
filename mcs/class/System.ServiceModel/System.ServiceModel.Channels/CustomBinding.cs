@@ -110,7 +110,7 @@ namespace System.ServiceModel.Channels
 
 		public override BindingElementCollection CreateBindingElements ()
 		{
-			return elements;
+			return elements.Clone ();
 		}
 	}
 }

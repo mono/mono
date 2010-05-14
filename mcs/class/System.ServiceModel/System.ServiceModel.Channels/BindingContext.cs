@@ -35,27 +35,29 @@ namespace System.ServiceModel.Channels
 {
 	public class BindingContext
 	{
-		static BindingElementCollection empty_collection =
-			new BindingElementCollection ();
-
 		CustomBinding binding;
 		BindingParameterCollection parameters;
-		BindingElementCollection elements = empty_collection;
-		BindingElementCollection remaining_elements;
 		Uri listen_uri_base;
 		string listen_uri_relative;
 		ListenUriMode listen_uri_mode;
 
+		BindingElementCollection elements; // for internal use
+
 		public BindingContext (CustomBinding binding,
-			BindingParameterCollection parameters)
+			BindingParameterCollection parms)
 		{
 			if (binding == null)
 				throw new ArgumentNullException ("binding");
-			if (parameters == null)
-				throw new ArgumentNullException ("parameters");
+			if (parms == null)
+				throw new ArgumentNullException ("parms");
 
 			this.binding = binding;
-			this.parameters = parameters;
+			parameters = new BindingParameterCollection ();
+			foreach (var item in parms)
+				parameters.Add (item);
+			this.elements = new BindingElementCollection ();
+			foreach (var item in binding.Elements)
+				this.elements.Add (item);
 		}
 
 		public BindingContext (CustomBinding binding,
@@ -70,14 +72,26 @@ namespace System.ServiceModel.Channels
 			listen_uri_mode = listenUriMode;
 		}
 
-		// copy .ctor().
-		private BindingContext (BindingContext other)
+		// deep clone .ctor().
+		BindingContext (CustomBinding binding,
+			BindingParameterCollection parms,
+			BindingElementCollection elems,
+			Uri listenUriBaseAddress,
+			string listenUriRelativeAddress,
+			ListenUriMode listenUriMode)
 		{
-			binding = other.binding;
-			parameters = other.parameters;
-			elements = other.elements == empty_collection ?
-				empty_collection : other.elements.Clone ();
+			this.binding = binding;
+			parameters = new BindingParameterCollection ();
+			foreach (var item in parms)
+				parameters.Add (item);
+			this.elements = new BindingElementCollection ();
+			foreach (var item in elems)
+				this.elements.Add (item);
+			listen_uri_base = listenUriBaseAddress;
+			listen_uri_relative = listenUriRelativeAddress;
+			listen_uri_mode = listenUriMode;
 		}
+
 
 		public CustomBinding Binding {
 			get { return binding; }
@@ -104,9 +118,9 @@ namespace System.ServiceModel.Channels
 
 		public BindingElementCollection RemainingBindingElements {
 			get {
-				if (remaining_elements == null)
-					remaining_elements = new BindingElementCollection ();
-				return remaining_elements;
+				if (elements == null)
+					elements = binding.CreateBindingElements ();
+				return elements;
 			}
 		}
 
@@ -117,35 +131,21 @@ namespace System.ServiceModel.Channels
 
 		BindingElement DequeueBindingElement (bool raiseError)
 		{
-			if (elements.Count == 0) {
+			if (RemainingBindingElements.Count == 0) {
 				if (raiseError)
 					throw new InvalidOperationException ("There is no more available binding element.");
 				else
 					return null;
 			}
-			BindingElement el = elements [0];
-			elements.RemoveAt (0);
+			BindingElement el = RemainingBindingElements [0];
+			RemainingBindingElements.RemoveAt (0);
 			return el;
-		}
-
-		private bool PrepareElements ()
-		{
-			if (elements != empty_collection)
-				return false;
-			elements = binding.CreateBindingElements ();
-			return true;
 		}
 
 		public IChannelFactory<TChannel>
 			BuildInnerChannelFactory<TChannel> ()
 		{
-			bool restore = PrepareElements ();
-			try {
-				return DequeueBindingElement ().BuildChannelFactory<TChannel> (this);
-			} finally {
-				if (restore)
-					elements = empty_collection;
-			}
+			return DequeueBindingElement ().BuildChannelFactory<TChannel> (this);
 		}
 
 #if !NET_2_1
@@ -153,63 +153,39 @@ namespace System.ServiceModel.Channels
 			BuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
 		{
-			bool restore = PrepareElements ();
-			try {
-				var be = DequeueBindingElement (false);
-				if (be == null)
-					throw new InvalidOperationException ("There is likely no TransportBindingElement that can build a channel listener in this binding context");
-				return be.BuildChannelListener<TChannel> (this);
-			} finally {
-				if (restore)
-					elements = empty_collection;
-			}
+			var be = DequeueBindingElement (false);
+			if (be == null)
+				throw new InvalidOperationException ("There is likely no TransportBindingElement that can build a channel listener in this binding context");
+			return be.BuildChannelListener<TChannel> (this);
 		}
 #endif
 
 		public bool CanBuildInnerChannelFactory<TChannel> ()
 		{
-			bool restore = PrepareElements ();
-			try {
-				return elements.Count > 0 &&
-					DequeueBindingElement ().CanBuildChannelFactory<TChannel> (this);
-			} finally {
-				if (restore)
-					elements = empty_collection;
-			}
+			BindingContext ctx = this.Clone ();
+			return ctx.DequeueBindingElement ().CanBuildChannelFactory<TChannel> (ctx);
 		}
 
 #if !NET_2_1
 		public bool CanBuildInnerChannelListener<TChannel> ()
 			where TChannel : class, IChannel
 		{
-			bool restore = PrepareElements ();
-			try {
-				var be = DequeueBindingElement (false);
-				if (be == null)
-					throw new InvalidOperationException ("There is likely no TransportBindingElement that can build a channel listener in this binding context");
-				return be.CanBuildChannelListener<TChannel> (this);
-			} finally {
-				if (restore)
-					elements = empty_collection;
-			}
+			var be = DequeueBindingElement (false);
+			if (be == null)
+				throw new InvalidOperationException ("There is likely no TransportBindingElement that can build a channel listener in this binding context");
+			return be.CanBuildChannelListener<TChannel> (this);
 		}
 #endif
 
 		public T GetInnerProperty<T> () where T : class
 		{
-			bool restore = PrepareElements ();
-			try {
-				BindingElement e = DequeueBindingElement (false);
-				return e == null ? default (T) : e.GetProperty<T> (this);
-			} finally {
-				if (restore)
-					elements = empty_collection;
-			}
+			BindingElement e = DequeueBindingElement (false);
+			return e == null ? default (T) : e.GetProperty<T> (this);
 		}
 
 		public BindingContext Clone ()
 		{
-			return new BindingContext (this);
+			return new BindingContext (this.binding, this.parameters, this.elements, this.listen_uri_base, this.listen_uri_relative, this.listen_uri_mode);
 		}
 	}
 }

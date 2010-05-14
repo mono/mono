@@ -48,7 +48,7 @@ namespace System.ServiceModel.Channels
 			: base (source, ctx)
 		{
 			ClientCredentials = ctx.BindingParameters.Find<ClientCredentials> ();
-			foreach (BindingElement be in ctx.RemainingBindingElements) {
+			foreach (BindingElement be in ctx.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);

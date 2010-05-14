@@ -1,3 +1,32 @@
+2010-05-14  Andreia Gaita  <avidigal@novell.com>
+
+	* BindingContext.cs: Copy elements from the original binding only when
+	creating it, never when cloning it. This way, CanBuildInnerChannel can
+	work recursively as it should.
+
+2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CustomBinding.cs : return clone collection.
+	* BindingContext.cs :
+	  Simply use RemainingBindingElements in builder methods.
+	  Clone() should be deep copying (as documented).
+	* BinaryMessageEncodingBindingElement.cs
+	  MtomMessageEncodingBindingElement.cs
+	  TextMessageEncodingBindingElement.cs
+	  HttpCookieContainerBindingElement.cs :
+	  do not add itself to RemainingBindingElements.
+	* HttpChannelFactory.cs
+	  HttpChannelListener.cs
+	  TcpChannelFactory.cs
+	  TcpChannelListener.cs
+	  MsmqChannelFactory.cs
+	  MsmqChannelListener.cs
+	  NamedPipeChannelFactory.cs
+	  NamedPipeChannelListener.cs
+	  PeerChannelFactory.cs
+	  PeerChannelListener.cs : do not iterate RemainingBindingElements.
+	  Instead, iterate all binding elements in the CustomBinding.
+
 2010-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpRequestChannel.cs : implement On[Begin|End][Close|Open] methods.

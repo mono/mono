@@ -121,7 +121,7 @@ namespace System.ServiceModel.Channels
 			if (Uri != null && source.Scheme != Uri.Scheme)
 				throw new ArgumentException (String.Format ("Requested listen uri scheme must be {0}, but was {1}.", source.Scheme, Uri.Scheme));
 
-			foreach (BindingElement be in context.RemainingBindingElements) {
+			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);

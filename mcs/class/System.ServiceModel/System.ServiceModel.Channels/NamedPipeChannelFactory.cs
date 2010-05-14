@@ -46,7 +46,7 @@ namespace System.ServiceModel.Channels
 		public NamedPipeChannelFactory (NamedPipeTransportBindingElement source, BindingContext ctx)
 			: base (source, ctx)
 		{
-			foreach (BindingElement be in ctx.RemainingBindingElements) {
+			foreach (BindingElement be in ctx.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);

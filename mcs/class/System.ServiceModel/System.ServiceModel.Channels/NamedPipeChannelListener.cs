@@ -50,7 +50,7 @@ namespace System.ServiceModel.Channels
 		public NamedPipeChannelListener (NamedPipeTransportBindingElement source, BindingContext context)
 			: base (context)
 		{
-			foreach (BindingElement be in context.RemainingBindingElements) {
+			foreach (BindingElement be in context.Binding.Elements) {
 				MessageEncodingBindingElement mbe = be as MessageEncodingBindingElement;
 				if (mbe != null) {
 					encoder = CreateEncoder<TChannel> (mbe);
