@@ -1,3 +1,7 @@
+2010-05-14  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Consts.cs.in: Update FX version for SL4 final version
+
 2010-04-16  Raja R Harinath  <harinath@hurrynot.org>
 
 	* basic-profile-check.cs: Add use of 'var' keyword.

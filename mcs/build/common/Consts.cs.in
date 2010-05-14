@@ -57,10 +57,10 @@ static class Consts
 	public const string FxFileVersion = "3.0.4506.648";
 	public const string VsFileVersion = "6.0.6001.17014";
 #elif NET_2_1
-	// Versions of .NET Framework for Silverlight 3.0
+	// Versions of .NET Framework for Silverlight 4.0
 	public const string FxVersion = "2.0.5.0";
 	public const string VsVersion = "9.0.0.0"; // unused, but needed for compilation
-	public const string FxFileVersion = "3.0.40818.0";
+	public const string FxFileVersion = "4.0.50401.0";
 	public const string VsFileVersion = "9.0.50727.42"; // unused, but needed for compilation
 #elif NET_2_0 || BOOTSTRAP_NET_2_0
 	// Versions of .NET Framework 2.0 RTM
