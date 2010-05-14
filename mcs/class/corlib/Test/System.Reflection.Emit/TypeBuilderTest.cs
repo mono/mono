@@ -10542,8 +10542,14 @@ namespace MonoTests.System.Reflection.Emit
 			tb.CreateType ();
 			ifaces = tb.GetInterfaces ();
 			Assert.AreEqual (2, ifaces.Length, "#3");
-			Assert.AreEqual (typeof (IFaceB), ifaces [0], "#4");
-			Assert.AreEqual (typeof (IFaceA), ifaces [1], "#5");
+			//Interfaces can come in any particular order
+			if (ifaces [0] == typeof (IFaceB)) {
+				Assert.AreEqual (typeof (IFaceB), ifaces [0], "#4");
+				Assert.AreEqual (typeof (IFaceA), ifaces [1], "#5");
+			} else {
+				Assert.AreEqual (typeof (IFaceB), ifaces [1], "#4");
+				Assert.AreEqual (typeof (IFaceA), ifaces [0], "#5");
+			}
 		}
 
 		public interface MB_Iface

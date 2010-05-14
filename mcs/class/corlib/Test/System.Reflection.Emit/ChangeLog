@@ -1,3 +1,8 @@
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeBuilderTest.cs: Fix test not to depend
+	on interface order.
+
 2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Enable a bunch of asserts.
