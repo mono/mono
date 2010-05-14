@@ -1,5 +1,10 @@
 2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* class.c (mono_class_get_full): Release strings on failure
+	to avoid leaking them.
+
+2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* class.c (mono_class_create_from_typedef): Only return
 	the class if no exceptions were detected.
 
