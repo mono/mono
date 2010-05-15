@@ -1,3 +1,7 @@
+2010-05-15  Marek Safar <marek.safar@gmail.com>
+
+	* KeyValuePair.cs: Initialize fields definitely.
+
 2010-03-19  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* CollectionDebuggerView.cs: Change to internal so we can avoid
