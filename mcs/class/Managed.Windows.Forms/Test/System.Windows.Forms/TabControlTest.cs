@@ -108,6 +108,22 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
+		public void ItemSizeTest ()
+		{
+			TabControl tc = new TabControl ();
+			tc.TabPages.Add ("One"); // Need to add a page to force to calc the width
+			tc.CreateControl (); // And create the control as well
+
+			Assert.IsTrue (tc.ItemSize != Size.Empty, "#A0");
+
+			Size item_size = tc.ItemSize;
+			tc.Padding = new Point (tc.Padding.X * 2, tc.Padding.Y * 2);
+
+			Assert.IsTrue (tc.ItemSize.Height > item_size.Height, "#B0");
+			Assert.IsTrue (tc.ItemSize.Width > item_size.Width, "#B1");
+		}
+
+		[Test]
 		public void ClearTabPagesTest ()
 		{
 			// no tab pages
