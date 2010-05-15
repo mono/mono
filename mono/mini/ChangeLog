@@ -1,3 +1,8 @@
+2010-05-14  Geoff Norton  <gnorton@novell.com>
+
+	* exceptions-x86.c: Fix the alignment of this trampoline so we dont get a 
+	misaligned stack on darwin.
+
 2010-05-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-arm.c aot-compiler.c: Implement support for generalized imt thunks on
