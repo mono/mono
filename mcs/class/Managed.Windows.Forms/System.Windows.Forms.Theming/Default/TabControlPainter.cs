@@ -167,7 +167,7 @@ namespace System.Windows.Forms.Theming.Default
 
 		public TabControlPainter ()
 		{
-			defaultItemSize = new Size (42, 21);
+			defaultItemSize = new Size (42, 16);
 			defaultPadding = new Point (6, 3);
 			selectedTabDelta = new Rectangle (2, 2, 4, 3);
 			selectedSpacing = 0;

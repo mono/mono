@@ -1,3 +1,8 @@
+2010-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControlPainter.cs: Reduce the height for our default item size,
+	as we were ignoring the padding before.
+
 2008-10-20  Jonathan Pobst  <monkey@jpobst.com>
 
 	* ToolStripPainter.cs: Don't paint over a set BackgroundImage.
