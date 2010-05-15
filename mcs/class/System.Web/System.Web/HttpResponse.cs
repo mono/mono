@@ -151,7 +151,12 @@ namespace System.Web
 				return version_header;
 			}
 		}
-		
+
+		internal HttpContext Context {
+			get { return context; }
+			set { context = value; }
+		}
+			
 		internal string[] FileDependencies {
 			get {
 				if (fileDependencies == null || fileDependencies.Count == 0)
@@ -537,7 +542,7 @@ namespace System.Web
 		
 		public string ApplyAppPathModifier (string virtualPath)
 		{
-			if (virtualPath == null)
+			if (virtualPath == null || context == null)
 				return null;
 		
 			if (virtualPath.Length == 0)

@@ -1,3 +1,8 @@
+2010-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* Control.cs: implemented 4.0 GetRouteUrl overloads and
+	GetUniqueIDRelativeTo
+
 2010-05-05  Marek Habersack  <mhabersack@novell.com>
 
 	* CollectionBuilder.cs: if a type has more than on indexer, check

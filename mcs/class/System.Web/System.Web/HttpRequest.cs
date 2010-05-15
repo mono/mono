@@ -1517,9 +1517,8 @@ namespace System.Web
 		}
 
 		internal HttpContext Context {
-			get {
-				return context;
-			}
+			get { return context; }
+			set { context = value; }
 		}
 
 		static void ValidateNameValueCollection (string name, NameValueCollection coll)

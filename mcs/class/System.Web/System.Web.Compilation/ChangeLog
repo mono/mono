@@ -1,3 +1,9 @@
+2010-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* RouteValueExpressionBuilder.cs: added
+
+	* RouteUrlExpressionBuilder.cs: implemented
+
 2010-05-12  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: implemented a 4.0 feature - pre-application

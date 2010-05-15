@@ -1,0 +1,4 @@
+2010-05-14  Marek Habersack  <mhabersack@novell.com>
+
+	* AssemblyInfo.cs: this assembly should be signed with winfx.pub
+

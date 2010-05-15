@@ -67,6 +67,7 @@ System.Web.Compilation/ClientBuildManagerParameterTest.cs
 System.Web.Compilation/TemplateControlCompilerTest.cs
 System.Web.Compilation/AppSettingsExpressionBuilderTest.cs
 System.Web.Compilation/AppResourcesCompilerTest.cs
+System.Web.Compilation/RouteUrlExpressionBuilderTest.cs
 System.Web.Configuration/AnonymousIdentificationSectionTest.cs
 System.Web.Configuration/AssemblyCollectionTest.cs
 System.Web.Configuration/AssemblyInfoTest.cs

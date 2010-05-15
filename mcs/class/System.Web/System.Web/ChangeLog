@@ -1,3 +1,12 @@
+2010-05-15  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpResponse.cs: added internal Context property
+
+	* HttpRequest.cs: added a setter to the internal Context property
+
+	* HttpContext.cs: set request and response Context properties to
+	'this' in the constructor.
+
 2010-05-12  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: when initializing new application

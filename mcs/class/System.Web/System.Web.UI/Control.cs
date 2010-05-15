@@ -46,6 +46,10 @@ using System.Web;
 using System.Web.Util;
 using System.Web.UI.Adapters;
 
+#if NET_4_0
+using System.Web.Routing;
+#endif
+
 namespace System.Web.UI
 {
 	// CAS
@@ -1823,5 +1827,61 @@ namespace System.Web.UI
 				return false;
 			}
 		}
+#if NET_4_0
+		public string GetRouteUrl (object routeParameters)
+		{
+			return GetRouteUrl (null, new RouteValueDictionary (routeParameters));
+		}
+
+		public string GetRouteUrl (RouteValueDictionary routeParameters)
+		{
+			return GetRouteUrl (null, routeParameters);
+		}
+
+		public string GetRouteUrl (string routeName, object routeParameters)
+		{
+			return GetRouteUrl (routeName, new RouteValueDictionary (routeParameters));
+		}
+
+		public string GetRouteUrl (string routeName, RouteValueDictionary routeParameters)
+		{
+			HttpContext ctx = Context ?? HttpContext.Current;
+			HttpRequest req = ctx != null ? ctx.Request : null;
+
+			if (req == null)
+				return null;
+
+			VirtualPathData vpd = RouteTable.Routes.GetVirtualPath (req.RequestContext, routeName, routeParameters);
+			if (vpd == null)
+				return null;
+
+			return vpd.VirtualPath;
+		}
+
+		public string GetUniqueIDRelativeTo (Control control)
+		{
+			if (control == null)
+				throw new ArgumentNullException ("control");
+
+			Control parent = this;
+			Page page = Page;
+			Control namingContainer = control.NamingContainer;
+			
+			if (namingContainer != null)
+				while (parent != null && parent != namingContainer)
+					parent = parent.Parent;
+
+			if (parent != namingContainer)
+				throw new InvalidOperationException (
+					String.Format ("This control is not a descendant of the NamingContainer of '{0}'", control.UniqueID)
+				);
+
+			int idx = control.UniqueID.LastIndexOf (IdSeparator);
+			if (idx < 0)
+				return UniqueID;
+
+			return UniqueID.Substring (idx + 1);
+		}
+#endif
 	}
 }

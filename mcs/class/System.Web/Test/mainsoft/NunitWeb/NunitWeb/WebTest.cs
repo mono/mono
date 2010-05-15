@@ -123,8 +123,9 @@ namespace MonoTests.SystemWeb.Framework
 		/// <seealso cref="MonoTests.SystemWeb.Framework.Response.Body"/>
 		public string Run ()
 		{
+#if !DOTNET
 			SystemWebTestShim.BuildManager.SuppressDebugModeMessages ();
-
+#endif
 			if (Request.Url == null)
 				Request.Url = Invoker.GetDefaultUrl ();
 			_unloadHandler.StartingRequest();
@@ -330,8 +331,10 @@ namespace MonoTests.SystemWeb.Framework
 				
 				if (!resource.StartsWith (namePrefix))
 					continue;
-				
-				CopyResource (type, resource, Path.Combine (targetDir, resource.Substring (namePrefix.Length)));
+				 
+				// The Replace part is for VisualStudio which compiles .resx files despite them being marked as
+				// embedded resources, which breaks the tests.
+				CopyResource (type, resource, Path.Combine (targetDir, resource.Substring (namePrefix.Length).Replace (".remove_extension", String.Empty)));
 			}
 		}
 		
@@ -597,11 +600,15 @@ namespace MonoTests.SystemWeb.Framework
 			CopyResource (myself, "My.ashx", "My.ashx");
 			CopyResource (myself, "Global.asax", "Global.asax");
 #if NET_2_0
-#if INSIDE_SYSTEM_WEB
+#if INSIDE_SYSTEM_WEB || DOTNET
 			CopyPrefixedResources (myself, "App_GlobalResources/", "App_GlobalResources");
 			CopyPrefixedResources (myself, "App_Code/", "App_Code");
 #endif
+#if DOTNET
+			CopyResource (myself, "Web.config", "Web.config");
+#else
 			CopyResource (myself, "Web.mono.config", "Web.config");
+#endif
 #else
 			CopyResource (myself, "Web.mono.config.1.1", "Web.config");
 #endif

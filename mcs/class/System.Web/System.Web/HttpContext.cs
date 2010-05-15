@@ -119,6 +119,8 @@ namespace System.Web
 		{
 			this.request = request;
 			this.response = response;
+			this.request.Context = this;
+			this.response.Context = this;
 #if NET_4_0
 			SessionStateBehavior = SessionStateBehavior.Default;
 #endif

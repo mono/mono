@@ -40,9 +40,14 @@ using System.Web.UI;
 using System.Web.UI.WebControls;
 using MonoTests.SystemWeb.Framework;
 using MonoTests.stand_alone.WebHarness;
+using MonoTests.Common;
 
 #if NET_2_0
 using System.Web.UI.Adapters;
+#endif
+
+#if NET_4_0
+using System.Web.Routing;
 #endif
 
 namespace MonoTests.System.Web.UI
@@ -1014,7 +1019,125 @@ namespace MonoTests.System.Web.UI
 		}
 
 #endif
+#if NET_4_0
+		[Test]
+		public void GetRouteUrl_Object ()
+		{
+			var t = new WebTest (PageInvoker.CreateOnLoad (GetRouteUrl_Object_Load));
+			t.Run ();
+		}
 
+		public static void GetRouteUrl_Object_Load (Page p)
+		{
+			RouteTable.Routes.Clear ();
+
+			var ctl = new Control ();
+			object obj = new { foo = "one", bar = "two" };
+			string path = ctl.GetRouteUrl (obj);
+			Assert.IsNull (path, "#A1");
+
+			RouteTable.Routes.Add (new Route ("{foo}-{bar}", new PageRouteHandler ("~/default.aspx")));
+			path = ctl.GetRouteUrl (obj);
+			Assert.IsNotNull (path, "#A2-1");
+			Assert.AreEqual ("/NunitWeb/one-two", path, "#A2-2");
+
+			path = ctl.GetRouteUrl ((object)null);
+			Assert.IsNull (path, "#A3");
+		}
+
+		[Test]
+		public void GetRouteUrl_RouteValueDictionary ()
+		{
+			var t = new WebTest (PageInvoker.CreateOnLoad (GetRouteUrl_RouteValueDictionary_Load));
+			t.Run ();
+		}
+
+		public static void GetRouteUrl_RouteValueDictionary_Load (Page p)
+		{
+			RouteTable.Routes.Clear ();
+
+			var ctl = new Control ();
+			var rvd = new RouteValueDictionary {
+				{"foo", "one"},
+				{"bar", "two"}
+			};
+			string path = ctl.GetRouteUrl (rvd);
+			Assert.IsNull (path, "#A1");
+
+			RouteTable.Routes.Add (new Route ("{foo}-{bar}", new PageRouteHandler ("~/default.aspx")));
+			path = ctl.GetRouteUrl (rvd);
+			Assert.IsNotNull (path, "#A2-1");
+			Assert.AreEqual ("/NunitWeb/one-two", path, "#A2-2");
+
+			path = ctl.GetRouteUrl ((RouteValueDictionary) null);
+			Assert.IsNull (path, "#A3");
+		}
+
+		[Test]
+		public void GetRouteUrl_String_Object ()
+		{
+			var t = new WebTest (PageInvoker.CreateOnLoad (GetRouteUrl_String_Object_Load));
+			t.Run ();
+		}
+
+		public static void GetRouteUrl_String_Object_Load (Page p)
+		{
+			RouteTable.Routes.Clear ();
+
+			var ctl = new Control ();
+			object obj = new { foo = "one", bar = "two" };
+			string path;
+			AssertExtensions.Throws<ArgumentException> (() => {
+				path = ctl.GetRouteUrl ("myroute1", obj);
+			}, "#A1");
+
+			RouteTable.Routes.Add (new Route ("{foo}-{bar}", new PageRouteHandler ("~/default.aspx")));
+			RouteTable.Routes.Add ("myroute1", new Route ("{bar}-{foo}", new PageRouteHandler ("~/default.aspx")));
+			path = ctl.GetRouteUrl ("myroute1", obj);
+			Assert.IsNotNull (path, "#A2-1");
+			Assert.AreEqual ("/NunitWeb/two-one", path, "#A2-2");
+
+			path = ctl.GetRouteUrl ("myroute1", (object) null);
+			Assert.IsNull (path, "#A3");
+		}
+
+		[Test]
+		public void GetRouteUrl_String_RouteValueDictionary ()
+		{
+			var t = new WebTest (PageInvoker.CreateOnLoad (GetRouteUrl_String_RouteValueDictionary_Load));
+			t.Run ();
+		}
+
+		public static void GetRouteUrl_String_RouteValueDictionary_Load (Page p)
+		{
+			RouteTable.Routes.Clear ();
+
+			var ctl = new Control ();
+			var rvd = new RouteValueDictionary {
+				{"foo", "one"},
+				{"bar", "two"}
+			};
+			string path;
+			AssertExtensions.Throws<ArgumentException> (() => {
+				path = ctl.GetRouteUrl ("myroute", rvd);
+			}, "#A1");
+
+			RouteTable.Routes.Add (new Route ("{foo}-{bar}", new PageRouteHandler ("~/default.aspx")));
+			RouteTable.Routes.Add ("myroute", new Route ("{bar}-{foo}", new PageRouteHandler ("~/default.aspx")));
+			path = ctl.GetRouteUrl ("myroute", rvd);
+			Assert.IsNotNull (path, "#A2-1");
+			Assert.AreEqual ("/NunitWeb/two-one", path, "#A2-2");
+
+			path = ctl.GetRouteUrl ("myroute", (RouteValueDictionary) null);
+			Assert.IsNull (path, "#A3-1");
+
+			path = ctl.GetRouteUrl (null, (RouteValueDictionary) null);
+			Assert.IsNull (path, "#A3-2");
+
+			path = ctl.GetRouteUrl (String.Empty, (RouteValueDictionary) null);
+			Assert.IsNull (path, "#A3-3");
+		}
+#endif
 		#region helpcalsses
 #if NET_2_0
 		class ControlWithState : Control
