@@ -233,8 +233,8 @@ namespace System.Windows.Forms {
 			get {
 				Size size = item_size;
 				if (SizeMode != TabSizeMode.Fixed) {
-					size.Width += padding.X;
-					size.Height += padding.Y;
+					size.Width += padding.X * 2;
+					size.Height += padding.Y * 2;
 				}
 
 				return size;
