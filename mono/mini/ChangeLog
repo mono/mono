@@ -1,3 +1,8 @@
+2010-05-15  Geoff Norton  <gnorton@novell.com>
+
+	* dwarfwriter.c, xdebug.c: Fix a pretty large leak when running in 
+	xdebug mode.
+
 2010-05-14  Geoff Norton  <gnorton@novell.com>
 
 	* exceptions-x86.c: Fix the alignment of this trampoline so we dont get a 
