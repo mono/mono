@@ -1,5 +1,9 @@
 2010-05-15  Geoff Norton  <gnorton@novell.com>
 
+	* mono-debug.c: Fix a leak of the global table on shutdown.
+
+2010-05-15  Geoff Norton  <gnorton@novell.com>
+
 	* debug-mono-symfile.(c|h): Add mono_debug_symfile_free_location
 	to clean up MonoDebugSourceLocation's.
 
