@@ -188,8 +188,9 @@ namespace System.Windows.Forms.Theming.Default
 			imagePadding = new Point (2, 3);
 
 			defaultFormatting = new StringFormat();
+			// Horizontal Alignment is handled in the Draw method
 			defaultFormatting.Alignment = StringAlignment.Near;
-			defaultFormatting.LineAlignment = StringAlignment.Near;
+			defaultFormatting.LineAlignment = StringAlignment.Center;
 			defaultFormatting.FormatFlags = StringFormatFlags.NoWrap | StringFormatFlags.NoClip;
 			defaultFormatting.HotkeyPrefix = HotkeyPrefix.Show;
 
@@ -272,6 +273,12 @@ namespace System.Windows.Forms.Theming.Default
 				end = 0;
 				delta = -1;
 			}
+
+			if (tab.SizeMode == TabSizeMode.Fixed)
+				defaultFormatting.Alignment = StringAlignment.Center;
+			else
+				defaultFormatting.Alignment = StringAlignment.Near;
+
 			int counter = start;
 			for (; counter != end; counter += delta) {
 				for (int i = tab.SliderPos; i < tab.TabPages.Count; i++) {

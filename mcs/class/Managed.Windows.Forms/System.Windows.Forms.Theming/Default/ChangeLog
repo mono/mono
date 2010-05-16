@@ -1,3 +1,10 @@
+0201-05-16  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControlPainter.cs: The text for our tabs should always be
+	vertically centered, and it should be horizontally centered if the
+	size mode is Fixed. Patch from Thomas Goldstein (stifu@free.fr).
+	Fixes part of #599841.
+
 2010-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControlPainter.cs: Reduce the height for our default item size,
