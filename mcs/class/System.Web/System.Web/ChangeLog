@@ -1,3 +1,8 @@
+2010-05-16  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: let BuildManager know when it's safe
+	to cache referenced assemblies.
+
 2010-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpResponse.cs: added internal Context property

@@ -416,6 +416,8 @@ namespace System.Web
 				
 					AppCodeCompiler acc = new AppCodeCompiler ();
 					acc.Compile ();
+
+					BuildManager.AllowReferencedAssembliesCaching = true;
 #if NET_4_0
 					BuildManager.CallPreStartMethods ();
 #endif

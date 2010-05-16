@@ -80,7 +80,7 @@ namespace System.Web.Compilation
 		
 		static int buildCount;
 		static bool is_precompiled;
-		static bool toplevelsCompiled;
+		static bool allowReferencedAssembliesCaching;
 #if NET_4_0
 		static bool? batchCompilationEnabled;
 		static FrameworkName targetFramework;
@@ -99,6 +99,11 @@ namespace System.Web.Compilation
 #endif
 		static ulong recursionDepth;
 
+		internal static bool AllowReferencedAssembliesCaching {
+			get { return allowReferencedAssembliesCaching; }
+			set { allowReferencedAssembliesCaching = value; }
+		}
+		
 		internal static bool IsPrecompiled {
 			get { return is_precompiled; }
 		}
@@ -1054,9 +1059,13 @@ namespace System.Web.Compilation
 			if (getReferencedAssembliesInvoked)
 				return configReferencedAssemblies;
 
-			getReferencedAssembliesInvoked = true;
+			if (allowReferencedAssembliesCaching)
+				getReferencedAssembliesInvoked = true;
+			
 			if (configReferencedAssemblies == null)
 				configReferencedAssemblies = new List <Assembly> ();
+			else if (getReferencedAssembliesInvoked)
+				configReferencedAssemblies.Clear ();
 			
 			CompilationSection compConfig = WebConfigurationManager.GetWebApplicationSection ("system.web/compilation") as CompilationSection;
                         if (compConfig == null)
