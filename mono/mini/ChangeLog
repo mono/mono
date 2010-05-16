@@ -1,3 +1,11 @@
+2010-05-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Use fast generic virtual method invocation
+	if gshared is enabled, to avoid asserts in the trampoline code.
+
+	* mini-ia64.c (mono_arch_build_imt_thunk): Implement generalized imt thunks
+	on ia64.
+
 2010-05-15  Geoff Norton  <gnorton@novell.com>
 
 	* dwarfwriter.c, xdebug.c: Fix a pretty large leak when running in 
