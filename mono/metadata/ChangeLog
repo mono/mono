@@ -1,3 +1,7 @@
+2010-05-16  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-debug.c (mono_debug_cleanup): Fix a crash in the previous change.
+
 2010-05-15  Geoff Norton  <gnorton@novell.com>
 
 	* mono-debug.c: Fix a leak of the global table on shutdown.
