@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2008 Novell, Inc
+// (C) 2008-2010 Novell, Inc
 //
 
 //
@@ -373,8 +373,12 @@ namespace MonoTests.System.Web.UI.WebControls
                 {
 #if VISUAL_STUDIO
                         WebTest.CopyResource (GetType (), "MonoTests.System.Web.Extensions.resources.ListViewTest.aspx", "ListViewTest.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.Extensions.resources.ListViewTotalRowCount_Bug535701_1.aspx", "ListViewTotalRowCount_Bug535701_1.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.Extensions.resources.ListViewTotalRowCount_Bug535701_2.aspx", "ListViewTotalRowCount_Bug535701_2.aspx");
 #else
                         WebTest.CopyResource (GetType (), "ListViewTest.aspx", "ListViewTest.aspx");
+			WebTest.CopyResource (GetType (), "ListViewTotalRowCount_Bug535701_1.aspx", "ListViewTotalRowCount_Bug535701_1.aspx");
+			WebTest.CopyResource (GetType (), "ListViewTotalRowCount_Bug535701_2.aspx", "ListViewTotalRowCount_Bug535701_2.aspx");
 #endif
                 }
 		
@@ -1204,6 +1208,72 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			ListViewPoker poker = p.FindControl ("ListView1") as ListViewPoker;
 			poker.SetEventRecorder (WebTest.CurrentTest.UserData as EventRecorder);
+		}
+
+		[Test (Description="Bug #535701, test 1")]
+		public void Bug_535701_1 ()
+		{
+			string originalHtml_1 = @"<span id=""ListViewTest"">
+        0 1 2 3 4 5 6 7 8 9 
+        </span>
+        <span id=""DataPager1""><a disabled=""disabled"">First</a>&nbsp;<a disabled=""disabled"">Previous</a>&nbsp;<span>1</span>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl01$ctl01','')"">2</a>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl02$ctl00','')"">Next</a>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl02$ctl01','')"">Last</a>&nbsp;</span>";
+			string originalHtml_2 = @"<span id=""ListViewTest"">
+        10 11 12 
+        </span>
+        <span id=""DataPager1""><a href=""javascript:__doPostBack('DataPager1$ctl00$ctl00','')"">First</a>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl00$ctl01','')"">Previous</a>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl01$ctl00','')"">1</a>&nbsp;<span>2</span>&nbsp;<a disabled=""disabled"">Next</a>&nbsp;<a disabled=""disabled"">Last</a>&nbsp;</span>";
+			
+			WebTest t = new WebTest ("ListViewTotalRowCount_Bug535701_1.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			
+			Assert.AreEqual (originalHtml_1, renderedHtml, "#A1");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls ["__EVENTTARGET"].Value = "DataPager1$ctl01$ctl01";
+			t.Request = fr;
+
+			pageHtml = t.Run ();
+			renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			Assert.AreEqual (originalHtml_2, renderedHtml, "#A2");
+		}
+
+		[Test (Description="Bug #535701, test 2")]
+		public void Bug_535701_2 ()
+		{
+			string originalHtml_1 = @"<span id=""ListViewTest2"">
+        12345678910
+        </span>
+        <span id=""DataPager1""><a disabled=""disabled"">First</a>&nbsp;<a disabled=""disabled"">Previous</a>&nbsp;<span>1</span>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl01$ctl01','')"">2</a>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl02$ctl00','')"">Next</a>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl02$ctl01','')"">Last</a>&nbsp;</span>
+        	
+        <br /><div>
+        DataPager.TotalRowCount = 14<br />
+        Actual TotalRowCount = 14</div>";
+			string originalHtml_2 = @"<span id=""ListViewTest2"">
+        11121314
+        </span>
+        <span id=""DataPager1""><a href=""javascript:__doPostBack('DataPager1$ctl00$ctl00','')"">First</a>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl00$ctl01','')"">Previous</a>&nbsp;<a href=""javascript:__doPostBack('DataPager1$ctl01$ctl00','')"">1</a>&nbsp;<span>2</span>&nbsp;<a disabled=""disabled"">Next</a>&nbsp;<a disabled=""disabled"">Last</a>&nbsp;</span>
+        	
+        <br /><div>
+        DataPager.TotalRowCount = 14<br />
+        Actual TotalRowCount = 14</div>";
+			
+			WebTest t = new WebTest ("ListViewTotalRowCount_Bug535701_2.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			
+			Assert.AreEqual (originalHtml_1, renderedHtml, "#A1");
+
+			FormRequest fr = new FormRequest (t.Response, "form1");
+			fr.Controls.Add ("__EVENTTARGET");
+			fr.Controls ["__EVENTTARGET"].Value = "DataPager1$ctl01$ctl01";
+			t.Request = fr;
+
+			pageHtml = t.Run ();
+			renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+
+			Assert.AreEqual (originalHtml_2, renderedHtml, "#A2");
 		}
 	}
 }
