@@ -1,3 +1,8 @@
+2010-05-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Timer.cs: check object reference when the timers are equal.
+	Fixes bug #605092.
+
 2009-11-02  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* Parallel.cs: Added fix for Bug #536919.
