@@ -31,7 +31,7 @@ namespace System.Threading.Tasks
 {
 	public struct ParallelLoopResult
 	{
-		internal ParallelLoopResult (long? lowest, bool isCompleted)
+		internal ParallelLoopResult (long? lowest, bool isCompleted) : this ()
 		{
 			LowestBreakIteration = lowest;
 			IsCompleted = isCompleted;
