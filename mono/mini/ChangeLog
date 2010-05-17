@@ -1,5 +1,8 @@
 2010-05-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_ppc_is_direct_call_sequence): Handle ilp32.
+	(ppc_patch_full): Ditto.
+
 	* mini-arm.c (mono_arch_build_imt_thunk): Fix the fail_tramp case.
 
 	* method-to-ir.c (mono_method_to_ir): Use fast generic virtual method invocation
