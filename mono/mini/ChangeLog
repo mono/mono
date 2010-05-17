@@ -1,5 +1,7 @@
 2010-05-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-arm.c (mono_arch_build_imt_thunk): Fix the fail_tramp case.
+
 	* method-to-ir.c (mono_method_to_ir): Use fast generic virtual method invocation
 	if gshared is enabled, to avoid asserts in the trampoline code.
 
