@@ -422,10 +422,10 @@ namespace System.Windows.Forms.Theming.Default
 			}
 
 			Point padding = tab.Padding;
-			interior = new Rectangle (bounds.Left + focusRectSpacing.X + borderThickness.Left + (padding.X / 2),
-				bounds.Top + focusRectSpacing.Y + borderThickness.Top + (padding.Y / 2),
-				bounds.Width - (focusRectSpacing.X * 2) - borderThickness.Width + 1 - padding.X, 
-				bounds.Height - (focusRectSpacing.Y * 2) - borderThickness.Height - padding.Y);
+			interior = new Rectangle (bounds.Left + padding.X - 1, // substract a little offset
+				bounds.Top + padding.Y,
+				bounds.Width - (padding.X * 2), 
+				bounds.Height - (padding.Y * 2));
 
 			if (tab.DrawMode == TabDrawMode.Normal && page.Text != null) {
 				if (tab.Alignment == TabAlignment.Left) {

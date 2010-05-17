@@ -1,5 +1,12 @@
 2010-05-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TabControlPainter.cs: Don't use FocusRectSpacing or BorderThickess
+	to calculate the interior rectangle to draw the tab contents, as
+	TabControl.Padding is enough - we had been ignoring it. This make
+	should our tab look more like that one in .net.
+
+2010-05-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TabControlPainter.cs: When drawing tabs, use TabControl.Padding into
 	account for the interior rectangle for the text/image contents.
 	Fixes the remaining bits of #604034.
