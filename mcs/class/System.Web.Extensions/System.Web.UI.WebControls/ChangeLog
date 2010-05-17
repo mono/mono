@@ -1,3 +1,8 @@
+2010-05-18  Marek Habersack  <mhabersack@novell.com>
+
+	* ListView.cs: if data source has pageable data, get total count
+	from the source's DataSourceCount property. Fixes bug #604053
+
 2009-12-15  Marek Habersack  <mhabersack@novell.com>
 
 	* NextPreviousPagerField.cs: HandleEvent doesn't call
