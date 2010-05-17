@@ -177,7 +177,9 @@ namespace System.Threading
 				if (ty == null)
 					return 1;
 				long result = tx.next_run - ty.next_run;
-				return result > 0 ? 1 : result < 0 ? -1 : 0;
+				if (result == 0)
+					return x == y ? 0 : -1;
+				return result > 0 ? 1 : -1;
 			}
 		}
 
