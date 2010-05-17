@@ -406,7 +406,7 @@ namespace System.Web.Compilation
 				return null;
 			
 			string extension = virtualPath.Extension;
-			BuildProvider bp = coll.GetProviderForExtension (extension);
+			BuildProvider bp = coll.GetProviderInstanceForExtension (extension);
 			if (bp == null) {
 				if (String.Compare (extension, ".asax", StringComparison.OrdinalIgnoreCase) == 0)
 					bp = new ApplicationFileBuildProvider ();

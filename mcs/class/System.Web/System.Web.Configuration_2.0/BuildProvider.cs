@@ -70,7 +70,15 @@ namespace System.Web.Configuration
 		[ConfigurationProperty ("extension", DefaultValue = "", Options = ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
 		public string Extension {
 			get { return (string) base[extensionProp]; }
-			set { base[extensionProp] = value; }
+			set {
+				string ext;
+
+				if (!String.IsNullOrEmpty (value))
+					ext = value.ToLowerInvariant ();
+				else
+					ext = value;
+				base [extensionProp] = ext;
+			}
 		}
 
 		[StringValidator (MinLength = 1)]

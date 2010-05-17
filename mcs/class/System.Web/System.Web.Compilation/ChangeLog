@@ -1,3 +1,10 @@
+2010-05-17  Marek Habersack  <mhabersack@novell.com>
+
+	* BuildProvider.cs: implemented a 4.0 method RegisterBuildProvider
+
+	* BuildManager.cs: separated dynamically registered assemblies
+	store from the referenced assemblies cache.
+
 2010-05-16  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildManager.cs: do not cache referenced assemblies until it's

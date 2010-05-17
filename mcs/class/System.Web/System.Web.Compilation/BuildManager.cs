@@ -82,9 +82,11 @@ namespace System.Web.Compilation
 		static bool is_precompiled;
 		static bool allowReferencedAssembliesCaching;
 #if NET_4_0
+		static List <Assembly> dynamicallyRegisteredAssemblies;
 		static bool? batchCompilationEnabled;
 		static FrameworkName targetFramework;
 		static bool preStartMethodsDone;
+		static bool preStartMethodsRunning;
 #endif
 		//static bool updatable; unused
 		static Dictionary<string, PreCompilationData> precompiled;
@@ -114,6 +116,11 @@ namespace System.Web.Compilation
 		}
 
 #if NET_4_0
+		internal static bool PreStartMethodsRunning {
+			get { return preStartMethodsRunning;
+			}
+		}
+		
 		public static bool? BatchCompilationEnabled {
 			get { return batchCompilationEnabled; }
 			set {
@@ -531,6 +538,7 @@ namespace System.Web.Compilation
 			if (preStartMethodsDone)
 				return;
 
+			preStartMethodsRunning = true;
 			MethodInfo mi = null;
 			try {
 				List <MethodInfo> methods = LoadPreStartMethodsFromAssemblies (GetReferencedAssemblies () as List <Assembly>);
@@ -550,6 +558,7 @@ namespace System.Web.Compilation
 					ex
 				);
 			} finally {
+				preStartMethodsRunning = false;
 				preStartMethodsDone = true;
 			}
 		}
@@ -609,7 +618,7 @@ namespace System.Web.Compilation
 		public static Type GetGlobalAsaxType ()
 		{
 			Type ret = HttpApplicationFactory.AppType;
-			if (!preStartMethodsDone)
+			if (!preStartMethodsRunning)
 				throw new InvalidOperationException ("This method cannot be called during the application's pre-start initialization stage.");
 			
 			return ret;
@@ -646,11 +655,11 @@ namespace System.Web.Compilation
 			if (preStartMethodsDone)
 				throw new InvalidOperationException ("This method cannot be called after the application's pre-start initialization stage.");
 
-			if (configReferencedAssemblies == null)
-				configReferencedAssemblies = new List <Assembly> ();
+			if (dynamicallyRegisteredAssemblies == null)
+				dynamicallyRegisteredAssemblies = new List <Assembly> ();
 
-			if (!configReferencedAssemblies.Contains (assembly))
-				configReferencedAssemblies.Add (assembly);
+			if (!dynamicallyRegisteredAssemblies.Contains (assembly))
+				dynamicallyRegisteredAssemblies.Add (assembly);
 		}
 
 		[MonoTODO ("A no-op until we use IWebObjectFactory internally. Always returns null.")]
@@ -1084,7 +1093,11 @@ namespace System.Web.Compilation
 
 			foreach (string assLocation in WebConfigurationManager.ExtraAssemblies)
 				LoadAssembly (assLocation, configReferencedAssemblies);
-
+#if NET_4_0
+			if (dynamicallyRegisteredAssemblies != null)
+				foreach (Assembly registeredAssembly in dynamicallyRegisteredAssemblies)
+					configReferencedAssemblies.Add (registeredAssembly);
+#endif
 			// Precompiled sites unconditionally load all assemblies from bin/ (fix for
 			// bug #502016)
 			if (is_precompiled || addAssembliesInBin) {

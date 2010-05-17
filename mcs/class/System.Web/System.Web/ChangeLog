@@ -1,3 +1,8 @@
+2010-05-17  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpApplicationFactory.cs: pre-application start methods must be
+	called even before App_Code is compiled.
+
 2010-05-16  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: let BuildManager know when it's safe

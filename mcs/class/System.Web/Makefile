@@ -360,7 +360,8 @@ STANDALONE_TEST_COMPILABLE_TESTS = \
 	ApplicationPreStartMethods/test_05 \
 	ApplicationPreStartMethods/test_06 \
 	ApplicationPreStartMethods/test_07 \
-	ApplicationPreStartMethods/test_08
+	ApplicationPreStartMethods/test_08 \
+	RegisterBuildProvider
 endif
 
 STANDALONE_TEST_RUNNER = Test/tools/standalone-runner.exe

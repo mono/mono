@@ -27,7 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
 using System;
 using System.Collections;
 using System.Configuration;
@@ -55,7 +54,16 @@ namespace System.Web.Configuration
 		}
 
 		public new BuildProvider this [string name] {
-			get { return (BuildProvider) BaseGet (name); }
+			get {
+				string ext;
+
+				if (!String.IsNullOrEmpty (name))
+					ext = name.ToLowerInvariant ();
+				else
+					ext = name;
+				
+				return (BuildProvider) BaseGet (ext);
+			}
 		}
 
 		protected override ConfigurationPropertyCollection Properties {
@@ -93,22 +101,26 @@ namespace System.Web.Configuration
 			return prov.Extension;
 		}
 
-		internal System.Web.Compilation.BuildProvider GetProviderForExtension (string extension)
+		internal global::System.Web.Compilation.BuildProvider GetProviderInstanceForExtension (string extension)
 		{
-			foreach (BuildProvider provider in this) {
-				if (String.Compare (extension, provider.Extension, StringComparison.OrdinalIgnoreCase) != 0)
-					continue;
-				
-				Type type = HttpApplication.LoadType (provider.Type);
-				if (type == null)
-					return null;
-				
-				return (System.Web.Compilation.BuildProvider) Activator.CreateInstance (type, null);
-			}
+#if NET_4_0
+			return global::System.Web.Compilation.BuildProvider.GetProviderInstanceForExtension (extension);
+#else
+			if (String.IsNullOrEmpty (extension))
+				return null;
 
-			return null;
+			BuildProvider provider = this [extension];
+			if (provider == null)
+				return null;
+			
+			Type type = HttpApplication.LoadType (provider.Type);
+			if (type == null)
+				return null;
+				
+			return Activator.CreateInstance (type, null) as global::System.Web.Compilation.BuildProvider;
+#endif
 		}
 	}
 }
-#endif // NET_2_0
+
 

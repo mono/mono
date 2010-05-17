@@ -404,6 +404,9 @@ namespace System.Web
 						if (!File.Exists (app_file))
 							app_file = null;
 					}
+#if NET_4_0
+					BuildManager.CallPreStartMethods ();
+#endif
 #if !TARGET_J2EE
 					AppResourcesCompiler ac = new AppResourcesCompiler (context);
 					ac.Compile ();
@@ -418,9 +421,7 @@ namespace System.Web
 					acc.Compile ();
 
 					BuildManager.AllowReferencedAssembliesCaching = true;
-#if NET_4_0
-					BuildManager.CallPreStartMethods ();
-#endif
+
 					// Get the default machine *.browser files.
 					string default_machine_browsers_path = Path.Combine (HttpRuntime.MachineConfigurationDirectory, "Browsers");
 					default_machine_browsers_files = new string[0];

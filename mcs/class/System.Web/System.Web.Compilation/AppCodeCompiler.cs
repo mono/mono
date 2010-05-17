@@ -281,7 +281,7 @@ namespace System.Web.Compilation
 			if (file == null || file.Length == 0 || buildProviders == null || buildProviders.Count == 0)
 				return null;
 
-			BuildProvider ret = buildProviders.GetProviderForExtension (Path.GetExtension (file));
+			BuildProvider ret = buildProviders.GetProviderInstanceForExtension (Path.GetExtension (file));
 			if (ret != null && IsCorrectBuilderType (ret)) {
 				ret.SetVirtualPath (PhysicalToVirtual (file));
 				return ret;

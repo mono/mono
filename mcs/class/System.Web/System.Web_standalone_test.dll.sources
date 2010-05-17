@@ -8,4 +8,5 @@ Test/standalone-tests/Unhandled_Exception_Global_Asax.cs
 Test/standalone-tests/BuildManagerCacheFiles.cs
 Test/standalone-tests/ApplicationPreStartMethods.cs
 Test/standalone-tests/Control_GetUniqueIDRelativeTo.cs
+Test/standalone-tests/RegisterBuildProvider.cs
 
