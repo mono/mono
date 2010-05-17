@@ -1,5 +1,11 @@
 2010-05-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* sgen-gc.c: Fix counters to be 64 bits.
+
+	* sgen-gc.c (dump_heap): Fix formating strings.
+
+2010-05-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* sgen-gc.c (global_remset_location_was_not_added): New
 	function that implements a 2 element LRU cache for just
 	added remsets. It is used to avoid adding duplicate ones.
