@@ -18352,6 +18352,35 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-33.cs">
+    <type name="Prop">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="HelperExtensions">
+      <method name="Void Foo(I, I)">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="I get_Prop()">
+        <size>2</size>
+      </method>
+      <method name="System.Int32[] get_Loc()">
+        <size>2</size>
+      </method>
+      <method name="Void Test()">
+        <size>13</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
