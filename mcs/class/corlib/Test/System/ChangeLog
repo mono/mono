@@ -1,3 +1,7 @@
+2010-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* StringTest.cs : add test for bug #605094.
+
 2010-04-25  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TimeSpanTest.cs: New test for ToString using custom formats.

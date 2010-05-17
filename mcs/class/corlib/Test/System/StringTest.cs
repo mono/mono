@@ -2657,6 +2657,8 @@ public class StringTest
 
 		string s3 = "test123";
 		Assert.AreEqual (0, s3.LastIndexOf ("test123"), "bug #77412");
+
+		Assert.AreEqual (1, "\u267B RT \u30FC".LastIndexOf ("\u267B RT "), "bug #605094");
 	}
 
 #if NET_2_0

@@ -2098,7 +2098,7 @@ Console.WriteLine ("==== {0} {1} {2} {3} {4} {5} {6} {7} {8}", s, si, send, leng
 			// check next _primary_ character.
 			if (ext != ExtenderType.None) {
 				byte diacritical = 0;
-				for (int tmp = 0; ; tmp--) {
+				for (int tmp = idx; ; tmp--) {
 					if (tmp < 0) // heading extender
 						return false;
 					if (IsIgnorable (s [tmp], opt))

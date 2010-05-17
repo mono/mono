@@ -1,3 +1,8 @@
+2010-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SimpleCollator.cs : fix extender search index for LastIndexOf().
+	  Fixed bug #605094.
+
 2010-04-20  Damien Diederen  <dd@crosstwine.com>
 
 	* Normalization.cs: Really apply canonical reordering "recursively."
