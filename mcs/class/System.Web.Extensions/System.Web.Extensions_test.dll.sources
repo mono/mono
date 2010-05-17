@@ -36,6 +36,7 @@
 ../../System.Web/Test/mainsoft/NunitWeb/NunitWeb/WebTestResourcesSetupAttribute.cs
 code/Country.cs
 code/CountryCollection.cs
+code/Bug604053_DataSource.cs
 System.Web.Script.Serialization/JavaScriptSerializerTest.cs
 System.Web.Script.Services/ProxyGeneratorTest.cs
 System.Web.UI/ScriptBehaviorDescriptorTest.cs

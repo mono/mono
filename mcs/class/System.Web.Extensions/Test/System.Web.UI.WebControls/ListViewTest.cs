@@ -375,10 +375,12 @@ namespace MonoTests.System.Web.UI.WebControls
                         WebTest.CopyResource (GetType (), "MonoTests.System.Web.Extensions.resources.ListViewTest.aspx", "ListViewTest.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.Extensions.resources.ListViewTotalRowCount_Bug535701_1.aspx", "ListViewTotalRowCount_Bug535701_1.aspx");
 			WebTest.CopyResource (GetType (), "MonoTests.System.Web.Extensions.resources.ListViewTotalRowCount_Bug535701_2.aspx", "ListViewTotalRowCount_Bug535701_2.aspx");
+			WebTest.CopyResource (GetType (), "MonoTests.System.Web.Extensions.resources.ListViewTotalRowCount_Bug604053.aspx", "ListViewTotalRowCount_Bug604053.aspx");
 #else
                         WebTest.CopyResource (GetType (), "ListViewTest.aspx", "ListViewTest.aspx");
 			WebTest.CopyResource (GetType (), "ListViewTotalRowCount_Bug535701_1.aspx", "ListViewTotalRowCount_Bug535701_1.aspx");
 			WebTest.CopyResource (GetType (), "ListViewTotalRowCount_Bug535701_2.aspx", "ListViewTotalRowCount_Bug535701_2.aspx");
+			WebTest.CopyResource (GetType (), "ListViewTotalRowCount_Bug604053.aspx", "ListViewTotalRowCount_Bug604053.aspx");
 #endif
                 }
 		
@@ -1274,6 +1276,93 @@ namespace MonoTests.System.Web.UI.WebControls
 			renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 
 			Assert.AreEqual (originalHtml_2, renderedHtml, "#A2");
+		}
+
+		[Test (Description="Bug #604053")]
+		public void Bug_604053 ()
+		{
+			string originalHtml = @"<span id=""Bug604053ListView1""><table id=""Bug604053ListView1_itemPlaceholderContainer"" border=""0"" style=""""><tr style=""""><th>
+											M1</th><th>
+											M2</th>
+	</tr>
+					<tr style="""">
+						<td>
+							<span id=""Bug604053ListView1_ctl10_M1Label"">0</span>
+						</td>
+						<td>
+							<span id=""Bug604053ListView1_ctl10_M2Label"">0</span>
+						</td>
+					</tr>
+				
+		
+					<tr style="""">
+						<td>
+							<span id=""Bug604053ListView1_ctl12_M1Label"">1</span>
+						</td>
+						<td>
+							<span id=""Bug604053ListView1_ctl12_M2Label"">1</span>
+						</td>
+					</tr>
+				
+
+
+</table>
+
+					<table><tr><td>
+								
+							</td>
+	</tr><tr><td style="""">
+								<span id=""DataPager1""><input type=""submit"" name=""Bug604053ListView1$DataPager1$ctl00$ctl00"" value=""First"" disabled=""disabled"" />&nbsp;<span>1</span>&nbsp;<a href=""javascript:__doPostBack('Bug604053ListView1$DataPager1$ctl01$ctl01','')"">2</a>&nbsp;<a href=""javascript:__doPostBack('Bug604053ListView1$DataPager1$ctl01$ctl02','')"">3</a>&nbsp;<a href=""javascript:__doPostBack('Bug604053ListView1$DataPager1$ctl01$ctl03','')"">4</a>&nbsp;<a href=""javascript:__doPostBack('Bug604053ListView1$DataPager1$ctl01$ctl04','')"">5</a>&nbsp;<input type=""submit"" name=""Bug604053ListView1$DataPager1$ctl02$ctl00"" value=""Last"" />&nbsp;</span>
+							</td>
+	</tr>
+
+</table>
+
+				</span>
+			<span id=""Bug604053ListView2""><table id=""Bug604053ListView2_itemPlaceholderContainer"" border=""0"" style=""""><tr style=""""><th>
+											M1</th><th>
+											M2</th>
+	</tr>
+					<tr style="""">
+						<td>
+							<span id=""Bug604053ListView2_ctl10_M1Label"">0</span>
+						</td>
+						<td>
+							<span id=""Bug604053ListView2_ctl10_M2Label"">0</span>
+						</td>
+					</tr>
+				
+		
+					<tr style="""">
+						<td>
+							<span id=""Bug604053ListView2_ctl12_M1Label"">1</span>
+						</td>
+						<td>
+							<span id=""Bug604053ListView2_ctl12_M2Label"">1</span>
+						</td>
+					</tr>
+				
+
+
+</table>
+
+					<table><tr><td>
+								
+							</td>
+	</tr><tr><td style="""">
+								<span id=""DataPager1""><input type=""submit"" name=""Bug604053ListView2$DataPager1$ctl00$ctl00"" value=""First"" disabled=""disabled"" />&nbsp;<input type=""submit"" name=""Bug604053ListView2$DataPager1$ctl00$ctl01"" value=""Previous"" disabled=""disabled"" />&nbsp;<input type=""submit"" name=""Bug604053ListView2$DataPager1$ctl00$ctl02"" value=""Next"" />&nbsp;<input type=""submit"" name=""Bug604053ListView2$DataPager1$ctl00$ctl03"" value=""Last"" />&nbsp;</span>
+							</td>
+	</tr>
+
+</table>
+
+				</span>";
+			
+ 			WebTest t = new WebTest ("ListViewTotalRowCount_Bug604053.aspx");
+			string pageHtml = t.Run ();
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
+			
+			Assert.AreEqual (originalHtml, renderedHtml, "#A1");
 		}
 	}
 }
