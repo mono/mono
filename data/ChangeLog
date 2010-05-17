@@ -1,3 +1,7 @@
+2010-05-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-2.pc.in (Libs): Remove glib dependencies.
+
 2010-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-2.pc (Requires): Remove glib dependencies.
