@@ -1,5 +1,9 @@
 2010-05-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* sgen-gc.c: Use _fast variants	for string and array length.
+
+2010-05-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* sgen-gc.c: Fix counters to be 64 bits.
 
 	* sgen-gc.c (dump_heap): Fix formating strings.
