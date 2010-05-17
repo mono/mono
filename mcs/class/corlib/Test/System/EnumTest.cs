@@ -705,11 +705,18 @@ namespace MonoTests.System
 			Assert.AreEqual (false, success, "#D1");
 			Assert.AreEqual (TestingEnum.This, result, "#D2");
 
-			// TryParse can accept any struct derived type
-			int n;
-			success = Enum.TryParse<int> ("31416", out n);
-			Assert.AreEqual (false, success, "#E1");
-			Assert.AreEqual (0, n, "#E2");
+			// TryParse throws ArgumentException if TEnum is not an enumeration type
+			try {
+				int n;
+				Enum.TryParse<int> ("31416", out n);
+				Assert.Fail ("#E1");
+			} catch (ArgumentException ex) {
+				Assert.AreEqual (typeof (ArgumentException), ex.GetType (), "#E2");
+				Assert.IsNull (ex.InnerException, "#E3");
+				Assert.IsNotNull (ex.Message, "#E4");
+				Assert.IsNotNull (ex.ParamName, "#E5");
+				Assert.AreEqual ("enumType", ex.ParamName, "#E6");
+			}
 		}
 
 		[Test]

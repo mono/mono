@@ -1,3 +1,8 @@
+2010-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Enum.cs : TryParse() should raise ArgumentException when the
+	  type parameter is not an enum. Fixed bug #604134
+
 2010-05-11 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* GC.cs: Add EPHEMERON_TOMBSTONE reandonly variable.

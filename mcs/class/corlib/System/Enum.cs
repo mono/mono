@@ -628,9 +628,12 @@ namespace System
 		public static bool TryParse<TEnum> (string value, bool ignoreCase, out TEnum result) where TEnum : struct
 		{
 			Type tenum_type = typeof (TEnum);
+			if (!tenum_type.IsEnum)
+				throw new ArgumentException("TEnum is not an Enum type.", "enumType");
+
 			result = default (TEnum);
 
-			if (value == null || value.Trim ().Length == 0 || !tenum_type.IsEnum)
+			if (value == null || value.Trim ().Length == 0)
 				return false;
 
 			return Parse (tenum_type, value, ignoreCase, out result);
