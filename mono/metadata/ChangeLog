@@ -1,3 +1,34 @@
+2010-05-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* sgen-gc.c (global_remset_location_was_not_added): New
+	function that implements a 2 element LRU cache for just
+	added remsets. It is used to avoid adding duplicate ones.
+
+	* sgen-gc.c (add_to_global_remset): Check cache	before
+	adding new entry.
+
+	* sgen-gc.c (scan_from_remsets): Don't process global remsets
+	that fail the cache test.
+
+	* sgen-gc.c (scan_from_remsets): Simplify the global remset
+	loop removing one condtion that is not possible.
+
+	A 2 element LRU cache was chosen by profiling IronPython 2.6
+	pytones with 1M passes and corlib compilation.
+
+	For the ipy test duplication was originally 940.92, measured
+	by "Store remsets" divided by "Unique store remsets".
+
+	With a 2-element LRU, duplication went to 1.007. Without the
+	check in scan_from_remsets 1.438.
+
+	With a 16-elements LRU, duplication reduction was negligibe.
+	A single element cache was basically of no use.
+
+	With corlib compilation duplication went from  1.4 to 1.02.
+
+	Performance results is a 20% time decrease for ipy and 2%
+	with corlib.
 2010-05-16  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-debug.c (mono_debug_cleanup): Fix a crash in the previous change.
