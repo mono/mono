@@ -790,6 +790,12 @@ namespace Mono.CSharp
 			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
 		}
 
+		public override string Name {
+			get {
+				return name;
+			}
+		}
+
 		public override string GetSignatureForError ()
 		{
 			return name;

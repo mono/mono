@@ -4944,23 +4944,6 @@ namespace Mono.CSharp {
 			var method = mg.BestCandidate;
 			if (method != null) {
 				type = method.ReturnType;
-
-				// TODO: this is a copy of mg.ResolveMemberAccess method
-				Expression iexpr = mg.InstanceExpression;
-				if (method.IsStatic) {
-					if (iexpr == null ||
-						iexpr is This || iexpr is EmptyExpression ||
-						mg.IdenticalTypeName) {
-						mg.InstanceExpression = null;
-					} else {
-						MemberExpr.error176 (ec, loc, mg.GetSignatureForError ());
-						return null;
-					}
-				} else {
-					if (iexpr == null || iexpr == EmptyExpression.Null) {
-						SimpleName.Error_ObjectRefRequired (ec, loc, mg.GetSignatureForError ());
-					}
-				}
 			}
 		
 			//
@@ -6530,12 +6513,12 @@ namespace Mono.CSharp {
 			get { return ThisVariable.Instance; }
 		}
 
-		public static bool IsThisAvailable (ResolveContext ec)
+		public static bool IsThisAvailable (ResolveContext ec, bool ignoreAnonymous)
 		{
 			if (ec.IsStatic || ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.BaseInitializer | ResolveContext.Options.ConstantScope))
 				return false;
 
-			if (ec.CurrentAnonymousMethod == null)
+			if (ignoreAnonymous || ec.CurrentAnonymousMethod == null)
 				return true;
 
 			if (TypeManager.IsStruct (ec.CurrentType) && ec.CurrentIterator == null)
@@ -6549,7 +6532,7 @@ namespace Mono.CSharp {
 			eclass = ExprClass.Variable;
 			type = ec.CurrentType;
 
-			if (!IsThisAvailable (ec)) {
+			if (!IsThisAvailable (ec, false)) {
 				if (ec.IsStatic && !ec.HasSet (ResolveContext.Options.ConstantScope)) {
 					ec.Report.Error (26, loc, "Keyword `this' is not valid in a static property, static method, or static field initializer");
 				} else if (ec.CurrentAnonymousMethod != null) {
@@ -7258,8 +7241,25 @@ namespace Mono.CSharp {
 
 			SimpleName original = expr as SimpleName;
 			Expression expr_resolved;
+			const ResolveFlags flags = ResolveFlags.VariableOrValue | ResolveFlags.Type;
+
 			using (ec.Set (ResolveContext.Options.OmitStructFlowAnalysis)) {
-				expr_resolved = expr.Resolve (ec, ResolveFlags.VariableOrValue | ResolveFlags.Type | ResolveFlags.Intermediate);
+				if (original != null) {
+					expr_resolved = original.DoResolve (ec, true);
+					if (expr_resolved != null) {
+						// Ugly, simulate skipped Resolve
+						if (expr_resolved is ConstantExpr) {
+							expr_resolved = expr_resolved.Resolve (ec);
+						} else if (expr_resolved is FieldExpr || expr_resolved is PropertyExpr) {
+							// nothing yet
+						} else if ((flags & expr_resolved.ExprClassToResolveFlags) == 0) {
+							expr_resolved.Error_UnexpectedKind (ec, flags, expr.Location);
+							expr_resolved = null;
+						}
+					}
+				} else {
+					expr_resolved = expr.Resolve (ec, flags);
+				}
 			}
 
 			if (expr_resolved == null)
@@ -7306,7 +7306,9 @@ namespace Mono.CSharp {
 				ec.CurrentType, expr_type, expr_type, Name, arity, BindingRestriction.NoOverrides, loc);
 
 			if (member_lookup == null) {
-				ExprClass expr_eclass = expr_resolved.eclass;
+				expr = expr_resolved.Resolve (ec);
+
+				ExprClass expr_eclass = expr.eclass;
 
 				//
 				// Extension methods are not allowed on all expression types
@@ -7316,7 +7318,7 @@ namespace Mono.CSharp {
 					expr_eclass == ExprClass.EventAccess) {
 					ExtensionMethodGroupExpr ex_method_lookup = ec.LookupExtensionMethod (expr_type, Name, arity, loc);
 					if (ex_method_lookup != null) {
-						ex_method_lookup.ExtensionExpression = expr_resolved;
+						ex_method_lookup.ExtensionExpression = expr;
 
 						if (HasTypeArguments) {
 							if (!targs.Resolve (ec))
@@ -7329,7 +7331,6 @@ namespace Mono.CSharp {
 					}
 				}
 
-				expr = expr_resolved;
 				member_lookup = Error_MemberLookupFailed (ec,
 					ec.CurrentType, expr_type, expr_type, Name, arity, null,
 					MemberKind.All, BindingRestriction.AccessibleOnly);
@@ -7337,13 +7338,16 @@ namespace Mono.CSharp {
 					return null;
 			}
 
+			MemberExpr me;
 			TypeExpr texpr = member_lookup as TypeExpr;
 			if (texpr != null) {
-				if (!(expr_resolved is TypeExpr) && 
-				    (original == null || !original.IdenticalNameAndTypeName (ec, expr_resolved, loc))) {
-					ec.Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
-						Name, member_lookup.GetSignatureForError ());
-					return null;
+				if (!(expr_resolved is TypeExpr)) {
+					me = expr_resolved as MemberExpr;
+					if (me == null || me.ProbeIdenticalTypeName (ec, expr_resolved, original) == expr_resolved) {
+						ec.Report.Error (572, loc, "`{0}': cannot reference a type through an expression; try `{1}' instead",
+							Name, member_lookup.GetSignatureForError ());
+						return null;
+					}
 				}
 
 				if (!texpr.CheckAccessLevel (ec.MemberContext)) {
@@ -7360,10 +7364,12 @@ namespace Mono.CSharp {
 				return member_lookup;
 			}
 
-			MemberExpr me = (MemberExpr) member_lookup;
-			me = me.ResolveMemberAccess (ec, expr_resolved, loc, original);
-			if (me == null)
-				return null;
+			me = (MemberExpr) member_lookup;
+
+			if (original != null && me.IsStatic)
+				expr_resolved = me.ProbeIdenticalTypeName (ec, expr_resolved, original);
+
+			me = me.ResolveMemberAccess (ec, expr_resolved, original);
 
 			if (HasTypeArguments) {
 				if (!targs.Resolve (ec))
@@ -8086,6 +8092,7 @@ namespace Mono.CSharp {
 				}
 
 				var mg = new IndexerMethodGroupExpr (ilist, loc);
+				mg.InstanceExpression = instance_expr;
 				mg = mg.OverloadResolve (ec, ref arguments, false, loc) as IndexerMethodGroupExpr;
 				if (mg == null)
 					return null;
@@ -8329,7 +8336,7 @@ namespace Mono.CSharp {
 			TypeSpec current_type = ec.CurrentType;
 			TypeSpec base_type = current_type.BaseType;
 
-			if (!This.IsThisAvailable (ec)) {
+			if (!This.IsThisAvailable (ec, false)) {
 				if (ec.IsStatic) {
 					ec.Report.Error (1511, loc, "Keyword `base' is not available in a static method");
 				} else {
@@ -8367,11 +8374,9 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			me = me.ResolveMemberAccess (ec, left, loc, null);
-			if (me == null)
-				return null;
-
+			me = me.ResolveMemberAccess (ec, left, null);
 			me.IsBase = true;
+
 			if (args != null) {
 				args.Resolve (ec);
 				me.SetTypeArguments (ec, args);

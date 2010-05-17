@@ -388,10 +388,7 @@ namespace Mono.CSharp {
 	public abstract class DelegateCreation : Expression, MethodGroupExpr.IErrorHandler
 	{
 		protected MethodSpec constructor_method;
-		protected MethodSpec delegate_method;
-		// We keep this to handle IsBase only
 		protected MethodGroupExpr method_group;
-		protected Expression delegate_instance_expression;
 
 		public static Arguments CreateDelegateMethodArguments (AParametersCollection pd, TypeSpec[] types, Location loc)
 		{
@@ -423,7 +420,7 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (3);
 			args.Add (new Argument (new TypeOf (new TypeExpression (type, loc), loc)));
 			args.Add (new Argument (new NullLiteral (loc)));
-			args.Add (new Argument (new TypeOfMethod (delegate_method, loc)));
+			args.Add (new Argument (method_group.CreateExpressionTree (ec)));
 			Expression e = new Invocation (ma, args).Resolve (ec);
 			if (e == null)
 				return null;
@@ -448,11 +445,11 @@ namespace Mono.CSharp {
 			if (method_group == null)
 				return null;
 
-			delegate_method = (MethodSpec) method_group;
+			var delegate_method = method_group.BestCandidate;
 			
 			if (TypeManager.IsNullableType (delegate_method.DeclaringType)) {
 				ec.Report.Error (1728, loc, "Cannot create delegate from method `{0}' because it is a member of System.Nullable<T> type",
-					TypeManager.GetFullNameSignature (delegate_method));
+					delegate_method.GetSignatureForError ());
 				return null;
 			}		
 			
@@ -460,8 +457,8 @@ namespace Mono.CSharp {
 
 			ExtensionMethodGroupExpr emg = method_group as ExtensionMethodGroupExpr;
 			if (emg != null) {
-				delegate_instance_expression = emg.ExtensionExpression;
-				TypeSpec e_type = delegate_instance_expression.Type;
+				method_group.InstanceExpression = emg.ExtensionExpression;
+				TypeSpec e_type = emg.ExtensionExpression.Type;
 				if (TypeManager.IsValueType (e_type)) {
 					ec.Report.Error (1113, loc, "Extension method `{0}' of value type `{1}' cannot be used to create delegates",
 						delegate_method.GetSignatureForError (), TypeManager.CSharpName (e_type));
@@ -486,43 +483,22 @@ namespace Mono.CSharp {
 				}
 			}
 
-			DoResolveInstanceExpression (ec);
+			var expr = method_group.InstanceExpression;
+			if (expr != null && (expr.Type.IsGenericParameter || !TypeManager.IsReferenceType (expr.Type)))
+				method_group.InstanceExpression = new BoxedCast (expr, TypeManager.object_type);
+
 			eclass = ExprClass.Value;
 			return this;
-		}
-
-		void DoResolveInstanceExpression (ResolveContext ec)
-		{
-			//
-			// Argument is another delegate
-			//
-			if (delegate_instance_expression != null)
-				return;
-
-			if (method_group.IsStatic) {
-				delegate_instance_expression = null;
-				return;
-			}
-
-			Expression instance = method_group.InstanceExpression;
-			if (instance != null && instance != EmptyExpression.Null) {
-				delegate_instance_expression = instance;
-				TypeSpec instance_type = delegate_instance_expression.Type;
-				if (TypeManager.IsValueType (instance_type) || TypeManager.IsGenericParameter (instance_type)) {
-					delegate_instance_expression = new BoxedCast (
-						delegate_instance_expression, TypeManager.object_type);
-				}
-			} else {
-				delegate_instance_expression = ec.GetThis (loc);
-			}
 		}
 		
 		public override void Emit (EmitContext ec)
 		{
-			if (delegate_instance_expression == null)
+			if (method_group.InstanceExpression == null)
 				ec.Emit (OpCodes.Ldnull);
 			else
-				delegate_instance_expression.Emit (ec);
+				method_group.InstanceExpression.Emit (ec);
+
+			var delegate_method = method_group.BestCandidate;
 
 			// Any delegate must be sealed
 			if (!delegate_method.DeclaringType.IsDelegate && delegate_method.IsVirtual && !method_group.IsBase) {
@@ -538,7 +514,7 @@ namespace Mono.CSharp {
 		void Error_ConversionFailed (ResolveContext ec, MethodSpec method, Expression return_type)
 		{
 			var invoke_method = Delegate.GetInvokeMethod (ec.Compiler, type);
-			string member_name = delegate_instance_expression != null ?
+			string member_name = method_group.InstanceExpression != null ?
 				Delegate.FullDelegateDesc (method) :
 				TypeManager.GetFullNameSignature (method);
 
@@ -663,8 +639,8 @@ namespace Mono.CSharp {
 				//
 				// An argument is not a method but another delegate
 				//
-				delegate_instance_expression = e;
 				method_group = new MethodGroupExpr (Delegate.GetInvokeMethod (ec.Compiler, e.Type), e.Type, loc);
+				method_group.InstanceExpression = e;
 			}
 
 			return base.DoResolve (ec);

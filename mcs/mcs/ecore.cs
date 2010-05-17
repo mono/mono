@@ -61,9 +61,6 @@ namespace Mono.CSharp {
 
 		// Mask of all the expression class flags.
 		MaskExprClass = VariableOrValue | Type | MethodGroup | TypeParameter,
-
-		// Set if this is resolving the first part of a MemberAccess.
-		Intermediate		= 1 << 11,
 	}
 
 	//
@@ -422,7 +419,7 @@ namespace Mono.CSharp {
 			ec.Report.Error (131, loc, "The left-hand side of an assignment must be a variable, a property or an indexer");
 		}
 
-		ResolveFlags ExprClassToResolveFlags {
+		public ResolveFlags ExprClassToResolveFlags {
 			get {
 				switch (eclass) {
 				case ExprClass.Type:
@@ -461,12 +458,7 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Unresolved)
 				return this;
 
-			Expression e;
-			if (this is SimpleName) {
-				e = ((SimpleName) this).DoResolve (ec, (flags & ResolveFlags.Intermediate) != 0);
-			} else {
-				e = DoResolve (ec);
-			}
+			Expression e = DoResolve (ec);
 
 			if (e == null)
 				return null;
@@ -590,7 +582,7 @@ namespace Mono.CSharp {
 			if (spec is FieldSpec)
 				return new FieldExpr ((FieldSpec) spec, loc);
 			if (spec is PropertySpec)
-				return new PropertyExpr (container_type, (PropertySpec) spec, loc);
+				return new PropertyExpr ((PropertySpec) spec, loc);
 			if (spec is TypeSpec)
 				return new TypeExpression (((TypeSpec) spec), loc);
 
@@ -2282,18 +2274,6 @@ namespace Mono.CSharp {
 			return new SimpleName (Name, targs, loc);
 		}
 
-		public static void Error_ObjectRefRequired (ResolveContext ec, Location l, string name)
-		{
-			if (ec.HasSet (ResolveContext.Options.FieldInitializerScope))
-				ec.Report.Error (236, l,
-					"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
-					name);
-			else
-				ec.Report.Error (120, l,
-					"An object reference is required to access non-static member `{0}'",
-					name);
-		}
-
 		protected virtual void Error_TypeOrNamespaceNotFound (IMemberContext ec)
 		{
 			if (ec.CurrentType != null) {
@@ -2345,18 +2325,6 @@ namespace Mono.CSharp {
 			NamespaceEntry.Error_NamespaceNotFound (loc, Name, ec.Compiler.Report);
 		}
 
-		public bool IdenticalNameAndTypeName (IMemberContext mc, Expression resolved_to, Location loc)
-		{
-			if (resolved_to == null || resolved_to.Type == null)
-				return false;
-
-			if (resolved_to.Type is ElementTypeSpec || resolved_to.Type is InternalType)
-				return false;
-
-			return resolved_to.Type.Name == Name &&
-				(mc.LookupNamespaceOrType (Name, Arity, loc, /* ignore_cs0104 = */ true) != null);
-		}
-
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return SimpleNameResolve (ec, null, false);
@@ -2370,18 +2338,6 @@ namespace Mono.CSharp {
 		public Expression DoResolve (ResolveContext ec, bool intermediate)
 		{
 			return SimpleNameResolve (ec, null, intermediate);
-		}
-
-		static bool IsNestedChild (TypeSpec t, TypeSpec parent)
-		{
-			while (parent != null) {
-				if (TypeManager.IsNestedChildOf (t, parent))
-					return true;
-
-				parent = parent.BaseType;
-			}
-
-			return false;
 		}
 
 		public override FullNamedExpression ResolveAsTypeStep (IMemberContext ec, bool silent)
@@ -2570,36 +2526,8 @@ namespace Mono.CSharp {
 			if (e is MemberExpr) {
 				MemberExpr me = (MemberExpr) e;
 
-				Expression left;
-				if (me.IsInstance) {
-					if (ec.IsStatic || ec.HasAny (ResolveContext.Options.FieldInitializerScope | ResolveContext.Options.BaseInitializer | ResolveContext.Options.ConstantScope)) {
-						//
-						// Note that an MemberExpr can be both IsInstance and IsStatic.
-						// An unresolved MethodGroupExpr can contain both kinds of methods
-						// and each predicate is true if the MethodGroupExpr contains
-						// at least one of that kind of method.
-						//
-/*
-						if (!me.IsStatic &&
-						    (!intermediate || !IdenticalNameAndTypeName (ec, me, loc))) {
-							Error_ObjectRefRequired (ec, loc, me.GetSignatureForError ());
-							return null;
-						}
-*/
-						//
-						// Pass the buck to MemberAccess and Invocation.
-						//
-						left = EmptyExpression.Null;
-					} else {
-						left = ec.GetThis (loc);
-					}
-				} else {
-					left = new TypeExpression (ec.CurrentType, loc);
-				}
-
-				me = me.ResolveMemberAccess (ec, left, loc, null);
-				if (me == null)
-					return null;
+				// TODO: It's used by EventExpr -> FieldExpr transformation only
+				me = me.ResolveMemberAccess (ec, null, null);
 
 				if (HasTypeArguments) {
 					if (!targs.Resolve (ec))
@@ -2608,15 +2536,8 @@ namespace Mono.CSharp {
 					me.SetTypeArguments (ec, targs);
 				}
 
-				if (!me.IsStatic && (me.InstanceExpression != null && me.InstanceExpression != EmptyExpression.Null) &&
-				    TypeManager.IsNestedFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
-				    me.InstanceExpression.Type != me.DeclaringType &&
-				    !TypeManager.IsFamilyAccessible (me.InstanceExpression.Type, me.DeclaringType) &&
-				    (!intermediate || !IdenticalNameAndTypeName (ec, e, loc))) {
-					ec.Report.Error (38, loc, "Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'",
-						TypeManager.CSharpName (me.DeclaringType), TypeManager.CSharpName (me.InstanceExpression.Type));
-					return null;
-				}
+				if (intermediate)
+					return me;
 
 				return (right_side != null)
 					? me.DoResolveLValue (ec, right_side)
@@ -2749,6 +2670,12 @@ namespace Mono.CSharp {
 	{
 		protected bool is_base;
 
+		//
+		// An instance expression associated with this member, if it's a
+		// non-static member
+		//
+		public Expression InstanceExpression;
+
 		/// <summary>
 		///   The name of this member.
 		/// </summary>
@@ -2785,84 +2712,94 @@ namespace Mono.CSharp {
 			get;
 		}
 
-		/// <summary>
-		///   The instance expression associated with this member, if it's a
-		///   non-static member.
-		/// </summary>
-		public Expression InstanceExpression;
-
-		public static void error176 (ResolveContext ec, Location loc, string name)
-		{
-			ec.Report.Error (176, loc, "Static member `{0}' cannot be accessed " +
-				      "with an instance reference, qualify it with a type name instead", name);
-		}
-
 		public static void Error_BaseAccessInExpressionTree (ResolveContext ec, Location loc)
 		{
 			ec.Report.Error (831, loc, "An expression tree may not contain a base access");
 		}
 
-		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
-							       SimpleName original)
+		//
+		// Implements identicial simple name and type-name
+		//
+		public Expression ProbeIdenticalTypeName (ResolveContext rc, Expression left, SimpleName name)
 		{
-			//
-			// Precondition:
-			//   original == null || original.Resolve (...) ==> left
-			//
+			var t = left.Type;
+			if (t.Kind == MemberKind.InternalCompilerType || t is ElementTypeSpec || t.Arity > 0)
+				return left;
 
-			if (left is TypeExpr) {
-				left = ((TypeExpr) left).ResolveAsTypeTerminal (ec, false);
-				if (left == null)
-					return null;
+			// In a member access of the form E.I, if E is a single identifier, and if the meaning of E as a simple-name is
+			// a constant, field, property, local variable, or parameter with the same type as the meaning of E as a type-name
 
-				// TODO: Same problem as in class.cs, TypeTerminal does not
-				// always do all necessary checks
-				ObsoleteAttribute oa = left.Type.GetAttributeObsolete ();
-				if (oa != null && !ec.IsObsolete) {
-					AttributeTester.Report_ObsoleteMessage (oa, left.GetSignatureForError (), loc, ec.Report);
-				}
-
-//				GenericTypeExpr ct = left as GenericTypeExpr;
-//				if (ct != null && !ct.CheckConstraints (ec))
-//					return null;
-				//
-
-				if (!IsStatic) {
-					SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
-					return null;
-				}
-
-				return this;
-			}
-				
-			if (!IsInstance) {
-				if (original != null && original.IdenticalNameAndTypeName (ec, left, loc))
-					return this;
-
-				return ResolveExtensionMemberAccess (ec, left);
+			if (left is MemberExpr || left is VariableReference) {
+				rc.Report.DisableReporting ();
+				Expression identical_type = rc.LookupNamespaceOrType (name.Name, 0, loc, true) as TypeExpr;
+				rc.Report.EnableReporting ();
+				if (identical_type != null && identical_type.Type == left.Type)
+					return identical_type;
 			}
 
-			InstanceExpression = left;
-			return this;
+			return left;
 		}
 
-		protected virtual MemberExpr ResolveExtensionMemberAccess (ResolveContext ec, Expression left)
+		protected bool ResolveInstanceExpression (ResolveContext rc)
 		{
-			error176 (ec, loc, GetSignatureForError ());
+			if (IsStatic) {
+				if (InstanceExpression != null) {
+					if (InstanceExpression is TypeExpr) {
+						ObsoleteAttribute oa = InstanceExpression.Type.GetAttributeObsolete ();
+						if (oa != null && !rc.IsObsolete) {
+							AttributeTester.Report_ObsoleteMessage (oa, InstanceExpression.GetSignatureForError (), loc, rc.Report);
+						}
+					} else {
+						rc.Report.Error (176, loc,
+							"Static member `{0}' cannot be accessed with an instance reference, qualify it with a type name instead",
+							GetSignatureForError ());
+					}
+
+					InstanceExpression = null;
+				}
+
+				return false;
+			}
+
+			if (InstanceExpression == null || InstanceExpression is TypeExpr) {
+				if (!This.IsThisAvailable (rc, true) || InstanceExpression is TypeExpr) {
+					if (rc.HasSet (ResolveContext.Options.FieldInitializerScope))
+						rc.Report.Error (236, loc,
+							"A field initializer cannot reference the nonstatic field, method, or property `{0}'",
+							GetSignatureForError ());
+					else
+						rc.Report.Error (120, loc,
+							"An object reference is required to access non-static member `{0}'",
+							GetSignatureForError ());
+
+					return false;
+				}
+
+				if (!TypeManager.IsFamilyAccessible (rc.CurrentType, DeclaringType)) {
+					rc.Report.Error (38, loc,
+						"Cannot access a nonstatic member of outer type `{0}' via nested type `{1}'",
+						DeclaringType.GetSignatureForError (), rc.CurrentType.GetSignatureForError ());
+				}
+
+				InstanceExpression = rc.GetThis (loc);
+				return false;
+			}
+
+			var me = InstanceExpression as MemberExpr;
+			if (me != null)
+				me.ResolveInstanceExpression (rc);
+
+			return true;
+		}
+
+		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
+		{
+			InstanceExpression = left;
 			return this;
 		}
 
 		protected void EmitInstance (EmitContext ec, bool prepare_for_load)
 		{
-			if (IsStatic)
-				return;
-
-			if (InstanceExpression == EmptyExpression.Null) {
-				// FIXME: This should not be here at all
-				SimpleName.Error_ObjectRefRequired (new ResolveContext (ec.MemberContext), loc, GetSignatureForError ());
-				return;
-			}
-
 			if (TypeManager.IsValueType (InstanceExpression.Type)) {
 				if (InstanceExpression is IMemoryLocation) {
 					((IMemoryLocation) InstanceExpression).AddressOf (ec, AddressOp.LoadStore);
@@ -2963,7 +2900,7 @@ namespace Mono.CSharp {
 		MethodSpec best_candidate;
 		// TODO: make private
 		public TypeArguments type_arguments;
- 		bool identical_type_name;
+ 		SimpleName simple_name;
 		bool has_inaccessible_candidates_only;
 		TypeSpec delegate_type;
 		TypeSpec queried_type;
@@ -3012,12 +2949,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool IdenticalTypeName {
-			get {
-				return identical_type_name;
-			}
-		}
-
 		public override string GetSignatureForError ()
 		{
 			if (best_candidate != null)
@@ -3037,10 +2968,6 @@ namespace Mono.CSharp {
 				if (best_candidate != null)
 					return !best_candidate.IsStatic;
 
-				foreach (var mb in Methods)
-					if (!mb.IsStatic)
-						return true;
-
 				return false;
 			}
 		}
@@ -3049,10 +2976,6 @@ namespace Mono.CSharp {
 			get {
 				if (best_candidate != null)
 					return best_candidate.IsStatic;
-
-				foreach (var mb in Methods)
-					if (mb.IsStatic)
-						return true;
 
 				return false;
 			}
@@ -3295,27 +3218,11 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected override MemberExpr ResolveExtensionMemberAccess (ResolveContext ec, Expression left)
+		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
-			if (!IsStatic)
-				return base.ResolveExtensionMemberAccess (ec, left);
+			simple_name = original;
 
-			//
-			// When left side is an expression and at least one candidate method is 
-			// static, it can be extension method
-			//
-			InstanceExpression = left;
-			return this;
-		}
-
-		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
-								SimpleName original)
-		{
-			if (!(left is TypeExpr) &&
-			    original != null && original.IdenticalNameAndTypeName (ec, left, loc))
-				identical_type_name = true;
-
-			return base.ResolveMemberAccess (ec, left, loc, original);
+			return base.ResolveMemberAccess (ec, left, original);
 		}
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -3861,7 +3768,7 @@ namespace Mono.CSharp {
 					var arity = type_arguments == null ? -1 : type_arguments.Count;
 					ExtensionMethodGroupExpr ex_method_lookup = ec.LookupExtensionMethod (type, first.Name, arity, loc);
 					if (ex_method_lookup != null) {
-						ex_method_lookup.ExtensionExpression = InstanceExpression;
+						ex_method_lookup.ExtensionExpression = InstanceExpression.Resolve (ec);
 						ex_method_lookup.SetTypeArguments (ec, type_arguments);
 						return ex_method_lookup.OverloadResolve (ec, ref Arguments, may_fail, loc);
 					}
@@ -3979,6 +3886,14 @@ namespace Mono.CSharp {
 
 			if (best_candidate == null)
 				return null;
+
+			if (best_candidate.Kind == MemberKind.Method) {
+				if (InstanceExpression != null && best_candidate.IsStatic) {
+					InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
+				}
+
+				ResolveInstanceExpression (ec);
+			}
 
 			if (best_candidate.IsGeneric) {
 				ConstraintChecker.CheckAll (best_candidate.GetGenericMethodDefinition (), best_candidate.TypeArguments,
@@ -4228,6 +4143,8 @@ namespace Mono.CSharp {
 		{
 			constant.MemberDefinition.SetIsUsed ();
 
+			ResolveInstanceExpression (rc);
+
 			if (!rc.IsObsolete) {
 				var oa = constant.GetAttributeObsolete ();
 				if (oa != null)
@@ -4321,16 +4238,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
-								SimpleName original)
-		{
-			if (spec.MemberType.IsPointer && !ec.IsUnsafe) {
-				UnsafeError (ec, loc);
-			}
-
-			return base.ResolveMemberAccess (ec, left, loc, original);
-		}
-
 		public void SetHasAddressTaken ()
 		{
 			IVariableReference vr = InstanceExpression as IVariableReference;
@@ -4366,16 +4273,7 @@ namespace Mono.CSharp {
 
 		Expression DoResolve (ResolveContext ec, bool lvalue_instance, bool out_access)
 		{
-			if (!IsStatic){
-				if (InstanceExpression == null){
-					//
-					// This can happen when referencing an instance field using
-					// a fully qualified type expression: TypeName.InstanceField = xxx
-					// 
-					SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
-					return null;
-				}
-
+			if (ResolveInstanceExpression (ec)) {
 				// Resolve the field's instance expression while flow analysis is turned
 				// off: when accessing a field "a.b", we must check whether the field
 				// "a.b" is initialized, not whether the whole struct "a" is initialized.
@@ -4385,14 +4283,11 @@ namespace Mono.CSharp {
 						Expression right_side =
 							out_access ? EmptyExpression.LValueMemberOutAccess : EmptyExpression.LValueMemberAccess;
 
-						if (InstanceExpression != EmptyExpression.Null)
-							InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
+						InstanceExpression = InstanceExpression.ResolveLValue (ec, right_side);
 					}
 				} else {
-					if (InstanceExpression != EmptyExpression.Null) {
-						using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
-							InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue);
-						}
+					using (ec.With (ResolveContext.Options.DoFlowAnalysis, false)) {
+						InstanceExpression = InstanceExpression.Resolve (ec, ResolveFlags.VariableOrValue);
 					}
 				}
 
@@ -4404,6 +4299,10 @@ namespace Mono.CSharp {
 				}
 			}
 
+			if (type.IsPointer && !ec.IsUnsafe) {
+				UnsafeError (ec, loc);
+			}
+
 			if (!ec.IsObsolete) {
 				ObsoleteAttribute oa = spec.GetAttributeObsolete ();
 				if (oa != null)
@@ -4412,6 +4311,10 @@ namespace Mono.CSharp {
 
 			var fb = spec as FixedFieldSpec;
 			IVariableReference var = InstanceExpression as IVariableReference;
+
+			if (lvalue_instance && var != null && var.VariableInfo != null) {
+				var.VariableInfo.SetFieldAssigned (ec, Name);
+			}
 			
 			if (fb != null) {
 				IFixedExpression fe = InstanceExpression as IFixedExpression;
@@ -4483,11 +4386,7 @@ namespace Mono.CSharp {
 		
 		override public Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			IVariableReference var = InstanceExpression as IVariableReference;
-			if (var != null && var.VariableInfo != null)
-				var.VariableInfo.SetFieldAssigned (ec, Name);
-
-			bool lvalue_instance = !spec.IsStatic && TypeManager.IsValueType (spec.DeclaringType);
+			bool lvalue_instance = IsInstance && spec.DeclaringType.IsStruct;
 			bool out_access = right_side == EmptyExpression.OutAccess.Instance || right_side == EmptyExpression.LValueMemberOutAccess;
 
 			Expression e = DoResolve (ec, lvalue_instance, out_access);
@@ -4637,7 +4536,8 @@ namespace Mono.CSharp {
 		public void EmitAssign (EmitContext ec, Expression source, bool leave_copy, bool prepare_for_load)
 		{
 			prepared = prepare_for_load;
-			EmitInstance (ec, prepared);
+			if (IsInstance)
+				EmitInstance (ec, prepared);
 
 			source.Emit (ec);
 			if (leave_copy) {
@@ -4755,7 +4655,7 @@ namespace Mono.CSharp {
 		LocalTemporary temp;
 		bool prepared;
 
-		public PropertyExpr (TypeSpec container_type, PropertySpec spec, Location l)
+		public PropertyExpr (PropertySpec spec, Location l)
 		{
 			this.spec = spec;
 			loc = l;
@@ -4842,15 +4742,8 @@ namespace Mono.CSharp {
 
 		bool InstanceResolve (ResolveContext ec, bool lvalue_instance, bool must_do_cs1540_check)
 		{
-			if (IsStatic) {
-				InstanceExpression = null;
+			if (!ResolveInstanceExpression (ec))
 				return true;
-			}
-
-			if (InstanceExpression == null) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
-				return false;
-			}
 
 			InstanceExpression = InstanceExpression.Resolve (ec);
 			if (lvalue_instance && InstanceExpression != null)
@@ -4929,10 +4822,10 @@ namespace Mono.CSharp {
 			// Only base will allow this invocation to happen.
 			//
 			if (IsBase && spec.IsAbstract) {
-				Error_CannotCallAbstractBase (ec, TypeManager.GetFullNameSignature (spec));
+				Error_CannotCallAbstractBase (ec, spec.GetSignatureForError ());
 			}
 
-			if (spec.MemberType.IsPointer && !ec.IsUnsafe){
+			if (type.IsPointer && !ec.IsUnsafe){
 				UnsafeError (ec, loc);
 			}
 
@@ -5171,8 +5064,7 @@ namespace Mono.CSharp {
 				GetSignatureForError ());
 		}
 
-		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, Location loc,
-								SimpleName original)
+		public override MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
 			//
 			// If the event is local to this class, we transform ourselves into a FieldExpr
@@ -5196,31 +5088,20 @@ namespace Mono.CSharp {
 
 					InstanceExpression = null;
 				
-					return ml.ResolveMemberAccess (ec, left, loc, original);
+					return ml.ResolveMemberAccess (ec, left, original);
 				}
 			}
 
-			if (left is This && !ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))			
+			if (!ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))			
 				Error_AssignmentEventOnly (ec);
 
-			return base.ResolveMemberAccess (ec, left, loc, original);
+			return base.ResolveMemberAccess (ec, left, original);
 		}
 
 		bool InstanceResolve (ResolveContext ec, bool must_do_cs1540_check)
 		{
-			if (IsStatic) {
-				InstanceExpression = null;
+			if (!ResolveInstanceExpression (ec))
 				return true;
-			}
-
-			if (InstanceExpression == null) {
-				SimpleName.Error_ObjectRefRequired (ec, loc, GetSignatureForError ());
-				return false;
-			}
-
-			InstanceExpression = InstanceExpression.Resolve (ec);
-			if (InstanceExpression == null)
-				return false;
 
 			if (IsBase && spec.IsAbstract) {
 				Error_CannotCallAbstractBase (ec, TypeManager.CSharpSignature(spec));
@@ -5276,6 +5157,8 @@ namespace Mono.CSharp {
 				return null;
 			}
 
+			type = spec.MemberType;
+
 			if (!InstanceResolve (ec, must_do_cs1540_check))
 				return null;
 
@@ -5291,7 +5174,6 @@ namespace Mono.CSharp {
 			}
 
 			spec.MemberDefinition.SetIsUsed ();
-			type = spec.MemberType;
 			
 			return this;
 		}		

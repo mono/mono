@@ -1,3 +1,10 @@
+2010-05-17  Marek Safar  <marek.safar@gmail.com>
+
+	* typespec.cs, expression.cs, statement.cs, ecore.cs, complete.cs,
+	delegate.cs: Member instance is resolved after member overload
+	definitely resolves static/instance property of member expression.
+	Fixes #545047, #358848, #456605, #460016, #603299
+
 2010-05-12  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #604981

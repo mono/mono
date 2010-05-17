@@ -4219,7 +4219,7 @@ namespace Mono.CSharp {
 				pinned_string.Emit (ec);
 				ec.Emit (OpCodes.Conv_I);
 
-				PropertyExpr pe = new PropertyExpr (pinned_string.VariableType, TypeManager.int_get_offset_to_string_data, pinned_string.Location);
+				PropertyExpr pe = new PropertyExpr (TypeManager.int_get_offset_to_string_data, pinned_string.Location);
 				//pe.InstanceExpression = pinned_string;
 				pe.Resolve (new ResolveContext (ec.MemberContext)).Emit (ec);
 
@@ -5208,8 +5208,7 @@ namespace Mono.CSharp {
 					if (return_type.IsInterface && TypeManager.IsGenericType (return_type)) {
 						enumerator_type = return_type;
 						if (!FetchGetCurrent (ec, return_type))
-							get_current = new PropertyExpr (
-								ec.CurrentType, TypeManager.ienumerator_getcurrent, loc);
+							get_current = new PropertyExpr (TypeManager.ienumerator_getcurrent, loc);
 						if (!FetchMoveNext (return_type))
 							move_next = TypeManager.bool_movenext_void;
 						return true;
@@ -5220,8 +5219,7 @@ namespace Mono.CSharp {
 					    !FetchGetCurrent (ec, return_type)) {
 						enumerator_type = return_type;
 						move_next = TypeManager.bool_movenext_void;
-						get_current = new PropertyExpr (
-							ec.CurrentType, TypeManager.ienumerator_getcurrent, loc);
+						get_current = new PropertyExpr (TypeManager.ienumerator_getcurrent, loc);
 						return true;
 					}
 				} else {

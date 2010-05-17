@@ -113,8 +113,7 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			Expression expr_resolved = expr.Resolve (ec,
-				ResolveFlags.VariableOrValue | ResolveFlags.Type |
-				ResolveFlags.Intermediate);
+				ResolveFlags.VariableOrValue | ResolveFlags.Type);
 
 			if (expr_resolved == null)
 				return null;
