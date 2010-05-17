@@ -49,6 +49,7 @@ namespace System.Windows.Forms {
 		private bool multiline;
 		private ImageList image_list;
 		private Size item_size = Size.Empty;
+		private bool item_size_manual;
 		private Point padding;
 		private int row_count = 0;
 		private bool hottrack;
@@ -114,7 +115,6 @@ namespace System.Windows.Forms {
 			tab_pages = new TabPageCollection (this);
 			SetStyle (ControlStyles.UserPaint, false);
 			padding = ThemeEngine.Current.TabControlDefaultPadding;
-			item_size = ThemeEngine.Current.TabControlDefaultItemSize;
 
 			MouseDown += new MouseEventHandler (MouseDownHandler);
 			MouseLeave += new EventHandler (OnMouseLeave);
@@ -225,17 +225,29 @@ namespace System.Windows.Forms {
 		[DefaultValue(null)]
 		public ImageList ImageList {
 			get { return image_list; }
-			set { image_list = value; }
+			set { 
+				image_list = value; 
+				Redraw ();
+			}
 		}
 
 		[Localizable(true)]
 		public Size ItemSize {
 			get {
+				if (item_size_manual)
+					return item_size;
+
+				if (!IsHandleCreated)
+					return Size.Empty;
+
 				Size size = item_size;
 				if (SizeMode != TabSizeMode.Fixed) {
 					size.Width += padding.X * 2;
 					size.Height += padding.Y * 2;
 				}
+
+				if (tab_pages.Count == 0)
+					size.Width = 0;
 
 				return size;
 			}
@@ -243,6 +255,7 @@ namespace System.Windows.Forms {
 				if (value.Height < 0 || value.Width < 0)
 					throw new ArgumentException ("'" + value + "' is not a valid value for 'ItemSize'.");
 				item_size = value;
+				item_size_manual = true;
 				Redraw ();
 			}
 		}
@@ -1142,6 +1155,8 @@ namespace System.Windows.Forms {
 				row_count = 1;
 			show_slider = false;
 			
+			CalculateItemSize ();
+
 			for (int i = 0; i < TabPages.Count; i++) {
 				TabPage page = TabPages [i];
 				int aux = 0;
@@ -1150,6 +1165,34 @@ namespace System.Windows.Forms {
 
 			if (SelectedIndex != -1 && TabPages.Count > SelectedIndex && TabPages[SelectedIndex].Row != BottomRow)
 				DropRow (TabPages [SelectedIndex].Row);
+		}
+
+		// ItemSize per-se is used mostly only to retrieve the Height,
+		// since the actual Width of the tabs is computed individually,
+		// except when SizeMode is TabSizeMode.Fixed, where Width is used as well.
+		private void CalculateItemSize ()
+		{
+			if (item_size_manual)
+				return;
+
+			SizeF size;
+			if (tab_pages.Count > 0) {
+				// .Net uses the first tab page if available.
+				size = TextRenderer.MeasureString (tab_pages [0].Text, Font);
+
+			} else {
+				size = TextRenderer.MeasureString ("a", Font);
+				size.Width = 0;
+			}
+
+			if (size_mode == TabSizeMode.Fixed)
+				size.Width = 96;
+			if (size.Width < MinimumTabWidth)
+				size.Width = MinimumTabWidth;
+			if (image_list != null && image_list.ImageSize.Height > size.Height)
+				size.Height = image_list.ImageSize.Height;
+
+			item_size = size.ToSize ();
 		}
 
 		private int BottomRow {

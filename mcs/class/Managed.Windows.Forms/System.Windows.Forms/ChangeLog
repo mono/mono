@@ -1,3 +1,10 @@
+2010-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com> 
+
+	* TabControl.cs: Properly implement ItemSize, which should depend on
+	Font and ImageList -if available-, instead of having a fixed height.
+	Setting ImageList should cause a Redraw also.
+	Fixes #599950.
+
 2010-05-15  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: ItemSize should be returning two times the padding
