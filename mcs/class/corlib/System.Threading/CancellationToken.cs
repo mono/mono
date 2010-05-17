@@ -26,7 +26,6 @@
 
 using System;
 using System.Threading;
-using System.Collections.Generic;
 
 #if NET_4_0 || BOOTSTRAP_NET_4_0
 namespace System.Threading
@@ -34,6 +33,7 @@ namespace System.Threading
 	public struct CancellationToken
 	{
 		public CancellationToken (bool canceled)
+			: this ()
 		{
 			// dummy, this is actually set by CancellationTokenSource when the token is created
 			Source = null;
