@@ -1,17 +1,36 @@
-// cs0038-2.cs: Cannot access a nonstatic member of outer type `X' via nested type `X.Nested'
-// Line: 9
-public enum MyEnum { V = 1 }
+// CS0038: Cannot access a nonstatic member of outer type `Outer' via nested type `Outer.Inner'
+// Line: 33
 
-class X {
-	public MyEnum MyEnum;	
-	class Nested {
-		internal MyEnum D () { 
-			return MyEnum; 
-		}
+public class Runner
+{
+	string msg;
+
+	public Runner (string s)
+	{
+		msg = s;
 	}
-	
-	static int Main () {
-		Nested n = new Nested ();
-		return n.D() == MyEnum.V ? 0 : 1;
+
+	public string Report ()
+	{
+		return msg;
+	}
+}
+
+public class Outer
+{
+	private Runner r = new Runner ("Outer");
+
+	public Runner Runner
+	{
+		get { return r; }
+		set { r = value; }
+	}
+
+	class Inner
+	{
+		public string Check ()
+		{
+			return Runner.Report ();
+		}
 	}
 }

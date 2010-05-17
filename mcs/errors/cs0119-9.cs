@@ -1,4 +1,4 @@
-// CS0120: An object reference is required to access non-static member `C.Enum()'
+// CS0119: Expression denotes a `method group', where a `variable', `value' or `type' was expected
 // Line: 20
 
 using System;
