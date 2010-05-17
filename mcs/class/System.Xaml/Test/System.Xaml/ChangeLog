@@ -1,3 +1,7 @@
+2010-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlObjectWriterTest.cs : fix and enable some tests.
+
 2010-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlObjectReaderTest.cs : more test use cases.

@@ -188,6 +188,8 @@ namespace System.Xaml
 			var obj = objects.Pop ();
 			if (members.Count > 0)
 				contents.Add (obj);
+			if (objects.Count == 0)
+				result = obj;
 		}
 
 		public override void WriteGetObject ()
@@ -195,8 +197,9 @@ namespace System.Xaml
 			manager.GetObject ();
 
 			var xm = members.Peek ();
-			if (!xm.Type.IsCollection)
-				throw new XamlObjectWriterException (String.Format ("WriteGetObject method can be invoked only when current member '{0}' is of collection type", xm.Name));
+			// see GetObjectOnNonNullString() test
+			//if (!xm.Type.IsCollection)
+			//	throw new XamlObjectWriterException (String.Format ("WriteGetObject method can be invoked only when current member '{0}' is of collection type", xm.Name));
 
 			var obj = xm.Invoker.GetValue (objects.Peek ());
 			if (obj == null)
@@ -287,8 +290,6 @@ namespace System.Xaml
 		{
 			objects.Push (obj);
 			object_instantiated = true;
-			if (objects.Count == 1)
-				result = objects.Peek ();
 			arguments.Clear ();
 			factory_method = null;
 		}

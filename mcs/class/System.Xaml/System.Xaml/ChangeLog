@@ -1,3 +1,11 @@
+2010-05-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XamlWriterStateManager.cs : on object writer, reject more write
+	  namespace order. (I should really unuse it for object writer.)
+	* XamlObjectWriter.cs : result is set at end object. Do not reject
+	  non-collection in this writer. I'm totally no idea why it should
+	  not do so though.
+
 2010-04-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlMember.cs : hack GetHashCode().

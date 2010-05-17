@@ -168,7 +168,7 @@ namespace System.Xaml
 
 		public void Namespace ()
 		{
-			if (!allow_ns_at_value && state == XamlWriteState.ValueWritten)
+			if (!allow_ns_at_value && (state == XamlWriteState.ValueWritten || state == XamlWriteState.ObjectStarted))
 				throw CreateError (String.Format ("Namespace declarations cannot be written at {0} state", state));
 			ns_pushed = true;
 		}

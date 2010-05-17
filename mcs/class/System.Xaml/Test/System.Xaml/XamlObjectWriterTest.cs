@@ -512,7 +512,6 @@ namespace MonoTests.System.Xaml
 
 		[Test]
 		[ExpectedException (typeof (XamlObjectWriterException))] // This is also very different, requires exactly opposite namespace output manner to XamlXmlWriter (namespace first, object follows).
-		[Category ("NotWorking")]
 		public void StartMemberAfterNamespace ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
@@ -592,14 +591,15 @@ namespace MonoTests.System.Xaml
 		}
 
 		[Test]
-		// String is not treated as a collection on XamlXmlWriter, while this XamlObjectReader does.
-		[Category ("NotWorking")]
+		// String is not treated as a collection on XamlXmlWriter, while this XamlObjectWriter does.
 		public void GetObjectOnNonNullString ()
 		{
 			var xw = new XamlObjectWriter (sctx, null);
 			xw.WriteStartObject (xt3);
+			Assert.IsNull (xw.Result, "#1");
 			xw.WriteStartMember (xt3.GetMember ("TestProp3"));
 			xw.WriteGetObject ();
+			Assert.IsNull (xw.Result, "#2");
 		}
 
 		[Test]
@@ -611,8 +611,6 @@ namespace MonoTests.System.Xaml
 			xw.WriteStartMember (new XamlMember (typeof (Foo).GetProperty ("Bar"), sctx));
 			xw.WriteGetObject ();
 			xw.Close ();
-			// FIXME: enable it once we got generic type output fixed.
-			//Assert.AreEqual (xml, sw.ToString ().Replace ('"', '\''), "#1");
 		}
 
 		[Test]
