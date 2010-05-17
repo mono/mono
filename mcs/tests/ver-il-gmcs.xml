@@ -38853,6 +38853,137 @@
       </method>
     </type>
   </test>
+  <test name="test-763.cs">
+    <type name="StaticDelegateWithSameNameAsInstance">
+      <method name="Void set_MyProvider(StaticDelegateWithSameNameAsInstance+Provider)">
+        <size>35</size>
+      </method>
+      <method name="Void StaticCallback()">
+        <size>31</size>
+      </method>
+      <method name="Void StaticCallback(System.String)">
+        <size>35</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>36</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="StaticDelegateWithSameNameAsInstance+Provider">
+      <method name="Void Invoke(System.String)">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.String, System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-764.cs">
+    <type name="Item">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="Caller">
+      <method name="System.String get_Item(System.String)">
+        <size>2</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void Foo()">
+        <size>12</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-765.cs">
+    <type name="B">
+      <method name="Void Foo(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Foo(System.String)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()">
+        <size>11</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-766.cs">
+    <type name="A.Color">
+      <method name="Color get_Base()">
+        <size>6</size>
+      </method>
+      <method name="Color get_NewBase()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B.Color">
+      <method name="Color From(Int32)">
+        <size>10</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>15</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-767.cs">
+    <type name="Test">
+      <method name="Int32 Foo()">
+        <size>2</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="Test get_Test()">
+        <size>6</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>11</size>
+      </method>
+    </type>
+  </test>
   <test name="test-77.cs">
     <type name="XX">
       <method name="Void .ctor()">
