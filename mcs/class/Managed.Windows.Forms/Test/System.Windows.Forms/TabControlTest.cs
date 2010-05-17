@@ -108,7 +108,7 @@ namespace MonoTests.System.Windows.Forms
 		}
 
 		[Test]
-		public void ItemSizeTest ()
+		public void ItemSizeTestPadding ()
 		{
 			TabControl tc = new TabControl ();
 			tc.TabPages.Add ("One"); // Need to add a page to force to calc the width
@@ -121,6 +121,74 @@ namespace MonoTests.System.Windows.Forms
 
 			Assert.IsTrue (tc.ItemSize.Height > item_size.Height, "#B0");
 			Assert.IsTrue (tc.ItemSize.Width > item_size.Width, "#B1");
+		}
+
+		[Test]
+		public void ItemSizeTest ()
+		{
+			TabControl tc = new TabControl ();
+			Assert.AreEqual (Size.Empty, tc.ItemSize, "#A0");
+
+			tc.CreateControl ();
+			Assert.IsTrue (tc.ItemSize.Width == 0, "#B0");
+			Assert.IsTrue (tc.ItemSize.Height > 0, "#B1");
+
+			tc.TabPages.Add ("A");
+			Assert.IsTrue (tc.ItemSize.Width > 0, "#C0");
+			Assert.IsTrue (tc.ItemSize.Height > 0, "#C1");
+
+			// ItemSize.Height can change, depending on Font
+			Size prev_size = tc.ItemSize;
+			tc.Font = new Font (tc.Font.FontFamily, tc.Font.Height * 2);
+			Assert.IsTrue (tc.ItemSize.Height > prev_size.Height, "#D0");
+
+			// Images can cause a change as well
+			prev_size = tc.ItemSize;
+			ImageList image_list = new ImageList ();
+			image_list.ImageSize = new Size (image_list.ImageSize.Width, tc.Font.Height * 2);
+			tc.ImageList = image_list;
+			Assert.IsTrue (tc.ItemSize.Height > prev_size.Height, "#E0");
+		}
+
+		[Test]
+		public void ItemSizeFixedTest ()
+		{
+			TabControl tc = new TabControl ();
+			tc.SizeMode = TabSizeMode.Fixed;
+			Assert.AreEqual (Size.Empty, tc.ItemSize, "#A0");
+
+			tc.CreateControl ();
+			Assert.IsTrue (tc.ItemSize.Width == 0, "#B0");
+			Assert.IsTrue (tc.ItemSize.Height > 0, "#B1");
+
+			tc.TabPages.Add ("A");
+			Assert.IsTrue (tc.ItemSize.Width == 96, "#C0");
+			Assert.IsTrue (tc.ItemSize.Width > 0, "#C1");
+
+			// Height can change automatically depending on Font,
+			// but not Width
+			Size prev_size = tc.ItemSize;
+			tc.Font = new Font (tc.Font.FontFamily, tc.Font.Height * 2);
+			Assert.IsTrue (tc.ItemSize.Width == 96, "#D0");
+			Assert.IsTrue (tc.ItemSize.Height > prev_size.Height, "#D1");
+
+			// Manually set ItemSize
+			tc.ItemSize = new Size (100, 35);
+			Assert.AreEqual (100, tc.ItemSize.Width, "#E0");
+			Assert.AreEqual (35, tc.ItemSize.Height, "#E1");
+
+			// Font size is decreased, but since we manually set
+			// the size we can't automatically update it.
+			tc.Font = new Font (tc.Font.FontFamily, tc.Font.Height / 2);
+			Assert.AreEqual (100, tc.ItemSize.Width, "#F0");
+			Assert.AreEqual (35, tc.ItemSize.Height, "#F1");
+
+			// Manually set even if control has not been created.
+			tc = new TabControl ();
+			tc.SizeMode = TabSizeMode.Fixed;
+			tc.ItemSize = new Size (100, 35);
+			Assert.AreEqual (100, tc.ItemSize.Width, "#G0");
+			Assert.AreEqual (35, tc.ItemSize.Height, "#G1");
 		}
 
 		[Test]
