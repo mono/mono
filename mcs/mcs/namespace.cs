@@ -352,7 +352,7 @@ namespace Mono.CSharp {
 			return ns;
 		}
 
-		TypeExpr LookupType (CompilerContext ctx, string name, int arity, Location loc)
+		public TypeExpr LookupType (CompilerContext ctx, string name, int arity, Location loc)
 		{
 			if (types == null)
 				return null;
@@ -1153,7 +1153,9 @@ namespace Mono.CSharp {
 			//
 			FullNamedExpression match = null;
 			foreach (Namespace using_ns in GetUsingTable ()) {
-				fne = using_ns.Lookup (Compiler, name, arity, loc);
+				// A using directive imports only types contained in the namespace, it
+				// does not import any nested namespaces
+				fne = using_ns.LookupType (Compiler, name, arity, loc);
 				if (fne == null)
 					continue;
 

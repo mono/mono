@@ -1,3 +1,9 @@
+2010-05-18  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #606551
+	* namespace.cs: Using directive imports only types and not nested
+	namespaces.
+
 2010-05-17  Marek Safar  <marek.safar@gmail.com>
 
 	* typespec.cs, expression.cs, statement.cs, ecore.cs, complete.cs,
