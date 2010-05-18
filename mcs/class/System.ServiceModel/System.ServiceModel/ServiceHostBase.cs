@@ -339,13 +339,6 @@ namespace System.ServiceModel
 				Authorization = new ServiceAuthorizationBehavior ();
 				Description.Behaviors.Add (Authorization);
 			}
-
-			// ensure ServiceDebugBehavior
-			ServiceDebugBehavior debugBehavior = Description.Behaviors.Find<ServiceDebugBehavior> ();
-			if (debugBehavior == null) {
-				debugBehavior = new ServiceDebugBehavior ();
-				Description.Behaviors.Add (debugBehavior);
-			}
 		}
 
 		private ServiceElement GetServiceElement() {
