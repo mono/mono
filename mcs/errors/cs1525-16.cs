@@ -1,4 +1,4 @@
-// CS0023: The `.' operator cannot be applied to operand of type `void'
+// CS1525: Unexpected symbol `void'
 // Line: 8
 
 class C
