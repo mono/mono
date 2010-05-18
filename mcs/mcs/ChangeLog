@@ -1,5 +1,10 @@
 2010-05-18  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #446507
+	* method.cs: Only one method can implement an interface.
+
+2010-05-18  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #594905
 	* convert.cs, constant.cs, expression.cs, literal.cs, ecore.cs:
 	Typed null can be used as a source for expression methods.

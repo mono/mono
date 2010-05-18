@@ -1821,6 +1821,12 @@ namespace Mono.CSharp {
 				// Set Final unless we're virtual, abstract or already overriding a method.
 				if ((modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE)) == 0)
 					flags |= MethodAttributes.Final;
+
+				//
+				// clear the pending implementation flag (requires explicit methods to be defined first)
+				//
+				parent.PartialContainer.PendingImplementations.ImplementMethod (method.MethodName,
+					member.InterfaceType, this, member.IsExplicitImpl);
 			}
 
 			DefineMethodBuilder (container, method_full_name, method.ParameterInfo);
@@ -1882,13 +1888,6 @@ namespace Mono.CSharp {
 				GenericMethod.EmitAttributes ();
 
 			method.ParameterInfo.ApplyAttributes (MethodBuilder);
-
-			//
-			// clear the pending implementation flag
-			//
-			if (implementing != null)
-				parent.PartialContainer.PendingImplementations.ImplementMethod (method.MethodName,
-					member.InterfaceType, this, member.IsExplicitImpl);
 
 			SourceMethod source = SourceMethod.Create (parent, MethodBuilder, method.Block);
 
