@@ -39013,6 +39013,26 @@
       </method>
     </type>
   </test>
+  <test name="test-768.cs">
+    <type name="A.N.Wrong">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="N.C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="X.TestClass">
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-77.cs">
     <type name="XX">
       <method name="Void .ctor()">
