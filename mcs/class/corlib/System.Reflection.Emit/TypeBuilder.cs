@@ -675,7 +675,7 @@ namespace System.Reflection.Emit
 #if NET_4_0
 		public PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
 		{
-			return DefineProperty (name, attributes, returnType, callingConvention, null, null, parameterTypes, null, null);
+			return DefineProperty (name, attributes, callingConvention, returnType , null, null, parameterTypes, null, null);
 		}	
 #endif
 
