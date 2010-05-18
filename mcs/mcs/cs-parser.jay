@@ -2985,14 +2985,6 @@ integral_type
 	| CHAR		{ $$ = TypeManager.system_char_expr; }
 	;
 
-predefined_type
-	: builtin_types
-	| VOID
-	  {
-		$$ = TypeManager.system_void_expr;	
-	  }
-	;
-
 //
 // Expressions, section 7.5
 //
@@ -3082,7 +3074,7 @@ member_access
 		var lt = (Tokenizer.LocatedToken) $3;
 		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4, lt.Location);
 	  }
-	| predefined_type DOT IDENTIFIER opt_type_argument_list
+	| builtin_types DOT IDENTIFIER opt_type_argument_list
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
 		// TODO: Location is wrong as some predefined types doesn't hold a location
@@ -3102,12 +3094,12 @@ member_access
 		var lt = (Tokenizer.LocatedToken) $3;
 		$$ = new CompletionMemberAccess ((Expression) $1, lt.Value, lt.Location);
 	  }
-	| predefined_type DOT GENERATE_COMPLETION
+	| builtin_types DOT GENERATE_COMPLETION
 	  {
 		// TODO: Location is wrong as some predefined types doesn't hold a location
 		$$ = new CompletionMemberAccess ((Expression) $1, null, lexer.Location);
 	  }
-	| predefined_type DOT IDENTIFIER GENERATE_COMPLETION {
+	| builtin_types DOT IDENTIFIER GENERATE_COMPLETION {
 		var lt = (Tokenizer.LocatedToken) $3;
 		$$ = new CompletionMemberAccess ((Expression) $1, lt.Value, lt.Location);
  	  }
@@ -3812,7 +3804,7 @@ cast_expression
 	  {
 		$$ = new Cast ((FullNamedExpression) $2, (Expression) $4, GetLocation ($1));
 	  }
-	| OPEN_PARENS predefined_type CLOSE_PARENS prefixed_unary_expression
+	| OPEN_PARENS builtin_types CLOSE_PARENS prefixed_unary_expression
 	  {
 		$$ = new Cast ((FullNamedExpression) $2, (Expression) $4, GetLocation ($1));
 	  }
