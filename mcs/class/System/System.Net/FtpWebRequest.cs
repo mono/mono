@@ -26,6 +26,7 @@ namespace System.Net
 		Uri requestUri;
 		string file_name; // By now, used for upload
 		ServicePoint servicePoint;
+		Stream origDataStream;
 		Stream dataStream;
 		Stream controlStream;
 		StreamReader controlReader;
@@ -623,10 +624,10 @@ namespace System.Net
 			}
 		}
 
-		private void CloseDataConnection () {
-			if(dataStream != null) {
-				dataStream.Close ();
-				dataStream = null;
+		internal void CloseDataConnection () {
+			if(origDataStream != null) {
+				origDataStream.Close ();
+				origDataStream = null;
 			}
 		}
 
@@ -960,7 +961,8 @@ namespace System.Net
 				throw CreateExceptionFromResponse (status);
 
 			if (usePassive) {
-				dataStream = new NetworkStream (s, false);
+				origDataStream = new NetworkStream (s, true);
+				dataStream = origDataStream;
 				if (EnableSsl)
 					ChangeToSSLSocket (ref dataStream);
 			}
@@ -980,7 +982,8 @@ namespace System.Net
 				}
 
 				s.Close ();
-				dataStream = new NetworkStream (incoming, false);
+				origDataStream = new NetworkStream (s, true);
+				dataStream = origDataStream;
 				if (EnableSsl)
 					ChangeToSSLSocket (ref dataStream);
 			}
@@ -1103,6 +1106,7 @@ namespace System.Net
 					string line = null;
 					string find = code.ToString() + ' ';
 					while (true){
+						line = null;
 						try {
 							line = controlReader.ReadLine();
 						} catch (IOException) {

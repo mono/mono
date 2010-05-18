@@ -1,3 +1,9 @@
+2010-05-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FtpDataStream.cs:
+	* FtpWebRequest.cs: properly close the data connection even when
+	nothing is read from it. Refixes bug #598908.
+
 2010-04-23 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpDataStream.cs:

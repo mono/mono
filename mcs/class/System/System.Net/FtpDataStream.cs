@@ -110,7 +110,8 @@ namespace System.Net
 
 			totalRead += nbytes;
 			if (nbytes == 0) {
-				networkStream.Close ();
+				networkStream = null;
+				request.CloseDataConnection ();
 				request.SetTransferCompleted ();
 			}
 
@@ -233,11 +234,7 @@ namespace System.Net
 
 			disposed = true;
 			if (networkStream != null)  {
-				try {
- 					networkStream.Close ();
-				} catch {
-				}
-
+				request.CloseDataConnection ();
 				request.SetTransferCompleted ();
 				request = null;
 				networkStream = null;
