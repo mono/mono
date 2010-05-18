@@ -1955,6 +1955,18 @@ namespace Mono.CSharp {
 			return GetSignatureForError ();
 		}
 
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			if (type == InternalType.Null || type == TypeManager.object_type) {
+				// Optimized version, also avoids referencing literal internal type
+				Arguments args = new Arguments (1);
+				args.Add (new Argument (this));
+				return CreateExpressionFactoryCall (ec, "Constant", args);
+			}
+
+			return base.CreateExpressionTree (ec);
+		}
+
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			return this;

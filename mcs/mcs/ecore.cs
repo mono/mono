@@ -1087,7 +1087,7 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class ExpressionStatement : Expression {
 
-		public virtual ExpressionStatement ResolveStatement (BlockContext ec)
+		public ExpressionStatement ResolveStatement (BlockContext ec)
 		{
 			Expression e = Resolve (ec);
 			if (e == null)
@@ -2794,6 +2794,12 @@ namespace Mono.CSharp {
 
 		public virtual MemberExpr ResolveMemberAccess (ResolveContext ec, Expression left, SimpleName original)
 		{
+			Constant c = left as Constant;
+			if (c != null && c.GetValue () == null) {
+				ec.Report.Warning (1720, 1, left.Location,
+					"Expression will always cause a `{0}'", "System.NullReferenceException");
+			}
+
 			InstanceExpression = left;
 			return this;
 		}

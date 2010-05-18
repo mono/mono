@@ -7288,16 +7288,10 @@ namespace Mono.CSharp {
 				return expr.Resolve (ec);
 			}
 
-			if (expr_type.IsPointer || expr_type == TypeManager.void_type ||
-				expr_type == TypeManager.null_type || expr_type == InternalType.AnonymousMethod) {
+			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum | MemberKind.Interface | MemberKind.TypeParameter;
+			if ((expr_type.Kind & dot_kinds) == 0 || expr_type == TypeManager.void_type) {
 				Unary.Error_OperatorCannotBeApplied (ec, loc, ".", expr_type);
 				return null;
-			}
-
-			Constant c = expr_resolved as Constant;
-			if (c != null && c.GetValue () == null) {
-				ec.Report.Warning (1720, 1, loc, "Expression will always cause a `{0}'",
-					"System.NullReferenceException");
 			}
 
 			var arity = HasTypeArguments ? targs.Count : -1;

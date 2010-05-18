@@ -40,14 +40,6 @@ namespace Mono.CSharp {
 		{
 		}
 
-		public override Expression CreateExpressionTree (ResolveContext ec)
-		{
-			// Optimized version, also avoids referencing literal internal type
-			Arguments args = new Arguments (1);
-			args.Add (new Argument (this));
-			return CreateExpressionFactoryCall (ec, "Constant", args);
-		}		
-
 		public override void Error_ValueCannotBeConverted (ResolveContext ec, Location loc, TypeSpec t, bool expl)
 		{
 			if (t.IsGenericParameter) {
@@ -64,17 +56,6 @@ namespace Mono.CSharp {
 			}
 
 			base.Error_ValueCannotBeConverted (ec, loc, t, expl);
-		}
-
-		public override Constant ConvertImplicitly (ResolveContext rc, TypeSpec targetType)
-		{
-			//
-			// Null literal is of object type
-			//
-			if (targetType == TypeManager.object_type)
-				return this;
-
-			return base.ConvertImplicitly (rc, targetType);
 		}
 
 		public override bool IsLiteral {
