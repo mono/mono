@@ -17,7 +17,8 @@ class C2
 {
 	public static void Main ()
 	{
-		const object o = null;
-		const string s = (string) o;
+		// BUG compatibility for now
+		//const object o = null;
+		//const string s = (string) o;
 	}
 }

@@ -18381,6 +18381,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-exmethod-34.cs">
+    <type name="Program">
+      <method name="Void Foo(System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-friend-01.cs">
     <type name="Test">
       <method name="Void .ctor()">
