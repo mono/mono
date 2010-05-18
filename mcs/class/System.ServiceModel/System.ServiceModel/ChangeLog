@@ -1,5 +1,9 @@
 2010-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : revert the previous change, caused regressions.
+
+2010-05-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBase.cs : do not arbitrarily add ServiceDebugBehavior
 	  on all configuration-based services. .NET doesn't do that.
 
