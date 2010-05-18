@@ -1,3 +1,7 @@
+2010-05-18  Marek Safar  <marek.safar@gmail.com>
+
+	* TypeBuilder.cs, PropertyBuilder.cs: Add DefineProperty overloads.
+
 2010-04-27  Marek Safar  <marek.safar@gmail.com>
 
 	* TypeBuilder.cs: StructLayoutAttribute ctor can be builder when

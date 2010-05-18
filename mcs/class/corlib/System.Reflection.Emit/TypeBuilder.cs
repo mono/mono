@@ -669,10 +669,22 @@ namespace System.Reflection.Emit
 
 		public PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, Type returnType, Type[] parameterTypes)
 		{
-			return DefineProperty (name, attributes, returnType, null, null, parameterTypes, null, null);
+			return DefineProperty (name, attributes, 0, returnType, null, null, parameterTypes, null, null);
 		}
+		
+#if NET_4_0
+		public PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] parameterTypes)
+		{
+			return DefineProperty (name, attributes, returnType, callingConvention, null, null, parameterTypes, null, null);
+		}	
+#endif
 
-		public  PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
+		public PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
+		{
+			return DefineProperty (name, attributes, 0, returnType, returnTypeRequiredCustomModifiers, returnTypeOptionalCustomModifiers, parameterTypes, parameterTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers);
+		}
+		
+		public PropertyBuilder DefineProperty (string name, PropertyAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnTypeRequiredCustomModifiers, Type[] returnTypeOptionalCustomModifiers, Type[] parameterTypes, Type[][] parameterTypeRequiredCustomModifiers, Type[][] parameterTypeOptionalCustomModifiers)
 		{
 			check_name ("name", name);
 			if (parameterTypes != null)
@@ -681,16 +693,13 @@ namespace System.Reflection.Emit
 						throw new ArgumentNullException ("parameterTypes");
 			check_not_created ();
 
-			PropertyBuilder res = new PropertyBuilder (this, name, attributes, returnType, returnTypeRequiredCustomModifiers, returnTypeOptionalCustomModifiers, parameterTypes, parameterTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers);
+			PropertyBuilder res = new PropertyBuilder (this, name, attributes, callingConvention, returnType, returnTypeRequiredCustomModifiers, returnTypeOptionalCustomModifiers, parameterTypes, parameterTypeRequiredCustomModifiers, parameterTypeOptionalCustomModifiers);
 
 			if (properties != null) {
-				PropertyBuilder[] new_properties = new PropertyBuilder [properties.Length+1];
-				System.Array.Copy (properties, new_properties, properties.Length);
-				new_properties [properties.Length] = res;
-				properties = new_properties;
+				Array.Resize (ref properties, properties.Length + 1);
+				properties [properties.Length - 1] = res;
 			} else {
-				properties = new PropertyBuilder [1];
-				properties [0] = res;
+				properties = new PropertyBuilder [1] { res };
 			}
 			return res;
 		}

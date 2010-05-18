@@ -60,10 +60,13 @@ namespace System.Reflection.Emit {
 		private Type[][] paramModReq;
 		private Type[][] paramModOpt;
 #pragma warning restore 169, 414
+		CallingConventions callingConvention;	// TODO: Implement
 		
-		internal PropertyBuilder (TypeBuilder tb, string name, PropertyAttributes attributes, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt) {
+		internal PropertyBuilder (TypeBuilder tb, string name, PropertyAttributes attributes, CallingConventions callingConvention, Type returnType, Type[] returnModReq, Type[] returnModOpt, Type[] parameterTypes, Type[][] paramModReq, Type[][] paramModOpt)
+		{
 			this.name = name;
 			this.attrs = attributes;
+			this.callingConvention = callingConvention;
 			this.type = returnType;
 			this.returnModReq = returnModReq;
 			this.returnModOpt = returnModOpt;
