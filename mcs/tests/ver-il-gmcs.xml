@@ -39043,6 +39043,22 @@
       </method>
     </type>
   </test>
+  <test name="test-769.cs">
+    <type name="C">
+      <method name="Void I.Clear()">
+        <size>1</size>
+      </method>
+      <method name="Void Clear()">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>114</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="test-77.cs">
     <type name="XX">
       <method name="Void .ctor()">
