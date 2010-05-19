@@ -1,4 +1,4 @@
-// Compiler options: -r:gtest-exmethod-02-lib.dll
+// Compiler options: -r:gtest-exmethod-02-lib.dll -noconfig
 
 using System;
 
