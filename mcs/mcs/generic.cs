@@ -2616,7 +2616,7 @@ namespace Mono.CSharp {
 				if (!tp.IsMethodOwned)
 					return parameter;
 
-				return fixed_types [tp.DeclaredPosition];
+				return fixed_types [tp.DeclaredPosition] ?? parameter;
 			}
 
 			var gt = parameter as InflatedTypeSpec;
