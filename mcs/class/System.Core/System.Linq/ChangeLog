@@ -1,3 +1,8 @@
+2010-05-19  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: fix GroupBy to deal with a null key for the last
+	group entry. Also fix GroupBy to properly throw ArgumentNullException.
+
 2010-05-05  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ParallelEnumerable.cs: Some operators weren't declared

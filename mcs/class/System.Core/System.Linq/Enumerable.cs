@@ -891,8 +891,8 @@ namespace System.Linq
 		static IEnumerable<IGrouping<TKey, TSource>> CreateGroupByIterator<TSource, TKey> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, IEqualityComparer<TKey> comparer)
 		{
-			Dictionary<TKey, List<TSource>> groups = new Dictionary<TKey, List<TSource>> ();
-			List<TSource> nullList = new List<TSource> ();
+			var groups = new Dictionary<TKey, List<TSource>> ();
+			var nullList = new List<TSource> ();
 			int counter = 0;
 			int nullCounter = -1;
 
@@ -916,14 +916,18 @@ namespace System.Linq
 			}
 
 			counter = 0;
-			foreach (KeyValuePair<TKey, List<TSource>> group in groups) {
+			foreach (var group in groups) {
 				if (counter == nullCounter) {
-					Grouping<TKey, TSource> nullGroup = new Grouping<TKey, TSource> (default (TKey), nullList);
-					yield return nullGroup;
+					yield return new Grouping<TKey, TSource> (default (TKey), nullList);
 					counter++;
 				}
-				Grouping<TKey, TSource> grouping = new Grouping<TKey, TSource> (group.Key, group.Value);
-				yield return grouping;
+
+				yield return new Grouping<TKey, TSource> (group.Key, group.Value);
+				counter++;
+			}
+
+			if (counter == nullCounter) {
+				yield return new Grouping<TKey, TSource> (default (TKey), nullList);
 				counter++;
 			}
 		}
@@ -939,8 +943,14 @@ namespace System.Linq
 		{
 			Check.SourceAndKeyElementSelectors (source, keySelector, elementSelector);
 
-			Dictionary<TKey, List<TElement>> groups = new Dictionary<TKey, List<TElement>> ();
-			List<TElement> nullList = new List<TElement> ();
+			return CreateGroupByIterator (source, keySelector, elementSelector, comparer);
+		}
+
+		static IEnumerable<IGrouping<TKey, TElement>> CreateGroupByIterator<TSource, TKey, TElement> (this IEnumerable<TSource> source,
+			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector, IEqualityComparer<TKey> comparer)
+		{
+			var groups = new Dictionary<TKey, List<TElement>> ();
+			var nullList = new List<TElement> ();
 			int counter = 0;
 			int nullCounter = -1;
 
@@ -965,14 +975,18 @@ namespace System.Linq
 			}
 
 			counter = 0;
-			foreach (KeyValuePair<TKey, List<TElement>> group in groups) {
+			foreach (var group in groups) {
 				if (counter == nullCounter) {
-					Grouping<TKey, TElement> nullGroup = new Grouping<TKey, TElement> (default (TKey), nullList);
-					yield return nullGroup;
+					yield return new Grouping<TKey, TElement> (default (TKey), nullList);
 					counter++;
 				}
-				Grouping<TKey, TElement> grouping = new Grouping<TKey, TElement> (group.Key, group.Value);
-				yield return grouping;
+
+				yield return new Grouping<TKey, TElement> (group.Key, group.Value);
+				counter++;
+			}
+
+			if (counter == nullCounter) {
+				yield return new Grouping<TKey, TElement> (default (TKey), nullList);
 				counter++;
 			}
 		}
@@ -985,6 +999,16 @@ namespace System.Linq
 		}
 
 		public static IEnumerable<TResult> GroupBy<TSource, TKey, TElement, TResult> (this IEnumerable<TSource> source,
+			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector,
+			Func<TKey, IEnumerable<TElement>, TResult> resultSelector,
+			IEqualityComparer<TKey> comparer)
+		{
+			Check.GroupBySelectors (source, keySelector, elementSelector, resultSelector);
+
+			return CreateGroupByIterator (source, keySelector, elementSelector, resultSelector, comparer);
+		}
+
+		static IEnumerable<TResult> CreateGroupByIterator<TSource, TKey, TElement, TResult> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector, Func<TSource, TElement> elementSelector,
 			Func<TKey, IEnumerable<TElement>, TResult> resultSelector,
 			IEqualityComparer<TKey> comparer)
@@ -1004,6 +1028,16 @@ namespace System.Linq
 		}
 
 		public static IEnumerable<TResult> GroupBy<TSource, TKey, TResult> (this IEnumerable<TSource> source,
+			Func<TSource, TKey> keySelector,
+			Func<TKey, IEnumerable<TSource>, TResult> resultSelector,
+			IEqualityComparer<TKey> comparer)
+		{
+			Check.SourceAndKeyResultSelectors (source, keySelector, resultSelector);
+
+			return CreateGroupByIterator (source, keySelector, resultSelector, comparer);
+		}
+
+		static IEnumerable<TResult> CreateGroupByIterator<TSource, TKey, TResult> (this IEnumerable<TSource> source,
 			Func<TSource, TKey> keySelector,
 			Func<TKey, IEnumerable<TSource>, TResult> resultSelector,
 			IEqualityComparer<TKey> comparer)
