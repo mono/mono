@@ -260,7 +260,7 @@ namespace System.Web.UI.WebControls {
 		}
 		
 		[DefaultValue (0)]
-		//[TypeConverter (typeof(DataSourceCacheDurationConverter))]
+		[TypeConverter (typeof(DataSourceCacheDurationConverter))]
 		public virtual int CacheDuration {
 			get {
 				return _cacheDuration;

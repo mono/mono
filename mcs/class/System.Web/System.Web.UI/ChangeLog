@@ -1,5 +1,8 @@
 2010-05-19  Marek Habersack  <mhabersack@novell.com>
 
+	* DataSourceCacheDurationConverter.cs: implemented. Fixes bug
+	#603083
+
 	* PageParser.cs: handle several main directive attributes
 	specially, as they can have expressions as their values. Fixes bug
 	#603532

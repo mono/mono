@@ -115,6 +115,7 @@ System.Web.UI/ControlCollectionTest.cs
 System.Web.UI/CssStyleCollectionTest.cs
 System.Web.UI/DataBindingCollectionTest.cs
 System.Web.UI/DataBindingHandlerAttributeTest.cs
+System.Web.UI/DataSourceCacheDurationConverterTest.cs
 System.Web.UI/LiteralControlTest.cs
 System.Web.UI.Adapters/ControlAdapterTest.cs
 System.Web.UI.Adapters/PageAdapterTest.cs
