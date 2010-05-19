@@ -1,3 +1,8 @@
+2010-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* PeerResolverSerializationTest.cs :
+	  verify deserialized address count too.
+
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CustomPeerResolverServiceTest.cs : enabled all disabled tests.

@@ -69,6 +69,7 @@ public class PeerResolverSerializationTest
 		using (var xw = XmlWriter.Create (sw))
 			ser.WriteObject (xw, rri);
 		rri = (ResolveResponseInfo) ser.ReadObject (XmlReader.Create (new StringReader (sw.ToString ())));
+		Assert.AreEqual (1, rri.Addresses.Count, "#1");
 	}
 }
 

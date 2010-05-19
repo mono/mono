@@ -15,28 +15,33 @@ namespace System.ServiceModel.PeerResolvers
 	public class RefreshResponseInfo
 	{
 		[MessageBodyMember (Name = "RefreshResponse", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		RefreshResponseInfoDC Body {
+			get {
+				if (body == null)
+					body = new RefreshResponseInfoDC ();
+				return body;
+			}
+		}
 		RefreshResponseInfoDC body;
 		
 		public RefreshResponseInfo ()
 		{
-			body = new RefreshResponseInfoDC ();
 		}
 		
 		public RefreshResponseInfo (TimeSpan registrationLifetime, RefreshResult result)
-			: this ()
 		{
-			body.RegistrationLifetime = registrationLifetime;
-			body.Result = result;
+			Body.RegistrationLifetime = registrationLifetime;
+			Body.Result = result;
 		}
 		
 		public TimeSpan RegistrationLifetime {
-			get { return body.RegistrationLifetime; }
-			set { body.RegistrationLifetime = value; }
+			get { return Body.RegistrationLifetime; }
+			set { Body.RegistrationLifetime = value; }
 		}
 		
 		public RefreshResult Result {
-			get { return body.Result; }
-			set { body.Result = value; }
+			get { return Body.Result; }
+			set { Body.Result = value; }
 		}
 		
 		public bool HasBody ()

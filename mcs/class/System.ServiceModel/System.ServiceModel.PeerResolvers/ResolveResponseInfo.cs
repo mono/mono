@@ -16,21 +16,27 @@ namespace System.ServiceModel.PeerResolvers
 	public class ResolveResponseInfo
 	{
 		[MessageBodyMember (Name = "ResolveResponse", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		ResolveResponseInfoDC Body {
+			get {
+				if (body == null)
+					body = new ResolveResponseInfoDC ();
+				return body;
+			}
+		}
 		ResolveResponseInfoDC body;
-		
+
 		public ResolveResponseInfo ()
 		{
-			body = new ResolveResponseInfoDC ();
 		}
 		
-		public ResolveResponseInfo (PeerNodeAddress[] addresses)
+		public ResolveResponseInfo (PeerNodeAddress [] addresses)
 		{
-			body.Addresses = new List<PeerNodeAddress> (addresses);
+			Body.Addresses = new List<PeerNodeAddress> (addresses);
 		}
 		
 		public IList<PeerNodeAddress> Addresses {
-			get { return body.Addresses; }
-			set { body.Addresses = value; }
+			get { return Body.Addresses; }
+			set { Body.Addresses = value; }
 		}
 		
 		public bool HasBody ()

@@ -15,36 +15,42 @@ namespace System.ServiceModel.PeerResolvers
 	public class UpdateInfo
 	{
 		[MessageBodyMember (Name = "Update", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		UpdateInfoDC Body {
+			get {
+				if (body == null)
+					body = new UpdateInfoDC ();
+				return body;
+			}
+		}
 		UpdateInfoDC body;
 		
 		public UpdateInfo ()
 		{
-			body = new UpdateInfoDC ();
 		}
 		
 		public UpdateInfo (Guid registrationId, Guid client, string meshId, PeerNodeAddress address)
 			: this ()
 		{
-			body.RegistrationId = registrationId;
-			body.ClientId = client;
-			body.MeshId = meshId;
-			body.NodeAddress = address;
+			Body.RegistrationId = registrationId;
+			Body.ClientId = client;
+			Body.MeshId = meshId;
+			Body.NodeAddress = address;
 		}
 		
 		public Guid ClientId {
-			get { return body.ClientId; }
+			get { return Body.ClientId; }
 		}
 		
 		public string MeshId {
-			get { return body.MeshId; }
+			get { return Body.MeshId; }
 		}
 		
 		public PeerNodeAddress NodeAddress {
-			get { return body.NodeAddress; }
+			get { return Body.NodeAddress; }
 		}
 		
 		public Guid RegistrationId {
-			get { return body.RegistrationId; }
+			get { return Body.RegistrationId; }
 		}
 		
 		public bool HasBody ()

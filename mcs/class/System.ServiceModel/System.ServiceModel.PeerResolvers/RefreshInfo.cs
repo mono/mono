@@ -15,26 +15,32 @@ namespace System.ServiceModel.PeerResolvers
 	public class RefreshInfo
 	{
 		[MessageBodyMember (Name = "Refresh", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		RefreshInfoDC Body {
+			get {
+				if (body == null)
+					body = new RefreshInfoDC ();
+				return body;
+			}
+		}
 		RefreshInfoDC body;
 		
 		public RefreshInfo ()
 		{
-			body = new RefreshInfoDC ();
 		}
 		
 		public RefreshInfo (string meshId, Guid regId)
 			: this ()
 		{
-			body.MeshId = meshId;
-			body.RegistrationId = regId;
+			Body.MeshId = meshId;
+			Body.RegistrationId = regId;
 		}
 		
 		public string MeshId {
-			get { return body.MeshId; }
+			get { return Body.MeshId; }
 		}
 		
 		public Guid RegistrationId {
-			get { return body.RegistrationId; }
+			get { return Body.RegistrationId; }
 		}
 		
 		public bool HasBody ()

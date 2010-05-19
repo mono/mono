@@ -15,27 +15,33 @@ namespace System.ServiceModel.PeerResolvers
 	public class RegisterResponseInfo
 	{
 		[MessageBodyMember (Name = "Update", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")] // .NET indeed returns "Update" element here.
+		RegisterResponseInfoDC Body {
+			get {
+				if (body == null)
+					body = new RegisterResponseInfoDC ();
+				return body;
+			}
+		}
 		RegisterResponseInfoDC body;
 		
 		public RegisterResponseInfo ()
 		{
-			body = new RegisterResponseInfoDC ();
 		}
 		
 		public RegisterResponseInfo (Guid registrationId, TimeSpan registrationLifetime)
 		{
-			body.RegistrationId = registrationId;
-			body.RegistrationLifetime = registrationLifetime;
+			Body.RegistrationId = registrationId;
+			Body.RegistrationLifetime = registrationLifetime;
 		}
 		
 		public Guid RegistrationId {
-			get { return body.RegistrationId; }
-			set { body.RegistrationId = value; }
+			get { return Body.RegistrationId; }
+			set { Body.RegistrationId = value; }
 		}
 		
 		public TimeSpan RegistrationLifetime {
-			get { return body.RegistrationLifetime; }
-			set { body.RegistrationLifetime = value; }
+			get { return Body.RegistrationLifetime; }
+			set { Body.RegistrationLifetime = value; }
 		}
 		
 		public bool HasBody ()

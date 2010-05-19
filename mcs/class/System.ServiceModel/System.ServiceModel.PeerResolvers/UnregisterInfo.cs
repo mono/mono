@@ -15,26 +15,31 @@ namespace System.ServiceModel.PeerResolvers
 	public class UnregisterInfo
 	{
 		[MessageBodyMember (Name = "Unregister", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		UnregisterInfoDC Body {
+			get {
+				if (body == null)
+					body = new UnregisterInfoDC ();
+				return body;
+			}
+		}
 		UnregisterInfoDC body;
 		
 		public UnregisterInfo ()
 		{
-			body = new UnregisterInfoDC ();
 		}
 		
 		public UnregisterInfo (string meshId, Guid registration_id)
-			: this ()
 		{
-			body.MeshId = meshId;
-			body.RegistrationId = registration_id;
+			Body.MeshId = meshId;
+			Body.RegistrationId = registration_id;
 		}
 		
 		public string MeshId {
-			get { return body.MeshId; }
+			get { return Body.MeshId; }
 		}
 		
 		public Guid RegistrationId  {
-			get { return body.RegistrationId; }
+			get { return Body.RegistrationId; }
 		}
 		
 		public bool HasBody ()

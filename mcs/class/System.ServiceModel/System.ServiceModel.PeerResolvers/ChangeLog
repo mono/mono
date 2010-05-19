@@ -1,3 +1,17 @@
+2010-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceSettingsResponseInfo.cs
+	  RegisterResponseInfo.cs
+	  RefreshResponseInfo.cs
+	  ResolveInfo.cs
+	  UpdateInfo.cs
+	  RegisterInfo.cs
+	  UnregisterInfo.cs
+	  RefreshInfo.cs
+	  ResolveResponseInfo.cs : they don't have field initialization at
+	  constructor now, for FormatterServices.GetUninitializedObject().
+	  Fix regression with related to serialization changes.
+
 2009-08-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* IPeerConnectorContract.cs : use common Constants class.

@@ -15,15 +15,20 @@ namespace System.ServiceModel.PeerResolvers
 	public class ResolveInfo
 	{
 		[MessageBodyMember (Name = "Resolve", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		ResolveInfoDC Body {
+			get {
+				if (body == null)
+					body = new ResolveInfoDC ();
+				return body;
+			}
+		}
 		ResolveInfoDC body;
 		
 		public ResolveInfo ()
 		{
-			body = new ResolveInfoDC ();
 		}
 		
 		public ResolveInfo (Guid clientId, string meshId, int maxAddresses)
-			: this ()
 		{
 			if (clientId == Guid.Empty)
 				throw new ArgumentException ("Empty Guid");
@@ -31,19 +36,19 @@ namespace System.ServiceModel.PeerResolvers
 				throw new ArgumentNullException ("meshId");
 			if (maxAddresses <= 0)
 				throw new ArgumentOutOfRangeException ("maxAddresses must be positive integer");
-			body.ClientId = clientId;
-			body.MeshId = meshId;
-			body.MaxAddresses = maxAddresses;
+			Body.ClientId = clientId;
+			Body.MeshId = meshId;
+			Body.MaxAddresses = maxAddresses;
 		}
 		
 		public Guid ClientId {
-			get { return body.ClientId; }
+			get { return Body.ClientId; }
 		}
 		public int MaxAddresses {
-			get { return body.MaxAddresses; }
+			get { return Body.MaxAddresses; }
 		}
 		public string MeshId {
-			get { return body.MeshId; }
+			get { return Body.MeshId; }
 		}
 		
 		public bool HasBody ()

@@ -15,22 +15,27 @@ namespace System.ServiceModel.PeerResolvers
 	public class ServiceSettingsResponseInfo
 	{
 		[MessageBodyMember (Name = "ServiceSettings", Namespace = "http://schemas.microsoft.com/net/2006/05/peer")]
+		ServiceSettingsResponseInfoDC Body {
+			get {
+				if (body == null)
+					body = new ServiceSettingsResponseInfoDC ();
+				return body;
+			}
+		}
 		ServiceSettingsResponseInfoDC body;
 		
 		public ServiceSettingsResponseInfo ()
 		{
-			body = new ServiceSettingsResponseInfoDC ();
 		}
 		
 		public ServiceSettingsResponseInfo (bool control)
-			: this ()
 		{
-			body.ControlMeshShape = control;
+			Body.ControlMeshShape = control;
 		}
 		
 		public bool ControlMeshShape {
-			get { return body.ControlMeshShape; }
-			set { body.ControlMeshShape = value; }
+			get { return Body.ControlMeshShape; }
+			set { Body.ControlMeshShape = value; }
 		}
 		
 		public bool HasBody ()
