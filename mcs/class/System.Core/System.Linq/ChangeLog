@@ -1,3 +1,8 @@
+2010-05-19  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: fix GroupBy to deal with a null key for the last
+	group entry. Also fix GroupBy to properly throw ArgumentNullException.
+
 2010-03-24  Andrés G. Aragoneses  <knocte@gmail.com>
 
 	* SortSequenceContext.cs: Fix build, broken in r154156 by a
