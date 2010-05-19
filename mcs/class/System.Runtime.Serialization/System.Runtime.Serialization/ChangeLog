@@ -1,3 +1,9 @@
+2010-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlFormatterDeserializer.cs : Array of something with non-default
+	  namespace should be deserialized as well. Required for fixing
+	  PeerResolvers ResolveResponseInfo serialization test case.
+
 2010-05-19  Andreia Gaita  <avidigal@novell.com>
 
 	* SerializationMap.cs: when deserializing, it is possible that the
