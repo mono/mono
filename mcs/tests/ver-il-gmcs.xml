@@ -12761,6 +12761,47 @@
       </method>
     </type>
   </test>
+  <test name="gtest-509.cs">
+    <type name="Test.Foo">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test.TestClass">
+      <method name="T Test.IBase.Get[T](System.Object)">
+        <size>10</size>
+      </method>
+      <method name="T Get[T](System.Object)">
+        <size>10</size>
+      </method>
+      <method name="Void Main(System.String[])">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-510.cs">
+    <type name="CA`2[U,V]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Map`2[K,T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="S">
+      <method name="Void Main()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -21834,6 +21875,85 @@
       </method>
       <method name="Char &lt;E&gt;m__0(Char)">
         <size>2</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-linq-20.cs">
+    <type name="Maybe`1[T]">
+      <method name="T get_Value()">
+        <size>7</size>
+      </method>
+      <method name="Void set_Value(T)">
+        <size>8</size>
+      </method>
+      <method name="Boolean get_HasValue()">
+        <size>7</size>
+      </method>
+      <method name="Void set_HasValue(Boolean)">
+        <size>8</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>38</size>
+      </method>
+      <method name="Maybe`1[U] SelectMany[U](System.Func`2[T,Maybe`1[U]])">
+        <size>30</size>
+      </method>
+      <method name="Maybe`1[V] SelectMany[U,V](System.Func`2[T,Maybe`1[U]], System.Func`3[T,U,V])">
+        <size>71</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor(T)">
+        <size>21</size>
+      </method>
+      <method name="Void .cctor()">
+        <size>11</size>
+      </method>
+    </type>
+    <type name="MaybeExtensions">
+      <method name="Maybe`1[T] ToMaybe[T](T)">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Void Main()">
+        <size>138</size>
+      </method>
+      <method name="Maybe`1[System.Int32] &lt;Main&gt;m__0(Int32)">
+        <size>7</size>
+      </method>
+      <method name="&lt;&gt;__AnonType0`2[System.Int32,System.Int32] &lt;Main&gt;m__1(Int32, Int32)">
+        <size>8</size>
+      </method>
+      <method name="Maybe`1[System.Int32] &lt;Main&gt;m__2(&lt;&gt;__AnonType0`2[System.Int32,System.Int32])">
+        <size>7</size>
+      </method>
+      <method name="Int32 &lt;Main&gt;m__3(&lt;&gt;__AnonType0`2[System.Int32,System.Int32], Int32)">
+        <size>16</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="&lt;&gt;__AnonType0`2[&lt;x&gt;__T,&lt;y&gt;__T]">
+      <method name="&lt;x&gt;__T get_x()">
+        <size>7</size>
+      </method>
+      <method name="&lt;y&gt;__T get_y()">
+        <size>7</size>
+      </method>
+      <method name="Boolean Equals(System.Object)">
+        <size>69</size>
+      </method>
+      <method name="Int32 GetHashCode()">
+        <size>86</size>
+      </method>
+      <method name="System.String ToString()">
+        <size>142</size>
+      </method>
+      <method name="Void .ctor(&lt;x&gt;__T, &lt;y&gt;__T)">
+        <size>21</size>
       </method>
     </type>
   </test>
@@ -39066,6 +39186,157 @@
       </method>
       <method name="Int32 Main()">
         <size>220</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-770.cs">
+    <type name="MyClass">
+      <method name="Void Main()">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+A">
+      <method name="Void add_MouseClick(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_MouseClick(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+B">
+      <method name="Void add_MouseClick(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_MouseClick(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MyClass+C">
+      <method name="Void MouseClick()">
+        <size>11</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-771.cs">
+    <type name="InternalAccess.Base">
+      <method name="System.String get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="InternalAccess.DerivedInternalExample">
+      <method name="System.String get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="InternalAccess.DerivedProtectedExample">
+      <method name="System.String get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="InternalAccess.MainClass">
+      <method name="Int32 Main()">
+        <size>60</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-772.cs">
+    <type name="Test">
+      <method name="Void Main()">
+        <size>14</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Foo">
+      <method name="Void .ctor(Object)">
+        <size>17</size>
+      </method>
+      <method name="Void .ctor(String, Object[])">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-773.cs">
+    <type name="Foo">
+      <method name="Int32 get_Item(Int32)">
+        <size>3</size>
+      </method>
+      <method name="Int32 IFoo.get_Bar(Int32)">
+        <size>8</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Bar">
+      <method name="Int32 get_Baz(Int32)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Babar">
+      <method name="Int32 get_Baz(Int32)">
+        <size>3</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>56</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-774.cs">
+    <type name="C">
+      <method name="Int32 I.get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void I.set_Item(Int32, Int32)">
+        <size>1</size>
+      </method>
+      <method name="Int32 get_Item(Int32)">
+        <size>2</size>
+      </method>
+      <method name="Void set_Item(Int32, Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
