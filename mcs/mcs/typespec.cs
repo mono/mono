@@ -665,6 +665,20 @@ namespace Mono.CSharp
 				return true;
 			}
 
+			static bool ContainsTypeParameter (TypeSpec tparam, TypeSpec type)
+			{
+				TypeSpec[] targs = type.TypeArguments;
+				for (int i = 0; i < targs.Length; i++) {
+					if (tparam == targs[i])
+						return true;
+
+					if (ContainsTypeParameter (tparam, targs[i]))
+						return true;
+				}
+
+				return false;
+			}
+
 			/// <summary>
 			///   Check whether `a' and `b' may become equal generic types.
 			///   The algorithm to do that is a little bit complicated.
@@ -702,13 +716,7 @@ namespace Mono.CSharp
 					//    class X<T> : I<T>, I<X<T>> -> ok
 					//
 
-					TypeSpec[] bargs = b.TypeArguments;
-					for (int i = 0; i < bargs.Length; i++) {
-						if (a.Equals (bargs[i]))
-							return false;
-					}
-
-					return true;
+					return !ContainsTypeParameter (a, b);
 				}
 
 				if (b.IsGenericParameter)

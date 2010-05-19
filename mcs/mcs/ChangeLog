@@ -1,6 +1,12 @@
 2010-05-19  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #515801
+	* typespec.cs (MayBecomeEqualGenericTypes): Recursively check
+	type arguments.
+
+2010-05-19  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #515801
 	* pending.cs: Advance counter correctly.
 
 2010-05-19  Marek Safar  <marek.safar@gmail.com>
