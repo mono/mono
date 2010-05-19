@@ -1,3 +1,9 @@
+2010-05-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Collect all information about a PLT entry into a separate MonoPltEntry
+	structure. Make the labels to plt entries local symbols instead of assembler local
+	labels, since tha latter causes problems for the iphone linker.
+
 2010-05-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* debugger-agent.c (set_breakpoint): Fix setting of pending breakpoints in
