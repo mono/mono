@@ -1,3 +1,8 @@
+2010-05-19  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexClientBase.cs : implement InnerDuplexChannel and
+	  CreateChannel(), by Pieter van der Berg.
+
 2010-05-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : revert the previous change, caused regressions.

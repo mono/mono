@@ -80,7 +80,7 @@ namespace System.ServiceModel
 		}
 
 		public IDuplexContextChannel InnerDuplexChannel {
-			get { throw new NotImplementedException (); }
+			get { return (IDuplexContextChannel) base.InnerChannel; }
 		}
 
 		internal override void Initialize (InstanceContext instance,
@@ -97,7 +97,7 @@ namespace System.ServiceModel
 
 		protected override TChannel CreateChannel ()
 		{
-			throw new NotImplementedException ();
+			return ChannelFactory.CreateChannel ();
 		}
 	}
 }
