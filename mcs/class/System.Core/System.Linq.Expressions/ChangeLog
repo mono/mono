@@ -1,3 +1,7 @@
+2010-05-19  Jb Evain  <jbevain@novell.com>
+
+	* ConstantExpression.cs: fix emission of nullable constants.
+
 2010-01-08  Jb Evain  <jbevain@novell.com>
 
 	* Expression.cs (Call): properly deal with zero length array
