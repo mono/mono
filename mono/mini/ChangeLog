@@ -1,3 +1,7 @@
+2010-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c (mono_ppc_is_direct_call_sequence): Handle one more case with ilp32.
+
 2010-05-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_ppc_is_direct_call_sequence): Handle ilp32.
