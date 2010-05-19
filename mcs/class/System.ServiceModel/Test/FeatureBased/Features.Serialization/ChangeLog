@@ -1,3 +1,8 @@
+2010-05-19  Andreia Gaita  <avidigal@novell.com>
+
+	* DataContractSerializerTest.cs: Add test for deserializing objects
+	with different namespaces (bug #599667)
+
 2010-04-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AsyncCallTest.cs : disable it again, it somehow does not work with

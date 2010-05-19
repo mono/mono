@@ -4,7 +4,10 @@ using System.Text;
 using System.ServiceModel;
 using MonoTests.Features;
 using MonoTests.Features.Contracts;
+using System.Runtime.Serialization;
 using NUnit.Framework;
+using System.Xml;
+using System.IO;
 
 namespace MonoTests.Features.Serialization
 {
@@ -62,5 +65,39 @@ namespace MonoTests.Features.Serialization
 			inst.floatMember = 1;
 			return inst;
 		}
+
+		[Test]
+		public void DefaultTypeMapTest ()
+		{
+			string t = "<Type1 xmlns=\"http://schemas.datacontract.org/2004/07/NS1.NS3\" "+
+				"xmlns:i=\"http://www.w3.org/2001/XMLSchema-instance\">"+
+				"<AType xmlns:a=\"http://schemas.datacontract.org/2004/07/NS1.NS2\">"+
+				"<a:Description>A description</a:Description>"+
+				"<a:ID>10</a:ID>"+
+				"</AType>"+
+				"<ErrorMsg i:nil=\"true\"/>"+
+				"<ResultCode>1</ResultCode>"+
+				"</Type1>";
+			var ser = new DataContractSerializer (typeof (NS1.NS3.Type1));
+			var ret = (NS1.NS3.Type1) ser.ReadObject (XmlReader.Create (new StringReader (t)));
+			Assert.IsNotNull (ret.AType, "#1");
+			Assert.AreEqual (ret.AType.Description, "A description", "#2");
+		}
+	}
+}
+
+namespace NS1.NS2 {
+	public class Type2 {
+		public int ID { get; set; }
+		public string Description { get; set; }
+	}
+}
+
+namespace NS1.NS3 {
+	public class Type1
+	{
+		public int ResultCode { get; set; }
+		public string ErrorMsg {get; set; }
+		public NS2.Type2 AType {get; set; }
 	}
 }
