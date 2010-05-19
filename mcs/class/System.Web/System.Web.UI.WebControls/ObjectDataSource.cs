@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue (0)]
-		[TypeConverter ("System.Web.UI.DataSourceCacheDurationConverter, " + Consts.AssemblySystem_Web)]
+		[TypeConverter (typeof (DataSourceCacheDurationConverter))]
 		public virtual int CacheDuration 
 		{
 			get {
