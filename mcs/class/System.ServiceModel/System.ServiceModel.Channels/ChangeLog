@@ -1,3 +1,11 @@
+2010-05-19  Andreia Gaita  <avidigal@novell.com>
+
+	* HttpRequestChannel.cs: if the response has no body, create an
+	  empty message and return that.
+	  Note: the ws-mc protocol defines that the service returns an
+	  200 response with an empty body on first connection, this
+	  adds support for that (fixes part of #599667)
+
 2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DuplexChannelBase.cs

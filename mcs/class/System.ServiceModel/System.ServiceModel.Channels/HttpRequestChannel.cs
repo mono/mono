@@ -210,25 +210,37 @@ Console.WriteLine (mb.CreateMessage ());
 			}
 
 			try {
-				using (var responseStream = resstr) {
-					MemoryStream ms = new MemoryStream ();
-					byte [] b = new byte [65536];
-					int n = 0;
+				Message ret;
 
-					while (true) {
-						n = responseStream.Read (b, 0, 65536);
-						if (n == 0)
-							break;
-						ms.Write (b, 0, n);
+				// TODO: unit test to make sure an empty response never throws
+				// an exception at this level
+				if (hrr.ContentLength == 0) {
+					ret = Message.CreateMessage (MessageVersion.Default, String.Empty);
+				} else {
+
+					using (var responseStream = resstr) {
+						MemoryStream ms = new MemoryStream ();
+						byte [] b = new byte [65536];
+						int n = 0;
+
+						while (true) {
+							n = responseStream.Read (b, 0, 65536);
+							if (n == 0)
+								break;
+							ms.Write (b, 0, n);
+						}
+						ms.Seek (0, SeekOrigin.Begin);
+
+						ret = Encoder.ReadMessage (
+							ms, (int) source.Transport.MaxReceivedMessageSize, res.ContentType);
 					}
-					ms.Seek (0, SeekOrigin.Begin);
+				}
 
-					Message ret = Encoder.ReadMessage (
-						ms, (int) source.Transport.MaxReceivedMessageSize, res.ContentType);
-					var rp = new HttpResponseMessageProperty () { StatusCode = hrr.StatusCode, StatusDescription = hrr.StatusDescription };
-					foreach (var key in hrr.Headers.AllKeys)
-						rp.Headers [key] = hrr.Headers [key];
-					ret.Properties.Add (HttpResponseMessageProperty.Name, rp);
+				var rp = new HttpResponseMessageProperty () { StatusCode = hrr.StatusCode, StatusDescription = hrr.StatusDescription };
+				foreach (var key in hrr.Headers.AllKeys)
+					rp.Headers [key] = hrr.Headers [key];
+				ret.Properties.Add (HttpResponseMessageProperty.Name, rp);
+
 /*
 MessageBuffer buf = ret.CreateBufferedCopy (0x10000);
 ret = buf.CreateMessage ();
@@ -237,9 +249,8 @@ w.Formatting = System.Xml.Formatting.Indented;
 buf.CreateMessage ().WriteMessage (w);
 w.Close ();
 */
-					channelResult.Response = ret;
-					channelResult.Complete ();
-				}
+				channelResult.Response = ret;
+				channelResult.Complete ();
 			} catch (Exception ex) {
 				channelResult.Complete (ex);
 			} finally {
