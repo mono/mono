@@ -245,6 +245,26 @@ namespace MonoTests.System.Linq.Expressions
 			Assert.IsNull (n ());
 		}
 
+		[Test]
+		public void EmitNullableInt ()
+		{
+			var i = Expression.Lambda<Func<int?>> (
+				Expression.Constant ((int?) 42, typeof (int?))).Compile ();
+
+			Assert.AreEqual ((int?) 42, i ());
+		}
+
+		[Test]
+		public void EmitNullableEnum ()
+		{
+			var e = Expression.Lambda<Func<Chose?>> (
+				Expression.Constant ((Chose?) Chose.Moche, typeof (Chose?))).Compile ();
+
+			Assert.AreEqual ((Chose?) Chose.Moche, e ());
+		}
+
+		enum Chose { Moche }
+
 		interface IBar {}
 		class Bar : IBar {}
 
