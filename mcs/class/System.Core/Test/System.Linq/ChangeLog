@@ -1,3 +1,7 @@
+2010-05-19  Jb Evain  <jbevain@novell.com>
+
+	* EnumerableMoreTest.cs: add more GroupBy tests.
+
 2010-04-29  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ParallelEnumerableTests.cs: Add Ignore attribute instead of commenting test.
