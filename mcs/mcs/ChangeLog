@@ -1,3 +1,8 @@
+2010-05-19  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #359733
+	* parameter.cs: Extension attribute can be defined in each assembly.
+
 2010-05-18  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #446507

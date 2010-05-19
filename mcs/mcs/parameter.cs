@@ -933,7 +933,7 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Imports SRE parameters
+		// Imports System.Reflection parameters
 		//
 		public static AParametersCollection Create (TypeSpec parent, ParameterInfo [] pi, MethodBase method)
 		{
@@ -945,7 +945,6 @@ namespace Mono.CSharp {
 			TypeSpec [] types = new TypeSpec [pi.Length + varargs];
 			IParameterData [] par = new IParameterData [pi.Length + varargs];
 			bool is_params = false;
-			PredefinedAttribute extension_attr = PredefinedAttributes.Get.Extension;
 			for (int i = 0; i < pi.Length; i++) {
 				ParameterInfo p = pi [i];
 				Parameter.Modifier mod = 0;
@@ -960,8 +959,8 @@ namespace Mono.CSharp {
 					// Strip reference wrapping
 					//
 					types [i] = Import.ImportType (p.ParameterType.GetElementType ());
-				} else if (i == 0 && method.IsStatic && parent.IsStatic &&
-					extension_attr.IsDefined && extension_attr.IsDefined && method.IsDefined (extension_attr.Type.GetMetaInfo (), false)) {
+				} else if (i == 0 && method.IsStatic && parent.IsStatic && // TODO: parent.Assembly.IsExtension &&
+					HasExtensionAttribute (method)) {
 					mod = Parameter.Modifier.This;
 					types[i] = Import.ImportType (p.ParameterType);
 				} else {
@@ -998,6 +997,19 @@ namespace Mono.CSharp {
 			return method != null ?
 				new ParametersImported (par, types, varargs != 0, is_params) :
 				new ParametersImported (par, types);
+		}
+
+		static bool HasExtensionAttribute (MethodBase mb)
+		{
+			var all_attributes = CustomAttributeData.GetCustomAttributes (mb);
+			foreach (var attr in all_attributes) {
+				var dt = attr.Constructor.DeclaringType;
+				if (dt.Name == "ExtensionAttribute" && dt.Namespace == "System.Runtime.CompilerServices") {
+					return true;
+				}
+			}
+
+			return false;
 		}
 	}
 
