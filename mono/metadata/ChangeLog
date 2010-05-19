@@ -1,3 +1,8 @@
+2010-05-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (get_runtime_invoke_type): Backport some fixes from HEAD to fix
+	sharing issues.
+
 2010-04-14 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* socket-io.c: make GetHostByName ("") work on windows.
