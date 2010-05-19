@@ -1814,9 +1814,8 @@ namespace Mono.CSharp {
 					if ((modifiers & Modifiers.OVERRIDE) == 0)
 						flags |= MethodAttributes.NewSlot;
 				}
-				flags |=
-					MethodAttributes.Virtual |
-					MethodAttributes.HideBySig;
+
+				flags |= MethodAttributes.Virtual | MethodAttributes.HideBySig;
 
 				// Set Final unless we're virtual, abstract or already overriding a method.
 				if ((modifiers & (Modifiers.VIRTUAL | Modifiers.ABSTRACT | Modifiers.OVERRIDE)) == 0)
@@ -1827,6 +1826,12 @@ namespace Mono.CSharp {
 				//
 				parent.PartialContainer.PendingImplementations.ImplementMethod (method.MethodName,
 					member.InterfaceType, this, member.IsExplicitImpl);
+
+				//
+				// Update indexer accessor name to match implementing abstract accessor
+				//
+				if (!implementing.DeclaringType.IsInterface && !member.IsExplicitImpl && implementing.IsAccessor)
+					method_full_name = implementing.MemberDefinition.Name;
 			}
 
 			DefineMethodBuilder (container, method_full_name, method.ParameterInfo);

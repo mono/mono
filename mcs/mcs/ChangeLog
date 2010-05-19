@@ -1,5 +1,10 @@
 2010-05-19  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #480139
+	* method.cs, pending.cs: Indexer override uses base name.
+	
+2010-05-19  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #424064
 	* generic.cs: Replace original with inflated type parameter on
 	failure.

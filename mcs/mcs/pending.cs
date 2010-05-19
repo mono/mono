@@ -272,10 +272,11 @@ namespace Mono.CSharp {
 						// interface indexer.  In this case, we need to create
 						// a proxy if the implementation's IndexerName doesn't
 						// match the IndexerName in the interface.
-						if (iType == null && name.Name != m.Name) {	// TODO: This is very expensive comparison
+						if (m.DeclaringType.IsInterface && iType == null && name.Name != m.Name) {	// TODO: This is very expensive comparison
 							tm.need_proxy[i] = method.method.Spec;
-						} else
+						} else {
 							tm.methods[i] = null;
+						}
 					} else {
 						tm.found [i] = method;
 					}
