@@ -1,3 +1,11 @@
+2010-05-19  Andreia Gaita  <avidigal@novell.com>
+
+	* SerializationMap.cs: when deserializing, it is possible that the
+	DataMemberInfo objects being matched against the xml don't have
+	a set namespace because they were created from
+	DefaultTypeMap.GetDataMembers(), so only use the namespace for
+	comparison if it's not null (fixes part of #599667)
+
 2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* KnownTypeCollection.cs : support DataContractNamespaceAttribute.

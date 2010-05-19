@@ -393,7 +393,7 @@ namespace System.Runtime.Serialization
 					if (Members [i].Order >= 0)
 						break;
 					if (reader.LocalName == Members [i].XmlName &&
-						reader.NamespaceURI == Members [i].XmlRootNamespace) {
+						(Members [i].XmlRootNamespace == null || reader.NamespaceURI == Members [i].XmlRootNamespace)) {
 						memberInd = i;
 						dmi = Members [i];
 						break;
@@ -403,7 +403,7 @@ namespace System.Runtime.Serialization
 					if (dmi != null)
 						break;
 					if (reader.LocalName == Members [i].XmlName &&
-						reader.NamespaceURI == Members [i].XmlRootNamespace) {
+						(Members [i].XmlRootNamespace == null || reader.NamespaceURI == Members [i].XmlRootNamespace)) {
 						memberInd = i;
 						ordered = i;
 						dmi = Members [i];
