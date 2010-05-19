@@ -389,13 +389,13 @@ namespace Mono.CSharp {
 			
 			for (i = 0; i < top; i++){
 				TypeSpec type = pending_implementations [i].type;
-				int j = 0;
 
 				bool base_implements_type = type.IsInterface &&
 					container.BaseType != null &&
 					container.BaseType.ImplementsInterface (type);
 
-				foreach (var mi in pending_implementations [i].methods){
+				for (int j = 0; j < pending_implementations [i].methods.Count; ++j) {
+					var mi = pending_implementations[i].methods[j];
 					if (mi == null)
 						continue;
 
@@ -448,7 +448,6 @@ namespace Mono.CSharp {
 							container.GetSignatureForError (), mi.GetSignatureForError ());
 					}
 					errors = true;
-					j++;
 				}
 			}
 			return errors;
