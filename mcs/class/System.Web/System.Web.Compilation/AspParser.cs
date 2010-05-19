@@ -420,7 +420,7 @@ namespace System.Web.Compilation
 							break;
 						}
 						tokenizer.Verbatim = true;
-						attributes.Add ("", GetVerbatim (tokenizer.get_token (), ">") + ">");
+						attributes.Add (String.Empty, GetVerbatim (tokenizer.get_token (), ">") + ">");
 						tokenizer.Verbatim = false;
 					}
 				}
@@ -460,7 +460,7 @@ namespace System.Web.Compilation
 			while ((token = tokenizer.get_token ()) != Token.EOF){
 				if (token == '<' && Eat ('%')) {
 					tokenizer.Verbatim = true;
-					attributes.Add ("", "<%" + 
+					attributes.Add (String.Empty, "<%" + 
 							GetVerbatim (tokenizer.get_token (), "%>") + "%>");
 					tokenizer.Verbatim = false;
 					tokenizer.InTag = true;

@@ -69,7 +69,7 @@ namespace System.Web.UI
 			return Path.Combine (BaseDir, path);
 		}
 
-		internal bool GetBool (Hashtable hash, string key, bool deflt)
+		internal bool GetBool (IDictionary hash, string key, bool deflt)
 		{
 			string val = hash [key] as string;
 			if (val == null)
@@ -86,7 +86,7 @@ namespace System.Web.UI
 			return result;
 		}
 
-		internal static string GetString (Hashtable hash, string key, string deflt)
+		internal static string GetString (IDictionary hash, string key, string deflt)
 		{
 			string val = hash [key] as string;
 			if (val == null)
@@ -94,8 +94,44 @@ namespace System.Web.UI
 
 			hash.Remove (key);
 			return val;
-		}		
+		}
 
+		internal static bool IsDirective (string value, char directiveChar)
+		{
+			if (value == null || value == String.Empty)
+				return false;
+			
+			value = value.Trim ();
+			if (!StrUtils.StartsWith (value, "<%") || !StrUtils.EndsWith (value, "%>"))
+				return false;
+
+			int dcIndex = value.IndexOf (directiveChar, 2);
+			if (dcIndex == -1)
+				return false;
+
+			if (dcIndex == 2)
+				return true;
+			dcIndex--;
+			
+			while (dcIndex >= 2) {
+				if (!Char.IsWhiteSpace (value [dcIndex]))
+					return false;
+				dcIndex--;
+			}
+
+			return true;
+		}
+		
+		internal static bool IsDataBound (string value)
+		{
+			return IsDirective (value, '#');
+		}
+
+		internal static bool IsExpression (string value)
+		{
+			return IsDirective (value, '$');
+		}
+		
 		internal void ThrowParseException (string message, params object[] parms)
 		{
 			if (parms == null)
@@ -105,7 +141,10 @@ namespace System.Web.UI
 		
 		internal void ThrowParseException (string message, Exception inner, params object[] parms)
 		{
-			throw new ParseException (location, String.Format (message, parms), inner);
+			if (parms == null || parms.Length == 0)
+				throw new ParseException (location, message, inner);
+			else
+				throw new ParseException (location, String.Format (message, parms), inner);
 		}
 
 		internal void ThrowParseFileNotFound (string path, params object[] parms)

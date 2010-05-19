@@ -1,10 +1,8 @@
 //
-// System.Web.UI.PageThemeFileParser
-//
 // Authors:
-//   Chris Toshok (toshok@ximian.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006-2010 Novell, Inc. (http://www.novell.com)
+// (C) 2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,40 +25,39 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
 using System;
-using System.Collections;
-using System.IO;
-using System.Web;
-using System.Web.Compilation;
-using System.Web.Util;
 
 namespace System.Web.UI
 {
-	internal sealed class PageThemeFileParser: UserControlParser
+	sealed class MainDirectiveAttribute <T>
 	{
-		internal PageThemeFileParser (VirtualPath virtualPath, string inputFile, HttpContext context)
-		: base (virtualPath, inputFile, context, "System.Web.UI.PageTheme")
-		{
-		}
+		string unparsedValue;
+		T value;
+		bool isExpression;
+		bool isDataBound;
 		
-		internal override void HandleOptions (object obj)
-		{
+		public string UnparsedValue {
+			get { return unparsedValue; }
 		}
 
-		internal override void AddDirective (string directive, IDictionary atts)
-		{
-			int cmp = String.Compare ("Register", directive, StringComparison.OrdinalIgnoreCase);
-			if (cmp == 0) {
-				base.AddDirective (directive, atts);
-				return;
-			}
-
-			ThrowParseException ("Unknown directive: " + directive);
+		public bool IsExpression {
+			get { return isExpression; }
 		}
 
-		internal override string DefaultBaseTypeName {
-			get { return "System.Web.UI.PageTheme"; }
+		public T Value {
+			get { return value; }
+		}
+
+		public MainDirectiveAttribute (string value)
+		{
+			this.unparsedValue = value;
+			if (value != null)
+				this.isExpression = BaseParser.IsExpression (value);
+		}
+
+		public MainDirectiveAttribute (T value, bool unused)
+		{
+			this.value = value;
 		}
 	}
 }

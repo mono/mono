@@ -228,7 +228,7 @@ namespace System.Web.UI
 			throw new ParseException (location, message);
 		}
 
-		static string GetAndRemove (Hashtable table, string key)
+		static string GetAndRemove (IDictionary table, string key)
 		{
 			string o = table [key] as string;
 			table.Remove (key);
@@ -259,7 +259,7 @@ namespace System.Web.UI
 				throw new ParseException (location, "duplicate " + DefaultDirectiveName + " directive");
 
 			gotDefault = true;
-			Hashtable attributes = attrs.GetDictionary (null);
+			IDictionary attributes = attrs.GetDictionary (null);
 			className = GetAndRemove (attributes, "class");
 			if (className == null)
 				throw new ParseException (null, "No Class attribute found.");
@@ -284,7 +284,7 @@ namespace System.Web.UI
 
 		internal virtual void AddAssemblyDirective (ILocation location, TagAttributes attrs)
 		{
-			Hashtable tbl = attrs.GetDictionary (null);
+			IDictionary tbl = attrs.GetDictionary (null);
 			string name = GetAndRemove (tbl, "Name");
 			string src = GetAndRemove (tbl, "Src");
 			if (name == null && src == null)

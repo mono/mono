@@ -129,7 +129,7 @@ namespace System.Web.UI
 			return generator.GetCompiledType ();
 		}
 
-		internal override void ProcessMainAttributes (Hashtable atts)
+		internal override void ProcessMainAttributes (IDictionary atts)
 		{
 			masterPage = GetString (atts, "MasterPageFile", null);
 			if (masterPage != null)

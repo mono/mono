@@ -85,7 +85,7 @@ namespace System.Web.UI
 			return type;
 		}
 
-		internal override void AddDirective (string directive, Hashtable atts)
+		internal override void AddDirective (string directive, IDictionary atts)
 		{
 			if (String.Compare (directive, "application", true, Helpers.InvariantCulture) != 0 &&
 			    String.Compare (directive, "Import", true, Helpers.InvariantCulture) != 0 &&

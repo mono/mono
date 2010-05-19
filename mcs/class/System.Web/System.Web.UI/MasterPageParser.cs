@@ -88,7 +88,7 @@ namespace System.Web.UI
 			mp.MasterPageFile = MasterPageFile;
 		}
 
-		internal override void AddDirective (string directive, Hashtable atts)
+		internal override void AddDirective (string directive, IDictionary atts)
 		{
 			if (String.Compare ("MasterType", directive, StringComparison.OrdinalIgnoreCase) == 0) {
 				PageParserFilter pfilter = PageParserFilter;

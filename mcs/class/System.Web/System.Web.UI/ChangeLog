@@ -1,3 +1,16 @@
+2010-05-19  Marek Habersack  <mhabersack@novell.com>
+
+	* PageParser.cs: handle several main directive attributes
+	specially, as they can have expressions as their values. Fixes bug
+	#603532
+
+	* MainDirectiveAttribute.cs: added - helper class to handle
+	directive attributes which can take either a value or an
+	expression.
+
+	* BaseParser.cs: IsDirective, IsExpression and IsDataBound methods
+	moved to here from TemplateControlCompiler.
+
 2010-05-15  Marek Habersack  <mhabersack@novell.com>
 
 	* Control.cs: implemented 4.0 GetRouteUrl overloads and

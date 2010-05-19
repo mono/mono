@@ -240,7 +240,7 @@ namespace System.Web.Compilation
 		ILocation location;
 		bool isApplication;
 		StringBuilder tagInnerText = new StringBuilder ();
-		static Hashtable emptyHash = new Hashtable ();
+		static IDictionary emptyHash = new Dictionary <string, object> ();
 		bool inForm;
 		bool useOtherTags;
 		TagType lastTag;
@@ -295,9 +295,9 @@ namespace System.Web.Compilation
 		// inherits declaration to work properly. Our current parser is not able to parse
 		// the input file out of sequence (i.e. directives first, then the rest) so we need
 		// to do what we do below, alas.
-		Hashtable GetDirectiveAttributesDictionary (string skipKeyName, CaptureCollection names, CaptureCollection values)
+		IDictionary GetDirectiveAttributesDictionary (string skipKeyName, CaptureCollection names, CaptureCollection values)
 		{
-			var ret = new Hashtable (StringComparer.InvariantCultureIgnoreCase);
+			var ret = new Dictionary <string, object> (StringComparer.OrdinalIgnoreCase);
 
 			int index = 0;
 			string keyName;
@@ -1246,7 +1246,7 @@ namespace System.Web.Compilation
 				return true;
 			}
 				
-			Hashtable htable = (atts != null) ? atts.GetDictionary (null) : emptyHash;
+			IDictionary htable = (atts != null) ? atts.GetDictionary (null) : emptyHash;
 			if (stack.Count > 1) {
 				try {
 					builder = parent.CreateSubBuilder (tagid, htable, null, tparser, location);

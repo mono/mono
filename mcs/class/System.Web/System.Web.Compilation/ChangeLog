@@ -1,3 +1,15 @@
+2010-05-19  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: IsDirective, IsExpression and
+	IsDataBound methods moved to System.Web.UI.BaseParser.
+	Made CompileExpression and GetFieldOrProperty methods internal.
+
+	* PageCompiler.cs: check several of the Page directive attributes
+	for expressions. Fixes bug #603532
+
+	* AspGenerator.cs, TagAttributes.cs: use IDictionary instead of
+	Hashtable
+
 2010-05-17  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildProvider.cs: implemented a 4.0 method RegisterBuildProvider

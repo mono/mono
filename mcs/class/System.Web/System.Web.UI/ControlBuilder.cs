@@ -680,7 +680,7 @@ namespace System.Web.UI {
 		}
 
 		internal virtual ControlBuilder CreateSubBuilder (string tagid,
-								  Hashtable atts,
+								  IDictionary atts,
 								  Type childType,
 								  TemplateParser parser,
 								  ILocation location)

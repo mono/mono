@@ -62,7 +62,7 @@ namespace System.Web.UI
 			compilationMode = ps.CompilationMode;
 		}
 		
-		internal override void ProcessMainAttributes (Hashtable atts)
+		internal override void ProcessMainAttributes (IDictionary atts)
 		{
 			autoEventWireup = GetBool (atts, "AutoEventWireup", autoEventWireup);
 			enableViewState = GetBool (atts, "EnableViewState", enableViewState);
@@ -97,7 +97,7 @@ namespace System.Web.UI
 			return ctrl;
 		}
 
-		internal override void AddDirective (string directive, Hashtable atts)
+		internal override void AddDirective (string directive, IDictionary atts)
 		{
 			int cmp = String.Compare ("Register", directive, true, Helpers.InvariantCulture);
 			if (cmp == 0) {

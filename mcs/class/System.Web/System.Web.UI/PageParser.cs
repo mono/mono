@@ -52,22 +52,22 @@ namespace System.Web.UI
 		bool trace;
 		bool notBuffer;
 		TraceMode tracemode = TraceMode.Default;
-		string responseEncoding;
 		string contentType;
-		int codepage = -1;
-		int lcid = -1;
+		MainDirectiveAttribute <int> codepage;
+		MainDirectiveAttribute <string> responseEncoding;
+		MainDirectiveAttribute <int> lcid;
+		MainDirectiveAttribute <string> clientTarget;
+		MainDirectiveAttribute <string> masterPage;
+		MainDirectiveAttribute <string> title;
+		MainDirectiveAttribute <string> theme;
 		string culture;
 		string uiculture;
 		string errorPage;
 		bool validateRequest;
-		string clientTarget;
 		bool async;
 		int asyncTimeout = -1;
-		string masterPage;
 		Type masterType;
 		string masterVirtualPath;
-		string title;
-		string theme;
 		string styleSheetTheme;
 		bool enable_event_validation;
 		bool maintainScrollPositionOnPostBack;
@@ -121,14 +121,17 @@ namespace System.Web.UI
 			enableViewStateMac = ps.EnableViewStateMac;
 			smartNavigation = ps.SmartNavigation;
 			validateRequest = ps.ValidateRequest;
-			masterPage = ps.MasterPageFile;
-			if (masterPage.Length == 0)
-				masterPage = null;
+
+			string value = ps.MasterPageFile;
+			if (value.Length > 0)
+				masterPage = new MainDirectiveAttribute <string> (value, true);
+			
 			enable_event_validation = ps.EnableEventValidation;
 			maxPageStateFieldLength = ps.MaxPageStateFieldLength;
-			theme = ps.Theme;
-			if (theme.Length == 0)
-				theme = null;
+			value = ps.Theme;
+			if (value.Length > 0)
+				theme = new MainDirectiveAttribute <string> (value, true);
+			
 			styleSheetTheme = ps.StyleSheetTheme;
 			if (styleSheetTheme.Length == 0)
 				styleSheetTheme = null;
@@ -144,8 +147,8 @@ namespace System.Web.UI
 			
 			return BuildManager.CreateInstanceFromVirtualPath (new VirtualPath (virtualPath, inputFile, isFake), typeof (IHttpHandler)) as IHttpHandler;
 		}
-		
-		internal override void ProcessMainAttributes (Hashtable atts)
+
+		internal override void ProcessMainAttributes (IDictionary atts)
 		{
 			// note: the 'enableSessionState' configuration property is
 			// processed in a case-sensitive manner while the page-level
@@ -162,71 +165,83 @@ namespace System.Web.UI
 					ThrowParseException ("Invalid value for enableSessionState: " + enabless);
 			}
 
-			string cp = GetString (atts, "CodePage", null);
-			if (cp != null) {
+			string value = GetString (atts, "CodePage", null);
+			if (value != null) {
 				if (responseEncoding != null)
-					ThrowParseException ("CodePage and ResponseEncoding are " +
-						"mutually exclusive.");
+					ThrowParseException ("CodePage and ResponseEncoding are mutually exclusive.");
+				
+				if (!BaseParser.IsExpression (value)) {
+					int cpval = -1;
 
-				int codepage = 0;
-				try {
-					codepage = (int) UInt32.Parse (cp);
-				} catch {
-					ThrowParseException ("Invalid value for CodePage: " + cp);
-				}
+					try {
+						cpval = (int) UInt32.Parse (value);
+					} catch {
+						ThrowParseException ("Invalid value for CodePage: " + value);
+					}
 
-				try {
-					Encoding.GetEncoding (codepage);
-				} catch {
-					ThrowParseException ("Unsupported codepage: " + cp);
-				}
+					try {
+						Encoding.GetEncoding (cpval);
+					} catch {
+						ThrowParseException ("Unsupported codepage: " + value);
+					}
+					codepage = new MainDirectiveAttribute <int> (cpval, true);
+				} else
+					codepage = new MainDirectiveAttribute <int> (value);
 			}
 			
-			responseEncoding = GetString (atts, "ResponseEncoding", null);
-			if (responseEncoding != null) {
-				if (codepage != -1)
-					ThrowParseException ("CodePage and ResponseEncoding are " +
-							     "mutually exclusive.");
+			value = GetString (atts, "ResponseEncoding", null);
+			if (value != null) {
+				if (codepage != null)
+					ThrowParseException ("CodePage and ResponseEncoding are mutually exclusive.");
 
-				try {
-					Encoding.GetEncoding (responseEncoding);
-				} catch {
-					ThrowParseException ("Unsupported encoding: " + responseEncoding);
-				}
+				if (!BaseParser.IsExpression (value)) {
+					try {
+						Encoding.GetEncoding (value);
+					} catch {
+						ThrowParseException ("Unsupported encoding: " + value);
+					}
+					responseEncoding = new MainDirectiveAttribute <string> (value, true);
+				} else
+					responseEncoding = new MainDirectiveAttribute <string> (value);
 			}
 			
 			contentType = GetString (atts, "ContentType", null);
 
-			string lcidStr = GetString (atts, "LCID", null);
-			if (lcidStr != null) {
-				try {
-					lcid = (int) UInt32.Parse (lcidStr);
-				} catch {
-					ThrowParseException ("Invalid value for LCID: " + lcid);
-				}
-
-				CultureInfo ci = null;
-				try {
-					ci = new CultureInfo (lcid);
-				} catch {
-					ThrowParseException ("Unsupported LCID: " + lcid);
-				}
-
-				if (ci.IsNeutralCulture) {
-					string suggestedCulture = SuggestCulture (ci.Name);
-					string fmt = "LCID attribute must be set to a non-neutral Culture.";
-					if (suggestedCulture != null) {
-						ThrowParseException (fmt + " Please try one of these: " +
-								     suggestedCulture);
-					} else {
-						ThrowParseException (fmt);
+			value = GetString (atts, "LCID", null);
+			if (value != null) {
+				if (!BaseParser.IsExpression (value)) {
+					int parsedLcid = -1;
+					try {
+						parsedLcid = (int) UInt32.Parse (value);
+					} catch {
+						ThrowParseException ("Invalid value for LCID: " + value);
 					}
-				}
+
+					CultureInfo ci = null;
+					try {
+						ci = new CultureInfo (parsedLcid);
+					} catch {
+						ThrowParseException ("Unsupported LCID: " + value);
+					}
+
+					if (ci.IsNeutralCulture) {
+						string suggestedCulture = SuggestCulture (ci.Name);
+						string fmt = "LCID attribute must be set to a non-neutral Culture.";
+						if (suggestedCulture != null) {
+							ThrowParseException (fmt + " Please try one of these: " +
+									     suggestedCulture);
+						} else {
+							ThrowParseException (fmt);
+						}
+					}
+					lcid = new MainDirectiveAttribute <int> (parsedLcid, true);
+				} else
+					lcid = new MainDirectiveAttribute <int> (value);
 			}
 
 			culture = GetString (atts, "Culture", null);
 			if (culture != null) {
-				if (lcidStr != null) 
+				if (lcid != null) 
 					ThrowParseException ("Culture and LCID are mutually exclusive.");
 				
 				CultureInfo ci = null;
@@ -292,22 +307,27 @@ namespace System.Web.UI
 
 			errorPage = GetString (atts, "ErrorPage", null);
 			validateRequest = GetBool (atts, "ValidateRequest", validateRequest);
-			clientTarget = GetString (atts, "ClientTarget", null);
-			if (clientTarget != null) {
-				clientTarget = clientTarget.Trim ();
-				ClientTargetSection sec = GetConfigSection <ClientTargetSection> ("system.web/clientTarget");
-				ClientTarget ct = null;
+			value = GetString (atts, "ClientTarget", null);
+			if (value != null) {				
+				if (!BaseParser.IsExpression (value)) {
+					value = value.Trim ();
+					
+					ClientTargetSection sec = GetConfigSection <ClientTargetSection> ("system.web/clientTarget");
+					ClientTarget ct = null;
 				
-				if ((ct = sec.ClientTargets [clientTarget]) == null)
-					clientTarget = clientTarget.ToLowerInvariant ();
+					if ((ct = sec.ClientTargets [value]) == null)
+						value = value.ToLowerInvariant ();
 				
-				if (ct == null && (ct = sec.ClientTargets [clientTarget]) == null) {
-					ThrowParseException (String.Format (
-							"ClientTarget '{0}' is an invalid alias. See the " +
-							"documentation for <clientTarget> config. section.",
-							clientTarget));
-				}
-				clientTarget = ct.UserAgent;
+					if (ct == null && (ct = sec.ClientTargets [value]) == null) {
+						ThrowParseException (String.Format (
+									     "ClientTarget '{0}' is an invalid alias. See the " +
+									     "documentation for <clientTarget> config. section.",
+									     clientTarget));
+					}
+					value = ct.UserAgent;
+					clientTarget = new MainDirectiveAttribute <string> (value, true);
+				} else
+					clientTarget = new MainDirectiveAttribute <string> (value);
 			}
 
 			notBuffer = !GetBool (atts, "Buffer", true);
@@ -321,22 +341,38 @@ namespace System.Web.UI
 				}
 			}
 			
-			masterPage = GetString (atts, "MasterPageFile", masterPage);
-			
-			if (!String.IsNullOrEmpty (masterPage)) {
-				if (!HostingEnvironment.VirtualPathProvider.FileExists (masterPage))
-					ThrowParseFileNotFound (masterPage);
-				AddDependency (masterPage);
+			value = GetString (atts, "MasterPageFile", masterPage != null ? masterPage.Value : null);
+			if (!String.IsNullOrEmpty (value)) {
+				if (!BaseParser.IsExpression (value)) {
+					if (!HostingEnvironment.VirtualPathProvider.FileExists (value))
+						ThrowParseFileNotFound (value);
+					AddDependency (value);
+					masterPage = new MainDirectiveAttribute <string> (value, true);
+				} else
+					masterPage = new MainDirectiveAttribute <string> (value);
 			}
 			
-			title = GetString(atts, "Title", null);
-
-			theme = GetString (atts, "Theme", theme);
+			value = GetString(atts, "Title", null);
+			if (value != null) {
+				if (!BaseParser.IsExpression (value))
+					title = new MainDirectiveAttribute <string> (value, true);
+				else
+					title = new MainDirectiveAttribute <string> (value);
+			}
+			
+			value = GetString (atts, "Theme", theme != null ? theme.Value : null);
+			if (value != null) {
+				if (!BaseParser.IsExpression (value))
+					theme = new MainDirectiveAttribute <string> (value, true);
+				else
+					theme = new MainDirectiveAttribute <string> (value);
+			}
+			
 			styleSheetTheme = GetString (atts, "StyleSheetTheme", styleSheetTheme);
 			enable_event_validation = GetBool (atts, "EnableEventValidation", enable_event_validation);
 			maintainScrollPositionOnPostBack = GetBool (atts, "MaintainScrollPositionOnPostBack", maintainScrollPositionOnPostBack);
 
-			if (atts.ContainsKey ("EnableViewState")) {
+			if (atts.Contains ("EnableViewState")) {
 				enableViewStateMac = GetBool (atts, "EnableViewStateMac", enableViewStateMac);
 				enableViewStateMacSet = true;
 			}
@@ -347,7 +383,7 @@ namespace System.Web.UI
 			base.ProcessMainAttributes (atts);
 		}
 		
-		internal override void AddDirective (string directive, Hashtable atts)
+		internal override void AddDirective (string directive, IDictionary atts)
 		{
 			bool isMasterType = String.Compare ("MasterType", directive, StringComparison.OrdinalIgnoreCase) == 0;
 			bool isPreviousPageType = isMasterType ? false : String.Compare ("PreviousPageType", directive,
@@ -460,16 +496,36 @@ namespace System.Web.UI
 			get { return "page"; }
 		}
 
-		internal string ResponseEncoding {
-			get { return responseEncoding; }
-		}
-
 		internal string ContentType {
 			get { return contentType; }
 		}
 
-		internal int CodePage {
+		internal MainDirectiveAttribute <string> ResponseEncoding {
+			get { return responseEncoding; }
+		}
+		
+		internal MainDirectiveAttribute <int> CodePage {
 			get { return codepage; }
+		}
+
+		internal MainDirectiveAttribute <int> LCID {
+			get { return lcid; }
+		}
+
+		internal MainDirectiveAttribute <string> ClientTarget {
+			get { return clientTarget; }
+		}
+
+		internal MainDirectiveAttribute <string> MasterPageFile {
+			get { return masterPage; }
+		}
+
+		internal MainDirectiveAttribute <string> Title {
+			get { return title; }
+		}
+
+		internal MainDirectiveAttribute <string> Theme {
+			get { return theme; }
 		}
 
 		internal string Culture {
@@ -480,20 +536,12 @@ namespace System.Web.UI
 			get { return uiculture; }
 		}
 
-		internal int LCID {
-			get { return lcid; }
-		}
-
 		internal string ErrorPage {
 			get { return errorPage; }
 		}
 
 		internal bool ValidateRequest {
 			get { return validateRequest; }
-		}
-
-		internal string ClientTarget {
-			get { return clientTarget; }
 		}
 
 		internal bool NotBuffer {
@@ -507,17 +555,9 @@ namespace System.Web.UI
 		internal int AsyncTimeout {
 			get { return asyncTimeout; }
 		}
-		
-		internal string Theme {
-			get { return theme; }
-		}
 
 		internal string StyleSheetTheme {
 			get { return styleSheetTheme; }
-		}
-
-		internal string MasterPageFile {
-			get { return masterPage; }
 		}
 		
 		internal Type MasterType {
@@ -527,10 +567,6 @@ namespace System.Web.UI
 				
 				return masterType;
 			}
-		}
-
-		internal string Title {
-			get { return title; }
 		}
 
 		internal bool EnableEventValidation {
