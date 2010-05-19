@@ -1,3 +1,9 @@
+2010-05-20  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c: Collect all information about a PLT entry into a separate MonoPltEntry
+	structure. Make the labels to plt entries local symbols instead of assembler local
+	labels, since tha latter causes problems for the iphone linker.
+
 2010-05-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_ppc_is_direct_call_sequence): Handle one more case with ilp32.
