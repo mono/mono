@@ -84,15 +84,30 @@ namespace System.Web.Compilation
 							   CodeStatementCollection trueStmt)
 		{
 #if NET_2_0
-			if (!String.IsNullOrEmpty (pageParser.MasterPageFile))
+			MainDirectiveAttribute <string> masterPageFile = pageParser.MasterPageFile;
+			if (masterPageFile != null && !masterPageFile.IsExpression)
 				// This is here just to trigger master page build, so that its type
 				// is available when compiling the page itself.
-				BuildManager.GetCompiledType (pageParser.MasterPageFile);
+				BuildManager.GetCompiledType (masterPageFile.Value);
+			MainDirectiveAttribute <string> clientTarget;
+#else
+			MainDirectiveAttribute clientTarget;
 #endif
-			if (pageParser.ClientTarget != null) {
+			clientTarget = pageParser.ClientTarget;
+			if (clientTarget != null) {
 				CodeExpression prop;
 				prop = new CodePropertyReferenceExpression (thisRef, "ClientTarget");
-				CodeExpression ct = new CodePrimitiveExpression (pageParser.ClientTarget);
+				CodeExpression ct = null;
+#if NET_2_0
+				if (clientTarget.IsExpression) {
+					var pi = GetFieldOrProperty (typeof (Page), "ClientTarget") as PropertyInfo;
+					if (pi != null)
+						ct = CompileExpression (pi, pi.PropertyType, clientTarget.UnparsedValue, false);
+				}
+
+				if (ct == null)
+#endif
+					ct = new CodePrimitiveExpression (clientTarget.Value);
 				if (localVars == null)
 					localVars = new CodeStatementCollection ();
 				localVars.Add (new CodeAssignStatement (prop, ct));
@@ -222,7 +237,12 @@ namespace System.Web.Compilation
 			throw new HttpException (String.Format ("Unable to create assign expression for type '{0}'.", valueType));
 		}
 		
-		static CodeAssignStatement CreatePropertyAssign (CodeExpression expr, string name, object value)
+		static CodeAssignStatement CreatePropertyAssign (CodeExpression owner, string name, CodeExpression rhs)
+		{
+			return new CodeAssignStatement (new CodePropertyReferenceExpression (owner, name), rhs);
+		}
+		
+		static CodeAssignStatement CreatePropertyAssign (CodeExpression owner, string name, object value)
 		{
 			CodeExpression rhs;
 			if (value == null || value is string)
@@ -236,27 +256,54 @@ namespace System.Web.Compilation
 					rhs = GetExpressionForValueAndType (value, vt);
 			}
 			
-			return new CodeAssignStatement (new CodePropertyReferenceExpression (expr, name), rhs);
+			return CreatePropertyAssign (owner, name, rhs);
 		}
 
 		static CodeAssignStatement CreatePropertyAssign (string name, object value)
 		{
 			return CreatePropertyAssign (thisRef, name, value);
 		}
-
-		void AddStatementsFromDirective (CodeMemberMethod method)
+#if NET_2_0
+		void AssignPropertyWithExpression <T> (CodeMemberMethod method, string name, MainDirectiveAttribute <T> value, ILocation location)
+#else
+		void AssignPropertyWithExpression (CodeMemberMethod method, string name, MainDirectiveAttribute value, ILocation location)
+#endif
 		{
-			string responseEncoding = pageParser.ResponseEncoding;
-			if (responseEncoding != null)
-				method.Statements.Add (CreatePropertyAssign ("ResponseEncoding", responseEncoding));
+			if (value == null)
+				return;
+			CodeAssignStatement assign;
+#if NET_2_0
+			CodeExpression rhs = null;
 			
-			int codepage = pageParser.CodePage;
-			if (codepage != -1)
-				method.Statements.Add (CreatePropertyAssign ("CodePage", codepage));
+			if (value.IsExpression) {
+				var pi = GetFieldOrProperty (typeof (Page), name) as PropertyInfo;
+				if (pi != null)
+					rhs = CompileExpression (pi, pi.PropertyType, value.UnparsedValue, false);
+			}
+			
+			if (rhs != null)
+				assign = CreatePropertyAssign (thisRef, name, rhs);
+			else
+#endif
+				assign = CreatePropertyAssign (name, value.Value);
 
+			method.Statements.Add (AddLinePragma (assign, location));
+		}
+
+		void AddStatementsFromDirective (ControlBuilder builder, CodeMemberMethod method, ILocation location)
+		{
+#if NET_2_0
+			AssignPropertyWithExpression <string> (method, "ResponseEncoding", pageParser.ResponseEncoding, location);
+			AssignPropertyWithExpression <int> (method, "CodePage", pageParser.CodePage, location);
+			AssignPropertyWithExpression <int> (method, "LCID", pageParser.LCID, location);
+#else
+			AssignPropertyWithExpression (method, "ResponseEncoding", pageParser.ResponseEncoding, location);
+			AssignPropertyWithExpression (method, "CodePage", pageParser.CodePage, location);
+			AssignPropertyWithExpression (method, "LCID", pageParser.LCID, location);
+#endif			
 			string contentType = pageParser.ContentType;
 			if (contentType != null)
-				method.Statements.Add (CreatePropertyAssign ("ContentType", contentType));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign ("ContentType", contentType), location));
 
 #if !NET_2_0
 			if (pageParser.OutputCache) {
@@ -264,32 +311,27 @@ namespace System.Web.Compilation
 						"InitOutputCache");
 				CodeMethodInvokeExpression invoke = new CodeMethodInvokeExpression (init,
 						OutputCacheParams ());
-				method.Statements.Add (invoke);
+				method.Statements.Add (AddLinePragma (invoke, builder));
 
 			}
 #endif
-			
-			int lcid = pageParser.LCID;
-			if (lcid != -1)
-				method.Statements.Add (CreatePropertyAssign ("LCID", lcid));
-
 			string culture = pageParser.Culture;
 			if (culture != null)
-				method.Statements.Add (CreatePropertyAssign ("Culture", culture));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign ("Culture", culture), location));
 
 			culture = pageParser.UICulture;
 			if (culture != null)
-				method.Statements.Add (CreatePropertyAssign ("UICulture", culture));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign ("UICulture", culture), location));
 
 			string errorPage = pageParser.ErrorPage;
 			if (errorPage != null)
-				method.Statements.Add (CreatePropertyAssign ("ErrorPage", errorPage));
+				method.Statements.Add (AddLinePragma (CreatePropertyAssign ("ErrorPage", errorPage), location));
 
                         if (pageParser.HaveTrace) {
                                 CodeAssignStatement stmt = new CodeAssignStatement ();
                                 stmt.Left = new CodePropertyReferenceExpression (thisRef, "TraceEnabled");
                                 stmt.Right = new CodePrimitiveExpression (pageParser.Trace);
-                                method.Statements.Add (stmt);
+                                method.Statements.Add (AddLinePragma (stmt, location));
                         }
 
                         if (pageParser.TraceMode != TraceMode.Default) {
@@ -297,14 +339,14 @@ namespace System.Web.Compilation
                                 CodeTypeReferenceExpression tm = new CodeTypeReferenceExpression ("System.Web.TraceMode");
                                 stmt.Left = new CodePropertyReferenceExpression (thisRef, "TraceModeValue");
                                 stmt.Right = new CodeFieldReferenceExpression (tm, pageParser.TraceMode.ToString ());
-                                method.Statements.Add (stmt);
+                                method.Statements.Add (AddLinePragma (stmt, location));
                         }
 
                         if (pageParser.NotBuffer) {
                                 CodeAssignStatement stmt = new CodeAssignStatement ();
                                 stmt.Left = new CodePropertyReferenceExpression (thisRef, "Buffer");
                                 stmt.Right = new CodePrimitiveExpression (false);
-                                method.Statements.Add (stmt);
+                                method.Statements.Add (AddLinePragma (stmt, location));
                         }
 
 #if NET_2_0
@@ -314,7 +356,7 @@ namespace System.Web.Compilation
                                 prop = new CodePropertyReferenceExpression (thisRef, "EnableEventValidation");
 				stmt.Left = prop;
 				stmt.Right = new CodePrimitiveExpression (pageParser.EnableEventValidation);
-				method.Statements.Add (stmt);
+				method.Statements.Add (AddLinePragma (stmt, location));
 			}
 
 			if (pageParser.MaintainScrollPositionOnPostBack) {
@@ -323,7 +365,7 @@ namespace System.Web.Compilation
                                 prop = new CodePropertyReferenceExpression (thisRef, "MaintainScrollPositionOnPostBack");
 				stmt.Left = prop;
 				stmt.Right = new CodePrimitiveExpression (pageParser.MaintainScrollPositionOnPostBack);
-				method.Statements.Add (stmt);
+				method.Statements.Add (AddLinePragma (stmt, location));
 			}
 #endif
 		}
@@ -337,7 +379,7 @@ namespace System.Web.Compilation
 		}
 #endif
 		
-		protected override void AddStatementsToInitMethod (CodeMemberMethod method)
+		protected override void AddStatementsToInitMethod (ControlBuilder builder, CodeMemberMethod method)
 		{
 			ILocation directiveLocation = pageParser.DirectiveLocation;
 			CodeArgumentReferenceExpression ctrlVar = new CodeArgumentReferenceExpression("__ctrl");
@@ -345,16 +387,11 @@ namespace System.Web.Compilation
 			if (pageParser.EnableViewStateMacSet)
 				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "EnableViewStateMac", pageParser.EnableViewStateMac), directiveLocation));
 #if NET_2_0
-			AddStatementsFromDirective (method);
-			if (pageParser.Title != null)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Title", pageParser.Title), directiveLocation));
-
-			if (pageParser.MasterPageFile != null)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "MasterPageFile", pageParser.MasterPageFile), directiveLocation));
-
-			if (pageParser.Theme != null)
-				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "Theme", pageParser.Theme), directiveLocation));
-
+			AddStatementsFromDirective (builder, method, directiveLocation);
+			AssignPropertyWithExpression <string> (method, "Title", pageParser.Title, directiveLocation);
+			AssignPropertyWithExpression <string> (method, "MasterPageFile", pageParser.MasterPageFile, directiveLocation);
+			AssignPropertyWithExpression <string> (method, "Theme", pageParser.Theme, directiveLocation);
+			
 			if (pageParser.StyleSheetTheme != null)
 				method.Statements.Add (AddLinePragma (CreatePropertyAssign (ctrlVar, "StyleSheetTheme", pageParser.StyleSheetTheme), directiveLocation));
 
@@ -380,9 +417,9 @@ namespace System.Web.Compilation
 		}
 
 		
-		protected override void AppendStatementsToFrameworkInitialize (CodeMemberMethod method)
+		protected override void AppendStatementsToFrameworkInitialize (ControlBuilder builder, CodeMemberMethod method)
 		{
-			base.AppendStatementsToFrameworkInitialize (method);
+			base.AppendStatementsToFrameworkInitialize (builder, method);
 
 			ArrayList deps = pageParser.Dependencies;
 			int depsCount = deps != null ? deps.Count : 0;
@@ -415,7 +452,7 @@ namespace System.Web.Compilation
 #endif
 
 #if ONLY_1_1
-			AddStatementsFromDirective (method);
+			AddStatementsFromDirective (builder, method, pageParser.Location);
 #endif
 			
 #if NET_1_1

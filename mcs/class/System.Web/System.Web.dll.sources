@@ -662,6 +662,7 @@ System.Web.UI/LosFormatter.cs
 System.Web.UI/MasterPage.cs
 System.Web.UI/MasterPageControlBuilder.cs
 System.Web.UI/MasterPageParser.cs
+System.Web.UI/MainDirectiveAttribute.cs
 System.Web.UI/MinimizableAttributeTypeConverter.cs
 System.Web.UI/NonVisualControlAttribute.cs
 System.Web.UI/ObjectConverter.cs

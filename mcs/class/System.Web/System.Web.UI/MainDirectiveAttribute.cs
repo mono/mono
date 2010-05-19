@@ -1,10 +1,8 @@
 //
-// System.Web.UI.PageThemeFileParser
-//
 // Authors:
-//   Chris Toshok (toshok@ximian.com)
+//      Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2006 Novell, Inc. (http://www.novell.com)
+// (C) 2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,44 +25,56 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
-
 using System;
-using System.Collections;
-using System.IO;
-using System.Web;
-using System.Web.Compilation;
-using System.Web.Util;
 
 namespace System.Web.UI
 {
-	internal sealed class PageThemeFileParser: UserControlParser
+#if NET_2_0
+	sealed class MainDirectiveAttribute <T>
+#else
+	sealed class MainDirectiveAttribute
+#endif
 	{
-		internal PageThemeFileParser (VirtualPath virtualPath, string inputFile, HttpContext context)
-		: base (virtualPath, inputFile, context, "System.Web.UI.PageTheme")
-		{
-		}
+		string unparsedValue;
+#if NET_2_0
+		T value;
+#else
+		object value;
+#endif
+		bool isExpression;
+		bool isDataBound;
 		
-		internal override void HandleOptions (object obj)
-		{
+		public string UnparsedValue {
+			get { return unparsedValue; }
 		}
 
-		internal override void AddDirective (string directive, IDictionary atts)
-		{
-			int cmp = String.Compare ("Register", directive, StringComparison.OrdinalIgnoreCase);
-			if (cmp == 0) {
-				base.AddDirective (directive, atts);
-				return;
-			}
-
-			ThrowParseException ("Unknown directive: " + directive);
+		public bool IsExpression {
+			get { return isExpression; }
 		}
-
-		internal override string DefaultBaseTypeName {
-			get { return "System.Web.UI.PageTheme"; }
+#if NET_2_0
+		public T Value {
+			get { return value; }
+		}
+#else
+		public object Value {
+			get { return value; }
+		}
+#endif
+		public MainDirectiveAttribute (string value)
+		{
+			this.unparsedValue = value;
+#if NET_2_0
+			if (value != null)
+				this.isExpression = BaseParser.IsExpression (value);
+#endif
+		}
+#if NET_2_0
+		public MainDirectiveAttribute (T value, bool unused)
+#else
+		public MainDirectiveAttribute (object value)
+#endif
+		{
+			this.value = value;
 		}
 	}
 }
-
-#endif

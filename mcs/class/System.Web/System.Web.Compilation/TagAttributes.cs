@@ -36,7 +36,7 @@ using System.Web.Util;
 
 namespace System.Web.Compilation
 {
-	class TagAttributes
+	sealed class TagAttributes
 	{
 		Hashtable atts_hash;
 		Hashtable tmp_hash;
@@ -158,7 +158,7 @@ namespace System.Web.Compilation
 			return (StrUtils.StartsWith (att, "<%#") && StrUtils.EndsWith (att, "%>"));
 		}
 		
-		public Hashtable GetDictionary (string key)
+		public IDictionary GetDictionary (string key)
 		{
 			if (got_hashed)
 				return atts_hash;

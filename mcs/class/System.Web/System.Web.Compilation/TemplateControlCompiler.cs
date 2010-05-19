@@ -195,7 +195,7 @@ namespace System.Web.Compilation
 #if NET_2_0
 				SetCustomAttributes (method);
 #endif
-				AddStatementsToInitMethod (method);
+				AddStatementsToInitMethod (builder, method);
 			}
 			
 			if (builder.HasAspCode) {
@@ -445,7 +445,7 @@ namespace System.Web.Compilation
 		}
 #endif
 		
-		protected virtual void AddStatementsToInitMethod (CodeMemberMethod method)
+		protected virtual void AddStatementsToInitMethod (ControlBuilder builder, CodeMemberMethod method)
 		{
 		}
 
@@ -593,44 +593,7 @@ namespace System.Web.Compilation
 
 			method.Statements.Add (AddLinePragma (assign, builder));
 		}
-
-		bool IsDirective (string value, char directiveChar)
-		{
-			if (value == null || value == String.Empty)
-				return false;
-			
-			value = value.Trim ();
-			if (!StrUtils.StartsWith (value, "<%") || !StrUtils.EndsWith (value, "%>"))
-				return false;
-
-			int dcIndex = value.IndexOf (directiveChar, 2);
-			if (dcIndex == -1)
-				return false;
-
-			if (dcIndex == 2)
-				return true;
-			dcIndex--;
-			
-			while (dcIndex >= 2) {
-				if (!Char.IsWhiteSpace (value [dcIndex]))
-					return false;
-				dcIndex--;
-			}
-
-			return true;
-		}
-		
-		bool IsDataBound (string value)
-		{
-			return IsDirective (value, '#');
-		}
-
 #if NET_2_0
-		bool IsExpression (string value)
-		{
-			return IsDirective (value, '$');
-		}		
-
 		void RegisterBindingInfo (ControlBuilder builder, string propName, ref string value)
 		{
 			string str = TrimDB (value, false);
@@ -668,7 +631,7 @@ namespace System.Web.Compilation
 			return (0 == String.Compare (a, b, true, Helpers.InvariantCulture));
 		}
 
-		static MemberInfo GetFieldOrProperty (Type type, string name)
+		internal static MemberInfo GetFieldOrProperty (Type type, string name)
 		{
 			MemberInfo member = null;
 			try {
@@ -701,9 +664,9 @@ namespace System.Web.Compilation
 		{
 			int hyphen = id.IndexOf ('-');
 			bool isPropertyInfo = (member is PropertyInfo);
-			bool isDataBound = IsDataBound (attValue);
+			bool isDataBound = BaseParser.IsDataBound (attValue);
 #if NET_2_0
-			bool isExpression = !isDataBound && IsExpression (attValue);
+			bool isExpression = !isDataBound && BaseParser.IsExpression (attValue);
 #else
 			bool isExpression = false;
 #endif
@@ -774,7 +737,7 @@ namespace System.Web.Compilation
 		}
 
 #if NET_2_0
-		CodeExpression CompileExpression (MemberInfo member, Type type, string value, bool useSetAttribute)
+		internal CodeExpression CompileExpression (MemberInfo member, Type type, string value, bool useSetAttribute)
 		{
 			// First let's find the correct expression builder
 			value = value.Substring (3, value.Length - 5).Trim ();
@@ -1018,9 +981,9 @@ namespace System.Web.Compilation
 				throw new ParseException (builder.Location, "Unrecognized attribute: " + id);
 
 			CodeMemberMethod method = builder.Method;
-			bool isDatabound = IsDataBound (attvalue);
+			bool isDatabound = BaseParser.IsDataBound (attvalue);
 #if NET_2_0
-			bool isExpression = !isDatabound && IsExpression (attvalue);
+			bool isExpression = !isDatabound && BaseParser.IsExpression (attvalue);
 #endif
 
 			if (isDatabound) {
@@ -1665,7 +1628,7 @@ namespace System.Web.Compilation
 			CallBaseFrameworkInitialize (method);
 #endif
 			CallSetStringResourcePointer (method);
-			AppendStatementsToFrameworkInitialize (method);
+			AppendStatementsToFrameworkInitialize (parser.RootBuilder, method);
 			mainClass.Members.Add (method);
 		}
 
@@ -1673,7 +1636,7 @@ namespace System.Web.Compilation
 		{
 		}
 
-		protected virtual void AppendStatementsToFrameworkInitialize (CodeMemberMethod method)
+		protected virtual void AppendStatementsToFrameworkInitialize (ControlBuilder builder, CodeMemberMethod method)
 		{
 			if (!parser.EnableViewState) {
 				CodeAssignStatement stmt = new CodeAssignStatement ();

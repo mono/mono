@@ -82,10 +82,10 @@ namespace System.Web.UI {
 		
 		string inputFile;
 		string text;
-		Hashtable mainAttributes;
+		IDictionary mainAttributes;
 		ArrayList dependencies;
 		ArrayList assemblies;
-		Hashtable anames;
+		IDictionary anames;
 #if NET_2_0
 		string[] binDirAssemblies;
 		Dictionary <string, bool> namespacesCache;
@@ -309,7 +309,7 @@ namespace System.Web.UI {
 		{
 		}
 
-		internal static string GetOneKey (Hashtable tbl)
+		internal static string GetOneKey (IDictionary tbl)
 		{
 			foreach (object key in tbl.Keys)
 				return key.ToString ();
@@ -317,7 +317,7 @@ namespace System.Web.UI {
 			return null;
 		}
 		
-		internal virtual void AddDirective (string directive, Hashtable atts)
+		internal virtual void AddDirective (string directive, IDictionary atts)
 		{
 #if NET_2_0
 			var pageParserFilter = PageParserFilter;
@@ -670,8 +670,13 @@ namespace System.Web.UI {
 			if (assembly == null || assembly.Location == String.Empty)
 				return;
 
-			if (anames == null)
+			if (anames == null) {
+#if NET_2_0
+				anames = new Dictionary <string, object> ();
+#else
 				anames = new Hashtable ();
+#endif
+			}
 
 			string name = assembly.GetName ().Name;
 			string loc = assembly.Location;
@@ -709,8 +714,13 @@ namespace System.Web.UI {
 
 		internal virtual Assembly AddAssemblyByName (string name)
 		{
-			if (anames == null)
+			if (anames == null) {
+#if NET_2_0
+				anames = new Dictionary <string, object> ();
+#else
 				anames = new Hashtable ();
+#endif
+			}
 
 			if (anames.Contains (name)) {
 				object o = anames [name];
@@ -739,7 +749,7 @@ namespace System.Web.UI {
 			return assembly;
 		}
 		
-		internal virtual void ProcessMainAttributes (Hashtable atts)
+		internal virtual void ProcessMainAttributes (IDictionary atts)
 		{
 			directiveLocation = new System.Web.Compilation.Location (Location);
 			
@@ -758,7 +768,7 @@ namespace System.Web.UI {
 			atts.Remove ("AspCompat"); // ignored
 			
 			debug = GetBool (atts, "Debug", compConfig.Debug);
-			compilerOptions = GetString (atts, "CompilerOptions", "");
+			compilerOptions = GetString (atts, "CompilerOptions", String.Empty);
 			language = GetString (atts, "Language", "");
 			if (language.Length != 0)
 				implicitLanguage = false;
@@ -767,14 +777,14 @@ namespace System.Web.UI {
 			
 			strictOn = GetBool (atts, "Strict", compConfig.Strict);
 			explicitOn = GetBool (atts, "Explicit", compConfig.Explicit);
-			if (atts.ContainsKey ("LinePragmas"))
+			if (atts.Contains ("LinePragmas"))
 				linePragmasOn = GetBool (atts, "LinePragmas", true);
 
 			string inherits = GetString (atts, "Inherits", null);
 #if NET_2_0
 			string srcRealPath = null;
 			
-			// In ASP 2, the source file is actually integrated with
+			// In ASP 2+, the source file is actually integrated with
 			// the generated file via the use of partial classes. This
 			// means that the code file has to be confirmed, but not
 			// used at this point.
