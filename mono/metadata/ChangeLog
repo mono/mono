@@ -1,3 +1,20 @@
+2010-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* marshal.c (mono_marshal_init): Register mono_gchandle_get_target
+	icall.
+
+	* marshal.c (mono_delegate_to_ftnptr): Use a gchandle instead of
+	gc tracked memory.
+
+	* marshal.c (mono_marshal_emit_managed_wrapper): Retrieve the first
+	argument from a gchandle.
+
+	* marshal.c: Get rid of the delegate_target_locations hash table.
+
+	Fixes #605295.
+
+	Backport of r157589.
+
 2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* class.c (mono_class_create_from_typedef): Fail a class
