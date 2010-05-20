@@ -1,3 +1,8 @@
+2010-05-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFile.cs: Add the new 4.0 overloads for
+	GetDirectoryNames and GetFileNames.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* IsolatedStorageFileEnumerator.cs

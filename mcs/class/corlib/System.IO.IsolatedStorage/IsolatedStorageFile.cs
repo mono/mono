@@ -522,6 +522,14 @@ namespace System.IO.IsolatedStorage {
 			return GetNames (adi);
 		}
 
+#if NET_4_0
+		[ComVisible (false)]
+		public string [] GetDirectoryNames ()
+		{
+			return GetDirectoryNames ("*");
+		}
+#endif
+
 		private string[] GetNames (FileSystemInfo[] afsi)
 		{
 			string[] r = new string[afsi.Length];
@@ -556,6 +564,14 @@ namespace System.IO.IsolatedStorage {
 
 			return GetNames (afi);
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		public string [] GetFileNames ()
+		{
+			return GetFileNames ("*");
+		}
+#endif
 
 		public override void Remove ()
 		{
