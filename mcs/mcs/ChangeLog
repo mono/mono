@@ -1,6 +1,12 @@
 2010-05-20  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #572071
+	* method.cs: Set override constraints using unexpanded interface
+	list.
+
+2010-05-20  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #572071
 	* ecore.cs: Include secondary extension method lookup in probing
 	mode.
 
