@@ -1,5 +1,10 @@
 2010-05-20  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Search for base indexer using the closest match
+	rule.
+
+2010-05-20  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #572071
 	* method.cs: Set override constraints using unexpanded interface
 	list.

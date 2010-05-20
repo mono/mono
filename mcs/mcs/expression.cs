@@ -7965,7 +7965,7 @@ namespace Mono.CSharp {
 
 			protected override IList<MemberSpec> GetBaseTypeMethods (ResolveContext rc, TypeSpec type)
 			{
-				candidates = GetIndexersForType (type);
+				candidates = GetIndexersForType (type, false);
 				if (candidates == null)
 					return null;
 
@@ -8036,9 +8036,13 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Call", args);
 		}
 
-		static IEnumerable<IndexerSpec> GetIndexersForType (TypeSpec lookup_type)
+		static IEnumerable<IndexerSpec> GetIndexersForType (TypeSpec lookup_type, bool baseAccess)
 		{
-			return MemberCache.FindIndexers (lookup_type, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides);
+			BindingRestriction restrictions = BindingRestriction.AccessibleOnly;
+			if (!baseAccess)
+				restrictions |= BindingRestriction.NoOverrides;
+
+			return MemberCache.FindIndexers (lookup_type, restrictions);
 		}
 
 		protected virtual void CommonResolve (ResolveContext ec)
@@ -8078,7 +8082,7 @@ namespace Mono.CSharp {
 			if (indexer_type == InternalType.Dynamic) {
 				dynamic = true;
 			} else {
-				var ilist = GetIndexersForType (/*current_type,*/ indexer_type);
+				var ilist = GetIndexersForType (indexer_type, this is BaseIndexerAccess);
 				if (ilist == null) {
 					ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
 							  TypeManager.CSharpName (indexer_type));
