@@ -980,7 +980,9 @@ namespace Mono.CSharp {
 					tp.Type.TypeArguments = base_tparam.TypeArguments;
 
 					// TODO MemberCache: Inflate with different MVAR ?
-					tp.Type.Interfaces = base_tparam.InterfacesDefined;
+					if (base_tparam.InterfacesDefined != null)
+						tp.Type.Interfaces = new List<TypeSpec> (base_tparam.InterfacesDefined);
+
 					tp.Type.BaseType = base_tparam.BaseType;
 				} else if (MethodData.implementing != null) {
 					var base_tp = MethodData.implementing.Constraints[i];
