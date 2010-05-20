@@ -1,5 +1,10 @@
 2010-05-20  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_resolve_method_ref): Rename this from decode_method_ref_2.
+	(make_writable): Remove this unused function.
+
+2010-05-20  Zoltan Varga  <vargaz@gmail.com>
+
 	* aot-compiler.c: Collect all information about a PLT entry into a separate MonoPltEntry
 	structure. Make the labels to plt entries local symbols instead of assembler local
 	labels, since tha latter causes problems for the iphone linker.
