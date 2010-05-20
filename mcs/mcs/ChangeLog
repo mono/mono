@@ -1,3 +1,9 @@
+2010-05-20  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #572071
+	* ecore.cs: Include secondary extension method lookup in probing
+	mode.
+
 2010-05-19  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #515801

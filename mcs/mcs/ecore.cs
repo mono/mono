@@ -458,20 +458,30 @@ namespace Mono.CSharp {
 			if (eclass != ExprClass.Unresolved)
 				return this;
 
-			Expression e = DoResolve (ec);
+			
+			Expression e;
+			try {
+				e = DoResolve (ec);
 
-			if (e == null)
-				return null;
+				if (e == null)
+					return null;
 
-			if ((flags & e.ExprClassToResolveFlags) == 0) {
-				e.Error_UnexpectedKind (ec, flags, loc);
-				return null;
+				if ((flags & e.ExprClassToResolveFlags) == 0) {
+					e.Error_UnexpectedKind (ec, flags, loc);
+					return null;
+				}
+
+				if (e.type == null)
+					throw new InternalErrorException ("Expression `{0}' didn't set its type in DoResolve", e.GetType ());
+
+				return e;
+			} catch (Exception ex) {
+				if (loc.IsNull || Report.DebugFlags > 0)
+					throw;
+
+				ec.Report.Error (584, loc, "Internal compiler error: {0}", ex.Message);
+				return EmptyExpression.Null;
 			}
-
-			if (e.type == null)
-				throw new InternalErrorException ("Expression `{0}' didn't set its type in DoResolve", e.GetType ());
-
-			return e;
 		}
 
 		/// <summary>
@@ -3697,70 +3707,65 @@ namespace Mono.CSharp {
 			//
 			var msg_recorder = new SessionReportPrinter ();
 			var prev_recorder = ec.Report.SetPrinter (msg_recorder);
+			try {
+				do {
+					//
+					// Methods in a base class are not candidates if any method in a derived
+					// class is applicable
+					//
+					int best_candidate_rate = int.MaxValue;
 
-			do {
-				//
-				// Methods in a base class are not candidates if any method in a derived
-				// class is applicable
-				//
-				int best_candidate_rate = int.MaxValue;
-
-				foreach (var member in Methods) {
-					var m = member as MethodSpec;
-					if (m == null) {
-						// TODO: It's wrong when non-member is before applicable method
-						// TODO: Should report only when at least 1 from the batch is applicable
-						if (candidates.Count != 0) {
-							ec.Report.SymbolRelatedToPreviousError (candidates [0]);
-							ec.Report.SymbolRelatedToPreviousError (member);
-							ec.Report.Warning (467, 2, loc, "Ambiguity between method `{0}' and non-method `{1}'. Using method `{0}'",
-								candidates[0].GetSignatureForError (), member.GetSignatureForError ());
+					foreach (var member in Methods) {
+						var m = member as MethodSpec;
+						if (m == null) {
+							// TODO: It's wrong when non-member is before applicable method
+							// TODO: Should report only when at least 1 from the batch is applicable
+							if (candidates.Count != 0) {
+								ec.Report.SymbolRelatedToPreviousError (candidates[0]);
+								ec.Report.SymbolRelatedToPreviousError (member);
+								ec.Report.Warning (467, 2, loc, "Ambiguity between method `{0}' and non-method `{1}'. Using method `{0}'",
+									candidates[0].GetSignatureForError (), member.GetSignatureForError ());
+							}
+							continue;
 						}
-						continue;
+
+						//
+						// Check if candidate is applicable (section 14.4.2.1)
+						//
+						bool params_expanded_form = false;
+						int candidate_rate = IsApplicable (ec, ref candidate_args, arg_count, ref m, ref params_expanded_form);
+
+						if (candidate_rate < best_candidate_rate) {
+							best_candidate_rate = candidate_rate;
+							best_candidate = m;
+						}
+
+						if (params_expanded_form) {
+							if (params_candidates == null)
+								params_candidates = new List<MethodSpec> (2);
+							params_candidates.Add (m);
+						}
+
+						if (candidate_args != Arguments) {
+							if (candidates_expanded == null)
+								candidates_expanded = new Dictionary<MethodSpec, Arguments> (2);
+
+							candidates_expanded.Add (m, candidate_args);
+							candidate_args = Arguments;
+						}
+
+						if (candidate_rate != 0 || has_inaccessible_candidates_only) {
+							if (msg_recorder != null)
+								msg_recorder.EndSession ();
+							continue;
+						}
+
+						msg_recorder = null;
+						candidates.Add (m);
 					}
-
-					//
-					// Check if candidate is applicable (section 14.4.2.1)
-					//
-					bool params_expanded_form = false;
-					int candidate_rate = IsApplicable (ec, ref candidate_args, arg_count, ref m, ref params_expanded_form);
-
-					if (candidate_rate < best_candidate_rate) {
-						best_candidate_rate = candidate_rate;
-						best_candidate = m;
-					}
-
-					if (params_expanded_form) {
-						if (params_candidates == null)
-							params_candidates = new List<MethodSpec> (2);
-						params_candidates.Add (m);
-					}
-
-					if (candidate_args != Arguments) {
-						if (candidates_expanded == null)
-							candidates_expanded = new Dictionary<MethodSpec, Arguments> (2);
-
-						candidates_expanded.Add (m, candidate_args);
-						candidate_args = Arguments;
-					}
-
-					if (candidate_rate != 0 || has_inaccessible_candidates_only) {
-						if (msg_recorder != null)
-							msg_recorder.EndSession ();
-						continue;
-					}
-
-					msg_recorder = null;
-					candidates.Add (m);
-				}
-			} while (candidates.Count == 0 && GetBaseTypeMethods (ec));
-
-			ec.Report.SetPrinter (prev_recorder);
-			if (msg_recorder != null && !msg_recorder.IsEmpty) {
-				if (!may_fail)
-					msg_recorder.Merge (prev_recorder);
-
-				return null;
+				} while (candidates.Count == 0 && GetBaseTypeMethods (ec));
+			} finally {
+				ec.Report.SetPrinter (prev_recorder);
 			}
 
 			int candidate_top = candidates.Count;
@@ -3776,10 +3781,19 @@ namespace Mono.CSharp {
 					if (ex_method_lookup != null) {
 						ex_method_lookup.ExtensionExpression = InstanceExpression.Resolve (ec);
 						ex_method_lookup.SetTypeArguments (ec, type_arguments);
-						return ex_method_lookup.OverloadResolve (ec, ref Arguments, may_fail, loc);
+						var emg = ex_method_lookup.OverloadResolve (ec, ref Arguments, may_fail, loc);
+						if (emg != null)
+							return emg;
 					}
 				}
-				
+
+				if (msg_recorder != null && !msg_recorder.IsEmpty) {
+					if (!may_fail)
+						msg_recorder.Merge (prev_recorder);
+
+					return null;
+				}
+			
 				if (may_fail)
 					return null;
 
