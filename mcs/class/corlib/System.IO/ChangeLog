@@ -1,3 +1,12 @@
+2010-05-20  Marek Habersack  <mhabersack@novell.com>
+
+	* FileStream.cs: when running on Windows and a path with Unix
+	directory separator chars is passed (including an UNC share), get
+	the canonical form of the path before attempting to retrieve its
+	directory name. Fixes bug #607502
+
+	* Path.cs: typo fix
+
 2010-05-08  Marek Habersack  <mhabersack@novell.com>
 
 	* Path.cs: vararg overload of Combine now correctly concatenates

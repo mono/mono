@@ -266,7 +266,11 @@ namespace System.IO
 
 			SecurityManager.EnsureElevatedPermissions (); // this is a no-op outside moonlight
 
-			string dname = Path.GetDirectoryName (path);
+			string dname;
+			if (Path.DirectorySeparatorChar != '/' && path.IndexOf ('/') >= 0)
+				dname = Path.GetDirectoryName (Path.GetFullPath (path));
+			else
+				dname = Path.GetDirectoryName (path);
 			if (dname.Length > 0) {
 				string fp = Path.GetFullPath (dname);
 				if (!Directory.Exists (fp)) {
