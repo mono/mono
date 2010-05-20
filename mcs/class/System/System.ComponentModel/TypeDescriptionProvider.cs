@@ -135,7 +135,7 @@ namespace System.ComponentModel
 		public virtual ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
 		{
 			if (_parent != null)
-				_parent.GetTypeDescriptor (objectType, instance);
+				return _parent.GetTypeDescriptor (objectType, instance);
 
 			if (_emptyCustomTypeDescriptor == null)
 				_emptyCustomTypeDescriptor = new EmptyCustomTypeDescriptor ();

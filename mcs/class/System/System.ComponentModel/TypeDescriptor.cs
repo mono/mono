@@ -126,6 +126,7 @@ public sealed class TypeDescriptor
 
 			plist.AddLast (provider);
 			instanceWrapper = null;
+			Refresh (instance);
 		}
 	}
 
@@ -146,6 +147,7 @@ public sealed class TypeDescriptor
 			}
 
 			plist.AddLast (provider);
+			Refresh (type);
 		}
 	}
 
@@ -772,6 +774,9 @@ public sealed class TypeDescriptor
 		}
 
 		if (ret == null)
+			ret = GetProvider (instance.GetType ());
+
+		if (ret == null)
 			return new DefaultTypeDescriptionProvider ();
 		else
 			return new WrappedTypeDescriptionProvider (ret);
@@ -787,7 +792,14 @@ public sealed class TypeDescriptor
 		lock (typeDescriptionProvidersLock) {
 			LinkedList <TypeDescriptionProvider> plist;
 			
-			if (typeDescriptionProviders.TryGetValue (type, out plist) && plist.Count > 0)
+			while (!typeDescriptionProviders.TryGetValue (type, out plist)) {
+				plist = null;
+				type = type.BaseType;
+				if (type == null)
+					break;
+			}
+
+			if (plist != null && plist.Count > 0)
 				ret = plist.Last.Value;
 		}
 
@@ -851,14 +863,14 @@ public sealed class TypeDescriptor
 		if (instance == null)
 			throw new ArgumentNullException ("instance");
 
-		bool removed = false;
+		//bool removed = false;
 		lock (componentDescriptionProvidersLock) {
 			LinkedList <TypeDescriptionProvider> plist;
 			WeakObjectWrapper instanceWrapper = new WeakObjectWrapper (instance);
 
 			if (componentDescriptionProviders.TryGetValue (instanceWrapper, out plist) && plist.Count > 0) {
 				RemoveProvider (provider, plist);
-				removed = true;
+				//removed = true;
 			}
 			
 			instanceWrapper = null;
@@ -877,13 +889,11 @@ public sealed class TypeDescriptor
 		if (type == null)
 			throw new ArgumentNullException ("type");
 
-		bool removed = false;
 		lock (typeDescriptionProvidersLock) {
 			LinkedList <TypeDescriptionProvider> plist;
 
 			if (typeDescriptionProviders.TryGetValue (type, out plist) && plist.Count > 0) {
 				RemoveProvider (provider, plist);
-				removed = true;
 			}
 		}
 
@@ -1116,7 +1126,12 @@ public sealed class TypeDescriptor
 
 		public override ICustomTypeDescriptor GetTypeDescriptor (Type objectType, object instance)
 		{
-			return new DefaultTypeDescriptor (this, objectType, instance);
+			TypeDescriptionProvider wrapped = Wrapped;
+
+			if (wrapped == null)
+				return new DefaultTypeDescriptor (this, objectType, instance);
+
+			return wrapped.GetTypeDescriptor (objectType, instance);
 		}
 	}
 

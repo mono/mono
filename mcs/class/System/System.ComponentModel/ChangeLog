@@ -1,3 +1,11 @@
+2010-05-20  Marek Habersack  <mhabersack@novell.com>
+
+	* TypeDescriptor.cs: GetTypeDescriptor correctly forwards the call
+	to the wrapped type, if any. Fixes bug #603060
+
+	* TypeDescriptionProvider.cs: GetTypeDescriptor must return the
+	value from a call forwarded to _parent. Fixes bug #603060
+
 2010-01-15  Alexandre Gomes  <alexmipego@gmail.com>
 
 	* BaseNumberConverter.cs: Fixed CanConvertTo and ConvertTo when
