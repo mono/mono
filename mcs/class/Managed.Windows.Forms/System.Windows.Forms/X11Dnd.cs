@@ -861,9 +861,11 @@ namespace System.Windows.Forms {
 				child = new_child;
 
 				Hwnd h = Hwnd.ObjectFromHandle (child);
-				Control d = Control.FromHandle (h.client_window);
-				if (d != null && d.allow_drop)
-					last_drop_child = child;
+				if (h != null) {
+					Control d = Control.FromHandle (h.client_window);
+					if (d != null && d.allow_drop)
+						last_drop_child = child;
+				}
 			}
 
 			if (last_drop_child != IntPtr.Zero)
@@ -876,6 +878,9 @@ namespace System.Windows.Forms {
 			}
 			target = child;
 			Hwnd hwnd = Hwnd.ObjectFromHandle (target);
+			if (hwnd == null)
+				return true;
+
 			Control c = Control.FromHandle (hwnd.client_window);
 
 			if (c == null)
