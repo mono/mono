@@ -12802,6 +12802,32 @@
       </method>
     </type>
   </test>
+  <test name="gtest-511.cs">
+    <type name="A`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Foo[T](A`1[T])">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Void Foo[T](A`1[T])">
+        <size>1</size>
+      </method>
+      <method name="Int32 Main()">
+        <size>76</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -20376,6 +20402,41 @@
       </method>
       <method name="System.String &lt;Main&gt;m__0(System.String)">
         <size>27</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-lambda-24.cs">
+    <type name="E">
+      <method name="System.String Test[T](C, T, System.Func`1[T])">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Int32 Test[T](T, System.Func`1[System.Boolean])">
+        <size>2</size>
+      </method>
+      <method name="System.String Foo[T](T, System.Action`1[T])">
+        <size>13</size>
+      </method>
+      <method name="Void Main()">
+        <size>42</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C+&lt;Main&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0(System.String)">
+        <size>24</size>
+      </method>
+      <method name="Void &lt;&gt;m__1(System.String)">
+        <size>47</size>
+      </method>
+      <method name="System.String &lt;&gt;m__2()">
+        <size>6</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -39334,6 +39395,82 @@
       </method>
       <method name="Void Main()">
         <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-775.cs">
+    <type name="C">
+      <method name="Void A.add_Member(System.EventHandler)">
+        <size>34</size>
+      </method>
+      <method name="Void A.remove_Member(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void add_Member(System.EventHandler)">
+        <size>34</size>
+      </method>
+      <method name="Void remove_Member(System.EventHandler)">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>11</size>
+      </method>
+      <method name="Int32 TestMe()">
+        <size>155</size>
+      </method>
+      <method name="Void f(System.Object, System.EventArgs)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-776.cs">
+    <type name="First">
+      <method name="System.Object get_Item(System.String)">
+        <size>6</size>
+      </method>
+      <method name="Void set_Item(System.String, System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Second">
+      <method name="System.Object get_Item(System.String)">
+        <size>6</size>
+      </method>
+      <method name="Void set_Item(System.String, System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Third">
+      <method name="System.Object get_Item(System.String)">
+        <size>8</size>
+      </method>
+      <method name="Void set_Item(System.String, System.Object)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="a">
+      <method name="Int32 Main(System.String[])">
+        <size>31</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
