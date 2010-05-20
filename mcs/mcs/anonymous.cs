@@ -1299,6 +1299,8 @@ namespace Mono.CSharp {
 			if (flags != 0)
 				aec_dispose = aec.Set (flags);
 
+			var errors = ec.Report.Errors;
+
 			bool res = Block.Resolve (ec.CurrentBranching, aec, Block.Parameters, null);
 
 			if (aec.HasReturnLabel)
@@ -1312,6 +1314,9 @@ namespace Mono.CSharp {
 			if (aec_dispose != null) {
 				aec_dispose.Dispose ();
 			}
+
+			if (res && errors != ec.Report.Errors)
+				return null;
 
 			return res ? this : null;
 		}
