@@ -138,7 +138,7 @@ namespace System.ComponentModel
 		public override int GetHashCode()
 		{
 			if (DefaultValue == null)
-				return base.GetHashCode ();
+				return 0;
 			return DefaultValue.GetHashCode();
 		}
 	}

@@ -1,3 +1,8 @@
+2010-05-20  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DefaultValueAttribute.cs: Two instances where DefaultValue == 
+	null are equal so they *must* return the same hash code
+
 2010-03-20  Miguel de Icaza  <miguel@novell.com>
 
 	* TypeDescriptor.cs: Remove warning.
