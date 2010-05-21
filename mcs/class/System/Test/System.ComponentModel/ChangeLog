@@ -1,3 +1,8 @@
+2010-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* DefaultValueAttributeTest.cs: Change test case to compare the 
+	hash code of two DVA created with null (instead of comparing to 0)
+
 2010-02-05  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* MaskedTextProviderTest.cs: New tests for ToString and

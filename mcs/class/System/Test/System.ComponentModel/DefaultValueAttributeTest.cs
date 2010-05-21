@@ -40,10 +40,11 @@ namespace MonoTests.System.ComponentModel {
 			Assert.IsNull (dva.Value, "Value");
 
 			Assert.IsFalse (dva.Equals (null), "Equals(null)");
-			Assert.IsTrue (dva.Equals (new DefaultValueAttribute (null)), "Equals(new)");
 
-			// != Value (null) GetHashCode
-			Assert.IsTrue (dva.GetHashCode () != 0, "GetHashCode");
+			DefaultValueAttribute dva2 = new DefaultValueAttribute (null);
+			Assert.IsTrue (dva.Equals (dva2), "Equals(new)");
+
+			Assert.AreEqual (dva.GetHashCode (), dva2.GetHashCode (), "GetHashCode");
 		}
 
 		[Test]
