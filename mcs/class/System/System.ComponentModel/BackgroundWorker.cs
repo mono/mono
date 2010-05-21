@@ -45,7 +45,7 @@ namespace System.ComponentModel
 		}
 
 		AsyncOperation async;
-		bool cancel_pending, report_progress = false, support_cancel = false;
+		bool cancel_pending, report_progress = false, support_cancel = false, complete = false;
 
 		public event DoWorkEventHandler DoWork;
 		public event ProgressChangedEventHandler ProgressChanged;
@@ -98,15 +98,19 @@ namespace System.ComponentModel
 			if (!WorkerReportsProgress)
 				throw new InvalidOperationException ("This background worker does not report progress.");
 
-			// FIXME: verify the expected behavior
-			if (!IsBusy)
-				return;
+			if (complete)
+				throw new InvalidOperationException ("The background worker has ended.");
 
-			async.Post (delegate (object o) {
-				ProgressChangedEventArgs e = o as ProgressChangedEventArgs;
-				OnProgressChanged (e);
-				},
-				new ProgressChangedEventArgs (percentProgress, userState));
+			ProgressChangedEventArgs pcea = new ProgressChangedEventArgs (percentProgress, userState);
+			if (async == null) {
+				// we can report progress before a call to RunWorkerAsync - but we do it sync
+				OnProgressChanged (pcea);
+			} else {
+				async.Post (delegate (object o) {
+					ProgressChangedEventArgs e = o as ProgressChangedEventArgs;
+					OnProgressChanged (e);
+				}, pcea);
+			}
 		}
 
 		public void RunWorkerAsync ()
@@ -142,6 +146,7 @@ namespace System.ComponentModel
 
 			SendOrPostCallback callback = delegate (object darg) {
 				this.async = null;
+				complete = true;
 				OnRunWorkerCompleted (darg as RunWorkerCompletedEventArgs);
 			};
 
@@ -157,6 +162,7 @@ namespace System.ComponentModel
 
 			async = AsyncOperationManager.CreateOperation (this);
 
+			complete = false;
 			ProcessWorkerEventHandler handler =
 				new ProcessWorkerEventHandler (ProcessWorker);
 			handler.BeginInvoke (argument, async, CompleteWorker, null, null);

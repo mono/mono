@@ -1,3 +1,9 @@
+2010-05-21  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AsyncOperation.cs: Add checks for null delegates
+	* BackgroundWorker.cs: Ensure ProgressChanged can be called before
+	starting the work but not after its complete
+
 2010-05-20  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* DefaultValueAttribute.cs: Two instances where DefaultValue == 

@@ -73,6 +73,9 @@ namespace System.ComponentModel
 
 		public void Post (SendOrPostCallback d, object arg)
 		{
+			if (d == null)
+				throw new ArgumentNullException ("d");
+
 			if (done)
 				throw new InvalidOperationException ("This task is already completed. Multiple call to Post is not allowed.");
 
@@ -82,6 +85,9 @@ namespace System.ComponentModel
 		public void PostOperationCompleted (
 			SendOrPostCallback d, object arg)
 		{
+			if (d == null)
+				throw new ArgumentNullException ("d");
+
 			if (done)
 				throw new InvalidOperationException ("This task is already completed. Multiple call to PostOperationCompleted is not allowed.");
 
