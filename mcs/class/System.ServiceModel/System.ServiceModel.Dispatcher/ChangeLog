@@ -1,5 +1,11 @@
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : disable slottling again :( It still fails
+	  to process concurrent requests if there is service metadata channel
+	  and MaxConcurrentSessions > 1 on non-ASP.NET channels.
+
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : enable throttling again. Though issues
 	  regarding parallel request is not here (multiple dispatchers
 	  can accept a channels for each), and HTTP channels do not accept
