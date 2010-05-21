@@ -1,3 +1,8 @@
+2010-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c (mono_arch_output_basic_block): Use ins->inst_c1 instead of p1, the
+	two are not the same on ilp32.
+
 2010-05-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c: Collect all information about a PLT entry into a separate MonoPltEntry
