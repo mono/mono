@@ -1,3 +1,7 @@
+2010-05-21  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs: Use constrained prefix more broadly to avoid boxing.
+
 2010-05-20  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #591149

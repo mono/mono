@@ -5079,8 +5079,6 @@ namespace Mono.CSharp {
 					     MethodSpec method, Arguments Arguments, Location loc,
 		                             bool dup_args, bool omit_args)
 		{
-			bool struct_call = false;
-			bool this_call = false;
 			LocalTemporary this_arg = null;
 
 			TypeSpec decl_type = method.DeclaringType;
@@ -5088,61 +5086,59 @@ namespace Mono.CSharp {
 			// Speed up the check by not doing it on not allowed targets
 			if (method.ReturnType == TypeManager.void_type && method.IsConditionallyExcluded (loc))
 				return;
-			
-			bool is_static = method.IsStatic;
-			if (!is_static){
-				this_call = instance_expr is This;
-				if (TypeManager.IsStruct (decl_type) || TypeManager.IsEnumType (decl_type))
-					struct_call = true;
+
+			OpCode call_op;
+			TypeSpec iexpr_type;
+
+			if (method.IsStatic) {
+				iexpr_type = null;
+				call_op = OpCodes.Call;
+			} else {
+				iexpr_type = instance_expr.Type;
+
+				if (is_base || decl_type.IsStruct || decl_type.IsEnum || (instance_expr is This && !method.IsVirtual)) {
+					call_op = OpCodes.Call;
+				} else {
+					call_op = OpCodes.Callvirt;
+				}
 
 				//
 				// If this is ourselves, push "this"
 				//
 				if (!omit_args) {
-					TypeSpec t = null;
-					TypeSpec iexpr_type = instance_expr.Type;
+					TypeSpec t = iexpr_type;
 
 					//
 					// Push the instance expression
 					//
-					if (TypeManager.IsValueType (iexpr_type) || TypeManager.IsGenericParameter (iexpr_type)) {
+					if ((iexpr_type.IsStruct && (call_op == OpCodes.Callvirt || (call_op == OpCodes.Call && decl_type == iexpr_type))) ||
+						iexpr_type.IsGenericParameter || TypeManager.IsNullableType (decl_type)) {
 						//
-						// Special case: calls to a function declared in a 
-						// reference-type with a value-type argument need
-						// to have their value boxed.
-						if (TypeManager.IsStruct (decl_type) ||
-						    TypeManager.IsGenericParameter (iexpr_type)) {
-							//
-							// If the expression implements IMemoryLocation, then
-							// we can optimize and use AddressOf on the
-							// return.
-							//
-							// If not we have to use some temporary storage for
-							// it.
-							if (instance_expr is IMemoryLocation) {
-								((IMemoryLocation)instance_expr).
-									AddressOf (ec, AddressOp.LoadStore);
-							} else {
-								LocalTemporary temp = new LocalTemporary (iexpr_type);
-								instance_expr.Emit (ec);
-								temp.Store (ec);
-								temp.AddressOf (ec, AddressOp.Load);
-							}
-
-							// avoid the overhead of doing this all the time.
-							if (dup_args)
-								t = ReferenceContainer.MakeType (iexpr_type);
+						// If the expression implements IMemoryLocation, then
+						// we can optimize and use AddressOf on the
+						// return.
+						//
+						// If not we have to use some temporary storage for
+						// it.
+						var iml = instance_expr as IMemoryLocation;
+						if (iml != null) {
+							iml.AddressOf (ec, AddressOp.LoadStore);
 						} else {
+							LocalTemporary temp = new LocalTemporary (iexpr_type);
 							instance_expr.Emit (ec);
-							
-							// FIXME: should use instance_expr is IMemoryLocation + constraint.
-							// to help JIT to produce better code
-							ec.Emit (OpCodes.Box, instance_expr.Type);
-							t = TypeManager.object_type;
+							temp.Store (ec);
+							temp.AddressOf (ec, AddressOp.Load);
 						}
+
+						// avoid the overhead of doing this all the time.
+						if (dup_args)
+							t = ReferenceContainer.MakeType (iexpr_type);
+					} else if (iexpr_type.IsEnum || iexpr_type.IsStruct) {
+						instance_expr.Emit (ec);
+						ec.Emit (OpCodes.Box, iexpr_type);
+						t = iexpr_type = TypeManager.object_type;
 					} else {
 						instance_expr.Emit (ec);
-						t = instance_expr.Type;
 					}
 
 					if (dup_args) {
@@ -5158,14 +5154,8 @@ namespace Mono.CSharp {
 			if (!omit_args && Arguments != null)
 				Arguments.Emit (ec, dup_args, this_arg);
 
-			OpCode call_op;
-			if (is_static || struct_call || is_base || (this_call && !method.IsVirtual)) {
-				call_op = OpCodes.Call;
-			} else {
-				call_op = OpCodes.Callvirt;
-				
-				if ((instance_expr != null) && (instance_expr.Type.IsGenericParameter))
-					ec.Emit (OpCodes.Constrained, instance_expr.Type);
+			if (call_op == OpCodes.Callvirt && (iexpr_type.IsGenericParameter || iexpr_type.IsStruct)) {
+				ec.Emit (OpCodes.Constrained, iexpr_type);
 			}
 
 			if (method.Parameters.HasArglist) {
