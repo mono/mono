@@ -1,3 +1,8 @@
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpListenerManager.cs : add a workaround for Func<>.BeginInvoke()
+	  problem that blocked ASP.NET channels working.
+
 2010-05-19  Andreia Gaita  <avidigal@novell.com>
 
 	* HttpRequestChannel.cs: if the response has no body, create an

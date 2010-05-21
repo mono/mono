@@ -236,10 +236,17 @@ namespace System.ServiceModel.Channels
 		{
 			if (wait_delegate == null)
 				wait_delegate = new Func<IChannelListener,HttpContext> (http_handler.WaitForRequest);
+// FIXME: Remove this workaround. This Func<>.BeginInvoke() invocation
+// somehow fails and does not kick this method asynchronously.
+#if false
 			wait_delegate.BeginInvoke (listener, delegate (IAsyncResult result) {
 				var ctx = wait_delegate.EndInvoke (result);
 				contextReceivedCallback (ctx != null ? new AspNetHttpContextInfo (ctx) : null);
 				}, null);
+#else
+			var ctx = wait_delegate.Invoke (listener);
+				contextReceivedCallback (ctx != null ? new AspNetHttpContextInfo (ctx) : null);
+#endif
 		}
 	}
 
