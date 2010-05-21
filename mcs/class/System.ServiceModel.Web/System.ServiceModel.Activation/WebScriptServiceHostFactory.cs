@@ -84,7 +84,7 @@ namespace System.ServiceModel.Activation
 
 				foreach (ServiceEndpoint se in Description.Endpoints)
 					if (se.Behaviors.Find<WebHttpBehavior> () == null)
-						se.Behaviors.Add (new WebScriptEnablingBehavior ());
+						se.Behaviors.Insert (0, new WebScriptEnablingBehavior ());
 			}
 		}
 	}

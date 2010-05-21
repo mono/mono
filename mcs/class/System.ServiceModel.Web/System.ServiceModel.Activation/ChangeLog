@@ -1,3 +1,9 @@
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebScriptServiceHostFactory.cs : similarly to ServiceDebugBehavior
+	  and ServiceMetadataBehavior in ServiceHostBase, it must *prepend*
+	  WebScriptEnablingBehavior to apply all other behaviors subsequently.
+
 2009-10-09  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebScriptServiceHostFactory.cs : call base.OnOpening() here too.
