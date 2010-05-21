@@ -1,3 +1,10 @@
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : enable throttling again. Though issues
+	  regarding parallel request is not here (multiple dispatchers
+	  can accept a channels for each), and HTTP channels do not accept
+	  more than one channel at a time anyways.
+
 2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : add workaround to set ChannelDispatcher

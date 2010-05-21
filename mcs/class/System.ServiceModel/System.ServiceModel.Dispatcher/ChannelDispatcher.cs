@@ -470,9 +470,8 @@ namespace System.ServiceModel.Dispatcher
 				// http://social.msdn.microsoft.com/Forums/en-US/wcf/thread/3faa4a5e-8602-4dbe-a181-73b3f581835e
 
 				while (loop) {
-					// FIXME: enable throttling and allow more than one connection to process at a time.
-					while (loop && channels.Count < 1) {
-//					while (loop && channels.Count < owner.ServiceThrottle.MaxConcurrentSessions) {
+					// FIXME: take MaxConcurrentCalls into consideration too.
+					while (loop && channels.Count < owner.ServiceThrottle.MaxConcurrentSessions) {
 						channel_acceptor ();
 						creator_handle.WaitOne (); // released by ChannelAccepted()
 					}
