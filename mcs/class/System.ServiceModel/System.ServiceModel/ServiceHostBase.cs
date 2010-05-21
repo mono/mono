@@ -395,8 +395,19 @@ namespace System.ServiceModel
 
 			//After the ChannelDispatchers are created, and attached to the service host
 			//Apply dispatching behaviors.
+			//
+			// This behavior application order is tricky: first only
+			// ServiceDebugBehavior and ServiceMetadataBehavior are
+			// applied, and then other service behaviors are applied.
+			// It is because those two behaviors adds ChannelDispatchers
+			// and any other service behaviors must be applied to
+			// those newly populated dispatchers.
 			foreach (IServiceBehavior b in Description.Behaviors)
-				b.ApplyDispatchBehavior (Description, this);
+				if (b is ServiceMetadataBehavior || b is ServiceDebugBehavior)
+					b.ApplyDispatchBehavior (Description, this);
+			foreach (IServiceBehavior b in Description.Behaviors)
+				if (!(b is ServiceMetadataBehavior || b is ServiceDebugBehavior))
+					b.ApplyDispatchBehavior (Description, this);
 
 			builder.ApplyDispatchBehaviors ();
 		}

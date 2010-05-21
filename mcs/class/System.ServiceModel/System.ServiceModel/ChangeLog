@@ -1,5 +1,11 @@
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostBase.cs : ServiceMetadataBehavior and ServiceDebugBehavior
+	  are special. They must be applied in prior to other behaviors so that
+	  newly populated ChannelDispatchers are applied behaviors accordingly.
+
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostBase.cs : remove Sleep() hack and wait channels to get
 	  opened to proceed.
 
