@@ -1,3 +1,12 @@
+2010-05-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	4.0 Updates.
+
+	* IsolatedStorage.cs: Add ObsoleteAttribute to CurrentSize and
+	MaximumSize.
+	* IsolatedStorageSecurityState.cs: New, stubbed.
+	* IsolatedStorageSecurityOptions.cs: New file.
+
 2010-05-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFile.cs: Add the new 4.0 overloads for

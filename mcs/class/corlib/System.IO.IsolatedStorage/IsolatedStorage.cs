@@ -82,6 +82,9 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant (false)]
+#if NET_4_0
+		[Obsolete]
+#endif
 		public virtual ulong CurrentSize {
 			get {
 				throw new InvalidOperationException (
@@ -102,6 +105,9 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant (false)]
+#if NET_4_0
+		[Obsolete]
+#endif
 		public virtual ulong MaximumSize {
 			get {
 				throw new InvalidOperationException (
