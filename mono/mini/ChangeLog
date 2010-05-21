@@ -1,5 +1,8 @@
 2010-05-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mono_jit_compile_method_inner): Remove a DISABLE_JIT block which was
+	added by mistake.
+
 	* mini-ppc.c: Fix the DISABLE_JIT build.
 
 2010-05-20  Zoltan Varga  <vargaz@gmail.com>
