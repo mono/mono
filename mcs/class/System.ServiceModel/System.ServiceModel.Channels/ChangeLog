@@ -1,5 +1,9 @@
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs : remove unused field. Some code cleanup.
+
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpReplyChannel.cs : use manual reset.
 	* AspNetReplyChannel.cs : make it equivalent to the above.
 

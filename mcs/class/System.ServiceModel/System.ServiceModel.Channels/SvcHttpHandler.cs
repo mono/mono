@@ -72,8 +72,7 @@ namespace System.ServiceModel.Channels {
 		string path;
 		ServiceHostBase host;
 		WcfListenerInfoCollection listeners = new WcfListenerInfoCollection ();
-		Dictionary<HttpContext,AutoResetEvent> wcf_wait_handles = new Dictionary<HttpContext,AutoResetEvent> ();
-		AutoResetEvent wait_for_request_handle = new AutoResetEvent (false);
+		Dictionary<HttpContext,ManualResetEvent> wcf_wait_handles = new Dictionary<HttpContext,ManualResetEvent> ();
 		int close_state;
 
 		public SvcHttpHandler (Type type, Type factoryType, string path)
@@ -97,17 +96,17 @@ namespace System.ServiceModel.Channels {
 			if (close_state > 0)
 				return null;
 
-			var wait = new ManualResetEvent (false);
 			var info = listeners [listener];
-			if (info.Pending.Count == 0) {
+			var ctx = info.Pending.Count == 0 ? null : info.Pending [0];
+			if (ctx == null) {
+				var wait = new ManualResetEvent (false);
 				info.ProcessRequestHandles.Add (wait);
-				wait_for_request_handle.Set ();
 				wait.WaitOne ();
+				ctx = info.Pending [0];
 				info.ProcessRequestHandles.Remove (wait);
 			}
 
-			var ctx = listeners [listener].Pending [0];
-			listeners [listener].Pending.RemoveAt (0);
+			info.Pending.RemoveAt (0);
 			return ctx;
 		}
 
@@ -153,7 +152,7 @@ namespace System.ServiceModel.Channels {
 		{
 			EnsureServiceHost ();
 
-			var wait = new AutoResetEvent (false);
+			var wait = new ManualResetEvent (false);
 			var l = FindBestMatchListener (context);
 			var i = listeners [l];
 			lock (i) {
