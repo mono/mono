@@ -1,5 +1,10 @@
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpReplyChannel.cs : use manual reset.
+	* AspNetReplyChannel.cs : make it equivalent to the above.
+
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpChannelListener.cs : do not accept more than one channel at a
 	  time. Remove extra fields. Add CancelAsync() implementation.
 

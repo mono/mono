@@ -160,14 +160,14 @@ Console.WriteLine (buf.CreateMessage ());
 			return true;
 		}
 
-		AutoResetEvent wait;
+		ManualResetEvent wait;
 
 		public override bool WaitForRequest (TimeSpan timeout)
 		{
 			if (wait != null)
 				throw new InvalidOperationException ("Another wait operation is in progress");
 			try {
-				var wait_ = new AutoResetEvent (false);
+				var wait_ = new ManualResetEvent (false);
 				wait = wait_;	// wait can be set to null if HttpContextAcquired runs to completion before we do WaitOne
 				source.ListenerManager.GetHttpContextAsync (timeout, HttpContextAcquired);
 				return wait_.WaitOne (timeout, false) && waiting.Count > 0;

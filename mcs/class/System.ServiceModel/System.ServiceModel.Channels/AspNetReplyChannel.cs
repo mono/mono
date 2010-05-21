@@ -41,7 +41,7 @@ namespace System.ServiceModel.Channels
 		AspNetChannelListener<IReplyChannel> listener;
 		List<HttpContext> waiting = new List<HttpContext> ();
 		HttpContext http_context;
-		AutoResetEvent wait;
+		ManualResetEvent wait;
 
 		public AspNetReplyChannel (AspNetChannelListener<IReplyChannel> listener)
 			: base (listener)
@@ -157,11 +157,10 @@ namespace System.ServiceModel.Channels
 			if (wait != null)
 				throw new InvalidOperationException ("Another wait operation is in progress");
 			try {
-				wait = new AutoResetEvent (false);
+				var wait_ = new ManualResetEvent (false);
+				wait = wait_;
 				listener.ListenerManager.GetHttpContextAsync (timeout, HttpContextAcquired);
-				if (wait != null) // in case callback is done before WaitOne() here.
-					return wait.WaitOne (timeout, false);
-				return waiting.Count > 0;
+				return wait_.WaitOne (timeout, false) && waiting.Count > 0;
 			} finally {
 				wait = null;
 			}
