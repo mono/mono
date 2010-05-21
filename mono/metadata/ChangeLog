@@ -1,3 +1,7 @@
+2010-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* threadpool.c: Fix the DISABLE_SOCKETS build.
+
 2010-05-19 Martin Baulig  <martin@novell.com>
 
 	Fix #604911.
