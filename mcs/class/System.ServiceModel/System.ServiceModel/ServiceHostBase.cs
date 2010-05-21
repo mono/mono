@@ -35,6 +35,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Security;
 using System.Reflection;
+using System.Threading;
 
 namespace System.ServiceModel
 {
@@ -464,11 +465,15 @@ namespace System.ServiceModel
 		{
 			DateTime start = DateTime.Now;
 			InitializeRuntime ();
-			foreach (var cd in ChannelDispatchers)
+			var waits = new List<ManualResetEvent> ();
+			foreach (var cd in ChannelDispatchers) {
+				var wait = new ManualResetEvent (false);
+				cd.Opened += delegate { wait.Set (); };
+				waits.Add (wait);
 				cd.Open (timeout - (DateTime.Now - start));
+			}
 
-			// FIXME: remove this hack. It should make sure that each ChannelDispatcher's loop has started, using WaitHandle.WaitAll() or something similar.
-			System.Threading.Thread.Sleep (300);
+			WaitHandle.WaitAll (waits.ToArray ());
 		}
 
 		protected override void OnEndClose (IAsyncResult result)

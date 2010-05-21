@@ -1,3 +1,8 @@
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : remove Sleep() hack and wait channels to get
+	  opened to proceed.
+
 2010-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DuplexClientBase.cs : implement InnerDuplexChannel and
