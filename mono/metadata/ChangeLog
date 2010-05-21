@@ -1,3 +1,11 @@
+2010-05-19 Martin Baulig  <martin@novell.com>
+
+	Fix #604911.
+
+	* threads.c (wait_for_tids_or_state_change): Use an
+	alertable WaitForMultipleObjectsEx().
+	(wait_for_tids): Likewise.
+
 2010-05-19 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* marshal.c (mono_marshal_init): Register mono_gchandle_get_target
