@@ -1,5 +1,10 @@
 2010-05-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_output_basic_block): Use ins->inst_c1 instead of p1, the
+	two are not the same on ilp32.
+
+2010-05-21  Zoltan Varga  <vargaz@gmail.com>
+
 	* mini.c (mono_jit_compile_method_inner): Remove a DISABLE_JIT block which was
 	added by mistake.
 
