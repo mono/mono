@@ -1,5 +1,10 @@
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpChannelListener.cs : do not accept more than one channel at a
+	  time. Remove extra fields. Add CancelAsync() implementation.
+
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : add a workaround for Func<>.BeginInvoke()
 	  problem that blocked ASP.NET channels working.
 

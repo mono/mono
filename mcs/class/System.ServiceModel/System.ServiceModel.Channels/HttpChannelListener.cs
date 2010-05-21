@@ -36,6 +36,7 @@ using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
 using System.ServiceModel.Security;
 using System.Text;
+using System.Threading;
 
 namespace System.ServiceModel.Channels
 {
@@ -48,11 +49,9 @@ namespace System.ServiceModel.Channels
 		{
 		}
 
-		object creator_lock = new object ();
-
 		protected override TChannel CreateChannel (TimeSpan timeout)
 		{
-			lock (creator_lock) {
+			lock (ThisLock) {
 				return CreateChannelCore (timeout);
 			}
 		}
@@ -102,7 +101,6 @@ namespace System.ServiceModel.Channels
 	internal abstract class HttpChannelListenerBase<TChannel> : InternalChannelListenerBase<TChannel>, IChannelDispatcherBoundListener
 		where TChannel : class, IChannel
 	{
-		List<TChannel> channels = new List<TChannel> ();
 		HttpListenerManager httpChannelManager;
 
 		internal static HttpChannelListenerBase<TChannel>CurrentHttpChannelListener;
@@ -144,9 +142,18 @@ namespace System.ServiceModel.Channels
 
 		public ServiceCredentialsSecurityTokenManager SecurityTokenManager { get; private set; }
 
+		ManualResetEvent accept_channel_handle = new ManualResetEvent (true);
+
 		protected override TChannel OnAcceptChannel (TimeSpan timeout)
 		{
-			TChannel ch = CreateChannel (timeout);
+			// HTTP channel listeners do not accept more than one channel at a time.
+			DateTime start = DateTime.Now;
+			accept_channel_handle.WaitOne (timeout - (DateTime.Now - start));
+			accept_channel_handle.Reset ();
+			TChannel ch = CreateChannel (timeout - (DateTime.Now - start));
+			ch.Closed += delegate {
+				accept_channel_handle.Set ();
+			};
 			return ch;
 		}
 
@@ -179,6 +186,16 @@ namespace System.ServiceModel.Channels
 			// The channels are kept open when the creator channel listener is closed.
 			// http://blogs.msdn.com/drnick/archive/2006/03/22/557642.aspx
 			httpChannelManager.Stop (false);
+		}
+
+		// immediately stop accepting channel.
+		public override bool CancelAsync (TimeSpan timeout)
+		{
+			try {
+				CurrentAsyncResult.AsyncWaitHandle.WaitOne (TimeSpan.Zero);
+			} catch (TimeoutException) {
+			}
+			return true;
 		}
 	}
 }
