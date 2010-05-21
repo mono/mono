@@ -1,3 +1,7 @@
+2010-05-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-ppc.c: Fix the DISABLE_JIT build.
+
 2010-05-20  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-runtime.c (decode_resolve_method_ref): Rename this from decode_method_ref_2.
