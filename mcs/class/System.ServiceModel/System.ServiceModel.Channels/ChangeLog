@@ -1,5 +1,10 @@
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SvcHttpHandler.cs : remove Sleep() hack. The host is now ensured
+	  to wait for channels opened.
+
+2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SvcHttpHandler.cs : remove unused field. Some code cleanup.
 
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
