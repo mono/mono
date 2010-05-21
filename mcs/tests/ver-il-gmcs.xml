@@ -1727,7 +1727,7 @@
         <size>17</size>
       </method>
       <method name="Void Main(System.String[])">
-        <size>214</size>
+        <size>216</size>
       </method>
     </type>
     <type name="ComparablePair`2[T,U]">
@@ -4177,7 +4177,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>96</size>
+        <size>98</size>
       </method>
     </type>
   </test>
@@ -5734,7 +5734,7 @@
     </type>
     <type name="Fault">
       <method name="Void Main()">
-        <size>47</size>
+        <size>51</size>
       </method>
       <method name="System.String ToString()">
         <size>6</size>
@@ -6174,7 +6174,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>145</size>
+        <size>148</size>
       </method>
     </type>
   </test>
@@ -9035,9 +9035,6 @@
   </test>
   <test name="gtest-335.cs">
     <type name="TestClass">
-      <method name="Void .ctor()">
-        <size>7</size>
-      </method>
       <method name="Boolean Test_1()">
         <size>43</size>
       </method>
@@ -9052,6 +9049,9 @@
       </method>
       <method name="Int32 Main()">
         <size>60</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -12828,6 +12828,16 @@
       </method>
     </type>
   </test>
+  <test name="gtest-512.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>5</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -16093,10 +16103,10 @@
         <size>7</size>
       </method>
       <method name="Void TestList(System.Collections.Generic.List`1[System.Int32], Int32)">
-        <size>81</size>
+        <size>83</size>
       </method>
       <method name="Int32 Main()">
-        <size>524</size>
+        <size>526</size>
       </method>
     </type>
     <type name="Test+Wrap">
@@ -18972,10 +18982,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>218</size>
+        <size>219</size>
       </method>
       <method name="Void Dispose()">
-        <size>56</size>
+        <size>57</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -19178,10 +19188,10 @@
         <size>7</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>186</size>
+        <size>187</size>
       </method>
       <method name="Void Dispose()">
-        <size>56</size>
+        <size>57</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -19381,10 +19391,10 @@
         <size>12</size>
       </method>
       <method name="Boolean MoveNext()">
-        <size>175</size>
+        <size>176</size>
       </method>
       <method name="Void Dispose()">
-        <size>56</size>
+        <size>57</size>
       </method>
       <method name="Void Reset()">
         <size>6</size>
@@ -20440,6 +20450,24 @@
       </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-lambda-25.cs">
+    <type name="MonoBugs.Bar">
+      <method name="Void DoStuff[T](T, System.Action`1[T])">
+        <size>11</size>
+      </method>
+      <method name="Void DoStuff[T](Nullable`1, System.Action`1[T])">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="MonoBugs.Program">
+      <method name="Void Main()">
+        <size>59</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__0(Foo`1)">
+        <size>13</size>
       </method>
     </type>
   </test>
@@ -22254,7 +22282,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>219</size>
+        <size>221</size>
       </method>
     </type>
   </test>
@@ -23822,7 +23850,7 @@
         <size>12</size>
       </method>
       <method name="Int32 Main()">
-        <size>29</size>
+        <size>31</size>
       </method>
     </type>
   </test>
@@ -27329,7 +27357,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>36</size>
+        <size>38</size>
       </method>
     </type>
     <type name="Blah">
@@ -28718,7 +28746,7 @@
     </type>
     <type name="A+B">
       <method name="Void .ctor()">
-        <size>219</size>
+        <size>211</size>
       </method>
     </type>
   </test>
@@ -28814,7 +28842,7 @@
     </type>
     <type name="A+B">
       <method name="Void .ctor()">
-        <size>219</size>
+        <size>211</size>
       </method>
     </type>
   </test>
@@ -30868,7 +30896,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>171</size>
+        <size>176</size>
       </method>
     </type>
   </test>
@@ -32196,7 +32224,7 @@
         <size>7</size>
       </method>
       <method name="Void Main()">
-        <size>25</size>
+        <size>27</size>
       </method>
     </type>
     <type name="Foo">
@@ -37843,7 +37871,7 @@
     </type>
     <type name="Program">
       <method name="Int32 Main()">
-        <size>70</size>
+        <size>72</size>
       </method>
     </type>
   </test>
@@ -38122,7 +38150,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>65</size>
+        <size>67</size>
       </method>
     </type>
   </test>
@@ -38420,7 +38448,7 @@
   <test name="test-733.cs">
     <type name="Test">
       <method name="Int32 Main()">
-        <size>86</size>
+        <size>88</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -38586,7 +38614,7 @@
   <test name="test-740.cs">
     <type name="FixedTest">
       <method name="Int32 Main()">
-        <size>348</size>
+        <size>336</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -39472,6 +39500,21 @@
       <method name="Int32 Main(System.String[])">
         <size>31</size>
       </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-777.cs">
+    <type name="MediaStore">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MediaStore+Thing">
       <method name="Void .ctor()">
         <size>7</size>
       </method>
@@ -46232,7 +46275,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>166</size>
+        <size>167</size>
       </method>
     </type>
     <type name="&lt;PrivateImplementationDetails&gt;">
@@ -46265,7 +46308,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>48</size>
+        <size>50</size>
       </method>
     </type>
   </test>
