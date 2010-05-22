@@ -65,7 +65,7 @@ mono_trace_is_traced (GLogLevelFlags level, MonoTraceMask mask);
 #define mono_trace_message(format...) mono_trace(G_LOG_LEVEL_MESSAGE, \
 											format)
 #else /* no varargs macros */
-static void
+static G_GNUC_UNUSED void
 mono_trace_error(MonoTraceMask mask, const char *format, ...)
 {
 	va_list args;
@@ -74,7 +74,7 @@ mono_trace_error(MonoTraceMask mask, const char *format, ...)
 	va_end (args);
 }
 
-static void
+static G_GNUC_UNUSED void
 mono_trace_warning(MonoTraceMask mask, const char *format, ...)
 {
 	va_list args;
@@ -83,7 +83,7 @@ mono_trace_warning(MonoTraceMask mask, const char *format, ...)
 	va_end (args);
 }
 
-static void
+static G_GNUC_UNUSED void
 mono_trace_message(MonoTraceMask mask, const char *format, ...)
 {
 	va_list args;
