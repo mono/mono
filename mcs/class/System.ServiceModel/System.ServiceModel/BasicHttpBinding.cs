@@ -256,6 +256,18 @@ namespace System.ServiceModel
 			switch (Security.Mode) {
 			case BasicHttpSecurityMode.Transport:
 				switch (Security.Transport.ClientCredentialType) {
+				case HttpClientCredentialType.Basic:
+					h.AuthenticationScheme = AuthenticationSchemes.Basic;
+					break;
+				case HttpClientCredentialType.Ntlm:
+					h.AuthenticationScheme = AuthenticationSchemes.Ntlm;
+					break;
+				case HttpClientCredentialType.Windows:
+					h.AuthenticationScheme = AuthenticationSchemes.Negotiate;
+					break;
+				case HttpClientCredentialType.Digest:
+					h.AuthenticationScheme = AuthenticationSchemes.Digest;
+					break;
 				case HttpClientCredentialType.Certificate:
 					var https = (HttpsTransportBindingElement) h;
 					https.RequireClientCertificate = true;
