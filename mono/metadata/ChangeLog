@@ -1,5 +1,10 @@
 2010-05-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* marshal.c (mono_marshal_get_runtime_invoke): Simplify the code computing the
+	target class and remove some dead code.
+
+2010-05-22  Zoltan Varga  <vargaz@gmail.com>
+
 	* marshal.c (mono_marshal_get_generic_array_helper): Make these wrappers dynamic and
 	free them when their parent method is freed.
 
