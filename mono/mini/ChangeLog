@@ -1,3 +1,7 @@
+2010-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c mini-llvm-cpp.cpp: Update after LLVM 2.8 changes.
+
 2010-05-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_arch_output_basic_block): Use ins->inst_c1 instead of p1, the
