@@ -1,3 +1,8 @@
+2010-05-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* metadata.c: Add a 'transient' argument to the MonoType creation functions, so
+	the MonoTypes inside method headers can be freed when the header is freed.
+
 2010-05-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* threadpool.c: Fix the DISABLE_SOCKETS build.
