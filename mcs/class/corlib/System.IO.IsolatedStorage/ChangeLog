@@ -1,3 +1,9 @@
+2010-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFile.cs: Implement FileExists and DirectoryExists, as
+	well as adding fields to detect that Close/Dispose have been called
+	and fire the proper exceptions.
+
 2010-05-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	4.0 Updates.

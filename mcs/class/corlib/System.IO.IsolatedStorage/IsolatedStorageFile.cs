@@ -56,6 +56,10 @@ namespace System.IO.IsolatedStorage {
 		private ulong _maxSize;
 		private Evidence _fullEvidences;
 		private static Mutex mutex = new Mutex ();
+#if NET_4_0
+		private bool closed;
+		private bool disposed;
+#endif
 
 		public static IEnumerator GetEnumerator (IsolatedStorageScope scope)
 		{
@@ -448,6 +452,9 @@ namespace System.IO.IsolatedStorage {
 
 		public void Close ()
 		{
+#if NET_4_0
+			closed = true;
+#endif
 		}
 
 		public void CreateDirectory (string dir)
@@ -491,9 +498,41 @@ namespace System.IO.IsolatedStorage {
 
 		public void Dispose ()
 		{
+#if NET_4_0
+			// Dispose may be calling Close, but we are not sure
+			disposed = true;
+#endif
 			// nothing to dispose, anyway we want to please the tools
 			GC.SuppressFinalize (this);
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		public bool DirectoryExists (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (disposed)
+				throw new ObjectDisposedException ("IsolatedStorageFile");
+			if (closed)
+				throw new InvalidOperationException ("Storage needs to be open for this operation.");
+
+			return Directory.Exists (Path.Combine (directory.FullName, path));
+		}
+
+		[ComVisible (false)]
+		public bool FileExists (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (disposed)
+				throw new ObjectDisposedException ("IsolatedStorageFile");
+			if (closed)
+				throw new InvalidOperationException ("Storage needs to be open for this operation.");
+
+			return File.Exists (Path.Combine (directory.FullName, path));
+		}
+#endif
 
 		public string[] GetDirectoryNames (string searchPattern)
 		{
