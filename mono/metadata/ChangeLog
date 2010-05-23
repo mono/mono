@@ -1,3 +1,7 @@
+2010-05-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (free_wrapper): New helper function to free dynamic wrappers.
+
 2010-05-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Simplify the code computing the
