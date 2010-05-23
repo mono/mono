@@ -1,3 +1,8 @@
+2010-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* corlib.dll.sources: Add System.IO.IsolatedStorageSecurityState.cs
+	and System.IO.IsolatedStorageSecurityOptions.cs.
+
 2010-05-07  Alan McGovern  <amcgovern@novell.com>
 
 	* Mono.Math/BigInteger.cs: If the BigInteger is instantiated with a

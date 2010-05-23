@@ -449,6 +449,8 @@ System.IO.IsolatedStorage/IsolatedStorageFile.cs
 System.IO.IsolatedStorage/IsolatedStorageFileEnumerator.cs
 System.IO.IsolatedStorage/IsolatedStorageFileStream.cs
 System.IO.IsolatedStorage/IsolatedStorageScope.cs
+System.IO.IsolatedStorage/IsolatedStorageSecurityOptions.cs
+System.IO.IsolatedStorage/IsolatedStorageSecurityState.cs
 System.Reflection/AmbiguousMatchException.cs
 System.Reflection/Assembly.cs
 System.Reflection/AssemblyAlgorithmIdAttribute.cs
