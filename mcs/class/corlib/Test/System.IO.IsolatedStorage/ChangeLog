@@ -1,3 +1,8 @@
+2010-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFileTest.cs: New test cases for DirectoryExists and
+	FileExists.
+
 2008-12-23  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* IsolatedStorageFileTest.cs: Add test case when null values are used

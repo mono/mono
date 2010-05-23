@@ -501,5 +501,102 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.AreEqual (typeof (Url), isf.AssemblyIdentity.GetType (), "AssemblyIdentity");
 			Assert.AreEqual (typeof (Url), isf.DomainIdentity.GetType (), "DomainIdentity");
 		}
+
+#if NET_4_0
+		[Test]
+		public void DirectoryExists ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			isf.CreateDirectory ("subdir");
+			isf.CreateDirectory ("subdir/subdir2");
+			isf.CreateDirectory ("subdir3");
+
+			Assert.AreEqual (true, isf.DirectoryExists ("subdir/"), "#A0");
+			Assert.AreEqual (true, isf.DirectoryExists ("subdir/subdir2/"), "#A1");
+			Assert.AreEqual (true, isf.DirectoryExists ("subdir3"), "#A2");
+			Assert.AreEqual (true, isf.DirectoryExists (String.Empty), "#A3"); // Weird
+			Assert.AreEqual (false, isf.DirectoryExists ("subdir99"), "#A4");
+			Assert.AreEqual (false, isf.DirectoryExists ("../../subdir"), "#A5");
+			Assert.AreEqual (false, isf.DirectoryExists ("*"), "#A5");
+			Assert.AreEqual (false, isf.DirectoryExists ("subdir*"), "#A6");
+
+			isf.DeleteDirectory ("subdir3");
+			Assert.AreEqual (false, isf.DirectoryExists ("subdir3"), "#B0");
+
+			isf.DeleteDirectory ("subdir/subdir2");
+			isf.DeleteDirectory ("subdir");
+
+			try {
+				isf.DirectoryExists (null);
+				Assert.Fail ("#Exc1");
+			} catch (ArgumentNullException) {
+			}
+
+			isf.Close ();
+			try {
+				isf.DirectoryExists ("subdir");
+				Assert.Fail ("#Exc2");
+			} catch (InvalidOperationException) {
+			}
+
+			isf.Dispose ();
+			try {
+				isf.DirectoryExists ("subdir");
+				Assert.Fail ("#Exc3");
+			} catch (ObjectDisposedException) {
+			}
+
+			// We want to be sure that if not closing but disposing
+			// should fire ObjectDisposedException instead of InvalidOperationException
+			isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			isf.Dispose ();
+
+			try {
+				isf.DirectoryExists ("subdir");
+				Assert.Fail ("#Exc4");
+			} catch (ObjectDisposedException) {
+			}
+		}
+
+		[Test]
+		public void FileExists ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			IsolatedStorageFileStream file_a = new IsolatedStorageFileStream ("file-a", FileMode.Create, isf);
+			IsolatedStorageFileStream file_b = new IsolatedStorageFileStream ("file-b", FileMode.Create, isf);
+			file_a.Close ();
+			file_b.Close ();
+
+			Assert.AreEqual (true, isf.FileExists ("file-a"), "#A0");
+			Assert.AreEqual (true, isf.FileExists ("file-b"), "#A1");
+			Assert.AreEqual (false, isf.FileExists (String.Empty), "#A2");
+			Assert.AreEqual (false, isf.FileExists ("file-"), "#A3");
+			Assert.AreEqual (false, isf.FileExists ("file-*"), "#A4");
+			Assert.AreEqual (false, isf.FileExists ("../../file-a"), "#A5");
+
+			isf.CreateDirectory ("subdir");
+			Assert.AreEqual (false, isf.FileExists ("subdir"), "#B0");
+
+			try {
+				isf.FileExists (null);
+				Assert.Fail ("#Exc1");
+			} catch (ArgumentNullException) {
+			}
+
+			isf.Close ();
+			try {
+				isf.FileExists ("file-a");
+				Assert.Fail ("#Exc2");
+			} catch (InvalidOperationException) {
+			}
+
+			isf.Dispose ();
+			try {
+				isf.FileExists ("file-a");
+				Assert.Fail ("#Exc3");
+			} catch (ObjectDisposedException) {
+			}
+		}
+#endif
 	}
 }
