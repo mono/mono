@@ -1289,15 +1289,24 @@ namespace System {
 
 			pos = uriString.IndexOf (':');
 			if (pos == 0) {
-				return "Invalid URI: The format of the URI could not be determined.";
+				if (kind == UriKind.Absolute)
+					return "Invalid URI: The format of the URI could not be determined.";
+				isAbsoluteUri = false;
+				path = uriString;
+				return null;
 			} else if (pos < 0) {
 				/* Relative path */
 				isAbsoluteUri = false;
 				path = uriString;
 				return null;
 			} else if (pos == 1) {
-				if (!IsAlpha (uriString [0]))
-					return "URI scheme must start with a letter.";
+				if (!IsAlpha (uriString [0])) {
+					if (kind == UriKind.Absolute)
+						return "URI scheme must start with a letter.";
+					isAbsoluteUri = false;
+					path = uriString;
+					return null;
+				}
 				// This means 'a:' == windows full path.
 				string msg = ParseAsWindowsAbsoluteFilePath (uriString);
 				if (msg != null)
@@ -1310,8 +1319,13 @@ namespace System {
 
 			// Check scheme name characters as specified in RFC2396.
 			// Note: different checks in 1.x and 2.0
-			if (!CheckSchemeName (scheme)) 
-				return Locale.GetText ("URI scheme must start with a letter and must consist of one of alphabet, digits, '+', '-' or '.' character.");
+			if (!CheckSchemeName (scheme)) {
+				if (kind == UriKind.Absolute)
+					return Locale.GetText ("URI scheme must start with a letter and must consist of one of alphabet, digits, '+', '-' or '.' character.");
+				isAbsoluteUri = false;
+				path = uriString;
+				return null;
+			}
 
 			// from here we're practically working on uriString.Substring(startpos,endpos-startpos)
 			int startpos = pos + 1;

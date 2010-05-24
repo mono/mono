@@ -1840,6 +1840,15 @@ namespace MonoTests.System
 			Assert.AreEqual ("file", unixuri.Scheme, "UnixAbsoluteFilePath_WithSpecialChars #2");
 		}
 
+		[Test]
+		public void RelativeUriWithColons ()
+		{
+			string s = @"Transform?args=[{""__type"":""Record:#Nostr"",""Code"":""%22test%22SomeGloss"",""ID"":""1"",""Table"":""Glossary""},{""__type"":""Record:#Nostr"",""Code"":""%22test%22All"",""ID"":""2"",""Table"":""GlossView""}, {""__type"":""Record:#Nostr"",""Code"":""%22test%22Q"",""ID"":""3"",""Table"":""Glossary""}]"; // with related to bug #573795
+			new Uri (s, UriKind.Relative);
+			new Uri (":", UriKind.Relative);
+			new Uri ("1:", UriKind.Relative);
+		}
+
 		public class DerivedUri : Uri
 		{
 			public DerivedUri (string uriString) : base (uriString)

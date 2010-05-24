@@ -1,3 +1,8 @@
+2010-05-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Uri.cs : do not reject relative URIs that contain ':' and
+	  any non-scheme characters preceding it.
+
 2010-04-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	Keep "ftp://a.b/%2fcd" urls unmolested

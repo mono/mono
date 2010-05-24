@@ -1,3 +1,7 @@
+2010-05-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* UriTest.cs : more URI tests, for relative URIs with ':'.
+
 2010-04-17  Raja R Harinath  <harinath@hurrynot.org>
 
 	* UriTest.cs (FtpRootPath): New.  Check that ftp root paths are
