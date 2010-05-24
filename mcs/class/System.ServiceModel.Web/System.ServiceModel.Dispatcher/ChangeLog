@@ -1,3 +1,8 @@
+2010-05-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* JsonQueryStringConverter.cs : objects are regarded serializable as
+	  long as they are public here, with some exceptions (not implemented).
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* WebMessageFormatter.cs: use MOONLIGHT symbol to

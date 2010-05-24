@@ -62,7 +62,9 @@ namespace System.ServiceModel.Dispatcher
 					return true;
 //				if (type.GetCustomAttributes (typeof (TypeConverterAttribute), true).Length > 0)
 //					return true;
-				return false;
+
+				// FIXME: it should return false for things like List<OfPrivateType>.
+				return type.IsPublic || type.IsNestedPublic;
 			default:
 				return true;
 			}
