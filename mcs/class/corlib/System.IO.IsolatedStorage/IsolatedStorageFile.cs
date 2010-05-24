@@ -448,6 +448,20 @@ namespace System.IO.IsolatedStorage {
 			get { return directory.FullName; }
 		}
 
+#if NET_4_0
+		internal bool IsClosed {
+			get {
+				return closed;
+			}
+		}
+
+		internal bool IsDisposed {
+			get {
+				return disposed;
+			}
+		}
+#endif
+
 		// methods
 
 		public void Close ()
@@ -478,6 +492,14 @@ namespace System.IO.IsolatedStorage {
 				}
 			}
 		}
+
+#if NET_4_0
+		[ComVisible (false)]
+		public IsolatedStorageFileStream CreateFile (string path)
+		{
+			return new IsolatedStorageFileStream (path, FileMode.Create, FileAccess.ReadWrite, FileShare.None, this);
+		}
+#endif
 
 		public void DeleteDirectory (string dir)
 		{
@@ -609,6 +631,56 @@ namespace System.IO.IsolatedStorage {
 		public string [] GetFileNames ()
 		{
 			return GetFileNames ("*");
+		}
+
+		[ComVisible (false)]
+		public void MoveDirectory (string sourceDirectoryName, string destinationDirectoryName)
+		{
+			if (sourceDirectoryName == null)
+				throw new ArgumentNullException ("sourceDirectoryName");
+			if (destinationDirectoryName == null)
+				throw new ArgumentNullException ("sourceDirectoryName");
+			if (disposed)
+				throw new ObjectDisposedException ("IsolatedStorageFile");
+			if (closed)
+				throw new InvalidOperationException ("Storage needs to be open for this operation.");
+
+			Directory.Move (Path.Combine (directory.FullName, sourceDirectoryName),
+					Path.Combine (directory.FullName, destinationDirectoryName));
+		}
+
+		[ComVisible (false)]
+		public void MoveFile (string sourceFileName, string destinationFileName)
+		{
+			if (sourceFileName == null)
+				throw new ArgumentNullException ("sourceFileName");
+			if (destinationFileName == null)
+				throw new ArgumentNullException ("sourceFileName");
+			if (disposed)
+				throw new ObjectDisposedException ("IsolatedStorageFile");
+			if (closed)
+				throw new InvalidOperationException ("Storage needs to be open for this operation.");
+
+			File.Move (Path.Combine (directory.FullName, sourceFileName),
+					Path.Combine (directory.FullName, destinationFileName));
+		}
+
+		[ComVisible (false)]
+		public IsolatedStorageFileStream OpenFile (string path, FileMode mode)
+		{
+			return new IsolatedStorageFileStream (path, mode, this);
+		}
+
+		[ComVisible (false)]
+		public IsolatedStorageFileStream OpenFile (string path, FileMode mode, FileAccess access)
+		{
+			return new IsolatedStorageFileStream (path, mode, access, this);
+		}
+
+		[ComVisible (false)]
+		public IsolatedStorageFileStream OpenFile (string path, FileMode mode, FileAccess access, FileShare share)
+		{
+			return new IsolatedStorageFileStream (path, mode, access, share, this);
 		}
 #endif
 

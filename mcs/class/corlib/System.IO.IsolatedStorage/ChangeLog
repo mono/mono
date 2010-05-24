@@ -1,3 +1,11 @@
+2010-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFileStream.cs: When creating our instance check that
+	the IsolatedStorageFile is not closed/disposed.
+	* IsolatedStorageFile.cs: Expose closed/disposed info as internal
+	properties, as well as implement 4.0 MoveDirectory/MoveFile, CreateFile
+	and OpenFile methods.
+
 2010-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFile.cs: Implement FileExists and DirectoryExists, as

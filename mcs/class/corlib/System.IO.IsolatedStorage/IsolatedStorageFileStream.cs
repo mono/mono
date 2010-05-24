@@ -62,6 +62,13 @@ namespace System.IO.IsolatedStorage {
 					IsolatedStorageFile.GetAssemblyIdentityFromEvidence (sf.GetMethod ().ReflectedType.Assembly.UnprotectedGetEvidence ()));
 			}
 
+#if NET_4_0
+			if (isf.IsClosed)
+				throw new InvalidOperationException ("Storage needs to be open for this operation.");
+			if (isf.IsDisposed)
+				throw new ObjectDisposedException ("IsolatedStorageFile");
+#endif
+
 			// ensure that the _root_ isolated storage can be (and is) created.
 			FileInfo fi = new FileInfo (isf.Root);
 			if (!fi.Directory.Exists)
