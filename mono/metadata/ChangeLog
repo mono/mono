@@ -1,3 +1,8 @@
+2010-05-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_free_dynamic_wrappers): Avoid an assert when this is called
+	during shutdown.
+
 2010-05-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (free_wrapper): New helper function to free dynamic wrappers.
