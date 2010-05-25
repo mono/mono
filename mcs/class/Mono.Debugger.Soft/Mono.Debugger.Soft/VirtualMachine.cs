@@ -20,6 +20,8 @@ namespace Mono.Debugger.Soft
 
 		internal Connection conn;
 
+		VersionInfo version;
+
 		internal VirtualMachine (ITargetProcess process, Connection conn) : base () {
 			SetVirtualMachine (this);
 			queue = new Queue ();
@@ -60,6 +62,12 @@ namespace Mono.Debugger.Soft
 		public EndPoint EndPoint {
 			get {
 				return conn.EndPoint;
+			}
+		}
+
+		public VersionInfo Version {
+			get {
+				return version;
 			}
 		}
 
@@ -207,9 +215,9 @@ namespace Mono.Debugger.Soft
 			conn.Connect ();
 
 			// Test the connection
-			VersionInfo ver = conn.Version;
-			if (ver.MajorVersion != Connection.MAJOR_VERSION)
-				throw new NotSupportedException (String.Format ("The debuggee implements protocol version {0}.{1}, while {2}.{3} is required.", ver.MajorVersion, ver.MinorVersion, Connection.MAJOR_VERSION, Connection.MINOR_VERSION));
+			version = conn.Version;
+			if (version.MajorVersion != Connection.MAJOR_VERSION)
+				throw new NotSupportedException (String.Format ("The debuggee implements protocol version {0}.{1}, while {2}.{3} is required.", version.MajorVersion, version.MinorVersion, Connection.MAJOR_VERSION, Connection.MINOR_VERSION));
 
 			long root_domain_id = conn.RootDomain;
 			root_domain = GetDomain (root_domain_id);
