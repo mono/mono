@@ -1,3 +1,7 @@
+2010-05-25  Jb Evain  <jbevain@novell.com>
+
+	* MemoryMappedFileTest.cs: use proper overloads.
+
 2009-09-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* MemoryMappedFileTest.cs: Add a minimal test for CreateViewAccessor ().

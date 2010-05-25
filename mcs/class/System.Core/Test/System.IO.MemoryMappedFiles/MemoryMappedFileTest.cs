@@ -77,7 +77,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 
 		[Test]
 		public void Basic () {
-			var file = MemoryMappedFile.CreateFromFile (File.Open (fname, FileMode.Open));
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
 
 			using (var stream = file.CreateViewStream ()) {
 				TextReader r = new StreamReader (stream);
@@ -94,13 +94,13 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 		[Test]
 		public void CreateFromFile_Null () {
 			AssertThrows<ArgumentNullException> (delegate () {
-					MemoryMappedFile.CreateFromFile ((FileStream) null);
+					MemoryMappedFile.CreateFromFile (null);
 				});
 		}
 
 		[Test]
 		public void CreateViewStream_Offsets () {
-			var file = MemoryMappedFile.CreateFromFile (File.Open (fname, FileMode.Open));
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
 
 			using (var stream = file.CreateViewStream (2, 3)) {
 				byte[] arr = new byte [128];
@@ -117,7 +117,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 
 		[Test]
 		public void CreateViewStream_Rights () {
-			var file = MemoryMappedFile.CreateFromFile (File.Open (fname, FileMode.Open));
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
 
 			using (var stream = file.CreateViewStream (0, 0, MemoryMappedFileAccess.Read)) {
 				AssertThrows<NotSupportedException> (delegate () {
@@ -134,7 +134,7 @@ namespace MonoTests.System.IO.MemoryMappedFiles {
 
 		[Test]
 		public unsafe void CreateViewBasic () {
-			var file = MemoryMappedFile.CreateFromFile (File.Open (fname, FileMode.Open));
+			var file = MemoryMappedFile.CreateFromFile (fname, FileMode.Open);
 
 			using (var v = file.CreateViewAccessor ()) {
 				string s = "";
