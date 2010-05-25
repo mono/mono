@@ -597,6 +597,94 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			} catch (ObjectDisposedException) {
 			}
 		}
+
+		[Test]
+		public void CreateFile ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			// Make sure we are actually creating it, by first removing it in case it already exists
+			if (isf.FileExists ("file-a"))
+				isf.DeleteFile ("file-a");
+
+			IsolatedStorageFileStream isf_stream = isf.CreateFile ("file-a");
+			isf_stream.Close ();
+			Assert.AreEqual (true, isf.FileExists ("file-a"), "#A0");
+
+			// Re-open the file that is already created, so we make sure we are passing
+			// the proper FileOpen
+			isf_stream = isf.CreateFile ("file-a");
+			isf_stream.Close ();
+
+			try {
+				isf.CreateFile (null);
+				Assert.Fail ("#Exc1");
+			} catch (ArgumentNullException) {
+			}
+
+			try {
+				isf.CreateFile ("random-dir/fileb");
+				Assert.Fail ("#Exc2");
+			} catch (DirectoryNotFoundException) {
+			}
+
+			isf.Close ();
+			try {
+				isf.CreateFile ("file-b");
+				Assert.Fail ("#Exc3");
+			} catch (InvalidOperationException) {
+			}
+
+			isf.Dispose ();
+			try {
+				isf.CreateFile ("file-a");
+				Assert.Fail ("#Exc4");
+			} catch (ObjectDisposedException) {
+			}
+		}
+
+		[Test]
+		public void MoveDirectory ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			// Mare sure to remove them if they exist already
+			if (isf.DirectoryExists ("subdir"))
+				isf.DeleteDirectory ("subdir");
+			if (isf.DirectoryExists ("subdir-new"))
+				isf.DeleteDirectory ("subdir-new");
+
+			isf.CreateDirectory ("subdir");
+			Assert.AreEqual (true, isf.DirectoryExists ("subdir"), "#A0");
+
+			isf.MoveDirectory ("subdir", "subdir-new");
+			Assert.AreEqual (false, isf.DirectoryExists ("subdir"), "#A1");
+			Assert.AreEqual (true, isf.DirectoryExists ("subdir-new"), "#A2");
+
+			isf.DeleteDirectory ("subdir-new");
+			isf.Close ();
+			isf.Dispose ();
+		}
+
+		[Test]
+		public void MoveFile ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			// Mare sure to remove them if they exist already
+			if (isf.FileExists ("file"))
+				isf.DeleteFile ("file");
+			if (isf.FileExists ("file-new"))
+				isf.DeleteFile ("file-new");
+
+			isf.CreateFile ("file").Close ();
+			Assert.AreEqual (true, isf.FileExists ("file"), "#A0");
+
+			isf.MoveFile ("file", "file-new");
+			Assert.AreEqual (false, isf.FileExists ("file"), "#A1");
+			Assert.AreEqual (true, isf.FileExists ("file-new"), "#A2");
+
+			isf.DeleteFile ("file-new");
+			isf.Close ();
+			isf.Dispose ();
+		}
 #endif
 	}
 }

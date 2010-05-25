@@ -1,3 +1,8 @@
+2010-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFileTest.cs: New test cases for CreateFile,
+	MoveDirectory and MoveFile.
+
 2010-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFileTest.cs: New test cases for DirectoryExists and
