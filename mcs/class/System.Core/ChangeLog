@@ -1,3 +1,7 @@
+2010-05-25  Jb Evain  <jbevain@novell.com>
+
+	* Makefile: define INSIDE_SYSCORE.
+
 2010-04-23  Rolf Bjarne Kvinge  <RKvinge@novell.com>
 
 	* moonlight_raw_System.Core.dll.sources: Include Lazy.cs and
