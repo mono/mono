@@ -1,5 +1,8 @@
 2010-05-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Enable llvm for methods with clauses when using
+	LLVM SVN.
+
 	* exceptions-amd64.c (mono_arch_find_jit_info_ext): Adjust the ip for LMF frames too.
 
 	* mini-llvm.c aot-compiler.c: More LLVM 2.8 updates.
