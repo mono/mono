@@ -1,3 +1,7 @@
+2010-05-25  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ParallelExecuter.cs: Fix NRE caused by lambda wrapping
+
 2010-05-25  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: make Reverse lazier. Based on a patch by

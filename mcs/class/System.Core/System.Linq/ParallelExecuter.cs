@@ -85,7 +85,11 @@ namespace System.Linq
 		                                                   Action endAction,
 		                                                   QueryOptions options)
 		{
-			return Process<TSource, TElement> (node, (e, i) => call (e), acquisitionFunc, (i) => endAction (), options);
+			return Process<TSource, TElement> (node,
+			                                   (e, i) => call (e),
+			                                   acquisitionFunc,
+			                                   endAction == null ? ((Action<int>)null) : (i) => endAction (),
+			                                   options);
 		}
 
 		internal static Task[] Process<TSource, TElement> (QueryBaseNode<TSource> node, Action<TElement, int> call,
