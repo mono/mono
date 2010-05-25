@@ -17,11 +17,6 @@
 
 2010-05-22  Zoltan Varga  <vargaz@gmail.com>
 
-	* marshal.c (mono_marshal_get_generic_array_helper): Make these wrappers dynamic and
-	free them when their parent method is freed.
-
-2010-05-22  Zoltan Varga  <vargaz@gmail.com>
-
 	* metadata.c: Add a 'transient' argument to the MonoType creation functions, so
 	the MonoTypes inside method headers can be freed when the header is freed.
 
