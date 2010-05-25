@@ -1,3 +1,10 @@
+2010-05-25  Martin Baulig  <martin@ximian.com>
+
+	Applying a patch from Lucas Meijer <lucas@lucasmeijer.com>.
+
+	* debug-mono-symfile.c: Release memory from symfiles that were
+	loaded from memory.
+
 2010-05-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_free_dynamic_wrappers): Avoid an assert when this is called
