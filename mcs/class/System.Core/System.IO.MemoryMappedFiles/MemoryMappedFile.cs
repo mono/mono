@@ -52,17 +52,6 @@ namespace System.IO.MemoryMappedFiles
 		FileStream stream;
 		bool keepOpen;
 		int unix_fd;
-		
-		public static MemoryMappedFile CreateFromFile (FileStream fileStream)
-		{
-			if (fileStream == null)
-				throw new ArgumentNullException ("fileStream");
-
-			return new MemoryMappedFile () {
-				stream = fileStream,
-				fileAccess = MemoryMappedFileAccess.ReadWrite
-			};
-		}
 
 		public static MemoryMappedFile CreateFromFile (string path)
 		{
@@ -235,12 +224,29 @@ namespace System.IO.MemoryMappedFiles
 			return CreateFromFile (mapName, FileMode.OpenOrCreate, mapName, capacity, access); 
 		}
 
-		/*
 		[MonoTODO]
-			public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability handleInheritability) {
+		public static MemoryMappedFile CreateOrOpen (string mapName, long capacity, MemoryMappedFileAccess access, MemoryMappedFileOptions options, MemoryMappedFileSecurity memoryMappedFileSecurity, HandleInheritability handleInheritability)
+		{
 			throw new NotImplementedException ();
 		}
-		*/
+
+		[MonoTODO]
+		public static MemoryMappedFile OpenExisting (string mapName)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static MemoryMappedFile OpenExisting (string mapName, MemoryMappedFileRights desiredAccessRights)
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public static MemoryMappedFile OpenExisting (string mapName, MemoryMappedFileRights desiredAccessRights, HandleInheritability inheritability)
+		{
+			throw new NotImplementedException ();
+		}
 
 		public MemoryMappedViewStream CreateViewStream ()
 		{
@@ -297,7 +303,19 @@ namespace System.IO.MemoryMappedFiles
 				stream = null;
 			}
 		}
-		
+
+		[MonoTODO]
+		public MemoryMappedFileSecurity GetAccessControl ()
+		{
+			throw new NotImplementedException ();
+		}
+
+		[MonoTODO]
+		public void SetAccessControl (MemoryMappedFileSecurity memoryMappedFileSecurity)
+		{
+			throw new NotImplementedException ();
+		}
+
 		[MonoTODO]
 		public SafeMemoryMappedFileHandle SafeMemoryMappedFileHandle {
 			get {
