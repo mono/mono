@@ -396,11 +396,17 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		[CLSCompliant(false)]
+#if NET_4_0
+		[Obsolete]
+#endif
 		public override ulong CurrentSize {
 			get { return GetDirectorySize (directory); }
 		}
 
 		[CLSCompliant(false)]
+#if NET_4_0
+		[Obsolete]
+#endif
 		public override ulong MaximumSize {
 			// return an ulong but default is signed long
 			get {
@@ -449,6 +455,13 @@ namespace System.IO.IsolatedStorage {
 		}
 
 #if NET_4_0
+		[ComVisible (false)]
+		public static bool IsEnabled {
+			get {
+				return true;
+			}
+		}
+
 		internal bool IsClosed {
 			get {
 				return closed;

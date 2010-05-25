@@ -1,5 +1,12 @@
 2010-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* IsolatedStorageFileStream.cs: When creating the instance, we should check 
+	for diposed first, and for closed on second place.
+	* IsolatedStorageFile.cs: Add Obsolete to CurrentSize and MaximumSize,
+	as part of 4.0.
+
+2010-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* IsolatedStorageFileStream.cs: When creating our instance check that
 	the IsolatedStorageFile is not closed/disposed.
 	* IsolatedStorageFile.cs: Expose closed/disposed info as internal

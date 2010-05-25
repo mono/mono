@@ -63,10 +63,10 @@ namespace System.IO.IsolatedStorage {
 			}
 
 #if NET_4_0
-			if (isf.IsClosed)
-				throw new InvalidOperationException ("Storage needs to be open for this operation.");
 			if (isf.IsDisposed)
 				throw new ObjectDisposedException ("IsolatedStorageFile");
+			if (isf.IsClosed)
+				throw new InvalidOperationException ("Storage needs to be open for this operation.");
 #endif
 
 			// ensure that the _root_ isolated storage can be (and is) created.
