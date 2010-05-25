@@ -1,3 +1,7 @@
+2010-05-25  Jb Evain  <jbevain@novell.com>
+
+	* CryptoTools.cs: make types internal for INSIDE_SYSCORE as well.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* CryptoTools.cs, PKCS1.cs, PKCS8.cs, SymmetricTransform.cs,

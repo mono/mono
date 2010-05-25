@@ -33,7 +33,7 @@ using System.Security.Cryptography;
 
 namespace Mono.Security.Cryptography {
 
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSCORE
 	internal
 #else
 	public
@@ -75,7 +75,7 @@ namespace Mono.Security.Cryptography {
 	}
 	
 	// Process an array as a sequence of blocks
-#if INSIDE_CORLIB
+#if INSIDE_CORLIB || INSIDE_SYSCORE
 	internal
 #else
 	public
