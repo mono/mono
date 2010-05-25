@@ -1,5 +1,9 @@
 2010-05-25  Jb Evain  <jbevain@novell.com>
 
+	* MemoryMappedViewAccessor.cs: fix API.
+
+2010-05-25  Jb Evain  <jbevain@novell.com>
+
 	* MemoryMappedFile.cs: add missing overloads.
 
 2010-05-25  Jb Evain  <jbevain@novell.com>

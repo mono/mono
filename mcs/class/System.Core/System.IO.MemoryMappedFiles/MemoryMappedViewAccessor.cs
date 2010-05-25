@@ -36,7 +36,7 @@ using Mono.Unix.Native;
 
 namespace System.IO.MemoryMappedFiles
 {
-	public class MemoryMappedViewAccessor : UnmanagedMemoryAccessor {
+	public sealed class MemoryMappedViewAccessor : UnmanagedMemoryAccessor, IDisposable {
 		int file_handle;
 		IntPtr mmap_addr;
 		SafeMemoryMappedViewHandle handle;
@@ -85,7 +85,12 @@ namespace System.IO.MemoryMappedFiles
 			}
 		}
 
-		public void Dispose () {
+		protected override void Dispose (bool disposing)
+		{
+			base.Dispose (disposing);
+		}
+
+		void IDisposable.Dispose () {
 			Dispose (true);
 		}
 
