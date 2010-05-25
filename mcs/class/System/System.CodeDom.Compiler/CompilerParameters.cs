@@ -105,6 +105,9 @@ namespace System.CodeDom.Compiler {
 		}
 
 #if NET_1_1
+#if NET_4_0
+		[Obsolete]
+#endif
 		public Evidence Evidence {
 			get { return evidence; }
 			[SecurityPermission (SecurityAction.Demand, ControlEvidence = true)]
