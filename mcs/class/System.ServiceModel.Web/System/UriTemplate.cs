@@ -231,7 +231,7 @@ namespace System
 			m.RequestUri = candidate;
 			var vc = m.BoundVariables;
 
-			string cp = baseAddress.MakeRelativeUri(candidate).ToString ();
+			string cp = Uri.UnescapeDataString (baseAddress.MakeRelativeUri (candidate).ToString ());
 			if (IgnoreTrailingSlash && cp [cp.Length - 1] == '/')
 				cp = cp.Substring (0, cp.Length - 1);
 
@@ -278,7 +278,7 @@ namespace System
 				return m;
 
 
-			string [] parameters = candidate.Query.Substring (1).Split ('&'); // chop first '?'
+			string [] parameters = Uri.UnescapeDataString (candidate.Query.Substring (1)).Split ('&'); // chop first '?'
 			foreach (string parameter in parameters) {
 				string [] pair = parameter.Split ('=');
 				m.QueryParameters.Add (pair [0], pair [1]);
