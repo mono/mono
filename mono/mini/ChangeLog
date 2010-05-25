@@ -1,3 +1,9 @@
+2010-05-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c aot-compiler.c: More LLVM 2.8 updates.
+
+	* mini.h (LLVM_CHECK_VERSION): New helper macro.
+
 2010-05-25  Miguel de Icaza  <miguel@novell.com>
 
 	* genmdesc.pl (build_spec): Add support for nacl: keyword also to
