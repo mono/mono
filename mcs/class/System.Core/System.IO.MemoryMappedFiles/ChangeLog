@@ -1,5 +1,9 @@
 2010-05-25  Jb Evain  <jbevain@novell.com>
 
+	* MemoryMappedFile.cs: make some helper methods private.
+
+2010-05-25  Jb Evain  <jbevain@novell.com>
+
 	* MemoryMappedFileSecurity.cs: ifdef for NET_4_0.
 
 2010-04-15  Jb Evain  <jbevain@novell.com>

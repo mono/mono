@@ -164,7 +164,7 @@ namespace System.IO.MemoryMappedFiles
 			};
 		}
 
-		public static void ConfigureUnixFD (IntPtr handle, HandleInheritability h)
+		static void ConfigureUnixFD (IntPtr handle, HandleInheritability h)
 		{
 			// TODO: Mono.Posix is lacking O_CLOEXEC definitions for fcntl.
 		}
@@ -172,7 +172,7 @@ namespace System.IO.MemoryMappedFiles
 
 		[DllImport("kernel32.dll", SetLastError = true)]
 		static extern bool SetHandleInformation (IntPtr hObject, int dwMask, int dwFlags);
-		public static void ConfigureWindowsFD (IntPtr handle, HandleInheritability h)
+		static void ConfigureWindowsFD (IntPtr handle, HandleInheritability h)
 		{
 			SetHandleInformation (handle, 1 /* FLAG_INHERIT */, h == HandleInheritability.None ? 0 : 1);
 		}
