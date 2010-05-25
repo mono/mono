@@ -3361,7 +3361,7 @@ expression_list_argument
 this_access
 	: THIS
 	  {
-		$$ = new This (current_block, GetLocation ($1));
+		$$ = new This (GetLocation ($1));
 	  }
 	;
 

@@ -6419,7 +6419,6 @@ namespace Mono.CSharp {
 			if (type == null)
 				type = ec.CurrentType;
 
-			is_struct = TypeManager.IsStruct (type);
 			return this;
 		}
 
@@ -6455,15 +6454,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		Block block;
 		VariableInfo variable_info;
-		protected bool is_struct;
-
-		public This (Block block, Location loc)
-		{
-			this.loc = loc;
-			this.block = block;
-		}
 
 		public This (Location loc)
 		{
@@ -6496,7 +6487,7 @@ namespace Mono.CSharp {
 		}
 
 		public override bool IsRef {
-			get { return is_struct; }
+			get { return type.IsStruct; }
 		}
 
 		protected override ILocalVariable Variable {
@@ -6534,8 +6525,7 @@ namespace Mono.CSharp {
 				}
 			}
 
-			is_struct = TypeManager.IsStruct (type);
-
+			var block = ec.CurrentBlock;
 			if (block != null) {
 				if (block.Toplevel.ThisVariable != null)
 					variable_info = block.Toplevel.ThisVariable.VariableInfo;
@@ -6600,7 +6590,7 @@ namespace Mono.CSharp {
 
 		public override int GetHashCode()
 		{
-			return block.GetHashCode ();
+			throw new NotImplementedException ();
 		}
 
 		public override string Name {
@@ -6613,14 +6603,12 @@ namespace Mono.CSharp {
 			if (t == null)
 				return false;
 
-			return block == t.block;
+			return true;
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
-			This target = (This) t;
-
-			target.block = clonectx.LookupBlock (block);
+			// Nothing
 		}
 
 		public override void SetHasAddressTaken ()

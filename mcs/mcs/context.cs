@@ -402,11 +402,7 @@ namespace Mono.CSharp
 		// TODO: Merge with CompilerGeneratedThis
 		public Expression GetThis (Location loc)
 		{
-			This my_this;
-			if (CurrentBlock != null)
-				my_this = new This (CurrentBlock, loc);
-			else
-				my_this = new This (loc);
+			This my_this = new This (loc);
 
 			if (!my_this.ResolveBase (this))
 				my_this = null;

@@ -1,5 +1,10 @@
 2010-05-21  Marek Safar  <marek.safar@gmail.com>
 
+	* context.cs, expression.cs, cs-parser.jay: Don't store current
+	block in This expression (it's too early for linq blocks).
+
+2010-05-21  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs: Use constrained prefix more broadly to avoid boxing.
 
 2010-05-20  Marek Safar  <marek.safar@gmail.com>
