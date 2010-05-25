@@ -1,3 +1,9 @@
+2010-05-24  Martin Baulig  <martin@ximian.com>
+
+	* Connection.cs (VersionInfo): Make this public.
+
+	* VirtualMachine.cs (Version): New public property.
+
 2010-05-07  Zoltan Varga  <vargaz@gmail.com>
 
 	* VirtualMachine.cs (ErrorHandler): Convert ABSENT_INFORMATION to

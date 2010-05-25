@@ -9,7 +9,7 @@ using Mono.Cecil.Metadata;
 
 namespace Mono.Debugger.Soft
 {
-	class VersionInfo {
+	public class VersionInfo {
 		public string VMVersion {
 			get; set;
 		}
