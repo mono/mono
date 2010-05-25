@@ -1,4 +1,8 @@
-2010-05-21  Marek Safar  <marek.safar@gmail.com>
+2010-05-25  Marek Safar  <marek.safar@gmail.com>
+
+	* linq.cs, cs-parser.jay: Keep location for all linq clauses.
+
+2010-05-25  Marek Safar  <marek.safar@gmail.com>
 
 	* context.cs, expression.cs, cs-parser.jay: Don't store current
 	block in This expression (it's too early for linq blocks).

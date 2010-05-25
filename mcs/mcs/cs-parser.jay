@@ -135,7 +135,7 @@ namespace Mono.CSharp
 		//
 		public Undo undo;
 		
-		Stack<Block> linq_clause_blocks;
+		Stack<Linq.QueryBlock> linq_clause_blocks;
 
 		// A counter to create new class names in interactive mode
 		static int class_count;
@@ -5474,13 +5474,13 @@ nested_from_clause
 from_clause
 	: FROM IDENTIFIER IN
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
 	  expression
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
 		var sn = new SimpleMemberName (lt.Value, lt.Location);
-		$$ = new Linq.SelectMany (current_block.Toplevel, sn, (Expression)$5);
+		$$ = new Linq.SelectMany ((Linq.QueryBlock)current_block, sn, (Expression)$5, GetLocation ($1));
 		
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5489,7 +5489,7 @@ from_clause
 	  }	  
 	| FROM type IDENTIFIER IN
 	  {
-		current_block = new Linq.QueryBlock (compiler, current_block, GetLocation ($1));
+		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
 	  expression
 	  {
@@ -5498,7 +5498,7 @@ from_clause
 
 		FullNamedExpression type = (FullNamedExpression)$2;
 		
-		$$ = new Linq.SelectMany (current_block.Toplevel, sn, new Linq.Cast (type, (FullNamedExpression)$6));
+		$$ = new Linq.SelectMany ((Linq.QueryBlock)current_block, sn, new Linq.Cast (type, (Expression)$6), GetLocation ($1));
 		
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5533,7 +5533,7 @@ select_or_group_clause
 	  }
 	  expression
 	  {
-		$$ = new Linq.Select (current_block.Toplevel, (Expression)$3, GetLocation ($1));
+		$$ = new Linq.Select ((Linq.QueryBlock)current_block, (Expression)$3, GetLocation ($1));
 
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5541,10 +5541,10 @@ select_or_group_clause
 	| GROUP
 	  {
 	  	if (linq_clause_blocks == null)
-	  		linq_clause_blocks = new Stack<Block> ();
+	  		linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
 	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
-	  	linq_clause_blocks.Push (current_block);
+	  	linq_clause_blocks.Push ((Linq.QueryBlock)current_block);
 	  }
 	  expression
 	  {
@@ -5555,7 +5555,7 @@ select_or_group_clause
 	  }
 	  BY expression
 	  {
-		$$ = new Linq.GroupBy (current_block.Toplevel, (Expression)$3, (ToplevelBlock) linq_clause_blocks.Pop (), (Expression)$6, GetLocation ($1));
+		$$ = new Linq.GroupBy ((Linq.QueryBlock)current_block, (Expression)$3, linq_clause_blocks.Pop (), (Expression)$6, GetLocation ($1));
 		
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5587,13 +5587,13 @@ query_body_clause
 let_clause
 	: LET IDENTIFIER ASSIGN 
 	  {
-	  	current_block = new Linq.QueryBlock (compiler, current_block, GetLocation ($1));
+	  	current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
 	  }
 	  expression
 	  {
 		var lt = (Tokenizer.LocatedToken) $2;
 		var sn = new SimpleMemberName (lt.Value, lt.Location);
-	  	$$ = new Linq.Let (current_block.Toplevel, current_container, sn, (Expression)$5);
+	  	$$ = new Linq.Let ((Linq.QueryBlock) current_block, current_container, sn, (Expression)$5, GetLocation ($1));
 	  	
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5609,7 +5609,7 @@ where_clause
 	  }
 	  boolean_expression
 	  {
-		$$ = new Linq.Where (current_block.Toplevel, (BooleanExpression)$3, GetLocation ($1));
+		$$ = new Linq.Where ((Linq.QueryBlock)current_block, (BooleanExpression)$3, GetLocation ($1));
 
 		current_block.SetEndLocation (lexer.Location);
 		current_block = current_block.Parent;
@@ -5620,10 +5620,10 @@ join_clause
 	: JOIN IDENTIFIER IN
 	  {
 		if (linq_clause_blocks == null)
-			linq_clause_blocks = new Stack<Block> ();
+			linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
-		linq_clause_blocks.Push (current_block);
+		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression ON
 	  {
@@ -5631,7 +5631,7 @@ join_clause
 		current_block = current_block.Parent;
 
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
-		linq_clause_blocks.Push (current_block);
+		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression EQUALS
 	  {
@@ -5648,8 +5648,8 @@ join_clause
 		var sn = new SimpleMemberName (lt.Value, lt.Location);
 		SimpleMemberName sn2 = null;
 		
-		ToplevelBlock outer_selector = (ToplevelBlock) linq_clause_blocks.Pop ();
-		ToplevelBlock block = (ToplevelBlock) linq_clause_blocks.Pop ();
+		ToplevelBlock outer_selector = linq_clause_blocks.Pop ();
+		ToplevelBlock block = linq_clause_blocks.Pop ();
 
 		if ($12 == null) {
 	  		$$ = new Linq.Join (block, sn, (Expression)$5, outer_selector, current_block.Toplevel, GetLocation ($1));
@@ -5672,10 +5672,10 @@ join_clause
 	| JOIN type IDENTIFIER IN
 	  {
 		if (linq_clause_blocks == null)
-			linq_clause_blocks = new Stack<Block> ();
+			linq_clause_blocks = new Stack<Linq.QueryBlock> ();
 	  		
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
-		linq_clause_blocks.Push (current_block);
+		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression ON
 	  {
@@ -5683,7 +5683,7 @@ join_clause
 		current_block = current_block.Parent;
 
 		current_block = new Linq.QueryBlock (compiler, current_block, lexer.Location);
-		linq_clause_blocks.Push (current_block);
+		linq_clause_blocks.Push ((Linq.QueryBlock) current_block);
 	  }
 	  expression EQUALS
 	  {
@@ -5699,8 +5699,8 @@ join_clause
 		var lt = (Tokenizer.LocatedToken) $3;
 		var sn = new SimpleMemberName (lt.Value, lt.Location);
 		SimpleMemberName sn2 = null;
-		ToplevelBlock outer_selector = (ToplevelBlock) linq_clause_blocks.Pop ();
-		ToplevelBlock block = (ToplevelBlock) linq_clause_blocks.Pop ();
+		ToplevelBlock outer_selector = linq_clause_blocks.Pop ();
+		ToplevelBlock block = linq_clause_blocks.Pop ();
 		
 		Linq.Cast cast = new Linq.Cast ((FullNamedExpression)$2, (Expression)$6);
 		if ($13 == null) {

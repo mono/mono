@@ -246,8 +246,8 @@ namespace Mono.CSharp.Linq
 			}
 		}
 
-		protected ARangeVariableQueryClause (ToplevelBlock block, Expression expr)
-			: base (block, expr, expr.Location)
+		protected ARangeVariableQueryClause (ToplevelBlock block, Expression expr, Location loc)
+			: base (block, expr, loc)
 		{
 		}
 
@@ -370,7 +370,7 @@ namespace Mono.CSharp.Linq
 		ToplevelBlock inner_selector, outer_selector;
 
 		public Join (ToplevelBlock block, SimpleMemberName lt, Expression inner, ToplevelBlock outerSelector, ToplevelBlock innerSelector, Location loc)
-			: base (block, inner)
+			: base (block, inner, loc)
 		{
 			this.lt = lt;
 			this.outer_selector = outerSelector;
@@ -452,8 +452,8 @@ namespace Mono.CSharp.Linq
 
 	public class Let : ARangeVariableQueryClause
 	{
-		public Let (ToplevelBlock block, TypeContainer container, SimpleMemberName identifier, Expression expr)
-			: base (block, CreateRangeVariableType (block, container, identifier, expr))
+		public Let (ToplevelBlock block, TypeContainer container, SimpleMemberName identifier, Expression expr, Location loc)
+			: base (block, CreateRangeVariableType (block, container, identifier, expr), loc)
 		{
 		}
 
@@ -492,8 +492,8 @@ namespace Mono.CSharp.Linq
 	{
 		SimpleMemberName lt;
 
-		public SelectMany (ToplevelBlock block, SimpleMemberName lt, Expression expr)
-			: base (block, expr)
+		public SelectMany (ToplevelBlock block, SimpleMemberName lt, Expression expr, Location loc)
+			: base (block, expr, loc)
 		{
 			this.lt = lt;
 		}
