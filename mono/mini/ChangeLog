@@ -1,5 +1,8 @@
 2010-05-25  Miguel de Icaza  <miguel@novell.com>
 
+	* genmdesc.pl (build_spec): Add support for nacl: keyword also to
+	the Perl program
+
 	* genmdesc.c: Added support for nacl: key on the machine
 	description files to support the extra space required by Google
 	Native Client.
