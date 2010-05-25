@@ -1,3 +1,8 @@
+2010-05-25  Jb Evain  <jbevain@novell.com>
+
+	* Enumerable.cs: make Reverse lazier. Based on a patch by
+	Matthew Flaschen <matthew.flaschen@gatech.edu>. Fixes #608195.
+
 2010-05-19  Jb Evain  <jbevain@novell.com>
 
 	* Enumerable.cs: fix GroupBy to deal with a null key for the last
