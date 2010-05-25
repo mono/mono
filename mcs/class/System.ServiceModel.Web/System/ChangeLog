@@ -1,7 +1,6 @@
 2010-05-25  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTemplate.cs : safe-unescape template parameters.
-	  Got bug #573795 site working.
 
 2009-10-23  Atsushi Enomoto  <atsushi@ximian.com>
 
