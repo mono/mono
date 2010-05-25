@@ -1,5 +1,7 @@
 2010-05-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (mono_arch_find_jit_info_ext): Adjust the ip for LMF frames too.
+
 	* mini-llvm.c aot-compiler.c: More LLVM 2.8 updates.
 
 	* mini.h (LLVM_CHECK_VERSION): New helper macro.
