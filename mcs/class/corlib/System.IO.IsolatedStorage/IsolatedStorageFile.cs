@@ -700,6 +700,9 @@ namespace System.IO.IsolatedStorage {
 		public override void Remove ()
 		{
 			directory.Delete (true);
+
+			// It seems .Net is calling Close from here.
+			Close ();
 		}
 
 

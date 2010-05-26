@@ -1,3 +1,8 @@
+2010-05-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFile.cs: Remove should call Close, just as .Net seems
+	to do.
+
 2010-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFileStream.cs: When creating the instance, we should check 
