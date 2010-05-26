@@ -4,7 +4,15 @@
 	   Miguel de Icaza (miguel@{ximian.com,gnome.org}),
 	   Paolo Molaro (lupus@{ximian.com,debian.org})
 
-  
+	This documents overall design of the Mono JIT up to version
+	2.0.   After Mono 2.0 the JIT engine was upgraded from
+	a tree-based intermediate representation to a linear
+	intermediate representation.
+
+	The Linear IL is documented here:
+
+	    http://www.mono-project.com/Linear_IL
+
 * Abstract
 
 	Mini is a new compilation engine for the Mono runtime.  The
@@ -69,6 +77,24 @@
 	The platform invocation code is interesting, as it generates
 	CIL code on the fly to marshal parameters, and then this
 	code is in turned processed by the JIT engine.
+
+	Mono has now gone through three different JIT engines, these
+	are:
+
+	* Original JIT engine: 2002, hard to port, hard to
+	  implement optimizations.
+
+	* Second JIT engine, used up until Mono 2.0, very
+          portable, many new optimizations.
+
+	* Third JIT engine, replaced the code generation layer from
+	  being based on a tree representation to be based on a linear
+	  representation.
+
+        For more information on the code generation changes, see our
+	web site for the details on the Linear IL:
+
+	    http://www.mono-project.com/Linear_IL
 
 * Previous Experiences
 
@@ -162,7 +188,7 @@
 	application domains, or generate code that will not be shared
 	across application domains.
 
-* Objectives of the new JIT engine.
+* Second Generation JIT engine.
 
 	We wanted to support a number of features that were missing:
 
@@ -206,7 +232,7 @@
 	     necessary that the JIT engine works in most of today's
 	     commercial hardware platforms. 
 
-* Features of the new JIT engine.
+* Features of the Second JIT engine.
 
 	The new JIT engine was architected by Dietmar Maurer and Paolo
 	Molaro, based on the new objectives.
@@ -382,7 +408,7 @@
 	temporary variables generated during the various
 	optimizations.
 
-** Instruction selection 
+** Instruction selection: Only used up until Mono 2.0
 
 	At this point, the BURS instruction selector is invoked to
 	transform the tree-based representation into a list of
@@ -609,7 +635,7 @@
 	registers, fixed registers and clobbered registers by each
 	operation.
 
-* BURG Code Generator Generator
+* BURG Code Generator Generator: Only used up to Mono 2.0
 
        monoburg was written by Dietmar Maurer. It is based on the
        papers from Christopher W. Fraser, Robert R. Henry and Todd
