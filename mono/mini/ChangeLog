@@ -1,3 +1,10 @@
+2010-05-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-runtime.c: Remove the half finished support for decoding the .arm_exidx
+	section.
+
+2010-05-25  Zoltan Varga  <vargaz@gmail.com>
+
 2010-05-25  Bill Holmes  <billholmes54@gmail.com>
 
 	* genmdesc.c (main): Fixing the detection of the nacl switch.
@@ -5,9 +12,6 @@
 	Code is contributed under MIT/X11 license.
 
 2010-05-25  Zoltan Varga  <vargaz@gmail.com>
-
-	* mini.c (mini_method_compile): Enable llvm for methods with clauses when using
-	LLVM SVN.
 
 	* exceptions-amd64.c (mono_arch_find_jit_info_ext): Adjust the ip for LMF frames too.
 
