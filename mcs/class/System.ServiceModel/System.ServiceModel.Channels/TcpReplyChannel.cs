@@ -102,9 +102,6 @@ namespace System.ServiceModel.Channels
 
 			public override void Reply (Message message, TimeSpan timeout)
 			{
-				if (message.Headers.RelatesTo == null)
-					message.Headers.RelatesTo = request.Headers.MessageId;
-
 				DateTime start = DateTime.Now;
 				owner.frame.WriteUnsizedMessage (message, timeout);
 				// FIXME: consider timeout here too.

@@ -1,3 +1,7 @@
+2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationInvokerHandler.cs : assign RelatesTo header item here.
+
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcher.cs : disable slottling again :( It still fails

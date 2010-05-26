@@ -101,6 +101,8 @@ namespace System.ServiceModel.Dispatcher
 				res = (Message) result;
 			res.Headers.CopyHeadersFrom (mrc.OperationContext.OutgoingMessageHeaders);
 			res.Properties.CopyProperties (mrc.OperationContext.OutgoingMessageProperties);
+			if (res.Headers.RelatesTo == null)
+				 res.Headers.RelatesTo = mrc.OperationContext.IncomingMessageHeaders.MessageId;
 			mrc.ReplyMessage = res;
 		}
 

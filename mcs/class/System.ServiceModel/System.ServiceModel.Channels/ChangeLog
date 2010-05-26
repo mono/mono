@@ -1,3 +1,11 @@
+2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpDuplexSessionChannel.cs, TcpReplyChannel.cs : do not set RelatesTo
+	  here. If the contract is not one-way (IsOneWay = false) and there is
+	  a callback, the callback message sent to the client should *not* be
+	  assigned RelatesTo header here. Just do it in the request-reply
+	  context. Do it in OperationInvokerHandler.
+
 2010-05-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SvcHttpHandler.cs : remove Sleep() hack. The host is now ensured

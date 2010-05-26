@@ -144,9 +144,6 @@ namespace System.ServiceModel.Channels
 			if (!is_service_side) {
 				if (message.Headers.To == null)
 					message.Headers.To = RemoteAddress.Uri;
-			} else {
-				if (message.Headers.RelatesTo == null && OperationContext.Current.IncomingMessageHeaders != null)
-					message.Headers.RelatesTo = OperationContext.Current.IncomingMessageHeaders.MessageId;
 			}
 
 			client.SendTimeout = (int) timeout.TotalMilliseconds;
