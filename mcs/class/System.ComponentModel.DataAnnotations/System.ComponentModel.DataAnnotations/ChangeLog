@@ -1,3 +1,8 @@
+2010-05-26  Marek Habersack  <mhabersack@novell.com>
+
+	* ValidationAttribute.cs: cope with null/empty ErrorMessageString
+	in FormatErrorMessage
+
 2010-05-12  Marek Habersack  <mhabersack@novell.com>
 
 	* ValidationException.cs: partially implemented

@@ -62,6 +62,10 @@ namespace System.ComponentModel.DataAnnotations
 
 		public virtual string FormatErrorMessage (string name)
 		{
+			string format = ErrorMessageString;
+			if (String.IsNullOrEmpty (format))
+				return String.Empty;
+
 			return String.Format (ErrorMessageString, name);
 		}
 #if NET_4_0
