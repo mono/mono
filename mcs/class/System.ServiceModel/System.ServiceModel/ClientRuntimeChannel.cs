@@ -471,14 +471,14 @@ namespace System.ServiceModel.MonoInternal
 		void Output (OperationDescription od, object [] parameters)
 		{
 			ClientOperation op = runtime.Operations [od.Name];
-			Send (CreateRequest (op, parameters, false), OperationTimeout);
+			Send (CreateRequest (op, parameters), OperationTimeout);
 		}
 
 		object Request (OperationDescription od, object [] parameters)
 		{
 			ClientOperation op = runtime.Operations [od.Name];
 			object [] inspections = new object [runtime.MessageInspectors.Count];
-			Message req = CreateRequest (op, parameters, true);
+			Message req = CreateRequest (op, parameters);
 
 			for (int i = 0; i < inspections.Length; i++)
 				inspections [i] = runtime.MessageInspectors [i].BeforeSendRequest (ref req, this);
@@ -562,7 +562,7 @@ namespace System.ServiceModel.MonoInternal
 		}
 		#endregion
 
-		Message CreateRequest (ClientOperation op, object [] parameters, bool isOutputChannel)
+		Message CreateRequest (ClientOperation op, object [] parameters)
 		{
 			MessageVersion version = message_version;
 			if (version == null)
@@ -599,7 +599,7 @@ namespace System.ServiceModel.MonoInternal
 			if (msg.Version.Addressing.Equals (AddressingVersion.WSAddressing10)) {
 				if (msg.Headers.MessageId == null)
 					msg.Headers.MessageId = new UniqueId ();
-				if (msg.Headers.ReplyTo == null && !isOutputChannel)
+				if (msg.Headers.ReplyTo == null)
 					msg.Headers.ReplyTo = new EndpointAddress (Constants.WsaAnonymousUri);
 				if (msg.Headers.To == null)
 					msg.Headers.To = RemoteAddress.Uri;

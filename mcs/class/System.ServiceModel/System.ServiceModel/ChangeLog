@@ -1,5 +1,10 @@
 2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientRuntimeChannel.cs : revert the previous change. It was
+	  actually sent.
+
+2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ClientRuntimeChannel.cs : do not add implicit ReplyTo on output
 	  channels.
 
