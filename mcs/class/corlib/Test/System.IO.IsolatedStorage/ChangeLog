@@ -1,3 +1,8 @@
+2010-05-26  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFileStreamTest.cs: New test cases for constructor
+	obtaining a closed/disposed IsolatedStorageFile.
+
 2010-05-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFileTest.cs: New test cases for CreateFile,

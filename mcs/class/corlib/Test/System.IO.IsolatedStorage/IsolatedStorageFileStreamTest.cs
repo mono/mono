@@ -145,5 +145,34 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			int t = isfs.WriteTimeout;
 		}
 #endif
+
+#if NET_4_0
+		[Test]
+		public void Constructor_StorageInvalid ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+
+			isf.Close ();
+			try {
+				new IsolatedStorageFileStream ("file", FileMode.Create, isf);
+			} catch (InvalidOperationException) {
+			}
+
+			isf.Dispose ();
+			try {
+				new IsolatedStorageFileStream ("file", FileMode.Create, isf);
+			} catch (InvalidOperationException) {
+			}
+
+			// Re-open and then remove the storage
+			isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			isf.Remove ();
+
+			try {
+				new IsolatedStorageFileStream ("file", FileMode.Create, isf);
+			} catch (InvalidOperationException) {
+			}
+		}
+#endif
 	}
 }
