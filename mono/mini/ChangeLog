@@ -1,5 +1,9 @@
 2010-05-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c: Instead of freeing method headers immediately, save them in a list in
+	MonoCompile, and free them in mono_destroy_compile (), since the MonoType's in them could
+	be referenced even after the header is freed.
+
 	* aot-runtime.c: Remove the half finished support for decoding the .arm_exidx
 	section.
 
