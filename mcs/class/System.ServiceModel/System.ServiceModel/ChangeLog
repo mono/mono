@@ -1,3 +1,8 @@
+2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientRuntimeChannel.cs : do not add implicit ReplyTo on output
+	  channels.
+
 2010-05-21  Geoff Norton  <gnorton@novell.com>
 
 	* BasicHttpBinding.cs: Transport mode supports authentication as well.
