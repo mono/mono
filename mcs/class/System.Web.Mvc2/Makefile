@@ -1,14 +1,16 @@
-thisdir = class/System.Web.Mvc
+thisdir = class/System.Web.Mvc2
 SUBDIRS = 
 include ../../build/rules.make
 
 LIBRARY = System.Web.Mvc.dll
 LIBRARY_USE_INTERMEDIATE_FILE = yes
-LIBRARY_COMPAT = yes
 
 RESX_DIST =  System.Web.Mvc/Resources/MvcResources.resx
 
 LIB_MCS_FLAGS = \
+		/warnaserror- \
+		/noconfig \
+		/keyfile:../winfx.pub \
 	        /r:System.dll \
 	        /r:System.Core.dll \
 	        /r:System.Configuration.dll \
@@ -18,6 +20,8 @@ LIB_MCS_FLAGS = \
 	        /r:System.Web.Abstractions.dll \
 	        /r:System.Web.Routing.dll \
 	        /r:System.Web.Extensions.dll \
+		/r:System.ComponentModel.DataAnnotations.dll \
+		/r:System.Data.Linq.dll \
 		$(foreach r, $(RESOURCES), /resource:$(r),System.Web.Mvc.Resources.$(notdir $(r)))
 
 ifeq (2.0, $(FRAMEWORK_VERSION))
