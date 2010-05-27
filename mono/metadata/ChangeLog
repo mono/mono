@@ -1,5 +1,29 @@
 2010-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* sgen-gc.c (search_fragment_for_size): Move fragment setup into
+	a separate function called setup_fragment.
+
+	* sgen-gc.c (search_fragment_for_size_range): Variant of
+	search_fragment_for_size that does search for a secondary smaller
+	size.
+
+	* sgen-gc.c (mono_gc_alloc_obj_nolock): Use search_fragment_for_size_range
+	for tlab allocation so small fragments are used.
+
+	This patch uses small fragments for tlab allocation when possible in order
+	to improve nursery utilization. With a fixed size tlab this patch is not very
+	usefull but once size gets dynamically adjusted, this will be invaluable.
+
+	Performance under pystone 500k is unchanged. Nursery utilization improves by
+	3.5% and 18 more fragments are used per minor GC.
+
+	Performance under modified binary-tree is unchanged. Nursery utilization
+	improves by 0.5% and 3 more fragments are used per minor GC.
+
+	These numbers make sense since as more pinning happens, more fragments are
+	created and so are the chances of having a bunch of small ones.
+
+2010-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
 	* sgen-gc.c (mono_gc_alloc_obj_nolock): Avoid wasting space	from
 	the current fragment when allocating a TLAB.
 
