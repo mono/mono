@@ -1,3 +1,8 @@
+2010-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-s390x.c (mono_arch_output_basic_block): Applied patch from Aurelien Minvielle
+	. Fix OP_ATOMIC_EXCHANGE_I4 on s390x. Fixes #609023.
+
 2010-05-27  Martin Baulig  <martin@ximian.com>
 
 	Fix #605698.
