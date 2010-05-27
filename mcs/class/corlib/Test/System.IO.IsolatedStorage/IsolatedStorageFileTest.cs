@@ -643,6 +643,42 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+		public void GetCreationTime ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+
+			// This is not causing an exception
+			isf.GetCreationTime ("doesntexist");
+			isf.GetCreationTime ("dir/doesntexist");
+
+			try {
+				isf.GetCreationTime (String.Empty);
+				Assert.Fail ("#Exc1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				isf.GetCreationTime ("   ");
+				Assert.Fail ("#Exc2");
+			} catch (ArgumentException) {
+			}
+
+			isf.Close ();
+			try {
+				isf.GetCreationTime ("doesntexist");
+				Assert.Fail ("#Exc3");
+			} catch (InvalidOperationException) {
+			}
+
+			isf.Dispose ();
+			try {
+				isf.GetCreationTime ("doesntexist");
+				Assert.Fail ("#Exc4");
+			} catch (ObjectDisposedException) {
+			}
+		}
+
+		[Test]
 		public void MoveDirectory ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
