@@ -701,6 +701,75 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+		public void CopyFile ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+
+			isf.CreateFile ("file").Close ();
+			isf.CopyFile ("file", "file-new");
+			Assert.AreEqual (true, isf.FileExists ("file"), "#A0");
+			Assert.AreEqual (true, isf.FileExists ("file-new"), "#A1");
+
+			// At this point 'file-exists' already exists.
+			isf.CopyFile ("file", "file-new", true);
+			Assert.AreEqual (true, isf.FileExists ("file"), "#B0");
+			Assert.AreEqual (true, isf.FileExists ("file-new"), "#B1");
+
+			isf.CreateDirectory ("subdir");
+			isf.CreateFile ("subdir/subfile").Close ();
+			isf.CopyFile ("subdir/subfile", "subdir/subfile-new");
+			Assert.AreEqual (true, isf.FileExists ("subdir/subfile"), "#C0");
+			Assert.AreEqual (true, isf.FileExists ("subdir/subfile-new"), "#C1");
+
+			try {
+				isf.CopyFile ("file", "file-new");
+				Assert.Fail ("#Exc0");
+			} catch (IsolatedStorageException) {
+			}
+
+			// Using the same file name is failing for even when passing override=true.
+			try {
+				isf.CopyFile ("file-new", "file-new", true);
+				Assert.Fail ("#Exc1");
+			} catch (IsolatedStorageException) {
+			}
+
+			try {
+				isf.CopyFile ("file-new", "file-new", false);
+				Assert.Fail ("#Exc2");
+			} catch (IsolatedStorageException) {
+			}
+
+			// Remove 'file-new' for cleaness purposes.
+			isf.DeleteFile ("file-new");
+
+			try {
+				isf.CopyFile ("doesntexist", "file-new", false);
+				Assert.Fail ("#Exc3");
+			} catch (FileNotFoundException) {
+			}
+
+			try {
+				isf.CopyFile ("doesnexist/doesntexist", "file-new", false);
+				Assert.Fail ("#Exc4");
+			} catch (DirectoryNotFoundException) {
+			}
+
+			// I'd have expected a DirectoryNotFoundException here.
+			try {
+				isf.CopyFile ("file", "doesntexist/doesntexist");
+				Assert.Fail ("#Exc5");
+			} catch (IsolatedStorageException) {
+			}
+
+			// We are creating a subdirectory and files within it, so remove it just in case.
+			isf.Remove ();
+
+			isf.Close ();
+			isf.Dispose ();
+		}
+
+		[Test]
 		public void MoveFile ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
