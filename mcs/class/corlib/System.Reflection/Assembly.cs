@@ -495,12 +495,16 @@ namespace System.Reflection {
 		// FIXME: What are we missing?
 		public static Assembly LoadFrom (String assemblyFile, Evidence securityEvidence, byte[] hashValue, AssemblyHashAlgorithm hashAlgorithm)
 		{
-			if (assemblyFile == null)
-				throw new ArgumentNullException ("assemblyFile");
-			if (assemblyFile == String.Empty)
-				throw new ArgumentException ("Name can't be the empty string", "assemblyFile");
 			throw new NotImplementedException ();
 		}
+
+#if NET_4_0
+		[MonoTODO]
+		public static Assembly LoadFrom (String assemblyFile, byte [] hashValue, AssemblyHashAlgorithm hashAlgorithm)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 #if NET_4_0
 		[Obsolete]
@@ -564,6 +568,14 @@ namespace System.Reflection {
 		{
 			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore, securityEvidence);
 		}
+
+#if NET_4_0
+		[MonoLimitation ("Argument securityContextSource is ignored")]
+		public static Assembly Load (byte [] rawAssembly, byte [] rawSymbolStore, SecurityContextSource securityContextSource)
+		{
+			return AppDomain.CurrentDomain.Load (rawAssembly, rawSymbolStore);
+		}
+#endif
 
 		public static Assembly ReflectionOnlyLoad (byte[] rawAssembly)
 		{
