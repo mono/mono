@@ -112,11 +112,38 @@ namespace System.Reflection.Emit {
 		{
 			return GetMethodSigHelper (mod, CallingConventions.Standard, (CallingConvention)0, returnType, parameterTypes);
 		}
+
 		[MonoTODO("Not implemented")]
 		public static SignatureHelper GetPropertySigHelper (Module mod, Type returnType, Type[] parameterTypes)
 		{
 			throw new NotImplementedException ();
 		}
+
+		[MonoTODO("Not implemented")]
+		public static SignatureHelper GetPropertySigHelper (Module mod, Type returnType,
+								    Type [] requiredReturnTypeCustomModifiers,
+								    Type [] optionalReturnTypeCustomModifiers,
+								    Type [] parameterTypes,
+								    Type [] [] requiredParameterTypeCustomModifiers,
+								    Type [] [] optionalParameterTypeCustomModifiers)
+		{
+			throw new NotImplementedException ();
+		}
+
+#if NET_4_0
+		[MonoTODO("Not implemented")]
+		public static SignatureHelper GetPropertySigHelper (Module mod,
+									CallingConventions callingConvention,
+									Type returnType,
+								    Type [] requiredReturnTypeCustomModifiers,
+								    Type [] optionalReturnTypeCustomModifiers,
+								    Type [] parameterTypes,
+								    Type [] [] requiredParameterTypeCustomModifiers,
+								    Type [] [] optionalParameterTypeCustomModifiers)
+		{
+			throw new NotImplementedException ();
+		}
+#endif
 
 		//
 		// Grows the given array, and returns the index where the element
@@ -233,17 +260,6 @@ namespace System.Reflection.Emit {
 				AppendArrayAt (ref modreqs, requiredCustomModifiers, p);
 			if (optionalCustomModifiers != null)
 				AppendArrayAt (ref modopts, optionalCustomModifiers, p);
-		}
-
-		[MonoTODO("Not implemented")]
-		public static SignatureHelper GetPropertySigHelper (Module mod, Type returnType,
-								    Type [] requiredReturnTypeCustomModifiers,
-								    Type [] optionalReturnTypeCustomModifiers,
-								    Type [] parameterTypes,
-								    Type [] [] requiredParameterTypeCustomModifiers,
-								    Type [] [] optionalParameterTypeCustomModifiers)
-		{
-			throw new NotImplementedException ();
 		}
 
 		public void AddArgument (Type clsArgument)
