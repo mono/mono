@@ -508,6 +508,44 @@ namespace System.IO.IsolatedStorage {
 
 #if NET_4_0
 		[ComVisible (false)]
+		public void CopyFile (string sourceFileName, string destinationFileName)
+		{
+			CopyFile (sourceFileName, destinationFileName, false);
+		}
+
+		[ComVisible (false)]
+		public void CopyFile (string sourceFileName, string destinationFileName, bool overwrite)
+		{
+			if (sourceFileName == null)
+				throw new ArgumentNullException ("sourceFileName");
+			if (destinationFileName == null)
+				throw new ArgumentNullException ("destinationFileName");
+			if (sourceFileName.Trim ().Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "sourceFileName");
+			if (destinationFileName.Trim ().Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "destinationFileName");
+
+			CheckOpen ();
+
+			string source_full_path = Path.Combine (directory.FullName, sourceFileName);
+			string dest_full_path = Path.Combine (directory.FullName, destinationFileName);
+
+			// These excs can be thrown from File.Copy, but we can try to detect them from here.
+			if (!Directory.Exists (Path.GetDirectoryName (source_full_path)))
+				throw new DirectoryNotFoundException ("Could not find a part of path '" + sourceFileName + "'.");
+			if (!File.Exists (source_full_path))
+				throw new FileNotFoundException ("Could not find a part of path '" + sourceFileName + "'.");
+			if (File.Exists (dest_full_path) && !overwrite)
+				throw new IsolatedStorageException ("Operation not allowed.");
+
+			try {
+				File.Copy (source_full_path, dest_full_path, overwrite);
+			} catch (IOException) {
+				throw new IsolatedStorageException ("Operation not allowed.");
+			}
+		}
+
+		[ComVisible (false)]
 		public IsolatedStorageFileStream CreateFile (string path)
 		{
 			return new IsolatedStorageFileStream (path, FileMode.Create, FileAccess.ReadWrite, FileShare.None, this);
