@@ -44,17 +44,11 @@ namespace System.ServiceModel.MonoInternal
 			// setup callback ClientRuntimeChannel.
 			var crt = runtime.CallbackClientRuntime;
 			var cd = ContractDescriptionGenerator.GetCallbackContract (runtime.Type, crt.CallbackClientType);
-			callback_contract = cd;
 			client = new ClientRuntimeChannel (crt, cd, this.DefaultOpenTimeout, this.DefaultCloseTimeout, channel, null,
 							   runtime.ChannelDispatcher.MessageVersion, this.RemoteAddress, null);
 		}
 
 		ClientRuntimeChannel client;
-		ContractDescription callback_contract;
-
-		public ContractDescription Contract {
-			get { return callback_contract; }
-		}
 
 		public override bool AllowOutputBatching {
 			get { return client.AllowOutputBatching; }

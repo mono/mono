@@ -1,3 +1,8 @@
+2010-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceRuntimeChannel.cs : remove unused members for refactoring.
+	* OperationContext.cs : add comment on GetCallbackChannel<T>().
+
 2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : revert the previous change. It was

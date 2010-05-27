@@ -157,6 +157,7 @@ namespace System.ServiceModel
 
 		public T GetCallbackChannel<T> ()
 		{
+			// It is correct; OperationContext.Channel and OperationContext.GetCallbackChannel<T>() returns the same instance on .NET. (at least as far as I tested.)
 			return (T) (object) channel;
 		}
 
