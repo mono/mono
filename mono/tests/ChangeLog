@@ -1,3 +1,7 @@
+2010-05-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* interlocked.cs: Add a test for Interlocked.Exchange on a local variable.
+
 2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* typeload-unaligned.cs: Move the reference to the broken type
