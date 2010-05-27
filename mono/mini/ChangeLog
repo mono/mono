@@ -1,3 +1,11 @@
+2010-05-27  Martin Baulig  <martin@ximian.com>
+
+	Fix #605698.
+
+	* debugger-agent.c (method_commands, type_commands): Temporarily
+	set the appdomain while executing this method; do all metadata
+	calls in the debuggee's appdomain where user assemblies are loaded.
+
 2010-05-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mono_jit_compile_method_inner): Propagate exceptions in one more place.
