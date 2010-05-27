@@ -57,10 +57,9 @@ class GroupJoin
 		if (res [0].b != "Foo")
 			return 12;
 			
-		// FIXME: Used same name
-		//var e2 = from a in d1
-		//	join a in d2 on a.Key equals a.Key into ab
-		//	select a;
+		var e2 = from a in d1
+			join a in d2 on a.Key equals a.Key into ab
+			select a;
 		
 		Console.WriteLine ("OK");
 		return 0;
