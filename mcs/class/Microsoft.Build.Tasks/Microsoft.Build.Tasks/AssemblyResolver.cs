@@ -190,8 +190,9 @@ namespace Microsoft.Build.Tasks {
 			TargetFrameworkAssemblies gac_asm = new TargetFrameworkAssemblies (directory);
 			foreach (string file in Directory.GetFiles (directory, "*.dll")) {
 				AssemblyName aname = GetAssemblyNameFromFile (file);
-				gac_asm.NameToAssemblyNameCache [aname.Name] =
-					new KeyValuePair<AssemblyName, string> (aname, file);
+				if (aname != null)
+					gac_asm.NameToAssemblyNameCache [aname.Name] =
+						new KeyValuePair<AssemblyName, string> (aname, file);
 			}
 
 			return gac_asm;
