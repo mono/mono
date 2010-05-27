@@ -1,3 +1,8 @@
+2010-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : fill CallbackDispatchRuntime. Add some
+	  FIXME comments for ongoing fixes.
+
 2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationInvokerHandler.cs : assign RelatesTo header item here.
