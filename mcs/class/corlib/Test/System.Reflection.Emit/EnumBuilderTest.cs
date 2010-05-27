@@ -231,6 +231,16 @@ namespace MonoTests.System.Reflection.Emit
 				_fieldName);
 		}
 
+#if NET_4_0
+		[Test]
+		public void GetEnumUnderlyingType ()
+		{
+			var @enum = GenerateEnum ();
+
+			Assert.AreEqual (_enumType, @enum.GetEnumUnderlyingType ());
+		}
+#endif
+
 		[Test]
 		public void TestFindMembersComplete ()
 		{

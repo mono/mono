@@ -1,3 +1,7 @@
+2010-05-27  Jb Evain  <jbevain@novell.com>
+
+	* EnumBuilderTest.cs: add test for .net_4_0's GetEnumUnderlyingType.
+
 2010-05-13 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* TypeBuilderTest.cs: Fix test not to depend
