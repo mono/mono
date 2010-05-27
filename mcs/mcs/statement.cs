@@ -1640,7 +1640,7 @@ namespace Mono.CSharp {
 			return false;
 		}
 
-		protected virtual bool CheckParentConflictName (ToplevelBlock block, string name, Location l)
+		protected bool CheckParentConflictName (ToplevelBlock block, string name, Location l)
 		{
 			LocalInfo vi = GetLocalInfo (name);
 			if (vi != null) {
@@ -1655,13 +1655,13 @@ namespace Mono.CSharp {
 			}
 
 			if (block != null) {
-				Expression e = block.GetParameterReference (name, Location.Null);
-				if (e != null) {
-					ParameterReference pr = e as ParameterReference;
-					if (this is Linq.QueryBlock && (pr != null && pr.Parameter is Linq.QueryBlock.ImplicitQueryParameter || e is MemberAccess))
+				var tblock = block.CheckParameterNameConflict (name);
+				if (tblock != null) {
+					if (block == tblock && block is Linq.QueryBlock)
 						Error_AlreadyDeclared (loc, name);
 					else
 						Error_AlreadyDeclared (loc, name, "parent or current");
+
 					return false;
 				}
 			}
@@ -1673,16 +1673,6 @@ namespace Mono.CSharp {
 		{
 			if (!CheckParentConflictName (Toplevel, name, l))
 				return null;
-
-			if (Toplevel.GenericMethod != null) {
-				foreach (TypeParameter tp in Toplevel.GenericMethod.CurrentTypeParameters) {
-					if (tp.Name == name) {
-						Toplevel.Report.SymbolRelatedToPreviousError (tp);
-						Error_AlreadyDeclaredTypeParameter (Toplevel.Report, loc, name, "local variable");
-						return null;
-					}
-				}
-			}			
 
 			IKnownVariable kvi = Explicit.GetKnownVariable (name);
 			if (kvi != null) {
@@ -1725,9 +1715,9 @@ namespace Mono.CSharp {
 				"A local variable named `{0}' is already defined in this scope", name);
 		}
 					
-		public virtual void Error_AlreadyDeclaredTypeParameter (Report r, Location loc, string name, string conflict)
+		public virtual void Error_AlreadyDeclaredTypeParameter (Location loc, string name, string conflict)
 		{
-			r.Error (412, loc, "The type parameter name `{0}' is the same as `{1}'",
+			Toplevel.Report.Error (412, loc, "The type parameter name `{0}' is the same as `{1}'",
 				name, conflict);
 		}
 
@@ -1768,9 +1758,8 @@ namespace Mono.CSharp {
 		{
 			LocalInfo ret;
 			for (Block b = this; b != null; b = b.Parent) {
-				if (b.variables != null) {
-					if (b.variables.TryGetValue (name, out ret))
-						return ret;
+				if (b.variables != null && b.variables.TryGetValue (name, out ret)) {
+					return ret;
 				}
 			}
 
@@ -2188,7 +2177,7 @@ namespace Mono.CSharp {
 
 		public override string ToString ()
 		{
-			return String.Format ("{0} ({1}:{2})", GetType (),ID, StartLocation);
+			return String.Format ("{0} ({1}:{2})", GetType (), this_id, StartLocation);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
@@ -2197,7 +2186,7 @@ namespace Mono.CSharp {
 
 			clonectx.AddBlockMap (this, target);
 
-			//target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
+			target.Toplevel = (ToplevelBlock) clonectx.LookupBlock (Toplevel);
 			target.Explicit = (ExplicitBlock) clonectx.LookupBlock (Explicit);
 			if (Parent != null)
 				target.Parent = clonectx.RemapBlockCopy (Parent);
@@ -2370,15 +2359,13 @@ namespace Mono.CSharp {
 			base.EmitMeta (ec);
 		}
 
-		internal IKnownVariable GetKnownVariable (string name)
+		public IKnownVariable GetKnownVariable (string name)
 		{
 			if (known_variables == null)
 				return null;
 
 			IKnownVariable kw;
-			if (!known_variables.TryGetValue (name, out kw))
-				return null;
-
+			known_variables.TryGetValue (name, out kw);
 			return kw;
 		}
 
@@ -2480,9 +2467,8 @@ namespace Mono.CSharp {
 			}
 		}
 
-		GenericMethod generic;
 		protected ParametersCompiled parameters;
-		ToplevelParameterInfo[] parameter_info;
+		protected ToplevelParameterInfo[] parameter_info;
 		LocalInfo this_variable;
 		bool resolved;
 		bool unreachable;
@@ -2507,10 +2493,6 @@ namespace Mono.CSharp {
 			get { return compiler.Report; }
 		}
 
-		public GenericMethod GenericMethod {
-			get { return generic; }
-		}
-
 		public ToplevelBlock Container {
 			get { return Parent == null ? null : Parent.Toplevel; }
 		}
@@ -2518,12 +2500,6 @@ namespace Mono.CSharp {
 		public ToplevelBlock (CompilerContext ctx, Block parent, ParametersCompiled parameters, Location start) :
 			this (ctx, parent, (Flags) 0, parameters, start)
 		{
-		}
-
-		public ToplevelBlock (CompilerContext ctx, Block parent, ParametersCompiled parameters, GenericMethod generic, Location start) :
-			this (ctx, parent, parameters, start)
-		{
-			this.generic = generic;
 		}
 
 		public ToplevelBlock (CompilerContext ctx, ParametersCompiled parameters, Location start) :
@@ -2563,10 +2539,11 @@ namespace Mono.CSharp {
 			ToplevelBlock target = (ToplevelBlock) t;
 			base.CloneTo (clonectx, t);
 
-			if (parameters.Count != 0)
-				target.parameter_info = new ToplevelParameterInfo [parameters.Count];
-			for (int i = 0; i < parameters.Count; ++i)
-				target.parameter_info [i] = new ToplevelParameterInfo (target, i);
+			if (parameters.Count != 0) {
+				target.parameter_info = new ToplevelParameterInfo[parameters.Count];
+				for (int i = 0; i < parameters.Count; ++i)
+					target.parameter_info[i] = new ToplevelParameterInfo (target, i);
+			}
 		}
 
 		public bool CheckError158 (string name, Location loc)
@@ -2659,6 +2636,9 @@ namespace Mono.CSharp {
 		public Expression GetParameterReference (string name, Location loc)
 		{
 			for (ToplevelBlock t = this; t != null; t = t.Container) {
+				if (t.parameters.IsEmpty)
+					continue;
+
 				Expression expr = t.GetParameterReferenceExpression (name, loc);
 				if (expr != null)
 					return expr;
@@ -2672,6 +2652,21 @@ namespace Mono.CSharp {
 			int idx = parameters.GetParameterIndexByName (name);
 			return idx < 0 ?
 				null : new ParameterReference (parameter_info [idx], loc);
+		}
+
+		public ToplevelBlock CheckParameterNameConflict (string name)
+		{
+			for (ToplevelBlock t = this; t != null; t = t.Container) {
+				if (t.HasParameterWithName (name))
+					return t;
+			}
+
+			return null;
+		}
+
+		protected virtual bool HasParameterWithName (string name)
+		{
+			return parameters.GetParameterIndexByName (name) >= 0;
 		}
 
 		// <summary>

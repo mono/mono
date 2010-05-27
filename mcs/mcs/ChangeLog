@@ -1,3 +1,10 @@
+2010-05-27  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bugs #608007, #572540, #566130, #476358
+
+	* generic.cs, linq.cs, expression.cs, statement.cs, cs-parser.jay:
+	More tricky refactoring of implicit linq blocks.
+	
 2010-05-25  Marek Safar  <marek.safar@gmail.com>
 
 	* linq.cs, cs-parser.jay: Keep location for all linq clauses.

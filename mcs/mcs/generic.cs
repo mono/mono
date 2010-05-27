@@ -1981,13 +1981,20 @@ namespace Mono.CSharp {
 			for (int i = 0; i < names.Length; i++) {
 				string type_argument_name = names[i].Name;
 				int idx = parameters.GetParameterIndexByName (type_argument_name);
-				if (idx >= 0) {
-					Block b = m.Block;
-					if (b == null)
-						b = new Block (null);
 
-					b.Error_AlreadyDeclaredTypeParameter (Report, parameters [i].Location,
+				if (idx >= 0) {
+					var b = m.Block;
+					if (b == null)
+						b = new ToplevelBlock (Compiler, Location);
+
+					b.Error_AlreadyDeclaredTypeParameter (parameters [i].Location,
 						type_argument_name, "method parameter");
+				}
+
+				if (m.Block != null) {
+					var ikv = m.Block.GetKnownVariable (type_argument_name);
+					if (ikv != null)
+						ikv.Block.Error_AlreadyDeclaredTypeParameter (ikv.Location, type_argument_name, "local variable");
 				}
 				
 				snames[i] = type_argument_name;
