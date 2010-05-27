@@ -1,3 +1,7 @@
+2010-05-27  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CallbackBehaviorAttributeTest.cs : fix assertion label.
+
 2010-04-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* FaultContractAttributeTest.cs : new test.

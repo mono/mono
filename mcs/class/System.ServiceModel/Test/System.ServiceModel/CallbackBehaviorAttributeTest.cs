@@ -154,7 +154,7 @@ namespace MonoTests.System.ServiceModel
 			eventServiceHost.Close ();
 
 			Assert.IsTrue (CallbackSent, "#1");
-			Assert.IsTrue (CallbackReceived, "#1");
+			Assert.IsTrue (CallbackReceived, "#2");
 		}
 
 		public static bool CallbackSent, CallbackReceived;
