@@ -1,3 +1,7 @@
+2010-05-27  Jb Evain  <jbevain@novell.com>
+
+	* SecurityContextSource.cs: add new enum in net_4_0.
+
 2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SecurityManager.cs: Add stub for new methods (so code compiles
