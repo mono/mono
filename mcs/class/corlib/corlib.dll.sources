@@ -1127,6 +1127,7 @@ System.Security/PermissionSet.cs
 System.Security/PolicyLevelType.cs
 System.Security/SecureString.cs
 System.Security/SecurityContext.cs
+System.Security/SecurityContextSource.cs
 System.Security/SecurityCriticalAttribute.cs
 System.Security/SecurityCriticalScope.cs
 System.Security/SecurityElement.cs
