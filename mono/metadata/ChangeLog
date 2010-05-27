@@ -1,3 +1,10 @@
+2010-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* sgen-gc.c (mono_gc_alloc_obj_nolock): Avoid wasting space	from
+	the current fragment when allocating a TLAB.
+
+	Reduces number of pystone 500k minor collections by 7%.
+
 2010-05-25  Martin Baulig  <martin@ximian.com>
 
 	Applying a patch from Lucas Meijer <lucas@lucasmeijer.com>.
