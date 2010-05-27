@@ -1,3 +1,7 @@
+2010-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_method_to_ir): Add missing write barrier to stobj.
+
 2010-05-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c: Instead of freeing method headers immediately, save them in a list in
