@@ -164,6 +164,13 @@ namespace System.Reflection.Emit {
 			return res;
 		}
 
+#if NET_4_0
+		public override Type GetEnumUnderlyingType ()
+		{
+			return _underlyingType;
+		}
+#endif
+
 		[MethodImplAttribute(MethodImplOptions.InternalCall)]
 		private extern void setup_enum_type (Type t);
 

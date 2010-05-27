@@ -1,3 +1,7 @@
+2010-05-27  Jb Evain  <jbevain@novell.com>
+
+	* EnumBuilder.cs (GetEnumUnderlyingType): override.
+
 2010-05-18  Marek Safar  <marek.safar@gmail.com>
 
 	* TypeBuilder.cs, PropertyBuilder.cs: Add DefineProperty overloads.
