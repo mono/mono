@@ -547,11 +547,8 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			if (disposed)
-				throw new ObjectDisposedException ("IsolatedStorageFile");
-			if (closed)
-				throw new InvalidOperationException ("Storage needs to be open for this operation.");
 
+			CheckOpen ();
 			return Directory.Exists (Path.Combine (directory.FullName, path));
 		}
 
@@ -560,12 +557,60 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (path == null)
 				throw new ArgumentNullException ("path");
-			if (disposed)
-				throw new ObjectDisposedException ("IsolatedStorageFile");
-			if (closed)
-				throw new InvalidOperationException ("Storage needs to be open for this operation.");
 
+			CheckOpen ();
 			return File.Exists (Path.Combine (directory.FullName, path));
+		}
+
+		[ComVisible (false)]
+		public DateTimeOffset GetCreationTime (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Trim ().Length == 0)
+				throw new ArgumentException ("An empty path is not valid.");
+
+			CheckOpen ();
+
+			string full_path = Path.Combine (directory.FullName, path);
+			if (File.Exists (full_path))
+				return File.GetCreationTime (full_path);
+
+			return Directory.GetCreationTime (full_path);
+		}
+
+		[ComVisible (false)]
+		public DateTimeOffset GetLastAccessTime (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Trim ().Length == 0)
+				throw new ArgumentException ("An empty path is not valid.");
+
+			CheckOpen ();
+
+			string full_path = Path.Combine (directory.FullName, path);
+			if (File.Exists (full_path))
+				return File.GetLastAccessTime (full_path);
+
+			return Directory.GetLastAccessTime (full_path);
+		}
+
+		[ComVisible (false)]
+		public DateTimeOffset GetLastWriteTime (string path)
+		{
+			if (path == null)
+				throw new ArgumentNullException ("path");
+			if (path.Trim ().Length == 0)
+				throw new ArgumentException ("An empty path is not valid.");
+
+			CheckOpen ();
+
+			string full_path = Path.Combine (directory.FullName, path);
+			if (File.Exists (full_path))
+				return File.GetLastWriteTime (full_path);
+
+			return Directory.GetLastWriteTime (full_path);
 		}
 #endif
 
@@ -653,11 +698,8 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentNullException ("sourceDirectoryName");
 			if (destinationDirectoryName == null)
 				throw new ArgumentNullException ("sourceDirectoryName");
-			if (disposed)
-				throw new ObjectDisposedException ("IsolatedStorageFile");
-			if (closed)
-				throw new InvalidOperationException ("Storage needs to be open for this operation.");
 
+			CheckOpen ();
 			Directory.Move (Path.Combine (directory.FullName, sourceDirectoryName),
 					Path.Combine (directory.FullName, destinationDirectoryName));
 		}
@@ -669,11 +711,8 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentNullException ("sourceFileName");
 			if (destinationFileName == null)
 				throw new ArgumentNullException ("sourceFileName");
-			if (disposed)
-				throw new ObjectDisposedException ("IsolatedStorageFile");
-			if (closed)
-				throw new InvalidOperationException ("Storage needs to be open for this operation.");
 
+			CheckOpen ();
 			File.Move (Path.Combine (directory.FullName, sourceFileName),
 					Path.Combine (directory.FullName, destinationFileName));
 		}
@@ -714,6 +753,15 @@ namespace System.IO.IsolatedStorage {
 		}
 
 		// internal stuff
+#if NET_4_0
+		void CheckOpen ()
+		{
+			if (disposed)
+				throw new ObjectDisposedException ("IsolatedStorageFile");
+			if (closed)
+				throw new InvalidOperationException ("Storage needs to be open for this operation.");
+		}
+#endif
 
 		private string GetNameFromIdentity (object identity)
 		{
