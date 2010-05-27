@@ -567,9 +567,23 @@ namespace System {
 		}
 
 		// NET 3.5 method
-		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes) {
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes)
+		{
 			return DefineDynamicAssembly (name, access, null, null, null, null, null, false, assemblyAttributes);
 		}
+
+#if NET_4_0
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, string dir, bool isSynchronized, IEnumerable<CustomAttributeBuilder> assemblyAttributes)
+		{
+			return DefineDynamicAssembly (name, access, dir, null, null, null, null, isSynchronized, assemblyAttributes);
+		}
+
+		[MonoLimitation ("The argument securityContextSource is ignored")]
+		public AssemblyBuilder DefineDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access, IEnumerable<CustomAttributeBuilder> assemblyAttributes, SecurityContextSource securityContextSource)
+		{
+			return DefineDynamicAssembly (name, access, assemblyAttributes);
+		}
+#endif
 
 		internal AssemblyBuilder DefineInternalDynamicAssembly (AssemblyName name, AssemblyBuilderAccess access)
 		{

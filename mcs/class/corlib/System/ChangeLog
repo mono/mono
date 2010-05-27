@@ -1,3 +1,7 @@
+2010-05-27  Jb Evain  <jbevain@novell.com>
+
+	* AppDomain.cs (DefineDynamicAssembly): add new net_4_0 overloads.
+
 2010-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Enum.cs : TryParse() should raise ArgumentException when the
