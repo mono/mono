@@ -1,3 +1,10 @@
+2010-05-28  Robert Jordan  <robertj@gmx.net>
+
+	* Makefile, *.dll.sources: disambiguate between Mvc and Mvc2
+	by using a distinct LIBRARY. Needed because the current
+	build system does not pay attention to LIBRARY_COMPAT
+	while building *.reponse  and *.makefrag.
+
 2010-03-18  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: include resources in compilation
