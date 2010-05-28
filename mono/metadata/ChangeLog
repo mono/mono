@@ -1,3 +1,8 @@
+2010-05-28 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* sgen-gc.c: Add a note about the int[] trick to avoid some
+	memset.
+
 2010-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* sgen-gc.c (sort_addresses): Use heap sort since it has better
