@@ -1,3 +1,9 @@
+2010-05-29  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c: Always use DESC_TYPE_RUN_LENGTH for objects without
+	references so that we don't have to do the cache-cold fetch of the
+	class in copy_object_no_checks().
+
 2010-05-29  Robert Jordan  <robertj@gmx.net>
 
 	* marshal.c (mono_marshal_asany): marshal LPWSTRs using
