@@ -214,7 +214,9 @@ namespace System.ServiceModel.Dispatcher
 
 		void ThrowIfOpened ()
 		{
-			switch (Parent.ChannelDispatcher.State) {
+			// FIXME: get callback client runtime status when ChannelDispatcher is not available.
+			var state = Parent.ChannelDispatcher != null ? Parent.ChannelDispatcher.State : CommunicationState.Created; // Parent.CallbackClientRuntime.ChannelFactory.State;
+			switch (state) {
 			case CommunicationState.Created:
 			case CommunicationState.Opening:
 				return;

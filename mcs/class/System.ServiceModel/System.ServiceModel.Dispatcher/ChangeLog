@@ -1,5 +1,10 @@
 2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* DispatchOperation.cs : on callback channels ChannelDispatcher is
+	  not available. Wait for something like ClientRuntime.ChannelFactory.
+
+2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* EndpointDispatcher.cs : some comments.
 	* DispatchOperation.cs : remove on-the-fly dependency on 
 	  OperationDescription. Add immutable check on each property.
