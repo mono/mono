@@ -1,3 +1,8 @@
+2010-05-28  Mark Probst  <mark.probst@gmail.com>
+
+	* method-to-ir.c (mono_method_to_ir): Only explicitly add the
+	write barrier for reference types.
+
 2010-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-s390x.c (mono_arch_output_basic_block): Applied patch from Aurelien Minvielle
