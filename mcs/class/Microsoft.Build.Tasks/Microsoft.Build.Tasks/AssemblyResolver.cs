@@ -146,6 +146,11 @@ namespace Microsoft.Build.Tasks {
 			return null;
 		}
 
+		// Look for %(Identity).{dll|exe|..}
+		// if specific_version==true
+		// 	resolve if assembly names match
+		// else
+		// 	resolve the valid assembly
 		public ResolvedReference FindInDirectory (ITaskItem reference, string directory, string [] file_extensions, bool specific_version)
 		{
 			string filename = reference.ItemSpec;
@@ -267,6 +272,11 @@ namespace Microsoft.Build.Tasks {
 			return rr;
 		}
 
+		// HintPath has a valid assembly
+		// if specific_version==true
+		// 	resolve if assembly names match
+		// else
+		// 	resolve the valid assembly
 		public ResolvedReference ResolveHintPathReference (ITaskItem reference, bool specific_version)
 		{
 			string hintpath = reference.GetMetadata ("HintPath");

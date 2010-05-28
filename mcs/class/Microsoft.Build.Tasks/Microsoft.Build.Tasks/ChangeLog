@@ -1,5 +1,9 @@
 2010-05-28  Ankit Jain  <jankit@novell.com>
 
+	* AssemblyResolver.cs: Add some comments.
+
+2010-05-28  Ankit Jain  <jankit@novell.com>
+
 	* AssemblyResolver.cs (FindInDirectory): Add a 'specific_version'
 	parameter. Look for reference.{dll|exe} instead of checking all
 	files in the directory. Compare assembly names only if
