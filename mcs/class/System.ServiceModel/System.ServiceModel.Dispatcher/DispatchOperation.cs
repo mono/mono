@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005-2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -35,7 +35,6 @@ using System.Text;
 
 namespace System.ServiceModel.Dispatcher
 {
-	[MonoTODO]
 	public sealed class DispatchOperation
 	{
 		internal class DispatchOperationCollection :
@@ -98,12 +97,18 @@ namespace System.ServiceModel.Dispatcher
 
 		public bool AutoDisposeParameters {
 			get { return auto_dispose_params; }
-			set { auto_dispose_params = value; }
+			set {
+				ThrowIfOpened ();
+				auto_dispose_params = value;
+			}
 		}
 
 		public bool DeserializeRequest {
 			get { return deserialize_request; }
-			set { deserialize_request = value; }
+			set {
+				ThrowIfOpened ();
+				deserialize_request = value;
+			}
 		}
 
 		public SynchronizedCollection<FaultContractInfo> FaultContractInfos {
@@ -113,6 +118,7 @@ namespace System.ServiceModel.Dispatcher
 		public IDispatchMessageFormatter Formatter {
 			get { return formatter; }
 			set {
+				ThrowIfOpened ();
 				formatter = value;
 				actual_formatter = null;
 			}
@@ -120,12 +126,18 @@ namespace System.ServiceModel.Dispatcher
 
 		public ImpersonationOption Impersonation {
 			get { return impersonation; }
-			set { impersonation = value; }
+			set {
+				ThrowIfOpened ();
+				impersonation = value;
+			}
 		}
 
 		public IOperationInvoker Invoker {
 			get { return invoker; }
-			set { invoker = value; }
+			set {
+				ThrowIfOpened ();
+				invoker = value;
+			}
 		}
 
 		public bool IsOneWay {
@@ -134,7 +146,10 @@ namespace System.ServiceModel.Dispatcher
 
 		public bool IsTerminating {
 			get { return is_terminating; }
-			set { is_terminating = value; }
+			set {
+				ThrowIfOpened ();
+				is_terminating = value;
+			}
 		}
 
 		public string Name {
@@ -151,12 +166,18 @@ namespace System.ServiceModel.Dispatcher
 
 		public bool ReleaseInstanceAfterCall {
 			get { return release_after_call; }
-			set { release_after_call = value; }
+			set {
+				ThrowIfOpened ();
+				release_after_call = value;
+			}
 		}
 
 		public bool ReleaseInstanceBeforeCall {
 			get { return release_before_call; }
-			set { release_before_call = value; }
+			set {
+				ThrowIfOpened ();
+				release_before_call = value;
+			}
 		}
 
 		public string ReplyAction {
@@ -165,47 +186,40 @@ namespace System.ServiceModel.Dispatcher
 
 		public bool SerializeReply {
 			get { return serialize_reply; }
-			set { serialize_reply = value; }
+			set {
+				ThrowIfOpened ();
+				serialize_reply = value;
+			}
 		}
 
 		public bool TransactionAutoComplete {
 			get { return tx_auto_complete; }
-			set { tx_auto_complete = value; }
+			set {
+				ThrowIfOpened ();
+				tx_auto_complete = value;
+			}
 		}
 
 		public bool TransactionRequired {
 			get { return tx_required; }
-			set { tx_required = value; }
+			set {
+				ThrowIfOpened ();
+				tx_required = value;
+			}
 		}
 
 		MessageVersion MessageVersion {
 			get { return Parent.ChannelDispatcher.MessageVersion; }
 		}
 
-		OperationDescription Description {
-			get {
-				// FIXME: ContractDescription should be acquired from elsewhere.
-				ContractDescription cd = ContractDescription.GetContract (Parent.Type);
-				OperationDescription od = cd.Operations.Find (Name);
-				if (od == null) {
-					if (Name == "*")
-						throw new Exception (String.Format ("INTERNAL ERROR: Contract {0} in namespace {1} does not contain Operations.", Parent.EndpointDispatcher.ContractName, Parent.EndpointDispatcher.ContractNamespace));
-					else
-						throw new Exception (String.Format ("INTERNAL ERROR: Operation {0} was not found.", Name));
-				}
-				return od;
-			}
-		}
-
-		internal IDispatchMessageFormatter GetFormatter ()
+		void ThrowIfOpened ()
 		{
-			if (actual_formatter == null) {
-				if (Formatter != null)
-					actual_formatter = Formatter;
-				else
-					actual_formatter = new OperationFormatter (Description, false, false); // FIXME: pass correct isRpc, isEncoded
+			switch (Parent.ChannelDispatcher.State) {
+			case CommunicationState.Created:
+			case CommunicationState.Opening:
+				return;
 			}
-			return actual_formatter;
+			throw new InvalidOperationException ("Cannot change this property after the service host is opened");
 		}
 	}
 }

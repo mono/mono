@@ -170,7 +170,10 @@ namespace System.ServiceModel.Dispatcher
 			o.Invoker = new DefaultOperationInvoker (od);
 
 			// Setup Formater
-			o.Formatter = new OperationFormatter (od, false, false); // FIXME: pass correct isRpc, isEncoded
+			// FIXME: this seems to be null at initializing, and should be set after applying all behaviors.
+			// I leave this as is to not regress and it's cosmetic compatibility to fix.
+			// FIXME: pass correct isRpc, isEncoded
+			o.Formatter = new OperationFormatter (od, false, false);
 
 			if (o.Action == "*" && (o.IsOneWay || o.ReplyAction == "*")) {
 				//Signature : Message  (Message)

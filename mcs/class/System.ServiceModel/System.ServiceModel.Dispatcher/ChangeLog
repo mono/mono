@@ -1,3 +1,9 @@
+2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs : some comments.
+	* DispatchOperation.cs : remove on-the-fly dependency on 
+	  OperationDescription. Add immutable check on each property.
+
 2010-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EndpointDispatcher.cs : fill CallbackDispatchRuntime. Add some
