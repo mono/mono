@@ -1,5 +1,13 @@
 2010-05-28  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-scan-object.h: Value types in arrays are not
+	always aligned to ALLOC_ALIGN.  To handle this, shift the size in
+	the GC descriptor by one bit, and don't encode the size for value
+	types not containing references.  Also get rid of
+	DESC_TYPE_STRING.
+
+2010-05-28  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Don't depend on the size encoded in a GC descriptor
 	other than for remset processing.
 
