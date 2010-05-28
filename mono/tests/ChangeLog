@@ -1,3 +1,8 @@
+2010-05-28  Robert Jordan  <robertj@gmx.net>
+
+	* libtest.c: Implement and use marshal_strdup () as a g_strdup ()
+	replacement under Windows. Fixes memory allocation mismatches.
+
 2010-05-27  Zoltan Varga  <vargaz@gmail.com>
 
 	* interlocked.cs: Add a test for Interlocked.Exchange on a local variable.
