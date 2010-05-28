@@ -1,3 +1,11 @@
+2010-05-27 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* sgen-gc.c (sort_addresses): Use heap sort since it has better
+	performance.
+
+	This helps programs with lots of threads or thread with big stacks
+	since the bottleneck the pin queue can get quite big.
+
 2010-05-26 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* sgen-gc.c (search_fragment_for_size): Move fragment setup into
