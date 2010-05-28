@@ -1,3 +1,7 @@
+2010-05-28  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources : remove old code from winfx beta.
+
 2010-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile (LIB_MCS_FLAGS): added a reference to

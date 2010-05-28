@@ -1,3 +1,7 @@
+2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DirectionalAction.cs : remove old code from winfx beta.
+
 2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpDuplexSessionChannel.cs, TcpReplyChannel.cs : do not set RelatesTo
