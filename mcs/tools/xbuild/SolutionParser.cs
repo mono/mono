@@ -250,6 +250,8 @@ namespace Mono.XBuild.CommandLine {
 						break;
 					case "NestedProjects":
 						break;
+					case "MonoDevelopProperties":
+						break;
 					default:
 						RaiseWarning (0, string.Format("Don't know how to handle GlobalSection {0}, Ignoring.", sectionType));
 						break;
