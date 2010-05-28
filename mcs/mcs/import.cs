@@ -963,7 +963,7 @@ namespace Mono.CSharp
 
 			const MethodAttributes explicit_impl = MethodAttributes.NewSlot |
 					MethodAttributes.Virtual | MethodAttributes.HideBySig |
-					MethodAttributes.Final | MethodAttributes.Private;
+					MethodAttributes.Final;
 
 			Dictionary<MethodBase, MethodSpec> possible_accessors = null;
 			MemberSpec imported;
@@ -983,7 +983,7 @@ namespace Mono.CSharp
 					MethodBase mb = (MethodBase) member;
 
 					// Ignore explicitly implemented members
-					if ((mb.Attributes & explicit_impl) == explicit_impl)
+					if ((mb.Attributes & explicit_impl) == explicit_impl && (mb.Attributes & MethodAttributes.MemberAccessMask) == MethodAttributes.Private)
 						continue;
 
 					// Ignore compiler generated methods

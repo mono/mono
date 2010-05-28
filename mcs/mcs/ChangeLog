@@ -1,5 +1,10 @@
 2010-05-28  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #609088
+	* import.cs: Check private modifier correctly.
+
+2010-05-28  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #609049
 	* ecore.cs: Don't ignore override methods when looking for base
 	member.
