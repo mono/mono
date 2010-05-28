@@ -1,3 +1,9 @@
+2010-05-29  Robert Jordan  <robertj@gmx.net>
+
+	* marshal.c (mono_marshal_asany): marshal LPWSTRs using
+	mono_marshal_string_to_utf16_copy () to avoid memory allocation
+	mismatches under Windows. Fixes pinvoke2:test_0_asany.
+
 2010-05-28  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Change default nursery size to 4MB, because it
