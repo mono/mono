@@ -1,0 +1,4 @@
+2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ExtensionsTest.cs :
+	  New tests (not working yet), by Stefan Prutianu.

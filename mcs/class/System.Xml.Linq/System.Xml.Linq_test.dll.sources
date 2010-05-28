@@ -13,3 +13,4 @@ System.Xml.Linq/XObjectTest.cs
 System.Xml.Linq/XProcessingInstructionTest.cs
 System.Xml.Linq/XStreamingElementTest.cs
 System.Xml.Linq/XTextTest.cs
+System.Xml.Schema/ExtensionsTest.cs
