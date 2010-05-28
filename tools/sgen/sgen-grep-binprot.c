@@ -193,7 +193,7 @@ main (int argc, char *argv[])
 	long nums [num_nums];
 
 	for (i = 0; i < num_nums; ++i)
-		nums [i] = strtol (argv [i + 1], NULL, 16);
+		nums [i] = strtoul (argv [i + 1], NULL, 16);
 
 	while ((type = read_entry (stdin, &data)) != SGEN_PROTOCOL_EOF) {
 		gboolean match = FALSE;
