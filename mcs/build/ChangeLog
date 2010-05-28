@@ -1,3 +1,8 @@
+2010-05-28  Marek Safar  <marek.safar@gmail.com>
+
+	* library.make: Don't sort source input files on windows to
+	build metadata compatible assemblies on all platforms.
+
 2010-04-16  Raja R Harinath  <harinath@hurrynot.org>
 
 	* profiles/net_4_0_bootstrap.make (PROFILE_MCS_HAS_BOOTSTRAP_FALLBACK):

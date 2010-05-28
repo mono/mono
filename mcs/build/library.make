@@ -258,9 +258,17 @@ $(makefrag): $(sourcefile)
 	   echo '$(sourcefile).makefrag:' >> $@; fi
 
 ifneq ($(response),$(sourcefile))
+
+ifdef PLATFORM_excludes
 $(response): $(sourcefile) $(PLATFORM_excludes)
-	@echo Creating $@ ...
+	@echo Filtering $(sourcefile) to $@ ...
 	@sort $(sourcefile) $(PLATFORM_excludes) | uniq -u | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+else
+$(response): $(sourcefile)
+	@echo Converting $(sourcefile) to $@ ...
+	@cat $(sourcefile) | $(PLATFORM_CHANGE_SEPARATOR_CMD) >$@
+endif
+	
 endif
 
 -include $(makefrag)
