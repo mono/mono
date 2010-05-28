@@ -56,7 +56,7 @@ namespace System.ServiceModel.Dispatcher
 		MethodInfo sync_method, begin_method, end_method;
 		bool deserialize_reply = true, serialize_request = true;
 		bool is_initiating, is_terminating, is_oneway;
-		IClientMessageFormatter formatter, actual_formatter;
+		IClientMessageFormatter formatter;
 		SynchronizedCollection<IParameterInspector> inspectors
 			= new SynchronizedCollection<IParameterInspector> ();
 #if !NET_2_1

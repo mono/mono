@@ -54,7 +54,7 @@ namespace System.ServiceModel.Dispatcher
 			tx_auto_complete, tx_required,
 			auto_dispose_params = true;
 		ImpersonationOption impersonation;
-		IDispatchMessageFormatter formatter, actual_formatter;
+		IDispatchMessageFormatter formatter;
 		IOperationInvoker invoker;
 		SynchronizedCollection<IParameterInspector> inspectors
 			= new SynchronizedCollection<IParameterInspector> ();
@@ -120,7 +120,6 @@ namespace System.ServiceModel.Dispatcher
 			set {
 				ThrowIfOpened ();
 				formatter = value;
-				actual_formatter = null;
 			}
 		}
 
