@@ -189,6 +189,15 @@ namespace System.ServiceModel.Description
 			foreach (var fd in od.Faults)
 				o.FaultContractInfos.Add (new FaultContractInfo (fd.Action, fd.DetailType));
 #endif
+
+			// FIXME: at initialization time it does not seem to 
+			// fill default formatter. It should be filled after
+			// applying all behaviors. (Tthat causes regression, so
+			// I don't care little compatibility difference so far)
+			//
+			// FIXME: pass correct isRpc, isEncoded
+			o.Formatter = new OperationFormatter (od, false, false);
+
 			proxy.Operations.Add (o);
 		}
 	}

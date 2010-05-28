@@ -1,5 +1,9 @@
 2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ClientOperation.cs : do the same for client side too.
+
+2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DispatchOperation.cs : on callback channels ChannelDispatcher is
 	  not available. Wait for something like ClientRuntime.ChannelFactory.
 

@@ -518,7 +518,7 @@ namespace System.ServiceModel.MonoInternal
 				runtime.MessageInspectors [i].AfterReceiveReply (ref res, inspections [i]);
 
 			if (op.DeserializeReply)
-				return op.GetFormatter ().DeserializeReply (res, parameters);
+				return op.Formatter.DeserializeReply (res, parameters);
 			else
 				return res;
 		}
@@ -570,7 +570,7 @@ namespace System.ServiceModel.MonoInternal
 
 			Message msg;
 			if (op.SerializeRequest)
-				msg = op.GetFormatter ().SerializeRequest (
+				msg = op.Formatter.SerializeRequest (
 					version, parameters);
 			else {
 				if (parameters.Length != 1)
