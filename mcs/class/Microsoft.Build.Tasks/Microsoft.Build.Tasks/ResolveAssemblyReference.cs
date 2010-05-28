@@ -221,7 +221,8 @@ namespace Microsoft.Build.Tasks {
 				} else {
 					resolved = assembly_resolver.FindInDirectory (
 							item, spath,
-							allowedAssemblyExtensions ?? default_assembly_extensions);
+							allowedAssemblyExtensions ?? default_assembly_extensions,
+							specific_version);
 				}
 
 				if (resolved != null)
@@ -239,10 +240,13 @@ namespace Microsoft.Build.Tasks {
 			specific_version = true;
 			string value = item.GetMetadata ("SpecificVersion");
 			if (String.IsNullOrEmpty (value)) {
-				AssemblyName name = new AssemblyName (item.ItemSpec);
+				//AssemblyName name = new AssemblyName (item.ItemSpec);
 				// If SpecificVersion is not specified, then
 				// it is true if the Include is a strong name else false
-				specific_version = assembly_resolver.IsStrongNamed (name);
+				//specific_version = assembly_resolver.IsStrongNamed (name);
+
+				// msbuild seems to just look for a ',' in the name :/
+				specific_version = item.ItemSpec.IndexOf (',') >= 0;
 				return true;
 			}
 
@@ -460,7 +464,7 @@ namespace Microsoft.Build.Tasks {
 				return false;
 
 			// match for full name
-			if (AssemblyResolver.AssemblyNamesCompatible (key_aname, found_ref.AssemblyName, true))
+			if (AssemblyResolver.AssemblyNamesCompatible (key_aname, found_ref.AssemblyName, true, false))
 				// exact match, so its already there, dont add anything
 				return true;
 

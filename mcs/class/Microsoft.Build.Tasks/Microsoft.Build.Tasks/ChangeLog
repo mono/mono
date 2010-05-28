@@ -1,5 +1,24 @@
 2010-05-28  Ankit Jain  <jankit@novell.com>
 
+	* AssemblyResolver.cs (FindInDirectory): Add a 'specific_version'
+	parameter. Look for reference.{dll|exe} instead of checking all
+	files in the directory. Compare assembly names only if
+	specific_version is true.
+	(ResolveHintPathReference): Extract code to check and compare assembly
+	names to ..
+	(ResolvedReferenceFromPath): .. this.
+	(AssemblyNamesCompatible): Change default value of @specificVersion to
+	true.
+	Track api changes.
+	* ResolveAssemblyReference.cs (ResolveReference): Specify
+	'specific_version' in case of SearchPath.Directory.
+	(TryGetSpecificVersionValue): msbuild seems to look only for ',' in
+	the reference, instead of checking whether the assembly is strong
+	named.
+	(TryGetResolvedReferenceByAssemblyName): Track api changes.
+
+2010-05-28  Ankit Jain  <jankit@novell.com>
+
 	* AssemblyResolver.cs (PopulateTargetFrameworkAssemblies):
 	Handle invalid dll, add a null check.
 
