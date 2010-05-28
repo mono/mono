@@ -1,3 +1,9 @@
+2010-05-28  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #609049
+	* ecore.cs: Don't ignore override methods when looking for base
+	member.
+
 2010-05-27  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bugs #608007, #572540, #566130, #476358

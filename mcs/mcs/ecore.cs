@@ -3376,8 +3376,12 @@ namespace Mono.CSharp {
 		protected virtual IList<MemberSpec> GetBaseTypeMethods (ResolveContext rc, TypeSpec type)
 		{
 			var arity = type_arguments == null ? -1 : type_arguments.Count;
+			BindingRestriction restrictions = BindingRestriction.AccessibleOnly;
+			if (!is_base)
+				restrictions |= BindingRestriction.NoOverrides;
+
 			return TypeManager.MemberLookup (rc.CurrentType, null, type,
-				MemberKind.Method, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides,
+				MemberKind.Method, restrictions,
 				Name, arity, null);
 		}
 
