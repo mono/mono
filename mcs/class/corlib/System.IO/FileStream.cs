@@ -656,6 +656,7 @@ namespace System.IO
 			WriteInternal (array, offset, count);
 		}
 
+
 		void WriteInternal (byte [] src, int offset, int count)
 		{
 			if (count > buf_size) {
@@ -663,13 +664,16 @@ namespace System.IO
 				MonoIOError error;
 
 				FlushBuffer ();
-
-				MonoIO.Write (handle, src, offset, count, out error);
-				if (error != MonoIOError.ERROR_SUCCESS) {
-					// don't leak the path information for isolated storage
-					throw MonoIO.GetException (GetSecureFileName (name), error);
-				}
+				int wcount = count;
 				
+				while (wcount > 0){
+					int n = MonoIO.Write (handle, src, offset, wcount, out error);
+					if (error != MonoIOError.ERROR_SUCCESS)
+						throw MonoIO.GetException (GetSecureFileName (name), error);
+					
+					wcount -= n;
+					offset += n;
+				} 
 				buf_start += count;
 			} else {
 
