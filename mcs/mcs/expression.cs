@@ -3427,7 +3427,7 @@ namespace Mono.CSharp {
 			// but on top of that we want for == and != to use a special path
 			// if we are comparing against null
 			//
-			if ((oper == Operator.Equality || oper == Operator.Inequality) && (left is Constant || right is Constant)) {
+			if ((oper & Operator.EqualityMask) != 0 && (left is Constant || right is Constant)) {
 				bool my_on_true = oper == Operator.Inequality ? on_true : !on_true;
 				
 				//
@@ -3439,7 +3439,10 @@ namespace Mono.CSharp {
 					left = swap;
 				}
 				
-				if (((Constant) right).IsZeroInteger) {
+				//
+				// brtrue/brfalse works with native int only
+				//
+				if (((Constant) right).IsZeroInteger && right.Type != TypeManager.int64_type && right.Type != TypeManager.uint64_type) {
 					left.EmitBranchable (ec, target, my_on_true);
 					return;
 				}
@@ -3484,10 +3487,8 @@ namespace Mono.CSharp {
 				}
 				
 				return;
-				
-			} else if (!(oper == Operator.LessThan        || oper == Operator.GreaterThan ||
-			             oper == Operator.LessThanOrEqual || oper == Operator.GreaterThanOrEqual ||
-			             oper == Operator.Equality        || oper == Operator.Inequality)) {
+
+			} else if ((oper & Operator.ComparisonMask) == 0) {
 				base.EmitBranchable (ec, target, on_true);
 				return;
 			}

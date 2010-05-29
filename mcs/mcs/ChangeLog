@@ -1,3 +1,9 @@
+2010-05-29  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #610126
+	* expression.cs: Don't use branch optimization for types bigger than
+	int.
+
 2010-05-28  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #609088
