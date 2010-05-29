@@ -27,7 +27,7 @@
 //
 using System;
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 namespace System.Runtime.Versioning
 {
 	[AttributeUsageAttribute(AttributeTargets.Assembly, AllowMultiple = false, Inherited = false)]

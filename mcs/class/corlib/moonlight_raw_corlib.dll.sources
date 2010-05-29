@@ -848,6 +848,7 @@ System.Runtime.Serialization.Formatters.Binary/ObjectWriter.cs
 System.Runtime.Serialization.Formatters.Binary/MessageFormatter.cs
 System.Runtime.Versioning/ResourceExposureAttribute.cs
 System.Runtime.Versioning/ResourceScope.cs
+System.Runtime.Versioning/TargetFrameworkAttribute.cs
 System.Runtime.Versioning/VersioningHelper.cs
 System.Security/AllowPartiallyTrustedCallersAttribute.cs
 System.Security/CodeAccessPermission_2_1.cs
