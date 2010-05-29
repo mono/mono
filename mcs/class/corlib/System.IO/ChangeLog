@@ -1,3 +1,7 @@
+2010-05-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* FileStream.cs: backport of Miguel's r145271 that fixes bug #531613.
+
 2010-03-17 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* StreamReader.cs: if the detected encoding is different from the
