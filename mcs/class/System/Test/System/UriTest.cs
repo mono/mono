@@ -1844,6 +1844,13 @@ namespace MonoTests.System
 		}
 
 
+		[Test]
+		public void ConsecutiveSlashes ()
+		{
+			Uri uri = new Uri ("http://media.libsyn.com/bounce/http://cdn4.libsyn.com/nerdist/somestuff.txt");
+			Assert.AreEqual ("http://media.libsyn.com/bounce/http://cdn4.libsyn.com/nerdist/somestuff.txt", uri.ToString ());
+		}
+
 		public class DerivedUri : Uri
 		{
 			public DerivedUri (string uriString) : base (uriString)
