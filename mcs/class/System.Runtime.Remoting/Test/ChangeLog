@@ -1,3 +1,7 @@
+2010-05-29  Robert Jordan  <robertj@gmx.net>
+
+	* IpcChannelTest.cs: Add test for bug #609381.
+
 2010-02-28  Robert Jordan  <robertj@gmx.net>
 
 	* BaseCalls.cs: Enable tests again. See bug #576618.

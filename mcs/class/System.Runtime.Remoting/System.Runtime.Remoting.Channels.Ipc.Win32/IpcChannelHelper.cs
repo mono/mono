@@ -117,18 +117,25 @@ namespace System.Runtime.Remoting.Channels.Ipc.Win32
         /// <summary>
         /// Copies a stream.
         /// </summary>
-        /// <param name="from"></param>
-        /// <param name="to"></param>
-        public static void Copy(Stream from, Stream to) 
+        /// <param name="input"></param>
+        /// <param name="output"></param>
+        public static void Copy(Stream input, Stream output) 
         {
+            MemoryStream ms = input as MemoryStream;
+	    if (ms != null)
+	    {
+	        ms.WriteTo (output);
+		return;
+	    }
+
             // TODO: find out the optimal chunk size.
             const int size = 1024 * 1024;
             byte[] buffer = new byte[size];
 
             int count;
-            while ((count = from.Read(buffer, 0, size)) > 0)
+            while ((count = input.Read(buffer, 0, size)) > 0)
             {
-                to.Write(buffer, 0, count);
+                output.Write(buffer, 0, count);
             }
         }
 

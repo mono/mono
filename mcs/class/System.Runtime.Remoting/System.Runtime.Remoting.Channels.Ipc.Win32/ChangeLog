@@ -1,3 +1,11 @@
+2010-05-29  Robert Jordan  <robertj@gmx.net>
+
+	* IpcChannelHelper.cs (copy): Take into account that the remoting
+	stack is internally using MemoryStreams all over the place.
+	Fixes bug #609381 as a side effect.
+
+	* IpcChannel.cs (.ctor): Create an IpcClientChannel as well.
+
 2005-11-05  Robert Jordan  <robertj@gmx.net>
 
 	* IpcClientChannel.cs, IpcServerChannel.cs: Added missing ctors.
