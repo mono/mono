@@ -1,3 +1,8 @@
+2010-05-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Uri.cs: Leave consecutive slashes in 'path' alone.
+	Fix for bug #606142. Backport once tested.
+
 2010-05-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Uri.cs : do not reject relative URIs that contain ':' and

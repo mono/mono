@@ -1,3 +1,7 @@
+2010-05-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* UriTest.cs: test for bug #606142.
+
 2010-05-24  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* UriTest.cs : more URI tests, for relative URIs with ':'.

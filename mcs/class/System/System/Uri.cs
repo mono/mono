@@ -1563,14 +1563,16 @@ namespace System {
 
 			ArrayList result = new ArrayList ();
 
+			bool begin = true;
 			for (int startpos = 0; startpos < path.Length; ) {
 				int endpos = path.IndexOf('/', startpos);
 				if (endpos == -1) endpos = path.Length;
 				string current = path.Substring (startpos, endpos-startpos);
 				startpos = endpos + 1;
-				if (current.Length == 0 || current == "." )
+				if ((begin && current.Length == 0) || current == "." )
 					continue;
 
+				begin = false;
 				if (current == "..") {
 					int resultCount = result.Count;
 					// in 2.0 profile, skip leading ".." parts
