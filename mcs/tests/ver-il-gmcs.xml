@@ -13529,7 +13529,7 @@
         <size>26</size>
       </method>
       <method name="Int32 Main()">
-        <size>568</size>
+        <size>572</size>
       </method>
     </type>
     <type name="Test+&lt;For&gt;c__AnonStorey0`1[T]">
@@ -32487,7 +32487,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>1120</size>
+        <size>1126</size>
       </method>
     </type>
   </test>
@@ -35460,7 +35460,7 @@
         <size>102</size>
       </method>
       <method name="Int32 Main()">
-        <size>55</size>
+        <size>57</size>
       </method>
     </type>
   </test>
@@ -39636,6 +39636,64 @@
     <type name="MediaStore+Thing">
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-778.cs">
+    <type name="A">
+      <method name="Int32 Test()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Int32 Test()">
+        <size>12</size>
+      </method>
+      <method name="Void Test(System.Object[])">
+        <size>1</size>
+      </method>
+      <method name="Void Test(System.Object[], System.String)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void Test(System.Object[], System.String)">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="D">
+      <method name="Int32 Test()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="T">
+      <method name="Int32 Main()">
+        <size>22</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-779.cs">
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>20</size>
+      </method>
+      <method name="Boolean test1(Int64, Int64)">
+        <size>14</size>
       </method>
     </type>
   </test>
