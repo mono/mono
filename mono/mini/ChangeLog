@@ -1,3 +1,7 @@
+2010-05-30  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (create_jit_info): Print EH clause info for LLVM too.
+
 2010-05-28  Mark Probst  <mark.probst@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Emit a write barrier for
