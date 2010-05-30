@@ -1,5 +1,14 @@
 2010-05-30  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-amd64.c (get_throw_trampoline): Fix the xdebug name of the corlib
+	trampoline.
+
+	* exceptions-x86.c (mono_arch_exceptions_init): Create an llvm rethrow trampoline too.
+
+	* mini-llvm.c (mono_llvm_emit_method): Implement OP_RETHROW.
+
+	* method-to-ir.c (mono_method_to_ir): Emit a OP_NOT_REACHED after a rethrow.
+
 	* mini-llvm.c (emit_call): Compute the containing try clause correctly for nested
 	clauses.
 
