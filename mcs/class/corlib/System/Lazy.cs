@@ -164,31 +164,6 @@ namespace System
 				throw new InvalidOperationException ("Invalid LazyThreadSafetyMode " + mode);
 			}
 
-			if (monitor == null) {
-				value = factory ();
-				inited = true;
-			} else {
-				lock (monitor) {
-					if (inited)
-						return value;
-
-					if (factory == null)
-						throw new InvalidOperationException ("The initialization function tries to access Value on this instance");
-
-					var init_factory = factory;
-					try {
-						factory = null;
-						T v = init_factory ();
-						value = v;
-						Thread.MemoryBarrier ();
-						inited = true;
-					} catch {
-						factory = init_factory;
-						throw;
-					}
-				}
-			}
-
 			return value;
 		}
 
