@@ -1,3 +1,9 @@
+2010-05-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageTest.cs:
+	* IsolatedStorageFileTest.cs: New tests for AvailableFreeSpace, Quota,
+	UsedSize and IncreaseQuotaTo.
+
 2010-05-27  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFileTest.cs: New test case for CopyFile.

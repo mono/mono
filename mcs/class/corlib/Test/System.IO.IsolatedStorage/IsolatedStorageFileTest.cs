@@ -504,6 +504,54 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 
 #if NET_4_0
 		[Test]
+		public void UsedSize ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			IsolatedStorageFileStream isfs = isf.CreateFile ("file");
+			StreamWriter writer = new StreamWriter (isfs);
+			writer.WriteLine ("hello mono");
+			writer.Close ();
+
+			Assert.AreEqual (true, isf.UsedSize > 0, "#A0");
+
+			isf.Close ();
+			try {
+				Console.WriteLine (isf.UsedSize);
+				Assert.Fail ("#Exc1");
+			} catch (InvalidOperationException) {
+			}
+
+			isf.Dispose ();
+			try {
+				Console.WriteLine (isf.UsedSize);
+				Assert.Fail ("#Exc2");
+			} catch (ObjectDisposedException) {
+			}
+		}
+
+		[Test]
+		public void IncreateQuotaTo ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+
+			try {
+				isf.IncreaseQuotaTo (-2);
+				Assert.Fail ("#Exc1");
+			} catch (ArgumentException) {
+			}
+
+			// I wonder how this behaves on some systems
+			try {
+				isf.IncreaseQuotaTo (100);
+				Assert.Fail ("#Exc2");
+			} catch (ArgumentException) {
+			}
+
+			// Since 'Quota' seems to be returning Int64.MaxValue, we cannot truly test against a value
+			// larger than that.
+		}
+
+		[Test]
 		public void DirectoryExists ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();

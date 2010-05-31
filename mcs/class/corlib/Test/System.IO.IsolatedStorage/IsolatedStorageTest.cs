@@ -224,5 +224,40 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
 			ulong ul = nais.MaximumSize;
 		}
+
+#if NET_4_0
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void IsolatedStorage_UsedSize ()
+		{
+			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
+			Console.WriteLine (nais.UsedSize);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void IsolatedStorage_AvailableFreeSpace ()
+		{
+			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
+			Console.WriteLine (nais.AvailableFreeSpace);
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		public void IsolatedStorage_Quota ()
+		{
+			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
+			Console.WriteLine (nais.Quota);
+		}
+
+		[Test]
+		public void IsolatedStorage_IncreaseQuotaTo ()
+		{
+			NonAbstractIsolatedStorage nais = new NonAbstractIsolatedStorage ();
+			Assert.AreEqual (false, nais.IncreaseQuotaTo (-10), "#A0");
+			Assert.AreEqual (false, nais.IncreaseQuotaTo (0), "#A1");
+			Assert.AreEqual (false, nais.IncreaseQuotaTo (100), "#A2");
+		}
+#endif
 	}
 }
