@@ -1414,12 +1414,17 @@ namespace MonoTests.System.Runtime.Serialization
 			root.FDict.Add (foo2);
 
 			ds.WriteObject (ms, root);
-			Console.WriteLine (Encoding.UTF8.GetString (ms.ToArray ()));
+			string result = Encoding.UTF8.GetString (ms.ToArray ());
 			ms.Position = 0;
 
 			root = (Root) ds.ReadObject (ms);
 
 			Assert.AreEqual (2, root.FDict.Count, "#1");
+			int idx = result.IndexOf ("foo1");
+			Assert.IsTrue (idx >= 0, "#2");
+			// since "foo1" is stored as z:Ref for string, it must not occur twice.
+			int idx2 = result.IndexOf ("foo1", idx + 1);
+			Assert.IsTrue (idx2 < 0, "idx2 should not occur at " + idx2);
 		}
 	}
 	

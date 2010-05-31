@@ -322,7 +322,7 @@ namespace System.Runtime.Serialization
 
 			XmlFormatterSerializer.Serialize (writer, graph,
 				known_types,
-				ignore_ext, max_items, root_ns.Value);
+				ignore_ext, max_items, root_ns.Value, preserve_refs);
 
 			// remove temporarily-added known types for
 			// rootType and object graph type.

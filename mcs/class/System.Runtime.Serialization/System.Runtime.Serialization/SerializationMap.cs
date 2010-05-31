@@ -296,16 +296,9 @@ namespace System.Runtime.Serialization
 		public virtual void Serialize (object graph,
 			XmlFormatterSerializer serializer)
 		{
-			string label = null;
-			if (IsReference) {
-				label = (string) serializer.References [graph];
-				if (label != null) {
-					serializer.Writer.WriteAttributeString ("z", "Ref", KnownTypeCollection.MSSimpleNamespace, label);
-					return;
-				}
-				label = "i" + (serializer.References.Count + 1);
-				serializer.References.Add (graph, label);
-			}
+			string label;
+			if (serializer.TrySerializeAsReference (IsReference, graph, out label))
+				return;
 			else if (serializer.SerializingObjects.Contains (graph))
 				throw new SerializationException (String.Format ("Circular reference of an object in the object graph was found: '{0}' of type {1}", graph, graph.GetType ()));
 			serializer.SerializingObjects.Add (graph);

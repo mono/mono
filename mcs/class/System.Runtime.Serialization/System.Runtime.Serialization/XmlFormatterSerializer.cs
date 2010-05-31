@@ -54,21 +54,24 @@ namespace System.Runtime.Serialization
 
 		public static void Serialize (XmlDictionaryWriter writer, object graph,
 			KnownTypeCollection types,
-			bool ignoreUnknown, int maxItems, string root_ns)
+			bool ignoreUnknown, int maxItems, string root_ns, bool preserveObjectReferences)
 		{
-			new XmlFormatterSerializer (writer, types, ignoreUnknown, maxItems, root_ns)
+			new XmlFormatterSerializer (writer, types, ignoreUnknown, maxItems, root_ns, preserveObjectReferences)
 				.Serialize (graph != null ? graph.GetType () : null, graph);
 		}
 
 		public XmlFormatterSerializer (XmlDictionaryWriter writer,
 			KnownTypeCollection types,
-			bool ignoreUnknown, int maxItems, string root_ns)
+			bool ignoreUnknown, int maxItems, string root_ns, bool preserveObjectReferences)
 		{
 			this.writer = writer;
 			this.types = types;
 			ignore_unknown = ignoreUnknown;
 			max_items = maxItems;
+			PreserveObjectReferences = preserveObjectReferences;
 		}
+
+		public bool PreserveObjectReferences { get; private set; }
 
 		public ArrayList SerializingObjects {
 			get { return objects; }
@@ -127,6 +130,12 @@ namespace System.Runtime.Serialization
 
 		public void SerializePrimitive (Type type, object graph, QName qname)
 		{
+			string label;
+			if (TrySerializeAsReference (false, graph, out label))
+				return;
+			if (label != null)
+				Writer.WriteAttributeString ("z", "Id", KnownTypeCollection.MSSimpleNamespace, label);
+
 //			writer.WriteStartAttribute ("type", XmlSchema.InstanceNamespace);
 //			writer.WriteQualifiedName (qname.Name, qname.Namespace);
 //			writer.WriteEndAttribute ();
@@ -143,6 +152,27 @@ namespace System.Runtime.Serialization
 		public void WriteEndElement ()
 		{
 			writer.WriteEndElement ();
+		}
+
+		// returned bool: whether z:Ref is written or not.
+		// out label: object label either in use or newly allocated.
+		public bool TrySerializeAsReference (bool isMapReference, object graph, out string label)
+		{
+			label = null;
+			if (!isMapReference && (!PreserveObjectReferences || graph == null || graph.GetType ().IsValueType))
+				return false;
+
+			label = (string) References [graph];
+			if (label != null) {
+				Writer.WriteAttributeString ("z", "Ref", KnownTypeCollection.MSSimpleNamespace, label);
+				label = null; // do not write label
+				return true;
+			}
+
+			label = "i" + (References.Count + 1);
+			References.Add (graph, label);
+
+			return false;
 		}
 	}
 }

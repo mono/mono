@@ -1,5 +1,13 @@
 2010-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* SerializationMap.cs, XmlFormatterSerializer.cs,
+	  DataContractSerializer.cs :
+	  support DataContractSerializer.PreserveObjectReferences. z:Ref
+	  attributes are used not only for objects with IsReference=true.
+	  Fixed bug #610036.
+
+2010-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* SerializationMap.cs, KnownTypeCollection.cs : contract namespace
 	  should be still considered even if contract (local) name is null.
 	  Fix crash for generic derived type of dictionary. Fixed the

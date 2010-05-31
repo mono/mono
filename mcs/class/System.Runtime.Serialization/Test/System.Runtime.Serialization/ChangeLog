@@ -1,5 +1,9 @@
 2010-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlObjectSerializerTest.cs : test PreserveObjectReferences too.
+
+2010-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlObjectSerializerTest.cs : add test for bug #610036.
 
 2010-04-28  Atsushi Enomoto  <atsushi@ximian.com>
