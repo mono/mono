@@ -1,3 +1,8 @@
+2010-05-31  Miguel de Icaza  <miguel@novell.com>
+
+	* console-unix.c (terminal_get_dimensions): Fix my previous
+	botched commit and return the actual value obtained from the ioctl.
+
 2010-05-29  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c: Always use DESC_TYPE_RUN_LENGTH for objects without
