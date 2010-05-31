@@ -48,6 +48,7 @@ namespace MonoTests.System
 			new Lazy<int> (null);
 		}
 
+
 		[Test]
 		[ExpectedException (typeof (ArgumentNullException))]
 		public void Ctor_Null_2 () {
@@ -258,6 +259,17 @@ namespace MonoTests.System
 				Assert.Fail ("#8");
 			} catch (InvalidOperationException ex) { }
 		}
+
+		static int Return22 () {
+			return 22;
+		}
+
+		[Test]
+		public void Trivial_Lazy () {
+			var x = new Lazy<int> (Return22, false);
+			Assert.AreEqual (22, x.Value, "#1");
+		}
+
 	}
 }
 
