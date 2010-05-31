@@ -456,6 +456,37 @@ namespace System.IO.IsolatedStorage {
 
 #if NET_4_0
 		[ComVisible (false)]
+		public override long AvailableFreeSpace {
+			get {
+				CheckOpen ();
+
+				// See the notes for 'Quota'
+				return Int64.MaxValue;
+
+			}
+		}
+
+		[ComVisible (false)]
+		public override long Quota {
+			get {
+				CheckOpen ();
+
+				// Since we don't fully support CAS, we are likely
+				// going to return Int64.MaxValue always, but we return
+				// MaximumSize just in case.
+				return (long)MaximumSize;
+			}
+		}
+
+		[ComVisible (false)]
+		public override long UsedSize {
+			get {
+				CheckOpen ();
+				return (long)GetDirectorySize (directory);
+			}
+		}
+
+		[ComVisible (false)]
 		public static bool IsEnabled {
 			get {
 				return true;
@@ -727,6 +758,18 @@ namespace System.IO.IsolatedStorage {
 		public string [] GetFileNames ()
 		{
 			return GetFileNames ("*");
+		}
+
+		[ComVisible (false)]
+		public override bool IncreaseQuotaTo (long newQuotaSize)
+		{
+			if (newQuotaSize < Quota)
+				throw new ArgumentException ();
+
+			CheckOpen ();
+
+			// .Net is supposed to be returning false, as mentioned in the docs.
+			return false;
 		}
 
 		[ComVisible (false)]

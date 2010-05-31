@@ -119,6 +119,29 @@ namespace System.IO.IsolatedStorage {
 			get { return storage_scope; }
 		}
 
+#if NET_4_0
+		[ComVisible (false)]
+		public virtual long AvailableFreeSpace {
+			get {
+				throw new InvalidOperationException ("This property is not defined for this store.");
+			}
+		}
+
+		[ComVisible (false)]
+		public virtual long Quota {
+			get {
+				throw new InvalidOperationException ("This property is not defined for this store.");
+			}
+		}
+
+		[ComVisible (false)]
+		public virtual long UsedSize {
+			get {
+				throw new InvalidOperationException ("This property is not defined for this store.");
+			}
+		}
+#endif
+
 		protected virtual char SeparatorExternal {
 			get { return System.IO.Path.DirectorySeparatorChar; }
 		}
@@ -157,6 +180,14 @@ namespace System.IO.IsolatedStorage {
 			storage_scope = scope;
 		}
 		public abstract void Remove ();
+
+#if NET_4_0
+		[ComVisible (false)]
+		public virtual bool IncreaseQuotaTo (long newQuotaSize)
+		{
+			return false;
+		}
+#endif
 	}
 }
 /* MOONLIGHT */
