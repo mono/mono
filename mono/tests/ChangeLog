@@ -1,5 +1,14 @@
 2010-05-31  Robert Jordan  <robertj@gmx.net>
 
+	* pinvoke2.cs (test_0_calli_dynamic): Use the cdecl version
+	of mono_test_marshal_inout_array. Fixes the test when compiled
+	with MSC (and GCC where it worked by accident).
+
+	* libtest.c (mono_test_marshal_inout_array_cdecl):
+	New. cdecl wrapper for the function with the same name.
+
+2010-05-31  Robert Jordan  <robertj@gmx.net>
+
 	* libtest.c (mono_test_marshal_lookup_symbol): Export as STDCALL because
 	it's DllImported from pinvoke2.
 
