@@ -1,3 +1,7 @@
+2010-05-31  Zoltan Varga  <vargaz@gmail.com>
+
+	* aot-compiler.c (patch_to_string): New debugging helper function.
+
 2010-05-30  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-amd64.c (get_throw_trampoline): Fix the xdebug name of the corlib
