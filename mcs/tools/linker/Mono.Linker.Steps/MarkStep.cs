@@ -279,9 +279,17 @@ namespace Mono.Linker.Steps {
 			if (slotType.FullName != Constants.Type)
 				return;
 
-			TypeDefinition type = _context.GetType ((string) value);
+			string type_name = (string) value;
 
-			MarkType (type);
+			try {
+				var type = TypeParser.ParseType (slotType.Module, type_name);
+				if (type == null)
+					return;
+
+				MarkType (type);
+			} catch {
+				return;
+			}
 		}
 
 		protected static bool CheckProcessed (IAnnotationProvider provider)
