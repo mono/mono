@@ -100,15 +100,19 @@ namespace System
 			}
 		}
 
-		T InitValue () {
+		T InitValue ()
+		{
+			Func<T> init_factory;
+			T v;
+			
 			switch (mode) {
-			case LazyThreadSafetyMode.None: {
-				var init_factory = factory;
+			case LazyThreadSafetyMode.None:
+				init_factory = factory;
 				if (init_factory == null) 
 					throw exception = new InvalidOperationException ("The initialization function tries to access Value on this instance");
 				try {
 					factory = null;
-					T v = init_factory ();
+					v = init_factory ();
 					value = v;
 					Thread.MemoryBarrier ();
 					inited = true;
@@ -117,10 +121,9 @@ namespace System
 					throw;
 				}
 				break;
-			} 
-			case LazyThreadSafetyMode.PublicationOnly: {
-				var init_factory = factory;
-				T v;
+
+			case LazyThreadSafetyMode.PublicationOnly:
+				init_factory = factory;
 
 				//exceptions are ignored
 				if (init_factory != null)
@@ -137,8 +140,8 @@ namespace System
 					factory = null;
 				}
 				break;
-			}
-			case LazyThreadSafetyMode.ExecutionAndPublication: {
+
+			case LazyThreadSafetyMode.ExecutionAndPublication:
 				lock (monitor) {
 					if (inited)
 						return value;
@@ -146,10 +149,10 @@ namespace System
 					if (factory == null)
 						throw exception = new InvalidOperationException ("The initialization function tries to access Value on this instance");
 
-					var init_factory = factory;
+					init_factory = factory;
 					try {
 						factory = null;
-						T v = init_factory ();
+						v = init_factory ();
 						value = v;
 						Thread.MemoryBarrier ();
 						inited = true;
@@ -159,7 +162,7 @@ namespace System
 					}
 				}
 				break;
-			}
+
 			default:
 				throw new InvalidOperationException ("Invalid LazyThreadSafetyMode " + mode);
 			}
