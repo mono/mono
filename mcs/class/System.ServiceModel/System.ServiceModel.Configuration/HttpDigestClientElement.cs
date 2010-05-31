@@ -54,7 +54,6 @@ using System.Xml;
 
 namespace System.ServiceModel.Configuration
 {
-	[MonoTODO]
 	public sealed partial class HttpDigestClientElement
 		 : ConfigurationElement
 	{
@@ -66,7 +65,7 @@ namespace System.ServiceModel.Configuration
 		{
 			properties = new ConfigurationPropertyCollection ();
 			impersonation_level = new ConfigurationProperty ("impersonationLevel",
-				typeof (TokenImpersonationLevel), "Identification", null/* FIXME: get converter for TokenImpersonationLevel*/, null,
+				typeof (TokenImpersonationLevel), "Identification", null, null,
 				ConfigurationPropertyOptions.None);
 
 			properties.Add (impersonation_level);
@@ -76,12 +75,11 @@ namespace System.ServiceModel.Configuration
 		{
 		}
 
-
 		// Properties
 
 		[ConfigurationProperty ("impersonationLevel",
 			 Options = ConfigurationPropertyOptions.None,
-			 DefaultValue = "Identification")]
+			 DefaultValue = TokenImpersonationLevel.Identification)]
 		public TokenImpersonationLevel ImpersonationLevel {
 			get { return (TokenImpersonationLevel) base [impersonation_level]; }
 			set { base [impersonation_level] = value; }
@@ -90,8 +88,6 @@ namespace System.ServiceModel.Configuration
 		protected override ConfigurationPropertyCollection Properties {
 			get { return properties; }
 		}
-
-
 	}
 
 }

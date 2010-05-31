@@ -1,3 +1,8 @@
+2010-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientCredentialsElement.cs, HttpDigestClientElement.cs,
+	  ConfigUtil.cs : implement ClientCredentialsElement.CreateBehavior().
+
 2010-04-05  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BaseAddressPrefixFilterElementCollection.cs

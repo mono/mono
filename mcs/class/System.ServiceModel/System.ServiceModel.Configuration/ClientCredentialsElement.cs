@@ -40,6 +40,8 @@ using System.Security.Principal;
 using System.IdentityModel.Claims;
 using System.IdentityModel.Policy;
 using System.IdentityModel.Tokens;
+using System.IdentityModel.Selectors;
+using System.Security.Cryptography.X509Certificates;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
@@ -72,6 +74,7 @@ namespace System.ServiceModel.Configuration
 			get { return (X509InitiatorCertificateClientElement) base ["clientCertificate"]; }
 		}
 
+		[MonoTODO]
 		[ConfigurationProperty ("httpDigest",
 			 Options = ConfigurationPropertyOptions.None)]
 		public HttpDigestClientElement HttpDigest {
@@ -138,11 +141,72 @@ namespace System.ServiceModel.Configuration
 			get { return (WindowsClientElement) base ["windows"]; }
 		}
 
-		[MonoTODO]
-		protected internal override object CreateBehavior () {
-			throw new NotImplementedException ();
+		protected internal override object CreateBehavior ()
+		{
+			var cb = new ClientCredentials ();
+			cb.SupportInteractive = SupportInteractive;
+			// how is "Type" used?
+
+			// ClientCertificate
+			if (!String.IsNullOrEmpty (ClientCertificate.FindValue))
+				cb.ClientCertificate.SetCertificate (ClientCertificate.StoreLocation, ClientCertificate.StoreName, ClientCertificate.X509FindType, ClientCertificate.FindValue);
+
+			// HttpDigest
+			if (HttpDigest.ImpersonationLevel != TokenImpersonationLevel.None)
+				throw new NotImplementedException ();
+
+			// IssuedToken
+			var bi = cb.IssuedToken;
+			var ci = IssuedToken;
+			bi.CacheIssuedTokens = ci.CacheIssuedTokens;
+			bi.DefaultKeyEntropyMode = ci.DefaultKeyEntropyMode;
+			bi.IssuedTokenRenewalThresholdPercentage = ci.IssuedTokenRenewalThresholdPercentage;
+			foreach (IssuedTokenClientBehaviorsElement ccb in ci.IssuerChannelBehaviors)
+				bi.IssuerChannelBehaviors.Add (new Uri (ccb.IssuerAddress, UriKind.RelativeOrAbsolute), ConfigUtil.CreateEndpointBehaviors (ccb.BehaviorConfiguration));
+			bi.LocalIssuerAddress = ci.LocalIssuer.CreateInstance ();
+			bi.LocalIssuerBinding = ConfigUtil.CreateBinding (ci.LocalIssuer.Binding, ci.LocalIssuer.BindingConfiguration);
+			bi.MaxIssuedTokenCachingTime = ci.MaxIssuedTokenCachingTime;
+
+			// Peer
+			if (!String.IsNullOrEmpty (Peer.Certificate.FindValue))
+				cb.Peer.SetCertificate (Peer.Certificate.StoreLocation, Peer.Certificate.StoreName, Peer.Certificate.X509FindType, Peer.Certificate.FindValue);
+			// cb.Peer.MeshPassword = /* cannot fill it here */
+			cb.Peer.MessageSenderAuthentication.CustomCertificateValidator = (X509CertificateValidator) CreateInstance (Peer.MessageSenderAuthentication.CustomCertificateValidatorType);
+			cb.Peer.MessageSenderAuthentication.CertificateValidationMode = Peer.MessageSenderAuthentication.CertificateValidationMode;
+			cb.Peer.MessageSenderAuthentication.RevocationMode = Peer.MessageSenderAuthentication.RevocationMode;
+			cb.Peer.MessageSenderAuthentication.TrustedStoreLocation = Peer.MessageSenderAuthentication.TrustedStoreLocation;
+			cb.Peer.PeerAuthentication.CustomCertificateValidator = (X509CertificateValidator) CreateInstance (Peer.PeerAuthentication.CustomCertificateValidatorType);
+			cb.Peer.PeerAuthentication.CertificateValidationMode = Peer.PeerAuthentication.CertificateValidationMode;
+			cb.Peer.PeerAuthentication.RevocationMode = Peer.PeerAuthentication.RevocationMode;
+			cb.Peer.PeerAuthentication.TrustedStoreLocation = Peer.PeerAuthentication.TrustedStoreLocation;
+
+			// ServiceCertificate
+			var bsc = cb.ServiceCertificate;
+			var csc = ServiceCertificate;
+			var bsca = bsc.Authentication;
+			var csca = csc.Authentication;
+			bsc.DefaultCertificate = csc.DefaultCertificate.CreateInstance ();
+			bsca.CertificateValidationMode = csca.CertificateValidationMode;
+			if (csca.CustomCertificateValidatorType != null)
+				bsca.CustomCertificateValidator = (X509CertificateValidator) CreateInstance (csca.CustomCertificateValidatorType);
+			bsca.RevocationMode = csca.RevocationMode;
+			bsca.TrustedStoreLocation = csca.TrustedStoreLocation;
+			foreach (X509ScopedServiceCertificateElement sce in ServiceCertificate.ScopedCertificates)
+				bsc.ScopedCertificates.Add (sce.TargetUri, sce.CreateInstance ());
+
+			// cb.UserNamePassword : not configurable ...
+
+			// Windows
+			cb.Windows.AllowedImpersonationLevel = Windows.AllowedImpersonationLevel;
+			cb.Windows.AllowNtlm = Windows.AllowNtlm;
+
+			return cb;
 		}
 
+		object CreateInstance (string typeName)
+		{
+			return String.IsNullOrEmpty (typeName) ? null : Activator.CreateInstance (System.Type.GetType (typeName, true));
+		}
 	}
 
 }
