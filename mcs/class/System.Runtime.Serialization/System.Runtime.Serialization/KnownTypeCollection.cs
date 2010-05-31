@@ -485,7 +485,7 @@ namespace System.Runtime.Serialization
 			return GetContractQName (type, null, null);
 		}
 
-		static QName GetContractQName (Type type)
+		internal static QName GetContractQName (Type type)
 		{
 			var a = GetAttribute<DataContractAttribute> (type);
 			return a == null ? null : GetContractQName (type, a.Name, a.Namespace);
@@ -499,16 +499,8 @@ namespace System.Runtime.Serialization
 
 		static QName GetContractQName (Type type, string name, string ns)
 		{
-			if (name == null) {
-				// FIXME: there could be decent ways to get 
-				// the same result...
-				name = type.Namespace == null || type.Namespace.Length == 0 ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
-				if (type.IsGenericType) {
-					name = name.Substring (0, name.IndexOf ('`')) + "Of";
-					foreach (var t in type.GetGenericArguments ())
-						name += t.Name; // FIXME: check namespaces too
-				}
-			}
+			if (name == null)
+				name = GetDefaultName (type);
 			if (ns == null)
 				ns = GetDefaultNamespace (type);
 			return new QName (name, ns);
@@ -537,7 +529,20 @@ namespace System.Runtime.Serialization
 			return new QName (name, ns);
 		}
 
-		static string GetDefaultNamespace (Type type)
+		internal static string GetDefaultName (Type type)
+		{
+			// FIXME: there could be decent ways to get 
+			// the same result...
+			string name = type.Namespace == null || type.Namespace.Length == 0 ? type.Name : type.FullName.Substring (type.Namespace.Length + 1).Replace ('+', '.');
+			if (type.IsGenericType) {
+				name = name.Substring (0, name.IndexOf ('`')) + "Of";
+				foreach (var t in type.GetGenericArguments ())
+					name += t.Name; // FIXME: check namespaces too
+			}
+			return name;
+		}
+
+		internal static string GetDefaultNamespace (Type type)
 		{
 			foreach (ContractNamespaceAttribute a in type.Assembly.GetCustomAttributes (typeof (ContractNamespaceAttribute), true))
 				if (a.ClrNamespace == type.Namespace)
@@ -602,16 +607,16 @@ namespace System.Runtime.Serialization
 			if (RegisterEnum (type) != null)
 				return true;
 
-			if (RegisterContract (type) != null)
-				return true;
-
-			if (RegisterIXmlSerializable (type) != null)
-				return true;
-
 			if (RegisterDictionary (type) != null)
 				return true;
 
 			if (RegisterCollectionContract (type) != null)
+				return true;
+
+			if (RegisterContract (type) != null)
+				return true;
+
+			if (RegisterIXmlSerializable (type) != null)
 				return true;
 
 			if (RegisterCollection (type) != null)

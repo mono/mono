@@ -1387,8 +1387,42 @@ namespace MonoTests.System.Runtime.Serialization
 				ds.WriteObject (xw, person);
 			Assert.AreEqual (xml, sw.ToString ().Replace ('"', '\''), "#1");
 		}
-	}
 
+		[Test]
+		public void Bug610036 ()
+		{
+			var ms = new MemoryStream ();
+			Type [] knownTypes = new Type [] { typeof (ParentClass), typeof (Foo), typeof (Bar) };
+
+            		var ds = new DataContractSerializer (typeof (Root), "Root", "Company.Foo", knownTypes, 1000, false, true, null);
+
+			var root = new Root ("root");
+			var bar1 = new Bar ("bar1");
+			var bar2 = new Bar ("bar2");
+			var bar3 = new Bar ("bar3");
+			
+			var foo1 = new Foo ("foo1");
+			var foo2 = new Foo ("foo2");
+			
+			foo1.FDict.Add (bar1);
+			foo1.FDict.Add (bar2);
+			
+			foo2.FDict.Add (bar1);
+			foo2.FDict.Add (bar3);
+			
+			root.FDict.Add (foo1);
+			root.FDict.Add (foo2);
+
+			ds.WriteObject (ms, root);
+			Console.WriteLine (Encoding.UTF8.GetString (ms.ToArray ()));
+			ms.Position = 0;
+
+			root = (Root) ds.ReadObject (ms);
+
+			Assert.AreEqual (2, root.FDict.Count, "#1");
+		}
+	}
+	
 	[DataContract]
 	public class MemberIgnored
 	{
@@ -1789,3 +1823,78 @@ namespace U2U.DataContracts
 		public string Description { get; set; }
 	}
 }
+
+#region bug #610036
+//parent class with a name property
+[DataContract (Namespace = "Company.Foo")]
+public abstract class ParentClass
+{
+	
+	//constructor
+	public ParentClass (string name)
+	{
+		Name = name;
+	}
+	
+	//the name
+	[DataMember]
+	public string Name{ get; set; }
+
+}
+
+//root object
+[DataContract (Namespace = "Company.Foo")]
+public class Root : ParentClass
+{
+	//dict
+	[DataMember]
+	public Dict<Foo> FDict;	
+	
+	//constructor
+	public Root (string name)
+		: base (name)
+	{
+		FDict = new Dict<Foo> ();
+	}
+}
+
+
+//subclass
+[DataContract (Namespace = "Company.Foo")]
+public class Foo : ParentClass
+{
+	//here is one dict
+	[DataMember]
+	public Dict<Bar> FDict;
+	
+	//constructor
+	public Foo (string name) 
+		: base (name)
+	{
+		FDict = new Dict<Bar> ();
+	}
+	
+}
+
+//another sublass
+[DataContract (Namespace = "Company.Foo")]
+public class Bar : ParentClass
+{
+	//constructor
+	public Bar (string name)
+		: base (name)
+	{
+	}
+	
+}
+//the custom dictionary
+[CollectionDataContract (ItemName = "DictItem", Namespace = "Company.Foo")]
+public class Dict<T> : Dictionary<string, T> where T : ParentClass
+{
+	public void Add (T item)
+	{
+		Add (item.Name, item);
+	}
+	
+}
+#endregion

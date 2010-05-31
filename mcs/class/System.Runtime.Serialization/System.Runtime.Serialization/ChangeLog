@@ -1,3 +1,10 @@
+2010-05-31  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs, KnownTypeCollection.cs : contract namespace
+	  should be still considered even if contract (local) name is null.
+	  Fix crash for generic derived type of dictionary. Fixed the
+	  primary (crasher) part of bug #610036.
+
 2010-05-19  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlFormatterDeserializer.cs : Array of something with non-default

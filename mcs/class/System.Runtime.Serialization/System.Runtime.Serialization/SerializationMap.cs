@@ -775,7 +775,7 @@ namespace System.Runtime.Serialization
 	internal partial class DictionaryTypeMap : SerializationMap, ICollectionTypeMap
 	{
 		Type key_type, value_type;
-		QName dict_qname, item_qname, key_qname, value_qname;
+		QName item_qname, key_qname, value_qname;
 		MethodInfo add_method;
 		CollectionDataContractAttribute a;
 
@@ -825,35 +825,48 @@ namespace System.Runtime.Serialization
 		public Type KeyType { get { return key_type; } }
 		public Type ValueType { get { return value_type; } }
 
-		static readonly QName kvpair_key_qname = new QName ("Key", KnownTypeCollection.MSArraysNamespace);
-		static readonly QName kvpair_value_qname = new QName ("Value", KnownTypeCollection.MSArraysNamespace);
-
 		internal virtual QName GetDictionaryQName ()
 		{
-			if (a != null && !String.IsNullOrEmpty (a.Name))
-				return new QName (a.Name, ContractNamespace);
-			return new QName ("ArrayOf" + GetItemQName ().Name, KnownTypeCollection.MSArraysNamespace);
+			string name = a != null ? a.Name : null;
+			string ns = a != null ? a.Namespace : null;
+			if (RuntimeType.IsGenericType && RuntimeType.GetGenericTypeDefinition () != typeof (Dictionary<,>))
+				name = name ?? KnownTypeCollection.GetDefaultName (RuntimeType);
+			else
+				name = "ArrayOf" + GetItemQName ().Name;
+			ns = ns ?? KnownTypeCollection.MSArraysNamespace;
+
+			return new QName (name, ns);
 		}
 
 		internal virtual QName GetItemQName ()
 		{
-			if (a != null && !String.IsNullOrEmpty (a.ItemName))
-				return new QName (a.ItemName, ContractNamespace);
-			return new QName ("KeyValueOf" + KnownTypes.GetQName (key_type).Name + KnownTypes.GetQName (value_type).Name, KnownTypeCollection.MSArraysNamespace);
+			string name = a != null ? a.ItemName : null;
+			string ns = a != null ? a.Namespace : null;
+
+			name = name ?? "KeyValueOf" + KnownTypes.GetQName (key_type).Name + KnownTypes.GetQName (value_type).Name;
+			ns = ns ?? (a != null ? ContractNamespace : KnownTypeCollection.MSArraysNamespace);
+
+			return new QName (name, ns);
 		}
 
 		internal virtual QName GetKeyQName ()
 		{
-			if (a != null && !String.IsNullOrEmpty (a.KeyName))
-				return new QName (a.KeyName, ContractNamespace);
-			return kvpair_key_qname;
+			string name = a != null ? a.KeyName : null;
+			string ns = a != null ? a.Namespace : null;
+
+			name = name ?? "Key";
+			ns = ns ?? (a != null ? ContractNamespace : KnownTypeCollection.MSArraysNamespace);
+			return new QName (name, ns);
 		}
 
 		internal virtual QName GetValueQName ()
 		{
-			if (a != null && !String.IsNullOrEmpty (a.ValueName))
-				return new QName (a.ValueName, ContractNamespace);
-			return kvpair_value_qname;
+			string name = a != null ? a.ValueName : null;
+			string ns = a != null ? a.Namespace : null;
+
+			name = name ?? "Value";
+			ns = ns ?? (a != null ? ContractNamespace : KnownTypeCollection.MSArraysNamespace);
+			return new QName (name, ns);
 		}
 
 		internal virtual string CurrentNamespace {
