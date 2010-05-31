@@ -1,5 +1,10 @@
 2010-05-31  Zoltan Varga  <vargaz@gmail.com>
 
+	* unwind.c (mono_unwind_decode_fde): The FDE only has an augmention if the CIE
+	says so.
+
+	* aot-runtime.c (decode_eh_frame): Fix an assert condition.
+
 	* aot-compiler.c (patch_to_string): New debugging helper function.
 
 2010-05-30  Zoltan Varga  <vargaz@gmail.com>
