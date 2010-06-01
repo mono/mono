@@ -9,17 +9,14 @@ test-xml-027.cs
 gtest-230.cs
 gtest-316.cs verifier
 gtest-437.cs
-gtest-anon-47.cs
 
 test-416.cs bug #504085
 test-418.cs bug #504085
 test-454.cs bug #593342
-test-468.cs
-test-184.cs
 test-682.cs bug #530861
 test-704.cs IGNORE #472845
 test-715.cs bug #504085
-test-733.cs
+test-759.cs IGNORE bug #604218
 
 test-xml-030.cs
 
