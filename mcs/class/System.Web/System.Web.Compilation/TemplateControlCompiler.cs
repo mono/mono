@@ -163,8 +163,8 @@ namespace System.Web.Compilation
 		void InitMethod (ControlBuilder builder, bool isTemplate, bool childrenAsProperties)
 		{
 			currentLocation = builder.Location;
-			
-			string tailname = ((builder is RootBuilder) ? "Tree" : ("_" + builder.ID));
+			bool inBuildControlTree = builder is RootBuilder;
+			string tailname = (inBuildControlTree ? "Tree" : ("_" + builder.ID));
 			CodeMemberMethod method = new CodeMemberMethod ();
 			builder.Method = method;
 			builder.MethodStatements = method.Statements;
@@ -176,9 +176,9 @@ namespace System.Web.Compilation
 			/* in the case this is the __BuildControlTree
 			 * method, allow subclasses to insert control
 			 * specific code. */
-			if (builder is RootBuilder) {
+			if (inBuildControlTree) {
 				SetCustomAttributes (method);
-				AddStatementsToInitMethod (builder, method);
+				AddStatementsToInitMethodTop (builder, method);
 			}
 			
 			if (builder.HasAspCode) {
@@ -375,6 +375,9 @@ namespace System.Web.Compilation
 					builder.MethodStatements = condStatement.FalseStatements;
 				}
 			}
+
+			if (inBuildControlTree)
+				AddStatementsToInitMethodBottom (builder, method);
 			
 			mainClass.Members.Add (method);
 		}
@@ -419,10 +422,14 @@ namespace System.Web.Compilation
 				SetCustomAttribute (method, uad);
 		}
 		
-		protected virtual void AddStatementsToInitMethod (ControlBuilder builder, CodeMemberMethod method)
+		protected virtual void AddStatementsToInitMethodTop (ControlBuilder builder, CodeMemberMethod method)
 		{
 		}
 
+		protected virtual void AddStatementsToInitMethodBottom (ControlBuilder builder, CodeMemberMethod method)
+		{
+		}
+		
 		void AddLiteralSubObject (ControlBuilder builder, string str)
 		{
 			if (!builder.HasAspCode) {

@@ -1,3 +1,12 @@
+2010-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: added new virtual method, 
+	AddStatementsToInitMethodBottom and renamed
+	AddStatementsToInitMethod to AddStatementsToInitMethodTop.
+
+	* PageCompiler.cs: code to set Meta{Description,Keywords}
+	properties, if present.
+
 2010-05-19  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: IsDirective, IsExpression and

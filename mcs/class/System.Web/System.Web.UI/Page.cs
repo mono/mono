@@ -143,6 +143,12 @@ public partial class Page : TemplateControl, IHttpHandler
 	string _title;
 	string _theme;
 	string _styleSheetTheme;
+#if NET_4_0
+	string _metaDescription;
+	string _metaKeywords;
+
+	bool frameworkInitialized;
+#endif
 	Hashtable items;
 
 	bool _maintainScrollPositionOnPostBack;
@@ -548,7 +554,57 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 #endif	
 	}
+#if NET_4_0
+	[Bindable (true)]
+	public string MetaDescription {
+		get {
+			if (_metaDescription == null) {
+				if (htmlHeader == null) {
+					if (frameworkInitialized)
+						throw new InvalidOperationException ("A server-side head element is required to set this property.");
+					return String.Empty;
+				} else
+					return htmlHeader.Description;
+			}
 
+			return _metaDescription;
+		}
+		
+		set {
+			if (htmlHeader == null) {
+				if (frameworkInitialized)
+					throw new InvalidOperationException ("A server-side head element is required to set this property.");
+				_metaDescription = value;
+			} else
+				htmlHeader.Description = value;
+		}
+	}
+
+	[Bindable (true)]
+	public string MetaKeywords {
+		get {
+			if (_metaKeywords == null) {
+				if (htmlHeader == null) {
+					if (frameworkInitialized)
+						throw new InvalidOperationException ("A server-side head element is required to set this property.");
+					return String.Empty;
+				} else
+					return htmlHeader.Keywords;
+			}
+
+			return _metaDescription;
+		}
+		
+		set {
+			if (htmlHeader == null) {
+				if (frameworkInitialized)
+					throw new InvalidOperationException ("A server-side head element is required to set this property.");
+				_metaKeywords = value;
+			} else
+				htmlHeader.Keywords = value;
+		}
+	}
+#endif
 	[Localizable (true)] 
 	[Bindable (true)] 
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
@@ -1152,6 +1208,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		_appCulture = Thread.CurrentThread.CurrentCulture;
 		_appUICulture = Thread.CurrentThread.CurrentUICulture;
 		FrameworkInitialize ();
+#if NET_4_0
+		frameworkInitialized = true;
+#endif
 		context.ErrorPage = _errorPage;
 
 		try {
@@ -2019,10 +2078,24 @@ public partial class Page : TemplateControl, IHttpHandler
 	internal void SetHeader (HtmlHead header)
 	{
 		htmlHeader = header;
+		if (header == null)
+			return;
+		
 		if (_title != null) {
 			htmlHeader.Title = _title;
 			_title = null;
 		}
+#if NET_4_0
+		if (_metaDescription != null) {
+			htmlHeader.Description = _metaDescription;
+			_metaDescription = null;
+		}
+
+		if (_metaKeywords != null) {
+			htmlHeader.Keywords = _metaKeywords;
+			_metaKeywords = null;
+		}
+#endif
 	}
 
 	protected bool AsyncMode {

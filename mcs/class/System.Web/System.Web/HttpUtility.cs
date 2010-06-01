@@ -508,7 +508,7 @@ namespace System.Web {
 			}
 		}
 
-		internal static string HtmlEncode (string s)
+		public static string HtmlEncode (string s)
 		{
 #if NET_4_0
 			if (s == null)

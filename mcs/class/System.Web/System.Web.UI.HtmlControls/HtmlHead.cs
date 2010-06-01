@@ -75,15 +75,21 @@ namespace System.Web.UI.HtmlControls
 			EnsureTitleControl ();
 
 			base.RenderChildren (writer);
-//			if (metadata != null) {
-//				foreach (DictionaryEntry entry in metadata) {
-//					writer.AddAttribute ("name", entry.Key.ToString ());
-//					writer.AddAttribute ("content", entry.Value.ToString ());
-//					writer.RenderBeginTag (HtmlTextWriterTag.Meta);
-//					writer.RenderEndTag ();
-//				}
-//			}
-			
+#if NET_4_0
+			if (descriptionMeta == null && descriptionText != null) {
+				writer.AddAttribute ("name", "description");
+				writer.AddAttribute ("content", HttpUtility.HtmlAttributeEncode (descriptionText));
+				writer.RenderBeginTag (HtmlTextWriterTag.Meta);
+				writer.RenderEndTag ();
+			}
+
+			if (keywordsMeta == null && keywordsText != null) {
+				writer.AddAttribute ("name", "keywords");
+				writer.AddAttribute ("content", HttpUtility.HtmlAttributeEncode (keywordsText));
+				writer.RenderBeginTag (HtmlTextWriterTag.Meta);
+				writer.RenderEndTag ();
+			}
+#endif
 			if (styleSheet != null)
 				styleSheet.Render (writer);
 		}
@@ -132,21 +138,6 @@ namespace System.Web.UI.HtmlControls
 			t.Text = titleText;
 			Controls.Add (t);
 		}
-
-//		IList LinkedStyleSheets {
-//			get {
-//				if (styleSheets == null) styleSheets = new ArrayList ();
-//				return styleSheets;
-//			}
-//		} 
-//		
-//		IDictionary Metadata {
-//			get {
-//				if (metadata == null) metadata = new Hashtable ();
-//				return metadata;
-//			}
-//		}
-		
 #if NET_4_0
 		public string Description {
 			get {

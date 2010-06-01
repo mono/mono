@@ -78,7 +78,7 @@ namespace System.Web.Compilation
 			cad.Arguments.Add (new CodeAttributeArgument (new CodePrimitiveExpression (obj)));
 		}
 
-		protected override void AddStatementsToInitMethod (ControlBuilder builder, CodeMemberMethod method)
+		protected override void AddStatementsToInitMethodTop (ControlBuilder builder, CodeMemberMethod method)
 		{
 			if (parser.MasterPageFile != null) {
 				CodeExpression prop;

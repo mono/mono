@@ -316,7 +316,7 @@ namespace System.Web.Compilation
 				OutputCacheParamsBlock (ctor);
 		}
 		
-		protected override void AddStatementsToInitMethod (ControlBuilder builder, CodeMemberMethod method)
+		protected override void AddStatementsToInitMethodTop (ControlBuilder builder, CodeMemberMethod method)
 		{
 			ILocation directiveLocation = pageParser.DirectiveLocation;
 			AddStatementsFromDirective (builder, method, directiveLocation);
@@ -342,7 +342,14 @@ namespace System.Web.Compilation
 			CodeMethodInvokeExpression expr = new CodeMethodInvokeExpression (thisRef, "InitializeCulture");
 			method.Statements.Add (AddLinePragma (new CodeExpressionStatement (expr), directiveLocation));
 		}
-
+#if NET_4_0
+		protected override void AddStatementsToInitMethodBottom (ControlBuilder builder, CodeMemberMethod method)
+		{
+			ILocation directiveLocation = pageParser.DirectiveLocation;
+			AssignPropertyWithExpression <string> (method, "MetaDescription", pageParser.MetaDescription, directiveLocation);
+			AssignPropertyWithExpression <string> (method, "MetaKeywords", pageParser.MetaKeywords, directiveLocation);
+		}
+#endif
 		protected override void PrependStatementsToFrameworkInitialize (CodeMemberMethod method)
 		{
 			base.PrependStatementsToFrameworkInitialize (method);

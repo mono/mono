@@ -60,6 +60,10 @@ namespace System.Web.UI
 		MainDirectiveAttribute <string> masterPage;
 		MainDirectiveAttribute <string> title;
 		MainDirectiveAttribute <string> theme;
+#if NET_4_0
+		MainDirectiveAttribute <string> metaDescription;
+		MainDirectiveAttribute <string> metaKeywords;
+#endif
 		string culture;
 		string uiculture;
 		string errorPage;
@@ -376,7 +380,23 @@ namespace System.Web.UI
 				enableViewStateMac = GetBool (atts, "EnableViewStateMac", enableViewStateMac);
 				enableViewStateMacSet = true;
 			}
-			
+#if NET_4_0
+			value = GetString (atts, "MetaDescription", null);
+			if (value != null) {
+				if (!BaseParser.IsExpression (value))
+					metaDescription = new MainDirectiveAttribute <string> (value, true);
+				else
+					metaDescription = new MainDirectiveAttribute <string> (value);
+			}
+
+			value = GetString (atts, "MetaKeywords", null);
+			if (value != null) {
+				if (!BaseParser.IsExpression (value))
+					metaKeywords = new MainDirectiveAttribute <string> (value, true);
+				else
+					metaKeywords = new MainDirectiveAttribute <string> (value);
+			}
+#endif
 			// Ignored by now
 			GetString (atts, "SmartNavigation", null);
 
@@ -527,7 +547,15 @@ namespace System.Web.UI
 		internal MainDirectiveAttribute <string> Theme {
 			get { return theme; }
 		}
+#if NET_4_0
+		internal MainDirectiveAttribute <string> MetaDescription {
+			get { return metaDescription; }
+		}
 
+		internal MainDirectiveAttribute <string> MetaKeywords {
+			get { return metaKeywords; }
+		}
+#endif
 		internal string Culture {
 			get { return culture; }
 		}

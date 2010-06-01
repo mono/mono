@@ -1,3 +1,9 @@
+2010-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlHead.cs: added code to render description and keywords metas
+	if the corresponding HtmlMeta controls aren't found and the user
+	set either Description or Keywords properties.
+
 2009-12-22  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs: RenderChildren is slightly more efficient now.
