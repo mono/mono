@@ -542,6 +542,7 @@ System.Web.UI.WebControls/WebColorConverterCas.cs
 System.Web.UI.WebControls/WebControlCas.cs
 System.Web.UI.WebControls/XmlCas.cs
 System.Web.UI.WebControls/XmlDataSourceCas.cs
+System.Web.Util/HttpEncoderTest.cs
 System.Web.Util/RequestValidatorTest.cs
 System.Web.Util/TransactionsCas.cs
 System.Web.Util/UrlUtilsTest.cs

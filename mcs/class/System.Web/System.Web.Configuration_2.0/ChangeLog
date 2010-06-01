@@ -1,3 +1,9 @@
+2010-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpRuntimeSection.cs: added 4.0 properties
+	MaxQueryLengthString, MaxUrlLength, EncoderType and
+	RelaxedUrlToFileSystemMapping.
+
 2010-05-17  Marek Habersack  <mhabersack@novell.com>
 
 	* BuildProvider.cs: made the Extension property case-insensitive

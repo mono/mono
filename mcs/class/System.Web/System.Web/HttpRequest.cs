@@ -1410,7 +1410,32 @@ namespace System.Web
 			validate_query_string = true;
 			validate_form = true;
 		}
-
+#if NET_4_0
+		internal void Validate ()
+		{
+			var cfg = WebConfigurationManager.GetSection ("system.web/httpRuntime") as HttpRuntimeSection;
+			string query = UrlComponents.Query;
+			
+			if (query != null && query.Length > cfg.MaxQueryStringLength)
+				throw new HttpException (400, "The length of the query string for this request exceeds the configured maxQueryStringLength value.");
+			
+			string path = PathNoValidation;
+			if (path != null) {
+				if (path.Length > cfg.MaxUrlLength)
+					throw new HttpException (400, "The length of the URL for this request exceeds the configured maxUrlLength value.");
+				
+				char[] invalidChars = RequestPathInvalidCharacters;
+				if (invalidChars != null) {
+					int idx = path.IndexOfAny (invalidChars);
+					if (idx != -1)
+						throw HttpException.NewWithCode (
+							String.Format ("A potentially dangerous Request.Path value was detected from the client ({0}).", path [idx]),
+							WebEventCodes.RuntimeErrorValidationFailure
+						);
+				}
+			}
+		}
+#endif
 #region internal routines
 		internal string ClientTarget {
 			get {

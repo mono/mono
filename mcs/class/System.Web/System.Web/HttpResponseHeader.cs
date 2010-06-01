@@ -6,7 +6,7 @@
 //
 
 //
-// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -31,6 +31,7 @@
 using System.Collections;
 using System.Text;
 using System.Web.Configuration;
+using System.Web.Util;
 
 namespace System.Web
 {
@@ -40,7 +41,15 @@ namespace System.Web
 		
 		public string Value {
 			get { return headerValue; }
-			set { headerValue = EncodeHeader (value); }
+			set {
+				string hname, hvalue;
+#if NET_4_0
+				HttpEncoder.Current.HeaderNameValueEncode (null, value, out hname, out hvalue);
+#else
+				HttpEncoder.HeaderNameValueEncode (null, value, out hname, out hvalue);
+#endif
+				headerValue = hvalue;
+			}
 		}
 	  
 		static bool headerCheckingEnabled;
@@ -56,41 +65,12 @@ namespace System.Web
 		{
 			Value = val;
 		}
-
-		string EncodeHeader (string value)
-		{
-			if (value == null || value.Length == 0)
-				return value;
-			
-			if (headerCheckingEnabled) {
-				StringBuilder ret = new StringBuilder ();
-				int len = value.Length;
-
-				for (int i = 0; i < len; i++) {
-					switch (value [i]) {
-						case '\r':
-							ret.Append ("%0d");
-							break;
-
-						case '\n':
-							ret.Append ("%0a");
-							break;
-
-						default:
-							ret.Append (value [i]);
-							break;
-					}
-				}
-
-				return ret.ToString ();
-			} else
-				return value;
-		}
 		
 		internal abstract void SendContent (HttpWorkerRequest wr);
 	}
 
-	internal sealed class KnownResponseHeader : BaseResponseHeader {
+	internal sealed class KnownResponseHeader : BaseResponseHeader
+	{
 		public int ID;
 
 		internal KnownResponseHeader (int ID, string val) : base (val)
@@ -104,8 +84,23 @@ namespace System.Web
 		}
 	}
 
-	internal  class UnknownResponseHeader : BaseResponseHeader {
-		public string Name;
+	internal sealed class UnknownResponseHeader : BaseResponseHeader
+	{
+		string headerName;
+		
+		public string Name {
+			get { return headerName; }
+			set {
+				string hname, hvalue;
+#if NET_4_0
+				HttpEncoder.Current.HeaderNameValueEncode (value, null, out hname, out hvalue);
+#else
+				HttpEncoder.HeaderNameValueEncode (value, null, out hname, out hvalue);
+#endif
+				headerName = hname;
+			}
+		}
+		
 
 		public UnknownResponseHeader (string name, string val) : base (val)
 		{

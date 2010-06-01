@@ -1,3 +1,20 @@
+2010-06-01  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpUtility.cs: moved chunks of code to the new
+	System.Web.Util.HttpEncoder class.
+
+	* HttpResponseHeader.cs: encode header names and values using
+	HttpEncoder.
+
+	* HttpRequest.cs: added internal method Validate, to validate the
+	request in 4.0 profile.
+
+	* HttpHeaderCollection.cs: added. A helper class to encode header
+	names/values on add.
+
+	* HttpApplication.cs: Pipeline () validates request by calling
+	HttpRequest.Validate in the 4.0 profile.
+
 2010-05-17  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpApplicationFactory.cs: pre-application start methods must be

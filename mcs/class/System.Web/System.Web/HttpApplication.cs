@@ -1174,21 +1174,10 @@ namespace System.Web
 			Delegate eventHandler;
 			if (stop_processing)
 				yield return true;
-
 #if NET_4_0
-			if (HttpRequest.ValidateRequestNewMode) {
-				char[] invalidChars = HttpRequest.RequestPathInvalidCharacters;
-				HttpRequest req = context.Request;
-				if (invalidChars != null && req != null) {
-					string path = req.PathNoValidation;
-					int idx = path != null ? path.IndexOfAny (invalidChars) : -1;
-					if (idx != -1)
-						throw HttpException.NewWithCode (
-							String.Format ("A potentially dangerous Request.Path value was detected from the client ({0}).", path [idx]),
-							WebEventCodes.RuntimeErrorValidationFailure
-						);
-				}
-			}
+			HttpRequest req = context.Request;
+			if (req != null)
+				req.Validate ();
 #endif
 			context.MapRequestHandlerDone = false;
 			StartTimer ("BeginRequest");

@@ -60,6 +60,10 @@ namespace System.Web.Configuration
 		static ConfigurationProperty requestPathInvalidCharactersProp;
 		static ConfigurationProperty requestValidationTypeProp;
 		static ConfigurationProperty requestValidationModeProp;
+		static ConfigurationProperty maxQueryStringLengthProp;
+		static ConfigurationProperty maxUrlLengthProp;
+		static ConfigurationProperty encoderTypeProp;
+		static ConfigurationProperty relaxedUrlToFileSystemMappingProp;
 #endif
 		static ConfigurationPropertyCollection properties;
 
@@ -123,6 +127,19 @@ namespace System.Web.Configuration
 									       PropertyHelper.VersionConverter,
 									       PropertyHelper.DefaultValidator,
 									       ConfigurationPropertyOptions.None);
+			maxQueryStringLengthProp = new ConfigurationProperty ("maxQueryStringLength", typeof (int), 2048,
+									      TypeDescriptor.GetConverter (typeof (int)),
+									      PropertyHelper.IntFromZeroToMaxValidator,
+									      ConfigurationPropertyOptions.None);
+			maxUrlLengthProp = new ConfigurationProperty ("maxUrlLength", typeof (int), 260,
+								      TypeDescriptor.GetConverter (typeof (int)),
+								      PropertyHelper.IntFromZeroToMaxValidator,
+								      ConfigurationPropertyOptions.None);
+			encoderTypeProp = new ConfigurationProperty ("encoderType", typeof (string), "System.Web.Util.HttpEncoder",
+								     TypeDescriptor.GetConverter (typeof (string)),
+								     PropertyHelper.NonEmptyStringValidator,
+								     ConfigurationPropertyOptions.None);
+			relaxedUrlToFileSystemMappingProp = new ConfigurationProperty ("relaxedUrlToFileSystemMapping", typeof (bool), false);
 #endif
 			
 			properties = new ConfigurationPropertyCollection();
@@ -148,6 +165,10 @@ namespace System.Web.Configuration
 			properties.Add (requestPathInvalidCharactersProp);
 			properties.Add (requestValidationTypeProp);
 			properties.Add (requestValidationModeProp);
+			properties.Add (maxQueryStringLengthProp);
+			properties.Add (maxUrlLengthProp);
+			properties.Add (encoderTypeProp);
+			properties.Add (relaxedUrlToFileSystemMappingProp);
 #endif
 		}
 
@@ -282,7 +303,7 @@ namespace System.Web.Configuration
 		}
 
 		[ConfigurationProperty ("requestValidationType", DefaultValue = "System.Web.Util.RequestValidator")]
-		[StringValidatorAttribute(MinLength = 1)]
+		[StringValidator (MinLength = 1)]
 		public string RequestValidationType {
 			get { return (string) base [requestValidationTypeProp]; }
 			set { base [requestValidationTypeProp] = value; }
@@ -293,6 +314,33 @@ namespace System.Web.Configuration
 		public Version RequestValidationMode {
 			get { return (Version) base [requestValidationModeProp]; }
 			set { base [requestValidationModeProp] = value; }
+		}
+
+		[IntegerValidator (MinValue = 0)]
+		[ConfigurationProperty ("maxQueryStringLength", DefaultValue = "2048")]
+		public int MaxQueryStringLength {
+			get { return (int) base [maxQueryStringLengthProp]; }
+			set { base [maxQueryStringLengthProp] = value; }
+		}
+
+		[IntegerValidator (MinValue = 0)]
+		[ConfigurationProperty ("maxUrlLength", DefaultValue = "260")]
+		public int MaxUrlLength {
+			get { return (int) base [maxUrlLengthProp]; }
+			set { base [maxUrlLengthProp] = value; }
+		}
+
+		[StringValidator (MinLength = 1)]
+		[ConfigurationProperty ("encoderType", DefaultValue = "System.Web.Util.HttpEncoder")]
+		public string EncoderType {
+			get { return (string) base [encoderTypeProp]; }
+			set { base [encoderTypeProp] = value; }
+		}
+
+		[ConfigurationProperty ("relaxedUrlToFileSystemMapping", DefaultValue = "False")]
+		public bool RelaxedUrlToFileSystemMapping {
+			get { return (bool) base [relaxedUrlToFileSystemMappingProp]; }
+			set { base [relaxedUrlToFileSystemMappingProp] = value; }
 		}
 #endif
 		protected override ConfigurationPropertyCollection Properties {

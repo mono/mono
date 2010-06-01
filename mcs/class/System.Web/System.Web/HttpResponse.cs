@@ -7,7 +7,7 @@
 //	Gonzalo Paniagua Javier (gonzalo@ximian.com)
 //      Marek Habersack <mhabersack@novell.com>
 //
-// Copyright (C) 2005-2009 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -88,7 +88,7 @@ namespace System.Web
 		// the headers that we compute here.
 		//
 
-		NameValueCollection headers;
+		HttpHeaderCollection headers;
 		bool headers_sent;
 		NameValueCollection cached_headers;
 
@@ -324,7 +324,7 @@ namespace System.Web
 		public NameValueCollection Headers {
 			get {
 				if (headers == null)
-					headers = new NameValueCollection ();
+					headers = new HttpHeaderCollection ();
 
 				return headers;
 			}
@@ -502,8 +502,7 @@ namespace System.Web
 		public void AppendHeader (string name, string value)
 		{
 			if (headers_sent)
-				throw new HttpException ("headers have been already sent");
-			
+				throw new HttpException ("Headers have been already sent");
 #if !TARGET_J2EE
 			if (String.Compare (name, "content-length", true, Helpers.InvariantCulture) == 0){
 				content_length = (long) UInt64.Parse (value);

@@ -303,6 +303,7 @@ System.Web/HttpCookieMode.cs
 System.Web/HttpException.cs
 System.Web/HttpFileCollection.cs
 System.Web/HttpForbiddenHandler.cs
+System.Web/HttpHeaderCollection.cs
 System.Web/HttpMethodNotAllowedHandler.cs
 System.Web/HttpModuleCollection.cs
 System.Web/HttpParamsCollection.cs
@@ -1158,6 +1159,7 @@ System.Web.Util/DataSourceHelper.cs
 System.Web.Util/DataSourceResolver.cs
 System.Web.Util/FileUtils.cs
 System.Web.Util/Helpers.cs
+System.Web.Util/HttpEncoder.cs
 System.Web.Util/ICalls.cs
 System.Web.Util/IWebObjectFactory.cs
 System.Web.Util/IWebPropertyAccessor.cs
