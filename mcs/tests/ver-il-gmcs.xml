@@ -9494,7 +9494,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main(System.String[])">
-        <size>31</size>
+        <size>36</size>
       </method>
     </type>
     <type name="TestThing">
@@ -12586,7 +12586,7 @@
   <test name="gtest-500.cs">
     <type name="Program">
       <method name="Int32 Main()">
-        <size>70</size>
+        <size>85</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
