@@ -1,3 +1,8 @@
+2010-06-01  Marek Safar  <marek.safar@gmail.com>
+
+	* convert.cs, expression.cs: Emit unbox for underlying nullable
+	type boxing cast.
+
 2010-05-29  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #610126

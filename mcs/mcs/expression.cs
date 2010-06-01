@@ -1352,8 +1352,7 @@ namespace Mono.CSharp {
 					return ResolveGenericParameter (ec, d, (TypeParameterSpec) t);
 
 				if (TypeManager.IsStruct (d)) {
-					bool temp;
-					if (Convert.ImplicitBoxingConversionExists (d, t, out temp))
+					if (Convert.ImplicitBoxingConversion (null, d, t) != null)
 						return CreateConstantResult (ec, true);
 				} else {
 					if (TypeManager.IsGenericParameter (d))
