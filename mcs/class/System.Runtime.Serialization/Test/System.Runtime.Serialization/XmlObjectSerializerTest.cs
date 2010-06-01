@@ -37,14 +37,15 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
+using System.Data;
 using System.IO;
 using System.Net;
 using System.Runtime.Serialization;
 using System.Text;
 using System.Xml;
-using NUnit.Framework;
-using System.Xml.Serialization;
 using System.Xml.Schema;
+using System.Xml.Serialization;
+using NUnit.Framework;
 
 [assembly: ContractNamespace ("http://www.u2u.be/samples/wcf/2009", ClrNamespace = "U2U.DataContracts")] // bug #599889
 
@@ -1425,6 +1426,59 @@ namespace MonoTests.System.Runtime.Serialization
 			// since "foo1" is stored as z:Ref for string, it must not occur twice.
 			int idx2 = result.IndexOf ("foo1", idx + 1);
 			Assert.IsTrue (idx2 < 0, "idx2 should not occur at " + idx2);
+		}
+
+		[Test]
+		public void IXmlSerializableCallConstructor ()
+		{
+			IXmlSerializableCallConstructor  (false);
+			// Disable. It asserts binary serialization, causing
+			// some breakage but nothing to do with IXmlSerializable.
+			//IXmlSerializableCallConstructor (true);
+		}
+		
+		void IXmlSerializableCallConstructor (bool binary)
+		{
+			Stream s = IXmlSerializableCallConstructorSerialize (binary);
+			var a = new byte [s.Length];
+			s.Position = 0;
+			s.Read (a, 0, a.Length);
+			s.Position = 0;
+			IXmlSerializableCallConstructorDeserialize (s, binary);
+		}
+
+		public Stream IXmlSerializableCallConstructorSerialize (bool binary)
+		{
+			var ds = new DataSet ("ds");
+			var dt = new DataTable ("dt");
+			ds.Tables.Add (dt);
+			dt.Columns.Add ("n", typeof (int));
+			dt.Columns.Add ("s", typeof (string));
+			
+			dt.Rows.Add (5, "five");
+			dt.Rows.Add (10, "ten");
+			
+			ds.AcceptChanges ();
+			
+			var s = new MemoryStream ();
+			
+			var w = binary ? XmlDictionaryWriter.CreateBinaryWriter (s) : XmlDictionaryWriter.CreateTextWriter (s);
+			
+			var x = new DataContractSerializer (typeof (DataSet));
+			x.WriteObject (w, ds);
+			w.Flush ();
+	
+			return s;
+		}
+		
+		public void IXmlSerializableCallConstructorDeserialize (Stream s, bool binary)
+		{
+			var r = binary ? XmlDictionaryReader.CreateBinaryReader (s, XmlDictionaryReaderQuotas.Max)
+				: XmlDictionaryReader.CreateTextReader (s, XmlDictionaryReaderQuotas.Max);
+			
+			var x = new DataContractSerializer (typeof (DataSet));
+			
+			var ds = (DataSet) x.ReadObject (r);
 		}
 	}
 	
