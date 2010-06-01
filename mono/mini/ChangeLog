@@ -1,3 +1,10 @@
+2010-06-01  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.c (mini_method_compile): Enable llvm+exceptions on LLVM SVN.
+
+	* mini-llvm.c (emit_cond_system_exception): Disable llvm when this occurs in a
+	clause.
+
 2010-05-31  Zoltan Varga  <vargaz@gmail.com>
 
 	* unwind.c (mono_unwind_decode_fde): The FDE only has an augmention if the CIE
