@@ -1,5 +1,11 @@
 2010-06-01  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* gfile-win32.c: Use __stat64 instead of _stat64.
+
+	Backport of r156824 by (Jonathan Chambers  <joncham@gmail.com>)	
+
+2010-06-01  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	 * src/gstring.c: Put in some null guards for the ctors
 
 	Backport of r157279 by (Alan McGovern  <amcgovern@novell.com>).
