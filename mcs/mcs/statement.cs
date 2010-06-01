@@ -4698,11 +4698,12 @@ namespace Mono.CSharp {
 	}
 
 	// FIXME: Why is it almost exact copy of Using ??
-	public class UsingTemporary : ExceptionStatement {
+	public class UsingTemporary : ExceptionStatement
+	{
 		TemporaryVariable local_copy;
 		public Statement Statement;
 		Expression expr;
-		TypeSpec expr_type;
+		Statement dispose_call;
 
 		public UsingTemporary (Expression expr, Statement stmt, Location l)
 		{
@@ -4717,7 +4718,7 @@ namespace Mono.CSharp {
 			if (expr == null)
 				return false;
 
-			expr_type = expr.Type;
+			var expr_type = expr.Type;
 
 			if (!expr_type.ImplementsInterface (TypeManager.idisposable_type) &&
 				Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
@@ -4733,6 +4734,25 @@ namespace Mono.CSharp {
 			local_copy = new TemporaryVariable (expr_type, loc);
 			local_copy.Resolve (ec);
 
+			if (TypeManager.void_dispose_void == null) {
+				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
+					TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
+			}
+
+			var dispose_mg = new MethodGroupExpr (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc) {
+				InstanceExpression = TypeManager.IsNullableType (expr_type) ?
+				new Cast (new TypeExpression (TypeManager.idisposable_type, loc), local_copy).Resolve (ec) :
+				local_copy
+			};
+
+			dispose_call = new StatementExpression (new Invocation (dispose_mg, null));
+
+			// Add conditional call when disposing possible null variable
+			if (!expr_type.IsStruct || TypeManager.IsNullableType (expr_type))
+				dispose_call = new If (new Binary (Binary.Operator.Inequality, local_copy, new NullLiteral (loc), loc), dispose_call, loc);
+
+			dispose_call.Resolve (ec);
+
 			ec.StartFlowBranching (this);
 
 			bool ok = Statement.Resolve (ec);
@@ -4740,11 +4760,6 @@ namespace Mono.CSharp {
 			ec.EndFlowBranching ();
 
 			ok &= base.Resolve (ec);
-
-			if (TypeManager.void_dispose_void == null) {
-				TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-					TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
-			}
 
 			return ok;
 		}
@@ -4761,29 +4776,7 @@ namespace Mono.CSharp {
 
 		protected override void EmitFinallyBody (EmitContext ec)
 		{
-			if (!TypeManager.IsStruct (expr_type)) {
-				Label skip = ec.DefineLabel ();
-				local_copy.Emit (ec);
-				ec.Emit (OpCodes.Brfalse, skip);
-				local_copy.Emit (ec);
-				ec.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				ec.MarkLabel (skip);
-				return;
-			}
-
-			MethodSpec ms = MemberCache.FindMember (expr_type,
-				MemberFilter.Method ("Dispose", 0, ParametersCompiled.EmptyReadOnlyParameters, TypeManager.void_type),
-				BindingRestriction.InstanceOnly) as MethodSpec;
-
-			if (ms == null) {
-				local_copy.Emit (ec);
-				ec.Emit (OpCodes.Box, expr_type);
-				ec.Emit (OpCodes.Callvirt, TypeManager.void_dispose_void);
-				return;
-			}
-
-			local_copy.AddressOf (ec, AddressOp.Load);
-			ec.Emit (OpCodes.Call, ms);
+			dispose_call.Emit (ec);
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Statement t)
