@@ -473,7 +473,7 @@ namespace System.Runtime.Serialization
 
 		public override object DeserializeObject (XmlReader reader, XmlFormatterDeserializer deserializer)
 		{
-			IXmlSerializable ixs = (IXmlSerializable) FormatterServices.GetUninitializedObject (RuntimeType);
+			IXmlSerializable ixs = (IXmlSerializable) Activator.CreateInstance (RuntimeType, new object [0]);
 			ixs.ReadXml (reader);
 			return ixs;
 		}

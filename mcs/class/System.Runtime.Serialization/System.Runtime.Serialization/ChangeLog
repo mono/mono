@@ -1,3 +1,8 @@
+2010-06-01  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* SerializationMap.cs : for IXmlSerializable it uses CreateInstance()
+	  instead of GetUninitializedObject(). Fixed bug #601785.
+
 2010-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs, XmlFormatterSerializer.cs,
