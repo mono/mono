@@ -429,8 +429,10 @@ process_io_event (MonoMList *list, int event)
 #ifdef EPOLL_DEBUG
 		g_print ("Dispatching event %d on socket %d\n", event, state->handle);
 #endif
-		InterlockedIncrement (&pending_io_items);
-		start_io_thread_or_queue (state);
+		if (!(mono_object_domain (state)->state == MONO_APPDOMAIN_UNLOADING || mono_object_domain (state)->state == MONO_APPDOMAIN_UNLOADED)) {
+			InterlockedIncrement (&pending_io_items);
+			start_io_thread_or_queue (state);
+		}
 	}
 
 	return oldlist;
