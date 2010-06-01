@@ -45,6 +45,13 @@
 	* mini-s390x.c (mono_arch_output_basic_block): Applied patch from Aurelien Minvielle
 	. Fix OP_ATOMIC_EXCHANGE_I4 on s390x. Fixes #609023.
 
+2010-05-31  Martin Baulig  <martin@ximian.com>
+
+	Fix #608271.
+
+	* debugger-agent.c (breakpoints_cleanup): Iterate over `event_requests', call
+	clear_breakpoint() on all breakpoint events and remove them from the list.
+
 2010-05-27  Martin Baulig  <martin@ximian.com>
 
 	Fix #605698.
