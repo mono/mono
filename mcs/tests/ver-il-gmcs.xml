@@ -12838,6 +12838,38 @@
       </method>
     </type>
   </test>
+  <test name="gtest-513.cs">
+    <type name="S">
+      <method name="Void System.IDisposable.Dispose()">
+        <size>13</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>6</size>
+      </method>
+    </type>
+    <type name="C">
+      <method name="Void System.IDisposable.Dispose()">
+        <size>1</size>
+      </method>
+      <method name="Void Dispose()">
+        <size>6</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test">
+      <method name="Int32 Main()">
+        <size>154</size>
+      </method>
+      <method name="Void GenMethod[T](T)">
+        <size>33</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -29381,7 +29413,7 @@
         <size>1</size>
       </method>
       <method name="Void Main()">
-        <size>24</size>
+        <size>30</size>
       </method>
     </type>
   </test>
