@@ -120,16 +120,11 @@ namespace Mono.CSharp {
 				return new BoxedCast (expr, target_type);
 			}
 
-			var effective_ifaces = expr_type.Interfaces;
-			if (effective_ifaces != null) {
-				foreach (var t in effective_ifaces) {
-					if (t == target_type || t.ImplementsInterface (target_type)) {
-						if (expr_type.IsReferenceType)
-							return new ClassCast (expr, target_type);
+			if (target_type.IsInterface && expr_type.IsConvertibleToInterface (target_type)) {
+				if (expr_type.IsReferenceType)
+					return new ClassCast (expr, target_type);
 
-						return new BoxedCast (expr, target_type);
-					}
-				}
+				return new BoxedCast (expr, target_type);
 			}
 
 			return null;

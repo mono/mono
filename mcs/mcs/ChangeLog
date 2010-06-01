@@ -1,5 +1,10 @@
 2010-06-01  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #610139
+	* generic.cs, convert.cs: Recursively check effective base interface
+
+2010-06-01  Marek Safar  <marek.safar@gmail.com>
+
 	* statement.cs: Handle nullable types and type parameters in using
 	statement, avoid boxing value types. Also fixes #571010
 

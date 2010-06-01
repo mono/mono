@@ -976,6 +976,25 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public bool IsConvertibleToInterface (TypeSpec iface)
+		{
+			if (Interfaces != null) {
+				foreach (var t in Interfaces) {
+					if (t == iface)
+						return true;
+				}
+			}
+
+			if (TypeArguments != null) {
+				foreach (var t in TypeArguments) {
+					if (((TypeParameterSpec) t).IsConvertibleToInterface (iface))
+						return true;
+				}
+			}
+
+			return false;
+		}
+
 		public override TypeSpec Mutate (TypeParameterMutator mutator)
 		{
 			return mutator.Mutate (this);
