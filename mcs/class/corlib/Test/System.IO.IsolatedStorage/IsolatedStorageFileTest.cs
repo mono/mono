@@ -743,7 +743,37 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.AreEqual (false, isf.DirectoryExists ("subdir"), "#A1");
 			Assert.AreEqual (true, isf.DirectoryExists ("subdir-new"), "#A2");
 
-			isf.DeleteDirectory ("subdir-new");
+			try {
+				isf.MoveDirectory (String.Empty, "subdir-new-new");
+				Assert.Fail ("#Exc1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				isf.MoveDirectory ("  ", "subdir-new-new");
+				Assert.Fail ("#Exc2");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				isf.MoveDirectory ("doesntexist", "subdir-new-new");
+				Assert.Fail ("#Exc3");
+			} catch (DirectoryNotFoundException) {
+			}
+
+			try {
+				isf.MoveDirectory ("doesnexist/doesntexist", "subdir-new-new");
+				Assert.Fail ("#Exc4");
+			} catch (DirectoryNotFoundException) {
+			}
+
+			try {
+				isf.MoveDirectory ("subdir-new", "doesntexist/doesntexist");
+				Assert.Fail ("#Exc5");
+			} catch (DirectoryNotFoundException) {
+			}
+
+			isf.Remove ();
 			isf.Close ();
 			isf.Dispose ();
 		}
@@ -752,6 +782,10 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		public void CopyFile ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			if (isf.FileExists ("file"))
+				isf.DeleteFile ("file");
+			if (isf.FileExists ("file-new"))
+				isf.DeleteFile ("file-new");
 
 			isf.CreateFile ("file").Close ();
 			isf.CopyFile ("file", "file-new");
@@ -826,15 +860,62 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				isf.DeleteFile ("file");
 			if (isf.FileExists ("file-new"))
 				isf.DeleteFile ("file-new");
+			if (isf.FileExists ("subdir/subfile"))
+				isf.DeleteFile ("subdir/subfile");
+			if (isf.FileExists ("subdir/subfile-new"))
+				isf.DeleteFile ("subdir/subfile-new");
 
 			isf.CreateFile ("file").Close ();
 			Assert.AreEqual (true, isf.FileExists ("file"), "#A0");
+
+			// Same file
+			isf.MoveFile ("file", "file");
+			Assert.AreEqual (true, isf.FileExists ("file"), "#A0-1");
 
 			isf.MoveFile ("file", "file-new");
 			Assert.AreEqual (false, isf.FileExists ("file"), "#A1");
 			Assert.AreEqual (true, isf.FileExists ("file-new"), "#A2");
 
-			isf.DeleteFile ("file-new");
+			isf.CreateDirectory ("subdir");
+			isf.CreateFile ("subdir/subfile").Close ();
+			isf.MoveFile ("subdir/subfile", "subdir/subfile-new");
+			Assert.AreEqual (false, isf.FileExists ("subdir/subfile"), "#B0");
+			Assert.AreEqual (true, isf.FileExists ("subdir/subfile-new"), "#B1");
+
+			try {
+				isf.MoveFile (String.Empty, "file-new-new");
+				Assert.Fail ("#Exc1");
+			} catch (ArgumentException) {
+			}
+
+			try {
+				isf.MoveFile ("  ", "file-new-new");
+				Assert.Fail ("#Exc2");
+			} catch (ArgumentException e) {
+				Console.WriteLine (e);
+			}
+
+			try {
+				isf.MoveFile ("doesntexist", "file-new-new");
+				Assert.Fail ("#Exc3");
+			} catch (FileNotFoundException) {
+			}
+
+			// CopyFile is throwing a DirectoryNotFoundException here.
+			try {
+				isf.MoveFile ("doesnexist/doesntexist", "file-new-new");
+				Assert.Fail ("#Exc4");
+			} catch (FileNotFoundException) {
+			}
+
+			// I'd have expected a DirectoryNotFoundException here.
+			try {
+				isf.MoveFile ("file-new", "doesntexist/doesntexist");
+				Assert.Fail ("#Exc5");
+			} catch (IsolatedStorageException) {
+			}
+
+			isf.Remove ();
 			isf.Close ();
 			isf.Dispose ();
 		}
