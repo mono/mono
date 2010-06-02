@@ -198,7 +198,7 @@ namespace System.Xml
 			{
 				Position = 0;
 				DictLocalName = DictNS = null;
-				LocalName = NS = Prefix = Value = String.Empty;
+				LocalName = NS = Prefix = Value = name = String.Empty;
 				NodeType = XmlNodeType.None;
 				TypedValue = null;
 				ValueType = 0;

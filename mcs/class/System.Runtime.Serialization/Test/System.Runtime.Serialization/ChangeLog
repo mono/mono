@@ -1,3 +1,7 @@
+2010-06-02  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlObjectSerializerTest.cs : enable binary reader test for #601785.
+
 2010-06-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlObjectSerializerTest.cs : added test for bug #601785, based on

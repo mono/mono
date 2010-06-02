@@ -1432,9 +1432,7 @@ namespace MonoTests.System.Runtime.Serialization
 		public void IXmlSerializableCallConstructor ()
 		{
 			IXmlSerializableCallConstructor  (false);
-			// Disable. It asserts binary serialization, causing
-			// some breakage but nothing to do with IXmlSerializable.
-			//IXmlSerializableCallConstructor (true);
+			IXmlSerializableCallConstructor (true);
 		}
 		
 		void IXmlSerializableCallConstructor (bool binary)
