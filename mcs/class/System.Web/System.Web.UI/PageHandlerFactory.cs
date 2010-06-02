@@ -35,6 +35,10 @@ namespace System.Web.UI
 {
 	public class PageHandlerFactory : IHttpHandlerFactory
 	{
+		protected internal PageHandlerFactory ()
+		{
+		}
+		
 		public virtual IHttpHandler GetHandler (HttpContext context, string requestType, string url, string path)
 		{
 			return PageParser.GetCompiledPageInstance (url, path, context);

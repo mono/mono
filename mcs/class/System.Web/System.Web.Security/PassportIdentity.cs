@@ -6,7 +6,7 @@
 //   Andreas Nahr (ClassDevelopment@A-SoftTech.com)
 //
 // (C) 2002 Ximian, Inc (http://www.ximian.com)
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -37,6 +37,9 @@ namespace System.Web.Security {
 	[MonoTODO("Not implemented")]
 	// CAS - no InheritanceDemand here as the class is sealed
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
+#if NET_4_0
+	[Obsolete ("This type is obsolete. The Passport authentication product is no longer supported and has been superseded by Live ID.")]
+#endif
 #if NET_2_0
 	public sealed class PassportIdentity : IIdentity, IDisposable {
 #else

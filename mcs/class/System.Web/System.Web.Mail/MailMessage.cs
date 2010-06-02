@@ -35,12 +35,12 @@ using System.Text;
 
 namespace System.Web.Mail
 {
+#if !NET_4_0
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
-	[Obsolete ("The recommended alternative is System.Net.Mail.MailMessage.")]
 #endif
+	[Obsolete ("The recommended alternative is System.Net.Mail.MailMessage. http://go.microsoft.com/fwlink/?linkid=14202")]
 	public class MailMessage
 	{
 		ArrayList attachments;

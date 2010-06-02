@@ -340,7 +340,7 @@ namespace System.Web.Configuration
 		}
 
 
-		[Obsolete]
+		[Obsolete ("The recommended alternative is the EcmaScriptVersion property. A Major version value greater than or equal to 1 implies JavaScript support. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public bool JavaScript {
 			get {
 				if (!Get (HaveJavaScript)) {

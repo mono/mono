@@ -28,13 +28,15 @@
 
 using System.Security.Permissions;
 
-namespace System.Web.UI {
-
-	[Obsolete ("Use the System.Convert class and String.Format instead", false)]
+namespace System.Web.UI
+{
+	[Obsolete ("The recommended alternative is System.Convert and String.Format. http://go.microsoft.com/fwlink/?linkid=14202")]
 	// CAS - no InheritanceDemand here as the class is sealed
+#if !NET_4_0
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public sealed class ObjectConverter {
-
+#endif
+	public sealed class ObjectConverter
+	{
 		public ObjectConverter ()
 		{
 		}

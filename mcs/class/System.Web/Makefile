@@ -253,6 +253,7 @@ LIB_MCS_FLAGS = \
 	-r:System.Data.dll		\
 	-r:System.Xml.dll		\
 	-r:System.EnterpriseServices.dll \
+	-r:System.Design.dll \
 	$(OTHER_LIB_MCS_FLAGS) \
 	$(RESX_RES:%=/resource:%) \
 	$(OTHER_RES:%=/resource:%)

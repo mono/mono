@@ -34,12 +34,12 @@ using System.Security.Permissions;
 
 namespace System.Web.Mail
 {
+#if !NET_4_0
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
-	[Obsolete ("The recommended alternative is System.Net.Mail.Attachment.")]
 #endif
+	[Obsolete ("The recommended alternative is System.Net.Mail.Attachment. http://go.microsoft.com/fwlink/?linkid=14202")]
 	public class MailAttachment
 	{
 		string filename;

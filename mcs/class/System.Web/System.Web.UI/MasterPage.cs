@@ -135,7 +135,7 @@ namespace System.Web.UI
 			return masterPage;
 		}
 
-		internal static void ApplyMasterPageRecursive (MasterPage master, IList appliedMasterPageFiles)
+		internal static void ApplyMasterPageRecursive (MasterPage master, List <string> appliedMasterPageFiles)
 		{
 			/* XXX need to use virtual paths here? */
 			if (master.MasterPageFile != null) {

@@ -416,7 +416,7 @@ namespace System.Web
 			errors = null;
 		}
 
-		[Obsolete ("use WebConfigurationManager.GetWebApplicationSection")]
+		[Obsolete ("The recommended alternative is System.Web.Configuration.WebConfigurationManager.GetWebApplicationSection in System.Web.dll. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public static object GetAppConfig (string name)
 		{
 			object o = ConfigurationSettings.GetConfig (name);
@@ -424,7 +424,7 @@ namespace System.Web
 			return o;
 		}
 
-		[Obsolete ("see GetSection")]
+		[Obsolete ("The recommended alternative is System.Web.HttpContext.GetSection in System.Web.dll. http://go.microsoft.com/fwlink/?linkid=14202")]
 		public object GetConfig (string name)
 		{
 			return GetSection (name);

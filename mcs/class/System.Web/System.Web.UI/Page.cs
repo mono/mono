@@ -63,7 +63,7 @@ namespace System.Web.UI
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 [ToolboxItem (false)]
 [Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
-
+[DesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (TypeCodeDomSerializer))]
 public partial class Page : TemplateControl, IHttpHandler
 {
 	static string machineKeyConfigPath = "system.web/machineKey";
@@ -81,9 +81,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	ValidatorCollection _validators;
 	bool renderingForm;
 	string _savedViewState;
-	ArrayList _requiresPostBack;
-	ArrayList _requiresPostBackCopy;
-	ArrayList requiresPostDataChanged;
+	List <string> _requiresPostBack;
+	List <string> _requiresPostBackCopy;
+	List <IPostBackDataHandler> requiresPostDataChanged;
 	IPostBackEventHandler requiresRaiseEvent;
 	IPostBackEventHandler formPostedRequiresRaiseEvent;
 	NameValueCollection secondPostData;
@@ -194,7 +194,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected bool AspCompatMode {
 		get { return false; }
-		set { throw new NotImplementedException (); }
+		set {
+			// nothing to do
+		}
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
@@ -220,10 +222,10 @@ public partial class Page : TemplateControl, IHttpHandler
 	[Browsable (false), DefaultValue ("")]
 	[WebSysDescription ("Value do override the automatic browser detection and force the page to use the specified browser.")]
 	public string ClientTarget {
-		get { return (clientTarget == null) ? "" : clientTarget; }
+		get { return (clientTarget == null) ? String.Empty : clientTarget; }
 		set {
 			clientTarget = value;
-			if (value == "")
+			if (value == String.Empty)
 				clientTarget = null;
 		}
 	}
@@ -261,6 +263,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		set { Thread.CurrentThread.CurrentCulture = GetPageCulture (value, Thread.CurrentThread.CurrentCulture); }
 	}
 
+	[EditorBrowsable (EditorBrowsableState.Never)]
+	[Browsable (false)]
+	[DefaultValue ("true")]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public virtual bool EnableEventValidation {
 		get { return _eventValidation; }
 		set {
@@ -303,7 +309,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is HttpResponse.AddFileDependencies. http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected ArrayList FileDependencies {
 		set {
@@ -325,6 +331,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		get { return isPostBack; }
 	}
 
+	public bool IsPostBackEventControlRegistered {
+		get { return requiresRaiseEvent != null; }
+	}
+	
 	[EditorBrowsable (EditorBrowsableState.Never), Browsable (false)]
 	public bool IsReusable {
 		get { return false; }
@@ -344,6 +354,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
+	[Browsable (false)]
 	public IDictionary Items {
 		get {
 			if (items == null)
@@ -492,8 +503,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	[FilterableAttribute (false)]
-	[Obsolete]
+	[Filterable (false)]
+	[Obsolete ("The recommended alternative is Page.SetFocus and Page.MaintainScrollPositionOnPostBack. http://go.microsoft.com/fwlink/?linkid=14202")]
 	[Browsable (false)]
 	public bool SmartNavigation {
 		get { return _smartNavigation; }
@@ -556,6 +567,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 #if NET_4_0
 	[Bindable (true)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[Localizable (true)]
 	public string MetaDescription {
 		get {
 			if (_metaDescription == null) {
@@ -581,6 +594,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[Bindable (true)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[Localizable (true)]
 	public string MetaKeywords {
 		get {
 			if (_metaKeywords == null) {
@@ -729,6 +744,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Never)]
+	[MonoNotSupported ("Mono does not support classic ASP compatibility mode.")]
 	protected void AspCompatEndProcessRequest (IAsyncResult result)
 	{
 		throw new NotImplementedException ();
@@ -813,28 +829,28 @@ public partial class Page : TemplateControl, IHttpHandler
 		return FindControl (id);
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.GetPostBackEventReference. http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackClientEvent (Control control, string argument)
 	{
 		return scriptManager.GetPostBackEventReference (control, argument);
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.GetPostBackClientHyperlink. http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackClientHyperlink (Control control, string argument)
 	{
 		return scriptManager.GetPostBackClientHyperlink (control, argument);
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.GetPostBackEventReference. http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackEventReference (Control control)
 	{
-		return scriptManager.GetPostBackEventReference (control, "");
+		return scriptManager.GetPostBackEventReference (control, String.Empty);
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.GetPostBackEventReference. http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public string GetPostBackEventReference (Control control, string argument)
 	{
@@ -862,7 +878,8 @@ public partial class Page : TemplateControl, IHttpHandler
 		return 0;
 	}
 
-	[MonoTODO("The following properties of OutputCacheParameters are silently ignored: CacheProfile, SqlDependency")]
+	[MonoTODO ("The following properties of OutputCacheParameters are silently ignored: CacheProfile, SqlDependency")]
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected internal virtual void InitOutputCache(OutputCacheParameters cacheSettings)
 	{
 		if (cacheSettings.Enabled) {
@@ -879,7 +896,9 @@ public partial class Page : TemplateControl, IHttpHandler
 				cache.SetNoStore ();
 		}
 	}
+	
 	[MonoTODO ("varyByContentEncoding is not currently used")]
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected virtual void InitOutputCache(int duration,
 					       string varyByContentEncoding,
 					       string varyByHeader,
@@ -965,13 +984,13 @@ public partial class Page : TemplateControl, IHttpHandler
 		InitOutputCache (duration, null, varyByHeader, varyByCustom, location, varyByParam);
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.IsClientScriptBlockRegistered(string key). http://go.microsoft.com/fwlink/?linkid=14202")]
 	public bool IsClientScriptBlockRegistered (string key)
 	{
 		return scriptManager.IsClientScriptBlockRegistered (key);
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.IsStartupScriptRegistered(string key). http://go.microsoft.com/fwlink/?linkid=14202")]
 	public bool IsStartupScriptRegistered (string key)
 	{
 		return scriptManager.IsStartupScriptRegistered (key);
@@ -981,7 +1000,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		return Request.MapPath (virtualPath);
 	}
-
+	
 	protected internal override void Render (HtmlTextWriter writer)
 	{
 		if (MaintainScrollPositionOnPostBack) {
@@ -1121,12 +1140,10 @@ public partial class Page : TemplateControl, IHttpHandler
 
 	void ProcessPostData (NameValueCollection data, bool second)
 	{
-		NameValueCollection requestValues = _requestValueCollection == null ?
-			new NameValueCollection () :
-			_requestValueCollection;
+		NameValueCollection requestValues = _requestValueCollection == null ? new NameValueCollection () : _requestValueCollection;
 		
 		if (data != null && data.Count > 0) {
-			Hashtable used = new Hashtable ();
+			var used = new Dictionary <string, string> (StringComparer.Ordinal);
 			foreach (string id in data.AllKeys) {
 				if (id == "__VIEWSTATE" || id == postEventSourceID || id == postEventArgumentID || id == ClientScriptManager.EventStateFieldName)
 					continue;
@@ -1149,7 +1166,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		
 					if (pbdh.LoadPostData (id, requestValues) == true) {
 						if (requiresPostDataChanged == null)
-							requiresPostDataChanged = new ArrayList ();
+							requiresPostDataChanged = new List <IPostBackDataHandler> ();
 						requiresPostDataChanged.Add (pbdh);
 					}
 				
@@ -1164,22 +1181,22 @@ public partial class Page : TemplateControl, IHttpHandler
 			}
 		}
 
-		ArrayList list1 = null;
+		List <string> list1 = null;
 		if (_requiresPostBackCopy != null && _requiresPostBackCopy.Count > 0) {
-			string [] handlers = (string []) _requiresPostBackCopy.ToArray (typeof (string));
+			string [] handlers = (string []) _requiresPostBackCopy.ToArray ();
 			foreach (string id in handlers) {
 				IPostBackDataHandler pbdh = FindControl (id, true) as IPostBackDataHandler;
 				if (pbdh != null) {			
 					_requiresPostBackCopy.Remove (id);
 					if (pbdh.LoadPostData (id, requestValues)) {
 						if (requiresPostDataChanged == null)
-							requiresPostDataChanged = new ArrayList ();
+							requiresPostDataChanged = new List <IPostBackDataHandler> ();
 	
 						requiresPostDataChanged.Add (pbdh);
 					}
 				} else if (!second) {
 					if (list1 == null)
-						list1 = new ArrayList ();
+						list1 = new List <string> ();
 					list1.Add (id);
 				}
 			}
@@ -1318,6 +1335,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		#endregion
 	}
 
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected IAsyncResult AsyncPageBeginProcessRequest (HttpContext context, AsyncCallback callback, object extraData) 
 	{
 		ProcessRequest (context);
@@ -1330,6 +1348,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		return asyncResult;
 	}
 
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected void AsyncPageEndProcessRequest (IAsyncResult result) 
 	{
 	}
@@ -1585,14 +1604,14 @@ public partial class Page : TemplateControl, IHttpHandler
 		sourceControl.RaisePostBackEvent (eventArgument);
 	}
 	
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.RegisterArrayDeclaration(string arrayName, string arrayValue). http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterArrayDeclaration (string arrayName, string arrayValue)
 	{
 		scriptManager.RegisterArrayDeclaration (arrayName, arrayValue);
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.RegisterClientScriptBlock(Type type, string key, string script). http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterClientScriptBlock (string key, string script)
 	{
@@ -1612,7 +1631,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		throw new NotImplementedException ();
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.RegisterOnSubmitStatement(Type type, string key, string script). http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public void RegisterOnSubmitStatement (string key, string script)
 	{
@@ -1631,12 +1650,13 @@ public partial class Page : TemplateControl, IHttpHandler
 			throw new HttpException ("The control to register does not implement the IPostBackDataHandler interface.");
 		
 		if (_requiresPostBack == null)
-			_requiresPostBack = new ArrayList ();
+			_requiresPostBack = new List <string> ();
 
-		if (_requiresPostBack.Contains (control.UniqueID))
+		string uniqueID = control.UniqueID;
+		if (_requiresPostBack.Contains (uniqueID))
 			return;
 
-		_requiresPostBack.Add (control.UniqueID);
+		_requiresPostBack.Add (uniqueID);
 	}
 
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
@@ -1645,7 +1665,7 @@ public partial class Page : TemplateControl, IHttpHandler
 		requiresRaiseEvent = control;
 	}
 
-	[Obsolete]
+	[Obsolete ("The recommended alternative is ClientScript.RegisterStartupScript(Type type, string key, string script). http://go.microsoft.com/fwlink/?linkid=14202")]
 	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public virtual void RegisterStartupScript (string key, string script)
 	{
@@ -1680,7 +1700,7 @@ public partial class Page : TemplateControl, IHttpHandler
 			if (postdata == null || (view_state = postdata ["__VIEWSTATE"]) == null)
 				return null;
 
-			if (view_state == "")
+			if (view_state == String.Empty)
 				return null;
 			return view_state;
 		}
@@ -1719,7 +1739,7 @@ public partial class Page : TemplateControl, IHttpHandler
 				Pair vsr = sState.First as Pair;
 				if (vsr != null) {
 					LoadViewStateRecursive (vsr.First);
-					_requiresPostBackCopy = vsr.Second as ArrayList;
+					_requiresPostBackCopy = vsr.Second as List <string>;
 				}
 			}
 		}
@@ -2015,6 +2035,9 @@ public partial class Page : TemplateControl, IHttpHandler
 		get { return isCrossPagePostBack; }
 	}
 
+	[Browsable (false)]
+	[EditorBrowsable (EditorBrowsableState.Never)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public new virtual char IdSeparator {
 		get {
 			//TODO: why override?
@@ -2098,11 +2121,15 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif
 	}
 
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected bool AsyncMode {
 		get { return asyncMode; }
 		set { asyncMode = value; }
 	}
 
+	[Browsable (false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[EditorBrowsable (EditorBrowsableState.Advanced)]
 	public TimeSpan AsyncTimeout {
 		get { return asyncTimeout; }
 		set { asyncTimeout = value; }
@@ -2121,6 +2148,9 @@ public partial class Page : TemplateControl, IHttpHandler
 	}
 
 	[MonoTODO ("Actually use the value in code.")]
+	[Browsable (false)]
+	[EditorBrowsable (EditorBrowsableState.Never)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	public int MaxPageStateFieldLength {
 		get { return maxPageStateFieldLength; }
 		set { maxPageStateFieldLength = value; }
@@ -2292,6 +2322,10 @@ public partial class Page : TemplateControl, IHttpHandler
 		return (HtmlTextWriter) Activator.CreateInstance(writerType, tw);
 	}
 
+	[Browsable (false)]
+	[DefaultValue ("0")]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	public ViewStateEncryptionMode ViewStateEncryptionMode {
 		get { return viewStateEncryptionMode; }
 		set { viewStateEncryptionMode = value; }
@@ -2382,7 +2416,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	void ApplyMasterPage ()
 	{
 		if (masterPageFile != null && masterPageFile.Length > 0) {
-			ArrayList appliedMasterPageFiles = new ArrayList ();
+			List <string> appliedMasterPageFiles = new List <string> ();
 
 			if (Master != null) {
 				MasterPage.ApplyMasterPageRecursive (Master, appliedMasterPageFiles);
@@ -2637,7 +2671,7 @@ public partial class Page : TemplateControl, IHttpHandler
 	{
 		base.OnInit (e);
 
-		ArrayList themes = new ArrayList();
+		var themes = new List <string> ();
 
 		if (StyleSheetPageTheme != null && StyleSheetPageTheme.GetStyleSheets () != null)
 			themes.AddRange (StyleSheetPageTheme.GetStyleSheets ());
@@ -2657,18 +2691,20 @@ public partial class Page : TemplateControl, IHttpHandler
 		}
 	}
 
-	[MonoTODO ("Not implemented.  Only used by .net aspx parser")]
+	[MonoDocumentationNote ("Not implemented.  Only used by .net aspx parser")]
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected object GetWrappedFileDependencies (string [] list)
 	{
 		return list;
 	}
 
-	[MonoTODO ("Does nothing.  Used by .net aspx parser")]
+	[MonoDocumentationNote ("Does nothing.  Used by .net aspx parser")]
 	protected virtual void InitializeCulture ()
 	{
 	}
 
-	[MonoTODO ("Does nothing. Used by .net aspx parser")]
+	[MonoDocumentationNote ("Does nothing. Used by .net aspx parser")]
+	[EditorBrowsable (EditorBrowsableState.Never)]
 	protected internal void AddWrappedFileDependencies (object virtualFileDependencies)
 	{
 	}

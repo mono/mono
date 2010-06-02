@@ -78,6 +78,9 @@ namespace System.Web.Configuration
 		}
 		
 		[ConfigurationProperty ("passport")]
+#if NET_4_0
+		[Obsolete ("This property is obsolete. The Passport authentication product is no longer supported and has been superseded by Live ID.")]
+#endif
 		public PassportAuthentication Passport {
 			get { return (PassportAuthentication) base [passportProp]; }
 		}
