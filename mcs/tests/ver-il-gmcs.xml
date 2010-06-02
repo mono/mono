@@ -12870,6 +12870,51 @@
       </method>
     </type>
   </test>
+  <test name="gtest-515.cs">
+    <type name="A">
+      <method name="I`1 Foo[T]()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="AA">
+      <method name="I`1 Foo[V]()">
+        <size>7</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="B">
+      <method name="Void Dispose()">
+        <size>1</size>
+      </method>
+      <method name="I`1 Foo[R]()">
+        <size>7</size>
+      </method>
+      <method name="Void Main()">
+        <size>12</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-516.cs">
+    <type name="B">
+      <method name="Void Foo()">
+        <size>15</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -39742,6 +39787,115 @@
       </method>
       <method name="Int32 Main()">
         <size>26</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-780.cs">
+    <type name="MonoVirtuals.X">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MonoVirtuals.Y">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MonoVirtuals.A">
+      <method name="Int32 f(MonoVirtuals.X)">
+        <size>12</size>
+      </method>
+      <method name="Int32 f(MonoVirtuals.Y)">
+        <size>13</size>
+      </method>
+      <method name="Int32 get_Item(MonoVirtuals.X)">
+        <size>12</size>
+      </method>
+      <method name="Int32 get_Item(MonoVirtuals.Y)">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MonoVirtuals.B">
+      <method name="Int32 f(MonoVirtuals.X)">
+        <size>19</size>
+      </method>
+      <method name="Int32 get_Item(MonoVirtuals.X)">
+        <size>19</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MonoVirtuals.C">
+      <method name="Int32 f(MonoVirtuals.X)">
+        <size>18</size>
+      </method>
+      <method name="Int32 f(MonoVirtuals.Y)">
+        <size>18</size>
+      </method>
+      <method name="Int32 get_Item(MonoVirtuals.X)">
+        <size>18</size>
+      </method>
+      <method name="Int32 get_Item(MonoVirtuals.Y)">
+        <size>18</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="MonoVirtuals.MainClass">
+      <method name="Int32 Main()">
+        <size>46</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-781.cs">
+    <type name="D">
+      <method name="Void Invoke()">
+        <size>0</size>
+      </method>
+      <method name="IAsyncResult BeginInvoke(System.AsyncCallback, System.Object)">
+        <size>0</size>
+      </method>
+      <method name="Void EndInvoke(IAsyncResult)">
+        <size>0</size>
+      </method>
+      <method name="Void .ctor(Object, IntPtr)">
+        <size>0</size>
+      </method>
+    </type>
+    <type name="E">
+      <method name="Void add_temp(D)">
+        <size>24</size>
+      </method>
+      <method name="Void remove_temp(D)">
+        <size>24</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="E get_Prop()">
+        <size>6</size>
+      </method>
+      <method name="Void Test()">
+        <size>41</size>
+      </method>
+      <method name="Void Main()">
+        <size>13</size>
+      </method>
+      <method name="Void &lt;Test&gt;m__0()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
