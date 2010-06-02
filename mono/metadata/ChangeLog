@@ -1,5 +1,10 @@
 2010-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* verify.c (verify_generic_parameters): Verify if
+	there are not loops in constraints.
+
+2010-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* verify.c (is_compatible_boxed_valuetype): Constaints
 	must be recursively checked if one generic argument
 	has a constraint on another.
