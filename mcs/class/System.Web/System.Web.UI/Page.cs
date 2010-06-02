@@ -63,7 +63,7 @@ namespace System.Web.UI
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 [ToolboxItem (false)]
 [Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
-[DesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (TypeCodeDomSerializer))]
+//[DesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (TypeCodeDomSerializer))]
 public partial class Page : TemplateControl, IHttpHandler
 {
 	static string machineKeyConfigPath = "system.web/machineKey";
