@@ -103,7 +103,9 @@ namespace System.Web.UI
 		TemplateControl _templateControl;
 		bool _isChildControlStateCleared;
 		string _templateSourceDirectory;
-
+#if NET_4_0
+		ViewStateMode viewStateMode;
+#endif
 		/*************/
 		int stateMask;
 		const int ENABLE_VIEWSTATE = 1;
@@ -139,6 +141,9 @@ namespace System.Web.UI
 			stateMask = ENABLE_VIEWSTATE | VISIBLE | AUTOID | BINDING_CONTAINER | AUTO_EVENT_WIREUP;
 			if (this is INamingContainer)
 				stateMask |= IS_NAMING_CONTAINER;
+#if NET_4_0
+			viewStateMode = ViewStateMode.Inherit;
+#endif
 		}
 		
 		ControlAdapter adapter;
@@ -275,10 +280,16 @@ namespace System.Web.UI
 
 		protected internal bool IsViewStateEnabled {
 			get {
-				for (Control control = this; control != null; control = control.Parent)
+				for (Control control = this; control != null; control = control.Parent) {
 					if (!control.EnableViewState)
 						return false;
-
+#if NET_4_0
+					ViewStateMode vsm = control.ViewStateMode;
+					if (vsm != ViewStateMode.Inherit)
+						return vsm == ViewStateMode.Enabled;
+#endif
+				}
+				
 				return true;
 			}
 		}
@@ -1828,6 +1839,18 @@ namespace System.Web.UI
 			}
 		}
 #if NET_4_0
+		[ThemeableAttribute(false)]
+		[DefaultValue ("0")]
+		public virtual ViewStateMode ViewStateMode {
+			get { return viewStateMode;  }
+			set {
+				if (value < ViewStateMode.Inherit || value > ViewStateMode.Disabled)
+					throw new ArgumentOutOfRangeException ("An attempt was made to set this property to a value that is not in the ViewStateMode enumeration.");
+
+				viewStateMode = value;
+			}
+		}
+
 		public string GetRouteUrl (object routeParameters)
 		{
 			return GetRouteUrl (null, new RouteValueDictionary (routeParameters));

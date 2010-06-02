@@ -183,6 +183,9 @@ public partial class Page : TemplateControl, IHttpHandler
 			viewStateEncryptionMode = ViewStateEncryptionMode.Auto;
 			_viewState = true;
 		}
+#if NET_4_0
+		this.ViewStateMode = ViewStateMode.Enabled;
+#endif
 	}
 
 	#endregion		
@@ -1786,7 +1789,11 @@ public partial class Page : TemplateControl, IHttpHandler
 		Pair vsr = null;
 		object viewState = null;
 		
-		if (EnableViewState)
+		if (EnableViewState
+#if NET_4_0
+		    && this.ViewStateMode == ViewStateMode.Enabled
+#endif
+		)
 			viewState = SaveViewStateRecursive ();
 		
 		object reqPostback = (_requiresPostBack != null && _requiresPostBack.Count > 0) ? _requiresPostBack : null;

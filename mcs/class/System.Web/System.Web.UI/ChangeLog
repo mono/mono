@@ -1,5 +1,9 @@
 2010-06-02  Marek Habersack  <mhabersack@novell.com>
 
+	* ViewStateMode.cs: added
+
+	* Control.cs: implemented 4.0 ViewStateMode
+
 	* Page.cs: implemented 4.0 properties AutoPostBackControl and
 	RouteData
 

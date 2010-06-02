@@ -17,6 +17,7 @@ System.Web.Compilation/RouteUrlExpressionBuilder.cs
 System.Web.Compilation/RouteValueExpressionBuilder.cs
 System.Web.SessionState_2.0/SessionStateBehavior.cs
 System.Web.Routing/PageRouteHandler.cs
+System.Web.UI/ViewStateMode.cs
 System.Web.UI.WebControls/IDataBoundControl.cs
 System.Web.UI.WebControls/IDataBoundItemControl.cs
 System.Web.UI.WebControls/IDataBoundListControl.cs
