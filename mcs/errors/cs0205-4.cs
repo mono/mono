@@ -1,4 +1,4 @@
-// CS0205: Cannot call an abstract base member `A.Foobar'
+// CS0205: Cannot call an abstract base member `A.Foobar.set'
 // Line: 13
 
 public abstract class A
