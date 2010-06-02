@@ -1,3 +1,12 @@
+2010-06-02  Geoff Norton  <gnorton@novell.com>
+
+	* appdomain.c: If we are running with IOMAP we might
+	have been provided a string that isn't case-aware for our file-
+	system, so we need to use io-portability to check if the file 
+	exists, rather than a simple glib test.
+
+	Fixes #608849
+
 2010-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* verify.c (verify_generic_parameters): Verify if
