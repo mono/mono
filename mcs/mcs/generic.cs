@@ -1102,7 +1102,7 @@ namespace Mono.CSharp {
 				if (tparams [i] == tp)
 					return targs[i];
 
-			// CECIL: This can happen when inflating nested types
+			// This can happen when inflating nested types
 			// without type arguments specified
 			return tp;
 		}
