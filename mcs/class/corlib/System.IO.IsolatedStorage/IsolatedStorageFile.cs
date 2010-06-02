@@ -779,10 +779,26 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentNullException ("sourceDirectoryName");
 			if (destinationDirectoryName == null)
 				throw new ArgumentNullException ("sourceDirectoryName");
+			if (sourceDirectoryName.Trim ().Length == 0)
+				throw new ArgumentException ("An empty directory name is not valid.", "sourceDirectoryName");
+			if (destinationDirectoryName.Trim ().Length == 0)
+				throw new ArgumentException ("An empty directory name is not valid.", "destinationDirectoryName");
 
 			CheckOpen ();
-			Directory.Move (Path.Combine (directory.FullName, sourceDirectoryName),
-					Path.Combine (directory.FullName, destinationDirectoryName));
+
+			string src_full_path = Path.Combine (directory.FullName, sourceDirectoryName);
+			string dest_full_path = Path.Combine (directory.FullName, destinationDirectoryName);
+
+			if (!Directory.Exists (src_full_path))
+				throw new DirectoryNotFoundException ("Could not find a part of path '" + sourceDirectoryName + "'.");
+			if (!Directory.Exists (Path.GetDirectoryName (dest_full_path)))
+				throw new DirectoryNotFoundException ("Could not find a part of path '" + destinationDirectoryName + "'.");
+
+			try {
+				Directory.Move (src_full_path, dest_full_path);
+			} catch (IOException) {
+				throw new IsolatedStorageException ("Operation not allowed.");
+			}
 		}
 
 		[ComVisible (false)]
@@ -792,10 +808,27 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentNullException ("sourceFileName");
 			if (destinationFileName == null)
 				throw new ArgumentNullException ("sourceFileName");
+			if (sourceFileName.Trim ().Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "sourceFileName");
+			if (destinationFileName.Trim ().Length == 0)
+				throw new ArgumentException ("An empty file name is not valid.", "destinationFileName");
 
 			CheckOpen ();
-			File.Move (Path.Combine (directory.FullName, sourceFileName),
-					Path.Combine (directory.FullName, destinationFileName));
+
+			string source_full_path = Path.Combine (directory.FullName, sourceFileName);
+			string dest_full_path = Path.Combine (directory.FullName, destinationFileName);
+
+			if (!File.Exists (source_full_path))
+				throw new FileNotFoundException ("Could not find a part of path '" + sourceFileName + "'.");
+			// I expected a DirectoryNotFound exception.
+			if (!Directory.Exists (Path.GetDirectoryName (dest_full_path)))
+				throw new IsolatedStorageException ("Operation not allowed.");
+
+			try {
+				File.Move (source_full_path, dest_full_path);
+			} catch (IOException) {
+				throw new IsolatedStorageException ("Operation not allowed.");
+			}
 		}
 
 		[ComVisible (false)]

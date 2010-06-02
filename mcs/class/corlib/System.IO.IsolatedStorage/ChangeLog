@@ -1,3 +1,10 @@
+2010-06-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFile.cs: Check for empty paths and existing paths in
+	both MoveFile and MoveDirectory, just as we do in CopyFile. Finally
+	cover our IO calls with a try-catch block, so all the IOException
+	instances are reported as IsolatedStorageException.
+
 2010-05-31  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorage.cs:
