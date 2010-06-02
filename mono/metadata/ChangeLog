@@ -1,3 +1,11 @@
+2010-06-02 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* verify.c (is_compatible_boxed_valuetype): Constaints
+	must be recursively checked if one generic argument
+	has a constraint on another.
+
+	Fixes #610625.
+
 2010-05-31  Miguel de Icaza  <miguel@novell.com>
 
 	* console-unix.c (terminal_get_dimensions): Fix my previous
