@@ -69,8 +69,12 @@ namespace System.Web.UI.WebControls {
 		{
 			return new QueryStringParameter (this);
 		}
-		
-		protected override object Evaluate (HttpContext ctx, Control control)
+#if NET_4_0
+		protected internal
+#else
+		protected
+#endif
+		override object Evaluate (HttpContext ctx, Control control)
 		{
 			if (ctx == null || ctx.Request == null)
 				return null;
@@ -78,7 +82,7 @@ namespace System.Web.UI.WebControls {
 			return ctx.Request.QueryString [QueryStringField];
 		}
 		
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
 		public string QueryStringField {
 			get {
 				string s = ViewState ["QueryStringField"] as string;

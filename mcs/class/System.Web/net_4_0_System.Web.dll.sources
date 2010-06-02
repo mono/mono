@@ -22,6 +22,7 @@ System.Web.UI.WebControls/IDataBoundControl.cs
 System.Web.UI.WebControls/IDataBoundItemControl.cs
 System.Web.UI.WebControls/IDataBoundListControl.cs
 System.Web.UI.WebControls/IFieldControl.cs
+System.Web.UI.WebControls/RouteParameter.cs
 System.Web.Util/RequestValidationSource.cs
 System.Web.Util/RequestValidator.cs
 

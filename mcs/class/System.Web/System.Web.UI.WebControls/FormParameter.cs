@@ -68,8 +68,12 @@ namespace System.Web.UI.WebControls {
 		{
 			return new FormParameter (this);
 		}
-		
-		protected override object Evaluate (HttpContext ctx, Control control)
+#if NET_4_0
+		protected internal
+#else
+		protected
+#endif
+		override object Evaluate (HttpContext ctx, Control control)
 		{
 			if (control == null || ctx.Request == null)
 				return null;
@@ -77,7 +81,7 @@ namespace System.Web.UI.WebControls {
 			return ctx.Request.Form [FormField];
 		}
 		
-	    [DefaultValueAttribute ("")]
+		[DefaultValueAttribute ("")]
 		public string FormField {
 			get {
 				string s = ViewState ["FormField"] as string;

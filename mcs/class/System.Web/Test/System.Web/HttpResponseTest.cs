@@ -246,7 +246,7 @@ namespace MonoTests.System.Web {
 
 	[TestFixture]
 	public class HttpResponseTest {
-		HttpContext Cook (int re, out FakeHttpWorkerRequest2 f)
+		public static HttpContext Cook (int re, out FakeHttpWorkerRequest2 f)
 		{
 			f = new FakeHttpWorkerRequest2 (re);
 			HttpContext c = new HttpContext (f);

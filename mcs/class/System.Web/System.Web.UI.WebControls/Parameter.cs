@@ -47,6 +47,9 @@ namespace System.Web.UI.WebControls {
 
 		protected Parameter (Parameter original)
 		{
+			if (original == null)
+				throw new NullReferenceException (".NET emulation");
+			
 			this.DefaultValue = original.DefaultValue;
 			this.Direction = original.Direction;
 			this.ConvertEmptyStringToNull = original.ConvertEmptyStringToNull;
@@ -309,7 +312,7 @@ namespace System.Web.UI.WebControls {
 				if (s != null)
 					return s;
 				
-				return "";
+				return String.Empty;
 			}
 			set {
 				
@@ -404,7 +407,12 @@ namespace System.Web.UI.WebControls {
 		// returns the value of the control that it is bound to, while 
 		// the QueryStringParameter object retrieves the current name/value pair from 
 		// the HttpRequest object.
-		protected virtual object Evaluate (HttpContext context, Control control)
+#if NET_4_0
+		protected internal
+#else
+		protected
+#endif
+		virtual	object Evaluate (HttpContext context, Control control)
 		{
 			return null;
 		}

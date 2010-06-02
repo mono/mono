@@ -1,3 +1,12 @@
+2010-06-03  Marek Habersack  <mhabersack@novell.com>
+
+	* Parameter.cs, ControlParameter.cs, SessionParameter.cs,
+	CookieParameter.cs, FormParameter.cs, ProfileParameter.cs,
+	QueryStringParameter.cs: Evaluate is 'protected internal virtual'
+	in 4.0.
+
+	* RouteParameter.cs: implemented.
+
 2010-04-28  Marek Habersack  <mhabersack@novell.com>
 
 	* CheckBoxList.cs: do not modify list item status in LoadPostData

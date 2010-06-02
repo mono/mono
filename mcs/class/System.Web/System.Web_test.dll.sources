@@ -512,6 +512,7 @@ System.Web.UI.WebControls/RepeatInfoCas.cs
 System.Web.UI.WebControls/RequiredFieldValidatorCas.cs
 System.Web.UI.WebControls/RoleGroupCas.cs
 System.Web.UI.WebControls/RoleGroupCollectionCas.cs
+System.Web.UI.WebControls/RouteParameterTest.cs
 System.Web.UI.WebControls/SelectedDatesCollectionCas.cs
 System.Web.UI.WebControls/SiteMapPathTest.cs
 System.Web.UI.WebControls/StyleCas.cs

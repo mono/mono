@@ -78,8 +78,12 @@ namespace System.Web.UI.WebControls {
 		{
 			return new ControlParameter (this);
 		}
-		
-		protected override object Evaluate (HttpContext ctx, Control control)
+#if NET_4_0
+		protected internal
+#else
+		protected
+#endif
+		override object Evaluate (HttpContext ctx, Control control)
 		{
 			if (control == null)
 				return null;
