@@ -1,3 +1,15 @@
+2010-06-02  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (set_rgctx_arg): New helper function to remove some duplicate code.
+	Use a separate generic class init trampoline for llvm, since it needs a different
+	signature.
+
+	* unwind.c (mono_unwind_decode_fde): Make this decode the mono specific LSDA which
+	includes the location of this/rgctx.
+
+	* mini-llvm.c aot-runtime.c: Enable generic sharing for llvm if using the LLVM mono
+	branch.
+
 2010-06-01  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.c (mini_method_compile): Enable llvm+exceptions on LLVM SVN.
