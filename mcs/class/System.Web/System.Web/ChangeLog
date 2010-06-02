@@ -1,3 +1,8 @@
+2010-06-02  Marek Habersack  <mhabersack@novell.com>
+
+	* DefaultHttpHandler.cs: implemented, so that static file requests
+	work again in 4.0
+
 2010-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpUtility.cs: moved chunks of code to the new

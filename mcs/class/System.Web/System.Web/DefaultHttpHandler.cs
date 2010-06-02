@@ -28,42 +28,94 @@
 //
 
 using System.Collections.Specialized;
+using System.Threading;
 
 namespace System.Web
 {
 	public class DefaultHttpHandler : IHttpAsyncHandler
 	{
+		sealed class DefaultHandlerAsyncResult : IAsyncResult
+		{
+			public object AsyncState {
+				get;
+				private set;
+			}
+
+			public WaitHandle AsyncWaitHandle {
+				get { return null; }
+			}
+			
+			public bool CompletedSynchronously {
+				get { return true; }
+			}
+
+			public bool IsCompleted {
+				get { return true; }
+			}
+			
+			public DefaultHandlerAsyncResult (AsyncCallback callback, object state)
+			{
+				this.AsyncState = state;
+
+				if (callback != null)
+					callback (this);
+			}
+		}
+
+		NameValueCollection executeUrlHeaders;
+		
 		protected HttpContext Context {
-			get { return null; }
+			get;
+			private set;
 		}
 
 		public virtual bool IsReusable {
 			get { return false; }
 		}
-
-		[MonoTODO("Not implemented, always returns null")]
+		
 		protected NameValueCollection ExecuteUrlHeaders {
-			get { return null; }
+			get {
+				HttpContext context = Context;
+				HttpRequest req = context != null ? context.Request : null;
+				if (req != null && executeUrlHeaders != null)	
+					executeUrlHeaders = new NameValueCollection (req.Headers);
+				
+				return executeUrlHeaders;
+			}
 		}
 
-		[MonoTODO("Not implemented, always returns null")]
 		public virtual IAsyncResult BeginProcessRequest (HttpContext context, AsyncCallback callback, object state)
 		{
-			return null;
+			this.Context = context;
+
+			HttpRequest req = context != null ? context.Request : null;
+			string filePath = req != null ? req.FilePath : null;
+
+			if (!String.IsNullOrEmpty (filePath) && String.Compare (".asp", VirtualPathUtility.GetExtension (filePath), StringComparison.OrdinalIgnoreCase) == 0)
+				throw new HttpException (String.Format ("Access to file '{0}' is forbidden.", filePath));
+
+			if (req != null && String.Compare ("POST", req.HttpMethod, StringComparison.OrdinalIgnoreCase) == 0)
+				throw new HttpException (String.Format ("Method '{0}' is not allowed when accessing file '{1}'", req.HttpMethod, filePath));
+
+			var sfh = new StaticFileHandler ();
+			sfh.ProcessRequest (context);
+			
+			return new DefaultHandlerAsyncResult (callback, state);
 		}
 
-		[MonoTODO("Not implemented, does nothing")]
 		public virtual void EndProcessRequest (IAsyncResult result)
 		{
+			// nothing to do
 		}
-
-		[MonoTODO("Not implemented, does nothing")]
+		
 		public virtual void ProcessRequest (HttpContext context)
 		{
+			throw new InvalidOperationException ("The ProcessRequest cannot be called synchronously.");
 		}
 
 		public virtual void OnExecuteUrlPreconditionFailure ()
 		{
+			// nothing to do
 		}
 
 		public virtual string OverrideExecuteUrlPath ()
