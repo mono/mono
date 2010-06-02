@@ -54,6 +54,9 @@ using System.Web.UI.Adapters;
 using System.Web.UI.HtmlControls;
 using System.Web.UI.WebControls;
 using System.Reflection;
+#if NET_4_0
+using System.Web.Routing;
+#endif
 
 namespace System.Web.UI
 {
@@ -63,7 +66,7 @@ namespace System.Web.UI
 [DefaultEvent ("Load"), DesignerCategory ("ASPXCodeBehind")]
 [ToolboxItem (false)]
 [Designer ("Microsoft.VisualStudio.Web.WebForms.WebFormDesigner, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (IRootDesigner))]
-//[DesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, typeof (TypeCodeDomSerializer))]
+[DesignerSerializer ("Microsoft.VisualStudio.Web.WebForms.WebFormCodeDomSerializer, " + Consts.AssemblyMicrosoft_VisualStudio_Web, "System.ComponentModel.Design.Serialization.TypeCodeDomSerializer, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
 public partial class Page : TemplateControl, IHttpHandler
 {
 	static string machineKeyConfigPath = "system.web/machineKey";
@@ -146,7 +149,8 @@ public partial class Page : TemplateControl, IHttpHandler
 #if NET_4_0
 	string _metaDescription;
 	string _metaKeywords;
-
+	Control _autoPostBackControl;
+	
 	bool frameworkInitialized;
 #endif
 	Hashtable items;
@@ -566,6 +570,26 @@ public partial class Page : TemplateControl, IHttpHandler
 #endif	
 	}
 #if NET_4_0
+	public Control AutoPostBackControl {
+		get { return _autoPostBackControl; }
+		set { _autoPostBackControl = value; }
+	}
+	
+	[BrowsableAttribute(false)]
+	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
+	public RouteData RouteData {
+		get {
+			if (_request == null)
+				return null;
+
+			RequestContext reqctx = _request.RequestContext;
+			if (reqctx == null)
+				return null;
+
+			return reqctx.RouteData;
+		}
+	}
+	
 	[Bindable (true)]
 	[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 	[Localizable (true)]
@@ -1553,7 +1577,6 @@ public partial class Page : TemplateControl, IHttpHandler
 	
 	void RaisePostBackEvents ()
 	{
-		Control targetControl;
 		if (requiresRaiseEvent != null) {
 			RaisePostBackEvent (requiresRaiseEvent, null);
 			return;
@@ -1569,7 +1592,14 @@ public partial class Page : TemplateControl, IHttpHandler
 			return;
 
 		string eventTarget = postdata [postEventSourceID];
-		if (eventTarget == null || eventTarget.Length == 0) {
+		IPostBackEventHandler target;
+		if (String.IsNullOrEmpty (eventTarget)) {
+#if NET_4_0
+			target = AutoPostBackControl as IPostBackEventHandler;
+			if (target != null)
+				RaisePostBackEvent (target, null);
+			else
+#endif
 			if (formPostedRequiresRaiseEvent != null)
 				RaisePostBackEvent (formPostedRequiresRaiseEvent, null);
 			else
@@ -1577,9 +1607,11 @@ public partial class Page : TemplateControl, IHttpHandler
 			return;
 		}
 
-		targetControl = FindControl (eventTarget, true);
-		IPostBackEventHandler target = targetControl as IPostBackEventHandler;
-			
+		target = FindControl (eventTarget, true) as IPostBackEventHandler;
+#if NET_4_0
+		if (target == null)
+			target = AutoPostBackControl as IPostBackEventHandler;
+#endif
 		if (target == null)
 			return;
 
