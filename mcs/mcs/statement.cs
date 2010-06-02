@@ -5338,7 +5338,7 @@ namespace Mono.CSharp {
 					}
 
 					get_enumerator.InstanceExpression = expr;
-					get_enumerator.IsBase = t != expr.Type;
+//					get_enumerator.IsBase = t != expr.Type;
 
 					return true;
 				}

@@ -128,7 +128,8 @@ namespace Mono.CSharp.Nullable
 
 		public override Expression DoResolveLValue (ResolveContext ec, Expression right_side)
 		{
-			return DoResolve (ec);
+			expr = expr.DoResolveLValue (ec, right_side);
+			return this;
 		}
 
 		public override void Emit (EmitContext ec)

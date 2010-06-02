@@ -7925,7 +7925,10 @@ namespace Mono.CSharp {
 
 			public IndexerSpec BestIndexer ()
 			{
-				return candidates.Where (l => l.Get == BestCandidate || l.Set == BestCandidate).First ();
+				return MemberCache.FindIndexers (BestCandidate.DeclaringType, BindingRestriction.None).
+					Where (l => 
+						(l.HasGet && l.Get.MemberDefinition == BestCandidate.MemberDefinition) ||
+						(l.HasSet && l.Set.MemberDefinition == BestCandidate.MemberDefinition)).First ();
 			}
 
 			static IEnumerable<MemberSpec> FilterAccessors (IEnumerable<IndexerSpec> indexers)
@@ -7940,7 +7943,7 @@ namespace Mono.CSharp {
 
 			protected override IList<MemberSpec> GetBaseTypeMethods (ResolveContext rc, TypeSpec type)
 			{
-				candidates = GetIndexersForType (type, false);
+				candidates = GetIndexersForType (type);
 				if (candidates == null)
 					return null;
 
@@ -8011,13 +8014,9 @@ namespace Mono.CSharp {
 			return CreateExpressionFactoryCall (ec, "Call", args);
 		}
 
-		static IEnumerable<IndexerSpec> GetIndexersForType (TypeSpec lookup_type, bool baseAccess)
+		static IEnumerable<IndexerSpec> GetIndexersForType (TypeSpec lookup_type)
 		{
-			BindingRestriction restrictions = BindingRestriction.AccessibleOnly;
-			if (!baseAccess)
-				restrictions |= BindingRestriction.NoOverrides;
-
-			return MemberCache.FindIndexers (lookup_type, restrictions);
+			return MemberCache.FindIndexers (lookup_type, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides);
 		}
 
 		protected virtual void CommonResolve (ResolveContext ec)
@@ -8057,15 +8056,20 @@ namespace Mono.CSharp {
 			if (indexer_type == InternalType.Dynamic) {
 				dynamic = true;
 			} else {
-				var ilist = GetIndexersForType (indexer_type, this is BaseIndexerAccess);
+				var ilist = GetIndexersForType (indexer_type);
 				if (ilist == null) {
 					ec.Report.Error (21, loc, "Cannot apply indexing with [] to an expression of type `{0}'",
 							  TypeManager.CSharpName (indexer_type));
 					return null;
 				}
 
-				var mg = new IndexerMethodGroupExpr (ilist, loc);
-				mg.InstanceExpression = instance_expr;
+				var mg = new IndexerMethodGroupExpr (ilist, loc) {
+					InstanceExpression = instance_expr
+				};
+
+				if (is_base_indexer)
+					mg.QueriedBaseType = current_type;
+
 				mg = mg.OverloadResolve (ec, ref arguments, false, loc) as IndexerMethodGroupExpr;
 				if (mg == null)
 					return null;
@@ -8320,19 +8324,12 @@ namespace Mono.CSharp {
 
 			var arity = args == null ? -1 : args.Count;
 			member_lookup = MemberLookup (ec.Compiler, ec.CurrentType, null, base_type, Identifier, arity,
-						      MemberKind.All, BindingRestriction.AccessibleOnly, loc);
+						      MemberKind.All, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides, loc);
 			if (member_lookup == null) {
 				Error_MemberLookupFailed (ec, ec.CurrentType, base_type, base_type, Identifier, arity,
 					null, MemberKind.All, BindingRestriction.AccessibleOnly);
 				return null;
 			}
-
-			Expression left;
-			
-			if (ec.IsStatic)
-				left = new TypeExpression (base_type, loc);
-			else
-				left = ec.GetThis (loc);
 
 			MemberExpr me = member_lookup as MemberExpr;
 			if (me == null){
@@ -8347,8 +8344,7 @@ namespace Mono.CSharp {
 				return null;
 			}
 			
-			me = me.ResolveMemberAccess (ec, left, null);
-			me.IsBase = true;
+			me.QueriedBaseType = base_type;
 
 			if (args != null) {
 				args.Resolve (ec);

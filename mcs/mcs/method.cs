@@ -1960,7 +1960,7 @@ namespace Mono.CSharp {
 				if (method_expr == null)
 					throw new NotImplementedException ();
 
-				method_expr.IsBase = true;
+				method_expr.QueriedBaseType = base_type;
 				method_expr.InstanceExpression = new CompilerGeneratedThis (Parent.Definition, Location);
 
 				ToplevelBlock new_block = new ToplevelBlock (Compiler, Block.StartLocation);

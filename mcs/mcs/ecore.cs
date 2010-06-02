@@ -2678,8 +2678,6 @@ namespace Mono.CSharp {
 	/// </summary>
 	public abstract class MemberExpr : Expression
 	{
-		protected bool is_base;
-
 		//
 		// An instance expression associated with this member, if it's a
 		// non-static member
@@ -2697,9 +2695,13 @@ namespace Mono.CSharp {
 		// When base.member is used
 		//
 		public bool IsBase {
-			get { return is_base; }
-			set { is_base = value; }
+			get { return QueriedBaseType != null; }
 		}
+
+		//
+		// A type used for base.member lookup or null
+		//
+		public TypeSpec QueriedBaseType { get; set; }
 
 		/// <summary>
 		///   Whether this is an instance member.
@@ -2725,6 +2727,34 @@ namespace Mono.CSharp {
 		public static void Error_BaseAccessInExpressionTree (ResolveContext ec, Location loc)
 		{
 			ec.Report.Error (831, loc, "An expression tree may not contain a base access");
+		}
+
+		//
+		// Converts best base candidate for virtual method starting from QueriedBaseType
+		//
+		protected MethodSpec CandidateToBaseOverride (MethodSpec method)
+		{
+			//
+			// Only when base.member is used
+			//
+			if (QueriedBaseType == null || method.DeclaringType == QueriedBaseType)
+				return method;
+
+			//
+			// Overload resulution works on virtual or non-virtual members only (no overrides). That
+			// means for base.member access we have to find the closest match after we found best candidate
+			//
+			if ((method.Modifiers & Modifiers.ABSTRACT | Modifiers.VIRTUAL | Modifiers.STATIC) != Modifiers.STATIC) {
+				var base_override = MemberCache.FindMember (QueriedBaseType, new MemberFilter (method), BindingRestriction.InstanceOnly) as MethodSpec;
+				if (base_override != null && base_override.DeclaringType != method.DeclaringType) {
+					if (base_override.IsGeneric)
+						return base_override.MakeGenericMethod (method.TypeArguments);
+
+					return base_override;
+				}
+			}
+
+			return method;
 		}
 
 		//
@@ -3376,18 +3406,15 @@ namespace Mono.CSharp {
 		protected virtual IList<MemberSpec> GetBaseTypeMethods (ResolveContext rc, TypeSpec type)
 		{
 			var arity = type_arguments == null ? -1 : type_arguments.Count;
-			BindingRestriction restrictions = BindingRestriction.AccessibleOnly;
-			if (!is_base)
-				restrictions |= BindingRestriction.NoOverrides;
 
 			return TypeManager.MemberLookup (rc.CurrentType, null, type,
-				MemberKind.Method, restrictions,
+				MemberKind.Method, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides,
 				Name, arity, null);
 		}
 
 		bool GetBaseTypeMethods (ResolveContext rc)
 		{
-			var base_type = Methods.First ().DeclaringType.BaseType;
+			var base_type = Methods [0].DeclaringType.BaseType;
 			if (base_type == null)
 				return false;
 
@@ -3898,6 +3925,9 @@ namespace Mono.CSharp {
 				return this;
 			}
 
+			if (IsBase)
+				best_candidate = CandidateToBaseOverride (best_candidate);
+
 			//
 			// And now check if the arguments are all
 			// compatible, perform conversions if
@@ -3912,8 +3942,12 @@ namespace Mono.CSharp {
 				return null;
 
 			if (best_candidate.Kind == MemberKind.Method) {
-				if (InstanceExpression != null && best_candidate.IsStatic) {
-					InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
+				if (InstanceExpression != null) {
+					if (best_candidate.IsStatic) {
+						InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
+					}
+
+					InstanceExpression.Resolve (ec);
 				}
 
 				ResolveInstanceExpression (ec);
@@ -4674,8 +4708,11 @@ namespace Mono.CSharp {
 	public class PropertyExpr : MemberExpr, IDynamicAssign
 	{
 		PropertySpec spec;
+
+		// getter and setter can be different for base calls
+		MethodSpec getter, setter;
+
 		TypeArguments targs;
-		
 		LocalTemporary temp;
 		bool prepared;
 
@@ -4707,6 +4744,12 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public PropertySpec PropertyInfo {
+			get {
+				return spec;
+			}
+		}
+
 		#endregion
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
@@ -4718,7 +4761,7 @@ namespace Mono.CSharp {
 				return CreateExpressionFactoryCall (ec, "ArrayLength", args);
 			}
 
-			if (is_base) {
+			if (IsBase) {
 				Error_BaseAccessInExpressionTree (ec, loc);
 				return null;
 			}
@@ -4734,7 +4777,7 @@ namespace Mono.CSharp {
 
 		public Expression CreateSetterTypeOfExpression ()
 		{
-			return new TypeOfMethod (spec.Set, loc);
+			return new TypeOfMethod (setter, loc);
 		}
 
 		public override TypeSpec DeclaringType {
@@ -4756,12 +4799,6 @@ namespace Mono.CSharp {
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.Property (InstanceExpression.MakeExpression (ctx), (MethodInfo) spec.Get.GetMetaInfo ());
-		}
-
-		public PropertySpec PropertyInfo {
-			get {
-				return spec;
-			}
 		}
 
 		bool InstanceResolve (ResolveContext ec, bool lvalue_instance, bool must_do_cs1540_check)
@@ -4842,15 +4879,17 @@ namespace Mono.CSharp {
 			if (!InstanceResolve (ec, false, must_do_cs1540_check))
 				return null;
 
+			if (type.IsPointer && !ec.IsUnsafe) {
+				UnsafeError (ec, loc);
+			}
+
+			getter = CandidateToBaseOverride (spec.Get);
+
 			//
 			// Only base will allow this invocation to happen.
 			//
-			if (IsBase && spec.IsAbstract) {
+			if (IsBase && getter.IsAbstract) {
 				Error_CannotCallAbstractBase (ec, spec.GetSignatureForError ());
-			}
-
-			if (type.IsPointer && !ec.IsUnsafe){
-				UnsafeError (ec, loc);
 			}
 
 			if (!ec.IsObsolete) {
@@ -4916,12 +4955,14 @@ namespace Mono.CSharp {
 			
 			if (!InstanceResolve (ec, TypeManager.IsStruct (spec.DeclaringType), must_do_cs1540_check))
 				return null;
+
+			setter = CandidateToBaseOverride (spec.Set);
 			
 			//
 			// Only base will allow this invocation to happen.
 			//
-			if (IsBase && spec.IsAbstract){
-				Error_CannotCallAbstractBase (ec, TypeManager.GetFullNameSignature (spec));
+			if (IsBase && setter.IsAbstract){
+				Error_CannotCallAbstractBase (ec, setter.GetSignatureForError ());
 			}
 
 			if (spec.MemberType.IsPointer && !ec.IsUnsafe) {
@@ -4955,7 +4996,7 @@ namespace Mono.CSharp {
 				return;
 			}
 
-			Invocation.EmitCall (ec, IsBase, InstanceExpression, spec.Get, null, loc, prepared, false);
+			Invocation.EmitCall (ec, IsBase, InstanceExpression, getter, null, loc, prepared, false);
 			
 			if (leave_copy) {
 				ec.Emit (OpCodes.Dup);
@@ -4994,7 +5035,7 @@ namespace Mono.CSharp {
 			Arguments args = new Arguments (1);
 			args.Add (new Argument (my_source));
 			
-			Invocation.EmitCall (ec, IsBase, InstanceExpression, spec.Set, args, loc, false, prepared);
+			Invocation.EmitCall (ec, IsBase, InstanceExpression, setter, args, loc, false, prepared);
 			
 			if (temp != null) {
 				temp.Emit (ec);
@@ -5124,13 +5165,14 @@ namespace Mono.CSharp {
 
 		bool InstanceResolve (ResolveContext ec, bool must_do_cs1540_check)
 		{
+			if (IsBase && spec.IsAbstract) {
+				Error_CannotCallAbstractBase (ec, spec.GetSignatureForError ());
+			}
+
 			if (!ResolveInstanceExpression (ec))
 				return true;
 
-			if (IsBase && spec.IsAbstract) {
-				Error_CannotCallAbstractBase (ec, TypeManager.CSharpSignature(spec));
-				return false;
-			}
+			InstanceExpression.Resolve (ec);
 
 			//
 			// This is using the same mechanism as the CS1540 check in PropertyExpr.

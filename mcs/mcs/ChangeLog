@@ -1,3 +1,11 @@
+2010-06-02  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #610088
+	* nullable.cs, expression.cs, statement.cs, method.cs, ecore.cs:
+	Ignore overrides for base overload resolution as for non-base
+	expressions and convert the best candidate to closest override
+	afterwards.
+
 2010-06-01  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #610139
