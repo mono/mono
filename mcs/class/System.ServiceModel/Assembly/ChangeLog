@@ -1,3 +1,7 @@
+2010-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* AssemblyInfo.cs : add InternalVisibleTo(sys.sm.routing).
+
 2009-05-01  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AssemblyInfo.cs: Don't include extra stuff into Moonlight (NET_2_1)
