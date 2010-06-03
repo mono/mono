@@ -18,6 +18,11 @@ namespace System.ServiceModel.Routing.Configuration
 			BaseAdd (element);
 		}
 
+		public void Clear ()
+		{
+			BaseClear ();
+		}
+
 		protected override ConfigurationElement CreateNewElement ()
 		{
 			return new BackupEndpointElement ();
@@ -34,7 +39,12 @@ namespace System.ServiceModel.Routing.Configuration
 		}
 
 		public new BackupEndpointCollection this [string name] {
-			get { return (BackupEndpointCollection) BaseGet (name); }
+			get {
+				foreach (BackupEndpointCollection c in this)
+					if (c.Name == name)
+						return c;
+				return null;
+			}
 		}
 	}
 }

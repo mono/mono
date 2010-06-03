@@ -13,10 +13,15 @@ namespace System.ServiceModel.Routing.Configuration
 	public class NamespaceElement : ConfigurationElement
 	{
 		[ConfigurationProperty ("namespace", DefaultValue = null, Options = ConfigurationPropertyOptions.IsRequired)]
-		public string Namespace { get; set; }
+		public string Namespace {
+			get { return (string) base ["namespace"]; }
+			set { base ["namespace"] = value; }
+		}
 
 		[ConfigurationProperty ("prefix", DefaultValue = null, Options = ConfigurationPropertyOptions.None | ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		public string Prefix { get; set; }
-
+		public string Prefix {
+			get { return (string) base ["prefix"]; }
+			set { base ["prefix"] = value; }
+		}
 	}
 }

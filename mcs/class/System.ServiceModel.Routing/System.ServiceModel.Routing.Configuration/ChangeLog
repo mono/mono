@@ -1,3 +1,18 @@
+2010-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* BackupEndpointCollection.cs
+	  BackupEndpointElement.cs
+	  BackupListCollection.cs
+	  FilterElement.cs
+	  FilterElementCollection.cs
+	  FilterTableEntryCollection.cs
+	  FilterTableEntryElement.cs
+	  NamespaceElement.cs
+	  NamespaceElementCollection.cs
+	  RoutingExtensionElement.cs
+	  RoutingSection.cs
+	  SoapProcessingExtensionElement.cs : implement to get working.
+
 2010-03-02  Raja R Harinath  <harinath@hurrynot.org>
 
 	* BackupListCollection.cs, FilterTableCollection.cs: Add indexer.

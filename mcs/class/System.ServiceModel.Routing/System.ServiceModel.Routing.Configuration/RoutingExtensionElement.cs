@@ -17,25 +17,29 @@ namespace System.ServiceModel.Routing.Configuration
 		}
 
 		[ConfigurationProperty ("filterTableName", DefaultValue = null)]
-		public string FilterTableName { get; set; }
+		public string FilterTableName {
+			get { return (string) base ["filterTableName"]; }
+			set { base ["filterTableName"] = value; }
+		}
 
 		[ConfigurationProperty ("routeOnHeadersOnly", DefaultValue = true, Options = ConfigurationPropertyOptions.None)]
-		public bool RouteOnHeadersOnly { get; set; }
+		public bool RouteOnHeadersOnly {
+			get { return (bool) base ["routeOnHeadersOnly"]; }
+			set { base ["routeOnHeadersOnly"] = value; }
+		}
 
 		[ConfigurationProperty ("soapProcessingEnabled", DefaultValue = true)]
-		public bool SoapProcessingEnabled { get; set; }
+		public bool SoapProcessingEnabled {
+			get { return (bool) base ["soapProcessingEnabled"]; }
+			set { base ["soapProcessingEnabled"] = value; }
+		}
 
 		protected override object CreateBehavior ()
 		{
-			var sec = (RoutingSection) ConfigurationManager.GetSection ("system.serviceModel/routing");
-			var re = (RoutingExtension) Activator.CreateInstance (typeof (RoutingExtension), new object [0]);
-
-			var filters = new List<MessageFilter> ();
 			var table = RoutingSection.CreateFilterTable (FilterTableName);
 
-			re.ApplyConfiguration (new RoutingConfiguration (table, RouteOnHeadersOnly) {
-				SoapProcessingEnabled = this.SoapProcessingEnabled });
-			return re;
+			var cfg = new RoutingConfiguration (table, RouteOnHeadersOnly) { SoapProcessingEnabled = this.SoapProcessingEnabled };
+			return new RoutingBehavior (cfg);
 		}
 	}
 }

@@ -43,6 +43,10 @@ namespace System.ServiceModel.Routing.Configuration
 			}
 		}
 
+		public FilterElement this [int index] {
+			get { return (FilterElement) BaseGet (index); }
+		}
+
 		public override bool IsReadOnly ()
 		{
 			return base.IsReadOnly ();

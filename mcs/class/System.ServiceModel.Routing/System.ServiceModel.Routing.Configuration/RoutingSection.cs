@@ -15,8 +15,9 @@ namespace System.ServiceModel.Routing.Configuration
 	{
 		public static ServiceEndpoint CreateEndpoint (this ChannelEndpointElement el)
 		{
-			// FIXME: implement
-			throw new NotImplementedException ();
+			// depends on System.ServiceModel internals (by InternalVisibleTo).
+			// FIXME: is IRequestReplyRouter okay for every case?
+			return new ServiceEndpoint (ContractDescription.GetContract (typeof (IRequestReplyRouter)), ConfigUtil.CreateBinding (el.Binding, el.BindingConfiguration), new EndpointAddress (el.Address));
 		}
 
 		public static MessageFilter CreateFilter (this FilterElement el, RoutingSection sec)
@@ -48,13 +49,14 @@ namespace System.ServiceModel.Routing.Configuration
 
 	public class RoutingSection : ConfigurationSection
 	{
-		static ServiceModelSectionGroup wcfRootSection = ConfigurationManager.GetSection ("system.serviceModel") as ServiceModelSectionGroup;
-
 		static ServiceEndpoint CreateServiceEndpoint (string name)
 		{
 			// FIXME: might be service endpoints.
-			var endpoints = wcfRootSection.Client.Endpoints;
-			return ((ChannelEndpointElement) endpoints [name]).CreateEndpoint ();
+			var endpoints = ConfigUtil.ClientSection.Endpoints;
+			foreach (ChannelEndpointElement ep in endpoints)
+				if (ep.Name == name)
+					return ep.CreateEndpoint ();
+			throw new KeyNotFoundException (String.Format ("client endpoint '{0}' not found", name));
 		}
 
 		[MonoTODO]
@@ -62,43 +64,52 @@ namespace System.ServiceModel.Routing.Configuration
 		{
 			var sec = (RoutingSection) ConfigurationManager.GetSection ("system.serviceModel/routing");
 
-			var filters = new Dictionary<string,MessageFilter> ();
 			var table = new MessageFilterTable<IEnumerable<ServiceEndpoint>> ();
 			var ftec = (FilterTableEntryCollection) sec.FilterTables [name];
 			foreach (FilterTableEntryElement fte in ftec) {
-				MessageFilter filter;
-				if (filters.TryGetValue (fte.FilterName, out filter)) {
-					var filterElement = (FilterElement) sec.Filters [fte.FilterName];
-					filter = filterElement.CreateFilter (sec);
-				}
+				var filterElement = (FilterElement) sec.Filters [fte.FilterName];
+				MessageFilter filter = filterElement.CreateFilter (sec);
 				table.Add (filter, new List<ServiceEndpoint> (), fte.Priority);
 				var list = (List<ServiceEndpoint>) table [filter];
 				list.Add (CreateServiceEndpoint (fte.EndpointName));
 				var bec = (BackupEndpointCollection) sec.BackupLists [fte.BackupList];
-				foreach (BackupEndpointElement bee in bec)
-					list.Add (CreateServiceEndpoint (bee.EndpointName));
+				if (bec != null)
+					foreach (BackupEndpointElement bee in bec)
+						list.Add (CreateServiceEndpoint (bee.EndpointName));
 			}
 			return table;
 		}
 
 		public RoutingSection ()
 		{
-			BackupLists = new BackupListCollection ();
-			Filters = new FilterElementCollection ();
-			FilterTables = new FilterTableCollection ();
-			NamespaceTable = new NamespaceElementCollection ();
+			//BackupLists = new BackupListCollection ();
+			//Filters = new FilterElementCollection ();
+			//FilterTables = new FilterTableCollection ();
+			//NamespaceTable = new NamespaceElementCollection ();
 		}
 
 		[ConfigurationProperty ("backupLists", Options = ConfigurationPropertyOptions.None)]
-		public BackupListCollection BackupLists { get; private set; }
+		public BackupListCollection BackupLists {
+			get { return (BackupListCollection) base ["backupLists"]; }
+			private set { base ["backupLists"] = value; }
+		}
 
 		[ConfigurationProperty ("filters", Options = ConfigurationPropertyOptions.None)]
-		public FilterElementCollection Filters { get; private set; }
+		public FilterElementCollection Filters {
+			get { return (FilterElementCollection) base ["filters"]; }
+			private set { base ["filters"] = value; }
+		}
 
 		[ConfigurationProperty ("filterTables", Options = ConfigurationPropertyOptions.None)]
-		public FilterTableCollection FilterTables { get; private set; }
+		public FilterTableCollection FilterTables {
+			get { return (FilterTableCollection) base ["filterTables"]; }
+			private set { base ["filterTables"] = value; }
+		}
 
 		[ConfigurationProperty ("namespaceTable", Options = ConfigurationPropertyOptions.None)]
-		public NamespaceElementCollection NamespaceTable { get; private set; }
+		public NamespaceElementCollection NamespaceTable {
+			get { return (NamespaceElementCollection) base ["namespaceTable"]; }
+			private set { base ["namespaceTable"] = value; }
+		}
 	}
 }

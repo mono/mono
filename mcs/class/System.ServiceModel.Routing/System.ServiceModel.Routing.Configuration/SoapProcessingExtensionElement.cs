@@ -17,7 +17,10 @@ namespace System.ServiceModel.Routing.Configuration
 		}
 
 		[ConfigurationProperty ("processMessages", DefaultValue = true, Options = ConfigurationPropertyOptions.None)]
-		public bool ProcessMessages { get; set; }
+		public bool ProcessMessages {
+			get { return (bool) base ["processMessages"]; }
+			set { base ["processMessages"] = value; }
+		}
 
 		protected override object CreateBehavior ()
 		{

@@ -14,7 +14,10 @@ namespace System.ServiceModel.Routing.Configuration
 	public class FilterTableEntryCollection : ConfigurationElementCollection
 	{
 		[ConfigurationProperty ("name", DefaultValue = null, Options = ConfigurationPropertyOptions.None | ConfigurationPropertyOptions.IsRequired | ConfigurationPropertyOptions.IsKey)]
-		public string Name { get; set; }
+		public string Name {
+			get { return (string) base ["name"]; }
+			set { base ["name"] = value; }
+		}
 
 		public void Add (FilterTableEntryElement element)
 		{
@@ -34,11 +37,6 @@ namespace System.ServiceModel.Routing.Configuration
 		protected override object GetElementKey (ConfigurationElement element)
 		{
 			return ((FilterTableEntryElement) element).EndpointName;
-		}
-
-		public override bool IsReadOnly ()
-		{
-			return base.IsReadOnly ();
 		}
 
 		public void Remove (FilterTableEntryElement element)

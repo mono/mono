@@ -33,6 +33,19 @@ namespace System.ServiceModel.Routing.Configuration
 			return ((NamespaceElement) element).Prefix;
 		}
 
+		public new NamespaceElement this [string name] {
+			get {
+				foreach (NamespaceElement ne in this)
+					if (ne.Namespace == name)
+						return ne;
+				return null;
+			}
+		}
+
+		public NamespaceElement this [int index] {
+			get { return (NamespaceElement) BaseGet (index); }
+		}
+
 		public override bool IsReadOnly ()
 		{
 			return base.IsReadOnly ();

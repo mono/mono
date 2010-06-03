@@ -13,6 +13,12 @@ namespace System.ServiceModel.Routing.Configuration
 	[ConfigurationCollection (typeof (BackupEndpointElement))]
 	public class BackupEndpointCollection : ConfigurationElementCollection
 	{
+		[ConfigurationProperty ("name", DefaultValue = null, Options = ConfigurationPropertyOptions.IsRequired)]
+		public string Name {
+			get { return (string) base ["name"]; }
+			set { base ["name"] = value; }
+		}
+
 		public BackupEndpointCollection ()
 		{
 		}
@@ -20,6 +26,11 @@ namespace System.ServiceModel.Routing.Configuration
 		public void Add (BackupEndpointElement element)
 		{
 			BaseAdd (element);
+		}
+
+		public void Clear ()
+		{
+			BaseClear ();
 		}
 
 		protected override ConfigurationElement CreateNewElement ()
