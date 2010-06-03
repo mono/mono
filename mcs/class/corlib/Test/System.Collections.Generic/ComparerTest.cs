@@ -39,6 +39,9 @@ namespace MonoTests.System.Collections.Generic
 	[TestFixture]
 	public class ComparerTest
 	{
+
+#if !NET_4_0 // FIXME: the blob contains the 2.0 mscorlib version
+
 		[Test] // bug #80929
 		public void SerializeDefault ()
 		{
@@ -54,6 +57,8 @@ namespace MonoTests.System.Collections.Generic
 
 			Assert.AreEqual (_serializedDefault, buffer);
 		}
+
+#endif
 
 		[Test]
 		public void DeserializeDefault ()
