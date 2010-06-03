@@ -1,3 +1,7 @@
+2010-06-03  Jb Evain  <jbevain@novell.com>
+
+	* ISafeSerializationData.cs: add new interface in net_4_0.
+
 2008-05-22  Miguel de Icaza  <miguel@novell.com>
 
 	* SerializationCallbacks.cs: This lock has a high contention rate
