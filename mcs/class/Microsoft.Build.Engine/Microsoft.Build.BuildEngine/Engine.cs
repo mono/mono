@@ -283,8 +283,10 @@ namespace Microsoft.Build.BuildEngine {
 			if (projectFullFileName == null)
 				throw new ArgumentNullException ("projectFullFileName");
 			
-			// FIXME: test it
-			return projects [projectFullFileName];
+			Project project;
+			projects.TryGetValue (projectFullFileName, out project);
+
+			return project;
 		}
 
 		internal void RemoveLoadedProject (Project p)

@@ -810,6 +810,13 @@ namespace MonoTests.Microsoft.Build.BuildEngine {
 				});
 		}
 
+		[Test]
+		public void TestGetLoadedProject1()
+		{
+			Project project = Engine.GlobalEngine.GetLoadedProject("foo.proj");
+			Assert.IsNull(project);
+		}
+
 		// Helper Methods for TestGlobalProperties*
 
 		void CreateAndCheckGlobalPropertiesTest (string main, string first, string second,

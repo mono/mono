@@ -1,3 +1,8 @@
+2010-06-03  Ankit Jain  <jankit@novell.com>
+
+	* EngineTest.cs (TestGetLoadedProject1):
+	Patch by Dale Ragan <dale.ragan@sinesignal.com> .
+
 2010-04-06  Ankit Jain  <jankit@novell.com>
 
 	* Consts.cs (ToolsVersionString): New.

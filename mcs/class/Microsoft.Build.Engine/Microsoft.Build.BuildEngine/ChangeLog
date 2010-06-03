@@ -1,3 +1,8 @@
+2010-06-03  Ankit Jain  <jankit@novell.com>
+
+	* Engine.cs (GetLoadedProject): Return null if project not found.
+	Based on a patch by Dale Ragan <dale.ragan@sinesignal.com> .
+
 2010-05-28  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #485841.
