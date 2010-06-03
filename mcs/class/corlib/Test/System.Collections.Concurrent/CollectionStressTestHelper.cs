@@ -85,10 +85,17 @@ namespace MonoTests.System.Collections.Concurrent
 				
 				bool state = true;
 				
+				Assert.AreEqual ((count + delta) * threads, coll.Count, "#0");
+				
 				ParallelTestHelper.ParallelStressTest (coll, (q) => {
+					bool s = true;
 					int t;
+					
 					for (int i = 0; i < count; i++)
-						state &= coll.TryTake (out t);
+						s &= coll.TryTake (out t);
+					
+					if (!s)
+						state = false;
 				}, threads);
 				
 				Assert.IsTrue (state, "#1");
@@ -110,7 +117,7 @@ namespace MonoTests.System.Collections.Concurrent
 					CollectionAssert.AreEquivalent (expected, actual, "#3");
 				else 
 					Assert.AreEqual (expected, actual, "#3");
-			});
+			}, 1000);
 		}
 	}
 }

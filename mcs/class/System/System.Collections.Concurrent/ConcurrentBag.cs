@@ -42,8 +42,14 @@ namespace System.Collections.Concurrent
 	public class ConcurrentBag<T> : IProducerConsumerCollection<T>, IEnumerable<T>, IEnumerable
 	{
 		const int multiplier = 2;
+		const int hintThreshold = 20;
+		
 		int size = Environment.ProcessorCount + 1;
 		int count;
+		
+		// We only use the add hints when number of slot is above hintThreshold
+		// so to not waste memory space and the CAS overhead
+		ConcurrentQueue<int> addHints = new ConcurrentQueue<int> ();
 		
 		CyclicDeque<T>[] container;
 		
@@ -74,18 +80,37 @@ namespace System.Collections.Concurrent
 			Interlocked.Increment (ref count);
 			GrowIfNecessary ();
 			
-			CyclicDeque<T> bag = GetBag ();
+			int index;
+			CyclicDeque<T> bag = GetBag (out index);
 			bag.PushBottom (item);
+			
+			// Cache operation ?
+			if (size > hintThreshold)
+				addHints.Enqueue (index);
 		}
 		
 		public bool TryTake (out T item)
 		{
 			item = default (T);
-			CyclicDeque<T> bag = GetBag ();
+
+			if (count == 0)
+				return false;
+
+			int hintIndex;
+			CyclicDeque<T> bag = GetBag (out hintIndex);
+			bool hintEnabled = size > hintThreshold;
 			
 			if (bag == null || bag.PopBottom (out item) != PopResult.Succeed) {
 				for (int i = 0; i < container.Length; i++) {
-					if (container[i].PopTop (out item) == PopResult.Succeed) {
+					// Try to retrieve something based on a hint
+					bool result = hintEnabled && addHints.TryDequeue (out hintIndex) && container[hintIndex].PopTop (out item) == PopResult.Succeed;
+
+					// We fall back to testing our slot
+					if (!result && container[i] != null)
+						result = container[i].PopTop (out item) == PopResult.Succeed;
+					
+					// If we found something, stop
+					if (result) {
 						Interlocked.Decrement (ref count);
 						return true;
 					}
@@ -198,11 +223,11 @@ namespace System.Collections.Concurrent
 			}
 		}
 		
-		CyclicDeque<T> GetBag ()
+		CyclicDeque<T> GetBag (out int i)
 		{			
-			int i = GetIndex ();
+			i = GetIndex ();
 			
-			return i < container.Length ? container[i] : null;
+			return i < container.Length ? (container[i] == null) ? (container[i] = new CyclicDeque<T> ()) : container[i] : null;
 		}
 		
 		void Grow (int referenceSize)
@@ -213,10 +238,7 @@ namespace System.Collections.Concurrent
 				
 				CyclicDeque<T>[] slice = new CyclicDeque<T>[size * multiplier];
 				int i = 0;
-				for (i = 0; i < container.Length; i++)
-					slice[i] = container[i];
-				for (; i < slice.Length; i++)
-					slice[i] = new CyclicDeque<T> ();
+				Array.Copy (container, slice, container.Length);
 				
 				container = slice;
 				size = slice.Length;

@@ -1,3 +1,9 @@
+2010-06-03  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* CollectionStressTestHelper.cs: Bump remove test repeat to 1000.
+	Use a local variable for tracking status and only update the global one
+	at the end.
+
 2010-03-24  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ConcurrentDictionaryTests.cs: Renaming in Assert

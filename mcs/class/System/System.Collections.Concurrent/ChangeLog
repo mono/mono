@@ -1,3 +1,8 @@
+2010-06-03  Jérémie Laval  <jeremie.laval@gmail.com>
+
+	* ConcurrentBag.cs: Add a add hint cache for faster steal retrieval.
+	Initialize lazily the underlying CyclicDeque.
+
 2010-04-15  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* BlockingCollection.cs:
