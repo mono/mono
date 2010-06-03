@@ -1090,6 +1090,13 @@ namespace Mono.CSharp {
 			return new ParametersCompiled (pd, types);
 		}
 
+		public static ParametersCompiled CreateImplicitParameter (FullNamedExpression texpr, Location loc)
+		{
+			return new ParametersCompiled (
+				new[] { new Parameter (texpr, "value", Parameter.Modifier.NONE, null, loc) },
+				null);
+		}
+
 		//
 		// Returns non-zero value for equal CLS parameter signatures
 		//

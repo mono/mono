@@ -1804,15 +1804,13 @@ get_accessor_declaration
 set_accessor_declaration
 	: opt_attributes opt_modifiers SET 
 	  {
-		Parameter implicit_value_parameter = new Parameter (
-			implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null, GetLocation ($3));
-
 		if (!parsing_indexer) {
-			current_local_parameters = new ParametersCompiled (compiler, new Parameter [] { implicit_value_parameter });
+			current_local_parameters = ParametersCompiled.CreateImplicitParameter (implicit_value_parameter_type, GetLocation ($3));
 		} else {
 			current_local_parameters = ParametersCompiled.MergeGenerated (compiler,
-				indexer_parameters, true, implicit_value_parameter, null);
+				indexer_parameters, true, new Parameter (
+					implicit_value_parameter_type, "value", Parameter.Modifier.NONE, null, GetLocation ($3)),
+					null);
 		}
 		
 		lexer.PropertyParsing = false;
@@ -2270,10 +2268,6 @@ event_declaration
 	  OPEN_BRACE
 	  {
 		implicit_value_parameter_type = (FullNamedExpression) $4;  
-		current_local_parameters = new ParametersCompiled (compiler,
-			new Parameter (implicit_value_parameter_type, "value", 
-			Parameter.Modifier.NONE, null, GetLocation ($3)));
-
 		lexer.EventParsing = true;
 	  }
 	  event_accessor_declarations
@@ -2344,19 +2338,20 @@ event_accessor_declarations
 		Report.Error (1055, GetLocation ($1), "An add or remove accessor expected");
 		$$ = null;
 	  }
-	| { $$ = null; }
 	;
 
 add_accessor_declaration
 	: opt_attributes ADD
 	  {
 		lexer.EventParsing = false;
+		current_local_parameters = ParametersCompiled.CreateImplicitParameter (implicit_value_parameter_type, GetLocation ($2));
 	  }
 	  block
 	  {
-		Accessor accessor = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, null, GetLocation ($2));
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, current_local_parameters, GetLocation ($2));
+	  
 		lexer.EventParsing = true;
-		$$ = accessor;
+		current_local_parameters = null;	
 	  }
 	| opt_attributes ADD error {
 		Report.Error (73, GetLocation ($2), "An add or remove accessor must have a body");
@@ -2372,11 +2367,14 @@ remove_accessor_declaration
 	: opt_attributes REMOVE
 	  {
 		lexer.EventParsing = false;
+		current_local_parameters = ParametersCompiled.CreateImplicitParameter (implicit_value_parameter_type, GetLocation ($2));
 	  }
 	  block
-	  {
-		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, null, GetLocation ($2));
+	  {  
+		$$ = new Accessor ((ToplevelBlock) $4, 0, (Attributes) $1, current_local_parameters, GetLocation ($2));
+		
 		lexer.EventParsing = true;
+		current_local_parameters = null;		
 	  }
 	| opt_attributes REMOVE error {
 		Report.Error (73, GetLocation ($2), "An add or remove accessor must have a body");

@@ -240,8 +240,7 @@ namespace Mono.CSharp
 			public SetMethod (PropertyBase method) :
 				base (method, "set_")
 			{
-				parameters = new ParametersCompiled (Compiler,
-					new Parameter (method.type_expr, "value", Parameter.Modifier.NONE, null, Location));
+				parameters = ParametersCompiled.CreateImplicitParameter (method.type_expr, Location);
 			}
 
 			public SetMethod (PropertyBase method, Accessor accessor):
@@ -1028,6 +1027,7 @@ namespace Mono.CSharp
 		{
 			protected readonly Event method;
 			ImplicitParameter param_attr;
+			ParametersCompiled parameters;
 
 			static readonly string[] attribute_targets = new string [] { "method", "param", "return" };
 
@@ -1039,6 +1039,7 @@ namespace Mono.CSharp
 			{
 				this.method = method;
 				this.ModFlags = method.ModFlags;
+				this.parameters = ParametersCompiled.CreateImplicitParameter (method.type_expr, Location);
 			}
 
 			protected AEventAccessor (Event method, Accessor accessor, string prefix)
@@ -1046,6 +1047,7 @@ namespace Mono.CSharp
 			{
 				this.method = method;
 				this.ModFlags = method.ModFlags;
+				this.parameters = accessor.Parameters;
 			}
 
 			public bool IsInterfaceImplementation {
@@ -1087,6 +1089,8 @@ namespace Mono.CSharp
 
 			public virtual MethodBuilder Define (DeclSpace parent)
 			{
+				parameters.Resolve (this);
+
 				method_data = new MethodData (method, method.ModFlags,
 					method.flags | MethodAttributes.HideBySig | MethodAttributes.SpecialName, this);
 
@@ -1120,7 +1124,7 @@ namespace Mono.CSharp
 
 			public override ParametersCompiled ParameterInfo {
 				get {
-					return method.parameters;
+					return parameters;
 				}
 			}
 		}
@@ -1146,8 +1150,6 @@ namespace Mono.CSharp
 		public AEventAccessor Add, Remove;
 		public EventBuilder     EventBuilder;
 		public MethodBuilder AddBuilder, RemoveBuilder;
-
-		ParametersCompiled parameters;
 
 		protected Event (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod_flags,
@@ -1197,9 +1199,6 @@ namespace Mono.CSharp
 			if (!TypeManager.IsDelegateType (MemberType)) {
 				Report.Error (66, Location, "`{0}': event must be of a delegate type", GetSignatureForError ());
 			}
-
-			parameters = ParametersCompiled.CreateFullyResolved (
-				new Parameter (null, "value", Parameter.Modifier.NONE, null, Location), MemberType);
 
 			if (!CheckBase ())
 				return false;

@@ -1,3 +1,10 @@
+2010-06-03  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #610919
+	* parameter.cs, property.cs, cs-parser.jay: Use independent implicit
+	parameters for explicit event accessors. Anonymous method capturing
+	won't otherwise work for event implicit parameter.
+
 2010-06-02  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #610088
