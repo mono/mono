@@ -1,3 +1,7 @@
+2010-06-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* SerializationMap.cs: NET_2_1 needs cast too
+
 2010-06-02  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* SerializationMap.cs : fix PeerNodeAddress serialization regression.

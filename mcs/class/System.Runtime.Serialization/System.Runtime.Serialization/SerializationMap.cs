@@ -474,7 +474,7 @@ namespace System.Runtime.Serialization
 		public override object DeserializeObject (XmlReader reader, XmlFormatterDeserializer deserializer)
 		{
 #if NET_2_1
-			IXmlSerializable ixs = Activator.CreateInstance (RuntimeType);
+			IXmlSerializable ixs = (IXmlSerializable) Activator.CreateInstance (RuntimeType);
 #else
 			IXmlSerializable ixs = (IXmlSerializable) Activator.CreateInstance (RuntimeType, true);
 #endif
