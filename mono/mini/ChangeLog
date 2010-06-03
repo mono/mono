@@ -1,5 +1,12 @@
 2010-06-03  Zoltan Varga  <vargaz@gmail.com>
 
+	* dwarfwriter.c: Update after the mono_debug_lookup_locals () changes.
+
+	* debugger-agent.c (method_commands_internal): Ditto. Return scope information for
+	locals.
+
+2010-06-03  Zoltan Varga  <vargaz@gmail.com>
+
 	* debugger-agent.c (appdomain_unload): Clear all breakpoint instances in the dying
 	appdomain.
 
