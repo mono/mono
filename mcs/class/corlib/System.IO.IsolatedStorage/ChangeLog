@@ -1,3 +1,8 @@
+2010-06-03  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* MoonIsolatedStorage.cs: Make class internal so we can access it
+	from System.Window.dll to adjust quotas
+
 2010-06-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFile.cs: Check for empty paths and existing paths in
