@@ -1,3 +1,8 @@
+2010-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* debugger-agent.c (appdomain_unload): Clear all breakpoint instances in the dying
+	appdomain.
+
 2010-06-02  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (set_rgctx_arg): New helper function to remove some duplicate code.
