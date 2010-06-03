@@ -1,3 +1,13 @@
+2010-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs, DispatchRuntime.cs, ClientRuntime.cs :
+	  now Callback[Dispatch|Client]Runtime properties are always filled
+	  so that users can configure the callback runtimes (not sure such
+	  configured runtimes work fine yet, but it is a required step).
+	* InputOrReplyRequestProcessor.cs : instead of HasCallbackRuntime
+	  hack, use CallbackClientRuntime.CallbackContractType for checking
+	  callback existence.
+
 2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientOperation.cs, DispatchOperation.cs : remove extra fields.

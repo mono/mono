@@ -66,7 +66,7 @@ namespace System.ServiceModel.MonoInternal
 
 		public ClientRuntimeChannel (ServiceEndpoint endpoint,
 			ChannelFactory channelFactory, EndpointAddress remoteAddress, Uri via)
-			: this (endpoint.CreateRuntime (), endpoint.Contract, channelFactory.DefaultOpenTimeout, channelFactory.DefaultCloseTimeout, null, channelFactory.OpenedChannelFactory, endpoint.Binding.MessageVersion, remoteAddress, via)
+			: this (endpoint.CreateClientRuntime (null), endpoint.Contract, channelFactory.DefaultOpenTimeout, channelFactory.DefaultCloseTimeout, null, channelFactory.OpenedChannelFactory, endpoint.Binding.MessageVersion, remoteAddress, via)
 		{
 		}
 

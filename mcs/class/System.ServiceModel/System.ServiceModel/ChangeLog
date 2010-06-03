@@ -1,3 +1,11 @@
+2010-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ClientProxyGenerator.cs : CreateProxyType now carefully considers
+	  requested proxy type, contract type and callback contract type.
+	  i.e. now the resulting proxy has implemented methods for callbacks
+	  that are also filled at ContractDescription.
+	* ClientRuntimeChannel.cs : reflect some method call changes.
+
 2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientRuntimeChannel.cs : replace GetFormatter() with Formatter.

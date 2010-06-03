@@ -66,9 +66,9 @@ namespace System.ServiceModel
 		static Dictionary<ClientProxyKey, Type> proxy_cache = new Dictionary<ClientProxyKey, Type> ();
 
 
-		public static Type CreateProxyType (Type contractInterface, ContractDescription cd, bool duplex)
+		public static Type CreateProxyType (Type requestedType, ContractDescription cd, bool duplex)
 		{
-			ClientProxyKey key = new ClientProxyKey (contractInterface, cd, duplex);
+			ClientProxyKey key = new ClientProxyKey (requestedType, cd, duplex);
 			Type res;
 			lock (proxy_cache) {
 				if (proxy_cache.TryGetValue (key, out res))
@@ -82,11 +82,14 @@ namespace System.ServiceModel
 #endif
 				typeof (ClientRuntimeChannel);
 
-			// public class __clientproxy_MyContract : ClientRuntimeChannel, [ContractType]
-			CodeClass c = new CodeModule (modname).CreateClass (
-				"__clientproxy_" + cd.Name,
-				crtype,
-				new Type [] {contractInterface});
+			// public class __clientproxy_MyContract : (Duplex)ClientRuntimeChannel, [ContractType]
+			var types = new List<Type> ();
+			types.Add (requestedType);
+			if (!cd.ContractType.IsAssignableFrom (requestedType))
+				types.Add (cd.ContractType);
+			if (cd.CallbackContractType != null && !cd.CallbackContractType.IsAssignableFrom (requestedType))
+				types.Add (cd.CallbackContractType);
+			CodeClass c = new CodeModule (modname).CreateClass ("__clientproxy_" + cd.Name, crtype, types.ToArray ());
 
 			//
 			// public __clientproxy_MyContract (

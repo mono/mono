@@ -65,7 +65,7 @@ namespace System.ServiceModel.Dispatcher
 			contract_name = contractName;
 			contract_ns = contractNamespace;
 
-			dispatch_runtime = new DispatchRuntime (this);
+			dispatch_runtime = new DispatchRuntime (this, null);
 
 			this.address_filter = new EndpointAddressMessageFilter (address);
 		}
@@ -124,12 +124,9 @@ namespace System.ServiceModel.Dispatcher
 			DispatchRuntime db = this.DispatchRuntime;
 			if (!isCallback && se.Contract.CallbackContractType != null) {
 				var ccd = ContractDescriptionGenerator.GetCallbackContract (db.Type, se.Contract.CallbackContractType);
-				// FIXME: remove below line. It does not have to be refilled here. (CallbackBehaviorAttributeTest blocks its removal.)
-				db.CallbackClientRuntime = ccd.CreateClientRuntime ();
-				db.CallbackClientRuntime.CallbackDispatchRuntime = DispatchRuntime;
 				db.CallbackClientRuntime.CallbackClientType = se.Contract.CallbackContractType;
-				// FIXME: enable it. it should be the contract type, not the callback type.
-				// db.CallbackClientRuntime.ContractClientType = se.Contract.ContractType;
+				db.CallbackClientRuntime.ContractClientType = se.Contract.ContractType;
+				ccd.FillClientOperations (db.CallbackClientRuntime);
 			}
 			foreach (OperationDescription od in se.Contract.Operations)
 				if (!db.Operations.Contains (od.Name))

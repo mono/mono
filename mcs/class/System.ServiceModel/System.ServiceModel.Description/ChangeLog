@@ -1,3 +1,12 @@
+2010-06-03  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ContractDescriptionGenerator.cs : Now callback contract methods are
+	  also reflected into OperationDescription as well as those from non-
+	  callback contract. Callback methods have reverse MessageDirection,
+	  so adjust them.
+	* ContractDescription.cs, ServiceEndpoint.cs, TypedMessageConverter.cs :
+	  A bit of renaming / reflect method call changes.
+
 2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescription.cs : fill ClientOperation.Formatter here.

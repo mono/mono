@@ -111,11 +111,11 @@ namespace System.ServiceModel.Description
 		}
 
 
-		internal ClientRuntime CreateRuntime ()
+		internal ClientRuntime CreateClientRuntime (object callbackDispatchRuntime)
 		{
 			ServiceEndpoint se = this;
 
-			var proxy = se.Contract.CreateClientRuntime ();
+			var proxy = se.Contract.CreateClientRuntime (callbackDispatchRuntime);
 
 #if !NET_2_1
 			foreach (IEndpointBehavior b in se.Behaviors)

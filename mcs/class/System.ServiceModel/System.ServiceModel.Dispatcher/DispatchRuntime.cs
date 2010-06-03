@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005-2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -41,15 +41,14 @@ namespace System.ServiceModel.Dispatcher
 {
 	public sealed class DispatchRuntime
 	{
-		ClientRuntime callback_client_runtime;
-
 		DispatchOperation.DispatchOperationCollection operations =
 			new DispatchOperation.DispatchOperationCollection ();
 
 
-		internal DispatchRuntime (EndpointDispatcher dispatcher)
+		internal DispatchRuntime (EndpointDispatcher dispatcher, ClientRuntime callbackClientRuntime)
 		{
 			EndpointDispatcher = dispatcher;
+			CallbackClientRuntime = callbackClientRuntime ?? new ClientRuntime (EndpointDispatcher.ContractName, EndpointDispatcher.ContractNamespace, this);
 			UnhandledDispatchOperation = new DispatchOperation (
 				this, "*", "*", "*");
 
@@ -78,22 +77,7 @@ namespace System.ServiceModel.Dispatcher
 
 		public EndpointDispatcher EndpointDispatcher { get; private set; }
 
-		// FIXME: this is somewhat compromized solution to workaround
-		// an issue that this runtime-creation-logic could result in
-		// an infinite loop on callback instatiation between 
-		// ClientRuntime, but so far it works by this property...
-		internal bool HasCallbackRuntime {
-			get { return callback_client_runtime != null; }
-		}
-
-		public ClientRuntime CallbackClientRuntime {
-			get {
-				if (callback_client_runtime == null)
-					callback_client_runtime = new ClientRuntime (EndpointDispatcher.ContractName, EndpointDispatcher.ContractNamespace);
-				return callback_client_runtime;
-			}
-			internal set { callback_client_runtime = value; }
-		}
+		public ClientRuntime CallbackClientRuntime { get; internal set; }
 
 		[MonoTODO]
 		public ReadOnlyCollection<IAuthorizationPolicy> ExternalAuthorizationPolicies { get; set; }

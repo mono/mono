@@ -145,11 +145,15 @@ namespace System.ServiceModel.Description
 			throw new NotImplementedException ();
 		}
 
-		internal ClientRuntime CreateClientRuntime ()
+		internal ClientRuntime CreateClientRuntime (object callbackDispatchRuntime)
 		{
-			ClientRuntime proxy = new ClientRuntime (Name, Namespace) { ContractClientType = ContractType, CallbackClientType = CallbackContractType };
-			//proxy.ContractClientType = typeof (TChannel);
+			ClientRuntime proxy = new ClientRuntime (Name, Namespace, callbackDispatchRuntime) {ContractClientType = ContractType, CallbackClientType = CallbackContractType};
+			FillClientOperations (proxy);
+			return proxy;
+		}
 
+		internal void FillClientOperations (ClientRuntime proxy)
+		{
 			foreach (OperationDescription od in Operations) {
 				if (!proxy.Operations.Contains (od.Name))
 					PopulateClientOperation (proxy, od);
@@ -158,8 +162,6 @@ namespace System.ServiceModel.Description
 					ob.ApplyClientBehavior (od, proxy.Operations [od.Name]);
 #endif
 			}
-
-			return proxy;
 		}
 
 		void PopulateClientOperation (ClientRuntime proxy, OperationDescription od)

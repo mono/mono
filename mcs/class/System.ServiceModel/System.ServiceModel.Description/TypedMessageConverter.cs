@@ -136,8 +136,9 @@ namespace System.ServiceModel.Description
 				throw new ArgumentException (String.Format ("Type {0} and its ancestor types do not have MessageContract attribute.", src));
 
 			MessageDescriptionCollection messages = new MessageDescriptionCollection ();
-			messages.Add (ContractDescriptionGenerator.CreateMessageDescription (src, defaultNamespace, action, true, mca));
-			messages.Add (ContractDescriptionGenerator.CreateMessageDescription (src, defaultNamespace, action, false, mca));
+			// FIXME: not sure if isDirectionInput arguments are ignorable (and can be dummy) here...
+			messages.Add (ContractDescriptionGenerator.CreateMessageDescription (src, defaultNamespace, action, true, false, mca));
+			messages.Add (ContractDescriptionGenerator.CreateMessageDescription (src, defaultNamespace, action, false, false, mca));
 			return messages;
 		}
 	}
