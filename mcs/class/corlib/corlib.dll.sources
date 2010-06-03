@@ -1069,6 +1069,7 @@ System.Runtime.Serialization/OnDeserializingAttribute.cs
 System.Runtime.Serialization/OnSerializedAttribute.cs
 System.Runtime.Serialization/OnSerializingAttribute.cs
 System.Runtime.Serialization/OptionalFieldAttribute.cs
+System.Runtime.Serialization/SafeSerializationEventArgs.cs
 System.Runtime.Serialization/SerializationBinder.cs
 System.Runtime.Serialization/SerializationCallbacks.cs
 System.Runtime.Serialization/SerializationEntry.cs
