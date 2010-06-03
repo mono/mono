@@ -1,3 +1,10 @@
+2010-06-03  Zoltan Varga  <vargaz@gmail.com>
+
+	* debug-mono-symfile.c (mono_debug_symfile_lookup_locals): Rewrite this so it returns
+	all information in a single structure. Return information about scopes as well.
+
+	* mono-debug.c (mono_debug_lookup_locals): Ditto.
+
 2010-06-02  Geoff Norton  <gnorton@novell.com>
 
 	* appdomain.c: If we are running with IOMAP we might
