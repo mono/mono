@@ -1,3 +1,7 @@
+2010-06-03  Jb Evain  <jbevain@novell.com>
+
+	* Assembly.cs: add net_4_0's PermissionSet property.
+
 2010-05-27  Jb Evain  <jbevain@novell.com>
 
 	* Assembly.cs (Load*): add net_4_0 overloads.

@@ -795,6 +795,10 @@ namespace System.Reflection {
 		public virtual IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}
+
+		public PermissionSet PermissionSet {
+			get { return this.GrantedPermissionSet; }
+		}
 #endif
 
 #if !MOONLIGHT
