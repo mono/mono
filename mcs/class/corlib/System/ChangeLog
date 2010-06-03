@@ -1,3 +1,7 @@
+2010-06-03  Jb Evain  <jbevain@novell.com>
+
+	* AppDomain.cs: add net_4_0's PermissionSet property.
+
 2010-05-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Lazy.cs: Remove some stupid leftover from previous changes.

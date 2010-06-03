@@ -223,6 +223,13 @@ namespace System {
 			get { return _granted; }
 		}
 #endif
+
+#if NET_4_0
+		public PermissionSet PermissionSet {
+			get { return this.GrantedPermissionSet; }
+		}
+#endif
+
 		[MethodImplAttribute (MethodImplOptions.InternalCall)]
 		private static extern AppDomain getCurDomain ();
 		
