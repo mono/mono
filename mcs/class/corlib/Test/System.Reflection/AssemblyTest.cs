@@ -218,7 +218,7 @@ namespace MonoTests.System.Reflection
 			Assert.IsTrue (corlib_test.GetReferencedAssemblies ().Length > 0, "GetReferencedAssemblies");
 			Assert.AreEqual (0, corlib_test.HostContext, "HostContext");
 #if NET_4_0
-			Assert.AreEqual ("v4.0.30128", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
+			Assert.AreEqual ("v4.0.30319", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
 #else
 			Assert.AreEqual ("v2.0.50727", corlib_test.ImageRuntimeVersion, "ImageRuntimeVersion");
 #endif
