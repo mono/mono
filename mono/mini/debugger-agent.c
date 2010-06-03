@@ -613,6 +613,8 @@ static void suspend_current (void);
 
 static void clear_event_requests_for_assembly (MonoAssembly *assembly);
 
+static void clear_breakpoints_for_domain (MonoDomain *domain);
+
 /* Submodule init/cleanup */
 static void breakpoints_init (void);
 static void breakpoints_cleanup (void);
@@ -2860,6 +2862,7 @@ appdomain_unload (MonoProfiler *prof, MonoDomain *domain)
 {
 	/* Invalidate each thread's frame stack */
 	mono_g_hash_table_foreach (thread_to_tls, invalidate_each_thread, NULL);
+	clear_breakpoints_for_domain (domain);
 	process_profiler_event (EVENT_KIND_APPDOMAIN_UNLOAD, domain);
 }
 
@@ -3027,6 +3030,7 @@ typedef struct {
 	long il_offset, native_offset;
 	guint8 *ip;
 	MonoJitInfo *ji;
+	MonoDomain *domain;
 } BreakpointInstance;
 
 /*
@@ -3069,7 +3073,7 @@ breakpoints_init (void)
  * JI.
  */
 static void
-insert_breakpoint (GPtrArray *seq_points, MonoJitInfo *ji, MonoBreakpoint *bp)
+insert_breakpoint (GPtrArray *seq_points, MonoDomain *domain, MonoJitInfo *ji, MonoBreakpoint *bp)
 {
 	int i, count;
 	gint32 il_offset = -1, native_offset;
@@ -3093,6 +3097,7 @@ insert_breakpoint (GPtrArray *seq_points, MonoJitInfo *ji, MonoBreakpoint *bp)
 	inst->native_offset = native_offset;
 	inst->ip = (guint8*)ji->code_start + native_offset;
 	inst->ji = ji;
+	inst->domain = domain;
 
 	mono_loader_lock ();
 
@@ -3184,7 +3189,7 @@ add_pending_breakpoints (MonoMethod *method, MonoJitInfo *ji)
 				continue;
 			g_assert (seq_points);
 
-			insert_breakpoint (seq_points, ji, bp);
+			insert_breakpoint (seq_points, domain, ji, bp);
 		}
 	}
 
@@ -3207,7 +3212,7 @@ set_bp_in_method (MonoDomain *domain, MonoMethod *method, GPtrArray *seq_points,
 	}
 	g_assert (code);
 
-	insert_breakpoint (seq_points, ji, bp);
+	insert_breakpoint (seq_points, domain, ji, bp);
 }
 
 typedef struct
@@ -3334,6 +3339,42 @@ breakpoints_cleanup (void)
 	breakpoints = NULL;
 	bp_locs = NULL;
 
+	mono_loader_unlock ();
+}
+
+/*
+ * clear_breakpoints_for_domain:
+ *
+ *   Clear breakpoint instances which reference DOMAIN.
+ */
+static void
+clear_breakpoints_for_domain (MonoDomain *domain)
+{
+	int i, j;
+
+	/* This could be called after shutdown */
+	if (!breakpoints)
+		return;
+
+	mono_loader_lock ();
+	for (i = 0; i < breakpoints->len; ++i) {
+		MonoBreakpoint *bp = g_ptr_array_index (breakpoints, i);
+
+		j = 0;
+		while (j < bp->children->len) {
+			BreakpointInstance *inst = g_ptr_array_index (bp->children, j);
+
+			if (inst->domain == domain) {
+				remove_breakpoint (inst);
+
+				g_free (inst);
+
+				g_ptr_array_remove_index_fast (bp->children, j);
+			} else {
+				j ++;
+			}
+		}
+	}
 	mono_loader_unlock ();
 }
 
