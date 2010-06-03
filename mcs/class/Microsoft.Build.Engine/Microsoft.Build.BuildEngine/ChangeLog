@@ -1,3 +1,14 @@
+2010-06-04  Ankit Jain  <jankit@novell.com>
+
+	* Import.cs (EvaluateProjectPath): Add a hack to support multiple
+	msbuild extension paths. Paths can be specified via the environment
+	variable - $MSBuildExtensionsPath . ~/.config/xbuild/tasks is also
+	checked for extensions, besides the default location.
+	This explicitly looks for a "$(MSBuildExtensionsPath)" in the import
+	expression and tries to replace that with possible paths, till it
+	finds the file. In rest of the project, the property would resolve
+	to its single default value.
+
 2010-06-03  Ankit Jain  <jankit@novell.com>
 
 	* Engine.cs (GetLoadedProject): Return null if project not found.

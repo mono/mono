@@ -31,12 +31,17 @@ using System;
 using System.IO;
 using System.Xml;
 
+using Microsoft.Build.Framework;
+
 namespace Microsoft.Build.BuildEngine {
 	public class Import {
 		XmlElement	importElement;
 		Project		project;
 		ImportedProject originalProject;
 		string		evaluatedProjectPath;
+
+		static string DotConfigExtensionsPath = Path.Combine (Environment.GetFolderPath (Environment.SpecialFolder.ApplicationData),
+								Path.Combine ("xbuild", "tasks"));
 	
 		internal Import (XmlElement importElement, Project project, ImportedProject originalProject)
 		{
@@ -82,10 +87,48 @@ namespace Microsoft.Build.BuildEngine {
 
 		string EvaluateProjectPath (string file)
 		{
-			Expression exp;
+			if (file.IndexOf ("$(MSBuildExtensionsPath)") >= 0) {
+				// This is a *HACK* to support multiple paths for
+				// MSBuildExtensionsPath property. Normally it would
+				// get resolved to a single value, but here we special
+				// case it and try ~/.config/xbuild/tasks and any
+				// paths specified in the env var $MSBuildExtensionsPath .
+				//
+				// The property itself will resolve to the default
+				// location though, so you get in any other part of the
+				// project.
 
-			exp = new Expression ();
-			exp.Parse (file, ParseOptions.Split);
+				string envvar = Environment.GetEnvironmentVariable ("MSBuildExtensionsPath");
+				envvar = (envvar ?? String.Empty) + ":" + DotConfigExtensionsPath;
+
+				string [] paths = envvar.Split (new char [] {':'}, StringSplitOptions.RemoveEmptyEntries);
+				foreach (string path in paths) {
+					if (!Directory.Exists (path)) {
+						project.ParentEngine.LogMessage (MessageImportance.Low, "Extension path '{0}' not found, ignoring.", path);
+						continue;
+					}
+
+					string pfile = Path.GetFullPath (file.Replace ("\\", "/").Replace (
+								"$(MSBuildExtensionsPath)", path + Path.DirectorySeparatorChar));
+
+					var evaluated_path = EvaluatePath (pfile);
+					if (File.Exists (evaluated_path)) {
+						project.ParentEngine.LogMessage (MessageImportance.Low,
+							"{0}: Importing project {1} from extension path {2}", project.FullFileName, evaluated_path, path);
+						return pfile;
+					}
+					project.ParentEngine.LogMessage (MessageImportance.Low,
+							"{0}: Couldn't find project {1} for extension path {2}", project.FullFileName, evaluated_path, path);
+				}
+			}
+
+			return EvaluatePath (file);
+		}
+
+		string EvaluatePath (string path)
+		{
+			var exp = new Expression ();
+			exp.Parse (path, ParseOptions.Split);
 			return (string) exp.ConvertTo (project, typeof (string));
 		}
 
