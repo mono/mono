@@ -1058,6 +1058,7 @@ System.Runtime.Serialization/IDeserializationCallback.cs
 System.Runtime.Serialization/IFormatter.cs
 System.Runtime.Serialization/IFormatterConverter.cs
 System.Runtime.Serialization/IObjectReference.cs
+System.Runtime.Serialization/ISafeSerializationData.cs
 System.Runtime.Serialization/ISerializable.cs
 System.Runtime.Serialization/ISerializationSurrogate.cs
 System.Runtime.Serialization/ISurrogateSelector.cs
