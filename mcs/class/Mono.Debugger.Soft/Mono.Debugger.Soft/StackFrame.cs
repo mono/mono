@@ -1,4 +1,6 @@
 using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace Mono.Debugger.Soft
 {
@@ -165,6 +167,23 @@ namespace Mono.Debugger.Soft
 				else
 					throw;
 			}
+		}
+
+		public IList<LocalVariable> GetVisibleVariables () {
+			if (Location.ILOffset == -1)
+				throw new AbsentInformationException ();
+
+			return Method.GetLocals ().Where (l => l.LiveRangeStart <= location.ILOffset && l.LiveRangeEnd >= location.ILOffset).ToList ();
+		}
+
+		public LocalVariable GetVisibleVariableByName (string name) {
+			if (name == null)
+				throw new ArgumentNullException ("name");
+
+			if (Location.ILOffset == -1)
+				throw new AbsentInformationException ();
+
+			return Method.GetLocals ().Where (l => l.LiveRangeStart <= location.ILOffset && l.LiveRangeEnd >= location.ILOffset && l.Name == name).FirstOrDefault ();
 		}
     }
 }
