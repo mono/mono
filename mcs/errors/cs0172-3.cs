@@ -1,4 +1,4 @@
-// cs0173-3.cs: Type of conditional expression cannot be determined because there is no implicit conversion between `ClassA' and `ClassB'
+// CS0172: Type of conditional expression cannot be determined as `ClassA' and `ClassB' convert implicitly to each other
 // Line: 29
 
 class ClassA {
