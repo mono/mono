@@ -31,9 +31,12 @@
 using System;
 using System.CodeDom;
 using System.Web.UI;
+using System.Web.Routing;
 
 namespace System.Web.Compilation
 {
+	[ExpressionEditor ("System.Web.UI.Design.RouteValueExpressionEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[ExpressionPrefix ("Routes")]
 	public class RouteValueExpressionBuilder : ExpressionBuilder
 	{
 		public override bool SupportsEvaluate { get { return true; } }
@@ -50,11 +53,28 @@ namespace System.Web.Compilation
 
 		public override CodeExpression GetCodeExpression (BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
-			throw new NotImplementedException ();
+			if (entry == null)
+				throw new NullReferenceException (".NET emulation (entry == null)");
+			
+			var ret = new CodeMethodInvokeExpression ();
+			ret.Method = new CodeMethodReferenceExpression (new CodeTypeReferenceExpression (typeof (RouteValueExpressionBuilder)), "GetRouteValue");
+
+			var thisref = new CodeThisReferenceExpression ();
+			CodeExpressionCollection parameters = ret.Parameters;
+			parameters.Add (new CodePropertyReferenceExpression (thisref, "Page"));
+			parameters.Add (new CodePrimitiveExpression (entry.Expression));
+			parameters.Add (new CodeTypeOfExpression (new CodeTypeReference (entry.DeclaringType)));
+			parameters.Add (new CodePrimitiveExpression (entry.Name));
+			
+			return ret;
 		}
 
 		public static object GetRouteValue (Page page, string key, Type controlType, string propertyName)
 		{
+			RouteData rd = page != null ? page.RouteData : null;
+			if (rd == null || String.IsNullOrEmpty (key))
+				return null;
+			
 			throw new NotImplementedException ();
 		}
 	}

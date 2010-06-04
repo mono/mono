@@ -758,11 +758,95 @@ namespace System.Web.Compilation
 			
 			CodeAssignStatement assign = new CodeAssignStatement ();
 			assign.Left = new CodePropertyReferenceExpression (ctrlVar, name);
-			assign.Right = expr;
+
+			TypeCode typeCode = Type.GetTypeCode (type);
+			if (typeCode != TypeCode.Empty && typeCode != TypeCode.Object && typeCode != TypeCode.DBNull)
+				assign.Right = CreateConvertToCall (typeCode, expr);
+			else 
+				assign.Right = new CodeCastExpression (type, expr);
 			
 			builder.Method.Statements.Add (AddLinePragma (assign, builder));
 		}
 
+		CodeMethodInvokeExpression CreateConvertToCall (TypeCode typeCode, CodeExpression expr)
+		{
+			var ret = new CodeMethodInvokeExpression ();
+			string methodName;
+
+			switch (typeCode) {
+				case TypeCode.Boolean:
+					methodName = "ToBoolean";
+					break;
+
+				case TypeCode.Char:
+					methodName = "ToChar";
+					break;
+
+				case TypeCode.SByte:
+					methodName = "ToSByte";
+					break;
+
+				case TypeCode.Byte:
+					methodName = "ToByte";
+					break;
+					
+				case TypeCode.Int16:
+					methodName = "ToInt16";
+					break;
+
+				case TypeCode.UInt16:
+					methodName = "ToUInt16";
+					break;
+
+				case TypeCode.Int32:
+					methodName = "ToInt32";
+					break;
+
+				case TypeCode.UInt32:
+					methodName = "ToUInt32";
+					break;
+
+				case TypeCode.Int64:
+					methodName = "ToInt64";
+					break;
+					
+				case TypeCode.UInt64:
+					methodName = "ToUInt64";
+					break;
+
+				case TypeCode.Single:
+					methodName = "ToSingle";
+					break;
+
+				case TypeCode.Double:
+					methodName = "ToDouble";
+					break;
+
+				case TypeCode.Decimal:
+					methodName = "ToDecimal";
+					break;
+
+				case TypeCode.DateTime:
+					methodName = "ToDateTime";
+					break;
+
+				case TypeCode.String:
+					methodName = "ToString";
+					break;
+
+				default:
+					throw new InvalidOperationException (String.Format ("Unsupported TypeCode '{0}'", typeCode));
+			}
+
+			var typeRef = new CodeTypeReferenceExpression (typeof (Convert));
+			typeRef.Type.Options = CodeTypeReferenceOptions.GlobalReference;
+			
+			ret.Method = new CodeMethodReferenceExpression (typeRef, methodName);
+			ret.Parameters.Add (expr);
+
+			return ret;
+		}
+		
 		BoundPropertyEntry CreateBoundPropertyEntry (PropertyInfo pi, string prefix, string expr, bool useSetAttribute)
 		{
 			BoundPropertyEntry ret = new BoundPropertyEntry ();

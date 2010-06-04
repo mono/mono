@@ -35,6 +35,8 @@ using System.Web.UI;
 
 namespace System.Web.Compilation
 {
+	[ExpressionEditor ("System.Web.UI.Design.RouteUrlExpressionEditor, System.Design, Version=4.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a")]
+	[ExpressionPrefix ("Routes")]
 	public class RouteUrlExpressionBuilder : ExpressionBuilder
 	{
 		static readonly char[] expressionSplitChars = { ',' };
