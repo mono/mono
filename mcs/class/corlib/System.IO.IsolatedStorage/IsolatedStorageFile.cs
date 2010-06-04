@@ -260,6 +260,9 @@ namespace System.IO.IsolatedStorage {
 		public static void Remove (IsolatedStorageScope scope)
 		{
 			string dir = GetIsolatedStorageRoot (scope);
+			if (!Directory.Exists (dir))
+				return;
+
 			Directory.Delete (dir, true);
 		}
 
@@ -852,6 +855,9 @@ namespace System.IO.IsolatedStorage {
 
 		public override void Remove ()
 		{
+#if NET_4_0
+			CheckOpen (false);
+#endif
 			directory.Delete (true);
 
 			// It seems .Net is calling Close from here.
@@ -870,10 +876,17 @@ namespace System.IO.IsolatedStorage {
 #if NET_4_0
 		void CheckOpen ()
 		{
+			CheckOpen (true);
+		}
+
+		void CheckOpen (bool checkDirExists)
+		{
 			if (disposed)
 				throw new ObjectDisposedException ("IsolatedStorageFile");
 			if (closed)
 				throw new InvalidOperationException ("Storage needs to be open for this operation.");
+			if (checkDirExists && !Directory.Exists (directory.FullName))
+				throw new IsolatedStorageException ("Isolated storage has been removed or disabled.");
 		}
 #endif
 

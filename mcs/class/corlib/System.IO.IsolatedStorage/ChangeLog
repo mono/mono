@@ -1,3 +1,10 @@
+2010-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFile.cs: In CheckOpen check that the directory for
+	the current storage is still valid, and throw an exception if needed.
+	Also, in the static Remove method call Directory.Delete only if the
+	directory exists, to avoid throwing an exception there.
+
 2010-06-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* MoonIsolatedStorage.cs: Make class internal so we can access it
