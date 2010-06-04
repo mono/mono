@@ -35,7 +35,9 @@ using System.Collections.Generic;
 using System.Configuration;
 using System.IO;
 using System.Text;
+#if NET_4_0
 using System.Web.Configuration;
+#endif
 
 namespace System.Web.Util
 {

@@ -1,3 +1,7 @@
+2010-06-04  Jb Evain  <jbevain@novell.com>
+
+	* HttpEncoder.cs: only net_4_0 uses System.Web.Configuration.
+
 2010-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HttpEncoder.cs: added. A 4.0 type but also used in 2.0 profile,
