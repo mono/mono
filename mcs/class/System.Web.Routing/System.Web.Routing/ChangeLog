@@ -1,3 +1,9 @@
+2010-06-05  Marek Habersack  <mhabersack@novell.com>
+
+	* UrlRoutingModule.cs: 4.0 doesn't do the UrlRouting.axd magic, it
+	simply remaps the current handler to the one obtained from the
+	route.
+
 2010-05-06  Marek Habersack  <mhabersack@novell.com>
 
 	* RouteCollection.cs: GetVirtualPath throws ArgumentException

@@ -136,7 +136,7 @@ namespace StandAloneRunnerSupport
 							Success = false;
 							throw new InvalidOperationException ("runner must not be null.");
 						}
-						result = runner.Run (tri.Url);
+						result = runner.Run (tri.Url, tri.PathInfo);
 						if (tri.Callback == null)
 							continue;
 

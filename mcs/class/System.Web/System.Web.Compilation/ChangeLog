@@ -1,3 +1,12 @@
+2010-06-05  Marek Habersack  <mhabersack@novell.com>
+
+	* TemplateControlCompiler.cs: expression evaluation results are
+	wrapped in a Convert.ConvertTo* call or a typecast.
+
+	* RouteValueExpressionBuilder.cs: implemented
+
+	* RouteUrlExpressionBuilder.cs: added missing custom attributes
+
 2010-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: added new virtual method, 

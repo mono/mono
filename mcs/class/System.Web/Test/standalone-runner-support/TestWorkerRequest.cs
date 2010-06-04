@@ -39,13 +39,20 @@ namespace StandAloneRunnerSupport
 		string page;
 		string query;
 		string appVirtualDir;
+		string pathInfo;
 		
 		public TestWorkerRequest (string page, string query, TextWriter output)
+			: this (page, query, null, output)
+		{
+		}
+		
+		public TestWorkerRequest (string page, string query, string pathInfo, TextWriter output)
 			: base (page, query, output)
 		{
 			this.page = page;
 			this.query = query;
 			this.appVirtualDir = GetAppPath ();
+			this.pathInfo = pathInfo;
 		}
 
 		public override string GetFilePath ()
@@ -53,6 +60,14 @@ namespace StandAloneRunnerSupport
 			return page;
 		}
 
+		public override string GetPathInfo ()
+		{
+			if (pathInfo == null)
+				return base.GetPathInfo ();
+
+			return pathInfo;
+		}
+		
 		public override string GetRawUrl ()
 		{
 			return TrimLeadingSlash (base.GetRawUrl ());

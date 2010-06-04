@@ -9,7 +9,7 @@
 <body>
     <form id="form1" runat="server">
     <div>
-	<asp:HyperLink runat="server" NavigateUrl="<%$RouteUrl:SearchTerm=test%>">Search for 'test'</asp:HyperLink>
+	<%= AppDomain.CurrentDomain.GetData ("BEGIN_CODE_MARKER") %><asp:HyperLink runat="server" NavigateUrl="<%$RouteUrl:SearchTerm=test%>">Search for 'test'</asp:HyperLink><%= AppDomain.CurrentDomain.GetData ("END_CODE_MARKER") %>
     </div>
     </form>
 </body>

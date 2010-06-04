@@ -45,6 +45,10 @@ namespace StandAloneRunnerSupport
 			get; set;
 		}
 
+		public string PathInfo {
+			get; set;
+		}
+		
 		public string UrlDescription {
 			get; set;
 		}

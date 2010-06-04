@@ -9,8 +9,9 @@
 <body>
     <form id="form1" runat="server">
     <div>
-	Search term is: <asp:Label runat="server" ID="label1" /><br />
-	Search term from expression is: <asp:Label ID="label2" runat="server" Text="<%$RouteValue:SearchTerm%>" />
+	<%= AppDomain.CurrentDomain.GetData ("BEGIN_CODE_MARKER") %>Search term is: <asp:Label runat="server" ID="label1" /><br />
+	Search term from expression is: <asp:Label ID="label2" runat="server" Text="<%$RouteValue:SearchTerm%>" /><br />
+	<pre runat="server" id="testLog" /><%= AppDomain.CurrentDomain.GetData ("END_CODE_MARKER") %>
     </div>
     </form>
 </body>

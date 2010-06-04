@@ -46,8 +46,13 @@ namespace StandAloneRunnerSupport
 		public TestRunner ()
 		{
 		}
-		
+
 		public string Run (string url)
+		{
+			return Run (url, null);
+		}
+		
+		public string Run (string url, string pathInfo)
 		{
 			ResetState ();
 			
@@ -67,7 +72,12 @@ namespace StandAloneRunnerSupport
 				if (!String.IsNullOrEmpty (query) && query [0] == '?')
 					query = query.Substring (1);
 				
-				var wr = new TestWorkerRequest (uri.AbsolutePath, query, output);
+				TestWorkerRequest wr;
+				
+				if (pathInfo != null)
+					wr = new TestWorkerRequest (uri.AbsolutePath, query, pathInfo, output);
+				else
+					wr = new TestWorkerRequest (uri.AbsolutePath, query, output);
 				
 				HttpRuntime.ProcessRequest (wr);
 				return output.ToString ();

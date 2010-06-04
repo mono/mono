@@ -30,6 +30,8 @@
 
 using System;
 using System.CodeDom;
+using System.ComponentModel;
+using System.Reflection;
 using System.Web.UI;
 using System.Web.Routing;
 
@@ -48,6 +50,7 @@ namespace System.Web.Compilation
 		// This method is used only from within pages that aren't compiled
 		public override object EvaluateExpression (object target, BoundPropertyEntry entry, object parsedData, ExpressionBuilderContext context)
 		{
+			// Mono doesn't use this, so let's leave it like that for now
 			throw new NotImplementedException ();
 		}
 
@@ -75,7 +78,26 @@ namespace System.Web.Compilation
 			if (rd == null || String.IsNullOrEmpty (key))
 				return null;
 			
-			throw new NotImplementedException ();
+			object value = rd.Values [key];
+			if (value == null)
+				return null;
+
+			if (controlType == null || String.IsNullOrEmpty (propertyName) || !(value is string))
+				return value;
+
+			PropertyDescriptorCollection pcoll = TypeDescriptor.GetProperties (controlType);
+			if (pcoll == null || pcoll.Count == 0)
+				return value;
+
+			PropertyDescriptor pdesc = pcoll [propertyName];
+			if (pdesc == null)
+				return value;
+
+			TypeConverter cvt = pdesc.Converter;
+			if (cvt == null || !cvt.CanConvertFrom (typeof (string)))
+				return value;
+
+			return cvt.ConvertFrom (value);
 		}
 	}
 }
