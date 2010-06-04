@@ -129,6 +129,7 @@ System.Web.Services.Description/MimeTextMatchCollection.cs
 System.Web.Services.Description/ExtensionManager.cs
 System.Web.Services.Description/ServiceDescriptionSerializerBase2.cs
 ../System.Web/System.Web.Util/Helpers.cs
+../System.Web/System.Web.Util/HttpEncoder.cs
 ../System.Web/System.Web/HttpUtility.cs
 System.Web.Services.Description/MimePart.cs
 System.Web.Services.Description/MimePartCollection.cs
