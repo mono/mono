@@ -85,7 +85,7 @@ namespace System.Runtime.CompilerServices
 				int idx, initial_idx;
 				int free_slot = -1;
 	
-				idx = initial_idx = RuntimeHelpers.GetHashCode (key) % len;
+				idx = initial_idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
 	
 				do {
 					object k = tmp [idx].key;
@@ -122,7 +122,7 @@ namespace System.Runtime.CompilerServices
 				int idx,initial_idx;
 				int free_slot = -1;
 
-				idx = initial_idx = RuntimeHelpers.GetHashCode (key) % len;
+				idx = initial_idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
 				do {
 					object k = data [idx].key;
 
@@ -154,7 +154,7 @@ namespace System.Runtime.CompilerServices
 			lock (_lock) {
 				int len = data.Length;
 				int idx, initial_idx;
-				idx = initial_idx = RuntimeHelpers.GetHashCode (key) % len;
+				idx = initial_idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
 				do {
 					object k = data[idx].key;
 					if (k == key) {
@@ -181,7 +181,8 @@ namespace System.Runtime.CompilerServices
 			lock (_lock) {
 				int len = data.Length;
 				int idx, initial_idx;
-				idx = initial_idx = RuntimeHelpers.GetHashCode (key) % len;
+				idx = initial_idx = (RuntimeHelpers.GetHashCode (key) & int.MaxValue) % len;
+				
 				do {
 					object k = data [idx].key;
 					if (k == key) {
