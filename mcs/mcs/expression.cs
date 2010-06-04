@@ -714,7 +714,7 @@ namespace Mono.CSharp {
 
 			TypeSpec[] predefined = predefined_operators [(int) Oper];
 			foreach (TypeSpec t in predefined) {
-				Expression oper_expr = Convert.UserDefinedConversion (ec, expr, t, expr.Location, false, false);
+				Expression oper_expr = Convert.ImplicitUserConversion (ec, expr, t, expr.Location);
 				if (oper_expr == null)
 					continue;
 

@@ -40,6 +40,7 @@ namespace Mono.CSharp {
 		Interface	= 1 << 15,
 		TypeParameter = 1 << 16,
 
+		ArrayType = 1 << 19,
 		PointerType = 1 << 20,
 		InternalCompilerType = 1 << 21,
 		FakeMethod = 1 << 22,
@@ -201,9 +202,16 @@ namespace Mono.CSharp {
 	/// </summary>
 	public class MemberCache
 	{
+		enum StateFlags
+		{
+			HasNoImplicitOperator = 1,
+			HasNoExplicitOperator = 1 << 1
+		}
+
 		readonly Dictionary<string, IList<MemberSpec>> member_hash;
 		Dictionary<string, MemberSpec[]> locase_members;
 		IList<MethodSpec> missing_abstract;
+		StateFlags state;
 
 		public static readonly string IndexerNameAlias = "<this>";
 
@@ -841,6 +849,50 @@ namespace Mono.CSharp {
 				return ConstructorInfo.ConstructorName;
 
 			return mc.MemberName.Name;
+		}
+
+		//
+		// Returns all operators declared on container and its base types
+		//
+		public static MethodSpec[] GetUserOperator (TypeSpec container, Operator.OpType op, bool declaredOnly)
+		{
+			MethodSpec[] found = null;
+
+			IList<MemberSpec> applicable;
+			do {
+				var mc = container.MemberCache;
+				if (op == Operator.OpType.Implicit && (mc.state & StateFlags.HasNoImplicitOperator) == 0 ||
+					op == Operator.OpType.Explicit && (mc.state & StateFlags.HasNoExplicitOperator) == 0) {
+
+					if (mc.member_hash.TryGetValue (Operator.GetMetadataName (op), out applicable)) {
+						int start_index;
+						if (found == null) {
+							start_index = 0;
+							found = new MethodSpec[applicable.Count];
+						} else {
+							start_index = found.Length - 1;
+							Array.Resize (ref found, found.Length + applicable.Count);
+						}
+
+						for (int i = 0; i < applicable.Count; ++i) {
+							if (applicable[i].Kind == MemberKind.Operator)
+								found[i + start_index] = (MethodSpec) applicable[i];
+						}
+					} else if (op == Operator.OpType.Implicit) {
+						mc.state |= StateFlags.HasNoImplicitOperator;
+					} else if (op == Operator.OpType.Explicit) {
+						mc.state |= StateFlags.HasNoExplicitOperator;
+					}
+				}
+
+				// BaseType call can be expensive
+				if (declaredOnly)
+					break;
+
+				container = container.BaseType;
+			} while (container != null && container.BaseType != null);
+
+			return found;
 		}
 
 		//

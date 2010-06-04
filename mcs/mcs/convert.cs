@@ -24,8 +24,6 @@ namespace Mono.CSharp {
 	static class Convert {
 		
 		static EmptyExpression MyEmptyExpr;
-		static DoubleHash explicit_conv;
-		static DoubleHash implicit_conv;
 		
 		static Convert ()
 		{
@@ -35,8 +33,6 @@ namespace Mono.CSharp {
 		public static void Reset ()
 		{
 			MyEmptyExpr = null;
-			explicit_conv = new DoubleHash (100);
-			implicit_conv = new DoubleHash (100);
 		}
 		
 		//
@@ -414,21 +410,24 @@ namespace Mono.CSharp {
 				return ec == null ? EmptyExpression.Null : Nullable.LiftedNull.Create (target_type, expr.Location);
 
 			// S -> T?
-			TypeSpec t_el = TypeManager.GetTypeArguments (target_type)[0];
+			TypeSpec t_el = Nullable.NullableInfo.GetUnderlyingType (target_type);
 
 			// S? -> T?
 			if (TypeManager.IsNullableType (expr_type))
-				expr_type = TypeManager.GetTypeArguments (expr_type)[0];
+				expr_type = Nullable.NullableInfo.GetUnderlyingType (expr_type);
 
 			//
 			// Predefined implicit identity or implicit numeric conversion
 			// has to exist between underlying type S and underlying type T
 			//
 
-			// Handles probing
+			// conversion exists only mode
 			if (ec == null) {
 				if (expr_type == t_el)
 					return EmptyExpression.Null;
+
+				if (expr is Constant)
+					return ((Constant) expr).ConvertImplicitly (ec, t_el);
 
 				return ImplicitNumericConversion (null, expr_type, t_el);
 			}
@@ -439,16 +438,19 @@ namespace Mono.CSharp {
 			else
 				unwrap = expr;
 
-			Expression conv = expr_type == t_el ? unwrap : ImplicitNumericConversion (unwrap, expr_type, t_el);
-			if (conv == null)
-				return null;
+			Expression conv = unwrap;
+			if (expr_type != t_el) {
+				if (conv is Constant)
+					conv = ((Constant)conv).ConvertImplicitly (ec, t_el);
+				else
+					conv = ImplicitNumericConversion (conv, expr_type, t_el);
 
+				if (conv == null)
+					return null;
+			}
+			
 			if (expr_type != expr.Type)
 				return new Nullable.Lifted (conv, unwrap, target_type).Resolve (ec);
-
-			// Do constant optimization for S -> T?
-			if (unwrap is Constant)
-				conv = ((Constant) unwrap).ConvertImplicitly (ec, t_el);
 
 			return Nullable.Wrap.Create (conv, target_type);
 		}
@@ -819,7 +821,7 @@ namespace Mono.CSharp {
 		///   by making use of FindMostEncomp* methods. Applies the correct rules separately
 		///   for explicit and implicit conversion operators.
 		/// </summary>
-		static public TypeSpec FindMostSpecificSource (IList<MethodSpec> list,
+		static TypeSpec FindMostSpecificSource (IList<MethodSpec> list,
 							   Expression source, bool apply_explicit_conv_rules)
 		{
 			var src_types_set = new List<TypeSpec> ();
@@ -913,241 +915,205 @@ namespace Mono.CSharp {
 		/// <summary>
 		///  User-defined Implicit conversions
 		/// </summary>
-		static public Expression ImplicitUserConversion (ResolveContext ec, Expression source,
-								 TypeSpec target, Location loc)
+		static public Expression ImplicitUserConversion (ResolveContext ec, Expression source, TypeSpec target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, loc, false, true);
+			return UserDefinedConversion (ec, source, target, true, loc);
 		}
 
 		/// <summary>
 		///  User-defined Explicit conversions
 		/// </summary>
-		static Expression ExplicitUserConversion (ResolveContext ec, Expression source,
-								 TypeSpec target, Location loc)
+		static Expression ExplicitUserConversion (ResolveContext ec, Expression source, TypeSpec target, Location loc)
 		{
-			return UserDefinedConversion (ec, source, target, loc, true, true);
+			return UserDefinedConversion (ec, source, target, false, loc);
 		}
 
-		static void AddConversionOperators (List<MethodSpec> list,
-						    Expression source, TypeSpec target_type,
-						    bool look_for_explicit,
-						    MethodGroupExpr mg)
+		static void FindApplicableUserDefinedConversionOperators (MethodSpec[] operators, Expression source, TypeSpec target, bool implicitOnly, ref List<MethodSpec> candidates)
 		{
-			if (mg == null)
-				return;
-
-			TypeSpec source_type = source.Type;
-			EmptyExpression expr = EmptyExpression.Grab ();
-
 			//
 			// LAMESPEC: Undocumented IntPtr/UIntPtr conversions
 			// IntPtr -> uint uses int
 			// UIntPtr -> long uses ulong
 			//
-			if (source_type == TypeManager.intptr_type) {
-				if (target_type == TypeManager.uint32_type)
-					target_type = TypeManager.int32_type;
-			} else if (source_type == TypeManager.uintptr_type) {
-				if (target_type == TypeManager.int64_type)
-					target_type = TypeManager.uint64_type;
+			if (source.Type == TypeManager.intptr_type) {
+				if (target == TypeManager.uint32_type)
+					target = TypeManager.int32_type;
+			} else if (source.Type == TypeManager.uintptr_type) {
+				if (target == TypeManager.int64_type)
+					target = TypeManager.uint64_type;
 			}
 
-			foreach (MethodSpec m in mg.Methods) {
-				AParametersCollection pd = m.Parameters;
-				TypeSpec return_type = m.ReturnType;
-				TypeSpec arg_type = pd.Types [0];
+			// For a conversion operator to be applicable, it must be possible
+			// to perform a standard conversion from the source type to
+			// the operand type of the operator, and it must be possible
+			// to perform a standard conversion from the result type of
+			// the operator to the target type.
 
-				if (source_type != arg_type) {
-					if (!ImplicitStandardConversionExists (source, arg_type)) {
-						if (!look_for_explicit)
-							continue;
-						expr.SetType (arg_type);
-						if (!ImplicitStandardConversionExists (expr, source_type))
-							continue;
-					}
+			Expression texpr = null;
+
+			foreach (var op in operators) {
+				var t = op.Parameters.Types[0];
+				if (source.Type != t && !ImplicitStandardConversionExists (source, t)) {
+					if (implicitOnly)
+						continue;
+
+					if (!ImplicitStandardConversionExists (new EmptyExpression (t), source.Type))
+						continue;
 				}
 
-				if (target_type != return_type) {
-					expr.SetType (return_type);
-					if (!ImplicitStandardConversionExists (expr, target_type)) {
-						if (!look_for_explicit)
-							continue;
-						expr.SetType (target_type);
-						if (!ImplicitStandardConversionExists (expr, return_type))
-							continue;
-					}
-				}
+				t = op.ReturnType;
 
-				// See LAMESPEC: Exclude IntPtr -> int conversion
-				if (source_type == TypeManager.uintptr_type && return_type == TypeManager.uint32_type)
+				// LAMESPEC: Exclude UIntPtr -> int conversion
+				if (t == TypeManager.uint32_type && source.Type == TypeManager.uintptr_type)
 					continue;
 
-				list.Add (m);
-			}
+				if (target != t && !ImplicitStandardConversionExists (new EmptyExpression (t), target)) {
+					if (implicitOnly)
+						continue;
 
-			EmptyExpression.Release (expr);
+					if (texpr == null)
+						texpr = new EmptyExpression (target);
+
+					if (!ImplicitStandardConversionExists (texpr, t))
+						continue;
+				}
+
+				if (candidates == null)
+					candidates = new List<MethodSpec> ();
+
+				candidates.Add (op);
+			}
 		}
 
-		/// <summary>
-		///   Compute the user-defined conversion operator from source_type to target_type.
-		///   `look_for_explicit' controls whether we should also include the list of explicit operators
-		/// </summary>
-		static MethodSpec GetConversionOperator (CompilerContext ctx, TypeSpec container_type, Expression source, TypeSpec target_type, bool look_for_explicit)
+		//
+		// User-defined conversions
+		//
+		static Expression UserDefinedConversion (ResolveContext ec, Expression source, TypeSpec target, bool implicitOnly, Location loc)
 		{
-			var ops = new List<MethodSpec> (4);
+			List<MethodSpec> candidates = null;
 
+			//
+			// If S or T are nullable types, S0 and T0 are their underlying types
+			// otherwise S0 and T0 are equal to S and T respectively.
+			//
 			TypeSpec source_type = source.Type;
+			TypeSpec target_type = target;
+			Expression unwrap;
 
-			if (source_type != TypeManager.decimal_type) {
-				AddConversionOperators (ops, source, target_type, look_for_explicit,
-					Expression.MethodLookup (ctx, container_type, source_type, MemberKind.Operator, "op_Implicit", 0, Location.Null));
-				if (look_for_explicit) {
-					AddConversionOperators (ops, source, target_type, look_for_explicit,
-						Expression.MethodLookup (ctx,
-							container_type, source_type, MemberKind.Operator, "op_Explicit", 0, Location.Null));
-				}
-			}
-
-			if (target_type != TypeManager.decimal_type) {
-				AddConversionOperators (ops, source, target_type, look_for_explicit,
-					Expression.MethodLookup (ctx, container_type, target_type, MemberKind.Operator, "op_Implicit", 0, Location.Null));
-				if (look_for_explicit) {
-					AddConversionOperators (ops, source, target_type, look_for_explicit,
-						Expression.MethodLookup (ctx,
-							container_type, target_type, MemberKind.Operator, "op_Explicit", 0, Location.Null));
-				}
-			}
-
-			if (ops.Count == 0)
-				return null;
-
-			TypeSpec most_specific_source = FindMostSpecificSource (ops, source, look_for_explicit);
-			if (most_specific_source == null)
-				return null;
-
-			TypeSpec most_specific_target = FindMostSpecificTarget (ops, target_type, look_for_explicit);
-			if (most_specific_target == null)
-				return null;
-
-			MethodSpec method = null;
-
-			foreach (var m in ops) {
-				if (m.ReturnType != most_specific_target)
-					continue;
-				if (m.Parameters.Types [0] != most_specific_source)
-					continue;
-				// Ambiguous: more than one conversion operator satisfies the signature.
-				if (method != null)
-					return null;
-				method = m;
-			}
-
-			return method;
-		}
-
-		/// <summary>
-		///   User-defined conversions
-		/// </summary>
-		public static Expression UserDefinedConversion (ResolveContext ec, Expression source,
-								TypeSpec target, Location loc,
-								bool look_for_explicit, bool return_convert)
-		{
-			TypeSpec source_type = source.Type;
-			MethodSpec method = null;
-			Expression expr = null;
-
-			object o;
-			DoubleHash hash;
-			if (look_for_explicit) {
-				hash = explicit_conv;
-			} else {
-				// Implicit user operators cannot convert to interfaces
-				if (target.IsInterface)
+			if (TypeManager.IsNullableType (source_type)) {
+				// No implicit conversion S? -> T for non-reference types
+				if (implicitOnly && !TypeManager.IsReferenceType (target_type) && !TypeManager.IsNullableType (target_type))
 					return null;
 
-				hash = implicit_conv;
-			}			
-
-			if (!(source is Constant) && hash.Lookup (source_type, target, out o)) {
-				method = (MethodSpec) o;
+				unwrap = source = Nullable.Unwrap.Create (source);
+				source_type = source.Type;
 			} else {
-				if (source_type == InternalType.Dynamic)
-					return null;
-
-				method = GetConversionOperator (ec.Compiler, null, source, target, look_for_explicit);
+				unwrap = null;
 			}
 
-			if (method != null) {
-				TypeSpec most_specific_source = method.Parameters.Types[0];
+			if (TypeManager.IsNullableType (target_type))
+				target_type = Nullable.NullableInfo.GetUnderlyingType (target_type);
 
-				//
-				// This will do the conversion to the best match that we
-				// found.  Now we need to perform an implict standard conversion
-				// if the best match was not the type that we were requested
-				// by target.
-				//
-				if (look_for_explicit) {
-					ReportPrinter temp = new SessionReportPrinter ();
-					ReportPrinter prev = ec.Report.SetPrinter (temp);
+			// Only these containers can contain a user defined implicit or explicit operators
+			const MemberKind user_conversion_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.TypeParameter;
 
-					expr = ExplicitConversionStandard (ec, source, most_specific_source, loc);
+			if ((source_type.Kind & user_conversion_kinds) != 0 && source_type != TypeManager.decimal_type) {
+				bool declared_only = source_type.IsStruct;
 
-					ec.Report.SetPrinter (prev);
-					if (temp.ErrorsCount != 0)
-						expr = null;
-				} else {
-					if (ImplicitStandardConversionExists (source, most_specific_source))
-						expr = ImplicitConversionStandard (ec, source, most_specific_source, loc);
-					else
-						expr = null;
-				}
-			}
-
-			if (expr == null) {
-				bool nullable = false;
-
-				if (TypeManager.IsNullableType (source_type)) {
-					source = Nullable.Unwrap.Create (source);
-					nullable = true;
+				var operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Implicit, declared_only);
+				if (operators != null) {
+					FindApplicableUserDefinedConversionOperators (operators, source, target_type, implicitOnly, ref candidates);
 				}
 
-				TypeSpec target_underlying;
-				if (TypeManager.IsNullableType (target)) {
-					target_underlying = TypeManager.GetTypeArguments (target)[0];
-					nullable = true;
-				} else {
-					// No implicit conversion S? -> T for non-reference type T
-					if (!look_for_explicit && !TypeManager.IsReferenceType (target))
-						nullable = false;
-
-					target_underlying = target;
-				}
-
-				if (nullable) {
-					expr = UserDefinedConversion (ec, source, target_underlying, loc, look_for_explicit, return_convert);
-
-					// Do result expression lifting only when it's needed
-					if (expr != null && (!look_for_explicit || TypeManager.IsReferenceType (target)))
-						expr = new Nullable.Lifted (expr, source, target).Resolve (ec);
-
-					return expr;
-				}
-			} else {
-				expr = new UserCast (method, expr, loc).Resolve (ec);
-
-				if (return_convert && !TypeManager.IsEqual (expr.Type, target)) {
-					if (look_for_explicit) {
-						expr = ExplicitConversionStandard (ec, expr, target, loc);
-					} else {
-						expr = ImplicitConversionStandard (ec, expr, target, loc);
+				if (!implicitOnly) {
+					operators = MemberCache.GetUserOperator (source_type, Operator.OpType.Explicit, declared_only);
+					if (operators != null) {
+						FindApplicableUserDefinedConversionOperators (operators, source, target_type, false, ref candidates);
 					}
 				}
 			}
 
-			if (!(source is Constant))
-				hash.Insert (source_type, target, method);
+			if ((target.Kind & user_conversion_kinds) != 0 && target != TypeManager.decimal_type) {
+				bool declared_only = target.IsStruct || implicitOnly;
 
-			return expr;
+				var operators = MemberCache.GetUserOperator (target_type, Operator.OpType.Implicit, declared_only);
+				if (operators != null) {
+					FindApplicableUserDefinedConversionOperators (operators, source, target_type, implicitOnly, ref candidates);
+				}
+
+				if (!implicitOnly) {
+					operators = MemberCache.GetUserOperator (target_type, Operator.OpType.Explicit, declared_only);
+					if (operators != null) {
+						FindApplicableUserDefinedConversionOperators (operators, source, target_type, false, ref candidates);
+					}
+				}
+			}
+
+			if (candidates == null)
+				return null;
+
+			//
+			// Find the most specific conversion operator
+			//
+			MethodSpec most_specific_operator;
+			TypeSpec s_x, t_x;
+			if (candidates.Count == 1) {
+				most_specific_operator = candidates[0];
+				s_x = most_specific_operator.Parameters.Types[0];
+				t_x = most_specific_operator.ReturnType;
+			} else {
+				s_x = FindMostSpecificSource (candidates, source, !implicitOnly);
+				if (s_x == null)
+					return null;
+
+				t_x = FindMostSpecificTarget (candidates, target, !implicitOnly);
+				if (t_x == null)
+					return null;
+
+				most_specific_operator = candidates[0];
+
+				for (int i = 1; i < candidates.Count; ++i) {
+					if (candidates[i].ReturnType == t_x && candidates[i].Parameters.Types[0] == s_x) {
+						most_specific_operator = candidates[i];
+						break;
+					}
+				}
+			}
+
+			//
+			// Convert input type when it's different to best operator argument
+			//
+			if (s_x != source.Type)
+				source = implicitOnly ?
+					ImplicitConversionStandard (ec, source, s_x, loc) :
+					ExplicitConversionStandard (ec, source, s_x, loc);
+
+			source = new UserCast (most_specific_operator, source, loc).Resolve (ec);
+
+			//
+			// Convert result type when it's different to best operator return type
+			//
+			if (t_x != target_type) {
+				//
+				// User operator is of T?, no need to lift it
+				//
+				if (TypeManager.IsNullableType (t_x) && t_x == target)
+					return source;
+
+				source = implicitOnly ?
+					ImplicitConversionStandard (ec, source, target_type, loc) :
+					ExplicitConversionStandard (ec, source, target_type, loc);
+			}
+
+			//
+			// Source expression is of nullable type, lift the result in case of it's null
+			//
+			if (unwrap != null && (TypeManager.IsReferenceType (target) || target_type != target))
+				source = new Nullable.Lifted (source, unwrap, target).Resolve (ec);
+			else if (target_type != target)
+				source = Nullable.Wrap.Create (source, target);
+
+			return source;
 		}
 
 		/// <summary>

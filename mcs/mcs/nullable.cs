@@ -390,6 +390,8 @@ namespace Mono.CSharp.Nullable
 					return null;
 
 				null_value = LiftedNull.Create (type, loc);
+			} else if (TypeManager.IsValueType (type)) {
+				null_value = LiftedNull.Create (type, loc);
 			} else {
 				null_value = new NullConstant (type, loc);
 			}

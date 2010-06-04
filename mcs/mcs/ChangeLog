@@ -1,3 +1,9 @@
+2010-06-04  Marek Safar  <marek.safar@gmail.com>
+
+	* membercache.cs, convert.cs, nullable.cs, expression.cs: Optimize
+	user defined conversion probing and simplify user conversion for
+	nullabe types. Fixes #610940.
+
 2010-06-03  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #610919
