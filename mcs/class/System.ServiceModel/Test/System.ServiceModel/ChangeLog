@@ -1,3 +1,8 @@
+2010-06-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CallbackBehaviorAttributeTest.cs : test recent changes on operation
+	  descriptions, message directions, client operations and so on.
+
 2010-05-27  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CallbackBehaviorAttributeTest.cs : fix assertion label.

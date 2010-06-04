@@ -28,6 +28,7 @@
 using System;
 using System.Collections.ObjectModel;
 using System.IO;
+using System.Linq;
 using System.Net.Sockets;
 using System.Reflection;
 using System.ServiceModel;
@@ -135,7 +136,34 @@ namespace MonoTests.System.ServiceModel
 			NetTcpBinding tcpBindingpublish = new NetTcpBinding ();
 			tcpBindingpublish.Security.Mode = SecurityMode.None;
 			eventServiceHost.AddServiceEndpoint (typeof (IGreetings), tcpBindingpublish, "net.tcp://localhost:8000/GreetingsService");
+			var cd = eventServiceHost.Description.Endpoints [0].Contract;
+			Assert.AreEqual (2, cd.Operations.Count, "Operations.Count");
+			var send = cd.Operations.FirstOrDefault (od => od.Name == "SendMessage");
+			var show = cd.Operations.FirstOrDefault (od => od.Name == "ShowMessage");
+			Assert.IsNotNull (send, "OD:SendMessage");
+			Assert.IsNotNull (show, "OD:ShowMessage");
+			foreach (var md in send.Messages) {
+				if (md.Direction == MessageDirection.Input)
+					Assert.AreEqual ("http://tempuri.org/IGreetings/SendMessage", md.Action, "MD:SendMessage");
+				else
+					Assert.AreEqual ("http://tempuri.org/IGreetings/SendMessageResponse", md.Action, "MD:SendMessage");
+			}
+			foreach (var md in show.Messages) {
+				if (md.Direction == MessageDirection.Output)
+					Assert.AreEqual ("http://tempuri.org/IGreetings/ShowMessage", md.Action, "MD:ShowMessage");
+				else
+					Assert.AreEqual ("http://tempuri.org/IGreetings/ShowMessageResponse", md.Action, "MD:ShowMessage");
+			}
 			eventServiceHost.Open ();
+
+			var chd = (ChannelDispatcher) eventServiceHost.ChannelDispatchers [0];
+			Assert.IsNotNull (chd, "ChannelDispatcher");
+			Assert.AreEqual (1, chd.Endpoints.Count, "ChannelDispatcher.Endpoints.Count");
+			var ed = chd.Endpoints [0];
+			var cr = ed.DispatchRuntime.CallbackClientRuntime;
+			Assert.IsNotNull (cr, "CR");
+			Assert.AreEqual (1, cr.Operations.Count, "CR.Operations.Count");
+			Assert.AreEqual ("http://tempuri.org/IGreetings/ShowMessage", cr.Operations [0].Action, "ClientOperation.Action");
 
 			//Create client proxy
 			NetTcpBinding clientBinding = new NetTcpBinding ();
