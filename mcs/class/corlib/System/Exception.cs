@@ -64,6 +64,15 @@ namespace System
 		#endregion
 #pragma warning restore 169, 649		
 
+#if NET_4_0
+		protected event EventHandler<SafeSerializationEventArgs> SerializeObjectState {
+			[MonoTODO]
+			add { throw new NotImplementedException (); }
+			[MonoTODO]
+			remove { throw new NotImplementedException (); }
+		}
+#endif
+
 		public Exception ()
 		{
 		}
