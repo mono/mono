@@ -1,3 +1,7 @@
+2010-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFileTest.cs: New test case for Remove.
+
 2010-06-02  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFileTest.cs: Augment our test cases for MoveFile and

@@ -504,6 +504,34 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 
 #if NET_4_0
 		[Test]
+		public void Remove ()
+		{
+			// Test that we can call Remove several times
+			IsolatedStorageFile.Remove (IsolatedStorageScope.User);
+			IsolatedStorageFile.Remove (IsolatedStorageScope.User);
+
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			isf.Remove ();
+
+			// The second call to Remove should cause an InvalidOperationException, due to
+			// marking itself as closed.
+			try {
+				isf.Remove ();
+				Assert.Fail ("#Exc1");
+			} catch (InvalidOperationException) {
+			}
+
+			// Open, Close and try to Remove
+			isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			isf.Close ();
+			try {
+				isf.Remove ();
+				Assert.Fail ("#Exc2");
+			} catch (InvalidOperationException) {
+			}
+		}
+
+		[Test]
 		public void UsedSize ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
