@@ -76,7 +76,9 @@ namespace Mono.CSharp
 		}
 
 		public bool IsArray {
-			get { return this is ArrayContainer; }
+			get {
+				return Kind == MemberKind.ArrayType;
+			}
 		}
 
 		public bool IsAttribute {
@@ -113,7 +115,7 @@ namespace Mono.CSharp
 
 		public bool IsConstantCompatible {
 			get {
-				if ((Kind & (MemberKind.Enum | MemberKind.Class | MemberKind.Interface | MemberKind.Delegate)) != 0)
+				if ((Kind & (MemberKind.Enum | MemberKind.Class | MemberKind.Interface | MemberKind.Delegate | MemberKind.ArrayType)) != 0)
 					return true;
 
 				return TypeManager.IsPrimitiveType (this) || this == TypeManager.decimal_type || this == InternalType.Dynamic;
@@ -865,7 +867,7 @@ namespace Mono.CSharp
 		static Dictionary<Tuple<TypeSpec, int>, ArrayContainer> instances = new Dictionary<Tuple<TypeSpec, int>, ArrayContainer> ();
 
 		private ArrayContainer (TypeSpec element, int rank)
-			: base (MemberKind.Class, element, null)
+			: base (MemberKind.ArrayType, element, null)
 		{
 			this.rank = rank;
 		}

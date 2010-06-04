@@ -1,5 +1,13 @@
 2010-06-04  Marek Safar  <marek.safar@gmail.com>
 
+	* convert.cs, typespec.cs, expression.cs: Start using array member
+	kind for better conversion checks.
+	
+	* import.cs, report.cs: Report better error message for runtime
+	reflection bugs.
+
+2010-06-04  Marek Safar  <marek.safar@gmail.com>
+
 	* membercache.cs, convert.cs, nullable.cs, expression.cs: Optimize
 	user defined conversion probing and simplify user conversion for
 	nullabe types. Fixes #610940.

@@ -973,7 +973,13 @@ namespace Mono.CSharp
 			//
 			// This requires methods to be returned first which seems to work for both Mono and .NET
 			//
-			var all = loading_type.GetMembers (all_members);
+			MemberInfo[] all;
+			try {
+				all = loading_type.GetMembers (all_members);
+			} catch (Exception e) {
+				throw new InternalErrorException (e, "Could not import type `{0}' from `{1}'",
+					declaringType.GetSignatureForError (), declaringType.Assembly.Location);
+			}
 
 			var cache = new MemberCache (all.Length);
 			foreach (var member in all) {

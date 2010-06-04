@@ -229,7 +229,7 @@ namespace Mono.CSharp {
 				if (TypeManager.IsValueType (expr_type))
 					return false;
 
-				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type || expr_type.IsDelegate) {
+				if (expr_type.IsClass || expr_type.IsInterface || expr_type == TypeManager.enum_type || expr_type.IsDelegate || expr_type.Kind == MemberKind.ArrayType) {
 					// No mcs internal types are convertible
 					return true; // expr_type.MetaInfo.Module != typeof (Convert).Module;
 				}

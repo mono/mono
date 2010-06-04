@@ -7263,7 +7263,10 @@ namespace Mono.CSharp {
 				return expr.Resolve (ec);
 			}
 
-			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum | MemberKind.Interface | MemberKind.TypeParameter;
+
+			const MemberKind dot_kinds = MemberKind.Class | MemberKind.Struct | MemberKind.Delegate | MemberKind.Enum |
+				MemberKind.Interface | MemberKind.TypeParameter | MemberKind.ArrayType;
+
 			if ((expr_type.Kind & dot_kinds) == 0 || expr_type == TypeManager.void_type) {
 				Unary.Error_OperatorCannotBeApplied (ec, loc, ".", expr_type);
 				return null;
