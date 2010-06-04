@@ -1,3 +1,8 @@
+2010-06-04  Marek Habersack  <mhabersack@novell.com>
+
+	* icall.c (ves_icall_MonoType_GetEvent): be case insensitive is
+	the BFLAGS_IgnoreCase is raised
+
 2010-06-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* debug-mono-symfile.c (mono_debug_symfile_lookup_locals): Rewrite this so it returns
@@ -37694,7 +37699,3 @@ Tue Jul  3 18:33:32 CEST 2001 Paolo Molaro <lupus@ximian.com>
 	Beta2. 
 
 	* mono/metadata/assembly.c (load_metadata_ptrs): Fix for Beta2
-
-
-
-
