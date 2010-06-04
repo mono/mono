@@ -1,3 +1,15 @@
+2010-06-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationDescription.cs : add contract origin flags to identify
+	  which operation should be used for client operations (and dispatch
+	  too in the future).
+	* MessageDescription.cs : add IsRequest flag to indicate if it is
+	  for request or not.
+	* ServiceContractGenerator.cs, ContractDescriptionGenerator.cs :
+	  make use of above changes.
+	* ContractDescription.cs : don't create extraneous ClientOperations
+	  in irrelevant message direction.
+
 2010-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ContractDescriptionGenerator.cs : Now callback contract methods are

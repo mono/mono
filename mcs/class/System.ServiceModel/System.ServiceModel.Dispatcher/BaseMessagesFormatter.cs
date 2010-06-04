@@ -5,7 +5,7 @@
 //	Atsushi Enomoto <atsushi@ximian.com>
 //	Eyal Alaluf <eyala@mainsoft.com>
 //
-// Copyright (C) 2005-2007 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005-2010 Novell, Inc.  http://www.novell.com
 // Copyright (C) 2008 Mainsoft Co. http://www.mainsoft.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -161,7 +161,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			MessageDescription md = null;
 			foreach (MessageDescription mdi in messages)
-				if (mdi.Direction == MessageDirection.Input)
+				if (mdi.IsRequest)
 					md = mdi;
 
 			object [] parts = CreatePartsArray (md.Body);
@@ -183,7 +183,7 @@ namespace System.ServiceModel.Dispatcher
 
 			MessageDescription md = null;
 			foreach (MessageDescription mdi in messages)
-				if (mdi.Direction == MessageDirection.Output)
+				if (!mdi.IsRequest)
 					md = mdi;
 
 			object [] parts = CreatePartsArray (md.Body);
@@ -233,7 +233,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			MessageDescription md = null;
 			foreach (MessageDescription mdi in messages)
-				if (mdi.Direction == MessageDirection.Output)
+				if (!mdi.IsRequest)
 					md = mdi;
 
 			object [] parts = MessageToParts (md, message);

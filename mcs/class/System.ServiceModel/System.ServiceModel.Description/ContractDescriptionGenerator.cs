@@ -286,6 +286,11 @@ namespace System.ServiceModel.Description
 #endif
 			// FIXME: fill KnownTypes, Behaviors and Faults.
 
+			if (isCallback)
+				od.InCallbackContract = true;
+			else
+				od.InOrdinalContract = true;
+
 			return od;
 		}
 
@@ -332,7 +337,7 @@ namespace System.ServiceModel.Description
 		public static MessageDescription CreateMessageDescription (
 			Type messageType, string defaultNamespace, string action, bool isRequest, bool isCallback, MessageContractAttribute mca)
 		{
-			MessageDescription md = new MessageDescription (action, isRequest ^ isCallback ? MessageDirection.Input : MessageDirection.Output);
+			MessageDescription md = new MessageDescription (action, isRequest ^ isCallback ? MessageDirection.Input : MessageDirection.Output) { IsRequest = isRequest };
 			md.MessageType = MessageFilterOutByRef (messageType);
 			if (mca.HasProtectionLevel)
 				md.ProtectionLevel = mca.ProtectionLevel;
@@ -379,7 +384,7 @@ namespace System.ServiceModel.Description
 			OperationContractAttribute oca, ParameterInfo[] plist, string name, string defaultNamespace, string action, bool isRequest, bool isCallback, Type retType, ICustomAttributeProvider retTypeAttributes)
 		{
 			var dir = isRequest ^ isCallback ? MessageDirection.Input : MessageDirection.Output;
-			MessageDescription md = new MessageDescription (action, dir);
+			MessageDescription md = new MessageDescription (action, dir) { IsRequest = isRequest };
 
 			MessageBodyDescription mb = md.Body;
 			mb.WrapperName = name + (isRequest ? String.Empty : "Response");

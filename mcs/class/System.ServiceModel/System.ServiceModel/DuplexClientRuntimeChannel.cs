@@ -44,10 +44,8 @@ namespace System.ServiceModel.MonoInternal
 			ChannelFactory factory, EndpointAddress remoteAddress, Uri via)
 			: base (endpoint, factory, remoteAddress, via)
 		{
-			var cd = ContractDescription.GetContract (endpoint.Contract.CallbackContractType);
-			var se = new ServiceEndpoint (cd, factory.Endpoint.Binding, remoteAddress);
-			var ed = new EndpointDispatcher (remoteAddress, cd.Name, cd.Namespace);
-			ed.InitializeServiceEndpoint (true, null, se);
+			var ed = new EndpointDispatcher (remoteAddress, endpoint.Contract.Name, endpoint.Contract.Namespace);
+			ed.InitializeServiceEndpoint (true, null, endpoint);
 			Runtime.CallbackDispatchRuntime = ed.DispatchRuntime;
 		}
 

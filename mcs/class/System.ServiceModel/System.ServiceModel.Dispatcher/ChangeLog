@@ -1,3 +1,11 @@
+2010-06-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointDispatcher.cs, BaseMessagesFormatter.cs:
+	  Now MessageDescription.Direction is differentiated from "IsRequest"
+	  property, to precisely identify request/reply in callbacks. Also
+	  now we don't have to create extraneous ContractDescription for
+	  callbacks.
+
 2010-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EndpointDispatcher.cs, DispatchRuntime.cs, ClientRuntime.cs :

@@ -59,6 +59,9 @@ namespace System.ServiceModel.Description
 			is_initiating = true;
 		}
 
+		internal bool InOrdinalContract { get; set; }
+		internal bool InCallbackContract { get; set; }
+
 		public MethodInfo BeginMethod {
 			get { return begin_method; }
 			set { begin_method = value; }

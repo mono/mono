@@ -148,15 +148,18 @@ namespace System.ServiceModel.Description
 		internal ClientRuntime CreateClientRuntime (object callbackDispatchRuntime)
 		{
 			ClientRuntime proxy = new ClientRuntime (Name, Namespace, callbackDispatchRuntime) {ContractClientType = ContractType, CallbackClientType = CallbackContractType};
-			FillClientOperations (proxy);
+			FillClientOperations (proxy, false);
 			return proxy;
 		}
 
-		internal void FillClientOperations (ClientRuntime proxy)
+		internal void FillClientOperations (ClientRuntime proxy, bool isCallback)
 		{
 			foreach (OperationDescription od in Operations) {
+				if (!(isCallback && od.InCallbackContract || !isCallback && od.InOrdinalContract))
+					continue; // not in the contract in use.
+
 				if (!proxy.Operations.Contains (od.Name))
-					PopulateClientOperation (proxy, od);
+					PopulateClientOperation (proxy, od, isCallback);
 #if !MOONLIGHT
 				foreach (IOperationBehavior ob in od.Behaviors)
 					ob.ApplyClientBehavior (od, proxy.Operations [od.Name]);
@@ -164,11 +167,12 @@ namespace System.ServiceModel.Description
 			}
 		}
 
-		void PopulateClientOperation (ClientRuntime proxy, OperationDescription od)
+		void PopulateClientOperation (ClientRuntime proxy, OperationDescription od, bool isCallback)
 		{
 			string reqA = null, resA = null;
 			foreach (MessageDescription m in od.Messages) {
-				if (m.Direction == MessageDirection.Input)
+				bool isReq = m.Direction == MessageDirection.Input ^ isCallback;
+				if (isReq)
 					reqA = m.Action;
 				else
 					resA = m.Action;
@@ -178,11 +182,12 @@ namespace System.ServiceModel.Description
 				new ClientOperation (proxy, od.Name, reqA) :
 				new ClientOperation (proxy, od.Name, reqA, resA);
 			foreach (MessageDescription md in od.Messages) {
-				if (md.Direction == MessageDirection.Input &&
+				bool isReq = md.Direction == MessageDirection.Input ^ isCallback;
+				if (isReq &&
 				    md.Body.Parts.Count == 1 &&
 				    md.Body.Parts [0].Type == typeof (Message))
 					o.SerializeRequest = false;
-				if (md.Direction == MessageDirection.Output &&
+				if (!isReq &&
 				    md.Body.ReturnValue != null &&
 				    md.Body.ReturnValue.Type == typeof (Message))
 					o.DeserializeReply = false;

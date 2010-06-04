@@ -56,6 +56,8 @@ namespace System.ServiceModel.Description
 			this.direction = direction;
 		}
 
+		internal bool IsRequest { get; set; }
+
 		public string Action {
 			get { return action; }
 		}

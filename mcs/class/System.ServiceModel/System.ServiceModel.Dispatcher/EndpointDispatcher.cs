@@ -4,7 +4,7 @@
 // Author:
 //	Atsushi Enomoto <atsushi@ximian.com>
 //
-// Copyright (C) 2005-2006 Novell, Inc.  http://www.novell.com
+// Copyright (C) 2005-2010 Novell, Inc.  http://www.novell.com
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -123,10 +123,10 @@ namespace System.ServiceModel.Dispatcher
 			//Build the dispatch operations
 			DispatchRuntime db = this.DispatchRuntime;
 			if (!isCallback && se.Contract.CallbackContractType != null) {
-				var ccd = ContractDescriptionGenerator.GetCallbackContract (db.Type, se.Contract.CallbackContractType);
+				var ccd = se.Contract;
 				db.CallbackClientRuntime.CallbackClientType = se.Contract.CallbackContractType;
 				db.CallbackClientRuntime.ContractClientType = se.Contract.ContractType;
-				ccd.FillClientOperations (db.CallbackClientRuntime);
+				ccd.FillClientOperations (db.CallbackClientRuntime, true);
 			}
 			foreach (OperationDescription od in se.Contract.Operations)
 				if (!db.Operations.Contains (od.Name))
@@ -136,7 +136,7 @@ namespace System.ServiceModel.Dispatcher
 		void PopulateDispatchOperation (DispatchRuntime db, OperationDescription od) {
 			string reqA = null, resA = null;
 			foreach (MessageDescription m in od.Messages) {
-				if (m.Direction == MessageDirection.Input)
+				if (m.IsRequest)
 					reqA = m.Action;
 				else
 					resA = m.Action;
@@ -147,11 +147,11 @@ namespace System.ServiceModel.Dispatcher
 				new DispatchOperation (db, od.Name, reqA, resA);
 			bool no_serialized_reply = od.IsOneWay;
 			foreach (MessageDescription md in od.Messages) {
-				if (md.Direction == MessageDirection.Input &&
+				if (md.IsRequest &&
 					md.Body.Parts.Count == 1 &&
 					md.Body.Parts [0].Type == typeof (Message))
 					o.DeserializeRequest = false;
-				if (md.Direction == MessageDirection.Output &&
+				if (!md.IsRequest &&
 					md.Body.ReturnValue != null) {
 					if (md.Body.ReturnValue.Type == typeof (Message))
 						o.SerializeReply = false;
@@ -188,7 +188,7 @@ namespace System.ServiceModel.Dispatcher
 			List<string> actions = new List<string> ();
 			foreach (var od in cd.Operations)
 				foreach (var md in od.Messages)
-					if (md.Direction == MessageDirection.Input)
+					if (md.IsRequest)
 						if (md.Action == "*")
 							return new MatchAllMessageFilter ();
 						else

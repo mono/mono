@@ -1,3 +1,9 @@
+2010-06-04  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DuplexClientRuntimeChannel.cs : do not create and use extraneous
+	  ContractDescription for callback contract. Non-callback ones now
+	  works fine.
+
 2010-06-03  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ClientProxyGenerator.cs : CreateProxyType now carefully considers
