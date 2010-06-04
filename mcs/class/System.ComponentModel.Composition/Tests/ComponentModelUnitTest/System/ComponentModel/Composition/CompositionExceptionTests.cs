@@ -8,6 +8,9 @@ using System.ComponentModel.Composition.Factories;
 using System.Globalization;
 using System.IO;
 using System.Linq;
+using System.Reflection;
+using System.Security;
+using System.Security.Permissions;
 using System.Text;
 using System.ComponentModel.Composition.Primitives;
 using System.UnitTesting;
@@ -16,13 +19,46 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 
 #if !SILVERLIGHT
 using System.Runtime.Serialization;
+using System.Security.Policy;
 #endif
 
 namespace System.ComponentModel.Composition
 {
-    [TestClass]
+    [TestClass][Serializable]
     public class CompositionExceptionTests
     {
+#if !SILVERLIGHT
+        public delegate void Work(int index);
+
+        public class Worker : MarshalByRefObject
+        {
+            public static ExpectationCollection<IEnumerable<CompositionError>, string> expectations = new ExpectationCollection<IEnumerable<CompositionError>, string>();
+            static Worker()
+            {
+                expectations.Add(ErrorFactory.CreateFromDsl("Error"), "1<Separator> Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error|Error"), "1<Separator> Error|2<Separator> Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error|Error|Error"), "1<Separator> Error|2<Separator> Error|3<Separator> Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error(Error)"), "1<Separator> Error|<Prefix>Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error(Error|Error)"), "1<Separator> Error|<Prefix>Error|2<Separator> Error|<Prefix>Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error(Error|Error|Error)"), "1<Separator> Error|<Prefix>Error|2<Separator> Error|<Prefix>Error|3<Separator> Error|<Prefix>Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error(Error(Exception))"), "1<Separator> Exception|<Prefix>Error|<Prefix>Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error(Error|Exception)"), "1<Separator> Error|<Prefix>Error|2<Separator> Exception|<Prefix>Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error(Exception)"), "1<Separator> Exception|<Prefix>Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error(Exception(Exception))"), "1<Separator> Exception|<Prefix>Exception|<Prefix>Error");
+                expectations.Add(ErrorFactory.CreateFromDsl("Error(Error(Exception)|Error)"), "1<Separator> Exception|<Prefix>Error|<Prefix>Error|2<Separator> Error|<Prefix>Error");
+            }
+
+            public Work Action;
+
+            internal void DoWork(int index)
+            {
+                Action(index);
+            }
+
+        }
+
+#endif
+
         [TestMethod]
         public void Constructor1_ShouldSetMessagePropertyToDefault()
         {
@@ -323,9 +359,74 @@ namespace System.ComponentModel.Composition
 
                 string result = exception.ToString();
                 string expected = FixMessage(e.Output);
-                StringAssert.Contains(result, expected);}
+                StringAssert.Contains(result, expected);
+            }
         }
 
+#if !SILVERLIGHT && CLR40
+        [TestMethod]
+        public void Message_ShouldIncludeElementGraphAccrossAppDomain()
+        {
+            PermissionSet ps = new PermissionSet(PermissionState.None);
+            ps.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
+            ps.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.MemberAccess));
+
+            //Create a new sandboxed domain 
+            AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+            AppDomain newDomain = AppDomain.CreateDomain("test domain", null, setup, ps);
+
+            Worker remoteWorker = (Worker)newDomain.CreateInstanceAndUnwrap(
+                Assembly.GetExecutingAssembly().FullName,
+                typeof(Worker).FullName);
+
+            var expectationIndex = new int[] { 1, 2, 3, 10};
+
+            var expectations = new ExpectationCollection<CompositionError, string>();
+            CompositionError error = null;
+
+            error = CreateCompositionErrorWithElementChain(1);
+            expectations.Add(error, GetElementGraphString(error));
+
+            error = CreateCompositionErrorWithElementChain(2);
+            expectations.Add(error, GetElementGraphString(error));
+
+            error = CreateCompositionErrorWithElementChain(3);
+            expectations.Add(error, GetElementGraphString(error));
+
+            error = CreateCompositionErrorWithElementChain(10);
+            expectations.Add(error, GetElementGraphString(error));
+
+            int index = 0;
+            foreach (var e in expectations)
+            {
+                try
+                {
+                    remoteWorker.Action = (int x) => 
+                    {
+                        var lclExpectations = new ExpectationCollection<CompositionError, string>();
+
+                        var lclError = CreateCompositionErrorWithElementChain(x);
+                        lclExpectations.Add(lclError, GetElementGraphString(lclError));
+
+                        var ce =  CreateCompositionException(new CompositionError[] { lclExpectations[0].Input });
+                        throw ce;
+                    };
+                    remoteWorker.DoWork(expectationIndex[index]);
+                }
+                catch (CompositionException compositionException)
+                {
+                    string result = compositionException.ToString();
+                    string expected = FixMessage(e.Output);
+                    StringAssert.Contains(result, expected);
+                }
+                catch (Exception exception)
+                {
+                    Assert.Fail(exception.ToString());
+                }
+                ++index;
+            }
+        }
+#endif
         [TestMethod]
         public void Message_ShouldIncludeErrors()
         { 
@@ -341,7 +442,7 @@ namespace System.ComponentModel.Composition
             expectations.Add(ErrorFactory.CreateFromDsl("Error(Exception)"),                "1<Separator> Exception|<Prefix>Error");
             expectations.Add(ErrorFactory.CreateFromDsl("Error(Exception(Exception))"),     "1<Separator> Exception|<Prefix>Exception|<Prefix>Error");
             expectations.Add(ErrorFactory.CreateFromDsl("Error(Error(Exception)|Error)"),   "1<Separator> Exception|<Prefix>Error|<Prefix>Error|2<Separator> Error|<Prefix>Error");
-            
+
             foreach (var e in expectations)
             {
                 var exception = CreateCompositionException(e.Input);
@@ -350,6 +451,47 @@ namespace System.ComponentModel.Composition
             }
         }
 
+#if !SILVERLIGHT && CLR40
+        [TestMethod]
+        public void Message_ShouldIncludeErrorsAccrossAppDomain()
+        {
+            PermissionSet ps = new PermissionSet(PermissionState.None);
+            ps.AddPermission(new SecurityPermission(SecurityPermissionFlag.Execution));
+            ps.AddPermission(new ReflectionPermission(ReflectionPermissionFlag.MemberAccess));
+
+            //Create a new sandboxed domain 
+            AppDomainSetup setup = AppDomain.CurrentDomain.SetupInformation;
+            AppDomain newDomain = AppDomain.CreateDomain("test domain", null, setup, ps);
+
+            Worker remoteWorker = (Worker)newDomain.CreateInstanceAndUnwrap(
+                Assembly.GetExecutingAssembly().FullName,
+                typeof(Worker).FullName);
+
+            int index = 0;
+            foreach (var expectation in Worker.expectations)
+            {
+                try
+                {
+                    remoteWorker.Action = (int x) => 
+                    {
+                        Exception e = CreateCompositionException(Worker.expectations[x].Input);
+                        throw e;
+                    };
+
+                    remoteWorker.DoWork(index);
+                }
+                catch(CompositionException e)
+                {
+                    AssertMessage(e, expectation.Output.Split('|'));
+                }
+                catch(Exception e)
+                {
+                    Assert.Fail(e.ToString());
+                }
+                ++index;
+            }
+        }
+#endif
         [TestMethod]
         public void Messsage_ShouldIncludeCountOfRootCauses()
         {
@@ -367,7 +509,7 @@ namespace System.ComponentModel.Composition
                 var exception = CreateCompositionException(e.Input);
 
                 AssertMessage(exception, e.Output, CultureInfo.CurrentCulture);
-            }          
+            }
         }
 
         [TestMethod]
@@ -390,57 +532,7 @@ namespace System.ComponentModel.Composition
             }
         }
 
-#if !SILVERLIGHT
-
-        [TestMethod]
-        public void Constructor6_NullAsInfoArgument_ShouldThrowArgumentNull()
-        {
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsArgument<ArgumentNullException>("info", () =>
-            {
-                SerializationTestServices.Create<CompositionException>((SerializationInfo)null, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithMissingIdEntryAsInfoArgument_ShouldThrowSerialization()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoRemovingMember<CompositionException>("Errors");
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsSerialization("Errors", () =>
-            {
-                SerializationTestServices.Create<CompositionException>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithWrongTypeForIdEntryAsInfoArgument_ShouldThrowInvalidCast()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoReplacingMember<CompositionException>("Errors", 10);
-            var context = new StreamingContext();
-
-            ExceptionAssert.Throws<InvalidCastException>(() =>
-            {
-                SerializationTestServices.Create<CompositionException>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void InnerException_CanBeSerialized()
-        {
-            var expectations = Expectations.GetInnerExceptions();
-
-            foreach (var e in expectations)
-            {
-                var exception = CreateCompositionException(e);
-
-                var result = SerializationTestServices.RoundTrip(exception);
-
-                ExtendedAssert.IsInstanceOfSameType(exception.InnerException, result.InnerException);
-            }
-        }
+#if !SILVERLIGHT && CLR40
 
         [TestMethod]
         public void Message_CanBeSerialized()
@@ -473,18 +565,6 @@ namespace System.ComponentModel.Composition
                     CompositionAssert.AreEqual(expected, actual);
                 });
             }
-        }
-
-        [TestMethod]
-        public void GetObjectData_NullAsInfoArgument_ShouldThrowArgumentNull()
-        {
-            var exception = (ISerializable)CreateCompositionException();
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsArgument<ArgumentNullException>("info", () =>
-            {
-                exception.GetObjectData((SerializationInfo)null, context);
-            });
         }
 
 #endif

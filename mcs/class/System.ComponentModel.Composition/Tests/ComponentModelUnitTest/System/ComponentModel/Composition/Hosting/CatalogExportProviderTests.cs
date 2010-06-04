@@ -479,9 +479,80 @@ namespace System.ComponentModel.Composition
             Assert.AreEqual(exportValue, importerPart.Value, "Importer was unexpectedly recomposed");
         }
 
+        [TestMethod]
+        public void CanBeCollectedAfterDispose()
+        {
+            AggregateExportProvider sourceExportProvider = new AggregateExportProvider();
+            var catalog = new AggregateCatalog(CatalogFactory.CreateDefaultAttributed());
+            var catalogExportProvider = new CatalogExportProvider(catalog);
+            catalogExportProvider.SourceProvider = sourceExportProvider;
+
+            WeakReference weakCatalogExportProvider = new WeakReference(catalogExportProvider);
+            catalogExportProvider.Dispose();
+            catalogExportProvider = null;
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            Assert.IsFalse(weakCatalogExportProvider.IsAlive);
+
+            GC.KeepAlive(sourceExportProvider);
+            GC.KeepAlive(catalog);
+        }
+
+        [TestMethod]
+        public void RemovingAndReAddingMultipleDefinitionsFromCatalog()
+        {
+            var fixedParts = new TypeCatalog(typeof(RootMultipleImporter), typeof(ExportedService));
+            var changingParts = new TypeCatalog(typeof(Exporter1), typeof(Exporter2));
+            var catalog = new AggregateCatalog();
+            catalog.Catalogs.Add(fixedParts);
+            catalog.Catalogs.Add(changingParts);
+            var catalogExportProvider = new CatalogExportProvider(catalog);
+            catalogExportProvider.SourceProvider = catalogExportProvider;
+
+            var root = catalogExportProvider.GetExport<RootMultipleImporter>().Value;
+            Assert.AreEqual(2, root.Imports.Length);
+
+            catalog.Catalogs.Remove(changingParts);
+            Assert.AreEqual(0, root.Imports.Length);
+
+            catalog.Catalogs.Add(changingParts);
+            Assert.AreEqual(2, root.Imports.Length);
+        }
+
+        [Export]
+        public class RootMultipleImporter
+        {
+            [ImportMany(AllowRecomposition = true)]
+            public IExportedInterface[] Imports { get; set; }
+        }
+        public interface IExportedInterface
+        {
+        }
+        [Export(typeof(IExportedInterface))]
+        public class Exporter1 : IExportedInterface
+        {
+            [Import]
+            public ExportedService Service { get; set; }
+        }
+        [Export(typeof(IExportedInterface))]
+        public class Exporter2 : IExportedInterface
+        {
+            [Import]
+            public ExportedService Service { get; set; }
+        }
+        [Export]
+        public class ExportedService
+        {
+        }
+
+
+
         private static ImportDefinition ImportFromContract(string contractName)
         {
             return ImportDefinitionFactory.CreateDefault(contractName,
+
                                                      ImportCardinality.ZeroOrMore,
                                                      false,
                                                      false);

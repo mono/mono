@@ -2,17 +2,19 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------------------
 using System;
-using System.ComponentModel.Composition.Hosting;
+using System.Collections.Generic;
 using System.ComponentModel.Composition.Primitives;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Internal;
-using System.Collections.Generic;
-using System.Linq;
-using System.Threading;
-using System.Globalization;
 
 namespace System.ComponentModel.Composition.ReflectionModel
 {
+#if !SILVERLIGHT
+    [System.Security.SecurityCritical]
+#endif
     public static class ReflectionModelServices
     {
         public static Lazy<Type> GetPartType(ComposablePartDefinition partDefinition)
@@ -105,9 +107,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
             return (importDefinition is ReflectionParameterImportDefinition);
         }
 
-#if SILVERLIGHT
-
-        public static bool IsPartCreatorImportDefinition(ImportDefinition importDefinition)
+        internal static bool IsExportFactoryImportDefinition(ImportDefinition importDefinition)
         {
             Requires.NotNull(importDefinition, "importDefinition");
 
@@ -122,7 +122,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
             return (importDefinition is IPartCreatorImportDefinition);
         }
 
-        public static ContractBasedImportDefinition GetPartCreatorProductImportDefinition(ImportDefinition importDefinition)
+        internal static ContractBasedImportDefinition GetPartCreatorProductImportDefinition(ImportDefinition importDefinition)
         {
             Requires.NotNull(importDefinition, "importDefinition");
 
@@ -136,7 +136,6 @@ namespace System.ComponentModel.Composition.ReflectionModel
 
             return partCreatorImportDefinition.ProductImportDefinition;
         }
-#endif
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public static ComposablePartDefinition CreatePartDefinition(
@@ -159,7 +158,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
                     origin));
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public static ExportDefinition CreateExportDefinition(
             LazyMemberInfo exportingMember,
             string contractName,
@@ -175,7 +174,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
                 origin);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public static ContractBasedImportDefinition CreateImportDefinition(
             LazyMemberInfo importingMember,
             string contractName,
@@ -190,7 +189,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
         }
 
         [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public static ContractBasedImportDefinition CreateImportDefinition(
+        internal static ContractBasedImportDefinition CreateImportDefinition(
             LazyMemberInfo importingMember,
             string contractName,
             string requiredTypeIdentity,
@@ -198,16 +197,14 @@ namespace System.ComponentModel.Composition.ReflectionModel
             ImportCardinality cardinality,
             bool isRecomposable,
             CreationPolicy requiredCreationPolicy,
-            bool isPartCreator,
+            bool isExportFactory,
             ICompositionElement origin)
         {
             Requires.NotNullOrEmpty(contractName, "contractName");
-            Requires.NullOrNotNullElements(requiredMetadata, "requiredMetadata");
             Requires.IsInMembertypeSet(importingMember.MemberType, "importingMember", MemberTypes.Property | MemberTypes.Field);
 
-            if (isPartCreator)
+            if (isExportFactory)
             {
-#if SILVERLIGHT
                 return new PartCreatorMemberImportDefinition(
                     importingMember,
                     origin,
@@ -219,9 +216,6 @@ namespace System.ComponentModel.Composition.ReflectionModel
                         isRecomposable,
                         false,
                         CreationPolicy.NonShared));
-#else
-                throw new ArgumentException("PartCreator is only support in Silverlight version of MEF", "isPartCreator");
-#endif
             }
             else
             {
@@ -250,24 +244,22 @@ namespace System.ComponentModel.Composition.ReflectionModel
             return CreateImportDefinition(parameter, contractName, requiredTypeIdentity, requiredMetadata, cardinality, requiredCreationPolicy, false, origin);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
-        public static ContractBasedImportDefinition CreateImportDefinition(
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+        internal static ContractBasedImportDefinition CreateImportDefinition(
             Lazy<ParameterInfo> parameter,
             string contractName,
             string requiredTypeIdentity,
             IEnumerable<KeyValuePair<string, Type>> requiredMetadata,
             ImportCardinality cardinality,
             CreationPolicy requiredCreationPolicy,
-            bool isPartCreator,
+            bool isExportFactory,
             ICompositionElement origin)
         {
             Requires.NotNull(parameter, "parameter");
             Requires.NotNullOrEmpty(contractName, "contractName");
-            Requires.NullOrNotNullElements(requiredMetadata, "requiredMetadata");
 
-            if (isPartCreator)
+            if (isExportFactory)
             {
-#if SILVERLIGHT
                 return new PartCreatorParameterImportDefinition(
                     parameter,
                     origin,
@@ -279,9 +271,6 @@ namespace System.ComponentModel.Composition.ReflectionModel
                         false,
                         true,
                         CreationPolicy.NonShared));
-#else
-                throw new ArgumentException("PartCreator is only support in Silverlight version of MEF", "isPartCreator");
-#endif
             }
             else
             {
@@ -295,8 +284,8 @@ namespace System.ComponentModel.Composition.ReflectionModel
                     origin);
             }
         }
-
-        private class ReflectionPartCreationInfo : IReflectionPartCreationInfo
+    }
+        internal class ReflectionPartCreationInfo : IReflectionPartCreationInfo
         {
             private readonly Lazy<Type> _partType;
             private readonly Lazy<IEnumerable<ImportDefinition>> _imports;
@@ -434,7 +423,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
             }
         }
 
-        private class LazyExportDefinition : ExportDefinition
+        internal class LazyExportDefinition : ExportDefinition
         {
             private readonly Lazy<IDictionary<string, object>> _metadata;
 
@@ -452,6 +441,4 @@ namespace System.ComponentModel.Composition.ReflectionModel
                 }
             }
         }
-
-    }
 }

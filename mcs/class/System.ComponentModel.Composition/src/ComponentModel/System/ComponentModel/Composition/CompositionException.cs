@@ -8,20 +8,15 @@ using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Globalization;
 using System.Linq;
+using System.Runtime.Serialization;
 using System.Security.Permissions;
 using System.Text;
 using Microsoft.Internal;
 using Microsoft.Internal.Collections;
 
-#if !SILVERLIGHT
-
-using System.Runtime.Serialization;
-using Microsoft.Internal.Runtime.Serialization;
-
-#endif
-
 namespace System.ComponentModel.Composition
 {
+
     /// <summary>
     ///     The exception that is thrown when one or more errors occur during composition in 
     ///     a <see cref="CompositionContainer"/>.
@@ -30,8 +25,22 @@ namespace System.ComponentModel.Composition
     public class CompositionException : Exception
     {
         const string ErrorsKey = "Errors";
+        private ReadOnlyCollection<CompositionError> _errors;
 
-        private readonly ReadOnlyCollection<CompositionError> _errors;
+#if CLR40 && !SILVERLIGHT
+        [Serializable]
+        private struct CompositionExceptionData : ISafeSerializationData
+        {
+            public CompositionError[] _errors;
+
+            void ISafeSerializationData.CompleteDeserialization(object obj)
+            {
+                CompositionException exception = obj as CompositionException;
+
+                exception._errors = new ReadOnlyCollection<CompositionError>(this._errors);
+            }
+        }
+#endif
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="CompositionException"/> class.
@@ -102,41 +111,28 @@ namespace System.ComponentModel.Composition
             : base(message, innerException)
         {
             Requires.NullOrNotNullElements(errors, "errors");
+#if CLR40 && !SILVERLIGHT
+            SerializeObjectState += delegate(object exception, SafeSerializationEventArgs eventArgs)
+            {
+                var data = new CompositionExceptionData();
+                if(this._errors != null)
+                {
+                    data._errors = this._errors.Select(error => new CompositionError(
+                        ((ICompositionError)error).Id, 
+                        error.Description,
+                        error.Element.ToSerializableElement(),
+                        error.Exception)).ToArray();
+                }
+                else
+                {
+                    data._errors = new CompositionError[0];
+                }
 
-            this._errors = new ReadOnlyCollection<CompositionError>(errors == null ? new CompositionError[0] : errors.ToArray());
+                eventArgs.AddSerializedState(data);
+            };
+#endif
+            _errors = new ReadOnlyCollection<CompositionError>(errors == null ? new CompositionError[0] : errors.ToArray<CompositionError>());
         }
-
-#if !SILVERLIGHT
-
-        /// <summary>
-        ///     Initializes a new instance of the <see cref="CompositionException"/> class 
-        ///     with the specified serialization data.
-        /// </summary>
-        /// <param name="info">
-        ///     The <see cref="SerializationInfo"/> that holds the serialized object data about the 
-        ///     <see cref="CompositionException"/>.
-        /// </param>
-        /// <param name="context">
-        ///     The <see cref="StreamingContext"/> that contains contextual information about the 
-        ///     source or destination.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        ///     <paramref name="info"/> is <see langword="null"/>.
-        /// </exception>
-        /// <exception cref="SerializationException">
-        ///     <paramref name="info"/> is missing a required value.
-        /// </exception>
-        /// <exception cref="InvalidCastException">
-        ///     <paramref name="info"/> contains a value that cannot be cast to the correct type.
-        /// </exception>
-        [System.Security.SecuritySafeCritical]
-        protected CompositionException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-            this._errors = info.GetValue<ReadOnlyCollection<CompositionError>>(ErrorsKey);
-        }
-
-#endif //!SILVERLIGHT
 
         /// <summary>
         ///     Gets the errors that are the cause of the exception.
@@ -174,32 +170,6 @@ namespace System.ComponentModel.Composition
                 return BuildDefaultMessage();
             }
         }
-
-#if !SILVERLIGHT
-
-        /// <summary>
-        ///     Gets the serialization data of the exception.
-        /// </summary>
-        /// <param name="info">
-        ///     The <see cref="SerializationInfo"/> that holds the serialized object data about the 
-        ///     <see cref="ComposablePartException"/>.
-        /// </param>
-        /// <param name="context">
-        ///     The <see cref="StreamingContext"/> that contains contextual information about the 
-        ///     source or destination.
-        /// </param>
-        /// <exception cref="ArgumentNullException">
-        ///     <paramref name="info"/> is <see langword="null"/>.
-        /// </exception>
-        [System.Security.SecurityCritical]
-        public override void GetObjectData(SerializationInfo info, StreamingContext context)
-        {
-            base.GetObjectData(info, context);
-
-            info.AddValue(ErrorsKey, _errors);
-        }
-
-#endif
 
         private string BuildDefaultMessage()
         {

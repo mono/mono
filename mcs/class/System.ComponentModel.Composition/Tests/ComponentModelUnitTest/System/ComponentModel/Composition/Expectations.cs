@@ -210,8 +210,10 @@ namespace System.ComponentModel.Composition
             yield return new Exception();
             yield return new ArgumentException();
             yield return new SystemException();
+#if CLR40
             yield return new CompositionException();
             yield return new ImportCardinalityMismatchException();
+#endif
         }
 
         public static IEnumerable<Exception> GetInnerExceptionsWithNull()

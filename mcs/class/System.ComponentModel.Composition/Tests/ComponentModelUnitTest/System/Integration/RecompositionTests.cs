@@ -461,5 +461,105 @@ namespace Tests.Integration
             Assert.AreEqual(42, value.Import.Property);
         }
 
+        [TestMethod]
+        [WorkItem(789269)]
+        public void TestRemovingAndReAddingMultipleDefinitionsFromCatalog()
+        {
+            var fixedParts = new TypeCatalog(typeof(RootMultipleImporter), typeof(ExportedService));
+            var changingParts = new TypeCatalog(typeof(Exporter1), typeof(Exporter2));
+            var catalog = new AggregateCatalog();
+            catalog.Catalogs.Add(fixedParts);
+            catalog.Catalogs.Add(changingParts);
+
+            var container = new CompositionContainer(catalog);
+
+            var root = container.GetExport<RootMultipleImporter>().Value;
+
+            Assert.AreEqual(2, root.Imports.Length);
+
+            catalog.Catalogs.Remove(changingParts);
+
+            Assert.AreEqual(0, root.Imports.Length);
+
+            catalog.Catalogs.Add(changingParts);
+
+            Assert.AreEqual(2, root.Imports.Length);
+        }
+
+        [Export]
+        public class RootMultipleImporter
+        {
+            [ImportMany(AllowRecomposition=true)]
+            public IExportedInterface[] Imports { get; set; }
+        }
+
+        public interface IExportedInterface
+        {
+
+        }
+
+        [Export(typeof(IExportedInterface))]
+        public class Exporter1 : IExportedInterface
+        {
+            [Import]
+            public ExportedService Service { get; set; }
+        }
+
+        [Export(typeof(IExportedInterface))]
+        public class Exporter2 : IExportedInterface
+        {
+            [Import]
+            public ExportedService Service { get; set; }
+        }
+
+        [Export]
+        public class ExportedService
+        {
+
+        }
+
+        [TestMethod]
+        [WorkItem(762215)]
+        [Ignore]
+        public void TestPartCreatorResurrection()
+        {
+            var container = new CompositionContainer(new TypeCatalog(typeof(NonDisposableImportsDisposable), typeof(PartImporter<NonDisposableImportsDisposable>)));
+            var exports = container.GetExports<PartImporter<NonDisposableImportsDisposable>>();
+            Assert.AreEqual(0, exports.Count());
+            container.ComposeParts(new DisposablePart());
+            exports = container.GetExports<PartImporter<NonDisposableImportsDisposable>>();
+            Assert.AreEqual(1, exports.Count());
+        }
+
+        [Export]
+        public class PartImporter<PartType>
+        {
+            [Import]
+            public PartType Creator { get; set; }
+        }
+
+        [Export]
+        public class NonDisposableImportsDisposable
+        {
+            [Import]
+            public DisposablePart Part { get; set; }
+        }
+
+        [Export]
+        public class Part
+        {
+
+        }
+        [Export]
+        [PartCreationPolicy(CreationPolicy.NonShared)]
+        public class DisposablePart : Part, IDisposable
+        {
+            public bool Disposed { get; private set; }
+            public void Dispose()
+            {
+                Disposed = true;
+            }
+        }
+
     }
 }

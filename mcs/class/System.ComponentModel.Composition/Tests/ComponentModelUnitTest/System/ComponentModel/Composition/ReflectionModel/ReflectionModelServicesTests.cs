@@ -869,24 +869,22 @@ namespace System.ComponentModel.Composition.ReflectionModel
             });
         }
 
-#if SILVERLIGHT
-
         [TestMethod]
-        public void IsPartCreatorImportDefinition_NullImport_ShouldThrowArgumentNull()
+        public void IsExportFactoryImportDefinition_NullImport_ShouldThrowArgumentNull()
         {
             ExceptionAssert.ThrowsArgumentNull("importDefinition", () =>
-                ReflectionModelServices.IsPartCreatorImportDefinition(null));
+                ReflectionModelServices.IsExportFactoryImportDefinition(null));
         }
         
         [TestMethod]
-        public void IsPartCreatorImportDefinition_InvalidImport_ShouldThrowArgument()
+        public void IsExportFactoryImportDefinition_InvalidImport_ShouldThrowArgument()
         {
             ExceptionAssert.ThrowsArgument("importDefinition", () =>
-                ReflectionModelServices.IsPartCreatorImportDefinition(CreateInvalidImport()));
+                ReflectionModelServices.IsExportFactoryImportDefinition(CreateInvalidImport()));
         }
         
         [TestMethod]
-        public void IsPartCreatorImportDefinition_NonPartCreatorImport_ShouldReturnFalse()
+        public void IsExportFactoryImportDefinition_NonPartCreatorImport_ShouldReturnFalse()
         {
             var import = ReflectionModelServices.CreateImportDefinition(
                 new LazyMemberInfo(MemberTypes.Field, () => new MemberInfo[] { typeof(ReflectionModelServicesTests) }), // bogus member
@@ -898,11 +896,11 @@ namespace System.ComponentModel.Composition.ReflectionModel
                 CreationPolicy.Any,
                 null);
 
-            Assert.IsFalse(ReflectionModelServices.IsPartCreatorImportDefinition(import));
+            Assert.IsFalse(ReflectionModelServices.IsExportFactoryImportDefinition(import));
         }
 
         [TestMethod]
-        public void IsPartCreatorImportDefinition_PartCreatorImport_ShouldReturnTrue()
+        public void IsExportFactoryImportDefinition_PartCreatorImport_ShouldReturnTrue()
         {
             var import = ReflectionModelServices.CreateImportDefinition(
                 new LazyMemberInfo(MemberTypes.Field, () => new MemberInfo[] { typeof(ReflectionModelServicesTests) }), // bogus member
@@ -915,7 +913,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
                 true, //isPartCreator
                 null);
 
-            Assert.IsTrue(ReflectionModelServices.IsPartCreatorImportDefinition(import));
+            Assert.IsTrue(ReflectionModelServices.IsExportFactoryImportDefinition(import));
         }
 
         [TestMethod]
@@ -973,8 +971,6 @@ namespace System.ComponentModel.Composition.ReflectionModel
             Assert.AreEqual(import.RequiredTypeIdentity, import2.RequiredTypeIdentity);
             EnumerableAssert.AreEqual(import.RequiredMetadata, import2.RequiredMetadata);
         }
-
-#endif
 
         private static IEnumerable<ImportDefinition> CreateInvalidImports()
         {

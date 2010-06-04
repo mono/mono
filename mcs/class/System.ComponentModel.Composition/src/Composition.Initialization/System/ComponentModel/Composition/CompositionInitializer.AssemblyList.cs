@@ -4,12 +4,12 @@
 using System;
 using System.Collections.Generic;
 using System.Reflection;
-//using System.Windows;
-//using System.Windows.Resources;
+using System.Windows;
+using System.Windows.Resources;
 
 namespace System.ComponentModel.Composition
 {
-    public static partial class PartInitializer
+    public static partial class CompositionInitializer
     {
         // This method is the only Silverlight specific code dependency in CompositionHost
         private static List<Assembly> GetAssemblyList()
@@ -18,7 +18,6 @@ namespace System.ComponentModel.Composition
 
             // While this may seem like somewhat of a hack, walking the AssemblyParts in the active 
             // deployment object is the only way to get the list of assemblies loaded by the XAP. 
-            /*
             foreach (AssemblyPart ap in Deployment.Current.Parts)
             {
                 StreamResourceInfo sri = Application.GetResourceStream(new Uri(ap.Source, UriKind.Relative));
@@ -30,7 +29,6 @@ namespace System.ComponentModel.Composition
                     assemblies.Add(assembly);
                 }
             }
-             */
 
             return assemblies;
         }

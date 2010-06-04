@@ -5,6 +5,7 @@ using System;
 using System.ComponentModel.Composition.Primitives;
 using Microsoft.Internal;
 using Microsoft.Internal.Collections;
+using System.Reflection;
 
 namespace System.ComponentModel.Composition.ReflectionModel
 {
@@ -13,10 +14,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
     {
         private static readonly Type LazyOfTType = typeof(Lazy<>);
         private static readonly Type LazyOfTMType = typeof(Lazy<,>);
-#if SILVERLIGHT
-        private static readonly Type PartCreatorOfTType = typeof(PartCreator<>);
-        private static readonly Type PartCreatorOfTMType = typeof(PartCreator<,>);
-#endif
+        private const string ExportFactoryTypeName = "System.ComponentModel.Composition.ExportFactory";
 
         private readonly Type _type;
         private readonly bool _isAssignableCollectionType;
@@ -51,9 +49,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
             get { return this._type; }
         }
 
-#if SILVERLIGHT
         public bool IsPartCreator { get; private set; }
-#endif
 
         public Type ContractType { get { return this._contractType; } }
 
@@ -91,22 +87,41 @@ namespace System.ComponentModel.Composition.ReflectionModel
                     return arguments[0];
                 }
 
-#if SILVERLIGHT
-                if (genericType == PartCreatorOfTType)
+                if (
+                    type.FullName.StartsWith(ExportFactoryTypeName, StringComparison.Ordinal) && 
+                    ((arguments.Length == 1) || (arguments.Length == 2)))
                 {
-                    this.IsPartCreator = true;
-                    this._castSingleValue = ExportServices.CreateStronglyTypedPartCreatorFactory(arguments[0], null);
-                    return arguments[0];
-                }
+                    // Func<Tuple<T, Action>>
+                    Type exportLifetimeContextCreatorType = typeof(Func<>).MakeGenericType(typeof(Tuple<,>).MakeGenericType(arguments[0], typeof(Action)));
+                    ConstructorInfo constructor = null;
 
-                if (genericType == PartCreatorOfTMType)
-                {
-                    this.IsPartCreator = true;
-                    this._castSingleValue = ExportServices.CreateStronglyTypedPartCreatorFactory(arguments[0], arguments[1]);
-                    this.MetadataViewType = arguments[1];
-                    return arguments[0];
+                    if (arguments.Length == 1)
+                    {
+                        constructor = type.GetConstructor(new Type[] { exportLifetimeContextCreatorType });
+                    }
+                    else
+                    {
+                        Assumes.IsTrue(arguments.Length == 2);
+                        constructor = type.GetConstructor(new Type[] { exportLifetimeContextCreatorType, arguments[1] });
+                    }
+
+                    if (constructor != null)
+                    {
+                        this.IsPartCreator = true;
+                        if (arguments.Length == 1)
+                        {
+                            this._castSingleValue = ExportServices.CreateStronglyTypedExportFactoryFactory(arguments[0], null, constructor);
+                        }
+                        else
+                        {
+                            Assumes.IsTrue(arguments.Length == 2);
+                            this._castSingleValue = ExportServices.CreateStronglyTypedExportFactoryFactory(arguments[0], arguments[1], constructor);
+                            this.MetadataViewType = arguments[1];
+                        }
+
+                        return arguments[0];
+                    }
                 }
-#endif
             }
 
             return type;

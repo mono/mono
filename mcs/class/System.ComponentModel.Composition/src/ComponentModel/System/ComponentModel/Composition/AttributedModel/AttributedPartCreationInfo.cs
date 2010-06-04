@@ -193,7 +193,10 @@ namespace System.ComponentModel.Composition.AttributedModel
 
         private void DiscoverExportsAndImports()
         {
-            if (this._exports != null)
+            // NOTE : in most cases both of these will be null or not null at the same time
+            // the only situation when that is not the case is when there was a failure during the previous discovery
+            // and one of them ended up not being set. In that case we will force the discovery again so that the same exception is thrown.
+            if ((this._exports != null) && (this._imports != null))
             {
                 return;
             }
@@ -325,10 +328,11 @@ namespace System.ComponentModel.Composition.AttributedModel
             {
                 yield break;
             }
-
+            
             // Stopping at object instead of null to help with performance. It is a noticable performance
             // gain (~5%) if we don't have to try and pull the attributes we know don't exist on object.
-            while (currentType != CompositionServices.ObjectType)
+            // We also need the null check in case we're passed a type that doesn't live in the runtime context.
+            while (currentType != null && currentType != CompositionServices.ObjectType)
             {
                 if (IsInheritedExport(currentType))
                 {
@@ -399,7 +403,8 @@ namespace System.ComponentModel.Composition.AttributedModel
 
                 // Stopping at object instead of null to help with performance. It is a noticable performance
                 // gain (~5%) if we don't have to try and pull the attributes we know don't exist on object.
-                while (baseType != CompositionServices.ObjectType)
+                // We also need the null check in case we're passed a type that doesn't live in the runtime context.
+                while (baseType != null && baseType != CompositionServices.ObjectType)
                 {
                     foreach (MemberInfo member in GetDeclaredOnlyImportMembers(baseType))
                     {

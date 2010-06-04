@@ -7,6 +7,7 @@ using System.ComponentModel.Composition.AttributedModel;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.ReflectionModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Text;
@@ -129,6 +130,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <value>
         ///     A <see cref="String"/> containing a human-readable display name of the <see cref="TypeCatalog"/>.
         /// </value>
+        [SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
         string ICompositionElement.DisplayName
         {
             get { return this.GetDisplayName(); }
@@ -140,6 +142,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <value>
         ///     This property always returns <see langword="null"/>.
         /// </value>
+        [SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
         ICompositionElement ICompositionElement.Origin
         {
             get { return null; }

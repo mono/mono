@@ -34,6 +34,8 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void Constructor1_ShouldSetPartsPropertyToEmpty()
         {
             var catalog = new AggregateCatalog();
@@ -58,6 +60,8 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void Constructor3_NullAsCatalogsArgument_ShouldSetPartsPropertyToEmpty()
         {
             var catalog = new AggregateCatalog((IEnumerable<ComposablePartCatalog>)null);
@@ -66,6 +70,8 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void Constructor3_EmptyIEnumerableAsCatalogsArgument_ShouldSetPartsPropertyToEmpty()
         {
             var catalog = new AggregateCatalog(Enumerable.Empty<ComposablePartCatalog>());
@@ -489,6 +495,8 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void AggregatingCatalogAddAndRemoveChildren()
         {
             int changedCount = 0;
@@ -558,6 +566,8 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void AggregatingCatalogAddAndRemoveNestedChildren()
         {
             int changedCount = 0;
@@ -613,6 +623,8 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void AggregatingDisposedAndNotifications()
         {
             int changedCount = 0;
@@ -742,6 +754,8 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void CatalogEvents_AggregateAddRemove()
         {
             var catalog = new AggregateCatalog();
@@ -749,6 +763,8 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void CatalogEvents_DeepAggregateAddRemove()
         {
             var deepCatalog = new AggregateCatalog();

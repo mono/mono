@@ -5,6 +5,7 @@ using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -40,9 +41,11 @@ namespace System.ComponentModel.Composition.Hosting
             }
 
             public override IEnumerable<Tuple<ComposablePartDefinition, ExportDefinition>> GetExports(
-                ImportDefinition import)
+                ImportDefinition definition)
             {
-                var originalExports = this._originalCatalog.GetExports(import);
+                Requires.NotNull(definition, "definition");
+
+                var originalExports = this._originalCatalog.GetExports(definition);
                 var trimmedExports = originalExports.Where(partAndExport =>
                     !this._removedParts.Contains(partAndExport.Item1));
 
@@ -51,7 +54,7 @@ namespace System.ComponentModel.Composition.Hosting
                 {
                     foreach (var export in part.ExportDefinitions)
                     {
-                        if (import.IsConstraintSatisfiedBy(export))
+                        if (definition.IsConstraintSatisfiedBy(export))
                         {
                             addedExports.Add(new Tuple<ComposablePartDefinition, ExportDefinition>(part, export));
                         }

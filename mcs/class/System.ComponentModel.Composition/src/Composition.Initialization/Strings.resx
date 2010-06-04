@@ -104,4 +104,13 @@
   <data name="InvalidOperationException_GlobalContainerAlreadyInitialized" xml:space="preserve">
     <value>The container has already been initialized either by another call to InitializeContainer or by someone causing the default container to be constructed. Ensure that InitializeContainer is one of the first things that happens in the application host to ensure that it is ready for the first composition.</value>
   </data>
+  <data name="ArgumentException_EmptyString" xml:space="preserve">
+    <value>'{0}' cannot be an empty string ("").</value>
+  </data>
+  <data name="InvalidOperationException_DeploymentCatalogInvalidStateChange" xml:space="preserve">
+    <value>Catalog is trying to transition to an invalid state. Occurs when you call DownloadAsync more than once or CancelAsync is called at an incorrect time.</value>
+  </data>
+  <data name="InvalidOperationException_ErrorReadingXap" xml:space="preserve">
+    <value>The package downloaded successfully but an error occurred while reading the contents of the package. See the inner exception for more details.</value>
+  </data>
 </root>

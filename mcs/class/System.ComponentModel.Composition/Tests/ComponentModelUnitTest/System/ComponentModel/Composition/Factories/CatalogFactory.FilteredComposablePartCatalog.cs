@@ -3,28 +3,61 @@
 // -----------------------------------------------------------------------
 using System;
 using System.ComponentModel.Composition.Primitives;
+using System.ComponentModel.Composition.Hosting;
 using System.Linq;
+using System.Linq.Expressions;
 
 namespace System.ComponentModel.Composition.Factories
 {
     partial class CatalogFactory
     {
-        private class FilteredComposablePartCatalog : ComposablePartCatalog
+        public class FilteredCatalog : ComposablePartCatalog, INotifyComposablePartCatalogChanged
         {
-            private readonly IQueryable<ComposablePartDefinition> _filteredParts;
+            private readonly ComposablePartCatalog _inner;
+            private readonly INotifyComposablePartCatalogChanged _innerNotifyChange;
+            private readonly IQueryable<ComposablePartDefinition> _partsQuery;
 
-            public FilteredComposablePartCatalog(ComposablePartCatalog catalog, Func<ComposablePartDefinition, bool> filter)
+            public FilteredCatalog(ComposablePartCatalog inner,
+                                   Func<ComposablePartDefinition, bool> filter)
             {
-                this._filteredParts = catalog.Parts.Where(filter).AsQueryable();
-
-                // Do we care about hooking the the catalog changed events? Not for my particular tests.
+                _inner = inner;
+                _innerNotifyChange = inner as INotifyComposablePartCatalogChanged;
+                _partsQuery = inner.Parts.Where(filter).AsQueryable();
             }
 
             public override IQueryable<ComposablePartDefinition> Parts
             {
                 get
                 {
-                    return this._filteredParts;
+                    return _partsQuery;
+                }
+            }
+
+            public event EventHandler<ComposablePartCatalogChangeEventArgs> Changed
+            {
+                add
+                {
+                    if (_innerNotifyChange != null)
+                        _innerNotifyChange.Changed += value;
+                }
+                remove
+                {
+                    if (_innerNotifyChange != null)
+                        _innerNotifyChange.Changed -= value;
+                }
+            }
+
+            public event EventHandler<ComposablePartCatalogChangeEventArgs> Changing
+            {
+                add
+                {
+                    if (_innerNotifyChange != null)
+                        _innerNotifyChange.Changing += value;
+                }
+                remove
+                {
+                    if (_innerNotifyChange != null)
+                        _innerNotifyChange.Changing -= value;
                 }
             }
         }

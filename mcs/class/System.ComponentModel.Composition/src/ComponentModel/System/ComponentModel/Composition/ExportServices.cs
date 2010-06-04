@@ -2,16 +2,15 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------------------
 using System;
-using System.Linq;
-using System.Collections;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
-using System.ComponentModel.Composition.ReflectionModel;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
+using System.Linq;
 using System.Reflection;
 using Microsoft.Internal;
 using Microsoft.Internal.Collections;
-using System.Globalization;
 
 namespace System.ComponentModel.Composition
 {
@@ -21,10 +20,9 @@ namespace System.ComponentModel.Composition
         private static readonly MethodInfo _createStronglyTypedLazyOfTM = typeof(ExportServices).GetMethod("CreateStronglyTypedLazyOfTM", BindingFlags.NonPublic | BindingFlags.Static);
         private static readonly MethodInfo _createStronglyTypedLazyOfT = typeof(ExportServices).GetMethod("CreateStronglyTypedLazyOfT", BindingFlags.NonPublic | BindingFlags.Static);
         private static readonly MethodInfo _createSemiStronglyTypedLazy = typeof(ExportServices).GetMethod("CreateSemiStronglyTypedLazy", BindingFlags.NonPublic | BindingFlags.Static);
-#if SILVERLIGHT
-        private static readonly MethodInfo _createStronglyTypedPartCreatorOfT = typeof(ExportServices).GetMethod("CreateStronglyTypedPartCreatorOfT", BindingFlags.NonPublic | BindingFlags.Static);
-        private static readonly MethodInfo _createStronglyTypedPartCreatorOfTM = typeof(ExportServices).GetMethod("CreateStronglyTypedPartCreatorOfTM", BindingFlags.NonPublic | BindingFlags.Static);
-#endif
+        private static readonly MethodInfo _createStronglyTypedExportFactoryOfT = typeof(ExportServices).GetMethod("CreateStronglyTypedExportFactoryOfT", BindingFlags.NonPublic | BindingFlags.Static);
+        private static readonly MethodInfo _createStronglyTypedExportFactoryOfTM = typeof(ExportServices).GetMethod("CreateStronglyTypedExportFactoryOfTM", BindingFlags.NonPublic | BindingFlags.Static);
+
         internal static readonly Type DefaultMetadataViewType = typeof(IDictionary<string, object>);
         internal static readonly Type DefaultExportedValueType = typeof(object);
 
@@ -73,6 +71,7 @@ namespace System.ComponentModel.Composition
             return (Func<Export, Lazy<object, object>>)Delegate.CreateDelegate(typeof(Func<Export, Lazy<object,object>>), genericMethod);
         }
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         internal static Lazy<T, M> CreateStronglyTypedLazyOfTM<T, M>(Export export)
         {
             IDisposable disposable = export as IDisposable;
@@ -92,6 +91,7 @@ namespace System.ComponentModel.Composition
             }
         }
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         internal static Lazy<T> CreateStronglyTypedLazyOfT<T>(Export export)
         {
             IDisposable disposable = export as IDisposable;
@@ -99,7 +99,7 @@ namespace System.ComponentModel.Composition
             {
                 return new DisposableLazy<T>(
                     () => ExportServices.GetCastedExportedValue<T>(export),
-                    export as IDisposable);
+                    disposable);
             }
             else
             {
@@ -108,6 +108,7 @@ namespace System.ComponentModel.Composition
             }
         }
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         internal static Lazy<object, object> CreateSemiStronglyTypedLazy<T, M>(Export export)
         {
             IDisposable disposable = export as IDisposable;
@@ -116,7 +117,7 @@ namespace System.ComponentModel.Composition
                 return new DisposableLazy<object, object>(
                     () => ExportServices.GetCastedExportedValue<T>(export),
                     AttributedModelServices.GetMetadataView<M>(export.Metadata),
-                    export as IDisposable);
+                    disposable);
             }
             else
             {
@@ -128,25 +129,24 @@ namespace System.ComponentModel.Composition
             }
         }
 
-#if SILVERLIGHT
-
-        internal static Func<Export, object> CreateStronglyTypedPartCreatorFactory(Type exportType, Type metadataType)
+        internal static Func<Export, object> CreateStronglyTypedExportFactoryFactory(Type exportType, Type metadataType, ConstructorInfo constructor)
         {
             MethodInfo genericMethod = null;
             if (metadataType == null)
             {
-                 genericMethod = _createStronglyTypedPartCreatorOfT.MakeGenericMethod(exportType);
+                 genericMethod = _createStronglyTypedExportFactoryOfT.MakeGenericMethod(exportType);
             }
             else
             {
-                genericMethod = _createStronglyTypedPartCreatorOfTM.MakeGenericMethod(exportType, metadataType);
+                genericMethod = _createStronglyTypedExportFactoryOfTM.MakeGenericMethod(exportType, metadataType);
             }
             
             Assumes.NotNull(genericMethod);
-            return (Func<Export, object>)Delegate.CreateDelegate(typeof(Func<Export, object>), genericMethod);
+            Func<Export, ConstructorInfo, object> exportFactoryFactory = (Func<Export, ConstructorInfo, object>)Delegate.CreateDelegate(typeof(Func<Export, ConstructorInfo, object>), genericMethod);
+            return (e) => exportFactoryFactory.Invoke(e, constructor);
         }
 
-        private static PartLifetimeContext<T> GetPartLifetimeContextFromExport<T>(Export export)
+        private static Tuple<T, Action> GetExportLifetimeContextFromExport<T>(Export export)
         {
             T exportedValue;
             Action disposeAction;
@@ -181,23 +181,20 @@ namespace System.ComponentModel.Composition
                 disposeAction = () => { };
             }
 
-            return new PartLifetimeContext<T>(exportedValue, disposeAction);
+            return new Tuple<T, Action>(exportedValue, disposeAction);
         }
 
-        private static object CreateStronglyTypedPartCreatorOfT<T>(Export export)
+        private static object CreateStronglyTypedExportFactoryOfT<T>(Export export, ConstructorInfo constructor)
         {
-            return new PartCreator<T>(
-                () => ExportServices.GetPartLifetimeContextFromExport<T>(export));
+            Func<Tuple<T, Action>> exportLifetimeContextCreator = () => ExportServices.GetExportLifetimeContextFromExport<T>(export);
+            return constructor.Invoke(new object[] { exportLifetimeContextCreator });
         }
 
-        private static object CreateStronglyTypedPartCreatorOfTM<T, M>(Export export)
+        private static object CreateStronglyTypedExportFactoryOfTM<T, M>(Export export, ConstructorInfo constructor)
         {
-            return new PartCreator<T, M>(
-                () => ExportServices.GetPartLifetimeContextFromExport<T>(export),
-                AttributedModelServices.GetMetadataView<M>(export.Metadata));
+            Func<Tuple<T, Action>> exportLifetimeContextCreator = () => ExportServices.GetExportLifetimeContextFromExport<T>(export);
+            return constructor.Invoke(new object[] { exportLifetimeContextCreator, AttributedModelServices.GetMetadataView<M>(export.Metadata) });
         }
-
-#endif
 
         internal static T GetCastedExportedValue<T>(Export export)
         {

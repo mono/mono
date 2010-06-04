@@ -7,6 +7,7 @@ using System.ComponentModel.Composition.Primitives;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.Internal;
+using System.Threading;
 
 namespace System.ComponentModel.Composition.ReflectionModel
 {
@@ -14,7 +15,8 @@ namespace System.ComponentModel.Composition.ReflectionModel
     {
         private readonly ExportDefinition _definition;
         private readonly ReflectionMember _member;
-        private volatile object _cachedValue = null;
+        private object _cachedValue = null;
+        private volatile bool _isValueCached = false;
 
         public ExportingMember(ExportDefinition definition, ReflectionMember member)
         {
@@ -38,7 +40,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
         {
             this.EnsureReadable();
 
-            if (this._cachedValue == null)
+            if (!this._isValueCached)
             {
                 object exportedValue;
                 try
@@ -61,9 +63,12 @@ namespace System.ComponentModel.Composition.ReflectionModel
 
                 lock (@lock)
                 {
-                    if (this._cachedValue == null)
+                    if (!this._isValueCached)
                     {
                         this._cachedValue = exportedValue;
+                        Thread.MemoryBarrier();
+
+                        this._isValueCached = true;
                     }
                 }
             }

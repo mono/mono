@@ -12,9 +12,9 @@ namespace System.ComponentModel.Composition.Hosting
 
         public const string PartCreationPolicyMetadataName = CompositionNamespace + ".CreationPolicy";
         public const string ExportTypeIdentityMetadataName = "ExportTypeIdentity";
-        public const string ProductDefinitionMetadataName = "ProductDefinition";
+        internal const string ProductDefinitionMetadataName = "ProductDefinition";
 
-        public const string PartCreatorContractName = CompositionNamespace + ".Contracts.PartCreator";
-        public static readonly string PartCreatorTypeIdentity = AttributedModelServices.GetTypeIdentity(typeof(ComposablePartDefinition));
+        internal const string PartCreatorContractName = CompositionNamespace + ".Contracts.ExportFactory";
+        internal static readonly string PartCreatorTypeIdentity = AttributedModelServices.GetTypeIdentity(typeof(ComposablePartDefinition));
     }
 }

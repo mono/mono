@@ -9,6 +9,7 @@ using System.Collections.ObjectModel;
 using System.ComponentModel.Composition.Diagnostics;
 using System.ComponentModel.Composition.Primitives;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -468,7 +469,7 @@ namespace System.ComponentModel.Composition.Hosting
         private string[] GetFiles()
         {
             string[] files = Directory.GetFiles(this._fullPath, this._searchPattern);
-            return Array.ConvertAll<string, string>(files, (file) => file);
+            return Array.ConvertAll<string, string>(files, (file) => file.ToUpperInvariant());
         }
 
         private static string GetFullPath(string path)
@@ -478,7 +479,7 @@ namespace System.ComponentModel.Composition.Hosting
                 path = IOPath.Combine(AppDomain.CurrentDomain.BaseDirectory, path);
             }
 
-            return IOPath.GetFullPath(path);
+            return IOPath.GetFullPath(path).ToUpperInvariant();
         }
 
         private void Initialize(string path, string searchPattern)
@@ -519,6 +520,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <value>
         ///     A <see cref="String"/> containing a human-readable display name of the <see cref="DirectoryCatalog"/>.
         /// </value>
+        [SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
         string ICompositionElement.DisplayName
         {
             get { return this.GetDisplayName(); }
@@ -530,6 +532,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <value>
         ///     This property always returns <see langword="null"/>.
         /// </value>
+        [SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
         ICompositionElement ICompositionElement.Origin
         {
             get { return null; }

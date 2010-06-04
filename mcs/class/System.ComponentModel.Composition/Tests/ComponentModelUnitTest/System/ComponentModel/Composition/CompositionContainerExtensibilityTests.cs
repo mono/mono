@@ -47,6 +47,26 @@ namespace System.ComponentModel.Composition
             Assert.AreSame(container, container.GetExportedValue<CompositionContainer>());
         }
 
+        [TestMethod]
+        public void CanBeCollectedAfterDispose()
+        {
+            AggregateExportProvider exportProvider = new AggregateExportProvider();
+            var catalog = new AggregateCatalog(CatalogFactory.CreateDefaultAttributed());
+            var container = new CompositionContainer(catalog, exportProvider);
+
+            WeakReference weakContainer = new WeakReference(container);
+            container.Dispose();
+            container = null;
+
+            GC.Collect();
+            GC.WaitForPendingFinalizers();
+
+            Assert.IsFalse(weakContainer.IsAlive);
+
+            GC.KeepAlive(exportProvider);
+            GC.KeepAlive(catalog);
+        }
+
         private CustomCompositionContainer CreateCustomCompositionContainer()
         {
             return new CustomCompositionContainer();

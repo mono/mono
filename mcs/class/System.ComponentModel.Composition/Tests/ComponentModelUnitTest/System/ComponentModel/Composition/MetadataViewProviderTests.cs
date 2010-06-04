@@ -12,6 +12,7 @@ namespace System.ComponentModel.Composition
     [TestClass]
     public class MetadataViewProviderTests
     {
+
         [TestMethod]
         public void GetMetadataView_InterfaceWithPropertySetter_ShouldThrowNotSupported()
         {
@@ -285,6 +286,23 @@ namespace System.ComponentModel.Composition
             Assert.AreEqual(120, view.MyInt);
         }
 
+
+        [TestMethod]
+        public void GetMetadataView_IMetadataViewWithDefaultedIntAndInvalidMetadata()
+        {
+            Dictionary<string, object> metadata = new Dictionary<string, object>();
+            metadata = new Dictionary<string, object>();
+            metadata.Add("MyInt", 1.2);
+            var view1 = MetadataViewProvider.GetMetadataView<IMetadataViewWithDefaultedInt>(metadata);
+            Assert.AreEqual(120, view1.MyInt);
+
+            metadata = new Dictionary<string, object>();
+            metadata.Add("MyInt", "Hello, World");
+            var view2 = MetadataViewProvider.GetMetadataView<IMetadataViewWithDefaultedInt>(metadata);
+            Assert.AreEqual(120, view2.MyInt);
+        }
+
+
         public interface IMetadataViewWithDefaultedBool
         {
             [DefaultValue(false)]
@@ -361,5 +379,23 @@ namespace System.ComponentModel.Composition
 
             Assert.IsInstanceOfType(exception.InnerException, typeof(TargetInvocationException));
         }
+
+        public interface IHasInt32
+        {
+            Int32 Value { get; }
+        }
+
+        [TestMethod]
+        public void TestMetadataIntConversion()
+        {
+            var metadata = new Dictionary<string, object>();
+            metadata["Value"] = (Int64)45;
+
+            var exception = ExceptionAssert.Throws<CompositionContractMismatchException>(() =>
+            {
+                MetadataViewProvider.GetMetadataView<IHasInt32>(metadata);
+            });
+        }
+
     }
 }

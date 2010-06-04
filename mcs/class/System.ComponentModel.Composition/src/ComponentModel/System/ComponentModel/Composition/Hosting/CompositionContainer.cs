@@ -303,7 +303,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <exception cref="ArgumentException">
         ///     <paramref name="exports"/> contains an element that is <see langword="null"/>.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1006")]
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public void ReleaseExports<T>(IEnumerable<Lazy<T>> exports)
         {
             Requires.NotNullOrNullElements(exports, "exports");
@@ -325,7 +325,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <exception cref="ArgumentException">
         ///     <paramref name="exports"/> contains an element that is <see langword="null"/>.
         /// </exception>
-        [SuppressMessage("Microsoft.Design", "CA1006")]
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public void ReleaseExports<T, TMetadataView>(IEnumerable<Lazy<T, TMetadataView>> exports)
         {
             Requires.NotNullOrNullElements(exports, "exports");

@@ -35,6 +35,8 @@ namespace System.ComponentModel.Composition.Primitives
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void Parts_ShouldNotCacheUnderlyingParts()
         {
             var catalog = CatalogFactory.CreateAggregateCatalog();

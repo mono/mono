@@ -53,7 +53,6 @@ namespace System.ComponentModel.Composition.AttributedModel
             IAttributedImport attributedImport = AttributedModelDiscovery.GetAttributedImport(reflectionParameter, parameter);
             ImportType importType = new ImportType(reflectionParameter.ReturnType, attributedImport.Cardinality);
 
-#if SILVERLIGHT
             if (importType.IsPartCreator)
             {
                 return new PartCreatorParameterImportDefinition(
@@ -69,7 +68,6 @@ namespace System.ComponentModel.Composition.AttributedModel
                         CreationPolicy.NonShared));
             }
             else
-#endif
             {
                 return new ReflectionParameterImportDefinition(
                     new Lazy<ParameterInfo>(() => parameter),
@@ -90,7 +88,6 @@ namespace System.ComponentModel.Composition.AttributedModel
             IAttributedImport attributedImport = AttributedModelDiscovery.GetAttributedImport(reflectionMember, member);
             ImportType importType = new ImportType(reflectionMember.ReturnType, attributedImport.Cardinality);
 
-#if SILVERLIGHT
             if (importType.IsPartCreator)
             {
                 return new PartCreatorMemberImportDefinition(
@@ -106,7 +103,6 @@ namespace System.ComponentModel.Composition.AttributedModel
                         CreationPolicy.NonShared));
             }
             else
-#endif
             {
                 return new ReflectionMemberImportDefinition(
                     new LazyMemberInfo(member),

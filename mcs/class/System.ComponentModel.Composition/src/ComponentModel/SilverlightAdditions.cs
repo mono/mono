@@ -5,8 +5,7 @@ using System;
 using System.Collections;
 using System.Collections.Generic;
 using System.Diagnostics;
-
-#if SILVERLIGHT
+using System.Diagnostics.CodeAnalysis;
 
 namespace System
 {
@@ -17,6 +16,18 @@ namespace System
     }
 }
 
+namespace System.ComponentModel
+{
+    internal sealed class LocalizableAttribute : Attribute
+    {
+        [SuppressMessage("Microsoft.Usage", "CA1801:ReviewUnusedParameters", MessageId = "isLocalizable")]
+        public LocalizableAttribute(bool isLocalizable)
+        {
+        }
+    }
+}
+
+#if !CLR40
 namespace System.Collections.Generic
 {
     internal class HashSet<T> : IEnumerable<T>

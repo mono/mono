@@ -79,7 +79,7 @@ namespace Microsoft.Internal
         }
 
         [DebuggerStepThrough]
-        internal static void IsTrue(bool condition, string message)
+        internal static void IsTrue(bool condition, [Localizable(false)]string message)
         {
             if (!condition)
             {
@@ -88,7 +88,7 @@ namespace Microsoft.Internal
         }
 
         [DebuggerStepThrough]
-        internal static void Fail(string message)
+        internal static void Fail([Localizable(false)]string message)
         {
             throw new InternalErrorException(message);
         }

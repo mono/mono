@@ -2,19 +2,20 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------------------
 using System;
-using System.Reflection;
-using Microsoft.Internal;
-using System.Threading;
-using System.Linq;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
+using System.Linq;
+using System.Reflection;
+using System.Threading;
+using Microsoft.Internal;
 
 namespace System.ComponentModel.Composition.ReflectionModel
 {
     public struct LazyMemberInfo
     {
-        private MemberTypes _memberType;
+        private readonly MemberTypes _memberType;
         private MemberInfo[] _accessors;
-        private Func<MemberInfo[]> _accessorsCreator;
+        private readonly Func<MemberInfo[]> _accessorsCreator;
 
         public LazyMemberInfo(MemberInfo member)
         {

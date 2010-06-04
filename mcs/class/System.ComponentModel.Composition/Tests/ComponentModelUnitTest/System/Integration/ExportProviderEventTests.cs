@@ -113,6 +113,8 @@ namespace System.ComponentModel.Composition
         public class SampleCatalogExport2 { }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void CatalogMultipleAdds_ShouldFireEvents()
         {
             var catalog = new TypeCatalog(typeof(SampleCatalogExport));

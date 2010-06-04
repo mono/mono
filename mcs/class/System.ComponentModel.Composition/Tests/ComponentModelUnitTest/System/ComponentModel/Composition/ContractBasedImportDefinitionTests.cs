@@ -85,24 +85,27 @@ namespace System.ComponentModel.Composition
         }
 
         [TestMethod]
-        public void Constructor2_ArrayWithNullKeyAsRequiredMetadataArgument_ShouldThrowArgument()
+        public void RequiredMetadata_ArrayWithNullKeyAsRequiredMetadataArgument_ShouldThrowInvalidOperation()
         {
             var requiredMetadata = new KeyValuePair<string, Type>[] { new KeyValuePair<string, Type>(null, typeof(object)) };
 
-            ExceptionAssert.ThrowsArgument<ArgumentException>("requiredMetadata", () =>
+            var import = new ContractBasedImportDefinition("requiredMetadata", (string)null, requiredMetadata, ImportCardinality.ExactlyOne, false, false, CreationPolicy.Any);
+
+            ExceptionAssert.Throws<InvalidOperationException>(() =>
             {
-                new ContractBasedImportDefinition("requiredMetadata", (string)null, requiredMetadata, ImportCardinality.ExactlyOne, false, false, CreationPolicy.Any);
+                var m = import.RequiredMetadata;
             });
         }
 
         [TestMethod]
-        public void Constructor2_ArrayWithNullValueAsRequiredMetadataArgument_ShouldThrowArgument()
+        public void RequiredMetadata_ArrayWithNullValueAsRequiredMetadataArgument_ShouldThrowInvalidOperation()
         {
             var requiredMetadata = new KeyValuePair<string, Type>[] { new KeyValuePair<string, Type>("key", null) };
+            var import = new ContractBasedImportDefinition("requiredMetadata", (string)null, requiredMetadata, ImportCardinality.ExactlyOne, false, false, CreationPolicy.Any);
 
-            ExceptionAssert.ThrowsArgument<ArgumentException>("requiredMetadata", () =>
+            ExceptionAssert.Throws<InvalidOperationException>(() =>
             {
-                new ContractBasedImportDefinition("requiredMetadata", (string)null, requiredMetadata, ImportCardinality.ExactlyOne, false, false, CreationPolicy.Any);
+                var m = import.RequiredMetadata;
             });
         }
 

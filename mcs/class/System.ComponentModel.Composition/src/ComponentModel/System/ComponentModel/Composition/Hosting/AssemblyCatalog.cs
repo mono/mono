@@ -6,6 +6,7 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.ReflectionModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.IO;
 using System.Linq;
@@ -208,6 +209,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <value>
         ///     A <see cref="String"/> containing a human-readable display name of the <see cref="AssemblyCatalog"/>.
         /// </value>
+        [SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
         string ICompositionElement.DisplayName
         {
             get { return this.GetDisplayName(); }
@@ -219,6 +221,7 @@ namespace System.ComponentModel.Composition.Hosting
         /// <value>
         ///     This property always returns <see langword="null"/>.
         /// </value>
+        [SuppressMessage("Microsoft.Design", "CA1033:InterfaceMethodsShouldBeCallableByChildTypes")]
         ICompositionElement ICompositionElement.Origin
         {
             get { return null; }
@@ -237,10 +240,10 @@ namespace System.ComponentModel.Composition.Hosting
         }
 
         protected override void Dispose(bool disposing)
-        {
-            if (Interlocked.CompareExchange(ref this._isDisposed, 1, 0) == 0)
+        {                
+            try
             {
-                try
+                if (Interlocked.CompareExchange(ref this._isDisposed, 1, 0) == 0)
                 {
                     if (disposing)
                     {
@@ -250,10 +253,10 @@ namespace System.ComponentModel.Composition.Hosting
                         }
                     }
                 }
-                finally
-                {
-                    base.Dispose(disposing);
-                }
+            }
+            finally
+            {
+                base.Dispose(disposing);
             }
         }
 

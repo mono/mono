@@ -4,13 +4,14 @@
 using System;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.ComponentModel.Composition
 {
     /// <summary>
     ///     Specifies that a property, field, or parameter imports a particular export.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
+    [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
     [AttributeUsage(AttributeTargets.Property | AttributeTargets.Field | AttributeTargets.Parameter,
                     AllowMultiple = false, Inherited = false)]
     public class ImportAttribute : Attribute, IAttributedImport

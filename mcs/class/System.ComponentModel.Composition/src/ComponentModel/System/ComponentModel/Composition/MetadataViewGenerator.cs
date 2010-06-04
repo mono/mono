@@ -101,8 +101,35 @@ namespace System.ComponentModel.Composition
                     }
                 }
             }
-
             return proxyType;
+        }
+
+        private static void GenerateLocalAssignmentFromDefaultAttribute(this ILGenerator IL, DefaultValueAttribute[] attrs, LocalBuilder local)
+        {
+            if (attrs.Length > 0)
+            {
+                DefaultValueAttribute defaultAttribute = attrs[0];
+                IL.LoadValue(defaultAttribute.Value);
+                if ((defaultAttribute.Value != null) && (defaultAttribute.Value.GetType().IsValueType))
+                {
+                    IL.Emit(OpCodes.Box, defaultAttribute.Value.GetType());
+                }
+                IL.Emit(OpCodes.Stloc, local);
+            }
+        }
+
+        private static void GenerateFieldAssignmentFromLocalValue(this ILGenerator IL, LocalBuilder local, FieldBuilder field)
+        {
+            IL.Emit(OpCodes.Ldarg_0);
+            IL.Emit(OpCodes.Ldloc, local);
+            IL.Emit(field.FieldType.IsValueType ? OpCodes.Unbox_Any : OpCodes.Castclass, field.FieldType);
+            IL.Emit(OpCodes.Stfld, field);
+        }
+
+        private static void GenerateLocalAssignmentFromFlag(this ILGenerator IL, LocalBuilder local, bool flag)
+        {
+            IL.Emit(flag ? OpCodes.Ldc_I4_1 : OpCodes.Ldc_I4_0);
+            IL.Emit(OpCodes.Stloc, local);
         }
 
         // This must be called with _readerWriterLock held for Write
@@ -125,6 +152,7 @@ namespace System.ComponentModel.Composition
             LocalBuilder exceptionData = proxyCtorIL.DeclareLocal(typeof(IDictionary));
             LocalBuilder sourceType = proxyCtorIL.DeclareLocal(typeof(Type));
             LocalBuilder value = proxyCtorIL.DeclareLocal(typeof(object));
+            LocalBuilder usesExportedMD = proxyCtorIL.DeclareLocal(typeof(bool));
 
             Label tryConstructView = proxyCtorIL.BeginExceptionBlock();
 
@@ -161,36 +189,47 @@ namespace System.ComponentModel.Composition
                     propertyTypeArguments);
 
                 // Generate constructor code for retrieving the metadata value and setting the field
-                Label doneGettingDefaultValue = proxyCtorIL.DefineLabel();
+                Label tryCastValue = proxyCtorIL.BeginExceptionBlock();
+                Label innerTryCastValue;
+
+                DefaultValueAttribute[] attrs = propertyInfo.GetAttributes<DefaultValueAttribute>(false);
+                if(attrs.Length > 0)
+                {
+                    innerTryCastValue = proxyCtorIL.BeginExceptionBlock();
+                }
 
                 // In constructor set the backing field with the value from the dictionary
+                Label doneGettingDefaultValue = proxyCtorIL.DefineLabel();
+                GenerateLocalAssignmentFromFlag(proxyCtorIL, usesExportedMD, true);
+
                 proxyCtorIL.Emit(OpCodes.Ldarg_1);
                 proxyCtorIL.Emit(OpCodes.Ldstr, propertyInfo.Name);
                 proxyCtorIL.Emit(OpCodes.Ldloca, value);
                 proxyCtorIL.Emit(OpCodes.Callvirt, _mdvDictionaryTryGet);
                 proxyCtorIL.Emit(OpCodes.Brtrue, doneGettingDefaultValue);
 
-                object[] attrs = propertyInfo.GetCustomAttributes(typeof(DefaultValueAttribute), false);
-                if (attrs.Length > 0)
-                {
-                    DefaultValueAttribute defaultAttribute = (DefaultValueAttribute)attrs[0];
-                    proxyCtorIL.LoadValue(defaultAttribute.Value);
-                    if ((defaultAttribute.Value != null) && (defaultAttribute.Value.GetType().IsValueType))
-                    {
-                        proxyCtorIL.Emit(OpCodes.Box, defaultAttribute.Value.GetType());
-                    }
-                    proxyCtorIL.Emit(OpCodes.Stloc, value);
-                }
+                proxyCtorIL.GenerateLocalAssignmentFromFlag(usesExportedMD, false);
+                proxyCtorIL.GenerateLocalAssignmentFromDefaultAttribute(attrs, value);
 
                 proxyCtorIL.MarkLabel(doneGettingDefaultValue);
-
-                Label tryCastValue = proxyCtorIL.BeginExceptionBlock();
-                proxyCtorIL.Emit(OpCodes.Ldarg_0);
-                proxyCtorIL.Emit(OpCodes.Ldloc, value);
-
-                proxyCtorIL.Emit(propertyInfo.PropertyType.IsValueType ? OpCodes.Unbox_Any : OpCodes.Castclass, propertyInfo.PropertyType);
-                proxyCtorIL.Emit(OpCodes.Stfld, proxyFieldBuilder);
+                proxyCtorIL.GenerateFieldAssignmentFromLocalValue(value, proxyFieldBuilder);
                 proxyCtorIL.Emit(OpCodes.Leave, tryCastValue);
+
+                // catch blocks for innerTryCastValue start here
+                if (attrs.Length > 0)
+                {
+                    proxyCtorIL.BeginCatchBlock(typeof(InvalidCastException));
+                    {
+                        Label notUsesExportedMd = proxyCtorIL.DefineLabel();
+                        proxyCtorIL.Emit(OpCodes.Ldloc, usesExportedMD);
+                        proxyCtorIL.Emit(OpCodes.Brtrue, notUsesExportedMd);
+                        proxyCtorIL.Emit(OpCodes.Rethrow);
+                        proxyCtorIL.MarkLabel(notUsesExportedMd);
+                        proxyCtorIL.GenerateLocalAssignmentFromDefaultAttribute(attrs, value);
+                        proxyCtorIL.GenerateFieldAssignmentFromLocalValue(value, proxyFieldBuilder);
+                    }
+                    proxyCtorIL.EndExceptionBlock();
+                }
 
                 // catch blocks for tryCast start here
                 proxyCtorIL.BeginCatchBlock(typeof(NullReferenceException));
@@ -212,8 +251,8 @@ namespace System.ComponentModel.Composition
                     proxyCtorIL.AddItemToLocalDictionary(exceptionData, MetadataItemTargetType, propertyInfo.PropertyType);
                     proxyCtorIL.Emit(OpCodes.Rethrow);
                 }
-                proxyCtorIL.EndExceptionBlock();
 
+                proxyCtorIL.EndExceptionBlock();
 
                 if (propertyInfo.CanWrite)
                 {

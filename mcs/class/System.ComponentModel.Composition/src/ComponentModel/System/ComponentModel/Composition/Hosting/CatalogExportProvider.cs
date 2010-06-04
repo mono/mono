@@ -7,6 +7,7 @@ using System.ComponentModel.Composition.Diagnostics;
 using System.ComponentModel.Composition.Primitives;
 using System.ComponentModel.Composition.ReflectionModel;
 using System.Diagnostics;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Linq;
 using System.Runtime.CompilerServices;
@@ -107,6 +108,7 @@ namespace System.ComponentModel.Composition.Hosting
         ///     This property must be set before accessing any methods on the 
         ///     <see cref="CatalogExportProvider"/>.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification="EnsureCanSet ensures that the property is set only once, Dispose is not required")]
         public ExportProvider SourceProvider
         {
             get
@@ -173,6 +175,8 @@ namespace System.ComponentModel.Composition.Hosting
                     bool disposeLock = false;
                     INotifyComposablePartCatalogChanged catalogToUnsubscribeFrom = null;
                     HashSet<IDisposable> partsToDispose = null;
+                    ExportProvider sourceProviderToUnsubscribeFrom = null;
+                    ImportEngine importEngineToDispose = null;
 
                     try
                     {
@@ -182,6 +186,12 @@ namespace System.ComponentModel.Composition.Hosting
                             {
                                 catalogToUnsubscribeFrom = this._catalog as INotifyComposablePartCatalogChanged;
                                 this._catalog = null;
+
+                                sourceProviderToUnsubscribeFrom = this._sourceProvider;
+                                this._sourceProvider = null;
+
+                                importEngineToDispose = this._importEngine;
+                                this._importEngine = null;
 
                                 partsToDispose = this._partsToDispose;
                                 this._partsToDispose = new HashSet<IDisposable>();
@@ -198,6 +208,16 @@ namespace System.ComponentModel.Composition.Hosting
                         if (catalogToUnsubscribeFrom != null)
                         {
                             catalogToUnsubscribeFrom.Changing -= this.OnCatalogChanging;
+                        }
+
+                        if (sourceProviderToUnsubscribeFrom != null)
+                        {
+                            sourceProviderToUnsubscribeFrom.ExportsChanging -= this.OnExportsChangingInternal;
+                        }
+
+                        if (importEngineToDispose != null)
+                        {
+                            importEngineToDispose.Dispose();
                         }
 
                         if (partsToDispose != null)
@@ -244,7 +264,6 @@ namespace System.ComponentModel.Composition.Hosting
             // Use the version of the catalog appropriate to this atomicComposition
             ComposablePartCatalog currentCatalog = atomicComposition.GetValueAllowNull(this._catalog);
 
-#if SILVERLIGHT
             IPartCreatorImportDefinition partCreatorDefinition = definition as IPartCreatorImportDefinition;
             bool isPartCreator = false;
 
@@ -253,7 +272,7 @@ namespace System.ComponentModel.Composition.Hosting
                 definition = partCreatorDefinition.ProductImportDefinition;
                 isPartCreator = true;
             }
-#endif
+
             CreationPolicy importPolicy = definition.GetRequiredCreationPolicy();
 
             List<Export> exports = new List<Export>();
@@ -261,7 +280,6 @@ namespace System.ComponentModel.Composition.Hosting
             {
                 if (!IsRejected(partDefinitionAndExportDefinition.Item1, atomicComposition))
                 {
-#if SILVERLIGHT
                     if (isPartCreator)
                     {
                         exports.Add(new PartCreatorExport(this,
@@ -269,7 +287,6 @@ namespace System.ComponentModel.Composition.Hosting
                             partDefinitionAndExportDefinition.Item2));
                     }
                     else
-#endif
                     {
                         exports.Add(CatalogExport.CreateExport(this, 
                             partDefinitionAndExportDefinition.Item1, 
@@ -303,15 +320,14 @@ namespace System.ComponentModel.Composition.Hosting
                     // will need to start tracking all the PartCreator's we hand out and only send those which we 
                     // have handed out. In fact we could do the same thing for all the Exports if we wished but 
                     // that requires a cache management which we don't want to do at this point.
-#if SILVERLIGHT
                     exports.Add(new PartCreatorExportDefinition(export));
-#endif
                 }
             }
 
             return exports.ToArray();
         }
 
+        [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
         private void OnCatalogChanging(object sender, ComposablePartCatalogChangeEventArgs e)
         {
             using (var atomicComposition = new AtomicComposition(e.AtomicComposition))
@@ -337,12 +353,13 @@ namespace System.ComponentModel.Composition.Hosting
                     }
                     if (removed)
                     {
+                        var capturedDefinition = definition;
                         ReleasePart(null, removedPart, atomicComposition);
                         atomicComposition.AddCompleteActionAllowNull(() =>
                         {
                             using (this._lock.LockStateForWrite())
                             {
-                                this._activatedParts.Remove(definition);
+                                this._activatedParts.Remove(capturedDefinition);
                             }
                         });
                     }

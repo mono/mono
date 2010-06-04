@@ -663,8 +663,6 @@ namespace System.ComponentModel.Composition
             Assert.AreEqual(0, exports.Count());
         }
 
-        [Ignore]
-        [WorkItem(744984)]
         [TestMethod]
         public void TestOptionalMetadataValueTypeMismatch()
         {
@@ -803,6 +801,239 @@ namespace System.ComponentModel.Composition
             Assert.AreEqual(4, data.Length);
         }
 
+        [AttributeUsage(AttributeTargets.Class, AllowMultiple=true)]
+        [MetadataAttribute]
+        public class DataAttribute : Attribute
+        {
+            public object Object { get; set; }
+        }
+
+        [Export]
+        [Data(Object="42")]
+        [Data(Object = "10")]
+        public class ExportWithMultipleMetadata_ExportStringsAsObjects
+        {
+        }
+
+        [Export]
+        [Data(Object = "42")]
+        [Data(Object = "10")]
+        [Data(Object = null)]
+        public class ExportWithMultipleMetadata_ExportStringsAsObjects_WithNull
+        {
+        }
+
+        [Export]
+        [Data(Object = 42)]
+        [Data(Object = 10)]
+        public class ExportWithMultipleMetadata_ExportIntsAsObjects
+        {
+        }
+
+        [Export]
+        [Data(Object = null)]
+        [Data(Object = 42)]
+        [Data(Object = 10)]
+        public class ExportWithMultipleMetadata_ExportIntsAsObjects_WithNull
+        {
+        }
+
+        public interface IObjectView_AsStrings
+        {
+            string[] Object { get; }
+        }
+
+        public interface IObjectView_AsInts
+        {
+            int[] Object { get; }
+        }
+
+        public interface IObjectView
+        {
+            object[] Object { get; }
+        }
+
+
+        [TestMethod]
+        public void ExportWithMultipleMetadata_ExportStringsAsObjects_ShouldDiscoverMetadataAsStrings()
+        {
+            var container = ContainerFactory.Create();
+            container.ComposeParts(new ExportWithMultipleMetadata_ExportStringsAsObjects());
+
+            var export = container.GetExport<ExportWithMultipleMetadata_ExportStringsAsObjects, IObjectView_AsStrings>();
+            Assert.IsNotNull(export);
+
+            Assert.IsNotNull(export.Metadata);
+            Assert.IsNotNull(export.Metadata.Object);
+            Assert.AreEqual(2, export.Metadata.Object.Length);
+        }
+
+        [TestMethod]
+        public void ExportWithMultipleMetadata_ExportStringsAsObjects_With_Null_ShouldDiscoverMetadataAsStrings()
+        {
+            var container = ContainerFactory.Create();
+            container.ComposeParts(new ExportWithMultipleMetadata_ExportStringsAsObjects_WithNull());
+
+            var export = container.GetExport<ExportWithMultipleMetadata_ExportStringsAsObjects_WithNull, IObjectView_AsStrings>();
+            Assert.IsNotNull(export);
+
+            Assert.IsNotNull(export.Metadata);
+            Assert.IsNotNull(export.Metadata.Object);
+            Assert.AreEqual(3, export.Metadata.Object.Length);
+        }
+
+        [TestMethod]
+        public void ExportWithMultipleMetadata_ExportIntsAsObjects_ShouldDiscoverMetadataAsInts()
+        {
+            var container = ContainerFactory.Create();
+            container.ComposeParts(new ExportWithMultipleMetadata_ExportIntsAsObjects());
+
+            var export = container.GetExport<ExportWithMultipleMetadata_ExportIntsAsObjects, IObjectView_AsInts>();
+            Assert.IsNotNull(export);
+
+            Assert.IsNotNull(export.Metadata);
+            Assert.IsNotNull(export.Metadata.Object);
+            Assert.AreEqual(2, export.Metadata.Object.Length);
+        }
+
+        [TestMethod]
+        public void ExportWithMultipleMetadata_ExportIntsAsObjects_With_Null_ShouldDiscoverMetadataAsObjects()
+        {
+            var container = ContainerFactory.Create();
+            container.ComposeParts(new ExportWithMultipleMetadata_ExportIntsAsObjects_WithNull());
+
+            var exports = container.GetExports<ExportWithMultipleMetadata_ExportIntsAsObjects_WithNull, IObjectView_AsInts>();
+            Assert.IsFalse(exports.Any());
+
+            var export = container.GetExport<ExportWithMultipleMetadata_ExportIntsAsObjects_WithNull, IObjectView>();
+
+            Assert.IsNotNull(export.Metadata);
+            Assert.IsNotNull(export.Metadata.Object);
+            Assert.AreEqual(3, export.Metadata.Object.Length);
+        }
+
+        [MetadataAttribute]
+        [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+        public class OrderAttribute : Attribute
+        {
+            public string Before { get; set; }
+            public string After { get; set; }
+        }
+
+        public interface IOrderMetadataView
+        {
+            string[] Before { get; }
+            string[] After { get; }
+        }
+
+        [Export]
+        [Order(Before = "Step3")]
+        [Order(Before = "Step2")]
+        public class OrderedItemBeforesOnly
+        {
+        }
+
+        [TestMethod]
+        public void ExportWithMultipleMetadata_ExportStringsAndNulls_ThroughMetadataAttributes()
+        {
+            var container = ContainerFactory.Create();
+            container.ComposeParts(new OrderedItemBeforesOnly());
+
+            var export = container.GetExport<OrderedItemBeforesOnly, IOrderMetadataView>();
+            Assert.IsNotNull(export);
+
+            Assert.IsNotNull(export.Metadata);
+
+            Assert.IsNotNull(export.Metadata.Before);
+            Assert.IsNotNull(export.Metadata.After);
+
+            Assert.AreEqual(2, export.Metadata.Before.Length);
+            Assert.AreEqual(2, export.Metadata.After.Length);
+
+            Assert.IsNotNull(export.Metadata.Before[0]);
+            Assert.IsNotNull(export.Metadata.Before[1]);
+
+            Assert.IsNull(export.Metadata.After[0]);
+            Assert.IsNull(export.Metadata.After[1]);
+        }
+
+        [MetadataAttribute]
+        [AttributeUsage(AttributeTargets.Class, AllowMultiple = true)]
+        public class DataTypeAttribute : Attribute
+        {
+            public Type Type { get; set; }
+        }
+
+        public interface ITypesMetadataView
+        {
+            Type[] Type { get; }
+        }
+
+        [Export]
+        [DataType(Type = typeof(int))]
+        [DataType(Type = typeof(string))]
+        public class ItemWithTypeExports
+        {
+        }
+
+        [Export]
+        [DataType(Type = typeof(int))]
+        [DataType(Type = typeof(string))]
+        [DataType(Type = null)]
+        public class ItemWithTypeExports_WithNulls
+        {
+        }
+
+        [Export]
+        [DataType(Type = null)]
+        [DataType(Type = null)]
+        [DataType(Type = null)]
+        public class ItemWithTypeExports_WithAllNulls
+        {
+        }
+
+        [TestMethod]
+        public void ExportWithMultipleMetadata_ExportTypes()
+        {
+            var container = ContainerFactory.Create();
+            container.ComposeParts(new ItemWithTypeExports());
+
+            var export = container.GetExport<ItemWithTypeExports, ITypesMetadataView>();
+
+            Assert.IsNotNull(export.Metadata);
+            Assert.IsNotNull(export.Metadata.Type);
+            Assert.AreEqual(2, export.Metadata.Type.Length);
+        }
+
+        [TestMethod]
+        public void ExportWithMultipleMetadata_ExportTypes_WithNulls()
+        {
+            var container = ContainerFactory.Create();
+            container.ComposeParts(new ItemWithTypeExports_WithNulls());
+
+            var export = container.GetExport<ItemWithTypeExports_WithNulls, ITypesMetadataView>();
+
+            Assert.IsNotNull(export.Metadata);
+            Assert.IsNotNull(export.Metadata.Type);
+            Assert.AreEqual(3, export.Metadata.Type.Length);
+        }
+
+        [TestMethod]
+        public void ExportWithMultipleMetadata_ExportTypes_WithAllNulls()
+        {
+            var container = ContainerFactory.Create();
+            container.ComposeParts(new ItemWithTypeExports_WithAllNulls());
+
+            var export = container.GetExport<ItemWithTypeExports_WithAllNulls, ITypesMetadataView>();
+
+            Assert.IsNotNull(export.Metadata);
+            Assert.IsNotNull(export.Metadata.Type);
+            Assert.AreEqual(3, export.Metadata.Type.Length);
+
+            Assert.IsNull(export.Metadata.Type[0]);
+            Assert.IsNull(export.Metadata.Type[1]);
+            Assert.IsNull(export.Metadata.Type[2]);
+        }
         [Export]
         [ExportMetadata(null, "ValueOfNullKey")]
         public class ClassWithNullMetadataKey
@@ -820,6 +1051,10 @@ namespace System.ComponentModel.Composition
         }
 
     }
+
+
+
+
 
     // Tests for metadata issues on export
 

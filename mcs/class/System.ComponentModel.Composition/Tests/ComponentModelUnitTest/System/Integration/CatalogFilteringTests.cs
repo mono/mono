@@ -52,6 +52,34 @@ namespace System.ComponentModel.Composition
             Assert.IsTrue(contC.IsPresent<ScopeCComponent>());
         }
 
+        [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
+        public void FilteredCatalog_EventsFired()
+        {
+            var aggCatalog = CatalogFactory.CreateAggregateCatalog();
+            var cat1 = CatalogFactory.CreateAttributed(typeof(ScopeAComponent1), typeof(ScopeBComponent));
+
+            var filteredCatalog = CatalogFactory.CreateFiltered(aggCatalog, 
+                partDef => partDef.Metadata.ContainsKey("Scope") &&
+                                    partDef.Metadata["Scope"].ToString() == "A");
+
+            var container = ContainerFactory.Create(filteredCatalog);
+
+            Assert.IsFalse(container.IsPresent<ScopeAComponent1>(), "sa before add");
+            Assert.IsFalse(container.IsPresent<ScopeBComponent>(), "sb before add");
+
+            aggCatalog.Catalogs.Add(cat1);
+
+            Assert.IsTrue(container.IsPresent<ScopeAComponent1>(), "sa after add");
+            Assert.IsFalse(container.IsPresent<ScopeBComponent>(), "sb after add");
+
+            aggCatalog.Catalogs.Remove(cat1);
+
+            Assert.IsFalse(container.IsPresent<ScopeAComponent1>(), "sa after remove");
+            Assert.IsFalse(container.IsPresent<ScopeBComponent>(), "sb after remove");
+        }
+
         private ComposablePartCatalog GetCatalog()
         {
             return CatalogFactory.CreateAttributed(

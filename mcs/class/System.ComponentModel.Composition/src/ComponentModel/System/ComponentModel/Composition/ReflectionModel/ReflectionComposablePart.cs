@@ -370,7 +370,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
 
             try
             {
-                instance = constructor.Invoke(arguments);
+                instance = constructor.SafeInvoke(arguments);
             }
             catch (TypeInitializationException ex) 
             { 

@@ -3,13 +3,14 @@
 // -----------------------------------------------------------------------
 using System;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.ComponentModel.Composition
 {
     /// <summary>
     ///     Specifies that a type or interface that provides a particular export.
     /// </summary>
-    [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
+    [SuppressMessage("Microsoft.Performance", "CA1813:AvoidUnsealedAttributes")]
     [AttributeUsage(AttributeTargets.Class | AttributeTargets.Interface, AllowMultiple = true, Inherited = true)]
     public class InheritedExportAttribute : ExportAttribute
     {

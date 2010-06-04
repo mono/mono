@@ -1,101 +1,115 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>Migrated rules for UnitTestFramework.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules />
+  </PropertyGroup>
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <OutputPath>..\..\bin</OutputPath>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+    <NoWarn>1570;1572;1573;1591;1699</NoWarn>
+  </PropertyGroup>
+  <PropertyGroup>
     <ProductVersion>9.0.30729</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{786E5A34-975C-4F98-884C-A1DC3ED9E38D}</ProjectGuid>
+    <ProjectGuid>{35FBE8A0-D87E-4991-B3FC-2A77807DEC85}</ProjectGuid>
+    <ProjectClrTypes>FULLCLR;SILVERLIGHT</ProjectClrTypes>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.ComponentModel.Composition.UnitTestFramework</RootNamespace>
+    <RootNamespace>
+    </RootNamespace>
     <AssemblyName>System.ComponentModel.Composition.UnitTestFramework</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\</OutputPath>
-    <DefineConstants>TRACE;DEBUG</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
     <NoWarn>;1699;1570;1572;1573;1591;0414</NoWarn>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>bin\Release\</OutputPath>
-    <DefineConstants>TRACE</DefineConstants>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
+    <NoStdLib>true</NoStdLib>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework, Version=9.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a, processorArchitecture=MSIL" />
+    <Reference Include="mscorlib" />
     <Reference Include="System" />
-    <Reference Include="System.Core">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
-    <Reference Include="System.Data" />
-    <Reference Include="System.Xml.Linq">
-      <RequiredTargetFramework>3.5</RequiredTargetFramework>
-    </Reference>
+    <Reference Include="System.Core" />
     <Reference Include="System.Xml" />
-    <Reference Include="WindowsBase">
-      <RequiredTargetFramework>3.0</RequiredTargetFramework>
-    </Reference>
-  </ItemGroup>
-  <ItemGroup>
-    <Compile Include="AssemblyInfo.cs" />
-    <Compile Include="System\ComponentModel\Composition\Diagnostics\TraceContext.cs" />
-    <Compile Include="System\ComponentModel\Composition\Diagnostics\TraceContext.TraceContextTraceListener.cs" />
-    <Compile Include="System\ComponentModel\Composition\Diagnostics\TraceEventDetails.cs" />
-    <Compile Include="System\ComponentModel\Composition\Diagnostics\TraceId.cs" />
-    <Compile Include="System\EnumExtensions.cs" />
-    <Compile Include="System\Collections\EnumerableExtensions.cs" />
-    <Compile Include="System\Collections\Generic\DictionaryExtensions.cs" />
-    <Compile Include="System\ComponentModel\Composition\ConstraintParser.cs" />
-    <Compile Include="System\ComponentModel\Composition\UnitTesting\CompositionAssert.cs" />
-    <Compile Include="System\ComponentModel\Composition\UnitTesting\ElementAssert.cs" />
-    <Compile Include="System\ComponentModel\Composition\UnitTesting\ErrorId.cs" />
-    <Compile Include="System\ComponentModel\Composition\UnitTesting\ExportsAssert.cs" />
-    <Compile Include="System\DisposableObject.cs" />
-    <Compile Include="System\Globalization\CurrentCultureContext.cs" />
-    <Compile Include="System\IO\FileIO.cs" />
-    <Compile Include="System\IO\TemporaryDirectory.cs" />
-    <Compile Include="System\IO\TemporaryFile.cs" />
-    <Compile Include="System\IO\TemporaryFileCopier.cs" />
-    <Compile Include="System\ReferenceTracker.cs" />
-    <Compile Include="System\Runtime\Serialization\SerializationTestServices.cs" />
-    <Compile Include="System\Runtime\Serialization\StrictFormatterConverter.cs" />
-    <Compile Include="System\TypeExtensions.cs" />
-    <Compile Include="System\UnitTesting\EnumerableAssert.cs" />
-    <Compile Include="System\UnitTesting\ExceptionAssert.cs" />
-    <Compile Include="System\UnitTesting\ExpectationCollectionOfI.cs" />
-    <Compile Include="System\UnitTesting\ExpectationCollectionOfIO.cs" />
-    <Compile Include="System\UnitTesting\ExpectationOfI.cs" />
-    <Compile Include="System\UnitTesting\ExpectationOfIO.cs" />
-    <Compile Include="System\UnitTesting\ExtendedAssert.cs" />
-    <Compile Include="System\UnitTesting\ReflectionAssert.cs" />
-    <Compile Include="System\UnitTesting\RetryMode.cs" />
-    <Compile Include="System\UnitTesting\TestServices.cs" />
-  </ItemGroup>
-  <ItemGroup>
     <ProjectReference Include="..\..\src\ComponentModel\ComponentModel.csproj">
-      <Project>{A36AEF66-2411-4225-B68E-F2D29368A31B}</Project>
+      <Project>{1BBA5101-D4F0-48B8-A5D6-7B23A099DCE3}</Project>
       <Name>ComponentModel</Name>
+    </ProjectReference>
+    <Reference Include="Microsoft.VisualStudio.QualityTools.UnitTestFramework" />
+  </ItemGroup>
+  <ItemGroup Condition=" '$(IsSilverlight)' == 'true' ">
+    <ProjectReference Include="$(CMInitProjectPath)\Composition.Initialization.csproj">
+      <Project>{A497DC28-0A3B-4BAD-B964-B8B436686D98}</Project>
+      <Name>Composition.Initialization</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Properties\" />
+    <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="System\Collections\EnumerableExtensions.cs" />
+    <Compile Include="System\Collections\Generic\DictionaryExtensions.cs" />
+    <Compile Include="System\ComponentModel\Composition\ConstraintParser.cs" />
+    <Compile Include="System\ComponentModel\Composition\Diagnostics\TraceId.cs" />
+    <Compile Include="System\ComponentModel\Composition\Diagnostics\TraceContext.cs" />
+    <Compile Include="System\ComponentModel\Composition\Diagnostics\TraceContext.TraceContextTraceListener.cs" />
+    <Compile Include="System\ComponentModel\Composition\Diagnostics\TraceEventDetails.cs" />
+    <Compile Include="System\ComponentModel\Composition\UnitTesting\CompositionAssert.cs" />
+    <Compile Include="System\ComponentModel\Composition\UnitTesting\ErrorId.cs" />
+    <Compile Include="System\ComponentModel\Composition\UnitTesting\ElementAssert.cs" />
+    <Compile Include="System\ComponentModel\Composition\UnitTesting\ExportsAssert.cs" />
+    <Compile Include="System\ComponentModel\Composition\Hosting\CompositionHostTestService.cs" />
+    <Compile Include="System\IO\TemporaryFileCopier.cs" />
+    <Compile Include="System\IO\TemporaryFile.cs" />
+    <Compile Include="System\ReferenceTracker.cs" />
+    <Compile Include="System\Globalization\CurrentCultureContext.cs" />
+    <Compile Include="System\IO\FileIO.cs" />
+    <Compile Include="System\IO\TemporaryDirectory.cs" />
+    <Compile Include="System\DisposableObject.cs" />
+    <Compile Include="System\Runtime\Serialization\StrictFormatterConverter.cs" />
+    <Compile Include="System\Runtime\Serialization\SerializationTestServices.cs" />
+    <Compile Include="System\TypeExtensions.cs" />
+    <Compile Include="System\UnitTesting\ExtendedAssert.cs" />
+    <Compile Include="System\UnitTesting\RetryMode.cs" />
+    <Compile Include="System\UnitTesting\ExpectationCollectionOfIO.cs" />
+    <Compile Include="System\UnitTesting\ExpectationCollectionOfI.cs" />
+    <Compile Include="System\UnitTesting\ExpectationOfIO.cs" />
+    <Compile Include="System\UnitTesting\ExpectationOfI.cs" />
+    <Compile Include="System\UnitTesting\TestServices.cs" />
+    <Compile Include="System\UnitTesting\ReflectionAssert.cs" />
+    <Compile Include="System\UnitTesting\EnumerableAssert.cs" />
+    <Compile Include="System\UnitTesting\ExceptionAssert.cs" />
+    <Compile Include="System\ComponentModel\Composition\ReflectionModel\ReflectionModelServicesEx.cs" />
   </ItemGroup>
-  <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
+  <ItemGroup>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>

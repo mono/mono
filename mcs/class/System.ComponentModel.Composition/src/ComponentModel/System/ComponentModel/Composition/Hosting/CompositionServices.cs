@@ -165,7 +165,9 @@ namespace System.ComponentModel.Composition.Hosting
                         throw ExceptionBuilder.CreateDiscoveryException(Strings.Discovery_ReservedMetadataNameUsed, member.GetDisplayName(), provider.Name);
                     }
 
-                    if (!dictionary.TryContributeMetadataValue(provider.Name, provider.Value, provider.IsMultiple))
+                    // we pass "null" for valueType which would make it inferred. We don;t have additional type information when metadata
+                    // goes through the ExportMetadataAttribute path
+                    if (!dictionary.TryContributeMetadataValue(provider.Name, provider.Value, null, provider.IsMultiple))
                     {
                         throw ExceptionBuilder.CreateDiscoveryException(Strings.Discovery_DuplicateMetadataNameValues, member.GetDisplayName(), provider.Name);
                     }
@@ -203,7 +205,7 @@ namespace System.ComponentModel.Composition.Hosting
                                 throw ExceptionBuilder.CreateDiscoveryException(Strings.Discovery_MetadataContainsValueWithInvalidType, pi.GetDisplayName(), value.GetType().GetDisplayName());
                             }
 
-                            if (!dictionary.TryContributeMetadataValue(pi.Name, value, allowsMultiple))
+                            if (!dictionary.TryContributeMetadataValue(pi.Name, value, pi.PropertyType, allowsMultiple))
                             {
                                 throw ExceptionBuilder.CreateDiscoveryException(Strings.Discovery_DuplicateMetadataNameValues, member.GetDisplayName(), pi.Name);
                             }
@@ -225,7 +227,7 @@ namespace System.ComponentModel.Composition.Hosting
             return;
         }
 
-        private static bool TryContributeMetadataValue(this IDictionary<string, object> dictionary, string name, object value, bool allowsMultiple)
+        private static bool TryContributeMetadataValue(this IDictionary<string, object> dictionary, string name, object value, Type valueType, bool allowsMultiple)
         {
             object metadataValue;
             if (!dictionary.TryGetValue(name, out metadataValue))
@@ -233,7 +235,7 @@ namespace System.ComponentModel.Composition.Hosting
                 if (allowsMultiple)
                 {
                     var list = new MetadataList();
-                    list.Add(value);
+                    list.Add(value, valueType);
                     value = list;
                 }
 
@@ -250,49 +252,89 @@ namespace System.ComponentModel.Composition.Hosting
                     return false;
                 }
 
-                list.Add(value);
+                list.Add(value, valueType);
             }
             return true;
         }
 
-        private class MetadataList : Collection<object>
+        private class MetadataList
         {
             private Type _arrayType = null;
-            private bool _mustBeReferenceType = false;
+            private bool _containsNulls = false;
+            private static readonly Type ObjectType = typeof(object);
+            private static readonly Type TypeType = typeof(Type);
+            private Collection<object> _innerList = new Collection<object>();
 
-            protected override void InsertItem(int index, object item)
+            public void Add(object item, Type itemType)
             {
-                if (item == null)
+                this._containsNulls |= (item == null);
+
+                // if we've been passed typeof(object), we basically have no type inmformation
+                if (itemType == ObjectType)
                 {
-                    this._mustBeReferenceType = true;
+                    itemType = null;
+                }
+
+                // if we have no type information, get it from the item, if we can
+                if ((itemType == null) && (item != null))
+                {
+                    itemType = item.GetType();
+                }
+
+                // Types are special, because the are abstract classes, so if the item casts to Type, we assume System.Type
+                if (item is Type)
+                {
+                    itemType = TypeType;
+                }
+
+                // only try to call this if we got a meaningful type
+                if (itemType != null)
+                {
+                    this.InferArrayType(itemType);
+                }
+
+                this._innerList.Add(item);
+            }
+
+            private void InferArrayType(Type itemType)
+            {
+                Assumes.NotNull(itemType);
+
+                if (this._arrayType == null)
+                {
+                    // this is the first typed element we've been given, it sets the type of the array
+                    this._arrayType = itemType;
                 }
                 else
                 {
-                    if (this._arrayType == null)
+                    // if there's a disagreement on the array type, we flip to Object
+                    // NOTE : we can try to do better in the future to find common base class, but given that we support very limited set of types
+                    // in metadata right now, it's a moot point
+                    if (this._arrayType != itemType)
                     {
-                        this._arrayType = item.GetType();
-                    }
-                    else if (this._arrayType != item.GetType())
-                    {
-                        this._arrayType = typeof(object);
+                        this._arrayType = ObjectType;
                     }
                 }
-
-                base.InsertItem(index, item);
             }
 
             public Array ToArray()
             {
-                if (this._mustBeReferenceType && this._arrayType.IsValueType)
+                if (this._arrayType == null)
                 {
-                    this._arrayType = typeof(object);
+                    // if the array type has not been set, assume Object 
+                    this._arrayType = ObjectType;
+                }
+                else if (this._containsNulls && this._arrayType.IsValueType)
+                {
+                    // if the array type is a value type and we have seen nulls, then assume Object
+                    this._arrayType = ObjectType;
                 }
 
-                Array array = Array.CreateInstance(this._arrayType, this.Count);
+                Array array = Array.CreateInstance(this._arrayType, this._innerList.Count);
 
                 for(int i = 0; i < array.Length; i++)
                 {
-                    array.SetValue(this[i], i);
+                    array.SetValue(this._innerList[i], i);
                 }
                 return array;
             }

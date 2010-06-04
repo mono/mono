@@ -4,9 +4,11 @@
 using System;
 using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
+using System.Diagnostics.CodeAnalysis;
 using System.Linq;
 using System.Linq.Expressions;
 using Microsoft.Internal;
+using System.Globalization;
 
 namespace System.ComponentModel.Composition.Primitives
 {
@@ -22,6 +24,7 @@ namespace System.ComponentModel.Composition.Primitives
         private Expression<Func<ExportDefinition, bool>> _constraint;
         private readonly CreationPolicy _requiredCreationPolicy = CreationPolicy.Any;
         private readonly string _requiredTypeIdentity = null;
+        private bool _isRequiredMetadataValidated = false;
 
         /// <summary>
         ///     Initializes a new instance of the <see cref="ContractBasedImportDefinition"/> class.
@@ -94,13 +97,12 @@ namespace System.ComponentModel.Composition.Primitives
         ///     <paramref name="cardinality"/> is not one of the <see cref="ImportCardinality"/> 
         ///     values.
         /// </exception>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public ContractBasedImportDefinition(string contractName, string requiredTypeIdentity, IEnumerable<KeyValuePair<string, Type>> requiredMetadata, 
             ImportCardinality cardinality, bool isRecomposable, bool isPrerequisite, CreationPolicy requiredCreationPolicy)
             : base(contractName, cardinality, isRecomposable, isPrerequisite)
         {
             Requires.NotNullOrEmpty(contractName, "contractName");
-            Requires.NullOrNotNullElements(requiredMetadata, "requiredMetadata");
 
             this._requiredTypeIdentity = requiredTypeIdentity;
 
@@ -141,10 +143,32 @@ namespace System.ComponentModel.Composition.Primitives
         ///         return an empty <see cref="IEnumerable{T}"/> instead.
         ///     </note>
         /// </remarks>
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public virtual IEnumerable<KeyValuePair<string, Type>> RequiredMetadata
         {
-            get { return this._requiredMetadata; }
+            get
+            {
+                // NOTE : unlike other arguments, we validate this one as late as possible, because its validation may lead to type loading
+                this.ValidateRequiredMetadata();
+
+                return this._requiredMetadata;
+            }
+        }
+
+        private void ValidateRequiredMetadata()
+        {
+            if (!this._isRequiredMetadataValidated)
+            {
+                foreach (KeyValuePair<string, Type> metadataItem in this._requiredMetadata)
+                {
+                    if ((metadataItem.Key == null) || (metadataItem.Value == null))
+                    {
+                        throw new InvalidOperationException(
+                            string.Format(CultureInfo.CurrentCulture, Strings.Argument_NullElement, "requiredMetadata"));
+                    }
+                }
+                this._isRequiredMetadataValidated = true;
+            }
         }
 
         /// <summary>
@@ -213,8 +237,13 @@ namespace System.ComponentModel.Composition.Primitives
         ///         <see cref="Constraint"/> property but the result should remain consistent.
         ///     </note>
         /// </remarks>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="exportDefinition"/> is <see langword="null"/>.
+        /// </exception>
         public override bool IsConstraintSatisfiedBy(ExportDefinition exportDefinition)
         {
+            Requires.NotNull(exportDefinition, "exportDefinition");
+
             if (!StringComparers.ContractName.Equals(this.ContractName, exportDefinition.ContractName))
             {
                 return false;

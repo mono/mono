@@ -1,88 +1,101 @@
-﻿<Project ToolsVersion="3.5" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="3.5">
+  <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|AnyCPU'">
+    <CodeAnalysisRuleSet>Migrated rules for Composition.Initialization.ruleset</CodeAnalysisRuleSet>
+    <CodeAnalysisRules />
+  </PropertyGroup>
+    <PropertyGroup>
+    <OutputPath>..\..\bin</OutputPath>
+    <DefineConstants>$(DefineConstants);TRACE</DefineConstants>
+    <NoWarn>1570;1572;1573;1591;1699</NoWarn>
+  </PropertyGroup>
   <PropertyGroup>
-    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
-    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProductVersion>9.0.30729</ProductVersion>
+    <ProjectClrTypes>FULLCLR;SILVERLIGHT</ProjectClrTypes>
+    <ProductVersion>10.0.20805</ProductVersion>
     <SchemaVersion>2.0</SchemaVersion>
-    <ProjectGuid>{9F7B8224-8306-41A1-B362-077C0C6DC7A1}</ProjectGuid>
-    <ProjectTypeGuids>{A1591282-1198-4647-A2B1-27E5FF5F6F3B};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
     <OutputType>Library</OutputType>
-    <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>System.ComponentModel.Composition.Initialization</RootNamespace>
     <AssemblyName>System.ComponentModel.Composition.Initialization</AssemblyName>
-    <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
-    <SilverlightApplication>false</SilverlightApplication>
-    <ValidateXaml>true</ValidateXaml>
-    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+    <RootNamespace>System.ComponentModel.Composition.Initialization</RootNamespace>
+    <DocumentationFile>$(OutputPath)\System.ComponentModel.Composition.Initialization.xml</DocumentationFile>
+    <ProjectGuid>{A497DC28-0A3B-4BAD-B964-B8B436686D98}</ProjectGuid>
+    <PublishUrl>publish\</PublishUrl>
+    <Install>true</Install>
+    <InstallFrom>Disk</InstallFrom>
+    <UpdateEnabled>false</UpdateEnabled>
+    <UpdateMode>Foreground</UpdateMode>
+    <UpdateInterval>7</UpdateInterval>
+    <UpdateIntervalUnits>Days</UpdateIntervalUnits>
+    <UpdatePeriodically>false</UpdatePeriodically>
+    <UpdateRequired>false</UpdateRequired>
+    <MapFileExtensions>true</MapFileExtensions>
+    <ApplicationRevision>0</ApplicationRevision>
+    <ApplicationVersion>1.0.0.%2a</ApplicationVersion>
+    <IsWebBootstrapper>false</IsWebBootstrapper>
+    <UseApplicationTrust>false</UseApplicationTrust>
+    <BootstrapperEnabled>true</BootstrapperEnabled>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>..\..\bin\SL\</OutputPath>
-    <DefineConstants>DEBUG;TRACE;SILVERLIGHT</DefineConstants>
+  <PropertyGroup>
+    <SignAssembly>true</SignAssembly>
     <NoStdLib>true</NoStdLib>
-    <NoConfig>true</NoConfig>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-    <DocumentationFile>..\..\bin\SL\System.ComponentModel.Composition.Initialization.xml</DocumentationFile>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>Bin\Release</OutputPath>
-    <DefineConstants>TRACE;SILVERLIGHT</DefineConstants>
-    <NoStdLib>true</NoStdLib>
-    <NoConfig>true</NoConfig>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="mscorlib" />
-    <Reference Include="system" />
+    <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Net" />
+    <Reference Include="System.Xml" />
+    <ProjectReference Include="..\ComponentModel\ComponentModel.csproj">
+      <Project>{1BBA5101-D4F0-48B8-A5D6-7B23A099DCE3}</Project>
+      <Name>ComponentModel</Name>
+    </ProjectReference>
+  </ItemGroup>
+  <ItemGroup Condition="'$(IsSilverLight)' == 'true'">
+    <Reference Include="System.Windows" />
+    <Compile Include="System\ComponentModel\Composition\Hosting\CompositionHost.cs" />
+    <Compile Include="System\ComponentModel\Composition\CompositionInitializer.AssemblyList.cs" />
+    <Compile Include="System\ComponentModel\Composition\CompositionInitializer.cs" />
+    <Compile Include="System\ComponentModel\Composition\Hosting\DeploymentCatalog.cs" />
+    <Compile Include="System\ComponentModel\Composition\Hosting\Package.cs" />
   </ItemGroup>
   <ItemGroup>
     <Compile Include="AssemblyInfo.cs" />
+    <Compile Include="Microsoft\Internal\Lock.cs" />
+    <Compile Include="Microsoft\Internal\Lock.Reader.cs" />
+    <Compile Include="Microsoft\Internal\Lock.Writer.cs" />
+    <Compile Include="Microsoft\Internal\Requires.cs" />
     <Compile Include="Strings.Designer.cs">
       <AutoGen>True</AutoGen>
       <DesignTime>True</DesignTime>
       <DependentUpon>Strings.resx</DependentUpon>
     </Compile>
-    <Compile Include="System\ComponentModel\Composition\Hosting\CompositionHost.cs" />
-    <Compile Include="System\ComponentModel\Composition\PartInitializer.AssemblyList.cs" />
-    <Compile Include="System\ComponentModel\Composition\PartInitializer.cs" />
+    <Compile Include="SuppressMessages.cs" />
+    <Compile Include="System\ComponentModel\Composition\ExportFactoryOfT.cs" />
+    <Compile Include="System\ComponentModel\Composition\ExportFactoryOfTTMetadata.cs" />
+    <Compile Include="System\ComponentModel\Composition\ExportLifetimeContextOfT.cs" />
   </ItemGroup>
   <ItemGroup>
     <EmbeddedResource Include="Strings.resx">
       <Generator>ResXFileCodeGenerator</Generator>
       <LastGenOutput>Strings.Designer.cs</LastGenOutput>
-      <CustomToolNamespace>System.ComponentModel.Composition</CustomToolNamespace>
+      <SubType>Designer</SubType>
     </EmbeddedResource>
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\ComponentModel\ComponentModel - SL.csproj">
-      <Project>{A36AEF66-2411-4225-B68E-F2D29368A31B}</Project>
-      <Name>ComponentModel - SL</Name>
-    </ProjectReference>
+    <BootstrapperPackage Include="Microsoft.Net.Client.3.5">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1 Client Profile</ProductName>
+      <Install>false</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Net.Framework.3.5.SP1">
+      <Visible>False</Visible>
+      <ProductName>.NET Framework 3.5 SP1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
+    <BootstrapperPackage Include="Microsoft.Windows.Installer.3.1">
+      <Visible>False</Visible>
+      <ProductName>Windows Installer 3.1</ProductName>
+      <Install>true</Install>
+    </BootstrapperPackage>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Properties\" />
-  </ItemGroup>
-  <Import Project="$(MSBuildExtensionsPath32)\Microsoft\Silverlight\v3.0\Microsoft.Silverlight.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
-  <ProjectExtensions>
-    <VisualStudio>
-      <FlavorProperties GUID="{A1591282-1198-4647-A2B1-27E5FF5F6F3B}">
-        <SilverlightProjectProperties />
-      </FlavorProperties>
-    </VisualStudio>
-  </ProjectExtensions>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSHARP.Targets" />
 </Project>

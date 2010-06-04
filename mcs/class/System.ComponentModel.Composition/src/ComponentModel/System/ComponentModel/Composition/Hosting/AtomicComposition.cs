@@ -2,6 +2,7 @@
 using System.Diagnostics;
 using System.Collections.Generic;
 using Microsoft.Internal;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.ComponentModel.Composition.Hosting
 {
@@ -31,8 +32,7 @@ namespace System.ComponentModel.Composition.Hosting
     /// </summary>
     public class AtomicComposition : IDisposable
     {
-        private AtomicComposition _outerAtomicComposition;
-
+        private readonly AtomicComposition _outerAtomicComposition;
         private KeyValuePair<object, object>[] _values;
         private int _valueCount = 0;
         private List<Action> _completeActionList;
@@ -48,12 +48,11 @@ namespace System.ComponentModel.Composition.Hosting
 
         public AtomicComposition(AtomicComposition outerAtomicComposition)
         {
-            this._outerAtomicComposition = outerAtomicComposition;
-
             // Lock the inner atomicComposition so that we can assume nothing changes except on
             // the innermost scope, and thereby optimize the query path
             if (outerAtomicComposition != null)
             {
+                this._outerAtomicComposition = outerAtomicComposition;
                 this._outerAtomicComposition.ContainsInnerAtomicComposition = true;
             }
         }
@@ -74,7 +73,7 @@ namespace System.ComponentModel.Composition.Hosting
             return TryGetValue(key, false, out value);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters")]
+        [SuppressMessage("Microsoft.Design", "CA1021:AvoidOutParameters")]
         public bool TryGetValue<T>(object key, bool localAtomicCompositionOnly, out T value) 
         {
             ThrowIfDisposed();

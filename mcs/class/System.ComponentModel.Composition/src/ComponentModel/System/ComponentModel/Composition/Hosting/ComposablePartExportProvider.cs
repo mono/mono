@@ -113,6 +113,7 @@ namespace System.ComponentModel.Composition.Hosting
         ///     This property must be set before accessing any methods on the 
         ///     <see cref="ComposablePartExportProvider"/>.
         /// </remarks>
+        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope", Justification = "EnsureCanSet ensures that the property is set only once, Dispose is not required")]
         public ExportProvider SourceProvider
         {
             get

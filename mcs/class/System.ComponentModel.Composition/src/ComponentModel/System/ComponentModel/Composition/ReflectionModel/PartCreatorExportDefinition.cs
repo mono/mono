@@ -6,8 +6,6 @@ using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 
-#if SILVERLIGHT
-
 namespace System.ComponentModel.Composition.ReflectionModel
 {
     internal class PartCreatorExportDefinition : ExportDefinition
@@ -62,5 +60,3 @@ namespace System.ComponentModel.Composition.ReflectionModel
         }
     }
 }
-
-#endif

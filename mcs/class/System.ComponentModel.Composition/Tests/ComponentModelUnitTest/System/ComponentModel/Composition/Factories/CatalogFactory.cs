@@ -2,12 +2,11 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Linq;
+using System.Linq.Expressions;
 using System.Reflection;
-using System.Collections;
 
 namespace System.ComponentModel.Composition.Factories
 {
@@ -72,7 +71,7 @@ namespace System.ComponentModel.Composition.Factories
 
         public static ComposablePartCatalog CreateFiltered(ComposablePartCatalog catalog, Func<ComposablePartDefinition, bool> filter)
         {
-            return new FilteredComposablePartCatalog(catalog, filter);
+            return new FilteredCatalog(catalog, filter);
         }
     }
 }

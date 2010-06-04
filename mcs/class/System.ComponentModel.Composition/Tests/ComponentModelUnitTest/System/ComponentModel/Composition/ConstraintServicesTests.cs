@@ -131,8 +131,6 @@ namespace System.ComponentModel.Composition
             Assert.IsTrue(predicate(exportDefinition));
         }
 
-#if SILVERLIGHT
-
         [TestMethod]
         public void PartCreatorConstraint_ShouldMatchPartCreatorExportDefinition()
         {
@@ -163,7 +161,6 @@ namespace System.ComponentModel.Composition
             Assert.IsTrue(partCreatorImportDef.IsConstraintSatisfiedBy(exportDefinition));
             Assert.IsTrue(predicate(exportDefinition));
         }
-#endif
 
         [TestMethod]
         public void TryParseConstraint_ConstraintFromCreateConstraintAsConstraintArgument1_CanParse()

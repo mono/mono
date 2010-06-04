@@ -15,7 +15,9 @@ namespace System.ComponentModel.Composition.Primitives
         private MethodInfo _method;
 
         protected ExportedDelegate() { }
-
+#if !SILVERLIGHT
+        [System.Security.SecurityCritical]
+#endif
         public ExportedDelegate(object instance, MethodInfo method)
         {
             Requires.NotNull(method, "method");

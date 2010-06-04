@@ -13,6 +13,7 @@ namespace System.ComponentModel.Composition.Diagnostics
     [TestClass]
     public class ComposableTraceSourceTests
     {
+#if !SILVERLIGHT
         [TestMethod]
         public void CanWriteInformation_ShouldReturnFalseByDefault()
         {
@@ -30,8 +31,6 @@ namespace System.ComponentModel.Composition.Diagnostics
         {
             Assert.IsTrue(CompositionTraceSource.CanWriteError);
         }
-
-#if !SILVERLIGHT
 
         [TestMethod]
         public void CanWriteInformation_WhenSwitchLevelLessThanInformation_ShouldReturnFalse()
@@ -428,7 +427,7 @@ namespace System.ComponentModel.Composition.Diagnostics
                 if (level == 0)
                     continue;
                 
-                if (level.HasFlag(sourceLevel) == on)
+                if (((level & sourceLevel) == sourceLevel) == on)
                 {
                     yield return level;
                 }
@@ -455,6 +454,73 @@ namespace System.ComponentModel.Composition.Diagnostics
                 // publicily catchable exception
                 Assert.IsFalse(exceptionType.IsVisible);
             }
+        }
+#endif
+
+#if SILVERLIGHT
+        [TestMethod]
+        public void CanWriteInformation_ShouldReturnFalse()
+        {
+            Assert.IsFalse(CompositionTraceSource.CanWriteInformation);
+        }
+
+        [TestMethod]
+        public void CanWriteWarning_ShouldReturnDebuggerLogging()
+        {
+            Assert.AreEqual(CompositionTraceSource.CanWriteWarning, Debugger.IsLogging());
+        }
+
+        [TestMethod]
+        public void CanWriteError_ShouldReturnDebuggerLogging()
+        {
+            Assert.AreEqual(CompositionTraceSource.CanWriteError, Debugger.IsLogging());
+        }
+
+        [TestMethod]
+        public void CreateLogMessage_ContainsTraceEventType()
+        {
+            IEnumerable<SilverlightTraceWriter.TraceEventType> eventTypes = Expectations.GetEnumValues<SilverlightTraceWriter.TraceEventType>();
+            
+            foreach(var eventType in eventTypes)
+            {
+                string message = SilverlightTraceWriter.CreateLogMessage(eventType, CompositionTraceId.Discovery_AssemblyLoadFailed, "Format");
+                Assert.IsTrue(message.Contains(eventType.ToString()), "Should contain enum string of EventType");
+            }            
+        }
+
+        [TestMethod]
+        public void CreateLogMessage_ContainsTraceIdAsInt()
+        {
+            IEnumerable<CompositionTraceId> traceIds = Expectations.GetEnumValues<CompositionTraceId>();
+            
+            foreach(var traceId in traceIds)
+            {
+                string message = SilverlightTraceWriter.CreateLogMessage(SilverlightTraceWriter.TraceEventType.Information, traceId, "Format");
+                Assert.IsTrue(message.Contains(((int)traceId).ToString()), "Should contain int version of TraceId");
+            }            
+        }
+
+        [TestMethod]
+        public void CreateLogMessage_FormatNull_ThrowsArugmentNull()
+        {
+            ExceptionAssert.ThrowsArgumentNull("format", () =>
+                SilverlightTraceWriter.CreateLogMessage(SilverlightTraceWriter.TraceEventType.Information, CompositionTraceId.Discovery_AssemblyLoadFailed, null));
+        }
+
+        [TestMethod]
+        public void CreateLogMessage_ArgumentsNull_ShouldCreateValidString()
+        {
+            string message = SilverlightTraceWriter.CreateLogMessage(SilverlightTraceWriter.TraceEventType.Information, CompositionTraceId.Discovery_AssemblyLoadFailed, "Format", null);
+
+            Assert.IsFalse(string.IsNullOrEmpty(message));
+        }
+
+        [TestMethod]
+        public void CreateLogMessage_ArgumentsPassed_ShouldCreateValidString()
+        {
+            string message = SilverlightTraceWriter.CreateLogMessage(SilverlightTraceWriter.TraceEventType.Information, CompositionTraceId.Discovery_AssemblyLoadFailed, "{0}", 9999);
+
+            Assert.IsTrue(message.Contains("9999"));
         }
 #endif
 

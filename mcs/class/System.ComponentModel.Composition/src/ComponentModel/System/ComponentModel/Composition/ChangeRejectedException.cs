@@ -7,12 +7,6 @@ using System.Globalization;
 using System.Security.Permissions;
 using Microsoft.Internal;
 
-#if !SILVERLIGHT
-
-using System.Runtime.Serialization;
-
-#endif
-
 namespace System.ComponentModel.Composition
 {
     /// <summary>
@@ -55,14 +49,6 @@ namespace System.ComponentModel.Composition
         {
         }
 
-#if !SILVERLIGHT
-        [System.Security.SecuritySafeCritical]
-        protected ChangeRejectedException(SerializationInfo info, StreamingContext context)
-            : base(info, context)
-        {
-        }
-#endif
-
         /// <summary>
         ///     Gets a message that describes the exception.
         /// </summary>
@@ -72,7 +58,6 @@ namespace System.ComponentModel.Composition
         /// </value>
         public override string Message
         {
-            [System.Security.SecuritySafeCritical]
             get
             {
                 return string.Format(CultureInfo.CurrentCulture, 

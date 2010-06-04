@@ -53,7 +53,18 @@ namespace System.ComponentModel.Composition.ReflectionModel
 
         public override object GetValue(object instance)
         {
-            return new ExportedDelegate(instance, this._method);
+            return SafeCreateExportedDelegate(instance, _method);
+        }
+#if !SILVERLIGHT
+        [System.Security.SecuritySafeCritical]
+#endif
+        private static ExportedDelegate SafeCreateExportedDelegate(object instance, MethodInfo method)
+        {
+            // We demand member access in place of the [SecurityCritical] 
+            // attribute on ExportDelegate constructor
+            ReflectionInvoke.DemandMemberAccessIfNeeded(method);
+
+            return new ExportedDelegate(instance, method);
         }
     }
 }

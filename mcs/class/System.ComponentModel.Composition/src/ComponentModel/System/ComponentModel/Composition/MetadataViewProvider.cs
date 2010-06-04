@@ -9,12 +9,13 @@ using System.Text;
 using Microsoft.Internal;
 using System.Globalization;
 using System.Runtime.InteropServices;
+using System.Diagnostics.CodeAnalysis;
 
 namespace System.ComponentModel.Composition
 {
     internal static class MetadataViewProvider
     {
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         public static TMetadataView GetMetadataView<TMetadataView>(IDictionary<string, object> metadata)
         {
             Type metadataViewType = typeof(TMetadataView);
@@ -47,7 +48,7 @@ namespace System.ComponentModel.Composition
                 // Now we have the type for the proxy create it
                 try
                 {
-                    return (TMetadataView)Activator.CreateInstance(proxyType, new object[] { metadata });
+                    return (TMetadataView)proxyType.SafeCreateInstance(metadata);
                 }
                 catch (MissingMethodException ex)
                 {

@@ -8,8 +8,6 @@ using System.ComponentModel.Composition.Primitives;
 using System.Linq.Expressions;
 using Microsoft.Internal;
 
-#if SILVERLIGHT
-
 namespace System.ComponentModel.Composition.ReflectionModel
 {
     internal class PartCreatorMemberImportDefinition : ReflectionMemberImportDefinition, IPartCreatorImportDefinition
@@ -48,5 +46,3 @@ namespace System.ComponentModel.Composition.ReflectionModel
         }
     }
 }
-
-#endif

@@ -6,6 +6,7 @@ using System.Collections;
 using System.ComponentModel.Composition.Hosting;
 using System.ComponentModel.Composition.Primitives;
 using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
 using System.Globalization;
 using System.Reflection;
 using Microsoft.Internal;
@@ -142,7 +143,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
                 {
                     try
                     {
-                        collectionObject = constructor.Invoke(new object[] { });
+                        collectionObject = constructor.SafeInvoke();
                     }
                     catch (TargetInvocationException exception)
                     {
@@ -173,7 +174,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
             return CollectionServices.GetCollectionWrapper(itemType, collectionObject);
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private void EnsureCollectionIsWritable(ICollection<object> collection)
         {
             bool isReadOnly = true;
@@ -208,7 +209,7 @@ namespace System.ComponentModel.Composition.ReflectionModel
             }
         }
 
-        [System.Diagnostics.CodeAnalysis.SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
+        [SuppressMessage("Microsoft.Design", "CA1031:DoNotCatchGeneralExceptionTypes")]
         private void PopulateCollection(ICollection<object> collection, IEnumerable values)
         {
             Assumes.NotNull(collection, values);

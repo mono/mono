@@ -3,6 +3,7 @@
 // -----------------------------------------------------------------------
 using System;
 using System.ComponentModel.Composition.Primitives;
+using System.Diagnostics.CodeAnalysis;
 using Microsoft.Internal;
 
 namespace System.ComponentModel.Composition.Hosting
@@ -49,7 +50,7 @@ namespace System.ComponentModel.Composition.Hosting
                 return exportedValue;
             }
 
-
+            [SuppressMessage("Microsoft.Reliability", "CA2000:Dispose objects before losing scope")]
             public static CatalogExport CreateExport(CatalogExportProvider catalogExportProvider,
                 ComposablePartDefinition partDefinition, ExportDefinition definition, CreationPolicy importCreationPolicy)
             {

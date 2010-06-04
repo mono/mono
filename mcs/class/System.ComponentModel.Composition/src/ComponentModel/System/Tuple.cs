@@ -1,7 +1,7 @@
 ﻿// -----------------------------------------------------------------------
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------------------
-#if !NET_4_0
+#if !CLR40
 using System;
 
 namespace System

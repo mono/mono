@@ -110,14 +110,14 @@ namespace System.ComponentModel.Composition.ReflectionModel
         {
             Assumes.NotNull(this._getMethod);
 
-            return this.UnderlyingGetMethod.Invoke(instance, (object[])null);
+            return this.UnderlyingGetMethod.SafeInvoke(instance);
         }
 
         public override void SetValue(object instance, object value)
         {
             Assumes.NotNull(this._setMethod);
 
-            this.UnderlyingSetMethod.Invoke(instance, new object[] { value });
+            this.UnderlyingSetMethod.SafeInvoke(instance, value);
         }
 
     }

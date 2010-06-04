@@ -2,10 +2,10 @@
 // Copyright (c) Microsoft Corporation.  All rights reserved.
 // -----------------------------------------------------------------------
 using System;
-using System.Collections.Generic;
+using System.Diagnostics.CodeAnalysis;
+using System.Globalization;
 using System.Linq.Expressions;
 using Microsoft.Internal;
-using System.Globalization;
 
 namespace System.ComponentModel.Composition.Primitives
 {
@@ -76,6 +76,7 @@ namespace System.ComponentModel.Composition.Primitives
         ///     <paramref name="cardinality"/> is not one of the <see cref="ImportCardinality"/> 
         ///     values.
         /// </exception>
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public ImportDefinition(Expression<Func<ExportDefinition, bool>> constraint, string contractName, ImportCardinality cardinality, bool isRecomposable, bool isPrerequisite)
             : this(contractName, cardinality, isRecomposable, isPrerequisite)
         {
@@ -146,6 +147,7 @@ namespace System.ComponentModel.Composition.Primitives
         ///         Overriders of this property should never return <see langword="null"/>.
         ///     </note>
         /// </remarks>
+        [SuppressMessage("Microsoft.Design", "CA1006:DoNotNestGenericTypesInMemberSignatures")]
         public virtual Expression<Func<ExportDefinition, bool>> Constraint
         {
             get
@@ -205,8 +207,13 @@ namespace System.ComponentModel.Composition.Primitives
         ///         <see cref="Constraint"/> property but the result should remain consistent.
         ///     </note>
         /// </remarks>
+        /// <exception cref="ArgumentNullException">
+        ///     <paramref name="exportDefinition"/> is <see langword="null"/>.
+        /// </exception>
         public virtual bool IsConstraintSatisfiedBy(ExportDefinition exportDefinition)
         {
+            Requires.NotNull(exportDefinition, "exportDefinition");
+
             if (this._compiledConstraint == null)
             {
                 this._compiledConstraint = this.Constraint.Compile();

@@ -2943,6 +2943,8 @@ namespace System.ComponentModel.Composition
         }
 
         [TestMethod]
+        [Ignore]
+        [WorkItem(812029)]
         public void ComposeExportedValueOfT_ValidContractName_ExportedValue_ExportContainsEmptyMetadata()
         {
             string expectedContractName = "ContractName";
@@ -2967,6 +2969,25 @@ namespace System.ComponentModel.Composition
             var exports = container.GetExports(importDefinition);
             Assert.AreEqual(1, exports.Count());  // we only get one if the import was not discovered since the import is not satisfied
         }
+
+        [TestMethod]
+        public void TestExportedValueCachesNullValue()
+        {
+            var container = ContainerFactory.Create();
+            var exporter = new ExportsMutableProperty();
+            exporter.Property = null;
+            container.ComposeParts(exporter);
+            Assert.IsNull(container.GetExportedValue<string>("Property"));
+            exporter.Property = "Value1";
+            // Exported value should have been cached and so it shouldn't change
+            Assert.IsNull(container.GetExportedValue<string>("Property"));
+        }
+        public class ExportsMutableProperty
+        {
+            [Export("Property")]
+            public string Property { get; set; }
+        }
+
 
         public class PartWithRequiredImport
         {

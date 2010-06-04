@@ -655,18 +655,6 @@ namespace System.ComponentModel.Composition
             }
         }
 
-        [TestMethod]
-        public void GetObjectData_NullAsInfoArgument_ShouldThrowArgumentNull()
-        {
-            var exception = (ISerializable)CreateComposablePartException();
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsArgument<ArgumentNullException>("info", () =>
-            {
-                exception.GetObjectData((SerializationInfo)null, context);
-            });
-        }
-
 #endif
 
         private static ComposablePartException CreateComposablePartException()

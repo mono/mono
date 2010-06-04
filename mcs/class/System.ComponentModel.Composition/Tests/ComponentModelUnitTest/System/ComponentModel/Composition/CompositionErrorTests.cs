@@ -409,113 +409,6 @@ namespace System.ComponentModel.Composition
 #if !SILVERLIGHT
 
         [TestMethod]
-        public void Constructor6_NullAsInfoArgument_ShouldThrowArgumentNull()
-        {
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsArgument<ArgumentNullException>("info", () =>
-            {
-                SerializationTestServices.Create<CompositionError>((SerializationInfo)null, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithMissingMessageEntryAsInfoArgument_ShouldThrowSerialization()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoRemovingMember<CompositionError>("Description", () => CreateCompositionError());
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsSerialization("Description", () =>
-            {
-                SerializationTestServices.Create<CompositionError>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithMissingExceptionEntryAsInfoArgument_ShouldThrowSerialization()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoRemovingMember<CompositionError>("Exception", () => CreateCompositionError());
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsSerialization("Exception", () =>
-            {
-                SerializationTestServices.Create<CompositionError>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithMissingIdEntryAsInfoArgument_ShouldThrowSerialization()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoRemovingMember<CompositionError>("Id", () => CreateCompositionError());
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsSerialization("Id", () =>
-            {
-                SerializationTestServices.Create<CompositionError>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithMissingElementEntryAsInfoArgument_ShouldThrowSerialization()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoRemovingMember<CompositionError>("Element", () => CreateCompositionError());
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsSerialization("Element", () =>
-            {
-                SerializationTestServices.Create<CompositionError>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithWrongTypeForExceptionEntryAsInfoArgument_ShouldThrowInvalidCast()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoReplacingMember<CompositionError>("Exception", 10, () => CreateCompositionError());
-            var context = new StreamingContext();
-
-            ExceptionAssert.Throws<InvalidCastException>(() =>
-            {
-                SerializationTestServices.Create<CompositionError>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithWrongTypeForMessageEntryAsInfoArgument_ShouldThrowInvalidCast()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoReplacingMember<CompositionError>("Description", 10, () => CreateCompositionError());
-            var context = new StreamingContext();
-
-            ExceptionAssert.Throws<InvalidCastException>(() =>
-            {
-                SerializationTestServices.Create<CompositionError>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithWrongTypeForIdEntryAsInfoArgument_ShouldThrowInvalidCast()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoReplacingMember<CompositionError>("Id", "InvalidValue", () => CreateCompositionError());
-            var context = new StreamingContext();
-
-            ExceptionAssert.Throws<InvalidCastException>(() =>
-            {
-                SerializationTestServices.Create<CompositionError>(info, context);
-            });
-        }
-
-        [TestMethod]
-        public void Constructor6_SerializationInfoWithWrongTypeForElementEntryAsInfoArgument_ShouldThrowInvalidCast()
-        {
-            var info = SerializationTestServices.CreateSerializationInfoReplacingMember<CompositionError>("Element", 10, () => CreateCompositionError());
-            var context = new StreamingContext();
-
-            ExceptionAssert.Throws<InvalidCastException>(() =>
-            {
-                SerializationTestServices.Create<CompositionError>(info, context);
-            });
-        }
-
-        [TestMethod]
         public void ICompositionErrorId_CanBeSerialized()
         {
             var expectations = Expectations.GetEnumValues<CompositionErrorId>();
@@ -527,21 +420,6 @@ namespace System.ComponentModel.Composition
                 var result = SerializationTestServices.RoundTrip(error);
 
                 Assert.AreEqual(error.Id, result.Id);
-            }
-        }
-
-        [TestMethod]
-        public void Element_CanBeSerialized()
-        {
-            var expectations = Expectations.GetCompositionElementsWithNull();
-
-            foreach (var e in expectations)
-            {
-                var exception = CreateCompositionError(e);
-
-                var result = SerializationTestServices.RoundTrip(exception);
-
-                ElementAssert.AreEqual(exception.Element, result.Element);
             }
         }
 
@@ -575,17 +453,6 @@ namespace System.ComponentModel.Composition
             }
         }
 
-        [TestMethod]
-        public void GetObjectData_NullAsInfoArgument_ShouldThrowArgumentNull()
-        {
-            var exception = (ISerializable)CreateCompositionError();
-            var context = new StreamingContext();
-
-            ExceptionAssert.ThrowsArgument<ArgumentNullException>("info", () =>
-            {
-                exception.GetObjectData((SerializationInfo)null, context);
-            });
-        }
 #endif
 
         private static CompositionError CreateCompositionError()

@@ -21,7 +21,7 @@ namespace System.UnitTesting
             Assert.IsNotNull(exception);
 
             // Exception of type '[typename]' was thrown
-            StringAssert.Contains(exception.Message, "'" + exception.GetType().FullName + "'");
+            StringAssert.Contains(exception.Message, exception.GetType().FullName);
         }
 
         /// <summary>
