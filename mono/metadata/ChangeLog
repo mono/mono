@@ -1,5 +1,10 @@
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-los.c: Keep bitmaps on chunk usage in LOS sections to speed
+	up freeing.
+
+2010-06-05  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c, sgen-los.c: New LOS allocator that allocates large
 	segments of memory at once, to reduce the number of mmap/munmap
 	calls.
