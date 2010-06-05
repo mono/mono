@@ -1,3 +1,10 @@
+2010-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (mono_llvm_emit_method): Fix support for finally clauses with more than
+	one ENDFINALLY.
+
+	* mini.c (mini_init): Register mono_resume_unwind as an icall.
+
 2010-06-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* dwarfwriter.c: Update after the mono_debug_lookup_locals () changes.
