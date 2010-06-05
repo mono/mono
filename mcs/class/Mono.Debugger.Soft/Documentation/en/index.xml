@@ -23,7 +23,7 @@
   </Remarks>
   <Copyright>(C) 2009 Novell, Inc.</Copyright>
   <Types>
-    <Namespace Name="Mono.Debugger">
+    <Namespace Name="Mono.Debugger.Soft">
       <Type Name="AppDomainMirror" Kind="Class" />
       <Type Name="ArrayMirror" Kind="Class" />
       <Type Name="AssemblyLoadEvent" Kind="Class" />
