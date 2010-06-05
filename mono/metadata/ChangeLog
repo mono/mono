@@ -1,5 +1,11 @@
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-major-copying.c, sgen-marksweep.c: Make degraded
+	allocations count toward major collections and trigger major
+	collections from degraded allocations if appropriate.
+
+2010-06-05  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-marksweep.c (ms_get_empty_block): Update heap boundaries.
 
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
