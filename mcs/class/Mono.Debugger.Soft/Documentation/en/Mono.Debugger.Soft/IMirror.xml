@@ -1,0 +1,35 @@
+<Type Name="IMirror" FullName="Mono.Debugger.Soft.IMirror">
+  <TypeSignature Language="C#" Value="public interface IMirror" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Interfaces />
+  <Docs>
+    <summary>Represents an entity in the debuggee.</summary>
+    <remarks>
+      <format type="text/html">
+        <a href="http://java.sun.com/j2se/1.5.0/docs/guide/jpda/jdi/com/sun/jdi/Mirror.html">JDI Documentation</a>
+      </format>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="VirtualMachine">
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.VirtualMachine VirtualMachine { get; }" />
+      <MemberType>Property</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Docs>
+        <summary>Returns the virtual machine this entity belongs to.</summary>
+        <value>
+        </value>
+        <remarks>
+        </remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

@@ -1,0 +1,75 @@
+<Overview>
+  <Assemblies>
+    <Assembly Name="Mono.Debugger" Version="0.0.0.0">
+      <Attributes>
+        <Attribute>
+          <AttributeName>System.Runtime.CompilerServices.RuntimeCompatibility(WrapNonExceptionThrows=true)</AttributeName>
+        </Attribute>
+      </Attributes>
+    </Assembly>
+  </Assemblies>
+  <Copyright>(C) 2009 Novell, Inc.</Copyright>
+  <Types>
+    <Namespace Name="Mono.Debugger.Soft">
+      <Type Name="AppDomainMirror" Kind="Class" />
+      <Type Name="ArrayMirror" Kind="Class" />
+      <Type Name="AssemblyLoadEvent" Kind="Class" />
+      <Type Name="AssemblyMirror" Kind="Class" />
+      <Type Name="BreakpointEvent" Kind="Class" />
+      <Type Name="BreakpointEventRequest" Kind="Class" />
+      <Type Name="CustomAttributeDataMirror" Kind="Class" />
+      <Type Name="CustomAttributeNamedArgumentMirror" Kind="Structure" />
+      <Type Name="CustomAttributeTypedArgumentMirror" Kind="Structure" />
+      <Type Name="EnumMirror" Kind="Class" />
+      <Type Name="ErrorCode" Kind="Enumeration" />
+      <Type Name="ErrorHandlerEventArgs" Kind="Class" />
+      <Type Name="Event" Kind="Class" />
+      <Type Name="EventRequest" Kind="Class" />
+      <Type Name="EventType" Kind="Enumeration" />
+      <Type Name="FieldInfoMirror" Kind="Class" />
+      <Type Name="ILInstruction" Kind="Class" />
+      <Type Name="IMirror" Kind="Interface" />
+      <Type Name="InvalidStackFrameException" Kind="Class" />
+      <Type Name="InvocationException" Kind="Class" />
+      <Type Name="LaunchOptions" Kind="Class" />
+      <Type Name="LocalVariable" Kind="Class" />
+      <Type Name="Location" Kind="Class" />
+      <Type Name="MethodBodyMirror" Kind="Class" />
+      <Type Name="MethodEntryEvent" Kind="Class" />
+      <Type Name="MethodEntryEventRequest" Kind="Class" />
+      <Type Name="MethodExitEvent" Kind="Class" />
+      <Type Name="MethodExitEventRequest" Kind="Class" />
+      <Type Name="MethodMirror" Kind="Class" />
+      <Type Name="Mirror" Kind="Class" />
+      <Type Name="ModuleMirror" Kind="Class" />
+      <Type Name="ObjectCollectedException" Kind="Class" />
+      <Type Name="ObjectMirror" Kind="Class" />
+      <Type Name="ParameterInfoMirror" Kind="Class" />
+      <Type Name="PrimitiveValue" Kind="Class" />
+      <Type Name="PropertyInfoMirror" Kind="Class" />
+      <Type Name="StackFrame" Kind="Class" />
+      <Type Name="StackFrameType" Kind="Enumeration" />
+      <Type Name="StepDepth" Kind="Enumeration" />
+      <Type Name="StepEvent" Kind="Class" />
+      <Type Name="StepEventRequest" Kind="Class" />
+      <Type Name="StepSize" Kind="Enumeration" />
+      <Type Name="StringMirror" Kind="Class" />
+      <Type Name="StructMirror" Kind="Class" />
+      <Type Name="SuspendPolicy" Kind="Enumeration" />
+      <Type Name="ThreadDeathEvent" Kind="Class" />
+      <Type Name="ThreadMirror" Kind="Class" />
+      <Type Name="ThreadStartEvent" Kind="Class" />
+      <Type Name="TypeLoadEvent" Kind="Class" />
+      <Type Name="TypeMirror" Kind="Class" />
+      <Type Name="Value" Kind="Class" />
+      <Type Name="VirtualMachine" Kind="Class" />
+      <Type Name="VirtualMachineManager" Kind="Class" />
+      <Type Name="VMDeathEvent" Kind="Class" />
+      <Type Name="VMDisconnectedException" Kind="Class" />
+      <Type Name="VMDisconnectEvent" Kind="Class" />
+      <Type Name="VMMismatchException" Kind="Class" />
+      <Type Name="VMStartEvent" Kind="Class" />
+    </Namespace>
+  </Types>
+  <Title>Mono.Debugger</Title>
+</Overview>

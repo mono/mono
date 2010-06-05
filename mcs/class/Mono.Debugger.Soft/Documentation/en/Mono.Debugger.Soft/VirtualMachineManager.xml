@@ -1,0 +1,57 @@
+<Type Name="VirtualMachineManager" FullName="Mono.Debugger.Soft.VirtualMachineManager">
+  <TypeSignature Language="C#" Value="public class VirtualMachineManager" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>System.Object</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Allows launching and connecting to mono virtual machines.</summary>
+    <remarks>This class implements the functionality of the classes in the <format type="text/html"><a href="http://java.sun.com/j2se/1.5.0/docs/guide/jpda/jdi/com/sun/jdi/connect/package-frame.html">com.sun.kdi.connect</a></format> package in JDI.</remarks>
+  </Docs>
+  <Members>
+    <Member MemberName="Launch">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Launch (string[] args, Mono.Debugger.Soft.LaunchOptions options);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="args" Type="System.String[]" />
+        <Parameter Name="options" Type="Mono.Debugger.Soft.LaunchOptions" />
+      </Parameters>
+      <Docs>
+        <param name="args">The arguments to pass to the launched virtual machine.</param>
+        <param name="options">Launch options.</param>
+        <summary>Launch a new virtual machine with the provided arguments.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+    <Member MemberName="Listen">
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Listen (System.Net.IPEndPoint endpoint);" />
+      <MemberType>Method</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <ReturnValue>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
+      </ReturnValue>
+      <Parameters>
+        <Parameter Name="endpoint" Type="System.Net.IPEndPoint" />
+      </Parameters>
+      <Docs>
+        <param name="endpoint">The TCP/IP endpoint to listen at.</param>
+        <summary>Wait for a virtual machine to connect at the specified address.</summary>
+        <returns>To be added.</returns>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

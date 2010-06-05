@@ -1,0 +1,35 @@
+<Type Name="VMDisconnectEvent" FullName="Mono.Debugger.Soft.VMDisconnectEvent">
+  <TypeSignature Language="C#" Value="public class VMDisconnectEvent : Mono.Debugger.Soft.Event" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Debugger.Soft.Event</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Sent when the connection to the debuggee is lost.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public VMDisconnectEvent (Mono.Debugger.Soft.VirtualMachine vm, int req_id);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="vm" Type="Mono.Debugger.Soft.VirtualMachine" />
+        <Parameter Name="req_id" Type="System.Int32" />
+      </Parameters>
+      <Docs>
+        <param name="vm">To be added.</param>
+        <param name="req_id">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

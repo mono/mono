@@ -1,0 +1,37 @@
+<Type Name="VMStartEvent" FullName="Mono.Debugger.Soft.VMStartEvent">
+  <TypeSignature Language="C#" Value="public class VMStartEvent : Mono.Debugger.Soft.Event" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Debugger.Soft.Event</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Sent when a VMStart event occurs in the debuggee.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members>
+    <Member MemberName=".ctor">
+      <MemberSignature Language="C#" Value="public VMStartEvent (Mono.Debugger.Soft.VirtualMachine vm, int req_id, long thread_id);" />
+      <MemberType>Constructor</MemberType>
+      <AssemblyInfo>
+        <AssemblyVersion>0.0.0.0</AssemblyVersion>
+      </AssemblyInfo>
+      <Parameters>
+        <Parameter Name="vm" Type="Mono.Debugger.Soft.VirtualMachine" />
+        <Parameter Name="req_id" Type="System.Int32" />
+        <Parameter Name="thread_id" Type="System.Int64" />
+      </Parameters>
+      <Docs>
+        <param name="vm">To be added.</param>
+        <param name="req_id">To be added.</param>
+        <param name="thread_id">To be added.</param>
+        <summary>To be added.</summary>
+        <remarks>To be added.</remarks>
+      </Docs>
+    </Member>
+  </Members>
+</Type>

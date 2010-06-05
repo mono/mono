@@ -1,0 +1,17 @@
+<Type Name="ThreadDeathEvent" FullName="Mono.Debugger.Soft.ThreadDeathEvent">
+  <TypeSignature Language="C#" Value="public class ThreadDeathEvent : Mono.Debugger.Soft.Event" />
+  <AssemblyInfo>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
+    <AssemblyVersion>0.0.0.0</AssemblyVersion>
+  </AssemblyInfo>
+  <Base>
+    <BaseTypeName>Mono.Debugger.Soft.Event</BaseTypeName>
+  </Base>
+  <Interfaces />
+  <Docs>
+    <summary>Sent when a ThreadDeath event occurs in the debuggee.</summary>
+    <remarks>
+    </remarks>
+  </Docs>
+  <Members />
+</Type>
