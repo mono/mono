@@ -1,5 +1,9 @@
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Increase the maximum small object size to 8000 bytes.
+
+2010-06-05  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c, sgen-major-copying.c, sgen-marksweep.c: Have only one
 	major heap allowance for minor collections, instead of two
 	separate ones for small and large objects.  This reduces the
