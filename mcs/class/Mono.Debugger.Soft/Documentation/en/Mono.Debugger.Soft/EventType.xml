@@ -1,7 +1,7 @@
-<Type Name="EventType" FullName="Mono.Debugger.EventType">
+<Type Name="EventType" FullName="Mono.Debugger.Soft.EventType">
   <TypeSignature Language="C#" Value="public enum EventType" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -20,7 +20,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -33,7 +33,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -46,7 +46,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -59,7 +59,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -72,7 +72,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -85,7 +85,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -98,7 +98,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -111,7 +111,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -124,7 +124,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -137,7 +137,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -150,7 +150,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -163,7 +163,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -176,7 +176,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -189,7 +189,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

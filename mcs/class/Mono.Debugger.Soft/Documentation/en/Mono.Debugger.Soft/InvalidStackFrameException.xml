@@ -1,7 +1,7 @@
-<Type Name="InvalidStackFrameException" FullName="Mono.Debugger.InvalidStackFrameException">
+<Type Name="InvalidStackFrameException" FullName="Mono.Debugger.Soft.InvalidStackFrameException">
   <TypeSignature Language="C#" Value="public class InvalidStackFrameException : Exception" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>

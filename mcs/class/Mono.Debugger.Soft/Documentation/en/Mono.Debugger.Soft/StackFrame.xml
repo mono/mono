@@ -1,11 +1,11 @@
-<Type Name="StackFrame" FullName="Mono.Debugger.StackFrame">
-  <TypeSignature Language="C#" Value="public class StackFrame : Mono.Debugger.Mirror" />
+<Type Name="StackFrame" FullName="Mono.Debugger.Soft.StackFrame">
+  <TypeSignature Language="C#" Value="public class StackFrame : Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Mirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -30,13 +30,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetArgument">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value GetArgument (int pos);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value GetArgument (int pos);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="pos" Type="System.Int32" />
@@ -49,13 +49,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetThis">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value GetThis ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value GetThis ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -65,16 +65,16 @@
       </Docs>
     </Member>
     <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value GetValue (Mono.Debugger.LocalVariable var);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value GetValue (Mono.Debugger.Soft.LocalVariable var);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="var" Type="Mono.Debugger.LocalVariable" />
+        <Parameter Name="var" Type="Mono.Debugger.Soft.LocalVariable" />
       </Parameters>
       <Docs>
         <param name="var">To be added.</param>
@@ -84,16 +84,16 @@
       </Docs>
     </Member>
     <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value GetValue (Mono.Debugger.ParameterInfoMirror param);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value GetValue (Mono.Debugger.Soft.ParameterInfoMirror param);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="param" Type="Mono.Debugger.ParameterInfoMirror" />
+        <Parameter Name="param" Type="Mono.Debugger.Soft.ParameterInfoMirror" />
       </Parameters>
       <Docs>
         <param name="param">To be added.</param>
@@ -103,16 +103,16 @@
       </Docs>
     </Member>
     <Member MemberName="GetValues">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value[] GetValues (Mono.Debugger.LocalVariable[] vars);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value[] GetValues (Mono.Debugger.Soft.LocalVariable[] vars);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value[]</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value[]</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="vars" Type="Mono.Debugger.LocalVariable[]" />
+        <Parameter Name="vars" Type="Mono.Debugger.Soft.LocalVariable[]" />
       </Parameters>
       <Docs>
         <param name="vars">To be added.</param>
@@ -166,13 +166,13 @@
       </Docs>
     </Member>
     <Member MemberName="Location">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Location Location { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Location Location { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Location</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Location</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -181,13 +181,13 @@
       </Docs>
     </Member>
     <Member MemberName="Method">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodMirror Method { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror Method { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -196,7 +196,7 @@
       </Docs>
     </Member>
     <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (Mono.Debugger.LocalVariable var, Mono.Debugger.Value value);" />
+      <MemberSignature Language="C#" Value="public void SetValue (Mono.Debugger.Soft.LocalVariable var, Mono.Debugger.Soft.Value value);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -205,8 +205,8 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="var" Type="Mono.Debugger.LocalVariable" />
-        <Parameter Name="value" Type="Mono.Debugger.Value" />
+        <Parameter Name="var" Type="Mono.Debugger.Soft.LocalVariable" />
+        <Parameter Name="value" Type="Mono.Debugger.Soft.Value" />
       </Parameters>
       <Docs>
         <param name="var">To be added.</param>
@@ -216,7 +216,7 @@
       </Docs>
     </Member>
     <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (Mono.Debugger.ParameterInfoMirror param, Mono.Debugger.Value value);" />
+      <MemberSignature Language="C#" Value="public void SetValue (Mono.Debugger.Soft.ParameterInfoMirror param, Mono.Debugger.Soft.Value value);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -225,8 +225,8 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="param" Type="Mono.Debugger.ParameterInfoMirror" />
-        <Parameter Name="value" Type="Mono.Debugger.Value" />
+        <Parameter Name="param" Type="Mono.Debugger.Soft.ParameterInfoMirror" />
+        <Parameter Name="value" Type="Mono.Debugger.Soft.Value" />
       </Parameters>
       <Docs>
         <param name="param">To be added.</param>
@@ -236,13 +236,13 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.ThreadMirror Thread { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ThreadMirror Thread { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ThreadMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ThreadMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

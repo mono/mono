@@ -1,7 +1,7 @@
-<Type Name="ErrorHandlerEventArgs" FullName="Mono.Debugger.ErrorHandlerEventArgs">
+<Type Name="ErrorHandlerEventArgs" FullName="Mono.Debugger.Soft.ErrorHandlerEventArgs">
   <TypeSignature Language="C#" Value="public class ErrorHandlerEventArgs : EventArgs" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -27,13 +27,13 @@
       </Docs>
     </Member>
     <Member MemberName="ErrorCode">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.ErrorCode ErrorCode { set; get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ErrorCode ErrorCode { set; get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ErrorCode</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

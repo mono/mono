@@ -1,11 +1,11 @@
-<Type Name="MethodEntryEventRequest" FullName="Mono.Debugger.MethodEntryEventRequest">
-  <TypeSignature Language="C#" Value="public sealed class MethodEntryEventRequest : Mono.Debugger.EventRequest" />
+<Type Name="MethodEntryEventRequest" FullName="Mono.Debugger.Soft.MethodEntryEventRequest">
+  <TypeSignature Language="C#" Value="public sealed class MethodEntryEventRequest : Mono.Debugger.Soft.EventRequest" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.EventRequest</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.EventRequest</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>

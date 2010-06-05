@@ -1,11 +1,11 @@
-<Type Name="PropertyInfoMirror" FullName="Mono.Debugger.PropertyInfoMirror">
-  <TypeSignature Language="C#" Value="public class PropertyInfoMirror : Mono.Debugger.Mirror" />
+<Type Name="PropertyInfoMirror" FullName="Mono.Debugger.Soft.PropertyInfoMirror">
+  <TypeSignature Language="C#" Value="public class PropertyInfoMirror : Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Mirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -14,17 +14,17 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public PropertyInfoMirror (Mono.Debugger.TypeMirror parent, long id, string name, Mono.Debugger.MethodMirror get_method, Mono.Debugger.MethodMirror set_method, System.Reflection.PropertyAttributes attrs);" />
+      <MemberSignature Language="C#" Value="public PropertyInfoMirror (Mono.Debugger.Soft.TypeMirror parent, long id, string name, Mono.Debugger.Soft.MethodMirror get_method, Mono.Debugger.Soft.MethodMirror set_method, System.Reflection.PropertyAttributes attrs);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="parent" Type="Mono.Debugger.TypeMirror" />
+        <Parameter Name="parent" Type="Mono.Debugger.Soft.TypeMirror" />
         <Parameter Name="id" Type="System.Int64" />
         <Parameter Name="name" Type="System.String" />
-        <Parameter Name="get_method" Type="Mono.Debugger.MethodMirror" />
-        <Parameter Name="set_method" Type="Mono.Debugger.MethodMirror" />
+        <Parameter Name="get_method" Type="Mono.Debugger.Soft.MethodMirror" />
+        <Parameter Name="set_method" Type="Mono.Debugger.Soft.MethodMirror" />
         <Parameter Name="attrs" Type="System.Reflection.PropertyAttributes" />
       </Parameters>
       <Docs>
@@ -54,13 +54,13 @@
       </Docs>
     </Member>
     <Member MemberName="DeclaringType">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.TypeMirror DeclaringType { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror DeclaringType { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.TypeMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -69,13 +69,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.CustomAttributeDataMirror[] GetCustomAttributes (bool inherit);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.CustomAttributeDataMirror[] GetCustomAttributes (bool inherit);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.CustomAttributeDataMirror[]</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.CustomAttributeDataMirror[]</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="inherit" Type="System.Boolean" />
@@ -88,16 +88,16 @@
       </Docs>
     </Member>
     <Member MemberName="GetCustomAttributes">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.CustomAttributeDataMirror[] GetCustomAttributes (Mono.Debugger.TypeMirror attributeType, bool inherit);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.CustomAttributeDataMirror[] GetCustomAttributes (Mono.Debugger.Soft.TypeMirror attributeType, bool inherit);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.CustomAttributeDataMirror[]</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.CustomAttributeDataMirror[]</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="attributeType" Type="Mono.Debugger.TypeMirror" />
+        <Parameter Name="attributeType" Type="Mono.Debugger.Soft.TypeMirror" />
         <Parameter Name="inherit" Type="System.Boolean" />
       </Parameters>
       <Docs>
@@ -109,13 +109,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetGetMethod">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodMirror GetGetMethod ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror GetGetMethod ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodMirror</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -125,13 +125,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetGetMethod">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodMirror GetGetMethod (bool nonPublic);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror GetGetMethod (bool nonPublic);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodMirror</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="nonPublic" Type="System.Boolean" />
@@ -144,13 +144,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetIndexParameters">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.ParameterInfoMirror[] GetIndexParameters ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ParameterInfoMirror[] GetIndexParameters ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ParameterInfoMirror[]</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ParameterInfoMirror[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -160,13 +160,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetSetMethod">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodMirror GetSetMethod ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror GetSetMethod ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodMirror</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -176,13 +176,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetSetMethod">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodMirror GetSetMethod (bool nonPublic);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror GetSetMethod (bool nonPublic);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodMirror</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="nonPublic" Type="System.Boolean" />
@@ -225,13 +225,13 @@
       </Docs>
     </Member>
     <Member MemberName="PropertyType">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.TypeMirror PropertyType { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror PropertyType { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.TypeMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

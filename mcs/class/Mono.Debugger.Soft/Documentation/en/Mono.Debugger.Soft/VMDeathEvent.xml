@@ -1,11 +1,11 @@
-<Type Name="VMDeathEvent" FullName="Mono.Debugger.VMDeathEvent">
-  <TypeSignature Language="C#" Value="public class VMDeathEvent : Mono.Debugger.Event" />
+<Type Name="VMDeathEvent" FullName="Mono.Debugger.Soft.VMDeathEvent">
+  <TypeSignature Language="C#" Value="public class VMDeathEvent : Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Event</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Event</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -15,13 +15,13 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public VMDeathEvent (Mono.Debugger.VirtualMachine vm, int req_id);" />
+      <MemberSignature Language="C#" Value="public VMDeathEvent (Mono.Debugger.Soft.VirtualMachine vm, int req_id);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="vm" Type="Mono.Debugger.VirtualMachine" />
+        <Parameter Name="vm" Type="Mono.Debugger.Soft.VirtualMachine" />
         <Parameter Name="req_id" Type="System.Int32" />
       </Parameters>
       <Docs>

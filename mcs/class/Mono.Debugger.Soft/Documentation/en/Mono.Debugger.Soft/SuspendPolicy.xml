@@ -1,7 +1,7 @@
-<Type Name="SuspendPolicy" FullName="Mono.Debugger.SuspendPolicy">
+<Type Name="SuspendPolicy" FullName="Mono.Debugger.Soft.SuspendPolicy">
   <TypeSignature Language="C#" Value="public enum SuspendPolicy" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -20,7 +20,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.SuspendPolicy</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.SuspendPolicy</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -33,7 +33,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.SuspendPolicy</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.SuspendPolicy</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -46,7 +46,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.SuspendPolicy</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.SuspendPolicy</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

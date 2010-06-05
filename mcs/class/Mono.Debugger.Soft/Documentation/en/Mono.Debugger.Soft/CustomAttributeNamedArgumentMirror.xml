@@ -1,7 +1,7 @@
-<Type Name="CustomAttributeNamedArgumentMirror" FullName="Mono.Debugger.CustomAttributeNamedArgumentMirror">
+<Type Name="CustomAttributeNamedArgumentMirror" FullName="Mono.Debugger.Soft.CustomAttributeNamedArgumentMirror">
   <TypeSignature Language="C#" Value="public struct CustomAttributeNamedArgumentMirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -14,13 +14,13 @@
   </Docs>
   <Members>
     <Member MemberName="Field">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.FieldInfoMirror Field { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.FieldInfoMirror Field { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.FieldInfoMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.FieldInfoMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -29,13 +29,13 @@
       </Docs>
     </Member>
     <Member MemberName="Property">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.PropertyInfoMirror Property { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.PropertyInfoMirror Property { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.PropertyInfoMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.PropertyInfoMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -44,13 +44,13 @@
       </Docs>
     </Member>
     <Member MemberName="TypedValue">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.CustomAttributeTypedArgumentMirror TypedValue { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.CustomAttributeTypedArgumentMirror TypedValue { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.CustomAttributeTypedArgumentMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.CustomAttributeTypedArgumentMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

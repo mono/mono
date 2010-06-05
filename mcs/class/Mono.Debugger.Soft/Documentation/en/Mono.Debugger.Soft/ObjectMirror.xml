@@ -1,11 +1,11 @@
-<Type Name="ObjectMirror" FullName="Mono.Debugger.ObjectMirror">
-  <TypeSignature Language="C#" Value="public class ObjectMirror : Mono.Debugger.Value" />
+<Type Name="ObjectMirror" FullName="Mono.Debugger.Soft.ObjectMirror">
+  <TypeSignature Language="C#" Value="public class ObjectMirror : Mono.Debugger.Soft.Value" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Value</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Value</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -30,13 +30,13 @@
       </Docs>
     </Member>
     <Member MemberName="Domain">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.AppDomainMirror Domain { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AppDomainMirror Domain { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.AppDomainMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.AppDomainMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -45,16 +45,16 @@
       </Docs>
     </Member>
     <Member MemberName="GetValue">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value GetValue (Mono.Debugger.FieldInfoMirror field);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value GetValue (Mono.Debugger.Soft.FieldInfoMirror field);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="field" Type="Mono.Debugger.FieldInfoMirror" />
+        <Parameter Name="field" Type="Mono.Debugger.Soft.FieldInfoMirror" />
       </Parameters>
       <Docs>
         <param name="field">To be added.</param>
@@ -64,16 +64,16 @@
       </Docs>
     </Member>
     <Member MemberName="GetValues">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value[] GetValues (System.Collections.Generic.IList&lt;Mono.Debugger.FieldInfoMirror&gt; fields);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value[] GetValues (System.Collections.Generic.IList&lt;Mono.Debugger.Soft.FieldInfoMirror&gt; fields);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value[]</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value[]</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="fields" Type="System.Collections.Generic.IList&lt;Mono.Debugger.FieldInfoMirror&gt;" />
+        <Parameter Name="fields" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Soft.FieldInfoMirror&gt;" />
       </Parameters>
       <Docs>
         <param name="fields">To be added.</param>
@@ -83,18 +83,18 @@
       </Docs>
     </Member>
     <Member MemberName="InvokeMethod">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value InvokeMethod (Mono.Debugger.ThreadMirror thread, Mono.Debugger.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Value&gt; arguments);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value InvokeMethod (Mono.Debugger.Soft.ThreadMirror thread, Mono.Debugger.Soft.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt; arguments);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="thread" Type="Mono.Debugger.ThreadMirror" />
-        <Parameter Name="method" Type="Mono.Debugger.MethodMirror" />
-        <Parameter Name="arguments" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Value&gt;" />
+        <Parameter Name="thread" Type="Mono.Debugger.Soft.ThreadMirror" />
+        <Parameter Name="method" Type="Mono.Debugger.Soft.MethodMirror" />
+        <Parameter Name="arguments" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt;" />
       </Parameters>
       <Docs>
         <param name="thread">To be added.</param>
@@ -121,7 +121,7 @@
       </Docs>
     </Member>
     <Member MemberName="SetValue">
-      <MemberSignature Language="C#" Value="public void SetValue (Mono.Debugger.FieldInfoMirror field, Mono.Debugger.Value value);" />
+      <MemberSignature Language="C#" Value="public void SetValue (Mono.Debugger.Soft.FieldInfoMirror field, Mono.Debugger.Soft.Value value);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -130,8 +130,8 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="field" Type="Mono.Debugger.FieldInfoMirror" />
-        <Parameter Name="value" Type="Mono.Debugger.Value" />
+        <Parameter Name="field" Type="Mono.Debugger.Soft.FieldInfoMirror" />
+        <Parameter Name="value" Type="Mono.Debugger.Soft.Value" />
       </Parameters>
       <Docs>
         <param name="field">To be added.</param>
@@ -141,7 +141,7 @@
       </Docs>
     </Member>
     <Member MemberName="SetValues">
-      <MemberSignature Language="C#" Value="public void SetValues (System.Collections.Generic.IList&lt;Mono.Debugger.FieldInfoMirror&gt; fields, Mono.Debugger.Value[] values);" />
+      <MemberSignature Language="C#" Value="public void SetValues (System.Collections.Generic.IList&lt;Mono.Debugger.Soft.FieldInfoMirror&gt; fields, Mono.Debugger.Soft.Value[] values);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -150,8 +150,8 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="fields" Type="System.Collections.Generic.IList&lt;Mono.Debugger.FieldInfoMirror&gt;" />
-        <Parameter Name="values" Type="Mono.Debugger.Value[]" />
+        <Parameter Name="fields" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Soft.FieldInfoMirror&gt;" />
+        <Parameter Name="values" Type="Mono.Debugger.Soft.Value[]" />
       </Parameters>
       <Docs>
         <param name="fields">To be added.</param>
@@ -161,13 +161,13 @@
       </Docs>
     </Member>
     <Member MemberName="Type">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.TypeMirror Type { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror Type { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.TypeMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

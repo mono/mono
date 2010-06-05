@@ -1,11 +1,11 @@
-<Type Name="VirtualMachine" FullName="Mono.Debugger.VirtualMachine">
-  <TypeSignature Language="C#" Value="public class VirtualMachine : Mono.Debugger.Mirror" />
+<Type Name="VirtualMachine" FullName="Mono.Debugger.Soft.VirtualMachine">
+  <TypeSignature Language="C#" Value="public class VirtualMachine : Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Mirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -33,16 +33,16 @@
       </Docs>
     </Member>
     <Member MemberName="CreateBreakpointRequest">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.BreakpointEventRequest CreateBreakpointRequest (Mono.Debugger.MethodMirror method, long il_offset);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.BreakpointEventRequest CreateBreakpointRequest (Mono.Debugger.Soft.MethodMirror method, long il_offset);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.BreakpointEventRequest</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.BreakpointEventRequest</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="method" Type="Mono.Debugger.MethodMirror" />
+        <Parameter Name="method" Type="Mono.Debugger.Soft.MethodMirror" />
         <Parameter Name="il_offset" Type="System.Int64" />
       </Parameters>
       <Docs>
@@ -57,13 +57,13 @@
       </Docs>
     </Member>
     <Member MemberName="CreateMethodEntryRequest">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodEntryEventRequest CreateMethodEntryRequest ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodEntryEventRequest CreateMethodEntryRequest ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodEntryEventRequest</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodEntryEventRequest</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -73,13 +73,13 @@
       </Docs>
     </Member>
     <Member MemberName="CreateMethodExitRequest">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodExitEventRequest CreateMethodExitRequest ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodExitEventRequest CreateMethodExitRequest ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodExitEventRequest</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodExitEventRequest</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -92,16 +92,16 @@
       </Docs>
     </Member>
     <Member MemberName="CreateStepRequest">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.StepEventRequest CreateStepRequest (Mono.Debugger.ThreadMirror thread);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.StepEventRequest CreateStepRequest (Mono.Debugger.Soft.ThreadMirror thread);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StepEventRequest</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StepEventRequest</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="thread" Type="Mono.Debugger.ThreadMirror" />
+        <Parameter Name="thread" Type="Mono.Debugger.Soft.ThreadMirror" />
       </Parameters>
       <Docs>
         <param name="thread">
@@ -115,13 +115,13 @@
       </Docs>
     </Member>
     <Member MemberName="CreateValue">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.PrimitiveValue CreateValue (object value);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.PrimitiveValue CreateValue (object value);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.PrimitiveValue</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.PrimitiveValue</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="value" Type="System.Object" />
@@ -151,7 +151,7 @@
       </Docs>
     </Member>
     <Member MemberName="EnableEvents">
-      <MemberSignature Language="C#" Value="public void EnableEvents (Mono.Debugger.EventType[] events);" />
+      <MemberSignature Language="C#" Value="public void EnableEvents (Mono.Debugger.Soft.EventType[] events);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -160,7 +160,7 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="events" Type="Mono.Debugger.EventType[]">
+        <Parameter Name="events" Type="Mono.Debugger.Soft.EventType[]">
           <Attributes>
             <Attribute>
               <AttributeName>System.ParamArray</AttributeName>
@@ -217,13 +217,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetNextEvent">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Event GetNextEvent ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Event GetNextEvent ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Event</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Event</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -236,13 +236,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetNextEvent">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Event GetNextEvent (int timeout);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Event GetNextEvent (int timeout);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Event</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Event</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="timeout" Type="System.Int32" />
@@ -259,7 +259,7 @@
       </Docs>
     </Member>
     <Member MemberName="GetNextEvent&lt;T&gt;">
-      <MemberSignature Language="C#" Value="public T GetNextEvent&lt;T&gt; () where T : Mono.Debugger.Event;" />
+      <MemberSignature Language="C#" Value="public T GetNextEvent&lt;T&gt; () where T : Mono.Debugger.Soft.Event;" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -270,7 +270,7 @@
       <TypeParameters>
         <TypeParameter Name="T">
           <Constraints>
-            <BaseTypeName>Mono.Debugger.Event</BaseTypeName>
+            <BaseTypeName>Mono.Debugger.Soft.Event</BaseTypeName>
           </Constraints>
         </TypeParameter>
       </TypeParameters>
@@ -287,13 +287,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetThreads">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.ThreadMirror&gt; GetThreads ();" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.Soft.ThreadMirror&gt; GetThreads ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.ThreadMirror&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.Soft.ThreadMirror&gt;</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -338,13 +338,13 @@
       </Docs>
     </Member>
     <Member MemberName="RootDomain">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.AppDomainMirror RootDomain { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AppDomainMirror RootDomain { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.AppDomainMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.AppDomainMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>
@@ -356,16 +356,16 @@
       </Docs>
     </Member>
     <Member MemberName="SetBreakpoint">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.BreakpointEventRequest SetBreakpoint (Mono.Debugger.MethodMirror method, long il_offset);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.BreakpointEventRequest SetBreakpoint (Mono.Debugger.Soft.MethodMirror method, long il_offset);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.BreakpointEventRequest</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.BreakpointEventRequest</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="method" Type="Mono.Debugger.MethodMirror" />
+        <Parameter Name="method" Type="Mono.Debugger.Soft.MethodMirror" />
         <Parameter Name="il_offset" Type="System.Int64" />
       </Parameters>
       <Docs>

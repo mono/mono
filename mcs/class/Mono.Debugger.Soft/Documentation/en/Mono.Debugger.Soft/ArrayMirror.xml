@@ -1,11 +1,11 @@
-<Type Name="ArrayMirror" FullName="Mono.Debugger.ArrayMirror">
-  <TypeSignature Language="C#" Value="public class ArrayMirror : Mono.Debugger.ObjectMirror, System.Collections.IEnumerable" />
+<Type Name="ArrayMirror" FullName="Mono.Debugger.Soft.ArrayMirror">
+  <TypeSignature Language="C#" Value="public class ArrayMirror : Mono.Debugger.Soft.ObjectMirror, System.Collections.IEnumerable" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.ObjectMirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.ObjectMirror</BaseTypeName>
   </Base>
   <Interfaces>
     <Interface>
@@ -57,13 +57,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetValues">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.Value&gt; GetValues (int index, int length);" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt; GetValues (int index, int length);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.Value&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt;</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
@@ -78,13 +78,13 @@
       </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value this[int index] { set; get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value this[int index] { set; get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
@@ -169,7 +169,7 @@
       </Docs>
     </Member>
     <Member MemberName="SetValues">
-      <MemberSignature Language="C#" Value="public void SetValues (int index, Mono.Debugger.Value[] values);" />
+      <MemberSignature Language="C#" Value="public void SetValues (int index, Mono.Debugger.Soft.Value[] values);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -179,7 +179,7 @@
       </ReturnValue>
       <Parameters>
         <Parameter Name="index" Type="System.Int32" />
-        <Parameter Name="values" Type="Mono.Debugger.Value[]" />
+        <Parameter Name="values" Type="Mono.Debugger.Soft.Value[]" />
       </Parameters>
       <Docs>
         <param name="index">To be added.</param>

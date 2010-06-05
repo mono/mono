@@ -1,11 +1,11 @@
-<Type Name="AppDomainMirror" FullName="Mono.Debugger.AppDomainMirror">
-  <TypeSignature Language="C#" Value="public class AppDomainMirror : Mono.Debugger.Mirror" />
+<Type Name="AppDomainMirror" FullName="Mono.Debugger.Soft.AppDomainMirror">
+  <TypeSignature Language="C#" Value="public class AppDomainMirror : Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Mirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -14,13 +14,13 @@
   </Docs>
   <Members>
     <Member MemberName="Corlib">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.AssemblyMirror Corlib { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AssemblyMirror Corlib { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.AssemblyMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.AssemblyMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -29,13 +29,13 @@
       </Docs>
     </Member>
     <Member MemberName="CreateString">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.StringMirror CreateString (string s);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.StringMirror CreateString (string s);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StringMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StringMirror</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="s" Type="System.String" />
@@ -63,13 +63,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetAssemblies">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.AssemblyMirror[] GetAssemblies ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AssemblyMirror[] GetAssemblies ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.AssemblyMirror[]</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.AssemblyMirror[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>
@@ -79,13 +79,13 @@
       </Docs>
     </Member>
     <Member MemberName="GetEntryAssembly">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.AssemblyMirror GetEntryAssembly ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.AssemblyMirror GetEntryAssembly ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.AssemblyMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.AssemblyMirror</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>

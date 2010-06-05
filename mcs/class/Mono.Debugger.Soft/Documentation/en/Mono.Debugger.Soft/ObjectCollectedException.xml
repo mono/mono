@@ -1,7 +1,7 @@
-<Type Name="ObjectCollectedException" FullName="Mono.Debugger.ObjectCollectedException">
+<Type Name="ObjectCollectedException" FullName="Mono.Debugger.Soft.ObjectCollectedException">
   <TypeSignature Language="C#" Value="public class ObjectCollectedException : Exception" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>

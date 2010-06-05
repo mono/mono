@@ -1,7 +1,7 @@
-<Type Name="VirtualMachineManager" FullName="Mono.Debugger.VirtualMachineManager">
+<Type Name="VirtualMachineManager" FullName="Mono.Debugger.Soft.VirtualMachineManager">
   <TypeSignature Language="C#" Value="public class VirtualMachineManager" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -14,17 +14,17 @@
   </Docs>
   <Members>
     <Member MemberName="Launch">
-      <MemberSignature Language="C#" Value="public static Mono.Debugger.VirtualMachine Launch (string[] args, Mono.Debugger.LaunchOptions options);" />
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Launch (string[] args, Mono.Debugger.Soft.LaunchOptions options);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.VirtualMachine</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="args" Type="System.String[]" />
-        <Parameter Name="options" Type="Mono.Debugger.LaunchOptions" />
+        <Parameter Name="options" Type="Mono.Debugger.Soft.LaunchOptions" />
       </Parameters>
       <Docs>
         <param name="args">The arguments to pass to the launched virtual machine.</param>
@@ -35,13 +35,13 @@
       </Docs>
     </Member>
     <Member MemberName="Listen">
-      <MemberSignature Language="C#" Value="public static Mono.Debugger.VirtualMachine Listen (System.Net.IPEndPoint endpoint);" />
+      <MemberSignature Language="C#" Value="public static Mono.Debugger.Soft.VirtualMachine Listen (System.Net.IPEndPoint endpoint);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.VirtualMachine</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="endpoint" Type="System.Net.IPEndPoint" />

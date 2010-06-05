@@ -1,7 +1,7 @@
-<Type Name="Mirror" FullName="Mono.Debugger.Mirror">
-  <TypeSignature Language="C#" Value="public abstract class Mirror : Mono.Debugger.IMirror" />
+<Type Name="Mirror" FullName="Mono.Debugger.Soft.Mirror">
+  <TypeSignature Language="C#" Value="public abstract class Mirror : Mono.Debugger.Soft.IMirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -9,7 +9,7 @@
   </Base>
   <Interfaces>
     <Interface>
-      <InterfaceName>Mono.Debugger.IMirror</InterfaceName>
+      <InterfaceName>Mono.Debugger.Soft.IMirror</InterfaceName>
     </Interface>
   </Interfaces>
   <Docs>
@@ -19,7 +19,7 @@
   </Docs>
   <Members>
     <Member MemberName="CheckMirror">
-      <MemberSignature Language="C#" Value="protected void CheckMirror (Mono.Debugger.Mirror m);" />
+      <MemberSignature Language="C#" Value="protected void CheckMirror (Mono.Debugger.Soft.Mirror m);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -28,7 +28,7 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="m" Type="Mono.Debugger.Mirror" />
+        <Parameter Name="m" Type="Mono.Debugger.Soft.Mirror" />
       </Parameters>
       <Docs>
         <param name="m">To be added.</param>
@@ -51,7 +51,7 @@
       </Docs>
     </Member>
     <Member MemberName="SetVirtualMachine">
-      <MemberSignature Language="C#" Value="protected void SetVirtualMachine (Mono.Debugger.VirtualMachine vm);" />
+      <MemberSignature Language="C#" Value="protected void SetVirtualMachine (Mono.Debugger.Soft.VirtualMachine vm);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -60,7 +60,7 @@
         <ReturnType>System.Void</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="vm" Type="Mono.Debugger.VirtualMachine" />
+        <Parameter Name="vm" Type="Mono.Debugger.Soft.VirtualMachine" />
       </Parameters>
       <Docs>
         <param name="vm">To be added.</param>
@@ -69,13 +69,13 @@
       </Docs>
     </Member>
     <Member MemberName="VirtualMachine">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.VirtualMachine VirtualMachine { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.VirtualMachine VirtualMachine { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.VirtualMachine</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -84,13 +84,13 @@
       </Docs>
     </Member>
     <Member MemberName="vm">
-      <MemberSignature Language="C#" Value="protected Mono.Debugger.VirtualMachine vm;" />
+      <MemberSignature Language="C#" Value="protected Mono.Debugger.Soft.VirtualMachine vm;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.VirtualMachine</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

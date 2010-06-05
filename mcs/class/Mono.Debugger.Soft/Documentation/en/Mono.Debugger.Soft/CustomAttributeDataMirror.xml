@@ -1,7 +1,7 @@
-<Type Name="CustomAttributeDataMirror" FullName="Mono.Debugger.CustomAttributeDataMirror">
+<Type Name="CustomAttributeDataMirror" FullName="Mono.Debugger.Soft.CustomAttributeDataMirror">
   <TypeSignature Language="C#" Value="public sealed class CustomAttributeDataMirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -14,7 +14,7 @@
   </Docs>
   <Members>
     <Member MemberName="Constructor">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodMirror Constructor { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror Constructor { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -25,7 +25,7 @@
         </Attribute>
       </Attributes>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>The constructor which creates this custom attribute.</summary>
@@ -34,7 +34,7 @@
       </Docs>
     </Member>
     <Member MemberName="ConstructorArguments">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.CustomAttributeTypedArgumentMirror&gt; ConstructorArguments { get; }" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.Soft.CustomAttributeTypedArgumentMirror&gt; ConstructorArguments { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
@@ -45,7 +45,7 @@
         </Attribute>
       </Attributes>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.CustomAttributeTypedArgumentMirror&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.Soft.CustomAttributeTypedArgumentMirror&gt;</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>The arguments to the constructor.</summary>
@@ -54,13 +54,13 @@
       </Docs>
     </Member>
     <Member MemberName="NamedArguments">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.CustomAttributeNamedArgumentMirror&gt; NamedArguments { get; }" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.IList&lt;Mono.Debugger.Soft.CustomAttributeNamedArgumentMirror&gt; NamedArguments { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.CustomAttributeNamedArgumentMirror&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.IList&lt;Mono.Debugger.Soft.CustomAttributeNamedArgumentMirror&gt;</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Additional arguments of the custom attribute</summary>

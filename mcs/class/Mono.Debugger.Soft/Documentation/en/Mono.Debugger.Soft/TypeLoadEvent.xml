@@ -1,11 +1,11 @@
-<Type Name="TypeLoadEvent" FullName="Mono.Debugger.TypeLoadEvent">
-  <TypeSignature Language="C#" Value="public class TypeLoadEvent : Mono.Debugger.Event" />
+<Type Name="TypeLoadEvent" FullName="Mono.Debugger.Soft.TypeLoadEvent">
+  <TypeSignature Language="C#" Value="public class TypeLoadEvent : Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Event</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Event</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -15,13 +15,13 @@
   </Docs>
   <Members>
     <Member MemberName="Type">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.TypeMirror Type { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror Type { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.TypeMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

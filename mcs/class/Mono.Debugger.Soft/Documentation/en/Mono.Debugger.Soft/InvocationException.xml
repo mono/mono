@@ -1,7 +1,7 @@
-<Type Name="InvocationException" FullName="Mono.Debugger.InvocationException">
+<Type Name="InvocationException" FullName="Mono.Debugger.Soft.InvocationException">
   <TypeSignature Language="C#" Value="public class InvocationException : Exception" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -14,13 +14,13 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public InvocationException (Mono.Debugger.ObjectMirror exception);" />
+      <MemberSignature Language="C#" Value="public InvocationException (Mono.Debugger.Soft.ObjectMirror exception);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="exception" Type="Mono.Debugger.ObjectMirror" />
+        <Parameter Name="exception" Type="Mono.Debugger.Soft.ObjectMirror" />
       </Parameters>
       <Docs>
         <param name="exception">To be added.</param>
@@ -29,13 +29,13 @@
       </Docs>
     </Member>
     <Member MemberName="Exception">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.ObjectMirror Exception { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ObjectMirror Exception { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ObjectMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ObjectMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

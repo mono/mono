@@ -1,11 +1,11 @@
-<Type Name="VMDisconnectEvent" FullName="Mono.Debugger.VMDisconnectEvent">
-  <TypeSignature Language="C#" Value="public class VMDisconnectEvent : Mono.Debugger.Event" />
+<Type Name="VMDisconnectEvent" FullName="Mono.Debugger.Soft.VMDisconnectEvent">
+  <TypeSignature Language="C#" Value="public class VMDisconnectEvent : Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Event</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Event</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -15,13 +15,13 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public VMDisconnectEvent (Mono.Debugger.VirtualMachine vm, int req_id);" />
+      <MemberSignature Language="C#" Value="public VMDisconnectEvent (Mono.Debugger.Soft.VirtualMachine vm, int req_id);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="vm" Type="Mono.Debugger.VirtualMachine" />
+        <Parameter Name="vm" Type="Mono.Debugger.Soft.VirtualMachine" />
         <Parameter Name="req_id" Type="System.Int32" />
       </Parameters>
       <Docs>

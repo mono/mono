@@ -1,7 +1,7 @@
-<Type Name="StepDepth" FullName="Mono.Debugger.StepDepth">
+<Type Name="StepDepth" FullName="Mono.Debugger.Soft.StepDepth">
   <TypeSignature Language="C#" Value="public enum StepDepth" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -20,7 +20,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StepDepth</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StepDepth</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -33,7 +33,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StepDepth</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StepDepth</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -46,7 +46,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StepDepth</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StepDepth</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

@@ -1,11 +1,11 @@
-<Type Name="MethodBodyMirror" FullName="Mono.Debugger.MethodBodyMirror">
-  <TypeSignature Language="C#" Value="public class MethodBodyMirror : Mono.Debugger.Mirror" />
+<Type Name="MethodBodyMirror" FullName="Mono.Debugger.Soft.MethodBodyMirror">
+  <TypeSignature Language="C#" Value="public class MethodBodyMirror : Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Mirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -31,13 +31,13 @@
       </Docs>
     </Member>
     <Member MemberName="Instructions">
-      <MemberSignature Language="C#" Value="public System.Collections.Generic.List&lt;Mono.Debugger.ILInstruction&gt; Instructions { get; }" />
+      <MemberSignature Language="C#" Value="public System.Collections.Generic.List&lt;Mono.Debugger.Soft.ILInstruction&gt; Instructions { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>System.Collections.Generic.List&lt;Mono.Debugger.ILInstruction&gt;</ReturnType>
+        <ReturnType>System.Collections.Generic.List&lt;Mono.Debugger.Soft.ILInstruction&gt;</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -46,13 +46,13 @@
       </Docs>
     </Member>
     <Member MemberName="Method">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodMirror Method { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror Method { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

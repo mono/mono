@@ -1,11 +1,11 @@
-<Type Name="StepEventRequest" FullName="Mono.Debugger.StepEventRequest">
-  <TypeSignature Language="C#" Value="public sealed class StepEventRequest : Mono.Debugger.EventRequest" />
+<Type Name="StepEventRequest" FullName="Mono.Debugger.Soft.StepEventRequest">
+  <TypeSignature Language="C#" Value="public sealed class StepEventRequest : Mono.Debugger.Soft.EventRequest" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.EventRequest</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.EventRequest</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -15,13 +15,13 @@
   </Docs>
   <Members>
     <Member MemberName="Depth">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.StepDepth Depth { set; get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.StepDepth Depth { set; get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StepDepth</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StepDepth</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -45,13 +45,13 @@
       </Docs>
     </Member>
     <Member MemberName="Size">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.StepSize Size { set; get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.StepSize Size { set; get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StepSize</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StepSize</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -60,13 +60,13 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.ThreadMirror Thread { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ThreadMirror Thread { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ThreadMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ThreadMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

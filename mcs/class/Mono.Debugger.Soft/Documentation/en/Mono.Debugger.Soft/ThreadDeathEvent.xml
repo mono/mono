@@ -1,11 +1,11 @@
-<Type Name="ThreadDeathEvent" FullName="Mono.Debugger.ThreadDeathEvent">
-  <TypeSignature Language="C#" Value="public class ThreadDeathEvent : Mono.Debugger.Event" />
+<Type Name="ThreadDeathEvent" FullName="Mono.Debugger.Soft.ThreadDeathEvent">
+  <TypeSignature Language="C#" Value="public class ThreadDeathEvent : Mono.Debugger.Soft.Event" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Event</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Event</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>

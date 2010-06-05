@@ -1,11 +1,11 @@
-<Type Name="PrimitiveValue" FullName="Mono.Debugger.PrimitiveValue">
-  <TypeSignature Language="C#" Value="public class PrimitiveValue : Mono.Debugger.Value" />
+<Type Name="PrimitiveValue" FullName="Mono.Debugger.Soft.PrimitiveValue">
+  <TypeSignature Language="C#" Value="public class PrimitiveValue : Mono.Debugger.Soft.Value" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Value</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Value</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -14,13 +14,13 @@
   </Docs>
   <Members>
     <Member MemberName=".ctor">
-      <MemberSignature Language="C#" Value="public PrimitiveValue (Mono.Debugger.VirtualMachine vm, object value);" />
+      <MemberSignature Language="C#" Value="public PrimitiveValue (Mono.Debugger.Soft.VirtualMachine vm, object value);" />
       <MemberType>Constructor</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <Parameters>
-        <Parameter Name="vm" Type="Mono.Debugger.VirtualMachine" />
+        <Parameter Name="vm" Type="Mono.Debugger.Soft.VirtualMachine" />
         <Parameter Name="value" Type="System.Object" />
       </Parameters>
       <Docs>

@@ -1,7 +1,7 @@
-<Type Name="VMMismatchException" FullName="Mono.Debugger.VMMismatchException">
+<Type Name="VMMismatchException" FullName="Mono.Debugger.Soft.VMMismatchException">
   <TypeSignature Language="C#" Value="public class VMMismatchException : Exception" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>

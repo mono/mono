@@ -1,11 +1,11 @@
-<Type Name="StringMirror" FullName="Mono.Debugger.StringMirror">
-  <TypeSignature Language="C#" Value="public class StringMirror : Mono.Debugger.ObjectMirror" />
+<Type Name="StringMirror" FullName="Mono.Debugger.Soft.StringMirror">
+  <TypeSignature Language="C#" Value="public class StringMirror : Mono.Debugger.Soft.ObjectMirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.ObjectMirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.ObjectMirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>

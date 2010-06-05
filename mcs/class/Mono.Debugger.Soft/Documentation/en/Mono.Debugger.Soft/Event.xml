@@ -1,7 +1,7 @@
-<Type Name="Event" FullName="Mono.Debugger.Event">
+<Type Name="Event" FullName="Mono.Debugger.Soft.Event">
   <TypeSignature Language="C#" Value="public abstract class Event" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -18,13 +18,13 @@
   </Docs>
   <Members>
     <Member MemberName="EventType">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.EventType EventType { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.EventType EventType { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventType</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventType</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -33,13 +33,13 @@
       </Docs>
     </Member>
     <Member MemberName="Request">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.EventRequest Request { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.EventRequest Request { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.EventRequest</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.EventRequest</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -48,13 +48,13 @@
       </Docs>
     </Member>
     <Member MemberName="Thread">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.ThreadMirror Thread { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.ThreadMirror Thread { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ThreadMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ThreadMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -79,13 +79,13 @@
       </Docs>
     </Member>
     <Member MemberName="vm">
-      <MemberSignature Language="C#" Value="protected Mono.Debugger.VirtualMachine vm;" />
+      <MemberSignature Language="C#" Value="protected Mono.Debugger.Soft.VirtualMachine vm;" />
       <MemberType>Field</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.VirtualMachine</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

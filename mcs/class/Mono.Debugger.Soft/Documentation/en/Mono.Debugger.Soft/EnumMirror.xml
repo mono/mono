@@ -1,11 +1,11 @@
-<Type Name="EnumMirror" FullName="Mono.Debugger.EnumMirror">
-  <TypeSignature Language="C#" Value="public class EnumMirror : Mono.Debugger.StructMirror" />
+<Type Name="EnumMirror" FullName="Mono.Debugger.Soft.EnumMirror">
+  <TypeSignature Language="C#" Value="public class EnumMirror : Mono.Debugger.Soft.StructMirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.StructMirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.StructMirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>

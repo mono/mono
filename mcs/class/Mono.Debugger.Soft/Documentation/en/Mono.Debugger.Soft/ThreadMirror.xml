@@ -1,11 +1,11 @@
-<Type Name="ThreadMirror" FullName="Mono.Debugger.ThreadMirror">
-  <TypeSignature Language="C#" Value="public class ThreadMirror : Mono.Debugger.ObjectMirror" />
+<Type Name="ThreadMirror" FullName="Mono.Debugger.Soft.ThreadMirror">
+  <TypeSignature Language="C#" Value="public class ThreadMirror : Mono.Debugger.Soft.ObjectMirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.ObjectMirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.ObjectMirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -15,13 +15,13 @@
   </Docs>
   <Members>
     <Member MemberName="GetFrames">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.StackFrame[] GetFrames ();" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.StackFrame[] GetFrames ();" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StackFrame[]</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StackFrame[]</ReturnType>
       </ReturnValue>
       <Parameters />
       <Docs>

@@ -1,11 +1,11 @@
-<Type Name="LocalVariable" FullName="Mono.Debugger.LocalVariable">
-  <TypeSignature Language="C#" Value="public class LocalVariable : Mono.Debugger.Mirror" />
+<Type Name="LocalVariable" FullName="Mono.Debugger.Soft.LocalVariable">
+  <TypeSignature Language="C#" Value="public class LocalVariable : Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Mirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -45,13 +45,13 @@
       </Docs>
     </Member>
     <Member MemberName="Method">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.MethodMirror Method { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.MethodMirror Method { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.MethodMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.MethodMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -75,13 +75,13 @@
       </Docs>
     </Member>
     <Member MemberName="Type">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.TypeMirror Type { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror Type { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.TypeMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

@@ -1,7 +1,7 @@
-<Type Name="IMirror" FullName="Mono.Debugger.IMirror">
+<Type Name="IMirror" FullName="Mono.Debugger.Soft.IMirror">
   <TypeSignature Language="C#" Value="public interface IMirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Interfaces />
@@ -15,13 +15,13 @@
   </Docs>
   <Members>
     <Member MemberName="VirtualMachine">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.VirtualMachine VirtualMachine { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.VirtualMachine VirtualMachine { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.VirtualMachine</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.VirtualMachine</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>Returns the virtual machine this entity belongs to.</summary>

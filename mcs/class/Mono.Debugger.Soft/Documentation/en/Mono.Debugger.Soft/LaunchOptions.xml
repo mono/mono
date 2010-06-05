@@ -1,7 +1,7 @@
-<Type Name="LaunchOptions" FullName="Mono.Debugger.LaunchOptions">
+<Type Name="LaunchOptions" FullName="Mono.Debugger.Soft.LaunchOptions">
   <TypeSignature Language="C#" Value="public class LaunchOptions" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -9,7 +9,7 @@
   </Base>
   <Interfaces />
   <Docs>
-    <summary>Options used to control <see cref="M:Mono.Debugger.VirtualMachineManager.Launch(System.String[],Mono.Debugger.LaunchOptions)" />.</summary>
+    <summary>Options used to control <see cref="M:Mono.Debugger.Soft.VirtualMachineManager.Launch(System.String[],Mono.Debugger.Soft.LaunchOptions)" />.</summary>
     <remarks>To be added.</remarks>
   </Docs>
   <Members>

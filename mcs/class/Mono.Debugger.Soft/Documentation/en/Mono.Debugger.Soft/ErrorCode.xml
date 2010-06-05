@@ -1,7 +1,7 @@
-<Type Name="ErrorCode" FullName="Mono.Debugger.ErrorCode">
+<Type Name="ErrorCode" FullName="Mono.Debugger.Soft.ErrorCode">
   <TypeSignature Language="C#" Value="public enum ErrorCode" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -20,7 +20,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ErrorCode</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -33,7 +33,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ErrorCode</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -46,7 +46,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ErrorCode</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -59,7 +59,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ErrorCode</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -72,7 +72,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ErrorCode</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -85,7 +85,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ErrorCode</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -98,7 +98,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.ErrorCode</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.ErrorCode</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

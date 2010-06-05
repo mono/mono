@@ -1,7 +1,7 @@
-<Type Name="StepSize" FullName="Mono.Debugger.StepSize">
+<Type Name="StepSize" FullName="Mono.Debugger.Soft.StepSize">
   <TypeSignature Language="C#" Value="public enum StepSize" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
@@ -20,7 +20,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StepSize</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StepSize</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -33,7 +33,7 @@
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.StepSize</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.StepSize</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

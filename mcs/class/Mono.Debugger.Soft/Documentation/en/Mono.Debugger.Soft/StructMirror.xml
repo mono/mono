@@ -1,11 +1,11 @@
-<Type Name="StructMirror" FullName="Mono.Debugger.StructMirror">
-  <TypeSignature Language="C#" Value="public class StructMirror : Mono.Debugger.Value" />
+<Type Name="StructMirror" FullName="Mono.Debugger.Soft.StructMirror">
+  <TypeSignature Language="C#" Value="public class StructMirror : Mono.Debugger.Soft.Value" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Value</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Value</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>
@@ -15,13 +15,13 @@
   </Docs>
   <Members>
     <Member MemberName="Fields">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value[] Fields { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value[] Fields { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value[]</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value[]</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>
@@ -30,18 +30,18 @@
       </Docs>
     </Member>
     <Member MemberName="InvokeMethod">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value InvokeMethod (Mono.Debugger.ThreadMirror thread, Mono.Debugger.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Value&gt; arguments);" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value InvokeMethod (Mono.Debugger.Soft.ThreadMirror thread, Mono.Debugger.Soft.MethodMirror method, System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt; arguments);" />
       <MemberType>Method</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters>
-        <Parameter Name="thread" Type="Mono.Debugger.ThreadMirror" />
-        <Parameter Name="method" Type="Mono.Debugger.MethodMirror" />
-        <Parameter Name="arguments" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Value&gt;" />
+        <Parameter Name="thread" Type="Mono.Debugger.Soft.ThreadMirror" />
+        <Parameter Name="method" Type="Mono.Debugger.Soft.MethodMirror" />
+        <Parameter Name="arguments" Type="System.Collections.Generic.IList&lt;Mono.Debugger.Soft.Value&gt;" />
       </Parameters>
       <Docs>
         <param name="thread">To be added.</param>
@@ -53,13 +53,13 @@
       </Docs>
     </Member>
     <Member MemberName="Item">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.Value this[string field] { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.Value this[string field] { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.Value</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.Value</ReturnType>
       </ReturnValue>
       <Parameters>
         <Parameter Name="field" Type="System.String" />
@@ -72,13 +72,13 @@
       </Docs>
     </Member>
     <Member MemberName="Type">
-      <MemberSignature Language="C#" Value="public Mono.Debugger.TypeMirror Type { get; }" />
+      <MemberSignature Language="C#" Value="public Mono.Debugger.Soft.TypeMirror Type { get; }" />
       <MemberType>Property</MemberType>
       <AssemblyInfo>
         <AssemblyVersion>0.0.0.0</AssemblyVersion>
       </AssemblyInfo>
       <ReturnValue>
-        <ReturnType>Mono.Debugger.TypeMirror</ReturnType>
+        <ReturnType>Mono.Debugger.Soft.TypeMirror</ReturnType>
       </ReturnValue>
       <Docs>
         <summary>To be added.</summary>

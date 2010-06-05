@@ -1,11 +1,11 @@
-<Type Name="Value" FullName="Mono.Debugger.Value">
-  <TypeSignature Language="C#" Value="public abstract class Value : Mono.Debugger.Mirror" />
+<Type Name="Value" FullName="Mono.Debugger.Soft.Value">
+  <TypeSignature Language="C#" Value="public abstract class Value : Mono.Debugger.Soft.Mirror" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
-    <BaseTypeName>Mono.Debugger.Mirror</BaseTypeName>
+    <BaseTypeName>Mono.Debugger.Soft.Mirror</BaseTypeName>
   </Base>
   <Interfaces />
   <Docs>

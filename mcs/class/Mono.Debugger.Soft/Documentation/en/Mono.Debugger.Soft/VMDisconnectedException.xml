@@ -1,7 +1,7 @@
-<Type Name="VMDisconnectedException" FullName="Mono.Debugger.VMDisconnectedException">
+<Type Name="VMDisconnectedException" FullName="Mono.Debugger.Soft.VMDisconnectedException">
   <TypeSignature Language="C#" Value="public class VMDisconnectedException : Exception" />
   <AssemblyInfo>
-    <AssemblyName>Mono.Debugger</AssemblyName>
+    <AssemblyName>Mono.Debugger.Soft</AssemblyName>
     <AssemblyVersion>0.0.0.0</AssemblyVersion>
   </AssemblyInfo>
   <Base>
