@@ -1,5 +1,9 @@
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-marksweep.c (ms_get_empty_block): Update heap boundaries.
+
+2010-06-05  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Enable mark&sweep again.
 
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
