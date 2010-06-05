@@ -97,7 +97,8 @@ MONO_DIRS = \
 	$(classdir)/Mono.Security/$(doc_en)                \
 	$(classdir)/Mono.Simd/$(doc_en)                    \
 	$(classdir)/Npgsql/$(doc_en)                       \
-	$(topdir)/tools/csharplib/en
+	$(topdir)/tools/csharplib/en					   \
+	$(classdir)/Mono.Debugger.Soft/$(doc_en)
 
 NOVELL_DIRS = \
 	$(topdir)/class/Novell.Directory.Ldap/Documentation/en

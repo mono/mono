@@ -1,0 +1,4 @@
+2010-06-05  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile (MONO_DIRS): Add Mono.Debugger.Soft.
+
