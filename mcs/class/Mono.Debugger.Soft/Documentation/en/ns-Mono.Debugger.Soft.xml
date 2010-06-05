@@ -1,4 +1,18 @@
 <Namespace Name="Mono.Debugger">
   <Docs>
+	<summary>Mono Soft Debugger API</summary>
+  <remarks>
+    <para>This API is used to communicate with the debugging agent running 
+	inside a mono runtime.
+	</para>
+    <para>The API is based on and is very similar to the <format type="text/html"><a href="http://java.sun.com/j2se/1.5.0/docs/guide/jpda/jdi/index.html">Java Debug Interface.</a> If documentation is missing, the JDI documentation can be consulted instead.</format></para>
+    <para>
+	In this documentation, debuggee refers to the remote process running the mono runtime which this API communicates with.
+	</para>
+    <para>A <c>Mirror</c> object represents an entity in the debuggee. There is usually one mirror subclass for each type of entity, i.e. <c>TypeMirror</c> for types, <c>AppDomainMirror</c> for application domains etc. These classes usually have a similar set of properties/methods as their non-mirror counterparts, the difference is that calling these properties/methods might result in a remote call to the debuggee to request information. The results of these remote calls are usually cached in the mirror object, so when multiple calls are made to <c>TypeMirror.Name</c>, for example, only the first call involves a remote operation. The <c>ToString()/Equals()/GetHashCode ()</c> methods are an exception, these are guaranteed to only access local state.
+	</para>
+    <para>Differences between this API and JDI:
+	<list type="bullet"><item><term>There is only one namespace, instead of 5 in JDI.</term></item><item><term>The API uses classes, while JDI uses interfaces.</term></item><item><term>No SPI interface yet.</term></item><item><term>Information is accessed using C# properties instead of methods.</term></item><item><term>There are fewer classes, i.e. <c>EventQueue</c>/<c>EventRequestManager</c> is integrated into <c>VirtualMachine</c>.</term></item><item><term>Values which have primitive types i.e. int are represented by a class called <c>PrimitiveValue</c>, instead of a separate class for each primitive type.</term></item></list></para>
+  </remarks>
   </Docs>
 </Namespace>
