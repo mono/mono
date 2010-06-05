@@ -1,5 +1,11 @@
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c, sgen-protocol.c, sgen-protocol.h: Protocol degraded
+	allocations and distinguish between normal, degraded and pinned
+	allocations.
+
+2010-06-05  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c, sgen-major-copying.c, sgen-marksweep.c: Make degraded
 	allocations count toward major collections and trigger major
 	collections from degraded allocations if appropriate.

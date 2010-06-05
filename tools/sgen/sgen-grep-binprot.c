@@ -18,6 +18,8 @@ read_entry (FILE *in, void **data)
 	switch (type) {
 	case SGEN_PROTOCOL_COLLECTION: size = sizeof (SGenProtocolCollection); break;
 	case SGEN_PROTOCOL_ALLOC: size = sizeof (SGenProtocolAlloc); break;
+	case SGEN_PROTOCOL_ALLOC_PINNED: size = sizeof (SGenProtocolAlloc); break;
+	case SGEN_PROTOCOL_ALLOC_DEGRADED: size = sizeof (SGenProtocolAlloc); break;
 	case SGEN_PROTOCOL_COPY: size = sizeof (SGenProtocolCopy); break;
 	case SGEN_PROTOCOL_PIN: size = sizeof (SGenProtocolPin); break;
 	case SGEN_PROTOCOL_MARK: size = sizeof (SGenProtocolMark); break;
@@ -52,6 +54,16 @@ print_entry (int type, void *data)
 	case SGEN_PROTOCOL_ALLOC: {
 		SGenProtocolAlloc *entry = data;
 		printf ("alloc obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_ALLOC_PINNED: {
+		SGenProtocolAlloc *entry = data;
+		printf ("alloc pinned obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
+		break;
+	}
+	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
+		SGenProtocolAlloc *entry = data;
+		printf ("alloc degraded obj %p vtable %p size %d\n", entry->obj, entry->vtable, entry->size);
 		break;
 	}
 	case SGEN_PROTOCOL_COPY: {
@@ -136,7 +148,9 @@ is_match (gpointer ptr, int type, void *data)
 	case SGEN_PROTOCOL_THREAD_REGISTER:
 	case SGEN_PROTOCOL_THREAD_UNREGISTER:
 		return TRUE;
-	case SGEN_PROTOCOL_ALLOC: {
+	case SGEN_PROTOCOL_ALLOC:
+	case SGEN_PROTOCOL_ALLOC_PINNED:
+	case SGEN_PROTOCOL_ALLOC_DEGRADED: {
 		SGenProtocolAlloc *entry = data;
 		return matches_interval (ptr, entry->obj, entry->size);
 	}
