@@ -1,5 +1,9 @@
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
 
+	* sgen-gc.c: Enable mark&sweep again.
+
+2010-06-05  Mark Probst  <mark.probst@gmail.com>
+
 	* sgen-gc.c: Increase the maximum small object size to 8000 bytes.
 
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
