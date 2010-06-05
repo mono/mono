@@ -1,3 +1,10 @@
+2010-06-05  Mark Probst  <mark.probst@gmail.com>
+
+	* sgen-gc.c, sgen-major-copying.c, sgen-marksweep.c: Have only one
+	major heap allowance for minor collections, instead of two
+	separate ones for small and large objects.  This reduces the
+	number of major collections.
+
 2010-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* icall.c (ves_icall_MonoType_GetEvent): be case insensitive is
