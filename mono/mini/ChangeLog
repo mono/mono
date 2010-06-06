@@ -1,3 +1,8 @@
+2010-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c method-to-ir.c ir-emit.h: When using the llvm mono branch, allow
+	loads/stores which can throw exceptions inside clauses.
+
 2010-06-05  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_emit_method): Fix support for finally clauses with more than
