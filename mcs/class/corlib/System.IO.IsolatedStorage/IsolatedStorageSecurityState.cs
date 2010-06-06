@@ -34,6 +34,10 @@ namespace System.IO.IsolatedStorage
 {
 	public class IsolatedStorageSecurityState : SecurityState {
 
+		internal IsolatedStorageSecurityState ()
+		{
+		}
+
 		public IsolatedStorageSecurityOptions Options {
 			get {
 				return IsolatedStorageSecurityOptions.IncreaseQuotaForApplication;
