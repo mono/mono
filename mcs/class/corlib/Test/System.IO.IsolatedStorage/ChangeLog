@@ -1,3 +1,8 @@
+2010-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFileTest.cs: Include check for paths outside our
+	storage root in our tests for MoveFile, MoveDirectory and CopyFile.
+
 2010-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFileTest.cs: New test case for Remove.

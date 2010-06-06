@@ -801,6 +801,13 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			} catch (DirectoryNotFoundException) {
 			}
 
+			// Out of storage dir
+			try {
+				isf.MoveDirectory ("subdir-new", "../../subdir-new");
+				Assert.Fail ("#Exc6");
+			} catch (IsolatedStorageException) {
+			}
+
 			isf.Remove ();
 			isf.Close ();
 			isf.Dispose ();
@@ -872,6 +879,19 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			} catch (IsolatedStorageException) {
 			}
 
+			// Out of storage dir
+			try {
+				isf.CopyFile ("file", "../../file");
+				Assert.Fail ("#Exc6");
+			} catch (IsolatedStorageException) {
+			}
+
+			try {
+				isf.CopyFile ("../file", "file-new");
+				Assert.Fail ("#Exc7");
+			} catch (IsolatedStorageException) {
+			}
+
 			// We are creating a subdirectory and files within it, so remove it just in case.
 			isf.Remove ();
 
@@ -940,6 +960,13 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			try {
 				isf.MoveFile ("file-new", "doesntexist/doesntexist");
 				Assert.Fail ("#Exc5");
+			} catch (IsolatedStorageException) {
+			}
+
+			// Out of storage dir
+			try {
+				isf.MoveFile ("file-new", "../../file-new");
+				Assert.Fail ("#Exc6");
 			} catch (IsolatedStorageException) {
 			}
 
