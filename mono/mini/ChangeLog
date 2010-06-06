@@ -1,5 +1,7 @@
 2010-06-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_check_method_supported): Only disable llvm for nested clauses.
+
 	* mini.c (mini_method_compile): Move the LLVM checks to a function in mini-llvm.c.
 
 	* mini.c (mono_jit_runtime_invoke): Initialize *exc to NULL before calling the wrapper,
