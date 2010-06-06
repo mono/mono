@@ -1,5 +1,7 @@
 2010-06-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_method_compile): Move the LLVM checks to a function in mini-llvm.c.
+
 	* mini.c (mono_jit_runtime_invoke): Initialize *exc to NULL before calling the wrapper,
 	so it doesn't have to do it.
 
