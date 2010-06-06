@@ -564,6 +564,8 @@ namespace System.IO.IsolatedStorage {
 			string source_full_path = Path.Combine (directory.FullName, sourceFileName);
 			string dest_full_path = Path.Combine (directory.FullName, destinationFileName);
 
+			if (!IsPathInStorage (source_full_path) || !IsPathInStorage (dest_full_path))
+				throw new IsolatedStorageException ("Operation not allowed.");
 			// These excs can be thrown from File.Copy, but we can try to detect them from here.
 			if (!Directory.Exists (Path.GetDirectoryName (source_full_path)))
 				throw new DirectoryNotFoundException ("Could not find a part of path '" + sourceFileName + "'.");
@@ -621,7 +623,12 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentNullException ("path");
 
 			CheckOpen ();
-			return Directory.Exists (Path.Combine (directory.FullName, path));
+
+			string full_path = Path.Combine (directory.FullName, path);
+			if (!IsPathInStorage (full_path))
+				return false;
+
+			return Directory.Exists (full_path);
 		}
 
 		[ComVisible (false)]
@@ -631,7 +638,12 @@ namespace System.IO.IsolatedStorage {
 				throw new ArgumentNullException ("path");
 
 			CheckOpen ();
-			return File.Exists (Path.Combine (directory.FullName, path));
+
+			string full_path = Path.Combine (directory.FullName, path);
+			if (!IsPathInStorage (full_path))
+				return false;
+
+			return File.Exists (full_path);
 		}
 
 		[ComVisible (false)]
@@ -792,6 +804,8 @@ namespace System.IO.IsolatedStorage {
 			string src_full_path = Path.Combine (directory.FullName, sourceDirectoryName);
 			string dest_full_path = Path.Combine (directory.FullName, destinationDirectoryName);
 
+			if (!IsPathInStorage (src_full_path) || !IsPathInStorage (dest_full_path))
+				throw new IsolatedStorageException ("Operation not allowed.");
 			if (!Directory.Exists (src_full_path))
 				throw new DirectoryNotFoundException ("Could not find a part of path '" + sourceDirectoryName + "'.");
 			if (!Directory.Exists (Path.GetDirectoryName (dest_full_path)))
@@ -821,6 +835,8 @@ namespace System.IO.IsolatedStorage {
 			string source_full_path = Path.Combine (directory.FullName, sourceFileName);
 			string dest_full_path = Path.Combine (directory.FullName, destinationFileName);
 
+			if (!IsPathInStorage (source_full_path) || !IsPathInStorage (dest_full_path))
+				throw new IsolatedStorageException ("Operation not allowed.");
 			if (!File.Exists (source_full_path))
 				throw new FileNotFoundException ("Could not find a part of path '" + sourceFileName + "'.");
 			// I expected a DirectoryNotFound exception.
@@ -887,6 +903,11 @@ namespace System.IO.IsolatedStorage {
 				throw new InvalidOperationException ("Storage needs to be open for this operation.");
 			if (checkDirExists && !Directory.Exists (directory.FullName))
 				throw new IsolatedStorageException ("Isolated storage has been removed or disabled.");
+		}
+
+		bool IsPathInStorage (string path)
+		{
+			return Path.GetFullPath (path).StartsWith (directory.FullName);
 		}
 #endif
 

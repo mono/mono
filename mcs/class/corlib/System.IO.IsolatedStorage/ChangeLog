@@ -1,3 +1,9 @@
+2010-06-06  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* IsolatedStorageFile.cs: Our 4.0 methods receiving a path should
+	either return false or throw an IsolatedStorageException if the path
+	refers to a directory outside the storage root.
+
 2010-06-04  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* IsolatedStorageFile.cs: In CheckOpen check that the directory for
