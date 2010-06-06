@@ -1,5 +1,8 @@
 2010-06-06  Zoltan Varga  <vargaz@gmail.com>
 
+	* helpers.c (mono_disassemble_code): Flush stdout, so the output from the spawned
+	process does not mix with ours.
+
 	* mini-llvm.c (mono_llvm_emit_method): Refactor this giant function into smaller
 	ones.
 
