@@ -1,3 +1,8 @@
+2010-06-06  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_marshal_get_runtime_invoke): Don't set *exc to NULL, it is now
+	done by the caller.
+
 2010-06-05  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-los.c: Keep bitmaps on chunk usage in LOS sections to speed
