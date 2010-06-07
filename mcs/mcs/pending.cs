@@ -58,7 +58,7 @@ namespace Mono.CSharp {
 		/// </summary>
 		TypeAndMethods [] pending_implementations;
 
-		PendingImplementation (TypeContainer container, MissingInterfacesInfo[] missing_ifaces, IList<MethodSpec> abstract_methods, int total)
+		PendingImplementation (TypeContainer container, MissingInterfacesInfo[] missing_ifaces, MethodSpec[] abstract_methods, int total)
 		{
 			var type_builder = container.Definition;
 			
@@ -67,7 +67,7 @@ namespace Mono.CSharp {
 
 			int i = 0;
 			if (abstract_methods != null) {
-				int count = abstract_methods.Count;
+				int count = abstract_methods.Length;
 				pending_implementations [i].methods = new MethodSpec [count];
 				pending_implementations [i].need_proxy = new MethodSpec [count];
 
@@ -163,13 +163,17 @@ namespace Mono.CSharp {
 			// We also pre-compute the methods.
 			//
 			bool implementing_abstract = ((b != null) && b.IsAbstract && (container.ModFlags & Modifiers.ABSTRACT) == 0);
-			IList<MethodSpec> abstract_methods = null;
+			MethodSpec[] abstract_methods = null;
 
 			if (implementing_abstract){
-				abstract_methods = MemberCache.GetNotImplementedAbstractMethods (b);
-				
-				if (abstract_methods == null)
+				var am = MemberCache.GetNotImplementedAbstractMethods (b);
+
+				if (am == null) {
 					implementing_abstract = false;
+				} else {
+					abstract_methods = new MethodSpec[am.Count];
+					am.CopyTo (abstract_methods, 0);
+				}
 			}
 			
 			int total = missing_interfaces.Length +  (implementing_abstract ? 1 : 0);

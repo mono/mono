@@ -733,6 +733,10 @@ namespace Mono.CSharp {
 			return methods;
 		}
 
+		//
+		// Returns all not implememted abstract members inside abstract type
+		// NOTE: Returned list is shared and must not be modified
+		//
 		public static IList<MethodSpec> GetNotImplementedAbstractMethods (TypeSpec type)
 		{
 			if (type.MemberCache.missing_abstract != null)

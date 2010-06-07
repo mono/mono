@@ -1,3 +1,8 @@
+2010-06-07  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #610878
+	* pending.cs: Clone cached list before modifying.
+
 2010-06-04  Marek Safar  <marek.safar@gmail.com>
 
 	* convert.cs, typespec.cs, expression.cs: Start using array member
