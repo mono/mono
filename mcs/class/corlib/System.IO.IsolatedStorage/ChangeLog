@@ -1,5 +1,11 @@
 2010-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* IsolatedStorageFile.cs: GetUserStoreForSite is only throwing a
+	NotSupportedException.
+	* IsolatedStorageFileStream.cs: Implement Flush by calling the base impl.
+
+2010-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* IsolatedStorageFile.cs: Remove and DeleteFile must report any
 	error found in our System.IO classes as IsolatedStorageException.
 

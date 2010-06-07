@@ -210,6 +210,13 @@ namespace System.IO.IsolatedStorage {
 			base.Flush ();
 		}
 
+#if NET_4_0
+		public override void Flush (bool flushToDisk)
+		{
+			base.Flush (flushToDisk);
+		}
+#endif
+
 		public override int Read (byte[] buffer, int offset, int count)
 		{
 			return base.Read (buffer, offset, count);
