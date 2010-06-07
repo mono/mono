@@ -517,6 +517,55 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+		public void DeleteFile ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+
+			try {
+				isf.DeleteFile (null);
+				Assert.Fail ("#Exc0");
+			} catch (ArgumentNullException) {
+			}
+
+#if NET_4_0
+			// We are getting an internal IndexOutOfRangeException in 2.0
+			// Not sure we want to mimic that one.
+			try {
+				isf.DeleteFile (String.Empty);
+				Assert.Fail ("#Exc1");
+			} catch (IsolatedStorageException) {
+			}
+#endif
+
+			try {
+				isf.DeleteFile ("idontexist");
+				Assert.Fail ("#Exc2");
+			} catch (IsolatedStorageException) {
+			}
+
+#if NET_4_0
+			try {
+				isf.DeleteFile ("../../file");
+				Assert.Fail ("#Exc3");
+			} catch (IsolatedStorageException) {
+			}
+#endif
+		
+			try {
+				isf.DeleteFile ("subdir/file");
+				Assert.Fail ("#Exc4");
+			} catch (IsolatedStorageException) {
+			}
+
+			isf.CreateDirectory ("subdir");
+			try {
+				isf.DeleteFile ("subdir");
+				Assert.Fail ("#Exc5");
+			} catch (IsolatedStorageException) {
+			}
+		}
+
+		[Test]
 		public void GetStore_NullTypes ()
 		{
 			IsolatedStorageScope scope = IsolatedStorageScope.User | IsolatedStorageScope.Roaming | IsolatedStorageScope.Assembly | IsolatedStorageScope.Domain;
