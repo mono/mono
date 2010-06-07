@@ -2737,6 +2737,9 @@ namespace Mono.CSharp {
 					unreachable = top_level.End ();
 				}
 			} catch (Exception e) {
+				if (e is CompletionResult)
+					throw;
+
 				if (rc.CurrentBlock != null) {
 					rc.Report.Error (584, rc.CurrentBlock.StartLocation, "Internal compiler error: {0}", e.Message);
 				} else {

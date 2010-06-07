@@ -155,7 +155,7 @@ namespace Mono.CSharp {
 				AppendResults (results, partial_name, r);
 			}
 
-			throw new CompletionResult (partial_name == null ? "" : partial_name, results.ToArray ());
+			throw new CompletionResult (partial_name == null ? "" : partial_name, results.Distinct ().ToArray ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)
@@ -193,7 +193,7 @@ namespace Mono.CSharp {
 				results = temp;
 			}
 
-			throw new CompletionResult (partial_name == null ? "" : partial_name, results.ToArray ());
+			throw new CompletionResult (partial_name == null ? "" : partial_name, results.Distinct ().ToArray ());
 		}
 
 		protected override void CloneTo (CloneContext clonectx, Expression t)

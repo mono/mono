@@ -476,7 +476,7 @@ namespace Mono.CSharp {
 
 				return e;
 			} catch (Exception ex) {
-				if (loc.IsNull || Report.DebugFlags > 0)
+				if (loc.IsNull || Report.DebugFlags > 0 || ex is CompletionResult)
 					throw;
 
 				ec.Report.Error (584, loc, "Internal compiler error: {0}", ex.Message);
