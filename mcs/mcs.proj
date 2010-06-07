@@ -1,0 +1,13 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Target Name="Build">
+    <!--<MSBuild Projects="mcs\mcs\gmcs.proj"/>-->
+    <MSBuild Projects="class\corlib\corlib.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System\System.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Xml\System.Xml.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System\System.csproj" Targets="Build" Properties="Configuration=Basic_XML_DEP;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Security\Mono.Security.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.CompilerServices.SymbolWriter\Mono.CompilerServices.SymbolWriter.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Core\System.Core.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
+  </Target>
+</Project>
