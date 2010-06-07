@@ -263,7 +263,11 @@ namespace System.IO.IsolatedStorage {
 			if (!Directory.Exists (dir))
 				return;
 
-			Directory.Delete (dir, true);
+			try {
+				Directory.Delete (dir, true);
+			} catch (IOException) {
+				throw new IsolatedStorageException ("Could not remove storage.");
+			}
 		}
 
 		// internal static stuff
@@ -610,7 +614,19 @@ namespace System.IO.IsolatedStorage {
 
 		public void DeleteFile (string file)
 		{
-			File.Delete (Path.Combine (directory.FullName, file));
+			if (file == null)
+				throw new ArgumentNullException ("file");
+
+			string full_path = Path.Combine (directory.FullName, file);
+			if (!File.Exists (full_path))
+				throw new IsolatedStorageException (Locale.GetText ("Could not delete file '{0}'", file));
+
+			try {
+				File.Delete (Path.Combine (directory.FullName, file));
+			} catch {
+				// hide the internal exception, just as DeleteDirectory does.
+				throw new IsolatedStorageException (Locale.GetText ("Could not delete file '{0}'", file));
+			}
 		}
 
 		public void Dispose ()

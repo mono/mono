@@ -1,5 +1,10 @@
 2010-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* IsolatedStorageFile.cs: Remove and DeleteFile must report any
+	error found in our System.IO classes as IsolatedStorageException.
+
+2010-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* IsolatedStorageFile.cs: Update the exceptions we are firing in 4.0
 	for CreateDirectory, GetFileNames and GetDirectoryNames.
 
