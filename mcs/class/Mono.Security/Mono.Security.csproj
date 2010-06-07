@@ -1,0 +1,26 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
+  <ItemGroup>
+    <ResponseFile Include="$(MSBuildProjectName).dll.sources"/>
+  </ItemGroup>
+  <PropertyGroup>
+    <OutputType>Library</OutputType>
+    <AssemblyName>$(MSBuildProjectName)</AssemblyName>
+    <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
+    <CompilerResponseFile>@(ResponseFile)</CompilerResponseFile>
+    <NoConfig>true</NoConfig>
+    <CodePage>65001</CodePage>
+    <UseVSHostingProcess>false</UseVSHostingProcess>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'basic|AnyCPU' ">
+    <DefineConstants>BOOTSTRAP_BASIC,NET_1_1,NET_2_0</DefineConstants>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="System.dll"/>
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+  <Target Name="BeforeBuild" DependsOnTargets="SetupProject">
+  </Target>
+</Project>

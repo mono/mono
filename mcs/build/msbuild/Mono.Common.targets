@@ -1,0 +1,18 @@
+<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <Import Project="$(MSBuildExtensionsPath)\ExtensionPack\MSBuild.ExtensionPack.tasks"/>
+  <PropertyGroup  Condition=" '$(USE_MONO_COMPILER)' == '1' ">
+    <CscToolExe>gmcs.bat</CscToolExe>
+    <CscToolPath>C:\MonoExperimental2.5.0\bin</CscToolPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" ('$(Configuration)' == 'basic' Or '$(Configuration)' == 'basic_XML_DEP') ">
+    <OutputPath>$(MSBuildProjectDirectory)\..\lib\basic\</OutputPath>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)' == 'net_2_0_bootstrap' ">
+    <OutputPath>$(MSBuildProjectDirectory)\..\lib\net_2_0_bootstrap\</OutputPath>
+  </PropertyGroup>
+  <Target Name="SetupProject">
+	  <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="/" Replacement="\" Files="$(MSBuildProjectName).dll.sources"/>
+	  <MakeDir Directories="$(OutputDirectory)"/>
+  </Target>
+</Project>
