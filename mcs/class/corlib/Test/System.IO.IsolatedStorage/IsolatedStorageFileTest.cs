@@ -429,12 +429,19 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 				try {
 					isf.CreateDirectory (path);
 				}
+#if NET_4_0
+				catch (IsolatedStorageException ex) {
+					Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "Message");
+					Assert.IsNull (ex.InnerException, "InnerException");
+				}
+#else
 				catch (IOException ex) {
 					Assert.AreEqual (typeof (IOException), ex.GetType (), "Type");
 					// don't leak path information
 					Assert.IsFalse (ex.Message.IndexOf (path) >= 0, "Message");
 					Assert.IsNull (ex.InnerException, "InnerException");
 				}
+#endif
 			}
 		}
 
@@ -463,13 +470,29 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 
 		[Test]
+#if NET_4_0
+		[ExpectedException (typeof (ArgumentException))]
+#else
 		[ExpectedException (typeof (SecurityException))]
+#endif
 		public void GetFilesInSubdirs ()
 		{
 			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
 			string pattern = Path.Combine ("..", "*");
 			isf.GetFileNames (pattern);
 		}
+
+        
+#if NET_4_0
+		[Test]
+		[ExpectedException (typeof (ArgumentException))]
+		public void GetDirsInSubDirs ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			isf.CreateDirectory ("subdir");
+			string [] dir_names = isf.GetDirectoryNames ("subdir/../*");
+		}
+#endif
 
 		[Test] // https://bugzilla.novell.com/show_bug.cgi?id=376188
 		public void CreateSubDirectory ()
