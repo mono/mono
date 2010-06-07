@@ -1651,7 +1651,6 @@ namespace Mono.CSharp
 			// TODO: Should be passed to parser as an argument
 			RootContext.ToplevelTypes = new ModuleCompiled (ctx, RootContext.Unsafe);
 			var ctypes = TypeManager.InitCoreTypes ();
-			TypeManager.InitExpressionTypes ();
 
 			Parse ();
 			if (Report.Errors > 0)

@@ -98,19 +98,6 @@ namespace Mono.CSharp {
 	public static TypeExpr binder_type;
 	public static TypeSpec binder_flags;
 
-	// 
-	// Expressions representing the internal types.  Used during declaration
-	// definition.
-	//
-	static public TypeExpr system_object_expr, system_string_expr; 
-	static public TypeExpr system_boolean_expr, system_decimal_expr;
-	static public TypeExpr system_single_expr, system_double_expr;
-	static public TypeExpr system_sbyte_expr, system_byte_expr;
-	static public TypeExpr system_int16_expr, system_uint16_expr;
-	static public TypeExpr system_int32_expr, system_uint32_expr;
-	static public TypeExpr system_int64_expr, system_uint64_expr;
-	static public TypeExpr system_char_expr, system_void_expr;
-	static public TypeExpr system_valuetype_expr;
 	public static TypeExpr expression_type_expr;
 
 
@@ -143,31 +130,6 @@ namespace Mono.CSharp {
 	public static MethodSpec void_decimal_ctor_long_arg;
 
 	static Dictionary<Assembly, bool> assembly_internals_vis_attrs;
-
-	//
-	// These are expressions that represent some of the internal data types, used
-	// elsewhere
-	//
-	public static void InitExpressionTypes ()
-	{
-		system_object_expr  = new TypeLookupExpression (object_type);
-		system_string_expr  = new TypeLookupExpression (string_type);
-		system_boolean_expr = new TypeLookupExpression (bool_type);
-		system_decimal_expr = new TypeLookupExpression (decimal_type);
-		system_single_expr  = new TypeLookupExpression (float_type);
-		system_double_expr  = new TypeLookupExpression (double_type);
-		system_sbyte_expr   = new TypeLookupExpression (sbyte_type);
-		system_byte_expr    = new TypeLookupExpression (byte_type);
-		system_int16_expr   = new TypeLookupExpression (short_type);
-		system_uint16_expr  = new TypeLookupExpression (ushort_type);
-		system_int32_expr   = new TypeLookupExpression (int32_type);
-		system_uint32_expr  = new TypeLookupExpression (uint32_type);
-		system_int64_expr   = new TypeLookupExpression (int64_type);
-		system_uint64_expr  = new TypeLookupExpression (uint64_type);
-		system_char_expr    = new TypeLookupExpression (char_type);
-		system_void_expr    = new TypeLookupExpression (void_type);
-		system_valuetype_expr  = new TypeLookupExpression (value_type);
-	}
 
 	static TypeManager ()
 	{

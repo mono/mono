@@ -82,12 +82,6 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public override TypeSpec BaseType {
-			get {
-				return TypeManager.multicast_delegate_type;
-			}
-		}
-
 		protected override bool DoDefineMembers ()
 		{
 			var ctor_parameters = ParametersCompiled.CreateFullyResolved (
@@ -291,6 +285,13 @@ namespace Mono.CSharp {
 			}
 
 			base.Emit ();
+		}
+
+		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
+		{
+			base_type = TypeManager.multicast_delegate_type;
+			base_class = null;
+			return null;
 		}
 
 		protected override TypeAttributes TypeAttr {

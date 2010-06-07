@@ -186,7 +186,8 @@ namespace Mono.CSharp {
 		// This one is computed after we can distinguish interfaces
 		// from classes from the arraylist `type_bases' 
 		//
-		TypeExpr base_type;
+		protected TypeSpec base_type;
+		protected TypeExpr base_type_expr;
 		protected TypeExpr[] iface_exprs;
 
 		protected List<FullNamedExpression> type_bases;
@@ -591,7 +592,7 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public virtual TypeSpec BaseType {
+		public TypeSpec BaseType {
 			get {
 				return spec.BaseType;
 			}
@@ -840,7 +841,9 @@ namespace Mono.CSharp {
 						Report.Error (1965, Location, "Class `{0}' cannot derive from the dynamic type",
 							GetSignatureForError ());
 					else
-						base_class = fne_resolved;
+						base_type = fne_resolved.Type;
+
+					base_class = fne_resolved;
 					continue;
 				}
 
@@ -880,7 +883,7 @@ namespace Mono.CSharp {
 			return ifaces;
 		}
 
-		TypeExpr[] GetNormalPartialBases (ref TypeExpr base_class)
+		TypeExpr[] GetNormalPartialBases ()
 		{
 			var ifaces = new List<TypeExpr> (0);
 			if (iface_exprs != null)
@@ -889,18 +892,15 @@ namespace Mono.CSharp {
 			foreach (TypeContainer part in partial_parts) {
 				TypeExpr new_base_class;
 				TypeExpr[] new_ifaces = part.ResolveBaseTypes (out new_base_class);
-				if (new_base_class != TypeManager.system_object_expr) {
-					if (base_class == TypeManager.system_object_expr)
-						base_class = new_base_class;
-					else {
-						if (new_base_class != null && !TypeManager.IsEqual (new_base_class.Type, base_class.Type)) {
-							Report.SymbolRelatedToPreviousError (base_class.Location, "");
-							Report.Error (263, part.Location,
-								"Partial declarations of `{0}' must not specify different base classes",
-								part.GetSignatureForError ());
-
-							return null;
-						}
+				if (new_base_class != null) {
+					if (base_type_expr != null && new_base_class.Type != base_type) {
+						Report.SymbolRelatedToPreviousError (new_base_class.Location, "");
+						Report.Error (263, part.Location,
+							"Partial declarations of `{0}' must not specify different base classes",
+							part.GetSignatureForError ());
+					} else {
+						base_type_expr = new_base_class;
+						base_type = base_type_expr.Type;
 					}
 				}
 
@@ -1038,9 +1038,9 @@ namespace Mono.CSharp {
 
 		bool DefineBaseTypes ()
 		{
-			iface_exprs = ResolveBaseTypes (out base_type);
+			iface_exprs = ResolveBaseTypes (out base_type_expr);
 			if (partial_parts != null) {
-				iface_exprs = GetNormalPartialBases (ref base_type);
+				iface_exprs = GetNormalPartialBases ();
 			}
 
 			var cycle = CheckRecursiveDefinition (this);
@@ -1113,23 +1113,11 @@ namespace Mono.CSharp {
 				return true;
 			}
 
-			TypeSpec base_ts;
-			if (base_type != null)
-				base_ts = base_type.Type;
-			else if (spec.IsStruct)
-				base_ts = TypeManager.value_type;
-			else if (spec.IsEnum)
-				base_ts = TypeManager.enum_type;
-			else if (spec.IsDelegate)
-				base_ts = TypeManager.multicast_delegate_type;
-			else
-				base_ts = null;
-
-			if (base_ts != null) {
-				spec.BaseType = base_ts;
+			if (base_type != null) {
+				spec.BaseType = base_type;
 
 				// Set base type after type creation
-				TypeBuilder.SetParent (base_ts.GetMetaInfo ());
+				TypeBuilder.SetParent (base_type.GetMetaInfo ());
 			}
 
 			return true;
@@ -1347,10 +1335,10 @@ namespace Mono.CSharp {
 
 			InTransit = tc;
 
-			if (base_type != null && base_type.Type != null) {
-				var ptc = base_type.Type.MemberDefinition as TypeContainer;
+			if (base_type_expr != null) {
+				var ptc = base_type.MemberDefinition as TypeContainer;
 				if (ptc != null && ptc.CheckRecursiveDefinition (this) != null)
-					return base_type.Type;
+					return base_type;
 			}
 
 			if (iface_exprs != null) {
@@ -1425,16 +1413,18 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (base_type != null) {
-				ObsoleteAttribute obsolete_attr = base_type.Type.GetAttributeObsolete ();
+			if (base_type_expr != null) {
+				ObsoleteAttribute obsolete_attr = base_type.GetAttributeObsolete ();
 				if (obsolete_attr != null && !IsObsolete)
 					AttributeTester.Report_ObsoleteMessage (obsolete_attr, base_type.GetSignatureForError (), Location, Report);
 
-				var ct = base_type as GenericTypeExpr;
+				var ct = base_type_expr as GenericTypeExpr;
 				if (ct != null)
 					ct.CheckConstraints (this);
+			}
 
-				var baseContainer = base_type.Type.MemberDefinition as ClassOrStruct;
+			if (base_type != null) {
+				var baseContainer = base_type.MemberDefinition as ClassOrStruct;
 				if (baseContainer != null) {
 					baseContainer.Define ();
 
@@ -2341,10 +2331,8 @@ namespace Mono.CSharp {
 
 			if (base_class == null) {
 				if (spec != TypeManager.object_type)
-					base_class = TypeManager.system_object_expr;
+					base_type = TypeManager.object_type;
 			} else {
-				var base_type = base_class.Type;
-
 				if (base_type.IsGenericParameter){
 					Report.Error (689, base_class.Location, "`{0}': Cannot derive from type parameter `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
@@ -2356,10 +2344,13 @@ namespace Mono.CSharp {
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					Report.Error (709, Location, "`{0}': Cannot derive from static class `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
-				} else if (base_type.IsSealed){
+				} else if (base_type.IsSealed) {
 					Report.SymbolRelatedToPreviousError (base_class.Type);
 					Report.Error (509, Location, "`{0}': cannot derive from sealed type `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
+				} else if (PartialContainer.IsStatic && base_class.Type != TypeManager.object_type) {
+					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
+						GetSignatureForError (), base_class.GetSignatureForError ());
 				}
 
 				if (base_type is PredefinedTypeSpec && !(spec is PredefinedTypeSpec) &&
@@ -2367,7 +2358,8 @@ namespace Mono.CSharp {
 					base_type == TypeManager.delegate_type || base_type == TypeManager.array_type)) {
 					Report.Error (644, Location, "`{0}' cannot derive from special class `{1}'",
 						GetSignatureForError (), base_type.GetSignatureForError ());
-					base_class = TypeManager.system_object_expr;
+
+					base_type = TypeManager.object_type;
 				}
 
 				if (!IsAccessibleAs (base_type)) {
@@ -2377,18 +2369,10 @@ namespace Mono.CSharp {
 				}
 			}
 
-			if (PartialContainer.IsStatic) {
-				if (base_class.Type != TypeManager.object_type) {
-					Report.Error (713, Location, "Static class `{0}' cannot derive from type `{1}'. Static classes must derive from object",
-						GetSignatureForError (), base_class.GetSignatureForError ());
-					return ifaces;
-				}
-
-				if (ifaces != null) {
-					foreach (TypeExpr t in ifaces)
-						Report.SymbolRelatedToPreviousError (t.Type);
-					Report.Error (714, Location, "Static class `{0}' cannot implement interfaces", GetSignatureForError ());
-				}
+			if (PartialContainer.IsStatic && ifaces != null) {
+				foreach (TypeExpr t in ifaces)
+					Report.SymbolRelatedToPreviousError (t.Type);
+				Report.Error (714, Location, "Static class `{0}' cannot implement interfaces", GetSignatureForError ());
 			}
 
 			return ifaces;
@@ -2590,7 +2574,7 @@ namespace Mono.CSharp {
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
 		{
 			TypeExpr[] ifaces = base.ResolveBaseTypes (out base_class);
-			base_class = TypeManager.system_valuetype_expr;
+			base_type = TypeManager.value_type;
 			return ifaces;
 		}
 

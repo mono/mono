@@ -128,7 +128,6 @@ namespace Mono.CSharp {
 				CompilerCallableEntryPoint.Reset ();
 				RootContext.ToplevelTypes = new ModuleCompiled (ctx, true);
 				/*var ctypes = */TypeManager.InitCoreTypes ();
-				TypeManager.InitExpressionTypes ();
 
 				Import.Initialize ();
 				driver.LoadReferences ();
@@ -1188,7 +1187,7 @@ namespace Mono.CSharp {
 					}
 					
 					Arguments args = new Arguments (1);
-					args.Add (new Argument (new TypeOf (source, Location)));
+					args.Add (new Argument (new TypeOf ((TypeExpr) clone, Location)));
 					source = new Invocation (new SimpleName ("Describe", Location), args).Resolve (ec);
 				}
 				Evaluator.SetPrinter (old_printer);

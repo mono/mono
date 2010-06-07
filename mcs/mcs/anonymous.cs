@@ -1713,11 +1713,11 @@ namespace Mono.CSharp {
 
 			Location loc = Location;
 
-			Method equals = new Method (this, null, TypeManager.system_boolean_expr,
+			Method equals = new Method (this, null, new TypeExpression (TypeManager.bool_type, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("Equals", loc),
 				Mono.CSharp.ParametersCompiled.CreateFullyResolved (new Parameter (null, "obj", 0, null, loc), TypeManager.object_type), null);
 
-			Method tostring = new Method (this, null, TypeManager.system_string_expr,
+			Method tostring = new Method (this, null, new TypeExpression (TypeManager.string_type, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN, new MemberName ("ToString", loc),
 				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
 
@@ -1826,7 +1826,7 @@ namespace Mono.CSharp {
 			//
 			// GetHashCode () override
 			//
-			Method hashcode = new Method (this, null, TypeManager.system_int32_expr,
+			Method hashcode = new Method (this, null, new TypeExpression (TypeManager.int32_type, loc),
 				Modifiers.PUBLIC | Modifiers.OVERRIDE | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("GetHashCode", loc),
 				Mono.CSharp.ParametersCompiled.EmptyReadOnlyParameters, null);
@@ -1849,7 +1849,7 @@ namespace Mono.CSharp {
 			Block hashcode_block = new Block (hashcode_top);
 			hashcode_top.AddStatement (new Unchecked (hashcode_block));
 
-			hashcode_block.AddVariable (TypeManager.system_int32_expr, "hash", loc);
+			hashcode_block.AddVariable (new TypeExpression (TypeManager.int32_type, loc), "hash", loc);
 			LocalVariableReference hash_variable = new LocalVariableReference (hashcode_block, "hash", loc);
 			LocalVariableReference hash_variable_assign = new LocalVariableReference (hashcode_block, "hash", loc);
 			hashcode_block.AddStatement (new StatementExpression (

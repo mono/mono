@@ -319,7 +319,7 @@ namespace Mono.CSharp {
 			}
 
 			public DisposeMethod (IteratorStorey host)
-				: base (host, TypeManager.system_void_expr, Modifiers.PUBLIC, new MemberName ("Dispose", host.Location))
+				: base (host, new TypeExpression (TypeManager.void_type, host.Location), Modifiers.PUBLIC, new MemberName ("Dispose", host.Location))
 			{
 				host.AddMethod (this);
 
@@ -458,7 +458,7 @@ namespace Mono.CSharp {
 
 		void DefineIteratorMembers ()
 		{
-			pc_field = AddCompilerGeneratedField ("$PC", TypeManager.system_int32_expr);
+			pc_field = AddCompilerGeneratedField ("$PC", new TypeExpression (TypeManager.int32_type, Location));
 			current_field = AddCompilerGeneratedField ("$current", iterator_type_expr);
 
 			if (hoisted_params != null) {
@@ -529,7 +529,7 @@ namespace Mono.CSharp {
 				type = iterator_type_expr;
 			} else {
 				name = new MemberName (name, "IEnumerator");
-				type = TypeManager.system_object_expr;
+				type = new TypeExpression (TypeManager.object_type, Location);
 			}
 
 			name = new MemberName (name, "Current", Location);
@@ -547,7 +547,7 @@ namespace Mono.CSharp {
 		void Define_Reset ()
 		{
 			Method reset = new Method (
-				this, null, TypeManager.system_void_expr,
+				this, null, new TypeExpression (TypeManager.void_type, Location),
 				Modifiers.PUBLIC | Modifiers.DEBUGGER_HIDDEN,
 				new MemberName ("Reset", Location),
 				ParametersCompiled.EmptyReadOnlyParameters, null);
@@ -815,7 +815,7 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext ec)
 		{
 			method = new AnonymousMethodMethod (Storey,
-				this, Storey, null, TypeManager.system_boolean_expr,
+				this, Storey, null, new TypeExpression (TypeManager.bool_type, loc),
 				Modifiers.PUBLIC, OriginalMethod.GetSignatureForError (),
 				new MemberName ("MoveNext", Location),
 				ParametersCompiled.EmptyReadOnlyParameters);

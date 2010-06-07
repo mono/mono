@@ -126,8 +126,6 @@ namespace Mono.CSharp {
 	{
 		public static readonly string UnderlyingValueField = "value__";
 
-		TypeExpr base_type;
-
 		const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -135,15 +133,44 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Enum (NamespaceEntry ns, DeclSpace parent, TypeExpr type,
+		public Enum (NamespaceEntry ns, DeclSpace parent, TypeExpression type,
 			     Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (ns, parent, name, attrs, MemberKind.Enum)
 		{
-			this.base_type = type;
+			base_type_expr = type;
 			var accmods = IsTopLevel ? Modifiers.INTERNAL : Modifiers.PRIVATE;
 			ModFlags = ModifiersExtensions.Check (AllowedModifiers, mod_flags, accmods, Location, Report);
 			spec = new EnumSpec (null, this, null, null, ModFlags);
 		}
+
+		#region Properties
+
+		public override AttributeTargets AttributeTargets {
+			get {
+				return AttributeTargets.Enum;
+			}
+		}
+
+		public TypeExpr BaseTypeExpression {
+			get {
+				return base_type_expr;
+			}
+		}
+
+		protected override TypeAttributes TypeAttr {
+			get {
+				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) |
+					TypeAttributes.Class | TypeAttributes.Sealed | base.TypeAttr;
+			}
+		}
+
+		public TypeSpec UnderlyingType {
+			get {
+				return ((EnumSpec) spec).UnderlyingType;
+			}
+		}
+
+		#endregion
 
 		public void AddEnumMember (EnumMember em)
 		{
@@ -158,16 +185,13 @@ namespace Mono.CSharp {
 
 		public static void Error_1008 (Location loc, Report Report)
 		{
-			Report.Error (1008, loc, "Type byte, sbyte, short, ushort, " +
-				      "int, uint, long or ulong expected");
+			Report.Error (1008, loc,
+				"Type byte, sbyte, short, ushort, int, uint, long or ulong expected");
 		}
 
 		protected override bool DefineNestedTypes ()
 		{
-			if (!base.DefineNestedTypes ())
-				return false;
-
-			((EnumSpec) spec).UnderlyingType = UnderlyingType;
+			((EnumSpec) spec).UnderlyingType = base_type_expr == null ? TypeManager.int32_type : base_type_expr.Type;
 
 			TypeBuilder.DefineField (UnderlyingValueField, UnderlyingType.GetMetaInfo (),
 				FieldAttributes.Public | FieldAttributes.SpecialName | FieldAttributes.RTSpecialName);
@@ -189,10 +213,11 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public TypeSpec UnderlyingType {
-			get {
-				return base_type.Type;
-			}
+		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
+		{
+			base_type = TypeManager.enum_type;
+			base_class = base_type_expr;
+			return null;
 		}
 
 		protected override bool VerifyClsCompliance ()
@@ -208,19 +233,6 @@ namespace Mono.CSharp {
 
 			return true;
 		}	
-
-		public override AttributeTargets AttributeTargets {
-			get {
-				return AttributeTargets.Enum;
-			}
-		}
-
-		protected override TypeAttributes TypeAttr {
-			get {
-				return ModifiersExtensions.TypeAttr (ModFlags, IsTopLevel) |
-					TypeAttributes.Class | TypeAttributes.Sealed | base.TypeAttr;
-			}
-		}
 	}
 
 	class EnumSpec : TypeSpec

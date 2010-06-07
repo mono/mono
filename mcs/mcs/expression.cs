@@ -6721,14 +6721,29 @@ namespace Mono.CSharp {
 	///   Implements the typeof operator
 	/// </summary>
 	public class TypeOf : Expression {
-		Expression QueriedType;
-		protected TypeSpec typearg;
+		FullNamedExpression QueriedType;
+		TypeSpec typearg;
 
-		public TypeOf (Expression queried_type, Location l)
+		public TypeOf (FullNamedExpression queried_type, Location l)
 		{
 			QueriedType = queried_type;
 			loc = l;
 		}
+
+		#region Properties
+		public TypeSpec TypeArgument {
+			get {
+				return typearg;
+			}
+		}
+
+		public FullNamedExpression TypeExpression {
+			get {
+				return QueriedType;
+			}
+		}
+
+		#endregion
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
@@ -6753,7 +6768,7 @@ namespace Mono.CSharp {
 			if (tne != null && typearg.IsGeneric && !tne.HasTypeArguments)
 				typearg = typearg.GetDefinition ();
 
-			if (typearg == TypeManager.void_type) {
+			if (typearg == TypeManager.void_type && !(QueriedType is TypeExpression)) {
 				ec.Report.Error (673, loc, "System.Void cannot be used from C#. Use typeof (void) to get the void type object");
 			} else if (typearg.IsPointer && !ec.IsUnsafe){
 				UnsafeError (ec, loc);
@@ -6817,35 +6832,11 @@ namespace Mono.CSharp {
 			ec.Emit (OpCodes.Call, TypeManager.system_type_get_type_from_handle);
 		}
 
-		public TypeSpec TypeArgument {
-			get {
-				return typearg;
-			}
-		}
-
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			TypeOf target = (TypeOf) t;
 			if (QueriedType != null)
-				target.QueriedType = QueriedType.Clone (clonectx);
-		}
-	}
-
-	/// <summary>
-	///   Implements the `typeof (void)' operator
-	/// </summary>
-	public class TypeOfVoid : TypeOf {
-		public TypeOfVoid (Location l) : base (null, l)
-		{
-			loc = l;
-		}
-
-		protected override Expression DoResolve (ResolveContext ec)
-		{
-			type = TypeManager.type_type;
-			typearg = TypeManager.void_type;
-
-			return DoResolveBase ();
+				target.QueriedType = (FullNamedExpression) QueriedType.Clone (clonectx);
 		}
 	}
 

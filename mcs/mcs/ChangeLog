@@ -1,5 +1,11 @@
 2010-06-07  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, eval.cs, iterators.cs, anonymous.cs, expression.cs
+	method.cs, class.cs, delegate.cs, cs-parser.jay, driver.cs, visit.cs
+	enum.cs: Hold location of predefined types.
+
+2010-06-07  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #610878
 	* pending.cs: Clone cached list before modifying.
 

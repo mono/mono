@@ -278,11 +278,6 @@ namespace Mono.CSharp
 			return null;
 		}
 
-		public virtual object Visit (TypeLookupExpression typeLookupExpression)
-		{
-			return null;
-		}
-
 		public virtual object Visit (LocalVariableReference localVariableReference)
 		{
 			return null;

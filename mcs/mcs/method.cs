@@ -1001,7 +1001,7 @@ namespace Mono.CSharp {
 		//
 		public override bool Define ()
 		{
-			if (type_expr == TypeManager.system_void_expr && parameters.IsEmpty && Name == Destructor.MetadataName) {
+			if (type_expr.Type == TypeManager.void_type && parameters.IsEmpty && MemberName.Arity == 0 && MemberName.Name == Destructor.MetadataName) {
 				Report.Warning (465, 1, Location, "Introducing `Finalize' method can interfere with destructor invocation. Did you intend to declare a destructor?");
 			}
 
@@ -1930,7 +1930,7 @@ namespace Mono.CSharp {
 		public static readonly string MetadataName = "Finalize";
 
 		public Destructor (DeclSpace parent, Modifiers mod, ParametersCompiled parameters, Attributes attrs, Location l)
-			: base (parent, null, TypeManager.system_void_expr, mod, AllowedModifiers,
+			: base (parent, null, null, mod, AllowedModifiers,
 				new MemberName (MetadataName, l), attrs, parameters)
 		{
 			ModFlags &= ~Modifiers.PRIVATE;
@@ -1949,13 +1949,14 @@ namespace Mono.CSharp {
 
 		protected override bool CheckBase ()
 		{
-			// Don't check base, the destructor has special syntax
+			// Don't check base, destructors have special syntax
+			return true;
+		}
 
+		public override void  Emit()
+		{
 			var base_type = Parent.PartialContainer.BaseType;
-			if (base_type == null)
-				return true;
-
-			if (Block != null) {
+			if (base_type != null && Block != null) {
 				MethodGroupExpr method_expr = Expression.MethodLookup (Parent.Module.Compiler, Parent.Definition, base_type, MemberKind.Destructor, MetadataName, 0, Location);
 				if (method_expr == null)
 					throw new NotImplementedException ();
@@ -1980,12 +1981,18 @@ namespace Mono.CSharp {
 				block = new_block;
 			}
 
-			return true;
+			base.Emit ();
 		}
 
 		public override string GetSignatureForError ()
 		{
 			return Parent.GetSignatureForError () + ".~" + Parent.MemberName.Name + "()";
+		}
+
+		protected override bool ResolveMemberType ()
+		{
+			member_type = TypeManager.void_type;
+			return true;
 		}
 
 		public override string[] ValidAttributeTargets {
