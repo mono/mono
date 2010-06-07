@@ -525,7 +525,11 @@ namespace System.IO.IsolatedStorage {
 
 			if (dir.IndexOfAny (Path.PathSeparatorChars) < 0) {
 				if (directory.GetFiles (dir).Length > 0)
+#if NET_4_0
+					throw new IsolatedStorageException ("Unable to create directory.");
+#else
 					throw new IOException (Locale.GetText ("Directory name already exists as a file."));
+#endif
 				directory.CreateSubdirectory (dir);
 			} else {
 				string[] dirs = dir.Split (Path.PathSeparatorChars);
@@ -533,8 +537,12 @@ namespace System.IO.IsolatedStorage {
 
 				for (int i = 0; i < dirs.Length; i++) {
 					if (dinfo.GetFiles (dirs [i]).Length > 0)
+#if NET_4_0
+						throw new IsolatedStorageException ("Unable to create directory.");
+#else
 						throw new IOException (Locale.GetText (
 							"Part of the directory name already exists as a file."));
+#endif
 					dinfo = dinfo.CreateSubdirectory (dirs [i]);
 				}
 			}
@@ -702,6 +710,10 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
+#if NET_4_0
+			if (searchPattern.Contains (".."))
+				throw new ArgumentException ("Search pattern cannot contain '..' to move up directories.", "searchPattern");
+#endif
 
 			// note: IsolatedStorageFile accept a "dir/file" pattern which is not allowed by DirectoryInfo
 			// so we need to split them to get the right results
@@ -745,6 +757,10 @@ namespace System.IO.IsolatedStorage {
 		{
 			if (searchPattern == null)
 				throw new ArgumentNullException ("searchPattern");
+#if NET_4_0
+			if (searchPattern.Contains (".."))
+				throw new ArgumentException ("Search pattern cannot contain '..' to move up directories.", "searchPattern");
+#endif
 
 			// note: IsolatedStorageFile accept a "dir/file" pattern which is not allowed by DirectoryInfo
 			// so we need to split them to get the right results
