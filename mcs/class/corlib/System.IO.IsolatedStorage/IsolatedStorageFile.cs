@@ -257,6 +257,14 @@ namespace System.IO.IsolatedStorage {
 			return storageFile;
 		}
 
+#if NET_4_0
+		[ComVisible (false)]
+		public static IsolatedStorageFile GetUserStoreForSite ()
+		{
+			throw new NotSupportedException ();
+		}
+#endif
+
 		public static void Remove (IsolatedStorageScope scope)
 		{
 			string dir = GetIsolatedStorageRoot (scope);
