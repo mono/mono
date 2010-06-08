@@ -1,5 +1,9 @@
 2010-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* IsolatedStorageFileTest.cs: New test for GetUserStoreForSite.
+
+2010-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* IsolatedStorageFileTest.cs: New test for DeleteFile.
 
 2010-06-07  Carlos Alberto Cortez <calberto.cortez@gmail.com>

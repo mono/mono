@@ -219,6 +219,16 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 		}
 #endif
 
+#if NET_4_0
+		// This is supposed to be working only in SL.
+		[Test]
+		[ExpectedException (typeof (NotSupportedException))]
+		public void GetUserStoreForSite ()
+		{
+			IsolatedStorageFile.GetUserStoreForSite ();
+		}
+#endif
+
 		[Test]
 		public void GetStore_Domain_Zone ()
 		{
