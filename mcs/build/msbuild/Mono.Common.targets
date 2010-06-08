@@ -12,7 +12,11 @@
     <OutputPath>$(MSBuildProjectDirectory)\..\lib\net_2_0_bootstrap\</OutputPath>
   </PropertyGroup>
   <Target Name="SetupProject">
-	  <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="/" Replacement="\" Files="$(MSBuildProjectName).dll.sources"/>
+    <Copy SourceFiles="$(MSBuildProjectName).dll.sources" DestinationFiles="$(MSBuildProjectName).dll.msbuild.sources"/>
+	  <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="/" Replacement="\" Files="$(MSBuildProjectName).dll.msbuild.sources"/>
 	  <MakeDir Directories="$(OutputDirectory)"/>
   </Target>
+  <ItemGroup>
+    <ResponseFile Include="$(MSBuildProjectName).dll.msbuild.sources"/>
+  </ItemGroup>
 </Project>
