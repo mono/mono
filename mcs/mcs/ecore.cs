@@ -2654,24 +2654,6 @@ namespace Mono.CSharp {
 		}
 	}
 
-	//
-	// Used to create types from a fully qualified name.  These are just used
-	// by the parser to setup the core types.
-	//
-	public sealed class TypeLookupExpression : TypeExpr {
-		
-		public TypeLookupExpression (TypeSpec type)
-		{
-			eclass = ExprClass.Type;
-			this.type = type;
-		}
-
-		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
-		{
-			return this;
-		}
-	}
-
 	/// <summary>
 	///   This class denotes an expression which evaluates to a member
 	///   of a struct or a class.
