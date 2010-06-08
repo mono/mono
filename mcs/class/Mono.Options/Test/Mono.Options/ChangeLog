@@ -1,3 +1,7 @@
+2010-06-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* OptionSetTest.cs: Add tests for constrained value splitting.
+
 2008-04-18  Jonathan Pryor  <jpryor@novell.com>
 
 	* OptionSetTest.cs: Update WriteOptionDescriptions() for new, 

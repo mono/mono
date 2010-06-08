@@ -393,11 +393,11 @@ namespace Tests.Mono.Options
 				{ "e={}", (k, v) => a.Add (k, v) },
 				{ "f=+/", (k, v) => a.Add (k, v) },
 			};
-			p.Parse (_("-a", "A", "B", "-a", "C", "D", "-a=E=F", "-a:G:H", "-aI=J", "-b", "1", "a", "-b", "2", "b"));
+			p.Parse (_("-a", "A", @"C:\tmp", "-a", "C=D", @"-a=E=F:\tmp", "-a:G:H", "-aI=J", "-b", "1", "a", "-b", "2", "b"));
 			AssertDictionary (a, 
-					"A", "B", 
+					"A", @"C:\tmp", 
 					"C", "D", 
-					"E", "F", 
+					"E", @"F:\tmp", 
 					"G", "H", 
 					"I", "J");
 			AssertDictionary (b,
@@ -481,29 +481,29 @@ namespace Tests.Mono.Options
 				new CustomOption ("a==:", null, 2, v => a.Add (v [0], v [1])),
 				new CustomOption ("b==:", null, 3, v => b.Add (v [0], new string[]{v [1], v [2]})),
 			};
-			p.Parse (_("-a=b=c", "-a=d", "e", "-a:f=g", "-a:h:i", "-a", "j=k", "-a", "l:m"));
+			p.Parse (_(@"-a=b=C:\tmp", "-a=d", @"C:\e", @"-a:f=C:\g", @"-a:h:C:\i", "-a", @"j=C:\k", "-a", @"l:C:\m"));
 			Assert.AreEqual (a.Count, 6);
-			Assert.AreEqual (a ["b"], "c");
-			Assert.AreEqual (a ["d"], "e");
-			Assert.AreEqual (a ["f"], "g");
-			Assert.AreEqual (a ["h"], "i");
-			Assert.AreEqual (a ["j"], "k");
-			Assert.AreEqual (a ["l"], "m");
+			Assert.AreEqual (a ["b"], @"C:\tmp");
+			Assert.AreEqual (a ["d"], @"C:\e");
+			Assert.AreEqual (a ["f"], @"C:\g");
+			Assert.AreEqual (a ["h"], @"C:\i");
+			Assert.AreEqual (a ["j"], @"C:\k");
+			Assert.AreEqual (a ["l"], @"C:\m");
 
 			Utils.AssertException (typeof(OptionException),
 					"Missing required value for option '-a'.",
 					p, v => {v.Parse (_("-a=b"));});
 
-			p.Parse (_("-b", "a", "b", "c", "-b:d:e:f", "-b=g=h:i", "-b:j=k:l"));
+			p.Parse (_("-b", "a", "b", @"C:\tmp", @"-b:d:e:F:\tmp", @"-b=g=h:i:\tmp", @"-b:j=k:l:\tmp"));
 			Assert.AreEqual (b.Count, 4);
 			Assert.AreEqual (b ["a"][0], "b");
-			Assert.AreEqual (b ["a"][1], "c");
+			Assert.AreEqual (b ["a"][1], @"C:\tmp");
 			Assert.AreEqual (b ["d"][0], "e");
-			Assert.AreEqual (b ["d"][1], "f");
+			Assert.AreEqual (b ["d"][1], @"F:\tmp");
 			Assert.AreEqual (b ["g"][0], "h");
-			Assert.AreEqual (b ["g"][1], "i");
+			Assert.AreEqual (b ["g"][1], @"i:\tmp");
 			Assert.AreEqual (b ["j"][0], "k");
-			Assert.AreEqual (b ["j"][1], "l");
+			Assert.AreEqual (b ["j"][1], @"l:\tmp");
 		}
 
 		[Test]

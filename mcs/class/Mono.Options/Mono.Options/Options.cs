@@ -913,7 +913,7 @@ namespace Mono.Options
 		{
 			if (option != null)
 				foreach (string o in c.Option.ValueSeparators != null 
-						? option.Split (c.Option.ValueSeparators, StringSplitOptions.None)
+						? option.Split (c.Option.ValueSeparators, c.Option.MaxValueCount - c.OptionValues.Count, StringSplitOptions.None)
 						: new string[]{option}) {
 					c.OptionValues.Add (o);
 				}

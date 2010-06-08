@@ -1,3 +1,10 @@
+2010-06-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* Options.cs: Don't overly split option values, only split to obtain
+	  the maximum number of desired values.  This better supports e.g. DOS
+	  paths in multi-value values, e.g. '-DPATH=C:\tmp' would now create
+	  the values {"PATH", "C:\tmp"} instead of {"PATH", "C", "\tmp"}.
+
 2009-04-18  Jonathan Pryor  <jpryor@novell.com>
 
 	* Options.cs: "Code sharing": Use StringCodea.WrappedLines() from
