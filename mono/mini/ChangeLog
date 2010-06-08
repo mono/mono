@@ -1,3 +1,10 @@
+2010-06-08  Zoltan Varga  <vargaz@gmail.com>
+
+	* liveness.c (visit_bb): Make the component vregs of long vars volatile as well.
+	Fixes #612206.
+
+	* exceptions.cs: Add a test.
+
 2010-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (mono_llvm_check_method_supported): Only disable llvm for nested clauses.
