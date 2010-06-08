@@ -1,3 +1,8 @@
+2010-06-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* StringTest.cs: Add tests for #601772 (i.e. take SplitStringChars(),
+	  change all the chars to Strings, and things should work).
+
 2010-05-31 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* LazyTest.cs: Add a test that actually test something.

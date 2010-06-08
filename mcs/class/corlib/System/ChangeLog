@@ -1,3 +1,11 @@
+2010-06-08  Jonathan Pryor  <jpryor@novell.com>
+
+	* String.cs: Fix String.Split(String[],int,StringSplitOptions) so that:
+	  - it properly obeys the 'count' parameter; Fixes #601772.
+	  - "...".Split(new[]{"."}, 2, StringSplitOptions.RemoveEmptyEntries).Length==0
+	  - "A..".Split (new String[] { "." }, 2, StringSplitOptions.RemoveEmptyEntries) == new[]{"A"}
+	  - Remove duplicative array handling code by using List<String>.
+
 2010-06-04  Jb Evain  <jbevain@novell.com>
 
 	* Exception.cs: add stub for SerializeObjectState.

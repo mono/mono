@@ -247,13 +247,15 @@ namespace System
 				throw new ArgumentOutOfRangeException ("count", "Count cannot be less than zero.");
 			if ((options != StringSplitOptions.None) && (options != StringSplitOptions.RemoveEmptyEntries))
 				throw new ArgumentException ("Illegal enum value: " + options + ".");
+			if (count == 1)
+				return new String [] { this };
 
 			bool removeEmpty = (options & StringSplitOptions.RemoveEmptyEntries) == StringSplitOptions.RemoveEmptyEntries;
 
 			if (count == 0 || (this == String.Empty && removeEmpty))
 				return new String [0];
 
-			ArrayList arr = new ArrayList ();
+			List<String> arr = new List<String> ();
 
 			int pos = 0;
 			int matchCount = 0;
@@ -277,34 +279,28 @@ namespace System
 				if (matchIndex == -1)
 					break;
 
-				if (!(matchPos == pos && removeEmpty))
+				if (!(matchPos == pos && removeEmpty)) {
+					if (arr.Count == count - 1)
+						break;
 					arr.Add (this.Substring (pos, matchPos - pos));
+				}
 
 				pos = matchPos + separator [matchIndex].Length;
 
 				matchCount ++;
-
-				if (matchCount == count - 1)
-					break;
 			}
 
 			if (matchCount == 0)
 				return new String [] { this };
-			else {
-				if (removeEmpty && pos == this.Length) {
-					String[] res = new String [arr.Count];
-					arr.CopyTo (0, res, 0, arr.Count);
 
-					return res;
-				}
-				else {
-					String[] res = new String [arr.Count + 1];
-					arr.CopyTo (0, res, 0, arr.Count);
-					res [arr.Count] = this.Substring (pos);
+			// string contained only separators
+			if (removeEmpty && matchCount != 0 && pos == this.Length && arr.Count == 0)
+				return new String [0];
 
-					return res;
-				}
-			}
+			if (!(removeEmpty && pos == this.Length))
+				arr.Add (this.Substring (pos));
+
+			return arr.ToArray ();
 		}
 
 		[ComVisible (false)]

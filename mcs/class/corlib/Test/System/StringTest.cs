@@ -4227,6 +4227,111 @@ public class StringTest
 		Assert.AreEqual ("..", res[1], "#11-09-2");
 		Assert.AreEqual (2, res.Length, "#11-09-3");
 	}
+	
+	[Test]
+	public void SplitStringStrings ()
+	{
+		String[] res;
+
+		// count == 0
+		res = "..A..B..".Split (new String[] { "." }, 0, StringSplitOptions.None);
+		Assert.AreEqual (0, res.Length, "#01-01");
+
+		// count == 1
+		res = "..A..B..".Split (new String[] { "." }, 1, StringSplitOptions.None);
+		Assert.AreEqual (1, res.Length, "#02-01");
+		Assert.AreEqual ("..A..B..", res [0], "#02-02");
+
+		// count == 1 + RemoveEmpty
+		res = "..A..B..".Split (new String[] { "." }, 1, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (1, res.Length, "#03-01");
+		Assert.AreEqual ("..A..B..", res [0], "#03-02");
+		
+		// Strange Case A+B A
+		res = "...".Split (new String[] { "." }, 1, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (1, res.Length, "#ABA-01");
+		Assert.AreEqual ("...", res [0], "#ABA-02");
+
+		// Strange Case A+B B
+		res = "...".Split (new String[] { "." }, 2, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (0, res.Length, "#ABB-01");
+
+		// Keeping Empties and multipe split chars
+		res = "..A;.B.;".Split (new String[] { ".", ";" }, StringSplitOptions.None);
+		Assert.AreEqual (7, res.Length, "#04-01");
+		Assert.AreEqual (string.Empty, res [0], "#04-02");
+		Assert.AreEqual (string.Empty, res [1], "#04-03");
+		Assert.AreEqual ("A", res [2], "#04-04");
+		Assert.AreEqual (string.Empty, res [3], "#04-05");
+		Assert.AreEqual ("B", res [4], "#04-06");
+		Assert.AreEqual (string.Empty, res [5], "#04-07");
+		Assert.AreEqual (string.Empty, res [6], "#04-08");
+
+		// Trimming (3 tests)
+		res = "..A".Split (new String[] { "." }, 2, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (1, res.Length, "#05-01");
+		Assert.AreEqual ("A", res [0], "#05-02");
+		
+		res = "A..".Split (new String[] { "." }, 2, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (1, res.Length, "#06-01");
+		Assert.AreEqual ("A", res [0], "#06-02");
+		
+		res = "..A..".Split (new String[] { "." }, 2, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (1, res.Length, "#07-01");
+		Assert.AreEqual ("A", res [0], "#07-02");
+
+		// Lingering Tail
+		res = "..A..B..".Split (new String[] { "." }, 2, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (2, res.Length, "#08-01");
+		Assert.AreEqual ("A", res [0], "#08-02");
+		Assert.AreEqual ("B..", res [1], "#08-03");
+
+		// Whitespace and Long split chain (removing empty chars)
+		res = "  A\tBC\n\rDEF    GHI  ".Split ((String[])null, StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (4, res.Length, "#09-01");
+		Assert.AreEqual ("A", res [0], "#09-02");
+		Assert.AreEqual ("BC", res [1], "#09-03");
+		Assert.AreEqual ("DEF", res [2], "#09-04");
+		Assert.AreEqual ("GHI", res [3], "#09-05");
+
+		// Nothing but separators
+		res = "..,.;.,".Split (new String[]{".",",",";"},2,StringSplitOptions.RemoveEmptyEntries);
+		Assert.AreEqual (0, res.Length, "#10-01");
+
+		// Complete testseries
+		String[] dash = new String[] { "/" };
+		StringSplitOptions o = StringSplitOptions.RemoveEmptyEntries;
+		Assert.AreEqual ("hi", "hi".Split (dash, o)[0], "#11-01");
+		Assert.AreEqual ("hi", "hi/".Split (dash, o)[0], "#11-02");
+		Assert.AreEqual ("hi", "/hi".Split (dash, o)[0], "#11-03");
+
+		Assert.AreEqual ("hi..", "hi../".Split (dash, o)[0], "#11-04-1");
+		Assert.AreEqual ("hi..", "/hi..".Split (dash, o)[0], "#11-04-2");
+
+		res = "/hi/..".Split (dash, o);
+		Assert.AreEqual ("hi", res[0], "#11-05-1");
+		Assert.AreEqual ("..", res[1], "#11-05-2");
+		Assert.AreEqual (2, res.Length, "#11-09-3");
+
+		res = "hi/..".Split (dash, o);
+		Assert.AreEqual ("hi", res[0], "#11-06-1");
+		Assert.AreEqual ("..", res[1], "#11-06-2");
+		Assert.AreEqual (2, res.Length, "#11-09-3");
+
+		res = "hi/../".Split (dash, o);
+		Assert.AreEqual ("hi", res[0], "#11-07-1");
+		Assert.AreEqual ("..", res[1], "#11-07-2");
+		Assert.AreEqual (2, res.Length, "#11-07-3");
+
+		res = "/hi../".Split (dash, o);
+		Assert.AreEqual ("hi..", res[0], "#11-08-1");
+		Assert.AreEqual (1, res.Length, "#11-08-2");
+
+		res = "/hi/../".Split (dash, o);
+		Assert.AreEqual ("hi", res[0], "#11-09-1");
+		Assert.AreEqual ("..", res[1], "#11-09-2");
+		Assert.AreEqual (2, res.Length, "#11-09-3");
+	}
 
 	[Test]
 	[Category ("NotDotNet")]
