@@ -594,17 +594,11 @@ namespace Mono.CSharp {
 		Expression right;
 		Expression left;
 
-		public CompoundAssign (Binary.Operator op, Expression target, Expression source)
-			: base (target, source, target.Location)
+		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Location loc)
+			: base (target, source, loc)
 		{
 			right = source;
 			this.op = op;
-		}
-
-		public CompoundAssign (Binary.Operator op, Expression target, Expression source, Expression left)
-			: this (op, target, source)
-		{
-			this.left = left;
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)

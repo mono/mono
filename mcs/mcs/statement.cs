@@ -4048,10 +4048,11 @@ namespace Mono.CSharp {
 	public class Unchecked : Statement {
 		public Block Block;
 		
-		public Unchecked (Block b)
+		public Unchecked (Block b, Location loc)
 		{
 			Block = b;
 			b.Unchecked = true;
+			this.loc = loc;
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -4077,10 +4078,11 @@ namespace Mono.CSharp {
 	public class Checked : Statement {
 		public Block Block;
 		
-		public Checked (Block b)
+		public Checked (Block b, Location loc)
 		{
 			Block = b;
 			b.Unchecked = false;
+			this.loc = loc;
 		}
 
 		public override bool Resolve (BlockContext ec)
@@ -4106,11 +4108,11 @@ namespace Mono.CSharp {
 	public class Unsafe : Statement {
 		public Block Block;
 
-		public Unsafe (Block b)
+		public Unsafe (Block b, Location loc)
 		{
 			Block = b;
 			Block.Unsafe = true;
-			loc = b.StartLocation;
+			this.loc = loc;
 		}
 
 		public override bool Resolve (BlockContext ec)

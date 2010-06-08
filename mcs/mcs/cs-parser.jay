@@ -886,10 +886,6 @@ opt_named_modifier
 	  }
 	;
 		  
-class_body
-	:  OPEN_BRACE opt_class_member_declarations CLOSE_BRACE
-	;
-
 opt_class_member_declarations
 	: /* empty */
 	| class_member_declarations
@@ -3726,11 +3722,8 @@ unchecked_expression
 pointer_member_access 
 	: primary_expression OP_PTR IDENTIFIER
 	  {
-		Expression deref;
 		var lt = (Tokenizer.LocatedToken) $3;
-
-		deref = new Indirection ((Expression) $1, lt.Location);
-		$$ = new MemberAccess (deref, lt.Value);
+		$$ = new MemberAccess (new Indirection ((Expression) $1, GetLocation ($2)), lt.Value, lt.Location);
 	  }
 	;
 
@@ -3995,57 +3988,57 @@ conditional_expression
 assignment_expression
 	: prefixed_unary_expression ASSIGN expression
 	  {
-		$$ = new SimpleAssign ((Expression) $1, (Expression) $3);
+		$$ = new SimpleAssign ((Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_MULT_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.Multiply, (Expression) $1, (Expression) $3);
+			Binary.Operator.Multiply, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_DIV_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.Division, (Expression) $1, (Expression) $3);
+			Binary.Operator.Division, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_MOD_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.Modulus, (Expression) $1, (Expression) $3);
+			Binary.Operator.Modulus, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_ADD_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.Addition, (Expression) $1, (Expression) $3);
+			Binary.Operator.Addition, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SUB_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3);
+			Binary.Operator.Subtraction, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SHIFT_LEFT_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3);
+			Binary.Operator.LeftShift, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_SHIFT_RIGHT_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.RightShift, (Expression) $1, (Expression) $3);
+			Binary.Operator.RightShift, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_AND_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3);
+			Binary.Operator.BitwiseAnd, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_OR_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3);
+			Binary.Operator.BitwiseOr, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	| prefixed_unary_expression OP_XOR_ASSIGN expression
 	  {
 		$$ = new CompoundAssign (
-			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3);
+			Binary.Operator.ExclusiveOr, (Expression) $1, (Expression) $3, GetLocation ($2));
 	  }
 	;
 
@@ -4192,7 +4185,7 @@ class_declaration
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 	  }
-	  class_body
+	  OPEN_BRACE opt_class_member_declarations CLOSE_BRACE
 	  {
 		--lexer.parsing_declaration;	  
 		if (RootContext.Documentation != null)
@@ -4493,7 +4486,7 @@ interactive_statement
 valid_declaration_statement
 	: block
 	| empty_statement
-        | expression_statement
+	| expression_statement
 	| selection_statement
 	| iteration_statement
 	| jump_statement		  
@@ -4808,8 +4801,8 @@ switch_block
 
 opt_switch_sections
 	: /* empty */ 		
-          {
-	  	Report.Warning (1522, 1, lexer.Location, "Empty switch block"); 
+      {
+		Report.Warning (1522, 1, lexer.Location, "Empty switch block"); 
 		$$ = new List<SwitchSection> ();
 	  }
 	| switch_sections
@@ -4881,8 +4874,7 @@ iteration_statement
 while_statement
 	: WHILE open_parens_any boolean_expression CLOSE_PARENS embedded_statement
 	  {
-		Location l = GetLocation ($1);
-		$$ = new While ((BooleanExpression) $3, (Statement) $5, l);
+		$$ = new While ((BooleanExpression) $3, (Statement) $5, GetLocation ($1));
 	  }
 	;
 
@@ -4890,9 +4882,7 @@ do_statement
 	: DO embedded_statement 
 	  WHILE open_parens_any boolean_expression CLOSE_PARENS SEMICOLON
 	  {
-		Location l = GetLocation ($1);
-
-		$$ = new Do ((Statement) $2, (BooleanExpression) $5, l);
+		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
 	  }
 	;
 
@@ -4976,7 +4966,6 @@ for_iterator
 statement_expression_list
 	: statement_expression	
 	  {
-		// CHANGE: was `null'
 		Statement s = (Statement) $1;
 		Block b = new Block (current_block, s.loc, lexer.Location);   
 
@@ -5237,14 +5226,14 @@ catch_args
 checked_statement
 	: CHECKED block
 	  {
-		$$ = new Checked ((Block) $2);
+		$$ = new Checked ((Block) $2, GetLocation ($1));
 	  }
 	;
 
 unchecked_statement
 	: UNCHECKED block
 	  {
-		$$ = new Unchecked ((Block) $2);
+		$$ = new Unchecked ((Block) $2, GetLocation ($1));
 	  }
 	;
 
@@ -5253,7 +5242,7 @@ unsafe_statement
 	  {
 		RootContext.CheckUnsafeOption (GetLocation ($1), Report);
 	  } block {
-		$$ = new Unsafe ((Block) $3);
+		$$ = new Unsafe ((Block) $3, GetLocation ($1));
 	  }
 	;
 
@@ -5314,13 +5303,9 @@ fixed_pointer_declarator
 	;
 
 lock_statement
-	: LOCK open_parens_any expression CLOSE_PARENS 
+	: LOCK open_parens_any expression CLOSE_PARENS embedded_statement
 	  {
-		//
- 	  } 
-	  embedded_statement
-	  {
-		$$ = new Lock ((Expression) $3, (Statement) $6, GetLocation ($1));
+		$$ = new Lock ((Expression) $3, (Statement) $5, GetLocation ($1));
 	  }
 	;
 
@@ -6289,8 +6274,8 @@ Location GetLocation (object obj)
 	if (obj is MemberName)
 		return ((MemberName) obj).Location;
 
-//	if (obj is Expression)
-//		return ((Expression) obj).Location;		
+	if (obj is Expression)
+		return ((Expression) obj).Location;
 
 	return lexer.Location;
 }
