@@ -111,11 +111,6 @@ namespace Microsoft.Build.Utilities
 			if (pathToTool == null)
 				throw new ArgumentNullException ("pathToTool");
 
-			if (!File.Exists (pathToTool)) {
-				Log.LogError ("Tool not found at {0}", pathToTool);
-				return -1;
-			}
-
 			string output, error, responseFileName;
 			StreamWriter outwr, errwr;
 
