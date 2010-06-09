@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <CompilerResponseFile>@(ResponseFile)</CompilerResponseFile>
     <NoWarn>0618,0612,0642</NoWarn>
     <NoConfig>true</NoConfig>
     <CodePage>65001</CodePage>
@@ -21,7 +19,13 @@
     <Compile Include="Mono.Xml.Xsl\PatternTokenizer.cs"/>
     <Reference Include="System.dll"/>
   </ItemGroup>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" DependsOnTargets="SetupProject">
+    <Exec Command="..\..\jay\jay.exe -ct &lt; ..\..\jay\skeleton.cs System.Xml.XPath\Parser.jay &gt; System.Xml.XPath\Parser.cs"/>
+    <Exec Command="echo #define XSLT_PATTERN &gt; Mono.Xml.Xsl\PatternParser.cs"/>
+    <Exec Command="..\..\jay\jay.exe -ct Mono.Xml.Xsl\PatternParser.jay &lt; ..\..\jay\skeleton.cs &gt;&gt; Mono.Xml.Xsl\PatternParser.cs"/>
+    <Exec Command="echo #define XSLT_PATTERN &gt; Mono.Xml.Xsl\PatternTokenizer.cs"/>
+    <Exec Command="type System.Xml.XPath\Tokenizer.cs &gt;&gt; Mono.Xml.Xsl\PatternTokenizer.cs"/>
   </Target>
 </Project>

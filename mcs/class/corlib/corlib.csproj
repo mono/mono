@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <AssemblyName>mscorlib</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <CompilerResponseFile>@(ResponseFile)</CompilerResponseFile>
     <NoConfig>true</NoConfig>
     <NoStdLib>true</NoStdLib>
     <CodePage>65001</CodePage>
@@ -19,14 +17,15 @@
     <DefineConstants>INSIDE_CORLIB,NET_1_1,NET_2_0,LIBC,BOOTSTRAP_BASIC</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources/collation.core.bin"/>
-    <EmbeddedResource Include="resources/collation.tailoring.bin"/>
-    <EmbeddedResource Include="resources/collation.cjkCHS.bin"/>
-    <EmbeddedResource Include="resources/collation.cjkCHT.bin"/>
-    <EmbeddedResource Include="resources/collation.cjkJA.bin"/>
-    <EmbeddedResource Include="resources/collation.cjkKO.bin"/>
-    <EmbeddedResource Include="resources/collation.cjkKOlv2.bin"/>
+    <EmbeddedResource Include="resources\collation.core.bin"/>
+    <EmbeddedResource Include="resources\collation.tailoring.bin"/>
+    <EmbeddedResource Include="resources\collation.cjkCHS.bin"/>
+    <EmbeddedResource Include="resources\collation.cjkCHT.bin"/>
+    <EmbeddedResource Include="resources\collation.cjkJA.bin"/>
+    <EmbeddedResource Include="resources\collation.cjkKO.bin"/>
+    <EmbeddedResource Include="resources\collation.cjkKOlv2.bin"/>
   </ItemGroup>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" DependsOnTargets="SetupProject">
   </Target>

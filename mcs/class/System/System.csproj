@@ -1,11 +1,9 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Project ToolsVersion="3.5" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
-  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <PropertyGroup>
     <OutputType>Library</OutputType>
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
-    <CompilerResponseFile>@(ResponseFile)</CompilerResponseFile>
     <NoConfig>true</NoConfig>
     <CodePage>65001</CodePage>
     <UseVSHostingProcess>false</UseVSHostingProcess>
@@ -18,15 +16,16 @@
     <DefineConstants>BOOTSTRAP_BASIC,NET_1_1,NET_2_0,CONFIGURATION_2_0,XML_DEP</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources/Asterisk.wav"/>
-    <EmbeddedResource Include="resources/Beep.wav"/>
-    <EmbeddedResource Include="resources/Exclamation.wav"/>
-    <EmbeddedResource Include="resources/Hand.wav"/>
-    <EmbeddedResource Include="resources/Question.wav"/>
+    <EmbeddedResource Include="resources\Asterisk.wav"/>
+    <EmbeddedResource Include="resources\Beep.wav"/>
+    <EmbeddedResource Include="resources\Exclamation.wav"/>
+    <EmbeddedResource Include="resources\Hand.wav"/>
+    <EmbeddedResource Include="resources\Question.wav"/>
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'basic_XML_DEP|AnyCPU' ">
     <Reference Include="System.Xml"/>
   </ItemGroup>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" DependsOnTargets="SetupProject">
   </Target>
