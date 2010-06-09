@@ -73,6 +73,7 @@ int WSAAPI getnameinfo(const struct sockaddr*,socklen_t,char*,DWORD,
 #include <mono/metadata/gc-internal.h>
 #include <mono/metadata/threads-types.h>
 #include <mono/metadata/socket-io.h>
+#include <mono/metadata/assembly.h>
 #include <mono/utils/mono-semaphore.h>
 #include "debugger-agent.h"
 #include "mini.h"
@@ -614,6 +615,8 @@ static void suspend_current (void);
 static void clear_event_requests_for_assembly (MonoAssembly *assembly);
 
 static void clear_breakpoints_for_domain (MonoDomain *domain);
+
+static void clear_types_for_assembly (MonoAssembly *assembly);
 
 /* Submodule init/cleanup */
 static void breakpoints_init (void);
@@ -2893,6 +2896,7 @@ assembly_unload (MonoProfiler *prof, MonoAssembly *assembly)
 	process_profiler_event (EVENT_KIND_ASSEMBLY_UNLOAD, assembly);
 
 	clear_event_requests_for_assembly (assembly);
+	clear_types_for_assembly (assembly);
 }
 
 static void
@@ -4373,6 +4377,30 @@ clear_event_requests_for_assembly (MonoAssembly *assembly)
 			}
 		}
 	}
+	mono_loader_unlock ();
+}
+
+/*
+ * type_comes_from_assembly:
+ *
+ *   GHRFunc that returns TRUE if klass comes from assembly
+ */
+static gboolean
+type_comes_from_assembly (gpointer klass, gpointer also_klass, gpointer assembly)
+{
+	return (mono_class_get_image ((MonoClass*)klass) == mono_assembly_get_image ((MonoAssembly*)assembly));
+}
+
+/*
+ * clear_types_for_assembly:
+ *
+ *   Clears types from loaded_classes for a given assembly
+ */
+static void
+clear_types_for_assembly (MonoAssembly *assembly)
+{
+	mono_loader_lock ();
+	g_hash_table_foreach_remove (loaded_classes, type_comes_from_assembly, assembly);
 	mono_loader_unlock ();
 }
 

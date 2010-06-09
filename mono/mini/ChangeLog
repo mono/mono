@@ -1,3 +1,7 @@
+2010-06-09  Levi Bard  <levi@unity3d.com>
+
+	* debugger-agent.c: Clear unloaded types on appdomain unload.
+
 2010-06-08  Zoltan Varga  <vargaz@gmail.com>
 
 	* liveness.c (visit_bb): Make the component vregs of long vars volatile as well.
