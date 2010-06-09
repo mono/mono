@@ -139,7 +139,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			if (is_compound) {
 				var target_expr = CSharpBinder.CreateCompilerExpression (argumentInfo[0], target);
-				expr = new Compiler.CompoundAssign (oper, target_expr, right, left);
+				expr = new Compiler.CompoundAssign (oper, target_expr, right, left, Compiler.Location.Null);
 			} else {
 				expr = new Compiler.Binary (oper, left, right, Compiler.Location.Null);
 			}
