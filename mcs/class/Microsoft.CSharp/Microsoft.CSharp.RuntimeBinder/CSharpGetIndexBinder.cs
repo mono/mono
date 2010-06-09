@@ -57,7 +57,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 
 			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
 			var args = CSharpBinder.CreateCompilerArguments (argumentInfo.Skip (1), indexes);
-			expr = new Compiler.ElementAccess (expr, args);
+			expr = new Compiler.ElementAccess (expr, args, Compiler.Location.Null);
 			expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr);
 
 			var binder = new CSharpBinder (this, expr, errorSuggestion);
