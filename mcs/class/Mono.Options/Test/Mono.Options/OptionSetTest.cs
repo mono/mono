@@ -38,6 +38,8 @@ using NDesk.Options;
 using Mono.Options;
 #endif
 
+using Cadenza.Collections.Tests;
+
 using NUnit.Framework;
 
 #if NDESK_OPTIONS
@@ -79,7 +81,31 @@ namespace Tests.Mono.Options
 	}
 
 	[TestFixture]
-	public class OptionSetTest {
+	public class OptionSetTest : ListContract<Option> {
+
+		protected override ICollection<Option> CreateCollection (IEnumerable<Option> values)
+		{
+			OptionSet set = new OptionSet();
+			foreach (Option value in values)
+				set.Add (value);
+			return set;
+		}
+
+		protected override Option CreateValueA ()
+		{
+			return new CustomOption ("A", null, 0, null);
+		}
+
+		protected override Option CreateValueB ()
+		{
+			return new CustomOption ("B", null, 0, null);
+		}
+
+		protected override Option CreateValueC ()
+		{
+			return new CustomOption ("C", null, 0, null);
+		}
+
 		static IEnumerable<string> _ (params string[] a)
 		{
 			return a;

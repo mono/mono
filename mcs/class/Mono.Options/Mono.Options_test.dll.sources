@@ -1,3 +1,6 @@
+Mono.Options/BaseRocksFixture.cs
+Mono.Options/CollectionContract.cs
+Mono.Options/ListContract.cs
 Mono.Options/OptionContextTest.cs
 Mono.Options/OptionSetTest.cs
 Mono.Options/OptionTest.cs

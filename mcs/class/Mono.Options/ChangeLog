@@ -1,3 +1,7 @@
+2010-06-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* Mono.Options_test.dll.sources: Add additional sources.
+
 2008-10-22  Jonathan Pryor  <jpryor@novell.com>
 
 	* Documentation/en/**/*.xml: s/NDesk.Options/Mono.Options/g (How'd I
