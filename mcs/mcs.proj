@@ -11,6 +11,8 @@
     <MSBuild Projects="class\Mono.Security\Mono.Security.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
     <MSBuild Projects="class\Mono.CompilerServices.SymbolWriter\Mono.CompilerServices.SymbolWriter.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
     <MSBuild Projects="class\System.Core\System.Core.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
+    <MSBuild Projects="tools\gacutil\gacutil.csproj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
+    <MSBuild Projects="tools\security\security.proj" Targets="Build" Properties="Configuration=basic;Platform=AnyCPU"/>
   </Target>
   <Target Name="Clean">
     <!--<MSBuild Projects="build\build.proj" Targets="Clean" />-->
