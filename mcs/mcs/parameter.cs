@@ -1262,7 +1262,7 @@ namespace Mono.CSharp {
 
 			return new ArrayCreation (
 				Parameter.ResolveParameterExpressionType (ec, loc),
-				"[]", initializers, loc);
+				initializers, loc);
 		}
 
 		public ParametersCompiled Clone ()

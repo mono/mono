@@ -140,7 +140,6 @@ namespace Mono.CSharp {
 	{
 //		object_type = null;
 	
-		type_hash = new DoubleHash ();
 		assembly_internals_vis_attrs = new Dictionary<Assembly, bool> ();
 		
 		// TODO: I am really bored by all this static stuff
@@ -182,55 +181,6 @@ namespace Mono.CSharp {
 		parameter_expression_type = fieldinfo_type = methodinfo_type = ctorinfo_type = null;
 
 		expression_type_expr = null;
-	}
-
-	//
-	// We use this hash for multiple kinds of constructed types:
-	//
-	//    (T, "&")	Given T, get T &
-	//    (T, "*")	Given T, get T *
-	//    (T, "[]")	Given T and a array dimension, get T []
-	//    (T, X)	Given a type T and a simple name X, get the type T+X
-	//
-	// Accessibility tests, if necessary, should be done by the user
-	//
-	static DoubleHash type_hash = new DoubleHash ();
-
-	//
-	// Gets the reference to T version of the Type (T&)
-	//
-	public static Type GetReferenceType (TypeSpec t)
-	{
-		return t.GetMetaInfo ().MakeByRefType ();
-	}
-
-	public static TypeSpec GetConstructedType (TypeSpec t, string dim)
-	{
-		object ret = null;
-		if (type_hash.Lookup (t, dim, out ret))
-			return (TypeSpec) ret;
-
-		TypeSpec ds;
-		if (dim.Length == 1) {
-			if (dim[0] == '*') {
-				ds = PointerContainer.MakeType (t);
-			} else if (dim[0] == '&') {
-				ds = ReferenceContainer.MakeType (t);
-			} else {
-				throw new NotImplementedException ("net");
-			}
-		} else if (dim.Length == 2) { 	// optimizes common "[]"
-			ds = ArrayContainer.MakeType (t);
-		} else {
-			int rank = dim.IndexOf (']');
-			if (rank + 1 != dim.Length)
-				t = GetConstructedType (t, dim.Substring (rank + 1));
-
-			ds = ArrayContainer.MakeType (t, rank);
-		}
-
-		type_hash.Insert (t, dim, ds);
-		return ds;
 	}
 
 	/// <summary>

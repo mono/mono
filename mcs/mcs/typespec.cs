@@ -863,8 +863,34 @@ namespace Mono.CSharp
 
 	public class ArrayContainer : ElementTypeSpec
 	{
+		struct TypeRankPair : IEquatable<TypeRankPair>
+		{
+			TypeSpec ts;
+			int rank;
+
+			public TypeRankPair (TypeSpec ts, int rank)
+			{
+				this.ts = ts;
+				this.rank = rank;
+			}
+
+			public override int GetHashCode ()
+			{
+				return ts.GetHashCode () ^ rank.GetHashCode ();
+			}
+
+			#region IEquatable<Tuple<T1,T2>> Members
+
+			public bool Equals (TypeRankPair other)
+			{
+				return other.ts == ts && other.rank == rank;
+			}
+
+			#endregion
+		}
+
 		readonly int rank;
-		static Dictionary<Tuple<TypeSpec, int>, ArrayContainer> instances = new Dictionary<Tuple<TypeSpec, int>, ArrayContainer> ();
+		static Dictionary<TypeRankPair, ArrayContainer> instances = new Dictionary<TypeRankPair, ArrayContainer> ();
 
 		private ArrayContainer (TypeSpec element, int rank)
 			: base (MemberKind.ArrayType, element, null)
@@ -958,6 +984,11 @@ namespace Mono.CSharp
 
 		protected override string GetPostfixSignature()
 		{
+			return GetPostfixSignature (rank);
+		}
+
+		public static string GetPostfixSignature (int rank)
+		{
 			StringBuilder sb = new StringBuilder ();
 			sb.Append ("[");
 			for (int i = 1; i < rank; i++) {
@@ -976,7 +1007,7 @@ namespace Mono.CSharp
 		public static ArrayContainer MakeType (TypeSpec element, int rank)
 		{
 			ArrayContainer ac;
-			var key = Tuple.Create (element, rank);
+			var key = new TypeRankPair (element, rank);
 			if (!instances.TryGetValue (key, out ac)) {
 				ac = new ArrayContainer (element, rank) {
 					BaseType = TypeManager.array_type
@@ -990,7 +1021,7 @@ namespace Mono.CSharp
 
 		public static void Reset ()
 		{
-			instances = new Dictionary<Tuple<TypeSpec, int>, ArrayContainer> ();
+			instances = new Dictionary<TypeRankPair, ArrayContainer> ();
 		}
 	}
 

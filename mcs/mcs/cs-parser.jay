@@ -2645,7 +2645,7 @@ opt_nullable
 		else if (RootContext.Version < LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "nullable types");
 	  
-	  	$$ = this;
+	  	$$ = ComposedTypeSpecifier.CreateNullable (GetLocation ($1));
 	  }
 	;
 
@@ -2879,8 +2879,7 @@ type_expression_or_array
 	: type_expression
 	| type_expression rank_specifiers
 	  {
-		string rank_specifiers = (string) $2;
-		$$ = new ComposedCast ((FullNamedExpression) $1, rank_specifiers);
+		$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
 	;
 	
@@ -2890,7 +2889,7 @@ type_expression
 		MemberName name = (MemberName) $1;
 
 		if ($2 != null) {
-			$$ = new ComposedCast (name.GetTypeExpression (), "?", lexer.Location);
+			$$ = new ComposedCast (name.GetTypeExpression (), (ComposedTypeSpecifier) $2);
 		} else {
 			if (name.Left == null && name.Name == "var")
 				$$ = new VarExpr (name.Location);
@@ -2901,7 +2900,7 @@ type_expression
 	| builtin_types opt_nullable
 	  {
 		if ($2 != null)
-			$$ = new ComposedCast ((FullNamedExpression) $1, "?", lexer.Location);
+			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
 	| type_expression STAR
 	  {
@@ -2910,11 +2909,11 @@ type_expression
 		// can't perform checks during this phase - we do it during
 		// semantic analysis.
 		//
-		$$ = new ComposedCast ((FullNamedExpression) $1, "*", GetLocation ($2));
+		$$ = new ComposedCast ((FullNamedExpression) $1, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
 	  }
 	| VOID STAR
 	  {
-		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), "*", GetLocation ($2));
+		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
 	  }	
 	;
 
@@ -3291,13 +3290,13 @@ element_access
 		  
 		Expression expr = (Expression) $1;  
 		if (expr is ComposedCast){
-			$$ = new ComposedCast ((ComposedCast)expr, (string) $2);
+			$$ = new ComposedCast ((ComposedCast)expr, (ComposedTypeSpecifier) $2);
 		} else if (expr is ATypeNameExpression){
 			//
 			// So we extract the string corresponding to the SimpleName
 			// or MemberAccess
 			// 
-			$$ = new ComposedCast ((ATypeNameExpression)expr, (string) $2);
+			$$ = new ComposedCast ((ATypeNameExpression)expr, (ComposedTypeSpecifier) $2);
 		} else {
 			Error_ExpectingTypeName (expr);
 			$$ = null;
@@ -3411,26 +3410,29 @@ array_creation_expression
 	  opt_rank_specifier	// shift/reduce on OPEN_BRACE
 	  opt_array_initializer
 	  {
-		$$ = new ArrayCreation ((FullNamedExpression) $1, (List<Expression>) $3, (string) $5, (ArrayInitializer) $6, GetLocation ($1));
+		$$ = new ArrayCreation ((FullNamedExpression) $1, (List<Expression>) $3,
+				new ComposedTypeSpecifier (((List<Expression>) $3).Count, GetLocation ($2)) {
+	  				Next = (ComposedTypeSpecifier) $5
+			  	}, (ArrayInitializer) $6, GetLocation ($1));
 	  }
 	| new_expr_start rank_specifiers opt_array_initializer
 	  {
 	  	if ($3 == null)
 	  		Report.Error (1586, GetLocation ($1), "Array creation must have array size or array initializer");
 
-		$$ = new ArrayCreation ((FullNamedExpression) $1, (string) $2, (ArrayInitializer) $3, GetLocation ($1));
+		$$ = new ArrayCreation ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2, (ArrayInitializer) $3, GetLocation ($1));
 	  }
 	| NEW rank_specifiers array_initializer
 	  {
 		if (RootContext.Version <= LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "implicitly typed arrays");
 	  
-		$$ = new ImplicitlyTypedArrayCreation ((string) $2, (ArrayInitializer) $3, GetLocation ($1));
+		$$ = new ImplicitlyTypedArrayCreation ((ComposedTypeSpecifier) $2, (ArrayInitializer) $3, GetLocation ($1));
 	  }
 	| new_expr_start error
 	  {
 		Report.Error (1526, GetLocation ($1), "A new expression requires () or [] after type");
-		$$ = new ArrayCreation ((FullNamedExpression) $1, "[]", null, GetLocation ($1));
+		$$ = new ArrayCreation ((FullNamedExpression) $1, null, GetLocation ($1));
 	  }
 	;
 
@@ -3517,28 +3519,21 @@ anonymous_type_parameter
 opt_rank_specifier
 	: /* empty */
 	  {
-		$$ = "";
+		$$ = null;
 	  }
 	| rank_specifiers
-	  {
-		$$ = $1;
-	  }
 	;
 
 opt_rank_specifier_or_nullable
 	: opt_nullable
-	  {
-		if ($1 != null)
-			$$ = "?";
-		else
-			$$ = string.Empty;
-	  }
 	| opt_nullable rank_specifiers
 	  {
-		if ($1 != null)
-			$$ = "?" + (string) $2;
-		else
+		if ($1 != null) {
+			((ComposedTypeSpecifier) $1).Next = (ComposedTypeSpecifier) $2;
+			$$ = $1;
+		} else {
 			$$ = $2;
+		}
 	  }
 	;
 
@@ -3546,34 +3541,35 @@ rank_specifiers
 	: rank_specifier
 	| rank_specifier rank_specifiers
 	  {
-		$$ = (string) $1 + (string) $2;
+	  	((ComposedTypeSpecifier) $1).Next = (ComposedTypeSpecifier) $2;
+	  	$$ = $1;
 	  }
 	;
 
 rank_specifier
 	: OPEN_BRACKET CLOSE_BRACKET
 	  {
-		$$ = "[]";
+		$$ = ComposedTypeSpecifier.CreateArrayDimension (1, GetLocation ($1));
 	  }
 	| OPEN_BRACKET dim_separators CLOSE_BRACKET
 	  {
-		$$ = "[" + (string) $2 + "]";
+		$$ = ComposedTypeSpecifier.CreateArrayDimension ((int)$2, GetLocation ($1));
 	  }
 	| OPEN_BRACKET error
 	  {
 	  	Error_SyntaxError (178, yyToken, "Invalid rank specifier");
-		$$ = "[]";
+		$$ = ComposedTypeSpecifier.CreateArrayDimension (1, GetLocation ($1));
 	  }
 	;
 
 dim_separators
 	: COMMA
 	  {
-		$$ = ",";
+		$$ = 2;
 	  }
 	| dim_separators COMMA
 	  {
-		$$ = (string) $1 + ",";
+		$$ = ((int) $1) + 1;
 	  }
 	;
 
@@ -4576,8 +4572,6 @@ declaration_statement
 variable_type
 	: primary_expression_no_array_creation opt_rank_specifier_or_nullable
 	  { 
-		// FIXME: Do something smart here regarding the composition of the type.
-
 		// Ok, the above "primary_expression" is there to get rid of
 		// both reduce/reduce and shift/reduces in the grammar, it should
 		// really just be "type_name".  If you use type_name, a reduce/reduce
@@ -4593,24 +4587,14 @@ variable_type
 		// Blah i;
 		
 		Expression expr = (Expression) $1;
-		string rank_or_nullable = (string) $2;
-		
-		if (expr is ComposedCast){
-			$$ = new ComposedCast ((ComposedCast)expr, rank_or_nullable);
-		} else if (expr is ATypeNameExpression){
-			//
-			// So we extract the string corresponding to the SimpleName
-			// or MemberAccess
-			//
-			if (rank_or_nullable.Length == 0) {
-				SimpleName sn = expr as SimpleName;
-				if (sn != null && sn.Name == "var")
-					$$ = new VarExpr (sn.Location);
-				else
-					$$ = $1;
-			} else {
-				$$ = new ComposedCast ((ATypeNameExpression)expr, rank_or_nullable);
-			}
+		if ($2 == null) {
+			SimpleName sn = expr as SimpleName;
+			if (sn != null && sn.Name == "var")
+				$$ = new VarExpr (sn.Location);
+			else
+				$$ = $1;
+		} else if (expr is ATypeNameExpression) {
+			$$ = new ComposedCast ((ATypeNameExpression)expr, (ComposedTypeSpecifier) $2);
 		} else {
 			Error_ExpectingTypeName (expr);
 			$$ = null;
@@ -4618,10 +4602,10 @@ variable_type
 	  }
 	| builtin_types opt_rank_specifier_or_nullable
 	  {
-		if ((string) $2 == "")
+		if ($2 == null)
 			$$ = $1;
 		else
-			$$ = new ComposedCast ((FullNamedExpression) $1, (string) $2, lexer.Location);
+			$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
 	  }
 	| VOID opt_rank_specifier
 	  {
@@ -4636,7 +4620,7 @@ local_variable_pointer_type
 		ATypeNameExpression expr = $1 as ATypeNameExpression;
 
 		if (expr != null) {
-			$$ = new ComposedCast (expr, "*");
+			$$ = new ComposedCast (expr, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
 		} else {
 			Error_ExpectingTypeName ((Expression)$1);
 			$$ = expr;
@@ -4644,15 +4628,15 @@ local_variable_pointer_type
 	  }
 	| builtin_types STAR
 	  {
-		$$ = new ComposedCast ((FullNamedExpression) $1, "*", GetLocation ($1));
+		$$ = new ComposedCast ((FullNamedExpression) $1, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
 	  }
 	| VOID STAR
 	  {
-		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), "*", GetLocation ($2));
+		$$ = new ComposedCast (new TypeExpression (TypeManager.void_type, GetLocation ($1)), ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
 	  }
 	| local_variable_pointer_type STAR
 	  {
-		$$ = new ComposedCast ((FullNamedExpression) $1, "*", GetLocation ($2));
+		$$ = new ComposedCast ((FullNamedExpression) $1, ComposedTypeSpecifier.CreatePointer (GetLocation ($2)));
 	  }
 	;
 
@@ -4661,12 +4645,10 @@ local_variable_type
 	| local_variable_pointer_type opt_rank_specifier
 	  {
 		if ($1 != null){
-			string rank = (string)$2;
-
-			if (rank == "")
+			if ($2 == null)
 				$$ = $1;
 			else
-				$$ = new ComposedCast ((FullNamedExpression) $1, rank);
+				$$ = new ComposedCast ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2);
 		} else {
 			$$ = null;
 		}
@@ -5923,7 +5905,7 @@ class VariableDeclaration {
 	public Expression GetInitializer (FullNamedExpression type)
 	{
 		if (initializer is ArrayInitializer)
-			return new ArrayCreation (type, "", (ArrayInitializer)initializer, Location);
+			return new ArrayCreation (type, (ArrayInitializer)initializer);
 
 		return initializer;
 	}
@@ -5947,7 +5929,7 @@ class VariableMemberDeclaration
 	public Expression GetInitializer (FullNamedExpression type)
 	{
 		if (initializer is ArrayInitializer)
-			return new ArrayCreation (type, "", (ArrayInitializer)initializer, MemberName.Location);
+			return new ArrayCreation (type, (ArrayInitializer)initializer);
 
 		return initializer;
 	}

@@ -1,3 +1,9 @@
+2010-06-09  Marek Safar  <marek.safar@gmail.com>
+
+	* typemanager.cs, parameter.cs, dynamic.cs, typespec.cs,
+	expression.cs, ecore.cs, cs-parser.jay: Fully parse composed type
+	specifiers and stop using string in AST.
+
 2010-06-07  Marek Safar  <marek.safar@gmail.com>
 
 	* typemanager.cs, eval.cs, iterators.cs, anonymous.cs, expression.cs

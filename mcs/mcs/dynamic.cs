@@ -539,7 +539,7 @@ namespace Mono.CSharp
 
 			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder ("InvokeConstructor", loc), binder_args);
 		}
@@ -558,7 +558,7 @@ namespace Mono.CSharp
 
 			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder (isSet ? "SetIndex" : "GetIndex", loc), binder_args);
 		}
@@ -614,7 +614,7 @@ namespace Mono.CSharp
 					foreach (TypeSpec t in ta.Arguments)
 						targs.Add (new TypeOf (new TypeExpression (t, loc), loc));
 
-					binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", targs, loc)));
+					binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (targs, loc)));
 				}
 			} else if (is_member_access) {
 				binder_args.Add (new Argument (new NullLiteral (loc)));
@@ -626,10 +626,10 @@ namespace Mono.CSharp
 			if (args == null) {
 				// Cannot be null because .NET trips over
 				real_args = new ArrayCreation (
-					new MemberAccess (GetBinderNamespace (loc), "CSharpArgumentInfo", loc), "[]",
+					new MemberAccess (GetBinderNamespace (loc), "CSharpArgumentInfo", loc),
 					new ArrayInitializer (0, loc), loc);
 			} else {
-				real_args = new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc);
+				real_args = new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc);
 			}
 
 			binder_args.Add (new Argument (real_args));
@@ -661,7 +661,7 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new BinderFlags (0, this)));
 			binder_args.Add (new Argument (new StringLiteral (name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder (isSet ? "SetMember" : "GetMember", loc), binder_args);
 		}
@@ -767,7 +767,7 @@ namespace Mono.CSharp
 			binder_args.Add (new Argument (new BinderFlags (flags, this)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), name, loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (GetBinder ("UnaryOperation", loc), binder_args);
 		}

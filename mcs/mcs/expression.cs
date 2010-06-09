@@ -3657,7 +3657,7 @@ namespace Mono.CSharp {
 			binder_args.Add (new Argument (new EnumConstant (new IntLiteral ((int) flags, loc), TypeManager.binder_flags)));
 			binder_args.Add (new Argument (new MemberAccess (new MemberAccess (sle, "ExpressionType", loc), GetOperatorExpressionTypeName (), loc)));
 			binder_args.Add (new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc)));									
-			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", args.CreateDynamicBinderArguments (ec), loc)));
+			binder_args.Add (new Argument (new ImplicitlyTypedArrayCreation (args.CreateDynamicBinderArguments (ec), loc)));
 
 			return new Invocation (DynamicExpressionStatement.GetBinder ("BinaryOperation", loc), binder_args);
 		}
@@ -5615,20 +5615,20 @@ namespace Mono.CSharp {
 		}
 	}
 
-	public class ArrayInitializer : ShimExpression
+	public class ArrayInitializer : Expression
 	{
 		List<Expression> elements;
 
 		public ArrayInitializer (List<Expression> init, Location loc)
-			: base (null)
 		{
 			elements = init;
+			this.loc = loc;
 		}
 
 		public ArrayInitializer (int count, Location loc)
-			: base (null)
 		{
 			elements = new List<Expression> (count);
+			this.loc = loc;
 		}
 
 		public ArrayInitializer (Location loc)
@@ -5641,6 +5641,11 @@ namespace Mono.CSharp {
 			elements.Add (expr);
 		}
 
+		public override Expression CreateExpressionTree (ResolveContext ec)
+		{
+			throw new NotSupportedException ("ET");
+		}
+
 		protected override void CloneTo (CloneContext clonectx, Expression t)
 		{
 			var target = (ArrayInitializer) t;
@@ -5648,8 +5653,6 @@ namespace Mono.CSharp {
 			target.elements = new List<Expression> (elements.Count);
 			foreach (var element in elements)
 				target.elements.Add (element.Clone (clonectx));
-
-			base.CloneTo (clonectx, t);
 		}
 
 		public int Count {
@@ -5659,6 +5662,11 @@ namespace Mono.CSharp {
 		protected override Expression DoResolve (ResolveContext rc)
 		{
 			throw new NotImplementedException ();
+		}
+
+		public override void Emit (EmitContext ec)
+		{
+			throw new InternalErrorException ("Missing Resolve call");
 		}
 
 		public Expression this [int index] {
@@ -5690,7 +5698,7 @@ namespace Mono.CSharp {
 		protected TypeSpec array_element_type;
 		int num_arguments = 0;
 		protected int dimensions;
-		protected readonly string rank;
+		protected readonly ComposedTypeSpecifier rank;
 		Expression first_emit;
 		LocalTemporary first_emit_temp;
 
@@ -5702,23 +5710,41 @@ namespace Mono.CSharp {
 		int const_initializers_count;
 		bool only_constant_initializers;
 
-		public ArrayCreation (FullNamedExpression requested_base_type, List<Expression> exprs, string rank, ArrayInitializer initializers, Location l)
+		public ArrayCreation (FullNamedExpression requested_base_type, List<Expression> exprs, ComposedTypeSpecifier rank, ArrayInitializer initializers, Location l)
+			: this (requested_base_type, rank, initializers, l)
 		{
-			this.requested_base_type = requested_base_type;
-			this.initializers = initializers;
-			this.rank = rank;
-			loc = l;
-
 			arguments = new List<Expression> (exprs);
 			num_arguments = arguments.Count;
 		}
 
-		public ArrayCreation (FullNamedExpression requested_base_type, string rank, ArrayInitializer initializers, Location l)
+		//
+		// For expressions like int[] foo = new int[] { 1, 2, 3 };
+		//
+		public ArrayCreation (FullNamedExpression requested_base_type, ComposedTypeSpecifier rank, ArrayInitializer initializers, Location loc)
 		{
 			this.requested_base_type = requested_base_type;
-			this.initializers = initializers;
 			this.rank = rank;
-			loc = l;
+			this.initializers = initializers;
+			this.loc = loc;
+
+			if (rank != null)
+				num_arguments = rank.Dimension;
+		}
+
+		//
+		// For compiler generated single dimensional arrays only
+		//
+		public ArrayCreation (FullNamedExpression requested_base_type, ArrayInitializer initializers, Location loc)
+			: this (requested_base_type, ComposedTypeSpecifier.SingleDimension, initializers, loc)
+		{
+		}
+
+		//
+		// For expressions like int[] foo = { 1, 2, 3 };
+		//
+		public ArrayCreation (FullNamedExpression requested_base_type, ArrayInitializer initializers)
+			: this (requested_base_type, null, initializers, initializers.Location)
+		{
 		}
 
 		protected override void Error_NegativeArrayIndex (ResolveContext ec, Location loc)
@@ -5919,26 +5945,16 @@ namespace Mono.CSharp {
 				return false;
 			}
 			
-			StringBuilder array_qualifier = new StringBuilder ();
-
-			//
-			// `In the first form allocates an array instace of the type that results
-			// from deleting each of the individual expression from the expression list'
-			//
-			if (num_arguments > 0) {
-				array_qualifier.Append ("[");
-				for (int i = num_arguments-1; i > 0; i--)
-					array_qualifier.Append (",");
-				array_qualifier.Append ("]");
-			}
-
-			array_qualifier.Append (rank);
-
 			//
 			// Lookup the type
 			//
-			TypeExpr array_type_expr;
-			array_type_expr = new ComposedCast (requested_base_type, array_qualifier.ToString (), loc);
+			FullNamedExpression array_type_expr;
+			if (num_arguments > 0) {
+				array_type_expr = new ComposedCast (requested_base_type, rank);
+			} else {
+				array_type_expr = requested_base_type;
+			}
+
 			array_type_expr = array_type_expr.ResolveAsTypeTerminal (ec, false);
 			if (array_type_expr == null)
 				return false;
@@ -6312,14 +6328,14 @@ namespace Mono.CSharp {
 	//
 	class ImplicitlyTypedArrayCreation : ArrayCreation
 	{
-		public ImplicitlyTypedArrayCreation (string rank, ArrayInitializer initializers, Location loc)
+		public ImplicitlyTypedArrayCreation (ComposedTypeSpecifier rank, ArrayInitializer initializers, Location loc)
 			: base (null, rank, initializers, loc)
 		{			
-			if (rank.Length > 2) {
-				while (rank [++dimensions] == ',');
-			} else {
-				dimensions = 1;
-			}
+		}
+
+		public ImplicitlyTypedArrayCreation (ArrayInitializer initializers, Location loc)
+			: base (null, initializers, loc)
+		{
 		}
 
 		protected override Expression DoResolve (ResolveContext ec)
@@ -6327,13 +6343,15 @@ namespace Mono.CSharp {
 			if (type != null)
 				return this;
 
+			dimensions = rank.Dimension;
+
 			if (!ResolveInitializers (ec))
 				return null;
 
 			if (array_element_type == null || array_element_type == TypeManager.null_type ||
 				array_element_type == TypeManager.void_type || array_element_type == InternalType.AnonymousMethod ||
 				array_element_type == InternalType.MethodGroup ||
-				arguments.Count != dimensions) {
+				arguments.Count != rank.Dimension) {
 				Error_NoBestType (ec);
 				return null;
 			}
@@ -6345,7 +6363,7 @@ namespace Mono.CSharp {
 			//
 			UnifyInitializerElement (ec);
 
-			type = TypeManager.GetConstructedType (array_element_type, rank);
+			type = ArrayContainer.MakeType (array_element_type, dimensions);
 			eclass = ExprClass.Value;
 			return this;
 		}
@@ -7753,15 +7771,15 @@ namespace Mono.CSharp {
 			bool dynamic;
 			ea.Arguments.Resolve (ec, out dynamic);
 
-			TypeSpec t = ea.Expr.Type;
+			var ac = ea.Expr.Type as ArrayContainer;
 			int rank = ea.Arguments.Count;
-			if (t.GetMetaInfo ().GetArrayRank () != rank) {
+			if (ac.Rank != rank) {
 				ec.Report.Error (22, ea.Location, "Wrong number of indexes `{0}' inside [], expected `{1}'",
-					  ea.Arguments.Count.ToString (), t.GetMetaInfo ().GetArrayRank ().ToString ());
+					  rank.ToString (), ac.Rank.ToString ());
 				return null;
 			}
 
-			type = TypeManager.GetElementType (t);
+			type = ac.Element;
 			if (type.IsPointer && !ec.IsUnsafe) {
 				UnsafeError (ec, ea.Location);
 			}
@@ -8564,6 +8582,65 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// Holds additional type specifiers like ?, *, []
+	//
+	public class ComposedTypeSpecifier
+	{
+		public static readonly ComposedTypeSpecifier SingleDimension = new ComposedTypeSpecifier (1, Location.Null);
+
+		public readonly int Dimension;
+		public readonly Location Location;
+
+		public ComposedTypeSpecifier (int specifier, Location loc)
+		{
+			this.Dimension = specifier;
+			this.Location = loc;
+		}
+
+		#region Properties
+		public bool IsNullable {
+			get {
+				return Dimension == -1;
+			}
+		}
+
+		public bool IsPointer {
+			get {
+				return Dimension == -2;
+			}
+		}
+
+		public ComposedTypeSpecifier Next { get; set; }
+
+		#endregion
+
+		public static ComposedTypeSpecifier CreateArrayDimension (int dimension, Location loc)
+		{
+			return new ComposedTypeSpecifier (dimension, loc);
+		}
+
+		public static ComposedTypeSpecifier CreateNullable (Location loc)
+		{
+			return new ComposedTypeSpecifier (-1, loc);
+		}
+
+		public static ComposedTypeSpecifier CreatePointer (Location loc)
+		{
+			return new ComposedTypeSpecifier (-2, loc);
+		}
+
+		public string GetSignatureForError ()
+		{
+			string s =
+				IsPointer ? "*" :
+				IsNullable ? "?" :
+				ArrayContainer.GetPostfixSignature (Dimension);
+
+			return Next != null ? s + Next.GetSignatureForError () : s;
+		}
+	}
+
 	// <summary>
 	//   This class is used to "construct" the type during a typecast
 	//   operation.  Since the Type.GetType class in .NET can parse
@@ -8572,18 +8649,16 @@ namespace Mono.CSharp {
 	// </summary>
 	public class ComposedCast : TypeExpr {
 		FullNamedExpression left;
-		string dim;
+		ComposedTypeSpecifier spec;
 		
-		public ComposedCast (FullNamedExpression left, string dim)
-			: this (left, dim, left.Location)
+		public ComposedCast (FullNamedExpression left, ComposedTypeSpecifier spec)
 		{
-		}
+			if (spec == null)
+				throw new ArgumentNullException ("spec");
 
-		public ComposedCast (FullNamedExpression left, string dim, Location l)
-		{
 			this.left = left;
-			this.dim = dim;
-			loc = l;
+			this.spec = spec;
+			this.loc = spec.Location;
 		}
 
 		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
@@ -8592,49 +8667,56 @@ namespace Mono.CSharp {
 			if (lexpr == null)
 				return null;
 
-			TypeSpec ltype = lexpr.Type;
-			if ((dim.Length > 0) && (dim [0] == '?')) {
-				TypeExpr nullable = new Nullable.NullableType (lexpr, loc);
-				if (dim.Length > 1)
-					nullable = new ComposedCast (nullable, dim.Substring (1), loc);
-				return nullable.ResolveAsTypeTerminal (ec, false);
-			}
-
-			if (dim == "*" && !TypeManager.VerifyUnmanaged (ec.Compiler, ltype, loc))
-				return null;
-
-			if (dim.Length != 0 && dim [0] == '[') {
-				if (TypeManager.IsSpecialType (ltype)) {
-					ec.Compiler.Report.Error (611, loc, "Array elements cannot be of type `{0}'", TypeManager.CSharpName (ltype));
-					return null;
-				}
-
-				if (ltype.IsStatic) {
-					ec.Compiler.Report.SymbolRelatedToPreviousError (ltype);
-					ec.Compiler.Report.Error (719, loc, "Array elements cannot be of static type `{0}'", 
-						TypeManager.CSharpName (ltype));
-				}
-			}
-
-			if (dim != "")
-				type = TypeManager.GetConstructedType (ltype, dim);
-			else
-				type = ltype;
-
-			if (type == null)
-				throw new InternalErrorException ("Couldn't create computed type " + ltype + dim);
-
-			if (type.IsPointer && !ec.IsUnsafe){
-				UnsafeError (ec.Compiler.Report, loc);
-			}
-
+			type = lexpr.Type;
 			eclass = ExprClass.Type;
+
+			var single_spec = spec;
+
+			if (single_spec.IsNullable) {
+				lexpr = new Nullable.NullableType (lexpr, loc);
+				lexpr = lexpr.ResolveAsTypeTerminal (ec, false);
+				if (lexpr != null)
+					type = lexpr.Type;
+
+				single_spec = single_spec.Next;
+			} else if (single_spec.IsPointer) {
+				if (!TypeManager.VerifyUnmanaged (ec.Compiler, type, loc))
+					return null;
+
+				if (!ec.IsUnsafe) {
+					UnsafeError (ec.Compiler.Report, loc);
+				}
+
+				type = PointerContainer.MakeType (type);
+				single_spec = single_spec.Next;
+			}
+
+			if (single_spec != null && single_spec.Dimension > 0) {
+				if (TypeManager.IsSpecialType (type)) {
+					ec.Compiler.Report.Error (611, loc, "Array elements cannot be of type `{0}'", type.GetSignatureForError ());
+				} else if (type.IsStatic) {
+					ec.Compiler.Report.SymbolRelatedToPreviousError (type);
+					ec.Compiler.Report.Error (719, loc, "Array elements cannot be of static type `{0}'",
+						type.GetSignatureForError ());
+				} else {
+					MakeArray (single_spec);
+				}
+			}
+
 			return this;
+		}
+
+		void MakeArray (ComposedTypeSpecifier spec)
+		{
+			if (spec.Next != null)
+				MakeArray (spec.Next);
+
+			type = ArrayContainer.MakeType (type, spec.Dimension);
 		}
 
 		public override string GetSignatureForError ()
 		{
-			return left.GetSignatureForError () + dim;
+			return left.GetSignatureForError () + spec.GetSignatureForError ();
 		}
 	}
 
@@ -8961,7 +9043,7 @@ namespace Mono.CSharp {
 				expr_initializers.Add (a.CreateExpressionTree (ec));
 
 			args.Add (new Argument (new ArrayCreation (
-				CreateExpressionTypeExpression (ec, loc), "[]", expr_initializers, loc)));
+				CreateExpressionTypeExpression (ec, loc), expr_initializers, loc)));
 			return CreateExpressionFactoryCall (ec, "ElementInit", args);
 		}
 
@@ -9027,7 +9109,7 @@ namespace Mono.CSharp {
 					expr_initializers.Add (expr);
 			}
 
-			return new ImplicitlyTypedArrayCreation ("[]", expr_initializers, loc);
+			return new ImplicitlyTypedArrayCreation (expr_initializers, loc);
 		}
 		
 		protected override Expression DoResolve (ResolveContext ec)
@@ -9317,8 +9399,8 @@ namespace Mono.CSharp {
 
 			Arguments args = new Arguments (3);
 			args.Add (new Argument (method.CreateExpressionTree (ec)));
-			args.Add (new Argument (new ArrayCreation (TypeManager.expression_type_expr, "[]", ctor_args, loc)));
-			args.Add (new Argument (new ImplicitlyTypedArrayCreation ("[]", init, loc)));
+			args.Add (new Argument (new ArrayCreation (TypeManager.expression_type_expr, ctor_args, loc)));
+			args.Add (new Argument (new ImplicitlyTypedArrayCreation (init, loc)));
 
 			return CreateExpressionFactoryCall (ec, "New", args);
 		}

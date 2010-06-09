@@ -4128,7 +4128,7 @@ namespace Mono.CSharp {
 			//
 			if (params_initializers != null) {
 				arguments.Add (new Argument (
-					new ArrayCreation (new TypeExpression (pt, loc), "[]", params_initializers, loc).Resolve (ec)));
+					new ArrayCreation (new TypeExpression (pt, loc), params_initializers, loc).Resolve (ec)));
 				arg_count++;
 			}
 
