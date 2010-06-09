@@ -172,7 +172,7 @@ namespace Mono.Options
 				yield return string.Empty;
 				yield break;
 			}
-			using (var ewidths = widths.GetEnumerator ()) {
+			using (IEnumerator<int> ewidths = widths.GetEnumerator ()) {
 				bool? hw = null;
 				int width = GetNextWidth (ewidths, int.MaxValue, ref hw);
 				int start = 0, end;

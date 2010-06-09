@@ -1,5 +1,9 @@
 2010-06-09  Jonathan Pryor  <jpryor@novell.com>
 
+	* Options.cs: Remove use of 'var' so that C# 2.0 can be used.
+
+2010-06-09  Jonathan Pryor  <jpryor@novell.com>
+
 	* Options.cs: Fix RemoveItem() and SetItem() so that removing by index
 	  and using the numeric indexer work as expected.
 
