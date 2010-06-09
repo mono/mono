@@ -329,6 +329,7 @@ namespace Mono.CSharp
 %token OPEN_PARENS_CAST
 %token GENERIC_DIMENSION
 %token DEFAULT_COLON
+%token OPEN_BRACKET_EXPR
 
 // Make the parser go into eval mode parsing (statements and compilation units).
 %token EVAL_STATEMENT_PARSER
@@ -1090,37 +1091,35 @@ field_declaration
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  FIXED
-	  member_type
+	  FIXED simple_type
 	  fixed_variable_declarators
 	  SEMICOLON
 	  { 
-			FullNamedExpression type = (FullNamedExpression) $4;
+		FullNamedExpression type = (FullNamedExpression) $4;
+		var mod = (Modifiers) $2;
 			
-			var mod = (Modifiers) $2;
+		if (RootContext.Version < LanguageVersion.ISO_2)
+			Report.FeatureIsNotAvailable (GetLocation ($3), "fixed size buffers");		
 
-			foreach (VariableDeclaration var in (List<VariableDeclaration>) $5) {
-				FixedField field = new FixedField (current_class, type, mod, var.identifier,
-					var.GetInitializer (type), (Attributes) $1, var.Location);
+		foreach (VariableDeclaration var in (List<VariableDeclaration>) $5) {
+			FixedField field = new FixedField (current_class, type, mod, var.identifier,
+				var.GetInitializer (type), (Attributes) $1, var.Location);
 					
-				if (RootContext.Version < LanguageVersion.ISO_2)
-					Report.FeatureIsNotAvailable (GetLocation ($3), "fixed size buffers");
-
-				if (RootContext.Documentation != null) {
-					field.DocComment = Lexer.consume_doc_comment ();
-					Lexer.doc_state = XmlCommentState.Allowed;
-				}
-				current_container.AddField (field);
-				$$ = field; // FIXME: might be better if it points to the top item
+			if (RootContext.Documentation != null) {
+				field.DocComment = Lexer.consume_doc_comment ();
+				Lexer.doc_state = XmlCommentState.Allowed;
 			}
+			current_container.AddField (field);
+			$$ = field; // FIXME: might be better if it points to the top item
+		}
 	  }
 	| opt_attributes
 	  opt_modifiers
-	  FIXED
-	  member_type
+	  FIXED simple_type
 	  error
+	  SEMICOLON
 	  {
-		Report.Error (1641, GetLocation ($4), "A fixed size buffer field must have the array size specifier after the field name");
+		Report.Error (1641, GetLocation ($5), "A fixed size buffer field must have the array size specifier after the field name");
 	  }
 	;
 
@@ -1144,7 +1143,7 @@ fixed_variable_declarator
 	  {
 		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, (Expression) $3);
 	  }
-	| IDENTIFIER OPEN_BRACKET CLOSE_BRACKET
+	| IDENTIFIER OPEN_BRACKET error
 	  {
 		Report.Error (443, lexer.Location, "Value or constant expected");
 		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, null);
@@ -1186,7 +1185,7 @@ local_variable_declarator
 local_variable_initializer
 	: expression
 	| array_initializer
-	| STACKALLOC simple_type OPEN_BRACKET expression CLOSE_BRACKET
+	| STACKALLOC simple_type OPEN_BRACKET_EXPR expression CLOSE_BRACKET
 	  {
 		$$ = new StackAlloc ((Expression) $2, (Expression) $4, GetLocation ($1));
 	  }
@@ -1241,7 +1240,7 @@ variable_declarator
 	;
 	
 variable_bad_array
-	: OPEN_BRACKET opt_expression CLOSE_BRACKET
+	: OPEN_BRACKET_EXPR opt_expression CLOSE_BRACKET
 	  {
 		Report.Error (650, GetLocation ($1), "Syntax error, bad array declarator. To declare a managed array the rank specifier precedes the variable's identifier. " +
 			"To declare a fixed size buffer field, use the fixed keyword before the field type");
@@ -2844,7 +2843,7 @@ member_type
 		lexer.parsing_generic_declaration = true;
 	  }
 	;
-
+	
 //
 // A type which does not allow `void' to be used
 //
@@ -3268,32 +3267,9 @@ variable_reference
 	;
 
 element_access
-	: primary_expression_no_array_creation OPEN_BRACKET expression_list_arguments CLOSE_BRACKET	
+	: primary_expression_no_array_creation OPEN_BRACKET_EXPR expression_list_arguments CLOSE_BRACKET	
 	  {
-		$$ = new ElementAccess ((Expression) $1, (Arguments) $3, GetLocation ($1));
-	  }
-	| primary_expression_no_array_creation rank_specifiers
-	  {
-		// So the super-trick is that primary_expression
-		// can only be either a SimpleName or a MemberAccess. 
-		// The MemberAccess case arises when you have a fully qualified type-name like :
-		// Foo.Bar.Blah i;
-		// SimpleName is when you have
-		// Blah i;
-		  
-		Expression expr = (Expression) $1;  
-		if (expr is ComposedCast){
-			$$ = new ComposedCast ((ComposedCast)expr, (ComposedTypeSpecifier) $2);
-		} else if (expr is ATypeNameExpression){
-			//
-			// So we extract the string corresponding to the SimpleName
-			// or MemberAccess
-			// 
-			$$ = new ComposedCast ((ATypeNameExpression)expr, (ComposedTypeSpecifier) $2);
-		} else {
-			Error_ExpectingTypeName (expr);
-			$$ = null;
-		}
+		$$ = new ElementAccess ((Expression) $1, (Arguments) $3, GetLocation ($2));
 	  }
 	;
 
@@ -3352,14 +3328,14 @@ base_access
 		var lt = (Tokenizer.LocatedToken) $3;
 		$$ = new BaseAccess (lt.Value, (TypeArguments) $4, lt.Location);
 	  }
-	| BASE OPEN_BRACKET expression_list_arguments CLOSE_BRACKET
+	| BASE OPEN_BRACKET_EXPR expression_list_arguments CLOSE_BRACKET
 	  {
 		$$ = new BaseIndexerAccess ((Arguments) $3, GetLocation ($1));
 	  }
-	| BASE error
+	| BASE OPEN_BRACKET error
 	  {
 	  	Error_SyntaxError (yyToken);
-		$$ = new BaseAccess (null, GetLocation ($2));
+		$$ = new BaseAccess (null, GetLocation ($1));
 	  }
 	;
 
@@ -3376,44 +3352,44 @@ post_decrement_expression
 		$$ = new UnaryMutator (UnaryMutator.Mode.PostDecrement, (Expression) $1, GetLocation ($2));
 	  }
 	;
-
+	
 object_or_delegate_creation_expression
-	: new_expr_start open_parens_any opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
+	: NEW new_expr_type open_parens_any opt_argument_list CLOSE_PARENS opt_object_or_collection_initializer
 	  {
-		if ($5 != null) {
+		if ($6 != null) {
 			if (RootContext.Version <= LanguageVersion.ISO_2)
 				Report.FeatureIsNotAvailable (GetLocation ($1), "object initializers");
 				
-			$$ = new NewInitialize ((Expression) $1, (Arguments) $3, (CollectionOrObjectInitializers) $5, GetLocation ($1));
+			$$ = new NewInitialize ((FullNamedExpression) $2, (Arguments) $4, (CollectionOrObjectInitializers) $6, GetLocation ($1));
 		}
 		else
-			$$ = new New ((Expression) $1, (Arguments) $3, GetLocation ($1));
+			$$ = new New ((FullNamedExpression) $2, (Arguments) $4, GetLocation ($1));
 	  }
-	| new_expr_start object_or_collection_initializer
+	| NEW new_expr_type object_or_collection_initializer
 	  {
 		if (RootContext.Version <= LanguageVersion.ISO_2)
 			Report.FeatureIsNotAvailable (GetLocation ($1), "collection initializers");
 	  
-		$$ = new NewInitialize ((Expression) $1, null, (CollectionOrObjectInitializers) $2, GetLocation ($1));
+		$$ = new NewInitialize ((FullNamedExpression) $2, null, (CollectionOrObjectInitializers) $3, GetLocation ($1));
 	  }
 	;
 
 array_creation_expression
-	: new_expr_start OPEN_BRACKET expression_list CLOSE_BRACKET 
-	  opt_rank_specifier	// shift/reduce on OPEN_BRACE
+	: NEW new_expr_type OPEN_BRACKET_EXPR expression_list CLOSE_BRACKET
+	  opt_rank_specifier
 	  opt_array_initializer
 	  {
-		$$ = new ArrayCreation ((FullNamedExpression) $1, (List<Expression>) $3,
-				new ComposedTypeSpecifier (((List<Expression>) $3).Count, GetLocation ($2)) {
-	  				Next = (ComposedTypeSpecifier) $5
-			  	}, (ArrayInitializer) $6, GetLocation ($1));
+		$$ = new ArrayCreation ((FullNamedExpression) $2, (List<Expression>) $4,
+				new ComposedTypeSpecifier (((List<Expression>) $4).Count, GetLocation ($3)) {
+	  				Next = (ComposedTypeSpecifier) $6
+			  	}, (ArrayInitializer) $7, GetLocation ($1));
 	  }
-	| new_expr_start rank_specifiers opt_array_initializer
+	| NEW new_expr_type rank_specifiers opt_array_initializer
 	  {
-	  	if ($3 == null)
+	  	if ($4 == null)
 	  		Report.Error (1586, GetLocation ($1), "Array creation must have array size or array initializer");
 
-		$$ = new ArrayCreation ((FullNamedExpression) $1, (ComposedTypeSpecifier) $2, (ArrayInitializer) $3, GetLocation ($1));
+		$$ = new ArrayCreation ((FullNamedExpression) $2, (ComposedTypeSpecifier) $3, (ArrayInitializer) $4, GetLocation ($1));
 	  }
 	| NEW rank_specifiers array_initializer
 	  {
@@ -3422,22 +3398,26 @@ array_creation_expression
 	  
 		$$ = new ImplicitlyTypedArrayCreation ((ComposedTypeSpecifier) $2, (ArrayInitializer) $3, GetLocation ($1));
 	  }
-	| new_expr_start error
+	| NEW new_expr_type OPEN_BRACKET CLOSE_BRACKET OPEN_BRACKET_EXPR error CLOSE_BRACKET
 	  {
-		Report.Error (1526, GetLocation ($1), "A new expression requires () or [] after type");
-		$$ = new ArrayCreation ((FullNamedExpression) $1, null, GetLocation ($1));
+		Report.Error (178, GetLocation ($6), "Invalid rank specifier, expecting `,' or `]'");
+		$$ = new ArrayCreation ((FullNamedExpression) $2, null, GetLocation ($1));
+	  }
+	| NEW new_expr_type error
+	  {
+		Error_SyntaxError (1526, yyToken, "Unexpected symbol");
+		$$ = new ArrayCreation ((FullNamedExpression) $2, null, GetLocation ($1));
 	  }
 	;
 
-new_expr_start
-	: NEW
-	  {
+new_expr_type
+	: {
 		++lexer.parsing_type;
 	  }
 	  simple_type
 	  {
 		--lexer.parsing_type;
-		$$ = $3;
+		$$ = $2;
 	  }
 	;
 
@@ -3547,11 +3527,6 @@ rank_specifier
 	| OPEN_BRACKET dim_separators CLOSE_BRACKET
 	  {
 		$$ = ComposedTypeSpecifier.CreateArrayDimension ((int)$2, GetLocation ($1));
-	  }
-	| OPEN_BRACKET error
-	  {
-	  	Error_SyntaxError (178, yyToken, "Invalid rank specifier");
-		$$ = ComposedTypeSpecifier.CreateArrayDimension (1, GetLocation ($1));
 	  }
 	;
 
@@ -6339,11 +6314,10 @@ void Error_SyntaxError (int error_code, int token, string msg)
 			error_code = 1525;
 	}
 	
-	if (expecting != null)
-		Report.Error (error_code, lexer.Location, "{2} `{0}', expecting {1}", 
-			symbol, expecting, msg);	  
-	else
+	if (string.IsNullOrEmpty (expecting))
 		Report.Error (error_code, lexer.Location, "{1} `{0}'", symbol, msg);
+	else
+		Report.Error (error_code, lexer.Location, "{2} `{0}', expecting {1}", symbol, expecting, msg);	  
 }
 
 string GetExpecting ()
@@ -6678,6 +6652,7 @@ static string GetTokenName (int token)
 	case Token.CLOSE_BRACE:
 		return "}";
 	case Token.OPEN_BRACKET:
+	case Token.OPEN_BRACKET_EXPR:
 		return "[";
 	case Token.CLOSE_BRACKET:
 		return "]";

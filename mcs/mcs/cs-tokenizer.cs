@@ -2629,8 +2629,32 @@ namespace Mono.CSharp
 					// To block doccomment inside attribute declaration.
 					if (doc_state == XmlCommentState.Allowed)
 						doc_state = XmlCommentState.NotAllowed;
-					val = LocatedToken.CreateOptional (ref_line, col);
-					return Token.OPEN_BRACKET;
+
+					val = LocatedToken.Create (ref_line, col);
+
+					if (parsing_block == 0 || lambda_arguments_parsing)
+						return Token.OPEN_BRACKET;
+
+					int next = peek_char ();
+					switch (next) {
+					case ']':
+					case ',':
+						return Token.OPEN_BRACKET;
+
+					case ' ':
+					case '\f':
+					case '\v':
+					case '\r':
+					case '\n':
+					case '/':
+						next = peek_token ();
+						if (next == Token.COMMA || next == Token.CLOSE_BRACKET)
+							return Token.OPEN_BRACKET;
+
+						return Token.OPEN_BRACKET_EXPR;
+					default:
+						return Token.OPEN_BRACKET_EXPR;
+					}
 				case ']':
 					val = LocatedToken.CreateOptional (ref_line, col);
 					return Token.CLOSE_BRACKET;
@@ -2931,6 +2955,8 @@ namespace Mono.CSharp
 					d = peek_char ();
 					if (d >= '0' && d <= '9')
 						return is_number (c);
+
+					val = LocatedToken.CreateOptional (ref_line, col);
 					return Token.DOT;
 				
 				case '#':

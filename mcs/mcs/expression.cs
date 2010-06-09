@@ -5223,7 +5223,7 @@ namespace Mono.CSharp {
 
 		protected MethodGroupExpr method;
 
-		public New (Expression requested_type, Arguments arguments, Location l)
+		public New (FullNamedExpression requested_type, Arguments arguments, Location l)
 		{
 			RequestedType = requested_type;
 			Arguments = arguments;
@@ -5309,20 +5309,6 @@ namespace Mono.CSharp {
 		
 		protected override Expression DoResolve (ResolveContext ec)
 		{
-			//
-			// The New DoResolve might be called twice when initializing field
-			// expressions (see EmitFieldInitializers, the call to
-			// GetInitializerExpression will perform a resolve on the expression,
-			// and later the assign will trigger another resolution
-			//
-			// This leads to bugs (#37014)
-			//
-			if (type != null){
-				if (RequestedType is NewDelegate)
-					return RequestedType;
-				return this;
-			}
-
 			TypeExpr texpr = RequestedType.ResolveAsTypeTerminal (ec, false);
 			if (texpr == null)
 				return null;
@@ -9243,7 +9229,7 @@ namespace Mono.CSharp {
 		CollectionOrObjectInitializers initializers;
 		IMemoryLocation instance;
 
-		public NewInitialize (Expression requested_type, Arguments arguments, CollectionOrObjectInitializers initializers, Location l)
+		public NewInitialize (FullNamedExpression requested_type, Arguments arguments, CollectionOrObjectInitializers initializers, Location l)
 			: base (requested_type, arguments, l)
 		{
 			this.initializers = initializers;

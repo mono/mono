@@ -338,7 +338,7 @@ namespace Mono.CSharp {
 			//
 			// Create an instance of a storey
 			//
-			Expression storey_type_expr = CreateStoreyTypeExpression (ec);
+			var storey_type_expr = CreateStoreyTypeExpression (ec);
 
 			ResolveContext rc = new ResolveContext (ec.MemberContext);
 			Expression e = new New (storey_type_expr, null, Location).Resolve (rc);
