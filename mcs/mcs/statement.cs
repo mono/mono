@@ -3703,7 +3703,7 @@ namespace Mono.CSharp {
 				Arguments get_value_args = new Arguments (1);
 				get_value_args.Add (new Argument (value));
 
-				Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args), loc).Resolve (rc);
+				Expression get_item = new IndexerAccess (new ElementAccess (switch_cache_field, get_value_args, loc), loc).Resolve (rc);
 				if (get_item == null)
 					return;
 
@@ -4989,7 +4989,7 @@ namespace Mono.CSharp {
 					list.Add (new Argument (counter [i]));
 				}
 
-				access = new ElementAccess (copy, list).Resolve (ec);
+				access = new ElementAccess (copy, list, loc).Resolve (ec);
 				if (access == null)
 					return false;
 

@@ -7629,10 +7629,10 @@ namespace Mono.CSharp {
 		public Arguments Arguments;
 		public Expression Expr;
 
-		public ElementAccess (Expression e, Arguments args)
+		public ElementAccess (Expression e, Arguments args, Location loc)
 		{
 			Expr = e;
-			loc  = e.Location;
+			this.loc = loc;
 			this.Arguments = args;
 		}
 

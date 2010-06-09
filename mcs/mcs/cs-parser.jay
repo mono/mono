@@ -3065,7 +3065,6 @@ member_access
 	| builtin_types DOT IDENTIFIER opt_type_argument_list
 	  {
 		var lt = (Tokenizer.LocatedToken) $3;
-		// TODO: Location is wrong as some predefined types doesn't hold a location
 		$$ = new MemberAccess ((Expression) $1, lt.Value, (TypeArguments) $4, lt.Location);
 	  }
 	| qualified_alias_member IDENTIFIER opt_type_argument_list
@@ -3084,7 +3083,6 @@ member_access
 	  }
 	| builtin_types DOT GENERATE_COMPLETION
 	  {
-		// TODO: Location is wrong as some predefined types doesn't hold a location
 		$$ = new CompletionMemberAccess ((Expression) $1, null, lexer.Location);
 	  }
 	| builtin_types DOT IDENTIFIER GENERATE_COMPLETION {
@@ -3272,13 +3270,8 @@ variable_reference
 element_access
 	: primary_expression_no_array_creation OPEN_BRACKET expression_list_arguments CLOSE_BRACKET	
 	  {
-		$$ = new ElementAccess ((Expression) $1, (Arguments) $3);
+		$$ = new ElementAccess ((Expression) $1, (Arguments) $3, GetLocation ($1));
 	  }
-	| array_creation_expression OPEN_BRACKET expression_list_arguments CLOSE_BRACKET
-	  {
-	  	// LAMESPEC: Not allowed according to specification
-		$$ = new ElementAccess ((Expression) $1, (Arguments) $3);
-	  }	
 	| primary_expression_no_array_creation rank_specifiers
 	  {
 		// So the super-trick is that primary_expression
