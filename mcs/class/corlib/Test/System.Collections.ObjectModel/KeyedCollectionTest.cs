@@ -105,6 +105,72 @@ namespace MonoTests.System.Collections.ObjectModel
 		}
 
 		[Test]
+		public void Insert_InvalidIndexDoesNotInsert ()
+		{
+			StrKeyCollection collection =
+				new StrKeyCollection(EqualityComparer<string>.Default, 0);
+			InsertInvalidIndex (collection, -1);
+			InsertInvalidIndex (collection, 1);
+		}
+
+		void InsertInvalidIndex (StrKeyCollection collection, int index)
+		{
+			try {
+				collection.Insert (index, "One");
+				Assert.Fail ("Invalid index should fail.");
+			}
+			catch (ArgumentOutOfRangeException) {
+			}
+			catch (Exception e) {
+				Assert.Fail ("Invalid exception type: expected ArgumentOutOfRangeException, got " + e.GetType ().Name);
+			}
+
+			IDictionary<string, string> dict = collection.GetDictionary ();
+			if (dict != null) {
+				Assert.AreEqual (0, dict.Count);
+				Assert.IsFalse (dict.ContainsKey ("Key:One"));
+			}
+		}
+
+		[Test]
+		public void Insert_DuplicateKey ()
+		{
+			StrKeyCollection collection =
+				new StrKeyCollection(EqualityComparer<string>.Default, 0);
+			collection.Add ("One");
+			try {
+				collection.Add ("One");
+				Assert.Fail ("Duplicate keys should throw ArgumentException.");
+			}
+			catch (ArgumentException) {
+			}
+			catch (Exception e) {
+				Assert.Fail ("Invalid exception type: expected ArgumentOutOfRangeException, got " + e.GetType ().Name);
+			}
+			Assert.AreEqual (1, collection.Count);
+			Assert.AreEqual (1, collection.GetDictionary ().Count);
+		}
+
+		[Test]
+		public void Insert_DuplicateKey_NoDictionary ()
+		{
+			StrKeyCollection collection =
+				new StrKeyCollection(EqualityComparer<string>.Default, 4);
+			collection.Add ("One");
+			try {
+				collection.Add ("One");
+				Assert.Fail ("Duplicate keys should throw ArgumentException.");
+			}
+			catch (ArgumentException) {
+			}
+			catch (Exception e) {
+				Assert.Fail ("Invalid exception type: expected ArgumentOutOfRangeException, got " + e.GetType ().Name);
+			}
+			Assert.AreEqual (1, collection.Count);
+			Assert.AreEqual (null, collection.GetDictionary ());
+		}
+
+		[Test]
 		public void TestInsert ()
 		{
 			StrKeyCollection collection =

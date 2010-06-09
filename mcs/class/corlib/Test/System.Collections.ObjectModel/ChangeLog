@@ -1,3 +1,7 @@
+2010-06-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* KeyedCollectionTest.cs: Verify exception safety of Insert().
+
 2008-01-20  Juraj Skripsky  <js@hotfeet.ch>
 
 	* ReadOnlyCollectionTest.cs: Add test to verify that ReadOnlyCollection

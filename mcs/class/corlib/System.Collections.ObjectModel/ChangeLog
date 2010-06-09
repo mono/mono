@@ -1,3 +1,9 @@
+2010-06-09  Jonathan Pryor  <jpryor@novell.com>
+
+	* KeyedCollection.cs: Make KeyedCollection.InsertItem() exception
+	  safe, so that if the index is invalid (negative or too large) we
+	  don't add the entry to the underlying Dictionary.
+
 2008-06-27  Andreas Nahr <ClassDevelopment@A-SoftTech.com>
 
 	* Collection.cs: Fix parameter names
