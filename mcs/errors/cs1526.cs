@@ -1,7 +1,8 @@
-// cs1526.cs: A new expression requires () or [] after type
-// Line: 6
+// CS1526: Unexpected symbol `;', expecting `(', `[', or `{'
+// Line: 7
+
 class X {
-        static void Main ()
+	static void Main ()
 	{
 		X x = new X;
 	}
