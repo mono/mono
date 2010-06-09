@@ -137,32 +137,20 @@ namespace Cadenza.Collections.Tests {
 
 			Assert.AreEqual (a, list [0]);
 			AssertThrows<ArgumentOutOfRangeException>(() => Ignore (list [-1]));
-			Console.WriteLine("#A");
 
 			try {
 				AssertThrows<ArgumentOutOfRangeException>(() => list [-1] = a);
 				AssertThrows<ArgumentOutOfRangeException>(() => list [1] = a);
-			Console.WriteLine("#B");
-
-				foreach (var e in list)
-					Console.WriteLine ("#Bar! {0}", e);
-			Console.WriteLine ("B.e");
 
 				list [0] = b;
 				Assert.AreEqual (1, list.Count);
-			Console.WriteLine("#B.1: {0}", list[0]);
 
-				foreach (var e in list)
-					Console.WriteLine ("#FOo! {0}", e);
-			Console.WriteLine("#B.2");
 				Assert.AreEqual (-1,  list.IndexOf (a));
 				Assert.AreEqual (0,   list.IndexOf (b));
-			Console.WriteLine("#C");
 			}
 			catch (NotSupportedException) {
 				Assert.IsTrue (list.IsReadOnly);
 			}
-			Console.WriteLine("#D");
 		}
 	}
 }
