@@ -1,3 +1,8 @@
+2010-06-11  Zoltan Varga  <vargaz@gmail.com>
+
+	* object.c: Use a callback to create IMT trampolines, allowing the usage of one
+	imt trampoline per imt slot when using LLVM.
+
 2010-06-10  Jonathan Pryor  <jpryor@novell.com>
 
 	* mini.c (mini_cleanup): Call mono_runtime_shutdown(). Fixes #438454.
