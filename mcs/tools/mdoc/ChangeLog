@@ -1,4 +1,4 @@
-2010-04-16  Jonathan Pryor <jpryor@novell.com>
+2010-06-10  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/monodocs2html.cs: Regenerate all index.{opts.ext}
 	  files if any of the source .xml files have changed.  This allows
