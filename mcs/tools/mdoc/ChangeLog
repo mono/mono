@@ -1,5 +1,12 @@
 2010-04-16  Jonathan Pryor <jpryor@novell.com>
 
+	* Mono.Documentation/monodocs2html.cs: Regenerate all index.{opts.ext}
+	  files if any of the source .xml files have changed.  This allows
+	  new <summary/> values to be inserted into the index.{opts.ext}
+	  files, instead of the index files being "stale".  Fixes #573121.
+
+2010-04-16  Jonathan Pryor <jpryor@novell.com>
+
 	* Makefile: Add System.Xml.Linq.dll to the referenced assemblies.
 	* Mono.Documentation/webdoc.cs: Allow .source files to be provided to
 	  'mdoc export-html-webdoc', which will cause the .source files to be

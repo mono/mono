@@ -125,7 +125,6 @@ class MDocToHtmlConverter : MDocCommand {
 		}
 		
 		XmlDocument overview = GetOverview (sourceDirectories);
-		string overviewDest   = opts.dest + "/index." + opts.ext;
 
 		ArrayList extensions = GetExtensionMethods (overview);
 		
@@ -133,8 +132,7 @@ class MDocToHtmlConverter : MDocCommand {
 		XsltArgumentList overviewargs = new XsltArgumentList();
 		overviewargs.AddParam("Index", "", overview.CreateNavigator ());
 
-		var regenIndex = sourceDirectories.Any (
-					d => !DestinationIsNewer (Path.Combine (d, "index.xml"), overviewDest));
+		var regenIndex = ShouldRegenIndexes (opts, overview, sourceDirectories);
 		if (regenIndex) {
 			overviewargs.AddParam("ext", "", opts.ext);
 			overviewargs.AddParam("basepath", "", "./");
@@ -168,20 +166,8 @@ class MDocToHtmlConverter : MDocCommand {
 			}
 			
 			foreach (XmlElement ty in ns.SelectNodes("Type")) {
-				string typefilebase = ty.GetAttribute("Name");
-				string sourceDir    = ty.GetAttribute("SourceDirectory");
-				string typename = ty.GetAttribute("DisplayName");
-				if (typename.Length == 0)
-					typename = typefilebase;
-				
-				if (opts.onlytype != null && !(nsname + "." + typename).StartsWith(opts.onlytype))
-					continue;
-
-				string typefile = CombinePath (sourceDir, nsname, typefilebase + ".xml");
-				if (typefile == null)
-					continue;
-
-				string destfile = opts.dest + "/" + nsname + "/" + typefilebase + "." + opts.ext;
+				string typename, typefile, destfile;
+				GetTypePaths (opts, ty, out typename, out typefile, out destfile);
 
 				if (DestinationIsNewer (typefile, destfile))
 					// target already exists, and is newer.  why regenerate?
@@ -211,6 +197,48 @@ class MDocToHtmlConverter : MDocCommand {
 		foreach (XmlNode n in extensions)
 			r.Add (n);
 		return r;
+	}
+
+	static bool ShouldRegenIndexes (MDocToHtmlConverterOptions opts, XmlDocument overview, List<string> sourceDirectories)
+	{
+		string overviewDest   = opts.dest + "/index." + opts.ext;
+		if (sourceDirectories.Any (
+					d => !DestinationIsNewer (Path.Combine (d, "index.xml"), overviewDest)))
+			return true;
+
+		foreach (XmlElement type in overview.SelectNodes("Overview/Types/Namespace/Type")) {
+			string _, srcfile, destfile;
+			GetTypePaths (opts, type, out _, out srcfile, out destfile);
+
+			if (srcfile == null || destfile == null)
+				continue;
+			if (DestinationIsNewer (srcfile, destfile))
+				return true;
+		}
+
+		return false;
+	}
+
+	static void GetTypePaths (MDocToHtmlConverterOptions opts, XmlElement type, out string typename, out string srcfile, out string destfile)
+	{
+		srcfile   = null;
+		destfile  = null;
+
+		string nsname       = type.ParentNode.Attributes ["Name"].Value;
+		string typefilebase = type.GetAttribute("Name");
+		string sourceDir    = type.GetAttribute("SourceDirectory");
+		typename            = type.GetAttribute("DisplayName");
+		if (typename.Length == 0)
+			typename = typefilebase;
+		
+		if (opts.onlytype != null && !(nsname + "." + typename).StartsWith(opts.onlytype))
+			return;
+
+		srcfile = CombinePath (sourceDir, nsname, typefilebase + ".xml");
+		if (srcfile == null)
+			return;
+
+		destfile = CombinePath (opts.dest, nsname, typefilebase + "." + opts.ext);
 	}
 	
 	private static void DumpTemplate() {
