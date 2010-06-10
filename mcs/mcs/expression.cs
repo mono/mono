@@ -5223,7 +5223,7 @@ namespace Mono.CSharp {
 
 		protected MethodGroupExpr method;
 
-		public New (FullNamedExpression requested_type, Arguments arguments, Location l)
+		public New (Expression requested_type, Arguments arguments, Location l)
 		{
 			RequestedType = requested_type;
 			Arguments = arguments;
