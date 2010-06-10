@@ -1,3 +1,11 @@
+2010-06-10  Jonathan Pryor  <jpryor@novell.com>
+
+	* Makefile.am: Add test-process-exit target.
+	* bug-438454.cs: Added; test case for #438454.
+	* bug-438454.exe.stdout.expected: Added; expected output when
+	  executing bug-438454.exe, to test the ordering of the
+	  AppDomain.ProcessExit event wrt ThreadPool disposal.
+
 2010-06-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs dtest-app.cs: Add tests for StackFrame.GetVisibleVariables ().

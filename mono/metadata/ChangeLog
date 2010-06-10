@@ -1,3 +1,10 @@
+2010-06-10  Jonathan Pryor <jpryor@novell.com>
+
+	* object.c (mono_runtime_run_main): Move fire_process_exit_event() into
+	  runtime.c:mono_runtime_shutdown().
+	* runtime.c: Added; adds mono_runtime_shutdown(), which invokes the
+	  AppDomain.ProcessExit event in all AppDomains.
+
 2010-06-06  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_marshal_get_runtime_invoke): Don't set *exc to NULL, it is now
