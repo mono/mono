@@ -26,6 +26,8 @@
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" DependsOnTargets="SetupProject">
     <Exec Command="..\..\jay\jay.exe -ct &lt; ..\..\jay\skeleton.cs System.Xml.XPath\Parser.jay &gt; System.Xml.XPath\Parser.cs"/>
+    <Copy SourceFiles="System.Xml.XPath\Parser.jay" DestinationFiles="Mono.Xml.Xsl\PatternParser.jay"/>
+    <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="%start Expr" Replacement="%start Pattern" TextEncoding="Windows-1252" Files="Mono.Xml.Xsl\PatternParser.jay"/>
     <Exec Command="echo #define XSLT_PATTERN &gt; Mono.Xml.Xsl\PatternParser.cs"/>
     <Exec Command="..\..\jay\jay.exe -ct Mono.Xml.Xsl\PatternParser.jay &lt; ..\..\jay\skeleton.cs &gt;&gt; Mono.Xml.Xsl\PatternParser.cs"/>
     <Exec Command="echo #define XSLT_PATTERN &gt; Mono.Xml.Xsl\PatternTokenizer.cs"/>
