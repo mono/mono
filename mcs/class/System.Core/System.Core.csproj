@@ -12,8 +12,14 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'basic|AnyCPU' ">
     <DefineConstants>BOOTSTRAP_BASIC,NET_1_1,NET_2_0,INSIDE_SYSCORE,LIBC,NET_3_5</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
+    <DefineConstants>NET_1_1,NET_2_0,INSIDE_SYSCORE,LIBC,NET_3_5</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Reference Include="System.dll"/>
+    <Reference Include="Mono.Posix">
+      <HintPath>..\lib\net_2_0\Mono.Posix.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

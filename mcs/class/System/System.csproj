@@ -15,6 +15,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'basic_XML_DEP|AnyCPU' ">
     <DefineConstants>BOOTSTRAP_BASIC,NET_1_1,NET_2_0,CONFIGURATION_2_0,XML_DEP</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
+    <DefineConstants>NET_1_1,NET_2_0,CONFIGURATION_2_0</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\Asterisk.wav"/>
     <EmbeddedResource Include="resources\Beep.wav"/>

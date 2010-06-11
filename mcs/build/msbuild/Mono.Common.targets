@@ -11,6 +11,9 @@
   <PropertyGroup Condition=" '$(Configuration)' == 'net_2_0_bootstrap' ">
     <OutputPath Condition=" '$(OutputPath)' == '' ">$(MSBuildProjectDirectory)\..\lib\net_2_0_bootstrap\</OutputPath>
   </PropertyGroup>
+  <PropertyGroup>
+    <OutputPath Condition=" '$(OutputPath)' == '' ">$(MSBuildProjectDirectory)\..\lib\$(Configuration)\</OutputPath>
+  </PropertyGroup>
   <Target Name="SetupProject">
     <Copy SourceFiles="$(ResponseFile)" DestinationFiles="$(ResponseFile).msbuild"/>
 	  <MSBuild.ExtensionPack.FileSystem.File TaskAction="Replace" RegexPattern="/" Replacement="\" Files="$(ResponseFile).msbuild"/>

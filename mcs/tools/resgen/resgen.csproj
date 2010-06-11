@@ -6,16 +6,15 @@
     <TargetFrameworkVersion>v3.5</TargetFrameworkVersion>
     <ResponseFile>$(MSBuildProjectName).exe.sources</ResponseFile>
     <CodePage>65001</CodePage>
-    <OutputPath>..\..\class\lib\basic\</OutputPath>
+    <OutputPath>..\..\class\lib\net_2_0_bootstrap\</OutputPath>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'basic|AnyCPU' ">
-    <DefineConstants>BOOTSTRAP_BASIC,NET_1_1,NET_2_0</DefineConstants>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0_bootstrap|AnyCPU' ">
+    <DefineConstants>NET_1_1,NET_2_0</DefineConstants>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="Mono.Security">
-      <HintPath>..\..\class\lib\basic\Mono.Security.dll</HintPath>
-    </Reference>
+    <Reference Include="System"/>
+    <Reference Include="System.Xml"/>
   </ItemGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

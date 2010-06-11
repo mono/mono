@@ -9,23 +9,26 @@
     <CodePage>65001</CodePage>
     <UseVSHostingProcess>false</UseVSHostingProcess>
     <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
+    <ProjectGuid>{72E6D902-9CE6-4F09-91E7-6D48B965DCFA}</ProjectGuid>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'basic|AnyCPU' ">
     <DefineConstants>INSIDE_CORLIB,NET_1_1,NET_2_0,LIBC,BOOTSTRAP_BASIC</DefineConstants>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0_bootstrap|AnyCPU' ">
-    <DefineConstants>INSIDE_CORLIB,NET_1_1,NET_2_0,LIBC,BOOTSTRAP_BASIC</DefineConstants>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
+    <DefineConstants>INSIDE_CORLIB,NET_1_1,NET_2_0,LIBC</DefineConstants>
+    <SignAssembly>true</SignAssembly>
+    <AssemblyOriginatorKeyFile>..\mono.snk</AssemblyOriginatorKeyFile>
   </PropertyGroup>
   <ItemGroup>
-    <EmbeddedResource Include="resources\collation.core.bin"/>
-    <EmbeddedResource Include="resources\collation.tailoring.bin"/>
-    <EmbeddedResource Include="resources\collation.cjkCHS.bin"/>
-    <EmbeddedResource Include="resources\collation.cjkCHT.bin"/>
-    <EmbeddedResource Include="resources\collation.cjkJA.bin"/>
-    <EmbeddedResource Include="resources\collation.cjkKO.bin"/>
-    <EmbeddedResource Include="resources\collation.cjkKOlv2.bin"/>
+    <EmbeddedResource Include="resources\collation.core.bin" />
+    <EmbeddedResource Include="resources\collation.tailoring.bin" />
+    <EmbeddedResource Include="resources\collation.cjkCHS.bin" />
+    <EmbeddedResource Include="resources\collation.cjkCHT.bin" />
+    <EmbeddedResource Include="resources\collation.cjkJA.bin" />
+    <EmbeddedResource Include="resources\collation.cjkKO.bin" />
+    <EmbeddedResource Include="resources\collation.cjkKOlv2.bin" />
   </ItemGroup>
-  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
+  <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets" />
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
   <Target Name="BeforeBuild" DependsOnTargets="SetupProject">
   </Target>

@@ -12,6 +12,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'basic|AnyCPU' ">
     <DefineConstants>BOOTSTRAP_BASIC,NET_1_1,NET_2_0</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
+    <DefineConstants>NET_1_1,NET_2_0</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <Compile Include="cs-parser.cs"/>
     <Reference Include="System.dll"/>
