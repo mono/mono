@@ -1,3 +1,8 @@
+2010-06-11  Pete Johanson  <peter@peterjohanson.com>
+
+	* Makefile: Don't use the mono key for signing.
+	* Assembly/AssemblyInfo.cs: Use the ECMA key for signing.
+
 2010-04-03  Jb Evain  <jbevain@novell.com>
 
 	* Makefile: System.Data.Services is a .net 3.5 assembly.

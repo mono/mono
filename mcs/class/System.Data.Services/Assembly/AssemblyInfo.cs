@@ -20,5 +20,8 @@ using System.Security;
 
 [assembly: NeutralResourcesLanguage ("en-US")]
 
+[assembly: AssemblyDelaySign (true)]
+[assembly: AssemblyKeyFile ("../ecma.pub")]
+
 [assembly: ComVisible (false)]
 [assembly: CLSCompliant (true)]
