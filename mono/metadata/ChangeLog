@@ -1,5 +1,10 @@
 2010-06-11  Zoltan Varga  <vargaz@gmail.com>
 
+	* object.c (mono_method_add_generic_virtual_invocation): Fix the computation of the
+	IMT slot which is passed to callbacks.get_imt_trampoline.
+
+2010-06-11  Zoltan Varga  <vargaz@gmail.com>
+
 	* object.c: Use a callback to create IMT trampolines, allowing the usage of one
 	imt trampoline per imt slot when using LLVM.
 
