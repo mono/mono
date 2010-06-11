@@ -345,6 +345,11 @@ namespace Mono.CSharp {
 			}
 		}
 
+		public static Location operator - (Location loc, int columns)
+		{
+			return new Location (loc.Row, loc.Column - columns);
+		}
+
 		static void AddCheckpoint (int compile_unit, int file, int row)
 		{
 			if (checkpoints.Length == ++checkpoint_index) {

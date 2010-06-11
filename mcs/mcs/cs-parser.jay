@@ -41,6 +41,8 @@ namespace Mono.CSharp
 			
 			All = Ref | Out | This | Params | Arglist | DefaultValue
 		}
+		
+		static readonly object ModifierNone = 0;
 	
 		NamespaceEntry  current_namespace;
 		TypeContainer   current_container;
@@ -4169,7 +4171,7 @@ opt_partial
 	;
 
 opt_modifiers
-	: /* empty */		{ $$ = (int) 0; }
+	: /* empty */		{ $$ = ModifierNone; }
 	| modifiers
 	;
 
@@ -4181,9 +4183,14 @@ modifiers
 		var m2 = (Modifiers) $2;
 
 		if ((m1 & m2) != 0) {
-			Location l = lexer.Location;
-			Report.Error (1004, l, "Duplicate `{0}' modifier", ModifiersExtensions.Name (m2));
+			Report.Error (1004, lexer.Location - ModifiersExtensions.Name (m2).Length,
+				"Duplicate `{0}' modifier", ModifiersExtensions.Name (m2));
+		} else if ((m2 & Modifiers.AccessibilityMask) != 0 && (m1 & Modifiers.AccessibilityMask) != 0 &&
+			((m2 | m1 & Modifiers.AccessibilityMask) != (Modifiers.PROTECTED | Modifiers.INTERNAL))) {
+			Report.Error (107, lexer.Location - ModifiersExtensions.Name (m2).Length,
+				"More than one protection modifier specified");
 		}
+		
 		$$ = m1 | m2;
 	  }
 	;
@@ -4207,7 +4214,12 @@ modifier
 	| OVERRIDE 		{ $$ = Modifiers.OVERRIDE; }
 	| EXTERN		{ $$ = Modifiers.EXTERN; }
 	| VOLATILE		{ $$ = Modifiers.VOLATILE; }
-	| UNSAFE		{ $$ = Modifiers.UNSAFE; }
+	| UNSAFE
+	  {
+		$$ = Modifiers.UNSAFE;
+		if (!RootContext.Unsafe)
+			Error_UnsafeCodeNotAllowed (GetLocation ($1));
+	  }
 	;
 
 opt_class_base
@@ -5188,9 +5200,10 @@ unchecked_statement
 	;
 
 unsafe_statement
-	: UNSAFE 
+	: UNSAFE
 	  {
-		RootContext.CheckUnsafeOption (GetLocation ($1), Report);
+		if (!RootContext.Unsafe)
+			Error_UnsafeCodeNotAllowed (GetLocation ($1));
 	  } block {
 		$$ = new Unsafe ((Block) $3, GetLocation ($1));
 	  }
@@ -5944,6 +5957,11 @@ void Error_DuplicateParameterModifier (Location loc, Parameter.Modifier mod)
 void Error_TypeExpected (Location loc)
 {
 	Report.Error (1031, loc, "Type expected");
+}
+
+void Error_UnsafeCodeNotAllowed (Location loc)
+{
+	Report.Error (227, loc, "Unsafe code requires the `unsafe' command line option to be specified");
 }
 
 void Error_NamedArgumentExpected (NamedArgument a)

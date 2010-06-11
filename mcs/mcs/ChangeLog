@@ -1,3 +1,8 @@
+2010-06-11  Marek Safar  <marek.safar@gmail.com>
+	
+	* modifiers.cs, rootcontext.cs, location.cs, cs-parser.jay: More
+	precise modifiers parsing.
+
 2010-06-09  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs, anonymous.cs, expression.cs, cs-parser.jay:

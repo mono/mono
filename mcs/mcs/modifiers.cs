@@ -9,10 +9,6 @@ namespace Mono.CSharp
 	[Flags]
 	public enum Modifiers
 	{
-		//
-		// The ordering of the following 4 constants
-		// has been carefully done.
-		//
 		PROTECTED = 0x0001,
 		PUBLIC    = 0x0002,
 		PRIVATE   = 0x0004,
@@ -235,11 +231,6 @@ namespace Mono.CSharp
 			int i;
 
 			if (invalid_flags == 0){
-
-				if ((mod & Modifiers.UNSAFE) != 0){
-					RootContext.CheckUnsafeOption (l, Report);
-				}
-				
 				//
 				// If no accessibility bits provided
 				// then provide the defaults.
@@ -251,20 +242,6 @@ namespace Mono.CSharp
 					return mod;
 				}
 
-				//
-				// Make sure that no conflicting accessibility
-				// bits have been set.  Protected+Internal is
-				// allowed, that is why they are placed on bits
-				// 1 and 4 (so the shift 3 basically merges them)
-				//
-				int a = (int) mod;
-				a &= 15;
-				a |= (a >> 3);
-				a = ((a & 2) >> 1) + (a & 5);
-				a = ((a & 4) >> 2) + (a & 3);
-				if (a > 1)
-					Report.Error (107, l, "More than one protection modifier specified");
-				
 				return mod;
 			}
 

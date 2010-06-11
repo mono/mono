@@ -389,13 +389,5 @@ namespace Mono.CSharp {
 			
 			return fb;
 		}
-
-		public static void CheckUnsafeOption (Location loc, Report Report)
-		{
-			if (!Unsafe) {
-				Report.Error (227, loc, 
-					"Unsafe code requires the `unsafe' command line option to be specified");
-			}
-		}
 	}
 }
