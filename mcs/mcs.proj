@@ -24,6 +24,9 @@
     <MSBuild Projects="class\Mono.CompilerServices.SymbolWriter\Mono.CompilerServices.SymbolWriter.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\Mono.Posix\Mono.Posix.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\System.Core\System.Core.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Security\Mono.Security.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System\System.csproj" Targets="Build" Properties="Configuration=net_2_0_XML_DEP;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Security\System.Security.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
   </Target>
   <Target Name="Clean">
     <!--<MSBuild Projects="build\build.proj" Targets="Clean" />-->
