@@ -1,3 +1,16 @@
+2010-06-11  Jonathan Pryor  <jpryor@novell.com>
+
+	* Monodoc/ecma-provider.cs: Reduce memory requirements when assembling
+	  ECMA documentation.  The problem was that we parse all the XML files
+	  in order to extract //summary and //remarks members, and then stored
+	  the XmlNodes for these members.  XmlNode keeps a ref to the creating
+	  XmlDocument, thus keeping the XmlNode around requires keeping the
+	  entire XmlDocument around; result: ~350+MB RAM is needed to assemble
+	  netdocs.zip (in ../../docs).  To fix, import the XmlNodes that we
+	  actually care about into an otherwise empty XmlDocument, so that we 
+	  only save the nodes we need. Result: ~32MB RAM is needed.
+	  Fixes #602560.
+
 2010-04-25  Jonathan Pryor  <jpryor@novell.com>
 
 	* Monodoc/ecma-provider.cs: Support the full set of possible operator

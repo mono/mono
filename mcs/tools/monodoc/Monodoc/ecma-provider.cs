@@ -242,8 +242,8 @@ public class EcmaProvider : Provider {
 						
 						XmlNode ns_summary = nsSummaryFile.SelectSingleNode ("Namespace/Docs/summary");
 						if (ns_summary != null && ns_summary.InnerText.Trim () != "To be added." && ns_summary.InnerText != "") {
-							namespace_summaries [tn] = ns_summary;
-							namespace_remarks [tn] = nsSummaryFile.SelectSingleNode ("Namespace/Docs/remarks");
+							namespace_summaries [tn]  = detached.ImportNode (ns_summary, true);
+							namespace_remarks [tn]    = detached.ImportNode (nsSummaryFile.SelectSingleNode ("Namespace/Docs/remarks"), true);
 						}
 						
 					} else if (!namespace_summaries.ContainsKey (tn)) {
@@ -263,7 +263,7 @@ public class EcmaProvider : Provider {
 
 	}
 		
-	struct TypeInfo : IComparable {
+	class TypeInfo : IComparable {
 		public string type_assembly;
 		public string type_name;
 		public string type_full;
@@ -398,15 +398,16 @@ public class EcmaProvider : Provider {
 		}
 	}
 	       
-	Hashtable class_summaries = new Hashtable ();
-	Hashtable namespace_summaries = new Hashtable ();
-	Hashtable namespace_remarks = new Hashtable ();
-	Hashtable namespace_realpath = new Hashtable ();
-	XmlDocument doc;
+	Hashtable/*<string, List<TypeInfo>>*/ class_summaries = new Hashtable ();
+	Hashtable/*<string, XmlNode>*/ namespace_summaries = new Hashtable ();
+	Hashtable/*<string, XmlNode>*/ namespace_remarks = new Hashtable ();
+	Hashtable/*<string, string -- path>*/ namespace_realpath = new Hashtable ();
+
+	XmlDocument detached = new XmlDocument ();
 	
 	void PopulateClass (Tree tree, string ns, Node ns_node, string file)
 	{
-		doc = new XmlDocument ();
+		XmlDocument doc = new XmlDocument ();
 		doc.Load (file);
 		
 		string name = EcmaDoc.GetClassName (doc);
@@ -417,7 +418,7 @@ public class EcmaProvider : Provider {
 		Node class_node;
 		string file_code = ns_node.tree.HelpSource.PackFile (file);
 
-		XmlNode class_summary = doc.SelectSingleNode ("/Type/Docs/summary");
+		XmlNode class_summary = detached.ImportNode (doc.SelectSingleNode ("/Type/Docs/summary"), true);
 		ArrayList l = (ArrayList) class_summaries [ns];
 		if (l == null){
 			l = new ArrayList ();
@@ -443,12 +444,12 @@ public class EcmaProvider : Provider {
 		//
 		class_node.CreateNode ("Members", "*");
 
-		PopulateMember (name, class_node, "Constructor", "Constructors");
-		PopulateMember (name, class_node, "Method", "Methods");
-		PopulateMember (name, class_node, "Property", "Properties");
-		PopulateMember (name, class_node, "Field", "Fields");
-		PopulateMember (name, class_node, "Event", "Events");
-		PopulateMember (name, class_node, "Operator", "Operators");
+		PopulateMember (doc, name, class_node, "Constructor", "Constructors");
+		PopulateMember (doc, name, class_node, "Method", "Methods");
+		PopulateMember (doc, name, class_node, "Property", "Properties");
+		PopulateMember (doc, name, class_node, "Field", "Fields");
+		PopulateMember (doc, name, class_node, "Event", "Events");
+		PopulateMember (doc, name, class_node, "Operator", "Operators");
 	}
 
 	class NodeIndex {
@@ -482,7 +483,7 @@ public class EcmaProvider : Provider {
 	// Performs an XPath query on the document to extract the nodes for the various members
 	// we also use some extra text to pluralize the caption
 	//
-	void PopulateMember (string typename, Node node, string type, string caption)
+	void PopulateMember (XmlDocument doc, string typename, Node node, string type, string caption)
 	{
 		string select = type;
 		if (select == "Operator") select = "Method";
