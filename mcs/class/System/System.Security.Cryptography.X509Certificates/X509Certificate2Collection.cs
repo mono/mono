@@ -220,8 +220,10 @@ namespace System.Security.Cryptography.X509Certificates {
 				}
 				break;
 			default:
-				string msg = Locale.GetText ("Invalid find type '{0}'.", findType);
-				throw new CryptographicException (msg);
+				{
+					string msg = Locale.GetText ("Invalid find type '{0}'.", findType);
+					throw new CryptographicException (msg);
+				}
 			}
 
 			CultureInfo cinv = CultureInfo.InvariantCulture;

@@ -140,7 +140,7 @@ namespace System.Net {
 			}
 
 			string path;
-			Uri raw_uri;
+			Uri raw_uri = null;
 			if (Uri.MaybeUri (raw_url) && Uri.TryCreate (raw_url, UriKind.Absolute, out raw_uri))
 				path = raw_uri.PathAndQuery;
 			else

@@ -1,3 +1,7 @@
+2010-06-11 Jonathan Chambers  <joncham@gmail.com>
+
+	* HttpListenerRequest.cs: Assign default value to variable before using.
+
 2010-05-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* FtpDataStream.cs:
