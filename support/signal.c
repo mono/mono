@@ -18,7 +18,11 @@
 #ifndef PLATFORM_WIN32
 #include <sys/time.h>
 #include <sys/types.h>
+#if defined(__APPLE__)
+#include "fakepoll.h"
+#else
 #include <poll.h>
+#endif
 #include <unistd.h>
 #include <stdlib.h>
 #include <string.h>

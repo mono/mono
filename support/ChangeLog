@@ -1,3 +1,10 @@
+2010-05-13  Geoff Norton  <gnorton@novell.com>
+
+	* fakepoll.h: Added for OSX
+	* serial.c:
+	* signal.c: poll on OSX is broken, so we use a select based 
+	implementation instead.
+
 2010-04-19 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* zlib-helper.c: don't call Z_FINISH if nothing has been written.

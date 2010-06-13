@@ -26,6 +26,7 @@ MPH_C_SOURCE =					\
 # Source code which helps implement POSIX and other related Unix standards,
 # and *may* be portable between Unix platforms.
 MPH_UNIX_SOURCE =				\
+	fakepoll.h				\
 	dirent.c				\
 	fcntl.c					\
 	fstab.c					\
