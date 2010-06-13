@@ -9,9 +9,13 @@
 #include <unistd.h>
 #include <fcntl.h>
 #include <string.h>
-#include <sys/poll.h>
-#include <sys/ioctl.h>
 #include <errno.h>
+#if defined(__APPLE__)
+#include "fakepoll.h"
+#else
+#include <sys/poll.h>
+#endif
+#include <sys/ioctl.h>
 
 #include <glib.h>
 
