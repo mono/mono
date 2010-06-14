@@ -19,9 +19,41 @@ using NUnit.Framework;
 
 namespace MonoTests.System.Text.RegularExpressions
 {
+
 	[TestFixture]
+	public class CompiledRegexTest :  RegexTest
+	{
+		[SetUp]
+        public void SetUp ()
+		{
+			Compiled = true;
+		}
+	}
+
+	[TestFixture]
+	public class InterpretedRegexTest :  RegexTest
+	{
+        [SetUp]
+        public void SetUp ()
+        {
+	        Compiled = false;
+        }
+	}
+
+
 	public class RegexTest
 	{
+
+       RegexOptions AddOptions ( RegexOptions options ){
+	       if( Compiled ){
+		       options |= RegexOptions.Compiled;
+	       }
+
+	       return options;
+       }
+
+       protected bool Compiled { get; set; }
+
 #if NET_2_0
 		private int cache_initial_value;
 
@@ -55,7 +87,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void NullPattern2 ()
 		{
-			new Regex (null, RegexOptions.None);
+			new Regex (null, AddOptions( RegexOptions.None ));
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
@@ -67,7 +99,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void InvalidOptions2 ()
 		{
-			new Regex ("foo", RegexOptions.ECMAScript | RegexOptions.RightToLeft);
+			new Regex ("foo", AddOptions( RegexOptions.ECMAScript | RegexOptions.RightToLeft ));
 		}
 		
 		[Test]
@@ -88,7 +120,8 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test]
 		public void Match1 ()
 		{
-			Regex email = new Regex ("(?<user>[^@]+)@(?<domain>.+)");
+			Regex email = new Regex ("(?<user>[^@]+)@(?<domain>.+)",
+			                         AddOptions( RegexOptions.None ));
 			Match m;
 
 			m = email.Match ("mono@go-mono.com");
@@ -106,7 +139,8 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test]
 		public void Match2 ()
 		{
-			Regex regex = new Regex(@"(?<tab>\t)|(?<text>[^\t]*)");
+			Regex regex = new Regex(@"(?<tab>\t)|(?<text>[^\t]*)",
+			                        AddOptions( RegexOptions.None ));
 			MatchCollection col = regex.Matches("\tjust a text");
 			Assert.AreEqual(3, col.Count);
 			Assert.AreEqual (col [0].Value, "\t");
@@ -117,67 +151,77 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Match_Null1 ()
 		{
-			new Regex (@"foo").Match (null);
+			new Regex (@"foo",AddOptions( RegexOptions.None )).Match (null);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Match_BadStart1 ()
 		{
-			new Regex (@"foo").Match ("foobar", -1);
+			new Regex (@"foo",
+			           AddOptions( RegexOptions.None )).Match ("foobar", -1);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Match_BadStart2 ()
 		{
-			new Regex (@"foo").Match ("foobar", -1, 0);
+			new Regex (@"foo",
+			           AddOptions( RegexOptions.None )).Match ("foobar", -1, 0);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Match_BadStart3 ()
 		{
-			new Regex (@"foo").Match ("foobar", 7);
+			new Regex (@"foo",
+			           AddOptions( RegexOptions.None )).Match ("foobar", 7);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Match_BadStart4 ()
 		{
-			new Regex (@"foo").Match ("foobar", 7, 0);
+			new Regex (@"foo",
+			           AddOptions( RegexOptions.None )).Match ("foobar", 7, 0);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Match_BadLength1 ()
 		{
-			new Regex (@"foo").Match ("foobar", 5, -1);
+			new Regex (@"foo",
+			           AddOptions( RegexOptions.None )).Match ("foobar", 5, -1);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Match_BadLength2 ()
 		{
-			new Regex (@"foo").Match ("foobar", 5, 3);
+			new Regex (@"foo",
+			           AddOptions( RegexOptions.None )).Match ("foobar", 5, 3);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Matches_Null1 ()
 		{
-			new Regex (@"foo").Matches (null);
+			new Regex (@"foo",
+			           AddOptions( RegexOptions.None )).Matches (null);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Matches_Null2 ()
 		{
-			new Regex (@"foo").Matches (null, 0);
+			new Regex (@"foo",
+			           AddOptions( RegexOptions.None )).Matches (null, 0);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Matches_Null3 ()
 		{
-			new Regex (@"foo", RegexOptions.RightToLeft).Matches (null);
+			new Regex (@"foo",
+			           AddOptions(RegexOptions.RightToLeft)).Matches (null);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Replace_InputNull ()
 		{
-			Regex r = new Regex ("^.*$");
+			Regex r = new Regex ("^.*$",
+			                     AddOptions( RegexOptions.None ));
 			MatchEvaluator m = delegate (Match match) {return null;};
 			r.Replace (null, m, 0, 0);
 		}
@@ -185,14 +229,16 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Replace_InputNull2 ()
 		{
-			Regex r = new Regex ("^.*$");
+			Regex r = new Regex ("^.*$",
+			                     AddOptions( RegexOptions.None ));
 			r.Replace (null, "abc", 0, 0);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Replace_InputNull3 ()
 		{
-			Regex r = new Regex ("^.*$", RegexOptions.RightToLeft);
+			Regex r = new Regex ("^.*$",
+			                     AddOptions(RegexOptions.RightToLeft));
 			MatchEvaluator m = delegate (Match match) {return null;};
 			r.Replace (null, m);
 		}
@@ -200,21 +246,24 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Replace_InputNull4 ()
 		{
-			Regex r = new Regex ("^.*$", RegexOptions.RightToLeft);
+			Regex r = new Regex ("^.*$",
+			                     AddOptions(RegexOptions.RightToLeft));
 			r.Replace (null, "abc");
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Replace_ReplacementNull ()
 		{
-			Regex r = new Regex ("^.*$");
+			Regex r = new Regex ("^.*$",
+			                     AddOptions( RegexOptions.None ));
 			r.Replace ("string", (string) null, 0, 0);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentNullException))]
 		public void Replace_EvaluatorNull ()
 		{
-			Regex r = new Regex ("^.*$");
+			Regex r = new Regex ("^.*$",
+			                     AddOptions( RegexOptions.None ));
 			MatchEvaluator m = null;
 			r.Replace ("string", m, 0, 0);
 		}
@@ -222,14 +271,16 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Replace_InvalidCount ()
 		{
-			Regex r = new Regex ("foo|bar");
+			Regex r = new Regex ("foo|bar",
+			                     AddOptions( RegexOptions.None ));
 			r.Replace ("foo",  "baz", -4);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Replace_InvalidStart ()
 		{
-			Regex r = new Regex ("foo|bar");
+			Regex r = new Regex ("foo|bar",
+			                     AddOptions( RegexOptions.None ));
 			r.Replace ("foo", "baz", 1, -4);
 		}
 
@@ -248,14 +299,16 @@ namespace MonoTests.System.Text.RegularExpressions
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Split_InvalidCount ()
 		{
-			Regex r = new Regex ("^.*$");
+			Regex r = new Regex ("^.*$",
+			                     AddOptions( RegexOptions.None ));
 			r.Split ("foo", -4);
 		}
 
 		[Test, ExpectedException (typeof (ArgumentOutOfRangeException))]
 		public void Split_InvalidCount2 ()
 		{
-			Regex r = new Regex ("^.*$");
+			Regex r = new Regex ("^.*$",
+			                     AddOptions( RegexOptions.None ));
 			r.Split ("foo", 1, -4);
 		}
 
@@ -309,13 +362,13 @@ namespace MonoTests.System.Text.RegularExpressions
 				new string [] { "ab", "cd", "ef" })
 		};
 
-		static void runTrial (MatchCollectionTrial t)
+		static void runTrial (MatchCollectionTrial t, bool compiled)
 		{
-			runTrial (t, false);
-			runTrial (t, true);
+			runTrial (t, false, compiled);
+			runTrial (t, true, compiled);
 		}
 
-		static void runTrial (MatchCollectionTrial t, bool rtl)
+		static void runTrial (MatchCollectionTrial t, bool rtl, bool compiled)
 		{
 			int i;
 			MatchCollection mc;
@@ -325,7 +378,11 @@ namespace MonoTests.System.Text.RegularExpressions
 				name += "-rtl";
 
 			int len = t.matches.Length;
-			Regex r = new Regex (t.regex, rtl ? RegexOptions.RightToLeft : RegexOptions.None);
+			RegexOptions options = rtl ? RegexOptions.RightToLeft : RegexOptions.None;
+			if( compiled )
+				options |= RegexOptions.Compiled;
+
+			Regex r = new Regex (t.regex,options);
 
 			// Incremental mode -- this access
 			mc = r.Matches (t.text);
@@ -365,7 +422,7 @@ namespace MonoTests.System.Text.RegularExpressions
 		public void Matches ()
 		{
 			foreach (MatchCollectionTrial t in trials)
-				runTrial (t);
+				runTrial (t,Compiled);
 		}
 #if NET_2_0
 		[Test]
@@ -429,7 +486,8 @@ namespace MonoTests.System.Text.RegularExpressions
 
 			// This is a backtracking torture test
 
-			Regex composite = new Regex (@"^1?$|^(11+?)\1+$");
+			Regex composite = new Regex (@"^1?$|^(11+?)\1+$",
+			                             AddOptions( RegexOptions.None ));
 
 			uint i = 0;
 			string x = "";
