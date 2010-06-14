@@ -414,7 +414,7 @@ namespace Mono.Tools {
 						store = GetStoreFromName (X509Stores.Names.IntermediateCA, machine);
 					}
 
-					Console.WriteLine ("{0}{1} X.509 Certificate v{2}", 	
+					Console.WriteLine ("{0}{1}X.509 Certificate v{2}", 	
 						Environment.NewLine,
 						selfsign ? "Self-signed " : String.Empty,
 						x509.Version);
@@ -432,7 +432,7 @@ namespace Mono.Tools {
 							if (signer.RSA != null) {
 								signed = x509.VerifySignature (signer.RSA);
 							} else if (signer.DSA != null) {
-								signed = x509.VerifySignature (signer.RSA);
+								signed = x509.VerifySignature (signer.DSA);
 							} else {
 								Console.WriteLine ("   *** WARNING: Couldn't not find who signed this certificate ***");
 								signed = true; // skip next warning
@@ -447,7 +447,7 @@ namespace Mono.Tools {
 					}
 					if (failed) {
 						Console.WriteLine ("   *** ERROR: Couldn't decode certificate properly ***");
-						Console.WriteLine ("   *** try 'man certmgr' for additional help or report to bugzilla.ximian.com ***");
+						Console.WriteLine ("   *** try 'man certmgr' for additional help or report to bugzilla.novell.com ***");
 						break;
 					}
 

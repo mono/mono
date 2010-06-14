@@ -1,3 +1,9 @@
+2010-06-16  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* certmgr.cs: Fix case where DSA is used in SSL certificate (rare 
+	enough that this was never found/reported). Suggest novell's 
+	bugzilla (instead of ximian)
+
 2009-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* certmgr.cs: Don't throw if we're missing an argument. Fix by
