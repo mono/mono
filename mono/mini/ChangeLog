@@ -1,5 +1,8 @@
 2010-06-14  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (sig_to_llvm_sig_full): Add a 'sinfo' out argument which returns
+	parameter index information. Use this to simplify a lot of code.
+
 	* unwind.c (mono_unwind_decode_fde): Handle augmentions using a loop.
 
 2010-06-12  Zoltan Varga  <vargaz@gmail.com>
