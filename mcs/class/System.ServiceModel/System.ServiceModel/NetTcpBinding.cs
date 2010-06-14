@@ -43,7 +43,6 @@ namespace System.ServiceModel
 		OptionalReliableSession reliable_session;
 		NetTcpSecurity security;
 		XmlDictionaryReaderQuotas reader_quotas;
-		EnvelopeVersion soap_version;
 		bool transaction_flow;
 		TransactionProtocol transaction_protocol;
 		TcpTransportBindingElement transport = new TcpTransportBindingElement ();
@@ -115,7 +114,7 @@ namespace System.ServiceModel
 		}
 
 		public EnvelopeVersion EnvelopeVersion {
-			get { return soap_version; }
+			get { return EnvelopeVersion.Soap12; }
 		}
 
 		public TransferMode TransferMode {

@@ -1,3 +1,11 @@
+2010-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* NetTcpBinding.cs : remove pointless EnvelopeVersion field.
+	* ClientRuntimeChannel.cs : disable MessageId output. It does not
+	  happen on TCP transport. Added FIXME comment to verify this.
+
+	  This fix makes non-first-time calls from mono client working.
+
 2010-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* DuplexClientRuntimeChannel.cs : do not create and use extraneous

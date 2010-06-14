@@ -592,8 +592,9 @@ namespace System.ServiceModel.MonoInternal
 				msg.Properties.CopyProperties (context.OutgoingMessageProperties);
 			}
 
-			if (OutputSession != null)
-				msg.Headers.MessageId = new UniqueId (OutputSession.Id);
+			// FIXME: disabling MessageId as it's not seen for bug #567672 case. But might be required for PeerDuplexChannel. Check it later.
+			//if (OutputSession != null)
+			//	msg.Headers.MessageId = new UniqueId (OutputSession.Id);
 			msg.Properties.AllowOutputBatching = AllowOutputBatching;
 
 			if (msg.Version.Addressing.Equals (AddressingVersion.WSAddressing10)) {
