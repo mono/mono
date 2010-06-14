@@ -1,3 +1,8 @@
+2010-06-14  Geoff Norton  <gnorton@novell.com>
+
+	* dyn_load.c: Fix one other place where l_addr could be null on 
+	bionic.
+
 2010-05-31  Geoff Norton  <gnorton@novell.com>
 
 	* dyn_load.c: Its possible for linkmap->l_addr to be null for the

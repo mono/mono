@@ -250,7 +250,10 @@ void GC_register_dynamic_libraries()
         char * start;
         register int i;
         
-	e = (ElfW(Ehdr) *) lm->l_addr;
+        e = (ElfW(Ehdr) *) lm->l_addr;
+        if (e == NULL)
+          continue;
+
         p = ((ElfW(Phdr) *)(((char *)(e)) + e->e_phoff));
         offset = ((unsigned long)(lm->l_addr));
         for( i = 0; i < (int)(e->e_phnum); ((i++),(p++)) ) {
