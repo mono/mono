@@ -1,3 +1,7 @@
+2010-06-14  Jonathan Pryor <jpryor@novell.com>
+
+	* Makefile.am (EXTRA_DIST): Add runtime.h.
+
 2010-06-14  Zoltan Varga  <vargaz@gmail.com>
 
 	* object.c (build_imt_slots): Don't crash if callbacks.get_imt_trampoline is not set.
