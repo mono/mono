@@ -1,3 +1,10 @@
+2010-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* OperationInvokerHandler.cs, MessageProcessingContext.cs :
+	  ChannelDispatcher may be null, so check its availability before
+	  using it. Don't use it, when possible.
+	* DispatchOperation.cs : remove unused member.
+
 2010-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* EndpointDispatcher.cs, BaseMessagesFormatter.cs:

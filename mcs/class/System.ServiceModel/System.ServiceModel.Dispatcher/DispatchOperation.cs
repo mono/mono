@@ -207,10 +207,6 @@ namespace System.ServiceModel.Dispatcher
 			}
 		}
 
-		MessageVersion MessageVersion {
-			get { return Parent.ChannelDispatcher.MessageVersion; }
-		}
-
 		void ThrowIfOpened ()
 		{
 			// FIXME: get callback client runtime status when ChannelDispatcher is not available.

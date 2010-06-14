@@ -96,7 +96,7 @@ namespace System.ServiceModel.Dispatcher
 			Message res = null;
 			if (operation.SerializeReply)
 				res = operation.Formatter.SerializeReply (
-					mrc.OperationContext.EndpointDispatcher.ChannelDispatcher.MessageVersion, outputs, result);
+					mrc.OperationContext.IncomingMessageVersion, outputs, result);
 			else
 				res = (Message) result;
 			res.Headers.CopyHeadersFrom (mrc.OperationContext.OutgoingMessageHeaders);
@@ -124,8 +124,9 @@ namespace System.ServiceModel.Dispatcher
 		{
 			var dr = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
 			bool shutdown = false;
-			foreach (var eh in dr.ChannelDispatcher.ErrorHandlers)
-				shutdown |= eh.HandleError (ex);
+			if (dr.ChannelDispatcher != null) // non-callback channel
+				foreach (var eh in dr.ChannelDispatcher.ErrorHandlers)
+					shutdown |= eh.HandleError (ex);
 			if (shutdown)
 				ProcessSessionErrorShutdown (mrc);
 		}
@@ -146,8 +147,9 @@ namespace System.ServiceModel.Dispatcher
 			var dr = mrc.OperationContext.EndpointDispatcher.DispatchRuntime;
 			var cd = dr.ChannelDispatcher;
 			Message msg = null;
-			foreach (var eh in cd.ErrorHandlers)
-				eh.ProvideFault (ex, cd.MessageVersion, ref msg);
+			if (cd != null) // non-callback channel
+				foreach (var eh in cd.ErrorHandlers)
+					eh.ProvideFault (ex, cd.MessageVersion, ref msg);
 			if (msg != null)
 				return msg;
 

@@ -77,7 +77,7 @@ namespace System.ServiceModel.Dispatcher
 		public void Reply (IDuplexChannel channel, bool useTimeout)
 		{
 			EventsHandler.BeforeSendReply ();
-			if (useTimeout)
+			if (useTimeout && Operation.Parent.ChannelDispatcher != null) // FIXME: this condition is a workaround for NRE, there might be better way to get timeout value.
 				channel.Send (ReplyMessage, Operation.Parent.ChannelDispatcher.timeouts.SendTimeout);
 			else
 				channel.Send (ReplyMessage);
@@ -86,7 +86,7 @@ namespace System.ServiceModel.Dispatcher
 		public void Reply (bool useTimeout)
 		{
 			EventsHandler.BeforeSendReply ();
-			if (useTimeout)
+			if (useTimeout && Operation.Parent.ChannelDispatcher != null) // FIXME: this condition is a workaround for NRE, there might be better way to get timeout value.
 				RequestContext.Reply (ReplyMessage, Operation.Parent.ChannelDispatcher.timeouts.SendTimeout);
 			else
 				RequestContext.Reply (ReplyMessage);
