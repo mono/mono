@@ -1,3 +1,9 @@
+2010-06-15  Marek Habersack  <mhabersack@novell.com>
+
+	* WebUIValidation_2.0.js: fail gracefully if control to validate
+	is not found (webForm.ValidatorGetValue and
+	webForm.Page_ClientValidate). Fixes bug #609478
+
 2009-10-05  Marek Habersack  <mhabersack@novell.com>
 
 	* WebUIValidation_2.0.js: before using webFrom.Page_Validators,

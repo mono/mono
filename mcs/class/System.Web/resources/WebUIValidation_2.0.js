@@ -159,6 +159,8 @@ webForm.ValidatorCommonOnSubmit = function ()
 webForm.ValidatorGetValue = function (controlname)
 {
 	var el = webForm.GetElement (controlname);
+        if (el == null)
+	        return null;
 
 	/* if the element has a 'value' attribute, return it */
 	if (typeof (el.value) != 'undefined' && el.value != null) {
@@ -188,6 +190,9 @@ webForm.ValidatorGetValueRecursive = function (el)
 
 webForm.ValidatorTrim = function (s)
 {
+        if (s == null)
+	       return null;
+
 	s = s.replace (/^\s+/g, "");
 	s = s.replace (/\s+$/g, "");
 
@@ -213,12 +218,15 @@ webForm.Page_ClientValidate = function (group)
 			var vo = webForm.Page_Validators [v];
 			var evalfunc = vo.evaluationfunction;
 			var result = false;
+		        var el = webForm.GetElement (vo.controltovalidate);
 
-			if (!vo._enabled || !webForm.IsValidationGroupMatch(vo, group)) {
+		        if (el == null) {
+			        result = true;
+			        webForm.ValidatorSucceeded (vo);
+			} else if (!vo._enabled || !webForm.IsValidationGroupMatch(vo, group)) {
 				result = true;
 				webForm.ValidatorSucceeded (vo);
-			}
-			else {
+			} else {
 				result = evalfunc.call (this, vo);
 			}
 
@@ -499,7 +507,7 @@ webForm.RequiredFieldValidatorEvaluateIsValid = function (validator)
 	var ControlToValidate = validator.controltovalidate;
 
 	var ctrl_value = webForm.ValidatorTrim (webForm.ValidatorGetValue (ControlToValidate));
-
+        
 	if (ctrl_value == webForm.ValidatorTrim (InitialValue)) {
 		webForm.ValidatorFailed (validator);
 		return false;
