@@ -1,5 +1,10 @@
 2010-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlSchemaValidator.cs : limit validity initialization. In some
+	  cases it failed to set Invalid.
+
+2010-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlSchemaValidator.cs : fill Validity. Fixed bug #613682.
 
 2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>

@@ -599,6 +599,8 @@ namespace System.Xml.Schema
 		private void HandleError (string message,
 			Exception innerException, bool isWarning)
 		{
+			if (current_info != null)
+				current_info.Validity = XmlSchemaValidity.Invalid;
 			if (isWarning && IgnoreWarnings)
 				return;
 
@@ -640,7 +642,7 @@ namespace System.Xml.Schema
 			if (current_info != null)
 				throw new InvalidOperationException ("Not allowed concurrent call to validation method");
 			current_info = info;
-			if (info != null)
+			if (info != null && info.Validity == XmlSchemaValidity.NotKnown)
 				current_info.Validity = XmlSchemaValidity.Valid;
 		}
 

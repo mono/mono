@@ -825,7 +825,7 @@ namespace System.Xml
 			XmlAttribute attribute = CreateAttribute (reader.Prefix, reader.LocalName, reader.NamespaceURI);
 #if NET_2_0
 			if (reader.SchemaInfo != null)
-				SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
+				SchemaInfo = reader.SchemaInfo;
 #endif
 			bool isDefault = reader.IsDefault;
 
@@ -876,7 +876,7 @@ namespace System.Xml
 			case ReadState.Initial:
 #if NET_2_0
 				if (reader.SchemaInfo != null)
-					this.SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
+					SchemaInfo = reader.SchemaInfo;
 #endif
 				reader.Read ();
 				break;
@@ -907,7 +907,7 @@ namespace System.Xml
 				XmlElement element = CreateElement (reader.Prefix, reader.LocalName, reader.NamespaceURI, reader.NameTable == this.NameTable);
 #if NET_2_0
 				if (reader.SchemaInfo != null)
-					SchemaInfo = new XmlSchemaInfo (reader.SchemaInfo);
+					SchemaInfo = reader.SchemaInfo;
 #endif
 				element.IsEmpty = reader.IsEmptyElement;
 
