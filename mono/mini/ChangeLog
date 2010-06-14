@@ -1,3 +1,7 @@
+2010-06-14  Zoltan Varga  <vargaz@gmail.com>
+
+	* unwind.c (mono_unwind_decode_fde): Handle augmentions using a loop.
+
 2010-06-12  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (compile_method): Add a 'depth' parameter to add_generic_class too
