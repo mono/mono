@@ -1,3 +1,7 @@
+2010-06-14  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlSchemaValidator.cs : fill Validity. Fixed bug #613682.
+
 2010-03-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlSchemaComplexType.cs : quick fix for bug #584664. Fill base

@@ -159,6 +159,8 @@ namespace System.Xml.Schema
 		// information to validate attribute values.
 		internal XmlSchemaDatatype CurrentAttributeType;
 
+		XmlSchemaInfo current_info;
+
 		#endregion
 
 		#region Public properties
@@ -404,6 +406,8 @@ namespace System.Xml.Schema
 				throw new ArgumentNullException ("localName");
 			if (ns == null)
 				throw new ArgumentNullException ("ns");
+			SetCurrentInfo (info);
+			try {
 
 			CheckState (Transition.Content);
 			transition = Transition.StartTag;
@@ -449,6 +453,10 @@ namespace System.Xml.Schema
 				info.MemberType = null;
 				// FIXME: supply Validity (really useful?)
 			}
+
+			} finally {
+				current_info = null;
+			}
 		}
 
 		public object ValidateEndElement (XmlSchemaInfo info)
@@ -465,10 +473,15 @@ namespace System.Xml.Schema
 		public object ValidateEndElement (XmlSchemaInfo info,
 			object var)
 		{
+			SetCurrentInfo (info);
+			try {
+
 			// If it is going to validate an empty element, then
 			// first validate end of attributes.
-			if (transition == Transition.StartTag)
+			if (transition == Transition.StartTag) {
+				current_info = null;
 				ValidateEndOfAttributes (info);
+			}
 
 			CheckState (Transition.Content);
 
@@ -487,6 +500,10 @@ namespace System.Xml.Schema
 			else if (skipValidationDepth < 0 || depth <= skipValidationDepth)
 				ret = AssessEndElementSchemaValidity (info);
 			return ret;
+
+			} finally {
+				current_info = null;
+			}
 		}
 
 		// StartTagCloseDeriv
@@ -494,6 +511,8 @@ namespace System.Xml.Schema
 		public void ValidateEndOfAttributes (XmlSchemaInfo info)
 		{
 			try {
+				SetCurrentInfo (info);
+
 				CheckState (Transition.StartTag);
 				transition = Transition.Content;
 				if (schemas.Count == 0)
@@ -503,6 +522,7 @@ namespace System.Xml.Schema
 					AssessCloseStartElementSchemaValidity (info);
 				depth++;
 			} finally {
+				current_info = null;
 				occuredAtts.Clear ();
 			}
 		}
@@ -595,6 +615,9 @@ namespace System.Xml.Schema
 
 		private void HandleError (ValException exception, bool isWarning)
 		{
+			if (current_info != null)
+				current_info.Validity = XmlSchemaValidity.Invalid;
+
 			if (isWarning && IgnoreWarnings)
 				return;
 
@@ -610,6 +633,16 @@ namespace System.Xml.Schema
 		}
 
 		#endregion
+
+		// call this at entry point of every public method.
+		private void SetCurrentInfo (XmlSchemaInfo info)
+		{
+			if (current_info != null)
+				throw new InvalidOperationException ("Not allowed concurrent call to validation method");
+			current_info = info;
+			if (info != null)
+				current_info.Validity = XmlSchemaValidity.Valid;
+		}
 
 		private void CheckState (Transition expected)
 		{
