@@ -203,7 +203,10 @@ namespace System.ServiceModel.Syndication
 						Item.Links.Add (l);
 						continue;
 					case "guid":
-						Item.AddPermalink (CreateUri (reader.ReadElementContentAsString ()));
+						if (reader.GetAttribute ("isPermaLink") == "true")
+							Item.AddPermalink (CreateUri (reader.ReadElementContentAsString ()));
+						else
+							Item.Id = reader.ReadElementContentAsString ();
 						continue;
 					case "pubDate":
 						// FIXME: somehow DateTimeOffset causes the runtime crash.

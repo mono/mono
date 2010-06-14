@@ -1,3 +1,7 @@
+2010-06-07  Carlos Martin Nieto  <carlos@cmartin.tk>
+
+	* Rss20ItemFormatter.cs: Don't assume guids are permalinks
+
 2009-12-01  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Atom10ItemFormatter.cs, Atom10FeedFormatter.cs :
