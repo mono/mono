@@ -1,3 +1,7 @@
+2010-06-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: 307 does not change request method.
+
 2010-06-11 Jonathan Chambers  <joncham@gmail.com>
 
 	* HttpListenerRequest.cs: Assign default value to variable before using.
