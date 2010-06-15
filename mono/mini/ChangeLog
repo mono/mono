@@ -1,5 +1,7 @@
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-ppc.c (mono_arch_get_cie_program): Define this for powerpc too.
+
 	* mini-llvm.c (process_bb): Add a missing CHECK_FAILURE.
 
 	* mini.c (mini_init): Remove some of the llvm restrictions, they are no longer needed.
