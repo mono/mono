@@ -812,12 +812,17 @@ namespace Mono.CSharp
 		}
 	}
 
-	public abstract class ElementTypeSpec : TypeSpec
+	public abstract class ElementTypeSpec : TypeSpec, ITypeDefinition
 	{
 		protected ElementTypeSpec (MemberKind kind, TypeSpec element, Type info)
-			: base (kind, element.DeclaringType, element.MemberDefinition, info, element.Modifiers)
+			: base (kind, element.DeclaringType, null, info, element.Modifiers)
 		{
 			this.Element = element;
+
+			// Has to use its own type definition instead of just element definition to
+			// correctly identify itself for cases like x.MemberDefininition == predefined.MemberDefinition
+			this.definition = this;
+
 			cache = MemberCache.Empty;
 		}
 
@@ -859,6 +864,73 @@ namespace Mono.CSharp
 			mutated.info = null;
 			return mutated;
 		}
+
+		#region ITypeDefinition Members
+
+		System.Reflection.Assembly IMemberDefinition.Assembly {
+			get {
+				return Element.Assembly;
+			}
+		}
+
+		public string Namespace {
+			get { throw new NotImplementedException (); }
+		}
+
+		public int TypeParametersCount {
+			get {
+				return 0;
+			}
+		}
+
+		public TypeParameterSpec[] TypeParameters {
+			get {
+				throw new NotSupportedException ();
+			}
+		}
+
+		public TypeSpec GetAttributeCoClass ()
+		{
+			return Element.MemberDefinition.GetAttributeCoClass ();
+		}
+
+		public string GetAttributeDefaultMember ()
+		{
+			return Element.MemberDefinition.GetAttributeDefaultMember ();
+		}
+
+		public MemberCache LoadMembers (TypeSpec declaringType)
+		{
+			return Element.MemberDefinition.LoadMembers (declaringType);
+		}
+
+		public bool IsImported {
+			get {
+				return Element.MemberDefinition.IsImported;
+			}
+		}
+
+		public string[] ConditionalConditions ()
+		{
+			return Element.MemberDefinition.ConditionalConditions ();
+		}
+
+		bool IMemberDefinition.IsNotCLSCompliant ()
+		{
+			return Element.MemberDefinition.IsNotCLSCompliant ();
+		}
+
+		public void SetIsAssigned ()
+		{
+			Element.MemberDefinition.SetIsAssigned ();
+		}
+
+		public void SetIsUsed ()
+		{
+			Element.MemberDefinition.SetIsUsed ();
+		}
+
+		#endregion
 	}
 
 	public class ArrayContainer : ElementTypeSpec

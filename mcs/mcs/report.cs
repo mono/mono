@@ -185,11 +185,15 @@ namespace Mono.CSharp {
 				return;
 
 			var mc = ms.MemberDefinition as MemberCore;
+			while (ms is ElementTypeSpec) {
+				ms = ((ElementTypeSpec) ms).Element;
+				mc = ms.MemberDefinition as MemberCore;
+			}
+
 			if (mc != null) {
 				SymbolRelatedToPreviousError (mc);
 			} else {
-				var im = ms.MemberDefinition as ImportedMemberDefinition;
-				SymbolRelatedToPreviousError (im.Assembly.Location, "");
+				SymbolRelatedToPreviousError (ms.MemberDefinition.Assembly.Location, "");
 			}
 		}
 

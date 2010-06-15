@@ -1,5 +1,11 @@
 2010-06-15  Marek Safar  <marek.safar@gmail.com>
 
+	* typespec.cs: ElementTypeSpec has to use its own ITypeDefinition.
+	
+	* report.cs: Unwrap elements for related symbols reporting.
+
+2010-06-15  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #612796
 	* cs-tokenizer.cs: Offset correctly keywords the first character
 	comparison.
