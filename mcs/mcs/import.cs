@@ -243,7 +243,7 @@ namespace Mono.CSharp
 				//
 				string name = mb.Name;
 				kind = MemberKind.Method;
-				if (!mb.DeclaringType.IsInterface && name.Length > 6) {
+				if (!is_generic && !mb.DeclaringType.IsInterface && name.Length > 6) {
 					if ((mod & (Modifiers.STATIC | Modifiers.PUBLIC)) == (Modifiers.STATIC | Modifiers.PUBLIC)) {
 						if (name[2] == '_' && name[1] == 'p' && name[0] == 'o') {
 							var op_type = Operator.GetType (name);
@@ -997,11 +997,11 @@ namespace Mono.CSharp
 						continue;
 
 					imported = Import.CreateMethod (mb, declaringType);
-					if (imported.Kind == MemberKind.Method) {
+					if (imported.Kind == MemberKind.Method && !imported.IsGeneric) {
 						if (possible_accessors == null)
 							possible_accessors = new Dictionary<MethodBase, MethodSpec> (ReferenceEquality<MethodBase>.Default);
 
-						// There are no metadata rules for accessors, we have to any method as possible candidate
+						// There are no metadata rules for accessors, we have to consider any method as possible candidate
 						possible_accessors.Add (mb, (MethodSpec) imported);
 					}
 
