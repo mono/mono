@@ -1,5 +1,7 @@
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (process_bb): Add a missing CHECK_FAILURE.
+
 	* mini.c (mini_init): Remove some of the llvm restrictions, they are no longer needed.
 
 	* method-to-ir.c (mono_method_to_ir): Enable fast virtual calls when using llvm.
