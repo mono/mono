@@ -27,6 +27,19 @@
     <MSBuild Projects="class\Mono.Security\Mono.Security.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\System\System.csproj" Targets="Build" Properties="Configuration=net_2_0_XML_DEP;Platform=AnyCPU"/>
     <MSBuild Projects="class\System.Security\System.Security.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Configuration\System.Configuration.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System\System.csproj" Targets="Build" Properties="Configuration=net_2_0_ALL_DEP;Platform=AnyCPU"/>
+    <MSBuild Projects="class\I18N\Common\I18N.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\I18N\West\I18N.West.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\I18N\MidEast\I18N.MidEast.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\I18N\Other\I18N.Other.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\I18N\Rare\I18N.Rare.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\I18N\CJK\I18N.CJK.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Drawing\System.Drawing.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Transactions\System.Transactions.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.EnterpriseServices\System.EnterpriseServices.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Data.Tds\Mono.Data.Tds.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Data\System.Data.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
   </Target>
   <Target Name="Clean">
     <!--<MSBuild Projects="build\build.proj" Targets="Clean" />-->

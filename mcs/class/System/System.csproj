@@ -21,12 +21,26 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0_XML_DEP|AnyCPU' ">
     <DefineConstants>NET_1_1,NET_2_0,CONFIGURATION_2_0,XML_DEP,SECURITY_DEP</DefineConstants>
   </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0_ALL_DEP|AnyCPU' ">
+    <DefineConstants>NET_1_1,NET_2_0,CONFIGURATION_2_0,XML_DEP,SECURITY_DEP,CONFIGURATION_DEP</DefineConstants>
+  </PropertyGroup>
   <ItemGroup>
     <EmbeddedResource Include="resources\Asterisk.wav"/>
     <EmbeddedResource Include="resources\Beep.wav"/>
     <EmbeddedResource Include="resources\Exclamation.wav"/>
     <EmbeddedResource Include="resources\Hand.wav"/>
     <EmbeddedResource Include="resources\Question.wav"/>
+  </ItemGroup>
+  <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0_ALL_DEP|AnyCPU' ">
+    <Reference Include="System.Xml"/>
+    <Reference Include="System.Configuration"/>
+    <Reference Include="System">
+      <Aliases>PrebuiltSystem</Aliases>
+      <HintPath>..\lib\net_2_0\System.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.Security">
+      <HintPath>..\lib\net_2_0\Mono.Security.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0_XML_DEP|AnyCPU' ">
     <Reference Include="System.Xml"/>
