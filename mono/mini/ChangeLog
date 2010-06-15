@@ -1,5 +1,8 @@
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (get_call_info): Fix the handling of MONO_TYPE_TYPEDBYREF after
+	the latest changes.
+
 	* tramp-x86.c (mono_arch_create_generic_trampoline): Emit unwind info for
 	these trampolines.
 
