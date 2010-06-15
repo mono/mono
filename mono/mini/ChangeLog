@@ -1,5 +1,16 @@
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini.c (mini_init): Remove some of the llvm restrictions, they are no longer needed.
+
+	* method-to-ir.c (mono_method_to_ir): Enable fast virtual calls when using llvm.
+
+	* mini-trampolines.c (mono_llvm_vcall_trampoline): Rewrite this to use one vtable
+	trampoline per vtable slot index. The slot, along with the 'this' argument is enough
+	to identify the vtable slot address plus the method which needs to be compiled.
+
+	* mini.c (mini_get_vtable_trampoline): Use one vtable trampoline per vtable slot when
+	using llvm.
+
 	* mini-x86.c (get_call_info_internal): Change the managed calling convention so
 	'this' is always passed as the first argument, before the vtype ret arg. This
 	simplifies get_this_arg_reg () and LLVM integration.
