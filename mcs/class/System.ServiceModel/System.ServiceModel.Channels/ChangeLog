@@ -1,5 +1,10 @@
 2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* TcpBinaryFrameManager.cs : lock read and write respectively.
+	  Finally fixed bug #567672 ('IsOneWay=false' case).
+
+2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* DirectionalAction.cs : remove old code from winfx beta.
 
 2010-05-26  Atsushi Enomoto  <atsushi@ximian.com>

@@ -176,13 +176,43 @@ namespace MonoTests.System.ServiceModel
 			proxy.SendMessage ();
 
 			//Wait for callback - sort of hack, but better than using wait handle to possibly block tests.
-			Thread.Sleep (1000);
+			Thread.Sleep (2000);
 
 			//Cleanup
 			eventServiceHost.Close ();
 
 			Assert.IsTrue (CallbackSent, "#1");
 			Assert.IsTrue (CallbackReceived, "#2");
+		}
+
+		[Test]
+		public void CallbackExample2 ()
+		{
+			//Start service and use net.tcp binding
+			ServiceHost eventServiceHost = new ServiceHost (typeof (GreetingsService2));
+			NetTcpBinding tcpBindingpublish = new NetTcpBinding ();
+			tcpBindingpublish.Security.Mode = SecurityMode.None;
+			eventServiceHost.AddServiceEndpoint (typeof (IGreetings2), tcpBindingpublish, "net.tcp://localhost:8000/GreetingsService2");
+			eventServiceHost.Open ();
+
+			//Create client proxy
+			NetTcpBinding clientBinding = new NetTcpBinding ();
+			clientBinding.Security.Mode = SecurityMode.None;
+			EndpointAddress ep = new EndpointAddress ("net.tcp://localhost:8000/GreetingsService2");
+			ClientCallback2 cb = new ClientCallback2 ();
+			IGreetings2 proxy = DuplexChannelFactory<IGreetings2>.CreateChannel (new InstanceContext (cb), clientBinding, ep);
+
+			//Call service
+			proxy.SendMessage ();
+
+			//Wait for callback - sort of hack, but better than using wait handle to possibly block tests.
+			Thread.Sleep (2000);
+
+			//Cleanup
+			eventServiceHost.Close ();
+
+			Assert.IsTrue (CallbackSent2, "#1");
+			Assert.IsTrue (CallbackReceived2, "#2");
 		}
 
 		public static bool CallbackSent, CallbackReceived;
@@ -222,6 +252,46 @@ namespace MonoTests.System.ServiceModel
 		public interface IGreetingsCallback
 		{
 			[OperationContract (IsOneWay = true)]
+			void ShowMessage (string message);
+		}
+
+		public static bool CallbackSent2, CallbackReceived2;
+
+		//Service implementation
+		[ServiceBehavior (ConcurrencyMode = ConcurrencyMode.Multiple, InstanceContextMode = InstanceContextMode.Single)]
+		public class GreetingsService2 : IGreetings2
+		{
+			public void SendMessage ()
+			{
+				//Make a callback
+				IGreetingsCallback2 clientCallback = OperationContext.Current.GetCallbackChannel<IGreetingsCallback2> ();
+
+				clientCallback.ShowMessage ("Mono and WCF are GREAT!");
+				CallbackBehaviorAttributeTest.CallbackSent2 = true;
+			}
+		}
+
+		// Client callback interface implementation
+		[CallbackBehavior (ConcurrencyMode = ConcurrencyMode.Reentrant, UseSynchronizationContext = false)]
+		public class ClientCallback2 : IGreetingsCallback2
+		{
+			public void ShowMessage (string message)
+			{
+				CallbackBehaviorAttributeTest.CallbackReceived2 = true;
+			}
+		}
+
+		[ServiceContract (CallbackContract = typeof (IGreetingsCallback2))]
+		public interface IGreetings2
+		{
+			[OperationContract (IsOneWay = false)]
+			void SendMessage ();
+		}
+
+		[ServiceContract]
+		public interface IGreetingsCallback2
+		{
+			[OperationContract (IsOneWay = false)]
 			void ShowMessage (string message);
 		}
 		#endregion

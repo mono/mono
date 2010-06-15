@@ -155,6 +155,8 @@ namespace System.ServiceModel.Channels
 
 		public byte [] ReadSizedChunk ()
 		{
+			lock (read_lock) {
+
 			int length = reader.ReadVariableInt ();
 			if (length == 0)
 				return empty_bytes;
@@ -166,9 +168,11 @@ namespace System.ServiceModel.Channels
 			for (int readSize = 0; readSize < length; )
 				readSize += reader.Read (buffer, readSize, length - readSize);
 			return buffer;
+
+			}
 		}
 
-		public void WriteSizedChunk (byte [] data, int index, int length)
+		void WriteSizedChunk (byte [] data, int index, int length)
 		{
 			writer.WriteVariableInt (length);
 			writer.Write (data, index, length);
@@ -258,8 +262,13 @@ namespace System.ServiceModel.Channels
 		XmlBinaryReaderSession reader_session;
 		int reader_session_items;
 
+		object read_lock = new object ();
+		object write_lock = new object ();
+
 		public Message ReadSizedMessage ()
 		{
+			lock (read_lock) {
+
 			// FIXME: implement full [MC-NMF].
 
 			int packetType;
@@ -318,11 +327,15 @@ namespace System.ServiceModel.Channels
 				benc.CurrentReaderSession = null;
 
 			return msg;
+			
+			}
 		}
 
 		// FIXME: support timeout
 		public Message ReadUnsizedMessage (TimeSpan timeout)
 		{
+			lock (read_lock) {
+
 			// Encoding type 7 is expected
 			if (EncodingRecord != EncodingBinary)
 				throw new NotImplementedException (String.Format ("Message encoding {0:X} is not implemented yet", EncodingRecord));
@@ -347,6 +360,8 @@ namespace System.ServiceModel.Channels
 			Message msg = Encoder.ReadMessage (ms, (int) ms.Length);
 
 			return msg;
+			
+			}
 		}
 
 		byte [] eof_buffer = new byte [1];
@@ -354,6 +369,8 @@ namespace System.ServiceModel.Channels
 
 		public void WriteSizedMessage (Message message)
 		{
+			lock (write_lock) {
+
 			ResetWriteBuffer ();
 
 			if (EncodingRecord != 8)
@@ -395,11 +412,15 @@ namespace System.ServiceModel.Channels
 
 			s.Write (buffer.GetBuffer (), 0, (int) buffer.Position);
 			s.Flush ();
+
+			}
 		}
 
 		// FIXME: support timeout
 		public void WriteUnsizedMessage (Message message, TimeSpan timeout)
 		{
+			lock (write_lock) {
+
 			ResetWriteBuffer ();
 
 			if (EncodingRecord != EncodingBinary)
@@ -414,19 +435,29 @@ namespace System.ServiceModel.Channels
 
 			s.WriteByte (UnsizedMessageTerminator); // terminator
 			s.Flush ();
+
+			}
 		}
 
 		public void WriteEndRecord ()
 		{
+			lock (write_lock) {
+
 			s.WriteByte (EndRecord); // it is required
 			s.Flush ();
+
+			}
 		}
 
 		public void ReadEndRecord ()
 		{
+			lock (read_lock) {
+
 			int b;
 			if ((b = s.ReadByte ()) != EndRecord)
 				throw new ProtocolException (String.Format ("EndRecord message was expected, got {0:X}", b));
+
+			}
 		}
 	}
 }

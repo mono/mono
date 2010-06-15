@@ -1,3 +1,8 @@
+2010-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* CallbackBehaviorAttributeTest.cs : added test for bug #567672
+	  ('IsOneWay=false' case).
+
 2010-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CallbackBehaviorAttributeTest.cs : test recent changes on operation
