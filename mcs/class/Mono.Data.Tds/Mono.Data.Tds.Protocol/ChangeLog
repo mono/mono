@@ -1,3 +1,9 @@
+2010-06-15  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #613087
+	* Tds70.cs (BuildPreparedParameters, BuildProcedureCall): Set default 
+	precision to 18 as used by MS.Net when connecting to SqlServer 7.0.
+
 2010-04-21  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #595918

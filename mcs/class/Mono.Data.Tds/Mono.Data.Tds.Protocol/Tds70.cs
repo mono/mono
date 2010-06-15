@@ -105,6 +105,10 @@ namespace Mono.Data.Tds.Protocol
 			foreach (TdsMetaParameter p in Parameters) {
 				if (parms.Length > 0)
 					parms.Append (", ");
+				// Set default precision according to the TdsVersion
+				// Current default is 29 for Tds80 
+				if (p.TypeName == "decimal")
+					p.Precision = (p.Precision !=0  ? p.Precision : (byte) 18);
 				parms.Append (p.Prepare ());
 				if (p.Direction == TdsParameterDirection.Output)
 					parms.Append (" output");
@@ -140,6 +144,8 @@ namespace Mono.Data.Tds.Protocol
 							select.Append (", ");
 						select.Append ("@" + parameterName);
 							
+						if (p.TypeName == "decimal")
+							p.Precision = (p.Precision !=0  ? p.Precision : (byte) 18);
 						declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
 
 						if (p.Direction != TdsParameterDirection.ReturnValue) {
@@ -466,7 +472,7 @@ namespace Mono.Data.Tds.Protocol
 				    ((decimal)param.Value) != Decimal.MaxValue && 
 				    ((decimal)param.Value) != Decimal.MinValue) {
 					decimal expo = new Decimal (System.Math.Pow (10, (double)param.Scale));
-					int pVal = (int)(((decimal)param.Value) * expo);
+					long pVal = (long)(((decimal)param.Value) * expo);
 					param.Value = (decimal)pVal;				
 				}
 			}
