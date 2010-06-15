@@ -81,6 +81,11 @@ public class ConditionalParsing
 		string a = (b ? (c ? "#" : "#") : "");
 	}
 
+	void Test_10 ()
+	{
+		int i = new int [] { 1, 2, 3 } [1];
+	}
+
 	public static void Main ()
 	{
 	}

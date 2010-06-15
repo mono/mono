@@ -10831,6 +10831,9 @@
       <method name="Void Test_9()">
         <size>43</size>
       </method>
+      <method name="Void Test_10()">
+        <size>21</size>
+      </method>
     </type>
   </test>
   <test name="gtest-410.cs">
@@ -12864,6 +12867,27 @@
       </method>
       <method name="Void GenMethod[T](T)">
         <size>33</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-514.cs">
+    <type name="test2.Test`3[T,U,V]">
+      <method name="Void Method()">
+        <size>128</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="test2.MainClass">
+      <method name="Void Dispose()">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>11</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
@@ -44345,6 +44369,44 @@
     <type name="MainClass+&lt;Test&gt;c__AnonStorey0">
       <method name="Void &lt;&gt;m__0()">
         <size>70</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-anon-93.cs">
+    <type name="BaseTest.MainClass">
+      <method name="Void add_MyEvent(System.EventHandler)">
+        <size>55</size>
+      </method>
+      <method name="Void remove_MyEvent(System.EventHandler)">
+        <size>55</size>
+      </method>
+      <method name="Void RaiseMyEvent(System.Object, System.EventArgs)">
+        <size>14</size>
+      </method>
+      <method name="Void Main()">
+        <size>50</size>
+      </method>
+      <method name="Void &lt;Main&gt;m__2(System.Object, System.EventArgs)">
+        <size>13</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseTest.MainClass+&lt;&gt;c__AnonStorey0">
+      <method name="Void &lt;&gt;m__0(System.Object, System.EventArgs)">
+        <size>23</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="BaseTest.MainClass+&lt;&gt;c__AnonStorey1">
+      <method name="Void &lt;&gt;m__1(System.Object, System.EventArgs)">
+        <size>23</size>
       </method>
       <method name="Void .ctor()">
         <size>7</size>
