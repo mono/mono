@@ -1487,14 +1487,10 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public bool EncodeTypeName (TypeSpec type)
+		public void EncodeTypeName (TypeSpec type)
 		{
-//			if (TypeManager.ContainsGenericParameters (type) && !TypeManager.IsGenericTypeDefinition (type))
-//				return false;
-
 			var old_type = type.GetMetaInfo ();
 			Encode (type.MemberDefinition.IsImported ? old_type.AssemblyQualifiedName : old_type.FullName);
-			return true;
 		}
 
 		void WriteCompressedValue (int value)

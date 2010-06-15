@@ -6799,6 +6799,24 @@ namespace Mono.CSharp {
 			return this;
 		}
 
+		static bool ContainsTypeParameter (TypeSpec type)
+		{
+			if (type.Kind == MemberKind.TypeParameter)
+				return true;
+
+			var element_container = type as ElementTypeSpec;
+			if (element_container != null)
+				return ContainsTypeParameter (element_container.Element);
+
+			foreach (var t in type.TypeArguments) {
+				if (ContainsTypeParameter (t)) {
+					return true;
+				}
+			}
+
+			return false;
+		}
+
 		public override void EncodeAttributeValue (IMemberContext rc, AttributeEncoder enc, TypeSpec targetType)
 		{
 			// Target type is not System.Type therefore must be object
@@ -6806,28 +6824,13 @@ namespace Mono.CSharp {
 			if (targetType != type)
 				enc.Encode (type);
 
-/*
- 			var gi = typearg as InflatedTypeSpec;
-			if (gi != null) {
-				// TODO: This has to be recursive, handle arrays, etc.
-				// I could probably do it after CustomAttribute encoder rewrite
-				foreach (var ta in gi.TypeArguments) {
-					if (ta.IsGenericParameter) {
-						ec.Report.SymbolRelatedToPreviousError (typearg);
-						ec.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
-								 TypeManager.CSharpName (typearg));
-						value = null;
-						return false;
-					}
-				}
-			}
- */
-
-			if (!enc.EncodeTypeName (typearg)) {
-				rc.Compiler.Report.SymbolRelatedToPreviousError (typearg);
+			if (ContainsTypeParameter (typearg)) {
 				rc.Compiler.Report.Error (416, loc, "`{0}': an attribute argument cannot use type parameters",
 					TypeManager.CSharpName (typearg));
+				return;
 			}
+
+			enc.EncodeTypeName (typearg);
 		}
 
 		public override void Emit (EmitContext ec)

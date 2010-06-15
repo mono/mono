@@ -1,5 +1,10 @@
 2010-06-15  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs, attribute.cs: Enable generic type parameters
+	attribute check.
+	
+2010-06-15  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #612146
 	* generic.cs: Don't use fixed array for inflated type parameter
 	interface constraints.
