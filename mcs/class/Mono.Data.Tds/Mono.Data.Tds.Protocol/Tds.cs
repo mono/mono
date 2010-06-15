@@ -1232,7 +1232,7 @@ namespace Mono.Data.Tds.Protocol
 					val = ~(val - 1);
 				return new Decimal (val, 0, 0, negative, 4);
 			}
-			case 8:
+			case 8:	{
 				int hi = Comm.GetTdsInt ();
 				int lo = Comm.GetTdsInt ();
 				bool negative = hi < 0;
@@ -1242,6 +1242,7 @@ namespace Mono.Data.Tds.Protocol
 					lo = ~(lo - 1);
 				}
 				return new Decimal (lo, hi, 0, negative, 4);
+			}
 			default:
 				return DBNull.Value;
 			}

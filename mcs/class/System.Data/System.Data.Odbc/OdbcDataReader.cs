@@ -1100,7 +1100,7 @@ namespace System.Data.Odbc
 				// NON_UNIQUE
 				int  nonUniqueLength = 0;
 				short nonUnique = libodbc.SQL_FALSE;
-				ret = libodbc.SQLBindCol (handle, 4, SQL_C_TYPE.SHORT, ref (short) nonUnique, sizeof (short), ref nonUniqueLength);
+				ret = libodbc.SQLBindCol (handle, 4, SQL_C_TYPE.SHORT, ref nonUnique, sizeof (short), ref nonUniqueLength);
 				if (ret != OdbcReturn.Success && ret != OdbcReturn.SuccessWithInfo)
 					throw Connection.CreateOdbcException (OdbcHandleType.Stmt, handle);
 

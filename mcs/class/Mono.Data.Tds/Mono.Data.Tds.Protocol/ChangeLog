@@ -1,3 +1,7 @@
+2010-06-15 Jonathan Chambers  <joncham@gmail.com>
+
+	* Tds.cs: Add {} around default switch case.
+
 2010-06-15  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #613087

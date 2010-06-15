@@ -1,3 +1,7 @@
+2010-06-15 Jonathan Chambers  <joncham@gmail.com>
+
+	* OdbcDataReader.cs: Remove unneeded cast on ref parameter
+
 2009-07-15  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* OdbcParameter.cs (OdbcType): Return appropriate type from the typeMap.
