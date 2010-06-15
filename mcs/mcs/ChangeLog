@@ -1,5 +1,11 @@
 2010-06-15  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #612796
+	* cs-tokenizer.cs: Offset correctly keywords the first character
+	comparison.
+	
+2010-06-15  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #613397
 	* expression.cs: Removed too aggressive object initializers
 	optimization.

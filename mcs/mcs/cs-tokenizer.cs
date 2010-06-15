@@ -574,7 +574,7 @@ namespace Mono.CSharp
 				return -1;
 
 			int first_index = id [0] - '_';
-			if (first_index > 'z')
+			if (first_index > 'z' - '_')
 				return -1;
 
 			KeywordEntry kwe = keywords [id_len] [first_index];
