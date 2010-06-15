@@ -1,4 +1,10 @@
 2010-06-15  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #613397
+	* expression.cs: Removed too aggressive object initializers
+	optimization.
+	
+2010-06-15  Marek Safar  <marek.safar@gmail.com>
 	
 	* parameter.cs, property.cs, membercache.cs, decl.cs, iterators.cs,
 	anonymous.cs, expression.cs, support.cs, method.cs, pending.cs,

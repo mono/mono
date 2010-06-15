@@ -8938,18 +8938,7 @@ namespace Mono.CSharp {
 				return this;
 			}
 
-			Expression expr = base.DoResolve (ec);
-			if (expr == null)
-				return null;
-
-			//
-			// Ignore field initializers with default value
-			//
-			Constant c = source as Constant;
-			if (c != null && c.IsDefaultInitializer (type) && target.eclass == ExprClass.Variable)
-				return EmptyExpressionStatement.Instance.Resolve (ec);
-
-			return expr;
+			return base.DoResolve (ec);
 		}
 
 		protected override MemberExpr Error_MemberLookupFailed (ResolveContext ec, TypeSpec type, IList<MemberSpec> members)
@@ -9102,7 +9091,7 @@ namespace Mono.CSharp {
 		{
 			List<string> element_names = null;
 			for (int i = 0; i < initializers.Count; ++i) {
-				Expression initializer = (Expression) initializers [i];
+				Expression initializer = initializers [i];
 				ElementInitializer element_initializer = initializer as ElementInitializer;
 
 				if (i == 0) {
