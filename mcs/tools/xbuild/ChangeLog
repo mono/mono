@@ -1,3 +1,9 @@
+2010-06-15  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/*/Microsoft.Common.targets (AssemblySearchPaths): Add
+	$(ReferencePath) to the search paths. This can be used to add or
+	override assembly search paths.
+
 2010-05-28  Ankit Jain  <jankit@novell.com>
 
 	* SolutionParser.cs (ParseSolution): Ignore GlobalSection
