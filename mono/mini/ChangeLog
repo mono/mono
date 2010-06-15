@@ -1,5 +1,8 @@
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Fix the build if LLVM_MONO_BRANCH is not
+	defined.
+
 	* mini-amd64.c (get_call_info): Change the managed calling convention so 'this'
 	is always passed as the first argument, before the vtype ret arg. This simplifies
 	get_this_arg_reg () and LLVM integration.
