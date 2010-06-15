@@ -948,9 +948,9 @@ namespace Mono.CSharp {
 			var tps = (TypeParameterSpec) MemberwiseClone ();
 			tps.BaseType = inflator.Inflate (BaseType);
 			if (ifaces != null) {
-				tps.ifaces = new TypeSpec[ifaces.Count];
+				tps.ifaces = new List<TypeSpec> (ifaces.Count);
 				for (int i = 0; i < ifaces.Count; ++i)
-					tps.ifaces[i] = inflator.Inflate (ifaces[i]);
+					tps.ifaces.Add (inflator.Inflate (ifaces[i]));
 			}
 			if (targs != null) {
 				tps.targs = new TypeSpec[targs.Length];

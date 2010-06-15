@@ -1,5 +1,11 @@
 2010-06-15  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #612146
+	* generic.cs: Don't use fixed array for inflated type parameter
+	interface constraints.
+	
+2010-06-15  Marek Safar  <marek.safar@gmail.com>
+
 	* typespec.cs: ElementTypeSpec has to use its own ITypeDefinition.
 	
 	* report.cs: Unwrap elements for related symbols reporting.
