@@ -16207,7 +16207,7 @@
         <size>83</size>
       </method>
       <method name="Int32 Main()">
-        <size>526</size>
+        <size>534</size>
       </method>
     </type>
     <type name="Test+Wrap">
@@ -18770,7 +18770,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>1099</size>
+        <size>1243</size>
       </method>
     </type>
     <type name="Test+Point">
@@ -18844,7 +18844,7 @@
         <size>7</size>
       </method>
       <method name="Int32 Main()">
-        <size>219</size>
+        <size>235</size>
       </method>
     </type>
   </test>
@@ -18960,6 +18960,21 @@
       </method>
       <method name="Boolean Do(Foo)">
         <size>86</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-initialize-11.cs">
+    <type name="InlineAssignmentTest.Foo">
+      <method name="Void .ctor()">
+        <size>14</size>
+      </method>
+    </type>
+    <type name="InlineAssignmentTest.MainClass">
+      <method name="Int32 Main()">
+        <size>30</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
