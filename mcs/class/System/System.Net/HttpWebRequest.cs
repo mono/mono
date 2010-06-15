@@ -957,7 +957,8 @@ namespace System.Net
 				contentLength = -1;
 				bodyBufferLength = 0;
 				bodyBuffer = null;
-				method = "GET";
+				if (code != HttpStatusCode.TemporaryRedirect)
+					method = "GET";
 				uriString = webResponse.Headers ["Location"];
 				break;
 			case HttpStatusCode.SeeOther: //303
