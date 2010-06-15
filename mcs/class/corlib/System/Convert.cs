@@ -413,11 +413,7 @@ namespace System {
 
 		public static byte ToByte (char value) 
 		{ 
-			if (value > Byte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue"));
-
-			return (byte)value;
+			return checked ((byte) value);
 		}
 
 		public static byte ToByte (DateTime value)
@@ -427,82 +423,42 @@ namespace System {
 	
 		public static byte ToByte (decimal value)
 		{ 
-			if (value > Byte.MaxValue || value < Byte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue or less than Byte.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (byte)(Math.Round (value));
+			return checked ((byte) Math.Round (value));
 		}
 	
 		public static byte ToByte (double value) 
 		{ 
-			if (value > Byte.MaxValue || value < Byte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue or less than Byte.MinValue"));
-	  
-			// This and the float version of ToByte are the only ones
-			// the spec listed as checking for .NaN and Infinity overflow
-			if (Double.IsNaN(value) || Double.IsInfinity(value))
-				throw new OverflowException (Locale.GetText (
-					"Value is equal to Double.NaN, Double.PositiveInfinity, or Double.NegativeInfinity"));
-
 			// Returned Even-Rounded
-			return (byte)(Math.Round (value));
+			return checked ((byte) Math.Round (value));
 		}
 
 		public static byte ToByte (float value) 
 		{ 
-			if (value > Byte.MaxValue || value < Byte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue or less than Byte.Minalue"));
-
-			// This and the double version of ToByte are the only ones
-			// the spec listed as checking for .NaN and Infinity overflow
-			if (Single.IsNaN(value) || Single.IsInfinity(value))
-				throw new OverflowException (Locale.GetText (
-					"Value is equal to Single.NaN, Single.PositiveInfinity, or Single.NegativeInfinity"));
-	  
 			// Returned Even-Rounded, pass it as a double, could have this
 			// method just call Convert.ToByte ( (double)value)
-			return (byte)(Math.Round ( (double)value));
+			return checked ((byte) Math.Round (value));
 		}
 
 		public static byte ToByte (int value) 
 		{ 
-			if (value > Byte.MaxValue || value < Byte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue or less than Byte.MinValue"));
-	  
-			return (byte)value; 
+			return checked ((byte) value); 
 		}
 
 		public static byte ToByte (long value) 
 		{ 
-			if (value > Byte.MaxValue || value < Byte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue or less than Byte.MinValue"));
-	  
-			return (byte)value;
+			return checked ((byte) value);
 		}
 
 		[CLSCompliant (false)]
 		public static byte ToByte (sbyte value) 
 		{ 
-			if (value < Byte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is less than Byte.MinValue"));
-	  
-			return (byte)value;
+			return checked ((byte) value);
 		}
 	
 		public static byte ToByte (short value) 
 		{ 
-			if (value > Byte.MaxValue || value < Byte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue or less than Byte.MinValue"));
-	  
-			return (byte)value; 
+			return checked ((byte) value);
 		}
 
 		public static byte ToByte (string value) 
@@ -523,40 +479,25 @@ namespace System {
 		{
 			int retVal = ConvertFromBase (value, fromBase, true);
 
-			if (retVal < (int) Byte.MinValue || retVal > (int) Byte.MaxValue)
-				throw new OverflowException ();
-			else
-				return (byte) retVal;
+			return checked ((byte) retVal);
 		}
 
 		[CLSCompliant (false)]
 		public static byte ToByte (uint value) 
 		{ 
-			if (value > Byte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue"));
-
-			return (byte)value;
+			return checked ((byte) value);
 		}
 
 		[CLSCompliant (false)]
 		public static byte ToByte (ulong value) 
 		{ 
-			if (value > Byte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue"));
-
-			return (byte)value;
+			return checked ((byte) value);
 		}
 
 		[CLSCompliant (false)]
 		public static byte ToByte (ushort value) 
 		{ 
-			if (value > Byte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Byte.MaxValue"));
-
-			return (byte)value;
+			return checked ((byte) value);
 		}
 
 		public static byte ToByte (object value)
@@ -607,20 +548,12 @@ namespace System {
 		
 		public static char ToChar (int value) 
 		{ 
-			if (value > Char.MaxValue || value < Char.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Char.MaxValue or less than Char.MinValue"));
-	  
-			return (char)value; 
+			return checked ((char) value);
 		}
 
 		public static char ToChar (long value) 
 		{ 
-			if (value > Char.MaxValue || value < Char.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Char.MaxValue or less than Char.MinValue"));
-	  
-			return (char)value; 
+			return checked ((char) value);
 		}
 
 		public static char ToChar (float value)
@@ -631,20 +564,12 @@ namespace System {
 		[CLSCompliant (false)]
 		public static char ToChar (sbyte value) 
 		{ 
-			if (value < Char.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is less than Char.MinValue"));
-	  
-			return (char)value; 
+			return checked ((char) value);
 		}
 	
 		public static char ToChar (short value) 
 		{ 
-			if (value < Char.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is less than Char.MinValue"));
-	  
-			return (char)value; 
+			return checked ((char) value);
 		}
 
 		public static char ToChar (string value) 
@@ -660,21 +585,13 @@ namespace System {
 		[CLSCompliant (false)]
 		public static char ToChar (uint value) 
 		{ 
-			if (value > Char.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Char.MaxValue"));
-	  
-			return (char)value; 
+			return checked ((char) value);
 		}
 
 		[CLSCompliant (false)]
 		public static char ToChar (ulong value) 
 		{ 
-			if (value > Char.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Char.MaxValue"));
-	  
-			return (char)value; 
+			return checked ((char) value);
 		}
 
 		[CLSCompliant (false)]
@@ -1023,11 +940,7 @@ namespace System {
 
 		public static short ToInt16 (char value) 
 		{
-			if (value > Int16.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue"));
-
-			return (short)value;
+			return checked ((short) value);
 		}
 
 		public static short ToInt16 (DateTime value) 
@@ -1037,56 +950,36 @@ namespace System {
 	
 		public static short ToInt16 (decimal value) 
 		{ 
-			if (value > Int16.MaxValue || value < Int16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue or less than Int16.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (short)(Math.Round (value));	  
+			return checked ((short) Math.Round (value));
 		}
 
 		public static short ToInt16 (double value) 
 		{ 
-			if (value > Int16.MaxValue || value < Int16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue or less than Int16.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (short)(Math.Round (value));	  
+			return checked ((short) Math.Round (value));
 		}
  
 		public static short ToInt16 (float value) 
 		{ 
-			if (value > Int16.MaxValue || value < Int16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue or less than Int16.MinValue"));
-	  
 			// Returned Even-Rounded, use Math.Round pass as a double.
-			return (short)Math.Round ( (double)value);
+			return checked ((short) Math.Round (value));
 		}
 
 		public static short ToInt16 (int value) 
 		{ 
-			if (value > Int16.MaxValue || value < Int16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue or less than Int16.MinValue"));
-
-			return (short)value; 
+			return checked ((short) value);
 		}
 	
 		public static short ToInt16 (long value) 
 		{ 
-			if (value > Int16.MaxValue || value < Int16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue or less than Int16.MinValue"));
-
-			return (short)value; 
+			return checked ((short) value);
 		}
 
 		[CLSCompliant (false)]
 		public static short ToInt16 (sbyte value) 
 		{ 
-			return (short)value; 
+			return value; 
 		}
 	
 		public static short ToInt16 (short value) 
@@ -1128,30 +1021,19 @@ namespace System {
 		[CLSCompliant (false)]
 		public static short ToInt16 (uint value) 
 		{ 
-			if (value > Int16.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue"));
-
-			return (short)value; 
+			return checked ((short) value);
 		}
 
 		[CLSCompliant (false)]
 		public static short ToInt16 (ulong value) 
 		{ 
-			if (value > (ulong)Int16.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue"));
-			return (short)value; 
+			return checked ((short) value);
 		}
 
 		[CLSCompliant (false)]
 		public static short ToInt16 (ushort value) 
 		{ 
-			if (value > Int16.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int16.MaxValue"));
-
-			return (short)value; 
+			return checked ((short) value);
 		}
 
 		public static short ToInt16 (object value)
@@ -1192,20 +1074,12 @@ namespace System {
 	
 		public static int ToInt32 (decimal value) 
 		{ 
-			if (value > Int32.MaxValue || value < Int32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int32.MaxValue or less than Int32.MinValue"));
-
 			// Returned Even-Rounded
-			return (int)(Math.Round (value));	  
+			return checked ((int) Math.Round (value));
 		}
 
 		public static int ToInt32 (double value) 
 		{ 
-			if (value > Int32.MaxValue || value < Int32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int32.MaxValue or less than Int32.MinValue"));
-	  
 			// Returned Even-Rounded
 			checked {
 				return (int)(Math.Round (value));
@@ -1232,11 +1106,7 @@ namespace System {
 	
 		public static int ToInt32 (long value) 
 		{ 
-			if (value > Int32.MaxValue || value < Int32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int32.MaxValue or less than Int32.MinValue"));
-
-			return (int)value; 
+			return checked ((int) value);
 		}
 
 		[CLSCompliant (false)]
@@ -1273,21 +1143,13 @@ namespace System {
 		[CLSCompliant (false)]
 		public static int ToInt32 (uint value) 
 		{ 
-			if (value > Int32.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int32.MaxValue"));
-
-			return (int)value; 
+			return checked ((int) value);
 		}
 
 		[CLSCompliant (false)]
 		public static int ToInt32 (ulong value) 
 		{ 
-			if (value > Int32.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int32.MaxValue"));
-
-			return (int)value; 
+			return checked ((int) value);
 		}
 
 		[CLSCompliant (false)]
@@ -1334,33 +1196,21 @@ namespace System {
 	
 		public static long ToInt64 (decimal value) 
 		{ 
-			if (value > Int64.MaxValue || value < Int64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int64.MaxValue or less than Int64.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (long)(Math.Round (value));	  
+			return checked ((long) Math.Round (value));
 		}
 
 		public static long ToInt64 (double value) 
 		{ 
-			if (value > Int64.MaxValue || value < Int64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int64.MaxValue or less than Int64.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (long)(Math.Round (value));
+			return checked ((long) Math.Round (value));
 		}
  
 		public static long ToInt64 (float value) 
 		{ 
-			if (value > Int64.MaxValue || value < Int64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int64.MaxValue or less than Int64.MinValue"));
-	  
 			// Returned Even-Rounded, pass to Math as a double, could
 			// just call Convert.ToInt64 ( (double)value);
-			return (long)(Math.Round ( (double)value));
+			return checked ((long) Math.Round (value));
 		}
 
 		public static long ToInt64 (int value) 
@@ -1412,11 +1262,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static long ToInt64 (ulong value) 
 		{ 
-			if (value > Int64.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than Int64.MaxValue"));
-
-			return (long)value; 
+			return checked ((long) value);
 		}
 
 		[CLSCompliant (false)]
@@ -1450,21 +1296,13 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (byte value) 
 		{ 
-			if (value > SByte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue"));
-
-			return (sbyte)value; 
+			return checked ((sbyte) value);
 		}
 
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (char value) 
 		{ 
-			if (value > SByte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue"));
-
-			return (sbyte)value;
+			return checked ((sbyte) value);
 		}
 
 		[CLSCompliant (false)]
@@ -1476,54 +1314,34 @@ namespace System {
 		[CLSCompliant (false)]	
 		public static sbyte ToSByte (decimal value) 
 		{ 
-			if (value > SByte.MaxValue || value < SByte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue or less than SByte.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (sbyte)(Math.Round (value));
+			return checked ((sbyte) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (double value) 
 		{ 
-			if (value > SByte.MaxValue || value < SByte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue or less than SByte.MinValue"));
-
 			// Returned Even-Rounded
-			return (sbyte)(Math.Round (value));
+			return checked ((sbyte) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (float value) 
 		{ 
-			if (value > SByte.MaxValue || value < SByte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue or less than SByte.Minalue"));
-
 			// Returned Even-Rounded, pass as double to Math
-			return (sbyte)(Math.Round ( (double)value));
+			return checked ((sbyte) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (int value) 
 		{ 
-			if (value > SByte.MaxValue || value < SByte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue or less than SByte.MinValue"));
-	  
-			return (sbyte)value; 
+			return checked ((sbyte) value);
 		}
 
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (long value) 
 		{ 
-			if (value > SByte.MaxValue || value < SByte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue or less than SByte.MinValue"));
-	  
-			return (sbyte)value;
+			return checked ((sbyte) value);
 		}
 
 		[CLSCompliant (false)]
@@ -1535,11 +1353,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (short value) 
 		{ 
-			if (value > SByte.MaxValue || value < SByte.MinValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue or less than SByte.MinValue"));
-	  
-			return (sbyte)value; 
+			return checked ((sbyte) value);
 		}
 
 		[CLSCompliant (false)]
@@ -1575,31 +1389,19 @@ namespace System {
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (uint value) 
 		{ 
-			if (value > SByte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue"));
-
-			return (sbyte)value;
+			return checked ((sbyte) value);
 		}
 
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (ulong value) 
 		{ 
-			if (value > (ulong)SByte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue"));
-
-			return (sbyte)value;
+			return checked ((sbyte) value);
 		}
 
 		[CLSCompliant (false)]
 		public static sbyte ToSByte (ushort value) 
 		{ 
-			if (value > SByte.MaxValue)
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than SByte.MaxValue"));
-
-			return (sbyte)value;
+			return checked ((sbyte) value);
 		}
 
 		[CLSCompliant (false)]
@@ -2010,74 +1812,46 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (decimal value) 
 		{ 
-			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt16.MaxValue or less than UInt16.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (ushort)(Math.Round (value));	  
+			return checked ((ushort) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (double value) 
 		{ 
-			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt16.MaxValue or less than UInt16.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (ushort)(Math.Round (value));
+			return checked ((ushort) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (float value) 
 		{ 
-			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt16.MaxValue or less than UInt16.MinValue"));
-	  
 			// Returned Even-Rounded, pass as double to Math
-			return (ushort)(Math.Round ( (double)value));
+			return checked ((ushort) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (int value) 
 		{ 
-			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt16.MaxValue or less than UInt16.MinValue"));
-
-			return (ushort)value; 
+			return checked ((ushort) value);
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (long value) 
 		{ 
-			if (value > UInt16.MaxValue || value < UInt16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt16.MaxValue or less than UInt16.MinValue"));
-
-			return (ushort)value; 
+			return checked ((ushort) value);
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (sbyte value) 
 		{ 
-			if (value < UInt16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is less than UInt16.MinValue"));
-
-			return (ushort)value; 
+			return checked ((ushort) value);
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (short value) 
 		{ 
-			if (value < UInt16.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is less than UInt16.MinValue"));
-
-			return (ushort)value; 
+			return checked ((ushort) value);
 		}
 		
 		[CLSCompliant (false)]
@@ -2105,21 +1879,13 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (uint value) 
 		{ 
-			if (value > UInt16.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt16.MaxValue"));
-
-			return (ushort)value; 
+			return checked ((ushort) value);
 		}
 
 		[CLSCompliant (false)]
 		public static ushort ToUInt16 (ulong value) 
 		{ 
-			if (value > (ulong)UInt16.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt16.MaxValue"));
-
-			return (ushort)value; 
+			return checked ((ushort) value);
 		}
 
 		[CLSCompliant (false)]
@@ -2173,74 +1939,46 @@ namespace System {
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (decimal value) 
 		{ 
-			if (value > UInt32.MaxValue || value < UInt32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt32.MaxValue or less than UInt32.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (uint)(Math.Round (value));	  
+			return checked ((uint) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (double value) 
 		{ 
-			if (value > UInt32.MaxValue || value < UInt32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt32.MaxValue or less than UInt32.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (uint)(Math.Round (value));	  
+			return checked ((uint) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (float value) 
 		{ 
-			if (value > UInt32.MaxValue || value < UInt32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt32.MaxValue or less than UInt32.MinValue"));
-	  
 			// Returned Even-Rounded, pass as double to Math
-			return (uint)(Math.Round ( (double)value));
+			return checked ((uint) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (int value) 
 		{ 
-			if (value < UInt32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is less than UInt32.MinValue"));
-
-			return (uint)value; 
+			return checked ((uint) value);
 		}
 
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (long value) 
 		{ 
-			if (value > UInt32.MaxValue || value < UInt32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt32.MaxValue or less than UInt32.MinValue"));
-
-			return (uint)value; 
+			return checked ((uint) value);
 		}
 
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (sbyte value) 
 		{ 
-			if (value < UInt32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is less than UInt32.MinValue"));
-
-			return (uint)value; 
+			return checked ((uint) value);
 		}
 
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (short value) 
 		{ 
-			if (value < UInt32.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is less than UInt32.MinValue"));
-
-			return (uint)value; 
+			return checked ((uint) value);
 		}
 
 		[CLSCompliant (false)]
@@ -2274,11 +2012,7 @@ namespace System {
 		[CLSCompliant (false)]
 		public static uint ToUInt32 (ulong value) 
 		{ 
-			if (value > UInt32.MaxValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt32.MaxValue"));
-
-			return (uint)value; 
+			return checked ((uint) value);
 		}
 
 		[CLSCompliant (false)]
@@ -2333,74 +2067,46 @@ namespace System {
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (decimal value) 
 		{ 
-			if (value > UInt64.MaxValue || value < UInt64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt64.MaxValue or less than UInt64.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (ulong)(Math.Round (value));	  
+			return checked ((ulong) Math.Round (value));
 		}
 
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (double value) 
 		{ 
-			if (value > UInt64.MaxValue || value < UInt64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt64.MaxValue or less than UInt64.MinValue"));
-	  
 			// Returned Even-Rounded
-			return (ulong)(Math.Round (value));	  
+			return checked ((ulong) Math.Round (value));
 		}
 		
 		[CLSCompliant (false)] 
 		public static ulong ToUInt64 (float value) 
 		{ 
-			if (value > UInt64.MaxValue || value < UInt64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is greater than UInt64.MaxValue or less than UInt64.MinValue"));
-	  
 			// Returned Even-Rounded, pass as a double to Math
-			return (ulong)(Math.Round ( (double)value));
+			return checked ((ulong) Math.Round (value));
 		}
 		
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (int value) 
 		{ 
-			if (value < (int)UInt64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is less than UInt64.MinValue"));
-
-			return (ulong)value; 
+			return checked ((ulong) value);
 		}
 		
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (long value) 
 		{ 
-			if (value < (long)UInt64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is less than UInt64.MinValue"));
-
-			return (ulong)value; 
+			return checked ((ulong) value);
 		}
 
 		[CLSCompliant (false)]
 		public static ulong ToUInt64 (sbyte value) 
 		{ 
-			if (value < (sbyte)UInt64.MinValue) 
-				throw new OverflowException
-				("Value is less than UInt64.MinValue");
-
-			return (ulong)value; 
+			return checked ((ulong) value);
 		}
 		
 		[CLSCompliant (false)]	
 		public static ulong ToUInt64 (short value) 
 		{ 
-			if (value < (short)UInt64.MinValue) 
-				throw new OverflowException (Locale.GetText (
-					"Value is less than UInt64.MinValue"));
-
-			return (ulong)value; 
+			return checked ((ulong) value);
 		}
 
 		[CLSCompliant (false)]

@@ -1,3 +1,7 @@
+2010-06-15  Jonathan Pryor  <jpryor@novell.com>
+
+	* ConvertTest.cs: Add tests for #596339.
+
 2010-06-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* StringTest.cs: Add tests for #601772 (i.e. take SplitStringChars(),

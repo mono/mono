@@ -4695,6 +4695,41 @@ namespace MonoTests.System {
 		{
 			Convert.ToInt32 (Double.NaN);
 		}
+
+		[Test]
+		public void ChangeTypeFromInvalidDouble ()
+		{
+			// types which should generate OverflowException from double.NaN, etc.
+			Type[] types = new Type []{
+				typeof (byte), typeof (sbyte), typeof (decimal), 
+				typeof (short), typeof (int), typeof (long),
+				typeof (ushort), typeof (uint), typeof (ulong),
+			};
+
+			CheckChangeTypeOverflow ("double.NaN",              double.NaN,               types);
+			CheckChangeTypeOverflow ("double.PositiveInfinity", double.PositiveInfinity,  types);
+			CheckChangeTypeOverflow ("double.NegativeInfinity", double.NegativeInfinity,  types);
+			CheckChangeTypeOverflow ("float.NaN",               float.NaN,                types);
+			CheckChangeTypeOverflow ("float.PositiveInfinity",  float.PositiveInfinity,   types);
+			CheckChangeTypeOverflow ("float.NegativeInfinity",  float.NegativeInfinity,   types);
+		}
+
+		static void CheckChangeTypeOverflow (string svalue, object value, Type[] types)
+		{
+			foreach (Type type in types) {
+				string message = string.Format (" when converting {0} to {1}", svalue, type.FullName);
+				try {
+					Convert.ChangeType (value, type);
+					Assert.Fail ("Expected System.OverflowException " + message);
+				}
+				catch (OverflowException) {
+					// success
+				}
+				catch (Exception e) {
+					Assert.Fail ("Unexpected exception type " + e.GetType ().FullName + message);
+				}
+			}
+		}
 	}
 
 	public class Image

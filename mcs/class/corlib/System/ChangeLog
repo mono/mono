@@ -1,3 +1,9 @@
+2010-06-15  Jonathan Pryor  <jpryor@novell.com>
+
+	* Convert.cs: Instead of manually checking for NaN, Infinity, etc.,
+	  use `checked` expressions to generate OverflowExceptions.  Ensure
+	  that OverflowExceptions are generated for needed types.  Fixes #596339
+
 2010-06-08  Jonathan Pryor  <jpryor@novell.com>
 
 	* String.cs: Fix String.Split(String[],int,StringSplitOptions) so that:
