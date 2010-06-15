@@ -1,3 +1,8 @@
+2010-06-15  Veerapuram Varadhan  <vvaradhan@novell.com> 
+	** Fixes #613087
+	* SqlDataReader.cs (GetSqlValue): Tds70 returns decimal (18,0) 
+	and beyond as System.Int64.
+	
 2010-03-26  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	* SqlDataAdapter.cs: 2.0 profile changes

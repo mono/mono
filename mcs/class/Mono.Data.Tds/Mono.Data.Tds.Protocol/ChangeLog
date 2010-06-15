@@ -1,3 +1,14 @@
+2010-06-15  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #613087
+	* Tds.cs (ProcessLoginAck): Fix server version being compared in 
+	the switch-case.
+	* Tds70.cs (BuildPreparedParameters, BuildProcedureCall): Set default 
+	precision to 18 as used by MS.Net when connecting to SqlServer 7.0.
+	(BuildExec, ExecRPC): Marked protected in order to be used by Tds80 
+	and henceforth.
+	* Tds80.cs (Execute): Separated from Tds70 to include Tds80 changes.
+	
 2010-04-21  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #595918

@@ -1283,7 +1283,8 @@ namespace System.Data.SqlClient
 			TdsDataColumn column;
 
 			object value = GetValue (i);
-
+			//Console.WriteLine ("Type of value: {0}", value.GetType ());
+			
 			SqlDbType type = GetSchemaRowDbType (i);
 			switch (type) {
 			case SqlDbType.BigInt:
@@ -1320,6 +1321,8 @@ namespace System.Data.SqlClient
 					return SqlDecimal.Null;
 				if (value is TdsBigDecimal)
 					return SqlDecimal.FromTdsBigDecimal ((TdsBigDecimal) value);
+				if (value is Int64)
+					return (SqlDecimal)((long) value);
 				return (SqlDecimal) ((decimal) value);
 			case SqlDbType.Float:
 				if (value == DBNull.Value)
