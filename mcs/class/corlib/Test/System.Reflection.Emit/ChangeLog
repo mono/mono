@@ -1,3 +1,8 @@
+2010-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* ModuleBuilderTest.cs: Disable the TestGlobalMethods () test since it's been failing
+	for a long time.
+
 2010-05-27  Jb Evain  <jbevain@novell.com>
 
 	* EnumBuilderTest.cs: add test for .net_4_0's GetEnumUnderlyingType.

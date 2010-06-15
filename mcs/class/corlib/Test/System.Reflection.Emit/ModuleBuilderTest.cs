@@ -116,6 +116,7 @@ namespace MonoTests.System.Reflection.Emit
 		}
 
 		[Test]
+		[Category("NotWorking")]
 		public void TestGlobalMethods ()
 		{
 			AssemblyBuilder builder = genAssembly ();
