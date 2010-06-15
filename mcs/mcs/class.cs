@@ -738,7 +738,7 @@ namespace Mono.CSharp {
 				return;
 
 			for (int i = 0; i < initialized_fields.Count; ++i) {
-				FieldInitializer fi = (FieldInitializer) initialized_fields [i];
+				FieldInitializer fi = initialized_fields [i];
 				ExpressionStatement s = fi.ResolveStatement (ec);
 				if (s == null)
 					continue;
