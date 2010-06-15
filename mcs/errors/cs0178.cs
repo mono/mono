@@ -1,4 +1,4 @@
-// CS0178: Invalid rank specifier `2', expecting `,' or `]'
+// CS0178: Invalid rank specifier, expecting `,' or `]'
 // Line: 8
 
 public class Blah {

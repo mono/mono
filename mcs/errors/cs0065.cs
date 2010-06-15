@@ -6,7 +6,7 @@ using System;
 public delegate void EventHandler (object sender, EventArgs e);
 
 public class EventClass {
-        event EventHandler handler {}
+        event EventHandler handler { add; }
 }
 
 public class MainClass {
