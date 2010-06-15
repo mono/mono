@@ -768,7 +768,7 @@ namespace System.Web.Compilation
 			builder.Method.Statements.Add (AddLinePragma (assign, builder));
 		}
 
-		CodeMethodInvokeExpression CreateConvertToCall (TypeCode typeCode, CodeExpression expr)
+		internal static CodeMethodInvokeExpression CreateConvertToCall (TypeCode typeCode, CodeExpression expr)
 		{
 			var ret = new CodeMethodInvokeExpression ();
 			string methodName;
@@ -843,7 +843,8 @@ namespace System.Web.Compilation
 			
 			ret.Method = new CodeMethodReferenceExpression (typeRef, methodName);
 			ret.Parameters.Add (expr);
-
+			ret.Parameters.Add (new CodePropertyReferenceExpression (new CodeTypeReferenceExpression (typeof (System.Globalization.CultureInfo)), "CurrentCulture"));
+			
 			return ret;
 		}
 		

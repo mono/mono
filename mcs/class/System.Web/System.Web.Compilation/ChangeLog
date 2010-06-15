@@ -1,3 +1,11 @@
+2010-06-15  Marek Habersack  <mhabersack@novell.com>
+
+	* ResourceExpressionBuilder.cs: cast the return value of
+	GetLocalResourceObject to appropriate type. Fixes bug #607766
+
+	* TemplateControlCompiler.cs: made CreateConvertToCall internal
+	static, so that it can be used from ResourceExpressionBuilder
+
 2010-06-05  Marek Habersack  <mhabersack@novell.com>
 
 	* TemplateControlCompiler.cs: expression evaluation results are
