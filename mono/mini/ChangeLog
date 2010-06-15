@@ -1,5 +1,10 @@
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* tramp-x86.c (mono_arch_create_generic_trampoline): Emit unwind info for
+	these trampolines.
+
+	* mini-x86.c (mono_arch_get_cie_program): Implement this for x86.
+
 	* mini-llvm.c: Fix compilation with llvm 2.6.
 
 	* mini-amd64.c (CallInfo): Fix the position of the vret_arg_index field.
