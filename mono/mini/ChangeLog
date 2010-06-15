@@ -1,5 +1,9 @@
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-amd64.c (CallInfo): Fix the position of the vret_arg_index field.
+	(get_call_info): Don't place the vret arg second when using varargs, since the
+	sig cookie could come before it.
+
 	* mini-llvm.c (mono_llvm_emit_method): Fix the build if LLVM_MONO_BRANCH is not
 	defined.
 
