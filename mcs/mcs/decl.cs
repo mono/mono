@@ -384,7 +384,7 @@ namespace Mono.CSharp {
 						if (pm is Indexer.GetIndexerMethod || pm is Indexer.SetIndexerMethod)
 							pm = null;
 
-						if (pm != null && (pm.Property.Get.IsDummy || pm.Property.Set.IsDummy)) {
+						if (pm != null && pm.Property.AccessorSecond == null) {
 							Report.Error (840, Location,
 								"`{0}' must have a body because it is not marked abstract or extern. The property can be automatically implemented when you define both accessors",
 								GetSignatureForError ());

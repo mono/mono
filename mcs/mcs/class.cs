@@ -484,8 +484,7 @@ namespace Mono.CSharp {
 
 		public void AddProperty (Property prop)
 		{
-			if (!AddMember (prop) || 
-				!AddMember (prop.Get) || !AddMember (prop.Set))
+			if (!AddMember (prop))
 				return;
 
 			if (properties == null)
@@ -501,14 +500,6 @@ namespace Mono.CSharp {
 		{
 			if (!AddMember (e))
 				return;
-
-			if (e is EventProperty) {
-				if (!AddMember (e.Add))
-					return;
-
-				if (!AddMember (e.Remove))
-					return;
-			}
 
 			if (events == null)
 				events = new List<MemberCore> ();
@@ -3105,6 +3096,22 @@ namespace Mono.CSharp {
 				GenericMethod.ModFlags = ModFlags;
 		}
 
+		#region Properties
+
+		public TypeSpec MemberType {
+			get {
+				return member_type;
+			}
+		}
+
+		public FullNamedExpression TypeExpression {
+			get {
+				return type_expr;
+			}
+		}
+
+		#endregion
+
 		//
 		// Main member define entry
 		//
@@ -3189,10 +3196,6 @@ namespace Mono.CSharp {
 			CheckProtectedModifier ();
 
 			return true;
-		}
-
-		public TypeSpec MemberType {
-			get { return member_type; }
 		}
 
 		protected virtual bool ResolveMemberType ()

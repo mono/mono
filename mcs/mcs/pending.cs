@@ -79,7 +79,7 @@ namespace Mono.CSharp {
 
 			foreach (MissingInterfacesInfo missing in missing_ifaces) {
 				var iface = missing.Type;
-				var mi = MemberCache.GetInterfaceMembers (iface);
+				var mi = MemberCache.GetInterfaceMethods (iface);
 
 				int count = mi.Count;
 				pending_implementations [i].type = iface;

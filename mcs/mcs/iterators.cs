@@ -537,10 +537,10 @@ namespace Mono.CSharp {
 			ToplevelBlock get_block = new ToplevelBlock (Compiler, Location);
 			get_block.AddStatement (new Return (new DynamicFieldExpr (CurrentField, Location), Location));
 				
-			Accessor getter = new Accessor (get_block, 0, null, null, Location);
+			Property current = new Property (this, type, Modifiers.DEBUGGER_HIDDEN, name, null);
+			current.Get = new Property.GetMethod (current, 0, null, Location);
+			current.Get.Block = get_block;
 
-			Property current = new Property (
-				this, type, Modifiers.DEBUGGER_HIDDEN, name, null, getter, null, false);
 			AddProperty (current);
 		}
 

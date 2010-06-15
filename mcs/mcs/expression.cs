@@ -8111,7 +8111,7 @@ namespace Mono.CSharp {
 				set_expr = Convert.ImplicitConversion (ec, right_side, type, loc);
 			}
 
-			if (accessor == null || accessor.Kind == MemberKind.FakeMethod) {
+			if (accessor == null) {
 				ec.Report.SymbolRelatedToPreviousError (spec);
 				ec.Report.Error (154, loc, "The property or indexer `{0}' cannot be used in this context because it lacks a `{1}' accessor",
 					spec.GetSignatureForError (), GetAccessorName (right_side != null));

@@ -143,10 +143,13 @@ namespace Mono.CSharp {
 
 		public override bool EnableOverloadChecks (MemberCore overload)
 		{
-			if (overload is MethodCore || overload is AbstractPropertyEventMethod) {
+			if (overload is MethodCore) {
 				caching_flags |= Flags.MethodOverloadsExist;
 				return true;
 			}
+
+			if (overload is AbstractPropertyEventMethod)
+				return true;
 
 			return base.EnableOverloadChecks (overload);
 		}
@@ -307,9 +310,6 @@ namespace Mono.CSharp {
 				metaInfo = ((MethodInfo) metaInfo).MakeGenericMethod (targs.Select (l => l.GetMetaInfo ()).ToArray ());
 				state &= ~StateFlags.PendingMakeMethod;
 			}
-
-			if (Kind == MemberKind.FakeMethod)
-				throw new InternalErrorException ("Emitting fake method");
 
 			return metaInfo;
 		}
@@ -925,32 +925,6 @@ namespace Mono.CSharp {
 			}
 
 			base.ApplyAttributeBuilder (a, ctor, cdata, pa);
-		}
-
-  		protected override bool CheckForDuplications ()
-   		{
-			if (!base.CheckForDuplications ())
-				return false;
-
-			var ar = Parent.PartialContainer.Properties;
-			if (ar != null) {
-				for (int i = 0; i < ar.Count; ++i) {
-					PropertyBase pb = (PropertyBase) ar [i];
-					if (pb.AreAccessorsDuplicateImplementation (this))
-						return false;
-				}
-			}
-
-			ar = Parent.PartialContainer.Indexers;
-			if (ar != null) {
-				for (int i = 0; i < ar.Count; ++i) {
-					PropertyBase pb = (PropertyBase) ar [i];
-					if (pb.AreAccessorsDuplicateImplementation (this))
-						return false;
-				}
-			}
-
-			return true;
 		}
 
 		protected virtual void DefineTypeParameters ()
@@ -1741,14 +1715,13 @@ namespace Mono.CSharp {
 								Report.SymbolRelatedToPreviousError (implementing);
 								Report.Error (686, method.Location, "Accessor `{0}' cannot implement interface member `{1}' for type `{2}'. Use an explicit interface implementation",
 									method.GetSignatureForError (), TypeManager.CSharpSignature (implementing), container.GetSignatureForError ());
-								return false;
-							}
-							PropertyBase.PropertyMethod pm = prop_method as PropertyBase.PropertyMethod;
-							if (pm != null && pm.HasCustomAccessModifier && (pm.ModFlags & Modifiers.PUBLIC) == 0) {
-								Report.SymbolRelatedToPreviousError (implementing);
-								Report.Error (277, method.Location, "Accessor `{0}' must be declared public to implement interface member `{1}'",
-									method.GetSignatureForError (), implementing.GetSignatureForError ());
-								return false;
+							} else {
+								PropertyBase.PropertyMethod pm = prop_method as PropertyBase.PropertyMethod;
+								if (pm != null && pm.HasCustomAccessModifier && (pm.ModFlags & Modifiers.PUBLIC) == 0) {
+									Report.SymbolRelatedToPreviousError (implementing);
+									Report.Error (277, method.Location, "Accessor `{0}' must be declared public to implement interface member `{1}'",
+										method.GetSignatureForError (), implementing.GetSignatureForError ());
+								}
 							}
 						}
 					}
@@ -1772,7 +1745,6 @@ namespace Mono.CSharp {
 						Report.SymbolRelatedToPreviousError (implementing);
 						Report.Error (466, method.Location, "`{0}': the explicit interface implementation cannot introduce the params modifier",
 							method.GetSignatureForError ());
-						return false;
 					}
 				} else {
 					if (implementing.DeclaringType.IsInterface) {
@@ -2009,29 +1981,14 @@ namespace Mono.CSharp {
 		protected ToplevelBlock block;
 		protected Dictionary<SecurityAction, PermissionSet> declarative_security;
 
-		// The accessor are created even if they are not wanted.
-		// But we need them because their names are reserved.
-		// Field says whether accessor will be emited or not
-		public readonly bool IsDummy;
-
 		protected readonly string prefix;
 
 		ReturnParameter return_attributes;
 
-		public AbstractPropertyEventMethod (PropertyBasedMember member, string prefix)
-			: base (member.Parent, SetupName (prefix, member, member.Location), null)
+		public AbstractPropertyEventMethod (InterfaceMemberBase member, string prefix, Attributes attrs, Location loc)
+			: base (member.Parent, SetupName (prefix, member, loc), attrs)
 		{
 			this.prefix = prefix;
-			IsDummy = true;
-		}
-
-		public AbstractPropertyEventMethod (InterfaceMemberBase member, Accessor accessor,
-						    string prefix)
-			: base (member.Parent, SetupName (prefix, member, accessor.Location),
-				accessor.Attributes)
-		{
-			this.prefix = prefix;
-			this.block = accessor.Block;
 		}
 
 		static MemberName SetupName (string prefix, InterfaceMemberBase member, Location loc)
@@ -2176,50 +2133,22 @@ namespace Mono.CSharp {
 
 		public override bool EnableOverloadChecks (MemberCore overload)
 		{
+			if (overload is MethodCore) {
+				caching_flags |= Flags.MethodOverloadsExist;
+				return true;
+			}
+
 			// This can only happen with indexers and it will
 			// be catched as indexer difference
 			if (overload is AbstractPropertyEventMethod)
 				return true;
 
-			if (overload is MethodCore) {
-				caching_flags |= Flags.MethodOverloadsExist;
-				return true;
-			}
 			return false;
 		}
 
 		public override bool IsClsComplianceRequired()
 		{
 			return false;
-		}
-
-		public bool IsDuplicateImplementation (MethodCore method)
-		{
-			if (!MemberName.Equals (method.MemberName))
-				return false;
-
-			TypeSpec[] param_types = method.ParameterTypes;
-
-			if (param_types == null || param_types.Length != ParameterTypes.Length)
-				return false;
-
-			for (int i = 0; i < param_types.Length; i++)
-				if (param_types [i] != ParameterTypes [i])
-					return false;
-
-			Report.SymbolRelatedToPreviousError (method);
-			Report.Error (82, Location, "A member `{0}' is already reserved",
-				method.GetSignatureForError ());
-			return true;
-		}
-
-		public override bool IsUsed {
-			get {
-				if (IsDummy)
-					return false;
-
-				return base.IsUsed;
-			}
 		}
 
 		public MethodSpec Spec { get; protected set; }

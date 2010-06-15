@@ -1675,9 +1675,11 @@ namespace Mono.CSharp {
 				ToplevelBlock get_block = new ToplevelBlock (ctx, p.Location);
 				get_block.AddStatement (new Return (
 					new MemberAccess (new This (p.Location), f.Name), p.Location));
-				Accessor get_accessor = new Accessor (get_block, 0, null, null, p.Location);
+
 				Property prop = new Property (a_type, t_args [i], Modifiers.PUBLIC,
-					new MemberName (p.Name, p.Location), null, get_accessor, null, false);
+					new MemberName (p.Name, p.Location), null);
+				prop.Get = new Property.GetMethod (prop, 0, null, p.Location);
+				prop.Get.Block = get_block;
 				a_type.AddProperty (prop);
 			}
 

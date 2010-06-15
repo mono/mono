@@ -43,7 +43,6 @@ namespace Mono.CSharp {
 		ArrayType = 1 << 19,
 		PointerType = 1 << 20,
 		InternalCompilerType = 1 << 21,
-		FakeMethod = 1 << 22,
 
 		NestedMask = Class | Struct | Delegate | Enum | Interface,
 		GenericMask = Method | Class | Struct | Delegate | Interface,
@@ -66,7 +65,9 @@ namespace Mono.CSharp {
 		InstanceOnly = 1 << 2,
 
 		// Ignore member overrides
-		NoOverrides	= 1 << 3
+		NoOverrides	= 1 << 3,
+
+		NoAccessors = 1 << 4,
 	}
 
 	public struct MemberFilter : IEquatable<MemberSpec>
@@ -350,7 +351,8 @@ namespace Mono.CSharp {
 					continue;
 				}
 
-				if (entry.DeclaringType == member.DeclaringType || entry.DeclaringType.ImplementsInterface (member.DeclaringType))
+				if ((entry.DeclaringType == member.DeclaringType && entry.IsAccessor == member.IsAccessor) ||
+					entry.DeclaringType.ImplementsInterface (member.DeclaringType))
 					return false;
 			}
 
@@ -382,8 +384,16 @@ namespace Mono.CSharp {
 						if ((restrictions & BindingRestriction.InstanceOnly) != 0 && entry.IsStatic)
 							continue;
 
-						if (filter.Equals (entry))
-							return entry;
+						if ((restrictions & BindingRestriction.NoAccessors) != 0 && entry.IsAccessor)
+							continue;
+
+						if (!filter.Equals (entry))
+							continue;
+
+						if ((restrictions & BindingRestriction.DeclaredOnly) != 0 && container.IsInterface && entry.DeclaringType != container)
+							continue;
+
+						return entry;
 
 						// TODO MemberCache:
 						//if ((restrictions & BindingRestriction.AccessibleOnly) != 0)
@@ -391,8 +401,11 @@ namespace Mono.CSharp {
 					}
 				}
 
+				if ((restrictions & BindingRestriction.DeclaredOnly) != 0)
+					break;
+
 				container = container.BaseType;
-			} while (container != null && (restrictions & BindingRestriction.DeclaredOnly) == 0);
+			} while (container != null);
 
 			return null;
 		}
@@ -690,7 +703,7 @@ namespace Mono.CSharp {
 					if (name_entry.IsAccessor)
 						continue;
 
-					if ((name_entry.Kind & (MemberKind.Constructor | MemberKind.FakeMethod | MemberKind.Destructor)) != 0)
+					if ((name_entry.Kind & (MemberKind.Constructor | MemberKind.Destructor | MemberKind.Operator)) != 0)
 						continue;
 
 					bool extra;
@@ -709,7 +722,7 @@ namespace Mono.CSharp {
 		//
 		// Returns members of @iface only, base members are ignored
 		//
-		public static IList<MethodSpec> GetInterfaceMembers (TypeSpec iface)
+		public static IList<MethodSpec> GetInterfaceMethods (TypeSpec iface)
 		{
 			//
 			// MemberCache flatten interfaces, therefore in cases like this one
@@ -1288,7 +1301,7 @@ namespace Mono.CSharp {
 					}
 				}
 
-				if ((ce.Kind & (MemberKind.Method | MemberKind.FakeMethod)) != 0) {
+				if ((ce.Kind & MemberKind.Method) != 0) {
 					Method method_a = member as Method;
 					Method method_b = ce.MemberDefinition as Method;
 					if (method_a != null && method_b != null && (method_a.ModFlags & method_b.ModFlags & Modifiers.PARTIAL) != 0) {
