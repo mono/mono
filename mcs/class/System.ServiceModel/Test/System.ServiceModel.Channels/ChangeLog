@@ -1,3 +1,8 @@
+2010-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpTransportBindingElementTest.cs : add connection tests (imported
+	  from standalone olive tests), one is disabled for breakage.
+
 2010-05-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* BindingContextTest.cs : add a couple of tests with related to

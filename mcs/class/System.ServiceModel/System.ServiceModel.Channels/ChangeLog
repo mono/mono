@@ -1,4 +1,10 @@
-2010-05-28  Atsushi Enomoto  <atsushi@ximian.com>
+2010-06-15  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* TcpReplyChannel.cs : accept TCP channel on ReceiveRequest(). This
+	  fixes standalone tcp-transport/sample[svc|cli]5.exe test in olive
+	  (but not TcpTransportBindingElementTest.SimpleDuplexStreamed.)
+
+2010-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpBinaryFrameManager.cs : lock read and write respectively.
 	  Finally fixed bug #567672 ('IsOneWay=false' case).

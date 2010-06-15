@@ -163,5 +163,104 @@ namespace MonoTests.System.ServiceModel.Channels
 			var s = b.GetProperty<ISecurityCapabilities> (new BindingContext (new CustomBinding (), new BindingParameterCollection ()));
 			Assert.IsNull (s, "#1");
 		}
+
+		[Test]
+		public void SimpleDuplexBuffered () // sample[svc|cli]4.exe
+		{
+			ServiceHost host = new ServiceHost (typeof (Foo));
+			var bindingS = new CustomBinding (new BindingElement [] {
+				new BinaryMessageEncodingBindingElement (),
+				new TcpTransportBindingElement () });
+			bindingS.ReceiveTimeout = TimeSpan.FromSeconds (5);
+			bindingS.OpenTimeout = TimeSpan.FromSeconds (20);
+			host.AddServiceEndpoint (typeof (IFoo),
+				bindingS, new Uri ("net.tcp://localhost:37564"));
+			host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().IncludeExceptionDetailInFaults = true;
+			host.Open ();
+
+			try {
+				for (int i = 0; i < 2; i++) {
+					var bindingC = new NetTcpBinding ();
+					bindingC.Security.Mode = SecurityMode.None;
+					IFooChannel proxy = new ChannelFactory<IFooChannel> (bindingC, new EndpointAddress ("net.tcp://localhost:37564/")).CreateChannel ();
+					proxy.Open ();
+					try {
+						Assert.AreEqual ("TEST FOR ECHO", proxy.Echo ("TEST FOR ECHO"), "#1");
+						var sid = proxy.SessionId;
+						Assert.AreEqual (3000, proxy.Add (1000, 2000), "#2");
+						Assert.AreEqual (sid, proxy.SessionId, "#3");
+					} finally {
+						proxy.Close ();
+					}
+				}
+			} catch (Exception ex) {
+				Console.Error.WriteLine (ex);
+			} finally {
+				host.Close ();
+			}
+		}
+
+		[Test]
+		[Category ("NotWorking")]
+		// FIXME: To enable this, we must fix the "request-reply TCP channel must close the connection" issue.
+		// It is strange, but the standalone test just works.
+		public void SimpleDuplexStreamed () // sample[svc|cli]5.exe
+		{
+			ServiceHost host = new ServiceHost (typeof (Foo));
+			NetTcpBinding bindingS = new NetTcpBinding ();
+			bindingS.TransferMode = TransferMode.Streamed;
+			bindingS.Security.Mode = SecurityMode.None;
+			bindingS.ReceiveTimeout = TimeSpan.FromSeconds (5);
+			bindingS.OpenTimeout = TimeSpan.FromSeconds (20);
+			host.AddServiceEndpoint (typeof (IFoo),
+				bindingS, new Uri ("net.tcp://localhost:37564"));
+			host.Description.Behaviors.Find<ServiceBehaviorAttribute> ().IncludeExceptionDetailInFaults = true;
+			host.Open ();
+
+			try {
+				for (int i = 0; i < 2; i++) {
+					var bindingC = new NetTcpBinding ();
+					bindingS.TransferMode = TransferMode.Streamed;
+					bindingC.Security.Mode = SecurityMode.None;
+					IFooChannel proxy = new ChannelFactory<IFooChannel> (bindingC, new EndpointAddress ("net.tcp://localhost:37564/")).CreateChannel ();
+					proxy.Open ();
+					try {
+						Assert.AreEqual ("TEST FOR ECHO", proxy.Echo ("TEST FOR ECHO"), "#1");
+						Assert.AreEqual (3000, proxy.Add (1000, 2000), "#2");
+					} finally {
+						proxy.Close ();
+					}
+				}
+			} finally {
+				host.Close ();
+			}
+		}
+
+		[ServiceContract]
+		public interface IFoo
+		{
+			[OperationContract]
+			string Echo (string msg);
+
+			[OperationContract]
+			uint Add (uint v1, uint v2);
+		}
+
+		public interface IFooChannel : IFoo, IClientChannel
+		{
+		}
+
+		class Foo : IFoo
+		{
+			public string Echo (string msg)
+			{
+				return msg;
+			}
+			
+			public uint Add (uint v1, uint v2)
+			{
+				return v1 + v2;
+			}
+		}
 	}
 }

@@ -55,13 +55,16 @@ namespace System.ServiceModel.Channels
 
 		public override RequestContext ReceiveRequest (TimeSpan timeout)
 		{
-			DateTime start = DateTime.Now;
-
-			if (client == null)
-				return null;
-
 			if (timeout <= TimeSpan.Zero)
 				throw new ArgumentException (String.Format ("Timeout value must be positive value. It was {0}", timeout));
+
+			DateTime start = DateTime.Now;
+
+			// FIXME: use timeout
+			if (client == null)
+				client = ((TcpChannelListener<IReplyChannel>) Manager).AcceptTcpClient (timeout);
+			NetworkStream ns = client.GetStream ();
+			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, true) { Encoder = this.Encoder, EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
 
 			// FIXME: use timeout
 			if (!frame.ProcessPreambleRecipient ())
@@ -137,11 +140,6 @@ namespace System.ServiceModel.Channels
 
 		protected override void OnOpen (TimeSpan timeout)
 		{
-			// FIXME: use timeout
-			if (client == null)
-				client = ((TcpChannelListener<IReplyChannel>) Manager).AcceptTcpClient (timeout);
-			NetworkStream ns = client.GetStream ();
-			frame = new TcpBinaryFrameManager (TcpBinaryFrameManager.SingletonUnsizedMode, ns, true) { Encoder = this.Encoder, EncodingRecord = TcpBinaryFrameManager.EncodingBinary };
 		}
 	}
 }
