@@ -1,0 +1,5 @@
+2010-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* dtest.cs dtest-app.cs: New files containing the soft debugger tests, moved here
+	from mono/tests.
+
