@@ -32,6 +32,7 @@
 
 using System;
 using System.Collections.Generic;
+using System.Linq;
 using System.Text;
 using System.Text.RegularExpressions;
 using System.IO;
@@ -135,7 +136,9 @@ namespace Mono.XBuild.CommandLine {
 
 			Match m = projectRegex.Match (line);
 			while (m.Success) {
-				ProjectInfo projectInfo = new ProjectInfo (m.Groups[2].Value, m.Groups[3].Value);
+				ProjectInfo projectInfo = new ProjectInfo (m.Groups[2].Value,
+								Path.GetFullPath (Path.Combine (solutionDir,
+									m.Groups [3].Value.Replace ('\\', Path.DirectorySeparatorChar))));
 				if (String.Compare (m.Groups [1].Value, solutionFolderGuid,
 						StringComparison.InvariantCultureIgnoreCase) == 0) {
 					// Ignore solution folders
@@ -189,8 +192,8 @@ namespace Mono.XBuild.CommandLine {
 			}
 
 			foreach (ProjectInfo projectInfo in projectInfos.Values) {
-				string filename = Path.Combine (solutionDir,
-							projectInfo.FileName.Replace ('\\', Path.DirectorySeparatorChar));
+				string filename = projectInfo.FileName;
+				string projectDir = Path.GetDirectoryName (filename);
 
 				if (!File.Exists (filename)) {
 					RaiseWarning (0, String.Format ("Project file {0} referenced in the solution file, " +
@@ -207,12 +210,34 @@ namespace Mono.XBuild.CommandLine {
 				}
 
 				foreach (BuildItem bi in currentProject.GetEvaluatedItemsByName ("ProjectReference")) {
+					ProjectInfo info = null;
 					string projectReferenceGuid = bi.GetEvaluatedMetadata ("Project");
-					Guid guid = new Guid (projectReferenceGuid);
-					ProjectInfo info;
-					if (projectInfos.TryGetValue (guid, out info))
-						// ignore if not found
-						projectInfo.Dependencies [guid] = info;
+					bool hasGuid = !String.IsNullOrEmpty (projectReferenceGuid);
+
+					// try to resolve the ProjectReference by GUID
+					// and fallback to project filename
+
+					if (hasGuid) {
+						Guid guid = new Guid (projectReferenceGuid);
+						projectInfos.TryGetValue (guid, out info);
+					}
+
+					if (info == null || !hasGuid) {
+						// Project not found by guid or guid not available
+						// Try to find by project file
+
+						string fullpath = Path.GetFullPath (Path.Combine (projectDir, bi.Include.Replace ('\\', Path.DirectorySeparatorChar)));
+						info = projectInfos.Values.FirstOrDefault (pi => pi.FileName == fullpath);
+
+						if (info == null)
+							RaiseWarning (0, String.Format (
+									"{0}: ProjectReference '{1}' not found, neither by guid '{2}' nor by project file name '{3}'.",
+									filename, bi.Include, projectReferenceGuid, fullpath));
+
+					}
+
+					if (info != null)
+						projectInfo.Dependencies [info.Guid] = info;
 				}
 			}
 

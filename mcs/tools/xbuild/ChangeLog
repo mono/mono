@@ -1,3 +1,9 @@
+2010-06-16  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ParseSolution): Use ProjectReference's
+	filename to locate if no guid is specified or project can't
+	be found by the guid.
+
 2010-06-15  Ankit Jain  <jankit@novell.com>
 
 	* xbuild/*/Microsoft.Common.targets (AssemblySearchPaths): Add
