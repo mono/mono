@@ -80,7 +80,7 @@ namespace Mono.Data.Tds.Protocol
 		
 		#region Methods
 
-		private string BuildExec (string sql)
+		protected string BuildExec (string sql)
 		{
 			string esql = sql.Replace ("'", "''"); // escape single quote
 			if (Parameters != null && Parameters.Count > 0)
@@ -118,6 +118,12 @@ namespace Mono.Data.Tds.Protocol
 			foreach (TdsMetaParameter p in Parameters) {
 				if (parms.Length > 0)
 					parms.Append (", ");
+				
+				// Set default precision according to the TdsVersion
+				// Current default is 29 for Tds80 
+				if (p.TypeName == "decimal")
+					p.Precision = (p.Precision !=0  ? p.Precision : (byte) 18);
+										
 				parms.Append (p.Prepare ());
 				if (p.Direction == TdsParameterDirection.Output)
 					parms.Append (" output");
@@ -152,6 +158,9 @@ namespace Mono.Data.Tds.Protocol
 						else
 							select.Append (", ");
 						select.Append ("@" + parameterName);
+						
+						if (p.TypeName == "decimal")
+							p.Precision = (p.Precision !=0 ? p.Precision : (byte) 18);
 							
 						declare.Append (String.Format ("declare {0}\n", p.Prepare ()));
 
@@ -442,9 +451,9 @@ namespace Mono.Data.Tds.Protocol
 			                                          param));
 		}
 		
-		private void ExecRPC (TdsRpcProcId rpcId, string sql, 
-		                      TdsMetaParameterCollection parameters, 
-		                      int timeout, bool wantResults)
+		protected void ExecRPC (TdsRpcProcId rpcId, string sql, 
+		                        TdsMetaParameterCollection parameters, 
+		                        int timeout, bool wantResults)
 		{
 			// clean up
 			InitExec ();
@@ -568,7 +577,7 @@ namespace Mono.Data.Tds.Protocol
 				    ((decimal)param.Value) != Decimal.MaxValue && 
 				    ((decimal)param.Value) != Decimal.MinValue) {
 					decimal expo = new Decimal (System.Math.Pow (10, (double)param.Scale));
-					int pVal = (int)(((decimal)param.Value) * expo);
+					long pVal = (long)(((decimal)param.Value) * expo);
 					param.Value = (decimal)pVal;				
 				}
 			}
@@ -675,14 +684,9 @@ namespace Mono.Data.Tds.Protocol
 		{
 			Parameters = parameters;
 			string sql = commandText;
-
-			if (Parameters != null && Parameters.Count > 0) {
-				ExecRPC (TdsRpcProcId.ExecuteSql, commandText, parameters, timeout, wantResults);
-			} else {
-				if (wantResults)
-					sql = BuildExec (commandText);
-				ExecuteQuery (sql, timeout, wantResults);
-			}
+			if (wantResults || (Parameters != null && Parameters.Count > 0))
+				sql = BuildExec (commandText);
+			ExecuteQuery (sql, timeout, wantResults);
 		}
 
 		private string FormatParameter (TdsMetaParameter parameter)

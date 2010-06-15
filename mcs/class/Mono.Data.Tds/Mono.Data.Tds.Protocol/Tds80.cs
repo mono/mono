@@ -210,6 +210,26 @@ namespace Mono.Data.Tds.Protocol {
 			OutputParameters.Add (value);
 		}
 		
+		public override void Execute (string commandText, TdsMetaParameterCollection parameters, int timeout, bool wantResults)
+		{
+			// We are connected to a Sql 7.0 server
+			if (TdsVersion < TdsVersion.tds80) {
+				base.Execute (commandText, parameters, timeout, wantResults);
+				return;
+			}
+
+			Parameters = parameters;
+			string sql = commandText;
+
+			if (Parameters != null && Parameters.Count > 0) {
+				ExecRPC (TdsRpcProcId.ExecuteSql, commandText, parameters, timeout, wantResults);
+			} else {
+				if (wantResults)
+					sql = BuildExec (commandText);
+				ExecuteQuery (sql, timeout, wantResults);
+			}
+		}
+
 		#endregion // Methods
 	}
 }
