@@ -187,20 +187,15 @@ namespace Mono.CSharp {
 		#endregion
 	}
 
-	/// <summary>
-	///   The MemberCache is used by dynamic and non-dynamic types to speed up
-	///   member lookups.  It has a member name based hash table; it maps each member
-	///   name to a list of CacheEntry objects.  Each CacheEntry contains a MemberInfo
-	///   and the BindingFlags that were initially used to get it.  The cache contains
-	///   all members of the current class and all inherited members.  If this cache is
-	///   for an interface types, it also contains all inherited members.
-	///
-	///   There are two ways to get a MemberCache:
-	///   * if this is a dynamic type, lookup the corresponding DeclSpace and then
-	///     use the DeclSpace.MemberCache property.
-	///   * if this not a dynamic type, call TypeHandle.GetTypeHandle() to get a
-	///     TypeHandle instance for the type and then use TypeHandle.MemberCache.
-	/// </summary>
+	//
+	// The MemberCache is the main members container used by compiler. It contains
+	// all members imported or defined during compilation using on demand filling
+	// process. Inflated containers are also using MemberCache to make inflated
+	// members look like normal definition.
+	//
+	// All of the methods are performance and memory sensitive as the MemberCache
+	// is the underlying engine of all member based operations.
+	//
 	public class MemberCache
 	{
 		enum StateFlags
