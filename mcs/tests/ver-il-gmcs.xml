@@ -12939,6 +12939,31 @@
       </method>
     </type>
   </test>
+  <test name="gtest-517.cs">
+    <type name="C">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="G`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Test`1[U]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -17917,6 +17942,40 @@
       </method>
       <method name="Void .ctor()">
         <size>44</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-etree-24.cs">
+    <type name="NotifyingProperty">
+      <method name="Void CreateDependent[TValue](System.Linq.Expressions.Expression`1[System.Func`1[TValue]], System.Func`1[System.Object], System.Linq.Expressions.Expression`1[System.Func`1[System.Object]][])">
+        <size>1</size>
+      </method>
+    </type>
+    <type name="NotifyingPropertyTest">
+      <method name="Void CreateDependent_NotifierNull()">
+        <size>58</size>
+      </method>
+      <method name="Void CreateDependent_DependentsNull()">
+        <size>83</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="System.Object &lt;CreateDependent_DependentsNull&gt;m__0()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="NotifyingPropertyTest+&lt;CreateDependent_NotifierNull&gt;c__AnonStorey0">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="NotifyingPropertyTest+&lt;CreateDependent_DependentsNull&gt;c__AnonStorey1">
+      <method name="Void .ctor()">
+        <size>7</size>
       </method>
     </type>
   </test>
@@ -39931,6 +39990,16 @@
         <size>13</size>
       </method>
       <method name="Void &lt;Test&gt;m__0()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-782.cs">
+    <type name="Test">
+      <method name="Void Main()">
         <size>1</size>
       </method>
       <method name="Void .ctor()">
