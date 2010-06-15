@@ -1,3 +1,9 @@
+2010-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-amd64.c (get_call_info): Change the managed calling convention so 'this'
+	is always passed as the first argument, before the vtype ret arg. This simplifies
+	get_this_arg_reg () and LLVM integration.
+
 2010-06-14 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_method_to_ir): Add support for .ctor intrinsics.
