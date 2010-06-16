@@ -1,3 +1,8 @@
+2010-06-16  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* XmlTextReader.cs : do not try to parse xml:base="".
+	  Fixed bug #608391.
+
 2010-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlDocument.cs : do not create XmlSchemaInfo instance every time

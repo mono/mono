@@ -1341,5 +1341,12 @@ namespace MonoTests.System.Xml
 				return String.Empty;
 			}
 		}
+
+		[Test]
+		public void EmptyXmlBase ()
+		{
+			XmlDocument doc = new XmlDocument ();
+			doc.LoadXml ("<root xml:base='' />");
+		}
 	}
 }

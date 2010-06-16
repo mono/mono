@@ -1473,6 +1473,10 @@ namespace System.Xml
 						Uri buri =
 							BaseURI != String.Empty ?
 							new Uri (BaseURI) : null;
+						// xml:base="" without any base URI -> pointless. However there are
+						// some people who use such xml:base. Seealso bug #608391.
+						if (buri == null && String.IsNullOrEmpty (value))
+							break;
 						Uri uri = resolver.ResolveUri (
 							buri, value);
 						parserContext.BaseURI =
