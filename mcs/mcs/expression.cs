@@ -4987,20 +4987,24 @@ namespace Mono.CSharp {
 					return null;
 				}
 
-				args = arguments;
+				if (arguments == null)
+					args = new Arguments (1);
+				else
+					args = arguments;
 
-				if (mg.IsStatic != mg.IsInstance) {
-					if (args == null)
-						args = new Arguments (1);
-
-					if (mg.IsStatic) {
-						args.Insert (0, new Argument (new TypeOf (new TypeExpression (mg.DeclaringType, loc), loc).Resolve (ec), Argument.AType.DynamicTypeName));
+				MemberAccess ma = expr as MemberAccess;
+				if (ma != null) {
+					var left_type = ma.Left as TypeExpr;
+					if (left_type != null) {
+						args.Insert (0, new Argument (new TypeOf (left_type, loc).Resolve (ec), Argument.AType.DynamicTypeName));
 					} else {
-						MemberAccess ma = expr as MemberAccess;
-						if (ma != null)
-							args.Insert (0, new Argument (ma.Left.Resolve (ec)));
-						else
-							args.Insert (0, new Argument (new This (loc).Resolve (ec)));
+						args.Insert (0, new Argument (ma.Left));
+					}
+				} else {	// is SimpleName
+					if (ec.IsStatic) {
+						args.Insert (0, new Argument (new TypeOf (new TypeExpression (ec.CurrentType, loc), loc).Resolve (ec), Argument.AType.DynamicTypeName));
+					} else {
+						args.Insert (0, new Argument (new This (loc).Resolve (ec)));
 					}
 				}
 			}
@@ -7242,6 +7246,7 @@ namespace Mono.CSharp {
 				else if (HasTypeArguments)
 					retval = new GenericTypeExpr (retval.Type, targs, loc).ResolveAsTypeStep (ec, false);
 
+				expr = expr_resolved;
 				return retval;
 			}
 
@@ -7302,6 +7307,8 @@ namespace Mono.CSharp {
 				if (member_lookup == null)
 					return null;
 			}
+
+			expr = expr_resolved;
 
 			MemberExpr me;
 			TypeExpr texpr = member_lookup as TypeExpr;

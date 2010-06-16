@@ -1,5 +1,10 @@
 2010-06-16  Marek Safar  <marek.safar@gmail.com>
 
+	* expression.cs: Dispatch dynamic invocation solely on left
+	expression type.
+
+2010-06-16  Marek Safar  <marek.safar@gmail.com>
+
 	* expression.cs, statement.cs: Always persist explicit cast
 	semantic at expression level.
 	
