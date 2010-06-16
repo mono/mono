@@ -206,7 +206,7 @@ namespace System.Net
 			get {
 				return (allowBuffering && (method != "HEAD" && method != "GET" &&
 							method != "MKCOL" && method != "CONNECT" &&
-							method != "DELETE" && method != "TRACE"));
+							method != "TRACE"));
 			}
 		}
 		
@@ -617,7 +617,7 @@ namespace System.Net
 				throw new WebException ("The request was canceled.", WebExceptionStatus.RequestCanceled);
 
 			bool send = !(method == "GET" || method == "CONNECT" || method == "HEAD" ||
-					method == "TRACE" || method == "DELETE");
+					method == "TRACE");
 			if (method == null || !send)
 				throw new ProtocolViolationException ("Cannot send data when method is: " + method);
 
@@ -1111,7 +1111,7 @@ namespace System.Net
 				bodyBuffer = null;
 				writeStream.Close ();
 			} else if (method != "HEAD" && method != "GET" && method != "MKCOL" && method != "CONNECT" &&
-					method != "DELETE" && method != "TRACE") {
+					method != "TRACE") {
 				if (getResponseCalled && !writeStream.RequestWritten)
 					writeStream.WriteRequest ();
 			}
