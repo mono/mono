@@ -1,3 +1,5 @@
+// Compiler options: -codepage:utf8
+
 // Tokenizer test
 
 class Test {
