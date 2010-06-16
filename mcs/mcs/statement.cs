@@ -4746,7 +4746,7 @@ namespace Mono.CSharp {
 
 			var dispose_mg = new MethodGroupExpr (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc) {
 				InstanceExpression = TypeManager.IsNullableType (expr_type) ?
-				new Cast (new TypeExpression (TypeManager.idisposable_type, loc), local_copy).Resolve (ec) :
+				new Cast (new TypeExpression (TypeManager.idisposable_type, loc), local_copy, loc).Resolve (ec) :
 				local_copy
 			};
 

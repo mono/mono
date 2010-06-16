@@ -1,3 +1,8 @@
+2010-06-16  Marek Safar  <marek.safar@gmail.com>
+
+	* expression.cs, statement.cs: Always persist explicit cast
+	semantic at expression level.
+	
 2010-06-15  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs, attribute.cs: Enable generic type parameters

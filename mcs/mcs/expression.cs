@@ -1488,19 +1488,11 @@ namespace Mono.CSharp {
 		}
 	}
 	
-	/// <summary>
-	///   This represents a typecast in the source language.
-	///
-	///   FIXME: Cast expressions have an unusual set of parsing
-	///   rules, we need to figure those out.
-	/// </summary>
+	//
+	// This represents a typecast in the source language.
+	//
 	public class Cast : ShimExpression {
 		Expression target_type;
-			
-		public Cast (Expression cast_type, Expression expr)
-			: this (cast_type, expr, cast_type.Location)
-		{
-		}
 
 		public Cast (Expression cast_type, Expression expr, Location loc)
 			: base (expr)
@@ -1547,8 +1539,11 @@ namespace Mono.CSharp {
 				return new DynamicConversion (type, CSharpBinderFlags.ConvertExplicit, arg, loc).Resolve (ec);
 			}
 
-			expr = Convert.ExplicitConversion (ec, expr, type, loc);
-			return expr;
+			var res = Convert.ExplicitConversion (ec, expr, type, loc);
+			if (res == expr)
+				return EmptyCast.Create (res, type);
+
+			return res;
 		}
 		
 		protected override void CloneTo (CloneContext clonectx, Expression t)
