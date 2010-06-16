@@ -65,14 +65,21 @@ namespace Microsoft.CSharp.RuntimeBinder
 				null :
 				new Compiler.TypeArguments (typeArguments.Select (l => new Compiler.TypeExpression (TypeImporter.Import (l), Compiler.Location.Null)).ToArray ());
 
-			Compiler.Expression expr;
+			var expr = CSharpBinder.CreateCompilerExpression (argumentInfo[0], target);
+
+			//
+			// Simple name invocation is actually member access invocation
+ 			// to capture original this argument. This  brings problem when
+			// simple name is resolved as a static invocation and member access
+			// has to be reduced back to simple name without reporting an error
+			//
 			if ((flags & CSharpBinderFlags.InvokeSimpleName) != 0) {
-				expr = new Compiler.SimpleName (Name, t_args, Compiler.Location.Null);
-			} else {
-				expr = CSharpBinder.CreateCompilerExpression (argumentInfo [0], target);
-				expr = new Compiler.MemberAccess (expr, Name, t_args, Compiler.Location.Null);
+				var value = expr as Compiler.RuntimeValueExpression;
+				if (value != null)
+					value.IsSuggestionOnly = true;
 			}
 
+			expr = new Compiler.MemberAccess (expr, Name, t_args, Compiler.Location.Null);
 			expr = new Compiler.Invocation (expr, c_args);
 
 			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)

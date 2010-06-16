@@ -1,3 +1,8 @@
+2010-06-16  Marek Safar  <marek.safar@gmail.com>
+
+	* CSharpInvokeMemberBinder.cs: Construct MemberAccess for simple
+	name expressions.
+
 2010-05-27  Marek Safar  <marek.safar@gmail.com>
 
 	* *.cs: Sync with the latest gmcs.
