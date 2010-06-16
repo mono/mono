@@ -1,3 +1,8 @@
+2010-06-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* HttpWebRequest.cs: DELETE allows an entity body.
+	Fixes bug #614483.
+
 2010-06-15 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: 307 does not change request method.
