@@ -584,6 +584,20 @@ namespace MonoTests.System.IO.IsolatedStorageTest {
 			Assert.AreEqual (typeof (Url), isf.DomainIdentity.GetType (), "DomainIdentity");
 		}
 
+		[Test]
+		public void RemoveFromOtherInstance ()
+		{
+			IsolatedStorageFile isf = IsolatedStorageFile.GetUserStoreForAssembly ();
+			IsolatedStorageFile isf2 = IsolatedStorageFile.GetUserStoreForAssembly ();
+
+			isf.Remove ();
+			try {
+				isf2.Remove ();
+				Assert.Fail ("#Exc1");
+			} catch (IsolatedStorageException) {
+			}
+		}
+
 #if NET_4_0
 		[Test]
 		public void Remove ()
