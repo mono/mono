@@ -882,13 +882,15 @@ namespace Mono.CSharp {
 							start_index = 0;
 							found = new MethodSpec[applicable.Count];
 						} else {
-							start_index = found.Length - 1;
+							start_index = found.Length;
 							Array.Resize (ref found, found.Length + applicable.Count);
 						}
 
 						for (int i = 0; i < applicable.Count; ++i) {
 							if (applicable[i].Kind == MemberKind.Operator)
 								found[i + start_index] = (MethodSpec) applicable[i];
+							else
+								Console.WriteLine (applicable[i].GetSignatureForError ());
 						}
 					} else if (op == Operator.OpType.Implicit) {
 						mc.state |= StateFlags.HasNoImplicitOperator;

@@ -1,3 +1,8 @@
+2010-06-16  Marek Safar  <marek.safar@gmail.com>
+
+	* membercache.cs, convert.cs: Correctly resize an array used by
+	GetUserOperator.
+
 2010-06-15  Marek Safar  <marek.safar@gmail.com>
 
 	A fix for bug #599601

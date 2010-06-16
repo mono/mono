@@ -952,6 +952,11 @@ namespace Mono.CSharp {
 			Expression texpr = null;
 
 			foreach (var op in operators) {
+				
+				// Can be null because MemberCache.GetUserOperator does not resize the array
+				if (op == null)
+					continue;
+
 				var t = op.Parameters.Types[0];
 				if (source.Type != t && !ImplicitStandardConversionExists (source, t)) {
 					if (implicitOnly)
