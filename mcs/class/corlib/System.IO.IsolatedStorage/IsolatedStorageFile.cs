@@ -914,7 +914,11 @@ namespace System.IO.IsolatedStorage {
 #if NET_4_0
 			CheckOpen (false);
 #endif
-			directory.Delete (true);
+			try {
+				directory.Delete (true);
+			} catch {
+				throw new IsolatedStorageException ("Could not remove storage.");
+			}
 
 			// It seems .Net is calling Close from here.
 			Close ();
