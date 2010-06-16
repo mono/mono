@@ -1,3 +1,12 @@
+2010-06-16  Miguel de Icaza  <miguel@novell.com>
+
+	* Random.cs: Do not call Math.Abs blindly when we get an int
+	value, as Math.Abs (Int32.MinValue) throws an overflow exception,
+	and our constructor uses Environment.TickCount which means that
+	eventually we will get a crash. 
+
+	Fixes #605797
+
 2010-06-15  Jonathan Pryor  <jpryor@novell.com>
 
 	* Convert.cs: Instead of manually checking for NaN, Infinity, etc.,

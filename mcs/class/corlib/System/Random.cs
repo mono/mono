@@ -56,7 +56,14 @@ namespace System
 			int mj, mk;
 
 			// Numerical Recipes in C online @ http://www.library.cornell.edu/nr/bookcpdf/c7-1.pdf
-			mj = MSEED - Math.Abs (Seed);
+
+			// Math.Abs throws on Int32.MinValue, so we need to work around that case.
+			// Fixes: 605797
+			if (Seed == Int32.MinValue)
+				mj = MSEED - Math.Abs (Int32.MinValue + 1);
+			else
+				mj = MSEED - Math.Abs (Seed);
+			
 			SeedArray [55] = mj;
 			mk = 1;
 			for (int i = 1; i < 55; i++) {  //  [1, 55] is special (Knuth)
