@@ -55,7 +55,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 			expr = new Compiler.Invocation (expr, c_args);
 
 			if ((flags & CSharpBinderFlags.ResultDiscarded) == 0)
-				expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr);
+				expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 			else
 				expr = new Compiler.DynamicResultCast (TypeImporter.Import (ReturnType), expr);
 

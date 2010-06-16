@@ -144,7 +144,7 @@ namespace Microsoft.CSharp.RuntimeBinder
 				expr = new Compiler.Binary (oper, left, right, Compiler.Location.Null);
 			}
 
-			expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr);
+			expr = new Compiler.Cast (new Compiler.TypeExpression (TypeImporter.Import (ReturnType), Compiler.Location.Null), expr, Compiler.Location.Null);
 			
 			if ((flags & CSharpBinderFlags.CheckedContext) != 0)
 				expr = new Compiler.CheckedExpr (expr, Compiler.Location.Null);
