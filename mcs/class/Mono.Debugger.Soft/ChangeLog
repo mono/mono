@@ -1,3 +1,7 @@
+2010-06-15  Zoltan Varga  <vargaz@gmail.com>
+
+	* *: Add testing infrastructure by moving the tests from mono/tests.
+
 2009-11-03  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile: Don't define LIBRARY_PACKAGE so it gets installed normally.
