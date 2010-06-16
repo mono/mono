@@ -889,8 +889,6 @@ namespace Mono.CSharp {
 						for (int i = 0; i < applicable.Count; ++i) {
 							if (applicable[i].Kind == MemberKind.Operator)
 								found[i + start_index] = (MethodSpec) applicable[i];
-							else
-								Console.WriteLine (applicable[i].GetSignatureForError ());
 						}
 					} else if (op == Operator.OpType.Implicit) {
 						mc.state |= StateFlags.HasNoImplicitOperator;
