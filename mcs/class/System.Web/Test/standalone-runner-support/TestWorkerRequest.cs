@@ -27,6 +27,7 @@
 //
 using System;
 using System.IO;
+using System.Net;
 using System.Web;
 using System.Web.Hosting;
 
@@ -40,7 +41,11 @@ namespace StandAloneRunnerSupport
 		string query;
 		string appVirtualDir;
 		string pathInfo;
-		
+
+		public bool IsPost { get; set; }
+		public HttpStatusCode StatusCode { get; set; }
+		public string StatusDescription { get; set; }
+			
 		public TestWorkerRequest (string page, string query, TextWriter output)
 			: this (page, query, null, output)
 		{
@@ -60,6 +65,14 @@ namespace StandAloneRunnerSupport
 			return page;
 		}
 
+		public override string GetHttpVerbName ()
+		{
+			if (IsPost)
+				return "POST";
+
+			return base.GetHttpVerbName ();
+		}
+		
 		public override string GetPathInfo ()
 		{
 			if (pathInfo == null)
@@ -78,6 +91,14 @@ namespace StandAloneRunnerSupport
 			return TrimLeadingSlash (base.GetUriPath ());
 		}
 
+		public override void SendStatus (int code, string description)
+		{
+			StatusCode = (HttpStatusCode) code;
+			StatusDescription = description;
+
+			base.SendStatus (code, description);
+		}
+		
 		static string TrimLeadingSlash (string input)
 		{
 			if (String.IsNullOrEmpty (input))

@@ -1356,7 +1356,7 @@ namespace System.Web.UI.WebControls
 
 			currentEditOldValues = OldEditValues.Values;
 			currentEditRowKeys = DataKey.Values;
-			currentEditNewValues = GetRowValues (false);
+			currentEditNewValues = GetRowValues (true);
 			
 			FormViewUpdateEventArgs args = new FormViewUpdateEventArgs (param, currentEditRowKeys, currentEditOldValues, currentEditNewValues);
 			OnItemUpdating (args);

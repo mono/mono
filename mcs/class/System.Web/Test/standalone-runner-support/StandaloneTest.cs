@@ -30,6 +30,7 @@ using System.Collections.Generic;
 using System.Web;
 using System.Web.Hosting;
 
+using MonoTests.SystemWeb.Framework;
 using NUnit.Framework;
 
 namespace StandAloneRunnerSupport
@@ -121,7 +122,7 @@ namespace StandAloneRunnerSupport
 				return;
 			}
 			
-			string result;
+			Response response;
 			TestRunner runner;
 			try {
 				Console.Write ('[');
@@ -136,12 +137,12 @@ namespace StandAloneRunnerSupport
 							Success = false;
 							throw new InvalidOperationException ("runner must not be null.");
 						}
-						result = runner.Run (tri.Url, tri.PathInfo);
+						response = runner.Run (tri.Url, tri.PathInfo, tri.PostValues);
 						if (tri.Callback == null)
 							continue;
 
 						tri.TestRunData = runner.TestRunData;
-						tri.Callback (result, tri);
+						tri.Callback (response.Body, tri);
 						Console.Write ('.');
 					} catch (Exception) {
 						FailedUrl = tri.Url;

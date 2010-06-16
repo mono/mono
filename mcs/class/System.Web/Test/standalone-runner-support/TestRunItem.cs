@@ -26,6 +26,7 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.Web;
 using System.Web.Hosting;
 
@@ -50,6 +51,10 @@ namespace StandAloneRunnerSupport
 		}
 		
 		public string UrlDescription {
+			get; set;
+		}
+
+		public SerializableDictionary <string, string> PostValues {
 			get; set;
 		}
 

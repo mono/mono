@@ -12,6 +12,9 @@ Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/ParseReader.cs
 Test/mainsoft/MainsoftWebTest/HtmlAgilityPack/tools.cs
 Test/mainsoft/MainsoftWebTest/NunitWebTest.cs
 Test/mainsoft/MainsoftWebTest/XmlComparer.cs
+
+Test/mainsoft/NunitWeb/NunitWeb/Response.cs
+
 Test/standalone-runner-support/Helpers.cs
 Test/standalone-runner-support/ITestCase.cs
 Test/standalone-runner-support/ITestRunner.cs
@@ -22,3 +25,4 @@ Test/standalone-runner-support/TestCaseFailureException.cs
 Test/standalone-runner-support/TestRunItem.cs
 Test/standalone-runner-support/TestRunner.cs
 Test/standalone-runner-support/TestWorkerRequest.cs
+Test/standalone-runner-support/SerializableDictionary.cs

@@ -26,10 +26,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.IO;
+using System.Net;
 using System.Text;
 using System.Web;
 using System.Web.Hosting;
+
+using MonoTests.SystemWeb.Framework;
 
 namespace StandAloneRunnerSupport
 {
@@ -46,14 +50,14 @@ namespace StandAloneRunnerSupport
 		public TestRunner ()
 		{
 		}
-
-		public string Run (string url)
-		{
-			return Run (url, null);
-		}
 		
-		public string Run (string url, string pathInfo)
+		public Response Run (string url, string pathInfo, SerializableDictionary <string, string> postValues)
 		{
+			if (String.IsNullOrEmpty (url))
+				throw new ArgumentNullException ("url");
+			
+			bool isPost = postValues != null;
+			
 			ResetState ();
 			
 			if (String.IsNullOrEmpty (url))
@@ -78,9 +82,14 @@ namespace StandAloneRunnerSupport
 					wr = new TestWorkerRequest (uri.AbsolutePath, query, pathInfo, output);
 				else
 					wr = new TestWorkerRequest (uri.AbsolutePath, query, output);
+				wr.IsPost = isPost;
 				
 				HttpRuntime.ProcessRequest (wr);
-				return output.ToString ();
+				return new Response {
+					Body = output.ToString (),
+					StatusCode = wr.StatusCode,
+					StatusDescription = wr.StatusDescription
+				};
 			} finally {
 				output.Close ();
 			}

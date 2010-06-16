@@ -10,4 +10,5 @@ Test/standalone-tests/ApplicationPreStartMethods.cs
 Test/standalone-tests/Control_GetUniqueIDRelativeTo.cs
 Test/standalone-tests/RegisterBuildProvider.cs
 Test/standalone-tests/PageMetaAttributes.cs
+Test/standalone-tests/FormViewUpdateParameters_Bug607722.cs
 
