@@ -380,9 +380,8 @@ namespace System.ServiceModel.Syndication
 		{
 			SyndicationFeed feed = null;
 			if (!reader.IsEmptyElement) {
-				reader.Read ();
 				Atom10FeedFormatter ff = new Atom10FeedFormatter ();
-				ff.ReadFrom (reader);
+				((IXmlSerializable) ff).ReadXml (reader); // this does not check the QName of the wrapping element.
 				feed = ff.Feed;
 			}
 			else
