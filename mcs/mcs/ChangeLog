@@ -1,3 +1,9 @@
+2010-06-15  Marek Safar  <marek.safar@gmail.com>
+
+	A fix for bug #599601
+	* dynamic.cs, ecore.cs: A new flag for dynamic resolver to ignore
+	generated member access left expression.
+	
 2010-06-16  Marek Safar  <marek.safar@gmail.com>
 
 	* expression.cs: Dispatch dynamic invocation solely on left

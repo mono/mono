@@ -2769,9 +2769,12 @@ namespace Mono.CSharp {
 							AttributeTester.Report_ObsoleteMessage (oa, InstanceExpression.GetSignatureForError (), loc, rc.Report);
 						}
 					} else {
-						rc.Report.Error (176, loc,
-							"Static member `{0}' cannot be accessed with an instance reference, qualify it with a type name instead",
-							GetSignatureForError ());
+						var runtime_expr = InstanceExpression as RuntimeValueExpression;
+						if (runtime_expr == null || !runtime_expr.IsSuggestionOnly) {
+							rc.Report.Error (176, loc,
+								"Static member `{0}' cannot be accessed with an instance reference, qualify it with a type name instead",
+								GetSignatureForError ());
+						}
 					}
 
 					InstanceExpression = null;
@@ -2781,7 +2784,7 @@ namespace Mono.CSharp {
 			}
 
 			if (InstanceExpression == null || InstanceExpression is TypeExpr) {
-				if (!This.IsThisAvailable (rc, true) || InstanceExpression is TypeExpr) {
+				if (InstanceExpression != null || !This.IsThisAvailable (rc, true)) {
 					if (rc.HasSet (ResolveContext.Options.FieldInitializerScope))
 						rc.Report.Error (236, loc,
 							"A field initializer cannot reference the nonstatic field, method, or property `{0}'",

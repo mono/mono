@@ -86,6 +86,16 @@ namespace Mono.CSharp
 			this.eclass = ExprClass.Variable;
 		}
 
+		#region Properties
+
+		public bool IsSuggestionOnly { get; set; }
+
+		public DynamicMetaObject MetaObject {
+			get { return obj; }
+		}
+
+		#endregion
+
 		public void AddressOf (EmitContext ec, AddressOp mode)
 		{
 			throw new NotImplementedException ();
@@ -133,10 +143,6 @@ namespace Mono.CSharp
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
 			return SLE.Expression.Convert (obj.Expression, type.GetMetaInfo ());
-		}
-
-		public DynamicMetaObject MetaObject {
-			get { return obj; }
 		}
 	}
 
