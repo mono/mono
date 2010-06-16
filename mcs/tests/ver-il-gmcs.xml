@@ -17465,6 +17465,9 @@
       <method name="Void NewTest_7()">
         <size>53</size>
       </method>
+      <method name="Void ConvertTest_16()">
+        <size>81</size>
+      </method>
     </type>
   </test>
   <test name="gtest-etree-02.cs">

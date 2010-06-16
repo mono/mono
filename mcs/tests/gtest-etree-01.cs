@@ -980,6 +980,13 @@ class Tester
 		Assert (null, e15.Compile ().Invoke (null));
 		Assert (9, e15.Compile ().Invoke (9));
 	}
+	
+	void ConvertTest_16 ()
+	{
+		Expression<Func<sbyte, sbyte>> e16 = a => (sbyte)a;
+		AssertNodeType (e16, ExpressionType.Convert);
+		Assert (6, e16.Compile ().Invoke (6));
+	}	
 
 	void ConvertCheckedTest ()
 	{
