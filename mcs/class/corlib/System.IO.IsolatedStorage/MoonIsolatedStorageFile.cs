@@ -100,6 +100,13 @@ namespace System.IO.IsolatedStorage {
 			throw new IsolatedStorageException ();
 		}
 		
+		public static bool IsEnabled {
+			get {
+				Console.WriteLine ("NIEX: System.IO.IsolatedStorage.IsolatedStorageFile:get_IsEnabled");
+				throw new NotImplementedException ();
+			}
+		}
+
 		public void CreateDirectory (string dir)
 		{
 			PreCheck ();
