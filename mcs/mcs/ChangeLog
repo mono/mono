@@ -1,5 +1,11 @@
 2010-06-17  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #615023
+	* ecore.cs: Resolve dynamic namespace and keyword collision in the
+	favour of the keyword.
+
+2010-06-17  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #614917
 	* convert.cs: Allow more undocumented 0 like values to enum type 
 	conversions.

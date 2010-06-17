@@ -2361,7 +2361,11 @@ namespace Mono.CSharp {
 					return ct.ResolveAsTypeStep (ec, false);
 				}
 
-				return fne;
+				//
+				// dynamic namespace is ignored when dynamic is allowed (does not apply to types)
+				//
+				if (!(fne is Namespace))
+					return fne;
 			}
 
 			if (!HasTypeArguments && Name == "dynamic" && RootContext.Version > LanguageVersion.V_3) {
@@ -2373,6 +2377,9 @@ namespace Mono.CSharp {
 
 				return new DynamicTypeExpr (loc);
 			}
+
+			if (fne != null)
+				return fne;
 
 			if (silent || errors != ec.Compiler.Report.Errors)
 				return null;
