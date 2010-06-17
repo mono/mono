@@ -1,3 +1,7 @@
+2010-06-17  Geoff Norton  <gnorton@novell.com>
+
+	* sgen-archdep.h: sgen support for arm linux and darwin.
+
 2010-06-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* loader.c (mono_method_get_header): Avoid a crash if the declaring method
