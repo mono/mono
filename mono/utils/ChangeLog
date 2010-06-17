@@ -1,3 +1,7 @@
+2010-06-17  Geoff Norton  <gnorton@novell.com>
+
+	* mono-sigcontext.h: Add arm variants.
+
 2010-05-29  Marek Habersack  <mhabersack@novell.com>
 
 	* mono-dl.c (mono_dl_build_path): modify the logic to try the
