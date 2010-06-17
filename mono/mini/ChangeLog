@@ -1,5 +1,10 @@
 2010-06-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_klass_info): Handle type load exceptions.
+
+	* method-to-ir.c (mono_method_to_ir): Avoid a crash if mono_method_get_header ()
+	fails.
+
 	* exceptions-x86.c (mono_x86_throw_corlib_exception): Negate the decrement of
 	the ip done by throw_exception (), it is not needed for corlib exceptions.
 
