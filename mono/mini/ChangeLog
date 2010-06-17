@@ -1,3 +1,14 @@
+2010-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mini_emit_stobj): Don't call mono_value_copy for small
+	value types as the overhead is huge. Manually expand it up to 5 words to
+	avoid code bloat.
+
+	This improves gmcs times by 5% and unmodified binary-tree by 78%. The later
+	is an exception that performance is dominated by mono_value_copy.
+
+	This puts sgen about 5% ahead of boehm in terms of wall-clock on a Core2Quad.
+
 2010-06-17  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c (process_call): Disable LLVM for calls to generic class init
