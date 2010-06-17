@@ -800,6 +800,12 @@ namespace Mono.CSharp
 			state = (state & ~(StateFlags.CLSCompliant_Undetected | StateFlags.Obsolete_Undetected)) | StateFlags.CLSCompliant;
 		}
 
+		public override int Arity {
+			get {
+				return 0;
+			}
+		}
+
 		public override string Name {
 			get {
 				return name;
