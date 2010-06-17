@@ -35,6 +35,7 @@ Mono.Debugger.Soft/MethodEntryEventRequest.cs
 Mono.Debugger.Soft/LocalVariable.cs
 Mono.Debugger.Soft/ParameterInfoMirror.cs
 Mono.Debugger.Soft/Event.cs
+Mono.Debugger.Soft/EventSet.cs
 Mono.Debugger.Soft/AppDomainCreateEvent.cs
 Mono.Debugger.Soft/ThreadDeathEvent.cs
 Mono.Debugger.Soft/SuspendPolicy.cs

@@ -2123,6 +2123,36 @@ public class DebuggerTests
 			});
 	}
 
+	[Test]
+	public void EventSets () {
+		//
+		// Create two filter which both match the same exception
+		//
+		Event e = run_until ("exceptions");
+
+		var req = vm.CreateExceptionRequest (null);
+		req.Enable ();
+
+		var req2 = vm.CreateExceptionRequest (vm.RootDomain.Corlib.GetType ("System.OverflowException"));
+		req2.Enable ();
+
+		vm.Resume ();
+
+		var es = vm.GetNextEventSet ();
+		Assert.AreEqual (2, es.Events.Length);
+
+		e = es [0];
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
+		Assert.AreEqual ("OverflowException", (e as ExceptionEvent).Exception.Type.Name);
+
+		e = es [1];
+		Assert.IsInstanceOfType (typeof (ExceptionEvent), e);
+		Assert.AreEqual ("OverflowException", (e as ExceptionEvent).Exception.Type.Name);
+
+		req.Disable ();
+		req2.Disable ();
+	}
+
 	//
 	// Test single threaded invokes during processing of nullref exceptions.
 	// These won't work if the exception handling is done from the sigsegv signal

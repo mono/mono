@@ -1,3 +1,8 @@
+2010-06-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* VirtualMachine.cs Connection.cs: Group events received together into an EventSet,
+	like it is done in JDI. Add a GetNextEventSet () method.
+
 2010-06-04  Zoltan Varga  <vargaz@gmail.com>
 
 	* StackFrame.cs (GetVisibleVariables): New method to return the set of variables
