@@ -1,3 +1,8 @@
+2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Binding.cs : add commented-out code for MessageVersion replacement.
+	* TransactionFlowBindingElement.cs : implement (almost dummy).
+
 2010-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* TcpReplyChannel.cs : accept TCP channel on ReceiveRequest(). This

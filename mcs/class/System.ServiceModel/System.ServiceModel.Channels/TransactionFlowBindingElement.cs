@@ -62,7 +62,7 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
-			throw new NotImplementedException ();
+			return context.GetInnerProperty<T> ();
 		}
 
 		public override bool CanBuildChannelFactory<TChannel> (BindingContext context)

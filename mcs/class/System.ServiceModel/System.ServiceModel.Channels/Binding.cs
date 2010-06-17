@@ -84,7 +84,9 @@ namespace System.ServiceModel.Channels
 
 		public abstract string Scheme { get; }
 
+		// FIXME: replace with a simple one-liner code (not working somehow).
 		public MessageVersion MessageVersion {
+//			get { return GetProperty<MessageVersion> (new BindingParameterCollection ()); }
 			get {
 				foreach (BindingElement e in CreateBindingElements ()) {
 					MessageEncodingBindingElement me = e as MessageEncodingBindingElement;
