@@ -1,5 +1,10 @@
 2010-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* method-to-ir.c (mono_emit_wb_aware_memcpy): Handle nested valuetypes.
+	This eliminates 2% of mono_value_copy calls on ipy and 12% on fsharp.
+
+2010-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c (mini_emit_stobj): Don't call mono_value_copy for small
 	value types as the overhead is huge. Manually expand it up to 5 words to
 	avoid code bloat.
