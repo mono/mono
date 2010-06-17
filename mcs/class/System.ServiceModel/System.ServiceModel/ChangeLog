@@ -1,3 +1,8 @@
+2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : retrieve MessageVersion and raise an error
+	  if there is none. (Check this earlier than building a listener.)
+
 2010-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* NetTcpBinding.cs : remove pointless EnvelopeVersion field.

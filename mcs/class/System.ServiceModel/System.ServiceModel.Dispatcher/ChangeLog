@@ -1,3 +1,8 @@
+2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ChannelDispatcher.cs : MessageVersion check is moved to
+	  ServiceHostBase.
+
 2010-06-14  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationInvokerHandler.cs, MessageProcessingContext.cs :

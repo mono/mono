@@ -624,6 +624,10 @@ namespace System.ServiceModel
 			AddBindingParameters (commonParams, se);
 			
 			// See if there's an existing channel that matches this endpoint
+			var version = se.Binding.GetProperty<MessageVersion> (commonParams);
+			if (version == null)
+				throw new InvalidOperationException ("At least one BindingElement in the Binding must override GetProperty method to return a MessageVersion and no prior binding element should return null instead of calling GetInnerProperty method on BindingContext.");
+
 			ChannelDispatcher cd = FindExistingDispatcher (se);
 			EndpointDispatcher ep;
 			if (cd != null) {
@@ -634,6 +638,7 @@ namespace System.ServiceModel
 					ServiceHostBase.CurrentServiceHostHack = host;
 					IChannelListener lf = BuildListener (se, commonParams);
 					cd = new ChannelDispatcher (lf, se.Binding.Name);
+					cd.MessageVersion = version;
 					if (ChannelDispatcherSetter != null) {
 						ChannelDispatcherSetter (cd);
 						ChannelDispatcherSetter = null;

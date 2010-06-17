@@ -1,3 +1,8 @@
+2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : overwrite MessageVersion to use None.
+	  (The only special case I found for ChannelDispatcher.MessageVersion.)
+
 2010-06-04  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* OperationDescription.cs : add contract origin flags to identify

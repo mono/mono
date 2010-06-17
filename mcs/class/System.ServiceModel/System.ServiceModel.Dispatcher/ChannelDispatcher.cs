@@ -132,10 +132,6 @@ namespace System.ServiceModel.Dispatcher
 
 		internal EndpointDispatcher InitializeServiceEndpoint (Type serviceType, ServiceEndpoint se)
 		{
-			this.MessageVersion = se.Binding.MessageVersion;
-			if (this.MessageVersion == null)
-				this.MessageVersion = MessageVersion.Default;
-
 			//Attach one EndpointDispacher to the ChannelDispatcher
 			EndpointDispatcher ed = new EndpointDispatcher (se.Address, se.Contract.Name, se.Contract.Namespace);
 			this.Endpoints.Add (ed);

@@ -135,6 +135,7 @@ namespace System.ServiceModel.Description
 			};
 
 			var channelDispatcher = new DispatcherBuilder (Owner).BuildChannelDispatcher (owner.Description.ServiceType, se, new BindingParameterCollection ());
+			channelDispatcher.MessageVersion = MessageVersion.None; // it has no MessageVersion.
 			// add HttpGetWsdl to indicate that the ChannelDispatcher is for mex or help.
 			var listener = channelDispatcher.Listener as ChannelListenerBase;
 			if (listener != null)
