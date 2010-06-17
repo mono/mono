@@ -1,3 +1,12 @@
+2010-06-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* EnumerableQuery.cs:
+	* EnumerableQuery_T.cs:
+	* EnumerableExecutor.cs: 
+	* EnumerableExecutor_T.cs: Include in Moonlight.
+
+	* Enumerable.cs: Moonlight too needs Zip.
+
 2010-05-25  Jérémie Laval  <jeremie.laval@gmail.com>
 
 	* ParallelExecuter.cs: Fix NRE caused by lambda wrapping

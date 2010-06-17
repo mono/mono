@@ -1,3 +1,10 @@
+2010-06-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* ExecutionScope.cs: This class exists in Moonlight, but isn't supported.
+
+	* StrongBox_T.cs:
+	* DynamicAttribute.cs: Include in Moonlight.
+
 2009-12-02  Marek Safar <marek.safar@gmail.com>
 
 	* DynamicAttribute.cs: Add arguments check.
