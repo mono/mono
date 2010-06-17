@@ -741,7 +741,7 @@ namespace Mono.CSharp {
 			if (expr is IntegralConstant && TypeManager.IsEnumType (target_type)) {
 				var i = (IntegralConstant) expr;
 				//
-				// LAMESPEC: csc allows any constand like 0 values to be converted, including const float f = 0.0
+				// LAMESPEC: csc allows any constant like 0 values to be converted, including const float f = 0.0
 				//
 				// An implicit enumeration conversion permits the decimal-integer-literal 0
 				// to be converted to any enum-type and to any nullable-type whose underlying
@@ -1250,7 +1250,7 @@ namespace Mono.CSharp {
 			if (expr is IntegralConstant && TypeManager.IsEnumType (target_type)){
 				var i = (IntegralConstant) expr;
 				//
-				// LAMESPEC: csc allows any constand like 0 values to be converted, including const float f = 0.0
+				// LAMESPEC: csc allows any constant like 0 values to be converted, including const float f = 0.0
 				//
 				// An implicit enumeration conversion permits the decimal-integer-literal 0
 				// to be converted to any enum-type and to any nullable-type whose underlying
