@@ -1,3 +1,11 @@
+2010-06-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (emit_cond_system_exception): Pass the ip of to throw_corlib_trampoline
+	using a block address if using the LLVM mono branch.
+
+	* exceptions-amd64.c (mono_arch_exceptions_init): Add new LLVM throw corlib exception
+	trampolines.
+
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-ppc.c (mono_arch_get_cie_program): Define this for powerpc too.
