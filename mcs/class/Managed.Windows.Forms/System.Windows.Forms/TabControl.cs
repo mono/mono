@@ -1323,13 +1323,13 @@ namespace System.Windows.Forms {
 					if (item_size.Height < image_size)
 						item_size.Height = image_size;
 				}
+
+				if (width < MinimumTabWidth)
+					width = MinimumTabWidth;
 			}
 
 			// Use ItemSize property to recover the padding info as well.
 			height = ItemSize.Height - ThemeEngine.Current.TabControlSelectedDelta.Height; // full height only for selected tab
-
-			if (width < MinimumTabWidth)
-				width = MinimumTabWidth;
 
 			if (i == SelectedIndex)
 				width += ThemeEngine.Current.TabControlSelectedSpacing;

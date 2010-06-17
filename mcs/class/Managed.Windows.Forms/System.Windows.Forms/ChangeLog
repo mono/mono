@@ -1,3 +1,9 @@
+2010-06-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: When calculating the size of our tabs use
+	MinimumTabWidth only if SizeMode is other than Fixed.
+	Patch by Thomas Goldstein (stifu@free.fr).
+
 2010-05-20  Andreia Gaita <avidigal@novell.com> 
 
 	* X11Dnd.cs: Fix a few crashers, making sure the client window is valid
