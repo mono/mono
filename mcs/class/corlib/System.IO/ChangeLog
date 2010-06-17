@@ -1,3 +1,7 @@
+2010-06-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* FileStream.cs: Include a required ctor in NET_2_1 so that it compiles.
+
 2010-05-20  Marek Habersack  <mhabersack@novell.com>
 
 	* FileStream.cs: when running on Windows and a path with Unix
