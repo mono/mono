@@ -86,7 +86,7 @@ namespace System.ServiceModel.Channels
 				return (T) (object) new ChannelProtectionRequirements ();
 #endif
 			if (typeof (T) == typeof (MessageVersion))
-				return (T) (object) MessageVersion.Default;
+				return (T) (object) MessageVersion.Soap12WSAddressing10;
 			return context.GetInnerProperty<T> ();
 		}
 	}

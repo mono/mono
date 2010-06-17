@@ -1,5 +1,10 @@
 2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpTransportBindingElementTest.cs, CustomBindingTest.cs :
+	  anohter couple of MessageVersion tests.
+
+2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* CustomBindingTest.cs : add tests for MessageVersion check on Open().
 
 2010-06-15  Atsushi Enomoto  <atsushi@ximian.com>

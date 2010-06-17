@@ -131,6 +131,8 @@ namespace System.ServiceModel.Channels
 		[MonoTODO]
 		public override T GetProperty<T> (BindingContext context)
 		{
+			if (typeof (T) == typeof (MessageVersion))
+				return (T) (object) MessageVersion;
 			return context.GetInnerProperty<T> ();
 		}
 

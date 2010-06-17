@@ -1,5 +1,12 @@
 2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Binding.cs : enable simpler MessageVersion code (issued got fixed).
+	* MtomMessageEncodingBindingElement.cs, TransportBindingElement.cs,
+	  TextMessageEncodingBindingElement.cs : return MessageVersion in
+	  GetProperty<T>().
+
+2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Binding.cs : add commented-out code for MessageVersion replacement.
 	* TransactionFlowBindingElement.cs : implement (almost dummy).
 

@@ -225,6 +225,14 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		public void GetPropertyMessageVersion ()
+		{
+			var be = new HttpTransportBindingElement ();
+			var mv = be.GetProperty<MessageVersion> (new BindingContext (new CustomBinding (), empty_params));
+			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, mv, "#1");
+		}
+
+		[Test]
 		public void GetPrpertyBindingDeliveryCapabilities ()
 		{
 			var be = new HttpTransportBindingElement ();

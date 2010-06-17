@@ -85,6 +85,14 @@ namespace MonoTests.System.ServiceModel.Channels
 		}
 
 		[Test]
+		public void MessageVersionProperty ()
+		{
+			Assert.IsNull (new CustomBinding ().MessageVersion, "#1");
+			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, new CustomBinding (new HttpTransportBindingElement ()).MessageVersion, "#2");
+			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, new CustomBinding (new TextMessageEncodingBindingElement ()).MessageVersion, "#3");
+		}
+
+		[Test]
 		[ExpectedException (typeof (ApplicationException))]
 		public void CtorFromAnotherBindingCallsCreateBindingElement ()
 		{
@@ -133,6 +141,12 @@ namespace MonoTests.System.ServiceModel.Channels
 			IRequestChannel ch = f.CreateChannel (new EndpointAddress ("urn:dummy"));
 			ch.Open ();
 			Message result = ch.Request (Message.CreateMessage (MessageVersion.Default, "urn:request"));
+		}
+
+		[Test]
+		public void TransportBindingElementDefaultMessageVersion ()
+		{
+			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, new HandlerTransportBindingElement (null).GetProperty<MessageVersion> (new BindingContext (new CustomBinding (), new BindingParameterCollection ())), "version");
 		}
 
 		[Test]
