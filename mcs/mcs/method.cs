@@ -2317,7 +2317,7 @@ namespace Mono.CSharp {
 			if (TypeManager.IsNullableType (return_type))
 				return_type_unwrap = TypeManager.GetTypeArguments (return_type) [0];
 
-			if (return_type == InternalType.Dynamic || first_arg_type == InternalType.Dynamic) {
+			if ((return_type == InternalType.Dynamic || first_arg_type == InternalType.Dynamic) && parameters.Count == 1) {
 				Report.Error (1964, Location,
 					"User-defined operator `{0}' cannot convert to or from the dynamic type",
 					GetSignatureForError ());

@@ -1,5 +1,10 @@
 2010-06-17  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #614955
+	* method.cs: Do not reject binary dynamic operators.
+
+2010-06-17  Marek Safar  <marek.safar@gmail.com>
+
 	* typespec.cs: Internal types have no generic parameters.
 	Fixes #615022.
 
