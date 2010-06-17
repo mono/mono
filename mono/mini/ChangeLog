@@ -1,5 +1,8 @@
 2010-06-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (process_call): Disable LLVM for calls to generic class init
+	trampolines on x86, since those have their own cconv.
+
 	* exceptions-x86.c (mono_arch_exceptions_init): Implement the llvm throw corlib
 	exception trampolines.
 
