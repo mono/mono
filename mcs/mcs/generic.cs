@@ -1381,7 +1381,7 @@ namespace Mono.CSharp {
 		protected override void InitializeMemberCache (bool onlyTypes)
 		{
 			if (cache == null)
-				cache = new MemberCache (open_type.MemberCache);
+				cache = new MemberCache (onlyTypes ? open_type.MemberCacheTypes : open_type.MemberCache);
 
 			TypeParameterSpec[] tparams_full;
 			TypeSpec[] targs_full = targs;
@@ -1447,7 +1447,7 @@ namespace Mono.CSharp {
 			// inflated because are not yet available in membercache
 			//
 			if ((state & StateFlags.PendingMemberCacheMembers) == 0) {
-				open_type.MemberCache.InflateTypes (cache, inflator);
+				open_type.MemberCacheTypes.InflateTypes (cache, inflator);
 
 				//
 				// Inflate any implemented interfaces
