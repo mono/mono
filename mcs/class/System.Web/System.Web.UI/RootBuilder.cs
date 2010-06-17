@@ -70,10 +70,6 @@ namespace System.Web.UI {
 #endif
 			htmlControls.Add ("IMG", typeof (HtmlImage));
 			htmlControls.Add ("INPUT", "INPUT");
-#if NET_2_0
-			htmlControls.Add ("LINK", typeof (HtmlLink));
-			htmlControls.Add ("META", typeof (HtmlLink));
-#endif
 			htmlControls.Add ("SELECT", typeof (HtmlSelect));
 			htmlControls.Add ("TABLE", typeof (HtmlTable));
 			htmlControls.Add ("TD", typeof (HtmlTableCell));

@@ -235,7 +235,7 @@ namespace MonoTests.System.Web.Compilation {
 			string pageHtml = new WebTest ("ConditionalClientComments.aspx").Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
 			string originalHtml = @"<!--[if IE 6]>
-		<link rel=""styleheet"" type=""text/css"" href=""compat-ie6.css"" />
+		<link rel=""styleheet"" type=""text/css"" href=""~/compat-ie6.css""></link>
 	<![endif]-->";
 			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "#A1");
 		}
