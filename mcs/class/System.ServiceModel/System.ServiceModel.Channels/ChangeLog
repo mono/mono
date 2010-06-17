@@ -1,5 +1,10 @@
 2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* MtomMessageEncodingBindingElement.cs: it's base is abstract, use 
+	  context.GetInnerProperty<T>().
+
+2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Binding.cs : enable simpler MessageVersion code (issued got fixed).
 	* MtomMessageEncodingBindingElement.cs, TransportBindingElement.cs,
 	  TextMessageEncodingBindingElement.cs : return MessageVersion in

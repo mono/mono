@@ -99,7 +99,7 @@ namespace System.ServiceModel.Channels
 		{
 			if (typeof (T) == typeof (MessageVersion))
 				return (T) (object) MessageVersion;
-			return base.GetProperty<T> (context);
+			return context.GetInnerProperty<T> ();
 		}
 
 		public override MessageEncoderFactory
