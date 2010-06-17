@@ -1,3 +1,7 @@
+2010-06-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* StringBuilder.cs: Moonlight needs Clear too.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* StringBuilder.cs, Encoding.cs: use MOONLIGHT symbol to
