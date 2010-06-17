@@ -161,7 +161,7 @@ void GC_push_all_stacks() {
           GC_push_one(state.__fs);
           GC_push_one(state.__gs);
 #elif defined(POWERPC)
-#if defined(_STRUCT_PPC_EXCEPTION_STATE)
+#if defined(_STRUCT_PPC_EXCEPTION_STATE) && defined(__DARWIN_UNIX03)
 	lo = (void*)(state.__r1 - PPC_RED_ZONE_SIZE);
         
 	GC_push_one(state.__r0); 
