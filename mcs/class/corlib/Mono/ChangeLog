@@ -1,3 +1,8 @@
+2010-06-17  Miguel de Icaza  <miguel@novell.com>
+
+	* DataConverter.cs: On bracketed cases, save the position as well,
+	like we do in the repeat case without brackets.  Fixes #595929
+
 2010-03-07  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Runtime.cs: Document how NewObject() is meant to be used.

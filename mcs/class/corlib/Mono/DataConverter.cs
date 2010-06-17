@@ -643,6 +643,7 @@ namespace Mono {
 					if (count == -1)
 						throw new ArgumentException ("invalid size specification");
 					i = j;
+					save = i + 1;
 					repeat = count;
 					break;
 				
