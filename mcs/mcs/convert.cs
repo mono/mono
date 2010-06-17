@@ -725,9 +725,6 @@ namespace Mono.CSharp {
 					if (value >= 0)
 						return true;
 				}
-
-				if (value == 0 && target_type.IsEnum)
-					return true;
 			}
 
 			if (expr is LongConstant && target_type == TypeManager.uint64_type){
@@ -739,6 +736,18 @@ namespace Mono.CSharp {
 				long v = ((LongConstant) expr).Value;
 				if (v >= 0)
 					return true;
+			}
+
+			if (expr is IntegralConstant && TypeManager.IsEnumType (target_type)) {
+				var i = (IntegralConstant) expr;
+				//
+				// LAMESPEC: csc allows any constand like 0 values to be converted, including const float f = 0.0
+				//
+				// An implicit enumeration conversion permits the decimal-integer-literal 0
+				// to be converted to any enum-type and to any nullable-type whose underlying
+				// type is an enum-type
+				//
+				return i.IsZeroInteger;
 			}
 
 			//
@@ -1238,17 +1247,19 @@ namespace Mono.CSharp {
 			if (e != null)
 				return e;
 
-			if (expr is IntConstant && TypeManager.IsEnumType (target_type)){
-				Constant i = (Constant) expr;
+			if (expr is IntegralConstant && TypeManager.IsEnumType (target_type)){
+				var i = (IntegralConstant) expr;
 				//
-				// LAMESPEC: Conversion from any 0 constant is allowed
+				// LAMESPEC: csc allows any constand like 0 values to be converted, including const float f = 0.0
 				//
 				// An implicit enumeration conversion permits the decimal-integer-literal 0
 				// to be converted to any enum-type and to any nullable-type whose underlying
 				// type is an enum-type
 				//
-				if (i.IsDefaultValue)
-					return new EnumConstant (i, target_type).Resolve (ec);
+				if (i.IsZeroInteger) {
+					// Recreate 0 literal to remove any collected conversions
+					return new EnumConstant (new IntLiteral (0, i.Location), target_type).Resolve (ec);
+				}
 			}
 
 			if (ec.IsUnsafe) {
