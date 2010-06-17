@@ -1,3 +1,9 @@
+2010-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* sgen-gc.c (mono_gc_wbarrier_value_copy_bitmap): Work in a similar
+	way to mono_gc_wbarrier_value_copy but takes a bitmap that
+	indicates which slots need a write barrier.
+
 2010-06-14  Jonathan Pryor <jpryor@novell.com>
 
 	* Makefile.am (EXTRA_DIST): Add runtime.h.

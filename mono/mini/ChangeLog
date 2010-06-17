@@ -1,5 +1,25 @@
 2010-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* method-to-ir.c (mono_emit_wb_aware_memcpy): Simplify this function.
+	Call new jit icall mono_gc_wbarrier_value_copy_bitmap for vt wbarrier
+	of size > 5 words. This support fast barriers for value types up to
+	256/512 bytes which	beyond that the copying itself is the major issue.
+
+	* method-to-ir.c (mini_emit_stobj): The intrinsic version is safe
+	for gsharing, so use it.
+
+	This eliminate all calls to mono_value_copy from managed code in
+	gmcs, fsharp and ipy.
+
+	This gives a 2% perf boost on ipy and 1% on gmcs over previous patches.
+
+	Even thou a lot of mono_value_copy calls were eliminated from fsharp,
+	performance kept
+
+	* mini.c (mini_init): Register new icall.
+
+2010-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* method-to-ir.c (mono_emit_wb_aware_memcpy): Handle nested valuetypes.
 	This eliminates 2% of mono_value_copy calls on ipy and 12% on fsharp.
 
