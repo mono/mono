@@ -71,16 +71,35 @@ namespace Mono.Debugger.Soft
 			}
 		}
 
+		EventSet current_es;
+		int current_es_index;
+
 		public Event GetNextEvent () {
 			lock (queue_monitor) {
-				if (queue.Count == 0)
-					Monitor.Wait (queue_monitor);
-				return (Event)queue.Dequeue ();
+				if (current_es == null || current_es_index == current_es.Events.Length) {
+					if (queue.Count == 0)
+						Monitor.Wait (queue_monitor);
+					current_es = (EventSet)queue.Dequeue ();
+					current_es_index = 0;
+				}
+				return current_es.Events [current_es_index ++];
 			}
 		}
 
 		public Event GetNextEvent (int timeout) {
 			throw new NotImplementedException ();
+		}
+
+		public EventSet GetNextEventSet () {
+			lock (queue_monitor) {
+				if (queue.Count == 0)
+					Monitor.Wait (queue_monitor);
+
+				current_es = null;
+				current_es_index = 0;
+
+				return (EventSet)queue.Dequeue ();
+			}
 		}
 
 		public T GetNextEvent<T> () where T : Event {
@@ -109,7 +128,7 @@ namespace Mono.Debugger.Soft
 		public void Dispose () {
 			conn.VM_Dispose ();
 			conn.Close ();
-			notify_vm_event (EventType.VMDisconnect, 0, 0, null);
+			notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, 0, 0, null);
 		}
 
 		public IList<ThreadMirror> GetThreads () {
@@ -186,9 +205,9 @@ namespace Mono.Debugger.Soft
 			conn.ClearAllBreakpoints ();
 		}
 
-		internal void queue_event (Event e) {
+		internal void queue_event_set (EventSet es) {
 			lock (queue_monitor) {
-				queue.Enqueue (e);
+				queue.Enqueue (es);
 				Monitor.Pulse (queue_monitor);
 			}
 		}
@@ -223,7 +242,7 @@ namespace Mono.Debugger.Soft
 			root_domain = GetDomain (root_domain_id);
 		}
 
-		internal void notify_vm_event (EventType evtype, int req_id, long thread_id, string vm_uri) {
+		internal void notify_vm_event (EventType evtype, SuspendPolicy spolicy, int req_id, long thread_id, string vm_uri) {
 			//Console.WriteLine ("Event: " + evtype + "(" + vm_uri + ")");
 
 			switch (evtype) {
@@ -232,13 +251,13 @@ namespace Mono.Debugger.Soft
 				lock (startup_monitor) {
 					Monitor.Pulse (startup_monitor);
 				}
-				queue_event (new VMStartEvent (vm, req_id, thread_id));
+				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMStartEvent (vm, req_id, thread_id) }));
 				break;
 			case EventType.VMDeath:
-				queue_event (new VMDeathEvent (vm, req_id));
+				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMDeathEvent (vm, req_id) }));
 				break;
 			case EventType.VMDisconnect:
-				queue_event (new VMDisconnectEvent (vm, req_id));
+				queue_event_set (new EventSet (this, spolicy, new Event[] { new VMDisconnectEvent (vm, req_id) }));
 				break;
 			default:
 				throw new Exception ();
@@ -497,64 +516,70 @@ namespace Mono.Debugger.Soft
 			this.vm = vm;
 		}
 
-		public void VMStart (int req_id, long thread_id, string vm_uri) {
-			vm.notify_vm_event (EventType.VMStart, req_id, thread_id, vm_uri);
-        }
+		public void Events (SuspendPolicy suspend_policy, EventInfo[] events) {
+			var l = new List<Event> ();
 
-		public void VMDeath (int req_id, long thread_id, string vm_uri) {
-			vm.notify_vm_event (EventType.VMDeath, req_id, thread_id, vm_uri);
-        }
+			for (int i = 0; i < events.Length; ++i) {
+				EventInfo ei = events [i];
+				int req_id = ei.ReqId;
+				long thread_id = ei.ThreadId;
+				long id = ei.Id;
+				long loc = ei.Location;
+
+				switch (ei.EventType) {
+				case EventType.VMStart:
+					vm.notify_vm_event (EventType.VMStart, suspend_policy, req_id, thread_id, null);
+					break;
+				case EventType.VMDeath:
+					vm.notify_vm_event (EventType.VMDeath, suspend_policy, req_id, thread_id, null);
+					break;
+				case EventType.ThreadStart:
+					l.Add (new ThreadStartEvent (vm, req_id, id));
+					break;
+				case EventType.ThreadDeath:
+					l.Add (new ThreadDeathEvent (vm, req_id, id));
+					break;
+				case EventType.AssemblyLoad:
+					l.Add (new AssemblyLoadEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.AssemblyUnload:
+					l.Add (new AssemblyUnloadEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.TypeLoad:
+					l.Add (new TypeLoadEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.MethodEntry:
+					l.Add (new MethodEntryEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.MethodExit:
+					l.Add (new MethodExitEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.Breakpoint:
+					l.Add (new BreakpointEvent (vm, req_id, thread_id, id, loc));
+					break;
+				case EventType.Step:
+					l.Add (new StepEvent (vm, req_id, thread_id, id, loc));
+					break;
+				case EventType.Exception:
+					l.Add (new ExceptionEvent (vm, req_id, thread_id, id, loc));
+					break;
+				case EventType.AppDomainCreate:
+					l.Add (new AppDomainCreateEvent (vm, req_id, thread_id, id));
+					break;
+				case EventType.AppDomainUnload:
+					l.Add (new AppDomainUnloadEvent (vm, req_id, thread_id, id));
+					break;
+				default:
+					break;
+				}
+			}
+			
+			if (l.Count > 0)
+				vm.queue_event_set (new EventSet (vm, suspend_policy, l.ToArray ()));
+		}
 
 		public void VMDisconnect (int req_id, long thread_id, string vm_uri) {
-			vm.notify_vm_event (EventType.VMDisconnect, req_id, thread_id, vm_uri);
-        }
-
-		public void ThreadStart (int req_id, long thread_id, long id) {
-			vm.queue_event (new ThreadStartEvent (vm, req_id, id));
-        }
-
-		public void ThreadDeath (int req_id, long thread_id, long id) {
-			vm.queue_event (new ThreadDeathEvent (vm, req_id, id));
-        }
-
-		public void AssemblyLoad (int req_id, long thread_id, long id) {
-			vm.queue_event (new AssemblyLoadEvent (vm, req_id, thread_id, id));
-        }
-
-		public void AssemblyUnload (int req_id, long thread_id, long id) {
-			vm.queue_event (new AssemblyUnloadEvent (vm, req_id, thread_id, id));
-        }
-
-		public void TypeLoad (int req_id, long thread_id, long id) {
-			vm.queue_event (new TypeLoadEvent (vm, req_id, thread_id, id));
-        }
-
-		public void MethodEntry (int req_id, long thread_id, long id) {
-			vm.queue_event (new MethodEntryEvent (vm, req_id, thread_id, id));
-        }
-
-		public void MethodExit (int req_id, long thread_id, long id) {
-			vm.queue_event (new MethodExitEvent (vm, req_id, thread_id, id));
-        }
-
-		public void Breakpoint (int req_id, long thread_id, long id, long loc) {
-			vm.queue_event (new BreakpointEvent (vm, req_id, thread_id, id, loc));
-        }
-
-		public void Step (int req_id, long thread_id, long id, long loc) {
-			vm.queue_event (new StepEvent (vm, req_id, thread_id, id, loc));
-        }
-
-		public void Exception (int req_id, long thread_id, long id, long loc) {
-			vm.queue_event (new ExceptionEvent (vm, req_id, thread_id, id, loc));
-        }
-
-		public void AppDomainCreate (int req_id, long thread_id, long id) {
-			vm.queue_event (new AppDomainCreateEvent (vm, req_id, thread_id, id));
-        }
-
-		public void AppDomainUnload (int req_id, long thread_id, long id) {
-			vm.queue_event (new AppDomainUnloadEvent (vm, req_id, thread_id, id));
+			vm.notify_vm_event (EventType.VMDisconnect, SuspendPolicy.None, req_id, thread_id, vm_uri);
         }
     }
 

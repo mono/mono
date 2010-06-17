@@ -193,6 +193,37 @@ namespace Mono.Debugger.Soft
 		}
 	}
 
+	class EventInfo {
+		public EventType EventType {
+			get; set;
+		}
+
+		public int ReqId {
+			get; set;
+		}
+
+		public SuspendPolicy SuspendPolicy {
+			get; set;
+		}
+
+		public long ThreadId {
+			get; set;
+		}
+
+		public long Id {
+			get; set;
+		}
+
+		public long Location {
+			get; set;
+		}
+
+		public EventInfo (EventType type, int req_id) {
+			EventType = type;
+			ReqId = req_id;
+		}
+	}
+
 	public enum ErrorCode {
 		NONE = 0,
 		INVALID_OBJECT = 20,
@@ -979,71 +1010,93 @@ namespace Mono.Debugger.Soft
 					PacketReader r = new PacketReader (packet);
 
 					if (r.CommandSet == CommandSet.EVENT && r.Command == (int)CmdEvent.COMPOSITE) {
-						r.ReadByte (); // suspend_policy
+						int spolicy = r.ReadByte ();
 						int nevents = r.ReadInt ();
+
+						SuspendPolicy suspend_policy = decode_suspend_policy (spolicy);
+
+						EventInfo[] events = new EventInfo [nevents];
 
 						for (int i = 0; i < nevents; ++i) {
 							EventKind kind = (EventKind)r.ReadByte ();
 							int req_id = r.ReadInt ();
 
+							EventType etype = (EventType)kind;
+
 							if (kind == EventKind.VM_START) {
 								long thread_id = r.ReadId ();
-								EventHandler.VMStart (req_id, thread_id, null);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id };
+								//EventHandler.VMStart (req_id, thread_id, null);
 							} else if (kind == EventKind.VM_DEATH) {
-								EventHandler.VMDeath (req_id, 0, null);
+								//EventHandler.VMDeath (req_id, 0, null);
+								events [i] = new EventInfo (etype, req_id) { };
 							} else if (kind == EventKind.THREAD_START) {
 								long thread_id = r.ReadId ();
-								EventHandler.ThreadStart (req_id, thread_id, thread_id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = thread_id };
+								//EventHandler.ThreadStart (req_id, thread_id, thread_id);
 							} else if (kind == EventKind.THREAD_DEATH) {
 								long thread_id = r.ReadId ();
-								EventHandler.ThreadDeath (req_id, thread_id, thread_id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = thread_id };
+								//EventHandler.ThreadDeath (req_id, thread_id, thread_id);
 							} else if (kind == EventKind.ASSEMBLY_LOAD) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
-								EventHandler.AssemblyLoad (req_id, thread_id, id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
+								//EventHandler.AssemblyLoad (req_id, thread_id, id);
 							} else if (kind == EventKind.ASSEMBLY_UNLOAD) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
-								EventHandler.AssemblyUnload (req_id, thread_id, id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
+								//EventHandler.AssemblyUnload (req_id, thread_id, id);
 							} else if (kind == EventKind.TYPE_LOAD) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
-								EventHandler.TypeLoad (req_id, thread_id, id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
+								//EventHandler.TypeLoad (req_id, thread_id, id);
 							} else if (kind == EventKind.METHOD_ENTRY) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
-								EventHandler.MethodEntry (req_id, thread_id, id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
+								//EventHandler.MethodEntry (req_id, thread_id, id);
 							} else if (kind == EventKind.METHOD_EXIT) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
-								EventHandler.MethodExit (req_id, thread_id, id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
+								//EventHandler.MethodExit (req_id, thread_id, id);
 							} else if (kind == EventKind.BREAKPOINT) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								long loc = r.ReadLong ();
-								EventHandler.Breakpoint (req_id, thread_id, id, loc);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
+								//EventHandler.Breakpoint (req_id, thread_id, id, loc);
 							} else if (kind == EventKind.STEP) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								long loc = r.ReadLong ();
-								EventHandler.Step (req_id, thread_id, id, loc);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
+								//EventHandler.Step (req_id, thread_id, id, loc);
 							} else if (kind == EventKind.EXCEPTION) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
 								long loc = 0; // FIXME
-								EventHandler.Exception (req_id, thread_id, id, loc);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id, Location = loc };
+								//EventHandler.Exception (req_id, thread_id, id, loc);
 							} else if (kind == EventKind.APPDOMAIN_CREATE) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
-								EventHandler.AppDomainCreate (req_id, thread_id, id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
+								//EventHandler.AppDomainCreate (req_id, thread_id, id);
 							} else if (kind == EventKind.APPDOMAIN_UNLOAD) {
 								long thread_id = r.ReadId ();
 								long id = r.ReadId ();
-								EventHandler.AppDomainUnload (req_id, thread_id, id);
+								events [i] = new EventInfo (etype, req_id) { ThreadId = thread_id, Id = id };
+								//EventHandler.AppDomainUnload (req_id, thread_id, id);
 							} else {
 								throw new NotImplementedException ("Unknown event kind: " + kind);
 							}
 						}
+
+						EventHandler.Events (suspend_policy, events);
 					}
 				}
 
@@ -1760,34 +1813,8 @@ namespace Mono.Debugger.Soft
 	/* This is the interface exposed by the debugger towards the debugger agent */
 	interface IEventHandler
 	{
-		void VMStart (int req_id, long thread_id, string vm_uri);
-
-		void VMDeath (int req_id, long thread_id, string vm_uri);
+		void Events (SuspendPolicy suspend_policy, EventInfo[] events);
 
 		void VMDisconnect (int req_id, long thread_id, string vm_uri);
-
-		void ThreadStart (int req_id, long thread_id, long id);
-
-		void ThreadDeath (int req_id, long thread_id, long id);
-
-		void AssemblyLoad (int req_id, long thread_id, long id);
-
-		void AssemblyUnload (int req_id, long thread_id, long id);
-
-		void TypeLoad (int req_id, long thread_id, long id);
-
-		void MethodEntry (int req_id, long thread_id, long id);
-
-		void MethodExit (int req_id, long thread_id, long id);
-
-		void Breakpoint (int req_id, long thread_id, long method_id, long loc);
-
-		void Step (int req_id, long thread_id, long method_id, long loc);
-
-		void Exception (int req_id, long thread_id, long exc_id, long loc);
-
-		void AppDomainCreate (int req_id, long thread_id, long id);
-
-		void AppDomainUnload (int req_id, long thread_id, long id);
 	}
 }
