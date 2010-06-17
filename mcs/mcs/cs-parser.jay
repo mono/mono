@@ -843,10 +843,15 @@ positional_or_named_argument
 	;
 
 named_attribute_argument
-	: IDENTIFIER ASSIGN expression
+	: IDENTIFIER ASSIGN
 	  {
+		++lexer.parsing_block;
+	  }
+	  expression
+	  {
+	  	--lexer.parsing_block;
 	  	var lt = (Tokenizer.LocatedToken) $1;
-		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $3);	  
+		$$ = new NamedArgument (lt.Value, lt.Location, (Expression) $4);	  
 	  }
 	;
 	
@@ -1519,8 +1524,12 @@ fixed_parameter
 	  parameter_type
 	  IDENTIFIER
 	  ASSIGN
+	  {
+	  	++lexer.parsing_block;
+	  }
 	  constant_expression
 	  {
+	  	--lexer.parsing_block;
 		if (RootContext.Version <= LanguageVersion.V_3) {
 			Report.FeatureIsNotAvailable (GetLocation ($5), "optional parameter");
 		}
@@ -1546,12 +1555,12 @@ fixed_parameter
 		}
 		
 		if ((valid_param_mod & ParameterModifierType.DefaultValue) == 0)
-			Report.Error (1065, GetLocation ($6), "Optional parameter is not valid in this context");
+			Report.Error (1065, GetLocation ($5), "Optional parameter is not valid in this context");
 		
 		var lt = (Tokenizer.LocatedToken) $4;
 		$$ = new Parameter ((FullNamedExpression) $3, lt.Value, mod, (Attributes) $1, lt.Location);
-		if ($6 != null)
-			((Parameter) $$).DefaultValue = (Expression) $6;
+		if ($7 != null)
+			((Parameter) $$).DefaultValue = (Expression) $7;
 	  }
 	;
 

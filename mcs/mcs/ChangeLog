@@ -1,5 +1,11 @@
 2010-06-17  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #614955
+	* cs-parser.jay: Correctly set expression mode for default parameter
+	values.
+
+2010-06-17  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #615023
 	* ecore.cs: Resolve dynamic namespace and keyword collision in the
 	favour of the keyword.
