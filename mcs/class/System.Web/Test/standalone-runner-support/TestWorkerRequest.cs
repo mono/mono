@@ -26,8 +26,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 using System;
+using System.Collections.Generic;
 using System.IO;
 using System.Net;
+using System.Text;
 using System.Web;
 using System.Web.Hosting;
 
@@ -35,17 +37,20 @@ namespace StandAloneRunnerSupport
 {
 	sealed class TestWorkerRequest : SimpleWorkerRequest
 	{
+		const string POST_CONTENT_TYPE = "application/x-www-form-urlencoded";
 		static readonly char[] vpathTrimChars = { '/' };
 		
 		string page;
 		string query;
 		string appVirtualDir;
 		string pathInfo;
-
+		byte[] entityBody;
+		SortedDictionary <string, string> originalPostData;
+		
 		public bool IsPost { get; set; }
 		public HttpStatusCode StatusCode { get; set; }
 		public string StatusDescription { get; set; }
-			
+		
 		public TestWorkerRequest (string page, string query, TextWriter output)
 			: this (page, query, null, output)
 		{
@@ -59,7 +64,7 @@ namespace StandAloneRunnerSupport
 			this.appVirtualDir = GetAppPath ();
 			this.pathInfo = pathInfo;
 		}
-
+		
 		public override string GetFilePath ()
 		{
 			return page;
@@ -71,6 +76,32 @@ namespace StandAloneRunnerSupport
 				return "POST";
 
 			return base.GetHttpVerbName ();
+		}
+
+		public override string GetKnownRequestHeader (int index)
+		{
+			if (!IsPost || entityBody == null)
+				return base.GetKnownRequestHeader (index);
+
+
+			switch (index) {
+				case HttpWorkerRequest.HeaderContentLength:
+					return entityBody.Length.ToString ();
+
+				case HttpWorkerRequest.HeaderContentType:
+					return POST_CONTENT_TYPE;
+
+				default:
+					return base.GetKnownRequestHeader (index);
+			}
+		}
+
+		public override byte[] GetPreloadedEntityBody ()
+		{
+			if (!IsPost || entityBody == null)
+				return base.GetPreloadedEntityBody ();
+
+			return entityBody;
 		}
 		
 		public override string GetPathInfo ()
@@ -97,6 +128,49 @@ namespace StandAloneRunnerSupport
 			StatusDescription = description;
 
 			base.SendStatus (code, description);
+		}
+
+		public void AppendPostData (string[] postData, bool isEncoded)
+		{
+			int len = postData != null ? postData.Length : 0;
+			if (len == 0)
+				return;
+
+			if (len % 2 != 0)
+				throw new InvalidOperationException ("POST data array must have an even number of elements.");
+
+			if (originalPostData == null)
+				originalPostData = new SortedDictionary <string, string> ();
+
+			string key, value;
+			for (int i = 0; i < len; i += 2) {
+				key = postData [i];
+				value = postData [i + 1];
+
+				if (originalPostData.ContainsKey (key))
+					originalPostData [key] = value;
+				else
+					originalPostData.Add (key, value);
+			}
+			
+			len = originalPostData.Count;
+			var sb = new StringBuilder ();
+			bool first = true;
+			
+			foreach (var de in originalPostData) {
+				if (first)
+					first = false;
+				else
+					sb.Append ('&');
+				key = de.Key;
+				value = de.Value;
+				sb.Append (isEncoded ? key : HttpUtility.UrlEncode (key));
+				sb.Append ('=');
+				if (!String.IsNullOrEmpty (value))
+					sb.Append (isEncoded ? value : HttpUtility.UrlEncode (value));
+			}
+
+			entityBody = Encoding.ASCII.GetBytes (sb.ToString ());
 		}
 		
 		static string TrimLeadingSlash (string input)

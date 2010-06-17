@@ -50,8 +50,11 @@ namespace StandAloneRunnerSupport
 		public TestRunner ()
 		{
 		}
-		
+#if BUG_IN_THE_RUNTIME_IS_FIXED
 		public Response Run (string url, string pathInfo, SerializableDictionary <string, string> postValues)
+#else
+		public Response Run (string url, string pathInfo, string[] postValues, string[] formValues)
+#endif
 		{
 			if (String.IsNullOrEmpty (url))
 				throw new ArgumentNullException ("url");
@@ -83,6 +86,10 @@ namespace StandAloneRunnerSupport
 				else
 					wr = new TestWorkerRequest (uri.AbsolutePath, query, output);
 				wr.IsPost = isPost;
+				if (isPost) {
+					wr.AppendPostData (formValues, true);
+					wr.AppendPostData (postValues, false);
+				}
 				
 				HttpRuntime.ProcessRequest (wr);
 				return new Response {

@@ -366,6 +366,9 @@ endif
 
 STANDALONE_TEST_RUNNER = Test/tools/standalone-runner.exe
 RUN_STANDALONE = $(TEST_RUNTIME) $(STANDALONE_TEST_RUNNER)
+ifdef TESTNAME
+RUN_STANDALONE += --test=$(TESTNAME)
+endif
 
 $(build_lib): $(RESX_RES) $(RESOURCE_FILES_2) $(RESOURCE_FILES_1)
 

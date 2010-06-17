@@ -82,12 +82,14 @@ namespace StandAloneRunner
 		static void Run (string[] args)
 		{
 			bool showHelp = false;
+			string testName = null;
+			
 			var options = new OptionSet () {
 				{"?|h|help", "Show short usage screen.", v => showHelp = true},
-			};
-
+				{"t=|test=", "Run this test only (full type name)", (string s) => testName = s},
+			}; 
+			
 			List <string> extra = options.Parse (args);
-
 			int extraCount = extra.Count;
 
 			if (showHelp || extraCount < 1)
@@ -109,13 +111,18 @@ namespace StandAloneRunner
 			int runCounter = 0;
 			int failedCounter = 0;
 			var reports = new List <string> ();
-			DateTime start = DateTime.Now;
-			DateTime end;
-
+			
 			Console.WriteLine ("Running tests:");
+			DateTime start = DateTime.Now;
+			
 			foreach (StandaloneTest test in tests) {
 				if (test.Info.Disabled)
 					continue;
+
+				if (!String.IsNullOrEmpty (testName)) {
+					if (String.Compare (test.TestType.FullName, testName) != 0)
+						continue;
+				}
 				
 				test.Run (appMan);
 				runCounter++;
@@ -124,8 +131,9 @@ namespace StandAloneRunner
 					reports.Add (FormatReport (test));
 				}
 			}
+			
+			DateTime end = DateTime.Now;
 			Console.WriteLine ();
-			end = DateTime.Now;
 
 			if (reports.Count > 0) {
 				int repCounter = 0;
@@ -151,7 +159,7 @@ namespace StandAloneRunner
 			string newline = Environment.NewLine;
 			
 			sb.AppendFormat ("{0}{1}", test.Info.Name, newline);			
-			sb.AppendFormat ("{0,16}: {1}{2}", "Type", test.TestType, newline);
+			sb.AppendFormat ("{0,16}: {1}{2}", "Test", test.TestType, newline);
 
 			if (!String.IsNullOrEmpty (test.Info.Description))
 				sb.AppendFormat ("{0,16}: {1}{2}", "Description", test.Info.Description, newline);
@@ -159,6 +167,9 @@ namespace StandAloneRunner
 			if (!String.IsNullOrEmpty (test.FailedUrl))
 				sb.AppendFormat ("{0,16}: {1}{2}", "Failed URL", test.FailedUrl, newline);
 
+			if (!String.IsNullOrEmpty (test.FailedUrlCallbackName))
+				sb.AppendFormat ("{0,16}: {1}{2}", "Callback method", test.FailedUrlCallbackName, newline);
+			
 			if (!String.IsNullOrEmpty (test.FailedUrlDescription))
 				sb.AppendFormat ("{0,16}: {1}{2}", "URL description", test.FailedUrlDescription, newline);
 

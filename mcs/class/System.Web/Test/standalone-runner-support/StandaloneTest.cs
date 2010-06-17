@@ -27,8 +27,12 @@
 //
 using System;
 using System.Collections.Generic;
+using System.IO;
+using System.Reflection;
+using System.Text;
 using System.Web;
 using System.Web.Hosting;
+using System.Xml;
 
 using MonoTests.SystemWeb.Framework;
 using NUnit.Framework;
@@ -37,6 +41,8 @@ namespace StandAloneRunnerSupport
 {
 	public sealed class StandaloneTest
 	{
+		const string HTML_NAMESPACE = "http://www.w3.org/1999/xhtml";
+		
 		string failureDetails;
 		
 		public TestCaseFailureException Exception {
@@ -65,6 +71,10 @@ namespace StandAloneRunnerSupport
 		}
 
 		public string FailedUrlDescription {
+			get; private set;
+		}
+
+		public string FailedUrlCallbackName {
 			get; private set;
 		}
 		
@@ -122,8 +132,10 @@ namespace StandAloneRunnerSupport
 				return;
 			}
 			
-			Response response;
+			Response response, previousResponse = null;
 			TestRunner runner;
+			string[] formValues;
+			
 			try {
 				Console.Write ('[');
 				foreach (var tri in runItems) {
@@ -131,22 +143,35 @@ namespace StandAloneRunnerSupport
 						continue;
 
 					runner = null;
+					response = null;
 					try {
 						runner = appMan.CreateObject (Info.Name, typeof (TestRunner), test.VirtualPath, test.PhysicalPath, true) as TestRunner;
 						if (runner == null) {
 							Success = false;
 							throw new InvalidOperationException ("runner must not be null.");
 						}
-						response = runner.Run (tri.Url, tri.PathInfo, tri.PostValues);
+						
+						if (tri.PostValues != null && previousResponse != null)
+							formValues = ExtractFormAndHiddenControls (previousResponse);
+						else
+							formValues = null;
+						
+						response = runner.Run (tri.Url, tri.PathInfo, tri.PostValues, formValues);
 						if (tri.Callback == null)
 							continue;
 
 						tri.TestRunData = runner.TestRunData;
-						tri.Callback (response.Body, tri);
+						if (tri.Callback != null)
+							tri.Callback (response.Body, tri);
 						Console.Write ('.');
 					} catch (Exception) {
 						FailedUrl = tri.Url;
 						FailedUrlDescription = tri.UrlDescription;
+
+						if (tri.Callback != null) {
+							MethodInfo mi = tri.Callback.Method;
+							FailedUrlCallbackName = FormatMethodName (mi);
+						}
 						Console.Write ('F');
 						throw;
 					} finally {
@@ -155,6 +180,7 @@ namespace StandAloneRunnerSupport
 							AppDomain.Unload (runner.Domain);
 						}
 						runner = null;
+						previousResponse = response;
 					}
 				}
 			} catch (AssertionException ex) {
@@ -163,5 +189,101 @@ namespace StandAloneRunnerSupport
 				Console.Write (']');
 			}
 		}
+
+		string[] ExtractFormAndHiddenControls (Response response)
+                {
+                        HtmlAgilityPack.HtmlDocument htmlDoc = new HtmlAgilityPack.HtmlDocument ();
+                        htmlDoc.LoadHtml (response.Body);
+
+                        var tempxml = new StringBuilder ();
+                        var tsw = new StringWriter (tempxml);
+                        htmlDoc.OptionOutputAsXml = true;
+                        htmlDoc.Save (tsw);
+
+                        var doc = new XmlDocument ();
+                        doc.LoadXml (tempxml.ToString ());
+
+                        XmlNamespaceManager nsmgr = new XmlNamespaceManager (doc.NameTable);
+                        nsmgr.AddNamespace ("html", HTML_NAMESPACE);
+
+                        XmlNode formNode = doc.SelectSingleNode ("//html:form", nsmgr);
+                        if (formNode == null)
+                                throw new ArgumentException ("Form was not found in document: " + response.Body);
+
+                        string actionUrl = formNode.Attributes ["action"].Value;
+                        XmlNode method = formNode.Attributes ["method"];
+			var data = new List <string> ();
+			string name, value;
+			
+                        foreach (XmlNode inputNode in doc.SelectNodes ("//html:input[@type='hidden']", nsmgr)) {
+				name = inputNode.Attributes["name"].Value;
+                                if (String.IsNullOrEmpty (name))
+                                        continue;
+
+				XmlAttribute attr = inputNode.Attributes["value"];
+                                if (attr != null)
+                                        value = attr.Value;
+                                else
+                                        value = String.Empty;
+
+				data.Add (name);
+				data.Add (value);
+                        }
+
+			return data.ToArray ();
+                }
+		
+		static bool ShouldPrintFullName (Type type)
+		{
+                        return type.IsClass && (!type.IsPointer || (!type.GetElementType ().IsPrimitive && !type.GetElementType ().IsNested));
+                }
+
+                string FormatMethodName (MethodInfo mi)
+		{
+                        var sb = new StringBuilder ();
+                        Type retType = mi.ReturnType;
+                        if (ShouldPrintFullName (retType))
+                                sb.Append (retType.ToString ());
+                        else
+                                sb.Append (retType.Name);
+                        sb.Append (" ");
+			sb.Append (mi.DeclaringType.FullName);
+			sb.Append ('.');
+                        sb.Append (mi.Name);
+                        if (mi.IsGenericMethod) {
+                                Type[] gen_params = mi.GetGenericArguments ();
+                                sb.Append ("<");
+                                for (int j = 0; j < gen_params.Length; j++) {
+                                        if (j > 0)
+                                                sb.Append (",");
+                                        sb.Append (gen_params [j].Name);
+                                }
+                                sb.Append (">");
+                        }
+                        sb.Append ("(");
+                        ParameterInfo[] p = mi.GetParameters ();
+                        for (int i = 0; i < p.Length; ++i) {
+                                if (i > 0)
+                                        sb.Append (", ");
+                                Type pt = p[i].ParameterType;
+                                bool byref = pt.IsByRef;
+                                if (byref)
+                                        pt = pt.GetElementType ();
+                                if (ShouldPrintFullName (pt))
+                                        sb.Append (pt.ToString ());
+                                else
+                                        sb.Append (pt.Name);
+                                if (byref)
+                                        sb.Append (" ref");
+                        }
+                        if ((mi.CallingConvention & CallingConventions.VarArgs) != 0) {
+                                if (p.Length > 0)
+                                        sb.Append (", ");
+                                sb.Append ("...");
+                        }
+                        
+                        sb.Append (")");
+                        return sb.ToString ();
+                }
 	}
 }

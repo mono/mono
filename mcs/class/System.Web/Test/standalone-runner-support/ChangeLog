@@ -1,3 +1,17 @@
+2010-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* TestRunner.cs, TestWorkerRequest.cs: added support for POST
+	requests.
+
+	* StandaloneTest.cs: added support for POST requests. Run items
+	are executed in sequence and their results are preserved for the
+	next run. If the next run is a POST one, form data is extracted
+	from the previous response and used to generate POST data for the
+	current one.
+	Added a new property, FailedUrlCallbackName, which contains the
+	fully qualified method name of the test callback which failed.
+	Callback is no longer required to be present.
+
 2010-03-06  Marek Habersack  <mhabersack@novell.com>
 
 	* TestWorkerRequest.cs: added overloads of GetRawUrl and

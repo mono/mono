@@ -53,11 +53,15 @@ namespace StandAloneRunnerSupport
 		public string UrlDescription {
 			get; set;
 		}
-
-		public SerializableDictionary <string, string> PostValues {
+#if BUG_IN_THE_RUNTIME_IS_FIXED
+		public SerializedDictionary <string, string> PostValues {
 			get; set;
 		}
-
+#else
+		public string[] PostValues {
+			get; set;
+		}
+#endif
 		public TestRunItem ()
 		: this (null, null, null)
 		{}

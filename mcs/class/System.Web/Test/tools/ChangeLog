@@ -1,3 +1,10 @@
+2010-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* standalone-runner.cs: added new command line parameter, --test,
+	which selects a single test to run instead of the entire suite. It
+	should be passed a fully qualified (without assembly name) type
+	name of the test class.
+
 2010-02-03  Marek Habersack  <mhabersack@novell.com>
 
 	* Makefile: added targets to compile cache priority queue tests
