@@ -11,4 +11,5 @@ Test/standalone-tests/Control_GetUniqueIDRelativeTo.cs
 Test/standalone-tests/RegisterBuildProvider.cs
 Test/standalone-tests/PageMetaAttributes.cs
 Test/standalone-tests/FormViewUpdateParameters_Bug607722.cs
+Test/standalone-tests/RootBuilderChildControlTypes_Bug603541.cs
 

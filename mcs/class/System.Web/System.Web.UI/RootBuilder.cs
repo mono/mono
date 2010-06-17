@@ -58,8 +58,6 @@ namespace System.Web.UI
 			htmlControls.Add ("HEAD", typeof (HtmlHead));
 			htmlControls.Add ("IMG", typeof (HtmlImage));
 			htmlControls.Add ("INPUT", "INPUT");
-			htmlControls.Add ("LINK", typeof (HtmlLink));
-			htmlControls.Add ("META", typeof (HtmlLink));
 			htmlControls.Add ("SELECT", typeof (HtmlSelect));
 			htmlControls.Add ("TABLE", typeof (HtmlTable));
 			htmlControls.Add ("TD", typeof (HtmlTableCell));

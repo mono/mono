@@ -1,3 +1,8 @@
+2010-06-17  Marek Habersack  <mhabersack@novell.com>
+
+	* RootBuilder.cs: both LINK and META HTML tags must be represented
+	as instances of HtmlGenericControl. Fixes bug #603541
+
 2010-06-02  Marek Habersack  <mhabersack@novell.com>
 
 	* ViewStateMode.cs: added
