@@ -92,15 +92,25 @@ namespace Mono.CSharp {
 		static Expression ImplicitTypeParameterConversion (Expression expr, TypeSpec target_type)
 		{
 			var expr_type = (TypeParameterSpec) expr.Type;
+
 			//
-			// From T to a type parameter U
+			// From T to a type parameter U, provided T depends on U
 			//
 			var ttype = target_type as TypeParameterSpec;
 			if (ttype != null) {
-				if (expr_type.IsReferenceType && !ttype.IsReferenceType)
-					return new BoxedCast (expr, target_type);
+				if (expr_type.TypeArguments != null) {
+					foreach (var targ in expr_type.TypeArguments) {
+						if (!TypeSpecComparer.Override.IsEqual (ttype, targ))
+							continue;
 
-				return new ClassCast (expr, target_type);
+						if (expr_type.IsReferenceType && !ttype.IsReferenceType)
+							return new BoxedCast (expr, target_type);
+
+						return new ClassCast (expr, target_type);
+					}
+				}
+
+				return null;
 			}
 
 			//
@@ -130,6 +140,15 @@ namespace Mono.CSharp {
 		{
 			var target_tp = target_type as TypeParameterSpec;
 			if (target_tp != null) {
+				if (target_tp.TypeArguments != null) {
+					foreach (var targ in target_tp.TypeArguments) {
+						if (!TypeSpecComparer.Override.IsEqual (source_type, targ))
+							continue;
+
+						return source == null ? EmptyExpression.Null : new ClassCast (source, target_type);
+					}
+				}
+
 				if (target_tp.Interfaces != null) {
 					foreach (TypeSpec iface in target_tp.Interfaces) {
 						if (!TypeManager.IsGenericParameter (iface))
@@ -1588,7 +1607,7 @@ namespace Mono.CSharp {
 			//
 			// Explicit type parameter conversion.
 			//
-			if (TypeManager.IsGenericParameter (source_type))
+			if (source_type.Kind == MemberKind.TypeParameter)
 				return ExplicitTypeParameterConversion (source, source_type, target_type);
 
 			bool target_is_value_type = TypeManager.IsStruct (target_type) || TypeManager.IsEnumType (target_type);

@@ -932,11 +932,27 @@ namespace Mono.CSharp {
 			var tparams = CurrentTypeParameters;
 
 			TypeParameterSpec[] base_tparams = null;
+			TypeParameterSpec[] base_decl_tparams = TypeParameterSpec.EmptyTypes;
+			TypeSpec[] base_targs = TypeSpec.EmptyTypes;
 			if (((ModFlags & Modifiers.OVERRIDE) != 0 || IsExplicitImpl)) {
-				if (base_method != null)
+				if (base_method != null) {
 					base_tparams = base_method.GenericDefinition.TypeParameters;
-				else if (MethodData.implementing != null)
+					if (base_method.DeclaringType.IsGeneric) {
+						base_decl_tparams = base_method.DeclaringType.MemberDefinition.TypeParameters;
+						base_targs = Parent.BaseType.TypeArguments;
+					}
+				} else if (MethodData.implementing != null) {
 					base_tparams = MethodData.implementing.GenericDefinition.TypeParameters;
+					if (MethodData.implementing.DeclaringType.IsGeneric) {
+						base_decl_tparams = MethodData.implementing.DeclaringType.MemberDefinition.TypeParameters;
+						foreach (var iface in Parent.CurrentType.Interfaces) {
+							if (iface == MethodData.implementing.DeclaringType) {
+								base_targs = iface.TypeArguments;
+								break;
+							}
+						}
+					}
+				}
 			}
 
 			for (int i = 0; i < tparams.Length; ++i) {
@@ -951,13 +967,9 @@ namespace Mono.CSharp {
 				if (base_tparams != null) {
 					var base_tparam = base_tparams[i];
 					tp.Type.SpecialConstraint = base_tparam.SpecialConstraint;
-					tp.Type.TypeArguments = base_tparam.TypeArguments;
 
-					// TODO MemberCache: Inflate with different MVAR ?
-					if (base_tparam.InterfacesDefined != null)
-						tp.Type.Interfaces = new List<TypeSpec> (base_tparam.InterfacesDefined);
-
-					tp.Type.BaseType = base_tparam.BaseType;
+					var inflator = new TypeParameterInflator (CurrentType, base_decl_tparams, base_targs);
+					base_tparam.InflateConstraints (inflator, tp.Type);
 				} else if (MethodData.implementing != null) {
 					var base_tp = MethodData.implementing.Constraints[i];
 					if (!tp.Type.HasSameConstraintsImplementation (base_tp)) {

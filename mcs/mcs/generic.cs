@@ -943,9 +943,8 @@ namespace Mono.CSharp {
 			return constraints;
 		}
 
-		public override MemberSpec InflateMember (TypeParameterInflator inflator)
+		public void InflateConstraints (TypeParameterInflator inflator, TypeParameterSpec tps)
 		{
-			var tps = (TypeParameterSpec) MemberwiseClone ();
 			tps.BaseType = inflator.Inflate (BaseType);
 			if (ifaces != null) {
 				tps.ifaces = new List<TypeSpec> (ifaces.Count);
@@ -957,7 +956,12 @@ namespace Mono.CSharp {
 				for (int i = 0; i < targs.Length; ++i)
 					tps.targs[i] = inflator.Inflate (targs[i]);
 			}
+		}
 
+		public override MemberSpec InflateMember (TypeParameterInflator inflator)
+		{
+			var tps = (TypeParameterSpec) MemberwiseClone ();
+			InflateConstraints (inflator, tps);
 			return tps;
 		}
 

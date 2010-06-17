@@ -1,3 +1,11 @@
+2010-06-17  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs, method.cs: Inflate copied type parameters from base
+	class or explicit interfaces.
+	
+	* convert.cs: Fixed conversion between two type parameters.
+	Fixes #614471
+
 2010-06-16  Marek Safar  <marek.safar@gmail.com>
 
 	* membercache.cs, convert.cs: Correctly resize an array used by
