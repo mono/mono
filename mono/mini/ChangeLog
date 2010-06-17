@@ -1,5 +1,12 @@
 2010-06-17  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c (mono_arch_exceptions_init): Implement the llvm throw corlib
+	exception trampolines.
+
+	* tramp-x86.c: Add xdebug info for a few trampolines.
+
+	* mini-llvm.c: Set the name of the arguments.
+
 	* mini-llvm.c (emit_cond_system_exception): Pass the ip of to throw_corlib_trampoline
 	using a block address if using the LLVM mono branch.
 
