@@ -1,3 +1,8 @@
+2010-06-17  Zoltan Varga  <vargaz@gmail.com>
+
+	* loader.c (mono_method_get_header): Avoid a crash if the declaring method
+	has a faulty header.
+
 2010-06-17 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* sgen-gc.c (mono_gc_wbarrier_value_copy_bitmap): Work in a similar
