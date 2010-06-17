@@ -2314,6 +2314,14 @@ namespace Mono.CSharp {
 
 			if ((ModFlags & Modifiers.METHOD_EXTENSION) != 0)
 				PredefinedAttributes.Get.Extension.EmitAttribute (TypeBuilder);
+
+			var trans_flags = TypeManager.HasDynamicTypeUsed (base_type);
+			if (trans_flags != null) {
+				var pa = PredefinedAttributes.Get.DynamicTransform;
+				if (pa.Constructor != null || pa.ResolveConstructor (Location, ArrayContainer.MakeType (TypeManager.bool_type))) {
+					TypeBuilder.SetCustomAttribute (new CustomAttributeBuilder (pa.Constructor, new object[] { trans_flags }));
+				}
+			}
 		}
 
 		protected override TypeExpr[] ResolveBaseTypes (out TypeExpr base_class)
