@@ -1,3 +1,8 @@
+2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : Do not build more than one ChannelDispatcher
+	  for a Binding. Then check duplicate listen URIs, excluding mex ones.
+
 2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : retrieve MessageVersion and raise an error

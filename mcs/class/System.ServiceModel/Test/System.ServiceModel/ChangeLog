@@ -1,5 +1,9 @@
 2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceHostTest.cs : improved endpoint tests and enabled them.
+
+2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceHostTest.cs : fix AddServiceEndpoint tests to make sense.
 	  They are mostly not working. Enable working one.
 

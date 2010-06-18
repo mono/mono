@@ -130,7 +130,6 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void AddServiceEndpoint2 ()
 		{
 			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
@@ -143,7 +142,6 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void AddServiceEndpoint2_2 ()
 		{
 			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
@@ -157,12 +155,11 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")] // If I blindly reject things like this, it will block Service[Debug|Metadata]Behavior functionality.
 		public void AddServiceEndpoint2_3 ()
 		{
-			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
-			host.Description.Endpoints.Add (new ServiceEndpoint (ContractDescription.GetContract (typeof (Foo)), new BasicHttpBinding (), new EndpointAddress ("http://localhost/echo")));
-			host.Description.Endpoints.Add (new ServiceEndpoint (ContractDescription.GetContract (typeof (IMetadataExchange)), new BasicHttpBinding (), new EndpointAddress ("http://localhost/echo")));
+			ServiceHost host = new ServiceHost (typeof (HogeFuga), new Uri ("http://localhost/echo"));
+			host.Description.Endpoints.Add (new ServiceEndpoint (ContractDescription.GetContract (typeof (IHoge)), new BasicHttpBinding (), new EndpointAddress ("http://localhost/echo")));
+			host.Description.Endpoints.Add (new ServiceEndpoint (ContractDescription.GetContract (typeof (IFuga)), new BasicHttpBinding (), new EndpointAddress ("http://localhost/echo")));
 
 			// Different contracts unlike previous two cases.
 			// If two or more endpoints are bound to the same listen
@@ -173,8 +170,29 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		public void AddServiceEndpoint2_4 ()
+		{
+			ServiceHost host = new ServiceHost (typeof (HogeFuga), new Uri ("http://localhost:37564"));
+			var binding = new BasicHttpBinding ();
+			host.AddServiceEndpoint (typeof (IHoge), binding, new Uri ("http://localhost:37564"));
+			host.AddServiceEndpoint (typeof (IFuga), binding, new Uri ("http://localhost:37564"));
+
+			// Use the same binding, results in one ChannelDispatcher (actually two, for metadata/debug behavior).
+			host.Open ();
+			try {
+				Assert.AreEqual (2, host.ChannelDispatchers.Count, "#1");
+				foreach (ChannelDispatcher cd in host.ChannelDispatchers) {
+					if (cd.BindingName != binding.Name)
+						continue; // mex
+					Assert.AreEqual (2, cd.Endpoints.Count, "#2");
+				}
+			} finally {
+				host.Close ();
+			}
+		}
+
+		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		[Category ("NotWorking")]
 		public void AddServiceEndpoint3 ()
 		{
 			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
@@ -312,6 +330,26 @@ namespace MonoTests.System.ServiceModel
 		{
 			[OperationContract]
 			string Echo (string source);
+		}
+		
+		[ServiceContract]
+		interface IHoge
+		{
+			[OperationContract]
+			void DoX ();
+		}
+
+		[ServiceContract]
+		interface IFuga
+		{
+			[OperationContract]
+			void DoY ();
+		}
+		
+		class HogeFuga : IHoge, IFuga
+		{
+			public void DoX () {}
+			public void DoY () {}
 		}
 
 		class Baz : IBaz

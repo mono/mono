@@ -476,6 +476,18 @@ namespace System.ServiceModel
 		{
 			DateTime start = DateTime.Now;
 			InitializeRuntime ();
+			for (int i = 0; i < ChannelDispatchers.Count; i++) {
+				// Skip ServiceMetadataExtension-based one. special case.
+				for (int j = i + 1; j < ChannelDispatchers.Count; j++) {
+					var cd1 = ChannelDispatchers [i];
+					var cd2 = ChannelDispatchers [j];
+					if (cd1.IsMex || cd2.IsMex)
+						continue;
+					if (cd1.Listener.Uri.Equals (cd2.Listener.Uri))
+						throw new InvalidOperationException ("Two or more service endpoints with different Binding instance are bound to the same listen URI.");
+				}
+			}
+
 			var waits = new List<ManualResetEvent> ();
 			foreach (var cd in ChannelDispatchers) {
 				var wait = new ManualResetEvent (false);
@@ -613,7 +625,7 @@ namespace System.ServiceModel
 			this.host = host;
 		}
 
-		List<ChannelDispatcher> built_dispatchers = new List<ChannelDispatcher> ();
+		Dictionary<Binding,ChannelDispatcher> built_dispatchers = new Dictionary<Binding,ChannelDispatcher> ();
 		Dictionary<ServiceEndpoint, EndpointDispatcher> ep_to_dispatcher_ep = new Dictionary<ServiceEndpoint, EndpointDispatcher> ();
 
 		internal static Action<ChannelDispatcher> ChannelDispatcherSetter;
@@ -646,7 +658,7 @@ namespace System.ServiceModel
 					ServiceHostBase.CurrentServiceHostHack = null;
 				}
 				ep = cd.InitializeServiceEndpoint (serviceType, se);
-				built_dispatchers.Add (cd);
+				built_dispatchers.Add (se.Binding, cd);
 			}
 			ep_to_dispatcher_ep[se] = ep;
 			return cd;
@@ -654,7 +666,7 @@ namespace System.ServiceModel
 		
 		ChannelDispatcher FindExistingDispatcher (ServiceEndpoint se)
 		{
-			return built_dispatchers.FirstOrDefault ((ChannelDispatcher cd) => (cd.Listener.Uri.Equals (se.ListenUri)) && cd.MessageVersion.Equals (se.Binding.MessageVersion));
+			return built_dispatchers.FirstOrDefault ((KeyValuePair<Binding,ChannelDispatcher> p) => se.Binding == p.Key).Value;
 		}
 
 		internal void ApplyDispatchBehaviors ()

@@ -1,5 +1,9 @@
 2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ChannelDispatcher.cs : add simple bool field to mark for mex channel.
+
+2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ChannelDispatcher.cs : MessageVersion check is moved to
 	  ServiceHostBase.
 

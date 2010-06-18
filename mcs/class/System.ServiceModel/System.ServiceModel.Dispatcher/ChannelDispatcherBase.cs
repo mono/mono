@@ -36,6 +36,8 @@ namespace System.ServiceModel.Dispatcher
 {
 	public abstract class ChannelDispatcherBase : CommunicationObject
 	{
+		internal bool IsMex { get; set; }
+
 		public abstract IChannelListener Listener { get; }
 
 		public abstract ServiceHostBase Host { get; }

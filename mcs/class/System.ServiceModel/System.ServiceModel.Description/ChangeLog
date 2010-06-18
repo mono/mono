@@ -1,3 +1,7 @@
+2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : use simple ChannelDispatcher.IsMex field.
+
 2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceMetadataExtension.cs : overwrite MessageVersion to use None.
