@@ -228,7 +228,7 @@ namespace Mono.CSharp {
 	public static TypeSpec CoreLookupType (CompilerContext ctx, string ns_name, string name, int arity, MemberKind kind, bool required)
 	{
 		Namespace ns = GlobalRootNamespace.Instance.GetNamespace (ns_name, true);
-		var te = ns.Lookup (ctx, name, arity, Location.Null);
+		var te = ns.LookupType (ctx, name, arity, !required, Location.Null);
 		var ts = te == null ? null : te.Type;
 
 		if (!required)

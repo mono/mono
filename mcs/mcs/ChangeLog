@@ -1,5 +1,11 @@
 2010-06-18  Marek Safar  <marek.safar@gmail.com>
 
+	* typemanager.cs, namespace.cs: Report more predefined types and
+	imported types collision types as a warning.
+	Fixes #537414, #601157
+
+2010-06-18  Marek Safar  <marek.safar@gmail.com>
+
 	* generic.cs: Overrides base method constraint can use method type
 	parameter.
 
