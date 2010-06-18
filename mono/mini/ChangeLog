@@ -1,5 +1,10 @@
 2010-06-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_method_code): Use cfg->header instead of the header of
+	orig_method.
+
+	* exceptions-amd64.c (mono_arch_exceptions_init): Fix fullaot support.
+
 	* mini-llvm.c (process_bb): Add support for OP_SQRT when using the LLVM mono branch.
 
 2010-06-17  Geoff Norton  <gnorton@novell.com>
