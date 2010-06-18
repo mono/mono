@@ -116,10 +116,21 @@ namespace System {
 		{
 		}
 #endif
-		protected Uri (SerializationInfo serializationInfo, 
-			       StreamingContext streamingContext) :
-			this (serializationInfo.GetString ("AbsoluteUri"), true)
+		protected Uri (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
+			string uri = serializationInfo.GetString ("AbsoluteUri");
+			if (uri.Length > 0) {
+				source = uri;
+				ParseUri(UriKind.Absolute);
+			} else {
+				uri = serializationInfo.GetString ("RelativeUri");
+				if (uri.Length > 0) {
+					source = uri;
+					ParseUri(UriKind.Relative);
+				} else {
+					throw new ArgumentException("Uri string was null or empty.");
+				}
+			}
 		}
 
 		public Uri (string uriString, UriKind uriKind)
@@ -639,7 +650,12 @@ namespace System {
 			}
 		}
 
-		public bool IsAbsoluteUri {
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		bool IsAbsoluteUri {
 			get { return isAbsoluteUri; }
 		}
 
@@ -1020,12 +1036,17 @@ namespace System {
 
 		protected void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue ("AbsoluteUri", this.AbsoluteUri);
+			if (this.isAbsoluteUri) {
+				info.AddValue ("AbsoluteUri", this.AbsoluteUri);
+			} else {
+				info.AddValue("AbsoluteUri", String.Empty);
+				info.AddValue("RelativeUri", this.OriginalString);
+			}
 		}
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue ("AbsoluteUri", this.AbsoluteUri);
+			GetObjectData (info, context);
 		}
 
 

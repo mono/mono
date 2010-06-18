@@ -1,3 +1,8 @@
+2010-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Uri.cs: fix serialization for relative URIs. Patch from Greg
+	Smolyn. Fixes bug #615320.
+
 2010-05-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Uri.cs: Leave consecutive slashes in 'path' alone.
