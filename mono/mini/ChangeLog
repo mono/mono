@@ -1,3 +1,7 @@
+2010-06-18  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c (process_bb): Add support for OP_SQRT when using the LLVM mono branch.
+
 2010-06-17  Geoff Norton  <gnorton@novell.com>
 
 	* mini-arm.h:
