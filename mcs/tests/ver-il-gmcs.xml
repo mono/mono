@@ -12964,6 +12964,44 @@
       </method>
     </type>
   </test>
+  <test name="gtest-518.cs">
+    <type name="Top`1[X]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="Top`1+C[X]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Int32 Main()">
+        <size>2</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-519.cs">
+    <type name="G`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void Foo[U]()">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
   <test name="gtest-anon-1.cs">
     <type name="X">
       <method name="Void .ctor()">
@@ -22366,6 +22404,19 @@
         <size>7</size>
       </method>
       <method name="Int32 &lt;&gt;m__1(Int32)">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="gtest-named-02.cs">
+    <type name="D">
+      <method name="Void Foo(Int32)">
+        <size>1</size>
+      </method>
+      <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
         <size>7</size>
       </method>
     </type>
@@ -40003,6 +40054,19 @@
   <test name="test-782.cs">
     <type name="Test">
       <method name="Void Main()">
+        <size>1</size>
+      </method>
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+  </test>
+  <test name="test-783.cs">
+    <type name="C">
+      <method name="Void Main()">
+        <size>25</size>
+      </method>
+      <method name="Void M(E)">
         <size>1</size>
       </method>
       <method name="Void .ctor()">
