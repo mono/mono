@@ -32,13 +32,27 @@ using NUnit.Framework;
 using System;
 using System.Reflection;
 using System.Runtime.CompilerServices;
+using System.Runtime.InteropServices;
 using System.Runtime.Serialization;
 using System.Security.Permissions;
+using System.Collections.Generic;
+using System.Threading;
+
 
 namespace MonoTests.System.Runtime.CompilerServices {
 
 	[TestFixture]
 	public class ConditionalWeakTableTest {
+
+	public class Link {
+		public object obj;
+	
+		public Link(object obj) { 
+			this.obj = obj;
+		}
+	}
+
+	public class Key {}
 
 	[Test]
 	public void GetValue () {
@@ -190,7 +204,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 
 	static List<WeakReference> FillWithNetwork (ConditionalWeakTable <object,object> cwt)
 	{
-		const int K = 2 * 1000;
+		const int K = 500;
 		object[] keys = new object [K];
 		for (int i = 0; i < K; ++i)
 			keys[i] = new object ();
@@ -219,10 +233,15 @@ namespace MonoTests.System.Runtime.CompilerServices {
 
 		cwt.Add (a, new object ());
 		cwt.Add (b, new object ());
-		var res = FillWithNetwork (cwt);
+
+		List<WeakReference> res = null;
+		ThreadStart dele = () => { res = FillWithNetwork (cwt); };
+		var th = new Thread(dele);
+		th.Start ();
+		th.Join ();
 
 		GC.Collect ();
-		GC.WaitForPendingFinalizers ();
+		GC.Collect ();
 
 		for (int i = 0; i < res.Count; ++i)
 			Assert.IsFalse (res [i].IsAlive, "#r" + i);
@@ -267,7 +286,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		var res2 = FillWithNetwork2 (cwt);
 
 		GC.Collect ();
-		GC.WaitForPendingFinalizers ();
+		//GC.WaitForPendingFinalizers ();
 
 		for (int i = 0; i < res.Count; ++i)
 			Assert.IsFalse (res [i].IsAlive, "#r0-" + i);
@@ -353,7 +372,7 @@ namespace MonoTests.System.Runtime.CompilerServices {
 
 	static object _lock1 = new object ();
 	static object _lock2 = new object ();
-	static int reachable = -1;
+	static int reachable = 0;
  
 	public class FinalizableLink {
 		object obj;
@@ -367,11 +386,13 @@ namespace MonoTests.System.Runtime.CompilerServices {
 		}
 
 		~FinalizableLink () {
-			lock (_lock) { Monitor.Wait (_lock1); }
-			object res;
-			bool res = cwt.TryGetValue (this, out res);
-			reachable = res ? 1 : 0;
-			lock (_lock2) { Monitor.Pulse (_lock2); }
+			lock (_lock1) { ; }
+			object obj;
+			bool res = cwt.TryGetValue (this, out obj);
+			if (res)
+				++reachable;
+			if (reachable == 20)
+				lock (_lock2) { Monitor.Pulse (_lock2); }
 		}
 	}
 
@@ -391,19 +412,22 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Test]
 	public void FinalizableObjectsThatRetainDeadKeys ()
 	{
-		var cwt = new ConditionalWeakTable <object,object> ();
-		ThreadStart dele = () => { FillWithFinalizable (cwt); };
-		var th = new Thread(dele);
-		th.Start ();
-		th.Join ();
+		lock (_lock1) { 
+			var cwt = new ConditionalWeakTable <object,object> ();
+			ThreadStart dele = () => { FillWithFinalizable (cwt); };
+			var th = new Thread(dele);
+			th.Start ();
+			th.Join ();
+			GC.Collect ();
+		}
 
+		Assert.AreEqual (0, reachable, "#1");
 		GC.Collect ();
-		Assert.AreEqual (-1, reachable, "#1");
- 		lock (_lock) { Monitor.Pulse (_lock1); }
 		GC.Collect ();
-		lock (_lock2) { Monitor.TimedWait (_lock2, 1000); }
+		lock (_lock2) { Monitor.Wait (_lock2, 1000); }
 
-		Assert.AreEqual (1, reachable, "#1");
+		Assert.AreEqual (20, reachable, "#1");
+	}
 	}
 }
 

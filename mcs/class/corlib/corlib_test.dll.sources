@@ -159,6 +159,7 @@ System.Resources/ResourceManagerTest.cs
 System.Resources/ResourceReaderTest.cs
 System.Resources/ResourceSetTest.cs
 System.Resources/ResourceWriterTest.cs
+System.Runtime.CompilerServices/ConditionalWeakTableTest.cs
 System.Runtime.CompilerServices/InternalsVisibleToAttributeTest.cs
 System.Runtime.CompilerServices/RuntimeHelpersTest.cs
 System.Runtime.CompilerServices/RuntimeWrappedExceptionTest.cs
