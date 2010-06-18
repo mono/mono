@@ -1,3 +1,8 @@
+2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* Rss20ItemFormatter.cs : enabled DateTimeOffset parsing.
+	  Fixed bug #615332, patch by Carlos Martin.
+
 2010-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Atom10ItemFormatter.cs : Fix reading of "source" element to not
