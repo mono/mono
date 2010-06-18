@@ -276,17 +276,22 @@ namespace MonoTests.System.Runtime.CompilerServices {
 	[Test]
 	public void OldGenStress () {
 		var cwt = new ConditionalWeakTable <object,object>[1];
+		List<object> k = null;
+		List<WeakReference> res, res2;
+		res = res2 = null;
 
-		var res = FillWithNetwork2 (cwt);
+		ThreadStart dele = () => {
+			res = FillWithNetwork2 (cwt);
+			ForcePromotion ();
+			k = FillReachable (cwt);
+			res2 = FillWithNetwork2 (cwt);
+		};
 
-		ForcePromotion ();
-
-		var k = FillReachable (cwt);
-
-		var res2 = FillWithNetwork2 (cwt);
+		var th = new Thread(dele);
+		th.Start ();
+		th.Join ();
 
 		GC.Collect ();
-		//GC.WaitForPendingFinalizers ();
 
 		for (int i = 0; i < res.Count; ++i)
 			Assert.IsFalse (res [i].IsAlive, "#r0-" + i);
