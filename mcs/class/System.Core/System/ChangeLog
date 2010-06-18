@@ -1,3 +1,24 @@
+2010-06-18  Vincent Povirk <madewokherd@gmail.com>  
+
+	* TimeZoneInfo.cs: Applied patch from Vincent Povirk that adds
+	support for reading time zone information on windows.
+
+	This patch makes TimeZoneInfo.GetSystemTimeZones and
+	FindSystemTimeZoneById work based on the registry on non-Unix
+	platforms, if the appropriate registry key exists. Mono currently
+	reads from /usr/share/zoneinfo, which doesn't exist on Windows.
+
+	This should fix bug 606084.
+
+	It won't fix the Local property on Windows. I think that requires
+	a Windows API call to get the id of the local timezone.
+
+	This was modified from the previous version to not check the
+	registry on Unix platforms. (Sorry it took me so long to do
+	this. I have very little time to spend on Mono-related work.)
+
+	This patch is licensed under the MIT X11 license.
+
 2010-04-16  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* Actions.cs: Forward Action() to mscorlib.dll and add the new
