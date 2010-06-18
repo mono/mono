@@ -4,7 +4,7 @@
 // Authors:
 //   Marek Habersack (mhabersack@novell.com)
 //
-// (C) 2007-2008 Novell, Inc
+// (C) 2007-2010 Novell, Inc
 //
 
 //
@@ -86,7 +86,7 @@ namespace System.Web.UI.WebControls
 		protected virtual void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			if (ID != null)
-				writer.AddAttribute (HtmlTextWriterAttribute.Id, ID);
+				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
 
 			if (_attributes != null && _attributes.Count > 0) {
 				foreach (string attr in _attributes.Keys)
@@ -257,7 +257,6 @@ namespace System.Web.UI.WebControls
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
-
 			Page page = Page;
 			if (page != null)
 				page.RegisterRequiresControlState (this);

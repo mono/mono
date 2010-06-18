@@ -1,3 +1,16 @@
+2010-06-19  Marek Habersack  <mhabersack@novell.com>
+
+	* DataPager.cs: when rendering the ID attribute, use ClientID
+
+2010-06-18  Marek Habersack  <mhabersack@novell.com>
+
+	* NumericPagerField.cs: CreateDataPagers outputs correct page
+	number in query mode. Fixes bug #615315
+	Rendering changes to match .NET
+
+	* DataPagerField.cs: if query string has been handled and query
+	mode is in effect, return true. Fixes bug #615315
+
 2010-05-18  Marek Habersack  <mhabersack@novell.com>
 
 	* ListView.cs: if data source has pageable data, get total count

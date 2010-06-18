@@ -210,7 +210,7 @@ namespace System.Web.UI.WebControls
 		{
 			bool queryMode = !String.IsNullOrEmpty (DataPager.QueryStringField);
 			if (!queryMode || QueryStringHandled)
-				return false;
+				return queryMode;
 
 			QueryStringHandled = true;
 
