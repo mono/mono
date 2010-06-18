@@ -1,3 +1,10 @@
+2010-06-18  Marek Safar  <marek.safar@gmail.com>
+
+	* generic.cs: Overrides base method constraint can use method type
+	parameter.
+
+	* import.cs: Removed redundant cache.
+	
 2010-06-17  Marek Safar  <marek.safar@gmail.com>
 
 	* generic.cs: Propagate type only inflate downwards.

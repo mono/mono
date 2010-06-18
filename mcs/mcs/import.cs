@@ -968,7 +968,6 @@ namespace Mono.CSharp
 			Dictionary<MethodBase, MethodSpec> possible_accessors = null;
 			MemberSpec imported;
 			MethodInfo m;
-			List<string> fields_to_ignore = null;
 
 			//
 			// This requires methods to be returned first which seems to work for both Mono and .NET
@@ -1053,11 +1052,6 @@ namespace Mono.CSharp
 					if (add == null || remove == null)
 						continue;
 
-					if (fields_to_ignore == null)
-						fields_to_ignore = new List<string> ();
-
-					fields_to_ignore.Add (e.Name);
-
 					imported = Import.CreateEvent (e, declaringType, add, remove);
 					break;
 				case MemberTypes.Field:
@@ -1065,9 +1059,6 @@ namespace Mono.CSharp
 
 					// Ignore compiler generated fields
 					if (fi.IsPrivate && fi.IsDefined (typeof (CompilerGeneratedAttribute), false))
-						continue;
-
-					if (fields_to_ignore != null && fields_to_ignore.Contains (fi.Name))
 						continue;
 
 					imported = Import.CreateField (fi, declaringType);

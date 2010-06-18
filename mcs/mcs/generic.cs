@@ -811,7 +811,7 @@ namespace Mono.CSharp {
 			// class A : I<int> { void Foo<X> where X : int {} }
 			//
 			bool found;
-			if (BaseType != other.BaseType) {
+			if (!TypeSpecComparer.Override.IsEqual (BaseType, other.BaseType)) {
 				if (other.targs == null)
 					return false;
 
