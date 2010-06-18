@@ -1,5 +1,7 @@
 2010-06-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c (emit_klass_info): Mark unloadable classes properly.
+
 	* aot-compiler.c aot-runtime.c: Fix LLVM support.
 
 	* mini-llvm.c: When emitting OP_CALL_HANDLER, avoid branching directly to the landing
