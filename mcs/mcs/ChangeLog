@@ -1,5 +1,10 @@
 2010-06-18  Marek Safar  <marek.safar@gmail.com>
 
+	* convert.cs, typespec.cs, method.cs: Fixed few more dynamic
+	conversion.
+
+2010-06-18  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, namespace.cs: Report more predefined types and
 	imported types collision types as a warning.
 	Fixes #537414, #601157

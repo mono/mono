@@ -2317,57 +2317,52 @@ namespace Mono.CSharp {
 			if (TypeManager.IsNullableType (return_type))
 				return_type_unwrap = TypeManager.GetTypeArguments (return_type) [0];
 
-			if ((return_type == InternalType.Dynamic || first_arg_type == InternalType.Dynamic) && parameters.Count == 1) {
-				Report.Error (1964, Location,
-					"User-defined operator `{0}' cannot convert to or from the dynamic type",
-					GetSignatureForError ());
-
-				return false;
-			}
-
 			//
 			// Rules for conversion operators
 			//
 			if (OperatorType == OpType.Implicit || OperatorType == OpType.Explicit) {
-				if (first_arg_type_unwrap == return_type_unwrap && first_arg_type_unwrap == declaring_type){
+				if (first_arg_type_unwrap == return_type_unwrap && first_arg_type_unwrap == declaring_type) {
 					Report.Error (555, Location,
 						"User-defined operator cannot take an object of the enclosing type and convert to an object of the enclosing type");
 					return false;
 				}
-				
+
 				TypeSpec conv_type;
 				if (TypeManager.IsEqual (declaring_type, return_type) || declaring_type == return_type_unwrap) {
 					conv_type = first_arg_type;
 				} else if (TypeManager.IsEqual (declaring_type, first_arg_type) || declaring_type == first_arg_type_unwrap) {
 					conv_type = return_type;
 				} else {
-					Report.Error (556, Location, 
+					Report.Error (556, Location,
 						"User-defined conversion must convert to or from the enclosing type");
 					return false;
 				}
 
-				//
-				// Because IsInterface and IsClass are not supported
-				//
-				if (!TypeManager.IsGenericParameter (conv_type)) {
-					if (conv_type.IsInterface) {
-						Report.Error (552, Location, "User-defined conversion `{0}' cannot convert to or from an interface type",
+				if (conv_type == InternalType.Dynamic) {
+					Report.Error (1964, Location,
+						"User-defined conversion `{0}' cannot convert to or from the dynamic type",
+						GetSignatureForError ());
+
+					return false;
+				}
+
+				if (conv_type.IsInterface) {
+					Report.Error (552, Location, "User-defined conversion `{0}' cannot convert to or from an interface type",
+						GetSignatureForError ());
+					return false;
+				}
+
+				if (conv_type.IsClass) {
+					if (TypeManager.IsSubclassOf (declaring_type, conv_type)) {
+						Report.Error (553, Location, "User-defined conversion `{0}' cannot convert to or from a base class",
 							GetSignatureForError ());
 						return false;
 					}
 
-					if (conv_type.IsClass) {
-						if (TypeManager.IsSubclassOf (declaring_type, conv_type)) {
-							Report.Error (553, Location, "User-defined conversion `{0}' cannot convert to or from a base class",
-								GetSignatureForError ());
-							return false;
-						}
-
-						if (TypeManager.IsSubclassOf (conv_type, declaring_type)) {
-							Report.Error (554, Location, "User-defined conversion `{0}' cannot convert to or from a derived class",
-								GetSignatureForError ());
-							return false;
-						}
+					if (TypeManager.IsSubclassOf (conv_type, declaring_type)) {
+						Report.Error (554, Location, "User-defined conversion `{0}' cannot convert to or from a derived class",
+							GetSignatureForError ());
+						return false;
 					}
 				}
 			} else if (OperatorType == OpType.LeftShift || OperatorType == OpType.RightShift) {
@@ -2390,15 +2385,15 @@ namespace Mono.CSharp {
 						return false;
 					}
 				}
-				
-				if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)){
+
+				if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)) {
 					Report.Error (562, Location,
 						"The parameter type of a unary operator must be the containing type");
 					return false;
 				}
-				
+
 				if (OperatorType == OpType.True || OperatorType == OpType.False) {
-					if (return_type != TypeManager.bool_type){
+					if (return_type != TypeManager.bool_type) {
 						Report.Error (
 							215, Location,
 							"The return type of operator True or False " +
@@ -2406,13 +2401,13 @@ namespace Mono.CSharp {
 						return false;
 					}
 				}
-				
+
 			} else if (!TypeManager.IsEqual (first_arg_type_unwrap, declaring_type)) {
 				// Checks for Binary operators
 
-				var second_arg_type = ParameterTypes [1];
+				var second_arg_type = ParameterTypes[1];
 				if (TypeManager.IsNullableType (second_arg_type))
-					second_arg_type = TypeManager.GetTypeArguments (second_arg_type) [0];
+					second_arg_type = TypeManager.GetTypeArguments (second_arg_type)[0];
 
 				if (!TypeManager.IsEqual (second_arg_type, declaring_type)) {
 					Report.Error (563, Location,

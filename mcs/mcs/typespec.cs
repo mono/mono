@@ -617,12 +617,23 @@ namespace Mono.CSharp
 				if (type1.MemberDefinition != target_type_def)
 					return false;
 
-				if (!type1.IsInterface && !type1.IsDelegate)
-					return false;
-
 				var t1_targs = type1.TypeArguments;
 				var t2_targs = type2.TypeArguments;
 				var targs_definition = target_type_def.TypeParameters;
+
+				if (!type1.IsInterface && !type1.IsDelegate) {
+					//
+					// Internal compiler variance between G<object> and G<dynamic>
+					//
+					for (int i = 0; i < targs_definition.Length; ++i) {
+						if ((t1_targs[i] != TypeManager.object_type && t1_targs[i] != InternalType.Dynamic) ||
+							(t2_targs[i] != TypeManager.object_type && t2_targs[i] != InternalType.Dynamic))
+							return false;
+					}
+
+					return true;
+				}
+
 				for (int i = 0; i < targs_definition.Length; ++i) {
 					Variance v = targs_definition[i].Variance;
 					if (v == Variance.None) {

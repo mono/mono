@@ -114,6 +114,16 @@ namespace Mono.CSharp {
 			}
 
 			//
+			// LAMESPEC: From T to dynamic type
+			//
+			if (target_type == InternalType.Dynamic) {
+				if (expr_type.IsReferenceType)
+					return new ClassCast (expr, target_type);
+
+				return new BoxedCast (expr, target_type);
+			}
+
+			//
 			// From T to its effective base class C
 			// From T to any base class of C
 			// From T to any interface implemented by C
