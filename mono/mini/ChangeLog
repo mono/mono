@@ -1,5 +1,10 @@
 2010-06-18  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-compiler.c aot-runtime.c: Fix LLVM support.
+
+	* mini-llvm.c: When emitting OP_CALL_HANDLER, avoid branching directly to the landing
+	pad, branch to a new bblock instead.
+
 	* aot-compiler.c (emit_method_code): Use cfg->header instead of the header of
 	orig_method.
 
@@ -10,7 +15,7 @@
 2010-06-17  Geoff Norton  <gnorton@novell.com>
 
 	* mini-arm.h:
-	* exceptions-arm.c: Move the UCONTEXT macros to mono-sigcontext.h so they 
+	* exceptions-arm.c: Move the UCONTEXT macros to mono-sigcontext.h so they
 	can be used by sgen.
 
 2010-06-17  Zoltan Varga  <vargaz@gmail.com>
