@@ -1,3 +1,8 @@
+2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostTest.cs : fix AddServiceEndpoint tests to make sense.
+	  They are mostly not working. Enable working one.
+
 2010-06-15  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* CallbackBehaviorAttributeTest.cs : added test for bug #567672

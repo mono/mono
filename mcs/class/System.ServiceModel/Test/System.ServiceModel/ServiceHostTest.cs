@@ -107,12 +107,11 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
-		[Ignore ("AddServiceEndpoint part does not work")]
 		public void AddServiceEndpoint ()
 		{
 			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
-			host.AddServiceEndpoint ("IBar", new BasicHttpBinding (), "rel");
-			host.AddServiceEndpoint ("IBar", new BasicHttpBinding (), "svc");
+			host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "rel");
+			host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "svc");
 
 			Assert.IsNotNull (host.Description, "#6");
 			Assert.IsNotNull (host.Description.Endpoints, "#7");
@@ -126,27 +125,64 @@ namespace MonoTests.System.ServiceModel
 		{
 			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("ftp://localhost/echo"));
 			// ftp does not match BasicHttpBinding
-			host.AddServiceEndpoint ("IBar", new BasicHttpBinding (), "rel");
+			host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "rel");
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void AddServiceEndpoint2 ()
 		{
-			// IBar is not part of the contract
 			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
-			host.AddServiceEndpoint ("IBar", new BasicHttpBinding (), "rel");
-			//host.AddServiceEndpoint ("IBar", new BasicHttpBinding (), "rel");
+			host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "rel");
+			host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "rel"); // duplicate URI
+
+			host.Open ();
+			host.Close (); // should not reach here. It is to make sure to close unexpectedly opened host.
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
+		public void AddServiceEndpoint2_2 ()
+		{
+			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
+			// same as above, but through Endpoints.Add()
+			host.Description.Endpoints.Add (new ServiceEndpoint (ContractDescription.GetContract (typeof (Foo)), new BasicHttpBinding (), new EndpointAddress ("http://localhost/echo/rel")));
+			host.Description.Endpoints.Add (new ServiceEndpoint (ContractDescription.GetContract (typeof (Foo)), new BasicHttpBinding (), new EndpointAddress ("http://localhost/echo/rel")));
+
+			host.Open ();
+			host.Close (); // should not reach here. It is to make sure to close unexpectedly opened host.
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")] // If I blindly reject things like this, it will block Service[Debug|Metadata]Behavior functionality.
+		public void AddServiceEndpoint2_3 ()
+		{
+			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
+			host.Description.Endpoints.Add (new ServiceEndpoint (ContractDescription.GetContract (typeof (Foo)), new BasicHttpBinding (), new EndpointAddress ("http://localhost/echo")));
+			host.Description.Endpoints.Add (new ServiceEndpoint (ContractDescription.GetContract (typeof (IMetadataExchange)), new BasicHttpBinding (), new EndpointAddress ("http://localhost/echo")));
+
+			// Different contracts unlike previous two cases.
+			// If two or more endpoints are bound to the same listen
+			// URI, then they must share the same instance.
+
+			host.Open ();
+			host.Close (); // should not reach here. It is to make sure to close unexpectedly opened host.
+		}
+
+		[Test]
+		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void AddServiceEndpoint3 ()
 		{
-			// IBar is not part of the contract
 			ServiceHost host = new ServiceHost (typeof (Foo), new Uri ("http://localhost/echo"));
-			host.AddServiceEndpoint ("IBar", new BasicHttpBinding (), "rel");
-			// host.AddServiceEndpoint ("IBar", new BasicHttpBinding (), "http://localhost/echo/rel");
+			host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "rel");
+			host.AddServiceEndpoint (typeof (Foo), new BasicHttpBinding (), "http://localhost/echo/rel"); // duplicate URI when resolved
+
+			host.Open ();
+			host.Close (); // should not reach here. It is to make sure to close unexpectedly opened host.
 		}
 
 		[Test]
@@ -176,7 +212,7 @@ namespace MonoTests.System.ServiceModel
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
-		public void AddServiceEndpointMex ()
+		public void AddServiceEndpointMexWithNoImpl ()
 		{
 			using (ServiceHost h = new ServiceHost (typeof (Foo), new Uri ("http://localhost:8080"))) {
 				// it expects ServiceMetadataBehavior
@@ -187,11 +223,11 @@ namespace MonoTests.System.ServiceModel
 		[Test]
 		public void AddServiceEndpointMetadataExchange ()
 		{
+			// MyMetadataExchange implements IMetadataExchange
 			ServiceHost host = new ServiceHost (typeof (MyMetadataExchange));
-			// strange, but unlike above, it is accepted. The only difference I can see is the binding name.
 			host.AddServiceEndpoint ("IMetadataExchange",
 						 new BasicHttpBinding (),
-						 "http://localhost:8080");
+						 "http://localhost:8080/");
 		}
 
 		[Test]

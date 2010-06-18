@@ -204,7 +204,7 @@ namespace MonoTests.System.ServiceModel.Channels
 		[Category ("NotWorking")]
 		// FIXME: To enable this, we must fix the "request-reply TCP channel must close the connection" issue.
 		// It is strange, but the standalone test just works.
-		public void SimpleDuplexStreamed () // sample[svc|cli]5.exe
+		public void SimpleRequestReplyStreamed () // sample[svc|cli]5.exe
 		{
 			ServiceHost host = new ServiceHost (typeof (Foo));
 			NetTcpBinding bindingS = new NetTcpBinding ();
