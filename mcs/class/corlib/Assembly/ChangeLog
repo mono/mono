@@ -1,3 +1,7 @@
+2010-06-18  Rolf Bjarne Kvinge  <RKvinge@novell.com>
+
+	* AssemblyInfo.cs: We need to be friends with System.Core now too.
+
 2010-03-16  Jb Evain  <jbevain@novell.com>
 
 	* AssemblyInfo.cs: use MOONLIGHT symbol to disambiguate
