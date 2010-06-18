@@ -121,10 +121,21 @@ namespace System {
 		{
 		}
 #endif
-		protected Uri (SerializationInfo serializationInfo, 
-			       StreamingContext streamingContext) :
-			this (serializationInfo.GetString ("AbsoluteUri"), true)
+		protected Uri (SerializationInfo serializationInfo, StreamingContext streamingContext)
 		{
+			string uri = serializationInfo.GetString ("AbsoluteUri");
+			if (uri.Length > 0) {
+				source = uri;
+				ParseUri(UriKind.Absolute);
+			} else {
+				uri = serializationInfo.GetString ("RelativeUri");
+				if (uri.Length > 0) {
+					source = uri;
+					ParseUri(UriKind.Relative);
+				} else {
+					throw new ArgumentException("Uri string was null or empty.");
+				}
+			}
 		}
 
 #if NET_2_0
@@ -696,11 +707,16 @@ namespace System {
 				return Unescape (Host);
 			}
 		}
+#endif
 
-		public bool IsAbsoluteUri {
+#if NET_2_0
+		public
+#else
+		internal
+#endif
+		bool IsAbsoluteUri {
 			get { return isAbsoluteUri; }
 		}
-#endif
 		// LAMESPEC: source field is supplied in such case that this
 		// property makes sense. For such case that source field is
 		// not supplied (i.e. .ctor(Uri, string), this property
@@ -1120,13 +1136,27 @@ namespace System {
 #if NET_2_0
 		protected void GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue ("AbsoluteUri", this.AbsoluteUri);
+			if (this.isAbsoluteUri) {
+				info.AddValue ("AbsoluteUri", this.AbsoluteUri);
+			} else {
+				info.AddValue("AbsoluteUri", String.Empty);
+				info.AddValue("RelativeUri", this.OriginalString);
+			}
 		}
 #endif
 
 		void ISerializable.GetObjectData (SerializationInfo info, StreamingContext context)
 		{
-			info.AddValue ("AbsoluteUri", this.AbsoluteUri);
+#if NET_2_0
+			GetObjectData (info, context);
+#else
+			if (this.isAbsoluteUri) {
+				info.AddValue ("AbsoluteUri", this.AbsoluteUri);
+			} else {
+				info.AddValue("AbsoluteUri", String.Empty);
+				info.AddValue("RelativeUri", this.OriginalString);
+			}		
+#endif
 		}
 
 
