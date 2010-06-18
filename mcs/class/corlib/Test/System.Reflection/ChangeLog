@@ -1,3 +1,7 @@
+2010-06-08 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* MethodInfoTest.cs: Fix test for variant iface.
+
 2010-04-20 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* BinderTest.cs: Add tests for #325306.

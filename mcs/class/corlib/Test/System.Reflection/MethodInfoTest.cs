@@ -720,9 +720,9 @@ namespace MonoTests.System.Reflection
 		    T Test ();
 		}
 
-		class MethodInvoke : IMethodInvoke<object>
+		class MethodInvoke : IMethodInvoke<string>
 		{
-		    public object Test ()
+		    public string Test ()
 		    {
 		        return "MethodInvoke";
 		    }
