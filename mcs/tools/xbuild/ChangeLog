@@ -1,3 +1,9 @@
+2010-06-18  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #615420.
+	* xbuild/Microsoft.CSharp.targets: Choose the compiler
+	based on TargetFrameworkVersion instead of ToolsVersion.
+
 2010-06-16  Ankit Jain  <jankit@novell.com>
 
 	* SolutionParser.cs (ParseSolution): Use ProjectReference's
