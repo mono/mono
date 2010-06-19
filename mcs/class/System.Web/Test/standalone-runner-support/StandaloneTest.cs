@@ -161,8 +161,13 @@ namespace StandAloneRunnerSupport
 							continue;
 
 						tri.TestRunData = runner.TestRunData;
+						tri.StatusCode = runner.StatusCode;
+						tri.Redirected = runner.Redirected;
+						tri.RedirectLocation = runner.RedirectLocation;	
+
 						if (tri.Callback != null)
 							tri.Callback (response.Body, tri);
+						
 						Console.Write ('.');
 					} catch (Exception) {
 						FailedUrl = tri.Url;

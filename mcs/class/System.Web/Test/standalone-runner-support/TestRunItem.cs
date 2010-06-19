@@ -62,6 +62,18 @@ namespace StandAloneRunnerSupport
 			get; set;
 		}
 #endif
+		public int StatusCode {
+			get; set;
+		}
+
+		public string RedirectLocation {
+			get; set;
+		}
+
+		public bool Redirected {
+			get; set;
+		}
+		
 		public TestRunItem ()
 		: this (null, null, null)
 		{}

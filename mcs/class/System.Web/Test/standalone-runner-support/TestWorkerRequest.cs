@@ -50,6 +50,14 @@ namespace StandAloneRunnerSupport
 		public bool IsPost { get; set; }
 		public HttpStatusCode StatusCode { get; set; }
 		public string StatusDescription { get; set; }
+		public string RedirectLocation { get; set; }
+		public bool Redirected {
+			get {
+				int code = (int) StatusCode;
+				
+				return code == 301 || code == 302;
+			}
+		}
 		
 		public TestWorkerRequest (string page, string query, TextWriter output)
 			: this (page, query, null, output)
@@ -122,6 +130,14 @@ namespace StandAloneRunnerSupport
 			return TrimLeadingSlash (base.GetUriPath ());
 		}
 
+		public override void SendKnownResponseHeader (int index, string value)
+		{
+			if (index == HttpWorkerRequest.HeaderLocation)
+				RedirectLocation = value;
+			
+			base.SendKnownResponseHeader (index, value);
+		}
+		
 		public override void SendStatus (int code, string description)
 		{
 			StatusCode = (HttpStatusCode) code;

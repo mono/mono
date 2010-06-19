@@ -220,19 +220,21 @@ namespace System.Web.Security
 			if (stored == null)
 				return false;
 
+			bool caseInsensitive = true;
 			switch (config.PasswordFormat) {
 			case FormsAuthPasswordFormat.Clear:
+				caseInsensitive = false;
 				/* Do nothing */
 				break;
 			case FormsAuthPasswordFormat.MD5:
-				password = HashPasswordForStoringInConfigFile (password, "MD5");
+				password = HashPasswordForStoringInConfigFile (password, FormsAuthPasswordFormat.MD5);
 				break;
 			case FormsAuthPasswordFormat.SHA1:
-				password = HashPasswordForStoringInConfigFile (password, "SHA1");
+				password = HashPasswordForStoringInConfigFile (password, FormsAuthPasswordFormat.MD5);
 				break;
 			}
 
-			return (password == stored);
+			return String.Compare (password, stored, caseInsensitive ? StringComparison.OrdinalIgnoreCase : StringComparison.Ordinal) == 0;
 		}
 
 #if NET_2_0
@@ -491,6 +493,28 @@ namespace System.Web.Security
 			return new string (result);
 		}
 
+		static string HashPasswordForStoringInConfigFile (string password, FormsAuthPasswordFormat passwordFormat)
+		{
+			if (password == null)
+				throw new ArgumentNullException ("password");
+			
+			byte [] bytes;
+			switch (passwordFormat) {
+				case FormsAuthPasswordFormat.MD5:
+					bytes = MD5.Create ().ComputeHash (Encoding.UTF8.GetBytes (password));
+					break;
+
+				case FormsAuthPasswordFormat.SHA1:
+					bytes = SHA1.Create ().ComputeHash (Encoding.UTF8.GetBytes (password));
+					break;
+
+				default:
+					throw new ArgumentException ("The format must be either MD5 or SHA1", "passwordFormat");
+			}
+
+			return GetHexString (bytes);
+		}
+		
 		public static string HashPasswordForStoringInConfigFile (string password, string passwordFormat)
 		{
 			if (password == null)
@@ -499,16 +523,13 @@ namespace System.Web.Security
 			if (passwordFormat == null)
 				throw new ArgumentNullException ("passwordFormat");
 
-			byte [] bytes;
 			if (String.Compare (passwordFormat, "MD5", true, Helpers.InvariantCulture) == 0) {
-				bytes = MD5.Create ().ComputeHash (Encoding.UTF8.GetBytes (password));
+				return HashPasswordForStoringInConfigFile (password, FormsAuthPasswordFormat.MD5);
 			} else if (String.Compare (passwordFormat, "SHA1", true, Helpers.InvariantCulture) == 0) {
-				bytes = SHA1.Create ().ComputeHash (Encoding.UTF8.GetBytes (password));
+				return HashPasswordForStoringInConfigFile (password, FormsAuthPasswordFormat.SHA1);
 			} else {
 				throw new ArgumentException ("The format must be either MD5 or SHA1", "passwordFormat");
 			}
-
-			return GetHexString (bytes);
 		}
 
 		public static void Initialize ()

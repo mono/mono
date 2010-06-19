@@ -46,6 +46,10 @@ namespace StandAloneRunnerSupport
 		public object TestRunData {
 			get { return Domain.GetData ("TestRunData"); }
 		}
+
+		public int StatusCode { get; private set; }
+		public string RedirectLocation { get; private set; }
+		public bool Redirected { get; private set; }
 		
 		public TestRunner ()
 		{
@@ -92,6 +96,10 @@ namespace StandAloneRunnerSupport
 				}
 				
 				HttpRuntime.ProcessRequest (wr);
+				StatusCode = (int) wr.StatusCode;
+				Redirected = wr.Redirected;
+				RedirectLocation = wr.RedirectLocation;
+				
 				return new Response {
 					Body = output.ToString (),
 					StatusCode = wr.StatusCode,
