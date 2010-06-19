@@ -1,3 +1,9 @@
+2010-06-19  Jonathan Pobst  <monkey@jpobst.com>
+
+	* FontDialog.cs: Show all 16 colors in the color drop down
+	to match .Net.  Patch by Thomas Goldstein (stifu@free.fr).
+	[Fixes bug #508523]
+
 2010-06-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: When calculating the size of our tabs use

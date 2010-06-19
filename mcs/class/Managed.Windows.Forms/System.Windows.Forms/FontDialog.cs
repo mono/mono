@@ -1275,6 +1275,7 @@ namespace System.Windows.Forms
 					       );
 				
 				SelectedIndex = 0;
+				MaxDropDownItems = 16;
 			}
 			
 			protected override void OnDrawItem( DrawItemEventArgs e )
