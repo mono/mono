@@ -1255,24 +1255,24 @@ namespace System.Windows.Forms
 				DropDownStyle = ComboBoxStyle.DropDownList;
 				DrawMode = DrawMode.OwnerDrawFixed;
 				
-				Items.AddRange( new object[] {
-						       new ColorComboBoxItem( Color.Black, "Black" ),
-						       new ColorComboBoxItem( Color.DarkRed, "Dark-Red" ),
-						       new ColorComboBoxItem( Color.Green, "Green" ),
-						       new ColorComboBoxItem( Color.Olive, "Olive-Green" ), // color not correct
-						       new ColorComboBoxItem( Color.Aquamarine, "Aquamarine" ), // color not correct
-						       new ColorComboBoxItem( Color.Crimson, "Crimson" ),
-						       new ColorComboBoxItem( Color.Cyan, "Cyan" ),
-						       new ColorComboBoxItem( Color.Gray, "Gray" ),
-						       new ColorComboBoxItem( Color.Silver, "Silver" ),
-						       new ColorComboBoxItem( Color.Red, "Red" ),
-						       new ColorComboBoxItem( Color.YellowGreen, "Yellow-Green" ),
-						       new ColorComboBoxItem( Color.Yellow, "Yellow" ),
-						       new ColorComboBoxItem( Color.Blue, "Blue" ),
-						       new ColorComboBoxItem( Color.Purple, "Purple" ),
-						       new ColorComboBoxItem( Color.Aquamarine, "Aquamarine" ),
-						       new ColorComboBoxItem( Color.White, "White" ) }
-					       );
+				Items.AddRange (new object[] {
+					new ColorComboBoxItem (Color.Black, "Black"),
+					new ColorComboBoxItem (Color.Maroon, "Maroon"),
+					new ColorComboBoxItem (Color.Green, "Green"),
+					new ColorComboBoxItem (Color.Olive, "Olive"),
+					new ColorComboBoxItem (Color.Navy, "Navy"),
+					new ColorComboBoxItem (Color.Purple, "Purple"),
+					new ColorComboBoxItem (Color.Teal, "Teal"),
+ 					new ColorComboBoxItem (Color.Gray, "Gray"),
+ 					new ColorComboBoxItem (Color.Silver, "Silver"),
+ 					new ColorComboBoxItem (Color.Red, "Red"),
+					new ColorComboBoxItem (Color.Lime, "Lime"),
+ 					new ColorComboBoxItem (Color.Yellow, "Yellow"),
+ 					new ColorComboBoxItem (Color.Blue, "Blue"),
+					new ColorComboBoxItem (Color.Fuchsia, "Fuchsia"),
+					new ColorComboBoxItem (Color.Aqua, "Aqua"),
+ 					new ColorComboBoxItem (Color.White, "White") }
+				);
 				
 				SelectedIndex = 0;
 				MaxDropDownItems = 16;
