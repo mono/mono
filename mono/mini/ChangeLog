@@ -1,3 +1,8 @@
+2010-06-19  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_create_generic_trampoline): Increase the buf len a little,
+	to avoid an assert.
+
 2010-06-18  Zoltan Varga  <vargaz@gmail.com>
 
 	* aot-compiler.c (emit_klass_info): Mark unloadable classes properly.
