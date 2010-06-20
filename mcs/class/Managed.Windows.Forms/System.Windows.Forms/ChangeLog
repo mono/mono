@@ -1,3 +1,8 @@
+2010-06-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: Implement ToolTip support for our tab pages.
+	Fixes part of #515045.
+
 2010-06-19  Jonathan Pobst  <monkey@jpobst.com>
 
 	* FontDialog.cs: Make the 16 colors in the color drop down

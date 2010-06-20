@@ -62,6 +62,10 @@ namespace System.Windows.Forms {
 		private int slider_pos = 0;
 		TabPage entered_tab_page;
 		bool mouse_down_on_a_tab_page;
+		ToolTip tooltip;
+		ToolTip.TipState tooltip_state = ToolTip.TipState.Down;
+		Timer tooltip_timer;
+
 #if NET_2_0
 		private bool rightToLeftLayout;
 #endif		
@@ -575,6 +579,11 @@ namespace System.Windows.Forms {
 					area_to_invalidate.Dispose ();
 				} else
 					entered_tab_page = value;
+
+				if (value == null)
+					CloseToolTip ();
+				else
+					SetToolTip (GetToolTipText (value));
 			}
 		}
 		#endregion	// Internal Properties
@@ -705,6 +714,7 @@ namespace System.Windows.Forms {
 
 		protected override void Dispose (bool disposing)
 		{
+			CloseToolTip ();
 			base.Dispose (disposing);
 		}
 
@@ -1547,6 +1557,52 @@ namespace System.Windows.Forms {
 			rect = regions[0].GetBounds(graphics);
 
 			return (int)(rect.Width);
+		}
+
+		void SetToolTip (string text)
+		{
+			if (text == null || text.Length == 0) {
+				CloseToolTip ();
+				return;
+			}
+
+			if (tooltip == null) {
+				tooltip = new ToolTip ();
+				tooltip_timer = new Timer ();
+				tooltip_timer.Tick += new EventHandler (ToolTipTimerTick);
+			}
+
+			CloseToolTip ();
+
+			tooltip_state = ToolTip.TipState.Initial;
+			tooltip_timer.Interval = 500;
+			tooltip_timer.Start ();
+		}
+
+		void CloseToolTip ()
+		{
+			if (tooltip == null)
+				return;
+
+			tooltip.Hide (this);
+			tooltip_timer.Stop ();
+			tooltip_state = ToolTip.TipState.Down;
+		}
+
+		void ToolTipTimerTick (object o, EventArgs args)
+		{
+			switch (tooltip_state) {
+				case ToolTip.TipState.Initial:
+					tooltip_timer.Stop ();
+					tooltip_timer.Interval = 5000;
+					tooltip_timer.Start ();
+					tooltip_state = ToolTip.TipState.Show;
+					tooltip.Present (this, GetToolTipText (EnteredTabPage));
+					break;
+				case ToolTip.TipState.Show:
+					CloseToolTip ();
+					break;
+			}
 		}
 
 		void OnMouseMove (object sender, MouseEventArgs e)
