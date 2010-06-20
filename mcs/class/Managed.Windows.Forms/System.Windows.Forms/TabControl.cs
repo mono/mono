@@ -469,7 +469,6 @@ namespace System.Windows.Forms {
 				if (show_tool_tips == value)
 					return;
 				show_tool_tips = value;
-				Redraw ();
 			}
 		}
 
@@ -1561,6 +1560,9 @@ namespace System.Windows.Forms {
 
 		void SetToolTip (string text)
 		{
+			if (!show_tool_tips)
+				return;
+
 			if (text == null || text.Length == 0) {
 				CloseToolTip ();
 				return;

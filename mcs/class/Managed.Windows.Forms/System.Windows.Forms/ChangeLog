@@ -1,5 +1,11 @@
 2010-06-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TabControl.cs: Show the tooltip depending on the value 
+	of ShowTooltips.
+	Fixes #615376.
+
+2010-06-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TabControl.cs: Implement ToolTip support for our tab pages.
 	Fixes part of #515045.
 
