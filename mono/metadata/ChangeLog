@@ -1,3 +1,9 @@
+2010-06-20  Jb Evain  <jbevain@novell.com>
+
+	* metadata-verify.c: do not consider the assembly invalid if it
+	doesn't have a #Blob stream as resource assemblies don't
+	necessarily have one.
+
 2010-06-17  Geoff Norton  <gnorton@novell.com>
 
 	* sgen-archdep.h: sgen support for arm linux and darwin.
