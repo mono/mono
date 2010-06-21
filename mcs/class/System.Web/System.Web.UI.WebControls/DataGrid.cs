@@ -1078,7 +1078,7 @@ namespace System.Web.UI.WebControls {
 
 			rt.Caption = Caption;
 			rt.CaptionAlign = CaptionAlign;
-			rt.Enabled = Enabled;
+			rt.Enabled = IsEnabled;
 
 			bool top_pager = true;
 			foreach (DataGridItem item in rt.Rows) {

@@ -105,14 +105,14 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		internal override void InternalAddAttributesToRender (HtmlTextWriter w) 
+		internal override void InternalAddAttributesToRender (HtmlTextWriter w, bool enabled)
 		{
 #if NET_2_0
 			Page page = Page;
 			if (page != null)
 				page.ClientScript.RegisterForEventValidation (NameAttribute, ValueAttribute);
 #endif
-			base.InternalAddAttributesToRender (w);
+			base.InternalAddAttributesToRender (w, enabled);
 			w.AddAttribute (HtmlTextWriterAttribute.Value, ValueAttribute);
 		}
 

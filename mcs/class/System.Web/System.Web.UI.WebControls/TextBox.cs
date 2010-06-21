@@ -195,7 +195,7 @@ namespace System.Web.UI.WebControls {
 			}
 
 			Page page = Page;
-			if (page != null && Enabled)
+			if (page != null && IsEnabled)
 				page.RegisterEnabledControl (this);
 #endif
 		}

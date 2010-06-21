@@ -242,7 +242,7 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void Render(HtmlTextWriter writer) {
 #if NET_2_0
-			if (!Enabled)
+			if (!IsEnabled)
 				return;
 #endif
 			ValidatorCollection	validators;

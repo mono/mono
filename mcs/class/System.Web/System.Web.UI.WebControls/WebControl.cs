@@ -408,9 +408,12 @@ namespace System.Web.UI.WebControls {
 		}
 
 #if NET_2_0
-		protected internal bool IsEnabled 
+		protected
+#endif
+		internal bool IsEnabled	
 		{
 			get {
+#if NET_2_0
 				WebControl wc = this;
 				while (wc != null) {
 					if (!wc.Enabled)
@@ -418,10 +421,11 @@ namespace System.Web.UI.WebControls {
 					wc = wc.Parent as WebControl;
 				}
 				return true;
+#else
+				return Enabled;
+#endif
 			}
 		}
-#endif		
-		
 
 		public void ApplyStyle (Style s) 
 		{
@@ -519,7 +523,7 @@ namespace System.Web.UI.WebControls {
 			if (AccessKey != string.Empty)
 				writer.AddAttribute (HtmlTextWriterAttribute.Accesskey, AccessKey);
 
-			if (!enabled)
+			if (!IsEnabled)
 				writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 
 			if (ToolTip != string.Empty)

@@ -128,7 +128,7 @@ namespace System.Web.UI.WebControls {
 			if (!String.IsNullOrEmpty (UniqueID))
 				writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);
 
-			if (!Enabled && SelectedIndex == -1)
+			if (!IsEnabled && SelectedIndex == -1)
 				SelectedIndex = 1;
 #else
 			writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);

@@ -533,10 +533,11 @@ namespace System.Web.UI.WebControls {
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
-			if (Page != null) {
-				Page.PreLoad += new EventHandler (OnPagePreLoad);
+			Page page = Page;
+			if (page != null) {
+				page.PreLoad += new EventHandler (OnPagePreLoad);
 
-				if (!IsViewStateEnabled && Page.IsPostBack)
+				if (!IsViewStateEnabled && page.IsPostBack)
 					RequiresDataBinding = true;
 			}
 		}
@@ -556,8 +557,9 @@ namespace System.Web.UI.WebControls {
 
 		void Initialize () 
 		{
-			if (Page != null) {
-				if (!Page.IsPostBack || (IsViewStateEnabled && (ViewState ["Items"] == null)))
+			Page page = Page;
+			if (page != null) {
+				if (!page.IsPostBack || (IsViewStateEnabled && (ViewState ["Items"] == null)))
 					RequiresDataBinding = true;
 			}
 			

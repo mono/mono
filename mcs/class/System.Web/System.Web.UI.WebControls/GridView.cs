@@ -1364,8 +1364,7 @@ namespace System.Web.UI.WebControls
 					}
 				}
 				return 0;
-			}
-			else {
+			} else {
 				GridViewRow footerRow = CreateRow (-1, -1, DataControlRowType.Footer, DataControlRowState.Normal);
 				InitializeRow (footerRow, fields);
 				OnRowCreated (new GridViewRowEventArgs (footerRow));

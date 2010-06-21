@@ -365,7 +365,7 @@ namespace System.Web.UI.WebControls {
 			check_box.Checked = item.Selected;
 			check_box.TextAlign = TextAlign;
 #if NET_2_0
-			if (!Enabled)
+			if (!IsEnabled)
 				check_box.Enabled = false;
 			else
 				check_box.Enabled = item.Enabled;

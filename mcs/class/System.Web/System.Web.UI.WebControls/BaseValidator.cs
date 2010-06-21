@@ -234,7 +234,7 @@ namespace System.Web.UI.WebControls {
 				if (SetFocusOnError)
 					RegisterExpandoAttribute (ClientID, "focusOnError", "t");
 #endif
-				if (!Enabled)
+				if (!IsEnabled)
 #if NET_2_0
 					RegisterExpandoAttribute (ClientID, "enabled", "False");
 #else
@@ -242,7 +242,7 @@ namespace System.Web.UI.WebControls {
 #endif
 
 #if NET_2_0
-				if (Enabled && !IsValid) {
+				if (IsEnabled && !IsValid) {
 					RegisterExpandoAttribute (ClientID, "isvalid", "False");
 #else
 				if (!IsValid) {
@@ -510,7 +510,7 @@ document.getElementById('" + ClientID + @"').dispose = function() {
 		override void Render (HtmlTextWriter writer)
 		{
 #if NET_2_0
-			if (!Enabled && !EnableClientScript)
+			if (!IsEnabled && !EnableClientScript)
 				return;
 #endif
 			if (render_uplevel) {
@@ -576,7 +576,7 @@ document.getElementById('" + ClientID + @"').dispose = function() {
 #endif
 		void Validate ()
 		{
-			if (Enabled && Visible)
+			if (IsEnabled && Visible)
 				IsValid = ControlPropertiesValid () && EvaluateIsValid ();
 			else
 				IsValid = true;
