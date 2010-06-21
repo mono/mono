@@ -1,3 +1,8 @@
+2010-06-22  Zoltan Varga  <vargaz@gmail.com>
+
+	* tramp-amd64.c (mono_arch_nullify_class_init_trampoline): Call patch_callsite ()
+	to handle the code sequence generated for non-near calls. Fixes #616056.
+
 2010-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* exceptions-x86.c (mono_arch_find_jit_info_ext): Adjust eip in the lmf case too.
