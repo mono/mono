@@ -1,3 +1,7 @@
+2010-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceHostBase.cs : remove extra throttling field.
+
 2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : Do not build more than one ChannelDispatcher

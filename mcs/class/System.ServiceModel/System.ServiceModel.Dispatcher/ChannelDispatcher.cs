@@ -315,7 +315,7 @@ namespace System.ServiceModel.Dispatcher
 		{
 			// FIXME: not sure if it should be filled here.
 			if (ServiceThrottle == null)
-				ServiceThrottle = new ServiceThrottle ();
+				ServiceThrottle = new ServiceThrottle (this);
 
 			loop_manager.Start ();
 		}

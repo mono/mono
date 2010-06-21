@@ -29,25 +29,44 @@ namespace System.ServiceModel.Dispatcher
 {
 	public sealed class ServiceThrottle
 	{
-		internal ServiceThrottle ()
+		internal ServiceThrottle (ChannelDispatcher owner)
 		{
+			if (owner == null)
+				throw new ArgumentNullException ("owner");
+			this.owner = owner;
 		}
 
+		ChannelDispatcher owner;
 		int max_call = 16, max_session = 10, max_instance = 26;
 
 		public int MaxConcurrentCalls {
 			get { return max_call; }
-			set { max_call = value; }
+			set {
+				CheckState ();
+				max_call = value;
+			}
 		}
 
 		public int MaxConcurrentSessions {
 			get { return max_session; }
-			set { max_session = value; }
+			set {
+				CheckState ();
+				max_session = value;
+			}
 		}
 
 		public int MaxConcurrentInstances {
 			get { return max_instance; }
-			set { max_instance = value; }
+			set {
+				CheckState ();
+				max_instance = value;
+			}
+		}
+
+		void CheckState ()
+		{
+			if (owner.State != CommunicationState.Created)
+				throw new InvalidOperationException ("Cannot change throttling settings after ChannelDispatcher got opened.");
 		}
 	}
 }

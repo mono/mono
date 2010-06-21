@@ -49,7 +49,6 @@ namespace System.ServiceModel
 		ServiceDescription description;
 		UriSchemeKeyedCollection base_addresses;
 		TimeSpan open_timeout, close_timeout, instance_idle_timeout;
-		ServiceThrottle throttle;
 		List<InstanceContext> contexts;
 		ReadOnlyCollection<InstanceContext> exposed_contexts;
 		ChannelDispatcherCollection channel_dispatchers;
@@ -63,7 +62,6 @@ namespace System.ServiceModel
 			close_timeout = DefaultCloseTimeout;
 
 			credentials = new ServiceCredentials ();
-			throttle = new ServiceThrottle ();
 			contexts = new List<InstanceContext> ();
 			exposed_contexts = new ReadOnlyCollection<InstanceContext> (contexts);
 			channel_dispatchers = new ChannelDispatcherCollection (this);

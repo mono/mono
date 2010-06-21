@@ -83,7 +83,7 @@ namespace System.ServiceModel.Description
 			foreach (var cdb in serviceHostBase.ChannelDispatchers) {
 				var cd = cdb as ChannelDispatcher;
 				if (cd != null)
-					cd.ServiceThrottle = new ServiceThrottle () {
+					cd.ServiceThrottle = new ServiceThrottle (cd) {
 						MaxConcurrentCalls = this.MaxConcurrentCalls,
 						MaxConcurrentSessions = this.MaxConcurrentSessions,
 						MaxConcurrentInstances = this.MaxConcurrentInstances };
