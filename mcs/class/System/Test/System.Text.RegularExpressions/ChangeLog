@@ -1,3 +1,7 @@
+2010-06-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* RegexBugs.cs: Regression test for #610587.
+
 2010-02-03  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* SplitTests.cs: New tests for #566117.

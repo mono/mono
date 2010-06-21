@@ -498,6 +498,13 @@ namespace MonoTests.System.Text.RegularExpressions
 			new Regex ("^(else|elif|except|finally)([^a-zA-Z_0-9]).*", RegexOptions.Compiled);
 		}
 
+
+		[Test]
+		public void Bug610587_RepetitionOfPositionAssertion ()
+		{
+			Assert.AreEqual ("888", Regex.Match("888", "^*8.*").Value);
+		}
+
 		void Kill65535_1 (int length)
 		{
 			StringBuilder sb = new StringBuilder ("x");
@@ -540,6 +547,7 @@ namespace MonoTests.System.Text.RegularExpressions
 			// no gaps in group numbering
 			Assert.AreEqual ((n * (n - 1)) / 2, sum, "#3:" + r);
 		}
+
 
 		static string bug80554_s = @"(?(static)|(.*))(static)";
 		static RegexTrial[] bug80554_trials = {
