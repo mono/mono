@@ -33,10 +33,8 @@ using System;
 
 namespace System.Globalization
 {
-	public sealed class CharUnicodeInfo
+	public static class CharUnicodeInfo
 	{
-		private CharUnicodeInfo () {}
-
 		public static int GetDecimalDigitValue (char ch)
 		{
 			int i = (int) ch;
