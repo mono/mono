@@ -1,5 +1,7 @@
 2010-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c: Add a resume_unwind trampoline for LLVM.
+
 	* mini-llvm.c (exception_cb): For nested clauses, add the same try range to the
 	nesting clause too.
 	(mono_llvm_check_method_supported): Enable llvm for methods with nested clauses.
