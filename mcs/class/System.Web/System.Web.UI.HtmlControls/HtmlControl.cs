@@ -79,7 +79,7 @@ namespace System.Web.UI.HtmlControls{
 					catch (Exception) {
 						throw new HttpException(attribName + " property had malformed url");
 					}
-					writer.WriteAttribute(attribName, attr, true);
+					writer.WriteAttribute(attribName, attr);
 					Attributes.Remove(attribName);
 				}
 			}

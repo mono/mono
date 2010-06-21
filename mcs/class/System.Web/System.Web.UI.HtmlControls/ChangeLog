@@ -1,3 +1,8 @@
+2010-06-21  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlControl.cs: PreProcessRelativeReference deos not
+	atribute-encode the attribute value. Fixes bug #596430
+
 2010-06-01  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlHead.cs: added code to render description and keywords metas
