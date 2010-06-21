@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,16 +30,13 @@ using System.Globalization;
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
-#if NET_2_0
 	[ToolboxData("<{0}:CompareValidator runat=\"server\" ErrorMessage=\"CompareValidator\"></{0}:CompareValidator>")]
-#else
-	[ToolboxData("<{0}:CompareValidator runat=server ErrorMessage=\"CompareValidator\"></{0}:CompareValidator>")]
-#endif
 	public class CompareValidator : BaseCompareValidator
 	{
 		public CompareValidator ()
@@ -49,21 +46,12 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
-#if NET_2_0
 				RegisterExpandoAttribute (ClientID, "evaluationfunction", "CompareValidatorEvaluateIsValid");
 				if (ControlToCompare.Length > 0)
 					RegisterExpandoAttribute (ClientID, "controltocompare", GetControlRenderID (ControlToCompare));
 				if (ValueToCompare.Length > 0)
 					RegisterExpandoAttribute (ClientID, "valuetocompare", ValueToCompare, true);
 				RegisterExpandoAttribute (ClientID, "operator", Operator.ToString ());
-#else
-				if (ControlToCompare != "")
-					w.AddAttribute ("controltocompare", GetControlRenderID(ControlToCompare));
-				if (ValueToCompare != "")
-					w.AddAttribute ("valuetocompare", ValueToCompare);
-				w.AddAttribute ("operator", Operator.ToString());
-				w.AddAttribute ("evaluationfunction", "CompareValidatorEvaluateIsValid", false);
-#endif
 			}
 
 			base.AddAttributesToRender (w);
@@ -72,8 +60,7 @@ namespace System.Web.UI.WebControls {
 		protected override bool ControlPropertiesValid ()
 		{
 			if ((this.Operator != ValidationCompareOperator.DataTypeCheck) && ControlToCompare.Length == 0 &&
-			    !BaseCompareValidator.CanConvert (this.ValueToCompare, this.Type, this.CultureInvariantValues))
-			{
+			    !BaseCompareValidator.CanConvert (this.ValueToCompare, this.Type, this.CultureInvariantValues)) {
 				throw new HttpException(
 					String.Format("Unable to convert the value: {0} as a {1}", ValueToCompare,
 						      Enum.GetName(typeof(ValidationDataType), this.Type)));
@@ -82,7 +69,7 @@ namespace System.Web.UI.WebControls {
 			if (ControlToCompare.Length > 0) {
 				if (string.CompareOrdinal (ControlToCompare, ControlToValidate) == 0)
 					throw new HttpException (String.Format ("Control '{0}' cannot have the same value '{1}' for both ControlToValidate and ControlToCompare.", ID, ControlToCompare));
-				CheckControlValidationProperty (ControlToCompare, "");
+				CheckControlValidationProperty (ControlToCompare, String.Empty);
 			}
 			
 			return base.ControlPropertiesValid ();
@@ -101,7 +88,8 @@ namespace System.Web.UI.WebControls {
 
 			string compare;
 			/* ControlToCompare takes precendence, if it's set. */
-			compare = (ControlToCompare != "" ? GetControlValidationValue (ControlToCompare) : ValueToCompare);
+			string controlToCompare = ControlToCompare;
+			compare = (!String.IsNullOrEmpty (controlToCompare) ? GetControlValidationValue (controlToCompare) : ValueToCompare);
 
 			return BaseCompareValidator.Compare (GetControlValidationValue (ControlToValidate), false, 
 							     compare, this.CultureInvariantValues,
@@ -112,9 +100,7 @@ namespace System.Web.UI.WebControls {
 		[TypeConverter(typeof(System.Web.UI.WebControls.ValidatedControlConverter))]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		public string ControlToCompare {
 			get { return ViewState.GetString ("ControlToCompare", String.Empty); }
 			set { ViewState["ControlToCompare"] = value; }
@@ -123,23 +109,17 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue(ValidationCompareOperator.Equal)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		public ValidationCompareOperator Operator {
 			get { return (ValidationCompareOperator)ViewState.GetInt ("Operator", (int)ValidationCompareOperator.Equal); }
 			set { ViewState ["Operator"] = (int)value; }
 		}
 
-#if !NET_2_0
 		[Bindable(true)]
-#endif
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		public string ValueToCompare {
 			get { return ViewState.GetString ("ValueToCompare", String.Empty); }
 			set { ViewState ["ValueToCompare"] = value; }

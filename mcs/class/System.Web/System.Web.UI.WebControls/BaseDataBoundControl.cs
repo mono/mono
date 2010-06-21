@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,13 +26,12 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -44,16 +43,15 @@ namespace System.Web.UI.WebControls {
 		static readonly object dataBoundEvent = new object ();
 
 		EventHandlerList events = new EventHandlerList ();
+		object dataSource;
+		bool initialized;
+		bool preRendered;
+		bool requiresDataBinding;
 		
 		public event EventHandler DataBound {
 			add { events.AddHandler (dataBoundEvent, value); }
 			remove { events.RemoveHandler (dataBoundEvent, value); }
 		}
-		
-		object dataSource;
-		bool initialized;
-		bool preRendered;
-		bool requiresDataBinding;
 		
 		protected BaseDataBoundControl ()
 		{
@@ -71,9 +69,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute (null)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual object DataSource {
-			get {
-				return dataSource;
-			}
+			get { return dataSource; }
 			set {
 				if(value!=null)
 					ValidateDataSource (value);
@@ -85,9 +81,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[ThemeableAttribute (false)]
 		public virtual string DataSourceID {
-			get {
-				return ViewState.GetString ("DataSourceID", "");
-			}
+			get { return ViewState.GetString ("DataSourceID", String.Empty); }
 			set {
 				ViewState["DataSourceID"] = value;
 				OnDataPropertyChanged ();
@@ -205,7 +199,3 @@ namespace System.Web.UI.WebControls {
 		
 	}
 }
-
-#endif
-
-

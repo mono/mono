@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2010 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
@@ -27,18 +27,16 @@
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent("ServerValidate")]
-#if NET_2_0
 	[ToolboxData("<{0}:CustomValidator runat=\"server\" ErrorMessage=\"CustomValidator\"></{0}:CustomValidator>")]
-#else
-	[ToolboxData("<{0}:CustomValidator runat=server ErrorMessage=\"CustomValidator\"></{0}:CustomValidator>")]
-#endif
-	public class CustomValidator : BaseValidator {
+	public class CustomValidator : BaseValidator
+	{
 		static readonly object serverValidateEvent = new object ();
 
 		EventHandlerList events = new EventHandlerList ();
@@ -46,7 +44,7 @@ namespace System.Web.UI.WebControls {
 		#region Events
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-			public event ServerValidateEventHandler ServerValidate {
+		public event ServerValidateEventHandler ServerValidate {
 			add { events.AddHandler (serverValidateEvent, value); }
 			remove { events.RemoveHandler (serverValidateEvent, value); }
 		}
@@ -54,7 +52,8 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Events
 
 		#region Public Constructors
-		public CustomValidator() {
+		public CustomValidator()
+		{
 		}
 		#endregion	// Public Constructors
 
@@ -62,68 +61,59 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		public string ClientValidationFunction {
-			get { return ViewState.GetString("ClientValidationFunction", ""); }
+			get { return ViewState.GetString("ClientValidationFunction", String.Empty); }
 			set { ViewState["ClientValidationFunction"] = value; }
 		}
 
-#if NET_2_0
 		[Themeable (false)]
 		[DefaultValue (false)]
 		public bool ValidateEmptyText {
 			get { return ViewState.GetBool ("ValidateEmptyText", false); }
 			set { ViewState ["ValidateEmptyText"] = value; }
 		}
-#endif
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
-		protected override void AddAttributesToRender(HtmlTextWriter writer) {
+		protected override void AddAttributesToRender (HtmlTextWriter writer)
+		{
 			base.AddAttributesToRender (writer);
 
 			if (base.RenderUplevel) {
 				string s;
-				
-#if NET_2_0
+
 				RegisterExpandoAttribute (ClientID, "evaluationfunction", "CustomValidatorEvaluateIsValid");
 				if (ValidateEmptyText)
 					RegisterExpandoAttribute (ClientID, "validateemptytext", "true");
 				s = ClientValidationFunction;
 				if (!String.IsNullOrEmpty (s))
 					RegisterExpandoAttribute (ClientID, "clientvalidationfunction", s, true);
-#else
-				writer.AddAttribute ("evaluationfunction", "CustomValidatorEvaluateIsValid", false);
-
-				s = ClientValidationFunction;
-				if (s != String.Empty)
-					writer.AddAttribute("clientvalidationfunction", s);
-#endif
 			}
 		}
 
 		protected override bool ControlPropertiesValid ()
 		{
-			if (ControlToValidate == "")
+			if (String.IsNullOrEmpty (ControlToValidate))
 				return true;
 			return base.ControlPropertiesValid ();
 		}
 
-		protected override bool EvaluateIsValid() {
-			if (ControlToValidate.Length > 0) {
-				string value = GetControlValidationValue (ControlToValidate);
-#if NET_2_0
+		protected override bool EvaluateIsValid ()
+		{
+			string controlToValidate = ControlToValidate;
+			if (!String.IsNullOrEmpty (controlToValidate)) {
+				string value = GetControlValidationValue (controlToValidate);
 				if (String.IsNullOrEmpty (value) && !ValidateEmptyText)
 					return true;
-#endif
+
 				return OnServerValidate (value);
 			}
 			return OnServerValidate(string.Empty);
 		}
 
-		protected virtual bool OnServerValidate(string value) {
+		protected virtual bool OnServerValidate (string value)
+		{
 			ServerValidateEventHandler eh = events [serverValidateEvent] as ServerValidateEventHandler;
 			if (eh != null) {
 				ServerValidateEventArgs	e;

@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Reflection;
 using System.Collections;
 using System.Collections.Specialized;
@@ -36,8 +35,8 @@ using System.Web.UI;
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class ButtonField : ButtonFieldBase
@@ -48,7 +47,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("Raised when a Button Command is executed.")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string CommandName {
-			get { return ViewState.GetString ("CommandName", ""); }
+			get { return ViewState.GetString ("CommandName", String.Empty); }
 			set {
 				ViewState ["CommandName"] = value;
 				OnFieldChanged ();
@@ -60,7 +59,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Data")]
 		public virtual string DataTextField {
-			get { return ViewState.GetString ("DataTextField", ""); }
+			get { return ViewState.GetString ("DataTextField", String.Empty); }
 			set {
 				ViewState ["DataTextField"] = value;
 				OnFieldChanged ();
@@ -71,7 +70,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Data")]
 		public virtual string DataTextFormatString {
-			get { return ViewState.GetString ("DataTextFormatString", ""); }
+			get { return ViewState.GetString ("DataTextFormatString", String.Empty); }
 			set {
 				ViewState ["DataTextFormatString"] = value;
 				OnFieldChanged ();
@@ -84,7 +83,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[UrlPropertyAttribute]
 		public virtual string ImageUrl {
-			get { return ViewState.GetString ("ImageUrl", ""); }
+			get { return ViewState.GetString ("ImageUrl", String.Empty); }
 			set {
 				ViewState ["ImageUrl"] = value;
 				OnFieldChanged ();
@@ -96,7 +95,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string Text {
-			get { return ViewState.GetString ("Text", ""); }
+			get { return ViewState.GetString ("Text", String.Empty); }
 			set {
 				ViewState ["Text"] = value;
 				OnFieldChanged ();
@@ -111,9 +110,9 @@ namespace System.Web.UI.WebControls {
 		protected virtual string FormatDataTextValue (object value)
 		{
 			if (DataTextFormatString.Length > 0)
-				return string.Format (DataTextFormatString, value);
+				return String.Format (DataTextFormatString, value);
 			else if (value == null)
-				return string.Empty;
+				return String.Empty;
 			else
 				return value.ToString ();
 		}
@@ -132,13 +131,12 @@ namespace System.Web.UI.WebControls {
 					btn.ValidationGroup = ValidationGroup;
 				}
 				
-				if (DataTextField != "") {
+				if (!String.IsNullOrEmpty (DataTextField)) {
 					if ((rowState & DataControlRowState.Insert) == 0)
 						cell.DataBinding += new EventHandler (OnDataBindField);
 				}
 				cell.Controls.Add ((Control) btn);
-			}
-			else
+			} else
 				base.InitializeCell (cell, cellType, rowState, rowIndex);
 		}
 		
@@ -185,4 +183,3 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif

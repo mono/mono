@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Web.Security;
 using System.Collections.Generic;
@@ -125,11 +123,9 @@ namespace System.Web.UI.WebControls
 		#region Public Properties
 
 		[DefaultValue (1)]
-		public virtual int BorderPadding
-		{
+		public virtual int BorderPadding {
 			get { return ViewState.GetInt ("BorderPadding", 1); }
-			set
-			{
+			set {
 				if (value < -1)
 					throw new ArgumentOutOfRangeException ();
 				ViewState ["BorderPadding"] = value;
@@ -137,8 +133,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("")]
-		public virtual string CancelButtonImageUrl
-		{
+		public virtual string CancelButtonImageUrl {
 			get { return ViewState.GetString ("CancelButtonImageUrl", String.Empty); }
 			set { ViewState ["CancelButtonImageUrl"] = value; }
 		}
@@ -146,10 +141,8 @@ namespace System.Web.UI.WebControls
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
-		public Style CancelButtonStyle
-		{
-			get
-			{
+		public Style CancelButtonStyle {
+			get {
 				if (_cancelButtonStyle == null) {
 					_cancelButtonStyle = new Style ();
 					if (IsTrackingViewState)
@@ -160,27 +153,23 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string CancelButtonText
-		{
+		public virtual string CancelButtonText {
 			get { return ViewState.GetString ("CancelButtonText", "Cancel"); }
 			set { ViewState ["CancelButtonText"] = value; }
 		}
 
-		public virtual ButtonType CancelButtonType
-		{
+		public virtual ButtonType CancelButtonType {
 			get { return ViewState ["CancelButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["CancelButtonType"]; }
 			set { ViewState ["CancelButtonType"] = value; }
 		}
 
 		[Themeable (false)]
-		public virtual string CancelDestinationPageUrl
-		{
+		public virtual string CancelDestinationPageUrl {
 			get { return ViewState.GetString ("CancelDestinationPageUrl", String.Empty); }
 			set { ViewState ["CancelDestinationPageUrl"] = value; }
 		}
 
-		public virtual string ChangePasswordButtonImageUrl
-		{
+		public virtual string ChangePasswordButtonImageUrl {
 			get { return ViewState.GetString ("ChangePasswordButtonImageUrl", String.Empty); }
 			set { ViewState ["ChangePasswordButtonImageUrl"] = value; }
 		}
@@ -189,10 +178,8 @@ namespace System.Web.UI.WebControls
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
-		public Style ChangePasswordButtonStyle
-		{
-			get
-			{
+		public Style ChangePasswordButtonStyle {
+			get {
 				if (_changePasswordButtonStyle == null) {
 					_changePasswordButtonStyle = new Style ();
 					if (IsTrackingViewState)
@@ -203,21 +190,18 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string ChangePasswordButtonText
-		{
+		public virtual string ChangePasswordButtonText {
 			get { return ViewState.GetString ("ChangePasswordButtonText", "Change Password"); }
 			set { ViewState ["ChangePasswordButtonText"] = value; }
 		}
 
-		public virtual ButtonType ChangePasswordButtonType
-		{
+		public virtual ButtonType ChangePasswordButtonType {
 			get { return ViewState ["ChangePasswordButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["ChangePasswordButtonType"]; }
 			set { ViewState ["ChangePasswordButtonType"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string ChangePasswordFailureText
-		{
+		public virtual string ChangePasswordFailureText {
 			get { return ViewState.GetString ("ChangePasswordFailureText", "Your attempt to change passwords was unsuccessful. Please try again."); }
 			set { ViewState ["ChangePasswordFailureText"] = value; }
 		}
@@ -225,18 +209,15 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (ChangePassword))]
-		public virtual ITemplate ChangePasswordTemplate
-		{
+		public virtual ITemplate ChangePasswordTemplate {
 			get { return _changePasswordTemplate; }
 			set { _changePasswordTemplate = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public Control ChangePasswordTemplateContainer
-		{
-			get
-			{
+		public Control ChangePasswordTemplateContainer {
+			get {
 				if (_changePasswordTemplateContainer == null)
 					_changePasswordTemplateContainer = new ChangePasswordContainer (this);
 				return _changePasswordTemplateContainer;
@@ -244,8 +225,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string ChangePasswordTitleText
-		{
+		public virtual string ChangePasswordTitleText {
 			get { return ViewState.GetString ("ChangePasswordTitleText", "Change Your Password"); }
 			set { ViewState ["ChangePasswordTitleText"] = value; }
 		}
@@ -254,34 +234,29 @@ namespace System.Web.UI.WebControls
 		[Browsable (false)]
 		[Themeable (false)]
 		[Filterable (false)]
-		public virtual string ConfirmNewPassword
-		{
-			get { return _newPasswordConfirm != null ? _newPasswordConfirm : ""; }
+		public virtual string ConfirmNewPassword {
+			get { return _newPasswordConfirm != null ? _newPasswordConfirm : String.Empty; }
 		}
 
 		[Localizable (true)]
-		public virtual string ConfirmNewPasswordLabelText
-		{
+		public virtual string ConfirmNewPasswordLabelText {
 			get { return ViewState.GetString ("ConfirmNewPasswordLabelText", "Confirm New Password:"); }
 			set { ViewState ["ConfirmNewPasswordLabelText"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string ConfirmPasswordCompareErrorMessage
-		{
+		public virtual string ConfirmPasswordCompareErrorMessage {
 			get { return ViewState.GetString ("ConfirmPasswordCompareErrorMessage", "The Confirm New Password must match the New Password entry."); }
 			set { ViewState ["ConfirmPasswordCompareErrorMessage"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string ConfirmPasswordRequiredErrorMessage
-		{
+		public virtual string ConfirmPasswordRequiredErrorMessage {
 			get { return ViewState.GetString ("ConfirmPasswordRequiredErrorMessage", String.Empty); }
 			set { ViewState ["ConfirmPasswordRequiredErrorMessage"] = value; }
 		}
 
-		public virtual string ContinueButtonImageUrl
-		{
+		public virtual string ContinueButtonImageUrl {
 			get { return ViewState.GetString ("ContinueButtonImageUrl", String.Empty); }
 			set { ViewState ["ContinueButtonImageUrl"] = value; }
 		}
@@ -289,10 +264,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public Style ContinueButtonStyle
-		{
-			get
-			{
+		public Style ContinueButtonStyle {
+			get {
 				if (_continueButtonStyle == null) {
 					_continueButtonStyle = new Style ();
 					if (IsTrackingViewState)
@@ -303,40 +276,34 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string ContinueButtonText
-		{
+		public virtual string ContinueButtonText {
 			get { return ViewState.GetString ("ContinueButtonText", "Continue"); }
 			set { ViewState ["ContinueButtonText"] = value; }
 		}
 
-		public virtual ButtonType ContinueButtonType
-		{
+		public virtual ButtonType ContinueButtonType {
 			get { return ViewState ["ContinueButtonType"] == null ? ButtonType.Button : (ButtonType) ViewState ["ContinueButtonType"]; }
 			set { ViewState ["ContinueButtonType"] = value; }
 		}
 
 		[Themeable (false)]
-		public virtual string ContinueDestinationPageUrl
-		{
+		public virtual string ContinueDestinationPageUrl {
 			get { return ViewState.GetString ("ContinueDestinationPageUrl", String.Empty); }
 			set { ViewState ["ContinueDestinationPageUrl"] = value; }
 		}
 
-		public virtual string CreateUserIconUrl
-		{
+		public virtual string CreateUserIconUrl {
 			get { return ViewState.GetString ("CreateUserIconUrl", String.Empty); }
 			set { ViewState ["CreateUserIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string CreateUserText
-		{
+		public virtual string CreateUserText {
 			get { return ViewState.GetString ("CreateUserText", String.Empty); }
 			set { ViewState ["CreateUserText"] = value; }
 		}
 
-		public virtual string CreateUserUrl
-		{
+		public virtual string CreateUserUrl {
 			get { return ViewState.GetString ("CreateUserUrl", String.Empty); }
 			set { ViewState ["CreateUserUrl"] = value; }
 		}
@@ -344,33 +311,28 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Browsable (false)]
 		[Themeable (false)]
-		public virtual string CurrentPassword
-		{
-			get { return _currentPassword != null ? _currentPassword : ""; }
+		public virtual string CurrentPassword {
+			get { return _currentPassword != null ? _currentPassword : String.Empty; }
 		}
 
 		[DefaultValue (false)]
-		public virtual bool DisplayUserName
-		{
+		public virtual bool DisplayUserName {
 			get { return ViewState.GetBool ("DisplayUserName", false); }
 			set { ViewState ["DisplayUserName"] = value; }
 		}
 
-		public virtual string EditProfileIconUrl
-		{
+		public virtual string EditProfileIconUrl {
 			get { return ViewState.GetString ("EditProfileIconUrl", String.Empty); }
 			set { ViewState ["EditProfileIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string EditProfileText
-		{
+		public virtual string EditProfileText {
 			get { return ViewState.GetString ("EditProfileText", String.Empty); }
 			set { ViewState ["EditProfileText"] = value; }
 		}
 
-		public virtual string EditProfileUrl
-		{
+		public virtual string EditProfileUrl {
 			get { return ViewState.GetString ("EditProfileUrl", String.Empty); }
 			set { ViewState ["EditProfileUrl"] = value; }
 		}
@@ -378,10 +340,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle FailureTextStyle
-		{
-			get
-			{
+		public TableItemStyle FailureTextStyle {
+			get {
 				if (_failureTextStyle == null) {
 					_failureTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -391,21 +351,18 @@ namespace System.Web.UI.WebControls
 			}
 		}
 
-		public virtual string HelpPageIconUrl
-		{
+		public virtual string HelpPageIconUrl {
 			get { return ViewState.GetString ("HelpPageIconUrl", String.Empty); }
 			set { ViewState ["HelpPageIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string HelpPageText
-		{
+		public virtual string HelpPageText {
 			get { return ViewState.GetString ("HelpPageText", String.Empty); }
 			set { ViewState ["HelpPageText"] = value; }
 		}
 
-		public virtual string HelpPageUrl
-		{
+		public virtual string HelpPageUrl {
 			get { return ViewState.GetString ("HelpPageUrl", String.Empty); }
 			set { ViewState ["HelpPageUrl"] = value; }
 		}
@@ -413,10 +370,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle HyperLinkStyle
-		{
-			get
-			{
+		public TableItemStyle HyperLinkStyle {
+			get {
 				if (_hyperLinkStyle == null) {
 					_hyperLinkStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -427,8 +382,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string InstructionText
-		{
+		public virtual string InstructionText {
 			get { return ViewState.GetString ("InstructionText", String.Empty); }
 			set { ViewState ["InstructionText"] = value; }
 		}
@@ -436,10 +390,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle InstructionTextStyle
-		{
-			get
-			{
+		public TableItemStyle InstructionTextStyle {
+			get {
 				if (_instructionTextStyle == null) {
 					_instructionTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -452,10 +404,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle LabelStyle
-		{
-			get
-			{
+		public TableItemStyle LabelStyle {
+			get {
 				if (_labelStyle == null) {
 					_labelStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -469,10 +419,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public MailDefinition MailDefinition
-		{
-			get
-			{
+		public MailDefinition MailDefinition {
+			get {
 				if (_mailDefinition == null) {
 					_mailDefinition = new MailDefinition ();
 					if (IsTrackingViewState)
@@ -484,15 +432,13 @@ namespace System.Web.UI.WebControls
 
 		[Themeable (false)]
 		[DefaultValue ("")]
-		public virtual string MembershipProvider
-		{
-			get
-			{
+		public virtual string MembershipProvider {
+			get {
 				object o = ViewState ["MembershipProvider"];
-				return (o == null) ? "" : (string) o;
+				return (o == null) ? String.Empty : (string) o;
 			}
-			set
-			{
+			
+			set {
 				if (value == null)
 					ViewState.Remove ("MembershipProvider");
 				else
@@ -504,33 +450,28 @@ namespace System.Web.UI.WebControls
 
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		[Themeable (false)]
-		public virtual string NewPassword
-		{
-			get { return _newPassword != null ? _newPassword : ""; }
+		public virtual string NewPassword {
+			get { return _newPassword != null ? _newPassword : String.Empty; }
 		}
 
 		[Localizable (true)]
-		public virtual string NewPasswordLabelText
-		{
+		public virtual string NewPasswordLabelText {
 			get { return ViewState.GetString ("NewPasswordLabelText", "New Password:"); }
 			set { ViewState ["NewPasswordLabelText"] = value; }
 		}
 
-		public virtual string NewPasswordRegularExpression
-		{
+		public virtual string NewPasswordRegularExpression {
 			get { return ViewState.GetString ("NewPasswordRegularExpression", String.Empty); }
 			set { ViewState ["NewPasswordRegularExpression"] = value; }
 		}
 
-		public virtual string NewPasswordRegularExpressionErrorMessage
-		{
+		public virtual string NewPasswordRegularExpressionErrorMessage {
 			get { return ViewState.GetString ("NewPasswordRegularExpressionErrorMessage", String.Empty); }
 			set { ViewState ["NewPasswordRegularExpressionErrorMessage"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string NewPasswordRequiredErrorMessage
-		{
+		public virtual string NewPasswordRequiredErrorMessage {
 			get { return ViewState.GetString ("NewPasswordRequiredErrorMessage", "New Password is required."); }
 			set { ViewState ["NewPasswordRequiredErrorMessage"] = value; }
 		}
@@ -538,10 +479,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
-		public TableItemStyle PasswordHintStyle
-		{
-			get
-			{
+		public TableItemStyle PasswordHintStyle {
+			get {
 				if (_passwordHintStyle == null) {
 					_passwordHintStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -552,48 +491,41 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string PasswordHintText
-		{
+		public virtual string PasswordHintText {
 			get { return ViewState.GetString ("PasswordHintText", String.Empty); }
 			set { ViewState ["PasswordHintText"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string PasswordLabelText
-		{
+		public virtual string PasswordLabelText {
 			get { return ViewState.GetString ("PasswordLabelText", "Password:"); }
 			set { ViewState ["PasswordLabelText"] = value; }
 		}
 
-		public virtual string PasswordRecoveryIconUrl
-		{
+		public virtual string PasswordRecoveryIconUrl {
 			get { return ViewState.GetString ("PasswordRecoveryIconUrl", String.Empty); }
 			set { ViewState ["PasswordRecoveryIconUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string PasswordRecoveryText
-		{
+		public virtual string PasswordRecoveryText {
 			get { return ViewState.GetString ("PasswordRecoveryText", String.Empty); }
 			set { ViewState ["PasswordRecoveryText"] = value; }
 		}
 
-		public virtual string PasswordRecoveryUrl
-		{
+		public virtual string PasswordRecoveryUrl {
 			get { return ViewState.GetString ("PasswordRecoveryUrl", String.Empty); }
 			set { ViewState ["PasswordRecoveryUrl"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string PasswordRequiredErrorMessage
-		{
+		public virtual string PasswordRequiredErrorMessage {
 			get { return ViewState.GetString ("PasswordRequiredErrorMessage", String.Empty); }
 			set { ViewState ["PasswordRequiredErrorMessage"] = value; }
 		}
 
 		[Themeable (false)]
-		public virtual string SuccessPageUrl
-		{
+		public virtual string SuccessPageUrl {
 			get { return ViewState.GetString ("SuccessPageUrl", String.Empty); }
 			set { ViewState ["SuccessPageUrl"] = value; }
 		}
@@ -601,18 +533,15 @@ namespace System.Web.UI.WebControls
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[TemplateContainer (typeof (ChangePassword))]
 		[Browsable (false)]
-		public virtual ITemplate SuccessTemplate
-		{
+		public virtual ITemplate SuccessTemplate {
 			get { return _successTemplate; }
 			set { _successTemplate = value; }
 		}
 
 		[Browsable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public Control SuccessTemplateContainer
-		{
-			get
-			{
+		public Control SuccessTemplateContainer {
+			get {
 				if (_successTemplateContainer == null)
 					_successTemplateContainer = new SuccessContainer (this);
 				return _successTemplateContainer;
@@ -621,8 +550,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string SuccessText
-		{
+		public virtual string SuccessText {
 			get { return ViewState.GetString ("SuccessText", "Your password has been changed!"); }
 			set { ViewState ["SuccessText"] = value; }
 		}
@@ -630,10 +558,8 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public TableItemStyle SuccessTextStyle
-		{
-			get
-			{
+		public TableItemStyle SuccessTextStyle {
+			get {
 				if (_successTextStyle == null) {
 					_successTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -644,8 +570,7 @@ namespace System.Web.UI.WebControls
 		}
 
 		[Localizable (true)]
-		public virtual string SuccessTitleText
-		{
+		public virtual string SuccessTitleText {
 			get { return ViewState.GetString ("SuccessTitleText", "Change Password Complete"); }
 			set { ViewState ["SuccessTitleText"] = value; }
 		}
@@ -653,10 +578,8 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public Style TextBoxStyle
-		{
-			get
-			{
+		public Style TextBoxStyle {
+			get {
 				if (_textBoxStyle == null) {
 					_textBoxStyle = new Style ();
 					if (IsTrackingViewState)
@@ -669,10 +592,8 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public TableItemStyle TitleTextStyle
-		{
-			get
-			{
+		public TableItemStyle TitleTextStyle {
+			get {
 				if (_titleTextStyle == null) {
 					_titleTextStyle = new TableItemStyle ();
 					if (IsTrackingViewState)
@@ -683,28 +604,24 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValue ("")]
-		public virtual string UserName
-		{
-			get
-			{
+		public virtual string UserName {
+			get {
 				if (_username == null && HttpContext.Current.Request.IsAuthenticated)
 					_username = HttpContext.Current.User.Identity.Name;
 
-				return _username != null ? _username : "";
+				return _username != null ? _username : String.Empty;
 			}
 			set { _username = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string UserNameLabelText
-		{
+		public virtual string UserNameLabelText {
 			get { return ViewState.GetString ("UserNameLabelText", "User Name:"); }
 			set { ViewState ["UserNameLabelText"] = value; }
 		}
 
 		[Localizable (true)]
-		public virtual string UserNameRequiredErrorMessage
-		{
+		public virtual string UserNameRequiredErrorMessage {
 			get { return ViewState.GetString ("UserNameRequiredErrorMessage", "User Name is required."); }
 			set { ViewState ["UserNameRequiredErrorMessage"] = value; }
 		}
@@ -712,10 +629,8 @@ namespace System.Web.UI.WebControls
 		[NotifyParentProperty (true)]
 		[PersistenceMode (PersistenceMode.InnerProperty)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
-		public Style ValidatorTextStyle
-		{
-			get
-			{
+		public Style ValidatorTextStyle {
+			get {
 				if (_validatorTextStyle == null) {
 					_validatorTextStyle = new Style ();
 					if (IsTrackingViewState)
@@ -806,18 +721,16 @@ namespace System.Web.UI.WebControls
 			bool res = false;
 			try {
 				res = MembershipProviderInternal.ChangePassword (UserName, CurrentPassword, NewPassword);
+			} catch {
 			}
-			catch { }
 			
 			if (res) {
-
 				OnChangedPassword (args);
 				_showContinue = true;
 
 				if (_mailDefinition != null)
 					SendMail (UserName, NewPassword);
-			}
-			else {
+			} else {
 				OnChangePasswordError (EventArgs.Empty);
 				string lastError = string.Format (
 					"Password incorrect or New Password invalid. New Password length minimum: {0}. Non-alphanumeric characters required: {1}.",
@@ -870,8 +783,7 @@ namespace System.Web.UI.WebControls
 			SmtpClient smtpClient = new SmtpClient ();
 			try {
 				smtpClient.Send (message);
-			}
-			catch (Exception e) {
+			} catch (Exception e) {
 				SendMailErrorEventArgs mailArgs = new SendMailErrorEventArgs (e);
 				OnSendMailError (mailArgs);
 				if (!mailArgs.Handled)
@@ -883,15 +795,12 @@ namespace System.Web.UI.WebControls
 
 		#region Properties
 
-		protected override HtmlTextWriterTag TagKey
-		{
+		protected override HtmlTextWriterTag TagKey {
 			get { return HtmlTextWriterTag.Table; }
 		}
 
-		internal virtual MembershipProvider MembershipProviderInternal
-		{
-			get
-			{
+		internal virtual MembershipProvider MembershipProviderInternal {
+			get {
 				if (_provider == null)
 					InitMemberShipProvider ();
 
@@ -905,7 +814,8 @@ namespace System.Web.UI.WebControls
 
 		protected internal override void LoadControlState (object savedState)
 		{
-			if (savedState == null) return;
+			if (savedState == null)
+				return;
 			object [] state = (object []) savedState;
 			base.LoadControlState (state [0]);
 
@@ -921,7 +831,6 @@ namespace System.Web.UI.WebControls
 
 		protected override void LoadViewState (object savedState)
 		{
-
 			if (savedState == null)
 				return;
 
@@ -1005,7 +914,6 @@ namespace System.Web.UI.WebControls
 
 		protected override void TrackViewState ()
 		{
-
 			base.TrackViewState ();
 
 			if (_cancelButtonStyle != null)
@@ -1052,10 +960,12 @@ namespace System.Web.UI.WebControls
 					ProcessChangePasswordEvent (args);
 					return true;
 				}
+
 				if (args.CommandName == CancelButtonCommandName) {
 					ProcessCancelEvent (args);
 					return true;
 				}
+
 				if (args.CommandName == ContinueButtonCommandName) {
 					ProcessContinueEvent (args);
 					return true;
@@ -1202,30 +1112,26 @@ namespace System.Web.UI.WebControls
 			}
 
 			// Requried controls
-			public IEditableTextControl UserNameTextBox
-			{
-				get
-				{
+			public IEditableTextControl UserNameTextBox {
+				get {
 					Control c = FindControl ("UserName");
 					if (c == null)
 						throw new HttpException ("ChangePasswordTemplate does not contain an IEditableTextControl with ID UserName for the username, this is required if DisplayUserName=true.");
 					return c as IEditableTextControl;
 				}
 			}
-			public IEditableTextControl CurrentPasswordTextBox
-			{
-				get
-				{
+			
+			public IEditableTextControl CurrentPasswordTextBox {
+				get {
 					Control c = FindControl ("CurrentPassword");
 					if (c == null)
 						throw new HttpException ("ChangePasswordTemplate does not contain an IEditableTextControl with ID CurrentPassword for the current password.");
 					return c as IEditableTextControl;
 				}
 			}
-			public IEditableTextControl NewPasswordTextBox
-			{
-				get
-				{
+			
+			public IEditableTextControl NewPasswordTextBox {
+				get {
 					Control c = FindControl ("NewPassword");
 					if (c == null)
 						throw new HttpException ("ChangePasswordTemplate does not contain an IEditableTextControl with ID NewPassword for the new password.");
@@ -1234,20 +1140,19 @@ namespace System.Web.UI.WebControls
 			}
 
 			// Optional controls
-			public IEditableTextControl ConfirmNewPasswordTextBox
-			{
+			public IEditableTextControl ConfirmNewPasswordTextBox {
 				get { return FindControl ("ConfirmNewPassword") as IEditableTextControl; }
 			}
-			public Control CancelButton
-			{
+			
+			public Control CancelButton {
 				get { return FindControl ("Cancel"); }
 			}
-			public Control ChangePasswordButton
-			{
+			
+			public Control ChangePasswordButton {
 				get { return FindControl ("ChangePassword"); }
 			}
-			public ITextControl FailureTextLiteral
-			{
+			
+			public ITextControl FailureTextLiteral {
 				get { return FindControl ("FailureText") as ITextControl; }
 			}
 		}
@@ -1281,8 +1186,7 @@ namespace System.Web.UI.WebControls
 						cell1.ApplyStyle (s1);
 
 					row.Controls.Add (cell1);
-				}
-				else {
+				} else {
 					cell0.ColumnSpan = 2;
 					cell0.HorizontalAlign = HorizontalAlign.Center;
 					if (s0 != null)
@@ -1399,9 +1303,9 @@ namespace System.Web.UI.WebControls
 				// Row #5
 				if (_owner.PasswordHintText.Length > 0) {
 					table.Controls.Add (
-						CreateRow (new LiteralControl (""),
+						CreateRow (new LiteralControl (String.Empty),
 							new LiteralControl (_owner.PasswordHintText),
-							new LiteralControl (""),
+							new LiteralControl (String.Empty),
 							null, _owner.PasswordHintStyle));
 				}
 
@@ -1487,7 +1391,7 @@ namespace System.Web.UI.WebControls
 				((IButtonControl) CancelButton).Text = _owner.CancelButtonText;
 				((IButtonControl) CancelButton).CausesValidation = false;
 
-				table.Controls.Add (CreateRow (ChangePasswordButton, CancelButton, new LiteralControl (""), null, null));
+				table.Controls.Add (CreateRow (ChangePasswordButton, CancelButton, new LiteralControl (String.Empty), null, null));
 
 				// Row #10
 				TableRow linksRow = new TableRow ();
@@ -1584,6 +1488,7 @@ namespace System.Web.UI.WebControls
 			{
 				ID = "SuccessContainerID";
 			}
+
 			public Control ChangePasswordButton
 			{
 				get { return FindControl ("Continue"); }
@@ -1592,4 +1497,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

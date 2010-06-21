@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,15 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Web.UI;
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public abstract class ButtonFieldBase : DataControlField
@@ -78,7 +77,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string ValidationGroup {
-			get { return ViewState.GetString ("ValidationGroup", ""); }
+			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
 			set {
 				ViewState ["ValidationGroup"] = value;
 				OnFieldChanged ();
@@ -96,4 +95,3 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif

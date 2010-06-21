@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -30,8 +30,8 @@ using System.Collections;
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -45,14 +45,13 @@ namespace System.Web.UI.WebControls {
 
 		DataKeyCollection keycoll;
 		object source;
-#if NET_2_0
+
 		//string dataSourceId;
 		IDataSource boundDataSource = null;
 		bool initialized;
 		bool requiresDataBinding;
 		DataSourceSelectArguments selectArguments;
 		IEnumerable data;
-#endif
 
 		protected BaseDataList ()
 		{
@@ -60,13 +59,11 @@ namespace System.Web.UI.WebControls {
 
 
 		[DefaultValue ("")]
-#if NET_2_0
 		[Localizable (true)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Accessibility")]
 		public virtual string Caption {
-			get { return ViewState.GetString ("Caption", ""); }
+			get { return ViewState.GetString ("Caption", String.Empty); }
 			set {
 				if (value == null)
 					ViewState.Remove ("Caption");
@@ -86,9 +83,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (-1)]
 		[WebSysDescription("")]
 		[WebCategory("Layout")]
@@ -101,9 +95,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.CellPadding = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (0)]
 		[WebSysDescription("")]
 		[WebCategory("Layout")]
@@ -124,14 +115,12 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue ("")]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[MonoTODO ("incomplete")]
 		[WebSysDescription("")]
 		[WebCategory("Data")]
 		public virtual string DataKeyField {
-			get { return ViewState.GetString ("DataKeyField", ""); }
+			get { return ViewState.GetString ("DataKeyField", String.Empty); }
 			set {
 				if (value == null)
 					ViewState.Remove ("DataKeyField");
@@ -164,59 +153,47 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[DefaultValue ("")]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[WebSysDescription("")]
 		[WebCategory("Data")]
 		public string DataMember {
-			get { return ViewState.GetString ("DataMember", ""); }
+			get { return ViewState.GetString ("DataMember", String.Empty); }
 			set {
 				if (value == null)
 					ViewState.Remove ("DataMember");
 				else
 					ViewState ["DataMember"] = value;
-#if NET_2_0
 				OnDataPropertyChanged ();
-#endif
 			}
 		}
 
 		[Bindable (true)]
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[WebSysDescription("")]
 		[WebCategory("Data")]
-		public virtual object DataSource {
+			public virtual object DataSource {
 			get { return source; }
 			set {
 				if ((value == null) || (value is IEnumerable) || (value is IListSource)) {
-#if NET_2_0
-// FIXME - can't duplicate in a test case ? LAMESPEC ?
-// can't duplicate in a test case
-//					if ((dataSourceId != null) && (dataSourceId.Length != 0))
-//						throw new HttpException (Locale.GetText ("DataSourceID is already set."));
+					// FIXME - can't duplicate in a test case ? LAMESPEC ?
+					// can't duplicate in a test case
+					// if ((dataSourceId != null) && (dataSourceId.Length != 0))
+					//	throw new HttpException (Locale.GetText ("DataSourceID is already set."));
 
 					source = value;
 
 					OnDataPropertyChanged ();
-#else
-					source = value;
-#endif
+
 				} else {
 					string msg = Locale.GetText ("Invalid data source. This requires an object implementing {0} or {1}.",
-						"IEnumerable", "IListSource");
+								     "IEnumerable", "IListSource");
 					throw new ArgumentException (msg);
 				}
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (GridLines.Both)]
 		[WebSysDescription("")]
 		[WebCategory("Appearance")]
@@ -229,9 +206,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.GridLines = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[Category ("Layout")]
 		[DefaultValue (HorizontalAlign.NotSet)]
 		[WebSysDescription("")]
@@ -249,12 +223,12 @@ namespace System.Web.UI.WebControls {
 			get { return ViewState.GetBool ("UseAccessibleHeader", false); }
 			set { ViewState ["UseAccessibleHeader"] = value; }
 		}
-#if NET_2_0
+
 		[DefaultValue ("")]
 		[IDReferenceProperty (typeof (DataSourceControl))]
 		[Themeable (false)]
 		public virtual string DataSourceID {
-			get { return ViewState.GetString ("DataSourceID", ""); }
+			get { return ViewState.GetString ("DataSourceID", String.Empty); }
 			set {
 				// LAMESPEC ? this is documented as an HttpException in beta2
 				if (source != null)
@@ -288,7 +262,7 @@ namespace System.Web.UI.WebControls {
 				return selectArguments;
 			}
 		}
-#endif
+
 		TableStyle TableStyle {
 			// this will throw an InvalidCasException just like we need
 			get { return (TableStyle) ControlStyle; }
@@ -301,27 +275,16 @@ namespace System.Web.UI.WebControls {
 		}
 
 		// see Kothari, page 435
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void CreateChildControls ()
+		protected internal override void CreateChildControls ()
 		{
 			// We are recreating the children from viewstate
 			if (HasControls ())
 				base.Controls.Clear();
 
-#if NET_2_0
 			if (IsDataBound)
 				CreateControlHierarchy (false);
 			else if (RequiresDataBinding)
 				EnsureDataBound ();
-#else
-			// If presents, build the children from the viewstate
-			if (ViewState ["Items"] != null)
-				CreateControlHierarchy (false);
-#endif
 		}
 
 		protected abstract void CreateControlHierarchy (bool useDataSource);
@@ -346,12 +309,10 @@ namespace System.Web.UI.WebControls {
 			// Indicate that child controls have been created, preventing
 			// CreateChildControls from getting called.
 			ChildControlsCreated = true;    
-#if NET_2_0
 			RequiresDataBinding = false;
 			IsDataBound = true;
-#endif
 		}
-#if NET_2_0
+
 		protected virtual DataSourceSelectArguments CreateDataSourceSelectArguments ()
 		{
 			return DataSourceSelectArguments.Empty;
@@ -391,13 +352,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#endif
-
 		protected override void OnDataBinding (EventArgs e)
 		{
 			base.OnDataBinding (e);
 		}
-#if NET_2_0
+
 		protected virtual void OnDataPropertyChanged ()
 		{
 			if (Initialized)
@@ -412,10 +371,11 @@ namespace System.Web.UI.WebControls {
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit (e);
-			if (Page != null) {
-				Page.PreLoad += new EventHandler (OnPagePreLoad);
+			Page page = Page;
+			if (page != null) {
+				page.PreLoad += new EventHandler (OnPagePreLoad);
 
-				if (!IsViewStateEnabled && Page.IsPostBack)
+				if (!IsViewStateEnabled && page.IsPostBack)
 					RequiresDataBinding = true;
 			}
 		}
@@ -435,8 +395,9 @@ namespace System.Web.UI.WebControls {
 		
 		void Initialize ()
 		{
-			if (Page != null) {
-				if (!Page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
+			Page page = Page;
+			if (page != null) {
+				if (!page.IsPostBack || (IsViewStateEnabled && !IsDataBound))
 					RequiresDataBinding = true;
 			}
 
@@ -451,7 +412,7 @@ namespace System.Web.UI.WebControls {
 			EnsureDataBound ();
 			base.OnPreRender (e);
 		}
-#endif
+
 		protected virtual void OnSelectedIndexChanged (EventArgs e)
 		{
 			EventHandler selectedIndexChanged = (EventHandler) Events [selectedIndexChangedEvent];
@@ -461,19 +422,13 @@ namespace System.Web.UI.WebControls {
 
 		protected abstract void PrepareControlHierarchy ();
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
 			PrepareControlHierarchy ();
 			// don't call base class or RenderBegin|EndTag
 			// or we'll get an extra <span></span>
 			RenderContents (writer);
 		}
-
 
 		[WebSysDescription("")]
 		[WebCategory("Action")]
@@ -482,7 +437,6 @@ namespace System.Web.UI.WebControls {
 			remove { Events.RemoveHandler (selectedIndexChangedEvent, value); }
 		}
 
-
 		static public bool IsBindableType (Type type)
 		{
 			// I can't believe how many NRE are possible in System.Web
@@ -490,28 +444,27 @@ namespace System.Web.UI.WebControls {
 				throw new NullReferenceException ();
 
 			switch (Type.GetTypeCode (type)) {
-			case TypeCode.Boolean:
-			case TypeCode.Byte:
-			case TypeCode.SByte:
-			case TypeCode.Int16:
-			case TypeCode.UInt16:
-			case TypeCode.Int32:
-			case TypeCode.UInt32:
-			case TypeCode.Int64:
-			case TypeCode.UInt64:
-			case TypeCode.Char:
-			case TypeCode.Double:
-			case TypeCode.Single:
-			case TypeCode.DateTime:
-			case TypeCode.Decimal:
-			case TypeCode.String:
-				return true;
-			default:
-				return false;
+				case TypeCode.Boolean:
+				case TypeCode.Byte:
+				case TypeCode.SByte:
+				case TypeCode.Int16:
+				case TypeCode.UInt16:
+				case TypeCode.Int32:
+				case TypeCode.UInt32:
+				case TypeCode.Int64:
+				case TypeCode.UInt64:
+				case TypeCode.Char:
+				case TypeCode.Double:
+				case TypeCode.Single:
+				case TypeCode.DateTime:
+				case TypeCode.Decimal:
+				case TypeCode.String:
+					return true;
+				default:
+					return false;
 			}
 		}
 
-#if NET_2_0
 		void ConnectToDataSource ()
 		{
 			if (NamingContainer != null)
@@ -527,6 +480,5 @@ namespace System.Web.UI.WebControls {
 			DataSourceView dsv = boundDataSource.GetView (String.Empty);
 			dsv.DataSourceViewChanged += new EventHandler (OnDataSourceViewChanged);
 		}
-#endif
 	}
 }

@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
-//
 using System;
 using System.Globalization;
 using System.Web;
@@ -35,19 +33,11 @@ using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
-#if NET_2_0
 	internal class ChildTable : Table
-#else
-	internal class TableID : Table
-#endif
 	{
 		Control parent;
 
-#if NET_2_0
 		public ChildTable (Control parent)
-#else
-		public TableID (Control parent)
-#endif
 		{
 			this.parent = parent;
 		}
@@ -60,6 +50,3 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
-
-
-

@@ -4,7 +4,7 @@
 // Authors: Ben Maurer <bmaurer@novell.com>
 //          Chris Toshok <toshok@novell.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,20 +26,18 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[Designer ("System.Web.UI.Design.WebControls.CompositeControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public abstract class CompositeControl : WebControl, INamingContainer, ICompositeControlDesignerAccessor {
-
+	public abstract class CompositeControl : WebControl, INamingContainer, ICompositeControlDesignerAccessor
+	{
 		protected CompositeControl ()
 		{
 		}
@@ -84,4 +82,3 @@ namespace System.Web.UI.WebControls {
 	}
 }
 
-#endif

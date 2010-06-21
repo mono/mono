@@ -28,9 +28,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-namespace System.Web.UI.WebControls {
-	public enum BulletStyle {
+namespace System.Web.UI.WebControls
+{
+	public enum BulletStyle
+	{
 		NotSet,
 		Numbered,
 		LowerAlpha,
@@ -43,4 +44,3 @@ namespace System.Web.UI.WebControls {
 		CustomImage,
 	}
 }
-#endif

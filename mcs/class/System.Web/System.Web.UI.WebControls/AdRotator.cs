@@ -4,7 +4,7 @@
 // Author:
 //        Ben Maurer <bmaurer@novell.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,8 +32,8 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -41,42 +41,24 @@ namespace System.Web.UI.WebControls {
 	[DefaultEvent("AdCreated")]
 	[DefaultProperty("AdvertisementFile")]
 	[Designer("System.Web.UI.Design.WebControls.AdRotatorDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[ToolboxData("<{0}:AdRotator runat=\"server\"></{0}:AdRotator>")]
-#else
-	[ToolboxData("<{0}:AdRotator runat=\"server\" Height=\"60px\" Width=\"468px\"></{0}:AdRotator>")]
-#endif		
-	public class AdRotator :
-#if NET_2_0
-	DataBoundControl
-#else		
-	WebControl
-#endif	
+	public class AdRotator : DataBoundControl
 	{
-#if NET_2_0
+		AdCreatedEventArgs createdargs;
+		ArrayList ads = new ArrayList ();
+		string ad_file = String.Empty;
+
 		protected internal override void OnInit (EventArgs e)
 		{
 			base.OnInit(e);
 		}
-#endif
-		
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnPreRender (EventArgs eee)
+
+		protected internal override void OnPreRender (EventArgs eee)
 		{
 			Hashtable ht = null;
 			
-			if (ad_file != "" && ad_file != null) {
-				ReadAdsFromFile (
-#if NET_2_0
-					GetPhysicalFilePath (ad_file)
-#else
-					Page.MapPath (ad_file)
-#endif
-				);
+			if (!String.IsNullOrEmpty (ad_file)) {
+				ReadAdsFromFile (GetPhysicalFilePath (ad_file));
 				ht = ChooseAd ();
 			}
 
@@ -86,7 +68,6 @@ namespace System.Web.UI.WebControls {
 			
 		}
 
-#if NET_2_0
 		[MonoTODO ("Not implemented")]
 		protected internal override void PerformDataBinding (IEnumerable data)
 		{
@@ -98,16 +79,8 @@ namespace System.Web.UI.WebControls {
 		{
 			throw new NotImplementedException ();
 		}
-#endif		
 
-		AdCreatedEventArgs createdargs;
-
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void Render (HtmlTextWriter w)
+		protected internal override void Render (HtmlTextWriter w)
 		{
 			AdCreatedEventArgs e = createdargs;
 
@@ -123,7 +96,7 @@ namespace System.Web.UI.WebControls {
 			if (e.ImageUrl != null && e.ImageUrl.Length > 0)
 				w.AddAttribute (HtmlTextWriterAttribute.Src, ResolveAdUrl (e.ImageUrl));
 
-			w.AddAttribute (HtmlTextWriterAttribute.Alt, e.AlternateText == null ? "" : e.AlternateText);
+			w.AddAttribute (HtmlTextWriterAttribute.Alt, e.AlternateText == null ? String.Empty : e.AlternateText);
 			w.AddAttribute (HtmlTextWriterAttribute.Border, "0", false);
 			w.RenderBeginTag (HtmlTextWriterTag.Img);
 			w.RenderEndTag (); // img
@@ -160,16 +133,17 @@ namespace System.Web.UI.WebControls {
 			
 			int total_imp = 0;
 			int cur_imp = 0;
+			bool keywordFilterEmpty = KeywordFilter.Length == 0;
 			
 			foreach (Hashtable a in ads) {
-				if (KeywordFilter == "" || KeywordFilter == (string) a ["Keyword"])
+				if (keywordFilterEmpty || KeywordFilter == (string) a ["Keyword"])
 					total_imp += a ["Impressions"] != null ? int.Parse ((string) a ["Impressions"]) : 1;
 			}
 
 			int r = new Random ().Next (total_imp);
 
 			foreach (Hashtable a in ads) {
-				if (KeywordFilter != "" && KeywordFilter != (string) a ["Keyword"])
+				if (keywordFilterEmpty && KeywordFilter != (string) a ["Keyword"])
 					continue;
 				cur_imp += a ["Impressions"] != null ? int.Parse ((string) a ["Impressions"]) : 1;
 				
@@ -182,8 +156,6 @@ namespace System.Web.UI.WebControls {
 			
 			return null;
 		}
-
-		ArrayList ads = new ArrayList ();
 		
 		void ReadAdsFromFile (string s)
 		{
@@ -206,12 +178,9 @@ namespace System.Web.UI.WebControls {
 				ads.Add (ad);
 			}
 		}
-		
-		string ad_file = "";
 
-#if NET_2_0
+
 		[UrlProperty]
-#endif		
 		[Bindable(true)]
 		[DefaultValue("")]
 		[Editor("System.Web.UI.Design.XmlUrlEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
@@ -227,7 +196,6 @@ namespace System.Web.UI.WebControls {
 			
 		}
 
-#if NET_2_0
 		[DefaultValue ("AlternateText")]
 		[WebSysDescriptionAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
@@ -241,7 +209,6 @@ namespace System.Web.UI.WebControls {
 				throw new NotImplementedException ();
 			}
 		}
-#endif		
 		
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
@@ -252,7 +219,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue ("ImageUrl")]
 		[MonoTODO ("Not implemented")]
 		[WebSysDescriptionAttribute ("")]
@@ -266,8 +232,6 @@ namespace System.Web.UI.WebControls {
 				throw new NotImplementedException ();
 			}
 		}
-#endif		
-		
 
 		[Bindable(true)]
 		[DefaultValue("")]
@@ -275,7 +239,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategory("Behavior")]
 		public string KeywordFilter {
 			get {
-				return ViewState.GetString ("KeywordFilter", "");
+				return ViewState.GetString ("KeywordFilter", String.Empty);
 			}
 			set {
 				ViewState ["KeywordFilter"] = value;
@@ -283,7 +247,6 @@ namespace System.Web.UI.WebControls {
 			
 		}
 
-#if NET_2_0
 		[DefaultValue ("NavigateUrl")]
 		[MonoTODO ("Not implemented")]
 		[WebSysDescriptionAttribute ("")]
@@ -297,7 +260,6 @@ namespace System.Web.UI.WebControls {
 				throw new NotImplementedException ();
 			}
 		}
-#endif		
 		
 		[Bindable(true)]
 		[DefaultValue("_top")]
@@ -314,7 +276,6 @@ namespace System.Web.UI.WebControls {
 			
 		}
 
-#if NET_2_0
 		/* all these are listed in corcompare */
 		public override string UniqueID
 		{
@@ -329,7 +290,6 @@ namespace System.Web.UI.WebControls {
 				return base.TagKey;
 			}
 		}
-#endif		
 	
 		protected virtual void OnAdCreated (AdCreatedEventArgs e)
 		{

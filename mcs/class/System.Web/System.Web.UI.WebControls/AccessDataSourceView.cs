@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
@@ -37,11 +36,11 @@ using System.ComponentModel;
 using System.Data.OleDb;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class AccessDataSourceView : SqlDataSourceView {
-
+	public class AccessDataSourceView : SqlDataSourceView
+	{
 		OleDbConnection oleConnection;
 		OleDbCommand oleCommand;
 		AccessDataSource dataSource;
@@ -81,5 +80,5 @@ namespace System.Web.UI.WebControls {
 		}						
 	}	
 }
-#endif
+
 

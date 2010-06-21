@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,15 +28,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Web.UI;
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class CommandField : ButtonFieldBase
@@ -47,7 +46,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string CancelImageUrl {
-			get { return ViewState.GetString ("CancelImageUrl", ""); }
+			get { return ViewState.GetString ("CancelImageUrl", String.Empty); }
 			set {
 				ViewState ["CancelImageUrl"] = value;
 				OnFieldChanged ();
@@ -80,7 +79,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string DeleteImageUrl {
-			get { return ViewState.GetString ("DeleteImageUrl", ""); }
+			get { return ViewState.GetString ("DeleteImageUrl", String.Empty); }
 			set {
 				ViewState ["DeleteImageUrl"] = value;
 				OnFieldChanged ();
@@ -104,7 +103,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string EditImageUrl {
-			get { return ViewState.GetString ("EditImageUrl", ""); }
+			get { return ViewState.GetString ("EditImageUrl", String.Empty); }
 			set {
 				ViewState ["EditImageUrl"] = value;
 				OnFieldChanged ();
@@ -128,7 +127,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string InsertImageUrl {
-			get { return ViewState.GetString ("InsertImageUrl", ""); }
+			get { return ViewState.GetString ("InsertImageUrl", String.Empty); }
 			set {
 				ViewState ["InsertImageUrl"] = value;
 				OnFieldChanged ();
@@ -152,7 +151,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string NewImageUrl {
-			get { return ViewState.GetString ("NewImageUrl", ""); }
+			get { return ViewState.GetString ("NewImageUrl", String.Empty); }
 			set {
 				ViewState ["NewImageUrl"] = value;
 				OnFieldChanged ();
@@ -176,7 +175,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string SelectImageUrl {
-			get { return ViewState.GetString ("SelectImageUrl", ""); }
+			get { return ViewState.GetString ("SelectImageUrl", String.Empty); }
 			set {
 				ViewState ["SelectImageUrl"] = value;
 				OnFieldChanged ();
@@ -255,7 +254,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public virtual string UpdateImageUrl {
-			get { return ViewState.GetString ("UpdateImageUrl", ""); }
+			get { return ViewState.GetString ("UpdateImageUrl", String.Empty); }
 			set {
 				ViewState ["UpdateImageUrl"] = value;
 				OnFieldChanged ();
@@ -273,13 +272,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		public override void InitializeCell (DataControlFieldCell cell,
-			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
+		public override void InitializeCell (DataControlFieldCell cell, DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
 			string index = rowIndex.ToString ();
 			
-			if (cellType == DataControlCellType.DataCell)
-			{
+			if (cellType == DataControlCellType.DataCell) {
 				if ((rowState & DataControlRowState.Edit) != 0) {
 					if (ShowEditButton) {
 						cell.Controls.Add (CreateButton (UpdateText, UpdateImageUrl, DataControlCommands.UpdateCommandName, index));
@@ -377,4 +374,4 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif
+

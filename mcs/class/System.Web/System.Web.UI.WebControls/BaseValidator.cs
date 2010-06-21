@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,8 +33,8 @@ using System.Reflection;
 using System.Collections;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -46,6 +46,7 @@ namespace System.Web.UI.WebControls {
 		bool render_uplevel;
 		bool valid;
 		Color forecolor;
+		bool pre_render_called = false;
 
 		protected BaseValidator ()
 		{
@@ -55,20 +56,12 @@ namespace System.Web.UI.WebControls {
 
 		// New in NET1.1 sp1
 		[Browsable(false)]
-#if ONLY_1_1
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-#endif		
 		[EditorBrowsable(EditorBrowsableState.Never)]
 		public override string AssociatedControlID {
-			get {
-				return base.AssociatedControlID;
-			}
-			set {
-				base.AssociatedControlID = value;
-			}
+			get { return base.AssociatedControlID; }
+			set { base.AssociatedControlID = value; }
 		}
 
-#if NET_2_0
 		[Themeable (false)]
 		[DefaultValue ("")]
 		public virtual string ValidationGroup {
@@ -92,12 +85,9 @@ namespace System.Web.UI.WebControls {
 			get { return base.Text; }
 			set { base.Text = value; }
 		}
-#endif
 
-#if NET_2_0
 		[IDReferenceProperty (typeof (Control))]
 		[Themeable (false)]
-#endif
 		[TypeConverter(typeof(System.Web.UI.WebControls.ValidatedControlConverter))]
 		[DefaultValue("")]
 		[WebSysDescription ("")]
@@ -107,12 +97,7 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["ControlToValidate"] = value; }
 		}
 
-#if NET_2_0
 		[Themeable (false)]
-#endif
-#if ONLY_1_1		
-		[Bindable(true)]
-#endif		
 		[DefaultValue(ValidatorDisplay.Static)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -121,9 +106,7 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["Display"] = (int)value; }
 		}
 
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[DefaultValue(true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
@@ -137,21 +120,11 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["BaseValidatorEnabled"] = value; }
 		}
 
-#if NET_2_0
 		[Localizable (true)]
-#endif
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
-#if NET_2_0
-		public
-#else
-		public virtual
-#endif
-		string ErrorMessage {
+		public string ErrorMessage {
 			get { return ViewState.GetString ("ErrorMessage", String.Empty); }
 			set { ViewState ["ErrorMessage"] = value; }
 		}
@@ -167,18 +140,11 @@ namespace System.Web.UI.WebControls {
 
 		[Browsable(false)]
 		[DefaultValue(true)]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
 		[WebSysDescription ("")]
 		[WebCategory ("Misc")]
-#if NET_2_0
-		public
-#else
-		public virtual
-#endif
-		bool IsValid {
+		public bool IsValid {
 			get { return valid; }
 			set { valid = value; }
 		}
@@ -211,44 +177,23 @@ namespace System.Web.UI.WebControls {
 					writer.AddAttribute(HtmlTextWriterAttribute.Id, ClientID);
 
 				if (ControlToValidate != String.Empty)
-#if NET_2_0
 					RegisterExpandoAttribute (ClientID, "controltovalidate", GetControlRenderID (ControlToValidate));
-#else
-					writer.AddAttribute ("controltovalidate", GetControlRenderID (ControlToValidate));
-#endif
 
 				if (ErrorMessage != String.Empty)
-#if NET_2_0
 					RegisterExpandoAttribute (ClientID, "errormessage", ErrorMessage, true);
-#else
-					writer.AddAttribute ("errormessage", ErrorMessage);
 
-				if (Text != String.Empty)
-					writer.AddAttribute ("text", Text);
-#endif
-
-#if NET_2_0
 				if (ValidationGroup != String.Empty)
 					RegisterExpandoAttribute (ClientID, "validationGroup", ValidationGroup, true);
 
 				if (SetFocusOnError)
 					RegisterExpandoAttribute (ClientID, "focusOnError", "t");
-#endif
-				if (!IsEnabled)
-#if NET_2_0
-					RegisterExpandoAttribute (ClientID, "enabled", "False");
-#else
-					writer.AddAttribute ("enabled", "false", false);
-#endif
 
-#if NET_2_0
-				if (IsEnabled && !IsValid) {
+				bool enabled = IsEnabled;
+				if (!enabled)
+					RegisterExpandoAttribute (ClientID, "enabled", "False");
+
+				if (enabled && !IsValid)
 					RegisterExpandoAttribute (ClientID, "isvalid", "False");
-#else
-				if (!IsValid) {
-					writer.AddAttribute ("isvalid", "false", false);
-#endif
-				}
 				else {
 					if (Display == ValidatorDisplay.Static)
 						writer.AddStyleAttribute ("visibility", "hidden");
@@ -257,28 +202,25 @@ namespace System.Web.UI.WebControls {
 				}
 
 				if (Display != ValidatorDisplay.Static)
-#if NET_2_0
 					RegisterExpandoAttribute (ClientID, "display", Display.ToString ());
-#else
-					writer.AddAttribute ("display", Display.ToString());
-#endif
 			}
 
 			base.AddAttributesToRender (writer);
 		}
 
-#if NET_2_0
-		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue) {
+		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue)
+		{
 			RegisterExpandoAttribute (controlId, attributeName, attributeValue, false);
 		}
 
-		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue, bool encode) {
-			if (Page.ScriptManager != null)
-				Page.ScriptManager.RegisterExpandoAttributeExternal (this, controlId, attributeName, attributeValue, encode);
+		internal void RegisterExpandoAttribute (string controlId, string attributeName, string attributeValue, bool encode)
+		{
+			Page page = Page;
+			if (page.ScriptManager != null)
+				page.ScriptManager.RegisterExpandoAttributeExternal (this, controlId, attributeName, attributeValue, encode);
 			else
-				Page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
+				page.ClientScript.RegisterExpandoAttribute (controlId, attributeName, attributeValue, encode);
 		}
-#endif
 
 		protected void CheckControlValidationProperty (string name, string propertyName)
 		{
@@ -299,7 +241,7 @@ namespace System.Web.UI.WebControls {
 				throw new HttpException (String.Format ("ControlToValidate property of '{0}' cannot be blank.", ID));
 			}
 
-			CheckControlValidationProperty (ControlToValidate, "");
+			CheckControlValidationProperty (ControlToValidate, String.Empty);
 
 			return true;
 		}
@@ -381,32 +323,18 @@ namespace System.Web.UI.WebControls {
 			return null;
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnInit (EventArgs e)
+		protected internal override void OnInit (EventArgs e)
 		{
+			Page page = Page;
 			/* according to an msdn article, this is done here */
-			if (Page != null) {
-				Page.Validators.Add (this);
-
-#if NET_2_0
-				Page.GetValidators (ValidationGroup).Add (this);
-#endif
+			if (page != null) {
+				page.Validators.Add (this);
+				page.GetValidators (ValidationGroup).Add (this);
 			}
 			base.OnInit (e);
 		}
 
-		bool pre_render_called = false;
-
-#if NET_2_0
-		protected internal
-#else
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 
@@ -415,104 +343,64 @@ namespace System.Web.UI.WebControls {
 			ControlPropertiesValid ();
 
 			render_uplevel = DetermineRenderUplevel ();
-			if (render_uplevel) {
+			if (render_uplevel)
 				RegisterValidatorCommonScript ();
-			}
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnUnload (EventArgs e)
+		protected internal override void OnUnload (EventArgs e)
 		{
+			Page page = Page;
 			/* according to an msdn article, this is done here */
-			if (Page != null) {
-				Page.Validators.Remove (this);
-
-#if NET_2_0
-				if (ValidationGroup != "")
-					Page.GetValidators (ValidationGroup).Remove (this);
-#endif
-
+			if (page != null) {
+				page.Validators.Remove (this);
+				string validationGroup = ValidationGroup;
+				if (!String.IsNullOrEmpty (validationGroup))
+					page.GetValidators (ValidationGroup).Remove (this);
 			}
 			base.OnUnload (e);
 		}
 
 		protected void RegisterValidatorCommonScript ()
 		{
-#if NET_2_0
-			if (Page.ScriptManager != null) {
-				Page.ScriptManager.RegisterClientScriptResourceExternal (this, typeof (BaseValidator), "WebUIValidation_2.0.js");
-				Page.ScriptManager.RegisterClientScriptBlockExternal (this, typeof (BaseValidator), "ValidationInitializeScript", Page.ValidationInitializeScript, true);
-				Page.ScriptManager.RegisterOnSubmitStatementExternal (this, typeof (BaseValidator), "ValidationOnSubmitStatement", Page.ValidationOnSubmitStatement);
-				Page.ScriptManager.RegisterStartupScriptExternal (this, typeof (BaseValidator), "ValidationStartupScript", Page.ValidationStartupScript, true);
-			}
-			else
-#endif
-			if (!Page.ClientScript.IsClientScriptIncludeRegistered (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock"))
-			{
-				Page.ClientScript.RegisterClientScriptInclude (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock",
-					Page.ClientScript.GetWebResourceUrl (typeof (BaseValidator), 
-#if NET_2_0
-						"WebUIValidation_2.0.js"));
-				Page.ClientScript.RegisterClientScriptBlock (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock.Initialize", Page.ValidationInitializeScript, true);
-				Page.ClientScript.RegisterOnSubmitStatement (typeof (BaseValidator), "Mono-System.Web-ValidationOnSubmitStatement", Page.ValidationOnSubmitStatement);
-				Page.ClientScript.RegisterStartupScript (typeof (BaseValidator), "Mono-System.Web-ValidationStartupScript", Page.ValidationStartupScript, true);
-#else		
-						"WebUIValidation.js"));
-
-				Page.ClientScript.RegisterOnSubmitStatement ("Mono-System.Web-ValidationOnSubmitStatement",
-									     "if (!ValidatorOnSubmit()) return false;");
-				Page.ClientScript.RegisterStartupScript ("Mono-System.Web-ValidationStartupScript",
-									 "<script language=\"JavaScript\">\n" + 
-									 "<!--\n" + 
-									 "var Page_ValidationActive = false;\n" + 
-									 "ValidatorOnLoad();\n" +
-									 "\n" + 
-									 "function ValidatorOnSubmit() {\n" + 
-									 "        if (Page_ValidationActive) {\n" + 
-									 "                if (!ValidatorCommonOnSubmit())\n" +
-									 "                        return Page_ClientValidate ();\n" +
-									 "        }\n" + 
-									 "        return true;\n" + 
-									 "}\n" + 
-									 "// -->\n" + 
-									 "</script>\n");
-#endif
+			Page page = Page;
+			if (page != null) {
+				if (page.ScriptManager != null) {
+					page.ScriptManager.RegisterClientScriptResourceExternal (this, typeof (BaseValidator), "WebUIValidation_2.0.js");
+					page.ScriptManager.RegisterClientScriptBlockExternal (this, typeof (BaseValidator), "ValidationInitializeScript", page.ValidationInitializeScript, true);
+					page.ScriptManager.RegisterOnSubmitStatementExternal (this, typeof (BaseValidator), "ValidationOnSubmitStatement", page.ValidationOnSubmitStatement);
+					page.ScriptManager.RegisterStartupScriptExternal (this, typeof (BaseValidator), "ValidationStartupScript", page.ValidationStartupScript, true);
+				} else if (!page.ClientScript.IsClientScriptIncludeRegistered (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock")) {
+					page.ClientScript.RegisterClientScriptInclude (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock",
+										       page.ClientScript.GetWebResourceUrl (typeof (BaseValidator), "WebUIValidation_2.0.js"));
+					page.ClientScript.RegisterClientScriptBlock (typeof (BaseValidator), "Mono-System.Web-ValidationClientScriptBlock.Initialize", page.ValidationInitializeScript, true);
+					page.ClientScript.RegisterOnSubmitStatement (typeof (BaseValidator), "Mono-System.Web-ValidationOnSubmitStatement", page.ValidationOnSubmitStatement);
+					page.ClientScript.RegisterStartupScript (typeof (BaseValidator), "Mono-System.Web-ValidationStartupScript", page.ValidationStartupScript, true);
+				}
 			}
 		}
 
 		protected virtual void RegisterValidatorDeclaration ()
 		{
-#if NET_2_0
-			if (Page.ScriptManager != null) {
-				Page.ScriptManager.RegisterArrayDeclarationExternal (this, "Page_Validators", String.Concat ("document.getElementById ('", ClientID, "')"));
-				Page.ScriptManager.RegisterStartupScriptExternal (this, typeof (BaseValidator), ClientID + "DisposeScript",
-@"
+			Page page = Page;
+			if (page != null) {
+				if (page.ScriptManager != null) {
+					page.ScriptManager.RegisterArrayDeclarationExternal (this, "Page_Validators", String.Concat ("document.getElementById ('", ClientID, "')"));
+					page.ScriptManager.RegisterStartupScriptExternal (this, typeof (BaseValidator), ClientID + "DisposeScript",
+											  @"
 document.getElementById('" + ClientID + @"').dispose = function() {
     Array.remove(Page_Validators, document.getElementById('" + ClientID + @"'));
 }
 ", true);
+				} else
+					page.ClientScript.RegisterArrayDeclaration ("Page_Validators", String.Concat ("document.getElementById ('", ClientID, "')"));
 			}
-			else
-#endif
-			Page.ClientScript.RegisterArrayDeclaration ("Page_Validators",
-								    String.Concat ("document.getElementById ('", ClientID, "')"));
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
-#if NET_2_0
 			if (!IsEnabled && !EnableClientScript)
 				return;
-#endif
+
 			if (render_uplevel) {
 				/* according to an msdn article, this is done here */
 				RegisterValidatorDeclaration ();
@@ -526,17 +414,10 @@ document.getElementById('" + ClientID + @"').dispose = function() {
 			if (!pre_render_called) {
 				render_tags = true;
 				render_text = true;
-			}
-			else if (render_uplevel) {
+			} else if (render_uplevel) {
 				render_tags = true;
-#if NET_2_0
 				render_text = Display != ValidatorDisplay.None;
-#else
-				if (Display != ValidatorDisplay.None)
-					render_text = !v || Display == ValidatorDisplay.Dynamic;
-#endif
-			}
-			else {
+			} else {
 				if (Display != ValidatorDisplay.None) {
 					render_tags = !v;
 					render_text = !v;
@@ -553,28 +434,21 @@ document.getElementById('" + ClientID + @"').dispose = function() {
 				string text;
 				if (render_text) {
 					text = Text;
-					if (text == "")
+					if (String.IsNullOrEmpty (text))
 						text = ErrorMessage;
-				} else {
+				} else
 					text = "&nbsp;";
-				}
 
 				writer.Write (text);
 			}
 
 
-			if (render_tags) {
+			if (render_tags)
 				writer.RenderEndTag ();
-			}
 		}
 
 		/* the docs say "public sealed" here */
-#if NET_2_0
-		public
-#else
-		public virtual
-#endif
-		void Validate ()
+		public void Validate ()
 		{
 			if (IsEnabled && Visible)
 				IsValid = ControlPropertiesValid () && EvaluateIsValid ();
@@ -582,5 +456,4 @@ document.getElementById('" + ClientID + @"').dispose = function() {
 				IsValid = true;
 		}
 	}
-
 }

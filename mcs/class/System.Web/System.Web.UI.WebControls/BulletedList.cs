@@ -27,7 +27,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
+
 using System.IO;
 using System.Collections;
 using System.Globalization;
@@ -38,8 +38,8 @@ using System.ComponentModel.Design;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -48,10 +48,16 @@ namespace System.Web.UI.WebControls {
 	[DefaultEventAttribute ("Click")]
 	[DefaultPropertyAttribute ("BulletStyle")]
 	[SupportsEventValidation]
-	public class BulletedList : ListControl, IPostBackEventHandler {
-		
+	public class BulletedList : ListControl, IPostBackEventHandler
+	{
+		static readonly object ClickEvent = new object ();
 		PostBackOptions postBackOptions;
-
+		
+		public event BulletedListEventHandler Click {
+			add { Events.AddHandler (ClickEvent, value); }
+			remove { Events.RemoveHandler (ClickEvent, value); }
+		}
+		
 		[MonoTODO ("we are missing a new style enum, we should be using it")]
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
@@ -59,8 +65,7 @@ namespace System.Web.UI.WebControls {
 			const string ListStyleImage = "list-style-image";
 			
 			bool isNumeric = false;
-			switch (BulletStyle)
-			{
+			switch (BulletStyle) {
 				case BulletStyle.NotSet:
 					break;
 				
@@ -136,8 +141,7 @@ namespace System.Web.UI.WebControls {
 						if (Target.Length > 0)
 							writer.AddAttribute(HtmlTextWriterAttribute.Target, this.Target);
 						
-					}
-					else
+					} else
 						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
 					
 					writer.RenderBeginTag (HtmlTextWriterTag.A);
@@ -157,7 +161,8 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		PostBackOptions GetPostBackOptions (string argument) {
+		PostBackOptions GetPostBackOptions (string argument)
+		{
 			if (postBackOptions == null) {
 				postBackOptions = new PostBackOptions (this);
 				postBackOptions.ActionUrl = null;
@@ -175,17 +180,16 @@ namespace System.Web.UI.WebControls {
 		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			int idx = 0;
-#if NET_2_0
-			bool havePage = Page != null;
-#endif
+			Page page = Page;
+			ClientScriptManager scriptManager = page != null ? page.ClientScript : null;
+			
 			foreach (ListItem i in Items) {
-#if NET_2_0
-				if (havePage)
-					Page.ClientScript.RegisterForEventValidation (UniqueID, i.Value);
+				if (page != null)
+					scriptManager.RegisterForEventValidation (UniqueID, i.Value);
 
 				if (i.HasAttributes)
 					i.Attributes.AddAttributes (writer);
-#endif
+
 				writer.RenderBeginTag (HtmlTextWriterTag.Li);
 				this.RenderBulletText (i, idx ++, writer);
 				writer.RenderEndTag ();
@@ -211,8 +215,8 @@ namespace System.Web.UI.WebControls {
 			this.OnClick (new BulletedListEventArgs (int.Parse (eventArgument, Helpers.InvariantCulture)));
 		}
 			
-	    [BrowsableAttribute (false)]
-    	[EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		[BrowsableAttribute (false)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override bool AutoPostBack { 
 			get { return base.AutoPostBack; }
 			set { throw new NotSupportedException (String.Format ("This property is not supported in {0}", GetType ())); }
@@ -225,15 +229,14 @@ namespace System.Web.UI.WebControls {
 			set { throw new NotSupportedException (String.Format ("This property is not supported in {0}", GetType ())); }
 		}
 		
-	    [EditorBrowsableAttribute (EditorBrowsableState.Never)]
+		[EditorBrowsableAttribute (EditorBrowsableState.Never)]
 		public override ListItem SelectedItem {
 			get { return null; }
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Bindable (false)]
-		public override string SelectedValue
-		{
+		public override string SelectedValue {
 			get { return string.Empty; }
 			set { throw new NotSupportedException (); }
 		}
@@ -242,11 +245,11 @@ namespace System.Web.UI.WebControls {
 		[EditorAttribute ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlPropertyAttribute]
 		public virtual string BulletImageUrl {
-			get { return ViewState.GetString ("BulletImageUrl", ""); }
+			get { return ViewState.GetString ("BulletImageUrl", String.Empty); }
 			set { ViewState ["BulletImageUrl"] = value; }
 		}
 		
-	    [DefaultValueAttribute (BulletStyle.NotSet)]
+		[DefaultValueAttribute (BulletStyle.NotSet)]
 		public virtual BulletStyle BulletStyle {
 			get { return (BulletStyle) ViewState.GetInt ("BulletStyle", (int) BulletStyle.NotSet); }
 			set {
@@ -259,7 +262,7 @@ namespace System.Web.UI.WebControls {
 		
 		public override ControlCollection Controls { get { return new EmptyControlCollection (this); } }
 		
-	    [DefaultValueAttribute (BulletedListDisplayMode.Text)]
+		[DefaultValueAttribute (BulletedListDisplayMode.Text)]
 		public virtual BulletedListDisplayMode DisplayMode {
 			get { return (BulletedListDisplayMode) ViewState.GetInt ("DisplayMode", (int)BulletedListDisplayMode.Text); }
 			set {
@@ -270,12 +273,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-	    [DefaultValueAttribute (1)]
+		[DefaultValueAttribute (1)]
 		public virtual int FirstBulletNumber {
 			get { return ViewState.GetInt ("FirstBulletNumber", 1); }
 			set { ViewState ["FirstBulletNumber"] = value; }
 		}
-		
 
 		protected override HtmlTextWriterTag TagKey {
 			get {
@@ -306,22 +308,9 @@ namespace System.Web.UI.WebControls {
 		}
 
 		[EditorBrowsable (EditorBrowsableState.Never)]
-		public override string Text
-		{
-			get { return string.Empty; }
+		public override string Text {
+			get { return String.Empty; }
 			set { throw new NotSupportedException (); }
-		}
-		
-		
-		static readonly object ClickEvent = new object ();
-		public event BulletedListEventHandler Click
-		{
-			add {
-				Events.AddHandler (ClickEvent, value);
-			}
-			remove {
-				Events.RemoveHandler (ClickEvent, value);
-			}
 		}
 		
 		protected virtual void OnClick (BulletedListEventArgs e)
@@ -334,4 +323,4 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif
+

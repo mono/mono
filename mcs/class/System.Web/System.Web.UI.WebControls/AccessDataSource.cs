@@ -4,7 +4,7 @@
 // Authors:
 //   Sanjay Gupta (gsanjay@novell.com)
 //
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,24 +26,22 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.IO;
 using System.ComponentModel;
 using System.Data.Common;
 using System.Drawing;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DesignerAttribute ("System.Web.UI.Design.WebControls.AccessDataSourceDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ToolboxBitmap ("")]
-	public class AccessDataSource : SqlDataSource {
-
+	public class AccessDataSource : SqlDataSource
+	{
 		const string PROVIDER_NAME = "System.Data.OleDb";
 		const string PROVIDER_STRING = "Microsoft.Jet.OLEDB.4.0";
 
@@ -86,8 +84,8 @@ namespace System.Web.UI.WebControls {
 
 		string GetPhysicalDataFilePath ()
 		{
-			if (DataFile == null || DataFile == "")
-				return "";
+			if (String.IsNullOrEmpty (DataFile))
+				return String.Empty;
 
 			// more here?  how do we handle |DataDirectory|?
 			return HttpContext.Current.Request.MapPath (DataFile);
@@ -115,7 +113,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescriptionAttribute ("MS Office Access database file name")]
 		[EditorAttribute ("System.Web.UI.Design.MdbDataFileEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public string DataFile {
-			get { return ViewState.GetString ("DataFile", ""); }
+			get { return ViewState.GetString ("DataFile", String.Empty); }
 			set {
 				ViewState ["DataFile"] = value;
 				connectionString = null;
@@ -129,7 +127,7 @@ namespace System.Web.UI.WebControls {
 			set { throw new InvalidOperationException
 				("Setting ProviderName on an AccessDataSource is not allowed");
 			}
-		}		
+		}
 	}
 }
-#endif
+

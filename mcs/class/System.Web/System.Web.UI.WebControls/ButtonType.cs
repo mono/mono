@@ -25,7 +25,6 @@
 // Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
 namespace System.Web.UI.WebControls
 {
         public enum ButtonType
@@ -35,4 +34,4 @@ namespace System.Web.UI.WebControls
                 Link = 2,
         }
 }
-#endif
+

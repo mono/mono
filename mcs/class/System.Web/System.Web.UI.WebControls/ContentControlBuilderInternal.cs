@@ -4,7 +4,7 @@
 // Authors:
 //   Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc.
+// (C) 2005-2010 Novell, Inc.
 //
 
 //
@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Web.UI.WebControls;
@@ -40,12 +38,8 @@ namespace System.Web.UI.WebControls
 	{
 		string placeHolderID;
 		
-		public override void Init (TemplateParser parser,
-					  ControlBuilder parentBuilder,
-					  Type type,
-					  string tagName,
-					  string ID,
-					  IDictionary attribs)
+		public override void Init (TemplateParser parser, ControlBuilder parentBuilder, Type type,
+					   string tagName, string ID, IDictionary attribs)
 		{
 			base.Init (parser, parentBuilder, type, tagName, ID, attribs);
 			placeHolderID = attribs ["ContentPlaceHolderID"] as string;
@@ -59,4 +53,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

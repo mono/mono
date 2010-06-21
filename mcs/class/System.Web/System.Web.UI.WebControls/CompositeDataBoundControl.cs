@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections;
 
@@ -41,8 +39,7 @@ namespace System.Web.UI.WebControls
 		{
 		}
 
-		public override ControlCollection Controls
-		{
+		public override ControlCollection Controls {
 			get {
 				EnsureChildControls();
 				return base.Controls;
@@ -57,8 +54,7 @@ namespace System.Web.UI.WebControls
 			if (itemCount != null) {
 				object [] data = new object [(int) itemCount];
 				CreateChildControls (data, false);
-			}
-			else if (RequiresDataBinding)
+			} else if (RequiresDataBinding)
 				EnsureDataBound ();
 		}
 		
@@ -72,5 +68,3 @@ namespace System.Web.UI.WebControls
 		protected abstract int CreateChildControls (IEnumerable dataSource, bool dataBinding);
 	}
 }
-
-#endif

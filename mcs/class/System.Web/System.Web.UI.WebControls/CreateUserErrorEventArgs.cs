@@ -4,7 +4,7 @@
 // Authors:
 //   Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,11 +27,10 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
-
 using System.Web.Security;
 
-namespace System.Web.UI.WebControls {
+namespace System.Web.UI.WebControls
+{
 	public class CreateUserErrorEventArgs : EventArgs 
 	{
 		MembershipCreateStatus status;
@@ -47,4 +46,4 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif
+

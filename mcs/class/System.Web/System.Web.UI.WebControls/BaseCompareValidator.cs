@@ -4,7 +4,7 @@
 // Authors:
 //	Chris Toshok (toshok@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,49 +33,40 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public abstract class BaseCompareValidator : BaseValidator {
-
-#if NET_2_0
-		protected
-#else
-		public
-#endif
-		BaseCompareValidator ()
+	public abstract class BaseCompareValidator : BaseValidator
+	{
+		protected BaseCompareValidator ()
 		{
 		}
 
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			if (RenderUplevel) {
-#if NET_2_0
-				if (Page!=null){
+				if (Page != null) {
 					RegisterExpandoAttribute (ClientID, "type", Type.ToString ());
 
 					switch (Type) {
-					case ValidationDataType.Date:
-						DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
-						string pattern = dateTimeFormat.ShortDatePattern;
-						string dateorder = (pattern.StartsWith ("y", true, Helpers.InvariantCulture) ? "ymd" : (pattern.StartsWith ("m", true, Helpers.InvariantCulture) ? "mdy" : "dmy"));
-						RegisterExpandoAttribute (ClientID, "dateorder", dateorder);
-						RegisterExpandoAttribute (ClientID, "cutoffyear", dateTimeFormat.Calendar.TwoDigitYearMax.ToString ());
-						break;
-					case ValidationDataType.Currency:
-						NumberFormatInfo numberFormat = CultureInfo.CurrentCulture.NumberFormat;
-						RegisterExpandoAttribute (ClientID, "decimalchar", numberFormat.CurrencyDecimalSeparator, true);
-						RegisterExpandoAttribute (ClientID, "groupchar", numberFormat.CurrencyGroupSeparator, true);
-						RegisterExpandoAttribute (ClientID, "digits", numberFormat.CurrencyDecimalDigits.ToString());
-						RegisterExpandoAttribute (ClientID, "groupsize", numberFormat.CurrencyGroupSizes [0].ToString ());
-						break;
+						case ValidationDataType.Date:
+							DateTimeFormatInfo dateTimeFormat = CultureInfo.CurrentCulture.DateTimeFormat;
+							string pattern = dateTimeFormat.ShortDatePattern;
+							string dateorder = (pattern.StartsWith ("y", true, Helpers.InvariantCulture) ? "ymd" : (pattern.StartsWith ("m", true, Helpers.InvariantCulture) ? "mdy" : "dmy"));
+							RegisterExpandoAttribute (ClientID, "dateorder", dateorder);
+							RegisterExpandoAttribute (ClientID, "cutoffyear", dateTimeFormat.Calendar.TwoDigitYearMax.ToString ());
+							break;
+						case ValidationDataType.Currency:
+							NumberFormatInfo numberFormat = CultureInfo.CurrentCulture.NumberFormat;
+							RegisterExpandoAttribute (ClientID, "decimalchar", numberFormat.CurrencyDecimalSeparator, true);
+							RegisterExpandoAttribute (ClientID, "groupchar", numberFormat.CurrencyGroupSeparator, true);
+							RegisterExpandoAttribute (ClientID, "digits", numberFormat.CurrencyDecimalDigits.ToString());
+							RegisterExpandoAttribute (ClientID, "groupsize", numberFormat.CurrencyGroupSizes [0].ToString ());
+							break;
 					}
 				}
-#else
-				w.AddAttribute ("datatype", Type.ToString());
-#endif
 			}
 
 			base.AddAttributesToRender (w);
@@ -96,10 +87,7 @@ namespace System.Web.UI.WebControls {
             		return BaseCompareValidator.Convert(text, type, false, out value);
 		}
 
-		protected static bool Compare (string left,
-					       string right,
-					       ValidationCompareOperator op,
-					       ValidationDataType type)
+		protected static bool Compare (string left, string right, ValidationCompareOperator op, ValidationDataType type)
 		{
             		return BaseCompareValidator.Compare(left, false, right, false, op, type);	
 		}
@@ -134,12 +122,10 @@ namespace System.Web.UI.WebControls {
 				if (c == 'm') {
 					if (!seen_month) order.Append ("m");
 					seen_month = true;
-				}
-				else if (c == 'y') {
+				} else if (c == 'y') {
 					if (!seen_year) order.Append ("y");
 					seen_year = true;
-				}
-				else /* (c == 'd') */ {
+				} else /* (c == 'd') */ {
 					if (!seen_date) order.Append ("d");
 					seen_date = true;
 				}
@@ -150,53 +136,32 @@ namespace System.Web.UI.WebControls {
 
 		protected static int GetFullYear (int two_digit_year)
 		{
-#if NET_2_0
 			/* This is an implementation that matches the
 			 * docs on msdn, but MS doesn't seem to go by
 			 * their docs (at least in 1.0). */
 			int cutoff = CutoffYear;
 			int twodigitcutoff = cutoff % 100;
 
-			if (two_digit_year <= twodigitcutoff) {
+			if (two_digit_year <= twodigitcutoff)
 				return cutoff - twodigitcutoff + two_digit_year;
-			}
-			else {
+			else
 				return cutoff - twodigitcutoff - 100 + two_digit_year;
-			}
-#else
-			/* This is the broken implementation in 1.0 */
-			int cutoff = CutoffYear;
-			int twodigitcutoff = cutoff % 100;
-
-			return cutoff - twodigitcutoff + two_digit_year;
-#endif
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		[Themeable (false)]
-		public
-#else 
-        	internal
-#endif
-            bool CultureInvariantValues {
+		public bool CultureInvariantValues {
 			get { return ViewState.GetBool ("CultureInvariantValues", false); }
 			set { ViewState ["CultureInvariantValues"] = value; }
 		}
-
-
 		
         	protected static int CutoffYear {
-			get {
-				return CultureInfo.CurrentCulture.Calendar.TwoDigitYearMax;
-			}
+			get { return CultureInfo.CurrentCulture.Calendar.TwoDigitYearMax; }
 		}
 
 
 		[DefaultValue(ValidationDataType.String)]
-#if NET_2_0
 		[Themeable (false)]
-#endif
 		[WebSysDescription("")]
 		[WebCategory("Behavior")]
 		public ValidationDataType Type {
@@ -204,130 +169,99 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["Type"] = value; }
 		}
 
-#if NET_2_0
-		
-		public
-#else 
-        internal
-#endif 
-        static bool CanConvert (string text, 
-					       ValidationDataType type, 
-					       bool cultureInvariant)
+		public static bool CanConvert (string text, ValidationDataType type, bool cultureInvariant)
 		{
             		object value;
             		return Convert(text, type, cultureInvariant, out value);
 		}
 
-#if NET_2_0
-		protected
-#else 
-        internal
-#endif 
-        static bool Compare (string left, 
+		protected static bool Compare (string left, 
 					       bool cultureInvariantLeftText, 
 					       string right, 
 					       bool cultureInvariantRightText, 
 					       ValidationCompareOperator op, 
 					       ValidationDataType type)
 		{
-            object lo, ro;
+			object lo, ro;
 
-            if (!Convert(left, type, cultureInvariantLeftText, out lo))
-                return false;
+			if (!Convert(left, type, cultureInvariantLeftText, out lo))
+				return false;
 
-            /* DataTypeCheck is a unary operator that only
-             * depends on the lhs */
-            if (op == ValidationCompareOperator.DataTypeCheck)
-                return true;
+			/* DataTypeCheck is a unary operator that only
+			 * depends on the lhs */
+			if (op == ValidationCompareOperator.DataTypeCheck)
+				return true;
 
-            /* pretty crackladen, but if we're unable to
-             * convert the rhs to @type, the comparison
-             * succeeds */
-            if (!Convert(right, type, cultureInvariantRightText, out ro))
-                return true;
+			/* pretty crackladen, but if we're unable to
+			 * convert the rhs to @type, the comparison
+			 * succeeds */
+			if (!Convert(right, type, cultureInvariantRightText, out ro))
+				return true;
 
-            int comp = ((IComparable)lo).CompareTo((IComparable)ro);
+			int comp = ((IComparable)lo).CompareTo((IComparable)ro);
 
-            switch (op)
-            {
-                case ValidationCompareOperator.Equal:
-                    return comp == 0;
-                case ValidationCompareOperator.NotEqual:
-                    return comp != 0;
-                case ValidationCompareOperator.LessThan:
-                    return comp < 0;
-                case ValidationCompareOperator.LessThanEqual:
-                    return comp <= 0;
-                case ValidationCompareOperator.GreaterThan:
-                    return comp > 0;
-                case ValidationCompareOperator.GreaterThanEqual:
-                    return comp >= 0;
-                default:
-                    return false;
-            }
+			switch (op) {
+				case ValidationCompareOperator.Equal:
+					return comp == 0;
+				case ValidationCompareOperator.NotEqual:
+					return comp != 0;
+				case ValidationCompareOperator.LessThan:
+					return comp < 0;
+				case ValidationCompareOperator.LessThanEqual:
+					return comp <= 0;
+				case ValidationCompareOperator.GreaterThan:
+					return comp > 0;
+				case ValidationCompareOperator.GreaterThanEqual:
+					return comp >= 0;
+				default:
+					return false;
+			}
 		}
 
-#if NET_2_0
-	protected
-#else
-	internal
-#endif
-		static bool Convert (string text,
-					       ValidationDataType type,
-					       bool cultureInvariant,
-					       out object value)
+		protected static bool Convert (string text, ValidationDataType type, bool cultureInvariant,out object value)
 		{
-            try
-            {
-                switch (type)
-                {
-                    case ValidationDataType.String:
-                        value = text;
-                        return value != null;
+			try {
+				switch (type) {
+					case ValidationDataType.String:
+						value = text;
+						return value != null;
 
-                    case ValidationDataType.Integer:
-                        IFormatProvider intFormatProvider = (cultureInvariant) ? 
-                            NumberFormatInfo.InvariantInfo :
-                            NumberFormatInfo.CurrentInfo;
-                        value = Int32.Parse(text, intFormatProvider);
-                        return true;
+					case ValidationDataType.Integer:
+						IFormatProvider intFormatProvider = (cultureInvariant) ? NumberFormatInfo.InvariantInfo :
+						NumberFormatInfo.CurrentInfo;
+						value = Int32.Parse(text, intFormatProvider);
+						return true;
 
-                    case ValidationDataType.Double:
-                        IFormatProvider doubleFormatProvider = (cultureInvariant) ?
-                            NumberFormatInfo.InvariantInfo :
-                            NumberFormatInfo.CurrentInfo;
-                        value = Double.Parse(text, doubleFormatProvider);
-                        return true;
+					case ValidationDataType.Double:
+						IFormatProvider doubleFormatProvider = (cultureInvariant) ? NumberFormatInfo.InvariantInfo :
+						NumberFormatInfo.CurrentInfo;
+						value = Double.Parse(text, doubleFormatProvider);
+						return true;
 
-                    case ValidationDataType.Date:
+					case ValidationDataType.Date:
                         
-                        IFormatProvider dateFormatProvider = (cultureInvariant) ? 
-                            DateTimeFormatInfo.InvariantInfo :
-                            DateTimeFormatInfo.CurrentInfo;
+						IFormatProvider dateFormatProvider = (cultureInvariant) ? DateTimeFormatInfo.InvariantInfo :
+						DateTimeFormatInfo.CurrentInfo;
 
-                        value = DateTime.Parse(text, dateFormatProvider);
-                        return true;
+						value = DateTime.Parse(text, dateFormatProvider);
+						return true;
 
-                    case ValidationDataType.Currency:
-                        IFormatProvider currencyFormatProvider = (cultureInvariant) ?
-                            NumberFormatInfo.InvariantInfo :
-                            NumberFormatInfo.CurrentInfo;
-                        value = Decimal.Parse(text, NumberStyles.Currency, currencyFormatProvider);
-                        return true;
+					case ValidationDataType.Currency:
+						IFormatProvider currencyFormatProvider = (cultureInvariant) ? NumberFormatInfo.InvariantInfo :
+						NumberFormatInfo.CurrentInfo;
+						value = Decimal.Parse(text, NumberStyles.Currency, currencyFormatProvider);
+						return true;
 
-                    default:
-                        value = null;
-                        return false;
-                }
-            }
-            catch
-            {
-                value = null;
-                return false;
-            }
+					default:
+						value = null;
+						return false;
+				}
+			} catch {
+				value = null;
+				return false;
+			}
 		}
 	}
-
 }
 
 

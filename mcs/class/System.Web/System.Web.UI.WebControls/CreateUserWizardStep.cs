@@ -24,8 +24,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Web;
 using System.Web.UI;
@@ -42,26 +40,18 @@ namespace System.Web.UI.WebControls
 		}
 
 		[DefaultValueAttribute (false)]
-		public override bool AllowReturn
-		{
-			get {
-				return ViewState.GetBool ("AllowReturn", false);
-			}
-			set {
-				ViewState ["AllowReturn"] = value;
-			}
+		public override bool AllowReturn {
+			get { return ViewState.GetBool ("AllowReturn", false); }
+			set { ViewState ["AllowReturn"] = value; }
 		}
 
 		[LocalizableAttribute (true)]
-		public override string Title
-		{
-			get
-			{
+		public override string Title {
+			get {
 				object o = ViewState ["TitleText"];
 				return (o == null) ? Locale.GetText ("Sign Up for Your New Account") : (string) o;
 			}
-			set
-			{
+			set {
 				if (value == null)
 					ViewState.Remove ("TitleText");
 				else
@@ -72,12 +62,10 @@ namespace System.Web.UI.WebControls
 		// MSDN: If you attempt to change the StepType property to any value other than the Auto value of the WizardStepType enumeration, an 
 		// InvalidOperationException will be thrown.
 		[ThemeableAttribute (false)]
-		public override WizardStepType StepType
-		{
+		public override WizardStepType StepType {
 			get { return WizardStepType.Auto; }
 			set { throw new InvalidOperationException (); }
 		}
 	}
 }
 
-#endif

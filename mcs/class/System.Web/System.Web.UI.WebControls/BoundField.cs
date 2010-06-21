@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Web.UI;
@@ -36,8 +35,8 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Reflection;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class BoundField : DataControlField
@@ -50,12 +49,8 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual bool ApplyFormatInEditMode {
-			get {
-				return ViewState.GetBool ("ApplyFormatInEditMode", false);
-			}
-			set {
-				ViewState ["ApplyFormatInEditMode"] = value;
-			}
+			get { return ViewState.GetBool ("ApplyFormatInEditMode", false); }
+			set { ViewState ["ApplyFormatInEditMode"] = value; }
 		}
 		
 		[DefaultValueAttribute (true)]
@@ -74,7 +69,7 @@ namespace System.Web.UI.WebControls {
 		[WebCategoryAttribute ("Data")]
 		[DefaultValueAttribute ("")]
 		public virtual string DataField {
-			get { return ViewState.GetString ("DataField", ""); }
+			get { return ViewState.GetString ("DataField", String.Empty); }
 			set {
 				ViewState ["DataField"] = value;
 				OnFieldChanged ();
@@ -85,7 +80,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Data")]
 		public virtual string DataFormatString {
-			get { return ViewState.GetString ("DataFormatString", ""); }
+			get { return ViewState.GetString ("DataFormatString", String.Empty); }
 			set {
 				ViewState ["DataFormatString"] = value;
 				OnFieldChanged ();
@@ -95,8 +90,7 @@ namespace System.Web.UI.WebControls {
 		[WebSysDescription ("")]
 		[WebCategoryAttribute ("Appearance")]
 		public override string HeaderText {
-			get { return ViewState.GetString ("HeaderText", "");
-			}
+			get { return ViewState.GetString ("HeaderText", String.Empty); }
 			set {
 				ViewState["HeaderText"] = value;
 				OnFieldChanged ();
@@ -106,7 +100,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual string NullDisplayText {
-			get { return ViewState.GetString ("NullDisplayText", ""); }
+			get { return ViewState.GetString ("NullDisplayText", String.Empty); }
 			set {
 				ViewState ["NullDisplayText"] = value;
 				OnFieldChanged ();
@@ -144,13 +138,11 @@ namespace System.Web.UI.WebControls {
 					TextBox box = (TextBox) cell.Controls [0];
 					dictionary [DataField] = box.Text;
 				}
-			} else if (includeReadOnly) {
+			} else if (includeReadOnly)
 				dictionary [DataField] = cell.Text;
-			}
 		}
 
-		public override bool Initialize (bool enableSorting, 
-						 Control control)
+		public override bool Initialize (bool enableSorting, Control control)
 		{
 			return base.Initialize (enableSorting, control);
 		}
@@ -193,11 +185,9 @@ namespace System.Web.UI.WebControls {
 				if (NullDisplayText.Length == 0) {
 					encode = false;
 					res = "&nbsp;";
-				}
-				else
+				} else
 					res = NullDisplayText;
-			}
-			else if (DataFormatString.Length > 0)
+			} else if (DataFormatString.Length > 0)
 				res = string.Format (DataFormatString, value);
 			else
 				res = stringValue;
@@ -279,4 +269,4 @@ namespace System.Web.UI.WebControls {
 
 	}
 }
-#endif
+

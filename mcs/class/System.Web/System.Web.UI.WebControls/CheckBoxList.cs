@@ -4,7 +4,7 @@
 // Authors:
 //	Jackson Harper (jackson@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,8 +32,8 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -47,9 +47,6 @@ namespace System.Web.UI.WebControls {
 			Controls.Add (check_box);
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -58,9 +55,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.CellPadding = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(-1)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -69,9 +63,6 @@ namespace System.Web.UI.WebControls {
 			set { TableStyle.CellSpacing = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(0)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -84,17 +75,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(RepeatDirection.Vertical)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
 		public virtual RepeatDirection RepeatDirection {
-			get {
-				return (RepeatDirection) ViewState.GetInt ("RepeatDirection",
-						(int) RepeatDirection.Vertical);
-			}
+			get { return (RepeatDirection) ViewState.GetInt ("RepeatDirection", (int) RepeatDirection.Vertical); }
 			set {
 				if (value < RepeatDirection.Horizontal ||
 						value > RepeatDirection.Vertical)
@@ -103,17 +88,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(RepeatLayout.Table)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
 		public virtual RepeatLayout RepeatLayout {
-			get {
-				return (RepeatLayout) ViewState.GetInt ("RepeatLayout",
-						(int) RepeatLayout.Table);
-			}
+			get { return (RepeatLayout) ViewState.GetInt ("RepeatLayout", (int) RepeatLayout.Table); }
 			set {
 				if (value < RepeatLayout.Table ||
 						value > RepeatLayout.Flow)
@@ -122,17 +101,11 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue(TextAlign.Right)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public virtual TextAlign TextAlign {
-			get {
-				return (TextAlign) ViewState.GetInt ("TextAlign",
-						(int) TextAlign.Right);
-			}
+			get { return (TextAlign) ViewState.GetInt ("TextAlign", (int) TextAlign.Right); }
 			set {
 				if (value < TextAlign.Left || value > TextAlign.Right)
 					throw new ArgumentOutOfRangeException ("value");
@@ -155,36 +128,27 @@ namespace System.Web.UI.WebControls {
 			return this;
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			base.OnPreRender (e);
 
 			// Register all of the checked controls so we can
 			// find out when they are unchecked.
+			Page page = Page;
 			for (int i = 0; i < Items.Count; i++) {
 				if (Items [i].Selected) {
 					check_box.ID = i.ToString (Helpers.InvariantCulture);
-					Page.RegisterRequiresPostBack (check_box);
+					if (page != null)
+						page.RegisterRequiresPostBack (check_box);
 				}
 			}
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void Render (HtmlTextWriter writer)
+		protected internal override void Render (HtmlTextWriter writer)
 		{
-#if NET_2_0
 			if (Items.Count == 0)
 				return;
-#endif
+
 			RepeatInfo ri = new RepeatInfo ();
 			ri.RepeatColumns = RepeatColumns;
 			ri.RepeatDirection = RepeatDirection;
@@ -196,31 +160,24 @@ namespace System.Web.UI.WebControls {
 				ti = TabIndex;
 				TabIndex = 0;
 			}
-#if NET_2_0
+
 			string ak = AccessKey;
 			check_box.AccessKey = ak;
 			this.AccessKey = null;
-#endif
 
 			ri.RenderRepeater (writer, this, TableStyle, this);
 
 			if (ti != 0)
 				TabIndex = ti;
-#if NET_2_0
 			this.AccessKey = ak;
-#endif
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			if (!IsEnabled)
 				return false;
-#if NET_2_0
+
 			EnsureDataBound ();
-#endif
 			int checkbox = -1;
 
 			try {
@@ -237,9 +194,7 @@ namespace System.Web.UI.WebControls {
 			string val = postCollection [postDataKey];
 			bool ischecked = val == "on";
 			ListItem item = Items [checkbox];
-#if NET_2_0
-			if (item.Enabled)
-#endif
+			if (item.Enabled) {
 				if (ischecked && !item.Selected) {
 					item.Selected = true;
 					return true;
@@ -247,24 +202,23 @@ namespace System.Web.UI.WebControls {
 					item.Selected = false;
 					return true;
 				}
-
+			}
+			
 			return false;
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		void RaisePostDataChangedEvent ()
+		protected virtual void RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
-			if (CausesValidation)
-				Page.Validate (ValidationGroup);
-#endif
+			if (CausesValidation) {
+				Page page = Page;
+				if (page != null)
+					page.Validate (ValidationGroup);
+			}
+			
 			OnSelectedIndexChanged (EventArgs.Empty);
 		}
 
-		bool IPostBackDataHandler.LoadPostData (string postDataKey,
-							NameValueCollection postCollection)
+		bool IPostBackDataHandler.LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
 			return LoadPostData (postDataKey, postCollection);
 		}
@@ -274,85 +228,49 @@ namespace System.Web.UI.WebControls {
 			RaisePostDataChangedEvent ();
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		bool HasFooter 
-		{
-			get {
-				return false;
-			}
+		protected virtual bool HasFooter  {
+			get { return false; }
 		}
 
 		bool IRepeatInfoUser.HasFooter {
 			get { return HasFooter; }
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		bool HasHeader
-		{
-			get {
-				return false;
-			}
+		protected virtual bool HasHeader {
+			get { return false; }
 		}
 
 		bool IRepeatInfoUser.HasHeader {
 			get { return HasHeader; }
 		}
 
-
-#if NET_2_0
-		protected virtual
-#endif
-		bool HasSeparators
-		{
-			get {
-				return false;
-			}
+		protected virtual bool HasSeparators {
+			get { return false; }
 		}
 
 		bool IRepeatInfoUser.HasSeparators {
 			get { return HasSeparators; }
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		int RepeatedItemCount
-		{
-			get {
-				return Items.Count;
-			}
+		protected virtual int RepeatedItemCount {
+			get { return Items.Count; }
 		}
 
 		int IRepeatInfoUser.RepeatedItemCount {
 			get { return RepeatedItemCount; }
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		Style GetItemStyle (ListItemType itemType,
-				    int repeatIndex)
+		protected virtual Style GetItemStyle (ListItemType itemType, int repeatIndex)
 		{
 			return null;
 		}
 
-		Style IRepeatInfoUser.GetItemStyle (ListItemType itemType,
-						    int repeatIndex)
+		Style IRepeatInfoUser.GetItemStyle (ListItemType itemType, int repeatIndex)
 		{
 			return GetItemStyle (itemType, repeatIndex);
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		void RenderItem (ListItemType itemType,
-				 int repeatIndex,
-				 RepeatInfo repeatInfo,
-				 HtmlTextWriter writer)
+		protected virtual void RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
 		{
 			ListItem item = Items [repeatIndex];
 
@@ -365,30 +283,27 @@ namespace System.Web.UI.WebControls {
 				check_box.Enabled = false;
 			else
 				check_box.Enabled = item.Enabled;
-#if NET_2_0
+
 			check_box.ValidationGroup = ValidationGroup;
 			check_box.CausesValidation = CausesValidation;
 			if (check_box.HasAttributes)
 				check_box.Attributes.Clear ();
 			if (item.HasAttributes)
 				check_box.Attributes.CopyFrom (item.Attributes);
-#endif
+
 			check_box.RenderControl (writer);
 		}
 
-		void IRepeatInfoUser.RenderItem (ListItemType itemType,
-						 int repeatIndex, RepeatInfo repeatInfo,
-						 HtmlTextWriter writer)
+		void IRepeatInfoUser.RenderItem (ListItemType itemType, int repeatIndex, RepeatInfo repeatInfo, HtmlTextWriter writer)
 		{
 			RenderItem (itemType, repeatIndex, repeatInfo, writer);
 		}
-#if NET_2_0
-        protected internal override void VerifyMultiSelect()
-        {
-            //by default the ListControl will throw an exception in this method,
-            //therefor we should override the method if the class is supporting
-            //MultiSelect option.
-        }
-#endif
-    }
+
+		protected internal override void VerifyMultiSelect()
+		{
+			//by default the ListControl will throw an exception in this method,
+			//therefor we should override the method if the class is supporting
+			//MultiSelect option.
+		}
+	}
 }
