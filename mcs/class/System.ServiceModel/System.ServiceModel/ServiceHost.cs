@@ -65,7 +65,6 @@ namespace System.ServiceModel
 			get { return instance; }
 		}
 
-		[MonoTODO]
 		public ServiceEndpoint AddServiceEndpoint (
 			Type implementedContract, Binding binding, string address)
 		{
@@ -73,7 +72,6 @@ namespace System.ServiceModel
 				new Uri (address, UriKind.RelativeOrAbsolute));
 		}
 
-		[MonoTODO]
 		public ServiceEndpoint AddServiceEndpoint (
 			Type implementedContract, Binding binding, string address, Uri listenUri)
 		{
@@ -81,7 +79,6 @@ namespace System.ServiceModel
 				new Uri (address, UriKind.RelativeOrAbsolute), listenUri);
 		}
 
-		[MonoTODO]
 		public ServiceEndpoint AddServiceEndpoint (
 			Type implementedContract, Binding binding, Uri address)
 		{
@@ -89,7 +86,6 @@ namespace System.ServiceModel
 				binding, address, address);
 		}
 
-		[MonoTODO]
 		public ServiceEndpoint AddServiceEndpoint (
 			Type implementedContract, Binding binding, Uri address, Uri listenUri)
 		{
@@ -149,7 +145,6 @@ namespace System.ServiceModel
 			return (TAttr) (atts.Length > 0 ? atts [0] : Activator.CreateInstance (typeof (TAttr)));
 		}
 
-		[MonoTODO]
 		protected void InitializeDescription (Type serviceType, UriSchemeKeyedCollection baseAddresses)
 		{
 			if (!serviceType.IsClass)
@@ -160,7 +155,6 @@ namespace System.ServiceModel
 			InitializeDescription (baseAddresses);
 		}
 
-		[MonoTODO]
 		protected void InitializeDescription (object serviceInstance, UriSchemeKeyedCollection baseAddresses)
 		{
 			instance = serviceInstance;

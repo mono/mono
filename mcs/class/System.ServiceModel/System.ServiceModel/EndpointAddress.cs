@@ -185,17 +185,15 @@ namespace System.ServiceModel
 		}
 
 //#if !NET_2_1
-		[MonoTODO]
 		public static EndpointAddress ReadFrom (
 			XmlDictionaryReader reader)
 		{
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
 
-			return ReadFromInternal (null, reader);
+			return ReadFromInternal (null, reader, null, null, null, null);
 		}
 
-		[MonoTODO]
 		public static EndpointAddress ReadFrom (
 			AddressingVersion addressingVersion,
 			XmlDictionaryReader reader)
@@ -203,7 +201,6 @@ namespace System.ServiceModel
 			return ReadFrom (addressingVersion, (XmlReader) reader);
 		}
 
-		[MonoTODO]
 		public static EndpointAddress ReadFrom (
 			AddressingVersion addressingVersion,
 			XmlReader reader)
@@ -213,10 +210,9 @@ namespace System.ServiceModel
 			if (reader == null)
 				throw new ArgumentNullException ("reader");
 
-			return ReadFromInternal (addressingVersion, reader);
+			return ReadFromInternal (addressingVersion, reader, null, null, null, null);
 		}
 
-		[MonoTODO]
 		public static EndpointAddress ReadFrom (
 			XmlDictionaryReader reader,
 			XmlDictionaryString localName,
@@ -226,35 +222,41 @@ namespace System.ServiceModel
 					 reader, localName, ns);
 		}
 
-
-		[MonoTODO]
 		public static EndpointAddress ReadFrom (
 			AddressingVersion addressingVersion,
 			XmlDictionaryReader reader,
 			XmlDictionaryString localName,
 			XmlDictionaryString ns)
 		{
-			throw new NotImplementedException ();
+			// Empty localName and ns will be rejected by ReadStartElement() by feeding empty strings.
+			return ReadFromInternal (addressingVersion, reader, null, null, localName ?? XmlDictionaryString.Empty, ns ?? XmlDictionaryString.Empty);
 		}
 
-		[MonoTODO]
 		public static EndpointAddress ReadFrom (
 			AddressingVersion addressingVersion,
-			XmlReader reader, string localname, string ns)
+			XmlReader reader, string localName, string ns)
 		{
-			throw new NotImplementedException ();
+			// Empty localName and ns will be rejected by ReadStartElement() by feeding empty strings.
+			return ReadFromInternal (addressingVersion, reader, localName ?? String.Empty, ns ?? String.Empty, null, null);
 		}
 
 		private static EndpointAddress ReadFromInternal (
 			AddressingVersion addressingVersion,
-			XmlReader reader)
+			XmlReader reader, string localName, string ns,
+			XmlDictionaryString dictLocalName,
+			XmlDictionaryString dictNS)
 		{
 			reader.MoveToContent ();
 			if (reader.NodeType != XmlNodeType.Element ||
 			    reader.IsEmptyElement)
 				throw new ArgumentException ("Cannot detect appropriate WS-Addressing Address element.");
 
-			reader.Read ();
+			if (localName != null)
+				reader.ReadStartElement (localName, ns);
+			else if (dictLocalName != null)
+				((XmlDictionaryReader) reader).ReadStartElement (dictLocalName, dictNS);
+			else
+				reader.ReadStartElement ();
 			reader.MoveToContent ();
 
 			if (addressingVersion == null) {

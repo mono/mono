@@ -189,6 +189,34 @@ namespace MonoTests.System.ServiceModel
 		}
 
 		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ReadFrom4Error ()
+		{
+			
+			string xml = @"<a:ReplyTo xmlns:a='http://www.w3.org/2005/08/addressing'><a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address></a:ReplyTo>";
+			XmlReader src = XmlReader.Create (new StringReader (xml));
+			XmlDictionaryReader reader =
+				XmlDictionaryReader.CreateDictionaryReader (src);
+
+			// null localName and ns
+			EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, reader, (string) null, null);
+		}
+
+		[Test]
+		[ExpectedException (typeof (XmlException))]
+		public void ReadFrom4Error2 ()
+		{
+			
+			string xml = @"<a:ReplyTo xmlns:a='http://www.w3.org/2005/08/addressing'><a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address></a:ReplyTo>";
+			XmlReader src = XmlReader.Create (new StringReader (xml));
+			XmlDictionaryReader reader =
+				XmlDictionaryReader.CreateDictionaryReader (src);
+
+			// null localName and ns
+			EndpointAddress.ReadFrom (AddressingVersion.WSAddressing10, reader, (XmlDictionaryString) null, null);
+		}
+
+		[Test]
 		public void ReadFromE10 ()
 		{
 			string xml = @"<a:ReplyTo xmlns:a='http://www.w3.org/2005/08/addressing'><a:Address>http://www.w3.org/2005/08/addressing/anonymous</a:Address></a:ReplyTo>";

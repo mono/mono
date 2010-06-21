@@ -1,3 +1,7 @@
+2010-06-21  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* EndpointAddressTest.cs : add more ReadFrom() tests.
+
 2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostTest.cs : improved endpoint tests and enabled them.
