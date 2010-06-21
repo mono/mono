@@ -28,6 +28,7 @@
 //
 
 using System;
+using System.Diagnostics;
 using System.Collections;
 
 namespace System.Text.RegularExpressions {
@@ -123,12 +124,12 @@ namespace System.Text.RegularExpressions {
 			return (ushort)((int)op | ((int)flags & 0xff00));
 		}
 
-		internal static readonly bool trace_regex =
-#if !NET_2_1
-			Environment.GetEnvironmentVariable ("MONO_TRACE_REGEX") != null;
-#else
-			false;
-#endif
+		[Conditional ("TRACE_REGEX")]
+		static void TraceRegexp (string fmt, params object[] args)
+		{
+			Console.WriteLine (fmt, args);
+		}
+
 		public static void DecodeOp (ushort word, out OpCode op, out OpFlags flags) {
 			op = (OpCode)(word & 0x00ff);
 			flags = (OpFlags)(word & 0xff00);
@@ -153,14 +154,13 @@ namespace System.Text.RegularExpressions {
 
 		public void EmitFalse () {
 			Emit (OpCode.False);
-			if (trace_regex)
-				Console.WriteLine ("false");
+			TraceRegexp ("false");
 		}
 
 		public void EmitTrue () {
 			Emit (OpCode.True);
-			if (trace_regex)
-				Console.WriteLine ("true");
+
+			TraceRegexp ("true");
 		}
 
 		void EmitCount (int count)
@@ -168,8 +168,8 @@ namespace System.Text.RegularExpressions {
 			uint ucount = (uint) count;
 			Emit ((ushort) (ucount & 0xFFFF)); // lo 16bits
 			Emit ((ushort) (ucount >> 16));	   // hi
-			if (trace_regex)
-				Console.WriteLine ("count {0}", count);
+
+			TraceRegexp ("count {0}", count);
 		}
 
 		public void EmitCharacter (char c, bool negate, bool ignore, bool reverse) {
@@ -180,24 +180,21 @@ namespace System.Text.RegularExpressions {
 
 			Emit ((ushort)c);
 
-			if (trace_regex)
-				Console.WriteLine ("character {0} negate {1} ignore {2} reverse {3}", c, negate, ignore, reverse);
+			TraceRegexp ("character {0} negate {1} ignore {2} reverse {3}", c, negate, ignore, reverse);
 		}
 
 		public void EmitCategory (Category cat, bool negate, bool reverse) {
 			Emit (OpCode.Category, MakeFlags (negate, false, reverse, false));
 			Emit ((ushort)cat);
 
-			if (trace_regex)
-				Console.WriteLine ("category {0} negate {1} reverse {2}", cat, negate, reverse);
+			TraceRegexp ("category {0} negate {1} reverse {2}", cat, negate, reverse);
 		}
 
 		public void EmitNotCategory (Category cat, bool negate, bool reverse) {
 			Emit (OpCode.NotCategory, MakeFlags (negate, false, reverse, false));
 			Emit ((ushort)cat);
 
-			if (trace_regex)
-				Console.WriteLine ("not category {0} negate {1} reverse {2}", cat, negate, reverse);
+			TraceRegexp ("not category {0} negate {1} reverse {2}", cat, negate, reverse);
 		}
 
 		public void EmitRange (char lo, char hi, bool negate, bool ignore, bool reverse) {
@@ -205,8 +202,7 @@ namespace System.Text.RegularExpressions {
 			Emit ((ushort)lo);
 			Emit ((ushort)hi);
 
-			if (trace_regex)
-				Console.WriteLine ("char range '{0}' - '{1}' negate {2} ignore {3} reverse {4}", lo, hi, negate, ignore, reverse);
+			TraceRegexp ("char range '{0}' - '{1}' negate {2} ignore {3} reverse {4}", lo, hi, negate, ignore, reverse);
 		}
 
 		public void EmitSet (char lo, BitArray set, bool negate, bool ignore, bool reverse) {
@@ -230,8 +226,7 @@ namespace System.Text.RegularExpressions {
 				Emit (word);
 			}
 
-			if (trace_regex)
-				Console.WriteLine ("set lo '{0}' - '{1}' negate {2} ignore {3} reverse {4}", lo, set, negate, ignore, reverse);
+			TraceRegexp ("set lo '{0}' - '{1}' negate {2} ignore {3} reverse {4}", lo, set, negate, ignore, reverse);
 		}
 
 		public void EmitString (string str, bool ignore, bool reverse) {
@@ -244,32 +239,28 @@ namespace System.Text.RegularExpressions {
 			
 			for (int i = 0; i < len; ++ i)
 				Emit ((ushort)str[i]);
-			if (trace_regex)
-				Console.WriteLine ("string '{0}' ignore {1} reverse {2}", str, ignore, reverse);
+			TraceRegexp ("string '{0}' ignore {1} reverse {2}", str, ignore, reverse);
 		}
 
 		public void EmitPosition (Position pos) {
 			Emit (OpCode.Position, 0);
 			Emit ((ushort)pos);
 
-			if (trace_regex)
-				Console.WriteLine ("position {0}", pos);
+			TraceRegexp ("position {0}", pos);
 		}
 
 		public void EmitOpen (int gid) {
 			Emit (OpCode.Open);
 			Emit ((ushort)gid);
 
-			if (trace_regex)
-				Console.WriteLine ("open {0}", gid);
+			TraceRegexp ("open {0}", gid);
 		}
 
 		public void EmitClose (int gid) {
 			Emit (OpCode.Close);
 			Emit ((ushort)gid);
 
-			if (trace_regex)
-				Console.WriteLine ("close {0}", gid);
+			TraceRegexp ("close {0}", gid);
 		}
 
 	       
@@ -282,23 +273,20 @@ namespace System.Text.RegularExpressions {
 			Emit ((ushort)(capture ? 1 : 0));
 			EmitLink (tail);
 
-			if (trace_regex)
-				Console.WriteLine ("balance start gid {0} balance {1} capture {2} tail {3}", gid, balance, capture, tail);
+			TraceRegexp ("balance start gid {0} balance {1} capture {2} tail {3}", gid, balance, capture, tail);
 		}
 
 		public void EmitBalance () {
 			Emit (OpCode.Balance);
 
-			if (trace_regex)
-				Console.WriteLine ("balance");
+			TraceRegexp ("balance");
 		}
 
 		public void EmitReference (int gid, bool ignore, bool reverse) {
 			Emit (OpCode.Reference, MakeFlags (false, ignore, reverse, false));
 			Emit ((ushort)gid);
 
-			if (trace_regex)
-				Console.WriteLine ("reference gid {0} ignore {1} reverse {2}", gid, ignore, reverse);
+			TraceRegexp ("reference gid {0} ignore {1} reverse {2}", gid, ignore, reverse);
 		}
 
 		public void EmitIfDefined (int gid, LinkRef tail) {
@@ -307,8 +295,7 @@ namespace System.Text.RegularExpressions {
 			EmitLink (tail);
 			Emit ((ushort)gid);
 
-			if (trace_regex)
-				Console.WriteLine ("if defined gid {1} tail {2}", gid, tail);
+			TraceRegexp ("if defined gid {1} tail {2}", gid, tail);
 		}
 
 		public void EmitSub (LinkRef tail) {
@@ -316,8 +303,7 @@ namespace System.Text.RegularExpressions {
 			Emit (OpCode.Sub);
 			EmitLink (tail);
 	
-			if (trace_regex)
-				Console.WriteLine ("sub {0}", tail);
+			TraceRegexp ("sub {0}", tail);
 		}
 
 		public void EmitTest (LinkRef yes, LinkRef tail) {
@@ -327,8 +313,7 @@ namespace System.Text.RegularExpressions {
 			EmitLink (yes);
 			EmitLink (tail);
 
-			if (trace_regex)
-				Console.WriteLine ("test yes {0} tail {1}", yes, tail);
+			TraceRegexp ("test yes {0} tail {1}", yes, tail);
 		}
 
 		public void EmitBranch (LinkRef next) {
@@ -336,8 +321,7 @@ namespace System.Text.RegularExpressions {
 			Emit (OpCode.Branch, 0);
 			EmitLink (next);
 
-			if (trace_regex)
-				Console.WriteLine ("branch next {0}", next);
+			TraceRegexp ("branch next {0}", next);
 		}
 
 		public void EmitJump (LinkRef target) {
@@ -345,8 +329,7 @@ namespace System.Text.RegularExpressions {
 			Emit (OpCode.Jump, 0);
 			EmitLink (target);
 
-			if (trace_regex)
-				Console.WriteLine ("jmp target {0}", target);
+			TraceRegexp ("jmp target {0}", target);
 		}
 
 		public void EmitRepeat (int min, int max, bool lazy, LinkRef until) {
@@ -356,16 +339,14 @@ namespace System.Text.RegularExpressions {
 			EmitCount (min);
 			EmitCount (max);
 
-			if (trace_regex)
-				Console.WriteLine ("repeat min {0} max {1} lazy {2} until {3}", min, max, lazy, until);
+			TraceRegexp ("repeat min {0} max {1} lazy {2} until {3}", min, max, lazy, until);
 		}
 
 		public void EmitUntil (LinkRef repeat) {
 			ResolveLink (repeat);
 			Emit (OpCode.Until);
 
-			if (trace_regex)
-				Console.WriteLine ("end until {0}", repeat);
+			TraceRegexp ("end until {0}", repeat);
 		}
 
 		public void EmitFastRepeat (int min, int max, bool lazy, LinkRef tail) {
@@ -375,8 +356,7 @@ namespace System.Text.RegularExpressions {
 			EmitCount (min);
 			EmitCount (max);
 
-			if (trace_regex)
-				Console.WriteLine ("repeat-fast min {0} max {1} lazy {2} tail {3}", min, max, lazy, tail);
+			TraceRegexp ("repeat-fast min {0} max {1} lazy {2} tail {3}", min, max, lazy, tail);
 		}
 
 		public void EmitIn (LinkRef tail) {
@@ -384,8 +364,7 @@ namespace System.Text.RegularExpressions {
 			Emit (OpCode.In);
 			EmitLink (tail);
 	
-			if (trace_regex)
-				Console.WriteLine ("in tail {0}", tail);
+			TraceRegexp ("in tail {0}", tail);
 		}
 
 		public void EmitAnchor (bool reverse, int offset, LinkRef tail) {
@@ -394,8 +373,7 @@ namespace System.Text.RegularExpressions {
 			EmitLink (tail);
 			Emit ((ushort)offset);
 
-			if (trace_regex)
-				Console.WriteLine ("anchor reverse {0} offset {1} tail {2}", reverse, offset, tail);
+			TraceRegexp ("anchor reverse {0} offset {1} tail {2}", reverse, offset, tail);
 		}
 
 		public void EmitInfo (int count, int min, int max) {
@@ -404,8 +382,7 @@ namespace System.Text.RegularExpressions {
 			EmitCount (min);
 			EmitCount (max);
 
-			if (trace_regex)
-				Console.WriteLine ("info group count {0} match_min {1} match_max {2}", count, min, max);
+			TraceRegexp ("info group count {0} match_min {1} match_max {2}", count, min, max);
 		}
 
 		public LinkRef NewLink () {

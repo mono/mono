@@ -1,5 +1,10 @@
 2010-06-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* compiler.cs: Use conditional compilation to enable
+	tracing to avoid code bloat.
+
+2010-06-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* parser.cs: Handle repetition of position assertions.
 
 	Fixes #610587.
