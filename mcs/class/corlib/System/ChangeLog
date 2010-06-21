@@ -1,3 +1,10 @@
+2010-06-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* Type.cs (StructLayoutAttribute): This raises on v4.
+
+	* MonoType.cs (StructLayoutAttribute): Implement this
+	under v4.
+
 2010-06-21  Jb Evain  <jbevain@novell.com>
 
 	* TimeSpan.cs: add the net_4_0 parsing code in Moonlight.

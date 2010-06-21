@@ -1580,29 +1580,38 @@ namespace System {
 
 		public virtual StructLayoutAttribute StructLayoutAttribute {
 			get {
-				LayoutKind kind;
-
-				if (IsLayoutSequential)
-					kind = LayoutKind.Sequential;
-				else if (IsExplicitLayout)
-					kind = LayoutKind.Explicit;
-				else
-					kind = LayoutKind.Auto;
-
-				StructLayoutAttribute attr = new StructLayoutAttribute (kind);
-
-				if (IsUnicodeClass)
-					attr.CharSet = CharSet.Unicode;
-				else if (IsAnsiClass)
-					attr.CharSet = CharSet.Ansi;
-				else
-					attr.CharSet = CharSet.Auto;
-
-				if (kind != LayoutKind.Auto)
-					GetPacking (out attr.Pack, out attr.Size);
-
-				return attr;
+#if NET_4_0
+				throw CreateNIE ();
+#else
+				return GetStructLayoutAttribute ();
+#endif
 			}
+		}
+		
+		internal StructLayoutAttribute GetStructLayoutAttribute ()
+		{
+			LayoutKind kind;
+
+			if (IsLayoutSequential)
+				kind = LayoutKind.Sequential;
+			else if (IsExplicitLayout)
+				kind = LayoutKind.Explicit;
+			else
+				kind = LayoutKind.Auto;
+
+			StructLayoutAttribute attr = new StructLayoutAttribute (kind);
+
+			if (IsUnicodeClass)
+				attr.CharSet = CharSet.Unicode;
+			else if (IsAnsiClass)
+				attr.CharSet = CharSet.Ansi;
+			else
+				attr.CharSet = CharSet.Auto;
+
+			if (kind != LayoutKind.Auto)
+				GetPacking (out attr.Pack, out attr.Size);
+
+			return attr;
 		}
 
 		internal object[] GetPseudoCustomAttributes ()
