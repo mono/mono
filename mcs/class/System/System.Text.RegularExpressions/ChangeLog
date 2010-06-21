@@ -1,3 +1,9 @@
+2010-06-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* compiler.cs: Add new internal flag to switch on regexp tracing.
+	The code is a statc readonly variable so the JIT can eliminate
+	all tracing code during normal runs.
+
 2010-03-20  Miguel de Icaza  <miguel@novell.com>
 
 	* RxInterpreter.cs: Removed warnings.
