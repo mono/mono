@@ -5,6 +5,11 @@
 	  new <summary/> values to be inserted into the index.{opts.ext}
 	  files, instead of the index files being "stale".  Fixes #573121.
 
+2010-04-16  Jonathan Pryor <jpryor@novell.com>
+
+	* Mono.Documentation/monodocer.cs: Use Int64 instead of UInt64 for
+	  enum values, so that we can properly capture negative values.
+
 2010-02-28  Jonathan Pryor <jpryor@novell.com>
 
 	* Mono.Documentation/webdoc.cs: Allow .source files to be provided to
