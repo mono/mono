@@ -255,7 +255,7 @@ namespace System.Web.UI.WebControls {
 			radio.Checked = item.Selected;
 			radio.ValueAttribute = item.Value;
 			radio.AutoPostBack = AutoPostBack;
-			radio.Enabled = Enabled;
+			radio.Enabled = IsEnabled;
 			radio.TabIndex = tabIndex;
 #if NET_2_0
 			radio.ValidationGroup = ValidationGroup;

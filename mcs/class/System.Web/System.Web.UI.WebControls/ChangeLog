@@ -1,3 +1,13 @@
+2010-06-21  Marek Habersack  <mhabersack@novell.com>
+
+	* BaseValidator.cs, BulletedList.cs, Calendar.cs, CheckBox.cs,
+	CheckBoxList.cs, DataGrid.cs, DropDownList.cs, GridView.cs,
+	HyperLink.cs, ImageButton.cs, LinkButton.cs, ListBox.cs,
+	ListControl.cs, Menu.cs, RadioButton.cs, RadioButtonList.cs,
+	RepeatInfo.cs, Repeater.cs, TextBox.cs, TreeView.cs,
+	ValidationSummary.cs, WebControl.cs: use WebControl.IsEnabled
+	instead of Enabled wherever necessary.
+
 2010-06-16  Marek Habersack  <mhabersack@novell.com>
 
 	* FormView.cs: row values must be retrieved with inclusion of

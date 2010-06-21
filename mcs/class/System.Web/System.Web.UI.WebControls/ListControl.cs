@@ -408,8 +408,9 @@ namespace System.Web.UI.WebControls {
 		{
 			base.OnPreRender (e);
 #if NET_2_0
-			if (Page != null && Enabled)
-				Page.RegisterEnabledControl (this);
+			Page page = Page;
+			if (page != null && IsEnabled)
+				page.RegisterEnabledControl (this);
 #endif
 		}
 

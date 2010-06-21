@@ -59,7 +59,7 @@ namespace System.Web.UI.WebControls {
 #if NET_2_0
 			AddDisplayStyleAttribute (w);
 #endif
-			if (!Enabled)
+			if (!IsEnabled)
 				return;
 			// add attributes - only if they're not empty
 			string t = Target;

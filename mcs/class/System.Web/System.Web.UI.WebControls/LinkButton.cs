@@ -60,9 +60,11 @@ namespace System.Web.UI.WebControls {
 	
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
-			if (Page != null)
-				Page.VerifyRenderingInServerForm (this);
+			Page page = Page;
+			if (page != null)
+				page.VerifyRenderingInServerForm (this);
 
+			bool enabled = IsEnabled;
 #if NET_2_0
 			string onclick = OnClientClick;
 			onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
@@ -73,26 +75,26 @@ namespace System.Web.UI.WebControls {
 
 			if (onclick.Length > 0)
 				w.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick);
-
-			if (Enabled && Page != null) {
+			
+			if (enabled && page != null) {
 				PostBackOptions options = GetPostBackOptions ();
-				string href = Page.ClientScript.GetPostBackEventReference (options, true);
+				string href = page.ClientScript.GetPostBackEventReference (options, true);
 				w.AddAttribute (HtmlTextWriterAttribute.Href, href);
 			}
 			base.AddAttributesToRender (w);
 			AddDisplayStyleAttribute (w);
 #else
 			base.AddAttributesToRender (w);
-			if (Page == null || !Enabled)
+			if (page == null || !enabled)
 				return;
 			
-			if (CausesValidation && Page.AreValidatorsUplevel ()) {
-				ClientScriptManager csm = new ClientScriptManager (Page);
+			if (CausesValidation && page.AreValidatorsUplevel ()) {
+				ClientScriptManager csm = new ClientScriptManager (page);
 				w.AddAttribute (HtmlTextWriterAttribute.Href,
 						String.Concat ("javascript:{if (typeof(Page_ClientValidate) == 'function') Page_ClientValidate(); ",
 							       csm.GetPostBackEventReference (this, String.Empty), ";}"));
 			} else {
-				w.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackClientHyperlink (this, ""));
+				w.AddAttribute (HtmlTextWriterAttribute.Href, page.ClientScript.GetPostBackClientHyperlink (this, String.Empty));
 			}
 #endif
 		}

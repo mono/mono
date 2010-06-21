@@ -371,8 +371,9 @@ namespace System.Web.UI.WebControls {
 #endif		
 		override void OnPreRender (EventArgs e)
 		{
-			if (Page != null && Enabled)
-				Page.RegisterRequiresPostBack (this);
+			Page page = Page;
+			if (page != null && IsEnabled)
+				page.RegisterRequiresPostBack (this);
 		}
 
 		[WebSysDescription ("")]

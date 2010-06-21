@@ -131,9 +131,9 @@ namespace System.Web.UI.WebControls {
 					break;
 
 				case BulletedListDisplayMode.HyperLink:
-					if (Enabled && item.Enabled) {
+					if (IsEnabled && item.Enabled) {
 						writer.AddAttribute (HtmlTextWriterAttribute.Href, item.Value);
-						if (Target != "")
+						if (Target.Length > 0)
 							writer.AddAttribute(HtmlTextWriterAttribute.Target, this.Target);
 						
 					}
@@ -146,7 +146,7 @@ namespace System.Web.UI.WebControls {
 					break;
 
 				case BulletedListDisplayMode.LinkButton:
-					if (Enabled && item.Enabled)
+					if (IsEnabled && item.Enabled)
 						writer.AddAttribute (HtmlTextWriterAttribute.Href, Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (index.ToString (Helpers.InvariantCulture)), true));
 					else
 						writer.AddAttribute (HtmlTextWriterAttribute.Disabled, "disabled", false);
@@ -301,7 +301,7 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[TypeConverter (typeof (TargetConverter))]
 		public virtual string Target {
-			get { return ViewState.GetString ("Target", ""); }
+			get { return ViewState.GetString ("Target", String.Empty); }
 			set { ViewState ["Target"] = value; }
 		}
 

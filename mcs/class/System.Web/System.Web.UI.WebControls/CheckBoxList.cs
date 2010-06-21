@@ -361,7 +361,7 @@ namespace System.Web.UI.WebControls {
 			check_box.AutoPostBack = AutoPostBack;
 			check_box.Checked = item.Selected;
 			check_box.TextAlign = TextAlign;
-			if (!Enabled)
+			if (!IsEnabled)
 				check_box.Enabled = false;
 			else
 				check_box.Enabled = item.Enabled;

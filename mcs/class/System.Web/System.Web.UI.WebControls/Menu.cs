@@ -903,7 +903,7 @@ namespace System.Web.UI.WebControls
 		protected internal virtual void RaisePostBackEvent (string eventArgument)
 		{
 			ValidateEvent (UniqueID, eventArgument);
-			if (!Enabled)
+			if (!IsEnabled)
 				return;
 
 			EnsureChildControls();
