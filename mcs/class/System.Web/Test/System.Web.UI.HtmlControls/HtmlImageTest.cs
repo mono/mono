@@ -143,7 +143,7 @@ namespace MonoTests.System.Web.UI.HtmlControls {
 			Assert.AreEqual (6, img.Attributes.Count, "Attributes.Count");
 
 			HtmlTextWriter writer = img.GetWriter ();
-			Assert.AreEqual (" src=\"*5&lt;&amp;*\" align=\"*1*\" alt=\"*2*\" border=\"3\" height=\"4\" width=\"6\" /", writer.InnerWriter.ToString ());
+			Assert.AreEqual (" src=\"*5<&*\" align=\"*1*\" alt=\"*2*\" border=\"3\" height=\"4\" width=\"6\" /", writer.InnerWriter.ToString ());
 		}
 	}
 }

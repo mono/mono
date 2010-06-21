@@ -1,3 +1,7 @@
+2010-06-21  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlImageTest.cs: fixed an invalid test.
+
 2009-07-06  Raja R Harinath  <harinath@hurrynot.org>
 
 	* HtmlFormTest.cs: Derive from SystemWebTestShim.Page to make

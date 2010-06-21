@@ -9,11 +9,12 @@ namespace MonoTests.Common
 
 	static class AssertExtensions
 	{
+#if NET_2_0
 		public static void Throws<ET> (AssertThrowsDelegate code, string message)
 		{
 			Throws (typeof (ET), code, message);
 		}
-
+#endif
 		public static void Throws (Type exceptionType, AssertThrowsDelegate code, string message)
 		{
 			if (code == null)

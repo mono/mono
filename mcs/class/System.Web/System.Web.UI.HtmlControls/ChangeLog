@@ -1,3 +1,8 @@
+2010-06-21  Marek Habersack  <mhabersack@novell.com>
+
+	* HtmlControl.cs: PreProcessRelativeReference deos not
+	atribute-encode the attribute value. Fixes bug #596430
+
 2009-12-22  Marek Habersack  <mhabersack@novell.com>
 
 	* HtmlForm.cs: RenderChildren is slightly more efficient now.
