@@ -1,5 +1,9 @@
 2010-06-21  Jb Evain  <jbevain@novell.com>
 
+	* CultureNotFoundException.cs: add it to Moonlight.
+
+2010-06-21  Jb Evain  <jbevain@novell.com>
+
 	* TimeSpanStyles.cs: add to Moonlight.
 
 2010-04-19  Zoltan Varga  <vargaz@gmail.com>
