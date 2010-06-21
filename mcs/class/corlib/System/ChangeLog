@@ -1,3 +1,8 @@
+2010-06-21  Jb Evain  <jbevain@novell.com>
+
+	* Array.cs: implement IStructuralComparable and IStructuralEquatable
+	on moonlight as well.
+
 2010-06-16  Miguel de Icaza  <miguel@novell.com>
 
 	* Random.cs: Do not call Math.Abs blindly when we get an int
