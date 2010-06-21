@@ -346,8 +346,9 @@ namespace System.ServiceModel.Dispatcher
 
 			public void Setup (TimeSpan openTimeout)
 			{
-				if (owner.Listener.State != CommunicationState.Opened)
-					owner.Listener.Open (openTimeout);
+				if (owner.Listener.State != CommunicationState.Created)
+					throw new InvalidOperationException ("Tried to open the channel listener which is bound to ChannelDispatcher, but it is not at Created state");
+				owner.Listener.Open (openTimeout);
 
 				// It is tested at Open(), but strangely it is not instantiated at this point.
 				foreach (var ed in owner.Endpoints)
