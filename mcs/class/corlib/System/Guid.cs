@@ -660,7 +660,7 @@ namespace System {
 			return !( a.Equals (b) );
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public static Guid Parse (string input)
 		{
 			Guid guid;

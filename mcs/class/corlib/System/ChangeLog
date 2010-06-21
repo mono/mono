@@ -1,5 +1,10 @@
 2010-06-21  Jb Evain  <jbevain@novell.com>
 
+	* Guid.cs: bring Parse/ParseExact/TryParse/TryParseExact in
+	Moonlight as well.
+
+2010-06-21  Jb Evain  <jbevain@novell.com>
+
 	* TypeAccessException.cs: TypeAccessException is part of moonlight 4.
 
 2010-06-21  Jb Evain  <jbevain@novell.com>
