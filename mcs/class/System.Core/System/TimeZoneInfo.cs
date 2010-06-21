@@ -135,6 +135,7 @@ namespace System
 #endif
 		private AdjustmentRule [] adjustmentRules;
 
+#if !NET_2_1
 		static RegistryKey timeZoneKey = null;
 		static bool timeZoneKeySet = false;
 		static RegistryKey TimeZoneKey {
@@ -151,6 +152,7 @@ namespace System
 				return timeZoneKey;
 			}
 		}
+#endif
 
 		public static void ClearCachedData ()
 		{
@@ -309,6 +311,7 @@ namespace System
 			//FIXME: this method should check for cached values in systemTimeZones
 			if (id == null)
 				throw new ArgumentNullException ("id");
+#if !NET_2_1
 			if (TimeZoneKey != null)
 			{
 				RegistryKey key = TimeZoneKey.OpenSubKey (id, false);
@@ -316,6 +319,7 @@ namespace System
 					throw new TimeZoneNotFoundException ();
 				return FromRegistryKey(id, key);
 			}
+#endif
 #if LIBC	
 			string filepath = Path.Combine (TimeZoneDirectory, id);
 			return FindSystemTimeZoneByFileName (id, filepath);
@@ -348,6 +352,7 @@ namespace System
 		}
 #endif
 
+#if !NET_2_1
 		private static TimeZoneInfo FromRegistryKey (string id, RegistryKey key)
 		{
 			byte [] reg_tzi = (byte []) key.GetValue ("TZI");
@@ -451,6 +456,7 @@ namespace System
 				start_date, end_date, daylight_delta,
 				start_transition_time, end_transition_time));
 		}
+#endif
 
 		public static TimeZoneInfo FromSerializedString (string source)
 		{
@@ -505,35 +511,36 @@ namespace System
 		{
 			if (systemTimeZones == null) {
 				systemTimeZones = new List<TimeZoneInfo> ();
+#if !NET_2_1
 				if (TimeZoneKey != null) {
 					foreach (string id in TimeZoneKey.GetSubKeyNames ()) {
 						try {
 							systemTimeZones.Add (FindSystemTimeZoneById (id));
 						} catch {}
 					}
+
+					return new ReadOnlyCollection<TimeZoneInfo> (systemTimeZones);
 				}
+#endif
 #if LIBC
-				else {
-					string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
-					foreach (string continent in continents) {
-						try {
-							foreach (string zonepath in Directory.GetFiles (Path.Combine (TimeZoneDirectory, continent))) {
-								try {
-									string id = String.Format ("{0}/{1}", continent, Path.GetFileName (zonepath));
-									systemTimeZones.Add (FindSystemTimeZoneById (id));
-								} catch (ArgumentNullException) {
-								} catch (TimeZoneNotFoundException) {
-								} catch (InvalidTimeZoneException) {
-								} catch (Exception) {
-									throw;
-								}
+				string[] continents = new string [] {"Africa", "America", "Antarctica", "Arctic", "Asia", "Atlantic", "Brazil", "Canada", "Chile", "Europe", "Indian", "Mexico", "Mideast", "Pacific", "US"};
+				foreach (string continent in continents) {
+					try {
+						foreach (string zonepath in Directory.GetFiles (Path.Combine (TimeZoneDirectory, continent))) {
+							try {
+								string id = String.Format ("{0}/{1}", continent, Path.GetFileName (zonepath));
+								systemTimeZones.Add (FindSystemTimeZoneById (id));
+							} catch (ArgumentNullException) {
+							} catch (TimeZoneNotFoundException) {
+							} catch (InvalidTimeZoneException) {
+							} catch (Exception) {
+								throw;
 							}
-						} catch {}
-					}
+						}
+					} catch {}
 				}
 #else
-				else
-					throw new NotImplementedException ("This method is not implemented for this platform");
+				throw new NotImplementedException ("This method is not implemented for this platform");
 #endif
 			}
 			return new ReadOnlyCollection<TimeZoneInfo> (systemTimeZones);

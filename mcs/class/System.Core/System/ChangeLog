@@ -1,3 +1,7 @@
+2010-06-21  Jb Evain  <jbevain@novell.com>
+
+	* TimeZoneInfo.cs: fix the moonlight and monotouch build.
+
 2010-06-18  Vincent Povirk <madewokherd@gmail.com>  
 
 	* TimeZoneInfo.cs: Applied patch from Vincent Povirk that adds
