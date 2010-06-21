@@ -1,3 +1,12 @@
+2010-06-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* object-internals.h: Map new PropertyBuilder fields.
+
+	* reflection.c (property_encode_signature): Emit an instance
+	signature if property's callconv is hasthis.
+
+	* appdomain.c: Bump corlib version.
+
 2010-06-20  Jb Evain  <jbevain@novell.com>
 
 	* metadata-verify.c: do not consider the assembly invalid if it
