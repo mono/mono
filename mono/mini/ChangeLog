@@ -1,5 +1,7 @@
 2010-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* exceptions-x86.c (mono_arch_find_jit_info_ext): Adjust eip in the lmf case too.
+
 	* exceptions-x86.c: Add a resume_unwind trampoline for LLVM.
 
 	* mini-llvm.c (exception_cb): For nested clauses, add the same try range to the
