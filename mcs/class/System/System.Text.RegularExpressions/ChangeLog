@@ -1,3 +1,11 @@
+2010-06-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* parser.cs: Handle repetition of position assertions.
+
+	Fixes #610587.
+
+	Backport of r159287.
+
 2009-09-07  Raja R Harinath  <harinath@hurrynot.org>
 
 	* Regex.cs (Escape, Unescape): Add null checks.
