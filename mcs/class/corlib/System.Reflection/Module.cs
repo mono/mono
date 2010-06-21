@@ -48,7 +48,7 @@ namespace System.Reflection {
 	[Serializable]
 	[ClassInterfaceAttribute (ClassInterfaceType.None)]
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 	public abstract class Module : ISerializable, ICustomAttributeProvider, _Module {
 #else
 	public partial class Module : ISerializable, ICustomAttributeProvider, _Module {
@@ -75,7 +75,7 @@ namespace System.Reflection {
 		}
 
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		protected
 #else
 		internal
@@ -290,7 +290,7 @@ namespace System.Reflection {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 
 		public virtual Assembly Assembly {
 			get { throw CreateNIE (); }

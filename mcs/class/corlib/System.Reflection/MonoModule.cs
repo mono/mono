@@ -38,7 +38,7 @@ using System.Security.Permissions;
 
 namespace System.Reflection {
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Module))]
 	[Serializable]
@@ -49,7 +49,7 @@ namespace System.Reflection {
 #endif
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Assembly Assembly {
@@ -57,7 +57,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		// Note: we do not ask for PathDiscovery because no path is returned here.
@@ -67,7 +67,7 @@ namespace System.Reflection {
 		}
 	
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		string ScopeName {
@@ -75,7 +75,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		int MDStreamVersion {
@@ -87,7 +87,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Guid ModuleVersionId {
@@ -96,7 +96,7 @@ namespace System.Reflection {
 			}
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -113,7 +113,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		bool IsResource()
@@ -121,7 +121,7 @@ namespace System.Reflection {
 			return is_resource;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -136,7 +136,7 @@ namespace System.Reflection {
 			return (Type[])filtered.ToArray (typeof(Type));
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -146,7 +146,7 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, inherit);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -156,7 +156,7 @@ namespace System.Reflection {
 			return MonoCustomAttrs.GetCustomAttributes (this, attributeType, inherit);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -170,7 +170,7 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetField (name, bindingAttr) : null;
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -184,7 +184,7 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetFields (bindingFlags) : new FieldInfo [0];
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -193,7 +193,7 @@ namespace System.Reflection {
 			get { return get_MetadataToken (this); }
 		}
 		protected
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #else
 		virtual
@@ -212,7 +212,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		MethodInfo[] GetMethods (BindingFlags bindingFlags) {
@@ -223,7 +223,7 @@ namespace System.Reflection {
 			return (globalType != null) ? globalType.GetMethods (bindingFlags) : new MethodInfo [0];
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -232,7 +232,7 @@ namespace System.Reflection {
 			ModuleHandle.GetPEKind (out peKind, out machine);
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -246,7 +246,7 @@ namespace System.Reflection {
 			return assembly.InternalGetType (this, className, throwOnError, ignoreCase);
 		}
 	
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -257,7 +257,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		FieldInfo ResolveField (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
@@ -271,7 +271,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		MemberInfo ResolveMember (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
@@ -286,7 +286,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		MethodBase ResolveMethod (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
@@ -300,7 +300,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		string ResolveString (int metadataToken) {
@@ -314,7 +314,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Type ResolveType (int metadataToken, Type [] genericTypeArguments, Type [] genericMethodArguments) {
@@ -328,7 +328,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		byte[] ResolveSignature (int metadataToken) {
@@ -358,7 +358,7 @@ namespace System.Reflection {
 		}
 #endif
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override
 #else
 		public virtual
@@ -368,7 +368,7 @@ namespace System.Reflection {
 			return InternalGetTypes ();
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override IList<CustomAttributeData> GetCustomAttributesData () {
 			return CustomAttributeData.GetCustomAttributes (this);
 		}

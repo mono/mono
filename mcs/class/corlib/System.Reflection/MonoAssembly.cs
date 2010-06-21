@@ -35,7 +35,7 @@ using System.Reflection.Emit;
 
 namespace System.Reflection {
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 	[ComVisible (true)]
 	[ComDefaultInterfaceAttribute (typeof (_Assembly))]
 	[Serializable]
@@ -45,7 +45,7 @@ namespace System.Reflection {
 	public partial class Assembly {
 #endif
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Type GetType (string name, bool throwOnError, bool ignoreCase)
@@ -57,7 +57,7 @@ namespace System.Reflection {
 			throw new ArgumentException ("name", "Name cannot be empty");
 
 			res = InternalGetType (null, name, throwOnError, ignoreCase);
-#if !NET_4_0
+#if !(NET_4_0 || MOONLIGHT)
 			if (res is TypeBuilder) {
 				if (throwOnError)
 					throw new TypeLoadException (string.Format ("Could not load type '{0}' from assembly '{1}'", name, this));
@@ -68,7 +68,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Module GetModule (String name)
@@ -88,7 +88,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		AssemblyName[] GetReferencedAssemblies () {
@@ -96,7 +96,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Module[] GetModules (bool getResourceModules) {
@@ -115,7 +115,7 @@ namespace System.Reflection {
 
 		[MonoTODO ("Always returns the same as GetModules")]
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Module[] GetLoadedModules (bool getResourceModules)
@@ -124,7 +124,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Assembly GetSatelliteAssembly (CultureInfo culture)
@@ -133,7 +133,7 @@ namespace System.Reflection {
 		}
 
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Assembly GetSatelliteAssembly (CultureInfo culture, Version version)
@@ -144,7 +144,7 @@ namespace System.Reflection {
 		//FIXME remove GetManifestModule under v4, it's a v2 artifact
 		[ComVisible (false)]
 		public
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		override
 #endif
 		Module ManifestModule {
