@@ -221,6 +221,7 @@ System/TimeZoneNotFoundException.cs
 System/TimeoutException.cs
 ../../build/common/MonoTODOAttribute.cs
 System/Type.cs
+System/TypeAccessException.cs
 System/TypeCode.cs
 System/TypedReference.cs
 System/TypeInitializationException.cs
