@@ -1774,7 +1774,7 @@ namespace Mono.CSharp {
 					new MemberAccess (new This (f.Location), f.Name), new NullLiteral (loc), loc)),
 					new Invocation (new MemberAccess (
 						new MemberAccess (new This (f.Location), f.Name), "ToString"), null),
-					new StringConstant (string.Empty, loc));
+					new StringConstant (string.Empty, loc), loc);
 
 				if (rs_equals == null) {
 					rs_equals = field_equal;

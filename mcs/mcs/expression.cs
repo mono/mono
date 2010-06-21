@@ -4144,12 +4144,12 @@ namespace Mono.CSharp {
 	public class Conditional : Expression {
 		Expression expr, true_expr, false_expr;
 
-		public Conditional (BooleanExpression expr, Expression true_expr, Expression false_expr)
+		public Conditional (BooleanExpression expr, Expression true_expr, Expression false_expr, Location loc)
 		{
 			this.expr = expr;
 			this.true_expr = true_expr;
 			this.false_expr = false_expr;
-			this.loc = expr.Location;
+			this.loc = loc;
 		}
 
 		public Expression Expr {

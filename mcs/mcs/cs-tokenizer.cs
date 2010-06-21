@@ -18,6 +18,7 @@ using System.Collections.Generic;
 using System.IO;
 using System.Globalization;
 using System.Reflection;
+using System.Diagnostics;
 
 namespace Mono.CSharp
 {
@@ -120,12 +121,10 @@ namespace Mono.CSharp
 			//
 			// Used for token not required by expression evaluator
 			//
-			public static LocatedToken CreateOptional (int row, int col)
+			[Conditional ("FULL_AST")]
+			public static void CreateOptional (int row, int col, ref object token)
 			{
-#if false
-				return Create (row, col);
-#endif
-				return null;
+				token = Create (row, col);
 			}
 			
 			public static void Initialize ()
@@ -2582,7 +2581,7 @@ namespace Mono.CSharp
 			while ((c = get_char ()) != -1) {
 				switch (c) {
 				case '\t':
-					col = ((col + tab_size) / tab_size) * tab_size;
+					col = ((col - 1 + tab_size) / tab_size) * tab_size;
 					continue;
 
 				case ' ':
@@ -2656,7 +2655,7 @@ namespace Mono.CSharp
 						return Token.OPEN_BRACKET_EXPR;
 					}
 				case ']':
-					val = LocatedToken.CreateOptional (ref_line, col);
+					LocatedToken.CreateOptional (ref_line, col, ref val);
 					return Token.CLOSE_BRACKET;
 				case '(':
 					val = LocatedToken.Create (ref_line, col);
@@ -2704,13 +2703,13 @@ namespace Mono.CSharp
 
 					return Token.OPEN_PARENS;
 				case ')':
-					val = LocatedToken.CreateOptional (ref_line, col);
+					LocatedToken.CreateOptional (ref_line, col, ref val);
 					return Token.CLOSE_PARENS;
 				case ',':
-					val = LocatedToken.CreateOptional (ref_line, col);
+					LocatedToken.CreateOptional (ref_line, col, ref val);
 					return Token.COMMA;
 				case ';':
-					val = LocatedToken.CreateOptional (ref_line, col);
+					LocatedToken.CreateOptional (ref_line, col, ref val);
 					return Token.SEMICOLON;
 				case '~':
 					val = LocatedToken.Create (ref_line, col);
@@ -2956,7 +2955,7 @@ namespace Mono.CSharp
 					if (d >= '0' && d <= '9')
 						return is_number (c);
 
-					val = LocatedToken.CreateOptional (ref_line, col);
+					LocatedToken.CreateOptional (ref_line, col, ref val);
 					return Token.DOT;
 				
 				case '#':

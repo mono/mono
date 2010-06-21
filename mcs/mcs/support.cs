@@ -39,7 +39,7 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
+	public class Tuple<T1, T2> : IEquatable<Tuple<T1, T2>>
 	{
 		public Tuple (T1 item1, T2 item2)
 		{

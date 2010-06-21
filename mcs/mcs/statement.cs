@@ -4331,7 +4331,7 @@ namespace Mono.CSharp {
 						new Binary (Binary.Operator.Equality, e, new NullLiteral (loc), loc),
 						new Binary (Binary.Operator.Equality, new MemberAccess (e, "Length"), new IntConstant (0, loc), loc), loc)),
 							new NullPointer (loc),
-							converted);
+							converted, loc);
 
 					converted = converted.Resolve (ec);					
 

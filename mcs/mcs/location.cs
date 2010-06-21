@@ -4,6 +4,7 @@
 // Author:
 //   Miguel de Icaza
 //   Atsushi Enomoto  <atsushi@ximian.com>
+//   Marek Safar (marek.safar@gmail.com)
 //
 // Copyright 2001 Ximian, Inc.
 // Copyright 2005 Novell, Inc.
@@ -13,6 +14,8 @@ using System;
 using System.IO;
 using System.Collections.Generic;
 using Mono.CompilerServices.SymbolWriter;
+using System.Diagnostics;
+using System.Linq;
 
 namespace Mono.CSharp {
 	/// <summary>
@@ -460,6 +463,73 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 					return null;
 				return (CompilationUnit) source_list [index - 1];
 			}
+		}
+	}
+
+	//
+	// A bag of additional locations to support full ast tree
+	//
+	public class LocationsBag
+	{
+		// TODO: Could introduce explicit members when Location[] becomes too confusing
+		public class MemberLocations
+		{
+			public readonly IList<Tuple<Modifiers, Location>> Modifiers;
+			public readonly Location[] Locations;
+
+			public MemberLocations (IList<Tuple<Modifiers, Location>> mods, Location[] locs)
+			{
+				Modifiers = mods;
+				Locations = locs;
+			}
+		}
+
+		Dictionary<object, Location[]> simple_locs = new Dictionary<object, Location[]> (ReferenceEquality<object>.Default);
+		Dictionary<MemberCore, MemberLocations> member_locs = new Dictionary<MemberCore, MemberLocations> (ReferenceEquality<MemberCore>.Default);
+
+		[Conditional ("FULL_AST")]
+		public void AddLocation (object element, params Location[] locations)
+		{
+			simple_locs.Add (element, locations);
+		}
+
+		[Conditional ("FULL_AST")]
+		public void AddStatement (object element, params Location[] locations)
+		{
+			if (locations.Length == 0)
+				throw new ArgumentException ("Statement is missing semicolon location");
+
+			simple_locs.Add (element, locations);
+		}
+
+		[Conditional ("FULL_AST")]
+		public void AddMember (MemberCore member, IList<Tuple<Modifiers, Location>> modLocations, params Location[] locations)
+		{
+			member_locs.Add (member, new MemberLocations (modLocations, locations));
+		}
+
+		[Conditional ("FULL_AST")]
+		public void AppendTo (object existing, params Location[] locations)
+		{
+			Location[] locs;
+			if (simple_locs.TryGetValue (existing, out locs)) {
+				simple_locs [existing].Concat (locations);
+				return;
+			}
+		}
+
+		public Location[] GetLocations (object element)
+		{
+			Location[] found;
+			simple_locs.TryGetValue (element, out found);
+			return found;
+		}
+
+		public MemberLocations GetMemberLocation (MemberCore element)
+		{
+			MemberLocations found;
+			member_locs.TryGetValue (element, out found);
+			return found;
 		}
 	}
 }
