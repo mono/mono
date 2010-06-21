@@ -1,3 +1,7 @@
+2010-06-21  Jb Evain  <jbevain@novell.com>
+
+	* TimeSpanStyles.cs: add to Moonlight.
+
 2010-04-19  Zoltan Varga  <vargaz@gmail.com>
 
 	* CompareInfo.cs (IndexOf): Return startIndex instead of 0 for empty strings.
