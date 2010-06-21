@@ -315,6 +315,7 @@ System.Globalization/CharUnicodeInfo.cs
 System.Globalization/CompareInfo.cs
 System.Globalization/CompareOptions.cs
 System.Globalization/CultureInfo.cs
+System.Globalization/CultureNotFoundException.cs
 System.Globalization/DateTimeFormatInfo.cs
 System.Globalization/DateTimeStyles.cs
 System.Globalization/DaylightTime.cs
