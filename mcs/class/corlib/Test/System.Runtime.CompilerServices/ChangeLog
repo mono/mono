@@ -1,3 +1,7 @@
+2010-06-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* ConditionalWeakTableTest.cs: Make test more resilient.
+
 2010-06-18 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* ConditionalWeakTableTest.cs: Fix another test.

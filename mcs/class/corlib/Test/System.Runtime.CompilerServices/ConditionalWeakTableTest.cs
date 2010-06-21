@@ -424,9 +424,11 @@ namespace MonoTests.System.Runtime.CompilerServices {
 			th.Start ();
 			th.Join ();
 			GC.Collect ();
+			GC.Collect ();
+
+			Assert.AreEqual (0, reachable, "#1");
 		}
 
-		Assert.AreEqual (0, reachable, "#1");
 		GC.Collect ();
 		GC.Collect ();
 		lock (_lock2) { Monitor.Wait (_lock2, 1000); }
