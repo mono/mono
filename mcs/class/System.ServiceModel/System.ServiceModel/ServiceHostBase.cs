@@ -118,7 +118,6 @@ namespace System.ServiceModel
 			private set;
 		}
 
-		[MonoTODO]
 		public ServiceCredentials Credentials {
 			get { return credentials; }
 		}
@@ -131,7 +130,6 @@ namespace System.ServiceModel
 			get { return contracts; }
 		}
 
-		[MonoTODO]
 		public IExtensionCollection<ServiceHostBase> Extensions {
 			get {
 				if (extensions == null)
@@ -525,95 +523,11 @@ namespace System.ServiceModel
 		{
 			Close ();
 		}
-
-		/*
-		class SyncMethodInvoker : IOperationInvoker
-		{
-			readonly MethodInfo _methodInfo;
-			public SyncMethodInvoker (MethodInfo methodInfo) {
-				_methodInfo = methodInfo;
-			}
-			
-			#region IOperationInvoker Members
-
-			public bool IsSynchronous {
-				get { return true; }
-			}
-
-			public object [] AllocateParameters () {
-				return new object [_methodInfo.GetParameters ().Length];
-			}
-
-			public object Invoke (object instance, object [] parameters)
-            {
-				return _methodInfo.Invoke (instance, parameters);
-			}
-
-			public IAsyncResult InvokeBegin (object instance, object [] inputs, AsyncCallback callback, object state) {
-				throw new NotSupportedException ();
-			}
-
-			public object InvokeEnd (object instance, out object [] outputs, IAsyncResult result) {
-				throw new NotSupportedException ();
-			}
-
-			#endregion
-		}
-
-		class AsyncMethodInvoker : IOperationInvoker
-		{
-			readonly MethodInfo _beginMethodInfo, _endMethodInfo;
-			public AsyncMethodInvoker (MethodInfo beginMethodInfo, MethodInfo endMethodInfo) {
-				_beginMethodInfo = beginMethodInfo;
-				_endMethodInfo = endMethodInfo;
-			}
-
-			#region IOperationInvoker Members
-
-			public bool IsSynchronous {
-				get { return false; }
-			}
-
-			public object [] AllocateParameters () {
-				return new object [_beginMethodInfo.GetParameters ().Length - 2 + _endMethodInfo.GetParameters().Length-1];
-			}
-
-			public object Invoke (object instance, object [] parameters) {
-				throw new NotImplementedException ("Can't invoke async method synchronously");
-				//BUGBUG: need to differentiate between input and output parameters.
-				IAsyncResult asyncResult = InvokeBegin(instance, parameters, delegate(IAsyncResult ignore) { }, null);
-				asyncResult.AsyncWaitHandle.WaitOne();
-				return InvokeEnd(instance, out parameters, asyncResult);
-			}
-
-			public IAsyncResult InvokeBegin (object instance, object [] inputs, AsyncCallback callback, object state) {
-				if (inputs.Length + 2 != _beginMethodInfo.GetParameters ().Length)
-					throw new ArgumentException ("Wrong number of input parameters");
-				object [] fullargs = new object [_beginMethodInfo.GetParameters ().Length];
-				Array.Copy (inputs, fullargs, inputs.Length);
-				fullargs [inputs.Length] = callback;
-				fullargs [inputs.Length + 1] = state;
-				return (IAsyncResult) _beginMethodInfo.Invoke (instance, fullargs);
-			}
-
-			public object InvokeEnd (object instance, out object [] outputs, IAsyncResult asyncResult) {
-				outputs = new object [_endMethodInfo.GetParameters ().Length - 1];
-				object [] fullargs = new object [_endMethodInfo.GetParameters ().Length];
-				fullargs [outputs.Length] = asyncResult;
-				object result = _endMethodInfo.Invoke (instance, fullargs);
-				Array.Copy (fullargs, outputs, outputs.Length);
-				return result;
-			}
-
-			#endregion
-		}
-		*/
 	}
 
 	/// <summary>
 	///  Builds ChannelDispatchers as appropriate to service the service endpoints. 
 	/// </summary>
-	/// <remarks>Will re-use ChannelDispatchers when two endpoint uris are the same</remarks>
 	partial class DispatcherBuilder
 	{
 		ServiceHostBase host;
