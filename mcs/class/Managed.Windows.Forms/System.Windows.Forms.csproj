@@ -6,8 +6,9 @@
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <NoConfig>true</NoConfig>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodePage>65001</CodePage>
-    <NoWarn>108</NoWarn>
+    <NoWarn>618,612,809</NoWarn>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
@@ -15,6 +16,17 @@
   </PropertyGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
     <Reference Include="System"/>
+    <Reference Include="System.Xml"/>
+    <Reference Include="System.Drawing"/>
+    <Reference Include="Accessibility"/>
+    <Reference Include="System.Data"/>
+    <Reference Include="System.Configuration"/>
+    <Reference Include="Mono.Posix">
+      <HintPath>..\lib\net_2_0\Mono.Posix.dll</HintPath>
+    </Reference>
+    <Reference Include="Mono.WebBrowser">
+      <HintPath>..\lib\net_2_0\Mono.WebBrowser.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />

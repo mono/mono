@@ -40,6 +40,84 @@
     <MSBuild Projects="class\System.EnterpriseServices\System.EnterpriseServices.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\Mono.Data.Tds\Mono.Data.Tds.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
     <MSBuild Projects="class\System.Data\System.Data.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Accessibility\Accessibility.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.WebBrowser\Mono.WebBrowser.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Managed.Windows.Forms\System.Windows.Forms.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Data.Sqlite\Mono.Data.Sqlite.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+   <!-- <MSBuild Projects="class\System.Web.ApplicationServices\System.Web.ApplicationServices.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web\System.Web.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Web\Mono.Web.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Services\System.Web.Services.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web\System.Web.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Runtime.Serialization.Formatters.Soap\System.Runtime.Serialization.Formatters.Soap.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Runtime.Remoting\System.Runtime.Remoting.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Configuration.Install\System.Configuration.Install.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Management\System.Management.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Data.OracleClient\System.Data.OracleClient.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Microsoft.VisualC\Microsoft.VisualC.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Cscompmgd\Cscompmgd.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Design\System.Design.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\PEAPI\PEAPI.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Npgsql\Npgsql.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\ICSharpCode.SharpZipLib\ICSharpCode.SharpZipLib.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Commons.Xml.Relaxng\Commons.Xml.Relaxng.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Novell.Directory.Ldap\Novell.Directory.Ldap.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Security.Win32\Mono.Security.Win32.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.DirectoryServices\System.DirectoryServices.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\RabbitMQ.Client\RabbitMQ.Client.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Messaging\Mono.Messaging.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Messaging\System.Messaging.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Messaging.RabbitMQ\Mono.Messaging.RabbitMQ.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.ServiceProcess\System.ServiceProcess.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Drawing.Design\System.Drawing.Design.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Design\System.Design.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Http\Mono.Http.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Cairo\Mono.Cairo.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\IBM.Data.DB2\IBM.Data.DB2.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\CustomMarshalers\CustomMarshalers.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\OpenSystem.C\OpenSystem.C.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Cecil\Mono.Cecil.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Cecil.Mdb\Mono.Cecil.Mdb.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Debugger.Soft\Mono.Debugger.Soft.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\SystemWebTestShim\SystemWebTestShim.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Microsoft.Build.Framework\Microsoft.Build.Framework.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Microsoft.Build.Utilities\Microsoft.Build.Utilities.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Microsoft.Build.Engine\Microsoft.Build.Engine.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Microsoft.Build.Tasks\Microsoft.Build.Tasks.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Xml.Linq\System.Xml.Linq.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Runtime.Serialization\System.Runtime.Serialization.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Data.DataSetExtensions\System.Data.DataSetExtensions.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Data.Linq\System.Data.Linq.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web\System.Web.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Abstractions\System.Web.Abstractions.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Routing\System.Web.Routing.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.IdentityModel\System.IdentityModel.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.IdentityModel.Selectors\System.IdentityModel.Selectors.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.ServiceModel\System.ServiceModel.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Extensions\System.Web.Extensions.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Extensions.Design\System.Web.Extensions.Design.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.ComponentModel.DataAnnotations\System.ComponentModel.DataAnnotations.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.DynamicData\System.Web.DynamicData.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.ServiceModel.Web\System.ServiceModel.Web.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Mvc\System.Web.Mvc.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Mvc2\System.Web.Mvc2.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.C5\Mono.C5.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Management\Mono.Management.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Options\Mono.Options.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Simd\Mono.Simd.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.Tasklets\Mono.Tasklets.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Mono.CSharp\Mono.CSharp.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\Moonlight.Build.Tasks\Moonlight.Build.Tasks.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\WindowsBase\WindowsBase.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Data.Services\System.Data.Services.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Extensions_1.0\System.Web.Extensions_1.0.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="class\System.Web.Extensions.Design_1.0\System.Web.Extensions.Design_1.0.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    -->
+    
+    <!-- nunit -->
+    <MSBuild Projects="ilasm\ilasm.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    <MSBuild Projects="tools\gacutil\gacutil.csproj" Targets="Build" Properties="Configuration=net_2_0;Platform=AnyCPU"/>
+    
   </Target>
   <Target Name="Clean">
     <!--<MSBuild Projects="build\build.proj" Targets="Clean" />-->

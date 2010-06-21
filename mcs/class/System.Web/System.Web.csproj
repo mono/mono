@@ -6,15 +6,24 @@
     <AssemblyName>$(MSBuildProjectName)</AssemblyName>
     <TargetFrameworkVersion>v2.0</TargetFrameworkVersion>
     <NoConfig>true</NoConfig>
+    <NoWarn>612,618</NoWarn>
+    <AllowUnsafeBlocks>true</AllowUnsafeBlocks>
     <CodePage>65001</CodePage>
-    <NoWarn>108</NoWarn>
     <UseVSHostingProcess>false</UseVSHostingProcess>
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
-    <DefineConstants>NET_1_1,NET_2_0</DefineConstants>
+    <DefineConstants>NET_1_1,NET_2_0,INSIDE_SYSTEM_WEB</DefineConstants>
   </PropertyGroup>
   <ItemGroup Condition=" '$(Configuration)|$(Platform)' == 'net_2_0|AnyCPU' ">
     <Reference Include="System"/>
+    <Reference Include="System.Drawing"/>
+    <Reference Include="System.Data"/>
+    <Reference Include="System.Xml"/>
+    <Reference Include="System.Configuration"/>
+    <Reference Include="System.EnterpriseServices"/>
+    <Reference Include="Mono.Data.Sqlite">
+      <HintPath>..\lib\net_2_0\Mono.Data.Sqlite.dll</HintPath>
+    </Reference>
   </ItemGroup>
   <Import Project="$(MSBuildProjectDirectory)\..\..\build\msbuild\Mono.Common.targets"/>
   <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
