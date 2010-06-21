@@ -1,5 +1,9 @@
 2010-06-21  Jb Evain  <jbevain@novell.com>
 
+	* TimeSpan.cs: add the net_4_0 parsing code in Moonlight.
+
+2010-06-21  Jb Evain  <jbevain@novell.com>
+
 	* Guid.cs: bring Parse/ParseExact/TryParse/TryParseExact in
 	Moonlight as well.
 
