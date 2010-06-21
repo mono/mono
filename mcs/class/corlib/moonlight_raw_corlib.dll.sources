@@ -331,6 +331,7 @@ System.Globalization/StringInfo.cs
 System.Globalization/TaiwanCalendar.cs
 System.Globalization/TextElementEnumerator.cs
 System.Globalization/TextInfo.cs
+System.Globalization/TimeSpanStyles.cs
 System.Globalization/ThaiBuddhistCalendar.cs
 System.Globalization/UmAlQuraCalendar.cs
 System.Globalization/UnicodeCategory.cs
