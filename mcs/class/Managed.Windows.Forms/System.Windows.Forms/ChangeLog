@@ -1,3 +1,11 @@
+2010-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControl.cs: When setting SelectedIndex and the new selected tab
+	bounds are obscured by the scrollers, take into account the self tab
+	when looking for the proper bounds to adjust the slider. This is specially
+	important when we need to adjust the slider pos for the *last* tab page.
+	Fixes #615382.
+
 2010-06-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControl.cs: Show the tooltip depending on the value 

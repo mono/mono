@@ -390,7 +390,7 @@ namespace System.Windows.Forms {
 					int re = LeftScrollButtonArea.Left;
 					if (show_slider && le > re) {
 						int i = 0;
-						for (i = 0; i < new_index - 1; i++) {
+						for (i = 0; i < new_index; i++) {
 							if (TabPages [i].TabBounds.Left < 0) // tab scrolled off the visible area, ignore
 								continue;
 
