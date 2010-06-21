@@ -1,3 +1,8 @@
+2010-06-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* GenericTypeParameterBuilderTest.cs: Fix test
+	under v4.
+
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* ModuleBuilderTest.cs: Disable the TestGlobalMethods () test since it's been failing
