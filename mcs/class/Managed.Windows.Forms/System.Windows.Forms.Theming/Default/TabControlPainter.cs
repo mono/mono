@@ -472,9 +472,11 @@ namespace System.Windows.Forms.Theming.Default
 				return res;
 			}
 
-			if (page.Parent.Focused && is_selected && tab.ShowFocusCues) {
-				interior.Width -= 1;
-				ThemeEngine.Current.CPDrawFocusRectangle (dc, interior, tab.ForeColor, tab.BackColor);
+			// TabControl ignores the value of ShowFocusCues
+			if (page.Parent.Focused && is_selected) {
+				Rectangle focus_rect = bounds;
+				focus_rect.Inflate (-2, -2);
+				ThemeEngine.Current.CPDrawFocusRectangle (dc, focus_rect, tab.BackColor, tab.ForeColor);
 			}
 
 			return res;

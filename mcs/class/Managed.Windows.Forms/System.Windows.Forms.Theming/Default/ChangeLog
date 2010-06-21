@@ -1,3 +1,11 @@
+2010-06-20  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
+	* TabControlPainter.cs: Actually draw the focus rectangle - TabControl
+	ignores the value of ShowFocusCues. Also, properly compute the bounds
+	for the focus rectangle, since it should include the padding of the
+	tab page.
+	Fixes bits of #515045.
+
 2010-05-17  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TabControlPainter.cs: Don't use FocusRectSpacing or BorderThickess
