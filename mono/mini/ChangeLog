@@ -1,5 +1,22 @@
 2010-06-21  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (exception_cb): For nested clauses, add the same try range to the
+	nesting clause too.
+	(mono_llvm_check_method_supported): Enable llvm for methods with nested clauses.
+	(mono_llvm_emit_method): Instead of calling 'mono_resume_unwind' directly, call a
+	trampoline which saves the context, so changes made to callee saved registers in
+	finally clauses are visible to a nesting catch clause.
+
+	* exceptions-amd64.c: Add a resume_unwind trampoline for LLVM.
+
+	* mini-exceptions.c (mono_handle_exception_internal): Fix support for nested clauses
+	in LLVM compiled code.
+	(mono_handle_exception_internal): Add a 'ctx' argument containing the state after
+	the finally handler has ran.
+
+	* mini.h (ResumeState): New structure containing information required to resume
+	exception handling after executing LLVM compiled finally clauses.
+
 	* exceptions-amd64.c (get_throw_trampoline): Clean up the amd64 throw trampolines a
 	bit, by passing all the registers as one argument.
 
