@@ -315,14 +315,23 @@ namespace System.Text.RegularExpressions.Syntax {
 							lazy = true;
 						}
 
-						Repetition repetition = new Repetition (min, max, lazy);
+						//It doesn't make sense to assert a given position more than once.
+						bool ignore_repetition = false;
+						if (expr is PositionAssertion) {
+							ignore_repetition = min > 0 && !lazy;
+							max = 1;
+						}
 
-						if (expr == null)
-							repetition.Expression = new Literal (ch.ToString (), IsIgnoreCase (options));
-						else
-							repetition.Expression = expr;
-
-						expr = repetition;
+						if (!ignore_repetition) {
+							Repetition repetition = new Repetition (min, max, lazy);
+	
+							if (expr == null)
+								repetition.Expression = new Literal (ch.ToString (), IsIgnoreCase (options));
+							else
+								repetition.Expression = expr;
+	
+							expr = repetition;
+						}
 					}
 				}
 

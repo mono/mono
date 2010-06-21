@@ -1,5 +1,11 @@
 2010-06-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* parser.cs: Handle repetition of position assertions.
+
+	Fixes #610587.
+
+2010-06-21  Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* compiler.cs: Add new internal flag to switch on regexp tracing.
 	The code is a statc readonly variable so the JIT can eliminate
 	all tracing code during normal runs.
