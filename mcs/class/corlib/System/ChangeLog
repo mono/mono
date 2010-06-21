@@ -1,5 +1,9 @@
 2010-06-21  Jb Evain  <jbevain@novell.com>
 
+	* Version.cs: bring Parse/TypeParse in for moonlight.
+
+2010-06-21  Jb Evain  <jbevain@novell.com>
+
 	* Array.cs: implement IStructuralComparable and IStructuralEquatable
 	on moonlight as well.
 
