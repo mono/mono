@@ -1,5 +1,9 @@
 2010-06-21  Jb Evain  <jbevain@novell.com>
 
+	* TypeAccessException.cs: TypeAccessException is part of moonlight 4.
+
+2010-06-21  Jb Evain  <jbevain@novell.com>
+
 	* Version.cs: bring Parse/TypeParse in for moonlight.
 
 2010-06-21  Jb Evain  <jbevain@novell.com>
