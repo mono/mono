@@ -1,5 +1,9 @@
 2010-06-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* Environment.cs: bump up corlib version.
+
+2010-06-21 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* Type.cs (StructLayoutAttribute): This raises on v4.
 
 	* MonoType.cs (StructLayoutAttribute): Implement this
