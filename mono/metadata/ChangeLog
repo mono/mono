@@ -1,3 +1,7 @@
+2010-06-21  Zoltan Varga  <vargaz@gmail.com>
+
+	* marshal.c (mono_array_to_lparray): Allow MONO_TYPE_PTR. Fixes #615952.
+
 2010-06-04  Marek Habersack  <mhabersack@novell.com>
 
 	* icall.c (ves_icall_MonoType_GetEvent): be case insensitive is
