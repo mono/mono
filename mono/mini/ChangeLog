@@ -1,5 +1,9 @@
 2010-06-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_emit_method): Recalculate MONO_INST_INDIRECT flags to
+	allow better optimization if the OP_LDADDR which caused the flag to be set was
+	optimized away.
+
 	* exceptions-amd64.c (get_throw_trampoline): Align the stack properly.
 
 	* mini-amd64.c (mono_arch_emit_exceptions): Pass only the type token index, not
