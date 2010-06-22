@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2010 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
@@ -27,14 +27,16 @@
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-	public class EditCommandColumn : DataGridColumn {
+	public class EditCommandColumn : DataGridColumn
+	{
 		#region Public Constructors
-		public EditCommandColumn() {
+		public EditCommandColumn()
+		{
 		}
 		#endregion	// Public Constructors
 
@@ -44,32 +46,21 @@ namespace System.Web.UI.WebControls {
 				object obj;
 
 				obj = ViewState["ButtonType"];
-				if (obj != null) {
+				if (obj != null)
 					return (ButtonColumnType)obj;
-				}
 				return ButtonColumnType.LinkButton;
 			}
 
-			set {
-				ViewState["ButtonType"] = value;
-			}
+			set { ViewState["ButtonType"] = value; }
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
 		[Localizable (true)]
-#endif
 		public virtual string CancelText {
-			get {
-				return ViewState.GetString("CancelText", string.Empty);
-			}
-
-			set {
-				ViewState["CancelText"] = value;
-			}
+			get { return ViewState.GetString("CancelText", String.Empty); }
+			set { ViewState["CancelText"] = value; }
 		}
 
-#if NET_2_0
 		[DefaultValue(true)]
 		public virtual bool CausesValidation {
 			get { return ViewState.GetBool ("CausesValidation", true); }
@@ -78,45 +69,30 @@ namespace System.Web.UI.WebControls {
 
 		[DefaultValue("")]
 		public virtual string ValidationGroup {
-			get { return ViewState.GetString ("ValidationGroup", ""); }
+			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
 			set { ViewState ["ValidationGroup"] = value; } 
 		}
 
-#endif
-
-#if NET_2_0
 		[DefaultValue ("")]
 		[Localizable (true)]
-#endif
 		public virtual string EditText {
-			get {
-				return ViewState.GetString("EditText", string.Empty);
-			}
-
-			set {
-				ViewState["EditText"] = value;
-			}
+			get { return ViewState.GetString("EditText", String.Empty); }
+			set { ViewState["EditText"] = value; }
 		}
 
-#if NET_2_0
 		[DefaultValue ("")]
 		[Localizable (true)]
-#endif
 		public virtual string UpdateText {
-			get {
-				return ViewState.GetString("UpdateText", string.Empty);
-			}
-
-			set {
-				ViewState["UpdateText"] = value;
-			}
+			get { return ViewState.GetString("UpdateText", String.Empty); }
+			set { ViewState["UpdateText"] = value; }
 		}
 		#endregion	// Public Instance Properties
 
 		#region Public Instance Methods
 
 		// Modeled after Ben's CommandField.InitializeCell. Saved me a lot of figuring-out time :-)
-		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType) {
+		public override void InitializeCell(TableCell cell, int columnIndex, ListItemType itemType)
+		{
 			base.InitializeCell (cell, columnIndex, itemType);
 
 			switch(itemType) {
@@ -136,11 +112,7 @@ namespace System.Web.UI.WebControls {
 				}
 
 				case ListItemType.EditItem: {
-#if NET_2_0
 					cell.Controls.Add (CreateButton (ButtonType, UpdateText, "Update", CausesValidation));
-#else
-					cell.Controls.Add(CreateButton(ButtonType, UpdateText, "Update", true));
-#endif
 					cell.Controls.Add(new LiteralControl("&nbsp;"));
 					cell.Controls.Add(CreateButton(ButtonType, CancelText, "Cancel", false));
 					break;
@@ -150,7 +122,8 @@ namespace System.Web.UI.WebControls {
 		#endregion	// Public Instance Methods
 
 		#region Private Methods
-		Control CreateButton(ButtonColumnType type, string text, string command, bool valid) {
+		Control CreateButton(ButtonColumnType type, string text, string command, bool valid)
+		{
 			Button b;
 			LinkButton d;
 
@@ -159,11 +132,8 @@ namespace System.Web.UI.WebControls {
 				d.Text = text;
 				d.CommandName = command;
 				d.CausesValidation = valid;
-#if NET_2_0
-				if (valid) {
+				if (valid)
 					d.ValidationGroup = ValidationGroup;
-				}
-#endif
 				return d;
 			}
 
@@ -171,11 +141,9 @@ namespace System.Web.UI.WebControls {
 			b.Text = text;
 			b.CommandName = command;
 			b.CausesValidation = valid;
-#if NET_2_0
-			if (valid) {
+			if (valid)
 				b.ValidationGroup = ValidationGroup;
-			}
-#endif
+
 			return b;
 		}
 		#endregion	// Private Methods

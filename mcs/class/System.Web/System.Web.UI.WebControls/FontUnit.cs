@@ -5,7 +5,7 @@
 //   Miguel de Icaza (miguel@novell.com)
 //   Ben Maurer (bmaurer@ximian.com).
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -33,15 +33,12 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.WebControls {
+namespace System.Web.UI.WebControls
+{
 	[TypeConverter  (typeof (FontUnitConverter))]
-#if NET_2_0
 	[Serializable]
-#else
-	// CAS
-	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#endif
-	public struct FontUnit {
+	public struct FontUnit
+	{
 		FontSize type;
 		Unit unit;
 		
@@ -57,7 +54,7 @@ namespace System.Web.UI.WebControls {
 		public static readonly FontUnit XXLarge = new FontUnit (FontSize.XXLarge);
 
 		static string [] font_size_names = new string [] {null, null, "Smaller", "Larger", "XX-Small", "X-Small", "Small",
-								"Medium", "Large", "X-Large", "XX-Large" };
+								  "Medium", "Large", "X-Large", "XX-Large" };
 		
 		public FontUnit (FontSize type)
 		{
@@ -78,7 +75,6 @@ namespace System.Web.UI.WebControls {
 		{
 		}
 
-#if NET_2_0
 		public FontUnit (double value) : this (new Unit (value, UnitType.Point))
 		{
 		}
@@ -86,7 +82,6 @@ namespace System.Web.UI.WebControls {
 		public FontUnit (double value, UnitType type) : this (new Unit (value, type))
 		{
 		}
-#endif
 
 		public FontUnit (Unit value)
 		{
@@ -94,54 +89,75 @@ namespace System.Web.UI.WebControls {
 			unit = value;
 		}
 		
-		public FontUnit (string value) : this (value, Thread.CurrentThread.CurrentCulture) {}
+		public FontUnit (string value) : this (value, Thread.CurrentThread.CurrentCulture)
+		{}
 
 		public FontUnit (string value, CultureInfo culture)
 		{
-			if (value == null || value == String.Empty){
+			if (String.IsNullOrEmpty (value)) {
 				type = FontSize.NotSet;
 				unit = Unit.Empty;
 				return;
 			}
 
-			switch (value.ToLower (Helpers.InvariantCulture)){
-			case "smaller": type = FontSize.Smaller; break;
-			case "larger": type = FontSize.Larger; break;
-			case "xxsmall": type = FontSize.XXSmall; break;
-			case "xx-small": type = FontSize.XXSmall; break;
-			case "xsmall": type = FontSize.XSmall; break;
-			case "x-small": type = FontSize.XSmall; break;
-			case "small": type = FontSize.Small; break;
-			case "medium": type = FontSize.Medium; break;
-			case "large": type = FontSize.Large; break;
-			case "xlarge": type = FontSize.XLarge; break;
-			case "x-large": type = FontSize.XLarge; break;
-			case "xxlarge": type = FontSize.XXLarge; break;
-			case "xx-large": type = FontSize.XXLarge; break;
-			default:
-				type = FontSize.AsUnit;
-				unit = new Unit (value, culture);
-				return;
+			switch (value.ToLower (Helpers.InvariantCulture)) {
+				case "smaller":
+					type = FontSize.Smaller;
+					break;
+				case "larger":
+					type = FontSize.Larger;
+					break;
+				case "xxsmall":
+					type = FontSize.XXSmall;
+					break;
+				case "xx-small":
+					type = FontSize.XXSmall;
+					break;
+				case "xsmall":
+					type = FontSize.XSmall;
+					break;
+				case "x-small":
+					type = FontSize.XSmall;
+					break;
+				case "small":
+					type = FontSize.Small;
+					break;
+				case "medium":
+					type = FontSize.Medium;
+					break;
+				case "large":
+					type = FontSize.Large;
+					break;
+				case "xlarge":
+					type = FontSize.XLarge;
+					break;
+				case "x-large":
+					type = FontSize.XLarge;
+					break;
+				case "xxlarge":
+					type = FontSize.XXLarge;
+					break;
+				case "xx-large":
+					type = FontSize.XXLarge;
+					break;
+				default:
+					type = FontSize.AsUnit;
+					unit = new Unit (value, culture);
+					return;
 			}
 			unit = Unit.Empty;
 		}
 		
 		public bool IsEmpty {
-			get {
-				return type == FontSize.NotSet;
-			}
+			get { return type == FontSize.NotSet; }
 		}
 
 		public FontSize Type {
-			get {
-				return type;
-			}
+			get { return type; }
 		}
 
 		public Unit Unit {
-			get {
-				return unit;
-			}
+			get { return unit; }
 		}
 		
 		public static FontUnit Parse (string s)
@@ -158,9 +174,10 @@ namespace System.Web.UI.WebControls {
 		{
 			return new FontUnit (n);
 		}
+		
 		public override bool Equals (object obj)
 		{
-			if (obj is FontUnit){
+			if (obj is FontUnit) {
 				FontUnit other = (FontUnit) obj;
 				return (other.type == type && other.unit == unit);
 			}
@@ -187,22 +204,20 @@ namespace System.Web.UI.WebControls {
 			return new FontUnit (n);
 		}
 
-#if NET_2_0
 		public string ToString (IFormatProvider fmt)
 		{
 			if (type == FontSize.NotSet)
-				return "";
+				return String.Empty;
 			else if (type == FontSize.AsUnit)
 				return unit.ToString (fmt);
 			else
 				return font_size_names [(int) type];
 		}
-#endif
 
 		public string ToString (CultureInfo culture)
 		{
 			if (type == FontSize.NotSet)
-				return "";
+				return String.Empty;
 
 			if (type == FontSize.AsUnit)
 				return unit.ToString (culture);
@@ -214,7 +229,6 @@ namespace System.Web.UI.WebControls {
 		{
 			return ToString (CultureInfo.CurrentCulture);
 		}
-		
 	}
 }
 

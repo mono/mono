@@ -4,7 +4,7 @@
 // Authors:
 //  Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc. (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Web.UI;
 using System.ComponentModel;
 
@@ -36,41 +35,27 @@ namespace System.Web.UI.WebControls
 {
 	public class HiddenField : Control, IPostBackDataHandler
 	{
-
 		static readonly object ValueChangedEvent = new object ();
 
-		public event EventHandler ValueChanged
-		{
+		public event EventHandler ValueChanged {
 			add { Events.AddHandler (ValueChangedEvent, value); }
 			remove { Events.RemoveHandler (ValueChangedEvent, value); }
 		}
 
 		[Bindable (true)]
 		public virtual string Value {
-			get {
-				return ViewState.GetString ("Value", "");
-			}
-			set {
-				ViewState ["Value"] = value;
-			}
+			get { return ViewState.GetString ("Value", String.Empty); }
+			set { ViewState ["Value"] = value; }
 		}
 
 		public override bool EnableTheming {
-			get {
-				return false;
-			}
-			set {
-				throw new NotSupportedException ();
-			}
+			get { return false; }
+			set { throw new NotSupportedException (); }
 		}
 
 		public override string SkinID {
-			get {
-				return String.Empty;
-			}
-			set {
-				throw new NotSupportedException ();
-			}
+			get { return String.Empty; }
+			set { throw new NotSupportedException (); }
 		}
 
 		public override void Focus ()
@@ -147,4 +132,4 @@ namespace System.Web.UI.WebControls
 		#endregion
 	}
 }
-#endif
+

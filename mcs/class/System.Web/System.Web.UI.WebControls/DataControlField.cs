@@ -5,7 +5,7 @@
 //	Sanjay Gupta (gsanjay@novell.com)
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -28,16 +28,14 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Web.UI;
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	[DefaultPropertyAttribute ("HeaderText")]
 	[TypeConverterAttribute (typeof(ExpandableObjectConverter))]
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -90,19 +88,16 @@ namespace System.Web.UI.WebControls {
 		public virtual void InitializeCell (DataControlFieldCell cell,
 			DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
-			if (cellType == DataControlCellType.Header)
-			{
+			if (cellType == DataControlCellType.Header) {
 				if (HeaderText.Length > 0 && sortingEnabled && SortExpression.Length > 0)
 					cell.Controls.Add ((Control) DataControlButton.CreateButton (String.IsNullOrEmpty (HeaderImageUrl) ? ButtonType.Link : ButtonType.Image, control, HeaderText, HeaderImageUrl, DataControlCommands.SortCommandName, SortExpression, true));
 				else if (HeaderImageUrl.Length > 0) {
 					Image image = new Image ();
 					image.ImageUrl = HeaderImageUrl;
 					cell.Controls.Add (image);
-				}
-				else
+				} else
 					cell.Text = HeaderText.Length > 0 ? HeaderText : "&nbsp;";
-			}
-			else if (cellType == DataControlCellType.Footer) {
+			} else if (cellType == DataControlCellType.Footer) {
 				string footerText = FooterText;
 				cell.Text = (footerText.Length > 0) ? footerText : "&nbsp;";
 			}
@@ -159,7 +154,7 @@ namespace System.Web.UI.WebControls {
 				((IStateManager)ItemStyle).LoadViewState (states[4]);
 		}
 
-		protected virtual object SaveViewState()
+		protected virtual object SaveViewState ()
 		{
 			object[] state = new object [5];
 			state [0] = viewState.SaveViewState ();
@@ -179,7 +174,7 @@ namespace System.Web.UI.WebControls {
 			return state;
 		}
 
-		protected virtual void TrackViewState()
+		protected virtual void TrackViewState ()
 		{
 			if (controlStyle != null) ((IStateManager) controlStyle).TrackViewState ();
 			if (footerStyle != null) ((IStateManager) footerStyle).TrackViewState ();
@@ -194,19 +189,19 @@ namespace System.Web.UI.WebControls {
 			throw new NotSupportedException ("Callback not supported");
 		}
 
-		void IStateManager.LoadViewState(object savedState)
+		void IStateManager.LoadViewState (object savedState)
 		{
-			LoadViewState(savedState);
+			LoadViewState (savedState);
 		}
 
-		object IStateManager.SaveViewState()
+		object IStateManager.SaveViewState ()
 		{
-			return SaveViewState();
+			return SaveViewState ();
 		}
 
-		void IStateManager.TrackViewState()
+		void IStateManager.TrackViewState ()
 		{
-			TrackViewState();
+			TrackViewState ();
 		}
 		
 		internal Exception GetNotSupportedPropException (string propName)
@@ -229,7 +224,7 @@ namespace System.Web.UI.WebControls {
 		public virtual string AccessibleHeaderText {
 			get {
 				object val = viewState ["accessibleHeaderText"];
-				return val != null ? (string) val : "";
+				return val != null ? (string) val : String.Empty;
 			}
 			set { 
 				viewState ["accessibleHeaderText"] = value;
@@ -281,7 +276,7 @@ namespace System.Web.UI.WebControls {
 		public virtual string FooterText {
 			get {
 				object val = viewState ["footerText"];
-				return val != null ? (string) val : "";
+				return val != null ? (string) val : String.Empty;
 			}
 			set { 
 				viewState ["footerText"] = value;
@@ -296,7 +291,7 @@ namespace System.Web.UI.WebControls {
 		public virtual string HeaderImageUrl {
 			get {
 				object val = viewState ["headerImageUrl"];
-				return val != null ? (string) val : "";
+				return val != null ? (string) val : String.Empty;
 			}
 			set { 
 				viewState ["headerImageUrl"] = value;
@@ -325,7 +320,7 @@ namespace System.Web.UI.WebControls {
 		public virtual string HeaderText {
 			get {
 				object val = viewState ["headerText"];
-				return val != null ? (string) val : "";
+				return val != null ? (string) val : String.Empty;
 			}
 			set { 
 				viewState ["headerText"] = value;
@@ -380,7 +375,7 @@ namespace System.Web.UI.WebControls {
 		public virtual string SortExpression {
 			get {
 				object val = viewState ["sortExpression"];
-				return val != null ? (string) val : "";
+				return val != null ? (string) val : String.Empty;
 			}
 			set { 
 				viewState ["sortExpression"] = value;
@@ -428,4 +423,3 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif

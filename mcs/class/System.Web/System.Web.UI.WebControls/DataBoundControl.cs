@@ -6,7 +6,7 @@
 //	Sanjay Gupta (gsanjay@novell.com)
 //
 // (C) 2003 Ben Maurer
-// (C) 2004 Novell, Inc. (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -30,7 +30,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Text;
@@ -39,8 +38,8 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Web.UI.WebControls.Adapters;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -65,7 +64,6 @@ namespace System.Web.UI.WebControls {
 		protected virtual IDataSource GetDataSource ()
 		{
 			if (IsBoundUsingDataSourceID) {
-
 				Control ctrl = FindDataSource ();
 
 				if (ctrl == null)
@@ -76,7 +74,8 @@ namespace System.Web.UI.WebControls {
 			}
 			
 			IDataSource ds = DataSource as IDataSource;
-			if (ds != null) return ds;
+			if (ds != null)
+				return ds;
 			
 			IEnumerable ie = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 			return new CollectionDataSource (ie);
@@ -190,13 +189,13 @@ namespace System.Web.UI.WebControls {
 		[DefaultValueAttribute ("")]
 		[WebCategoryAttribute ("Data")]
 		public virtual string DataMember {
-			get { return ViewState.GetString ("DataMember", ""); }
+			get { return ViewState.GetString ("DataMember", String.Empty); }
 			set { ViewState["DataMember"] = value; }
 		}
 
 		[IDReferencePropertyAttribute (typeof(DataSourceControl))]
 		public override string DataSourceID {
-			get { return ViewState.GetString ("DataSourceID", ""); }
+			get { return ViewState.GetString ("DataSourceID", String.Empty); }
 			set {
 				ViewState ["DataSourceID"] = value;
 				base.DataSourceID = value;
@@ -241,9 +240,8 @@ namespace System.Web.UI.WebControls {
 		{
 			// Call OnDataBinding only if it has not already been 
 			// called in the PerformSelect method.
-			if (IsBoundUsingDataSourceID) {
+			if (IsBoundUsingDataSourceID)
 				OnDataBinding (EventArgs.Empty);
-			}
 			// The PerformDataBinding method binds the data in the  
 			// retrievedData collection to elements of the data-bound control.
 			InternalPerformDataBinding (data);
@@ -295,7 +293,7 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif
+
 
 
 

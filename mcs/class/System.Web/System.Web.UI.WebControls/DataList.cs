@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -32,27 +32,22 @@ using System.Globalization;
 using System.Security.Permissions;
 using System.Web.Util;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[Designer ("System.Web.UI.Design.WebControls.DataListDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#if NET_2_0
 	[ControlValueProperty ("SelectedValue")]
 	[Editor ("System.Web.UI.Design.WebControls.DataListComponentEditor, " + Consts.AssemblySystem_Design, "System.ComponentModel.ComponentEditor, " + Consts.AssemblySystem)]
-#else
-	[Editor ("System.Web.UI.Design.WebControls.DataListComponentEditor, " + Consts.AssemblySystem_Design, typeof (System.ComponentModel.ComponentEditor))]
-#endif
-	public class DataList : BaseDataList, INamingContainer, IRepeatInfoUser {
-
+	public class DataList : BaseDataList, INamingContainer, IRepeatInfoUser
+	{
 		public const string CancelCommandName = "Cancel";
 		public const string DeleteCommandName = "Delete";
 		public const string EditCommandName = "Edit";
 		public const string SelectCommandName = "Select";
 		public const string UpdateCommandName = "Update";
-
 
 		static readonly object cancelCommandEvent = new object ();
 		static readonly object deleteCommandEvent = new object ();
@@ -82,18 +77,10 @@ namespace System.Web.UI.WebControls {
 		ArrayList list;
 		int idx;
 
-#if NET_2_0
 		public DataList ()
 		{
 			idx = -1;
 		}
-#else
-		public DataList ()
-		{
-			idx = -1;
-		}
-#endif
-
 
 		[DefaultValue (null)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Content)]
@@ -105,9 +92,8 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (alternatingItemStyle == null) {
 					alternatingItemStyle = new TableItemStyle ();
-					if (IsTrackingViewState) {
+					if (IsTrackingViewState)
 						alternatingItemStyle.TrackViewState ();
-					}
 				}
 				return alternatingItemStyle;
 			}
@@ -149,9 +135,8 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (editItemStyle == null) {
 					editItemStyle = new TableItemStyle ();
-					if (IsTrackingViewState) {
+					if (IsTrackingViewState)
 						editItemStyle.TrackViewState ();
-					}
 				}
 				return editItemStyle;
 			}
@@ -189,9 +174,8 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (footerStyle == null) {
 					footerStyle = new TableItemStyle ();
-					if (IsTrackingViewState) {
+					if (IsTrackingViewState)
 						footerStyle.TrackViewState ();
-					}
 				}
 				return footerStyle;
 			}
@@ -212,13 +196,8 @@ namespace System.Web.UI.WebControls {
 		[DefaultValue (GridLines.None)]
 		public override GridLines GridLines {
 			get {
-				if (!ControlStyleCreated) {
-#if NET_2_0
+				if (!ControlStyleCreated)
 					return GridLines.None;
-#else
-					return GridLines.Both;
-#endif
-				}
 				return TableStyle.GridLines;
 			}
 			set { TableStyle.GridLines = value; }
@@ -234,9 +213,8 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (headerStyle == null) {
 					headerStyle = new TableItemStyle ();
-					if (IsTrackingViewState) {
+					if (IsTrackingViewState)
 						headerStyle.TrackViewState ();
-					}
 				}
 				return headerStyle;
 			}
@@ -275,9 +253,8 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (itemStyle == null) {
 					itemStyle = new TableItemStyle ();
-					if (IsTrackingViewState) {
+					if (IsTrackingViewState)
 						itemStyle.TrackViewState ();
-					}
 				}
 				return itemStyle;
 			}
@@ -294,9 +271,6 @@ namespace System.Web.UI.WebControls {
 			set { itemTemplate = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (0)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -313,9 +287,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (RepeatDirection.Vertical)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -327,9 +298,6 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["RepeatDirection"] = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (RepeatLayout.Table)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -381,9 +349,8 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (selectedItemStyle == null) {
 					selectedItemStyle = new TableItemStyle ();
-					if (IsTrackingViewState) {
+					if (IsTrackingViewState)
 						selectedItemStyle.TrackViewState ();
-					}
 				}
 				return selectedItemStyle;
 			}
@@ -410,9 +377,8 @@ namespace System.Web.UI.WebControls {
 			get {
 				if (separatorStyle == null) {
 					separatorStyle = new TableItemStyle ();
-					if (IsTrackingViewState) {
+					if (IsTrackingViewState)
 						separatorStyle.TrackViewState ();
-					}
 				}
 				return separatorStyle;
 			}
@@ -429,9 +395,6 @@ namespace System.Web.UI.WebControls {
 			set { separatorTemplate = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -443,9 +406,6 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["ShowFooter"] = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
@@ -457,7 +417,6 @@ namespace System.Web.UI.WebControls {
 			set { ViewState ["ShowHeader"] = value; }
 		}
 
-#if NET_2_0
 		[MonoTODO ("incomplete")]
 		[Browsable (false)]
 		public object SelectedValue {
@@ -466,9 +425,8 @@ namespace System.Web.UI.WebControls {
 					throw new InvalidOperationException (Locale.GetText ("No DataKeyField present."));
 
 				int idx = SelectedIndex;
-				if ((idx >= 0) && (idx < DataKeys.Count)) {
+				if ((idx >= 0) && (idx < DataKeys.Count))
 					return DataKeys [idx];
-				}
 
 				return null;
 			}
@@ -477,7 +435,6 @@ namespace System.Web.UI.WebControls {
 		protected override HtmlTextWriterTag TagKey {
 			get { return HtmlTextWriterTag.Table; }
 		}
-#endif
 
 		TableStyle TableStyle {
 			// this will throw an InvalidCasException just like we need
@@ -535,17 +492,14 @@ namespace System.Web.UI.WebControls {
 
 			if (useDataSource) {
 				idx = 0;
-#if NET_2_0
 				if (IsBoundUsingDataSourceID)
 					ds = GetData();
 				else
-#endif
-				ds = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
+					ds = DataSourceResolver.ResolveDataSource (DataSource, DataMember);
 				keys = DataKeysArray;
 				keys.Clear ();
-			} else {
+			} else
 				idx = (int) ViewState ["Items"];
-			}
 
 			if ((ds == null) && (idx == 0))
 				return;
@@ -560,7 +514,7 @@ namespace System.Web.UI.WebControls {
 			if (ds != null) {
 				string key = DataKeyField;
 				foreach (object o in ds) {
-					if (useDataSource && key != "")
+					if (useDataSource && !String.IsNullOrEmpty (key))
 						keys.Add (DataBinder.GetPropertyValue (o, key));
 					type = ListItemType.Item;
 					if (idx == edit_item_index) 
@@ -595,12 +549,8 @@ namespace System.Web.UI.WebControls {
 
 		protected override Style CreateControlStyle ()
 		{
-#if NET_2_0
 			// not kept (directly) in the DataList ViewState
 			TableStyle tableStyle = new TableStyle ();
-#else
-			TableStyle tableStyle = new TableStyle (ViewState);
-#endif
 			tableStyle.CellSpacing = 0;
 			return tableStyle;
 		}
@@ -615,28 +565,28 @@ namespace System.Web.UI.WebControls {
 			ITemplate t = null;
 			
 			switch (item.ItemType) {
-			case ListItemType.Header:
-				t = HeaderTemplate;
-				break;
-			case ListItemType.Footer:
-				t = FooterTemplate;
-				break;	
-			case ListItemType.Separator:
-				t = SeparatorTemplate;
-				break;
-			case ListItemType.Item:
-			case ListItemType.AlternatingItem:
-			case ListItemType.SelectedItem:
-			case ListItemType.EditItem:
-				if ((item.ItemType == ListItemType.EditItem) && (EditItemTemplate != null))
-					t = EditItemTemplate;
-				else if ((item.ItemType == ListItemType.SelectedItem) && (SelectedItemTemplate != null))
-					t = SelectedItemTemplate;
-				else if ((item.ItemType == ListItemType.AlternatingItem) && (AlternatingItemTemplate != null))
-					t = AlternatingItemTemplate;
-				else
-					t = ItemTemplate;
-				break;
+				case ListItemType.Header:
+					t = HeaderTemplate;
+					break;
+				case ListItemType.Footer:
+					t = FooterTemplate;
+					break;	
+				case ListItemType.Separator:
+					t = SeparatorTemplate;
+					break;
+				case ListItemType.Item:
+				case ListItemType.AlternatingItem:
+				case ListItemType.SelectedItem:
+				case ListItemType.EditItem:
+					if ((item.ItemType == ListItemType.EditItem) && (EditItemTemplate != null))
+						t = EditItemTemplate;
+					else if ((item.ItemType == ListItemType.SelectedItem) && (SelectedItemTemplate != null))
+						t = SelectedItemTemplate;
+					else if ((item.ItemType == ListItemType.AlternatingItem) && (AlternatingItemTemplate != null))
+						t = AlternatingItemTemplate;
+					else
+						t = ItemTemplate;
+					break;
 			}
 
 			if (t != null)
@@ -661,10 +611,8 @@ namespace System.Web.UI.WebControls {
 				HeaderStyle.LoadViewState (state [6]);
 			if (state [7] != null)
 				FooterStyle.LoadViewState (state [7]);
-#if NET_2_0
 			if (state [8] != null)
 				ControlStyle.LoadViewState (state [8]);
-#endif
 		}
 
 		protected override bool OnBubbleEvent (object source, EventArgs e)
@@ -677,18 +625,18 @@ namespace System.Web.UI.WebControls {
 			CultureInfo inv = Helpers.InvariantCulture;
 
 			OnItemCommand (dlca);
-			if (String.Compare (cn, CancelCommandName, true, inv) == 0) {
+			if (String.Compare (cn, CancelCommandName, true, inv) == 0)
 				OnCancelCommand (dlca);
-			} else if (String.Compare (cn, DeleteCommandName, true, inv) == 0) {
+			else if (String.Compare (cn, DeleteCommandName, true, inv) == 0)
 				OnDeleteCommand (dlca);
-			} else if (String.Compare (cn, EditCommandName, true, inv) == 0) {
+			else if (String.Compare (cn, EditCommandName, true, inv) == 0)
 				OnEditCommand (dlca);
-			} else if (String.Compare (cn, SelectCommandName, true, inv) == 0) {
+			else if (String.Compare (cn, SelectCommandName, true, inv) == 0) {
 				SelectedIndex = dlca.Item.ItemIndex;
 				OnSelectedIndexChanged (dlca);
-			} else if (String.Compare (cn, UpdateCommandName, true, inv) == 0) {
+			} else if (String.Compare (cn, UpdateCommandName, true, inv) == 0)
 				OnUpdateCommand (dlca);
-			}
+			
 			return true;
 		}
 
@@ -712,14 +660,17 @@ namespace System.Web.UI.WebControls {
 			if (editCommand != null)
 				editCommand (this, e);
 		}
-#if NET_2_0
+
 		protected internal override void OnInit (EventArgs e)
 		{
-			// EditItemIndex and SelectedIndex now use the Control State (i.e not the View State)
-			Page.RegisterRequiresControlState (this);
+			// EditItemIndex and SelectedIndex now use the Control State (i.e not the
+			// View State)
+			Page page = Page;
+			if (page != null)
+				page.RegisterRequiresControlState (this);
 			base.OnInit (e);
 		}
-#endif
+
 		protected virtual void OnItemCommand (DataListCommandEventArgs e)
 		{
 			DataListCommandEventHandler itemCommand = (DataListCommandEventHandler) Events [itemCommandEvent];
@@ -756,72 +707,60 @@ namespace System.Web.UI.WebControls {
 			Style alt = null;
 			foreach (DataListItem item in Controls) {
 				switch (item.ItemType) {
-				case ListItemType.Item:
-					item.MergeStyle (itemStyle);
-					break;
-				case ListItemType.AlternatingItem:
-					if (alt == null) {
-						if (alternatingItemStyle != null) {
-							alt = new TableItemStyle ();
-							alt.CopyFrom (itemStyle);
-							alt.CopyFrom (alternatingItemStyle);
-						} else {
-							alt = itemStyle;
+					case ListItemType.Item:
+						item.MergeStyle (itemStyle);
+						break;
+					case ListItemType.AlternatingItem:
+						if (alt == null) {
+							if (alternatingItemStyle != null) {
+								alt = new TableItemStyle ();
+								alt.CopyFrom (itemStyle);
+								alt.CopyFrom (alternatingItemStyle);
+							} else
+								alt = itemStyle;
 						}
-					}
 
-					item.MergeStyle (alt);
-					break;
-				case ListItemType.EditItem:
-					if (editItemStyle != null) {
-						item.MergeStyle (editItemStyle);
-					} else {
-						item.MergeStyle (itemStyle);
-					}
-					break;
-				case ListItemType.Footer:
-					if (!ShowFooter) {
-						item.Visible = false;
+						item.MergeStyle (alt);
 						break;
-					}
-					if (footerStyle != null) {
-						item.MergeStyle (footerStyle);
-					}
-					break;
-				case ListItemType.Header:
-					if (!ShowHeader) {
-						item.Visible = false;
+					case ListItemType.EditItem:
+						if (editItemStyle != null)
+							item.MergeStyle (editItemStyle);
+						else
+							item.MergeStyle (itemStyle);
 						break;
-					}
-					if (headerStyle != null) {
-						item.MergeStyle (headerStyle);
-					}
-					break;
-				case ListItemType.SelectedItem:
-					if (selectedItemStyle != null) {
-						item.MergeStyle (selectedItemStyle);
-					} else {
-						item.MergeStyle (itemStyle);
-					}
-					break;
-				case ListItemType.Separator:
-					if (separatorStyle != null) {
-						item.MergeStyle(separatorStyle);
-					}
-					else {
-						item.MergeStyle (itemStyle);
-					}
-					break;
+					case ListItemType.Footer:
+						if (!ShowFooter) {
+							item.Visible = false;
+							break;
+						}
+						if (footerStyle != null)
+							item.MergeStyle (footerStyle);
+						break;
+					case ListItemType.Header:
+						if (!ShowHeader) {
+							item.Visible = false;
+							break;
+						}
+						if (headerStyle != null)
+							item.MergeStyle (headerStyle);
+						break;
+					case ListItemType.SelectedItem:
+						if (selectedItemStyle != null)
+							item.MergeStyle (selectedItemStyle);
+						else
+							item.MergeStyle (itemStyle);
+						break;
+					case ListItemType.Separator:
+						if (separatorStyle != null)
+							item.MergeStyle(separatorStyle);
+						else
+							item.MergeStyle (itemStyle);
+						break;
 				}
 			}
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void RenderContents (HtmlTextWriter writer)
+		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			if (Items.Count == 0)
 				return;			
@@ -852,24 +791,18 @@ for (int i=0; i < Items.Count; i++) {
 			if (extract) {
 				ri.OuterTableImplied = true;
 				writer.AddAttribute (HtmlTextWriterAttribute.Id, ClientID);
-				if (ControlStyleCreated) {
+				if (ControlStyleCreated)
 					ControlStyle.AddAttributesToRender (writer);
-				}
 				writer.RenderBeginTag (HtmlTextWriterTag.Table);
 				ri.RenderRepeater (writer, this, ControlStyle, this);
 				writer.RenderEndTag ();
-			} else {
+			} else
 				ri.RenderRepeater (writer, this, ControlStyle, this);
-			}
 		}
 
 		protected override object SaveViewState ()
 		{
-#if NET_2_0
 			object[] state = new object [9];
-#else
-			object[] state = new object [8];
-#endif
 			state[0] = base.SaveViewState ();
 			if (itemStyle != null)
 				state [1] = itemStyle.SaveViewState ();
@@ -885,10 +818,8 @@ for (int i=0; i < Items.Count; i++) {
 				state [6] = headerStyle.SaveViewState ();
 			if (footerStyle != null)
 				state [7] = footerStyle.SaveViewState ();
-#if NET_2_0
 			if (ControlStyleCreated)
 				state [8] = ControlStyle.SaveViewState ();
-#endif
 			return state;
 		}
 
@@ -909,10 +840,8 @@ for (int i=0; i < Items.Count; i++) {
 				selectedItemStyle.TrackViewState ();
 			if (separatorStyle != null)
 				separatorStyle.TrackViewState ();
-#if NET_2_0
 			if (ControlStyleCreated)
 				ControlStyle.TrackViewState ();
-#endif
 		}
 
 
@@ -995,31 +924,31 @@ for (int i=0; i < Items.Count; i++) {
 		{
 			DataListItem item = null;
 			switch (itemType) {
-			case ListItemType.Header:
-			case ListItemType.Footer:
-				if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
-					throw new ArgumentOutOfRangeException ();
+				case ListItemType.Header:
+				case ListItemType.Footer:
+					if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
+						throw new ArgumentOutOfRangeException ();
 
-				item = FindFirstItem (itemType);
-				break;
-			case ListItemType.Item:
-			case ListItemType.AlternatingItem:
-			case ListItemType.SelectedItem:
-			case ListItemType.EditItem:
-				if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
-					throw new ArgumentOutOfRangeException ();
+					item = FindFirstItem (itemType);
+					break;
+				case ListItemType.Item:
+				case ListItemType.AlternatingItem:
+				case ListItemType.SelectedItem:
+				case ListItemType.EditItem:
+					if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
+						throw new ArgumentOutOfRangeException ();
 
-				item = FindBestItem (repeatIndex);
-				break;
-			case ListItemType.Separator:
-				if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
-					throw new ArgumentOutOfRangeException ();
+					item = FindBestItem (repeatIndex);
+					break;
+				case ListItemType.Separator:
+					if (repeatIndex >= 0 && (!HasControls () || repeatIndex >= Controls.Count))
+						throw new ArgumentOutOfRangeException ();
 
-				item = FindSpecificItem (itemType, repeatIndex);
-				break;
-			default:
-				item = null;
-				break;
+					item = FindSpecificItem (itemType, repeatIndex);
+					break;
+				default:
+					item = null;
+					break;
 			}
 
 			if (item == null || item.ControlStyleCreated == false)
@@ -1057,13 +986,13 @@ for (int i=0; i < Items.Count; i++) {
 				DataListItem item = (Controls [i] as DataListItem);
 				if ((item != null) && (item.ItemIndex == repeatIndex)) {
 					switch (item.ItemType) {
-					case ListItemType.Item:
-					case ListItemType.AlternatingItem:
-					case ListItemType.SelectedItem:
-					case ListItemType.EditItem:
-						return item;
-					default:
-						return null;
+						case ListItemType.Item:
+						case ListItemType.AlternatingItem:
+						case ListItemType.SelectedItem:
+						case ListItemType.EditItem:
+							return item;
+						default:
+							return null;
 					}
 				}
 			}
@@ -1078,19 +1007,19 @@ for (int i=0; i < Items.Count; i++) {
 
 			DataListItem item = null;
 			switch (itemType) {
-			case ListItemType.Header:
-			case ListItemType.Footer:
-				item = FindFirstItem (itemType);
-				break;
-			case ListItemType.Item:
-			case ListItemType.AlternatingItem:
-			case ListItemType.SelectedItem:
-			case ListItemType.EditItem:
-				item = FindBestItem (repeatIndex);
-				break;
-			case ListItemType.Separator:
-				item = FindSpecificItem (itemType, repeatIndex);
-				break;
+				case ListItemType.Header:
+				case ListItemType.Footer:
+					item = FindFirstItem (itemType);
+					break;
+				case ListItemType.Item:
+				case ListItemType.AlternatingItem:
+				case ListItemType.SelectedItem:
+				case ListItemType.EditItem:
+					item = FindBestItem (repeatIndex);
+					break;
+				case ListItemType.Separator:
+					item = FindSpecificItem (itemType, repeatIndex);
+					break;
 			}
 
 			if (item != null) {

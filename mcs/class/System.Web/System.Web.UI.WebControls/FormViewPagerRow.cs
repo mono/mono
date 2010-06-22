@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Collections.Generic;
 using System.Text;
@@ -36,15 +34,10 @@ namespace System.Web.UI.WebControls
 {
 	public class FormViewPagerRow : FormViewRow, INamingContainer, INonBindingContainer
 	{
-		public FormViewPagerRow (
-			int rowIndex,
-			DataControlRowType rowType,
-			DataControlRowState rowState
-		)
+		public FormViewPagerRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
 			:base (rowIndex, rowType, rowState)
 		{
 		}
 	}
 }
 
-#endif

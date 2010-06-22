@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.ComponentModel;
 using System.Web.UI;
@@ -58,7 +57,7 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual HierarchicalDataSourceView GetData (string viewPath)
 		{
-			if (DataSource != null && DataSourceID != "")
+			if (DataSource != null && !String.IsNullOrEmpty (DataSourceID))
 				throw new HttpException ();	
 			IHierarchicalDataSource ds = GetDataSource ();
 			if (ds != null)
@@ -86,12 +85,8 @@ namespace System.Web.UI.WebControls
 		}
 
 		bool IsDataBound {
-			get {
-				return ViewState.GetBool ("DataBound", false);
-			}
-			set {
-				ViewState ["DataBound"] = value;
-			}
+			get { return ViewState.GetBool ("DataBound", false); }
+			set { ViewState ["DataBound"] = value; }
 		}
 
 		protected void MarkAsDataBound ()
@@ -168,6 +163,6 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
-#endif
+
 
 

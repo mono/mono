@@ -3,7 +3,7 @@
 //
 // Author: Duncan Mak (duncan@novell.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,13 +25,10 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web.UI.WebControls {
-
-#if NET_2_0
-	public class DataListItemEventArgs : EventArgs {
-#else
-	public sealed class DataListItemEventArgs : EventArgs {
-#endif
+namespace System.Web.UI.WebControls
+{
+	public class DataListItemEventArgs : EventArgs
+	{
 		DataListItem item;
 
 		public DataListItemEventArgs (DataListItem item)

@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.Security.Permissions;
 
@@ -47,7 +45,7 @@ namespace System.Web.UI.WebControls
 		public virtual string AccessKey {
 			get {
 				object o = viewState ["AccessKey"];
-				return o != null ? (string) o : "";
+				return o != null ? (string) o : String.Empty;
 			}
 			set {
 				if (value == null || value.Length < 2)
@@ -65,11 +63,9 @@ namespace System.Web.UI.WebControls
 		public virtual string AlternateText {
 			get {
 				object o = viewState ["AlternateText"];
-				return o != null ? (string) o : "";
+				return o != null ? (string) o : String.Empty;
 			}
-			set {
-				viewState ["AlternateText"] = value;
-			}
+			set { viewState ["AlternateText"] = value; }
 		}
 		
 		[WebCategoryAttribute ("Behavior")]
@@ -95,11 +91,9 @@ namespace System.Web.UI.WebControls
 		public string NavigateUrl {
 			get {
 				object o = viewState ["NavigateUrl"];
-				return o != null ? (string) o : "";
+				return o != null ? (string) o : String.Empty;
 			}
-			set {
-				viewState ["NavigateUrl"] = value;
-			}
+			set { viewState ["NavigateUrl"] = value; }
 		}
 		
 		[BindableAttribute (true)]
@@ -109,11 +103,9 @@ namespace System.Web.UI.WebControls
 		public string PostBackValue {
 			get {
 				object o = viewState ["PostBackValue"];
-				return o != null ? (string) o : "";
+				return o != null ? (string) o : String.Empty;
 			}
-			set {
-				viewState ["PostBackValue"] = value;
-			}
+			set { viewState ["PostBackValue"] = value; }
 		}
 		
 		[DefaultValueAttribute ((short)0)]
@@ -123,9 +115,7 @@ namespace System.Web.UI.WebControls
 				object o = viewState ["TabIndex"];
 				return o != null ? (short) o : (short) 0;
 			}
-			set {
-				viewState ["TabIndex"] = value;
-			}
+			set { viewState ["TabIndex"] = value; }
 		}
 		
 		[WebCategoryAttribute ("Behavior")]
@@ -135,11 +125,9 @@ namespace System.Web.UI.WebControls
 		public virtual string Target {
 			get {
 				object o = viewState ["Target"];
-				return o != null ? (string) o : "";
+				return o != null ? (string) o : String.Empty;
 			}
-			set {
-				viewState ["Target"] = value;
-			}
+			set { viewState ["Target"] = value; }
 		}
 		
 		[Browsable (false)]
@@ -183,8 +171,7 @@ namespace System.Web.UI.WebControls
 			TrackViewState ();
 		}
 		
-		bool IStateManager.IsTrackingViewState
-		{
+		bool IStateManager.IsTrackingViewState {
 			get { return IsTrackingViewState; }
 		}
 		
@@ -204,4 +191,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

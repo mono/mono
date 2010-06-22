@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 using System.Security.Permissions;
 
@@ -48,8 +46,7 @@ namespace System.Web.UI.WebControls
 		static readonly object ClickEvent = new object();
 		
 		[Category ("Action")]
-		public event ImageMapEventHandler Click
-		{
+		public event ImageMapEventHandler Click {
 			add { Events.AddHandler (ClickEvent, value); }
 			remove { Events.RemoveHandler (ClickEvent, value); }
 		}
@@ -58,7 +55,8 @@ namespace System.Web.UI.WebControls
 		{
 			if (Events != null) {
 				ImageMapEventHandler eh = (ImageMapEventHandler) Events [ClickEvent];
-				if (eh!= null) eh (this, e);
+				if (eh!= null)
+					eh (this, e);
 			}
 		}
 
@@ -68,20 +66,16 @@ namespace System.Web.UI.WebControls
 				object o = ViewState ["HotSpotMode"];
 				return o != null ? (HotSpotMode) o : HotSpotMode.NotSet;
 			}
-			set {
-				ViewState ["HotSpotMode"] = value;
-			}
+			set { ViewState ["HotSpotMode"] = value; }
 		}
 		
 		[DefaultValueAttribute ("")]
 		public virtual string Target {
 			get {
 				object o = ViewState ["Target"];
-				return o != null ? (string) o : "";
+				return o != null ? (string) o : String.Empty;
 			}
-			set {
-				ViewState ["Target"] = value;
-			}
+			set { ViewState ["Target"] = value; }
 		}
 
 		[NotifyParentPropertyAttribute (true)]
@@ -101,7 +95,8 @@ namespace System.Web.UI.WebControls
 		protected override void TrackViewState ()
 		{
 			base.TrackViewState ();
-			if (spots != null) ((IStateManager)spots).TrackViewState ();
+			if (spots != null)
+				((IStateManager)spots).TrackViewState ();
 		}
 		
 		protected override object SaveViewState ()
@@ -189,4 +184,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

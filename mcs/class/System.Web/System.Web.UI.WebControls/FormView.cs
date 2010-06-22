@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,8 +25,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -294,7 +292,8 @@ namespace System.Web.UI.WebControls
 		public virtual bool AllowPaging {
 			get {
 				object ob = ViewState ["AllowPaging"];
-				if (ob != null) return (bool) ob;
+				if (ob != null)
+					return (bool) ob;
 				return false;
 			}
 			set {
@@ -333,8 +332,9 @@ namespace System.Web.UI.WebControls
 		public virtual string Caption {
 			get {
 				object ob = ViewState ["Caption"];
-				if (ob != null) return (string) ob;
-				return string.Empty;
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["Caption"] = value;
@@ -344,11 +344,11 @@ namespace System.Web.UI.WebControls
 		
 		[WebCategoryAttribute ("Accessibility")]
 		[DefaultValueAttribute (TableCaptionAlign.NotSet)]
-		public virtual TableCaptionAlign CaptionAlign
-		{
+		public virtual TableCaptionAlign CaptionAlign {
 			get {
 				object o = ViewState ["CaptionAlign"];
-				if(o != null) return (TableCaptionAlign) o;
+				if(o != null)
+					return (TableCaptionAlign) o;
 				return TableCaptionAlign.NotSet;
 			}
 			set {
@@ -359,38 +359,31 @@ namespace System.Web.UI.WebControls
 
 		[WebCategoryAttribute ("Layout")]
 		[DefaultValueAttribute (-1)]
-		public virtual int CellPadding
-		{
+		public virtual int CellPadding {
 			get {
 				if (ControlStyleCreated)
 					return ((TableStyle) ControlStyle).CellPadding;
 				return -1;
 			}
-			set {
-				((TableStyle) ControlStyle).CellPadding = value;
-			}
+			set { ((TableStyle) ControlStyle).CellPadding = value; }
 		}
 
 		[WebCategoryAttribute ("Layout")]
 		[DefaultValueAttribute (0)]
-		public virtual int CellSpacing
-		{
+		public virtual int CellSpacing {
 			get {
 				if (ControlStyleCreated)
 					return ((TableStyle) ControlStyle).CellSpacing;
 				return 0;
 			}
-			set {
-				((TableStyle) ControlStyle).CellSpacing = value;
-			}
+			
+			set { ((TableStyle) ControlStyle).CellSpacing = value; }
 		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
 		public FormViewMode CurrentMode {
-			get {
-				return hasCurrentMode ? currentMode : DefaultMode;
-			}
+			get { return hasCurrentMode ? currentMode : DefaultMode; }
 			private set {
 				hasCurrentMode = true;
 				currentMode = value;
@@ -402,9 +395,7 @@ namespace System.Web.UI.WebControls
 		[DefaultValueAttribute (FormViewMode.ReadOnly)]
 		[WebCategoryAttribute ("Behavior")]
 		public virtual FormViewMode DefaultMode {
-			get {
-				return defaultMode;
-			}
+			get { return defaultMode; }
 			set {
 				defaultMode = value;
 				RequireBinding ();
@@ -416,8 +407,7 @@ namespace System.Web.UI.WebControls
 		[WebCategoryAttribute ("Data")]
 		[TypeConverter (typeof(StringArrayConverter))]
 		[EditorAttribute ("System.Web.UI.Design.WebControls.DataFieldEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
-		public virtual string[] DataKeyNames
-		{
+		public virtual string[] DataKeyNames {
 			get {
 				if (dataKeyNames == null)
 					return emptyKeys;
@@ -431,9 +421,8 @@ namespace System.Web.UI.WebControls
 		
 		IOrderedDictionary KeyTable {
 			get {
-				if (_keyTable == null) {
+				if (_keyTable == null)
 					_keyTable = new OrderedDictionary (DataKeyNames.Length);
-				}
 				return _keyTable;
 			}
 		}
@@ -442,18 +431,16 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual DataKey DataKey {
 			get {
-				if (key == null) {
+				if (key == null)
 					key= new DataKey (KeyTable);
-				}
 				return key;
 			}
 		}
 
 		DataKey OldEditValues {
 			get {
-				if (oldEditValues == null) {
+				if (oldEditValues == null)
 					oldEditValues = new DataKey (new OrderedDictionary ());
-				}
 				return oldEditValues;
 			}
 		}
@@ -514,8 +501,9 @@ namespace System.Web.UI.WebControls
 		public virtual string EmptyDataText {
 			get {
 				object ob = ViewState ["EmptyDataText"];
-				if (ob != null) return (string) ob;
-				return string.Empty;
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["EmptyDataText"] = value;
@@ -547,8 +535,9 @@ namespace System.Web.UI.WebControls
 		public virtual string FooterText {
 			get {
 				object ob = ViewState ["FooterText"];
-				if (ob != null) return (string) ob;
-				return string.Empty;
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["FooterText"] = value;
@@ -580,9 +569,7 @@ namespace System.Web.UI.WebControls
 					return ((TableStyle) ControlStyle).GridLines;
 				return GridLines.None;
 			}
-			set {
-				((TableStyle) ControlStyle).GridLines = value;
-			}
+			set { ((TableStyle) ControlStyle).GridLines = value; }
 		}
 
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -625,8 +612,9 @@ namespace System.Web.UI.WebControls
 		public virtual string HeaderText {
 			get {
 				object ob = ViewState ["HeaderText"];
-				if (ob != null) return (string) ob;
-				return string.Empty;
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["HeaderText"] = value;
@@ -642,9 +630,7 @@ namespace System.Web.UI.WebControls
 					return ((TableStyle) ControlStyle).HorizontalAlign;
 				return HorizontalAlign.NotSet;
 			}
-			set {
-				((TableStyle) ControlStyle).HorizontalAlign = value;
-			}
+			set { ((TableStyle) ControlStyle).HorizontalAlign = value; }
 		}
 
 		[DefaultValue (null)]
@@ -684,21 +670,15 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual int PageCount {
-			get {
-				return pageCount;
-			}
-			private set {
-				pageCount = value;
-			}
+			get { return pageCount; }
+			private set { pageCount = value; }
 		}
 
 		[WebCategoryAttribute ("Paging")]
 		[BindableAttribute (true, BindingDirection.OneWay)]
 		[DefaultValueAttribute (0)]
 		public virtual int PageIndex {
-			get {
-				return pageIndex;
-			}
+			get { return pageIndex; }
 			set {
 				if (value < -1)
 					throw new ArgumentOutOfRangeException ("PageIndex must be non-negative");
@@ -792,9 +772,7 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		[BrowsableAttribute (false)]
 		public virtual object DataItem {
-			get {
-				return dataItem;
-			}
+			get { return dataItem; }
 		}
 		
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
@@ -831,10 +809,8 @@ namespace System.Web.UI.WebControls
 				if (view.CanRetrieveTotalRowCount) {
 					arg.RetrieveTotalRowCount = true;
 					arg.MaximumRows = 1;
-				}
-				else {
+				} else
 					arg.MaximumRows = -1;
-				}
 			}
 			return arg;
 		}
@@ -849,9 +825,8 @@ namespace System.Web.UI.WebControls
 		
 		void RequireBinding ()
 		{
-			if (Initialized) {
+			if (Initialized)
 				RequiresDataBinding = true;
-			}
 		}
 		
 		protected virtual Table CreateTable ()
@@ -869,8 +844,7 @@ namespace System.Web.UI.WebControls
 					MarkAsDataBound ();
 					OnDataBound (EventArgs.Empty);
 				}
-			}
-			else
+			} else
 				base.EnsureDataBound ();
 		}
 	
@@ -913,16 +887,15 @@ namespace System.Web.UI.WebControls
 
 			if (AllowPaging) {
 				PageCount = dataSource.DataSourceCount;
-				if (PageIndex >= PageCount && PageCount > 0) {
+				if (PageIndex >= PageCount && PageCount > 0)
 					pageIndex = dataSource.CurrentPageIndex = PageCount - 1;
-				}
+				
 				if (dataSource.DataSource != null) {
 					IEnumerator e = dataSource.GetEnumerator ();
 					if (e.MoveNext ())
 						dataItem = e.Current;
 				}
-			}
-			else {
+			} else {
 				int page = 0;
 				object lastItem = null;
 				if (dataSource.DataSource != null) {
@@ -962,15 +935,15 @@ namespace System.Web.UI.WebControls
 				table.Rows.Add (itemRow);
 			} else {
 				switch (CurrentMode) {
-				case FormViewMode.Edit:
-					itemRow = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Edit);
-					break;
-				case FormViewMode.Insert:
-					itemRow = CreateRow (-1, DataControlRowType.DataRow, DataControlRowState.Insert);
-					break;
-				default:
-					itemRow = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
-					break;
+					case FormViewMode.Edit:
+						itemRow = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Edit);
+						break;
+					case FormViewMode.Insert:
+						itemRow = CreateRow (-1, DataControlRowType.DataRow, DataControlRowState.Insert);
+						break;
+					default:
+						itemRow = CreateRow (-1, DataControlRowType.EmptyDataRow, DataControlRowState.Normal);
+						break;
 				}
 				InitializeRow (itemRow);
 				table.Rows.Add (itemRow);
@@ -999,8 +972,10 @@ namespace System.Web.UI.WebControls
 		DataControlRowState GetRowState ()
 		{
 			DataControlRowState rstate = DataControlRowState.Normal;
-			if (CurrentMode == FormViewMode.Edit) rstate |= DataControlRowState.Edit;
-			else if (CurrentMode == FormViewMode.Insert) rstate |= DataControlRowState.Insert;
+			if (CurrentMode == FormViewMode.Edit)
+				rstate |= DataControlRowState.Edit;
+			else if (CurrentMode == FormViewMode.Insert)
+				rstate |= DataControlRowState.Insert;
 			return rstate;
 		}
 		
@@ -1021,8 +996,7 @@ namespace System.Web.UI.WebControls
 		{
 			TableCell cell = new TableCell ();
 			
-			if (row.RowType == DataControlRowType.DataRow)
-			{
+			if (row.RowType == DataControlRowType.DataRow) {
 				if ((row.RowState & DataControlRowState.Edit) != 0) {
 					if (editItemTemplate != null)
 						editItemTemplate.InstantiateIn (cell);
@@ -1033,13 +1007,11 @@ namespace System.Web.UI.WebControls
 						insertItemTemplate.InstantiateIn (cell);
 					else
 						row.Visible = false;
-				}
-				else if (itemTemplate != null)
+				} else if (itemTemplate != null)
 					itemTemplate.InstantiateIn (cell);
 				else
 					row.Visible = false;
-			}
-			else if (row.RowType == DataControlRowType.EmptyDataRow)
+			} else if (row.RowType == DataControlRowType.EmptyDataRow)
 			{
 				if (emptyDataTemplate != null)
 					emptyDataTemplate.InstantiateIn (cell);
@@ -1047,8 +1019,7 @@ namespace System.Web.UI.WebControls
 					cell.Text = EmptyDataText;
 				else
 					row.Visible = false;
-			}
-			else if (row.RowType == DataControlRowType.Footer)
+			} else if (row.RowType == DataControlRowType.Footer)
 			{
 				if (footerTemplate != null)
 					footerTemplate.InstantiateIn (cell);
@@ -1056,8 +1027,7 @@ namespace System.Web.UI.WebControls
 					cell.Text = FooterText;
 				else
 					row.Visible = false;
-			}
-			else if (row.RowType == DataControlRowType.Header)
+			} else if (row.RowType == DataControlRowType.Header)
 			{
 				if (headerTemplate != null)
 					headerTemplate.InstantiateIn (cell);
@@ -1097,10 +1067,11 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual void ExtractRowValues (IOrderedDictionary fieldValues, bool includeKeys)
 		{
-			if (Row == null)
+			FormViewRow row = Row;
+			if (row == null)
 				return;
 
-			DataControlRowState rowState = Row.RowState;
+			DataControlRowState rowState = row.RowState;
 			IBindableTemplate bt;
 			
 			if ((rowState & DataControlRowState.Insert) != 0)
@@ -1111,19 +1082,18 @@ namespace System.Web.UI.WebControls
 				return;
 			
 			if (bt != null) {
-				IOrderedDictionary values = bt.ExtractValues (Row.Cells [0]);
-				if (values != null)
-				foreach (DictionaryEntry e in values) {
-					if (includeKeys || Array.IndexOf (DataKeyNames, e.Key) == -1)
-						fieldValues [e.Key] = e.Value;
+				IOrderedDictionary values = bt.ExtractValues (row.Cells [0]);
+				if (values != null) {
+					foreach (DictionaryEntry e in values) {
+						if (includeKeys || Array.IndexOf (DataKeyNames, e.Key) == -1)
+							fieldValues [e.Key] = e.Value;
+					}
 				}
 			}
 		}
 		
 		protected override HtmlTextWriterTag TagKey {
-			get {
-				return HtmlTextWriterTag.Table;
-			}
+			get { return HtmlTextWriterTag.Table; }
 		}
 		
 		public sealed override void DataBind ()
@@ -1154,32 +1124,32 @@ namespace System.Web.UI.WebControls
 
 			foreach (FormViewRow row in table.Rows) {
 				switch (row.RowType) {
-				case DataControlRowType.Header:
-					if (headerStyle != null && !headerStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (headerStyle);
-					break;
-				case DataControlRowType.Footer:
-					if (footerStyle != null && !footerStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (footerStyle);
-					break;
-				case DataControlRowType.Pager:
-					if (pagerStyle != null && !pagerStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (pagerStyle);
-					break;
-				case DataControlRowType.EmptyDataRow:
-					if (emptyDataRowStyle != null && !emptyDataRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (emptyDataRowStyle);
-					break;
-				case DataControlRowType.DataRow:
-					if (rowStyle != null && !rowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (rowStyle);
-					if ((row.RowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0 && editRowStyle != null && !editRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (editRowStyle);
-					if ((row.RowState & DataControlRowState.Insert) != 0 && insertRowStyle != null && !insertRowStyle.IsEmpty)
-						row.ControlStyle.CopyFrom (insertRowStyle);
-					break;
-				default:
-					break;
+					case DataControlRowType.Header:
+						if (headerStyle != null && !headerStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (headerStyle);
+						break;
+					case DataControlRowType.Footer:
+						if (footerStyle != null && !footerStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (footerStyle);
+						break;
+					case DataControlRowType.Pager:
+						if (pagerStyle != null && !pagerStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (pagerStyle);
+						break;
+					case DataControlRowType.EmptyDataRow:
+						if (emptyDataRowStyle != null && !emptyDataRowStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (emptyDataRowStyle);
+						break;
+					case DataControlRowType.DataRow:
+						if (rowStyle != null && !rowStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (rowStyle);
+						if ((row.RowState & (DataControlRowState.Edit | DataControlRowState.Insert)) != 0 && editRowStyle != null && !editRowStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (editRowStyle);
+						if ((row.RowState & DataControlRowState.Insert) != 0 && insertRowStyle != null && !insertRowStyle.IsEmpty)
+							row.ControlStyle.CopyFrom (insertRowStyle);
+						break;
+					default:
+						break;
 				}
 			}
 		}
@@ -1230,73 +1200,72 @@ namespace System.Web.UI.WebControls
 
 		void ProcessEvent (string eventName, string param, bool causesValidation)
 		{
-			switch (eventName)
-			{
-			case DataControlCommands.PageCommandName:
-				int newIndex = -1;
-				switch (param) {
+			switch (eventName) {
+				case DataControlCommands.PageCommandName:
+					int newIndex = -1;
+					switch (param) {
+						case DataControlCommands.FirstPageCommandArgument:
+							newIndex = 0;
+							break;
+						case DataControlCommands.LastPageCommandArgument:
+							newIndex = PageCount - 1;
+							break;
+						case DataControlCommands.NextPageCommandArgument:
+							newIndex = PageIndex + 1;
+							break;
+						case DataControlCommands.PreviousPageCommandArgument:
+							newIndex = PageIndex - 1;
+							break;
+						default:
+							int paramIndex = 0;
+							int.TryParse (param, out paramIndex);
+							newIndex = paramIndex - 1;
+							break;
+					}
+					ShowPage (newIndex);
+					break;
+					
 				case DataControlCommands.FirstPageCommandArgument:
-					newIndex = 0;
+					ShowPage (0);
 					break;
+
 				case DataControlCommands.LastPageCommandArgument:
-					newIndex = PageCount - 1;
+					ShowPage (PageCount - 1);
 					break;
+					
 				case DataControlCommands.NextPageCommandArgument:
-					newIndex = PageIndex + 1;
+					if (PageIndex < PageCount - 1)
+						ShowPage (PageIndex + 1);
 					break;
+
 				case DataControlCommands.PreviousPageCommandArgument:
-					newIndex = PageIndex - 1;
+					if (PageIndex > 0)
+						ShowPage (PageIndex - 1);
 					break;
-				default:
-					int paramIndex = 0;
-					int.TryParse (param, out paramIndex);
-					newIndex = paramIndex - 1;
+					
+				case DataControlCommands.EditCommandName:
+					ProcessChangeMode (FormViewMode.Edit, false);
 					break;
-				}
-				ShowPage (newIndex);
-				break;
 					
-			case DataControlCommands.FirstPageCommandArgument:
-				ShowPage (0);
-				break;
-
-			case DataControlCommands.LastPageCommandArgument:
-				ShowPage (PageCount - 1);
-				break;
+				case DataControlCommands.NewCommandName:
+					ProcessChangeMode (FormViewMode.Insert, false);
+					break;
 					
-			case DataControlCommands.NextPageCommandArgument:
-				if (PageIndex < PageCount - 1)
-					ShowPage (PageIndex + 1);
-				break;
-
-			case DataControlCommands.PreviousPageCommandArgument:
-				if (PageIndex > 0)
-					ShowPage (PageIndex - 1);
-				break;
+				case DataControlCommands.UpdateCommandName:
+					UpdateItem (param, causesValidation);
+					break;
 					
-			case DataControlCommands.EditCommandName:
-				ProcessChangeMode (FormViewMode.Edit, false);
-				break;
+				case DataControlCommands.CancelCommandName:
+					CancelEdit ();
+					break;
 					
-			case DataControlCommands.NewCommandName:
-				ProcessChangeMode (FormViewMode.Insert, false);
-				break;
+				case DataControlCommands.DeleteCommandName:
+					DeleteItem ();
+					break;
 					
-			case DataControlCommands.UpdateCommandName:
-				UpdateItem (param, causesValidation);
-				break;
-					
-			case DataControlCommands.CancelCommandName:
-				CancelEdit ();
-				break;
-					
-			case DataControlCommands.DeleteCommandName:
-				DeleteItem ();
-				break;
-					
-			case DataControlCommands.InsertCommandName:
-				InsertItem (causesValidation);
-				break;
+				case DataControlCommands.InsertCommandName:
+					InsertItem (causesValidation);
+					break;
 			}
 		}
 		
@@ -1352,7 +1321,8 @@ namespace System.Web.UI.WebControls
 			if (causesValidation && Page != null && !Page.IsValid)
 				return;
 			
-			if (currentMode != FormViewMode.Edit) throw new HttpException ("Must be in Edit mode");
+			if (currentMode != FormViewMode.Edit)
+				throw new HttpException ("Must be in Edit mode");
 
 			currentEditOldValues = OldEditValues.Values;
 			currentEditRowKeys = DataKey.Values;
@@ -1391,7 +1361,8 @@ namespace System.Web.UI.WebControls
 			if (causesValidation && Page != null && !Page.IsValid)
 				return;
 			
-			if (currentMode != FormViewMode.Insert) throw new HttpException ("Must be in Insert mode");
+			if (currentMode != FormViewMode.Insert)
+				throw new HttpException ("Must be in Insert mode");
 			
 			currentEditNewValues = GetRowValues (true);
 			FormViewInsertEventArgs args = new FormViewInsertEventArgs (param, currentEditNewValues);
@@ -1494,14 +1465,22 @@ namespace System.Web.UI.WebControls
 		protected override void TrackViewState()
 		{
 			base.TrackViewState();
-			if (pagerSettings != null) ((IStateManager)pagerSettings).TrackViewState();
-			if (footerStyle != null) ((IStateManager)footerStyle).TrackViewState();
-			if (headerStyle != null) ((IStateManager)headerStyle).TrackViewState();
-			if (pagerStyle != null) ((IStateManager)pagerStyle).TrackViewState();
-			if (rowStyle != null) ((IStateManager)rowStyle).TrackViewState();
-			if (editRowStyle != null) ((IStateManager)editRowStyle).TrackViewState();
-			if (insertRowStyle != null) ((IStateManager)insertRowStyle).TrackViewState();
-			if (emptyDataRowStyle != null) ((IStateManager)emptyDataRowStyle).TrackViewState();
+			if (pagerSettings != null)
+				((IStateManager)pagerSettings).TrackViewState();
+			if (footerStyle != null)
+				((IStateManager)footerStyle).TrackViewState();
+			if (headerStyle != null)
+				((IStateManager)headerStyle).TrackViewState();
+			if (pagerStyle != null)
+				((IStateManager)pagerStyle).TrackViewState();
+			if (rowStyle != null)
+				((IStateManager)rowStyle).TrackViewState();
+			if (editRowStyle != null)
+				((IStateManager)editRowStyle).TrackViewState();
+			if (insertRowStyle != null)
+				((IStateManager)insertRowStyle).TrackViewState();
+			if (emptyDataRowStyle != null)
+				((IStateManager)emptyDataRowStyle).TrackViewState();
 		}
 
 		protected override object SaveViewState()
@@ -1536,14 +1515,22 @@ namespace System.Web.UI.WebControls
 			
 			base.LoadViewState (states[0]);
 			
-			if (states[1] != null) ((IStateManager)PagerSettings).LoadViewState (states[1]);
-			if (states[2] != null) ((IStateManager)FooterStyle).LoadViewState (states[2]);
-			if (states[3] != null) ((IStateManager)HeaderStyle).LoadViewState (states[3]);
-			if (states[4] != null) ((IStateManager)PagerStyle).LoadViewState (states[4]);
-			if (states[5] != null) ((IStateManager)RowStyle).LoadViewState (states[5]);
-			if (states[6] != null) ((IStateManager)InsertRowStyle).LoadViewState (states[6]);
-			if (states[7] != null) ((IStateManager)EditRowStyle).LoadViewState (states[7]);
-			if (states[8] != null) ((IStateManager)EmptyDataRowStyle).LoadViewState (states[8]);
+			if (states[1] != null)
+				((IStateManager)PagerSettings).LoadViewState (states[1]);
+			if (states[2] != null)
+				((IStateManager)FooterStyle).LoadViewState (states[2]);
+			if (states[3] != null)
+				((IStateManager)HeaderStyle).LoadViewState (states[3]);
+			if (states[4] != null)
+				((IStateManager)PagerStyle).LoadViewState (states[4]);
+			if (states[5] != null)
+				((IStateManager)RowStyle).LoadViewState (states[5]);
+			if (states[6] != null)
+				((IStateManager)InsertRowStyle).LoadViewState (states[6]);
+			if (states[7] != null)
+				((IStateManager)EditRowStyle).LoadViewState (states[7]);
+			if (states[8] != null)
+				((IStateManager)EmptyDataRowStyle).LoadViewState (states[8]);
 		}
 		
 		protected internal override void Render (HtmlTextWriter writer)
@@ -1574,4 +1561,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

@@ -175,9 +175,7 @@ namespace System.Web.UI.WebControls {
 
 				return style.BorderWidth;
 			}
-			set {
-				ControlStyle.BorderWidth = value;
-			}
+			set { ControlStyle.BorderWidth = value; }
 		}
 
 		[Browsable(false)]

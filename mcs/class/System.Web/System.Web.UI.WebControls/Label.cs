@@ -4,7 +4,7 @@
 // Authors:
 //	Miguel de Icaza (miguel@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // TODO: Are we missing something in LoadViewState?
 //
@@ -32,8 +32,8 @@
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -43,29 +43,18 @@ namespace System.Web.UI.WebControls {
 	[DefaultProperty("Text")]
 	[Designer("System.Web.UI.Design.WebControls.LabelDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[ParseChildren (false)]
-#if NET_2_0
 	[ToolboxData("<{0}:Label runat=\"server\" Text=\"Label\"></{0}:Label>")]
 	[ControlValueProperty ("Text", null)]
-#else	
-	[ToolboxData("<{0}:Label runat=server>Label</{0}:Label>")]
-#endif		
-	public class Label : WebControl
-#if NET_2_0
-	, ITextControl
-#endif		
+	public class Label : WebControl, ITextControl
 	{
 		[Bindable(true)]
 		[DefaultValue("")]
 		[PersistenceMode(PersistenceMode.InnerDefaultProperty)]
-#if NET_2_0
 		[Localizable (true)]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public virtual string Text {
-			get {
-				return ViewState.GetString ("Text", "");
-			}
+			get { return ViewState.GetString ("Text", String.Empty); }
 			set {
 				ViewState ["Text"] = value;
 				if (HasControls ())
@@ -73,22 +62,15 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-		// Added in .net 1.1 sp1
-#if NET_2_0
 		[IDReferenceProperty (typeof (Control))]
 		[TypeConverter (typeof (AssociatedControlConverter))]
 		[Themeable (false)]
-#endif		
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Accessibility")]
 		public virtual string AssociatedControlID {
-			get {
-				return ViewState.GetString ("AssociatedControlID", "");
-			}
-			set {
-				ViewState ["AssociatedControlID"] = value;
-			}
+			get { return ViewState.GetString ("AssociatedControlID", String.Empty); }
+			set { ViewState ["AssociatedControlID"] = value; }
 		}
 
 		protected override void LoadViewState (object savedState)
@@ -121,12 +103,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void RenderContents (HtmlTextWriter writer)
+		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			if (HasControls () || HasRenderMethodDelegate ())
 				base.RenderContents (writer);
@@ -134,18 +111,14 @@ namespace System.Web.UI.WebControls {
 				writer.Write (Text);
 		}
 
-		// Added in .net 1.1 sp1
 		protected override HtmlTextWriterTag TagKey {
-			get {
-				return AssociatedControlID == "" ? HtmlTextWriterTag.Span : HtmlTextWriterTag.Label;
-			}
+			get { return String.IsNullOrEmpty (AssociatedControlID) ? HtmlTextWriterTag.Span : HtmlTextWriterTag.Label; }
 		}
 
-		// Added in .net 1.1 sp1
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
-			if (AssociatedControlID != "")
+			if (!String.IsNullOrEmpty (AssociatedControlID))
 				writer.AddAttribute (HtmlTextWriterAttribute.For, NamingContainer.FindControl (AssociatedControlID).ClientID);
 		}
 	}

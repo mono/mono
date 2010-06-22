@@ -4,7 +4,7 @@
 // Authors:
 //   Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Collections.Specialized;
 using System.ComponentModel;
 
@@ -48,7 +46,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		internal FormViewUpdateEventArgs (object argument, IOrderedDictionary keys, IOrderedDictionary oldValues, IOrderedDictionary newValues)
-		: this (argument)
+			: this (argument)
 		{
 			this.keys = keys;
 			this.oldValues = oldValues;
@@ -73,4 +71,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

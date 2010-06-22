@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2010 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
@@ -27,16 +27,13 @@
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
-#if NET_2_0
-	public class DataGridItem : TableRow, INamingContainer, IDataItemContainer {
-#else
-	public class DataGridItem : TableRow, INamingContainer {
-#endif
+	public class DataGridItem : TableRow, INamingContainer, IDataItemContainer
+	{
 		#region Fields
 		object item;
 		int dataset_index;
@@ -54,35 +51,23 @@ namespace System.Web.UI.WebControls {
 
 		#region Public Instance Properties
 		public virtual object DataItem {
-			get {
-				return item;
-			}
-
-			set {
-				item = value;
-			}
+			get { return item; }
+			set { item = value; }
 		}
 
 		public virtual int DataSetIndex {
-			get {
-				return dataset_index;
-			}
+			get { return dataset_index; }
 		}
 
 		public virtual int ItemIndex {
-			get {
-				return item_index;
-			}
+			get { return item_index; }
 		}
 
 		public virtual ListItemType ItemType {
-			get {
-				return item_type;
-			}
+			get { return item_type; }
 		}
 		#endregion	// Public Instance Properties
 
-#if NET_2_0
 		#region IDataItemContainer Properties
 		object IDataItemContainer.DataItem {
 			get { return item; }
@@ -96,10 +81,10 @@ namespace System.Web.UI.WebControls {
 			get { return item_index; }
 		}
 		#endregion	// IDataItemContainer Properties
-#endif
 
 		#region Public Instance Methods
-		protected override bool OnBubbleEvent(object source, EventArgs args) {
+		protected override bool OnBubbleEvent(object source, EventArgs args)
+		{
 			// Nikhil Kothari, pg 312-313:
 			if (args is CommandEventArgs) {
 				RaiseBubbleEvent(this, new DataGridCommandEventArgs(this, source, (CommandEventArgs)args));
@@ -109,7 +94,8 @@ namespace System.Web.UI.WebControls {
 			return base.OnBubbleEvent (source, args);
 		}
 
-		protected internal virtual void SetItemType(ListItemType itemType) {
+		protected internal virtual void SetItemType(ListItemType itemType)
+		{
 			item_type = itemType;
 			
 		}

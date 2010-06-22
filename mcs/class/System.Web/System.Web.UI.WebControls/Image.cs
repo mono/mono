@@ -4,7 +4,7 @@
 // Author:
 //	Sebastien Pouliot  <sebastien@ximian.com>
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,8 +29,8 @@
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// Note: this control can live inside or outside a <form> element
 
 	// CAS
@@ -38,11 +38,9 @@ namespace System.Web.UI.WebControls {
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultProperty ("ImageUrl")]
-#if NET_2_0
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-#endif
-	public class Image : WebControl {
-
+	public class Image : WebControl
+	{
 		public Image ()
 			: base (HtmlTextWriterTag.Img)
 		{
@@ -51,9 +49,7 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable (true)]
 		[DefaultValue ("")]
-#if NET_2_0
 		[Localizable (true)]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public virtual string AlternateText {
@@ -85,9 +81,6 @@ namespace System.Web.UI.WebControls {
 			get { return base.Font; }
 		}
 
-#if ONLY_1_1
-		[Bindable (true)]
-#endif
 		[DefaultValue (ImageAlign.NotSet)]
 		[WebSysDescription ("")]
 		[WebCategory ("Layout")]
@@ -108,12 +101,8 @@ namespace System.Web.UI.WebControls {
 
 		[Bindable (true)]
 		[DefaultValue ("")]
-#if NET_2_0
 		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlProperty]
-#else
-		[Editor ("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof (System.Drawing.Design.UITypeEditor))]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public virtual string ImageUrl {
@@ -131,10 +120,8 @@ namespace System.Web.UI.WebControls {
 
 		// this was added in Fx 1.1 SP1
 		[DefaultValue ("")]
-#if NET_2_0
 		[Editor ("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		[UrlProperty]
-#endif
 		[WebSysDescription ("")]
 		[WebCategory ("Accessibility")]
 		public virtual string DescriptionUrl {
@@ -150,7 +137,6 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 
-#if NET_2_0
 		[DefaultValue (false)]
 		[WebSysDescription ("")]
 		[WebCategory ("Accessibility")]
@@ -159,17 +145,12 @@ namespace System.Web.UI.WebControls {
 				object o = ViewState ["GenerateEmptyAlternateText"];
 				return (o == null) ? false : (bool) o;
 			}
-			set {
-				ViewState ["GenerateEmptyAlternateText"] = value;
-			}
+			set { ViewState ["GenerateEmptyAlternateText"] = value; }
 		}
-#endif
-
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{
 			base.AddAttributesToRender (writer);
-#if NET_2_0
 			// src is always present, even if empty, in 2.0
 			writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (ImageUrl));
 			string s = AlternateText;
@@ -178,45 +159,35 @@ namespace System.Web.UI.WebControls {
 			s = DescriptionUrl;
 			if (s.Length > 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Longdesc, ResolveClientUrl (s));
-#else
-			string s = ImageUrl;
-			if (s.Length > 0)
-				writer.AddAttribute (HtmlTextWriterAttribute.Src, ResolveClientUrl (s));
-			// alt is always present, even if empty, in 1.x
-			writer.AddAttribute (HtmlTextWriterAttribute.Alt, AlternateText);
-			// added in Fx 1.1 SP1 but the HtmlTextWriterAttribute wasn't
-			s = DescriptionUrl;
-			if (s.Length > 0)
-				writer.AddAttribute ("longdesc", s);
-#endif
+
 			switch (ImageAlign) {
-			case ImageAlign.Left:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "left", false);
-				break;
-			case ImageAlign.Right:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "right", false);
-				break;
-			case ImageAlign.Baseline:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "baseline", false);
-				break;
-			case ImageAlign.Top:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "top", false);
-				break;
-			case ImageAlign.Middle:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "middle", false);
-				break;
-			case ImageAlign.Bottom:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "bottom", false);
-				break;
-			case ImageAlign.AbsBottom:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "absbottom", false);
-				break;
-			case ImageAlign.AbsMiddle:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "absmiddle", false);
-				break;
-			case ImageAlign.TextTop:
-				writer.AddAttribute (HtmlTextWriterAttribute.Align, "texttop", false);
-				break;
+				case ImageAlign.Left:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "left", false);
+					break;
+				case ImageAlign.Right:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "right", false);
+					break;
+				case ImageAlign.Baseline:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "baseline", false);
+					break;
+				case ImageAlign.Top:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "top", false);
+					break;
+				case ImageAlign.Middle:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "middle", false);
+					break;
+				case ImageAlign.Bottom:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "bottom", false);
+					break;
+				case ImageAlign.AbsBottom:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "absbottom", false);
+					break;
+				case ImageAlign.AbsMiddle:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "absmiddle", false);
+					break;
+				case ImageAlign.TextTop:
+					writer.AddAttribute (HtmlTextWriterAttribute.Align, "texttop", false);
+					break;
 			}
 #if NET_2_0
 #if BUG_78875_FIXED
@@ -235,12 +206,7 @@ namespace System.Web.UI.WebControls {
 #endif
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void RenderContents (HtmlTextWriter writer)
+		protected internal override void RenderContents (HtmlTextWriter writer)
 		{
 			base.RenderContents (writer);
 		}

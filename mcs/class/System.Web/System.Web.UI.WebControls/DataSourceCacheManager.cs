@@ -26,8 +26,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System;
 using System.Web;
 using System.Web.UI;
@@ -97,13 +95,11 @@ namespace System.Web.UI.WebControls
 			else
 				dependencies = new string [] { };
 
-			DataCache.Add (key, o,
-				new CacheDependency (new string [] { }, dependencies),
-				absoluteExpiration, slidindExpiraion, CacheItemPriority.Default, null);
+			DataCache.Add (key, o, new CacheDependency (new string [] { }, dependencies),
+				       absoluteExpiration, slidindExpiraion, CacheItemPriority.Default, null);
 		}
 
-		static Cache DataCache
-		{
+		static Cache DataCache {
 			get {
 				if (HttpContext.Current != null)
 					return HttpContext.Current.InternalCache;
@@ -129,4 +125,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

@@ -4,7 +4,7 @@
 // Authors:
 //   Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,33 +28,26 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
 	public class GridViewSortEventArgs : CancelEventArgs
 	{
-		string sortExpression;
-		SortDirection sortDirection;
-		
 		public GridViewSortEventArgs (string expression, SortDirection sortDirection)
 		{
-			this.sortExpression = expression;
-			this.sortDirection = sortDirection;
+			this.SortExpression = expression;
+			this.SortDirection = sortDirection;
 		}
 		
 		public string SortExpression {
-			get { return sortExpression; }
-			set { sortExpression = value;}
+			get;
+			set;
 		}
 		
 		public SortDirection SortDirection {
-			get { return sortDirection; }
-			set { sortDirection = value;}
+			get;
+			set;
 		}
 	}
 }
-
-#endif

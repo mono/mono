@@ -4,7 +4,7 @@
 // Authors:
 //	Jordi Mas i Hernandez (jordi@ximian.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 //
 //
@@ -32,20 +32,17 @@ using System.Collections.Specialized;
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[DefaultEvent("Click")]
-#if NET_2_0
 	[Designer ("System.Web.UI.Design.WebControls.PreviewControlDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
 	[SupportsEventValidation]
-	public class ImageButton : Image, IPostBackDataHandler, IPostBackEventHandler, IButtonControl {
-#else
-	public class ImageButton : Image, IPostBackDataHandler, IPostBackEventHandler {
-#endif
+	public class ImageButton : Image, IPostBackDataHandler, IPostBackEventHandler, IButtonControl
+	{
 		static readonly object ClickEvent = new object ();
 		static readonly object CommandEvent = new object ();
 		int pos_x, pos_y;
@@ -55,66 +52,39 @@ namespace System.Web.UI.WebControls {
 
 		}
 
-#if ONLY_1_1
-		[Bindable(false)]
-#endif		
 		[DefaultValue(true)]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-#if NET_2_0
 		[Themeable (false)]
-		public virtual
-#else		
-		public
-#endif		
-		bool CausesValidation {
-			get {
-				return ViewState.GetBool ("CausesValidation", true);
-			}
-
-			set {
-				ViewState ["CausesValidation"] = value;
-			}
+		public virtual bool CausesValidation {
+			get { return ViewState.GetBool ("CausesValidation", true); }
+			set { ViewState ["CausesValidation"] = value; }
 		}
 
 		[Bindable(true)]
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		public string CommandArgument {
-			get {
-				return ViewState.GetString ("CommandArgument", "");
-			}
-			set {
-				ViewState ["CommandArgument"] = value;
-			}
+			get { return ViewState.GetString ("CommandArgument", String.Empty); }
+			set { ViewState ["CommandArgument"] = value; }
 		}
 
 		[DefaultValue("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-#if NET_2_0
 		[Themeable (false)]
-#endif		
 		public string CommandName {
-			get {
-				return ViewState.GetString ("CommandName", "");
-			}
-			set {
-				ViewState ["CommandName"] = value;
-			}
+			get { return ViewState.GetString ("CommandName", String.Empty); }
+			set { ViewState ["CommandName"] = value; }
 		}
 
-#if NET_2_0
 		[EditorBrowsable (EditorBrowsableState.Always)]
 		[Browsable (true)]
 		[DefaultValue (true)]
 		[Bindable (true)]
-		public virtual new bool Enabled
-		{
+		public virtual new bool Enabled {
 			// Should there be any special code below? Doesn't look so...
 			get { return base.Enabled; }
 			set { base.Enabled = value; }
@@ -124,79 +94,47 @@ namespace System.Web.UI.WebControls {
 		[EditorBrowsable (EditorBrowsableState.Never)]
 		[Themeable (false)]
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
-		public override bool GenerateEmptyAlternateText
-		{
+		public override bool GenerateEmptyAlternateText {
 			get { return false; }
 			set { throw new NotSupportedException (); }
 		}
 
 		[DefaultValue ("")]
 		[Themeable (false)]
-		public virtual string OnClientClick 
-		{
-			get {
-				return ViewState.GetString ("OnClientClick", String.Empty);
-			}
-			set {
-				ViewState ["OnClientClick"] = value;
-			}
+		public virtual string OnClientClick {
+			get { return ViewState.GetString ("OnClientClick", String.Empty); }
+			set { ViewState ["OnClientClick"] = value; }
 		}
 
 		[Themeable (false)]
-#if NET_2_0
 		[UrlProperty ("*.aspx")]
-#else
-		[UrlProperty]
-#endif
 		[DefaultValue ("")]
 		[Editor ("System.Web.UI.Design.UrlEditor, "  + Consts.AssemblySystem_Design, "System.Drawing.Design.UITypeEditor, " + Consts.AssemblySystem_Drawing)]
 		public virtual string PostBackUrl {
-			get {
-				return ViewState.GetString ("PostBackUrl", String.Empty);
-			}
-			set {
-				ViewState["PostBackUrl"] = value;
-			}
+			get { return ViewState.GetString ("PostBackUrl", String.Empty); }
+			set { ViewState["PostBackUrl"] = value; }
 		}
 
 		[Themeable (false)]
 		[DefaultValue ("")]
 		[WebSysDescription ("")]
 		[WebCategory ("Behavior")]
-		public virtual string ValidationGroup
-		{
-			get {
-				return ViewState.GetString ("ValidationGroup", "");
-			}
-			set {
-				ViewState ["ValidationGroup"] = value;
-			}
+		public virtual string ValidationGroup {
+			get { return ViewState.GetString ("ValidationGroup", String.Empty); }
+			set { ViewState ["ValidationGroup"] = value; }
 		}
-#endif		
 
 		[Browsable(false)]
 		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-#if NET_2_0 && HAVE_CONTROL_ADAPTERS
-		protected virtual new
-#else		
-		protected override
-#endif
-		HtmlTextWriterTag TagKey {
+		protected override HtmlTextWriterTag TagKey {
 			get { return HtmlTextWriterTag.Input; }
 		}
 
-#if NET_2_0
 		// Gets or sets the value of the ImageButton control's AlternateText property. (MSDN)
-		protected virtual string Text 
-		{
-			get {
-				return AlternateText;
-			}
-			set {
-				AlternateText = value;
-			}
+		protected virtual string Text {
+			get { return AlternateText; }
+			set { AlternateText = value; }
 		}
-#endif		
 
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
 		{			
@@ -208,7 +146,7 @@ namespace System.Web.UI.WebControls {
 			writer.AddAttribute (HtmlTextWriterAttribute.Name, UniqueID);
 
 			base.AddAttributesToRender (writer);
-#if NET_2_0
+
 			string onclick = OnClientClick;
 			if (!String.IsNullOrEmpty (onclick))
 				onclick = ClientScriptManager.EnsureEndsWithSemicolon (onclick);
@@ -225,24 +163,16 @@ namespace System.Web.UI.WebControls {
 			
 			if (onclick.Length > 0)
 				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, onclick);
-#else
-			if (CausesValidation && page != null && page.AreValidatorsUplevel ()) {
-				ClientScriptManager csm = new ClientScriptManager (page);
-				writer.AddAttribute (HtmlTextWriterAttribute.Onclick, csm.GetClientValidationEvent ());
-				writer.AddAttribute ("language", "javascript");
-			}
-#endif
 		}
 
-#if NET_2_0
 		internal virtual string GetClientScriptEventReference ()
 		{
 			PostBackOptions options = GetPostBackOptions ();
 			Page page = Page;
 			
-			if (options.PerformValidation || !String.IsNullOrEmpty (options.ActionUrl)) {
+			if (options.PerformValidation || !String.IsNullOrEmpty (options.ActionUrl))
 				return page != null ? page.ClientScript.GetPostBackEventReference (options, true) : String.Empty;
-			} else {
+			else {
 				if (page != null)
 					page.ClientScript.RegisterForEventValidation (options);
 				return String.Empty;
@@ -273,26 +203,21 @@ namespace System.Web.UI.WebControls {
 			
 			return options;
 		}
-#endif		
 
-
-#if NET_2_0
-		protected virtual
-#endif
-		bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection) 
 		{
 			string x, y;
 			string unique = UniqueID;
 			x = postCollection [unique + ".x"];
 			y = postCollection [unique + ".y"];
-			if (x != null && x != "" && y != null && y != "") {
+			if (!String.IsNullOrEmpty (x) && !String.IsNullOrEmpty (y)) {
 				pos_x = Int32.Parse(x);
 				pos_y = Int32.Parse(y);
 				Page.RegisterRequiresRaiseEvent (this);
 				return true;
 			} else {
 				x = postCollection [unique];
-				if (x != null && x != "") {
+				if (!String.IsNullOrEmpty (x)) {
 					pos_x = Int32.Parse (x);
 					pos_y = 0;
 					Page.RegisterRequiresRaiseEvent (this);
@@ -302,28 +227,20 @@ namespace System.Web.UI.WebControls {
 
 			return false;
 		}
-#if NET_2_0
-		protected virtual
-#endif
-		void RaisePostDataChangedEvent ()
+
+		protected virtual void RaisePostDataChangedEvent ()
 		{
 		}
 		
-#if NET_2_0
-		protected virtual
-#endif
-		void RaisePostBackEvent (string eventArgument)
+		protected virtual void RaisePostBackEvent (string eventArgument)
 		{
-#if NET_2_0
 			ValidateEvent (UniqueID, String.Empty);
-#endif
-			if (CausesValidation)
-#if NET_2_0
-				Page.Validate (ValidationGroup);
-#else
-				Page.Validate ();
-#endif
-
+			if (CausesValidation) {
+				Page page = Page;
+				if (page != null)
+					page.Validate (ValidationGroup);
+			}
+			
 			OnClick (new ImageClickEventArgs (pos_x, pos_y));
 			OnCommand (new CommandEventArgs (CommandName, CommandArgument));
 		}
@@ -364,12 +281,7 @@ namespace System.Web.UI.WebControls {
 			RaiseBubbleEvent (this, e);
 		}
 
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void OnPreRender (EventArgs e)
+		protected internal override void OnPreRender (EventArgs e)
 		{
 			Page page = Page;
 			if (page != null && IsEnabled)
@@ -378,50 +290,27 @@ namespace System.Web.UI.WebControls {
 
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
-		public event ImageClickEventHandler Click
-		{
-			add {
-				Events.AddHandler (ClickEvent, value);
-			}
-			remove {
-				Events.RemoveHandler (ClickEvent, value);
-			}
+		public event ImageClickEventHandler Click {
+			add { Events.AddHandler (ClickEvent, value); }
+			remove { Events.RemoveHandler (ClickEvent, value); }
 		}
 
 		[WebSysDescription ("")]
 		[WebCategory ("Action")]
-		public event CommandEventHandler Command
-		{
-			add {
-				Events.AddHandler (CommandEvent, value);
-			}
-			remove {
-				Events.RemoveHandler (CommandEvent, value);
-			}
+		public event CommandEventHandler Command {
+			add { Events.AddHandler (CommandEvent, value); }
+			remove { Events.RemoveHandler (CommandEvent, value); }
 		}
 
-#if NET_2_0
-		string IButtonControl.Text 
-		{
-			get {
-				return Text;
-			}
-			set {
-				Text = value;
-			}
+		string IButtonControl.Text  {
+			get { return Text; }
+			set { Text = value; }
 		}
 
-		event EventHandler IButtonControl.Click
-		{
-			add {
-				Events.AddHandler (ClickEvent, value);
-			}
-			remove {
-				Events.RemoveHandler (ClickEvent, value);
-			}
+		event EventHandler IButtonControl.Click {
+			add { Events.AddHandler (ClickEvent, value); }
+			remove { Events.RemoveHandler (ClickEvent, value); }
 		}
-		
-#endif
 	}
 }
 

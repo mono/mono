@@ -23,8 +23,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-#if NET_2_0
-
 using System;
 using System.ComponentModel;
 using System.Web;
@@ -82,7 +80,7 @@ namespace System.Web.UI.WebControls
 		public string FileName {
 			get {
 				if (PostedFile == null)
-					return string.Empty;
+					return String.Empty;
 				else
 					return Path.GetFileName (PostedFile.FileName);
 			}
@@ -101,7 +99,8 @@ namespace System.Web.UI.WebControls
 		[DesignerSerializationVisibility (DesignerSerializationVisibility.Hidden)]
 		public HttpPostedFile PostedFile {
 			get {
-				if (Page == null || !Page.IsPostBack)
+				Page page = Page;
+				if (page == null || !page.IsPostBack)
 					return null;
 				if (Context == null || Context.Request == null)
 					return null;
@@ -120,13 +119,16 @@ namespace System.Web.UI.WebControls
 		protected internal override void OnPreRender (System.EventArgs e)
 		{
 			base.OnPreRender (e);
-			Page.Form.Enctype = "multipart/form-data";
+			Page page = Page;
+			if (page != null)
+				page.Form.Enctype = "multipart/form-data";
 		}
 
 		protected internal override void Render (HtmlTextWriter writer)
 		{
-			if (Page != null)
-				Page.VerifyRenderingInServerForm (this);
+			Page page = Page;
+			if (page != null)
+				page.VerifyRenderingInServerForm (this);
 			base.Render (writer);
 		}
 
@@ -138,4 +140,4 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
-#endif
+

@@ -4,7 +4,7 @@
 // Authors:
 //	Ben Maurer (bmaurer@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // TODO: Are we missing something in LoadViewState?
 //
@@ -31,8 +31,8 @@
 using System.ComponentModel;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
@@ -40,15 +40,11 @@ namespace System.Web.UI.WebControls {
 	[ControlBuilder(typeof(HyperLinkControlBuilder))]
 	[DataBindingHandler("System.Web.UI.Design.HyperLinkDataBindingHandler, " + Consts.AssemblySystem_Design)]
 	[ParseChildren (false)]
-#if NET_2_0
 	[ToolboxData("<{0}:HyperLink runat=\"server\">HyperLink</{0}:HyperLink>")]
-#else		
-	[ToolboxData("<{0}:HyperLink runat=server>HyperLink</{0}:HyperLink>")]
-#endif		
 	[DefaultProperty("Text")]
 	[Designer("System.Web.UI.Design.WebControls.HyperLinkDesigner, " + Consts.AssemblySystem_Design, "System.ComponentModel.Design.IDesigner")]
-	public class HyperLink : WebControl {
-
+	public class HyperLink : WebControl
+	{
 		public HyperLink () : base (HtmlTextWriterTag.A)
 		{
 		}
@@ -56,9 +52,7 @@ namespace System.Web.UI.WebControls {
 		protected override void AddAttributesToRender (HtmlTextWriter w)
 		{
 			base.AddAttributesToRender (w);
-#if NET_2_0
 			AddDisplayStyleAttribute (w);
-#endif
 			if (!IsEnabled)
 				return;
 			// add attributes - only if they're not empty
@@ -90,11 +84,9 @@ namespace System.Web.UI.WebControls {
 					Controls.Add (new LiteralControl (s));
 				}
 				base.AddParsedSubObject (obj);
-			} else {
+			} else
 				Text = lc.Text;
-			}
 		}
-		
 
 		[MonoTODO ("Why override?")]
 		protected override void LoadViewState (object savedState)
@@ -102,96 +94,72 @@ namespace System.Web.UI.WebControls {
 			base.LoadViewState (savedState);
 		}
 		
-#if NET_2_0
-		protected internal
-#else		
-		protected
-#endif		
-		override void RenderContents (HtmlTextWriter w)	
+		protected internal override void RenderContents (HtmlTextWriter w)	
 		{
 			if (HasControls () || HasRenderMethodDelegate ()) {
 				base.RenderContents (w);
 				return;
 			}
 			string image_url = ImageUrl;
-			if (image_url != "") {
+			if (!String.IsNullOrEmpty (image_url)) {
 				Image img = new Image ();
 				img.ImageUrl = ResolveClientUrl (image_url);
 				string str = Text;
-				if (str != "")
+				if (!String.IsNullOrEmpty (str))
 					img.AlternateText = str;
+// #if NET_4_0
+// 				else
+// 					img.GenerateEmptyAlternateText = true;
+// #else
+// 				img.BorderWidth = 0;
+// #endif
 				str = ToolTip;
-				if (str != "")
+				if (!String.IsNullOrEmpty (str))
 					img.ToolTip = str;
 				img.RenderControl (w);
-			} else {
+			} else
 				w.Write (Text);
-			}
-			
 		}
 
 		[Bindable(true)]
 		[DefaultValue("")]
 		[Editor("System.Web.UI.Design.ImageUrlEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-#if NET_2_0
 		[UrlProperty]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public virtual string ImageUrl {
-			get {
-				return ViewState.GetString ("ImageUrl", "");
-			}
-			set {
-				ViewState ["ImageUrl"] = value;
-			}	
+			get { return ViewState.GetString ("ImageUrl", String.Empty); }
+			set { ViewState ["ImageUrl"] = value; }	
 		}
 		
 		[Bindable(true)]
 		[DefaultValue("")]
 		[Editor("System.Web.UI.Design.UrlEditor, " + Consts.AssemblySystem_Design, typeof(System.Drawing.Design.UITypeEditor))]
-#if NET_2_0
 		[UrlProperty]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Navigation")]
 		public string NavigateUrl {
-			get {
-				return ViewState.GetString ("NavigateUrl", "");
-			}
-			set {
-				ViewState ["NavigateUrl"] = value;
-			}	
+			get { return ViewState.GetString ("NavigateUrl", String.Empty); }
+			set { ViewState ["NavigateUrl"] = value; }	
 		}
 		
-#if ONLY_1_1
-		[Bindable(true)]
-#endif		
 		[DefaultValue("")]
 		[TypeConverter(typeof(System.Web.UI.WebControls.TargetConverter))]
 		[WebSysDescription ("")]
 		[WebCategory ("Navigation")]
 		public string Target {
-			get {
-				return ViewState.GetString ("Target", "");
-			}
-			set {
-				ViewState ["Target"] = value;
-			}
+			get { return ViewState.GetString ("Target", String.Empty); }
+			set { ViewState ["Target"] = value; }
 		}
 		
 		[Bindable(true)]
 		[DefaultValue("")]
 		[PersistenceMode(PersistenceMode.InnerDefaultProperty)]
-#if NET_2_0
 		[Localizable (true)]
-#endif		
 		[WebSysDescription ("")]
 		[WebCategory ("Appearance")]
 		public virtual string Text {
-			get {
-				return ViewState.GetString ("Text", "");
-			}
+			get { return ViewState.GetString ("Text", String.Empty); }
 			set {
 				ViewState ["Text"] = value;
 				if (HasControls ())

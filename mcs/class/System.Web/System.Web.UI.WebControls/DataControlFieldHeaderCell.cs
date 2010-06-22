@@ -4,7 +4,7 @@
 // Authors:
 //  Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc. (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc. (http://www.novell.com)
 //
 
 //
@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
 using System.Web.UI;
 
 namespace System.Web.UI.WebControls
@@ -49,23 +47,23 @@ namespace System.Web.UI.WebControls
 		public virtual TableHeaderScope Scope {
 			get {
 				object ob = ViewState ["Scope"];
-				if (ob != null) return (TableHeaderScope) ob;
-				else return TableHeaderScope.NotSet;
+				if (ob != null)
+					return (TableHeaderScope) ob;
+				else
+					return TableHeaderScope.NotSet;
 			}
-			set {
-				ViewState ["Scope"] = value;
-			}
+			set { ViewState ["Scope"] = value; }
 		}
 		
 		public virtual string AbbreviatedText {
 			get {
 				object ob = ViewState ["AbbreviatedText"];
-				if (ob != null) return (string) ob;
-				else return string.Empty;
+				if (ob != null)
+					return (string) ob;
+				else
+					return String.Empty;
 			}
-			set {
-				ViewState ["AbbreviatedText"] = value;
-			}
+			set { ViewState ["AbbreviatedText"] = value;}
 		}
 		
 		protected override void AddAttributesToRender (HtmlTextWriter writer)
@@ -84,4 +82,4 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
-#endif
+

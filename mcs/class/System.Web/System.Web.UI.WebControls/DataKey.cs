@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -27,8 +27,6 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-
-#if NET_2_0
 using System;
 using System.Collections;
 using System.Collections.Specialized;
@@ -99,7 +97,8 @@ namespace System.Web.UI.WebControls
 		
 		protected virtual object SaveViewState ()
 		{
-			if (keyTable.Count == 0) return null;
+			if (keyTable.Count == 0)
+				return null;
 			
 			if (keyNames != null) {
 				object[] avals = new object [keyTable.Count];
@@ -148,4 +147,4 @@ namespace System.Web.UI.WebControls
 		}
 	}
 }
-#endif
+

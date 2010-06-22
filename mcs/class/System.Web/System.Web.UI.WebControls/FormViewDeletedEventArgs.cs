@@ -4,7 +4,7 @@
 // Authors:
 //   Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,8 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Collections.Specialized;
 
 namespace System.Web.UI.WebControls
@@ -49,7 +47,7 @@ namespace System.Web.UI.WebControls
 		}
 		
 		internal FormViewDeletedEventArgs (int affectedRows, Exception e, IOrderedDictionary keys, IOrderedDictionary values) 
-		: this (affectedRows, e)
+			: this (affectedRows, e)
 		{
 			this.keys = keys;
 			this.values = values;
@@ -78,4 +76,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

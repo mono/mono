@@ -4,7 +4,7 @@
 // Author:
 //      Atsushi Enomoto  <atsushi@ximian.com>
 //
-// (C) 2008-2009 Novell, Inc (http://www.novell.com)
+// (C) 2008-2010 Novell, Inc (http://www.novell.com)
 //
 //
 // Permission is hereby granted, free of charge, to any person obtaining
@@ -27,8 +27,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-
-#if NET_2_0
 using System;
 using System.Security.Permissions;
 using System.Web;
@@ -44,5 +42,5 @@ namespace System.Web.UI.WebControls
 		DataKey DataKey { get; set; }
 	}
 }
-#endif
+
 

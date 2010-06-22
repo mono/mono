@@ -3,7 +3,7 @@
 //
 // Author: Duncan Mak (duncan@novell.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -27,13 +27,9 @@
 
 using System.Web.UI.WebControls;
 
-namespace System.Web.UI.WebControls {
-
-	public
-#if !NET_2_0
-	sealed
-#endif
-	class DataGridSortCommandEventArgs : EventArgs
+namespace System.Web.UI.WebControls
+{
+	public class DataGridSortCommandEventArgs : EventArgs
 	{
 		object source;
 		string expr;

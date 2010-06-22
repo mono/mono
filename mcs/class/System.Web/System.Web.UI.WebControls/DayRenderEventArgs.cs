@@ -3,7 +3,7 @@
 //
 // Author: Duncan Mak (duncan@novell.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,15 +25,13 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	public sealed class DayRenderEventArgs
 	{
 		TableCell cell;
 		CalendarDay day;
-#if NET_2_0
 		string _selectUrl;
-#endif
 
 		public DayRenderEventArgs (TableCell cell, CalendarDay day)
 		{
@@ -41,13 +39,11 @@ namespace System.Web.UI.WebControls {
 			this.day = day;
 		}
 
-#if NET_2_0
 		public DayRenderEventArgs (TableCell cell, CalendarDay day, string selectUrl)
 			: this (cell, day)
 		{
 			_selectUrl = selectUrl;
 		}
-#endif
 
 		public TableCell Cell {
 			get { return cell; }
@@ -57,10 +53,8 @@ namespace System.Web.UI.WebControls {
 			get { return day; }
 		}
 
-#if NET_2_0
 		public string SelectUrl {
 			get { return _selectUrl; }
 		}
-#endif
 	}
 }

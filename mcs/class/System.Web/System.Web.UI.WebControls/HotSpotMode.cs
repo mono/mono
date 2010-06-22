@@ -22,16 +22,17 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 
-#if NET_2_0
-namespace System.Web.UI.WebControls {
-        public enum HotSpotMode {
+namespace System.Web.UI.WebControls
+{
+        public enum HotSpotMode
+	{
                 NotSet = 0,
 		Navigate = 1,
 		PostBack = 2,
 		Inactive = 3		
         }
 }
-#endif
+

@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,7 +28,6 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
 using System.Collections;
 using System.Collections.Specialized;
 using System.Web.UI;
@@ -36,8 +35,8 @@ using System.ComponentModel;
 using System.Security.Permissions;
 using System.Reflection;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class HyperLinkField : DataControlField
@@ -58,8 +57,10 @@ namespace System.Web.UI.WebControls {
 		public virtual string[] DataNavigateUrlFields {
 			get {
 				object ob = ViewState ["DataNavigateUrlFields"];
-				if (ob != null) return (string[]) ob;
-				if (emptyFields == null) emptyFields = new string[0];
+				if (ob != null)
+					return (string[]) ob;
+				if (emptyFields == null)
+					emptyFields = new string[0];
 				return emptyFields;
 			}
 			set {
@@ -73,8 +74,9 @@ namespace System.Web.UI.WebControls {
 		public virtual string DataNavigateUrlFormatString {
 			get {
 				object ob = ViewState ["DataNavigateUrlFormatString"];
-				if (ob != null) return (string) ob;
-				return "";
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["DataNavigateUrlFormatString"] = value;
@@ -88,8 +90,9 @@ namespace System.Web.UI.WebControls {
 		public virtual string DataTextField {
 			get {
 				object ob = ViewState ["DataTextField"];
-				if (ob != null) return (string) ob;
-				return "";
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["DataTextField"] = value;
@@ -102,8 +105,9 @@ namespace System.Web.UI.WebControls {
 		public virtual string DataTextFormatString {
 			get {
 				object ob = ViewState ["DataTextFormatString"];
-				if (ob != null) return (string) ob;
-				return "";
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["DataTextFormatString"] = value;
@@ -118,8 +122,9 @@ namespace System.Web.UI.WebControls {
 		public virtual string NavigateUrl {
 			get {
 				object ob = ViewState ["NavigateUrl"];
-				if (ob != null) return (string) ob;
-				return "";
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["NavigateUrl"] = value;
@@ -133,8 +138,9 @@ namespace System.Web.UI.WebControls {
 		public virtual string Target {
 			get {
 				object ob = ViewState ["Target"];
-				if (ob != null) return (string) ob;
-				return "";
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["Target"] = value;
@@ -148,8 +154,9 @@ namespace System.Web.UI.WebControls {
 		public virtual string Text {
 			get {
 				object ob = ViewState ["Text"];
-				if (ob != null) return (string) ob;
-				return "";
+				if (ob != null)
+					return (string) ob;
+				return String.Empty;
 			}
 			set {
 				ViewState ["Text"] = value;
@@ -157,8 +164,7 @@ namespace System.Web.UI.WebControls {
 			}
 		}
 		
-		public override void InitializeCell (DataControlFieldCell cell,
-						     DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
+		public override void InitializeCell (DataControlFieldCell cell,DataControlCellType cellType, DataControlRowState rowState, int rowIndex)
 		{
 			base.InitializeCell (cell, cellType, rowState, rowIndex);
 			if (cellType == DataControlCellType.DataCell) {
@@ -191,7 +197,7 @@ namespace System.Web.UI.WebControls {
 		protected virtual string FormatDataNavigateUrlValue (object[] dataUrlValues)
 		{
 			if (dataUrlValues == null || dataUrlValues.Length == 0)
-				return "";
+				return String.Empty;
 			else if (DataNavigateUrlFormatString.Length > 0)
 				return string.Format (DataNavigateUrlFormatString, dataUrlValues);
 			else
@@ -203,7 +209,7 @@ namespace System.Web.UI.WebControls {
 			if (DataTextFormatString.Length > 0)
 				return string.Format (DataTextFormatString, dataTextValue);
 			else if (dataTextValue == null)
-				return "";
+				return String.Empty;
 			else
 				return dataTextValue.ToString ();
 		}
@@ -276,4 +282,4 @@ namespace System.Web.UI.WebControls {
 		}
 	}
 }
-#endif
+

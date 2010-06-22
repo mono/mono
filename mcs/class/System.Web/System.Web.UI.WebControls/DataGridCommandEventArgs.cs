@@ -3,7 +3,7 @@
 //
 // Author: Duncan Mak (duncan@novell.com)
 //
-// Copyright (C) 2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2005-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,21 +25,14 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-namespace System.Web.UI.WebControls {
-
-	public
-#if !NET_2_0
-	sealed
-#endif
-	class DataGridCommandEventArgs : CommandEventArgs
+namespace System.Web.UI.WebControls
+{
+	public class DataGridCommandEventArgs : CommandEventArgs
 	{
 		DataGridItem item;
 		object source;
 		
-		public DataGridCommandEventArgs (
-			DataGridItem item,
-			object source,
-			CommandEventArgs args)
+		public DataGridCommandEventArgs (DataGridItem item, object source, CommandEventArgs args)
 			: base (args)
 		{
 			this.item = item;

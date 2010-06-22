@@ -4,7 +4,7 @@
 // Authors:
 //   Sanjay Gupta (gsanjay@novell.com)
 //
-// (C) 2004 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 
 //
@@ -28,26 +28,21 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.ComponentModel;
 
 namespace System.Web.UI.WebControls
 {
 	public class GridViewEditEventArgs : CancelEventArgs
 	{
-		int index;
-		
 		public GridViewEditEventArgs (int editIndex)
 		{
-			this.index = editIndex;
+			this.NewEditIndex = editIndex;
 		}
 		
 		public int NewEditIndex {
-			get { return index; }
-			set { index = value; }
+			get;
+			set;
 		}
 	}
 }
 
-#endif

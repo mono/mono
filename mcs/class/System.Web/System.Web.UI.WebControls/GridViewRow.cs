@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,10 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-
-#if NET_2_0
 
 using System;
 using System.Collections;
@@ -93,7 +90,8 @@ namespace System.Web.UI.WebControls
 		
 		protected override bool OnBubbleEvent (object source, EventArgs e)
 		{
-			if (base.OnBubbleEvent (source, e)) return true;
+			if (base.OnBubbleEvent (source, e))
+				return true;
 			
 			if (e is CommandEventArgs) {
 				GridViewCommandEventArgs args = new GridViewCommandEventArgs (this, source, (CommandEventArgs)e);
@@ -105,4 +103,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif

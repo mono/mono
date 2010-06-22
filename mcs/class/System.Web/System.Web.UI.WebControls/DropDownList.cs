@@ -17,7 +17,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (c) 2005 Novell, Inc. (http://www.novell.com)
+// Copyright (c) 2005-2010 Novell, Inc. (http://www.novell.com)
 //
 // Authors:
 //	Peter Bartok	(pbartok@novell.com)
@@ -29,17 +29,16 @@ using System.ComponentModel;
 using System.Drawing;
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermissionAttribute (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermissionAttribute (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	// attributes
 	[ValidationProperty("SelectedItem")]
-#if NET_2_0
 	[SupportsEventValidation]
-#endif
-	public class DropDownList : ListControl, IPostBackDataHandler {
+	public class DropDownList : ListControl, IPostBackDataHandler
+	{
 		#region Public Constructors
 		public DropDownList() {
 		}
@@ -48,35 +47,20 @@ namespace System.Web.UI.WebControls {
 		#region Public Instance Properties
 		[Browsable(false)]
 		public override Color BorderColor {
-			get {
-				return base.BorderColor;
-			}
-
-			set {
-				base.BorderColor = value;
-			}
+			get { return base.BorderColor; }
+			set { base.BorderColor = value; }
 		}
 
 		[Browsable(false)]
 		public override BorderStyle BorderStyle {
-			get {
-				return base.BorderStyle;
-			}
-
-			set {
-				base.BorderStyle = value;
-			}
+			get { return base.BorderStyle; }
+			set { base.BorderStyle = value; }
 		}
 
 		[Browsable(false)]
 		public override Unit BorderWidth {
-			get {
-				return base.BorderWidth;
-			}
-
-			set {
-				base.BorderWidth = value;
-			}
+			get { return base.BorderWidth; }
+			set { base.BorderWidth = value; }
 		}
 
 		[DefaultValue(0)]
@@ -88,145 +72,76 @@ namespace System.Web.UI.WebControls {
 				int selected;
 
 				selected = base.SelectedIndex;
-				if ((selected != -1) || (Items.Count == 0)) {
+				if ((selected != -1) || (Items.Count == 0))
 					return selected;
-				}
 
 				Items[0].Selected = true;
 				return 0;
 			}
 
-			set {
-				base.SelectedIndex = value;
-			}
+			set { base.SelectedIndex = value; }
 		}
 
-#if ONLY_1_1
-		[Bindable(false)]
-		[Browsable(false)]
-		[DesignerSerializationVisibility(DesignerSerializationVisibility.Hidden)]
-		[EditorBrowsable(EditorBrowsableState.Never)]
-		public override string ToolTip {
-			get {
-				return string.Empty;
-			}
-
-			set {
-			}
-		}
-#endif		
 		#endregion	// Public Instance Properties
 
 		#region Protected Instance Methods
 		protected override void AddAttributesToRender(HtmlTextWriter writer)
 		{
-			if (Page != null)
-				Page.VerifyRenderingInServerForm (this);
-#if NET_2_0
+			Page page = Page;
+			if (page != null)
+				page.VerifyRenderingInServerForm (this);
+
 			if (writer == null)
 				return;
 			if (!String.IsNullOrEmpty (UniqueID))
-				writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);
+				writer.AddAttribute (HtmlTextWriterAttribute.Name, this.UniqueID, true);
 
 			if (!IsEnabled && SelectedIndex == -1)
 				SelectedIndex = 1;
-#else
-			writer.AddAttribute(HtmlTextWriterAttribute.Name, this.UniqueID, true);
-#endif
+
 			if (AutoPostBack) {
-#if NET_2_0
-				string onchange = Page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true);
+				string onchange = page != null ? page.ClientScript.GetPostBackEventReference (GetPostBackOptions (), true) : String.Empty;
 				onchange = String.Concat ("setTimeout('", onchange.Replace ("\\", "\\\\").Replace ("'", "\\'"), "', 0)");
 				writer.AddAttribute (HtmlTextWriterAttribute.Onchange, BuildScriptAttribute ("onchange", onchange));
-#else
-				writer.AddAttribute (HtmlTextWriterAttribute.Onchange,
-						     BuildScriptAttribute ("onchange", Page.ClientScript.GetPostBackClientHyperlink (this, "")));
-#endif
 			}
 
 			base.AddAttributesToRender(writer);
 		}
 
-#if NET_2_0
-		PostBackOptions GetPostBackOptions () {
+		PostBackOptions GetPostBackOptions ()
+		{
 			PostBackOptions options = new PostBackOptions (this);
 			options.ActionUrl = null;
 			options.ValidationGroup = null;
 			options.Argument = String.Empty;
 			options.RequiresJavaScriptProtocol = false;
 			options.ClientSubmit = true;
-			options.PerformValidation = CausesValidation && Page != null && Page.AreValidatorsUplevel (ValidationGroup);
+
+			Page page = Page;
+			options.PerformValidation = CausesValidation && page != null && page.AreValidatorsUplevel (ValidationGroup);
 			if (options.PerformValidation)
 				options.ValidationGroup = ValidationGroup;
 
 			return options;
 		}
-#endif		
 
-		protected override ControlCollection CreateControlCollection() {
+		protected override ControlCollection CreateControlCollection ()
+		{
 			return base.CreateControlCollection();
 		}
 
-#if ONLY_1_1
-		protected override void RenderContents(HtmlTextWriter writer) {
-			int		count;
-			ListItem	item;
-			bool		selected;
-
-			if (writer == null) {
-				return;
-			}
-
-			count = Items.Count;
-			selected = false;
-
-			for (int i = 0; i < count; i++) {
-				item = Items[i];
-				writer.WriteBeginTag("option");
-				if (item.Selected) {
-					if (selected) {
-						throw new HttpException("DropDownList only may have a single selected item");
-					}
-					writer.WriteAttribute("selected", "selected", false);
-					selected = true;
-				}
-				writer.WriteAttribute("value", item.Value, true);
-				if (item.HasAttributes)
-					item.Attributes.Render (writer);
-				
-				writer.Write(">");
-				string text = HttpUtility.HtmlEncode (item.Text);
-				writer.Write (text);
-				writer.WriteEndTag("option");
-				writer.WriteLine();
-			}
-		}
-#endif
-
-#if NET_2_0
 		protected internal override void VerifyMultiSelect ()
 		{
 			throw new HttpException ("DropDownList only may have a single selected item");
-		}
-#endif		
-		
+		}		
 		#endregion	// Protected Instance Methods
 
 		#region	Interface Methods
-#if NET_2_0
-		protected virtual
-#endif
-		bool LoadPostData (string postDataKey, NameValueCollection postCollection)
+		protected virtual bool LoadPostData (string postDataKey, NameValueCollection postCollection)
 		{
-#if NET_2_0
 			EnsureDataBound ();
-#endif
-			int	index;
-
-			index = Items.IndexOf(postCollection[postDataKey]);
-#if NET_2_0
+			int index = Items.IndexOf(postCollection[postDataKey]);
 			ValidateEvent (postDataKey, postCollection [postDataKey]);
-#endif
 			if (index != this.SelectedIndex) {
 				SelectedIndex = index;
 				return true;
@@ -235,15 +150,14 @@ namespace System.Web.UI.WebControls {
 			return false;
 		}
 
-#if NET_2_0
-		protected virtual
-#endif
-		void RaisePostDataChangedEvent ()
+		protected virtual void RaisePostDataChangedEvent ()
 		{
-#if NET_2_0
-			if (CausesValidation)
-				Page.Validate (ValidationGroup);
-#endif
+			if (CausesValidation) {
+				Page page = Page;
+				if (page != null)
+					page.Validate (ValidationGroup);
+			}
+			
 			OnSelectedIndexChanged(EventArgs.Empty);
 		}
 		

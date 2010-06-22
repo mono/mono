@@ -26,27 +26,20 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-#if NET_2_0
-
 using System.Security.Permissions;
 
-namespace System.Web.UI.WebControls {
-
+namespace System.Web.UI.WebControls
+{
 	// CAS
 	[AspNetHostingPermission (SecurityAction.LinkDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	[AspNetHostingPermission (SecurityAction.InheritanceDemand, Level = AspNetHostingPermissionLevel.Minimal)]
 	public class DetailsViewPagerRow : DetailsViewRow, INamingContainer, INonBindingContainer
 	{
 		[MonoTODO ("why this class exists at all?")]
-		public DetailsViewPagerRow (
-			int rowIndex,
-			DataControlRowType rowType,
-			DataControlRowState rowState
-		)
+		public DetailsViewPagerRow (int rowIndex, DataControlRowType rowType, DataControlRowState rowState)
 			:base (rowIndex, rowType, rowState)
 		{
 		}
 	}
 }
 
-#endif

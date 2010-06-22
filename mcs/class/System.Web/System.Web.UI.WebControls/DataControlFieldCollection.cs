@@ -4,7 +4,7 @@
 // Authors:
 //	Lluis Sanchez Gual (lluis@novell.com)
 //
-// (C) 2005 Novell, Inc (http://www.novell.com)
+// (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -25,11 +25,7 @@
 // OF CONTRACT, TORT OR OTHERWISE, ARISING FROM, OUT OF OR IN CONNECTION
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
-// Copyright (C) 2004 Novell, Inc (http://www.novell.com)
 //
-
-#if NET_2_0
-
 using System;
 using System.Collections;
 using System.Web.UI;
@@ -102,19 +98,22 @@ namespace System.Web.UI.WebControls
 			get { return (DataControlField) ((IList)this) [i]; }
 		}
 
-		protected override void OnInsertComplete (int index, object value) {
+		protected override void OnInsertComplete (int index, object value)
+		{
 			DataControlField field = (DataControlField) value;
 			field.FieldChanged += new EventHandler (OnFieldChanged);
 			OnFieldsChanged ();
 		}
 
-		protected override void OnRemoveComplete (int index, object value) {
+		protected override void OnRemoveComplete (int index, object value)
+		{
 			DataControlField field = (DataControlField) value;
 			field.FieldChanged -= new EventHandler (OnFieldChanged);
 			OnFieldsChanged ();
 		}
 
-		protected override void OnClearComplete () {
+		protected override void OnClearComplete ()
+		{
 			OnFieldsChanged ();
 		}
 		
@@ -157,4 +156,3 @@ namespace System.Web.UI.WebControls
 	}
 }
 
-#endif
