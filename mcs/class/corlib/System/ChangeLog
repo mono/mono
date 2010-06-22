@@ -1,3 +1,8 @@
+2010-06-22  Jb Evain  <jbevain@novell.com>
+
+	* Guid.cs: properly throw if the parsed guid has more data after
+	parsing a correct guid. Fixes #616050.
+
 2010-06-21 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* Environment.cs: bump up corlib version.

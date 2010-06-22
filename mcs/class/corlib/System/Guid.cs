@@ -153,6 +153,9 @@ namespace System {
 				if (format == Format.P && !ParseChar (')'))
 					return false;
 
+				if (!Eof)
+					return false;
+
 				guid = new Guid ((int) a, (short) b, (short) c, d);
 				return true;
 			}
@@ -191,6 +194,9 @@ namespace System {
 				}
 
 				if (!(ParseChar ('}') && ParseChar ('}')))
+					return false;
+
+				if (!Eof)
 					return false;
 
 				guid = new Guid ((int) a, (short) b, (short) c, d);
