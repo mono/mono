@@ -1,3 +1,12 @@
+2010-06-22  Geoff Norton  <gnorton@novell.com>
+
+	* domain.c: Allow gettings the tls key, since we need it for
+	cross thread tls poking in sgen-mach
+	* sgen-gc.(c|h), gc-internal.h: Rework sgen into having some functions
+	in external files for platform specific STW support.
+	* sgen-os-mach.c: Add a new mach kernel backend implementation of STW.
+	* sgen-os-posix.c: Move the existing posix signal based STW here.
+
 2010-06-21  Zoltan Varga  <vargaz@gmail.com>
 
 	* marshal.c (mono_array_to_lparray): Allow MONO_TYPE_PTR. Fixes #615952.
