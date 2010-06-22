@@ -1,5 +1,12 @@
 2010-06-22  Jb Evain  <jbevain@novell.com>
 
+	backport of r159337.
+
+	* Queryable.cs: properly set the constants types in the queryable
+	expression tree.
+
+2010-06-22  Jb Evain  <jbevain@novell.com>
+
 	backport of r159329.
 
 	* QueryableEnumerable.cs: override ToString.
