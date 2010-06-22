@@ -471,16 +471,42 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 	//
 	public class LocationsBag
 	{
-		// TODO: Could introduce explicit members when Location[] becomes too confusing
 		public class MemberLocations
 		{
 			public readonly IList<Tuple<Modifiers, Location>> Modifiers;
-			public readonly Location[] Locations;
+			Location[] locations;
 
 			public MemberLocations (IList<Tuple<Modifiers, Location>> mods, Location[] locs)
 			{
 				Modifiers = mods;
-				Locations = locs;
+				locations = locs;
+			}
+
+			#region Properties
+
+			public Location this [int index] {
+				get {
+					return locations [index];
+				}
+			}
+			
+			public int Count {
+				get {
+					return locations.Length;
+				}
+			}
+
+			#endregion
+
+			public void AddLocations (params Location[] additional)
+			{
+				if (locations == null) {
+					locations = additional;
+				} else {
+					int pos = locations.Length;
+					Array.Resize (ref locations, pos + additional.Length);
+					additional.CopyTo (locations, pos);
+				}
 			}
 		}
 
@@ -513,7 +539,17 @@ if (checkpoints.Length <= CheckpointIndex) throw new Exception (String.Format ("
 		{
 			Location[] locs;
 			if (simple_locs.TryGetValue (existing, out locs)) {
-				simple_locs [existing].Concat (locations);
+				simple_locs [existing] = locs.Concat (locations).ToArray ();
+				return;
+			}
+		}
+
+		[Conditional ("FULL_AST")]
+		public void AppendToMember (MemberCore existing, params Location[] locations)
+		{
+			MemberLocations member;
+			if (member_locs.TryGetValue (existing, out member)) {
+				member.AddLocations (locations);
 				return;
 			}
 		}

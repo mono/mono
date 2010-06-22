@@ -2912,6 +2912,7 @@ namespace Mono.CSharp
 							update_formatted_doc_comment (current_comment_start);
 						continue;
 					}
+					val = LocatedToken.Create (ref_line, col);
 					return Token.DIV;
 
 				case '%':

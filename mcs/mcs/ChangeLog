@@ -1,3 +1,7 @@
+2010-06-22  Marek Safar  <marek.safar@gmail.com>
+
+	* cs-tokenizer.cs, location.cs, cs-parser.jay: Track more locations.
+
 2010-06-18  Marek Safar  <marek.safar@gmail.com>
 
 	* cs-tokenizer.cs, anonymous.cs, expression.cs, statement.cs,

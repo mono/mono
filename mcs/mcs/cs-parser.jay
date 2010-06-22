@@ -1171,6 +1171,7 @@ local_variable_declarators
 	  {
 		var decls = (List<object>) $1;
 		decls.Add ($3);
+		lbag.AppendTo ($3, GetLocation ($2));
 		$$ = $1;
 	  }
 	;
@@ -1179,6 +1180,7 @@ local_variable_declarator
 	: IDENTIFIER ASSIGN local_variable_initializer
 	  {
 		$$ = new VariableDeclaration ((Tokenizer.LocatedToken) $1, (Expression) $3);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| IDENTIFIER
 	  {
@@ -1727,7 +1729,7 @@ property_declaration
 	  }
 	  CLOSE_BRACE
 	  {
-		lbag.AppendTo (current_property, GetLocation ($10));
+		lbag.AppendToMember (current_property, GetLocation ($10));
 		current_property = null;
 	  }
 	;
@@ -1774,7 +1776,7 @@ indexer_declaration
 		if (RootContext.Documentation != null)
 			current_property.DocComment = ConsumeStoredComment ();
 			
-		lbag.AppendTo (current_property, GetLocation ($12));
+		lbag.AppendToMember (current_property, GetLocation ($12));
 		current_property = null;		
 	  }
 	;
@@ -1818,6 +1820,7 @@ get_accessor_declaration
 		}	
 	  
 		current_local_parameters = current_property.Get.ParameterInfo;	  
+		lbag.AddMember (current_property.Get, mod_locations);
 		lexer.PropertyParsing = false;
 	  }
 	  accessor_body
@@ -1865,6 +1868,7 @@ set_accessor_declaration
 		}
 		
 		current_local_parameters = current_property.Set.ParameterInfo;	
+		lbag.AddMember (current_property.Set, mod_locations);
 		lexer.PropertyParsing = false;
 	  }
 	  accessor_body
@@ -1935,7 +1939,7 @@ interface_declaration
 	  }
 	  opt_semicolon 
 	  {
-	    lbag.AppendTo (current_class, GetLocation ($11), GetLocation ($13));
+	    lbag.AppendToMember (current_class, GetLocation ($11), GetLocation ($13));
 		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial INTERFACE error {
@@ -2213,6 +2217,7 @@ constructor_declarator
 			}
 		}
 		
+		lbag.AddMember (c, mod_locations, GetLocation ($5), GetLocation ($7));
 		$$ = c;
 	  }
 	;
@@ -2341,7 +2346,7 @@ event_declaration
 			Lexer.doc_state = XmlCommentState.Allowed;
 		}
 		
-		lbag.AppendTo (current_event, GetLocation ($9));
+		lbag.AppendToMember (current_event, GetLocation ($9));
 	  	current_event = null;	
 		current_local_parameters = null;
 	  }
@@ -2389,6 +2394,7 @@ add_accessor_declaration
 	  	current_event.Add = new EventProperty.AddDelegateMethod (current_event, (Attributes) $1, GetLocation ($3));
 		current_local_parameters = current_event.Add.ParameterInfo;
 		
+		lbag.AddMember (current_event.Add, mod_locations);
 		lexer.EventParsing = false;		
 	  }
 	  event_accessor_block
@@ -2416,6 +2422,7 @@ remove_accessor_declaration
 	  	current_event.Remove = new EventProperty.RemoveDelegateMethod (current_event, (Attributes) $1, GetLocation ($3));
 		current_local_parameters = current_event.Remove.ParameterInfo;
 
+		lbag.AddMember (current_event.Remove, mod_locations);
 		lexer.EventParsing = false;		
 	  }
 	  event_accessor_block
@@ -3393,6 +3400,7 @@ array_creation_expression
 				new ComposedTypeSpecifier (((List<Expression>) $4).Count, GetLocation ($3)) {
 	  				Next = (ComposedTypeSpecifier) $6
 			  	}, (ArrayInitializer) $7, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
 	  }
 	| NEW new_expr_type rank_specifiers opt_array_initializer
 	  {
@@ -3570,10 +3578,12 @@ array_initializer
 	: OPEN_BRACE CLOSE_BRACE
 	  {
 		$$ = new ArrayInitializer (0, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| OPEN_BRACE variable_initializer_list opt_comma CLOSE_BRACE
 	  {
 		$$ = new ArrayInitializer ((List<Expression>) $2, GetLocation ($1));
+		lbag.AddLocation ($$, GetLocation ($3));
 	  }
 	;
 
@@ -4181,7 +4191,7 @@ class_declaration
 	  }
 	  opt_semicolon 
 	  {
-	  	lbag.AppendTo (current_class, GetLocation ($11), GetLocation ($13));
+	  	lbag.AppendToMember (current_class, GetLocation ($11), GetLocation ($13));
 		$$ = pop_current_class ();
 	  }
 	;	
@@ -4829,7 +4839,7 @@ switch_statement
 	  OPEN_BRACE opt_switch_sections CLOSE_BRACE
 	  {
 		$$ = new Switch ((Expression) $4, (List<SwitchSection>) $7, GetLocation ($1));
-		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4), GetLocation ($6), GetLocation ($8));
+		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($5), GetLocation ($6), GetLocation ($8));
 		
 		current_block = (Block) switch_stack.Pop ();
 	  }
@@ -4921,7 +4931,7 @@ do_statement
 	  WHILE open_parens_any boolean_expression CLOSE_PARENS SEMICOLON
 	  {
 		$$ = new Do ((Statement) $2, (BooleanExpression) $5, GetLocation ($1));
-		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4), GetLocation ($6));
+		lbag.AddStatement ($$, GetLocation ($3), GetLocation ($4), GetLocation ($6), GetLocation ($7));
 	  }
 	;
 
@@ -4971,7 +4981,7 @@ for_statement
 		For f = new For ((Statement) $5, (BooleanExpression) $6, (Statement) $8, (Statement) $10, GetLocation ($1));
 		current_block.AddStatement (f);
 		
-		lbag.AddStatement (f, GetLocation ($4), GetLocation ($7), GetLocation ($9));
+		lbag.AddStatement (f, GetLocation ($2), GetLocation ($4), GetLocation ($7), GetLocation ($9));
 
 		$$ = end_block (lexer.Location);
 	  }
@@ -5050,7 +5060,7 @@ foreach_statement
 	  {
 		if ($8 != null) {
 			Foreach f = new Foreach ((Expression) $3, (LocalVariableReference) $8, (Expression) $6, (Statement) $9, GetLocation ($1));
-			lbag.AddStatement (f, GetLocation ($2), GetLocation ($4), GetLocation ($5), GetLocation ($7));
+			lbag.AddStatement (f, GetLocation ($2), GetLocation ($5), GetLocation ($7));
 			
 			current_block.AddStatement (f);
 		}
@@ -5255,6 +5265,7 @@ catch_args
 	: open_parens_any type opt_identifier CLOSE_PARENS 
 	  {
 		$$ = new Tuple<FullNamedExpression, Tokenizer.LocatedToken> ((FullNamedExpression)$2, (Tokenizer.LocatedToken) $3);
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($4));
 	  }
 	| open_parens_any CLOSE_PARENS 
 	  {
