@@ -1,3 +1,7 @@
+2010-06-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* UriTest.cs: exclude 2 tests in 4.0.
+
 2010-05-29 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* UriTest.cs: test for bug #606142.
