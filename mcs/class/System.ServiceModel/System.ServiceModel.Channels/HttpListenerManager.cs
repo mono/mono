@@ -410,9 +410,9 @@ namespace System.ServiceModel.Channels
 				return mex_info == null;
 
 			if (wsdl_instance == null)
-				return true;
+				return true; // no mex endpoint is involved.
 			if (channel_listener.State != CommunicationState.Opened)
-				return true;
+				return true; // it's being terminated.
 
 			if (wsdl_instance.WsdlUrl != null && Uri.Compare (ctx.RequestUrl, wsdl_instance.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) {
 				if (mex_info == null)

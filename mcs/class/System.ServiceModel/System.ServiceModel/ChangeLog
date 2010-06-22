@@ -1,3 +1,9 @@
+2010-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceBehaviorAttribute.cs : do not overwrite existing properties
+	  which may have been set by preceding behaviors. Fix WSDL output.
+	* EnvelopeVersion.cs : fix name and namespace for None property.
+
 2010-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceHostBase.cs : remove TODOs and unused code.

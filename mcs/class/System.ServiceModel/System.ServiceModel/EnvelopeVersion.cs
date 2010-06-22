@@ -53,8 +53,8 @@ namespace System.ServiceModel
 								     Soap12UltimateReceiver,
 								     Soap12NextReceiver);
 
-		static EnvelopeVersion none = new EnvelopeVersion ("None",
-								     String.Empty,
+		static EnvelopeVersion none = new EnvelopeVersion ("EnvelopeNone",
+								     "http://schemas.microsoft.com/ws/2005/05/envelope/none",
 								     String.Empty,
 								     null);
 

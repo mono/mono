@@ -1,3 +1,7 @@
+2010-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* DispatchRuntimeTest.cs : add another line of assertion.
+
 2010-06-18  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ChannelDispatcherTest.cs : had to disable a test that regressed from

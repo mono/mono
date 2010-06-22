@@ -66,6 +66,7 @@ namespace MonoTests.System.ServiceModel.Dispatcher
 			Assert.AreEqual (0, r.InstanceContextInitializers.Count, "#8");
 			//Assert.AreEqual (0, r.InstanceContextLifetimes.Count, "#9");
 			Assert.IsNull (r.InstanceProvider, "#10");
+			Assert.IsNull (r.InstanceContextProvider, "#10-2");
 			Assert.AreEqual (AuditLevel.None,
 					 r.MessageAuthenticationAuditLevel, "#11");
 			Assert.AreEqual (0, r.MessageInspectors.Count, "#12");

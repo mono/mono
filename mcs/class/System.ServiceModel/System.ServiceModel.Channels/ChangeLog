@@ -1,3 +1,7 @@
+2010-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpListenerManager.cs : add some comments.
+
 2010-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpReplyChannel.cs : use MessageVersion.None for GET messages.
