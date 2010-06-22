@@ -8259,12 +8259,12 @@ namespace Mono.CSharp {
 	///   The base operator for method names
 	/// </summary>
 	public class BaseAccess : Expression {
-		public readonly string Identifier;
+		readonly string identifier;
 		TypeArguments args;
 
 		public BaseAccess (string member, Location l)
 		{
-			this.Identifier = member;
+			this.identifier = member;
 			loc = l;
 		}
 
@@ -8273,6 +8273,21 @@ namespace Mono.CSharp {
 		{
 			this.args = args;
 		}
+
+		#region Properties
+
+		public string Identifier {
+			get {
+				return identifier;
+			}
+		}
+
+		public TypeArguments TypeArguments {
+			get {
+				return args;
+			}
+		}
+		#endregion
 
 		public override Expression CreateExpressionTree (ResolveContext ec)
 		{
@@ -8326,10 +8341,10 @@ namespace Mono.CSharp {
 			}
 
 			var arity = args == null ? -1 : args.Count;
-			member_lookup = MemberLookup (ec.Compiler, ec.CurrentType, null, base_type, Identifier, arity,
+			member_lookup = MemberLookup (ec.Compiler, ec.CurrentType, null, base_type, identifier, arity,
 						      MemberKind.All, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides, loc);
 			if (member_lookup == null) {
-				Error_MemberLookupFailed (ec, ec.CurrentType, base_type, base_type, Identifier, arity,
+				Error_MemberLookupFailed (ec, ec.CurrentType, base_type, base_type, identifier, arity,
 					null, MemberKind.All, BindingRestriction.AccessibleOnly);
 				return null;
 			}
@@ -8338,10 +8353,10 @@ namespace Mono.CSharp {
 			if (me == null){
 				if (member_lookup is TypeExpression){
 					ec.Report.Error (582, loc, "{0}: Can not reference a type through an expression, try `{1}' instead",
-							 Identifier, member_lookup.GetSignatureForError ());
+							 identifier, member_lookup.GetSignatureForError ());
 				} else {
 					ec.Report.Error (582, loc, "{0}: Can not reference a {1} through an expression", 
-							 Identifier, member_lookup.ExprClassName);
+							 identifier, member_lookup.ExprClassName);
 				}
 				
 				return null;

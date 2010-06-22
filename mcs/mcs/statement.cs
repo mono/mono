@@ -659,14 +659,23 @@ namespace Mono.CSharp {
 	/// <summary>
 	///   Implements the return statement
 	/// </summary>
-	public class Return : ExitStatement {
+	public class Return : ExitStatement
+	{
 		protected Expression Expr;
 		public Return (Expression expr, Location l)
 		{
 			Expr = expr;
 			loc = l;
 		}
-		
+
+		#region Properties
+		public Expression Expression {
+			get {
+				return Expr;
+			}
+		}
+		#endregion
+
 		protected override bool DoResolve (BlockContext ec)
 		{
 			if (Expr == null) {
