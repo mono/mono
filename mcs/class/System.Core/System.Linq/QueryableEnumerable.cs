@@ -119,11 +119,14 @@ namespace System.Linq {
 			if (enumerable != null)
 				return enumerable.ToString ();
 
-			var constant = expression as ConstantExpression;
-			if (constant != null)
-				return constant.ToString ();
+			if (expression == null)
+				return base.ToString ();
 
-			return base.ToString ();
+			var constant = expression as ConstantExpression;
+			if (constant != null && constant.Value == this)
+				return base.ToString ();
+
+			return expression.ToString ();
 		}
 	}
 }
