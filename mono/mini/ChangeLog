@@ -1,5 +1,7 @@
 2010-06-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (emit_entry_bb): Save the this argument only in gshared methods.
+
 	* mini-llvm.c: Fix a couple memory leaks. Get rid of a few #ifdefs.
 
 2010-06-22  Zoltan Varga  <vargaz@gmail.com>
