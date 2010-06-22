@@ -148,7 +148,10 @@ namespace System.Windows.Forms
 		#region ICloneable Members
 		public virtual object Clone()
 		{
-			TreeNode tn = new TreeNode (text, image_index, selected_image_index);
+			TreeNode tn = (TreeNode)Activator.CreateInstance (GetType ());
+			tn.Text = text;
+			tn.image_index = image_index;
+			tn.selected_image_index = selected_image_index;
 			if (nodes != null) {
 				foreach (TreeNode child in nodes)
 					tn.Nodes.Add ((TreeNode)child.Clone ());

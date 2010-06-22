@@ -1,5 +1,11 @@
 2010-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TreeNode.cs: Clone should detect the type of the current instance
+	and properly create the correct object.
+	Fixes #613708.
+
+2010-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TabControl.cs: When setting SelectedIndex and the new selected tab
 	bounds are obscured by the scrollers, take into account the self tab
 	when looking for the proper bounds to adjust the slider. This is specially
