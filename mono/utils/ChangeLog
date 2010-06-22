@@ -1,3 +1,12 @@
+2010-06-22  Geoff Norton  <gnorton@novell.com>
+
+	* Makefile.am
+	* mach-support-amd64.c
+	* mach-support-x86.c
+	* mach-support.c
+	* mach-support.h: Added a new suite of helpers for managing threads
+	on mach based kernels.
+
 2010-06-17  Geoff Norton  <gnorton@novell.com>
 
 	* mono-sigcontext.h: Add arm variants.
