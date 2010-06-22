@@ -1537,7 +1537,11 @@ namespace System.Windows.Forms {
 				clip_region.MakeEmpty();
 
 				foreach (Rectangle r in hwnd.ClipRectangles) {
-					clip_region.Union (r);
+					/* Expand the region slightly.
+					 * See bug 464464.
+					 */
+					Rectangle r2 = Rectangle.FromLTRB (r.Left, r.Top, r.Right, r.Bottom + 1);
+					clip_region.Union (r2);
 				}
 
 				if (hwnd.UserClip != null) {

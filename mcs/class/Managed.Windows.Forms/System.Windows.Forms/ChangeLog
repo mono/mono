@@ -1,3 +1,9 @@
+2010-06-22  Dick Porter  <dporter@codicesoftware.com>
+
+	* TextControl.cs, XplatUIX11.cs, XplatUICarbon.cs: Expand paint
+	regions slightly so that the full extents of text get painted.
+	Fixes bug 464464.
+
 2010-06-21  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* TreeNode.cs: Clone should detect the type of the current instance
