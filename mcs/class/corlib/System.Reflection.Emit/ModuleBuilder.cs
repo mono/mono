@@ -821,7 +821,7 @@ namespace System.Reflection.Emit {
 			throw new NotImplementedException ();
 		}
 
-#if NET_4_0
+#if NET_4_0 || MOONLIGHT
 		public override	Assembly Assembly {
 			get { return assemblyb; }
 		}
