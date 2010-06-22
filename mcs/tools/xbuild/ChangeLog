@@ -1,3 +1,162 @@
+2010-06-18  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #615420.
+	* xbuild/Microsoft.CSharp.targets: Choose the compiler
+	based on TargetFrameworkVersion instead of ToolsVersion.
+
+2010-06-16  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ParseSolution): Use ProjectReference's
+	filename to locate if no guid is specified or project can't
+	be found by the guid.
+
+2010-06-15  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/*/Microsoft.Common.targets (AssemblySearchPaths): Add
+	$(ReferencePath) to the search paths. This can be used to add or
+	override assembly search paths.
+
+2010-05-28  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs (ParseSolution): Ignore GlobalSection
+	'MonoDevelopProperties'.
+
+2010-05-05  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #599454.
+	* xbuild/*/Microsoft.Common.targets (PrepareForBuild): Create the
+	dir for the documentation file.
+
+2010-04-25  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #599486.
+	* xbuild/Microsoft.CSharp.targets:
+	* xbuild/Microsoft.VisualBasic.targets: Add $(CoreCompileDependsOn)
+	for the CoreCompile target.
+
+2010-04-21  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Remove unnecessary "/" in the paths.
+	Fixes windows build (thanks to Atsushi Eno).
+
+2010-04-14  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Silverlight*.targets: New.
+	* Makefile: Update to install silverlight target files.
+	* xbuild_targets.make: Update to handle silverlight
+	target files.
+
+2010-04-12  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Update EXTRA_DIST with the new targets files.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/*/Microsoft.Common.targets: Emit warning if
+	$(TargetFrameworkVersion) is not supported by the current
+	tool set.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Move to 2.0, 3.5 and 4.0 .
+	The 4.0 copy gets the framework path for 4.0 .
+	* Makefile: Update for the above change.
+	* xbuild_targets.make: Likewise.
+
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets (DeployOutputFiles): Copy only
+	if the source file exists.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/3.5/Microsoft.Common.tasks:
+	* xbuild/4.0/Microsoft.Common.tasks: Remove spurious
+	Moonlight task declarations.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets (BuildingResources): Refactor to
+	(PrepareResources): .. this.
+	(PrepareResourcesDependsOn): New.
+	(GetFrameworkPaths): Extract from PrepareForBuild target.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.VisualBasic.targets: Fix OutputAssembly
+	property for the Vbc task.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #594531.
+	* xbuild/Microsoft.VisualBasic.targets: Set RootNamespace
+	property of Vbc task.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #594526.
+	* xbuild/Microsoft.VisualBasic.targets(CoreCompile): Fix Outputs
+	to use @(IntermediateAssembly) instead of $(IntermediateAssembly).
+	Patch suggested by Eli Bishop (eli@wavemarket.com).
+
+2010-04-06  Ankit Jain  <jankit@novell.com>
+
+	* SolutionParser.cs: Identify and emit warning for a
+	common problem on some installations of windows.
+
+2010-04-06  Ankit Jain  <jankit@novell.com>
+
+	* Makefile: Add xbuild_targets.make .
+
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* Main.cs (Execute): If toolsversion is specified on the command line,
+	then use that.
+	* Parameters.cs: Read toolsversion from the command line ('/tv:..') .
+	* SolutionParser.cs: Infer ToolsVersion from the sln version.
+	Set ToolsVersion property of the MSBuild tasks, in the generated
+	.sln.proj file, for building the projects.
+
+	* xbuild/Microsoft.Common.tasks: Move to ..
+	* xbuild/2.0/Microsoft.Common.tasks: .. here.
+	* xbuild/3.5/Microsoft.Common.tasks: New.
+	* xbuild/4.0/Microsoft.Common.tasks: New.
+	Use the corresponding 3.5/4.0 tasks assembly.
+
+	* xbuild_targets.make: Copies the target and tasks file in the correct
+	place, to allow running tests with different toolsversion.
+	* Makefile: Import xbuild_targets.make . Use correct assembly names for
+	Utilities assembly, for 3.5/4.0 profiles.
+	Install the correct Microsoft.Common.tasks file for the profile.
+	Copy xbuild.exe to class/lib/$(PROFILE), so that it can find other
+	profile dirs as relative path.
+	(EXTRA_DISTFILES): Add the new Microsoft.Common.tasks files.
+
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
+	* CommandLineException.cs (Message): Include the inner exception message
+	also.
+	* Parameters.cs (LoadResponseFile): Report any errors in this, as
+	warnings.
+
+2010-03-04  Jonathan Pryor <jpryor@novel.com>
+
+	* xbuild/Makefile: $(EXTRAS_DIR) should use $(FRAMEWORK_VERSION) so
+	  that when building for the 4.0 profile we install the appropriate
+	  files into the $libdir/mono/4.0/ directory.
+
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets (DeployOutputFiles):
+	Check for empty $(OutDir), though it should be caught by
+	the check for $(OutputPath) earlier.
+
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.Common.targets: Check for empty invalid
+	$(OutputPath), and error or warn the user.
+
 2010-02-19  Ankit Jain  <jankit@novell.com>
 
 	* SolutionParser.cs (GetAllProjectFileNames): New.

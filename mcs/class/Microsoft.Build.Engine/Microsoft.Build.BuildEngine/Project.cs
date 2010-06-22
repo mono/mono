@@ -89,9 +89,14 @@ namespace Microsoft.Build.BuildEngine {
 		{
 		}
 
-		public Project (Engine engine)
+		public Project (Engine engine) : this (engine, null)
+		{
+		}
+		
+		public Project (Engine engine, string toolsVersion)
 		{
 			parentEngine  = engine;
+			ToolsVersion = toolsVersion;
 
 			buildEnabled = ParentEngine.BuildEnabled;
 			xmlDocument = new XmlDocument ();
@@ -116,6 +121,7 @@ namespace Microsoft.Build.BuildEngine {
 				GlobalProperties.AddProperty (bp.Clone (true));
 			
 			ProcessXml ();
+
 		}
 
 		[MonoTODO ("Not tested")]
@@ -793,8 +799,7 @@ namespace Microsoft.Build.BuildEngine {
 			last_item_group_containing = new Dictionary <string, BuildItemGroup> ();
 			
 			taskDatabase = new TaskDatabase ();
-			if (ParentEngine.DefaultTasksRegistered)
-				taskDatabase.CopyTasks (ParentEngine.DefaultTasks);	
+			taskDatabase.CopyTasks (ParentEngine.GetDefaultTasks (GetToolsVersionToUse ()));
 
 			initialTargets = new List<string> ();
 			defaultTargets = new string [0];
@@ -860,7 +865,7 @@ namespace Microsoft.Build.BuildEngine {
 						AddChoose (xe);
 						break;
 					default:
-						throw new InvalidProjectFileException ("Invalid element in project file.");
+						throw new InvalidProjectFileException (String.Format ("Invalid element '{0}' in project file.", xe.Name));
 					}
 				}
 			}
@@ -927,9 +932,15 @@ namespace Microsoft.Build.BuildEngine {
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectName",
 						Path.GetFileNameWithoutExtension (fullFileName),
 						PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", parentEngine.BinPath, PropertyType.Reserved));
-			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", parentEngine.BinPath, PropertyType.Reserved));
+			string toolsVersionToUse = GetToolsVersionToUse ();
+			string toolsPath = parentEngine.Toolsets [toolsVersionToUse].ToolsPath;
+			if (toolsPath == null)
+				throw new Exception ("Unknown toolsVersion: " + toolsVersionToUse);
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildBinPath", toolsPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsPath", toolsPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildToolsVersion", toolsVersionToUse, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath", ExtensionsPath, PropertyType.Reserved));
+			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildExtensionsPath32", ExtensionsPath, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDefaultTargets", DefaultTargets, PropertyType.Reserved));
 			EvaluatedProperties.AddProperty (new BuildProperty ("OS", OS, PropertyType.Environment));
 
@@ -941,6 +952,18 @@ namespace Microsoft.Build.BuildEngine {
 				projectDir = Path.GetDirectoryName (FullFileName);
 
 			EvaluatedProperties.AddProperty (new BuildProperty ("MSBuildProjectDirectory", projectDir, PropertyType.Reserved));
+		}
+
+		string GetToolsVersionToUse ()
+		{
+			if (String.IsNullOrEmpty (ToolsVersion)) {
+				if (HasToolsVersionAttribute)
+					return DefaultToolsVersion;
+				else
+					return parentEngine.DefaultToolsVersion;
+			} else {
+				return ToolsVersion;
+			}
 		}
 		
 		void AddProjectExtensions (XmlElement xmlElement)
@@ -1077,7 +1100,19 @@ namespace Microsoft.Build.BuildEngine {
 				return evaluatedItemsByName;
 			}
 		}
-		
+
+		internal IEnumerable EvaluatedItemsByNameAsDictionaryEntries {
+			get {
+				if (EvaluatedItemsByName.Count == 0)
+					yield break;
+
+				foreach (KeyValuePair<string, BuildItemGroup> pair in EvaluatedItemsByName) {
+					foreach (BuildItem bi in pair.Value)
+						yield return new DictionaryEntry (pair.Key, bi.ConvertToITaskItem (null, ExpressionOptions.ExpandItemRefs));
+				}
+			}
+		}
+
 		internal IDictionary <string, BuildItemGroup> EvaluatedItemsByNameIgnoringCondition {
 			get {
 				// FIXME: do we need to do this here?
@@ -1238,6 +1273,13 @@ namespace Microsoft.Build.BuildEngine {
 			}
 		}
 
+		internal IEnumerable EvaluatedPropertiesAsDictionaryEntries {
+			get {
+				foreach (BuildProperty bp in EvaluatedProperties)
+					yield return new DictionaryEntry (bp.Name, bp.Value);
+			}
+		}
+
 		public string FullFileName {
 			get { return fullFileName; }
 			set { fullFileName = value; }
@@ -1314,6 +1356,29 @@ namespace Microsoft.Build.BuildEngine {
 		[MonoTODO]
 		public string Xml {
 			get { return xmlDocument.InnerXml; }
+		}
+
+		// corresponds to the xml attribute
+		public string DefaultToolsVersion {
+			get {
+				if (xmlDocument != null)
+					return xmlDocument.DocumentElement.GetAttribute ("ToolsVersion");
+				return null;
+			}
+			set {
+				if (xmlDocument != null)
+					xmlDocument.DocumentElement.SetAttribute ("ToolsVersion", value);
+			}
+		}
+
+		public bool HasToolsVersionAttribute {
+			get {
+				return xmlDocument != null && xmlDocument.DocumentElement.HasAttribute ("ToolsVersion");
+			}
+		}
+		
+		public string ToolsVersion {
+			get; internal set;
 		}
 
 		internal List<string> BuiltTargetKeys {

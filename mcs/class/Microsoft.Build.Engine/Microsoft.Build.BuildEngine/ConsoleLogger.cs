@@ -29,6 +29,7 @@
 
 using System;
 using System.Runtime.InteropServices;
+using System.Collections;
 using System.Collections.Generic;
 using System.IO;
 using System.Security;
@@ -283,6 +284,8 @@ namespace Microsoft.Build.BuildEngine {
 						String.IsNullOrEmpty (args.TargetNames) ? "default" : args.TargetNames));
 			ResetColor ();
 			WriteLine (String.Empty);
+			DumpProperties (args.Properties);
+			DumpItems (args.Items);
 			PushEvent (args);
 		}
 		
@@ -405,7 +408,7 @@ namespace Microsoft.Build.BuildEngine {
 		public void CustomEventHandler (object sender, CustomBuildEventArgs args)
 		{
 		}
-		
+
 		private void WriteLine (string message)
 		{
 			if (indent > 0) {
@@ -436,6 +439,7 @@ namespace Microsoft.Build.BuildEngine {
 		{
 			StringBuilder sb = new StringBuilder ();
 
+			string last_imported_target_file = String.Empty;
 			for (int i = 0; i < events.Count; i ++) {
 				BuildStatusEventArgs args = events [i];
 				ProjectStartedEventArgs pargs = args as ProjectStartedEventArgs;
@@ -444,12 +448,20 @@ namespace Microsoft.Build.BuildEngine {
 							String.IsNullOrEmpty (pargs.TargetNames) ?
 								"default targets" :
 								pargs.TargetNames);
+					last_imported_target_file = String.Empty;
 					continue;
 				}
 
 				TargetStartedEventArgs targs = args as TargetStartedEventArgs;
-				if (targs != null)
+				if (targs != null) {
+					if (targs.TargetFile != targs.ProjectFile && targs.TargetFile != last_imported_target_file)
+						// target from an imported file,
+						// and it hasn't been mentioned as yet
+						sb.AppendFormat ("{0} ", targs.TargetFile);
+
+					last_imported_target_file = targs.TargetFile;
 					sb.AppendFormat ("({0} target) ->\n", targs.TargetName);
+				}
 			}
 
 			return sb.ToString ();
@@ -571,6 +583,59 @@ namespace Microsoft.Build.BuildEngine {
                 		} else
                 			return false;
                 }
+
+		void DumpProperties (IEnumerable properties)
+		{
+			if (!IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic))
+				return;
+
+			SetColor (eventColor);
+			WriteLine ("\n");
+			WriteLine ("Initial Properties:");
+			ResetColor ();
+
+			if (properties == null)
+				return;
+
+			var dict = new SortedDictionary<string, string> ();
+			foreach (DictionaryEntry de in properties)
+				dict [(string)de.Key] = (string)de.Value;
+
+			foreach (KeyValuePair<string, string> pair in dict)
+				WriteLine (String.Format ("{0} = {1}", pair.Key, pair.Value));
+			WriteLine ("\n");
+		}
+
+		void DumpItems (IEnumerable items)
+		{
+			if (!IsVerbosityGreaterOrEqual (LoggerVerbosity.Diagnostic) || items == null)
+				return;
+
+			SetColor (eventColor);
+			WriteLine ("\n");
+			WriteLine ("Initial Items:");
+			ResetColor ();
+			if (items == null)
+				return;
+
+			var items_table = new SortedDictionary<string, List<ITaskItem>> ();
+			foreach (DictionaryEntry de in items) {
+				string key = (string)de.Key;
+				if (!items_table.ContainsKey (key))
+					items_table [key] = new List<ITaskItem> ();
+
+				items_table [key].Add ((ITaskItem) de.Value);
+			}
+
+			foreach (string name in items_table.Keys) {
+				WriteLine (name);
+				indent ++;
+				foreach (ITaskItem item in items_table [name])
+					WriteLine (item.ItemSpec);
+				indent--;
+			}
+			WriteLine ("\n");
+		}
 
 		public string Parameters {
 			get {

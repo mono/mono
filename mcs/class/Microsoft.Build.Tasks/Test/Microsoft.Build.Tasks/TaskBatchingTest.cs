@@ -40,6 +40,12 @@ namespace MonoTests.Microsoft.Build.Tasks
 	[TestFixture]
 	public class TaskBatchingTest
 	{
+		string projectHeader;
+		public TaskBatchingTest ()
+		{
+			projectHeader = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + ">";
+		}
+
 		[Test]
 		public void Test1 ()
 		{
@@ -548,7 +554,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 		// batching should happen only on basis of the task attributes,
 		// and not the resolved expression values
 		public void TestBatching1 () {
-			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectString = projectHeader + @"
 	<ItemGroup>
 		<item3 Include=""foo""/>
 		<item2 Include=""%(item3.Identity)""/>
@@ -584,7 +590,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 		// batching should happen only on basis of the task attributes,
 		// and not the resolved expression values
 		public void TestConditionalBatching2 () {
-			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectString = projectHeader + @"
 	<ItemGroup>
 		<item2 Include=""%(item3.Identity)""/>
 		<item4 Include=""%(item2.Identity);@(item3)""/>
@@ -614,7 +620,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		[Test]
 		public void TestBatchingWithUnbatchedItems () {
-			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectString = projectHeader + @"
 	<ItemGroup>
 		<Item1 Include=""One""/>
 		<Item1 Include=""Two""/>
@@ -651,7 +657,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		[Test]
 		public void TestPropertiesWithBatchedReferences () {
-			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectString = projectHeader + @"
 	<ItemGroup>
 		<Item1 Include=""One""/>
 		<Item1 Include=""Two""/>
@@ -693,7 +699,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		[Test]
 		public void TestPropertiesWithDynamicItems () {
-			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectString = projectHeader + @"
 	<ItemGroup>
 		<Item1 Include=""One""/>
 		<Item1 Include=""Two""/>
@@ -748,7 +754,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		[Test]
 		public void TestTargetInvocationFromBatchedTask () {
-			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectString = projectHeader + @"
 	<ItemGroup>
 		<Item1 Include=""One""/>
 		<Item1 Include=""Two""/>
@@ -799,7 +805,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		[Test]
 		public void TestTargetInvocationFromBatchedTarget () {
-			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectString = projectHeader + @"
 	<ItemGroup>
 		<Item1 Include=""One""/>
 		<Item1 Include=""Two""/>
@@ -864,7 +870,7 @@ namespace MonoTests.Microsoft.Build.Tasks
 
 		[Test]
 		public void TestBatchingWithUnqualifiedMetadataReference () {
-			string projectString = @"<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+			string projectString = projectHeader + @"
 	<ItemGroup>
 		<Item1 Include=""One""><Md>1</Md></Item1>
 		<Item1 Include=""Two""><Md>2</Md></Item1>

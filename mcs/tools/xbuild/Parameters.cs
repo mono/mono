@@ -56,10 +56,11 @@ namespace Mono.XBuild.CommandLine {
 		string[]		targets;
 		bool			validate;
 		string			validationSchema;
+		string			toolsVersion;
 		
 		string			responseFile;
 	
-		public Parameters (string binPath)
+		public Parameters ()
 		{
 			consoleLoggerParameters = "";
 			displayHelp = false;
@@ -190,8 +191,10 @@ namespace Mono.XBuild.CommandLine {
                                                 sb.Length = 0;
                                         }
                                 }
-                        } catch (Exception x) {
-				ReportError (2, "Error during loading response file.", x);
+                        } catch (IOException x) {
+				ErrorUtilities.ReportWarning (2, String.Format (
+							"Error loading response file. (Exception: {0}). Ignoring.",
+							x.Message));
 			} finally {
                                 if (sr != null)
                                         sr.Close ();
@@ -235,6 +238,8 @@ namespace Mono.XBuild.CommandLine {
 					ProcessConsoleLoggerParameters (s);
 				} else if (s.StartsWith ("/validate:") || s.StartsWith ("/val:")) {
 					ProcessValidate (s);
+				} else if (s.StartsWith ("/toolsversion:") || s.StartsWith ("/tv:")) {
+					ToolsVersion = s.Split (':') [1];
 				} else
 					return false;
 				break;
@@ -383,6 +388,11 @@ namespace Mono.XBuild.CommandLine {
 		
 		public string ValidationSchema {
 			get { return validationSchema; }
+		}
+
+		public string ToolsVersion {
+			get { return toolsVersion; }
+			private set { toolsVersion = value; }
 		}
 		
 	}

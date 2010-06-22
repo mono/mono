@@ -235,9 +235,9 @@ namespace MonoTests.Microsoft.Build.Tasks
 			Project project = engine.CreateNewProject ();
 			TestMessageLogger logger = new TestMessageLogger ();
 			engine.RegisterLogger (logger);
-			Console.WriteLine (projectText);
 			project.LoadXml (projectText);
 			if (!project.Build ("1")) {
+				Console.WriteLine (projectText);
 				logger.DumpMessages ();
 				Assert.Fail ("Build failed");
 			}
@@ -283,11 +283,16 @@ namespace MonoTests.Microsoft.Build.Tasks
 				sb.AppendFormat (" RootNamespace = \"{0}\"", rootNamespace);
 			sb.Append (">\n \t\t\t<Output TaskParameter=\"ManifestResourceNames\" ItemName=\"ResourceNames\" />\n");
 			sb.Append ("\t\t</CreateVisualBasicManifestResourceName>\n\t</Target>\n");
-			sb.Append ("\t<UsingTask TaskName=\"Microsoft.Build.Tasks.CreateVisualBasicManifestResourceName\" " +
-				"AssemblyName=\"Microsoft.Build.Tasks, Version=2.0.0.0, Culture=neutral, PublicKeyToken=b03f5f7f11d50a3a\"/>\n");
+			sb.Append ("\t" + GetUsingTask ("CreateVisualBasicManifestResourceName"));
 			sb.Append ("</Project>");
 
 			return sb.ToString ();
 		}
+		
+		string GetUsingTask (string taskName)
+		{
+			return "<UsingTask TaskName='Microsoft.Build.Tasks." + taskName + "' AssemblyFile='" + Consts.GetTasksAsmPath () + "' />";
+		}
+
 	}
 }

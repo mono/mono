@@ -57,16 +57,27 @@ namespace Microsoft.Build.Tasks {
 				List <ITaskItem> temporaryCopiedFiles = new List <ITaskItem> ();
 			
 				if (sourceFiles != null && destinationFiles != null &&
-					sourceFiles.Length != destinationFiles.Length)
-					throw new Exception ("Number of source files is different than number of destination files.");
-				if (destinationFiles != null && destinationFolder != null)
-					throw new Exception ("You must specify only one attribute from DestinationFiles and DestinationFolder");
+					sourceFiles.Length != destinationFiles.Length) {
+					Log.LogError ("Number of source files is different than number of destination files.");
+					return false;
+				}
+
+				if (destinationFiles != null && destinationFolder != null) {
+					Log.LogError ("You must specify only one attribute from DestinationFiles and DestinationFolder");
+					return false;
+				}
+
 				if (destinationFiles != null && destinationFiles.Length > 0) {
 					for (int i = 0; i < sourceFiles.Length; i ++) {
 						ITaskItem sourceItem = sourceFiles [i];
 						ITaskItem destinationItem = destinationFiles [i];
 						string sourceFile = sourceItem.GetMetadata ("FullPath");
 						string destinationFile = destinationItem.GetMetadata ("FullPath");
+
+						if (!File.Exists (sourceFile)) {
+							Log.LogError ("Cannot copy {0} to {1}, as the source file doesn't exist.", sourceFile, destinationFile);
+							continue;
+						}
 
 						if (!skipUnchangedFiles || HasFileChanged (sourceFile, destinationFile))
 							CopyFile (sourceFile, destinationFile, true);
@@ -85,6 +96,11 @@ namespace Microsoft.Build.Tasks {
 						string filename = sourceItem.GetMetadata ("Filename") + sourceItem.GetMetadata ("Extension");
 						string destinationFile = Path.Combine (destinationDirectory,filename);
 
+						if (!File.Exists (sourceFile)) {
+							Log.LogError ("Cannot copy {0} to {1}, as the source file doesn't exist.", sourceFile, destinationFile);
+							continue;
+						}
+
 						if (!skipUnchangedFiles || directoryCreated ||
 							HasFileChanged (sourceFile, destinationFile))
 							CopyFile (sourceFile, destinationFile, false);
@@ -99,7 +115,8 @@ namespace Microsoft.Build.Tasks {
 					}
 					destinationFiles = temporaryDestinationFiles.ToArray ();
 				} else {
-					throw new Exception ("You must specify DestinationFolder or DestinationFiles attribute.");
+					Log.LogError ("You must specify DestinationFolder or DestinationFiles attribute.");
+					return false;
 				}
 				
 				copiedFiles = temporaryCopiedFiles.ToArray ();

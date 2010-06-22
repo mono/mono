@@ -23,6 +23,8 @@
 
 		<DebugSymbols Condition=" '$(DebugType)' == 'none' ">false</DebugSymbols>
 		<DebugType    Condition=" '$(DebugType)' == 'none' "></DebugType>
+
+		<CoreCompileDependsOn></CoreCompileDependsOn>
 	</PropertyGroup>
 
 	<ItemGroup>
@@ -32,7 +34,8 @@
 	<Target
 		Name="CoreCompile"
 		Inputs="@(Compile)"
-		Outputs="$(IntermediateAssembly)"
+		Outputs="@(IntermediateAssembly)"
+		DependsOnTargets="$(CoreCompileDependsOn)"
 	>
 		<Vbc
 			AdditionalLibPaths="$(AdditionalLibPaths)"
@@ -61,12 +64,13 @@
 			OptionExplicit="$(OptionExplicit)"
 			OptionStrict="$(OptionStrict)"
 			OptionStrictType="$(OptionStrictType)" 
-			OutputAssembly="$(IntermediateAssembly)"
+			OutputAssembly="@(IntermediateAssembly)"
 			Platform="$(PlatformTarget)"
 			References="@(ResolvedFiles)"
 			RemoveIntegerChecks="$(RemoveIntegerChecks)"
 			Resources="@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile)"
 			ResponseFiles="$(CompilerResponseFile)"
+			RootNamespace="$(RootNamespace)"
 			Sources="@(Compile)"
 			TargetType="$(OutputType)"
 			TreatWarningsAsErrors="$(TreatWarningsAsErrors)"

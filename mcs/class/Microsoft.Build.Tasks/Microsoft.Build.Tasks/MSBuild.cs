@@ -65,8 +65,13 @@ namespace Microsoft.Build.Tasks {
 			string currentDirectory = Environment.CurrentDirectory;
 			Hashtable outputs;
 		
-			Dictionary<string, string> global_properties = SplitPropertiesToDictionary ();
+			var global_properties = SplitPropertiesToDictionary ();
 			Dictionary<string, ITaskItem> projectsByFileName = new Dictionary<string, ITaskItem> ();
+
+			Log.LogMessage (MessageImportance.Low, "Global Properties:");
+			if (global_properties != null)
+				foreach (KeyValuePair<string, string> pair in global_properties)
+					Log.LogMessage (MessageImportance.Low, "\t{0} = {1}", pair.Key, pair.Value);
 
 			foreach (ITaskItem project in projects) {
 				filename = project.GetMetadata ("FullPath");
@@ -82,7 +87,14 @@ namespace Microsoft.Build.Tasks {
 				outputs = new Hashtable ();
 
 				try {
-					result = BuildEngine.BuildProjectFile (filename, targets, global_properties, outputs);
+					// Order of precedence:
+					// %(Project.ToolsVersion) , ToolsVersion property
+					string tv = project.GetMetadata ("ToolsVersion");
+					if (String.IsNullOrEmpty (tv))
+						tv = ToolsVersion;
+					ThrowIfNotValidToolsVersion (tv);
+
+					result = BuildEngine2.BuildProjectFile (filename, targets, global_properties, outputs, tv);
 				} catch (InvalidProjectFileException e) {
 					Log.LogError ("Error building project {0}: {1}", filename, e.Message);
 					result = false;
@@ -125,6 +137,12 @@ namespace Microsoft.Build.Tasks {
 
 			Directory.SetCurrentDirectory (currentDirectory);
 			return result;
+		}
+
+		void ThrowIfNotValidToolsVersion (string toolsVersion)
+		{
+			if (!String.IsNullOrEmpty (toolsVersion) && Engine.GlobalEngine.Toolsets [toolsVersion] == null)
+				throw new Exception (String.Format ("Unknown ToolsVersion : {0}", toolsVersion));
 		}
 
 		[Required]
@@ -170,12 +188,16 @@ namespace Microsoft.Build.Tasks {
 			set { buildInParallel = value; }
 		}
 
-		Dictionary<string, string> SplitPropertiesToDictionary ()
+		public string ToolsVersion {
+			get; set;
+		}
+
+		SortedDictionary<string, string> SplitPropertiesToDictionary ()
 		{
 			if (properties == null)
 				return null;
 
-			Dictionary<string, string> global_properties = new Dictionary<string, string> ();
+			var global_properties = new SortedDictionary<string, string> ();
 			foreach (string kvpair in properties) {
 				if (String.IsNullOrEmpty (kvpair))
 					continue;

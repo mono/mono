@@ -46,6 +46,7 @@ Microsoft.Build.BuildEngine/InternalLoggerException.cs
 Microsoft.Build.BuildEngine/InvalidProjectFileException.cs
 Microsoft.Build.BuildEngine/IReference.cs
 Microsoft.Build.BuildEngine/ItemReference.cs
+Microsoft.Build.BuildEngine/LogExtensions.cs
 Microsoft.Build.BuildEngine/MetadataReference.cs
 Microsoft.Build.BuildEngine/Project.cs
 Microsoft.Build.BuildEngine/ProjectLoadSettings.cs
@@ -56,6 +57,9 @@ Microsoft.Build.BuildEngine/Target.cs
 Microsoft.Build.BuildEngine/TaskDatabase.cs
 Microsoft.Build.BuildEngine/TaskEngine.cs
 Microsoft.Build.BuildEngine/Token.cs
+Microsoft.Build.BuildEngine/Toolset.cs
+Microsoft.Build.BuildEngine/ToolsetCollection.cs
+Microsoft.Build.BuildEngine/ToolsetDefinitionLocations.cs
 Microsoft.Build.BuildEngine/UsingTask.cs
 Microsoft.Build.BuildEngine/UsingTaskCollection.cs
 Microsoft.Build.BuildEngine/Utilities.cs

@@ -1,3 +1,85 @@
+2010-06-04  Ankit Jain  <jankit@novell.com>
+
+	* Import.cs (EvaluateProjectPath): Add a hack to support multiple
+	msbuild extension paths. Paths can be specified via the environment
+	variable - $MSBuildExtensionsPath . ~/.config/xbuild/tasks is also
+	checked for extensions, besides the default location.
+	This explicitly looks for a "$(MSBuildExtensionsPath)" in the import
+	expression and tries to replace that with possible paths, till it
+	finds the file. In rest of the project, the property would resolve
+	to its single default value.
+
+2010-06-03  Ankit Jain  <jankit@novell.com>
+
+	* Engine.cs (GetLoadedProject): Return null if project not found.
+	Based on a patch by Dale Ragan <dale.ragan@sinesignal.com> .
+
+2010-05-28  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #485841.
+	* DirectoryScanner.cs (ProcessInclude): Set %(RecursiveDir) only if
+	the '**' wildcard was found in the original Include.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs (InitializeProperties): Set MSBuildBinPath to the current
+	tools path.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* TaskEngine.cs (Prepare): Throw InvalidProjectFileException instead of a generic
+	Exception.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs (EventsToString): If the target being executed is
+	from an imported file, then show that.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* Project.cs: Add property MSBuildExtensionsPath32, used by silverlight
+	projects.
+
+2010-04-07  Ankit Jain  <jankit@novell.com>
+
+	* ConsoleLogger.cs: Dump items and properties when a project starts
+	to build. Useful for debugging.
+	* Engine.cs (LogProjectStarted): Set the properties and items also,
+	for the project started event.
+	* Project.cs (EvaluatedPropertiesAsDictionaryEntries): New.
+	(EvaluatedItemsByNameAsDictionaryEntries): New. Required for
+	ProjectStartedEvent .
+
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* BuildEngine.cs: Implement IBuildEngine2 instead of
+	IBuildEngine.
+	* BuildTasks.cs: Use the new extension methods for logging.
+	(InitializeTask): Emit a message informing about the assembly
+	from which the task is being loaded. Emit a useful debug message
+	incase of a InvalidCastException.
+	* Engine.cs: Add missing methods, constructors and properties related
+	to ToolsVersion support. Setup a default set of Toolsets.
+	Keep separate taskdbs' per ToolsVersion. The common tasks
+	would come from different *.tasks file, and use different
+	task assemblies.
+	(DefaultToolsVersion): Correctly set this based on the profile.
+	* LogExtensions.cs: New. Extension methods on Engine, for logging.
+	* Project.cs: Add missing methods/contructors/properties related
+	to ToolsVersion support. Add reserved properties -
+	MSBuildToolsPath and MSBuildToolsVersion .
+	* Toolset.cs: New.
+	* ToolsetCollection.cs: New.
+	* ToolsetDefinitionLocations.cs: New.
+
+2010-03-04  Ankit Jain  <jankit@novell.com>
+
+	* BuildEngine.cs (LogErrorEvent): Log as warning, if
+	ContinueOnError==true, and log a corresponding message.
+	* TargetBatchingImpl.cs: Refactor to share code between the
+	batched and unbatched case. If a task fails and
+	ContinueOnError==true, then ignore the failed state.
+
 2010-02-19  Ankit Jain  <jankit@novell.com>
 
 	* BuildItem.cs: Track api changes.

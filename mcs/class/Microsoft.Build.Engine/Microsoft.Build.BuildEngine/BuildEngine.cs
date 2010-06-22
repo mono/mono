@@ -32,7 +32,7 @@ using System.Collections;
 using Microsoft.Build.Framework;
 
 namespace Microsoft.Build.BuildEngine {
-	internal class BuildEngine : IBuildEngine {
+	internal class BuildEngine : IBuildEngine2 {
 	
 		Engine	engine;
 		int	columnNumberOfTaskNode;
@@ -60,7 +60,16 @@ namespace Microsoft.Build.BuildEngine {
 				       IDictionary globalProperties,
 				       IDictionary targetOutputs)
 		{
+			return BuildProjectFile (projectFileName, targetNames, globalProperties, targetOutputs, null);
+		}
+
+		public bool BuildProjectFile (string projectFileName,
+				       string[] targetNames,
+				       IDictionary globalProperties,
+				       IDictionary targetOutputs, string toolsVersion)
+		{
 			if (String.IsNullOrEmpty (projectFileName)) {
+				project.ToolsVersion = toolsVersion;
 				return engine.BuildProject (project, targetNames, targetOutputs,
 						BuildSettings.DoNotResetPreviouslyBuiltTargets);
 			} else {
@@ -71,8 +80,19 @@ namespace Microsoft.Build.BuildEngine {
 							(string) de.Key, (string) de.Value,
 							PropertyType.Global));
 				return engine.BuildProjectFile (projectFileName,
-					targetNames, bpg, targetOutputs, BuildSettings.DoNotResetPreviouslyBuiltTargets);
+					targetNames, bpg, targetOutputs, BuildSettings.DoNotResetPreviouslyBuiltTargets, toolsVersion);
 			}
+		}
+
+		public bool BuildProjectFilesInParallel (string[] projectFileNames,
+					string [] targetNames,
+					IDictionary[] globalProperties,
+					IDictionary[] targetOutputsPerProject,
+					string[] toolsVersion,
+					bool useResultsCache,
+					bool unloadProjectsOnCompletion)
+		{
+			throw new NotImplementedException ();
 		}
 
 		// Raises a custom event to all registered loggers.
@@ -84,7 +104,21 @@ namespace Microsoft.Build.BuildEngine {
 		// Raises an error to all registered loggers.
 		public void LogErrorEvent (BuildErrorEventArgs e)
 		{
-			engine.EventSource.FireErrorRaised (this, e);
+			if (ContinueOnError) {
+				// log the error as a warning
+				LogWarningEvent (new BuildWarningEventArgs (
+					e.Subcategory, e.Code, e.File, e.LineNumber, e.ColumnNumber,
+					e.EndLineNumber, e.EndColumnNumber, e.Message,
+					e.HelpKeyword, e.SenderName));
+
+				LogMessageEvent (new BuildMessageEventArgs (
+							"Previous error was converted to a warning as the " +
+							"task was called with ContinueOnError=true.",
+							null, null, MessageImportance.Normal));
+
+			} else {
+				engine.EventSource.FireErrorRaised (this, e);
+			}
 		}
 
 		// Raises a message event to all registered loggers.
@@ -113,6 +147,10 @@ namespace Microsoft.Build.BuildEngine {
 
 		public string ProjectFileOfTaskNode {
 			get { return taskfile; }
+		}
+
+		public bool IsRunningMultipleNodes {
+			get { return false; }
 		}
 		
 	}

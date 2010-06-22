@@ -1,3 +1,75 @@
+2010-06-09  Ankit Jain  <jankit@novell.com>
+
+	* ToolTask.cs: Don't check for tool's existence, as we might
+	not have the full path.
+
+2010-05-28  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs: Add some comments.
+
+2010-05-28  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs (FindInDirectory): Add a 'specific_version'
+	parameter. Look for reference.{dll|exe} instead of checking all
+	files in the directory. Compare assembly names only if
+	specific_version is true.
+	(ResolveHintPathReference): Extract code to check and compare assembly
+	names to ..
+	(ResolvedReferenceFromPath): .. this.
+	(AssemblyNamesCompatible): Change default value of @specificVersion to
+	true.
+	Track api changes.
+	* ResolveAssemblyReference.cs (ResolveReference): Specify
+	'specific_version' in case of SearchPath.Directory.
+	(TryGetSpecificVersionValue): msbuild seems to look only for ',' in
+	the reference, instead of checking whether the assembly is strong
+	named.
+	(TryGetResolvedReferenceByAssemblyName): Track api changes.
+
+2010-05-28  Ankit Jain  <jankit@novell.com>
+
+	* AssemblyResolver.cs (PopulateTargetFrameworkAssemblies):
+	Handle invalid dll, add a null check.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* GetFrameworkPath.cs (FrameworkVersion40Path): New.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* Copy.cs: Cleanly log errors, instead of throwing exceptions.
+
+2010-04-10  Ankit Jain  <jankit@novell.com>
+
+	* Vbc.cs (LogEventsFromTextOutput):
+	* ToolTask.cs (LogEventsFromTextOutput): Emit the messages
+	that don't match the error regex, as is.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	* Copy.cs: Handle non-existant source files.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	Fix bug #594541
+	* Vbc.cs (LogEventsFromTextOutput): Override and correctly parse
+	output. Taken regex from monodevelop for this.
+
+2010-04-08  Ankit Jain  <jankit@novell.com>
+
+	* Vbc.cs (ValidateParameters): Always return true, dummy implementation.
+
+2010-04-07  Ankit Jain  <jankit@novell.com>
+
+	* MSBuild.cs: Emit global properties, if any. Sort the property
+	list.
+
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* Csc.cs: Use dmcs as the compiler for 4.0 profile.
+	* MSBuild.cs (ToolsVersion): New.
+	Use toolsVersion for building.
+
 2010-02-10  Ankit Jain  <jankit@novell.com>
 
 	* GenerateResource.cs (CompileResourceFile): Check File.Exists

@@ -1,3 +1,7 @@
+2010-04-03  Ankit Jain  <jankit@novell.com>
+
+	* IBuildEngine2.cs: New.
+
 2006-12-19  Marek Sieradzki  <marek.sieradzi@gmail.com>
 
 	* LoggerException.cs: Changed serialization names.

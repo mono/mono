@@ -176,27 +176,31 @@ namespace Microsoft.Build.BuildEngine {
 		void LogError (string message,
 				     params object[] messageArgs)
 		{
-			BuildErrorEventArgs beea = new BuildErrorEventArgs (
-				null, null, null, 0, 0, 0, 0, String.Format (message, messageArgs),
-				null, null);
-			parentTarget.Project.ParentEngine.EventSource.FireErrorRaised (this, beea);
+			parentTarget.Project.ParentEngine.LogError (message, messageArgs);
 		}
 		
 		void LogMessage (MessageImportance importance,
 					string message,
 					params object[] messageArgs)
 		{
-			BuildMessageEventArgs bmea = new BuildMessageEventArgs (
-				String.Format (message, messageArgs), null,
-				null, importance);
-			parentTarget.Project.ParentEngine.EventSource.FireMessageRaised (this, bmea);
+			parentTarget.Project.ParentEngine.LogMessage (importance, message, messageArgs);
 		}
 
 		ITask InitializeTask ()
 		{
 			ITask task;
 			
-			task = (ITask)Activator.CreateInstance (this.Type);
+			try {
+				task = (ITask)Activator.CreateInstance (this.Type);
+			} catch (InvalidCastException) {
+				LogMessage (MessageImportance.Low, "InvalidCastException, ITask: {0} Task type: {1}",
+						typeof (ITask).AssemblyQualifiedName, this.Type.AssemblyQualifiedName);
+				throw;
+			}
+			parentTarget.Project.ParentEngine.LogMessage (
+					MessageImportance.Low,
+					"Using task {0} from {1}", Name, this.Type.AssemblyQualifiedName);
+
 			task.BuildEngine = new BuildEngine (parentTarget.Project.ParentEngine, parentTarget.Project,
 						parentTarget.TargetFile, 0, 0, ContinueOnError);
 			task_logger = new TaskLoggingHelper (task);

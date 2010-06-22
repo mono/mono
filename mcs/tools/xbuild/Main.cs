@@ -44,7 +44,6 @@ namespace Mono.XBuild.CommandLine {
 		
 		Parameters	parameters;
 		string[]	args;
-		string		binPath;
 		string		defaultSchema;
 		
 		Engine		engine;
@@ -61,11 +60,11 @@ namespace Mono.XBuild.CommandLine {
 		
 		public MainClass ()
 		{
-			binPath = ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20);
+			string binPath = ToolLocationHelper.GetPathToDotNetFramework (TargetDotNetFrameworkVersion.Version20);
 			defaultSchema = Path.Combine (binPath, "Microsoft.Build.xsd");
-			parameters = new Parameters (binPath);
+			parameters = new Parameters ();
 		}
-		
+
 		public void Execute ()
 		{
 			bool result = false;
@@ -79,7 +78,14 @@ namespace Mono.XBuild.CommandLine {
 				if (parameters.DisplayVersion)
 					ErrorUtilities.ShowVersion (false);
 				
-				engine  = new Engine (binPath);
+				//FIXME: cmd line arg to set toolsversion
+				engine  = Engine.GlobalEngine;
+				if (!String.IsNullOrEmpty (parameters.ToolsVersion)) {
+					if (engine.Toolsets [parameters.ToolsVersion] == null)
+						ErrorUtilities.ReportError (0, String.Format ("Unknown tools version : {0}", parameters.ToolsVersion));
+
+					engine.DefaultToolsVersion = parameters.ToolsVersion;
+				}
 				
 				engine.GlobalProperties = this.parameters.Properties;
 				

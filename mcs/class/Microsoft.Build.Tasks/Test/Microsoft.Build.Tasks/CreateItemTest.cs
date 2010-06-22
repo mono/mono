@@ -252,6 +252,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 
 		}
 
+#if NET_3_5 || NET_4_0
 		[Test]
 		public void TestItemsWithWildcards () {
 			Engine engine = new Engine (Consts.BinPath);
@@ -274,7 +275,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 							  };
 
 			string documentString = @"
-				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" ToolsVersion=""3.5"">
+				<Project xmlns=""http://schemas.microsoft.com/developer/msbuild/2003"" " + Consts.ToolsVersionString + @">
 					<PropertyGroup>
 						<WC>dir\**\*.dll</WC>
 						<ExWC>*\x*.dll</ExWC>
@@ -318,6 +319,7 @@ namespace MonoTests.Microsoft.Build.Tasks {
 				Directory.Delete (basedir, true);
 			}
 		}
+#endif
 
 		void CreateDirectoriesAndFiles (string basedir, string[] dirs, string[] files) {
 			foreach (string dir in dirs)

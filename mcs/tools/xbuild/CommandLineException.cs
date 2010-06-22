@@ -78,6 +78,15 @@ namespace Mono.XBuild.CommandLine {
 		public int ErrorCode {
 			get { return errorCode; }
 		}
+
+		public override string Message {
+			get {
+				if (InnerException != null)
+					return base.Message + ": " + InnerException.Message;
+				else
+					return base.Message;
+			}
+		}
 	}
 }
 

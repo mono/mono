@@ -130,7 +130,7 @@ namespace Microsoft.Build.Tasks {
 
 			KeyValuePair<AssemblyName, string> pair;
 			if (gac_asm.NameToAssemblyNameCache.TryGetValue (key_aname.Name, out pair)) {
-				if (AssemblyNamesCompatible (key_aname, pair.Key, specific_version, true)) {
+				if (AssemblyNamesCompatible (key_aname, pair.Key, specific_version)) {
 					// gac and tgt frmwk refs are not copied private
 					return GetResolvedReference (reference, pair.Value, pair.Key, false,
 							SearchPath.TargetFrameworkDirectory);
@@ -146,40 +146,55 @@ namespace Microsoft.Build.Tasks {
 			return null;
 		}
 
-		public ResolvedReference FindInDirectory (ITaskItem reference, string directory, string [] file_extensions)
+		// Look for %(Identity).{dll|exe|..}
+		// if specific_version==true
+		// 	resolve if assembly names match
+		// else
+		// 	resolve the valid assembly
+		public ResolvedReference FindInDirectory (ITaskItem reference, string directory, string [] file_extensions, bool specific_version)
 		{
-			if (reference.ItemSpec.IndexOf (',') < 0) {
-				// Try as a filename
-				string path = Path.Combine (directory, reference.ItemSpec);
-				AssemblyName aname = GetAssemblyNameFromFile (path);
-				if (aname != null)
-					return GetResolvedReference (reference, path, aname, true, SearchPath.Directory);
+			string filename = reference.ItemSpec;
+			int comma_pos = filename.IndexOf (',');
+			if (comma_pos >= 0)
+				filename = filename.Substring (0, comma_pos);
 
-				foreach (string extn in file_extensions) {
-					string path_with_extn = path + extn;
-					aname = GetAssemblyNameFromFile (path_with_extn);
-					if (aname != null)
-						return GetResolvedReference (reference, path_with_extn, aname, true,
-								SearchPath.Directory);
-				}
+			// Try as a filename
+			string path = Path.GetFullPath (Path.Combine (directory, filename));
+			AssemblyName aname = specific_version ? new AssemblyName (reference.ItemSpec) : null;
+
+			ResolvedReference resolved_ref = ResolveReferenceForPath (path, reference, aname, null, SearchPath.Directory, specific_version);
+			if (resolved_ref != null)
+				return resolved_ref;
+
+			// try path + Include + {.dll|.exe|..}
+			foreach (string extn in file_extensions) {
+				resolved_ref = ResolveReferenceForPath (path + extn, reference, aname, null, SearchPath.Directory, specific_version);
+				if (resolved_ref != null)
+					return resolved_ref;
 			}
 
-			// Probably an assembly name
-			AssemblyName key_aname = new AssemblyName (reference.ItemSpec);
-			foreach (string extn in file_extensions) {
-				foreach (string file in Directory.GetFiles (directory, "*" + extn)) {
-					AssemblyName found_aname = GetAssemblyNameFromFile (file);
-					if (found_aname == null)
-						// error already logged
-						continue;
+			return null;
+		}
 
-					//FIXME: Extract 'name' and look only for name.dll name.exe ?
-					if (AssemblyNamesCompatible (key_aname, found_aname, false))
-						return GetResolvedReference (reference, file, found_aname, true,
-								SearchPath.Directory);
+		// tries to resolve reference from the given file path, and compares assembly names
+		// if @specific_version == true, and logs accordingly
+		ResolvedReference ResolveReferenceForPath (string filename, ITaskItem reference, AssemblyName aname,
+					string error_message, SearchPath spath, bool specific_version)
+		{
+			AssemblyName found_aname = GetAssemblyNameFromFile (filename);
+			if (found_aname == null) {
+				if (error_message != null)
+					log.LogMessage (MessageImportance.Low, error_message);
+				return null;
+			}
 
-					LogSearchMessage ("Considered {0}, but assembly name wasn't compatible.", file);
-				}
+			if (!specific_version || AssemblyNamesCompatible (aname, found_aname, specific_version)) {
+				// Check compatibility only if specific_version == true
+				return GetResolvedReference (reference, filename, found_aname, true, spath);
+			} else {
+				LogSearchMessage ("Considered '{0}', but assembly name '{1}' did not match the " +
+						"expected '{2}' (SpecificVersion={3})", filename, found_aname, aname, specific_version);
+				log.LogMessage (MessageImportance.Low, "Assembly names are not compatible.");
 			}
 
 			return null;
@@ -190,8 +205,9 @@ namespace Microsoft.Build.Tasks {
 			TargetFrameworkAssemblies gac_asm = new TargetFrameworkAssemblies (directory);
 			foreach (string file in Directory.GetFiles (directory, "*.dll")) {
 				AssemblyName aname = GetAssemblyNameFromFile (file);
-				gac_asm.NameToAssemblyNameCache [aname.Name] =
-					new KeyValuePair<AssemblyName, string> (aname, file);
+				if (aname != null)
+					gac_asm.NameToAssemblyNameCache [aname.Name] =
+						new KeyValuePair<AssemblyName, string> (aname, file);
 			}
 
 			return gac_asm;
@@ -256,11 +272,13 @@ namespace Microsoft.Build.Tasks {
 			return rr;
 		}
 
+		// HintPath has a valid assembly
+		// if specific_version==true
+		// 	resolve if assembly names match
+		// else
+		// 	resolve the valid assembly
 		public ResolvedReference ResolveHintPathReference (ITaskItem reference, bool specific_version)
 		{
-			AssemblyName name = new AssemblyName (reference.ItemSpec);
-			ResolvedReference resolved = null;
-
 			string hintpath = reference.GetMetadata ("HintPath");
 			if (String.IsNullOrEmpty (hintpath)) {
 				LogSearchMessage ("HintPath attribute not found");
@@ -273,21 +291,9 @@ namespace Microsoft.Build.Tasks {
 				return null;
 			}
 
-			AssemblyName found = GetAssemblyNameFromFile (hintpath);
-			if (found == null) {
-				log.LogMessage (MessageImportance.Low, "File at HintPath {0}, is either an invalid assembly or the file does not exist.", hintpath);
-				return null;
-			}
-
-			if (AssemblyNamesCompatible (name, found, specific_version)) {
-				resolved = GetResolvedReference (reference, hintpath, found, true, SearchPath.HintPath);
-			} else {
-				LogSearchMessage ("Considered {0}, but assembly name '{1}' did not match the " +
-						"expected '{2}' (SpecificVersion={3})", hintpath, found, name, specific_version);
-				log.LogMessage (MessageImportance.Low, "Assembly names are not compatible.");
-			}
-
-			return resolved;
+			return ResolveReferenceForPath (hintpath, reference, new AssemblyName (reference.ItemSpec),
+						String.Format ("File at HintPath {0}, is either an invalid assembly or the file does not exist.", hintpath),
+						SearchPath.HintPath, specific_version);
 		}
 
 		public AssemblyName GetAssemblyNameFromFile (string filename)
@@ -309,7 +315,7 @@ namespace Microsoft.Build.Tasks {
 
 		internal static bool AssemblyNamesCompatible (AssemblyName a, AssemblyName b, bool specificVersion)
 		{
-			return AssemblyNamesCompatible (a, b, specificVersion, false);
+			return AssemblyNamesCompatible (a, b, specificVersion, true);
 		}
 
 		// if @specificVersion is true then match full name, else just the simple name

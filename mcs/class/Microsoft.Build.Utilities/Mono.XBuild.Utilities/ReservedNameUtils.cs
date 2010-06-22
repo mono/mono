@@ -72,6 +72,9 @@ namespace Mono.XBuild.Utilities {
 		{
 			if (metadataName == null)
 				throw new ArgumentNullException ();
+
+			if (String.IsNullOrEmpty (itemSpec))
+				return String.Empty;
 		
 			switch (metadataName.ToLower ()) {
 			case "fullpath":

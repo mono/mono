@@ -37,7 +37,12 @@ namespace Microsoft.Build.Utilities
 		Version20,
 		Version30,
 		Version35,
+#if NET_4_0
+		Version40,
+		VersionLatest = Version40
+#else
 		VersionLatest = Version35
+#endif
 	}
 }
 

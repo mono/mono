@@ -137,5 +137,57 @@ namespace MonoTests.Microsoft.Build.BuildEngine.Various {
 			Assert.IsNotNull (project.EvaluatedProperties ["A"], "A2");
 			Assert.IsNull (project.EvaluatedProperties ["B"], "A3");
 		}
+
+		[Test]
+		public void TestBuildContinueOnError ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='A'>
+						<Error ContinueOnError='true' Text='text' />
+						<CreateProperty Value='A'>
+							<Output TaskParameter='Value' PropertyName='A'/>
+						</CreateProperty>
+						<Error ContinueOnError='true' Text='text' />
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsTrue (project.Build ("A"), "A1");
+			Assert.IsNotNull (project.EvaluatedProperties["A"], "A2");
+		}
+
+		[Test]
+		public void TestBuildContinueOnErrorFalse ()
+		{
+			Engine engine;
+			Project project;
+
+			string documentString = @"
+				<Project xmlns='http://schemas.microsoft.com/developer/msbuild/2003'>
+					<Target Name='A'>
+						<Error ContinueOnError='false' Text='text' />
+						<CreateProperty Value='A'>
+							<Output TaskParameter='Value' PropertyName='A'/>
+						</CreateProperty>
+					</Target>
+				</Project>
+			";
+
+			engine = new Engine (Consts.BinPath);
+			project = engine.CreateNewProject ();
+			project.LoadXml (documentString);
+
+			Assert.IsFalse (project.Build ("A"), "A1");
+			Assert.IsNull (project.EvaluatedProperties["A"], "A2");
+		}
+
 	}
 }
