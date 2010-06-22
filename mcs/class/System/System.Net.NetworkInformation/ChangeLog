@@ -1,3 +1,8 @@
+2010-06-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Ping.cs: we need to read the output to give the process time
+	to start. Fixes bug #591136.
+
 2010-03-25  Marek Safar  <marek.safar@gmail.com>
 
 	* IPGlobalProperties.cs: Made Win32_IN6_ADDR verifiable.

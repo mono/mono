@@ -292,9 +292,8 @@ namespace System.Net.NetworkInformation {
 				ping.Start ();
 
 #pragma warning disable 219
-			// No need to read stdout or stderr as long as the output is less than 4k on linux <= 2.6.11 and 65k after that
-			//	string stdout = ping.StandardOutput.ReadToEnd ();
-			//	string stderr = ping.StandardError.ReadToEnd ();
+				string stdout = ping.StandardOutput.ReadToEnd ();
+				string stderr = ping.StandardError.ReadToEnd ();
 #pragma warning restore 219
 				
 				trip_time = (long) (DateTime.Now - sentTime).TotalMilliseconds;
