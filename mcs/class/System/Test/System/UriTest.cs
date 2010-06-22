@@ -167,8 +167,10 @@ namespace MonoTests.System
 
 			uri = new Uri (new Uri("http://www.xxx.com"), "?x=0");
 			Assert.AreEqual ("http://www.xxx.com/?x=0", uri.ToString(), "#rel30");
+#if !NET_4_0
 			uri = new Uri (new Uri("http://www.xxx.com/index.htm"), "?x=0");
 			Assert.AreEqual ("http://www.xxx.com/?x=0", uri.ToString(), "#rel31");
+#endif
 			uri = new Uri (new Uri("http://www.xxx.com/index.htm"), "#here");
 			Assert.AreEqual ("http://www.xxx.com/index.htm#here", uri.ToString(), "#rel32");
 #if NET_2_0
@@ -243,7 +245,9 @@ namespace MonoTests.System
 			Uri b = new Uri ("http://a/b/c/d;p?q");
 			Assert.AreEqual ("http://a/g", new Uri (b, "/g").ToString (), "#1");
 			Assert.AreEqual ("http://g/", new Uri (b, "//g").ToString (), "#2");
+#if !NET_4_0
 			Assert.AreEqual ("http://a/b/c/?y", new Uri (b, "?y").ToString (), "#3");
+#endif
 			Assert.IsTrue (new Uri (b, "#s").ToString ().EndsWith ("#s"), "#4");
 
 			Uri u = new Uri (b, "/g?q=r");
