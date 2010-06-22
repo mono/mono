@@ -1,3 +1,8 @@
+2010-06-22 Geoff Norton  <gnorton@novell.com>
+
+	* sgen-os-mach.c: We cannot call malloc from the gc, so we need to use
+	alloca instead to prevent a deadlock.
+
 2010-06-22  Geoff Norton  <gnorton@novell.com>
 
 	* domain.c: Allow gettings the tls key, since we need it for

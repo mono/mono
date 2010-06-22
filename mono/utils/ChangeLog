@@ -1,3 +1,8 @@
+2010-06-22 Geoff Norton  <gnorton@novell.com>
+
+	* mach-support-*.(c|h): We cannot allocate from the gc, so make
+	these functions alloc-less.
+
 2010-06-22  Geoff Norton  <gnorton@novell.com>
 
 	* Makefile.am
