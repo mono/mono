@@ -1,3 +1,8 @@
+2010-06-22 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* metadata.c (mono_metadata_type_hash): Don't hash
+	the type kind for dynamic types since it can change.
+
 2010-06-22 Geoff Norton  <gnorton@novell.com>
 
 	* sgen-os-mach.c: We cannot call malloc from the gc, so we need to use
