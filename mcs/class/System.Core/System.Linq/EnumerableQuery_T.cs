@@ -95,6 +95,11 @@ namespace System.Linq
 		{
 			return queryable.Execute<TResult> (expression);
 		}
+
+		public override string ToString ()
+		{
+			return queryable.ToString ();
+		}
 	}
 }
 

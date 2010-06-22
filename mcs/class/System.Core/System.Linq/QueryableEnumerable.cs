@@ -113,5 +113,17 @@ namespace System.Linq {
 			var lambda = Expression.Lambda<Func<TResult>> (TransformQueryable (expression));
 			return lambda.Compile ().Invoke ();
 		}
+
+		public override string ToString ()
+		{
+			if (enumerable != null)
+				return enumerable.ToString ();
+
+			var constant = expression as ConstantExpression;
+			if (constant != null)
+				return constant.ToString ();
+
+			return base.ToString ();
+		}
 	}
 }
