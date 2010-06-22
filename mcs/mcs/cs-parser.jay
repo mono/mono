@@ -2443,7 +2443,8 @@ remove_accessor_declaration
 event_accessor_block
 	: opt_semicolon
 	  {
-		Report.Error (73, lexer.Location, "An add or remove accessor must have a body");	  
+		Report.Error (73, lexer.Location, "An add or remove accessor must have a body");
+		$$ = null;
 	  }
 	| block;
 	;
@@ -3227,10 +3228,10 @@ argument_list
 	  	Report.Error (839, GetLocation ($2), "An argument is missing");
 	  	$$ = $1;
 	  }
-	| COMMA argument_or_named_argument
+	| COMMA error
 	  {
 	  	Report.Error (839, GetLocation ($1), "An argument is missing");
-	  	$$ = $1;
+	  	$$ = null;
 	  }
 	;
 
