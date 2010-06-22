@@ -290,6 +290,41 @@ namespace MonoTests.System {
 			new Guid (0x00010203, 0x0405, 0x0607, 0x08, 0x09, 0x0a, 0x0b, 0x0c, 0x0d, 0x0e, 0x0f).ToString ("This is invalid");
 		}
 
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExtraJunkN ()
+		{
+			new Guid ("000102030405060708090a0b0c0d0e0faaaaaa");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExtraJunkD ()
+		{
+			new Guid ("00010203-0405-0607-0809-0a0b0c0d0e0faaaaaa");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExtraJunkB ()
+		{
+			new Guid ("{00010203-0405-0607-0809-0A0B0C0D0E0F}aaaa");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExtraJunkP ()
+		{
+			new Guid ("(00010203-0405-0607-0809-0A0B0C0D0E0F)aaaa");
+		}
+
+		[Test]
+		[ExpectedException (typeof (FormatException))]
+		public void ParseExtraJunkX ()
+		{
+			new Guid ("{0x00010203,0x0405,0x0607,{0x08,0x09,0x0a,0x0b,0x0c,0x0d,0x0e,0x0f}}aaaa");
+		}
+
 #if NET_4_0
 
 		/*

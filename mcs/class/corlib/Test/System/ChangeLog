@@ -1,3 +1,7 @@
+2010-06-22  Jb Evain  <jbevain@novell.com>
+
+	* GuidTest.cs: add tests for #616050.
+
 2010-06-15  Jonathan Pryor  <jpryor@novell.com>
 
 	* ConvertTest.cs: Add tests for #596339.
