@@ -327,7 +327,11 @@ namespace System {
 			
 			// par 5.2 step 6 a)
 			path = baseUri.path;
+#if NET_4_0
+			if (relativeUri.Length > 0) {
+#else
 			if (relativeUri.Length > 0 || query.Length > 0) {
+#endif
 				pos = path.LastIndexOf ('/');
 				if (pos >= 0) 
 					path = path.Substring (0, pos + 1);

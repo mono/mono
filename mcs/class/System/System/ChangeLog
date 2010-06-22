@@ -1,3 +1,8 @@
+2010-06-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* Uri.cs: change of behavior un 4.0.
+	Fixes bug #602411.
+
 2010-06-18 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Uri.cs: fix serialization for relative URIs. Patch from Greg
