@@ -419,7 +419,7 @@ namespace System.ServiceModel.Channels
 					return false; // Do not handle this at normal dispatcher.
 				if (String.Compare (ctx.QueryString [null], "wsdl", StringComparison.OrdinalIgnoreCase) == 0)
 					return mex_info.SupportsMex; // wsdl dispatcher should handle this.
-				if (!wsdl_instance.HelpUrl.Equals (wsdl_instance.WsdlUrl))
+				if (wsdl_instance.HelpUrl == null || !wsdl_instance.HelpUrl.Equals (wsdl_instance.WsdlUrl))
 					return true; // in case help URL is not equivalent to WSDL URL, it anyways returns WSDL regardless of ?wsdl existence.
 			}
 			if (wsdl_instance.HelpUrl != null && Uri.Compare (ctx.RequestUrl, wsdl_instance.HelpUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) {

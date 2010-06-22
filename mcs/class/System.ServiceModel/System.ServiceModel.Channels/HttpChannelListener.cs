@@ -103,8 +103,6 @@ namespace System.ServiceModel.Channels
 	{
 		HttpListenerManager httpChannelManager;
 
-		internal static HttpChannelListenerBase<TChannel>CurrentHttpChannelListener;
-
 		public HttpChannelListenerBase (HttpTransportBindingElement source,
 			BindingContext context)
 			: base (context)

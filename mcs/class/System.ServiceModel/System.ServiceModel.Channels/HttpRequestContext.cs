@@ -64,12 +64,12 @@ namespace System.ServiceModel.Channels
 			// was wrong.
 
 			// FIXME: should this be done here?
-			if (channel.MessageVersion.Addressing.Equals (AddressingVersion.None))
+			if (Channel.MessageVersion.Addressing.Equals (AddressingVersion.None))
 				msg.Headers.Action = null; // prohibited
 
 			MemoryStream ms = new MemoryStream ();
-			channel.Encoder.WriteMessage (msg, ms);
-			ctx.Response.ContentType = channel.Encoder.ContentType;
+			Channel.Encoder.WriteMessage (msg, ms);
+			ctx.Response.ContentType = Channel.Encoder.ContentType;
 
 			string pname = HttpResponseMessageProperty.Name;
 			bool suppressEntityBody = false;
@@ -103,7 +103,7 @@ namespace System.ServiceModel.Channels
 	internal abstract class HttpRequestContextBase : RequestContext
 	{
 		Message request;
-		internal HttpReplyChannel channel;
+		HttpReplyChannel channel;
 
 		public HttpRequestContextBase (
 			HttpReplyChannel channel,
@@ -167,7 +167,7 @@ namespace System.ServiceModel.Channels
 
 		public override void Close ()
 		{
-			Close (channel.DefaultSendTimeout);
+			Close (Channel.DefaultSendTimeout);
 		}
 	}
 }

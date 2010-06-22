@@ -144,7 +144,7 @@ namespace System.ServiceModel.Channels
 					}
 				}
 			} else if (ctx.Request.HttpMethod == "GET") {
-				msg = Message.CreateMessage (MessageVersion, null);
+				msg = Message.CreateMessage (MessageVersion.None, null);
 			}
 			if (msg.Headers.To == null)
 				msg.Headers.To = ctx.Request.Url;
