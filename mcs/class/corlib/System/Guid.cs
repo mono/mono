@@ -4,9 +4,10 @@
 // Authors:
 //	Duco Fijma (duco@lorentz.xs4all.nl)
 //	Sebastien Pouliot (sebastien@ximian.com)
+//	Jb Evain (jbevain@novell.com)
 //
 // (C) 2002 Duco Fijma
-// Copyright (C) 2004-2005 Novell, Inc (http://www.novell.com)
+// Copyright (C) 2004-2010 Novell, Inc (http://www.novell.com)
 //
 // References
 // 1.	UUIDs and GUIDs (DRAFT), Section 3.4
