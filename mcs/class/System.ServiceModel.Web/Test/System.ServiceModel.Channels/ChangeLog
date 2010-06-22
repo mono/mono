@@ -1,3 +1,8 @@
+2010-06-22  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* WebMessageEncodingBindingElementTest.cs : add test for
+	  GetProperty<MessageVersion>().
+
 2008-02-08  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* WebMessageEncodingBindingElementTest.cs : more MessageEncoder test.

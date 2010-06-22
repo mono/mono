@@ -138,5 +138,13 @@ namespace MonoTests.System.ServiceModel
 			var f = m.BuildChannelFactory<IRequestChannel> (CreateBindingContext ());
 			Assert.AreEqual (f.GetType (), new HttpTransportBindingElement ().BuildChannelFactory<IRequestChannel> (CreateBindingContext ()).GetType (), "#1");
 		}
+
+		[Test]
+		public void GetPropertyMessageVersion ()
+		{
+			var m = new WebMessageEncodingBindingElement ();
+			var bc = new BindingContext (new CustomBinding (), new BindingParameterCollection ());
+			Assert.AreEqual (MessageVersion.None, m.GetProperty<MessageVersion> (bc), "#1");
+		}
 	}
 }

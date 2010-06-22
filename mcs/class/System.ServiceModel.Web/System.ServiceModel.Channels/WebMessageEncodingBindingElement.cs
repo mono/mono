@@ -144,6 +144,8 @@ namespace System.ServiceModel.Channels
 
 		public override T GetProperty<T> (BindingContext context)
 		{
+			if (typeof (T) == typeof (MessageVersion))
+				return (T) (object) MessageVersion;
 			if (typeof (T) == typeof (XmlDictionaryReaderQuotas))
 				return (T) (object) ReaderQuotas;
 			return context.GetInnerProperty<T> ();
