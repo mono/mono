@@ -1,5 +1,8 @@
 2010-06-22  Zoltan Varga  <vargaz@gmail.com>
 
+	* method-to-ir.c (mono_method_to_ir): Don't mark loads from OP_LDADDR with
+	MONO_INST_FAULT.
+
 	* mini-llvm.c (mono_llvm_emit_method): Recalculate MONO_INST_INDIRECT flags to
 	allow better optimization if the OP_LDADDR which caused the flag to be set was
 	optimized away.
