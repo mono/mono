@@ -29,7 +29,7 @@
 using System;
 namespace System.Diagnostics.Contracts {
 	[Conditional ("CONTRACTS_FULL")]
-	[AttributeUsage (AttributeTargets.Delegate | AttributeTargets.Interface | AttributeTargets.Class, Inherited=false)]
+	[AttributeUsage (AttributeTargets.Class, Inherited = false)]
 	public sealed class ContractClassForAttribute : Attribute {
 		Type type;
 

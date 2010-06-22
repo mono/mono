@@ -1,10 +1,10 @@
 //
-// System.Diagnostics.Contracts.ContractFailedEventArgs.cs
+// System.Diagnostics.Contracts.ContractException.cs
 //
 // Authors:
-//    Miguel de Icaza (miguel@gnome.org)
+//    Chris Bacon (chrisbacon76@gmail.com)
 //
-// Copyright 2009 Novell (http://www.novell.com)
+// Copyright 2010 Novell (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -29,40 +29,30 @@
 #if NET_4_0
 
 using System;
-using System.Runtime.ConstrainedExecution;
 
 namespace System.Diagnostics.Contracts {
 
-	public sealed class ContractFailedEventArgs : EventArgs {
-		
-		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
-		public ContractFailedEventArgs (ContractFailureKind failureKind, string message, string condition, Exception originalException)
+	class ContractException : Exception {
+
+		internal ContractException (string failure, ContractFailureKind kind, string condition, string userMessage, Exception innerException)
+			: base (failure, innerException)
 		{
-			Condition = condition;
-			FailureKind = failureKind;
-			Handled = false;
-			Unwind = false; // MS docs are incorrect - this should default to false.
-			Message = message;
-			OriginalException = originalException;
+			this.Failure = failure;
+			this.Kind = kind;
+			this.Condition = condition;
+			this.UserMessage = userMessage;
 		}
 
-		public void SetHandled ()
-		{
-			Handled = true;
-		}
+		public string Failure { get; private set; }
 
-		public void SetUnwind ()
-		{
-			Unwind = true;
-		}
+		public ContractFailureKind Kind { get; private set; }
 
 		public string Condition { get; private set; }
-		public ContractFailureKind FailureKind { get; private set; }
-		public bool Handled { get; private set; }
-		public bool Unwind { get; private set; }
-		public string Message { get; private set; }
-		public Exception OriginalException { get; private set; }
+
+		public string UserMessage { get; private set; }
+
 	}
+
 }
 
 #endif

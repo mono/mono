@@ -3,8 +3,10 @@
 //
 // Authors:
 //    Miguel de Icaza (miguel@gnome.org)
+//    Chris Bacon (chrisbacon76@gmail.com)
+//    Marek Safar (marek.safar@gmail.com)
 //
-// Copyright 2009 Novell (http://www.novell.com)
+// Copyright 2009, 2010 Novell (http://www.novell.com)
 //
 // Permission is hereby granted, free of charge, to any person obtaining
 // a copy of this software and associated documentation files (the
@@ -26,121 +28,139 @@
 // WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE SOFTWARE.
 //
 
-//
-// Things left to do:
-// 
-//   * This is a blind implementation from specs, without any testing, so the escalation
-//     is probably broken, and so are the messages and arguments to the eventargs properties
-//
-//   * How to plug the original condition into the Escalate method?   Perhaps we need
-//     some injection for it?
-//
-//   * The "originalException" in Escalate is nowhere used
-//
-//   * We do not Escalate everything that needs to be, perhaps that is the role of the
-//     rewriter to call Escalate with the proper values?
-//
-//   * I added a "new()" constraint to methods that took a TException because I needed
-//     to new the exception, but this is perhaps wrong.
-//
-//   * Result and ValueAtReturn, I need to check what these do in .NET 4, but have not
-//     installed it yet ;-)
-//
+#if NET_4_0
+
 using System;
 using System.Collections.Generic;
+using System.Diagnostics.Contracts.Internal;
+using System.Runtime.ConstrainedExecution;
 
-namespace System.Diagnostics.Contracts {
-#if NET_2_1 || NET_4_0
-	public
-#else
-	internal
-#endif
-
-	static class Contract {
-
+namespace System.Diagnostics.Contracts
+{
+	public static class Contract
+	{
 		public static event EventHandler<ContractFailedEventArgs> ContractFailed;
 
-		static void Escalate (ContractFailureKind kind, Exception e, string text, params object [] args)
-		{
-			if (ContractFailed != null){
-				var ea = new ContractFailedEventArgs (kind, text, "<condition>", e ?? new Exception ());
-				ContractFailed (null, ea);
-				if (!ea.Unwind)
-					return;
-			}
-			Console.Error.WriteLine ("Contract.{0}: {1}", kind.ToString (), String.Format (text, args));
+		// Used in test
+		internal static EventHandler<ContractFailedEventArgs> InternalContractFailedEvent {
+			get { return ContractFailed; }
 		}
-		
+
+		// Used in test
+		internal static Type GetContractExceptionType ()
+		{
+			return typeof (ContractException);
+		}
+
+		// Used in test
+		internal static Type GetContractShouldAssertExceptionType ()
+		{
+			return typeof (ContractShouldAssertException);
+		}
+
+		static void ReportFailure (ContractFailureKind kind, string userMessage, string conditionText, Exception innerException)
+		{
+			string msg = ContractHelper.RaiseContractFailedEvent (kind, userMessage, conditionText, innerException);
+			// if msg is null, then it has been handled already, so don't do anything here
+			if (msg != null)
+				ContractHelper.TriggerFailure (kind, msg, userMessage, conditionText, innerException);
+		}
+
+		static void AssertMustUseRewriter (ContractFailureKind kind, string message)
+		{
+			if (Environment.UserInteractive) {
+				// FIXME: This should trigger an assertion.
+				// But code will never get here at the moment, as Environment.UserInteractive currently
+				// always returns false.
+				throw new ContractShouldAssertException (message);
+			} else {
+				// TODO: Note that FailFast() currently throws a NotImplementedException()
+				Environment.FailFast(message/*, new ExecutionEngineException()*/);
+			}
+		}
+
 		[ConditionalAttribute("CONTRACTS_FULL")]
 		[ConditionalAttribute("DEBUG")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Assert (bool condition)
 		{
 			if (condition)
 				return;
-			Escalate (ContractFailureKind.Assert, null, "failure");
+
+			ReportFailure (ContractFailureKind.Assert, null, null, null);
 		}
 
 		[ConditionalAttribute("DEBUG")]
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Assert (bool condition, string userMessage)
 		{
 			if (condition)
 				return;
-			
-			Escalate (ContractFailureKind.Assert, null, userMessage);
+
+			ReportFailure (ContractFailureKind.Assert, userMessage, null, null);
 		}
 
 		[ConditionalAttribute("DEBUG")]
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Assume(bool condition)
 		{
 			// At runtime, this behaves like assert
 			if (condition)
 				return;
 
-			Escalate (ContractFailureKind.Assume, null, "failure");
+			ReportFailure (ContractFailureKind.Assume, null, null, null);
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
 		[ConditionalAttribute("DEBUG")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Assume (bool condition, string userMessage)
 		{
+			// At runtime, this behaves like assert
 			if (condition)
 				return;
-			
-			Escalate (ContractFailureKind.Assume, null, userMessage);
+
+			ReportFailure (ContractFailureKind.Assume, userMessage, null, null);
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void EndContractBlock ()
 		{
-			// seems to be some kind of flag, no code generated
+			// Marker method, no code required.
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Ensures (bool condition)
 		{
-			// Requires binary rewriter to work
+			AssertMustUseRewriter (ContractFailureKind.Postcondition, "Contract.Ensures");
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Ensures (bool condition, string userMessage)
 		{
-			// Requires binary rewriter to work
+			AssertMustUseRewriter (ContractFailureKind.Postcondition, "Contract.Ensures");
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void EnsuresOnThrow<TException> (bool condition) where TException : Exception
 		{
-			// Requires binary rewriter to work
+			AssertMustUseRewriter (ContractFailureKind.Postcondition, "Contract.EnsuresOnThrow");
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void EnsuresOnThrow<TException> (bool condition, string userMessage) where TException : Exception
 		{
-			// Requires binary rewriter to work
+			AssertMustUseRewriter (ContractFailureKind.Postcondition, "Contract.EnsuresOnThrow");
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static bool Exists<T> (IEnumerable<T> collection, Predicate<T> predicate)
 		{
 			if (predicate == null)
@@ -154,6 +174,7 @@ namespace System.Diagnostics.Contracts {
 			return false;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static bool Exists (int fromInclusive, int toExclusive, Predicate<int> predicate)
 		{
 			if (predicate == null)
@@ -168,6 +189,7 @@ namespace System.Diagnostics.Contracts {
 			return false;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static bool ForAll<T> (IEnumerable<T> collection, Predicate<T> predicate)
 		{
 			if (predicate == null)
@@ -182,6 +204,7 @@ namespace System.Diagnostics.Contracts {
 			return true;
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static bool ForAll (int fromInclusive, int toExclusive, Predicate<int> predicate)
 		{
 			if (predicate == null)
@@ -197,74 +220,81 @@ namespace System.Diagnostics.Contracts {
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Invariant (bool condition)
 		{
-			// Binary rewriter required
+			AssertMustUseRewriter (ContractFailureKind.Invariant, "Contract.Invariant");
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Invariant (bool condition, string userMessage)
 		{
-			// Binary rewriter required
+			AssertMustUseRewriter (ContractFailureKind.Invariant, "Contract.Invariant");
 		}
 
-		static Exception RewriterRequired ()
-		{
-			return new Exception ("The rewriter is required to use this method");
-		}
-	
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static T OldValue<T> (T value)
 		{
-			// This is really the binary rewriter that should kick-in
-			throw RewriterRequired ();
+			// Marker method, no code required.
+			return default (T);
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
-		[MonoTODO ("Currently throws Exception, needs to throw the proper exception")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Requires (bool condition)
 		{
-			if (!condition){
-				Escalate (ContractFailureKind.Precondition, null, "failure");
-				throw new Exception ();
-			}
+			AssertMustUseRewriter (ContractFailureKind.Precondition, "Contract.Requires");
 		}
 
 		[ConditionalAttribute("CONTRACTS_FULL")]
-		[MonoTODO ("Currently throws Exception, needs to throw the proper exception")]
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static void Requires (bool condition, string userMessage)
 		{
-			if (!condition){
-				Escalate (ContractFailureKind.Precondition, null, userMessage);
-				throw new Exception ();
-			}
+			AssertMustUseRewriter (ContractFailureKind.Precondition, "Contract.Requires");
 		}
 
-		public static void Requires<TException> (bool condition) where TException : Exception, new ()
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		public static void Requires<TException> (bool condition) where TException : Exception
 		{
-			if (!condition){
-				var e = new TException ();
-				Escalate (ContractFailureKind.Precondition, e, "failure");
-				throw e;
-			}
+			AssertMustUseRewriter (ContractFailureKind.Precondition, "Contract.Requires<TException>");
 		}
 
-		public static void Requires<TException>(bool condition, string userMessage) where TException : Exception, new ()
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
+		public static void Requires<TException> (bool condition, string userMessage) where TException : Exception
 		{
-			if (!condition){
-				var e = new TException ();
-				Escalate (ContractFailureKind.Precondition, e, userMessage);
-				throw e;
-			}
+			AssertMustUseRewriter (ContractFailureKind.Precondition, "Contract.Requires<TException>");
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static T Result<T> ()
 		{
-			throw RewriterRequired ();
+			// Marker method, no code required.
+			return default (T);
 		}
 
+		[ReliabilityContract (Consistency.WillNotCorruptState, Cer.Success)]
 		public static T ValueAtReturn<T> (out T value)
 		{
-			throw RewriterRequired ();
+			// Marker method, no code required.
+			return value = default (T);
 		}
 	}
 }
+
+#else
+
+using System;
+using System.Collections.Generic;
+
+// FIXME: This class exists only to avoid runtime SIGSEGV during 2.0 compilation
+static class RuntimeBUG
+{
+		public static bool Exists<T> (IEnumerable<T> collection, Predicate<T> predicate)
+		{
+			return false;
+		}
+}
+
+
+#endif

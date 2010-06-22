@@ -1,3 +1,7 @@
+2010-06-22  Chris Bacon <chrisbacon76@gmail.com>
+
+	* System.Diagnostics.Contract.Internal: New file.
+
 2010-05-23  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
 	* corlib.dll.sources: Add System.IO.IsolatedStorageSecurityState.cs

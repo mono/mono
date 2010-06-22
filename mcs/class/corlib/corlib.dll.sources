@@ -331,14 +331,17 @@ System.Diagnostics.CodeAnalysis/SuppressMessageAttribute.cs
 System.Diagnostics.Contracts/Contract.cs
 System.Diagnostics.Contracts/ContractClassAttribute.cs
 System.Diagnostics.Contracts/ContractClassForAttribute.cs
+System.Diagnostics.Contracts/ContractException.cs
 System.Diagnostics.Contracts/ContractFailedEventArgs.cs
 System.Diagnostics.Contracts/ContractFailureKind.cs
 System.Diagnostics.Contracts/ContractInvariantMethodAttribute.cs
 System.Diagnostics.Contracts/ContractPublicPropertyNameAttribute.cs
 System.Diagnostics.Contracts/ContractReferenceAssemblyAttribute.cs
 System.Diagnostics.Contracts/ContractRuntimeIgnoredAttribute.cs
+System.Diagnostics.Contracts/ContractShouldAssertException.cs
 System.Diagnostics.Contracts/ContractVerificationAttribute.cs
 System.Diagnostics.Contracts/PureAttribute.cs
+System.Diagnostics.Contracts.Internal/ContractHelper.cs
 System.Diagnostics.SymbolStore/ISymbolBinder.cs
 System.Diagnostics.SymbolStore/ISymbolBinder1.cs
 System.Diagnostics.SymbolStore/ISymbolDocument.cs
