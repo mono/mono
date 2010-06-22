@@ -1691,8 +1691,12 @@ namespace System.Windows.Forms {
 		internal void GetVisibleLineIndexes (Rectangle clip, out int start, out int end)
 		{
 			if (multiline) {
-				start = GetLineByPixel(clip.Top + viewport_y - offset_y, false).line_no;
-				end = GetLineByPixel(clip.Bottom + viewport_y - offset_y, false).line_no;
+				/* Expand the region slightly to be sure to
+				 * paint the full extent of the line of text.
+				 * See bug 464464.
+				 */
+				start = GetLineByPixel(clip.Top + viewport_y - offset_y - 1, false).line_no;
+				end = GetLineByPixel(clip.Bottom + viewport_y - offset_y + 1, false).line_no;
 			} else {
 				start = GetLineByPixel(clip.Left + viewport_x - offset_x, false).line_no;
 				end = GetLineByPixel(clip.Right + viewport_x - offset_x, false).line_no;
