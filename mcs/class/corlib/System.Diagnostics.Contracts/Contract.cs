@@ -282,19 +282,4 @@ namespace System.Diagnostics.Contracts
 	}
 }
 
-#else
-
-using System;
-using System.Collections.Generic;
-
-// FIXME: This class exists only to avoid runtime SIGSEGV during 2.0 compilation
-static class RuntimeBUG
-{
-		public static bool Exists<T> (IEnumerable<T> collection, Predicate<T> predicate)
-		{
-			return false;
-		}
-}
-
-
 #endif
