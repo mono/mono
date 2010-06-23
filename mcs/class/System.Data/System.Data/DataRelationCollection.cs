@@ -271,7 +271,7 @@ namespace System.Data {
 			inTransition = relation;
 
 			try {
-				CollectionChangeEventArgs e = new CollectionChangeEventArgs (CollectionChangeAction.Add, this);
+				CollectionChangeEventArgs e = new CollectionChangeEventArgs (CollectionChangeAction.Add, relation);
 				OnCollectionChanging (e);
 
 				this.AddCore (relation);
@@ -281,7 +281,7 @@ namespace System.Data {
 				relation.ParentTable.ResetPropertyDescriptorsCache ();
 				relation.ChildTable.ResetPropertyDescriptorsCache ();
 
-				e = new CollectionChangeEventArgs (CollectionChangeAction.Add, this);
+				e = new CollectionChangeEventArgs (CollectionChangeAction.Add, relation);
 				OnCollectionChanged (e);
 			} finally {
 				inTransition = null;
@@ -587,14 +587,16 @@ namespace System.Data {
 				if (!(List.Contains (relation)))
 					throw new ArgumentException ("Relation doesnot belong to this Collection.");
 
-				OnCollectionChanging (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
+				CollectionChangeEventArgs e = new CollectionChangeEventArgs (CollectionChangeAction.Remove, relation);
+				OnCollectionChanging (e);
 
 				RemoveCore (relation);
 				string name = "Relation" + index;
 				if (relation.RelationName == name)
 					index--;
 
-				OnCollectionChanged (CreateCollectionChangeEvent (CollectionChangeAction.Remove));
+				e = new CollectionChangeEventArgs (CollectionChangeAction.Remove, relation);
+				OnCollectionChanged (e);
 			} finally {
 				inTransition = null;
 			}
