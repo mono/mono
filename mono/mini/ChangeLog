@@ -1,3 +1,7 @@
+2010-06-23  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini.h (MONO_INS_HAS_NO_SIDE_EFFECT): Add OP_LDADDR.
+
 2010-06-22  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_method_to_ir): Don't mark loads from OP_LDADDR with
