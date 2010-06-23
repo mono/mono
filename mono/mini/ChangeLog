@@ -1,5 +1,7 @@
 2010-06-23  Miguel de Icaza  <miguel@novell.com>
 
+	* Makefile.am: Make the file a bit more consistent.
+
 	* debug-debugger.c: Wrap the entire file with an #ifdef
 	MONO_DEBUGGER_SUPPORTED to simplify the build.
 
@@ -11,7 +13,7 @@
 	debugger supports Boehm, but not Sgen, this simplifies the build. 
 
 	* Renamed the *.s files into *.S
-	
+
 2010-06-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_INS_HAS_NO_SIDE_EFFECT): Add OP_LDADDR.
