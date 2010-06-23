@@ -1,3 +1,17 @@
+2010-06-23  Miguel de Icaza  <miguel@novell.com>
+
+	* debug-debugger.c: Wrap the entire file with an #ifdef
+	MONO_DEBUGGER_SUPPORTED to simplify the build.
+
+	* Makefile.am: Fix the opcodes build issue by including the
+	source, not by including the .lo file directly
+
+	Always bring the MDB sources into the build, to drop the
+	dependency on the AM_CONDITIONAL from configure.in as the hard
+	debugger supports Boehm, but not Sgen, this simplifies the build. 
+
+	* Renamed the *.s files into *.S
+	
 2010-06-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_INS_HAS_NO_SIDE_EFFECT): Add OP_LDADDR.
