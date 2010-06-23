@@ -1,5 +1,11 @@
 2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* ServiceMetadataExtension.cs : Reduced not a few lines of code,
+	  now that we know wsdl and help do not have to be differentiated,
+	  this extension support can be a lot simpler.
+
+2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* ServiceMetadataExtension.cs : add Instance field for simplification.
 
 2010-06-21  Atsushi Enomoto  <atsushi@ximian.com>

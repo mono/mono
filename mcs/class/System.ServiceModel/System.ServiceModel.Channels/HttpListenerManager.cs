@@ -254,12 +254,9 @@ namespace System.ServiceModel.Channels
 	{
 		static Dictionary<Uri, List<IChannelListener>> registered_channels;
 		IChannelListener channel_listener;
-		MetadataPublishingInfo mex_info;
-		HttpGetWsdl wsdl_instance;
 		ManualResetEvent wait_http_ctx = new ManualResetEvent (false);
 		List<HttpContextInfo> pending = new List<HttpContextInfo> ();
 
-		public MetadataPublishingInfo MexInfo { get { return mex_info; } }
 		public HttpTransportBindingElement Source { get; private set; }
 		public ChannelDispatcher Dispatcher { get; private set; }
 
@@ -275,8 +272,6 @@ namespace System.ServiceModel.Channels
 		{
 			this.Dispatcher = dispatcher;
 			this.channel_listener = channelListener;
-			mex_info = Dispatcher != null ? Dispatcher.Listener.GetProperty<MetadataPublishingInfo> () : null;
-			wsdl_instance = mex_info != null ? mex_info.Instance : null;
 			Source = source;
 
 			if (securityTokenManager != null) {
@@ -291,19 +286,6 @@ namespace System.ServiceModel.Channels
 				registered_channels [channel_listener.Uri] = new List<IChannelListener> ();
 			OnRegister (channel_listener, timeout);
 			registered_channels [channel_listener.Uri].Add (channel_listener);
-
-			// make sure to fill wsdl_instance among other 
-			// listeners. It is somewhat hacky way, but 
-			// otherwise there is no assured way to do it.
-			var wsdl = wsdl_instance;
-			if (wsdl == null)
-				foreach (var l in registered_channels [channel_listener.Uri])
-					if ((wsdl = l.GetProperty<HttpListenerManager> ().wsdl_instance) != null)
-						break;
-			if (wsdl != null) {
-				foreach (var l in registered_channels [channel_listener.Uri])
-					l.GetProperty<HttpListenerManager> ().wsdl_instance = wsdl;
-			}
 		}
 
 		public void Stop (bool abort)

@@ -1,5 +1,10 @@
 2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs :
+	  No need to get messed around MetadataPublishingInfo anymore.
+
+2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : remove extra different code paths for
 	  channel dispatchers with or without mex endpoints.
 

@@ -104,14 +104,8 @@ namespace System.ServiceModel.Description
 
 			if (dispatchers == null)
 				dispatchers = new Dictionary<Uri, ChannelDispatcher> ();
-			else if (dispatchers.ContainsKey (uri)) {
-				var info = dispatchers [uri].Listener.GetProperty<MetadataPublishingInfo> ();
-				if (isMex)
-					info.SupportsMex = true;
-				else
-					info.SupportsHelp = true;
-				return;
-			}
+			else if (dispatchers.ContainsKey (uri))
+				return; // already exists (e.g. reached here for wsdl while help is already filled on the same URI.)
 
 			if (binding == null) {
 				switch (scheme) {
@@ -140,12 +134,6 @@ namespace System.ServiceModel.Description
 
 			var channelDispatcher = new DispatcherBuilder (Owner).BuildChannelDispatcher (owner.Description.ServiceType, se, new BindingParameterCollection ());
 			channelDispatcher.MessageVersion = MessageVersion.None; // it has no MessageVersion.
-			// add HttpGetWsdl to indicate that the ChannelDispatcher is for mex or help.
-			var listener = channelDispatcher.Listener as ChannelListenerBase;
-			if (listener != null)
-				listener.Properties.Add (new MetadataPublishingInfo () { SupportsMex = isMex, SupportsHelp = !isMex, Instance = instance });
-			else
-				throw new InvalidOperationException ("FIXME: attempt to use ServiceMetadataExtension to not-supported channel listener: " + listener.GetType ());
 			channelDispatcher.IsMex = true;
 			channelDispatcher.Endpoints [0].DispatchRuntime.InstanceContextProvider = new SingletonInstanceContextProvider (new InstanceContext (owner, instance));
 
@@ -170,18 +158,6 @@ namespace System.ServiceModel.Description
 	{
 		[OperationContract (Action = "*", ReplyAction = "*")]
 		SMMessage Get (SMMessage req);
-	}
-
-	// It is used to identify which page to serve when a channel dispatcher 
-	// has a listener to an relatively empty URI (conflicting with the 
-	// target service endpoint)
-	//
-	// Can't be enum as it is for GetProperty<T> ().
-	internal class MetadataPublishingInfo
-	{
-		public bool SupportsMex { get; set; }
-		public bool SupportsHelp { get; set; }
-		public HttpGetWsdl Instance { get; set; }
 	}
 
 	class HttpGetWsdl : IHttpGetHelpPageAndMetadataContract
