@@ -74,7 +74,7 @@ LIB_MCS_FLAGS = \
 TEST_MCS_FLAGS = $(LIB_MCS_FLAGS) -doc:$(test_lib:.dll=.xml) -nowarn:219,169,1591 $(NUNIT_RESOURCE_FILES:%=/resource:%) -r:SystemWebTestShim.dll
 
 EXTRA_DISTFILES = $(RESOURCE_FILES_DIST) $(NUNIT_RESOURCE_FILES) \
-	Standalone.Web.Extensions_test.dll.sources
+	System.Web.Extensions_standalone_test.dll.sources
 
 run-standalone-test: $(STANDALONE_TEST_MAKEFRAG) $(STANDALONE_RUNNER_SUPPORT_MAKEFRAG) $(STANDALONE_TEST_ASSEMBLY)
 	$(MAKE) -C ../System.Web/ standalone-runner-support
