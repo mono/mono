@@ -1,5 +1,10 @@
 2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs : remove extra different code paths for
+	  channel dispatchers with or without mex endpoints.
+
+2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs : simplify FilterHttpContext().
 
 2010-06-22  Atsushi Enomoto  <atsushi@ximian.com>

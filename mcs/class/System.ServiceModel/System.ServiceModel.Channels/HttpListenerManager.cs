@@ -364,10 +364,6 @@ namespace System.ServiceModel.Channels
 
 		void DispatchHttpListenerContext (HttpContextInfo ctx)
 		{
-			if (wsdl_instance == null) {
-				AddListenerContext (ctx);
-				return;
-			}
 			foreach (var l in registered_channels [channel_listener.Uri]) {
 				var lm = l.GetProperty<HttpListenerManager> ();
 				if (lm.FilterHttpContext (ctx)) {
