@@ -1,3 +1,9 @@
+2010-06-23  Ankit Jain  <jankit@novell.com>
+
+	* TargetBatchingImpl.cs (BuildTargetNeeded): Fix var names to
+	correctly reflect what they track. Log messages when skipping
+	or building a target.
+
 2010-06-04  Ankit Jain  <jankit@novell.com>
 
 	* Import.cs (EvaluateProjectPath): Add a hack to support multiple

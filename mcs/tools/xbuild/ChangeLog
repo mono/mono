@@ -1,3 +1,8 @@
+2010-06-23  Ankit Jain  <jankit@novell.com>
+
+	* xbuild/Microsoft.CSharp.targets (CoreCompile): Fix inputs.
+	* xbuild/Microsoft.VisualBasic.targets (CoreCompile): Fix inputs.
+
 2010-06-18  Ankit Jain  <jankit@novell.com>
 
 	Fix bug #615420.
