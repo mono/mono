@@ -24,7 +24,8 @@
 
 	<Target
 		Name="CoreCompile"
-		Inputs="@(Compile)"
+		Inputs="@(Compile);@(ManifestResourceWithNoCulture);@(ManifestNonResxWithNoCultureOnDisk);@(CompiledLicenseFile);@(DocFileItem);
+			$(KeyOriginatorFile);@(ReferencePath);$(Win32Icon);$(Win32Resource)"
 		Outputs="@(IntermediateAssembly)"
 		DependsOnTargets="$(CoreCompileDependsOn)"
 	>
