@@ -1,3 +1,8 @@
+2010-06-23  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* XmlFormatterDeserializer.cs: Fix some issues in Moonlight when 
+	some referenced assemblies cannot be found or loaded
+
 2010-06-03  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SerializationMap.cs: NET_2_1 needs cast too

@@ -196,9 +196,25 @@ namespace System.Runtime.Serialization
 
 			foreach (var ass in AppDomain.CurrentDomain.GetAssemblies ()) {
 				foreach (var t in ass.GetTypes ()) {
-					var dca = t.GetCustomAttribute<DataContractAttribute> (true);
-					if (dca != null && dca.Name == name && dca.Namespace == ns)
-						return makeArray ? t.MakeArrayType () : t;
+					// there can be null entries or exception throw to access the attribute - 
+					// at least when some referenced assemblies could not be loaded (affects moonlight)
+					if (t == null)
+						continue;
+
+					try {
+						var dca = t.GetCustomAttribute<DataContractAttribute> (true);
+						if (dca != null && dca.Name == name && dca.Namespace == ns)
+							return makeArray ? t.MakeArrayType () : t;
+					}
+					catch (TypeLoadException tle) {
+						Console.Error.WriteLine (tle);
+						continue;
+					}
+					catch (FileNotFoundException fnfe) {
+						Console.Error.WriteLine (fnfe);
+						continue;
+					}
+
 					if (clrns != null && t.Name == name && t.Namespace == clrns)
 						return makeArray ? t.MakeArrayType () : t;
 				}
