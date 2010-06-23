@@ -940,6 +940,8 @@ struct_declaration
 
 		if (RootContext.Documentation != null)
 			current_container.DocComment = Lexer.consume_doc_comment ();
+
+		lbag.AddMember (current_class, mod_locations, GetLocation ($4));
 	  }
 	  struct_body
 	  {
@@ -949,6 +951,7 @@ struct_declaration
 	  }
 	  opt_semicolon
 	  {
+		lbag.AppendToMember (current_class, GetLocation ($13));
 		$$ = pop_current_class ();
 	  }
 	| opt_attributes opt_modifiers opt_partial STRUCT error {
@@ -963,6 +966,9 @@ struct_body
 			Lexer.doc_state = XmlCommentState.Allowed;
 	  }
 	  opt_struct_member_declarations CLOSE_BRACE
+	  {
+		lbag.AppendToMember (current_class, GetLocation ($1), GetLocation ($4));
+	  }
 	;
 
 opt_struct_member_declarations
@@ -1116,7 +1122,7 @@ field_declaration
 			}
 			
 			current_container.AddField (field);
-			lbag.AddMember (field, mod_locations, GetLocation ($3), GetLocation ($6));
+			lbag.AddMember (field, mod_locations, GetLocation ($6), GetLocation ($3));
 			
 			$$ = field; // FIXME: might be better if it points to the top item
 		}
@@ -2007,6 +2013,7 @@ operator_declaration
 		// Note again, checking is done in semantic analysis
 		current_container.AddOperator (op);
 
+		lbag.AddMember (op, mod_locations, lbag.GetLocations (decl));
 		current_local_parameters = null;
 	  }
 	;
@@ -2068,6 +2075,7 @@ operator_declarator
 		}
 
 		$$ = new OperatorDeclaration (op, (FullNamedExpression) $1, loc);
+		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($3), GetLocation ($4), GetLocation ($7));
 	  }
 	| conversion_operator_declarator
 	;
@@ -2118,6 +2126,7 @@ conversion_operator_declarator
 		}
 
 		$$ = new OperatorDeclaration (Operator.OpType.Implicit, (FullNamedExpression) $3, loc);
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($2), GetLocation ($4), GetLocation ($7));
 	  }
 	| EXPLICIT OPERATOR type OPEN_PARENS
 	  {
@@ -2136,6 +2145,7 @@ conversion_operator_declarator
 		}
 
 		$$ = new OperatorDeclaration (Operator.OpType.Explicit, (FullNamedExpression) $3, loc);
+		lbag.AddLocation ($$, GetLocation ($1), GetLocation ($2), GetLocation ($4), GetLocation ($7));
 	  }
 	| IMPLICIT error 
 	  {
@@ -3381,7 +3391,7 @@ object_or_delegate_creation_expression
 			$$ = new New ((FullNamedExpression) $2, (Arguments) $4, GetLocation ($1));
 		}
 		
-		lbag.AddLocation ($$, GetLocation ($2), GetLocation ($4));
+		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($5));
 	  }
 	| NEW new_expr_type object_or_collection_initializer
 	  {
@@ -4114,6 +4124,7 @@ lambda_expression
 	  lambda_expression_body
 	  {
 		$$ = end_anonymous ((ToplevelBlock) $4);
+		lbag.AddLocation ($$, GetLocation ($2));
 	  }
 	| OPEN_PARENS_LAMBDA
 	  {
@@ -4130,6 +4141,7 @@ lambda_expression
 	  lambda_expression_body 
 	  {
 		$$ = end_anonymous ((ToplevelBlock) $7);
+		lbag.AddLocation ($$, GetLocation ($3), GetLocation ($4));
 	  }
 	;
 
@@ -4192,7 +4204,7 @@ class_declaration
 	  }
 	  opt_semicolon 
 	  {
-	  	lbag.AppendToMember (current_class, GetLocation ($11), GetLocation ($13));
+		lbag.AppendToMember (current_class, GetLocation ($11), GetLocation ($13), GetLocation ($15));
 		$$ = pop_current_class ();
 	  }
 	;	
@@ -4820,7 +4832,7 @@ if_statement
 	  embedded_statement ELSE embedded_statement
 	  {
 		$$ = new If ((BooleanExpression) $3, (Statement) $5, (Statement) $7, GetLocation ($1));
-		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4), GetLocation ($5));
+		lbag.AddStatement ($$, GetLocation ($2), GetLocation ($4), GetLocation ($6));
 		
 		if ($5 is EmptyStatement)
 			Report.Warning (642, 3, GetLocation ($5), "Possible mistaken empty statement");
@@ -5254,6 +5266,8 @@ catch_clause
 		}
 
 		$$ = new Catch (type, id, (Block) $4, var_block, ((Block) $4).loc);
+		lbag.AddLocation ($$, GetLocation ($1));
+		lbag.AppendTo ($$, lbag.GetLocations ($2));
 	  }
         ;
 
@@ -5319,7 +5333,7 @@ fixed_statement
 				}
 				return v;
 			}), (Statement) $7, GetLocation ($1));
-			
+
 		lbag.AddStatement (f, GetLocation ($2), GetLocation ($5));
 
 		current_block.AddStatement (f);
@@ -5376,6 +5390,8 @@ using_statement
 
 		var vars = new Stack<Tuple<LocalVariableReference, Expression>> ();
 
+		lbag.AddStatement (assign_block, GetLocation ($1), GetLocation ($2), GetLocation ($4));
+
 		foreach (VariableDeclaration decl in de.Item2) {
 			LocalInfo vi = current_block.AddVariable (de.Item1, decl.identifier, decl.Location);
 			if (vi == null)
@@ -5424,7 +5440,9 @@ using_statement
 	  }
 	  embedded_statement
 	  {
-		current_block.AddStatement (new UsingTemporary ((Expression) $3, (Statement) $6, GetLocation ($1)));
+		UsingTemporary usingTemporary = new UsingTemporary ((Expression) $3, (Statement) $6, GetLocation ($1));
+		lbag.AddStatement (usingTemporary, GetLocation ($2), GetLocation ($4));
+		current_block.AddStatement (usingTemporary);
 		$$ = end_block (lexer.Location);
 	  }
 	; 
