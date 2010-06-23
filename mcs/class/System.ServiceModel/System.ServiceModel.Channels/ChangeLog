@@ -1,5 +1,9 @@
 2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs : cosmetic code formatting fix.
+
+2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpListenerManager.cs :
 	  No need to get messed around MetadataPublishingInfo anymore.
 

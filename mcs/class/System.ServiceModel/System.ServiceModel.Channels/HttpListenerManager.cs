@@ -384,28 +384,28 @@ namespace System.ServiceModel.Channels
 
 		internal bool FilterHttpContext (HttpContextInfo ctx)
 		{
-				if (Dispatcher == null)
-					return true; // no mex can be involved.
-				if (ctx.HttpMethod.ToUpper () != "GET")
-					return !Dispatcher.IsMex; // non-GET request never matches mex channel dispatcher.
-				var sme = Dispatcher.Host.Extensions.Find<ServiceMetadataExtension> ();
-				if (sme == null)
-					return true; // no mex can be involved.
+			if (Dispatcher == null)
+				return true; // no mex can be involved.
+			if (ctx.HttpMethod.ToUpper () != "GET")
+				return !Dispatcher.IsMex; // non-GET request never matches mex channel dispatcher.
+			var sme = Dispatcher.Host.Extensions.Find<ServiceMetadataExtension> ();
+			if (sme == null)
+				return true; // no mex can be involved.
 
-				var listener = Dispatcher.Listener;
-				var mex = sme.Instance;
+			var listener = Dispatcher.Listener;
+			var mex = sme.Instance;
 
-				// now the request is GET, and we have to return true or false based on the matrix below:
-				// matches wsdl or help| yes      |  no      |
-				// mex                 | yes | no | yes | no |
-				// --------------------+-----+----+-----+----+
-				//                     |  T  | F  |  F  |  T |
+			// now the request is GET, and we have to return true or false based on the matrix below:
+			// matches wsdl or help| yes      |  no      |
+			// mex                 | yes | no | yes | no |
+			// --------------------+-----+----+-----+----+
+			//                     |  T  | F  |  F  |  T |
 
-				bool match =
-					(mex.WsdlUrl != null && Uri.Compare (ctx.RequestUrl, mex.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) ||
-					(mex.HelpUrl != null && Uri.Compare (ctx.RequestUrl, mex.HelpUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0);
+			bool match =
+				(mex.WsdlUrl != null && Uri.Compare (ctx.RequestUrl, mex.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) ||
+				(mex.HelpUrl != null && Uri.Compare (ctx.RequestUrl, mex.HelpUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0);
 
-				return !(match ^ Dispatcher.IsMex);
+			return !(match ^ Dispatcher.IsMex);
 		}
 	}
 }
