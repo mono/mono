@@ -62,6 +62,10 @@ namespace System.ServiceModel.Description
 		{
 		}
 
+		internal HttpGetWsdl Instance {
+			get { return instance; }
+		}
+
 		[MonoTODO]
 		public MetadataSet Metadata {
 			get {

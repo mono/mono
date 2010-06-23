@@ -1,3 +1,7 @@
+2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* ServiceMetadataExtension.cs : add Instance field for simplification.
+
 2010-06-21  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* ServiceThrottlingBehavior.cs : pass channel dispatcher for .ctor.

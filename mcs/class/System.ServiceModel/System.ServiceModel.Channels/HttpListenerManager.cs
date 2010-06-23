@@ -406,30 +406,28 @@ namespace System.ServiceModel.Channels
 
 		internal bool FilterHttpContext (HttpContextInfo ctx)
 		{
-			if (ctx.HttpMethod.ToUpper () != "GET")
-				return mex_info == null;
+				if (Dispatcher == null)
+					return true; // no mex can be involved.
+				if (ctx.HttpMethod.ToUpper () != "GET")
+					return !Dispatcher.IsMex; // non-GET request never matches mex channel dispatcher.
+				var sme = Dispatcher.Host.Extensions.Find<ServiceMetadataExtension> ();
+				if (sme == null)
+					return true; // no mex can be involved.
 
-			if (wsdl_instance == null)
-				return true; // no mex endpoint is involved.
-			if (channel_listener.State != CommunicationState.Opened)
-				return true; // it's being terminated.
+				var listener = Dispatcher.Listener;
+				var mex = sme.Instance;
 
-			if (wsdl_instance.WsdlUrl != null && Uri.Compare (ctx.RequestUrl, wsdl_instance.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) {
-				if (mex_info == null)
-					return false; // Do not handle this at normal dispatcher.
-				if (String.Compare (ctx.QueryString [null], "wsdl", StringComparison.OrdinalIgnoreCase) == 0)
-					return mex_info.SupportsMex; // wsdl dispatcher should handle this.
-				if (wsdl_instance.HelpUrl == null || !wsdl_instance.HelpUrl.Equals (wsdl_instance.WsdlUrl))
-					return true; // in case help URL is not equivalent to WSDL URL, it anyways returns WSDL regardless of ?wsdl existence.
-			}
-			if (wsdl_instance.HelpUrl != null && Uri.Compare (ctx.RequestUrl, wsdl_instance.HelpUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) {
-				// Do not handle this at normal dispatcher.
-				// Do return true otherwise, even if it is with "?wsdl".
-				// (It must be handled above if applicable.)
-				return mex_info != null;
-			}
+				// now the request is GET, and we have to return true or false based on the matrix below:
+				// matches wsdl or help| yes      |  no      |
+				// mex                 | yes | no | yes | no |
+				// --------------------+-----+----+-----+----+
+				//                     |  T  | F  |  F  |  T |
 
-			return mex_info == null;
+				bool match =
+					(mex.WsdlUrl != null && Uri.Compare (ctx.RequestUrl, mex.WsdlUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0) ||
+					(mex.HelpUrl != null && Uri.Compare (ctx.RequestUrl, mex.HelpUrl, cmpflag, fmtflag, StringComparison.Ordinal) == 0);
+
+				return !(match ^ Dispatcher.IsMex);
 		}
 	}
 }
