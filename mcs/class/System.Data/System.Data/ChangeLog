@@ -1,3 +1,9 @@
+2010-06-23  Veerapuram Varadhan  <vvaradhan@novell.com>
+
+	** Fixes #581679
+	* DataRelationCollection.cs (Add, Remove): Use DataRelation obj instead 
+	of this when raising OnCollectionChang(ing, ed) events.
+	
 2010-04-11  Veerapuram Varadhan  <vvaradhan@novell.com>
 
 	** Fixes #591443
