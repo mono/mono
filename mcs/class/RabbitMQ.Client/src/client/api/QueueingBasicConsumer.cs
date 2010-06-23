@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -76,8 +76,8 @@ namespace RabbitMQ.Client
     /// When the consumer is closed, through BasicCancel or through
     /// the shutdown of the underlying IModel or IConnection, the
     /// SharedQueue's Close() method is called, which causes any
-    /// threads blocked on the queue's Enqueue() or Dequeue()
-    /// operations to throw EndOfStreamException (see the comment for
+    /// Enqueue() operations, and Dequeue() operations when the queue
+    /// is empty, to throw EndOfStreamException (see the comment for
     /// SharedQueue.Close()).
     ///</para>
     ///<para>

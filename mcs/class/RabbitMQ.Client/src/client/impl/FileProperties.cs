@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -80,5 +80,28 @@ namespace RabbitMQ.Client.Impl
         public abstract void ClearFilename();
         public abstract void ClearTimestamp();
         public abstract void ClearClusterId();
+
+        public abstract bool IsContentTypePresent();
+        public abstract bool IsContentEncodingPresent();
+        public abstract bool IsHeadersPresent();
+        public abstract bool IsPriorityPresent();
+        public abstract bool IsReplyToPresent();
+        public abstract bool IsMessageIdPresent();
+        public abstract bool IsFilenamePresent();
+        public abstract bool IsTimestampPresent();
+        public abstract bool IsClusterIdPresent();
+
+        public override object Clone()
+        {
+            FileProperties clone = MemberwiseClone() as FileProperties;
+            if (IsHeadersPresent())
+            {
+                clone.Headers = new Hashtable();
+                foreach (DictionaryEntry entry in Headers)
+                    clone.Headers[entry.Key] = entry.Value;
+            }
+
+            return clone;
+        }
     }
 }

@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -56,6 +56,7 @@
 //---------------------------------------------------------------------------
 using System;
 using System.IO;
+using System.Net.Sockets;
 using System.Text;
 using System.Threading;
 using System.Collections;
@@ -89,16 +90,18 @@ namespace RabbitMQ.Client.Impl
         ///(milliseconds)</summary>
         public static int ConnectionCloseTimeout = 10000;
 
-        public ConnectionParameters m_parameters;
+        public ConnectionFactory m_factory;
         public IFrameHandler m_frameHandler;
         public uint m_frameMax = 0;
         public ushort m_heartbeat = 0;
+        public IDictionary m_clientProperties;
+        public IDictionary m_serverProperties;
         public AmqpTcpEndpoint[] m_knownHosts = null;
 
         public MainSession m_session0;
         public ModelBase m_model0;
 
-        public readonly SessionManager m_sessionManager;
+        public SessionManager m_sessionManager;
 
         public volatile bool m_running = true;
 
@@ -119,14 +122,14 @@ namespace RabbitMQ.Client.Impl
         
         public IList m_shutdownReport = ArrayList.Synchronized(new ArrayList());
 
-        public ConnectionBase(ConnectionParameters parameters,
+        public ConnectionBase(ConnectionFactory factory,
                               bool insist,
                               IFrameHandler frameHandler)
         {
-            m_parameters = parameters;
+            m_factory = factory;
             m_frameHandler = frameHandler;
 
-            m_sessionManager = new SessionManager(this);
+            m_sessionManager = new SessionManager(this, 0);
             m_session0 = new MainSession(this);
             m_session0.Handler = new MainSession.SessionCloseDelegate(NotifyReceivedCloseOk);
             m_model0 = (ModelBase)Protocol.CreateModel(m_session0);
@@ -134,6 +137,7 @@ namespace RabbitMQ.Client.Impl
             StartMainLoop();
             Open(insist);
             StartHeartbeatLoops();
+            AppDomain.CurrentDomain.DomainUnload += HandleDomainUnload;
         }
 
         public event ConnectionShutdownEventHandler ConnectionShutdown
@@ -214,23 +218,11 @@ namespace RabbitMQ.Client.Impl
             m_heartbeatWrite.Set();
         }
 
-        public ConnectionParameters Parameters
-        {
-            get
-            {
-                return m_parameters;
-            }
-        }
-
         public ushort ChannelMax
         {
             get
             {
                 return m_sessionManager.ChannelMax;
-            }
-            set
-            {
-                m_sessionManager.ChannelMax = value;
             }
         }
 
@@ -259,6 +251,30 @@ namespace RabbitMQ.Client.Impl
                 // because when we hit the timeout socket is
                 // in unusable state
                 m_frameHandler.Timeout = value * 2 * 1000;
+            }
+        }
+
+        public IDictionary ClientProperties
+        {
+            get
+            {
+                return new Hashtable(m_clientProperties);
+            }
+            set
+            {
+                m_clientProperties = value;
+            }
+        }
+
+        public IDictionary ServerProperties
+        {
+            get
+            {
+                return m_serverProperties;
+            }
+            set
+            {
+                m_serverProperties = value;
             }
         }
 
@@ -355,7 +371,7 @@ namespace RabbitMQ.Client.Impl
         ///<summary>API-side invocation of connection close.</summary>
         public void Close()
         {
-            Close(200, "Goodbye", Timeout.Infinite);
+            Close(CommonFraming.Constants.ReplySuccess, "Goodbye", Timeout.Infinite);
         }
         
         ///<summary>API-side invocation of connection close.</summary>
@@ -367,7 +383,7 @@ namespace RabbitMQ.Client.Impl
         ///<summary>API-side invocation of connection close with timeout.</summary>
         public void Close(int timeout)
         {
-            Close(200, "Goodbye", timeout);
+            Close(CommonFraming.Constants.ReplySuccess, "Goodbye", timeout);
         }
         
         ///<summary>API-side invocation of connection close with timeout.</summary>
@@ -396,7 +412,7 @@ namespace RabbitMQ.Client.Impl
         ///<summary>API-side invocation of connection abort with timeout.</summary>
         public void Abort(int timeout)
         {
-            Abort(200, "Connection close forced", timeout);
+            Abort(CommonFraming.Constants.ReplySuccess, "Connection close forced", timeout);
         }
         
         ///<summary>API-side invocation of connection abort with timeout.</summary>
@@ -496,9 +512,9 @@ namespace RabbitMQ.Client.Impl
 
         public void StartMainLoop()
         {
-            Thread mainloopThread = new Thread(new ThreadStart(MainLoop));
-            mainloopThread.Name = "AMQP Connection " + Endpoint.ToString();
-            mainloopThread.Start();
+            Thread mainLoopThread = new Thread(new ThreadStart(MainLoop));
+            mainLoopThread.Name = "AMQP Connection " + Endpoint.ToString();
+            mainLoopThread.Start();
         }
         
         public void StartHeartbeatLoops()
@@ -604,6 +620,14 @@ namespace RabbitMQ.Client.Impl
             {
                 shutdownCleanly = HardProtocolExceptionHandler(hpe);
             }
+            catch (SocketException se)
+            {
+                // Possibly due to handshake timeout
+                HandleMainLoopException(new ShutdownEventArgs(ShutdownInitiator.Library,
+                                                          0,
+                                                          "Socket exception",
+                                                          se));
+            }
             catch (Exception ex)
             {
                 HandleMainLoopException(new ShutdownEventArgs(ShutdownInitiator.Library,
@@ -635,7 +659,7 @@ namespace RabbitMQ.Client.Impl
                 // counter.
                 return;
             }
-
+            
             if (frame.Channel == 0) {
                 // In theory, we could get non-connection.close-ok
                 // frames here while we're quiescing (m_closeReason !=
@@ -682,7 +706,16 @@ namespace RabbitMQ.Client.Impl
             m_model0.SetCloseReason(m_closeReason);
             m_model0.FinishClose();
         }
-            
+
+        /// <remarks>
+        /// We need to close the socket, otherwise attempting to unload the domain
+        /// could cause a CannotUnloadAppDomainException
+        /// </remarks>
+        public void HandleDomainUnload(object sender, EventArgs ea)
+        {
+            Abort(CommonFraming.Constants.InternalError, "Domain Unload");
+        }
+
         public bool HardProtocolExceptionHandler(HardProtocolException hpe)
         {
             if (SetCloseReason(hpe.ShutdownReason))
@@ -875,6 +908,7 @@ namespace RabbitMQ.Client.Impl
                     }
                 }
             }
+            AppDomain.CurrentDomain.DomainUnload -= HandleDomainUnload;
         }
 
         public void OnCallbackException(CallbackExceptionEventArgs args)
@@ -897,9 +931,11 @@ namespace RabbitMQ.Client.Impl
             }
         }
 
-        public IDictionary BuildClientPropertiesTable()
+        public static IDictionary DefaultClientProperties()
         {
-            string version = this.GetType().Assembly.GetName().Version.ToString();
+            System.Reflection.Assembly assembly =
+                    System.Reflection.Assembly.GetAssembly(typeof(ConnectionBase));
+            string version = assembly.GetName().Version.ToString();
             //TODO: Get the rest of this data from the Assembly Attributes
             Hashtable table = new Hashtable();
             table["product"] = Encoding.UTF8.GetBytes("RabbitMQ");
@@ -942,6 +978,8 @@ namespace RabbitMQ.Client.Impl
             ConnectionStartDetails connectionStart = (ConnectionStartDetails)
                 connectionStartCell.Value;
 
+            ServerProperties = connectionStart.m_serverProperties;
+
             AmqpVersion serverVersion = new AmqpVersion(connectionStart.m_versionMajor,
                                                         connectionStart.m_versionMinor);
             if (!serverVersion.Equals(Protocol.Version))
@@ -954,24 +992,36 @@ namespace RabbitMQ.Client.Impl
                                                            serverVersion.Minor);
             }
 
+            m_clientProperties = new Hashtable(m_factory.ClientProperties);
+
             // FIXME: check that PLAIN is supported.
             // FIXME: parse out locales properly!
-            ConnectionTuneDetails connectionTune =
-                m_model0.ConnectionStartOk(BuildClientPropertiesTable(),
+            ConnectionTuneDetails connectionTune = default(ConnectionTuneDetails);
+            try
+            {
+                connectionTune = 
+                m_model0.ConnectionStartOk(m_clientProperties,
                                            "PLAIN",
-                                           Encoding.UTF8.GetBytes("\0" + m_parameters.UserName +
-                                                                  "\0" + m_parameters.Password),
+                                           Encoding.UTF8.GetBytes(
+                                               "\0" + m_factory.UserName +
+                                               "\0" + m_factory.Password),
                                            "en_US");
+            }
+            catch (OperationInterruptedException e)
+            {
+                throw new PossibleAuthenticationFailureException(
+                    "Possibly caused by authentication failure", e);
+            }
 
-            ushort channelMax = (ushort) NegotiatedMaxValue(m_parameters.RequestedChannelMax,
+            ushort channelMax = (ushort) NegotiatedMaxValue(m_factory.RequestedChannelMax,
                                                             connectionTune.m_channelMax);
-            ChannelMax = channelMax;
+            m_sessionManager = new SessionManager(this, channelMax);
 
-            uint frameMax = NegotiatedMaxValue(m_parameters.RequestedFrameMax,
+            uint frameMax = NegotiatedMaxValue(m_factory.RequestedFrameMax,
                                                connectionTune.m_frameMax);
             FrameMax = frameMax;
 
-            ushort heartbeat = (ushort) NegotiatedMaxValue(m_parameters.RequestedHeartbeat,
+            ushort heartbeat = (ushort) NegotiatedMaxValue(m_factory.RequestedHeartbeat,
                                                            connectionTune.m_heartbeat);
             Heartbeat = heartbeat;
 
@@ -979,7 +1029,7 @@ namespace RabbitMQ.Client.Impl
                                       frameMax,
                                       heartbeat);
 
-            string knownHosts = m_model0.ConnectionOpen(m_parameters.VirtualHost,
+            string knownHosts = m_model0.ConnectionOpen(m_factory.VirtualHost,
                                                         "", // FIXME: make configurable?
                                                         insist);
             KnownHosts = AmqpTcpEndpoint.ParseMultiple(Protocol, knownHosts);

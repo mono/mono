@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -85,6 +85,9 @@ namespace RabbitMQ.Client.Exceptions {
         ///each endpoint.</summary>
         public IDictionary ConnectionErrors { get { return m_connectionErrors; } }
 
+        ///<summary>same as ConnectionErrors property</summary>
+        public override IDictionary Data { get { return m_connectionErrors; } }
+
         ///<summary>Construct a BrokerUnreachableException. Expects
         ///maps as per the description of the ConnectionAttempts and
         ///ConnectionErrors properties.</summary>
@@ -103,19 +106,12 @@ namespace RabbitMQ.Client.Exceptions {
             StringBuilder sb = new StringBuilder(base.Message);
             sb.Append("\nEndpoints attempted:\n");
             foreach (DictionaryEntry entry in m_connectionAttempts) {
-                sb.Append("  endpoint=");
-                sb.Append(entry.Key);
-                sb.Append(", attempts=");
-                sb.Append(entry.Value);
-                sb.Append(", outcome=");
-                Exception e = m_connectionErrors[entry.Key] as Exception;
-                if (e == null) {
-                    sb.Append("(null)");
-                } else {
-                    sb.Append(e.Message);
-                }
-                sb.Append("\n");
+                sb.Append("------------------------------------------------\n");
+                sb.Append("endpoint=").Append(entry.Key);
+                sb.Append(", attempts=").Append(entry.Value).Append("\n");
+                sb.Append(m_connectionErrors[entry.Key] as Exception);
             }
+            sb.Append("\n================================================\n");
             sb.Append("Stack trace:\n");
             sb.Append(base.StackTrace);
             return sb.ToString();

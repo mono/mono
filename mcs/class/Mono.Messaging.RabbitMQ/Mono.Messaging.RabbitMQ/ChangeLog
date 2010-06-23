@@ -1,3 +1,8 @@
+2010-06-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* RabbitMQMessageQueue.cs: Modified to support RabbitMQ 1.8
+	* RabbitMQMessageEnumerator.cs: Modified to support RabbitMQ 1.8
+	
 2009-07-14  Michael Barker  <mike@middlesoft.co.uk>
 
 	* RabbitMQMessageQueue.cs: Refactored, removed dead code and renamed methods.

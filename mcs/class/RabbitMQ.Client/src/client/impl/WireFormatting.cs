@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -128,7 +128,7 @@ namespace RabbitMQ.Client.Impl
         ///<remarks>
         /// Supports the AMQP 0-8/0-9 standard entry types S, I, D, T
         /// and F, as well as the QPid-0-8 specific b, d, f, l, s, t,
-        /// x and V types.
+        /// x and V types and the AMQP 0-9-1 A type.
         ///</remarks>
         public static IDictionary ReadTable(NetworkBinaryReader reader)
         {
@@ -140,10 +140,36 @@ namespace RabbitMQ.Client.Impl
             while ((backingStream.Position - startPosition) < tableLength)
             {
                 string key = ReadShortstr(reader);
-                object value = null;
+                object value = ReadFieldValue(reader);
+                
+                if (!table.ContainsKey(key))
+                {
+                    table[key] = value;
+                }
+            }
 
-                byte discriminator = reader.ReadByte();
-                switch ((char)discriminator)
+            return table;
+        }
+
+        public static IList ReadArray(NetworkBinaryReader reader)
+        {
+            IList array = new ArrayList();
+            long arrayLength = reader.ReadUInt32();
+            Stream backingStream = reader.BaseStream;
+            long startPosition = backingStream.Position;
+            while ((backingStream.Position - startPosition) < arrayLength)
+            {
+                object value = ReadFieldValue(reader);
+                array.Add(value);
+            }
+            return array;
+        }
+
+        public static object ReadFieldValue(NetworkBinaryReader reader)
+        {
+            object value = null;
+            byte discriminator = reader.ReadByte();
+            switch ((char)discriminator)
                 {
                   case 'S':
                       value = ReadLongstr(reader);
@@ -161,6 +187,9 @@ namespace RabbitMQ.Client.Impl
                       value = ReadTable(reader);
                       break;
 
+                  case 'A':
+                      value = ReadArray(reader);
+                      break;
                   case 'b':
                       value = ReadOctet(reader);
                       break;
@@ -190,16 +219,9 @@ namespace RabbitMQ.Client.Impl
                       throw new SyntaxError("Unrecognised type in table: " +
                                             (char) discriminator);
                 }
-
-                if (!table.ContainsKey(key))
-                {
-                    table[key] = value;
-                }
-            }
-
-            return table;
+            return value;
         }
-
+      
         public static AmqpTimestamp ReadTimestamp(NetworkBinaryReader reader)
         {
             ulong stamp = ReadLonglong(reader);
@@ -290,7 +312,7 @@ namespace RabbitMQ.Client.Impl
         ///<para>
         /// Supports the AMQP 0-8/0-9 standard entry types S, I, D, T
         /// and F, as well as the QPid-0-8 specific b, d, f, l, s, t
-        /// x and V types.
+        /// x and V types and the AMQP 0-9-1 A type.
         ///</para>
         ///</remarks>
         public static void WriteTable(NetworkBinaryWriter writer, IDictionary val)
@@ -309,81 +331,7 @@ namespace RabbitMQ.Client.Impl
                 {
                     WriteShortstr(writer, (string)entry.Key);
                     object value = entry.Value;
-
-                    if (value == null)
-                    {
-                        WriteOctet(writer, (byte)'V');
-                    }
-                    else if (value is string)
-                    {
-                        WriteOctet(writer, (byte)'S');
-                        WriteLongstr(writer, Encoding.UTF8.GetBytes((string)value));
-                    }
-                    else if (value is byte[])
-                    {
-                        WriteOctet(writer, (byte)'S');
-                        WriteLongstr(writer, (byte[])value);
-                    }
-                    else if (value is int)
-                    {
-                        WriteOctet(writer, (byte)'I');
-                        writer.Write((int)value);
-                    }
-                    else if (value is decimal)
-                    {
-                        WriteOctet(writer, (byte)'D');
-                        WriteDecimal(writer, (decimal)value);
-                    }
-                    else if (value is AmqpTimestamp)
-                    {
-                        WriteOctet(writer, (byte)'T');
-                        WriteTimestamp(writer, (AmqpTimestamp)value);
-                    }
-                    else if (value is IDictionary)
-                    {
-                        WriteOctet(writer, (byte)'F');
-                        WriteTable(writer, (IDictionary)value);
-                    }
-                    else if (value is byte)
-                    {
-                        WriteOctet(writer, (byte)'b');
-                        WriteOctet(writer, (byte)value);
-                    }
-                    else if (value is double)
-                    {
-                        WriteOctet(writer, (byte)'d');
-                        writer.Write((double)value);
-                    }
-                    else if (value is float)
-                    {
-                        WriteOctet(writer, (byte)'f');
-                        writer.Write((float)value);
-                    }
-                    else if (value is long)
-                    {
-                        WriteOctet(writer, (byte)'l');
-                        writer.Write((long)value);
-                    }
-                    else if (value is short)
-                    {
-                        WriteOctet(writer, (byte)'s');
-                        writer.Write((short)value);
-                    }
-                    else if (value is bool)
-                    {
-                        WriteOctet(writer, (byte)'t');
-                        WriteOctet(writer, (byte)(((bool)value) ? 1 : 0));
-                    }
-                    else if (value is BinaryTableValue)
-                    {
-                        WriteOctet(writer, (byte)'x');
-                        WriteLongstr(writer, ((BinaryTableValue)value).Bytes);
-                    }
-                    else
-                    {
-                        throw new WireFormattingException("Value cannot appear as table value",
-                                                          value);
-                    }
+                    WriteFieldValue(writer, value);
                 }
 
                 // Now, backpatch the table length.
@@ -395,6 +343,112 @@ namespace RabbitMQ.Client.Impl
             }
         }
 
+        public static void WriteArray(NetworkBinaryWriter writer, IList val)
+        {
+            if (val == null)
+            {
+                writer.Write((uint)0);
+            }
+            else
+            {
+                Stream backingStream = writer.BaseStream;
+                long patchPosition = backingStream.Position;
+                writer.Write((uint)0); // length of table - will be backpatched
+                foreach (object entry in val)
+                {
+                    WriteFieldValue(writer, entry);
+                }
+                long savedPosition = backingStream.Position;
+                long tableLength = savedPosition - patchPosition - 4; // offset for length word
+                backingStream.Seek(patchPosition, SeekOrigin.Begin);
+                writer.Write((uint)tableLength);
+                backingStream.Seek(savedPosition, SeekOrigin.Begin);
+            }
+        }
+
+        public static void WriteFieldValue(NetworkBinaryWriter writer, object value)
+        {
+            if (value == null)
+            {
+                WriteOctet(writer, (byte)'V');
+            }
+            else if (value is string)
+            {
+                WriteOctet(writer, (byte)'S');
+                WriteLongstr(writer, Encoding.UTF8.GetBytes((string)value));
+            }
+            else if (value is byte[])
+            {
+                WriteOctet(writer, (byte)'S');
+                WriteLongstr(writer, (byte[])value);
+            }
+            else if (value is int)
+            {
+                WriteOctet(writer, (byte)'I');
+                writer.Write((int)value);
+            }
+            else if (value is decimal)
+            {
+                WriteOctet(writer, (byte)'D');
+                WriteDecimal(writer, (decimal)value);
+            }
+            else if (value is AmqpTimestamp)
+            {
+                WriteOctet(writer, (byte)'T');
+                WriteTimestamp(writer, (AmqpTimestamp)value);
+            }
+            else if (value is IDictionary)
+            {
+                WriteOctet(writer, (byte)'F');
+                WriteTable(writer, (IDictionary)value);
+            }
+            else if (value is IList)
+            {
+                WriteOctet(writer, (byte)'A');
+                WriteArray(writer, (IList)value);
+            }
+            else if (value is byte)
+            {
+                WriteOctet(writer, (byte)'b');
+                WriteOctet(writer, (byte)value);
+            }
+            else if (value is double)
+            {
+                WriteOctet(writer, (byte)'d');
+                writer.Write((double)value);
+            }
+            else if (value is float)
+            {
+                WriteOctet(writer, (byte)'f');
+                writer.Write((float)value);
+            }
+            else if (value is long)
+            {
+                WriteOctet(writer, (byte)'l');
+                writer.Write((long)value);
+            }
+            else if (value is short)
+            {
+                WriteOctet(writer, (byte)'s');
+                writer.Write((short)value);
+            }
+            else if (value is bool)
+            {
+                WriteOctet(writer, (byte)'t');
+                WriteOctet(writer, (byte)(((bool)value) ? 1 : 0));
+            }
+            else if (value is BinaryTableValue)
+            {
+                WriteOctet(writer, (byte)'x');
+                WriteLongstr(writer, ((BinaryTableValue)value).Bytes);
+            }
+            else
+            {
+                throw new WireFormattingException("Value cannot appear as table value",
+                                                  value);
+            }
+        }
+        
         public static void WriteTimestamp(NetworkBinaryWriter writer, AmqpTimestamp val)
         {
             // 0-9 is afaict silent on the signedness of the timestamp.

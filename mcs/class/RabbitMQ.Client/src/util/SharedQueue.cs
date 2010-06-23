@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -61,7 +61,7 @@ using System.Threading;
 
 namespace RabbitMQ.Util {
     ///<summary>A thread-safe shared queue implementation.</summary>
-    public class SharedQueue: IDisposable {
+    public class SharedQueue : IEnumerable {
         ///<summary>The shared queue.</summary>
         ///<remarks>
         ///Subclasses must ensure appropriate locking discipline when
@@ -77,21 +77,15 @@ namespace RabbitMQ.Util {
         public SharedQueue() {
         }
 
-        ///<summary>Close the queue. Causes all waiting threads to be
-        ///interrupted (with EndOfStreamException) and all further
-        ///Enqueue() and Dequeue() operations to throw
-        ///EndOfStreamException.</summary>
+        ///<summary>Close the queue. Causes all further Enqueue()
+        ///operations to throw EndOfStreamException, and all pending
+        ///or subsequent Dequeue() operations to throw an
+        ///EndOfStreamException once the queue is empty.</summary>
         public void Close() {
             lock (m_queue) {
                 m_isOpen = false;
                 Monitor.PulseAll(m_queue);
             }
-        }
-
-        ///<summary>Implement IDisposable.Dispose. Delegates directly
-        ///to Close().</summary>
-        public void Dispose() {
-            Close();
         }
 
         ///<summary>Call only when the lock on m_queue is held.</summary>
@@ -121,12 +115,11 @@ namespace RabbitMQ.Util {
         ///<remarks>
         ///Callers of Dequeue() will block if no items are available
         ///until some other thread calls Enqueue() or the queue is
-        ///closed. If the queue is closed (by a call to Close()), this
-        ///method will throw EndOfStreamException.
+        ///closed. In the latter case this method will throw
+        ///EndOfStreamException.
         ///</remarks>
         public object Dequeue() {
             lock (m_queue) {
-                EnsureIsOpen();
                 while (m_queue.Count == 0) {
                     EnsureIsOpen();
                     Monitor.Wait(m_queue);
@@ -151,15 +144,15 @@ namespace RabbitMQ.Util {
         /// whereas Dequeue() will.
         ///</para>
         ///<para>
-        /// If, at the time of call, the queue is in a closed state
-        /// (by a call to Close()), this method will throw
-        /// EndOfStreamException.
+        /// If at the time of call the queue is empty and in a
+        /// closed state (following a call to Close()), then this
+        /// method will throw EndOfStreamException.
         ///</para>
         ///</remarks>
         public object DequeueNoWait(object defaultValue) {
             lock (m_queue) {
-                EnsureIsOpen();
                 if (m_queue.Count == 0) {
+                    EnsureIsOpen();
                     return defaultValue;
                 } else {
                     return m_queue.Dequeue();
@@ -197,7 +190,8 @@ namespace RabbitMQ.Util {
 	/// System.Threading.Monitor.Wait(object,int).
         ///</para>
         ///<para>
-        /// If, at any time during the call, the queue is in or
+        /// If no items are present and the queue is in a closed
+        /// state, or if at any time while waiting the queue
         /// transitions to a closed state (by a call to Close()), this
         /// method will throw EndOfStreamException.
         ///</para>
@@ -210,8 +204,8 @@ namespace RabbitMQ.Util {
 
 	    DateTime startTime = DateTime.Now;
 	    lock (m_queue) {
-                EnsureIsOpen();
                 while (m_queue.Count == 0) {
+                    EnsureIsOpen();
 		    int elapsedTime = (int) ((DateTime.Now - startTime).TotalMilliseconds);
 		    int remainingTime = millisecondsTimeout - elapsedTime;
 		    if (remainingTime <= 0) {
@@ -220,12 +214,61 @@ namespace RabbitMQ.Util {
 		    }
 
                     Monitor.Wait(m_queue, remainingTime);
-                    EnsureIsOpen();
                 }
 
                 result = m_queue.Dequeue();
 		return true;
             }
 	}
+
+        ///<summary>Implementation of the IEnumerable interface, for
+        ///permitting SharedQueue to be used in foreach
+        ///loops.</summary>
+        IEnumerator IEnumerable.GetEnumerator() {
+            return new SharedQueueEnumerator(this);
+        }
+
     }
+
+    ///<summary>Implementation of the IEnumerator interface, for
+    ///permitting SharedQueue to be used in foreach loops.</summary>
+    public class SharedQueueEnumerator : IEnumerator {
+
+        protected SharedQueue m_queue;
+        protected object m_current;
+
+        ///<summary>Construct an enumerator for the given
+        ///SharedQueue.</summary>
+        public SharedQueueEnumerator(SharedQueue queue) {
+            m_queue = queue;
+        }
+
+        object IEnumerator.Current {
+            get {
+                if (m_current == null) {
+                    throw new InvalidOperationException();
+                }
+                return m_current;
+            }
+        }
+
+        bool IEnumerator.MoveNext() {
+            try {
+                m_current = m_queue.Dequeue();
+                return true;
+            } catch (EndOfStreamException) {
+                m_current = null;
+                return false;
+            }
+        }
+
+        ///<summary>Reset()ting a SharedQueue doesn't make sense, so
+        ///this method always throws
+        ///InvalidOperationException.</summary>
+        void IEnumerator.Reset() {
+            throw new InvalidOperationException("SharedQueue.Reset() does not make sense");
+        }
+
+    }
+
 }

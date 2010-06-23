@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -82,8 +82,16 @@ namespace RabbitMQ.Client.Impl
             m_socket.NoDelay = true;
 
             Stream netstream = m_socket.GetStream();
-            m_reader = new NetworkBinaryReader(netstream);
-            m_writer = new NetworkBinaryWriter(netstream);
+            if (endpoint.Ssl.Enabled) {
+                try {
+                    netstream = SslHelper.TcpUpgrade(netstream, endpoint.Ssl);
+                } catch (Exception) {
+                    Close();
+                    throw;
+                }
+            }
+            m_reader = new NetworkBinaryReader(new BufferedStream(netstream));
+            m_writer = new NetworkBinaryWriter(new BufferedStream(netstream));
         }
 
         public AmqpTcpEndpoint Endpoint
@@ -115,6 +123,7 @@ namespace RabbitMQ.Client.Impl
                 m_writer.Write((byte)1);
                 m_writer.Write((byte)m_endpoint.Protocol.MajorVersion);
                 m_writer.Write((byte)m_endpoint.Protocol.MinorVersion);
+                m_writer.Flush();
             }
         }
 
@@ -122,7 +131,7 @@ namespace RabbitMQ.Client.Impl
         {
             lock (m_reader)
             {
-                    return Frame.ReadFrom(m_reader);
+                return Frame.ReadFrom(m_reader);
             }
         }
 
@@ -131,6 +140,7 @@ namespace RabbitMQ.Client.Impl
             lock (m_writer)
             {
                 frame.WriteTo(m_writer);
+                m_writer.Flush();
                 //Console.WriteLine("OUTBOUND:");
                 //DebugUtil.DumpProperties(frame, Console.Out, 2);
             }

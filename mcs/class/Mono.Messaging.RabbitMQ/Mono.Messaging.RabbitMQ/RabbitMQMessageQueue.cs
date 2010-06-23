@@ -196,9 +196,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		public static void Delete (QueueReference qRef)
 		{
-			ConnectionFactory cf = new ConnectionFactory ();
-			
-			using (IConnection cn = cf.CreateConnection (qRef.Host)) {
+			using (IConnection cn = CreateConnection (qRef)) {
 				using (IModel model = cn.CreateModel ()) {
 					model.QueueDelete (qRef.Queue, false, false, false);
 				}
@@ -213,10 +211,8 @@ namespace Mono.Messaging.RabbitMQ {
 			if (msg.BodyStream == null)
 				throw new ArgumentException ("Message is not serialized properly");
 		
-			ConnectionFactory cf = new ConnectionFactory ();
-			
 			try {
-				using (IConnection cn = cf.CreateConnection (QRef.Host)) {
+				using (IConnection cn = CreateConnection (QRef)) {
 					SetDeliveryInfo (msg, GetVersion (cn), null);
 					using (IModel ch = cn.CreateModel ()) {
 						Send (ch, msg);
@@ -272,10 +268,8 @@ namespace Mono.Messaging.RabbitMQ {
 			else if (host != QRef.Host)
 				throw new MonoMessagingException ("Transactions can not span multiple hosts");
 			
-			if (cn == null) {
-				ConnectionFactory cf = new ConnectionFactory ();
-				cn = cf.CreateConnection (host);
-			}
+			if (cn == null)
+				cn = CreateConnection (QRef);
 			
 			if (model == null) {
 				model = cn.CreateModel ();
@@ -298,9 +292,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		public void Purge ()
 		{
-			ConnectionFactory cf = new ConnectionFactory ();
-
-			using (IConnection cn = cf.CreateConnection (QRef.Host)) {
+			using (IConnection cn = CreateConnection (QRef)) {
 				using (IModel model = cn.CreateModel ()) {
 					model.QueuePurge (QRef.Queue, false);
 				}
@@ -309,9 +301,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		public IMessage Peek ()
 		{
-			ConnectionFactory cf = new ConnectionFactory ();
-
-			using (IConnection cn = cf.CreateConnection (QRef.Host)) {
+			using (IConnection cn = CreateConnection (QRef)) {
 				using (IModel ch = cn.CreateModel ()) {
 					return Receive (ch, -1, false);
 				}
@@ -488,8 +478,7 @@ namespace Mono.Messaging.RabbitMQ {
 		
 		private IMessage Run (RecieveDelegate r)
 		{
-			ConnectionFactory cf = new ConnectionFactory ();
-			using (IConnection cn = cf.CreateConnection (QRef.Host)) {
+			using (IConnection cn = CreateConnection (QRef)) {
 				using (IModel model = cn.CreateModel ()) {
 					return r (this, model);
 				}
@@ -514,10 +503,8 @@ namespace Mono.Messaging.RabbitMQ {
 				else if (host != q.QRef.Host)
 					throw new MonoMessagingException ("Transactions can not span multiple hosts");
 				
-				if (cn == null) {
-					ConnectionFactory cf = new ConnectionFactory ();
-					cn = cf.CreateConnection (host);
-				}
+				if (cn == null)
+					cn = CreateConnection (q.QRef);
 				
 				if (model == null) {
 					model = cn.CreateModel ();
@@ -679,6 +666,13 @@ namespace Mono.Messaging.RabbitMQ {
 		private RabbitMQMessageQueueTransaction GetTx ()
 		{
 			return (RabbitMQMessageQueueTransaction) provider.CreateMessageQueueTransaction ();
+		}
+
+		private static IConnection CreateConnection (QueueReference qRef)
+		{
+			ConnectionFactory cf = new ConnectionFactory ();
+			cf.Address = qRef.Host;
+			return cf.CreateConnection ();
 		}		
 	}
 }

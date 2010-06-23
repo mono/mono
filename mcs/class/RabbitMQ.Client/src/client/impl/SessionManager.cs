@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -62,30 +62,27 @@ using RabbitMQ.Client;
 using RabbitMQ.Client.Exceptions;
 using RabbitMQ.Util;
 
+// We use spec version 0-9 for common constants such as frame types,
+// error codes, and the frame end byte, since they don't vary *within
+// the versions we support*. Obviously we may need to revisit this if
+// that ever changes.
+using CommonFraming = RabbitMQ.Client.Framing.v0_9;
+
 namespace RabbitMQ.Client.Impl
 {
     public class SessionManager
     {
         private readonly Hashtable m_sessionMap = new Hashtable();
         private readonly ConnectionBase m_connection;
-        private ushort m_channelMax = 0;
+        private readonly IntAllocator Ints;
+        public readonly ushort ChannelMax;
         private bool m_autoClose = false;
 
-        public SessionManager(ConnectionBase connection)
+        public SessionManager(ConnectionBase connection, ushort channelMax)
         {
             m_connection = connection;
-        }
-
-        public ushort ChannelMax
-        {
-            get
-            {
-                return m_channelMax;
-            }
-            set
-            {
-                m_channelMax = value;
-            }
+            ChannelMax = (channelMax == 0) ? ushort.MaxValue : channelMax;
+            Ints = new IntAllocator(1, ChannelMax);
         }
 
         public bool AutoClose
@@ -121,30 +118,36 @@ namespace RabbitMQ.Client.Impl
         {
             lock (m_sessionMap)
             {
-                int channelNumber = Allocate();
+                int channelNumber = Ints.Allocate();
                 if (channelNumber == -1)
                 {
                     throw new ChannelAllocationException();
                 }
-                return Create(channelNumber);
+                return CreateInternal(channelNumber);
             }
         }
 
         public ISession Create(int channelNumber)
         {
-            ISession session;
             lock (m_sessionMap)
             {
-                if (m_sessionMap.ContainsKey(channelNumber))
+                if (!Ints.Reserve(channelNumber))
                 {
                     throw new ChannelAllocationException(channelNumber);
                 }
-                session = new Session(m_connection, channelNumber);
-                session.SessionShutdown += new SessionShutdownEventHandler(HandleSessionShutdown);
-                //Console.WriteLine("SessionManager adding session "+session);
-                m_sessionMap[channelNumber] = session;
+                return CreateInternal(channelNumber);
             }
-            return session;
+        }
+
+        public ISession CreateInternal(int channelNumber)
+        {
+            lock(m_sessionMap)
+            {
+                ISession session = new Session(m_connection, channelNumber);
+                session.SessionShutdown += new SessionShutdownEventHandler(HandleSessionShutdown);
+                m_sessionMap[channelNumber] = session;
+                return session;
+            }
         }
 
         ///<summary>Replace an active session slot with a new ISession
@@ -165,30 +168,13 @@ namespace RabbitMQ.Client.Impl
             }
         }
 
-        ///<summary>Find an unused channel number. Must be called
-        ///while holding m_sessionMap lock!</summary>
-        ///<remarks>
-        /// Returns -1 if no unused channel numbers are available.
-        ///</remarks>
-        public int Allocate()
-        {
-            ushort maxChannels = (m_channelMax == 0) ? ushort.MaxValue : m_channelMax;
-            for (int candidate = 1; candidate <= maxChannels; candidate++)
-            {
-                if (!m_sessionMap.ContainsKey(candidate))
-                {
-                    return candidate;
-                }
-            }
-            return -1;
-        }
-
         public void HandleSessionShutdown(ISession session, ShutdownEventArgs reason)
         {
             //Console.WriteLine("SessionManager removing session "+session);
             lock (m_sessionMap)
             {
                 m_sessionMap.Remove(session.ChannelNumber);
+                Ints.Free(session.ChannelNumber);
                 CheckAutoClose();
             }
         }
@@ -223,7 +209,7 @@ namespace RabbitMQ.Client.Impl
         ///when we decide to close the connection.</summary>
         public void AutoCloseConnection()
         {
-            m_connection.Abort(200, "AutoClose", ShutdownInitiator.Library, Timeout.Infinite);
+            m_connection.Abort(CommonFraming.Constants.ReplySuccess, "AutoClose", ShutdownInitiator.Library, Timeout.Infinite);
         }
     }
 }

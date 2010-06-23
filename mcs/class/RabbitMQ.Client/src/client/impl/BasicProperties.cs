@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -57,53 +57,86 @@
 using System;
 using System.Collections;
 
-namespace RabbitMQ.Client.Impl {
-    public abstract class BasicProperties: ContentHeaderBase, IBasicProperties {
-	public abstract string ContentType { get; set; }
-	public abstract string ContentEncoding { get; set; }
-	public abstract IDictionary Headers { get; set; }
-	public abstract byte DeliveryMode { get; set; }
-	public abstract byte Priority { get; set; }
-	public abstract string CorrelationId { get; set; }
-	public abstract string ReplyTo { get; set; }
-	public abstract string Expiration { get; set; }
-	public abstract string MessageId { get; set; }
-	public abstract AmqpTimestamp Timestamp { get; set; }
-	public abstract string Type { get; set; }
-	public abstract string UserId { get; set; }
-	public abstract string AppId { get; set; }
-	public abstract string ClusterId { get; set; }
+namespace RabbitMQ.Client.Impl
+{
+    public abstract class BasicProperties: ContentHeaderBase, IBasicProperties
+    {
+        public abstract string ContentType { get; set; }
+        public abstract string ContentEncoding { get; set; }
+        public abstract IDictionary Headers { get; set; }
+        public abstract byte DeliveryMode { get; set; }
+        public abstract byte Priority { get; set; }
+        public abstract string CorrelationId { get; set; }
+        public abstract string ReplyTo { get; set; }
+        public abstract string Expiration { get; set; }
+        public abstract string MessageId { get; set; }
+        public abstract AmqpTimestamp Timestamp { get; set; }
+        public abstract string Type { get; set; }
+        public abstract string UserId { get; set; }
+        public abstract string AppId { get; set; }
+        public abstract string ClusterId { get; set; }
 
-	public abstract void ClearContentType();
-	public abstract void ClearContentEncoding();
-	public abstract void ClearHeaders();
-	public abstract void ClearDeliveryMode();
-	public abstract void ClearPriority();
-	public abstract void ClearCorrelationId();
-	public abstract void ClearReplyTo();
-	public abstract void ClearExpiration();
-	public abstract void ClearMessageId();
-	public abstract void ClearTimestamp();
-	public abstract void ClearType();
-	public abstract void ClearUserId();
-	public abstract void ClearAppId();
-	public abstract void ClearClusterId();
+        public abstract void ClearContentType();
+        public abstract void ClearContentEncoding();
+        public abstract void ClearHeaders();
+        public abstract void ClearDeliveryMode();
+        public abstract void ClearPriority();
+        public abstract void ClearCorrelationId();
+        public abstract void ClearReplyTo();
+        public abstract void ClearExpiration();
+        public abstract void ClearMessageId();
+        public abstract void ClearTimestamp();
+        public abstract void ClearType();
+        public abstract void ClearUserId();
+        public abstract void ClearAppId();
+        public abstract void ClearClusterId();
 
-        public PublicationAddress ReplyToAddress {
-            get {
+        public abstract bool IsContentTypePresent();
+        public abstract bool IsContentEncodingPresent();
+        public abstract bool IsHeadersPresent();
+        public abstract bool IsDeliveryModePresent();
+        public abstract bool IsPriorityPresent();
+        public abstract bool IsCorrelationIdPresent();
+        public abstract bool IsReplyToPresent();
+        public abstract bool IsExpirationPresent();
+        public abstract bool IsMessageIdPresent();
+        public abstract bool IsTimestampPresent();
+        public abstract bool IsTypePresent();
+        public abstract bool IsUserIdPresent();
+        public abstract bool IsAppIdPresent();
+        public abstract bool IsClusterIdPresent();
+
+        public PublicationAddress ReplyToAddress
+        {
+            get
+            {
                 return PublicationAddress.Parse(ReplyTo);
             }
-            set {
+            set
+            {
                 ReplyTo = value.ToString();
             }
         }
 
-	public void SetPersistent(bool persistent) {
-	    if (persistent) {
-		DeliveryMode = 2;
-	    } else {
-		DeliveryMode = 1;
-	    }
-	}
+        public void SetPersistent(bool persistent)
+        {
+            if (persistent)
+                DeliveryMode = 2;
+            else
+                DeliveryMode = 1;
+        }
+
+        public override object Clone()
+        {
+            BasicProperties clone = MemberwiseClone() as BasicProperties;
+            if (IsHeadersPresent())
+            {
+                clone.Headers = new Hashtable();
+                foreach (DictionaryEntry entry in Headers)
+                    clone.Headers[entry.Key] = entry.Value;
+            }
+
+            return clone;
+        }
     }
 }

@@ -1,3 +1,7 @@
+2010-06-23  Michael Barker  <mike@middlesoft.co.uk>
+
+	* Updated to version 1.8 of the RabbitMQ libraries
+	  
 2009-12-23  Jo Shields  <directhex@apebox.org>
 
 	* docs/specs/Makefile: Use compiled Mono, not system Mono (fixes 

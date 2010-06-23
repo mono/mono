@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -74,20 +74,22 @@ namespace RabbitMQ.Client
     ///<example><code>
     ///     ConnectionFactory factory = new ConnectionFactory();
     ///     //
-    ///     // The next three lines are optional:
-    ///     factory.Parameters.UserName = ConnectionParameters.DefaultUser;
-    ///     factory.Parameters.Password = ConnectionParameters.DefaultPass;
-    ///     factory.Parameters.VirtualHost = ConnectionParameters.DefaultVHost;
+    ///     // The next six lines are optional:
+    ///     factory.UserName = ConnectionFactory.DefaultUser;
+    ///     factory.Password = ConnectionFactory.DefaultPass;
+    ///     factory.VirtualHost = ConnectionFactory.DefaultVHost;
+    ///     factory.Protocol = Protocols.FromEnvironment();
+    ///     factory.HostName = hostName;
+    ///     factory.PortNumber = AmqpTcpEndpoint.UseDefaultPort;
     ///     //
-    ///     IProtocol protocol = Protocols.DefaultProtocol;
-    ///     IConnection conn = factory.CreateConnection(protocol, hostName, portNumber);
+    ///     IConnection conn = factory.CreateConnection();
     ///     //
     ///     IModel ch = conn.CreateModel();
     ///     //
     ///     // ... use ch's IModel methods ...
     ///     //
-    ///     ch.Close(200, "Closing the channel");
-    ///     conn.Close(200, "Closing the connection");
+    ///     ch.Close(Constants.ReplySuccess, "Closing the channel");
+    ///     conn.Close(Constants.ReplySuccess, "Closing the connection");
     ///</code></example>
     ///<para>
     /// Please see also the API overview and tutorial in the User Guide.
@@ -103,22 +105,96 @@ namespace RabbitMQ.Client
     ///</remarks>
     public class ConnectionFactory
     {
-        private ConnectionParameters m_parameters = new ConnectionParameters();
-        ///<summary>Retrieve the parameters this factory uses to
-        ///construct IConnection instances.</summary>
-        public ConnectionParameters Parameters
-        {
-            get
-            {
-                return m_parameters;
-            }
+        /// <summary>Default user name (value: "guest")</summary>
+        public const string DefaultUser = "guest"; // PLEASE KEEP THIS MATCHING THE DOC ABOVE
+
+        /// <summary>Default password (value: "guest")</summary>
+        public const string DefaultPass = "guest"; // PLEASE KEEP THIS MATCHING THE DOC ABOVE
+
+        /// <summary>Default virtual host (value: "/")</summary>
+        public const string DefaultVHost = "/"; // PLEASE KEEP THIS MATCHING THE DOC ABOVE
+
+        /// <summary> Default value for the desired maximum channel
+        /// number, with zero meaning unlimited (value: 0)</summary>
+        public const ushort DefaultChannelMax = 0; // PLEASE KEEP THIS MATCHING THE DOC ABOVE
+
+        /// <summary>Default value for the desired maximum frame size,
+        /// with zero meaning unlimited (value: 0)</summary>
+        public const uint DefaultFrameMax = 0; // PLEASE KEEP THIS MATCHING THE DOC ABOVE
+
+        /// <summary>Default value for desired heartbeat interval, in
+        /// seconds, with zero meaning none (value: 0)</summary>
+        public const ushort DefaultHeartbeat = 0; // PLEASE KEEP THIS MATCHING THE DOC ABOVE
+
+        /// <summary>Username to use when authenticating to the server</summary>
+        public string UserName = DefaultUser;
+
+        /// <summary>Password to use when authenticating to the server</summary>
+        public string Password = DefaultPass;
+
+        /// <summary>Virtual host to access during this connection</summary>
+        public string VirtualHost = DefaultVHost;
+
+        /// <summary>Maximum channel number to ask for</summary>
+        public ushort RequestedChannelMax = DefaultChannelMax;
+
+        /// <summary>Frame-max parameter to ask for (in bytes)</summary>
+        public uint RequestedFrameMax = DefaultFrameMax;
+
+        /// <summary>Heartbeat setting to request (in seconds)</summary>
+        public ushort RequestedHeartbeat = DefaultHeartbeat;
+
+        /// <summary>Dictionary of client properties to be sent to the
+        /// server</summary>
+        public IDictionary ClientProperties = ConnectionBase.DefaultClientProperties();
+
+        ///<summary>Ssl options setting</summary>
+        public SslOption Ssl = new SslOption();
+
+        ///<summary>The host to connect to</summary>
+        public String HostName = "localhost";
+
+        ///<summary>The port to connect on. AmqpTcpEndpoint.UseDefaultPort indicates the 
+        /// default for the protocol should be used.</summary>
+        public int Port = AmqpTcpEndpoint.UseDefaultPort;
+
+        ///<summary>The AMQP protocol to be used</summary>
+        public IProtocol Protocol = Protocols.FromEnvironment();
+
+        public AmqpTcpEndpoint Endpoint
+        { 
+          get
+          { 
+              return new AmqpTcpEndpoint(Protocol, HostName, Port); 
+          }
+          set
+          {
+              Protocol = value.Protocol;
+              Port = value.Port;
+              HostName = value.HostName;
+          }
         }
 
-        ///<summary>Constructs a ConnectionFactory with default values
-        ///for Parameters.</summary>
-        public ConnectionFactory()
+        public String Address
         {
+          get
+          { 
+              String result = HostName;
+              if(Port != AmqpTcpEndpoint.UseDefaultPort)
+              {
+                  result += (":" + Port);
+              }
+              return result;
+          }
+          set
+          {
+              Endpoint = AmqpTcpEndpoint.Parse(Protocol, value);
+          }      
         }
+
+        ///<summary>Construct a fresh instance, with all fields set to
+        ///their respective defaults.</summary>
+        public ConnectionFactory() { }
 
         protected virtual IConnection FollowRedirectChain
             (int maxRedirects,
@@ -144,7 +220,7 @@ namespace RabbitMQ.Client
                         // and fully open a successful connection,
                         // in which case we're done, and the
                         // connection should be returned.
-                        return p.CreateConnection(m_parameters, insist, fh);
+                        return p.CreateConnection(this, insist, fh);
                     } catch (RedirectException re) {
                         if (insist) {
                             // We've been redirected, but we insisted that
@@ -230,78 +306,25 @@ namespace RabbitMQ.Client
         ///endpoint in the list provided. Up to a maximum of
         ///maxRedirects broker-originated redirects are permitted for
         ///each endpoint tried.</summary>
-        public virtual IConnection CreateConnection(int maxRedirects,
-                                                    params AmqpTcpEndpoint[] endpoints)
+        public virtual IConnection CreateConnection(int maxRedirects)
         {
             IDictionary connectionAttempts = new Hashtable();
             IDictionary connectionErrors = new Hashtable();
             IConnection conn = CreateConnection(maxRedirects,
                                                 connectionAttempts,
                                                 connectionErrors,
-                                                endpoints);
+                                                new AmqpTcpEndpoint[]{Endpoint});
             if (conn != null) {
                 return conn;
             }
             throw new BrokerUnreachableException(connectionAttempts, connectionErrors);
         }
 
-        ///<summary>Create a connection to the first available
-        ///endpoint in the list provided. No broker-originated
-        ///redirects are permitted.</summary>
-        public virtual IConnection CreateConnection(params AmqpTcpEndpoint[] endpoints)
+        ///<summary>Create a connection to the specified endpoint
+        ///No broker-originated redirects are permitted.</summary>
+        public virtual IConnection CreateConnection()
         {
-            return CreateConnection(0, endpoints);
-        }
-
-        ///<summary>Create a connection to the endpoint specified.</summary>
-        ///<exception cref="ArgumentException"/>
-        public IConnection CreateConnection(IProtocol version,
-                                            string hostName,
-                                            int portNumber)
-        {
-            return CreateConnection(new AmqpTcpEndpoint[] {
-                                        new AmqpTcpEndpoint(version, hostName, portNumber)
-                                    });
-        }
-
-        ///<summary>Create a connection to the endpoint specified. The
-        ///port used is the default for the protocol.</summary>
-        ///<exception cref="ArgumentException"/>
-        public IConnection CreateConnection(IProtocol version, string hostName)
-        {
-            return CreateConnection(version, hostName, -1);
-        }
-
-        ///<summary>Create a connection to the endpoint specified.</summary>
-        ///<remarks>
-        /// Please see the class overview documentation for
-        /// information about the Uri format in use.
-        ///</remarks>
-        ///<exception cref="ArgumentException"/>
-        public IConnection CreateConnection(IProtocol version, Uri uri)
-        {
-            return CreateConnection(version, uri.Host, uri.Port);
-        }
-
-        ///<summary>Create a connection to the endpoint specified,
-        ///with the IProtocol from
-        ///Protocols.FromEnvironment().</summary>
-        ///<remarks>
-        /// Please see the class overview documentation for
-        /// information about the Uri format in use.
-        ///</remarks>
-        public IConnection CreateConnection(Uri uri)
-        {
-            return CreateConnection(Protocols.FromEnvironment(), uri.Host, uri.Port);
-        }
-
-        ///<summary>Create a connection to the host (and optional
-        ///port) specified, with the IProtocol from
-        ///Protocols.FromEnvironment(). The format of the address
-        ///string is the same as that accepted by
-        ///AmqpTcpEndpoint.Parse().</summary>
-        public IConnection CreateConnection(string address) {
-            return CreateConnection(AmqpTcpEndpoint.Parse(Protocols.FromEnvironment(), address));
+            return CreateConnection(0);
         }
     }
 }

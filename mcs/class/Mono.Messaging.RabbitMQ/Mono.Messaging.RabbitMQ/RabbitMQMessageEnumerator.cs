@@ -105,7 +105,8 @@ namespace Mono.Messaging.RabbitMQ {
 			get {
 				if (cn == null) {
 					ConnectionFactory cf = new ConnectionFactory ();
-					cn = cf.CreateConnection (qRef.Host);
+					cf.Address = qRef.Host;
+					cn = cf.CreateConnection ();
 				}
 				
 				if (model == null) {

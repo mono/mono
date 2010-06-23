@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -103,10 +103,6 @@ namespace RabbitMQ.Client
         ///communicate with its peer.</summary>
         IProtocol Protocol { get; }
 
-        ///<summary>The connection parameters used during construction
-        ///of this connection.</summary>
-        ConnectionParameters Parameters { get; }
-
         ///<summary>The maximum channel number this connection
         ///supports (0 if unlimited). Usable channel numbers
         ///range from 1 to this number, inclusive.</summary>
@@ -119,6 +115,15 @@ namespace RabbitMQ.Client
         ///<summary>The current heartbeat setting for this connection
         ///(0 for disabled), in seconds.</summary>
         ushort Heartbeat { get; }
+
+        ///<summary>A copy of the client properties that has been sent to the
+        ///server.</summary>
+        IDictionary ClientProperties { get; }
+
+        ///<summary>A dictionary of the server properties sent by the server
+        ///while establishing the connection. This typically includes
+        ///the product name and version of the server.</summary>
+        IDictionary ServerProperties { get; }
 
         ///<summary>Returns the known hosts that came back from the
         ///broker in the connection.open-ok method at connection

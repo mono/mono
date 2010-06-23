@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -56,6 +56,7 @@
 //---------------------------------------------------------------------------
 using System;
 using System.IO;
+using System.Net.Sockets;
 
 using RabbitMQ.Util;
 using RabbitMQ.Client.Exceptions;
@@ -103,7 +104,21 @@ namespace RabbitMQ.Client.Impl
             int type;
             int channel;
 
-            type = reader.ReadByte();
+            try
+            {
+                type = reader.ReadByte();
+            }
+            catch (IOException ioe)
+            {
+                // If it's a WSAETIMEDOUT SocketException, unwrap it.
+                // This might happen when the limit of half-open connections is
+                // reached.
+                if (ioe.InnerException == null ||
+                    !(ioe.InnerException is SocketException) ||
+                    ((SocketException)ioe.InnerException).SocketErrorCode != SocketError.TimedOut)
+                    throw ioe;
+                throw ioe.InnerException;
+            }
 
             if (type == 'A')
             {
@@ -177,11 +192,11 @@ namespace RabbitMQ.Client.Impl
         public void WriteTo(NetworkBinaryWriter writer)
         {
             FinishWriting();
-            writer.Write((byte)m_type);
-            writer.Write((ushort)m_channel);
-            writer.Write((uint)m_payload.Length);
-            writer.Write((byte[])m_payload);
-            writer.Write((byte)CommonFraming.Constants.FrameEnd);
+            writer.Write((byte) m_type);
+            writer.Write((ushort) m_channel);
+            writer.Write((uint) m_payload.Length);
+            writer.Write((byte[]) m_payload);
+            writer.Write((byte) CommonFraming.Constants.FrameEnd);
         }
 
         public NetworkBinaryReader GetReader()

@@ -4,7 +4,7 @@
 // The APL v2.0:
 //
 //---------------------------------------------------------------------------
-//   Copyright (C) 2007-2009 LShift Ltd., Cohesive Financial
+//   Copyright (C) 2007-2010 LShift Ltd., Cohesive Financial
 //   Technologies LLC., and Rabbit Technologies Ltd.
 //
 //   Licensed under the Apache License, Version 2.0 (the "License");
@@ -43,11 +43,11 @@
 //   are Copyright (C) 2007-2008 LShift Ltd, Cohesive Financial
 //   Technologies LLC, and Rabbit Technologies Ltd.
 //
-//   Portions created by LShift Ltd are Copyright (C) 2007-2009 LShift
+//   Portions created by LShift Ltd are Copyright (C) 2007-2010 LShift
 //   Ltd. Portions created by Cohesive Financial Technologies LLC are
-//   Copyright (C) 2007-2009 Cohesive Financial Technologies
+//   Copyright (C) 2007-2010 Cohesive Financial Technologies
 //   LLC. Portions created by Rabbit Technologies Ltd are Copyright
-//   (C) 2007-2009 Rabbit Technologies Ltd.
+//   (C) 2007-2010 Rabbit Technologies Ltd.
 //
 //   All Rights Reserved.
 //
@@ -161,6 +161,48 @@ namespace RabbitMQ.Client
 
         ///<summary> Clear the ClusterId property. </summary>
         void ClearClusterId();
+
+        ///<summary> Returns true iff the ContentType property is present. </summary>
+        bool IsContentTypePresent();
+
+        ///<summary> Returns true iff the ContentEncoding property is present. </summary>
+        bool IsContentEncodingPresent();
+
+        ///<summary> Returns true iff the Headers property is present. </summary>
+        bool IsHeadersPresent();
+
+        ///<summary> Returns true iff the DeliveryMode property is present. </summary>
+        bool IsDeliveryModePresent();
+
+        ///<summary> Returns true iff the Priority property is present. </summary>
+        bool IsPriorityPresent();
+
+        ///<summary> Returns true iff the CorrelationId property is present. </summary>
+        bool IsCorrelationIdPresent();
+
+        ///<summary> Returns true iff the ReplyTo property is present. </summary>
+        bool IsReplyToPresent();
+
+        ///<summary> Returns true iff the Expiration property is present. </summary>
+        bool IsExpirationPresent();
+
+        ///<summary> Returns true iff the MessageId property is present. </summary>
+        bool IsMessageIdPresent();
+
+        ///<summary> Returns true iff the Timestamp property is present. </summary>
+        bool IsTimestampPresent();
+
+        ///<summary> Returns true iff the Type property is present. </summary>
+        bool IsTypePresent();
+
+        ///<summary> Returns true iff the UserId property is present. </summary>
+        bool IsUserIdPresent();
+
+        ///<summary> Returns true iff the AppId property is present. </summary>
+        bool IsAppIdPresent();
+
+        ///<summary> Returns true iff the ClusterId property is present. </summary>
+        bool IsClusterIdPresent();
 
         ///<summary>Convenience property; parses ReplyTo property
         ///using PublicationAddress.Parse, and serializes it using
