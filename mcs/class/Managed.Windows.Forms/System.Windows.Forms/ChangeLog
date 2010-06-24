@@ -1,3 +1,8 @@
+2010-06-24  Dick Porter  <dporter@codicesoftware.com>
+
+	* Fix NullReferenceException when keyboard shortcut activates
+	disabled context menu item.  Fixes bug 615940.
+
 2010-06-22  Dick Porter  <dporter@codicesoftware.com>
 
 	* TextControl.cs, XplatUIX11.cs, XplatUICarbon.cs: Expand paint
