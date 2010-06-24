@@ -11,6 +11,8 @@ mono \- Mono's ECMA-CLI native code generator (Just-in-Time and Ahead-of-Time)
 .SH SYNOPSIS
 .PP
 .B mono [options] file [arguments...]
+.PP
+.B mono-sgen [options] file [arguments...]
 .SH DESCRIPTION
 \fImono\fP is a runtime implementation of the ECMA Common Language
 Infrastructure.  This can be used to run ECMA and .NET applications.
@@ -35,6 +37,10 @@ is an ECMA assembly.  They typically have a .exe or .dll extension.
 The runtime provides a number of configuration options for running
 applications, for developing and debugging, and for testing and
 debugging the runtime itself.
+.PP
+The \fImono\fP command uses the Boehm conservative garbage collector
+while the \fImono-sgen\fP command uses a moving and generational
+garbage collector.
 .SH PORTABILITY
 On Unix-based systems, Mono provides a mechanism to emulate the 
 Windows-style file access, this includes providing a case insensitive
