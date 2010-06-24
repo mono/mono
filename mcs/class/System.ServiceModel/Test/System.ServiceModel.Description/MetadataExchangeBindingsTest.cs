@@ -29,12 +29,13 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
+using System.Net.Sockets;
 using System.Runtime.Serialization;
 using System.ServiceModel;
 using System.ServiceModel.Channels;
 using System.ServiceModel.Description;
 using System.ServiceModel.Dispatcher;
+using System.Text;
 
 using NUnit.Framework;
 
@@ -43,6 +44,15 @@ namespace MonoTests.System.ServiceModel.Description
 	[TestFixture]
 	public class MetadataExchangeBindingsTest
 	{
+		Uri CreateUri (string uriString)
+		{
+			var uri = new Uri (uriString);
+			var l = new TcpListener (uri.Port);
+			l.Start ();
+			l.Stop ();
+			return uri;
+		}
+
 		[Test]
 		public void CreateMexHttpBinding ()
 		{
@@ -59,7 +69,7 @@ namespace MonoTests.System.ServiceModel.Description
 			Assert.AreEqual (MessageVersion.Soap12WSAddressing10, b.GetProperty<MessageVersion> (new BindingParameterCollection ()), "#6");
 
 			var host = new ServiceHost (typeof (MetadataExchange));
-			host.AddServiceEndpoint (typeof (IMetadataExchange), MetadataExchangeBindings.CreateMexHttpBinding (), new Uri ("http://localhost:8080"));
+			host.AddServiceEndpoint (typeof (IMetadataExchange), MetadataExchangeBindings.CreateMexHttpBinding (), CreateUri ("http://localhost:8080"));
 			host.Open ();
 			try {
 				// it still does not rewrite MessageVersion.None. It's rather likely ServiceMetadataExtension which does overwriting.

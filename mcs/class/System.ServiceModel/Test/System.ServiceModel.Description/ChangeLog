@@ -1,3 +1,8 @@
+2010-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* MetadataExchangeBindingsTest.cs : make sure that the target port
+	  of the Uri is available (as some other tests do).
+
 2010-06-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* MetadataExchangeBindingsTest.cs : make sure that special casing of
