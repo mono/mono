@@ -1,3 +1,10 @@
+2010-06-23  Miguel de Icaza  <miguel@novell.com>
+
+	* Makefile.am: Add support for building a sgen-aware versions of
+	the library: libwapisgen.la libmonoruntimesgen-static it shares
+	all the components of the default, but use a differen set of
+	CFLAGS to enable SGEN instead.
+
 2010-06-01  Geoff Norton  <gnorton@novell.com>
 
 	* sockets.c: Don't call poll directly, use mono_poll.

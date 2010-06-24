@@ -1,5 +1,11 @@
 2010-06-23  Miguel de Icaza  <miguel@novell.com>
 
+	* Makefile.am: Build the mono-sgen binary a Mono VM with the Sgen
+	GC enabled as well as libmono-sgen-2.0 and libomonosgen-static
+
+	* driver.c: Do not depend on the USED_GC_NAME when using SGen, use
+	it only for Boehm diagnostics.
+
 	* Makefile.am: Make the file a bit more consistent.
 
 	* debug-debugger.c: Wrap the entire file with an #ifdef
