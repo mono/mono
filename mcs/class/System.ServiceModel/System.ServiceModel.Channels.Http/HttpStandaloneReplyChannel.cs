@@ -65,14 +65,18 @@ namespace System.ServiceModel.Channels.Http
 
 		void AbortConnections (TimeSpan timeout)
 		{
-			// FIXME: find out how and what it should handle this situation.
+			if (reqctx != null)
+				reqctx.Close (timeout);
 		}
+
+		bool close_started;
 
 		protected override void OnClose (TimeSpan timeout)
 		{
+			if (close_started)
+				return;
+			close_started = true;
 			DateTime start = DateTime.Now;
-			if (reqctx != null)
-				reqctx.Close (timeout);
 
 			// FIXME: consider timeout
 			AbortConnections (timeout - (DateTime.Now - start));

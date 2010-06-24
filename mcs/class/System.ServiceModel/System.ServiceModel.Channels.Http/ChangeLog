@@ -1,3 +1,8 @@
+2010-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpStandaloneReplyChannel.cs : do not try to enter close loop
+	  between request context and this.
+
 2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpStandaloneChannelListener.cs
