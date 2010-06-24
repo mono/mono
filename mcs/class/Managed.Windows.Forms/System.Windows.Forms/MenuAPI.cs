@@ -115,8 +115,12 @@ namespace System.Windows.Forms {
 		{
 			if (menu is MainMenu)
 				pt = ScreenToMenu (menu, pt);
-			else
+			else {
+				if (menu.Wnd == null) {
+					return null;
+				}
 				pt = menu.Wnd.PointToClient (pt);
+			}
 			foreach (MenuItem item in menu.MenuItems) {
 				Rectangle rect = item.bounds;
 				if (rect.Contains (pt))
