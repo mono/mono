@@ -2746,7 +2746,7 @@ namespace Mono.CSharp {
 					unreachable = top_level.End ();
 				}
 			} catch (Exception e) {
-				if (e is CompletionResult)
+				if (e is CompletionResult || rc.Report.IsDisabled)
 					throw;
 
 				if (rc.CurrentBlock != null) {

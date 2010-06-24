@@ -1,5 +1,13 @@
 2010-06-24  Marek Safar  <marek.safar@gmail.com>
 
+	* statement.cs, report.cs: Rethrow internal error when reporting is
+	disabled.
+	
+	* ecore.cs: Check for identical name only when simple name is set.
+	Fixes #616667
+
+2010-06-24  Marek Safar  <marek.safar@gmail.com>
+
 	A fix for bug #616809
 	* generic.cs, expression.cs, ecore.cs: Added a new type expression
 	for open generic type to pass unbound type arguments to typeof

@@ -397,6 +397,12 @@ namespace Mono.CSharp {
 			get { return printer.ErrorsCount; }
 		}
 
+		public bool IsDisabled {
+			get {
+				return reporting_disabled > 0;
+			}
+		}
+
 		public ReportPrinter Printer {
 			get { return printer; }
 		}

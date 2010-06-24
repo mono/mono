@@ -476,7 +476,7 @@ namespace Mono.CSharp {
 
 				return e;
 			} catch (Exception ex) {
-				if (loc.IsNull || Report.DebugFlags > 0 || ex is CompletionResult)
+				if (loc.IsNull || Report.DebugFlags > 0 || ex is CompletionResult || ec.Report.IsDisabled)
 					throw;
 
 				ec.Report.Error (584, loc, "Internal compiler error: {0}", ex.Message);
@@ -3955,7 +3955,7 @@ namespace Mono.CSharp {
 
 			if (best_candidate.Kind == MemberKind.Method) {
 				if (InstanceExpression != null) {
-					if (best_candidate.IsStatic) {
+					if (best_candidate.IsStatic && simple_name != null) {
 						InstanceExpression = ProbeIdenticalTypeName (ec, InstanceExpression, simple_name);
 					}
 
