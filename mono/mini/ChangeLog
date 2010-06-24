@@ -1,3 +1,9 @@
+2010-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* method-to-ir.c (mono_emit_wb_aware_memcpy): Don't emit bitmap
+	wb for now on 64bits systems while issues with valuetype returns
+	are not fixed.
+
 2010-06-24  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Add support for using a standard set of
