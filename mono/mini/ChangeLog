@@ -1,3 +1,25 @@
+2010-06-23  Miguel de Icaza  <miguel@novell.com>
+
+	* Makefile.am: Build the mono-sgen binary a Mono VM with the Sgen
+	GC enabled as well as libmono-sgen-2.0 and libomonosgen-static
+
+	* driver.c: Do not depend on the USED_GC_NAME when using SGen, use
+	it only for Boehm diagnostics.
+
+	* Makefile.am: Make the file a bit more consistent.
+
+	* debug-debugger.c: Wrap the entire file with an #ifdef
+	MONO_DEBUGGER_SUPPORTED to simplify the build.
+
+	* Makefile.am: Fix the opcodes build issue by including the
+	source, not by including the .lo file directly
+
+	Always bring the MDB sources into the build, to drop the
+	dependency on the AM_CONDITIONAL from configure.in as the hard
+	debugger supports Boehm, but not Sgen, this simplifies the build. 
+
+	* Renamed the *.s files into *.S
+
 2010-06-24 Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* method-to-ir.c (mono_emit_wb_aware_memcpy): Don't emit bitmap
