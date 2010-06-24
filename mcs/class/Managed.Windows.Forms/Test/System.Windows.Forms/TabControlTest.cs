@@ -873,6 +873,30 @@ namespace MonoTests.System.Windows.Forms
 			Assert.IsTrue (tc.Focused, "A2");
 		}
 
+        	// Make sure that setting focus for TabControl is *not* resetting SelectedIndex when
+        	// the value is -1
+		[Test]
+		public void GotFocusSelectedIndex ()
+		{
+			TabControl tc = new TabControl ();
+			tc.TabPages.Add ("A");
+			tc.TabPages.Add ("B");
+
+			Button b = new Button (); // Dummy button to receive focus by default
+			Form f = new Form ();
+			f.Controls.AddRange (new Control [] { b, tc });
+			f.Show ();
+
+			tc.SelectedIndex = -1;
+
+			// Make sure focus goes back to button
+			b.Focus ();
+
+			// Finally give focus back to TabControl
+			tc.Focus ();
+
+			Assert.AreEqual (-1, tc.SelectedIndex, "#A0");
+		}
 #endif
 	}
 
