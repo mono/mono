@@ -1,5 +1,11 @@
 2010-06-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
 
+	* TabControl.cs: Call Invalidate when removing a tab page. We were
+	depending on the redraw routines of SelectedIndex, which could be not
+	enough to detect the real affected area.
+
+2010-06-24  Carlos Alberto Cortez <calberto.cortez@gmail.com>
+
 	* TabControl.cs: Don't set SelectedTabIndex when getting the focus *at
 	all*.
 	Fixes #613765.

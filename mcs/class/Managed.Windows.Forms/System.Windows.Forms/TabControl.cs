@@ -1800,9 +1800,11 @@ namespace System.Windows.Forms {
 					owner.selected_index = -1;
 
 					owner.SelectedIndex = --prev_selected_index;
+					owner.Invalidate ();
 				} else if (change_index) {
 					owner.selected_index = -1;
 					owner.OnSelectedIndexChanged (EventArgs.Empty);
+					owner.Invalidate ();
 				} else
 					owner.Redraw ();
 			}
