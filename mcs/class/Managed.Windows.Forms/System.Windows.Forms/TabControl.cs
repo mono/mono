@@ -956,8 +956,6 @@ namespace System.Windows.Forms {
 		{
 			switch ((Msg)m.Msg) {
 			case Msg.WM_SETFOCUS:
-				if (selected_index == -1 && this.TabCount > 0)
-					this.SelectedIndex = 0;
 				if (selected_index != -1)
 					Invalidate(GetTabRect(selected_index));
 				base.WndProc (ref m);
