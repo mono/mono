@@ -467,10 +467,10 @@ namespace System.ServiceModel.Dispatcher
 				// http://social.msdn.microsoft.com/Forums/en-US/wcf/thread/3faa4a5e-8602-4dbe-a181-73b3f581835e
 
 				while (loop) {
-					// FIXME: enable throttling
-					// FIXME: take MaxConcurrentCalls into consideration too.
-//					while (loop && channels.Count < owner.ServiceThrottle.MaxConcurrentSessions) {
-					while (loop && channels.Count < 1) {
+					// FIXME: take MaxConcurrentCalls into consideration appropriately.
+					while (loop && channels.Count < Math.Min (owner.ServiceThrottle.MaxConcurrentSessions, owner.ServiceThrottle.MaxConcurrentCalls)) {
+						// FIXME: this should not be required, but saves multi-ChannelDispatcher case (Throttling enabled) for HTTP standalone listener...
+						Thread.Sleep (100);
 						channel_acceptor ();
 						creator_handle.WaitOne (); // released by ChannelAccepted()
 					}

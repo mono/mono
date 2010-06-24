@@ -1,3 +1,8 @@
+2010-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* HttpTransportBindingElement.cs :
+	  Use new HTTP channel listener implementation.
+
 2010-06-23  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* HttpListenerManager.cs : cosmetic code formatting fix.

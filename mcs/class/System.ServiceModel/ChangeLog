@@ -1,3 +1,11 @@
+2010-06-24  Astushi Enomoto  <atsushi@ximian.com>
+
+	* System.ServiceModel.dll.sources :
+	  add new HTTP channel listener implementation sources.
+
+	  Old sources will be kept for a while, won't entirely vanish as
+	  ASP.NET support will live there.
+
 2010-05-28  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources : remove old code from winfx beta.

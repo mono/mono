@@ -312,6 +312,13 @@ System.ServiceModel.Channels/WSSignedXml.cs
 System.ServiceModel.Channels/WindowsStreamSecurityBindingElement.cs
 System.ServiceModel.Channels/XmlObjectSerializerBodyWriter.cs
 System.ServiceModel.Channels/XmlReaderBodyWriter.cs
+System.ServiceModel.Channels.Http/HttpChannelListenerEntry.cs
+System.ServiceModel.Channels.Http/HttpContextInfo.cs
+System.ServiceModel.Channels.Http/HttpListenerManager.cs
+System.ServiceModel.Channels.Http/HttpListenerManagerTable.cs
+System.ServiceModel.Channels.Http/HttpStandaloneChannelListener.cs
+System.ServiceModel.Channels.Http/HttpStandaloneReplyChannel.cs
+System.ServiceModel.Channels.Http/HttpStandaloneRequestContext.cs
 System.ServiceModel.ComIntegration/Dummy.cs
 System.ServiceModel.Configuration/AddressHeaderCollectionElement.cs
 System.ServiceModel.Configuration/AllowedAudienceUriElement.cs

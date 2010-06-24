@@ -30,11 +30,11 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Security;
 using System.ServiceModel.Channels;
+using System.ServiceModel.Channels.Http;
 using System.ServiceModel.Description;
 
 namespace System.ServiceModel.Channels
 {
-	[MonoTODO]
 	public class HttpTransportBindingElement : TransportBindingElement,
 		IPolicyExportExtension, IWsdlExportExtension
 	{
@@ -180,7 +180,8 @@ namespace System.ServiceModel.Channels
 			if (ServiceHostingEnvironment.InAspNet)
 				return new AspNetChannelListener<TChannel> (this, context);
 			else
-				return new HttpSimpleChannelListener<TChannel> (this, context);
+				return new HttpStandaloneChannelListener<TChannel> (this, context);
+//				return new HttpSimpleChannelListener<TChannel> (this, context);
 		}
 #endif
 
