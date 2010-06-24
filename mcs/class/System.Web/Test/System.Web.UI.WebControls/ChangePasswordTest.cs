@@ -32,6 +32,7 @@ using System;
 using System.Drawing;
 using System.Threading;
 using System.Collections;
+using System.Globalization;
 using System.IO;
 using System.Web;
 using System.Web.UI;
@@ -138,6 +139,22 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void DefaultProperties ()
 		{
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+
+			try {
+				CultureInfo ci = CultureInfo.GetCultureInfo ("en-US");
+				Thread.CurrentThread.CurrentCulture = ci;
+				Thread.CurrentThread.CurrentUICulture = ci;
+				RunDefaultPropertiesTests ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+		}
+
+		void RunDefaultPropertiesTests ()
+		{
 			TestChangePassword w = new TestChangePassword ();
 			Assert.AreEqual (0, w.Attributes.Count, "Attributes.Count");
 			Assert.AreEqual (0, w.StateBag.Count, "ViewState.Count");
@@ -164,7 +181,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (string.Empty, w.PasswordRecoveryUrl, "PasswordRecoveryUrl");
 			Assert.AreEqual ("Confirm New Password:", w.ConfirmNewPasswordLabelText, "ConfirmNewPasswordLabelText");
 			Assert.AreEqual ("The Confirm New Password must match the New Password entry.", w.ConfirmPasswordCompareErrorMessage, "ConfirmPasswordCompareErrorMessage");
-			Assert.AreEqual (String.Empty, w.ConfirmPasswordRequiredErrorMessage, "ConfirmPasswordRequiredErrorMessage");
+			Assert.AreEqual ("Confirm New Password is required.", w.ConfirmPasswordRequiredErrorMessage, "ConfirmPasswordRequiredErrorMessage");
 			Assert.AreEqual (string.Empty, w.ContinueButtonImageUrl, "ContinueButtonImageUrl");
 			Assert.AreEqual ("Continue", w.ContinueButtonText, "ContinueButtonText");
 			Assert.AreEqual (ButtonType.Button, w.ContinueButtonType, "ContinueButtonType");
@@ -747,18 +764,13 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Request = fr;
 			html = t.Run ();
 			if (html.IndexOf ("Change Password Complete") < 0)
-				Assert.Fail ("Password has not beeb changed!");
+				Assert.Fail ("Password has not been changed!");
 			
 			fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-#if DOT_NET
 			fr.Controls.Add ("ChangePassword1$SuccessContainerID$ContinuePushButton");
 			fr.Controls["ChangePassword1$SuccessContainerID$ContinuePushButton"].Value = "Continue";
-#else
-			fr.Controls.Add ("ChangePassword1$SuccessContainerID$ContinueButton");
-			fr.Controls ["ChangePassword1$SuccessContainerID$ContinueButton"].Value = "Continue";
-#endif
 
 			t.Request = fr;
 			html = t.Run ();

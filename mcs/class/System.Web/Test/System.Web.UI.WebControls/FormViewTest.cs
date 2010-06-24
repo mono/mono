@@ -371,23 +371,25 @@ namespace MonoTests.System.Web.UI.WebControls
 		
 
 		ArrayList myds = new ArrayList ();	
-                [TestFixtureSetUp]
-                public void setup ()
-                {
-                        TestMyData.InitData();  
-                        myds.Add ("Item1");
-                        myds.Add ("Item2");
-                        myds.Add ("Item3");
-                        myds.Add ("Item4");
-                        myds.Add ("Item5");
-                        myds.Add ("Item6");
+		[TestFixtureSetUp]
+		public void setup ()
+		{
+			TestMyData.InitData();  
+			myds.Add ("Item1");
+			myds.Add ("Item2");
+			myds.Add ("Item3");
+			myds.Add ("Item4");
+			myds.Add ("Item5");
+			myds.Add ("Item6");
 
-                        WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
-                        WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");
-                        WebTest.CopyResource (GetType (), "FormViewInsertEditDelete.aspx", "FormViewInsertEditDelete.aspx");
+			WebTest.CopyResource (GetType (), "FormView.aspx", "FormView.aspx");
+			WebTest.CopyResource (GetType (), "FormViewTest1.aspx", "FormViewTest1.aspx");
+			WebTest.CopyResource (GetType (), "FormViewTest1_2.aspx", "FormViewTest1_2.aspx");
+			WebTest.CopyResource (GetType (), "FormViewTest1_3.aspx", "FormViewTest1_3.aspx");
+			WebTest.CopyResource (GetType (), "FormViewTest1_4.aspx", "FormViewTest1_4.aspx");
+			WebTest.CopyResource (GetType (), "FormViewInsertEditDelete.aspx", "FormViewInsertEditDelete.aspx");
 			WebTest.CopyResource (GetType (), "FormViewPagerVisibility.aspx", "FormViewPagerVisibility.aspx");
-               }
-		
+		}
 
 		[Test]
 		public void Defaults ()
@@ -1403,7 +1405,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void CellPaddingException ()
 		{
 		       Poker p = new Poker ();
-		        p.CellPadding = -2;
+			p.CellPadding = -2;
 		}
 
 		[Test]
@@ -1564,24 +1566,11 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 //#endif
 		public void FormView_RenderSimpleTemplate()
 		{
-			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
-			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test1") + 5, RenderedPageHtml.IndexOf ("test2") - RenderedPageHtml.IndexOf ("test1") - 5);  		
-			string origHtmlValue = @" &nbsp;<table cellspacing=""2"" cellpadding=""3"" rules=""all"" border=""1"" id=""FormView1"" style=""background-color:#DEBA84;border-color:#DEBA84;border-width:1px;border-style:None;"">
-						<tr style=""color:#8C4510;background-color:#FFF7E7;"">
-						<td colspan=""2"">
-						 <span id=""FormView1_Label1"">1</span>
-						 </td>
-						</tr><tr align=""center"" style=""color:#8C4510;"">
-						<td colspan=""2""><table border=""0"">
-						<tr>
-						<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"" style=""color:#8C4510;"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"" style=""color:#8C4510;"">3</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$4')"" style=""color:#8C4510;"">4</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$5')"" style=""color:#8C4510;"">5</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$6')"" style=""color:#8C4510;"">6</a></td>
-						</tr>
-						</table></td>
-						</tr>
-						</table>";         
-        
+			string renderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
+			string newHtmlValue = HtmlDiff.GetControlFromPageHtml (renderedPageHtml);
+			string origHtmlValue = "<table cellspacing=\"2\" cellpadding=\"3\" rules=\"all\" border=\"1\" id=\"FormView1\" style=\"background-color:#DEBA84;border-color:#DEBA84;border-width:1px;border-style:None;\">\r\n\t<tr style=\"color:#8C4510;background-color:#FFF7E7;\">\r\n\t\t<td colspan=\"2\">\n                <span id=\"FormView1_Label1\">1</span>\n            </td>\r\n\t</tr><tr align=\"center\" style=\"color:#8C4510;\">\r\n\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('FormView1','Page$2')\" style=\"color:#8C4510;\">2</a></td><td><a href=\"javascript:__doPostBack('FormView1','Page$3')\" style=\"color:#8C4510;\">3</a></td><td><a href=\"javascript:__doPostBack('FormView1','Page$4')\" style=\"color:#8C4510;\">4</a></td><td><a href=\"javascript:__doPostBack('FormView1','Page$5')\" style=\"color:#8C4510;\">5</a></td><td><a href=\"javascript:__doPostBack('FormView1','Page$6')\" style=\"color:#8C4510;\">6</a></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table>";         
+	
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderSimpleTemplate");                  
-
 		}
 
 		[Test]
@@ -1591,27 +1580,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 //#endif
 		public void FormView_RenderFooterAndPager()
 		{
-			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();			
-			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test2") + 5, RenderedPageHtml.IndexOf ("test3") - RenderedPageHtml.IndexOf ("test2") - 5);
-			string origHtmlValue = @" <table cellspacing=""0"" cellpadding=""4"" border=""0"" id=""FormView2"" style=""color:#333333;border-collapse:collapse;"">
-						<tr style=""color:#333333;background-color:#F7F6F3;"">
-						<td colspan=""2"">
-						 <span id=""FormView2_Label2"">1</span>
-						 </td>
-						</tr><tr style=""color:White;background-color:#5D7B9D;font-weight:bold;"">
-						<td colspan=""2"">
-						<span id=""FormView2_Label3"">Footer Template Test</span>
-						 </td>
-						</tr><tr align=""center"" style=""color:White;background-color:#284775;"">
-						<td colspan=""2"">
-						<input type=""submit"" name=""FormView2$ctl01$Button1"" value=""Prev Item"" id=""FormView2_ctl01_Button1"" />
-					        <input type=""submit"" name=""FormView2$ctl01$Button2"" value=""Next Item"" id=""FormView2_ctl01_Button2"" />
-						 <input type=""submit"" name=""FormView2$ctl01$Button3"" value=""First Item"" id=""FormView2_ctl01_Button3"" />
-						 <input type=""submit"" name=""FormView2$ctl01$Button4"" value=""Last Item"" id=""FormView2_ctl01_Button4"" />
-						 </td>
-						</tr>
-						</table>    
-						</div>";    
+			string renderedPageHtml = new WebTest ("FormViewTest1_2.aspx").Run ();
+			string newHtmlValue = HtmlDiff.GetControlFromPageHtml (renderedPageHtml);
+			string origHtmlValue = "<table cellspacing=\"0\" cellpadding=\"4\" border=\"0\" id=\"FormView2\" style=\"color:#333333;border-collapse:collapse;\">\r\n\t<tr style=\"color:#333333;background-color:#F7F6F3;\">\r\n\t\t<td colspan=\"2\">\n                <span id=\"FormView2_Label2\">1</span>\n            </td>\r\n\t</tr><tr style=\"color:White;background-color:#5D7B9D;font-weight:bold;\">\r\n\t\t<td colspan=\"2\">\n                <span id=\"FormView2_Label3\">Footer Template Test</span>\n            </td>\r\n\t</tr><tr align=\"center\" style=\"color:White;background-color:#284775;\">\r\n\t\t<td colspan=\"2\">\n                <input type=\"submit\" name=\"FormView2$ctl01$Button1\" value=\"Prev Item\" id=\"FormView2_ctl01_Button1\" />\n                <input type=\"submit\" name=\"FormView2$ctl01$Button2\" value=\"Next Item\" id=\"FormView2_ctl01_Button2\" />\n                <input type=\"submit\" name=\"FormView2$ctl01$Button3\" value=\"First Item\" id=\"FormView2_ctl01_Button3\" />\n                <input type=\"submit\" name=\"FormView2$ctl01$Button4\" value=\"Last Item\" id=\"FormView2_ctl01_Button4\" />\n            </td>\r\n\t</tr>\r\n</table>";    
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "FormView_RenderFooterAndPager");
 		}
 
@@ -1622,21 +1593,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 //#endif
 		public void FormView_RenderWithHeader()
 		{
-			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
-			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test4") + 5, RenderedPageHtml.IndexOf ("endtest") - RenderedPageHtml.IndexOf ("test4") - 5);
-			string origHtmlValue = @" <table cellspacing=""10"" cellpadding=""3"" align=""Right"" rules=""all"" border=""1"" id=""FormView4"" style=""background-color:White;border-color:#CCCCCC;border-width:1px;border-style:None;"">
-						<tr align=""left"" style=""color:White;background-color:#006699;font-weight:bold;"">
-						<td colspan=""2"">Using Header Text property</td>
-						</tr><tr align=""center"" style=""color:#000066;background-color:Maroon;"">
-						<td colspan=""2"">Using Footer Text property</td>
-						</tr><tr align=""left"" style=""color:#000066;background-color:LightGrey;"">
-						<td colspan=""2"">
-						<a id=""FormView4_ctl01_LinkButton1"" href=""javascript:__doPostBack('FormView4$ctl01$LinkButton1','')"">Next</a>
-						 <a id=""FormView4_ctl01_LinkButton2"" href=""javascript:__doPostBack('FormView4$ctl01$LinkButton2','')"">Prev</a>
-						<span id=""FormView4_ctl01_Label7"">Page Index: 0</span>
-						</td>
-						</tr>
-						</table>"; 			
+			string renderedPageHtml = new WebTest ("FormViewTest1_4.aspx").Run ();
+			string newHtmlValue = HtmlDiff.GetControlFromPageHtml (renderedPageHtml);
+			string origHtmlValue = "<table cellspacing=\"10\" cellpadding=\"3\" align=\"Right\" rules=\"all\" border=\"1\" id=\"FormView4\" style=\"background-color:White;border-color:#CCCCCC;border-width:1px;border-style:None;\">\r\n\t<tr align=\"left\" style=\"color:White;background-color:#006699;font-weight:bold;\">\r\n\t\t<td colspan=\"2\">Using Header Text property</td>\r\n\t</tr><tr align=\"center\" style=\"color:#000066;background-color:Maroon;\">\r\n\t\t<td colspan=\"2\">Using Footer Text property</td>\r\n\t</tr><tr align=\"left\" style=\"color:#000066;background-color:LightGrey;\">\r\n\t\t<td colspan=\"2\">\n                <a id=\"FormView4_ctl01_LinkButton1\" href=\"javascript:__doPostBack('FormView4$ctl01$LinkButton1','')\">Next</a>\n                <a id=\"FormView4_ctl01_LinkButton2\" href=\"javascript:__doPostBack('FormView4$ctl01$LinkButton2','')\">Prev</a>\n                <span id=\"FormView4_ctl01_Label7\">Page Index: 0</span>\n            </td>\r\n\t</tr>\r\n</table>"; 			
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderingDefaultPaging");
 		}
 
@@ -1648,29 +1607,9 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 //#endif
 		public void FormView_Render ()
 		{
-			string RenderedPageHtml = new WebTest ("FormViewTest1.aspx").Run ();
-			string newHtmlValue = RenderedPageHtml.Substring (RenderedPageHtml.IndexOf ("test3") + 5, RenderedPageHtml.IndexOf ("test4") - RenderedPageHtml.IndexOf ("test3") - 5);
-			string origHtmlValue = @"<table cellspacing=""0"" cellpadding=""2"" border=""0"" id=""FormView3"" style=""color:Black;background-color:LightGoldenrodYellow;border-color:Tan;border-width:1px;border-style:solid;border-collapse:collapse;"">
-	<tr align=""center"" valign=""top"" style=""color:#C00000;background-color:Tan;font-weight:bold;"">
-		<td colspan=""2"">
-                <span id=""FormView3_Label5"">Header Template Test</span>
-            </td>
-	</tr><tr>
-		<td colspan=""2"">
-                <span id=""FormView3_Label4"">1</span>
-            </td>
-	</tr><tr align=""right"" style=""color:#FFC0FF;background-color:Tan;"">
-		<td colspan=""2"">
-                <span id=""FormView3_Label6"">FormView Footer</span>
-            </td>
-	</tr><tr align=""center"" style=""color:DarkSlateBlue;background-color:PaleGoldenrod;"">
-		<td colspan=""2""><table border=""0"">
-			<tr>
-				<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView3','Page$2')"" style=""color:DarkSlateBlue;"">2</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$3')"" style=""color:DarkSlateBlue;"">3</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$4')"" style=""color:DarkSlateBlue;"">4</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$5')"" style=""color:DarkSlateBlue;"">5</a></td><td><a href=""javascript:__doPostBack('FormView3','Page$6')"" style=""color:DarkSlateBlue;"">6</a></td>
-			</tr>
-		</table></td>
-	</tr>
-</table>";        
+			string RenderedPageHtml = new WebTest ("FormViewTest1_3.aspx").Run ();
+			string newHtmlValue = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
+			string origHtmlValue = "<table cellspacing=\"0\" cellpadding=\"2\" border=\"0\" id=\"FormView3\" style=\"color:Black;background-color:LightGoldenrodYellow;border-color:Tan;border-width:1px;border-style:solid;border-collapse:collapse;\">\r\n\t<tr align=\"center\" valign=\"top\" style=\"color:#C00000;background-color:Tan;font-weight:bold;\">\r\n\t\t<td colspan=\"2\">\n                <span id=\"FormView3_Label5\">Header Template Test</span>\n            </td>\r\n\t</tr><tr>\r\n\t\t<td colspan=\"2\">\n                <span id=\"FormView3_Label4\">1</span>\n            </td>\r\n\t</tr><tr align=\"right\" style=\"color:#FFC0FF;background-color:Tan;\">\r\n\t\t<td colspan=\"2\">\n                <span id=\"FormView3_Label6\">FormView Footer</span>\n            </td>\r\n\t</tr><tr align=\"center\" style=\"color:DarkSlateBlue;background-color:PaleGoldenrod;\">\r\n\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('FormView3','Page$2')\" style=\"color:DarkSlateBlue;\">2</a></td><td><a href=\"javascript:__doPostBack('FormView3','Page$3')\" style=\"color:DarkSlateBlue;\">3</a></td><td><a href=\"javascript:__doPostBack('FormView3','Page$4')\" style=\"color:DarkSlateBlue;\">4</a></td><td><a href=\"javascript:__doPostBack('FormView3','Page$5')\" style=\"color:DarkSlateBlue;\">5</a></td><td><a href=\"javascript:__doPostBack('FormView3','Page$6')\" style=\"color:DarkSlateBlue;\">6</a></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table>";        
 			HtmlDiff.AssertAreEqual (origHtmlValue, newHtmlValue, "RenderingDefaultPaging");
 		}
 		
@@ -1681,28 +1620,8 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 		{
 			WebTest t = new WebTest ("FormViewInsertEditDelete.aspx");
 			string pageHTML = t.Run ();
-			string newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
-			string origHtml = @" <div> 
-					&nbsp;
-					<table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
-					<tr>
-					<td colspan=""2"">
-					<span id=""FormView1_ID"">1001</span>&nbsp;
-					 <span id=""FormView1_LName"">Chand</span>                
-					 <span id=""FormView1_FName"">Mahesh</span>&nbsp;
-					<a id=""FormView1_EditButton"" href=""javascript:__doPostBack('FormView1$EditButton','')"">Edit</a>
-					 <a id=""FormView1_NewButton"" href=""javascript:__doPostBack('FormView1$NewButton','')"">New</a>
-					<a id=""FormView1_DeleteButton"" href=""javascript:__doPostBack('FormView1$DeleteButton','')"">Delete</a>
-					</td>
-					</tr><tr>
-					<td colspan=""2""><table border=""0"">
-					<tr>
-					<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"">3</a></td>
-					</tr>
-					</table></td>
-					</tr>
-					</table>     
-					 </div>";
+			string newHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+			string origHtml = "<table cellspacing=\"0\" border=\"0\" id=\"FormView1\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td colspan=\"2\">\n                    <span id=\"FormView1_ID\">1001</span>&nbsp;\n                    <span id=\"FormView1_LName\">Chand</span>\n                    <span id=\"FormView1_FName\">Mahesh</span>&nbsp;\n                    <a id=\"FormView1_EditButton\" href=\"javascript:__doPostBack('FormView1$EditButton','')\">Edit</a>\n                    <a id=\"FormView1_NewButton\" href=\"javascript:__doPostBack('FormView1$NewButton','')\">New</a>\n                    <a id=\"FormView1_DeleteButton\" href=\"javascript:__doPostBack('FormView1$DeleteButton','')\">Delete</a>\n                </td>\r\n\t</tr><tr>\r\n\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('FormView1','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('FormView1','Page$3')\">3</a></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "BeforeEditPostback");
 
 			//Edit button postback (change to edit mode - buttons "Update" and "Cancel" should appear.
@@ -1714,26 +1633,8 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();
-			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
-			origHtml = @" <div>
-					&nbsp;
-					<table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
-					<tr>
-					<td colspan=""2"">                
-					 Enter First Name:<input name=""FormView1$FNameEdit"" type=""text"" value=""Mahesh"" id=""FormView1_FNameEdit"" /><br />
-					 Enter Last Name:<input name=""FormView1$LNameEdit"" type=""text"" value=""Chand"" id=""FormView1_LNameEdit"" /><br />
-					 <a id=""FormView1_UpdateButton"" href=""javascript:__doPostBack('FormView1$UpdateButton','')"">Update</a>
-					<a id=""FormView1_CancelUpdateButton"" href=""javascript:__doPostBack('FormView1$CancelUpdateButton','')"">Cancel</a>
-					 </td>
-					</tr><tr>
-					<td colspan=""2""><table border=""0"">
-					<tr>
-					<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"">3</a></td>
-					</tr>
-					</table></td>
-					</tr>
-					</table>    
-					</div>";
+			newHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+			origHtml = "<table cellspacing=\"0\" border=\"0\" id=\"FormView1\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td colspan=\"2\">\n                    Enter First Name:<input name=\"FormView1$FNameEdit\" type=\"text\" value=\"Mahesh\" id=\"FormView1_FNameEdit\" /><br />\n                    Enter Last Name:<input name=\"FormView1$LNameEdit\" type=\"text\" value=\"Chand\" id=\"FormView1_LNameEdit\" /><br />\n                    <a id=\"FormView1_UpdateButton\" href=\"javascript:__doPostBack('FormView1$UpdateButton','')\">Update</a>\n                    <a id=\"FormView1_CancelUpdateButton\" href=\"javascript:__doPostBack('FormView1$CancelUpdateButton','')\">Cancel</a>\n                </td>\r\n\t</tr><tr>\r\n\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('FormView1','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('FormView1','Page$3')\">3</a></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "AfterEditPostback");
 
 			//Update record postback                
@@ -1749,28 +1650,8 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr.Controls["FormView1$LNameEdit"].Value = "Test";			
 			t.Request = fr;
 			pageHTML = t.Run ();
-			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
-			origHtml=@"  <div>
-				&nbsp;
-				 <table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
-				<tr>
-				<td colspan=""2"">
-				<span id=""FormView1_ID"">1001</span>&nbsp;
-				 <span id=""FormView1_LName"">Test</span>                
-				<span id=""FormView1_FName"">Merav</span>&nbsp;
-				<a id=""FormView1_EditButton"" href=""javascript:__doPostBack('FormView1$EditButton','')"">Edit</a>
-				<a id=""FormView1_NewButton"" href=""javascript:__doPostBack('FormView1$NewButton','')"">New</a>
-				<a id=""FormView1_DeleteButton"" href=""javascript:__doPostBack('FormView1$DeleteButton','')"">Delete</a>
-				</td>
-				</tr><tr>
-				<td colspan=""2""><table border=""0"">
-				<tr>
-				<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"">3</a></td>
-				</tr>
-				</table></td>
-				</tr>
-				</table>     
-				</div>";
+			newHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+			origHtml = "<table cellspacing=\"0\" border=\"0\" id=\"FormView1\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td colspan=\"2\">\n                    <span id=\"FormView1_ID\">1001</span>&nbsp;\n                    <span id=\"FormView1_LName\">Test</span>\n                    <span id=\"FormView1_FName\">Merav</span>&nbsp;\n                    <a id=\"FormView1_EditButton\" href=\"javascript:__doPostBack('FormView1$EditButton','')\">Edit</a>\n                    <a id=\"FormView1_NewButton\" href=\"javascript:__doPostBack('FormView1$NewButton','')\">New</a>\n                    <a id=\"FormView1_DeleteButton\" href=\"javascript:__doPostBack('FormView1$DeleteButton','')\">Delete</a>\n                </td>\r\n\t</tr><tr>\r\n\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('FormView1','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('FormView1','Page$3')\">3</a></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "AfterUpdatePostback"); 
   
 			//Postback to return to Edit mode
@@ -1797,42 +1678,15 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr.Controls["__EVENTARGUMENT"].Value = "";
 			t.Request = fr;
 			pageHTML = t.Run ();
-			newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
-			origHtml = @" <div>
-					&nbsp;
-					 <table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
-					<tr>
-					<td colspan=""2"">
-					<span id=""FormView1_ID"">1001</span>&nbsp;
-					<span id=""FormView1_LName"">Test</span>                
-					<span id=""FormView1_FName"">Merav</span>&nbsp;
-					 <a id=""FormView1_EditButton"" href=""javascript:__doPostBack('FormView1$EditButton','')"">Edit</a>
-					<a id=""FormView1_NewButton"" href=""javascript:__doPostBack('FormView1$NewButton','')"">New</a>
-					 <a id=""FormView1_DeleteButton"" href=""javascript:__doPostBack('FormView1$DeleteButton','')"">Delete</a>
-					 </td>
-					</tr><tr>
-					<td colspan=""2""><table border=""0"">
-					<tr>
-					<td><span>1</span></td><td><a href=""javascript:__doPostBack('FormView1','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('FormView1','Page$3')"">3</a></td>
-					</tr>
-					</table></td>
-					</tr>
-					</table>     
-					</div>";
+			newHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+			origHtml = "<table cellspacing=\"0\" border=\"0\" id=\"FormView1\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td colspan=\"2\">\n                    <span id=\"FormView1_ID\">1001</span>&nbsp;\n                    <span id=\"FormView1_LName\">Test</span>\n                    <span id=\"FormView1_FName\">Merav</span>&nbsp;\n                    <a id=\"FormView1_EditButton\" href=\"javascript:__doPostBack('FormView1$EditButton','')\">Edit</a>\n                    <a id=\"FormView1_NewButton\" href=\"javascript:__doPostBack('FormView1$NewButton','')\">New</a>\n                    <a id=\"FormView1_DeleteButton\" href=\"javascript:__doPostBack('FormView1$DeleteButton','')\">Delete</a>\n                </td>\r\n\t</tr><tr>\r\n\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('FormView1','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('FormView1','Page$3')\">3</a></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "CancelEditedRecordPostback");   
-			
 		}
 
 		[Test (Description="Bug #578863")]
 		public void FormView_PagerSettings_Visibility ()
 		{
-			string origHtml = @"<table id=""FormView1"" cellpadding=""3"" cellspacing=""2"" rules=""all"" border=""1"" style=""background-color:#DEBA84;border-color:#DEBA84;border-width:1px;border-style:None;""> 
-		<tr style=""background-color:#FFF7E7;color:#8C4510;""> 
-			<td colspan=""2""> 
-          <span id=""FormView1_Label1"">1</span> 
-	</td> 
-		</tr> 
-	</table>";
+			string origHtml = "<table cellspacing=\"2\" cellpadding=\"3\" rules=\"all\" border=\"1\" id=\"FormView1\" style=\"background-color:#DEBA84;border-color:#DEBA84;border-width:1px;border-style:None;\">\r\n\t<tr style=\"color:#8C4510;background-color:#FFF7E7;\">\r\n\t\t<td colspan=\"2\">\n          <span id=\"FormView1_Label1\">1</span>\n\t</td>\r\n\t</tr>\r\n</table>";
 			
 			WebTest t = new WebTest ("FormViewPagerVisibility.aspx");
 			string pageHtml = t.Run ();
@@ -1956,7 +1810,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		static void  d_ModeChanging(object sender, FormViewModeEventArgs e)
 		{
- 			if (WebTest.CurrentTest.UserData == null) 
+			if (WebTest.CurrentTest.UserData == null) 
 			{
 				ArrayList list = new ArrayList ();
 				list.Add ("ModeChanging");
@@ -1973,7 +1827,7 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 
 		static void  d_ModeChanged(object sender, EventArgs e)
 		{
- 			if (WebTest.CurrentTest.UserData == null) 
+			if (WebTest.CurrentTest.UserData == null) 
 					{
 				ArrayList list = new ArrayList ();
 				list.Add ("ModeChanged");
@@ -2268,25 +2122,8 @@ CommandEventArgs cargs = new CommandEventArgs ("Page", "Prev");
 			fr.Controls["__EVENTARGUMENT"].Value = "";						
 			t.Request = fr;
 			pageHTML = t.Run ();
-			string newHtml = pageHTML.Substring (pageHTML.IndexOf ("start") + 5, pageHTML.IndexOf ("end") - pageHTML.IndexOf ("start") - 5);
-			string origHtml = @" <div>
-			&nbsp;
-			<table cellspacing=""0"" border=""0"" id=""FormView1"" style=""border-collapse:collapse;"">
-			<tr>
-			<td colspan=""2"">
-			Insert ID:
-			 <input name=""FormView1$IDInsert"" type=""text"" id=""FormView1_IDInsert"" /><br />
-			Insert First Name:
-			 <input name=""FormView1$FNameInsert"" type=""text"" id=""FormView1_FNameInsert"" />
-			<br />
-			Insert Last Name:&nbsp;
-			 <input name=""FormView1$LNameInsert"" type=""text"" id=""FormView1_LNameInsert"" />
-			<a id=""FormView1_InsertButton"" href=""javascript:__doPostBack('FormView1$InsertButton','')"">Insert</a>
-			<a id=""FormView1_CancelInsertButton"" href=""javascript:__doPostBack('FormView1$CancelInsertButton','')"">Cancel</a>
-			</td>
-			</tr>
-			</table>   
-			 </div>";
+			string newHtml = HtmlDiff.GetControlFromPageHtml (pageHTML);
+			string origHtml = "<table cellspacing=\"0\" border=\"0\" id=\"FormView1\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td colspan=\"2\">\n                    Insert ID:\n                    <input name=\"FormView1$IDInsert\" type=\"text\" id=\"FormView1_IDInsert\" /><br />\n                    Insert First Name:\n                    <input name=\"FormView1$FNameInsert\" type=\"text\" id=\"FormView1_FNameInsert\" />\n                    <br />\n                    Insert Last Name:&nbsp;\n                    <input name=\"FormView1$LNameInsert\" type=\"text\" id=\"FormView1_LNameInsert\" />\n                    <a id=\"FormView1_InsertButton\" href=\"javascript:__doPostBack('FormView1$InsertButton','')\">Insert</a>\n                    <a id=\"FormView1_CancelInsertButton\" href=\"javascript:__doPostBack('FormView1$CancelInsertButton','')\">Cancel</a>\n                </td>\r\n\t</tr>\r\n</table>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "InsertPostback");
 
 			//Insert new record

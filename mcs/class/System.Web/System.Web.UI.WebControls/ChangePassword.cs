@@ -252,7 +252,7 @@ namespace System.Web.UI.WebControls
 
 		[Localizable (true)]
 		public virtual string ConfirmPasswordRequiredErrorMessage {
-			get { return ViewState.GetString ("ConfirmPasswordRequiredErrorMessage", String.Empty); }
+			get { return ViewState.GetString ("ConfirmPasswordRequiredErrorMessage", "Confirm New Password is required."); }
 			set { ViewState ["ConfirmPasswordRequiredErrorMessage"] = value; }
 		}
 
@@ -1469,7 +1469,7 @@ namespace System.Web.UI.WebControls
 						break;
 				}
 
-				ContinueButton.ID = "ContinueButton";
+				ContinueButton.ID = "ContinuePushButton";
 				ContinueButton.ApplyStyle (_cPassword.ContinueButtonStyle);
 				((IButtonControl) ContinueButton).CommandName = ChangePassword.ContinueButtonCommandName;
 				((IButtonControl) ContinueButton).Text = _cPassword.ContinueButtonText;

@@ -327,6 +327,22 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void FontUnit_IFormatProviderToString ()
 		{
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+
+			try {
+				CultureInfo ci = CultureInfo.GetCultureInfo ("en-US");
+				Thread.CurrentThread.CurrentCulture = ci;
+				Thread.CurrentThread.CurrentUICulture = ci;
+				RunFontUnit_IFormatProviderToString_Tests ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+		}
+
+		void RunFontUnit_IFormatProviderToString_Tests ()
+		{
 			MyFormatProvider mfp = new MyFormatProvider ();
 
 			FontUnit f1 = new FontUnit (FontSize.Large);

@@ -300,23 +300,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Invoker = new PageInvoker (pd);
 			
 			string htmlPage = t.Run ();
-			string htmlOrigin = @"<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" id=""Grid"" style=""border-collapse:collapse;"">
-							<tr>
-								<th scope=""col"">Data</th>
-							</tr><tr>
-								<td><img src=""Item%200"" alt=""Item: Item 0"" style=""border-width:0px;"" /></td>
-							</tr><tr>
-								<td><img src=""Item%201"" alt=""Item: Item 1"" style=""border-width:0px;"" /></td>
-							</tr><tr>
-								<td><img src=""Item%202"" alt=""Item: Item 2"" style=""border-width:0px;"" /></td>
-							</tr><tr>
-								<td><img src=""Item%203"" alt=""Item: Item 3"" style=""border-width:0px;"" /></td>
-							</tr><tr>
-								<td><img src=""Item%204"" alt=""Item: Item 4"" style=""border-width:0px;"" /></td>
-							</tr>
-						</table>
-					</div>";
+			string htmlOrigin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Data</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"Item%200\" alt=\"Item: Item 0\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"Item%201\" alt=\"Item: Item 1\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"Item%202\" alt=\"Item: Item 2\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"Item%203\" alt=\"Item: Item 3\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"Item%204\" alt=\"Item: Item 4\" style=\"border-width:0px;\" /></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 			string htmlControl = HtmlDiff.GetControlFromPageHtml (htmlPage);
 			HtmlDiff.AssertAreEqual (htmlOrigin, htmlControl, "GetFormattedAlternateText");
 		}
@@ -353,23 +337,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			t.Invoker = new PageInvoker (pd);
 
 			string htmlPage = t.Run ();
-			string htmlOrigin = @"<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
-							<tr>
-								<th scope=""col"">Data</th><th scope=""col"">Field</th>
-							</tr><tr>
-								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
-							</tr><tr>
-								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
-							</tr><tr>
-								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
-							</tr><tr>
-								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
-							</tr><tr>
-								<td><span>NullDisplayText</span></td><td>&nbsp;</td>
-							</tr>
-						</table>
-					</div>";
+			string htmlOrigin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Data</th><th scope=\"col\">Field</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span>NullDisplayText</span></td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span>NullDisplayText</span></td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span>NullDisplayText</span></td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span>NullDisplayText</span></td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span>NullDisplayText</span></td><td>&nbsp;</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 			string htmlControl = HtmlDiff.GetControlFromPageHtml (htmlPage);
 			HtmlDiff.AssertAreEqual (htmlOrigin, htmlControl, "ImageFieldNullText");
 		}
@@ -401,23 +369,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			pd.PreRender = _ConvertEmptyStringToNull;
 			t.Invoker = new PageInvoker (pd);
 			string htmlPage = t.Run ();
-			string htmlOrigin = @"<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
-							<tr>
-								<th scope=""col"">Data</th><th scope=""col"">Field</th>
-							</tr><tr>
-								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
-							</tr><tr>
-								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
-							</tr><tr>
-								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
-							</tr><tr>
-								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
-							</tr><tr>
-								<td><img src="""" style=""border-width:0px;"" /></td><td>&nbsp;</td>
-							</tr>
-						</table>
-					</div>";
+			string htmlOrigin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Data</th><th scope=\"col\">Field</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"\" style=\"border-width:0px;\" /></td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"\" style=\"border-width:0px;\" /></td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"\" style=\"border-width:0px;\" /></td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"\" style=\"border-width:0px;\" /></td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><img src=\"\" style=\"border-width:0px;\" /></td><td>&nbsp;</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 			string htmlControl = HtmlDiff.GetControlFromPageHtml (htmlPage);
 			HtmlDiff.AssertAreEqual (htmlOrigin, htmlControl, "ConvertEmptyStringToNull");
 		}

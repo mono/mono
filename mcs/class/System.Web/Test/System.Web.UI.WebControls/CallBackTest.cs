@@ -70,12 +70,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("__CALLBACKTARGET");
-			fr.Controls.Add ("__CALLBACKARGUMENT");
+			fr.Controls.Add ("__CALLBACKID");
+			fr.Controls.Add ("__CALLBACKPARAM");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["__CALLBACKTARGET"].Value = "__Page";
-			fr.Controls ["__CALLBACKARGUMENT"].Value = "monitor";
+			fr.Controls ["__CALLBACKID"].Value = "__Page";
+			fr.Controls ["__CALLBACKPARAM"].Value = "monitor";
 
 			t.Request = fr;
 			html = t.Run ();
@@ -89,8 +89,8 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["__CALLBACKTARGET"].Value = "__Page";
-			fr.Controls ["__CALLBACKARGUMENT"].Value = "laptop";
+			fr.Controls ["__CALLBACKID"].Value = "__Page";
+			fr.Controls ["__CALLBACKPARAM"].Value = "laptop";
 
 			t.Request = fr;
 			html = t.Run ();
@@ -123,12 +123,12 @@ namespace MonoTests.System.Web.UI.WebControls
 			FormRequest fr = new FormRequest (t.Response, "form1");
 			fr.Controls.Add ("__EVENTTARGET");
 			fr.Controls.Add ("__EVENTARGUMENT");
-			fr.Controls.Add ("__CALLBACKTARGET");
-			fr.Controls.Add ("__CALLBACKARGUMENT");
+			fr.Controls.Add ("__CALLBACKID");
+			fr.Controls.Add ("__CALLBACKPARAM");
 			fr.Controls["__EVENTTARGET"].Value = "";
 			fr.Controls["__EVENTARGUMENT"].Value = "";
-			fr.Controls ["__CALLBACKTARGET"].Value = "__Page";
-			fr.Controls ["__CALLBACKARGUMENT"].Value = "";
+			fr.Controls ["__CALLBACKID"].Value = "__Page";
+			fr.Controls ["__CALLBACKPARAM"].Value = "";
 			t.Request = fr;
 			
 			html = t.Run ();

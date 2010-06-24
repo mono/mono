@@ -8,12 +8,11 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    starttest
-    <div>
+    <%= MonoTests.stand_alone.WebHarness.HtmlDiff.BEGIN_TAG %><div>
         <asp:DetailsView ID="DetailsView1" runat="server" BackImageUrl="Blue_hills.jpg"
             Caption="Caption Test" CaptionAlign="Bottom" CellPadding="30" CellSpacing="20"
             DataSourceID="ObjectDataSource1" Height="50px" Width="125px">
-        </asp:DetailsView>
+        </asp:DetailsView><%= MonoTests.stand_alone.WebHarness.HtmlDiff.END_TAG %>
         <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" DeleteMethod="Delete"
             InsertMethod="Insert" SelectMethod="GetMyData" TypeName="MonoTests.System.Web.UI.WebControls.TableObject"
             UpdateMethod="Update">
@@ -33,9 +32,7 @@
                 <asp:Parameter Name="LName" Type="String" />
             </InsertParameters>
         </asp:ObjectDataSource>
-    
-    </div>
-    endtest
+    </div><%= MonoTests.stand_alone.WebHarness.HtmlDiff.END_TAG %>
     </form>
 </body>
 </html>

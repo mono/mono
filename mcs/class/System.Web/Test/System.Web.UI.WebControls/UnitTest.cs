@@ -31,6 +31,7 @@
 using NUnit.Framework;
 using System;
 using System.Globalization;
+using System.Threading;
 using System.Web;
 using System.Web.UI.WebControls;
 
@@ -41,6 +42,22 @@ namespace MonoTests.System.Web.UI.WebControls
 	{
 		[Test]
 		public void UnitConstructors ()
+		{
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+			try {
+				CultureInfo ciUS = CultureInfo.GetCultureInfo ("en-US");
+
+				Thread.CurrentThread.CurrentCulture = ciUS;
+				Thread.CurrentThread.CurrentUICulture = ciUS;
+				RunUnitConstructorsTests ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+		}
+
+		void RunUnitConstructorsTests ()
 		{
 			Unit a1 = new Unit (1.0);
 
@@ -169,7 +186,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 			s1 = new Unit (".9em");
 			Assert.AreEqual (s1.Type, UnitType.Em, "B1");
-			Assert.AreEqual (s1.Value, 0.9, "B2");
+			Assert.AreEqual (0.9d, s1.Value, "B2");
 			Assert.AreEqual ("0.9em", s1.ToString (), "B3");
 		}
 
@@ -183,8 +200,21 @@ namespace MonoTests.System.Web.UI.WebControls
 			Unit s1 = new Unit ("1,5cm", ci);
 			Assert.AreEqual (s1.Type, UnitType.Cm, "C1");
 			Assert.AreEqual (s1.Value, 1.5, "C2");
-			Assert.AreEqual (s1.ToString (), "1.5cm", "A54");
-			Assert.AreEqual (s1.ToString (ci), "1,5cm", "A54");
+
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+			try {
+				CultureInfo ciUS = CultureInfo.GetCultureInfo ("en-US");
+
+				Thread.CurrentThread.CurrentCulture = ciUS;
+				Thread.CurrentThread.CurrentUICulture = ciUS;
+				Assert.AreEqual (s1.ToString (), "1.5cm", "A54");
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+
+			Assert.AreEqual (s1.ToString (ci), "1,5cm", "A55");
 		}
 		
 		[Test]
@@ -316,8 +346,23 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void Unit_IFormatProviderToString ()
+		{
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+			try {
+				CultureInfo ciUS = CultureInfo.GetCultureInfo ("en-US");
+
+				Thread.CurrentThread.CurrentCulture = ciUS;
+				Thread.CurrentThread.CurrentUICulture = ciUS;
+				RunUnit_IFormatProviderToStringTests ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+		}
+
+		void RunUnit_IFormatProviderToStringTests ()
 		{
 			MyFormatProvider mfp = new MyFormatProvider ();
 

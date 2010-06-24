@@ -19,10 +19,8 @@
     </script>
 
     <form id="form1" runat="server">
-        start
         <div>
-            &nbsp;
-            <asp:FormView ID="FormView1" runat="server" AllowPaging="True" DataSourceID="ObjectDataSource1">
+            <%= MonoTests.stand_alone.WebHarness.HtmlDiff.BEGIN_TAG %><asp:FormView ID="FormView1" runat="server" AllowPaging="True" DataSourceID="ObjectDataSource1">
                 <ItemTemplate>
                     <asp:Label ID="ID" runat="server" Text='<%# Eval("ID") %>'></asp:Label>&nbsp;
                     <asp:Label ID="LName" runat="server" Text='<%# Eval("LName") %>'></asp:Label>
@@ -53,7 +51,7 @@
                 <EmptyDataTemplate>
                     <asp:Label ID="Label1" runat="server" Text='<%# "The Database is empty" %>'></asp:Label>
                 </EmptyDataTemplate>
-            </asp:FormView>
+            </asp:FormView><%= MonoTests.stand_alone.WebHarness.HtmlDiff.END_TAG %>
             <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" DeleteMethod="Delete"
                 InsertMethod="Insert" SelectMethod="Select" TypeName="MonoTests.System.Web.UI.WebControls.FormViewDataObject"
                 UpdateMethod="Update">
@@ -74,7 +72,6 @@
                 </InsertParameters>
             </asp:ObjectDataSource>
         </div>
-        end
     </form>
 </body>
 </html>

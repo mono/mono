@@ -367,21 +367,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public void BoundField_NullValueRender ()
 		{
 			string html = new WebTest (PageInvoker.CreateOnLoad (new PageDelegate (BasicRenderTestInit))).Run ();
-			string orightml = @"<div>
-				<table cellspacing=""0"" rules=""all"" border=""1"" id=""GridView1"" style=""border-collapse:collapse;"">
-					<tr>
-						<th scope=""col"">&nbsp;</th><th scope=""col"">&nbsp;</th>
-					</tr><tr>
-						<td>Norway</td><td>Norway</td>
-					</tr><tr>
-						<td>Sweden</td><td>Sweden</td>
-					</tr><tr>
-						<td>EMPTY</td><td>&nbsp;</td>
-					</tr><tr>
-						<td>Italy</td><td>Italy</td>
-					</tr>
-				</table>
-				</div>";
+			string orightml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">&nbsp;</th><th scope=\"col\">&nbsp;</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Norway</td><td>Norway</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Sweden</td><td>Sweden</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>EMPTY</td><td>&nbsp;</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Italy</td><td>Italy</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 			html = HtmlDiff.GetControlFromPageHtml (html);
 			HtmlDiff.AssertAreEqual (orightml, html, "NullValueRender");
 		}

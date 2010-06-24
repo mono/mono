@@ -174,7 +174,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Assert.AreEqual (Color.Red, s.BorderColor, "CreateControlStyle#2");
 			p.ApplyStyle (s);
 			string html = p.Render ();
-			HtmlDiff.AssertAreEqual ("<div style=\"background-color:Red;border-color:Red;\"></div>", html, "CreateControlStyle");
+			string origHtml = "<div style=\"background-color:Red;border-color:Red;\">\n\n</div>";
+			HtmlDiff.AssertAreEqual (origHtml, html, "CreateControlStyle");
 		}
 
 		[Test]
@@ -227,7 +228,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Poker p = new Poker ();
 			p.Direction = ContentDirection.LeftToRight;
 			string html = p.Render();
-			HtmlDiff.AssertAreEqual ("<div dir=\"ltr\"></div>", html, "Direction");
+			string origHtml = "<div dir=\"ltr\">\n\n</div>";
+			HtmlDiff.AssertAreEqual (origHtml, html, "Direction");
 		}
 
 		[Test]
@@ -236,8 +238,8 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Poker p = new Poker ();
 			p.GroupingText = "MyNameText";
 			string html = p.Render ();
-			HtmlDiff.AssertAreEqual ("<div><fieldset><legend>MyNameText</legend></fieldset></div>", html, "GroupingText");
-
+			string origHtml = "<div>\n\t<fieldset>\n\t\t<legend>\n\t\t\tMyNameText\n\t\t</legend>\n\t</fieldset>\n</div>";
+			HtmlDiff.AssertAreEqual (origHtml, html, "GroupingText");
 		}
 
 		[Test]
@@ -270,13 +272,16 @@ namespace MonoTests.System.Web.UI.WebControls {
 			Poker p = new Poker ();
 			p.ScrollBars = ScrollBars.Horizontal;
 			string html = p.Render ();
-			HtmlDiff.AssertAreEqual ("<div style=\"overflow-x:scroll;\"></div>", html, "ScrollBars.Horizontal");
+			string origHtml1 = "<div style=\"overflow-x:scroll;\">\n\n</div>";
+			HtmlDiff.AssertAreEqual (origHtml1, html, "ScrollBars.Horizontal");
 			p.ScrollBars = ScrollBars.Vertical;
 			html = p.Render ();
-			HtmlDiff.AssertAreEqual ("<div style=\"overflow-y:scroll;\"></div>", html, "ScrollBars.Vertical");
+			string origHtml2 = "<div style=\"overflow-y:scroll;\">\n\n</div>";
+			HtmlDiff.AssertAreEqual (origHtml2, html, "ScrollBars.Vertical");
 			p.ScrollBars = ScrollBars.Both;
 			html = p.Render ();
-			HtmlDiff.AssertAreEqual ("<div style=\"overflow:scroll;\"></div>", html, "ScrollBars.Both");
+			string origHtml3 = "<div style=\"overflow:scroll;\">\n\n</div>";
+			HtmlDiff.AssertAreEqual (origHtml3, html, "ScrollBars.Both");
 		}
 
 		[TestFixtureTearDown]

@@ -99,7 +99,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, step.AllowReturn, "AllowReturn");
 			Assert.AreEqual (true, step.EnableTheming, "EnableTheming");
 			Assert.AreEqual (null, step.ID, "ID");
-		        Assert.AreEqual (WizardStepType.Auto, step.StepType, "StepType");
+			Assert.AreEqual (WizardStepType.Auto, step.StepType, "StepType");
 			Assert.AreEqual ("", step.Title, "Title");
 			Assert.AreEqual (null, step.Wizard, "Wizard");
 		}
@@ -216,32 +216,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			// This render test include Title property test 
 			string html = new WebTest (PageInvoker.CreateOnLoad (
 				new PageDelegate (Render_Test))).Run ();
-			string origin = @"<table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""border-collapse:collapse;"">
-								<tr>
-									<td style=""height:100%;""><a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links."" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd?d=u9knZDluAzVeq3S7b_Cm7w2&amp;t=632875336762459244"" style=""border-width:0px;"" /></a><table id=""ctl01_SideBarContainer_SideBarList"" cellspacing=""0"" border=""0"" style=""border-collapse:collapse;"">
-										<tr>
-											<td style=""font-weight:bold;""><a id=""ctl01_SideBarContainer_SideBarList_ctl00_SideBarButton"" href=""javascript:__doPostBack('ctl01$SideBarContainer$SideBarList$ctl00$SideBarButton','')"">my_title</a></td>
-										</tr><tr>
-											<td><a id=""ctl01_SideBarContainer_SideBarList_ctl01_SideBarButton"" href=""javascript:__doPostBack('ctl01$SideBarContainer$SideBarList$ctl01$SideBarButton','')"">my_title_2</a></td>
-										</tr>
-									</table><a id=""ctl01_SkipLink""></a></td><td style=""height:100%;""><table cellspacing=""0"" cellpadding=""0"" border=""0"" style=""height:100%;width:100%;border-collapse:collapse;"">
-										<tr style=""height:100%;"">
-											<td>123</td>
-										</tr><tr>
-											<td align=""right""><table cellspacing=""5"" cellpadding=""5"" border=""0"">
-												<tr>
-													<td align=""right""><input type=""submit"" name=""ctl01$StartNavigationTemplateContainerID$StartNextButton"" value=""Next"" id=""ctl01_StartNavigationTemplateContainerID_StartNextButton"" /></td>
-												</tr>
-											</table></td>
-										</tr>
-									</table></td>
-								</tr>
-							</table>";
-			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "BaseRender");
-			if (html.IndexOf ("my_title") < 0) {
+			string origin = "<table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td style=\"height:100%;\"><a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links.\" height=\"0\" width=\"0\" src=\"/NunitWeb/WebResource.axd?d=4RHYfeNnynkXiM59uthjZg2&amp;t=633802729995006876\" style=\"border-width:0px;\" /></a><table id=\"ctl01_SideBarContainer_SideBarList\" cellspacing=\"0\" border=\"0\" style=\"border-collapse:collapse;\">\r\n\t\t\t<tr>\r\n\t\t\t\t<td style=\"font-weight:bold;\"><a id=\"ctl01_SideBarContainer_SideBarList_ctl00_SideBarButton\" href=\"javascript:__doPostBack('ctl01$SideBarContainer$SideBarList$ctl00$SideBarButton','')\">my_title</a></td>\r\n\t\t\t</tr><tr>\r\n\t\t\t\t<td><a id=\"ctl01_SideBarContainer_SideBarList_ctl01_SideBarButton\" href=\"javascript:__doPostBack('ctl01$SideBarContainer$SideBarList$ctl01$SideBarButton','')\">my_title_2</a></td>\r\n\t\t\t</tr>\r\n\t\t</table><a id=\"ctl01_SkipLink\"></a></td><td style=\"height:100%;\"><table cellspacing=\"0\" cellpadding=\"0\" border=\"0\" style=\"height:100%;width:100%;border-collapse:collapse;\">\r\n\t\t\t<tr style=\"height:100%;\">\r\n\t\t\t\t<td>123</td>\r\n\t\t\t</tr><tr>\r\n\t\t\t\t<td align=\"right\"><table cellspacing=\"5\" cellpadding=\"5\" border=\"0\">\r\n\t\t\t\t\t<tr>\r\n\t\t\t\t\t\t<td align=\"right\"><input type=\"submit\" name=\"ctl01$StartNavigationTemplateContainerID$StartNextButton\" value=\"Next\" id=\"ctl01_StartNavigationTemplateContainerID_StartNextButton\" /></td>\r\n\t\t\t\t\t</tr>\r\n\t\t\t\t</table></td>\r\n\t\t\t</tr>\r\n\t\t</table></td>\r\n\t</tr>\r\n</table>";
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origin, renderedHtml, "BaseRender");
+			if (html.IndexOf ("my_title") < 0)
 				Assert.Fail ("WizardStepBase title not rendered");
-			}
-			
 		}
 
 		public static void Render_Test (Page p)
@@ -270,7 +249,6 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NunitWeb")]
-        [Category ("NotWorking")]
 		public void WizardStepBase_PostBackAllowReturnTest ()
 		{
 			// This test examine the rendering 2 steps and make postbake

@@ -156,6 +156,22 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test]
 		public void CanConvert ()
 		{
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+
+			try {
+				CultureInfo ci = CultureInfo.GetCultureInfo ("en-US");
+				Thread.CurrentThread.CurrentCulture = ci;
+				Thread.CurrentThread.CurrentUICulture = ci;
+				RunCanConvertTests ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+		}
+
+		void RunCanConvertTests ()
+		{
 			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
 
 			/* an integer constant */
@@ -206,6 +222,22 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		public void Convert ()
+		{
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+
+			try {
+				CultureInfo ci = CultureInfo.GetCultureInfo ("en-US");
+				Thread.CurrentThread.CurrentCulture = ci;
+				Thread.CurrentThread.CurrentUICulture = ci;
+				RunConvertTests ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+		}
+
+		void RunConvertTests ()
 		{
 			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
 			object result;
@@ -276,6 +308,22 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		public void Compare ()
+		{
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+
+			try {
+				CultureInfo ci = CultureInfo.GetCultureInfo ("en-US");
+				Thread.CurrentThread.CurrentCulture = ci;
+				Thread.CurrentThread.CurrentUICulture = ci;
+				RunCompareTests ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+		}
+
+		void RunCompareTests ()
 		{
 			BaseCompareValidatorPoker p = new BaseCompareValidatorPoker ();
 

@@ -8,8 +8,8 @@
 </head>
 <body>
     <form id="form1" runat="server">
-    <div><%= MonoTests.stand_alone.WebHarness.HtmlDiff.BEGIN_TAG %>
-        <asp:GridView ID="GridView1" runat="server" DataSourceID="ObjectDataSource1" AutoGenerateColumns="false" DataKeyNames="id">
+    <div>
+        <%= MonoTests.stand_alone.WebHarness.HtmlDiff.BEGIN_TAG %><asp:GridView ID="GridView1" runat="server" DataSourceID="ObjectDataSource1" AutoGenerateColumns="false" DataKeyNames="id">
             <Columns>
                 <asp:BoundField DataField="id" HeaderText="ID" />
                 <asp:TemplateField>
@@ -22,7 +22,6 @@
                         <asp:Button ID="b1" runat="server" CommandName="Update" Text="upd" UseSubmitBehavior="false"/>
                     </AlternatingItemTemplate>
                 </asp:TemplateField>
-                
             </Columns>
         </asp:GridView><%= MonoTests.stand_alone.WebHarness.HtmlDiff.END_TAG %>
         <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" SelectMethod="GetAllItems"

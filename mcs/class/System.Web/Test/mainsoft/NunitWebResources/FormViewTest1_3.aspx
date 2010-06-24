@@ -23,19 +23,24 @@
                 <asp:Parameter Name="value" Type="Int32" />
             </UpdateParameters>
         </asp:ObjectDataSource>
-	<%= MonoTests.stand_alone.WebHarness.HtmlDiff.BEGIN_TAG %><asp:FormView ID="FormView1" runat="server" AllowPaging="True" BackColor="#DEBA84"
-            BorderColor="#DEBA84" BorderStyle="None" BorderWidth="1px" CellPadding="3" CellSpacing="2"
-            DataSourceID="ObjectDataSource1" GridLines="Both">
-            <FooterStyle BackColor="#F7DFB5" ForeColor="#8C4510" />
-            <EditRowStyle BackColor="#738A9C" Font-Bold="True" ForeColor="White" />
-            <RowStyle BackColor="#FFF7E7" ForeColor="#8C4510" />
-            <PagerStyle ForeColor="#8C4510" HorizontalAlign="Center" />
-            <ItemTemplate>
-                <asp:Label ID="Label1" runat="server" Text="<%# FormView1.DataItem.ToString() %>"></asp:Label>
-            </ItemTemplate>
-            <HeaderStyle BackColor="#A55129" Font-Bold="True" ForeColor="White" />
-        </asp:FormView><%= MonoTests.stand_alone.WebHarness.HtmlDiff.END_TAG %>
     </div>
+        <%= MonoTests.stand_alone.WebHarness.HtmlDiff.BEGIN_TAG %><asp:FormView ID="FormView3" runat="server" AllowPaging="True" BackColor="LightGoldenrodYellow"
+            BorderColor="Tan" BorderWidth="1px" CellPadding="2" DataSourceID="ObjectDataSource1"
+            ForeColor="Black">
+            <FooterStyle BackColor="Tan" ForeColor="#FFC0FF" HorizontalAlign="Right" />
+            <EditRowStyle BackColor="DarkSlateBlue" ForeColor="GhostWhite" />
+            <PagerStyle BackColor="PaleGoldenrod" ForeColor="DarkSlateBlue" HorizontalAlign="Center" />
+            <FooterTemplate>
+                <asp:Label ID="Label6" runat="server" Text='<%# "FormView Footer" %>'></asp:Label>
+            </FooterTemplate>
+            <ItemTemplate>
+                <asp:Label ID="Label4" runat="server" Text="<%# FormView3.DataItem.ToString() %>"></asp:Label>
+            </ItemTemplate>
+            <HeaderStyle BackColor="Tan" Font-Bold="True" ForeColor="#C00000" HorizontalAlign="Center" VerticalAlign="Top" />
+            <HeaderTemplate>
+                <asp:Label ID="Label5" runat="server" Text='<%# "Header Template Test" %>'></asp:Label>
+            </HeaderTemplate>
+        </asp:FormView><%= MonoTests.stand_alone.WebHarness.HtmlDiff.END_TAG %>
     </form>
 </body>
 </html>

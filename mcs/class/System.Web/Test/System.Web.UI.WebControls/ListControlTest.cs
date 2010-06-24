@@ -79,6 +79,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			return writer.InnerWriter.ToString ();
 		}
 
+		public bool GetIsTrackingViewState ()
+		{
+			return IsTrackingViewState;
+		}
 #if NET_2_0
 		public HtmlTextWriterTag GetTagKey ()
 		{
@@ -223,7 +227,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.Items.Add (foo);
 			p.Items.Add (bar);
 #region orig
-			string orig = "<select type=\"MyType\" name=\"MyName\" value=\"MyValue\"><option value=\"foo\">foo</option><option value=\"bar\">bar</option></select>";
+			string orig = "<select type=\"MyType\" name=\"MyName\" value=\"MyValue\">\n\t<option value=\"foo\">foo</option>\n\t<option value=\"bar\">bar</option>\n\n</select>";
 #endregion
 			string html =  p.Render ();
 			HtmlDiff.AssertAreEqual(orig,html,"AddAttributesToRender failed");
@@ -301,18 +305,14 @@ namespace MonoTests.System.Web.UI.WebControls
 			p.DataBind ();
 			string html = p.Render ();
 #region #1
-			string orig = @"<select type=""MyType"" name=""MyName"" value=""MyValue"">
-					<option selected=""selected"" value=""1"">1</option>
-					<option value=""2"">2</option>
-					<option value=""3"">3</option>
-					</select>";
+			string orig = "<select type=\"MyType\" name=\"MyName\" value=\"MyValue\">\n\t<option selected=\"selected\" value=\"1\">1</option>\n\t<option value=\"2\">2</option>\n\t<option value=\"3\">3</option>\n\n</select>";
 #endregion
 			HtmlDiff.AssertAreEqual (orig, html, "PerformDataBind");
 		}
 
 		[Test]
 		[Category("NotWorking")] //Not implemented
- 		public void SetPostDataSelection ()
+		public void SetPostDataSelection ()
 		{
 			Poker p = new Poker ();
 			ListItem foo = new ListItem ("foo");
@@ -399,21 +399,11 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (true, p.Items[2].Selected, "MultipleSelect#2");
 			string html = p.Render ();
 			#region origin
-			string orig = @"<select size=""4"" multiple=""multiple"">
-					<option selected=""selected"" value=""A"">A</option>
-					<option value=""C"">C</option>
-					<option selected=""selected"" value=""E"">E</option>
-					<option value=""F"">F</option>
-					<option value=""G"">G</option>
-					<option value=""D"">D</option>
-					<option value=""B"">B</option>
-					</select>";
+			string orig = "<select size=\"4\" multiple=\"multiple\">\n\t<option selected=\"selected\" value=\"A\">A</option>\n\t<option value=\"C\">C</option>\n\t<option selected=\"selected\" value=\"E\">E</option>\n\t<option value=\"F\">F</option>\n\t<option value=\"G\">G</option>\n\t<option value=\"D\">D</option>\n\t<option value=\"B\">B</option>\n\n</select>";
 			#endregion
 			HtmlDiff.AssertAreEqual (orig, html, "MultipleSelect#3");
 		}
 #endif
-
-
 
 		[Test]
 		public void CleanProperties ()
@@ -556,16 +546,25 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		// Tests Save/Load/Track ViewState
-		public void ViewStateNotNeeded ()
+		public void ViewStateIsNeeded ()
 		{
 			ListControlPoker a = new ListControlPoker ();
+			IStateManager sm = a.Items as IStateManager;
+			
+			Assert.IsFalse (a.GetIsTrackingViewState (), "#A1-1");
+			Assert.IsFalse (sm.IsTrackingViewState, "#A1-2");
+			object state = a.SaveState ();
+			Assert.IsNotNull (state, "#A1-3");
 
 			a.Items.Add ("a");
 			a.Items.Add ("b");
 			a.Items.Add ("c");
 
-			object state = a.SaveState ();
-			Assert.AreEqual (null, state, "A1");
+			Assert.IsFalse (a.GetIsTrackingViewState (), "#A2-1");
+			Assert.IsFalse (sm.IsTrackingViewState, "#A2-2");
+
+			state = a.SaveState ();
+			Assert.IsNotNull (state, "#A3");
 		}
 
 		[Test]
@@ -1008,9 +1007,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			ListControlPoker p = new ListControlPoker ();
 			p.Items.Add ("one");
 			p.SelectedValue = "dos";
-            Assert.AreEqual("", p.SelectedValue, "SelectedValue");
-            Assert.AreEqual(null, p.SelectedItem, "SelectedItem");
-            Assert.AreEqual(-1, p.SelectedIndex, "SelectedIndex");
+	    Assert.AreEqual("", p.SelectedValue, "SelectedValue");
+	    Assert.AreEqual(null, p.SelectedItem, "SelectedItem");
+	    Assert.AreEqual(-1, p.SelectedIndex, "SelectedIndex");
 		}
 
 		[Test]
@@ -1018,9 +1017,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			ListControlPoker p = new ListControlPoker ();
 			p.SelectedValue = "dos";
-            Assert.AreEqual("", p.SelectedValue, "SelectedValue");
-            Assert.AreEqual(null, p.SelectedItem, "SelectedItem");
-            Assert.AreEqual(-1, p.SelectedIndex, "SelectedIndex");
+	    Assert.AreEqual("", p.SelectedValue, "SelectedValue");
+	    Assert.AreEqual(null, p.SelectedItem, "SelectedItem");
+	    Assert.AreEqual(-1, p.SelectedIndex, "SelectedIndex");
 		}
 #if NET_2_0
 		[Test]

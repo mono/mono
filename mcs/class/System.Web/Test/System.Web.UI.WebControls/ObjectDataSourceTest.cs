@@ -187,7 +187,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			ds.UpdateParameters.Add (p3);
 			ds.ID = "MyObject";
 			ds.TypeName = typeof (MyTableObject).AssemblyQualifiedName;
-					                                              
+										      
 
 		}
 
@@ -363,13 +363,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = new WebTest (PageInvoker.CreateOnLoad (
 				new PageDelegate (FilterExpression))).Run ();
 			string newHtml= HtmlDiff.GetControlFromPageHtml (html);
-			string origHtml = @"<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
-						<tr>
-						<td>ID</td><td>FName</td><td>LName</td>
-						</tr><tr>
-						<td>1002</td><td>Melanie</td><td>Talmadge</td>
-						</tr>
-						</table>";
+			string origHtml = "<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td>ID</td><td>FName</td><td>LName</td>\r\n\t</tr><tr>\r\n\t\t<td>1002</td><td>Melanie</td><td>Talmadge</td>\r\n\t</tr>\r\n</table>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "FilterExpression");
 		}
 
@@ -398,16 +392,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = new WebTest (PageInvoker.CreateOnLoad (
 				new PageDelegate (FilterParameter))).Run ();
 			string newHtml = HtmlDiff.GetControlFromPageHtml (html);
-			string origHtml = @"<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
-						<tr>
-						<td>ID</td><td>FName</td><td>LName</td>
-						</tr><tr>
-						<td>1003</td><td>Vinay</td><td>Bansal</td>
-						</tr>
-						</table>";
+			string origHtml = "<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t<tr>\r\n\t\t<td>ID</td><td>FName</td><td>LName</td>\r\n\t</tr><tr>\r\n\t\t<td>1003</td><td>Vinay</td><td>Bansal</td>\r\n\t</tr>\r\n</table>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "FilterExpression");
 		}
-
 
 		public static void FilterParameter (Page p)
 		{
@@ -436,32 +423,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = new WebTest (PageInvoker.CreateOnLoad (
 				new PageDelegate (EnablePaging))).Run ();
 			string newHtml = HtmlDiff.GetControlFromPageHtml (html);
-			string origHtml = @"<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
-						<tr>
-						<th scope=""col"">Name</th><th scope=""col"">Number</th>
-						</tr><tr>
-						<td>Number0</td><td>0</td>
-						</tr><tr>
-						<td>Number1</td><td>1</td>
-						</tr><tr>
-						<td>Number2</td><td>2</td>
-						</tr><tr>
-						<td>Number3</td><td>3</td>
-						</tr><tr>
-						<td>Number4</td><td>4</td>
-						</tr><tr>
-						<td colspan=""2""><table border=""0"">
-						<tr>
-						<td><span>1</span></td><td><a href=""javascript:__doPostBack('ctl01','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('ctl01','Page$3')"">3</a></td><td><a href=""javascript:__doPostBack('ctl01','Page$4')"">4</a></td>
-						</tr>
-						</table></td>
-						</tr>
-						</table>
-						</div>";
+			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">Name</th><th scope=\"col\">Number</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number0</td><td>0</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number1</td><td>1</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number2</td><td>2</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number3</td><td>3</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>Number4</td><td>4</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"2\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('ctl01','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('ctl01','Page$3')\">3</a></td><td><a href=\"javascript:__doPostBack('ctl01','Page$4')\">4</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 			HtmlDiff.AssertAreEqual (origHtml, newHtml, "EnablePaging");
 		}
-
 
 		public static void EnablePaging (Page p)
 		{
@@ -496,19 +460,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			string html = new WebTest (PageInvoker.CreateOnLoad (
 				new PageDelegate (DeleteMethod))).Run ();
 			string newHtml = HtmlDiff.GetControlFromPageHtml (html);
-			string origHtml = @"<div>
-					<table cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;"">
-					<tr>
-					<td>ID</td><td>1002</td>
-					</tr><tr>
-					<td>FName</td><td>Melanie</td>
-					</tr><tr>
-					<td>LName</td><td>Talmadge</td>
-					</tr>
-					</table>
-					</div>";
-			HtmlDiff.AssertAreEqual (origHtml, newHtml, "DeleteRender");
+			string origHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<td>ID</td><td>1002</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>FName</td><td>Melanie</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>LName</td><td>Talmadge</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 
+			HtmlDiff.AssertAreEqual (origHtml, newHtml, "DeleteRender");
 		}
 
 		public static void DeleteMethod (Page p)
@@ -1074,7 +1028,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Hashtable value = new Hashtable ();
 			value.Add ("ID", "1001");
 
-		        view.ConflictDetection = ConflictOptions.CompareAllValues;
+			view.ConflictDetection = ConflictOptions.CompareAllValues;
 			view.ExecuteUpdate (null,null, value);
 			Assert.AreEqual (true, MyTableObject.UpdateWithCompareAllValues, "CompareAllValues");
 		}
@@ -1567,7 +1521,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		public static bool UpdateCompareAllValuesCalled;
 		public static bool UpdateOverwriteChangesCalled;
 		public static string UpdatePassedValues;
- 	
+	
 		private void ResetEventCheckers()
 		{
 			DeleteWithParamsAndKeys = false;

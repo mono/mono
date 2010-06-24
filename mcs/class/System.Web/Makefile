@@ -123,10 +123,15 @@ TEST_RESOURCE_FILES = \
 	Test/mainsoft/NunitWebResources/FooterTemplateTest.aspx \
 	Test/mainsoft/NunitWebResources/DataGrid.aspx \
 	Test/mainsoft/NunitWebResources/DetailsViewTemplates.aspx \
+	Test/mainsoft/NunitWebResources/DetailsViewTemplates_2.aspx \
+	Test/mainsoft/NunitWebResources/DetailsViewTemplates_3.aspx \
 	Test/mainsoft/NunitWebResources/DetailsViewDataActions.aspx \
 	Test/mainsoft/NunitWebResources/DetailsViewProperties1.aspx \
 	Test/mainsoft/NunitWebResources/Bluehills.jpg \
 	Test/mainsoft/NunitWebResources/FormViewTest1.aspx \
+	Test/mainsoft/NunitWebResources/FormViewTest1_2.aspx \
+	Test/mainsoft/NunitWebResources/FormViewTest1_3.aspx \
+	Test/mainsoft/NunitWebResources/FormViewTest1_4.aspx \
 	Test/mainsoft/NunitWebResources/FormViewInsertEditDelete.aspx \
 	Test/mainsoft/NunitWebResources/GridViewUpdate.aspx \
 	Test/mainsoft/NunitWebResources/XMLDataSourceTest.xml \

@@ -210,10 +210,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestPropertyRender)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<span style=""display:inline-block;color:Red;background-color:Red;border-color:Red;border-width:3px;border-style:Dashed;"">
-			<a href=""#ctl01_SkipLink""><img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd""
-			style=""border-width:0px;"" /></a><span>node1</span><span>-</span><span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a>
-			</span><a id=""ctl01_SkipLink""></a></span>";
+			string OriginControlHtml = "<span style=\"display:inline-block;color:Red;background-color:Red;border-color:Red;border-width:3px;border-style:Dashed;\"><a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" height=\"0\" width=\"0\" src=\"/NunitWeb/WebResource.axd?d=4RHYfeNnynkXiM59uthjZg2&amp;t=633802729995006876\" style=\"border-width:0px;\" /></a><span>node1</span><span>-</span><span><a title=\"test\" href=\"/NunitWeb/MyPageWithMaster.aspx\">root</a></span><a id=\"ctl01_SkipLink\"></a></span>";
 			HtmlDiff.AssertAreEqual(OriginControlHtml,RenderedControlHtml,"RenderProperty");
 		}
 		[Test]
@@ -222,12 +219,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestStylesRender)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<span style=""background-color:Red;""><a href=""#ctl01_SkipLink"">
-			<img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd""
-			style=""border-width:0px;"" /></a><span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx""
-			style=""background-color:Beige;border-color:Purple;"">root</a></span>
-			<span style=""background-color:RoyalBlue;""> &gt; </span><span style=""background-color:Pink;border-color:Purple;"">node1</span>
-			<a id=""ctl01_SkipLink""></a></span>";
+			string OriginControlHtml = "<span style=\"background-color:Red;\"><a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" height=\"0\" width=\"0\" src=\"/NunitWeb/WebResource.axd?d=4RHYfeNnynkXiM59uthjZg2&amp;t=633802729995006876\" style=\"border-width:0px;\" /></a><span><a title=\"test\" href=\"/NunitWeb/MyPageWithMaster.aspx\" style=\"background-color:Beige;border-color:Purple;\">root</a></span><span style=\"background-color:RoyalBlue;\"> &gt; </span><span style=\"background-color:Pink;border-color:Purple;\">node1</span><a id=\"ctl01_SkipLink\"></a></span>";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml,"RenderStyles");
 		}
 		[Test]
@@ -236,10 +228,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (DoTestDefaultRender)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<span><a href=""#ctl01_SkipLink"">
-			<img alt=""Skip Navigation Links"" height=""0"" width=""0"" src=""/NunitWeb/WebResource.axd""
-			style=""border-width:0px;"" /></a><span><a title=""test"" href=""/NunitWeb/MyPageWithMaster.aspx"">root</a>
-			</span><span> &gt; </span><span>node1</span><a id=""ctl01_SkipLink""></a></span>";
+			string OriginControlHtml = "<span><a href=\"#ctl01_SkipLink\"><img alt=\"Skip Navigation Links\" height=\"0\" width=\"0\" src=\"/NunitWeb/WebResource.axd?d=4RHYfeNnynkXiM59uthjZg2&amp;t=633802729995006876\" style=\"border-width:0px;\" /></a><span><a title=\"test\" href=\"/NunitWeb/MyPageWithMaster.aspx\">root</a></span><span> &gt; </span><span>node1</span><a id=\"ctl01_SkipLink\"></a></span>";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml,"RenderDefault");
 		}
 

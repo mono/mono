@@ -367,6 +367,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // Adapter binding does work on .NET but not by calling ResolveAdapter
 		public void PerformDataBinding_UsesAdapter ()
 		{
 			MyDataBoundControl c = new MyDataBoundControl ();

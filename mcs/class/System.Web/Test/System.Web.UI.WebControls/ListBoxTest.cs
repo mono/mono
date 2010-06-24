@@ -80,10 +80,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			return writer.InnerWriter.ToString ();
 		}
 #if NET_2_0
-        public new virtual void VerifyMultiSelect()
-        {
-            base.VerifyMultiSelect();
-        }
+	public new virtual void VerifyMultiSelect()
+	{
+	    base.VerifyMultiSelect();
+	}
 #endif
 	}
 
@@ -135,7 +135,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-        [Category ("NotWorking")]
+	[Category ("NotWorking")]
 #if !NET_2_0
 		[ExpectedException (typeof (ArgumentOutOfRangeException))]
 #endif
@@ -261,7 +261,7 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		[Test]
 		[Category ("NotDotNet")]
-        [Category ("NotWorking")]
+		[Category ("NotWorking")]
 		public void NameIsUniqueID ()
 		{
 			ListBoxPoker list = new ListBoxPoker ();
@@ -367,22 +367,22 @@ namespace MonoTests.System.Web.UI.WebControls
 
 		}
 #if NET_2_0
-        [Test]
-        public void VerifyMultiSelectPositive()
-        {
-            ListBoxPoker list = new ListBoxPoker();
-            list.SelectionMode = ListSelectionMode.Multiple;
-            list.VerifyMultiSelect();
-        }
+	[Test]
+	public void VerifyMultiSelectPositive()
+	{
+	    ListBoxPoker list = new ListBoxPoker();
+	    list.SelectionMode = ListSelectionMode.Multiple;
+	    list.VerifyMultiSelect();
+	}
 
-        [Test]
-        [ExpectedException(typeof(HttpException))]
-        public void VerifyMultiSelectNegative()
-        {
-            ListBoxPoker list = new ListBoxPoker();
-            list.SelectionMode = ListSelectionMode.Single;
-            list.VerifyMultiSelect();
-        }
+	[Test]
+	[ExpectedException(typeof(HttpException))]
+	public void VerifyMultiSelectNegative()
+	{
+	    ListBoxPoker list = new ListBoxPoker();
+	    list.SelectionMode = ListSelectionMode.Single;
+	    list.VerifyMultiSelect();
+	}
 
 		[Test]
 		[Category ("NunitWeb")]

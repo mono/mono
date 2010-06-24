@@ -215,7 +215,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			b.ToolTip = "Hello_ToolTip";
 			b.RenderControl (tw);
 			
-			string strTarget = "<input type=\"button\" name=\"MyButton\" value=\"Hello\" disabled=\"disabled\" title=\"Hello_ToolTip\" />";
+			string strTarget = "<input type=\"button\" name=\"MyButton\" value=\"Hello\" id=\"MyButton\" disabled=\"disabled\" title=\"Hello_ToolTip\" />";
 			string str = sw.ToString();
 			HtmlDiff.AssertAreEqual (strTarget, str, "Button_Render2");
 		}

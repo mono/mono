@@ -20,15 +20,13 @@
     
 </script>
     <form id="form1" runat="server">
-    starttest
     <div>
-        &nbsp;&nbsp;&nbsp; &nbsp;&nbsp;
-        <asp:DetailsView ID="DetailsView1" runat="server" AllowPaging="True" DataSourceID="ObjectDataSource1"
+        <%= MonoTests.stand_alone.WebHarness.HtmlDiff.BEGIN_TAG %><asp:DetailsView ID="DetailsView1" runat="server" AllowPaging="True" DataSourceID="ObjectDataSource1"
             Height="50px" Width="125px"  >
             <Fields>
-                <asp:CommandField ShowDeleteButton="True" ShowInsertButton="True" ShowEditButton="True" />                
+                <asp:CommandField ShowDeleteButton="True" ShowInsertButton="True" ShowEditButton="True" />
             </Fields>
-        </asp:DetailsView>
+        </asp:DetailsView><%= MonoTests.stand_alone.WebHarness.HtmlDiff.END_TAG %>
         <asp:ObjectDataSource ID="ObjectDataSource1" runat="server" DeleteMethod="Delete"
             SelectMethod="GetMyData" TypeName="MonoTests.System.Web.UI.WebControls.TableObject" InsertMethod="Insert" UpdateMethod="Update" >
             <DeleteParameters>
@@ -46,10 +44,8 @@
                 <asp:Parameter Name="FName" Type="String" />
                 <asp:Parameter Name="LName" Type="String" />
             </UpdateParameters>
-        </asp:ObjectDataSource>
-    
+        </asp:ObjectDataSource> 
     </div>
-    endtest
     </form>
 </body>
 </html>

@@ -141,6 +141,7 @@ namespace System.Web.UI.WebControls
 			base.Render (writer);
 
 			if (spots != null && spots.Count > 0) {
+				writer.AddAttribute (HtmlTextWriterAttribute.Id, "ImageMap" + ClientID);
 				writer.AddAttribute (HtmlTextWriterAttribute.Name, "ImageMap" + ClientID);
 				writer.RenderBeginTag (HtmlTextWriterTag.Map);
 				for (int n=0; n<spots.Count; n++) {

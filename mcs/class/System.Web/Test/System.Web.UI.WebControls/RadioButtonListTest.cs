@@ -191,11 +191,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 		{
 			string RenderedPageHtml = new WebTest (PageInvoker.CreateOnLoad (Render_Load)).Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
-			string OriginControlHtml = @"<table id=""ctl01"" border=""0"">
-											<tr>
-												<td><input id=""ctl01_0"" type=""radio"" name=""ctl01"" value=""value1"" /><label for=""ctl01_0"">text2</label></td>
-											</tr>
-										</table>";
+			string OriginControlHtml = "<table id=\"ctl01\" border=\"0\">\r\n\t<tr>\r\n\t\t<td><input id=\"ctl01_0\" type=\"radio\" name=\"ctl01\" value=\"value1\" /><label for=\"ctl01_0\">text2</label></td>\r\n\t</tr>\r\n</table>";
 			HtmlDiff.AssertAreEqual (OriginControlHtml, RenderedControlHtml, "Render");
 		}
 

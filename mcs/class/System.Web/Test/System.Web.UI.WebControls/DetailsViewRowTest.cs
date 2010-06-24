@@ -171,12 +171,10 @@ namespace MonoTests.System.Web.UI.WebControls
 			PokerDetailsViewRow row = new PokerDetailsViewRow (2, DataControlRowType.Header, DataControlRowState.Selected);
 			row.ID = "TestingRow";
 			row.BackColor = Color.Red; 
-			string originalHtml = @"<tr id=""TestingRow"" style=""background-color:Red;""></tr>";
-			HtmlDiff.AssertAreEqual (row.Render (), originalHtml, "DetailsViewRowRender");
-
+			string originalHtml = "<tr id=\"TestingRow\" style=\"background-color:Red;\">\r\n\r\n</tr>";
+			string renderedHtml = row.Render ();
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "DetailsViewRowRender");
 		}
-
 	}
 }
-
 #endif

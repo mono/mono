@@ -505,16 +505,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (select));
 			string html = t.Run ();
-			string origin = @"<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" id=""Grid"" style=""border-collapse:collapse;"">
-							<tr>
-								<th scope=""col"">ID</th><th scope=""col"">FName</th><th scope=""col"">LName</th>
-							</tr><tr>
-								<td>1001</td><td>Mahesh</td><td>Chand</td>
-							</tr>
-						</table>
-					</div>";
-			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewSelect");
+			string origin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">ID</th><th scope=\"col\">FName</th><th scope=\"col\">LName</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1001</td><td>Mahesh</td><td>Chand</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origin, renderedHtml, "ObjectDataSourceViewSelect");
 		}
 
 		public static void select (Page p)
@@ -556,22 +549,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			// Note : ObjectDataSource will return page counter 5 hard coded
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (selectcount));
 			string html = t.Run ();
-			string origin = @"<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" id=""Grid"" style=""border-collapse:collapse;"">
-							<tr>
-								<th scope=""col"">ID</th><th scope=""col"">FName</th><th scope=""col"">LName</th>
-							</tr><tr>
-								<td>1001</td><td>Mahesh</td><td>Chand</td>
-							</tr><tr>
-								<td colspan=""3""><table border=""0"">
-									<tr>
-										<td><span>1</span></td><td><a href=""javascript:__doPostBack('Grid','Page$2')"">2</a></td><td><a href=""javascript:__doPostBack('Grid','Page$3')"">3</a></td><td><a href=""javascript:__doPostBack('Grid','Page$4')"">4</a></td><td><a href=""javascript:__doPostBack('Grid','Page$5')"">5</a></td>
-									</tr>
-								</table></td>
-							</tr>
-						</table>
-					</div>";
-			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewSelectCount");
+			string origin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">ID</th><th scope=\"col\">FName</th><th scope=\"col\">LName</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1001</td><td>Mahesh</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td colspan=\"3\"><table border=\"0\">\r\n\t\t\t\t<tr>\r\n\t\t\t\t\t<td><span>1</span></td><td><a href=\"javascript:__doPostBack('Grid','Page$2')\">2</a></td><td><a href=\"javascript:__doPostBack('Grid','Page$3')\">3</a></td><td><a href=\"javascript:__doPostBack('Grid','Page$4')\">4</a></td><td><a href=\"javascript:__doPostBack('Grid','Page$5')\">5</a></td>\r\n\t\t\t\t</tr>\r\n\t\t\t</table></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origin, renderedHtml, "ObjectDataSourceViewSelectCount");
 		}
 
 		public static void selectcount (Page p)
@@ -612,18 +592,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (insert));
 			string html = t.Run ();
-			string origin = @"<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" id=""Grid"" style=""border-collapse:collapse;"">
-							<tr>
-								<th scope=""col"">ID</th><th scope=""col"">FName</th><th scope=""col"">LName</th>
-							</tr><tr>
-								<td>1001</td><td>Mahesh</td><td>Chand</td>
-							</tr><tr>
-								<td>1000</td><td>Yonik</td><td>Laim</td>
-							</tr>
-						</table>
-					</div>";
-			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewInsert");
+			string origin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">ID</th><th scope=\"col\">FName</th><th scope=\"col\">LName</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1001</td><td>Mahesh</td><td>Chand</td>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1000</td><td>Yonik</td><td>Laim</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origin, renderedHtml, "ObjectDataSourceViewInsert");
 		}
 
 		public static void insert (Page p)
@@ -678,16 +649,9 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (update));
 			string html = t.Run ();
-			string origin = @"<div>
-						<table cellspacing=""0"" rules=""all"" border=""1"" id=""Grid"" style=""border-collapse:collapse;"">
-							<tr>
-								<th scope=""col"">ID</th><th scope=""col"">FName</th><th scope=""col"">LName</th>
-							</tr><tr>
-								<td>1001</td><td>Yonik</td><td>Laim</td>
-							</tr>
-						</table>
-					</div>";
-			HtmlDiff.AssertAreEqual (origin, HtmlDiff.GetControlFromPageHtml (html), "ObjectDataSourceViewUpdate");
+			string origin = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"Grid\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">ID</th><th scope=\"col\">FName</th><th scope=\"col\">LName</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td>1001</td><td>Yonik</td><td>Laim</td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
+			string renderedHtml = HtmlDiff.GetControlFromPageHtml (html);
+			HtmlDiff.AssertAreEqual (origin, renderedHtml, "ObjectDataSourceViewUpdate");
 		}
 
 		public static void update (Page p)

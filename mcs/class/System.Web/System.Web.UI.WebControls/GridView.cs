@@ -100,6 +100,7 @@ namespace System.Web.UI.WebControls
 		int pageIndex;
 		int selectedIndex = -1;
 		int editIndex = -1;
+		int pageCount = 0;
 		SortDirection sortDirection = SortDirection.Ascending;
 		string sortExpression;
 		
@@ -779,8 +780,8 @@ namespace System.Web.UI.WebControls
 		[BrowsableAttribute (false)]
 		[DesignerSerializationVisibilityAttribute (DesignerSerializationVisibility.Hidden)]
 		public virtual int PageCount {
-			get { return ViewState.GetInt ("PageCount", 0); }
-			private set { ViewState ["PageCount"] = value; }
+			get { return pageCount; }
+			private set { pageCount = value; }
 		}
 
 		[WebCategoryAttribute ("Paging")]
@@ -1954,6 +1955,7 @@ namespace System.Web.UI.WebControls
 				LoadDataKeyArrayState ((object []) state [7]);
 			if (state [8] != null)
 				((IStateManager) OldEditValues).LoadViewState (state [8]);
+			pageCount = (int)state [9];
 		}
 		
 		protected internal override object SaveControlState ()
@@ -1979,7 +1981,8 @@ namespace System.Web.UI.WebControls
 				sortDirection, 
 				DataKeyNames,
 				SaveDataKeyArrayState (),
-				(oldEditValues == null ? null : ((IStateManager)oldEditValues).SaveViewState ())
+				(oldEditValues == null ? null : ((IStateManager)oldEditValues).SaveViewState ()),
+				pageCount
 			};
 		}
 

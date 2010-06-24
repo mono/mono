@@ -150,8 +150,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			CircleHotSpot circle = new CircleHotSpot ();
 			circle.NavigateUrl = "NavigateURL";
 			imageMap.HotSpots.Add (circle);
-			string originalHtml = "<img src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"0,0,0\" href=\"NavigateURL\" target=\"Target\" title=\"\" alt=\"\" />\r\n</map>";
-			HtmlDiff.AssertAreEqual (imageMap.Render (), originalHtml, "RenderNavigateTextAssigned");
+			string originalHtml = "<img src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\" id=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"0,0,0\" href=\"NavigateURL\" target=\"Target\" title=\"\" alt=\"\" />\r\n</map>";
+			string renderedHtml = imageMap.Render ();
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "RenderNavigateTextAssigned");
 		}
 
 		[Test]
@@ -171,8 +172,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			circle.X = 30;
 			circle.Y = 40;
 			imageMap.HotSpots.Add (circle);
-			string originalHtml = "<img src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"30,40,10\" href=\"NavigateURL\" title=\"Circle\" alt=\"Circle\" accesskey=\"A\" tabindex=\"1\" />\r\n</map>";
-			HtmlDiff.AssertAreEqual (imageMap.Render (), originalHtml, "RenderNavigateCircleTextAssigned");
+			string originalHtml = "<img src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\" id=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"30,40,10\" href=\"NavigateURL\" title=\"Circle\" alt=\"Circle\" accesskey=\"A\" tabindex=\"1\" />\r\n</map>";
+			string renderedHtml = imageMap.Render ();
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "RenderNavigateCircleTextAssigned");
 		}
 
 		[Test]
@@ -202,8 +204,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			poly.TabIndex = 2;
 			poly.Coordinates = "10,20,30,40,50,60,100,200";
 			imageMap.HotSpots.Add (poly);
-			string originalHtml = "<img src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\">\r\n\t<area shape=\"rect\" coords=\"30,20,40,10\" href=\"NavigateUrlRect\" title=\"Rectangle\" alt=\"Rectangle\" accesskey=\"R\" tabindex=\"1\" /><area shape=\"poly\" coords=\"10,20,30,40,50,60,100,200\" href=\"NavigateUrlPoly\" title=\"Polygon\" alt=\"Polygon\" accesskey=\"P\" tabindex=\"2\" />\r\n</map>";
-			HtmlDiff.AssertAreEqual (imageMap.Render (), originalHtml, "RenderNavigateShapesTextAssigned");
+			string originalHtml = "<img src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\" id=\"ImageMap\">\r\n\t<area shape=\"rect\" coords=\"30,20,40,10\" href=\"NavigateUrlRect\" title=\"Rectangle\" alt=\"Rectangle\" accesskey=\"R\" tabindex=\"1\" /><area shape=\"poly\" coords=\"10,20,30,40,50,60,100,200\" href=\"NavigateUrlPoly\" title=\"Polygon\" alt=\"Polygon\" accesskey=\"P\" tabindex=\"2\" />\r\n</map>";
+			string renderedHtml = imageMap.Render ();
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "RenderNavigateShapesTextAssigned");
 		}
 
 		[Test]
@@ -216,8 +219,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			imageMap.HotSpotMode = HotSpotMode.Inactive;
 			imageMap.Target = "Target";
 			imageMap.HotSpots.Add (new CircleHotSpot ());
-			string originalHtml = "<img src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"0,0,0\" nohref=\"true\" title=\"\" alt=\"\" />\r\n</map>";
-			HtmlDiff.AssertAreEqual (imageMap.Render (), originalHtml, "RenderInaciveTextAssigned");
+			string originalHtml = "<img src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\" id=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"0,0,0\" nohref=\"true\" title=\"\" alt=\"\" />\r\n</map>";
+			string renderedHtml = imageMap.Render ();
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "RenderInaciveTextAssigned");
 		}
 
 		[Test]
@@ -232,8 +236,9 @@ namespace MonoTests.System.Web.UI.WebControls
 			CircleHotSpot circle = new CircleHotSpot ();
 			circle.NavigateUrl = "NavigateURL";
 			imageMap.HotSpots.Add (circle);
-			string originalHtml = "<img disabled=\"disabled\" src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"0,0,0\" href=\"NavigateURL\" target=\"Target\" title=\"\" alt=\"\" />\r\n</map>";
-			HtmlDiff.AssertAreEqual (imageMap.Render (), originalHtml, "RenderDisabledTextAssigne");
+			string originalHtml = "<img disabled=\"disabled\" src=\"\" usemap=\"#ImageMap\" style=\"border-width:0px;\" /><map name=\"ImageMap\" id=\"ImageMap\">\r\n\t<area shape=\"circle\" coords=\"0,0,0\" href=\"NavigateURL\" target=\"Target\" title=\"\" alt=\"\" />\r\n</map>";
+			string renderedHtml = imageMap.Render ();
+			HtmlDiff.AssertAreEqual (originalHtml, renderedHtml, "RenderDisabledTextAssigne");
 		}
 
 		[Test]
@@ -441,9 +446,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		{
 			WebTest t = new WebTest (PageInvoker.CreateOnLoad (myPageLoad));
 			#region orig
-			string strTarget = @"<img id=""imgmap"" src="""" usemap=""#ImageMapimgmap"" style=""border-width:0px;"" /><map name=""ImageMapimgmap"">
-	                                <area shape=""rect"" coords=""0,0,0,0"" href=""javascript:__doPostBack('imgmap','0')"" title="""" alt="""" /><area shape=""poly"" coords="""" href=""javascript:__doPostBack('imgmap','1')"" title="""" alt="""" /><area shape=""circle"" coords=""0,0,0"" href=""javascript:__doPostBack('imgmap','2')"" title="""" alt="""" />
-                                 </map>";
+			string strTarget = "<img id=\"imgmap\" src=\"\" usemap=\"#ImageMapimgmap\" style=\"border-width:0px;\" /><map name=\"ImageMapimgmap\" id=\"ImageMapimgmap\">\r\n\t<area shape=\"rect\" coords=\"0,0,0,0\" href=\"javascript:__doPostBack('imgmap','0')\" title=\"\" alt=\"\" /><area shape=\"poly\" coords=\"\" href=\"javascript:__doPostBack('imgmap','1')\" title=\"\" alt=\"\" /><area shape=\"circle\" coords=\"0,0,0\" href=\"javascript:__doPostBack('imgmap','2')\" title=\"\" alt=\"\" />\r\n</map>";
 			#endregion
 			string RenderedPageHtml = t.Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);
@@ -463,9 +466,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			fr.Controls["__EVENTARGUMENT"].Value = "0";
 			t.Request = fr;
 			#region orig
-			string strTarget = @"<img id=""imgmap"" src="""" usemap=""#ImageMapimgmap"" style=""border-width:0px;"" /><map name=""ImageMapimgmap"">
-	                                <area shape=""rect"" coords=""0,0,0,0"" href=""javascript:__doPostBack('imgmap','0')"" title="""" alt="""" /><area shape=""poly"" coords="""" href=""javascript:__doPostBack('imgmap','1')"" title="""" alt="""" /><area shape=""circle"" coords=""0,0,0"" href=""javascript:__doPostBack('imgmap','2')"" title="""" alt="""" />
-                                 </map>";
+			string strTarget = "<img id=\"imgmap\" src=\"\" usemap=\"#ImageMapimgmap\" style=\"border-width:0px;\" /><map name=\"ImageMapimgmap\" id=\"ImageMapimgmap\">\r\n\t<area shape=\"rect\" coords=\"0,0,0,0\" href=\"javascript:__doPostBack('imgmap','0')\" title=\"\" alt=\"\" /><area shape=\"poly\" coords=\"\" href=\"javascript:__doPostBack('imgmap','1')\" title=\"\" alt=\"\" /><area shape=\"circle\" coords=\"0,0,0\" href=\"javascript:__doPostBack('imgmap','2')\" title=\"\" alt=\"\" />\r\n</map>";
 			#endregion
 			string RenderedPageHtml = t.Run ();
 			string RenderedControlHtml = HtmlDiff.GetControlFromPageHtml (RenderedPageHtml);

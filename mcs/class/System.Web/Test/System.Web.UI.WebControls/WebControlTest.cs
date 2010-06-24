@@ -34,6 +34,7 @@ using System.Collections;
 using System.Drawing;
 using System.IO;
 using System.Globalization;
+using System.Threading;
 using System.Web;
 using System.Web.UI;
 using System.Web.UI.WebControls;
@@ -301,7 +302,24 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void Assignment () {
+		public void Assignment () 
+		{
+			CultureInfo currentCulture = Thread.CurrentThread.CurrentCulture;
+			CultureInfo currentUICulture = Thread.CurrentThread.CurrentUICulture;
+			try {
+				CultureInfo ciUS = CultureInfo.GetCultureInfo ("en-US");
+
+				Thread.CurrentThread.CurrentCulture = ciUS;
+				Thread.CurrentThread.CurrentUICulture = ciUS;
+				RunAssignmentTests ();
+			} finally {
+				Thread.CurrentThread.CurrentCulture = currentCulture;
+				Thread.CurrentThread.CurrentUICulture = currentUICulture;
+			}
+		}
+
+		void RunAssignmentTests ()
+		{
 			WebControlTestClass	w;
 
 			w = new WebControlTestClass(HtmlTextWriterTag.Small);
@@ -467,7 +485,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual ("<span id=\"naming_fooid\"></span>", child.Render (), "A1");
 		}
 
-                
+		
 		[Test]
 		public void ViewState() {
 			WebControlTestClass	w;
@@ -702,20 +720,21 @@ namespace MonoTests.System.Web.UI.WebControls
 			{
 				return my_control_adapter;
 			}
-            public void DoRender(HtmlTextWriter writer)
-            {
-                Render(writer);
-            }
-            public bool GetIsEnabled
-            {
-                get
-                {
-                    return IsEnabled;
-                }
-            }
+	    public void DoRender(HtmlTextWriter writer)
+	    {
+		Render(writer);
+	    }
+	    public bool GetIsEnabled
+	    {
+		get
+		{
+		    return IsEnabled;
+		}
+	    }
 		}
 		
 		[Test]
+		[Category ("NotDotNet")] // .NET doesn't use ResolveAdapter
 		public void RenderWithWebControlAdapter ()
 		{
 			MyWebControl c = new MyWebControl ();
@@ -726,6 +745,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
+		[Category ("NotDotNet")] // .NET doesn't use ResolveAdapter
 		public void RenderWithControlAdapter ()
 		{
 			MyWebControl c = new MyWebControl ();

@@ -218,11 +218,8 @@ namespace MonoTests.System.Web.UI.WebControls
 			markup = markup.Replace ("\n", "");
 
 #if NET_2_0
-			HtmlDiff.AssertAreEqual (
-				"<table border=\"0\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +
-				"</tr><tr><td><a>Edit</a></td><td><input name=\"sucker_tbl$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td>" +
-				"</tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td>" +
-				"</tr></table>", markup, "I2");
+			string origHtml = "<table border=\"0\" id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td></tr><tr><td><a>Edit</a></td><td><input name=\"sucker$ctl02$ctl00\" type=\"submit\" value=\"Bearbeiten\" /></td><td>1</td><td>2</td><td>3</td></tr><tr><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td><td>&nbsp;</td></tr></table>";
+			HtmlDiff.AssertAreEqual (origHtml, markup, "I2");
 #else
 			Assert.AreEqual (
 				"<table border=\"0\" id=\"sucker_tbl\"><tr><td>&nbsp;</td><td>&nbsp;</td><td>one</td><td>two</td><td>three</td>" +

@@ -128,19 +128,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug 595568 #0")]
 		public void CheckBoxField_Bug595568_0 ()
 		{
-			string originalHtml = @"<div> 
-	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
-			<tr> 
-				<th scope=""col"">&nbsp;</th> 
-			</tr><tr> 
-				<td><span title=""Dummy""><input id=""gridView_ctl02_ctl00"" type=""checkbox"" name=""gridView$ctl02$ctl00"" checked=""checked"" /></span></td> 
-			</tr><tr> 
-				<td><span title=""Dummy""><input id=""gridView_ctl03_ctl00"" type=""checkbox"" name=""gridView$ctl03$ctl00"" /></span></td> 
-			</tr><tr> 
-				<td><span title=""Dummy""><input id=""gridView_ctl04_ctl00"" type=""checkbox"" name=""gridView$ctl04$ctl00"" /></span></td> 
-			</tr> 
-		</table>
-	</div>";
+			string originalHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">&nbsp;</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span title=\"Dummy\"><input id=\"gridView_ctl02_ctl00\" type=\"checkbox\" name=\"gridView$ctl02$ctl00\" checked=\"checked\" /></span></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span title=\"Dummy\"><input id=\"gridView_ctl03_ctl00\" type=\"checkbox\" name=\"gridView$ctl03$ctl00\" /></span></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><span title=\"Dummy\"><input id=\"gridView_ctl04_ctl00\" type=\"checkbox\" name=\"gridView$ctl04$ctl00\" /></span></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 			WebTest t = new WebTest ("CheckBoxField_Bug595568_0.aspx");
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
@@ -151,25 +139,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug 595568 #1")]
 		public void CheckBoxField_Bug595568_1 ()
 		{
-			string originalHtml = @"<div> 
-	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
-			<tr> 
-				<th scope=""col"">&nbsp;</th> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select><span title=""Dummy""><input id=""gridView_ctl02_ctl01"" type=""checkbox"" name=""gridView$ctl02$ctl01"" checked=""checked"" /></span></td> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select><span title=""Dummy""><input id=""gridView_ctl03_ctl01"" type=""checkbox"" name=""gridView$ctl03$ctl01"" /></span></td> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select><span title=""Dummy""><input id=""gridView_ctl04_ctl01"" type=""checkbox"" name=""gridView$ctl04$ctl01"" /></span></td> 
-			</tr> 
-		</table> 
-	</div>";
+			string originalHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">&nbsp;</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl02$ctl00\">\r\n\r\n\t\t\t</select><span title=\"Dummy\"><input id=\"gridView_ctl02_ctl01\" type=\"checkbox\" name=\"gridView$ctl02$ctl01\" checked=\"checked\" /></span></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl03$ctl00\">\r\n\r\n\t\t\t</select><span title=\"Dummy\"><input id=\"gridView_ctl03_ctl01\" type=\"checkbox\" name=\"gridView$ctl03$ctl01\" /></span></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl04$ctl00\">\r\n\r\n\t\t\t</select><span title=\"Dummy\"><input id=\"gridView_ctl04_ctl01\" type=\"checkbox\" name=\"gridView$ctl04$ctl01\" /></span></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 			WebTest t = new WebTest ("CheckBoxField_Bug595568_1.aspx");
 			string pageHtml = t.Run ();
 			string renderedHtml = HtmlDiff.GetControlFromPageHtml (pageHtml);
@@ -180,19 +150,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug 595568 #2")]
 		public void CheckBoxField_Bug595568_2 ()
 		{
-			string originalHtml = @"<div> 
-	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
-			<tr> 
-				<th scope=""col"">&nbsp;</th> 
-			</tr><tr> 
-				<td><input id=""gridView_ctl02_ctl00"" type=""checkbox"" name=""gridView$ctl02$ctl00"" /><span title=""Dummy""><input id=""gridView_ctl02_ctl01"" type=""checkbox"" name=""gridView$ctl02$ctl01"" checked=""checked"" /></span><input id=""gridView_ctl02_ctl02"" type=""checkbox"" name=""gridView$ctl02$ctl02"" /></td> 
-			</tr><tr> 
-				<td><input id=""gridView_ctl03_ctl00"" type=""checkbox"" name=""gridView$ctl03$ctl00"" /><span title=""Dummy""><input id=""gridView_ctl03_ctl01"" type=""checkbox"" name=""gridView$ctl03$ctl01"" /></span><input id=""gridView_ctl03_ctl02"" type=""checkbox"" name=""gridView$ctl03$ctl02"" /></td> 
-			</tr><tr> 
-				<td><input id=""gridView_ctl04_ctl00"" type=""checkbox"" name=""gridView$ctl04$ctl00"" /><span title=""Dummy""><input id=""gridView_ctl04_ctl01"" type=""checkbox"" name=""gridView$ctl04$ctl01"" /></span><input id=""gridView_ctl04_ctl02"" type=""checkbox"" name=""gridView$ctl04$ctl02"" /></td> 
-			</tr> 
-		</table> 
-	</div>";
+			string originalHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">&nbsp;</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input id=\"gridView_ctl02_ctl00\" type=\"checkbox\" name=\"gridView$ctl02$ctl00\" /><span title=\"Dummy\"><input id=\"gridView_ctl02_ctl01\" type=\"checkbox\" name=\"gridView$ctl02$ctl01\" checked=\"checked\" /></span><input id=\"gridView_ctl02_ctl02\" type=\"checkbox\" name=\"gridView$ctl02$ctl02\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input id=\"gridView_ctl03_ctl00\" type=\"checkbox\" name=\"gridView$ctl03$ctl00\" /><span title=\"Dummy\"><input id=\"gridView_ctl03_ctl01\" type=\"checkbox\" name=\"gridView$ctl03$ctl01\" /></span><input id=\"gridView_ctl03_ctl02\" type=\"checkbox\" name=\"gridView$ctl03$ctl02\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input id=\"gridView_ctl04_ctl00\" type=\"checkbox\" name=\"gridView$ctl04$ctl00\" /><span title=\"Dummy\"><input id=\"gridView_ctl04_ctl01\" type=\"checkbox\" name=\"gridView$ctl04$ctl01\" /></span><input id=\"gridView_ctl04_ctl02\" type=\"checkbox\" name=\"gridView$ctl04$ctl02\" /></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 			
 			WebTest t = new WebTest ("CheckBoxField_Bug595568_2.aspx");
 			string pageHtml = t.Run ();
@@ -204,25 +162,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug 595568 #5")]
 		public void CheckBoxField_Bug595568_5 ()
 		{
-			string originalHtml = @"<div> 
-	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
-			<tr> 
-				<th scope=""col"">&nbsp;</th> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select></td> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select></td> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select></td> 
-			</tr> 
-		</table> 
-	</div>";
+			string originalHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">&nbsp;</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl02$ctl00\">\r\n\r\n\t\t\t</select></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl03$ctl00\">\r\n\r\n\t\t\t</select></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl04$ctl00\">\r\n\r\n\t\t\t</select></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 
 			WebTest t = new WebTest ("CheckBoxField_Bug595568_5.aspx");
 			string pageHtml = t.Run ();
@@ -234,25 +174,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug 595568 #6")]
 		public void CheckBoxField_Bug595568_6 ()
 		{	
-			string originalHtml = @"<div> 
-	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
-			<tr> 
-				<th scope=""col"">&nbsp;</th> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select><input id=""gridView_ctl02_ctl01"" type=""checkbox"" name=""gridView$ctl02$ctl01"" /></td> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select><input id=""gridView_ctl03_ctl01"" type=""checkbox"" name=""gridView$ctl03$ctl01"" /></td> 
-			</tr><tr> 
-				<td><select size=""4""> 
- 
-				</select><input id=""gridView_ctl04_ctl01"" type=""checkbox"" name=""gridView$ctl04$ctl01"" /></td> 
-			</tr> 
-		</table> 
-	</div>";
+			string originalHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">&nbsp;</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl02$ctl00\">\r\n\r\n\t\t\t</select><input id=\"gridView_ctl02_ctl01\" type=\"checkbox\" name=\"gridView$ctl02$ctl01\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl03$ctl00\">\r\n\r\n\t\t\t</select><input id=\"gridView_ctl03_ctl01\" type=\"checkbox\" name=\"gridView$ctl03$ctl01\" /></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><select size=\"4\" name=\"gridView$ctl04$ctl00\">\r\n\r\n\t\t\t</select><input id=\"gridView_ctl04_ctl01\" type=\"checkbox\" name=\"gridView$ctl04$ctl01\" /></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 
 			WebTest t = new WebTest ("CheckBoxField_Bug595568_6.aspx");
 			string pageHtml = t.Run ();
@@ -264,25 +186,7 @@ namespace MonoTests.System.Web.UI.WebControls
 		[Test (Description="Bug 595568 #7")]
 		public void CheckBoxField_Bug595568_7 ()
 		{
-			string originalHtml = @"<div> 
-	<table id=""gridView"" cellspacing=""0"" rules=""all"" border=""1"" style=""border-collapse:collapse;""> 
-			<tr> 
-				<th scope=""col"">&nbsp;</th> 
-			</tr><tr> 
-				<td><input id=""gridView_ctl02_ctl00"" type=""checkbox"" name=""gridView$ctl02$ctl00"" /><select size=""4""> 
- 
-				</select></td> 
-			</tr><tr> 
-				<td><input id=""gridView_ctl03_ctl00"" type=""checkbox"" name=""gridView$ctl03$ctl00"" /><select size=""4""> 
- 
-				</select></td> 
-			</tr><tr> 
-				<td><input id=""gridView_ctl04_ctl00"" type=""checkbox"" name=""gridView$ctl04$ctl00"" /><select size=""4""> 
- 
-				</select></td> 
-			</tr> 
-		</table> 
-	</div>";
+			string originalHtml = "<div>\r\n\t<table cellspacing=\"0\" rules=\"all\" border=\"1\" id=\"gridView\" style=\"border-collapse:collapse;\">\r\n\t\t<tr>\r\n\t\t\t<th scope=\"col\">&nbsp;</th>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input id=\"gridView_ctl02_ctl00\" type=\"checkbox\" name=\"gridView$ctl02$ctl00\" /><select size=\"4\" name=\"gridView$ctl02$ctl01\">\r\n\r\n\t\t\t</select></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input id=\"gridView_ctl03_ctl00\" type=\"checkbox\" name=\"gridView$ctl03$ctl00\" /><select size=\"4\" name=\"gridView$ctl03$ctl01\">\r\n\r\n\t\t\t</select></td>\r\n\t\t</tr><tr>\r\n\t\t\t<td><input id=\"gridView_ctl04_ctl00\" type=\"checkbox\" name=\"gridView$ctl04$ctl00\" /><select size=\"4\" name=\"gridView$ctl04$ctl01\">\r\n\r\n\t\t\t</select></td>\r\n\t\t</tr>\r\n\t</table>\r\n</div>";
 
 			WebTest t = new WebTest ("CheckBoxField_Bug595568_7.aspx");		
 			string pageHtml = t.Run ();

@@ -125,8 +125,8 @@ public partial class Page : TemplateControl, IHttpHandler
 	const string ScrollPositionYID = "__SCROLLPOSITIONY";
 	const string EnabledControlArrayID = "__enabledControlArray";
 	internal const string LastFocusID = "__LASTFOCUS";
-	internal const string CallbackArgumentID = "__CALLBACKARGUMENT";
-	internal const string CallbackSourceID = "__CALLBACKTARGET";
+	internal const string CallbackArgumentID = "__CALLBACKPARAM";
+	internal const string CallbackSourceID = "__CALLBACKID";
 	internal const string PreviousPageID = "__PREVIOUSPAGE";
 
 	int maxPageStateFieldLength = -1;

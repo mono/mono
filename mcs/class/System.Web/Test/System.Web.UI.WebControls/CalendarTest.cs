@@ -257,7 +257,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (today, c.SelectedDate, "SelectDateProperty #1");
 
 			c.SelectedDate = now;
-			Assert.AreEqual (today, c.SelectedDate, "SelectDateProperty #2");
+			Assert.AreEqual (now, c.SelectedDate, "SelectDateProperty #2");
 		}
 
 		[Test]

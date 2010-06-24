@@ -117,7 +117,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			TestTable t = new TestTable ();
 			t.Caption = "CaptionText";
 			string html = t.Render ();
-			string orig = "<table border=\"0\"><caption>CaptionText</caption></table>";
+			string orig = "<table border=\"0\">\n\t<caption>\n\t\tCaptionText\n\t</caption>\n</table>";
 			HtmlDiff.AssertAreEqual (orig, html, "Caption");
 		}
 
@@ -128,7 +128,7 @@ namespace MonoTests.System.Web.UI.WebControls {
 			t.Caption = "CaptionText";
 			t.CaptionAlign = TableCaptionAlign.Left; 
 			string html = t.Render ();
-			string orig = "<table border=\"0\"><caption align=\"Left\">CaptionText</caption></table>";
+			string orig = "<table border=\"0\">\n\t<caption align=\"Left\">\n\t\tCaptionText\n\t</caption>\n</table>";
 			HtmlDiff.AssertAreEqual (orig, html, "CaptionAlign");
 		}
 #endif

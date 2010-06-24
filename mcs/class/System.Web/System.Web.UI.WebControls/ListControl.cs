@@ -564,10 +564,14 @@ namespace System.Web.UI.WebControls {
 			IStateManager manager = items as IStateManager;
 			if (manager != null)
 				itemsState = manager.SaveViewState ();
-			
+
+			// .NET 2.0+ never returns null. It returns a Triplet with the Third member
+			// set to an instance of ArrayList. Since we don't have a use (at least atm)
+			// for this, we will just return a pair with both members null.
+#if !NET_2_0
 			if (baseState == null && itemsState == null)
 				return null;
-
+#endif
 			return new Pair (baseState, itemsState);
 		}
 
@@ -589,7 +593,6 @@ namespace System.Web.UI.WebControls {
 				manager.LoadViewState (itemsState);
 			}
 		}
-
 #if NET_2_0
 		[MonoTODO ("Not implemented")]
 		protected void SetPostDataSelection (int selectedIndex)

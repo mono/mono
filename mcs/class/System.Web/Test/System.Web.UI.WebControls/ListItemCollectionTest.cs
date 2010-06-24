@@ -282,7 +282,8 @@ namespace MonoTests.System.Web.UI.WebControls
 		}
 
 		[Test]
-		public void ViewState () {
+		public void ViewState () 
+		{
 			ListItemCollection	c;
 			ListItemCollection	c2;
 			ListItem		i;
@@ -290,9 +291,18 @@ namespace MonoTests.System.Web.UI.WebControls
 			object			state;
 
 			c = new ListItemCollection();
+			state = ((IStateManager) c).SaveViewState ();
+			Assert.IsNull (state, "#A1");
+
 			i = new ListItem("Item 1", "1");
 			i2 = new ListItem("Item 2", "2");
 
+			c.Add (i);
+			c.Add (i2);
+			state = ((IStateManager) c).SaveViewState ();
+			Assert.IsNull (state, "#A2");
+
+			c = new ListItemCollection ();
 			((IStateManager)c).TrackViewState();
 
 			c.Add(i);
@@ -300,6 +310,7 @@ namespace MonoTests.System.Web.UI.WebControls
 			Assert.AreEqual (2, c.Count, "V1");
 
 			state = ((IStateManager)c).SaveViewState();
+			Assert.IsNotNull (state, "#A3");
 
 			c2 = new ListItemCollection();
 			((IStateManager)c2).LoadViewState(state);
