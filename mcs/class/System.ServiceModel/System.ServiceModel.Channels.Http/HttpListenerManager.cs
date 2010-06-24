@@ -96,6 +96,8 @@ namespace System.ServiceModel.Channels.Http
 			var entry = entries.First (e => e.ChannelDispatcher == channel);
 			entries.Remove (entry);
 
+			entry.WaitHandle.Set (); // make sure to finish pending requests.
+
 			// stop the server if there is no more registered listener.
 			if (entries.Count > 0)
 				return;

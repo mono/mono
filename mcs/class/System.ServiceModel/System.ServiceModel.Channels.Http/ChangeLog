@@ -1,5 +1,10 @@
 2010-06-24  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* HttpListenerManager.cs : finish pending wait handle when closing
+	  a listener. Fixed the issue on closing host/listener/channels.
+
+2010-06-24  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* HttpStandaloneReplyChannel.cs : do not try to enter close loop
 	  between request context and this.
 
