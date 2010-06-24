@@ -159,8 +159,8 @@ namespace Mono.CSharp {
 	/// </summary>
 	/// <remarks>
 	///   The LocalTemporary class is used to hold temporary values of a given
-	///   type to "simulate" the expression semantics on property and indexer
-	///   access whose return values are void.
+	///   type to "simulate" the expression semantics. The local variable is
+	///   never captured.
 	///
 	///   The local temporary is used to alter the normal flow of code generation
 	///   basically it creates a local variable, and its emit instruction generates
