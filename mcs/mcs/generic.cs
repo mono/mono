@@ -1812,6 +1812,23 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// Generic type with unbound type arguments, used for typeof (G<,,>)
+	//
+	class GenericOpenTypeExpr : TypeExpr
+	{
+		public GenericOpenTypeExpr (TypeSpec type, /*UnboundTypeArguments args,*/ Location loc)
+		{
+			this.type = type.GetDefinition ();
+			this.loc = loc;
+		}
+
+		protected override TypeExpr DoResolveAsTypeStep (IMemberContext ec)
+		{
+			return this;
+		}
+	}
+
 	static class ConstraintChecker
 	{
 		/// <summary>

@@ -1,5 +1,12 @@
 2010-06-24  Marek Safar  <marek.safar@gmail.com>
 
+	A fix for bug #616809
+	* generic.cs, expression.cs, ecore.cs: Added a new type expression
+	for open generic type to pass unbound type arguments to typeof
+	expression.
+
+2010-06-24  Marek Safar  <marek.safar@gmail.com>
+
 	* statement.cs: Foreach collection implementation refactoring to
 	search for GetEnumerator more preciselly. Fixes #431453 and more
 	unreported bugs.

@@ -2356,9 +2356,13 @@ namespace Mono.CSharp {
 			FullNamedExpression fne = ec.LookupNamespaceOrType (Name, Arity, loc, /*ignore_cs0104=*/ false);
 
 			if (fne != null) {
-				if (HasTypeArguments && fne.Type != null && TypeManager.IsGenericType (fne.Type)) {
-					GenericTypeExpr ct = new GenericTypeExpr (fne.Type, targs, loc);
-					return ct.ResolveAsTypeStep (ec, false);
+				if (fne.Type != null && Arity > 0) {
+					if (HasTypeArguments) {
+						GenericTypeExpr ct = new GenericTypeExpr (fne.Type, targs, loc);
+						return ct.ResolveAsTypeStep (ec, false);
+					}
+
+					return new GenericOpenTypeExpr (fne.Type, loc);
 				}
 
 				//
@@ -2368,7 +2372,7 @@ namespace Mono.CSharp {
 					return fne;
 			}
 
-			if (!HasTypeArguments && Name == "dynamic" && RootContext.Version > LanguageVersion.V_3) {
+			if (Arity == 0 && Name == "dynamic" && RootContext.Version > LanguageVersion.V_3) {
 				if (!PredefinedAttributes.Get.Dynamic.IsDefined) {
 					ec.Compiler.Report.Error (1980, Location,
 						"Dynamic keyword requires `{0}' to be defined. Are you missing System.Core.dll assembly reference?",
