@@ -1,3 +1,8 @@
+2010-06-24  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm-cpp.cpp (mono_llvm_create_ee): Add support for using a standard set of
+	passes by calling createStandardFunctionPasses ().
+
 2010-06-23  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini.h (MONO_INS_HAS_NO_SIDE_EFFECT): Add OP_LDADDR.
