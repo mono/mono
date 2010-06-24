@@ -22,6 +22,7 @@ echo "# Postprocessed with patch-quiet.sh" > $src.tmp && cat $src >> $src.tmp &&
 sed -e 's/^\t\(if \)\?$(COMPILE)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(COMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 sed -e 's/^\t\(if \)\?$(LTCOMPILE)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(LTCOMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 sed -e 's/^\t\(if \)\?$(LTCXXCOMPILE)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(LTCXXCOMPILE)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
+sed -e 's/^\t\(if \)\?$(LIBTOOL)/\t$(if $(V),,@echo -e "CC\\t$@";) \1$(LIBTOOL)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
 # link
 # automake defines multiple symbols ending with LINK
 sed -e 's/^\t$(\(.*LINK\))/\t$(if $(V),,@echo -e "LD\\t$@";) $(\1)/g' < $src > $src.tmp && cp $src.tmp $src && rm -f $src.tmp
