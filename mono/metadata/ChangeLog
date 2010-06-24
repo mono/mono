@@ -1,18 +1,3 @@
-2010-06-23  Miguel de Icaza  <miguel@novell.com>
-
-	* Makefile.am: Add support for building a sgen-aware versions of
-	the libraries: libmonoruntimesgen.la libmonoruntimesgen-static.la,
-	they share all the components of the default, but use a differen
-	set of CFLAGS to enable SGEN instead.
-
-	Put the BOEHM defines in the CFLAGS definition. 
-
-	* domain-internals.h (MonoJitInfo): this structure used to have
-	different sizes depending on the GC that was configured (Boehm vs
-	SGen).   I have removed this difference for the sake of avoiding
-	the complexity of dealing with the mono/arch directory requiring
-	GC-specific changes to their Makefiles.
-
 2010-06-23  Mark Probst  <mark.probst@gmail.com>
 
 	* sgen-gc.c, sgen-los.c, sgen-marksweep.c: Fix warnings.
