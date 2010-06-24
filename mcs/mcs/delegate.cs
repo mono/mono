@@ -561,7 +561,7 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public bool AmbiguousCall (ResolveContext ec, MethodSpec ambiguous)
+		public bool AmbiguousCall (ResolveContext ec, MethodGroupExpr mg, MethodSpec ambiguous)
 		{
 			return false;
 		}

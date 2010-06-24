@@ -2926,7 +2926,7 @@ namespace Mono.CSharp {
 	{
 		public interface IErrorHandler
 		{
-			bool AmbiguousCall (ResolveContext ec, MethodSpec ambiguous);
+			bool AmbiguousCall (ResolveContext ec, MethodGroupExpr mg, MethodSpec ambiguous);
 			bool NoExactMatch (ResolveContext ec, MethodSpec method);
 		}
 
@@ -2966,6 +2966,8 @@ namespace Mono.CSharp {
 			queried_type = type;
 		}
 
+		#region Properties
+
 		public override TypeSpec DeclaringType {
 			get {
 				return queried_type;
@@ -2982,6 +2984,19 @@ namespace Mono.CSharp {
 			set {
 				delegate_type = value;
 			}
+		}
+
+		#endregion
+
+		//
+		// When best candidate is already know this factory can be used
+		// NOTE: InstanceExpression has to be set manually
+		//
+		public static MethodGroupExpr CreatePredefined (MethodSpec best, TypeSpec queriedType, Location loc)
+		{
+			return new MethodGroupExpr (best, queriedType, loc) {
+				best_candidate = best
+			};
 		}
 
 		public override string GetSignatureForError ()
@@ -3306,7 +3321,7 @@ namespace Mono.CSharp {
 
 		void Error_AmbiguousCall (ResolveContext ec, MethodSpec ambiguous)
 		{
-			if (CustomErrorHandler != null && CustomErrorHandler.AmbiguousCall (ec, ambiguous))
+			if (CustomErrorHandler != null && CustomErrorHandler.AmbiguousCall (ec, this, ambiguous))
 				return;
 
 			ec.Report.SymbolRelatedToPreviousError (best_candidate);
@@ -3709,6 +3724,10 @@ namespace Mono.CSharp {
 		public virtual MethodGroupExpr OverloadResolve (ResolveContext ec, ref Arguments Arguments,
 			bool may_fail, Location loc)
 		{
+			// TODO: causes some issues with linq
+			//if (best_candidate != null)
+			//	return this;
+
 			var candidates = new List<MethodSpec> (2);
 			List<MethodSpec> params_candidates = null;
 

@@ -4714,36 +4714,50 @@ namespace Mono.CSharp {
 	// FIXME: Why is it almost exact copy of Using ??
 	public class UsingTemporary : ExceptionStatement
 	{
-		TemporaryVariable local_copy;
-		public Statement Statement;
+		protected TemporaryVariable local_copy;
+		Statement statement;
 		Expression expr;
-		Statement dispose_call;
+		protected Statement dispose_call;
 
 		public UsingTemporary (Expression expr, Statement stmt, Location l)
 		{
 			this.expr = expr;
-			Statement = stmt;
+			statement = stmt;
 			loc = l;
 		}
 
-		public override bool Resolve (BlockContext ec)
+		#region Properties
+		public Expression Expression {
+			get {
+				return expr;
+			}
+		}
+
+		public Statement Statement {
+			get {
+				return statement;
+			}
+		}
+
+		#endregion
+
+		protected virtual bool DoResolve (BlockContext ec)
 		{
 			expr = expr.Resolve (ec);
 			if (expr == null)
 				return false;
 
-			var expr_type = expr.Type;
-
-			if (!expr_type.ImplementsInterface (TypeManager.idisposable_type) &&
+			if (!expr.Type.ImplementsInterface (TypeManager.idisposable_type) &&
 				Convert.ImplicitConversion (ec, expr, TypeManager.idisposable_type, loc) == null) {
-				if (expr_type != InternalType.Dynamic) {
+				if (expr.Type != InternalType.Dynamic) {
 					Using.Error_IsNotConvertibleToIDisposable (ec, expr);
 					return false;
 				}
 
 				expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.idisposable_type, loc);
-				expr_type = expr.Type;
 			}
+
+			var expr_type = expr.Type;
 
 			local_copy = new TemporaryVariable (expr_type, loc);
 			local_copy.Resolve (ec);
@@ -4753,11 +4767,10 @@ namespace Mono.CSharp {
 					TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
 			}
 
-			var dispose_mg = new MethodGroupExpr (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc) {
-				InstanceExpression = TypeManager.IsNullableType (expr_type) ?
+			var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc);
+			dispose_mg.InstanceExpression = TypeManager.IsNullableType (expr_type) ?
 				new Cast (new TypeExpression (TypeManager.idisposable_type, loc), local_copy, loc).Resolve (ec) :
-				local_copy
-			};
+				local_copy;
 
 			dispose_call = new StatementExpression (new Invocation (dispose_mg, null));
 
@@ -4765,11 +4778,16 @@ namespace Mono.CSharp {
 			if (!expr_type.IsStruct || TypeManager.IsNullableType (expr_type))
 				dispose_call = new If (new Binary (Binary.Operator.Inequality, local_copy, new NullLiteral (loc), loc), dispose_call, loc);
 
-			dispose_call.Resolve (ec);
+			return dispose_call.Resolve (ec);
+		}
+
+		public override bool Resolve (BlockContext ec)
+		{
+			bool ok = DoResolve (ec);
 
 			ec.StartFlowBranching (this);
 
-			bool ok = Statement.Resolve (ec);
+			ok &= statement.Resolve (ec);
 
 			ec.EndFlowBranching ();
 
@@ -4785,7 +4803,7 @@ namespace Mono.CSharp {
 
 		protected override void EmitTryBody (EmitContext ec)
 		{
-			Statement.Emit (ec);
+			statement.Emit (ec);
 		}
 
 		protected override void EmitFinallyBody (EmitContext ec)
@@ -4798,7 +4816,7 @@ namespace Mono.CSharp {
 			UsingTemporary target = (UsingTemporary) t;
 
 			target.expr = expr.Clone (clonectx);
-			target.Statement = Statement.Clone (clonectx);
+			target.statement = statement.Clone (clonectx);
 		}
 	}
 
@@ -5087,16 +5105,16 @@ namespace Mono.CSharp {
 			}
 		}
 
-		sealed class CollectionForeach : Statement
+		sealed class CollectionForeach : Statement, MethodGroupExpr.IErrorHandler
 		{
-			class CollectionForeachStatement : Statement
+			class Body : Statement
 			{
 				TypeSpec type;
 				Expression variable, current, conv;
 				Statement statement;
 				Assign assign;
 
-				public CollectionForeachStatement (TypeSpec type, Expression variable,
+				public Body (TypeSpec type, Expression variable,
 								   Expression current, Statement statement,
 								   Location loc)
 				{
@@ -5139,20 +5157,59 @@ namespace Mono.CSharp {
 				}
 			}
 
+			class Dispose : UsingTemporary
+			{
+				LocalTemporary dispose;
+
+				public Dispose (TemporaryVariable variable, LocalTemporary dispose, Expression expr, Statement statement, Location loc)
+					: base (expr, statement, loc)
+				{
+					base.local_copy = variable;
+					this.dispose = dispose;
+				}
+
+				protected override bool DoResolve (BlockContext ec)
+				{
+					if (TypeManager.void_dispose_void == null) {
+						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
+							TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
+					}
+
+					Expression dispose_var = (Expression) dispose ?? local_copy;
+
+					var dispose_mg = MethodGroupExpr.CreatePredefined (TypeManager.void_dispose_void, TypeManager.idisposable_type, loc);
+					dispose_mg.InstanceExpression = dispose_var;
+
+					dispose_call = new StatementExpression (new Invocation (dispose_mg, null));
+
+					if (!dispose_var.Type.IsStruct)
+						dispose_call = new If (new Binary (Binary.Operator.Inequality, dispose_var, new NullLiteral (loc), loc), dispose_call, loc);
+
+					return dispose_call.Resolve (ec);
+				}
+
+				protected override void EmitFinallyBody (EmitContext ec)
+				{
+					Label call_dispose = ec.DefineLabel ();
+					if (dispose != null) {
+						local_copy.Emit (ec, false);
+						ec.Emit (OpCodes.Isinst, dispose.Type);
+						dispose.Store (ec);
+					}
+
+					base.EmitFinallyBody (ec);
+
+					if (dispose != null) {
+						ec.MarkLabel (call_dispose);
+						dispose.Release (ec);
+					}
+				}
+			}
+
 			Expression variable, expr;
 			Statement statement;
-
-			TemporaryVariable enumerator;
-			Expression init;
-			Statement loop;
-			Statement wrapper;
-
-			MethodGroupExpr get_enumerator;
-			PropertyExpr get_current;
-			MethodSpec move_next;
 			Expression var_type;
-			TypeSpec enumerator_type;
-			bool enumerator_found;
+			ExpressionStatement init;
 
 			public CollectionForeach (Expression var_type, Expression var,
 						  Expression expr, Statement stmt, Location l)
@@ -5169,403 +5226,215 @@ namespace Mono.CSharp {
 				throw new NotImplementedException ();
 			}
 
-			bool GetEnumeratorFilter (ResolveContext ec, MethodSpec mi)
+			void Error_WrongEnumerator (ResolveContext rc, MethodSpec enumerator)
 			{
-				TypeSpec return_type = mi.ReturnType;
+				rc.Report.SymbolRelatedToPreviousError (enumerator);
+				rc.Report.Error (202, loc,
+					"foreach statement requires that the return type `{0}' of `{1}' must have a suitable public MoveNext method and public Current property",
+						enumerator.ReturnType.GetSignatureForError (), enumerator.GetSignatureForError ());
+			}
 
+			MethodGroupExpr ResolveGetEnumerator (ResolveContext rc)
+			{
 				//
-				// Ok, we can access it, now make sure that we can do something
-				// with this `GetEnumerator'
+				// Option 1: Try to match by name GetEnumerator first
 				//
+				var mexpr = Expression.MemberLookup (rc.Compiler, rc.CurrentType, null, expr.Type, "GetEnumerator", -1,
+					MemberKind.All, BindingRestriction.NoOverrides | BindingRestriction.AccessibleOnly, loc);
 
-				if (return_type == TypeManager.ienumerator_type ||
-					return_type.ImplementsInterface (TypeManager.ienumerator_type)) {
-					//
-					// If it is not an interface, lets try to find the methods ourselves.
-					// For example, if we have:
-					// public class Foo : IEnumerator { public bool MoveNext () {} public int Current { get {}}}
-					// We can avoid the iface call. This is a runtime perf boost.
-					// even bigger if we have a ValueType, because we avoid the cost
-					// of boxing.
-					//
-					// We have to make sure that both methods exist for us to take
-					// this path. If one of the methods does not exist, we will just
-					// use the interface. Sadly, this complex if statement is the only
-					// way I could do this without a goto
-					//
+				var mg = mexpr as MethodGroupExpr;
+				if (mg != null) {
+					mg.InstanceExpression = expr;
+					mg.CustomErrorHandler = this;
+					Arguments args = new Arguments (0);
+					mg = mg.OverloadResolve (rc, ref args, false, loc);
 
-					if (TypeManager.bool_movenext_void == null) {
-						TypeManager.bool_movenext_void = TypeManager.GetPredefinedMethod (
-							TypeManager.ienumerator_type, "MoveNext", loc, TypeSpec.EmptyTypes);
-					}
-
-					if (TypeManager.ienumerator_getcurrent == null) {
-						TypeManager.ienumerator_getcurrent = TypeManager.GetPredefinedProperty (
-							TypeManager.ienumerator_type, "Current", loc, TypeManager.object_type);
-					}
-
-					//
-					// Prefer a generic enumerator over a non-generic one.
-					//
-					if (return_type.IsInterface && TypeManager.IsGenericType (return_type)) {
-						enumerator_type = return_type;
-						if (!FetchGetCurrent (ec, return_type))
-							get_current = new PropertyExpr (TypeManager.ienumerator_getcurrent, loc);
-						if (!FetchMoveNext (return_type))
-							move_next = TypeManager.bool_movenext_void;
-						return true;
-					}
-
-					if (return_type.IsInterface ||
-					    !FetchMoveNext (return_type) ||
-					    !FetchGetCurrent (ec, return_type)) {
-						enumerator_type = return_type;
-						move_next = TypeManager.bool_movenext_void;
-						get_current = new PropertyExpr (TypeManager.ienumerator_getcurrent, loc);
-						return true;
-					}
-				} else {
-					//
-					// Ok, so they dont return an IEnumerable, we will have to
-					// find if they support the GetEnumerator pattern.
-					//
-
-					if (TypeManager.HasElementType (return_type) || !FetchMoveNext (return_type) || !FetchGetCurrent (ec, return_type)) {
-						ec.Report.Error (202, loc, "foreach statement requires that the return type `{0}' of `{1}' must have a suitable public MoveNext method and public Current property",
-							TypeManager.CSharpName (return_type), TypeManager.CSharpSignature (mi));
-						return false;
+					if (mg != null && args.Count == 0 && !mg.BestCandidate.IsStatic && mg.BestCandidate.IsPublic) {
+						return mg;
 					}
 				}
 
-				enumerator_type = return_type;
+				//
+				// Option 2: Try to match using IEnumerable interfaces with preference of generic version
+				//
+				TypeSpec iface_candidate = null;
+				for (TypeSpec t = expr.Type; t != null && t != TypeManager.object_type; t = t.BaseType) {
+					var ifaces = t.Interfaces;
+					if (ifaces != null) {
+						foreach (var iface in ifaces) {
+							if (TypeManager.generic_ienumerable_type != null && iface.MemberDefinition == TypeManager.generic_ienumerable_type.MemberDefinition) {
+								if (iface_candidate != null && iface_candidate != TypeManager.ienumerable_type) {
+									rc.Report.SymbolRelatedToPreviousError (expr.Type);
+									rc.Report.Error(1640, loc,
+										"foreach statement cannot operate on variables of type `{0}' because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
+										expr.Type.GetSignatureForError (), TypeManager.generic_ienumerable_type.GetSignatureForError ());
 
-				return true;
+									return null;
+								}
+
+								iface_candidate = iface;
+								continue;
+							}
+
+							if (iface == TypeManager.ienumerable_type && iface_candidate == null) {
+								iface_candidate = iface;
+							}
+						}
+					}
+				}
+
+				if (iface_candidate == null) {
+					rc.Report.Error (1579, loc,
+						"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `{1}' or is not accessible",
+						expr.Type.GetSignatureForError (), "GetEnumerator");
+
+					return null;
+				}
+
+				var method = TypeManager.GetPredefinedMethod (iface_candidate, 
+					MemberFilter.Method ("GetEnumerator", 0, ParametersCompiled.EmptyReadOnlyParameters, null), loc);
+
+				if (method == null)
+					return null;
+
+				mg = MethodGroupExpr.CreatePredefined (method, expr.Type, loc);
+				mg.InstanceExpression = expr;
+				return mg;
 			}
 
-			//
-			// Retrieves a `public bool MoveNext ()' method from the Type `t'
-			//
-			bool FetchMoveNext (TypeSpec t)
+			MethodGroupExpr ResolveMoveNext (ResolveContext rc, MethodSpec enumerator)
 			{
-				move_next = MemberCache.FindMember (t,
+				var ms = MemberCache.FindMember (enumerator.ReturnType,
 					MemberFilter.Method ("MoveNext", 0, ParametersCompiled.EmptyReadOnlyParameters, TypeManager.bool_type),
 					BindingRestriction.InstanceOnly) as MethodSpec;
 
-				return move_next != null && (move_next.Modifiers & Modifiers.PUBLIC) != 0;
-			}
-		
-			//
-			// Retrieves a `public T get_Current ()' method from the Type `t'
-			//
-			bool FetchGetCurrent (ResolveContext ec, TypeSpec t)
-			{
-				PropertyExpr pe = Expression.MemberLookup (ec.Compiler,
-					ec.CurrentType, t, "Current", 0, MemberKind.Property,
-					BindingRestriction.AccessibleOnly, loc) as PropertyExpr;
-				if (pe == null)
-					return false;
+				if (ms == null || !ms.IsPublic) {
+					Error_WrongEnumerator (rc, enumerator);
+					return null;
+				}
 
-				get_current = pe;
-				return true;
+				return MethodGroupExpr.CreatePredefined (ms, enumerator.ReturnType, loc);
 			}
 
-			void Error_Enumerator (BlockContext ec)
+			PropertySpec ResolveCurrent (ResolveContext rc, MethodSpec enumerator)
 			{
-				if (enumerator_found) {
-					return;
+				var ps = MemberCache.FindMember (enumerator.ReturnType,
+					MemberFilter.Property ("Current", null),
+					BindingRestriction.InstanceOnly) as PropertySpec;
+
+				if (ps == null || !ps.IsPublic) {
+					Error_WrongEnumerator (rc, enumerator);
+					return null;
 				}
 
-			    ec.Report.Error (1579, loc,
-					"foreach statement cannot operate on variables of type `{0}' because it does not contain a definition for `GetEnumerator' or is not accessible",
-					TypeManager.CSharpName (expr.Type));
-			}
-
-			bool TryType (ResolveContext ec, TypeSpec t)
-			{
-				var mg = Expression.MemberLookup (ec.Compiler, ec.CurrentType, null, t, "GetEnumerator", 0,
-					MemberKind.Method, BindingRestriction.NoOverrides | BindingRestriction.InstanceOnly, loc) as MethodGroupExpr;
-
-				if (mg == null)
-					return false;
-
-				MethodSpec result = null;
-				MethodSpec tmp_move_next = null;
-				PropertyExpr tmp_get_cur = null;
-				TypeSpec tmp_enumerator_type = enumerator_type;
-				foreach (MethodSpec mi in mg.Methods) {
-					if (!mi.Parameters.IsEmpty)
-						continue;
-			
-					// Check whether GetEnumerator is public
-					if ((mi.Modifiers & Modifiers.AccessibilityMask) != Modifiers.PUBLIC)
-						continue;
-
-					enumerator_found = true;
-
-					if (!GetEnumeratorFilter (ec, mi))
-						continue;
-
-					if (result != null) {
-						if (TypeManager.IsGenericType (result.ReturnType)) {
-							if (!TypeManager.IsGenericType (mi.ReturnType))
-								continue;
-
-							ec.Report.SymbolRelatedToPreviousError (t);
-							ec.Report.Error(1640, loc, "foreach statement cannot operate on variables of type `{0}' " +
-									 "because it contains multiple implementation of `{1}'. Try casting to a specific implementation",
-									 TypeManager.CSharpName (t), TypeManager.generic_ienumerable_type.GetSignatureForError ());
-							return false;
-						}
-
-						// Always prefer generics enumerators
-						if (!TypeManager.IsGenericType (mi.ReturnType)) {
-							if (mi.DeclaringType.ImplementsInterface (result.DeclaringType) ||
-								result.DeclaringType.ImplementsInterface (mi.DeclaringType))
-								continue;
-
-							ec.Report.SymbolRelatedToPreviousError (result);
-							ec.Report.SymbolRelatedToPreviousError (mi);
-							ec.Report.Warning (278, 2, loc, "`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
-									TypeManager.CSharpName (t), "enumerable", result.GetSignatureForError (), mi.GetSignatureForError ());
-							return false;
-						}
-					}
-					result = mi;
-					tmp_move_next = move_next;
-					tmp_get_cur = get_current;
-					tmp_enumerator_type = enumerator_type;
-					if (mi.DeclaringType == t)
-						break;
-				}
-
-				if (result != null) {
-					move_next = tmp_move_next;
-					get_current = tmp_get_cur;
-					enumerator_type = tmp_enumerator_type;
-					get_enumerator = new MethodGroupExpr (result, enumerator_type, loc);
-
-					if (t != expr.Type) {
-						expr = Convert.ExplicitConversion (
-							ec, expr, t, loc);
-						if (expr == null)
-							throw new InternalErrorException ();
-					}
-
-					get_enumerator.InstanceExpression = expr;
-//					get_enumerator.IsBase = t != expr.Type;
-
-					return true;
-				}
-
-				return false;
-			}
-
-			bool ProbeCollectionType (ResolveContext ec, TypeSpec t)
-			{
-				int errors = ec.Report.Errors;
-				for (TypeSpec tt = t; tt != null && tt != TypeManager.object_type;){
-					if (TryType (ec, tt))
-						return true;
-					tt = tt.BaseType;
-				}
-
-				if (ec.Report.Errors > errors)
-					return false;
-
-				//
-				// Now try to find the method in the interfaces
-				//
-				for (TypeSpec tt = t; tt != null && tt != TypeManager.object_type; ) {
-					if (tt.Interfaces != null) {
-						foreach (TypeSpec i in tt.Interfaces) {
-							if (TryType (ec, i))
-								return true;
-						}
-					}
-					tt = tt.BaseType;
-				}
-
-				return false;
+				return ps;
 			}
 
 			public override bool Resolve (BlockContext ec)
 			{
-				enumerator_type = TypeManager.ienumerator_type;
-
 				bool is_dynamic = expr.Type == InternalType.Dynamic;
 				if (is_dynamic)
 					expr = Convert.ImplicitConversionRequired (ec, expr, TypeManager.ienumerable_type, loc);
-				
-				if (!ProbeCollectionType (ec, expr.Type)) {
-					Error_Enumerator (ec);
+
+				var get_enumerator_mg = ResolveGetEnumerator (ec);
+				if (get_enumerator_mg == null) {
 					return false;
 				}
+
+				var get_enumerator = get_enumerator_mg.BestCandidate;
+				var enumerator = new TemporaryVariable (get_enumerator.ReturnType, loc);
+				enumerator.Resolve (ec);
+
+				// Prepare bool MoveNext ()
+				var move_next_mg = ResolveMoveNext (ec, get_enumerator);
+				if (move_next_mg == null) {
+					return false;
+				}
+
+				move_next_mg.InstanceExpression = enumerator;
+
+				// Prepare ~T~ Current { get; }
+				var current_prop = ResolveCurrent (ec, get_enumerator);
+				if (current_prop == null) {
+					return false;
+				}
+
+				var current_pe = new PropertyExpr (current_prop, loc) { InstanceExpression = enumerator }.Resolve (ec);
+				if (current_pe == null)
+					return false;
 
 				VarExpr ve = var_type as VarExpr;
 				if (ve != null) {
 					// Infer implicitly typed local variable from foreach enumerable type
-					var_type = new TypeExpression (
-						is_dynamic ? InternalType.Dynamic : get_current.Type,
-						var_type.Location);
+					var_type = new TypeExpression (current_pe.Type, var_type.Location);
 				}
 
 				var_type = var_type.ResolveAsTypeTerminal (ec, false);
 				if (var_type == null)
 					return false;
-								
-				enumerator = new TemporaryVariable (enumerator_type, loc);
-				enumerator.Resolve (ec);
 
-				init = new Invocation (get_enumerator, null);
-				init = init.Resolve (ec);
-				if (init == null)
-					return false;
+				var init = new Invocation (get_enumerator_mg, null);
+				init.Resolve (ec);
 
-				Expression move_next_expr;
-				{
-					var mi = new List<MemberSpec> (1) { move_next };
-					MethodGroupExpr mg = new MethodGroupExpr (mi, var_type.Type, loc);
-					mg.InstanceExpression = enumerator;
+				statement = new While (new BooleanExpression (new Invocation (move_next_mg, null)),
+					new Body (var_type.Type, variable, current_pe, statement, loc), loc);
 
-					move_next_expr = new Invocation (mg, null);
-				}
+				var enum_type = enumerator.Type;
 
-				get_current.InstanceExpression = enumerator;
-
-				Statement block = new CollectionForeachStatement (
-					var_type.Type, variable, get_current, statement, loc);
-
-				loop = new While (new BooleanExpression (move_next_expr), block, loc);
-
-
-				bool implements_idisposable = enumerator_type.ImplementsInterface (TypeManager.idisposable_type);
-				if (implements_idisposable || !enumerator_type.IsSealed) {
-					wrapper = new DisposableWrapper (this, implements_idisposable);
+				//
+				// Add Dispose method call when enumerator can be IDisposable
+				//
+				if (!enumerator.Type.ImplementsInterface (TypeManager.idisposable_type)) {
+					if (!enum_type.IsSealed && !TypeManager.IsValueType (enum_type)) {
+						//
+						// Runtime Dispose check
+						//
+						var tv = new LocalTemporary (TypeManager.idisposable_type);
+						statement = new Dispose (enumerator, tv, init, statement, loc);
+					} else {
+						//
+						// No Dispose call needed
+						//
+						this.init = new SimpleAssign (enumerator, init);
+						this.init.Resolve (ec);
+					}
 				} else {
-					wrapper = new NonDisposableWrapper (this);
+					//
+					// Static Dispose check
+					//
+					statement = new Dispose (enumerator, null, init, statement, loc);
 				}
 
-				return wrapper.Resolve (ec);
+				return statement.Resolve (ec);
 			}
 
 			protected override void DoEmit (EmitContext ec)
 			{
-				wrapper.Emit (ec);
+				if (init != null)
+					init.EmitStatement (ec);
+
+				statement.Emit (ec);
 			}
 
-			class NonDisposableWrapper : Statement {
-				CollectionForeach parent;
+			#region IErrorHandler Members
 
-				internal NonDisposableWrapper (CollectionForeach parent)
-				{
-					this.parent = parent;
-				}
-
-				protected override void CloneTo (CloneContext clonectx, Statement target)
-				{
-					throw new NotSupportedException ();
-				}
-
-				public override bool Resolve (BlockContext ec)
-				{
-					return parent.ResolveLoop (ec);
-				}
-
-				protected override void DoEmit (EmitContext ec)
-				{
-					parent.EmitLoopInit (ec);
-					parent.EmitLoopBody (ec);
-				}
-			}
-
-			sealed class DisposableWrapper : ExceptionStatement
+			bool MethodGroupExpr.IErrorHandler.AmbiguousCall (ResolveContext ec, MethodGroupExpr mg, MethodSpec ambiguous)
 			{
-				CollectionForeach parent;
-				bool implements_idisposable;
+				ec.Report.SymbolRelatedToPreviousError (mg.BestCandidate);
+				ec.Report.Warning (278, 2, loc,
+					"`{0}' contains ambiguous implementation of `{1}' pattern. Method `{2}' is ambiguous with method `{3}'",
+					mg.DeclaringType.GetSignatureForError (), "enumerable",
+					mg.BestCandidate.GetSignatureForError (), ambiguous.GetSignatureForError ());
 
-				internal DisposableWrapper (CollectionForeach parent, bool implements)
-				{
-					this.parent = parent;
-					this.implements_idisposable = implements;
-				}
-
-				protected override void CloneTo (CloneContext clonectx, Statement target)
-				{
-					throw new NotSupportedException ();
-				}
-
-				public override bool Resolve (BlockContext ec)
-				{
-					bool ok = true;
-
-					ec.StartFlowBranching (this);
-
-					if (!parent.ResolveLoop (ec))
-						ok = false;
-
-					ec.EndFlowBranching ();
-
-					ok &= base.Resolve (ec);
-
-					if (TypeManager.void_dispose_void == null) {
-						TypeManager.void_dispose_void = TypeManager.GetPredefinedMethod (
-							TypeManager.idisposable_type, "Dispose", loc, TypeSpec.EmptyTypes);
-					}
-					return ok;
-				}
-
-				protected override void EmitPreTryBody (EmitContext ec)
-				{
-					parent.EmitLoopInit (ec);
-				}
-
-				protected override void EmitTryBody (EmitContext ec)
-				{
-					parent.EmitLoopBody (ec);
-				}
-
-				protected override void EmitFinallyBody (EmitContext ec)
-				{
-					Expression instance = parent.enumerator;
-					if (!TypeManager.IsValueType (parent.enumerator_type)) {
-
-						parent.enumerator.Emit (ec);
-
-						Label call_dispose = ec.DefineLabel ();
-
-						if (!implements_idisposable) {
-							ec.Emit (OpCodes.Isinst, TypeManager.idisposable_type);
-							LocalTemporary temp = new LocalTemporary (TypeManager.idisposable_type);
-							temp.Store (ec);
-							temp.Emit (ec);
-							instance = temp;
-						}
-						
-						ec.Emit (OpCodes.Brtrue_S, call_dispose);
-
-						// using 'endfinally' to empty the evaluation stack
-						ec.Emit (OpCodes.Endfinally);
-						ec.MarkLabel (call_dispose);
-					}
-
-					Invocation.EmitCall (ec, false, instance, TypeManager.void_dispose_void, null, loc);
-				}
+				return true;
 			}
 
-			bool ResolveLoop (BlockContext ec)
+			bool MethodGroupExpr.IErrorHandler.NoExactMatch (ResolveContext ec, MethodSpec method)
 			{
-				return loop.Resolve (ec);
+				return false;
 			}
 
-			void EmitLoopInit (EmitContext ec)
-			{
-				enumerator.EmitAssign (ec, init);
-			}
-
-			void EmitLoopBody (EmitContext ec)
-			{
-				loop.Emit (ec);
-			}
+			#endregion
 		}
 
 		Expression type;

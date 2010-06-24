@@ -88,7 +88,7 @@ namespace Mono.CSharp.Linq
 				return rmg;
 			}
 
-			public bool AmbiguousCall (ResolveContext ec, MethodSpec ambiguous)
+			public bool AmbiguousCall (ResolveContext ec, MethodGroupExpr mg, MethodSpec ambiguous)
 			{
 				ec.Report.SymbolRelatedToPreviousError (mg.BestCandidate);
 				ec.Report.SymbolRelatedToPreviousError (ambiguous);

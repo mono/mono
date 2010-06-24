@@ -999,6 +999,10 @@ namespace Mono.CSharp {
 			get { return (modifiers & Modifiers.PRIVATE) != 0; }
 		}
 
+		public bool IsPublic {
+			get { return (modifiers & Modifiers.PUBLIC) != 0; }
+		}
+
 		public bool IsStatic {
 			get { 
 				return (modifiers & Modifiers.STATIC) != 0;
