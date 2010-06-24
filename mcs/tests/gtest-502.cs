@@ -1,4 +1,5 @@
 using System;
+using TestAlias = A.N<double>;
 
 class C<T>
 {
@@ -14,11 +15,23 @@ class C<T>
 	static Type simple = typeof (Simple);
 }
 
+class A
+{
+	public class N<T>
+	{
+	}
+}
+
 class M
 {
-	public static void Main ()
+	public static int Main ()
 	{
 		new C<int> ();
+		
+		if (typeof (TestAlias).ToString () != "A+N`1[System.Double]")
+			return 1;
+		
+		return 0;
 	}
 }
 

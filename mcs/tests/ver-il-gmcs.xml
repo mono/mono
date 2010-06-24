@@ -12650,11 +12650,23 @@
       </method>
     </type>
     <type name="M">
-      <method name="Void Main()">
-        <size>7</size>
-      </method>
       <method name="Void .ctor()">
         <size>7</size>
+      </method>
+    </type>
+    <type name="A">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="A+N`1[T]">
+      <method name="Void .ctor()">
+        <size>7</size>
+      </method>
+    </type>
+    <type name="M">
+      <method name="Int32 Main()">
+        <size>40</size>
       </method>
     </type>
   </test>
