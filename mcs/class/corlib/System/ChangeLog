@@ -1,3 +1,8 @@
+2010-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* Array.cs (SortImpl): Fix the 'fast path' which used 'as' to cast objects so
+	it never sorted the items array if it was not a object[]. Fixes #616416.
+
 2010-06-22  Jb Evain  <jbevain@novell.com>
 
 	* Guid.cs: properly throw if the parsed guid has more data after

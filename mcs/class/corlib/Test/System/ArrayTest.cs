@@ -2313,6 +2313,39 @@ public class ArrayTest
 		}
 	}
 
+	[Test] // #616416
+	public void SortNonGenericDoubleItems () {
+            double[] doubleValues = new double[11];
+
+			doubleValues[0] = 0.221788066253601;
+			doubleValues[1] = 0.497278285809481;
+			doubleValues[2] = 0.100565033883643;
+			doubleValues[3] = 0.0433309347749905;
+			doubleValues[4] = 0.00476726438463812;
+			doubleValues[5] = 0.1354609735456;
+			doubleValues[6] = 0.57690356588135;
+			doubleValues[7] = 0.466239434334826;
+			doubleValues[8] = 0.409741461978934;
+			doubleValues[9] = 0.0112412763949565;
+			doubleValues[10] = 0.668704347674307;
+
+            int[] indices = new int[11];
+            indices[0] = 0;
+            indices[1] = 1;
+            indices[2] = 2;
+            indices[3] = 3;
+            indices[4] = 4;
+            indices[5] = 5;
+            indices[6] = 6;
+            indices[7] = 7;
+            indices[8] = 8;
+            indices[9] = 9;
+            indices[10] = 10;
+
+			Array.Sort ((Array)doubleValues, (Array)indices);
+			Assert.AreEqual (4, indices [0]);
+	}
+
 	[Test]
 	public void TestInitializeEmpty()
 	{

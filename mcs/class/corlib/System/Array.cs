@@ -1331,7 +1331,7 @@ namespace System
 			int high = index + length - 1;
 			
 #if !BOOTSTRAP_BASIC			
-			if (comparer == null) {
+			if (comparer == null && items is object[]) {
 				if (keys is int[]) {
 					qsort (keys as int[], items as object[], low, high);
 					return;
