@@ -1,5 +1,7 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* debugger-agent.c (get_objref): Implement support for sgen.
+
 	* driver.c: Remove the unused gc_wrapper.h include.
 
 	* driver.c (mono_main): Delegate the --desktop mode optimizations to the GC
