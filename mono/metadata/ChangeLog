@@ -1,3 +1,8 @@
+2010-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* *-gc.c (mono_gc_get_description): New function returning a human readable
+	description of the current GC.
+
 2010-06-24  Miguel de Icaza  <miguel@novell.com>
 
 	* mono-hash.c: Moved here from mono/utils as this file is
