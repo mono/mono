@@ -1,3 +1,11 @@
+2010-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-gc.c (mini_gc_init_cfg): New function to initialize GC specific flags
+	in MonoCompile.
+
+	* method-to-ir.c mini.c: Remove usage of HAVE_SGEN_GC and use runtime checks
+	instead.
+
 2010-06-23  Miguel de Icaza  <miguel@novell.com>
 
 	* Makefile.am: Build the mono-sgen binary a Mono VM with the Sgen
