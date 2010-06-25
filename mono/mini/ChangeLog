@@ -1,5 +1,7 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c (mono_main): Use mono_gc_get_description () to print the GC name.
+
 	* mini-gc.c (mini_gc_init_cfg): New function to initialize GC specific flags
 	in MonoCompile.
 
