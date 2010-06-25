@@ -1,3 +1,7 @@
+2010-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am: Add an 'SGEN' make variable to allow tests to be run with SGEN.
+
 2010-06-15  Zoltan Varga  <vargaz@gmail.com>
 
 	* dtest.cs dtest-app.cs: Removed, moved to mcs/Mono.Debugger.Soft.
