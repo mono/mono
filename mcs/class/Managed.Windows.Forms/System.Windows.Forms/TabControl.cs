@@ -1320,7 +1320,7 @@ namespace System.Windows.Forms {
 			if (SizeMode == TabSizeMode.Fixed) {
 				width = item_size.Width;
 			} else {			
-				width = MeasureStringWidth (DeviceContext, page.Text, page.Font);
+				width = MeasureStringWidth (DeviceContext, page.Text, Font);
 				width += (Padding.X * 2) + 2;
 
 				if (ImageList != null && page.ImageIndex >= 0) {
