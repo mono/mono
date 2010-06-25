@@ -226,7 +226,7 @@ namespace Commons.Xml.Relaxng
 		private void expectEnd (string name)
 		{
 			if (NodeType != XmlNodeType.EndElement)
-				throw new RelaxngException (String.Format ("Expected EndElement but found {0}.", NodeType));
+				throw new RelaxngException (String.Format ("Expected EndElement '{1}' but found {0} '{2}'.", NodeType, name, LocalName));
 			expect (name);
 
 			Read ();
@@ -805,9 +805,8 @@ namespace Commons.Xml.Relaxng
 
 			if (!IsEmptyElement) {
 				Read ();
-				while (Name == "param") {
+				while (LocalName == "param")
 					data.ParamList.Add (ReadParam ());
-				}
 				if (LocalName == "except")
 					data.Except = ReadPatternExcept ();
 				expectEnd ("data");

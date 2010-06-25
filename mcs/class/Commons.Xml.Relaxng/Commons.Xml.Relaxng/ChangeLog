@@ -1,3 +1,7 @@
+2010-06-25  Atsushi Enomoto <atsushi@ximian.com>
+
+	* RelaxngReader.cs : don't use Name, use LocalName. Fixed bug #617264.
+
 2009-02-23  Atsushi Enomoto <atsushi@ximian.com>
 
 	* RelaxngValidatingReader.cs : implemented error recovery feature.
