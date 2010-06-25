@@ -1,3 +1,8 @@
+2010-06-25  Zoltan Varga  <vargaz@gmail.com>
+
+	* driver.c (mono_main): Delegate the --desktop mode optimizations to the GC
+	implementation.
+
 2010-06-25  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-trampolines.c (common_call_trampoline): An ugly hack to
