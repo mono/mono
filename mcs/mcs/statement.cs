@@ -632,6 +632,55 @@ namespace Mono.CSharp {
 		}
 	}
 
+	//
+	// Simple version of statement list not requiring a block
+	//
+	public class StatementList : Statement
+	{
+		List<Statement> statements;
+
+		public StatementList (Statement first, Statement second)
+		{
+			statements = new List<Statement> () { first, second };
+		}
+
+		#region Properties
+		public IList<Statement> Statements {
+			get {
+				return statements;
+			}
+		}
+		#endregion
+
+		public void Add (Statement statement)
+		{
+			statements.Add (statement);
+		}
+
+		public override bool Resolve (BlockContext ec)
+		{
+			foreach (var s in statements)
+				s.Resolve (ec);
+
+			return true;
+		}
+
+		protected override void DoEmit (EmitContext ec)
+		{
+			foreach (var s in statements)
+				s.Emit (ec);
+		}
+
+		protected override void CloneTo (CloneContext clonectx, Statement target)
+		{
+			StatementList t = (StatementList) target;
+
+			t.statements = new List<Statement> (statements.Count);
+			foreach (Statement s in statements)
+				t.statements.Add (s.Clone (clonectx));
+		}
+	}
+
 	// A 'return' or a 'yield break'
 	public abstract class ExitStatement : Statement
 	{
@@ -1456,13 +1505,7 @@ namespace Mono.CSharp {
 			statements = new List<Statement> (4);
 		}
 
-		public Block CreateSwitchBlock (Location start)
-		{
-			// FIXME: should this be implicit?
-			Block new_block = new ExplicitBlock (this, start, start);
-			new_block.switch_block = this;
-			return new_block;
-		}
+		#region Properties
 
 		public int ID {
 			get { return this_id; }
@@ -1474,6 +1517,16 @@ namespace Mono.CSharp {
 					variables = new Dictionary<string, LocalInfo> ();
 				return variables;
 			}
+		}
+
+		#endregion
+
+		public Block CreateSwitchBlock (Location start)
+		{
+			// FIXME: should this be implicit?
+			Block new_block = new ExplicitBlock (this, start, start);
+			new_block.switch_block = this;
+			return new_block;
 		}
 
 		void AddChild (Block b)
@@ -2146,8 +2199,7 @@ namespace Mono.CSharp {
 		protected override void DoEmit (EmitContext ec)
 		{
 			for (int ix = 0; ix < statements.Count; ix++){
-				Statement s = (Statement) statements [ix];
-				s.Emit (ec);
+				statements [ix].Emit (ec);
 			}
 		}
 

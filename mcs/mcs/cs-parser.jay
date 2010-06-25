@@ -5025,20 +5025,17 @@ for_iterator
 	;
 
 statement_expression_list
-	: statement_expression	
-	  {
-		Statement s = (Statement) $1;
-		Block b = new Block (current_block, s.loc, lexer.Location);   
-
-		b.AddStatement (s);
-		$$ = b;
-	  }
+	: statement_expression
 	| statement_expression_list COMMA statement_expression
 	  {
-		((Block) $1).AddStatement ((Statement) $3);
-		lbag.AddStatement ($3, GetLocation ($2));
-		
-		$$ = $1;
+	  	var sl = $1 as StatementList;
+	  	if (sl == null)
+	  		sl = new StatementList ((Statement) $1, (Statement) $3);
+	  	else
+	  		sl.Add ((Statement) $3);
+	  		
+		lbag.AddStatement (sl, GetLocation ($2));
+		$$ = sl;
 	  }
 	;
 

@@ -1,3 +1,8 @@
+2010-06-25  Marek Safar  <marek.safar@gmail.com>
+
+	* statement.cs, cs-parser.jay: Don't create expensive block for
+	simple statements.
+
 2010-06-24  Marek Safar  <marek.safar@gmail.com>
 
 	* statement.cs, report.cs: Rethrow internal error when reporting is
