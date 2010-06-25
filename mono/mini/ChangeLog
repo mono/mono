@@ -1,5 +1,7 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am: Add an 'SGEN' make variable to allow tests to be run with SGEN.
+
 	* mini-gc.c (mini_gc_init_cfg): Use mono_gc_is_moving () instead of HAVE_SGEN_GC.
 	It might be be better to define a MonoGCJitOptions structure later and have the
 	GC return that.
