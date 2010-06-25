@@ -1,5 +1,7 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* gc_wrapper.h: Avoid redefining pthread_ calls for SGEN, no longer needed.
+
 	* gc_wrapper.h: Define the mono_gc_ wrappers for Boehm too, runtime code should
 	call these instead of the pthread_ variants.
 
