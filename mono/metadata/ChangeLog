@@ -1,5 +1,8 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* null-gc.c boehm-gc.c: Define the mono_gc_ pthread wrapper functions for these
+	GCs too.
+
 	* *-gc.c (mono_gc_wbarrier_value_copy_bitmap): Implement this for all GCs.
 
 	* sgen-gc.c (mono_gc_is_moving): New function returning whenever this GC can move
