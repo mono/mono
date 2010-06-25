@@ -1,5 +1,7 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile: Don't build an sgen aware version, it is no longer needed.
+
 	* wait.c handles.c wthreads.c: Call the mono_gc_ wrapper functions of some pthread
 	apis. This breaks the compile time dependency between io-layer and the GC.
 

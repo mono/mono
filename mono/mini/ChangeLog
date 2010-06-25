@@ -1,5 +1,7 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am: Use libwapi.la for both sgen and non-sgen builds.
+
 	* debugger-agent.c (get_objref): Implement support for sgen.
 
 	* driver.c: Remove the unused gc_wrapper.h include.
