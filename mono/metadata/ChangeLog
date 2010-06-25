@@ -1,5 +1,8 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* sgen-gc.c (mono_gc_is_moving): New function returning whenever this GC can move
+	objects.
+
 	* *-gc.c (mono_gc_set_desktop_mode): New function setting up the GC to work in
 	desktop mode.
 
