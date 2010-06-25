@@ -1,5 +1,7 @@
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-darwin.c: Don't undefine pthread_ calls for SGEN, they are no longer defined.
+
 	* Makefile.am: Use libwapi.la for both sgen and non-sgen builds.
 
 	* debugger-agent.c (get_objref): Implement support for sgen.
