@@ -6,11 +6,6 @@
 	* *-gc.c (mono_gc_set_desktop_mode): New function setting up the GC to work in
 	desktop mode.
 
-2010-06-25  Mark Probst  <mark.probst@gmail.com>
-
-	* class.c (mono_class_inflate_generic_method_full_checked): Added
-	a comment regarding a hack in mini-trampolines.c.
-
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* *-gc.c (mono_gc_get_description): New function returning a human readable
