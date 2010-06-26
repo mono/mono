@@ -1,3 +1,7 @@
+2010-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* gc.c (mono_gc_init): Move the GC disabled check to *-gc.c.
+
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* null-gc.c boehm-gc.c: Define the mono_gc_ pthread wrapper functions for these
