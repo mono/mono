@@ -1,3 +1,8 @@
+2010-06-27  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-trampolines.c (common_call_trampoline): Make the last change work for LLVM
+	as well.
+
 2010-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* mini-llvm.c: Fix a few problems exposed by make check.
