@@ -1,3 +1,7 @@
+2010-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* mini-llvm.c: Fix a few problems exposed by make check.
+
 2010-06-25  Mark Probst  <mark.probst@gmail.com>
 
 	* mini-trampolines.c (common_call_trampoline): An ugly hack to
