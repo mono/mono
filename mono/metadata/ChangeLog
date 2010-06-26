@@ -1,5 +1,8 @@
 2010-06-26  Zoltan Varga  <vargaz@gmail.com>
 
+	* sgen-gc.c (mono_gc_wbarrier_value_copy_bitmap): Use SIZEOF_VOID_P instead of
+	sizeof(SIZEOF_VOID_P) which is 4.
+
 	* gc.c (mono_gc_init): Move the GC disabled check to *-gc.c.
 
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
