@@ -1,3 +1,9 @@
+2010-06-26  Mark Probst  <mark.probst@gmail.com>
+
+	* bug-616463.cs: New test.
+
+	* Makefile.am: Test added to generic tests.
+
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Add an 'SGEN' make variable to allow tests to be run with SGEN.

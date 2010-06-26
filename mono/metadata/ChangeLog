@@ -1,3 +1,8 @@
+2010-06-25  Mark Probst  <mark.probst@gmail.com>
+
+	* class.c (mono_class_inflate_generic_method_full_checked): Added
+	a comment regarding a hack in mini-trampolines.c.
+
 2010-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* sgen-gc.c (mono_gc_wbarrier_value_copy_bitmap): Use SIZEOF_VOID_P instead of

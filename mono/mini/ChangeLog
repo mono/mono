@@ -1,3 +1,9 @@
+2010-06-25  Mark Probst  <mark.probst@gmail.com>
+
+	* mini-trampolines.c (common_call_trampoline): An ugly hack to
+	work around a potentially very hard to fix problem with inflating
+	generic methods.
+
 2010-06-26  Zoltan Varga  <vargaz@gmail.com>
 
 	* method-to-ir.c (mono_emit_wb_aware_memcpy): Remove the workaround as the core
