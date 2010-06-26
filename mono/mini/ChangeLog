@@ -1,3 +1,8 @@
+2010-06-26  Zoltan Varga  <vargaz@gmail.com>
+
+	* method-to-ir.c (mono_emit_wb_aware_memcpy): Remove the workaround as the core
+	problem has been fixes.
+
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile.am: Add an 'SGEN' make variable to allow tests to be run with SGEN.
