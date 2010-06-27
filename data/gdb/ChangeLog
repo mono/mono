@@ -1,3 +1,7 @@
+2010-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* mono-gdb.py: Add pretty printers for more runtime data structures.
+
 2009-10-13  Zoltan Varga  <vargaz@gmail.com>
 
 	* mono-gdb.py: Add an 'xdb' command to flush the debugging info.

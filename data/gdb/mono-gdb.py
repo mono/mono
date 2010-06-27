@@ -158,14 +158,124 @@ class MonoClassPrinter:
     def __init__(self, val):
         self.val = val
 
-    def to_string(self):
+    def to_string_inner(self, add_quotes):
         if int(self.val.cast (gdb.lookup_type ("guint64"))) == 0:
             return "0x0"
         klass = self.val.dereference ()
         class_name = stringify_class_name (klass ["name_space"].string (), klass ["name"].string ())
-        return "\"%s\"" % (class_name)
+        if add_quotes:
+            return "\"%s\"" % (class_name)
+        else:
+            return class_name
         # This returns more info but requires calling into the inferior
         #return "\"%s\"" % (gdb.parse_and_eval ("mono_type_full_name (&((MonoClass*)%s)->byval_arg)" % (str (int ((self.val).cast (gdb.lookup_type ("guint64")))))))
+
+    def to_string(self):
+        try:
+            return self.to_string_inner (True)
+        except:
+            #print sys.exc_info ()[0]
+            #print sys.exc_info ()[1]
+            return str(self.val.cast (gdb.lookup_type ("gpointer")))
+
+class MonoGenericInstPrinter:
+    "Print a MonoGenericInst structure"
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        inst = self.val.dereference ()
+        inst_len = inst ["type_argc"]
+        inst_args = inst ["type_argv"]
+        inst_str = ""
+        for i in range(0, inst_len):
+            print inst_args
+            type_printer = MonoTypePrinter (inst_args [i])
+            if i > 0:
+                inst_str = inst_str + ", "
+            inst_str = inst_str + type_printer.to_string ()
+        return inst_str
+
+class MonoGenericClassPrinter:
+    "Print a MonoGenericClass structure"
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string_inner(self):
+        gclass = self.val.dereference ()
+        container_str = str(gclass ["container_class"])
+        class_inst = gclass ["context"]["class_inst"]
+        class_inst_str = ""
+        if int(class_inst.cast (gdb.lookup_type ("guint64"))) != 0:
+            class_inst_str  = str(class_inst)
+        method_inst = gclass ["context"]["method_inst"]
+        method_inst_str = ""
+        if int(method_inst.cast (gdb.lookup_type ("guint64"))) != 0:
+            method_inst_str  = str(method_inst)
+        return "%s, [%s], [%s]>" % (container_str, class_inst_str, method_inst_str)
+
+    def to_string(self):
+        try:
+            return self.to_string_inner ()
+        except:
+            #print sys.exc_info ()[0]
+            #print sys.exc_info ()[1]
+            return str(self.val.cast (gdb.lookup_type ("gpointer")))
+
+class MonoTypePrinter:
+    "Print a MonoType structure"
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string_inner(self, csharp):
+        try:
+            t = self.val.dereference ()
+
+            kind = str (t ["type"]).replace ("MONO_TYPE_", "").lower ()
+            info = ""
+
+            if kind == "class":
+                p = MonoClassPrinter(t ["data"]["klass"])
+                info = p.to_string ()
+            elif kind == "genericinst":
+                info = str(t ["data"]["generic_class"])
+
+            if info != "":
+                return "{%s, %s}" % (kind, info)
+            else:
+                return "{%s}" % (kind)
+        except:
+            #print sys.exc_info ()[0]
+            #print sys.exc_info ()[1]
+            return str(self.val.cast (gdb.lookup_type ("gpointer")))
+
+    def to_string(self):
+        return self.to_string_inner (False)
+
+class MonoMethodRgctxPrinter:
+    "Print a MonoMethodRgctx structure"
+
+    def __init__(self, val):
+        self.val = val
+
+    def to_string(self):
+        rgctx = self.val.dereference ()
+        klass = rgctx ["class_vtable"].dereference () ["klass"]
+        klass_printer = MonoClassPrinter (klass)
+        inst = rgctx ["method_inst"].dereference ()
+        inst_len = inst ["type_argc"]
+        inst_args = inst ["type_argv"]
+        inst_str = ""
+        for i in range(0, inst_len):
+            print inst_args
+            type_printer = MonoTypePrinter (inst_args [i])
+            if i > 0:
+                inst_str = inst_str + ", "
+            inst_str = inst_str + type_printer.to_string ()
+        return "MRGCTX[%s, [%s]]" % (klass_printer.to_string(), inst_str)
 
 def lookup_pretty_printer(val):
     t = str (val.type)
@@ -179,6 +289,14 @@ def lookup_pretty_printer(val):
         return MonoMethodPrinter (val)
     if t == "MonoClass *":
         return MonoClassPrinter (val)
+    if t == "MonoType *":
+        return MonoTypePrinter (val)
+    if t == "MonoGenericInst *":
+        return MonoGenericInstPrinter (val)
+    if t == "MonoGenericClass *":
+        return MonoGenericClassPrinter (val)
+    if t == "MonoMethodRuntimeGenericContext *":
+        return MonoMethodRgctxPrinter (val)
     return None
 
 def register_csharp_printers(obj):
