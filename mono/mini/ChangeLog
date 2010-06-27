@@ -1,5 +1,12 @@
 2010-06-27  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-trampolines.c (common_call_trampoline): Remove the code which created static
+	rgctx trampolines when called from LLVM, they won't work for dynamic rgctx arguments
+	if the callsite is patched.
+
+	* mini-llvm.c (process_call): Disable calls which need an rgctx arg if not using
+	the llvm branch.
+
 	* tramp-amd64.c (mono_arch_create_rgctx_lazy_fetch_trampoline): Fix the name of
 	the trampoline in the xdebug info.
 
