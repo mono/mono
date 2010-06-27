@@ -31,3 +31,5 @@ run-test-ondotnet-local:
 DISTFILES =
 
 dist-local:
+
+uninstall-local:

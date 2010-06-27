@@ -1,3 +1,7 @@
+2010-06-27  Michael Barker  <mike@middlesoft.co.uk>
+
+	* docs/specs/Makefile: Added uninstall-local 
+
 2010-06-23  Michael Barker  <mike@middlesoft.co.uk>
 
 	* Updated to version 1.8 of the RabbitMQ libraries
