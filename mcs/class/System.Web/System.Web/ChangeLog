@@ -1,3 +1,9 @@
+2010-06-27  Marek Habersack  <mhabersack@novell.com>
+
+	* HttpUtility.cs: if IHtmlString instance is passed to HtmlEncode
+	(object), use IHtmlString.ToHtmlString () to return the value
+	without encoding it.
+
 2010-06-02  Marek Habersack  <mhabersack@novell.com>
 
 	* DefaultHttpHandler.cs: implemented, so that static file requests

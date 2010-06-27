@@ -552,6 +552,10 @@ namespace System.Web {
 			if (value == null)
 				return null;
 
+			IHtmlString htmlString = value as IHtmlString;
+			if (htmlString != null)
+				return htmlString.ToHtmlString ();
+			
 			return HtmlEncode (value.ToString ());
 		}
 

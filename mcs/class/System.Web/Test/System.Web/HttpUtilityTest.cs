@@ -296,7 +296,15 @@ namespace MonoTests.System.Web {
 			for (int i = 0; i < encoding_pairs.Length; i += 2)
 				Assert.AreEqual (encoding_pairs [i + 1], HttpUtility.HtmlEncode (encoding_pairs [i]), "#B" + (i / 2).ToString ());
 		}
-
+#if NET_4_0
+		[Test]
+		public void HtmlEncode_IHtmlString ()
+		{
+			string origString = "<script>alert ('Hola');</script>";
+			var hs = new HtmlString (origString);
+			Assert.AreEqual (origString, HttpUtility.HtmlEncode (hs), "#A1");
+		}
+#endif
 		[Test]
 #if !TARGET_JVM
 		[Category ("NotWorking")]
