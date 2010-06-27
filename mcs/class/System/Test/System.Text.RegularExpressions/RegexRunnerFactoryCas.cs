@@ -1,5 +1,5 @@
 //
-// RegexRunnerFactoryCas.cs 
+// RegexRunnerFactoryCas.cs
 //	- CAS unit tests for System.Text.RegularExpressions.RegexRunnerFactory
 //
 // Author:
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,49 +37,49 @@ using System.Text.RegularExpressions;
 
 namespace MonoCasTests.System.Text.RegularExpressions {
 
-	class TestRegexRunnerFactory: RegexRunnerFactory {
+class TestRegexRunnerFactory: RegexRunnerFactory {
 
-		public TestRegexRunnerFactory ()
-		{
-		}
+    public TestRegexRunnerFactory ()
+    {
+    }
 
-		protected override RegexRunner CreateInstance ()
-		{
-			return null;
-		}
+    protected override RegexRunner CreateInstance ()
+    {
+        return null;
+    }
 
-		public RegexRunner Create ()
-		{
-			return CreateInstance ();
-		}
-	}
+    public RegexRunner Create ()
+    {
+        return CreateInstance ();
+    }
+}
 
-	[TestFixture]
-	[Category ("CAS")]
-	public class RegexRunnerFactoryCas {
+[TestFixture]
+[Category ("CAS")]
+public class RegexRunnerFactoryCas {
 
-		[SetUp]
-		public void SetUp ()
-		{
-			if (!SecurityManager.SecurityEnabled)
-				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
-		}
+    [SetUp]
+    public void SetUp ()
+    {
+        if (!SecurityManager.SecurityEnabled)
+            Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void Deny_Unrestricted ()
-		{
-			TestRegexRunnerFactory factory = new TestRegexRunnerFactory ();
-			Assert.IsNull (factory.Create (), "CreateInstance");
-		}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void Deny_Unrestricted ()
+    {
+        TestRegexRunnerFactory factory = new TestRegexRunnerFactory ();
+        Assert.IsNull (factory.Create (), "CreateInstance");
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void LinkDemand_Deny_Unrestricted ()
-		{
-			ConstructorInfo ci = typeof (TestRegexRunnerFactory).GetConstructor (new Type[0]);
-			Assert.IsNotNull (ci, "default .ctor");
-			Assert.IsNotNull (ci.Invoke (null), "invoke");
-		}
-	}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void LinkDemand_Deny_Unrestricted ()
+    {
+        ConstructorInfo ci = typeof (TestRegexRunnerFactory).GetConstructor (new Type[0]);
+        Assert.IsNotNull (ci, "default .ctor");
+        Assert.IsNotNull (ci.Invoke (null), "invoke");
+    }
+}
 }

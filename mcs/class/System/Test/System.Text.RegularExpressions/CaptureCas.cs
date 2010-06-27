@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,42 +36,42 @@ using System.Text.RegularExpressions;
 
 namespace MonoCasTests.System.Text.RegularExpressions {
 
-	[TestFixture]
-	[Category ("CAS")]
-	public class CaptureCas {
+[TestFixture]
+[Category ("CAS")]
+public class CaptureCas {
 
-		private Capture capture;
+    private Capture capture;
 
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			capture = (Capture) Match.Empty.Groups [0];
-		}
+    [TestFixtureSetUp]
+    public void FixtureSetUp ()
+    {
+        capture = (Capture) Match.Empty.Groups [0];
+    }
 
-		[SetUp]
-		public void SetUp ()
-		{
-			if (!SecurityManager.SecurityEnabled)
-				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
-		}
+    [SetUp]
+    public void SetUp ()
+    {
+        if (!SecurityManager.SecurityEnabled)
+            Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void Deny_Unrestricted ()
-		{
-			Assert.AreEqual (0, capture.Index, "Index");
-			Assert.AreEqual (0, capture.Length, "Length");
-			Assert.AreEqual (String.Empty, capture.Value, "Value");
-			Assert.AreEqual (String.Empty, capture.ToString (), "ToString");
-		}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void Deny_Unrestricted ()
+    {
+        Assert.AreEqual (0, capture.Index, "Index");
+        Assert.AreEqual (0, capture.Length, "Length");
+        Assert.AreEqual (String.Empty, capture.Value, "Value");
+        Assert.AreEqual (String.Empty, capture.ToString (), "ToString");
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void LinkDemand_Deny_Unrestricted ()
-		{
-			MethodInfo mi = typeof (Group).GetProperty ("Index").GetGetMethod ();
-			Assert.IsNotNull (mi, "Index");
-			Assert.AreEqual (0, (int)mi.Invoke (capture, null), "invoke");
-		}
-	}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void LinkDemand_Deny_Unrestricted ()
+    {
+        MethodInfo mi = typeof (Group).GetProperty ("Index").GetGetMethod ();
+        Assert.IsNotNull (mi, "Index");
+        Assert.AreEqual (0, (int)mi.Invoke (capture, null), "invoke");
+    }
+}
 }

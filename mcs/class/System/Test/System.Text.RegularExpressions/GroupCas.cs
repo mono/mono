@@ -13,10 +13,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -36,41 +36,41 @@ using System.Text.RegularExpressions;
 
 namespace MonoCasTests.System.Text.RegularExpressions {
 
-	[TestFixture]
-	[Category ("CAS")]
-	public class GroupCas {
+[TestFixture]
+[Category ("CAS")]
+public class GroupCas {
 
-		private Group group;
+    private Group group;
 
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			group = Match.Empty.Groups [0];
-		}
+    [TestFixtureSetUp]
+    public void FixtureSetUp ()
+    {
+        group = Match.Empty.Groups [0];
+    }
 
-		[SetUp]
-		public void SetUp ()
-		{
-			if (!SecurityManager.SecurityEnabled)
-				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
-		}
+    [SetUp]
+    public void SetUp ()
+    {
+        if (!SecurityManager.SecurityEnabled)
+            Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void Deny_Unrestricted ()
-		{
-			Group sg = Group.Synchronized (group);
-			Assert.IsNotNull (sg.Captures, "Captures");
-			Assert.IsFalse (sg.Success, "Success");
-		}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void Deny_Unrestricted ()
+    {
+        Group sg = Group.Synchronized (group);
+        Assert.IsNotNull (sg.Captures, "Captures");
+        Assert.IsFalse (sg.Success, "Success");
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void LinkDemand_Deny_Unrestricted ()
-		{
-			MethodInfo mi = typeof (Group).GetProperty ("Success").GetGetMethod ();
-			Assert.IsNotNull (mi, "Success");
-			Assert.IsFalse ((bool) mi.Invoke (group, null), "invoke");
-		}
-	}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void LinkDemand_Deny_Unrestricted ()
+    {
+        MethodInfo mi = typeof (Group).GetProperty ("Success").GetGetMethod ();
+        Assert.IsNotNull (mi, "Success");
+        Assert.IsFalse ((bool) mi.Invoke (group, null), "invoke");
+    }
+}
 }

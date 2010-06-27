@@ -1,5 +1,5 @@
 //
-// MatchCollectionCas.cs 
+// MatchCollectionCas.cs
 //	- CAS unit tests for System.Text.RegularExpressions.MatchCollection
 //
 // Author:
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,37 +37,37 @@ using System.Text.RegularExpressions;
 
 namespace MonoCasTests.System.Text.RegularExpressions {
 
-	[TestFixture]
-	[Category ("CAS")]
-	public class MatchCollectionCas {
+[TestFixture]
+[Category ("CAS")]
+public class MatchCollectionCas {
 
-		private MatchCollection coll;
+    private MatchCollection coll;
 
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-		}
+    [TestFixtureSetUp]
+    public void FixtureSetUp ()
+    {
+    }
 
-		[SetUp]
-		public void SetUp ()
-		{
-			if (!SecurityManager.SecurityEnabled)
-				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
-		}
+    [SetUp]
+    public void SetUp ()
+    {
+        if (!SecurityManager.SecurityEnabled)
+            Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void Deny_Unrestricted ()
-		{
-		}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void Deny_Unrestricted ()
+    {
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void LinkDemand_Deny_Unrestricted ()
-		{
-			MethodInfo mi = typeof (Match).GetProperty ("Empty").GetGetMethod ();
-			Assert.IsNotNull (mi, "Empty");
-			Assert.IsNotNull (mi.Invoke (null, null), "invoke");
-		}
-	}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void LinkDemand_Deny_Unrestricted ()
+    {
+        MethodInfo mi = typeof (Match).GetProperty ("Empty").GetGetMethod ();
+        Assert.IsNotNull (mi, "Empty");
+        Assert.IsNotNull (mi.Invoke (null, null), "invoke");
+    }
+}
 }

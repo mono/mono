@@ -1,5 +1,5 @@
 //
-// GroupCollectionCas.cs 
+// GroupCollectionCas.cs
 //	- CAS unit tests for System.Text.RegularExpressions.GroupCollection
 //
 // Author:
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-// 
+//
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-// 
+//
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -37,47 +37,47 @@ using System.Text.RegularExpressions;
 
 namespace MonoCasTests.System.Text.RegularExpressions {
 
-	[TestFixture]
-	[Category ("CAS")]
-	public class GroupCollectionCas {
+[TestFixture]
+[Category ("CAS")]
+public class GroupCollectionCas {
 
-		private GroupCollection coll;
+    private GroupCollection coll;
 
-		[TestFixtureSetUp]
-		public void FixtureSetUp ()
-		{
-			coll = Match.Empty.Groups;
-		}
+    [TestFixtureSetUp]
+    public void FixtureSetUp ()
+    {
+        coll = Match.Empty.Groups;
+    }
 
-		[SetUp]
-		public void SetUp ()
-		{
-			if (!SecurityManager.SecurityEnabled)
-				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
-		}
+    [SetUp]
+    public void SetUp ()
+    {
+        if (!SecurityManager.SecurityEnabled)
+            Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void Deny_Unrestricted ()
-		{
-			Assert.AreEqual (1, coll.Count, "Count");
-			Assert.IsTrue (coll.IsReadOnly, "IsReadOnly");
-			Assert.IsFalse (coll.IsSynchronized, "IsSynchronized");
-			Assert.IsNotNull (coll.SyncRoot, "SyncRoot");
-			Assert.IsNotNull (coll[0], "this[int]");
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void Deny_Unrestricted ()
+    {
+        Assert.AreEqual (1, coll.Count, "Count");
+        Assert.IsTrue (coll.IsReadOnly, "IsReadOnly");
+        Assert.IsFalse (coll.IsSynchronized, "IsSynchronized");
+        Assert.IsNotNull (coll.SyncRoot, "SyncRoot");
+        Assert.IsNotNull (coll[0], "this[int]");
 
-			Assert.IsNotNull (coll.GetEnumerator (), "GetEnumerator");
-			Group[] groups = new Group[1];
-			coll.CopyTo (groups, 0);
-		}
+        Assert.IsNotNull (coll.GetEnumerator (), "GetEnumerator");
+        Group[] groups = new Group[1];
+        coll.CopyTo (groups, 0);
+    }
 
-		[Test]
-		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-		public void LinkDemand_Deny_Unrestricted ()
-		{
-			MethodInfo mi = typeof (GroupCollection).GetProperty ("Count").GetGetMethod ();
-			Assert.IsNotNull (mi, "Count");
-			Assert.AreEqual (1, (int)mi.Invoke (coll, null), "invoke");
-		}
-	}
+    [Test]
+    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+    public void LinkDemand_Deny_Unrestricted ()
+    {
+        MethodInfo mi = typeof (GroupCollection).GetProperty ("Count").GetGetMethod ();
+        Assert.IsNotNull (mi, "Count");
+        Assert.AreEqual (1, (int)mi.Invoke (coll, null), "invoke");
+    }
+}
 }
