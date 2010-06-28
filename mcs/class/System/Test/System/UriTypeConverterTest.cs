@@ -194,6 +194,9 @@ namespace MonoTests.System {
 
 			o = converter.ConvertFrom (converter.ConvertTo (uri, typeof (InstanceDescriptor)));
 			Assert.AreEqual (url, (o as Uri).AbsoluteUri, "uri");
+
+			o = converter.ConvertFrom ("");
+			Assert.IsNotNull (o, "not null");
 		}
 
 		[Test]

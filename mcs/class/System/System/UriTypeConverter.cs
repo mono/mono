@@ -96,7 +96,11 @@ namespace System {
 
 			string s = (value as string);
 			if (s != null)
-				return s == "" ? null : new Uri (s, UriKind.RelativeOrAbsolute);
+#if NET_2_1
+				if (s == "")
+					return null;
+#endif
+				return new Uri (s, UriKind.RelativeOrAbsolute);
 #if !NET_2_1
 			InstanceDescriptor id = (value as InstanceDescriptor);
 			if (id != null) {
@@ -126,7 +130,9 @@ namespace System {
 				throw new NotSupportedException (Locale.GetText ("Cannot convert to destination type."));
 #endif
 			} else {
+#if NET_2_1
 				throw new NotSupportedException (Locale.GetText ("Cannot convert to destination type."));
+#endif
 			}
 
 			return base.ConvertTo (context, culture, value, destinationType);

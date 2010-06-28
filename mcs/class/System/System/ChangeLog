@@ -1,5 +1,10 @@
 2010-06-28  Alan McGovern  <amcgovern@novell.com>
 
+	* UriTypeConverter.cs: Fix some regressed tests and add a new test
+	for when ConvertFrom is called with String.Empty.
+
+2010-06-28  Alan McGovern  <amcgovern@novell.com>
+
 	* UriTypeConverter.cs: Converting String.Empty should return null
 	instead of a Uri instance. Null values and unconvertable values
 	need to throw NotSupportedExceptions for moonlight too.
