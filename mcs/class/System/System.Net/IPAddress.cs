@@ -282,10 +282,10 @@ namespace System.Net {
 #endif
 					}
 
+					if (val > 0xFF)
+						return null; // e.g. 256.0.0.1
 					if (i == (ips.Length - 1)) 
 						i = 3;
-					else if (val > 0xFF)
-						return null; // e.g. 256.0.0.1
 					for (int j = 0; val > 0; j++, val /= 0x100)
 						a |= (val & 0xFF) << ((i - j) << 3);
 				}
