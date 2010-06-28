@@ -1,3 +1,7 @@
+2010-06-29  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (bug-81691.exe): Fix the dependencies of this test.
+
 2010-06-26  Mark Probst  <mark.probst@gmail.com>
 
 	* bug-616463.cs: New test.
