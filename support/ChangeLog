@@ -1,3 +1,7 @@
+2010-06-28  Zoltan Varga  <vargaz@gmail.com>
+
+	* Makefile.am (patch-libtool): Fix this up after the dolt changes.
+
 2010-05-13  Geoff Norton  <gnorton@novell.com>
 
 	* fakepoll.h: Added for OSX
