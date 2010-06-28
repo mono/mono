@@ -17,8 +17,6 @@ namespace Mono.CSharp {
 
 	public class Const : FieldBase
 	{
-		Constant value;
-
 		public const Modifiers AllowedModifiers =
 			Modifiers.NEW |
 			Modifiers.PUBLIC |
@@ -26,14 +24,9 @@ namespace Mono.CSharp {
 			Modifiers.INTERNAL |
 			Modifiers.PRIVATE;
 
-		public Const (DeclSpace parent, FullNamedExpression type, string name,
-			      Expression expr, Modifiers mod_flags, Attributes attrs, Location loc)
-			: base (parent, type, mod_flags, AllowedModifiers,
-				new MemberName (name, loc), attrs)
+		public Const (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
+			: base (parent, type, mod_flags, AllowedModifiers, name, attrs)
 		{
-			if (expr != null)
-				initializer = new ConstInitializer (this, expr);
-
 			ModFlags |= Modifiers.STATIC;
 		}
 
@@ -45,14 +38,13 @@ namespace Mono.CSharp {
 			if (!base.Define ())
 				return false;
 
-			TypeSpec ttype = MemberType;
-			if (!ttype.IsConstantCompatible) {
-				Error_InvalidConstantType (ttype, Location, Report);
+			if (!member_type.IsConstantCompatible) {
+				Error_InvalidConstantType (member_type, Location, Report);
 			}
 
 			FieldAttributes field_attr = FieldAttributes.Static | ModifiersExtensions.FieldAttr (ModFlags);
 			// Decimals cannot be emitted into the constant blob.  So, convert to 'readonly'.
-			if (ttype == TypeManager.decimal_type) {
+			if (member_type == TypeManager.decimal_type) {
 				field_attr |= FieldAttributes.InitOnly;
 			} else {
 				field_attr |= FieldAttributes.Literal;
@@ -65,17 +57,26 @@ namespace Mono.CSharp {
 
 			if ((field_attr & FieldAttributes.InitOnly) != 0)
 				Parent.PartialContainer.RegisterFieldForInitialization (this,
-					new FieldInitializer (this, initializer, this));
+					new FieldInitializer (spec, initializer, this));
+
+			if (declarators != null) {
+				var t = new TypeExpression (MemberType, TypeExpression.Location);
+				int index = Parent.PartialContainer.Constants.IndexOf (this);
+				foreach (var d in declarators) {
+					var c = new Const (Parent, t, ModFlags & ~Modifiers.STATIC, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
+					c.initializer = d.Initializer;
+					((ConstInitializer) c.initializer).Name = d.Name.Value;
+					Parent.PartialContainer.Constants.Insert (++index, c);
+				}
+			}
 
 			return true;
 		}
 
-		public Constant DefineValue ()
+		public void DefineValue ()
 		{
-			if (value == null)
-				value = initializer.Resolve (new ResolveContext (this)) as Constant;
-
-			return value;
+			var rc = new ResolveContext (this);
+			((ConstSpec) spec).GetConstant (rc);
 		}
 
 		/// <summary>
@@ -83,10 +84,11 @@ namespace Mono.CSharp {
 		/// </summary>
 		public override void Emit ()
 		{
-			if (value.Type == TypeManager.decimal_type) {
-				FieldBuilder.SetCustomAttribute (CreateDecimalConstantAttribute (value));
-			} else{
-				FieldBuilder.SetConstant (value.GetTypedValue ());
+			var c = ((ConstSpec) spec).Value as Constant;
+			if (c.Type == TypeManager.decimal_type) {
+				FieldBuilder.SetCustomAttribute (CreateDecimalConstantAttribute (c));
+			} else {
+				FieldBuilder.SetConstant (c.GetTypedValue ());
 			}
 
 			base.Emit ();
@@ -133,29 +135,41 @@ namespace Mono.CSharp {
 			this.value = value;
 		}
 
+		//
+		// This expresion is guarantee to be a constant at emit phase only
+		//
 		public Expression Value {
 			get {
 				return value;
 			}
-			private set {
-				this.value = value;
-			}
+		}
+
+		//
+		// For compiled constants we have to resolve the value as there could be constant dependecies. This
+		// is needed for imported constants too to get the right context type
+		//
+		public Constant GetConstant (ResolveContext rc)
+		{
+			if (value.eclass != ExprClass.Value)
+				value = value.Resolve (rc);
+
+			return (Constant) value;
 		}
 	}
 
-	class ConstInitializer : ShimExpression
+	public class ConstInitializer : ShimExpression
 	{
 		bool in_transit;
-		protected readonly FieldBase field;
+		readonly FieldBase field;
 
-		public ConstInitializer (FieldBase field, Expression value)
+		public ConstInitializer (FieldBase field, Expression value, Location loc)
 			: base (value)
 		{
-			if (value != null)
-				this.loc = value.Location;
-
+			this.loc = loc;
 			this.field = field;
 		}
+
+		public string Name { get; set; }
 
 		protected override Expression DoResolve (ResolveContext unused)
 		{
@@ -180,9 +194,9 @@ namespace Mono.CSharp {
 		protected virtual Expression DoResolveInitializer (ResolveContext rc)
 		{
 			if (in_transit) {
-				field.Compiler.Report.Error (110, field.Location,
+				field.Compiler.Report.Error (110, expr.Location,
 					"The evaluation of the constant value for `{0}' involves a circular definition",
-					field.GetSignatureForError ());
+					GetSignatureForError ());
 
 				expr = null;
 			} else {
@@ -199,11 +213,11 @@ namespace Mono.CSharp {
 
 				if (c == null) {
 					if (TypeManager.IsReferenceType (field.MemberType))
-						Error_ConstantCanBeInitializedWithNullOnly (rc, field.MemberType, loc, field.GetSignatureForError ());
+						Error_ConstantCanBeInitializedWithNullOnly (rc, field.MemberType, expr.Location, GetSignatureForError ());
 					else if (!(expr is Constant))
-						Error_ExpressionMustBeConstant (rc, field.Location, field.GetSignatureForError ());
+						Error_ExpressionMustBeConstant (rc, expr.Location, GetSignatureForError ());
 					else
-						expr.Error_ValueCannotBeConverted (rc, loc, field.MemberType, false);
+						expr.Error_ValueCannotBeConverted (rc, expr.Location, field.MemberType, false);
 				}
 
 				expr = c;
@@ -217,6 +231,14 @@ namespace Mono.CSharp {
 			}
 
 			return expr;
+		}
+
+		public override string GetSignatureForError ()
+		{
+			if (Name == null)
+				return field.GetSignatureForError ();
+
+			return field.Parent.GetSignatureForError () + "." + Name;
 		}
 	}
 }

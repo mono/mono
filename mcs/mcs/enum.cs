@@ -35,12 +35,9 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public EnumMember (Enum parent, EnumMember prev_member, string name, Expression expr,
-				   Attributes attrs, Location loc)
-			: base (parent, new EnumTypeExpr (), name, null, Modifiers.PUBLIC,
-				attrs, loc)
+		public EnumMember (Enum parent, MemberName name, Attributes attrs)
+			: base (parent, new EnumTypeExpr (), Modifiers.PUBLIC, name, attrs)
 		{
-			initializer = new EnumInitializer (this, expr, prev_member);
 		}
 
 		static bool IsValidEnumType (TypeSpec t)
@@ -85,45 +82,55 @@ namespace Mono.CSharp {
 		}
 	}
 
-	class EnumInitializer : ConstInitializer
-	{
-		EnumMember prev;
-
-		public EnumInitializer (Const field, Expression init, EnumMember prev)
-			: base (field, init)
-		{
-			this.prev = prev;
-		}
-
-		protected override Expression DoResolveInitializer (ResolveContext rc)
-		{
-			if (expr != null)
-				return base.DoResolveInitializer (rc);
-
-			if (prev == null)
-				return field.ConvertInitializer (rc, null);
-
-			try {
-				var ec = prev.DefineValue () as EnumConstant;
-				expr = ec.Increment ().Resolve (rc);
-			} catch (OverflowException) {
-				rc.Report.Error (543, field.Location,
-					"The enumerator value `{0}' is outside the range of enumerator underlying type `{1}'",
-					field.GetSignatureForError (),
-					TypeManager.CSharpName (((Enum) field.Parent).UnderlyingType));
-
-				expr = field.ConvertInitializer (rc, null);
-			}		
-
-			return expr;
-		}
-	}
-
 	/// <summary>
 	///   Enumeration container
 	/// </summary>
 	public class Enum : TypeContainer
 	{
+		//
+		// Implicit enum member initializer, used when no constant value is provided
+		//
+		class ImplicitInitializer : Expression
+		{
+			readonly EnumMember prev;
+			readonly EnumMember current;
+
+			public ImplicitInitializer (EnumMember current, EnumMember prev)
+			{
+				this.current = current;
+				this.prev = prev;
+			}
+
+			public override Expression CreateExpressionTree (ResolveContext ec)
+			{
+				throw new NotSupportedException ("Missing Resolve call");
+			}
+
+			protected override Expression DoResolve (ResolveContext rc)
+			{
+				// We are the first member
+				if (prev == null) {
+					return New.Constantify (current.Parent.Definition).Resolve (rc);
+				}
+
+				var c = ((ConstSpec) prev.Spec).GetConstant (rc) as EnumConstant;
+				try {
+					return c.Increment ().Resolve (rc);
+				} catch (OverflowException) {
+					rc.Report.Error (543, current.Location,
+						"The enumerator value `{0}' is outside the range of enumerator underlying type `{1}'",
+						current.GetSignatureForError (), ((Enum) current.Parent).UnderlyingType.GetSignatureForError ());
+
+					return New.Constantify (current.Parent.Definition).Resolve (rc);
+				}
+			}
+
+			public override void Emit (EmitContext ec)
+			{
+				throw new NotSupportedException ("Missing Resolve call");
+			}
+		}
+
 		public static readonly string UnderlyingValueField = "value__";
 
 		const Modifiers AllowedModifiers =
@@ -204,7 +211,17 @@ namespace Mono.CSharp {
 
 		protected override bool DoDefineMembers ()
 		{
-			DefineContainerMembers (constants);
+			if (constants != null) {
+				for (int i = 0; i < constants.Count; ++i) {
+					EnumMember em = (EnumMember) constants [i];
+					if (em.Initializer == null) {
+						em.Initializer = new ImplicitInitializer (em, i == 0 ? null : (EnumMember) constants[i - 1]);
+					}
+
+					em.Define ();
+				}
+			}
+
 			return true;
 		}
 

@@ -446,11 +446,11 @@ namespace Mono.CSharp {
 		ExpressionStatement resolved;
 		IMemberContext rc;
 
-		public FieldInitializer (FieldBase field, Expression expression, IMemberContext rc)
-			: base (new FieldExpr (field, expression.Location), expression, expression.Location)
+		public FieldInitializer (FieldSpec spec, Expression expression, IMemberContext rc)
+			: base (new FieldExpr (spec, expression.Location), expression, expression.Location)
 		{
 			this.rc = rc;
-			if (!field.IsStatic)
+			if (!spec.IsStatic)
 				((FieldExpr)target).InstanceExpression = CompilerGeneratedThis.Instance;
 		}
 

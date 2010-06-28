@@ -19,15 +19,32 @@ using System.Runtime.InteropServices;
 
 namespace Mono.CSharp
 {
+	public class FieldDeclarator
+	{
+		public FieldDeclarator (SimpleMemberName name, Expression initializer)
+		{
+			this.Name = name;
+			this.Initializer = initializer;
+		}
+
+		#region Properties
+
+		public SimpleMemberName Name { get; private set; }
+		public Expression Initializer { get; private set; }
+
+		#endregion
+	}
+
 	//
 	// Abstract class for all fields
 	//
 	abstract public class FieldBase : MemberBase
 	{
-		public FieldBuilder FieldBuilder;
+		protected FieldBuilder FieldBuilder;
 		protected FieldSpec spec;
 		public Status status;
 		protected Expression initializer;
+		protected List<FieldDeclarator> declarators;
 
 		[Flags]
 		public enum Status : byte {
@@ -45,10 +62,46 @@ namespace Mono.CSharp
 				Report.Error (681, Location, "The modifier 'abstract' is not valid on fields. Try using a property instead");
 		}
 
+		#region Properties
+
 		public override AttributeTargets AttributeTargets {
 			get {
 				return AttributeTargets.Field;
 			}
+		}
+
+		public Expression Initializer {
+			get {
+				return initializer;
+			}
+			set {
+				this.initializer = value;
+			}
+		}
+
+		public FieldSpec Spec {
+			get {
+				return spec;
+			}
+		}
+
+		public override string[] ValidAttributeTargets  {
+			get {
+				return attribute_targets;
+			}
+		}
+
+		#endregion
+
+		public void AddDeclarator (FieldDeclarator declarator)
+		{
+			if (declarators == null)
+				declarators = new List<FieldDeclarator> (2);
+
+			declarators.Add (declarator);
+
+			// TODO: This will probably break
+			Parent.AddMember (this, declarator.Name.Value);
 		}
 
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
@@ -187,28 +240,6 @@ namespace Mono.CSharp
 				variable_name);
 		}
 
-		public Expression Initializer {
-			get {
-				return initializer;
-			}
-			set {
-				if (value != null) {
-					this.initializer = value;
-				}
-			}
-		}
-
-		public FieldSpec Spec {
-			get { return spec; }
-		}
-
-		public override string[] ValidAttributeTargets 
-		{
-			get {
-				return attribute_targets;
-			}
-		}
-
 		protected override bool VerifyClsCompliance ()
 		{
 			if (!base.VerifyClsCompliance ())
@@ -321,11 +352,9 @@ namespace Mono.CSharp
 			Modifiers.PRIVATE |
 			Modifiers.UNSAFE;
 
-		public FixedField (DeclSpace parent, FullNamedExpression type, Modifiers mod, string name,
-			Expression size_expr, Attributes attrs, Location loc):
-			base (parent, type, mod, AllowedModifiers, new MemberName (name, loc), attrs)
+		public FixedField (DeclSpace parent, FullNamedExpression type, Modifiers mod, MemberName name, Attributes attrs)
+			: base (parent, type, mod, AllowedModifiers, name, attrs)
 		{
-			initializer = new ConstInitializer (this, size_expr);
 		}
 
 		public override Constant ConvertInitializer (ResolveContext rc, Constant expr)
@@ -342,7 +371,16 @@ namespace Mono.CSharp
 				Report.Error (1663, Location,
 					"`{0}': Fixed size buffers type must be one of the following: bool, byte, short, int, long, char, sbyte, ushort, uint, ulong, float or double",
 					GetSignatureForError ());
-			}			
+			} else if (declarators != null) {
+				var t = new TypeExpression (MemberType, TypeExpression.Location);
+				int index = Parent.PartialContainer.Fields.IndexOf (this);
+				foreach (var d in declarators) {
+					var f = new FixedField (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
+					f.initializer = d.Initializer;
+					((ConstInitializer) f.initializer).Name = d.Name.Value;
+					Parent.PartialContainer.Fields.Insert (++index, f);
+				}
+			}
 			
 			// Create nested fixed buffer container
 			string name = String.Format ("<{0}>__FixedBuffer{1}", Name, GlobalCounter++);
@@ -555,15 +593,26 @@ namespace Mono.CSharp
 				if ((ModFlags & Modifiers.BACKING_FIELD) == 0) {
 					Parent.MemberCache.AddMember (spec);
 				}
-			}
-			catch (ArgumentException) {
+
+				if (initializer != null) {
+					((TypeContainer) Parent).RegisterFieldForInitialization (this,
+						new FieldInitializer (spec, initializer, this));
+				}
+			} catch (ArgumentException) {
 				Report.RuntimeMissingSupport (Location, "`void' or `void*' field type");
 				return false;
 			}
 
-			if (initializer != null) {
-				((TypeContainer) Parent).RegisterFieldForInitialization (this,
-					new FieldInitializer (this, initializer, this));
+			if (declarators != null) {
+				var t = new TypeExpression (MemberType, TypeExpression.Location);
+				int index = Parent.PartialContainer.Fields.IndexOf (this);
+				foreach (var d in declarators) {
+					var f = new Field (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
+					if (d.Initializer != null)
+						f.initializer = d.Initializer;
+
+					Parent.PartialContainer.Fields.Insert (++index, f);
+				}
 			}
 
 			return true;

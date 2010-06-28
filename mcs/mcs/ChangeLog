@@ -1,3 +1,10 @@
+2010-06-28  Marek Safar  <marek.safar@gmail.com>
+
+	* field.cs, property.cs, assign.cs, const.cs, expression.cs,
+	ecore.cs, class.cs, cs-parser.jay, enum.cs: Don't use intermediate
+	structure for simple type fields (saves memory and makes few things
+	simpler). Clean up some hacks mostly for events.
+
 2010-06-25  Marek Safar  <marek.safar@gmail.com>
 
 	* statement.cs, cs-parser.jay: Don't create expensive block for

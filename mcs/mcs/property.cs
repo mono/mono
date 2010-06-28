@@ -893,7 +893,7 @@ namespace Mono.CSharp
 						mb.SetImplementationFlags (mb.GetMethodImplementationFlags () | MethodImplAttributes.Synchronized);
 					}
 
-					var field_info = ((EventField) method).BackingField;
+					var field_info = ((EventField) method).backing_field;
 					FieldExpr f_expr = new FieldExpr (field_info, Location);
 					if ((method.ModFlags & Modifiers.STATIC) == 0)
 						f_expr.InstanceExpression = new CompilerGeneratedThis (field_info.Spec.MemberType, Location);
@@ -940,8 +940,9 @@ namespace Mono.CSharp
 		static readonly string[] attribute_targets = new string [] { "event", "field", "method" };
 		static readonly string[] attribute_targets_interface = new string[] { "event", "method" };
 
-		public Field BackingField;
-		public Expression Initializer;
+		Expression initializer;
+		Field backing_field;
+		List<FieldDeclarator> declarators;
 
 		public EventField (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, type, mod_flags, name, attrs)
@@ -950,10 +951,46 @@ namespace Mono.CSharp
 			Remove = new RemoveDelegateMethod (this);
 		}
 
+		#region Properties
+
+		bool HasBackingField {
+			get {
+				return !IsInterface && (ModFlags & Modifiers.ABSTRACT) == 0;
+			}
+		}
+
+		public Expression Initializer {
+			get {
+				return initializer;
+			}
+			set {
+				initializer = value;
+			}
+		}
+
+		public override string[] ValidAttributeTargets {
+			get {
+				return HasBackingField ? attribute_targets : attribute_targets_interface;
+			}
+		}
+
+		#endregion
+
+		public void AddDeclarator (FieldDeclarator declarator)
+		{
+			if (declarators == null)
+				declarators = new List<FieldDeclarator> (2);
+
+			declarators.Add (declarator);
+
+			// TODO: This will probably break
+			Parent.AddMember (this, declarator.Name.Value);
+		}
+
 		public override void ApplyAttributeBuilder (Attribute a, MethodSpec ctor, byte[] cdata, PredefinedAttributes pa)
 		{
 			if (a.Target == AttributeTargets.Field) {
-				BackingField.ApplyAttributeBuilder (a, ctor, cdata, pa);
+				backing_field.ApplyAttributeBuilder (a, ctor, cdata, pa);
 				return;
 			}
 
@@ -973,9 +1010,17 @@ namespace Mono.CSharp
 			if (!base.Define ())
 				return false;
 
-			if (Initializer != null && (ModFlags & Modifiers.ABSTRACT) != 0) {
-				Report.Error (74, Location, "`{0}': abstract event cannot have an initializer",
-					GetSignatureForError ());
+			if (declarators != null) {
+				var t = new TypeExpression (MemberType, TypeExpression.Location);
+				int index = Parent.PartialContainer.Events.IndexOf (this);
+				foreach (var d in declarators) {
+					var ef = new EventField (Parent, t, ModFlags, new MemberName (d.Name.Value, d.Name.Location), OptAttributes);
+
+					if (d.Initializer != null)
+						ef.initializer = d.Initializer;
+
+					Parent.PartialContainer.Events.Insert (++index, ef);
+				}
 			}
 
 			if (!HasBackingField) {
@@ -983,38 +1028,25 @@ namespace Mono.CSharp
 				return true;
 			}
 
-			// FIXME: We are unable to detect whether generic event is used because
-			// we are using FieldExpr instead of EventExpr for event access in that
-			// case.  When this issue will be fixed this hack can be removed.
-			if (TypeManager.IsGenericType (MemberType) || Parent.IsGeneric)
-				SetIsUsed ();
-
 			if (Add.IsInterfaceImplementation)
 				SetIsUsed ();
 
-			BackingField = new Field (Parent,
+			backing_field = new Field (Parent,
 				new TypeExpression (MemberType, Location),
 				Modifiers.BACKING_FIELD | Modifiers.COMPILER_GENERATED | Modifiers.PRIVATE | (ModFlags & (Modifiers.STATIC | Modifiers.UNSAFE)),
 				MemberName, null);
 
-			Parent.PartialContainer.AddField (BackingField);
-			BackingField.Initializer = Initializer;
-			BackingField.ModFlags &= ~Modifiers.COMPILER_GENERATED;
+			Parent.PartialContainer.AddField (backing_field);
+			backing_field.Initializer = Initializer;
+			backing_field.ModFlags &= ~Modifiers.COMPILER_GENERATED;
 
 			// Call define because we passed fields definition
-			return BackingField.Define ();
-		}
+			backing_field.Define ();
 
-		public bool HasBackingField {
-			get {
-				return !IsInterface && (ModFlags & Modifiers.ABSTRACT) == 0;
-			}
-		}
+			// Set backing field for event fields
+			spec.BackingField = backing_field.Spec;
 
-		public override string[] ValidAttributeTargets {
-			get {
-				return HasBackingField ? attribute_targets : attribute_targets_interface;
-			}
+			return true;
 		}
 	}
 
@@ -1137,6 +1169,7 @@ namespace Mono.CSharp
 
 		AEventAccessor add, remove;
 		EventBuilder EventBuilder;
+		protected EventSpec spec;
 
 		protected Event (DeclSpace parent, FullNamedExpression type, Modifiers mod_flags, MemberName name, Attributes attrs)
 			: base (parent, null, type, mod_flags,
@@ -1223,7 +1256,7 @@ namespace Mono.CSharp
 			EventBuilder.SetAddOnMethod (AddBuilder);
 			EventBuilder.SetRemoveOnMethod (RemoveBuilder);
 
-			var spec = new EventSpec (Parent.Definition, this, MemberType, ModFlags, Add.Spec, remove.Spec);
+			spec = new EventSpec (Parent.Definition, this, MemberType, ModFlags, Add.Spec, remove.Spec);
 
 			Parent.MemberCache.AddMember (this, Name, spec);
 			Parent.MemberCache.AddMember (this, AddBuilder.Name, Add.Spec);
@@ -1258,6 +1291,7 @@ namespace Mono.CSharp
 	public class EventSpec : MemberSpec, IInterfaceMemberSpec
 	{
 		MethodSpec add, remove;
+		FieldSpec backing_field;
 
 		public EventSpec (TypeSpec declaringType, IMemberDefinition definition, TypeSpec eventType, Modifiers modifiers, MethodSpec add, MethodSpec remove)
 			: base (MemberKind.Event, declaringType, definition, modifiers)
@@ -1284,6 +1318,15 @@ namespace Mono.CSharp
 			}
 			set {
 				remove = value;
+			}
+		}
+
+		public FieldSpec BackingField {
+			get {
+				return backing_field;
+			}
+			set {
+				backing_field = value;
 			}
 		}
 

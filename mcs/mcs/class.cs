@@ -286,6 +286,11 @@ namespace Mono.CSharp {
 			return AddToContainer (symbol, symbol.MemberName.Basename);
 		}
 
+		public bool AddMember (MemberCore symbol, string name)
+		{
+			return AddToContainer (symbol, name);
+		}
+
 		protected virtual bool AddMemberType (TypeContainer ds)
 		{
 			return AddToContainer (ds, ds.Basename);
@@ -1490,7 +1495,8 @@ namespace Mono.CSharp {
 		protected virtual void DefineContainerMembers (System.Collections.IList mcal) // IList<MemberCore>
 		{
 			if (mcal != null) {
-				foreach (MemberCore mc in mcal) {
+				for (int i = 0; i < mcal.Count; ++i) {
+					MemberCore mc = (MemberCore) mcal[i];
 					try {
 						mc.Define ();
 					} catch (Exception e) {
@@ -1822,6 +1828,8 @@ namespace Mono.CSharp {
 		//
 		// Performs the validation on a Method's modifiers (properties have
 		// the same properties).
+		//
+		// TODO: Why is it not done at parse stage ?
 		//
 		public bool MethodModifiersValid (MemberCore mc)
 		{

@@ -5646,7 +5646,8 @@ namespace Mono.CSharp {
 
 		protected override Expression DoResolve (ResolveContext rc)
 		{
-			throw new NotImplementedException ();
+			var current_field = rc.CurrentMemberDefinition as FieldBase;
+			return new ArrayCreation (new TypeExpression (current_field.MemberType, current_field.Location), this).Resolve (rc);
 		}
 
 		public override void Emit (EmitContext ec)

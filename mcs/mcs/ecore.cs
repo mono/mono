@@ -4218,11 +4218,10 @@ namespace Mono.CSharp {
 			if (!rc.IsObsolete) {
 				var oa = constant.GetAttributeObsolete ();
 				if (oa != null)
-					AttributeTester.Report_ObsoleteMessage (oa, TypeManager.GetFullNameSignature (constant), loc, rc.Report);
+					AttributeTester.Report_ObsoleteMessage (oa, constant.GetSignatureForError (), loc, rc.Report);
 			}
 
-			// Constants are resolved on-demand
-			var c = constant.Value.Resolve (rc) as Constant;
+			var c = constant.GetConstant (rc);
 
 			// Creates reference expression to the constant value
 			return Constant.CreateConstant (rc, constant.MemberType, c.GetValue (), loc);
@@ -4235,7 +4234,7 @@ namespace Mono.CSharp {
 
 		public override string GetSignatureForError ()
 		{
-			return TypeManager.GetFullNameSignature (constant);
+			return constant.GetSignatureForError ();
 		}
 	}
 
@@ -5151,17 +5150,21 @@ namespace Mono.CSharp {
 			    TypeManager.IsNestedChildOf(ec.CurrentType, spec.DeclaringType)) {
 					
 				// TODO: Breaks dynamic binder as currect context fields are imported and not compiled
-				EventField mi = spec.MemberDefinition as EventField;
+				// EventField mi = spec.MemberDefinition as EventField;
 
-				if (mi != null && mi.HasBackingField) {
-					mi.SetIsUsed ();
-					if (!ec.IsObsolete)
-						mi.CheckObsoleteness (loc);
+				if (spec.BackingField != null) {
+					spec.MemberDefinition.SetIsUsed ();
 
-					if ((mi.ModFlags & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))
+					if (!ec.IsObsolete) {
+						ObsoleteAttribute oa = spec.GetAttributeObsolete ();
+						if (oa != null)
+							AttributeTester.Report_ObsoleteMessage (oa, spec.GetSignatureForError (), loc, ec.Report);
+					}
+
+					if ((spec.Modifiers & (Modifiers.ABSTRACT | Modifiers.EXTERN)) != 0 && !ec.HasSet (ResolveContext.Options.CompoundAssignmentScope))
 						Error_AssignmentEventOnly (ec);
 					
-					FieldExpr ml = new FieldExpr (mi.BackingField, loc);
+					FieldExpr ml = new FieldExpr (spec.BackingField, loc);
 
 					InstanceExpression = null;
 				
