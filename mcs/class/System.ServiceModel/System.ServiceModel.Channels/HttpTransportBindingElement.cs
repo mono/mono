@@ -30,7 +30,7 @@ using System.Collections.Generic;
 using System.Net;
 using System.Net.Security;
 using System.ServiceModel.Channels;
-#if !MOONLIGHT
+#if !NET_2_1
 using System.ServiceModel.Channels.Http;
 #endif
 using System.ServiceModel.Description;
