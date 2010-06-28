@@ -1,5 +1,5 @@
 //
-// RegexCompilationInfoCas.cs - CAS unit tests for
+// RegexCompilationInfoCas.cs - CAS unit tests for 
 //	System.Text.RegularExpressions.RegexCompilationInfo
 //
 // Author:
@@ -14,10 +14,10 @@
 // distribute, sublicense, and/or sell copies of the Software, and to
 // permit persons to whom the Software is furnished to do so, subject to
 // the following conditions:
-//
+// 
 // The above copyright notice and this permission notice shall be
 // included in all copies or substantial portions of the Software.
-//
+// 
 // THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND,
 // EXPRESS OR IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF
 // MERCHANTABILITY, FITNESS FOR A PARTICULAR PURPOSE AND
@@ -39,40 +39,38 @@ using MonoTests.System.Text.RegularExpressions;
 
 namespace MonoCasTests.System.Text.RegularExpressions {
 
-[TestFixture]
-[Category ("CAS")]
-public class RegexCompilationInfoCas {
+	[TestFixture]
+	[Category ("CAS")]
+	public class RegexCompilationInfoCas {
 
-    [SetUp]
-    public void SetUp ()
-    {
-        if (!SecurityManager.SecurityEnabled)
-            Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
-    }
+		[SetUp]
+		public void SetUp ()
+		{
+			if (!SecurityManager.SecurityEnabled)
+				Assert.Ignore ("SecurityManager.SecurityEnabled is OFF");
+		}
 
-    [Test]
-    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-    public void ReuseUnitTest_Deny_Unrestricted ()
-    {
-        RegexCompilationInfoTest unit = new RegexCompilationInfoTest ();
-        unit.Constructor ();
-        unit.Constructor_InvalidRegexOptions ();
-        unit.Options_Invalid ();
-    }
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void ReuseUnitTest_Deny_Unrestricted ()
+		{
+			RegexCompilationInfoTest unit = new RegexCompilationInfoTest ();
+			unit.Constructor ();
+			unit.Constructor_InvalidRegexOptions ();
+			unit.Options_Invalid ();
+		}
 
-    [Test]
-    [PermissionSet (SecurityAction.Deny, Unrestricted = true)]
-    public void LinkDemand_Deny_Unrestricted ()
-    {
-        Type[] types = new Type[5] { typeof (string), typeof (RegexOptions),
-                                     typeof (string), typeof (string), typeof (bool)
-                                   };
-        ConstructorInfo ci = typeof (RegexCompilationInfo).GetConstructor (types);
-        Assert.IsNotNull (ci, ".ctor");
-        object[] parameters = new object[5] { String.Empty, RegexOptions.None,
-                                              "name", String.Empty, false
-                                            };
-        Assert.IsNotNull (ci.Invoke (parameters), "invoke");
-    }
-}
+		[Test]
+		[PermissionSet (SecurityAction.Deny, Unrestricted = true)]
+		public void LinkDemand_Deny_Unrestricted ()
+		{
+			Type[] types = new Type[5] { typeof (string), typeof (RegexOptions), 
+				typeof (string), typeof (string), typeof (bool) };
+			ConstructorInfo ci = typeof (RegexCompilationInfo).GetConstructor (types);
+			Assert.IsNotNull (ci, ".ctor");
+			object[] parameters = new object[5] { String.Empty, RegexOptions.None, 
+				"name", String.Empty, false };
+			Assert.IsNotNull (ci.Invoke (parameters), "invoke");
+		}
+	}
 }
