@@ -79,7 +79,7 @@ namespace System.ComponentModel {
 
 		public string ConvertToString (object value)
 		{
-			throw new NotImplementedException ();
+			return (string) ConvertTo (null, CultureInfo.CurrentCulture, value, typeof(string));
 		}
 	}
 }

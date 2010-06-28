@@ -1,3 +1,8 @@
+2010-06-25  Alan McGovern  <amcgovern@novell.com>
+
+	* TypeConverter_2_1.cs: Implement ConvertToString as per docs and
+	moonlight tests.
+
 2010-05-21  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AsyncOperation.cs: Add checks for null delegates
