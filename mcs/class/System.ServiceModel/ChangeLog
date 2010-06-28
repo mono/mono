@@ -1,3 +1,7 @@
+2010-06-28  Astushi Enomoto  <atsushi@ximian.com>
+
+	* HTTP_listener_notes.txt : updated, things became much better.
+
 2010-06-24  Astushi Enomoto  <atsushi@ximian.com>
 
 	* System.ServiceModel.dll.sources :

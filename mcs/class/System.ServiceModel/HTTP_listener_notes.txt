@@ -1,28 +1,34 @@
 * ASP.NET integration and HTTP standalone service process flow
 
+WARNING: This document is now obsoleted for HTTP standalone listener.
+
 This mostly explains what our WCF does, and does not explain what I think it really should do (though I write about them as long as I know).
 
 
 ** Basic process flow
 
-- ServiceHost opens a set of ChannelDispatchers for each ServiceEndpoint.
-- ChannelDispatcher builds an IChannelListener (such as HttpSimpleChannelListener`1 or AspNetChannelListener`1) based on the corresponding ServiceEndpoint which contains a Binding that is used to build channel listeners).
+- ServiceHost opens a set of ChannelDispatchers for each Binding used in ServiceHost.Endpoints.
+  - When the same Binding instance is used in multiple service endpoints, they share the same ChannelDispatcher, only differentiating EndpointDispatcher.
+- ChannelDispatcher builds an IChannelListener (such as HttpStandaloneChannelListener`1 or AspNetChannelListener`1) based on the corresponding ServiceEndpoint which contains a Binding that is used to build channel listeners).
 - IChannelListener itself does not provide any service loop. Instead, the ChannelDispatcher starts a service loop.
 -- IChannelListener only has methods for receiving requests that must be explicitly invoked for each request (i.e. to repeatedly process requests it must invoke receiver methods every time, unlike ServiceHost.Open() method).
-- Inside the service loop, IChannelListener invokes [Begin]AcceptChannel() to get a channel such as HttpSimpleReplyChannel`1 or AspNetReplyChannel`1. Channels can be created as much as the service throttle limitation (ServiceThrottle) allows.
+- Inside the service loop, IChannelListener invokes [Begin]AcceptChannel() to get a channel such as HttpStandaloneReplyChannel or AspNetReplyChannel`1. Channels can be created as much as the service throttle limitation (ServiceThrottle) allows.
 - Then the loop manager invokes the channel's [Begin]TryReceiveRequest().
 - When WSDLs are enabled, ServiceMetadataExtension populates another ChannelDispatcher (yes, not just an EndpointDispatcher) that serves HTTP requests to WSDLs.
--- It is important to understand that during this process it populates HTTP channel listener onto the *same* port and even possibly onto the same target URL, differentiating only by the request parameter (e.g. "?wsdl"). This causes a lot of confusion on both IHttpHandler (for ASP.NET) and HttpListener (for non-ASP.NET).
-- Inside (abstract) HttpChannelListener`1, it internally has (abstract) HttpListenerManager which manages the actual HTTP listeners.
--- This intermediate stuff is required to manage HTTP listeners across the actual HttpChannelListeners because more than one channel listeners might use the identical HTTP listener; only one HttpListener can listen to a specific URI prefix, while (as explained above) WSDL support dispatcher may listen to the same URI only differentiating the query parameter.
+  - It is because ServiceMetadataExtension typically uses a Binding returned by corresponding method in MetadataExchangeBindings.
+-- It is important to understand that if multiple ChannelDispatchers have the identical endpoint URI, it populates HTTP channel listener onto the *same* port and even possibly onto the same target URL during this process, differentiating only by the request parameter (e.g. "?wsdl"). This causes a lot of complication on both IHttpHandler (for ASP.NET) and HttpListener (for non-ASP.NET).
+- Inside HttpStandaloneChannelListener or AspNetChannelListener, it internally has HttpListenerManager (NOTE: in different namespaces and different code) which manages the actual HTTP listeners.
+-- These men in the middle are required to manage HTTP listeners across the actual channel listeners because more than one channel listeners might use the identical HTTP listener; only one HttpListener can listen to a specific URI prefix, while (as explained above) WSDL support dispatcher may listen to the same URI only differentiating the query parameter.
 - While building ChannelDispatcher inside ServiceHostBase, we have a tricky code that sets ChannelDispatcher to HttpChannelListener. It is to make sure to apply ServiceMetadataExtension to the listener internals. Without that info, it is not possible to handle wsdl requests precisely (or if you have any simpler idea to achieve this safely, we would glad to hear it).
 
 
 ** non-ASP.NET-specific process flow
 
-- HttpSimpleChannelListener`1 implements IChannelListener`1, HttpSimpleReplyChannel implements IReplyChannel`1, and HttpSimpleRequestContext extends RequestContext.
-- HttpSimpleChannelListener`1 internally creates HttpSimpleListenerManager that manages HttpListeners. The management here includes sharing HttpListeners between the channel listeners that have the identical Uri (see WSDL section above).
-- When HttpSimpleChannelListener`1.[Begin]TryReceiveRequest() is invoked, then it subsequently calls HttpListener.BeginGetContext() to retrieve the context.
+- HttpStandaloneChannelListener`1 implements IChannelListener`1, HttpStandaloneReplyChannel implements IReplyChannel`1, and HttpStandaloneRequestContext extends RequestContext.
+- HttpStandaloneChannelListener`1 internally creates System.ServiceModel.Channels.Http.HttpListenerManager that manages HttpListeners. The management here includes sharing HttpListeners between the channel listeners that have the identical Uri (see WSDL section above).
+- HttpListenerManager start HttpListener's listening loop when a ChannelDispatcher is registered as a channel candidate. If a ChannelDispatcher is unregistered and there is no more listening channel, then the HttpListener is disposed.
+- When a ChannelDispatcher is registered, the dispatchers for the same HttpListener are sorted by the "ChannelDispatcher with the highest priority in Endpoints" order.
+- When an HttpListenerContext is arrived, each ChannelDispatcher (in order) examines if it "matches" and processes if it does. Matching is checked by EndpointDispatchers' filtering.
 
 
 ** ASP.NET-specific process flow
@@ -52,18 +58,12 @@ locking: TBD
 
 - WebHttpBinding creates HTTP channel listeners that share an identical endpoint URI, which could also be mapped by ServiceMetadataExtension. It brings problem on dispatching HTTP request to correct listener. FilterPriority is used to resolve the issue (possibly to some extent) that requests to wsdl/mex are treated in lower priority.
 - While multiple channel dispatchers' endpoints could indicate an identical HTTP URI, it is not allowed to use the same HTTP URI across more than one ServiceHostBase and attempt to create such endpoints will result in InvalidOperationException for conflict with existing listeners.
-- Actually, .NET seems to reject duplicate listen URI at HttpChannelListener level (precisely to say, equivalent to that of mono, ones from HttpTransportBindingElement.BuildChannelListener()). We don't reject that (bug).
+- Actually, .NET rejects duplicate listen URI at HttpChannelListener level (precisely to say, equivalent to that of mono, ones from HttpTransportBindingElement.BuildChannelListener()). It does not happen if the service endpoints share the same Binding (as described above).
 
 
 ** Bugs
 
 There is not a few bugs on service implementations and there often are reasons:
 
--- TCP duplex channels used to fail to serve requests when the throttle is 1. It was due to failure in managing closed channels (while it is duplex and hence it has to maintain channels until it is explicitly closed, clients often, or mostly, disconnects without any notice. So it had to be changed to explicitly check if the connection is available at any beginning of the request processing).
--- If there are more than one endpoint with the identical listen URI, it will fail to dispatch requests to correct listener even if the endpoints have appropriately configured FilterPriority. part of bug #573795.
 - ASP.NET listener ends up to dump ThreadAbort during its shutdown. It's mostly harmless though.
 
-** Required changes
-
-- HttpChannelListeners (Simple-, AspNet-) need an owner ChannelDispatcher. It has to be set probably at ICommunicationObject.Opening event.
-- After having ChannelDispatcher to manage a HttpChannelListener for each endpoint URI (create new or reuse), the listener has to differentiate HTTP requests to an appropriate channel, by EndpointDispatcher.FilterPriority.
