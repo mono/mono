@@ -60,6 +60,14 @@ System.Diagnostics/DebugTest.cs
 System.Diagnostics/StackFrameTest.cs
 System.Diagnostics/StackTraceTest.cs
 System.Diagnostics/TextWriterTraceListenerTest.cs
+System.Diagnostics.Contracts/ContractAssertTest.cs
+System.Diagnostics.Contracts/ContractAssumeTest.cs
+System.Diagnostics.Contracts/ContractCollectionMethodsTest.cs
+System.Diagnostics.Contracts/ContractHelperTest.cs
+System.Diagnostics.Contracts/ContractMarkerMethodsTest.cs
+System.Diagnostics.Contracts/ContractMustUseRewriterTest.cs
+System.Diagnostics.Contracts/Helpers/RunAgainstReferenceAttribute.cs
+System.Diagnostics.Contracts/Helpers/TestContractBase.cs
 System/DoubleFormatterTest.cs
 System/DoubleTest.cs
 System/EnumTest.cs

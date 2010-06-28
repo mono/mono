@@ -1,3 +1,7 @@
+2010-06-28  Chris Bacon  <chrisbacon76@gmail.com>
+
+	* System.Diagnostics.Contracts tests added.
+
 ﻿2007-05-31  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile : missing EXTRA_DISTFILES.
