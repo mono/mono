@@ -1,3 +1,8 @@
+2010-06-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* IPAddress.cs: verify the last IPv4 digit too.
+	Fixes bug #612135.
+
 2010-06-16 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* HttpWebRequest.cs: DELETE allows an entity body.
