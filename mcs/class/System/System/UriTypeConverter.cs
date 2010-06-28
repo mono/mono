@@ -79,9 +79,15 @@ namespace System {
 
 		public override object ConvertFrom (ITypeDescriptorContext context, CultureInfo culture, object value)
 		{
-			if (value == null)
+			if (value == null) {
+#if NET_2_1
+				throw new NotSupportedException (Locale.GetText ("Cannot convert from value."));
+#else
 				throw new ArgumentNullException ("value");
+#endif
+			}
 
+			Console.WriteLine ("Converting: '{0}' of type '{1}'", value, value.GetType ().Name);
 			if (!CanConvertFrom (context, value.GetType ()))
 				throw new NotSupportedException (Locale.GetText ("Cannot convert from value."));
 
@@ -90,7 +96,7 @@ namespace System {
 
 			string s = (value as string);
 			if (s != null)
-				return new Uri (s, UriKind.RelativeOrAbsolute);
+				return s == "" ? null : new Uri (s, UriKind.RelativeOrAbsolute);
 #if !NET_2_1
 			InstanceDescriptor id = (value as InstanceDescriptor);
 			if (id != null) {
@@ -116,7 +122,11 @@ namespace System {
 					ConstructorInfo ci = typeof (Uri).GetConstructor (new Type [2] { typeof (string), typeof (UriKind) });
 					return new InstanceDescriptor (ci , new object [] { uri.ToString (), uri.IsAbsoluteUri ? UriKind.Absolute : UriKind.Relative });
 				}
+#else
+				throw new NotSupportedException (Locale.GetText ("Cannot convert to destination type."));
 #endif
+			} else {
+				throw new NotSupportedException (Locale.GetText ("Cannot convert to destination type."));
 			}
 
 			return base.ConvertTo (context, culture, value, destinationType);

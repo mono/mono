@@ -1,3 +1,9 @@
+2010-06-28  Alan McGovern  <amcgovern@novell.com>
+
+	* UriTypeConverter.cs: Converting String.Empty should return null
+	instead of a Uri instance. Null values and unconvertable values
+	need to throw NotSupportedExceptions for moonlight too.
+
 2010-06-22 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* Uri.cs: change of behavior un 4.0.
