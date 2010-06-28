@@ -770,7 +770,7 @@ namespace Mono.CSharp {
 				mge.SetTypeArguments (ec, new TypeArguments (new FullNamedExpression [arity]));
 			}
 
-			return mge;
+			return mge.Resolve (ec);
 		}
 
 		protected virtual MemberExpr Error_MemberLookupFailed (ResolveContext ec, TypeSpec type, IList<MemberSpec> members)
@@ -2447,7 +2447,7 @@ namespace Mono.CSharp {
 						}
 					}
 
-					if (HasTypeArguments && e != null)
+					if (e != null && Arity > 0)
 						e.Error_TypeArgumentsCannotBeUsed (ec.Report, loc, null, 0);
 
 					return e;
@@ -2460,7 +2460,7 @@ namespace Mono.CSharp {
 					else
 						e = e.Resolve (ec);
 
-					if (HasTypeArguments && e != null)
+					if (e != null && Arity > 0)
 						e.Error_TypeArgumentsCannotBeUsed (ec.Report, loc, null, 0);
 
 					return e;
@@ -2935,7 +2935,7 @@ namespace Mono.CSharp {
 		}
 
 		public IErrorHandler CustomErrorHandler;
-		public IList<MemberSpec> Methods;
+		protected IList<MemberSpec> Methods;
 		MethodSpec best_candidate;
 		// TODO: make private
 		public TypeArguments type_arguments;
@@ -3622,15 +3622,8 @@ namespace Mono.CSharp {
 			// Types have to be identical when ref or out modifer is used 
 			//
 			if (arg_mod != 0 || param_mod != 0) {
-				if (TypeManager.HasElementType (parameter))
-					parameter = TypeManager.GetElementType (parameter);
-
-				TypeSpec a_type = argument.Type;
-				if (TypeManager.HasElementType (a_type))
-					a_type = TypeManager.GetElementType (a_type);
-
-				if (a_type != parameter) {
-					if (a_type == InternalType.Dynamic)
+				if (argument.Type != parameter) {
+					if (argument.Type == InternalType.Dynamic)
 						return 0;
 
 					return 2;
