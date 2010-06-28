@@ -1,3 +1,8 @@
+2010-06-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
+
+	* SmtpClient.cs: support PLAIN authentication and throw if LOGIN and
+	PLAIN are not supported. Fixes bug #607249.
+
 2010-05-04  Miguel de Icaza  <miguel@novell.com>
 
 	* Apply patch from Ted Unangst to fix bug 574049

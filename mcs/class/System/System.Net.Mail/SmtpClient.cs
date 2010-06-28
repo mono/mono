@@ -83,23 +83,18 @@ namespace System.Net.Mail {
 		BackgroundWorker worker;
 		object user_async_state;
 
-		// ESMTP state
 		[Flags]
 		enum AuthMechs {
 			None        = 0,
-			CramMD5     = 0x01,
-			DigestMD5   = 0x02,
-			GssAPI      = 0x04,
-			Kerberos4   = 0x08,
-			Login       = 0x10,
-			Plain       = 0x20,
+			Login       = 0x01,
+			Plain       = 0x02,
 		}
 
 		class CancellationException : Exception
 		{
 		}
 
-		AuthMechs authMechs = AuthMechs.None;
+		AuthMechs authMechs;
 		Mutex mutex = new Mutex ();
 
 		#endregion // Fields
@@ -418,7 +413,6 @@ namespace System.Net.Mail {
 
 		void ParseExtensions (string extens)
 		{
-			char[] delims = new char [1] { ' ' };
 			string[] parts = extens.Split ('\n');
 
 			foreach (string part in parts) {
@@ -427,22 +421,19 @@ namespace System.Net.Mail {
 
 				string start = part.Substring (4);
 				if (start.StartsWith ("AUTH ", StringComparison.Ordinal)) {
-					string[] options = start.Split (delims);
+					string[] options = start.Split (' ');
 					for (int k = 1; k < options.Length; k++) {
 						string option = options[k].Trim();
+						// GSSAPI, KERBEROS_V4, NTLM not supported
 						switch (option) {
+						/*
 						case "CRAM-MD5":
 							authMechs |= AuthMechs.CramMD5;
 							break;
 						case "DIGEST-MD5":
 							authMechs |= AuthMechs.DigestMD5;
 							break;
-						case "GSSAPI":
-							authMechs |= AuthMechs.GssAPI;
-							break;
-						case "KERBEROS_V4":
-							authMechs |= AuthMechs.Kerberos4;
-							break;
+						*/
 						case "LOGIN":
 							authMechs |= AuthMechs.Login;
 							break;
@@ -1170,25 +1161,53 @@ try {
 			Authenticate (user, pass);
 		}
 
-		void Authenticate (string Username, string Password)
+		void CheckStatus (SmtpResponse status, int i)
 		{
-			// FIXME: use the proper AuthMech
-			SmtpResponse status = SendCommand ("AUTH LOGIN");
-			if (((int) status.StatusCode) != 334) {
+			if (((int) status.StatusCode) != i)
 				throw new SmtpException (status.StatusCode, status.Description);
-			}
+		}
 
-			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Username)));
-			if (((int) status.StatusCode) != 334) {
+		void ThrowIfError (SmtpResponse status)
+		{
+			if (IsError (status))
 				throw new SmtpException (status.StatusCode, status.Description);
-			}
+		}
 
-			status = SendCommand (Convert.ToBase64String (Encoding.ASCII.GetBytes (Password)));
-			if (IsError (status)) {
-				throw new SmtpException (status.StatusCode, status.Description);
+		void Authenticate (string user, string password)
+		{
+			if (authMechs == AuthMechs.None)
+				return;
+
+			SmtpResponse status;
+			/*
+			if ((authMechs & AuthMechs.DigestMD5) != 0) {
+				status = SendCommand ("AUTH DIGEST-MD5");
+				CheckStatus (status, 334);
+				string challenge = Encoding.ASCII.GetString (Convert.FromBase64String (status.Description.Substring (4)));
+				Console.WriteLine ("CHALLENGE: {0}", challenge);
+				DigestSession session = new DigestSession ();
+				session.Parse (false, challenge);
+				string response = session.Authenticate (this, user, password);
+				status = SendCommand (Convert.ToBase64String (Encoding.UTF8.GetBytes (response)));
+				CheckStatus (status, 235);
+			} else */
+			if ((authMechs & AuthMechs.Login) != 0) {
+				status = SendCommand ("AUTH LOGIN");
+				CheckStatus (status, 334);
+				status = SendCommand (Convert.ToBase64String (Encoding.UTF8.GetBytes (user)));
+				CheckStatus (status, 334);
+				status = SendCommand (Convert.ToBase64String (Encoding.UTF8.GetBytes (password)));
+				CheckStatus (status, 235);
+			} else if ((authMechs & AuthMechs.Plain) != 0) {
+				string s = String.Format ("\0{0}\0{1}", user, password);
+				s = Convert.ToBase64String (Encoding.UTF8.GetBytes (s));
+				status = SendCommand ("AUTH PLAIN " + s);
+				CheckStatus (status, 235);
+			} else {
+				throw new SmtpException ("AUTH types PLAIN, LOGIN not supported by the server");
 			}
 		}
-		
+
 		#endregion // Methods
 		
 		// The HeaderName struct is used to store constant string values representing mail headers.
