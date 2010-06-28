@@ -1,4 +1,4 @@
-// cs0071.cs: An explicit interface implementation of an event must use property syntax
+// CS0071: `ErrorCS0071.IFoo.OnFoo': An explicit interface implementation of an event must use property syntax
 // Line: 13
 
 using System;
@@ -10,8 +10,6 @@ interface IFoo {
 }
 	
 class ErrorCS0071 : IFoo {
-	event Foo IFoo.OnFoo () { }
-	public static void Main () {
-	}
+	event Foo IFoo.OnFoo;
 }
 

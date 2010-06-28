@@ -1,4 +1,4 @@
-// cs0068.cs: `IFoo.OnFoo': event in interface cannot have initializer
+// CS0068: `IFoo.OnFoo': event in interface cannot have an initializer
 // Line: 14
 
 using System;
