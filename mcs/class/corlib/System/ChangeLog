@@ -1,3 +1,8 @@
+2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* Attribute.cs: Fix GetHashCode to match MS behavior (needed for
+	Moonlight)
+
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Array.cs (SortImpl): Fix the 'fast path' which used 'as' to cast objects so

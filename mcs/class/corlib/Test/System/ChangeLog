@@ -1,3 +1,7 @@
+2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* AttributeTest.cs: Add test cases for GetHashCode
+
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* ArrayTest.cs: Add a test for #616416.

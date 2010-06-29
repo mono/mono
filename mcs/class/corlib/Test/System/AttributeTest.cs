@@ -954,6 +954,43 @@ namespace MonoTests.System
 		private class ClassC : ClassB
 		{
 		}
+
+		[Test]
+		public void EmptyNonOverridenGetHashCode ()
+		{
+			MyAttribute a1 = new MyAttribute ();
+			MyAttribute a2 = new MyAttribute ();
+			Assert.AreEqual (a1.GetHashCode (), a2.GetHashCode (), "identical argument-less");
+			Assert.AreEqual (a1.GetHashCode (), a1.TypeId.GetHashCode (), "Empty/TypeId");
+
+			MySubAttribute b1 = new MySubAttribute ();
+			Assert.AreNotEqual (a1.GetHashCode (), b1.GetHashCode (), "non-identical-types");
+			Assert.AreEqual (b1.GetHashCode (), b1.TypeId.GetHashCode (), "Empty/TypeId/Sub");
+		}
+
+		class MyOwnCustomAttribute : MyCustomAttribute {
+
+			public MyOwnCustomAttribute (string s)
+				: base (s)
+			{
+			}
+		}
+
+		[Test]
+		public void NonEmptyNonOverridenGetHashCode ()
+		{
+			MyCustomAttribute a1 = new MyCustomAttribute (null);
+			MyCustomAttribute a2 = new MyCustomAttribute (null);
+			Assert.AreEqual (a1.GetHashCode (), a2.GetHashCode (), "identical arguments");
+			Assert.AreEqual (a1.GetHashCode (), a1.TypeId.GetHashCode (), "TypeId");
+
+			MyCustomAttribute a3 = new MyCustomAttribute ("a");
+			MyCustomAttribute a4 = new MyCustomAttribute ("b");
+			Assert.AreNotEqual (a3.GetHashCode (), a4.GetHashCode (), "non-identical-arguments");
+
+			MyOwnCustomAttribute b1 = new MyOwnCustomAttribute (null);
+			Assert.AreNotEqual (a1.GetHashCode (), b1.GetHashCode (), "non-identical-types");
+		}
 	}
 
 	namespace ParamNamespace {

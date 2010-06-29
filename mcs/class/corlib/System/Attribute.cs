@@ -254,7 +254,14 @@ namespace System
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			int result = TypeId.GetHashCode ();
+
+			FieldInfo[] fields = GetType ().GetFields (BindingFlags.Instance | BindingFlags.NonPublic | BindingFlags.Public);
+			foreach (FieldInfo field in fields) {
+				object value = field.GetValue (this);
+				result ^= value == null ? 0 : value.GetHashCode ();
+			}
+			return result;
 		}
 
 		public virtual bool IsDefaultAttribute ()
