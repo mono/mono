@@ -2801,9 +2801,7 @@ namespace Mono.CSharp {
 			if (method == null)
 				return new EmptyExpression (TypeManager.decimal_type);
 
-			MethodGroupExpr mg = new MethodGroupExpr (method, TypeManager.delegate_type, loc);
-			mg = mg.OverloadResolve (ec, ref args, false, loc);
-
+			MethodGroupExpr mg = MethodGroupExpr.CreatePredefined (method, TypeManager.delegate_type, loc);
 			return new ClassCast (new UserOperatorCall (mg, args, CreateExpressionTree, loc), l);
 		}
 
@@ -5208,7 +5206,7 @@ namespace Mono.CSharp {
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
 		{
-			return MakeExpression (ctx, mg.InstanceExpression, (MethodSpec) mg, arguments);
+			return MakeExpression (ctx, mg.InstanceExpression, mg.BestCandidate, arguments);
 		}
 
 		public static SLE.Expression MakeExpression (BuilderContext ctx, Expression instance, MethodSpec mi, Arguments args)

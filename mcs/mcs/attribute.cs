@@ -436,8 +436,7 @@ namespace Mono.CSharp {
 			if (mg == null)
 				return null;
 			
-			var constructor = (MethodSpec) mg;
-			return constructor;
+			return mg.BestCandidate;
 		}
 
 		protected virtual bool ResolveNamedArguments (ResolveContext ec)
