@@ -1,3 +1,10 @@
+2010-06-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	* XamlLanguageTest.cs (CategoryAttribute): Use a slightly more
+	portable way to resolve the CategoryAttribute ambiguity.
+	* XamlObjectReaderTest.cs, XamlObjectWriterTest.cs: Likewise.
+	* XamlTypeTest.cs, XamlXmlReaderTest.cs, XamlXmlWriterTest.cs: Likewise.
+
 2010-05-17  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XamlObjectWriterTest.cs : fix and enable some tests.

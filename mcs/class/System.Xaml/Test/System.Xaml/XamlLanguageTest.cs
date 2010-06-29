@@ -32,7 +32,7 @@ using System.Xaml.Schema;
 using System.Xml;
 using NUnit.Framework;
 
-using Category = NUnit.Framework.CategoryAttribute;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 namespace MonoTests.System.Xaml
 {

@@ -33,7 +33,7 @@ using System.Xaml.Schema;
 using System.Xml;
 using NUnit.Framework;
 
-using Category = NUnit.Framework.CategoryAttribute;
+using CategoryAttribute = NUnit.Framework.CategoryAttribute;
 
 // Some test result remarks:
 // - TypeExtension: [ConstructorArgument] -> PositionalParameters
