@@ -1,5 +1,11 @@
 2010-06-29  Marek Safar  <marek.safar@gmail.com>
 
+	* import.cs: Operators must have between 1 and 2 parameters.
+	
+	* method.cs: Switch destructor to direct membercache lookup
+
+2010-06-29  Marek Safar  <marek.safar@gmail.com>
+
 	* driver.cs, expression.cs: Use Membercache for StringConcat when
 	it got all what is needed.
 

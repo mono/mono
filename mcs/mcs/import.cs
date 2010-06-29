@@ -247,7 +247,7 @@ namespace Mono.CSharp
 					if ((mod & (Modifiers.STATIC | Modifiers.PUBLIC)) == (Modifiers.STATIC | Modifiers.PUBLIC)) {
 						if (name[2] == '_' && name[1] == 'p' && name[0] == 'o') {
 							var op_type = Operator.GetType (name);
-							if (op_type.HasValue) {
+							if (op_type.HasValue && parameters.Count > 0 && parameters.Count < 3) {
 								kind = MemberKind.Operator;
 							}
 						}

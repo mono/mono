@@ -1937,14 +1937,17 @@ namespace Mono.CSharp {
 			return true;
 		}
 
-		public override void  Emit()
+		public override void Emit()
 		{
 			var base_type = Parent.PartialContainer.BaseType;
 			if (base_type != null && Block != null) {
-				MethodGroupExpr method_expr = Expression.MethodLookup (Parent.Module.Compiler, Parent.Definition, base_type, MemberKind.Destructor, MetadataName, 0, Location);
-				if (method_expr == null)
+				var base_dtor = MemberCache.FindMember (base_type,
+					new MemberFilter (MetadataName, 0, MemberKind.Destructor, null, null), BindingRestriction.InstanceOnly) as MethodSpec;
+
+				if (base_dtor == null)
 					throw new NotImplementedException ();
 
+				MethodGroupExpr method_expr = MethodGroupExpr.CreatePredefined (base_dtor, base_type, Location);
 				method_expr.QueriedBaseType = base_type;
 				method_expr.InstanceExpression = new CompilerGeneratedThis (Parent.Definition, Location);
 
