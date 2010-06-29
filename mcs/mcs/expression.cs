@@ -3762,6 +3762,7 @@ namespace Mono.CSharp {
 	//
 	public class StringConcat : Expression {
 		Arguments arguments;
+		static IList<MemberSpec> concat_members;
 		
 		public StringConcat (Expression left, Expression right, Location loc)
 		{
@@ -3803,7 +3804,7 @@ namespace Mono.CSharp {
 			concat_args.Add (arguments [pos]);
 			add_args.Add (new Argument (arguments [pos].CreateExpressionTree (ec)));
 
-			MethodGroupExpr method = CreateConcatMemberExpression ().Resolve (ec) as MethodGroupExpr;
+			MethodGroupExpr method = CreateConcatMethodGroup ();
 			if (method == null)
 				return null;
 
@@ -3856,17 +3857,22 @@ namespace Mono.CSharp {
 			arguments.Add (new Argument (operand));
 		}
 
-		Expression CreateConcatMemberExpression ()
+		MethodGroupExpr CreateConcatMethodGroup ()
 		{
-			return new MemberAccess (new MemberAccess (new QualifiedAliasMember ("global", "System", loc), "String", loc), "Concat", loc);
+			if (concat_members == null) {
+				concat_members = MemberCache.FindMembers (type,
+					MemberFilter.Method ("Concat", -1, null, type), BindingRestriction.DeclaredOnly);
+			}
+
+			return new MethodGroupExpr (concat_members, type, loc);
 		}
 
 		public override void Emit (EmitContext ec)
 		{
-			Expression concat = new Invocation (CreateConcatMemberExpression (), arguments, true);
-			concat = concat.Resolve (new ResolveContext (ec.MemberContext));
-			if (concat != null)
-				concat.Emit (ec);
+			var mg = CreateConcatMethodGroup ();
+			mg = mg.OverloadResolve (new ResolveContext (ec.MemberContext), ref arguments, false, loc);
+			if (mg != null)
+				mg.EmitCall (ec, arguments);
 		}
 
 		public override SLE.Expression MakeExpression (BuilderContext ctx)
@@ -3876,6 +3882,11 @@ namespace Mono.CSharp {
 
 			var concat = typeof (string).GetMethod ("Concat", new[] { typeof (object), typeof (object) });
 			return SLE.Expression.Add (arguments[0].Expr.MakeExpression (ctx), arguments[1].Expr.MakeExpression (ctx), concat);
+		}
+
+		public static void Reset ()
+		{
+			concat_members = null;
 		}
 	}
 

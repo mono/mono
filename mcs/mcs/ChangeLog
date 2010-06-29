@@ -1,5 +1,10 @@
 2010-06-29  Marek Safar  <marek.safar@gmail.com>
 
+	* driver.cs, expression.cs: Use Membercache for StringConcat when
+	it got all what is needed.
+
+2010-06-29  Marek Safar  <marek.safar@gmail.com>
+
 	* membercache.cs, expression.cs, statement.cs, doc.cs, ecore.cs:
 	Changed FindMembers to allocate a new list only when a filter is
 	used. Saves decent chunk of memory and should save even more in the

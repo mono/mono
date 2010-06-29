@@ -2042,6 +2042,7 @@ namespace Mono.CSharp
 			Binary.Reset ();
 			ConstantFold.Reset ();
 			CastFromDecimal.Reset ();
+			StringConcat.Reset ();
 			
 			NamespaceEntry.Reset ();
 			CodeGen.Reset ();
