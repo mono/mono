@@ -1,5 +1,9 @@
 2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlWriterTests.cs : refine failure conditions.
+
+2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlWriterTests.cs : add test matrix for understanding things.
 	  Make those test names consistent. Mark as NotWorking.
 

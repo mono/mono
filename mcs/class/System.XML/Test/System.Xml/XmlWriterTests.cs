@@ -603,6 +603,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelAuto cl = new ConformanceLevelAuto ();
 			XmlWriter xw = XmlWriter.Create (cl);
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -612,6 +613,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelDocument cl = new ConformanceLevelDocument ();
 			XmlWriter xw = XmlWriter.Create (cl);
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -621,6 +623,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelFragment cl = new ConformanceLevelFragment ();
 			XmlWriter xw = XmlWriter.Create (cl);
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -630,15 +633,18 @@ namespace MonoTests.System.Xml
 		{
 			InvalidWriteState cl = new InvalidWriteState ();
 			XmlWriter xw = XmlWriter.Create (cl);
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void CreateNOCLSettingsCLAuto ()
 		{
 			InvalidWriteState cl = new InvalidWriteState ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Auto });
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -648,15 +654,18 @@ namespace MonoTests.System.Xml
 		{
 			InvalidWriteState cl = new InvalidWriteState ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Document });
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
 		[Test]
 		[ExpectedException (typeof (InvalidOperationException))]
+		[Category ("NotWorking")]
 		public void CreateNOCLSettingsCLFrag ()
 		{
 			InvalidWriteState cl = new InvalidWriteState ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Fragment });
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -666,6 +675,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelAuto cl = new ConformanceLevelAuto ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Document });
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -675,6 +685,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelAuto cl = new ConformanceLevelAuto ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Fragment });
+			Assert.AreEqual (ConformanceLevel.Fragment, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -684,6 +695,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelDocument cl = new ConformanceLevelDocument ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Auto });
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -693,6 +705,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelDocument cl = new ConformanceLevelDocument ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Fragment });
+			Assert.AreEqual (ConformanceLevel.Fragment, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -702,6 +715,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelFragment cl = new ConformanceLevelFragment ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Auto });
+			Assert.AreEqual (ConformanceLevel.Fragment, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
@@ -711,6 +725,7 @@ namespace MonoTests.System.Xml
 		{
 			ConformanceLevelFragment cl = new ConformanceLevelFragment ();
 			XmlWriter xw = XmlWriter.Create (cl, new XmlWriterSettings () { ConformanceLevel = ConformanceLevel.Document });
+			Assert.AreEqual (ConformanceLevel.Document, xw.Settings.ConformanceLevel, "#1");
 			WriteState state = xw.WriteState;
 		}
 
