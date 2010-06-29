@@ -1,3 +1,8 @@
+2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* InstancePersistenceEvent.cs, InstancePersistenceContext.cs,
+	  InstanceStore.cs, InstanceView.cs, InstanceValue.cs : some hack.
+
 2010-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* AllEnums.cs InstanceLockQueryResult.cs InstanceStore.cs

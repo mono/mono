@@ -13,7 +13,7 @@ namespace System.Runtime.DurableInstancing
 {
 	public sealed class InstanceView
 	{
-		internal InstanceView ()
+		internal InstanceView (Guid instanceId, InstanceOwner owner)
 		{
 		}
 		
@@ -29,8 +29,15 @@ namespace System.Runtime.DurableInstancing
 		public InstanceValueConsistency InstanceOwnerMetadataConsistency { get; internal set; }
 		public InstanceState InstanceState { get; internal set; }
 		public ReadOnlyCollection<InstanceStoreQueryResult> InstanceStoreQueryResults { get; internal set; }
-		public bool IsBoundToInstance { get; private set; }
-		public bool IsBoundToInstanceOwner { get { throw new NotImplementedException (); } }
+
+		public bool IsBoundToInstance {
+			get { return InstanceId == Guid.Empty; }
+		}
+
+		public bool IsBoundToInstanceOwner {
+			get { return InstanceOwner == null; }
+		}
+
 		public bool IsBoundToLock { get { throw new NotImplementedException (); } }
 	}
 }

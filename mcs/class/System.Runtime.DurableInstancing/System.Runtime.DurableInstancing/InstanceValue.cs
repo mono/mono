@@ -13,7 +13,12 @@ namespace System.Runtime.DurableInstancing
 {
 	public sealed class InstanceValue
 	{
-		public static InstanceValue DeletedValue { get { throw new NotImplementedException (); } }
+		static InstanceValue ()
+		{
+			DeletedValue = new InstanceValue (null);
+			DeletedValue.Value = DeletedValue; // recursion!
+		}
+		public static InstanceValue DeletedValue { get; private set; }
 
 		public InstanceValue (object value)
 			: this (value, InstanceValueOptions.None)

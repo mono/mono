@@ -15,6 +15,8 @@ namespace System.Runtime.DurableInstancing
 	{
 		internal InstancePersistenceEvent (XName name)
 		{
+			if (name == null)
+				throw new ArgumentNullException ("name");
 			Name = name;
 		}
 
@@ -22,11 +24,20 @@ namespace System.Runtime.DurableInstancing
 
 		public static bool operator == (InstancePersistenceEvent left, InstancePersistenceEvent right)
 		{
-			throw new NotImplementedException ();
+			if (Object.ReferenceEquals (left, null))
+				return Object.ReferenceEquals (right, null);
+			if (Object.ReferenceEquals (right, null))
+				return false;
+			return left.Name == right.Name;
 		}
+
 		public static bool operator != (InstancePersistenceEvent left, InstancePersistenceEvent right)
 		{
-			throw new NotImplementedException ();
+			if (Object.ReferenceEquals (left, null))
+				return !Object.ReferenceEquals (right, null);
+			if (Object.ReferenceEquals (right, null))
+				return true;
+			return left.Name != right.Name;
 		}
 
 		public bool Equals (InstancePersistenceEvent persistenceEvent)
@@ -49,9 +60,12 @@ namespace System.Runtime.DurableInstancing
 	public abstract class InstancePersistenceEvent<T> : InstancePersistenceEvent
 		where T : InstancePersistenceEvent<T>, new()
 	{
-		public static T Value {
-			get { throw new NotImplementedException (); }
+		static InstancePersistenceEvent ()
+		{
+			Value = (T) Activator.CreateInstance (typeof (T), new object [0]);
 		}
+
+		public static T Value { get; private set; }
 		
 		protected InstancePersistenceEvent (XName name)
 			: base (name)

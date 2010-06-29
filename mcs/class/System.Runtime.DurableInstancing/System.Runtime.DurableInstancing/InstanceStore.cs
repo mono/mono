@@ -14,20 +14,32 @@ namespace System.Runtime.DurableInstancing
 	public abstract class InstanceStore
 	{
 		public InstanceOwner DefaultInstanceOwner { get; set; }
-		
+
+		Func<InstanceHandle, InstancePersistenceCommand, TimeSpan, InstanceView> execute_delegate;
+
 		public IAsyncResult BeginExecute (InstanceHandle handle, InstancePersistenceCommand command, TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (execute_delegate == null)
+				execute_delegate = new Func<InstanceHandle, InstancePersistenceCommand, TimeSpan, InstanceView> (Execute);
+			return execute_delegate.BeginInvoke (handle, command, timeout, callback, state);
 		}
+
+		Func<InstancePersistenceContext, InstancePersistenceCommand, TimeSpan, bool> try_command_delegate;
 
 		protected internal virtual IAsyncResult BeginTryCommand (InstancePersistenceContext context, InstancePersistenceCommand command, TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (try_command_delegate == null)
+				try_command_delegate = new Func<InstancePersistenceContext, InstancePersistenceCommand, TimeSpan, bool> (TryCommand);
+			return try_command_delegate.BeginInvoke (context, command, timeout, callback, state);
 		}
+
+		Func<InstanceHandle, TimeSpan, List<InstancePersistenceEvent>> wait_for_events_delegate;
 
 		public IAsyncResult BeginWaitForEvents (InstanceHandle handle, TimeSpan timeout, AsyncCallback callback, object state)
 		{
-			throw new NotImplementedException ();
+			if (wait_for_events_delegate == null)
+				wait_for_events_delegate = new Func<InstanceHandle, TimeSpan, List<InstancePersistenceEvent>> (WaitForEvents);
+			return wait_for_events_delegate.BeginInvoke (handle, timeout, callback, state);
 		}
 
 		public InstanceHandle CreateInstanceHandle ()
@@ -52,12 +64,23 @@ namespace System.Runtime.DurableInstancing
 
 		public InstanceView EndExecute (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (execute_delegate == null)
+				throw new InvalidOperationException ("Async operation has not started");
+			return execute_delegate.EndInvoke (result);
+		}
+
+		public bool EndTryCommand (IAsyncResult result)
+		{
+			if (try_command_delegate == null)
+				throw new InvalidOperationException ("Async operation has not started");
+			return try_command_delegate.EndInvoke (result);
 		}
 
 		public List<InstancePersistenceEvent> EndWaitForEvents (IAsyncResult result)
 		{
-			throw new NotImplementedException ();
+			if (wait_for_events_delegate == null)
+				throw new InvalidOperationException ("Async operation has not started");
+			return wait_for_events_delegate.EndInvoke (result);
 		}
 
 		public InstanceView Execute (InstanceHandle handle, InstancePersistenceCommand command, TimeSpan timeout)

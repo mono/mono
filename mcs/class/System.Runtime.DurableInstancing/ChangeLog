@@ -1,3 +1,7 @@
+2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
+	* System.Runtime.DurableInstancing_test.dll.sources : test sources.
+
 2010-05-12  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* Makefile, System.Runtime.DurableInstancing.dll.sources:

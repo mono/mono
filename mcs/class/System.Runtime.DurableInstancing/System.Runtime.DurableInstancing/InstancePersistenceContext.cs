@@ -13,8 +13,15 @@ namespace System.Runtime.DurableInstancing
 {
 	public sealed class InstancePersistenceContext
 	{
-		internal InstancePersistenceContext ()
+		internal InstancePersistenceContext (InstanceHandle handle, InstanceView view)
 		{
+			if (handle == null)
+				throw new ArgumentNullExcepion ("handle");
+			if (view == null)
+				throw new ArgumentNullExcepion ("view");
+
+			InstanceHandle = handle;
+			InstanceView = view;
 		}
 		
 		public InstanceHandle InstanceHandle { get; private set; }
@@ -27,14 +34,7 @@ namespace System.Runtime.DurableInstancing
 		{
 			throw new NotImplementedException ();
 		}
-		public IAsyncResult BeginBindReclaimedLock (long instanceVersion, TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
-		public IAsyncResult BeginExecute (InstancePersistenceCommand command, TimeSpan timeout, AsyncCallback callback, object state)
-		{
-			throw new NotImplementedException ();
-		}
+
 		public void BindAcquiredLock (long instanceVersion)
 		{
 			throw new NotImplementedException ();
@@ -67,14 +67,7 @@ namespace System.Runtime.DurableInstancing
 		{
 			throw new NotImplementedException ();
 		}
-		public void EndBindReclaimedLock (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
-		public void EndExecute (IAsyncResult result)
-		{
-			throw new NotImplementedException ();
-		}
+
 		public void Execute (InstancePersistenceCommand command, TimeSpan timeout)
 		{
 			throw new NotImplementedException ();
@@ -114,6 +107,40 @@ namespace System.Runtime.DurableInstancing
 		public void WroteInstanceOwnerMetadataValue (XName name, InstanceValue value)
 		{
 			throw new NotImplementedException ();
+		}
+
+		// async operations
+
+		Action<long, TimeSpan> bind_reclaimed_lock_delegate;
+		
+		public IAsyncResult BeginBindReclaimedLock (long instanceVersion, TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (bind_reclaimed_lock_delegate == null)
+				bind_reclaimed_lock_delegate = new Action<long, TimeSpan> (BindReclaimedLock);
+			return bind_reclaimed_lock_delegate.BeginInvoke (instanceVersion, timeout, callback, state);
+		}
+
+		public void EndBindReclaimedLock (IAsyncResult result)
+		{
+			if (bind_reclaimed_lock_delegate == null)
+				throw new InvalidOperationException ("Async BindReclaimedLock operation has not started");
+			bind_reclaimed_lock_delegate.EndInvoke (result);
+		}
+
+		Action<InstancePersistenceCommand, TimeSpan> execute_delegate;
+		
+		public IAsyncResult BeginExecute (InstancePersistenceCommand command, TimeSpan timeout, AsyncCallback callback, object state)
+		{
+			if (execute_delegate == null)
+				execute_delegate = new Action<InstancePersistenceCommand, TimeSpan> (Execute);
+			return execute_delegate.BeginInvoke (command, timeout, callback, state);
+		}
+		
+		public void EndExecute (IAsyncResult result)
+		{
+			if (execute_delegate == null)
+				throw new InvalidOperationException ("Async Execute operation has not started");
+			execute_delegate.EndInvoke (result);
 		}
 	}
 }
