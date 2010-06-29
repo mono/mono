@@ -1,3 +1,7 @@
+2010-06-29  Andreia Gaita  <avidigal@novell.com>
+
+	* XmlWriterTests.cs : added tests for bug #607967.
+
 2010-06-16  Atsushi Enomoto  <atsushi@ximian.com>
 
 	* XmlTextReaderTests.cs : added test for bug #608391.
