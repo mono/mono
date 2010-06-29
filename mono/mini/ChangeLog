@@ -1,5 +1,7 @@
 2010-06-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* driver.c: Print the full LLVM version we are compiled against in --version.
+
 	* aot-runtime.c (decode_exception_debug_info): Separate the LLVM and non-LLVM code
 	a bit better. Decode nesting information to fix eh support for llvm+aot.
 
