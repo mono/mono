@@ -1,3 +1,10 @@
+2010-06-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* assembly.c: Add a few more assemblies to the list of framework
+	assemblies.
+
+	Fixes #617714.
+
 2010-06-28  Zoltan Varga  <vargaz@gmail.com>
 
 	* class.c (mono_class_get_vtable_entry): Avoid a crash if mono_class_setup_vtable ()
