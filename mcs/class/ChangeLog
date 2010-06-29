@@ -1,5 +1,9 @@
 2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* Makefile: move back Mvc2.
+
+2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* Makefile: add S.R.DurableInstancing dir to 4.0.
 
 2010-04-28  Marek Habersack  <mhabersack@novell.com>

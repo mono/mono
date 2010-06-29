@@ -107,6 +107,7 @@ net_2_0_dirs := \
 	System.Web.DynamicData		\
 	System.ServiceModel.Web		\
 	System.Web.Mvc			\
+	System.Web.Mvc2			\
 	Mono.C5				\
 	Mono.Management			\
 	Mono.Options 			\
