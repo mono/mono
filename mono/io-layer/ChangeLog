@@ -1,3 +1,7 @@
+2010-06-29  Geoff Norton  <gnorton@novell.com>
+
+	* atomics.h: Implement armv6+ variants of our atomics.
+
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* Makefile: Don't build an sgen aware version, it is no longer needed.
