@@ -1199,7 +1199,7 @@ fixed_field_declarators
 	  {
 		current_field.AddDeclarator ((FieldDeclarator) $1);
 	  }
-	| fixed_field_declarator fixed_field_declarator
+	| fixed_field_declarators fixed_field_declarator
 	  {
 		current_field.AddDeclarator ((FieldDeclarator) $2);
 	  }
