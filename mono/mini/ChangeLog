@@ -1,5 +1,7 @@
 2010-06-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* mini-llvm.c (mono_llvm_cleanup): Dispose the aot module too.
+
 	* mini-arm.c (get_call_info): Change the managed calling convention so 'this'
 	is always passed as the first argument, before the vtype ret arg. This simplifies
 	get_this_arg_reg () and LLVM integration.
