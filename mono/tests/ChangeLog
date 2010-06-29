@@ -1,5 +1,8 @@
 2010-06-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* Makefile.am: Disable bug-459094.exe it creates a very deep directory hierarchy
+	without cleaning it up.
+
 	* Makefile.am (bug-81691.exe): Fix the dependencies of this test.
 
 2010-06-26  Mark Probst  <mark.probst@gmail.com>
