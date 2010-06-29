@@ -68,6 +68,10 @@ namespace Mono.CSharp {
 		NoOverrides	= 1 << 3,
 
 		NoAccessors = 1 << 4,
+
+		StopOnFirstMatch = 1 << 5,
+
+		DefaultMemberLookup = NoOverrides | StopOnFirstMatch
 	}
 
 	public struct MemberFilter : IEquatable<MemberSpec>
@@ -406,16 +410,19 @@ namespace Mono.CSharp {
 		}
 
 		//
-		// Returns the first set of members starting from container
+		// Returns the first set of members starting from
+		// container, the returned list must not be modified
 		//
 		public static IList<MemberSpec> FindMembers (TypeSpec container, MemberFilter filter, BindingRestriction restrictions)
 		{
 			IList<MemberSpec> applicable;
-			IList<MemberSpec> found = null;
+			List<MemberSpec> found = null;
+			int match_counter = 0;
 
 			do {
+				int i;
 				if (container.MemberCache.member_hash.TryGetValue (filter.Name, out applicable)) {
-					for (int i = 0; i < applicable.Count; ++i) {
+					for (i = 0; i < applicable.Count; ++i) {
 						var entry = applicable [i];
 
 						// Is the member of the correct type
@@ -459,32 +466,52 @@ namespace Mono.CSharp {
 						if (!filter.Equals (entry))
 							continue;
 
+						// Try not to allocate a new list until it's necessary
 						if (found == null) {
-							if (i == 0) {
-								found = applicable;
-							} else {
-								found = new List<MemberSpec> ();
-								found.Add (entry);
+							if (i == match_counter) {
+								++match_counter;
+								continue;
 							}
-						} else if (found == applicable) {
-							found = new List<MemberSpec> ();
-							found.Add (applicable[0]);
-							found.Add (entry);
-						} else {
-							found.Add (entry);
+
+							found = new List<MemberSpec> (System.Math.Max (4, match_counter + 1));
+							for (int ii = 0; ii < match_counter; ++ii)
+								found.Add (applicable [ii]);
 						}
+
+						found.Add (entry);
 					}
 
-					if (found != null) {
-						if (found == applicable && applicable.Count != 1)
-							return new MemberSpec[] { found[0] };
+					// Deal with allocation-less optimization
+					if ((restrictions & (BindingRestriction.DeclaredOnly | BindingRestriction.StopOnFirstMatch)) != 0) {
+						if (found != null)
+							return found;
 
-						return found;
+						if (i == match_counter)
+							return applicable;
+
+						if (match_counter > 0) {
+							found = new List<MemberSpec> (match_counter);
+							for (int ii = 0; ii < match_counter; ++ii)
+								found.Add (applicable[ii]);
+
+							return found;
+						}
+
+						if ((restrictions & BindingRestriction.DeclaredOnly) != 0)
+							return null;
+					} else if (found == null) {
+						if (i == match_counter) {
+							found = new List<MemberSpec> (applicable);
+						} else if (match_counter > 0) {
+							found = new List<MemberSpec> (System.Math.Max (4, match_counter));
+							for (int ii = 0; ii < match_counter; ++ii)
+								found.Add (applicable[ii]);
+						}
 					}
 				}
 
 				container = container.BaseType;
-			} while (container != null && (restrictions & BindingRestriction.DeclaredOnly) == 0);
+			} while (container != null);
 
 			return found;
 		}

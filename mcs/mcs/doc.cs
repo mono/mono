@@ -364,7 +364,7 @@ namespace Mono.CSharp {
 			var filter = new MemberFilter (member_name, 0, MemberKind.All, param_list, null);
 			IList<MemberSpec> found = null;
 			while (type != null && found == null) {
-				found = MemberCache.FindMembers (type, filter, BindingRestriction.None);
+				found = MemberCache.FindMembers (type, filter, BindingRestriction.StopOnFirstMatch);
 				type = type.DeclaringType;
 			}
 

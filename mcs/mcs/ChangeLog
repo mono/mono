@@ -1,3 +1,10 @@
+2010-06-29  Marek Safar  <marek.safar@gmail.com>
+
+	* membercache.cs, expression.cs, statement.cs, doc.cs, ecore.cs:
+	Changed FindMembers to allocate a new list only when a filter is
+	used. Saves decent chunk of memory and should save even more in the
+	future when the filter is not used that often.
+
 2010-06-28  Marek Safar  <marek.safar@gmail.com>
 
 	* field.cs, property.cs, assign.cs, const.cs, expression.cs,

@@ -684,7 +684,7 @@ namespace Mono.CSharp {
 						       MemberKind kind, string name, int arity, Location loc)
 		{
 			return (MethodGroupExpr)MemberLookup (ctx, container_type, null, queried_type, name, arity,
-					     kind, BindingRestriction.AccessibleOnly, loc);
+					     kind, BindingRestriction.AccessibleOnly | BindingRestriction.StopOnFirstMatch, loc);
 		}
 
 		/// <summary>
@@ -814,7 +814,7 @@ namespace Mono.CSharp {
 		{
 			MethodGroupExpr operator_group;
 			string mname = Operator.GetMetadataName (is_true ? Operator.OpType.True : Operator.OpType.False);
-			operator_group = MethodLookup (ec.Compiler, ec.CurrentType, e.Type, MemberKind.Operator, mname, 0, loc) as MethodGroupExpr;
+			operator_group = MethodLookup (ec.Compiler, ec.CurrentType, e.Type, MemberKind.Operator, mname, 0, loc);
 			if (operator_group == null)
 				return null;
 
@@ -2474,7 +2474,7 @@ namespace Mono.CSharp {
 //			TypeSpec almost_matched_type = null;
 //			IList<MemberSpec> almost_matched = null;
 			for (TypeSpec lookup_ds = ec.CurrentType; lookup_ds != null; lookup_ds = lookup_ds.DeclaringType) {
-				e = MemberLookup (ec.Compiler, ec.CurrentType, lookup_ds, Name, arity, BindingRestriction.NoOverrides, loc);
+				e = MemberLookup (ec.Compiler, ec.CurrentType, lookup_ds, Name, arity, BindingRestriction.DefaultMemberLookup, loc);
 				if (e != null) {
 					PropertyExpr pe = e as PropertyExpr;
 					if (pe != null) {
@@ -3416,7 +3416,7 @@ namespace Mono.CSharp {
 			var arity = type_arguments == null ? -1 : type_arguments.Count;
 
 			return TypeManager.MemberLookup (rc.CurrentType, null, type,
-				MemberKind.Method, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides,
+				MemberKind.Method, BindingRestriction.AccessibleOnly | BindingRestriction.DefaultMemberLookup,
 				Name, arity, null);
 		}
 

@@ -7267,7 +7267,7 @@ namespace Mono.CSharp {
 			var arity = HasTypeArguments ? targs.Count : -1;
 
 			var member_lookup = MemberLookup (ec.Compiler,
-				ec.CurrentType, expr_type, expr_type, Name, arity, BindingRestriction.NoOverrides, loc);
+				ec.CurrentType, expr_type, expr_type, Name, arity, BindingRestriction.DefaultMemberLookup, loc);
 
 			if (member_lookup == null) {
 				expr = expr_resolved.Resolve (ec);
@@ -8013,7 +8013,7 @@ namespace Mono.CSharp {
 
 		static IEnumerable<IndexerSpec> GetIndexersForType (TypeSpec lookup_type)
 		{
-			return MemberCache.FindIndexers (lookup_type, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides);
+			return MemberCache.FindIndexers (lookup_type, BindingRestriction.AccessibleOnly | BindingRestriction.DefaultMemberLookup);
 		}
 
 		protected virtual void CommonResolve (ResolveContext ec)
@@ -8336,7 +8336,7 @@ namespace Mono.CSharp {
 
 			var arity = args == null ? -1 : args.Count;
 			member_lookup = MemberLookup (ec.Compiler, ec.CurrentType, null, base_type, identifier, arity,
-						      MemberKind.All, BindingRestriction.AccessibleOnly | BindingRestriction.NoOverrides, loc);
+							  MemberKind.All, BindingRestriction.AccessibleOnly | BindingRestriction.DefaultMemberLookup, loc);
 			if (member_lookup == null) {
 				Error_MemberLookupFailed (ec, ec.CurrentType, base_type, base_type, identifier, arity,
 					null, MemberKind.All, BindingRestriction.AccessibleOnly);
@@ -8931,7 +8931,7 @@ namespace Mono.CSharp {
 				return EmptyExpressionStatement.Instance;
 			
 			MemberExpr me = MemberLookupFinal (ec, ec.CurrentInitializerVariable.Type, ec.CurrentInitializerVariable.Type,
-				Name, 0, MemberKind.Field | MemberKind.Property, BindingRestriction.AccessibleOnly | BindingRestriction.InstanceOnly, loc) as MemberExpr;
+				Name, 0, MemberKind.Field | MemberKind.Property, BindingRestriction.AccessibleOnly | BindingRestriction.InstanceOnly | BindingRestriction.DefaultMemberLookup, loc) as MemberExpr;
 
 			if (me == null)
 				return null;

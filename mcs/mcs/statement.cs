@@ -5292,7 +5292,7 @@ namespace Mono.CSharp {
 				// Option 1: Try to match by name GetEnumerator first
 				//
 				var mexpr = Expression.MemberLookup (rc.Compiler, rc.CurrentType, null, expr.Type, "GetEnumerator", -1,
-					MemberKind.All, BindingRestriction.NoOverrides | BindingRestriction.AccessibleOnly, loc);
+					MemberKind.All, BindingRestriction.DefaultMemberLookup | BindingRestriction.AccessibleOnly, loc);
 
 				var mg = mexpr as MethodGroupExpr;
 				if (mg != null) {
