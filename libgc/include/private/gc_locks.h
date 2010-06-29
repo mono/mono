@@ -224,6 +224,19 @@
 #    endif /* ALPHA */
 #    ifdef ARM32
         inline static int GC_test_and_set(volatile unsigned int *addr) {
+#if defined(__ARM_ARCH_6__) || defined(__ARM_ARCH_7A__) || defined(__ARM_ARCH_7__)
+          int ret, tmp;
+          __asm__ __volatile__ (
+                                 "1:\n"
+                                 "ldrex %0, [%3]\n"
+                                 "strex %1, %2, [%3]\n" 
+                                 "teq %1, #0\n"
+                                 "bne 1b\n"
+                                 : "=&r" (ret), "=&r" (tmp)
+                                 : "r" (1), "r" (addr)
+                                 : "memory", "cc");
+          return ret;
+#else
           int oldval;
           /* SWP on ARM is very similar to XCHG on x86.  Doesn't lock the
            * bus because there are no SMP ARM machines.  If/when there are,
@@ -234,6 +247,7 @@
       			     : "r"(1), "r"(addr)
 			     : "memory");
           return oldval;
+#endif
         }
 #       define GC_TEST_AND_SET_DEFINED
 #    endif /* ARM32 */
