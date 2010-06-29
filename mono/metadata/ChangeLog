@@ -1,5 +1,10 @@
 2010-06-29 Rodrigo Kumpera  <rkumpera@novell.com>
 
+	* assembly.c: Revert r159692 since it breaks loading 3.5
+	assemblies under 2.0.
+
+2010-06-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
 	* icall.c (ves_icall_Type_make_array_type): Raise a TLE if a
 	TypedByRef is passed.
 
