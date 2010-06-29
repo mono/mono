@@ -33,7 +33,15 @@ using System.Collections;
 
 namespace System.Text.RegularExpressions {
 	abstract class LinkRef {
-		// empty
+#if TRACE_REGEX
+		static int next_label = 1;
+		int label = next_label++;
+
+		public override string ToString ()
+		{
+			return "L" + label.ToString ();
+		}
+#endif
 	}
 		
 	interface ICompiler {
@@ -127,7 +135,14 @@ namespace System.Text.RegularExpressions {
 		[Conditional ("TRACE_REGEX")]
 		static void TraceRegexp (string fmt, params object[] args)
 		{
+			Console.Write ("\t");
 			Console.WriteLine (fmt, args);
+		}
+
+		[Conditional ("TRACE_REGEX")]
+		static void TraceRegexpLabel (LinkRef lref)
+		{
+			Console.Write ("{0}:", lref);
 		}
 
 		public static void DecodeOp (ushort word, out OpCode op, out OpFlags flags) {
@@ -168,8 +183,6 @@ namespace System.Text.RegularExpressions {
 			uint ucount = (uint) count;
 			Emit ((ushort) (ucount & 0xFFFF)); // lo 16bits
 			Emit ((ushort) (ucount >> 16));	   // hi
-
-			TraceRegexp ("count {0}", count);
 		}
 
 		public void EmitCharacter (char c, bool negate, bool ignore, bool reverse) {
@@ -394,6 +407,8 @@ namespace System.Text.RegularExpressions {
 		
 			while (stack.Pop ())
 				pgm[stack.OffsetAddress] = (ushort)stack.GetOffset (CurrentAddress);
+
+			TraceRegexpLabel (lref);
 		}
 
 		public void EmitBranchEnd(){}

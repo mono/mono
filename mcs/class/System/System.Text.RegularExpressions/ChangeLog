@@ -1,3 +1,13 @@
+2010-06-29  Raja R Harinath  <harinath@hurrynot.org>
+
+	Make trace output resemble assembler listing
+	* compiler.cs (LinkRef.ToString) [TRACE_REGEX]: Add pretty-printer
+	in TRACE_REGEX mode.
+	(TraceRegexp): Indent the output.
+	(TraceRegexpLabel): New.  Prints out a line label.
+	(EmitCount): Don't trace.  All callers are traced.
+	(ResolveLink): Trace line labels.
+
 2010-06-21  Rodrigo Kumpera  <rkumpera@novell.com>
 
 	* compiler.cs: Use conditional compilation to enable
