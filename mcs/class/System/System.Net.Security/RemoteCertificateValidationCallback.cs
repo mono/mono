@@ -35,12 +35,8 @@ namespace System.Net.Security
 {
 	public delegate bool RemoteCertificateValidationCallback (
 		object sender,
-#if SECURITY_DEP
 		X509Certificate certificate,
 		X509Chain chain,
-#else
-		object certificate,
-		object chain,
-#endif
 		SslPolicyErrors sslPolicyErrors);
 }
+

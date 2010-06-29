@@ -1,3 +1,7 @@
+2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* RemoteCertificateValidationCallback.cs: Remove SECURITY_DEP use
+
 2010-05-10  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* SslStream.cs: Allow Moonlight to build the non-server part

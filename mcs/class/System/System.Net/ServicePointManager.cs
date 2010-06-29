@@ -36,7 +36,6 @@ using System.Configuration;
 using System.Net.Configuration;
 using System.Security.Cryptography.X509Certificates;
 
-#if NET_2_0
 using System.Globalization;
 using System.Net.Security;
 #if SECURITY_DEP
@@ -46,7 +45,6 @@ using Mono.Security.Cryptography;
 using Mono.Security.X509.Extensions;
 using Mono.Security.Protocol.Tls;
 using MSX = Mono.Security.X509;
-#endif
 #endif
 
 //
@@ -124,9 +122,7 @@ namespace System.Net
 #endif
 		static bool useNagle;
 #endif
-#if NET_2_0
 		static RemoteCertificateValidationCallback server_cert_cb;
-#endif
 
 		// Fields
 		
@@ -261,7 +257,6 @@ namespace System.Net
 			set { _securityProtocol = value; }
 		}
 
-#if NET_2_0
 		public static RemoteCertificateValidationCallback ServerCertificateValidationCallback
 		{
 			get {
@@ -271,7 +266,6 @@ namespace System.Net
 				server_cert_cb = value;
 			}
 		}
-#endif
 
 #if NET_1_1
 		public static bool Expect100Continue {

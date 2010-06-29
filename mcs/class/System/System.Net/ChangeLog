@@ -1,3 +1,8 @@
+2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ServicePointManager.cs: Remove NET_2_0 defines around 
+	RemoteCertificateValidationCallback
+
 2010-06-28 Gonzalo Paniagua Javier <gonzalo@novell.com>
 
 	* IPAddress.cs: verify the last IPv4 digit too.
