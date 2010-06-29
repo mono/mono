@@ -1,3 +1,7 @@
+2010-06-29  Marek Safar <marek.safar@gmail.com>
+
+	* List.cs: Optimize IEnumerable<T> ctor.
+
 2010-05-15  Marek Safar <marek.safar@gmail.com>
 
 	* KeyValuePair.cs: Initialize fields definitely.
