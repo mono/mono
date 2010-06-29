@@ -1,5 +1,11 @@
 2010-06-29  Zoltan Varga  <vargaz@gmail.com>
 
+	* aot-runtime.c (decode_exception_debug_info): Separate the LLVM and non-LLVM code
+	a bit better. Decode nesting information to fix eh support for llvm+aot.
+
+	* aot-compiler.c (emit_exception_debug_info): Encode nesting information for LLVM
+	methods.
+
 	* mini-llvm.c (mono_llvm_cleanup): Dispose the aot module too.
 
 	* mini-arm.c (get_call_info): Change the managed calling convention so 'this'
