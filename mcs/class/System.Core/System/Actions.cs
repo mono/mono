@@ -34,6 +34,7 @@ using System.Runtime.CompilerServices;
 [assembly:TypeForwardedTo (typeof(Action<,>))]
 [assembly:TypeForwardedTo (typeof(Action<,,>))]
 [assembly:TypeForwardedTo (typeof(Action<,,,>))]
+[assembly:TypeForwardedTo (typeof (Action))]
 #elif MOONLIGHT
 [assembly:TypeForwardedTo (typeof (Action))]
 #endif
