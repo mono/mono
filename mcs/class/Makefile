@@ -107,7 +107,6 @@ net_2_0_dirs := \
 	System.Web.DynamicData		\
 	System.ServiceModel.Web		\
 	System.Web.Mvc			\
-	System.Web.Mvc2			\
 	Mono.C5				\
 	Mono.Management			\
 	Mono.Options 			\
@@ -173,7 +172,8 @@ net_4_0_dirs := \
 	System.ComponentModel.Composition \
 	System.Xaml \
 	System.ServiceModel.Routing \
-	System.Runtime.Caching
+	System.Runtime.Caching \
+	System.Runtime.DurableInstancing
 
 net_2_0_bootstrap_SUBDIRS := $(bootstrap_dirs)
 net_2_0_SUBDIRS := $(common_dirs) $(net_2_0_dirs) $(net_2_0_only_dirs)
