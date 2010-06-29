@@ -940,11 +940,14 @@ namespace System.Text.RegularExpressions {
 			Debug.Assert (cp > mark_start, "Regex", "Attempt to backtrack forwards");
 			for (int i = 0; i < groups.Length; ++ i) {
 				int m = groups [i];
-				while (cp <= m)
+				while (cp <= m) {
+					marks [m].Start = -1;
 					m = marks [m].Previous;
+				}
 
 				groups [i] = m;
 			}
+			mark_start = cp;
 		}
 
 		private void ResetGroups () {

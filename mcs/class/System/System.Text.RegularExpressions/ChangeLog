@@ -1,5 +1,11 @@
 2010-06-29  Raja R Harinath  <harinath@hurrynot.org>
 
+	Mitigate a possible source of unbounded memory growth
+	* interpreter.cs (Backtrack): Move mark_start back, and invalidate
+	discarded marks.
+
+2010-06-29  Raja R Harinath  <harinath@hurrynot.org>
+
 	Make trace output resemble assembler listing
 	* compiler.cs (LinkRef.ToString) [TRACE_REGEX]: Add pretty-printer
 	in TRACE_REGEX mode.
