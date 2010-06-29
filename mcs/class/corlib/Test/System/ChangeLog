@@ -1,3 +1,7 @@
+2010-06-29 Rodrigo Kumpera  <rkumpera@novell.com>
+
+	* TypeTest.cs: Add tests for #612780.
+
 2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
 
 	* AttributeTest.cs: Add test cases for GetHashCode

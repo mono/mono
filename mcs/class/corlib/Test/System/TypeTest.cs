@@ -3321,6 +3321,26 @@ PublicKeyToken=b77a5c561934e089"));
 			public int field;
 		}
 
+		[Test] // Bug #612780
+		public void CannotMakeDerivedTypesFromTypedByRef ()
+		{
+		try {
+	        typeof (System.TypedReference).MakeArrayType ();
+	        Assert.Fail ("#1");
+		} catch (TypeLoadException) { }
+
+		try {
+	        typeof (System.TypedReference).MakeByRefType ();
+	        Assert.Fail ("#2");
+		} catch (TypeLoadException) { }
+
+		try {
+	        typeof (System.TypedReference).MakePointerType ();
+	        Assert.Fail ("#3");
+		} catch (TypeLoadException) { }
+
+		}
+
 #if NET_4_0
 		interface IGetInterfaceMap<in T>
 		{
