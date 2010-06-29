@@ -1,3 +1,13 @@
+2010-06-29  Sebastien Pouliot  <sebastien@ximian.com>
+
+	* ComplexBindingPropertiesAttribute.cs:
+	* DefaultBindingPropertyAttribute.cs:
+	* DefaultEventAttribute.cs:
+	* DefaultPropertyAttribute.cs:
+		Fix GetHashCode so that values are equals if Equals 
+		return true
+	* DesignTimeVisibleAttribute.cs: Fix default value for Visible.
+
 2010-06-25  Alan McGovern  <amcgovern@novell.com>
 
 	* TypeConverter_2_1.cs: Implement ConvertToString as per docs and

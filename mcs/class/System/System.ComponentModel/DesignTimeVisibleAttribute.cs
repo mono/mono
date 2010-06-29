@@ -47,7 +47,7 @@ namespace System.ComponentModel {
 		#region Constructors
 
 		public DesignTimeVisibleAttribute ()
-			: this (true)
+			: this (false)
 		{
 		}
 

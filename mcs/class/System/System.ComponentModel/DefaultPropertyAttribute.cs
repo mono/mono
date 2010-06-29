@@ -61,7 +61,7 @@ namespace System.ComponentModel
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return property_name == null ? 0 : property_name.GetHashCode ();
 		}
 	}
 }

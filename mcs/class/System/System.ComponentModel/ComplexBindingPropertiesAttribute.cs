@@ -69,13 +69,11 @@ namespace System.ComponentModel
 
 		public override int GetHashCode ()
 		{
-			int hc = string.Concat (data_source, data_member).GetHashCode ();
-			if (hc == 0)
-				return base.GetHashCode ();
+			int hc = data_source == null ? 0 : data_source.GetHashCode ();
+			hc ^= data_member == null ? 0 : data_member.GetHashCode ();
 			return hc;
 		}
 	}
 }
-
 
 #endif

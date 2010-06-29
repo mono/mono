@@ -61,7 +61,7 @@ namespace System.ComponentModel
 
 		public override int GetHashCode ()
 		{
-			return base.GetHashCode ();
+			return eventName == null ? 0 : eventName.GetHashCode ();
 		}
 	}
 }
