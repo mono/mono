@@ -1,3 +1,7 @@
+2010-06-29  Geoff Norton  <gnorton@novell.com>
+
+	* atomics.h: Implement armv6+ variants of our atomics.
+
 2010-04-20  Jonathan Pryor  <jpryor@novell.com>
 
 	* collection.c: Cleanup platform checks around
