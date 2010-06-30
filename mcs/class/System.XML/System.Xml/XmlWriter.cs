@@ -141,11 +141,11 @@ namespace System.Xml
 			else
 				settings = settings.Clone ();
 
-			bool returnNew = false;
 			var src = writer.Settings;
 			if (src == null) {
 				settings.ConformanceLevel = ConformanceLevel.Document; // Huh? Why??
-				returnNew = true;
+				writer = new DefaultXmlWriter (writer);
+				writer.settings = settings;
 			} else {
 				ConformanceLevel dst = src.ConformanceLevel;
 				switch (src.ConformanceLevel) {
@@ -161,14 +161,13 @@ namespace System.Xml
 
 				settings.MergeFrom (src);
 
-				// It returns a new XmlWriter instance if 1) Settings is *not* overriden, or 2) Settings give a significant difference.
-				returnNew = src.ConformanceLevel != dst;
+				// It returns a new XmlWriter instance if 1) Settings is null, or 2) Settings ConformanceLevel (or might be other members as well) give significant difference.
+				if (src.ConformanceLevel != dst) {
+					writer = new DefaultXmlWriter (writer, false);
+					writer.settings = settings;
+				}
 			}
 
-			if (returnNew) {
-				writer = new DefaultXmlWriter (writer);
-				writer.settings = settings;
-			}
 			return writer;
 		}
 

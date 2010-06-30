@@ -1,5 +1,12 @@
 2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
 
+	* XmlDefaultWriter.cs : add state management support. 
+	* XmlWriter.cs : use above feature for "null Settings in source
+	  writer" case. This brings some minor .NET compatibility and
+	  should fix bug #607697.
+
+2010-06-30  Atsushi Enomoto  <atsushi@ximian.com>
+
 	* XmlDefaultWriter.cs : new source (which I once wrote for relaxng
 	  and corcompare).
 	* XmlWriter.cs : in some cases XmlWriter.Create() returns a new

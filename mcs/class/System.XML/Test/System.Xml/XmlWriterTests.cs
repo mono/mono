@@ -608,7 +608,6 @@ namespace MonoTests.System.Xml
 		//   and the source settings, it does not create wrapper.
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateCLAuto ()
 		{
 			ConformanceLevelAuto cl = new ConformanceLevelAuto ();
@@ -630,7 +629,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateCLFrag ()
 		{
 			ConformanceLevelFragment cl = new ConformanceLevelFragment ();
@@ -697,7 +695,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateCLAutoSettingsCLDoc ()
 		{
 			ConformanceLevelAuto cl = new ConformanceLevelAuto ();
@@ -708,7 +705,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateCLAutoSettingsCLFrag ()
 		{
 			ConformanceLevelAuto cl = new ConformanceLevelAuto ();
@@ -741,7 +737,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateCLDocSettingsCLFrag ()
 		{
 			ConformanceLevelDocument cl = new ConformanceLevelDocument ();
@@ -763,7 +758,6 @@ namespace MonoTests.System.Xml
 		}
 
 		[Test]
-		[Category ("NotWorking")]
 		public void CreateCLFragSettingsCLDoc ()
 		{
 			ConformanceLevelFragment cl = new ConformanceLevelFragment ();
