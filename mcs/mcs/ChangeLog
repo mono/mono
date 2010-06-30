@@ -1,5 +1,11 @@
 2010-06-30  Marek Safar  <marek.safar@gmail.com>
 
+	* support.cs: Removed unused code.
+	
+	* ecore.cs: Don't use memberlookup for operators.
+
+2010-06-30  Marek Safar  <marek.safar@gmail.com>
+
 	* typemanager.cs, membercache.cs, convert.cs, expression.cs,
 	ecore.cs: Replace remaining MethodLookup with correct user operator
 	lookup (to do correct deep lookup). Clean up most of outstanding

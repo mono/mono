@@ -1242,21 +1242,18 @@ namespace Mono.CSharp {
 		// 'child.Type' to our target type (type)
 		MethodSpec GetConversionOperator (bool find_explicit)
 		{
-			string operator_name = find_explicit ? "op_Explicit" : "op_Implicit";
+			var op = find_explicit ? Operator.OpType.Explicit : Operator.OpType.Implicit;
 
-			// Operators are always public
-			var mi = TypeManager.MemberLookup (child.Type, child.Type, child.Type, MemberKind.Operator,
-				BindingRestriction.None, operator_name, 0, null);
-
+			var mi = MemberCache.GetUserOperator (child.Type, op, true);
 			if (mi == null){
-				mi = TypeManager.MemberLookup (type, type, type, MemberKind.Operator,
-					BindingRestriction.None, operator_name, 0, null);
+				mi = MemberCache.GetUserOperator (type, op, true);
 			}
 			
 			foreach (MethodSpec oper in mi) {
-				AParametersCollection pd = oper.Parameters;
+				if (oper.ReturnType != type)
+					continue;
 
-				if (pd.Types [0] == child.Type && oper.ReturnType == type)
+				if (oper.Parameters.Types [0] == child.Type)
 					return oper;
 			}
 
@@ -1304,9 +1301,7 @@ namespace Mono.CSharp {
 		public Expression Resolve ()
 		{
 			if (operators == null) {
-				var all_oper = TypeManager.MemberLookup (TypeManager.decimal_type,
-				   TypeManager.decimal_type, TypeManager.decimal_type, MemberKind.Operator,
-				   BindingRestriction.None, "op_Explicit", 0, null);
+				var all_oper = MemberCache.GetUserOperator (TypeManager.decimal_type, Operator.OpType.Explicit, true);
 
 				operators = new Dictionary<TypeSpec, MethodSpec> ();
 				foreach (MethodSpec oper in all_oper) {
@@ -2965,48 +2960,21 @@ namespace Mono.CSharp {
 
 		#region Properties
 
-		public override TypeSpec DeclaringType {
-			get {
-				return queried_type;
-			}
-		}
-
 		public MethodSpec BestCandidate {
 			get {
 				return best_candidate;
 			}
 		}
 
-		public TypeSpec DelegateType {
-			set {
-				delegate_type = value;
+		public override TypeSpec DeclaringType {
+			get {
+				return queried_type;
 			}
 		}
 
-		#endregion
-
-		//
-		// When best candidate is already know this factory can be used
-		// NOTE: InstanceExpression has to be set manually
-		//
-		public static MethodGroupExpr CreatePredefined (MethodSpec best, TypeSpec queriedType, Location loc)
-		{
-			return new MethodGroupExpr (best, queriedType, loc) {
-				best_candidate = best
-			};
-		}
-
-		public override string GetSignatureForError ()
-		{
-			if (best_candidate != null)
-				return best_candidate.GetSignatureForError ();
-
-			return Methods.First ().GetSignatureForError ();
-		}
-
-		public override string Name {
-			get {
-				return Methods.First ().Name;
+		public TypeSpec DelegateType {
+			set {
+				delegate_type = value;
 			}
 		}
 
@@ -3028,9 +2996,37 @@ namespace Mono.CSharp {
 			}
 		}
 
-		public static explicit operator MethodSpec (MethodGroupExpr mg)
+		public override string Name {
+			get {
+				if (best_candidate != null)
+					return best_candidate.Name;
+
+				// TODO: throw ?
+				return Methods.First ().Name;
+			}
+		}
+
+		#endregion
+
+		//
+		// When best candidate is already know this factory can be used
+		// to avoid expensive overload resolution to be called
+		//
+		// NOTE: InstanceExpression has to be set manually
+		//
+		public static MethodGroupExpr CreatePredefined (MethodSpec best, TypeSpec queriedType, Location loc)
 		{
-			return mg.best_candidate;
+			return new MethodGroupExpr (best, queriedType, loc) {
+				best_candidate = best
+			};
+		}
+
+		public override string GetSignatureForError ()
+		{
+			if (best_candidate != null)
+				return best_candidate.GetSignatureForError ();
+
+			return Methods.First ().GetSignatureForError ();
 		}
 
 		//
@@ -3308,7 +3304,6 @@ namespace Mono.CSharp {
 		override public void Emit (EmitContext ec)
 		{
 			throw new NotSupportedException ();
-			// ReportUsageError ();
 		}
 		
 		public void EmitCall (EmitContext ec, Arguments arguments)
