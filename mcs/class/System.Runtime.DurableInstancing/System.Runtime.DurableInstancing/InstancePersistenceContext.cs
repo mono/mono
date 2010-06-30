@@ -16,9 +16,9 @@ namespace System.Runtime.DurableInstancing
 		internal InstancePersistenceContext (InstanceHandle handle, InstanceView view)
 		{
 			if (handle == null)
-				throw new ArgumentNullExcepion ("handle");
+				throw new ArgumentNullException ("handle");
 			if (view == null)
-				throw new ArgumentNullExcepion ("view");
+				throw new ArgumentNullException ("view");
 
 			InstanceHandle = handle;
 			InstanceView = view;
