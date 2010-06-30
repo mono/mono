@@ -1,4 +1,11 @@
 
+Wed Jun 30 12:10:57 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* Makefile.am, mini-llvm.h, mini-unwind.h, mini.c, mini.h, xdebug.c:
+	implemt the option of loading the llvm backend from a module so
+	that we can have a single binary and the bloat from llvm is
+	only experienced when it is actually loaded.
+
 Wed Jun 30 12:02:39 CEST 2010 Paolo Molaro <lupus@ximian.com>
 
 	* mini-llvm.c: remove direct access to mono_defaults.
