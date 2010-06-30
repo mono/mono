@@ -1,3 +1,9 @@
+
+Wed Jun 30 12:06:33 CEST 2010 Paolo Molaro <lupus@ximian.com>
+
+	* mono-compiler.h: define MONO_LLVM_INTERNAL for internal functions
+	that may be needed by the llvm backend module.
+
 2010-06-25  Zoltan Varga  <vargaz@gmail.com>
 
 	* gc_wrapper.h: Avoid redefining pthread_ calls for SGEN, no longer needed.
